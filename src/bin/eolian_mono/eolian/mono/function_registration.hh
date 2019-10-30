@@ -66,7 +66,7 @@ struct function_registration_generator
     if(!as_generator(
         indent << "if (methods.Contains(\"" << string << "\"))\n"
         << indent << "{\n"
-        << indent << scope_tab << "descs.Add(new EflOpDescription() {"
+        << indent << scope_tab << "descs.Add(new Efl.Eo.EflOpDescription() {"
 #ifdef _WIN32
         << "api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\")"
 #else

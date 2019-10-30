@@ -410,7 +410,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <para>For internal use by generated code only.</para>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    internal abstract class NativeMethods : Efl.Eo.NativeClass
+    internal abstract class NativeMethods : Efl.Eo.NativeMethods
     {
         private static EflConstructorDelegate csharpEflConstructorStaticDelegate = new EflConstructorDelegate(Constructor);
         private static Efl.Eo.NativeModule EoModule = new Efl.Eo.NativeModule("eo");
@@ -421,11 +421,11 @@ public abstract class EoWrapper : IWrapper, IDisposable
         /// <para>Since EFL 1.23.</para>
         /// </summary>
         /// <returns>The list of Eo operations to be overload.</returns>
-        internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(Type type, bool includeInherited)
+        internal override System.Collections.Generic.List<Efl.Eo.EflOpDescription> GetEoOps(Type type, bool includeInterfaces)
         {
-            var descs = new System.Collections.Generic.List<EflOpDescription>();
+            var descs = new System.Collections.Generic.List<Efl.Eo.EflOpDescription>();
 
-            descs.Add(new EflOpDescription()
+            descs.Add(new Efl.Eo.EflOpDescription()
             {
                 api_func = Efl.Eo.FunctionInterop.LoadFunctionPointer(EoModule.Module, "efl_constructor"),
                 func = Marshal.GetFunctionPointerForDelegate(csharpEflConstructorStaticDelegate)

@@ -39,6 +39,9 @@ internal struct ClassDescription
     internal IntPtr class_destructor;
 }
 
+namespace Efl.Eo
+{
+
 ///<summary>Description of an Eo API operation.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 internal struct EflOpDescription
@@ -47,6 +50,7 @@ internal struct EflOpDescription
     internal IntPtr api_func;
     ///<summary>The static function to be called for this op</summary>
     internal IntPtr func;
+}
 }
 
 ///<summary>List of operations on a given Object.</summary>

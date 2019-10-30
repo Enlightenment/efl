@@ -439,9 +439,9 @@ struct klass
          if(!as_generator(
              indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
-             << indent << scope_tab << "internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
+             << indent << scope_tab << "internal override System.Collections.Generic.List<Efl.Eo.EflOpDescription> GetEoOps(System.Type type, bool includeInterfaces)\n"
              << indent << scope_tab << "{\n"
-             << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<EflOpDescription>();\n"
+             << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl.Eo.EflOpDescription>();\n"
             )
             .generate(sink, attributes::unused, inative_cxt))
            return false;
@@ -462,12 +462,12 @@ struct klass
              return false;
 
          if(!as_generator(
-             indent << scope_tab << scope_tab << "if (includeInherited)\n"
+             indent << scope_tab << scope_tab << "if (includeInterfaces)\n"
              << indent << scope_tab(2) << "{\n"
              << indent << scope_tab(3) << "var all_interfaces = type.GetInterfaces();\n"
              << indent << scope_tab(3) << "foreach (var iface in all_interfaces)\n"
              << indent << scope_tab(3) << "{\n"
-             << indent << scope_tab(4) <<  "var moredescs = ((Efl.Eo.NativeClass)iface.GetCustomAttributes(false)?.FirstOrDefault(attr => attr is Efl.Eo.NativeClass))?.GetEoOps(type, false);\n"
+             << indent << scope_tab(4) <<  "var moredescs = ((Efl.Eo.NativeMethods)iface.GetCustomAttributes(false)?.FirstOrDefault(attr => attr is Efl.Eo.NativeMethods))?.GetEoOps(type, false);\n"
              << indent << scope_tab(4) <<  "if (moredescs != null)\n"
              << indent << scope_tab(5) <<  "descs.AddRange(moredescs);\n"
              << indent << scope_tab(3) << "}\n"
@@ -592,7 +592,7 @@ struct klass
      if (cls.type == attributes::class_type::abstract_)
      {
          if (!as_generator(
-                scope_tab << "[Efl.Eo.PrivateNativeClass]\n"
+                scope_tab << "[Efl.Eo.PrivateNativeMethods]\n"
                 << scope_tab << "private class " << inherit_name << "Realized : " << inherit_name << "\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"

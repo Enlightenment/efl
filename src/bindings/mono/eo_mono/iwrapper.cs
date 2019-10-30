@@ -343,9 +343,9 @@ public static class Globals
                 var attrs = System.Attribute.GetCustomAttributes(iface);
                 foreach (var attr in attrs)
                 {
-                    if (attr is Efl.Eo.NativeClass)
+                    if (attr is Efl.Eo.NativeMethods)
                     {
-                        ifaces_lst.Add(((Efl.Eo.NativeClass)attr).GetEflClass());
+                        ifaces_lst.Add(((Efl.Eo.NativeMethods)attr).GetEflClass());
                         break;
                     }
                 }
@@ -355,14 +355,14 @@ public static class Globals
         return ifaces_lst;
     }
 
-    private static Efl.Eo.NativeClass GetNativeClass(System.Type type)
+    private static Efl.Eo.NativeMethods GetNativeClass(System.Type type)
     {
         var attrs = System.Attribute.GetCustomAttributes(type, false);
         foreach (var attr in attrs)
         {
-            if (attr is Efl.Eo.NativeClass)
+            if (attr is Efl.Eo.NativeMethods)
             {
-                return (Efl.Eo.NativeClass)attr;
+                return (Efl.Eo.NativeMethods)attr;
             }
         }
 
@@ -401,7 +401,7 @@ public static class Globals
     {
         Eina.Log.Debug($"called with 0x{klass.ToInt64():x} {type}");
         var derived = type.BaseType;
-        Efl.Eo.NativeClass nativeClass = GetNativeClass(derived);
+        Efl.Eo.NativeMethods nativeClass = GetNativeClass(derived);
 
         while (nativeClass == null)
         {
@@ -790,28 +790,49 @@ public static class Config
     }
 }
 
+/// <summary>
+/// Base class for the <c>*NativeMethods</c> family of attributes that are used
+/// to retrieve the native class information for the given C# generated class.
+/// <para>Internal usage.</para>
+/// </summary>
 [System.AttributeUsage(System.AttributeTargets.Class |
                        System.AttributeTargets.Interface,
                        AllowMultiple = false,
                        Inherited = false)
 ]
-abstract class NativeClass : System.Attribute
+abstract class NativeMethods : System.Attribute
 {
+    /// <summary>
+    /// Gets the native C EO class this instance wraps.
+    /// <para>Internal usage.</para>
+    /// </summary>
+    /// <returns>A pointer to the native (C) EO class.</returns>
     internal abstract IntPtr GetEflClass();
-    internal abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
+    /// <summary>
+    /// Gets a list of EO methods to be overriden for the given C# type.
+    /// <para>A method will be added to the list if <c>type</c> overrides it
+    /// and is a method exported by the native EO class associated with this
+    /// class or one of its bases.</para>
+    /// </summary>
+    /// <param name="type">The original C# type.</param>
+    /// <param name="includeInterfaces"><c>true</c> if we want to check the
+    /// interfaces implemented by <c>type</c> too.</param>
+    /// <returns>A list of <see cref="Efl.Eo.EflOpDescription" /> with the
+    /// callbacks ready to be passed to EO for the class registration.</returns>
+    internal abstract System.Collections.Generic.List<Efl.Eo.EflOpDescription> GetEoOps(System.Type type, bool includeInterfaces);
 }
 
 /// <summary>Attribute for private native classes.
 ///
 /// <para>For internal usage by generated code only.</para></summary>
-class PrivateNativeClass : NativeClass
+class PrivateNativeMethods : NativeMethods
 {
     internal override IntPtr GetEflClass()
     {
         return IntPtr.Zero;
     }
 
-    internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
+    internal override System.Collections.Generic.List<Efl.Eo.EflOpDescription> GetEoOps(System.Type type, bool includeInterfaces)
     {
         return null;
     }
