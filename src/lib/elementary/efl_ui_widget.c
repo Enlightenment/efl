@@ -1732,7 +1732,7 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
    Efl_Ui_Widget *subs;
    Eina_List *n;
    Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!pd) return;
+   EINA_SAFETY_ON_NULL_RETURN(pd);
    int distance, parent_counter = (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0);
 
    if (tree_unfocusable)
@@ -1772,7 +1772,7 @@ EAPI Eina_Bool
 elm_widget_tree_unfocusable_get(const Eo *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!sd) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
 
    return !!sd->tree_unfocusable;
 }
