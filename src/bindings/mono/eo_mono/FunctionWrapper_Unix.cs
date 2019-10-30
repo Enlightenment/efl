@@ -24,10 +24,12 @@ internal static partial class FunctionInterop
     [DllImport(efl.Libs.Libdl)]
     private static extern IntPtr dlsym(IntPtr handle, string symbol);
 
-    ///<summary>Loads a function pointer from the given module.</summary>
-    ///<param name="nativeLibraryHandle">The module containing the function.</param>
-    ///<param name="functionName">The name of the function to search for.</param>
-    ///<returns>A function pointer that can be used with delegates.</returns>
+    /// <summary>Loads a function pointer from the given module.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="nativeLibraryHandle">The module containing the function.</param>
+    /// <param name="functionName">The name of the function to search for.</param>
+    /// <returns>A function pointer that can be used with delegates.</returns>
     internal static IntPtr LoadFunctionPointer(IntPtr nativeLibraryHandle, string functionName)
     {
         Eina.Log.Debug($"searching {nativeLibraryHandle} for {functionName}");
