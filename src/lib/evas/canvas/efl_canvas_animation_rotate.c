@@ -8,16 +8,14 @@ _efl_canvas_animation_rotate_rotate_set(Eo *eo_obj EINA_UNUSED,
                                  double from_degree,
                                  double to_degree,
                                  Efl_Canvas_Object *pivot,
-                                 double cx,
-                                 double cy)
+                                 Eina_Vector2 center_point)
 {
    pd->from.degree = from_degree;
    pd->to.degree = to_degree;
 
    //TODO: check whether ref for pivot should be added.
    pd->rel_pivot.obj = pivot;
-   pd->rel_pivot.cx = cx;
-   pd->rel_pivot.cy = cy;
+   pd->rel_pivot.pos = center_point;
    pd->use_rel_pivot = EINA_TRUE;
 }
 
@@ -27,8 +25,7 @@ _efl_canvas_animation_rotate_rotate_get(const Eo *eo_obj EINA_UNUSED,
                                  double *from_degree,
                                  double *to_degree,
                                  Efl_Canvas_Object **pivot,
-                                 double *cx,
-                                 double *cy)
+                                 Eina_Vector2 *center_point)
 {
    if (!pd->use_rel_pivot)
      {
@@ -45,11 +42,8 @@ _efl_canvas_animation_rotate_rotate_get(const Eo *eo_obj EINA_UNUSED,
    if (pivot)
      *pivot = pd->rel_pivot.obj;
 
-   if (cx)
-     *cx = pd->rel_pivot.cx;
-
-   if (cy)
-     *cy = pd->rel_pivot.cy;
+   if (center_point)
+     *center_point = pd->rel_pivot.pos;
 }
 
 EOLIAN static void
@@ -57,14 +51,12 @@ _efl_canvas_animation_rotate_rotate_absolute_set(Eo *eo_obj EINA_UNUSED,
                                           Efl_Canvas_Animation_Rotate_Data *pd,
                                           double from_degree,
                                           double to_degree,
-                                          Evas_Coord cx,
-                                          Evas_Coord cy)
+                                          Eina_Position2D abs)
 {
    pd->from.degree = from_degree;
    pd->to.degree = to_degree;
 
-   pd->abs_pivot.cx = cx;
-   pd->abs_pivot.cy = cy;
+   pd->abs_pivot = abs;
    pd->use_rel_pivot = EINA_FALSE;
 }
 
@@ -73,8 +65,7 @@ _efl_canvas_animation_rotate_rotate_absolute_get(const Eo *eo_obj EINA_UNUSED,
                                           Efl_Canvas_Animation_Rotate_Data *pd,
                                           double *from_degree,
                                           double *to_degree,
-                                          Evas_Coord *cx,
-                                          Evas_Coord *cy)
+                                          Eina_Position2D *abs)
 {
    if (pd->use_rel_pivot)
      {
@@ -88,11 +79,8 @@ _efl_canvas_animation_rotate_rotate_absolute_get(const Eo *eo_obj EINA_UNUSED,
    if (to_degree)
      *to_degree = pd->to.degree;
 
-   if (cx)
-     *cx = pd->abs_pivot.cx;
-
-   if (cy)
-     *cy = pd->abs_pivot.cy;
+   if (abs)
+     *abs = pd->abs_pivot;
 }
 
 EOLIAN static double
@@ -113,13 +101,13 @@ _efl_canvas_animation_rotate_efl_canvas_animation_animation_apply(Eo *eo_obj,
         efl_gfx_mapping_rotate(target,
                                new_degree,
                                (pd->rel_pivot.obj) ? pd->rel_pivot.obj : target,
-                               pd->rel_pivot.cx, pd->rel_pivot.cy);
+                               pd->rel_pivot.pos.x, pd->rel_pivot.pos.y);
      }
    else
      {
         efl_gfx_mapping_rotate_absolute(target,
                                         new_degree,
-                                        pd->abs_pivot.cx, pd->abs_pivot.cy);
+                                        pd->abs_pivot.x, pd->abs_pivot.y);
      }
 
    return progress;
@@ -135,11 +123,11 @@ _efl_canvas_animation_rotate_efl_object_constructor(Eo *eo_obj,
    pd->to.degree = 0.0;
 
    pd->rel_pivot.obj = NULL;
-   pd->rel_pivot.cx = 0.5;
-   pd->rel_pivot.cy = 0.5;
+   pd->rel_pivot.pos.x = 0.5;
+   pd->rel_pivot.pos.y = 0.5;
 
-   pd->abs_pivot.cx = 0;
-   pd->abs_pivot.cy = 0;
+   pd->abs_pivot.x = 0;
+   pd->abs_pivot.y = 0;
 
    pd->use_rel_pivot = EINA_TRUE;
 

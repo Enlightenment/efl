@@ -86,7 +86,7 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    /* Animations to hide button */
    //Rotate from 0 to 45 degrees Animation
    Efl_Canvas_Animation *cw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
-   efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, 0.5, 0.5);
+   efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, EINA_VECTOR2(0.5, 0.5));
 
    //Scale Animation to zoom in
    Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
@@ -120,7 +120,7 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    //Rotate from 45 to 0 degrees Animation
    Efl_Canvas_Animation *ccw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
-   efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, 0.5, 0.5);
+   efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, EINA_VECTOR2(0.5, 0.5));
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
 
    //Show Sequential Group Animation
