@@ -1786,7 +1786,6 @@ struct _Edje
    Eina_Bool          walking_actions : 1;
    Eina_Bool          block_break : 1;
    Eina_Bool          delete_me : 1;
-   Eina_Bool          postponed : 1;
    Eina_Bool          freeze_calc : 1;
    Eina_Bool          has_entries : 1;
    Eina_Bool          entries_inited : 1;

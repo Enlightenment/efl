@@ -952,12 +952,8 @@ _edje_recalc(Edje *ed)
              return;
           }
      }
-// XXX: dont need this with current smart calc infra. remove me later
-//   if (ed->postponed) return;
-//   if (!ed->calc_only)
+
    evas_object_smart_changed(ed->obj);
-// XXX: dont need this with current smart calc infra. remove me later
-//   ed->postponed = EINA_TRUE;
 }
 
 static
@@ -1009,8 +1005,6 @@ _edje_recalc_do(Edje *ed)
    Eina_Bool need_reinit_state = EINA_FALSE;
 #endif
 
-// XXX: dont need this with current smart calc infra. remove me later
-//   ed->postponed = EINA_FALSE;
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);
    evas_object_smart_need_recalculate_set(ed->obj, 0);
    if (!ed->dirty) return;
