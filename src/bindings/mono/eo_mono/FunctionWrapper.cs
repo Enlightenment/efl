@@ -19,17 +19,21 @@ using System.Runtime.InteropServices;
 namespace Efl.Eo
 {
 
-///<summary>Class to load functions pointers from a native module.
+/// <summary>Class to load functions pointers from a native module.
 ///
-///This class has a platform-dependent implementation on whether it
-///is compiled for Windows (using LoadLibrary/GetProcAddress) or Unix
-///(dlopen/dlsym).</summary>
+/// <para>This class has a platform-dependent implementation on whether it
+/// is compiled for Windows (using LoadLibrary/GetProcAddress) or Unix
+/// (dlopen/dlsym).</para>
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 internal static partial class FunctionInterop
 {
-    ///<summary>Loads a function pointer from the given module.</summary>
-    ///<param name="moduleName">The name of the module containing the function.</param>
-    ///<param name="functionName">The name of the function to search for.</param>
-    ///<returns>A function pointer that can be used with delegates.</returns>
+    /// <summary>Loads a function pointer from the given module.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="moduleName">The name of the module containing the function.</param>
+    /// <param name="functionName">The name of the function to search for.</param>
+    /// <returns>A function pointer that can be used with delegates.</returns>
     internal static IntPtr LoadFunctionPointer(string moduleName, string functionName)
     {
         IntPtr module = NativeModule.LoadLibrary(moduleName);
@@ -39,9 +43,11 @@ internal static partial class FunctionInterop
         return s;
     }
 
-    ///<summary>Loads a function pointer from the default module.</summary>
-    ///<param name="functionName">The name of the function to search for.</param>
-    ///<returns>A function pointer that can be used with delegates.</returns>
+    /// <summary>Loads a function pointer from the default module.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="functionName">The name of the function to search for.</param>
+    /// <returns>A function pointer that can be used with delegates.</returns>
     internal static IntPtr LoadFunctionPointer(string functionName)
     {
         Eina.Log.Debug($"searching {null} for {functionName}");
@@ -51,12 +57,12 @@ internal static partial class FunctionInterop
     }
 }
 
-///<summary>Wraps a native function in a portable manner.
+/// <summary>Wraps a native function in a portable manner.
 ///
-///This is intended as a workaround DllImport limitations when switching between mono and dotnet.
-///
-///The parameter T must be a delegate.
-///</summary>
+/// <para>This is intended as a workaround DllImport limitations when switching between mono and dotnet.</para>
+/// <para>The parameter T must be a delegate.</para>
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T: System.Delegate?
 {
     private Lazy<FunctionLoadResult<T>> loadResult;
@@ -84,17 +90,21 @@ class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T: Syste
         }
     }
 
-    ///<summary>Creates a wrapper for the given function of the given module.</summary>
-    ///<param name="moduleName">The name of the module containing the function.</param>
-    ///<param name="functionName">The name of the function to search for.</param>
+    /// <summary>Creates a wrapper for the given function of the given module.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="moduleName">The name of the module containing the function.</param>
+    /// <param name="functionName">The name of the function to search for.</param>
     internal FunctionWrapper(string moduleName, string functionName)
         : this(new NativeModule(moduleName), functionName)
     {
     }
 
-    ///<summary>Creates a wrapper for the given function of the given module.</summary>
-    ///<param name="module">The module wrapper containing the function.</param>
-    ///<param name="functionName">The name of the function to search for.</param>
+    /// <summary>Creates a wrapper for the given function of the given module.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="module">The module wrapper containing the function.</param>
+    /// <param name="functionName">The name of the function to search for.</param>
     internal FunctionWrapper(NativeModule module, string functionName)
     {
         this.module = module;
@@ -105,8 +115,10 @@ class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T: Syste
             });
     }
 
-    ///<summary>Retrieves the result of function load.</summary>
-    ///<returns>The load result.</returns>
+    /// <summary>Retrieves the result of function load.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The load result.</returns>
     internal FunctionLoadResult<T> Value
     {
         get
@@ -116,7 +128,9 @@ class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T: Syste
     }
 }
 
-///<summary>The outcome of the function load process.</summary>
+/// <summary>The outcome of the function load process.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 enum FunctionLoadResultKind
 {
     ///<summary>Function was loaded successfully.</summary>
@@ -127,16 +141,23 @@ enum FunctionLoadResultKind
     FunctionNotFound
 }
 
-///<summary>Represents the result of loading a function pointer.</summary>
+/// <summary>Represents the result of loading a function pointer.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 class FunctionLoadResult<T>
 {
-    ///<summary>The status of the load.</summary>
+    /// <summary>The status of the load.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     FunctionLoadResultKind Kind;
     private T _Delegate;
 
-    ///<summary>The delegate wrapping the loaded function pointer.
+    /// <summary>The delegate wrapping the loaded function pointer.
     ///
-    ///Throws InvalidOperationException if trying to access while not loaded.</summary>
+    /// <para>Throws InvalidOperationException if trying to access while not loaded.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <value>The <c>delegate</c> wrapping the native function.</value>
     internal T Delegate
     {
         get
@@ -150,15 +171,19 @@ class FunctionLoadResult<T>
         }
     }
 
-    ///<summary>Creates a new load result of the given kind.</summary>
-    ///<param name="kind">The outcome of the load process.</param>
+    /// <summary>Creates a new load result of the given kind.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="kind">The outcome of the load process.</param>
     internal FunctionLoadResult(FunctionLoadResultKind kind)
     {
         this.Kind = kind;
     }
 
-    ///<summary>Creates a new load result with the given delegate.</summary>
-    ///<param name="Delegate">The delegate wrapping the native function.</param>
+    /// <summary>Creates a new load result with the given delegate.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="Delegate">The delegate wrapping the native function.</param>
     internal FunctionLoadResult(T Delegate)
     {
         this._Delegate = Delegate;
