@@ -1,11 +1,3 @@
-
-# gstreamer 0.1 support
-#generic_deps = [dependency('gstreamer')]
-#generic_src = files([
-#  'main_0_10.c'
-#])
-
-
 generic_src = files([
   'main.c'
 ])

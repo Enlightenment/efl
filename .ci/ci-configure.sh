@@ -19,7 +19,7 @@ if [ "$DISTRO" != "" ] ; then
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
-  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=gstreamer,libvlc,xine \
+  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
@@ -29,7 +29,7 @@ if [ "$DISTRO" != "" ] ; then
   -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
   -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false \
   -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
-  -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine \
+  -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer1,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dfribidi=false -Dfontconfig=false \
   -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
   -Delua=true -Dnls=false -Dbindings= -Dlua-interpreter=luajit -Dnative-arch-optimization=false"
@@ -109,6 +109,6 @@ else
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
   export CC="ccache gcc"
   travis_fold meson meson
-  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
+  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer1,libvlc,xine
   travis_endfold meson
 fi

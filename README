@@ -426,7 +426,7 @@ Required by default:
   * bullet
   * libpng
   * libjpeg
-  * gstreamer (1.x, 0.10 support optional. Ensure all codecs you want are installed.)
+  * gstreamer (Ensure all codecs you want are installed.)
   * zlib
   * luajit (lua 5.1 or 5.2 support optional)
   * libtiff
