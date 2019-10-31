@@ -277,6 +277,20 @@ is_forked(void)
    return getpid() != main_pid;
 }
 
+Eina_Bool
+is_buffer(void)
+{
+   return buffer;
+}
+
+static void (*suite_setup_cb)(Eo*);
+
+void
+suite_setup_cb_set(void (*cb)(Eo*))
+{
+   suite_setup_cb = cb;
+}
+
 int
 suite_setup(Eina_Bool legacy)
 {
@@ -311,6 +325,7 @@ suite_setup(Eina_Bool legacy)
      {
         global_win = _elm_suite_win_create();
         force_focus_win(global_win);
+        if (suite_setup_cb) suite_setup_cb(global_win);
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
    /* preload default theme */
