@@ -367,6 +367,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_content_get1)
 {
    Efl_Ui_Widget *wid[3];
+   int num_widgets = EINA_C_ARRAY_LENGTH(wid);
 
    for (int i = 0; i < 3; i++)
      {
@@ -374,14 +375,14 @@ EFL_START_TEST(pack_content_get1)
         efl_pack_end(widget, wid[i]);
      }
 
-   for (int i = -100000; i <= 100000; i++)
+   for (int i = -num_widgets - 1; i <= num_widgets + 1; i++)
      {
-        if (i < -3)
+        if (i <= -num_widgets)
           ck_assert_ptr_eq(efl_pack_content_get(widget, i), efl_pack_content_get(widget, 0));
-        else if (i >= -3 && i < 3)
-          ck_assert_ptr_eq(efl_pack_content_get(widget, i), wid[(i + 3) % 3]);
-        else
+        else if (i >= num_widgets)
           ck_assert_ptr_eq(efl_pack_content_get(widget, i), efl_pack_content_get(widget, 2));
+        else
+          ck_assert_ptr_eq(efl_pack_content_get(widget, i), wid[(i + num_widgets) % num_widgets]);
      }
 }
 EFL_END_TEST
