@@ -32,16 +32,22 @@
 extern "C" {
 #endif
 
-
 #ifndef EFL_INTERNAL_UNSTABLE
 # error This file can not be included outside EFL
 #endif
 
 #include <Efl.h>
 
+EOAPI const Eina_List *efl_input_device_children_get(const Eo *obj);
+
+EOAPI void efl_input_device_evas_set(Eo *obj, Evas *e);
+EOAPI Evas *efl_input_device_evas_get(const Eo *obj);
+
+EOAPI void efl_input_device_subclass_set(Eo *obj, Evas_Device_Subclass sub_clas);
+EOAPI Evas_Device_Subclass efl_input_device_subclass_get(const Eo *obj);
+
 typedef struct _Efl_Input_Pointer_Data  Efl_Input_Pointer_Data;
 typedef struct _Efl_Input_Key_Data      Efl_Input_Key_Data;
-typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
 typedef struct _Efl_Input_Hold_Data     Efl_Input_Hold_Data;
 typedef struct _Efl_Input_Focus_Data    Efl_Input_Focus_Data;
 
@@ -110,18 +116,6 @@ struct _Efl_Input_Key_Data
    Eina_Bool          fake : 1;
    Eina_Bool          win_fed : 1;
    Eina_Bool          no_stringshare : 1;
-};
-
-struct _Efl_Input_Device_Data
-{
-   Eo               *eo;
-   Eo               *evas; /* Evas */
-   Efl_Input_Device *source;  /* ref */
-   Eina_List        *children; /* ref'ed by efl_parent, not by this list */
-   unsigned int      id;
-   Efl_Input_Device_Type klass;
-   unsigned int      subclass; // Evas_Device_Subclass (unused)
-   unsigned int      pointer_count;
 };
 
 struct _Efl_Input_Hold_Data
