@@ -9,6 +9,7 @@
 
 extern Eo *win;
 extern Eo *widget;
+extern const Efl_Class *widget_klass;
 
 void efl_pack_behavior_test(TCase *tc);
 void efl_pack_linear_behavior_test(TCase *tc);
