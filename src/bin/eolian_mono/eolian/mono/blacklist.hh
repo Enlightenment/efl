@@ -64,6 +64,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
     || c_name == "efl_ui_list_model_size_get"
     || c_name == "efl_ui_list_relayout_layout_do"
     || c_name == "efl_event_callback_forwarder_priority_add" // Depends on constants support.
+    || c_name == "efl_ui_text_context_menu_item_add"
     ;
 }
 
