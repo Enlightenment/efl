@@ -56,32 +56,7 @@ typedef unsigned long long    DATA64;
 #define LKU(x) eina_lock_release(&(x))
 #define LKDBG(x) eina_lock_debug(&(x))
 
-/**
- * See explanation of variation_sequences at:
- * https://unicode.org/Public/UCD/latest/ucd/StandardizedVariants.txt
- * https://unicode.org/reports/tr37/
- * https://unicode.org/ivd/
- * https://www.freetype.org/freetype2/docs/reference/ft2-glyph_variants.html
-*/
-#define VAR_SEQ(x) GENERIC_VARIATION_SEQUENCES(x) | IDEOGRAPHICS_VARIATION_SEQUENCES(x) | MANGOLIAN_VARIATION_SEQUENCES(x)
-#define GENERIC_VARIATION_SEQUENCES(x) (x>=0xFE00 && x<=0xFE0F) ? x : 0
-#define IDEOGRAPHICS_VARIATION_SEQUENCES(x) (x>=0xE0100 && x<=0xE01EF) ? x : 0
-#define MANGOLIAN_VARIATION_SEQUENCES(x) (x>=0x180B && x<=0x180D) ? x : 0
-/**
- * http://unicode.org/emoji/charts/emoji-variants.html
-*/
-#define  VARIATION_EMOJI_PRESENTATION  0xFE0F
-#define  VARIATION_TEXT_PRESENTATION   0xFE0E
 
-/**
- * These Options (Flags) are used with evas_common_font_glyph_search function
- */
-#define EVAS_FONT_SEARCH_OPTION_NONE            0x0000
-#define EVAS_FONT_SEARCH_OPTION_SKIP_COLOR      0x0001
-
-
-#define FASH_INT_MAGIC              0x01012345
-#define FASH_GLYPH_MAGIC            0x02012345
 
 enum _Evas_Font_Style
 {
@@ -153,10 +128,6 @@ typedef struct _RGBA_Font_Source      RGBA_Font_Source;
 typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
 typedef struct _RGBA_Font_Glyph_Out   RGBA_Font_Glyph_Out;
 
-typedef struct _Fash_Item_variation_Index_Item  Fash_Item_variation_Index_Item;
-typedef struct _Fash_Item_variation_List        Fash_Item_variation_List;
-typedef struct _Fash_Item_Index_Map_Variations  Fash_Item_Index_Map_Variations;
-
 typedef struct _Fash_Item_Index_Map Fash_Item_Index_Map;
 typedef struct _Fash_Int_Map        Fash_Int_Map;
 typedef struct _Fash_Int_Map2       Fash_Int_Map2;
@@ -168,25 +139,9 @@ struct _Fash_Item_Index_Map
    RGBA_Font_Int *fint;
    int            index;
 };
-struct _Fash_Item_variation_Index_Item
-{
-   Fash_Item_Index_Map  item;
-   Eina_Unicode         variation_sequence;
-};
-struct _Fash_Item_variation_List
-{
-   Fash_Item_variation_Index_Item  *list;
-   size_t                           length;
-   size_t                           capacity;
-};
-struct _Fash_Item_Index_Map_Variations
-{
-   Fash_Item_Index_Map         item;
-   Fash_Item_variation_List   *variations;
-};
 struct _Fash_Int_Map
 {
-  Fash_Item_Index_Map_Variations items[256];
+  Fash_Item_Index_Map item[256];
 };
 struct _Fash_Int_Map2
 {
@@ -194,7 +149,6 @@ struct _Fash_Int_Map2
 };
 struct _Fash_Int
 {
-   unsigned int MAGIC;
    Fash_Int_Map2 *bucket[256];
    void (*freeme) (Fash_Int *fash);
 };
@@ -212,7 +166,6 @@ struct _Fash_Glyph_Map2
 };
 struct _Fash_Glyph
 {
-   unsigned int MAGIC;
    Fash_Glyph_Map2 *bucket[256];
    void (*freeme) (Fash_Glyph *fash);
 };
@@ -394,7 +347,7 @@ void *evas_common_font_freetype_face_get(RGBA_Font *font); /* XXX: Not EAPI on p
 
 EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
 EAPI Eina_Bool         evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg);
-EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, Eina_Unicode gl, Eina_Unicode variation_sequence);
+EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, Eina_Unicode gl);
 
 /* load */
 EAPI void              evas_common_font_dpi_set              (int dpi_h, int dpi_v);
@@ -444,7 +397,7 @@ EAPI void              evas_common_font_ascent_descent_get(RGBA_Font *fn, const 
 
 EAPI void             *evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode, int pitch_data, int w, int h, int *size_ret);
 EAPI DATA8            *evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret);
-EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl, Eina_Unicode variation_sequence, uint32_t evas_font_search_options);
+EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl);
 
 void evas_common_font_load_init(void);
 void evas_common_font_load_shutdown(void);
