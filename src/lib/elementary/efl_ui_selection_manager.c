@@ -5475,8 +5475,9 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
                                                      _efl_sel_manager_x11_selection_notify, pd);
         pd->clear_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
                                                     _x11_selection_clear, pd);
-        pd->fix_handler = ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
-                                                  _x11_fixes_selection_notify, pd);
+        if (ECORE_X_EVENT_FIXES_SELECTION_NOTIFY) // If XFIXES is not available ECORE_X_EVENT_FIXES_SELECTION_NOTIFY would be NULL
+          pd->fix_handler = ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
+                                                    _x11_fixes_selection_notify, pd);
      }
 #endif
 
