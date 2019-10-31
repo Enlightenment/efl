@@ -15,7 +15,6 @@
 
 #include "elm_entry_common.h"
 #include "elm_widget_entry.h"
-#include "efl_ui_text.eo.h"
 #include "elm_hoversel_eo.h"
 #include "efl_ui_text_part.eo.h"
 #include "elm_part_helper.h"
@@ -73,11 +72,11 @@ struct _Efl_Ui_Text_Data
    int                                   cursor_pos;
    Elm_Scroller_Policy                   policy_h, policy_v;
    Elm_Wrap_Type                         line_wrap;
-   Elm_Input_Panel_Layout                input_panel_layout;
-   Elm_Autocapital_Type                  autocapital_type;
-   Elm_Input_Panel_Lang                  input_panel_lang;
-   Elm_Input_Panel_Return_Key_Type       input_panel_return_key_type;
-   Elm_Input_Hints                       input_hints;
+   Efl_Ui_Input_Panel_Layout             input_panel_layout;
+   Efl_Ui_Autocapital_Type               autocapital_type;
+   Efl_Ui_Input_Panel_Language_Type      input_panel_lang;
+   Efl_Ui_Input_Panel_Return_Key_Type    input_panel_return_key_type;
+   Efl_Ui_Input_Hints                    input_hints;
    Efl_Text_Cursor_Cursor               *sel_handler_cursor;
    void                                 *input_panel_imdata;
    int                                   input_panel_imdata_len;
@@ -390,7 +389,7 @@ _validate(Evas_Object *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
    Eina_Bool res;
-   Elm_Validate_Content vc;
+   Efl_Ui_Validate_Content_Info vc;
    Eina_Strbuf *buf;
 
    if (sd->validators == 0) return;
@@ -2496,7 +2495,7 @@ _efl_ui_text_context_menu_clear(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_context_menu_item_add(Eo *obj, Efl_Ui_Text_Data *sd, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
+_efl_ui_text_context_menu_item_add(Eo *obj, Efl_Ui_Text_Data *sd, const char *label, const char *icon_file, Efl_Ui_Icon_Type icon_type, Context_Item_Clicked_Cb func, const void *data)
 {
    Elm_Entry_Context_Menu_Item *it;
 
@@ -2507,7 +2506,7 @@ _efl_ui_text_context_menu_item_add(Eo *obj, Efl_Ui_Text_Data *sd, const char *la
    it->obj = obj;
    it->label = eina_stringshare_add(label);
    it->icon_file = eina_stringshare_add(icon_file);
-   it->icon_type = icon_type;
+   it->icon_type = (Elm_Icon_Type)icon_type;
    it->func = func;
    it->data = (void *)data;
 }
@@ -2630,20 +2629,20 @@ _efl_ui_text_scrollable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Input_Panel_Layout layout)
+_efl_ui_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Efl_Ui_Input_Panel_Layout layout)
 {
    sd->input_panel_layout = layout;
 
    edje_object_part_text_input_panel_layout_set
      (sd->entry_edje, "efl.text", (Edje_Input_Panel_Layout)layout);
 
-   if (layout == ELM_INPUT_PANEL_LAYOUT_PASSWORD)
+   if (layout == EFL_UI_INPUT_PANEL_LAYOUT_PASSWORD)
      efl_ui_text_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
-   else if (layout == ELM_INPUT_PANEL_LAYOUT_TERMINAL)
+   else if (layout == EFL_UI_INPUT_PANEL_LAYOUT_TERMINAL)
      efl_ui_text_input_hint_set(obj, (sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE));
 }
 
-EOLIAN static Elm_Input_Panel_Layout
+EOLIAN static Efl_Ui_Input_Panel_Layout
 _efl_ui_text_input_panel_layout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_layout;
@@ -2665,14 +2664,14 @@ _efl_ui_text_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Efl_Ui_
 }
 
 EOLIAN static void
-_efl_ui_text_autocapital_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Autocapital_Type autocapital_type)
+_efl_ui_text_autocapital_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Efl_Ui_Autocapital_Type autocapital_type)
 {
    sd->autocapital_type = autocapital_type;
    edje_object_part_text_autocapital_type_set
      (sd->entry_edje, "efl.text", (Edje_Text_Autocapital_Type)autocapital_type);
 }
 
-EOLIAN static Elm_Autocapital_Type
+EOLIAN static Efl_Ui_Autocapital_Type
 _efl_ui_text_autocapital_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->autocapital_type;
@@ -2693,7 +2692,7 @@ _efl_ui_text_prediction_allow_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *s
 }
 
 EOLIAN static void
-_efl_ui_text_input_hint_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Input_Hints hints)
+_efl_ui_text_input_hint_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Efl_Ui_Input_Hints hints)
 {
    sd->input_hints = hints;
 
@@ -2701,7 +2700,7 @@ _efl_ui_text_input_hint_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Input
      (sd->entry_edje, "efl.text", (Edje_Input_Hints)hints);
 }
 
-EOLIAN static Elm_Input_Hints
+EOLIAN static Efl_Ui_Input_Hints
 _efl_ui_text_input_hint_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_hints;
@@ -2735,14 +2734,14 @@ _efl_ui_text_input_panel_hide(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_input_panel_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Input_Panel_Lang lang)
+_efl_ui_text_input_panel_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Efl_Ui_Input_Panel_Language_Type lang)
 {
    sd->input_panel_lang = lang;
    edje_object_part_text_input_panel_language_set
      (sd->entry_edje, "efl.text", (Edje_Input_Panel_Lang)lang);
 }
 
-EOLIAN static Elm_Input_Panel_Lang
+EOLIAN static Efl_Ui_Input_Panel_Language_Type
 _efl_ui_text_input_panel_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_lang;
@@ -2770,7 +2769,7 @@ _efl_ui_text_input_panel_imdata_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data 
 }
 
 EOLIAN static void
-_efl_ui_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Input_Panel_Return_Key_Type return_key_type)
+_efl_ui_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Efl_Ui_Input_Panel_Return_Key_Type return_key_type)
 {
    sd->input_panel_return_key_type = return_key_type;
 
@@ -2778,7 +2777,7 @@ _efl_ui_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Da
      (sd->entry_edje, "efl.text", (Edje_Input_Panel_Return_Key_Type)return_key_type);
 }
 
-EOLIAN static Elm_Input_Panel_Return_Key_Type
+EOLIAN static Efl_Ui_Input_Panel_Return_Key_Type
 _efl_ui_text_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_return_key_type;
