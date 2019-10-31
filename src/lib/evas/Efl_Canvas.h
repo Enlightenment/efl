@@ -40,8 +40,8 @@ extern "C" {
 
 #include <interfaces/efl_gfx_types.eot.h>
 #include <interfaces/efl_gfx_path.eo.h>
-#include <interfaces/efl_input_types.eot.h>
 #include <interfaces/efl_text_types.eot.h>
+#include <canvas/efl_input_types.eot.h>
 #include <canvas/efl_canvas_animation_types.eot.h>
 #include <gesture/efl_canvas_gesture_types.eot.h>
 

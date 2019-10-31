@@ -186,7 +186,7 @@ struct _Efl_Canvas_Object_Animation_Event
  */
 
 /* Input events */
-#include "interfaces/efl_input_types.eot.h"
+#include "canvas/efl_input_types.eot.h"
 #include "canvas/efl_input_device.eo.h"
 #include "canvas/efl_canvas_pointer.eo.h"
 #include "canvas/efl_canvas_scene.eo.h"

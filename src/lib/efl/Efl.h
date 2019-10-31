@@ -241,7 +241,6 @@ EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_drag_types.eot.h"
-#include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_text_types.eot.h"
 #endif
 
