@@ -44,7 +44,6 @@
 #include <Eet.h>
 #include <Eo.h>
 #include <Evas.h>
-#include <Evas_Internal.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
@@ -65,6 +64,8 @@
 #endif
 
 #include "Edje.h"
+#define EFL_INTERNAL_UNSTABLE
+#include <Evas_Internal.h>
 
 #ifdef EAPI
 # undef EAPI

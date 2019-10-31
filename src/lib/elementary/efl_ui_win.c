@@ -26,9 +26,6 @@
 
 #include "../evas/canvas/evas_box_eo.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #include "elm_part_helper.h"
 #include "efl_ui_win_part.eo.h"
 #include "elm_plug_eo.h"

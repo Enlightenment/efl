@@ -1,9 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 /* private calls */
 
 /* FIXME: this is not optimal, but works. i should have a hash of keys per */

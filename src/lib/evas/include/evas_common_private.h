@@ -54,6 +54,7 @@
 
 #include "Evas.h"
 
+#define EFL_INTERNAL_UNSTABLE
 #include "Evas_Internal.h"
 
 #include "../common/evas_font.h"

@@ -185,6 +185,20 @@ struct _Efl_Canvas_Object_Animation_Event
  * @}
  */
 
+/* Input events */
+#include "interfaces/efl_input_types.eot.h"
+#include "canvas/efl_input_device.eo.h"
+#include "canvas/efl_canvas_pointer.eo.h"
+#include "canvas/efl_canvas_scene.eo.h"
+#include "canvas/efl_input_state.eo.h"
+#include "canvas/efl_input_event.eo.h"
+#include "canvas/efl_input_pointer.eo.h"
+#include "canvas/efl_input_key.eo.h"
+#include "canvas/efl_input_hold.eo.h"
+#include "canvas/efl_input_interface.eo.h"
+#include "canvas/efl_input_focus.eo.h"
+#include "canvas/efl_input_clickable.eo.h"
+
 #include "canvas/efl_canvas_animation_types.eot.h"
 
 #include "gesture/efl_canvas_gesture_types.eot.h"
@@ -457,12 +471,3 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_canvas_vg_gradient.eo.h"
 #include "canvas/efl_canvas_vg_gradient_linear.eo.h"
 #include "canvas/efl_canvas_vg_gradient_radial.eo.h"
-
-#include "canvas/efl_input_state.eo.h"
-#include "canvas/efl_input_event.eo.h"
-#include "canvas/efl_input_pointer.eo.h"
-#include "canvas/efl_input_key.eo.h"
-#include "canvas/efl_input_hold.eo.h"
-#include "canvas/efl_input_interface.eo.h"
-#include "canvas/efl_input_focus.eo.h"
-#include "canvas/efl_input_clickable.eo.h"

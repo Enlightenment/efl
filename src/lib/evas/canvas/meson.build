@@ -28,6 +28,9 @@ pub_eo_files = [
   'efl_input_hold.eo',
   'efl_input_focus.eo',
   'efl_input_clickable.eo',
+  'efl_input_device.eo',
+  'efl_canvas_pointer.eo',
+  'efl_canvas_scene.eo',
   'efl_canvas_animation.eo',
   'efl_canvas_animation_alpha.eo',
   'efl_canvas_animation_rotate.eo',
@@ -52,7 +55,7 @@ pub_eo_files = [
   'efl_canvas_group.eo',
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
-  'efl_canvas_text.eo'
+  'efl_canvas_text.eo',
 ]
 
 evas_canvas_eo_files = pub_eo_files
@@ -76,7 +79,8 @@ endforeach
 
 pub_eo_types_files = [
     'evas_canvas3d_types.eot',
-    'efl_canvas_animation_types.eot'
+    'efl_canvas_animation_types.eot',
+    'efl_input_types.eot',
 ]
 
 evas_canvas_eot_files = pub_eo_types_files
@@ -171,6 +175,7 @@ evas_src += files([
   'efl_input_hold.c',
   'efl_input_focus.c',
   'efl_input_clickable.c',
+  'efl_input_device.c',
   'efl_canvas_animation.c',
   'efl_canvas_animation_alpha.c',
   'efl_canvas_animation_rotate.c',

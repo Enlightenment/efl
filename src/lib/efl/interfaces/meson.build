@@ -6,7 +6,6 @@ pub_legacy_eo_files = [
   'efl_gfx_color.eo',
   'efl_gfx_image.eo',
   'efl_gfx_frame_controller.eo',
-  'efl_input_device.eo',
   'efl_ui_draggable.eo',
   'efl_ui_scrollable.eo',
   'efl_ui_scrollbar.eo',
@@ -32,8 +31,6 @@ endforeach
 
 pub_eo_files = [
   'efl_playable.eo',
-  'efl_canvas_scene.eo',
-  'efl_canvas_pointer.eo',
   'efl_config.eo',
   'efl_control.eo',
   'efl_duplicate.eo',
@@ -121,7 +118,6 @@ pub_eo_files += pub_legacy_eo_files
 pub_eo_types_files = [
   'efl_gfx_types.eot',
   'efl_ui_drag_types.eot',
-  'efl_input_types.eot',
   'efl_types.eot',
   'efl_text_types.eot',
 ]
@@ -157,7 +153,6 @@ efl_src += files([
   'efl_gfx_path.c',
   'efl_gfx_shape.c',
   'efl_gfx_color.c',
-  'efl_input_device.c',
   'efl_io_closer.c',
   'efl_io_positioner.c',
   'efl_io_reader.c',
@@ -171,10 +166,6 @@ efl_src += files([
   'efl_text_markup_util.c',
   'efl_model_provider.c',
 ])
-
-#efl_header_src += files([
-#  'efl_common_internal.h'
-#])
 
 install_headers('efl_file.h',
   install_dir : join_paths(dir_package_include, 'interfaces'),

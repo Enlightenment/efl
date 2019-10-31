@@ -2,10 +2,9 @@
 # include <config.h>
 #endif
 
-#include <Efl.h>
-
+#include "Evas.h"
 #define EFL_INTERNAL_UNSTABLE
-#include "efl_common_internal.h"
+#include "Evas_Internal.h"
 
 #define MY_CLASS EFL_INPUT_DEVICE_CLASS
 
@@ -228,4 +227,4 @@ _efl_input_device_is_pointer_type_get(const Eo *obj EINA_UNUSED, Efl_Input_Devic
 }
 
 
-#include "interfaces/efl_input_device.eo.c"
+#include "efl_input_device.eo.c"

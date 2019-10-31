@@ -2,9 +2,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 EVAS_MEMPOOL(_mp_pc);
 
 extern Eina_Hash* signals_hash_table;

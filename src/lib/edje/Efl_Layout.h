@@ -8,6 +8,9 @@
 #include <Eo.h>
 /* This include has been added to support Eo in Evas */
 #include <Efl.h>
+
+#include <Efl_Canvas.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif

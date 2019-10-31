@@ -21,10 +21,6 @@
 #include "elm_part_helper.h"
 #include "elm_widget_combobox.h"
 
-/* FIXME: remove this when we don't rely on evas event structs anymore */
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #define MY_CLASS EFL_UI_WIDGET_CLASS
 
 #define MY_CLASS_NAME "Efl_Ui_Widget"

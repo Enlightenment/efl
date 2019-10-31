@@ -3488,12 +3488,28 @@ typedef Eo Efl_Animation_Group_Sequential;
 #define EFL_ANIMATION_REPEAT_INFINITE -1
 #define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
-#ifndef _EFL_INPUT_DEVICE_EO_H_
-#define _EFL_INPUT_DEVICE_EO_H_
+// The below type are necessary for legacy API and need to be manually kept in sync with .eo file.
+#ifndef _EFL_INPUT_DEVICE_EO_CLASS_TYPE
+#define _EFL_INPUT_DEVICE_EO_CLASS_TYPE
 typedef Eo Efl_Input_Device;
-typedef unsigned int Efl_Input_Device_Type;
+#endif
+
+#ifndef _EFL_INPUT_DEVICE_EO_TYPES
+#define _EFL_INPUT_DEVICE_EO_TYPES
+typedef enum
+{
+  EFL_INPUT_DEVICE_TYPE_NONE = 0,
+  EFL_INPUT_DEVICE_TYPE_SEAT,
+  EFL_INPUT_DEVICE_TYPE_KEYBOARD,
+  EFL_INPUT_DEVICE_TYPE_MOUSE,
+  EFL_INPUT_DEVICE_TYPE_TOUCH,
+  EFL_INPUT_DEVICE_TYPE_PEN,
+  EFL_INPUT_DEVICE_TYPE_WAND,
+  EFL_INPUT_DEVICE_TYPE_GAMEPAD
+} Efl_Input_Device_Type;
 
 #endif
+
 
 #ifndef _EFL_TEXT_CURSOR_EO_H_
 #define _EFL_TEXT_CURSOR_EO_H_

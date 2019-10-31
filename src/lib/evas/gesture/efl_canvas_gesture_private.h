@@ -3,8 +3,6 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
 
 #include "efl_gesture_events.eo.h"
 
