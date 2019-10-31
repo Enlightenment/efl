@@ -738,9 +738,9 @@ public static class Globals
         efl_mono_wrapper_supervisor_callbacks_set(FreeWrapperSupervisorCallbackDelegate);
     }
 
-    internal static void ThreadSafeFreeCbExec(EinaFreeCb cbFreeCb, IntPtr cbData)
+    internal static void ThreadSafeFreeCbExec(Eina.Callbacks.EinaFreeCb cbFreeCb, IntPtr cbData)
     {
-        EinaFreeCb cb = (IntPtr gcHandlePtr) => {
+        Eina.Callbacks.EinaFreeCb cb = (IntPtr gcHandlePtr) => {
             cbFreeCb(cbData);
             GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
             gcHandle.Free();

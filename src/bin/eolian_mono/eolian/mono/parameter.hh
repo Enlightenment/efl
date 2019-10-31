@@ -494,7 +494,7 @@ struct marshall_parameter_generator
             ).generate(sink, std::make_tuple(param, param_name), context);
 
       return as_generator(
-               "IntPtr " << param_name << "_data, " << type << "Internal " << param_name << ", EinaFreeCb "
+               "IntPtr " << param_name << "_data, " << type << "Internal " << param_name << ", Eina.Callbacks.EinaFreeCb "
                << param_name << "_free_cb"
            ).generate(sink, param, context);
    }
