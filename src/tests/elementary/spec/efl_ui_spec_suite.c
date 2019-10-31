@@ -26,7 +26,7 @@ _setup_window_and_widget(const Efl_Class *klass, const Efl_Class *content_klass)
    widget_klass = klass;
    win = win_add();
    widget = efl_add(klass, win);
-   efl_content_set(win, widget);
+   ck_assert(efl_content_set(win, widget));
 
    ck_assert(win);
    ck_assert(widget);
