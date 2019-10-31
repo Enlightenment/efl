@@ -1,6 +1,201 @@
 ==========
-EFL 1.23.1
+EFL 1.23.2
 ==========
+
+Changes since 1.23.1:
+---------------------
+
+
+Fixes:
+
+   * eet - fix loading eet files that do not have dicts (T8368)
+   * ecore_evas/wl2 0 fux xdg close cb for window when it's closed remotely
+   * wl egl - use platform get display
+   * eina: fix network byte order swap funcs on big endian
+   * eina: unbreak byteswap checks
+   * eina: remove eina_config.h.in
+   * eio - fbsd - make fd for monitored file close on exec (T7486)
+   * csharp: Add since info to members related to events. (T8359)
+   * evas_cache_image: drop image after replacement
+   * evas_image: fix memory leak
+   * evas filter: preserve text source color
+   * elm: Fix potential leak in cv request add (CID1405809)
+   * csharp: Add since documentation to Async methods (T8359)
+   * csharp: updating efl_csharp_application docs. (T8345)
+   * csharp: updating efl_all docs. (T8345)
+   * csharp: updating UserModel docs. (T8345)
+   * eolian: fix eolian errors with EOLIAN_ENFORCE_SINCE=1
+   * vg_common_json: Apply image's alpha color
+   * canvas vg: don't draw images if it's full transparent.
+   * evas/callbacks: emit hardcoded legacy smart callbacks always
+   * eo: block "invalidate" event emission when there are no subscribers (T8321)
+   * evas/smart: print actual errors when smart api functions are called on non-smarts
+   * elm/layout: add some workarounds to try handling legacy min sizes
+   * ecore_con: use only Eina_Magic infrastructure for set and check in Ecore_Con_Url.
+   * csharp: updating eina_log docs. (T8293)
+   * csharp: updating eina_list docs. (T8293)
+   * csharp: updating eina_hash docs and hide api. (T8293)
+   * csharp: updating eina_error docs. (T8293)
+   * csharp: updating eina_container_common doc and api (T8293)
+   * csharp: updating eina_config docs and hide api. (T8293)
+   * csharp: updating eina_common docs and hide api. (T8293)
+   * csharp: Updating eina_array docs and hide api. (T8293)
+   * csharp: Remove test dependency on internal funcs
+   * csharp: updating Factory docs. (T8345)
+   * csharp: updating Bind docs and hide api. (T8345)
+   * csharp: updating GenericModel.cs docs. (T8345)
+   * vector json: use lottie apis case by case.
+   * csharp: fix to write cref Eina.Array<T> correctly
+   * csharp: Fix promises docs and hide api (T8293)
+   * csharp: Avoid direct usage of some dllimport funcs
+   * tests/eina: fix assign when compare was intended (CID1400858)
+   * lz4: fix potential div by zero (CID1404010)
+   * csharp: Add since documentation to struct and struct fields
+   * examples/evas: free map pointer in map example (CID1400959)
+   * examples/eldbus: fix pointer leak on failure case (CID1400787)
+   * efl_canvas_vg : Propagates the alpha color of the parent
+   * csharp: rename Factory.cs to ItemFactory.cs
+   * mono: make public static field const or readonly
+   * csharp: updating eldbus_connection docs. (T8361)
+   * csharp: updating eldbus_config docs. (T8361)
+   * csharp: Updating eldbus_common docs. (T8361)
+   * vector json: optimize logic.
+   * vector json: fix a ordering issue of stroke.
+   * csharp: Add Efl.Model implementations to internal model
+   * gesture_manager: Deleted function and definition that are no more use.
+   * mono: remove underscores of Efl_Op_Description, Efl_Object_Ops (T8333)
+   * mono: merge namespaces
+   * mono: add static modifier to static holder types.
+   * csharp: hide eldbus_service api. (T8361)
+   * csharp: updating eldbus_object docs and hide api. (T8361)
+   * csharp: updating eldbus_pending docs and hide api. (T8361)
+   * csharp: updating eldbus_proxy doc and hide api. (T8361)
+   * csharp: updating eldbus_message doc and hide api. (T8361)
+   * mono: encapsulate invoke method
+   * csharp: Setting ELM_ENGINE if it is none. (T8322)
+   * evas/language: #ifdef guard variable which is only used inside #ifdef (CID1400807)
+   * tests/eldbus: add va_end for va_args usage in message test
+   * ecore/getopt: handle negative return in arg parsing (CID1402615)
+   * ecore/main: avoid calling FD_SET with invalid fd value (CID1383850)
+   * benchmarks/eina: fix possible div by zero in ecore_hash (CID1400768)
+   * tests: fix minor string leaks
+   * embryo: don't use sizeof() when strlen() is intended (CID1402617)
+   * efl/boolean_model: remove misleading null check (CID1405799)
+   * eina/convert: init endptr in failure case of eina_convert_strtod_c
+   * evas_vg/svg: fix null deref (CID1405672)
+   * efl/engines: fix null derefs
+   * elm/main: fix null deref (CID1402697)
+   * tests/ecore_con: clarify pointer usage in ecore_con_url tests (CID1401029)
+   * efl/io: return EINVAL if null slice is passed for writing
+   * fix various trivial null derefs
+   * ecore-evas-wayland: Minor formatting fix
+   * ecore-evas-wayland: Minor formatting fix
+   * ecore-evas-wayland: Add handler to array
+   * ecore_evas_wayland: Fix array step size
+   * ecore-wl2: Minor formatting fix
+   * ecore-evas-wayland: Minor formatting fixes
+   * docs: small fixes to Efl.Text
+   * spaces--
+   * examples/ecore: use correct type for getchar() return (CID1400794)
+   * examples/efl_thread: fix oob writes
+   * csharp: Add licensing information. (T8039)
+   * cxx: Add license to CXX bindings.
+   * mono: merge namespaces in manual bindings
+   * tests/spec: free array in multi selectable tests
+   * tests/eina: use slstr_steal function in slstr_steal test (CID1401043)
+   * ecore/app: permit resetting app args to uninitialized (zeroed) state
+   * tests/ecore: unset app args after app args unit test to prevent invalid reads
+   * tests/ecore: replace all bespoke strcats with snprintf (CID1400812)
+   * tests/ecore: ensure that we attempt to re-set PATH in ecore-file tests
+   * csharp: Add since information to EoWrapper.cs
+   * eina_mono: Initialize UNHANDLED_EXCEPTION inline (T8427)
+   * eina_mono: re-throw exception to preserve stack details (T8426)
+   * efl_message: add pending queue for filtering message.
+   * elm/code: check save file attrs after opening (CID1396966)
+   * csharp: Returning only method name iwrapper.
+   * efl_ui/text_scroller: fix null derefs
+   * tests/layout: add legacy layout test to verify behavior with legacy size hints
+   * mono: implement dispose method based on dispose pattern (T8400, T8419)
+   * csharp: Calling ConfigureAwait on task eopromises. (T8424)
+   * csharp: Calling ConfigureAwait on tasks Model. (T8424)
+   * csharp: Calling ConfigureAwait on tasks GM. (T8424)
+   * csharp: Using Count eina_promises. (T8422)
+   * csharp: Changing Count() to Length on eina_value. (T8422)
+   * csharp:Using Array.Empty genericmodel. (T8421)
+   * csharp: Using Array.Empty Eina. (T8421)
+   * ci: use shell to directly set base_dir for osx builds
+   * csharp:Changing ex access modifier from Errors.cs. (T8401)
+   * eina_array: add paramName argument of ArgumentNullException (T8428)
+   * Typo in comment
+   * efreet : Check that the file has a protocol in efreet_desktop_command_file_process()
+   * Silence mono warning in tests
+   * csharp: Add missing exception ctr from iwrapper. (T8392)
+   * csharp: Add missing exception ctor from Errors.cs. (T8392)
+   * docs: Improve documentation on cache-related classes
+   * efl_ui_spotlight_manager: apply vis changes to subobj
+   * docs: Formatting and polishing Efl.Ui.Factory docs
+   * docs: Polished docs for Efl.Ui.Scrollable
+   * mono: encapsulate internal CustomMarshaler
+   * mono: encapsulate internal Add/RemoveNativeEventHandler
+   * mono: encapsulate internal nativemethods
+   * mono: encapsulate internal FunctionWrapper
+   * mono: encapsulate internal NativeModule
+   * eina_mono: remove exceptions in unexpected locations (T8402)
+   * vg_common_svg: Free node tree for memory leak after eet write.
+   * Replace tabs with spaces
+   * edje_calc: Delete duplicated conditional statement.
+   * efl_ui_win: Delete useless geometry set for legacy.edje
+   * tests/elm: add util callback for incrementing an int data
+   * tests/elm: add util functions for clicking objects/parts with event flags
+   * tests/elm: make argv a static char so it never goes out of scope and crashes
+   * tests/elm: add utility function to trigger a mouse drag
+   * tests/genlist: fix tree test sizing
+   * efl/timer: don't attempt instantiating timers until they're finalized
+   * efl/timer: correctly handle recursion for timer processing
+   * tests/ecore: add more grueling timer throughput test (T8434)
+   * elm/genlist: fix item highlight/unhighlight eventing on clicks
+   * elm/genlist: remove misleading "changed" signal
+   * elm/genlist: only add calc job on theme apply if already finalized
+   * elm/genlist: freeze/thaw canvas when processing item queue
+   * elm/genlist: don't process entire item queue on each item add
+   * elm/genlist: remove calc jobs
+   * elm/genlist: defer recalc when applying a name filter
+   * elm/genlist: slightly simplify use of _item_filtered_get()
+   * elm/genlist: trigger filter,done callback immediately if no filter queue exists
+   * elm/genlist: fix "drag" smart callback
+   * elm/genlist: set pan need recalc during item move on item position change
+   * elm/genlist: hide cached item contents and mark content unfocusable during calc
+   * elm/genlist: fix item focus unregister on item move
+   * tests/ecore: make timer behavior test even more strict (T8434)
+   * tests/loop_timer: add port of ecore_timer behavior tests for loop_timer
+   * tests/genlist: add behavior testing for nearly all genlist events (T8433)
+   * mono: encapsulate internal delegates
+   * mono: encapsulate internal iwrapper members
+   * mono: encapsulate internal workaround members
+   * ci: remove existing base_dir ccache config on osx build before adding new one
+   * meson: add embryo as a dep of edje
+   * csharp: FunctionWrapper doc fixes
+   * edje_calc: Remove unused flag.
+   * elm/widget: error on null params for tree_unfocusable functions
+   * eina: change default policy of Chained Mempool to recycle memory right away.
+   * efl_ui: remove Efl.Ui.Slider_Indicator_Visible_Mode
+   * efl_ui: mark Efl.Ui.Focus.Autoscroll_Mode beta
+   * evas/font: simplify handling strings when constructing font names (CID1382854)
+   * ecore/timer: correctly handle recursive deletion of legacy timers
+   * tests/ecore: do not create global test timeout timer if running unforked
+   * tests/ecore: add intensive test for recursive timer usage
+   * tests/evas: replace macro with function in mesh loader/saver test
+   * tests/evas: prune directory scan in mesh loader/saver test (T6857)
+   * tests/efl_app: add port of intensive timer recursion
+   * csharp: space after keywords.
+   * tests/spec: merge some loops in linear pack tests
+   * tests/spec: reduce looping of pack content tests
+   * tests/spec: store test class and reuse globally to avoid needing efl_isa
+   * tests/spec: assert success of content_set during setup
+   * tests/spec: use wrefs to automatically unset global pointers
+   * edje: improve callback count on Evas canvas. (T8321)
+   * eolian-cxx: Rename fields to standard naming
+   * mono: introduce friend assembly
 
 Changes since 1.23.0:
 ---------------------
