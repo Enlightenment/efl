@@ -48,14 +48,14 @@ class TestMain
 
         Console.WriteLine("[ START SUITE ] " + ckRunSuite);
         var cases= GetTestCases(ckRunCase);
-        foreach(var testCase in cases)
+        foreach (var testCase in cases)
         {
             var localTestCases = testCase.GetMethods(BindingFlags.Static | BindingFlags.Public);
 
             var setUp = Array.Find(localTestCases, m => String.Equals(m.Name, "SetUp", StringComparison.Ordinal));
             var tearDown = Array.Find(localTestCases, m => String.Equals(m.Name, "TearDown", StringComparison.Ordinal));
 
-            foreach(var localTestCase in localTestCases)
+            foreach (var localTestCase in localTestCases)
             {
                 if (localTestCase == setUp || localTestCase == tearDown)
                     continue;

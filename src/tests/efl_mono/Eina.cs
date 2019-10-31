@@ -4343,7 +4343,7 @@ class TestEinaAccessor
 
         var zipped = accessor.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
 
-        foreach(Tuple<int, int> pair in zipped)
+        foreach (Tuple<int, int> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
@@ -4358,7 +4358,7 @@ class TestEinaAccessor
 
         var zipped = accessor.Zip(arr, (first, second) => new Tuple<string, string>(first, second));
 
-        foreach(Tuple<string, string> pair in zipped)
+        foreach (Tuple<string, string> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
@@ -4376,7 +4376,7 @@ class TestEinaAccessor
 
         var zipped = accessor.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
 
-        foreach(Tuple<int, int> pair in zipped)
+        foreach (Tuple<int, int> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
@@ -4391,7 +4391,7 @@ class TestEinaAccessor
 
         var zipped = accessor.Zip(arr, (first, second) => new Tuple<int, int>(first, second));
 
-        foreach(Tuple<int, int> pair in zipped)
+        foreach (Tuple<int, int> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }

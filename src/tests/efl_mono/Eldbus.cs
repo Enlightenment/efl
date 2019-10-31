@@ -261,7 +261,7 @@ class TestEldbusMessage
                 string bus_name;
                 bool isHasData = false;
 
-                while(iterator.GetAndNext(out bus_name))
+                while (iterator.GetAndNext(out bus_name))
                 {
                     if (String.IsNullOrEmpty(bus_name))
                     {

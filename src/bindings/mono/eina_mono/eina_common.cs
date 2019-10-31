@@ -205,7 +205,7 @@ public static class StringConversion
             Marshal.WriteByte(native + strbuf.Length, 0); // write the terminating null
             return native;
         }
-        catch(Exception)
+        catch (Exception)
         {
             MemoryNative.Free(native);
             throw;
