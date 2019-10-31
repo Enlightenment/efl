@@ -473,7 +473,8 @@ object_setup(void)
 {
    if (widget_klass == EFL_UI_GROUP_ITEM_CLASS)
      {
-        Efl_Ui_Collection *collection = efl_add(EFL_UI_GRID_CLASS, win);
+        Efl_Ui_Collection *collection = collection_grid;
+        if (!collection) collection = efl_add(EFL_UI_GRID_CLASS, win);
         efl_content_set(win, collection);
         efl_pack_end(collection, widget);
      }
