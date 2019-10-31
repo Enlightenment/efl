@@ -34,7 +34,7 @@ SUITE_INIT(elm)
 void
 _elm2_suite_init(void)
 {
-   if (getpid() != main_pid)
+   if (is_forked())
      {
         if (abort_on_warnings)
           fail_on_errors_setup();
@@ -59,7 +59,7 @@ _elm_suite_shutdown(void)
    /* verify that ecore was de-initialized completely */
    ck_assert_int_eq(ecore_init(), 1);
    /* avoid slowdowns in fork mode */
-   if (getpid() != main_pid) return;
+   if (is_forked()) return;
    ck_assert_int_eq(ecore_shutdown(), 0);
 }
 
@@ -236,7 +236,7 @@ win_add(void)
         evas_font_path_global_append(TEST_FONT_DIR);
         font_path = EINA_TRUE;
      }
-   if (getpid() != main_pid)
+   if (is_forked())
      {
         if (global_win) return global_win;
      }
@@ -261,7 +261,7 @@ win_add_focused()
 {
    Evas_Object *win;
 
-   if (getpid() != main_pid)
+   if (is_forked())
      {
         if (global_win) return global_win;
      }
@@ -269,6 +269,12 @@ win_add_focused()
    win = _elm_suite_win_create();
    force_focus_win(win);
    return win;
+}
+
+Eina_Bool
+is_forked(void)
+{
+   return getpid() != main_pid;
 }
 
 int

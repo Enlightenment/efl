@@ -11,6 +11,7 @@ void _elm_suite_shutdown(void);
 void *real_timer_add(double in, Ecore_Task_Cb cb, void *data);
 void fail_on_errors_teardown(void);
 void fail_on_errors_setup(void);
+Eina_Bool is_forked(void);
 
 void get_me_to_those_events(Eo *obj);
 void click_object(Eo *obj);
