@@ -82,6 +82,7 @@ blacklisted_files = [
   'elm_atspi_app_object.eo',
   'elm_interface_scrollable.eo',
   'evas_canvas3d_types.eot',
+  'elm_general.eot',
 ]
 
 manual_inheritance_files = [
