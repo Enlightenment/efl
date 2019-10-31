@@ -76,9 +76,9 @@ struct function_pointer {
                   << "{\n\n"
                   << scope_tab << "private " << f_name  << "Internal _cb;\n"
                   << scope_tab << "private IntPtr _cb_data;\n"
-                  << scope_tab << "private EinaFreeCb _cb_free_cb;\n\n"
+                  << scope_tab << "private Eina.Callbacks.EinaFreeCb _cb_free_cb;\n\n"
 
-                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, EinaFreeCb _cb_free_cb)\n"
+                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, Eina.Callbacks.EinaFreeCb _cb_free_cb)\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "this._cb = _cb;\n"
                   << scope_tab << scope_tab << "this._cb_data = _cb_data;\n"

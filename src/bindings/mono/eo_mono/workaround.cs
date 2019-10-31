@@ -232,5 +232,4 @@ public struct ActionData
 } // namespace Efl
 
 // Global delegates
-public delegate void EinaFreeCb(IntPtr data);
 public delegate void EvasSmartCb(IntPtr data, IntPtr obj, IntPtr event_info);
