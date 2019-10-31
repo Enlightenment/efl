@@ -5,6 +5,8 @@
 #include "Evas.h"
 #define EFL_INTERNAL_UNSTABLE
 #include "Evas_Internal.h"
+#include "evas_common_private.h"
+#include "evas_private.h"
 
 #define MY_CLASS EFL_INPUT_DEVICE_CLASS
 
@@ -16,6 +18,9 @@ struct _Efl_Input_Device_Data
    Eo               *evas; /* Evas */
    Efl_Input_Device *source;  /* ref */
    Eina_List        *children; /* ref'ed by efl_parent, not by this list */
+   Eina_Hash        *grabs; /* Hash of all the object that might grab this device.
+                               We expect thousand of them to be registered here,
+                               that is why we use a hash. */
    unsigned int      id;
    Efl_Input_Device_Type klass;
    unsigned int      subclass; // Evas_Device_Subclass (unused)
@@ -70,6 +75,12 @@ _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
         if (p) p->children = eina_list_remove(p->children, obj);
      }
    efl_unref(pd->source);
+
+   if (pd->grabs)
+     {
+        eina_hash_free(pd->grabs);
+        pd->grabs = NULL;
+     }
 
    return efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -279,11 +290,42 @@ _efl_input_device_subclass_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
 
 EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_subclass_set, EFL_FUNC_CALL(sub_clas), Evas_Device_Subclass sub_clas);
 
+static void
+_grab_del(void *data)
+{
+   Evas_Object_Pointer_Data *pdata = data;
+
+   evas_object_pointer_grab_del(pdata->obj, pdata);
+}
+
+static void
+_efl_input_device_grab_register(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
+                                Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata)
+{
+   if (!pd->grabs) pd->grabs = eina_hash_pointer_new(_grab_del);
+   eina_hash_add(pd->grabs, &grab, pdata);
+}
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_grab_register, EFL_FUNC_CALL(grab, pdata),
+                          Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+
+static void
+_efl_input_device_grab_unregister(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
+                                  Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata)
+{
+   eina_hash_del(pd->grabs, &grab, pdata);
+}
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_grab_unregister, EFL_FUNC_CALL(grab, pdata),
+                          Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+
 #define EFL_INPUT_DEVICE_EXTRA_OPS                                      \
   EFL_OBJECT_OP_FUNC(efl_input_device_evas_get, _efl_input_device_evas_get), \
   EFL_OBJECT_OP_FUNC(efl_input_device_evas_set, _efl_input_device_evas_set), \
   EFL_OBJECT_OP_FUNC(efl_input_device_subclass_get, _efl_input_device_subclass_get), \
   EFL_OBJECT_OP_FUNC(efl_input_device_subclass_set, _efl_input_device_subclass_set), \
   EFL_OBJECT_OP_FUNC(efl_input_device_children_get, _efl_input_device_children_get), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_grab_register, _efl_input_device_grab_register), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_grab_unregister, _efl_input_device_grab_unregister),
 
 #include "efl_input_device.eo.c"

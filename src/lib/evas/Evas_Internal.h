@@ -38,6 +38,8 @@ extern "C" {
 
 #include <Efl.h>
 
+typedef struct _Evas_Object_Pointer_Data Evas_Object_Pointer_Data;
+
 EOAPI const Eina_List *efl_input_device_children_get(const Eo *obj);
 
 EOAPI void efl_input_device_evas_set(Eo *obj, Evas *e);
@@ -45,6 +47,9 @@ EOAPI Evas *efl_input_device_evas_get(const Eo *obj);
 
 EOAPI void efl_input_device_subclass_set(Eo *obj, Evas_Device_Subclass sub_clas);
 EOAPI Evas_Device_Subclass efl_input_device_subclass_get(const Eo *obj);
+
+EOAPI void efl_input_device_grab_register(Eo *obj, Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+EOAPI void efl_input_device_grab_unregister(Eo *obj, Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
 
 typedef struct _Efl_Input_Pointer_Data  Efl_Input_Pointer_Data;
 typedef struct _Efl_Input_Key_Data      Efl_Input_Key_Data;

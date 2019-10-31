@@ -77,6 +77,7 @@ typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 typedef struct _Evas_Smart_Interfaces_Array Evas_Smart_Interfaces_Array;
+typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
@@ -1095,6 +1096,7 @@ struct _Evas_Object_Protected_State
 struct _Evas_Object_Pointer_Data {
    EINA_INLIST;
 
+   Evas_Object_Protected_Data *obj;
    Evas_Pointer_Data *evas_pdata;
    Evas_Object_Pointer_Mode pointer_mode;
    int mouse_grabbed;
@@ -1679,6 +1681,10 @@ void evas_object_inform_call_image_preloaded(Evas_Object *obj);
 void evas_object_inform_call_image_unloaded(Evas_Object *obj);
 void evas_object_inform_call_image_resize(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
+Evas_Object_Pointer_Data *evas_object_pointer_data_find(Evas_Object_Protected_Data *obj,
+                                                        Efl_Input_Device *pointer);
+void evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
+                                  Evas_Object_Pointer_Data *pdata);
 void evas_object_grabs_cleanup(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_key_grab_free(Evas_Object *obj, Evas_Object_Protected_Data *pd, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool source_invisible);
