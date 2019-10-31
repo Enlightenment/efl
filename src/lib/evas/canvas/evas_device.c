@@ -330,25 +330,12 @@ evas_device_description_get(const Evas_Device *dev)
 }
 
 EAPI void
-evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
+evas_device_parent_set(Evas_Device *dev EINA_UNUSED, Evas_Device *parent EINA_UNUSED)
 {
    // Note: This function should be deprecated. parent_set doesn't make sense
    // unless the parent is a seat device. Parent shouldn't be changed after
    // creation.
-
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
-   if (parent)
-     {
-        SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
-     }
-   else if (efl_parent_get(dev))
-     {
-        efl_ref(dev);
-     }
-
-   efl_parent_set(dev, parent);
-   evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   ERR("It is not advised and possible anymore to changed the parent of an Evas_Device.");
 }
 
 EAPI const Evas_Device *

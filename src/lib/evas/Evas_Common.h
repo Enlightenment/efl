@@ -1159,7 +1159,7 @@ EAPI const char *evas_device_description_get(const Evas_Device *dev);
  *
  * @since 1.8
  */
-EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent);
+EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent) EINA_DEPRECATED;
 
 /**
  * Get the parent of a device
