@@ -27,7 +27,7 @@ internal class ModelHelper
     static internal void SetProperties<T>(T o, Efl.IModel child)
     {
         var properties = typeof(T).GetProperties();
-        foreach(var prop in properties)
+        foreach (var prop in properties)
         {
             child.SetProperty(prop.Name, ValueFromProperty(o, prop));
         }
@@ -37,7 +37,7 @@ internal class ModelHelper
     static internal void GetProperties<T>(T o, Efl.IModel child)
     {
         var properties = typeof(T).GetProperties();
-        foreach(var prop in properties)
+        foreach (var prop in properties)
         {
             using (var v = child.GetProperty(prop.Name))
             {
@@ -79,7 +79,7 @@ public class UserModel<T> : Efl.MonoModelInternal
    public UserModel (Efl.Object parent = null) : base(Efl.MonoModelInternal.efl_mono_model_internal_class_get(), parent)
    {
      var properties = typeof(T).GetProperties();
-     foreach(var prop in properties)
+     foreach (var prop in properties)
      {
         AddProperty(prop.Name, Eina.ValueTypeBridge.GetManaged(prop.PropertyType));
      }

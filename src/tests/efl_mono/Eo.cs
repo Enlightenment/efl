@@ -262,7 +262,7 @@ class TestEoAccessors
 
         var zipped = acc.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
 
-        foreach(Tuple<int, int> pair in zipped)
+        foreach (Tuple<int, int> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }

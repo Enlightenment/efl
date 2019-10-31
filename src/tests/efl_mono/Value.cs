@@ -493,8 +493,8 @@ public static class TestEinaValue {
 
     public static void TestValueCompareArray()
     {
-        using(Eina.Value a = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32))
-        using(Eina.Value b = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
+        using (Eina.Value a = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32))
+        using (Eina.Value b = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
 
             Test.AssertEquals(a, b);
 
@@ -536,8 +536,8 @@ public static class TestEinaValue {
 
     public static void TestValueCompareList()
     {
-        using(Eina.Value a = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32))
-        using(Eina.Value b = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
+        using (Eina.Value a = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32))
+        using (Eina.Value b = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
 
             Test.AssertEquals(a, b);
 
@@ -584,7 +584,7 @@ public static class TestEinaValue {
 
     public static void TestValueToString()
     {
-        using(Eina.Value a = new Eina.Value(Eina.ValueType.Int32)) {
+        using (Eina.Value a = new Eina.Value(Eina.ValueType.Int32)) {
             int i = -12345;
             string x = $"{i}";
             Test.Assert(a.Set(i));
@@ -606,8 +606,8 @@ public static class TestEinaValue {
 
     public static void TestValueConvertInt()
     {
-        using(Eina.Value from = new Eina.Value(Eina.ValueType.Int32))
-        using(Eina.Value to = new Eina.Value(Eina.ValueType.UInt32)) {
+        using (Eina.Value from = new Eina.Value(Eina.ValueType.Int32))
+        using (Eina.Value to = new Eina.Value(Eina.ValueType.UInt32)) {
             int source = 0x7FFFFFFF;
             uint target_uint;
             int target_int;
@@ -636,8 +636,8 @@ public static class TestEinaValue {
 
     public static void TestValueConvertUInt()
     {
-        using(Eina.Value from = new Eina.Value(Eina.ValueType.UInt32))
-        using(Eina.Value to = new Eina.Value(Eina.ValueType.UInt32)) {
+        using (Eina.Value from = new Eina.Value(Eina.ValueType.UInt32))
+        using (Eina.Value to = new Eina.Value(Eina.ValueType.UInt32)) {
             uint source = 0xFFFFFFFF;
             uint target_uint;
             string target_str;
@@ -664,13 +664,13 @@ public static class TestEinaValue {
     public static void TestValueContainerConstructorWrongArgs()
     {
         Test.AssertRaises<ArgumentException>(() => {
-            using(Eina.Value array = new Eina.Value(Eina.ValueType.String, Eina.ValueType.String)) { }
+            using (Eina.Value array = new Eina.Value(Eina.ValueType.String, Eina.ValueType.String)) { }
         });
     }
 
     public static void TestValueContainerWithNonContainerAccess()
     {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Int32)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Int32)) {
             Test.AssertRaises<Eina.InvalidValueTypeException>(() => array[0] = 1);
             object val = null;
             Test.AssertRaises<Eina.InvalidValueTypeException>(() => val = array[0]);
@@ -679,7 +679,7 @@ public static class TestEinaValue {
 
     public static void TestValueArrayOfSByte()
     {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.SByte)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.SByte)) {
             Test.AssertEquals(0, array.Count());
             Test.Assert(array.Append(0));
             Test.AssertEquals(1, array.Count());
@@ -711,7 +711,7 @@ public static class TestEinaValue {
 
     public static void TestValueArrayOfByte()
     {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Byte)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Byte)) {
             Test.AssertEquals(0, array.Count());
             Test.Assert(array.Append(0));
             Test.AssertEquals(1, array.Count());
@@ -745,7 +745,7 @@ public static class TestEinaValue {
 
     public static void TestValueArrayOfInts()
     {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
             Test.AssertEquals(0, array.Count());
             Test.Assert(array.Append(0));
             Test.AssertEquals(1, array.Count());
@@ -777,7 +777,7 @@ public static class TestEinaValue {
 
     public static void TestValueArrayOfInt64s()
     {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int64)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int64)) {
             Test.AssertEquals(0, array.Count());
             Test.Assert(array.Append(0));
             Test.AssertEquals(1, array.Count());
@@ -810,7 +810,7 @@ public static class TestEinaValue {
     public static void TestValueArrayOfUInts()
     {
 
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.UInt32)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.UInt32)) {
             Test.Assert(array.Append(2));
             Test.AssertEquals((uint)array[0], (uint)2);
             Test.AssertRaises<OverflowException>(() => array[0] = -1);
@@ -820,7 +820,7 @@ public static class TestEinaValue {
     public static void TestValueArrayOfStrings()
     {
 
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.String)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.String)) {
 
             Test.Assert(array.Append("hello"));
             Test.Assert(array.Append("world"));
@@ -839,7 +839,7 @@ public static class TestEinaValue {
     public static void TestValueArrayOfObjects()
     {
 
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Object)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Object)) {
 
             var a = new Dummy.TestObject();
             var b = new Dummy.TestObject();
@@ -861,7 +861,7 @@ public static class TestEinaValue {
 
 
     public static void TestArrayOutOfBounds() {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
             object placeholder = null;
             Test.AssertRaises<System.ArgumentOutOfRangeException>(() => array[0] = 1);
             Test.AssertRaises<System.ArgumentOutOfRangeException>(() => placeholder = array[0]);
@@ -877,16 +877,16 @@ public static class TestEinaValue {
     }
 
     public static void TestValueArraySubType() {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32))
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32))
             Test.AssertEquals(Eina.ValueType.Int32, array.GetValueSubType());
 
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.UInt32))
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.UInt32))
             Test.AssertEquals(Eina.ValueType.UInt32, array.GetValueSubType());
     }
 
     public static void TestValueArrayConvert() {
-        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32))
-        using(Eina.Value other = new Eina.Value(Eina.ValueType.Int32)) {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32))
+        using (Eina.Value other = new Eina.Value(Eina.ValueType.Int32)) {
             other.Set(100);
             other.ConvertTo(array);
             Test.AssertEquals(100, (int)array[0]);
@@ -895,7 +895,7 @@ public static class TestEinaValue {
     }
 
     public static void TestValueList() {
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
             Test.AssertEquals(0, list.Count());
             Test.Assert(list.Append(0));
             Test.AssertEquals(1, list.Count());
@@ -924,13 +924,13 @@ public static class TestEinaValue {
             Test.AssertEquals("[1984, -42, 5, 42]", list.ToString());
         }
 
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.UInt32)) {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.UInt32)) {
             Test.Assert(list.Append(2));
             Test.AssertEquals((uint)list[0], (uint)2);
             Test.AssertRaises<OverflowException>(() => list[0] = -1);
         }
 
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.String)) {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.String)) {
 
             Test.Assert(list.Append("hello"));
             Test.Assert(list.Append("world"));
@@ -947,7 +947,7 @@ public static class TestEinaValue {
     }
 
     public static void TestListOutOfBounds() {
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
             object placeholder = null;
             Test.AssertRaises<System.ArgumentOutOfRangeException>(() => list[0] = 1);
             Test.AssertRaises<System.ArgumentOutOfRangeException>(() => placeholder = list[0]);
@@ -963,16 +963,16 @@ public static class TestEinaValue {
     }
 
     public static void TestValueListSubType() {
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32))
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32))
             Test.AssertEquals(Eina.ValueType.Int32, list.GetValueSubType());
 
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.UInt32))
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.UInt32))
             Test.AssertEquals(Eina.ValueType.UInt32, list.GetValueSubType());
     }
 
     public static void TestValueListConvert() {
-        using(Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32))
-        using(Eina.Value other = new Eina.Value(Eina.ValueType.Int32)) {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32))
+        using (Eina.Value other = new Eina.Value(Eina.ValueType.Int32)) {
             other.Set(100);
             other.ConvertTo(list);
             Test.AssertEquals(100, (int)list[0]);
@@ -982,7 +982,7 @@ public static class TestEinaValue {
 
     public static void TestStringThroughValue() {
         // Check if Value_Native->Value doesn't try to free the pointed string.
-        using(Eina.Value value_ptr = new Eina.Value(Eina.ValueType.String)) {
+        using (Eina.Value value_ptr = new Eina.Value(Eina.ValueType.String)) {
             string payload = "Something";
             value_ptr.Set(payload);
             Eina.ValueNative byvalue = value_ptr;
