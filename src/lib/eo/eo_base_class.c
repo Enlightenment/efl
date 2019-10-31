@@ -1230,7 +1230,12 @@ _efl_pending_future_new(void)
 static inline unsigned char
 _pointer_hash(const uintptr_t val)
 {
-   static const unsigned char shift = (unsigned char) log2(1 + sizeof (Efl_Event_Description));
+   static unsigned char shift = 0;
+
+   /* Sadly LLVM doesn't have log2 in its compile time optimization. So
+      we can not use static const here for portability sake. */
+   if (EINA_UNLIKELY((!shift)))
+     shift = (unsigned char) log2(1 + sizeof (Efl_Event_Description));
 #ifdef EFL64
    return (unsigned char)(((val) >> shift) & 0x3F);
 #else
