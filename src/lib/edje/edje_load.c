@@ -670,11 +670,13 @@ _edje_device_canvas_del(void *data, const Efl_Event *event)
      efl_event_callback_array_del(event->object, edje_device_callbacks(), ed);
 }
 
-static void
+void
 _edje_devices_add(Edje *ed, Evas *tev)
 {
    const Eina_List *devices, *l;
    Efl_Input_Device *dev;
+
+   ed->need_seat = EINA_TRUE;
 
    devices = evas_device_list(tev, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
@@ -868,7 +870,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                }
 
              /* handle multiseat stuff */
-             _edje_devices_add(ed, tev);
+             if (ed->collection->need_seat || ed->need_seat)
+               _edje_devices_add(ed, tev);
 
              /* colorclass stuff */
              _edje_process_colorclass(ed);
