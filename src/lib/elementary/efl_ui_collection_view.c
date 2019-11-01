@@ -575,7 +575,6 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                }
           }
 #endif
-
         // When requesting an entity, the model should already be in the cache
         if (!child) continue;
 
@@ -624,8 +623,8 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                                                                    search_index - 1);
                   updated_size = EINA_FALSE;
                }
-          }}
-   ;
+          }
+     }
 
    // Currently position manager will flush its entire size cache on update, so only do
    // it when necessary to improve performance.
@@ -642,7 +641,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
      {
         efl_ui_position_manager_entity_entities_ready(pd->manager,
                                                       updated_entity_start_id,
-                                                      i - 1);
+                                                      request->offset + i - 1);
 
         efl_event_callback_del(efl_main_loop_get(), EFL_LOOP_EVENT_IDLE, _idle_cb, obj);
         efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_IDLE, _idle_cb, obj);
@@ -1054,7 +1053,7 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
 
    entities = memory.mem;
    //count = efl_model_children_count_get(parent);
-   limit = range.end_id - range.start_id;;
+   limit = range.end_id - range.start_id;
 
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE
