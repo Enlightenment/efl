@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using System.Linq;
@@ -1026,67 +1027,168 @@ internal static class ClassRegister
     private static readonly object klassAllocLock = new object();
 }
 
-interface IOwnershipTag
+/// <summary>Custom marshaler for Eo objects that do not move ownership between native and managed code.
+///
+/// <para>For internal usage by generated code.</para>
+///
+/// <para>Since EFL 1.24</para>
+/// </summary>
+class MarshalEoNoMove : ICustomMarshaler
 {
-}
+    private static ICustomMarshaler instance = new MarshalEoNoMove();
 
-class OwnTag : IOwnershipTag
-{
-}
+    /// <summary>
+    /// Gets an instance of this marshaler.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="cookie">Cookie to identify the marshaler. Unused.</param>
+    /// <returns>The marshaler instance.</returns>
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "The same marshaler is used for all cases.")]
+    public static ICustomMarshaler GetInstance(string cookie) => instance;
 
-class NonOwnTag : IOwnershipTag
-{
-}
-
-class MarshalEo<U> : ICustomMarshaler
-    where U : IOwnershipTag
-{
-    internal static ICustomMarshaler GetInstance(string cookie)
-    {
-        Eina.Log.Debug("MarshalEo.GetInstace cookie " + cookie);
-        return new MarshalEo<U>();
-    }
-
+    /// <summary>
+    /// Clean ups the managed data.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be cleaned.</param>
     public void CleanUpManagedData(object ManagedObj)
     {
-        //Eina.Log.Warning("MarshalEo.CleanUpManagedData not implemented");
-        //throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Clean ups the native data if it was created.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native data to be cleaned.</param>
     public void CleanUpNativeData(IntPtr pNativeData)
     {
-        //Eina.Log.Warning("MarshalEo.CleanUpNativeData not implemented");
-        //throw new NotImplementedException();
     }
 
-    public int GetNativeDataSize()
-    {
-        Eina.Log.Debug("MarshalEo.GetNativeDataSize");
-        return 0;
-        //return 8;
-    }
+    /// <summary>
+    /// Gets the native data size.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>The data size in bytes.</returns>
+    public int GetNativeDataSize() => -1;
 
+    /// <summary>
+    /// Marshals the given managed object to its native handle.
+    /// <para>As this marshaler does not move the reference, the managed code
+    /// can keep its reference and does not need to incref.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be marshalled.</param>
+    /// <returns>The marshalled native data.</returns>
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        Eina.Log.Debug("MarshalEo.MarshallManagedToNative");
-
         if (ManagedObj == null)
         {
             return IntPtr.Zero;
         }
 
-        var r = ((IWrapper)ManagedObj).NativeHandle;
-        if (typeof(U) == typeof(OwnTag))
+        IWrapper wrapper = ManagedObj as IWrapper;
+
+        if (wrapper == null)
         {
-            Efl.Eo.Globals.efl_ref(r);
+            throw new ArgumentException("Managed object to be marshalled must be an IWrapper.");
         }
 
-        return r;
+        return wrapper.NativeHandle;
     }
 
+    /// <summary>
+    /// Marshals the given native pointer into a managed object.
+    /// <para>The given native object has its reference count incremented in order to make
+    /// the C# wrapper capable of accessing it while the wrapper is alive.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native pointer to the EO object.</param>
+    /// <returns>The managed wrapper for the given native object.</returns>
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
-        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : typeof(U) != typeof(OwnTag));
+        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : true);
+    }
+}
+
+/// <summary>Custom marshaler for Eo objects that move ownership between native and managed code.
+///
+/// <para>For internal usage by generated code.</para>
+///
+/// <para>Since EFL 1.24</para>
+/// </summary>
+class MarshalEoMove : ICustomMarshaler
+{
+    private static ICustomMarshaler instance = new MarshalEoMove();
+
+    /// <summary>
+    /// Gets an instance of this marshaler.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="cookie">Cookie to identify the marshaler. Unused.</param>
+    /// <returns>The marshaler instance.</returns>
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "The same marshaler is used for all cases.")]
+    public static ICustomMarshaler GetInstance(string cookie) => instance;
+
+    /// <summary>
+    /// Clean ups the managed data.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be cleaned.</param>
+    public void CleanUpManagedData(object ManagedObj)
+    {
+    }
+
+    /// <summary>
+    /// Clean ups the native data if it was created.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native data to be cleaned.</param>
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
+
+    /// <summary>
+    /// Gets the native data size.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>The data size in bytes.</returns>
+    public int GetNativeDataSize() => -1;
+
+    /// <summary>
+    /// Marshals the given managed object to its native handle.
+    /// <para>The wrapper given as parameter needs to keep a reference to the native
+    /// object, so the EO has its refcount incremented.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be marshalled.</param>
+    /// <returns>The marshalled native data.</returns>
+    public IntPtr MarshalManagedToNative(object ManagedObj)
+    {
+        if (ManagedObj == null)
+        {
+            return IntPtr.Zero;
+        }
+
+        IWrapper wrapper = ManagedObj as IWrapper;
+
+        if (wrapper == null)
+        {
+            throw new ArgumentException("Managed object to be marshalled must be an IWrapper.");
+        }
+
+        return Efl.Eo.Globals.efl_ref(wrapper.NativeHandle);
+    }
+
+    /// <summary>
+    /// Marshals the given native pointer into a managed object.
+    /// <para>The returned wrapper "steals" the reference to keep it alive.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native pointer to the EO object.</param>
+    /// <returns>The managed wrapper for the given native object.</returns>
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : false);
     }
 }
 
