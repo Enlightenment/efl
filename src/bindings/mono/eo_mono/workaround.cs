@@ -64,7 +64,7 @@ namespace Efl
 
 ///<summary>This struct holds the description of a specific event (Since EFL 1.22).</summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct EventDescription
+internal struct EventDescription
 {
     ///<summary>Name of the event.</summary>
     public IntPtr Name;
@@ -119,7 +119,7 @@ public struct EventDescription
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 [Efl.Eo.BindingEntity]
-public struct Event
+internal struct Event
 {
     /// <summary>The object the callback was called on.
     /// (Since EFL 1.22)</summary>
@@ -194,7 +194,7 @@ public struct Event
     }
 }
 
-public delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
+internal delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
 internal delegate void FreeWrapperSupervisorCb(System.IntPtr obj);
 
 [StructLayout(LayoutKind.Sequential)]
