@@ -39,9 +39,7 @@ pieces of information you will need.
 
 Q. Do I need to make the source public of libraries or applications that I
 build on top of EFL?
-A. No, UNLESS you use the escape library. Escape is GPL. This is ONLY
-needed for PS3 development, so unless you are doing this, it is not
-relevant.
+A. No
 
 Q. Do I need to provide the source for EFL?
 A. Yes. In general you do. If you are shipping any of the binaries or

@@ -21,10 +21,6 @@
 # include <evil_private.h> /* dlsym */
 #endif
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #ifdef HAVE_EXOTIC
 # include <Exotic.h>
 #endif

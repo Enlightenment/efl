@@ -5,10 +5,6 @@
 # include <features.h>
 #endif
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 

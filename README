@@ -365,16 +365,6 @@ their behavior as if they were real physical objects.
 
 
 
-**Escape:**
-
-//GPL v2 license//
-
-This library is used as a compatibility library to provide missing
-libc APIs for porting to the Playstation 3 (PS3) native runtime
-environment.
-
-
-
 **Ethumb:**
 
 //LGPL v2 license//

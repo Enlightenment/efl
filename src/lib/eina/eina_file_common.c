@@ -41,10 +41,6 @@
 #include "eina_file_common.h"
 #include "eina_xattr.h"
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #ifndef O_BINARY
 # define O_BINARY 0
 #endif
