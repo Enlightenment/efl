@@ -83,6 +83,9 @@ blacklisted_files = [
   'elm_interface_scrollable.eo',
   'evas_canvas3d_types.eot',
   'elm_general.eot',
+  'efl_thread.eo',
+  'efl_threadio.eo',
+  'efl_appthread.eo'
 ]
 
 manual_inheritance_files = [
