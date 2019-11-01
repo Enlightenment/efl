@@ -153,9 +153,6 @@ _ecore_event_init(void)
    // no need to do as it was a count, nto an event
 
    return EINA_TRUE;
-
- err_pool:
-   return EINA_FALSE;
 }
 
 void
