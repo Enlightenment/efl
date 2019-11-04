@@ -809,9 +809,11 @@ _elm_config_profile_derived_save(const char *profile, Elm_Config_Derived *derive
         eet_close(ef);
         if (ret)
           {
-             if (!ecore_file_cp(buf, buf2))
-               ERR("Error saving Elementary's derived configuration profile file");
-             ecore_file_unlink(buf);
+             if (!ecore_file_mv(buf, buf2))
+               {
+                  ERR("Error saving Elementary's derived configuration profile file");
+                  ecore_file_unlink(buf);
+               }
           }
         else
           {
@@ -2155,14 +2157,12 @@ _elm_config_profile_save(const char *profile)
         goto err;
      }
 
-   ret = ecore_file_cp(buf2, buf);
+   ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
         ERR("Error saving Elementary's configuration profile file");
         goto err;
      }
-
-   ecore_file_unlink(buf2);
 
    derived = _elm_config_derived_load(profile ? profile : _elm_profile);
    if (derived)
@@ -2248,14 +2248,13 @@ _elm_config_save(Elm_Config *cfg, const char *profile)
         goto err;
      }
 
-   ret = ecore_file_cp(buf2, buf);
+   ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
         ERR("Error saving Elementary's configuration file");
         goto err;
      }
 
-   ecore_file_unlink(buf2);
    return EINA_TRUE;
 
 err:
