@@ -759,22 +759,24 @@ public static class Globals
         Monitor.Exit(Efl.All.InitLock);
     }
 
-    /// <summary>
-    /// Internal struct used by the binding to pass the native handle pointer
-    /// to the managed object wrapping constructor.
-    /// Internal usage only: do not use this class in inherited classes.
-    /// </summary>
-    public struct WrappingHandle
-    {
-        public WrappingHandle(IntPtr h)
-        {
-            NativeHandle = h;
-        }
 
-        public IntPtr NativeHandle { get; private set; }
-    }
 
 } // Globals
+
+/// <summary>
+/// Internal struct used by the binding to pass the native handle pointer
+/// to the managed object wrapping constructor.
+/// Internal usage only: do not use this class in inherited classes.
+/// </summary>
+internal struct WrappingHandle
+{
+    public WrappingHandle(IntPtr h)
+    {
+        NativeHandle = h;
+    }
+
+    public IntPtr NativeHandle { get; private set; }
+}
 
 public static class Config
 {

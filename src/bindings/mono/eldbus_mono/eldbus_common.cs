@@ -178,7 +178,7 @@ public static class Argument
     /// The type of a byte.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class ByteType
+    internal static class ByteType
     {
         /// <summary>
         /// The code of the byte.
@@ -196,7 +196,7 @@ public static class Argument
     /// The type of a boolean
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class BooleanType
+    internal static class BooleanType
     {
         /// <summary>
         /// The code of the boolean.
@@ -214,7 +214,7 @@ public static class Argument
     /// The type of a Int16.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Int16Type
+    internal static class Int16Type
     {
         /// <summary>
         /// The code of the Int16.
@@ -232,7 +232,7 @@ public static class Argument
     /// The type of an unsigned Int16.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UInt16Type
+    internal static class UInt16Type
     {
         /// <summary>
         /// The code of the unsigned Int16.
@@ -250,7 +250,7 @@ public static class Argument
     /// The type of a Int32.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Int32Type
+    internal static class Int32Type
     {
         /// <summary>
         /// The code of the Int32.
@@ -268,7 +268,7 @@ public static class Argument
     /// The type of an unsigned Int32.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UInt32Type
+    internal static class UInt32Type
     {
         /// <summary>
         /// The code of the unsigned Int32.
@@ -286,7 +286,7 @@ public static class Argument
     /// The type of a Int64.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Int64Type
+    internal static class Int64Type
     {
         /// <summary>
         /// The code of the Int64.
@@ -304,7 +304,7 @@ public static class Argument
     /// The type of an unsigned Int64.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UInt64Type
+    internal static class UInt64Type
     {
         /// <summary>
         /// The code of the unsigned Int64.
@@ -322,7 +322,7 @@ public static class Argument
     /// The type of the double.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class DoubleType
+    internal static class DoubleType
     {
         /// <summary>
         /// The code of the double.
@@ -340,7 +340,7 @@ public static class Argument
     /// The type of a string.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class StringType
+    internal static class StringType
     {
         /// <summary>
         /// The code of the string.
@@ -358,7 +358,7 @@ public static class Argument
     /// The type of an object path.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class ObjectPathType
+    internal static class ObjectPathType
     {
         /// <summary>
         /// The code of the object path.
@@ -376,7 +376,7 @@ public static class Argument
     /// The type of a signature.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class SignatureType
+    internal static class SignatureType
     {
         /// <summary>
         /// The code of the signature.
@@ -394,7 +394,7 @@ public static class Argument
     /// The type of a array.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class ArrayType
+    internal static class ArrayType
     {
         /// <summary>
         /// The code of the array.
@@ -412,7 +412,7 @@ public static class Argument
     /// The type of a struct.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class StructType
+    internal static class StructType
     {
         /// <summary>
         /// The code of the struct.
@@ -430,7 +430,7 @@ public static class Argument
     /// The type of a variant.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class VariantType
+    internal static class VariantType
     {
         /// <summary>
         /// The code of the variant.
@@ -448,7 +448,7 @@ public static class Argument
     /// The type of a dictionary.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class DictEntryType
+    internal static class DictEntryType
     {
         /// <summary>
         /// The code of the dictionary.
@@ -466,7 +466,7 @@ public static class Argument
     /// The type of an unix file descriptor.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UnixFdType
+    internal static class UnixFdType
     {
         /// <summary>
         /// The code of unix fd.

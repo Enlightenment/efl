@@ -9,9 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace TestSuite {
 
 [SuppressMessage("Gendarme.Rules.Portability", "DoNotHardcodePathsRule")]
-public class TestModel {
+public static class TestModel {
 
-    public class VeggieViewModel
+    private class VeggieViewModel
     {
         public string Name { get; set; }
         public string Type { get; set; }

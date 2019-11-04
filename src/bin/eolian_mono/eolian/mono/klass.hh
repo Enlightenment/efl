@@ -232,7 +232,7 @@ struct klass
              << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
              << scope_tab << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
              << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-             << scope_tab << "private " << concrete_name << "(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"
+             << scope_tab << "private " << concrete_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
              << scope_tab << "{\n"
              << scope_tab << "}\n\n"
             )
@@ -580,7 +580,7 @@ struct klass
                      << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                      << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
                      << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-                     << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"
+                     << scope_tab << "internal " << inherit_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
                      << scope_tab << "{\n"
                      << scope_tab << "}\n\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
@@ -595,7 +595,7 @@ struct klass
                 scope_tab << "[Efl.Eo.PrivateNativeClass]\n"
                 << scope_tab << "private class " << inherit_name << "Realized : " << inherit_name << "\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"
+                << scope_tab << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.WrappingHandle wh) : base(wh)\n"
                 << scope_tab << scope_tab << "{\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"

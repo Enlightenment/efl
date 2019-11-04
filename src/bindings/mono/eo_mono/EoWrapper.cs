@@ -81,7 +81,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="wh">The native pointer to be wrapped.</param>
-    protected EoWrapper(Efl.Eo.Globals.WrappingHandle wh)
+    internal EoWrapper(Efl.Eo.WrappingHandle wh)
     {
         handle = wh.NativeHandle;
         AddWrapperSupervisor();
@@ -485,7 +485,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
 /// But as <see cref="Efl.Object" /> is abstract, whis realized class will allow us to create C# instances of it.</summary>
 internal class ObjectRealized : Efl.Object
 {
-    protected ObjectRealized(Efl.Eo.Globals.WrappingHandle ch) : base(ch) { }
+    internal ObjectRealized(Efl.Eo.WrappingHandle ch) : base(ch) { }
 }
 
 } // namespace Efl

@@ -79,7 +79,7 @@ public static class Log
     /// <summary>The colors to be used by the logging system.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Color
+    internal static class Color
     {
         /// <summary>Light red
         /// <para>Since EFL 1.23.</para>
@@ -139,7 +139,7 @@ public static class Log
     static Log()
     {
         const String name = "mono";
-        const String color = "\033[32;1m";
+        const String color = Color.GREEN;
 
         // Maybe move this check outside when other eina stuff get support?
         domain = eina_log_domain_register(name, color);
