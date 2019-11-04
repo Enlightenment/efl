@@ -2,75 +2,100 @@ import efl_canvas_animation_types;
 
 class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
-   [[Efl animation class]]
+   [[Base class to be used by classes implementing specific canvas animations.
+
+     A canvas animation modifies the properties of a @Efl.Canvas.Object like
+     @Efl.Gfx.Entity.position, @Efl.Gfx.Entity.scale or @Efl.Gfx.Mapping.rotate, for example.
+     The value of the changed properties moves smoothly as the provided progress value
+     evolves from $[0] to $[1].
+
+     For example implementations see @Efl.Canvas.Animation_Translate or @Efl.Canvas.Animation_Scale.
+   ]]
    c_prefix: efl_animation;
    methods {
       @property final_state_keep {
-         [[Keep final state property]]
+         [[If $true the last mapping state the animation applies will be kept.
+           Otherwise all the @Efl.Gfx.Mapping properties will be reset when the animation ends.]]
          set {
          }
          get {
          }
          values {
-            keep: bool; [[$true to keep final state, $false otherwise.]]
+            keep: bool; [[$true to keep the final state.]]
          }
       }
       @property duration {
-         [[Duration property]]
+         [[The duration of a single animation "run".
+           The @Efl.Playable.length implementation will return this duration adjusted by @.repeat_mode and
+           @.repeat_count.
+         ]]
          set {
          }
          get {
          }
          values {
-            sec: double; [[Duration value.]]
+            sec: double; [[Duration in seconds.]]
          }
       }
       @property repeat_mode {
-         [[Repeat mode property]]
+         [[What to do when the animation finishes.
+         ]]
          set {
          }
          get {
          }
          values {
-            mode: Efl.Canvas.Animation_Repeat_Mode; [[Repeat mode.]]
+            mode: Efl.Canvas.Animation_Repeat_Mode(Efl.Canvas.Animation_Repeat_Mode.restart); [[Repeat mode.]]
          }
       }
       @property repeat_count {
-         [[Repeat count property]]
-         set {
-         }
-         get {
-         }
+         [[How many times to repeat an animation once it finishes.
+           $[0] means that the animation only plays once (it is not repeated) and is the default value.
+           $[-1] means that the animation is repeated forever.
+         ]]
          values {
-            count: int; [[Repeat count. -1 repeats animation infinitely.]]
+            count: int(0); [[Repeat count.]]
          }
       }
       @property start_delay {
-         [[Start delay property]]
+         [[The time that passes since the animation is started and the first real change to the object is applied.
+         ]]
          set {
          }
          get {
          }
          values {
-            sec: double; [[Delay time, in seconds, from when the animation starts until the animation is animated.]]
+            sec: double; [[Delay time in seconds.]]
          }
       }
       @property interpolator {
-         [[Interpolator property]]
+         [[Optional mapping function.
+
+           Animations are based on a timer that moves linearly from 0 to 1. This $interpolator
+           method is applied before the timer is passed to the animation, to achieve effects
+           like acceleration or deceleration, for example.
+         ]]
          set {
          }
          get {
          }
          values {
-            interpolator: Efl.Interpolator; [[Interpolator which indicates interpolation function.]]
+            interpolator: Efl.Interpolator; [[Mapping function. By default it is $NULL (linear mapping).]]
          }
       }
       animation_apply {
+         [[Overwrite this method to implement your own animation subclasses.
+         
+           This is used for example by @Efl.Canvas.Animation_Translate or @Efl.Canvas.Animation_Scale.
+
+           Subclasses should call their parent's @.animation_apply to get the adjusted $progress value
+           and then perform the animation by modifying the $target's properties.
+         ]]
          params {
-            @in progress: double;
-            @in target: Efl.Canvas.Object;
+            @in progress: double; [[Animation progress from $[0] to $[1].]]
+            @in target: Efl.Canvas.Object; [[Object to animate.]]
          }
-         return: double; [[Final applied progress.]]
+         return: double; [[Final applied progress, after possible adjustments. See @.interpolator.]]
       }
    }
    implements {
