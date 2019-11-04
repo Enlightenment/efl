@@ -1,33 +1,52 @@
 class @beta Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
 {
-   [[Efl scale animation class]]
+   [[Animated scaling effect.
+
+     The @Efl.Canvas.Object will have its size and position changed due to a scaling
+     operation around a specified pivot point.
+     Coordinates for the pivot point can be relative to the object or absolute
+     (relative to the containing canvas).
+
+     Note: Changing an object's geometry using @Efl.Gfx.Entity.position or @Efl.Gfx.Entity.size
+     while this animation is running might lead to unexpected results.
+   ]]
    c_prefix: efl_animation_scale;
    data: Efl_Canvas_Animation_Scale_Data;
    methods {
       @property scale {
-         [[Scale property]]
+         [[Scale range and pivot object.
+           The object's scale will change from $from_scale to $to_scale.
+           All of the object's vertices (i.e. the corners, if it's a rectangular object)
+           will be multiplied by this scale, relative to the pivot point inside the pivot object.
+           The pivot point is another object $pivot plus an additional offset $center_point.
+         ]]
          set {
          }
          get {
          }
          values {
-            from_scale : Eina.Vector2; [[Scale factor  when animation starts]]
-            to_scale : Eina.Vector2; [[Scale factor when animation ends]]
-            pivot: Efl.Canvas.Object; [[Pivot object for the center point. If the pivot object is $NULL, then the object
-                                        is scaled on itself.]]
-            pivot_pos : Eina.Vector2; [[Relative coordinates of the center point. 0.0,0.0 is upper left.]]
+            from_scale: Eina.Vector2; [[Initial scale value.]]
+            to_scale: Eina.Vector2; [[Ending scale value.]]
+            pivot: Efl.Canvas.Object; [[Object to use as pivot. $NULL means the animated object itself.]]
+            center_point: Eina.Vector2; [[Position in pixels of the pivot point inside the pivot object.
+                                          $[(0,0)] means the upper-left corner.]]
          }
       }
       @property scale_absolute {
-         [[Scale absolute property]]
+         [[Scale range and pivot position, relative to the canvas.
+           The object's scale will change from $from_scale to $to_scale.
+           All of the object's vertices (i.e. the corners, if it's a rectangular object)
+           will be multiplied by this scale, relative to the pivot point.
+           The pivot point is relative to the canvas.
+         ]]
          set {
          }
          get {
          }
          values {
-            from_scale : Eina.Vector2; [[Scale factor  when animation starts]]
-            to_scale : Eina.Vector2; [[Scale factor when animation ends]]
-            pos : Eina.Position2D; [[Absolut coordinates in canvas space]]
+            from_scale: Eina.Vector2; [[Initial scale value.]]
+            to_scale: Eina.Vector2; [[Ending scale value.]]
+            pivot_point: Eina.Position2D; [[Position of the pivot point relative to the canvas.]]
          }
       }
    }
