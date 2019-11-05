@@ -222,7 +222,7 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            Once layout is complete, the result is returned as @Eina.Rect,
            with w, h fields set.
          ]]
-         return: future<Eina.Rect> @move; [[Future for layout result]]
+         return: future<Eina.Rect>; [[Future for layout result]]
       }
    }
    implements {
