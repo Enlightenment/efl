@@ -2005,7 +2005,6 @@ EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
 /* TODO: doxygen if we are keeping any of the below functions public */
 
-EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age);
 EAPI void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
 
 EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
