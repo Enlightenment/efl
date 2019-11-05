@@ -46,8 +46,9 @@ typedef enum {
    SHADER_FLAG_FILTER_DIR_Y      = (1 << 24),
    SHADER_FLAG_FILTER_ALPHA_ONLY = (1 << 25),
    SHADER_FLAG_FILTER_GRAYSCALE  = (1 << 26),
+   SHADER_FLAG_FILTER_INVERSE_COLOR  = (1 << 27),
 } Shader_Flag;
-#define SHADER_FLAG_COUNT 27
+#define SHADER_FLAG_COUNT 28
 
 static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "TEX",
@@ -77,6 +78,7 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "FILTER_DIR_Y",
    "ALPHA_ONLY",
    "FILTER_GRAYSCALE",
+   "FILTER_INVERSE_COLOR",
 };
 
 static Eina_Bool compiler_released = EINA_FALSE;
@@ -828,6 +830,9 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
         break;
       case SHD_FILTER_GRAYSCALE:
         flags |= SHADER_FLAG_FILTER_GRAYSCALE;
+        break;
+      case SHD_FILTER_INVERSE_COLOR:
+        flags |= SHADER_FLAG_FILTER_INVERSE_COLOR;
         break;
       default:
         CRI("Impossible shader type.");

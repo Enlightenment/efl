@@ -234,6 +234,10 @@ vec4 fetch_pixel(float ox, float oy)
    c.rgb = 0.3 * c.r + 0.59 * c.g + 0.11 * c.b;
 #endif
 
+#ifdef SHD_FILTER_INVERSE_COLOR
+   c.rgb = c.a - c.rgba;
+#endif
+
 #ifndef SHD_FILTER_BLUR
 
    gl_FragColor =
