@@ -2005,7 +2005,6 @@ EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
 /* TODO: doxygen if we are keeping any of the below functions public */
 
-EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
 EAPI void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
 EAPI void ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b);
 EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);

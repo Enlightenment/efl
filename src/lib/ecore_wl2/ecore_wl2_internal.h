@@ -46,6 +46,7 @@ EAPI Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, in
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
 EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf);
 EAPI void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride);
+EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
 
 # undef EAPI
 # define EAPI
