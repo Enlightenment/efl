@@ -11,40 +11,50 @@ typedef struct _Efl_Spring_Interpolator_Data Efl_Spring_Interpolator_Data;
 
 struct _Efl_Spring_Interpolator_Data
 {
-   double factor[2];
+   double decay;
+   int oscillations;
 };
 
 EOLIAN static double
 _efl_spring_interpolator_efl_interpolator_interpolate(Eo *obj EINA_UNUSED,
-                                                      Efl_Spring_Interpolator_Data *pd EINA_UNUSED,
+                                                      Efl_Spring_Interpolator_Data *pd,
                                                       double progress)
 {
    if ((progress < 0.0) || (progress > 1.0))
      return progress;
 
    return ecore_animator_pos_map(progress, ECORE_POS_MAP_SPRING,
-                                 pd->factor[0], pd->factor[1]);
+                                 pd->decay, (double)pd->oscillations);
 }
 
 EOLIAN static void
-_efl_spring_interpolator_factors_set(Eo *eo_obj EINA_UNUSED,
-                                     Efl_Spring_Interpolator_Data *pd,
-                                     double factor1, double factor2)
+_efl_spring_interpolator_decay_set(Eo *eo_obj EINA_UNUSED,
+                                   Efl_Spring_Interpolator_Data *pd,
+                                   double decay)
 {
-   pd->factor[0] = factor1;
-   pd->factor[1] = factor2;
+   pd->decay = decay;
+}
+
+EOLIAN static double
+_efl_spring_interpolator_decay_get(const Eo *eo_obj EINA_UNUSED,
+                                     Efl_Spring_Interpolator_Data *pd)
+{
+   return pd->decay;
 }
 
 EOLIAN static void
-_efl_spring_interpolator_factors_get(const Eo *eo_obj EINA_UNUSED,
-                                     Efl_Spring_Interpolator_Data *pd,
-                                     double *factor1, double *factor2)
+_efl_spring_interpolator_oscillations_set(Eo *eo_obj EINA_UNUSED,
+                                          Efl_Spring_Interpolator_Data *pd,
+                                          int oscillations)
 {
-   if (factor1)
-     *factor1 = pd->factor[0];
+   pd->oscillations = oscillations;
+}
 
-   if (factor2)
-     *factor2 = pd->factor[1];
+EOLIAN static int
+_efl_spring_interpolator_oscillations_get(const Eo *eo_obj EINA_UNUSED,
+                                          Efl_Spring_Interpolator_Data *pd)
+{
+   return pd->oscillations;
 }
 
 EOLIAN static Efl_Object *
@@ -53,8 +63,8 @@ _efl_spring_interpolator_efl_object_constructor(Eo *eo_obj,
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
-   pd->factor[0] = 1.0;
-   pd->factor[1] = 1.0;
+   pd->decay = 1.0;
+   pd->oscillations = 1;
 
    return eo_obj;
 }

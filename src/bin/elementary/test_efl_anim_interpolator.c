@@ -33,32 +33,35 @@ _interpolator_create(int index, Evas_Object *win)
    else if (index == 1)
      {
         interp = efl_add(EFL_SINUSOIDAL_INTERPOLATOR_CLASS, win);
-        efl_sinusoidal_interpolator_factor_set(interp, 1.0);
+        efl_sinusoidal_interpolator_slope_set(interp, 1.0);
      }
    else if (index == 2)
      {
         interp = efl_add(EFL_DECELERATE_INTERPOLATOR_CLASS, win);
-        efl_decelerate_interpolator_factor_set(interp, 1.0);
+        efl_decelerate_interpolator_slope_set(interp, 1.0);
      }
    else if (index == 3)
      {
         interp = efl_add(EFL_ACCELERATE_INTERPOLATOR_CLASS, win);
-        efl_accelerate_interpolator_factor_set(interp, 1.0);
+        efl_accelerate_interpolator_slope_set(interp, 1.0);
      }
    else if (index == 4)
      {
         interp = efl_add(EFL_DIVISOR_INTERPOLATOR_CLASS, win);
-        efl_divisor_interpolator_factors_set(interp, 1.0, 1.0);
+        efl_divisor_interpolator_divisor_set(interp, 1.0);
+        efl_divisor_interpolator_power_set(interp, 1);
      }
    else if (index == 5)
      {
         interp = efl_add(EFL_BOUNCE_INTERPOLATOR_CLASS, win);
-        efl_bounce_interpolator_factors_set(interp, 1.0, 1.0);
+        efl_bounce_interpolator_rigidness_set(interp, 1.0);
+        efl_bounce_interpolator_bounces_set(interp, 1);
      }
    else if (index == 6)
      {
         interp = efl_add(EFL_SPRING_INTERPOLATOR_CLASS, win);
-        efl_spring_interpolator_factors_set(interp, 1.0, 1.0);
+        efl_spring_interpolator_decay_set(interp, 1.0);
+        efl_spring_interpolator_oscillations_set(interp, 1);
      }
 
    return interp;
