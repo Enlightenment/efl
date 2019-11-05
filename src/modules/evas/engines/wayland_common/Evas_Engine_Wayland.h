@@ -30,7 +30,6 @@ struct _Evas_Engine_Info_Wayland
    Eina_Rectangle window;
    int x_rel, y_rel;
    int x_cursor, y_cursor;
-   int resizing;
    uint32_t timestamp;
    /* window surface should be made with these config */
    int depth_bits;
@@ -41,6 +40,7 @@ struct _Evas_Engine_Info_Wayland
    Eina_Bool drag_start : 1;
    Eina_Bool drag_stop : 1;
    Eina_Bool drag_ack : 1;
+   Eina_Bool resizing : 1;
 };
 
 #endif
