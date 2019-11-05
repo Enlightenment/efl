@@ -483,6 +483,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
 /// allow minimal interaction with them through <see cref="Efl.Object" />.
 ///
 /// But as <see cref="Efl.Object" /> is abstract, whis realized class will allow us to create C# instances of it.</summary>
+[Efl.Object.NativeMethods]
 internal class ObjectRealized : Efl.Object
 {
     internal ObjectRealized(Efl.Eo.WrappingHandle ch) : base(ch) { }

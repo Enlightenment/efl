@@ -1,3 +1,4 @@
+# Generation of .eo.cs files and test library common to dotnet and mono
 eo_files = [
     'dummy_child.eo',
     'dummy_numberwrapper.eo',
@@ -56,68 +57,88 @@ foreach mono_gen_file : eo_files
                                 '@INPUT@'])
 endforeach
 
-efl_mono_test = library('efl_mono_test',
-    eo_file_targets,
-    link_with : [efl_mono],
+if get_option('dotnet')
+
+  dotnet_test_conf_data = configuration_data()
+
+  dotnet_test_conf_data.set('EFL_VERSION', meson.project_version())
+  dotnet_test_conf_data.set('BINDING_BUILD', join_paths(meson.current_build_dir(),
+                                                        '..', '..', 'bindings', 'mono'))
+  dotnet_test_conf_data.set('BINDING_TEST_SRC', meson.current_source_dir())
+
+  dotnet_test_conf_data.set('NETCOREAPP_VERSION', dotnet_core_app_version)
+
+  if get_option('mono-beta')
+    dotnet_test_conf_data.set('EFL_BETA', 'EFL_BETA')
+  else
+    dotnet_test_conf_data.set('EFL_BETA', '')
+  endif
+
+  dotnet_test_csproj = configure_file(input: 'efl_sharp_test_suite.csproj.in',
+                                      output: 'efl_sharp_test_suite.csproj',
+                                      configuration: dotnet_test_conf_data,
+  )
+
+  efl_mono_suite = custom_target('efl_mono_test',
+    input: eo_file_targets + [dotnet_test_csproj],
+    output: 'efl_sharp_test_suite.dll',
+    depends: [efl_mono],
+    build_by_default: true,
+    command: [dotnet,
+              'build',
+              '-o',
+              meson.current_build_dir(),
+              '--framework',
+              'netcoreapp' + dotnet_core_app_version,
+              dotnet_test_csproj],
+  )
+
+else
+  efl_mono_test = library('efl_mono_test',
+      eo_file_targets,
+      link_with : [efl_mono],
+      cs_args : extra_cs_args
+  )
+
+  efl_mono_src = [
+       'Main.cs',
+       'TestUtils.cs',
+       'EinaTestData.cs',
+       'StructHelpers.cs',
+       'BasicDirection.cs',
+       'Eina.cs',
+       'Eldbus.cs',
+       'Eo.cs',
+       'EoPromises.cs',
+       'EoConstruction.cs',
+       'Errors.cs',
+       'Events.cs',
+       'FunctionPointers.cs',
+       'FunctionPointerMarshalling.cs',
+       'Model.cs',
+       'Parts.cs',
+       'Promises.cs',
+       'Strbuf.cs',
+       'Strings.cs',
+       'Structs.cs',
+       'Value.cs',
+       'ValueEolian.cs',
+       'Inheritance.cs',
+       'Hash.cs'
+  ]
+
+  efl_mono_suite = executable('efl-mono-suite',
+    efl_mono_src,
+    link_with : [efl_mono, efl_mono_test],
     cs_args : extra_cs_args
-)
+  )
+endif
 
-efl_mono_src = [
-     'Main.cs',
-     'TestUtils.cs',
-     'EinaTestData.cs',
-     'StructHelpers.cs',
-     'BasicDirection.cs',
-     'Eina.cs',
-     'Eldbus.cs',
-     'Eo.cs',
-     'EoPromises.cs',
-     'EoConstruction.cs',
-     'Errors.cs',
-     'Events.cs',
-     'FunctionPointers.cs',
-     'FunctionPointerMarshalling.cs',
-     'Model.cs',
-     'Parts.cs',
-     'Promises.cs',
-     'Strbuf.cs',
-     'Strings.cs',
-     'Structs.cs',
-     'Value.cs',
-     'ValueEolian.cs',
-     'Inheritance.cs',
-     'Hash.cs'
-]
-
-efl_mono_suite = executable('efl-mono-suite',
-  efl_mono_src,
-  link_with : [efl_mono, efl_mono_test],
-  cs_args : extra_cs_args
-)
-
+# Common environment shared by both dotnet and mono
 env_mono = environment()
 env_mono.set('MONO_PATH', efl_mono_test_suite_path )
 env_mono.set('EFL_RUN_IN_TREE', '1')
 
-if (cs_is_dotnet)
-copy_prog = find_program(['cp', 'copy'])
-
-configure_file(input : 'efl-mono-suite.runtimeconfig.json',
-               output : 'efl-mono-suite.runtimeconfig.json',
-               copy : true)
-
-custom_target('copy_efl_mono_dll',
-              build_by_default : true,
-              input : efl_mono,
-              output : efl_mono.full_path().split('/')[-1],
-              command : [copy_prog, '@INPUT@', '@OUTPUT@'])
-
-custom_target('copy_efl_mono_lib_dll',
-              build_by_default : true,
-              input : efl_mono_lib,
-              output : efl_mono_lib.full_path().split('/')[-1],
-              command : [copy_prog, '@INPUT@', '@OUTPUT@'])
-endif
 
 config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary', 'efl_mono']
 load_lib = efl_mono_test_suite_path + ':'
@@ -136,9 +157,20 @@ foreach config : config_libs
   load_lib += repaired_path+':'
 endforeach
 
+load_lib += ':' + meson.current_build_dir()
+
 env_mono.set('LD_LIBRARY_PATH', load_lib)
 
-test('efl-mono-suite',
-  efl_mono_suite,
-  env : env_mono
-)
+
+if get_option('dotnet')
+  test('efl-mono-suite',
+    dotnet,
+    args: [join_paths(meson.current_build_dir(), 'efl_sharp_test_suite.dll')],
+    env: env_mono,
+  )
+else
+  test('efl-mono-suite',
+    efl_mono_suite,
+    env : env_mono
+  )
+endif
