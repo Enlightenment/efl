@@ -217,12 +217,16 @@ void _dummy_test_object_out_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Te
 
 void _dummy_test_object_call_in_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char *str)
 {
-  dummy_test_object_in_string(obj, str);
+  char *ptr = dummy_test_object_in_string(obj, str);
+  if (ptr)
+    free(ptr);
 }
 
 void _dummy_test_object_call_in_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, char *str)
 {
-  dummy_test_object_in_own_string(obj, str);
+  char *ptr = dummy_test_object_in_own_string(obj, str);
+  if (ptr)
+    free(ptr);
 }
 
 const char *_dummy_test_object_call_return_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
@@ -252,7 +256,9 @@ char *_dummy_test_object_call_out_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Obj
 // Stringshare virtual test helpers
 void _dummy_test_object_call_in_stringshare(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Stringshare *str)
 {
-  dummy_test_object_in_stringshare(obj, str);
+  Eina_Stringshare *ptr = dummy_test_object_in_stringshare(obj, str);
+  if (ptr)
+    eina_stringshare_del(ptr);
 }
 
 void _dummy_test_object_call_in_own_stringshare(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Stringshare *str)

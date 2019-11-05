@@ -19,6 +19,6 @@ EWAPI const Efl_Class *function_as_argument_class_get(void);
 
 EOAPI void function_as_argument_set_cb(Eo *obj, void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
 
-EOAPI char *function_as_argument_call_cb(Eo *obj, int a, double b) EFL_TRANSFER_OWNERSHIP;
+EOAPI char *function_as_argument_call_cb(Eo *obj, int a, double b) EFL_TRANSFER_OWNERSHIP EINA_WARN_UNUSED_RESULT;
 
 #endif
