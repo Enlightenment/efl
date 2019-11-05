@@ -59,6 +59,7 @@ EAPI void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
 
 EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
 EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
+EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha);
 
 # undef EAPI
 # define EAPI
