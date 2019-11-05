@@ -63,7 +63,7 @@ jobs:
       env: DISTRO=Ubuntu1804
     - os: linux
       if: type = cron
-      env: DISTRO=Ubuntu1904
+      env: DISTRO=Ubuntu1910
     - os: linux
       if: type = cron
       env: DISTRO=Debian96
