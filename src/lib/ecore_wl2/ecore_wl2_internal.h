@@ -53,6 +53,7 @@ EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
 EAPI Eina_Bool ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer);
 EAPI void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
+EAPI int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
 
 # undef EAPI
 # define EAPI
