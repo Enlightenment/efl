@@ -2003,10 +2003,6 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
-/* TODO: doxygen if we are keeping any of the below functions public */
-
-
-
 # endif
 
 # undef EAPI
