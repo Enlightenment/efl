@@ -44,6 +44,7 @@ EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rect
 EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
 EAPI Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha);
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
+EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf);
 
 # undef EAPI
 # define EAPI
