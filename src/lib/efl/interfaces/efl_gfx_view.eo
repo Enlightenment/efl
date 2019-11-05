@@ -2,7 +2,10 @@ import eina_types;
 
 interface @beta Efl.Gfx.View
 {
-   [[Efl graphics view interface]]
+   [[Interface for graphical objects with a native size which might be
+     different from the desired rendered size (controlled through the
+     @.view_size property).
+   ]]
    c_prefix: efl_gfx;
    methods {
       @property view_size {
