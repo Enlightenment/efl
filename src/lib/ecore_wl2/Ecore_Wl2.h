@@ -2006,7 +2006,6 @@ EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 /* TODO: doxygen if we are keeping any of the below functions public */
 
 
-EAPI void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
 EAPI int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
 EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 EAPI void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge);
