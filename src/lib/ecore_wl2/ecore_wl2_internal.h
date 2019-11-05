@@ -41,6 +41,7 @@ EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
 EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
 
 EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
+EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
 
 # undef EAPI
 # define EAPI
