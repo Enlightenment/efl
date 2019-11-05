@@ -68,6 +68,7 @@ EAPI void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool pur
 EAPI Ecore_Wl2_Buffer *ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface);
 EAPI int ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf);
 EAPI void ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf);
+EAPI Ecore_Wl2_Window *ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface);
 
 # undef EAPI
 # define EAPI
