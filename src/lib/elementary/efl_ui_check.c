@@ -319,6 +319,9 @@ _efl_ui_check_efl_ui_selectable_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Ein
 
    pd->selected = value;
 
+   pd->legacy_changed_emitted_select = !pd->selected;
+   pd->legacy_changed_emitted_unselect = pd->selected;
+
    if (!elm_widget_is_legacy(obj))
      efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED_CHANGED, &pd->selected);
 }
