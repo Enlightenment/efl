@@ -14,7 +14,7 @@
 
 #include "Ecore.h"
 #include "ecore_private.h"
-#include "lib/ecore/ecore_main_common.h"
+#include "ecore_main_common.h"
 
 #ifdef HAVE_SYS_TIMERFD_H
 
