@@ -109,7 +109,7 @@ static const char *COLLECTION_VIEW_MANAGED_YES = "yes";
 #define MY_DATA_GET(obj, pd)                                            \
   Efl_Ui_Collection_View_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
-static void _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request);
+static Eina_Bool _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request);
 static void _idle_cb(void *data, const Efl_Event *event);
 
 static int
@@ -435,10 +435,11 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
      }
 
    if (request_entity)
-     {
-        request->need_entity = EINA_TRUE;
-        _entity_request(obj, request);
-     }
+     request->need_entity = EINA_TRUE;
+
+   if (request->need_entity &&
+       !request->entity_requested)
+     _entity_request(obj, request);
 
    return v;
 }
@@ -449,12 +450,7 @@ _model_free_cb(Eo *o, void *data, const Eina_Future *dead_future EINA_UNUSED)
    MY_DATA_GET(o, pd);
    Efl_Ui_Collection_Request *request = data;
 
-   if (request->need_entity)
-     {
-        if (!request->entity_requested)
-          _entity_request(o, request);
-     }
-   else
+   if (!request->entity_requested)
      {
         pd->requests = eina_list_remove(pd->requests, request);
         free(request);
@@ -632,7 +628,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
      {
         efl_ui_position_manager_entity_item_size_changed(pd->manager,
                                                          updated_size_start_id,
-                                                         i - 1);
+                                                         request->offset + i - 1);
         updated_size = EINA_FALSE;
      }
 
@@ -748,10 +744,11 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 }
 
-static void
+static Eina_Bool
 _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request)
 {
-   if (request->model_requested && (!request->model_fetched)) return;
+   if (request->entity_requested) return EINA_TRUE;
+   if (request->model_fetched) return EINA_FALSE;
    request->f = efl_future_then(obj, request->f,
                                 .success_type = EINA_VALUE_TYPE_ARRAY,
                                 .success = _entity_fetch_cb);
@@ -761,17 +758,19 @@ _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request)
                                 .data = request,
                                 .free = _entity_free_cb);
    request->entity_requested = EINA_TRUE;
+   request->need_entity = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-static inline void
+static inline Eina_Bool
 _entity_inflight_request(Efl_Ui_Collection_View *obj,
                          Efl_Ui_Collection_Request *request,
                          Efl_Ui_Collection_Request *inflight)
 {
-   if (request->need_entity == EINA_FALSE) return ;
-   if (inflight->entity_requested) return ;
+   if (request->need_entity == EINA_FALSE) return EINA_TRUE;
 
-   _entity_request(obj, inflight);
+   return _entity_request(obj, inflight);
 }
 
 static Eina_List *
@@ -804,7 +803,7 @@ _batch_request_flush(Eina_List *requests,
              // request included in current inflight request
              if (rstart >= istart && rend <= iend)
                {
-                  _entity_inflight_request(obj, request, inflight);
+                  if (!_entity_inflight_request(obj, request, inflight)) continue;
 
                   // In this case no need to start a request
                   requests = eina_list_remove_list(requests, ll);
@@ -816,6 +815,8 @@ _batch_request_flush(Eina_List *requests,
              // request overflow left and right
              if (rstart < istart && iend < rend)
                {
+                  if (!_entity_inflight_request(obj, request, inflight)) continue;
+
                   // Remove the center portion of the request by emitting a new one
                   Efl_Ui_Collection_Request *rn;
 
@@ -830,24 +831,23 @@ _batch_request_flush(Eina_List *requests,
                   requests = eina_list_append(requests, rn);
 
                   request->length = istart - rstart;
-                  _entity_inflight_request(obj, request, inflight);
                   continue;
                }
 
              // request overflow left
              if (rstart < istart && rend > istart && rend <= iend)
                {
+                  if (!_entity_inflight_request(obj, request, inflight)) continue;
                   request->length = istart - rstart;
-                  _entity_inflight_request(obj, request, inflight);
                   continue;
                }
 
              // request overflow right
              if (rstart >= istart && rstart < iend && iend <= rend)
                {
+                  if (!_entity_inflight_request(obj, request, inflight)) continue;
                   request->offset = iend;
                   request->length = rend - iend;
-                  _entity_inflight_request(obj, request, inflight);
                   continue;
                }
           }
@@ -891,7 +891,7 @@ _batch_request_flush(Eina_List *requests,
 
         eina_list_move_list(&pd->requests, &requests, ll);
      }
-   return NULL;
+   return eina_list_free(requests);
 }
 
 static Efl_Ui_Position_Manager_Size_Batch_Result
@@ -1110,7 +1110,6 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
 
         requests = _cache_entity_fetch(requests, &request, pd,
                                        search_index, &entities[idx]);
-
         idx++;
      }
    // Done, but flush request first
@@ -1772,7 +1771,6 @@ _efl_model_child_added(void *data, const Efl_Event *event)
 
  notify_manager:
 #endif
-   // FIXME this function must be called with an entity
    efl_ui_position_manager_entity_item_added(pd->manager, ev->index, NULL);
 }
 
