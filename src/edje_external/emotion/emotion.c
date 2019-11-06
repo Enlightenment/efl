@@ -430,7 +430,7 @@ _external_emotion_icon_add(void *data EINA_UNUSED, Evas *e)
    int w = 0, h = 0;
 
    ic = edje_object_add(e);
-   edje_object_file_set(ic, PACKAGE_DATA_DIR"/data/icon.edj", "icon");
+   edje_object_file_set(ic, DATA_DIR"/edje/data/icon.edj", "icon");
    edje_object_size_min_get(ic, &w, &h);
    if (w < 1) w = 20;
    if (h < 1) h = 10;

@@ -1017,8 +1017,8 @@ cache_init(void)
                          "EFREET", "efreet", "checkme",
                          PACKAGE_BIN_DIR,
                          PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
+                         DATA_DIR"/efreet/",
+                         DATA_DIR"/efreet/");
 
    cache_exe_del_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                    cache_exe_del_cb, NULL);

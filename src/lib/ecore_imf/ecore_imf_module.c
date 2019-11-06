@@ -53,7 +53,7 @@ ecore_imf_module_init(void)
    pfx = eina_prefix_new(NULL, ecore_imf_init,
                          "ECORE_IMF", "ecore_imf", "checkme",
                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                         DATA_DIR"/ecore_imf/", DATA_DIR"/ecore_imf/");
 #ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())

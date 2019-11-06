@@ -821,7 +821,7 @@ _evas_module_libdir_get(void)
 {
    if (!pfx) pfx = eina_prefix_new
       (NULL, _evas_module_libdir_get, "EVAS", "evas", "checkme",
-       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, DATA_DIR"/evas/", DATA_DIR"/evas/");
    if (!pfx) return "";
    return eina_prefix_lib_get(pfx);
 }
@@ -831,7 +831,7 @@ _evas_module_datadir_get(void)
 {
    if (!pfx) pfx = eina_prefix_new
       (NULL, _evas_module_libdir_get, "EVAS", "evas", "checkme",
-       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, DATA_DIR"/evas/", DATA_DIR"/evas/");
    if (!pfx) return NULL;
    return eina_prefix_data_get(pfx);
 }

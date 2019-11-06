@@ -693,8 +693,8 @@ main(int argc, char **argv)
    struct stat st;
    if (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj", &st) == 0)
       theme_file = PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj";
-   else if (stat(PACKAGE_DATA_DIR"/data/theme.edj", &st) == 0)
-      theme_file = PACKAGE_DATA_DIR"/data/theme.edj";
+   else if (stat(DATA_DIR"/emotion/data/theme.edj", &st) == 0)
+      theme_file = DATA_DIR"/emotion/data/theme.edj";
    else
      {
         printf("Cannot find the theme file\n");

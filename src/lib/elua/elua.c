@@ -27,7 +27,7 @@ elua_init(void)
    INF("elua init");
 
    _elua_pfx = eina_prefix_new(NULL, elua_init, "ELUA", "elua", "checkme",
-                               PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
+                               PACKAGE_BIN_DIR, "", DATA_DIR"/elua/",
                                LOCALE_DIR);
 
    if (!_elua_pfx)

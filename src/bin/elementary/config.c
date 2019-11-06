@@ -4403,7 +4403,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 #endif
         elm_app_info_set(efl_main, "elementary", "images/logo.png");
         elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-        elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+        elm_app_compile_data_dir_set(DATA_DIR"/elementary/");
      }
 
    if (!quiet)

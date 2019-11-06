@@ -374,7 +374,7 @@ eeze_sensor_init(void)
 
    pfx = eina_prefix_new(NULL, eeze_sensor_init, "EEZE", "eeze", "checkme",
                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                         DATA_DIR"/eeze/", DATA_DIR"/eeze/");
 
    g_handle = calloc(1, sizeof(Eeze_Sensor));
    if (!g_handle) return EINA_FALSE;

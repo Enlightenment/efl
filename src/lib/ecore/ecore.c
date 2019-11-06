@@ -259,7 +259,7 @@ ecore_init(void)
    _ecore_pfx = eina_prefix_new(NULL, ecore_init,
                                 "ECORE", "ecore", "checkme",
                                 PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                                PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                                DATA_DIR"/ecore", DATA_DIR"/ecore");
    if (!_ecore_pfx)
      {
         ERR("Could not get ecore installation prefix");

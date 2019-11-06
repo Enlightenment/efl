@@ -1773,7 +1773,7 @@ main(int argc, char *argv[])
    _pfx = eina_prefix_new(argv[0], ethumb_client_init,
                           "ETHUMB_CLIENT", "ethumb_client", "checkme",
                           PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                          DATA_DIR"/ethumb_client/", DATA_DIR"/ethumb_client/");
    if (!_pfx)
      {
         ERR("Could not get ethumb_client installation prefix.");

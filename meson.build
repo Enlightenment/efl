@@ -134,6 +134,7 @@ config_h.set_quoted('PACKAGE_BUGREPORT', 'enlightenment-devel@lists.sourceforge.
 config_h.set_quoted('PACKAGE_STRING', meson.project_name() + ' ' + meson.project_version())
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_BIN_DIR', dir_bin)
+config_h.set_quoted('DATA_DIR', dir_data)
 config_h.set_quoted('PACKAGE_LIB_DIR', dir_lib)
 config_h.set_quoted('PACKAGE_SRC_DIR', meson.source_root())
 config_h.set_quoted('PACKAGE_BUILD_DIR', meson.current_build_dir())
@@ -322,7 +323,6 @@ foreach package : subprojects
   package_name = package[0]
   package_version_name = '-'.join(package_name.split('_')) + '-' + version_major
   package_c_args = [
-    '-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"',
     '-DNEED_RUN_IN_TREE=1',
   ]
   automatic_pkgfile = true

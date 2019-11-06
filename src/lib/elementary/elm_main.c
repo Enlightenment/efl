@@ -825,7 +825,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
                          "ELM", "elementary", "config/profile.cfg",
                          PACKAGE_LIB_DIR, /* don't have a bin dir currently */
                          PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
+                         DATA_DIR"/elementary/",
                          LOCALE_DIR);
    if (pfx)
      {

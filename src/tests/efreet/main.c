@@ -100,7 +100,7 @@ const char *ef_test_path_get(const char *component)
      }
    else
      {
-        eina_str_join(buf, sizeof(buf), '/', PACKAGE_DATA_DIR "/tests",
+        eina_str_join(buf, sizeof(buf), '/', DATA_DIR"/efreet/tests",
                       component);
      }
 

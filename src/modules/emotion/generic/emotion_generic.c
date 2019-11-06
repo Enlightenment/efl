@@ -1855,7 +1855,7 @@ generic_module_init(void)
    pfx = eina_prefix_new(NULL, emotion_init,
                          "EMOTION", "emotion", "checkme",
                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                         DATA_DIR"/emotion/", DATA_DIR"/emotion/");
    if (!pfx)
      {
         CRI("Could not get prefix for emotion");

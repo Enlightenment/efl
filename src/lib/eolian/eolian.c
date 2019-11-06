@@ -29,7 +29,7 @@ EAPI int eolian_init(void)
    INF("Init");
 
    _eolian_prefix = eina_prefix_new(NULL, eolian_init, "EOLIAN", "eolian",
-                                    NULL, "", "", PACKAGE_DATA_DIR, "");
+                                    NULL, "", "", DATA_DIR"/eolian/", "");
    if (!_eolian_prefix)
      {
         ERR("Could not initialize the Eolian prefix.");

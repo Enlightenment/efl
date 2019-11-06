@@ -123,7 +123,7 @@ external_##type_name##_icon_add(void *data EINA_UNUSED, Evas *e) {   \
    int w = 20, h = 10;                                              \
                                                                     \
    ic = edje_object_add(e);                                         \
-   edje_object_file_set(ic, PACKAGE_DATA_DIR"/edje_externals/icons.edj", "ico_"name);\
+   edje_object_file_set(ic, DATA_DIR"/elementary/edje_externals/icons.edj", "ico_"name);\
    evas_object_size_hint_min_set(ic, w, h);                         \
    evas_object_size_hint_max_set(ic, w, h);                         \
                                                                     \

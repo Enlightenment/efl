@@ -66,7 +66,7 @@ static Evas_Object *
 _route_icon_get(Evas_Object *obj)
 {
    Evas_Object *icon = elm_icon_add(obj);
-   elm_image_file_set(icon, PACKAGE_DATA_DIR"/images/bubble.png", NULL);
+   elm_image_file_set(icon, DATA_DIR"/elementary/images/bubble.png", NULL);
    evas_object_show(icon);
 
    return icon;

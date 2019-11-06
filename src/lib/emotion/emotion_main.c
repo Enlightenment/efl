@@ -162,7 +162,7 @@ emotion_init(void)
    _emotion_pfx = eina_prefix_new(NULL, emotion_init,
                                   "EMOTION", "emotion", "checkme",
                                   PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                                  PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                                  DATA_DIR"/emotion/", DATA_DIR"/emotion/");
    EINA_SAFETY_ON_NULL_GOTO(_emotion_pfx, error);
 
    ecore_init();

@@ -12462,8 +12462,8 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
                          "include/edje.inc", /* a magic file to check for in PREFIX/share/DIRNAME for success */
                          PACKAGE_BIN_DIR,    /* package bin dir @ compile time */
                          PACKAGE_LIB_DIR,    /* package lib dir @ compile time */
-                         PACKAGE_DATA_DIR,   /* package data dir @ compile time */
-                         PACKAGE_DATA_DIR    /* if locale needed  use LOCALE_DIR */
+                         DATA_DIR"/edje/",   /* package data dir @ compile time */
+                         DATA_DIR"/edje/"    /* if locale needed  use LOCALE_DIR */
                          );
 #ifdef _WIN32
 # define BIN_EXT ".exe"

@@ -22,8 +22,8 @@ e_prefix_determine(char *argv0)
                          "EMBRYO", "embryo", "include/default.inc",
                          PACKAGE_BIN_DIR,
                          PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
+                         DATA_DIR"/embryo/",
+                         DATA_DIR"/embryo/");
    if (!pfx) return 0;
    return 1;
 }

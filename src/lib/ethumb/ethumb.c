@@ -246,7 +246,7 @@ ethumb_init(void)
    _pfx = eina_prefix_new(NULL, ethumb_init,
                           "ETHUMB", "ethumb", "checkme",
                           PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+                          DATA_DIR"/ethumb/", DATA_DIR"/ethumb/");
    if (!_pfx)
      {
         ERR("Could not get ethumb installation prefix.");
