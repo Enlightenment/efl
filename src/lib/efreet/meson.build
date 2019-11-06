@@ -46,6 +46,8 @@ efreet = declare_dependency(
   dependencies: efreet_pub_deps,
 )
 
+overall_efl_source += files('efreet_mime.c')
+
 efreet_mime_lib = library('efreet_mime',
     'efreet_mime.c',
     dependencies: efreet_pub_deps + [m, efreet, efreet_deps],
@@ -55,12 +57,13 @@ efreet_mime_lib = library('efreet_mime',
     version : meson.project_version()
 )
 
-
 efreet_mime = declare_dependency(
   include_directories: [include_directories('.')],
   link_with: efreet_mime_lib,
   dependencies: efreet_pub_deps
 )
+
+overall_efl_source += files('efreet_trash.c')
 
 efreet_trash_lib = library('efreet_trash',
     'efreet_trash.c',

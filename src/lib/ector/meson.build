@@ -77,6 +77,10 @@ endforeach
 
 subdir('software')
 
+overall_efl_deps += declare_dependency(
+  link_with: ector_opt_lib,
+)
+
 ector_lib = library('ector',
     ector_src, pub_eo_file_target,
     dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,

@@ -318,6 +318,9 @@ test_dirs = []
 example_dirs = []
 tmp_empty = declare_dependency()
 overall_efl_source = []
+overall_efl_deps = []
+overall_efl_include_directories = []
+overall_efl_pub_deps = []
 
 foreach package : subprojects
   package_name = package[0]
@@ -364,6 +367,13 @@ foreach package : subprojects
       set_variable(package_name + '_header_subdirs', package_header_subdirs)
       set_variable(package_name + '_eo_subdirs', package_eo_subdirs)
       overall_efl_source += get_variable(package_name + '_src')
+      overall_efl_deps += get_variable(package_name)
+      overall_efl_deps += get_variable(package_name+'_deps')
+      overall_efl_pub_deps += get_variable(package_name+'_pub_deps')
+
+      foreach sub : package_header_subdirs
+         overall_efl_include_directories += include_directories(join_paths('src', 'lib', package_name, sub))
+      endforeach
     endif
     if (package[2])
        subdir(join_paths(local_module, package_name))

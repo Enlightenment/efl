@@ -300,6 +300,11 @@ foreach loader : evas_model_savers_file
   )]
 endforeach
 
+overall_efl_deps += [draw, evas_static_list, libunibreak]
+overall_efl_deps += declare_dependency(
+  link_with: evas_link,
+)
+
 evas_lib = library('evas',
     include_directories: evas_include_directories + [vg_common_inc_dir],
     sources : [evas_src, pub_eo_file_target, priv_eo_file_target],

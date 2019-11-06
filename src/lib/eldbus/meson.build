@@ -92,7 +92,10 @@ eldbus_src = files([
   'eldbus_introspection.c'
 ])
 
-eldbus_deps += dependency('dbus-1')
+dbus = dependency('dbus-1')
+
+eldbus_deps += dbus
+overall_efl_deps += [dbus]
 
 eldbus_lib = library('eldbus',
     eldbus_src, pub_eo_file_target,

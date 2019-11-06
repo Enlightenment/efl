@@ -38,6 +38,7 @@ if sys_windows == true
     install_dir : dir_package_include,
   )
 else
+  ecore_win32_pub_deps = []
   ecore_win32_deps = []
   ecore_win32 = declare_dependency()
   automatic_pkgfile = false
