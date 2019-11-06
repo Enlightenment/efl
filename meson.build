@@ -39,6 +39,8 @@ if host_machine.system() == 'darwin'
   bin_linker_args = ['-pagezero_size', '10000', '-image_base', '100000000']
 endif
 
+efl_eins_libs = []
+
 windows = ['windows', 'cygwin']
 #bsd for meson 0.46 and 0.47
 bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd', 'openbsd']
@@ -314,6 +316,7 @@ ecore_audio = declare_dependency()
 test_dirs = []
 example_dirs = []
 tmp_empty = declare_dependency()
+overall_efl_source = []
 
 foreach package : subprojects
   package_name = package[0]
@@ -360,6 +363,7 @@ foreach package : subprojects
       set_variable(package_name + '_eot_files', pub_eo_types_files)
       set_variable(package_name + '_header_subdirs', package_header_subdirs)
       set_variable(package_name + '_eo_subdirs', package_eo_subdirs)
+      overall_efl_source += get_variable(package_name + '_src')
     endif
     if (package[2])
        subdir(join_paths(local_module, package_name))
@@ -491,6 +495,7 @@ configure_file(
 
 subdir(join_paths('systemd-services'))
 subdir(join_paths('dbus-services'))
+subdir(join_paths('efl-eins'))
 
 #output the three new efl-* .pc files
 efl_20_pc_files = [
