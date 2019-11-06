@@ -1020,7 +1020,7 @@ _edje_recalc_do(Edje *ed)
 #endif
      }
 
-   if (EINA_UNLIKELY(ed->table_parts_size > 0))
+   if (EINA_LIKELY(ed->table_parts_size > 0))
 #ifdef EDJE_CALC_CACHE
      need_reinit_state =
 #endif
