@@ -36,6 +36,7 @@ if target_machine.system() == 'windows'
     link_with: evil_lib,
   )
 else
+  evil_src = []
   evil = declare_dependency()
 endif
 

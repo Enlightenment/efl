@@ -39,4 +39,5 @@ if sys_windows == true
   )
 else
   automatic_pkgfile = false
+  ecore_win32_src = []
 endif
