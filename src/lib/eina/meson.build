@@ -111,7 +111,7 @@ public_headers = [
   'Eina.h'
 ]
 
-sources = [
+eina_src = files([
 'eina_abi.c',
 'eina_accessor.c',
 'eina_array.c',
@@ -187,12 +187,12 @@ sources = [
 'eina_slstr.c',
 'eina_vpath.c',
 'eina_vpath_xdg.c'
-]
+])
 
 if sys_windows == true
-  sources += 'eina_file_win32.c'
+  eina_src += 'eina_file_win32.c'
 else
-  sources += 'eina_file.c'
+  eina_src += 'eina_file.c'
 endif
 
 eina_config = configuration_data()
@@ -363,7 +363,7 @@ endif
 
 execinfo = cc.find_library('execinfo', required: false)
 
-eina_lib = library('eina', sources,
+eina_lib = library('eina', eina_src,
   include_directories : config_dir,
   dependencies: [m, rt, dl, execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil],
   install: true,
