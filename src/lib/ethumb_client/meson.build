@@ -1,10 +1,10 @@
-ethumb_client_header_src = [
+ethumb_client_header_src = files([
   'Ethumb_Client.h'
-]
+])
 
-ethumb_client_src = [
+ethumb_client_src = files([
   'ethumb_client.c'
-]
+])
 
 ethumb_client_deps = [
   eldbus,

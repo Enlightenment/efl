@@ -2,13 +2,12 @@ ecore_evas_deps = [eina, ecore_input_evas, ecore_input, ecore, eet, evas, efl, e
 ecore_evas_pub_deps = [evas, ecore]
 pub_eo_file_target = []
 
-ecore_evas_header_src = [
+ecore_evas_header_src = files([
   'Ecore_Evas_Types.h',
   'Ecore_Evas.h',
+])
 
-]
-
-ecore_evas_src = [
+ecore_evas_src = files([
   'ecore_evas.c',
   'ecore_evas_buffer.c',
   'ecore_evas_buffer.h',
@@ -24,8 +23,7 @@ ecore_evas_src = [
   'ecore_evas_win32.h',
   'ecore_evas_x11.h',
   'ecore_evas_util.c'
-]
-
+])
 
 ecore_evas_lib = library('ecore_evas',
     ecore_evas_src, pub_eo_file_target,

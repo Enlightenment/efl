@@ -1,13 +1,13 @@
-ethumb_header_src = [
+ethumb_header_src = files([
   'Ethumb.h'
-]
+])
 
-ethumb_src = [
+ethumb_src = files([
   'ethumb.c',
   'ethumb_private.h',
   'md5.h',
   'md5.c',
-]
+])
 
 ethumb_deps = [eet, evas, ecore, ecore_evas, ecore_file, ecore_imf, edje, emile]
 ethumb_pub_deps = [eina, eo, efl]

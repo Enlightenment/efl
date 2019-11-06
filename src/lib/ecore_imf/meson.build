@@ -1,16 +1,16 @@
 ecore_imf_deps = [ecore]
 ecore_imf_pub_deps = [eina]
 
-ecore_imf_header_src = [
+ecore_imf_header_src = files([
    'Ecore_IMF.h'
-]
+])
 
-ecore_imf_src = [
+ecore_imf_src = files([
   'ecore_imf.c',
   'ecore_imf_context.c',
   'ecore_imf_module.c',
   'ecore_imf_private.h',
-]
+])
 
 
 ecore_imf_lib = library('ecore_imf',

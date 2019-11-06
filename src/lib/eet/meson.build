@@ -1,11 +1,11 @@
 eet_deps = [crypto, jpeg, rg_etc, m]
 eet_pub_deps = [eina, emile, efl]
 
-eet_header_src = [
+eet_header_src = files([
   'Eet.h'
-]
+])
 
-eet_src = [
+eet_src = files([
   'Eet_private.h',
   'eet_alloc.c',
   'eet_cipher.c',
@@ -16,7 +16,7 @@ eet_src = [
   'eet_lib.c',
   'eet_node.c',
   'eet_utils.c',
-]
+])
 
 eet_lib = library('eet',
     eet_src, pub_eo_file_target,

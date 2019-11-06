@@ -21,21 +21,21 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-emotion_header_src = [
+emotion_header_src = files([
   'Emotion.h',
   'Emotion_Legacy.h',
   'Emotion_Eo.h',
   'efl_canvas_video_eo.legacy.h',
-]
+])
 
-emotion_src = [
+emotion_src = files([
   'emotion_modules.h',
   'emotion_private.h',
   'emotion_smart.c',
   'emotion_webcam.c',
   'emotion_modules.c',
   'emotion_main.c'
-]
+])
 
 emotion_deps = [ecore, eet, evas, eio, emile]
 emotion_pub_deps = [eina, eo, efl]

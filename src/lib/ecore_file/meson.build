@@ -1,23 +1,23 @@
 ecore_file_deps = [ecore_con, ecore]
 ecore_file_pub_deps = [eina]
 
-ecore_file_src = [
+ecore_file_src = files([
   'ecore_file.c',
   'ecore_file_download.c',
   'ecore_file_monitor.c',
   'ecore_file_path.c',
   'ecore_file_private.h'
-]
+])
 
 if sys_windows == true
-  ecore_file_src += [ 'ecore_file_monitor_win32.c']
+  ecore_file_src += files([ 'ecore_file_monitor_win32.c'])
 elif sys_linux == true
-  ecore_file_src += [ 'ecore_file_monitor_inotify.c']
+  ecore_file_src += files([ 'ecore_file_monitor_inotify.c'])
 else
-  ecore_file_src += [ 'ecore_file_monitor_poll.c']
+  ecore_file_src += files([ 'ecore_file_monitor_poll.c'])
 endif
 
-ecore_file_header_src = ['Ecore_File.h']
+ecore_file_header_src = files(['Ecore_File.h'])
 
 
 ecore_file_lib = library('ecore_file',

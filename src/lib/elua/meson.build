@@ -12,8 +12,8 @@ else
 endif
 
 
-elua_src = ['elua.c', 'io.c', 'cache.c']
-elua_header_src = ['Elua.h']
+elua_src = files(['elua.c', 'io.c', 'cache.c'])
+elua_header_src = files(['Elua.h'])
 
 elua_lib = library('elua',
     elua_src,

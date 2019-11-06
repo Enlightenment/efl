@@ -4,11 +4,11 @@ ecore_wl2_deps = [
 ]
 ecore_wl2_pub_deps = [eina, ecore]
 
-ecore_wl2_header_src = [
+ecore_wl2_header_src = files([
   'Ecore_Wl2.h'
-]
+])
 
-ecore_wl2_src = [
+ecore_wl2_src = files([
   'ecore_wl2_internal.h',
   'ecore_wl2_subsurf.c',
   'ecore_wl2_dnd.c',
@@ -20,7 +20,7 @@ ecore_wl2_src = [
   'ecore_wl2_private.h',
   'ecore_wl2_buffer.c',
   'ecore_wl2_surface.c'
-]
+])
 
 ecore_wl2_lib = library('ecore_wl2',
     ecore_wl2_src, pub_eo_file_target,

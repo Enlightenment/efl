@@ -88,7 +88,7 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-edje_header_src = [
+edje_header_src = files([
   'Edje.h',
   'Efl_Layout.h',
   'Edje_Common.h',
@@ -99,9 +99,9 @@ edje_header_src = [
   'edje_edit_eo.legacy.h',
   'efl_layout_group_eo.legacy.h',
   'efl_canvas_layout_eo.legacy.h',
-]
+])
 
-edje_src = [
+edje_src = files([
   'edje_private.h',
   'edje_convert.h',
   'edje_box_layout.c',
@@ -140,8 +140,7 @@ edje_src = [
   'edje_part_box.c',
   'edje_part_text.c',
   'edje_part_invalid.c'
-
-]
+])
 
 edje_lib = library('edje',
     edje_src, pub_eo_file_target, priv_eo_file_target,

@@ -25,14 +25,14 @@ pub_eo_types_files = []
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-eio_header_src = [
+eio_header_src = files([
   'Eio.h',
   'Eio_Legacy.h',
   'Eio_Eo.h',
   'eio_inline_helper.x'
-]
+])
 
-eio_src = [
+eio_src = files([
   'eio_dir.c',
   'eio_eet.c',
   'eio_file.c',
@@ -48,19 +48,19 @@ eio_src = [
   'efl_io_model_private.h',
   'eio_private.h',
   'eio_sentry_private.h'
-]
+])
 
 linker_args = []
 
 if sys_windows == true
-  eio_src += ['eio_monitor_win32.c']
+  eio_src += files(['eio_monitor_win32.c'])
 elif sys_osx == true
-  eio_src += ['eio_monitor_cocoa.c']
+  eio_src += files(['eio_monitor_cocoa.c'])
   linker_args = [['-framework', 'CoreServices']]
 elif sys_linux == true
-  eio_src += ['eio_monitor_inotify.c']
+  eio_src += files(['eio_monitor_inotify.c'])
 elif sys_bsd == true
-  eio_src += ['eio_monitor_kevent.c']
+  eio_src += files(['eio_monitor_kevent.c'])
 endif
 
 eio_deps = [ecore, ecore_file, eet, eo, eina, efl, emile, efreet_mime]

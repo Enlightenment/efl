@@ -1,4 +1,4 @@
-efreet_header_src = [
+efreet_header_src = files([
   'Efreet.h',
   'efreet_base.h',
   'efreet_desktop.h',
@@ -9,9 +9,9 @@ efreet_header_src = [
   'efreet_uri.h',
   'Efreet_Mime.h',
   'Efreet_Trash.h'
-]
+])
 
-efreet_src = [
+efreet_src = files([
   'efreet.c',
   'efreet_base.c',
   'efreet_icon.c',
@@ -26,7 +26,7 @@ efreet_src = [
   'efreet_private.h',
   'efreet_xml.h',
   'efreet_cache_private.h'
-]
+])
 
 efreet_deps = [eet, ecore, ecore_con, ecore_file, eo, efl, eina, emile, ecore_ipc, buildsystem,intl]
 efreet_pub_deps = [eina, eo, efl]

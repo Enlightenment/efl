@@ -45,7 +45,7 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-eldbus_header_src = [
+eldbus_header_src = files([
   'Eldbus.h',
   'eldbus_connection.h',
   'eldbus_freedesktop.h',
@@ -59,9 +59,9 @@ eldbus_header_src = [
   'eldbus_introspection.h',
   'Eldbus_Model.h',
   'eldbus_message_eina_value.h'
-]
+])
 
-eldbus_src = [
+eldbus_src = files([
   'eldbus_private.h',
   'eldbus_private_types.h',
   'eldbus_model_private.h',
@@ -90,7 +90,7 @@ eldbus_src = [
   'eldbus_model_arguments.c',
   'eldbus_model_signal.c',
   'eldbus_introspection.c'
-]
+])
 
 eldbus_deps += dependency('dbus-1')
 

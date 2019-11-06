@@ -96,7 +96,7 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-ecore_con_header_src = [
+ecore_con_header_src = files([
   'Ecore_Con.h',
   'Efl_Net.h',
   'Ecore_Con_Eet.h',
@@ -108,9 +108,9 @@ ecore_con_header_src = [
   'ecore_con_eet_client_obj_eo.legacy.h',
   'ecore_con_eet_server_obj_eo.h',
   'ecore_con_eet_server_obj_eo.legacy.h'
-]
+])
 
-ecore_con_src = [
+ecore_con_src = files([
   'ecore_con_alloc.c',
   'ecore_con.c',
   'ecore_con_proxy_helper.c',
@@ -145,38 +145,38 @@ ecore_con_src = [
   'efl_net_server_ssl.c',
   'ecore_con_local.c',
   'efl_net_ip_address.c'
-]
+])
 
 if sys_windows == true
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net_socket_windows.c',
     'efl_net_dialer_windows.c',
     'efl_net_server_windows.c'
-  ]
+  ])
 else
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net_socket_unix.c',
     'efl_net_dialer_unix.c',
     'efl_net_server_unix.c'
-  ]
+  ])
 endif
 
 if get_option('network-backend') == 'none'
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net_control_access_point-none.c',
     'efl_net_control_technology-none.c',
     'efl_net_control-none.c',
     'efl_net_session-none.c'
-  ]
+  ])
 else
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net-connman.h',
     'efl_net-connman.c',
     'efl_net_control_access_point-connman.c',
     'efl_net_control_technology-connman.c',
     'efl_net_control-connman.c',
     'efl_net_session-connman.c'
-  ]
+  ])
   ecore_con_deps += eldbus
 endif
 

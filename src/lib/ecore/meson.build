@@ -85,7 +85,7 @@ pub_eo_types_files = []
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-ecore_header_src = [
+ecore_header_src = files([
   'Ecore.h',
   'Ecore_Common.h',
   'Ecore_Legacy.h',
@@ -96,9 +96,9 @@ ecore_header_src = [
   'ecore_exe_eo.h',
   'ecore_exe_eo.legacy.h',
   'efl_loop_timer_eo.legacy.h',
-]
+])
 
-ecore_src = [
+ecore_src = files([
   'efl_app.c',
   'ecore.c',
   'ecore_alloc.c',
@@ -168,13 +168,13 @@ ecore_src = [
   'efl_core_env.c',
   'efl_core_proc_env.c',
   'efl_core_command_line.c',
-]
+])
 
 if sys_windows == true
   #nothing for now ... needs testing
-  ecore_src += ['ecore_exe_win32.c']
+  ecore_src += files(['ecore_exe_win32.c'])
 else
-  ecore_src += ['ecore_signal.c', 'ecore_exe_posix.c']
+  ecore_src += files(['ecore_signal.c', 'ecore_exe_posix.c'])
 endif
 
 if get_option('glib') == true and sys_windows == false

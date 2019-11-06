@@ -5,18 +5,18 @@ if get_option('tslib')
   ecore_fb_deps += dependency('tslib')
 endif
 
-ecore_fb_header_src = [
+ecore_fb_header_src = files([
   'Ecore_Fb.h'
-]
+])
 
-ecore_fb_src = [
+ecore_fb_src = files([
   'ecore_fb.c',
   'ecore_fb_li.c',
   'ecore_fb_ts.c',
   'ecore_fb_vt.c',
   'ecore_fb_keytable.h',
   'ecore_fb_private.h'
-]
+])
 
 ecore_fb_lib = library('ecore_fb',
     ecore_fb_src, pub_eo_file_target,

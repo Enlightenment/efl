@@ -1,10 +1,10 @@
-ecore_imf_evas_header_src = [
+ecore_imf_evas_header_src = files([
   'Ecore_IMF_Evas.h'
-]
+])
 
-ecore_imf_evas_src = [
+ecore_imf_evas_src = files([
   'ecore_imf_evas.c'
-]
+])
 
 ecore_imf_evas_deps = [ecore_imf, evas]
 ecore_imf_evas_pub_deps = [eina, eo, efl]

@@ -1,7 +1,7 @@
 ecore_wayland_deps = [ecore_input, ecore, eo, efl, eina]
 ecore_wayland_pub_deps = [dependency('wayland-client', version: '>= 1.8.0'), dependency('wayland-cursor', version: '>= 1.8.0 '),  dependency('xkbcommon', version: '>= 0.5.0'), dependency('uuid')]
 
-ecore_wayland_src = [
+ecore_wayland_src = files([
   'ecore_wl.c',
   'ecore_wl_dnd.c',
   'ecore_wl_input.c',
@@ -17,11 +17,11 @@ ecore_wayland_src = [
   'xdg-shell-protocol.c',
   'session-recovery-client-protocol.h',
   'session-recovery-protocol.c'
-]
-ecore_wayland_header_src = [
-  'Ecore_Wayland.h'
-]
+])
 
+ecore_wayland_header_src = files([
+  'Ecore_Wayland.h'
+])
 
 ecore_wayland_lib = library('ecore_wayland',
     ecore_wayland_src,

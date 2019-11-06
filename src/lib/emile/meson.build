@@ -1,26 +1,26 @@
 emile_deps = [jpeg, crypto, dependency('zlib')]
 emile_pub_deps = [eina, efl]
 
-emile_headers = [
+emile_headers = files([
   'Emile.h',
   'emile_cipher.h',
   'emile_compress.h',
   'emile_image.h',
   'emile_base64.h'
-]
+])
 
-emile_src = [
+emile_src = files([
   'emile_private.h',
   'emile_main.c',
   'emile_compress.c',
   'emile_image.c',
   'emile_base64.c',
-]
+])
 
 if (get_option('crypto') == 'gnutls')
-  emile_src += 'emile_cipher_gnutls.c'
+  emile_src += files('emile_cipher_gnutls.c')
 elif (get_option('crypto') == 'openssl')
-  emile_src += 'emile_cipher_openssl.c'
+  emile_src += files('emile_cipher_openssl.c')
 endif
 
 emile_lib = library('emile',

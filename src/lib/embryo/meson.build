@@ -1,12 +1,11 @@
 embryo_deps = [ecore]
 embryo_pub_deps = [eina, eo, efl]
 
-
-embryo_header_src = [
+embryo_header_src = files([
   'Embryo.h'
-]
+])
 
-embryo_src = [
+embryo_src = files([
   'embryo_amx.c',
   'embryo_args.c',
   'embryo_float.c',
@@ -15,7 +14,7 @@ embryo_src = [
   'embryo_str.c',
   'embryo_time.c',
   'embryo_private.h'
-]
+])
 
 embryo_deps = [eina, m]
 

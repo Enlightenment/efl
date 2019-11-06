@@ -376,7 +376,7 @@ elementary_headers_unstable = [
   'efl_ui_relative_layout_private.h'
 ]
 
-elementary_pub_headers = [
+elementary_pub_headers = files([
   'elc_ctxpopup.h',
   'elc_ctxpopup_legacy.h',
   'elc_combobox.h',
@@ -706,14 +706,14 @@ elementary_pub_headers = [
   'elm_widget_item_container_eo.legacy.h',
   'elm_widget_item_eo.legacy.h',
   'elm_widget_item_static_focus_eo.legacy.h',
-]
+])
 
-elementary_header_src = [
+elementary_header_src = files([
   'Elementary.h',
   'Elementary_Cursor.h'
-] + elementary_pub_headers + elementary_headers_unstable
+]) + elementary_pub_headers + elementary_headers_unstable
 
-elementary_src = [
+elementary_src = files([
   'elm_priv.h',
   'elementary_config.h',
   'els_box.h',
@@ -943,7 +943,7 @@ elementary_src = [
   'efl_ui_select_model.c',
   'efl_ui_view_model.c',
   'efl_ui_collection_view.c',
-]
+])
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,

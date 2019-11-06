@@ -1,17 +1,17 @@
 ecore_input_deps = [ecore]
 ecore_input_pub_deps = [eina, eo]
 
-ecore_input_header_src = [
+ecore_input_header_src = files([
   'Ecore_Input.h'
-]
+])
 
-ecore_input_src = [
+ecore_input_src = files([
   'ecore_input.c',
   'ecore_input_compose.c',
   'ecore_input_joystick.c',
   'ecore_input_compose.h',
   'ecore_input_private.h'
-]
+])
 
 if get_option('eeze')
   ecore_input_deps += eeze

@@ -1,7 +1,7 @@
 evil_deps = []
 evil_pub_deps = []
 if target_machine.system() == 'windows'
-  evil_src = [
+  evil_src = files([
   'evil_dlfcn.c',
   'evil_fcntl.c',
   'evil_langinfo.c',
@@ -15,7 +15,7 @@ if target_machine.system() == 'windows'
   'evil_unistd.c',
   'evil_util.c',
   'evil_private.h',
-  ]
+  ])
 
   psapi = cc.find_library('psapi')
   ole32 = cc.find_library('ole32')

@@ -9,7 +9,7 @@ ector_header_src = [
  # nothing for now ector stays only intree
 ]
 
-ector_src = [
+ector_src = files([
   'ector_main.c',
   'ector_gl_internal.h',
   'ector_buffer.c',
@@ -19,7 +19,7 @@ ector_src = [
   'ector_renderer_gradient.c',
   'ector_renderer_gradient_radial.c',
   'ector_renderer_gradient_linear.c'
-]
+])
 
 pub_eo_files = [
   'ector_surface.eo',

@@ -6,10 +6,10 @@ if (get_option('x11'))
   efl_wl_pub_deps += [dependency('xkbcommon-x11')]
 endif
 
-efl_wl_src = [
+efl_wl_src = files([
  'dmabuf.c',
  'efl_wl.c'
-]
+])
 efl_wl_header_src = ['Efl_Wl.h']
 
 

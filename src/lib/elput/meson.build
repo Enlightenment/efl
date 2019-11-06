@@ -2,11 +2,11 @@ elput_deps = [ecore, ecore_input, eeze, eo, m]
 elput_pub_deps = [eina, eldbus]
 pub_eo_file_target = []
 
-elput_header_src = [
+elput_header_src = files([
   'Elput.h'
-]
+])
 
-elput_src = [
+elput_src = files([
   'elput_touch.c',
   'elput_evdev.c',
   'elput_input.c',
@@ -14,7 +14,7 @@ elput_src = [
   'elput_manager.c',
   'elput.c',
   'elput_private.h'
-]
+])
 
 elput_deps += dependency('libinput', version : ['>=1.7.0'])
 elput_deps += dependency('xkbcommon', version : ['>=0.3.0'])

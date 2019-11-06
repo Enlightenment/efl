@@ -1,10 +1,10 @@
 efl_deps = []
 efl_pub_deps = [eo]
 
-efl_header_src = [
+efl_header_src = files([
   'Efl.h',
   'Efl_MVVM_Common.h'
-]
+])
 
 efl_src = []
 

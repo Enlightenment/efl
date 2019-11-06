@@ -1,14 +1,14 @@
 ecore_sdl_deps = [eina, ecore, ecore_input]
 ecore_sdl_pub_deps = []
 
-ecore_sdl_src = [
+ecore_sdl_src = files([
   'ecore_sdl.c'
-]
+])
 
-ecore_sdl_header_src = [
+ecore_sdl_header_src = files([
   'Ecore_Sdl.h',
   'Ecore_Sdl_Keys.h'
-]
+])
 
 ecore_sdl_deps += dependency('sdl2')
 

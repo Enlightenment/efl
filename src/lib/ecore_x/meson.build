@@ -1,13 +1,13 @@
 ecore_x_deps = [ecore, dl, m, ecore_input]
 ecore_x_pub_deps = [eina, efl]
 
-ecore_x_header_src = [
+ecore_x_header_src = files([
   'Ecore_X.h',
   'Ecore_X_Atoms.h',
   'Ecore_X_Cursor.h'
-]
+])
 
-ecore_x_src = [
+ecore_x_src = files([
   'ecore_x_atoms_decl.h',
   'ecore_x.c',
   'ecore_x_dnd.c',
@@ -43,7 +43,7 @@ ecore_x_src = [
   'ecore_x_vsync.c',
   'ecore_x_gesture.c',
   'ecore_x_private.h'
-]
+])
 
 ecore_x_checks = [
   ['Xcomposite', 'Xcomposite.h', 'Xcomposite', 'XCompositeQueryExtension'],

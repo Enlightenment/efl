@@ -7,7 +7,7 @@ pub_eo_files = [
   'efl_object_override.eo'
 ]
 
-eo_src = [
+eo_src = files([
   'eo.c',
   'eo_ptr_indirection.c',
   'eo_ptr_indirection.h',
@@ -17,13 +17,13 @@ eo_src = [
   'eo_add_fallback.h',
   'eo_private.h',
   'eo_internal.h'
-]
+])
 
 pub_eo_types_files = [
   'eina_types.eot'
 ]
 
-eo_header = ['Eo.h']
+eo_header = files(['Eo.h'])
 
 pub_eo_file_target = []
 priv_eo_file_target = []

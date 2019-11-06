@@ -115,7 +115,7 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 
 evas_src += pub_eo_file_target
 
-evas_header_src = [
+evas_header_src = files([
   'Evas.h',
   'Evas_Common.h',
   'Evas_Eo.h',
@@ -123,7 +123,7 @@ evas_header_src = [
   'Evas_Legacy.h',
   'Evas_Loader.h',
   'Efl_Canvas.h',
-]
+])
 
 evas_include_directories += [
   include_directories('.'),
@@ -135,9 +135,9 @@ evas_include_directories += [
   vg_common_inc_dir
 ]
 
-evas_src += [
+evas_src += files([
    'main.c'
-]
+])
 
 evas_src_opt = [ ]
 

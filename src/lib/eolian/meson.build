@@ -1,7 +1,7 @@
 eolian_pub_deps = [eina]
 eolian_deps = []
 
-eolian_src = [
+eolian_src = files([
 'eo_lexer.c',
 'eo_lexer.h',
 'eo_parser.c',
@@ -33,7 +33,7 @@ eolian_src = [
 'database_var_api.c',
 'database_validate.c',
 'eolian_aux.c'
-]
+])
 
 eolian_lib = library('eolian', eolian_src,
     include_directories: config_dir,

@@ -3,11 +3,11 @@ bullet = dependency('bullet')
 ephysics_deps = [evas, bullet]
 ephysics_pub_deps = [eina, eo, efl]
 
-ephysics_header_src = [
+ephysics_header_src = files([
   'EPhysics.h'
-]
+])
 
-ephysics_src = [
+ephysics_src = files([
   'ephysics_private.h',
   'ephysics_trimesh.h',
   'ephysics_body_materials.h',
@@ -18,7 +18,7 @@ ephysics_src = [
   'ephysics_quaternion.cpp',
   'ephysics_shape.cpp',
   'ephysics_world.cpp'
-]
+])
 
 ephysics_lib = library('ephysics',
     ephysics_src,

@@ -2,11 +2,11 @@ ecore_cocoa_deps = [eina, ecore_input, ecore, emile, eet]
 ecore_cocoa_pub_deps = [eina]
 pub_eo_file_target = []
 
-ecore_cocoa_header_src = [
+ecore_cocoa_header_src = files([
   'Ecore_Cocoa.h'
-]
+])
 
-ecore_cocoa_src = [
+ecore_cocoa_src = files([
   'ecore_cocoa.m',
   'ecore_cocoa_keys.h',
   'ecore_cocoa_window.h',
@@ -15,7 +15,7 @@ ecore_cocoa_src = [
   'ecore_cocoa_app.m',
   'ecore_cocoa_app.h',
   'ecore_cocoa_private.h'
-]
+])
 
 evas_include_directories = [
   include_directories(join_paths('..', 'evas')),

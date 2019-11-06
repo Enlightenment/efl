@@ -5,7 +5,7 @@ if sys_windows == true
    eina_pub_deps += [evil]
 endif
 
-public_sub_headers = [
+public_sub_headers = files([
 'eina_promise.h',
 'eina_safety_checks.h',
 'eina_error.h',
@@ -105,11 +105,11 @@ public_sub_headers = [
 'eina_freeq.h',
 'eina_slstr.h',
 'eina_vpath.h',
-]
+])
 
-public_headers = [
+public_headers = files([
   'Eina.h'
-]
+])
 
 eina_src = files([
 'eina_abi.c',
@@ -190,9 +190,9 @@ eina_src = files([
 ])
 
 if sys_windows == true
-  eina_src += 'eina_file_win32.c'
+  eina_src += files('eina_file_win32.c')
 else
-  eina_src += 'eina_file.c'
+  eina_src += files('eina_file.c')
 endif
 
 eina_config = configuration_data()
