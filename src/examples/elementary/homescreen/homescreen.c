@@ -33,6 +33,8 @@ static Icon workspace3[] = {
     { EINA_RECT(0, 0, 0, 0), NULL, NULL},
 };
 
+static Eina_Size2D table_size = EINA_SIZE2D(20, 20);
+
 static Efl_Ui_Widget*
 _create_icon(Icon *icon, Eo *parent)
 {
