@@ -1884,12 +1884,10 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    Efl_Model *mselect = NULL;
    Eina_Bool selection = EINA_FALSE, sizing = EINA_FALSE;
 
-   if (ev->previous) efl_event_callback_array_del(ev->previous, model_cbs(), data);
-   if (ev->current) efl_event_callback_array_add(ev->current, model_cbs(), data);
-
    // Cleanup all object, pending request and refetch everything
    _all_cleanup(data, pd);
 
+   if (pd->model) efl_event_callback_array_del(pd->model, model_cbs(), data);
    efl_replace(&pd->model, NULL);
 
    if (!ev->current)
@@ -1983,6 +1981,8 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    requests = _batch_request_flush(requests, data, pd);
 
    pd->model = model;
+   efl_event_callback_array_add(pd->model, model_cbs(), data);
+
    efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
    switch(efl_ui_position_manager_entity_version(pd->manager, 1))
      {
@@ -1993,8 +1993,6 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
            count);
        break;
      }
-
-
 }
 
 static void
