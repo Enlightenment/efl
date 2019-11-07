@@ -223,7 +223,7 @@ struct function_definition_generator
         << scope_tab(2) << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
         << self
-        << ((!f.is_static && (f.parameters.size() > 0)) ? "," : "")
+        << ((!f.is_static && (f.parameters.size() > 0)) ? ", " : "")
         << (argument_invocation % ", ") << ");\n"
         << scope_tab(2) << eolian_mono::function_definition_epilogue()
         << scope_tab(1) << "}\n\n")
@@ -497,8 +497,8 @@ struct property_wrapper_definition_generator
                      << argument(false) << " = default(" << type(true) << ");\n"
                     )
                   << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
-                  << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
-                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ",") << ");\n"
+                  << "(" << (("out _out_" << argument(false)) % ", ") << ");\n"
+                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
                   << scope_tab(2) << "}" << "\n"
                  ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
           return false;

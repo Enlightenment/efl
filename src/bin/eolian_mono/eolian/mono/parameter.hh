@@ -1536,7 +1536,7 @@ struct constructor_param_generator
 
      if (!as_generator(
                        efl::eolian::grammar::attribute_reorder<1, -1>
-                       (type(false, ctor.is_optional) << " " << constructor_parameter_name(ctor) << (ctor.is_optional ? " = null" : "")) % ","
+                       (type(false, ctor.is_optional) << " " << constructor_parameter_name(ctor) << (ctor.is_optional ? " = null" : "")) % ", "
                 ).generate(sink, params, context))
        return false;
      //   }

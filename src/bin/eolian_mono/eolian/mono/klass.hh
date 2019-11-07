@@ -132,7 +132,7 @@ struct klass
               continue;
 
             if(first->type != attributes::class_type::regular && first->type != attributes::class_type::abstract_)
-              if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
+              if(!as_generator("\n" << scope_tab << string << ",").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
                 return false;
          }
 
@@ -202,9 +202,9 @@ struct klass
             (
              documentation
              << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
-             << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
-             << scope_tab << ", " << interface_name << "\n"
-             << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
+             << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "")
+             << ",\n" << scope_tab << interface_name
+             << *(",\n" << scope_tab << name_helpers::klass_full_concrete_or_interface_name) << "\n"
              << "{\n"
             ).generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), concrete_cxt))
               return false;
@@ -564,9 +564,9 @@ struct klass
                      << scope_tab << "/// <param name=\"parent\">Parent instance.</param>\n"
                      << *(documentation)
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
-                     << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
-                     << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") : "
-                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
+                     << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null")
+                     << *(", " << constructor_param ) << ") : "
+                     << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
                      << scope_tab << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
