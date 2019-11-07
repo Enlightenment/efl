@@ -223,7 +223,7 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "gesture/efl_gesture_events.eo.h"
 
 #include "canvas/efl_canvas_object.eo.h"
-
+#include "canvas/efl_canvas_object_animation.eo.h"
 #include "canvas/efl_canvas_animation.eo.h"
 #include "canvas/efl_canvas_animation_alpha.eo.h"
 #include "canvas/efl_canvas_animation_rotate.eo.h"

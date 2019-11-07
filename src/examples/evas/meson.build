@@ -50,6 +50,7 @@ examples = [
   'evas-vg-batman',
   'evas-vg-simple',
   'evas-vg-json',
+  'efl-canvas-animation',
 ]
 
 foreach example : examples
