@@ -187,6 +187,11 @@ inline std::string function_scope_get(attributes::function_def const& f)
      case attributes::member_scope::scope_private:
        return "private ";
      case attributes::member_scope::scope_protected:
+       // Efl.Part.part.get is protected in C to force developers to use `efl_part`.
+       // There is no such restriction in C# as the binding takes care of the returned
+       // object lifetime.
+       if (f.c_name == "efl_part_get")
+         return "public ";
        return "protected ";
      case attributes::member_scope::scope_unknown:
        // This should trigger a compilation error

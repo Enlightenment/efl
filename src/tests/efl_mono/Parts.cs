@@ -81,6 +81,20 @@ public static class TestMVVMParts
     }
 }
 
+public static class TestNamedParts
+{
+    public static void named_parts()
+    {
+        var obj = new Dummy.PartHolder();
+        var p1 = obj.GetPart("one");
+        var p2 = obj.GetPart("two");
+        Test.Assert(p1 is Dummy.TestObject);
+        Test.AssertEquals("part_one", p1.GetName());
+        Test.Assert(p2 is Dummy.TestObject);
+        Test.AssertEquals("part_two", p2.GetName());
+    }
+}
+
 #endif
 
 }
