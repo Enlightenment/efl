@@ -57,6 +57,33 @@ foreach mono_gen_file : eo_files
                                 '@INPUT@'])
 endforeach
 
+efl_mono_src = [
+      'Main.cs',
+      'TestUtils.cs',
+      'EinaTestData.cs',
+      'StructHelpers.cs',
+      'BasicDirection.cs',
+      'Eina.cs',
+      'Eldbus.cs',
+      'Eo.cs',
+      'EoPromises.cs',
+      'EoConstruction.cs',
+      'Errors.cs',
+      'Events.cs',
+      'FunctionPointers.cs',
+      'FunctionPointerMarshalling.cs',
+      'Model.cs',
+      'Parts.cs',
+      'Promises.cs',
+      'Strbuf.cs',
+      'Strings.cs',
+      'Structs.cs',
+      'Value.cs',
+      'ValueEolian.cs',
+      'Inheritance.cs',
+      'Hash.cs'
+]
+
 if get_option('dotnet')
 
   dotnet_test_conf_data = configuration_data()
@@ -80,7 +107,7 @@ if get_option('dotnet')
   )
 
   efl_mono_suite = custom_target('efl_mono_test',
-    input: eo_file_targets + [dotnet_test_csproj],
+    input: eo_file_targets + [dotnet_test_csproj] + efl_mono_src,
     output: 'efl_sharp_test_suite.dll',
     depends: [efl_mono],
     build_by_default: true,
@@ -99,33 +126,6 @@ else
       link_with : [efl_mono],
       cs_args : extra_cs_args
   )
-
-  efl_mono_src = [
-       'Main.cs',
-       'TestUtils.cs',
-       'EinaTestData.cs',
-       'StructHelpers.cs',
-       'BasicDirection.cs',
-       'Eina.cs',
-       'Eldbus.cs',
-       'Eo.cs',
-       'EoPromises.cs',
-       'EoConstruction.cs',
-       'Errors.cs',
-       'Events.cs',
-       'FunctionPointers.cs',
-       'FunctionPointerMarshalling.cs',
-       'Model.cs',
-       'Parts.cs',
-       'Promises.cs',
-       'Strbuf.cs',
-       'Strings.cs',
-       'Structs.cs',
-       'Value.cs',
-       'ValueEolian.cs',
-       'Inheritance.cs',
-       'Hash.cs'
-  ]
 
   efl_mono_suite = executable('efl-mono-suite',
     efl_mono_src,
