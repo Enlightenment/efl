@@ -4028,6 +4028,21 @@ _scroll_event_object_detach(Evas_Object *obj)
 }
 
 EOLIAN static void
+_elm_interface_scrollable_reset_signals(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   sid->go_up = sid->go_down = sid->go_right = sid->go_left = EINA_FALSE;
+
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,down", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,vbar", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,hbar", "elm");
+
+   _elm_scroll_scroll_bar_visibility_adjust(sid);
+}
+
+EOLIAN static void
 _elm_interface_scrollable_objects_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Object *edje_object, Evas_Object *hit_rectangle)
 {
    Evas_Coord mw, mh;
@@ -4039,10 +4054,7 @@ _elm_interface_scrollable_objects_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
 
    sid->edje_obj = edje_object;
 
-   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
-   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,down", "elm");
-   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
-   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
+   elm_interface_scrollable_reset_signals(obj);
 
    if (sid->event_rect)
      _scroll_event_object_detach(obj);

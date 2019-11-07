@@ -647,6 +647,9 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Focus
             enable: bool; [[True to enable looping.]]
          }
       }
+      reset_signals {
+        [[Call this if you have changed the group of the object passed to @.objects]]
+      }
    }
    implements {
       class.constructor;

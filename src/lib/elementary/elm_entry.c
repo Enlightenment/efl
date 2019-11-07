@@ -1003,6 +1003,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
           elm_widget_theme_object_set
           (obj, sd->scr_edje, "scroller", "entry", style);
 
+        elm_interface_scrollable_reset_signals(obj);
         _elm_entry_background_switch(sd->entry_edje, sd->scr_edje);
 
         str = edje_object_data_get(sd->scr_edje, "focus_highlight");
