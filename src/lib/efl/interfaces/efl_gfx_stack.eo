@@ -42,7 +42,9 @@ interface Efl.Gfx.Stack
 
            See also @.layer.]]
          get {
-            return: Efl.Gfx.Stack @no_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+         }
+         values {
+            below: Efl.Gfx.Stack; [[The @Efl.Gfx.Stack object directly below $obj, if any,
                                                 or $null, if none.]]
          }
       }
@@ -54,7 +56,9 @@ interface Efl.Gfx.Stack
 
            See also @.layer and @.below]]
          get {
-            return: Efl.Gfx.Stack @no_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+         }
+         values {
+            above: Efl.Gfx.Stack; [[The @Efl.Gfx.Stack object directly below $obj, if any,
                                                 or $null, if none.]]
          }
       }

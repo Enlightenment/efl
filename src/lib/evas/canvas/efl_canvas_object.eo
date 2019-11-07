@@ -352,7 +352,9 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            See also @.clipper.
          ]]
          get {
-            return: iterator<Efl.Canvas.Object> @no_unused; [[An iterator over the
+         }
+         values {
+            objects: iterator<Efl.Canvas.Object> @move; [[An iterator over the
                                              list of objects clipped by $obj.]]
          }
       }
