@@ -1978,7 +1978,7 @@ _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, E
 }
 
 #define EFL_OBJECT_EVENT_CALLBACK_BLOCK(Pd, Desc, Event)                \
-  if ((Desc == Event) && (!(Pd->event_cb_##Event))) return EINA_FALSE;
+  if ((Desc == Event) && (!(Pd->event_cb_##Event))) return EINA_TRUE;
 
 static inline Eina_Bool
 _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
@@ -1999,7 +1999,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    };
    int event_hash;
 
-   if (pd->callbacks_count == 0) return EINA_FALSE;
+   if (pd->callbacks_count == 0) return EINA_TRUE;
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_ADD)
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_DEL)
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DEL)
@@ -2010,7 +2010,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
      {
         event_hash = _pointer_hash((uintptr_t) desc);
         if (!(pd->callbacks_mask & (1 << event_hash)))
-          return EINA_FALSE;
+          return EINA_TRUE;
      }
 
    if (pd->event_frame)
@@ -2060,6 +2060,7 @@ restart_back:
 
                        // Handle nested restart of walking list
                        if (lookup) lookup->current = idx - 1;
+
                        it->func((void *) (*cb)->func_data, &ev);
                        /* Abort callback calling if the func says so. */
                        if (pd->callback_stopped)
@@ -2083,6 +2084,7 @@ restart_back:
 
                   // Handle nested restart of walking list
                   if (lookup) lookup->current = idx - 1;
+
                   (*cb)->items.item.func((void *) (*cb)->func_data, &ev);
                   /* Abort callback calling if the func says so. */
                   if (pd->callback_stopped)
@@ -2176,7 +2178,6 @@ _efl_event_forwarder_callback(void *data, const Efl_Event *event)
    Eina_Bool ret = EINA_FALSE;
 
    ret = efl_event_callback_call(new_obj, event->desc, event->info);
-
    if (!ret)
      {
         efl_event_callback_stop(event->object);
