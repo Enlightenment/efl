@@ -419,8 +419,6 @@ static void       st_collections_group_parts_part_description_text_repch(void);
 static void       st_collections_group_parts_part_description_text_size(void);
 static void       st_collections_group_parts_part_description_text_size_range(void);
 static void       st_collections_group_parts_part_description_text_fit(void);
-static void       st_collections_group_parts_part_description_text_fit_step(void);
-static void       st_collections_group_parts_part_description_text_fit_size_array(void);
 static void       st_collections_group_parts_part_description_text_min(void);
 static void       st_collections_group_parts_part_description_text_max(void);
 static void       st_collections_group_parts_part_description_text_align(void);
@@ -954,8 +952,6 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
    {"collections.group.parts.part.description.text.size_range", st_collections_group_parts_part_description_text_size_range},
    {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
-   {"collections.group.parts.part.description.text.fit_step", st_collections_group_parts_part_description_text_fit_step},
-   {"collections.group.parts.part.description.text.fit_size_array", st_collections_group_parts_part_description_text_fit_size_array},
    {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
    {"collections.group.parts.part.description.text.max", st_collections_group_parts_part_description_text_max},
    {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
@@ -11656,83 +11652,6 @@ st_collections_group_parts_part_description_text_fit(void)
 
    ed->text.fit_x = parse_bool(0);
    ed->text.fit_y = parse_bool(1);
-}
-
-
-/**
-    @page edcref
-
-    @property
-        fit_step
-    @parameters
-        [font step size in points (pt)]
-    @effect
-        Sets the font step size for the text part. when fitting text
-
-        Defaults: 1
-    @since 1.24.0
-    @endproperty
- */
-static void
-st_collections_group_parts_part_description_text_fit_step(void)
-{
-   Edje_Part_Description_Text *ed;
-
-   check_arg_count(1);
-
-   if (current_part->type != EDJE_PART_TYPE_TEXTBLOCK)
-     {
-        ERR("parse error %s:%i. text attributes in non-TEXTBLOCK part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Text *)current_desc;
-
-   ed->text.fit_step = parse_int(0);
-
-   if (ed->text.fit_step < 1)
-     {
-          ERR("parse error %s:%i. fit step less than 1.",
-            file_in, line - 1);
-        exit(-1);
-     }
-}
-
-/**
-    @page edcref
-
-    @property
-        fit
-    @parameters
-        [Array of font sizes in points]
-    @effect
-        Sets the allowed font sizes array for the text part.
-    @since 1.24.0
-    @endproperty
- */
-static void
-st_collections_group_parts_part_description_text_fit_size_array(void)
-{
-   int n, argc;
-   Edje_Part_Description_Text *ed;
-
-   if (current_part->type != EDJE_PART_TYPE_TEXTBLOCK)
-     {
-        ERR("parse error %s:%i. text attributes in non-TEXTBLOCK part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Text *)current_desc;
-   check_min_arg_count(1);
-
-   for (n = 0, argc = get_arg_count(); n < argc; n++)
-     {
-        unsigned int *value = malloc(sizeof(unsigned int));
-        *value = (unsigned int) parse_int(n);
-        ed->text.fit_size_array = eina_list_append(ed->text.fit_size_array, value);
-     }
 }
 
 /**
