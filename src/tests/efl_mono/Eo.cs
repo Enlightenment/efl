@@ -23,10 +23,6 @@ namespace TestSuite
 
 class TestEo
 {
-    private class Derived : Dummy.TestObject
-    {
-    }
-
     public static void return_null_object()
     {
         var testing = new Dummy.TestObject();
