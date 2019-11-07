@@ -8,7 +8,7 @@
 
 #include "elm_priv.h"
 #include "efl_ui_alert_popup_private.h"
-#include "efl_ui_alert_popup_part.eo.h"
+#include "efl_ui_alert_popup_part_title.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_ALERT_POPUP_CLASS
@@ -257,18 +257,42 @@ _efl_ui_alert_popup_efl_object_destructor(Eo *obj, Efl_Ui_Alert_Popup_Data *pd)
 }
 
 static Eina_Bool
-_part_is_efl_ui_alert_popup_part(const Eo *obj, const char *part)
+_part_is_efl_ui_alert_popup_part_title(const Eo *obj, const char *part)
 {
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE)) return EINA_FALSE;
    return eina_streq(part, "efl.text.title");
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE_PARTIAL(efl_ui_alert_popup, EFL_UI_ALERT_POPUP,
-                          Efl_Ui_Alert_Popup_Data, _part_is_efl_ui_alert_popup_part)
-ELM_PART_OVERRIDE_TEXT_SET(efl_ui_alert_popup, EFL_UI_ALERT_POPUP, Efl_Ui_Alert_Popup_Data)
-ELM_PART_OVERRIDE_TEXT_GET(efl_ui_alert_popup, EFL_UI_ALERT_POPUP, Efl_Ui_Alert_Popup_Data)
-#include "efl_ui_alert_popup_part.eo.c"
+EOLIAN static Efl_Object *
+_efl_ui_alert_popup_efl_part_part_get(const Eo *obj, Efl_Ui_Alert_Popup_Data *priv EINA_UNUSED, const char *part)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   if (_part_is_efl_ui_alert_popup_part_title(obj, part))
+     return ELM_PART_IMPLEMENT(EFL_UI_ALERT_POPUP_PART_TITLE_CLASS, obj, part);
+   return efl_part_get(efl_super(obj, EFL_UI_ALERT_POPUP_CLASS), part);
+}
+
+EOLIAN static void
+_efl_ui_alert_popup_part_title_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Alert_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_ALERT_POPUP_CLASS);
+
+   _efl_ui_alert_popup_text_set(pd->obj, sd, pd->part, text);
+}
+
+EOLIAN static const char*
+_efl_ui_alert_popup_part_title_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Alert_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_ALERT_POPUP_CLASS);
+
+   return _efl_ui_alert_popup_text_get(pd->obj, sd, pd->part);
+}
+
+
+#include "efl_ui_alert_popup_part_title.eo.c"
 
 /* Efl.Part end */
 EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_alert_popup)
