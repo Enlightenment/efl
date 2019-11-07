@@ -4002,10 +4002,9 @@ _elm_map_efl_ui_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
-
    elm_widget_theme_object_set
       (obj, wd->resize_obj, "map", "base", elm_widget_style_get(obj));
-
+   elm_interface_scrollable_reset_signals(obj);
    _sizing_eval(obj);
 
    return int_ret;

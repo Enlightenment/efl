@@ -1139,6 +1139,8 @@ _elm_list_efl_ui_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   elm_interface_scrollable_reset_signals(obj);
+
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    EINA_LIST_FOREACH(sd->items, n, eo_it)
@@ -1150,7 +1152,6 @@ _elm_list_efl_ui_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
      }
 
    _items_fix(obj);
-
    elm_layout_sizing_eval(obj);
 
    return int_ret;
