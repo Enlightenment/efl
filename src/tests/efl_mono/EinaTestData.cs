@@ -23,25 +23,26 @@ namespace EinaTestData
 
 class BaseSequence
 {
-    public static byte[] Values()
-    {
-        return new byte[3]{0x0,0x2A,0x42};
-    }
+    public static byte[] Values() => new byte[3]{0x0, 0x2A, 0x42};
 }
 
 public static class BaseData
 {
-    public static readonly int[] base_seq_int = {0x0,0x2A,0x42};
-    public static readonly int[] append_seq_int = {42,43,33};
-    public static readonly int[] modified_seq_int = {0x0,0x2A,0x42,42,43,33};
+    public static readonly int[] base_seq_int = {0x0, 0x2A, 0x42};
+    public static readonly int[] append_seq_int = {42, 43, 33};
+    public static readonly int[] modified_seq_int = {0x0, 0x2A, 0x42, 42, 43, 33};
 
-    public static readonly string[] base_seq_str = {"0x0","0x2A","0x42"};
-    public static readonly string[] append_seq_str = {"42","43","33"};
-    public static readonly string[] modified_seq_str = {"0x0","0x2A","0x42","42","43","33"};
+    public static readonly string[] base_seq_str = {"0x0", "0x2A", "0x42"};
+    public static readonly string[] append_seq_str = {"42", "43", "33"};
+    public static readonly string[] modified_seq_str = {"0x0", "0x2A", "0x42",
+        "42",  "43",   "33"};
 
-    public static readonly Eina.Stringshare[] base_seq_strshare = {"0x0","0x2A","0x42"};
-    public static readonly Eina.Stringshare[] append_seq_strshare = {"42","43","33"};
-    public static readonly Eina.Stringshare[] modified_seq_strshare = {"0x0","0x2A","0x42","42","43","33"};
+    public static readonly Eina.Stringshare[] base_seq_strshare = {"0x0", "0x2A",
+        "0x42"};
+    public static readonly Eina.Stringshare[] append_seq_strshare = {"42", "43",
+        "33"};
+    public static readonly Eina.Stringshare[] modified_seq_strshare = {
+        "0x0", "0x2A", "0x42", "42", "43", "33"};
 
     public static Dummy.Numberwrapper NW(int n)
     {
@@ -58,7 +59,7 @@ public static class BaseData
         a.SetNumber(0x0);
         b.SetNumber(0x2A);
         c.SetNumber(0x42);
-        return new Dummy.Numberwrapper[]{a,b,c};
+        return new Dummy.Numberwrapper[]{a, b, c};
     }
 
     public static Dummy.Numberwrapper[] AppendSeqObj()
@@ -69,7 +70,7 @@ public static class BaseData
         a.SetNumber(42);
         b.SetNumber(43);
         c.SetNumber(33);
-        return new Dummy.Numberwrapper[]{a,b,c};
+        return new Dummy.Numberwrapper[]{a, b, c};
     }
 
     public static Dummy.Numberwrapper[] ModifiedSeqObj()
@@ -86,16 +87,14 @@ public static class BaseData
         d.SetNumber(42);
         e.SetNumber(43);
         f.SetNumber(33);
-        return new Dummy.Numberwrapper[]{a,b,c,d,e,f};
+        return new Dummy.Numberwrapper[]{a, b, c, d, e, f};
     }
 
     public static void NumberwrapperSequenceAssertEqual(
-        Dummy.Numberwrapper[] a
-        , Dummy.Numberwrapper[] b
-        , [CallerLineNumber] int line = 0
-        , [CallerFilePath] string file = null
-        , [CallerMemberName] string member = null)
-    {
+        Dummy.Numberwrapper[] a, Dummy.Numberwrapper[] b,
+        [ CallerLineNumber ] int line = 0,
+        [ CallerFilePath ] string file = null,
+        [ CallerMemberName ] string member = null) {
         Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
         for (int i = 0; i < a.Length; ++i)
         {
@@ -201,7 +200,7 @@ class NativeInheritImpl : Dummy.TestObject
     }
     public bool binbuf_in_own_still_usable()
     {
-        bool r = binbuf_in_own_binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33});
+        bool r = binbuf_in_own_binbuf.GetBytes().SequenceEqual(new byte[]{43, 42, 0x0, 0x2A, 0x42, 33});
         r = r && binbuf_in_own_binbuf.Own;
 
         binbuf_in_own_binbuf.Dispose();

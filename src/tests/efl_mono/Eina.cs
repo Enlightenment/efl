@@ -174,7 +174,8 @@ class TestEinaBinbuf
         var binbuf = new Eina.Binbuf(base_seq, (uint)base_seq.Length);
         Test.Assert(t.EinaBinbufIn(binbuf));
         Test.Assert(binbuf.Own);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(
+            new byte[]{43, 42, 0x0, 0x2A, 0x42, 33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
     }
@@ -185,7 +186,8 @@ class TestEinaBinbuf
         var binbuf = new Eina.Binbuf(base_seq, (uint)base_seq.Length);
         Test.Assert(t.EinaBinbufInOwn(binbuf));
         Test.Assert(!binbuf.Own);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(
+            new byte[]{43, 42, 0x0, 0x2A, 0x42, 33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.CheckBinbufInOwn());
@@ -253,7 +255,8 @@ class TestEinaBinbuf
         Test.Assert(t.CallEinaBinbufIn(binbuf));
         Test.Assert(t.binbuf_in_flag);
         Test.Assert(binbuf.Own);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(
+            new byte[]{43, 42, 0x0, 0x2A, 0x42, 33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
     }
@@ -265,7 +268,8 @@ class TestEinaBinbuf
         binbuf.Own = false;
         Test.Assert(t.CallEinaBinbufInOwn(binbuf));
         Test.Assert(t.binbuf_in_own_flag);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(
+            new byte[]{43, 42, 0x0, 0x2A, 0x42, 33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.binbuf_in_own_still_usable());
@@ -378,7 +382,7 @@ class TestEinaSlice
         var t = new Dummy.TestObject();
         Test.Assert(t.EinaRwSliceIn(slc));
 
-        Test.Assert(slc.GetBytes().SequenceEqual(new byte[3]{0x1,0x2B,0x43}));
+        Test.Assert(slc.GetBytes().SequenceEqual(new byte[3]{0x1, 0x2B, 0x43}));
 
         pinnedRWData.Free();
     }
@@ -818,7 +822,7 @@ class TestEinaArray
         a.SetNumber(88);
         b.SetNumber(44);
         c.SetNumber(22);
-        var cmp = new Dummy.Numberwrapper[]{a,b,c};
+        var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var arr = new Eina.Array<Dummy.Numberwrapper>();
         Test.Assert(arr.Handle != IntPtr.Zero);
@@ -1435,7 +1439,7 @@ class TestEinaInarray
         a.SetNumber(88);
         b.SetNumber(44);
         c.SetNumber(22);
-        var cmp = new Dummy.Numberwrapper[]{a,b,c};
+        var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var arr = new Eina.Inarray<Dummy.Numberwrapper>();
         Test.Assert(arr.Handle != IntPtr.Zero);
@@ -1723,10 +1727,9 @@ class TestEinaList
         lst.SortedInsert(88);
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{88}));
         lst.SortedInsert(22);
-        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22,88}));
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22, 88}));
         lst.SortedInsert(44);
-        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22,44,88}));
-
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22, 44, 88}));
     }
 
     public static void sorted_insert_string()
@@ -1735,10 +1738,9 @@ class TestEinaList
         lst.SortedInsert("c");
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c"}));
         lst.SortedInsert("a");
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","c"}));
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a", "c"}));
         lst.SortedInsert("b");
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c"}));
-
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a", "b", "c"}));
     }
 
     public static void sorted_insert_stringshare()
@@ -1747,10 +1749,11 @@ class TestEinaList
         lst.SortedInsert("c");
         Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"c"}));
         lst.SortedInsert("a");
-        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","c"}));
+        Test.Assert(
+            lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a", "c"}));
         lst.SortedInsert("b");
-        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","b","c"}));
-
+        Test.Assert(
+            lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a", "b", "c"}));
     }
 
     public static void sorted_insert_custom_comparer_natural()
@@ -1790,11 +1793,12 @@ class TestEinaList
         lst.SortedInsert(comparator, "The");
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"The"}));
         lst.SortedInsert(comparator, "Quick");
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Quick","The"}));
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Quick", "The"}));
         lst.SortedInsert(comparator, "Brown");
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Brown", "Quick", "The"}));
         lst.SortedInsert(comparator, "Jumped");
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Jumped","Brown", "Quick", "The"}));
+        Test.Assert(lst.ToArray().SequenceEqual(
+            new string[]{"Jumped", "Brown", "Quick", "The"}));
     }
 
     public static void sort_int()
@@ -1804,10 +1808,9 @@ class TestEinaList
         lst.Append(22);
         lst.Append(11);
         lst.Append(44);
-        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88,22,11,44}));
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88, 22, 11, 44}));
         lst.Sort();
-        Test.Assert(lst.ToArray().SequenceEqual(new int[]{11,22,44,88}));
-
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{11, 22, 44, 88}));
     }
 
     public static void sort_string()
@@ -1817,9 +1820,11 @@ class TestEinaList
         lst.Append("b");
         lst.Append("a");
         lst.Append("c");
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"d","b","a","c"}));
+        Test.Assert(
+            lst.ToArray().SequenceEqual(new string[]{"d", "b", "a", "c"}));
         lst.Sort();
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c","d"}));
+        Test.Assert(
+            lst.ToArray().SequenceEqual(new string[]{"a", "b", "c", "d"}));
     }
 
     public static void sort_stringshare()
@@ -1829,9 +1834,11 @@ class TestEinaList
         lst.Append("b");
         lst.Append("a");
         lst.Append("c");
-        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"d","b","a","c"}));
+        Test.Assert(lst.ToArray().SequenceEqual(
+            new Eina.Stringshare[]{"d", "b", "a", "c"}));
         lst.Sort();
-        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","b","c","d"}));
+        Test.Assert(lst.ToArray().SequenceEqual(
+            new Eina.Stringshare[]{"a", "b", "c", "d"}));
     }
 
     public static void reverse_int()
@@ -1840,10 +1847,9 @@ class TestEinaList
         lst.Append(22);
         lst.Append(44);
         lst.Append(88);
-        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22,44,88}));
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22, 44, 88}));
         lst.Reverse();
-        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88,44,22}));
-
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88, 44, 22}));
     }
 
     public static void reverse_string()
@@ -1852,9 +1858,9 @@ class TestEinaList
         lst.Append("a");
         lst.Append("b");
         lst.Append("c");
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c"}));
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a", "b", "c"}));
         lst.Reverse();
-        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c","b","a"}));
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c", "b", "a"}));
     }
 
     public static void reverse_stringshare()
@@ -1863,9 +1869,11 @@ class TestEinaList
         lst.Append("a");
         lst.Append("b");
         lst.Append("c");
-        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","b","c"}));
+        Test.Assert(
+            lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a", "b", "c"}));
         lst.Reverse();
-        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"c","b","a"}));
+        Test.Assert(
+            lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"c", "b", "a"}));
     }
 
     public static void eina_list_as_ienumerable_int()
@@ -1921,7 +1929,7 @@ class TestEinaList
         a.SetNumber(88);
         b.SetNumber(44);
         c.SetNumber(22);
-        var cmp = new Dummy.Numberwrapper[]{a,b,c};
+        var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var lst = new Eina.List<Dummy.Numberwrapper>();
         lst.Append(a);
@@ -2483,7 +2491,7 @@ class TestEinaInlist
         a.SetNumber(88);
         b.SetNumber(44);
         c.SetNumber(22);
-        var cmp = new Dummy.Numberwrapper[]{a,b,c};
+        var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var lst = new Eina.Inlist<Dummy.Numberwrapper>();
         lst.Append(a);
@@ -2725,7 +2733,7 @@ class TestEinaHash
     public static void test_eina_hash_int_in()
     {
         var t = new Dummy.TestObject();
-        var hsh = new Eina.Hash<int,int>();
+        var hsh = new Eina.Hash<int, int>();
         hsh[22] = 222;
         Test.Assert(t.EinaHashIntIn(hsh));
         Test.Assert(hsh.Own);
@@ -2755,7 +2763,7 @@ class TestEinaHash
     public static void test_eina_hash_int_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Hash<int,int> hsh;
+        Eina.Hash<int, int>hsh;
         Test.Assert(t.EinaHashIntOut(out hsh));
         Test.Assert(!hsh.Own);
         Test.Assert(hsh[22] == 222);
@@ -2815,7 +2823,7 @@ class TestEinaHash
     public static void test_eina_hash_str_in()
     {
         var t = new Dummy.TestObject();
-        var hsh = new Eina.Hash<string,string>();
+        var hsh = new Eina.Hash<string, string>();
         hsh["aa"] = "aaa";
         Test.Assert(t.EinaHashStrIn(hsh));
         Test.Assert(hsh.Own);
@@ -2828,7 +2836,7 @@ class TestEinaHash
     public static void test_eina_hash_str_in_own()
     {
         var t = new Dummy.TestObject();
-        var hsh = new Eina.Hash<string,string>();
+        var hsh = new Eina.Hash<string, string>();
         hsh["aa"] = "aaa";
         Test.Assert(t.EinaHashStrInOwn(hsh));
         Test.Assert(!hsh.Own);
@@ -2843,7 +2851,7 @@ class TestEinaHash
     public static void test_eina_hash_str_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Hash<string,string> hsh;
+        Eina.Hash<string, string>hsh;
         Test.Assert(t.EinaHashStrOut(out hsh));
         Test.Assert(!hsh.Own);
         Test.Assert(hsh["aa"] == "aaa");
@@ -2857,7 +2865,7 @@ class TestEinaHash
     public static void test_eina_hash_str_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Hash<string,string> hsh;
+        Eina.Hash<string, string>hsh;
         Test.Assert(t.EinaHashStrOutOwn(out hsh));
         Test.Assert(hsh.Own);
         Test.Assert(hsh["aa"] == "aaa");

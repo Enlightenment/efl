@@ -254,11 +254,12 @@ class TestPromises
         Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
 #pragma warning disable 0219
-        Eina.Future future = new Eina.Future(promise,(Eina.Value value) => {
+        Eina.Future future = new Eina.Future(promise, (Eina.Value value) =>
+        {
             callbackCalled = true;
             received_value = value;
             return value;
-        } );
+        });
 #pragma warning restore 0219
 
         Eina.Value reference_value = new Eina.Value(Eina.ValueType.Int32);

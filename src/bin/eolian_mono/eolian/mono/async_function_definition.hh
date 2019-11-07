@@ -95,7 +95,7 @@ struct async_function_declaration_generator
     if (!as_generator(
             scope_tab << "/// <param name=\"token\">Token to notify the async operation of external request to cancel.</param>\n"
             << scope_tab << "/// <returns>An async task wrapping the result of the operation.</returns>\n"
-            << scope_tab << "System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") <<
+            << scope_tab << "System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ", ") <<
                                     " System.Threading.CancellationToken token = default(System.Threading.CancellationToken));\n\n"
         ).generate(sink, f.parameters, context))
       return false;
@@ -153,9 +153,9 @@ struct async_function_definition_generator
     if(!as_generator(
             scope_tab << "/// <param name=\"token\">Token to notify the async operation of external request to cancel.</param>\n"
             << scope_tab << "/// <returns>An async task wrapping the result of the operation.</returns>\n"
-            << scope_tab << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token = default(System.Threading.CancellationToken))\n"
+            << scope_tab << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ", ") << " System.Threading.CancellationToken token = default(System.Threading.CancellationToken))\n"
             << scope_tab << "{\n"
-            << scope_tab << scope_tab << "Eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ",") << ");\n"
+            << scope_tab << scope_tab << "Eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ", ") << ");\n"
             << scope_tab << scope_tab << "return Efl.Eo.Globals.WrapAsync(future, token);\n"
             << scope_tab << "}\n\n"
         ).generate(sink, std::make_tuple(f.parameters, param_forwarding), context))

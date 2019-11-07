@@ -114,7 +114,7 @@ struct function_pointer {
                   << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
                   << scope_tab << "}\n\n"
 
-                  << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ",") << ")\n"
+                  << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ", ") << ")\n"
                   << scope_tab << "{\n"
                   << function_definition_preamble << "_cb(_cb_data, " << (argument_invocation % ", ") << ");\n"
                   << function_definition_epilogue
