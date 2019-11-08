@@ -282,8 +282,8 @@ _child_removed(void *data, const Efl_Event *event)
              // Manually shift all the byte in the buffer
              while (offset < byte_length)
                {
-                  lookup->buffer[offset] = (lookup->buffer[offset] & upper_mask) |
-                    ((lookup->buffer[offset] & lower_mask) << 1);
+                  lookup->buffer[offset] = ((lookup->buffer[offset] & upper_mask) >> 1) |
+                    (lookup->buffer[offset] & lower_mask);
                   if (offset + 1 < byte_length)
                     lookup->buffer[offset] |= lookup->buffer[offset + 1] & 0x1;
 
