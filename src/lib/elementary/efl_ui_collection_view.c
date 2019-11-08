@@ -1874,7 +1874,9 @@ static void
 _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 {
    Efl_Model_Changed_Event *ev = event->info;
+#ifdef VIEWPORT_ENABLE
    Eina_List *requests = NULL;
+#endif
    MY_DATA_GET(data, pd);
    Eina_Iterator *it;
    const char *property;
@@ -1883,22 +1885,21 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    Efl_Model *mselect = NULL;
    Eina_Bool selection = EINA_FALSE, sizing = EINA_FALSE;
 
-   // Cleanup all object, pending request and refetch everything
+   // Cleanup all object, pending request to prepare refetching everything
    _all_cleanup(data, pd);
-
    if (pd->model) efl_event_callback_array_del(pd->model, model_cbs(), data);
-   efl_replace(&pd->model, NULL);
+   if (pd->multi_selectable_async_model)
+     {
+        efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
+                                         EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
+                                         data);
+        efl_composite_detach(data, pd->multi_selectable_async_model);
+     }
 
    if (!ev->current)
      {
-        if (pd->multi_selectable_async_model)
-          {
-             efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
-                                              EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
-                                              data);
-             efl_composite_detach(data, pd->multi_selectable_async_model);
-             efl_replace(&pd->multi_selectable_async_model, NULL);
-          }
+        efl_replace(&pd->model, NULL);
+        efl_replace(&pd->multi_selectable_async_model, NULL);
         return ;
      }
 
@@ -1937,15 +1938,9 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    // Build and connect the selection model properly
    if (!mselect)
      {
-        mselect = model = efl_add(EFL_UI_SELECT_MODEL_CLASS, data,
-                                  efl_ui_view_model_set(efl_added, model));
-     }
-   if (pd->multi_selectable_async_model)
-     {
-        efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
-                                         EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
-                                         data);
-        efl_composite_detach(data, pd->multi_selectable_async_model);
+        mselect = model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, data,
+                                      efl_ui_view_model_set(efl_added, model),
+                                      efl_loop_model_volatile_make(efl_added));
      }
    efl_replace(&pd->multi_selectable_async_model, mselect);
    efl_composite_attach(data, pd->multi_selectable_async_model);
@@ -1953,8 +1948,15 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
                                     EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                     data);
 
-   if (!sizing) model = efl_add(EFL_UI_HOMOGENEOUS_MODEL_CLASS, data,
-                                efl_ui_view_model_set(efl_added, model));
+   if (!sizing) model = efl_add_ref(EFL_UI_HOMOGENEOUS_MODEL_CLASS, data,
+                                    efl_ui_view_model_set(efl_added, model),
+                                    efl_loop_model_volatile_make(efl_added));
+
+   efl_replace(&pd->model, model);
+   efl_event_callback_array_add(pd->model, model_cbs(), data);
+
+   if (mselect) efl_unref(mselect);
+   if (!sizing) efl_unref(model);
 
    count = efl_model_children_count_get(model);
 
@@ -1976,13 +1978,9 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
         requests = eina_list_append(requests, request);
      }
-#endif
    requests = _batch_request_flush(requests, data, pd);
+#endif
 
-   pd->model = model;
-   efl_event_callback_array_add(pd->model, model_cbs(), data);
-
-   efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
    switch(efl_ui_position_manager_entity_version(pd->manager, 1))
      {
        case 1:
@@ -1992,6 +1990,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
            count);
        break;
      }
+   efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
 }
 
 static void
