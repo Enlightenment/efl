@@ -57,8 +57,7 @@ struct _Efl_Ui_Collection_Request
    uint64_t offset;
    uint64_t length;
 
-   Eina_Bool model_requested : 1;
-   Eina_Bool model_fetched : 1;
+   Eina_Bool need_size : 1;
    Eina_Bool need_entity : 1;
    Eina_Bool entity_requested : 1;
 };
@@ -352,6 +351,7 @@ _request_add(Eina_List *requests, Efl_Ui_Collection_Request **request,
    if ((*request)->offset + (*request)->length == index)
      {
         if (need_entity) (*request)->need_entity = EINA_TRUE;
+        if (!need_entity) (*request)->need_size = EINA_TRUE;
         (*request)->length += 1;
         return requests;
      }
@@ -364,8 +364,8 @@ _request_add(Eina_List *requests, Efl_Ui_Collection_Request **request,
    (*request)->offset = index;
    (*request)->length = 1;
    // At this point, we rely on the model caching ability to avoid recreating model
-   (*request)->model_requested = EINA_TRUE;
    (*request)->need_entity = !!need_entity;
+   (*request)->need_size = EINA_TRUE;
 
    return requests;
 }
@@ -379,7 +379,6 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    unsigned int i, len;
    Eina_Bool request_entity = EINA_FALSE;
 
-   request->model_fetched = EINA_TRUE;
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
         Efl_Ui_Collection_Item_Lookup *insert;
@@ -435,11 +434,17 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
      }
 
    if (request_entity)
-     request->need_entity = EINA_TRUE;
+     {
+        request->need_entity = EINA_TRUE;
 
-   if (request->need_entity &&
-       !request->entity_requested)
-     _entity_request(obj, request);
+        if (!request->entity_requested)
+          _entity_request(obj, request);
+     }
+   else if (request->need_size)
+     {
+        efl_ui_position_manager_entity_item_size_changed(pd->manager, request->offset,
+                                                         request->offset + len);
+     }
 
    return v;
 }
@@ -624,7 +629,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
 
    // Currently position manager will flush its entire size cache on update, so only do
    // it when necessary to improve performance.
-   if (updated_size)
+   if (updated_size || request->need_size)
      {
         efl_ui_position_manager_entity_item_size_changed(pd->manager,
                                                          updated_size_start_id,
@@ -748,7 +753,6 @@ static Eina_Bool
 _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request)
 {
    if (request->entity_requested) return EINA_TRUE;
-   if (request->model_fetched) return EINA_FALSE;
    request->f = efl_future_then(obj, request->f,
                                 .success_type = EINA_VALUE_TYPE_ARRAY,
                                 .success = _entity_fetch_cb);
@@ -768,6 +772,7 @@ _entity_inflight_request(Efl_Ui_Collection_View *obj,
                          Efl_Ui_Collection_Request *request,
                          Efl_Ui_Collection_Request *inflight)
 {
+   inflight->need_size |= request->need_size;
    if (request->need_entity == EINA_FALSE) return EINA_TRUE;
 
    return _entity_request(obj, inflight);
@@ -825,8 +830,8 @@ _batch_request_flush(Eina_List *requests,
 
                   rn->offset = iend;
                   rn->length = rend - iend;
-                  rn->model_requested = request->model_requested;
                   rn->need_entity = request->need_entity;
+                  rn->need_size = request->need_size;
 
                   requests = eina_list_append(requests, rn);
 
@@ -877,12 +882,6 @@ _batch_request_flush(Eina_List *requests,
 
         // We now have a request, time to trigger a fetch
         // We assume here that we are always fetching the model (model_requested must be true)
-        if (!request->model_requested)
-          {
-             CRI("Someone forgot to set model_requested for %" PRIu64 " to %" PRIu64 ".",
-                 request->offset, request->offset + request->length);
-             request->model_requested = EINA_TRUE;
-          }
         request->f = efl_model_children_slice_get(model, request->offset, request->length);
         request->f = efl_future_then(obj, request->f,
                                      .success = _model_fetched_cb,
@@ -1532,7 +1531,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         request->offset = lowerlimit_offset;
         // This length work over multiple viewport as they are contiguous
         request->length = lowerlimit_offset - pd->viewport[0]->offset;
-        request->model_requested = EINA_TRUE;
+        request->need_size = EINA_TRUE;
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1549,7 +1548,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         request->offset = upperlimit_offset;
         // This length work over multiple viewport as they are contiguous
         request->length = pd->viewport[2]->offset + pd->viewport[2]->count - upperlimit_offset;
-        request->model_requested = EINA_TRUE;
+        request->need_size = EINA_TRUE;
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1759,7 +1758,7 @@ _efl_model_child_added(void *data, const Efl_Event *event)
         if (!request) break;
         request->offset = ev->index;
         request->length = 1;
-        request->model_requested = EINA_TRUE;
+        request->need_size = EINA_TRUE;
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1839,7 +1838,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
         if (!request) break;
         request->offset = pd->viewport[2]->offset + pd->viewport[i]->count - 1;
         request->length = 1;
-        request->model_requested = EINA_TRUE;
+        request->need_size = EINA_TRUE;
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1972,7 +1971,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
         request->offset = pd->viewport[i]->offset;
         request->length = pd->viewport[i]->count;
-        request->model_requested = EINA_TRUE;
+        request->need_size = EINA_TRUE;
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
