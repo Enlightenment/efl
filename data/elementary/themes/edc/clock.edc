@@ -877,10 +877,10 @@ group { name: "e/modules/clock/calendar";
       }
       part { name: "previm"; mouse_events: 0;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 15 15;
             max: 15 15;
-            rel1.to: "prev";
-            rel2.to: "prev";
+            rel.to: "prev";
             image.normal: "calendar_prev.png";
             color: 160 160 160 255;
          }
@@ -916,10 +916,10 @@ group { name: "e/modules/clock/calendar";
       }
       part { name: "nextim"; mouse_events: 0;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 15 15;
             max: 15 15;
-            rel1.to: "next";
-            rel2.to: "next";
+            rel.to: "next";
             image.normal: "calendar_next.png";
             color: 160 160 160 255;
          }
