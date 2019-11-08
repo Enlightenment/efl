@@ -400,6 +400,7 @@ EFL_START_TEST(eina_matrix3_operations)
           zx, zy, zz;
    double tx = 20, ty = 30, ret;
    const double arr[] = {1, 1, 1, 1, 1, 1, 1, 1, 1};
+   double rotate_radian = 45.0 * M_PI / 180.0;
 
    eina_matrix3_values_set(&m1,
                            1, 0, 0,
@@ -458,13 +459,12 @@ EFL_START_TEST(eina_matrix3_operations)
                            1, 0, 0,
                            0, 1, 0,
                            0, 0, 1);
-   eina_matrix3_rotate(&m1, M_PI/2);
-
-   fail_if (!MATRIX3_CMP(round(m1.xx), round(m1.xy), round(m1.xz),
-                         round(m1.yx), round(m1.yy), round(m1.yz),
-                         round(m1.zx), round(m1.zy), round(m1.zz),
-                         0, -1, 0,
-                         1, 0, 0,
+   eina_matrix3_rotate(&m1, rotate_radian);
+   fail_if (!MATRIX3_CMP(m1.xx, m1.xy, m1.xz,
+                         m1.yx, m1.yy, m1.yz,
+                         m1.zx, m1.zy, m1.zz,
+                         cosf(rotate_radian), -sinf(rotate_radian), 0,
+                         sinf(rotate_radian),  cosf(rotate_radian), 0,
                          0, 0, 1));
 
    eina_matrix3_values_set(&m1,
