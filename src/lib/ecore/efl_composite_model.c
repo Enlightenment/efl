@@ -481,7 +481,7 @@ _efl_composite_model_efl_model_child_del(Eo *obj EINA_UNUSED,
                                          Efl_Composite_Model_Data *pd,
                                          Efl_Object *child)
 {
-   efl_model_child_del(pd->source, child);
+   efl_model_child_del(pd->source, efl_ui_view_model_get(child));
 }
 
 static void
