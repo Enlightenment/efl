@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
+using System.Globalization;
 
 using Eina.Callbacks;
 using static Eina.HashNativeFunctions;
@@ -642,7 +643,7 @@ abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, I
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
-        return int32Traits.ManagedToNativeAlloc(Convert.ToInt32((object)man));
+        return int32Traits.ManagedToNativeAlloc(Convert.ToInt32((object)man, CultureInfo.CurrentCulture));
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)
@@ -681,7 +682,7 @@ abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, I
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
-        return int64Traits.ManagedToNativeAlloc(Convert.ToInt64((object)man));
+        return int64Traits.ManagedToNativeAlloc(Convert.ToInt64((object)man, CultureInfo.CurrentCulture));
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)

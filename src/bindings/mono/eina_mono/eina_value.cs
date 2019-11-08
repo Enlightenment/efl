@@ -26,6 +26,7 @@ using System.Security.Permissions;
 using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Globalization;
 
 using static Eina.EinaNative.UnsafeNativeMethods;
 using static Eina.TraitFunctions;
@@ -3111,69 +3112,69 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         {
             case ValueType.SByte:
                 {
-                    sbyte b = Convert.ToSByte(o);
+                    sbyte b = Convert.ToSByte(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_char(this.Handle, b);
                 }
 
             case ValueType.Byte:
                 {
-                    byte b = Convert.ToByte(o);
+                    byte b = Convert.ToByte(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_uchar(this.Handle, b);
                 }
 
             case ValueType.Short:
                 {
-                    short b = Convert.ToInt16(o);
+                    short b = Convert.ToInt16(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_short(this.Handle, b);
                 }
 
             case ValueType.UShort:
                 {
-                    ushort b = Convert.ToUInt16(o);
+                    ushort b = Convert.ToUInt16(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_ushort(this.Handle, b);
                 }
 
             case ValueType.Int32:
                 {
-                    int x = Convert.ToInt32(o);
+                    int x = Convert.ToInt32(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_int(this.Handle, x);
                 }
 
             case ValueType.UInt32:
                 {
-                    uint x = Convert.ToUInt32(o);
+                    uint x = Convert.ToUInt32(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_uint(this.Handle, x);
                 }
 
             case ValueType.Long:
             case ValueType.Int64:
                 {
-                    long x = Convert.ToInt64(o);
+                    long x = Convert.ToInt64(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_long(this.Handle, x);
                 }
 
             case ValueType.ULong:
             case ValueType.UInt64:
                 {
-                    ulong x = Convert.ToUInt64(o);
+                    ulong x = Convert.ToUInt64(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_ulong(this.Handle, x);
                 }
 
             case ValueType.Float:
                 {
-                    float x = Convert.ToSingle(o);
+                    float x = Convert.ToSingle(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_float(this.Handle, x);
                 }
 
             case ValueType.Double:
                 {
-                    double x = Convert.ToDouble(o);
+                    double x = Convert.ToDouble(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_double(this.Handle, x);
                 }
 
             case ValueType.String:
                 {
-                    string x = Convert.ToString(o);
+                    string x = Convert.ToString(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_string(this.Handle, x);
                 }
             case ValueType.Object:
@@ -3298,42 +3299,48 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             {
                 case ValueType.SByte:
                     {
-                        sbyte v = Convert.ToSByte(value);
+                        sbyte v = Convert.ToSByte(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_char(this.Handle, i, v);
                         break;
                     }
 
                 case ValueType.Byte:
                     {
-                        byte v = Convert.ToByte(value);
+                        byte v = Convert.ToByte(value,
+                                                CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_uchar(this.Handle, i, v);
                         break;
                     }
 
                 case ValueType.Short:
                     {
-                        short x = Convert.ToInt16(value);
+                        short x = Convert.ToInt16(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_short(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.UShort:
                     {
-                        ushort x = Convert.ToUInt16(value);
+                        ushort x = Convert.ToUInt16(value,
+                                                    CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_ushort(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Int32:
                     {
-                        int x = Convert.ToInt32(value);
+                        int x = Convert.ToInt32(value,
+                                                CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_int(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.UInt32:
                     {
-                        uint x = Convert.ToUInt32(value);
+                        uint x = Convert.ToUInt32(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_uint(this.Handle, i, x);
                         break;
                     }
@@ -3341,7 +3348,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 case ValueType.Long:
                 case ValueType.Int64:
                     {
-                        long x = Convert.ToInt64(value);
+                        long x = Convert.ToInt64(value,
+                                                 CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_long(this.Handle, i, x);
                         break;
                     }
@@ -3349,28 +3357,31 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 case ValueType.ULong:
                 case ValueType.UInt64:
                     {
-                        ulong x = Convert.ToUInt64(value);
+                        ulong x = Convert.ToUInt64(value,
+                                                   CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_ulong(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Float:
                     {
-                        float x = Convert.ToSingle(value);
+                        float x = Convert.ToSingle(value,
+                                                   CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_float(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Double:
                     {
-                        double x = Convert.ToDouble(value);
+                        double x = Convert.ToDouble(value, CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_double(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.String:
                     {
-                        string x = Convert.ToString(value);
+                        string x = Convert.ToString(value,
+                                                    CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_string(this.Handle, i, x);
                         break;
                     }

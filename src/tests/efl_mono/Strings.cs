@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 using System;
+using System.Globalization;
 
 namespace TestSuite {
 
@@ -83,7 +84,8 @@ class TestStrings
             String str = String.Empty;
             var obj = new Dummy.TestObject();
             obj.OutOwnString(out str);
-            Test.AssertEquals(str.ToString(), "out_own_string");
+            Test.AssertEquals(str.ToString(CultureInfo.CurrentCulture),
+                              "out_own_string");
         }
         System.GC.Collect();
     }
@@ -254,7 +256,8 @@ class TestStringshare
             String str = String.Empty;
             var obj = new Dummy.TestObject();
             obj.OutOwnStringshare(out str);
-            Test.AssertEquals(str.ToString(), "out_own_stringshare");
+            Test.AssertEquals(str.ToString(CultureInfo.CurrentCulture),
+                              "out_own_stringshare");
         }
         System.GC.Collect();
     }
