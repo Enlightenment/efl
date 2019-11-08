@@ -202,6 +202,17 @@ EAPI Efl_Substitute_Ctor_Cb efl_mono_avoid_top_level_constructor_callback_addr_g
    return &_efl_mono_avoid_top_level_constructor_cb;
 }
 
+// Environment wrappers //
+EAPI const char *efl_mono_native_getenv(const char *name)
+{
+   return getenv(name);
+}
+
+EAPI Eina_Error efl_mono_native_setenv(const char *name, const char *value, int overwrite)
+{
+   return setenv(name, value, overwrite);
+}
+
 // Iterator Wrapper //
 
 typedef struct _Eina_Iterator_Wrapper_Mono

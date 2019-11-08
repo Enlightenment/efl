@@ -30,8 +30,13 @@ class TestMain
 
     static int Main(string[] args)
     {
-        if (Environment.GetEnvironmentVariable("ELM_ENGINE") == null)
-            Environment.SetEnvironmentVariable("ELM_ENGINE", "buffer");
+        /// We do not use System.Environment due to CoreCLR open issues regarding
+        /// setenv modifying the actual C environment. See issue #1592 in CoreCLR repo.
+        Eina.Config.Init();
+        if (Eina.Environment.GetEnv("ELM_ENGINE") == null)
+        {
+            Eina.Environment.SetEnv("ELM_ENGINE", "buffer", true);
+        }
 
         Efl.All.Init(Efl.Csharp.Components.Ui);
 
@@ -114,6 +119,7 @@ class TestMain
         Console.WriteLine("[   END SUITE ] " + ckRunSuite);
 
         Efl.All.Shutdown();
+        Eina.Config.Shutdown(); // For the extra init in getenv/setenv above
 
         if (!pass)
           return -1;

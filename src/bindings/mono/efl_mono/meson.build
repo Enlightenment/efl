@@ -41,6 +41,7 @@ if get_option('build-tests')
      mono_friend_assemblies += 'efl_sharp_test_suite'
   else
      mono_friend_assemblies += 'efl_mono_test'
+     mono_friend_assemblies += 'efl-mono-suite'
   endif
 endif
 

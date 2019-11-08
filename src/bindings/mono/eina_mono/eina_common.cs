@@ -31,7 +31,7 @@ internal delegate void EinaFreeCb(IntPtr data);
 
 }
 
-internal static class NativeCustomExportFunctions
+internal static partial class NativeCustomExportFunctions
 {
     [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_mono_native_free(IntPtr ptr);
