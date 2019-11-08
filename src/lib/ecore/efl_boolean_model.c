@@ -258,11 +258,11 @@ _child_removed(void *data, const Efl_Event *event)
    Eina_Iterator *it;
    Eina_Array updated;
 
-   if (!pd->parent) return;
+   if (!pd->values) return;
 
    eina_array_step_set(&updated, sizeof (Eina_Array), 8);
 
-   it = eina_hash_iterator_data_new(pd->parent->values);
+   it = eina_hash_iterator_data_new(pd->values);
    EINA_ITERATOR_FOREACH(it, v)
      {
         Efl_Boolean_Model_Storage_Range *lookup;
@@ -276,7 +276,7 @@ _child_removed(void *data, const Efl_Event *event)
           {
              unsigned char lower_mask = (((unsigned char)1) << (ev->index & 0x7)) - 1;
              unsigned char upper_mask = (~(((unsigned char)1) << (ev->index & 0x7))) & (~lower_mask);
-             unsigned char offset = (ev->index - lookup->offset) >> 3;
+             uint16_t offset = (ev->index - lookup->offset) >> 3;
              uint16_t byte_length = lookup->length >> 3;
 
              // Manually shift all the byte in the buffer
