@@ -1021,14 +1021,25 @@ group { name: "elm/entry/base-password/default";
 }
 
 group { name: "elm/entry/magnifier/default";
-   images.image: "frame_rounded.png" COMP;
    parts {
-      part { name: "bg"; type: RECT; mouse_events: 0;
+      part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            rel.to: "over";
-            rel1.offset: 10 10;
-            rel2.offset: -11 -11;
+            rel.to: "bg";
+            WIN_SHADOW;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "bg"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 80 40;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
             color: 48 48 48 255;
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -1037,24 +1048,7 @@ group { name: "elm/entry/magnifier/default";
       }
       part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel.to: "over";
-            rel1.offset: 10 10;
-            rel2.offset: -11 -11;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "over"; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 128 64;
-            align: 0 0;
-            image.normal: "frame_rounded.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            fill.smooth: 0;
+            rel.to: "bg";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -1063,19 +1057,17 @@ group { name: "elm/entry/magnifier/default";
       }
    }
    programs {
-      program { name: "magnifier_show";
-         signal: "elm,action,show,magnifier"; source: "elm";
+      program { signal: "elm,action,show,magnifier"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.content";
          target: "bg";
-         target: "over";
+         target: "shadow";
       }
-      program { name: "magnifier_hide";
-         signal: "elm,action,hide,magnifier"; source: "elm";
+      program { signal: "elm,action,hide,magnifier"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "elm.swallow.content";
          target: "bg";
-         target: "over";
+         target: "shadow";
       }
    }
 }
@@ -1086,10 +1078,10 @@ group { name: "elm/entry/handler/start/default";
       part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 27; // 42 54
             image.normal: "handle_pick_up_left.png";
+            min: 21 27; // 42 54
             align: (29/42) (11/54);
-            color_class: "entry_selection_handler";
+            color: 51 153 255 255;
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1112,14 +1104,12 @@ group { name: "elm/entry/handler/start/default";
       }
    }
    programs {
-      program {
-         signal: "elm,handler,show"; source: "elm";
+      program { signal: "elm,handler,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
-      program {
-         signal: "elm,handler,hide"; source: "elm";
+      program { signal: "elm,handler,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
@@ -1133,10 +1123,10 @@ group { name: "elm/entry/handler/end/default";
       part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 27; // 42 54
             image.normal: "handle_pick_up_right.png";
+            min: 21 27; // 42 54
             align: (12/42) (11/54);
-            color_class: "entry_selection_handler";
+            color: 51 153 255 255;
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1159,14 +1149,12 @@ group { name: "elm/entry/handler/end/default";
       }
    }
    programs {
-      program {
-         signal: "elm,handler,show"; source: "elm";
+      program { signal: "elm,handler,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
-      program {
-         signal: "elm,handler,hide"; source: "elm";
+      program { signal: "elm,handler,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
