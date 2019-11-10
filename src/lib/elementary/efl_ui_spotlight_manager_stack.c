@@ -9,9 +9,9 @@
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
    Efl_Gfx_Entity *group;
-   Efl_Canvas_Animation_Player *hide, *show;
-   int from, to;
-   Efl_Gfx_Entity *content;
+   Efl_Canvas_Animation_Player *alpha_anim;
+   Efl_Gfx_Entity *content[2];
+   int ids[2]; //only used when in animation
    Eina_Size2D page_size;
    Eina_Bool animation;
 } Efl_Ui_Spotlight_Manager_Stack_Data;
@@ -21,29 +21,16 @@ typedef struct {
 static void
 _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 {
-   Eina_Array *array = eina_array_new(2);
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
-   if (efl_player_playing_get(pd->hide))
-     {
-        //we are currently in animation, sync the geometry of the targets
-        eina_array_push(array, efl_animation_player_target_get(pd->hide));
-        eina_array_push(array, efl_animation_player_target_get(pd->show));
-     }
-   else
-     {
-        //we only have our content right now, or nothing
-        eina_array_push(array, pd->content);
-     }
    Eina_Rect goal = EINA_RECT_EMPTY();
    goal.size = pd->page_size;
    goal.y = (group_pos.y + group_pos.h/2)-pd->page_size.h/2;
    goal.x = (group_pos.x + group_pos.w/2)-pd->page_size.w/2;
-   while (eina_array_count(array) > 0)
+   for (int i = 0; i < 2; ++i)
      {
-        Efl_Gfx_Entity *subobj = eina_array_pop(array);
-        efl_gfx_entity_geometry_set(subobj, goal);
+        if (pd->content[i])
+          efl_gfx_entity_geometry_set(pd->content[i], goal);
      }
-   eina_array_free(array);
 }
 
 static void
@@ -66,85 +53,36 @@ _running_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
    //calculate absolut position, multiply pos with 2.0 because duration is only 0.5)
-   absolut_position = pd->from + (pd->to - pd->from)*(efl_player_playback_position_get(pd->show)*2.0);
+   absolut_position = pd->ids[0] + (pd->ids[1] - pd->ids[0])*(efl_canvas_object_animation_progress_get(ev->object));
    efl_event_callback_call(data, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &absolut_position);
 }
 
 static void
-_anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event)
+_hide_object_cb(void *data, const Efl_Event *ev)
 {
-   Efl_Canvas_Object *content;
-
-   content = efl_animation_player_target_get(event->object);
-   efl_gfx_entity_visible_set(content, EINA_TRUE);
+   if (!ev->info)
+     {
+        efl_gfx_entity_visible_set(ev->object, EINA_FALSE);
+        efl_event_callback_del(ev->object, ev->desc, _hide_object_cb, data);
+        efl_event_callback_del(ev->object, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _running_cb, data);
+     }
 }
-
-static void
-_hide_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Efl_Ui_Spotlight_Manager_Stack_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
-   Efl_Canvas_Object *content;
-
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-   content = efl_animation_player_target_get(pd->hide);
-   efl_gfx_entity_visible_set(content, EINA_FALSE);
-}
-
-static void
-_show_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Efl_Ui_Spotlight_Manager_Stack_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
-   Efl_Canvas_Object *content;
-
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-   content = efl_animation_player_target_get(pd->show);
-   efl_gfx_entity_visible_set(content, EINA_TRUE);
-   pd->content = content;
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(_anim_show_event_cb,
-  {EFL_ANIMATION_PLAYER_EVENT_RUNNING, _running_cb},
-  {EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb},
-  {EFL_ANIMATION_PLAYER_EVENT_ENDED, _show_anim_ended_cb},
-)
-
-EFL_CALLBACKS_ARRAY_DEFINE(_anim_hide_event_cb,
-  {EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb},
-  {EFL_ANIMATION_PLAYER_EVENT_ENDED, _hide_anim_ended_cb},
-)
 
 EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Ui_Spotlight_Container *spotlight, Efl_Canvas_Group *group)
 {
    if (spotlight && group)
      {
-        Efl_Canvas_Animation_Alpha *show_anim, *hide_anim;
         pd->container = spotlight;
         pd->group = group;
 
         efl_event_callback_add(pd->group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
         efl_event_callback_add(pd->group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
-        show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
-        efl_animation_alpha_set(show_anim, 0.0, 1.0);
-        efl_animation_duration_set(show_anim, 0.5);
-        efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
-
-        pd->show = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
-        efl_animation_player_animation_set(pd->show, show_anim);
-        efl_player_playing_set(pd->show, EINA_FALSE);
-        efl_event_callback_array_add(pd->show, _anim_show_event_cb(), obj);
-
-        //Default Hide Animation
-        hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
-        efl_animation_alpha_set(hide_anim, 1.0, 0.0);
-        efl_animation_duration_set(hide_anim, 0.5);
-        efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
-
-        pd->hide = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
-        efl_animation_player_animation_set(pd->hide, hide_anim);
-        efl_player_playing_set(pd->hide, EINA_FALSE);
-        efl_event_callback_array_add(pd->hide, _anim_hide_event_cb(), obj);
+        pd->alpha_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
+        efl_animation_alpha_set(pd->alpha_anim, 0.0, 1.0);
+        efl_animation_duration_set(pd->alpha_anim, 0.5);
+        efl_animation_final_state_keep_set(pd->alpha_anim, EINA_TRUE);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
@@ -153,8 +91,8 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
         }
         if (efl_ui_spotlight_active_element_get(spotlight))
           {
-             pd->content = efl_ui_spotlight_active_element_get(spotlight);
-             efl_gfx_entity_visible_set(pd->content, EINA_TRUE);
+             pd->content[0] = efl_ui_spotlight_active_element_get(spotlight);
+             efl_gfx_entity_visible_set(pd->content[0], EINA_TRUE);
              _geom_sync(obj, pd);
           }
      }
@@ -173,14 +111,6 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EIN
    efl_canvas_group_member_remove(pd->container, subobj);
 }
 
-static void
-_setup_anim(Efl_Animation_Player *player, Efl_Gfx_Entity *entity)
-{
-   efl_player_playing_set(player, EINA_FALSE);
-   efl_animation_player_target_set(player, entity);
-   efl_player_playing_set(player, EINA_TRUE);
-}
-
 static Eina_Bool
 is_valid(Eo *obj, int index)
 {
@@ -193,33 +123,35 @@ is_valid(Eo *obj, int index)
 EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, int from, int to)
 {
-   if (efl_pack_content_get(pd->container, to) == pd->content)
+   if (efl_pack_content_get(pd->container, to) == pd->content[1])
      return;
 
    if (is_valid(pd->container, to) && is_valid(pd->container, from))
      {
+        int tmp[2] = {from, to};
+
+        for (int i = 0; i < 2; ++i)
+          {
+             pd->ids[i] = tmp[i];
+             pd->content[i] = efl_pack_content_get(pd->container, pd->ids[i]);
+             if (pd->animation)
+               efl_canvas_object_animation_start(pd->content[i], pd->alpha_anim, -1.0+2.0*i, 0.0);
+             efl_gfx_entity_visible_set(pd->content[i], EINA_TRUE);
+          }
         if (pd->animation)
           {
-             pd->from = from;
-             pd->to = to;
-             pd->content = NULL;
-             _setup_anim(pd->hide, efl_pack_content_get(pd->container, from));
-             _setup_anim(pd->show, efl_pack_content_get(pd->container, to));
-          }
-        else
-          {
-             efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, from), EINA_FALSE);
-             pd->content = efl_pack_content_get(pd->container, to);
-             efl_gfx_entity_visible_set(pd->content, EINA_TRUE);
+             efl_event_callback_add(pd->content[0], EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, _hide_object_cb, obj);
+             efl_event_callback_add(pd->content[0], EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _running_cb, obj);
           }
      }
    else
      {
         double pos = to;
 
-        pd->content = efl_pack_content_get(pd->container, to);
-        efl_gfx_entity_visible_set(pd->content, EINA_TRUE);
+        pd->content[0] = efl_pack_content_get(pd->container, to);
+        efl_gfx_entity_visible_set(pd->content[0], EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &pos);
+        pd->content[1] = NULL;
      }
 
    _geom_sync(obj, pd);
@@ -250,22 +182,14 @@ _efl_ui_spotlight_manager_stack_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_
      }
 }
 
-static void
-_reset_player(Efl_Animation_Player *player, Eina_Bool vis)
-{
-   Efl_Gfx_Entity *obj;
-
-   obj = efl_animation_player_target_get(player);
-   efl_player_playing_set(player, EINA_FALSE);
-   efl_animation_player_target_set(player, NULL);
-   efl_gfx_entity_visible_set(obj, vis);
-}
-
 EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Eina_Bool animation)
 {
-   _reset_player(pd->hide, EINA_FALSE);
-   _reset_player(pd->show, EINA_TRUE);
+   for (int i = 0; i < 2; ++i)
+     {
+        if (pd->content[i])
+          efl_canvas_object_animation_stop(pd->content[i]);
+     }
    pd->animation = animation;
 }
 
