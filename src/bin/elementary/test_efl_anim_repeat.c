@@ -7,7 +7,7 @@ typedef struct _App_Data
 {
    Efl_Canvas_Animation        *show_anim;
    Efl_Canvas_Animation        *hide_anim;
-   Efl_Canvas_Animation_Player *anim_obj;
+   Elm_Button                  *button;
 
    Evas_Object          *start_btn;
    Evas_Object          *repeat_count_spin;
@@ -27,45 +27,49 @@ _anim_repeat_mode_get(Evas_Object *spinner)
      return EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE;
 }
 
-static void
-_anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   printf("Animation has been started!\n");
-}
 
 static void
-_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_anim_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
+   Eo *anim = event->info;
    App_Data *ad = data;
 
-   printf("Animation has been ended!\n");
-
-   Efl_Canvas_Animation_Repeat_Mode repeat_mode = _anim_repeat_mode_get(ad->repeat_mode_spin);
-   if (repeat_mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
+   if (anim)
      {
-        int repeat_count = elm_spinner_value_get(ad->repeat_count_spin);
-        if (repeat_count % 2 == 1)
-          {
-             ad->is_btn_visible = !(ad->is_btn_visible);
-
-             if (ad->is_btn_visible)
-               elm_object_text_set(ad->start_btn, "Start Alpha Animation from 1.0 to 0.0");
-             else
-               elm_object_text_set(ad->start_btn, "Start Alpha Animation from 0.0 to 1.0");
-          }
+        printf("Animation has been started!\n");
      }
-
-   elm_object_disabled_set(ad->repeat_count_spin, EINA_FALSE);
-   elm_object_disabled_set(ad->repeat_mode_spin, EINA_FALSE);
+   else
+     {
+        printf("Animation has been ended!\n");
+        Efl_Canvas_Animation_Repeat_Mode repeat_mode = _anim_repeat_mode_get(ad->repeat_mode_spin);
+        if (repeat_mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
+          {
+             int repeat_count = elm_spinner_value_get(ad->repeat_count_spin);
+             if (repeat_count % 2 == 1)
+               {
+                  ad->is_btn_visible = !(ad->is_btn_visible);
+                  if (ad->is_btn_visible)
+                    elm_object_text_set(ad->start_btn, "Start Alpha Animation from 1.0 to 0.0");
+                  else
+                    elm_object_text_set(ad->start_btn, "Start Alpha Animation from 0.0 to 1.0");
+               }
+          }
+        elm_object_disabled_set(ad->repeat_count_spin, EINA_FALSE);
+        elm_object_disabled_set(ad->repeat_mode_spin, EINA_FALSE);
+     }
 }
 
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
-   double progress = event_running->progress;
-   printf("Animation is running! Current progress(%lf)\n", progress);
+   double *progress = event->info;
+   printf("Animation is running! Current progress(%lf)\n", *progress);
 }
+
+EFL_CALLBACKS_ARRAY_DEFINE(animation_stats_cb,
+  {EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, _anim_changed_cb },
+  {EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _anim_running_cb },
+)
 
 static void
 _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -89,7 +93,7 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
         efl_animation_repeat_mode_set(ad->show_anim, repeat_mode);
 
         //Create Animation Object from Animation
-        efl_animation_player_animation_set(ad->anim_obj, ad->show_anim);
+        efl_canvas_object_animation_start(ad->button, ad->show_anim, 1.0, 0.0);
         efl_text_set(obj, "Start Alpha Animation from 1.0 to 0.0");
      }
    else
@@ -101,12 +105,9 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
         efl_animation_repeat_mode_set(ad->hide_anim, repeat_mode);
 
         //Create Animation Object from Animation
-        efl_animation_player_animation_set(ad->anim_obj, ad->hide_anim);
+        efl_canvas_object_animation_start(ad->button, ad->hide_anim, 1.0, 0.0);
         efl_text_set(obj, "Start Alpha Animation from 0.0 to 1.0");
      }
-
-   //Let Animation Object start animation
-   efl_player_playing_set(ad->anim_obj, EINA_TRUE);
 }
 
 static void
@@ -133,6 +134,7 @@ test_efl_anim_repeat(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_resize(btn, 200, 200);
    evas_object_move(btn, 100, 50);
    evas_object_show(btn);
+   efl_event_callback_array_add(btn, animation_stats_cb(), ad);
 
    //Show Animation
    Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
@@ -178,24 +180,14 @@ test_efl_anim_repeat(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_move(repeat_mode_spin, 100, 400);
    evas_object_show(repeat_mode_spin);
 
-
    //Initialize App Data
    ad->show_anim = show_anim;
    ad->hide_anim = hide_anim;
-   ad->anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
-                          efl_animation_player_target_set(efl_added, btn));
-   //Register callback called when animation starts
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
-   //Register callback called when animation ends
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, ad);
-   //Register callback called while animation is executed
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
-
    ad->start_btn = start_btn;
    ad->repeat_count_spin = repeat_count_spin;
    ad->repeat_mode_spin = repeat_mode_spin;
    ad->is_btn_visible = EINA_TRUE;
-
+   ad->button = btn;
 
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
