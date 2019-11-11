@@ -118,16 +118,16 @@ group { name: "e/modules/packagekit/main";
          description { state: "updated" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel1.relative: (5/40) (5/40);
-            rel2.relative: (35/40) (35/40);
+            rel1.relative: (15/40) (15/40);
+            rel2.relative: (25/40) (25/40);
             image.normal: "pkg-ok.png";
             color: 255 255 255 255;
          }
          description { state: "error" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel1.relative: (5/40) (5/40);
-            rel2.relative: (35/40) (35/40);
+            rel1.relative: (15/40) (15/40);
+            rel2.relative: (25/40) (25/40);
             image.normal: "pkg-err.png";
             color: 255 255 255 255;
          }
