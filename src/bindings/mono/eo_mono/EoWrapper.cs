@@ -325,6 +325,44 @@ public abstract class EoWrapper : IWrapper, IDisposable
             }
         }
     }
+    internal Efl.EventCb GetInternalEventCallback<T>(EventHandler<T> handler, Func<IntPtr, T> createArgsInstance) where T:EventArgs
+    {
+        return (IntPtr data, ref Efl.Event.NativeStruct evt) =>
+        {
+           var obj = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data).Target;
+           if (obj != null)
+           {
+              try
+              {
+                 handler?.Invoke(obj, createArgsInstance(evt.Info));
+              }
+              catch (Exception e)
+              {
+                 Eina.Log.Error(e.ToString());
+                 Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);
+              }
+           }
+        };
+    }
+    internal Efl.EventCb GetInternalEventCallback(EventHandler handler)
+    {
+        return (IntPtr data, ref Efl.Event.NativeStruct evt) =>
+        {
+           var obj = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data).Target;
+           if (obj != null)
+           {
+              try
+              {
+                 handler?.Invoke(obj, EventArgs.Empty);
+              }
+              catch (Exception e)
+              {
+                 Eina.Log.Error(e.ToString());
+                 Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);
+              }
+           }
+        };
+    }
 
     private static void OwnershipUniqueCallback(IntPtr data, ref Efl.Event.NativeStruct evt)
     {
