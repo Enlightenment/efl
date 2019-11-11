@@ -157,13 +157,13 @@ _efl_ui_spotlight_manager_plain_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animation_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Eina_Bool animation)
+_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Eina_Bool animation)
 {
    pd->animation = animation;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animation_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 {
    return pd->animation;
 }

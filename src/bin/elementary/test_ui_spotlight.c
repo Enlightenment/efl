@@ -513,7 +513,7 @@ _animation_cb(void *data, const Efl_Event *ev)
 {
    Params *params = data;
 
-   efl_ui_spotlight_manager_animation_enabled_set(efl_ui_spotlight_manager_get(params->spotlight), efl_ui_selectable_selected_get(ev->object));
+   efl_ui_spotlight_manager_animated_transition_set(efl_ui_spotlight_manager_get(params->spotlight), efl_ui_selectable_selected_get(ev->object));
 }
 
 static void
@@ -536,7 +536,7 @@ view_animation_cb(void *data,
 
    ck = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_event_callback_add(ck, EFL_UI_EVENT_SELECTED_CHANGED, _animation_cb, params);
-   efl_ui_selectable_selected_set(ck, efl_ui_spotlight_manager_animation_enabled_get(efl_ui_spotlight_manager_get(params->spotlight)));
+   efl_ui_selectable_selected_set(ck, efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(params->spotlight)));
    efl_text_set(ck, "Animation");
    efl_pack_end(box, ck);
    efl_gfx_entity_visible_set(ck, 1);

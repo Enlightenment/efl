@@ -262,7 +262,7 @@ _reset_player(Efl_Animation_Player *player, Eina_Bool vis)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animation_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Eina_Bool animation)
+_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Eina_Bool animation)
 {
    _reset_player(pd->hide, EINA_FALSE);
    _reset_player(pd->show, EINA_TRUE);
@@ -270,7 +270,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animation_enabled_set(E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animation_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
+_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 {
    return pd->animation;
 }

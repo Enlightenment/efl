@@ -2,13 +2,13 @@
 EAPI void
 edje_object_animation_set(Efl_Canvas_Layout *obj, Eina_Bool on)
 {
-   efl_canvas_layout_animation_set(obj, on);
+   efl_canvas_layout_animated_set(obj, on);
 }
 
 EAPI Eina_Bool
 edje_object_animation_get(const Efl_Canvas_Layout *obj)
 {
-   return efl_canvas_layout_animation_get(obj);
+   return efl_canvas_layout_animated_get(obj);
 }
 
 EAPI Efl_Input_Device *
