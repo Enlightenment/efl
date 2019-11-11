@@ -197,8 +197,8 @@ _transition_animation_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EFL_OPS_DEFINE(transition_tracker,
-  EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_animation_enabled_set, _transition_animation_set),
-  EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_animation_enabled_get, _transition_animation_get),
+  EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_animated_transition_set, _transition_animation_set),
+  EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_animated_transition_get, _transition_animation_get),
   EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_content_add, _transition_content_add),
   EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_content_del, _transition_content_del),
   EFL_OBJECT_OP_FUNC(efl_ui_spotlight_manager_switch_to, _transition_request_switch),

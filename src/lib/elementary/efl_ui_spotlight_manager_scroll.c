@@ -305,7 +305,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_size_set(Eo *obj EINA_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animation_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Eina_Bool animation)
+_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Eina_Bool animation)
 {
    pd->animation = animation;
    if (pd->transition.active && !animation)
@@ -317,7 +317,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animation_enabled_set(
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animation_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
+_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
 {
    return pd->animation;
 }

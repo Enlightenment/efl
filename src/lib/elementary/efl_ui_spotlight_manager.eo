@@ -55,10 +55,12 @@ abstract @beta Efl.Ui.Spotlight.Manager extends Efl.Object {
         size : Eina.Size2D; [[The new size of the sub-widgets.]]
       }
     }
-    @property animation_enabled @pure_virtual {
-       [[This flag can be used to disable animations.]]
+    @property animated_transition @pure_virtual {
+       [[When this flag is $true the transition from the previous element to the new one will be animated whenever
+         @Efl.Ui.Spotlight.Container.active_element changes.]]
        values {
-          enable : bool; [[$true if you want animations to happen, $false otherwise.]]
+          enable : bool; [[$true to enable animated transitions. If $false, the new active element is shown
+                           immediately.]]
        }
     }
   }

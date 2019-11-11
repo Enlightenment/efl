@@ -10,7 +10,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
    event_c_prefix: efl_layout;
    data: Edje;
    methods {
-      @property animation {
+      @property animated {
          [[Whether this object is animating or not.
 
            This property indicates whether animations are stopped or not.
