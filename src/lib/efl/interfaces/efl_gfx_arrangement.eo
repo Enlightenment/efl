@@ -1,5 +1,5 @@
 import efl_gfx_types;
-interface @beta Efl.Gfx.Arrangement
+interface Efl.Gfx.Arrangement
 {
    [[
      This interface provides methods for manipulating how contents are arranged within a container,
