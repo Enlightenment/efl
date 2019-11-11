@@ -7,6 +7,7 @@ _efl_canvas_animation_duration_set(Eo *eo_obj EINA_UNUSED,
                             Efl_Canvas_Animation_Data *pd,
                             double sec)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(sec > 0.0);
    pd->duration = sec;
 }
 
@@ -69,7 +70,7 @@ _efl_canvas_animation_start_delay_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Data *pd,
                                double sec)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(sec < 0.0);
+   EINA_SAFETY_ON_FALSE_RETURN(sec >= 0.0);
 
    pd->start_delay_time = sec;
 }
