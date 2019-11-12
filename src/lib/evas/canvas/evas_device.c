@@ -289,7 +289,7 @@ evas_device_pop(Evas *eo_e)
    Evas_Device *dev;
 
    Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
-   if (e) return ;
+   if (!e) return ;
    dev = eina_array_pop(e->cur_device);
    if (dev) efl_unref(dev);
 }
