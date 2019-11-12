@@ -468,6 +468,37 @@ _efl_ui_animation_view_play(Eo *obj, Efl_Ui_Animation_View_Data *pd)
    return EINA_TRUE;
 }
 
+Eina_Bool _efl_ui_animation_view_play_sector(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *start, const char *end)
+{
+   int start_frame = 0;
+   int end_frame = evas_object_vg_animated_frame_count_get(pd->vg) - 1;
+
+   if (start && end)
+     {
+        efl_gfx_frame_controller_sector_get(pd->vg, start, &start_frame, NULL);
+        efl_gfx_frame_controller_sector_get(pd->vg, end, &end_frame, NULL);
+     }
+   else
+     {
+        if (start)
+          {
+             efl_gfx_frame_controller_sector_get(pd->vg, start, &start_frame, &end_frame);
+          }
+        else if (end)
+          {
+             efl_gfx_frame_controller_sector_get(pd->vg, end, &end_frame, NULL);
+          }
+     }
+
+   efl_ui_animation_view_min_frame_set(obj, start_frame);
+   if (start_frame < end_frame)
+      efl_ui_animation_view_max_frame_set(obj, end_frame);
+
+   if (!efl_ui_animation_view_play(obj))
+      return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_animation_view_stop(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 {

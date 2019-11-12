@@ -135,6 +135,25 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
 
          return: bool; [[$true when it's successful. $false otherwise.]]
       }
+      play_sector {
+         [[Play animation of sector one time instantly when it's available.
+
+           If end sector is NULL, only start sector is referenced.
+           If both the start and end sectors are valid,
+           Play is played and stoped at starting point of each sector.
+
+           If start is null and end is valid, playback starts from 0 frame to the start frame of the end sector.
+           If both sectors start and end are invalid. Play from 0 frame to the last frame of animation view object.
+
+           Note: This method use to @.min_frame, @.max_frame (@.min_progress, @.max_progress) internally.
+                 So if you have changed the min or max frame(progress) it can be changed to the sector frame.
+         ]]
+         params {
+            @in start: string; [[ The name of start sector ]]
+            @in end: string; [[ The name of end sector ]]
+         }
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
       play_back {
          [[Play back animation one time instantly when it's available.
 
