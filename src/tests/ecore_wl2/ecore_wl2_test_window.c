@@ -225,6 +225,25 @@ EFL_START_TEST(wl2_window_maximize)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_preferred_rot)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   int rot = 0;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_preferred_rotation_set(win, 90);
+
+   rot = ecore_wl2_window_preferred_rotation_get(win);
+   fail_if(rot != 90);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -243,5 +262,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_focus_skip);
         tcase_add_test(tc, wl2_window_fullscreen);
         tcase_add_test(tc, wl2_window_maximize);
+        tcase_add_test(tc, wl2_window_preferred_rot);
      }
 }
