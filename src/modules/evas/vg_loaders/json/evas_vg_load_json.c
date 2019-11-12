@@ -20,6 +20,13 @@ evas_vg_load_file_close_json(Vg_File_Data *vfd)
 
    Lottie_Animation *lot_anim = (Lottie_Animation *) vfd->loader_data;
    lottie_animation_destroy(lot_anim);
+   if (vfd->anim_data->markers)
+     {
+        Vg_File_Anim_Data_Marker *marker;
+        EINA_INARRAY_FOREACH(vfd->anim_data->markers, marker)
+          if (marker->name) eina_stringshare_del(marker->name);
+        eina_inarray_free(vfd->anim_data->markers);
+     }
    if (vfd->anim_data) free(vfd->anim_data);
    if (vfd->root) efl_unref(vfd->root);
    free(vfd);
@@ -70,6 +77,23 @@ evas_vg_load_file_open_json(Eina_File *file,
         if (!vfd->anim_data) goto err;
         vfd->anim_data->duration = lottie_animation_get_duration(lot_anim);
         vfd->anim_data->frame_cnt = frame_cnt;
+
+        // marker information
+        const LOTMarkerList *markerlist = lottie_animation_get_markerlist(lot_anim);
+        if (markerlist && markerlist->size > 0)
+          {
+             Vg_File_Anim_Data_Marker *marker;
+             int i = 0;
+             vfd->anim_data->markers = eina_inarray_new(sizeof(Vg_File_Anim_Data_Marker), 0);
+             eina_inarray_resize(vfd->anim_data->markers, markerlist->size);
+             EINA_INARRAY_FOREACH(vfd->anim_data->markers, marker)
+               {
+                  marker->name = eina_stringshare_add(markerlist->ptr[i].name);
+                  marker->startframe = markerlist->ptr[i].startframe;
+                  marker->endframe = markerlist->ptr[i].endframe;
+                  i++;
+               }
+          }
      }
 
    //default size

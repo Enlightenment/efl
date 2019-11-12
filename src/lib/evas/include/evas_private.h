@@ -141,6 +141,7 @@ typedef struct _Evas_Canvas3D_File_Eet         Evas_Canvas3D_File_Eet;
 
 typedef struct _Vg_File_Data                   Vg_File_Data;
 typedef struct _Vg_File_Anim_Data              Vg_File_Anim_Data;
+typedef struct _Vg_File_Anim_Data_Marker       Vg_File_Anim_Data_Marker;
 
 struct _Evas_Canvas3D_Vec2_Eet
 {
@@ -1533,11 +1534,19 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
 
+struct _Vg_File_Anim_Data_Marker
+{
+   Eina_Stringshare *name;
+   int               startframe;
+   int               endframe;
+};
+
 struct _Vg_File_Anim_Data
 {
    unsigned int frame_num;            //current frame number
    unsigned int frame_cnt;            //total frame count
    float        duration;             //animation duration
+   Eina_Inarray *markers;             //array of Vg_File_Anim_Data_Marker
 };
 
 struct _Vg_File_Data
