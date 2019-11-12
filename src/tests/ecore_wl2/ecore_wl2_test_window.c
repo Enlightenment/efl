@@ -206,6 +206,25 @@ EFL_START_TEST(wl2_window_fullscreen)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_maximize)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool m = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_maximized_set(win, EINA_TRUE);
+
+   m = ecore_wl2_window_maximized_get(win);
+   fail_if(m != EINA_TRUE);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -223,5 +242,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_floating_mode);
         tcase_add_test(tc, wl2_window_focus_skip);
         tcase_add_test(tc, wl2_window_fullscreen);
+        tcase_add_test(tc, wl2_window_maximize);
      }
 }
