@@ -64,7 +64,7 @@ EFL_START_TEST(wl2_window_surface_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST(wl2_window_rotation_get)
+EFL_START_TEST(wl2_window_rotation)
 {
    Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
@@ -78,6 +78,11 @@ EFL_START_TEST(wl2_window_rotation_get)
 
    rot = ecore_wl2_window_rotation_get(win);
    ck_assert_int_ge(rot, 0);
+
+   ecore_wl2_window_rotation_set(win, 90);
+
+   rot = ecore_wl2_window_rotation_get(win);
+   fail_if(rot != 90);
 }
 EFL_END_TEST
 
@@ -271,7 +276,7 @@ ecore_wl2_test_window(TCase *tc)
         /* window tests can only run if there is an existing compositor */
         tcase_add_test(tc, wl2_window_new);
         tcase_add_test(tc, wl2_window_surface_test);
-        tcase_add_test(tc, wl2_window_rotation_get);
+        tcase_add_test(tc, wl2_window_rotation);
         tcase_add_test(tc, wl2_window_output_find);
         if (getenv("E_START"))
           tcase_add_test(tc, wl2_window_aux_hints_supported_get);
