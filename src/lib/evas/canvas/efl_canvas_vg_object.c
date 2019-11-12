@@ -943,6 +943,30 @@ _efl_canvas_vg_object_efl_gfx_frame_controller_frame_duration_get(const Eo *eo_o
    return evas_cache_vg_anim_duration_get(pd->vg_entry);
 }
 
+Eina_Bool _efl_canvas_vg_object_efl_gfx_frame_controller_sector_set(Eo *obj EINA_UNUSED,
+                                                                    Efl_Canvas_Vg_Object_Data *pd,
+                                                                    const char *name,
+                                                                    int startframe,
+                                                                    int endframe)
+{
+   if (!pd->vg_entry) return EINA_FALSE;
+   if (!evas_cache_vg_anim_sector_set(pd->vg_entry, name, startframe, endframe))
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+Eina_Bool _efl_canvas_vg_object_efl_gfx_frame_controller_sector_get(const Eo *obj EINA_UNUSED,
+                                                                    Efl_Canvas_Vg_Object_Data *pd,
+                                                                    const char *name,
+                                                                    int *startframe,
+                                                                    int *endframe)
+{
+   if (!pd->vg_entry) return EINA_FALSE;
+   if (!evas_cache_vg_anim_sector_get(pd->vg_entry, name, startframe, endframe))
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_gfx_frame_controller_frame_set(Eo *eo_obj,
                                                          Efl_Canvas_Vg_Object_Data *pd,
