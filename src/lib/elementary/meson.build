@@ -168,7 +168,7 @@ pub_eo_files = [
   'efl_ui_caching_factory.eo',
   'efl_ui_widget_factory.eo',
   'efl_ui_property_bind_part.eo',
-  'efl_ui_relative_layout.eo',
+  'efl_ui_relative_container.eo',
   'efl_ui_action_connector.eo',
   'efl_ui_format.eo',
   'efl_ui_item_clickable.eo',
@@ -373,7 +373,7 @@ elementary_headers_unstable = [
   'efl_ui_tab_pager_private.h',
   'efl_ui_tab_bar_private.h',
   'efl_ui_tab_page_private.h',
-  'efl_ui_relative_layout_private.h'
+  'efl_ui_relative_container_private.h'
 ]
 
 elementary_pub_headers = [
@@ -931,7 +931,7 @@ elementary_src = [
   'efl_ui_homogeneous_model.c',
   'efl_ui_exact_model.c',
   'efl_ui_average_model.c',
-  'efl_ui_relative_layout.c',
+  'efl_ui_relative_container.c',
   'efl_ui_action_connector.c',
   'efl_ui_format.c',
   'efl_ui_scroll_util.c',

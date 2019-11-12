@@ -222,7 +222,7 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 #endif
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
-# include <efl_ui_relative_layout.eo.h>
+# include <efl_ui_relative_container.eo.h>
 
 // FIXME - Text object must stop using Context_Item_Clicked_Cb!
 typedef void (*Context_Item_Clicked_Cb)(void *data, Eo *obj, void *event_info);

@@ -57,20 +57,20 @@ _btn_clicked_to_cb(void *data, const Efl_Event *event)
    switch (opt)
      {
       case LEFT:
-        efl_ui_relative_layout_relation_left_get(layout, btn, NULL, &relative);
-        efl_ui_relative_layout_relation_left_set(layout, btn, to, relative);
+        efl_ui_relative_container_relation_left_get(layout, btn, NULL, &relative);
+        efl_ui_relative_container_relation_left_set(layout, btn, to, relative);
         break;
       case RIGHT:
-        efl_ui_relative_layout_relation_right_get(layout, btn, NULL, &relative);
-        efl_ui_relative_layout_relation_right_set(layout, btn, to, relative);
+        efl_ui_relative_container_relation_right_get(layout, btn, NULL, &relative);
+        efl_ui_relative_container_relation_right_set(layout, btn, to, relative);
         break;
       case TOP:
-        efl_ui_relative_layout_relation_top_get(layout, btn, NULL, &relative);
-        efl_ui_relative_layout_relation_top_set(layout, btn, to, relative);
+        efl_ui_relative_container_relation_top_get(layout, btn, NULL, &relative);
+        efl_ui_relative_container_relation_top_set(layout, btn, to, relative);
         break;
       case BOTTOM:
-        efl_ui_relative_layout_relation_bottom_get(layout, btn, NULL, &relative);
-        efl_ui_relative_layout_relation_bottom_set(layout, btn, to, relative);
+        efl_ui_relative_container_relation_bottom_get(layout, btn, NULL, &relative);
+        efl_ui_relative_container_relation_bottom_set(layout, btn, to, relative);
         break;
      }
    efl_text_set(obj, ((to == layout) ? "parent" : (char *)efl_text_get(to)));
@@ -89,16 +89,16 @@ _slider_changed_relative_cb(void *data, const Efl_Event *event)
    switch (opt)
      {
       case LEFT:
-        efl_ui_relative_layout_relation_left_set(layout, btn, NULL, val);
+        efl_ui_relative_container_relation_left_set(layout, btn, NULL, val);
         break;
       case RIGHT:
-        efl_ui_relative_layout_relation_right_set(layout, btn, NULL, val);
+        efl_ui_relative_container_relation_right_set(layout, btn, NULL, val);
         break;
       case TOP:
-        efl_ui_relative_layout_relation_top_set(layout, btn, NULL, val);
+        efl_ui_relative_container_relation_top_set(layout, btn, NULL, val);
         break;
       case BOTTOM:
-        efl_ui_relative_layout_relation_bottom_set(layout, btn, NULL, val);
+        efl_ui_relative_container_relation_bottom_set(layout, btn, NULL, val);
         break;
      }
 }
@@ -131,19 +131,19 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
      {
       case LEFT:
         text = "left";
-        efl_ui_relative_layout_relation_left_get(layout, btn, &to, &relative);
+        efl_ui_relative_container_relation_left_get(layout, btn, &to, &relative);
         break;
       case RIGHT:
         text = "right";
-        efl_ui_relative_layout_relation_right_get(layout, btn, &to, &relative);
+        efl_ui_relative_container_relation_right_get(layout, btn, &to, &relative);
         break;
       case TOP:
         text = "top";
-        efl_ui_relative_layout_relation_top_get(layout, btn, &to, &relative);
+        efl_ui_relative_container_relation_top_get(layout, btn, &to, &relative);
         break;
       case BOTTOM:
         text = "bottom";
-        efl_ui_relative_layout_relation_bottom_get(layout, btn, &to, &relative);
+        efl_ui_relative_container_relation_bottom_get(layout, btn, &to, &relative);
         break;
      }
    btn_text = ((to == layout) ? "parent" : (char *)efl_text_get(to));
@@ -271,12 +271,12 @@ _button_frame_add(Eo *box, Eo *btn)
 }
 
 void
-test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_ui_relative_container(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win, *vbox, *f, *hbox;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                                  efl_text_set(efl_added, "Efl.Ui.Relative_Layout"),
+                                  efl_text_set(efl_added, "Efl.Ui.Relative_Container"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
@@ -301,26 +301,26 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
                efl_text_set(efl_added, "Contents"),
                efl_pack(vbox, efl_added));
 
-   layout = efl_add(EFL_UI_RELATIVE_LAYOUT_CLASS, f,
+   layout = efl_add(EFL_UI_RELATIVE_CONTAINER_CLASS, f,
                     efl_content_set(f, efl_added));
 
    btn1 = efl_add(EFL_UI_BUTTON_CLASS, layout,
                   efl_text_set(efl_added, "button1"),
                   efl_gfx_hint_align_set(efl_added, 0.0, 0.0),
                   efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_color_clicked_cb, layout),
-                  efl_ui_relative_layout_relation_right_set(layout, efl_added, layout, 0.0),
-                  efl_ui_relative_layout_relation_bottom_set(layout, efl_added, layout, 0.0));
+                  efl_ui_relative_container_relation_right_set(layout, efl_added, layout, 0.0),
+                  efl_ui_relative_container_relation_bottom_set(layout, efl_added, layout, 0.0));
 
    btn2 = efl_add(EFL_UI_BUTTON_CLASS, layout,
                   efl_text_set(efl_added, "button2"),
                   efl_gfx_hint_align_set(efl_added, 0.5, 0.0),
-                  efl_ui_relative_layout_relation_left_set(layout, efl_added, btn1, 1.0),
-                  efl_ui_relative_layout_relation_bottom_set(layout, efl_added, layout, 0.0));
+                  efl_ui_relative_container_relation_left_set(layout, efl_added, btn1, 1.0),
+                  efl_ui_relative_container_relation_bottom_set(layout, efl_added, layout, 0.0));
 
    btn3 = efl_add(EFL_UI_BUTTON_CLASS, layout,
                   efl_text_set(efl_added, "button3"),
-                  efl_ui_relative_layout_relation_left_set(layout, efl_added, btn2, 0.0),
-                  efl_ui_relative_layout_relation_top_set(layout, efl_added, btn2, 1.0));
+                  efl_ui_relative_container_relation_left_set(layout, efl_added, btn2, 0.0),
+                  efl_ui_relative_container_relation_top_set(layout, efl_added, btn2, 1.0));
 
    _button_frame_add(hbox, btn1);
    _button_frame_add(hbox, btn2);

@@ -43,7 +43,7 @@
              "Efl.Ui.Tab_Page",
              "Efl.Ui.Timepicker",
              "Efl.Ui.Navigation_Bar",
-             "Efl.Ui.Relative_Layout",
+             "Efl.Ui.Relative_Container",
              "Efl.Ui.Animation_View",
              "Efl.Ui.Table",
              "Efl.Ui.Flip"
