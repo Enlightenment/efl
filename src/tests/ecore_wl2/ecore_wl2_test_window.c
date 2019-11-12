@@ -130,6 +130,25 @@ EFL_START_TEST(wl2_window_display_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_alpha)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool alpha = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_alpha_set(win, EINA_TRUE);
+
+   alpha = ecore_wl2_window_alpha_get(win);
+   fail_if(alpha != EINA_TRUE);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -143,5 +162,6 @@ ecore_wl2_test_window(TCase *tc)
         if (getenv("E_START"))
           tcase_add_test(tc, wl2_window_aux_hints_supported_get);
         tcase_add_test(tc, wl2_window_display_get);
+        tcase_add_test(tc, wl2_window_alpha);
      }
 }
