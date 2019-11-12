@@ -8,16 +8,16 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
    c_prefix: efl_ui_scroll_manager;
    methods {
       @property pan @protected {
-    [[This is the internal pan object managed by scroll manager.
+         [[This is the internal pan object managed by scroll manager.
 
-      This property is protected as it is meant for scrollable object
-      implementations only, to set and access the internal pan object.
-      If pan is set to $NULL, scrolling does not work.
-    ]]
+           This property is protected as it is meant for scrollable object
+           implementations only, to set and access the internal pan object.
+           If pan is set to $NULL, scrolling does not work.
+         ]]
          set {
          }
          values {
-            pan: Efl.Ui.Pan; [[Pan object]]
+            pan: Efl.Ui.Pan; [[Pan object.]]
          }
       }
    }
