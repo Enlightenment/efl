@@ -79,20 +79,28 @@ public struct Error : IComparable<Error>, IEquatable<Error>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="val">Value to be converted to Error</param>
-    static public implicit operator Error(int val)
-    {
-        return new Error(val);
-    }
+    public static implicit operator Error(int val) => FromInt32(val);
+
+    /// <summary>
+    ///   Converts a <see cref="int" /> to a <see cref="Error" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The <see cref="int" /> to be converted.</param>
+    public static Error FromInt32(int val) => new Error(val);
 
     /// <summary>
     ///   Int conversion from Error.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="error">Error identifier to be converted to int</param>
-    static public implicit operator int(Error error)
-    {
-        return error.code;
-    }
+    public static implicit operator int(Error error) => ToInt32(error);
+
+    /// <summary>
+    ///   Converts a <see cref="Error" /> to a <see cref="int" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The <see cref="Error" /> to be converted.</param>
+    public static int ToInt32(Error error) => error.code;
 
     /// <summary>
     ///   Transform the object to a string representing the object.
@@ -213,7 +221,7 @@ public struct Error : IComparable<Error>, IEquatable<Error>
     {
         if (object.ReferenceEquals(obj, null))
             return false;
-            
+
         return this.Equals((Error)obj);
     }
 

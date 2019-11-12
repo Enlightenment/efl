@@ -897,11 +897,15 @@ public class ValueTypeBox
     }
 
     public static implicit operator ValueTypeBox(ValueType v)
-    {
-        return new ValueTypeBox(v);
-    }
+        => FromValueType(v);
+
+    public static ValueTypeBox FromValueType(ValueType v)
+        => new ValueTypeBox(v);
 
     public static implicit operator ValueType(ValueTypeBox box)
+        => ToValueType(box);
+
+    public static ValueType ToValueType(ValueTypeBox box)
     {
         if (box == null)
         {
@@ -1565,24 +1569,30 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static implicit operator ValueNative(Value v)
-    {
-        return v.GetNative();
-    }
+    public static implicit operator ValueNative(Value v) => ToValueNative(v);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static ValueNative ToValueNative(Value v) => v.GetNative();
 
     /// <summary>Implicit conversion from native struct representation to managed wrapper.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static implicit operator Value(ValueNative v)
-    {
-        return new Value(v);
-    }
+    public static implicit operator Value(ValueNative v) => FromValueNative(v);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static Value FromValueNative(ValueNative v) => new Value(v);
 
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(byte x)
+    public static implicit operator Value(byte x) => FromByte(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="byte" />
+    /// </summary>
+    /// <param name="x">The <see cref="byte" /> to be converted.</param>
+    public static Value FromByte(byte x)
     {
         var v = new Eina.Value(ValueType.Byte);
         v.Set(x);
@@ -1593,7 +1603,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator byte(Value v)
+    public static implicit operator byte(Value v) => ToByte(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="byte" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static byte ToByte(Value v)
     {
         byte b;
         v.Get(out b);
@@ -1604,7 +1621,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(sbyte x)
+    public static implicit operator Value(sbyte x) => FromSByte(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="sbyte" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="sbyte" /> to be converted.</param>
+    public static Value FromSByte(sbyte x)
     {
         var v = new Eina.Value(ValueType.SByte);
         v.Set(x);
@@ -1615,7 +1639,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator sbyte(Value v)
+    public static implicit operator sbyte(Value v) => ToSByte(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="sbyte" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static sbyte ToSByte(Value v)
     {
         sbyte b;
         v.Get(out b);
@@ -1626,7 +1657,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(short x)
+    public static implicit operator Value(short x) => FromShort(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="short" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="short" /> to be converted.</param>
+    public static Value FromShort(short x)
     {
         var v = new Eina.Value(ValueType.Short);
         v.Set(x);
@@ -1637,7 +1675,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator short(Value v)
+    public static implicit operator short(Value v) => ToInt16(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="short" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static short ToInt16(Value v)
     {
         short b;
         v.Get(out b);
@@ -1648,7 +1693,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(ushort x)
+    public static implicit operator Value(ushort x) => FromUInt16(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="ushort" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="ushort" /> to be converted.</param>
+    public static Value FromUInt16(ushort x)
     {
         var v = new Eina.Value(ValueType.UShort);
         v.Set(x);
@@ -1659,7 +1711,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator ushort(Value v)
+    public static implicit operator ushort(Value v) => ToUInt16(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="ushort" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static ushort ToUInt16(Value v)
     {
         ushort b;
         v.Get(out b);
@@ -1670,18 +1729,33 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(int x)
+    public static implicit operator Value(int x) => FromInt32(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="int" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="int" /> to be converted.</param>
+    public static Value FromInt32(int x)
     {
         var v = new Eina.Value(ValueType.Int32);
         v.Set(x);
 
         return v;
+
     }
 
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator int(Value v)
+    public static implicit operator int(Value v) => ToInt32(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="int" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static int ToInt32(Value v)
     {
         int b;
         v.Get(out b);
@@ -1692,7 +1766,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(uint x)
+    public static implicit operator Value(uint x) => FromUInt32(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="uint" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="uint" /> to be converted.</param>
+    public static Value FromUInt32(uint x)
     {
         var v = new Eina.Value(ValueType.UInt32);
         v.Set(x);
@@ -1703,7 +1784,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator uint(Value v)
+    public static implicit operator uint(Value v) => ToUInt32(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="uint" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static uint ToUInt32(Value v)
     {
         uint b;
         v.Get(out b);
@@ -1714,7 +1802,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(long x)
+    public static implicit operator Value(long x) => FromInt64(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="long" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="long" /> to be converted.</param>
+    public static Value FromInt64(long x)
     {
         var v = new Eina.Value(ValueType.Long);
         v.Set(x);
@@ -1725,7 +1820,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator long(Value v)
+    public static implicit operator long(Value v) => ToInt64(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="long" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static long ToInt64(Value v)
     {
         long b;
         v.Get(out b);
@@ -1736,7 +1838,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(ulong x)
+    public static implicit operator Value(ulong x) => FromUInt64(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="ulong" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="ulong" /> to be converted.</param>
+    public static Value FromUInt64(ulong x)
     {
         var v = new Eina.Value(ValueType.ULong);
         v.Set(x);
@@ -1747,7 +1856,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator ulong(Value v)
+    public static implicit operator ulong(Value v) => ToUInt64(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="ulong" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static ulong ToUInt64(Value v)
     {
         ulong b;
         v.Get(out b);
@@ -1758,7 +1874,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(float x)
+    public static implicit operator Value(float x) => FromSingle(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="float" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="float" /> to be converted.</param>
+    public static Value FromSingle(float x)
     {
         var v = new Eina.Value(ValueType.Float);
         v.Set(x);
@@ -1769,7 +1892,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator float(Value v)
+    public static implicit operator float(Value v) => ToSingle(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="float" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static float ToSingle(Value v)
     {
         float b;
         v.Get(out b);
@@ -1780,7 +1910,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(double x)
+    public static implicit operator Value(double x) => FromDouble(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="double" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="double" /> to be converted.</param>
+    public static Value FromDouble(double x)
     {
         var v = new Eina.Value(ValueType.Double);
         v.Set(x);
@@ -1791,7 +1928,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator double(Value v)
+    public static implicit operator double(Value v) => ToDouble(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="double" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static double ToDouble(Value v)
     {
         double b;
         v.Get(out b);
@@ -1802,7 +1946,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(string x)
+    public static implicit operator Value(string x) => FromString(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="string" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="string" /> to be converted.</param>
+    public static Value FromString(string x)
     {
         var v = new Eina.Value(ValueType.String);
         v.Set(x);
@@ -1813,7 +1964,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator string(Value v)
+    public static implicit operator string(Value v) => ToString(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="string" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static string ToString(Value v)
     {
         string b;
         v.Get(out b);
@@ -1944,7 +2102,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Explicit conversion from EFL objects.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static explicit operator Value(Efl.Object obj)
+    public static explicit operator Value(Efl.Object obj) => FromObject(obj);
+
+    /// <summary>
+    ///   Converts a <see cref="Efl.Object" /> to a <see cref="Value" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The <see cref="Efl.Object" /> to be converted.</param>
+    public static Value FromObject(Efl.Object obj)
     {
         var v = new Eina.Value(ValueType.Object);
         v.Set(obj);
@@ -1954,7 +2119,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Explicit conversion from Value to Efl.Objects.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static explicit operator Efl.Object(Value v)
+    public static explicit operator Efl.Object(Value v) => ToObject(v);
+
+    /// <summary>
+    ///   Converts a <see cref="Value" /> to a <see cref="Object" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static Efl.Object ToObject(Value v)
     {
         Efl.Object obj;
         v.Get(out obj);
