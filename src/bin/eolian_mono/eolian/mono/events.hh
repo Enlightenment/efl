@@ -474,6 +474,7 @@ struct event_definition_generator
    {
       auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
+      bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
 
       if (!as_generator(
             scope_tab << "/// <summary>Method to raise event "<< event_name << ".\n"
@@ -510,7 +511,7 @@ struct event_definition_generator
       if (!as_generator(
             scope_tab << "/// </summary>\n"
             << scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
-            << scope_tab << "public void On" << event_name << "(" << event_args_type << " e)\n"
+            << scope_tab << (is_concrete ? "public" : "protected virtual") << " void On" << event_name << "(" << event_args_type << " e)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "var key = \"_" << upper_c_name << "\";\n"
             << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(" << library_name << ", key);\n"
