@@ -1259,7 +1259,7 @@ _pointer_hash(const uintptr_t val)
 static inline void
 _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
-   int event_hash;
+   unsigned char event_hash;
 
    event_hash = _pointer_hash((uintptr_t) it->desc);
 
@@ -1996,7 +1996,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
       .inserted_before = 0,
       .generation = 1,
    };
-   int event_hash;
+   unsigned char event_hash;
 
    if (pd->callbacks_count == 0) return EINA_TRUE;
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_ADD)
