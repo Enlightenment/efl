@@ -140,6 +140,17 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     }
 
     /// <summary>
+    /// Conversion from string to Stringshare.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <remarks>
+    /// Note that this method can be used to create an instance of this class,
+    /// either via an explicit cast or an implicit convertion.
+    /// <seealso cref="Create(string)"/>
+    /// </remarks>
+    public static Stringshare FromString(string s) => s;
+
+    /// <summary>
     /// Check two Stringshare objects for equality.
     /// <para>Since EFL 1.23.</para>
     /// </summary>

@@ -1657,14 +1657,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(short x) => FromShort(x);
+    public static implicit operator Value(short x) => FromInt16(x);
 
     /// <summary>
     ///   Conversion to a <see cref="Value" /> from a <see cref="short" />
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="x">The <see cref="short" /> to be converted.</param>
-    public static Value FromShort(short x)
+    public static Value FromInt16(short x)
     {
         var v = new Eina.Value(ValueType.Short);
         v.Set(x);
