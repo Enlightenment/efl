@@ -78,6 +78,21 @@ struct alias_definition_generator
                  << scope_tab << "{\n"
                  << scope_tab << scope_tab << "return value.payload;\n"
                  << scope_tab << "}\n"
+
+                 << scope_tab << "/// <summary>Converts an instance of " << alias_type_doc << " to this struct.</summary>\n"
+                 << scope_tab << "/// <param name=\"value\">The value to be converted.</param>\n"
+                 << scope_tab << "/// <returns>A struct with the given value.</returns>\n"
+                 << scope_tab << "public static " << alias_name << " From" << name_helpers::translate_value_type(alias_type) << "(" << alias_type << " value)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return value;\n"
+                 << scope_tab << "}\n\n"
+
+                 << scope_tab << "/// <summary>Converts an instance of this struct to " << alias_type_doc << ".</summary>\n"
+                 << scope_tab << "/// <returns>The actual value the alias is wrapping.</returns>\n"
+                 << scope_tab << "public " << alias_type << " To" << name_helpers::translate_value_type(alias_type) << "()\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return this;\n"
+                 << scope_tab << "}\n"
                  << "}\n"
                  ).generate(sink, alias, context))
        return false;

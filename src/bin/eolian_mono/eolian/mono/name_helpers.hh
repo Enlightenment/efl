@@ -537,6 +537,32 @@ std::string constructor_managed_name(std::string full_name)
     return managed_name(tokens.at(tokens.size()-1));
 }
 
+std::string translate_value_type(std::string const& name)
+{
+  static std::map<std::string, std::string> table = {
+    {"sbyte", "SByte"},
+    {"byte","Byte"},
+    {"short","Int16"},
+    {"ushort","UInt16"},
+    {"int", "Int32"},
+    {"uint","UInt32"},
+    {"long","Int64"},
+    {"ulong","UInt64"},
+    {"char","Char"},
+    {"float","Single"},
+    {"double","Double"},
+    {"bool","Boolean"},
+    {"decimal","Decimal"},
+  };
+
+  auto found = table.find(name);
+
+  if (found != table.end())
+    return found->second;
+
+  return name;
+}
+
 } // namespace name_helpers
 
 } // namespace eolian_mono

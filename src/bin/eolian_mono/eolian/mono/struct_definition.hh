@@ -493,6 +493,26 @@ struct struct_definition_generator
             ).generate(sink, attributes::unused, context))
        return false;
 
+    if(!as_generator(
+            indent << scope_tab << "/// <summary>Conversion to the managed representation from a native pointer.\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!struct_.documentation.since.empty())
+       if (!as_generator(indent << scope_tab << "/// <para>Since EFL " + struct_.documentation.since + ".</para>\n"
+            ).generate(sink, attributes::unused, context))
+         return false;
+
+     if (!as_generator(
+            indent << scope_tab << "/// </summary>\n"
+            << indent << scope_tab << "/// <param name=\"ptr\">Native pointer to be converted.</param>\n"
+            << indent << scope_tab << "public static " << struct_name << " FromIntPtr(IntPtr ptr)\n"
+            << indent << scope_tab << "{\n"
+            << indent << scope_tab << scope_tab << "return ptr;\n"
+            << indent << scope_tab << "}\n\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
      if (!struct_internal_definition.generate(sink, struct_, change_indentation(indent.inc(), context)))
        return false;
 
