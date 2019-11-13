@@ -48,7 +48,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
 
    wl_disp = ecore_wl2_display_get(gw->wl2_disp);
    const char *s = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
-   if (strstr(s, "EXT_platform_base"))
+   if (s && strstr(s, "EXT_platform_base"))
      {
         EGLDisplay (*func) (EGLenum platform, void *native_display, const EGLint *attrib_list);
         func = (void *)eglGetProcAddress("eglGetPlatformDisplayEXT");
