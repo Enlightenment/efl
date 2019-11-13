@@ -72,7 +72,7 @@ struct _Efl_Object_Data
    EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_NOREF);
 
    EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_INVALIDATE);
-   Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_DESTRUCT); // No proper count: minor optimization triggered at destruction only
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
 
@@ -1269,6 +1269,7 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
    else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_DEL)
    else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DEL)
    else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_INVALIDATE)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DESTRUCT)
    else if (it->desc == EFL_EVENT_NOREF && !pd->event_cb_EFL_EVENT_NOREF)
      {
         if (efl_event_callback_count(obj_id, EFL_EVENT_NOREF) > 0)
@@ -1280,8 +1281,6 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
              pd->event_cb_EFL_EVENT_NOREF = EINA_TRUE;
           }
      }
-   else if (it->desc == EFL_EVENT_DESTRUCT)
-     pd->has_destroyed_event_cb = EINA_TRUE;
    else if (it->desc == EFL_EVENT_OWNERSHIP_SHARED || it->desc == EFL_EVENT_OWNERSHIP_UNIQUE)
      {
         EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -1353,7 +1352,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    eina_freeq_ptr_main_add(pd->callbacks, free, 0);
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
-   pd->has_destroyed_event_cb = EINA_FALSE;
+   pd->event_cb_EFL_EVENT_DESTRUCT = EINA_FALSE;
    pd->event_cb_EFL_EVENT_CALLBACK_ADD = EINA_FALSE;
    pd->event_cb_EFL_EVENT_CALLBACK_DEL = EINA_FALSE;
    pd->event_cb_EFL_EVENT_DEL = EINA_FALSE;
@@ -2005,6 +2004,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DEL)
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_INVALIDATE)
    else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_NOREF)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DESTRUCT)
 
    if (!legacy_compare)
      {
@@ -2585,7 +2585,7 @@ err_parent_back:
    // this isn't 100% correct, as the object is still "slightly" alive at this
    // point (so efl_destructed_is() returns false), but triggering the
    // "destruct" event here is the simplest, safest solution.
-   if (EINA_UNLIKELY(pd->has_destroyed_event_cb))
+   if (EINA_UNLIKELY(pd->event_cb_EFL_EVENT_DESTRUCT))
      _event_callback_call(obj, pd, EFL_EVENT_DESTRUCT, NULL, EINA_FALSE);
 
    // remove generic data after this final event, in case they are used in a cb
