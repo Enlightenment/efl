@@ -92,8 +92,12 @@ if meson.is_cross_build()
   edje_codegen_path = _edje_codegen.path()
   edje_codegen_exe = [_edje_codegen]
 else
-  env = find_program('env', native: true)
-  edje_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', edje_codegen.full_path()]
+  if sys_windows == true
+    edje_codegen_exe = [edje_codegen.full_path()]
+  else
+    env = find_program('env', native: true)
+    edje_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', edje_codegen.full_path()]
+  endif
 endif
 
 edje_pick = executable('edje_pick',

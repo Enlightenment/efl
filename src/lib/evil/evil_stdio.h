@@ -43,6 +43,10 @@
  */
 EAPI int evil_rename(const char *src, const char *dst);
 
+#ifndef HAVE_CYGWIN
+typedef int mode_t;
+#endif
+
 /**
  * @brief Wrap the _mkdir() function on Windows.
  *

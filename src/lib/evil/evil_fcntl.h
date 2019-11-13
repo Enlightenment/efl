@@ -75,7 +75,9 @@ struct flock
    short int l_whence; /**< type of l_start */
    off_t     l_start;  /**< starting offset */
    off_t     l_len;    /**< 0 means end of the file */
+#ifdef HAVE_CYGWIN
    pid_t     l_pid;    /**< lock owner */
+#endif
 };
 
 

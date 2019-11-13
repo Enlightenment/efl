@@ -20,6 +20,8 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_CYGWIN
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -228,3 +230,5 @@ eina_counter_dump(Eina_Counter *counter)
 
    return result;
 }
+
+#endif

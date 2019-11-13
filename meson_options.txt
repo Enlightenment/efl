@@ -64,6 +64,11 @@ option('eeze',
   description : 'Device abstraction (udev wrapper) in efl'
 )
 
+option('dbus',
+  type : 'boolean',
+  value : true
+)
+
 option('opengl',
   type : 'combo',
   choices : ['full', 'es-egl', 'none'],
@@ -104,6 +109,24 @@ option('crypto',
   type : 'combo',
   choices : ['gnutls', 'openssl'],
   value : 'openssl',
+  description : 'Which SSL Crypto library used in efl'
+)
+
+option('openssl_dir',
+  type : 'string',
+  value : '',
+  description : 'Which SSL Crypto library used in efl'
+)
+
+option('regex_include_dir',
+  type : 'string',
+  value : '',
+  description : 'Which SSL Crypto library used in efl'
+)
+
+option('regex_dir',
+  type : 'string',
+  value : '',
   description : 'Which SSL Crypto library used in efl'
 )
 

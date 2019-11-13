@@ -17,6 +17,10 @@ extern "C" {
 # endif
 #endif
 
+#ifndef EVIL_UNUSED
+#define EVIL_UNUSED
+#endif
+
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif

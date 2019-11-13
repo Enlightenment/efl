@@ -1,4 +1,4 @@
-emile_deps = [jpeg, crypto, dependency('zlib')]
+emile_deps = [jpeg, crypto, dependency('zlib', required: false)]
 emile_pub_deps = [eina, efl]
 
 emile_headers = [
@@ -26,7 +26,7 @@ endif
 emile_lib = library('emile',
     emile_src,
     include_directories: config_dir,
-    dependencies: emile_pub_deps + emile_deps + [lz4, rg_etc, m],
+    dependencies: emile_pub_deps + emile_deps + [lz4, rg_etc],
     install: true,
     version : meson.project_version()
 )

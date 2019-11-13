@@ -177,7 +177,9 @@ else
     'efl_net_control-connman.c',
     'efl_net_session-connman.c'
   ]
-  ecore_con_deps += eldbus
+  if get_option('dbus')
+    ecore_con_deps += eldbus
+  endif
 endif
 
 ecore_con_deps += crypto

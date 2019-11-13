@@ -154,10 +154,14 @@ if strerror_r_char_p
 endif
 
 #for later use, a bunch of librarie findings
+if host_machine.system() != 'windows'
 m = cc.find_library('m')
+endif
 #just keep this here as required false, if it is not inplace the library rt will just be linked as NOP
+if host_machine.system() != 'windows'
 dl = cc.find_library('dl', required: false)
 rt = cc.find_library('rt', required: false)
+endif
 
 thread_dep = dependency('threads')
 
@@ -210,9 +214,19 @@ endif
 
 regexp = []
 if sys_windows == true
-   regexp = cc.find_library('regex',
-                            has_headers: ['regex.h', 'fnmatch.h'],
-                            required: true)
+   if sys_windows == true
+     inc_arg = '-I' + get_option('regex_include_dir')
+     if cc.has_header('regex.h', args: inc_arg) == false
+       error('regex can not be found')
+     endif
+      regexp = cc.find_library('pcre',
+				dirs : [get_option('regex_dir')],
+                            	required: true)
+   else
+      regexp = cc.find_library('regex',
+                                has_headers: ['regex.h', 'fnmatch.h'],
+                            	required: true)
+   endif
    if regexp.found() == false
       error('regex can not be found')
    endif
@@ -234,7 +248,7 @@ config_h.set('VREV', '0')
 
 jpeg = dependency('libjpeg', required: false)
 if jpeg.found() == false
-  jpeg = cc.find_library('jpeg')
+#  jpeg = cc.find_library('jpeg')
 endif
 
 if sys_bsd == true

@@ -45,14 +45,14 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 
 eo_lib = library('eo',
     eo_src, pub_eo_file_target,
-    dependencies: [eina, valgrind, dl, execinfo],
+    dependencies: [eina, valgrind, execinfo],
     install: true,
     version : meson.project_version()
 )
 
 eo_lib_dbg = library('eo_dbg',
     eo_src, pub_eo_file_target,
-    dependencies: [eina, valgrind, dl, execinfo],
+    dependencies: [eina, valgrind, execinfo],
     install: true,
     c_args : '-DEO_DEBUG',
     version : meson.project_version()

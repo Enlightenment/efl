@@ -1,4 +1,4 @@
-eet_deps = [crypto, jpeg, rg_etc, m]
+eet_deps = [crypto, jpeg, rg_etc]
 eet_pub_deps = [eina, emile, efl]
 
 eet_header_src = [

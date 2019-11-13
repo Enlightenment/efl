@@ -4,10 +4,18 @@
 # as 'source :', later everything is build as libevas.so.
 #
 
-png = dependency('libpng')
+png = dependency('libpng', required: false)
 tiff = dependency('libtiff-4', required: get_option('evas-loaders-disabler').contains('tiff') == false)
-giflib = cc.find_library('gif')
+if get_option('evas-loaders-disabler').contains('gif')
+  giflib = declare_dependency()
+else
+  giflib = cc.find_library('gif')
+endif
 webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
+
+if get_option('evas-loaders-disabler').contains('generic')
+  rt = declare_dependency()
+endif
 
 evas_image_loaders_file = [
      ['bmp',     'shared', []],
@@ -143,7 +151,9 @@ evas_src_opt = [ ]
 
 evas_src += vg_common_src
 
-evas_deps += dependency('freetype2')
+if sys_windows == false
+  evas_deps += dependency('freetype2')
+endif
 
 if (get_option('fontconfig'))
    config_h.set('HAVE_FONTCONFIG', '1')

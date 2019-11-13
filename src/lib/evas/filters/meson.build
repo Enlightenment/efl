@@ -25,8 +25,10 @@ if get_option('lua-interpreter') == 'lua'
       break
     endif
   endforeach
-else
+elif sys_windows == false
   lua = dependency(get_option('lua-interpreter'))
+else
+  lua = declare_dependency()
 endif
 
 if sys_osx == true and get_option('lua-interpreter') == 'luajit'
