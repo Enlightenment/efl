@@ -1243,10 +1243,11 @@ _pointer_hash(const uintptr_t val)
 #endif
 }
 
-#define EFL_OBJECT_EVENT_CB_INC(Obj, It, Pd, Event)     \
-  if (It->desc == Event && !Pd->event_cb_##Event)       \
-    {                                                   \
-       Pd->event_cb_##Event = EINA_TRUE;                \
+#define EFL_OBJECT_EVENT_CB_INC(Obj, It, Pd, Event, Update_Hash)        \
+  if (It->desc == Event && !Pd->event_cb_##Event)                       \
+    {                                                                   \
+       Update_Hash = EINA_FALSE;                                        \
+       Pd->event_cb_##Event = EINA_TRUE;                                \
     }
 
 #define EFL_OBJECT_EVENT_CB_DEC(Obj, It, Pd, Event)     \
@@ -1259,19 +1260,17 @@ _pointer_hash(const uintptr_t val)
 static inline void
 _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
-   unsigned char event_hash;
+   Eina_Bool update_hash = EINA_TRUE;
 
-   event_hash = _pointer_hash((uintptr_t) it->desc);
-
-   pd->callbacks_mask |= 1ULL << event_hash;
-
-   EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_ADD)
-   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_DEL)
-   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DEL)
-   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_INVALIDATE)
-   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DESTRUCT)
+   EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_ADD, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_DEL, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DEL, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_INVALIDATE, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DESTRUCT, update_hash)
    else if (it->desc == EFL_EVENT_NOREF && !pd->event_cb_EFL_EVENT_NOREF)
      {
+        update_hash = EINA_FALSE;
+
         if (efl_event_callback_count(obj_id, EFL_EVENT_NOREF) > 0)
           {
              EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -1286,6 +1285,15 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
         EO_OBJ_POINTER_RETURN(obj_id, obj);
         obj->ownership_track = EINA_TRUE;
         EO_OBJ_DONE(obj_id);
+     }
+
+   if (update_hash)
+     {
+        unsigned char event_hash;
+
+        event_hash = _pointer_hash((uintptr_t) it->desc);
+
+        pd->callbacks_mask |= 1ULL << event_hash;
      }
 }
 
@@ -1976,8 +1984,12 @@ _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, E
    return !strcmp(a->name, b->name);
 }
 
-#define EFL_OBJECT_EVENT_CALLBACK_BLOCK(Pd, Desc, Event)                \
-  if ((Desc == Event) && (!(Pd->event_cb_##Event))) return EINA_TRUE;
+#define EFL_OBJECT_EVENT_CALLBACK_BLOCK(Pd, Desc, Event, Need_Hash)     \
+  if (Desc == Event)                                                    \
+    {                                                                   \
+       if (!(Pd->event_cb_##Event)) return EINA_TRUE;                   \
+       Need_Hash = EINA_FALSE;                                          \
+    }                                                                   \
 
 static inline Eina_Bool
 _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
@@ -1996,18 +2008,20 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
       .inserted_before = 0,
       .generation = 1,
    };
-   unsigned char event_hash;
+   Eina_Bool need_hash = EINA_TRUE;
 
    if (pd->callbacks_count == 0) return EINA_TRUE;
-   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_ADD)
-   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_DEL)
-   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DEL)
-   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_INVALIDATE)
-   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_NOREF)
-   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DESTRUCT)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_ADD, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_DEL, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DEL, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_INVALIDATE, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_NOREF, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DESTRUCT, need_hash)
 
-   if (!legacy_compare)
+   if (EINA_LIKELY(!legacy_compare && need_hash))
      {
+        unsigned char event_hash;
+
         event_hash = _pointer_hash((uintptr_t) desc);
         if (!(pd->callbacks_mask & (1ULL << event_hash)))
           return EINA_TRUE;
