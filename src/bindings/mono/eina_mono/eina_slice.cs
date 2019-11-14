@@ -52,7 +52,7 @@ public interface ISliceBase
 /// Since EFL 1.23.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct Slice : ISliceBase
+public struct Slice : ISliceBase, IEquatable<Slice>
 {
     /// <summary>
     /// The length of this slice.
@@ -87,6 +87,49 @@ public struct Slice : ISliceBase
         Mem = mem;
         Len = len;
     }
+
+    /// <summary>
+    ///   Gets a hash for <see cref="Slice" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => Length.GetHashCode() ^ Mem.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="Slice" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is Slice)) ? false : Equals((Slice)other);
+
+    /// <summary>Returns whether this <see cref="Slice" /> is equal
+    /// to the given <see cref="Slice" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="Slice" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(Slice other)
+        => (Length == other.Length) ^ (Mem == other.Mem);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(Slice lhs, Slice rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(Slice lhs, Slice rhs) => !(lhs == rhs);
 }
 
 /// <summary>Pointer to a slice of native memory.
@@ -94,7 +137,7 @@ public struct Slice : ISliceBase
 /// Since EFL 1.23.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct RwSlice : ISliceBase
+public struct RwSlice : ISliceBase, IEquatable<RwSlice>
 {
     /// <summary>
     /// The length of this slice.
@@ -141,6 +184,49 @@ public struct RwSlice : ISliceBase
         r.Len = Len;
         return r;
     }
+
+    /// <summary>
+    ///   Gets a hash for <see cref="RwSlice" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => Mem.GetHashCode() ^ Length.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="RwSlice" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is RwSlice)) ? false : Equals((RwSlice)other);
+
+    /// <summary>Returns whether this <see cref="RwSlice" /> is equal
+    /// to the given <see cref="RwSlice" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="RwSlice" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(RwSlice other)
+        => (Length == other.Length) && (Mem == other.Mem);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(RwSlice lhs, RwSlice rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(RwSlice lhs, RwSlice rhs) => !(lhs == rhs);
 }
 
 }

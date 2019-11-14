@@ -41,7 +41,7 @@ public static class Timeout
 /// <para>Since EFL 1.23.</para>
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct ObjectPath
+public struct ObjectPath : IEquatable<ObjectPath>
 {
     /// <summary>
     /// The string of the path.
@@ -86,6 +86,48 @@ public struct ObjectPath
     /// </summary>
     /// <param name="path">The ObjectPath to be converted.</param>
     public static string ToString(ObjectPath path) => path.value;
+    
+    /// <summary>
+    ///   Gets a hash for <see cref="ObjectPath" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => value.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ObjectPath" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ObjectPath)) ? false : Equals((ObjectPath)other);
+
+    /// <summary>Returns whether this <see cref="ObjectPath" /> is equal
+    /// to the given <see cref="ObjectPath" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ObjectPath" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ObjectPath other) => value == other.value;
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ObjectPath lhs, ObjectPath rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ObjectPath lhs, ObjectPath rhs) => !(lhs == rhs);
 
 }
 
@@ -94,7 +136,7 @@ public struct ObjectPath
 /// <para>Since EFL 1.23.</para>
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct SignatureString
+public struct SignatureString : IEquatable<SignatureString>
 {
     /// <summary>
     /// The string of the signature.
@@ -137,6 +179,48 @@ public struct SignatureString
         => ToString(sig);
 
     public static string ToString(SignatureString sig) => sig.value;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="SignatureString" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => value.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="SignatureString" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is SignatureString)) ? false : Equals((SignatureString)other);
+
+    /// <summary>Returns whether this <see cref="SignatureString" /> is equal
+    /// to the given <see cref="SignatureString" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="SignatureString" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(SignatureString other) => value == other.value;
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(SignatureString lhs, SignatureString rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(SignatureString lhs, SignatureString rhs) => !(lhs == rhs);
 }
 
 /// <summary>
@@ -144,7 +228,7 @@ public struct SignatureString
 /// <para>Since EFL 1.23.</para>
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct UnixFd
+public struct UnixFd : IEquatable<UnixFd>
 {
     /// <summary>
     /// The value of the file descriptor.
@@ -189,6 +273,48 @@ public struct UnixFd
     /// </summary>
     /// <param name="unix_fd">The <see cref="UnixFd" /> to be converted.</param>
     public static Int32 ToInt32(UnixFd unix_fd) => unix_fd.value;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="UnixFd" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => value.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="UnixFd" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is UnixFd)) ? false : Equals((UnixFd)other);
+
+    /// <summary>Returns whether this <see cref="UnixFd" /> is equal
+    /// to the given <see cref="UnixFd" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="UnixFd" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(UnixFd other) => value == other.value;
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(UnixFd lhs, UnixFd rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(UnixFd lhs, UnixFd rhs) => !(lhs == rhs);
 }
 /// <summary>
 /// Arguments of EldBus.

@@ -563,7 +563,7 @@ static internal class UnsafeNativeMethods
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 [EditorBrowsable(EditorBrowsableState.Never)]
-public struct ValueNative
+public struct ValueNative : IEquatable<ValueNative>
 {
     public IntPtr Type;
     public IntPtr Value; // Actually an Eina_Value_Union, but it is padded to 8 bytes.
@@ -572,6 +572,49 @@ public struct ValueNative
     {
         return $"ValueNative<Type:0x{Type.ToInt64():x}, Value:0x{Value.ToInt64():x}>";
     }
+
+    /// <summary>
+    ///   Gets a hash for <see cref="ValueNative" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => Type.GetHashCode() ^ Value.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ValueNative" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ValueNative)) ? false : Equals((ValueNative)other);
+
+    /// <summary>Returns whether this <see cref="ValueNative" /> is equal
+    /// to the given <see cref="ValueNative" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ValueNative" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ValueNative other)
+        => (Type == other.Type) ^ (Value == other.Value);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ValueNative lhs, ValueNative rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ValueNative lhs, ValueNative rhs) => !(lhs == rhs);
 }
 
 /// <summary>Exception for failures when setting an container item.
