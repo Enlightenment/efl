@@ -158,14 +158,14 @@ _build_compositor(Efl_Ui_Win *win)
    return comp;
 }
 
-static Efl_Canvas_Animation *fade_in;
-
 static void
 _home_screen_cb(void *data, const Efl_Event *cb)
 {
    Efl_Canvas_Rectangle *rect;
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, compositor);
+   efl_gfx_entity_size_set(rect, EINA_SIZE2D(720*SCALE+15, 1280*SCALE));
+   efl_gfx_entity_position_set(rect, EINA_POSITION2D(0, 1280*SCALE));
 }
 
 
