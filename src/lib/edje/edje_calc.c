@@ -988,12 +988,38 @@ _edje_recalc_table_parts(Edje *ed
    for (i = 0; i < ed->table_parts_size; i++)
      {
         ep = ed->table_parts[i];
+
+        //Ignore if the real part doesn't have swallowed object
+        if ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
+            (ep->typedata.swallow) &&
+            (!ep->typedata.swallow->swallowed_object))
+          continue;
+
         if (ep->calculated != FLAG_XY) // FIXME: this is always true (see for above)
           _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY, NULL);
      }
 #ifdef EDJE_CALC_CACHE
    return need_reinit_state;
 #endif
+}
+
+void
+_edje_recalc_textblock_style_text_set(Edje *ed)
+{
+   unsigned short i;
+   Edje_Real_Part *ep;
+   Edje_Part_Description_Text *chosen_desc;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        ep = ed->table_parts[i];
+
+        if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+          {
+             _edje_part_textblock_style_text_set
+               (ed, ep, (Edje_Part_Description_Text *)ep->chosen_description);
+          }
+     }
 }
 
 void
@@ -1004,6 +1030,17 @@ _edje_recalc_do(Edje *ed)
 #ifdef EDJE_CALC_CACHE
    Eina_Bool need_reinit_state = EINA_FALSE;
 #endif
+
+
+   //Do nothing if the edje has no size, Regardless of the edje part size calc,
+   //the text and style has to be set.
+   if ((EINA_UNLIKELY(!ed->has_size)) && (!ed->calc_only) && (ed->w == 0) && (ed->h == 0))
+     {
+        _edje_recalc_textblock_style_text_set(ed);
+
+        return;
+     }
+   ed->has_size = EINA_TRUE;
 
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);
    evas_object_smart_need_recalculate_set(ed->obj, 0);

@@ -1807,6 +1807,7 @@ struct _Edje
    Eina_Bool          text_part_change : 1;
    Eina_Bool          all_part_change : 1;
 #endif
+   Eina_Bool          has_size : 1;
 };
 
 struct _Edje_Calc_Params_Map
