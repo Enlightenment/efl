@@ -232,7 +232,6 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "canvas/efl_canvas_animation_group.eo.h"
 #include "canvas/efl_canvas_animation_group_parallel.eo.h"
 #include "canvas/efl_canvas_animation_group_sequential.eo.h"
-#include "canvas/efl_canvas_animation_player.eo.h"
 #include "canvas/efl_canvas_event_grabber.eo.h"
 
  /**
