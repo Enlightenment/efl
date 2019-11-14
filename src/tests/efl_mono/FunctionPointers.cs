@@ -53,6 +53,7 @@ class TestFunctionPointers
 
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(42 * 2, x);
+        obj.Dispose();
     }
 
     public static void set_callback_with_lambda()
@@ -71,6 +72,7 @@ class TestFunctionPointers
 
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(37 + 4, x);
+        obj.Dispose();
     }
 
     public static void replace_callback()
@@ -96,6 +98,7 @@ class TestFunctionPointers
         x = obj.CallCallback(42);
         Test.Assert(new_called, "call_callback must call a callback");
         Test.AssertEquals(42 * 42, x);
+        obj.Dispose();
     }
 
     class NoOverride : Dummy.TestObject {
@@ -112,6 +115,7 @@ class TestFunctionPointers
 
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(42 * 3, x);
+        obj.Dispose();
     }
 
     class WithOverride : Dummy.TestObject {
@@ -151,6 +155,7 @@ class TestFunctionPointers
 
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(42 * 3, x);
+        obj.Dispose();
     }
 
     // These are needed due to issues calling methods on obj from the GC thread (where the
@@ -202,7 +207,7 @@ class TestFunctionPointers
 
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(42 * 2, x);
-
+        obj.Dispose();
     }
 }
 

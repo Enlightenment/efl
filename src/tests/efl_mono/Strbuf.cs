@@ -29,6 +29,7 @@ class TestStrBuf
 
         Test.AssertEquals("Here's Jonnny!".Length, buf.Length);
         Test.AssertEquals("Here's Johnny!", buf.Steal());
+        buf.Dispose();
     }
 
     public static void test_tostring()
@@ -39,6 +40,7 @@ class TestStrBuf
         buf.Append("World!");
 
         Test.AssertEquals("Hello World!", buf.ToString());
+        buf.Dispose();
     }
 
     public static void test_eolian()
@@ -50,6 +52,8 @@ class TestStrBuf
         obj.AppendToStrbuf(buf, " to buf");
 
         Test.AssertEquals("Appended to buf", buf.Steal());
+        buf.Dispose();
+        obj.Dispose();
     }
 
     private class Appender : Dummy.TestObject
@@ -79,6 +83,8 @@ class TestStrBuf
 
         Test.Assert(obj.called);
         Test.AssertEquals("Is this virtual?", buf.Steal());
+        buf.Dispose();
+        obj.Dispose();
     }
 }
 } // namespace TestSuite

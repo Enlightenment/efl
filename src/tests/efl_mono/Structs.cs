@@ -62,6 +62,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         bool r = t.StructSimpleIn(simple);
         Test.Assert(r, "Function returned false");
+        t.Dispose();
     }
 
     /*
@@ -95,6 +96,7 @@ internal class TestStructs
         bool r = t.StructSimpleOut(out simple);
         Test.Assert(r, "Function returned false");
         checkStructSimple(simple);
+        t.Dispose();
     }
 
     /*
@@ -122,6 +124,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         var simple = t.StructSimpleReturn();
         checkStructSimple(simple);
+        t.Dispose();
     }
 
     /*
@@ -236,6 +239,7 @@ internal class TestStructs
         t.CallStructSimpleIn(simple);
         Test.Assert(t.called);
         Test.AssertEquals(simple.Fstring, t.received.Fstring);
+        t.Dispose();
     }
 
     /*
@@ -269,6 +273,7 @@ internal class TestStructs
         t.CallStructSimpleOut(out simple);
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Out", simple.Fstring);
+        t.Dispose();
     }
 
     /*
@@ -297,6 +302,7 @@ internal class TestStructs
         Dummy.StructSimple simple = t.CallStructSimpleReturn();
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Return", simple.Fstring);
+        t.Dispose();
     }
 
     /*
@@ -325,6 +331,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         bool r = t.StructComplexIn(complex);
         Test.Assert(r, "Function returned false");
+        t.Dispose();
     }
 
     // public static void complex_ptr_in()
@@ -342,6 +349,7 @@ internal class TestStructs
         bool r = t.StructComplexOut(out complex);
         Test.Assert(r, "Function returned false");
         checkStructComplex(complex);
+        t.Dispose();
     }
 
     // public static void complex_ptr_out()
@@ -357,6 +365,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         var complex = t.StructComplexReturn();
         checkStructComplex(complex);
+        t.Dispose();
     }
 #endif
     // public static void complex_ptr_return()

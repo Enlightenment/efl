@@ -53,6 +53,7 @@ class TestEolianError
         var obj = new Overrider();
 
         Test.AssertRaises<Efl.EflException>(obj.CallChildrenRaiseError);
+        obj.Dispose();
     }
 
     // return eina_error
@@ -70,6 +71,7 @@ class TestEolianError
         error = obj.ReturnsError();
 
         Test.AssertEquals(expected, error);
+        obj.Dispose();
     }
 
     class ReturnOverride : Dummy.TestObject {
@@ -97,6 +99,7 @@ class TestEolianError
         error = obj.ReturnsError();
 
         Test.AssertEquals(new Eina.Error(expected * 2), error);
+        obj.Dispose();
     }
 
     // events
@@ -114,11 +117,13 @@ class TestEolianError
         // An event whose managed delegate generates an exception
         // must set an eina_error so it can be reported back to
         // the managed code
-        var obj = new Dummy.TestObject();
+        var  obj = new Dummy.TestObject();
         Listener listener = new Listener();
         obj.EvtWithIntEvent += listener.callback;
 
-        Test.AssertRaises<Efl.EflException>(() => { obj.EmitEventWithInt(2); });
+        Test.AssertRaises<Efl.EflException>(() =>
+        { obj.EmitEventWithInt(2); });
+        obj.Dispose();
     }
 }
 }

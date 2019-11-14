@@ -31,6 +31,7 @@ class TestIntDirections
         t.IntOut(original, out received);
 
         Test.AssertEquals(-original, received);
+        t.Dispose();
     }
 
     /*

@@ -41,6 +41,9 @@ class TestFunctionPointerMarshalling
 
         Test.Assert(called, "Callback was not called");
         Test.AssertEquals(reference, buf.Steal());
+        v.Dispose();
+        buf.Dispose();
+        obj.Dispose();
     }
 }
 }

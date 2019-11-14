@@ -49,7 +49,7 @@ class TestInheritance
             return "Hello World";
         }
     }
-    
+
     internal class Inherit3Parent : Dummy.TestObject
     {
         public bool disposed = false;
@@ -95,6 +95,7 @@ class TestInheritance
         var obj = new Inherit1();
         int i = Dummy.InheritHelper.ReceiveDummyAndCallIntOut(obj);
         Test.AssertEquals (50, i);
+        obj.Dispose();
     }
 
     public static void test_inherit_from_iface()
@@ -104,6 +105,7 @@ class TestInheritance
         Test.AssertEquals (50, i);
         string s = Dummy.InheritHelper.ReceiveDummyAndCallInStringshare(obj);
         Test.AssertEquals ("Hello World", s);
+        obj.Dispose();
     }
 
     private static void CreateAndCheckInheritedObjects(out WeakReference parentWRef, out WeakReference childWRef)
@@ -127,8 +129,8 @@ class TestInheritance
         Test.AssertEquals(false, parent.disposed);
         Test.AssertEquals(false, parent.childDisposed);
 
-        parent = null;
-        child = null;
+        child.Dispose();
+        parent.Dispose();
     }
 
     public static void test_inherit_lifetime()

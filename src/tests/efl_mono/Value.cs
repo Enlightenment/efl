@@ -172,6 +172,8 @@ public static class TestEinaValue {
             Efl.Object target;
             Test.Assert(v.Get(out target));
             Test.AssertEquals(target, obj);
+            target.Dispose();
+            obj.Dispose();
         }
     }
 
@@ -329,6 +331,8 @@ public static class TestEinaValue {
             Efl.Object received = null;
             Test.Assert(a.Get(out received));
             Test.AssertEquals(expected, received);
+            received.Dispose();
+            expected.Dispose();
         }
     }
 
@@ -364,6 +368,7 @@ public static class TestEinaValue {
 
             Test.Assert(a.Reset());
             Test.Assert(a.Set(expected));
+            actual.Dispose();
         }
     }
     public static void TestValueOptionalLists()
@@ -395,6 +400,7 @@ public static class TestEinaValue {
             Eina.Value actual = null;
             Test.Assert(a.Get(out actual));
             Test.AssertEquals(expected, actual);
+            actual.Dispose();
         }
     }
 
@@ -865,6 +871,9 @@ public static class TestEinaValue {
 
             Test.AssertEquals((Efl.Object)array[0], c);
             Test.AssertEquals((Efl.Object)array[1], b);
+            c.Dispose();
+            b.Dispose();
+            a.Dispose();
         }
     }
 
@@ -1027,6 +1036,7 @@ public static class TestEinaValue {
         int rec_val;
         Test.Assert(v2.Get(out rec_val));
         Test.AssertEquals(raw_val, rec_val);
+        v2.Dispose();
     }
 
     // FIXME Add remaining list tests
@@ -1123,6 +1133,7 @@ public static class TestValueFromObject
             Test.Assert(v.Set(newObj));
             prop.SetValue(source, v.Unwrap());
             Test.AssertEquals(prop.GetValue(source), newObj);
+            newObj.Dispose();
         }
     }
 
@@ -1163,14 +1174,18 @@ public static class TestValueFromObject
         Test.AssertEquals(toCheck[0], 100);
         Test.AssertEquals(toCheck[1], 200);
         Test.AssertEquals(toCheck[2], 300);
+        v.Dispose();
     }
 
     public static void TestObjectContainerFromToObject()
     {
         var initialBag = new Eina.Array<Efl.Object>();
-        initialBag.Push(new Dummy.TestObject());
-        initialBag.Push(new Dummy.TestObject());
-        initialBag.Push(new Dummy.TestObject());
+        var tmp1 = new Dummy.TestObject();
+        var tmp2 = new Dummy.TestObject();
+        var tmp3 = new Dummy.TestObject();
+        initialBag.Push(tmp1);
+        initialBag.Push(tmp2);
+        initialBag.Push(tmp3);
 
         var source = new ComplexHolder { BagOfObjects = initialBag };
         var prop = source.GetType().GetProperty("BagOfObjects");
@@ -1199,6 +1214,10 @@ public static class TestValueFromObject
         Test.AssertEquals(toCheck[0], first);
         Test.AssertEquals(toCheck[1], second);
         Test.AssertEquals(toCheck[2], third);
+        tmp3.Dispose();
+        tmp2.Dispose();
+        tmp1.Dispose();
+        v.Dispose();
     }
 }
 #pragma warning restore 1591

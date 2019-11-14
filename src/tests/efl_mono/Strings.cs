@@ -28,6 +28,7 @@ class TestStrings
             String sent = "in_string";
             String returned = obj.InString(sent);
             Test.AssertEquals(sent, returned);
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -41,6 +42,7 @@ class TestStrings
             String sent = "in_own_string";
             String returned = obj.InOwnString(sent);
             Test.AssertEquals(sent, returned);
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -51,6 +53,7 @@ class TestStrings
         {
             var obj = new Dummy.TestObject();
             Test.AssertEquals("string", obj.ReturnString());
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -61,6 +64,7 @@ class TestStrings
         {
             var obj = new Dummy.TestObject();
             Test.AssertEquals("own_string", obj.ReturnOwnString());
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -73,6 +77,7 @@ class TestStrings
             var obj = new Dummy.TestObject();
             obj.OutString(out str);
             Test.AssertEquals("out_string", str);
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -86,6 +91,7 @@ class TestStrings
             obj.OutOwnString(out str);
             Test.AssertEquals(str.ToString(CultureInfo.CurrentCulture),
                               "out_own_string");
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -143,6 +149,7 @@ class TestStrings
             Test.AssertEquals(sent, obj.received_in);
         /* } */
         System.GC.Collect();
+        obj.Dispose();
     }
 
     /* The managed wrapper should take ownership of the in parameter */
@@ -155,6 +162,7 @@ class TestStrings
             Test.AssertEquals(sent, obj.received_in_own);
         /* } */
         System.GC.Collect();
+        obj.Dispose();
     }
 
     /* The managed wrapper still owns the returned C string. We need to cache it until
@@ -165,6 +173,7 @@ class TestStrings
         /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("inherited", obj.CallReturnString());
         System.GC.Collect();
+        obj.Dispose();
     }
 
     /* The managed wrapper must surrender the ownership to the C after the virtual call. */
@@ -174,6 +183,7 @@ class TestStrings
         /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("own_inherited", obj.CallReturnOwnString());
         System.GC.Collect();
+        obj.Dispose();
     }
 
     /* The managed wrapper still owns the C string after the call. Like return without own, we may
@@ -184,6 +194,7 @@ class TestStrings
         /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("out_inherited", obj.CallOutString());
         System.GC.Collect();
+        obj.Dispose();
     }
 
     /* The managed wrapper gives C the ownership of the filled out parameter */
@@ -193,6 +204,7 @@ class TestStrings
         /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("out_own_inherited", obj.CallOutOwnString());
         System.GC.Collect();
+        obj.Dispose();
     }
 
 }
@@ -206,6 +218,7 @@ class TestStringshare
             String sent = "in_stringshare";
             String returned = obj.InStringshare(sent);
             Test.AssertEquals(sent, returned);
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -217,6 +230,7 @@ class TestStringshare
             String sent = "in_own_stringshare";
             String returned = obj.InOwnStringshare(sent);
             Test.AssertEquals(sent, returned);
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -226,6 +240,7 @@ class TestStringshare
         {
             var obj = new Dummy.TestObject();
             Test.AssertEquals("stringshare", obj.ReturnStringshare());
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -235,6 +250,7 @@ class TestStringshare
         {
             var obj = new Dummy.TestObject();
             Test.AssertEquals("own_stringshare", obj.ReturnOwnStringshare());
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -246,6 +262,7 @@ class TestStringshare
             var obj = new Dummy.TestObject();
             obj.OutStringshare(out str);
             Test.AssertEquals("out_stringshare", str);
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -258,6 +275,7 @@ class TestStringshare
             obj.OutOwnStringshare(out str);
             Test.AssertEquals(str.ToString(CultureInfo.CurrentCulture),
                               "out_own_stringshare");
+            obj.Dispose();
         }
         System.GC.Collect();
     }
@@ -310,6 +328,7 @@ class TestStringshare
         String sent = "in_inherited";
         obj.CallInStringshare(sent);
         Test.AssertEquals(sent, obj.received_in);
+        obj.Dispose();
     }
 
     public static void in_own_stringshare_from_virtual()
@@ -318,6 +337,7 @@ class TestStringshare
         String sent = "in_own_inherited";
         obj.CallInOwnStringshare(sent);
         Test.AssertEquals(sent, obj.received_in_own);
+        obj.Dispose();
     }
 
     public static void return_stringshare_from_virtual()
@@ -325,6 +345,7 @@ class TestStringshare
         var obj = new StringshareReturner();
         // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
         Test.AssertEquals("inherited", obj.CallReturnStringshare());
+        obj.Dispose();
     }
 
     public static void return_own_stringshare_from_virtual()
@@ -332,6 +353,7 @@ class TestStringshare
         var obj = new StringshareReturner();
         // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
         Test.AssertEquals("own_inherited", obj.CallReturnOwnStringshare());
+        obj.Dispose();
     }
 
     public static void out_stringshare_from_virtual()
@@ -339,6 +361,7 @@ class TestStringshare
         var obj = new StringshareReturner();
         // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
         Test.AssertEquals("out_inherited", obj.CallOutStringshare());
+        obj.Dispose();
     }
 
     public static void out_own_stringshare_from_virtual()
@@ -346,6 +369,7 @@ class TestStringshare
         var obj = new StringshareReturner();
         // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
         Test.AssertEquals("out_own_inherited", obj.CallOutOwnStringshare());
+        obj.Dispose();
     }
 }
 

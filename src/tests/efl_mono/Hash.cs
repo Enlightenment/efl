@@ -21,6 +21,7 @@ class TestHash
         Test.AssertEquals(hash.Count, 2);
 
         Test.Assert(!hash.DelByValue(200));
+        hash.Dispose();
     }
 
     public static void test_del_value_string()
@@ -39,6 +40,7 @@ class TestHash
         Test.AssertEquals(hash.Count, 2);
 
         Test.Assert(!hash.DelByValue("Elementary"));
+        hash.Dispose();
     }
 
     public static void test_del_key()
@@ -50,6 +52,7 @@ class TestHash
 
         hash.DelByKey(1);
         Test.AssertEquals(hash.Count, 2);
+        hash.Dispose();
     }
 }
 } // namespace TestSuite

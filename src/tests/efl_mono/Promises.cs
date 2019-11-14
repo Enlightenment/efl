@@ -30,6 +30,7 @@ class TestPromises
         Test.Assert(cleanCalled, "Promise clean callback should have been called.");
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        promise.Dispose();
     }
 
     public static void test_simple_resolve()
@@ -55,6 +56,8 @@ class TestPromises
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_value, reference_value);
+        reference_value.Dispose();
+        promise.Dispose();
     }
 
     public static void test_simple_with_object()
@@ -74,12 +77,16 @@ class TestPromises
 
         Eina.Value referenceValue = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32);
         referenceValue.Append(32);
-        promise.Resolve(new Eina.Value(referenceValue));
+        var tmp = new Eina.Value(referenceValue);
+        promise.Resolve(tmp);
 
         loop.Iterate();
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(receivedValue, referenceValue);
+        tmp.Dispose();
+        referenceValue.Dispose();
+        promise.Dispose();
     }
 
     public static void test_simple_reject()
@@ -106,6 +113,7 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        promise.Dispose();
     }
 
     public static void test_simple_future_cancel()
@@ -128,6 +136,7 @@ class TestPromises
         Test.Assert(promiseCallbackCalled, "Promise cancel callback should have been called.");
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_error, Eina.Error.ECANCELED);
+        promise.Dispose();
     }
 
 
@@ -172,6 +181,8 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        reference_value.Dispose();
+        promise.Dispose();
     }
 
     public static void test_then_chain_array()
@@ -217,6 +228,8 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        reference_value.Dispose();
+        promise.Dispose();
     }
 
     public static void test_cancel_after_resolve()
@@ -244,6 +257,7 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        promise.Dispose();
     }
 
     public static void test_constructor_with_callback()
@@ -270,6 +284,9 @@ class TestPromises
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_value, reference_value);
+        promise.Dispose();
+        loop.Dispose();
+        reference_value.Dispose();
     }
 
     public static void test_reject_on_disposal()

@@ -38,6 +38,7 @@ public static class TestEinaValueEolian {
             Test.AssertEquals(v, v_received);
             v_received.Dispose();
         }
+        obj.Dispose();
     }
 
     public static void TestEolianEinaValueInOwn()
@@ -58,6 +59,7 @@ public static class TestEinaValueEolian {
 
             obj.ClearValue();
         }
+        obj.Dispose();
     }
 
     public static void TestEolianEinaValueOut()
@@ -73,7 +75,9 @@ public static class TestEinaValueEolian {
 
             Test.AssertEquals(v, v_out);
             Test.AssertEquals(Eina.Ownership.Unmanaged, v_out.Ownership);
+            v_out.Dispose();
         }
+        obj.Dispose();
     }
 
     public static void TestEolianEinaValueOutOwn()
@@ -89,7 +93,9 @@ public static class TestEinaValueEolian {
 
             Test.AssertEquals(v, v_out);
             Test.AssertEquals(Eina.Ownership.Managed, v_out.Ownership);
+            v_out.Dispose();
         }
+        obj.Dispose();
     }
 
     public static void TestEolianEinaValueOutByValue()
@@ -105,7 +111,9 @@ public static class TestEinaValueEolian {
 
             Test.AssertEquals(v, v_out);
             Test.AssertEquals(Eina.Ownership.Managed, v_out.Ownership);
+            v_out.Dispose();
         }
+        obj.Dispose();
     }
 
     private class ValueHandler : Dummy.TestObject
@@ -130,6 +138,7 @@ public static class TestEinaValueEolian {
             obj.CallSetValue(val);
             Test.AssertEquals(val, obj.value);
         }
+        obj.Dispose();
     }
 
     public static void TestEolianEinaValueImplicitOperators()
@@ -141,6 +150,7 @@ public static class TestEinaValueEolian {
         var expected = new Eina.Value(1999);
         var received = new Eina.Value(Eina.ValueType.String);
 
+        received.Dispose();
         obj.OutValue(out received);
         Test.AssertEquals(expected, received);
         Test.AssertEquals(Eina.ValueType.Int32, received.GetValueType());
@@ -148,6 +158,7 @@ public static class TestEinaValueEolian {
         int i = received;
         Test.AssertEquals(i, 1999);
 
+        expected.Dispose();
         expected = new Eina.Value("Hallo");
         obj.SetValue("Hallo");
 
@@ -159,9 +170,11 @@ public static class TestEinaValueEolian {
         Test.AssertEquals(s, "Hallo");
 
         // Casting
+        expected.Dispose();
         expected = new Eina.Value((double)15);
         obj.SetValue((double)15);
 
+        received.Dispose();
         obj.OutValue(out received);
         Test.AssertEquals(expected, received);
         Test.AssertEquals(Eina.ValueType.Double, received.GetValueType());
@@ -169,11 +182,16 @@ public static class TestEinaValueEolian {
         // Check for 0
         // This is a special value, since C# can silently convert it to an enum
         // leading to collisions with Eina.ValueType
+        expected.Dispose();
         expected = new Eina.Value(0);
         obj.SetValue(0);
+        received.Dispose();
         obj.OutValue(out received);
         Test.AssertEquals(expected, received);
         Test.AssertEquals(Eina.ValueType.Int32, received.GetValueType());
+        expected.Dispose();
+        received.Dispose();
+        obj.Dispose();
     }
 
 // ValueType in eolian context is beta, so not allowed.
@@ -188,6 +206,7 @@ public static class TestEinaValueEolian {
         {
             Test.AssertEquals(type, obj.MirrorValueType(type));
         }
+        obj.Dispose();
     }
 #endif
 }

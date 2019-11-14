@@ -32,7 +32,8 @@ public static class TestModel {
     {
         Efl.Loop loop = Efl.App.AppMain;
 
-        CreateModel(loop);
+        var model = CreateModel(loop);
+        model.Dispose();
     }
 
     internal static async Task EasyModelExtractionAsync (Efl.Loop loop)
@@ -49,6 +50,8 @@ public static class TestModel {
         Test.AssertEquals(r.Name, "Tomato");
 
         loop.End();
+        model.Dispose();
+        veggies.Dispose();
     }
 
     public static void easy_model_extraction ()
@@ -77,6 +80,8 @@ public static class TestModel {
 
         Test.Assert(callbackCalled, "Property bound callback must have been called.");
         Test.AssertEquals(propertyBound, "style");
+        factory.Dispose();
+        parent.Dispose();
     }
 }
 

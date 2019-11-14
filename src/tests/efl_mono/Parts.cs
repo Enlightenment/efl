@@ -31,6 +31,7 @@ public static class TestParts
     {
         var t = new Dummy.PartHolder();
         do_part_test(t);
+        t.Dispose();
     }
 
     private class Child : Dummy.PartHolder
@@ -41,6 +42,7 @@ public static class TestParts
     public static void inherited_part_test() {
         var t = new Child();
         do_part_test(t);
+        t.Dispose();
     }
 
     private static void do_part_test(Dummy.PartHolder t)
@@ -66,6 +68,8 @@ public static class TestMVVMParts
         var error = bindablePart.Markup().Bind("name");
 
         Test.AssertEquals(error, Eina.Error.NO_ERROR);
+        factory.Dispose();
+        parent.Dispose();
     }
 
     public static void mvvm_factory_properties()
@@ -78,6 +82,9 @@ public static class TestMVVMParts
         var error = factory.IconPart().BindFactory(iconFactory);
 
         Test.AssertEquals(error, Eina.Error.NO_ERROR);
+        iconFactory.Dispose();
+        factory.Dispose();
+        parent.Dispose();
     }
 }
 
@@ -92,6 +99,7 @@ public static class TestNamedParts
         Test.AssertEquals("part_one", p1.GetName());
         Test.Assert(p2 is Dummy.TestObject);
         Test.AssertEquals("part_two", p2.GetName());
+        obj.Dispose();
     }
 }
 

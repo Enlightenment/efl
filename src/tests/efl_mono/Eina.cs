@@ -38,6 +38,7 @@ class TestEinaBinbuf
         var binbuf = new Eina.Binbuf();
         Test.Assert(binbuf.Handle != IntPtr.Zero);
         Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
+        binbuf.Dispose();
     }
 
     public static void eina_binbuf_bytes()
@@ -47,6 +48,7 @@ class TestEinaBinbuf
         byte[] cmp = binbuf.GetBytes();
         Test.Assert(cmp != test_string);
         Test.Assert(cmp.SequenceEqual(test_string));
+        binbuf.Dispose();
     }
 
     public static void eina_binbuf_bytes_length()
@@ -58,6 +60,7 @@ class TestEinaBinbuf
         Test.Assert(cmp != test_string);
         Test.Assert(cmp != expected);
         Test.Assert(cmp.SequenceEqual(expected));
+        binbuf.Dispose();
     }
 
     public static void eina_binbuf_copy_ctor()
@@ -70,6 +73,8 @@ class TestEinaBinbuf
         byte[] cmp2 = binbuf2.GetBytes();
         Test.Assert(cmp != cmp2);
         Test.Assert(cmp.SequenceEqual(cmp2));
+        binbuf2.Dispose();
+        binbuf.Dispose();
     }
 
     public static void free_get_null_handle()
@@ -78,6 +83,7 @@ class TestEinaBinbuf
         Test.Assert(binbuf.Handle != IntPtr.Zero);
         binbuf.Free();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
+        binbuf.Dispose();
     }
 
     public static void reset_get_empty_string()
@@ -90,6 +96,7 @@ class TestEinaBinbuf
         binbuf.Reset();
         Test.Assert(binbuf.Handle != IntPtr.Zero);
         Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
+        binbuf.Dispose();
     }
 
     public static void append_bytes()
@@ -99,6 +106,7 @@ class TestEinaBinbuf
         byte[] cmp = binbuf.GetBytes();
         Test.Assert(cmp != test_string);
         Test.Assert(cmp.SequenceEqual(test_string));
+        binbuf.Dispose();
     }
 
     public static void append_bytes_length()
@@ -109,6 +117,7 @@ class TestEinaBinbuf
         byte[] expected = System.Text.Encoding.UTF8.GetBytes("0123456");
         Test.Assert(cmp != expected);
         Test.Assert(cmp.SequenceEqual(expected));
+        binbuf.Dispose();
     }
 
     public static void append_binbuf()
@@ -122,6 +131,8 @@ class TestEinaBinbuf
         Test.Assert(cmp != cmp2);
         Test.Assert(cmp2.SequenceEqual(cmp));
         Test.Assert(cmp2.SequenceEqual(test_string));
+        binbuf2.Dispose();
+        binbuf.Dispose();
     }
 
     public static void append_char()
@@ -133,6 +144,7 @@ class TestEinaBinbuf
         byte[] cmp = binbuf.GetBytes();
         Test.Assert(cmp.Length == 3);
         Test.Assert(cmp[0] == 0 && cmp[1] == 12 && cmp[2] == 42);
+        binbuf.Dispose();
     }
 
     public static void remove()
@@ -143,6 +155,7 @@ class TestEinaBinbuf
         Test.Assert(binbuf.Handle != IntPtr.Zero);
         byte[] expected = System.Text.Encoding.UTF8.GetBytes("019ABCDEF");
         Test.Assert(binbuf.GetBytes().SequenceEqual(expected));
+        binbuf.Dispose();
     }
 
     public static void get_string_native()
@@ -150,6 +163,7 @@ class TestEinaBinbuf
         var binbuf = new Eina.Binbuf(test_string);
         Test.Assert(binbuf.GetBytes().SequenceEqual(test_string));
         Test.Assert(binbuf.GetStringNative() != IntPtr.Zero);
+        binbuf.Dispose();
     }
 
     public static void binbuf_free_string()
@@ -159,6 +173,7 @@ class TestEinaBinbuf
         binbuf.FreeString();
         Test.Assert(binbuf.Handle != IntPtr.Zero);
         Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
+        binbuf.Dispose();
     }
 
     public static void binbuf_length()
@@ -166,6 +181,7 @@ class TestEinaBinbuf
         var binbuf = new Eina.Binbuf(test_string, 6);
         Test.Assert(binbuf.Length == 6);
         Test.Assert(binbuf.GetBytes().Length == 6);
+        binbuf.Dispose();
     }
 
     public static void test_eina_binbuf_in()
@@ -178,6 +194,7 @@ class TestEinaBinbuf
             new byte[]{43, 42, 0x0, 0x2A, 0x42, 33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_binbuf_in_own()
@@ -191,6 +208,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.CheckBinbufInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_binbuf_out()
@@ -205,6 +223,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.CheckBinbufOut());
+        t.Dispose();
     }
 
     public static void test_eina_binbuf_out_own()
@@ -218,6 +237,7 @@ class TestEinaBinbuf
         Test.Assert(binbuf.Append(base_seq));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_binbuf_return()
@@ -231,6 +251,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.CheckBinbufReturn());
+        t.Dispose();
     }
 
     public static void test_eina_binbuf_return_own()
@@ -243,6 +264,7 @@ class TestEinaBinbuf
         Test.Assert(binbuf.Append(base_seq));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // //
@@ -259,6 +281,7 @@ class TestEinaBinbuf
             new byte[]{43, 42, 0x0, 0x2A, 0x42, 33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_inherit_eina_binbuf_in_own()
@@ -273,6 +296,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.binbuf_in_own_still_usable());
+        t.Dispose();
     }
 
     public static void test_inherit_eina_binbuf_out()
@@ -286,6 +310,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.binbuf_out_still_usable());
+        t.Dispose();
     }
 
     public static void test_inherit_eina_binbuf_out_own()
@@ -299,6 +324,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.binbuf_out_own_no_longer_own());
+        t.Dispose();
     }
 
     public static void test_inherit_eina_binbuf_return()
@@ -312,6 +338,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.binbuf_return_still_usable());
+        t.Dispose();
     }
 
     public static void test_inherit_eina_binbuf_return_own()
@@ -325,6 +352,7 @@ class TestEinaBinbuf
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
         Test.Assert(t.binbuf_return_own_no_longer_own());
+        t.Dispose();
     }
 }
 
@@ -346,6 +374,7 @@ class TestEinaSlice
 
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
         Test.Assert(base_seq.Length == (int)(slc.Len));
+        binbuf.Dispose();
     }
 #endif
 
@@ -361,6 +390,7 @@ class TestEinaSlice
         var binbuf = new Eina.Binbuf();
         binbuf.Append(new Eina.Slice(pinnedPtr, (UIntPtr)3));
         Test.Assert(binbuf.GetBytes().SequenceEqual(base_seq));
+        binbuf.Dispose();
     }
 #endif
 
@@ -369,6 +399,7 @@ class TestEinaSlice
         var t = new Dummy.TestObject();
         var slc = new Eina.Slice(pinnedPtr, (UIntPtr)3);
         Test.Assert(t.EinaSliceIn(slc));
+        t.Dispose();
     }
 
     public static void test_eina_rw_slice_in()
@@ -385,6 +416,7 @@ class TestEinaSlice
         Test.Assert(slc.GetBytes().SequenceEqual(new byte[3]{0x1, 0x2B, 0x43}));
 
         pinnedRWData.Free();
+        t.Dispose();
     }
 
     public static void test_eina_slice_out()
@@ -395,6 +427,7 @@ class TestEinaSlice
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == base_seq.Length);
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
+        t.Dispose();
     }
 
     public static void test_eina_rw_slice_out()
@@ -405,6 +438,7 @@ class TestEinaSlice
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == base_seq.Length);
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
+        t.Dispose();
     }
 
     public static void test_eina_rw_slice_inout()
@@ -419,6 +453,7 @@ class TestEinaSlice
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == rw_seq.Length);
         Test.Assert(slc.GetBytes().SequenceEqual(expected_seq));
+        t.Dispose();
     }
 
     /*
@@ -437,6 +472,7 @@ class TestEinaSlice
         var slc = new Eina.Slice(pinnedPtr, (UIntPtr)3);
         Test.Assert(t.EinaSliceIn(slc));
         Test.Assert(t.slice_in_flag);
+        t.Dispose();
     }
 
     public static void test_inherit_eina_rw_slice_in()
@@ -454,6 +490,7 @@ class TestEinaSlice
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
 
         pinnedRWData.Free();
+        t.Dispose();
     }
 
     public static void test_inherit_eina_slice_out()
@@ -465,6 +502,7 @@ class TestEinaSlice
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == base_seq.Length);
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
+        t.Dispose();
     }
 
     public static void test_inherit_eina_rw_slice_out()
@@ -476,6 +514,7 @@ class TestEinaSlice
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == base_seq.Length);
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
+        t.Dispose();
     }
 }
 
@@ -495,6 +534,7 @@ class TestEinaArray
     {
         var a = new Eina.Array<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
+        a.Dispose();
     }
 
     public static void create_array_from_null()
@@ -509,6 +549,7 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(88));
         Test.Assert(a[0] == 88);
+        a.Dispose();
     }
 
     public static void push_string()
@@ -517,6 +558,7 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push("test string §éΨبÿツ"));
         Test.AssertEquals("test string §éΨبÿツ", a[0]);
+        a.Dispose();
     }
 
     public static void push_stringshare()
@@ -525,6 +567,7 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push("test string §éΨبÿツ"));
         Test.AssertEquals("test string §éΨبÿツ", a[0].Str);
+        a.Dispose();
     }
 
     public static void push_obj()
@@ -536,6 +579,8 @@ class TestEinaArray
         Test.Assert(a.Push(o));
         Test.Assert(a[0].NativeHandle == o.NativeHandle);
         Test.Assert(a[0].GetNumber() == 88);
+        o.Dispose();
+        a.Dispose();
     }
 
     public static void pop_int()
@@ -545,6 +590,7 @@ class TestEinaArray
         Test.Assert(a.Push(88));
         Test.Assert(a.Pop() == 88);
         Test.Assert(a.Count() == 0);
+        a.Dispose();
     }
 
     public static void pop_string()
@@ -554,6 +600,7 @@ class TestEinaArray
         Test.Assert(a.Push("test string"));
         Test.Assert(a.Pop() == "test string");
         Test.Assert(a.Count() == 0);
+        a.Dispose();
     }
 
     public static void pop_stringshare()
@@ -563,6 +610,7 @@ class TestEinaArray
         Test.Assert(a.Push("test string"));
         Test.Assert(a.Pop() == "test string");
         Test.Assert(a.Count() == 0);
+        a.Dispose();
     }
 
     public static void pop_obj()
@@ -576,6 +624,8 @@ class TestEinaArray
         Test.Assert(p.NativeHandle == o.NativeHandle);
         Test.Assert(p.GetNumber() == 88);
         Test.Assert(a.Count() == 0);
+        o.Dispose();
+        a.Dispose();
     }
 
     public static void data_set_int()
@@ -588,6 +638,7 @@ class TestEinaArray
         Test.Assert(a[0] == 44);
         a[0] = 22;
         Test.Assert(a[0] == 22);
+        a.Dispose();
     }
 
     public static void data_set_string()
@@ -600,6 +651,7 @@ class TestEinaArray
         Test.Assert(a[0] == "other string");
         a[0] = "abc";
         Test.Assert(a[0] == "abc");
+        a.Dispose();
     }
 
     public static void data_set_stringshare()
@@ -612,6 +664,7 @@ class TestEinaArray
         Test.Assert(a[0] == "other string");
         a[0] = "abc";
         Test.Assert(a[0] == "abc");
+        a.Dispose();
     }
 
     public static void data_set_obj()
@@ -639,6 +692,10 @@ class TestEinaArray
         a[0] = o3;
         Test.Assert(a[0].NativeHandle == o3.NativeHandle);
         Test.Assert(a[0].GetNumber() == 22);
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        a.Dispose();
     }
 
     public static void count_int()
@@ -655,6 +712,7 @@ class TestEinaArray
         Test.Assert(a.Push(22));
         Test.Assert(a[2] == 22);
         Test.Assert(a.Count() == 3);
+        a.Dispose();
     }
 
     public static void count_string()
@@ -671,6 +729,7 @@ class TestEinaArray
         Test.Assert(a.Push("c"));
         Test.Assert(a[2] == "c");
         Test.Assert(a.Count() == 3);
+        a.Dispose();
     }
 
     public static void count_stringshare()
@@ -687,6 +746,7 @@ class TestEinaArray
         Test.Assert(a.Push("c"));
         Test.Assert(a[2] == "c");
         Test.Assert(a.Count() == 3);
+        a.Dispose();
     }
 
     public static void count_obj()
@@ -716,6 +776,11 @@ class TestEinaArray
         Test.Assert(a[2].NativeHandle == o3.NativeHandle);
         Test.Assert(a[2].GetNumber() == 22);
         Test.Assert(a.Count() == 3);
+
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        a.Dispose();
     }
 
     public static void length_int()
@@ -732,6 +797,7 @@ class TestEinaArray
         Test.Assert(a.Push(22));
         Test.Assert(a[2] == 22);
         Test.Assert(a.Length == 3);
+        a.Dispose();
     }
 
     public static void length_string()
@@ -748,6 +814,7 @@ class TestEinaArray
         Test.Assert(a.Push("c"));
         Test.Assert(a[2] == "c");
         Test.Assert(a.Length == 3);
+        a.Dispose();
     }
 
     public static void length_stringshare()
@@ -764,6 +831,7 @@ class TestEinaArray
         Test.Assert(a.Push("c"));
         Test.Assert(a[2] == "c");
         Test.Assert(a.Length == 3);
+        a.Dispose();
     }
 
     public static void eina_array_as_ienumerable_int()
@@ -780,6 +848,7 @@ class TestEinaArray
             Test.AssertEquals(cmp, e);
             cmp /= 2;
         }
+        a.Dispose();
     }
 
     public static void eina_array_as_ienumerable_string()
@@ -796,6 +865,7 @@ class TestEinaArray
             Test.AssertEquals(cmp, e);
             cmp = cmp + "X";
         }
+        a.Dispose();
     }
 
     public static void eina_array_as_ienumerable_stringshare()
@@ -812,6 +882,7 @@ class TestEinaArray
             Test.AssertEquals(cmp, e);
             cmp = cmp + "X";
         }
+        a.Dispose();
     }
 
     public static void eina_array_as_ienumerable_obj()
@@ -837,6 +908,7 @@ class TestEinaArray
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
+        arr.Dispose();
     }
 
     // //
@@ -855,6 +927,7 @@ class TestEinaArray
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_int));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_int_in_own()
@@ -868,6 +941,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_array_int_out()
@@ -881,6 +955,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntOut());
+        t.Dispose();
     }
 
     public static void test_eina_array_int_out_own()
@@ -893,6 +968,7 @@ class TestEinaArray
         Test.Assert(arr.Append(append_seq_int));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_int_return()
@@ -905,6 +981,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntReturn());
+        t.Dispose();
     }
 
     public static void test_eina_array_int_return_own()
@@ -916,6 +993,7 @@ class TestEinaArray
         Test.Assert(arr.Append(append_seq_int));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // String //
@@ -929,6 +1007,7 @@ class TestEinaArray
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_str));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_str_in_own()
@@ -942,6 +1021,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_array_str_out()
@@ -955,6 +1035,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrOut());
+        t.Dispose();
     }
 
     public static void test_eina_array_str_out_own()
@@ -967,6 +1048,7 @@ class TestEinaArray
         Test.Assert(arr.Append(append_seq_str));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_str_return()
@@ -979,6 +1061,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrReturn());
+        t.Dispose();
     }
 
     public static void test_eina_array_str_return_own()
@@ -990,6 +1073,7 @@ class TestEinaArray
         Test.Assert(arr.Append(append_seq_str));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // Eina.Stringshare //
@@ -1003,6 +1087,7 @@ class TestEinaArray
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_strshare));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_strshare_in_own()
@@ -1016,6 +1101,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_array_strshare_out()
@@ -1029,6 +1115,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareOut());
+        t.Dispose();
     }
 
     public static void test_eina_array_strshare_out_own()
@@ -1041,6 +1128,7 @@ class TestEinaArray
         Test.Assert(arr.Append(append_seq_strshare));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_strshare_return()
@@ -1053,6 +1141,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareReturn());
+        t.Dispose();
     }
 
     public static void test_eina_array_strshare_return_own()
@@ -1064,6 +1153,7 @@ class TestEinaArray
         Test.Assert(arr.Append(append_seq_strshare));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // Object //
@@ -1078,6 +1168,7 @@ class TestEinaArray
         NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedSeqObj());
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_obj_in_own()
@@ -1091,6 +1182,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_array_obj_out()
@@ -1104,6 +1196,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjOut());
+        t.Dispose();
     }
 
     public static void test_eina_array_obj_out_own()
@@ -1116,6 +1209,7 @@ class TestEinaArray
         Test.Assert(arr.Append(AppendSeqObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_obj_return()
@@ -1128,6 +1222,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjReturn());
+        t.Dispose();
     }
 
     public static void test_eina_array_obj_return_own()
@@ -1139,6 +1234,7 @@ class TestEinaArray
         Test.Assert(arr.Append(AppendSeqObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_array_obj_return_in_same_id()
@@ -1156,6 +1252,8 @@ class TestEinaArray
             Test.Assert(a[i].NativeHandle == b[i].NativeHandle);
             Test.Assert(a[i].NativeHandle == cmp[i].NativeHandle);
         }
+        a.Dispose();
+        t.Dispose();
     }
 
 
@@ -1200,6 +1298,7 @@ class TestEinaInarray
         Test.Assert(a.Push(o) == 0);
         Test.Assert(a[0].NativeHandle == o.NativeHandle);
         Test.Assert(a[0].GetNumber() == 88);
+        o.Dispose();
         a.Dispose();
     }
 
@@ -1234,6 +1333,7 @@ class TestEinaInarray
         Test.Assert(p.NativeHandle == o.NativeHandle);
         Test.Assert(p.GetNumber() == 88);
         Test.Assert(a.Count() == 0);
+        o.Dispose();
         a.Dispose();
     }
 
@@ -1295,6 +1395,9 @@ class TestEinaInarray
         Test.Assert(a[0].GetNumber() == 22);
         Test.Assert(a.Count() == 1);
 
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
         a.Dispose();
     }
 
@@ -1360,6 +1463,9 @@ class TestEinaInarray
         Test.Assert(a[2].GetNumber() == 22);
         Test.Assert(a.Count() == 3);
 
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
         a.Dispose();
     }
 
@@ -1480,6 +1586,7 @@ class TestEinaList
         Test.Assert(lst[0] == 44);
         lst[0] = 22;
         Test.Assert(lst[0] == 22);
+        lst.Dispose();
     }
 
     public static void data_set_string()
@@ -1491,6 +1598,7 @@ class TestEinaList
         Test.Assert(lst[0] == "other string");
         lst[0] = "abc";
         Test.Assert(lst[0] == "abc");
+        lst.Dispose();
     }
 
     public static void data_set_stringshare()
@@ -1502,6 +1610,7 @@ class TestEinaList
         Test.Assert(lst[0] == "other string");
         lst[0] = "abc";
         Test.Assert(lst[0] == "abc");
+        lst.Dispose();
     }
 
     public static void data_set_obj()
@@ -1528,6 +1637,10 @@ class TestEinaList
         lst[0] = o3;
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
         Test.Assert(lst[0].GetNumber() == 22);
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        lst.Dispose();
     }
 
     public static void append_count_int()
@@ -1543,6 +1656,7 @@ class TestEinaList
         lst.Append(22);
         Test.Assert(lst[2] == 22);
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void append_count_string()
@@ -1558,6 +1672,7 @@ class TestEinaList
         lst.Append("c");
         Test.Assert(lst[2] == "c");
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void append_count_stringshare()
@@ -1573,6 +1688,7 @@ class TestEinaList
         lst.Append("c");
         Test.Assert(lst[2] == "c");
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void append_count_obj()
@@ -1601,6 +1717,10 @@ class TestEinaList
         Test.Assert(lst[2].NativeHandle == o3.NativeHandle);
         Test.Assert(lst[2].GetNumber() == 22);
         Test.Assert(lst.Count() == 3);
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        lst.Dispose();
     }
 
     public static void length_int()
@@ -1616,6 +1736,7 @@ class TestEinaList
         lst.Append(22);
         Test.Assert(lst[2] == 22);
         Test.Assert(lst.Length == 3);
+        lst.Dispose();
     }
 
     public static void length_string()
@@ -1631,6 +1752,7 @@ class TestEinaList
         lst.Append("c");
         Test.Assert(lst[2] == "c");
         Test.Assert(lst.Length == 3);
+        lst.Dispose();
     }
 
     public static void length_stringshare()
@@ -1646,6 +1768,7 @@ class TestEinaList
         lst.Append("c");
         Test.Assert(lst[2] == "c");
         Test.Assert(lst.Length == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_int()
@@ -1661,6 +1784,7 @@ class TestEinaList
         lst.Prepend(22);
         Test.Assert(lst[0] == 22);
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_string()
@@ -1676,6 +1800,7 @@ class TestEinaList
         lst.Prepend("c");
         Test.Assert(lst[0] == "c");
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_stringshare()
@@ -1691,6 +1816,7 @@ class TestEinaList
         lst.Prepend("c");
         Test.Assert(lst[0] == "c");
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_obj()
@@ -1719,6 +1845,11 @@ class TestEinaList
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
         Test.Assert(lst[0].GetNumber() == 22);
         Test.Assert(lst.Count() == 3);
+
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        lst.Dispose();
     }
 
     public static void sorted_insert_int()
@@ -1730,6 +1861,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{22, 88}));
         lst.SortedInsert(44);
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{22, 44, 88}));
+        lst.Dispose();
     }
 
     public static void sorted_insert_string()
@@ -1741,6 +1873,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a", "c"}));
         lst.SortedInsert("b");
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a", "b", "c"}));
+        lst.Dispose();
     }
 
     public static void sorted_insert_stringshare()
@@ -1754,6 +1887,7 @@ class TestEinaList
         lst.SortedInsert("b");
         Test.Assert(
             lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a", "b", "c"}));
+        lst.Dispose();
     }
 
     public static void sorted_insert_custom_comparer_natural()
@@ -1769,6 +1903,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{1, 2, 3}));
         lst.SortedInsert(comparator, -1);
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{-1, 1, 2, 3}));
+        lst.Dispose();
     }
 
     public static void sorted_insert_custom_comparer_reversed()
@@ -1784,6 +1919,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{3, 2, 1}));
         lst.SortedInsert(comparator, -1);
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{3, 2, 1, -1}));
+        lst.Dispose();
     }
 
     public static void sorted_insert_custom_comparer_string()
@@ -1799,6 +1935,7 @@ class TestEinaList
         lst.SortedInsert(comparator, "Jumped");
         Test.Assert(lst.ToArray().SequenceEqual(
             new string[]{"Jumped", "Brown", "Quick", "The"}));
+        lst.Dispose();
     }
 
     public static void sort_int()
@@ -1811,6 +1948,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{88, 22, 11, 44}));
         lst.Sort();
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{11, 22, 44, 88}));
+        lst.Dispose();
     }
 
     public static void sort_string()
@@ -1825,6 +1963,7 @@ class TestEinaList
         lst.Sort();
         Test.Assert(
             lst.ToArray().SequenceEqual(new string[]{"a", "b", "c", "d"}));
+        lst.Dispose();
     }
 
     public static void sort_stringshare()
@@ -1839,6 +1978,7 @@ class TestEinaList
         lst.Sort();
         Test.Assert(lst.ToArray().SequenceEqual(
             new Eina.Stringshare[]{"a", "b", "c", "d"}));
+        lst.Dispose();
     }
 
     public static void reverse_int()
@@ -1850,6 +1990,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{22, 44, 88}));
         lst.Reverse();
         Test.Assert(lst.ToArray().SequenceEqual(new int[]{88, 44, 22}));
+        lst.Dispose();
     }
 
     public static void reverse_string()
@@ -1861,6 +2002,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a", "b", "c"}));
         lst.Reverse();
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c", "b", "a"}));
+        lst.Dispose();
     }
 
     public static void reverse_stringshare()
@@ -1874,6 +2016,7 @@ class TestEinaList
         lst.Reverse();
         Test.Assert(
             lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"c", "b", "a"}));
+        lst.Dispose();
     }
 
     public static void eina_list_as_ienumerable_int()
@@ -1889,6 +2032,7 @@ class TestEinaList
             Test.AssertEquals(cmp, e);
             cmp /= 2;
         }
+        lst.Dispose();
     }
 
     public static void eina_list_as_ienumerable_string()
@@ -1904,6 +2048,7 @@ class TestEinaList
             Test.AssertEquals(cmp, e);
             cmp = cmp + "X";
         }
+        lst.Dispose();
     }
 
     public static void eina_list_as_ienumerable_stringshare()
@@ -1919,6 +2064,7 @@ class TestEinaList
             Test.AssertEquals(cmp, e);
             cmp = cmp + "X";
         }
+        lst.Dispose();
     }
 
     public static void eina_list_as_ienumerable_obj()
@@ -1943,6 +2089,7 @@ class TestEinaList
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
+        lst.Dispose();
     }
 
     // //
@@ -1961,6 +2108,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_int));
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_int_in_own()
@@ -1973,6 +2121,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_list_int_out()
@@ -1985,6 +2134,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntOut());
+        t.Dispose();
     }
 
     public static void test_eina_list_int_out_own()
@@ -1997,6 +2147,7 @@ class TestEinaList
         lst.AppendArray(append_seq_int);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_int_return()
@@ -2008,6 +2159,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntReturn());
+        t.Dispose();
     }
 
     public static void test_eina_list_int_return_own()
@@ -2019,6 +2171,7 @@ class TestEinaList
         lst.AppendArray(append_seq_int);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // String //
@@ -2032,6 +2185,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_str_in_own()
@@ -2044,6 +2198,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_list_str_out()
@@ -2056,6 +2211,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrOut());
+        t.Dispose();
     }
 
     public static void test_eina_list_str_out_own()
@@ -2068,6 +2224,7 @@ class TestEinaList
         lst.AppendArray(append_seq_str);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_str_return()
@@ -2079,6 +2236,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrReturn());
+        t.Dispose();
     }
 
     public static void test_eina_list_str_return_own()
@@ -2090,6 +2248,7 @@ class TestEinaList
         lst.AppendArray(append_seq_str);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // Eina.Stringshare //
@@ -2103,6 +2262,7 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_strshare_in_own()
@@ -2115,6 +2275,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrshareInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_list_strshare_out()
@@ -2127,6 +2288,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrshareOut());
+        t.Dispose();
     }
 
     public static void test_eina_list_strshare_out_own()
@@ -2139,6 +2301,7 @@ class TestEinaList
         lst.AppendArray(append_seq_strshare);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_strshare_return()
@@ -2150,6 +2313,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrshareReturn());
+        t.Dispose();
     }
 
     public static void test_eina_list_strshare_return_own()
@@ -2161,6 +2325,7 @@ class TestEinaList
         lst.AppendArray(append_seq_strshare);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     // Object //
@@ -2175,6 +2340,7 @@ class TestEinaList
         NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseSeqObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_obj_in_own()
@@ -2187,6 +2353,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListObjInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_list_obj_out()
@@ -2199,6 +2366,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListObjOut());
+        t.Dispose();
     }
 
     public static void test_eina_list_obj_out_own()
@@ -2211,6 +2379,7 @@ class TestEinaList
         lst.AppendArray(AppendSeqObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_obj_return()
@@ -2222,6 +2391,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListObjReturn());
+        t.Dispose();
     }
 
     public static void test_eina_list_obj_return_own()
@@ -2233,6 +2403,7 @@ class TestEinaList
         lst.AppendArray(AppendSeqObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_list_obj_return_in_same_id()
@@ -2250,6 +2421,8 @@ class TestEinaList
             Test.Assert(a[i].NativeHandle == b[i].NativeHandle);
             Test.Assert(a[i].NativeHandle == cmp[i].NativeHandle);
         }
+        a.Dispose();
+        t.Dispose();
     }
 }
 
@@ -2265,6 +2438,7 @@ class TestEinaInlist
         lst[0] = 22;
         Test.Assert(lst[0] == 22);
         Test.Assert(lst.Count() == 1);
+        lst.Dispose();
     }
 
     public static void data_set_string()
@@ -2277,6 +2451,7 @@ class TestEinaInlist
         lst[0] = "abc";
         Test.Assert(lst[0] == "abc");
         Test.Assert(lst.Count() == 1);
+        lst.Dispose();
     }
 
     public static void data_set_obj()
@@ -2305,6 +2480,10 @@ class TestEinaInlist
         Test.Assert(lst[0].GetNumber() == 22);
 
         Test.Assert(lst.Count() == 1);
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        lst.Dispose();
     }
 
     public static void append_count_int()
@@ -2320,6 +2499,7 @@ class TestEinaInlist
         lst.Append(22);
         Test.Assert(lst[2] == 22);
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void append_count_string()
@@ -2335,6 +2515,7 @@ class TestEinaInlist
         lst.Append("c");
         Test.Assert(lst[2] == "c");
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void append_count_obj()
@@ -2363,6 +2544,10 @@ class TestEinaInlist
         Test.Assert(lst[2].NativeHandle == o3.NativeHandle);
         Test.Assert(lst[2].GetNumber() == 22);
         Test.Assert(lst.Count() == 3);
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        lst.Dispose();
     }
 
     public static void length_int()
@@ -2378,6 +2563,7 @@ class TestEinaInlist
         lst.Append(22);
         Test.Assert(lst[2] == 22);
         Test.Assert(lst.Length == 3);
+        lst.Dispose();
     }
 
     public static void length_string()
@@ -2393,6 +2579,7 @@ class TestEinaInlist
         lst.Append("c");
         Test.Assert(lst[2] == "c");
         Test.Assert(lst.Length == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_int()
@@ -2408,6 +2595,7 @@ class TestEinaInlist
         lst.Prepend(22);
         Test.Assert(lst[0] == 22);
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_string()
@@ -2423,6 +2611,7 @@ class TestEinaInlist
         lst.Prepend("c");
         Test.Assert(lst[0] == "c");
         Test.Assert(lst.Count() == 3);
+        lst.Dispose();
     }
 
     public static void prepend_count_obj()
@@ -2451,6 +2640,10 @@ class TestEinaInlist
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
         Test.Assert(lst[0].GetNumber() == 22);
         Test.Assert(lst.Count() == 3);
+        o3.Dispose();
+        o2.Dispose();
+        o1.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_inlist_as_ienumerable_int()
@@ -2466,6 +2659,7 @@ class TestEinaInlist
             Test.AssertEquals(cmp, e);
             cmp /= 2;
         }
+        lst.Dispose();
     }
 
     public static void eina_inlist_as_ienumerable_string()
@@ -2481,6 +2675,7 @@ class TestEinaInlist
             Test.AssertEquals(cmp, e);
             cmp = cmp + "X";
         }
+        lst.Dispose();
     }
 
     public static void eina_inlist_as_ienumerable_obj()
@@ -2505,6 +2700,7 @@ class TestEinaInlist
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
+        lst.Dispose();
     }
 
 } // < TestEinaInlist
@@ -2601,6 +2797,9 @@ class TestEinaHash
 
         Test.Assert(hsh.Count == 3);
 
+        c.Dispose();
+        b.Dispose();
+        a.Dispose();
         hsh.Dispose();
     }
 
@@ -2721,6 +2920,9 @@ class TestEinaHash
         Test.AssertEquals(count, 3);
         Test.AssertEquals(dct.Count, 0);
 
+        a.Dispose();
+        b.Dispose();
+        c.Dispose();
         hsh.Dispose();
     }
 
@@ -2741,6 +2943,7 @@ class TestEinaHash
         Test.Assert(hsh[44] == 444);
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     /*
@@ -2757,6 +2960,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntInOwn());
+        t.Dispose();
     }
     */
 
@@ -2772,6 +2976,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntOut());
+        t.Dispose();
     }
 
     /*
@@ -2787,6 +2992,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntOutOwn());
+        t.Dispose();
     }
     */
 
@@ -2801,6 +3007,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntReturn());
+        t.Dispose();
     }
 
     /*
@@ -2815,6 +3022,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntReturnOwn());
+        t.Dispose();
     }
     */
 
@@ -2831,6 +3039,7 @@ class TestEinaHash
         Test.Assert(hsh["bb"] == "bbb");
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_hash_str_in_own()
@@ -2846,6 +3055,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashStrInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_hash_str_out()
@@ -2860,6 +3070,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashStrOut());
+        t.Dispose();
     }
 
     public static void test_eina_hash_str_out_own()
@@ -2874,6 +3085,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashStrOutOwn());
+        t.Dispose();
     }
 
     public static void test_eina_hash_str_return()
@@ -2887,6 +3099,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashStrReturn());
+        t.Dispose();
     }
 
     public static void test_eina_hash_str_return_own()
@@ -2900,6 +3113,7 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashStrReturnOwn());
+        t.Dispose();
     }
 
     // Eina.Stringshare //
@@ -3005,8 +3219,13 @@ class TestEinaHash
         Test.Assert(hsh[nwk2].NativeHandle == nwv2.NativeHandle);
         Test.Assert(hsh[nwk2].GetNumber() == nwv2.GetNumber());
         Test.Assert(hsh[nwk2].GetNumber() == 444);
+        nwk1.Dispose();
+        nwk2.Dispose();
+        nwv1.Dispose();
+        nwv2.Dispose();
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
+        t.Dispose();
     }
 
     public static void test_eina_hash_obj_in_own()
@@ -3029,6 +3248,11 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashObjInOwn(nwk1, nwv1, nwk2, nwv2));
+        nwk1.Dispose();
+        nwk2.Dispose();
+        nwv1.Dispose();
+        nwv2.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_hash_obj_out()
@@ -3048,6 +3272,11 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashObjOut(nwk1, nwv1, nwk2, nwv2));
+        nwk1.Dispose();
+        nwk2.Dispose();
+        nwv1.Dispose();
+        nwv2.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_hash_obj_out_own()
@@ -3064,9 +3293,14 @@ class TestEinaHash
         Dummy.Numberwrapper nwk2 = NW(44);
         Dummy.Numberwrapper nwv2 = NW(444);
         hsh[nwk2] = nwv2;
+        nwk1.Dispose();
+        nwk2.Dispose();
+        nwv1.Dispose();
+        nwv2.Dispose();
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashObjOutOwn());
+        t.Dispose();
     }
 
     public static void test_eina_hash_obj_return()
@@ -3085,6 +3319,11 @@ class TestEinaHash
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashObjReturn(nwk1, nwv1, nwk2, nwv2));
+        nwk1.Dispose();
+        nwk2.Dispose();
+        nwv1.Dispose();
+        nwv2.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_hash_obj_return_own()
@@ -3100,9 +3339,14 @@ class TestEinaHash
         Dummy.Numberwrapper nwk2 = NW(44);
         Dummy.Numberwrapper nwv2 = NW(444);
         hsh[nwk2] = nwv2;
+        nwk1.Dispose();
+        nwk2.Dispose();
+        nwv1.Dispose();
+        nwv2.Dispose();
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashObjReturnOwn());
+        t.Dispose();
     }
 }
 
@@ -3771,6 +4015,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, 3);
 
         itr.Dispose();
+        dct.Dispose();
         hsh.Dispose();
     }
 
@@ -3806,6 +4051,10 @@ class TestEinaIterator
         Test.AssertEquals(idx, 3);
 
         itr.Dispose();
+        a.Dispose();
+        b.Dispose();
+        c.Dispose();
+        dct.Dispose();
         hsh.Dispose();
     }
 
@@ -3834,6 +4083,7 @@ class TestEinaIterator
 
         itr.Dispose();
         arr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_int_in_own()
@@ -3859,6 +4109,7 @@ class TestEinaIterator
         arr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorIntInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_int_out()
@@ -3881,6 +4132,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorIntOut());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_int_out_own()
@@ -3901,6 +4153,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_int.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_int_return()
@@ -3922,6 +4175,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorIntReturn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_int_return_own()
@@ -3941,6 +4195,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_int.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     // String //
@@ -3964,6 +4219,7 @@ class TestEinaIterator
 
         itr.Dispose();
         arr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_str_in_own()
@@ -3987,6 +4243,7 @@ class TestEinaIterator
         arr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_str_out()
@@ -4009,6 +4266,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrOut());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_str_out_own()
@@ -4029,6 +4287,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_str.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_str_return()
@@ -4050,6 +4309,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrReturn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_str_return_own()
@@ -4069,6 +4329,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_str.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     // Eina.Stringshare //
@@ -4092,6 +4353,7 @@ class TestEinaIterator
 
         itr.Dispose();
         arr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_strshare_in_own()
@@ -4115,6 +4377,7 @@ class TestEinaIterator
         arr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrshareInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_strshare_out()
@@ -4137,6 +4400,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrshareOut());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_strshare_out_own()
@@ -4157,6 +4421,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_strshare.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_strshare_return()
@@ -4178,6 +4443,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrshareReturn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_strshare_return_own()
@@ -4197,6 +4463,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_strshare.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     // Object //
@@ -4220,6 +4487,7 @@ class TestEinaIterator
 
         itr.Dispose();
         arr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_obj_in_own()
@@ -4243,6 +4511,7 @@ class TestEinaIterator
         arr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorObjInOwn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_obj_out()
@@ -4267,6 +4536,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorObjOut());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_obj_out_own()
@@ -4289,6 +4559,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_obj.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 
     public static void test_eina_iterator_obj_return()
@@ -4312,6 +4583,7 @@ class TestEinaIterator
         itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorObjReturn());
+        t.Dispose();
     }
 
     public static void test_eina_iterator_obj_return_own()
@@ -4333,6 +4605,7 @@ class TestEinaIterator
         Test.AssertEquals(idx, base_seq_obj.Length);
 
         itr.Dispose();
+        t.Dispose();
     }
 } // < TestEinaIterator
 
@@ -4355,6 +4628,8 @@ class TestEinaAccessor
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
+
+        lst.Dispose();
     }
 
     public static void basic_accessor_array()
@@ -4370,6 +4645,8 @@ class TestEinaAccessor
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
+
+        arr.Dispose();
     }
 
     public static void basic_accessor_inlist()
@@ -4388,6 +4665,7 @@ class TestEinaAccessor
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
+        lst.Dispose();
     }
 
     public static void basic_accessor_inarray()
@@ -4403,6 +4681,7 @@ class TestEinaAccessor
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
+        arr.Dispose();
     }
 }
 

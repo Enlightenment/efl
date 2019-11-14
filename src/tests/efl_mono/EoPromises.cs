@@ -72,6 +72,7 @@ class TestEoPromises
         loop.Iterate();
         Test.Assert(callbackCalled, "Future callback must have been called.");
         Test.AssertEquals(receivedValue, sentValue);
+        obj.Dispose();
     }
 
     public static void test_object_promise_cancel()
@@ -97,6 +98,7 @@ class TestEoPromises
         loop.Iterate();
         Test.Assert(callbackCalled, "Future callback must have been called.");
         Test.AssertEquals(receivedError, sentError);
+        obj.Dispose();
     }
 
 }
@@ -144,6 +146,7 @@ class TestEoAsyncMethods
         int receivedValue;
         v.Get(out receivedValue);
         Test.AssertEquals(receivedValue, sentValue);
+        obj.Dispose();
     }
 
     public static void test_async_cancel()
@@ -173,6 +176,8 @@ class TestEoAsyncMethods
         }
 
         Test.Assert(raised, "AggregateException must have been raised.");
+        cancelSrc.Dispose();
+        obj.Dispose();
     }
 
     public static void test_async_reject()
@@ -205,6 +210,7 @@ class TestEoAsyncMethods
         }
 
         Test.Assert(raised, "AggregateException must have been raised.");
+        obj.Dispose();
     }
 }
 }
