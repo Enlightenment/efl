@@ -1003,12 +1003,17 @@ _edje_recalc_table_parts(Edje *ed
 #endif
 }
 
+// Defined in edje_textblock.c
+Eina_Bool
+_edje_part_textblock_style_text_set(Edje *ed,
+                                    Edje_Real_Part *ep,
+                                    Edje_Part_Description_Text *chosen_desc);
+
 void
 _edje_recalc_textblock_style_text_set(Edje *ed)
 {
    unsigned short i;
    Edje_Real_Part *ep;
-   Edje_Part_Description_Text *chosen_desc;
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
