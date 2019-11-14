@@ -1,5 +1,4 @@
 import efl_canvas_animation_types;
-parse efl_canvas_animation_player;
 
 class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
@@ -16,7 +15,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
      removed. This means that if the animation does not end in the object's initial state there will be a noticeable
      sudden jump.
      To avoid this, animations must finish in the same state as they begin, or the object's state must be
-     matched to the animation's ending state once the animation finishes (using the @[Efl.Canvas.Animation_Player.ended]
+     matched to the animation's ending state once the animation finishes (using the @[Efl.Canvas.Object_Animation.animation,changed]
      event).
    ]]
    c_prefix: efl_animation;
@@ -99,7 +98,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
       }
       animation_apply {
          [[Overwrite this method to implement your own animation subclasses.
-         
+
            This is used for example by @Efl.Canvas.Animation_Translate or @Efl.Canvas.Animation_Scale.
 
            Subclasses should call their parent's @.animation_apply to get the adjusted $progress value
