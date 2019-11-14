@@ -1263,7 +1263,7 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
 
    event_hash = _pointer_hash((uintptr_t) it->desc);
 
-   pd->callbacks_mask |= 1 << event_hash;
+   pd->callbacks_mask |= 1ULL << event_hash;
 
    EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_ADD)
    else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_DEL)
@@ -2009,7 +2009,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    if (!legacy_compare)
      {
         event_hash = _pointer_hash((uintptr_t) desc);
-        if (!(pd->callbacks_mask & (1 << event_hash)))
+        if (!(pd->callbacks_mask & (1ULL << event_hash)))
           return EINA_TRUE;
      }
 
