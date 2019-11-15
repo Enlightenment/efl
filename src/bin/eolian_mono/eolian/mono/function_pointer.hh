@@ -72,7 +72,7 @@ struct function_pointer {
           return false;
 
       // Wrapper type, with callback matching the Unamanaged one
-      if (!as_generator("internal class " << f_name << "Wrapper : IDisposable\n"
+      if (!as_generator("internal class " << f_name << "Wrapper\n"
                   << "{\n\n"
                   << scope_tab << "private " << f_name  << "Internal _cb;\n"
                   << scope_tab << "private IntPtr _cb_data;\n"
@@ -87,31 +87,10 @@ struct function_pointer {
 
                   << scope_tab << "~" << f_name << "Wrapper()\n"
                   << scope_tab << "{\n"
-                  << scope_tab << scope_tab << "Dispose(false);\n"
-                  << scope_tab << "}\n\n"
-
-                  << scope_tab << "protected virtual void Dispose(bool disposing)\n"
-                  << scope_tab << "{\n"
                   << scope_tab << scope_tab << "if (this._cb_free_cb != null)\n"
                   << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << "if (disposing)\n"
-                  << scope_tab << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << scope_tab << "this._cb_free_cb(this._cb_data);\n"
-                  << scope_tab << scope_tab << scope_tab << "}\n"
-                  << scope_tab << scope_tab << scope_tab << "else\n"
-                  << scope_tab << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.ThreadSafeFreeCbExec(this._cb_free_cb, this._cb_data);\n"
-                  << scope_tab << scope_tab << scope_tab << "}\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb_free_cb = null;\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb_data = IntPtr.Zero;\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb = null;\n"
+                  << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.ThreadSafeFreeCbExec(this._cb_free_cb, this._cb_data);\n"
                   << scope_tab << scope_tab << "}\n"
-                  << scope_tab << "}\n\n"
-
-                  << scope_tab << "public void Dispose()\n"
-                  << scope_tab << "{\n"
-                  << scope_tab << scope_tab << "Dispose(true);\n"
-                  << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
                   << scope_tab << "}\n\n"
 
                   << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ", ") << ")\n"
