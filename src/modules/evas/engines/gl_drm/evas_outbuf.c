@@ -609,8 +609,6 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
      }
    else
      return MODE_FULL;
-
-   return ob->swap_mode;
 }
 
 int
