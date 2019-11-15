@@ -79,6 +79,11 @@ struct _Efl_Ui_Collection_View_Data
 
    Eina_List *requests; // Array of Efl_Ui_Collection_Request in progress
 
+   struct {
+      Efl_Gfx_Entity *last; // The last item of the collection, so focus can start by the end if necessary.
+      Efl_Gfx_Entity *previously; // The previously selected item in the collection, so focus can come back to it.
+   } focus;
+
    unsigned int start_id;
    unsigned int end_id;
 
@@ -293,6 +298,9 @@ _all_cleanup(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *pd)
      }
 #endif
 
+   efl_replace(&pd->focus.previously, NULL);
+   efl_replace(&pd->focus.last, NULL);
+
    EINA_LIST_FOREACH_SAFE(pd->requests, l, ll, request)
      eina_future_cancel(request->f);
 }
@@ -485,6 +493,33 @@ _entity_fetch_cb(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
    return eina_future_as_value(r);
 }
 
+static inline unsigned int
+_lookup_entity_index(Efl_Gfx_Entity *entity, Efl_Model **model)
+{
+   Efl_Model *fetch;
+
+   fetch = efl_ui_view_model_get(entity);
+   if (model) *model = fetch;
+   return efl_composite_model_index_get(fetch);
+}
+
+static void
+_last_entity_update(Efl_Ui_Collection_View_Data *pd, Efl_Gfx_Entity *entity)
+{
+   Efl_Model *new_model, *old_model;
+   unsigned int new_index, old_index;
+
+   if (!pd->focus.last) goto replace;
+
+   new_index = _lookup_entity_index(entity, &new_model);
+   old_index = _lookup_entity_index(pd->focus.last, &old_model);
+
+   if (new_index <= old_index) return;
+
+ replace:
+   efl_replace(&pd->focus.last, entity);
+}
+
 static inline Eina_Bool
 _entity_propagate(Efl_Model *model, Efl_Gfx_Entity *entity)
 {
@@ -634,6 +669,9 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    evas_event_thaw(e);
    evas_event_thaw_eval(e);
 
+   // Check if the last child is also the list item in the list
+   _last_entity_update(pd, child);
+
    // Currently position manager will flush its entire size cache on update, so only do
    // it when necessary to improve performance.
    if (updated_size || request->need_size)
@@ -667,6 +705,54 @@ _entity_free_cb(Eo *o, void *data, const Eina_Future *dead_future EINA_UNUSED)
    free(request);
 }
 
+static Eina_Bool
+_focus_lookup(Efl_Ui_Collection_View_Data *pd, unsigned int search_index,
+              Efl_Gfx_Entity **entity, Efl_Model **model)
+{
+   unsigned int idx;
+
+   if (entity) *entity = pd->focus.last;
+   if (pd->focus.last)
+     {
+        idx = _lookup_entity_index(pd->focus.last, model);
+        if (idx == search_index) return EINA_TRUE;
+     }
+   if (entity) *entity = pd->focus.previously;
+   if (pd->focus.previously)
+     {
+        idx = _lookup_entity_index(pd->focus.previously, model);
+        if (idx == search_index) return EINA_TRUE;
+     }
+
+   if (entity) *entity = NULL;
+   if (model) *model = NULL;
+   return EINA_FALSE;
+}
+
+static Efl_Ui_Collection_Item_Lookup *
+_build_from_focus(Efl_Ui_Collection_View_Data *pd, unsigned int search_index,
+                  Efl_Model **model)
+{
+   Efl_Ui_Collection_Item_Lookup *insert;
+   Efl_Gfx_Entity *entity = NULL;
+
+   // Not found in the cache lookup, but just maybe
+   if (!_focus_lookup(pd, search_index, &entity, model)) return NULL;
+
+   // Lucky us, let's add it to the cache
+   insert = calloc(1, sizeof (Efl_Ui_Collection_Item_Lookup));
+   if (!insert) return NULL;
+
+   insert->index = search_index;
+   insert->item.model = efl_ref(*model);
+   insert->item.entity = efl_ref(entity);
+
+   pd->cache = eina_rbtree_inline_insert(pd->cache, EINA_RBTREE_GET(insert),
+                                         _cache_tree_cmp, NULL);
+
+   return insert;
+}
+
 static Eina_List *
 _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                   Efl_Ui_Collection_View_Data *pd,
@@ -675,7 +761,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                   Eina_Size2D item_base)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
-   Efl_Model *model;
+   Efl_Model *model = NULL;
    Eina_Size2D item_size = item_base;
 
    if (!pd->cache) goto not_found;
@@ -683,10 +769,16 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    lookup = (void*) eina_rbtree_inline_lookup(pd->cache, &search_index,
                                               sizeof (search_index), _cache_tree_lookup,
                                               NULL);
-   if (!lookup) goto not_found;
-
    // In the cache we should always have model, so no need to check for it
-   model = lookup->item.model;
+   if (lookup)
+     {
+        model = lookup->item.model;
+     }
+   else
+     {
+        lookup = _build_from_focus(pd, search_index, &model);
+        if (!lookup) goto not_found;
+     }
 
    // If we do not know the size
    if (!ITEM_SIZE_FROM_MODEL(model, item_size))
@@ -731,12 +823,14 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                     Efl_Ui_Position_Manager_Object_Batch_Entity *target)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
+   Efl_Model *model = NULL;
 
    if (!pd->cache) goto not_found;
 
    lookup = (void*) eina_rbtree_inline_lookup(pd->cache, &search_index,
                                               sizeof (search_index), _cache_tree_lookup,
                                               NULL);
+   if (!lookup) lookup = _build_from_focus(pd, search_index, &model);
    if (!lookup) goto not_found;
    if (!lookup->item.entity) goto not_found;
 
@@ -1668,8 +1762,27 @@ _efl_ui_collection_view_position_manager_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_model_count_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
+   Efl_Ui_Collection_Request *request = NULL;
+   Eina_List *requests = NULL;
+   MY_DATA_GET(data, pd);
+   unsigned int index;
+   unsigned int count = 0;
+
+   count = efl_model_children_count_get(pd->model);
+   if (pd->focus.last)
+     {
+        index = _lookup_entity_index(pd->focus.last, NULL);
+
+        if (index + 1 == count)
+          return ;
+     }
+
+   // The last item is not the last item anymore
+   requests = _request_add(requests, &request, count, EINA_TRUE);
+   requests = _batch_request_flush(requests, data, pd);
+
    // We are not triggering efl_ui_position_manager_entity_data_access_set as it is can
    // only be slow, we rely on child added/removed instead (If we were to not rely on
    // child added/removed we could maybe use count changed)
@@ -1863,6 +1976,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
    if (request_length > 0)
      {
         Efl_Ui_Collection_Request *request = NULL;
+
         requests = _request_add(requests, &request, ev->index, EINA_TRUE);
         request->length = request_length;
         requests = eina_list_append(requests, request);
@@ -1882,9 +1996,7 @@ static void
 _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 {
    Efl_Model_Changed_Event *ev = event->info;
-#ifdef VIEWPORT_ENABLE
    Eina_List *requests = NULL;
-#endif
    MY_DATA_GET(data, pd);
    Eina_Iterator *it;
    const char *property;
@@ -1971,7 +2083,6 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 #ifdef VIEWPORT_ENABLE
    for (i = 0; i < 3; i++)
      {
-        Efl_Ui_Collection_Request *request;
 
         if (!pd->viewport[i]) continue ;
         if (pd->viewport[i]->count == 0) continue ;
@@ -1986,10 +2097,21 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
         requests = eina_list_append(requests, request);
      }
-   requests = _batch_request_flush(requests, data, pd);
 #endif
 
-   switch(efl_ui_position_manager_entity_version(pd->manager, 1))
+   // Fetch last item if necessary for later focus
+   if (efl_model_children_count_get(model))
+     {
+        Efl_Ui_Collection_Request *request = NULL;
+        uint64_t index = efl_model_children_count_get(model) - 1;
+
+        requests = _request_add(requests, &request, index, EINA_TRUE);
+     }
+
+   // Flush all pending request
+   requests = _batch_request_flush(requests, data, pd);
+
+   switch (efl_ui_position_manager_entity_version(pd->manager, 1))
      {
        case 1:
          efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
@@ -2249,20 +2371,17 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo 
    if (focus == efl_ui_focus_manager_root_get(obj))
      {
         // Find last item
-        item_id = efl_model_children_count_get(cpd->model) - 1;
+        item = cpd->focus.previously;
+        if (!item) item = cpd->focus.last;
+        if (item) item_id = _lookup_entity_index(item, NULL);
+        else item_id = efl_model_children_count_get(cpd->model) - 1;
      }
    else
      {
-        Efl_Model *model;
-        Eina_Value *vindex;
-
         item = _find_item(obj, cpd, focus);
         if (!item) return ;
 
-        model = efl_ui_view_model_get(item);
-        vindex = efl_model_property_get(model, "child.index");
-        if (!eina_value_uint_convert(vindex, &item_id)) return;
-        eina_value_free(vindex);
+        item_id = _lookup_entity_index(item, NULL);
      }
 
    // If this is NULL then we are before finalize, we cannot serve any sane value here
@@ -2293,7 +2412,8 @@ EOLIAN static Efl_Ui_Focus_Object *
 _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Collection_View_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
 {
    MY_DATA_GET(pd->collection, cpd);
-   Efl_Ui_Item *new_item, *item;
+   Efl_Ui_Item *new_item = NULL;
+   Efl_Ui_Item *item;
    unsigned int item_id;
 
    if (!child)
@@ -2302,11 +2422,11 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
    item = _find_item(obj, cpd, child);
 
    //if this is NULL then we are before finalize, we cannot serve any sane value here
-   if (!cpd->manager) return NULL;
-   if (!item) return NULL;
+   if (!cpd->manager) goto end;
+   if (!item) goto end;
 
    if (!_id_from_item(item, &item_id))
-     return NULL;
+     goto end;
 
    if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
      {
@@ -2361,6 +2481,8 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
         new_item = efl_ui_focus_manager_request_move(efl_super(obj, EFL_UI_COLLECTION_VIEW_FOCUS_MANAGER_CLASS), direction, child, logical);
      }
 
+ end:
+   efl_replace(&cpd->focus.previously, new_item);
    return new_item;
 }
 
