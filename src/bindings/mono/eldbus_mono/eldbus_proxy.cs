@@ -236,6 +236,10 @@ public class Proxy : IDisposable
             throw new ArgumentNullException("msg");
         }
 
+        // Native send() takes ownership of the message. We ref here to keep the IDisposable
+        // behavior simpler and keeping the original object alive in case the user wants.
+        msg.Ref();
+
         IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
@@ -265,14 +269,15 @@ public class Proxy : IDisposable
     {
         CheckHandle();
 
-        var msg = NewMethodCall(member);
-
-        foreach (BasicMessageArgument arg in args)
+        using (var msg = NewMethodCall(member))
         {
-            arg.AppendTo(msg);
-        }
+            foreach (BasicMessageArgument arg in args)
+            {
+                arg.AppendTo(msg);
+            }
 
-        return Send(msg, dlgt, timeout);
+            return Send(msg, dlgt, timeout);
+        }
     }
 
     eldbus.Pending Call(string member, params BasicMessageArgument[] args)

@@ -196,6 +196,7 @@ public abstract class Application
             OnTerminate();
         };
         app.Begin();
+        command_line.Dispose();
         Shutdown();
     }
 }

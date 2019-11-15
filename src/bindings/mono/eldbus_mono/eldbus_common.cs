@@ -1481,8 +1481,8 @@ public static class Common
             return;
         }
 
-        eldbus.Message msg;
-        eldbus.Pending pending;
+        eldbus.Message msg = null;
+        eldbus.Pending pending = null;
 
         try
         {
@@ -1492,6 +1492,11 @@ public static class Common
         catch (Exception e)
         {
             Eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
+
+            if (msg != null)
+            {
+                msg.Dispose(); // CA2000
+            }
             return;
         }
 
@@ -1502,6 +1507,10 @@ public static class Common
         catch (Exception e)
         {
             Eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
+        }
+        finally
+        {
+            msg.Dispose(); // CA2000
         }
     }
 
