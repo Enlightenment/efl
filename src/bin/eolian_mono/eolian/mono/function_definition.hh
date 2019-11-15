@@ -123,7 +123,8 @@ struct native_function_definition_generator
       self = "";
 
     if(!as_generator
-       (indent << "private static "
+       (indent << "[SuppressMessage(\"Microsoft.Reliability\", \"CA2000:DisposeObjectsBeforeLosingScope\", Justification = \"The instantiated objects can be stored in the called Managed API method.\")]\n"
+        << indent << "private static "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
