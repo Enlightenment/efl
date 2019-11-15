@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 using EinaTestData;
 using static EinaTestData.BaseData;
@@ -108,6 +109,7 @@ class TestInheritance
         obj.Dispose();
     }
 
+    [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectBeforeLosingScope", Justification = "It is expected to lose scope.")]
     private static void CreateAndCheckInheritedObjects(out WeakReference parentWRef, out WeakReference childWRef)
     {
         var parent = new Inherit3Parent();

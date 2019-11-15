@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TestSuite
 {
@@ -126,6 +127,7 @@ class TestEoInherit
         loop.Dispose();
     }
 
+    [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectBeforeLosingScope", Justification = "It is expected to lose scope.")]
     private static WeakReference CreateCollectableInherited()
     {
         return new WeakReference(new MyObject());
