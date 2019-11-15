@@ -1,0 +1,62 @@
+#define FN_COL_DEFAULT 255 255 255 255; color3: 0 0 0 128
+collections {
+   color_classes {
+      color_class { name: "button_text";
+         color: FN_COL_DEFAULT;
+         desc: "Text of a button";
+      }
+   }
+   group { name: "efl/button:homescreen_icon"; data.item: "version" "123";
+      parts {
+         swallow { "efl.content"; nomouse;
+            required;
+            desc { "default";
+               fixed: 1 0;
+               rel2.relative: 1.0 0.0;
+               rel2.to: "sizer_content";
+               fixed: 1 0;
+               aspect: 1.0 1.0;
+               aspect_preference: BOTH;
+            }
+         }
+         text { "sizer_content"; nomouse;
+            scale: 1;
+            desc { "default";
+               rel1.relative: 0.0 1.0;
+               rel2.relative: 1.0 1.0;
+               align: 0.0 1.0;
+               text {
+                  size: 10;
+                  min: 1 1;
+                  ellipsis: -1;
+                  text: "Masdfasdfsaf";
+                  text_class: "button_text";
+               }
+               visible: 0;
+            }
+         }
+         text { "efl.text"; nomouse;
+            scale;
+            required;
+            desc { "default"
+               rel1.relative: 0.0 1.0;
+               rel2.relative: 1.0 1.0;
+               align: 0.0 1.0;
+               color3: 255 255 255 255;
+               text { font: "sans"; size: 10;;
+                  align: 0.5 0.5;
+                  min: 1 1;
+                  text_class: "button";
+                  ellipsis: -1;
+               }
+               visible: 1;
+               fixed: 0 0;
+            }
+            desc { "visible";
+               inherit: "default";
+
+            }
+         }
+      }
+   }
+}

@@ -1,5 +1,3 @@
-//Compile with:
-//gcc -g efl_ui_scroller_example.c -o efl_ui_scroller_example `pkg-config --cflags --libs elementary`
 #include <Efl_Ui.h>
 #include <Efreet.h>
 
@@ -11,13 +9,13 @@ typedef struct
 {
   Eina_Position2D position;
   const char *name;
-  const char *icon_path;
+  const char *icon;
   Efl_Event_Cb cb;
 } Icon;
 
 
 static Icon workspace1[] = {
-    { EINA_POSITION2D(0, 0), "bla", "ic", NULL},
+    { EINA_POSITION2D(0, 0), "Chrome", "/usr/share/icons/hicolor/128x128/apps/chromium.png", NULL},
     { EINA_POSITION2D(0, 1), "bla", "ic2", NULL},
     { EINA_POSITION2D(2, 0), NULL, NULL, NULL},
 };
@@ -58,11 +56,11 @@ static Icon* workspaces[] = {workspace1, workspace2, workspace3};
 static void _home_screen_cb(void *data, const Efl_Event *cb);
 
 static Icon start_line_config[] = {
-    { EINA_POSITION2D(0, 0), "Call", "ic", NULL},
-    { EINA_POSITION2D(0, 0), "Contact", "ic2", NULL},
-    { EINA_POSITION2D(0, 0), "Home", "ic2", _home_screen_cb},
-    { EINA_POSITION2D(0, 0), "Whatzup", "ic2", NULL},
-    { EINA_POSITION2D(0, 0), "Tölegram", "ic2", NULL},
+    { EINA_POSITION2D(0, 0), "Call", "call-start", NULL},
+    { EINA_POSITION2D(0, 0), "Contact", "contact-new", NULL},
+    { EINA_POSITION2D(0, 0), "Home", "applications-internet", _home_screen_cb},
+    { EINA_POSITION2D(0, 0), "Mail", "emblem-mail", NULL},
+    { EINA_POSITION2D(0, 0), "Documents", "emblem-documents", NULL},
     { EINA_POSITION2D(0, 0), NULL, NULL, NULL},
 };
 
@@ -72,10 +70,15 @@ static Eo *compositor;
 static Efl_Ui_Widget*
 _create_icon(Icon *icon, Eo *parent)
 {
-   Eo *ret = efl_add(EFL_UI_BUTTON_CLASS, parent);
+   Eo *ret = efl_add(EFL_UI_BUTTON_CLASS, parent, efl_ui_widget_style_set(efl_added, "homescreen_icon"));
+   Eo *ic = efl_add(EFL_UI_IMAGE_CLASS, parent);
+   efl_ui_image_icon_set(ic, icon->icon);
+   efl_content_set(ret, ic);
+
    efl_text_set(ret, icon->name);
    if (icon->cb)
      efl_event_callback_add(ret, EFL_INPUT_EVENT_CLICKED, icon->cb, icon);
+
    return ret;
 }
 
@@ -174,6 +177,8 @@ EAPI_MAIN void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win, *over_container, *desktop;
+
+   efl_ui_theme_extension_add(efl_ui_theme_default_get(), "/home/marcel/git/efl/build/src/examples/elementary/homescreen/button_theme.edj");
 
    win = efl_new(EFL_UI_WIN_CLASS,
              efl_ui_win_autodel_set(efl_added, EINA_TRUE));
