@@ -1473,6 +1473,7 @@ database_error_del(Eolian_Error *err)
 {
    if (!err || eolian_object_unref(&err->base)) return;
    eina_stringshare_del(err->msg);
+   database_doc_del(err->doc);
    free(err);
 }
 
