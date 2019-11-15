@@ -1648,6 +1648,7 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
           {
             case 1:
               efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+                efl_provider_find(obj, EFL_UI_WIN_CLASS),
                 efl_ref(obj), _batch_entity_cb, _unref_cb,
                 efl_ref(obj), _batch_size_cb, _unref_cb,
                 count);
@@ -1992,6 +1993,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
      {
        case 1:
          efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+           efl_provider_find(data, EFL_UI_WIN_CLASS),
            efl_ref(data), _batch_entity_cb, _unref_cb,
            efl_ref(data), _batch_size_cb, _unref_cb,
            count);

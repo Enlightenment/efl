@@ -30,6 +30,8 @@ typedef struct {
    Eina_Bool size_cache_dirty;
    Eo *last_group;
    Eina_Future *rebuild_absolut_size;
+   Efl_Ui_Win *window;
+   Evas *canvas;
    Api_Callbacks callbacks;
 } Efl_Ui_Position_Manager_Grid_Data;
 
@@ -769,7 +771,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_version(Eo *obj EIN
 }
 
 EOLIAN static void
-_efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
+_efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, Efl_Ui_Win *canvas, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
    // Cleanup cache first
    _group_cache_invalidate(obj, pd);
@@ -781,6 +783,9 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access
      pd->callbacks.size.free_cb(pd->callbacks.size.data);
 
    // Set them
+   efl_replace(&pd->window, canvas);
+   efl_replace(&pd->canvas, canvas ? evas_object_evas_get(canvas) : NULL);
+
    pd->callbacks.object.data = obj_access_data;
    pd->callbacks.object.access = obj_access;
    pd->callbacks.object.free_cb = obj_access_free_cb;
@@ -797,7 +802,7 @@ EOLIAN static void
 _efl_ui_position_manager_grid_efl_object_invalidate(Eo *obj,
                                                     Efl_Ui_Position_Manager_Grid_Data *pd EINA_UNUSED)
 {
-   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
    efl_invalidate(efl_super(obj, EFL_UI_POSITION_MANAGER_GRID_CLASS));
 }

@@ -961,6 +961,7 @@ _efl_ui_collection_position_manager_set(Eo *obj, Efl_Ui_Collection_Data *pd, Efl
           {
             case 1:
               efl_ui_position_manager_data_access_v1_data_access_set(pd->pos_man,
+                efl_provider_find(obj, EFL_UI_WIN_CLASS),
                 &pd->obj_accessor, _obj_accessor_get_at, NULL,
                 &pd->size_accessor, _size_accessor_get_at, NULL,
                 eina_list_count(pd->items));

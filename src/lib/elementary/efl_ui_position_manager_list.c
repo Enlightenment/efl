@@ -25,6 +25,8 @@ typedef struct {
    int maximum_min_size;
    Vis_Segment prev_run;
    Efl_Gfx_Entity *last_group;
+   Efl_Ui_Win *window;
+   Evas *canvas;
    Api_Callbacks callbacks;
 } Efl_Ui_Position_Manager_List_Data;
 
@@ -193,6 +195,8 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
    else
      geom.x -= (relevant_space_size - cache_access(obj, pd, new.start_id));
 
+   evas_event_freeze(pd->canvas);
+
    for (i = new.start_id; i < new.end_id; ++i)
      {
         Eina_Size2D size;
@@ -291,6 +295,9 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
    efl_gfx_entity_position_set(first_group, first_group_pos);
    efl_gfx_entity_size_set(first_group, first_group_size);
+
+   evas_event_thaw(pd->canvas);
+   evas_event_thaw_eval(pd->canvas);
 }
 
 
@@ -503,7 +510,7 @@ _efl_ui_position_manager_list_efl_object_invalidate(Eo *obj, Efl_Ui_Position_Man
    if (pd->rebuild_absolut_size)
      eina_future_cancel(pd->rebuild_absolut_size);
 
-   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
@@ -542,7 +549,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_version(Eo *obj EIN
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
+_efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Efl_Ui_Win *canvas, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
    // Cleanup cache first
    cache_invalidate(obj, pd);
@@ -554,6 +561,9 @@ _efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access
      pd->callbacks.size.free_cb(pd->callbacks.size.data);
 
    // Set them
+   efl_replace(&pd->window, canvas);
+   efl_replace(&pd->canvas, canvas ? evas_object_evas_get(canvas) : NULL);
+
    pd->callbacks.object.data = obj_access_data;
    pd->callbacks.object.access = obj_access;
    pd->callbacks.object.free_cb = obj_access_free_cb;

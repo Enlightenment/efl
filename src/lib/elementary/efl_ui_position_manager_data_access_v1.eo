@@ -116,6 +116,7 @@ interface @beta Efl.Ui.Position_Manager.Data_Access_V1 {
          set {
          }
          values {
+           canvas: Efl.Ui.Win; [[Will use this object to freeze/thaw canvas events.]]
            obj_access : Efl.Ui.Position_Manager.Object_Batch_Callback; [[Function callback for canvas objects, even if
                                                                          the start_id is valid, the returned objects
                                                                          may be $NULL.]]
