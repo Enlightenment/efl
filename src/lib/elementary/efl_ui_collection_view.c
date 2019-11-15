@@ -520,6 +520,10 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    unsigned int i, len;
    uint64_t updated_size_start_id = 0, updated_entity_start_id = 0;
    Eina_Bool updated_size = EINA_FALSE, updated_entity = EINA_FALSE;
+   Evas *e;
+
+   e = evas_object_evas_get(obj);
+   evas_event_freeze(e);
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
@@ -626,6 +630,9 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                }
           }
      }
+
+   evas_event_thaw(e);
+   evas_event_thaw_eval(e);
 
    // Currently position manager will flush its entire size cache on update, so only do
    // it when necessary to improve performance.
