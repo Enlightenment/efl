@@ -57,10 +57,6 @@ if [ "$DISTRO" != "" ] ; then
   fi
 
   if [ "$1" = "coverity" ]; then
-#    if [ $(date +%A) != "Saturday" ]; then
-#      echo "Not Saturday so we are not running our weekly Coverity scan build."
-#      exit 0
-#    fi
     OPTS="$OPTS $WAYLAND_LINUX_COPTS"
     travis_fold cov-download cov-download
     docker exec --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c '.ci/coverity-tools-install.sh'
