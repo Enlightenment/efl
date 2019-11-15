@@ -144,7 +144,7 @@ _ipc_launch(void)
         usleep(try_gap);
         ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
      }
-   if (!ipc) ERR("Timeout in trying to start and then connect to efrteed");
+   if (!ipc) ERR("Timeout in trying to start and then connect to efreetd");
 }
 
 static Eina_Bool
