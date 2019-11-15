@@ -14,20 +14,25 @@
   Efl_Ui_Position_Manager_List_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   unsigned int size;
+   Api_Callbacks callbacks;
+
    Eina_Future *rebuild_absolut_size;
-   Eina_Rect viewport;
-   Eina_Size2D abs_size;
-   Eina_Vector2 scroll_position;
-   Efl_Ui_Layout_Orientation dir;
    int *size_cache;
-   int average_item_size;
-   int maximum_min_size;
-   Vis_Segment prev_run;
    Efl_Gfx_Entity *last_group;
    Efl_Ui_Win *window;
    Evas *canvas;
-   Api_Callbacks callbacks;
+
+   Vis_Segment prev_run;
+
+   Eina_Rect viewport;
+   Eina_Size2D abs_size;
+   Eina_Vector2 scroll_position;
+
+   Efl_Ui_Layout_Orientation dir;
+
+   unsigned int size;
+   int average_item_size;
+   int maximum_min_size;
 } Efl_Ui_Position_Manager_List_Data;
 
 /*

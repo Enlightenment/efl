@@ -13,32 +13,37 @@
   Efl_Ui_Position_Manager_Grid_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   unsigned int size;
-   unsigned int groups;
-   Eina_Rect viewport;
-   Eina_Vector2 scroll_position;
-   Efl_Ui_Layout_Orientation dir;
-   Vis_Segment prev_run;
-   unsigned int prev_consumed_space;
-   Eina_Size2D max_min_size;
-   Eina_Size2D last_viewport_size;
-   Eina_Size2D prev_min_size;
+   Api_Callbacks callbacks;
 
    Eina_Inarray *group_cache;
-   Eina_Bool group_cache_dirty;
    int *size_cache;
-   Eina_Bool size_cache_dirty;
    Eo *last_group;
    Eina_Future *rebuild_absolut_size;
    Efl_Ui_Win *window;
    Evas *canvas;
-   Api_Callbacks callbacks;
+
+   Vis_Segment prev_run;
+
+   Eina_Rect viewport;
+   Eina_Vector2 scroll_position;
+   Eina_Size2D max_min_size;
+   Eina_Size2D last_viewport_size;
+   Eina_Size2D prev_min_size;
+
+   Efl_Ui_Layout_Orientation dir;
+
+   unsigned int size;
+   unsigned int groups;
+   unsigned int prev_consumed_space;
+
+   Eina_Bool group_cache_dirty;
+   Eina_Bool size_cache_dirty;
 } Efl_Ui_Position_Manager_Grid_Data;
 
 typedef struct {
-   Eina_Bool real_group;
    Eina_Size2D group_header_size;
    int items;
+   Eina_Bool real_group;
 } Group_Cache_Line;
 
 static inline void
