@@ -2966,6 +2966,22 @@ _edje_part_recalc_single_mesh0(Edje_Calc_Params *params,
 }
 
 static void
+_edje_table_recalc_apply(Edje *ed EINA_UNUSED,
+                         Edje_Real_Part *ep,
+                         Edje_Calc_Params *p3 EINA_UNUSED,
+                         Edje_Part_Description_Table *chosen_desc)
+{
+   evas_obj_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
+   evas_obj_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
+   evas_obj_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
+   if (evas_object_smart_need_recalculate_get(ep->object))
+     {
+        efl_canvas_group_need_recalculate_set(ep->object, 0);
+        efl_canvas_group_calculate(ep->object);
+     }
+}
+
+static void
 _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *ep,
                          Edje_Part_Description_Common *desc,
@@ -3086,13 +3102,19 @@ _edje_part_recalc_single(Edje *ed,
         // limit size if needed
         if (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) ||
              (((Edje_Part_Description_Table *)chosen_desc)->table.min.v)))
-          _edje_part_recalc_single_table(ep, chosen_desc, &minw, &minh);
+          {
+             _edje_table_recalc_apply(ed, ep, params, (Edje_Part_Description_Table *)chosen_desc);
+             _edje_part_recalc_single_table(ep, chosen_desc, &minw, &minh);
+          }
         break;
       case EDJE_PART_TYPE_BOX:
         // limit size if needed
         if ((((Edje_Part_Description_Box *)chosen_desc)->box.min.h) ||
             (((Edje_Part_Description_Box *)chosen_desc)->box.min.v))
-          _edje_part_recalc_single_box(ep, chosen_desc, &minw, &minh);
+          {
+             _edje_box_recalc_apply(ed, ep, params, (Edje_Part_Description_Box *)chosen_desc);
+             _edje_part_recalc_single_box(ep, chosen_desc, &minw, &minh);
+          }
         break;
       case EDJE_PART_TYPE_IMAGE:
         _edje_part_recalc_single_image0(ed, ep, params, (Edje_Part_Description_Image *)desc, pos);
@@ -3158,22 +3180,6 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_physics(params, desc);
 #endif
    _edje_part_recalc_single_map(ed, ep, center, zoom_center, light, persp, desc, chosen_desc, params);
-}
-
-static void
-_edje_table_recalc_apply(Edje *ed EINA_UNUSED,
-                         Edje_Real_Part *ep,
-                         Edje_Calc_Params *p3 EINA_UNUSED,
-                         Edje_Part_Description_Table *chosen_desc)
-{
-   evas_obj_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
-   evas_obj_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
-   evas_obj_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
-   if (evas_object_smart_need_recalculate_get(ep->object))
-     {
-        efl_canvas_group_need_recalculate_set(ep->object, 0);
-        efl_canvas_group_calculate(ep->object);
-     }
 }
 
 static void
