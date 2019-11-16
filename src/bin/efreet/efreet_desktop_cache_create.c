@@ -70,13 +70,22 @@ cache_add(Eet_File *ef, const char *path, const char *file_id, int priority EINA
         *changed = 1;
         INF("  NEW");
     }
-    else if (ecore_file_mod_time(desk->orig_path) != desk->load_time)
+    else
     {
-        efreet_desktop_free(desk);
-        *changed = 1;
-        desk = efreet_desktop_uncached_new(path);
-        if (desk) INF("  CHANGED");
-        else      INF("  NO UNCACHED");
+        struct stat st;
+        if (!stat(desk->orig_path, &st))
+        {
+           time_t modtime = st.st_mtime;
+           if (modtime < st.st_ctime) modtime = st.st_ctime;
+           if (modtime != desk->load_time)
+           {
+              efreet_desktop_free(desk);
+              *changed = 1;
+              desk = efreet_desktop_uncached_new(path);
+              if (desk) INF("  CHANGED");
+              else      INF("  NO UNCACHED");
+           }
+        }
     }
     if (!desk) return 1;
     if (file_id && old_file_ids && !eina_hash_find(old_file_ids->hash, file_id))
