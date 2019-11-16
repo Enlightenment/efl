@@ -167,6 +167,8 @@ EAPI int ECORE_X_RAW_BUTTON_PRESS = 0;
 EAPI int ECORE_X_RAW_BUTTON_RELEASE = 0;
 EAPI int ECORE_X_RAW_MOTION = 0;
 
+EAPI int ECORE_X_DEVICES_CHANGE = 0;
+
 #ifdef LOGRT
 static double t0 = 0.0;
 static Status (*_logrt_real_reply)(Display *disp,
@@ -654,6 +656,8 @@ _ecore_x_init2(void)
    ECORE_X_RAW_BUTTON_PRESS = ecore_event_type_new();
    ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
    ECORE_X_RAW_MOTION = ecore_event_type_new();
+
+   ECORE_X_DEVICES_CHANGE = ecore_event_type_new();
 
    _ecore_x_modifiers_get();
 

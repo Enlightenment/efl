@@ -36,6 +36,7 @@ typedef struct _Ecore_X_Touch_Device_Info
 } Ecore_X_Touch_Device_Info;
 #endif /* ifdef ECORE_XI2_2 */
 
+static Ecore_Job *update_devices_job = NULL;
 static XIDeviceInfo *_ecore_x_xi2_devs = NULL;
 static int _ecore_x_xi2_num = 0;
 #ifdef ECORE_XI2_2
@@ -63,6 +64,18 @@ _ecore_x_input_init(void)
         _ecore_x_xi2_opcode = -1;
         return;
      }
+
+   // listen for device changes
+   XIEventMask m;
+   m.deviceid = XIAllDevices;
+   m.mask_len = XIMaskLen(XI_LASTEVENT);
+   m.mask = calloc( m.mask_len, 1);
+   if (!m.mask) return;
+   XISetMask(m.mask, XI_DeviceChanged);
+   XISetMask(m.mask, XI_HierarchyChanged);
+   XISetMask(m.mask, XI_PropertyEvent);
+   XISelectEvents(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), &m, 1);
+   free(m.mask);
 
    _ecore_x_xi2_devs = XIQueryDevice(_ecore_x_disp, XIAllDevices,
                                      &_ecore_x_xi2_num);
@@ -130,6 +143,15 @@ _ecore_x_input_get_axis_label(char *axis_name)
 void
 _ecore_x_input_shutdown(void)
 {
+   XIEventMask m;
+   m.deviceid = XIAllDevices;
+   m.mask_len = XIMaskLen(XI_LASTEVENT);
+   m.mask = calloc( m.mask_len, 1);
+   if (m.mask)
+     {
+        XISelectEvents(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), &m, 1);
+        free(m.mask);
+     }
 #ifdef ECORE_XI2
    if (_ecore_x_xi2_devs)
      {
@@ -147,6 +169,8 @@ _ecore_x_input_shutdown(void)
      eina_list_free(_ecore_x_xi2_grabbed_devices_list);
    _ecore_x_xi2_grabbed_devices_list = NULL;
 #endif /* ifdef ECORE_XI2 */
+   if (update_devices_job) ecore_job_del(update_devices_job);
+   update_devices_job = NULL;
 }
 
 #ifdef ECORE_XI2
@@ -655,6 +679,14 @@ _ecore_x_input_device_lookup(int deviceid)
 }
 #endif
 
+static void
+_cb_update_devices(void *data EINA_UNUSED)
+{
+   update_devices_job = NULL;
+   ecore_x_input_devices_update();
+   ecore_event_add(ECORE_X_DEVICES_CHANGE, NULL, NULL, NULL);
+}
+
 void
 _ecore_x_input_handler(XEvent *xevent)
 {
@@ -663,6 +695,14 @@ _ecore_x_input_handler(XEvent *xevent)
 
    switch (xevent->xcookie.evtype)
      {
+      case XI_DeviceChanged:
+      case XI_HierarchyChanged:
+      case XI_PropertyEvent:
+        if (update_devices_job) ecore_job_del(update_devices_job);
+        update_devices_job = ecore_job_add(_cb_update_devices, NULL);
+        // XXX: post change event
+        break;
+
       case XI_RawMotion:
       case XI_RawButtonPress:
       case XI_RawButtonRelease:
@@ -904,3 +944,142 @@ ecore_x_input_touch_devices_ungrab(void)
 {
    return _ecore_x_input_touch_devices_grab(0, EINA_FALSE);
 }
+
+// XXX
+EAPI void
+ecore_x_input_devices_update(void)
+{
+   if (_ecore_x_xi2_devs) XIFreeDeviceInfo(_ecore_x_xi2_devs);
+   _ecore_x_xi2_num = 0;
+   _ecore_x_xi2_devs = XIQueryDevice(_ecore_x_disp, XIAllDevices,
+                                     &_ecore_x_xi2_num);
+}
+
+EAPI int
+ecore_x_input_device_num_get(void)
+{
+   return _ecore_x_xi2_num;
+}
+
+EAPI int
+ecore_x_input_device_id_get(int slot)
+{
+   if ((slot < 0) || (slot >= _ecore_x_xi2_num)) return 0;
+   return _ecore_x_xi2_devs[slot].deviceid;
+}
+
+EAPI const char *
+ecore_x_input_device_name_get(int slot)
+{
+   if ((slot < 0) || (slot >= _ecore_x_xi2_num)) return NULL;
+   return _ecore_x_xi2_devs[slot].name;
+}
+
+EAPI char **
+ecore_x_input_device_properties_list(int slot, int *num_ret)
+{
+   char **atoms = NULL;
+   int num = 0, i;
+   Atom *a;
+
+   if ((slot < 0) || (slot >= _ecore_x_xi2_num)) goto err;
+   a = XIListProperties(_ecore_x_disp, _ecore_x_xi2_devs[slot].deviceid, &num);
+   if (!a) goto err;
+   atoms = calloc(num, sizeof(char *));
+   if (!atoms) goto err;
+   for (i = 0; i < num; i++)
+     {
+        Ecore_X_Atom at = a[i];
+        atoms[i] = ecore_x_atom_name_get(at);
+        if (!atoms[i]) goto err;
+     }
+   XFree(a);
+   *num_ret = num;
+   return atoms;
+err:
+   if (atoms)
+     {
+        for (i = 0; i < num; i++) free(atoms[i]);
+        free(atoms);
+     }
+   *num_ret = 0;
+   return NULL;
+}
+
+EAPI void
+ecore_x_input_device_properties_free(char **list, int num)
+{
+   int i;
+
+   for (i = 0; i < num; i++) free(list[i]);
+   free(list);
+}
+
+// unit_size_ret will be 8, 16, 32
+// fromat_ret will almost be one of:
+// ECORE_X_ATOM_CARDINAL
+// ECORE_X_ATOM_INTEGER
+// ECORE_X_ATOM_FLOAT (unit_size 32 only)
+// ECORE_X_ATOM_ATOM // very rare
+// ECORE_X_ATOM_STRING (unit_size 8 only - guaratee nul termination)
+
+EAPI void *
+ecore_x_input_device_property_get(int slot, const char *prop, int *num_ret,
+                                  Ecore_X_Atom *format_ret, int *unit_size_ret)
+{
+   Atom a, a_type = 0;
+   int fmt = 0;
+   unsigned long num = 0, dummy;
+   unsigned char *data = NULL;
+   unsigned char *d = NULL;
+
+   if ((slot < 0) || (slot >= _ecore_x_xi2_num)) goto err;
+   a = XInternAtom(_ecore_x_disp, prop, False);
+   if (!XIGetProperty(_ecore_x_disp, _ecore_x_xi2_devs[slot].deviceid,
+                      a, 0, 65536, False, AnyPropertyType, &a_type, &fmt,
+                      &num, &dummy, &data)) goto err;
+   *format_ret = a_type;
+   *num_ret = num;
+   *unit_size_ret = fmt;
+   if ((a_type == ECORE_X_ATOM_STRING) && (fmt == 8))
+     {
+        d = malloc(num + 1);
+        if (!d) goto err2;
+        memcpy(d, data, num);
+        d[num] = 0;
+     }
+   else
+     {
+        if      (fmt == 8 ) d = malloc(num);
+        else if (fmt == 16) d = malloc(num * 2);
+        else if (fmt == 32) d = malloc(num * 4);
+        if (!d) goto err2;
+        memcpy(d, data, num * (fmt / 8));
+     }
+   XFree(data);
+   return d;
+err2:
+   XFree(data);
+err:
+   *num_ret = 0;
+   *format_ret = 0;
+   *unit_size_ret = 0;
+   return NULL;
+}
+
+EAPI void
+ecore_x_input_device_property_set(int slot, const char *prop, void *data,
+                                  int num, Ecore_X_Atom format, int unit_size)
+{
+   Atom a, a_type = 0;
+   if ((slot < 0) || (slot >= _ecore_x_xi2_num)) return;
+   a = XInternAtom(_ecore_x_disp, prop, False);
+   a_type = format;
+   XIChangeProperty(_ecore_x_disp, _ecore_x_xi2_devs[slot].deviceid,
+                    a, a_type, unit_size, XIPropModeReplace, data, num);
+}
+
+// XXX: add api's to get XIDeviceInfo->... stuff like
+// use, attachement, enabled, num_classes, classes (which list number of
+// buttons and their names, keycodes, valuators (mouse etc.), touch devices
+// etc.
