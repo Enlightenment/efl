@@ -710,19 +710,8 @@ group { name: "e/modules/ibox/drop_overlay";
 
 group { name: "e/modules/ibar/menu";
    parts {
-      part { name: "sizer"; type: SPACER;
-         description { state: "default"; }
-         description { state: "hidden";
-            fixed: 1 1;
-            rel1.relative: 0.5 1.0;
-            rel2.relative: 0.5 1.0;
-            minmul: 0 0;
-         }
-      }
       part { name: "clip"; type: RECT;
-         description { state: "default";
-            rel.to: "sizer";
-         }
+         description { state: "default"; }
          description { state: "hidden";
             inherit: "default";
             color: 0 0 0 0;
@@ -731,7 +720,6 @@ group { name: "e/modules/ibar/menu";
       part { name: "base"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
-            rel.to: "sizer";
             color: 0 0 0 192;
          }
       }
@@ -739,7 +727,6 @@ group { name: "e/modules/ibar/menu";
          clip_to: "clip";
          scale: 1;
          description { state: "default";
-            rel.to: "sizer";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             offscale;
@@ -754,13 +741,11 @@ group { name: "e/modules/ibar/menu";
    programs {
       program { signal: "e,state,hidden"; source: "e";
          action: STATE_SET "hidden" 0.0;
-         target: "sizer";
          target: "clip";
       }
 
       program { signal: "e,action,show"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "sizer";
          target: "clip";
          transition: SINUSOIDAL 0.2;
          after: "show2";
@@ -771,7 +756,6 @@ group { name: "e/modules/ibar/menu";
 
       program { signal: "e,action,hide"; source: "e";
          action: STATE_SET "hidden" 0.0;
-         target: "sizer";
          target: "clip";
          transition: SINUSOIDAL 0.2;
          after: "hide2";
