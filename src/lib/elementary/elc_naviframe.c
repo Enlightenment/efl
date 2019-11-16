@@ -512,9 +512,9 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it,
    if (_elm_config->access_mode)
      _access_obj_process(nit, EINA_TRUE);
 
-   memset(buf, 0x0, sizeof(buf));
+   buf[0] = 0;
    if (nit->title_label)
-     strncat(buf, nit->title_label, sizeof(buf) - 1);
+     strncpy(buf, nit->title_label, sizeof(buf) - 1);
    if (nit->subtitle_label)
      {
         if ((nit->title_label) && (strlen(buf) < (sizeof(buf) - 2)))
