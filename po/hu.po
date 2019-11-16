@@ -1,7 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Enlightenment development team
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Hungarian translation for Efl.
+# Copyright (C) 2014 Enlightenment development team
+# This file is put in the public domain.
+# Páder Rezső <rezso@rezso.net>, 2014.
 #
 #: src/lib/elementary/elm_config.c:4135
 msgid ""
