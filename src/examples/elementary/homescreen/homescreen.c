@@ -13,24 +13,25 @@ typedef struct
   Efl_Event_Cb cb;
 } Icon;
 
+#define P "/usr/share/icons/hicolor/128x128/apps/"
 
 static Icon workspace1[] = {
-    { EINA_POSITION2D(0, 0), "Chrome", "/usr/share/icons/hicolor/128x128/apps/chromium.png", NULL},
-    { EINA_POSITION2D(0, 1), "bla", "ic2", NULL},
+    { EINA_POSITION2D(0, 0), "Chrome", P"chromium.png", NULL},
+    { EINA_POSITION2D(0, 1), "Cups", P"cups.png", NULL},
     { EINA_POSITION2D(2, 0), NULL, NULL, NULL},
 };
 
 static Icon workspace2[] = {
-    { EINA_POSITION2D(0, 3), "bla", "ic", NULL},
-    { EINA_POSITION2D(1, 3), "bla", "ic", NULL},
-    { EINA_POSITION2D(2, 3), "bla", "ic", NULL},
-    { EINA_POSITION2D(3, 3), "bla", "ic", NULL},
-    { EINA_POSITION2D(4, 3), "bla", "ic", NULL},
-    { EINA_POSITION2D(0, 4), "bla", "ic", NULL},
-    { EINA_POSITION2D(1, 4), "bla", "ic", NULL},
-    { EINA_POSITION2D(2, 4), "bla", "ic", NULL},
-    { EINA_POSITION2D(3, 4), "bla", "ic", NULL},
-    { EINA_POSITION2D(4, 4), "bla", "ic", NULL},
+    { EINA_POSITION2D(0, 3), "Cadence", P"cadence.png", NULL},
+    { EINA_POSITION2D(1, 3), "Emacs", P"emacs.png", NULL},
+    { EINA_POSITION2D(2, 3), "etui", P"etui.png", NULL},
+    { EINA_POSITION2D(3, 3), "CAD", P"librecad.png", NULL},
+    { EINA_POSITION2D(4, 3), "Libreoffice", P"libreoffice-base.png", NULL},
+    { EINA_POSITION2D(0, 4), "Riot", P"riot.png", NULL},
+    { EINA_POSITION2D(1, 4), "Tex", P"texstudio.png", NULL},
+    { EINA_POSITION2D(2, 4), "Telegram", P"telegram.png", NULL},
+    { EINA_POSITION2D(3, 4), "Vlc", P"vlc.png", NULL},
+    { EINA_POSITION2D(4, 4), "Mono", P"monodevelop.png", NULL},
     { EINA_POSITION2D(2, 0), NULL, NULL, NULL},
 };
 
@@ -166,6 +167,8 @@ _home_screen_cb(void *data, const Efl_Event *cb)
 {
    Efl_Canvas_Rectangle *rect;
 
+   printf("asdfasdfasdf\n");
+
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, compositor);
    efl_gfx_entity_size_set(rect, EINA_SIZE2D(720*SCALE+15, 1280*SCALE));
    efl_gfx_entity_position_set(rect, EINA_POSITION2D(0, 1280*SCALE));
@@ -176,7 +179,7 @@ _home_screen_cb(void *data, const Efl_Event *cb)
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   Eo *win, *over_container, *desktop;
+   Eo *win, *over_container, *desktop, *background;
 
    efl_ui_theme_extension_add(efl_ui_theme_default_get(), "/home/marcel/git/efl/build/src/examples/elementary/homescreen/button_theme.edj");
 
@@ -190,5 +193,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_pack_end(compositor, desktop);
    efl_gfx_entity_size_set(compositor, EINA_SIZE2D(720*SCALE, 1280*SCALE));
 
+   background = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   efl_file_simple_load(background, "/home/marcel/git/efl/src/examples/elementary/homescreen/Lantern_Cluster.edj", "e/desktop/background");
+   efl_content_set(win, background);
 }
 EFL_MAIN()

@@ -1,4 +1,23 @@
 #define FN_COL_DEFAULT 255 255 255 255; color3: 0 0 0 128
+
+#define EFL_UI_CLICKABLE_PART_BIND(PART) \
+program { \
+   signal: "mouse,down,1"; source: PART; \
+   action: SIGNAL_EMIT "efl,action,press" "efl"; \
+} \
+program { \
+   signal: "mouse,down,1,*"; source: PART; \
+   action: SIGNAL_EMIT "efl,action,press" "efl"; \
+} \
+program { \
+   signal: "mouse,up,1"; source: PART;  \
+   action: SIGNAL_EMIT "efl,action,unpress" "efl";  \
+}  \
+program { \
+   signal: "mouse,pressed,out"; source: PART; \
+   action: SIGNAL_EMIT "efl,action,mouse_out" "efl"; \
+}
+
 collections {
    color_classes {
       color_class { name: "button_text";
@@ -41,6 +60,8 @@ collections {
             desc { "default"
                rel1.relative: 0.0 1.0;
                rel2.relative: 1.0 1.0;
+               rel2.offset: 0 -2;
+               rel1.offset: 0 -2;
                align: 0.0 1.0;
                color3: 255 255 255 255;
                text { font: "sans"; size: 10;;
@@ -52,11 +73,16 @@ collections {
                visible: 1;
                fixed: 0 0;
             }
-            desc { "visible";
-               inherit: "default";
-
+         }
+         rect { "event";
+            desc { "default"
+               color: 0 0 0 0;
             }
          }
       }
+      programs {
+         EFL_UI_CLICKABLE_PART_BIND("event")
+      }
+
    }
 }
