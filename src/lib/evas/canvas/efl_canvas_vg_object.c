@@ -524,7 +524,6 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
      {
         //Use root as a cache key.
         ENFN->ector_surface_cache_set(engine, root, buffer);
-        pd->cached_frame_idx = pd->frame_idx;
      }
 
    return buffer;
@@ -566,7 +565,6 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    Vg_Cache_Entry *vg_entry = pd->vg_entry;
    Efl_VG *root;
    Eina_Position2D offset = {0, 0};  //Offset after keeping aspect ratio.
-   Eina_Bool drop_cache = EINA_FALSE;
    void *buffer = NULL;
 
    evas_cache_vg_entry_value_provider_update(pd->vg_entry, efl_key_data_get(obj->object, "_vg_value_providers"));
@@ -603,7 +601,10 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         //Size is changed, cached data is invalid.
         if ((size.w != vg_entry->w) || (size.h != vg_entry->h))
           {
-             drop_cache = EINA_TRUE;
+             //if the size doesn't match, drop previous cache surfaces.
+             ENFN->ector_surface_cache_drop(engine, (void *) vg_entry->root[1]);
+             ENFN->ector_surface_cache_drop(engine, (void *) vg_entry->root[2]);
+
              vg_entry = evas_cache_vg_entry_resize(vg_entry, size.w, size.h);
              evas_cache_vg_entry_del(pd->vg_entry);
              pd->vg_entry = vg_entry;
@@ -623,20 +624,12 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
 
    if (cacheable)
      {
-        //if the size doesn't match, drop previous cache surface.
-        if (drop_cache)
-          ENFN->ector_surface_cache_drop(engine, (void *) root);
         //Cache Hit!
-        else if (pd->frame_idx == pd->cached_frame_idx)
-          buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
-        //Drop invalid one.
-        else
-          ENFN->ector_surface_cache_drop(engine, (void *) root);
+        buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
      }
 
    if (!buffer)
-     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL,
-                                do_async, cacheable);
+     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL, do_async, cacheable);
    else
      //cache reference was increased when we get the cache.
      ENFN->ector_surface_cache_drop(engine, (void *) root);
