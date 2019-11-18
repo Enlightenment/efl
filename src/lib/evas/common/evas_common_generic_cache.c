@@ -50,7 +50,7 @@ generic_cache_data_set(Generic_Cache *cache, void *key, void *surface)
    {
       entry = eina_list_data_get(eina_list_last(cache->lru_list));
       // if its still being ref.
-      if (entry->ref) return;
+      if (entry->ref > 1) return;
       eina_hash_del(cache->hash, &entry->key, entry);
       cache->lru_list = eina_list_remove_list(cache->lru_list, eina_list_last(cache->lru_list));
       cache->free_func(cache->user_data, entry->data);
