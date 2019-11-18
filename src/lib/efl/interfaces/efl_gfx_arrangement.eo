@@ -1,3 +1,4 @@
+import efl_gfx_types;
 interface @beta Efl.Gfx.Arrangement
 {
    [[
@@ -13,19 +14,17 @@ interface @beta Efl.Gfx.Arrangement
            unused space.
 
            It is different than the @Efl.Gfx.Hint.hint_align property in that it affects the position
-           of all the contents within the container. For example, if a box widget has extra space
-           on the horizontal axis, this property can be used to align the box's contents to the
-           left or the right side.
+           of all the contents within the container instead of the container itself.
+           For example, if a box widget has extra space on the horizontal axis,
+           this property can be used to align the box's contents to the left or the right side.
 
            See also @Efl.Gfx.Hint.hint_align.
          ]]
          set {}
          get {}
          values {
-            align_horiz: double(0.5); [[Double, ranging from 0.0 to 1.0, where 0.0 is at the start of the horizontal
-                                        axis and 1.0 is at the end.]]
-            align_vert:  double(0.5); [[Double, ranging from 0.0 to 1.0, where 0.0 is at the start of the vertical
-                                        axis and 1.0 is at the end.]]
+            align_horiz: Efl.Gfx.Align(0.5); [[Controls the horizontal alignment.]]
+            align_vert:  Efl.Gfx.Align(0.5); [[Controls the vertical alignment.]]
          }
       }
       @property content_padding @beta {

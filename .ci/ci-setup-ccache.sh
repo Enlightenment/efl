@@ -7,6 +7,7 @@ if [ "$DISTRO" != "" ] ; then
   docker exec $(cat $HOME/cid)  ccache -pz
 else
   cp .ci/ccache.conf ~/.ccache
-  ccache -o base_dir="$(pwd)"
+  sed -iE '/^base_dir/d' ~/.ccache/ccache.conf
+  echo "base_dir = $pwd" >> ~/.ccache/ccache.conf
   ccache -pz
 fi

@@ -323,6 +323,12 @@ option('mono-examples-dir',
   description: 'Where eolian_mono will search for examples to embed into the documentation'
 )
 
+option('dotnet',
+  type: 'boolean',
+  value: false,
+  description: 'Enable building C# bindings with dotnet instead of mono'
+)
+
 option('lua-interpreter',
   type: 'combo',
   choices: ['luajit', 'lua'],
@@ -365,4 +371,10 @@ option('install-eo-files',
   type: 'boolean',
   value: false,
   description : 'Install any eo file'
+)
+
+option('mono-friend-assemblies',
+  type : 'array',
+  value : [],
+  description : 'List of friend assemblies that can access efl_mono assembly\'s internal types and members.'
 )

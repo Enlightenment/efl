@@ -63,7 +63,6 @@ _children_slice_future_then(void *data EINA_UNUSED,
               abort();
            }
      }
-   fprintf(stderr, "len: %i\n", len);
 
    fail_if(len != 7);
 

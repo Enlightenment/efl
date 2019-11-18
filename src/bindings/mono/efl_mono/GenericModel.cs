@@ -18,7 +18,7 @@ namespace Efl {
 /// </summary>
 /// <typeparam name="T">The type of the child model. It is the type used when adding/removing/getting items to this
 /// model.</typeparam>
-public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
+public class GenericModel<T> : Efl.Object, Efl.IModel
 {
    private Efl.IModel model;
 
@@ -119,12 +119,12 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    /// <returns>Token to notify the async operation of external request to cancel.</returns>
    async public System.Threading.Tasks.Task<T> GetAtAsync(uint index)
    {
-       using (Eina.Value v = await GetChildrenSliceAsync(index, 1))
+       using (Eina.Value v = await GetChildrenSliceAsync(index, 1).ConfigureAwait(false))
        {
            if (v.GetValueType().IsContainer())
            {
                var child = (Efl.IModel)v[0];
-               T obj = (T)Activator.CreateInstance(typeof(T), new System.Object[] {});
+               T obj = (T)Activator.CreateInstance(typeof(T), Array.Empty<object>());
                ModelHelper.GetProperties(obj, child);
                return obj;
            }

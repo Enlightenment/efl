@@ -77,6 +77,7 @@ typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 typedef struct _Evas_Smart_Interfaces_Array Evas_Smart_Interfaces_Array;
+typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
@@ -140,6 +141,7 @@ typedef struct _Evas_Canvas3D_File_Eet         Evas_Canvas3D_File_Eet;
 
 typedef struct _Vg_File_Data                   Vg_File_Data;
 typedef struct _Vg_File_Anim_Data              Vg_File_Anim_Data;
+typedef struct _Vg_File_Anim_Data_Marker       Vg_File_Anim_Data_Marker;
 
 struct _Evas_Canvas3D_Vec2_Eet
 {
@@ -1095,6 +1097,7 @@ struct _Evas_Object_Protected_State
 struct _Evas_Object_Pointer_Data {
    EINA_INLIST;
 
+   Evas_Object_Protected_Data *obj;
    Evas_Pointer_Data *evas_pdata;
    Evas_Object_Pointer_Mode pointer_mode;
    int mouse_grabbed;
@@ -1531,11 +1534,19 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
 
+struct _Vg_File_Anim_Data_Marker
+{
+   Eina_Stringshare *name;
+   int               startframe;
+   int               endframe;
+};
+
 struct _Vg_File_Anim_Data
 {
    unsigned int frame_num;            //current frame number
    unsigned int frame_cnt;            //total frame count
    float        duration;             //animation duration
+   Eina_Inarray *markers;             //array of Vg_File_Anim_Data_Marker
 };
 
 struct _Vg_File_Data
@@ -1679,6 +1690,10 @@ void evas_object_inform_call_image_preloaded(Evas_Object *obj);
 void evas_object_inform_call_image_unloaded(Evas_Object *obj);
 void evas_object_inform_call_image_resize(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
+Evas_Object_Pointer_Data *evas_object_pointer_data_find(Evas_Object_Protected_Data *obj,
+                                                        Efl_Input_Device *pointer);
+void evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
+                                  Evas_Object_Pointer_Data *pdata);
 void evas_object_grabs_cleanup(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_key_grab_free(Evas_Object *obj, Evas_Object_Protected_Data *pd, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool source_invisible);

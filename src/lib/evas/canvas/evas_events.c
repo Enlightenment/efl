@@ -3,9 +3,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 int _evas_event_counter = 0;
 
 static Eina_List *

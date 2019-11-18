@@ -9,6 +9,8 @@
 /* generic atoms */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_ATOM;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_CARDINAL;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_INTEGER; /**< @since 1.24 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_FLOAT; /**< @since 1.24 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_COMPOUND_TEXT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_FILE_NAME;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_STRING;

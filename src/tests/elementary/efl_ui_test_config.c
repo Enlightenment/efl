@@ -68,7 +68,6 @@ EFL_START_TEST(efl_config_eoapi)
    CONFIG_CHKD(scroll_thumbscroll_acceleration_time_limit, 0);
    CONFIG_CHKD(scroll_thumbscroll_acceleration_weight, 0);
    CONFIG_CHKE(focus_autoscroll_mode, EFL_UI_FOCUS_AUTOSCROLL_MODE_NONE, "none");
-   CONFIG_CHKE(slider_indicator_visible_mode, EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always");
    CONFIG_CHKD(longpress_timeout, 0);
    CONFIG_CHKE(softcursor_mode, EFL_UI_SOFTCURSOR_MODE_ON, "on");
    CONFIG_CHKD(tooltip_delay, 0);

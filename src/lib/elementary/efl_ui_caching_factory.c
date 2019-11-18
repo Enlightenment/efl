@@ -438,8 +438,8 @@ _efl_ui_caching_factory_pause(void *data, const Efl_Event *event EINA_UNUSED)
    Efl_Ui_Caching_Factory_Data *pd = data;
    Efl_Gfx_Entity *entity;
 
-   // Application is going into background, let's free ressource
-   // Possible improvement would be to delay that by a few second.
+   // Application is going into background, let's free resources.
+   // Possible improvement would be to delay that by a few seconds.
    EINA_LIST_FREE(pd->cache, entity)
      efl_del(entity);
 

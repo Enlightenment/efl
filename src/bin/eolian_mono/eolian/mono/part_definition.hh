@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_PART_DEFINITION_HH
 #define EOLIAN_MONO_PART_DEFINITION_HH
 
@@ -59,7 +74,7 @@ struct part_extension_method_definition_generator
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T> x=null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\" ,fac);\n"
+                << scope_tab << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\", fac);\n"
                 << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, context))
         return false;

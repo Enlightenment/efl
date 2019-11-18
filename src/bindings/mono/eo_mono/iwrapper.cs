@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -5,8 +20,10 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
+using System.Linq;
 
 using static Eina.NativeCustomExportFunctions;
 using EoG = Efl.Eo.Globals;
@@ -20,7 +37,7 @@ namespace Eo
 public static class Globals
 {
     /// <summary>Represents the type of the native Efl_Class.</summary>
-    public enum EflClassType
+    internal enum EflClassType
     {
         /// <summary>Regular EFL classes.</summary>
         Regular = 0,
@@ -35,14 +52,14 @@ public static class Globals
     }
 
     [return: MarshalAs(UnmanagedType.U1)]
-    public delegate bool efl_object_init_delegate();
-    public static readonly FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
+    internal delegate bool efl_object_init_delegate();
+    static readonly FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
         new FunctionWrapper<efl_object_init_delegate>(efl.Libs.EoModule, "efl_object_init");
-    public static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
+    internal static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
 
-    public delegate void efl_object_shutdown_delegate();
-    public static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
-    public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
+    internal delegate void efl_object_shutdown_delegate();
+    static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
+    internal static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
     // [DllImport(efl.Libs.Eo)] internal static extern void efl_object_shutdown();
 
     [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr efl_mono_wrapper_supervisor_get(IntPtr eo);
@@ -54,19 +71,19 @@ public static class Globals
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_internal_start_bindings([MarshalAs(UnmanagedType.LPStr)] String file, int line, IntPtr klass, IntPtr parent,
                                          byte is_ref, byte is_fallback, IntPtr substitute_ctor, IntPtr data);
-    public delegate  IntPtr
+    internal delegate  IntPtr
         _efl_add_end_delegate(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
-    public delegate  IntPtr
+    internal delegate  IntPtr
         efl_ref_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_ref(IntPtr eo);
-    public delegate  void
+    internal delegate  void
         efl_unref_delegate(IntPtr eo);
     [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_unref(IntPtr eo);
-    public delegate  int
+    internal delegate  int
         efl_ref_count_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] internal static extern int
         efl_ref_count(IntPtr eo);
@@ -183,11 +200,11 @@ public static class Globals
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr extn48, IntPtr term);
 
-    public delegate  byte efl_class_functions_set_delegate(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    internal delegate  byte efl_class_functions_set_delegate(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
     [DllImport(efl.Libs.Eo)] internal static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
-    public delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
+    internal delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
-    public delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
+    internal delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
 
     /// <summary>Gets a native pointer to <c>obj</c> that forwards the method call to its parent
     /// implementation.
@@ -198,13 +215,13 @@ public static class Globals
     /// <param name="obj">The native pointer to be prepared.</param>
     /// <param name="klass">The current class.</param>
     /// <returns>The native pointer to <c>obj</c> prepared to call the parent implementation of <c>klass</c>.</returns>
-    public static IntPtr Super(IntPtr obj, IntPtr klass)
+    internal static IntPtr Super(IntPtr obj, IntPtr klass)
     {
         return efl_super(obj, klass);
     }
 
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
-    public delegate  IntPtr efl_class_get_delegate(IntPtr obj);
+    internal delegate  IntPtr efl_class_get_delegate(IntPtr obj);
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_class_get(IntPtr obj);
 
     /// <summary>Gets the native EO class pointer for the given object.
@@ -214,13 +231,13 @@ public static class Globals
     /// <param name="obj">The native pointer to the <see cref="Efl.Object" /> instance to get the native class
     /// from.</param>
     /// <returns>The native class pointer or <see cref="IntPtr.Zero" /> if no such class existis.</returns>
-    public static IntPtr GetClass(IntPtr obj)
+    internal static IntPtr GetClass(IntPtr obj)
     {
         return efl_class_get(obj);
     }
 
     [DllImport(efl.Libs.Eo)] internal static extern EflClassType efl_class_type_get(IntPtr klass);
-    public delegate  IntPtr dlerror_delegate();
+    internal delegate  IntPtr dlerror_delegate();
     [DllImport(efl.Libs.Evil)] internal static extern IntPtr dlerror();
 
     [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_constructor(IntPtr obj);
@@ -245,36 +262,36 @@ public static class Globals
     /// <param name="desc">The native event description.</param>
     /// <param name="event_info">The native payload of the event.</param>
     /// <returns><c>false</c> if one of the callbacks aborted the call. <c>true</c> otherwise.</returns>
-    public static bool CallEventCallback(IntPtr obj, IntPtr desc, IntPtr event_info)
+    internal static bool CallEventCallback(IntPtr obj, IntPtr desc, IntPtr event_info)
     {
         return efl_event_callback_call(obj, desc, event_info);
     }
 
-    public const int RTLD_NOW = 2;
+    internal const int RTLD_NOW = 2;
 
-    public delegate byte class_initializer(IntPtr klass);
+    internal delegate byte class_initializer(IntPtr klass);
 
-    public static T GetParamHelper<T>(Nullable<T> v) where T : struct
+    internal static T GetParamHelper<T>(Nullable<T> v) where T : struct
     {
         return v.Value;
     }
 
-    public static U GetParamHelper<U>(U v)
+    internal static U GetParamHelper<U>(U v)
     {
         return v;
     }
 
-    public static bool ParamHelperCheck<T>(Nullable<T> v) where T : struct
+    internal static bool ParamHelperCheck<T>(Nullable<T> v) where T : struct
     {
         return v.HasValue;
     }
 
-    public static bool ParamHelperCheck<U>(U v)
+    internal static bool ParamHelperCheck<U>(U v)
     {
         return v != null;
     }
 
-    public static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
+    internal static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
     {
         ClassDescription description;
         description.version = 2; // EO_VERSION
@@ -313,7 +330,7 @@ public static class Globals
         return klass;
     }
 
-    public static List<IntPtr> get_efl_interfaces(System.Type type)
+    internal static List<IntPtr> get_efl_interfaces(System.Type type)
     {
         System.Type base_type = type.BaseType;
 
@@ -353,30 +370,35 @@ public static class Globals
         return null;
     }
 
-    public static System.Collections.Generic.List<System.Reflection.MethodInfo>
+    internal static System.Collections.Generic.List<string>
         GetUserMethods(System.Type type)
     {
-        var r = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
-        var flags = System.Reflection.BindingFlags.Instance
-                    | System.Reflection.BindingFlags.DeclaredOnly
-                    | System.Reflection.BindingFlags.Public
-                    | System.Reflection.BindingFlags.NonPublic;
-        r.AddRange(type.GetMethods(flags));
-        var base_type = type.BaseType;
+        var r = new System.Collections.Generic.List<string>();
+        var flags =
+            System.Reflection.BindingFlags.Instance
+            | System.Reflection.BindingFlags.DeclaredOnly
+            | System.Reflection.BindingFlags.Public
+            | System.Reflection.BindingFlags.NonPublic;
 
-        for (;base_type != null; base_type = base_type.BaseType)
+        for (var base_type = type;;base_type = base_type.BaseType)
         {
-            if (IsGeneratedClass(base_type))
+            r.AddRange(base_type.GetMethods(flags)
+                       .AsParallel().Select(info=>info.Name).ToList());
+            if (IsGeneratedClass(base_type.BaseType))
             {
-                return r;
+                break;
             }
 
-            r.AddRange(base_type.GetMethods(flags));
+            if (base_type.BaseType == null)
+            {
+                break;
+            }
         }
+
         return r;
     }
 
-    public static byte class_initializer_call(IntPtr klass, System.Type type)
+    internal static byte class_initializer_call(IntPtr klass, System.Type type)
     {
         Eina.Log.Debug($"called with 0x{klass.ToInt64():x} {type}");
         var derived = type.BaseType;
@@ -425,7 +447,7 @@ public static class Globals
        return 1;
     }
 
-    public static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
+    internal static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
     {
         IntPtr nul = IntPtr.Zero;
         int iface_list_count = (il == null ? 0 : il.Count);
@@ -484,12 +506,12 @@ public static class Globals
         }
     }
 
-    public static Efl.Eo.WrapperSupervisor WrapperSupervisorPtrToManaged(IntPtr wsPtr)
+    internal static Efl.Eo.WrapperSupervisor WrapperSupervisorPtrToManaged(IntPtr wsPtr)
     {
         return (Efl.Eo.WrapperSupervisor) GCHandle.FromIntPtr(wsPtr).Target;
     }
 
-    public static Efl.Eo.WrapperSupervisor GetWrapperSupervisor(IntPtr eo)
+    internal static Efl.Eo.WrapperSupervisor GetWrapperSupervisor(IntPtr eo)
     {
         var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(eo);
         if (wsPtr == IntPtr.Zero)
@@ -500,13 +522,13 @@ public static class Globals
         return WrapperSupervisorPtrToManaged(wsPtr);
     }
 
-    public static void SetWrapperSupervisor(IntPtr eo, Efl.Eo.WrapperSupervisor ws)
+    internal static void SetWrapperSupervisor(IntPtr eo, Efl.Eo.WrapperSupervisor ws)
     {
         GCHandle gch = GCHandle.Alloc(ws);
         Efl.Eo.Globals.efl_mono_wrapper_supervisor_set(eo, GCHandle.ToIntPtr(gch));
     }
 
-    public static void free_dict_values(Dictionary<String, IntPtr> dict)
+    internal static void free_dict_values(Dictionary<String, IntPtr> dict)
     {
         foreach (IntPtr ptr in dict.Values)
         {
@@ -514,7 +536,7 @@ public static class Globals
         }
     }
 
-    public static void free_stringshare_values(Dictionary<String, IntPtr> dict)
+    internal static void free_stringshare_values(Dictionary<String, IntPtr> dict)
     {
         foreach (IntPtr ptr in dict.Values)
         {
@@ -522,13 +544,13 @@ public static class Globals
         }
     }
 
-    public static void free_gchandle(IntPtr ptr)
+    internal static void free_gchandle(IntPtr ptr)
     {
         GCHandle handle = GCHandle.FromIntPtr(ptr);
         handle.Free();
     }
 
-    public static System.Threading.Tasks.Task<Eina.Value> WrapAsync(Eina.Future future, CancellationToken token)
+    internal static System.Threading.Tasks.Task<Eina.Value> WrapAsync(Eina.Future future, CancellationToken token)
     {
         // Creates a task that will wait for SetResult for completion.
         // TaskCompletionSource is used to create tasks for 'external' Task sources.
@@ -552,7 +574,7 @@ public static class Globals
                     }
                     else
                     {
-                        tcs.TrySetException(new Efl.FutureException(received));
+                        tcs.TrySetException(new Efl.FutureException(err));
                     }
                 }
                 else
@@ -600,7 +622,7 @@ public static class Globals
     /// <param name="handle">The Eo id to be wrapped.</param>
     /// <param name="shouldIncRef">Whether we should increase the refcount of the Eo instance.</param>
     /// <returns>The C# wrapper for this instance.</returns>
-    public static Efl.Eo.IWrapper CreateWrapperFor(System.IntPtr handle, bool shouldIncRef=true)
+    internal static Efl.Eo.IWrapper CreateWrapperFor(System.IntPtr handle, bool shouldIncRef=true)
     {
 
         if (handle == IntPtr.Zero)
@@ -674,7 +696,7 @@ public static class Globals
     }
 
     private static Efl.FreeWrapperSupervisorCb FreeWrapperSupervisorCallbackDelegate = new Efl.FreeWrapperSupervisorCb(FreeWrapperSupervisorCallback);
-    public static void FreeWrapperSupervisorCallback(IntPtr eo)
+    internal static void FreeWrapperSupervisorCallback(IntPtr eo)
     {
         try
         {
@@ -712,14 +734,14 @@ public static class Globals
         }
     }
 
-    public static void SetNativeDisposeCallbacks()
+    internal static void SetNativeDisposeCallbacks()
     {
         efl_mono_wrapper_supervisor_callbacks_set(FreeWrapperSupervisorCallbackDelegate);
     }
 
-    public static void ThreadSafeFreeCbExec(EinaFreeCb cbFreeCb, IntPtr cbData)
+    internal static void ThreadSafeFreeCbExec(Eina.Callbacks.EinaFreeCb cbFreeCb, IntPtr cbData)
     {
-        EinaFreeCb cb = (IntPtr gcHandlePtr) => {
+        Eina.Callbacks.EinaFreeCb cb = (IntPtr gcHandlePtr) => {
             cbFreeCb(cbData);
             GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
             gcHandle.Free();
@@ -737,22 +759,24 @@ public static class Globals
         Monitor.Exit(Efl.All.InitLock);
     }
 
-    /// <summary>
-    /// Internal struct used by the binding to pass the native handle pointer
-    /// to the managed object wrapping constructor.
-    /// Internal usage only: do not use this class in inherited classes.
-    /// </summary>
-    public struct WrappingHandle
-    {
-        public WrappingHandle(IntPtr h)
-        {
-            NativeHandle = h;
-        }
 
-        public IntPtr NativeHandle { get; private set; }
-    }
 
 } // Globals
+
+/// <summary>
+/// Internal struct used by the binding to pass the native handle pointer
+/// to the managed object wrapping constructor.
+/// Internal usage only: do not use this class in inherited classes.
+/// </summary>
+internal struct WrappingHandle
+{
+    public WrappingHandle(IntPtr h)
+    {
+        NativeHandle = h;
+    }
+
+    public IntPtr NativeHandle { get; private set; }
+}
 
 public static class Config
 {
@@ -774,23 +798,23 @@ public static class Config
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public abstract class NativeClass : System.Attribute
+abstract class NativeClass : System.Attribute
 {
-    public abstract IntPtr GetEflClass();
-    public abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
+    internal abstract IntPtr GetEflClass();
+    internal abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
 }
 
 /// <summary>Attribute for private native classes.
 ///
 /// <para>For internal usage by generated code only.</para></summary>
-public class PrivateNativeClass : NativeClass
+class PrivateNativeClass : NativeClass
 {
-    public override IntPtr GetEflClass()
+    internal override IntPtr GetEflClass()
     {
         return IntPtr.Zero;
     }
 
-    public override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
+    internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
     {
         return null;
     }
@@ -827,9 +851,9 @@ public interface IWrapper
     }
 }
 
-public static class ClassRegister
+internal static class ClassRegister
 {
-    public static System.Type GetManagedType(IntPtr klass)
+    internal static System.Type GetManagedType(IntPtr klass)
     {
         System.Type t;
         if (Efl.Eo.ClassRegister.typeFromKlass.TryGetValue(klass, out t))
@@ -893,7 +917,7 @@ public static class ClassRegister
         return t;
     }
 
-    public static IntPtr GetKlass(System.Type objectType)
+    internal static IntPtr GetKlass(System.Type objectType)
     {
         IntPtr klass;
         if (klassFromType.TryGetValue(objectType, out klass))
@@ -920,7 +944,7 @@ public static class ClassRegister
         return RegisterKlass(baseKlass, objectType);
     }
 
-    public static IntPtr GetInheritKlassOrRegister(IntPtr baseKlass, System.Type objectType)
+    internal static IntPtr GetInheritKlassOrRegister(IntPtr baseKlass, System.Type objectType)
     {
         IntPtr klass;
         if (klassFromType.TryGetValue(objectType, out klass))
@@ -990,89 +1014,190 @@ public static class ClassRegister
         return (IntPtr)(method.Invoke(null, null));
     }
 
-    public static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)
+    internal static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)
     {
         klassFromType[objectType] = klassPtr;
         typeFromKlass[klassPtr] = objectType;
     }
 
-    public static readonly System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
         = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
 
-    public static readonly System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
         = new System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type>();
 
     private static readonly object klassAllocLock = new object();
 }
 
-public interface IOwnershipTag
+/// <summary>Custom marshaler for Eo objects that do not move ownership between native and managed code.
+///
+/// <para>For internal usage by generated code.</para>
+///
+/// <para>Since EFL 1.24</para>
+/// </summary>
+class MarshalEoNoMove : ICustomMarshaler
 {
-}
+    private static ICustomMarshaler instance = new MarshalEoNoMove();
 
-public class OwnTag : IOwnershipTag
-{
-}
+    /// <summary>
+    /// Gets an instance of this marshaler.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="cookie">Cookie to identify the marshaler. Unused.</param>
+    /// <returns>The marshaler instance.</returns>
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "The same marshaler is used for all cases.")]
+    public static ICustomMarshaler GetInstance(string cookie) => instance;
 
-public class NonOwnTag : IOwnershipTag
-{
-}
-
-public class MarshalEo<U> : ICustomMarshaler
-    where U : IOwnershipTag
-{
-    public static ICustomMarshaler GetInstance(string cookie)
-    {
-        Eina.Log.Debug("MarshalEo.GetInstace cookie " + cookie);
-        return new MarshalEo<U>();
-    }
-
+    /// <summary>
+    /// Clean ups the managed data.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be cleaned.</param>
     public void CleanUpManagedData(object ManagedObj)
     {
-        //Eina.Log.Warning("MarshalEo.CleanUpManagedData not implemented");
-        //throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Clean ups the native data if it was created.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native data to be cleaned.</param>
     public void CleanUpNativeData(IntPtr pNativeData)
     {
-        //Eina.Log.Warning("MarshalEo.CleanUpNativeData not implemented");
-        //throw new NotImplementedException();
     }
 
-    public int GetNativeDataSize()
-    {
-        Eina.Log.Debug("MarshalEo.GetNativeDataSize");
-        return 0;
-        //return 8;
-    }
+    /// <summary>
+    /// Gets the native data size.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>The data size in bytes.</returns>
+    public int GetNativeDataSize() => -1;
 
+    /// <summary>
+    /// Marshals the given managed object to its native handle.
+    /// <para>As this marshaler does not move the reference, the managed code
+    /// can keep its reference and does not need to incref.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be marshalled.</param>
+    /// <returns>The marshalled native data.</returns>
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        Eina.Log.Debug("MarshalEo.MarshallManagedToNative");
-
         if (ManagedObj == null)
         {
             return IntPtr.Zero;
         }
 
-        var r = ((IWrapper)ManagedObj).NativeHandle;
-        if (typeof(U) == typeof(OwnTag))
+        IWrapper wrapper = ManagedObj as IWrapper;
+
+        if (wrapper == null)
         {
-            Efl.Eo.Globals.efl_ref(r);
+            throw new ArgumentException("Managed object to be marshalled must be an IWrapper.");
         }
 
-        return r;
+        return wrapper.NativeHandle;
     }
 
+    /// <summary>
+    /// Marshals the given native pointer into a managed object.
+    /// <para>The given native object has its reference count incremented in order to make
+    /// the C# wrapper capable of accessing it while the wrapper is alive.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native pointer to the EO object.</param>
+    /// <returns>The managed wrapper for the given native object.</returns>
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
-        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : typeof(U) != typeof(OwnTag));
+        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : true);
+    }
+}
+
+/// <summary>Custom marshaler for Eo objects that move ownership between native and managed code.
+///
+/// <para>For internal usage by generated code.</para>
+///
+/// <para>Since EFL 1.24</para>
+/// </summary>
+class MarshalEoMove : ICustomMarshaler
+{
+    private static ICustomMarshaler instance = new MarshalEoMove();
+
+    /// <summary>
+    /// Gets an instance of this marshaler.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="cookie">Cookie to identify the marshaler. Unused.</param>
+    /// <returns>The marshaler instance.</returns>
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "The same marshaler is used for all cases.")]
+    public static ICustomMarshaler GetInstance(string cookie) => instance;
+
+    /// <summary>
+    /// Clean ups the managed data.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be cleaned.</param>
+    public void CleanUpManagedData(object ManagedObj)
+    {
+    }
+
+    /// <summary>
+    /// Clean ups the native data if it was created.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native data to be cleaned.</param>
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
+
+    /// <summary>
+    /// Gets the native data size.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>The data size in bytes.</returns>
+    public int GetNativeDataSize() => -1;
+
+    /// <summary>
+    /// Marshals the given managed object to its native handle.
+    /// <para>The wrapper given as parameter needs to keep a reference to the native
+    /// object, so the EO has its refcount incremented.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be marshalled.</param>
+    /// <returns>The marshalled native data.</returns>
+    public IntPtr MarshalManagedToNative(object ManagedObj)
+    {
+        if (ManagedObj == null)
+        {
+            return IntPtr.Zero;
+        }
+
+        IWrapper wrapper = ManagedObj as IWrapper;
+
+        if (wrapper == null)
+        {
+            throw new ArgumentException("Managed object to be marshalled must be an IWrapper.");
+        }
+
+        return Efl.Eo.Globals.efl_ref(wrapper.NativeHandle);
+    }
+
+    /// <summary>
+    /// Marshals the given native pointer into a managed object.
+    /// <para>The returned wrapper "steals" the reference to keep it alive.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native pointer to the EO object.</param>
+    /// <returns>The managed wrapper for the given native object.</returns>
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : false);
     }
 }
 
 ///<summary>Marshals between System.Type instances and Eo classes (IntPtrs).</summary>
-public class MarshalEflClass : ICustomMarshaler
+class MarshalEflClass : ICustomMarshaler
 {
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         Eina.Log.Debug("MarshalEflClass.GetInstance cookie " + cookie);
         return new MarshalEflClass();
@@ -1116,7 +1241,7 @@ public class MarshalEflClass : ICustomMarshaler
     }
 }
 
-public class StringPassOwnershipMarshaler : ICustomMarshaler
+class StringPassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1144,7 +1269,7 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1157,7 +1282,7 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler
     static private StringPassOwnershipMarshaler marshaler;
 }
 
-public class StringKeepOwnershipMarshaler: ICustomMarshaler
+class StringKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1183,7 +1308,7 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1196,7 +1321,7 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler
     static private StringKeepOwnershipMarshaler marshaler;
 }
 
-public class StringsharePassOwnershipMarshaler : ICustomMarshaler
+class StringsharePassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1224,7 +1349,7 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1237,7 +1362,7 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
     static private StringsharePassOwnershipMarshaler marshaler;
 }
 
-public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
+class StringshareKeepOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1263,7 +1388,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1276,7 +1401,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
     static private StringshareKeepOwnershipMarshaler marshaler;
 }
 
-public class StrbufPassOwnershipMarshaler : ICustomMarshaler
+class StrbufPassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1304,7 +1429,7 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1317,7 +1442,7 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler
     static private StrbufPassOwnershipMarshaler marshaler;
 }
 
-public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
+class StrbufKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1344,7 +1469,7 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1362,8 +1487,27 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
 /// <summary>General exception for errors inside the binding.</summary>
 public class EflException : Exception
 {
+    /// <summary>
+    ///   Default Constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public EflException()
+    {
+    }
+
     /// <summary>Create a new EflException with the given message.</summary>
     public EflException(string message) : base(message)
+    {
+    }
+
+    /// <summary>
+    ///   Create a new EflException with the given message and inner exception.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public EflException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }
@@ -1374,18 +1518,70 @@ public class FutureException : EflException
     /// <summary>The error code returned by the failed Eina.Future.</summary>
     public Eina.Error Error { get; private set; }
 
-    /// <summary>Construct a new exception from the Eina.Error stored in the given Eina.Value.</summary>
-    public FutureException(Eina.Value value) : base("Future failed.")
+    /// <summary>
+    ///   Default constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public FutureException() : this(Eina.Error.UNHANDLED_EXCEPTION)
     {
-        if (value.GetValueType() != Eina.ValueType.Error)
-        {
-            throw new ArgumentException("FutureException must receive an Eina.Value with Eina.Error.");
-        }
-
-        Eina.Error err;
-        value.Get(out err);
-        Error = err;
     }
-}
 
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given message
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    public FutureException(string message)
+        : this(Eina.Error.UNHANDLED_EXCEPTION, message)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given message and inner exception.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public FutureException(string message, Exception innerException)
+        : this(Eina.Error.UNHANDLED_EXCEPTION, message, innerException)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    public FutureException(Eina.Error error)
+        : this(error, "Future failed.")
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error and message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    /// <param name="message">The message of the exception.</param>
+    public FutureException(Eina.Error error, string message)
+        : this(error, message, null)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error, message and innerException.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public FutureException(Eina.Error error, string message,
+                           Exception innerException)
+        : base(message, innerException) => Error = error;
+}
 } // namespace efl

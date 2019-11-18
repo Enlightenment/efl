@@ -218,7 +218,17 @@ efreet_desktop_empty_new(const char *file)
     if (!desktop) return NULL;
 
     desktop->orig_path = strdup(file);
-    desktop->load_time = ecore_file_mod_time(file);
+    do
+    {
+       struct stat st;
+
+       if (!stat(desktop->orig_path, &st))
+       {
+          time_t modtime = st.st_mtime;
+          if (modtime < st.st_ctime) modtime = st.st_ctime;
+          desktop->load_time = modtime;
+       }
+    } while (0);
 
     desktop->ref = 1;
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_STRUCT_DEFINITION_HH
 #define EOLIAN_MONO_STRUCT_DEFINITION_HH
 
@@ -276,7 +291,7 @@ struct struct_internal_definition_generator
           indent << "#pragma warning disable CS1591\n\n"
           << indent << "/// <summary>Internal wrapper for struct " << string << ".</summary>\n"
           << indent << "[StructLayout(LayoutKind.Sequential)]\n"
-          << indent << "public struct " << string << "\n"
+          << indent << "internal struct " << string << "\n"
           << indent << "{\n"
          )
          .generate(sink, std::make_tuple<>(binding_struct_name(struct_), struct_internal_decl_name()), context))
@@ -474,6 +489,26 @@ struct struct_definition_generator
             << indent << scope_tab << "{\n"
             << indent << scope_tab << scope_tab << "var tmp = (" << struct_name << ".NativeStruct)Marshal.PtrToStructure(ptr, typeof(" << struct_name << ".NativeStruct));\n"
             << indent << scope_tab << scope_tab << "return tmp;\n"
+            << indent << scope_tab << "}\n\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
+    if(!as_generator(
+            indent << scope_tab << "/// <summary>Conversion to the managed representation from a native pointer.\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!struct_.documentation.since.empty())
+       if (!as_generator(indent << scope_tab << "/// <para>Since EFL " + struct_.documentation.since + ".</para>\n"
+            ).generate(sink, attributes::unused, context))
+         return false;
+
+     if (!as_generator(
+            indent << scope_tab << "/// </summary>\n"
+            << indent << scope_tab << "/// <param name=\"ptr\">Native pointer to be converted.</param>\n"
+            << indent << scope_tab << "public static " << struct_name << " FromIntPtr(IntPtr ptr)\n"
+            << indent << scope_tab << "{\n"
+            << indent << scope_tab << scope_tab << "return ptr;\n"
             << indent << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, context))
        return false;

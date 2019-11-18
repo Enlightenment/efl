@@ -1,8 +1,5 @@
 #include "edje_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 static void
 _edje_hold_signal_cb(void *data, const Efl_Event *event)
 {

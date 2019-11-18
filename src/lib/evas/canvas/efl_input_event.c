@@ -5,11 +5,9 @@
 #define EFL_INPUT_EVENT_PROTECTED
 
 #include <Evas.h>
+#define EFL_INTERNAL_UNSTABLE
 #include <Evas_Internal.h>
 #include "canvas/evas_canvas_eo.h"
-
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
 
 #define MY_CLASS EFL_INPUT_EVENT_MIXIN
 

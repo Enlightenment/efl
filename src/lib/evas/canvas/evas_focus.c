@@ -3,8 +3,6 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "interfaces/efl_common_internal.h"
-
 
 static int evas_focus_log_domain = -1;
 

@@ -29,6 +29,7 @@ static const Efl_Test_Case etc[] = {
   { "Object Smart", evas_test_object_smart },
   { "Matrix", evas_test_matrix },
   { "Events", evas_test_events },
+  { "Efl Canvas Animation", efl_test_canvas_animation },
   { NULL, NULL }
 };
 

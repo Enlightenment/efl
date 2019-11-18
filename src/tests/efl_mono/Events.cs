@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Linq;
 
@@ -21,6 +36,7 @@ class TestEoEvents
         Eina.Value v = new Eina.Value(Eina.ValueType.Int32);
         v.Set(0);
         loop.Quit(v);
+        v.Dispose();
     }
     protected void another_callback(object sender, EventArgs e) { }
 
@@ -55,6 +71,7 @@ class TestEoEvents
         obj.EmitEventWithString("Some args");
 
         Test.AssertEquals("Some args", received_string);
+        obj.Dispose();
     }
 
     public static void event_with_int_payload()
@@ -69,6 +86,7 @@ class TestEoEvents
         obj.EmitEventWithInt(-1984);
 
         Test.AssertEquals(-1984, received_int);
+        obj.Dispose();
     }
 
     public static void event_with_bool_payload()
@@ -87,6 +105,7 @@ class TestEoEvents
         obj.EmitEventWithBool(false);
 
         Test.AssertEquals(false, received_bool);
+        obj.Dispose();
     }
 
     public static void event_with_uint_payload()
@@ -100,6 +119,7 @@ class TestEoEvents
         obj.EmitEventWithUint(0xbeef);
 
         Test.AssertEquals<uint>(0xbeef, received_uint);
+        obj.Dispose();
     }
 
     public static void event_with_float_payload()
@@ -113,6 +133,7 @@ class TestEoEvents
         obj.EmitEventWithFloat(3.14f);
 
         Test.AssertAlmostEquals(3.14f, received_float);
+        obj.Dispose();
     }
 
     public static void event_with_double_payload()
@@ -127,6 +148,7 @@ class TestEoEvents
         obj.EmitEventWithDouble(reference);
 
         Test.AssertAlmostEquals(reference, received_double);
+        obj.Dispose();
     }
 
     public static void event_with_object_payload()
@@ -143,6 +165,8 @@ class TestEoEvents
         obj.EmitEventWithObj(sent_obj);
 
         Test.AssertEquals(sent_obj, received_obj);
+        sent_obj.Dispose();
+        obj.Dispose();
     }
 
     public static void event_with_error_payload()
@@ -159,6 +183,7 @@ class TestEoEvents
         obj.EmitEventWithError(sent_error);
 
         Test.AssertEquals(sent_error, received_error);
+        obj.Dispose();
     }
 
     public static void event_with_struct_payload()
@@ -176,6 +201,7 @@ class TestEoEvents
         obj.EmitEventWithStruct(sent_struct);
 
         Test.AssertEquals(sent_struct.Fstring, received_struct.Fstring);
+        obj.Dispose();
     }
 
 #if EFL_BETA
@@ -193,6 +219,7 @@ class TestEoEvents
         obj.EmitEventWithStructComplex(sent_struct);
 
         Test.AssertEquals(sent_struct.Fobj, received_struct.Fobj);
+        obj.Dispose();
     }
 #endif
 
@@ -215,7 +242,12 @@ class TestEoEvents
         Test.AssertEquals(sent.Length, received.Length);
         var pairs = sent.Zip(received, (string sentItem, string receivedItem) => new { Sent = sentItem, Received = receivedItem } );
         foreach (var pair in pairs)
+        {
             Test.AssertEquals(pair.Sent, pair.Received);
+        }
+        sent.Dispose();
+        received.Dispose();
+        obj.Dispose();
     }
 }
 
@@ -238,6 +270,7 @@ class TestEventAddRemove
         obj.EvtWithIntEvent -= evtCb;
         obj.EmitEventWithInt(42);
         Test.Assert(!called);
+        obj.Dispose();
     }
 }
 
@@ -255,6 +288,7 @@ class TestInterfaceEvents
         obj.NonconflictedEvent += cb;
         obj.EmitNonconflicted();
         Test.Assert(called);
+        obj.Dispose();
     }
 }
 
@@ -275,7 +309,7 @@ class TestEventNaming
         obj.EmitEventWithUnder();
 
         Test.Assert(test_called);
-
+        obj.Dispose();
     }
 }
 
@@ -327,6 +361,7 @@ class TestEventWithDeadWrappers
         Test.CollectAndIterate();
 
         Test.AssertNull(wref.Target);
+        manager.Dispose();
     }
 
 }

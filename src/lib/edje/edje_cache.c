@@ -140,9 +140,9 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    j = 0;
 
    /* FIXME: Build specialized data type for each case */
-#define EDJE_LOAD_PROGRAMS_ADD(Array, Edc, It, Git, All)      \
-  for (It = 0; It < Edc->programs.Array##_count; ++It, ++Git) \
-    All[Git] = Edc->programs.Array[It];
+#define EDJE_LOAD_PROGRAMS_ADD(Array, Edc, It, Git, All)                \
+   for (It = 0; It < Edc->programs.Array##_count; ++It, ++Git)          \
+     All[Git] = Edc->programs.Array[It];
 
    EDJE_LOAD_PROGRAMS_ADD(fnmatch, edc, i, j, all);
    EDJE_LOAD_PROGRAMS_ADD(strncmp, edc, i, j, all);
@@ -367,18 +367,37 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
           {
              edc->patterns.table_programs_size = n;
 
-#define EDJE_LOAD_BUILD_TABLE(Array, Edc, It, Tmp)     \
-  for (It = 0; It < Edc->programs.Array##_count; ++It) \
-    {                                                  \
-       Tmp = Edc->programs.Array[It];                  \
-       Edc->patterns.table_programs[Tmp->id] = Tmp;    \
-    }
+#define EDJE_LOAD_BUILD_TABLE(Array, Edc, It, Tmp)                      \
+             for (It = 0; It < Edc->programs.Array##_count; ++It)       \
+               {                                                        \
+                  Tmp = Edc->programs.Array[It];                        \
+                  Edc->patterns.table_programs[Tmp->id] = Tmp;          \
+                  if (!Edc->need_seat && Tmp->signal && !strncmp(Tmp->signal, "seat,", 5)) \
+                    Edc->need_seat = EINA_TRUE;                         \
+               }
 
              EDJE_LOAD_BUILD_TABLE(fnmatch, edc, i, pr);
              EDJE_LOAD_BUILD_TABLE(strcmp, edc, i, pr);
              EDJE_LOAD_BUILD_TABLE(strncmp, edc, i, pr);
              EDJE_LOAD_BUILD_TABLE(strrncmp, edc, i, pr);
              EDJE_LOAD_BUILD_TABLE(nocmp, edc, i, pr);
+          }
+     }
+
+   /* Search for the use of allowed seat used by part if we still do not know if seat are needed. */
+   if (!edc->need_seat)
+     {
+        unsigned int i;
+
+        for (i = 0; i < edc->parts_count; i++)
+          {
+             Edje_Part *part = edc->parts[i];
+
+             if (part->allowed_seats)
+               {
+                  edc->need_seat = EINA_TRUE;
+                  break;
+               }
           }
      }
 

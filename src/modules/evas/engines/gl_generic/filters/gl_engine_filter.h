@@ -18,6 +18,7 @@ GL_Filter_Apply_Func gl_filter_fill_func_get(Render_Engine_GL_Generic *re, Evas_
 GL_Filter_Apply_Func gl_filter_mask_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd);
 //GL_Filter_Apply_Func gl_filter_transform_func_get(Evas_Filter_Command *cmd);
 GL_Filter_Apply_Func gl_filter_grayscale_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd);
+GL_Filter_Apply_Func gl_filter_inverse_color_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd);
 
 #undef DBG
 #undef INF

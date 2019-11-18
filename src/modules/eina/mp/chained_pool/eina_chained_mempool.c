@@ -182,22 +182,23 @@ _eina_chained_mempool_usage_cmp(const Eina_Inlist *l1, const Eina_Inlist *l2)
 static void *
 _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
 {
-  void *mem;
+  void *mem = NULL;
 
-  if (p->last)
-    {
-      mem = p->last;
-      p->last += pool->item_alloc;
-      if (p->last >= p->limit)
-        p->last = NULL;
-    }
-  else
+  // Let's try to first recycle memory
+  if (p->base)
     {
 #ifndef NVALGRIND
       VALGRIND_MAKE_MEM_DEFINED(p->base, pool->item_alloc);
 #endif
       // Request a free pointer
       mem = eina_trash_pop(&p->base);
+    }
+  else if (p->last)
+    {
+      mem = p->last;
+      p->last += pool->item_alloc;
+      if (p->last >= p->limit)
+        p->last = NULL;
     }
 
   // move to end - it just filled up
@@ -306,7 +307,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 
    // we have reached the end of the list - no free pools
    if (!p)
-     {
+      {
        //new chain created ,point it to be the first_fill chain
         pool->first_fill = _eina_chained_mp_pool_new(pool);
         if (!pool->first_fill)
@@ -368,6 +369,56 @@ eina_chained_mempool_free(void *data, void *ptr)
 
    eina_spinlock_release(&pool->mutex);
    return;
+}
+
+static void *
+eina_chained_mempool_malloc_near(void *data,
+                                 void *after, void *before,
+                                 unsigned int size EINA_UNUSED)
+{
+   Chained_Mempool *pool = data;
+   Chained_Pool *p = NULL;
+   void *mem = NULL;
+
+   if (!eina_spinlock_take(&pool->mutex))
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
+#endif
+     }
+
+   if (after)
+     {
+        Eina_Rbtree *r = eina_rbtree_inline_lookup(pool->root, after,
+                                                   0, _eina_chained_mp_pool_key_cmp, NULL);
+
+        if (r)
+          {
+             p = EINA_RBTREE_CONTAINER_GET(r, Chained_Pool);
+
+             if (!p->base && !p->last)
+               p = NULL;
+          }
+     }
+
+   if (before && p == NULL)
+     {
+        Eina_Rbtree *r = eina_rbtree_inline_lookup(pool->root, before,
+                                                   0, _eina_chained_mp_pool_key_cmp, NULL);
+        if (r)
+          {
+             p = EINA_RBTREE_CONTAINER_GET(r, Chained_Pool);
+             if (!p->base && !p->last)
+               p = NULL;
+          }
+     }
+
+   if (p) mem = _eina_chained_mempool_alloc_in(pool, p);
+
+   eina_spinlock_release(&pool->mutex);
+
+   if (!mem) return eina_chained_mempool_malloc(pool, size);
+   return mem;
 }
 
 static Eina_Bool
@@ -725,7 +776,8 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
    &eina_chained_mempool_shutdown,
    &eina_chained_mempool_repack,
    &eina_chained_mempool_from,
-   &eina_chained_mempool_iterator_new
+   &eina_chained_mempool_iterator_new,
+   &eina_chained_mempool_malloc_near
 };
 
 Eina_Bool chained_init(void)

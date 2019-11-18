@@ -516,6 +516,11 @@ _load_mesh(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
         /*Get extension of file*/
         tmp = strdup(event_info);
         a = strrchr(tmp,'.');
+        if (!a)
+          {
+             free(tmp);
+             return;
+          }
         format = malloc(sizeof (char) * (strlen(a) - 1));
         for (i = 0; i <= (int)strlen(a) - 1; i++)
           format[i] = a[i + 1];

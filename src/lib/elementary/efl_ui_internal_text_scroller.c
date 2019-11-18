@@ -21,6 +21,14 @@
 #define EFL_UI_SCROLLER_DATA_GET(o, sd) \
   Efl_Ui_Scroller_Data * sd = efl_data_scope_safe_get(o, EFL_UI_SCROLLER_CLASS)
 
+#define EFL_UI_SCROLLER_DATA_GET_OR_RETURN(o, ptr, ...) \
+  EFL_UI_SCROLLER_DATA_GET(o, ptr);                         \
+  if (EINA_UNLIKELY(!ptr))                            \
+    {                                                 \
+       ERR("No widget data for object %p (%s)",       \
+           o, evas_object_type_get(o));               \
+       return __VA_ARGS__;                                    \
+    }
 #define MY_CLASS EFL_UI_INTERNAL_TEXT_SCROLLER_CLASS
 #define MY_CLASS_PFX efl_ui_internal_text_scroller
 
@@ -55,7 +63,7 @@ _efl_ui_internal_text_scroller_efl_object_constructor(Eo *obj,
                                         Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   //EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   //EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd, NULL);
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
 
@@ -71,7 +79,7 @@ _efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
    Evas_Coord vmw = 0, vmh = 0;
 
    efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
-   EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -162,7 +170,7 @@ _efl_ui_internal_text_scroller_scroller_mode_set(Eo *obj,
                                        Efl_Ui_Internal_Text_Scroller_Data *sd,
                                        Efl_Ui_Text_Scroller_Mode mode)
 {
-   EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd);
    sd->mode = mode;
    if (mode == EFL_UI_TEXT_SCROLLER_MODE_MULTILINE)
      {
@@ -180,7 +188,7 @@ EOLIAN static Eo *
 _efl_ui_internal_text_scroller_viewport_clip_get(const Eo *obj,
       Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
 {
-   EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd, NULL);
    return evas_object_clip_get(psd->pan_obj);
 }
 

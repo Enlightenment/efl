@@ -2,14 +2,30 @@
 # include <config.h>
 #endif
 
-#include <Efl.h>
-
+#include "Evas.h"
 #define EFL_INTERNAL_UNSTABLE
-#include "efl_common_internal.h"
+#include "Evas_Internal.h"
+#include "evas_common_private.h"
+#include "evas_private.h"
 
 #define MY_CLASS EFL_INPUT_DEVICE_CLASS
 
 /* Efl Input Device = Evas Device */
+typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
+struct _Efl_Input_Device_Data
+{
+   Eo               *eo;
+   Eo               *evas; /* Evas */
+   Efl_Input_Device *source;  /* ref */
+   Eina_List        *children; /* ref'ed by efl_parent, not by this list */
+   Eina_Hash        *grabs; /* Hash of all the object that might grab this device.
+                               We expect thousand of them to be registered here,
+                               that is why we use a hash. */
+   unsigned int      id;
+   Efl_Input_Device_Type klass;
+   unsigned int      subclass; // Evas_Device_Subclass (unused)
+   unsigned int      pointer_count;
+};
 
 typedef struct _Child_Device_Iterator Child_Device_Iterator;
 
@@ -59,6 +75,12 @@ _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
         if (p) p->children = eina_list_remove(p->children, obj);
      }
    efl_unref(pd->source);
+
+   if (pd->grabs)
+     {
+        eina_hash_free(pd->grabs);
+        pd->grabs = NULL;
+     }
 
    return efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -227,5 +249,83 @@ _efl_input_device_is_pointer_type_get(const Eo *obj EINA_UNUSED, Efl_Input_Devic
    return _is_pointer(pd);
 }
 
+static const Eina_List *
+_efl_input_device_children_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
+   return pd->children;
+}
 
-#include "interfaces/efl_input_device.eo.c"
+EOAPI EFL_FUNC_BODY_CONST(efl_input_device_children_get, const Eina_List *, NULL);
+
+static Evas *
+_efl_input_device_evas_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
+   return pd->evas;
+}
+
+EOAPI EFL_FUNC_BODY_CONST(efl_input_device_evas_get, Evas *, NULL);
+
+static void
+_efl_input_device_evas_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Evas *e)
+{
+   pd->evas = e;
+}
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_evas_set, EFL_FUNC_CALL(e), Evas *e);
+
+static Evas_Device_Subclass
+_efl_input_device_subclass_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
+   return pd->subclass;
+}
+
+EOAPI EFL_FUNC_BODY_CONST(efl_input_device_subclass_get, Evas_Device_Subclass, 0);
+
+static void
+_efl_input_device_subclass_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
+                               Evas_Device_Subclass sub_clas)
+{
+   pd->subclass = sub_clas;
+}
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_subclass_set, EFL_FUNC_CALL(sub_clas), Evas_Device_Subclass sub_clas);
+
+static void
+_grab_del(void *data)
+{
+   Evas_Object_Pointer_Data *pdata = data;
+
+   evas_object_pointer_grab_del(pdata->obj, pdata);
+}
+
+static void
+_efl_input_device_grab_register(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
+                                Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata)
+{
+   if (!pd->grabs) pd->grabs = eina_hash_pointer_new(_grab_del);
+   eina_hash_add(pd->grabs, &grab, pdata);
+}
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_grab_register, EFL_FUNC_CALL(grab, pdata),
+                          Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+
+static void
+_efl_input_device_grab_unregister(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
+                                  Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata)
+{
+   eina_hash_del(pd->grabs, &grab, pdata);
+}
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_grab_unregister, EFL_FUNC_CALL(grab, pdata),
+                          Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+
+#define EFL_INPUT_DEVICE_EXTRA_OPS                                      \
+  EFL_OBJECT_OP_FUNC(efl_input_device_evas_get, _efl_input_device_evas_get), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_evas_set, _efl_input_device_evas_set), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_subclass_get, _efl_input_device_subclass_get), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_subclass_set, _efl_input_device_subclass_set), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_children_get, _efl_input_device_children_get), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_grab_register, _efl_input_device_grab_register), \
+  EFL_OBJECT_OP_FUNC(efl_input_device_grab_unregister, _efl_input_device_grab_unregister),
+
+#include "efl_input_device.eo.c"

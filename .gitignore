@@ -94,3 +94,4 @@ Session.vim
 /.settings/
 efl_libs.csv
 .vscode/
+.uuid

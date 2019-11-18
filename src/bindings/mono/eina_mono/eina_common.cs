@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -16,7 +31,7 @@ internal delegate void EinaFreeCb(IntPtr data);
 
 }
 
-internal static class NativeCustomExportFunctions
+internal static partial class NativeCustomExportFunctions
 {
     [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_mono_native_free(IntPtr ptr);
@@ -190,10 +205,10 @@ public static class StringConversion
             Marshal.WriteByte(native + strbuf.Length, 0); // write the terminating null
             return native;
         }
-        catch(Exception e)
+        catch (Exception)
         {
             MemoryNative.Free(native);
-            throw e;
+            throw;
         }
     }
 

@@ -174,13 +174,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_text_class.eo.h"
 #include "interfaces/efl_gfx_size_class.eo.h"
 
-/* Input events */
-#include "interfaces/efl_input_types.eot.h"
-#include "interfaces/efl_input_device.eo.h"
-
 /* Canvas & UI */
-#include "interfaces/efl_canvas_scene.eo.h"
-#include "interfaces/efl_canvas_pointer.eo.h"
 #include "interfaces/efl_ui_view.eo.h"
 #include "interfaces/efl_ui_property_bind.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
@@ -247,7 +241,6 @@ EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_drag_types.eot.h"
-#include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_text_types.eot.h"
 #endif
 

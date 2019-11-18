@@ -39,7 +39,6 @@ enum @beta @extern Elm.Icon.Type
 }
 
 /* FIXME: shouldn't exist, they are unusable by the bindings */
-struct @beta @extern Elm.Validate_Content; [[Data for the elm_validator_regexp_helper()]]
 struct @beta @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "anchor,clicked" signals emitted
                                               by entries.]]
 struct @beta @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted

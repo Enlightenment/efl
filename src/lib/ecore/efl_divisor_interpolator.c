@@ -11,7 +11,8 @@ typedef struct _Efl_Divisor_Interpolator_Data Efl_Divisor_Interpolator_Data;
 
 struct _Efl_Divisor_Interpolator_Data
 {
-   double factor[2];
+   double divisor;
+   int power;
 };
 
 EOLIAN static double
@@ -23,28 +24,36 @@ _efl_divisor_interpolator_efl_interpolator_interpolate(Eo *eo_obj EINA_UNUSED,
      return progress;
 
    return ecore_animator_pos_map(progress, ECORE_POS_MAP_DIVISOR_INTERP,
-                                 pd->factor[0], pd->factor[1]);
+                                 pd->divisor, (double)pd->power);
 }
 
 EOLIAN static void
-_efl_divisor_interpolator_factors_set(Eo *eo_obj EINA_UNUSED,
+_efl_divisor_interpolator_divisor_set(Eo *eo_obj EINA_UNUSED,
                                       Efl_Divisor_Interpolator_Data *pd,
-                                      double factor1, double factor2)
+                                      double divisor)
 {
-   pd->factor[0] = factor1;
-   pd->factor[1] = factor2;
+   pd->divisor = divisor;
 }
 
-EOLIAN static void
-_efl_divisor_interpolator_factors_get(const Eo *eo_obj EINA_UNUSED,
-                                      Efl_Divisor_Interpolator_Data *pd,
-                                      double *factor1, double *factor2)
+EOLIAN static double
+_efl_divisor_interpolator_divisor_get(const Eo *eo_obj EINA_UNUSED,
+                                      Efl_Divisor_Interpolator_Data *pd)
 {
-   if (factor1)
-     *factor1 = pd->factor[0];
+   return pd->divisor;
+}
+EOLIAN static void
+_efl_divisor_interpolator_power_set(Eo *eo_obj EINA_UNUSED,
+                                    Efl_Divisor_Interpolator_Data *pd,
+                                    int power)
+{
+   pd->power = power;
+}
 
-   if (factor2)
-     *factor2 = pd->factor[1];
+EOLIAN static int
+_efl_divisor_interpolator_power_get(const Eo *eo_obj EINA_UNUSED,
+                                    Efl_Divisor_Interpolator_Data *pd)
+{
+   return pd->power;
 }
 
 EOLIAN static Efl_Object *
@@ -53,8 +62,8 @@ _efl_divisor_interpolator_efl_object_constructor(Eo *eo_obj,
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
-   pd->factor[0] = 1.0;
-   pd->factor[1] = 1.0;
+   pd->divisor = 1.0;
+   pd->power = 1;
 
    return eo_obj;
 }

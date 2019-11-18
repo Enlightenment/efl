@@ -231,7 +231,13 @@ vec4 fetch_pixel(float ox, float oy)
 #endif
 
 #ifdef SHD_FILTER_GRAYSCALE
-   c.rgb = 0.3 * c.r + 0.59 * c.g + 0.11 * c.b;
+   c.r = 0.3 * c.r + 0.59 * c.g + 0.11 * c.b;
+   c.g = c.r;
+   c.b = c.r;
+#endif
+
+#ifdef SHD_FILTER_INVERSE_COLOR
+   c.rgb = c.a - c.rgba;
 #endif
 
 #ifndef SHD_FILTER_BLUR

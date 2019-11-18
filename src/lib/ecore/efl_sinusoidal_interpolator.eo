@@ -1,19 +1,22 @@
 class @beta Efl.Sinusoidal_Interpolator extends Efl.Object implements Efl.Interpolator
 {
-   [[Efl sinusoidal interpolator class
+   [[Sinusoidal interpolator. It starts slow, then moves quickly and then slows down
+     again before stopping.
 
-     output = (1 - cos(input * Pi)) / 2;
+     How long it stays in the quick zone (the slope of the curve) can be customized.
    ]]
    data: Efl_Sinusoidal_Interpolator_Data;
    methods {
-      @property factor {
-         [[Factor property]]
+      @property slope {
+         [[Customize the sinusoidal effect.]]
          set {
          }
          get {
          }
          values {
-            factor: double; [[Factor of the interpolation function.]]
+            slope: double; [[How steep is the effect. $[0] performs a linear interpolation,
+                             $[1] corresponds to a sinus function and higher numbers produce
+                             an increasingly steep effect.]]
          }
       }
    }

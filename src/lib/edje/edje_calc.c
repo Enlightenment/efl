@@ -952,12 +952,8 @@ _edje_recalc(Edje *ed)
              return;
           }
      }
-// XXX: dont need this with current smart calc infra. remove me later
-//   if (ed->postponed) return;
-//   if (!ed->calc_only)
+
    evas_object_smart_changed(ed->obj);
-// XXX: dont need this with current smart calc infra. remove me later
-//   ed->postponed = EINA_TRUE;
 }
 
 static
@@ -992,12 +988,43 @@ _edje_recalc_table_parts(Edje *ed
    for (i = 0; i < ed->table_parts_size; i++)
      {
         ep = ed->table_parts[i];
+
+        //Ignore if the real part doesn't have swallowed object
+        if ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
+            (ep->typedata.swallow) &&
+            (!ep->typedata.swallow->swallowed_object))
+          continue;
+
         if (ep->calculated != FLAG_XY) // FIXME: this is always true (see for above)
           _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY, NULL);
      }
 #ifdef EDJE_CALC_CACHE
    return need_reinit_state;
 #endif
+}
+
+// Defined in edje_textblock.c
+Eina_Bool
+_edje_part_textblock_style_text_set(Edje *ed,
+                                    Edje_Real_Part *ep,
+                                    Edje_Part_Description_Text *chosen_desc);
+
+void
+_edje_recalc_textblock_style_text_set(Edje *ed)
+{
+   unsigned short i;
+   Edje_Real_Part *ep;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        ep = ed->table_parts[i];
+
+        if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+          {
+             _edje_part_textblock_style_text_set
+               (ed, ep, (Edje_Part_Description_Text *)ep->chosen_description);
+          }
+     }
 }
 
 void
@@ -1009,8 +1036,17 @@ _edje_recalc_do(Edje *ed)
    Eina_Bool need_reinit_state = EINA_FALSE;
 #endif
 
-// XXX: dont need this with current smart calc infra. remove me later
-//   ed->postponed = EINA_FALSE;
+
+   //Do nothing if the edje has no size, Regardless of the edje part size calc,
+   //the text and style has to be set.
+   if ((EINA_UNLIKELY(!ed->has_size)) && (!ed->calc_only) && (ed->w == 0) && (ed->h == 0))
+     {
+        _edje_recalc_textblock_style_text_set(ed);
+
+        return;
+     }
+   ed->has_size = EINA_TRUE;
+
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);
    evas_object_smart_need_recalculate_set(ed->obj, 0);
    if (!ed->dirty) return;
@@ -1026,7 +1062,7 @@ _edje_recalc_do(Edje *ed)
 #endif
      }
 
-   if (EINA_UNLIKELY(ed->table_parts_size > 0))
+   if (EINA_LIKELY(ed->table_parts_size > 0))
 #ifdef EDJE_CALC_CACHE
      need_reinit_state =
 #endif
@@ -2930,6 +2966,22 @@ _edje_part_recalc_single_mesh0(Edje_Calc_Params *params,
 }
 
 static void
+_edje_table_recalc_apply(Edje *ed EINA_UNUSED,
+                         Edje_Real_Part *ep,
+                         Edje_Calc_Params *p3 EINA_UNUSED,
+                         Edje_Part_Description_Table *chosen_desc)
+{
+   evas_obj_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
+   evas_obj_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
+   evas_obj_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
+   if (evas_object_smart_need_recalculate_get(ep->object))
+     {
+        efl_canvas_group_need_recalculate_set(ep->object, 0);
+        efl_canvas_group_calculate(ep->object);
+     }
+}
+
+static void
 _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *ep,
                          Edje_Part_Description_Common *desc,
@@ -3050,13 +3102,19 @@ _edje_part_recalc_single(Edje *ed,
         // limit size if needed
         if (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) ||
              (((Edje_Part_Description_Table *)chosen_desc)->table.min.v)))
-          _edje_part_recalc_single_table(ep, chosen_desc, &minw, &minh);
+          {
+             _edje_table_recalc_apply(ed, ep, params, (Edje_Part_Description_Table *)chosen_desc);
+             _edje_part_recalc_single_table(ep, chosen_desc, &minw, &minh);
+          }
         break;
       case EDJE_PART_TYPE_BOX:
         // limit size if needed
         if ((((Edje_Part_Description_Box *)chosen_desc)->box.min.h) ||
             (((Edje_Part_Description_Box *)chosen_desc)->box.min.v))
-          _edje_part_recalc_single_box(ep, chosen_desc, &minw, &minh);
+          {
+             _edje_box_recalc_apply(ed, ep, params, (Edje_Part_Description_Box *)chosen_desc);
+             _edje_part_recalc_single_box(ep, chosen_desc, &minw, &minh);
+          }
         break;
       case EDJE_PART_TYPE_IMAGE:
         _edje_part_recalc_single_image0(ed, ep, params, (Edje_Part_Description_Image *)desc, pos);
@@ -3122,22 +3180,6 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_physics(params, desc);
 #endif
    _edje_part_recalc_single_map(ed, ep, center, zoom_center, light, persp, desc, chosen_desc, params);
-}
-
-static void
-_edje_table_recalc_apply(Edje *ed EINA_UNUSED,
-                         Edje_Real_Part *ep,
-                         Edje_Calc_Params *p3 EINA_UNUSED,
-                         Edje_Part_Description_Table *chosen_desc)
-{
-   evas_obj_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
-   evas_obj_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
-   evas_obj_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
-   if (evas_object_smart_need_recalculate_get(ep->object))
-     {
-        efl_canvas_group_need_recalculate_set(ep->object, 0);
-        efl_canvas_group_calculate(ep->object);
-     }
 }
 
 static void
@@ -4177,12 +4219,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
              _edje_recalc_do(ted);
           }
-     }
-   if (ep->part->type == EDJE_PART_TYPE_GROUP &&
-       ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
-        (ep->typedata.swallow)) &&
-       ep->typedata.swallow->swallowed_object)
-     {
+
         Edje_Size *min = NULL, *max = NULL;
 
         if (ep->chosen_description)

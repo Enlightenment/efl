@@ -23,6 +23,7 @@
 
 // Evas internal EO APIs
 # include "Evas.h"
+#define EFL_INTERNAL_UNSTABLE
 # include "Evas_Internal.h"
 # include "Emotion.h"
 

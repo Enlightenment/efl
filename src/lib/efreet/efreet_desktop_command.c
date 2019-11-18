@@ -605,6 +605,19 @@ efreet_desktop_command_append_icon(char *dest, int *size, int *len,
     return dest;
 }
 
+static Eina_Bool
+_is_protocol(const char *path)
+{
+    Eina_Bool nonlocal = EINA_FALSE;
+    char *p = (char*)path;
+    while (!nonlocal && *p && *p != '/')
+    {
+       nonlocal = (*p == ':');
+       p++;
+    }
+   return nonlocal;
+}
+
 /**
  * @param command the Efreet_Desktop_Comand that this file is for
  * @param file the filname as either an absolute path, relative path, or URI
@@ -630,7 +643,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             return NULL;
         }
     }
-    else if (strstr(file, ":"))
+    else if (_is_protocol(file))
     {
         uri = file;
         base = ecore_file_file_get(file);

@@ -12,7 +12,7 @@ tcase_gen_template = """
 static void
 {}(TCase *tc)
 {{
-  tcase_add_checked_fixture(tc, _{}_fixture, _shutdown_fixture);
+  tcase_add_checked_fixture(tc, _{}_fixture, NULL);
   tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
   {}(tc);
 }}

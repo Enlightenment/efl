@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_FUNCTION_POINTER_HPP
 #define EOLIAN_MONO_FUNCTION_POINTER_HPP
 
@@ -51,19 +66,19 @@ struct function_pointer {
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
       if (!as_generator(marshall_annotation(true)
-                  << "public delegate " << marshall_type(true) << " " << string // public?
+                  << "internal delegate " << marshall_type(true) << " " << string // public?
                   << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_annotation << " " << marshall_parameter)) << ");\n")
               .generate(sink, std::make_tuple(f.return_type, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
 
       // Wrapper type, with callback matching the Unamanaged one
-      if (!as_generator("internal class " << f_name << "Wrapper : IDisposable\n"
+      if (!as_generator("internal class " << f_name << "Wrapper\n"
                   << "{\n\n"
                   << scope_tab << "private " << f_name  << "Internal _cb;\n"
                   << scope_tab << "private IntPtr _cb_data;\n"
-                  << scope_tab << "private EinaFreeCb _cb_free_cb;\n\n"
+                  << scope_tab << "private Eina.Callbacks.EinaFreeCb _cb_free_cb;\n\n"
 
-                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, EinaFreeCb _cb_free_cb)\n"
+                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, Eina.Callbacks.EinaFreeCb _cb_free_cb)\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "this._cb = _cb;\n"
                   << scope_tab << scope_tab << "this._cb_data = _cb_data;\n"
@@ -72,34 +87,13 @@ struct function_pointer {
 
                   << scope_tab << "~" << f_name << "Wrapper()\n"
                   << scope_tab << "{\n"
-                  << scope_tab << scope_tab << "Dispose(false);\n"
-                  << scope_tab << "}\n\n"
-
-                  << scope_tab << "protected virtual void Dispose(bool disposing)\n"
-                  << scope_tab << "{\n"
                   << scope_tab << scope_tab << "if (this._cb_free_cb != null)\n"
                   << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << "if (disposing)\n"
-                  << scope_tab << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << scope_tab << "this._cb_free_cb(this._cb_data);\n"
-                  << scope_tab << scope_tab << scope_tab << "}\n"
-                  << scope_tab << scope_tab << scope_tab << "else\n"
-                  << scope_tab << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.ThreadSafeFreeCbExec(this._cb_free_cb, this._cb_data);\n"
-                  << scope_tab << scope_tab << scope_tab << "}\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb_free_cb = null;\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb_data = IntPtr.Zero;\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb = null;\n"
+                  << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.ThreadSafeFreeCbExec(this._cb_free_cb, this._cb_data);\n"
                   << scope_tab << scope_tab << "}\n"
                   << scope_tab << "}\n\n"
 
-                  << scope_tab << "public void Dispose()\n"
-                  << scope_tab << "{\n"
-                  << scope_tab << scope_tab << "Dispose(true);\n"
-                  << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
-                  << scope_tab << "}\n\n"
-
-                  << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ",") << ")\n"
+                  << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ", ") << ")\n"
                   << scope_tab << "{\n"
                   << function_definition_preamble << "_cb(_cb_data, " << (argument_invocation % ", ") << ");\n"
                   << function_definition_epilogue

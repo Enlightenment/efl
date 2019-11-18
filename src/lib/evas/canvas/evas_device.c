@@ -1,9 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 /* WARNING: This API is not used across EFL, hard to test! */
 
 #ifdef DEBUG_UNTESTED_
@@ -187,7 +184,6 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                      Evas_Device *parent_dev, Evas_Device *emulation_dev,
                      Evas_Device_Class clas, Evas_Device_Subclass sub_clas)
 {
-   Efl_Input_Device_Data *d;
    Evas_Public_Data *e;
    Evas_Device *dev;
 
@@ -197,13 +193,9 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                      efl_name_set(efl_added, name),
                      efl_comment_set(efl_added, desc),
                      efl_input_device_type_set(efl_added, clas),
-                     efl_input_device_source_set(efl_added, emulation_dev));
-
-   d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-   d->evas = eo_e;
-
-   // Legacy support, subclass is most likely unused
-   d->subclass = (unsigned) sub_clas;
+                     efl_input_device_source_set(efl_added, emulation_dev),
+                     efl_input_device_evas_set(efl_added, eo_e),
+                     efl_input_device_subclass_set(efl_added, sub_clas));
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -272,7 +264,6 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
 EAPI void
 evas_device_del(Evas_Device *dev)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
    if (!efl_invalidated_get(dev))
      efl_del(dev);
    efl_unref(dev);
@@ -281,10 +272,8 @@ evas_device_del(Evas_Device *dev)
 EAPI void
 evas_device_push(Evas *eo_e, Evas_Device *dev)
 {
-   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS);
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   if (!e) return;
    if (!e->cur_device)
      {
         e->cur_device = eina_array_new(4);
@@ -299,9 +288,8 @@ evas_device_pop(Evas *eo_e)
 {
    Evas_Device *dev;
 
-   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS);
-
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   if (!e) return ;
    dev = eina_array_pop(e->cur_device);
    if (dev) efl_unref(dev);
 }
@@ -309,29 +297,17 @@ evas_device_pop(Evas *eo_e)
 EAPI const Eina_List *
 evas_device_list(Evas *eo_e, const Evas_Device *dev)
 {
-   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
+   if (dev) return efl_input_device_children_get(dev);
 
-   if (dev)
-     {
-        SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS, NULL);
-
-        Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-        return d->children;
-     }
-
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   return e->devices;
+   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   return e ? e->devices : NULL;
 }
 
 EAPI void
 evas_device_name_set(Evas_Device *dev, const char *name)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-
    efl_name_set(dev, name);
-   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const char *
@@ -343,12 +319,8 @@ evas_device_name_get(const Evas_Device *dev)
 EAPI void
 evas_device_description_set(Evas_Device *dev, const char *desc)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
    efl_comment_set(dev, desc);
-
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const char *
@@ -358,26 +330,12 @@ evas_device_description_get(const Evas_Device *dev)
 }
 
 EAPI void
-evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
+evas_device_parent_set(Evas_Device *dev EINA_UNUSED, Evas_Device *parent EINA_UNUSED)
 {
    // Note: This function should be deprecated. parent_set doesn't make sense
    // unless the parent is a seat device. Parent shouldn't be changed after
    // creation.
-
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-   if (parent)
-     {
-        SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
-     }
-   else if (efl_parent_get(dev))
-     {
-        efl_ref(dev);
-     }
-
-   efl_parent_set(dev, parent);
-   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   ERR("It is not advised and possible anymore to changed the parent of an Evas_Device.");
 }
 
 EAPI const Evas_Device *
@@ -394,16 +352,17 @@ evas_device_parent_get(const Evas_Device *dev)
 EAPI void
 evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
    EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(dev));
 
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-   Evas_Public_Data *edata = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *edata = efl_data_scope_safe_get(efl_input_device_evas_get(dev), EVAS_CANVAS_CLASS);
+   Efl_Input_Device_Type klass = efl_input_device_type_get(dev);
 
-   if ((Evas_Device_Class)d->klass == clas)
+   if (!edata) return;
+
+   if ((Evas_Device_Class)klass == clas)
      return;
 
-   if (_is_pointer(d->klass))
+   if (_is_pointer(klass))
      _evas_pointer_data_remove(edata, dev);
 
    efl_input_device_type_set(dev, clas);
@@ -411,7 +370,7 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
    if (_is_pointer(clas))
      _evas_pointer_data_add(edata, dev);
 
-   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI Evas_Device_Class
@@ -423,30 +382,21 @@ evas_device_class_get(const Evas_Device *dev)
 EAPI void
 evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-
-   d->subclass = (unsigned) clas;
-   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   efl_input_device_subclass_set(dev, clas);
+   evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI Evas_Device_Subclass
 evas_device_subclass_get(const Evas_Device *dev)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS, EVAS_DEVICE_SUBCLASS_NONE);
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-
-   return (Evas_Device_Subclass) d->subclass;
+   return efl_input_device_subclass_get(dev);
 }
 
 EAPI void
 evas_device_emulation_source_set(Evas_Device *dev, Evas_Device *src)
 {
-   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
-
    efl_input_device_source_set(dev, src);
-   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const Evas_Device *

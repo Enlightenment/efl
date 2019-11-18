@@ -1197,6 +1197,8 @@ EAPI extern int ECORE_X_RAW_BUTTON_PRESS;   /**< @since 1.8 */
 EAPI extern int ECORE_X_RAW_BUTTON_RELEASE; /**< @since 1.8 */
 EAPI extern int ECORE_X_RAW_MOTION;         /**< @since 1.8 */
 
+EAPI extern int ECORE_X_DEVICES_CHANGE; /**< @since 1.24 */
+
 typedef enum _Ecore_X_WM_Protocol
 {
    /** If enabled the window manager will be asked to send a
@@ -2567,6 +2569,15 @@ EAPI Eina_Bool      ecore_x_input_multi_select(Ecore_X_Window win); /**< @since 
 EAPI Eina_Bool	    ecore_x_input_raw_select(Ecore_X_Window win); /**< @since 1.8 */
 EAPI Eina_Bool      ecore_x_input_touch_devices_grab(Ecore_X_Window win); /**< @since 1.15 */
 EAPI Eina_Bool      ecore_x_input_touch_devices_ungrab(void); /**< @since 1.15 */
+
+EAPI void           ecore_x_input_devices_update(void); /**< @since 1.24 */
+EAPI int            ecore_x_input_device_num_get(void); /**< @since 1.24 */
+EAPI int            ecore_x_input_device_id_get(int slot); /**< @since 1.24 */
+EAPI const char    *ecore_x_input_device_name_get(int slot); /**< @since 1.24 */
+EAPI char         **ecore_x_input_device_properties_list(int slot, int *num_ret); /**< @since 1.24 */
+EAPI void           ecore_x_input_device_properties_free(char **list, int num); /**< @since 1.24 */
+EAPI void          *ecore_x_input_device_property_get(int slot, const char *prop, int *num_ret, Ecore_X_Atom *format_ret, int *unit_size_ret); /**< @since 1.24 */
+EAPI void           ecore_x_input_device_property_set(int slot, const char *prop, void *data, int num, Ecore_X_Atom format, int unit_size); /**< @since 1.24 */
 
 EAPI Eina_Bool      ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);
 

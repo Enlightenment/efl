@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -49,20 +64,29 @@ public struct ObjectPath
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="str">The string of the path.</param>
-    public static implicit operator ObjectPath(string str)
-    {
-        return new ObjectPath(str);
-    }
+    public static implicit operator ObjectPath(string str) => FromString(str);
+
+    /// <summary>
+    ///   Converts a <see cref="string" /> to a <see cref="ObjectPath" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="str">The <see cref="string" /> of the path.</param>
+    public static ObjectPath FromString(string str) => new ObjectPath(str);
 
     /// <summary>
     /// Conversion operator of string from ObjectPath.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="path">The ObjectPath to be converted.</param>
-    public static implicit operator string(ObjectPath path)
-    {
-        return path.value;
-    }
+    public static implicit operator string(ObjectPath path) => ToString(path);
+
+    /// <summary>
+    /// Converts a <see cref="ObjectPath" /> to a <see cref="string" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="path">The ObjectPath to be converted.</param>
+    public static string ToString(ObjectPath path) => path.value;
+
 }
 
 /// <summary>
@@ -94,9 +118,15 @@ public struct SignatureString
     /// </summary>
     /// <param name="str">The string of the signature.</param>
     public static implicit operator SignatureString(string str)
-    {
-        return new SignatureString(str);
-    }
+        => FromString(str);
+
+    /// <summary>
+    /// Converts a <see cref="string" /> to a <see cref="SignatureString" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="str">The string of the signature.</param>
+    public static SignatureString FromString(string str)
+        => new SignatureString(str);
 
     /// <summary>
     /// Conversion operator of string from SignatureString.
@@ -104,9 +134,9 @@ public struct SignatureString
     /// </summary>
     /// <param name="sig">The SignatureString to be conversion.</param>
     public static implicit operator string(SignatureString sig)
-    {
-        return sig.value;
-    }
+        => ToString(sig);
+
+    public static string ToString(SignatureString sig) => sig.value;
 }
 
 /// <summary>
@@ -137,22 +167,29 @@ public struct UnixFd
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="fd">The file descriptor.</param>
-    public static implicit operator UnixFd(Int32 fd)
-    {
-        return new UnixFd(fd);
-    }
+    public static implicit operator UnixFd(Int32 fd) => FromInt32(fd);
+
+    /// <summary>
+    /// Converts a <see cref="Int32" /> to a <see cref="UnixFd" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="fd">The file descriptor.</param>
+    public static UnixFd FromInt32(Int32 fd) => new UnixFd(fd);
 
     /// <summary>
     /// Conversion operator of Int32 from UnixFd.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="unix_fd">The UnixFd to be converted.</param>
-    public static implicit operator Int32(UnixFd unix_fd)
-    {
-        return unix_fd.value;
-    }
-}
+    public static implicit operator Int32(UnixFd unix_fd) => ToInt32(unix_fd);
 
+    /// <summary>
+    ///   Converts a <see cref="UnixFd" /> to a <see cref="Int32" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="unix_fd">The <see cref="UnixFd" /> to be converted.</param>
+    public static Int32 ToInt32(UnixFd unix_fd) => unix_fd.value;
+}
 /// <summary>
 /// Arguments of EldBus.
 /// <para>Since EFL 1.23.</para>
@@ -163,7 +200,7 @@ public static class Argument
     /// The type of a byte.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class ByteType
+    internal static class ByteType
     {
         /// <summary>
         /// The code of the byte.
@@ -181,7 +218,7 @@ public static class Argument
     /// The type of a boolean
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class BooleanType
+    internal static class BooleanType
     {
         /// <summary>
         /// The code of the boolean.
@@ -199,7 +236,7 @@ public static class Argument
     /// The type of a Int16.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Int16Type
+    internal static class Int16Type
     {
         /// <summary>
         /// The code of the Int16.
@@ -217,7 +254,7 @@ public static class Argument
     /// The type of an unsigned Int16.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UInt16Type
+    internal static class UInt16Type
     {
         /// <summary>
         /// The code of the unsigned Int16.
@@ -235,7 +272,7 @@ public static class Argument
     /// The type of a Int32.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Int32Type
+    internal static class Int32Type
     {
         /// <summary>
         /// The code of the Int32.
@@ -253,7 +290,7 @@ public static class Argument
     /// The type of an unsigned Int32.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UInt32Type
+    internal static class UInt32Type
     {
         /// <summary>
         /// The code of the unsigned Int32.
@@ -271,7 +308,7 @@ public static class Argument
     /// The type of a Int64.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class Int64Type
+    internal static class Int64Type
     {
         /// <summary>
         /// The code of the Int64.
@@ -289,7 +326,7 @@ public static class Argument
     /// The type of an unsigned Int64.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UInt64Type
+    internal static class UInt64Type
     {
         /// <summary>
         /// The code of the unsigned Int64.
@@ -307,7 +344,7 @@ public static class Argument
     /// The type of the double.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class DoubleType
+    internal static class DoubleType
     {
         /// <summary>
         /// The code of the double.
@@ -325,7 +362,7 @@ public static class Argument
     /// The type of a string.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class StringType
+    internal static class StringType
     {
         /// <summary>
         /// The code of the string.
@@ -343,7 +380,7 @@ public static class Argument
     /// The type of an object path.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class ObjectPathType
+    internal static class ObjectPathType
     {
         /// <summary>
         /// The code of the object path.
@@ -361,7 +398,7 @@ public static class Argument
     /// The type of a signature.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class SignatureType
+    internal static class SignatureType
     {
         /// <summary>
         /// The code of the signature.
@@ -379,7 +416,7 @@ public static class Argument
     /// The type of a array.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class ArrayType
+    internal static class ArrayType
     {
         /// <summary>
         /// The code of the array.
@@ -397,7 +434,7 @@ public static class Argument
     /// The type of a struct.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class StructType
+    internal static class StructType
     {
         /// <summary>
         /// The code of the struct.
@@ -415,7 +452,7 @@ public static class Argument
     /// The type of a variant.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class VariantType
+    internal static class VariantType
     {
         /// <summary>
         /// The code of the variant.
@@ -433,7 +470,7 @@ public static class Argument
     /// The type of a dictionary.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class DictEntryType
+    internal static class DictEntryType
     {
         /// <summary>
         /// The code of the dictionary.
@@ -451,7 +488,7 @@ public static class Argument
     /// The type of an unix file descriptor.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static class UnixFdType
+    internal static class UnixFdType
     {
         /// <summary>
         /// The code of unix fd.
@@ -558,9 +595,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The byte to be converted.</param>
     public static implicit operator BasicMessageArgument(byte arg)
-    {
-        return new ByteMessageArgument(arg);
-    }
+        => FromByte(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="byte" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="byte" /> to be converted.</param>
+    public static BasicMessageArgument FromByte(byte arg)
+        => new ByteMessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from bool.
@@ -568,9 +611,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The bool to be converted.</param>
     public static implicit operator BasicMessageArgument(bool arg)
-    {
-        return new BoolMessageArgument(arg);
-    }
+        => FromBoolean(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="bool" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="bool" /> to be converted.</param>
+    public static BasicMessageArgument FromBoolean(bool arg)
+        => new BoolMessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from Int16.
@@ -578,9 +627,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The int16 to be converted.</param>
     public static implicit operator BasicMessageArgument(Int16 arg)
-    {
-        return new Int16MessageArgument(arg);
-    }
+        => FromInt16(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="Int16" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="Int16" /> to be converted.</param>
+    public static BasicMessageArgument FromInt16(Int16 arg)
+        => new Int16MessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from unsigned int16.
@@ -588,9 +643,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The unsigned int16 to be converted.</param>
     public static implicit operator BasicMessageArgument(UInt16 arg)
-    {
-        return new UInt16MessageArgument(arg);
-    }
+        => FromUInt16(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="UInt16" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="UInt16" /> to be converted.</param>
+    public static BasicMessageArgument FromUInt16(UInt16 arg)
+        => new UInt16MessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from int32.
@@ -598,9 +659,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The int32 to be converted.</param>
     public static implicit operator BasicMessageArgument(Int32 arg)
-    {
-        return new Int32MessageArgument(arg);
-    }
+        => FromInt32(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="Int32" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="Int32" /> to be converted.</param>
+    public static BasicMessageArgument FromInt32(Int32 arg)
+        => new Int32MessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from unsigned int32.
@@ -608,9 +675,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The unsigned int32 to be converted.</param>
     public static implicit operator BasicMessageArgument(UInt32 arg)
-    {
-        return new UInt32MessageArgument(arg);
-    }
+        => FromUInt32(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="UInt32" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="UInt32" /> to be converted.</param>
+    public static BasicMessageArgument FromUInt32(UInt32 arg)
+        => new UInt32MessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from int64.
@@ -618,9 +691,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The int64 to be converted.</param>
     public static implicit operator BasicMessageArgument(Int64 arg)
-    {
-        return new Int64MessageArgument(arg);
-    }
+        => FromInt64(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="Int64" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="Int64" /> to be converted.</param>
+    public static BasicMessageArgument FromInt64(Int64 arg)
+        => new Int64MessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from unsigned int64.
@@ -628,9 +707,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The unsigned int64 to be converted.</param>
     public static implicit operator BasicMessageArgument(UInt64 arg)
-    {
-        return new UInt64MessageArgument(arg);
-    }
+        => FromUInt64(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="UInt64" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="UInt64" /> to be converted.</param>
+    public static BasicMessageArgument FromUInt64(UInt64 arg)
+        => new UInt64MessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from string.
@@ -638,9 +723,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">the string to be converted.</param>
     public static implicit operator BasicMessageArgument(string arg)
-    {
-        return new StringMessageArgument(arg);
-    }
+        => FromString(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="string" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="string" /> to be converted.</param>
+    public static BasicMessageArgument FromString(string arg)
+        => new StringMessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from signature.
@@ -648,9 +739,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The signature to be converted.</param>
     public static implicit operator BasicMessageArgument(SignatureString arg)
-    {
-        return new SignatureMessageArgument(arg);
-    }
+        => FromSignatureString(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="SignatureString" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="SignatureString" /> to be converted.</param>
+    public static BasicMessageArgument FromSignatureString(SignatureString arg)
+        => new SignatureMessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from object path.
@@ -658,9 +755,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The object path to be converted.</param>
     public static implicit operator BasicMessageArgument(ObjectPath arg)
-    {
-        return new ObjectPathMessageArgument(arg);
-    }
+        => FromObjectPath(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="ObjectPath" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="ObjectPath" /> to be converted.</param>
+    public static BasicMessageArgument FromObjectPath(ObjectPath arg)
+        => new ObjectPathMessageArgument(arg);
 
     /// <summary>
     /// Conversion operator of BasicMessageArgument from unix fd.
@@ -668,9 +771,15 @@ public abstract class BasicMessageArgument
     /// </summary>
     /// <param name="arg">The unix fd to be converted.</param>
     public static implicit operator BasicMessageArgument(UnixFd arg)
-    {
-        return new UnixFdMessageArgument(arg);
-    }
+        => FromUnixFd(arg);
+
+    /// <summary>
+    ///   Converts a <see cref="UnixFd" /> to a <see cref="BasicMessageArgument" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="arg">The <see cref="UnixFd" /> to be converted.</param>
+    public static BasicMessageArgument FromUnixFd(UnixFd arg)
+        => new UnixFdMessageArgument(arg);
 }
 
 /// <summary>
@@ -1372,8 +1481,8 @@ public static class Common
             return;
         }
 
-        eldbus.Message msg;
-        eldbus.Pending pending;
+        eldbus.Message msg = null;
+        eldbus.Pending pending = null;
 
         try
         {
@@ -1383,6 +1492,11 @@ public static class Common
         catch (Exception e)
         {
             Eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
+
+            if (msg != null)
+            {
+                msg.Dispose(); // CA2000
+            }
             return;
         }
 
@@ -1393,6 +1507,10 @@ public static class Common
         catch (Exception e)
         {
             Eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
+        }
+        finally
+        {
+            msg.Dispose(); // CA2000
         }
     }
 

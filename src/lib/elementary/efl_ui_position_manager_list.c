@@ -339,18 +339,23 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 }
 
 static Eina_Value
-_rebuild_job_cb(void *data, Eina_Value v EINA_UNUSED, const Eina_Future *f EINA_UNUSED)
+_rebuild_job_cb(Eo *obj, void *data, const Eina_Value v)
 {
-   MY_DATA_GET(data, pd);
+   Efl_Ui_Position_Manager_List_Data *pd = data;
 
-   if (!efl_alive_get(data)) return EINA_VALUE_EMPTY;
+   cache_require(obj, pd);
+   recalc_absolut_size(obj, pd);
+   position_content(obj, pd);
 
-   cache_require(data, pd);
-   recalc_absolut_size(data, pd);
-   position_content(data, pd);
+   return v;
+}
+
+static void
+_rebuild_job_free(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_Position_Manager_List_Data *pd = data;
+
    pd->rebuild_absolut_size = NULL;
-
-   return EINA_VALUE_EMPTY;
 }
 
 static void
@@ -358,8 +363,10 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    if (pd->rebuild_absolut_size) return;
 
-   pd->rebuild_absolut_size = efl_loop_job(efl_app_main_get());
-   eina_future_then(pd->rebuild_absolut_size, _rebuild_job_cb, obj);
+   pd->rebuild_absolut_size = efl_future_then(obj, efl_loop_job(efl_app_main_get()),
+                                              .success = _rebuild_job_cb,
+                                              .data = pd,
+                                              .free = _rebuild_job_free);
 }
 
 EOLIAN static void
@@ -386,7 +393,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_scroll_position_set
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, int added_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int added_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    if (pd->size == 0)
      {
@@ -403,7 +410,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj 
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_removed(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, int removed_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_removed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int removed_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    pd->size --;
    if (subobj)

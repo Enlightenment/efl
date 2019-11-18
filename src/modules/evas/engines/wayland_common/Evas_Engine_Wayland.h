@@ -2,6 +2,7 @@
 # define _EVAS_ENGINE_WAYLAND_COMMON_H
 
 #include "Ecore_Wl2.h"
+#include "ecore_wl2_internal.h"
 
 typedef struct _Evas_Engine_Info_Wayland Evas_Engine_Info_Wayland;
 
@@ -23,13 +24,9 @@ struct _Evas_Engine_Info_Wayland
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
 
-   Eina_Bool indirect : 1;
-
-   Eina_Bool www_avail : 1;
    Eina_Rectangle window;
    int x_rel, y_rel;
    int x_cursor, y_cursor;
-   int resizing;
    uint32_t timestamp;
    /* window surface should be made with these config */
    int depth_bits;
@@ -40,6 +37,9 @@ struct _Evas_Engine_Info_Wayland
    Eina_Bool drag_start : 1;
    Eina_Bool drag_stop : 1;
    Eina_Bool drag_ack : 1;
+   Eina_Bool resizing : 1;
+   Eina_Bool indirect : 1;
+   Eina_Bool www_avail : 1;
 };
 
 #endif

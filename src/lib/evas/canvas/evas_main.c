@@ -16,9 +16,6 @@
 
 #include <Ecore.h>
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #define MY_CLASS EVAS_CANVAS_CLASS
 
 #ifdef LKDEBUG
@@ -2052,3 +2049,5 @@ _evas_canvas_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Public_D
 
 #include "evas_stack.x"
 #include "canvas/evas_canvas_eo.c"
+#include "efl_canvas_pointer.eo.c"
+#include "efl_canvas_scene.eo.c"

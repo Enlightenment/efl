@@ -6,6 +6,13 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+typedef struct _Check_Data
+{
+   Evas_Object *check1;
+   Evas_Object *check2;
+   int value;
+} Check_Data;
+
 EFL_START_TEST(elm_test_check_size)
 {
    Evas_Object *win, *check, *box;
@@ -146,6 +153,66 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+static void
+_check_changed_cb(void *ptr, Evas_Object *obj, void *e EINA_UNUSED)
+{
+   Check_Data *data = (Check_Data*) ptr;
+
+   if (obj == data->check1) {
+      elm_check_state_set(data->check2, EINA_TRUE);
+   } else if ( obj == data->check2) {
+      elm_check_state_set(data->check1, EINA_FALSE);
+   } else {
+      ck_assert(EINA_FALSE);
+   }
+   data->value ++;
+}
+
+EFL_START_TEST(elm_test_check_api_call)
+{
+   Evas_Object *win, *check1, *check2, *box;
+   Check_Data data ={0,};
+
+   win = elm_win_util_standard_add("check", "Check");
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   data.check1 = check1 = elm_check_add(box);
+   elm_object_text_set(check1, "TEST TEST TEST");
+   evas_object_smart_callback_add(check1, "changed", _check_changed_cb, &data);
+   elm_box_pack_end(box, check1);
+   evas_object_show(check1);
+
+   data.check2 = check2 = elm_check_add(box);
+   elm_object_text_set(check2, "TEST TEST TEST");
+   evas_object_smart_callback_add(check2, "changed", _check_changed_cb, &data);
+   elm_box_pack_end(box, check2);
+   evas_object_show(check2);
+
+   evas_object_show(win);
+
+   get_me_to_those_events(check1);
+
+   data.value = 0;
+   click_object(data.check1);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(data.value, 1);
+
+   data.value = 0;
+   click_object(data.check2);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(data.value, 1);
+
+   data.value = 0;
+   click_object(data.check1);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(data.value, 1);
+}
+EFL_END_TEST
+
 void elm_test_check(TCase *tc)
 {
    tcase_add_test(tc, elm_test_check_size);
@@ -154,4 +221,5 @@ void elm_test_check(TCase *tc)
    tcase_add_test(tc, elm_test_check_state);
    tcase_add_loop_test(tc, elm_test_check_callbacks, 0, 2);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_test_check_api_call);
 }

@@ -1,11 +1,92 @@
-/* FIXME - Text object must stop using elm_general! */
-import elm_general;
+/* FIXME - Text object must stop using Context_Item_Clicked_Cb! */
+/* Legacy-only function pointer types, for the legacy EO classes (genlist, etc...) */
+type @beta @extern Context_Item_Clicked_Cb: __undefined_type; [[Evas smart callback type]]
+
+struct @beta Efl.Ui.Validate_Content_Info
+{
+   [[Validate content information.]]
+   text: string; [[Validate content text]]
+   signal: string; [[Validate content signal]]
+}
+
+enum @beta Efl.Ui.Autocapital_Type
+{
+   [[Autocapitalization Types.
+     Choose method of auto-capitalization.
+   ]]
+   none,         [[No auto-capitalization when typing.]]
+   word,         [[Autocapitalize each word typed.]]
+   sentence,     [[Autocapitalize the start of each sentence.]]
+   allcharacter  [[Autocapitalize all letters.]]
+}
+
+enum @beta Efl.Ui.Input_Panel_Language_Type
+{
+   [[Input panel (virtual keyboard) language modes.
+   ]]
+   automatic,    [[Automatic]]
+   alphabet      [[Alphabet]]
+}
+
+
+enum @beta Efl.Ui.Input_Hints
+{
+   [[Enumeration that defines the types of Input Hints.]]
+   none                = 0,        [[No active hints.]]
+   auto_complete       = 1 << 0,   [[Suggest word auto completion.]]
+   sensitive_data      = 1 << 1,   [[Typed text should not be stored.]]
+}
+
+
+enum @beta Efl.Ui.Input_Panel_Layout
+{
+   [[Input panel (virtual keyboard) layout types.
+     Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
+   ]]
+   normal,      [[Default layout.]]
+   number,      [[Number layout.]]
+   email,       [[Email layout.]]
+   url,         [[URL layout.]]
+   phonenumber, [[Phone Number layout.]]
+   ip,          [[IP layout.]]
+   month,       [[Month layout.]]
+   numberonly,  [[Number Only layout.]]
+   invalid,     [[Never use this.]]
+   hex,         [[Hexadecimal layout.]]
+   terminal,    [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization).]]
+   password,    [[Like normal, but no auto-correct, no auto-capitalization etc.]]
+   datetime,    [[Date and time layout.]]
+   emoticon,    [[Emoticon layout.]]
+   voice        [[Voice layout, but if the IME does not support voice layout, then normal layout will be shown.]]
+}
+
+enum @beta Efl.Ui.Input_Panel_Return_Key_Type
+{
+   [["Return" Key types on the input panel (virtual keyboard).
+   ]]
+   default, [[Default.]]
+   done,    [[Done.]]
+   go,      [[Go.]]
+   join,    [[Join.]]
+   login,   [[Login.]]
+   next,    [[Next.]]
+   search,  [[Search string or magnifier icon.]]
+   send,    [[Send.]]
+   signin   [[Sign-in.]]
+}
+enum @beta Efl.Ui.Icon_Type
+{
+   [[Icon types.]]
+   none, [[Icon has no type set.]]
+   file, [[Icon is of type file.]]
+   standard [[Icon is of type standard.]]
+}
 
 class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Text_Selectable
    composites
-                 Efl.Text_Interactive, Efl.Text_Markup
+                 Efl.Text_Interactive, Efl.Text_Markup, Efl.Text_Cursor
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
@@ -73,7 +154,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          get {
          }
          values {
-            lang: Elm.Input.Panel.Lang; [[Language to be set to the input panel.]]
+            lang: Efl.Ui.Input_Panel_Language_Type; [[Language to be set to the input panel.]]
          }
       }
       @property selection_handler_disabled {
@@ -104,7 +185,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          get {
          }
          values {
-            autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
+            autocapital_type: Efl.Ui.Autocapital_Type; [[The type of autocapitalization.]]
          }
       }
       @property password_mode {
@@ -149,7 +230,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          get {
          }
          values {
-            hints: Elm.Input.Hints; [[Input hint.]]
+            hints: Efl.Ui.Input_Hints; [[Input hint.]]
          }
       }
       @property input_panel_layout {
@@ -159,7 +240,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          get {
          }
          values {
-            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[Layout type.]]
+            layout: Efl.Ui.Input_Panel_Layout(Efl.Ui.Input_Panel_Layout.invalid); [[Layout type.]]
          }
       }
       @property input_panel_return_key_type {
@@ -172,7 +253,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          get {
          }
          values {
-            return_key_type: Elm.Input.Panel.Return_Key.Type; [[The type of "return" key on the input panel.]]
+            return_key_type: Efl.Ui.Input_Panel_Return_Key_Type; [[The type of "return" key on the input panel.]]
          }
       }
       @property input_panel_enabled {
@@ -274,14 +355,10 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          params {
             @in label: string @optional; [[The item's text label.]]
             @in icon_file: string @optional; [[The item's icon file.]]
-            @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
-            @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
+            @in icon_type: Efl.Ui.Icon_Type; [[The item's icon type.]]
+            @in func: Context_Item_Clicked_Cb @optional; [[The callback to execute when the item is clicked.]]
             @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
          }
-      }
-      cursor_new {
-         [[Creates and returns a new cursor for the text.]]
-         return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor]]
       }
    }
    implements {
@@ -339,18 +416,19 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
       /* can be $NULL, tag nullable once Eolian supports it */
       changed,user: Efl.Ui.Text_Change_Info;
          [[The text object has changed due to user interaction]]
-      validate: Elm.Validate_Content; [[Called when validating]]
+      validate: Efl.Ui.Validate_Content_Info; [[Called when validating]]
       context,open: void; [[Called when context menu was opened]]
       preedit,changed: void; [[Called when entry preedit changed]]
       press: void; [[Called when entry pressed]]
       redo,request: void; [[Called when redo is requested]]
       undo,request: void; [[Called when undo is requested]]
       aborted: void; [[Called when entry is aborted]]
-      anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
-      anchor,hover,opened: Elm.Entry_Anchor_Hover_Info; [[Called when hover opened]]
-      anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]
-      anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
-      anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
+      // FIXME: efl_ui_text doesn't support anchor callbacks yet.
+      //anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
+      //anchor,hover,opened: Elm.Entry_Anchor_Hover_Info; [[Called when hover opened]]
+      //anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]
+      //anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
+      //anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
       cursor,changed,manual: void; [[Called on manual cursor change]]
    }
 }

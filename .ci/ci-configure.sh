@@ -17,7 +17,7 @@ if [ "$DISTRO" != "" ] ; then
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
-  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
+  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=gstreamer,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true"
 
@@ -57,10 +57,6 @@ if [ "$DISTRO" != "" ] ; then
   fi
 
   if [ "$1" = "coverity" ]; then
-#    if [ $(date +%A) != "Saturday" ]; then
-#      echo "Not Saturday so we are not running our weekly Coverity scan build."
-#      exit 0
-#    fi
     OPTS="$OPTS $WAYLAND_LINUX_COPTS"
     travis_fold cov-download cov-download
     docker exec --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c '.ci/coverity-tools-install.sh'

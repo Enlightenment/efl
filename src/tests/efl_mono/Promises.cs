@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Collections.Generic;
 
@@ -15,6 +30,7 @@ class TestPromises
         Test.Assert(cleanCalled, "Promise clean callback should have been called.");
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        promise.Dispose();
     }
 
     public static void test_simple_resolve()
@@ -40,6 +56,8 @@ class TestPromises
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_value, reference_value);
+        reference_value.Dispose();
+        promise.Dispose();
     }
 
     public static void test_simple_with_object()
@@ -59,12 +77,16 @@ class TestPromises
 
         Eina.Value referenceValue = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32);
         referenceValue.Append(32);
-        promise.Resolve(new Eina.Value(referenceValue));
+        var tmp = new Eina.Value(referenceValue);
+        promise.Resolve(tmp);
 
         loop.Iterate();
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(receivedValue, referenceValue);
+        tmp.Dispose();
+        referenceValue.Dispose();
+        promise.Dispose();
     }
 
     public static void test_simple_reject()
@@ -91,6 +113,7 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        promise.Dispose();
     }
 
     public static void test_simple_future_cancel()
@@ -113,6 +136,7 @@ class TestPromises
         Test.Assert(promiseCallbackCalled, "Promise cancel callback should have been called.");
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_error, Eina.Error.ECANCELED);
+        promise.Dispose();
     }
 
 
@@ -157,6 +181,8 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        reference_value.Dispose();
+        promise.Dispose();
     }
 
     public static void test_then_chain_array()
@@ -202,6 +228,8 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        reference_value.Dispose();
+        promise.Dispose();
     }
 
     public static void test_cancel_after_resolve()
@@ -229,6 +257,7 @@ class TestPromises
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+        promise.Dispose();
     }
 
     public static void test_constructor_with_callback()
@@ -239,11 +268,12 @@ class TestPromises
         Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
 #pragma warning disable 0219
-        Eina.Future future = new Eina.Future(promise,(Eina.Value value) => {
+        Eina.Future future = new Eina.Future(promise, (Eina.Value value) =>
+        {
             callbackCalled = true;
             received_value = value;
             return value;
-        } );
+        });
 #pragma warning restore 0219
 
         Eina.Value reference_value = new Eina.Value(Eina.ValueType.Int32);
@@ -254,6 +284,9 @@ class TestPromises
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_value, reference_value);
+        promise.Dispose();
+        loop.Dispose();
+        reference_value.Dispose();
     }
 
     public static void test_reject_on_disposal()

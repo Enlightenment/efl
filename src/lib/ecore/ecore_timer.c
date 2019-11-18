@@ -24,7 +24,7 @@ struct _Ecore_Timer_Legacy
    Eina_Bool inside_call : 1;
    Eina_Bool delete_me   : 1;
 };
-
+typedef struct _Ecore_Timer_Legacy Ecore_Timer_Legacy;
 struct _Efl_Loop_Timer_Data
 {
    EINA_INLIST;
@@ -32,6 +32,7 @@ struct _Efl_Loop_Timer_Data
    Eo            *object;
    Eo            *loop;
    Efl_Loop_Data *loop_data;
+   Ecore_Timer_Legacy *legacy;
 
    double     in;
    double     at;
@@ -46,8 +47,6 @@ struct _Efl_Loop_Timer_Data
    Eina_Bool  constructed : 1;
    Eina_Bool  finalized   : 1;
 };
-
-typedef struct _Ecore_Timer_Legacy Ecore_Timer_Legacy;
 
 static void _efl_loop_timer_util_delay(Efl_Loop_Timer_Data *timer, double add);
 static void _efl_loop_timer_util_instanciate(Efl_Loop_Data *loop, Efl_Loop_Timer_Data *timer);
@@ -82,7 +81,8 @@ _check_timer_event_catcher_add(void *data, const Efl_Event *event)
         if (array[i].desc == EFL_LOOP_TIMER_EVENT_TIMER_TICK)
           {
              if (timer->listening++ > 0) return;
-             _efl_loop_timer_util_instanciate(timer->loop_data, timer);
+             if (timer->finalized)
+               _efl_loop_timer_util_instanciate(timer->loop_data, timer);
              // No need to walk more than once per array as you can not del
              // a partial array
              return;
@@ -155,12 +155,19 @@ static void
 _ecore_timer_legacy_tick(void *data, const Efl_Event *event)
 {
    Ecore_Timer_Legacy *legacy = data;
+   Eina_Bool inside_call = legacy->inside_call;
 
    legacy->inside_call = 1;
-   if (!_ecore_call_task_cb(legacy->func, (void *)legacy->data) ||
-       legacy->delete_me)
-     efl_del(event->object);
-   else legacy->inside_call = 0;
+   if (!_ecore_call_task_cb(legacy->func, (void *)legacy->data) || legacy->delete_me)
+     {
+        legacy->delete_me = EINA_TRUE;
+        /* cannot destroy timer if recursing */
+        if (!inside_call)
+          efl_del(event->object);
+     }
+   /* only unset flag if not currently recursing */
+   else if (!inside_call)
+     legacy->inside_call = 0;
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(legacy_timer,
@@ -171,6 +178,7 @@ EAPI Ecore_Timer *
 ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
 {
    Ecore_Timer_Legacy *legacy;
+   Efl_Loop_Timer_Data *td;
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -185,8 +193,9 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
    legacy->data = data;
    timer = efl_add(MY_CLASS, efl_main_loop_get(),
                   efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
-                  efl_key_data_set(efl_added, "_legacy", legacy),
                   efl_loop_timer_interval_set(efl_added, in));
+   td = efl_data_scope_get(timer, MY_CLASS);
+   td->legacy = legacy;
    return timer;
 }
 
@@ -194,6 +203,7 @@ EAPI Ecore_Timer *
 ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
 {
    Ecore_Timer_Legacy *legacy;
+   Efl_Loop_Timer_Data *td;
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -208,24 +218,26 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
    legacy->data = data;
    timer = efl_add(MY_CLASS, efl_main_loop_get(),
                   efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
-                  efl_key_data_set(efl_added, "_legacy", legacy),
                   efl_loop_timer_loop_reset(efl_added),
                   efl_loop_timer_interval_set(efl_added, in));
+   td = efl_data_scope_get(timer, MY_CLASS);
+   td->legacy = legacy;
    return timer;
 }
 
 EAPI void *
 ecore_timer_del(Ecore_Timer *timer)
 {
-   Ecore_Timer_Legacy *legacy;
+   Efl_Loop_Timer_Data *td;
    void *data;
 
    if (!timer) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   legacy = efl_key_data_get(timer, "_legacy");
+
+   td = efl_data_scope_safe_get(timer, MY_CLASS);
    // If legacy == NULL, this means double free or something
-   if (legacy == NULL)
+   if ((!td) || (!td->legacy))
      {
         // Just in case it is an Eo timer, but not a legacy one.
         ERR("You are trying to destroy a timer which seems dead already.");
@@ -233,8 +245,8 @@ ecore_timer_del(Ecore_Timer *timer)
         return NULL;
      }
 
-   data = (void *)legacy->data;
-   if (legacy->inside_call) legacy->delete_me = EINA_TRUE;
+   data = (void *)td->legacy->data;
+   if (td->legacy->inside_call) td->legacy->delete_me = EINA_TRUE;
    else efl_del(timer);
    return data;
 }
@@ -471,8 +483,12 @@ _efl_loop_timer_efl_object_parent_set(Eo *obj, Efl_Loop_Timer_Data *pd, Efl_Obje
    // Remove the timer from all possible pending list
    first = eina_inlist_first(EINA_INLIST_GET(pd));
    if (first == pd->loop_data->timers)
-     pd->loop_data->timers = eina_inlist_remove
-       (pd->loop_data->timers, EINA_INLIST_GET(pd));
+     {
+        /* if this timer is currently being processed, update the pointer here so it is not lost */
+        if (pd == pd->loop_data->timer_current)
+          pd->loop_data->timer_current = (Efl_Loop_Timer_Data*)EINA_INLIST_GET(pd)->next;
+        pd->loop_data->timers = eina_inlist_remove(pd->loop_data->timers, EINA_INLIST_GET(pd));
+     }
    else if (first == pd->loop_data->suspended)
      pd->loop_data->suspended = eina_inlist_remove
        (pd->loop_data->suspended, EINA_INLIST_GET(pd));
@@ -565,7 +581,8 @@ _efl_loop_timer_next_get(Eo *obj, Efl_Loop_Data *pd)
 static inline void
 _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer, double when)
 {
-   if (timer->frozen || efl_invalidated_get(timer->object)) return;
+   if (timer->frozen || efl_invalidated_get(timer->object) ||
+       (timer->legacy && timer->legacy->delete_me)) return;
 
    if (timer->loop_data &&
        (EINA_INLIST_GET(timer)->next || EINA_INLIST_GET(timer)->prev))
@@ -641,14 +658,24 @@ _efl_loop_timer_expired_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, double when
 
         efl_ref(timer->object);
         eina_evlog("+timer", timer, 0.0, NULL);
+        /* this can remove timer from its inlist in the legacy codepath */
         efl_event_callback_call(timer->object, EFL_LOOP_TIMER_EVENT_TIMER_TICK, NULL);
         eina_evlog("-timer", timer, 0.0, NULL);
 
         // may have changed in recursive main loops
         // this current timer can not die yet as we hold a reference on it
+        /* this is tricky: the current timer cannot be deleted, but it CAN be removed from its inlist,
+         * thus breaking timer processing
+         */
         if (pd->timer_current)
-          pd->timer_current = (Efl_Loop_Timer_Data *)
-            EINA_INLIST_GET(pd->timer_current)->next;
+          {
+             if (pd->timer_current == timer)
+               pd->timer_current = (Efl_Loop_Timer_Data *)EINA_INLIST_GET(pd->timer_current)->next;
+             /* assume this has otherwise been modified either due to recursive mainloop processing or
+              * the timer being removed from its inlist and carefully updating pd->timer_current in the
+              * process as only the most elite of engineers would think to do
+              */
+          }
         _efl_loop_timer_reschedule(timer, when);
         efl_unref(timer->object);
      }

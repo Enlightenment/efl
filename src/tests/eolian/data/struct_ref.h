@@ -38,7 +38,7 @@ EWAPI const Efl_Class *struct_class_get(void);
  *
  * @ingroup Struct
  */
-EOAPI char *struct_foo(Eo *obj, int idx) EFL_TRANSFER_OWNERSHIP;
+EOAPI char *struct_foo(Eo *obj, int idx) EFL_TRANSFER_OWNERSHIP EINA_WARN_UNUSED_RESULT;
 
 EOAPI Named *struct_bar(Eo *obj);
 

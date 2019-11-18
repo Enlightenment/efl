@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_ALIAS_DEFINITION_HH
 #define EOLIAN_MONO_ALIAS_DEFINITION_HH
 
@@ -62,6 +77,21 @@ struct alias_definition_generator
                  << scope_tab << "public static implicit operator " << alias_type << "(" << alias_name << " value)\n"
                  << scope_tab << "{\n"
                  << scope_tab << scope_tab << "return value.payload;\n"
+                 << scope_tab << "}\n"
+
+                 << scope_tab << "/// <summary>Converts an instance of " << alias_type_doc << " to this struct.</summary>\n"
+                 << scope_tab << "/// <param name=\"value\">The value to be converted.</param>\n"
+                 << scope_tab << "/// <returns>A struct with the given value.</returns>\n"
+                 << scope_tab << "public static " << alias_name << " From" << name_helpers::translate_value_type(alias_type) << "(" << alias_type << " value)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return value;\n"
+                 << scope_tab << "}\n\n"
+
+                 << scope_tab << "/// <summary>Converts an instance of this struct to " << alias_type_doc << ".</summary>\n"
+                 << scope_tab << "/// <returns>The actual value the alias is wrapping.</returns>\n"
+                 << scope_tab << "public " << alias_type << " To" << name_helpers::translate_value_type(alias_type) << "()\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return this;\n"
                  << scope_tab << "}\n"
                  << "}\n"
                  ).generate(sink, alias, context))

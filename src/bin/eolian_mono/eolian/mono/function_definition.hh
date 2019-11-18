@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_FUNCTION_DEFINITION_HH
 #define EOLIAN_MONO_FUNCTION_DEFINITION_HH
 
@@ -61,7 +76,7 @@ struct native_function_definition_generator
     if(!as_generator
        (
         indent << eolian_mono::marshall_annotation(true) << "\n"
-        << indent << "public delegate "
+        << indent << "internal delegate "
         << eolian_mono::marshall_type(true)
         << " "
         << string << "_api_delegate(" << (f.is_static ? "" : "System.IntPtr obj")
@@ -76,7 +91,7 @@ struct native_function_definition_generator
 
     // Delegate holder (so it can't be collected).
     if(!as_generator
-       (indent << "public static readonly Efl.Eo.FunctionWrapper<" << string << "_api_delegate> " << string << "_ptr = new Efl.Eo.FunctionWrapper<"
+       (indent << "internal static readonly Efl.Eo.FunctionWrapper<" << string << "_api_delegate> " << string << "_ptr = new Efl.Eo.FunctionWrapper<"
           << string << "_api_delegate>(Module, \"" << string << "\");\n\n")
        .generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name, f.c_name), context))
       return false;
@@ -108,7 +123,8 @@ struct native_function_definition_generator
       self = "";
 
     if(!as_generator
-       (indent << "private static "
+       (indent << "[SuppressMessage(\"Microsoft.Reliability\", \"CA2000:DisposeObjectsBeforeLosingScope\", Justification = \"The instantiated objects can be stored in the called Managed API method.\")]\n"
+        << indent << "private static "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
@@ -208,7 +224,7 @@ struct function_definition_generator
         << scope_tab(2) << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
         << self
-        << ((!f.is_static && (f.parameters.size() > 0)) ? "," : "")
+        << ((!f.is_static && (f.parameters.size() > 0)) ? ", " : "")
         << (argument_invocation % ", ") << ");\n"
         << scope_tab(2) << eolian_mono::function_definition_epilogue()
         << scope_tab(1) << "}\n\n")
@@ -482,8 +498,8 @@ struct property_wrapper_definition_generator
                      << argument(false) << " = default(" << type(true) << ");\n"
                     )
                   << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
-                  << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
-                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ",") << ");\n"
+                  << "(" << (("out _out_" << argument(false)) % ", ") << ");\n"
+                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
                   << scope_tab(2) << "}" << "\n"
                  ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
           return false;

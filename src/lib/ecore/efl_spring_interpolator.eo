@@ -1,17 +1,31 @@
 class @beta Efl.Spring_Interpolator extends Efl.Object implements Efl.Interpolator
 {
-   [[Efl spring interpolator class]]
+   [[Spring interpolator. The value quickly reaches $[1.0] and then oscillates
+     around it a number of times before stopping (as if linked with a spring).
+
+     The number of oscillations and how quickly it stops can be customized.
+   ]]
    data: Efl_Spring_Interpolator_Data;
    methods {
-      @property factors {
-         [[Factors property]]
+      @property decay {
+         [[Customize the decay factor.]]
          set {
          }
          get {
          }
          values {
-            factor1: double; [[First factor of the interpolation function.]]
-            factor2: double; [[Second factor of the interpolation function.]]
+            decay: double; [[How quickly energy is lost.
+                             Higher numbers result in smaller oscillations.]]
+         }
+      }
+      @property oscillations {
+         [[Customize number of oscillations.]]
+         set {
+         }
+         get {
+         }
+         values {
+            oscillations: int; [[Number of oscillations before stopping.]]
          }
       }
    }

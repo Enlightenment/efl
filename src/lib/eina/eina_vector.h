@@ -32,6 +32,7 @@
 typedef struct _Eina_Vector2 Eina_Vector2;
 typedef struct _Eina_Vector3 Eina_Vector3;
 
+#define EINA_VECTOR2(x, y) ((Eina_Vector2) {(x), (y)})
 /**
  * @}
  * @defgroup Eina_Vector2 Vectors in floating point

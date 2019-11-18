@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_EVENTS_HH
 #define EOLIAN_MONO_EVENTS_HH
 
@@ -22,7 +37,7 @@ struct unpack_event_args_visitor
    typedef bool result_type;
    bool operator()(grammar::attributes::regular_type_def const& regular) const
    {
-      std::string const& arg = "evt.Info";
+      std::string const& arg = "info";
       std::string arg_type = name_helpers::type_full_managed_name(regular);
 
       if (regular.is_struct())
@@ -30,7 +45,7 @@ struct unpack_event_args_visitor
            // Structs are usually passed by pointer to events, like having a ptr<> modifier
            // Uses implicit conversion from IntPtr
            return as_generator(
-                " evt.Info"
+                " info"
               ).generate(sink, attributes::unused, *context);
         }
       else if (type.is_ptr)
@@ -106,17 +121,17 @@ struct unpack_event_args_visitor
            // Type defined in Eo is passed here. (e.g. enum type defined in Eo)
            // Uses conversion from IntPtr with type casting to the given type.
            return as_generator(
-                " (" << arg_type << ")evt.Info"
+                " (" << arg_type << ")info"
               ).generate(sink, attributes::unused, *context);
         }
    }
    bool operator()(grammar::attributes::klass_name const& cls) const
    {
-      return as_generator("(Efl.Eo.Globals.CreateWrapperFor(evt.Info) as " + name_helpers::klass_full_concrete_name(cls) + ")").generate(sink, attributes::unused, *context);
+      return as_generator("(Efl.Eo.Globals.CreateWrapperFor(info) as " + name_helpers::klass_full_concrete_name(cls) + ")").generate(sink, attributes::unused, *context);
    }
    bool operator()(attributes::complex_type_def const&) const
    {
-      return as_generator("new " << eolian_mono::type << "(evt.Info, false, false)").generate(sink, type, *context);
+      return as_generator("new " << eolian_mono::type << "(info, false, false)").generate(sink, type, *context);
    }
 };
 
@@ -396,8 +411,8 @@ struct event_definition_generator
 
            auto sub_context = change_indentation(indent.inc().inc(), context);
 
-           if (!as_generator(wrapper_args_type << " args = new " << wrapper_args_type << "();\n"
-                             << scope_tab(6) << "args.arg = ").generate(arg_initializer_sink, attributes::unused, context))
+           if (!as_generator(", info => new " << wrapper_args_type << "{ "
+                             << "arg = ").generate(arg_initializer_sink, attributes::unused, context))
              return false;
            if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_initializer_sink), decltype(sub_context)>{arg_initializer_sink, &sub_context, *etype}))
              return false;
@@ -405,7 +420,7 @@ struct event_definition_generator
            if (!(*etype).original_type.visit(pack_event_info_and_call_visitor<decltype(event_call_site_sink), decltype(sub_context)>{event_call_site_sink, &sub_context, *etype}))
              return false;
 
-           arg_initializer += ";\n";
+           arg_initializer += " }";
 
            event_args = arg_initializer;
         }
@@ -459,6 +474,7 @@ struct event_definition_generator
    {
       auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
+      bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
 
       if (!as_generator(
             scope_tab << "/// <summary>Method to raise event "<< event_name << ".\n"
@@ -495,7 +511,7 @@ struct event_definition_generator
       if (!as_generator(
             scope_tab << "/// </summary>\n"
             << scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
-            << scope_tab << "public void On" << event_name << "(" << event_args_type << " e)\n"
+            << scope_tab << (is_concrete ? "public" : "protected virtual") << " void On" << event_name << "(" << event_args_type << " e)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "var key = \"_" << upper_c_name << "\";\n"
             << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(" << library_name << ", key);\n"
@@ -525,24 +541,9 @@ struct event_definition_generator
       return as_generator(
            scope_tab << "{\n"
            << scope_tab << scope_tab << "add\n"
-           << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << "Efl.EventCb callerCb = (IntPtr data, ref Efl.Event.NativeStruct evt) =>\n"
-           << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "var obj = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data).Target;\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "if (obj != null)\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << event_args
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "try\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "value?.Invoke(obj, args);\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "catch (Exception e)\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error(e.ToString());\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-           << scope_tab << scope_tab << scope_tab << "};\n\n"
+           << scope_tab << scope_tab << "{\n"//evt.type.is_engaged()
+           << scope_tab << scope_tab << scope_tab << "Efl.EventCb callerCb = GetInternalEventCallback(value"
+           << (evt.type.is_engaged() ? event_args : "") << ");\n"
            << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
            << scope_tab << scope_tab << scope_tab << "AddNativeEventHandler(" << library_name << ", key, callerCb, value);\n"
            << scope_tab << scope_tab << "}\n\n"

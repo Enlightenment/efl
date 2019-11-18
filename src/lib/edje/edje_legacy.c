@@ -78,7 +78,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
 
    ed = _edje_fetch(obj);
    if (!ed || ed->delete_me) return;
-   _edje_object_signal_callback_add(ed, emission, source, func, NULL, NULL, data);
+   _edje_object_signal_callback_add(obj, ed, emission, source, func, NULL, NULL, data);
 }
 
 EAPI void *

@@ -105,7 +105,7 @@ _storage_lookup(Efl_Boolean_Model_Data *pd,
         lookup->offset = v->last ? v->last->offset + v->last->length + 1 : 0;
         lookup->length = sizeof (lookup->buffer) * 8; // Number of bits in the buffer
         // Initialize the buffer to the right default value
-        if (default_value) memset(&lookup->buffer[0], *default_value, sizeof (lookup->buffer));
+        memset(&lookup->buffer[0], *default_value, sizeof (lookup->buffer));
 
         v->buffers_root = eina_rbtree_inline_insert(v->buffers_root, EINA_RBTREE_GET(lookup),
                                                     EINA_RBTREE_CMP_NODE_CB(_storage_range_cmp), NULL);
@@ -258,11 +258,11 @@ _child_removed(void *data, const Efl_Event *event)
    Eina_Iterator *it;
    Eina_Array updated;
 
-   if (!pd->parent) return;
+   if (!pd->values) return;
 
    eina_array_step_set(&updated, sizeof (Eina_Array), 8);
 
-   it = eina_hash_iterator_data_new(pd->parent->values);
+   it = eina_hash_iterator_data_new(pd->values);
    EINA_ITERATOR_FOREACH(it, v)
      {
         Efl_Boolean_Model_Storage_Range *lookup;
@@ -276,14 +276,14 @@ _child_removed(void *data, const Efl_Event *event)
           {
              unsigned char lower_mask = (((unsigned char)1) << (ev->index & 0x7)) - 1;
              unsigned char upper_mask = (~(((unsigned char)1) << (ev->index & 0x7))) & (~lower_mask);
-             unsigned char offset = (ev->index - lookup->offset) >> 3;
+             uint16_t offset = (ev->index - lookup->offset) >> 3;
              uint16_t byte_length = lookup->length >> 3;
 
              // Manually shift all the byte in the buffer
              while (offset < byte_length)
                {
-                  lookup->buffer[offset] = (lookup->buffer[offset] & upper_mask) |
-                    ((lookup->buffer[offset] & lower_mask) << 1);
+                  lookup->buffer[offset] = ((lookup->buffer[offset] & upper_mask) >> 1) |
+                    (lookup->buffer[offset] & lower_mask);
                   if (offset + 1 < byte_length)
                     lookup->buffer[offset] |= lookup->buffer[offset + 1] & 0x1;
 

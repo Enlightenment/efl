@@ -1809,6 +1809,26 @@ _grayscale_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction
    return EINA_TRUE;
 }
 
+/**
+  @page evasfiltersref
+  Apply inverse color
+  TODO: write down more information
+ */
+
+static Eina_Bool
+_inverse_color_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "inverse_color"), EINA_FALSE);
+
+   instr->type = EVAS_FILTER_MODE_INVERSE_COLOR;
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
+
+   return EINA_TRUE;
+}
+
 static int
 _padding_set_padding_update(Evas_Filter_Program *pgm,
                             Evas_Filter_Instruction *instr,
@@ -2270,6 +2290,7 @@ LUA_GENERIC_FUNCTION(mask)
 LUA_GENERIC_FUNCTION(padding_set)
 LUA_GENERIC_FUNCTION(transform)
 LUA_GENERIC_FUNCTION(grayscale)
+LUA_GENERIC_FUNCTION(inverse_color)
 
 static const luaL_Reg _lua_buffer_metamethods[] = {
    { "__call", _lua_buffer_new },
@@ -2507,6 +2528,7 @@ _lua_state_create(Evas_Filter_Program *pgm)
    PUSH_LUA_FUNCTION(padding_set)
    PUSH_LUA_FUNCTION(transform)
    PUSH_LUA_FUNCTION(grayscale)
+   PUSH_LUA_FUNCTION(inverse_color)
 
    for (unsigned k = 0; k < (sizeof(fill_modes) / sizeof(fill_modes[0])); k++)
      {
@@ -3439,6 +3461,20 @@ _instr2cmd_grayscale(Evas_Filter_Context *ctx,
    return evas_filter_command_grayscale_add(ctx, dc, src->cid, dst->cid);
 }
 
+static Evas_Filter_Command *
+_instr2cmd_inverse_color(Evas_Filter_Context *ctx,
+                         Evas_Filter_Instruction *instr, void *dc)
+{
+   Buffer *src, *dst;
+
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
+
+   return evas_filter_command_inverse_color_add(ctx, dc, src->cid, dst->cid);
+}
+
 static Eina_Bool
 _command_from_instruction(Evas_Filter_Context *ctx,
                           Evas_Filter_Instruction *instr, void *dc)
@@ -3477,6 +3513,9 @@ _command_from_instruction(Evas_Filter_Context *ctx,
         break;
       case EVAS_FILTER_MODE_GRAYSCALE:
         instr2cmd = _instr2cmd_grayscale;
+        break;
+      case EVAS_FILTER_MODE_INVERSE_COLOR:
+        instr2cmd = _instr2cmd_inverse_color;
         break;
       case EVAS_FILTER_MODE_PADDING_SET:
       case EVAS_FILTER_MODE_BUFFER:

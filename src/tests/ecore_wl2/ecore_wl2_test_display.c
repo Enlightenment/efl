@@ -164,6 +164,19 @@ EFL_START_TEST(wl2_display_inputs_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_display_compositor_version_get)
+{
+   Ecore_Wl2_Display *disp;
+   int ver;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   ver = ecore_wl2_display_compositor_version_get(disp);
+   ck_assert_int_ne(ver, 0);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_display(TCase *tc)
 {
@@ -188,5 +201,6 @@ ecore_wl2_test_display(TCase *tc)
         tcase_add_test(tc, wl2_display_globals_get);
         tcase_add_test(tc, wl2_display_screen_size_get);
         tcase_add_test(tc, wl2_display_inputs_get);
+        tcase_add_test(tc, wl2_display_compositor_version_get);
      }
 }

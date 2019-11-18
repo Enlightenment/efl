@@ -1619,6 +1619,28 @@ evas_filter_command_grayscale_add(Evas_Filter_Context *ctx,
    return cmd;
 }
 
+Evas_Filter_Command *
+evas_filter_command_inverse_color_add(Evas_Filter_Context *ctx,
+                                     void *draw_context EINA_UNUSED,
+                                     int inbuf, int outbuf)
+{
+   Evas_Filter_Command *cmd;
+   Evas_Filter_Buffer *in, *out;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+
+   in = _filter_buffer_get(ctx, inbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, NULL);
+
+   out = _filter_buffer_get(ctx, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
+
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_INVERSE_COLOR, in, NULL, out);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
+
+   return cmd;
+}
+
 void
 evas_filter_context_obscured_region_set(Evas_Filter_Context *ctx, Eina_Rectangle rect)
 {

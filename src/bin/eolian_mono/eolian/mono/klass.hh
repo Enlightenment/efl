@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_CLASS_DEFINITION_HPP
 #define EOLIAN_MONO_CLASS_DEFINITION_HPP
 
@@ -117,7 +132,7 @@ struct klass
               continue;
 
             if(first->type != attributes::class_type::regular && first->type != attributes::class_type::abstract_)
-              if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
+              if(!as_generator("\n" << scope_tab << string << ",").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
                 return false;
          }
 
@@ -187,9 +202,9 @@ struct klass
             (
              documentation
              << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
-             << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
-             << scope_tab << ", " << interface_name << "\n"
-             << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
+             << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "")
+             << ",\n" << scope_tab << interface_name
+             << *(",\n" << scope_tab << name_helpers::klass_full_concrete_or_interface_name) << "\n"
              << "{\n"
             ).generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), concrete_cxt))
               return false;
@@ -217,7 +232,7 @@ struct klass
              << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
              << scope_tab << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
              << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-             << scope_tab << "private " << concrete_name << "(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"
+             << scope_tab << "private " << concrete_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
              << scope_tab << "{\n"
              << scope_tab << "}\n\n"
             )
@@ -407,7 +422,7 @@ struct klass
             (
              indent << lit("/// <summary>Wrapper for native methods and virtual method delegates.\n")
              << indent << "/// For internal use by generated code only.</summary>\n"
-             << indent << "public new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
+             << indent << "internal new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
              << indent << "{\n"
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
@@ -424,7 +439,7 @@ struct klass
          if(!as_generator(
              indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
-             << indent << scope_tab << "public override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
+             << indent << scope_tab << "internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
              << indent << scope_tab << "{\n"
              << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<EflOpDescription>();\n"
             )
@@ -474,7 +489,7 @@ struct klass
          if(!as_generator(
               indent << scope_tab << "/// <summary>Returns the Eo class for the native methods of this class.</summary>\n"
               << indent << scope_tab << "/// <returns>The native class pointer.</returns>\n"
-              << indent << scope_tab << "public override IntPtr GetEflClass()\n"
+              << indent << scope_tab << "internal override IntPtr GetEflClass()\n"
               << indent << scope_tab << "{\n"
               << indent << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
               << indent << scope_tab << "}\n\n"
@@ -549,9 +564,9 @@ struct klass
                      << scope_tab << "/// <param name=\"parent\">Parent instance.</param>\n"
                      << *(documentation)
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
-                     << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
-                     << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") : "
-                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
+                     << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null")
+                     << *(", " << constructor_param ) << ") : "
+                     << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
                      << scope_tab << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
@@ -565,7 +580,7 @@ struct klass
                      << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                      << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
                      << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-                     << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"
+                     << scope_tab << "internal " << inherit_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
                      << scope_tab << "{\n"
                      << scope_tab << "}\n\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
@@ -580,7 +595,7 @@ struct klass
                 scope_tab << "[Efl.Eo.PrivateNativeClass]\n"
                 << scope_tab << "private class " << inherit_name << "Realized : " << inherit_name << "\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.Globals.WrappingHandle wh) : base(wh)\n"
+                << scope_tab << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.WrappingHandle wh) : base(wh)\n"
                 << scope_tab << scope_tab << "{\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"

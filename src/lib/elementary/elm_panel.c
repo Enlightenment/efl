@@ -223,6 +223,7 @@ _elm_panel_efl_ui_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   elm_interface_scrollable_reset_signals(obj);
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    if (sd->scrollable)

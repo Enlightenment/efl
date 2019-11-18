@@ -82,7 +82,7 @@ _stdin_cb(void *data EINA_UNUSED, Ecore_Fd_Handler *handler EINA_UNUSED)
 {
    const Eina_List *l;
    Ecore_Evas *ee;
-   char c = getchar();
+   int c = getchar();
 
    if (c == EOF)
      {

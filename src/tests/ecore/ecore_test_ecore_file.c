@@ -196,9 +196,7 @@ EFL_START_TEST(ecore_test_ecore_file_operations)
 
    src_dir = get_tmp_dir();
    fail_if(!src_dir);
-   strcat(dir, src_dir);
-   strcat(dir, "/");
-   strcat(dir, dirs[2]);
+   snprintf(dir, sizeof(dir), "%s/%s", src_dir, dirs[2]);
    res = ecore_file_mkpath(dir);
    fail_if(res != EINA_TRUE);
    res = ecore_file_recursive_rm(src_dir);
@@ -265,18 +263,14 @@ EFL_START_TEST(ecore_test_ecore_file_operations)
 
    src_dir = get_tmp_dir();
    fail_if(!src_dir);
-   strcpy(dir, src_dir);
-   strcat(dir, "/");
-   strcat(dir, dirs[0]);
+   snprintf(dir, sizeof(dir), "%s/%s", src_dir, dirs[0]);
    fail_if(ecore_file_mkdir(dir) != EINA_TRUE);
 
    fail_if(ecore_file_mkdirs(NULL) != -1);
    for (i = 0; i < 3; i++)
      {
         char tmp[PATH_MAX];
-        strcpy(tmp, src_dir);
-        strcat(tmp, "/");
-        strcat(tmp, dirs2[i]);
+        snprintf(tmp, sizeof(tmp), "%s/%s", src_dir, dirs2[i]);
         dirs2[i] = strdup(tmp);
      }
    fail_if(ecore_file_mkdirs((const char **)dirs2) != 3);
@@ -382,8 +376,8 @@ EFL_END_TEST
 
 EFL_START_TEST(ecore_test_ecore_file_path)
 {
-   const char *src_dir, *src_file, *dest_file;
-   char *dup_dir, *path;
+   const char *src_dir, *dest_file;
+   char *dup_dir, *path, *src_file;
    unsigned int ret;
    int fd;
    Eina_Bool res;
@@ -403,11 +397,8 @@ EFL_START_TEST(ecore_test_ecore_file_path)
 
    src_dir = getenv("PATH");
    fail_if(!src_dir);
-   path = malloc(strlen(src_dir) + strlen(dup_dir) + 1);
-   *path = '\0';
-   strcat(path, src_dir);
-   strcat(path, ":");
-   strcat(path, dirname(dup_dir));
+   path = malloc(strlen(src_dir) + strlen(dup_dir) + 2);
+   snprintf(path, strlen(src_dir) + strlen(dup_dir) + 2, "%s:%s", src_dir, dirname(dup_dir));
    ret = setenv("PATH", path, 1);
    fail_if(ret != 0);
    free(dup_dir);
@@ -416,11 +407,25 @@ EFL_START_TEST(ecore_test_ecore_file_path)
    ret = ecore_file_init();
 
    res = ecore_file_app_installed(dest_file);
+   if (!res)
+     {
+        /* attempt to mitigate cascading failures */
+        ret = setenv("PATH", src_dir, 1);
+        fail_if(ret != 0);
+     }
    fail_if(res != EINA_TRUE);
    res = ecore_file_app_installed(src_file);
+   if (!res)
+     {
+        /* attempt to mitigate cascading failures */
+        ret = setenv("PATH", src_dir, 1);
+        fail_if(ret != 0);
+     }
    fail_if(res != EINA_TRUE);
    list = NULL;
    list = ecore_file_app_list();
+   ret = setenv("PATH", src_dir, 1);
+   fail_if(ret != 0);
    fd = 0;
    EINA_LIST_FOREACH(list, l, path)
      {
@@ -433,20 +438,19 @@ EFL_START_TEST(ecore_test_ecore_file_path)
    fail_if(fd == 0);
    EINA_LIST_FREE(list, dup_dir)
      free(dup_dir);
-   ret = setenv("PATH", src_dir, 1);
-   fail_if(ret != 0);
 
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
+   free(src_file);
 }
 EFL_END_TEST
 
 EFL_START_TEST(ecore_test_ecore_file_monitor)
 {
    Ecore_File_Monitor *mon;
-   const char *src_dir;
+   char *src_dir;
    const char *file = "EcoreFileDest";
    const char *sub_dir[] = {"subdir1", 0};
    char dir_name[MAXSIZE] = {'\0'};
@@ -467,9 +471,7 @@ EFL_START_TEST(ecore_test_ecore_file_monitor)
    mon = ecore_file_monitor_add(realp, file_monitor_cb, NULL);
    fail_if(mon == NULL);
 
-   strcat(file_name, src_dir);
-   strcat(file_name, "/");
-   strcat(file_name, file);
+   snprintf(file_name, sizeof(file_name), "%s/%s", src_dir, file);
    _writeToFile(file_name, random_text);
    _writeToFile(file_name, random_text);
 
@@ -482,9 +484,7 @@ EFL_START_TEST(ecore_test_ecore_file_monitor)
    res = ecore_file_remove(file_name);
    fail_if(res != EINA_TRUE);
 
-   strcat(dir_name, src_dir);
-   strcat(dir_name, "/");
-   strcat(dir_name, sub_dir[0]);
+   snprintf(dir_name, sizeof(dir_name), "%s/%s", src_dir, sub_dir[0]);
    res = ecore_file_rmdir(dir_name);
    fail_if(res != EINA_TRUE);
 
@@ -495,6 +495,7 @@ EFL_START_TEST(ecore_test_ecore_file_monitor)
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
+   free(src_dir);
 }
 EFL_END_TEST
 
@@ -517,9 +518,7 @@ EFL_START_TEST(ecore_test_ecore_file_download)
    download_file = ecore_file_file_get(download_url); //example.com
    fail_if(!download_file);
    fail_if(!ecore_file_download_protocol_available("http://"));
-   strcat(dest_name, download_dir);
-   strcat(dest_name, "/");
-   strcat(dest_name, download_file);
+   snprintf(dest_name, sizeof(dest_name), "%s/%s", download_dir, download_file);
 
    res = ecore_file_download("xxyyzz", dest_name, completion_cb,
                              progress_cb, NULL, &job);

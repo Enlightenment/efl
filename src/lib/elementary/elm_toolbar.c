@@ -1511,6 +1511,7 @@ _elm_toolbar_efl_ui_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",
      elm_widget_style_get(obj));
+   elm_interface_scrollable_reset_signals(obj);
    if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      edje_object_signal_emit(wd->resize_obj, "elm,orient,vertical", "elm");
    else

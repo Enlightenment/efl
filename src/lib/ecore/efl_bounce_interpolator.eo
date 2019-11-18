@@ -1,17 +1,31 @@
 class @beta Efl.Bounce_Interpolator extends Efl.Object implements Efl.Interpolator
 {
-   [[Efl bounce interpolator class]]
+   [[Bouncing interpolator. The value quickly reaches $[1.0] and then bounces back
+     a number of times before stopping at $[1.0].
+
+     The number of bounces and how far it goes back on every bounce can be customized.
+   ]]
    data: Efl_Bounce_Interpolator_Data;
    methods {
-      @property factors {
-         [[Factors property]]
+      @property bounces {
+         [[Customize the number of bounces.]]
          set {
          }
          get {
          }
          values {
-            factor1: double; [[First factor of the interpolation function.]]
-            factor2: double; [[Second factor of the interpolation function.]]
+            bounces: int; [[Number of bounces before stopping.]]
+         }
+      }
+      @property rigidness {
+         [[Customize the rigidness.]]
+         set {
+         }
+         get {
+         }
+         values {
+            rigidness: double; [[How much energy is lost on every bounce.
+                                 Higher numbers result in smaller bounces (lesser bounciness).]]
          }
       }
    }

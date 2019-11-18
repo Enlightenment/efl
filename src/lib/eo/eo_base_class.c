@@ -40,7 +40,10 @@ typedef struct
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
    Eina_Hash                 *providers;
+   Eina_Hash                 *schedulers;
 } Efl_Object_Extension;
+
+#define EFL_OBJECT_EVENT_CALLBACK(Event) Eina_Bool event_cb_##Event : 1;
 
 struct _Efl_Object_Data
 {
@@ -53,19 +56,27 @@ struct _Efl_Object_Data
 
    Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
+#ifdef EFL64
+   uint64_t                   callbacks_mask;
+#else
+   uint32_t                   callbacks_mask;
+#endif
    Eina_Inlist               *pending_futures;
    unsigned int               callbacks_count;
 
    unsigned short             event_freeze_count;
-   unsigned short             event_cb_efl_event_callback_add_count;
-   unsigned short             event_cb_efl_event_callback_del_count;
-   unsigned short             event_cb_efl_event_del_count;
-   unsigned short             event_cb_efl_event_noref_count;
-   unsigned short             event_cb_efl_event_invalidate_count;
+
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_CALLBACK_ADD);
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_CALLBACK_DEL);
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_DEL);
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_NOREF);
+
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_INVALIDATE);
+   EFL_OBJECT_EVENT_CALLBACK(EFL_EVENT_DESTRUCT); // No proper count: minor optimization triggered at destruction only
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
+
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
-   Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
 };
 
 typedef enum
@@ -150,7 +161,8 @@ _efl_object_extension_noneed(Efl_Object_Data *pd)
        (ext->generic_data) ||
        (ext->wrefs) ||
        (ext->composite_parent) ||
-       (ext->providers)) return;
+       (ext->providers) ||
+       (ext->schedulers)) return;
    _efl_object_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -164,6 +176,12 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
      {
         eina_hash_free(pd->ext->providers);
         pd->ext->providers = NULL;
+        _efl_object_extension_noneed(pd);
+     }
+   if (pd->ext && pd->ext->schedulers)
+     {
+        eina_hash_free(pd->ext->schedulers);
+        pd->ext->schedulers = NULL;
         _efl_object_extension_noneed(pd);
      }
 
@@ -1159,7 +1177,6 @@ _legacy_events_hash_free_cb(void *_desc)
 }
 
 /* EOF Legacy */
-
 struct _Eo_Callback_Description
 {
    union
@@ -1179,6 +1196,7 @@ struct _Eo_Callback_Description
 
 static Eina_Mempool *_eo_callback_mempool = NULL;
 static Eina_Mempool *_efl_pending_future_mempool = NULL;
+static Eina_Mempool *_efl_future_scheduler_entry_mempool = NULL;
 
 static void
 _eo_callback_free(Eo_Callback_Description *cb)
@@ -1209,58 +1227,92 @@ _efl_pending_future_new(void)
 #define CB_COUNT_INC(cnt) do { if ((cnt) != 0xffff) (cnt)++; } while(0)
 #define CB_COUNT_DEC(cnt) do { if ((cnt) != 0xffff) (cnt)--; } while(0)
 
+static inline unsigned char
+_pointer_hash(const uintptr_t val)
+{
+   static unsigned char shift = 0;
+
+   /* Sadly LLVM doesn't have log2 in its compile time optimization. So
+      we can not use static const here for portability sake. */
+   if (EINA_UNLIKELY((!shift)))
+     shift = (unsigned char) log2(1 + sizeof (Efl_Event_Description));
+#ifdef EFL64
+   return (unsigned char)(((val) >> shift) & 0x3F);
+#else
+   return (unsigned char)(((val) >> shift) & 0x1F);
+#endif
+}
+
+#define EFL_OBJECT_EVENT_CB_INC(Obj, It, Pd, Event, Update_Hash)        \
+  if (It->desc == Event && !Pd->event_cb_##Event)                       \
+    {                                                                   \
+       Update_Hash = EINA_FALSE;                                        \
+       Pd->event_cb_##Event = EINA_TRUE;                                \
+    }
+
+#define EFL_OBJECT_EVENT_CB_DEC(Obj, It, Pd, Event)     \
+  if (It->desc == Event && Pd->event_cb_##Event)        \
+    {                                                   \
+       if (!efl_event_callback_count(Obj, Event))       \
+         Pd->event_cb_##Event = EINA_FALSE;             \
+    }
+
 static inline void
 _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
-   if      (it->desc == EFL_EVENT_CALLBACK_ADD)
-     CB_COUNT_INC(pd->event_cb_efl_event_callback_add_count);
-   else if (it->desc == EFL_EVENT_CALLBACK_DEL)
-     CB_COUNT_INC(pd->event_cb_efl_event_callback_del_count);
-   else if (it->desc == EFL_EVENT_DEL)
-     CB_COUNT_INC(pd->event_cb_efl_event_del_count);
-   else if (it->desc == EFL_EVENT_NOREF)
+   Eina_Bool update_hash = EINA_TRUE;
+
+   EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_ADD, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_CALLBACK_DEL, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DEL, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_INVALIDATE, update_hash)
+   else EFL_OBJECT_EVENT_CB_INC(obj_id, it, pd, EFL_EVENT_DESTRUCT, update_hash)
+   else if (it->desc == EFL_EVENT_NOREF && !pd->event_cb_EFL_EVENT_NOREF)
      {
-        if (pd->event_cb_efl_event_noref_count == 0)
+        update_hash = EINA_FALSE;
+
+        if (efl_event_callback_count(obj_id, EFL_EVENT_NOREF) > 0)
           {
              EO_OBJ_POINTER_RETURN(obj_id, obj);
              obj->noref_event = EINA_TRUE;
              EO_OBJ_DONE(obj_id);
-          }
 
-        CB_COUNT_INC(pd->event_cb_efl_event_noref_count);
+             pd->event_cb_EFL_EVENT_NOREF = EINA_TRUE;
+          }
      }
-   else if (it->desc == EFL_EVENT_INVALIDATE)
-     CB_COUNT_INC(pd->event_cb_efl_event_invalidate_count);
-   else if (it->desc == EFL_EVENT_DESTRUCT)
-     pd->has_destroyed_event_cb = EINA_TRUE;
    else if (it->desc == EFL_EVENT_OWNERSHIP_SHARED || it->desc == EFL_EVENT_OWNERSHIP_UNIQUE)
      {
         EO_OBJ_POINTER_RETURN(obj_id, obj);
         obj->ownership_track = EINA_TRUE;
         EO_OBJ_DONE(obj_id);
      }
+
+   if (update_hash)
+     {
+        unsigned char event_hash;
+
+        event_hash = _pointer_hash((uintptr_t) it->desc);
+
+        pd->callbacks_mask |= 1ULL << event_hash;
+     }
 }
 
 static inline void
 _special_event_count_dec(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
-   if      (it->desc == EFL_EVENT_CALLBACK_ADD)
-     CB_COUNT_DEC(pd->event_cb_efl_event_callback_add_count);
-   else if (it->desc == EFL_EVENT_CALLBACK_DEL)
-     CB_COUNT_DEC(pd->event_cb_efl_event_callback_del_count);
-   else if (it->desc == EFL_EVENT_DEL)
-     CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
-   else if (it->desc == EFL_EVENT_INVALIDATE)
-     CB_COUNT_DEC(pd->event_cb_efl_event_invalidate_count);
-   else if (it->desc == EFL_EVENT_NOREF)
+   EFL_OBJECT_EVENT_CB_DEC(obj_id, it, pd, EFL_EVENT_CALLBACK_ADD)
+   else EFL_OBJECT_EVENT_CB_DEC(obj_id, it, pd, EFL_EVENT_CALLBACK_DEL)
+   else EFL_OBJECT_EVENT_CB_DEC(obj_id, it, pd, EFL_EVENT_DEL)
+   else EFL_OBJECT_EVENT_CB_DEC(obj_id, it, pd, EFL_EVENT_INVALIDATE)
+   else if (it->desc == EFL_EVENT_NOREF && pd->event_cb_EFL_EVENT_NOREF)
      {
-        CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
-
-        if (pd->event_cb_efl_event_noref_count == 0)
+        if (efl_event_callback_count(obj_id, EFL_EVENT_NOREF) == 0)
           {
              EO_OBJ_POINTER_RETURN(obj_id, obj);
              obj->noref_event = EINA_FALSE;
              EO_OBJ_DONE(obj_id);
+
+             pd->event_cb_EFL_EVENT_NOREF = EINA_FALSE;
           }
      }
 }
@@ -1269,17 +1321,9 @@ _special_event_count_dec(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
 static void
 _eo_callback_remove(Eo *obj, Efl_Object_Data *pd, Eo_Callback_Description **cb)
 {
+   Eo_Callback_Description *tmp = *cb;
    unsigned int length;
    const Efl_Callback_Array_Item *it;
-
-   if ((*cb)->func_array)
-     {
-        for (it = (*cb)->items.item_array; it->func; it++)
-          _special_event_count_dec(obj, pd, it);
-     }
-   else _special_event_count_dec(obj, pd, &((*cb)->items.item));
-
-   _eo_callback_free(*cb);
 
    length = pd->callbacks_count - (cb - pd->callbacks);
    if (length > 1)
@@ -1293,6 +1337,15 @@ _eo_callback_remove(Eo *obj, Efl_Object_Data *pd, Eo_Callback_Description **cb)
         free(pd->callbacks);
         pd->callbacks = NULL;
      }
+
+   if (tmp->func_array)
+     {
+        for (it = tmp->items.item_array; it->func; it++)
+          _special_event_count_dec(obj, pd, it);
+     }
+   else _special_event_count_dec(obj, pd, &(tmp->items.item));
+
+   _eo_callback_free(tmp);
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
@@ -1307,11 +1360,12 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    eina_freeq_ptr_main_add(pd->callbacks, free, 0);
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
-   pd->has_destroyed_event_cb = EINA_FALSE;
-   pd->event_cb_efl_event_callback_add_count = 0;
-   pd->event_cb_efl_event_callback_del_count = 0;
-   pd->event_cb_efl_event_del_count = 0;
-   pd->event_cb_efl_event_noref_count = 0;
+   pd->event_cb_EFL_EVENT_DESTRUCT = EINA_FALSE;
+   pd->event_cb_EFL_EVENT_CALLBACK_ADD = EINA_FALSE;
+   pd->event_cb_EFL_EVENT_CALLBACK_DEL = EINA_FALSE;
+   pd->event_cb_EFL_EVENT_DEL = EINA_FALSE;
+   pd->event_cb_EFL_EVENT_NOREF = EINA_FALSE;
+   pd->event_cb_EFL_EVENT_INVALIDATE = EINA_FALSE;
 }
 
 static void
@@ -1450,6 +1504,29 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    const Efl_Callback_Array_Item_Full arr[] =
      { {desc, priority, func, (void *)user_data}, {NULL, 0, NULL, NULL}};
    Eo_Callback_Description *cb = _eo_callback_new();
+#ifdef EO_DEBUG
+   unsigned int idx, r = 0, entries = 0;
+
+   for (idx = pd->callbacks_count ; idx > 0; idx--)
+     {
+        Eo_Callback_Description **cb;
+
+        cb = pd->callbacks + idx - 1;
+        if (!(*cb)->func_array)
+          {
+             if (((*cb)->items.item.desc == desc) &&
+                 ((*cb)->items.item.func == func) &&
+                 ((*cb)->priority == priority) &&
+                 ((*cb)->generation == _efl_event_generation(pd)))
+               r++;
+          }
+        entries++;
+     }
+   if (r > 1) INF("Object '%s' got %i callback with event '%s' registered.",
+                  efl_debug_name_get(obj), r, desc->name);
+   if (entries > 10) INF("Object '%s' got %i callbacks.",
+                         efl_debug_name_get(obj), entries);
+#endif
 
    // very unlikely so improve l1 instr cache by using goto
    if (EINA_UNLIKELY(!cb || !desc || !func)) goto err;
@@ -1462,8 +1539,6 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
 
    _eo_callbacks_sorted_insert(pd, cb);
    _special_event_count_inc(obj, pd, &(cb->items.item));
-   if (EINA_UNLIKELY(desc == EFL_EVENT_DESTRUCT))
-     pd->has_destroyed_event_cb = EINA_TRUE;
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
@@ -1542,6 +1617,7 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    Efl_Callback_Array_Item_Full *ev_array;
 #ifdef EO_DEBUG
    const Efl_Callback_Array_Item *prev;
+   unsigned int idx, r = 0, entries = 0;
 #endif
 
    // very unlikely so improve l1 instr cache by using goto
@@ -1566,18 +1642,43 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    cb->generation = _efl_event_generation(pd);
    if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
 
+#ifdef EO_DEBUG
+   for (idx = pd->callbacks_count ; idx > 0; idx--)
+     {
+        Eo_Callback_Description **cb;
+
+        cb = pd->callbacks + idx - 1;
+        if ((*cb)->func_array)
+          {
+             if (((*cb)->items.item_array == array) &&
+                 ((*cb)->priority == priority) &&
+                 ((*cb)->generation == _efl_event_generation(pd)))
+               r++;
+          }
+        entries++;
+     }
+   if (r > 1)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        Eina_Bool first = EINA_TRUE;
+
+        for (it = array; it->func; it++)
+          {
+             if (first) eina_strbuf_append(buf, it->desc->name);
+             else eina_strbuf_append_printf(buf, ", %s", it->desc->name);
+             first = EINA_FALSE;
+          }
+        INF("Object '%s' got %i callback with events array %s registered.",
+            efl_debug_name_get(obj), r, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+   if (entries > 10) INF("Object '%s' got %i callbacks.",
+                         efl_debug_name_get(obj), entries);
+#endif
+
    _eo_callbacks_sorted_insert(pd, cb);
    for (it = cb->items.item_array; it->func; it++)
      _special_event_count_inc(obj, pd, it);
-   if (!pd->has_destroyed_event_cb)
-     {
-        for (it = cb->items.item_array; it->func; it++)
-          if (it->desc == EFL_EVENT_DESTRUCT)
-            {
-               pd->has_destroyed_event_cb = EINA_TRUE;
-               break;
-            }
-     }
 
    num = 0;
    for (it = cb->items.item_array; it->func; it++) num++;
@@ -1656,6 +1757,224 @@ EOAPI EFL_FUNC_BODYV(efl_event_callback_array_del,
                      const Efl_Callback_Array_Item *array,
                      const void *user_data);
 
+typedef struct _Efl_Future_Scheduler Efl_Future_Scheduler;
+typedef struct _Efl_Future_Scheduler_Entry Efl_Future_Scheduler_Entry;
+
+struct _Efl_Future_Scheduler
+{
+   Eina_Future_Scheduler scheduler;
+
+   const Efl_Callback_Array_Item *array;
+   const Eo *self;
+
+   Eina_List *futures;
+
+   Eina_Bool listener : 1;
+};
+
+struct _Efl_Future_Scheduler_Entry
+{
+   Eina_Future_Schedule_Entry base;
+   Eina_Future_Scheduler_Cb cb;
+   Eina_Future *future;
+   Eina_Value value;
+};
+
+static Eina_Trash *schedulers_trash = NULL;
+static unsigned char schedulers_count = 0;
+
+static void
+_future_scheduler_cleanup(Efl_Object_Data *pd)
+{
+   if (eina_hash_population(pd->ext->schedulers)) return ;
+
+   eina_hash_free(pd->ext->schedulers);
+   pd->ext->schedulers = NULL;
+   _efl_object_extension_noneed(pd);
+}
+
+static void
+_futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Future_Scheduler *sched = data;
+   Eina_List *entries = sched->futures;
+   Efl_Future_Scheduler_Entry *entry;
+
+   sched->futures = NULL;
+
+   efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
+   sched->listener = EINA_FALSE;
+
+   // Now trigger callbacks
+   EINA_LIST_FREE(entries, entry)
+     {
+        entry->cb(entry->future, entry->value);
+        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+     }
+}
+
+static void
+_futures_cancel_cb(void *data)
+{
+   Efl_Future_Scheduler *sched = data;
+   Eina_List *entries = sched->futures;
+   Efl_Future_Scheduler_Entry *entry;
+
+   efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
+   sched->listener = EINA_FALSE;
+   sched->futures = NULL;
+
+   EINA_LIST_FREE(entries, entry)
+     {
+        eina_future_cancel(entry->future);
+        eina_value_flush(&entry->value);
+        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+     }
+
+   if (schedulers_count > 8)
+     {
+        free(sched);
+     }
+   else
+     {
+        eina_trash_push(&schedulers_trash, sched);
+        schedulers_count++;
+     }
+}
+
+static Eina_Future_Schedule_Entry *
+_efl_event_future_scheduler(Eina_Future_Scheduler *s_sched,
+                            Eina_Future_Scheduler_Cb cb,
+                            Eina_Future *future,
+                            Eina_Value value)
+{
+   Efl_Future_Scheduler *sched = (Efl_Future_Scheduler *)s_sched;
+   Efl_Future_Scheduler_Entry *entry;
+
+   entry = eina_mempool_malloc(_efl_future_scheduler_entry_mempool, sizeof(*entry));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(entry, NULL);
+
+   entry->base.scheduler = &sched->scheduler;
+   entry->cb = cb;
+   entry->future = future;
+   entry->value = value;
+
+   if (!sched->listener)
+     {
+        efl_event_callback_array_add((Eo *) sched->self, sched->array, sched);
+        sched->listener = EINA_TRUE;
+     }
+
+   sched->futures = eina_list_append(sched->futures, entry);
+   return &entry->base;
+}
+
+static void
+_efl_event_future_recall(Eina_Future_Schedule_Entry *s_entry)
+{
+   Efl_Future_Scheduler_Entry *entry = (Efl_Future_Scheduler_Entry *)s_entry;
+   Efl_Future_Scheduler *sched;
+   Eina_List *lookup;
+
+   sched = (Efl_Future_Scheduler *) entry->base.scheduler;
+
+   lookup = eina_list_data_find_list(sched->futures, entry);
+   if (!lookup) return;
+
+   sched->futures = eina_list_remove_list(sched->futures, lookup);
+   if (!sched->futures)
+     {
+        Efl_Object_Data *pd = efl_data_scope_get(sched->self, EFL_OBJECT_CLASS);
+
+        _future_scheduler_cleanup(pd);
+     }
+
+   eina_value_flush(&entry->value);
+   eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+}
+
+EOLIAN static Eina_Future_Scheduler *
+_efl_object_event_future_scheduler_get(const Eo *obj, Efl_Object_Data *pd, Efl_Callback_Array_Item *array)
+{
+   Efl_Object_Extension *ext;
+   Efl_Future_Scheduler *sched;
+   unsigned int i;
+
+   if (!array) return NULL;
+
+   ext = _efl_object_extension_need(pd);
+
+   // First lookup for an existing scheduler that match the provided array
+   if (!ext->schedulers) ext->schedulers = eina_hash_pointer_new(_futures_cancel_cb);
+   sched = eina_hash_find(ext->schedulers, &array);
+   if (sched) return &sched->scheduler;
+
+   // Define all the callback in the array to point to our internal callback,
+   // making the array ready to use.
+   for (i = 0; array[i].desc; i++)
+     array[i].func = _futures_dispatch_cb;
+
+   if (schedulers_count)
+     {
+        // Take one out of the trash for faster cycling
+        sched = eina_trash_pop(&schedulers_trash);
+        schedulers_count--;
+     }
+   else
+     {
+        // Need to allocate a new scheduler as none are on standby.
+        sched = calloc(1, sizeof (Efl_Future_Scheduler));
+     }
+   sched->scheduler.schedule = _efl_event_future_scheduler;
+   sched->scheduler.recall = _efl_event_future_recall;
+   sched->array = array;
+   sched->self = obj;
+
+   eina_hash_add(ext->schedulers, &array, sched);
+
+   return &sched->scheduler;
+}
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_event_future_scheduler_get,
+                           Eina_Future_Scheduler *, 0, EFL_FUNC_CALL(array),
+                           Efl_Callback_Array_Item *array);
+
+EOAPI unsigned int
+_efl_object_event_callback_count(const Eo *obj EINA_UNUSED,
+                                 Efl_Object_Data *pd,
+                                 const Efl_Event_Description *desc)
+{
+   unsigned int r = 0;
+   unsigned int idx;
+
+   for (idx = pd->callbacks_count ; idx > 0; idx--)
+     {
+        Eo_Callback_Description **cb;
+
+        cb = pd->callbacks + idx - 1;
+
+        if ((*cb)->func_array)
+          {
+             const Efl_Callback_Array_Item *it;
+
+             for (it = (*cb)->items.item_array; it->func; it++)
+               {
+                  if (it->desc > desc) break;
+                  if (it->desc == desc) r++;
+               }
+          }
+        else
+          {
+             if ((*cb)->items.item.desc == desc) r++;
+          }
+     }
+   return r;
+}
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_event_callback_count,
+                           unsigned int, 0, EFL_FUNC_CALL(desc),
+                           const Efl_Event_Description *desc);
+
 static Eina_Bool
 _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, Eina_Bool legacy_compare)
 {
@@ -1664,6 +1983,13 @@ _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, E
      return (a == b);
    return !strcmp(a->name, b->name);
 }
+
+#define EFL_OBJECT_EVENT_CALLBACK_BLOCK(Pd, Desc, Event, Need_Hash)     \
+  if (Desc == Event)                                                    \
+    {                                                                   \
+       if (!(Pd->event_cb_##Event)) return EINA_TRUE;                   \
+       Need_Hash = EINA_FALSE;                                          \
+    }                                                                   \
 
 static inline Eina_Bool
 _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
@@ -1682,18 +2008,24 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
       .inserted_before = 0,
       .generation = 1,
    };
+   Eina_Bool need_hash = EINA_TRUE;
 
-   if (pd->callbacks_count == 0) return EINA_FALSE;
-   else if ((desc == EFL_EVENT_CALLBACK_ADD) &&
-            (pd->event_cb_efl_event_callback_add_count == 0)) return EINA_FALSE;
-   else if ((desc == EFL_EVENT_CALLBACK_DEL) &&
-            (pd->event_cb_efl_event_callback_del_count == 0)) return EINA_FALSE;
-   else if ((desc == EFL_EVENT_DEL) &&
-            (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
-   else if ((desc == EFL_EVENT_INVALIDATE) &&
-            (pd->event_cb_efl_event_invalidate_count == 0)) return EINA_FALSE;
-   else if ((desc == EFL_EVENT_NOREF) &&
-            (pd->event_cb_efl_event_noref_count == 0)) return EINA_FALSE;
+   if (pd->callbacks_count == 0) return EINA_TRUE;
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_ADD, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_CALLBACK_DEL, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DEL, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_INVALIDATE, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_NOREF, need_hash)
+   else EFL_OBJECT_EVENT_CALLBACK_BLOCK(pd, desc, EFL_EVENT_DESTRUCT, need_hash)
+
+   if (EINA_LIKELY(!legacy_compare && need_hash))
+     {
+        unsigned char event_hash;
+
+        event_hash = _pointer_hash((uintptr_t) desc);
+        if (!(pd->callbacks_mask & (1ULL << event_hash)))
+          return EINA_TRUE;
+     }
 
    if (pd->event_frame)
      frame.generation = ((Efl_Event_Callback_Frame*)pd->event_frame)->generation + 1;
@@ -1742,6 +2074,7 @@ restart_back:
 
                        // Handle nested restart of walking list
                        if (lookup) lookup->current = idx - 1;
+
                        it->func((void *) (*cb)->func_data, &ev);
                        /* Abort callback calling if the func says so. */
                        if (pd->callback_stopped)
@@ -1765,6 +2098,7 @@ restart_back:
 
                   // Handle nested restart of walking list
                   if (lookup) lookup->current = idx - 1;
+
                   (*cb)->items.item.func((void *) (*cb)->func_data, &ev);
                   /* Abort callback calling if the func says so. */
                   if (pd->callback_stopped)
@@ -1858,7 +2192,6 @@ _efl_event_forwarder_callback(void *data, const Efl_Event *event)
    Eina_Bool ret = EINA_FALSE;
 
    ret = efl_event_callback_call(new_obj, event->desc, event->info);
-
    if (!ret)
      {
         efl_event_callback_stop(event->object);
@@ -2266,7 +2599,7 @@ err_parent_back:
    // this isn't 100% correct, as the object is still "slightly" alive at this
    // point (so efl_destructed_is() returns false), but triggering the
    // "destruct" event here is the simplest, safest solution.
-   if (EINA_UNLIKELY(pd->has_destroyed_event_cb))
+   if (EINA_UNLIKELY(pd->event_cb_EFL_EVENT_DESTRUCT))
      _event_callback_call(obj, pd, EFL_EVENT_DESTRUCT, NULL, EINA_FALSE);
 
    // remove generic data after this final event, in case they are used in a cb
@@ -2367,12 +2700,17 @@ _efl_object_class_constructor(Efl_Class *klass EINA_UNUSED)
       eina_mempool_add("chained_mempool", NULL, NULL,
                        sizeof(Efl_Future_Pending), 256);
 
+   _efl_future_scheduler_entry_mempool =
+     eina_mempool_add("chained_mempool", NULL, NULL,
+                      sizeof(Efl_Future_Scheduler_Entry), 256);
+
    _eo_nostep_alloc = !!getenv("EO_NOSTEP_ALLOC");
 }
 
 EOLIAN static void
 _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
+   eina_mempool_del(_efl_future_scheduler_entry_mempool);
    eina_mempool_del(_efl_pending_future_mempool);
    eina_mempool_del(_eo_callback_mempool);
    eina_hash_free(_legacy_events_hash);
@@ -2385,6 +2723,8 @@ _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
    EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_object_event_callback_array_del), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call), \
+   EFL_OBJECT_OP_FUNC(efl_event_future_scheduler_get, _efl_object_event_future_scheduler_get), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_count, _efl_object_event_callback_count), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get), \
    EFL_OBJECT_OP_FUNC(efl_wref_add, _efl_object_wref_add), \
    EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_object_wref_del), \

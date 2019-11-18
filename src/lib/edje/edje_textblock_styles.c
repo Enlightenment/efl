@@ -52,6 +52,8 @@ _edje_format_parse(const char **s)
    return NULL;
 }
 
+#define _IS_STRINGS_EQUAL(str1, len1, str2, len2) (((len1)==(len2)) && !strncmp(str1, str2, len1))
+
 static void
 _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, Eina_Strbuf *result)
 {
@@ -68,11 +70,11 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
              const char *key = item;
              const char *val = pos + 1;
 
-             if (!strncmp(key, "font_source", key_len))
+             if (_IS_STRINGS_EQUAL(key, key_len, "font_source", 11))
                {
                   /* dont allow font sources */
                }
-             else if (!strncmp(key, "text_class", key_len))
+             else if (_IS_STRINGS_EQUAL(key, key_len, "text_class", 10))
                {
                   if (tag_ret)
                     tag_ret->text_class = eina_stringshare_add(val);
@@ -83,12 +85,12 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
                   free(item);
                   continue;
                }
-             else if (!strncmp(key, "font_size", key_len))
+             else if (_IS_STRINGS_EQUAL(key, key_len, "font_size", 9))
                {
                   if (tag_ret)
                     tag_ret->font_size = atof(val);
                }
-             else if (!strncmp(key, "font", key_len)) /* Fix fonts */
+             else if (_IS_STRINGS_EQUAL(key, key_len, "font", 4)) /* Fix fonts */
                {
                   if (tag_ret)
                     {

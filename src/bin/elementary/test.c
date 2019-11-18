@@ -397,7 +397,7 @@ void test_ui_spotlight_stack(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spotlight_plain(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spotlight_scroll(void *data, Evas_Object *obj, void *event_info);
 
-void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
+void test_ui_relative_container(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_collection_grid(void *data, Evas_Object *obj, void *event_info);
@@ -908,7 +908,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table", test_ui_table);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table (Linear API)", test_ui_table_linear);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table_Static", test_ui_table_static);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Container", test_ui_relative_container);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection List", test_efl_ui_collection_list);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection Grid", test_efl_ui_collection_grid);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection_View", test_efl_ui_collection_view);

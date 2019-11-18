@@ -43,7 +43,7 @@
              "Efl.Ui.Tab_Page",
              "Efl.Ui.Timepicker",
              "Efl.Ui.Navigation_Bar",
-             "Efl.Ui.Relative_Layout",
+             "Efl.Ui.Relative_Container",
              "Efl.Ui.Animation_View",
              "Efl.Ui.Table",
              "Efl.Ui.Flip"
@@ -118,9 +118,76 @@ EFL_START_TEST(no_err_on_shutdown)
 }
 EFL_END_TEST
 
+static Eina_Bool
+is_this_visible(Eo *obj)
+{
+   Eina_Size2D sz;
+
+   if (!efl_gfx_entity_visible_get(obj))
+     return EINA_FALSE;
+
+   sz = efl_gfx_entity_size_get(obj);
+   if ((!sz.w) || (!sz.h)) return EINA_FALSE;
+
+   for (Eo *clipper = efl_canvas_object_clipper_get(obj); clipper ; clipper = efl_canvas_object_clipper_get(clipper))
+     {
+        int r,g,b,a;
+
+        efl_gfx_color_get(clipper, &r, &g, &b, &a);
+
+        if (!efl_gfx_entity_visible_get(clipper)) return EINA_FALSE;
+
+        if (r == 0 && g == 0 && b == 0) return EINA_FALSE;
+        if (a == 0) return EINA_FALSE;
+        sz = efl_gfx_entity_size_get(clipper);
+        if ((!sz.w) || (!sz.h)) return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+EFL_START_TEST(correct_visibility_setting)
+{
+   Eo *checker = NULL;
+
+   if (efl_isa(widget, EFL_UI_FLIP_CLASS)) return; //FIXME Flip needs more work for this. However, flip should be redone as a spotlight manager, When this is done, we can add these classes to the check here.
+
+   efl_gfx_entity_size_set(widget, EINA_SIZE2D(200, 200));
+   efl_gfx_hint_size_min_set(widget, EINA_SIZE2D(200, 200));
+   efl_gfx_entity_visible_set(widget, EINA_TRUE);
+   checker = create_test_widget();
+   efl_gfx_hint_size_min_set(checker, EINA_SIZE2D(100, 100));
+
+   if (efl_isa(widget, EFL_PACK_INTERFACE))
+     {
+         efl_pack(widget, checker);
+     }
+   else if (efl_isa(widget, EFL_CONTENT_INTERFACE))
+     {
+        efl_content_set(widget, checker);
+     }
+   else
+     return;
+
+   get_me_to_those_events(widget);
+
+   if (checker)
+     ck_assert_int_eq(is_this_visible(checker), EINA_TRUE);
+
+   efl_gfx_entity_visible_set(widget, EINA_FALSE);
+   get_me_to_those_events(widget);
+   if (checker)
+     ck_assert_int_eq(is_this_visible(checker), EINA_FALSE);
+
+   efl_gfx_entity_visible_set(widget, EINA_TRUE);
+   get_me_to_those_events(widget);
+   if (checker)
+     ck_assert_int_eq(is_this_visible(checker), EINA_TRUE);
+}
+EFL_END_TEST
 void
 efl_ui_widget_behavior_test(TCase *tc)
 {
    tcase_add_test(tc, no_leaking_canvas_object);
    tcase_add_test(tc, no_err_on_shutdown);
+   tcase_add_test(tc, correct_visibility_setting);
 }

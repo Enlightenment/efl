@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 #define CODE_ANALYSIS
@@ -11,6 +26,7 @@ using System.Security.Permissions;
 using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Globalization;
 
 using static Eina.EinaNative.UnsafeNativeMethods;
 using static Eina.TraitFunctions;
@@ -881,11 +897,15 @@ public class ValueTypeBox
     }
 
     public static implicit operator ValueTypeBox(ValueType v)
-    {
-        return new ValueTypeBox(v);
-    }
+        => FromValueType(v);
+
+    public static ValueTypeBox FromValueType(ValueType v)
+        => new ValueTypeBox(v);
 
     public static implicit operator ValueType(ValueTypeBox box)
+        => ToValueType(box);
+
+    public static ValueType ToValueType(ValueTypeBox box)
     {
         if (box == null)
         {
@@ -1278,7 +1298,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             }
 
             Type[] genericArguments = objType.GetGenericArguments();
-            if (genericArguments.Count() != 1)
+            if (genericArguments.Length != 1)
             {
                 throw new ArgumentException($"Unsupported type for direct construction: {objType}");
             }
@@ -1549,30 +1569,33 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static implicit operator ValueNative(Value v)
-    {
-        return v.GetNative();
-    }
+    public static implicit operator ValueNative(Value v) => ToValueNative(v);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static ValueNative ToValueNative(Value v) => v.GetNative();
 
     /// <summary>Implicit conversion from native struct representation to managed wrapper.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static implicit operator Value(ValueNative v)
-    {
-        return new Value(v);
-    }
+    public static implicit operator Value(ValueNative v) => FromValueNative(v);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static Value FromValueNative(ValueNative v) => new Value(v);
 
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(byte x)
+    public static implicit operator Value(byte x) => FromByte(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="byte" />
+    /// </summary>
+    /// <param name="x">The <see cref="byte" /> to be converted.</param>
+    public static Value FromByte(byte x)
     {
         var v = new Eina.Value(ValueType.Byte);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1580,13 +1603,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator byte(Value v)
+    public static implicit operator byte(Value v) => ToByte(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="byte" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static byte ToByte(Value v)
     {
         byte b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1594,13 +1621,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(sbyte x)
+    public static implicit operator Value(sbyte x) => FromSByte(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="sbyte" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="sbyte" /> to be converted.</param>
+    public static Value FromSByte(sbyte x)
     {
         var v = new Eina.Value(ValueType.SByte);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1608,13 +1639,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator sbyte(Value v)
+    public static implicit operator sbyte(Value v) => ToSByte(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="sbyte" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static sbyte ToSByte(Value v)
     {
         sbyte b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1622,13 +1657,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(short x)
+    public static implicit operator Value(short x) => FromInt16(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="short" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="short" /> to be converted.</param>
+    public static Value FromInt16(short x)
     {
         var v = new Eina.Value(ValueType.Short);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1636,13 +1675,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator short(Value v)
+    public static implicit operator short(Value v) => ToInt16(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="short" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static short ToInt16(Value v)
     {
         short b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1650,13 +1693,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(ushort x)
+    public static implicit operator Value(ushort x) => FromUInt16(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="ushort" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="ushort" /> to be converted.</param>
+    public static Value FromUInt16(ushort x)
     {
         var v = new Eina.Value(ValueType.UShort);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1664,13 +1711,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator ushort(Value v)
+    public static implicit operator ushort(Value v) => ToUInt16(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="ushort" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static ushort ToUInt16(Value v)
     {
         ushort b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1678,27 +1729,36 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(int x)
+    public static implicit operator Value(int x) => FromInt32(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="int" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="int" /> to be converted.</param>
+    public static Value FromInt32(int x)
     {
         var v = new Eina.Value(ValueType.Int32);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
+
     }
 
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator int(Value v)
+    public static implicit operator int(Value v) => ToInt32(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="int" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static int ToInt32(Value v)
     {
         int b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1706,13 +1766,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(uint x)
+    public static implicit operator Value(uint x) => FromUInt32(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="uint" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="uint" /> to be converted.</param>
+    public static Value FromUInt32(uint x)
     {
         var v = new Eina.Value(ValueType.UInt32);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1720,13 +1784,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator uint(Value v)
+    public static implicit operator uint(Value v) => ToUInt32(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="uint" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static uint ToUInt32(Value v)
     {
         uint b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1734,13 +1802,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(long x)
+    public static implicit operator Value(long x) => FromInt64(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="long" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="long" /> to be converted.</param>
+    public static Value FromInt64(long x)
     {
         var v = new Eina.Value(ValueType.Long);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1748,13 +1820,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator long(Value v)
+    public static implicit operator long(Value v) => ToInt64(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="long" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static long ToInt64(Value v)
     {
         long b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1762,13 +1838,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(ulong x)
+    public static implicit operator Value(ulong x) => FromUInt64(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="ulong" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="ulong" /> to be converted.</param>
+    public static Value FromUInt64(ulong x)
     {
         var v = new Eina.Value(ValueType.ULong);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1776,13 +1856,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator ulong(Value v)
+    public static implicit operator ulong(Value v) => ToUInt64(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="ulong" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static ulong ToUInt64(Value v)
     {
         ulong b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1790,13 +1874,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(float x)
+    public static implicit operator Value(float x) => FromSingle(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="float" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="float" /> to be converted.</param>
+    public static Value FromSingle(float x)
     {
         var v = new Eina.Value(ValueType.Float);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1804,13 +1892,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator float(Value v)
+    public static implicit operator float(Value v) => ToSingle(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="float" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static float ToSingle(Value v)
     {
         float b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1818,13 +1910,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(double x)
+    public static implicit operator Value(double x) => FromDouble(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="double" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="double" /> to be converted.</param>
+    public static Value FromDouble(double x)
     {
         var v = new Eina.Value(ValueType.Double);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1832,13 +1928,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator double(Value v)
+    public static implicit operator double(Value v) => ToDouble(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="double" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static double ToDouble(Value v)
     {
         double b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1846,13 +1946,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator Value(string x)
+    public static implicit operator Value(string x) => FromString(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="string" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="string" /> to be converted.</param>
+    public static Value FromString(string x)
     {
         var v = new Eina.Value(ValueType.String);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1860,13 +1964,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Implicit conversion.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static implicit operator string(Value v)
+    public static implicit operator string(Value v) => ToString(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="string" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static string ToString(Value v)
     {
         string b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1994,26 +2102,34 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Explicit conversion from EFL objects.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static explicit operator Value(Efl.Object obj)
+    public static explicit operator Value(Efl.Object obj) => FromObject(obj);
+
+    /// <summary>
+    ///   Converts a <see cref="Efl.Object" /> to a <see cref="Value" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The <see cref="Efl.Object" /> to be converted.</param>
+    public static Value FromObject(Efl.Object obj)
     {
         var v = new Eina.Value(ValueType.Object);
-        if (!v.Set(obj))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(obj);
         return v;
     }
 
     /// <summary>Explicit conversion from Value to Efl.Objects.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static explicit operator Efl.Object(Value v)
+    public static explicit operator Efl.Object(Value v) => ToObject(v);
+
+    /// <summary>
+    ///   Converts a <see cref="Value" /> to a <see cref="Object" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static Efl.Object ToObject(Value v)
     {
         Efl.Object obj;
-        if (!v.Get(out obj))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out obj);
 
         return obj;
     }
@@ -2975,7 +3091,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_convert(this.Handle, destination.Handle);
     }
 
-    /// <summary>Compare two eina values.
+    /// <summary>Compare two <see cref="Eina.Value" />.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="other">The object to be compared to.</param>
@@ -2983,7 +3099,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// the <c>other</c>.</returns>
     public int CompareTo(Value other)
     {
-        if (other == null)
+        if (object.ReferenceEquals(other, null))
         {
             return 1;
         }
@@ -2993,15 +3109,21 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_compare_wrapper(this.Handle, other.Handle);
     }
 
-    /// <summary>Compare to other values.
+    /// <summary>Compare two values.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <param name="other">The object to be compared to.</param>
-    /// <returns><c>-1</c>, <c>0</c> or <c>1</c> if this value is respectively smaller than, equal to or greater than
-    /// the <c>other</c>.</returns>
-    public int Compare(Value other)
+    /// <param name="lhs">The left value.</param>
+    /// <param name="rhs">The right value.</param>
+    /// <returns><c>-1</c>, <c>0</c> or <c>1</c> if <c>lhs</c> is respectively
+    /// smaller than, equal to or greater than the <c>rhs</c>.</returns>
+    public static int Compare(Value lhs, Value rhs)
     {
-        return this.CompareTo(other);
+        if (object.ReferenceEquals(lhs, rhs))
+            return 0;
+        if (object.ReferenceEquals(lhs, null))
+            return -1;
+
+        return lhs.CompareTo(rhs);
     }
 
     /// <summary>Returns whether this value is equal to the given object.
@@ -3016,13 +3138,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             return false;
         }
 
-        Value v = obj as Value;
-        if (v == null)
-        {
-            return false;
-        }
-
-        return this.Equals(v);
+        return this.Equals(obj as Value);
     }
 
     /// <summary>Returns whether this value is equal to the given value.
@@ -3030,17 +3146,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// </summary>
     /// <param name="other">The value to be compared to.</param>
     /// <returns><c>true</c> if this value is equal to <c>other</c>.</returns>
-    public bool Equals(Value other)
-    {
-        try
-        {
-            return this.CompareTo(other) == 0;
-        }
-        catch (ObjectDisposedException)
-        {
-            return false;
-        }
-    }
+    public bool Equals(Value other) => this.CompareTo(other) == 0;
 
     /// <summary>Gets the hash code for this value.
     ///
@@ -3052,70 +3158,72 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return this.Handle.ToInt32();
     }
 
-    /// <summary>Returns whether both values are null or <c>x</c> is equal to <c>y</c>.
+    /// <summary>Returns whether both values are null or <c>lhs</c> is equal to <c>rhs</c>.
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if both parameters are <c>null</c> or if <c>x</c> is equal
-    /// to <c>y</c>.</returns>
-    public static bool operator==(Value x, Value y)
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if both parameters are <c>null</c> or if <c>lhs</c> is equal
+    /// to <c>lhs</c>.</returns>
+    public static bool operator==(Value lhs, Value rhs)
     {
-        if (object.ReferenceEquals(x, null))
-        {
-            return object.ReferenceEquals(y, null);
-        }
+        if (object.ReferenceEquals(lhs, null))
+            return  object.ReferenceEquals(rhs, null);
 
-        return x.Equals(y);
+        return lhs.Equals(rhs);
     }
 
-    /// <summary>Returns whether <c>x</c> is different from <c>y</c>.
+    /// <summary>Returns whether <c>lhs</c> is different from <c>rhs</c>.
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if <c>x</c> is different from <c>y</c>.</returns>
-    public static bool operator!=(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null))
-        {
-            return !object.ReferenceEquals(y, null);
-        }
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is different from <c>rhs</c>.</returns>
+    public static bool operator!=(Value lhs, Value rhs) => !(lhs == rhs);
 
-        return !x.Equals(y);
-    }
-
-    /// <summary>Returns whether <c>x</c> is greater than <c>y</c>.
+    /// <summary>Returns whether <c>lhs</c> is less than <c>rhs</c>.
     ///
     /// <para>If either parameter is <c>null</c>, <c>false</c> is returned.</para>
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if <c>x</c> is greater than <c>y</c>.</returns>
-    public static bool operator>(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
-        {
-            return false;
-        }
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is less than <c>rhs</c>.</returns>
+    public static bool operator<(Value lhs, Value rhs) => (Compare(lhs, rhs) < 0);
 
-        return x.CompareTo(y) > 0;
-    }
-
-    /// <summary>Returns whether <c>x</c> is smaller than <c>y</c>.
+    /// <summary>Returns whether <c>lhs</c> is greater than <c>rhs</c>.
     ///
     /// <para>If either parameter is <c>null</c>, <c>false</c> is returned.</para>
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if <c>x</c> is smaller than <c>y</c>.</returns>
-    public static bool operator<(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
-        {
-            return false;
-        }
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is greater than <c>rhs</c>.</returns>
+    public static bool operator>(Value lhs, Value rhs) => rhs < lhs;
 
-        return x.CompareTo(y) < 0;
-    }
+    /// <summary>
+    ///   Returns whether <c>lhs</c> is equal or less than <c>rhs</c>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// or less than <c>rhs</c>.</returns>
+    public static bool operator<=(Value lhs, Value rhs) => !(lhs > rhs);
+
+    /// <summary>
+    ///   Returns whether <c>lhs</c> is equal or greater than <c>rhs</c>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// or greater than <c>rhs</c>.</returns>
+    public static bool operator>=(Value lhs, Value rhs) => !(lhs < rhs);
 
 
     /// <summary>Converts value to string.
@@ -3176,69 +3284,69 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         {
             case ValueType.SByte:
                 {
-                    sbyte b = Convert.ToSByte(o);
+                    sbyte b = Convert.ToSByte(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_char(this.Handle, b);
                 }
 
             case ValueType.Byte:
                 {
-                    byte b = Convert.ToByte(o);
+                    byte b = Convert.ToByte(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_uchar(this.Handle, b);
                 }
 
             case ValueType.Short:
                 {
-                    short b = Convert.ToInt16(o);
+                    short b = Convert.ToInt16(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_short(this.Handle, b);
                 }
 
             case ValueType.UShort:
                 {
-                    ushort b = Convert.ToUInt16(o);
+                    ushort b = Convert.ToUInt16(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_ushort(this.Handle, b);
                 }
 
             case ValueType.Int32:
                 {
-                    int x = Convert.ToInt32(o);
+                    int x = Convert.ToInt32(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_int(this.Handle, x);
                 }
 
             case ValueType.UInt32:
                 {
-                    uint x = Convert.ToUInt32(o);
+                    uint x = Convert.ToUInt32(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_uint(this.Handle, x);
                 }
 
             case ValueType.Long:
             case ValueType.Int64:
                 {
-                    long x = Convert.ToInt64(o);
+                    long x = Convert.ToInt64(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_long(this.Handle, x);
                 }
 
             case ValueType.ULong:
             case ValueType.UInt64:
                 {
-                    ulong x = Convert.ToUInt64(o);
+                    ulong x = Convert.ToUInt64(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_ulong(this.Handle, x);
                 }
 
             case ValueType.Float:
                 {
-                    float x = Convert.ToSingle(o);
+                    float x = Convert.ToSingle(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_float(this.Handle, x);
                 }
 
             case ValueType.Double:
                 {
-                    double x = Convert.ToDouble(o);
+                    double x = Convert.ToDouble(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_double(this.Handle, x);
                 }
 
             case ValueType.String:
                 {
-                    string x = Convert.ToString(o);
+                    string x = Convert.ToString(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_string(this.Handle, x);
                 }
             case ValueType.Object:
@@ -3363,42 +3471,48 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             {
                 case ValueType.SByte:
                     {
-                        sbyte v = Convert.ToSByte(value);
+                        sbyte v = Convert.ToSByte(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_char(this.Handle, i, v);
                         break;
                     }
 
                 case ValueType.Byte:
                     {
-                        byte v = Convert.ToByte(value);
+                        byte v = Convert.ToByte(value,
+                                                CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_uchar(this.Handle, i, v);
                         break;
                     }
 
                 case ValueType.Short:
                     {
-                        short x = Convert.ToInt16(value);
+                        short x = Convert.ToInt16(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_short(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.UShort:
                     {
-                        ushort x = Convert.ToUInt16(value);
+                        ushort x = Convert.ToUInt16(value,
+                                                    CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_ushort(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Int32:
                     {
-                        int x = Convert.ToInt32(value);
+                        int x = Convert.ToInt32(value,
+                                                CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_int(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.UInt32:
                     {
-                        uint x = Convert.ToUInt32(value);
+                        uint x = Convert.ToUInt32(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_uint(this.Handle, i, x);
                         break;
                     }
@@ -3406,7 +3520,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 case ValueType.Long:
                 case ValueType.Int64:
                     {
-                        long x = Convert.ToInt64(value);
+                        long x = Convert.ToInt64(value,
+                                                 CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_long(this.Handle, i, x);
                         break;
                     }
@@ -3414,28 +3529,31 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 case ValueType.ULong:
                 case ValueType.UInt64:
                     {
-                        ulong x = Convert.ToUInt64(value);
+                        ulong x = Convert.ToUInt64(value,
+                                                   CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_ulong(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Float:
                     {
-                        float x = Convert.ToSingle(value);
+                        float x = Convert.ToSingle(value,
+                                                   CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_float(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Double:
                     {
-                        double x = Convert.ToDouble(value);
+                        double x = Convert.ToDouble(value, CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_double(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.String:
                     {
-                        string x = Convert.ToString(value);
+                        string x = Convert.ToString(value,
+                                                    CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_string(this.Handle, i, x);
                         break;
                     }

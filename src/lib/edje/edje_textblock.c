@@ -416,6 +416,84 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
      }
 }
 
+Eina_Bool
+_edje_part_textblock_style_text_set(Edje *ed,
+                                    Edje_Real_Part *ep,
+                                    Edje_Part_Description_Text *chosen_desc)
+{
+   const char *text = "";
+   const char *style = "";
+   Evas_Textblock_Style *stl = NULL;
+   const char *tmp;
+
+   if (chosen_desc->text.id_source >= 0)
+     {
+        Edje_Part_Description_Text *et;
+
+        ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
+
+        et = _edje_real_part_text_source_description_get(ep, NULL);
+        tmp = edje_string_get(&et->text.style);
+        if (tmp) style = tmp;
+     }
+   else
+     {
+        ep->typedata.text->source = NULL;
+
+        tmp = edje_string_get(&chosen_desc->text.style);
+        if (tmp) style = tmp;
+     }
+
+   if (chosen_desc->text.id_text_source >= 0)
+     {
+        Edje_Part_Description_Text *et;
+        Edje_Real_Part *rp;
+
+        ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+
+        et = _edje_real_part_text_text_source_description_get(ep, &rp);
+        text = edje_string_get(&et->text.text);
+
+        if (rp->typedata.text->text) text = rp->typedata.text->text;
+     }
+   else
+     {
+        ep->typedata.text->text_source = NULL;
+        text = NULL;
+        if (chosen_desc->text.domain)
+          {
+             if (!chosen_desc->text.text.translated)
+               chosen_desc->text.text.translated = _set_translated_string(ed, ep);
+             if (chosen_desc->text.text.translated)
+               text = chosen_desc->text.text.translated;
+          }
+
+        if (!text) text = edje_string_get(&chosen_desc->text.text);
+
+        if (ep->typedata.text->text) text = ep->typedata.text->text;
+     }
+
+   stl = _edje_textblock_style_get(ed, style);
+   if (stl)
+     {
+        if (evas_object_textblock_style_get(ep->object) != stl)
+          evas_object_textblock_style_set(ep->object, stl);
+        // FIXME: need to account for editing
+        if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+          {
+             // do nothing - should be done elsewhere
+          }
+        else
+          {
+             evas_object_textblock_text_markup_set(ep->object, text);
+          }
+
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 void
 _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    Edje *ed,
@@ -432,75 +510,14 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
    if (chosen_desc)
      {
         Evas_Coord tw, th;
-        const char *text = "";
-        const char *style = "";
-        Evas_Textblock_Style *stl = NULL;
-        const char *tmp;
-
-        if (chosen_desc->text.id_source >= 0)
-          {
-             Edje_Part_Description_Text *et;
-
-             ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
-
-             et = _edje_real_part_text_source_description_get(ep, NULL);
-             tmp = edje_string_get(&et->text.style);
-             if (tmp) style = tmp;
-          }
-        else
-          {
-             ep->typedata.text->source = NULL;
-
-             tmp = edje_string_get(&chosen_desc->text.style);
-             if (tmp) style = tmp;
-          }
-
-        if (chosen_desc->text.id_text_source >= 0)
-          {
-             Edje_Part_Description_Text *et;
-             Edje_Real_Part *rp;
-
-             ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
-
-             et = _edje_real_part_text_text_source_description_get(ep, &rp);
-             text = edje_string_get(&et->text.text);
-
-             if (rp->typedata.text->text) text = rp->typedata.text->text;
-          }
-        else
-          {
-             ep->typedata.text->text_source = NULL;
-             text = NULL;
-             if (chosen_desc->text.domain)
-               {
-                  if (!chosen_desc->text.text.translated)
-                    chosen_desc->text.text.translated = _set_translated_string(ed, ep);
-                  if (chosen_desc->text.text.translated)
-                    text = chosen_desc->text.text.translated;
-               }
-             if (!text)
-               text = edje_string_get(&chosen_desc->text.text);
-             if (ep->typedata.text->text) text = ep->typedata.text->text;
-          }
 
         if (ep->part->scale)
           evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
-        stl = _edje_textblock_style_get(ed, style);
-        if (stl)
+        //Gets textblock's style and text to set evas_object_textblock properties.
+        //If there is no style for it. don't need to calc.
+        if (_edje_part_textblock_style_text_set(ed, ep, chosen_desc))
           {
-             if (evas_object_textblock_style_get(ep->object) != stl)
-               evas_object_textblock_style_set(ep->object, stl);
-             // FIXME: need to account for editing
-             if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-               {
-                  // do nothing - should be done elsewhere
-               }
-             else
-               {
-                  evas_object_textblock_text_markup_set(ep->object, text);
-               }
-
              if ((chosen_desc->text.fit_x) || (chosen_desc->text.fit_y))
                {
                   double base_s = 1.0;

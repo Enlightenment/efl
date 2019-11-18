@@ -608,6 +608,10 @@ _efl_canvas_layout_efl_object_event_callback_priority_add(Eo *obj, Edje *pd, con
     {
        pd->has_recalc_event_cb = EINA_TRUE;
     }
+  else if (desc == EFL_CONTENT_EVENT_CONTENT_CHANGED)
+    {
+       pd->has_content_change_event_cb = EINA_TRUE;
+    }
 
   return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
 }
@@ -620,6 +624,10 @@ _efl_canvas_layout_efl_object_event_callback_array_priority_add(Eo *obj, Edje *p
         if (array[i].desc == EFL_LAYOUT_EVENT_RECALC)
           {
              pd->has_recalc_event_cb = EINA_TRUE;
+          }
+        else if (array[i].desc == EFL_CONTENT_EVENT_CONTENT_CHANGED)
+          {
+             pd->has_content_change_event_cb = EINA_TRUE;
           }
      }
    return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);

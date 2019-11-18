@@ -213,11 +213,11 @@ _eina_list_mempool_accounting_free(Eina_List_Accounting *accounting)
 }
 
 static inline Eina_List *
-_eina_list_mempool_list_new(EINA_UNUSED Eina_List *list)
+_eina_list_mempool_list_new(Eina_List *before, Eina_List *after)
 {
    Eina_List *tmp;
 
-   tmp = eina_mempool_malloc(_eina_list_mp, sizeof (Eina_List));
+   tmp = eina_mempool_malloc_near(_eina_list_mp, before, after, sizeof (Eina_List));
    if (!tmp)
      return NULL;
 #ifdef EINA_LIST_MAGIC
@@ -585,7 +585,7 @@ eina_list_append(Eina_List *list, const void *data)
 {
    Eina_List *l, *new_l;
 
-   new_l = _eina_list_mempool_list_new(list);
+   new_l = _eina_list_mempool_list_new(NULL, list);
    if (!new_l) return list;
 
    new_l->next = NULL;
@@ -619,7 +619,7 @@ eina_list_prepend(Eina_List *list, const void *data)
 {
    Eina_List *new_l;
 
-   new_l = _eina_list_mempool_list_new(list);
+   new_l = _eina_list_mempool_list_new(list, NULL);
    if (!new_l) return list;
 
    new_l->prev = NULL;
@@ -680,7 +680,7 @@ eina_list_append_relative_list(Eina_List *list,
    EINA_MAGIC_CHECK_LIST(relative, NULL);
 #endif
 
-   new_l = _eina_list_mempool_list_new(list);
+   new_l = _eina_list_mempool_list_new(relative, relative->next);
    if (!new_l) return list;
 
    new_l->next = relative->next;
@@ -733,7 +733,7 @@ eina_list_prepend_relative_list(Eina_List *list,
 #ifdef EINA_LIST_MAGIC
    EINA_MAGIC_CHECK_LIST(relative, NULL);
 #endif
-   new_l = _eina_list_mempool_list_new(list);
+   new_l = _eina_list_mempool_list_new(relative->prev, relative);
    if (!new_l) return list;
 
    new_l->prev = relative->prev;

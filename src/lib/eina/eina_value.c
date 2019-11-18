@@ -5664,7 +5664,7 @@ eina_value_copy(const Eina_Value *value, Eina_Value *copy)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
 
-   if (!memcmp(value, &_eina_value_empty, sizeof (Eina_Value)))
+   if (value->type == NULL)
      {
         memcpy(copy, &_eina_value_empty, sizeof (Eina_Value));
         return EINA_TRUE;

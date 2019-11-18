@@ -27,9 +27,12 @@ internal class ModelHelper
     static internal void SetProperties<T>(T o, Efl.IModel child)
     {
         var properties = typeof(T).GetProperties();
-        foreach(var prop in properties)
+        foreach (var prop in properties)
         {
-            child.SetProperty(prop.Name, ValueFromProperty(o, prop));
+            using (var tmp = ValueFromProperty(o, prop))
+            {
+                child.SetProperty(prop.Name, tmp);
+            }
         }
     }
 
@@ -37,7 +40,7 @@ internal class ModelHelper
     static internal void GetProperties<T>(T o, Efl.IModel child)
     {
         var properties = typeof(T).GetProperties();
-        foreach(var prop in properties)
+        foreach (var prop in properties)
         {
             using (var v = child.GetProperty(prop.Name))
             {
@@ -67,7 +70,7 @@ internal class ModelHelper
 /// </summary>
 /// <typeparam name="T">The enclosed C# model class with the properties to be added to the native model.</typeparam>
 [Efl.Eo.BindingEntity]
-public class UserModel<T> : Efl.MonoModelInternal, IDisposable
+public class UserModel<T> : Efl.MonoModelInternal
 {
    /// <summary>
    /// Creates a new root model.
@@ -79,16 +82,10 @@ public class UserModel<T> : Efl.MonoModelInternal, IDisposable
    public UserModel (Efl.Object parent = null) : base(Efl.MonoModelInternal.efl_mono_model_internal_class_get(), parent)
    {
      var properties = typeof(T).GetProperties();
-     foreach(var prop in properties)
+     foreach (var prop in properties)
      {
         AddProperty(prop.Name, Eina.ValueTypeBridge.GetManaged(prop.PropertyType));
      }
-   }
-
-   /// <summary>Disposes of this instance.</summary>
-   ~UserModel()
-   {
-       Dispose(false);
    }
 
    /// <summary>Adds a new child to the model wrapping the properties of <c>o</c>

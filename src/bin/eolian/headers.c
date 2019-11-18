@@ -168,7 +168,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
      eina_strbuf_append(buf, "void");
 
    eina_strbuf_append(buf, ")");
-   if (!eolian_function_return_allow_unused(fid, ftype))
+   if (!eolian_function_return_allow_unused(fid, ftype) || return_move)
      {
         if (!flagbuf)
           flagbuf = eina_strbuf_new();

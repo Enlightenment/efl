@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -221,6 +236,10 @@ public class Proxy : IDisposable
             throw new ArgumentNullException("msg");
         }
 
+        // Native send() takes ownership of the message. We ref here to keep the IDisposable
+        // behavior simpler and keeping the original object alive in case the user wants.
+        msg.Ref();
+
         IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
@@ -250,14 +269,15 @@ public class Proxy : IDisposable
     {
         CheckHandle();
 
-        var msg = NewMethodCall(member);
-
-        foreach (BasicMessageArgument arg in args)
+        using (var msg = NewMethodCall(member))
         {
-            arg.AppendTo(msg);
-        }
+            foreach (BasicMessageArgument arg in args)
+            {
+                arg.AppendTo(msg);
+            }
 
-        return Send(msg, dlgt, timeout);
+            return Send(msg, dlgt, timeout);
+        }
     }
 
     eldbus.Pending Call(string member, params BasicMessageArgument[] args)

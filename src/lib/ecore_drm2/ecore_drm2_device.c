@@ -487,7 +487,7 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
                     {
                        pstate->supported_rotations |= r;
                        pstate->rotation_map[ffs(r)] =
-                         1 << prop->enums[k].value;
+                         1ULL << prop->enums[k].value;
                     }
                }
           }

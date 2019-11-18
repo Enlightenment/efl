@@ -11,6 +11,7 @@
 
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
+#define EFL_INTERNAL_UNSTABLE
 #include "Evas_Internal.h"
 
 static const char ASSOCIATE_KEY[] = "__Ecore_Evas_Associate";

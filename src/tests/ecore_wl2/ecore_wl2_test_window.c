@@ -64,7 +64,7 @@ EFL_START_TEST(wl2_window_surface_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST(wl2_window_rotation_get)
+EFL_START_TEST(wl2_window_rotation)
 {
    Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
@@ -78,6 +78,11 @@ EFL_START_TEST(wl2_window_rotation_get)
 
    rot = ecore_wl2_window_rotation_get(win);
    ck_assert_int_ge(rot, 0);
+
+   ecore_wl2_window_rotation_set(win, 90);
+
+   rot = ecore_wl2_window_rotation_get(win);
+   fail_if(rot != 90);
 }
 EFL_END_TEST
 
@@ -130,6 +135,158 @@ EFL_START_TEST(wl2_window_display_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_alpha)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool alpha = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_alpha_set(win, EINA_TRUE);
+
+   alpha = ecore_wl2_window_alpha_get(win);
+   fail_if(alpha != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_floating_mode)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool f = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_floating_mode_set(win, EINA_TRUE);
+
+   f = ecore_wl2_window_floating_mode_get(win);
+   fail_if(f != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_focus_skip)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool skip = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_focus_skip_set(win, EINA_TRUE);
+
+   skip = ecore_wl2_window_focus_skip_get(win);
+   fail_if(skip != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_fullscreen)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool full = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_fullscreen_set(win, EINA_TRUE);
+
+   full = ecore_wl2_window_fullscreen_get(win);
+   fail_if(full != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_maximize)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool m = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_maximized_set(win, EINA_TRUE);
+
+   m = ecore_wl2_window_maximized_get(win);
+   fail_if(m != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_preferred_rot)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   int rot = 0;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_preferred_rotation_set(win, 90);
+
+   rot = ecore_wl2_window_preferred_rotation_get(win);
+   fail_if(rot != 90);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_rotation_app)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool r = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_rotation_app_set(win, EINA_TRUE);
+
+   r = ecore_wl2_window_rotation_app_get(win);
+   fail_if(r != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_wm_window_rotation_app)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool r = EINA_FALSE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_wm_rotation_supported_set(win, EINA_TRUE);
+
+   r = ecore_wl2_window_wm_rotation_supported_get(win);
+   fail_if(r != EINA_TRUE);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -138,10 +295,18 @@ ecore_wl2_test_window(TCase *tc)
         /* window tests can only run if there is an existing compositor */
         tcase_add_test(tc, wl2_window_new);
         tcase_add_test(tc, wl2_window_surface_test);
-        tcase_add_test(tc, wl2_window_rotation_get);
+        tcase_add_test(tc, wl2_window_rotation);
         tcase_add_test(tc, wl2_window_output_find);
         if (getenv("E_START"))
           tcase_add_test(tc, wl2_window_aux_hints_supported_get);
         tcase_add_test(tc, wl2_window_display_get);
+        tcase_add_test(tc, wl2_window_alpha);
+        tcase_add_test(tc, wl2_window_floating_mode);
+        tcase_add_test(tc, wl2_window_focus_skip);
+        tcase_add_test(tc, wl2_window_fullscreen);
+        tcase_add_test(tc, wl2_window_maximize);
+        tcase_add_test(tc, wl2_window_preferred_rot);
+        tcase_add_test(tc, wl2_window_rotation_app);
+        tcase_add_test(tc, wl2_wm_window_rotation_app);
      }
 }

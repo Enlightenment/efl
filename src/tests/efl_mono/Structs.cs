@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Runtime.InteropServices;
 using System.Linq;
@@ -47,6 +62,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         bool r = t.StructSimpleIn(simple);
         Test.Assert(r, "Function returned false");
+        t.Dispose();
     }
 
     /*
@@ -80,6 +96,7 @@ internal class TestStructs
         bool r = t.StructSimpleOut(out simple);
         Test.Assert(r, "Function returned false");
         checkStructSimple(simple);
+        t.Dispose();
     }
 
     /*
@@ -107,6 +124,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         var simple = t.StructSimpleReturn();
         checkStructSimple(simple);
+        t.Dispose();
     }
 
     /*
@@ -221,6 +239,7 @@ internal class TestStructs
         t.CallStructSimpleIn(simple);
         Test.Assert(t.called);
         Test.AssertEquals(simple.Fstring, t.received.Fstring);
+        t.Dispose();
     }
 
     /*
@@ -254,6 +273,7 @@ internal class TestStructs
         t.CallStructSimpleOut(out simple);
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Out", simple.Fstring);
+        t.Dispose();
     }
 
     /*
@@ -282,6 +302,7 @@ internal class TestStructs
         Dummy.StructSimple simple = t.CallStructSimpleReturn();
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Return", simple.Fstring);
+        t.Dispose();
     }
 
     /*
@@ -310,6 +331,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         bool r = t.StructComplexIn(complex);
         Test.Assert(r, "Function returned false");
+        t.Dispose();
     }
 
     // public static void complex_ptr_in()
@@ -327,6 +349,7 @@ internal class TestStructs
         bool r = t.StructComplexOut(out complex);
         Test.Assert(r, "Function returned false");
         checkStructComplex(complex);
+        t.Dispose();
     }
 
     // public static void complex_ptr_out()
@@ -342,6 +365,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         var complex = t.StructComplexReturn();
         checkStructComplex(complex);
+        t.Dispose();
     }
 #endif
     // public static void complex_ptr_return()

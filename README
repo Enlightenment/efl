@@ -539,4 +539,3 @@ one can use "gnutls" (some distros are strict about licenses and want gnutls
 instead of openssl) You can switch to gnutls with:
 
     -Dcrypto=gnutls
-

@@ -659,7 +659,7 @@ _output_plane_states_get(Ecore_Drm2_Atomic_State *state, unsigned int crtc_id, i
              states =
                eina_list_append(states, _atomic_state_plane_duplicate(pstate));
           }
-        else if (pstate->mask & (1 << index))
+        else if (pstate->mask & (1ULL << index))
           {
              states =
                eina_list_append(states, _atomic_state_plane_duplicate(pstate));
@@ -1454,7 +1454,7 @@ ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc
                {
                   if (res->crtcs[k] != output->crtc_id) continue;
 
-                  if (p & (1 << k))
+                  if (p & (1ULL << k))
                     {
                        ret = EINA_TRUE;
                        break;

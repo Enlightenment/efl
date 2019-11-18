@@ -16,5 +16,6 @@ mono_files += files(
   'eina_value.cs',
   'eina_promises.cs',
   'eina_accessor.cs',
-  'eina_strbuf.cs'
+  'eina_strbuf.cs',
+  'eina_environment.cs',
 )

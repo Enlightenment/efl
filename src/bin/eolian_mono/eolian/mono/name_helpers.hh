@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_NAME_HELPERS_HH
 #define EOLIAN_MONO_NAME_HELPERS_HH
 
@@ -520,6 +535,32 @@ std::string constructor_managed_name(std::string full_name)
     auto tokens = utils::split(full_name, '.');
 
     return managed_name(tokens.at(tokens.size()-1));
+}
+
+std::string translate_value_type(std::string const& name)
+{
+  static std::map<std::string, std::string> table = {
+    {"sbyte", "SByte"},
+    {"byte","Byte"},
+    {"short","Int16"},
+    {"ushort","UInt16"},
+    {"int", "Int32"},
+    {"uint","UInt32"},
+    {"long","Int64"},
+    {"ulong","UInt64"},
+    {"char","Char"},
+    {"float","Single"},
+    {"double","Double"},
+    {"bool","Boolean"},
+    {"decimal","Decimal"},
+  };
+
+  auto found = table.find(name);
+
+  if (found != table.end())
+    return found->second;
+
+  return name;
 }
 
 } // namespace name_helpers

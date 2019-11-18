@@ -40,10 +40,23 @@ extern "C" {
 
 #include <interfaces/efl_gfx_types.eot.h>
 #include <interfaces/efl_gfx_path.eo.h>
-#include <interfaces/efl_input_types.eot.h>
 #include <interfaces/efl_text_types.eot.h>
+#include <canvas/efl_input_types.eot.h>
 #include <canvas/efl_canvas_animation_types.eot.h>
 #include <gesture/efl_canvas_gesture_types.eot.h>
+
+/* Input events */
+#include "canvas/efl_input_device.eo.h"
+#include "canvas/efl_canvas_pointer.eo.h"
+#include "canvas/efl_canvas_scene.eo.h"
+#include "canvas/efl_input_state.eo.h"
+#include "canvas/efl_input_event.eo.h"
+#include "canvas/efl_input_pointer.eo.h"
+#include "canvas/efl_input_key.eo.h"
+#include "canvas/efl_input_hold.eo.h"
+#include "canvas/efl_input_interface.eo.h"
+#include "canvas/efl_input_focus.eo.h"
+#include "canvas/efl_input_clickable.eo.h"
 
 #include <gesture/efl_canvas_gesture.eo.h>
 #include <gesture/efl_canvas_gesture_touch.eo.h>

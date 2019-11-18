@@ -337,9 +337,9 @@ EAPI Eina_Bool eina_convert_atofp(const char  *src,
  * @brief Converts a string to a floating point number.
  *
  * @param[in] nptr a string to convert. It shouldn't be NULL.
- * @param[out] endptr If endptr is not NULL, a pointer to the character after the last
+ * @param[out] endptr If @p endptr is not NULL, a pointer to the character after the last
  *                    character used in the conversion is stored in the location referenced
- *                    by endptr.
+ *                    by endptr. If @p nptr is NULL, this will also be set to NULL.
  * @return a double type floating point number.
  *
  * This function returns converted floating point number with locale-independency.

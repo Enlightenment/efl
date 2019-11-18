@@ -1,8 +1,24 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 using EinaTestData;
 using static EinaTestData.BaseData;
@@ -34,7 +50,7 @@ class TestInheritance
             return "Hello World";
         }
     }
-    
+
     internal class Inherit3Parent : Dummy.TestObject
     {
         public bool disposed = false;
@@ -80,6 +96,7 @@ class TestInheritance
         var obj = new Inherit1();
         int i = Dummy.InheritHelper.ReceiveDummyAndCallIntOut(obj);
         Test.AssertEquals (50, i);
+        obj.Dispose();
     }
 
     public static void test_inherit_from_iface()
@@ -89,8 +106,10 @@ class TestInheritance
         Test.AssertEquals (50, i);
         string s = Dummy.InheritHelper.ReceiveDummyAndCallInStringshare(obj);
         Test.AssertEquals ("Hello World", s);
+        obj.Dispose();
     }
 
+    [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectBeforeLosingScope", Justification = "It is expected to lose scope.")]
     private static void CreateAndCheckInheritedObjects(out WeakReference parentWRef, out WeakReference childWRef)
     {
         var parent = new Inherit3Parent();
@@ -112,8 +131,8 @@ class TestInheritance
         Test.AssertEquals(false, parent.disposed);
         Test.AssertEquals(false, parent.childDisposed);
 
-        parent = null;
-        child = null;
+        child.Dispose();
+        parent.Dispose();
     }
 
     public static void test_inherit_lifetime()

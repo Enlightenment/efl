@@ -23,5 +23,6 @@ void evas_test_evasgl(TCase *tc);
 void evas_test_object_smart(TCase *tc);
 void evas_test_matrix(TCase *tc);
 void evas_test_events(TCase *tc);
+void efl_test_canvas_animation(TCase *tc);
 
 #endif /* _EVAS_SUITE_H */

@@ -34,6 +34,29 @@ efl_src = configure_file(
   configuration: efl_libs
 )
 
+friend_assemblies = ''
+mono_friend_assemblies = get_option('mono-friend-assemblies')
+if get_option('build-tests')
+  if get_option('dotnet')
+     mono_friend_assemblies += 'efl_sharp_test_suite'
+  else
+     mono_friend_assemblies += 'efl_mono_test'
+     mono_friend_assemblies += 'efl-mono-suite'
+  endif
+endif
+
+foreach f : mono_friend_assemblies
+   friend_assemblies += '[assembly: InternalsVisibleTo("@0@")]\n'.format(f)
+endforeach
+friend_assembly_data = configuration_data()
+friend_assembly_data.set('MONO_FRIEND_ASSEMBLIES', friend_assemblies)
+
+mono_files += configure_file(
+  input: 'AssemblyInfo.cs.in',
+  output: 'AssemblyInfo.cs',
+  configuration: friend_assembly_data
+)
+
 mono_eo_files = [
   'efl_mono_model_internal.eo',
   'efl_mono_model_internal_child.eo'

@@ -11,7 +11,7 @@ typedef struct _Efl_Sinusoidal_Interpolator_Data Efl_Sinusoidal_Interpolator_Dat
 
 struct _Efl_Sinusoidal_Interpolator_Data
 {
-   double factor;
+   double slope;
 };
 
 EOLIAN static double
@@ -23,22 +23,22 @@ _efl_sinusoidal_interpolator_efl_interpolator_interpolate(Eo *eo_obj EINA_UNUSED
      return progress;
 
    return ecore_animator_pos_map(progress, ECORE_POS_MAP_SINUSOIDAL_FACTOR,
-                                 pd->factor, 0);
+                                 pd->slope, 0);
 }
 
 EOLIAN static void
-_efl_sinusoidal_interpolator_factor_set(Eo *eo_obj EINA_UNUSED,
+_efl_sinusoidal_interpolator_slope_set(Eo *eo_obj EINA_UNUSED,
                                         Efl_Sinusoidal_Interpolator_Data *pd,
-                                        double factor)
+                                        double slope)
 {
-   pd->factor = factor;
+   pd->slope = slope;
 }
 
 EOLIAN static double
-_efl_sinusoidal_interpolator_factor_get(const Eo *eo_obj EINA_UNUSED,
+_efl_sinusoidal_interpolator_slope_get(const Eo *eo_obj EINA_UNUSED,
                                         Efl_Sinusoidal_Interpolator_Data *pd EINA_UNUSED)
 {
-   return pd->factor;
+   return pd->slope;
 }
 
 EOLIAN static Efl_Object *
@@ -47,7 +47,7 @@ _efl_sinusoidal_interpolator_efl_object_constructor(Eo *eo_obj,
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
-   pd->factor = 1.0;
+   pd->slope = 1.0;
 
    return eo_obj;
 }

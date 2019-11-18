@@ -427,6 +427,58 @@ evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry* vg_entry)
    return vfd->anim_data->frame_cnt;
 }
 
+Eina_Bool
+evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, int startframe, int endframe)
+{
+   if (!vg_entry) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
+   if (!name) return EINA_FALSE;
+
+   Vg_File_Anim_Data_Marker *marker;
+   Vg_File_Anim_Data_Marker new_marker;
+   int i = 0;
+
+   EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
+     {
+        if (!strcmp(marker->name, name))
+          {
+             marker->startframe = startframe;
+             marker->endframe = endframe;
+             return EINA_TRUE;
+          }
+        i++;
+     }
+
+   new_marker.name = eina_stringshare_add(name);
+   new_marker.startframe = startframe;
+   new_marker.endframe = endframe;
+   eina_inarray_push(vg_entry->vfd->anim_data->markers, &new_marker);
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, int* startframe, int* endframe)
+{
+   if (!vg_entry) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
+   if (!name) return EINA_FALSE;
+
+   Vg_File_Anim_Data_Marker *marker;
+   EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
+     {
+        if (!strcmp(marker->name, name))
+          {
+             if (startframe) *startframe = marker->startframe;
+             if (endframe) *endframe = marker->endframe;
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 Efl_VG*
 evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 {

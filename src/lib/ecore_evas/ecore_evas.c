@@ -24,6 +24,7 @@
 #include "ecore_private.h"
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
+#define EFL_INTERNAL_UNSTABLE
 #include <Evas_Internal.h>
 
 #include "Ecore_Evas.h"
@@ -33,9 +34,6 @@
 #include "ecore_evas_cocoa.h"
 #include "ecore_evas_extn.h"
 #include "ecore_evas_win32.h"
-
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
 
 #include "ecore_private.h"
 

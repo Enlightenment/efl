@@ -208,6 +208,7 @@ EFL_START_TEST(eina_test_simple)
    fail_if(test1 != NULL);
 
    test1 = eina_matrixsparse_data_idx_get(matrix, 5, 3);
+   fail_if(!test1);
    fail_if(*test1 != data[5][3]);
 
    r = eina_matrixsparse_column_idx_clear(matrix, 3);

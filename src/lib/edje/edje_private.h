@@ -44,7 +44,6 @@
 #include <Eet.h>
 #include <Eo.h>
 #include <Evas.h>
-#include <Evas_Internal.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
@@ -65,6 +64,8 @@
 #endif
 
 #include "Edje.h"
+#define EFL_INTERNAL_UNSTABLE
+#include <Evas_Internal.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -1186,6 +1187,7 @@ struct _Edje_Part_Collection
    unsigned char    script_recursion; /* permits unsafe Embryo->EDC->Embryo scripting */
    unsigned char    use_custom_seat_names;
    unsigned char    checked : 1;
+   unsigned char    need_seat : 1; /* will be one when the collection use seat in any of its part */
 };
 
 struct _Edje_Part_Dragable
@@ -1796,15 +1798,10 @@ struct _Edje
    Eina_Bool          walking_actions : 1;
    Eina_Bool          block_break : 1;
    Eina_Bool          delete_me : 1;
-   Eina_Bool          postponed : 1;
    Eina_Bool          freeze_calc : 1;
    Eina_Bool          has_entries : 1;
    Eina_Bool          entries_inited : 1;
 
-#ifdef EDJE_CALC_CACHE
-   Eina_Bool          text_part_change : 1;
-   Eina_Bool          all_part_change : 1;
-#endif
    Eina_Bool          have_mapped_part : 1;
    Eina_Bool          recalc_call : 1;
    Eina_Bool          update_hints : 1;
@@ -1813,6 +1810,14 @@ struct _Edje
    Eina_Bool          canvas_animator : 1;
    Eina_Bool          has_state_clip : 1;
    Eina_Bool          has_recalc_event_cb : 1;
+
+   Eina_Bool          has_content_change_event_cb : 1;
+   Eina_Bool          need_seat : 1; /* Will be true when an event handler that expect seat is registered on the object. */
+#ifdef EDJE_CALC_CACHE
+   Eina_Bool          text_part_change : 1;
+   Eina_Bool          all_part_change : 1;
+#endif
+   Eina_Bool          has_size : 1;
 };
 
 struct _Edje_Calc_Params_Map
@@ -2469,7 +2474,8 @@ const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 						      const char *source,
 						      const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
-Eina_Bool _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source,
+Eina_Bool _edje_object_signal_callback_add(Evas_Object *obj, Edje *ed,
+                                           const char *emission, const char *source,
                                            Edje_Signal_Cb func_legacy,
                                            Efl_Signal_Cb func_eo, Eina_Free_Cb func_free_cb, void *data);
 
@@ -2656,6 +2662,7 @@ void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
 Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);
 void _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 
+void _edje_devices_add(Edje *ed, Evas *tev);
 Eina_Stringshare *_edje_seat_name_get(Edje *ed, Efl_Input_Device *device);
 Efl_Input_Device *_edje_seat_get(Edje *ed, Eina_Stringshare *name);
 Eina_Bool _edje_part_allowed_seat_find(Edje_Real_Part *rp, const char *seat_name);

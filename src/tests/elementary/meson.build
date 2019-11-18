@@ -134,7 +134,7 @@ efl_ui_suite_src = [
   'efl_ui_test_box_stack.c',
   'efl_ui_test_table.c',
   'efl_ui_test_grid.c',
-  'efl_ui_test_relative_layout.c',
+  'efl_ui_test_relative_container.c',
   'efl_ui_test_image.c',
   'efl_ui_test_image_zoomable.c',
   'efl_ui_test_layout.c',

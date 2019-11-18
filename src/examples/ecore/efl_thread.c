@@ -35,7 +35,7 @@ _th_read_change(void *data EINA_UNUSED, const Efl_Event *ev)
         Eina_Error err = efl_io_reader_read(obj, &rw_slice);
         if (!err)
           {
-             buf[rw_slice.len] = 0;
+             buf[rw_slice.len - 1] = 0;
              printf("--- TH READ [%p] [%s] ok %i bytes '%s'\n", obj, efl_core_command_line_command_get(obj), (int)rw_slice.len, buf);
 
              char *buf2 = "yes-im-here ";
@@ -112,7 +112,7 @@ _read_change(void *data EINA_UNUSED, const Efl_Event *ev)
         Eina_Error err = efl_io_reader_read(obj, &rw_slice);
         if (!err)
           {
-             buf[rw_slice.len] = 0;
+             buf[rw_slice.len - 1] = 0;
              printf("--- READ [%p] [%s] ok %i bytes '%s'\n", obj, efl_core_command_line_command_get(obj), (int)rw_slice.len, buf);
           }
      }
@@ -146,7 +146,7 @@ _stdin_read_change(void *data EINA_UNUSED, const Efl_Event *ev)
         Eina_Error err = efl_io_reader_read(obj, &rw_slice);
         if (!err)
           {
-             buf[rw_slice.len] = 0;
+             buf[rw_slice.len - 1] = 0;
              printf("--- STDIN READ [%p] [%s] ok %i bytes '%s'\n", obj, efl_core_command_line_command_get(obj), (int)rw_slice.len, buf);
           }
      }

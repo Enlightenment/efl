@@ -45,6 +45,9 @@ class Efl.Ui.Alert_Popup extends Efl.Ui.Popup
          }
       }
    }
+   parts {
+      title @beta: Efl.Ui.Alert_Popup_Part_Title; [[The title text of Alert Popup.]]
+   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

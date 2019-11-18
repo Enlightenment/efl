@@ -609,6 +609,7 @@ EFL_START_TEST(eina_test_strbuf_release_test)
 
    string = eina_strbuf_release(buf);
    ck_assert_str_eq(string, "strbuf_release_test");
+   free(string);
 }
 EFL_END_TEST
 

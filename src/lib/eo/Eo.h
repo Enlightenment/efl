@@ -318,6 +318,18 @@ EOAPI Eina_Bool efl_event_callback_priority_add(Eo *obj, const Efl_Event_Descrip
 EOAPI Eina_Bool efl_event_callback_del(Eo *obj, const Efl_Event_Description *desc, Efl_Event_Cb func, const void *user_data);
 
 /**
+ * @brief Get the Eina_Future scheduler that trigger them on a specific set of events on an object.
+ *
+ * @param[in] obj The object that the scheduler is attached to.
+ * @param[in] array The events that when triggered on the object will trigger the Eina_Future.
+ *
+ * @return Return a scheduler that will trigger future exactly when the event are triggered.
+ *
+ * @note You must use EFL_SCHEDULER_ARRAY_DEFINE() to create the @p array.
+ */
+EOAPI Eina_Future_Scheduler *efl_event_future_scheduler_get(const Eo *obj, Efl_Callback_Array_Item *array);
+
+/**
  * @brief Add an array of callbacks created by @ref EFL_CALLBACKS_ARRAY_DEFINE
  * for an event with a specific priority. The array need to be sorted with @ref
  * efl_callbacks_cmp if you are not using the @ref EFL_CALLBACKS_ARRAY_DEFINE
@@ -1899,7 +1911,6 @@ EOAPI void efl_wref_add(Eo *obj, Efl_Object **wref);
  */
 EOAPI void efl_wref_del(Eo *obj, Efl_Object **wref);
 
-
 /**
  * @brief Generic data with string key on an object.
  *
@@ -2184,6 +2195,32 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
   }
 
 /**
+ * Helper for creating global scheduler arrays. The callback will be set by scheduler get.
+ * Problems occur here in windows where you can't declare a static array with
+ * external symbols in them. These addresses are only known at runtime.
+ * This also allows for automatic sorting for better performance.
+ */
+#define EFL_SCHEDULER_ARRAY_DEFINE(Name, ...)                           \
+  static Efl_Callback_Array_Item *                                      \
+  Name(void)                                                            \
+  {                                                                     \
+     const Efl_Event_Description *tmp[] = { __VA_ARGS__ };              \
+     static Efl_Callback_Array_Item internal[EINA_C_ARRAY_LENGTH(tmp) + 1] = { { 0, 0 } }; \
+                                                                        \
+     if (internal[0].desc == NULL)                                      \
+       {                                                                \
+          unsigned int i;                                               \
+                                                                        \
+          for (i = 0; i < EINA_C_ARRAY_LENGTH(tmp); i++)                \
+            internal[i].desc = tmp[i];                                  \
+                                                                        \
+          qsort(internal, EINA_C_ARRAY_LENGTH(internal) - 1, sizeof (internal[0]), \
+                (int(*)(const void*,const void*)) efl_callbacks_cmp);   \
+       }                                                                \
+     return internal;                                                   \
+  }
+
+/**
  * @def efl_event_callback_add(obj, desc, cb, data)
  * Add a callback for an event.
  * @param[in] desc An #Efl_Event_Description of the event to listen to.
@@ -2229,6 +2266,17 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @ingroup Efl_Object
  */
 #define efl_event_callback_forwarder_add(obj, desc, new_obj) efl_event_callback_forwarder_priority_add(obj, desc, EFL_CALLBACK_PRIORITY_DEFAULT, new_obj)
+
+/**
+ * @brief Count the number of event handler registered for a specific event.
+ *
+ * @param[in] obj The object.
+ * @param[in] desc The specific event.
+ * @return The number of handler registered for this specific events.
+ *
+ * @ingroup Efl_Object
+ */
+EOAPI unsigned int efl_event_callback_count(const Eo *obj, const Efl_Event_Description *desc);
 
 /**
  * @def Replace the previous Eo pointer with new content.

@@ -98,5 +98,24 @@ interface @beta Efl.Gfx.Frame_Controller
             duration: double; [[Duration in seconds]]
          }
       }
+      @property sector {
+         [[The sector for playing section.
+
+           Returns the start and end frame of the sector specified by the name.
+         ]]
+         set {
+            return: bool; [[ Returns $true if sector and frame set success. ]]
+         }
+         get {
+            return: bool; [[ Returns $true if frames get success. ]]
+         }
+         keys {
+            name: string; [[ The name of sector ]]
+         }
+         values {
+            startframe: int; [[ The start frame of sector ]]
+            endframe: int; [[ The end frame of sector ]]
+         }
+      }
    }
 }

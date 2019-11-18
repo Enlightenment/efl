@@ -2770,6 +2770,7 @@ efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Ite
    else return -1;
 }
 
+
 #ifdef EO_DEBUG
 /* NOTE: cannot use ecore_time_get()! */
 static inline double

@@ -1,13 +1,25 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl
+namespace Efl.Eo
 {
 
-namespace Eo
-{
-
-public partial class NativeModule
+internal partial class NativeModule
 {
     private const int RTLD_NOW = 0x002;
     // Currently we are using GLOBAL due to issues
@@ -21,7 +33,7 @@ public partial class NativeModule
 
     ///<summary>Closes the library handle.</summary>
     ///<param name="handle">The handle to the library.</param>
-    public static void UnloadLibrary(IntPtr handle)
+    internal static void UnloadLibrary(IntPtr handle)
     {
         dlclose(handle);
     }
@@ -48,7 +60,7 @@ public partial class NativeModule
     ///</summary>
     ///<param name="filename">The name to search for.</param>
     ///<returns>The loaded library handle or <see cref="System.IntPtr.Zero"/> on failure.</returns>
-    public static IntPtr LoadLibrary(string filename)
+    internal static IntPtr LoadLibrary(string filename)
     {
         Eina.Log.Debug($"Loading library {filename}");
         var r = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
@@ -67,8 +79,6 @@ public partial class NativeModule
 
         return r;
     }
-}
-
 }
 
 }

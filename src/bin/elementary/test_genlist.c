@@ -5531,9 +5531,7 @@ test_genlist_show_item(void *data,
    g_data->gl = gl;
    g_data->itc1 = api->itc1;
 
-   if (g_data)
-     max = g_data->max_items;
-   else max = 20000;
+   max = g_data->max_items;
    for (i = 0; i <= max; i++)
        elm_genlist_item_append(gl, api->itc1, (void*)(uintptr_t)i, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 

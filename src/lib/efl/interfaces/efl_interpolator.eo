@@ -1,12 +1,25 @@
 interface @beta Efl.Interpolator
 {
-   [[Efl interpolator interface]]
+   [[Interface providing interpolation capabilities.
+   
+     In the context of EFL, interpolation is defined as the mapping of values in the
+     $[0, 1] range to another range (typically close).
+
+     This is used for example in animations, where the timer moves linearly from $[0.0]
+     to $[1.0] but the property being animated can accelerate, decelerate, bounce or
+     even move slightly out-of-bounds and come back.
+
+     For example implementations see @Efl.Accelerate_Interpolator, @Efl.Decelerate_Interpolator
+     or @Efl.Bounce_Interpolator.
+   ]]
    methods {
       interpolate {
-         [[Interpolate the given value.]]
-         return: double; [[Output value calculated by interpolating the input value.]]
+         [[Performs the mapping operation.]]
+         return: double; [[Output mapped value. Its range is unrestricted. In particular,
+                           it might be outside the input $[0, 1] range.]]
          params {
-            @in progress: double; [[Input value mapped from 0.0 to 1.0.]]
+            @in progress: double; [[Input value between $[0.0] and $[1.0]. Values outside this range
+                                    might yield unpredictable results.]]
          }
       }
    }

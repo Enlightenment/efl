@@ -646,25 +646,37 @@ _edje_device_changed_cb(void *data, const Efl_Event *event)
    _edje_seat_event_filter_apply(ed, seat);
 }
 
+static void _edje_device_canvas_del(void *data, const Efl_Event *event);
+
+EFL_CALLBACKS_ARRAY_DEFINE(edje_device_callbacks,
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _edje_device_added_cb },
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _edje_device_removed_cb },
+                           { EFL_EVENT_DEL, _edje_device_canvas_del });
+
+EFL_CALLBACKS_ARRAY_DEFINE(edje_device_custom_callbacks,
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED, _edje_device_changed_cb },
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _edje_device_added_cb },
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _edje_device_removed_cb },
+                           { EFL_EVENT_DEL, _edje_device_canvas_del });
+
 static void
 _edje_device_canvas_del(void *data, const Efl_Event *event)
 {
    Edje *ed = data;
-   efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
-                          _edje_device_added_cb, ed);
-   efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
-                          _edje_device_removed_cb, ed);
 
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
-                            _edje_device_changed_cb, ed);
+     efl_event_callback_array_del(event->object, edje_device_custom_callbacks(), ed);
+   else
+     efl_event_callback_array_del(event->object, edje_device_callbacks(), ed);
 }
 
-static void
+void
 _edje_devices_add(Edje *ed, Evas *tev)
 {
    const Eina_List *devices, *l;
    Efl_Input_Device *dev;
+
+   ed->need_seat = EINA_TRUE;
 
    devices = evas_device_list(tev, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
@@ -672,16 +684,11 @@ _edje_devices_add(Edje *ed, Evas *tev)
         if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           _edje_device_add(ed, dev);
      }
-   efl_event_callback_add(tev, EFL_EVENT_DEL, _edje_device_canvas_del, ed);
-
-   efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
-                          _edje_device_added_cb, ed);
-   efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
-                          _edje_device_removed_cb, ed);
 
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
-                            _edje_device_changed_cb, ed);
+     efl_event_callback_array_add(tev, edje_device_custom_callbacks(), ed);
+   else
+     efl_event_callback_array_add(tev, edje_device_callbacks(), ed);
 }
 
 static inline void
@@ -863,7 +870,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                }
 
              /* handle multiseat stuff */
-             _edje_devices_add(ed, tev);
+             if (ed->collection->need_seat || ed->need_seat)
+               _edje_devices_add(ed, tev);
 
              /* colorclass stuff */
              _edje_process_colorclass(ed);
@@ -1887,14 +1895,10 @@ _edje_file_callbacks_del(Edje *ed, Evas *e)
    Evas *tev = e;
 
    if (!tev) tev = evas_object_evas_get(ed->obj);
-   efl_event_callback_del(tev, EFL_EVENT_DEL, _edje_device_canvas_del, ed);
-   efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
-                          _edje_device_added_cb, ed);
-   efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
-                          _edje_device_removed_cb, ed);
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
-                            _edje_device_changed_cb, ed);
+     efl_event_callback_array_del(tev, edje_device_custom_callbacks(), ed);
+   else
+     efl_event_callback_array_del(tev, edje_device_callbacks(), ed);
 }
 
 void

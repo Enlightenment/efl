@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_DOCUMENTATION_HPP
 #define EOLIAN_MONO_DOCUMENTATION_HPP
 
@@ -70,7 +85,7 @@ struct documentation_generator
       const char* eo_name = ::eolian_function_name_get(function);
       std::string name = object_ref_conversion(klass);
 
-      // Klass is needed to check the property naming rulles
+      // Klass is needed to check the property naming rules
       attributes::klass_def klass_d((const ::Eolian_Class *)klass, eolian_object_unit_get(klass));
 
       // Comment the block below to enable @see reference conversion for non-public interface members.

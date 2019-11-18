@@ -1,16 +1,53 @@
 # README
 #
-# Evas build is a bit more complex.
-# the final shared library is build in src/lib/evas_goal/meson.build.
-#
-# The content of lib/evas is build as static_library as
-# are all the engines loaders and savers.
-#
 # All those stages are defining dependencies with theire source code
 # as 'source :', later everything is build as libevas.so.
 #
-# For now loaders and savers are ALWAYS build statically.
-#
+
+png = dependency('libpng')
+tiff = dependency('libtiff-4', required: get_option('evas-loaders-disabler').contains('tiff') == false)
+giflib = cc.find_library('gif')
+webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
+
+evas_image_loaders_file = [
+     ['bmp',     'shared', []],
+     ['eet',     'static', [eet]],
+     ['generic', 'shared', [rt]],
+     ['gif',     'shared', [giflib]],
+     ['ico',     'shared', []],
+     ['jpeg',    'static', [jpeg]],
+     ['pmaps',   'shared', []],
+     ['png',     'static', [png]],
+     ['psd',     'shared', []],
+     ['tga',     'shared', []],
+     ['tgv',     'shared', [rg_etc, lz4]],
+     ['tiff',    'shared', [tiff]],
+     ['wbmp',    'shared', []],
+     ['webp',    'shared', [webp]],
+     ['xpm',     'shared', []]
+]
+
+evas_image_savers_file = [
+     ['eet',     'static', [eet]],
+     ['jpeg',    'static', [jpeg]],
+     ['png',     'static', [png]],
+     ['tgv',     'shared', [rg_etc, lz4]],
+     ['tiff',    'shared', [tiff]],
+     ['webp',    'shared', [webp]],
+]
+json = dependency('rlottie', required: get_option('evas-loaders-disabler').contains('json') == false)
+
+evas_vg_loaders_file = [
+  ['eet', [eet]],
+  ['json', [json]],
+  ['svg', []],
+]
+
+evas_vg_savers_file = ['eet', 'svg']
+
+evas_model_savers_file = ['eet', 'obj', 'ply']
+
+evas_model_loaders_file = ['eet', 'md2', 'obj', 'ply']
 
 rel_evas_modules = join_paths('..', '..', '..', 'modules', 'evas', 'engines', 'software_generic')
 evas_deps = [eo, eet, eina, efl, emile, ector, ecore, buildsystem, intl]
@@ -168,13 +205,8 @@ if get_option('opengl') != 'none'
   endif
 endif
 
-evas_pre = declare_dependency(
-  include_directories: evas_include_directories + [vg_common_inc_dir] + [include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))],
-  sources : pub_eo_file_target + priv_eo_file_target,
-  dependencies: [eina, eo, ector, emile, evas_deps, m],
-)
-
 evas_link = [ ]
+evas_pub_deps = [eina, ecore, ector, emile]
 
 if cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
   evas_opt = static_library('evas_opt',
@@ -189,11 +221,106 @@ if cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
   evas_link += [ evas_opt ]
 endif
 
-evas_pre_lib_dep = declare_dependency(
-  include_directories: evas_include_directories + [vg_common_inc_dir],
-  sources : [evas_src, pub_eo_file_target],
-  link_with: evas_link,
-  dependencies: [evas_deps, m, draw, valgrind, libunibreak]
+foreach loader_inst : evas_image_loaders_file
+  loader = loader_inst[0]
+  loader_type = loader_inst[1]
+  loader_deps = loader_inst[2]
+  if get_option('evas-loaders-disabler').contains(loader) == false
+    if loader_type == 'static'
+      config_h.set('BUILD_LOADER_'+loader.to_upper(), '1')
+      file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'image_loaders', loader, 'evas_image_load_'+loader+'.c')
+      config_h.set('EVAS_STATIC_BUILD_'+loader.to_upper(), '1')
+      evas_static_list += [declare_dependency(
+        sources: file,
+        dependencies: loader_deps,
+      )]
+    endif
+  else
+    message('Image loader '+loader+' disabled')
+  endif
+endforeach
+
+foreach loader_inst : evas_image_savers_file
+  loader = loader_inst[0]
+  loader_type = loader_inst[1]
+  loader_deps = loader_inst[2]
+  if get_option('evas-loaders-disabler').contains(loader) == false
+    if loader_type == 'static'
+      config_h.set('BUILD_LOADER_'+loader.to_upper(), '1')
+      file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'image_savers', loader, 'evas_image_save_'+loader+'.c')
+      config_h.set('EVAS_STATIC_BUILD_'+loader.to_upper(), '1')
+      evas_static_list += [declare_dependency(
+        sources: file,
+        dependencies: loader_deps,
+      )]
+    endif
+  else
+    message('Image saver '+loader+' disabled')
+  endif
+endforeach
+
+foreach loader_inst : evas_vg_loaders_file
+  loader = loader_inst[0]
+  loader_deps = loader_inst[1]
+
+  if (get_option('evas-loaders-disabler').contains(loader) == false)
+    file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'vg_loaders', loader, 'evas_vg_load_'+loader+'.c')
+    evas_static_list += [declare_dependency(
+      sources: file,
+      dependencies: loader_deps,
+    )]
+    config_h.set('EVAS_STATIC_BUILD_VG_'+loader.to_upper(), '1')
+  endif
+endforeach
+
+foreach loader : evas_vg_savers_file
+  if (get_option('evas-loaders-disabler').contains(loader) == false)
+    file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'vg_savers', loader, 'evas_vg_save_'+loader+'.c')
+    evas_static_list += [declare_dependency(
+      sources: file,
+      dependencies: [eo, ector, emile, freetype, eet],
+    )]
+    config_h.set('EVAS_STATIC_BUILD_VG_'+loader.to_upper(), '1')
+  endif
+endforeach
+
+foreach loader : evas_model_loaders_file
+  file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'model_loaders', loader, 'evas_model_load_'+loader+'.c')
+
+  evas_static_list += [declare_dependency(
+    sources: file,
+  )]
+endforeach
+
+foreach loader : evas_model_savers_file
+ file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'model_savers', loader, 'evas_model_save_'+loader+'.c')
+
+  evas_static_list += [declare_dependency(
+    sources: file,
+  )]
+endforeach
+
+evas_lib = library('evas',
+    include_directories: evas_include_directories + [vg_common_inc_dir],
+    sources : [evas_src, pub_eo_file_target, priv_eo_file_target],
+    dependencies: [evas_deps, m, draw, valgrind, libunibreak, evas_static_list],
+    link_with: evas_link,
+    install: true,
+    c_args : '-DPACKAGE_DATA_DIR="'+join_paths(dir_data, 'evas')+'"',
+    version : meson.project_version()
+)
+
+evas = declare_dependency(
+   link_with : [evas_lib],
+   sources: pub_eo_file_target,
+   dependencies : [m] + evas_pub_deps + evas_deps,
+   include_directories: evas_include_directories + [vg_common_inc_dir] + [include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))],
+)
+
+evas_bin = declare_dependency(
+   link_with : [evas_lib],
+   dependencies : [eina, ecore, ector, emile, lua],
+   include_directories : evas_include_directories
 )
 
 if get_option('install-eo-files')
@@ -206,7 +333,6 @@ install_headers(evas_header_src,
   install_dir : dir_package_include,
 )
 
-automatic_pkgfile = false
 pub_eo_files = []
 package_eo_subdirs += ['canvas', 'gesture']
 package_header_subdirs += ['canvas', 'gesture']

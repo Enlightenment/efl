@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_PARAMETER_HH
 #define EOLIAN_MONO_PARAMETER_HH
 
@@ -479,7 +494,7 @@ struct marshall_parameter_generator
             ).generate(sink, std::make_tuple(param, param_name), context);
 
       return as_generator(
-               "IntPtr " << param_name << "_data, " << type << "Internal " << param_name << ", EinaFreeCb "
+               "IntPtr " << param_name << "_data, " << type << "Internal " << param_name << ", Eina.Callbacks.EinaFreeCb "
                << param_name << "_free_cb"
            ).generate(sink, param, context);
    }
@@ -894,7 +909,7 @@ struct native_convert_out_variable_generator
            // Assign a default value to the out variable in case we end up in the catch clause.
            return as_generator(
                    string << " = default(" << type << ");"
-                   ).generate(sink, std::make_tuple(param.param_name, param), context);
+                   ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param), context);
         }
       return true;
    }
@@ -1521,7 +1536,7 @@ struct constructor_param_generator
 
      if (!as_generator(
                        efl::eolian::grammar::attribute_reorder<1, -1>
-                       (type(false, ctor.is_optional) << " " << constructor_parameter_name(ctor) << (ctor.is_optional ? " = null" : "")) % ","
+                       (type(false, ctor.is_optional) << " " << constructor_parameter_name(ctor) << (ctor.is_optional ? " = null" : "")) % ", "
                 ).generate(sink, params, context))
        return false;
      //   }

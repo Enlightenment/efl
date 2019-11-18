@@ -2089,7 +2089,7 @@ funcstub(int native)
 	     error(10);		/* illegal function or declaration */
 	     return;
 	  }			/* if */
-        assert(sizeof(str) <= sNAMEMAX);
+        assert(strlen(str) <= sNAMEMAX);
 	strcpy(symbolname, str);
      }				/* if */
    needtoken('(');		/* only functions may be native/forward */

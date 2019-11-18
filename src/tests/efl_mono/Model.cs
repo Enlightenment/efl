@@ -9,9 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace TestSuite {
 
 [SuppressMessage("Gendarme.Rules.Portability", "DoNotHardcodePathsRule")]
-public class TestModel {
+public static class TestModel {
 
-    public class VeggieViewModel
+    private class VeggieViewModel
     {
         public string Name { get; set; }
         public string Type { get; set; }
@@ -32,7 +32,8 @@ public class TestModel {
     {
         Efl.Loop loop = Efl.App.AppMain;
 
-        var veggies = CreateModel(loop);
+        var model = CreateModel(loop);
+        model.Dispose();
     }
 
     internal static async Task EasyModelExtractionAsync (Efl.Loop loop)
@@ -42,13 +43,15 @@ public class TestModel {
         var model = new Efl.GenericModel<VeggieViewModel>(veggies, loop);
         Test.AssertEquals(3, (int)model.GetChildrenCount());
 
-        VeggieViewModel r2 = await model.GetAtAsync(1);
+        VeggieViewModel r2 = await model.GetAtAsync(1).ConfigureAwait(false);
         Test.AssertEquals(r2.Name, "Romaine Lettuce");
 
-        VeggieViewModel r = await model.GetAtAsync(0);
+        VeggieViewModel r = await model.GetAtAsync(0).ConfigureAwait(false);
         Test.AssertEquals(r.Name, "Tomato");
 
         loop.End();
+        model.Dispose();
+        veggies.Dispose();
     }
 
     public static void easy_model_extraction ()
@@ -77,6 +80,8 @@ public class TestModel {
 
         Test.Assert(callbackCalled, "Property bound callback must have been called.");
         Test.AssertEquals(propertyBound, "style");
+        factory.Dispose();
+        parent.Dispose();
     }
 }
 

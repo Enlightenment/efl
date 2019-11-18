@@ -84,13 +84,13 @@ test_efl_anim_translate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    //Translate Animation to right bottom relatively
    Efl_Canvas_Animation *translate_rb_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
-   efl_animation_translate_set(translate_rb_anim, 0, 0, 100, 100);
+   efl_animation_translate_set(translate_rb_anim, EINA_POSITION2D(0, 0), EINA_POSITION2D(100, 100));
    efl_animation_duration_set(translate_rb_anim, 1.0);
    efl_animation_final_state_keep_set(translate_rb_anim, EINA_TRUE);
 
    //Translate Animation to left top relatively
    Efl_Canvas_Animation *translate_lt_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
-   efl_animation_translate_set(translate_lt_anim, 100, 100, 0, 0);
+   efl_animation_translate_set(translate_lt_anim, EINA_POSITION2D(100, 100), EINA_POSITION2D(0, 0));
    efl_animation_duration_set(translate_lt_anim, 1.0);
    efl_animation_final_state_keep_set(translate_lt_anim, EINA_TRUE);
 
@@ -150,13 +150,13 @@ test_efl_anim_translate_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_U
 
    //Translate Animation to right bottom absolutely
    Efl_Canvas_Animation *translate_rb_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
-   efl_animation_translate_absolute_set(translate_rb_anim, 0, 0, 100, 100);
+   efl_animation_translate_absolute_set(translate_rb_anim, EINA_POSITION2D(0, 0), EINA_POSITION2D(100, 100));
    efl_animation_duration_set(translate_rb_anim, 1.0);
    efl_animation_final_state_keep_set(translate_rb_anim, EINA_TRUE);
 
    //Translate Animation to left top absolutely
    Efl_Canvas_Animation *translate_lt_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
-   efl_animation_translate_absolute_set(translate_lt_anim, 100, 100, 0, 0);
+   efl_animation_translate_absolute_set(translate_lt_anim, EINA_POSITION2D(100, 100), EINA_POSITION2D(0, 0));
    efl_animation_duration_set(translate_lt_anim, 1.0);
    efl_animation_final_state_keep_set(translate_lt_anim, EINA_TRUE);
 
