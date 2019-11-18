@@ -609,8 +609,8 @@ EAPI Eina_List *ecore_file_app_list(void);
  * @return @c EINA_TRUE if the download start or @c EINA_FALSE on failure.
  *
  * This function starts the download of the URL @p url and saves it to
- * @p dst. @p url must provide the protocol, including 'http://',
- * 'ftp://' or 'file://'. Ecore_File must be compiled with CURL to
+ * @p dst. @p url must provide the protocol, including '%http://',
+ * '%ftp://' or '%file://'. Ecore_File must be compiled with CURL to
  * download using http and ftp protocols. If @p dst is ill-formed, or
  * if it already exists, the function returns @c EINA_FALSE. When the
  * download is complete, the callback @p completion_cb is called and
@@ -684,8 +684,8 @@ EAPI void      ecore_file_download_abort(Ecore_File_Download_Job *job);
  * @return @c EINA_TRUE if protocol is handled, @c EINA_FALSE otherwise.
  *
  * This function returns @c EINA_TRUE if @p protocol is supported,
- * @c EINA_FALSE otherwise. @p protocol can be 'http://', 'ftp://' or
- * 'file://'. Ecore_FILE must be compiled with CURL to handle http and
+ * @c EINA_FALSE otherwise. @p protocol can be '%http://', '%ftp://' or
+ * '%file://'. Ecore_FILE must be compiled with CURL to handle http and
  * ftp protocols.
  */
 EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);
