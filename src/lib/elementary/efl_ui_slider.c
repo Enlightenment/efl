@@ -78,6 +78,21 @@ _user_value_update(Evas_Object *obj, double value)
 }
 
 static void
+_step_value_update(Evas_Object *obj, double step)
+{
+   double value;
+
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
+
+   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
+     step *= -1.0;
+
+   value = CLAMP(sd->val + step, sd->val_min, sd->val_max);
+   _user_value_update(obj, value);
+
+}
+
+static void
 _drag_value_fetch(Evas_Object *obj)
 {
    EFL_UI_SLIDER_DATA_GET(obj, sd);
@@ -194,7 +209,8 @@ _drag_up(Evas_Object *obj)
 
    efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            relative_step, relative_step);
-   _drag_value_fetch(obj);
+
+   _step_value_update(obj, step);
 }
 
 static void
@@ -214,7 +230,8 @@ _drag_down(Evas_Object *obj)
 
    efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            relative_step, relative_step);
-   _drag_value_fetch(obj);
+
+   _step_value_update(obj, step);
 }
 
 static Eina_Bool

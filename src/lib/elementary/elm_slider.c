@@ -144,7 +144,6 @@ _indicator_set(Evas_Object *obj)
    elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", str);
    if (sd->popup)
      edje_object_part_text_set(sd->popup, "elm.indicator", str);
-
    if (sd->popup2)
      {
         eina_strbuf_reset(sd->indi_format_strbuf);
@@ -336,6 +335,40 @@ _val_set(Evas_Object *obj)
 }
 
 static void
+_user_value_update(Evas_Object *obj, double value)
+{
+   double val = value;
+
+   ELM_SLIDER_DATA_GET_OR_RETURN(obj, sd);
+
+   if (fabs(val - sd->val) > DBL_EPSILON)
+     {
+        sd->val = val;
+        sd->intvl_from = val;
+        _val_set(obj);
+
+        evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+        ecore_timer_del(sd->delay);
+        sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
+     }
+}
+
+static void
+_step_value_update(Evas_Object *obj, double step)
+{
+   double value, absolute_step;
+
+   ELM_SLIDER_DATA_GET(obj, sd);
+
+   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
+     step *= -1.0;
+
+   absolute_step = step * (sd->val_max - sd->val_min);
+   value = CLAMP(sd->val + absolute_step, sd->val_min, sd->val_max);
+   _user_value_update(obj, value);
+}
+
+static void
 _val_fetch(Evas_Object *obj, Eina_Bool user_event)
 {
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
@@ -489,6 +522,8 @@ _drag_up(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
                          step, step);
+
+   _step_value_update(data, step);
 }
 
 static void
@@ -507,6 +542,8 @@ _drag_down(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
                          step, step);
+
+   _step_value_update(data, step);
 }
 
 static Eina_Bool
