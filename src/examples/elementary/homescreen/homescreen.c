@@ -13,6 +13,8 @@ typedef struct
   Efl_Event_Cb cb;
 } Icon;
 
+static void _fake_app_cb(void *data, const Efl_Event *ev);
+
 #define P "/usr/share/icons/hicolor/128x128/apps/"
 
 static Icon workspace1[] = {
@@ -22,16 +24,16 @@ static Icon workspace1[] = {
 };
 
 static Icon workspace2[] = {
-    { EINA_POSITION2D(0, 3), "Cadence", P"cadence.png", NULL},
-    { EINA_POSITION2D(1, 3), "Emacs", P"emacs.png", NULL},
-    { EINA_POSITION2D(2, 3), "etui", P"etui.png", NULL},
-    { EINA_POSITION2D(3, 3), "CAD", P"librecad.png", NULL},
-    { EINA_POSITION2D(4, 3), "Libreoffice", P"libreoffice-base.png", NULL},
-    { EINA_POSITION2D(0, 4), "Riot", P"riot.png", NULL},
-    { EINA_POSITION2D(1, 4), "Tex", P"texstudio.png", NULL},
-    { EINA_POSITION2D(2, 4), "Telegram", P"telegram.png", NULL},
-    { EINA_POSITION2D(3, 4), "Vlc", P"vlc.png", NULL},
-    { EINA_POSITION2D(4, 4), "Mono", P"monodevelop.png", NULL},
+    { EINA_POSITION2D(0, 3), "Cadence", P"cadence.png", _fake_app_cb},
+    { EINA_POSITION2D(1, 3), "Emacs", P"emacs.png", _fake_app_cb},
+    { EINA_POSITION2D(2, 3), "etui", P"etui.png", _fake_app_cb},
+    { EINA_POSITION2D(3, 3), "CAD", P"librecad.png", _fake_app_cb},
+    { EINA_POSITION2D(4, 3), "Libreoffice", P"libreoffice-base.png", _fake_app_cb},
+    { EINA_POSITION2D(0, 4), "Riot", P"riot.png", _fake_app_cb},
+    { EINA_POSITION2D(1, 4), "Tex", P"texstudio.png", _fake_app_cb},
+    { EINA_POSITION2D(2, 4), "Telegram", P"telegram.png", _fake_app_cb},
+    { EINA_POSITION2D(3, 4), "Vlc", P"vlc.png", _fake_app_cb},
+    { EINA_POSITION2D(4, 4), "Mono", P"monodevelop.png", _fake_app_cb},
     { EINA_POSITION2D(2, 0), NULL, NULL, NULL},
 };
 
@@ -57,11 +59,11 @@ static Icon* workspaces[] = {workspace1, workspace2, workspace3};
 static void _home_screen_cb(void *data, const Efl_Event *cb);
 
 static Icon start_line_config[] = {
-    { EINA_POSITION2D(0, 0), "Call", "call-start", NULL},
-    { EINA_POSITION2D(0, 0), "Contact", "contact-new", NULL},
+    { EINA_POSITION2D(0, 0), "Call", "call-start", _fake_app_cb},
+    { EINA_POSITION2D(0, 0), "Contact", "contact-new", _fake_app_cb},
     { EINA_POSITION2D(0, 0), "Home", "applications-internet", _home_screen_cb},
-    { EINA_POSITION2D(0, 0), "Mail", "emblem-mail", NULL},
-    { EINA_POSITION2D(0, 0), "Documents", "emblem-documents", NULL},
+    { EINA_POSITION2D(0, 0), "Mail", "emblem-mail", _fake_app_cb},
+    { EINA_POSITION2D(0, 0), "Documents", "emblem-documents", _fake_app_cb},
     { EINA_POSITION2D(0, 0), NULL, NULL, NULL},
 };
 
@@ -156,8 +158,11 @@ static Efl_Ui_Widget*
 _build_compositor(Efl_Ui_Win *win)
 {
    Efl_Ui_Widget *comp;
+   Efl_Ui_Spotlight_Manager *stack;
 
-   comp = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win);
+   stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   comp = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
+                  efl_ui_spotlight_manager_set(efl_added, stack));
 
    return comp;
 }
@@ -167,14 +172,27 @@ _home_screen_cb(void *data, const Efl_Event *cb)
 {
    Efl_Canvas_Rectangle *rect;
 
-   printf("asdfasdfasdf\n");
-
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, compositor);
    efl_gfx_entity_size_set(rect, EINA_SIZE2D(720*SCALE+15, 1280*SCALE));
    efl_gfx_entity_position_set(rect, EINA_POSITION2D(0, 1280*SCALE));
+
+   efl_ui_spotlight_push(compositor, rect);
 }
 
-
+static void
+_fake_app_cb(void *data, const Efl_Event *ev)
+{
+    Efl_Ui_Table *table = efl_add(EFL_UI_TABLE_CLASS, compositor);
+    Efl_Canvas_Rectangle *rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, compositor);
+    efl_gfx_color_set(rect, 50, 50, 50, 255);
+    efl_pack_table(table, rect, 0, 0, 1, 1);
+    Efl_Ui_Text *text = efl_add(EFL_UI_TEXT_CLASS , table);
+    efl_text_interactive_editable_set(text, EINA_FALSE);
+    efl_text_multiline_set(text, EINA_FALSE);
+    efl_text_set(text, "This is a testing application");
+    efl_pack_table(table, text, 0, 0, 1, 1);
+    efl_ui_spotlight_push(compositor, table);
+}
 
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
@@ -189,8 +207,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    over_container = _build_homescreen(win);
    desktop = _build_overall_structure(win, over_container);
+
    compositor = _build_compositor(win);
-   efl_pack_end(compositor, desktop);
+   //efl_pack_end(compositor, desktop);
+   efl_ui_spotlight_push(compositor, desktop);
    efl_gfx_entity_size_set(compositor, EINA_SIZE2D(720*SCALE, 1280*SCALE));
 
    background = efl_add(EFL_UI_LAYOUT_CLASS, win);
