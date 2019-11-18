@@ -35,9 +35,10 @@
 static Eo *gvg[5];
 
 static void
-_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
+running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   double progress = *((double*)event->info);
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double progress = event_running->progress;
 
    int i;
    for (i = 0; i < 5; i++)
@@ -119,8 +120,11 @@ main(void)
    //Play custom animation
    Eo *anim = efl_add(EFL_CANVAS_ANIMATION_CLASS, evas);
    efl_animation_duration_set(anim, efl_gfx_frame_controller_frame_duration_get(vg, 0, 0));
-   efl_event_callback_add(vg, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _running_cb, NULL);
-   efl_canvas_object_animation_start(vg, anim, 1.0, 0.0);
+
+   Eo *player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, evas);
+   efl_animation_player_animation_set(player, anim);
+   efl_event_callback_add(player, EFL_ANIMATION_PLAYER_EVENT_RUNNING, running_cb, NULL);
+   efl_player_playing_set(player, EINA_TRUE);
 
    ecore_main_loop_begin();
    ecore_evas_shutdown();
