@@ -19,9 +19,9 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "grammar/generator.hpp"
-#include "grammar/attributes.hpp"
-#include "grammar/string.hpp"
+#include "generator.hpp"
+#include "attributes.hpp"
+#include "string.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

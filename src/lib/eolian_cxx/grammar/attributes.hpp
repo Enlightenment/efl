@@ -18,7 +18,7 @@
 
 #include <tuple>
 #include <type_traits>
-#include "grammar/type_traits.hpp"
+#include "type_traits.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

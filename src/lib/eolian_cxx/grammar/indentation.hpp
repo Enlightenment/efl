@@ -16,8 +16,8 @@
 #ifndef EOLIAN_CXX_GRAMMAR_INDENTATION_HPP
 #define EOLIAN_CXX_GRAMMAR_INDENTATION_HPP
 
-#include "grammar/generator.hpp"
-#include "grammar/attributes.hpp"
+#include "generator.hpp"
+#include "attributes.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

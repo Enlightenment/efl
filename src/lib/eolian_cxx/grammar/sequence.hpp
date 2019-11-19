@@ -16,7 +16,8 @@
 #ifndef EOLIAN_CXX_SEQUENCE_HH
 #define EOLIAN_CXX_SEQUENCE_HH
 
-#include "grammar/generator.hpp"
+#include "generator.hpp"
+#include "attributes.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

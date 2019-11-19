@@ -16,7 +16,7 @@
 #ifndef EOLIAN_CXX_GENERATOR_HH
 #define EOLIAN_CXX_GENERATOR_HH
 
-#include <type_traits>
+#include "type_traits"
 
 // EXPERIMENTAL
 //#define USE_EOCXX_INHERIT_ONLY

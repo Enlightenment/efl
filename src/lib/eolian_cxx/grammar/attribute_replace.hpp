@@ -16,7 +16,7 @@
 #ifndef EOLIAN_CXX_ATTRIBUTE_REPLACE_HH
 #define EOLIAN_CXX_ATTRIBUTE_REPLACE_HH
 
-#include "grammar/generator.hpp"
+#include "generator.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

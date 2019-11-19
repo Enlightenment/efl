@@ -16,8 +16,8 @@
 #ifndef EOLIAN_CXX_CASE_HH
 #define EOLIAN_CXX_CASE_HH
 
-#include "grammar/context.hpp"
-#include "grammar/generator.hpp"
+#include "context.hpp"
+#include "generator.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

@@ -16,8 +16,8 @@
 #ifndef EOLIAN_CXX_ATTRIBUTE_REORDER_HH
 #define EOLIAN_CXX_ATTRIBUTE_REORDER_HH
 
-#include "grammar/generator.hpp"
-#include "grammar/attributes.hpp"
+#include "generator.hpp"
+#include "attributes.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

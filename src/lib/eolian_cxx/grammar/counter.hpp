@@ -4,10 +4,10 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "grammar/generator.hpp"
-#include "grammar/attributes.hpp"
-#include "grammar/case.hpp"
-#include "grammar/integral.hpp"
+#include "generator.hpp"
+#include "attributes.hpp"
+#include "case.hpp"
+#include "integral.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 

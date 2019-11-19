@@ -16,8 +16,8 @@
 #ifndef EOLIAN_CXX_ALTERNATIVE_HH
 #define EOLIAN_CXX_ALTERNATIVE_HH
 
-#include "grammar/generator.hpp"
-#include "grammar/meta.hpp"
+#include "generator.hpp"
+#include "meta.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
