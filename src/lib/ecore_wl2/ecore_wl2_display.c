@@ -1200,3 +1200,10 @@ ecore_wl2_connected_display_get(const char *name)
 
    return ewd;
 }
+
+EAPI struct wl_compositor *
+ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->wl.compositor;
+}

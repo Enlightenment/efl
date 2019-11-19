@@ -743,6 +743,18 @@ EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Displa
 EAPI Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
 
 /**
+ * Gets the wl_compositor which belongs to this display
+ *
+ * @param display The Ecore_Wl2_Display to get the compositor of
+ *
+ * @return The wl_compositor associated with this display
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.24
+ */
+EAPI struct wl_compositor *ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display);
+
+/**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
  *
