@@ -310,6 +310,25 @@ EFL_START_TEST(wl2_window_geometry)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_type)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window_Type type = ECORE_WL2_WINDOW_TYPE_NONE;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_type_set(win, ECORE_WL2_WINDOW_TYPE_TOPLEVEL);
+
+   type = ecore_wl2_window_type_get(win);
+   fail_if(type != ECORE_WL2_WINDOW_TYPE_TOPLEVEL);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -332,5 +351,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_rotation_app);
         tcase_add_test(tc, wl2_wm_window_rotation_app);
         tcase_add_test(tc, wl2_window_geometry);
+        tcase_add_test(tc, wl2_window_type);
      }
 }
