@@ -563,6 +563,17 @@ std::string translate_value_type(std::string const& name)
   return name;
 }
 
+
+// Field names //
+struct struct_field_name_generator
+{
+  template <typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
+  {
+    return as_generator(string).generate(sink, name_helpers::to_field_name(field.name), context);
+  }
+} const struct_field_name {};
+
 } // namespace name_helpers
 
 } // namespace eolian_mono
@@ -590,9 +601,18 @@ struct is_eager_generator<eolian_mono::name_helpers::klass_full_concrete_name_ge
 template <>
 struct is_generator<eolian_mono::name_helpers::klass_full_concrete_name_generator> : std::true_type {};
 
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::struct_field_name_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::name_helpers::struct_field_name_generator> : std::true_type {};
+
 namespace type_traits {
 template <>
 struct attributes_needed<struct ::eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::integral_constant<int, 1> {};
+
+template <>
+struct attributes_needed< ::eolian_mono::name_helpers::struct_field_name_generator> : std::integral_constant<int, 1> {};
+
 }
       
 } } }

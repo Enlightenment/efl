@@ -377,4 +377,48 @@ internal class TestStructs
     // }
 }
 
+internal class TestStructEquality
+{
+    static Dummy.StructSimple a = new Dummy.StructSimple(1, 2, (char)3, 4, Fstring: "", Fmstring: "", Fstringshare: "");
+    static Dummy.StructSimple b = new Dummy.StructSimple(1, 2, (char)3, 4, Fstring: "", Fmstring: "", Fstringshare: "");
+
+    static Dummy.StructSimple c = new Dummy.StructSimple(4, 3, (char)2, 1, Fstring: "", Fmstring: "", Fstringshare: "");
+
+    // to check if we differ on a single struct field
+    static Dummy.StructSimple singleDifferentField = new Dummy.StructSimple(1, 2, (char)3, 5, Fstring: "", Fmstring: "", Fstringshare: "");
+
+    public static void test_equals()
+    {
+        Test.AssertEquals(a, b);
+        Test.AssertNotEquals(a, c);
+        Test.AssertNotEquals(a, singleDifferentField);
+    }
+
+    public static void test_equals_different_types()
+    {
+        Test.Assert(!(a.Equals(new Object())));
+    }
+
+    public static void test_equatable()
+    {
+        Test.Assert(((IEquatable<Dummy.StructSimple>)a).Equals(b));
+        Test.Assert(!((IEquatable<Dummy.StructSimple>)a).Equals(c));
+        Test.Assert(!((IEquatable<Dummy.StructSimple>)a).Equals(singleDifferentField));
+    }
+
+    public static void test_equality_operators()
+    {
+        Test.Assert(a == b);
+        Test.Assert(a != c);
+        Test.Assert(a != singleDifferentField);
+    }
+
+    public static void test_hash_code()
+    {
+        Test.AssertEquals(a.GetHashCode(), b.GetHashCode());
+        Test.AssertNotEquals(a.GetHashCode(), c.GetHashCode());
+        Test.AssertNotEquals(a.GetHashCode(), singleDifferentField.GetHashCode());
+    }
+}
+
 }

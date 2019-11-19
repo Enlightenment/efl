@@ -59,7 +59,7 @@ struct alias_definition_generator
      std::string const alias_name = utils::remove_all(alias.eolian_name, '_');
      if (!as_generator(
                  documentation
-                 << "public struct " << alias_name << "\n"
+                 << "public struct " << alias_name << " : IEquatable<" << alias_name << ">\n"
                  << "{\n"
                  << scope_tab << "private " << alias_type << " payload;\n\n"
 
@@ -93,7 +93,64 @@ struct alias_definition_generator
                  << scope_tab << "{\n"
                  << scope_tab << scope_tab << "return this;\n"
                  << scope_tab << "}\n"
-                 << "}\n"
+                 ).generate(sink, alias, context))
+       return false;
+
+     std::string since_line;
+     if (!alias.documentation.since.empty())
+         if (!as_generator(scope_tab << "/// <para>Since EFL " + alias.documentation.since + ".</para>\n"
+                 ).generate(std::back_inserter(since_line), attributes::unused, context))
+           return false;
+
+     // GetHashCode (needed by the equality comparisons)
+     if (!as_generator(
+             scope_tab << "/// <summary>Get a hash code for this item.\n"
+             << since_line
+             << scope_tab << "/// </summary>\n"
+             << scope_tab << "public override int GetHashCode() => payload.GetHashCode();\n"
+          ).generate(sink, attributes::unused, context))
+       return false;
+
+     // IEquatble<T> Equals
+     if (!as_generator(
+                 scope_tab << "/// <summary>Equality comparison.\n"
+                 << since_line
+                 << scope_tab << "/// </summary>\n"
+                 << scope_tab << "public bool Equals(" << alias_name << " other) => payload == other.payload;\n"
+          ).generate(sink, attributes::unused, context))
+       return false;
+
+     // ValueType.Equals
+     if (!as_generator(
+                 scope_tab << "/// <summary>Equality comparison.\n"
+                 << since_line
+                 << scope_tab << "/// </summary>\n"
+                 << scope_tab << "public override bool Equals(object other)\n"
+                 << scope_tab << scope_tab << "=> ((other is " << alias_name << ") ? Equals((" << alias_name << ")other) : false);\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     // Equality operators
+     if (!as_generator(
+                 scope_tab << "/// <summary>Equality comparison.\n"
+                 << since_line
+                 << scope_tab << "/// </summary>\n"
+                 << scope_tab << "public static bool operator ==(" << alias_name << " lhs, " << alias_name << " rhs)\n"
+                 << scope_tab << scope_tab << "=> lhs.payload == rhs.payload;\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!as_generator(
+                 scope_tab << "/// <summary>Equality comparison.\n"
+                 << since_line
+                 << scope_tab << "/// </summary>\n"
+                 << scope_tab << "public static bool operator !=(" << alias_name << " lhs, " << alias_name << " rhs)\n"
+                 << scope_tab << scope_tab << "=> lhs.payload != rhs.payload;\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!as_generator(
+                 "}\n"
                  ).generate(sink, alias, context))
        return false;
 
