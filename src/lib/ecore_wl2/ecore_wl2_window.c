@@ -1748,3 +1748,18 @@ ecore_wl2_window_type_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, ECORE_WL2_WINDOW_TYPE_NONE);
    return window->type;
 }
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_window_surface_find(struct wl_surface *surface)
+{
+   Ecore_Wl2_Display *ewd;
+   Ecore_Wl2_Window *win;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   ewd = ecore_wl2_connected_display_get(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
+
+   win = ecore_wl2_display_window_find_by_surface(ewd, surface);
+   return win;
+}

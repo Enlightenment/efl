@@ -1361,6 +1361,16 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
 EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
 
 /**
+ * Finds a window by surface
+ *
+ * @param surface The surface to find the window of
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window *ecore_wl2_window_surface_find(struct wl_surface *surface);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
