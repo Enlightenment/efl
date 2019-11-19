@@ -1741,3 +1741,10 @@ ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge)
    if (!window->wl2_surface) return;
    ecore_wl2_surface_flush(window->wl2_surface, purge);
 }
+
+EAPI Ecore_Wl2_Window_Type
+ecore_wl2_window_type_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, ECORE_WL2_WINDOW_TYPE_NONE);
+   return window->type;
+}
