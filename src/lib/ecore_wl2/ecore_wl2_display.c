@@ -1163,3 +1163,9 @@ ecore_wl2_display_flush(Ecore_Wl2_Display *display)
 
    _begin_recovery_maybe(display, code);
 }
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Display *display, struct wl_surface *surface)
+{
+   return _ecore_wl2_display_window_surface_find(display, surface);
+}
