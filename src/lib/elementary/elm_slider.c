@@ -78,6 +78,21 @@ _is_horizontal(Efl_Ui_Layout_Orientation dir)
    return efl_ui_layout_orientation_is_horizontal(dir, EINA_TRUE);
 }
 
+static Eina_Bool
+_is_inverted(Eo *obj, Elm_Slider_Data *sd)
+{
+   Eina_Bool mirrored, inverted;
+
+   mirrored = efl_ui_mirrored_get(obj);
+   inverted = efl_ui_layout_orientation_is_inverted(sd->dir);
+
+   if ((_is_horizontal(sd->dir) && (mirrored ^ inverted)) ||
+       (!_is_horizontal(sd->dir) && inverted))
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
+}
+
 static void
 _units_set(Evas_Object *obj)
 {
@@ -315,7 +330,7 @@ _val_set(Evas_Object *obj)
    else if (pos2 > 1.0)
      pos2 = 1.0;
 
-   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
+   if (_is_inverted(obj, sd))
      {
         pos = 1.0 - pos;
         pos2 = 1.0 - pos2;
@@ -360,7 +375,7 @@ _step_value_update(Evas_Object *obj, double step)
 
    ELM_SLIDER_DATA_GET(obj, sd);
 
-   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
+   if (_is_inverted(obj, sd))
      step *= -1.0;
 
    absolute_step = step * (sd->val_max - sd->val_min);
@@ -392,7 +407,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
         else pos2 = posy2;
      }
 
-   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
+   if (_is_inverted(obj, sd))
      {
         pos = 1.0 - pos;
         pos2 = 1.0 - pos2;
