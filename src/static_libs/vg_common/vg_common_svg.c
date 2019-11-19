@@ -544,7 +544,7 @@ vg_common_svg_node_free(Svg_Node *node)
 }
 
 static Efl_VG *
-_apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_data)
+_apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_data, int fill_opacity)
 {
    Efl_VG *grad_obj = NULL;
    Efl_Gfx_Gradient_Stop *stops, *stop;
@@ -678,23 +678,26 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
         // not a known gradient
         return NULL;
      }
+
    // apply common prperty
    efl_gfx_gradient_spread_set(grad_obj, g->spread);
+
    // update the stops
    stop_count = eina_list_count(g->stops);
    if (stop_count)
      {
         double opacity;
+        double fopacity = ((double) fill_opacity) / 255;   //fill opacity if any exists.
         stops = calloc(stop_count, sizeof(Efl_Gfx_Gradient_Stop));
         i = 0;
         EINA_LIST_FOREACH(g->stops, l, stop)
           {
              // Use premultiplied color
-             opacity = (double)stop->a / 255;
-             stops[i].r = stop->r * opacity;
-             stops[i].g = stop->g * opacity;
-             stops[i].b = stop->b * opacity;
-             stops[i].a = stop->a;
+             opacity = ((double) stop->a / 255) * fopacity;
+             stops[i].r = (stop->r * opacity);
+             stops[i].g = (stop->g * opacity);
+             stops[i].b = (stop->b * opacity);
+             stops[i].a = (stop->a * fopacity);
              stops[i].offset = stop->offset;
              i++;
           }
@@ -727,8 +730,8 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
      }
    else if (style->fill.paint.gradient)
      {
-        // if the fill has gradient then apply.
-        efl_canvas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient, vg, parent, vg_data));
+        Efl_VG *gradient = _apply_gradient_property(style->fill.paint.gradient, vg, parent, vg_data, style->fill.opacity);
+        efl_canvas_vg_shape_fill_set(vg, gradient);
      }
    else if (style->fill.paint.cur_color)
      {
@@ -758,11 +761,11 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
 
    // apply the fill style property
    efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
-
    efl_gfx_shape_stroke_width_set(vg, style->stroke.width);
    efl_gfx_shape_stroke_cap_set(vg, style->stroke.cap);
    efl_gfx_shape_stroke_join_set(vg, style->stroke.join);
    efl_gfx_shape_stroke_scale_set(vg, style->stroke.scale);
+
    // if stroke property is NULL then do nothing
    if (style->stroke.paint.none)
      {
@@ -771,7 +774,8 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    else if (style->stroke.paint.gradient)
      {
         // if the fill has gradient then apply.
-        efl_canvas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient, vg, parent, vg_data));
+        Efl_VG *gradient = _apply_gradient_property(style->stroke.paint.gradient, vg, parent, vg_data, 255);
+        efl_canvas_vg_shape_stroke_fill_set(vg, gradient);
      }
    else if (style->stroke.paint.url)
      {
