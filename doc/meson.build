@@ -189,7 +189,7 @@ compress_target = custom_target('package_doc_tar',
 )
 
 run_target('doc',
-  command: ['echo', 'Documentation sucessfully build!'],
+  command: ['echo', 'Documentation built successfully'],
   depends: compress_target,
 )
 

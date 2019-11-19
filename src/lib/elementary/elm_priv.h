@@ -329,6 +329,9 @@ extern const char *_elm_engines[];
 # define ELM_PRIV_SMART_CALLBACKS_DESC(name, signal, type) \
    {name, type},
 
+# define CLAMP(x, min, max) \
+   (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+
 struct _Elm_Config_Flags
 {
    Eina_Bool engine : 1;
