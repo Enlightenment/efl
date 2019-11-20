@@ -390,7 +390,7 @@ _efl_canvas_vg_container_efl_object_parent_set(Eo *obj,
 
 EOLIAN static Efl_VG *
 _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
-                                             Efl_Canvas_Vg_Container_Data *pd)
+                                                 Efl_Canvas_Vg_Container_Data *pd)
 {
    Eina_List *l;
    Efl_VG *child;
@@ -410,6 +410,9 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
    //Copy Children
    EINA_LIST_FOREACH(pd->children, l, child)
      {
+        //Skip, We already copied composite target before.
+        if (child == pd->comp_target) continue;
+
         Efl_VG *eo = efl_duplicate(child);
         efl_parent_set(eo, container);
      }
