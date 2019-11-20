@@ -405,14 +405,14 @@ struct visitor_generate
         , {"iterator", nullptr, nullptr, [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "Eina.Iterator";
+             c.outer.base_type = "IEnumerable";
              return c;
            }           
           }
         , {"accessor", nullptr, nullptr, [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "Eina.Accessor";
+             c.outer.base_type = "IEnumerable";
              return c;
            }           
           }

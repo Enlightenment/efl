@@ -129,9 +129,14 @@ struct unpack_event_args_visitor
    {
       return as_generator("(Efl.Eo.Globals.CreateWrapperFor(info) as " + name_helpers::klass_full_concrete_name(cls) + ")").generate(sink, attributes::unused, *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& types) const
    {
-      return as_generator("new " << eolian_mono::type << "(info, false, false)").generate(sink, type, *context);
+      if (types.outer.base_type == "iterator")
+        return as_generator("Efl.Eo.Globals.IteratorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else if (types.outer.base_type == "accessor")
+        return as_generator("Efl.Eo.Globals.AccessorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else
+        return as_generator("new " << eolian_mono::type << "(info, false, false)").generate(sink, type, *context);
    }
 };
 
@@ -237,10 +242,18 @@ struct pack_event_info_and_call_visitor
       return as_generator(indent << "IntPtr info = e.arg.NativeHandle;\n"
                           << indent << this->native_call).generate(sink, attributes::unused, *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& type) const
    {
       auto const& indent = current_indentation(*context);
-      return as_generator(indent << "IntPtr info = e.arg.Handle;\n"
+      if (type.outer.base_type == "iterator")
+        return as_generator(indent << "IntPtr info = Efl.Eo.Globals.IEnumerableToIterator(e.arg);\n"
+                            << indent << this->native_call).generate(sink, attributes::unused, *context);
+      else if (type.outer.base_type == "accessor")
+        return as_generator(indent << "IntPtr info = Efl.Eo.Globals.IEnumerableToAccessor(e.arg);\n"
+                            << indent << this->native_call).generate(sink, attributes::unused, *context);
+
+      else
+        return as_generator(indent << "IntPtr info = e.arg.Handle;\n"
                           << indent << this->native_call).generate(sink, attributes::unused, *context);
    }
 };

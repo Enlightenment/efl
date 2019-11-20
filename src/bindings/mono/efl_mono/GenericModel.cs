@@ -31,7 +31,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    }
 
    /// <summary>The list of properties available in the wrapped model.</summary>
-   public Eina.Iterator< System.String> Properties
+   public IEnumerable<System.String> Properties
    {
       get { return GetProperties(); }
    }
@@ -44,7 +44,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
 
    /// <summary>The list of properties available in the wrapped model.</summary>
    /// <returns>The list of properties in the model.</returns>
-   public Eina.Iterator<System.String> GetProperties()
+   public IEnumerable<System.String> GetProperties()
    {
        return model.GetProperties();
    }
