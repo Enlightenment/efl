@@ -16,6 +16,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+
 using static Efl.UnsafeNativeMethods;
 
 namespace Efl.Csharp
@@ -24,17 +27,32 @@ namespace Efl.Csharp
 /// <summary>The components to be initialized.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
-public enum Components
+[Flags]
+public enum Components : Int32
 {
+    // Base flags.
+    /// <summary>
+    ///   Initialize nothing.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    None = 0x0,
     ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.
-    /// <para>Since EFL 1.23.</para>
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
-    Basic,
-    ///<summary>The same components of <see cref="Efl.Csharp.Components.Basic"/>
-    /// and the Elementary widget toolkit.
-    /// <para>Since EFL 1.23.</para>
+    Basic = 0x1,
+    /// <summary>
+    ///   Elementary Widget toolkit: Elm.
+    /// <para>it's depend of <see cref="Efl.Csharp.Components.Basic" />.</para>
+    /// <para>Since EFL 1.24</para>
     /// </summary>
-    Ui,
+    Ui = Basic | 0x2,
+
+    // Combined flags.
+    /// <summary>
+    ///   Enable all components, equals to <see cref="Efl.Csharp.Components.Ui" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    All = int.MaxValue,
 }
 
 /// <summary>
@@ -60,23 +78,36 @@ public enum Components
 public abstract class Application
 {
     //the initializied components
-    private static Components initComponent;
-    //what follows are 3 private functions to boot up the internals of efl
-    private static void Init(Efl.Csharp.Components component)
-    {
-        Eina.Config.Init();
-        Efl.Eo.Config.Init();
-        ecore_init();
-        ecore_init_ex(0, IntPtr.Zero);
-        evas_init();
-        eldbus.Config.Init();
+    private static Components initComponents = Components.All;
 
-        if (component == Components.Ui)
+    //what follows are 3 private functions to boot up the internals of efl
+    private static void Init(Efl.Csharp.Components components = Components.All)
+    {
+        if (components == Components.None)
         {
+            return;
+        }
+
+        initComponents = components;
+
+        if ((initComponents & Components.Basic) == Components.Basic)
+        {
+            Eina.Config.Init();
+            Efl.Eo.Config.Init();
+            ecore_init();
+            ecore_init_ex(0, IntPtr.Zero);
+            evas_init();
+            eldbus.Config.Init();
+        }
+
+        if ((initComponents & Components.Ui) == Components.Ui)
+        {
+#if WIN32
             // TODO Support elm command line arguments
-#if WIN32       // Not a native define, we define it in our build system
+            // Not a native define, we define it in our build system
             // Ecore_Win32 uses OleInitialize, which requires single thread apartments
-            if (System.Threading.Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+            if (System.Threading.Thread.CurrentThread.GetApartmentState()
+                != ApartmentState.STA)
             {
                 throw new InvalidOperationException("UI Applications require STAThreadAttribute in Main()");
             }
@@ -85,8 +116,6 @@ public abstract class Application
 
             Efl.Ui.Win.ExitOnAllWindowsClosed = new Eina.Value(0);
         }
-
-        initComponent = component;
     }
 
     private static void Shutdown()
@@ -95,16 +124,24 @@ public abstract class Application
         System.GC.Collect();
         System.GC.WaitForPendingFinalizers();
 
-        if (initComponent == Components.Ui)
+        if (initComponents == Components.None)
+        {
+            return;
+        }
+
+        if ((initComponents & Components.Ui) == Components.Ui)
         {
             elm_shutdown();
         }
 
-        eldbus.Config.Shutdown();
-        evas_shutdown();
-        ecore_shutdown();
-        Efl.Eo.Config.Shutdown();
-        Eina.Config.Shutdown();
+        if ((initComponents & Components.Basic) == Components.Basic)
+        {
+            eldbus.Config.Shutdown();
+            evas_shutdown();
+            ecore_shutdown();
+            Efl.Eo.Config.Shutdown();
+            Eina.Config.Shutdown();
+        }
     }
 
     /// <summary>
@@ -157,7 +194,7 @@ public abstract class Application
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="components">The <see cref="Efl.Csharp.Components" /> to run the application.</param>
-    public void Launch(Efl.Csharp.Components components = Components.Ui)
+    public void Launch(Efl.Csharp.Components components = Components.All)
     {
         Init(components);
         Efl.App app = Efl.App.AppMain;
