@@ -714,6 +714,47 @@ EAPI Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
 EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
 
 /**
+ * Finds an Ecore_Wl2_Window based on wl_surface
+ *
+ * @param display The display to search for the window
+ * @param surface The wl_surface of the window to find
+ *
+ * @return The Ecore_Wl2_Window if found, or NULL if no such window exists
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Display *display, struct wl_surface *surface);
+
+/**
+ * Gets the connected display object
+ *
+ * @brief This function is typically used by clients to get an
+ * ​existing Wayland display.
+ *
+ * ​@param name The display target name. If @c NULL, the default
+ *             display is assumed.
+ *
+ * ​@return The Ecore_Wl2_Display which was connected to
+ *
+ * ​@ingroup Ecore_Wl2_Display_Group
+ * ​@since 1.24
+ */
+EAPI Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
+
+/**
+ * Gets the wl_compositor which belongs to this display
+ *
+ * @param display The Ecore_Wl2_Display to get the compositor of
+ *
+ * @return The wl_compositor associated with this display
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.24
+ */
+EAPI struct wl_compositor *ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display);
+
+/**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
  *
@@ -1037,6 +1078,16 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
 /**
+ * Get the type of a given window
+ *
+ * @see Ecore_Wl2_Window_Type
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
+
+/**
  * Find the output that a given window is on
  *
  * @param window The window to find the output for
@@ -1308,6 +1359,16 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
+
+/**
+ * Finds a window by surface
+ *
+ * @param surface The surface to find the window of
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window *ecore_wl2_window_surface_find(struct wl_surface *surface);
 
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions

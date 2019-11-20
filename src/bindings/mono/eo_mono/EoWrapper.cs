@@ -404,7 +404,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <para>Wraps the pointer handle to the native object instance.</para>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    protected struct ConstructingHandle
+    protected struct ConstructingHandle : IEquatable<ConstructingHandle>
     {
         /// <summary>Constructor for wrapping the native handle.
         /// <para>Since EFL 1.23.</para>
@@ -418,6 +418,52 @@ public abstract class EoWrapper : IWrapper, IDisposable
         /// <para>Since EFL 1.23.</para>
         /// </summary>
         public IntPtr NativeHandle { get; private set; }
+
+        /// <summary>
+        ///   Gets a hash for <see cref="ConstructingHandle" />.
+        /// <para>Since EFL 1.24.</para>
+        /// </summary>
+        /// <returns>A hash code.</returns>
+        public override int GetHashCode() => NativeHandle.GetHashCode();
+
+        /// <summary>Returns whether this <see cref="ConstructingHandle" />
+        /// is equal to the given <see cref="object" />.
+        /// <para>Since EFL 1.24.</para>
+        /// </summary>
+        /// <param name="other">The <see cref="object" /> to be compared to.</param>
+        /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+        public override bool Equals(object other)
+            => (!(other is ConstructingHandle))
+            ? false : Equals((ConstructingHandle)other);
+
+        /// <summary>Returns whether this <see cref="ConstructingHandle" /> is equal
+        /// to the given <see cref="ConstructingHandle" />.
+        /// <para>Since EFL 1.24.</para>
+        /// </summary>
+        /// <param name="other">The <see cref="ConstructingHandle" /> to be compared to.</param>
+        /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+        public bool Equals(ConstructingHandle other)
+            => NativeHandle == other.NativeHandle;
+
+        /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+        /// <para>Since EFL 1.24.</para>
+        /// </summary>
+        /// <param name="lhs">The left hand side of the operator.</param>
+        /// <param name="rhs">The right hand side of the operator.</param>
+        /// <returns><c>true</c> if <c>lhs</c> is equal
+        /// to <c>rhs</c>.</returns>
+        public static bool operator==(ConstructingHandle lhs, ConstructingHandle rhs)
+            => lhs.Equals(rhs);
+
+        /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+        /// <para>Since EFL 1.24.</para>
+        /// </summary>
+        /// <param name="lhs">The left hand side of the operator.</param>
+        /// <param name="rhs">The right hand side of the operator.</param>
+        /// <returns><c>true</c> if <c>lhs</c> is not equal
+        /// to <c>rhs</c>.</returns>
+        public static bool operator!=(ConstructingHandle lhs, ConstructingHandle rhs)
+            => !(lhs == rhs);
     }
 
     /// <summary>

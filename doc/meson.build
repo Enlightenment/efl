@@ -104,6 +104,7 @@ widget_preview_eps = custom_target('widget_preview_prefs_epc',
 
 shot_sh = find_program('shot.sh')
 tar = find_program('tar')
+efl_copy = find_program('efl_copy.sh')
 
 foreach text_filter_property : text_filter_properties
   text = text_filter_property[0]
@@ -181,10 +182,17 @@ doc_target += custom_target('doxygen',
   build_by_default: false
 )
 
+# This is not pretty but meson does not seem to allow wildcards in plain cp commands
+copy_images = custom_target('documentation images',
+  command: [efl_copy, '-rf', join_paths(meson.current_source_dir(), 'img', '*.png'), 'html'],
+  output: ['empty_img_copy'],
+  build_by_default: false
+)
+
 compress_target = custom_target('package_doc_tar',
   command: [tar, '-C', meson.build_root(), '--xz',  '-cf', 'efl-'+meson.project_version()+'-doc.tar.xz', 'html', 'man'],
   output: 'efl-'+meson.project_version()+'-doc.tar.xz',
-  depends: doc_target,
+  depends: [doc_target, copy_images],
   build_by_default: false
 )
 

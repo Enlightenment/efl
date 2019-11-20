@@ -675,4 +675,40 @@ class TestHiddenClasses
     }
 }
 
+class TestAliasEquality
+{
+    static Dummy.MyInt a = 4;
+    static Dummy.MyInt b = 4;
+    static Dummy.MyInt c = 5;
+
+    public static void test_equals()
+    {
+        Test.AssertEquals(a, b);
+        Test.AssertNotEquals(a, c);
+    }
+
+    public static void test_equals_different_types()
+    {
+        Test.Assert(!(a.Equals(new Object())));
+    }
+
+    public static void test_equatable()
+    {
+        Test.Assert(((IEquatable<Dummy.MyInt>)a).Equals(b));
+        Test.Assert(!((IEquatable<Dummy.MyInt>)a).Equals(c));
+    }
+
+    public static void test_equality_operators()
+    {
+        Test.Assert(a == b);
+        Test.Assert(a != c);
+    }
+
+    public static void test_hash_code()
+    {
+        Test.AssertEquals(a.GetHashCode(), b.GetHashCode());
+        Test.AssertNotEquals(a.GetHashCode(), c.GetHashCode());
+    }
+}
+
 }

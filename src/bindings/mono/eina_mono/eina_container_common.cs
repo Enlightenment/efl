@@ -43,19 +43,111 @@ public enum ElementType
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Sequential)]
-public struct InlistMem
+public struct InlistMem : IEquatable<InlistMem>
 {
     public IntPtr next {get;set;}
     public IntPtr prev {get;set;}
     public IntPtr last {get;set;}
+
+    /// <summary>
+    ///   Gets a hash for <see cref="InlistMem" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => next.GetHashCode() ^ prev.GetHashCode() ^ last.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="InlistMem" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is InlistMem)) ? false : Equals((InlistMem)other);
+
+    /// <summary>Returns whether this <see cref="InlistMem" /> is equal
+    /// to the given <see cref="InlistMem" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="InlistMem" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(InlistMem other)
+        => (next == other.next) && (prev == other.prev)
+        && (last == other.last);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(InlistMem lhs, InlistMem rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(InlistMem lhs, InlistMem rhs) => !(lhs == rhs);
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Sequential)]
-public struct InlistNode<T>
+public struct InlistNode<T> : IEquatable<InlistNode<T>>
 {
     public InlistMem __in_list {get;set;}
     public T Val {get;set;}
+
+    /// <summary>
+    ///   Gets a hash for <see cref="InlistNode{T}" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => __in_list.GetHashCode() ^ Val.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="InlistNode{T}" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is InlistNode<T>)) ? false : Equals((InlistNode<T>)other);
+
+    /// <summary>Returns whether this <see cref="InlistNode{T}" /> is equal
+    /// to the given <see cref="InlistNode{T}" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="InlistNode{T}" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(InlistNode<T> other)
+        => (__in_list == other.__in_list) && (Val.Equals(other.Val));
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(InlistNode<T> lhs, InlistNode<T> rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(InlistNode<T> lhs, InlistNode<T> rhs)
+        => !(lhs == rhs);
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]

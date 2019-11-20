@@ -21,6 +21,7 @@
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
+#include "grammar/attribute_reorder.hpp"
 #include "name_helpers.hh"
 #include "helpers.hh"
 #include "type.hh"
@@ -408,14 +409,15 @@ struct struct_definition_generator
      auto const& indent = current_indentation(context);
      if(!as_generator(documentation).generate(sink, struct_, context))
        return false;
+     auto struct_managed_name = binding_struct_name(struct_);
      if(!as_generator
         (
             indent << "[StructLayout(LayoutKind.Sequential)]\n"
          << indent << "[Efl.Eo.BindingEntity]\n"
-         << indent << "public struct " << string << "\n"
+         << indent << "public struct " << struct_managed_name << " : IEquatable<" << struct_managed_name << ">\n"
          << indent << "{\n"
          )
-        .generate(sink, binding_struct_name(struct_), context))
+        .generate(sink, attributes::unused, context))
        return false;
 
      // iterate struct fields
@@ -472,6 +474,114 @@ struct struct_definition_generator
               return false;
        }
 
+     std::string since_line;
+     if (!struct_.documentation.since.empty())
+         if (!as_generator(indent << scope_tab << "/// <para>Since EFL " + struct_.documentation.since + ".</para>\n"
+                 ).generate(std::back_inserter(since_line), attributes::unused, context))
+           return false;
+
+     // GetHashCode (needed by the equality comparisons)
+     if (!as_generator(
+             indent << scope_tab << "/// <summary>Get a hash code for this item.\n"
+             << since_line
+             << indent << scope_tab << "/// </summary>\n"
+             << indent << scope_tab << "public override int GetHashCode()\n"
+             << indent << scope_tab << "{\n"
+          ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (struct_.fields.size() != 0 )
+       {
+          // int hash = 17;
+          // hash = 23 * fieldA.GetHashCode();
+          // hash = 23 * fieldB.GetHashCode();
+          // hash = 23 * fieldC.GetHashCode();
+          // return hash
+          if (!as_generator(
+                indent << scope_tab << scope_tab << "int hash = 17;\n"
+                << *(indent << scope_tab << scope_tab << "hash = hash * 23 + " << name_helpers::struct_field_name << ".GetHashCode();\n")
+                << indent << scope_tab << scope_tab << "return hash;\n"
+              ).generate(sink, struct_.fields, context))
+            return false;
+       }
+     else
+       {
+          // Just compare the place holder pointers
+          if (!as_generator(
+                "return field.GetHashCode();\n"
+              ).generate(sink, attributes::unused, context))
+            return false;
+       }
+
+     if (!as_generator(
+             indent << scope_tab << "}\n"
+          ).generate(sink, attributes::unused, context))
+       return false;
+
+     // IEquatable<T> Equals
+     if (!as_generator(
+             indent << scope_tab << "/// <summary>Equality comparison.\n"
+             << since_line
+             << indent << scope_tab << "/// </summary>\n"
+             << indent << scope_tab << "public bool Equals(" << struct_managed_name << " other)\n"
+             << indent << scope_tab << "{\n"
+             << indent << scope_tab << scope_tab << "return "
+          ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (struct_.fields.size() != 0 )
+       {
+          if (!as_generator(
+                grammar::attribute_reorder<-1, -1>((name_helpers::struct_field_name << " == other." << name_helpers::struct_field_name)) % " && "
+              ).generate(sink, struct_.fields, context))
+            return false;
+       }
+     else
+       {
+          // Just compare the place holder pointers
+          if (!as_generator(
+                "field.Equals(other.field)"
+              ).generate(sink, attributes::unused, context))
+            return false;
+       }
+     
+     
+     if (!as_generator(   
+             indent << scope_tab << scope_tab << ";\n"
+             << indent << scope_tab << "}\n"
+          ).generate(sink, attributes::unused, context))
+      return false;
+
+     // ValueType.Equals
+     if (!as_generator(
+           indent << scope_tab << "/// <summary>Equality comparison.\n"
+           << since_line
+           << indent << scope_tab << "/// </summary>\n"
+           << indent << scope_tab << "public override bool Equals(object other)\n"
+           << indent << scope_tab << scope_tab << "=> ((other is " << struct_managed_name  << ") ? Equals((" << struct_managed_name << ")other) : false);\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     // Equality operators
+     if (!as_generator(
+           indent << scope_tab << "/// <summary>Equality comparison.\n"
+           << since_line
+           << indent << scope_tab << "/// </summary>\n"
+           << indent << scope_tab << "public static bool operator ==(" << struct_managed_name << " lhs, " << struct_managed_name << " rhs)\n"
+           << indent << scope_tab << scope_tab << "=> lhs.Equals(rhs);"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!as_generator(
+           indent << scope_tab << "/// <summary>Equality comparison.\n"
+           << since_line
+           << indent << scope_tab << "/// </summary>\n"
+           << indent << scope_tab << "public static bool operator !=(" << struct_managed_name << " lhs, " << struct_managed_name << " rhs)\n"
+           << indent << scope_tab << scope_tab << "=> !lhs.Equals(rhs);"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     // Conversions from/to internal struct and IntPtrs
      if(!as_generator(
             indent << scope_tab << "/// <summary>Implicit conversion to the managed representation from a native pointer.\n"
             ).generate(sink, attributes::unused, context))

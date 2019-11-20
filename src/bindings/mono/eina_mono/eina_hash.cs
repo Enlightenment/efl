@@ -30,11 +30,57 @@ namespace Eina
 
 [StructLayout(LayoutKind.Sequential)]
 [EditorBrowsable(EditorBrowsableState.Never)]    
-public struct HashTupleNative
+public struct HashTupleNative : IEquatable<HashTupleNative>
 {
     public IntPtr key;
     public IntPtr data;
     public uint   key_length;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="HashTupleNative" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => key.GetHashCode() ^ data.GetHashCode() ^ key_length.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="HashTupleNative" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is HashTupleNative)) ? false : Equals((HashTupleNative)other);
+
+    /// <summary>Returns whether this <see cref="HashTupleNative" /> is equal
+    /// to the given <see cref="HashTupleNative" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="HashTupleNative" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(HashTupleNative other)
+        => (key == other.key) && (data == other.data)
+        && (key_length == other.key_length);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(HashTupleNative lhs, HashTupleNative rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(HashTupleNative lhs, HashTupleNative rhs) => !(lhs == rhs);
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]

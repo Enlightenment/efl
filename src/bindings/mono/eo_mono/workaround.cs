@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 ///<summary>Eo class description, passed to efl_class_new.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-internal struct ClassDescription
+internal struct ClassDescription : IEquatable<ClassDescription>
 {
     ///<summary>Current Eo version.</summary>
     internal uint version;
@@ -37,6 +37,55 @@ internal struct ClassDescription
     internal IntPtr class_constructor;
     ///<summary>Destructor of the class.</summary>
     internal IntPtr class_destructor;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="ClassDescription" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => version.GetHashCode() ^ name.GetHashCode()
+        ^ class_type ^ data_size.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ClassDescription" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ClassDescription)) ? false
+        : Equals((ClassDescription)other);
+
+
+    /// <summary>Returns whether this <see cref="ClassDescription" /> is equal
+    /// to the given <see cref="ClassDescription" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ClassDescription" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ClassDescription other)
+        => (name == other.name) && (class_type == other.class_type);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ClassDescription lhs, ClassDescription rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ClassDescription lhs, ClassDescription rhs)
+        => !(lhs == rhs);
 }
 
 ///<summary>Description of an Eo API operation.</summary>
@@ -198,33 +247,185 @@ internal delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
 internal delegate void FreeWrapperSupervisorCb(System.IntPtr obj);
 
 [StructLayout(LayoutKind.Sequential)]
-public struct TextCursorCursor
+public struct TextCursorCursor : IEquatable<TextCursorCursor>
 {
     IntPtr obj;
     UIntPtr pos; // UIntPtr to automatically change size_t between 32/64
     IntPtr node;
     [MarshalAsAttribute(UnmanagedType.U1)]bool changed;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="TextCursorCursor" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => obj.GetHashCode() ^ pos.GetHashCode()
+        ^ node.GetHashCode() ^ changed.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="TextCursorCursor" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is TextCursorCursor)) ? false
+        : Equals((TextAnnotateAnnotation)other);
+
+
+    /// <summary>Returns whether this <see cref="TextCursorCursor" /> is equal
+    /// to the given <see cref="TextCursorCursor" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="TextCursorCursor" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(TextCursorCursor other)
+        => (obj == other.obj) && (pos == other.pos)
+        && (node == other.node) && (changed == other.changed);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(TextCursorCursor lhs, TextCursorCursor rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(TextCursorCursor lhs, TextCursorCursor rhs)
+        => !(lhs == rhs);
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct TextAnnotateAnnotation
+public struct TextAnnotateAnnotation : IEquatable<TextAnnotateAnnotation>
 {
     IntPtr list;
     IntPtr obj;
     IntPtr start_node;
     IntPtr end_node;
     [MarshalAsAttribute(UnmanagedType.U1)]bool is_item;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="TextAnnotateAnnotation" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => list.GetHashCode() ^ obj.GetHashCode()
+        ^ start_node.GetHashCode() ^ end_node.GetHashCode()
+        ^ is_item.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="TextAnnotateAnnotation" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is TextAnnotateAnnotation)) ? false
+        : Equals((TextAnnotateAnnotation)other);
+
+
+    /// <summary>Returns whether this <see cref="TextAnnotateAnnotation" /> is equal
+    /// to the given <see cref="TextAnnotateAnnotation" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="TextAnnotateAnnotation" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(TextAnnotateAnnotation other)
+        => (list == other.list) && (obj == other.obj)
+        && (start_node == other.start_node) && (is_item == other.is_item);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(TextAnnotateAnnotation lhs, TextAnnotateAnnotation rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(TextAnnotateAnnotation lhs, TextAnnotateAnnotation rhs)
+        => !(lhs == rhs);
 }
 
 namespace Access
 {
 
-public struct ActionData
+public struct ActionData : IEquatable<ActionData>
 {
     public IntPtr name;
     public IntPtr action;
     public IntPtr param;
     public IntPtr func;
+
+
+    /// <summary>
+    ///   Gets a hash for <see cref="ActionData" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => name.GetHashCode() ^ action.GetHashCode()
+        ^ param.GetHashCode() ^ func.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ActionData" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ActionData)) ? false
+        : Equals((ActionData)other);
+
+
+    /// <summary>Returns whether this <see cref="ActionData" /> is equal
+    /// to the given <see cref="ActionData" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ActionData" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ActionData other)
+        => (name == other.name) && (action == other.action)
+        && (param == other.param) && (func == other.func);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ActionData lhs, ActionData rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ActionData lhs, ActionData rhs)
+        => !(lhs == rhs);
 }
 
 } // namespace Access
