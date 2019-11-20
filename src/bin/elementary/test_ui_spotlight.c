@@ -230,10 +230,10 @@ height_slider_cb(void *data, const Efl_Event *ev)
 }
 
 static void
-width_check_cb(void *data, const Efl_Event *ev)
+width_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Size_Params *params = data;
-   Eina_Bool ck = elm_check_selected_get(ev->object);
+   Eina_Bool ck = elm_check_selected_get(obj);
    int w, h;
 
    elm_object_disabled_set(params->slider, ck);
@@ -250,10 +250,10 @@ width_check_cb(void *data, const Efl_Event *ev)
 }
 
 static void
-height_check_cb(void *data, const Efl_Event *ev)
+height_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Size_Params *params = data;
-   Eina_Bool ck = elm_check_selected_get(ev->object);
+   Eina_Bool ck = elm_check_selected_get(obj);
    int w, h;
 
    elm_object_disabled_set(params->slider, ck);
@@ -456,8 +456,7 @@ spotlight_size(void *data,
    size_params->spotlight = params->spotlight;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_EVENT_SELECTED_CHANGED, width_check_cb,
-                          size_params);
+   evas_object_smart_callback_add(ck, "changed", width_check_cb, size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
    if (params->wfill)
@@ -497,8 +496,7 @@ spotlight_size(void *data,
    size_params->spotlight = params->spotlight;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_EVENT_SELECTED_CHANGED, height_check_cb,
-                          size_params);
+   evas_object_smart_callback_add(ck, "changed", height_check_cb, size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
    if (params->hfill)
