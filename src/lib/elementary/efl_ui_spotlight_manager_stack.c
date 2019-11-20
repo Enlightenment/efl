@@ -33,18 +33,6 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 }
 
 static void
-_resize_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _geom_sync(data, efl_data_scope_get(data, MY_CLASS));
-}
-
-static void
-_move_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _geom_sync(data, efl_data_scope_get(data, MY_CLASS));
-}
-
-static void
 _running_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Manager_Stack_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
@@ -73,9 +61,6 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
    if (spotlight)
      {
         pd->container = spotlight;
-
-        efl_event_callback_add(pd->container, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
-        efl_event_callback_add(pd->container, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
         pd->alpha_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
         efl_animation_alpha_set(pd->alpha_anim, 0.0, 1.0);
@@ -165,9 +150,6 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_size_set(Eo *obj, Efl_U
 EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd EINA_UNUSED)
 {
-   efl_event_callback_del(pd->container, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
-   efl_event_callback_del(pd->container, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
-
    efl_invalidate(efl_super(obj, MY_CLASS));
 
    for (int i = 0; i < efl_content_count(pd->container); ++i)
