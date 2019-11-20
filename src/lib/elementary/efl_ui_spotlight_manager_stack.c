@@ -8,7 +8,6 @@
 
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
-   Efl_Gfx_Entity *group;
    Efl_Canvas_Animation_Player *alpha_anim;
    Efl_Gfx_Entity *content[2];
    int ids[2]; //only used when in animation
@@ -21,7 +20,7 @@ typedef struct {
 static void
 _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 {
-   Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
+   Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->container);
    Eina_Rect goal = EINA_RECT_EMPTY();
    goal.size = pd->page_size;
    goal.y = (group_pos.y + group_pos.h/2)-pd->page_size.h/2;
@@ -69,15 +68,14 @@ _hide_object_cb(void *data, const Efl_Event *ev)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Ui_Spotlight_Container *spotlight, Efl_Canvas_Group *group)
+_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
-   if (spotlight && group)
+   if (spotlight)
      {
         pd->container = spotlight;
-        pd->group = group;
 
-        efl_event_callback_add(pd->group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
-        efl_event_callback_add(pd->group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
+        efl_event_callback_add(pd->container, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
+        efl_event_callback_add(pd->container, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
         pd->alpha_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
         efl_animation_alpha_set(pd->alpha_anim, 0.0, 1.0);
@@ -167,8 +165,8 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_size_set(Eo *obj, Efl_U
 EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd EINA_UNUSED)
 {
-   efl_event_callback_del(pd->group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
-   efl_event_callback_del(pd->group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
+   efl_event_callback_del(pd->container, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
+   efl_event_callback_del(pd->container, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
    efl_invalidate(efl_super(obj, MY_CLASS));
 

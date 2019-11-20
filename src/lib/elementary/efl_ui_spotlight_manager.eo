@@ -18,9 +18,6 @@ abstract @beta Efl.Ui.Spotlight.Manager extends Efl.Object {
       ]]
       params {
         spotlight : Efl.Ui.Spotlight.Container; [[The container to bind the manager to.]]
-        group : Efl.Canvas.Group; [[The graphical group where the views should be added with
-                                    @Efl.Canvas.Group.group_member_add and removed with
-                                    @Efl.Canvas.Group.group_member_remove.]]
       }
     }
     content_add @pure_virtual  {

@@ -10,11 +10,6 @@ group { "efl/pager"; data.item: "version" "123";
          desc { "default";
          }
       }
-      swallow { "efl.page_root";
-         scale;
-         desc { "default";
-         }
-      }
       swallow { "efl.indicator";
          scale;
          desc { "default";

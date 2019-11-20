@@ -9,7 +9,7 @@
 typedef struct _Efl_Ui_Spotlight_Container_Data
 {
    Eina_List *content_list;
-   Eo *page_root, *event;
+   Eo *event;
    struct {
       Eina_Size2D sz;
    } page_spec;
@@ -203,10 +203,7 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
-   efl_content_set(efl_part(obj, "efl.page_root"), pd->page_root);
-
-   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, pd);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, pd);
 
    pd->event = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                        evas_object_evas_get(obj));
@@ -616,7 +613,7 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
 
    if (pd->transition)
      {
-        efl_ui_spotlight_manager_bind(pd->transition, NULL, NULL);
+        efl_ui_spotlight_manager_bind(pd->transition, NULL);
         efl_del(pd->transition);
      }
 
@@ -631,8 +628,7 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
         //disable animation when not finalized yet, this help reducing the overhead of scheduling a animation that will not be displayed
         _animated_transition_manager_eval(obj, pd);
         efl_ui_spotlight_manager_animated_transition_set(pd->transition, efl_finalized_get(obj));
-        efl_ui_spotlight_manager_bind(pd->transition, obj,
-          pd->page_root);
+        efl_ui_spotlight_manager_bind(pd->transition, obj);
         efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);
         efl_event_callback_add(pd->transition, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, _pos_updated, obj);
      }
