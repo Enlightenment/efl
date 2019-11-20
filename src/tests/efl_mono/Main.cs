@@ -24,8 +24,8 @@ class TestMain
     static Type[] GetTestCases(String name="")
     {
         return Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "TestSuite", StringComparison.Ordinal) &&
-                                                                t.Name.StartsWith("Test") &&
-                                                                t.Name.Contains(name)).ToArray();
+                                                                t.Name.StartsWith("Test", StringComparison.Ordinal) &&
+                                                                t.Name.Contains(name, StringComparison.Ordinal)).ToArray();
     }
 
     static int Main(string[] args)
@@ -45,7 +45,7 @@ class TestMain
         String ckRunSuite = Environment.GetEnvironmentVariable("CK_RUN_SUITE");
         String ckRunCase = Environment.GetEnvironmentVariable("CK_RUN_CASE");
 
-        if (ckRunSuite != null && !ckRunSuite.Equals("mono"))
+        if (ckRunSuite != null && !ckRunSuite.Equals("mono", StringComparison.Ordinal))
             return 0;
 
         if (ckRunCase == null)

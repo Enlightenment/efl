@@ -201,7 +201,7 @@ public struct Error : IComparable<Error>, IEquatable<Error>
     /// </summary>
     /// <returns>A hash code.</returns>
     public override int GetHashCode()
-        => code.GetHashCode() + Message.GetHashCode();
+        => code.GetHashCode() + Message.GetHashCode(StringComparison.Ordinal);
 
     /// <summary>
     ///   Compare to a given error.

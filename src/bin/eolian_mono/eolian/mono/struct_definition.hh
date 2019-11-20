@@ -485,6 +485,7 @@ struct struct_definition_generator
              indent << scope_tab << "/// <summary>Get a hash code for this item.\n"
              << since_line
              << indent << scope_tab << "/// </summary>\n"
+             << "#pragma warning disable CA1307\n"
              << indent << scope_tab << "public override int GetHashCode()\n"
              << indent << scope_tab << "{\n"
           ).generate(sink, attributes::unused, context))
@@ -515,6 +516,7 @@ struct struct_definition_generator
 
      if (!as_generator(
              indent << scope_tab << "}\n"
+             << "#pragma warning restore CA1307\n\n"
           ).generate(sink, attributes::unused, context))
        return false;
 

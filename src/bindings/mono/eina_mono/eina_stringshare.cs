@@ -198,7 +198,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     /// </returns>
     public override int GetHashCode()
     {
-        return Str.GetHashCode();
+        return Str.GetHashCode(StringComparison.Ordinal);
     }
 
     /// <summary>

@@ -867,16 +867,17 @@ internal static class ClassRegister
         {
             throw new System.InvalidOperationException($"Could not get Native class name. Handle: {klass}");
         }
-
+#pragma warning disable CA1307
         string name = Eina.StringConversion.NativeUtf8ToManagedString(namePtr)
-                      .Replace("_", ""); // Convert Efl C name to C# name
+            .Replace("_", ""); // Convert Efl C name to C# name
+#pragma warning restore CA1307
 
         // Check if this is an internal implementation of an abstract class
         var abstract_impl_suffix = "Realized";
-        if (name.EndsWith(abstract_impl_suffix))
+        if (name.EndsWith(abstract_impl_suffix, StringComparison.Ordinal))
         {
             name = name.Substring(0, name.Length - abstract_impl_suffix.Length);
-            var lastDot = name.LastIndexOf(".");
+            var lastDot = name.LastIndexOf(".", StringComparison.Ordinal);
             var klassName = name.Substring(lastDot + 1);
             name += "+" + klassName + abstract_impl_suffix; // '+' is the separator for nested classes
         }
@@ -885,7 +886,7 @@ internal static class ClassRegister
         var klass_type = Efl.Eo.Globals.efl_class_type_get(klass);
         if (klass_type == Efl.Eo.Globals.EflClassType.Interface || klass_type == Efl.Eo.Globals.EflClassType.Mixin)
         {
-            var pos = name.LastIndexOf(".");
+            var pos = name.LastIndexOf(".", StringComparison.Ordinal);
             name = name.Insert(pos + 1, "I"); // -1 if not found, inserts at 0 normally
         }
 
