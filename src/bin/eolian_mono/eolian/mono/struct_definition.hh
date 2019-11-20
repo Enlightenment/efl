@@ -29,6 +29,7 @@
 #include "documentation.hh"
 #include "struct_fields.hh"
 #include "blacklist.hh"
+#include "culture_info.hh"
 
 namespace eolian_mono {
 
@@ -485,7 +486,6 @@ struct struct_definition_generator
              indent << scope_tab << "/// <summary>Get a hash code for this item.\n"
              << since_line
              << indent << scope_tab << "/// </summary>\n"
-             << "#pragma warning disable CA1307\n"
              << indent << scope_tab << "public override int GetHashCode()\n"
              << indent << scope_tab << "{\n"
           ).generate(sink, attributes::unused, context))
@@ -500,7 +500,7 @@ struct struct_definition_generator
           // return hash
           if (!as_generator(
                 indent << scope_tab << scope_tab << "int hash = 17;\n"
-                << *(indent << scope_tab << scope_tab << "hash = hash * 23 + " << name_helpers::struct_field_name << ".GetHashCode();\n")
+                << *(grammar::attribute_reorder<-1, -1>(indent << scope_tab << scope_tab << "hash = hash * 23 + " << name_helpers::struct_field_name << ".GetHashCode(" << culture_info << ");\n"))
                 << indent << scope_tab << scope_tab << "return hash;\n"
               ).generate(sink, struct_.fields, context))
             return false;
@@ -516,7 +516,6 @@ struct struct_definition_generator
 
      if (!as_generator(
              indent << scope_tab << "}\n"
-             << "#pragma warning restore CA1307\n\n"
           ).generate(sink, attributes::unused, context))
        return false;
 
