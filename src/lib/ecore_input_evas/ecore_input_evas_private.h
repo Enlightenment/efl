@@ -1,5 +1,5 @@
-#ifndef _ECORE_INPUT_PRIVATE_H
-#define _ECORE_INPUT_PRIVATE_H
+#ifndef _ECORE_INPUT_EVAS_PRIVATE_H
+#define _ECORE_INPUT_EVAS_PRIVATE_H
 
 extern int _ecore_input_evas_log_dom;
 
