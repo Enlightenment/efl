@@ -65,6 +65,12 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
                                  (-1, -1) means that all available space inside the container can be used.]]
          }
       }
+      @property animated_transition {
+         [[When this flag is $true the transitions caused by @.push, @.pop or @.active_element are animated (if the @.spotlight_manager supports that). $false means immidiate displaying at the final position.]]
+         values {
+            enable : bool; [[$true to enable animated transitions. If $false, then any transition is displayed at the final position immidiatly]]
+         }
+      }
       push @beta {
          [[Packs a new sub-widget before @.active_element, and move the spotlight there.
 

@@ -33,6 +33,8 @@ typedef struct _Efl_Ui_Spotlight_Container_Data
    Eina_Bool fill_width: 1;
    Eina_Bool fill_height: 1;
    Eina_Bool prevent_transition_interaction : 1;
+   Eina_Bool animation_enabled_internal : 1;
+   Eina_Bool animation_enabled : 1;
 } Efl_Ui_Spotlight_Container_Data;
 
 #define MY_CLASS EFL_UI_SPOTLIGHT_CONTAINER_CLASS
@@ -186,6 +188,7 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
+   pd->animation_enabled = EINA_TRUE;
    pd->position = -1;
    pd->curr.page = NULL;
    pd->curr.pos = 0.0;
@@ -214,13 +217,19 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
    return obj;
 }
 
+static void
+_animated_transition_manager_eval(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
+{
+   efl_ui_spotlight_manager_animated_transition_set(pd->transition, pd->animation_enabled_internal && pd->animation_enabled);
+}
+
 EOLIAN static Efl_Object*
-_efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EINA_UNUSED)
+_efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd)
 {
    Efl_Ui_Spotlight_Manager *manager;
 
    obj = efl_finalize(efl_super(obj, MY_CLASS));
-
+   pd->animation_enabled_internal = EINA_TRUE;
    manager = efl_ui_spotlight_manager_get(obj);
    //set a view manager in case nothing is here
    if (!manager)
@@ -229,7 +238,8 @@ _efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Contai
      }
    else
      {
-        efl_ui_spotlight_manager_animated_transition_set(manager, EINA_TRUE);
+
+        _animated_transition_manager_eval(obj, pd);
      }
 
    return obj;
@@ -619,6 +629,7 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
         //the api indicates that the caller passes ownership to this function, so we need to unref here
         efl_unref(pd->transition);
         //disable animation when not finalized yet, this help reducing the overhead of scheduling a animation that will not be displayed
+        _animated_transition_manager_eval(obj, pd);
         efl_ui_spotlight_manager_animated_transition_set(pd->transition, efl_finalized_get(obj));
         efl_ui_spotlight_manager_bind(pd->transition, obj,
           pd->page_root);
@@ -737,6 +748,20 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
 
    return transition_done;
 }
+
+EOLIAN static void
+_efl_ui_spotlight_container_animated_transition_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Eina_Bool enable)
+{
+   pd->animation_enabled = enable;
+   _animated_transition_manager_eval(obj, pd);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_spotlight_container_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
+{
+   return pd->animation_enabled;
+}
+
 
 
 #include "efl_ui_spotlight_container.eo.c"

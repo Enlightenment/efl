@@ -116,6 +116,7 @@ typedef struct {
   } spotlight;
   struct {
     int called;
+    Eina_Bool value;
   } animation;
   double last_position;
 } Transition_Calls;
@@ -187,7 +188,7 @@ static void
 _transition_animation_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Eina_Bool animation)
 {
    transition_calls.animation.called++;
-   ck_assert_int_eq(animation, EINA_TRUE);
+   transition_calls.animation.value = animation;
 }
 
 static Eina_Bool
@@ -265,7 +266,8 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
 
    efl_ui_spotlight_manager_set(container, t);
    transition_calls.last_position = -2.0;
-   ck_assert_int_eq(transition_calls.animation.called, 1);
+   ck_assert_int_eq(transition_calls.animation.called, 2);
+   ck_assert_int_eq(transition_calls.animation.value, EINA_TRUE);
    ck_assert_int_eq(transition_calls.spotlight.called, 1);
    ck_assert_ptr_eq(transition_calls.spotlight.spotlight, container);
    //We cannot verify group
@@ -618,6 +620,34 @@ EFL_START_TEST (efl_ui_spotlight_test_pop3)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_spotlight_animated_transition)
+{
+   //this checks animation handing with the plain manager, there is no animation that will be played, but the flag should be preserved
+   ck_assert_int_eq(efl_ui_spotlight_animated_transition_get(container), EINA_TRUE);
+   efl_ui_spotlight_animated_transition_set(container, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(container)), EINA_FALSE);
+
+   //now check with a real spotlight manager
+   efl_ui_spotlight_manager_set(container, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
+   efl_ui_spotlight_animated_transition_set(container, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_spotlight_animated_transition_get(container), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(container)), EINA_TRUE);
+
+   efl_ui_spotlight_animated_transition_set(container, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_spotlight_animated_transition_get(container), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(container)), EINA_FALSE);
+
+   Eo *manager2 = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   Eina_Bool animated_transition_manager;
+   efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
+    efl_ui_spotlight_manager_set(efl_added, manager2),
+    efl_ui_spotlight_animated_transition_set(efl_added, EINA_TRUE),
+    animated_transition_manager = efl_ui_spotlight_manager_animated_transition_get(manager2));
+   ck_assert_int_eq(animated_transition_manager, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(manager2), EINA_TRUE);
+}
+EFL_END_TEST
+
 static void
 spotlight_setup()
 {
@@ -653,4 +683,5 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_test_pop1);
    tcase_add_test(tc, efl_ui_spotlight_test_pop2);
    tcase_add_test(tc, efl_ui_spotlight_test_pop3);
+   tcase_add_test(tc, efl_ui_spotlight_animated_transition);
 }
