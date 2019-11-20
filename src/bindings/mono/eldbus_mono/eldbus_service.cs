@@ -25,7 +25,7 @@ namespace eldbus
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class EldbusServiceNativeFunctions
+internal static class EldbusServiceNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_service_interface_register(IntPtr conn, string path, IntPtr desc);

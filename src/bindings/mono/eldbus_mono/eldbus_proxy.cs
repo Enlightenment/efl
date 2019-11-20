@@ -25,7 +25,7 @@ namespace eldbus
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]    
-public static class EldbusProxyNativeFunctions
+internal static class EldbusProxyNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_get(IntPtr obj, string _interface);
