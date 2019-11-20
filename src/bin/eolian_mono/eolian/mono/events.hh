@@ -131,7 +131,11 @@ struct unpack_event_args_visitor
    }
    bool operator()(attributes::complex_type_def const& types) const
    {
-      if (types.outer.base_type == "iterator")
+      if (types.outer.base_type == "array")
+        return as_generator("Efl.Eo.Globals.NativeArrayTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else if (types.outer.base_type == "list")
+        return as_generator("Efl.Eo.Globals.NativeListTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else if (types.outer.base_type == "iterator")
         return as_generator("Efl.Eo.Globals.IteratorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
       else if (types.outer.base_type == "accessor")
         return as_generator("Efl.Eo.Globals.AccessorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
@@ -245,13 +249,18 @@ struct pack_event_info_and_call_visitor
    bool operator()(attributes::complex_type_def const& type) const
    {
       auto const& indent = current_indentation(*context);
-      if (type.outer.base_type == "iterator")
+      if (type.outer.base_type == "array")
+        return as_generator(indent << "IntPtr info = Efl.Eo.Globals.IListToNativeArray(e.arg);\n"
+                            << indent << this->native_call).generate(sink, attributes::unused, *context);
+      else if (type.outer.base_type == "list")
+        return as_generator(indent << "IntPtr info = Efl.Eo.Globals.IListToNativeList(e.arg);\n"
+                            << indent << this->native_call).generate(sink, attributes::unused, *context);
+      else if (type.outer.base_type == "iterator")
         return as_generator(indent << "IntPtr info = Efl.Eo.Globals.IEnumerableToIterator(e.arg);\n"
                             << indent << this->native_call).generate(sink, attributes::unused, *context);
       else if (type.outer.base_type == "accessor")
         return as_generator(indent << "IntPtr info = Efl.Eo.Globals.IEnumerableToAccessor(e.arg);\n"
                             << indent << this->native_call).generate(sink, attributes::unused, *context);
-
       else
         return as_generator(indent << "IntPtr info = e.arg.Handle;\n"
                           << indent << this->native_call).generate(sink, attributes::unused, *context);

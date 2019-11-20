@@ -625,20 +625,27 @@ struct native_convert_in_variable_generator
                << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
-     else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *"
-              || param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *"
-     )
+     else if (param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *")
        {
           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
           if (!complex)
             return false;
           return as_generator(
-               "var " << string << " = new " << type << "(" << escape_keyword(param.param_name)
-               << ", " << (param.type.has_own ? "true" : "false")
-               << ", " << (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own ? "true" : "false")
+               "var " << string << " = Efl.Eo.Globals.NativeListTo" << type << "(" << escape_keyword(param.param_name)
                << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
+     else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *")
+       {
+          attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+          if (!complex)
+            return false;
+          return as_generator(
+               "var " << string << " = Efl.Eo.Globals.NativeArrayTo" << type << "(" << escape_keyword(param.param_name)
+               << ");\n"
+            ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
+       }
+
      else if (param.type.c_type == "Eina_Iterator *" || param.type.c_type == "const Eina_Iterator *")
        {
           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
@@ -729,27 +736,26 @@ struct convert_in_variable_generator
                   ).generate(sink, attributes::unused, context))
              return false;
         }
-      else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *"
-               || param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *"
-      )
+      else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *")
         {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
            if (!complex)
              return false;
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << escape_keyword(param.param_name) << ".Handle;\n"
+                 "var " << string << " = " << "Efl.Eo.Globals.IListToNativeArray(" << escape_keyword(param.param_name) << ");\n"
               ).generate(sink, var_name, context))
              return false;
-           if (param.type.has_own && !as_generator(
-                     escape_keyword(param.param_name) << ".Own = false;\n"
-                  ).generate(sink, attributes::unused, context))
+        }
+      else if (param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *")
+        {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
              return false;
-
-           if (!complex->subtypes.front().is_value_type && complex->subtypes.front().has_own
-               && !as_generator(
-                     escape_keyword(param.param_name) << ".OwnContent = false;\n"
-                  ).generate(sink, attributes::unused, context))
+           auto var_name = in_variable_name(param.param_name);
+           if (!as_generator(
+                 "var " << string << " = " << "Efl.Eo.Globals.IListToNativeList(" << escape_keyword(param.param_name) << ");\n"
+              ).generate(sink, var_name, context))
              return false;
         }
       else if (param.type.c_type == "Eina_Iterator *" || param.type.c_type == "const Eina_Iterator *")
@@ -996,7 +1002,17 @@ struct convert_out_assign_generator
                || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
+              )
+        {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
+             return false;
+           return as_generator(
+               string << " = Efl.Eo.Globals.NativeArrayTo" << type << "(" << string
+               << ");\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
+        }
+      else if (param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
@@ -1006,9 +1022,7 @@ struct convert_out_assign_generator
            if (!complex)
              return false;
            return as_generator(
-               string << " = new " << type << "(" << string
-               << ", " << (param.type.has_own ? "true" : "false")
-               << ", " << (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own ? "true" : "false")
+               string << " = Efl.Eo.Globals.NativeListTo" << type << "(" << string
                << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
@@ -1138,17 +1152,22 @@ struct convert_return_generator
              .generate(sink, ret_type, context))
              return false;
        }
-     else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
-              || ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *"
-             )
+     else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *")
        {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
            if (!complex)
              return false;
-           if (!as_generator("return new " << type << "(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"}
-                   << ", " << (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own ? "true" : "false")
-                   << ");\n")
-             .generate(sink, ret_type, context))
+           if (!as_generator("return Efl.Eo.Globals.NativeArrayTo" << type << "(_ret_var);")
+                 .generate(sink, ret_type, context))
+             return false;
+       }
+     else if (ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *")
+       {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
+           if (!complex)
+             return false;
+           if (!as_generator("return Efl.Eo.Globals.NativeListTo" << type << "(_ret_var);")
+                 .generate(sink, ret_type, context))
              return false;
        }
      else if (ret_type.c_type == "Eina_Accessor *" || ret_type.c_type == "const Eina_Accessor *")
@@ -1271,36 +1290,29 @@ struct native_convert_out_assign_generator
       else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
-              )
+               || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT))
         {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
            if (!complex)
              return false;
            auto outvar = out_variable_name(param.param_name);
            if (!as_generator(
-                string << " = " << string << ".Handle;\n"
+                string << " = Efl.Eo.Globals.IListToNativeArray(" << string << ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
-           if (param.type.has_own && !as_generator(
-                 string << ".Own = false;\n"
-               ).generate(sink, outvar, context))
+        }
+      else if (param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT))
+        {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
              return false;
-
-           // Iterators and Accessors can't own their content.
-           if (param.type.c_type == "Eina_Iterator *" || param.type.c_type == "const Eina_Iterator *"
-               || param.type.c_type == "Eina_Accessor *" || param.type.c_type == "const Eina_Accessor *"
-              )
-             return true;
-
-           if (!complex->subtypes.front().is_value_type && complex->subtypes.front().has_own
-               && !as_generator(
-                 string << ".OwnContent = false;\n"
-               ).generate(sink, outvar, context))
+           auto outvar = out_variable_name(param.param_name);
+           if (!as_generator(
+                string << " = Efl.Eo.Globals.IListToNativeList(" << string << ");\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
         }
       else if (param_is_acceptable(param, "Eina_Accessor *", WANT_OWN, WANT_OUT)
@@ -1442,29 +1454,20 @@ struct native_convert_return_generator
           return as_generator("return _ret_var.Handle;")
             .generate(sink, attributes::unused, context);
        }
-     else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
-              || ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *"
-     )
+     else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *")
        {
           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
           if (!complex)
             return false;
-          if (ret_type.has_own && !as_generator("_ret_var.Own = false; ")
-              .generate(sink, attributes::unused, context))
+          return as_generator("return Efl.Eo.Globals.IListToNativeArray(_ret_var);")
+            .generate(sink, attributes::unused, context);
+       }
+     else if (ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *")
+       {
+          attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
+          if (!complex)
             return false;
-
-           // Iterators and Accessors can't own their content.
-           if (ret_type.c_type != "Eina_Iterator *" && ret_type.c_type != "const Eina_Iterator *"
-               && ret_type.c_type != "Eina_Accessor *" && ret_type.c_type != "const Eina_Accessor *"
-              )
-             {
-                if (!complex->subtypes.front().is_value_type && complex->subtypes.front().has_own
-                    && !as_generator("_ret_var.OwnContent = false; ")
-                   .generate(sink, attributes::unused, context))
-                  return false;
-             }
-
-          return as_generator("return _ret_var.Handle;")
+          return as_generator("return Efl.Eo.Globals.IListToNativeList(_ret_var);")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Accessor *" || ret_type.c_type == "const Eina_Accessor *")
