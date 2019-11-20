@@ -364,6 +364,10 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
              E_NO_ERRNO(result, close(statusPipe[0]), ok);
              E_IF_NO_ERRNO(result, eina_file_close_on_exec(statusPipe[1], EINA_TRUE), ok) /* close on exec shows success */
              {
+                int except[2] = { 0, -1 };
+
+                except[0] = statusPipe[1];
+                eina_file_close_from(3, except);
                 /* Run the actual command. */
                  _ecore_exe_exec_it(exe_cmd, flags); /* no return */
              }

@@ -348,6 +348,23 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
 EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 
 /**
+ * @brief Close all file descriptors that are open at or above the given fd
+ * @details This closes all open file descriptors that are equal to or of
+ *          higher value than the given inpit fd given. This is intended for
+ *          niche use like closing all open files just before exec()ing a
+ *          new process after calling fork(). The except_fd array can be NULL
+ *          if no fd's are to be skipped, but if some fd's are to skip being
+ *          closed then this will be an array of fd numbers being terminated
+ *          by a fd value of -1.
+ * 
+ * @param[in] fd The fd value to begin closing at
+ * @param[in] except_fd An array of fd's not to close terminated by -1 as the last invalid fd
+ * 
+ * @since 1.24
+ */
+EAPI void eina_file_close_from(int fd, int *except_fd);
+
+/**
  * @brief Generates and creates a uniquely named temporary file from a template name.
  *        The generated file is opened with the open(2) @c O_EXCL flag.
  * @details This function calls mkstemp(), generates a unique temporary filename
