@@ -178,7 +178,7 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "pager");
+     elm_widget_theme_klass_set(obj, "spotlight");
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
