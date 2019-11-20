@@ -7,8 +7,8 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Collection_View
     The orientation (vertical or horizontal) of the list can be set with
     @Efl.Ui.Layout_Orientable.orientation.
 
-    Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable_Async.select_mode
-    policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Async.selected_iterator_new.
+    Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+    policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Index_Range.selected_ndx_iterator_new.
   ]]
    data: null;
    implements {

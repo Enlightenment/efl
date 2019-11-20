@@ -96,7 +96,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
    li = efl_add(EFL_UI_COLLECTION_VIEW_CLASS, win,
                 efl_ui_collection_view_position_manager_set(efl_added, position_manager),
                 efl_ui_view_model_set(efl_added, model),
-                efl_ui_multi_selectable_async_select_mode_set(efl_added, mode),
+                efl_ui_multi_selectable_select_mode_set(efl_added, mode),
                 efl_ui_collection_view_factory_set(efl_added, factory));
 
    efl_content_set(win, li);

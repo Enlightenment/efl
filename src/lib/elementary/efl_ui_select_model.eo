@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Select_Model extends Efl.Boolean_Model
-   implements Efl.Ui.Multi_Selectable_Async,
+   implements Efl.Ui.Multi_Selectable_Index_Range,
               Efl.Ui.Selectable
 {
    [[Efl ui select model class]]
@@ -9,13 +9,13 @@ class @beta Efl.Ui.Select_Model extends Efl.Boolean_Model
       Efl.Model.property { get; set; }
       Efl.Model.properties { get; }
       Efl.Ui.Single_Selectable.last_selected { get; }
-      Efl.Ui.Multi_Selectable_Async.selected_iterator_new;
-      Efl.Ui.Multi_Selectable_Async.unselected_iterator_new;
-      Efl.Ui.Multi_Selectable_Async.select_mode {get; set;}
-      Efl.Ui.Multi_Selectable_Async.all_select;
-      Efl.Ui.Multi_Selectable_Async.all_unselect;
-      Efl.Ui.Multi_Selectable_Async.range_select;
-      Efl.Ui.Multi_Selectable_Async.range_unselect;
+      Efl.Ui.Multi_Selectable.select_mode {get; set;}
+      Efl.Ui.Multi_Selectable.all_select;
+      Efl.Ui.Multi_Selectable.all_unselect;
+      Efl.Ui.Multi_Selectable_Index_Range.selected_ndx_iterator_new;
+      Efl.Ui.Multi_Selectable_Index_Range.unselected_ndx_iterator_new;
+      Efl.Ui.Multi_Selectable_Index_Range.ndx_range_select;
+      Efl.Ui.Multi_Selectable_Index_Range.ndx_range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
       Efl.Ui.Selectable.selected {get; set;}
    }

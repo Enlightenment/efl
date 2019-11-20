@@ -469,7 +469,7 @@ _efl_ui_select_model_efl_model_property_get(const Eo *obj, Efl_Ui_Select_Model_D
 }
 
 static Eina_Iterator *
-_efl_ui_select_model_efl_ui_multi_selectable_async_selected_iterator_new(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_index_range_selected_ndx_iterator_new(Eo *obj,
                                                                          Efl_Ui_Select_Model_Data *pd)
 {
    if (pd->parent && pd->parent->selection == EFL_UI_SELECT_MODE_NONE)
@@ -478,7 +478,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_async_selected_iterator_new(Eo *obj
 }
 
 static Eina_Iterator *
-_efl_ui_select_model_efl_ui_multi_selectable_async_unselected_iterator_new(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_index_range_unselected_ndx_iterator_new(Eo *obj,
                                                                            Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
 {
    return efl_boolean_model_boolean_iterator_get(obj, "selected", EINA_FALSE);
@@ -492,7 +492,7 @@ _efl_ui_select_model_efl_ui_single_selectable_last_selected_get(const Eo *obj EI
 }
 
 static void
-_efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_set(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_select_mode_set(Eo *obj,
                                                                    Efl_Ui_Select_Model_Data *pd,
                                                                    Efl_Ui_Select_Mode mode)
 {
@@ -501,11 +501,11 @@ _efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_set(Eo *obj,
       case EFL_UI_SELECT_MODE_SINGLE:
          mode = EFL_UI_SELECT_MODE_SINGLE;
          if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
-           efl_ui_multi_selectable_async_all_unselect(obj);
+           efl_ui_multi_selectable_all_unselect(obj);
          break;
       case EFL_UI_SELECT_MODE_NONE:
          if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
-           efl_ui_multi_selectable_async_all_unselect(obj);
+           efl_ui_multi_selectable_all_unselect(obj);
          else if (pd->last_model)
            {
               Eina_Value unselect = eina_value_bool_init(EINA_FALSE);
@@ -526,14 +526,14 @@ _efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_set(Eo *obj,
 }
 
 static Efl_Ui_Select_Mode
-_efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_get(const Eo *obj EINA_UNUSED,
+_efl_ui_select_model_efl_ui_multi_selectable_select_mode_get(const Eo *obj EINA_UNUSED,
                                                                    Efl_Ui_Select_Model_Data *pd)
 {
    return pd->selection;
 }
 
 static void
-_efl_ui_select_model_efl_ui_multi_selectable_async_all_select(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_all_select(Eo *obj,
                                                               Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
 {
    unsigned long count, i;
@@ -553,16 +553,16 @@ _efl_ui_select_model_efl_ui_multi_selectable_async_all_select(Eo *obj,
 }
 
 static void
-_efl_ui_select_model_efl_ui_multi_selectable_async_all_unselect(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_all_unselect(Eo *obj,
                                                                 Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
 {
    uint64_t count = efl_model_children_count_get(obj);
 
-   efl_ui_multi_selectable_async_range_unselect(obj, 0, count - 1);
+   efl_ui_multi_selectable_ndx_range_unselect(obj, 0, count - 1);
 }
 
 static void
-_efl_ui_select_model_efl_ui_multi_selectable_async_range_select(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_select(Eo *obj,
                                                                 Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
                                                                 uint64_t a, uint64_t b)
 {
@@ -604,7 +604,7 @@ _children_unselect_then(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Va
 #define BATCH_MAX 100
 
 static void
-_efl_ui_select_model_efl_ui_multi_selectable_async_range_unselect(Eo *obj,
+_efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *obj,
                                                                   Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
                                                                   uint64_t a, uint64_t b)
 {
@@ -695,4 +695,4 @@ _efl_ui_select_model_efl_ui_selectable_selected_get(const Eo *obj,
 }
 
 #include "efl_ui_select_model.eo.c"
-#include "efl_ui_multi_selectable_async.eo.c"
+#include "efl_ui_multi_selectable_index_range.eo.c"
