@@ -1,15 +1,5 @@
 group { "efl/pager"; data.item: "version" "123";
    parts {
-      spacer { "base";
-         scale;
-         desc { "default";
-         }
-      }
-      swallow { "efl.background";
-         scale;
-         desc { "default";
-         }
-      }
       swallow { "efl.indicator";
          scale;
          desc { "default";
