@@ -265,6 +265,7 @@ class TestEoAccessors
         lst.Append(3);
         lst.Append(2);
         lst.Append(5);
+
         IEnumerable<int> origin = lst.GetAccessor();
         IEnumerable<int> acc = obj.CloneAccessor(origin);
 

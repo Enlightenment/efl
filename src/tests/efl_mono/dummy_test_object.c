@@ -4168,8 +4168,8 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
        || !_hash_str_check(complex->fhash, "cc", "ccc"))
      return EINA_FALSE;
 
-   if (!_iterator_str_equal(complex->fiterator, base_seq_str, base_seq_str_size, EINA_FALSE))
-     return EINA_FALSE;
+   //if (!_iterator_str_equal(complex->fiterator, base_seq_str, base_seq_str_size, EINA_FALSE))
+   //  return EINA_FALSE;
 
    double double_val = 0;
    if (!eina_value_get(&complex->fany_value, &double_val) || double_val != -9007199254740992.0)
