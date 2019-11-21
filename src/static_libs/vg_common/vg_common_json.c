@@ -352,13 +352,24 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
 }
 
 static void
+_reset_vg_tree(Efl_VG *node)
+{
+   //Hide all nodes visibility
+   if (efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS))
+     {
+        Efl_VG* child;
+        Eina_Iterator *itr = efl_canvas_vg_container_children_get(node);
+        EINA_ITERATOR_FOREACH(itr, child)
+          _reset_vg_tree(child);
+     }
+   efl_gfx_entity_visible_set(node, EINA_FALSE);
+}
+
+static void
 _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int depth EINA_UNUSED)
 {
-   if (!layer->mVisible)
-     {
-        efl_gfx_entity_visible_set(root, EINA_FALSE);
-        return;
-     }
+   if (!layer->mVisible) return;
+
    efl_gfx_entity_visible_set(root, EINA_TRUE);
    efl_gfx_color_set(root, layer->mAlpha, layer->mAlpha, layer->mAlpha, layer->mAlpha);
 
@@ -523,6 +534,8 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
         if (tree->keypath) efl_key_data_set(root, "_lot_node_name", tree->keypath);
         vfd->root = root;
      }
+   else _reset_vg_tree(root);
+
    _update_vg_tree(root, tree, 1);
 #else
    return EINA_FALSE;
