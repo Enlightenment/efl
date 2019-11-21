@@ -3366,11 +3366,13 @@ _edje_vector_load_json(Edje *ed, Edje_Real_Part *ep, const char *key)
 
    if (ep->typedata.vector->player == NULL)
      {
-        Eo *player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, ed->base.evas);
-        efl_animation_player_animation_set(player, ep->typedata.vector->anim);
-        efl_event_callback_add(player, EFL_ANIMATION_PLAYER_EVENT_RUNNING,
-                               _edje_vector_animation_running_cb, ep);
-        ep->typedata.vector->player = player;
+        /*
+           Eo *player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, ed->base.evas);
+           efl_animation_player_animation_set(player, ep->typedata.vector->anim);
+           efl_event_callback_add(player, EFL_ANIMATION_PLAYER_EVENT_RUNNING,
+           _edje_vector_animation_running_cb, ep);
+           ep->typedata.vector->player = player;
+         */
      }
 
    if (ep->typedata.vector->current_id != desc->vg.id)
