@@ -61,6 +61,9 @@ _animator_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_event_callback_call(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, &pd->in->progress);
 
+   //Check if animation stopped in animation_progress,updated callback.
+   if (!pd->in) return;
+
    //Not end. Keep going.
    if ((pd->in->speed < 0 && EINA_DBL_EQ(pd->in->progress, 0)) ||
        (pd->in->speed > 0 && EINA_DBL_EQ(pd->in->progress, 1.0)))
