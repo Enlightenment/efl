@@ -25,7 +25,7 @@ namespace eldbus
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class EldbusMessageNativeFunctions
+internal static class EldbusMessageNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_message_ref(IntPtr msg);

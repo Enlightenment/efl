@@ -25,7 +25,7 @@ namespace eldbus
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class EldbusPendingNativeFunctions
+internal static class EldbusPendingNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern void
         eldbus_pending_data_set(IntPtr pending, string key, IntPtr data);

@@ -92,7 +92,7 @@ public struct ObjectPath : IEquatable<ObjectPath>
     /// <para>Since EFL 1.24.</para>
     /// </summary>
     /// <returns>A hash code.</returns>
-    public override int GetHashCode() => value.GetHashCode();
+    public override int GetHashCode() => value.GetHashCode(StringComparison.Ordinal);
 
     /// <summary>Returns whether this <see cref="ObjectPath" />
     /// is equal to the given <see cref="object" />.
@@ -185,7 +185,7 @@ public struct SignatureString : IEquatable<SignatureString>
     /// <para>Since EFL 1.24.</para>
     /// </summary>
     /// <returns>A hash code.</returns>
-    public override int GetHashCode() => value.GetHashCode();
+    public override int GetHashCode() => value.GetHashCode(StringComparison.Ordinal);
 
     /// <summary>Returns whether this <see cref="SignatureString" />
     /// is equal to the given <see cref="object" />.

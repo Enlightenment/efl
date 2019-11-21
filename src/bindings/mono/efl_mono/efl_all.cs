@@ -59,7 +59,7 @@ static class UnsafeNativeMethods
 /// </summary>
 public static class All
 {
-    private static bool InitializedUi = false;
+    private static Efl.Csharp.Components initComponents = Efl.Csharp.Components.Basic;
 
     /// <summary>
     ///   If the main loop was initialized.
@@ -79,17 +79,28 @@ public static class All
     /// <param name="components">The <see cref="Efl.Csharp.Components" /> that initialize the Efl.</param>
     public static void Init(Efl.Csharp.Components components = Efl.Csharp.Components.Basic)
     {
-        Eina.Config.Init();
-        Efl.Eo.Config.Init();
-        ecore_init();
-        ecore_init_ex(0, IntPtr.Zero);
-        evas_init();
-        eldbus.Config.Init();
+        if (components == Efl.Csharp.Components.None)
+        {
+            return;
+        }
 
-        if (components == Efl.Csharp.Components.Ui)
+        initComponents = components;
+
+        if ((initComponents & Efl.Csharp.Components.Basic)
+            == Efl.Csharp.Components.Basic)
+        {
+            Eina.Config.Init();
+            Efl.Eo.Config.Init();
+            ecore_init();
+            ecore_init_ex(0, IntPtr.Zero);
+            evas_init();
+            eldbus.Config.Init();
+        }
+
+        if ((initComponents & Efl.Csharp.Components.Ui)
+            == Efl.Csharp.Components.Ui)
         {
             Efl.Ui.Config.Init();
-            InitializedUi = true;
         }
         Monitor.Enter(InitLock);
         MainLoopInitialized = true;
@@ -114,22 +125,32 @@ public static class All
         MainLoopInitialized = false;
         Monitor.Exit(InitLock);
 
-        if (InitializedUi)
+        if (initComponents == Efl.Csharp.Components.None)
+        {
+            return;
+        }
+
+        if ((initComponents & Efl.Csharp.Components.Ui)
+            == Efl.Csharp.Components.Ui)
         {
             Eina.Log.Debug("Shutting down Elementary");
             Efl.Ui.Config.Shutdown();
         }
 
-        Eina.Log.Debug("Shutting down Eldbus");
-        eldbus.Config.Shutdown();
-        Eina.Log.Debug("Shutting down Evas");
-        evas_shutdown();
-        Eina.Log.Debug("Shutting down Ecore");
-        ecore_shutdown();
-        Eina.Log.Debug("Shutting down Eo");
-        Efl.Eo.Config.Shutdown();
-        Eina.Log.Debug("Shutting down Eina");
-        Eina.Config.Shutdown();
+        if ((initComponents & Efl.Csharp.Components.Basic)
+            == Efl.Csharp.Components.Basic)
+        {
+            Eina.Log.Debug("Shutting down Eldbus");
+            eldbus.Config.Shutdown();
+            Eina.Log.Debug("Shutting down Evas");
+            evas_shutdown();
+            Eina.Log.Debug("Shutting down Ecore");
+            ecore_shutdown();
+            Eina.Log.Debug("Shutting down Eo");
+            Efl.Eo.Config.Shutdown();
+            Eina.Log.Debug("Shutting down Eina");
+            Eina.Config.Shutdown();
+        }
     }
 }
 

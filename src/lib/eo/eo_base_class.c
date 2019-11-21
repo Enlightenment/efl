@@ -1270,15 +1270,10 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
    else if (it->desc == EFL_EVENT_NOREF && !pd->event_cb_EFL_EVENT_NOREF)
      {
         update_hash = EINA_FALSE;
-
-        if (efl_event_callback_count(obj_id, EFL_EVENT_NOREF) > 0)
-          {
-             EO_OBJ_POINTER_RETURN(obj_id, obj);
-             obj->noref_event = EINA_TRUE;
-             EO_OBJ_DONE(obj_id);
-
-             pd->event_cb_EFL_EVENT_NOREF = EINA_TRUE;
-          }
+        EO_OBJ_POINTER_RETURN(obj_id, obj);
+        obj->noref_event = EINA_TRUE;
+        EO_OBJ_DONE(obj_id);
+        pd->event_cb_EFL_EVENT_NOREF = EINA_TRUE;
      }
    else if (it->desc == EFL_EVENT_OWNERSHIP_SHARED || it->desc == EFL_EVENT_OWNERSHIP_UNIQUE)
      {

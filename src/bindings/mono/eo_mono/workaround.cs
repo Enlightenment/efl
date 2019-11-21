@@ -44,7 +44,7 @@ internal struct ClassDescription : IEquatable<ClassDescription>
     /// </summary>
     /// <returns>A hash code.</returns>
     public override int GetHashCode()
-        => version.GetHashCode() ^ name.GetHashCode()
+        => version.GetHashCode() ^ name.GetHashCode(StringComparison.Ordinal)
         ^ class_type ^ data_size.GetHashCode();
 
     /// <summary>Returns whether this <see cref="ClassDescription" />

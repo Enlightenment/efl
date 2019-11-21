@@ -13,7 +13,7 @@
 typedef struct _App_Data
 {
    Efl_Canvas_Animation        *anim[INTERP_NUM];
-   Efl_Canvas_Animation_Player *anim_obj[INTERP_NUM];
+   Efl_Ui_Button *btns[INTERP_NUM];
 
    Evas_Object          *btn[INTERP_NUM];
    Evas_Object          *start_all_btn;
@@ -68,45 +68,48 @@ _interpolator_create(int index, Evas_Object *win)
 }
 
 static void
-_anim_started_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_anim_changed_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
+   Eo *anim = event->info;
    App_Data *ad = data;
 
-   printf("Animation has been started!\n");
-
-   ad->running_anim_cnt++;
-}
-
-static void
-_anim_ended_cb(void *data, const Efl_Event *event)
-{
-   App_Data *ad = data;
-   int i;
-
-   printf("Animation has been ended!\n");
-
-   ad->running_anim_cnt--;
-
-   for (i = 0; i < INTERP_NUM; i++)
+   if (anim)
      {
-        if (ad->anim_obj[i] == event->object)
-          {
-             elm_object_disabled_set(ad->btn[i], EINA_FALSE);
-             break;
-          }
+        printf("Animation has been started!\n");
+        ad->running_anim_cnt++;
      }
+   else
+     {
+        int i;
 
-   if (ad->running_anim_cnt == 0)
-     elm_object_disabled_set(ad->start_all_btn, EINA_FALSE);
+        printf("Animation has been ended!\n");
+        ad->running_anim_cnt--;
+
+        for (i = 0; i < INTERP_NUM; i++)
+          {
+             if (ad->btns[i] == event->object)
+               {
+                  elm_object_disabled_set(ad->btn[i], EINA_FALSE);
+                  break;
+               }
+          }
+
+        if (ad->running_anim_cnt == 0)
+          elm_object_disabled_set(ad->start_all_btn, EINA_FALSE);
+     }
 }
 
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
-   double progress = event_running->progress;
-   printf("Animation is running! Current progress(%lf)\n", progress);
+   double *progress = event->info;
+   printf("Animation is running! Current progress(%lf)\n", *progress);
 }
+
+EFL_CALLBACKS_ARRAY_DEFINE(animation_stats_cb,
+  {EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, _anim_changed_cb },
+  {EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _anim_running_cb },
+)
 
 static void
 _anim_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -116,7 +119,7 @@ _anim_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    int index = (uintptr_t)evas_object_data_get(obj, "index");
 
    //Let Animation Object start animation
-   efl_player_playing_set(ad->anim_obj[index], EINA_TRUE);
+   efl_canvas_object_animation_start(ad->btns[index], ad->anim[index], 1.0, 0.0);
 
    elm_object_disabled_set(obj, EINA_TRUE);
    elm_object_disabled_set(ad->start_all_btn, EINA_TRUE);
@@ -131,7 +134,7 @@ _anim_start_all(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    for (i = 0; i < INTERP_NUM; i++)
      {
         //Let Animation Object start animation
-        efl_player_playing_set(ad->anim_obj[i], EINA_TRUE);
+        efl_canvas_object_animation_start(ad->btns[i], ad->anim[i], 1.0, 0.0);
         elm_object_disabled_set(ad->btn[i], EINA_TRUE);
      }
 
@@ -147,9 +150,7 @@ _win_del_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    for (i = 0; i < INTERP_NUM; i++)
      {
         //Unregister callback called when window deletes
-        efl_event_callback_del(ad->anim_obj[i],
-                               EFL_ANIMATION_PLAYER_EVENT_ENDED,
-                               _anim_ended_cb, ad);
+        efl_event_callback_array_del(ad->btns[i], animation_stats_cb(), ad);
      }
 
    free(ad);
@@ -211,23 +212,8 @@ test_efl_anim_interpolator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ad->anim[i] = anim;
 
         //Create Animation Object from Animation
-        Efl_Canvas_Animation_Player *anim_obj =
-          efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
-                  efl_animation_player_animation_set(efl_added, anim),
-                  efl_animation_player_target_set(efl_added, btn));
-        ad->anim_obj[i] = anim_obj;
-
-        //Register callback called when animation starts
-        efl_event_callback_add(anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED,
-                               _anim_started_cb, ad);
-
-        //Register callback called when animation ends
-        efl_event_callback_add(anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED,
-                               _anim_ended_cb, ad);
-
-        //Register callback called while animation is executed
-        efl_event_callback_add(anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING,
-                               _anim_running_cb, NULL);
+        ad->btns[i] = btn;
+        efl_event_callback_array_add(btn, animation_stats_cb(), ad);
      }
 
    ad->running_anim_cnt = 0;

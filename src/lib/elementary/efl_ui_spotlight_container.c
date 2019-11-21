@@ -229,7 +229,7 @@ _efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Contai
      }
    else
      {
-        efl_ui_spotlight_manager_animation_enabled_set(manager, EINA_TRUE);
+        efl_ui_spotlight_manager_animated_transition_set(manager, EINA_TRUE);
      }
 
    return obj;
@@ -619,7 +619,7 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
         //the api indicates that the caller passes ownership to this function, so we need to unref here
         efl_unref(pd->transition);
         //disable animation when not finalized yet, this help reducing the overhead of scheduling a animation that will not be displayed
-        efl_ui_spotlight_manager_animation_enabled_set(pd->transition, efl_finalized_get(obj));
+        efl_ui_spotlight_manager_animated_transition_set(pd->transition, efl_finalized_get(obj));
         efl_ui_spotlight_manager_bind(pd->transition, obj,
           pd->page_root);
         efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);

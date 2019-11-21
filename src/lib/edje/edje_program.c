@@ -320,7 +320,7 @@ _efl_canvas_layout_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, 
 
 /* FIXDOC: Verify/Expand */
 EOLIAN void
-_efl_canvas_layout_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
+_efl_canvas_layout_animated_set(Eo *obj, Edje *ed, Eina_Bool on)
 {
    Eina_List *l;
    unsigned short i;
@@ -390,7 +390,7 @@ break_prog:
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_animation_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_animated_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;

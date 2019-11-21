@@ -39,7 +39,6 @@ pub_eo_files = [
   'efl_canvas_animation_group.eo',
   'efl_canvas_animation_group_parallel.eo',
   'efl_canvas_animation_group_sequential.eo',
-  'efl_canvas_animation_player.eo',
   'efl_canvas_text_factory.eo',
   'efl_canvas_rectangle.eo',
   'efl_canvas_object.eo',
@@ -56,6 +55,7 @@ pub_eo_files = [
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
   'efl_canvas_text.eo',
+  'efl_canvas_object_animation.eo',
 ]
 
 evas_canvas_eo_files = pub_eo_files
@@ -184,7 +184,6 @@ evas_src += files([
   'efl_canvas_animation_group.c',
   'efl_canvas_animation_group_parallel.c',
   'efl_canvas_animation_group_sequential.c',
-  'efl_canvas_animation_player.c',
   'efl_gfx_vg_value_provider.c',
   'efl_canvas_vg_object.c',
   'efl_canvas_vg_node.c',
@@ -207,6 +206,7 @@ evas_src += files([
   'evas_canvas3d_primitive.c',
   'evas_canvas3d_node_callback.h',
   'evas_canvas3d_eet.c',
+  'efl_canvas_object_animation.c',
   ])
 
 evas_include_directories += include_directories('.')
