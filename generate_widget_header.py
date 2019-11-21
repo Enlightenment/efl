@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 import os
-from ete3 import Tree, TreeStyle, AttrFace, CircleFace, faces, NodeStyle
+from ete3 import Tree, TreeStyle, AttrFace, faces, NodeStyle
 import argparse
 
 parser = argparse.ArgumentParser(description='Create a image showing all widgets')
@@ -11,8 +11,6 @@ G = parser.parse_args()
 sys.path.insert(0, os.path.join(G.sourcedir, 'src', 'scripts', 'pyolian'))
 
 import eolian
-from eolian import Eolian_Type_Type
-from eolian import Eolian_Type_Builtin_Type
 
 SCAN_FOLDER = os.path.join(G.sourcedir, 'src', 'lib')
 
