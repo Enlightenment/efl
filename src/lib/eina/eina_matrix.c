@@ -551,8 +551,8 @@ eina_matrix3_rotate(Eina_Matrix3 *m, double rad)
     *       Later we would want someone to look at this and improve accuracy.
     */
 #if 1
-   c = cosf(rad);
-   s = sinf(rad);
+   c = cos(rad);
+   s = sin(rad);
 #else
    /* normalize the angle between -pi,pi */
    rad = fmod(rad + M_PI, 2 * M_PI) - M_PI;
