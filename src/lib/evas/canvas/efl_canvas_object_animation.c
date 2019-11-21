@@ -59,7 +59,8 @@ _animator_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_gfx_mapping_reset(obj);
    efl_animation_apply(pd->in->animation, pd->in->progress, obj);
 
-   efl_event_callback_call(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, &pd->in->progress);
+   double progress = pd->in->progress;
+   efl_event_callback_call(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, &progress);
 
    //Check if animation stopped in animation_progress,updated callback.
    if (!pd->in) return;
