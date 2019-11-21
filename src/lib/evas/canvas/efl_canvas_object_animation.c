@@ -106,6 +106,7 @@ static Eina_Value
 _start_fcb(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Canvas_Object_Animation_Data *pd = efl_data_scope_safe_get(o, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_VALUE_EMPTY);
    if (!pd->in) return v; //animation was stopped before anything started
    _start(o, pd, pd->in->start_pos);
    return v;
@@ -169,6 +170,8 @@ _efl_canvas_object_animation_animation_start(Eo *obj, Efl_Canvas_Object_Animatio
    in->speed = speed;
    in->start_pos = start_pos;
    efl_event_callback_call(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, in->animation);
+   //You should not rely on in beeing available after calling the above event.
+   in = NULL;
 
    if (efl_animation_start_delay_get(animation) > 0.0)
      {
@@ -193,7 +196,9 @@ _efl_canvas_object_animation_animation_stop(Eo *obj, Efl_Canvas_Object_Animation
 
    efl_event_callback_call(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, pd->in->animation);
 
-   free(pd->in);
+   //this could be NULL if some weird callstack calls stop again while the above event is executed
+   if (pd->in)
+     free(pd->in);
    pd->in = NULL;
 }
 
