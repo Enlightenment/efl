@@ -25,7 +25,7 @@ class @beta Efl.Boolean_Model extends Efl.Composite_Model
             @in name: string; [[The name of the property to examine.]]
             @in request: bool; [[The value to look for.]]
          }
-         return: iterator<ptr(uint64)>; [[The iterator that is valid until any change is made on the model.]]
+         return: iterator<ptr(uint64)> @move; [[The iterator that is valid until any change is made on the model.]]
       }
    }
    implements {

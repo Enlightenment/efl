@@ -217,9 +217,9 @@ interface Efl.Gfx.Image
          }
          get {}
          values {
-            horizontal: iterator<Efl.Gfx.Image_Stretch_Region>(null); [[Representation of areas that are
+            horizontal: iterator<Efl.Gfx.Image_Stretch_Region>(null) @move; [[Representation of areas that are
                 stretchable in the image horizontal space.]]
-            vertical: iterator<Efl.Gfx.Image_Stretch_Region>(null); [[Representation of areas that are
+            vertical: iterator<Efl.Gfx.Image_Stretch_Region>(null) @move; [[Representation of areas that are
                 stretchable in the image vertical space.]]
          }
       }
