@@ -1,4 +1,4 @@
-struct @beta Efl_Text_Cursor_Handle;
+struct @beta Efl_Text_Cursor_Handle; [[Opaque handle for Text cursors.]]
 
 enum @beta Efl.Text.Cursor_Type
 {
