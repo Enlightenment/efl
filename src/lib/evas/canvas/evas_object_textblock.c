@@ -10462,6 +10462,8 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 EAPI void
 evas_textblock_cursor_line_jump_by(Efl_Text_Cursor_Handle *cur, int by)
 {
+   if (!cur) return;
+
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    ASYNC_BLOCK;
    int ln;
@@ -10471,10 +10473,7 @@ evas_textblock_cursor_line_jump_by(Efl_Text_Cursor_Handle *cur, int by)
    Evas_Object_Textblock_Node_Text *pnode;
    size_t ppos;
 
-
    ln = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL) + by;
-
-   if (!cur) return;
 
    pnode = cur->node;
    ppos = cur->pos;
