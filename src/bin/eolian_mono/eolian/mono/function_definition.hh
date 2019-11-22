@@ -284,7 +284,8 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+          if (!as_generator(scope_tab << "[SuppressMessage(\"Microsoft.Usage\", \"CA1801:ReviweUnusedParameters\", Justification = \"The parameter is used only for extension method overload resolution.\")]\n"
+                            << scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
                             << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(\"" << property.name << "\", fac);\n"
@@ -301,7 +302,8 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
+          if (!as_generator(scope_tab << "[SuppressMessage(\"Microsoft.Usage\", \"CA1801:ReviweUnusedParameters\", Justification = \"The parameter is used only for extension method overload resolution.\")]\n"
+                            << scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
                             << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
