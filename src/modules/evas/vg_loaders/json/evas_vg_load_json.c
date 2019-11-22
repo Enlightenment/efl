@@ -20,14 +20,17 @@ evas_vg_load_file_close_json(Vg_File_Data *vfd)
 
    Lottie_Animation *lot_anim = (Lottie_Animation *) vfd->loader_data;
    lottie_animation_destroy(lot_anim);
-   if (vfd->anim_data->markers)
+   if (vfd->anim_data)
      {
-        Vg_File_Anim_Data_Marker *marker;
-        EINA_INARRAY_FOREACH(vfd->anim_data->markers, marker)
-          if (marker->name) eina_stringshare_del(marker->name);
-        eina_inarray_free(vfd->anim_data->markers);
+        if (vfd->anim_data->markers)
+          {
+             Vg_File_Anim_Data_Marker *marker;
+             EINA_INARRAY_FOREACH(vfd->anim_data->markers, marker)
+                if (marker->name) eina_stringshare_del(marker->name);
+             eina_inarray_free(vfd->anim_data->markers);
+          }
+        free(vfd->anim_data);
      }
-   if (vfd->anim_data) free(vfd->anim_data);
    if (vfd->root) efl_unref(vfd->root);
    free(vfd);
 

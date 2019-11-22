@@ -238,6 +238,8 @@ static void
 _sizing_eval(void *data)
 {
    Evas_Object *obj = data;
+   Elm_Object_Item *eo_item;
+   const Eina_List *l;
    const char *max_size_str;
    int max_size = 0;
    char buf[128];
@@ -254,6 +256,12 @@ _sizing_eval(void *data)
 
    elm_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
    edje_object_message_signal_process(elm_layout_edje_get(sd->hover));
+
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
+     {
+        ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
+        efl_canvas_group_calculate(VIEW(item));
+     }
 
    elm_box_recalculate(sd->bx);
    evas_object_size_hint_combined_min_get(sd->bx, &box_w, &box_h);
@@ -501,7 +509,6 @@ _activate(Evas_Object *obj)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
         evas_object_show(VIEW(item));
-        efl_canvas_group_calculate(VIEW(item));
         elm_box_pack_end(sd->bx, VIEW(item));
      }
 

@@ -463,8 +463,8 @@ EFL_START_TEST(eina_matrix3_operations)
    fail_if (!MATRIX3_CMP(m1.xx, m1.xy, m1.xz,
                          m1.yx, m1.yy, m1.yz,
                          m1.zx, m1.zy, m1.zz,
-                         cosf(rotate_radian), -sinf(rotate_radian), 0,
-                         sinf(rotate_radian),  cosf(rotate_radian), 0,
+                         cos(rotate_radian), -sin(rotate_radian), 0,
+                         sin(rotate_radian),  cos(rotate_radian), 0,
                          0, 0, 1));
 
    eina_matrix3_values_set(&m1,
