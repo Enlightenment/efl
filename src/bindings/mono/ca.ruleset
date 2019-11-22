@@ -56,7 +56,7 @@
 		<!-- Type name must not match namespace -->
 		<Rule Id="CA1724" Action="None"/>
 		<!-- Unused parameter. Lots of warnings regarding Dispose(disposing) -->
-		<Rule Id="CA1801" Action="None"/>
+		<Rule Id="CA1801" Action="Warning"/>
 		<!-- Do not ignore function result -->
 		<Rule Id="CA1806" Action="None"/>
 		<!-- Remove static constructors -->
