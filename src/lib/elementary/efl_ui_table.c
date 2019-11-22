@@ -269,7 +269,7 @@ _efl_ui_table_efl_object_invalidate(Eo *obj, Efl_Ui_Table_Data *pd)
 EOLIAN static void
 _efl_ui_table_efl_gfx_arrangement_content_padding_set(Eo *obj, Efl_Ui_Table_Data *pd, unsigned int h, unsigned int v)
 {
-   if (EINA_DBL_EQ(pd->pad.h, h) && EINA_DBL_EQ(pd->pad.v, v))
+   if (pd->pad.h == h && pd->pad.v == v)
      return;
 
    pd->pad.h = h;
