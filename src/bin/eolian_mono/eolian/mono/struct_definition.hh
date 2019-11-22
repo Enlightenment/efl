@@ -361,10 +361,20 @@ struct struct_internal_definition_generator
            ).generate(sink, std::make_tuple(internal_name, external_name, internal_name), context))
        return false;
 
-     for (auto const& field : struct_.fields)
+     if (struct_.fields.size() >= 1)
        {
-          if (!to_internal_field_convert.generate(sink, field, context))
-            return false;
+          for (auto const& field : struct_.fields)
+            {
+               if (!to_internal_field_convert.generate(sink, field, context))
+                 return false;
+            }
+       }
+     else
+       {
+         if (!as_generator(
+              indent << scope_tab << scope_tab << "_internal_struct.field = _external_struct.field;\n"
+              ).generate(sink, attributes::unused, context))
+           return false;
        }
 
      if (!as_generator(indent << scope_tab << scope_tab << "return _internal_struct;\n"
@@ -380,10 +390,20 @@ struct struct_internal_definition_generator
            ).generate(sink, std::make_tuple(external_name, internal_name, external_name), context))
        return false;
 
-     for (auto const& field : struct_.fields)
+     if (struct_.fields.size() != 0)
        {
-          if (!to_external_field_convert.generate(sink, field, context))
-            return false;
+          for (auto const& field : struct_.fields)
+            {
+               if (!to_external_field_convert.generate(sink, field, context))
+                 return false;
+            }
+       }
+     else
+       {
+         if (!as_generator(
+              indent << scope_tab << scope_tab << "_external_struct.field = _internal_struct.field;\n"
+              ).generate(sink, attributes::unused, context))
+           return false;
        }
 
      if (!as_generator(indent << scope_tab << scope_tab << "return _external_struct;\n"
