@@ -1,5 +1,3 @@
-struct @beta Efl_Text_Cursor_Handle; [[Opaque handle for Text cursors.]]
-
 enum @beta Efl.Text.Cursor_Type
 {
    [[Text cursor types.]]
@@ -226,7 +224,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          set {  }
          get {  }
          values {
-            handle: Efl_Text_Cursor_Handle @by_ref; [[The handle of the cursor object.]]
+            handle: Efl.Text_Cursor_Handle @by_ref; [[The handle of the cursor object.]]
          }
       }
 
