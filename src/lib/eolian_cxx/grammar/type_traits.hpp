@@ -16,6 +16,8 @@
 #ifndef EOLIAN_CXX_TYPE_TRAITS_HH
 #define EOLIAN_CXX_TYPE_TRAITS_HH
 
+#include <type_traits>
+
 namespace efl { namespace eolian { namespace grammar { namespace type_traits {
 
 template <typename G>
