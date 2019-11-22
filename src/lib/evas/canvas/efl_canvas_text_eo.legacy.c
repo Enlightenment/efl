@@ -1,8 +1,8 @@
 
 EAPI Eina_Bool
-evas_object_textblock_visible_range_get(Efl_Canvas_Text *obj, Efl_Text_Cursor_Cursor *start, Efl_Text_Cursor_Cursor *end)
+evas_object_textblock_visible_range_get(Efl_Canvas_Text *obj EINA_UNUSED, Efl_Text_Cursor_Handle *start, Efl_Text_Cursor_Handle *end)
 {
-   return efl_canvas_text_visible_range_get(obj, start, end);
+   return evas_textblock_cursor_visible_range_get(start, end);
 }
 
 EAPI void
@@ -26,25 +26,31 @@ evas_object_textblock_bidi_delimiters_get(const Efl_Canvas_Text *obj)
 EAPI void
 evas_object_textblock_legacy_newline_set(Efl_Canvas_Text *obj, Eina_Bool mode)
 {
-   efl_canvas_text_legacy_newline_set(obj, mode);
+   efl_canvas_text_newline_as_paragraph_separator_set(obj, mode);
 }
 
 EAPI Eina_Bool
 evas_object_textblock_legacy_newline_get(const Efl_Canvas_Text *obj)
 {
-   return efl_canvas_text_legacy_newline_get(obj);
+   return efl_canvas_text_newline_as_paragraph_separator_get(obj);
 }
 
 EAPI void
 evas_object_textblock_size_formatted_get(const Efl_Canvas_Text *obj, int *w, int *h)
 {
-   efl_canvas_text_size_formatted_get(obj, w, h);
+   Eina_Size2D size;
+   size = efl_canvas_text_size_formatted_get(obj);
+   if (w) *w = size.w;
+   if (h) *h = size.h;
 }
 
 EAPI void
 evas_object_textblock_size_native_get(const Efl_Canvas_Text *obj, int *w, int *h)
 {
-   efl_canvas_text_size_native_get(obj, w, h);
+   Eina_Size2D size;
+   size = efl_canvas_text_size_native_get(obj);
+   if (w) *w = size.w;
+   if (h) *h = size.h;
 }
 
 EAPI Eina_Bool

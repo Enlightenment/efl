@@ -2,8 +2,8 @@ import efl_text_types;
 
 class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font,
-                       Efl.Text_Style, Efl.Text_Format, Efl.Text_Cursor,
-                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Ui.I18n
+                       Efl.Text_Style, Efl.Text_Format,
+                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Ui.I18n
 {
    [[Efl canvas text class]]
    methods {
@@ -16,6 +16,18 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
             is_empty: bool; [[$true if empty, $false otherwise]]
          }
       }
+      cursor_add {
+         [[Add cursor that will manipulate and iterate content of the text object
+           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.]]
+         params {
+            cursor: Efl.Text.Cursor; [[Text cursor.]]
+         }
+      }
+      cursor_create {
+         [[ Create new cursor and add it to text object
+         ]]
+         return: Efl.Text.Cursor @move; [[Text cursor.]]
+      }
       visible_range_get {
          [[Returns the currently visible range.
 
@@ -25,8 +37,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
-            @in start: ptr(Efl.Text_Cursor_Cursor); [[Range start position]]
-            @in end: ptr(Efl.Text_Cursor_Cursor); [[Range end position]]
+            @in start: Efl.Text.Cursor; [[Range start position]]
+            @in end: Efl.Text.Cursor; [[Range end position]]
          }
       }
       @property style_insets {
@@ -54,7 +66,7 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
             delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty]]
          }
       }
-      @property legacy_newline {
+      @property newline_as_paragraph_separator {
          [[When $true, newline character will behave as a paragraph separator.
          ]]
          set {}
@@ -105,8 +117,7 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          ]]
          get {}
          values {
-            w: int; [[The width of the object.]]
-            h: int; [[The height of the object.]]
+            size: Eina.Size2D; [[The size of the object]]
          }
       }
       @property size_native {
@@ -129,56 +140,7 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          ]]
          get {}
          values {
-            w: int; [[The width returned.]]
-            h: int; [[The height returned.]]
-         }
-      }
-      range_text_get @const {
-         [[Returns the text in the range between $cur1 and $cur2.
-         ]]
-         return: mstring @move; [[The text in the given range]]
-         params {
-            @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
-            @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
-         }
-      }
-      range_geometry_get {
-         [[Get the geometry of a range in the text.
-
-           The geometry is represented as rectangles for each of the line
-           segments in the given range [$cur1, $cur2].
-         ]]
-         params {
-             @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
-             @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
-         }
-         return: iterator<ptr(Eina.Rect)> @move; [[
-            Iterator on all geoemtries of the given range
-         ]]
-      }
-      range_simple_geometry_get {
-         [[Get the "simple" geometry of a range.
-
-           The geometry is the geometry in which rectangles in middle lines of
-           range are merged into one big rectangle. This is an optimized
-           version of @.range_geometry_get.
-         ]]
-         params {
-             @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
-             @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
-         }
-         return: iterator<ptr(Eina.Rect)> @move; [[
-            Iterator on all simple geometries of the given range
-         ]]
-      }
-      range_delete {
-         [[Deletes the range between given cursors.
-
-           This removes all the text in given range [$start,$end].
-         ]]
-         params {
-            @in cur1: ptr(Efl.Text_Cursor_Cursor); [[Range start position]]
-            @in cur2: ptr(Efl.Text_Cursor_Cursor); [[Range end position]]
+            size: Eina.Size2D; [[The size of the object]]
          }
       }
       // Obstacles
@@ -274,34 +236,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Format.tabstops { get; set; }
       Efl.Text_Format.password { get; set; }
       Efl.Text_Format.replacement_char { get; set; }
-      Efl.Text_Cursor.text_cursor { get; }
-      Efl.Text_Cursor.cursor_position { set; get; }
-      Efl.Text_Cursor.cursor_content { get; }
-      Efl.Text_Cursor.cursor_geometry { get; }
-      Efl.Text_Cursor.cursor_new;
-      Efl.Text_Cursor.cursor_free;
-      Efl.Text_Cursor.cursor_equal;
-      Efl.Text_Cursor.cursor_compare;
-      Efl.Text_Cursor.cursor_copy;
-      Efl.Text_Cursor.cursor_char_next;
-      Efl.Text_Cursor.cursor_char_prev;
-      Efl.Text_Cursor.cursor_cluster_next;
-      Efl.Text_Cursor.cursor_cluster_prev;
-      Efl.Text_Cursor.cursor_paragraph_char_first;
-      Efl.Text_Cursor.cursor_paragraph_char_last;
-      Efl.Text_Cursor.cursor_word_start;
-      Efl.Text_Cursor.cursor_word_end;
-      Efl.Text_Cursor.cursor_line_char_first;
-      Efl.Text_Cursor.cursor_line_char_last;
-      Efl.Text_Cursor.cursor_paragraph_first;
-      Efl.Text_Cursor.cursor_paragraph_last;
-      Efl.Text_Cursor.cursor_paragraph_next;
-      Efl.Text_Cursor.cursor_paragraph_prev;
-      Efl.Text_Cursor.cursor_line_jump_by;
-      Efl.Text_Cursor.cursor_coord_set;
-      Efl.Text_Cursor.cursor_cluster_coord_set;
-      Efl.Text_Cursor.cursor_text_insert;
-      Efl.Text_Cursor.cursor_char_delete;
       Efl.Text_Annotate.annotation { set; get; }
       Efl.Text_Annotate.range_annotations_get;
       Efl.Text_Annotate.annotation_insert;
@@ -312,13 +246,12 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Annotate.cursor_item_annotation { get; }
       Efl.Text_Annotate.cursor_item_insert;
       Efl.Text_Markup.markup { set; get; }
-      Efl.Text_Markup_Interactive.cursor_markup_insert;
-      Efl.Text_Markup_Interactive.markup_range { get;}
       Efl.Gfx.Entity.scale { set; }
    }
    events {
-      cursor,changed: void; [[Called when cursor changed]]
       changed: void; [[Called when canvas text changed ]]
+      attributes,changed: void; [[Called when attributes change]]
+      layout,finished: void; [[Called when the object has been layed out]]
       style_insets,changed: void; [[Called when the property @.style_insets changed.]]
    }
 }

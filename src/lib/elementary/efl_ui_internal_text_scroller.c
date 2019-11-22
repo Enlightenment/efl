@@ -101,7 +101,7 @@ _efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
         efl_event_freeze(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_table, view.size);
         efl_gfx_entity_size_set(sd->text_obj, view.size);
-        efl_canvas_text_size_formatted_get(sd->text_obj, &fsz.w, &fsz.h);
+        fsz = efl_canvas_text_size_formatted_get(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_table, sz);
         efl_gfx_entity_size_set(sd->text_obj, sz);
         efl_event_thaw(sd->text_obj);

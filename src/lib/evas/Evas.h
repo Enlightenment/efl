@@ -210,7 +210,6 @@ extern "C" {
 #include <canvas/efl_input_types.eot.h>
 #include <Evas_Common.h>
 
-
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <Evas_Legacy.h>
 #endif

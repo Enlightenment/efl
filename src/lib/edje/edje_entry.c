@@ -4083,7 +4083,7 @@ _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_next(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_next(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
 
@@ -4117,7 +4117,7 @@ _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
 
 
 Eina_Bool
-_edje_text_cursor_prev(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_prev(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
 
@@ -4152,7 +4152,7 @@ _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_up(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_up(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
@@ -4192,7 +4192,7 @@ _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_down(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_down(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
@@ -4231,7 +4231,7 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4266,7 +4266,7 @@ _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_end(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4300,7 +4300,7 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_copy(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *d, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_copy(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *d, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
 
@@ -4330,7 +4330,7 @@ _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst)
 }
 
 void
-_edje_text_cursor_line_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_line_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4364,7 +4364,7 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_line_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_line_end(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4397,7 +4397,7 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_coord_set(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c,
+_edje_text_cursor_coord_set(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c,
                              Evas_Coord x, Evas_Coord y)
 {
    Entry *en = rp->typedata.text->entry_data;
@@ -4444,7 +4444,7 @@ _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 char *
-_edje_text_cursor_content_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_content_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Handle *c)
 {
    return evas_textblock_cursor_content_get(c);
 }
@@ -4460,7 +4460,7 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_pos_set(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c, int pos)
+_edje_text_cursor_pos_set(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c, int pos)
 {
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -4489,7 +4489,7 @@ _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos)
 }
 
 int
-_edje_text_cursor_pos_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_pos_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Handle *c)
 {
    return evas_textblock_cursor_pos_get(c);
 }

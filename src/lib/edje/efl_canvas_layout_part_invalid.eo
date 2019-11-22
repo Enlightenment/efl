@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implements Efl.Content,
                                       Efl.Pack_Linear, Efl.Ui.Layout_Orientable_Readonly,
                                       Efl.Pack_Table, Efl.Text,
-                                      Efl.Text_Markup, Efl.Text_Markup_Interactive
+                                      Efl.Text_Markup
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 
@@ -29,20 +29,6 @@ class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implem
       // Efl.Canvas.Layout_Part_Text
       Efl.Text.text { set; get; }
       Efl.Text_Markup.markup { get; set; }
-      Efl.Text_Markup_Interactive.cursor_markup_insert;
-      Efl.Text_Cursor.text_cursor { get; }
-      Efl.Text_Cursor.cursor_paragraph_first;
-      Efl.Text_Cursor.cursor_paragraph_last;
-      Efl.Text_Cursor.cursor_position { set; get; }
-      Efl.Text_Cursor.cursor_coord_set;
-      Efl.Text_Cursor.cursor_line_char_first;
-      Efl.Text_Cursor.cursor_line_char_last;
-      Efl.Text_Cursor.cursor_char_next;
-      Efl.Text_Cursor.cursor_char_prev;
-      Efl.Text_Cursor.cursor_line_jump_by;
-      Efl.Text_Cursor.cursor_copy;
-      Efl.Text_Cursor.cursor_content { get; }
-      Efl.Text_Cursor.cursor_geometry { get; }
       // Efl.Canvas.Layout_Part_Box
       Efl.Container.content_iterate;
       Efl.Container.content_count;

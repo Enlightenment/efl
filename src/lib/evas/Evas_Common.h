@@ -3510,11 +3510,6 @@ typedef enum
 
 #endif
 
-
-#ifndef _EFL_TEXT_CURSOR_EO_H_
-#define _EFL_TEXT_CURSOR_EO_H_
-
-#endif
 #ifndef _EFL_GFX_ENTITY_EO_H_
 #define _EFL_GFX_ENTITY_EO_H_
 
