@@ -27,6 +27,8 @@ struct _Layout_Model_Data
 };
 typedef struct _Layout_Model_Data Layout_Model_Data;
 
+static Evas_Object *win = NULL;
+
 static Eina_Value
 _wait_for_image(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 {
@@ -50,22 +52,32 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 }
 
 static void
-_list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
+_list_pressed_item_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Layout_Model_Data *priv = data;
-   Eo *child = event->info;
+   Efl_Ui_Item_Clickable_Pressed *pressed = event->info;
+   Efl_Ui_Item *item = pressed->item;
+   Efl_Model *model = efl_ui_view_model_get(item);
 
-   printf("LIST selected model\n");
-   efl_ui_view_model_set(priv->provider, child);
+   printf("LIST pressed model `%s` from item `%s`.\n",
+          efl_debug_name_get(model),
+          efl_debug_name_get(item));
+   efl_ui_view_model_set(priv->provider, model);
 }
 
 static void
 _update_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Layout_Model_Data *priv = data;
+   Efl_Model *newone;
 
    const char *text = elm_object_text_get(priv->entry);
-   elm_layout_text_set(priv->label, "default", text);
+   newone = efl_add(EFL_IO_MODEL_CLASS, win,
+                    efl_io_model_path_set(efl_added, text));
+   efl_ui_view_model_set(priv->fileview, newone);
+   efl_del(priv->model);
+   priv->model = newone;
+
 }
 
 static void
@@ -103,7 +115,8 @@ EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Layout_Model_Data *priv;
-   Evas_Object *win, *panes, *bxr, *genlist;
+   Evas_Object *panes, *bxr;
+   Efl_Ui_Factory *factory;
    Eo *img_factory;
    char *dirname;
 
@@ -122,16 +135,19 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    if (argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
-   priv->model = efl_add_ref(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
+   priv->model = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
 
-   genlist = elm_genlist_add(win);
-   priv->fileview = efl_add_ref(ELM_VIEW_LIST_CLASS, win, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
-   elm_view_list_property_connect(priv->fileview, "filename", "elm.text");
-   elm_view_list_model_set(priv->fileview, priv->model);
-   _widget_init(genlist);
-   elm_object_part_content_set(panes, "left", genlist);
+   factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
+   efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
+   efl_ui_property_bind(factory, "efl.text", "filename");
+
+   priv->fileview = efl_add(EFL_UI_LIST_VIEW_CLASS, panes,
+                            efl_ui_collection_view_factory_set(efl_added, factory),
+                            efl_ui_view_model_set(efl_added, priv->model));
+   _widget_init(priv->fileview);
+   elm_object_part_content_set(panes, "left", priv->fileview);
    elm_panes_content_left_size_set(panes, 0.3);
-   efl_event_callback_add(priv->fileview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _list_selected_cb, priv);
+   efl_event_callback_add(priv->fileview, EFL_UI_EVENT_ITEM_PRESSED, _list_pressed_item_cb, priv);
 
    bxr = elm_box_add(win);
    priv->bxr = bxr;
