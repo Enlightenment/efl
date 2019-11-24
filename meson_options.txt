@@ -54,7 +54,7 @@ option('cocoa',
 
 option('physics',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Physics engine (bullet) in efl'
 )
 
