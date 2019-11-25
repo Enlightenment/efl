@@ -88,7 +88,7 @@ enum @beta Efl.Ui.Widget_Orientation_Mode
       not change according to the window or screen orientation.]]
 }
 
-enum @beta Efl.Ui.Select_Mode {
+enum Efl.Ui.Select_Mode {
    [[Type of multi selectable object.]]
    single, [[Only single child is selected. If a child is selected,
              previous selected child will be unselected.]]
