@@ -30,8 +30,8 @@ interface @beta Efl.Text_Annotate {
          [[Returns an iterator of all the handles in a range.
          ]]
          params {
-              @in start: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
-              @in end:   ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
+              @in start: ptr(const(Efl.Text_Cursor_Handle)); [[Start of range]]
+              @in end:   ptr(const(Efl.Text_Cursor_Handle)); [[End of range]]
          }
          return: iterator<ptr(Efl.Text_Annotate_Annotation)> @move; [[Handle of the Annotation]]
       }
@@ -42,8 +42,8 @@ interface @beta Efl.Text_Annotate {
            handle will be returned for further handling.
          ]]
          params {
-              @in start: ptr(Efl.Text_Cursor_Cursor); [[Start of range]]
-              @in end:   ptr(Efl.Text_Cursor_Cursor); [[End of range]]
+              @in start: ptr(Efl.Text_Cursor_Handle); [[Start of range]]
+              @in end:   ptr(Efl.Text_Cursor_Handle); [[End of range]]
               @in format: string; [[Annotation format]]
          }
          return: ptr(Efl.Text_Annotate_Annotation); [[Handle of inserted annotation]]
@@ -69,9 +69,9 @@ interface @beta Efl.Text_Annotate {
          params {
              @in annotation: ptr(const(Efl.Text_Annotate_Annotation)); [[Annotation
                  handle to query]]
-             @in start: ptr(Efl.Text_Cursor_Cursor); [[Cursor to be set to the start
+             @in start: ptr(Efl.Text_Cursor_Handle); [[Cursor to be set to the start
              position of the annotation in the text]]
-             @in end: ptr(Efl.Text_Cursor_Cursor); [[Cursor to be set to the end
+             @in end: ptr(Efl.Text_Cursor_Handle); [[Cursor to be set to the end
              position of the annotation in the text]]
          }
       }
@@ -111,7 +111,7 @@ interface @beta Efl.Text_Annotate {
             annotation: ptr(Efl.Text_Annotate_Annotation); [[Annotation]]
          }
          keys {
-            cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
+            cur: ptr(Efl.Text_Cursor_Handle); [[Cursor object]]
          }
       }
       cursor_item_insert {
@@ -122,7 +122,7 @@ interface @beta Efl.Text_Annotate {
            OBJECT REPLACEMENT CHARACTER and set a special annotation to it.
          ]]
          params {
-            cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
+            cur: ptr(Efl.Text_Cursor_Handle); [[Cursor object]]
             @in item: string;   [[Item key to be used in higher-up
                                   code to query and decided what image, emoticon
                                   etc. to embed.]]

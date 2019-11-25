@@ -24,5 +24,4 @@ struct @beta Efl.Ui.Text_Change_Info {
 
 type @extern @beta Efl.Text_Annotate_Annotation: __undefined_type; [[EFL text annotations data structure]]
 
-type @extern @beta Efl.Text_Cursor_Cursor: __undefined_type; [[Text cursor data structure]]
-
+struct @beta Efl.Text_Cursor_Handle; [[Opaque handle for Text cursors.]]

@@ -86,7 +86,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Text_Selectable
    composites
-                 Efl.Text_Interactive, Efl.Text_Markup, Efl.Text_Cursor
+                 Efl.Text_Interactive, Efl.Text_Markup
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
@@ -285,6 +285,17 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          values {
             item_factory: Efl.Canvas.Text_Factory; [[Factory to create items]]
          }
+      }
+      cursor_add {
+         [[Add cursor that will manipulate and iterate content of the text object.
+           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.]]
+         params {
+            cursor: Efl.Text.Cursor; [[Text cursor.]]
+         }
+      }
+      cursor_create {
+         [[Creates and returns a new cursor for the text.]]
+         return: Efl.Text.Cursor @move; [[Text cursor.]]
       }
       input_panel_show {
          [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout,

@@ -18,6 +18,8 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
+
 
 #include "grammar/generator.hpp"
 #include "grammar/attributes.hpp"

@@ -174,3 +174,14 @@ else
     env : env_mono
   )
 endif
+
+eolian_mono_helpers_suite = executable('eolian-mono-suite',
+  ['eolian_mono_suite.cc'],
+  include_directories : config_dir,
+  dependencies: [check, eolian_cxx, eina_cxx],
+  cpp_args : package_c_args + [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eolian-mono-suite', eolian_mono_helpers_suite)

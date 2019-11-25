@@ -8,18 +8,18 @@
 static void
 _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {
-   Efl_Text_Cursor_Cursor *start, *end;
+   Efl_Text_Cursor *start, *end;
 
-   start = efl_text_cursor_new(obj);
-   end = efl_text_cursor_new(obj);
+   start = efl_ui_text_cursor_create(obj);
+   end = efl_ui_text_cursor_create(obj);
 
-   efl_text_cursor_position_set(obj, start, start_pos);
-   efl_text_cursor_position_set(obj, end, end_pos);
+   efl_text_cursor_position_set(start, start_pos);
+   efl_text_cursor_position_set(end, end_pos);
 
-   efl_text_annotation_insert(obj, start, end, style);
+   efl_text_annotation_insert(obj, efl_text_cursor_handle_get(start), efl_text_cursor_handle_get(end), style);
 
-   efl_text_cursor_free(obj, start);
-   efl_text_cursor_free(obj, end);
+   efl_del(start);
+   efl_del(end);
 }
 
 static Eo *
@@ -98,15 +98,15 @@ typedef struct
 static void
 _on_bt3_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_Text_Cursor_Cursor *sel_start, *sel_end;
+   Efl_Text_Cursor *sel_start, *sel_end;
    Eo *en = data;
 
-   efl_text_interactive_selection_cursors_get(data, &sel_start, &sel_end);
-   const char *s = efl_canvas_text_range_text_get(data, sel_start, sel_end);
+   efl_text_interactive_selection_cursors_get(en, &sel_start, &sel_end);
+   const char *s = efl_text_cursor_range_text_get(sel_start, sel_end);
 
    printf("SELECTION REGION: %d - %d\n",
-         efl_text_cursor_position_get(en, sel_start),
-         efl_text_cursor_position_get(en, sel_end));
+         efl_text_cursor_position_get( sel_start),
+         efl_text_cursor_position_get(sel_end));
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
 }
@@ -248,9 +248,9 @@ _on_factory_bt_image_clicked(void *data, const Efl_Event *event EINA_UNUSED)
    static int image_idx = 0;
 
    image_idx = (image_idx + 1) % IMAGES_SZ;
-   efl_text_cursor_item_insert(en,
-         efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
-         images[image_idx], "size=32x32");
+
+   efl_text_cursor_item_insert(en, efl_text_cursor_handle_get(efl_text_interactive_main_cursor_get(en)),
+          images[image_idx], "size=32x32");
    printf("Inserted image: key = %s\n", images[image_idx]);
 }
 
@@ -258,8 +258,8 @@ static void
 _on_factory_bt_emoticon_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
-         "emoticon/evil-laugh", "size=32x32");
+    efl_text_cursor_item_insert(en, efl_text_cursor_handle_get(efl_text_interactive_main_cursor_get(en)),
+          "emoticon/evil-laugh", "size=32x32");
 }
 
 static struct
@@ -287,7 +287,7 @@ void
 test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *bt, *en;
-   Efl_Text_Cursor_Cursor *main_cur, *cur;
+   Efl_Text_Cursor *main_cur, *cur;
    char buf[128];
    Eina_File *f;
 
@@ -350,16 +350,16 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    efl_text_font_set(en, "Sans", 14);
    efl_text_normal_color_set(en, 255, 255, 255, 255);
 
-   main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
-   cur = efl_text_cursor_new(en);
+   main_cur = efl_text_interactive_main_cursor_get(en);
+   cur = efl_ui_text_cursor_create(en);
 
-   efl_text_cursor_position_set(en, cur, 2);
-   efl_text_cursor_item_insert(en, cur, "emoticon/happy", "size=32x32");
-   efl_text_cursor_position_set(en, cur, 50);
+   efl_text_cursor_position_set(cur, 2);
+   efl_text_cursor_item_insert(en, efl_text_cursor_handle_get(cur), "emoticon/happy", "size=32x32");
+   efl_text_cursor_position_set(cur, 50);
 
    snprintf(buf, sizeof(buf), "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
-   efl_text_cursor_item_insert(en, cur, buf, "size=32x32");
-   efl_text_cursor_position_set(en, main_cur, 5);
+   efl_text_cursor_item_insert(en, efl_text_cursor_handle_get(cur), buf, "size=32x32");
+   efl_text_cursor_position_set(main_cur, 5);
 
    efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);

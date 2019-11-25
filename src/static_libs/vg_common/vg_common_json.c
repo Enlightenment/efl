@@ -184,6 +184,7 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
                           grad = efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
                           efl_key_data_set(shape, key, grad);
                        }
+                     efl_gfx_entity_visible_set(grad, EINA_TRUE);
                      efl_gfx_gradient_linear_start_set(grad, node->mGradient.start.x, node->mGradient.start.y);
                      efl_gfx_gradient_linear_end_set(grad, node->mGradient.end.x, node->mGradient.end.y);
                   }
@@ -196,6 +197,7 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
                           grad = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);
                           efl_key_data_set(shape, key, grad);
                        }
+                     efl_gfx_entity_visible_set(grad, EINA_TRUE);
                      efl_gfx_gradient_radial_center_set(grad, node->mGradient.center.x, node->mGradient.center.y);
                      efl_gfx_gradient_radial_focal_set(grad, node->mGradient.focal.x, node->mGradient.focal.y);
                      efl_gfx_gradient_radial_radius_set(grad, node->mGradient.cradius);
@@ -307,6 +309,7 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
         msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, mtarget);
         efl_key_data_set(mtarget, key, msource);
      }
+   efl_gfx_entity_visible_set(msource, EINA_TRUE);
 
    //FIXME : EFL_GFX_VG_COMPOSITE_METHOD_ALPHA option is temporary
    //Currently matte alpha implements is same the mask intersect implement.
@@ -327,6 +330,7 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
              msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, mtarget);
              efl_key_data_set(mtarget, key, msource);
           }
+        efl_gfx_entity_visible_set(msource, EINA_TRUE);
         _construct_mask_nodes(msource, mask, depth + 1);
 
         Efl_Gfx_Vg_Composite_Method mask_mode;

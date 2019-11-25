@@ -22,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
 #include "utils.hh"
 
 #include "grammar/integral.hpp"

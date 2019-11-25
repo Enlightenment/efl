@@ -98,7 +98,7 @@ namespace eolian_mono { namespace utils {
 
    inline bool ends_with(std::string const& source, std::string suffix)
    {
-       if (source.size() > suffix.size())
+       if (source.size() >= suffix.size())
            return (0 == source.compare(source.size() - suffix.size(), suffix.size(), suffix));
        else
            return false;

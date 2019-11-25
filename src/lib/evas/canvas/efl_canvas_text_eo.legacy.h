@@ -32,7 +32,7 @@ typedef Eo Efl_Canvas_Text;
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI Eina_Bool evas_object_textblock_visible_range_get(Efl_Canvas_Text *obj, Efl_Text_Cursor_Cursor *start, Efl_Text_Cursor_Cursor *end);
+EAPI Eina_Bool evas_object_textblock_visible_range_get(Efl_Canvas_Text *obj, Efl_Text_Cursor_Handle *start, Efl_Text_Cursor_Handle *end);
 
 /**
  * @brief Gets the left, right, top and bottom insets of the text.

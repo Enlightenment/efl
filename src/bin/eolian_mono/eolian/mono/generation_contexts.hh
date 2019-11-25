@@ -16,6 +16,8 @@
 #ifndef EOLIAN_MONO_GENERATION_CONTEXTS_HH
 #define EOLIAN_MONO_GENERATION_CONTEXTS_HH
 
+#include <map>
+
 #include "grammar/context.hpp"
 #include "grammar/indentation.hpp"
 

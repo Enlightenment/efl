@@ -54,6 +54,7 @@ pub_eo_files = [
   'efl_canvas_group.eo',
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
+  'efl_text_cursor.eo',
   'efl_canvas_text.eo',
   'efl_canvas_object_animation.eo',
 ]
@@ -207,6 +208,7 @@ evas_src += files([
   'evas_canvas3d_node_callback.h',
   'evas_canvas3d_eet.c',
   'efl_canvas_object_animation.c',
+  'efl_text_cursor.c'
   ])
 
 evas_include_directories += include_directories('.')
