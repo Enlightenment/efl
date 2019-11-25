@@ -227,8 +227,8 @@ class TestEoEvents
     public static void event_with_array_payload()
     {
         var obj = new Dummy.TestObject();
-        List<string> received = null;
-        List<string> sent = new List<string>();
+        IList<string> received = null;
+        IList<string> sent = new List<string>();
 
         sent.Add("Abc");
         sent.Add("Def");

@@ -920,26 +920,20 @@ class TestEinaArray
     public static void test_eina_array_int_in()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<int>();
-        arr.Append(base_seq_int);
+        var arr = new List<int>();
+        arr.AddRange(base_seq_int);
         Test.Assert(t.EinaArrayIntIn(arr));
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_int));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_array_int_in_own()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<int>();
-        arr.Append(base_seq_int);
+        var arr = new List<int>();
+        arr.AddRange(base_seq_int);
         Test.Assert(t.EinaArrayIntInOwn(arr));
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_int));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntInOwn());
         t.Dispose();
     }
@@ -947,13 +941,9 @@ class TestEinaArray
     public static void test_eina_array_int_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<int> arr;
+        IList<int> arr;
         Test.Assert(t.EinaArrayIntOut(out arr));
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
-        Test.Assert(arr.Append(append_seq_int));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntOut());
         t.Dispose();
     }
@@ -961,13 +951,9 @@ class TestEinaArray
     public static void test_eina_array_int_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<int> arr;
+        IList<int> arr;
         Test.Assert(t.EinaArrayIntOutOwn(out arr));
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
-        Test.Assert(arr.Append(append_seq_int));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -975,11 +961,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayIntReturn();
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
-        Test.Assert(arr.Append(append_seq_int));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntReturn());
         t.Dispose();
     }
@@ -988,11 +970,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayIntReturnOwn();
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
-        Test.Assert(arr.Append(append_seq_int));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1000,26 +978,20 @@ class TestEinaArray
     public static void test_eina_array_str_in()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<string>();
-        arr.Append(base_seq_str);
+        var arr = new List<string>();
+        arr.AddRange(base_seq_str);
         Test.Assert(t.EinaArrayStrIn(arr));
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_str));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_array_str_in_own()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<string>();
-        arr.Append(base_seq_str);
+        var arr = new List<string>();
+        arr.AddRange(base_seq_str);
         Test.Assert(t.EinaArrayStrInOwn(arr));
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_str));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrInOwn());
         t.Dispose();
     }
@@ -1027,13 +999,9 @@ class TestEinaArray
     public static void test_eina_array_str_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<string> arr;
+        IList<string> arr;
         Test.Assert(t.EinaArrayStrOut(out arr));
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
-        Test.Assert(arr.Append(append_seq_str));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrOut());
         t.Dispose();
     }
@@ -1041,13 +1009,9 @@ class TestEinaArray
     public static void test_eina_array_str_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<string> arr;
+        IList<string> arr;
         Test.Assert(t.EinaArrayStrOutOwn(out arr));
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
-        Test.Assert(arr.Append(append_seq_str));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1055,11 +1019,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayStrReturn();
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
-        Test.Assert(arr.Append(append_seq_str));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrReturn());
         t.Dispose();
     }
@@ -1068,11 +1028,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayStrReturnOwn();
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
-        Test.Assert(arr.Append(append_seq_str));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1080,26 +1036,20 @@ class TestEinaArray
     public static void test_eina_array_strshare_in()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<Eina.Stringshare>();
-        arr.Append(base_seq_strshare);
+        var arr = new List<Eina.Stringshare>();
+        arr.AddRange(base_seq_strshare);
         Test.Assert(t.EinaArrayStrshareIn(arr));
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_strshare));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_array_strshare_in_own()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<Eina.Stringshare>();
-        arr.Append(base_seq_strshare);
+        var arr = new List<Eina.Stringshare>();
+        arr.AddRange(base_seq_strshare);
         Test.Assert(t.EinaArrayStrshareInOwn(arr));
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(modified_seq_strshare));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareInOwn());
         t.Dispose();
     }
@@ -1107,13 +1057,9 @@ class TestEinaArray
     public static void test_eina_array_strshare_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<Eina.Stringshare> arr;
+        IList<Eina.Stringshare> arr;
         Test.Assert(t.EinaArrayStrshareOut(out arr));
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
-        Test.Assert(arr.Append(append_seq_strshare));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareOut());
         t.Dispose();
     }
@@ -1121,13 +1067,9 @@ class TestEinaArray
     public static void test_eina_array_strshare_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<Eina.Stringshare> arr;
+        IList<Eina.Stringshare> arr;
         Test.Assert(t.EinaArrayStrshareOutOwn(out arr));
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
-        Test.Assert(arr.Append(append_seq_strshare));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1135,11 +1077,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayStrshareReturn();
-        Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
-        Test.Assert(arr.Append(append_seq_strshare));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareReturn());
         t.Dispose();
     }
@@ -1148,11 +1086,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayStrshareReturnOwn();
-        Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
-        Test.Assert(arr.Append(append_seq_strshare));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1161,26 +1095,20 @@ class TestEinaArray
     public static void test_eina_array_obj_in()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<Dummy.Numberwrapper>();
-        arr.Append(BaseSeqObj());
+        var arr = new List<Dummy.Numberwrapper>();
+        arr.AddRange(BaseSeqObj());
         Test.Assert(t.EinaArrayObjIn(arr));
-        Test.Assert(arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedSeqObj());
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_array_obj_in_own()
     {
         var t = new Dummy.TestObject();
-        var arr = new Eina.Array<Dummy.Numberwrapper>();
-        arr.Append(BaseSeqObj());
+        var arr = new List<Dummy.Numberwrapper>();
+        arr.AddRange(BaseSeqObj());
         Test.Assert(t.EinaArrayObjInOwn(arr));
-        Test.Assert(!arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedSeqObj());
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjInOwn());
         t.Dispose();
     }
@@ -1188,13 +1116,9 @@ class TestEinaArray
     public static void test_eina_array_obj_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<Dummy.Numberwrapper> arr;
+        IList<Dummy.Numberwrapper> arr;
         Test.Assert(t.EinaArrayObjOut(out arr));
-        Test.Assert(!arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseSeqObj());
-        Test.Assert(arr.Append(AppendSeqObj()));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjOut());
         t.Dispose();
     }
@@ -1202,13 +1126,9 @@ class TestEinaArray
     public static void test_eina_array_obj_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Array<Dummy.Numberwrapper> arr;
+        IList<Dummy.Numberwrapper> arr;
         Test.Assert(t.EinaArrayObjOutOwn(out arr));
-        Test.Assert(arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseSeqObj());
-        Test.Assert(arr.Append(AppendSeqObj()));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1216,11 +1136,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayObjReturn();
-        Test.Assert(!arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseSeqObj());
-        Test.Assert(arr.Append(AppendSeqObj()));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjReturn());
         t.Dispose();
     }
@@ -1229,11 +1145,7 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayObjReturnOwn();
-        Test.Assert(arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseSeqObj());
-        Test.Assert(arr.Append(AppendSeqObj()));
-        arr.Dispose();
-        Test.Assert(arr.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -1241,18 +1153,17 @@ class TestEinaArray
     {
         var t = new Dummy.TestObject();
         var cmp = BaseSeqObj();
-        var a = new Eina.Array<Dummy.Numberwrapper>();
-        a.Append(cmp);
+        var a = new List<Dummy.Numberwrapper>();
+        a.AddRange(cmp);
         var b = t.EinaArrayObjReturnIn(a);
         NumberwrapperSequenceAssertEqual(a.ToArray(), b.ToArray());
         NumberwrapperSequenceAssertEqual(a.ToArray(), BaseSeqObj());
-        int len = a.Length;
+        int len = a.Count;
         for (int i=0; i < len; ++i)
         {
             Test.Assert(a[i].NativeHandle == b[i].NativeHandle);
             Test.Assert(a[i].NativeHandle == cmp[i].NativeHandle);
         }
-        a.Dispose();
         t.Dispose();
     }
 
@@ -2101,25 +2012,19 @@ class TestEinaList
     public static void test_eina_list_int_in()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<int>();
-        lst.AppendArray(base_seq_int);
+        var lst = new List<int>();
+        lst.AddRange(base_seq_int);
         Test.Assert(t.EinaListIntIn(lst));
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_int));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_list_int_in_own()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<int>();
-        lst.AppendArray(base_seq_int);
+        var lst = new List<int>();
+        lst.AddRange(base_seq_int);
         Test.Assert(t.EinaListIntInOwn(lst));
-        Test.Assert(!lst.Own);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntInOwn());
         t.Dispose();
     }
@@ -2127,12 +2032,9 @@ class TestEinaList
     public static void test_eina_list_int_out()
     {
         var t = new Dummy.TestObject();
-        Eina.List<int> lst;
+        IList<int> lst;
         Test.Assert(t.EinaListIntOut(out lst));
-        Test.Assert(!lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_int));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntOut());
         t.Dispose();
     }
@@ -2140,13 +2042,9 @@ class TestEinaList
     public static void test_eina_list_int_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.List<int> lst;
+        IList<int> lst;
         Test.Assert(t.EinaListIntOutOwn(out lst));
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_int));
-        lst.AppendArray(append_seq_int);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2154,10 +2052,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListIntReturn();
-        Test.Assert(!lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_int));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntReturn());
         t.Dispose();
     }
@@ -2166,11 +2061,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListIntReturnOwn();
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_int));
-        lst.AppendArray(append_seq_int);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2178,25 +2069,19 @@ class TestEinaList
     public static void test_eina_list_str_in()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<string>();
-        lst.AppendArray(base_seq_str);
+        var lst = new List<string>();
+        lst.AddRange(base_seq_str);
         Test.Assert(t.EinaListStrIn(lst));
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_list_str_in_own()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<string>();
-        lst.AppendArray(base_seq_str);
+        var lst = new List<string>();
+        lst.AddRange(base_seq_str);
         Test.Assert(t.EinaListStrInOwn(lst));
-        Test.Assert(!lst.Own);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrInOwn());
         t.Dispose();
     }
@@ -2204,12 +2089,9 @@ class TestEinaList
     public static void test_eina_list_str_out()
     {
         var t = new Dummy.TestObject();
-        Eina.List<string> lst;
+        IList<string> lst;
         Test.Assert(t.EinaListStrOut(out lst));
-        Test.Assert(!lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrOut());
         t.Dispose();
     }
@@ -2217,13 +2099,9 @@ class TestEinaList
     public static void test_eina_list_str_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.List<string> lst;
+        IList<string> lst;
         Test.Assert(t.EinaListStrOutOwn(out lst));
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
-        lst.AppendArray(append_seq_str);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2231,10 +2109,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListStrReturn();
-        Test.Assert(!lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrReturn());
         t.Dispose();
     }
@@ -2243,11 +2118,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListStrReturnOwn();
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
-        lst.AppendArray(append_seq_str);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2255,25 +2126,19 @@ class TestEinaList
     public static void test_eina_list_strshare_in()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<Eina.Stringshare>();
-        lst.AppendArray(base_seq_strshare);
+        var lst = new List<Eina.Stringshare>();
+        lst.AddRange(base_seq_strshare);
         Test.Assert(t.EinaListStrshareIn(lst));
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_list_strshare_in_own()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<Eina.Stringshare>();
-        lst.AppendArray(base_seq_strshare);
+        var lst = new List<Eina.Stringshare>();
+        lst.AddRange(base_seq_strshare);
         Test.Assert(t.EinaListStrshareInOwn(lst));
-        Test.Assert(!lst.Own);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrshareInOwn());
         t.Dispose();
     }
@@ -2281,12 +2146,9 @@ class TestEinaList
     public static void test_eina_list_strshare_out()
     {
         var t = new Dummy.TestObject();
-        Eina.List<Eina.Stringshare> lst;
+        IList<Eina.Stringshare> lst;
         Test.Assert(t.EinaListStrshareOut(out lst));
-        Test.Assert(!lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrshareOut());
         t.Dispose();
     }
@@ -2294,13 +2156,9 @@ class TestEinaList
     public static void test_eina_list_strshare_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.List<Eina.Stringshare> lst;
+        IList<Eina.Stringshare> lst;
         Test.Assert(t.EinaListStrshareOutOwn(out lst));
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
-        lst.AppendArray(append_seq_strshare);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2308,10 +2166,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListStrshareReturn();
-        Test.Assert(!lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListStrshareReturn());
         t.Dispose();
     }
@@ -2320,11 +2175,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListStrshareReturnOwn();
-        Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
-        lst.AppendArray(append_seq_strshare);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2333,25 +2184,19 @@ class TestEinaList
     public static void test_eina_list_obj_in()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<Dummy.Numberwrapper>();
-        lst.AppendArray(BaseSeqObj());
+        var lst = new List<Dummy.Numberwrapper>();
+        lst.AddRange(BaseSeqObj());
         Test.Assert(t.EinaListObjIn(lst));
-        Test.Assert(lst.Own);
         NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseSeqObj());
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
     public static void test_eina_list_obj_in_own()
     {
         var t = new Dummy.TestObject();
-        var lst = new Eina.List<Dummy.Numberwrapper>();
-        lst.AppendArray(BaseSeqObj());
+        var lst = new List<Dummy.Numberwrapper>();
+        lst.AddRange(BaseSeqObj());
         Test.Assert(t.EinaListObjInOwn(lst));
-        Test.Assert(!lst.Own);
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListObjInOwn());
         t.Dispose();
     }
@@ -2359,12 +2204,9 @@ class TestEinaList
     public static void test_eina_list_obj_out()
     {
         var t = new Dummy.TestObject();
-        Eina.List<Dummy.Numberwrapper> lst;
+        IList<Dummy.Numberwrapper> lst;
         Test.Assert(t.EinaListObjOut(out lst));
-        Test.Assert(!lst.Own);
         NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseSeqObj());
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListObjOut());
         t.Dispose();
     }
@@ -2372,13 +2214,11 @@ class TestEinaList
     public static void test_eina_list_obj_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.List<Dummy.Numberwrapper> lst;
+        IList<Dummy.Numberwrapper> lst;
+        // We don't have a way to directly check if the underlying native object returned in the out param
+        // was freed, do we?
         Test.Assert(t.EinaListObjOutOwn(out lst));
-        Test.Assert(lst.Own);
         NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseSeqObj());
-        lst.AppendArray(AppendSeqObj());
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2386,10 +2226,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListObjReturn();
-        Test.Assert(!lst.Own);
         NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseSeqObj());
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListObjReturn());
         t.Dispose();
     }
@@ -2398,11 +2235,7 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var lst = t.EinaListObjReturnOwn();
-        Test.Assert(lst.Own);
         NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseSeqObj());
-        lst.AppendArray(AppendSeqObj());
-        lst.Dispose();
-        Test.Assert(lst.Handle == IntPtr.Zero);
         t.Dispose();
     }
 
@@ -2410,19 +2243,11 @@ class TestEinaList
     {
         var t = new Dummy.TestObject();
         var cmp = BaseSeqObj();
-        var a = new Eina.List<Dummy.Numberwrapper>();
-        a.AppendArray(cmp);
+        var a = new List<Dummy.Numberwrapper>();
+        a.AddRange(cmp);
         var b = t.EinaListObjReturnIn(a);
         NumberwrapperSequenceAssertEqual(a.ToArray(), b.ToArray());
         NumberwrapperSequenceAssertEqual(a.ToArray(), BaseSeqObj());
-        int len = a.Length;
-        for (int i=0; i < len; ++i)
-        {
-            Test.Assert(a[i].NativeHandle == b[i].NativeHandle);
-            Test.Assert(a[i].NativeHandle == cmp[i].NativeHandle);
-        }
-        a.Dispose();
-        t.Dispose();
     }
 }
 
