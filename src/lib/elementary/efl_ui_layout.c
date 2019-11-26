@@ -2975,7 +2975,7 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 EOLIAN static Eina_Bool
 _efl_ui_layout_base_efl_object_event_callback_priority_add(Eo *obj, Efl_Ui_Layout_Data *pd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
 {
-  if (desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+  if (desc == EFL_UI_LAYOUT_EVENT_THEME_CHANGED)
     {
        pd->cb_theme_changed = EINA_TRUE;
     }
@@ -2988,7 +2988,7 @@ _efl_ui_layout_base_efl_object_event_callback_array_priority_add(Eo *obj, Efl_Ui
 {
    for (int i = 0; array[i].desc; ++i)
      {
-        if (array[i].desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+        if (array[i].desc == EFL_UI_LAYOUT_EVENT_THEME_CHANGED)
           {
              pd->cb_theme_changed = EINA_TRUE;
           }
