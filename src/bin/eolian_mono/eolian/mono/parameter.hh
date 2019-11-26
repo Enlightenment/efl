@@ -1095,6 +1095,17 @@ struct convert_in_ptr_assign_generator
                  string << " = " << in_variable_name(param.param_name) << ";\n"
              ).generate(sink, escape_keyword(param.param_name), context);
         }
+      else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, !WANT_OUT)
+               || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, !WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, !WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, !WANT_OUT)
+              )
+        {
+           return as_generator(
+             lit("Efl.Eo.Globals.UpdateListFromNativeArray(") << escape_keyword(param.param_name) << ", " << in_variable_name(param.param_name) << ");\n"
+           ).generate(sink, attributes::unused, context);
+        }
+
 
       return true;
    }

@@ -853,12 +853,9 @@ public static class Globals
         if (nativeArray == IntPtr.Zero)
             throw new ArgumentException("nativeArray is null", nameof(nativeArray));
 
-        uint count = Eina.ArrayNativeFunctions.eina_array_count_custom_export_mono(nativeArray);
         List<T> list = new List<T>();
-        for (uint i = 0; i < count; i++)
-        {
-            list.Add(Eina.TraitFunctions.NativeToManaged<T>(Eina.ArrayNativeFunctions.eina_array_data_get_custom_export_mono(nativeArray, i)));
-        }
+        UpdateListFromNativeArray(list, nativeArray);
+
         return list;
     }
 
@@ -873,6 +870,21 @@ public static class Globals
             Eina.ArrayNativeFunctions.eina_array_push_custom_export_mono(nativeArray, Eina.TraitFunctions.ManagedToNativeAlloc(data)); //FIXME: need to free
         }
         return nativeArray;
+    }
+
+    internal static void UpdateListFromNativeArray<T>(IList<T> list, IntPtr nativeArray)
+    {
+        list.Clear();
+        if (nativeArray == IntPtr.Zero)
+        {
+            return;
+        }
+
+        uint count = Eina.ArrayNativeFunctions.eina_array_count_custom_export_mono(nativeArray);
+        for (uint i = 0; i < count; i++)
+        {
+            list.Add(Eina.TraitFunctions.NativeToManaged<T>(Eina.ArrayNativeFunctions.eina_array_data_get_custom_export_mono(nativeArray, i)));
+        }
     }
 
 } // Globals
