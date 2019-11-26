@@ -4,6 +4,20 @@
 #include "../evas/canvas/evas_line_eo.h"
 #include "../evas/canvas/evas_text_eo.h"
 
+//In implementations that gets properties for user-created edje,
+//edje calculation should be performed regardless of the size of edje.
+#define EDJE_RECALC_DO(ed) \
+   do { \
+     Eina_Bool calc_flag = EINA_FALSE; \
+     if (!ed->has_size) \
+       { \
+          ed->has_size = EINA_TRUE; \
+          calc_flag = EINA_TRUE; \
+       } \
+     _edje_recalc_do(ed); \
+     if (calc_flag) ed->has_size = EINA_FALSE; \
+   } while (0)
+
 typedef struct _Edje_Box_Layout Edje_Box_Layout;
 struct _Edje_Box_Layout
 {
@@ -1945,7 +1959,7 @@ edje_object_part_object_get(const Eo *obj, const char *part)
    if ((!ed) || (!part)) return NULL;
 
    /* Need to recalc before providing the object. */
-   if (!ed->freeze) _edje_recalc_do(ed);
+   if (!ed->freeze) EDJE_RECALC_DO(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
@@ -2187,7 +2201,7 @@ _edje_efl_text_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
 #else
                        if (ed->dirty)
 #endif
-                         _edje_recalc_do(ed);
+                         EDJE_RECALC_DO(ed);
                        entry = evas_object_textblock_text_markup_get(rp->object);
                     }
                }
@@ -2200,7 +2214,7 @@ _edje_efl_text_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
 #else
                        if (ed->dirty)
 #endif
-                         _edje_recalc_do(ed);
+                         EDJE_RECALC_DO(ed);
                        entry = efl_text_markup_get(rp->object);
                     }
                   else
@@ -3580,7 +3594,7 @@ _efl_canvas_layout_efl_layout_group_group_size_max_get(const Eo *obj EINA_UNUSED
      return EINA_SIZE2D(0, 0);
 
    /* Need to recalc before providing the object. */
-   if (!ed->freeze) _edje_recalc_do(ed);
+   if (!ed->freeze) EDJE_RECALC_DO(ed);
 
    sz = ed->collection->prop.max;
 

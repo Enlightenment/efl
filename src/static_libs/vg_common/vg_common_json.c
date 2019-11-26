@@ -365,6 +365,7 @@ _reset_vg_tree(Efl_VG *node)
         Eina_Iterator *itr = efl_canvas_vg_container_children_get(node);
         EINA_ITERATOR_FOREACH(itr, child)
           _reset_vg_tree(child);
+        if (itr) eina_iterator_free(itr);
      }
    efl_gfx_entity_visible_set(node, EINA_FALSE);
 }

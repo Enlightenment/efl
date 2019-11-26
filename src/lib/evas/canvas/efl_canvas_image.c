@@ -517,6 +517,28 @@ _efl_canvas_image_efl_gfx_frame_controller_frame_duration_get(const Eo *eo_obj, 
    return _evas_image_animated_frame_duration_get(eo_obj, start_frame, frame_num);
 }
 
+Eina_Bool _efl_canvas_image_efl_gfx_frame_controller_sector_set(Eo *obj EINA_UNUSED,
+                                                                    void *_pd EINA_UNUSED,
+                                                                    const char *name EINA_UNUSED,
+                                                                    int startframe EINA_UNUSED,
+                                                                    int endframe EINA_UNUSED)
+{
+   // TODO: We need to implement the feature to section playback of image animation.
+   ERR("efl_gfx_frame_controller_sector_set not implemented for efl_canvas_image yet.");
+   return EINA_FALSE;
+}
+
+Eina_Bool _efl_canvas_image_efl_gfx_frame_controller_sector_get(const Eo *obj EINA_UNUSED,
+                                                                      void *_pd EINA_UNUSED,
+                                                                      const char *name EINA_UNUSED,
+                                                                      int *startframe EINA_UNUSED,
+                                                                      int *endframe EINA_UNUSED)
+{
+   // TODO: We need to implement the feature to section playback of image animation.
+   ERR("efl_gfx_frame_controller_sector_get not implemented for efl_canvas_image yet.");
+   return EINA_FALSE;
+}
+
 Eina_Bool
 _evas_image_animated_frame_set(Eo *eo_obj, int frame_index)
 {
