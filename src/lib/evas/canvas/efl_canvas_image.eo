@@ -24,6 +24,7 @@ class @beta Efl.Canvas.Image extends Efl.Canvas.Image_Internal implements
       Efl.Gfx.Frame_Controller.loop_type { get; }
       Efl.Gfx.Frame_Controller.loop_count { get; }
       Efl.Gfx.Frame_Controller.frame_duration { get; }
+      Efl.Gfx.Frame_Controller.sector { set; get; }
       Efl.Gfx.Image_Load_Controller.load_async_start;
       Efl.Gfx.Image_Load_Controller.load_async_cancel;
       Efl.Gfx.Image_Load_Controller.load_dpi { get; set; }
