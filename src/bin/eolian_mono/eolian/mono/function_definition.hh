@@ -124,6 +124,7 @@ struct native_function_definition_generator
 
     if(!as_generator
        (indent << "[SuppressMessage(\"Microsoft.Reliability\", \"CA2000:DisposeObjectsBeforeLosingScope\", Justification = \"The instantiated objects can be stored in the called Managed API method.\")]\n"
+        << indent << "[SuppressMessage(\"Microsoft.Usage\", \"CA1801:ReviweUnusedParameters\", Justification = \"The parameter \\\"pd\\\" is a requirement from the C API wrapped by this method.\")]\n"
         << indent << "private static "
         << eolian_mono::marshall_type(true) << " "
         << string
