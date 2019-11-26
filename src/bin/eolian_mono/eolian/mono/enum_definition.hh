@@ -40,15 +40,21 @@ struct enum_definition_generator
      if(!name_helpers::open_namespaces(sink, enum_.namespaces, context))
        return false;
 
-     if(!as_generator(documentation).generate(sink, enum_, context))
-       return false;
+     std::string enum_name = name_helpers::typedecl_managed_name(enum_);
+     std::string flags_attribute;
+
+     // CA1717
+     if (utils::ends_with(enum_name, "Flags") || utils::ends_with(enum_name, "InputHints")) // Special provision while Text api is revamped
+       flags_attribute = "[Flags]";
 
      if(!as_generator
         (
-         "[Efl.Eo.BindingEntity]\n"
-         "public enum " << string << "\n{\n"
+         documentation
+         << flags_attribute
+         << "[Efl.Eo.BindingEntity]\n"
+         "public enum " << enum_name << "\n{\n"
          )
-        .generate(sink, name_helpers::typedecl_managed_name(enum_), context))
+        .generate(sink, enum_, context))
        return false;
 
      // iterate enum fiels
