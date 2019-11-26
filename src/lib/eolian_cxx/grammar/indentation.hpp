@@ -53,6 +53,11 @@ struct scope_tab_generator
 
   int n;
   int m;
+
+  explicit operator std::string() const
+  {
+     return std::string(n * m, ' ');
+  }
 };
 
 template <>
@@ -71,6 +76,12 @@ struct scope_tab_terminal
   {
      return {1};
   }
+
+  explicit operator std::string() const
+  {
+      return static_cast<std::string>(scope_tab_generator{1});
+  }
+
 } const scope_tab = {};
 
 template <>

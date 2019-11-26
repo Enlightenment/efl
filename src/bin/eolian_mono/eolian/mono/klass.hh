@@ -410,6 +410,10 @@ struct klass
          auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
+         std::string klass_since;
+
+         if (!documentation_helpers::generate_since_tag_line(std::back_inserter(klass_since), cls.documentation, indent, context))
+           return false;
 
          std::string base_name;
          if(!root)
@@ -421,7 +425,10 @@ struct klass
          if(!as_generator
             (
              indent << lit("/// <summary>Wrapper for native methods and virtual method delegates.\n")
-             << indent << "/// For internal use by generated code only.</summary>\n"
+             << indent << "/// For internal use by generated code only.\n"
+             << klass_since
+             << indent << "/// </summary>\n"
+             << indent << "[EditorBrowsable(EditorBrowsableState.Never)]\n"
              << indent << "internal new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
              << indent << "{\n"
             ).generate(sink, attributes::unused, inative_cxt))
@@ -437,7 +444,9 @@ struct klass
            }
 
          if(!as_generator(
-             indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
+             indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.\n"
+             << klass_since
+             << indent << "/// </summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
              << indent << scope_tab << "internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
              << indent << scope_tab << "{\n"
@@ -485,9 +494,14 @@ struct klass
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
 
+         if (!klass_since.empty())
+             klass_since = static_cast<std::string>(scope_tab) + klass_since;
+
          // Attribute getter of the native 'Efl_Class *' handle (for proper inheritance from additional explicit interfaces)
          if(!as_generator(
-              indent << scope_tab << "/// <summary>Returns the Eo class for the native methods of this class.</summary>\n"
+              indent << scope_tab << "/// <summary>Returns the Eo class for the native methods of this class.\n"
+              << klass_since
+              << indent << scope_tab << "/// </summary>\n"
               << indent << scope_tab << "/// <returns>The native class pointer.</returns>\n"
               << indent << scope_tab << "internal override IntPtr GetEflClass()\n"
               << indent << scope_tab << "{\n"
@@ -558,9 +572,15 @@ struct klass
         return !blacklist::is_function_blacklisted(ctor.function, context);
      });
 
+     std::string klass_since;
+     if (!documentation_helpers::generate_since_tag_line(std::back_inserter(klass_since), cls.documentation, scope_tab, context))
+       return false;
+
      // Public (API) constructors
      if (!as_generator(
-                     scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.</summary>\n"
+                     scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
+                     << klass_since
+                     << scope_tab << "/// </summary>\n"
                      << scope_tab << "/// <param name=\"parent\">Parent instance.</param>\n"
                      << *(documentation)
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
@@ -572,13 +592,17 @@ struct klass
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
                      << scope_tab << "}\n\n"
                      << scope_tab << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
-                     << scope_tab << "/// Do not call this constructor directly.</summary>\n"
+                     << scope_tab << "/// Do not call this constructor directly.\n"
+                     << klass_since
+                     << scope_tab << "/// </summary>\n"
                      << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
                      << scope_tab << "protected " << inherit_name << "(ConstructingHandle ch) : base(ch)\n"
                      << scope_tab << "{\n"
                      << scope_tab << "}\n\n"
                      << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
-                     << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
+                     << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.\n"
+                     << klass_since
+                     << scope_tab << "/// </summary>\n"
                      << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
                      << scope_tab << "internal " << inherit_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
                      << scope_tab << "{\n"
@@ -605,7 +629,9 @@ struct klass
 
      return as_generator(
                  scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
-                 << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
+                 << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.\n"
+                 << klass_since
+                 << scope_tab << "/// </summary>\n"
                  << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
                  << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
                  << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, Efl.Object parent) : base(baseKlass, parent)\n"
