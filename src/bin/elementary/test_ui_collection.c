@@ -8,13 +8,13 @@
 static void
 _all_select(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_selectable_all_select(data);
+   efl_ui_multi_selectable_all_select(data);
 }
 
 static void
 _all_unselect(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_selectable_all_unselect(data);
+   efl_ui_multi_selectable_all_unselect(data);
 }
 
 static void
@@ -168,7 +168,7 @@ _select_value_cb(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Collection *c = data;
 
-   efl_ui_selectable_select_mode_set(c, efl_ui_radio_group_selected_value_get(ev->object));
+   efl_ui_multi_selectable_select_mode_set(c, efl_ui_radio_group_selected_value_get(ev->object));
 }
 
 void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class *item, const char *name)

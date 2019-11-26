@@ -1921,11 +1921,11 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
         // Search the composition of model for the one providing MULTI_SELECTABLE_ASYNC
         mselect = ev->current;
         while (mselect &&
-               !efl_isa(mselect, EFL_UI_MULTI_SELECTABLE_ASYNC_INTERFACE) &&
+               !efl_isa(mselect, EFL_UI_MULTI_SELECTABLE_INDEX_RANGE_INTERFACE) &&
                efl_isa(mselect, EFL_COMPOSITE_MODEL_CLASS))
           mselect = efl_ui_view_model_get(mselect);
 
-        if (!efl_isa(mselect, EFL_UI_MULTI_SELECTABLE_ASYNC_INTERFACE))
+        if (!efl_isa(mselect, EFL_UI_MULTI_SELECTABLE_INDEX_RANGE_INTERFACE))
           {
              mselect = NULL;
              selection = EINA_FALSE;

@@ -108,6 +108,12 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
                                            EFL_GFX_COLORSPACE_ARGB8888,
                                            &pd->comp.stride);
         if (!pd->comp.pixels) ERR("Failed to map VG composite buffer");
+
+        //If composite method is SUBSTRACT or INTERSECT, Buffer needs initialize.
+        if (pd->comp.pixels &&
+            (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT ||
+             pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT))
+          memset(pd->comp.pixels, init_buffer, pd->comp.length);
      }
    else
      {

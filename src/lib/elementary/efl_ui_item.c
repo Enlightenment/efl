@@ -30,7 +30,7 @@ static Efl_Ui_Select_Mode
 _fetch_state(Eo *obj)
 {
    if (efl_isa(obj, EFL_UI_MULTI_SELECTABLE_INTERFACE))
-     return efl_ui_selectable_select_mode_get(obj);
+     return efl_ui_multi_selectable_select_mode_get(obj);
    if (efl_isa(obj, EFL_UI_SINGLE_SELECTABLE_INTERFACE))
      return EFL_UI_SELECT_MODE_SINGLE;
    ERR("Uncaught state %s", efl_debug_name_get(obj));
@@ -236,6 +236,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_item, Efl_Ui_Item_Data)
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"
 #include "efl_ui_multi_selectable.eo.c"
+#include "efl_ui_multi_selectable_object_range.eo.c"
 #include "efl_ui_single_selectable.eo.c"
 #include "efl_ui_item_clickable.eo.c"
 

@@ -1,7 +1,7 @@
 class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Pack_Linear,
                    Efl.Ui.Layout_Orientable,
-                   Efl.Ui.Multi_Selectable,
+                   Efl.Ui.Multi_Selectable_Object_Range,
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager,
                    Efl.Ui.Item_Clickable
@@ -24,7 +24,7 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
      If all items do not fit in the current widget size scrolling facilities are provided.
 
      Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
-     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_iterator_new.
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Object_Range.selected_iterator_new.
 
      @since 1.23
    ]]
@@ -84,12 +84,12 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.move;
       Efl.Ui.Single_Selectable.last_selected { get; }
-      Efl.Ui.Multi_Selectable.selected_iterator_new;
       Efl.Ui.Multi_Selectable.select_mode {get; set;}
       Efl.Ui.Multi_Selectable.all_select;
       Efl.Ui.Multi_Selectable.all_unselect;
-      Efl.Ui.Multi_Selectable.range_select;
-      Efl.Ui.Multi_Selectable.range_unselect;
+      Efl.Ui.Multi_Selectable_Object_Range.selected_iterator_new;
+      Efl.Ui.Multi_Selectable_Object_Range.range_select;
+      Efl.Ui.Multi_Selectable_Object_Range.range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
    }
 }

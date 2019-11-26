@@ -8,7 +8,7 @@ class Efl.Ui.List extends Efl.Ui.Collection
      @Efl.Ui.Layout_Orientable.orientation.
 
      Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
-     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_iterator_new.
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Object_Range.selected_iterator_new.
 
      @Efl.Ui.List supports grouping by using @Efl.Ui.Group_Item objects.
      Group headers are displayed at the top or left side of the viewport if items belonging to the group

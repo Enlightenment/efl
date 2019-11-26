@@ -6,45 +6,13 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
 
      The implementor of this interface provides the possibility to select multiple Selectables.
      If not, only @Efl.Ui.Single_Selectable should be implemented.]]
-   c_prefix: efl_ui_selectable;
+   c_prefix: efl_ui_multi_selectable;
    methods
    {
       @property select_mode {
          [[The mode type for children selection.]]
-         set {}
-         get {}
          values {
             mode: Efl.Ui.Select_Mode; [[Type of selection of children]]
-         }
-      }
-      selected_iterator_new {
-         [[Get the selected items in a iterator. The iterator sequence will be decided by selection.]]
-         return: iterator<Efl.Ui.Selectable> @move @no_unused; [[User has to free the iterator after usage.]]
-      }
-      range_select @beta {
-         [[Select a range of @Efl.Ui.Selectable.
-
-           This will select the range of selectables from a to b or from b to a depending on which one comes first.
-           If a or b are not part of the widget, a error is returned, and no change is applied.
-           $null is not allowed as either of the parameters.
-           Both of the passed values will also be selected.
-         ]]
-         params {
-           a : Efl.Ui.Selectable; [[One side of the range.]]
-           b : Efl.Ui.Selectable; [[The other side of the range.]]
-         }
-      }
-      range_unselect @beta {
-         [[Unselect a range of @Efl.Ui.Selectable.
-
-           This will unselect the range of selectables from a to b or from b to a depending on which one comes first.
-           If a or b are not part of the widget, a error is returned, and no change is applied.
-           $null is not allowed as either of the parameters.
-           Both of the passed values will also be unselected.
-         ]]
-         params {
-           a : Efl.Ui.Selectable; [[One side of the range.]]
-           b : Efl.Ui.Selectable; [[The other side of the range.]]
          }
       }
       all_select {

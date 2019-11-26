@@ -110,7 +110,7 @@ static void
 _bt_none_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_multi_selectable_async_select_mode_set(li, EFL_UI_SELECT_MODE_NONE);
+   efl_ui_multi_selectable_select_mode_set(li, EFL_UI_SELECT_MODE_NONE);
 }
 
 static void
@@ -124,7 +124,7 @@ static void
 _bt_default_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_multi_selectable_async_select_mode_set(li, EFL_UI_SELECT_MODE_SINGLE);
+   efl_ui_multi_selectable_select_mode_set(li, EFL_UI_SELECT_MODE_SINGLE);
 }
 
 static void

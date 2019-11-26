@@ -111,12 +111,12 @@ EFL_START_TEST(efl_test_select_model)
 
    ecore_main_loop_begin();
 
-   it = efl_ui_multi_selectable_async_selected_iterator_new(model);
+   it = efl_ui_multi_selectable_selected_ndx_iterator_new(model);
    EINA_ITERATOR_FOREACH(it, index)
      fail_if(*index != 2);
    eina_iterator_free(it);
 
-   it = efl_ui_multi_selectable_async_unselected_iterator_new(model);
+   it = efl_ui_multi_selectable_unselected_ndx_iterator_new(model);
    EINA_ITERATOR_FOREACH(it, index)
      fail_if(*index == 2);
    eina_iterator_free(it);

@@ -3,7 +3,7 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
                 Efl.Ui.Focus.Manager_Sub,
                 Efl.Ui.Widget_Focus_Manager,
                 Efl.Ui.Item_Clickable
-    composites Efl.Ui.Scrollable, Efl.Ui.Scrollbar, Efl.Ui.Multi_Selectable_Async, Efl.Ui.Single_Selectable
+    composites Efl.Ui.Scrollable, Efl.Ui.Scrollbar, Efl.Ui.Multi_Selectable_Index_Range, Efl.Ui.Single_Selectable
 {
    [[This widget displays a list of items in an arrangement controlled by an external @.position_manager
      object. By using different @.position_manager objects this widget can show unidimensional lists or
@@ -21,8 +21,8 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
 
      If all items do not fit in the current widget size scrolling facilities are provided.
 
-     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable_Async.select_mode
-     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Async.selected_iterator_new.
+     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Index_Range.selected_ndx_iterator_new.
 
      @since 1.23
    ]]

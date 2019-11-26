@@ -298,6 +298,8 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_selectable.eo.h>
 # include <efl_ui_single_selectable.eo.h>
 # include <efl_ui_multi_selectable.eo.h>
+# include <efl_ui_multi_selectable_object_range.eo.h>
+# include <efl_ui_multi_selectable_index_range.eo.h>
 # include <efl_ui_popup.eo.h>
 # include <efl_ui_alert_popup.eo.h>
 # include <efl_ui_popup_part_backwall.eo.h>
@@ -307,7 +309,6 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_tab_bar.eo.h>
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_pager.eo.h>
-# include <efl_ui_multi_selectable_async.eo.h>
 # include <efl_ui_select_model.eo.h>
 
 # include <efl_ui_list_view.eo.h>
