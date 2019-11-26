@@ -1003,30 +1003,6 @@ _edje_recalc_table_parts(Edje *ed
 #endif
 }
 
-// Defined in edje_textblock.c
-Eina_Bool
-_edje_part_textblock_style_text_set(Edje *ed,
-                                    Edje_Real_Part *ep,
-                                    Edje_Part_Description_Text *chosen_desc);
-
-void
-_edje_recalc_textblock_style_text_set(Edje *ed)
-{
-   unsigned short i;
-   Edje_Real_Part *ep;
-
-   for (i = 0; i < ed->table_parts_size; i++)
-     {
-        ep = ed->table_parts[i];
-
-        if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-          {
-             _edje_part_textblock_style_text_set
-               (ed, ep, (Edje_Part_Description_Text *)ep->chosen_description);
-          }
-     }
-}
-
 void
 _edje_recalc_do(Edje *ed)
 {
@@ -1037,14 +1013,9 @@ _edje_recalc_do(Edje *ed)
 #endif
 
 
-   //Do nothing if the edje has no size, Regardless of the edje part size calc,
-   //the text and style has to be set.
+   //Do nothing if the edje has no size,
    if ((EINA_UNLIKELY(!ed->has_size)) && (!ed->calc_only) && (ed->w == 0) && (ed->h == 0))
-     {
-        _edje_recalc_textblock_style_text_set(ed);
-
-        return;
-     }
+     return;
    ed->has_size = EINA_TRUE;
 
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);
