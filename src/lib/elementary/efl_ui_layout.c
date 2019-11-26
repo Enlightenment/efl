@@ -557,6 +557,8 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    char buf[64];
    static unsigned int version = 0;
 
+   sd->needs_theme_apply = EINA_FALSE;
+
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
@@ -2699,6 +2701,7 @@ EOLIAN static Eo *
 _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    sd->obj = obj;
+   sd->needs_theme_apply = EINA_TRUE;
    sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 1;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -2708,12 +2711,17 @@ _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 }
 
 EOLIAN static Efl_Object*
-_efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED)
+_efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd)
 {
    Eo *eo, *win;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    eo = efl_finalize(efl_super(obj, MY_CLASS));
-   efl_ui_widget_theme_apply(eo);
+   if (pd->needs_theme_apply)
+     {
+        efl_ui_widget_theme_apply(eo);
+        /* handle case where subclass does not call into layout */
+        pd->needs_theme_apply = EINA_FALSE;
+     }
    efl_canvas_group_change(obj);
 
    Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
