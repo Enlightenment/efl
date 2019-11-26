@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 using System;
+using System.Linq;
+using System.Text;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 
 
 /// <summary>Exception for assertion failures.</summary>
@@ -212,6 +215,41 @@ public static class Test
             throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}");
     }
 
+    public static void AssertSequenceEquals<TFirst, TSecond, TInner>(TFirst lhs, TSecond rhs,
+                                                                    String msg = "Sequence not equal",
+                                                                    [CallerLineNumber] int line = 0,
+                                                                    [CallerFilePath] string file = null,
+                                                                    [CallerMemberName] string member = null)
+                                                                    where TFirst : IEnumerable<TInner>
+                                                                                         where TSecond : IEnumerable<TInner>
+                                                                                        //  where TInner : IEquatable<TInner>
+    {
+        int idx = 0;
+
+        var firstList = lhs.ToList();
+        var secondList = rhs.ToList();
+
+        var firstStr = PrettyPrint(firstList);
+        var secondStr = PrettyPrint(secondList);
+
+        if (firstList.Count != secondList.Count) {
+            throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}: Different sizes. lhs: {firstStr} rhs: {secondStr}");
+        }
+
+        foreach ((TInner, TInner) pair in lhs.Zip(rhs, (a, b) => (a, b))) {
+            TInner first = pair.Item1;
+            TInner second = pair.Item2;
+
+            if (!first.Equals(second))
+            {
+                throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}: Difference  at index {idx}");
+            }
+
+            idx++;
+        }
+
+    }
+
     /// <summary>Runs a number of garbage collections and iterate the main loop.
     /// The iteration is needed to make sure objects collected in the GC thread
     /// are efl_unref'd in the main thread.</summary>
@@ -228,6 +266,26 @@ public static class Test
         }
     }
 
+    public static string PrettyPrint<T>(IEnumerable<T> collection)
+    {
+
+        if (collection == null)
+        {
+            return "(null)";
+        }
+
+        var sb = new StringBuilder();
+        sb.Append("[ ");
+
+        foreach (var v in collection)
+        {
+            sb.Append(v.ToString());
+            sb.Append(", ");
+        }
+
+        sb.Append(" ] ");
+
+        return sb.ToString();
+    }
+
 }
-
-

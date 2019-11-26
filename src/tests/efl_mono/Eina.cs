@@ -923,7 +923,7 @@ class TestEinaArray
         var arr = new List<int>();
         arr.AddRange(base_seq_int);
         Test.Assert(t.EinaArrayIntIn(arr));
-        Test.Assert(arr.ToArray().SequenceEqual(modified_seq_int));
+        Test.AssertSequenceEquals<IEnumerable<int>, IEnumerable<int>, int>(arr.ToArray(), modified_seq_int);
         t.Dispose();
     }
 
@@ -933,7 +933,7 @@ class TestEinaArray
         var arr = new List<int>();
         arr.AddRange(base_seq_int);
         Test.Assert(t.EinaArrayIntInOwn(arr));
-        Test.Assert(arr.ToArray().SequenceEqual(modified_seq_int));
+        Test.AssertSequenceEquals<IEnumerable<int>, IEnumerable<int>, int>(arr.ToArray(), modified_seq_int);
         Test.Assert(t.CheckEinaArrayIntInOwn());
         t.Dispose();
     }
@@ -943,7 +943,7 @@ class TestEinaArray
         var t = new Dummy.TestObject();
         IList<int> arr;
         Test.Assert(t.EinaArrayIntOut(out arr));
-        Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
+        Test.AssertSequenceEquals<IEnumerable<int>, IEnumerable<int>, int>(arr.ToArray(), base_seq_int);
         Test.Assert(t.CheckEinaArrayIntOut());
         t.Dispose();
     }
