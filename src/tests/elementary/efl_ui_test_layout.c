@@ -154,9 +154,11 @@ EFL_START_TEST(efl_ui_layout_test_layout_theme)
    Evas_Object *win;
    const char *klass, *group, *style;
    Eina_Error err;
+   int called = 0;
 
    win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
+     efl_event_callback_add(efl_added, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, (void*)event_callback_single_call_int_data, &called),
      err = efl_ui_layout_theme_set(efl_added, "button", NULL, "anchor")
    );
    ck_assert_int_eq(err, 0);
@@ -164,6 +166,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_theme)
    ck_assert_str_eq(klass, "button");
    ck_assert(!group);
    ck_assert_str_eq(style, "anchor");
+   ck_assert_int_eq(called, 1);
 }
 EFL_END_TEST
 
