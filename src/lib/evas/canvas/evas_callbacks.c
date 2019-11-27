@@ -393,7 +393,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         type == EVAS_CALLBACK_MULTI_DOWN ||
         type == EVAS_CALLBACK_MOUSE_UP ||
         type == EVAS_CALLBACK_MULTI_UP)
-     _efl_canvas_gesture_manager_filter_event(e->gmd, eo_obj, event_info);
+     _efl_canvas_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
 
    if (obj->is_smart)
      _evas_object_smart_callback_call_internal(eo_obj, efl_event_desc);
@@ -817,12 +817,17 @@ void
 evas_object_callbacks_event_catcher_add(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Callback_Array_Item *array)
 {
    Evas_Callback_Type type = EVAS_CALLBACK_LAST;
+   void *gd = NULL;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer && obj->layer->evas && obj->layer->evas->gesture_manager)
-          _efl_canvas_gesture_manager_callback_add_hook(obj->layer->evas->gmd, obj->object, array[i].desc);
+          {
+             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
+
+             _efl_canvas_gesture_manager_callback_add_hook(gd, obj->object, array[i].desc);
+          }
 
         if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
@@ -850,6 +855,7 @@ evas_object_callbacks_event_catcher_add(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 void
 evas_object_callbacks_event_catcher_del(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Callback_Array_Item *array)
 {
+   void *gd = NULL;
    int i;
 
    if (!obj->layer ||
@@ -859,7 +865,11 @@ evas_object_callbacks_event_catcher_del(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_canvas_gesture_manager_callback_del_hook(obj->layer->evas->gmd, obj->object, array[i].desc);
+          {
+             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
+
+             _efl_canvas_gesture_manager_callback_del_hook(gd, obj->object, array[i].desc);
+          }
 
         if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
