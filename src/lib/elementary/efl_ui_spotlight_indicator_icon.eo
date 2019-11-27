@@ -4,5 +4,6 @@ class @beta Efl.Ui.Spotlight.Indicator_Icon extends Efl.Ui.Spotlight.Indicator {
       Efl.Ui.Spotlight.Indicator.content_del;
       Efl.Ui.Spotlight.Indicator.content_add;
       Efl.Ui.Spotlight.Indicator.position_update;
+      Efl.Object.destructor;
   }
 }

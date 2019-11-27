@@ -656,7 +656,6 @@ _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Da
 {
    if (pd->indicator)
      {
-        efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         efl_del(pd->indicator);
      }
    pd->indicator = indicator;
