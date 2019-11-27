@@ -408,7 +408,11 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
    //Copy Composite
    if (pd->comp_target)
      {
+        /* OPTIMIZE: How to skip copying the target
+           if this target is linked to multiple sources?? */
         Eo * comp_target = efl_duplicate(pd->comp_target);
+
+        //FIXME: comp_target parent should be its own parent(duplicated obj this case)
         efl_parent_set(comp_target, container);
         efl_canvas_vg_node_comp_method_set(container, comp_target, pd->comp.method);
      }
@@ -417,7 +421,9 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
    EINA_LIST_FOREACH(pd->children, l, child)
      {
         //Skip, We already copied composite target before.
-        if (child == pd->comp_target) continue;
+        Efl_Canvas_Vg_Container_Data *pd2 =
+              efl_data_scope_get(child, MY_CLASS);
+        if (pd2->comp.src) continue;
 
         Efl_VG *eo = efl_duplicate(child);
         efl_parent_set(eo, container);
