@@ -1,6 +1,43 @@
 ==========
-EFL 1.23.2
+EFL 1.23.3
 ==========
+
+Changes since 1.23.2:
+---------------------
+
+
+Fixes:
+
+   * elementary: handle case when XFIXES is not available. (T8321)
+   * ecore: remove unecessary field in data structure.
+   * eina: only the type need to be NULL to assume EINA_VALUE_EMPTY.
+   * tests/eina: use #ifdef guard for block which can only occur inside ifdef (CID1400948)
+   * mono: remove duplicated EinaFreeCb delegate
+   * mono: blacklist efl_ui_text_context_menu_item_add
+   * Revert "elm/genlist: don't process entire item queue on each item add"
+   * tests/spec: allow for a longer timeout of the spec suite for dist build
+   * travis/ci: update Fedora CI images to 31
+   * ci: work around ccache segafult during setup
+   * travis: update Ubuntu image to the 19.10 release
+   * docs: Efl.Gfx.View
+   * check: reset flags that used for legacy 'changed' cb
+   * elementary: fix end of fast scroll not showing up during Efl.Ui.CollectionView scroll.
+   * edje_calc: UNLIKELY changed to LIKELY.
+   * elm_config: replace ecore_file_cp with ecore_file_mv
+   * csharp:comma have whitespace after and none before
+   * csharp: Removing a never used class. (T8417)
+   * elementary: cleanup Eina_Future properly by relying on efl_future_then proper lifecycle.
+   * elementary: properly handle in flight request in Efl.Ui.CollectionView.
+   * elementary: watch event on the model Efl.Ui.CollectionView use directly.
+   * ci: fix ccache segfault during setup on CI in release-ready build
+   * evas_filter: remove shader compile error
+   * Efl.Ui.Scroll_Manager: Fix indentation
+   * eolian_mono: avoid keyword as a variable name
+   * wl_egl : Prevent access to NULL pointer
+   * eolian-cxx: Make events inherit beta info from klass.
+   * Revert "elm/genlist: remove calc jobs"
+   * Revert "tests/genlist: add behavior testing for nearly all genlist events"
+
 
 Changes since 1.23.1:
 ---------------------
