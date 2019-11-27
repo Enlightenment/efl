@@ -15,10 +15,7 @@ class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
       point_record {
          [[Touch point record method]]
          params {
-            @in tool       : int; [[The finger id ]]
-            @in pos        : Eina.Vector2; [[Position of the event]]
-            @in timestamp  : uint; [[The timestamp of the event]]
-            @in action     : Efl.Pointer.Action; [[action of the event]]
+            @in event      : void_ptr; [[The EFL_INPUT_POINTER_CLASS pointer ]]
          }
       }
       /* FIXME: This is most likely not useful (without timestamps). */

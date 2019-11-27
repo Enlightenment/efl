@@ -346,9 +346,7 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
         printf("%s (%p), mask:%d => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mask->mMode, mtarget);
-        depth++;
 #endif
-
         _construct_mask_nodes(msource, mask, depth + 1);
 
         Efl_Gfx_Vg_Composite_Method mask_mode;
