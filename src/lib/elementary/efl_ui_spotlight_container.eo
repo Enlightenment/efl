@@ -4,7 +4,7 @@ struct  @beta Efl.Ui.Spotlight.Transition_Event {
    to : int; [[The index to where the transition is headed, -1 if not known.]]
 }
 
-class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
+class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack_Linear
 {
    [[The Spotlight widget is a container for other sub-widgets, where only one sub-widget is active at any given time.
 
