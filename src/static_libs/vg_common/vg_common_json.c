@@ -37,8 +37,10 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
                   image = efl_add(EFL_CANVAS_VG_IMAGE_CLASS, parent);
                   efl_key_data_set(parent, key, image);
                }
-             efl_gfx_entity_visible_set(image, EINA_TRUE);
-
+#if DEBUG
+        for (int i = 0; i < depth; i++) printf("    ");
+        printf("%s (%p)\n", efl_class_name_get(efl_class_get(image)), image);
+#endif
              Eina_Matrix3 m;
              eina_matrix3_identity(&m);
              eina_matrix3_values_set( &m,
@@ -46,10 +48,9 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
                                       node->mImageInfo.mMatrix.m21,  node->mImageInfo.mMatrix.m22, node->mImageInfo.mMatrix.m23,
                                       node->mImageInfo.mMatrix.m31,  node->mImageInfo.mMatrix.m32, node->mImageInfo.mMatrix.m33);
              efl_canvas_vg_node_transformation_set(image, &m);
-
              efl_canvas_vg_image_data_set(image, node->mImageInfo.data, EINA_SIZE2D(node->mImageInfo.width, node->mImageInfo.height));
-
              efl_gfx_color_set(image, node->mImageInfo.mAlpha, node->mImageInfo.mAlpha, node->mImageInfo.mAlpha, node->mImageInfo.mAlpha);
+             efl_gfx_entity_visible_set(image, EINA_TRUE);
 
              continue;
           }
@@ -258,8 +259,12 @@ _construct_mask_nodes(Efl_Canvas_Vg_Container *parent, LOTMask *mask, int depth 
    else
      efl_gfx_path_reset(shape);
 
-   efl_gfx_entity_visible_set(shape, EINA_TRUE);
+#if DEBUG
+        for (int i = 0; i < depth; i++) printf("    ");
+        printf("%s (%p)\n", efl_class_name_get(efl_class_get(shape)), shape);
+#endif
 
+   efl_gfx_entity_visible_set(shape, EINA_TRUE);
    efl_gfx_path_reserve(shape, mask->mPath.elmCount, mask->mPath.ptCount);
 
    for (size_t i = 0; i < mask->mPath.elmCount; i++)
@@ -311,6 +316,12 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
      }
    efl_gfx_entity_visible_set(msource, EINA_TRUE);
 
+#if DEBUG
+        for (int i = 0; i < depth; i++) printf("    ");
+        printf("%s (%p), mask => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mtarget);
+        depth++;
+#endif
+
    //FIXME : EFL_GFX_VG_COMPOSITE_METHOD_ALPHA option is temporary
    //Currently matte alpha implements is same the mask intersect implement.
    //It has been implemented as a multiplication calculation.
@@ -331,6 +342,13 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
              efl_key_data_set(mtarget, key, msource);
           }
         efl_gfx_entity_visible_set(msource, EINA_TRUE);
+
+#if DEBUG
+        for (int i = 0; i < depth; i++) printf("    ");
+        printf("%s (%p), mask:%d => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mask->mMode, mtarget);
+        depth++;
+#endif
+
         _construct_mask_nodes(msource, mask, depth + 1);
 
         Efl_Gfx_Vg_Composite_Method mask_mode;
@@ -525,10 +543,6 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
    const LOTLayerNode *tree =
       lottie_animation_render_tree(lot_anim, frame_num,
                                    vfd->view_box.w, vfd->view_box.h);
-#if DEBUG
-   printf("%s (%p)\n", efl_class_name_get(efl_class_get(vfd->root)), vfd->root);
-#endif
-
    //Root node
    Efl_Canvas_Vg_Container *root = vfd->root;
    if (!root)
@@ -540,6 +554,10 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
         vfd->root = root;
      }
    else _reset_vg_tree(root);
+
+#if DEBUG
+   printf("%s (%p)\n", efl_class_name_get(efl_class_get(vfd->root)), vfd->root);
+#endif
 
    _update_vg_tree(root, tree, 1);
 #else
