@@ -9,10 +9,12 @@ if [ "$DISTRO" != "" ] ; then
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Dbindings=luajit"
   # Why do we need to disable the imf loaders here?
 
+  MONO_LINUX_COPTS=" -Dbindings=luajit,mono -Dmono-beta=true"
+
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
   # TODO:
-  # - Enable C++ and mono bindings: -Dbindings=luajit,cxx,mono -Dmono-beta=true
+  # - Enable C++ bindings: -Dbindings=luajit,cxx
   # - No libelogind, Xgesture packages in fedora 30 repo
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
@@ -39,6 +41,10 @@ if [ "$DISTRO" != "" ] ; then
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
   -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg -Dbindings=luajit \
   -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
+
+  if [ "$1" = "default" ]; then
+    OPTS="$OPTS $MONO_LINUX_COPTS"
+  fi
 
   if [ "$1" = "options-enabled" ]; then
     OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
