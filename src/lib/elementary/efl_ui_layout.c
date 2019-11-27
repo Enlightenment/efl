@@ -540,7 +540,9 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
    if (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         if (sd->cb_theme_changed)
-          efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+          efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+        if (elm_widget_is_legacy(obj))
+          evas_object_smart_callback_call(obj, "theme,changed", NULL);
      }
 
    if (!_visuals_refresh(obj, sd))
