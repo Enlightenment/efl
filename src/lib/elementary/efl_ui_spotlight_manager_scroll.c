@@ -8,6 +8,7 @@
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
    Efl_Gfx_Entity *foreclip, *backclip;
+   Efl_Canvas_Rectangle *event;
    Eina_Size2D page_size;
    struct {
       Eina_Bool active;
@@ -47,6 +48,7 @@ _apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
    else
      current_pos = efl_pack_index_get(pd->container, efl_ui_spotlight_active_element_get(pd->container));
 
+   efl_gfx_entity_geometry_set(pd->event, group_pos);
    efl_gfx_entity_geometry_set(pd->foreclip, group_pos);
    //first calculate the size
    geometry.h = pd->page_size.h;
@@ -174,17 +176,22 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_S
         efl_gfx_entity_visible_set(pd->backclip, EINA_FALSE);
         efl_canvas_group_member_add(spotlight, pd->backclip);
 
+        pd->event = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
+                       evas_object_evas_get(obj));
+        efl_canvas_object_repeat_events_set(pd->event, EINA_TRUE);
+        efl_event_callback_array_add(pd->event, mouse_listeners(), obj);
+        efl_canvas_group_member_add(spotlight, pd->event);
+        efl_gfx_color_set(pd->event, 0, 0, 0, 0);
+
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
            efl_canvas_object_clipper_set(elem, pd->backclip);
            efl_canvas_group_member_add(pd->container, elem);
            efl_gfx_entity_visible_set(elem, EINA_TRUE);
+           efl_gfx_stack_above(pd->event, elem);
         }
         _apply_box_properties(obj, pd);
-
-        efl_event_callback_array_add(efl_content_get(efl_part(pd->container, "efl.event")), mouse_listeners(), obj);
      }
-
 }
 
 EOLIAN static void
@@ -193,7 +200,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_add(Eo *obj EI
    efl_gfx_entity_visible_set(subobj, EINA_TRUE);
    efl_canvas_object_clipper_set(subobj, pd->backclip);
    efl_canvas_group_member_add(pd->container, subobj);
-
+   efl_gfx_stack_above(pd->event, subobj);
    if (!pd->transition.active)
      _apply_box_properties(obj, pd);
 }
@@ -311,7 +318,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_ge
 EOLIAN static void
 _efl_ui_spotlight_manager_scroll_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd EINA_UNUSED)
 {
-   efl_event_callback_array_del(efl_content_get(efl_part(pd->container, "efl.event")), mouse_listeners(), obj);
+   efl_del(pd->event);
    efl_del(pd->backclip);
    efl_del(pd->foreclip);
 
