@@ -3701,6 +3701,7 @@ _item_block_del(Elm_Gen_Item *it)
    itb->items = eina_list_remove(itb->items, it);
    itb->count--;
    itb->changed = EINA_TRUE;
+   efl_canvas_group_change(sd->pan_obj);
    efl_canvas_group_change(sd->obj);
    if (itb->realized) efl_ui_focus_manager_calc_unregister(itb->sd->obj, EO_OBJ(it));
    if (itb->count < 1)
@@ -3848,6 +3849,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
      sd->group_items = eina_list_remove(sd->group_items, it);
 
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
+   efl_canvas_group_change(sd->pan_obj);
    efl_canvas_group_change(sd->obj);
 
    ELM_SAFE_FREE(it->item, free);
@@ -5546,6 +5548,7 @@ _update_job(void *data)
      }
    if (position)
      {
+        efl_canvas_group_change(sd->pan_obj);
         efl_canvas_group_change(sd->obj);
      }
    evas_event_thaw(e);
