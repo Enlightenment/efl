@@ -42,9 +42,14 @@ _efl_canvas_gesture_touch_state_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gestur
 }
 
 EOLIAN static void
-_efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd,
-                                int id, Eina_Vector2 pos, unsigned int timestamp, Efl_Pointer_Action action)
+_efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd, void *event)
 {
+   Efl_Input_Pointer_Data *pointer_data = efl_data_scope_get(event, EFL_INPUT_POINTER_CLASS);
+   int id = pointer_data->touch_id;
+   int timestamp = pointer_data->timestamp;
+   Efl_Pointer_Action action = pointer_data->action;
+   Eina_Vector2 pos = pointer_data->cur;
+
    Pointer_Data *point = eina_hash_find(pd->touch_points, &id);
    Eina_Position2D _pos = { pos.x, pos.y };
 
