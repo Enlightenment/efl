@@ -185,7 +185,11 @@ if get_option('glib') == true and sys_windows == false
 endif
 
 if get_option('g-mainloop') == true
-  config_h.set('USE_G_MAIN_LOOP', '1')
+  if get_option('glib') == false
+    error('g-mainloop enabled by glib not. Please enable with -Dglib=true')
+  else
+    config_h.set('USE_G_MAIN_LOOP', '1')
+  endif
 endif
 
 if get_option('systemd') == true

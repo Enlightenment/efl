@@ -18,7 +18,7 @@ if [ "$DISTRO" != "" ] ; then
   # - No libelogind, Xgesture packages in fedora 30 repo
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
-  -Ddebug-threads=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
+  -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=gstreamer,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true"
