@@ -191,16 +191,7 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "spotlight");
-
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-
-   if (elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Failed to set layout!");
 
    pd->animation_enabled = EINA_TRUE;
    pd->position = -1;
