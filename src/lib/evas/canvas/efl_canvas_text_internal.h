@@ -83,10 +83,10 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Iterator;
 /**
  * @internal
- * @typedef Efl_Text_Annotate_Annotation_Iterator
+ * @typedef Efl_Text_Attribute_Handle_Iterator
  * A textblock annotation iterator.
  */
-typedef struct _Efl_Text_Annotate_Annotation_Iterator Efl_Text_Annotate_Annotation_Iterator;
+typedef struct _Efl_Text_Attribute_Handle_Iterator Efl_Text_Attribute_Handle_Iterator;
 /**
  * @internal
  * @typedef Efl_Canvas_Text_Filter
@@ -143,7 +143,7 @@ struct _Evas_Textblock_Node_Format
    const char                         *format;  /**< Cached, parsed and translated version of orig_format. */
    const char                         *orig_format;  /**< Original format information. */
    Evas_Object_Textblock_Node_Text    *text_node;  /**< The text node it's pointing to. */
-   Efl_Text_Annotate_Annotation         *annotation; /**< Pointer to this node's annotation handle (if exists). */
+   Efl_Text_Attribute_Handle          *annotation; /**< Pointer to this node's annotation handle (if exists). */
    size_t                              offset;  /**< Offset from the last format node of the same text. */
    struct {
       unsigned char l, r, t, b;
@@ -166,8 +166,17 @@ struct _Efl_Text_Cursor_Handle
    Eina_Bool                        changed : 1;
 };
 
+struct _Efl_Text_Attribute_Handle
+{
+   EINA_INLIST;
+   Evas_Object                       *obj;
+   Evas_Object_Textblock_Node_Format *start_node, *end_node;
+   Eina_Bool                         is_item : 1; /**< indicates it is an item/object placeholder */
+};
+
 void evas_textblock_cursor_line_jump_by(Efl_Text_Cursor_Handle *cur, int by);
 int _cursor_text_append(Efl_Text_Cursor_Handle *cur, const char *text);
+void evas_textblock_async_block(Evas_Object *eo_object);
 
 
 // Used in Efl.Text.Cursor, where multible objects can have same handle.
@@ -177,6 +186,76 @@ evas_textblock_cursor_ref(Efl_Text_Cursor_Handle *cursor, Eo * cursor_obj);
 // Used in Efl.Text.Cursor, where multible objects can have same handle.
 void
 evas_textblock_cursor_unref(Efl_Text_Cursor_Handle *cursor, Eo * cursor_obj);
+void _evas_textblock_cursor_init(Efl_Text_Cursor_Handle *cur, const Evas_Object *tb);
+
+/*Annoation Functions*/
+/**
+  * @internal
+  * Returns the value of the current data of list node,
+  * and goes to the next list node.
+  *
+  * @param it the iterator.
+  * @param data the data of the current list node.
+  * @return EINA_FALSE if unsuccessful. Otherwise, returns EINA_TRUE.
+  */
+Eina_Bool
+_evas_textblock_annotation_iterator_next(Efl_Text_Attribute_Handle_Iterator *it, void **data);
+
+/**
+  * @internal
+  * Frees the annotation iterator.
+  * @param it the iterator to free
+  * @return EINA_FALSE if unsuccessful. Otherwise, returns EINA_TRUE.
+  */
+void
+_evas_textblock_annotation_iterator_free(Efl_Text_Attribute_Handle_Iterator *it);
+
+
+/**
+  * @internal
+  * Creates newly allocated  iterator associated to a list.
+  * @param list The list.
+  * @return If the memory cannot be allocated, NULL is returned.
+  * Otherwise, a valid iterator is returned.
+  */
+Eina_Iterator *
+_evas_textblock_annotation_iterator_new(Eina_List *list);
+
+
+
+void
+_textblock_cursor_pos_at_fnode_set(Efl_Text_Cursor_Handle *cur,
+      Evas_Object_Textblock_Node_Format *fnode);
+
+
+Eina_Bool
+_evas_textblock_annotations_set(Evas_Object *eo_obj,
+      Efl_Text_Attribute_Handle *an,
+      Efl_Text_Cursor_Handle *start, Efl_Text_Cursor_Handle *end,
+      const char *format, Eina_Bool is_item);
+
+void
+_evas_textblock_annotation_remove(Evas_Object *eo_obj, Efl_Canvas_Text_Data *o,
+      Efl_Text_Attribute_Handle *an, Eina_Bool remove_nodes, Eina_Bool invalidate);
+
+void
+_evas_textblock_annotations_clear(const Evas_Object *eo_obj);
+
+
+Efl_Text_Attribute_Handle *
+_evas_textblock_annotations_insert(Eo *eo_obj,
+      Efl_Text_Cursor_Handle *start, Efl_Text_Cursor_Handle *end,
+      const char *format, Eina_Bool is_item);
+
+
+Eina_Inlist *
+_evas_textblock_annotations_get(Evas_Object *o);
+
+void
+_evas_textblock_annotations_node_format_remove(Evas_Object *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
+
+void
+_evas_textblock_relayout_if_needed(Evas_Object *o);
 
 #ifdef EAPI
 # undef EAPI
@@ -213,7 +292,24 @@ evas_textblock_cursor_unref(Efl_Text_Cursor_Handle *cursor, Eo * cursor_obj);
  */
 EAPI void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_obj);
 
+
+/**
+ * Internally sets cursor handle(legacy textblock cursor) into cursor object.
+ *
+ * @param obj     the cursor object.
+ * @param handle  the text cursor handle.
+ */
+EAPI void efl_text_cursor_handle_set(Eo *obj, Efl_Text_Cursor_Handle *handle);
+
+/**
+ * Internally gets cursor handle(legacy textblock cursor) from cursor object.
+ *
+ * @param obj     the cursor object.
+ * @return        the internal text cursor handle.
+ */
+EAPI Efl_Text_Cursor_Handle *efl_text_cursor_handle_get(const Eo *obj);
+
 #undef EAPI
 #define EAPI
 
-#endif
+#endif//#ifndef _EFL_CANVAS_TEXT_INTERNAL_H

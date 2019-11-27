@@ -22,6 +22,4 @@ struct @beta Efl.Ui.Text_Change_Info {
    merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
 
-type @extern @beta Efl.Text_Annotate_Annotation: __undefined_type; [[EFL text annotations data structure]]
-
-struct @beta Efl.Text_Cursor_Handle; [[Opaque handle for Text cursors.]]
+struct @extern @beta Efl.Text_Attribute_Handle; [[EFL text annotations data structure]]

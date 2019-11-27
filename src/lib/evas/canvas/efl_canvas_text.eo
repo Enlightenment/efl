@@ -3,7 +3,7 @@ import efl_text_types;
 class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font,
                        Efl.Text_Style, Efl.Text_Format,
-                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Ui.I18n
+                       Efl.Text_Markup, Efl.Ui.I18n
 {
    [[Efl canvas text class]]
    methods {
@@ -236,15 +236,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Format.tabstops { get; set; }
       Efl.Text_Format.password { get; set; }
       Efl.Text_Format.replacement_char { get; set; }
-      Efl.Text_Annotate.annotation { set; get; }
-      Efl.Text_Annotate.range_annotations_get;
-      Efl.Text_Annotate.annotation_insert;
-      Efl.Text_Annotate.annotation_del;
-      Efl.Text_Annotate.annotation_is_item;
-      Efl.Text_Annotate.item_geometry_get;
-      Efl.Text_Annotate.annotation_positions_get;
-      Efl.Text_Annotate.cursor_item_annotation { get; }
-      Efl.Text_Annotate.cursor_item_insert;
       Efl.Text_Markup.markup { set; get; }
       Efl.Gfx.Entity.scale { set; }
    }

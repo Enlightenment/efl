@@ -153,7 +153,7 @@ struct _Anchor
 {
    Eo                    *obj;
    char                  *name;
-   Efl_Text_Annotate_Annotation *annotation;
+   Efl_Text_Attribute_Handle *annotation;
    Eina_List             *rects;
    int                   gen;
    Eina_Bool              item : 1;
@@ -3180,13 +3180,12 @@ _efl_ui_text_efl_access_text_range_extents_get(const Eo *obj, Efl_Ui_Text_Data *
 }
 
 static Efl_Access_Text_Attribute*
-_textblock_node_format_to_atspi_text_attr(const Eo *obj,
-      Efl_Text_Annotate_Annotation *annotation)
+_textblock_node_format_to_atspi_text_attr(Efl_Text_Attribute_Handle *annotation)
 {
    Efl_Access_Text_Attribute *ret;
    const char *txt;
 
-   txt = efl_text_annotation_get(obj, annotation);
+   txt = efl_text_attribute_factory_attribute_get(annotation);
    if (!txt) return NULL;
 
    ret = calloc(1, sizeof(Efl_Access_Text_Attribute));
@@ -3202,34 +3201,35 @@ _textblock_node_format_to_atspi_text_attr(const Eo *obj,
 EOLIAN static Eina_Bool
 _efl_ui_text_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
 {
-   Evas_Textblock_Cursor *cur1, *cur2;
+   Efl_Text_Cursor *cur1, *cur2;
    Efl_Access_Text_Attribute *attr;
    Eina_Iterator *annotations;
-   Efl_Text_Annotate_Annotation *an;
+   Efl_Text_Attribute_Handle *an;
 
-   cur1 = evas_object_textblock_cursor_new(obj);
+   Eo *mobj = (Eo *)obj;
+   cur1 = efl_ui_text_cursor_create(mobj);
    if (!cur1) return EINA_FALSE;
 
-   cur2 = evas_object_textblock_cursor_new(obj);
+   cur2 = efl_ui_text_cursor_create(mobj);
    if (!cur2)
      {
-        evas_textblock_cursor_free(cur1);
+        efl_del(cur1);
         return EINA_FALSE;
      }
 
-   evas_textblock_cursor_pos_set(cur1, *start_offset);
-   evas_textblock_cursor_pos_set(cur2, *end_offset);
+   efl_text_cursor_position_set(cur1, *start_offset);
+   efl_text_cursor_position_set(cur2, *end_offset);
 
-   annotations = efl_text_range_annotations_get(obj, cur1, cur2);
+   annotations = efl_text_attribute_factory_range_attributes_get(cur1, cur2);
 
-   evas_textblock_cursor_free(cur1);
-   evas_textblock_cursor_free(cur2);
+   efl_del(cur1);
+   efl_del(cur2);
 
    if (!annotations) return EINA_FALSE;
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
-        attr = _textblock_node_format_to_atspi_text_attr(obj, an);
+        attr = _textblock_node_format_to_atspi_text_attr(an);
         if (!attr) continue;
         if (!strcmp(attr->name, attr_name))
           {
@@ -3247,35 +3247,35 @@ _efl_ui_text_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Text_Data *_pd 
 EOLIAN static Eina_List*
 _efl_ui_text_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
-   Evas_Textblock_Cursor *cur1, *cur2;
+   Efl_Text_Cursor *cur1, *cur2;
    Eina_List *ret = NULL;
    Efl_Access_Text_Attribute *attr;
    Eina_Iterator *annotations;
-   Efl_Text_Annotate_Annotation *an;
-
-   cur1 = evas_object_textblock_cursor_new(obj);
+   Efl_Text_Attribute_Handle *an;
+   Eo *mobj = (Eo *)obj;
+   cur1 = efl_ui_text_cursor_create(mobj);
    if (!cur1) return NULL;
 
-   cur2 = evas_object_textblock_cursor_new(obj);
+   cur2 = efl_ui_text_cursor_create(mobj);
    if (!cur2)
      {
-        evas_textblock_cursor_free(cur1);
+        efl_del(cur1);
         return NULL;
      }
 
-   evas_textblock_cursor_pos_set(cur1, *start_offset);
-   evas_textblock_cursor_pos_set(cur2, *end_offset);
+   efl_text_cursor_position_set(cur1, *start_offset);
+   efl_text_cursor_position_set(cur2, *end_offset);
 
-   annotations = efl_text_range_annotations_get(obj, cur1, cur2);
+   annotations = efl_text_attribute_factory_range_attributes_get(cur1, cur2);
 
-   evas_textblock_cursor_free(cur1);
-   evas_textblock_cursor_free(cur2);
+   efl_del(cur1);
+   efl_del(cur2);
 
    if (!annotations) return NULL;
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
-        attr = _textblock_node_format_to_atspi_text_attr(obj, an);
+        attr = _textblock_node_format_to_atspi_text_attr(an);
         if (!attr) continue;
         ret = eina_list_append(ret, attr);
      }
@@ -3291,7 +3291,7 @@ _efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_D
    Efl_Access_Text_Attribute *attr;
    Efl_Text_Cursor *start, *end;
    Eina_Iterator *annotations;
-   Efl_Text_Annotate_Annotation *an;
+   Efl_Text_Attribute_Handle *an;
 
    /* Retrieve all annotations in the text. */
    Eo *mobj = (Eo *)obj; /* XXX const */
@@ -3301,11 +3301,11 @@ _efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_D
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
 
-   annotations = efl_text_range_annotations_get(obj, efl_text_cursor_handle_get(start), efl_text_cursor_handle_get(end));
+   annotations = efl_text_attribute_factory_range_attributes_get(start, end);
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
-        attr = _textblock_node_format_to_atspi_text_attr(obj, an);
+        attr = _textblock_node_format_to_atspi_text_attr(an);
         if (!attr) continue;
         ret = eina_list_append(ret, attr);
      }
@@ -3659,20 +3659,20 @@ _anchor_format_parse(const char *item)
 }
 
 static Anchor *
-_anchor_get(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Text_Annotate_Annotation *an)
+_anchor_get(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Text_Attribute_Handle *an)
 {
    Anchor *anc;
    Eina_List *i;
    const char *str;
 
-   str = efl_text_annotation_get(obj, an);
+   str = efl_text_attribute_factory_attribute_get(an);
 
    EINA_LIST_FOREACH(sd->anchors, i, anc)
      {
         if (anc->annotation == an) break;
      }
 
-   if (!anc && (efl_text_annotation_is_item(obj, an) || !strncmp(str, "a ", 2)))
+   if (!anc && (efl_text_attribute_factory_attribute_is_item(an) || !strncmp(str, "a ", 2)))
      {
         const char *p;
 
@@ -3681,7 +3681,7 @@ _anchor_get(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Text_Annotate_Annotation *an)
           {
              anc->obj = obj;
              anc->annotation = an;
-             anc->item = efl_text_annotation_is_item(obj, an);
+             anc->item = efl_text_attribute_factory_attribute_is_item(an);
              p = strstr(str, "href=");
              if (p)
                {
@@ -3705,7 +3705,7 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
    Eina_Iterator *it;
    Eina_Position2D off;
    Efl_Text_Cursor *start, *end;
-   Efl_Text_Annotate_Annotation *an;
+   Efl_Text_Attribute_Handle *an;
    Eina_List *i, *ii;
    Anchor *anc;
 
@@ -3723,7 +3723,7 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
 
-   it = efl_text_range_annotations_get(obj, efl_text_cursor_handle_get(start), efl_text_cursor_handle_get(end));
+   it = efl_text_attribute_factory_range_attributes_get(start, end);
    efl_del(start);
    efl_del(end);
 
@@ -3765,8 +3765,7 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
                     }
 
                   rect = eina_list_data_get(anc->rects);
-                  efl_text_item_geometry_get(sd->text_obj,
-                        anc->annotation, &cx, &cy, &cw, &ch);
+                  efl_text_attribute_factory_item_geometry_get(anc->annotation, &cx, &cy, &cw, &ch);
                   efl_gfx_entity_size_set(rect->obj, EINA_SIZE2D(cw, ch));
                   efl_gfx_entity_position_set(rect->obj,
                         EINA_POSITION2D(off.x + cx, off.y + cy));
@@ -3780,8 +3779,7 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
                   size_t count;
                   start = efl_ui_text_cursor_create(obj);
                   end = efl_ui_text_cursor_create(obj);
-                  efl_text_annotation_positions_get(obj, anc->annotation,
-                        efl_text_cursor_handle_get(start), efl_text_cursor_handle_get(end));
+                  efl_text_attribute_factory_attribute_cursors_get(anc->annotation, start, end);
 
                   range = efl_text_cursor_range_geometry_get(start, end);
                   count = eina_list_count(eina_iterator_container_get(range));

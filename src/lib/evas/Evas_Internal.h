@@ -318,6 +318,17 @@ EWAPI extern const Efl_Event_Description _EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED
  */
 EAPI Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_Cursor *cur,Eina_Bool forward);
 
+
+
+
+/*Attribute Factory Internal function*/
+EAPI const char * efl_text_attribute_factory_attribute_get(Efl_Text_Attribute_Handle *annotation);
+EAPI Eina_Iterator * efl_text_attribute_factory_range_attributes_get(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end);
+EAPI void efl_text_attribute_factory_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor *start, Efl_Text_Cursor *end);
+EAPI void efl_text_attribute_factory_remove(Efl_Text_Attribute_Handle *annotation);
+EAPI Eina_Bool efl_text_attribute_factory_attribute_is_item(Efl_Text_Attribute_Handle *annotation);
+EAPI Eina_Bool efl_text_attribute_factory_item_geometry_get(const Efl_Text_Attribute_Handle *annotation, int *x, int *y, int *w, int *h);
+
 #ifdef __cplusplus
 }
 #endif

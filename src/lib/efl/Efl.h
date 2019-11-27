@@ -70,7 +70,7 @@ typedef struct tm Efl_Time;
 
 typedef struct _Efl_Text_Cursor_Handle Efl_Text_Cursor_Handle;
 typedef struct _Efl_Text_Cursor_Handle _Efl_Text_Cursor_Handle;
-typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
+typedef struct _Efl_Text_Attribute_Handle Efl_Text_Attribute_Handle;
 
 #include "interfaces/efl_types.eot.h"
 
@@ -211,7 +211,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_font.eo.h"
 #include "interfaces/efl_text_style.eo.h"
 #include "interfaces/efl_text_format.eo.h"
-#include "interfaces/efl_text_annotate.eo.h"
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
 
