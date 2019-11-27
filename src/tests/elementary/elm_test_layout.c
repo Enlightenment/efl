@@ -114,10 +114,27 @@ EFL_START_TEST(elm_layout_test_sizing)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_layout_test_theme_changed_callback)
+{
+   Evas_Object *win, *ly;
+   int called = 0;
+
+   win = win_add(NULL, "layout", ELM_WIN_BASIC);
+   evas_object_show(win);
+
+   ly = elm_button_add(win);
+   evas_object_smart_callback_add(ly, "theme,changed", event_callback_single_call_int_data, &called);
+   evas_object_show(ly);
+   elm_object_style_set(ly, "anchor");
+   ck_assert_int_eq(called, 1);
+}
+EFL_END_TEST
+
 void elm_test_layout(TCase *tc)
 {
    tcase_add_test(tc, elm_layout_test_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_layout_test_swallows);
    tcase_add_test(tc, elm_layout_test_sizing);
+   tcase_add_test(tc, elm_layout_test_theme_changed_callback);
 }
