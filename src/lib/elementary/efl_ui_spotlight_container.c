@@ -218,12 +218,6 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    efl_event_callback_array_add(obj, spotlight_resized(), pd);
-   pd->event = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                       evas_object_evas_get(obj));
-   evas_object_color_set(pd->event, 0, 0, 0, 0);
-   evas_object_repeat_events_set(pd->event, EINA_TRUE);
-   efl_content_set(efl_part(obj, "efl.event"), pd->event);
-
    return obj;
 }
 
