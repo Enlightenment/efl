@@ -47,7 +47,7 @@ class @beta Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
 
         }
         values {
-          iter : iterator<string>;
+          iter : iterator<string> @move;
         }
       }
    }

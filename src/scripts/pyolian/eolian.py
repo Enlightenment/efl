@@ -23,6 +23,7 @@ a way that this folder will be available on PYTHON_PATH, fe:
   from pyolian.generator import Template
 
 """
+import os
 from enum import IntEnum
 import atexit
 from ctypes import cast, byref, c_char_p, c_void_p, c_int
@@ -520,6 +521,44 @@ class Eolian_State(Eolian_Unit):
         return bool(lib.eolian_state_check(self))
 
 
+#  Helper functions  ###################################################
+
+def parse_folders(folders):
+    """Loads a new database scanning the given folders.
+
+    For example:
+
+    SCAN_FOLDER = os.path.join(eolian.in_tree_src_dir(), 'src', 'lib')
+    eolian_db = eolian.parse_folders(SCAN_FOLDER)
+    """
+
+    db = Eolian_State()
+    if not isinstance(db, Eolian_State):
+        raise (RuntimeError('Eolian, failed to create Eolian state'))
+
+    if isinstance(folders, str):
+        folders = [folders]
+
+    for folder in folders:
+        # eolian source tree scan
+        if not db.directory_add(folder):
+            raise (RuntimeError('Eolian, failed to scan source dirsectory'))
+
+    # Parse all known eo files
+    if not db.all_eot_files_parse():
+        raise (RuntimeError('Eolian, failed to parse all EOT files'))
+
+    if not db.all_eo_files_parse():
+        raise (RuntimeError('Eolian, failed to parse all EO files'))
+
+    return db
+
+def in_tree_src_dir():
+    """Returns the root folder of this script's source tree"""
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    return os.path.abspath(os.path.join(script_path, '..', '..', '..'))
+
+
 #  Namespace Utility Class  ###################################################
 
 class Namespace(object):
@@ -733,12 +772,30 @@ class Class(Object):
         return Iterator(Class, lib.eolian_class_extensions_get(self))
 
     @cached_property
+    def extensions_hierarchy(self):
+        visited = set()
+        queue = [ext for ext in self.extensions]
+
+        while queue:
+            current = queue.pop()
+
+            if current in visited:
+                continue
+
+            visited.add(current)
+
+            queue.extend(current.extensions)
+
+        return visited
+
+    @cached_property
     def inherits_full(self):
         li = []
 
         def do_class_recursive(cls):
             if cls.parent:
                 li.append(cls.parent)
+                do_class_recursive(cls.parent)
             for other in cls.extensions:
                 if other not in li:
                     li.append(other)

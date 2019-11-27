@@ -721,7 +721,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
             hover: bool @optional; [[$false by default, $true means to include
                                      fingers that are currently hovering.]]
          }
-         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
+         return: iterator<const(Efl.Input.Pointer)> @move; [[Iterator to pointer positions]]
       }
       @property win_rotation @beta {
          [[The rotation of this window

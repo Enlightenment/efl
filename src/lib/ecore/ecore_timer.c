@@ -15,6 +15,17 @@
 
 #define ECORE_TIMER_CHECK(obj) if (!efl_isa((obj), MY_CLASS)) return
 
+#define EFL_LOOP_TIMER_DATA_GET(o, td) \
+   Efl_Loop_Timer_Data *td = efl_data_scope_safe_get(o, EFL_LOOP_TIMER_CLASS)
+
+#define EFL_LOOP_TIMER_DATA_GET_OR_RETURN(o, ptr, ...) \
+   EFL_LOOP_TIMER_DATA_GET(o, ptr);                    \
+   if (EINA_UNLIKELY(!ptr))                            \
+     {                                                 \
+        ERR("No data for timer %p", o);                \
+        return __VA_ARGS__;                            \
+     }
+
 struct _Ecore_Timer_Legacy
 {
    Ecore_Task_Cb func;
@@ -178,7 +189,6 @@ EAPI Ecore_Timer *
 ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
 {
    Ecore_Timer_Legacy *legacy;
-   Efl_Loop_Timer_Data *td;
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -194,7 +204,7 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
    timer = efl_add(MY_CLASS, efl_main_loop_get(),
                   efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
                   efl_loop_timer_interval_set(efl_added, in));
-   td = efl_data_scope_get(timer, MY_CLASS);
+   EFL_LOOP_TIMER_DATA_GET_OR_RETURN(timer, td, NULL);
    td->legacy = legacy;
    return timer;
 }
@@ -203,7 +213,6 @@ EAPI Ecore_Timer *
 ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
 {
    Ecore_Timer_Legacy *legacy;
-   Efl_Loop_Timer_Data *td;
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -220,7 +229,7 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
                   efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
                   efl_loop_timer_loop_reset(efl_added),
                   efl_loop_timer_interval_set(efl_added, in));
-   td = efl_data_scope_get(timer, MY_CLASS);
+   EFL_LOOP_TIMER_DATA_GET_OR_RETURN(timer, td, NULL);
    td->legacy = legacy;
    return timer;
 }
@@ -228,14 +237,12 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
 EAPI void *
 ecore_timer_del(Ecore_Timer *timer)
 {
-   Efl_Loop_Timer_Data *td;
    void *data;
 
    if (!timer) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-
-   td = efl_data_scope_safe_get(timer, MY_CLASS);
+   EFL_LOOP_TIMER_DATA_GET(timer, td);
    // If legacy == NULL, this means double free or something
    if ((!td) || (!td->legacy))
      {

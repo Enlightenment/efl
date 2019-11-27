@@ -183,6 +183,7 @@ _efl_ui_view_model_property_logic_add(Eo *obj, Efl_Ui_View_Model_Data *pd,
         logic->sources = eina_list_append(logic->sources, eina_stringshare_add(source));
         efl_ui_view_model_property_bind(obj, source, property);
      }
+   eina_iterator_free(bound);
 
    return 0;
 }

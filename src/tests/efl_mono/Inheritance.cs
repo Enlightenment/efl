@@ -142,9 +142,9 @@ class TestInheritance
 
         CreateAndCheckInheritedObjects(out parentWRef, out childWRef);
 
-        // Two invocations to iterate a the child wasn't being released with a single one
-        Test.CollectAndIterate();
-        Test.CollectAndIterate();
+        // We need some extra iterations of the main loop to allow the async callbacks
+        // registered from the Dispose method to the main loop to run.
+        Test.CollectAndIterate(10, 10);
 
         var parent = (Dummy.TestObject) parentWRef.Target;
         var child = (Dummy.TestObject) childWRef.Target;

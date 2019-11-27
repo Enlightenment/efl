@@ -56,6 +56,10 @@ struct alias_definition_generator
      alias_type_doc = utils::replace_all(alias_type, "<", "&lt;");
      alias_type_doc = utils::replace_all(alias_type_doc, ">", "&gt;");
 
+     std::string alias_since;
+     if (!documentation_helpers::generate_since_tag_line(std::back_inserter(alias_since), alias.documentation, scope_tab, context))
+       return false;
+
      std::string const alias_name = utils::remove_all(alias.eolian_name, '_');
      if (!as_generator(
                  documentation
@@ -63,7 +67,9 @@ struct alias_definition_generator
                  << "{\n"
                  << scope_tab << "private " << alias_type << " payload;\n\n"
 
-                 << scope_tab << "/// <summary>Converts an instance of " << alias_type_doc << " to this struct.</summary>\n"
+                 << scope_tab << "/// <summary>Converts an instance of " << alias_type_doc << " to this struct.\n"
+                 << alias_since
+                 << scope_tab << "/// </summary>\n"
                  << scope_tab << "/// <param name=\"value\">The value to be converted.</param>\n"
                  << scope_tab << "/// <returns>A struct with the given value.</returns>\n"
                  << scope_tab << "public static implicit operator " << alias_name << "(" << alias_type << " value)\n"
@@ -71,7 +77,9 @@ struct alias_definition_generator
                  << scope_tab << scope_tab << "return new " << alias_name << "{payload=value};\n"
                  << scope_tab << "}\n\n"
 
-                 << scope_tab << "/// <summary>Converts an instance of this struct to " << alias_type_doc << ".</summary>\n"
+                 << scope_tab << "/// <summary>Converts an instance of this struct to " << alias_type_doc << ".\n"
+                 << alias_since
+                 << scope_tab << "/// </summary>\n"
                  << scope_tab << "/// <param name=\"value\">The value to be converted packed in this struct.</param>\n"
                  << scope_tab << "/// <returns>The actual value the alias is wrapping.</returns>\n"
                  << scope_tab << "public static implicit operator " << alias_type << "(" << alias_name << " value)\n"

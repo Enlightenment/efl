@@ -649,8 +649,24 @@ struct documentation_string_generator
 
 } const documentation_string {};
 
-} // namespace eolian_mono
+namespace documentation_helpers
+{
 
+template<typename OutputIterator, typename Indent, typename Context>
+bool generate_since_tag_line(OutputIterator sink, attributes::documentation_def const& doc, Indent indentation, Context context)
+{
+  if (doc.since.empty())
+    return true;
+
+  return as_generator
+            (
+                indentation << ("/// <para>Since EFL " + doc.since + ".</para>\n")
+            ).generate(sink, attributes::unused, context);
+}
+
+} // documentation_helpers
+
+} // namespace eolian_mono
 
 namespace efl { namespace eolian { namespace grammar {
 

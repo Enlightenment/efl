@@ -4,6 +4,7 @@
 
 #include "elm_priv.h"
 #include "efl_ui_internal_text_interactive.h"
+#include "efl_canvas_text_internal.h"
 
 #define MY_CLASS EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS
 

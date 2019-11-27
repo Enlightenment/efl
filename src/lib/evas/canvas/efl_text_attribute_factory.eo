@@ -1,0 +1,37 @@
+import efl_text_types;
+
+abstract @beta Efl.Text.Attribute.Factory extends Efl.Object {
+   [[Attribute factory API to manage text attributes.
+     Use it to insert and remove style attributes (font, size, color, ...) using @Efl.Text.Cursor on EFL Widgets.
+
+     Attributes can be assigned to character ranges, selected using two @Efl.Text.Cursor instances.
+     Cursor instances are already bound to a text object so there's no need to provide it to this class.
+     Style is specified using format strings as described in Efl.Canvas.Text.style_set.
+
+     There is no need to instantiate this class. Use directly the @.attribute_insert and @.attribute_clear static methods.]]
+   methods {
+      attribute_insert @static {
+         [[Inserts an attribute format in a specified range [$start, $end - 1].
+
+           The $format will be applied to the given range.
+           The passed cursors must belong to same textObject, else insertion will be ignored.
+           Passed format parameter uses same format as style in Efl.Canvas.Text.style_set.
+         ]]
+         params {
+              start: const(Efl.Text.Cursor); [[Start of range.]]
+              end: const(Efl.Text.Cursor); [[End of range.]]
+              format: string; [[Attribute format.]]
+         }
+      }
+
+      attribute_clear @static {
+         [[Clear(remove) attributes  at specified range [$start, $end - 1].
+         ]]
+         params {
+              start: const(Efl.Text.Cursor); [[Start of range.]]
+              end: const(Efl.Text.Cursor); [[End of range.]]
+         }
+         return: uint; [[Number of removed attributes.]]
+      }
+   }
+}

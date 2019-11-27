@@ -81,7 +81,7 @@ mixin Efl.Ui.Format requires Efl.Object
            performance reasons.
          ]]
          values {
-            values: accessor<Efl.Ui.Format_Value>; [[Accessor over a list of value-text pairs.
+            values: accessor<Efl.Ui.Format_Value> @move; [[Accessor over a list of value-text pairs.
                                                      The method will dispose of the accessor, but not of
                                                      its contents.
                                                      For convenience, Eina offers a range of helper

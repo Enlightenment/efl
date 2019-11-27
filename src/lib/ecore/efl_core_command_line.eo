@@ -50,7 +50,7 @@ mixin @beta Efl.Core.Command_Line requires Efl.Object {
     }
     command_access {
       [[ Get the accessor which enables access to each argument that got passed to this object. ]]
-      return : accessor<stringshare>;
+      return : accessor<stringshare> @move;
     }
     @property command_array {
       [[ Use an array to fill this object

@@ -44,7 +44,6 @@ pub_eo_files = [
   'efl_text_font.eo',
   'efl_text_style.eo',
   'efl_text_format.eo',
-  'efl_text_annotate.eo',
   'efl_text_markup.eo',
   'efl_text_markup_util.eo',
   'efl_gfx_stack.eo',

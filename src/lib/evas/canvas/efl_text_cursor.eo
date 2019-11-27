@@ -215,19 +215,6 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          }
       }
 
-      @property handle {
-         [[This method should rarely be used by users. It gives you a lightweight handle to a cursor.
-
-         You can either replace the handle to change the object this is working on, or get it for caching
-
-         The handle is freed when the object is freed if set, but otherwise it remains under the control of the caller.]]
-         set {  }
-         get {  }
-         values {
-            handle: Efl.Text_Cursor_Handle @by_ref; [[The handle of the cursor object.]]
-         }
-      }
-
       @property text_object {
          [[The text object this cursor is associated with.]]
          get { }
