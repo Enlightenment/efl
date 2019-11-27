@@ -10,6 +10,7 @@
 typedef struct {
    Efl_Ui_Box *indicator;
    Efl_Ui_Spotlight_Container *container;
+   Efl_Canvas_Layout *layout;
    double last_position;
 } Efl_Ui_Spotlight_Indicator_Icon_Data;
 
@@ -32,6 +33,7 @@ _add_item(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Indicator_Icon_Data *pd)
    efl_gfx_hint_align_set(item, 0.5, 0.5);
    efl_gfx_hint_weight_set(item, 0, 0);
    efl_gfx_hint_fill_set(item, 0, 0);
+   efl_gfx_hint_size_min_set(item,  efl_layout_calc_size_min(item, EINA_SIZE2D(0, 0)));
    efl_pack_end(pd->indicator, item);
    _flush_state(item, 0.0);
 }
@@ -70,22 +72,50 @@ _flush_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Indicator_Icon_Data *pd)
      _flush_state(efl_pack_content_get(pd->indicator, next), fabs(1.0f - fabs((next - pd->last_position))));
 }
 
+static void
+_resize_cb(void *data, const Efl_Event *ev)
+{
+   efl_gfx_entity_size_set(data, efl_gfx_entity_size_get(ev->object));
+}
+
+static void
+_position_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_gfx_entity_position_set(data, efl_gfx_entity_position_get(ev->object));
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(spotlight_resized,
+  {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb},
+  {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _position_cb},
+)
+
 EOLIAN static void
 _efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_bind(Eo *obj, Efl_Ui_Spotlight_Indicator_Icon_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
    if (spotlight)
      {
         pd->container = spotlight;
-        pd->indicator = efl_add(EFL_UI_BOX_CLASS, spotlight);
+        efl_event_callback_array_add(pd->container, spotlight_resized(), pd->layout);
+        pd->layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, pd->container);
+
+        if (elm_widget_theme_object_set(pd->container, pd->layout,
+                                       "spotlight",
+                                       "indicator_holder",
+                                       elm_widget_theme_style_get(pd->container)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
+          CRI("Failed to set layout!");
+        efl_canvas_group_member_add(pd->container, pd->layout);
+        efl_gfx_entity_geometry_set(pd->layout, efl_gfx_entity_geometry_get(pd->container));
+
+        pd->indicator = efl_add(EFL_UI_BOX_CLASS, pd->container);
         efl_ui_widget_internal_set(pd->indicator, EINA_TRUE);
-        efl_content_set(efl_part(pd->container, "efl.indicator"), pd->indicator);
-        efl_gfx_entity_visible_set(pd->indicator, EINA_TRUE);
         efl_ui_layout_orientation_set(pd->indicator, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
-        efl_gfx_arrangement_content_padding_set(pd->indicator, 15, 15);
+        efl_content_set(efl_part(pd->layout, "efl.indicator"), pd->indicator);
 
         for (int i = 0; i < efl_content_count(pd->container); ++i)
           {
+             Eo *subobj = efl_pack_content_get(pd->container, i);
              _add_item(obj, pd);
+             efl_gfx_stack_above(pd->layout, subobj);
           }
      }
 }
@@ -95,6 +125,7 @@ _efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_content_add(Eo *obj,
 {
    _add_item(obj, pd);
    _flush_position(obj, pd);
+   efl_gfx_stack_above(pd->layout, subobj);
 }
 
 EOLIAN static void
@@ -110,5 +141,17 @@ _efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_position_update(Eo *
    pd->last_position = position;
    _flush_position(obj, pd);
 }
+
+EOLIAN static void
+_efl_ui_spotlight_indicator_icon_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Indicator_Icon_Data *pd)
+{
+   if (pd->layout)
+     efl_del(pd->layout);
+   if (pd->indicator)
+     efl_del(pd->indicator);
+
+   efl_destructor(efl_super(obj, EFL_UI_SPOTLIGHT_INDICATOR_ICON_CLASS));
+}
+
 
 #include "efl_ui_spotlight_indicator_icon.eo.c"
