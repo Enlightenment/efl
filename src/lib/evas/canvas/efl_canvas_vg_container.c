@@ -421,9 +421,12 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
    EINA_LIST_FOREACH(pd->children, l, child)
      {
         //Skip, We already copied composite target before.
-        Efl_Canvas_Vg_Container_Data *pd2 =
-              efl_data_scope_get(child, MY_CLASS);
-        if (pd2->comp.src) continue;
+        if (efl_isa(child, MY_CLASS))
+          {
+             Efl_Canvas_Vg_Container_Data *pd2 =
+                efl_data_scope_get(child, MY_CLASS);
+             if (pd2->comp.src) continue;
+          }
 
         Efl_VG *eo = efl_duplicate(child);
         efl_parent_set(eo, container);
