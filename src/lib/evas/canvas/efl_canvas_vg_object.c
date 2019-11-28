@@ -565,6 +565,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    Vg_Cache_Entry *vg_entry = pd->vg_entry;
    Efl_VG *root;
    Eina_Position2D offset = {0, 0};  //Offset after keeping aspect ratio.
+   Eina_Bool drop_cache = EINA_FALSE;
    void *buffer = NULL;
 
    evas_cache_vg_entry_value_provider_update(pd->vg_entry, efl_key_data_get(obj->object, "_vg_value_providers"));
@@ -601,10 +602,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         //Size is changed, cached data is invalid.
         if ((size.w != vg_entry->w) || (size.h != vg_entry->h))
           {
-             //if the size doesn't match, drop previous cache surfaces.
-             ENFN->ector_surface_cache_drop(engine, (void *) vg_entry->root[1]);
-             ENFN->ector_surface_cache_drop(engine, (void *) vg_entry->root[2]);
-
+             drop_cache = EINA_TRUE;
              vg_entry = evas_cache_vg_entry_resize(vg_entry, size.w, size.h);
              evas_cache_vg_entry_del(pd->vg_entry);
              pd->vg_entry = vg_entry;
@@ -624,12 +622,17 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
 
    if (cacheable)
      {
+        //if the size doesn't match, drop previous cache surface.
+        if (drop_cache)
+          ENFN->ector_surface_cache_drop(engine, (void *) root);
         //Cache Hit!
-        buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
+        else
+          buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
      }
 
    if (!buffer)
-     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL, do_async, cacheable);
+     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL,
+                                do_async, cacheable);
    else
      //cache reference was increased when we get the cache.
      ENFN->ector_surface_cache_drop(engine, (void *) root);
@@ -712,12 +715,8 @@ _efl_canvas_vg_object_render(Evas_Object *eo_obj EINA_UNUSED,
    //Cache surface?
    Eina_Bool cacheable = EINA_FALSE;
 
-   /* Try caching buffer only for first and last frames
-      because it's an overhead task if it caches all frame images.
-      We assume the first and last frame images are the most resusable
-      in generic scenarios. */
-   if (pd->frame_idx == 0 ||
-       (pd->frame_idx == (int) (evas_cache_vg_anim_frame_count_get(pd->vg_entry) - 1)))
+   /* Try caching buffer only for static images. */
+   if (evas_cache_vg_anim_frame_count_get(pd->vg_entry) == 0)
      cacheable = EINA_TRUE;
 
    if (pd->vg_entry)
