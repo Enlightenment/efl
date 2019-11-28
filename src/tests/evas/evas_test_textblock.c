@@ -4588,6 +4588,21 @@ EFL_START_TEST(efl_canvas_text_style)
    efl_canvas_text_style_apply(txt, "backing=on");
    ck_assert_int_eq(efl_text_backing_type_get(txt), EFL_TEXT_STYLE_BACKING_TYPE_ENABLED);
 
+   efl_canvas_text_style_apply(txt, "style=far_soft_shadow");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
+
+   efl_canvas_text_style_apply(txt, "style=glow,top_right");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_GLOW);
+   ck_assert_int_eq(efl_text_shadow_direction_get(txt), EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
+
+   efl_canvas_text_style_apply(txt, "style=far_shadow,top");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW);
+   ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP);
+
+   efl_canvas_text_style_apply(txt, "style=soft_outline,top,bottom");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE);
+   ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
+
    efl_canvas_text_style_apply(txt, "color=#EF596C");
    efl_text_normal_color_get(txt, &r, &g, &b, &a);
    ck_assert_int_eq(r, 0xEF);

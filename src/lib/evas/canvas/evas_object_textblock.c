@@ -1402,6 +1402,87 @@ static const char *gfx_filterstr = NULL;
  */
 
 /**
+ * Internal
+ * Split str using commas as separators. All characters from the beginning of the string up until
+ * the first comma (excluded) are copied into part1.
+ * All characters after the last comma (excluded) up until the end of str are copied into part2.
+ * Any character in between part1 and part2 is ignored (as right now it's only valid to have 1 comma and 2 strings).
+ * For example, if str="str1,str2,str3,str4",
+ * part1 will contain "str1" and part2 will contain "str4".
+ * part1 and part2 must be already allocated and contain enough space for any possible outcome
+ * of the parsing. The safest bet is that they should be as big as str.
+ */
+void
+_style_string_split(const char *str, char* part1, char* part2)
+{
+   char *temp = part1;
+   for (const char *p = str; *p; p++)
+   {
+      if (*p == ',')
+         {
+            *temp = 0;
+            temp = part2;
+            continue;
+         }
+      *temp = *p;
+      temp++;
+   }
+   *temp = 0;
+}
+
+#define FORMAT_SHADOW_SET(evas, efl) {fmt->style = evas; if (set_default) _FMT_INFO(effect) = efl;}
+
+void
+_format_shadow_set(Evas_Object_Textblock_Format *fmt, char *str, Eina_Bool set_default, Efl_Canvas_Text_Data *o)
+{
+   if (!strcmp(str, "shadow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW)
+   else if (!strcmp(str, "outline"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_OUTLINE, EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE)
+   else if (!strcmp(str, "soft_outline"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_SOFT_OUTLINE, EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE)
+   else if (!strcmp(str, "outline_shadow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_OUTLINE_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW)
+   else if (!strcmp(str, "outline_soft_shadow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW)
+   else if (!strcmp(str, "glow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_GLOW, EFL_TEXT_STYLE_EFFECT_TYPE_GLOW)
+   else if (!strcmp(str, "far_shadow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_FAR_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW)
+   else if (!strcmp(str, "soft_shadow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_SOFT_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW)
+   else if (!strcmp(str, "far_soft_shadow"))
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_FAR_SOFT_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW)
+   else   /*off none plain */
+     FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_PLAIN, EFL_TEXT_STYLE_EFFECT_TYPE_NONE)
+}
+
+#define FORMAT_SHADOW_DIRECTION_SET(direction) {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_##direction); if (set_default) _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_##direction;}
+
+void
+_format_shadow_direction_set(Evas_Object_Textblock_Format *fmt, char *str, Eina_Bool set_default, Efl_Canvas_Text_Data *o)
+{
+   if (!strcmp(str, "bottom_right"))
+     FORMAT_SHADOW_DIRECTION_SET(BOTTOM_RIGHT)
+   else if (!strcmp(str, "bottom"))
+     FORMAT_SHADOW_DIRECTION_SET(BOTTOM)
+   else if (!strcmp(str, "bottom_left"))
+     FORMAT_SHADOW_DIRECTION_SET(BOTTOM_LEFT)
+   else if (!strcmp(str, "left"))
+     FORMAT_SHADOW_DIRECTION_SET(LEFT)
+   else if (!strcmp(str, "top_left"))
+     FORMAT_SHADOW_DIRECTION_SET(TOP_LEFT)
+   else if (!strcmp(str, "top"))
+     FORMAT_SHADOW_DIRECTION_SET(TOP)
+   else if (!strcmp(str, "top_right"))
+     FORMAT_SHADOW_DIRECTION_SET(TOP_RIGHT)
+   else if (!strcmp(str, "right"))
+     FORMAT_SHADOW_DIRECTION_SET(RIGHT)
+   else
+     FORMAT_SHADOW_DIRECTION_SET(BOTTOM_RIGHT)
+}
+
+/**
  * @internal
  * Init the format strings.
  */
@@ -2387,62 +2468,20 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * style=<appearance>,<position>
          * @endcode
          */
-        const char *p;
-        char *p1, *p2, *pp;
+        char *part1, *part2;
 
-        p2 = alloca(len + 1);
-        *p2 = 0;
-        /* no comma */
-        if (!strstr(param, ",")) p1 = (char*) param;
-        else
-          {
-             p1 = alloca(len + 1);
-             *p1 = 0;
+        part1 = alloca(len + 1);
+        *part1 = 0;
 
-             /* split string "str1,str2" into p1 and p2 (if we have more than
-              * 1 str2 eg "str1,str2,str3,str4" then we don't care. p2 just
-              * ends up being the last one as right now it's only valid to have
-              * 1 comma and 2 strings */
-             pp = p1;
-             for (p = param; *p; p++)
-               {
-                  if (*p == ',')
-                    {
-                       *pp = 0;
-                       pp = p2;
-                       continue;
-                    }
-                  *pp = *p;
-                  pp++;
-               }
-             *pp = 0;
-          }
-        if      (!strcmp(p1, "off"))                 fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        else if (!strcmp(p1, "none"))                fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        else if (!strcmp(p1, "plain"))               fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        else if (!strcmp(p1, "shadow"))              fmt->style = EVAS_TEXT_STYLE_SHADOW;
-        else if (!strcmp(p1, "outline"))             fmt->style = EVAS_TEXT_STYLE_OUTLINE;
-        else if (!strcmp(p1, "soft_outline"))        fmt->style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
-        else if (!strcmp(p1, "outline_shadow"))      fmt->style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
-        else if (!strcmp(p1, "outline_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
-        else if (!strcmp(p1, "glow"))                fmt->style = EVAS_TEXT_STYLE_GLOW;
-        else if (!strcmp(p1, "far_shadow"))          fmt->style = EVAS_TEXT_STYLE_FAR_SHADOW;
-        else if (!strcmp(p1, "soft_shadow"))         fmt->style = EVAS_TEXT_STYLE_SOFT_SHADOW;
-        else if (!strcmp(p1, "far_soft_shadow"))     fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
-        else                                         fmt->style = EVAS_TEXT_STYLE_PLAIN;
+        part2 = alloca(len + 1);
+        *part2 = 0;
 
-        if (*p2)
-          {
-             if      (!strcmp(p2, "bottom_right")) EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
-             else if (!strcmp(p2, "bottom"))       EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
-             else if (!strcmp(p2, "bottom_left"))  EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);
-             else if (!strcmp(p2, "left"))         EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT);
-             else if (!strcmp(p2, "top_left"))     EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT);
-             else if (!strcmp(p2, "top"))          EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP);
-             else if (!strcmp(p2, "top_right"))    EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
-             else if (!strcmp(p2, "right"))        EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT);
-             else                                  EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
-          }
+        _style_string_split(param, part1, part2);
+
+        _format_shadow_set(fmt, part1, EINA_FALSE, NULL);
+
+        if (*part2)
+          _format_shadow_direction_set(fmt, part2, EINA_FALSE, NULL);
      }
    else if (cmd == tabstopsstr)
      {
@@ -2860,62 +2899,19 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
      }
    else if (cmd == stylestr)
      {
-        const char *p;
-        char *p1, *p2, *pp;
+        char *part1, *part2;
 
-        p2 = alloca(len + 1);
-        *p2 = 0;
-        /* no comma */
-        if (!strstr(param, ",")) p1 = (char*) param;
-        else
-          {
-             p1 = alloca(len + 1);
-             *p1 = 0;
+        part1 = alloca(len + 1);
+        *part1 = 0;
+        
+        part2 = alloca(len + 1);
+        *part2 = 0;
 
-             /* split string "str1,str2" into p1 and p2 (if we have more than
-              * 1 str2 eg "str1,str2,str3,str4" then we don't care. p2 just
-              * ends up being the last one as right now it's only valid to have
-              * 1 comma and 2 strings */
-             pp = p1;
-             for (p = param; *p; p++)
-               {
-                  if (*p == ',')
-                    {
-                       *pp = 0;
-                       pp = p2;
-                       continue;
-                    }
-                  *pp = *p;
-                  pp++;
-               }
-             *pp = 0;
-          }
+        _style_string_split(param, part1, part2);
+        _format_shadow_set(fmt, part1, EINA_TRUE, o);
 
-        if      (!strcmp(p1, "off"))                 {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
-        else if (!strcmp(p1, "none"))                {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
-        else if (!strcmp(p1, "plain"))               {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
-        else if (!strcmp(p1, "shadow"))              {fmt->style = EVAS_TEXT_STYLE_SHADOW;              _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW;}
-        else if (!strcmp(p1, "outline"))             {fmt->style = EVAS_TEXT_STYLE_OUTLINE;             _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE;}
-        else if (!strcmp(p1, "soft_outline"))        {fmt->style = EVAS_TEXT_STYLE_SOFT_OUTLINE;        _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE;}
-        else if (!strcmp(p1, "outline_shadow"))      {fmt->style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;      _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW;}
-        else if (!strcmp(p1, "outline_soft_shadow")) {fmt->style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW; _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW;}
-        else if (!strcmp(p1, "glow"))                {fmt->style = EVAS_TEXT_STYLE_GLOW;                _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_GLOW;}
-        else if (!strcmp(p1, "far_shadow"))          {fmt->style = EVAS_TEXT_STYLE_FAR_SHADOW;          _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW;}
-        else if (!strcmp(p1, "soft_shadow"))         {fmt->style = EVAS_TEXT_STYLE_SOFT_SHADOW;         _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW;}
-        else if (!strcmp(p1, "far_soft_shadow"))     {fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;     _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW;}
-        else                                         {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
-        if (*p2)
-          {
-             if      (!strcmp(p2, "bottom_right"))  {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT); _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT;}
-             else if (!strcmp(p2, "bottom"))        {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);       _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM;}
-             else if (!strcmp(p2, "bottom_left"))   {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);  _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT;}
-             else if (!strcmp(p2, "left"))          {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT);         _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT;}
-             else if (!strcmp(p2, "top_left"))      {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT);     _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT;}
-             else if (!strcmp(p2, "top"))           {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP);          _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;}
-             else if (!strcmp(p2, "top_right"))     {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);    _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT;}
-             else if (!strcmp(p2, "right"))         {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT);        _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;}
-             else                                   {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT); _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT;}
-          }
+        if (*part2)
+          _format_shadow_direction_set(fmt, part2, EINA_TRUE, o);
      }
    else
      {
