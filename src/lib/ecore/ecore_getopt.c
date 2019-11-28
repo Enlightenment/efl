@@ -26,10 +26,6 @@
 
 #define _(x)                 dgettext("ecore", x)
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include "Ecore.h"
 #include "Ecore_Getopt.h"
 

@@ -2793,7 +2793,7 @@ _eo_log_time_now(void)
 
    return clk_conv * mach_absolute_time();
 #else
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined (HAVE_CLOCK_GETTIME)
    struct timespec t;
    static int clk_id = -1;
 

@@ -8,7 +8,7 @@
 #include <Ecore_Getopt.h>
 #include <Ecore_Evas.h>
 
-#if defined(_WIN32) || defined(EXOTIC_NO_SIGNAL)
+#if defined(_WIN32)
 # define NO_SIGNAL
 #else
 # include <signal.h>

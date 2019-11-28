@@ -32,10 +32,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include <Eina.h>
 #include <Eo.h>
 #include <Ector.h>

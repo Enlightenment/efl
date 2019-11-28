@@ -9,10 +9,6 @@
 # include <evil_private.h> /* setenv unsetenv */
 #endif
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include <Eina.h>
 
 #include "Embryo.h"

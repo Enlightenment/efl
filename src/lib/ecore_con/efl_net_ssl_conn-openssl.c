@@ -21,10 +21,6 @@
 # include <evil_private.h> /* dlsym */
 #endif
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include "ecore_con_private.h"
 
 /* OpenSSL's BIO is the abstraction for I/O, provide one for Efl.Io.* */

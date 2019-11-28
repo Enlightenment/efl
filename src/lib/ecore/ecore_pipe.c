@@ -26,10 +26,6 @@
 # endif
 #endif
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 /*
  * On Windows, pipe() is implemented with sockets.
  * Contrary to Linux, Windows uses different functions
