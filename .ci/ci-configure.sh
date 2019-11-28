@@ -21,7 +21,7 @@ if [ "$DISTRO" != "" ] ; then
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=gstreamer,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
-  -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true"
+  -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
   # Enabled png, jpeg evas loader for in tree edje file builds
   DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
