@@ -648,6 +648,47 @@ EFL_START_TEST (efl_ui_spotlight_animated_transition)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_spotlight_min_max_sizing)
+{
+   Efl_Ui_Button *btn0, *btn1;
+   Eina_Size2D min, size;
+
+   btn0 = efl_add(WIDGET_CLASS, container);
+   efl_gfx_hint_size_min_set(btn0, EINA_SIZE2D(20, 200));
+
+   btn1 = efl_add(WIDGET_CLASS, container);
+   efl_gfx_hint_size_min_set(btn1, EINA_SIZE2D(200, 20));
+
+   efl_pack_end(container, btn0);
+   efl_pack_end(container, btn1);
+   min = efl_gfx_hint_size_restricted_min_get(container);
+   ck_assert_int_eq(min.w, 200);
+   ck_assert_int_eq(min.h, 200);
+
+   efl_gfx_hint_size_min_set(btn0, EINA_SIZE2D(20, 300));
+   efl_canvas_group_calculate(container);
+
+   min = efl_gfx_hint_size_restricted_min_get(container);
+   ck_assert_int_eq(min.w, 200);
+   ck_assert_int_eq(min.h, 300);
+
+   efl_gfx_hint_size_min_set(btn0, EINA_SIZE2D(20, 20));
+   efl_canvas_group_calculate(container);
+
+   min = efl_gfx_hint_size_restricted_min_get(container);
+   ck_assert_int_eq(min.w, 200);
+   ck_assert_int_eq(min.h, 20);
+
+   efl_ui_spotlight_size_set(container, EINA_SIZE2D(2000, 2000));
+
+   efl_gfx_entity_size_set(container, EINA_SIZE2D(200, 200));
+   size = efl_gfx_entity_size_get(btn0);
+   ck_assert_int_eq(size.w, 200);
+   ck_assert_int_eq(size.h, 200);
+
+}
+EFL_END_TEST
+
 static void
 spotlight_setup()
 {
@@ -684,4 +725,5 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_test_pop2);
    tcase_add_test(tc, efl_ui_spotlight_test_pop3);
    tcase_add_test(tc, efl_ui_spotlight_animated_transition);
+   tcase_add_test(tc, efl_ui_spotlight_min_max_sizing);
 }

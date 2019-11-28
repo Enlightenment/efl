@@ -92,6 +92,7 @@ view_add(View_Type p, Eo *parent)
                snprintf(buf, sizeof(buf), "List Page - Item #%d", i);
                elm_list_item_append(page, buf, NULL, NULL, NULL, NULL);
             }
+          efl_gfx_hint_size_min_set(page, EINA_SIZE2D(200, 200));
           evas_object_size_hint_weight_set(page, EVAS_HINT_EXPAND,
                                            EVAS_HINT_EXPAND);
           evas_object_size_hint_align_set(page, EVAS_HINT_FILL,
