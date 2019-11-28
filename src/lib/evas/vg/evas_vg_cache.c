@@ -83,9 +83,7 @@ _vg_load_from_file(const Eina_File *file, const char *key)
    if (em)
      {
         loader = em->functions;
-          {
-             vfd = loader->file_open((Eina_File *) file, key, &error);
-          }
+        vfd = loader->file_open((Eina_File *) file, key, &error);
         if (vfd)
           {
              vfd->loader = loader;
@@ -167,9 +165,7 @@ _evas_cache_vg_entry_free_cb(void *data)
 
    eina_stringshare_del(vg_entry->key);
    free(vg_entry->hash_key);
-   efl_unref(vg_entry->root[0]);
-   efl_unref(vg_entry->root[1]);
-   efl_unref(vg_entry->root[2]);
+   efl_unref(vg_entry->root);
    free(vg_entry);
 }
 
@@ -198,42 +194,8 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const Efl_Fi
    return EINA_TRUE;
 }
 
-static Efl_VG*
-_cached_root_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
-{
-   Vg_File_Data *vfd = vg_entry->vfd;
-
-   //Case 1: Animatable
-   if (vfd->anim_data)
-     {
-        //Start frame
-        if (vg_entry->root[1] && frame_num == 0)
-          {
-             return vg_entry->root[1];
-          }
-        //End frame
-        else if (vg_entry->root[2] && (frame_num == (vfd->anim_data->frame_cnt - 1)))
-          {
-             return vg_entry->root[2];
-          }
-        //Current frame
-        else if (vg_entry->root[0] && (frame_num == (vfd->anim_data->frame_num)))
-          {
-             return vg_entry->root[0];
-          }
-     }
-   //Case 2: Static
-   else
-     {
-        if (vg_entry->root[0])
-          return vg_entry->root[0];
-     }
-
-   return NULL;
-}
-
-static Efl_VG *
-_caching_root_update(Vg_Cache_Entry *vg_entry)
+static void
+_root_update(Vg_Cache_Entry *vg_entry)
 {
    Vg_File_Data *vfd = vg_entry->vfd;
 
@@ -246,33 +208,14 @@ _caching_root_update(Vg_Cache_Entry *vg_entry)
         /* TODO: Yet trivial but still we may have a better solution to
            avoid this unnecessary copy. If the ector surface key is not
            to this root pointer. */
-        vg_entry->root[0] = efl_duplicate(vfd->root);
+        vg_entry->root = efl_duplicate(vfd->root);
      }
-   else
+   //Shareable??
+   else if (vg_entry->root != vfd->root)
      {
-        if (vg_entry->root[0]) efl_unref(vg_entry->root[0]);
-        vg_entry->root[0] = efl_duplicate(vfd->root);
-
-        //Animatable?
-        if (vfd->anim_data)
-          {
-             //Start frame
-             if (vfd->anim_data->frame_num == 0)
-               {
-                  if (vg_entry->root[1]) efl_unref(vg_entry->root[1]);
-                  vg_entry->root[1] = efl_duplicate(vfd->root);
-                  return vg_entry->root[1];
-               }
-             //End frame
-             else if (vfd->anim_data->frame_num == (vfd->anim_data->frame_cnt - 1))
-               {
-                  if (vg_entry->root[2]) efl_unref(vg_entry->root[2]);
-                  vg_entry->root[2] = efl_duplicate(vfd->root);
-                  return vg_entry->root[2];
-               }
-          }
+        if (vg_entry->root) efl_unref(vg_entry->root);
+        vg_entry->root = efl_ref(vfd->root);
      }
-   return vg_entry->root[0];
 }
 
 static void
@@ -374,7 +317,6 @@ evas_cache_vg_entry_create(Evas *evas,
    if (!vg_cache) return NULL;
 
    //TODO: zero-sized entry is useless. how to skip it?
-   //
    hash_key = eina_strbuf_new();
    eina_strbuf_append_printf(hash_key, "%p/%p/%s/%d/%d/%p", evas, file, key, w, h, vp_list);
    vg_entry = eina_hash_find(vg_cache->vg_entry_hash, eina_strbuf_string_get(hash_key));
@@ -488,8 +430,9 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
    Vg_File_Data *vfd = vg_entry->vfd;
    if (!vfd) return NULL;
 
-   Efl_VG *root = _cached_root_get(vg_entry, frame_num);
-   if (root) return root;
+   //No need to update.
+   if (!vfd->anim_data && vg_entry->root)
+     return vg_entry->root;
 
    if (!vfd->static_viewbox)
      {
@@ -501,11 +444,11 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 
    if (!vfd->loader->file_data(vfd)) return NULL;
 
-   root = _caching_root_update(vg_entry);
+   _root_update(vg_entry);
 
-   _local_transform(root, vg_entry->w, vg_entry->h, vfd);
+   _local_transform(vg_entry->root, vg_entry->w, vg_entry->h, vfd);
 
-   return root;
+   return vg_entry->root;
 }
 
 void

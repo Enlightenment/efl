@@ -26,7 +26,7 @@ typedef struct _Vg_Cache_Entry
    Eina_Stringshare     *key;
    int                   w;
    int                   h;
-   Efl_VG               *root[3];     //0: default, 1: start frame, 2: end frame
+   Efl_VG               *root;
    int                   ref;
    Vg_File_Data         *vfd;
 } Vg_Cache_Entry;
