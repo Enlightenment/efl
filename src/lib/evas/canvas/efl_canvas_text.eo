@@ -19,7 +19,9 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       }
       cursor_add {
          [[Adds an existing cursor to the text object.
-           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.]]
+           If the cursor already belonged to another text object it will be reassigned to the new one.
+           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.
+         ]]
          params {
             cursor: Efl.Text.Cursor; [[The text cursor to use.]]
          }
