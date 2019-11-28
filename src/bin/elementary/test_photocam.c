@@ -817,7 +817,8 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
            efl_text_set(efl_added, "Clicking the image will play/pause animation."),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_gfx_hint_weight_set(efl_added, 1, 0),
-           efl_canvas_text_style_set(efl_added, NULL, "DEFAULT='align=center font=Sans font_size=10 color=#fff wrap=word'"),
+           efl_text_font_set(efl_added, "Sans", 10),
+           efl_text_normal_color_set(efl_added, 255, 255, 255, 255),
            efl_pack(bx, efl_added)
           );
 
