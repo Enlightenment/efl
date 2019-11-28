@@ -1,4 +1,3 @@
-// src/lib/efl/interfaces/efl_text_font.eo
 import efl_gfx_types;
 enum @beta Efl.Text_Font_Weight {
    [[Type of font weight]]
@@ -58,12 +57,12 @@ interface @beta Efl.Text_Font {
            This property controls the font name of a text object.
            The font string has to follow fontconfig's convention for
            naming fonts, as it's the underlying library used to query system
-           fonts by Evas (see the fc-list command's output, on your system,
-           to get an idea). Alternatively, youe can use the full path to a font
+           fonts by EFL (see the $[fc-list] command's output, on your system,
+           to get an idea). Alternatively, you can use the full path to a font
            file.
 
            When reading it, the font name string is still owned by
-           Evas and should not be freed.
+           EFL and should not be freed.
            See also @.font_source.
          ]]
          set {
