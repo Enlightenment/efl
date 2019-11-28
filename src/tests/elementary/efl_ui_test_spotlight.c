@@ -255,19 +255,18 @@ EFL_START_TEST (efl_ui_spotlight_active_index)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_smart_transition_calls)
+static void
+_verify_transition_calls(int number_of_animation_calls, Eina_Bool animation_value)
 {
    Efl_Ui_Widget *w, *w1, *w2;
-   Efl_Ui_Spotlight_Manager*t = _create_transition();
 
    w = efl_add(WIDGET_CLASS, win);
    w1 = efl_add(WIDGET_CLASS, win);
    w2 = efl_add(WIDGET_CLASS, win);
 
-   efl_ui_spotlight_manager_set(container, t);
    transition_calls.last_position = -2.0;
-   ck_assert_int_eq(transition_calls.animation.called, 2);
-   ck_assert_int_eq(transition_calls.animation.value, EINA_TRUE);
+   ck_assert_int_eq(transition_calls.animation.called, number_of_animation_calls);
+   ck_assert_int_eq(transition_calls.animation.value, animation_value);
    ck_assert_int_eq(transition_calls.spotlight.called, 1);
    ck_assert_ptr_eq(transition_calls.spotlight.spotlight, container);
    //We cannot verify group
@@ -344,6 +343,24 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
    ck_assert_ptr_eq(transition_calls.content_del.subobj, w);
    ck_assert_ptr_eq(transition_calls.content_del.current_page_at_call, w2);
    transition_calls.content_del.called = 0;
+}
+
+EFL_START_TEST (efl_ui_smart_transition_calls)
+{
+   Efl_Ui_Spotlight_Manager*t = _create_transition();
+   efl_ui_spotlight_manager_set(container, t);
+
+   _verify_transition_calls(2, EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_smart_transition_calls_no_animation)
+{
+   Efl_Ui_Spotlight_Manager*t = _create_transition();
+   efl_ui_spotlight_manager_set(container, t);
+   efl_ui_spotlight_animated_transition_set(container, EINA_FALSE);
+
+   _verify_transition_calls(3, EINA_FALSE);
 }
 EFL_END_TEST
 
@@ -715,6 +732,7 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_init);
    tcase_add_test(tc, efl_ui_spotlight_active_index);
    tcase_add_test(tc, efl_ui_smart_transition_calls);
+   tcase_add_test(tc, efl_ui_smart_transition_calls_no_animation);
    tcase_add_test(tc, efl_ui_smart_transition_lifetime);
    tcase_add_test(tc, efl_ui_smart_indicator_calls);
    tcase_add_test(tc, efl_ui_smart_indicator_transition_calls);
