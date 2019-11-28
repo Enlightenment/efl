@@ -131,5 +131,6 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
       Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Linear.pack_unpack_at;
+      Efl.Canvas.Group.group_calculate;
    }
 }

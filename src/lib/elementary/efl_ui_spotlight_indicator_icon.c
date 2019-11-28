@@ -12,6 +12,7 @@ typedef struct {
    Efl_Ui_Spotlight_Container *container;
    Efl_Canvas_Layout *layout;
    double last_position;
+   Eina_Size2D min, max;
 } Efl_Ui_Spotlight_Indicator_Icon_Data;
 
 static void
