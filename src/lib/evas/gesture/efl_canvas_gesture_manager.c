@@ -153,17 +153,19 @@ _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_
 }
 
 void
-_efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
+_efl_canvas_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
 {
-   Efl_Canvas_Gesture_Manager_Data *pd = data;
    Eina_List *l, *gesture_context;
+   Efl_Canvas_Gesture_Manager_Data *pd;
    const Efl_Event_Description *gesture_type;
    Efl_Canvas_Gesture_Recognizer *recognizer;
    Efl_Canvas_Gesture *gesture;
    Efl_Canvas_Gesture_Recognizer_Result recog_result;
    Efl_Canvas_Gesture_Recognizer_Result recog_state;
    Efl_Canvas_Gesture_Touch *touch_event;
+   Efl_Input_Pointer_Data *pointer_data = efl_data_scope_get(event, EFL_INPUT_POINTER_CLASS);
 
+   pd = efl_data_scope_get(obj, MY_CLASS);
    gesture_context = eina_hash_find(pd->m_gesture_contex, &target);
    if (gesture_context)
      {
@@ -178,7 +180,8 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
                   eina_hash_add(pd->m_object_events, &gesture_type, touch_event);
                }
 
-             efl_gesture_touch_point_record(touch_event, event);
+             efl_gesture_touch_point_record(touch_event, pointer_data->touch_id, pointer_data->cur,
+                                            pointer_data->timestamp, pointer_data->action);
 
              //This is for handling the case that mouse event pairs dont match.
 			 //Such as the case of canceling gesture recognition after a mouse down.

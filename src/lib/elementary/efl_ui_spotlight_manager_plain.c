@@ -8,7 +8,6 @@
 
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
-   Efl_Gfx_Entity *group;
    Eina_Size2D page_size;
    Efl_Ui_Widget *current_content;
    Eina_Bool animation;
@@ -31,7 +30,7 @@ static void
 _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 {
    Efl_Gfx_Entity *entity = pd->current_content;
-   Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
+   Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->container);
    Eina_Rect goal = EINA_RECT_EMPTY();
 
    goal.size = pd->page_size;
@@ -40,34 +39,14 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
    efl_gfx_entity_geometry_set(entity, goal);
 }
 
-static void
-_resize_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _geom_sync(data, efl_data_scope_get(data, MY_CLASS));
-}
-
-static void
-_move_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _geom_sync(data, efl_data_scope_get(data, MY_CLASS));
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(group_callback,
-  {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb},
-  {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb},
-)
-
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Ui_Spotlight_Container *spotlight, Efl_Canvas_Group *group)
+_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
-   if (spotlight && group)
+   if (spotlight)
      {
         Efl_Ui_Widget *index;
 
         pd->container = spotlight;
-        pd->group = group;
-
-        efl_event_callback_array_add(pd->group, group_callback(), obj);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
@@ -146,8 +125,6 @@ EOLIAN static void
 _efl_ui_spotlight_manager_plain_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_CLASS));
-
-   efl_event_callback_array_del(pd->group, group_callback(), obj);
 
    for (int i = 0; i < efl_content_count(pd->container); ++i)
      {

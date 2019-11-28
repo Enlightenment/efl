@@ -75,26 +75,19 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
             mode: bool; [[$true for legacy mode, $false otherwise]]
          }
       }
-      @property style {
-         [[The text style of the object.
-
-           $key is how you reference the style (for deletion or fetching). $NULL
-           as key indicates the style has the highest priority (default style).
-           The style priority is the order of creation, styles created first
-           are applied first with the exception of $NULL which is implicitly
-           first.
-
-           Set $style to $NULL to delete it.
-         ]]
-         set {
+      style_apply {
+         [[apply the style for this object, sent style member will override old ones, other styles will not be affected.
+         similar to setting style using functions (for example font_slant_set, wrap_set).]]
+         params {
+            @in style: string; [[A whitespace-separated list of $[property=value] pairs, for example, $[font=sans size=30].]]
          }
-         get {
-         }
-         keys {
-            key: string; [[The name to the style. $NULL is the default style]]
-         }
+      }
+      @property all_styles {
+         [[Get all styles belong to this object as string (default styles plus styles 
+         from style_apply or style functions (for example font_slant_set, wrap_set).]]
+         get {}
          values {
-            style: string; [[The style]]
+            style: string; [[All styles, should not be freed.]]
          }
       }
       @property size_formatted {

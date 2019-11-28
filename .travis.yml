@@ -71,6 +71,9 @@ jobs:
     - os: linux
       if: type = cron
       env: DISTRO=Fedora31 CI_BUILD_TYPE=coverity
+    - os: linux
+      if: type = cron
+      env: DISTRO=Fedora31 CI_BUILD_TYPE=asan
 
 services:
   - docker

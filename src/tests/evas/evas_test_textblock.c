@@ -4350,6 +4350,9 @@ EFL_START_TEST(evas_textblock_annotation)
 }
 EFL_END_TEST;
 
+static const char *efl_style_buf =
+   "" TEST_FONT " font_size=10 color=#000 text_class=entry";
+
 #define START_EFL_CANVAS_TEXT_TEST() \
    Evas *evas; \
    Eo *txt; \
@@ -4360,9 +4363,8 @@ EFL_END_TEST;
    txt = efl_add(EFL_CANVAS_TEXT_CLASS, evas); \
    fail_if(!txt); \
    efl_canvas_text_newline_as_paragraph_separator_set(txt, EINA_FALSE); \
-   efl_canvas_text_style_set(txt, NULL, style_buf); \
-   fail_if(!efl_canvas_text_style_get(txt, NULL) || \
-         strcmp(style_buf, efl_canvas_text_style_get(txt, NULL))); \
+   efl_canvas_text_style_apply(txt, efl_style_buf); \
+   fail_if(!efl_canvas_text_all_styles_get(txt)); \
    cur_obj = efl_canvas_text_cursor_create(txt);\
    cur = evas_object_textblock_cursor_new(txt); \
    fail_if(!cur); \
@@ -4547,6 +4549,56 @@ EFL_START_TEST(efl_text_font)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_canvas_text_style)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+   unsigned char r, g, b, a;
+   const char *style;
+
+   efl_text_password_set(txt, EINA_FALSE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
+   efl_text_font_weight_set(txt, EFL_TEXT_FONT_WEIGHT_EXTRABOLD);
+   efl_text_font_slant_set(txt, EFL_TEXT_FONT_SLANT_OBLIQUE);
+   efl_text_tabstops_set(txt, 20);
+
+   efl_canvas_text_style_apply(txt, "color=#90E135");
+
+   style = efl_canvas_text_all_styles_get(txt);
+
+   // from efl_style_buf
+   fail_if(!strstr(style, "font=DejaVuSans,UnDotum,malayalam"));
+   // default value
+   fail_if(!strstr(style, "font_width=normal"));
+
+   // from functions
+   fail_if(!strstr(style, "font_weight=extrabold"));
+   fail_if(!strstr(style, "tabstops=20"));
+   fail_if(!strstr(style, "color=rgba(144,225,53,255)"));
+   fail_if(!strstr(style, "password=off"));
+   efl_text_password_set(txt, EINA_TRUE);
+   style = efl_canvas_text_all_styles_get(txt);
+   fail_if(!strstr(style, "password=on"));
+
+   efl_canvas_text_style_apply(txt, "font_width=ultracondensed");
+   ck_assert_int_eq(efl_text_font_width_get(txt), EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
+
+   efl_canvas_text_style_apply(txt, "wrap=none");
+   ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);
+
+   efl_canvas_text_style_apply(txt, "backing=on");
+   ck_assert_int_eq(efl_text_backing_type_get(txt), EFL_TEXT_STYLE_BACKING_TYPE_ENABLED);
+
+   efl_canvas_text_style_apply(txt, "color=#EF596C");
+   efl_text_normal_color_get(txt, &r, &g, &b, &a);
+   ck_assert_int_eq(r, 0xEF);
+   ck_assert_int_eq(g, 0x59);
+   ck_assert_int_eq(b, 0x6C);
+   ck_assert_int_eq(a, 0xFF);
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -4581,5 +4633,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_canvas_text_markup);
    tcase_add_test(tc, efl_canvas_text_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
+   tcase_add_test(tc, efl_canvas_text_style);
 }
 

@@ -476,6 +476,7 @@ struct _Evas_Object_Textblock
          Efl_Text_Format_Wrap            wrap;
          Efl_Text_Font_Bitmap_Scalable   bitmap_scalable;
       } info;
+      char * default_style_str;
    } default_format;
    double                              valign;
    Eina_Stringshare                   *markup_text;
@@ -551,6 +552,7 @@ static int evas_object_textblock_was_opaque(Evas_Object *eo_obj,
 static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
 						Evas_Object_Protected_Data *obj,
 						void *type_private_data);
+static void _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Text_Data *o);
 
 static const Evas_Object_Func object_func =
 {
@@ -2702,6 +2704,230 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
 }
 
+//FIXME Create common function for both _default _format_command & _format_command
+/**
+ * @internal
+ * Parses the cmd and parameter and adds the parsed format to fmt and fmt info.
+ *
+ * @param obj the evas object - should not be NULL.
+ * @param fmt The format to populate - should not be NULL.
+ * @param[in] cmd the command to process, should be stringshared.
+ * @param[in] param the parameter of the command. may modify the string.
+ */
+static Eina_Bool
+_default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char *cmd, char *param)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
+
+   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   int len = _format_clean_param(param);
+   Eina_Bool changed = EINA_FALSE;
+   const char * font_prefix = "font_";
+
+   ASYNC_BLOCK;
+
+   if (cmd == fontstr)
+     {
+        char *end = strchr(param, ':');
+
+        if (!end)
+        changed = eina_stringshare_replace(&(_FMT_INFO(font)), param);
+        else
+        changed = eina_stringshare_replace_length(&(_FMT_INFO(font)), param, end - param);
+
+        while (end)
+        {
+           const char *tend;
+           param = end;
+           end = strchr(end + 1, ':');
+           if (!end)
+              tend = param + strlen(param);
+           else
+              tend = end;
+
+           char *equal = strchr(param, '=');
+           if (equal)
+              {
+                 char font_param[strlen(font_prefix) + (equal - param)];
+                 font_param[0] = '\0';
+                 strcat(font_param, font_prefix);
+                 strncat(font_param, &param[1], equal - param -1);
+                 const char *key = eina_stringshare_add(font_param);
+
+                 char val[tend - equal];
+                 val[0] = '\0';
+                 strncat(val, &equal[1], tend - equal -1);
+
+                 _default_format_command(eo_obj, fmt, key, val);
+                 eina_stringshare_del(key);
+              }
+        }
+     }
+   else if (cmd == font_fallbacksstr)
+     {
+        changed = eina_stringshare_replace(&(_FMT_INFO(font_fallbacks)), param);
+     }
+   else if (cmd == font_sizestr)
+     {
+        int size;
+
+        size = atoi(param);
+        if (size > 0 && _FMT_INFO(size) != size)
+          {
+             _FMT_INFO(size) = size;
+             changed = EINA_TRUE;
+          }
+     }
+   else if (cmd == font_sourcestr)
+     {
+        Eina_Stringshare *font_source = _FMT_INFO(font_source);
+        if ((!font_source) ||
+              ((font_source) && (strcmp(font_source, param))))
+          {
+             changed = eina_stringshare_replace(&(_FMT_INFO(font_source)), param);
+          }
+     }
+   else if (cmd == font_weightstr)
+     {
+        unsigned int weight = evas_font_style_find(param,
+                                                   param + len,
+                                                   EVAS_FONT_STYLE_WEIGHT);
+
+        if (_FMT_INFO(font_weight) != weight)
+          {
+             _FMT_INFO(font_weight) = weight;
+             changed = EINA_TRUE;
+          }
+     }
+   else if (cmd == font_stylestr)
+     {
+        unsigned int slant = evas_font_style_find(param,
+                                                  param + len,
+                                                  EVAS_FONT_STYLE_SLANT);
+
+        if (_FMT_INFO(font_slant) != slant)
+          {
+             _FMT_INFO(font_slant) = slant;
+             changed = EINA_TRUE;
+          }
+     }
+   else if (cmd == font_widthstr)
+     {
+        unsigned int width = evas_font_style_find(param,
+                                                  param + len,
+                                                  EVAS_FONT_STYLE_WIDTH);
+
+        if (_FMT_INFO(font_width) != width)
+          {
+             _FMT_INFO(font_width) = width;
+             changed = EINA_TRUE;
+          }
+     }
+   else if (cmd == langstr)
+     {
+        changed = eina_stringshare_replace(&(_FMT_INFO(font_lang)),
+                                           evas_font_lang_normalize(param));
+     }
+   else if (cmd == gfx_filterstr)
+     {
+        if (!fmt->gfx_filter)
+          fmt->gfx_filter = calloc(1, sizeof(Efl_Canvas_Text_Filter));
+        eina_stringshare_replace(&fmt->gfx_filter->name, param);
+        eina_stringshare_replace(&(_FMT_INFO(gfx_filter_name)), param);
+     }
+   else if (cmd == wrapstr)
+     {
+        Efl_Text_Format_Wrap wrap = _FMT_INFO(wrap);
+
+        if (!strcmp("word", param))
+          wrap = EFL_TEXT_FORMAT_WRAP_WORD;
+        else if (!strcmp("char", param))
+          wrap = EFL_TEXT_FORMAT_WRAP_CHAR;
+        else if (!strcmp("mixed", param))
+          wrap = EFL_TEXT_FORMAT_WRAP_MIXED;
+        else if (!strcmp("hyphenation", param))
+          wrap = EFL_TEXT_FORMAT_WRAP_HYPHENATION;
+
+        if (_FMT_INFO(wrap) != wrap)
+          {
+             _FMT_INFO(wrap) = wrap;
+             _FMT(wrap_word) = (wrap == EFL_TEXT_FORMAT_WRAP_WORD);
+             _FMT(wrap_char) = (wrap == EFL_TEXT_FORMAT_WRAP_CHAR);
+             _FMT(wrap_mixed) = (wrap == EFL_TEXT_FORMAT_WRAP_MIXED);
+             _FMT(wrap_hyphenation) = (wrap == EFL_TEXT_FORMAT_WRAP_HYPHENATION);
+             changed = EINA_TRUE;
+          }
+     }
+   else if (cmd == stylestr)
+     {
+        const char *p;
+        char *p1, *p2, *pp;
+
+        p2 = alloca(len + 1);
+        *p2 = 0;
+        /* no comma */
+        if (!strstr(param, ",")) p1 = (char*) param;
+        else
+          {
+             p1 = alloca(len + 1);
+             *p1 = 0;
+
+             /* split string "str1,str2" into p1 and p2 (if we have more than
+              * 1 str2 eg "str1,str2,str3,str4" then we don't care. p2 just
+              * ends up being the last one as right now it's only valid to have
+              * 1 comma and 2 strings */
+             pp = p1;
+             for (p = param; *p; p++)
+               {
+                  if (*p == ',')
+                    {
+                       *pp = 0;
+                       pp = p2;
+                       continue;
+                    }
+                  *pp = *p;
+                  pp++;
+               }
+             *pp = 0;
+          }
+
+        if      (!strcmp(p1, "off"))                 {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
+        else if (!strcmp(p1, "none"))                {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
+        else if (!strcmp(p1, "plain"))               {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
+        else if (!strcmp(p1, "shadow"))              {fmt->style = EVAS_TEXT_STYLE_SHADOW;              _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW;}
+        else if (!strcmp(p1, "outline"))             {fmt->style = EVAS_TEXT_STYLE_OUTLINE;             _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE;}
+        else if (!strcmp(p1, "soft_outline"))        {fmt->style = EVAS_TEXT_STYLE_SOFT_OUTLINE;        _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE;}
+        else if (!strcmp(p1, "outline_shadow"))      {fmt->style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;      _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW;}
+        else if (!strcmp(p1, "outline_soft_shadow")) {fmt->style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW; _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW;}
+        else if (!strcmp(p1, "glow"))                {fmt->style = EVAS_TEXT_STYLE_GLOW;                _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_GLOW;}
+        else if (!strcmp(p1, "far_shadow"))          {fmt->style = EVAS_TEXT_STYLE_FAR_SHADOW;          _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW;}
+        else if (!strcmp(p1, "soft_shadow"))         {fmt->style = EVAS_TEXT_STYLE_SOFT_SHADOW;         _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW;}
+        else if (!strcmp(p1, "far_soft_shadow"))     {fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;     _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW;}
+        else                                         {fmt->style = EVAS_TEXT_STYLE_PLAIN;               _FMT_INFO(effect) = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;}
+        if (*p2)
+          {
+             if      (!strcmp(p2, "bottom_right"))  {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT); _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT;}
+             else if (!strcmp(p2, "bottom"))        {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);       _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM;}
+             else if (!strcmp(p2, "bottom_left"))   {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);  _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT;}
+             else if (!strcmp(p2, "left"))          {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT);         _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT;}
+             else if (!strcmp(p2, "top_left"))      {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT);     _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT;}
+             else if (!strcmp(p2, "top"))           {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP);          _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;}
+             else if (!strcmp(p2, "top_right"))     {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);    _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT;}
+             else if (!strcmp(p2, "right"))         {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT);        _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;}
+             else                                   {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT); _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT;}
+          }
+     }
+   else
+     {
+        /* Update reset of formats like color, ...etc*/
+        _format_command(eo_obj, fmt, cmd, param);
+        /*FIXME update only when change happened*/
+        changed = EINA_TRUE;
+     }
+
+  return changed;
+}
+
 /* 
  * @internal
  * just to create a constant without using marco
@@ -2924,12 +3150,16 @@ _format_parse(const char **s)
  * @param obj The evas object - Not NULL.
  * @param[out] fmt The format to populate - Not NULL.
  * @param[in] str the string to parse.- Not NULL.
+ * @param[in] is_default_format if this is default format true else false.
  */
 static void
-_format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char *str)
+_format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char *str, Eina_Bool is_default_format)
 {
    const char *s;
    const char *item;
+   Eina_Bool changed = EINA_FALSE;
+
+   if (!str) return;
 
    s = str;
 
@@ -2945,7 +3175,16 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
         char *val = NULL;
         if (_format_param_parse(item, &key, &val, &allocator))
           {
-             if ((key) && (val)) _format_command(eo_obj, fmt, key, val);
+             if ((key) && (val))
+               {
+                  if (is_default_format == EINA_TRUE)
+                    {
+                       if (_default_format_command(eo_obj, fmt, key, val))
+                         changed = EINA_TRUE;
+                    }
+                  else
+                    _format_command(eo_obj, fmt, key, val);
+               }
              eina_stringshare_del(key);
           }
         else
@@ -2954,7 +3193,290 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
           }
      }
 
+   if (is_default_format == EINA_TRUE && changed)
+     {
+        Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+        _canvas_text_format_changed(eo_obj, o);
+     }
+
    _allocator_reset(&allocator);
+}
+
+#define PRINTF_APPEND_STR(name, val) eina_strbuf_append_printf(format_buffer, "%s=%s ", name, val)
+#define PRINTF_APPEND_INT(name, val) eina_strbuf_append_printf(format_buffer, "%s=%i ", name, val)
+#define PRINTF_APPEND_COLOR(name, r, g, b, a) eina_strbuf_append_printf(format_buffer, "%s=rgba(%i,%i,%i,%i) ", name, r, g, b, a)
+#define PRINTF_APPEND_FLOAT(name, val) eina_strbuf_append_printf(format_buffer, "%s=%f ", name, val)
+#define PRINTF_APPEND_PERCENT_FLOAT(name, val) eina_strbuf_append_printf(format_buffer, "%s=%f%% ", name, val)
+
+/**
+ * @internal
+ * get all formats in one string
+ *
+ * @param obj The evas object - Not NULL.
+ * @param[out] fmt The format to convert to string - Not NULL.
+ * @return the format as string, must be freed by the user.
+ */
+static char *
+_format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
+{
+   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Eina_Strbuf *format_buffer = eina_strbuf_new();
+
+   //format info
+
+   if (_FMT_INFO(font))
+     PRINTF_APPEND_STR(fontstr, _FMT_INFO(font));
+
+   if (_FMT_INFO(font_fallbacks))
+     PRINTF_APPEND_STR(font_fallbacksstr, _FMT_INFO(font_fallbacks));
+
+   PRINTF_APPEND_INT(font_sizestr, _FMT_INFO(size));
+
+   if (_FMT_INFO(font_source))
+     PRINTF_APPEND_STR(font_sourcestr, _FMT_INFO(font_source));
+
+   const char *weight_value_str = evas_font_style_find_str(_FMT_INFO(font_weight), EVAS_FONT_STYLE_WEIGHT);
+   if (!weight_value_str)
+     weight_value_str = "normal";
+
+   PRINTF_APPEND_STR(font_weightstr, weight_value_str);
+
+   const char *slant_value_str = evas_font_style_find_str(_FMT_INFO(font_slant), EVAS_FONT_STYLE_SLANT);
+   if (!slant_value_str)
+     slant_value_str = "normal";
+
+   PRINTF_APPEND_STR(font_stylestr, slant_value_str);
+
+   const char *width_value_str = evas_font_style_find_str(_FMT_INFO(font_width), EVAS_FONT_STYLE_WIDTH);
+   if (!width_value_str)
+     width_value_str = "normal";
+
+   PRINTF_APPEND_STR(font_widthstr, width_value_str);
+
+   if (_FMT_INFO(font_lang))
+     PRINTF_APPEND_STR(langstr, _FMT_INFO(font_lang));
+
+   if (_FMT_INFO(gfx_filter_name))
+     PRINTF_APPEND_STR(gfx_filterstr, _FMT_INFO(gfx_filter_name));
+
+   char *wrap_value_str;
+   Efl_Text_Format_Wrap wrap = _FMT_INFO(wrap);
+
+   switch (wrap)
+     {
+        case EFL_TEXT_FORMAT_WRAP_CHAR:
+          wrap_value_str = "char";
+          break;
+        case EFL_TEXT_FORMAT_WRAP_MIXED:
+          wrap_value_str = "mixed";
+          break;
+        case EFL_TEXT_FORMAT_WRAP_HYPHENATION:
+          wrap_value_str = "hyphenation";
+          break;
+        default:
+          wrap_value_str = "word";
+          break;
+     }
+
+   PRINTF_APPEND_STR(wrapstr, wrap_value_str);
+
+   //format
+   PRINTF_APPEND_COLOR(colorstr, fmt->color.normal.r, fmt->color.normal.g,
+                             fmt->color.normal.b, fmt->color.normal.a);
+
+   PRINTF_APPEND_COLOR(underline_colorstr, fmt->color.underline.r, fmt->color.underline.g,
+                             fmt->color.underline.b, fmt->color.underline.a);
+
+   PRINTF_APPEND_COLOR(underline2_colorstr, fmt->color.underline2.r, fmt->color.underline2.g,
+                             fmt->color.underline2.b, fmt->color.underline2.a);
+
+   PRINTF_APPEND_COLOR(underline_dash_colorstr, fmt->color.underline_dash.r, fmt->color.underline_dash.g,
+                             fmt->color.underline_dash.b, fmt->color.underline_dash.a);
+
+   PRINTF_APPEND_COLOR(outline_colorstr, fmt->color.outline.r, fmt->color.outline.g,
+                             fmt->color.outline.b, fmt->color.outline.a);
+
+   PRINTF_APPEND_COLOR(shadow_colorstr, fmt->color.shadow.r, fmt->color.shadow.g,
+                             fmt->color.shadow.b, fmt->color.shadow.a);
+
+   PRINTF_APPEND_COLOR(glow_colorstr, fmt->color.glow.r, fmt->color.glow.g,
+                             fmt->color.glow.b, fmt->color.glow.a);
+
+   PRINTF_APPEND_COLOR(glow2_colorstr, fmt->color.glow2.r, fmt->color.glow2.g,
+                             fmt->color.glow2.b, fmt->color.glow2.a);
+
+   PRINTF_APPEND_COLOR(backing_colorstr, fmt->color.backing.r, fmt->color.backing.g,
+                             fmt->color.backing.b, fmt->color.backing.a);
+
+   PRINTF_APPEND_COLOR(strikethrough_colorstr, fmt->color.strikethrough.r, fmt->color.strikethrough.g,
+                             fmt->color.strikethrough.b, fmt->color.strikethrough.a);
+
+   char *halign_value_str = NULL;
+   Evas_Textblock_Align_Auto halign = fmt->halign_auto;
+
+   switch (halign)
+     {
+        case EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL:
+          halign_value_str = "auto";
+          break;
+        case EVAS_TEXTBLOCK_ALIGN_AUTO_END:
+          halign_value_str = "end";
+          break;
+        case EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE:
+          halign_value_str = "locale";
+          break;
+        case EVAS_TEXTBLOCK_ALIGN_AUTO_NONE:
+          if (fmt->halign == 0.5)
+            halign_value_str = "center";
+          else if (fmt->halign == 0.0)
+            halign_value_str = "left";
+          else if (fmt->halign == 1.0)
+            halign_value_str = "right";
+
+          break;
+     }
+
+   if (halign_value_str != NULL)
+     PRINTF_APPEND_STR(alignstr, halign_value_str);
+   else
+     PRINTF_APPEND_FLOAT(alignstr, fmt->halign);
+
+
+   char *valign_value_str = NULL;
+
+   if (fmt->valign == 0.5)
+     valign_value_str = "center";
+   else if (fmt->valign == 0.0)
+     valign_value_str = "top";
+   else if (fmt->valign == 1.0)
+     valign_value_str = "bottom";
+   else if (fmt->valign == -1.0)
+     valign_value_str = "baseline";
+
+   if (valign_value_str != NULL)
+     PRINTF_APPEND_STR(valignstr, valign_value_str);
+   else
+     PRINTF_APPEND_FLOAT(valignstr, fmt->valign);
+
+   PRINTF_APPEND_FLOAT(text_valignstr, o->valign);
+   PRINTF_APPEND_INT(left_marginstr, fmt->margin.l);
+   PRINTF_APPEND_INT(right_marginstr, fmt->margin.r);
+
+
+   char *underline_value_str = "off";
+
+   if (fmt->underline == EINA_TRUE && fmt->underline2 == EINA_TRUE)
+     underline_value_str = "double";
+   else if (fmt->underline == EINA_TRUE)
+     underline_value_str = "single";
+   else if (fmt->underline_dash == EINA_TRUE)
+     underline_value_str = "dashed";
+
+   PRINTF_APPEND_STR(underlinestr, underline_value_str);
+   PRINTF_APPEND_STR(strikethroughstr, (fmt->strikethrough == 0 ? "off" : "on"));
+   PRINTF_APPEND_STR(backingstr, (fmt->backing == 0 ? "off" : "on"));
+
+   char *style_value_str_1 = "off";
+   char *style_value_str_2 = NULL;
+   Efl_Text_Style_Effect_Type style1 = _FMT_INFO(effect);
+   Efl_Text_Style_Effect_Type style2 = _FMT_INFO(shadow_direction);
+
+   switch (style1)
+     {
+        case EFL_TEXT_STYLE_EFFECT_TYPE_NONE:
+          style_value_str_1 = "plain";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW:
+          style_value_str_1 = "shadow";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE:
+          style_value_str_1 = "outline";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE:
+          style_value_str_1 = "soft_outline";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW:
+          style_value_str_1 = "outline_shadow";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW:
+          style_value_str_1 = "outline_soft_shadow";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_GLOW:
+          style_value_str_1 = "glow";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW:
+          style_value_str_1 = "far_shadow";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW:
+          style_value_str_1 = "soft_shadow";
+          break;
+        case EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW:
+          style_value_str_1 = "far_soft_shadow";
+          break;
+        default:
+          style_value_str_1 = "off";
+          break;
+     }
+
+   switch (style2)
+     {
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+          style_value_str_2 = "bottom_right";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+          style_value_str_2 = "bottom";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+          style_value_str_2 = "bottom_left";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+          style_value_str_2 = "left";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+          style_value_str_2 = "top_left";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+          style_value_str_2 = "top";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+          style_value_str_2 = "top_right";
+          break;
+        case EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+          style_value_str_2 = "right";
+          break;
+        default:
+          style_value_str_2 = NULL;
+          break;
+     }
+
+   if (style_value_str_2 != NULL)
+     eina_strbuf_append_printf(format_buffer, "%s=%s,%s ", stylestr, style_value_str_1, style_value_str_2);
+   else
+     PRINTF_APPEND_STR(stylestr, style_value_str_1);
+
+   PRINTF_APPEND_INT(tabstopsstr, fmt->tabstops);
+   PRINTF_APPEND_INT(linesizestr, fmt->linesize);
+   PRINTF_APPEND_PERCENT_FLOAT(linerelsizestr, (fmt->linerelsize*100));
+   PRINTF_APPEND_INT(linegapstr, fmt->linegap);
+   PRINTF_APPEND_PERCENT_FLOAT(linerelgapstr, (fmt->linerelgap*100));
+   PRINTF_APPEND_PERCENT_FLOAT(linefillstr, (fmt->linefill*100));
+   PRINTF_APPEND_FLOAT(ellipsisstr, fmt->ellipsis);
+   PRINTF_APPEND_STR(passwordstr, (fmt->password == 0 ? "off" : "on"));
+
+   if (o->repch)
+     PRINTF_APPEND_STR(replacement_charstr, o->repch);
+
+   PRINTF_APPEND_INT(underline_dash_widthstr, fmt->underline_dash_width);
+   PRINTF_APPEND_INT(underline_dash_gapstr, fmt->underline_dash_gap);
+   PRINTF_APPEND_FLOAT(underline_heightstr, fmt->underline_height);
+
+   const char *temp = eina_strbuf_string_get(format_buffer);
+   size_t len = strlen(temp);
+   char *format_str = malloc(len+1);
+   strcpy(format_str, temp);
+   eina_strbuf_free(format_buffer);
+
+   return format_str;
 }
 
 /**
@@ -6839,7 +7361,7 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
           }
         if ((c->o->style) && (c->o->style->default_tag))
           {
-             _format_fill(c->obj, c->fmt, c->o->style->default_tag);
+             _format_fill(c->obj, c->fmt, c->o->style->default_tag, EINA_FALSE);
              finalize = EINA_TRUE;
           }
 
@@ -6847,7 +7369,7 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
           {
              if ((use->st) && (use->st->default_tag))
                {
-                  _format_fill(c->obj, c->fmt, use->st->default_tag);
+                  _format_fill(c->obj, c->fmt, use->st->default_tag, EINA_FALSE);
                   finalize = EINA_TRUE;
                }
           }
@@ -7452,41 +7974,12 @@ _style_by_key_find(Efl_Canvas_Text_Data *o, const char *key)
    return NULL;
 }
 
-static Evas_Textblock_Style *
-_style_fetch(const char *style)
-{
-   Evas_Textblock_Style *ts = NULL;
-   Eina_List *i;
-
-   if (!style) return NULL;
-
-   EINA_LIST_FOREACH(_style_cache, i, ts)
-     {
-        if (ts->style_text == style) break;
-     }
-
-   if (!ts)
-     {
-        ts = evas_textblock_style_new();
-        ts->legacy = EINA_FALSE;
-        evas_textblock_style_set(ts, style);
-        _style_cache = eina_list_append(_style_cache, ts);
-     }
-   return ts;
-}
-
 EOLIAN static void
-_efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *key, const char *style)
+_efl_canvas_text_style_apply(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *style)
 {
-   // FIXME: Make key value behaviour.
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-
-   Evas_Textblock_Style *ts;
-
-   ts = _style_fetch(style);
-
-   _textblock_style_generic_set(eo_obj, ts, key);
+   _format_fill(eo_obj, &(o->default_format.format), style, EINA_TRUE);
 }
 
 EAPI Evas_Textblock_Style *
@@ -7500,11 +7993,13 @@ evas_object_textblock_style_get(const Eo *eo_obj)
 }
 
 EOLIAN static const char *
-_efl_canvas_text_style_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o, const char *key)
+_efl_canvas_text_all_styles_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 {
-   Evas_Textblock_Style *ts = _style_by_key_find(o, key);
+   if (o->default_format.default_style_str)
+     free(o->default_format.default_style_str);
 
-   return ts ? ts->style_text : NULL;
+   o->default_format.default_style_str = _format_string_get(eo_obj, &(o->default_format.format));
+   return o->default_format.default_style_str;
 }
 
 EOLIAN static void
@@ -13766,6 +14261,9 @@ evas_object_textblock_free(Evas_Object *eo_obj)
      }
    if (o->bidi_delimiters) eina_stringshare_del(o->bidi_delimiters);
    _format_command_shutdown();
+
+   if (o->default_format.default_style_str)
+     free(o->default_format.default_style_str);
 
    /* remove obstacles */
    _obstacles_free(eo_obj, o);

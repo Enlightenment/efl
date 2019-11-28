@@ -540,6 +540,11 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
        pd->env = NULL;
      }
 
+   // close all fd's other than the first 3 (0, 1, 2) and exited write fd
+   int except[2] = { 0, -1 };
+   except[0] = pd->fd.exited_write;
+   eina_file_close_from(3, except);
+
    // actually execute!
    _exec(cmd, pd->flags, td->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!

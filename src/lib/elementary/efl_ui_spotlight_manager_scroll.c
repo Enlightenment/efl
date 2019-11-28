@@ -7,7 +7,7 @@
 
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
-   Efl_Gfx_Entity *group, *foreclip, *backclip;
+   Efl_Gfx_Entity *foreclip, *backclip;
    Eina_Size2D page_size;
    struct {
       Eina_Bool active;
@@ -39,7 +39,7 @@ static void
 _apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
 {
    Eina_Rect geometry = EINA_RECT_EMPTY();
-   Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
+   Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->container);
    double current_pos;
 
    if (pd->transition.active)
@@ -74,18 +74,6 @@ _apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
 
    //Propagate progress
    _propagate_progress(obj, current_pos);
-}
-
-static void
-_resize_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _apply_box_properties(data, efl_data_scope_get(data, EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS));
-}
-
-static void
-_move_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _apply_box_properties(data, efl_data_scope_get(data, EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS));
 }
 
 static void
@@ -169,22 +157,19 @@ EFL_CALLBACKS_ARRAY_DEFINE(mouse_listeners,
 );
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Ui_Spotlight_Container *spotlight, Efl_Canvas_Group *group)
+_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
-   if (spotlight && group)
+   if (spotlight)
      {
         pd->container = spotlight;
-        pd->group = group;
-        efl_event_callback_add(pd->group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
-        efl_event_callback_add(pd->group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
         pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                               evas_object_evas_get(group));
+                               evas_object_evas_get(pd->container));
         evas_object_static_clip_set(pd->foreclip, EINA_TRUE);
         efl_canvas_group_member_add(spotlight, pd->foreclip);
 
         pd->backclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                               evas_object_evas_get(group));
+                               evas_object_evas_get(pd->container));
         evas_object_static_clip_set(pd->backclip, EINA_TRUE);
         efl_gfx_entity_visible_set(pd->backclip, EINA_FALSE);
         efl_canvas_group_member_add(spotlight, pd->backclip);
@@ -192,7 +177,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_S
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
            efl_canvas_object_clipper_set(elem, pd->backclip);
-           efl_canvas_group_member_add(pd->group, elem);
+           efl_canvas_group_member_add(pd->container, elem);
            efl_gfx_entity_visible_set(elem, EINA_TRUE);
         }
         _apply_box_properties(obj, pd);
@@ -207,7 +192,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_add(Eo *obj EI
 {
    efl_gfx_entity_visible_set(subobj, EINA_TRUE);
    efl_canvas_object_clipper_set(subobj, pd->backclip);
-   efl_canvas_group_member_add(pd->group, subobj);
+   efl_canvas_group_member_add(pd->container, subobj);
 
    if (!pd->transition.active)
      _apply_box_properties(obj, pd);
@@ -218,7 +203,7 @@ EOLIAN static void
 _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_canvas_object_clipper_set(subobj, NULL);
-   efl_canvas_group_member_remove(pd->group, subobj);
+   efl_canvas_group_member_remove(pd->container, subobj);
 
    if (!pd->transition.active)
      _apply_box_properties(obj, pd);
@@ -326,8 +311,6 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_ge
 EOLIAN static void
 _efl_ui_spotlight_manager_scroll_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd EINA_UNUSED)
 {
-   efl_event_callback_del(pd->group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
-   efl_event_callback_del(pd->group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
    efl_event_callback_array_del(efl_content_get(efl_part(pd->container, "efl.event")), mouse_listeners(), obj);
    efl_del(pd->backclip);
    efl_del(pd->foreclip);

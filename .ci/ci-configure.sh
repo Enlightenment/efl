@@ -9,14 +9,16 @@ if [ "$DISTRO" != "" ] ; then
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Dbindings=luajit"
   # Why do we need to disable the imf loaders here?
 
+  MONO_LINUX_COPTS=" -Dbindings=luajit,mono -Dmono-beta=true"
+
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
   # TODO:
-  # - Enable C++ and mono bindings: -Dbindings=luajit,cxx,mono -Dmono-beta=true
+  # - Enable C++ bindings: -Dbindings=luajit,cxx
   # - No libelogind, Xgesture packages in fedora 30 repo
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
-  -Ddebug-threads=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
+  -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=gstreamer,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true"
@@ -39,6 +41,10 @@ if [ "$DISTRO" != "" ] ; then
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
   -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg -Dbindings=luajit \
   -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
+
+  if [ "$1" = "default" ]; then
+    OPTS="$OPTS $MONO_LINUX_COPTS"
+  fi
 
   if [ "$1" = "options-enabled" ]; then
     OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
@@ -63,7 +69,13 @@ if [ "$DISTRO" != "" ] ; then
     travis_endfold cov-download
   fi
 
-  if [ "$1" = "mingw" ]; then
+  if [ "$1" = "asan" ]; then
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+      --env CXX="ccache g++" --env CFLAGS="-O0 -g" --env CXXFLAGS="-O0 -g" \
+      --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS -Db_sanitize=address"
+    travis_endfold meson
+  elif [ "$1" = "mingw" ]; then
     OPTS="$OPTS $MINGW_COPTS"
     travis_fold cross-native cross-native
     docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'

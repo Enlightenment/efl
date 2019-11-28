@@ -1,20 +1,5 @@
-group { "efl/pager"; data.item: "version" "123";
+group { "efl/spotlight"; data.item: "version" "123";
    parts {
-      spacer { "base";
-         scale;
-         desc { "default";
-         }
-      }
-      swallow { "efl.background";
-         scale;
-         desc { "default";
-         }
-      }
-      swallow { "efl.page_root";
-         scale;
-         desc { "default";
-         }
-      }
       swallow { "efl.indicator";
          scale;
          desc { "default";
@@ -32,7 +17,7 @@ group { "efl/pager"; data.item: "version" "123";
    }
 }
 
-group { "efl/pager/indicator"; data.item: "version" "123";
+group { "efl/spotlight/indicator"; data.item: "version" "123";
    images {
       image: "ring_white_middle.png" COMP;
    }

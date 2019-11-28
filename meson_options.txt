@@ -54,7 +54,7 @@ option('cocoa',
 
 option('physics',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Physics engine (bullet) in efl'
 )
 
@@ -109,7 +109,7 @@ option('crypto',
 
 option('glib',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Main loop integration for glib in efl'
 )
 

@@ -989,12 +989,6 @@ _edje_recalc_table_parts(Edje *ed
      {
         ep = ed->table_parts[i];
 
-        //Ignore if the real part doesn't have swallowed object
-        if ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
-            (ep->typedata.swallow) &&
-            (!ep->typedata.swallow->swallowed_object))
-          continue;
-
         if (ep->calculated != FLAG_XY) // FIXME: this is always true (see for above)
           _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY, NULL);
      }

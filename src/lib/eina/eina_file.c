@@ -36,6 +36,10 @@
 #endif
 #include <fcntl.h>
 
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
+
 #define PATH_DELIM '/'
 
 #include "eina_config.h"
@@ -1252,3 +1256,83 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
    return 0;
 }
 
+EAPI void
+eina_file_close_from(int fd, int *except_fd)
+{
+#if defined(_WIN32)
+   // XXX: what do to here? anything?
+#else
+#ifdef HAVE_DIRENT_H
+   DIR *dir;
+
+   dir = opendir("/proc/sefl/fd");
+   if (!dir) dir = opendir("/dev/fd");
+   if (dir)
+     {
+        struct dirent *dp;
+        const char *fname;
+        int *closes = NULL;
+        int num_closes = 0, i;
+
+        for (;;)
+          {
+skip:
+             dp = readdir(dir);
+             if (!dp) break;
+             fname = dp->d_name;
+
+             if ((fname[0] >= '0') && (fname[0] <= '9'))
+               {
+                  int num = atoi(fname);
+                  if (num >= fd)
+                    {
+                       if (except_fd)
+                         {
+                            int j;
+
+                            for (j = 0; except_fd[j] >= 0; j++)
+                              {
+                                 if (except_fd[j] == num) goto skip;
+                              }
+                         }
+                       num_closes++;
+                       int *tmp = realloc(closes, num_closes * sizeof(int));
+                       if (!tmp) num_closes--;
+                       else
+                         {
+                            closes = tmp;
+                            closes[num_closes - 1] = num;
+                         }
+                    }
+               }
+          }
+        closedir(dir);
+        for (i = 0; i < num_closes; i++) close(closes[i]);
+        free(closes);
+        return;
+     }
+#endif
+   int i, max = 1024;
+
+# ifdef HAVE_SYS_RESOURCE_H
+   struct rlimit lim;
+   if (getrlimit(RLIMIT_NOFILE, &lim) < 0) return;
+   max = lim.rlim_max;
+# endif
+   for (i = fd; i < max;)
+     {
+        if (except_fd)
+          {
+             int j;
+
+             for (j = 0; except_fd[j] >= 0; j++)
+               {
+                  if (except_fd[j] == i) goto skip2;
+               }
+          }
+        close(i);
+skip2:
+        i++;
+     }
+#endif
+}
