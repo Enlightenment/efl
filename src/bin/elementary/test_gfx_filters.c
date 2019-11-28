@@ -294,11 +294,9 @@ _font_size_change(void *data, const Efl_Event *ev)
 {
    Eo *win = data;
    Eo *text;
-   const char *font;
 
    text = efl_key_wref_get(win, "text");
-   efl_text_font_get(text, &font, NULL);
-   efl_text_font_set(text, font, elm_spinner_value_get(ev->object));
+   efl_text_font_size_set(text, elm_spinner_value_get(ev->object));
 }
 
 static void
@@ -462,7 +460,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       // Note: No TEXT object with EO APIs
       o = text = evas_object_text_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _text_resize, NULL);
-      efl_text_font_set(o, "Sans:style=Bold", default_font_size);
+      efl_text_font_family_set(o, "Sans:style=Bold");
+      efl_text_font_size_set(o, default_font_size);
       efl_gfx_entity_scale_set(text, elm_config_scale_get());
       efl_text_set(o, "EFL");
       efl_gfx_entity_visible_set(o, 1);

@@ -38,7 +38,8 @@ Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
       Efl.Text_Markup.markup { get; set; }
       Efl.Text_Format.ellipsis { set; get; }
       Efl.Text_Format.wrap { set; get; }
-      Efl.Text_Font.font { set; get; }
+      Efl.Text_Font.font_family { set; get; }
+      Efl.Text_Font.font_size { set; get; }
       Efl.Text_Style.normal_color { set; get; }
       Efl.Text_Style.backing_type { set; get; }
       Efl.Text_Style.backing_color { set; get;}

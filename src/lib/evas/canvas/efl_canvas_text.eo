@@ -191,7 +191,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_state_prepare;
-      Efl.Text_Font.font { get; set; }
+      Efl.Text_Font.font_family { get; set; }
+      Efl.Text_Font.font_size { get; set; }
       Efl.Text_Font.font_source { get; set; }
       Efl.Text_Font.font_fallbacks { get; set; }
       Efl.Text_Font.font_lang { get; set; }
@@ -221,9 +222,9 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Format.ellipsis { get; set; }
       Efl.Text_Format.wrap { get; set; }
       Efl.Text_Format.multiline { get; set; }
-      Efl.Text_Format.halign { get; set; }
-      Efl.Text_Format.halign_auto_type { get; set; }
-      Efl.Text_Format.valign { get; set; }
+      Efl.Text_Format.horizontal_align { get; set; }
+      Efl.Text_Format.horizontal_align_auto_type { get; set; }
+      Efl.Text_Format.vertical_align { get; set; }
       Efl.Text_Format.linegap { get; set; }
       Efl.Text_Format.linerelgap { get; set; }
       Efl.Text_Format.tabstops { get; set; }

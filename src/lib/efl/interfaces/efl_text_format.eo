@@ -45,21 +45,21 @@ interface @beta Efl.Text_Format {
          }
       }
 
-      @property halign_auto_type {
+      @property horizontal_align_auto_type {
          [[Horizontal alignment of text]]
          values {
             value: Efl.Text_Format_Horizontal_Alignment_Auto_Type; [[Alignment type]]
          }
       }
 
-      @property halign {
+      @property horizontal_align {
          [[Horizontal alignment of text]]
          values {
             value: double; [[Horizontal alignment value]]
          }
       }
 
-      @property valign {
+      @property vertical_align {
          [[Vertical alignment of text]]
          values {
             value: double; [[Vertical alignment value]]

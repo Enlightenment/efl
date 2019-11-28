@@ -45,10 +45,16 @@ Efl_Object *_evas_textgrid_efl_object_constructor(Eo *obj, Evas_Textgrid_Data *p
 void _evas_textgrid_efl_object_destructor(Eo *obj, Evas_Textgrid_Data *pd);
 
 
-void _evas_textgrid_efl_text_font_font_set(Eo *obj, Evas_Textgrid_Data *pd, const char *font, Efl_Font_Size size);
+void _evas_textgrid_efl_text_font_font_family_set(Eo *obj, Evas_Textgrid_Data *pd, const char *font);
 
 
-void _evas_textgrid_efl_text_font_font_get(const Eo *obj, Evas_Textgrid_Data *pd, const char **font, Efl_Font_Size *size);
+void _evas_textgrid_efl_text_font_font_family_get(const Eo *obj, Evas_Textgrid_Data *pd, const char **font);
+
+
+void _evas_textgrid_efl_text_font_font_size_set(Eo *obj, Evas_Textgrid_Data *pd, Efl_Font_Size size);
+
+
+void _evas_textgrid_efl_text_font_font_size_get(const Eo *obj, Evas_Textgrid_Data *pd, Efl_Font_Size *size);
 
 
 void _evas_textgrid_efl_text_font_font_source_set(Eo *obj, Evas_Textgrid_Data *pd, const char *font_source);
@@ -90,8 +96,10 @@ _evas_textgrid_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(evas_obj_textgrid_palette_get, _evas_textgrid_palette_get),
       EFL_OBJECT_OP_FUNC(efl_constructor, _evas_textgrid_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_destructor, _evas_textgrid_efl_object_destructor),
-      EFL_OBJECT_OP_FUNC(efl_text_font_set, _evas_textgrid_efl_text_font_font_set),
-      EFL_OBJECT_OP_FUNC(efl_text_font_get, _evas_textgrid_efl_text_font_font_get),
+      EFL_OBJECT_OP_FUNC(efl_text_font_family_set, _evas_textgrid_efl_text_font_font_family_set),
+      EFL_OBJECT_OP_FUNC(efl_text_font_family_get, _evas_textgrid_efl_text_font_font_family_get),
+      EFL_OBJECT_OP_FUNC(efl_text_font_size_set, _evas_textgrid_efl_text_font_font_size_set),
+      EFL_OBJECT_OP_FUNC(efl_text_font_size_get, _evas_textgrid_efl_text_font_font_size_get),
       EFL_OBJECT_OP_FUNC(efl_text_font_source_set, _evas_textgrid_efl_text_font_font_source_set),
       EFL_OBJECT_OP_FUNC(efl_text_font_source_get, _evas_textgrid_efl_text_font_font_source_get),
       EFL_OBJECT_OP_FUNC(efl_text_font_bitmap_scalable_set, _evas_textgrid_efl_text_font_font_bitmap_scalable_set),

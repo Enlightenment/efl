@@ -67,7 +67,8 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 
    en = _create_label(win, bx);
    efl_text_markup_set(en, "You can also <b>ENTER</b> markup!");
-   efl_text_font_set(en, "Sans", 14);
+   efl_text_font_family_set(en, "Sans");
+   efl_text_font_size_set(en, 14);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_text_multiline_set(en, EINA_TRUE);
 
@@ -76,7 +77,8 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
          "You can use the text -> markup helper\nto make coding easier.");
    efl_text_markup_set(en, markup);
    free(markup);
-   efl_text_font_set(en, "Sans", 14);
+   efl_text_font_family_set(en, "Sans");
+   efl_text_font_size_set(en, 14);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_text_multiline_set(en, EINA_TRUE);
 
@@ -85,7 +87,8 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
          "You can use markup -&gt; text helpers<ps>to make coding easier.");
    efl_text_set(en, markup);
    free(markup);
-   efl_text_font_set(en, "Sans", 14);
+   efl_text_font_family_set(en, "Sans");
+   efl_text_font_size_set(en, 14);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_text_multiline_set(en, EINA_TRUE);
 }
@@ -161,7 +164,8 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
 
-   efl_text_font_set(en, "Sans", 12);
+   efl_text_font_family_set(en, "Sans");
+   efl_text_font_size_set(en, 12);
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
    efl_text_normal_color_set(en, 255, 255, 255, 255);
 

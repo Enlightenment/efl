@@ -154,7 +154,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
              txt = efl_add(EFL_UI_TEXT_CLASS, ibox);
              efl_gfx_hint_weight_set(txt, 0.95, EFL_GFX_HINT_EXPAND);
-             efl_text_halign_set(txt, 0.2);
+             efl_text_horizontal_align_set(txt, 0.2);
              efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
              snprintf(buf, sizeof(buf), "placeholder style item [%d]", i);
              efl_text_set(txt, buf);
@@ -232,7 +232,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    /*select mode */
    txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
    efl_gfx_hint_weight_set(txt, EFL_GFX_HINT_EXPAND, 0.01);
-   efl_text_halign_set(txt, 0.02);
+   efl_text_horizontal_align_set(txt, 0.02);
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
    efl_text_set(txt, "Select Mode");
    efl_pack_end(wbox, txt);
@@ -260,7 +260,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
    efl_gfx_hint_weight_set(txt, EFL_GFX_HINT_EXPAND, 0.01);
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
-   efl_text_halign_set(txt, 0.02);
+   efl_text_horizontal_align_set(txt, 0.02);
    efl_text_set(txt, "Item Scroll");
    efl_pack_end(wbox, txt);
 

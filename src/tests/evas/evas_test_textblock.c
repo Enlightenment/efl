@@ -4528,20 +4528,27 @@ EFL_START_TEST(efl_text_font)
 
    const char * font;
    int font_size;
-   efl_text_font_set(txt, "Sans", 20);
-   efl_text_font_set(txt, NULL, 0);
+   efl_text_font_family_set(txt, "Sans");
+   efl_text_font_size_set(txt, 20);
+   efl_text_font_family_set(txt, NULL);
+   efl_text_font_size_set(txt, 0);
 
-   efl_text_font_get(txt, &font, &font_size);
+   font = efl_text_font_family_get(txt);
+   font_size = efl_text_font_size_get(txt);
    fail_if(20 != font_size);
    fail_if(strcmp(font,"Sans"));
 
-   efl_text_font_set(txt, NULL, 30);
-   efl_text_font_get(txt, &font, &font_size);
+   efl_text_font_family_set(txt, NULL);
+   efl_text_font_size_set(txt, 30);
+   font = efl_text_font_family_get(txt);
+   font_size = efl_text_font_size_get(txt);
    fail_if(30 != font_size);
    fail_if(strcmp(font,"Sans"));
 
-   efl_text_font_set(txt, "arial", 0);
-   efl_text_font_get(txt, &font, &font_size);
+   efl_text_font_family_set(txt, "arial");
+   efl_text_font_size_set(txt, 0);
+   font = efl_text_font_family_get(txt);
+   font_size = efl_text_font_size_get(txt);
    fail_if(30 != font_size);
    fail_if(strcmp(font,"arial"));
 

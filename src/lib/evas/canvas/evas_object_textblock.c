@@ -15971,20 +15971,16 @@ _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Text_Data *o)
 /* Efl.Text.Font interface implementation */
 
 static void
-_efl_canvas_text_efl_text_font_font_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *font EINA_UNUSED, int size EINA_UNUSED)
+_efl_canvas_text_efl_text_font_font_family_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *font)
 {
    ASYNC_BLOCK;
    Eina_Bool changed = EINA_FALSE;
 
    Eina_Stringshare *nfont;
 
-   if (size > 0 && o->default_format.info.size != size)
-     {
-        o->default_format.info.size = size;
-        changed = EINA_TRUE;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(font);
 
-   if (font && o->default_format.info.font != font)
+   if (_FMT_INFO(font) != font && !eina_streq(_FMT_INFO(font), font))
      {
         nfont = eina_stringshare_add(font);
         if (nfont == _FMT_INFO(font))
@@ -16006,11 +16002,28 @@ _efl_canvas_text_efl_text_font_font_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Dat
      }
 }
 
-static void
-_efl_canvas_text_efl_text_font_font_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char **font EINA_UNUSED, int *size EINA_UNUSED)
+static const char *
+_efl_canvas_text_efl_text_font_font_family_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 {
-   if (font) *font = o->default_format.info.font;
-   if (size) *size = o->default_format.info.size;
+   return o->default_format.info.font;
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o, int size)
+{
+   ASYNC_BLOCK;
+   EINA_SAFETY_ON_FALSE_RETURN(size > 0);
+   if (o->default_format.info.size != size)
+     {
+        o->default_format.info.size = size;
+        _canvas_text_format_changed(obj, o);
+     }
+}
+
+static Efl_Font_Size
+_efl_canvas_text_efl_text_font_font_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+{
+   return o->default_format.info.size;
 }
 
 static void
@@ -16583,7 +16596,7 @@ _efl_canvas_text_efl_text_format_multiline_get(const Eo *obj EINA_UNUSED, Efl_Ca
 }
 
 static void
-_efl_canvas_text_efl_text_format_halign_auto_type_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
+_efl_canvas_text_efl_text_format_horizontal_align_auto_type_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
 {
    ASYNC_BLOCK;
    if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE)
@@ -16605,7 +16618,7 @@ _efl_canvas_text_efl_text_format_halign_auto_type_set(Eo *obj, Efl_Canvas_Text_D
 }
 
 static Efl_Text_Format_Horizontal_Alignment_Auto_Type
-_efl_canvas_text_efl_text_format_halign_auto_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+_efl_canvas_text_efl_text_format_horizontal_align_auto_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 {
    Efl_Text_Format_Horizontal_Alignment_Auto_Type ret =
       EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE;
@@ -16626,7 +16639,7 @@ _efl_canvas_text_efl_text_format_halign_auto_type_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o,
+_efl_canvas_text_efl_text_format_horizontal_align_set(Eo *obj, Efl_Canvas_Text_Data *o,
       double value)
 {
    ASYNC_BLOCK;
@@ -16636,13 +16649,13 @@ _efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o,
 }
 
 static double
-_efl_canvas_text_efl_text_format_halign_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+_efl_canvas_text_efl_text_format_horizontal_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
    return _FMT(halign);
 }
 
 static void
-_efl_canvas_text_efl_text_format_valign_set(Eo *obj, Efl_Canvas_Text_Data *o,
+_efl_canvas_text_efl_text_format_vertical_align_set(Eo *obj, Efl_Canvas_Text_Data *o,
       double value)
 {
    ASYNC_BLOCK;
@@ -16654,7 +16667,7 @@ _efl_canvas_text_efl_text_format_valign_set(Eo *obj, Efl_Canvas_Text_Data *o,
 }
 
 static double
-_efl_canvas_text_efl_text_format_valign_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+_efl_canvas_text_efl_text_format_vertical_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
    return o->valign;
 }
