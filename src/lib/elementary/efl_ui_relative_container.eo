@@ -1,5 +1,5 @@
 import efl_gfx_types;
-class @beta Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout, Efl.Pack
+class Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout, Efl.Pack
 {
    [[The relative container class.
 
