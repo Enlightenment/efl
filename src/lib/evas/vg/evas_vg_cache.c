@@ -432,8 +432,17 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
    if (!vfd) return NULL;
 
    //No need to update.
-   if (!vfd->anim_data && vg_entry->root)
-     return vg_entry->root;
+   if (vfd->anim_data)
+     {
+        if (vg_entry->root &&
+            vfd->anim_data->frame_num == frame_num)
+          return vg_entry->root;
+     }
+   else
+     {
+        if (vg_entry->root)
+          return vg_entry->root;
+     }
 
    if (!vfd->static_viewbox)
      {
