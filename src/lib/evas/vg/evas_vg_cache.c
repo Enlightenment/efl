@@ -154,9 +154,10 @@ _evas_cache_vg_entry_free_cb(void *data)
         if (vg_entry->vfd->ref <= 0)
           {
              Eina_Strbuf *hash_key = eina_strbuf_new();
-             eina_strbuf_append_printf(hash_key, "%s/%s",
+             eina_strbuf_append_printf(hash_key, "%s/%s/%p",
                                        eina_file_filename_get(vg_entry->file),
-                                       vg_entry->key);
+                                       vg_entry->key,
+                                       vg_entry->evas);
              if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
                ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
              eina_strbuf_free(hash_key);
@@ -281,13 +282,13 @@ evas_cache_vg_shutdown(void)
 }
 
 Vg_File_Data *
-evas_cache_vg_file_open(const Eina_File *file, const char *key)
+evas_cache_vg_file_open(const Eina_File *file, const char *key, Evas *e)
 {
    Vg_File_Data *vfd;
    Eina_Strbuf *hash_key;
 
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%s/%s", eina_file_filename_get(file), key);
+   eina_strbuf_append_printf(hash_key, "%s/%s/%p", eina_file_filename_get(file), key, e);
    vfd = eina_hash_find(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key));
    if (!vfd)
      {
@@ -340,7 +341,7 @@ evas_cache_vg_entry_create(Evas *evas,
    eina_strbuf_free(hash_key);
    vg_entry->ref++;
 
-   vg_entry->vfd = evas_cache_vg_file_open(file, key);
+   vg_entry->vfd = evas_cache_vg_file_open(file, key, vg_entry->evas);
    //No File??
    if (!vg_entry->vfd)
      {
@@ -483,7 +484,7 @@ Eina_Bool
 evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Vg_File_Data *vfd =
-      evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
+      evas_cache_vg_file_open(vg_entry->file, vg_entry->key, vg_entry->evas);
 
    if (!vfd) return EINA_FALSE;
 
