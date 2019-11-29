@@ -36,7 +36,7 @@ struct @beta Efl.Net.Control.Agent_Request_Input {
     access_point: Efl.Net.Control.Access_Point; [[The access point which triggered this request.]]
     fields: Efl.Net.Control.Agent_Request_Input_Field; [[Bitwise OR of fields present in this request.]]
     passphrase_type: string; [[Extra detail for the passphrase field, such as wep, psk, response (IEEE802.X GTC/OTP), string...]]
-    informational: list<ptr(Efl.Net.Control.Agent_Request_Input_Information)>; [[Such as the previous passphrase, VPN host]]
+    informational: list<Efl.Net.Control.Agent_Request_Input_Information>; [[Such as the previous passphrase, VPN host]]
 }
 
 struct @beta Efl.Net.Control.Agent_Error {

@@ -57,7 +57,7 @@ class @beta Efl.Observable extends Efl.Object {
       iterator_tuple_new {
          [[Return a new iterator associated to this observable.
          ]]
-         return: iterator<ptr(Efl.Observable_Tuple)> @move; [[Iterator for observer]]
+         return: iterator<Efl.Observable_Tuple> @move; [[Iterator for observer]]
       }
    }
    implements {

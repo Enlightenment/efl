@@ -17,7 +17,7 @@ function @beta EflIoPath {
 function @beta EflIoDirectInfo {
   [[EflIoDirectInfo function]]
   params {
-     @in entries: array<ptr(Eina.File_Direct_Info)>; [[Accessor to an array of info.]]
+     @in entries: array<Eina.File_Direct_Info>; [[Accessor to an array of info.]]
   }
 };
 

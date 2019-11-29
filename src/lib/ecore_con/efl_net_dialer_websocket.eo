@@ -260,7 +260,7 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
 
         request_headers_get {
             [[Returns an iterator to the key-value pairs for request headers]]
-            return: iterator<ptr(Efl.Net.Http.Header)> @move @no_unused; [[Iterator to key value pairs]]
+            return: iterator<Efl.Net.Http.Header> @move @no_unused; [[Iterator to key value pairs]]
         }
 
         @property cookie_jar {
