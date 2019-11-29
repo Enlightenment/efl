@@ -706,6 +706,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_position_single_ite
      EINA_SAFETY_ON_FALSE_RETURN_VAL(group_consumed_ids == 0, EINA_RECT(0, 0, 0, 0));
 
    int columns = pd->viewport.w/pd->max_min_size.w;
+   if (columns == 0) return EINA_RECT(0, 0, 0, 0);
    int sub_pos_id = idx - group_consumed_ids;
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
