@@ -336,7 +336,7 @@ _generate_animated_thumb(struct _emotion_plugin *_plugin)
    Ethumb *e = _plugin->e;
 
    snprintf(buf, sizeof(buf),
-            "%s/ethumb/modules/emotion/" MODULE_ARCH "/template.edj",
+            "%s/ethumb/modules/emotion/" MODULE_ARCH "/emotion.edj",
             eina_prefix_lib_get(_pfx));
    ethumb_thumb_path_get(e, &thumb_path, NULL);
    thumb_dir = ecore_file_dir_get(thumb_path);

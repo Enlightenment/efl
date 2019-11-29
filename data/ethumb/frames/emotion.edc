@@ -1,5 +1,4 @@
 collections {
-
    group {
       name: "movie/thumb";
 

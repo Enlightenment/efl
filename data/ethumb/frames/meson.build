@@ -12,3 +12,18 @@ custom_target('edje_cc_ethumb_frame',
     install : true,
     install_dir : join_paths(dir_data, 'ethumb', 'frames'),
 )
+
+emotion_ethumb_frame = files('emotion.edc')
+
+custom_target('edje_cc_emotion_ethumb',
+    input : emotion_ethumb_frame,
+    output : '@BASENAME@.edj',
+    command : edje_cc_exe + [ '-beta', '-fastcomp',
+              '-sd', join_paths(meson.current_source_dir()),
+              '-id', join_paths(meson.current_source_dir()),
+              '-fd', join_paths(meson.current_source_dir()),
+              '@INPUT@', '@OUTPUT@'],
+    depends : edje_depends,
+    install : true,
+    install_dir : join_paths(dir_lib, 'ethumb', 'modules', 'emotion', version_name),
+)
