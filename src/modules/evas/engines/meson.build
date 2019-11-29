@@ -44,7 +44,7 @@ foreach engine_conf : engines
     build = get_option(engine_conf[1][0])
   endif
   if build
-    engine_include_dir = []
+    engine_include_dir = [evas_include_directories]
     engine_src = []
     engine_deps = []
     engine_dep = declare_dependency(

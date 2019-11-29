@@ -9,8 +9,8 @@ foreach loader_inst : evas_image_savers_file
       evas_package_modules = join_paths(dir_lib, 'evas', 'modules')
       mod_install_dir = join_paths(evas_package_modules, 'image_savers', loader, version_name)
       shared_module('shared_saver_'+loader, file,
-        include_directories : config_dir,
-        dependencies : [eina, evas] + loader_deps,
+        include_directories : config_dir + evas_include_directories,
+        dependencies : [eina, evas_deps, evas] + loader_deps,
         install : true,
         install_dir : mod_install_dir,
         name_suffix : sys_mod_extension

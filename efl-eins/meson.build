@@ -11,14 +11,15 @@ foreach package : subprojects
   package_name = package[0]
   if package[1].length() == 0 or get_option(package[1][0])
     if (package[3])
-      selected_overall_efl_deps += get_variable(package_name)
+      selected_overall_efl_deps += get_variable(package_name + '_deps')
     endif
   endif
 endforeach
 
 efl_eins = declare_dependency(
-  include_directories: config_dir,
+  include_directories: overall_efl_include_directories + config_dir,
   dependencies : selected_overall_efl_deps,
+  link_with : efl_eins_lib,
   version: version_major + '.' + version_minor + '.' + version_micro,
 )
 

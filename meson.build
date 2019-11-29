@@ -316,6 +316,10 @@ ecore_audio = declare_dependency()
 
 test_dirs = []
 example_dirs = []
+module_dirs = []
+bin_dirs = []
+benchmark_dirs = []
+
 tmp_empty = declare_dependency()
 overall_efl_source = []
 overall_efl_deps = []
@@ -370,19 +374,23 @@ foreach package : subprojects
       overall_efl_deps += get_variable(package_name)
       overall_efl_deps += get_variable(package_name+'_deps')
       overall_efl_pub_deps += get_variable(package_name+'_pub_deps')
-
+      overall_efl_include_directories += include_directories(join_paths('src', 'lib', package_name))
       foreach sub : package_header_subdirs
          overall_efl_include_directories += include_directories(join_paths('src', 'lib', package_name, sub))
       endforeach
     endif
     if (package[2])
-       subdir(join_paths(local_module, package_name))
+       module_dirs += package_name
     endif
     if (package[4])
-       subdir(join_paths(local_bin, package_name))
+      if (package_name == 'eolian')
+        subdir(join_paths(local_bin, package_name))
+      else
+        bin_dirs += package_name
+      endif
     endif
     if (package[5])
-       subdir(join_paths(local_benchmark, package_name))
+       benchmark_dirs += package_name
     endif
     if (package[6])
        test_dirs += [package_name]
@@ -426,6 +434,20 @@ foreach package : subprojects
     message(package_name+' disabled!')
   endif
 
+endforeach
+
+subdir(join_paths('efl-eins'))
+
+foreach module : module_dirs
+  subdir(join_paths(local_module, module))
+endforeach
+
+foreach binn : bin_dirs
+  subdir(join_paths(local_bin, binn))
+endforeach
+
+foreach benchmark : benchmark_dirs
+  subdir(join_paths(local_benchmark, benchmark))
 endforeach
 
 #build this later, as the debug services are depending on ecore
@@ -505,7 +527,6 @@ configure_file(
 
 subdir(join_paths('systemd-services'))
 subdir(join_paths('dbus-services'))
-subdir(join_paths('efl-eins'))
 
 #output the three new efl-* .pc files
 efl_20_pc_files = [
