@@ -5,40 +5,44 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Text_Style, Efl.Text_Format,
                        Efl.Text_Markup, Efl.Ui.I18n
 {
-   [[Efl canvas text class]]
+   [[This is the Canvas-level text class. This class only takes care of rendering text,
+     if you need user interaction consider the classes in $Efl.Ui.]]
    methods {
       @property is_empty {
-         [[Whether the object is empty (no text) or not
+         [[Whether the object is empty (no text) or not.
          ]]
          get {
          }
          values {
-            is_empty: bool; [[$true if empty, $false otherwise]]
+            is_empty: bool; [[$true if empty.]]
          }
       }
       cursor_add {
-         [[Add cursor that will manipulate and iterate content of the text object
-           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.]]
+         [[Adds an existing cursor to the text object.
+           If the cursor already belonged to another text object it will be reassigned to the new one.
+           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.
+         ]]
          params {
-            cursor: Efl.Text.Cursor; [[Text cursor.]]
+            cursor: Efl.Text.Cursor; [[The text cursor to use.]]
          }
       }
       cursor_create {
-         [[ Create new cursor and add it to text object
+         [[Creates a new cursor and adds it to the text object.
+           This cursor can be used to manipulate and iterate the content of the text object.
          ]]
-         return: Efl.Text.Cursor @move; [[Text cursor.]]
+         return: Efl.Text.Cursor @move; [[The created text cursor.]]
       }
       visible_range_get {
          [[Returns the currently visible range.
 
-           The given $start and $end cursor act like out-variables here,
-           as they are set to the positions of the start and the end of the
+           The given $start and $end cursors are output variables:
+           they are set to the positions of the start and the end of the
            visible range in the text, respectively.
          ]]
-         return: bool; [[$true on success, $false otherwise]]
+         return: bool; [[$true on success.]]
          params {
-            @in start: Efl.Text.Cursor; [[Range start position]]
-            @in end: Efl.Text.Cursor; [[Range end position]]
+            @in start: Efl.Text.Cursor; [[Range start position.]]
+            @in end: Efl.Text.Cursor; [[Range end position.]]
          }
       }
       @property style_insets {
@@ -48,92 +52,97 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          ]]
          get {}
          values {
-            l: int; [[Left padding]]
-            r: int; [[Right padding]]
-            t: int; [[Top padding]]
-            b: int; [[Bottom padding]]
+            l: int; [[Left padding.]]
+            r: int; [[Right padding.]]
+            t: int; [[Top padding.]]
+            b: int; [[Bottom padding.]]
          }
       }
       @property bidi_delimiters {
-         [[BiDi delimiters are used for in-paragraph separation of bidi
+         [[BiDi delimiters are used for in-paragraph separation of bidirectional
            segments. This is useful, for example, in the recipient fields of
-           e-mail clients where bidi oddities can occur when mixing RTL
-           and LTR.
+           e-mail clients where bidi oddities can occur when mixing RTL (right-to-left)
+           and LTR (left-to-right) text.
          ]]
          set {}
          get {}
          values {
-            delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty]]
+            delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
          }
       }
       @property newline_as_paragraph_separator {
-         [[When $true, newline character will behave as a paragraph separator.
+         [[When $true, the newline character will behave as a paragraph separator.
          ]]
          set {}
          get {}
          values {
-            mode: bool; [[$true for legacy mode, $false otherwise]]
+            mode: bool; [[$true for legacy mode, $false otherwise.]]
          }
       }
       style_apply {
-         [[apply the style for this object, sent style member will override old ones, other styles will not be affected.
-         similar to setting style using functions (for example font_slant_set, wrap_set).]]
+         [[Applies a style to the text object. Applied style attributes override old ones, leaving other attributes
+         unaffected.
+         This is similar to setting individual style attributes using properties like @Efl.Text_Font.font_slant or
+         @Efl.Text_Format.wrap.]]
          params {
-            @in style: string; [[A whitespace-separated list of $[property=value] pairs, for example, $[font=sans size=30].]]
+            @in style: string; [[A whitespace-separated list of $[property=value] pairs, for example,
+                                 $[font=sans size=30].]]
          }
       }
       @property all_styles {
-         [[Get all styles belong to this object as string (default styles plus styles 
-         from style_apply or style functions (for example font_slant_set, wrap_set).]]
+         [[A string representing the complete set of styles applied to this text object.
+           This includes the default attributes plus any additional style applied with @.style_apply
+           or individual style properties like @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap.]]
          get {}
          values {
-            style: string; [[All styles, should not be freed.]]
+            style: string; [[A whitespace-separated list of $[property=value] pairs, for example,
+                                 $[font=sans size=30]. Do not free.]]
          }
       }
       @property size_formatted {
-         [[The formatted width and height.
+         [[The formatted width and height of this text block.
 
            This calculates the actual size after restricting the
-           textblock to the current size of the object.
+           text block to the current size of the object.
 
-           The main difference between this and @.size_native.get
-           is that the "native" function does not wrapping into account
-           it just calculates the real width of the object if it was
-           placed on an infinite canvas, while this function gives the
-           size after wrapping according to the size restrictions of the
+           The main difference between this and @.size_native
+           is that the "native" function does not take wrapping into account:
+           it just calculates the real width of the object as if it was
+           placed on an infinite canvas, while @.size_formatted gives the
+           size after wrapping text according to the size restrictions of the
            object.
 
-           For example for a textblock containing the text:
+           For example a text block containing the text:
            "You shall not pass!" with no margins or padding and assuming
            a monospace font and a size of 7x10 char widths (for simplicity)
            has a native size of 19x1 and a formatted size of 5x4.
          ]]
          get {}
          values {
-            size: Eina.Size2D; [[The size of the object]]
+            size: Eina.Size2D; [[The formatted size of the object (after wrapping).]]
          }
       }
       @property size_native {
-         [[The native width and height.
+         [[The native width and height of this text block.
 
            This calculates the actual size without taking account the
            current size of the object.
 
-           The main difference between this and @.size_formatted.get
-           is that the "native" function does not take wrapping into
-           account it just calculates the real width of the object if
-           it was placed on an infinite canvas, while the "formatted"
-           function gives the size after  wrapping text according to
-           the size restrictions of the object.
+           The main difference between this and @.size_formatted
+           is that the "native" function does not take wrapping into account:
+           it just calculates the real width of the object as if it was
+           placed on an infinite canvas, while @.size_formatted gives the
+           size after wrapping text according to the size restrictions of the
+           object.
 
-           For example for a textblock containing the text:
+           For example a text block containing the text:
            "You shall not pass!" with no margins or padding and assuming
            a monospace font and a size of 7x10 char widths (for simplicity)
            has a native size of 19x1 and a formatted size of 5x4.
          ]]
          get {}
          values {
-            size: Eina.Size2D; [[The size of the object]]
+            size: Eina.Size2D; [[The native size of the object (without wrapping).]]
          }
       }
       // Obstacles
@@ -145,17 +154,17 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            position of the obstacle.
          ]]
          params {
-            @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object.]]
          }
-         return: bool; [[$true on success, $false otherwise.]]
+         return: bool; [[$true on success.]]
       }
       obstacle_del {
          [[Removes $eo_obs from observation during text layout.
          ]]
          params {
-            @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object.]]
          }
-         return: bool; [[$true on success, $false otherwise.]]
+         return: bool; [[$true on success.]]
       }
       obstacles_update {
          [[Triggers for relayout due to obstacles' state change.
@@ -166,7 +175,7 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            layout.
 
            For example: if you have just repositioned the obstacles to
-           differrent coordinates relative to the textblock, you need to
+           different coordinates relative to the text block, you need to
            call this so it will consider this new state and will relayout
            the text.
          ]]
@@ -175,9 +184,9 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          [[Requests to layout the text off the mainloop.
 
            Once layout is complete, the result is returned as @Eina.Rect,
-           with w, h fields set.
+           with the $w and $h fields set.
          ]]
-         return: future<Eina.Rect>; [[Future for layout result]]
+         return: future<Eina.Rect>; [[Future for layout result.]]
       }
    }
    implements {
@@ -191,7 +200,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_state_prepare;
-      Efl.Text_Font.font { get; set; }
+      Efl.Text_Font.font_family { get; set; }
+      Efl.Text_Font.font_size { get; set; }
       Efl.Text_Font.font_source { get; set; }
       Efl.Text_Font.font_fallbacks { get; set; }
       Efl.Text_Font.font_lang { get; set; }
@@ -221,9 +231,9 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Format.ellipsis { get; set; }
       Efl.Text_Format.wrap { get; set; }
       Efl.Text_Format.multiline { get; set; }
-      Efl.Text_Format.halign { get; set; }
-      Efl.Text_Format.halign_auto_type { get; set; }
-      Efl.Text_Format.valign { get; set; }
+      Efl.Text_Format.horizontal_align { get; set; }
+      Efl.Text_Format.horizontal_align_auto_type { get; set; }
+      Efl.Text_Format.vertical_align { get; set; }
       Efl.Text_Format.linegap { get; set; }
       Efl.Text_Format.linerelgap { get; set; }
       Efl.Text_Format.tabstops { get; set; }

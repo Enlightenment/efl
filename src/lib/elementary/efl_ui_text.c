@@ -2088,7 +2088,8 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
    font_name = edje_object_data_get(wd->resize_obj, "font.name");
    font_size = edje_object_data_get(wd->resize_obj, "font.size");
    font_size_n = font_size ? atoi(font_size) : 0;
-   efl_text_font_set(sd->text_obj, font_name, font_size_n);
+   efl_text_font_family_set(sd->text_obj, font_name);
+   efl_text_font_size_set(sd->text_obj, font_size_n);
 
    // color
    if (disabled)
@@ -2104,7 +2105,8 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
    font_name = edje_object_data_get(wd->resize_obj, "guide.font.name");
    font_size = edje_object_data_get(wd->resize_obj, "guide.font.size");
    font_size_n = font_size ? atoi(font_size) : 0;
-   efl_text_font_set(sd->text_guide_obj, font_name, font_size_n);
+   efl_text_font_family_set(sd->text_guide_obj, font_name);
+   efl_text_font_size_set(sd->text_guide_obj, font_size_n);
 
    colorcode = NULL;
    // color

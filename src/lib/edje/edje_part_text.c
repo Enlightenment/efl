@@ -149,8 +149,8 @@ _efl_canvas_layout_part_text_efl_text_format_ellipsis_get(const Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_font_font_set(Eo *obj,
-      void *_pd EINA_UNUSED, const char *font, Efl_Font_Size size)
+_efl_canvas_layout_part_text_efl_text_font_font_family_set(Eo *obj,
+      void *_pd EINA_UNUSED, const char *font)
 {
    Edje_User_Defined *eud;
 
@@ -161,17 +161,43 @@ _efl_canvas_layout_part_text_efl_text_font_font_set(Eo *obj,
    eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
 
    eud->u.text_style.types |= EDJE_PART_TEXT_PROP_FONT;
-   efl_text_font_set(pd->rp->object, font, size);
+   efl_text_font_family_set(pd->rp->object, font);
+}
+
+EOLIAN static const char *
+_efl_canvas_layout_part_text_efl_text_font_font_family_get(const Eo *obj,
+      void *_pd EINA_UNUSED)
+{
+   PROXY_DATA_GET(obj, pd);
+   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return NULL;
+
+   return efl_text_font_family_get(pd->rp->object);
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_font_font_get(const Eo *obj,
-      void *_pd EINA_UNUSED, const char **font, Efl_Font_Size *size)
+_efl_canvas_layout_part_text_efl_text_font_font_size_set(Eo *obj,
+      void *_pd EINA_UNUSED, Efl_Font_Size size)
 {
+   Edje_User_Defined *eud;
+
    PROXY_DATA_GET(obj, pd);
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
 
-   efl_text_font_get(pd->rp->object, font, size);
+
+   eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
+
+   eud->u.text_style.types |= EDJE_PART_TEXT_PROP_FONT;
+   efl_text_font_size_set(pd->rp->object, size);
+}
+
+EOLIAN static Efl_Font_Size
+_efl_canvas_layout_part_text_efl_text_font_font_size_get(const Eo *obj,
+      void *_pd EINA_UNUSED)
+{
+   PROXY_DATA_GET(obj, pd);
+   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return 0;
+
+   return efl_text_font_size_get(pd->rp->object);
 }
 
 EOLIAN static void
@@ -372,8 +398,8 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
         Edje_Part_Text_Prop *prop;
 
         prop = _prop_new(props, EDJE_PART_TEXT_PROP_FONT);
-        efl_text_font_get(rp->object, &prop->val.font.font,
-              &prop->val.font.size);
+        prop->val.font.font = efl_text_font_family_get(rp->object);
+        prop->val.font.size = efl_text_font_size_get(rp->object);
      }
 
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_SHADOW_DIRECTION)
@@ -484,9 +510,11 @@ _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj,
         break;
 
       case EDJE_PART_TEXT_PROP_FONT:
-        efl_text_font_set(efl_part(obj,
+        efl_text_font_family_set(efl_part(obj,
+                 eud->part), 
+              prop->val.font.font);
+        efl_text_font_size_set(efl_part(obj,
                  eud->part),
-              prop->val.font.font,
               prop->val.font.size);
         break;
 

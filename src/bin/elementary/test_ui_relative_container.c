@@ -156,7 +156,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
    efl_add(EFL_UI_TEXT_CLASS, hbox,
            efl_text_set(efl_added, text),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
-           efl_text_valign_set(efl_added, 0.5),
+           efl_text_vertical_align_set(efl_added, 0.5),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(40, 0)),
            efl_gfx_hint_weight_set(efl_added, 0, EFL_GFX_HINT_EXPAND),
            efl_pack(hbox, efl_added));
@@ -210,14 +210,14 @@ _button_frame_add(Eo *box, Eo *btn)
    efl_add(EFL_UI_TEXT_CLASS, hbox,
            efl_text_set(efl_added, "to"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
-           efl_text_halign_set(efl_added, 0.5),
+           efl_text_horizontal_align_set(efl_added, 0.5),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(60, 0)),
            efl_gfx_hint_weight_set(efl_added, 0, EFL_GFX_HINT_EXPAND),
            efl_pack(hbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
            efl_text_set(efl_added, "relative"),
-           efl_text_halign_set(efl_added, 0.5),
+           efl_text_horizontal_align_set(efl_added, 0.5),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(hbox, efl_added));
 

@@ -1,4 +1,3 @@
-// src/lib/efl/interfaces/efl_text_font.eo
 import efl_gfx_types;
 enum @beta Efl.Text_Font_Weight {
    [[Type of font weight]]
@@ -52,21 +51,18 @@ interface @beta Efl.Text_Font {
    ]]
    c_prefix: efl_text;
    methods {
-      @property font {
-         [[The font family, filename and size for a given text object.
+      @property font_family {
+         [[The font family, filename for a given text object.
 
-           This property controls the font name and size of a text object.
+           This property controls the font name of a text object.
            The font string has to follow fontconfig's convention for
            naming fonts, as it's the underlying library used to query system
-           fonts by Evas (see the fc-list command's output, on your system,
-           to get an idea). Alternatively, youe can use the full path to a font
+           fonts by EFL (see the $[fc-list] command's output, on your system,
+           to get an idea). Alternatively, you can use the full path to a font
            file.
 
-           To skip changing font family pass null as font family.
-           To skip changing font size pass 0 as font size.
-
            When reading it, the font name string is still owned by
-           Evas and should not be freed.
+           EFL and should not be freed.
            See also @.font_source.
          ]]
          set {
@@ -75,9 +71,21 @@ interface @beta Efl.Text_Font {
          }
          values {
             font: string; [[The font family name or filename.]]
+         }
+      }
+
+      @property font_size {
+         [[The font size for a given text object.
+
+           This property controls the font size of a text object.
+         ]]
+         set {}
+         get {}
+         values {
             size: Efl.Font.Size; [[The font size, in points.]]
          }
       }
+
       @property font_source {
          [[The font (source) file to be used on a given text object.
 
@@ -85,7 +93,7 @@ interface @beta Efl.Text_Font {
            given text object, overriding system lookup, which will first
            occur in the given file's contents.
 
-           See also @.font.
+           See also @.font_family.
          ]]
          set {
          }

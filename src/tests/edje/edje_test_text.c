@@ -161,7 +161,8 @@ START_TEST(edje_test_text_font)
    efl_file_key_set(layout, "test");
    ck_assert(!efl_file_load(layout));
 
-   efl_text_font_set(efl_part(layout, "text"), "Sans", 14);
+   efl_text_font_family_set(efl_part(layout, "text"), "Sans");
+   efl_text_font_size_set(efl_part(layout, "text"), 14);
 
 }
 END_TEST
@@ -288,7 +289,8 @@ _basic_check(Eo *layout, Eina_Bool set)
           {
              efl_text_wrap_set(efl_part(layout, "text"), EFL_TEXT_FORMAT_WRAP_WORD);
              efl_text_ellipsis_set(efl_part(layout, "text"), 1.0);
-             efl_text_font_set(efl_part(layout, "text"), "Sans", 12);
+             efl_text_font_family_set(efl_part(layout, "text"), "Sans");
+             efl_text_font_size_set(efl_part(layout, "text"), 12);
           }
 
         wrap = efl_text_wrap_get(efl_part(layout, "text"));
@@ -297,7 +299,8 @@ _basic_check(Eo *layout, Eina_Bool set)
         ellipsis = efl_text_ellipsis_get(efl_part(layout, "text"));
         ck_assert(EINA_DBL_EQ(ellipsis, 1.0));
 
-        efl_text_font_get(efl_part(layout, "text"), &font, &size);
+        font = efl_text_font_family_get(efl_part(layout, "text"));
+        size = efl_text_font_size_get(efl_part(layout, "text"));
         ck_assert_str_eq(font, "Sans");
         ck_assert_int_eq(size, 12);
      }

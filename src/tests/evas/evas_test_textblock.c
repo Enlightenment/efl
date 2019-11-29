@@ -4528,20 +4528,27 @@ EFL_START_TEST(efl_text_font)
 
    const char * font;
    int font_size;
-   efl_text_font_set(txt, "Sans", 20);
-   efl_text_font_set(txt, NULL, 0);
+   efl_text_font_family_set(txt, "Sans");
+   efl_text_font_size_set(txt, 20);
+   efl_text_font_family_set(txt, NULL);
+   efl_text_font_size_set(txt, 0);
 
-   efl_text_font_get(txt, &font, &font_size);
+   font = efl_text_font_family_get(txt);
+   font_size = efl_text_font_size_get(txt);
    fail_if(20 != font_size);
    fail_if(strcmp(font,"Sans"));
 
-   efl_text_font_set(txt, NULL, 30);
-   efl_text_font_get(txt, &font, &font_size);
+   efl_text_font_family_set(txt, NULL);
+   efl_text_font_size_set(txt, 30);
+   font = efl_text_font_family_get(txt);
+   font_size = efl_text_font_size_get(txt);
    fail_if(30 != font_size);
    fail_if(strcmp(font,"Sans"));
 
-   efl_text_font_set(txt, "arial", 0);
-   efl_text_font_get(txt, &font, &font_size);
+   efl_text_font_family_set(txt, "arial");
+   efl_text_font_size_set(txt, 0);
+   font = efl_text_font_family_get(txt);
+   font_size = efl_text_font_size_get(txt);
    fail_if(30 != font_size);
    fail_if(strcmp(font,"arial"));
 
@@ -4587,6 +4594,21 @@ EFL_START_TEST(efl_canvas_text_style)
 
    efl_canvas_text_style_apply(txt, "backing=on");
    ck_assert_int_eq(efl_text_backing_type_get(txt), EFL_TEXT_STYLE_BACKING_TYPE_ENABLED);
+
+   efl_canvas_text_style_apply(txt, "style=far_soft_shadow");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
+
+   efl_canvas_text_style_apply(txt, "style=glow,top_right");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_GLOW);
+   ck_assert_int_eq(efl_text_shadow_direction_get(txt), EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
+
+   efl_canvas_text_style_apply(txt, "style=far_shadow,top");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW);
+   ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP);
+
+   efl_canvas_text_style_apply(txt, "style=soft_outline,top,bottom");
+   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE);
+   ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
 
    efl_canvas_text_style_apply(txt, "color=#EF596C");
    efl_text_normal_color_get(txt, &r, &g, &b, &a);

@@ -141,7 +141,8 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
    evas_obj_text_ellipsis_set(ep->object, params->type.text->ellipsis);
-   efl_text_font_set(ep->object, font, size);
+   efl_text_font_family_set(ep->object, font);
+   efl_text_font_size_set(ep->object, size);
    efl_text_set(ep->object, text);
    efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(sw,  sh));
 
@@ -342,16 +343,19 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
         /* the fit shoult not depend on font size, because it give the differet
          * size calculation. As base font size for calculate fit size I take
          * 10 (ten), because this value used for calculate fit by Y below */
-        efl_text_font_set(ep->object, font, 10);
+        efl_text_font_family_set(ep->object, font);
+        efl_text_font_size_set(ep->object, 10);
         part_get_geometry(ep, &tw, &th);
 
         size = (10 * sw) / tw;
-        efl_text_font_set(ep->object, font, size);
+        efl_text_font_family_set(ep->object, font);
+        efl_text_font_size_set(ep->object, size);
         part_get_geometry(ep, &tw, &th);
         while ((tw > sw) && (size > 1))
           {
              size--;
-             efl_text_font_set(ep->object, font, size);
+             efl_text_font_family_set(ep->object, font);
+             efl_text_font_size_set(ep->object, size);
              part_get_geometry(ep, &tw, &th);
           }
      }
@@ -368,7 +372,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
            if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
 
-           efl_text_font_set(ep->object, font, size);
+           efl_text_font_family_set(ep->object, font);
+           efl_text_font_size_set(ep->object, size);
            efl_text_set(ep->object, text);
         part_get_geometry(ep, &tw, &th);
 
@@ -390,7 +395,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                   else efl_text_font_source_set(ep->object, NULL);
 
                   if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
-                  efl_text_font_set(ep->object, font, size);
+                  efl_text_font_family_set(ep->object, font);
+                  efl_text_font_size_set(ep->object, size);
 
                   part_get_geometry(ep, &tw, &th);
                   if ((size > 0) && (th == 0)) break;
@@ -402,7 +408,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
              int current;
 
              if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
-             efl_text_font_set(ep->object, font, 10);
+             efl_text_font_family_set(ep->object, font);
+             efl_text_font_size_set(ep->object, 10);
 
              part_get_geometry(ep, &tw, &th);
 
@@ -424,7 +431,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                        current = (top + bottom) / 2;
 
                        if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
-                       efl_text_font_set(ep->object, font, current);
+                       efl_text_font_family_set(ep->object, font);
+                       efl_text_font_size_set(ep->object, current);
 
                        part_get_geometry(ep, &tw, &th);
 
@@ -440,7 +448,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                   current++;
 
                   if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
-                  efl_text_font_set(ep->object, font, current);
+                  efl_text_font_family_set(ep->object, font);
+                  efl_text_font_size_set(ep->object, current);
 
                   part_get_geometry(ep, &tw, &th);
                } while (th <= sh);
@@ -490,7 +499,8 @@ arrange_text:
 
    if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
 
-   efl_text_font_set(ep->object, font, size);
+   efl_text_font_family_set(ep->object, font);
+   efl_text_font_size_set(ep->object, size);
    efl_text_set(ep->object, text);
    part_get_geometry(ep, &tw, &th);
 
