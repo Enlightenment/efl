@@ -1,8 +1,4 @@
 group { name: "elm/naviframe/item/basic/default";
-   images.image: "vgrad_med_dark.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "shadow_vert.png" COMP;
    parts {
       // this set of limits and bottoms is evil - but it's a nasty construct
       // allowing EITHER the title and subtitle texts OR the prev/next button
@@ -134,11 +130,11 @@ group { name: "elm/naviframe/item/basic/default";
          scale: 1;
          description { state: "default" 0.0;
             rel1.relative: 0.0 0.0;
-            rel1.offset: 0 2;
+            rel1.offset: 4 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
+            rel2.offset: -5 4;
             align: 0.5 0.0;
-            color: FN_COL_DEFAULT_SOFT_SHADOW;
+            min: 40 24;
             text { font: FN; size: 8;
                text: SPACER_TEXT;
                text_class: "title_bar_sub";
@@ -151,16 +147,14 @@ group { name: "elm/naviframe/item/basic/default";
       }
       part { name: "title2"; type: TEXT;
          scale: 1;
-         effect: SOFT_SHADOW BOTTOM;
          description { state: "default" 0.0;
             color_class: "border_title_active";
             rel1.to_y: "title1";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -1;
+            rel1.offset: 0 0;
             rel2.to_y: "title1";
             rel2.offset: -1 -1;
             align: 0.5 0.0;
-            color: FN_COL_DEFAULT_SOFT_SHADOW;
             text { font: FNBD; size: 10;
                text: SPACER_TEXT;
                text_class: "title_bar";
@@ -176,11 +170,10 @@ group { name: "elm/naviframe/item/basic/default";
          description { state: "default" 0.0;
             rel1.to_y: "title2";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -3;
+            rel1.offset: 0 0;
             rel2.to_y: "title2";
-            rel2.offset: -1 -3;
+            rel2.offset: -1 -1;
             align: 0.5 0.0;
-            color: FN_COL_DEFAULT_SOFT_SHADOW;
             text { font: FN; size: 8;
                text: SPACER_TEXT;
                text_class: "title_bar_sub";
@@ -191,9 +184,13 @@ group { name: "elm/naviframe/item/basic/default";
             visible: 0;
          }
       }
-      
-      
+
       part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "top_clip"; type: RECT;
+         clip_to: "clip";
          description { state: "default" 0.0;
          }
       }
@@ -224,25 +221,6 @@ group { name: "elm/naviframe/item/basic/default";
             rel1.relative: 0.0 0.0;
          }
       }
-      part { name: "shadow"; mouse_events: 0;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-            image.normal: "shadow_vert.png";
-            rel1.to: "top";
-            rel1.relative: 0.0 1.0;
-            rel2.to: "top";
-            rel2.offset: -1 0;
-            fill.smooth: 0;
-            min: 0 20;
-            align: 0.5 0.0;
-            fixed: 1 1;
-         }
-         description { state: "title-hidden" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-      }
       part { name: "tophide0"; type: SPACER;
          description { state: "default" 0.0;
             rel1.to: "base";
@@ -257,16 +235,14 @@ group { name: "elm/naviframe/item/basic/default";
             rel2.to: "tophide0";
          }
       }
-      part { name: "top";
-         clip_to: "clip";
+      part { name: "top"; type: RECT;
+         scale: 1;
+         clip_to: "top_clip";
          description { state: "default" 0.0;
-            color_class: "border_top";
-            image.normal: "vgrad_med_dark.png";
+            color: 32 32 32 255;
             rel1.to: "base";
             rel2.to_x: "base";
             rel2.to_y: "bottom";
-            fill.smooth: 0;
-            TILED_HORIZ(120)
          }
          description { state: "title-hidden" 0.0;
             inherit: "default" 0.0;
@@ -280,42 +256,28 @@ group { name: "elm/naviframe/item/basic/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             color: 0 0 0 0;
-            rel1.to: "top";
-            rel2.to: "top";
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "top";
-            rel2.to: "top";
-            fill.smooth: 0;
+            rel.to: "top";
          }
       }
       part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SOFT_SHADOW BOTTOM;
          clip_to: "elements_clip";
          description { state: "default" 0.0;
-            color_class: "border_title_active_sub";
+            color: 255 255 255 255;
+            rel1.offset: 4 14;
             rel1.to_x: "base";
             rel1.to_y: "top";
-            rel1.relative: 0.0 0.5;
-            rel2.offset: 0 -1;
+            rel2.offset: -5 -15;
             rel2.to_x: "base";
             rel2.to_y: "top";
-            rel2.relative: 1.0 0.5;
             align: 0.5 0.5;
-            color: FN_COL_DEFAULT_SOFT_SHADOW;
             text { font: FNBD; size: 10;
                text_class: "title_bar";
                align: 0.5 0.5;
                min: 0 1;
             }
             fixed: 0 1;
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -324,24 +286,24 @@ group { name: "elm/naviframe/item/basic/default";
       }
       part { name: "elm.text.subtitle"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          clip_to: "elements_clip";
          description { state: "default" 0.0;
+            color: 160 160 160 255;
             rel1.to_x: "base";
-            rel1.to_y: "elm.text.title";
+            rel1.to_y: "top";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -3;
+            rel1.offset: 4 -5;
             rel2.to_x: "base";
-            rel2.to_y: "elm.text.title";
-            rel2.offset: -1 -3;
-            align: 0.5 0.0;
-            color: FN_COL_DEFAULT;
+            rel2.to_y: "top";
+            rel2.offset: -5 -5;
+            align: 0.5 1.0;
             text { font: FN; size: 8;
                text_class: "title_bar_sub";
-               align: 0.5 0.0;
+               align: 0.5 1.0;
                min: 0 1;
             }
             fixed: 0 1;
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -351,8 +313,7 @@ group { name: "elm/naviframe/item/basic/default";
       part { name: "buttons_clip"; type: RECT;
          clip_to: "elements_clip";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
          }
          description { state: "title-hidden" 0.0;
             inherit: "default" 0.0;
@@ -366,10 +327,10 @@ group { name: "elm/naviframe/item/basic/default";
             rel1.to_x: "base";
 //            rel1.to_y: "top";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.to_x: "base";
             rel2.to_y: "title3";
-            rel2.offset: -3 -1;
+            rel2.offset: -5 -5;
             align: 1.0 0.5;
             min: 26 26;
             max: 1 1;
@@ -386,9 +347,9 @@ group { name: "elm/naviframe/item/basic/default";
          description { state: "default" 0.0;
             rel1.to_x: "base";
 //            rel1.to_y: "top";
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -1;
+            rel2.offset: 4 -5;
             rel2.to_x: "base";
             rel2.to_y: "title3";
             align: 0.0 0.5;
@@ -408,10 +369,10 @@ group { name: "elm/naviframe/item/basic/default";
             rel1.to_x: "elm.swallow.prev_btn";
             rel1.to_y: "top";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.to_x: "elm.swallow.prev_btn";
             rel2.to_y: "top";
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             align: 0.0 0.5;
          }
@@ -420,27 +381,14 @@ group { name: "elm/naviframe/item/basic/default";
             rel1.to_x: "top";
             rel1.relative: 0.0 0.0;
             rel2.to_x: "top";
-            rel2.offset: -3 -3;
-           align: 0.5 0.5;
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         clip_to: "elements_clip";
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "top";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "top";
-            FIXED_SIZE(69, 5)
+            rel2.offset: -5 -5;
+            align: 0.5 0.5;
          }
       }
       part { name: "elements_clip"; type: RECT;
          clip_to: "clip";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -456,22 +404,18 @@ group { name: "elm/naviframe/item/basic/default";
       }
    }
    programs {
-      program {
-         signal: "elm,state,title,show"; source: "elm";
+      program { signal: "elm,state,title,show"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "top";
-         target: "shadow";
          target: "elm.swallow.content";
          target: "buttons_clip";
          target: "elm.swallow.prev_btn";
          target: "elm.swallow.next_btn";
       }
-      program {
-         signal: "elm,action,title,show"; source: "elm";
+      program { signal: "elm,action,title,show"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "top";
-         target: "shadow";
          target: "elm.swallow.content";
          after: "titleshow2";
       }
@@ -482,18 +426,15 @@ group { name: "elm/naviframe/item/basic/default";
          target: "elm.swallow.prev_btn";
          target: "elm.swallow.next_btn";
       }
-      program {
-         signal: "elm,state,title,hide"; source: "elm";
+      program { signal: "elm,state,title,hide"; source: "elm";
          action: STATE_SET "title-hidden" 0.0;
          target: "buttons_clip";
          target: "top";
-         target: "shadow";
          target: "elm.swallow.content";
          target: "elm.swallow.prev_btn";
          target: "elm.swallow.next_btn";
       }
-      program {
-         signal: "elm,action,title,hide"; source: "elm";
+      program { signal: "elm,action,title,hide"; source: "elm";
          action: STATE_SET "title-hidden" 0.0;
          target: "buttons_clip";
          target: "elm.swallow.prev_btn";
@@ -502,78 +443,66 @@ group { name: "elm/naviframe/item/basic/default";
       }
       program { name: "titlehide2";
          action: STATE_SET "title-hidden" 0.0;
-         transition: DECEL 0.5;
+         transition: DECEL 0.2;
          target: "top";
-         target: "shadow";
          target: "elm.swallow.content";
          after: "title_transition_finished";
       }
       program { name: "title_transition_finished";
          action: SIGNAL_EMIT "elm,action,title,transition,finished" "elm";
       }
-      program {
-         signal: "elm,state,prev_btn,show"; source: "elm";
+      program { signal: "elm,state,prev_btn,show"; source: "elm";
          action: STATE_SET "default" 0.0;
          filter: "elm.swallow.content" "default";
          target: "elm.swallow.prev_btn";
       }
-      program {
-         signal: "elm,state,prev_btn,hide"; source: "elm";
+      program { signal: "elm,state,prev_btn,hide"; source: "elm";
          action: STATE_SET "title-hidden" 0.0;
          target: "elm.swallow.prev_btn";
       }
-      program {
-         signal: "elm,state,next_btn,show"; source: "elm";
+      program { signal: "elm,state,next_btn,show"; source: "elm";
          action: STATE_SET "default" 0.0;
          filter: "elm.swallow.content" "default";
          target: "elm.swallow.next_btn";
       }
-      program {
-         signal: "elm,state,next_btn,hide"; source: "elm";
+      program { signal: "elm,state,next_btn,hide"; source: "elm";
          action: STATE_SET "title-hidden" 0.0;
          target: "elm.swallow.next_btn";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "top";
+      program { signal: "mouse,clicked,1"; source: "top";
          action: SIGNAL_EMIT "elm,action,title,clicked" "elm";
       }
-      program {
-         signal: "elm,state,title_label,show"; source: "elm";
+      program { signal: "elm,state,title_label,show"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
          target: "elm.text.title";
          target: "elm.text.subtitle";
       }
-      program {
-         signal: "elm,state,title_label,hide"; source: "elm";
+      program { signal: "elm,state,title_label,hide"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "elm.swallow.icon";
          target: "elm.text.title";
          target: "elm.text.subtitle";
       }
-      program {
-         signal: "elm,state,visible"; source: "elm";
+      program { signal: "elm,state,visible"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elements_clip";
          target: "base";
       }
-      program {
-         signal: "elm,state,invisible"; source: "elm";
+      program { signal: "elm,state,invisible"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "elements_clip";
       }
 
       /* current page is being pushed: [previous]<----[current] */
-      program {
-         signal: "elm,state,cur,pushed"; source: "elm";
+      program { signal: "elm,state,cur,pushed"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "elements_clip";
       }
-      program {
-         signal: "elm,state,cur,pushed,deferred"; source: "elm";
+      program { signal: "elm,state,cur,pushed,deferred"; source: "elm";
          action: STATE_SET "prev" 0.0;
-         transition: DECEL 0.5;
+         transition: DECEL 0.2;
          target: "base";
          target: "elements_clip";
          after: "pushed3";
@@ -583,16 +512,14 @@ group { name: "elm/naviframe/item/basic/default";
       }
 
       /* current page is being popped: [current]---->[next] */
-      program {
-         signal: "elm,state,cur,popped"; source: "elm";
+      program { signal: "elm,state,cur,popped"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "elements_clip";
       }
-      program {
-         signal: "elm,state,cur,popped,deferred"; source: "elm";
+      program { signal: "elm,state,cur,popped,deferred"; source: "elm";
          action: STATE_SET "next" 0.0;
-         transition: DECEL 0.5;
+         transition: DECEL 0.2;
          target: "base";
          target: "elements_clip";
          after: "popped3";
@@ -602,16 +529,14 @@ group { name: "elm/naviframe/item/basic/default";
       }
 
       /* new page is being pushed: [current]<----[next] */
-      program {
-         signal: "elm,state,new,pushed"; source: "elm";
+      program { signal: "elm,state,new,pushed"; source: "elm";
          action: STATE_SET "next" 0.0;
          target: "base";
          target: "elements_clip";
       }
-      program {
-         signal: "elm,state,new,pushed,deferred"; source: "elm";
+      program { signal: "elm,state,new,pushed,deferred"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "base";
          target: "elements_clip";
          after: "pushedb3";
@@ -621,16 +546,14 @@ group { name: "elm/naviframe/item/basic/default";
       }
 
       /* previous page is being pushed: [previous]---->[current] */
-      program {
-         signal: "elm,state,prev,popped"; source: "elm";
+      program { signal: "elm,state,prev,popped"; source: "elm";
          action: STATE_SET "prev" 0.0;
          target: "base";
          target: "elements_clip";
       }
-      program {
-         signal: "elm,state,prev,popped,deferred"; source: "elm";
+      program { signal: "elm,state,prev,popped,deferred"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "base";
          target: "elements_clip";
          after: "poppedb3";
@@ -648,18 +571,15 @@ group { name: "elm/naviframe/item/overlap/default";
       // this is a hack around an edje_cc inherit bug - group doesnt seem
       // to inherit properly with limits etc.
       BOTTOMMAX()
-      
+
       part { name: "elm.swallow.content";
          description { state: "default" 0.0;
             rel1.to: "base";
             rel1.relative: 0.0 0.0;
          }
       }
-      part { name: "top";
+      part { name: "top_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 224;
-         }
-         description { state: "title-hidden" 0.0;
             color: 255 255 255 224;
          }
       }
