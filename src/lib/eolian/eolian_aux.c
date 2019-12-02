@@ -100,6 +100,7 @@ _callables_find(const Eolian_Class *cl, Eina_List **funcs,
         total += _callables_find_body(pcl, funcs, events, written);
         total += _callables_find(pcl, funcs, events, written);
      }
+   eina_iterator_free(itr);
 
    return total;
 }
