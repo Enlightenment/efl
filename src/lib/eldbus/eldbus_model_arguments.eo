@@ -11,7 +11,7 @@ class @beta Eldbus.Model.Arguments extends Eldbus.Model {
             params {
                 @in proxy: ptr(Eldbus.Proxy); [[Eldbus proxy]]
                 @in name: string; [[Name]]
-                @in arguments: const(list<ptr(Eldbus.Introspection.Argument)>); [[The introspected arguments]]
+                @in arguments: const(list<Eldbus.Introspection.Argument>); [[The introspected arguments]]
             }
         }
     @property arg_name {

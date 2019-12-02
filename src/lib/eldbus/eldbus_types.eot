@@ -86,6 +86,6 @@ struct @beta @extern Eldbus.Introspection.Signal
 {
    [[DBus Signal]]
     name: stringshare; [[Signal name]]
-    arguments: list<ptr(Eldbus.Introspection.Argument)>; [[List with signal arguments]]
-    annotations: list<ptr(Eldbus.Introspection.Annotation)>; [[List with signal annotations]]
+    arguments: list<Eldbus.Introspection.Argument>; [[List with signal arguments]]
+    annotations: list<Eldbus.Introspection.Annotation>; [[List with signal annotations]]
 }

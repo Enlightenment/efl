@@ -263,7 +263,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
       }
       relations_get @protected @beta @const {
          [[Gets an all relations between accessible object and other accessible objects.]]
-         return: iterator<ptr(Efl.Access.Relation)> @move; [[Accessible relation set]]
+         return: iterator<Efl.Access.Relation> @move; [[Accessible relation set]]
       }
       @property role @beta {
          [[The role of the object in accessibility domain.]]
@@ -296,7 +296,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
          get {
          }
          values {
-            attributes: list<ptr(Efl.Access.Attribute) @move> @move; [[List of object attributes.
+            attributes: list<Efl.Access.Attribute> @move; [[List of object attributes.
                                                                          Must be freed by the user]]
          }
       }

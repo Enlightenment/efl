@@ -1006,10 +1006,6 @@ _edje_recalc_do(Edje *ed)
    Eina_Bool need_reinit_state = EINA_FALSE;
 #endif
 
-
-   //Do nothing if the edje has no size,
-   if ((EINA_UNLIKELY(!ed->has_size)) && (!ed->calc_only) && (ed->w == 0) && (ed->h == 0))
-     return;
    ed->has_size = EINA_TRUE;
 
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);

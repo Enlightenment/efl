@@ -317,7 +317,7 @@ class Test.Object extends Efl.Object {
            return: list<array<int> >;
        }
        method_list_with_opaque_elements_check {
-           return: const(list<ptr(Elm.Calendar.Mark)>);
+           return: const(list<Elm.Calendar.Mark>);
        }
        method_in_enum_return_enum_check {
            params { e: Test.Enum_Ex; }
