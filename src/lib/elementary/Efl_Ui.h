@@ -273,6 +273,8 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_spotlight_manager_scroll.eo.h>
 # include <efl_ui_spotlight_manager_stack.eo.h>
 # include <efl_ui_spotlight_util.eo.h>
+# include <efl_ui_stack.eo.h>
+# include <efl_ui_pager.eo.h>
 
 # include <efl_ui_navigation_bar.eo.h>
 # include <efl_ui_navigation_bar_part.eo.h>

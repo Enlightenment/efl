@@ -1,0 +1,10 @@
+class @beta Efl.Ui.Pager extends Efl.Ui.Spotlight.Container
+{
+   [[A spotlight with predefined @Efl.Ui.Spotlight.Container.spotlight_manager
+
+     The container will slide in the content sideways, the old content will slide out.
+   ]]
+   implements {
+      Efl.Object.constructor;
+   }
+}
