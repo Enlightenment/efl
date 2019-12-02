@@ -881,11 +881,9 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
                     efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
-   spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
+   spotlight = efl_add(EFL_UI_STACK_CLASS, layout,
                          efl_content_set(efl_part(layout, "pager"), efl_added),
                          efl_ui_spotlight_size_set(efl_added, EINA_SIZE2D(200, 300)));
-
-   efl_ui_spotlight_manager_set(spotlight, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Pop"),
@@ -1073,11 +1071,9 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
                     efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
-   spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
+   spotlight = efl_add(EFL_UI_PAGER_CLASS, layout,
                          efl_content_set(efl_part(layout, "pager"), efl_added),
                          efl_ui_spotlight_size_set(efl_added, EINA_SIZE2D(200, 300)));
-
-   efl_ui_spotlight_manager_set(spotlight, efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Prev"),
