@@ -265,7 +265,8 @@ class TestEoAccessors
         lst.Append(3);
         lst.Append(2);
         lst.Append(5);
-        Eina.Accessor<int> acc = obj.CloneAccessor(lst.GetAccessor());
+        IEnumerable<int> origin = lst.GetAccessor();
+        IEnumerable<int> acc = obj.CloneAccessor(origin);
 
         var zipped = acc.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
 

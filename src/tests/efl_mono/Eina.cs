@@ -4620,7 +4620,7 @@ class TestEinaAccessor
         lst.Append(3);
         lst.Append(4);
 
-        Eina.Accessor<int> accessor = lst.GetAccessor();
+        IEnumerable<int> accessor = lst.GetAccessor();
 
         var zipped = accessor.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
 
@@ -4637,7 +4637,7 @@ class TestEinaAccessor
         var arr = new Eina.Array<string>();
         arr.Append(base_seq_str);
 
-        Eina.Accessor<string> accessor = arr.GetAccessor();
+        IEnumerable<string> accessor = arr.GetAccessor();
 
         var zipped = accessor.Zip(arr, (first, second) => new Tuple<string, string>(first, second));
 
