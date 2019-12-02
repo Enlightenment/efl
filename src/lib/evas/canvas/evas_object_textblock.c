@@ -7580,6 +7580,7 @@ evas_object_textblock_add(Evas *e)
    o = efl_data_scope_get(eo_obj, MY_CLASS);
    o->legacy_newline = EINA_TRUE;
    o->auto_styles = EINA_FALSE;
+   _FMT(password) = EINA_TRUE;
    return eo_obj;
 }
 
@@ -7616,7 +7617,7 @@ _efl_canvas_text_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Text_Data *class_
    _FMT(underline_dash_gap) = 2;
    _FMT(underline_height) = 1.0;
    _FMT(linerelgap) = 0.0;
-   _FMT(password) = 1;
+   _FMT(password) = EINA_FALSE;
    _FMT(ellipsis) = -1;
    _FMT_INFO(bitmap_scalable) = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
 
