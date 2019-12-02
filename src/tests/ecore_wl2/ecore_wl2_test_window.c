@@ -335,15 +335,31 @@ EFL_START_TEST(wl2_window_activated)
    Ecore_Wl2_Window *win;
    Eina_Bool ret;
 
+   ret = ecore_wl2_window_activated_get(win);
+
+   fail_if(ret != EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_aspect)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   int w, h;
+   unsigned int aspect;
+
    disp = _display_connect();
    ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
 
-   ret = ecore_wl2_window_activated_get(win);
+   ecore_wl2_window_aspect_set(win, 1, 1, 3);
+   ecore_wl2_window_aspect_get(win, &w, &h, &aspect);
 
-   fail_if(ret != EINA_TRUE);
+   fail_if(w != 1);
+   fail_if(h != 1);
+   fail_if(aspect != 3);
 }
 EFL_END_TEST
 
@@ -361,7 +377,6 @@ EFL_START_TEST(wl2_window_available_rotation)
 
    win = _window_create(disp);
    ck_assert(win != NULL);
-
 
    ecore_wl2_window_available_rotations_set(win, rots, 2);
 
@@ -399,5 +414,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_type);
         tcase_add_test(tc, wl2_window_activated);
         tcase_add_test(tc, wl2_window_available_rotation);
+        tcase_add_test(tc, wl2_window_aspect);
      }
 }
