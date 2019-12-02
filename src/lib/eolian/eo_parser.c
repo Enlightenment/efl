@@ -762,7 +762,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr, Eina_Bool allow_const)
           {
              def->btype = ls->t.kw - KW_byte + 1;
              def->base.name = eina_stringshare_ref(ls->t.value.s);
-             def->base.c_name = eina_stringshare_ref(def->base.name);
+             def->base.c_name = eina_stringshare_add(eo_lexer_get_c_type(ls->t.kw));
              eo_lexer_get(ls);
              if ((tpid >= KW_accessor && tpid <= KW_list) ||
                  (tpid >= KW_slice && tpid <= KW_rw_slice) || (tpid == KW_hash))
