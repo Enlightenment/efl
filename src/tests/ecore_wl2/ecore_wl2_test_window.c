@@ -335,6 +335,12 @@ EFL_START_TEST(wl2_window_activated)
    Ecore_Wl2_Window *win;
    Eina_Bool ret;
 
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
    ret = ecore_wl2_window_activated_get(win);
 
    fail_if(ret != EINA_TRUE);
