@@ -774,10 +774,26 @@ public static class Globals
         }
     }
 
-    internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable)
+    internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable, bool isMoved)
     {
         if (enumerable == null)
+        {
             throw new ArgumentException("enumerable is null", nameof(enumerable));
+        }
+
+        // If we are a wrapper around an existing Eina.Accessor, we can just forward
+        // it and avoid unnecessary copying.
+        var wrappedAccessor = enumerable as Eina.Accessor<T>;
+
+        if (wrappedAccessor != null)
+        {
+            if (isMoved)
+            {
+                wrappedAccessor.Own = false;
+            }
+            return wrappedAccessor.Handle;
+        }
+
         IntPtr[] intPtrs = new IntPtr[enumerable.Count()];
 
         int i = 0;
