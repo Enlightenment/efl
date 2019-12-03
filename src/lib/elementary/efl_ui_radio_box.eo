@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Radio_Box extends Efl.Ui.Box composites Efl.Ui.Radio_Group
+class Efl.Ui.Radio_Box extends Efl.Ui.Box composites Efl.Ui.Radio_Group
 {
    [[A standard @Efl.Ui.Box container which automatically handles grouping of any @Efl.Ui.Radio
      widget added to it in addition to regular widgets.
