@@ -81,17 +81,31 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
      }
 }
 
+static void
+_update_ids(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, int avoid_index)
+{
+   for (int i = 0; i < 2; ++i)
+     {
+        if (pd->ids[i] != -1 && pd->ids[i] != avoid_index)
+          pd->ids[i] = efl_pack_index_get(pd->container, pd->content[i]);
+     }
+   double pos = pd->ids[1];
+   efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &pos);
+}
+
 EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_add(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_canvas_group_member_add(pd->container, subobj);
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
+   _update_ids(obj, pd, -1);
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
+_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Gfx_Entity *subobj, int index)
 {
    efl_canvas_group_member_remove(pd->container, subobj);
+   _update_ids(obj, pd, index);
 }
 
 static Eina_Bool
@@ -131,10 +145,12 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_
      {
         double pos = to;
 
-        pd->content[0] = efl_pack_content_get(pd->container, to);
-        efl_gfx_entity_visible_set(pd->content[0], EINA_TRUE);
+        pd->ids[0] = -1;
+        pd->content[0] = NULL;
+        pd->ids[1] = to;
+        pd->content[1] = efl_pack_content_get(pd->container, to);
+        efl_gfx_entity_visible_set(pd->content[1], EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &pos);
-        pd->content[1] = NULL;
      }
 
    _geom_sync(obj, pd);
