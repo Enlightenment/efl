@@ -72,9 +72,11 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
          }
       }
       push @beta {
-         [[Packs a new sub-widget before @.active_element, and move the spotlight there.
+         [[Packs a new sub-widget after @.active_element, and move the spotlight there.
 
            This is the same behavior as a push operation on a stack.
+           When sub-widgets are added using only @.push and @.pop you don't have to worry about @.active_element
+           since only the last sub-widget is manipulated, and this container behaves like a traditional stack.
 
            An animation might be triggered to give the new sub-widget the spotlight and come into position.
          ]]
@@ -85,10 +87,10 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
       pop @beta {
          [[Removes the sub-widget that has the spotlight from the widget.
 
-           The sub-widgets behind it naturally flow down so the next one gets the spotlight.
+           The spotlight is moved to the previous sub-widget.
            This is the same behavior as a pop operation on a stack.
-           When combined with @.push you don't have to worry about @.active_element since only the first sub-widget is
-           manipulated.
+           When sub-widgets are added using only @.push and @.pop you don't have to worry about @.active_element
+           since only the last sub-widget is manipulated, and this container behaves like a traditional stack.
 
            An animation might be triggered to give the new sub-widget the spotlight, come into position and the old
            one disappear.
