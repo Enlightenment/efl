@@ -71,6 +71,24 @@ EAPI void ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf);
 EAPI Ecore_Wl2_Window *ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface);
 EAPI Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
 
+/**
+ * Attach a buffer to a window
+ *
+ * Note that the GL stack my attach buffers to a surface - we should call this
+ * function at that time (with a NULL buffer) to track whether a surface
+ * has a valid buffer.  That is, call with implicit true and buffer NULL at
+ * the time of glSwapBuffers.
+ *
+ * @param window The target window
+ * @param buffer The buffer to attach
+ * @param x X offset from corner
+ * @param y Y offset from corner
+ * @param implicit True if an external library is doing the actual attaching
+ *
+ * @since 1.21
+ */
+EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
+
 # undef EAPI
 # define EAPI
 
