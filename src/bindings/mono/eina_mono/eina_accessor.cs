@@ -34,6 +34,12 @@ internal class AccessorNativeFunctions
         eina_accessor_data_get(IntPtr accessor, uint position, out IntPtr data);
     [DllImport(efl.Libs.Eina)] public static extern void
         eina_accessor_free(IntPtr accessor);
+    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+        eina_mono_owned_carray_length_accessor_new(IntPtr array,
+                                                   uint step,
+                                                   uint length,
+                                                   Eina.Callbacks.EinaFreeCb freeCb,
+                                                   IntPtr handle);
 }
 
 /// <summary>Accessors provide an uniform way of accessing Eina containers,

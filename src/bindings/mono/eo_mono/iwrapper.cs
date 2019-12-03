@@ -790,21 +790,44 @@ public static class Globals
             return wrappedAccessor.Handle;
         }
 
-        var list = new List<IntPtr>();
+        // TODO: Check if we're either an Eina.List or Eina.Collection?
+        // We could just rewrap their native accessors
+        IntPtr[] intPtrs = new IntPtr[enumerable.Count()];
+
+        int i = 0;
         foreach (T data in enumerable)
         {
-            list.Add(Eina.TraitFunctions.ManagedToNativeAlloc<T>(data));
+            intPtrs[i] = Eina.TraitFunctions.ManagedToNativeAlloc<T>(data);
+            i++;
         }
-        IntPtr[] dataArray = list.ToArray();
-        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned); //FIXME: Need to free.
-        IntPtr ret = Eina.AccessorNativeFunctions.eina_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
 
-        if (!isMoved)
+        IntPtr[] dataArray = intPtrs.ToArray();
+        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
+        
+        IntPtr nativeAccessor = IntPtr.Zero;
+
+        if (isMoved)
         {
-            // FIXME Need to free ret and unpin pinnedArray in the future.
+            // We need a custom accessor that would unpin the data when freed.
+            nativeAccessor = Eina.AccessorNativeFunctions.eina_mono_owned_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(),
+                                                                                                     (uint)IntPtr.Size,
+                                                                                                     (uint)dataArray.Length,
+                                                                                                     free_gchandle,
+                                                                                                     GCHandle.ToIntPtr(pinnedArray));
+        }
+        else
+        {
+            // FIXME: Leaking....
+            nativeAccessor = Eina.AccessorNativeFunctions.eina_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
         }
 
-        return ret;
+        if (nativeAccessor == IntPtr.Zero)
+        {
+            pinnedArray.Free();
+            throw new InvalidOperationException("Failed to get native accessor for the given container");
+        }
+
+        return nativeAccessor;
     }
 
     internal static IEnumerable<T> IteratorToIEnumerable<T>(IntPtr iterator)
