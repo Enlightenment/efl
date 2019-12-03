@@ -74,7 +74,9 @@ struct _Eina_Thread_Queue_Msg_Block
 // avoid reallocation via malloc/free etc. to avoid free memory pages and
 // pressure on the malloc subsystem
 static int _eina_thread_queue_log_dom = -1;
+static int _eina_thread_queue_block_pool_count = 0;
 static Eina_Spinlock _eina_thread_queue_block_pool_lock;
+static Eina_Thread_Queue_Msg_Block *_eina_thread_queue_block_pool = NULL;
 
 #ifdef ERR
 # undef ERR
@@ -86,51 +88,57 @@ static Eina_Spinlock _eina_thread_queue_block_pool_lock;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_thread_queue_log_dom, __VA_ARGS__)
 
-static Eina_Hash *mempools;
-
 // api's to get message blocks from the pool or put them back in
 static Eina_Thread_Queue_Msg_Block *
 _eina_thread_queue_msg_block_new(int size)
 {
    Eina_Thread_Queue_Msg_Block *blk;
-   Eina_Mempool *mp;
-   size_t mp_size = sizeof(Eina_Thread_Queue_Msg_Block) - sizeof(Eina_Thread_Queue_Msg) + size;
 
    eina_spinlock_take(&(_eina_thread_queue_block_pool_lock));
-   mp = eina_hash_find(mempools, &size);
-   if (!mp)
+   if (_eina_thread_queue_block_pool)
      {
-        const char *choice = getenv("EINA_MEMPOOL");
-        if ((!choice) || (!choice[0]))
-          choice = "chained_mempool";
-        mp = eina_mempool_add(choice, "Eina_Thread_Queue_Msg_Block", NULL, mp_size, 16);
-        eina_hash_add(mempools, &size, mp);
+        blk = _eina_thread_queue_block_pool;
+        if (blk->size >= size)
+          {
+             blk->first = 0;
+             blk->last = 0;
+             blk->ref = 0;
+             blk->full = 0;
+             _eina_thread_queue_block_pool = blk->next;
+             blk->next = NULL;
+             _eina_thread_queue_block_pool_count--;
+             eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
+             return blk;
+          }
+        blk = NULL;
      }
    eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
 
-   blk = eina_mempool_calloc(mp, mp_size);
+   blk = malloc(sizeof(Eina_Thread_Queue_Msg_Block) -
+                sizeof(Eina_Thread_Queue_Msg) +
+                size);
    if (!blk)
      {
         ERR("Thread queue block buffer of size %i allocation failed", size);
         return NULL;
      }
+   blk->next = NULL;
 #ifndef ATOMIC
    eina_spinlock_new(&(blk->lock_ref));
    eina_spinlock_new(&(blk->lock_first));
 #endif
    eina_lock_new(&(blk->lock_non_0_ref));
    blk->size = size;
+   blk->first = 0;
+   blk->last = 0;
+   blk->ref = 0;
+   blk->full = 0;
    return blk;
 }
 
 static void
-_eina_thread_queue_msg_block_free(Eina_Thread_Queue_Msg_Block *blk)
+_eina_thread_queue_msg_block_real_free(Eina_Thread_Queue_Msg_Block *blk)
 {
-   Eina_Mempool *mp;
-
-   eina_spinlock_take(&(_eina_thread_queue_block_pool_lock));
-   mp = eina_hash_find(mempools, &blk->size);
-   eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
    eina_lock_take(&(blk->lock_non_0_ref));
    eina_lock_release(&(blk->lock_non_0_ref));
    eina_lock_free(&(blk->lock_non_0_ref));
@@ -142,7 +150,29 @@ _eina_thread_queue_msg_block_free(Eina_Thread_Queue_Msg_Block *blk)
    eina_spinlock_release(&(blk->lock_first));
    eina_spinlock_free(&(blk->lock_first));
 #endif
-   eina_mempool_free(mp, blk);
+   free(blk);
+}
+
+static void
+_eina_thread_queue_msg_block_free(Eina_Thread_Queue_Msg_Block *blk)
+{
+   if (blk->size == MIN_SIZE)
+     {
+        eina_spinlock_take(&(_eina_thread_queue_block_pool_lock));
+        if (_eina_thread_queue_block_pool_count < 20)
+          {
+             _eina_thread_queue_block_pool_count++;
+             blk->next = _eina_thread_queue_block_pool;
+             _eina_thread_queue_block_pool = blk;
+             eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
+          }
+        else
+          {
+             eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
+             _eina_thread_queue_msg_block_real_free(blk);
+          }
+     }
+   else _eina_thread_queue_msg_block_real_free(blk);
 }
 
 static Eina_Bool
@@ -154,6 +184,21 @@ _eina_thread_queue_msg_block_pool_init(void)
 static void
 _eina_thread_queue_msg_block_pool_shutdown(void)
 {
+   eina_spinlock_take(&(_eina_thread_queue_block_pool_lock));
+   while (_eina_thread_queue_block_pool)
+     {
+        Eina_Thread_Queue_Msg_Block *blk, *blknext;
+
+        for (;;)
+          {
+             blk = _eina_thread_queue_block_pool;
+             if (!blk) break;
+             blknext = blk->next;
+             _eina_thread_queue_msg_block_real_free(blk);
+             _eina_thread_queue_block_pool = blknext;
+          }
+     }
+   eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
    eina_spinlock_free(&_eina_thread_queue_block_pool_lock);
 }
 
@@ -186,15 +231,19 @@ _eina_thread_queue_msg_alloc(Eina_Thread_Queue *thq, int size, Eina_Thread_Queue
    size = ((size + 7) >> 3) << 3;
    if (!thq->data)
      {
-        size = MAX(size, MIN_SIZE);
-        thq->data = _eina_thread_queue_msg_block_new(size);
+        if (size < MIN_SIZE)
+          thq->data = _eina_thread_queue_msg_block_new(MIN_SIZE);
+        else
+          thq->data = _eina_thread_queue_msg_block_new(size);
         thq->last = thq->data;
      }
    blk = thq->last;
    if (blk->full)
      {
-        size = MAX(size, MIN_SIZE);
-        blk->next = _eina_thread_queue_msg_block_new(size);
+        if (size < MIN_SIZE)
+          blk->next = _eina_thread_queue_msg_block_new(MIN_SIZE);
+        else
+          blk->next = _eina_thread_queue_msg_block_new(size);
         blk = blk->next;
         thq->last = blk;
      }
@@ -206,8 +255,10 @@ _eina_thread_queue_msg_alloc(Eina_Thread_Queue *thq, int size, Eina_Thread_Queue
      }
    else
      {
-        size = MAX(size, MIN_SIZE);
-        blk->next = _eina_thread_queue_msg_block_new(size);
+        if (size < MIN_SIZE)
+          blk->next = _eina_thread_queue_msg_block_new(MIN_SIZE);
+        else
+          blk->next = _eina_thread_queue_msg_block_new(size);
         blk = blk->next;
         thq->last = blk;
         blk->last += size;
@@ -335,7 +386,6 @@ eina_thread_queue_init(void)
         ERR("Cannot init thread queue block pool spinlock");
         return EINA_FALSE;
      }
-   mempools = eina_hash_int32_new((Eina_Free_Cb)eina_mempool_del);
    return EINA_TRUE;
 }
 
@@ -344,7 +394,6 @@ eina_thread_queue_shutdown(void)
 {
    _eina_thread_queue_msg_block_pool_shutdown();
    eina_log_domain_unregister(_eina_thread_queue_log_dom);
-   eina_hash_free(mempools);
    return EINA_TRUE;
 }
 
