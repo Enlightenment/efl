@@ -89,6 +89,17 @@ EAPI Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
  */
 EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
+/**
+ * Set a buffer transform on a given window
+ *
+ * @param window The window on which to set the buffer transform
+ * @param transform The buffer transform being requested
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
+
 # undef EAPI
 # define EAPI
 
