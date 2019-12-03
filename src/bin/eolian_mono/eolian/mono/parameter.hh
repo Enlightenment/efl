@@ -655,8 +655,7 @@ struct native_convert_in_variable_generator
           if (!complex)
             return false;
           return as_generator(
-               "var " << string << " = Efl.Eo.Globals.AccessorTo" << type << "(" << escape_keyword(param.param_name)
-               << ");\n"
+               "var " << string << " = Efl.Eo.Globals.AccessorTo" << type << "(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
      else if (param.type.c_type == "Eina_Value")
@@ -1022,8 +1021,7 @@ struct convert_out_assign_generator
            if (!complex)
              return false;
            return as_generator(
-               string << " = Efl.Eo.Globals.AccessorTo" << type << "(" << string
-               << ");\n"
+               string << " = Efl.Eo.Globals.AccessorTo" << type << "(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
        else if (param_is_acceptable(param, "Eina_Iterator *", WANT_OWN, WANT_OUT)
@@ -1156,7 +1154,7 @@ struct convert_return_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
            if (!complex)
              return false;
-           if (!as_generator("return Efl.Eo.Globals.AccessorTo" << type << "(_ret_var);")
+           if (!as_generator("return Efl.Eo.Globals.AccessorTo" << type << "(_ret_var, " << (ret_type.has_own ? "true" : "false") << ");")
                  .generate(sink, ret_type, context))
              return false;
        }

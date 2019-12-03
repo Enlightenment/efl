@@ -759,10 +759,12 @@ public static class Globals
         Monitor.Exit(Efl.All.InitLock);
     }
 
-    internal static IEnumerable<T> AccessorToIEnumerable<T>(IntPtr accessor)
+    internal static IEnumerable<T> AccessorToIEnumerable<T>(IntPtr accessor, bool isMoved)
     {
         if (accessor == IntPtr.Zero)
+        {
            throw new ArgumentException("accessor is null", nameof(accessor));
+        }
 
         IntPtr data = IntPtr.Zero;
         uint position = 0;
@@ -771,6 +773,11 @@ public static class Globals
         {
             yield return Eina.TraitFunctions.NativeToManaged<T>(data);
             position += 1;
+        }
+
+        if (isMoved)
+        {
+            Eina.AccessorNativeFunctions.eina_accessor_free(accessor);
         }
     }
 
