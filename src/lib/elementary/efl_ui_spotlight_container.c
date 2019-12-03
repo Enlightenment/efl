@@ -716,12 +716,12 @@ _efl_ui_spotlight_container_push(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EI
 {
    if (efl_ui_spotlight_active_element_get(obj))
      {
-        if (!efl_pack_before(obj, view, efl_ui_spotlight_active_element_get(obj)))
+        if (!efl_pack_after(obj, view, efl_ui_spotlight_active_element_get(obj)))
           return;
      }
    else
      {
-        if (!efl_pack_begin(obj, view))
+        if (!efl_pack_end(obj, view))
           return;
      }
 
@@ -769,9 +769,9 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
         return efl_loop_future_resolved(obj, v);
      }
 
-   new_index = efl_pack_index_get(obj, efl_ui_spotlight_active_element_get(obj)) + 1;
-   if (new_index >= count)
-     new_index -= 2;
+   new_index = efl_pack_index_get(obj, efl_ui_spotlight_active_element_get(obj)) - 1;
+   if (new_index < 0)
+     new_index += 2;
 
    pd->transition_done.content = content;
    pd->transition_done.transition_done = efl_loop_promise_new(obj);

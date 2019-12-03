@@ -540,8 +540,8 @@ EFL_START_TEST (efl_ui_spotlight_test_push1)
      }
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
     efl_ui_spotlight_push(container, w);
-    ck_assert_int_eq(efl_pack_index_get(container, w), 0);
-    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), efl_pack_content_get(container, 0));
+    ck_assert_int_eq(efl_pack_index_get(container, w), 1);
+    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), efl_pack_content_get(container, 1));
 }
 EFL_END_TEST
 
@@ -556,7 +556,7 @@ EFL_START_TEST (efl_ui_spotlight_test_push2)
      }
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
     efl_ui_spotlight_push(container, w);
-    ck_assert_int_eq(efl_pack_index_get(container, w), 3);
+    ck_assert_int_eq(efl_pack_index_get(container, w), 4);
     ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
 }
 EFL_END_TEST
