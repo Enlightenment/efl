@@ -132,9 +132,9 @@ struct unpack_event_args_visitor
    bool operator()(attributes::complex_type_def const& types) const
    {
       if (types.outer.base_type == "iterator")
-        return as_generator("Efl.Eo.Globals.IteratorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+        return as_generator("Efl.Eo.CollectionConversions.IteratorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
       else if (types.outer.base_type == "accessor")
-        return as_generator("Efl.Eo.Globals.AccessorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+        return as_generator("Efl.Eo.CollectionConversions.AccessorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
       else
         return as_generator("new " << eolian_mono::type << "(info, false, false)").generate(sink, type, *context);
    }

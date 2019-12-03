@@ -72,7 +72,7 @@ struct to_internal_field_convert_generator
       else if ((complex && (complex->outer.base_type == "iterator")))
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = Efl.Eo.Globals.IEnumerableToIterator(_external_struct." << string << ");\n")
+                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = Efl.Eo.CollectionConversions.IEnumerableToIterator(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -212,7 +212,7 @@ struct to_external_field_convert_generator
       else if (complex && complex->outer.base_type == "iterator")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Efl.Eo.Globals.IteratorTo" << type << "(_internal_struct." << string << ");\n")
+                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Efl.Eo.CollectionConversions.IteratorTo" << type << "(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }

@@ -645,7 +645,7 @@ struct native_convert_in_variable_generator
           if (!complex)
             return false;
           return as_generator(
-               "var " << string << " = Efl.Eo.Globals.IteratorTo" << type << "(" << escape_keyword(param.param_name)
+               "var " << string << " = Efl.Eo.CollectionConversions.IteratorTo" << type << "(" << escape_keyword(param.param_name)
                << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
@@ -655,7 +655,7 @@ struct native_convert_in_variable_generator
           if (!complex)
             return false;
           return as_generator(
-               "var " << string << " = Efl.Eo.Globals.AccessorTo" << type << "(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+               "var " << string << " = Efl.Eo.CollectionConversions.AccessorTo" << type << "(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
      else if (param.type.c_type == "Eina_Value")
@@ -758,7 +758,7 @@ struct convert_in_variable_generator
              return false;
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << "Efl.Eo.Globals.IEnumerableToIterator(" << escape_keyword(param.param_name) << ");\n"
+                 "var " << string << " = " << "Efl.Eo.CollectionConversions.IEnumerableToIterator(" << escape_keyword(param.param_name) << ");\n"
               ).generate(sink, var_name, context))
              return false;
         }
@@ -769,7 +769,7 @@ struct convert_in_variable_generator
              return false;
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = Efl.Eo.Globals.IEnumerableToAccessor(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
+                 "var " << string << " = Efl.Eo.CollectionConversions.IEnumerableToAccessor(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
               ).generate(sink, var_name, context))
              return false;
         }
@@ -1021,7 +1021,7 @@ struct convert_out_assign_generator
            if (!complex)
              return false;
            return as_generator(
-               string << " = Efl.Eo.Globals.AccessorTo" << type << "(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+               string << " = Efl.Eo.CollectionConversions.AccessorTo" << type << "(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
        else if (param_is_acceptable(param, "Eina_Iterator *", WANT_OWN, WANT_OUT)
@@ -1034,7 +1034,7 @@ struct convert_out_assign_generator
            if (!complex)
              return false;
            return as_generator(
-               string << " = Efl.Eo.Globals.IteratorTo" << type << "(" << string
+               string << " = Efl.Eo.CollectionConversions.IteratorTo" << type << "(" << string
                << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
@@ -1154,7 +1154,7 @@ struct convert_return_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
            if (!complex)
              return false;
-           if (!as_generator("return Efl.Eo.Globals.AccessorTo" << type << "(_ret_var, " << (ret_type.has_own ? "true" : "false") << ");")
+           if (!as_generator("return Efl.Eo.CollectionConversions.AccessorTo" << type << "(_ret_var, " << (ret_type.has_own ? "true" : "false") << ");")
                  .generate(sink, ret_type, context))
              return false;
        }
@@ -1163,7 +1163,7 @@ struct convert_return_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
            if (!complex)
              return false;
-           if (!as_generator("return Efl.Eo.Globals.IteratorTo" << type << "(_ret_var);")
+           if (!as_generator("return Efl.Eo.CollectionConversions.IteratorTo" << type << "(_ret_var);")
                  .generate(sink, ret_type, context))
              return false;
        }
@@ -1312,7 +1312,7 @@ struct native_convert_out_assign_generator
              return false;
            auto outvar = out_variable_name(param.param_name);
            if (!as_generator(
-                string << " = Efl.Eo.Globals.IEnumerableToAccessor(" << string << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
+                string << " = Efl.Eo.CollectionConversions.IEnumerableToAccessor(" << string << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
         }
@@ -1327,7 +1327,7 @@ struct native_convert_out_assign_generator
              return false;
            auto outvar = out_variable_name(param.param_name);
            if (!as_generator(
-                string << " = Efl.Eo.Globals.IEnumerableToIterator(" << string << ");\n"
+                string << " = Efl.Eo.CollectionConversions.IEnumerableToIterator(" << string << ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
         }
@@ -1467,12 +1467,12 @@ struct native_convert_return_generator
        }
      else if (ret_type.c_type == "Eina_Accessor *" || ret_type.c_type == "const Eina_Accessor *")
        {
-          return as_generator(lit("return Efl.Eo.Globals.IEnumerableToAccessor(_ret_var, ") << (ret_type.has_own ? "true" : "false") << ");")
+          return as_generator(lit("return Efl.Eo.CollectionConversions.IEnumerableToAccessor(_ret_var, ") << (ret_type.has_own ? "true" : "false") << ");")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Iterator *" || ret_type.c_type == "const Eina_Iterator *")
        {
-          return as_generator("return Efl.Eo.Globals.IEnumerableToIterator(_ret_var);")
+          return as_generator("return Efl.Eo.CollectionConversions.IEnumerableToIterator(_ret_var);")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type != "void")

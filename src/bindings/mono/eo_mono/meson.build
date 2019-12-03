@@ -1,6 +1,7 @@
 mono_files += files(
   'iwrapper.cs',
   'workaround.cs',
+  'CollectionConversions.cs',
   'FunctionWrapper.cs',
   'NativeModule.cs',
   'EoWrapper.cs',
