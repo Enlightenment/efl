@@ -2043,6 +2043,8 @@ _edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Par
    _edje_recalc(ed);
    if (ed->text_change.func)
      ed->text_change.func(ed->text_change.data, obj, part);
+   edje_object_signal_emit(ed->obj, "edje,text,changed", "edje");
+
    return EINA_TRUE;
 }
 
