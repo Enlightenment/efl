@@ -15,15 +15,14 @@ _efl_canvas_animation_group_sequential_efl_canvas_animation_animation_apply(Eo *
    int anim_repeated_count;
 
    progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
-   Eina_List *group_anim = efl_animation_group_animations_get(eo_obj);
+   Eina_Iterator *group_anim = efl_animation_group_animations_get(eo_obj);
    if (!group_anim) return progress;
 
    group_length = efl_playable_length_get(eo_obj);
    group_elapsed_time = group_length * progress;
 
-   Eina_List *l;
    Efl_Canvas_Animation *anim;
-   EINA_LIST_FOREACH(group_anim, l, anim)
+   EINA_ITERATOR_FOREACH(group_anim, anim)
      {
         anim_start_delay = efl_animation_start_delay_get(anim);
         anim_length = efl_playable_length_get(anim) + anim_start_delay;
@@ -53,6 +52,7 @@ _efl_canvas_animation_group_sequential_efl_canvas_animation_animation_apply(Eo *
 
         break;
      }
+   eina_iterator_free(group_anim);
 
    return progress;
 }
@@ -63,17 +63,17 @@ _efl_canvas_animation_group_sequential_efl_canvas_animation_duration_get(const E
    double total_duration = 0.0;
    double child_total_duration;
 
-   Eina_List *animations = efl_animation_group_animations_get(eo_obj);
-   if (!animations) return 0.0;
+   Eina_Iterator *group_anim = efl_animation_group_animations_get(eo_obj);
+   if (!group_anim) return 0.0;
 
-   Eina_List *l;
    Efl_Canvas_Animation *anim;
-   EINA_LIST_FOREACH(animations, l, anim)
+   EINA_ITERATOR_FOREACH(group_anim, anim)
      {
         child_total_duration = efl_playable_length_get(anim);
         child_total_duration += efl_animation_start_delay_get(anim);
         total_duration += child_total_duration;
      }
+   eina_iterator_free(group_anim);
 
    return total_duration;
 }

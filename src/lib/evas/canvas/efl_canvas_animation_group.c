@@ -41,11 +41,11 @@ _efl_canvas_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
      }
 }
 
-EOLIAN static Eina_List *
+EOLIAN static Eina_Iterator*
 _efl_canvas_animation_group_animations_get(const Eo *eo_obj EINA_UNUSED,
                                     Efl_Canvas_Animation_Group_Data *pd)
 {
-   return pd->animations;
+   return eina_list_iterator_new(pd->animations);
 }
 
 EOLIAN static void

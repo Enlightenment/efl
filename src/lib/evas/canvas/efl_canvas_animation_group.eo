@@ -23,7 +23,7 @@ abstract @beta Efl.Canvas.Animation_Group extends Efl.Canvas.Animation
       }
       animations_get @const {
          [[Gets the list of animations currently in the animation group.]]
-         return: list<Efl.Canvas.Animation>; [[List of animations in the group.]]
+         return: iterator<Efl.Canvas.Animation> @move; [[List of animations in the group.]]
       }
    }
    implements {
