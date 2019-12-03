@@ -312,6 +312,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_clist_init(&e->calc_done);
 
    efl_wref_add(efl_add(EFL_CANVAS_GESTURE_MANAGER_CLASS, eo_obj), &e->gesture_manager);
+   e->gmd = efl_data_scope_get(e->gesture_manager, EFL_CANVAS_GESTURE_MANAGER_CLASS);
 
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
