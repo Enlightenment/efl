@@ -369,6 +369,25 @@ EFL_START_TEST(wl2_window_aspect)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_class)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   const char *class;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_class_set(win, "TEST");
+   class = ecore_wl2_window_class_get(win);
+
+   fail_if(strcmp(class, "TEST"));
+}
+EFL_END_TEST
+
 EFL_START_TEST(wl2_window_available_rotation)
 {
    Ecore_Wl2_Display *disp;
@@ -421,5 +440,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_activated);
         tcase_add_test(tc, wl2_window_available_rotation);
         tcase_add_test(tc, wl2_window_aspect);
+        tcase_add_test(tc, wl2_window_class);
      }
 }
