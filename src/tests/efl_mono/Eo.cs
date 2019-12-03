@@ -257,18 +257,21 @@ class TestVariables
 
 class TestEoAccessors
 {
-    private static void do_eo_accessors(IEnumerable<int> accessor)
+    private static void do_eo_accessors(IEnumerable<int> accessor, bool shouldMove=false)
     {
         var obj = new Dummy.TestObject();
 
-        IEnumerable<int> acc = obj.CloneAccessor(accessor);
+        IEnumerable<int> source = shouldMove ? accessor.ToList() : accessor;
 
-        var zipped = acc.Zip(accessor, (first, second) => new Tuple<int, int>(first, second));
+        IEnumerable<int> acc = shouldMove ? obj.CloneAccessorOwn(accessor) : obj.CloneAccessor(accessor);
+
+        var zipped = acc.Zip(source, (first, second) => new Tuple<int, int>(first, second));
 
         foreach (Tuple<int, int> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
+
         obj.Dispose();
     }
 
@@ -280,16 +283,26 @@ class TestEoAccessors
         lst.Append(2);
         lst.Append(5);
 
-        // FIXME: Replace the first accessor with the list once Eina.List implements Eina.IList
         do_eo_accessors(lst.GetAccessor());
 
         lst.Dispose();
     }
+    public static void eina_eo_accessors_own()
+    {
+        Eina.List<int> lst = new Eina.List<int>();
+        lst.Append(4);
+        lst.Append(3);
+        lst.Append(2);
+        lst.Append(1);
+        Eina.Accessor<int> acc = lst.GetAccessor();
+        do_eo_accessors(acc, shouldMove : true);
+
+        Test.Assert(!acc.Own);
+
+    }
 
     public static void managed_eo_accessors()
     {
-        var obj = new Dummy.TestObject();
-
         List<int> lst = new List<int>();
         lst.Add(-1);
         lst.Add(1);
@@ -297,6 +310,17 @@ class TestEoAccessors
         lst.Add(42);
 
         do_eo_accessors(lst);
+    }
+
+    public static void managed_eo_accessors_own()
+    {
+        List<int> lst = new List<int>();
+        lst.Add(-1);
+        lst.Add(1);
+        lst.Add(4);
+        lst.Add(42);
+
+        do_eo_accessors(lst, shouldMove : true);
     }
 }
 

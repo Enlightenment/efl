@@ -4683,6 +4683,23 @@ Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj EINA_UNUSED, Dummy_Test
    return eina_list_accessor_new(pd->list_for_accessor);
 }
 
+Eina_Accessor *_dummy_test_object_clone_accessor_own(Eo *obj EINA_UNUSED, Dummy_Test_Object_Data *pd, Eina_Accessor *acc)
+{
+   if (pd->list_for_accessor)
+     eina_list_free(pd->list_for_accessor);
+
+   unsigned int i;
+   int *data;
+   EINA_ACCESSOR_FOREACH(acc, i, data)
+     {
+         pd->list_for_accessor = eina_list_append(pd->list_for_accessor, data);
+     }
+
+   eina_accessor_free(acc);
+
+   return eina_list_accessor_new(pd->list_for_accessor);
+}
+
 void _dummy_test_object_dummy_test_iface_emit_nonconflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_NONCONFLICTED, NULL);

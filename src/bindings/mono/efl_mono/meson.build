@@ -83,6 +83,7 @@ endforeach
 efl_mono_lib = library('eflcustomexportsmono',
     [
       join_paths('..', '..', '..', 'lib', 'efl_mono', 'efl_custom_exports_mono.c'),
+      join_paths('..', '..', '..', 'lib', 'efl_mono', 'efl_mono_accessors.c'),
       join_paths('..', '..', '..', 'lib', 'efl_mono', 'efl_mono_model_internal.c'),
     ],
     pub_eo_file_target,
