@@ -4736,9 +4736,23 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
                {
                   if (ecore_imf_context_input_hint_get(ctx) & ECORE_IMF_INPUT_HINT_SENSITIVE_DATA)
                     {
+                       int idx = 0;
                        char *itr = NULL;
-                       for (itr = plain_text; itr && *itr; ++itr)
-                         *itr = '*';
+                       size_t len = eina_unicode_utf8_get_len(plain_text);
+                       char *u_text = (char *)malloc(len * sizeof(char) + 1);
+                       if (!u_text) return EINA_FALSE;
+
+                       itr = u_text;
+                       while (eina_unicode_utf8_next_get(plain_text, &idx))
+                         {
+                            *itr = '*';
+                            itr++;
+                         }
+                       *itr = 0;
+
+                       plain_text = strdup(u_text);
+                       free(u_text);
+                       u_text = NULL;
                     }
 
                   *text = strdup(plain_text);
