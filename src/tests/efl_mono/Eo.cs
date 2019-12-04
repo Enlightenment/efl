@@ -149,7 +149,8 @@ class TestEoNames
         var obj = new Dummy.TestObject();
 
         string name = "Dummy";
-        obj.SetName(name);
+        for (int i = 0; i < 1000000; i++)
+            obj.SetName(name);
         Test.AssertEquals(name, obj.GetName());
         obj.Dispose();
     }
