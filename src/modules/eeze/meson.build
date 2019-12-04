@@ -1,6 +1,5 @@
 sensors = [
 ['fake', [ecore]],
-#['tizen', []],
 ['udev', [ecore]],
 ]
 
