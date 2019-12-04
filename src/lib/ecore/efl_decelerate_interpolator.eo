@@ -4,7 +4,7 @@ class @beta Efl.Decelerate_Interpolator extends Efl.Object implements Efl.Interp
      it reaches $[1.0].
 
      Internally it uses the second half of a sinus rise (from 0.5 to 1.0) and the steepness
-     can be customized.
+     can be customized through the @.slope property.
    ]]
    data: Efl_Decelerate_Interpolator_Data;
    methods {
