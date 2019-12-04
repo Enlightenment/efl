@@ -76,8 +76,8 @@ class Efl.Ui.View_Model extends Efl.Composite_Model
                                             with the above property name.]]
             set: EflUiViewModelPropertySet; [[Define the set callback called when the @Efl.Model.property.set is called
                                             with the above property name.]]
-            binded: iterator<string> @move; [[Iterator of property name to bind with this defined property see
-                                              @.property_bind.]]
+            bound: iterator<string> @move; [[Iterator of property name to bind with this defined property see
+                                             @.property_bind.]]
          }
          return: Eina.Error;
       }

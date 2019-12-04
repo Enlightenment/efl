@@ -5981,7 +5981,7 @@ _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
 {
    Efl_Ui_Property_Bound *prop;
 
-   // Always check for a model and fetch a provider in case a binded property
+   // Always check for a model and fetch a provider in case a bound property
    // is provided by a class down the hierarchy, but they still need to be notified
    // when a model change
    _efl_ui_widget_model_register(widget, pd);

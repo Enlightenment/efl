@@ -30,7 +30,7 @@ struct _Efl_Ui_View_Model_Data
       Eina_Bool child_removed : 1;
    } propagating; // Boolean to prevent reentrance event emission on the same object
    Eina_Bool finalized : 1;
-   Eina_Bool children_bind : 1; // Define if child object should be automatically binded
+   Eina_Bool children_bind : 1; // Define if child object should be automatically bound
 };
 
 struct _Efl_Ui_View_Model_Text
