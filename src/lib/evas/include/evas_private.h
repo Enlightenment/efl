@@ -879,6 +879,7 @@ struct _Evas_Public_Data
    int            smart_calc_count;
 
    Eo            *gesture_manager;
+   void          *gmd;
    Eo            *pending_default_focus_obj;
    Eina_Hash     *focused_objects; //Key - seat; value - the focused object
    Eina_List     *focused_by; //Which seat has the canvas focus
@@ -1944,8 +1945,7 @@ void efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output);
 void evas_object_pixels_get_force(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
 // Gesture Manager
-void *_efl_canvas_gesture_manager_private_data_get(Eo *obj);
-void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
+void _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event);
 void _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_Event_Description *type);
 void _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_Event_Description *type);
 

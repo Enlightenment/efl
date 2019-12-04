@@ -347,6 +347,66 @@ EFL_START_TEST(wl2_window_activated)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_aspect)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   int w, h;
+   unsigned int aspect;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_aspect_set(win, 1, 1, 3);
+   ecore_wl2_window_aspect_get(win, &w, &h, &aspect);
+
+   fail_if(w != 1);
+   fail_if(h != 1);
+   fail_if(aspect != 3);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_title)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   const char *title;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_title_set(win, "TEST");
+   title = ecore_wl2_window_title_get(win);
+
+   fail_if(strcmp(title, "TEST"));
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_class)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   const char *class;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_class_set(win, "TEST");
+   class = ecore_wl2_window_class_get(win);
+
+   fail_if(strcmp(class, "TEST"));
+}
+EFL_END_TEST
+
 EFL_START_TEST(wl2_window_available_rotation)
 {
    Ecore_Wl2_Display *disp;
@@ -361,7 +421,6 @@ EFL_START_TEST(wl2_window_available_rotation)
 
    win = _window_create(disp);
    ck_assert(win != NULL);
-
 
    ecore_wl2_window_available_rotations_set(win, rots, 2);
 
@@ -399,5 +458,8 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_type);
         tcase_add_test(tc, wl2_window_activated);
         tcase_add_test(tc, wl2_window_available_rotation);
+        tcase_add_test(tc, wl2_window_aspect);
+        tcase_add_test(tc, wl2_window_class);
+        tcase_add_test(tc, wl2_window_title);
      }
 }

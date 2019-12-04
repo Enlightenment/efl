@@ -214,10 +214,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
 
-#ifdef EFL_BETA_API_SUPPORT
-
-EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
-
 /**
  * @brief Get a proxy object referring to a part of an object.
  *
@@ -233,6 +229,10 @@ EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
  * @since 1.21
  */
 EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
+
+#ifdef EFL_BETA_API_SUPPORT
+
+EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
 
 #else
 

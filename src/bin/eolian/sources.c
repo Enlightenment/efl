@@ -139,6 +139,16 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
         free(sn);
         return;
      }
+   /* slices are value types that don't boil down to pointers */
+   switch (eolian_type_builtin_type_get(btp))
+     {
+      case EOLIAN_TYPE_BUILTIN_SLICE:
+      case EOLIAN_TYPE_BUILTIN_RW_SLICE:
+        eina_strbuf_append_printf(buf, "((%s){0})", eolian_type_c_name_get(btp));
+        return;
+      default:
+        break;
+     }
    /* enums and remaining regulars... 0 should do */
    eina_strbuf_append(buf, "0");
 }

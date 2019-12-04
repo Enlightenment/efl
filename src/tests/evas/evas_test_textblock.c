@@ -4393,6 +4393,16 @@ EFL_START_TEST(efl_canvas_text_simple)
    efl_text_set(txt, buf);
    fail_if(strcmp(efl_text_get(txt), buf));
 
+   /* Check if password is false by default*/
+   Eina_Bool password = efl_text_password_get(txt);
+   fail_if(password);
+   efl_text_password_set(txt, EINA_TRUE);
+   password = efl_text_password_get(txt);
+   fail_if(!password);
+   efl_text_password_set(txt, EINA_FALSE);
+   password = efl_text_password_get(txt);
+   fail_if(password);
+
    END_EFL_CANVAS_TEXT_TEST();
 }
 EFL_END_TEST

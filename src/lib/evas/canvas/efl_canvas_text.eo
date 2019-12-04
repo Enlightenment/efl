@@ -83,10 +83,324 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          [[Applies a style to the text object. Applied style attributes override old ones, leaving other attributes
          unaffected.
          This is similar to setting individual style attributes using properties like @Efl.Text_Font.font_slant or
-         @Efl.Text_Format.wrap.]]
+         @Efl.Text_Format.wrap.
+
+         The style can be set as "attribute"="Value".
+         Multible attribute can be set at once separated by space.
+
+         The following styling attributes are accepted:
+
+         - Font
+         - Font fallback
+         - Font size
+         - Font source
+         - Font weight
+         - Font style
+         - Font width
+         - Language
+         - Color
+         - Underline Color
+         - Second Underline Color
+         - Underline Dash Color
+         - Outline Color
+         - Shadow Color
+         - First Glow Color
+         - Second Glow Color
+         - Backing Color
+         - Strikethrough Color
+         - Horizontal Align
+         - Vertical Align
+         - Wrap
+         - Left margin
+         - Right margin
+         - Underline
+         - Strikethrough
+         - Backing
+         - Style
+         - Tabstops
+         - Line size
+         - Relative line size
+         - Line gap
+         - Relative line gap
+         - Item
+         - Line fill
+         - Ellipsis
+         - Password
+         - Underline dash width
+         - Underline dash gap
+         - Underline height
+
+         Font
+         This sets the name of the font to be used.
+         font=<font name>
+
+         Font fallback
+         A comma delimited list of fonts to try if finding the primary font fails.
+         font_fallbacks=<font names>
+
+         Font size
+         This sets the the size of font in points to be used.
+         font_size=<size>
+
+         Font source
+         Specify source from which to search for the font.
+         font_source=<source>
+
+         Font weight
+         Sets the weight of the font. The value must be one of:
+         "normal"
+         "thin"
+         "ultralight"
+         "extralight"
+         "light"
+         "book"
+         "medium"
+         "semibold"
+         "bold"
+         "ultrabold"
+         "extrabold"
+         "black"
+         "extrablack"
+         font_weight=<weight>
+
+         Font style
+         Sets the style of the font. The value must be one of:
+         "normal"
+         "oblique"
+         "italic"
+         font_style=<style>
+
+         Font width
+         Sets the width of the font. The value must be one of:
+         "normal"
+         "ultracondensed"
+         "extracondensed"
+         "condensed"
+         "semicondensed"
+         "semiexpanded"
+         "expanded"
+         "extraexpanded"
+         "ultraexpanded"
+         font_width=<width>
+
+         Language
+         Overrides the language defined in font. For example, lang=he.
+         The value can either be a language text or one of presets:
+         "auto" - Respects system locale settings as language
+         "none" - Disable language support
+         lang=<language>
+
+         Color Commands <color>:
+         The following formats are accepted:
+         "#RRGGBB"
+         "#RRGGBBAA"
+         "#RGB"
+         "#RGBA"
+         "rgb(r,g,b)"
+         "rgba(r,g,b,a)"
+         "color_name" like "red" (X11 color names)
+
+         Color
+         Sets the color of the text.
+         color=<color>
+
+         Underline Color
+         Sets the color of the underline.
+         underline_color=<color>
+
+         Second Underline Color
+         Sets the color of the second line of underline(when using underline mode "double").
+         underline2_color=<color>
+
+         Underline Dash Color
+         Sets the color of dashed underline.
+         underline_dash_color=<color>
+
+         Outline Color
+         Sets the color of the outline of the text.
+         outline_color=<color>
+
+         Shadow Color
+         Sets the color of the shadow of the text.
+         shadow_color=<color>
+
+         First Glow Color
+         Sets the first color of the glow of text.
+         glow_color=<color>
+
+         Second Glow Color
+         Sets the second color of the glow of text.
+         glow2_color=<color>
+
+         Backing Color
+         Sets a background color for text.
+         backing_color=<color>
+
+         Strikethrough Color
+         Sets the color of text that is striked through.
+         strikethrough_color=<color>
+
+         Horizontal Align
+         Sets the horizontal alignment of the text. The value can either be a number, a percentage or one of several presets:
+         "auto" - Respects LTR/RTL settings
+         "locale" - Respects locale(language) direction settings
+         "center" - Centers the text in the line
+         "middle" - Alias for "center"
+         "left" - Puts the text at the left of the line
+         "right" - Puts the text at the right of the line
+         "start" - Respects LTR/RTL settings. It is same with "auto"
+         "end" - Puts the text at the opposite side of LTR/RTL settings
+         <number> - A number between 0.0 and 1.0 where 0.0 represents "left" and 1.0 represents "right"
+         <number>% - A percentage between 0% and 100% where 0% represents "left" and 100% represents "right"
+         align=<value or preset>
+
+         Vertical Align
+         Sets the vertical alignment of the text.
+         The value can either be a number or one of the following presets:
+         "top" - Puts text at the top of the line
+         "center" - Centers the text in the line
+         "middle" - Alias for "center"
+         "bottom" - Puts the text at the bottom of the line
+         "baseline" - Baseline
+         "base" - Alias for "baseline"
+         <number> - A number between 0.0 and 1.0 where 0.0 represents "top" and 1.0 represents "bottom"
+         <number>% - A percentage between 0% and 100% where 0% represents "top" and 100% represents "bottom"
+         valign=<value or preset>
+         See explanation of baseline at: https://en.wikipedia.org/wiki/Baseline_%28typography%29
+
+         Wrap
+         Sets the wrap policy of the text. The value must be one of the following:
+         "word" - Only wraps lines at word boundaries
+         "char" - Wraps at any character
+         "mixed" - Wrap at words if possible, if not at any character
+         "hyphenation" - Hyphenate if possible, if not wrap at words if possible, if not at any character
+         "" - Don't wrap
+         wrap=<value or preset>
+
+         Left margin
+         Sets the left margin of the text (in pixel). The value can be a number, an increment, decrement or "reset":
+         +<number> - Increments existing left margin by <number>
+         -<number> - Decrements existing left margin by <number>
+         <number> - Sets left margin to <number>
+         "reset" - Sets left margin to 0
+         left_margin=<value or reset>
+
+         Right margin
+         Sets the right margin of the text (in pixel). The value can be a number, an increment, decrement or "reset":
+         +<number> - Increments existing right margin by <number>
+         -<number> - Decrements existing right margin by <number>
+         <number> - Sets left margin to <number>
+         "reset" - Sets left margin to 0
+         right_margin=<value or reset>
+
+         Underline
+         Sets if and how a text will be underlined. The value must be one of the following:
+         "off" - No underlining
+         "single" - A single line under the text
+         "on" - Alias for "single"
+         "double" - Two lines under the text
+         "dashed" - A dashed line under the text
+         underline=off/single/on/double/dashed
+
+         Strikethrough
+         Sets if the text will be striked through. The value must be one of the following:
+         "off" - No strikethrough
+         "on" - Strikethrough
+         strikethrough=on/off
+
+         Backing
+         Sets if the text will have background color enabled or disabled. The value must be one of the following:
+         "off" - No backing
+         "on" - Backing
+         backing=on/off
+
+         Style
+         Sets the style of the text. The value must be a string composed of two comma separated parts.
+         The first part of the value sets the appearance of the text, the second the position.
+         The first part may be any of the following values:
+         "plain"
+         "off" - Alias for "plain"
+         "none" - Alias for "plain"
+         "shadow"
+         "outline"
+         "soft_outline"
+         "outline_shadow"
+         "outline_soft_shadow"
+         "glow"
+         "far_shadow"
+         "soft_shadow"
+         "far_soft_shadow" The second part may be any of the following values:
+         "bottom_right"
+         "bottom"
+         "bottom_left"
+         "left"
+         "top_left"
+         "top"
+         "top_right"
+         "right"
+         style=<appearance>,<position>
+
+         Tabstops
+         Sets the size (in pixel) of the tab character. The value must be a number greater than one.
+         tabstops=<number>
+
+         Line size
+         Sets the size (in pixel) of line of text. The value should be a number.
+         Setting this value sets linerelsize to 0%!
+         linesize=<number>
+
+         Relative line size
+         Percentage indicating the wanted size of the line relative to the calculated size.
+         Setting this value sets linesize to 0!
+         linerelsize=<number>%
+
+         Line gap
+         Sets the size (in pixel) of the line gap in text (distance between lines). The value should be a number.
+         Setting this value sets linerelgap to 0%!
+         linegap=<number>
+
+         Relative line gap
+         Sets the relative size of the line gap in text based calculated size. The value must be a percentage.
+         Setting this value sets linegap to 0!
+         linerelgap=<number>%
+
+         Line fill
+         Sets the size of the line fill in text. The value must be a percentage (how much line fill its canvas).
+         For example setting value to 100%, means the one line will fill it canvas.
+         linefill=<number>%
+
+         Ellipsis
+         Sets ellipsis mode. The value should be a number.
+         Any value smaller than 0.0 or greater than 1.0 disables ellipsis.
+         A value of 0 means ellipsizing the leftmost portion of the text first, 1 on the other hand the rightmost portion.
+         ellipsis=<number>
+
+         Password
+         Sets if the text is being used for passwords.
+         Enabling this causes all characters to be substituted for '*'. Value must be one of the following:
+         "on" - Enable
+         "off" - Disable
+         password=on/off
+
+         Underline dash width
+         Sets the width of the underline dash (in pixel). The value should be a number.
+         underline_dash_width=<number>
+
+         Underline dash gap
+         Sets the gap of the underline dash (in pixel). The value should be a number.
+         underline_dash_gap=<number>
+
+         Underline height
+         Sets the height of the single underline (in pixel). The value should be a floating number.
+         underline_height=<floatingnumber>
+
+         Gfx Filter
+         Experimental filter, see efl_gfx_filter for more information.
+         gfx_filter='filter name'
+         ]]
+
          params {
-            @in style: string; [[A whitespace-separated list of $[property=value] pairs, for example,
-                                 $[font=sans size=30].]]
+            @in style: string; [[A whitespace-separated list of $[property=value] pairs, for example, $[font=sans font_size=30].]]
          }
       }
       @property all_styles {

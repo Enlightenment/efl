@@ -255,19 +255,18 @@ EFL_START_TEST (efl_ui_spotlight_active_index)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_smart_transition_calls)
+static void
+_verify_transition_calls(int number_of_animation_calls, Eina_Bool animation_value)
 {
    Efl_Ui_Widget *w, *w1, *w2;
-   Efl_Ui_Spotlight_Manager*t = _create_transition();
 
    w = efl_add(WIDGET_CLASS, win);
    w1 = efl_add(WIDGET_CLASS, win);
    w2 = efl_add(WIDGET_CLASS, win);
 
-   efl_ui_spotlight_manager_set(container, t);
    transition_calls.last_position = -2.0;
-   ck_assert_int_eq(transition_calls.animation.called, 2);
-   ck_assert_int_eq(transition_calls.animation.value, EINA_TRUE);
+   ck_assert_int_eq(transition_calls.animation.called, number_of_animation_calls);
+   ck_assert_int_eq(transition_calls.animation.value, animation_value);
    ck_assert_int_eq(transition_calls.spotlight.called, 1);
    ck_assert_ptr_eq(transition_calls.spotlight.spotlight, container);
    //We cannot verify group
@@ -344,6 +343,24 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
    ck_assert_ptr_eq(transition_calls.content_del.subobj, w);
    ck_assert_ptr_eq(transition_calls.content_del.current_page_at_call, w2);
    transition_calls.content_del.called = 0;
+}
+
+EFL_START_TEST (efl_ui_smart_transition_calls)
+{
+   Efl_Ui_Spotlight_Manager*t = _create_transition();
+   efl_ui_spotlight_manager_set(container, t);
+
+   _verify_transition_calls(2, EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_smart_transition_calls_no_animation)
+{
+   Efl_Ui_Spotlight_Manager*t = _create_transition();
+   efl_ui_spotlight_manager_set(container, t);
+   efl_ui_spotlight_animated_transition_set(container, EINA_FALSE);
+
+   _verify_transition_calls(3, EINA_FALSE);
 }
 EFL_END_TEST
 
@@ -523,8 +540,8 @@ EFL_START_TEST (efl_ui_spotlight_test_push1)
      }
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
     efl_ui_spotlight_push(container, w);
-    ck_assert_int_eq(efl_pack_index_get(container, w), 0);
-    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), efl_pack_content_get(container, 0));
+    ck_assert_int_eq(efl_pack_index_get(container, w), 1);
+    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), efl_pack_content_get(container, 1));
 }
 EFL_END_TEST
 
@@ -539,7 +556,7 @@ EFL_START_TEST (efl_ui_spotlight_test_push2)
      }
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
     efl_ui_spotlight_push(container, w);
-    ck_assert_int_eq(efl_pack_index_get(container, w), 3);
+    ck_assert_int_eq(efl_pack_index_get(container, w), 4);
     ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
 }
 EFL_END_TEST
@@ -648,6 +665,47 @@ EFL_START_TEST (efl_ui_spotlight_animated_transition)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_spotlight_min_max_sizing)
+{
+   Efl_Ui_Button *btn0, *btn1;
+   Eina_Size2D min, size;
+
+   btn0 = efl_add(WIDGET_CLASS, container);
+   efl_gfx_hint_size_min_set(btn0, EINA_SIZE2D(20, 200));
+
+   btn1 = efl_add(WIDGET_CLASS, container);
+   efl_gfx_hint_size_min_set(btn1, EINA_SIZE2D(200, 20));
+
+   efl_pack_end(container, btn0);
+   efl_pack_end(container, btn1);
+   min = efl_gfx_hint_size_restricted_min_get(container);
+   ck_assert_int_eq(min.w, 200);
+   ck_assert_int_eq(min.h, 200);
+
+   efl_gfx_hint_size_min_set(btn0, EINA_SIZE2D(20, 300));
+   efl_canvas_group_calculate(container);
+
+   min = efl_gfx_hint_size_restricted_min_get(container);
+   ck_assert_int_eq(min.w, 200);
+   ck_assert_int_eq(min.h, 300);
+
+   efl_gfx_hint_size_min_set(btn0, EINA_SIZE2D(20, 20));
+   efl_canvas_group_calculate(container);
+
+   min = efl_gfx_hint_size_restricted_min_get(container);
+   ck_assert_int_eq(min.w, 200);
+   ck_assert_int_eq(min.h, 20);
+
+   efl_ui_spotlight_size_set(container, EINA_SIZE2D(2000, 2000));
+
+   efl_gfx_entity_size_set(container, EINA_SIZE2D(200, 200));
+   size = efl_gfx_entity_size_get(btn0);
+   ck_assert_int_eq(size.w, 200);
+   ck_assert_int_eq(size.h, 200);
+
+}
+EFL_END_TEST
+
 static void
 spotlight_setup()
 {
@@ -674,6 +732,7 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_init);
    tcase_add_test(tc, efl_ui_spotlight_active_index);
    tcase_add_test(tc, efl_ui_smart_transition_calls);
+   tcase_add_test(tc, efl_ui_smart_transition_calls_no_animation);
    tcase_add_test(tc, efl_ui_smart_transition_lifetime);
    tcase_add_test(tc, efl_ui_smart_indicator_calls);
    tcase_add_test(tc, efl_ui_smart_indicator_transition_calls);
@@ -684,4 +743,5 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_test_pop2);
    tcase_add_test(tc, efl_ui_spotlight_test_pop3);
    tcase_add_test(tc, efl_ui_spotlight_animated_transition);
+   tcase_add_test(tc, efl_ui_spotlight_min_max_sizing);
 }

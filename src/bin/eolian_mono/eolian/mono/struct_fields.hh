@@ -45,8 +45,9 @@ struct field_argument_assignment_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-       if (!as_generator("this." << string << " = " << string)
-               .generate(sink, std::make_tuple(name_helpers::to_field_name(field.name), name_helpers::to_field_name(field.name)), context))
+       auto field_name = name_helpers::to_field_name(field.name);
+       if (!as_generator("this." << field_name << " = " << field_name)
+               .generate(sink, attributes::unused, context))
            return false;
        return true;
    }

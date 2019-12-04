@@ -2,7 +2,7 @@ class @beta Efl.Canvas.Gesture_Zoom extends Efl.Canvas.Gesture
 {
    [[Zoom gesture class holding state information.
      See @Efl.Canvas.Gesture to see what this state is and
-     @[Efl.Gesture.Events.gesture,zoom] for a description of the Flick gesture.
+     @[Efl.Gesture.Events.gesture,zoom] for a description of the Zoom gesture.
    ]]
    c_prefix: efl_gesture_zoom;
    methods {

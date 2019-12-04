@@ -821,6 +821,13 @@ EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect);
 
 /**
+ * @see evas_object_size_hint_aspect_get
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI void ecore_wl2_window_aspect_get(Ecore_Wl2_Window *window, int *w, int *h, unsigned int *aspect);
+
+/**
  * Show a given Ecore_Wl2_Window
  *
  * @param window The Ecore_Wl2_Window to show
@@ -1009,6 +1016,18 @@ EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
 
 /**
+ * Get the title of a given window
+ *
+ * @param window The window to set the title of
+ *
+ * @return A string if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI const char *ecore_wl2_window_title_get(Ecore_Wl2_Window *window);
+
+/**
  * Set the class of a given window
  *
  * @param window The window to set the class of
@@ -1018,6 +1037,19 @@ EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title
  * @since 1.17
  */
 EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas);
+
+
+/**
+ * Get the class of a given window
+ *
+ * @param window The window to set the class of
+ *
+ * @return A string if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI const char *ecore_wl2_window_class_get(Ecore_Wl2_Window *window);
 
 /**
  * Get the geometry of a given window
@@ -1098,17 +1130,6 @@ EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
  * @since 1.20
  */
 EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
-
-/**
- * Set a buffer transform on a given window
- *
- * @param window The window on which to set the buffer transform
- * @param transform The buffer transform being requested
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
 
 /**
  * Set if window rotation is supported by the window manager
@@ -1336,6 +1357,18 @@ EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
  * @since 1.20
  */
 EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
+
+/**
+ * Get the role of a given window
+ *
+ * @param window The window to set the class role
+ *
+ * @return A string if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI const char *ecore_wl2_window_role_get(Ecore_Wl2_Window *window);
 
 /**
  * Set if a given window is in floating mode
@@ -2004,24 +2037,6 @@ EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Wi
  * @since 1.21
  */
 EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle);
-
-/**
- * Attach a buffer to a window
- *
- * Note that the GL stack my attach buffers to a surface - we should call this
- * function at that time (with a NULL buffer) to track whether a surface
- * has a valid buffer.  That is, call with implicit true and buffer NULL at
- * the time of glSwapBuffers.
- *
- * @param window The target window
- * @param buffer The buffer to attach
- * @param x X offset from corner
- * @param y Y offset from corner
- * @param implicit True if an external library is doing the actual attaching
- *
- * @since 1.21
- */
-EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
 /**
  * Push buffered wayland protocol to compositor

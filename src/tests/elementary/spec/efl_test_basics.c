@@ -46,7 +46,9 @@
              "Efl.Ui.Relative_Container",
              "Efl.Ui.Animation_View",
              "Efl.Ui.Table",
-             "Efl.Ui.Flip"
+             "Efl.Ui.Flip",
+             "Efl.Ui.Stack",
+             "Efl.Ui.Pager"
              ],
        "custom-mapping" : {
           "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",

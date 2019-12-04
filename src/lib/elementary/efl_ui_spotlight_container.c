@@ -29,6 +29,7 @@ typedef struct _Efl_Ui_Spotlight_Container_Data
    } transition_done;
    Efl_Ui_Spotlight_Manager *transition;
    Efl_Ui_Spotlight_Indicator *indicator;
+   Eina_Size2D min, max;
    double position;
    Eina_Bool fill_width: 1;
    Eina_Bool fill_height: 1;
@@ -157,19 +158,38 @@ _transition_event_emission(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data 
 }
 
 static void
-_resize_cb(void *data, const Efl_Event *ev)
+_emit_page_size(Efl_Ui_Spotlight_Container *obj, Efl_Ui_Spotlight_Container_Data *pd)
 {
-   Efl_Ui_Spotlight_Container_Data *pd = data;
    Eina_Size2D sz;
 
-   sz = efl_gfx_entity_size_get(ev->object);
+   sz = efl_gfx_entity_size_get(obj);
 
-   if (pd->fill_width) pd->page_spec.sz.w = sz.w;
-   if (pd->fill_height) pd->page_spec.sz.h = sz.h;
+   if (!pd->fill_width)
+     sz.w = MIN(pd->page_spec.sz.w, sz.w);
+
+   if (!pd->fill_height)
+     sz.h = MIN(pd->page_spec.sz.h, sz.h);
 
    if (pd->transition)
-     efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);
+     efl_ui_spotlight_manager_size_set(pd->transition, sz);
 }
+
+static void
+_resize_cb(void *data, const Efl_Event *ev)
+{
+   _emit_page_size(ev->object, data);
+}
+
+static void
+_position_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   _emit_page_size(ev->object, data);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(spotlight_resized,
+  {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb},
+  {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _position_cb},
+)
 
 EOLIAN static Eo *
 _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
@@ -177,17 +197,9 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "spotlight");
-
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Failed to set layout!");
-
+   pd->max = EINA_SIZE2D(INT_MAX, INT_MAX);
    pd->animation_enabled = EINA_TRUE;
    pd->position = -1;
    pd->curr.page = NULL;
@@ -203,14 +215,7 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, pd);
-
-   pd->event = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                       evas_object_evas_get(obj));
-   evas_object_color_set(pd->event, 0, 0, 0, 0);
-   evas_object_repeat_events_set(pd->event, EINA_TRUE);
-   efl_content_set(efl_part(obj, "efl.event"), pd->event);
-
+   efl_event_callback_array_add(obj, spotlight_resized(), pd);
    return obj;
 }
 
@@ -265,9 +270,41 @@ _child_inv(void *data, const Efl_Event *ev)
    _unpack(data, pd, ev->object, index);
 }
 
+#define ADJUST_PRIVATE_MIN_MAX(obj, subobj, pd) \
+  do \
+    { \
+       min = efl_gfx_hint_size_combined_min_get(subobj); \
+       max = efl_gfx_hint_size_combined_max_get(subobj); \
+       pd->min.w = MAX(pd->min.w, min.w); \
+       pd->min.h = MAX(pd->min.h, min.h); \
+       pd->max.w = MIN(pd->max.w, max.w); \
+       pd->max.h = MIN(pd->max.h, max.h); \
+    } \
+  while(0)
+
+#define FLUSH_MIN_MAX(obj, pd) \
+  do \
+    { \
+       efl_gfx_hint_size_restricted_min_set(obj, pd->min); \
+       efl_gfx_hint_size_restricted_max_set(obj, pd->max); \
+    } \
+  while(0)
+
+static void
+_hints_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_canvas_group_change(data);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(children_evt,
+  {EFL_EVENT_INVALIDATE, _child_inv},
+  {EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _hints_changed_cb}
+)
+
 static Eina_Bool
 _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   Eina_Size2D min, max;
    EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
    if (eina_list_data_find(pd->content_list, subobj))
      {
@@ -277,7 +314,10 @@ _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gf
    if (!efl_ui_widget_sub_object_add(obj, subobj))
      return EINA_FALSE;
 
-   efl_event_callback_add(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
+   efl_event_callback_array_add(subobj, children_evt(), obj);
+
+   ADJUST_PRIVATE_MIN_MAX(obj, subobj, pd);
+   FLUSH_MIN_MAX(obj, pd);
 
    return EINA_TRUE;
 }
@@ -545,7 +585,8 @@ _unpack(Eo *obj,
        pd->indicator && !pd->transition)
      efl_ui_spotlight_indicator_position_update(pd->indicator, efl_pack_index_get(obj, pd->curr.page));
 
-   efl_event_callback_del(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
+   efl_event_callback_array_del(subobj, children_evt(), obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -649,7 +690,6 @@ _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Da
 {
    if (pd->indicator)
      {
-        efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         efl_del(pd->indicator);
      }
    pd->indicator = indicator;
@@ -676,12 +716,12 @@ _efl_ui_spotlight_container_push(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EI
 {
    if (efl_ui_spotlight_active_element_get(obj))
      {
-        if (!efl_pack_before(obj, view, efl_ui_spotlight_active_element_get(obj)))
+        if (!efl_pack_after(obj, view, efl_ui_spotlight_active_element_get(obj)))
           return;
      }
    else
      {
-        if (!efl_pack_begin(obj, view))
+        if (!efl_pack_end(obj, view))
           return;
      }
 
@@ -729,9 +769,9 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
         return efl_loop_future_resolved(obj, v);
      }
 
-   new_index = efl_pack_index_get(obj, efl_ui_spotlight_active_element_get(obj)) + 1;
-   if (new_index >= count)
-     new_index -= 2;
+   new_index = efl_pack_index_get(obj, efl_ui_spotlight_active_element_get(obj)) - 1;
+   if (new_index < 0)
+     new_index += 2;
 
    pd->transition_done.content = content;
    pd->transition_done.transition_done = efl_loop_promise_new(obj);
@@ -758,6 +798,28 @@ _efl_ui_spotlight_container_animated_transition_get(const Eo *obj EINA_UNUSED, E
    return pd->animation_enabled;
 }
 
+EOLIAN static void
+_efl_ui_spotlight_container_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
+{
+   Efl_Ui_Widget *content;
+   Eina_List *n;
+
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
+
+   pd->min = EINA_SIZE2D(0,0);
+   pd->max = EINA_SIZE2D(INT_MAX, INT_MAX);
+
+   EINA_LIST_FOREACH(pd->content_list, n, content)
+     {
+        Eina_Size2D min, max;
+
+        min = efl_gfx_hint_size_combined_min_get(content);
+        max = efl_gfx_hint_size_combined_max_get(content);
+
+        ADJUST_PRIVATE_MIN_MAX(obj, content, pd);
+     }
+   FLUSH_MIN_MAX(obj, pd);
+}
 
 
 #include "efl_ui_spotlight_container.eo.c"

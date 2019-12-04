@@ -1,0 +1,10 @@
+class @beta Efl.Ui.Stack extends Efl.Ui.Spotlight.Container
+{
+   [[A spotlight with predefined @Efl.Ui.Spotlight.Container.spotlight_manager
+
+     The container will alpha-blend the new content over the old content.
+   ]]
+   implements {
+      Efl.Object.constructor;
+   }
+}
