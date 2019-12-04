@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Concurrent;
 
 namespace Efl
 {
@@ -43,6 +44,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
     private static Efl.EventCb ownershipUniqueDelegate = new Efl.EventCb(OwnershipUniqueCallback);
     private static Efl.EventCb ownershipSharedDelegate = new Efl.EventCb(OwnershipSharedCallback);
+
+    private ConcurrentDictionary<string, IntPtr> cached_strings = new ConcurrentDictionary<string, IntPtr>();
+    private ConcurrentDictionary<string, IntPtr> cached_stringshares = new ConcurrentDictionary<string, IntPtr>();
 
     private Hashtable keyValueHash = null;
 
@@ -195,9 +199,12 @@ public abstract class EoWrapper : IWrapper, IDisposable
             {
                 Efl.Eo.Globals.efl_mono_thread_safe_native_dispose(handle);
             }
-
             Monitor.Exit(Efl.All.InitLock);
         }
+
+        // Are these threadsafe?
+        Efl.Eo.Globals.free_dict_values(cached_strings);
+        Efl.Eo.Globals.free_stringshare_values(cached_stringshares);
     }
 
     /// <summary>Turns the native pointer into a string representation.

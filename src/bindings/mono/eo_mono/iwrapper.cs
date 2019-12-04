@@ -19,6 +19,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -528,7 +529,7 @@ public static class Globals
         Efl.Eo.Globals.efl_mono_wrapper_supervisor_set(eo, GCHandle.ToIntPtr(gch));
     }
 
-    internal static void free_dict_values(Dictionary<String, IntPtr> dict)
+    internal static void free_dict_values(ConcurrentDictionary<String, IntPtr> dict)
     {
         foreach (IntPtr ptr in dict.Values)
         {
@@ -536,7 +537,7 @@ public static class Globals
         }
     }
 
-    internal static void free_stringshare_values(Dictionary<String, IntPtr> dict)
+    internal static void free_stringshare_values(ConcurrentDictionary<String, IntPtr> dict)
     {
         foreach (IntPtr ptr in dict.Values)
         {
