@@ -1,5 +1,5 @@
 #include "efl_canvas_animation_private.h"
-
+#include <math.h>
 #define MY_CLASS EFL_CANVAS_ANIMATION_CLASS
 
 static double _standard_animation_time = 0.2; //in seconds
@@ -117,8 +117,7 @@ _efl_canvas_animation_efl_playable_length_get(const Eo *eo_obj, Efl_Canvas_Anima
 {
    if (efl_animation_repeat_count_get(eo_obj) == EFL_ANIMATION_REPEAT_INFINITE)
      {
-        //TODO: what's correct?
-        return (double)EFL_ANIMATION_REPEAT_INFINITE;
+        return INFINITY;
      }
 
    return (efl_animation_duration_get(eo_obj) * (efl_animation_repeat_count_get(eo_obj) + 1));
