@@ -2301,8 +2301,11 @@ tags_done:
                {
                   /* regular class can have a parent, but just one */
                   _inherit_dep(ls, ibuf, EINA_TRUE);
+                  /* followed by composites */
+                  if (ls->t.kw == KW_composites)
+                    goto noimp_comp;
                   /* if not followed by implements, we're done */
-                  if ((ls->t.kw != KW_implements) && (ls->t.kw != KW_composites))
+                  if (ls->t.kw != KW_implements)
                     {
                        eo_lexer_dtor_pop(ls);
                        goto inherit_done;
@@ -2314,6 +2317,7 @@ tags_done:
              while (test_next(ls, ','));
           }
 
+noimp_comp:
         if (ls->t.kw == KW_composites)
           {
              if (type == EOLIAN_CLASS_INTERFACE)
