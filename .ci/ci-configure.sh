@@ -6,22 +6,21 @@ set -e
 
 if [ "$DISTRO" != "" ] ; then
   # Normal build test of all targets
-  OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Dbindings=luajit"
   # Why do we need to disable the imf loaders here?
+  OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
-  MONO_LINUX_COPTS=" -Dbindings=luajit,mono -Dmono-beta=true"
+  MONO_LINUX_COPTS=" -Dbindings=luajit,cxx,mono -Dmono-beta=true"
 
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
   # TODO:
-  # - Enable C++ bindings: -Dbindings=luajit,cxx
   # - No libelogind, Xgesture packages in fedora 30 repo
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
-  -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
+  -Dvnc-server=true -Dbindings=luajit,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
   # Enabled png, jpeg evas loader for in tree edje file builds
   DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
@@ -39,7 +38,7 @@ if [ "$DISTRO" != "" ] ; then
 
   MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
-  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg -Dbindings=luajit \
+  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg \
   -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
 
   if [ "$1" = "default" ]; then
@@ -109,6 +108,6 @@ else
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
   export CC="ccache gcc"
   travis_fold meson meson
-  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer1,libvlc,xine
+  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer1,libvlc,xine
   travis_endfold meson
 fi
