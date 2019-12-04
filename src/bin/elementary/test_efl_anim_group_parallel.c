@@ -5,7 +5,6 @@
 
 typedef struct _App_Data
 {
-   Efl_Canvas_Animation        *parallel_show_anim;
    Efl_Canvas_Animation        *parallel_hide_anim;
    Elm_Button                  *button;
 
@@ -49,7 +48,7 @@ _btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    if (ad->is_btn_visible)
      {
         //Create Animation Object from Animation
-        efl_canvas_object_animation_start(ad->button, ad->parallel_show_anim, 1.0, 0.0);
+        efl_canvas_object_animation_start(ad->button, ad->parallel_hide_anim, -1.0, 0.0);
         efl_text_set(obj, "Start Parallel Group Animation to hide button");
      }
    else
@@ -88,29 +87,6 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    evas_object_show(btn);
    efl_event_callback_array_add(btn, animation_stats_cb(), ad);
 
-   //Show Animation
-   Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
-   efl_animation_alpha_set(show_anim, 0.0, 1.0);
-
-   //Rotate from 45 to 0 degrees Animation
-   Efl_Canvas_Animation *ccw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
-   efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, EINA_VECTOR2(0.5, 0.5));
-
-   //Scale Animation to zoom out
-   Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), NULL, EINA_VECTOR2(0.5, 0.5));
-
-   //Show Parallel Group Animation
-   Efl_Canvas_Animation *parallel_show_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_PARALLEL_CLASS, win);
-   efl_animation_duration_set(parallel_show_anim, 1.0);
-   efl_animation_final_state_keep_set(parallel_show_anim, EINA_TRUE);
-
-   //Add animations to group animation
-   efl_animation_group_animation_add(parallel_show_anim, show_anim);
-   efl_animation_group_animation_add(parallel_show_anim, ccw_45_degrees_anim);
-   efl_animation_group_animation_add(parallel_show_anim, scale_half_anim);
-
-
    //Hide Animation
    Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
@@ -135,7 +111,6 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
 
    //Initialize App Data
-   ad->parallel_show_anim = parallel_show_anim;
    ad->parallel_hide_anim = parallel_hide_anim;
    ad->button = btn;
 

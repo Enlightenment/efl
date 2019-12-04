@@ -5,7 +5,6 @@
 
 typedef struct _App_Data
 {
-   Efl_Canvas_Animation        *sequential_show_anim;
    Efl_Canvas_Animation        *sequential_hide_anim;
    Elm_Button                  *button;
 
@@ -49,7 +48,7 @@ _btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    if (ad->is_btn_visible)
      {
         //Create Animation Object from Animation
-        efl_canvas_object_animation_start(ad->button, ad->sequential_show_anim, 1.0, 0.0);
+        efl_canvas_object_animation_start(ad->button, ad->sequential_hide_anim, -1.0, 0.0);
         efl_text_set(obj, "Start Sequential Group Animation to hide button");
      }
    else
@@ -111,37 +110,7 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    efl_animation_group_animation_add(sequential_hide_anim, scale_double_anim);
    efl_animation_group_animation_add(sequential_hide_anim, hide_anim);
 
-
-   /* Animations to show button */
-   //Show Animation
-   Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
-   efl_animation_alpha_set(show_anim, 0.0, 1.0);
-   efl_animation_duration_set(show_anim, 1.0);
-
-   //Scale Animation to zoom out
-   Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), NULL, EINA_VECTOR2(0.5, 0.5));
-   efl_animation_duration_set(scale_half_anim, 1.0);
-
-   //Rotate from 45 to 0 degrees Animation
-   Efl_Canvas_Animation *ccw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
-   efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, EINA_VECTOR2(0.5, 0.5));
-   efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
-
-   //Show Sequential Group Animation
-   Efl_Canvas_Animation *sequential_show_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_CLASS, win);
-   efl_animation_final_state_keep_set(sequential_show_anim, EINA_TRUE);
-   //efl_animation_duration_set() is called for each animation not to set the same duration
-
-   //Add animations to group animation
-   //First, parallel_hide_anim is added with duration 0 to set the initial state
-   efl_animation_group_animation_add(sequential_show_anim, show_anim);
-   efl_animation_group_animation_add(sequential_show_anim, scale_half_anim);
-   efl_animation_group_animation_add(sequential_show_anim, ccw_45_degrees_anim);
-
-
    //Initialize App Data
-   ad->sequential_show_anim = sequential_show_anim;
    ad->sequential_hide_anim = sequential_hide_anim;
    ad->button = btn;
 
