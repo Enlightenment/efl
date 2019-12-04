@@ -10,7 +10,7 @@ typedef struct _App_Data
    Elm_Button                  *button;
 
    Evas_Object          *start_btn;
-   Evas_Object          *repeat_count_spin;
+   Evas_Object          *play_count_spin;
    Evas_Object          *repeat_mode_spin;
 
    Eina_Bool             is_btn_visible;
@@ -44,8 +44,8 @@ _anim_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
         Efl_Canvas_Animation_Repeat_Mode repeat_mode = _anim_repeat_mode_get(ad->repeat_mode_spin);
         if (repeat_mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
           {
-             int repeat_count = elm_spinner_value_get(ad->repeat_count_spin);
-             if (repeat_count % 2 == 1)
+             int play_count = elm_spinner_value_get(ad->play_count_spin);
+             if (play_count % 2 == 0)
                {
                   ad->is_btn_visible = !(ad->is_btn_visible);
                   if (ad->is_btn_visible)
@@ -54,7 +54,7 @@ _anim_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
                     elm_object_text_set(ad->start_btn, "Start Alpha Animation from 0.0 to 1.0");
                }
           }
-        elm_object_disabled_set(ad->repeat_count_spin, EINA_FALSE);
+        elm_object_disabled_set(ad->play_count_spin, EINA_FALSE);
         elm_object_disabled_set(ad->repeat_mode_spin, EINA_FALSE);
      }
 }
@@ -78,16 +78,16 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
 
    ad->is_btn_visible = !(ad->is_btn_visible);
 
-   int repeat_count = elm_spinner_value_get(ad->repeat_count_spin);
-   elm_object_disabled_set(ad->repeat_count_spin, EINA_TRUE);
+   int play_count = elm_spinner_value_get(ad->play_count_spin);
+   elm_object_disabled_set(ad->play_count_spin, EINA_TRUE);
 
    Efl_Canvas_Animation_Repeat_Mode repeat_mode = _anim_repeat_mode_get(ad->repeat_mode_spin);
    elm_object_disabled_set(ad->repeat_mode_spin, EINA_TRUE);
 
    if (ad->is_btn_visible)
      {
-        //Set animation repeat count
-        efl_animation_repeat_count_set(ad->show_anim, repeat_count);
+        //Set animation play count
+        efl_animation_play_count_set(ad->show_anim, play_count);
 
         //Set animation repeat mode
         efl_animation_repeat_mode_set(ad->show_anim, repeat_mode);
@@ -99,7 +99,7 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
    else
      {
         //Set animation repeat count
-        efl_animation_repeat_count_set(ad->hide_anim, repeat_count);
+        efl_animation_play_count_set(ad->hide_anim, play_count);
 
         //Set animation repeat mode
         efl_animation_repeat_mode_set(ad->hide_anim, repeat_mode);
@@ -158,15 +158,15 @@ test_efl_anim_repeat(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_move(start_btn, 100, 300);
    evas_object_show(start_btn);
 
-   //Spinner to set animation repeat count
-   Evas_Object *repeat_count_spin = elm_spinner_add(win);
-   elm_spinner_label_format_set(repeat_count_spin, "Repeat Count: %d");
-   elm_spinner_editable_set(repeat_count_spin, EINA_FALSE);
-   elm_spinner_min_max_set(repeat_count_spin, 0, 3);
-   elm_spinner_value_set(repeat_count_spin, 0);
-   evas_object_resize(repeat_count_spin, 200, 50);
-   evas_object_move(repeat_count_spin, 100, 350);
-   evas_object_show(repeat_count_spin);
+   //Spinner to set animation play count
+   Evas_Object *play_count_spin = elm_spinner_add(win);
+   elm_spinner_label_format_set(play_count_spin, "Play Count (0 is infinite): %d");
+   elm_spinner_editable_set(play_count_spin, EINA_FALSE);
+   elm_spinner_min_max_set(play_count_spin, 0, 3);
+   elm_spinner_value_set(play_count_spin, 1);
+   evas_object_resize(play_count_spin, 200, 50);
+   evas_object_move(play_count_spin, 100, 350);
+   evas_object_show(play_count_spin);
 
    //Spinner to set animation repeat mode
    Evas_Object *repeat_mode_spin = elm_spinner_add(win);
@@ -184,7 +184,7 @@ test_efl_anim_repeat(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    ad->show_anim = show_anim;
    ad->hide_anim = hide_anim;
    ad->start_btn = start_btn;
-   ad->repeat_count_spin = repeat_count_spin;
+   ad->play_count_spin = play_count_spin;
    ad->repeat_mode_spin = repeat_mode_spin;
    ad->is_btn_visible = EINA_TRUE;
    ad->button = btn;
