@@ -48,13 +48,13 @@ void _evas_textgrid_efl_object_destructor(Eo *obj, Evas_Textgrid_Data *pd);
 void _evas_textgrid_efl_text_font_font_family_set(Eo *obj, Evas_Textgrid_Data *pd, const char *font);
 
 
-void _evas_textgrid_efl_text_font_font_family_get(const Eo *obj, Evas_Textgrid_Data *pd, const char **font);
+const char * _evas_textgrid_efl_text_font_font_family_get(const Eo *obj, Evas_Textgrid_Data *pd);
 
 
 void _evas_textgrid_efl_text_font_font_size_set(Eo *obj, Evas_Textgrid_Data *pd, Efl_Font_Size size);
 
 
-void _evas_textgrid_efl_text_font_font_size_get(const Eo *obj, Evas_Textgrid_Data *pd, Efl_Font_Size *size);
+Evas_Font_Size _evas_textgrid_efl_text_font_font_size_get(const Eo *obj, Evas_Textgrid_Data *pd);
 
 
 void _evas_textgrid_efl_text_font_font_source_set(Eo *obj, Evas_Textgrid_Data *pd, const char *font_source);

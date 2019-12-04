@@ -1224,10 +1224,10 @@ _evas_textgrid_efl_text_font_font_family_set(Eo *eo_obj,
    _evas_textgrid_font_reload(eo_obj, o);
 }
 
-EOLIAN static void
-_evas_textgrid_efl_text_font_font_family_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, const char **font_name)
+EOLIAN static const char *
+_evas_textgrid_efl_text_font_font_family_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
 {
-   if (font_name) *font_name = o->cur.font_name;
+   return o->cur.font_name;
 }
 
 EOLIAN static void
@@ -1244,10 +1244,10 @@ _evas_textgrid_efl_text_font_font_size_set(Eo *eo_obj,
    _evas_textgrid_font_reload(eo_obj, o);
 }
 
-EOLIAN static void
-_evas_textgrid_efl_text_font_font_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, Evas_Font_Size *font_size)
+EOLIAN static Evas_Font_Size
+_evas_textgrid_efl_text_font_font_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
 {
-   if (font_size) *font_size = o->cur.font_size;
+   return o->cur.font_size;
 }
 
 EOLIAN static void
