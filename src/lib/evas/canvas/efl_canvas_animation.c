@@ -52,19 +52,19 @@ _efl_canvas_animation_repeat_mode_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_A
 }
 
 EOLIAN static void
-_efl_canvas_animation_repeat_count_set(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_play_count_set(Eo *eo_obj EINA_UNUSED,
                                 Efl_Canvas_Animation_Data *pd,
                                 int count)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(count >= EFL_ANIMATION_REPEAT_INFINITE);
+   EINA_SAFETY_ON_FALSE_RETURN(count >= 0);
 
-   pd->repeat_count = count;
+   pd->play_count = count;
 }
 
 EOLIAN static int
-_efl_canvas_animation_repeat_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
+_efl_canvas_animation_play_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
 {
-   return pd->repeat_count;
+   return pd->play_count;
 }
 
 EOLIAN static void
@@ -115,12 +115,12 @@ _efl_canvas_animation_animation_apply(Eo *eo_obj,
 EOLIAN static double
 _efl_canvas_animation_efl_playable_length_get(const Eo *eo_obj, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
-   if (efl_animation_repeat_count_get(eo_obj) == EFL_ANIMATION_REPEAT_INFINITE)
+   if (efl_animation_play_count_get(eo_obj) == 0)
      {
         return INFINITY;
      }
 
-   return (efl_animation_duration_get(eo_obj) * (efl_animation_repeat_count_get(eo_obj) + 1));
+   return (efl_animation_duration_get(eo_obj) * efl_animation_play_count_get(eo_obj));
 }
 
 EOLIAN static Eina_Bool
@@ -139,6 +139,7 @@ EOLIAN static Efl_Object*
 _efl_canvas_animation_efl_object_constructor(Eo *obj, Efl_Canvas_Animation_Data *pd)
 {
    pd->duration = _default_animation_time;
+   pd->play_count = 1;
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
