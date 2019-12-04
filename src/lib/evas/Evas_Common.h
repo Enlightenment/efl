@@ -3483,10 +3483,7 @@ typedef Eo Efl_Animation_Group_Sequential;
 #endif
 
 #define EFL_ANIMATION_GROUP_DURATION_NONE -1
-#define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
-
 #define EFL_ANIMATION_REPEAT_INFINITE -1
-#define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
 // The below type are necessary for legacy API and need to be manually kept in sync with .eo file.
 #ifndef _EFL_INPUT_DEVICE_EO_CLASS_TYPE

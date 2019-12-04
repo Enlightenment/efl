@@ -123,11 +123,7 @@ typedef Eo Efl_Canvas_Animation_Group_Sequential;
 #endif
 
 #define EFL_ANIMATION_GROUP_DURATION_NONE -1
-#define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
-
 #define EFL_ANIMATION_REPEAT_INFINITE -1
-#define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
-
 
 struct _Efl_Canvas_Animation_Player_Event_Running
 {
