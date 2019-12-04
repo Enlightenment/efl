@@ -1247,6 +1247,17 @@ _add_composite(Eolian_Class *cl, const Eolian_Class *icl, Eina_Hash *ch)
      }
 }
 
+static void
+_add_implicit_composite(Eolian_Class *icl, Eina_Hash *ch, Eina_Bool try_tree)
+{
+   eina_hash_set(ch, &icl, icl);
+   if (!try_tree)
+     return;
+   Eina_List *l;
+   EINA_LIST_FOREACH(icl->extends, l, icl)
+     _add_implicit_composite(icl, ch, try_tree);
+}
+
 static Eina_Bool
 _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
                   Eina_Hash *errh)
@@ -1325,7 +1336,12 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
         cl->composite = eina_list_append(cl->composite, out_cl);
         succ = _db_fill_inherits(vals, out_cl, fhash, errh);
         ++ncomp;
-        eina_hash_set(ch, &out_cl, out_cl);
+        /* for each thing that is composited, we need to add the entire
+         * inheritance tree of it into composite hash to check, so e.g.
+         * class A -> composites B -> extends C does not complain about
+         * A not implementing C
+         */
+        _add_implicit_composite(out_cl, ch, out_cl->type == EOLIAN_CLASS_INTERFACE);
      }
 
    /* parent can be abstract, those are not checked for unimplemented,
