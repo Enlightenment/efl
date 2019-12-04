@@ -110,8 +110,17 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          }
          return: double; [[Final applied progress, after possible adjustments. See @.interpolator.]]
       }
+      @property default_duration @static {
+         [[Duration that will be used by default on all animations unless another value
+           is set per object using @.duration.
+         ]]
+         values {
+            animation_time : double; [[Default animation duration, in seconds.]]
+         }
+      }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Playable.length { get; }
       Efl.Playable.seekable { get; }
       Efl.Playable.playable { get; }

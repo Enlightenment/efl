@@ -2,6 +2,8 @@
 
 #define MY_CLASS EFL_CANVAS_ANIMATION_CLASS
 
+static double _standard_animation_time = 0.2; //in seconds
+
 EOLIAN static void
 _efl_canvas_animation_duration_set(Eo *eo_obj EINA_UNUSED,
                             Efl_Canvas_Animation_Data *pd,
@@ -132,6 +134,26 @@ EOLIAN static Eina_Bool
 _efl_canvas_animation_efl_playable_seekable_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
+}
+
+EOLIAN static Efl_Object*
+_efl_canvas_animation_efl_object_constructor(Eo *obj, Efl_Canvas_Animation_Data *pd)
+{
+   pd->duration = _standard_animation_time;
+   return efl_constructor(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_canvas_animation_default_duration_set(double animation_time)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(animation_time > 0.0);
+   _standard_animation_time = animation_time;
+}
+
+EOLIAN static double
+_efl_canvas_animation_default_duration_get(void)
+{
+   return _standard_animation_time;
 }
 
 #include "efl_canvas_animation.eo.c"
