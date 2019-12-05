@@ -23,6 +23,18 @@ static int event_freeze_count = 0;
 
 typedef struct _Eo_Callback_Description  Eo_Callback_Description;
 typedef struct _Efl_Event_Callback_Frame Efl_Event_Callback_Frame;
+typedef struct _Efl_Event_Forwarder Efl_Event_Forwarder;
+
+struct _Efl_Event_Forwarder
+{
+   const Efl_Event_Description *desc;
+   Eo *source;
+   Eo *new_obj;
+
+   short priority;
+
+   Eina_Bool inserted : 1;
+};
 
 struct _Efl_Event_Callback_Frame
 {
@@ -41,6 +53,7 @@ typedef struct
    Eo                      ***wrefs;
    Eina_Hash                 *providers;
    Eina_Hash                 *schedulers;
+   Eina_Hash                 *forwarders;
 } Efl_Object_Extension;
 
 #define EFL_OBJECT_EVENT_CALLBACK(Event) Eina_Bool event_cb_##Event : 1;
@@ -124,6 +137,8 @@ typedef struct
    if ((pd)->event_frame) (pd)->event_frame = (pd)->event_frame->next; \
 } while (0)
 
+static void _efl_event_forwarder_callback(void *data, const Efl_Event *event);
+
 static int _eo_nostep_alloc = -1;
 
 static void
@@ -162,7 +177,8 @@ _efl_object_extension_noneed(Efl_Object_Data *pd)
        (ext->wrefs) ||
        (ext->composite_parent) ||
        (ext->providers) ||
-       (ext->schedulers)) return;
+       (ext->schedulers) ||
+       (ext->forwarders)) return;
    _efl_object_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -171,6 +187,13 @@ static void
 _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
+
+   if (pd->ext && pd->ext->forwarders)
+     {
+        eina_hash_free(pd->ext->forwarders);
+        pd->ext->forwarders = NULL;
+        _efl_object_extension_noneed(pd);
+     }
 
    if (pd->ext && pd->ext->providers)
      {
@@ -1282,6 +1305,24 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
         EO_OBJ_DONE(obj_id);
      }
 
+   if (pd->ext && pd->ext->forwarders)
+     {
+        Efl_Event_Forwarder *forwarder;
+        Eina_List *l;
+
+        // Check if some event need to be forwarded now
+        EINA_LIST_FOREACH(eina_hash_find(pd->ext->forwarders, it->desc), l, forwarder)
+          {
+             if (!forwarder->source) continue;
+             if (forwarder->inserted) continue;
+             efl_event_callback_priority_add(forwarder->source,
+                                             forwarder->desc,
+                                             forwarder->priority,
+                                             _efl_event_forwarder_callback, obj_id);
+             forwarder->inserted = EINA_TRUE;
+          }
+     }
+
    if (update_hash)
      {
         unsigned char event_hash;
@@ -2193,6 +2234,27 @@ _efl_event_forwarder_callback(void *data, const Efl_Event *event)
      }
 }
 
+static void
+_forwarders_list_clean(void *data)
+{
+   Efl_Event_Forwarder *forwarder;
+   Eina_List *l = data;
+
+   EINA_LIST_FREE(l, forwarder)
+     {
+        if (forwarder->source)
+          {
+             if (forwarder->inserted)
+               efl_event_callback_del(forwarder->source,
+                                      forwarder->desc,
+                                      _efl_event_forwarder_callback,
+                                      forwarder->new_obj);
+             efl_wref_del(forwarder->source, &forwarder->source);
+          }
+        free(forwarder);
+     }
+}
+
 EOLIAN static void
 _efl_object_event_callback_forwarder_priority_add(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
                                                   const Efl_Event_Description *desc,
@@ -2201,8 +2263,50 @@ _efl_object_event_callback_forwarder_priority_add(Eo *obj, Efl_Object_Data *pd E
 {
    EO_OBJ_POINTER_RETURN(new_obj, new_data);
    EO_OBJ_DONE(new_obj);
+   Efl_Event_Forwarder *forwarder;
+   Efl_Object_Extension *ext;
+   Efl_Object_Data *dpd;
+   Eina_List *l;
 
-   efl_event_callback_priority_add(obj, desc, priority, _efl_event_forwarder_callback, new_obj);
+   dpd = efl_data_scope_safe_get(new_obj, EFL_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(dpd);
+
+   ext = _efl_object_extension_need(dpd);
+   EINA_SAFETY_ON_NULL_RETURN(ext);
+
+   // Prevent double insertion for the same object source and event description
+   EINA_LIST_FOREACH(eina_hash_find(ext->forwarders, desc), l, forwarder)
+     {
+        if (forwarder->desc == desc &&
+            forwarder->new_obj == new_obj &&
+            forwarder->source == obj)
+          {
+             ERR("Forwarder added on '%s' for event '%s' toward '%s' has already been set.\n",
+                 efl_debug_name_get(obj), desc->name, efl_debug_name_get(new_obj));
+             return;
+          }
+     }
+
+   forwarder = malloc(sizeof (Efl_Event_Forwarder));
+   EINA_SAFETY_ON_NULL_RETURN(forwarder);
+   forwarder->desc = desc;
+   forwarder->priority = priority;
+   forwarder->new_obj = new_obj;
+   efl_wref_add(obj, &forwarder->source);
+
+   if (efl_event_callback_count(new_obj, desc) > 0)
+     {
+        efl_event_callback_priority_add(obj, desc, priority, _efl_event_forwarder_callback, new_obj);
+        forwarder->inserted = EINA_TRUE;
+     }
+   else
+     {
+        forwarder->inserted = EINA_FALSE;
+     }
+
+   if (!ext->forwarders)
+     ext->forwarders = eina_hash_pointer_new(_forwarders_list_clean);
+   eina_hash_list_direct_append(ext->forwarders, forwarder->desc, forwarder);
 }
 
 EOLIAN static void
@@ -2212,8 +2316,35 @@ _efl_object_event_callback_forwarder_del(Eo *obj, Efl_Object_Data *pd EINA_UNUSE
 {
    EO_OBJ_POINTER_RETURN(new_obj, new_data);
    EO_OBJ_DONE(new_obj);
+   Efl_Event_Forwarder *forwarder;
+   Efl_Object_Extension *ext;
+   Efl_Object_Data *dpd;
+   Eina_List *l, *tofree = NULL;
 
-   efl_event_callback_del(obj, desc, _efl_event_forwarder_callback, new_obj);
+   dpd = efl_data_scope_safe_get(new_obj, EFL_OBJECT_CLASS);
+   if (!dpd) return ;
+
+   ext = _efl_object_extension_need(dpd);
+   if (!ext) return ;
+
+   EINA_LIST_FOREACH(eina_hash_find(ext->forwarders, desc), l, forwarder)
+     {
+        // Remove dead source at the same time we remove any forwader
+        if (forwarder->source == obj || forwarder->source == NULL)
+          tofree = eina_list_append(tofree, forwarder);
+     }
+
+   EINA_LIST_FREE(tofree, forwarder)
+     {
+        if (forwarder->source)
+          {
+             if (forwarder->inserted)
+               efl_event_callback_del(obj, desc, _efl_event_forwarder_callback, new_obj);
+             efl_wref_del(obj, &forwarder->source);
+          }
+        eina_hash_list_remove(ext->forwarders, desc, forwarder);
+        free(forwarder);
+     }
 }
 
 EOLIAN static void
