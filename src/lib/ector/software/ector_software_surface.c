@@ -239,6 +239,15 @@ _ector_software_surface_efl_object_destructor(Eo *obj, Ector_Software_Surface_Da
 }
 
 static void
+_ector_software_surface_ector_surface_reference_point_get(const Eo *obj EINA_UNUSED,
+                                                          Ector_Software_Surface_Data *pd,
+                                                          int* x, int* y)
+{
+   if (x) *x = pd->x;
+   if (y) *y = pd->y;
+}
+
+static void
 _ector_software_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
                                                           Ector_Software_Surface_Data *pd,
                                                           int x, int y)

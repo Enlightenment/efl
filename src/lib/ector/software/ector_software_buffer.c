@@ -64,6 +64,17 @@ _ector_software_buffer_base_pixels_clear(Eo *obj EINA_UNUSED, Ector_Software_Buf
 }
 
 EOLIAN static Eina_Bool
+_ector_software_buffer_base_ector_buffer_pixels_get(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
+                                                    void **pixels, int* width, int* height, int* stride)
+{
+   if (*pixels) *pixels = pd->pixels.u8;
+   if (*width) *width = pd->generic->w;
+   if (*height) *height = pd->generic->h;
+   if (*stride) *stride = pd->stride;
+   return pd->writable;
+}
+
+EOLIAN static Eina_Bool
 _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
                                                     void *pixels, int width, int height, int stride,
                                                     Efl_Gfx_Colorspace cspace, Eina_Bool writable)

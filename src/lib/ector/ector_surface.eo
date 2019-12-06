@@ -5,10 +5,10 @@ mixin @beta Ector.Surface extends Ector.Buffer
    c_prefix: ector_surface;
    data: null;
    methods {
-      @property reference_point {
+      @property reference_point @pure_virtual {
          [[This defines where (0,0) is in pixel coordinates inside the surface]]
-         set @pure_virtual {
-         }
+         set {}
+         get {}
          values {
             x: int; [[X coordinate for reference point]]
             y: int; [[Y coordinate for reference point]]

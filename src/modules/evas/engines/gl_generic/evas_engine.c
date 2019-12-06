@@ -2715,7 +2715,7 @@ eng_ector_surface_cache_drop(void *engine, void *key)
 static void
 eng_ector_begin(void *engine, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
-                int x, int y, Eina_Bool clear, Eina_Bool do_async EINA_UNUSED)
+                int x, int y, Eina_Bool do_async EINA_UNUSED)
 {
    if (use_gl)
      {
@@ -2732,7 +2732,7 @@ eng_ector_begin(void *engine, void *surface,
         eng_image_stride_get(engine, glim, &stride);
         eng_image_size_get(engine, glim, &w, &h);
 
-        if (clear) memset(pixels, 0, stride * h);
+        memset(pixels, 0, stride * h);
 
         // it just uses the software backend to draw for now
         ector_buffer_pixels_set(ector, pixels, w, h, stride, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
