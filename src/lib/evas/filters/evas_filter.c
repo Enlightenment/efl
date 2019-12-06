@@ -1768,7 +1768,6 @@ evas_filter_font_draw(Evas_Filter_Context *ctx,
    Eina_Bool async_unref;
    Evas_Filter_Buffer *fb;
    void *surface = NULL;
-
    fb = _filter_buffer_get(ctx, bufid);
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
 

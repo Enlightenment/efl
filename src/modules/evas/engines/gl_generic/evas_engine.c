@@ -3115,6 +3115,8 @@ eng_image_surface_noscale_new(void *engine, int w, int h, int alpha)
 static GL_Filter_Apply_Func
 _gfx_filter_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 {
+   return NULL;
+
    GL_Filter_Apply_Func funcptr = NULL;
 
    switch (cmd->mode)
