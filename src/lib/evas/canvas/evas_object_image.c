@@ -1683,8 +1683,8 @@ _efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o 
 
    if (obj->legacy.ctor)
      evas_object_image_video_surface_set(eo_obj, NULL);
-   evas_object_image_free(eo_obj, obj);
    efl_gfx_image_stretch_region_set(eo_obj, NULL, NULL);
+   evas_object_image_free(eo_obj, obj);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
