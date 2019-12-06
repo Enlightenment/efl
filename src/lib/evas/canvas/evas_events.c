@@ -3042,7 +3042,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
 
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_DOWN, evt,
                                         event_id, EFL_EVENT_FINGER_DOWN);
-        if ((obj->proxy->is_proxy) || (obj->proxy->src_events))
+        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
           _evas_event_source_multi_down_events(obj, e, evt, pdata, event_id);
         if (e->delete_me || e->is_frozen) break;
      }
@@ -3126,7 +3126,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
           }
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_UP, evt,
                                         event_id, EFL_EVENT_FINGER_UP);
-        if ((obj->proxy->is_proxy) || (obj->proxy->src_events))
+        if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
           _evas_event_source_multi_up_events(obj, e, evt, pdata, event_id);
         if (e->delete_me || e->is_frozen) break;
      }
@@ -3308,7 +3308,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                   _evas_event_havemap_adjust_f(obj, &ev->cur, &ev->prev, obj_pdata->mouse_grabbed);
                   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, evt,
                                                   event_id, EFL_EVENT_FINGER_MOVE);
-                  if ((obj->proxy->is_proxy) || (obj->proxy->src_events))
+                  if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
                     _evas_event_source_multi_move_events(obj, e, evt, pdata, event_id);
 
                   if (e->delete_me || e->is_frozen) break;
@@ -3352,7 +3352,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                {
                   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, evt,
                                                   event_id, EFL_EVENT_FINGER_MOVE);
-                  if ((obj->proxy->is_proxy) || (obj->proxy->src_events))
+                  if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
                     _evas_event_source_multi_move_events(obj, e, evt, pdata, event_id);
                }
              if (e->delete_me || e->is_frozen) break;
