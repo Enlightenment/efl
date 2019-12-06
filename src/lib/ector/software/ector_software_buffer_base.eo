@@ -10,6 +10,7 @@ mixin @beta Ector.Software.Buffer.Base extends Ector.Buffer
    implements {
       Ector.Buffer.flags { get; }
       Ector.Buffer.pixels_set;
+      Ector.Buffer.pixels_get;
       Ector.Buffer.map;
       Ector.Buffer.unmap;
    }

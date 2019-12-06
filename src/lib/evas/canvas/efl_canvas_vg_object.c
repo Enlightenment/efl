@@ -440,6 +440,15 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                     memset(cd->blend.pixels, 0, cd->blend.length);
                }
 
+             //For recovery context
+             int px, py, pw, ph, pstride;
+             void *ppixels;
+             ector_buffer_size_get(ector, &pw, &ph);
+             ector_buffer_pixels_get(ector, &ppixels, &px, &ph, &pstride);
+             Efl_Gfx_Colorspace pcspace = ector_buffer_cspace_get(ector);
+             ector_surface_reference_point_get(ector, &px, &py);
+				 ERR("buffer = %p, %d %d %d %d, stride = %d, color = %d", ppixels, px,py, pw, ph, pstride, pcspace);
+
              // Buffer change
              ector_buffer_pixels_set(ector, cd->blend.pixels,
                                      w, h, cd->blend.stride,
@@ -450,8 +459,9 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
              EINA_LIST_FOREACH(cd->children, l, child)
                 _evas_vg_render(obj, pd, engine, output, context, child, clips, w, h, ector, do_async);
 
-             // Re-set original surface
-             ENFN->ector_begin(engine, output, context, ector, 0, 0, EINA_FALSE, do_async);
+             // Recover original surface
+             ector_buffer_pixels_set(ector, ppixels, pw, ph, pstride, pcspace, EINA_TRUE);
+             ector_surface_reference_point_set(ector, px, py);
 
              // Draw buffer to original surface.(Ector_Surface)
              ector_surface_draw_image(ector, cd->blend.buffer, 0, 0, alpha);
@@ -501,12 +511,10 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_set_color(context, 255, 255, 255, 255);
 
    //ector begin - end for drawing composite images.
-   //ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_FALSE, EINA_FALSE);
    _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, 255, NULL, 0);
-   //ENFN->ector_end(engine, buffer, context, ector, EINA_FALSE);
 
    //Actual content drawing
-   ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_TRUE, do_async);
+   ENFN->ector_begin(engine, buffer, context, ector, 0, 0, do_async);
 
    //draw on buffer
    _evas_vg_render(obj, pd,
