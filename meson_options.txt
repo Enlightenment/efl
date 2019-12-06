@@ -109,7 +109,7 @@ option('crypto',
 
 option('glib',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Main loop integration for glib in efl'
 )
 
@@ -197,7 +197,7 @@ option('ecore-imf-loaders-disabler',
   type : 'array',
   description : 'List of input methods to disable in efl',
   choices : ['xim', 'ibus', 'scim'],
-  value : ['scim']
+  value : ['ibus']
 )
 
 option('emotion-loaders-disabler',
