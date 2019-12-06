@@ -1677,9 +1677,12 @@ evas_object_image_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o EINA_UNUSED)
+_efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   // To avoid unecessary GC storage triggered during shutdown, we mark the content as dynamic
+   o->content_hint = EFL_GFX_IMAGE_CONTENT_HINT_DYNAMIC;
 
    if (obj->legacy.ctor)
      evas_object_image_video_surface_set(eo_obj, NULL);
