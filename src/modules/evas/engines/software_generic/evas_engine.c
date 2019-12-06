@@ -4466,7 +4466,7 @@ _draw_thread_ector_surface_set(void *data)
 static void
 eng_ector_begin(void *engine EINA_UNUSED, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
-                int x, int y, Eina_Bool clear, Eina_Bool do_async)
+                int x, int y, Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -4479,7 +4479,6 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         nes->pixels = surface;
         nes->x = x;
         nes->y = y;
-        nes->clear = clear;
 
         QCMD(_draw_thread_ector_surface_set, nes);
      }
@@ -4494,7 +4493,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
         // clear the surface before giving to ector
-        if (clear) memset(pixels, 0, (w * h * 4));
+        memset(pixels, 0, (w * h * 4));
 
         ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
