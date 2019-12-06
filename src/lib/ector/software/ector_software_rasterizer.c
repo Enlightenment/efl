@@ -522,12 +522,29 @@ _span_fill_clipRect(int span_count, const SW_FT_Span *spans, void *user_data)
 {
    const int NSPANS = 256;
    int clip_count, i;
-   SW_FT_Span cspans[NSPANS];
    Span_Data *fill_data = (Span_Data *) user_data;
    Clip_Data clip = fill_data->clip;
    SW_FT_Span *clipped;
    Eina_Rectangle *rect;
    Eina_Rectangle tmp_rect;
+   SW_FT_Span *cspans = NULL;
+   Eina_Bool intersect = EINA_FALSE;
+
+   //Note: Uses same span_count sized heap memory in intersect mask case.
+   if (fill_data->comp_method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT)
+     {
+        intersect = EINA_TRUE;
+        cspans = malloc(sizeof(SW_FT_Span) * (span_count));
+        if (!cspans)
+          {
+             ERR("OOM: Failed malloc()");
+             return ;
+          }
+     }
+   else
+     {
+        cspans = alloca(sizeof(SW_FT_Span) * (NSPANS));
+     }
 
    clip_count = eina_array_count(clip.clips);
 
@@ -545,11 +562,12 @@ _span_fill_clipRect(int span_count, const SW_FT_Span *spans, void *user_data)
         while (spans < end)
           {
              clipped = cspans;
-             spans = _intersect_spans_rect(&tmp_rect, spans, end, &clipped, NSPANS);
+             spans = _intersect_spans_rect(&tmp_rect, spans, end, &clipped, intersect ? span_count : NSPANS);
              if (clipped - cspans)
                fill_data->unclipped_blend(clipped - cspans, cspans, fill_data);
           }
      }
+   if (intersect && cspans) free(cspans);
 }
 
 static void
@@ -557,20 +575,38 @@ _span_fill_clipPath(int span_count, const SW_FT_Span *spans, void *user_data)
 {
    const int NSPANS = 256;
    int current_clip = 0;
-   SW_FT_Span cspans[NSPANS];
    Span_Data *fill_data = (Span_Data *) user_data;
    Clip_Data clip = fill_data->clip;
    SW_FT_Span *clipped;
+   SW_FT_Span *cspans = NULL;
+   Eina_Bool intersect = EINA_FALSE;
+
+   //Note: Uses same span_count sized heap memory in intersect mask case.
+   if (fill_data->comp_method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT)
+     {
+        intersect = EINA_TRUE;
+        cspans = malloc(sizeof(SW_FT_Span) * (span_count));
+        if (!cspans)
+          {
+             ERR("OOM: Failed malloc()");
+             return ;
+          }
+     }
+   else
+     {
+        cspans = alloca(sizeof(SW_FT_Span) * (NSPANS));
+     }
 
    // FIXME: Take clip path offset into account.
    const SW_FT_Span *end = spans + span_count;
    while (spans < end)
      {
         clipped = cspans;
-        spans = _intersect_spans_region(clip.path, &current_clip, spans, end, &clipped, NSPANS);
+        spans = _intersect_spans_region(clip.path, &current_clip, spans, end, &clipped, intersect ? span_count : NSPANS);
         if (clipped - cspans)
           fill_data->unclipped_blend(clipped - cspans, cspans, fill_data);
      }
+   if (intersect && cspans) free(cspans);
 }
 
 static void

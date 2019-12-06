@@ -356,7 +356,7 @@ _ecore_main_win32_handler_del(Eo *obj,
 void       _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd);
 void       _ecore_main_shutdown(void);
 
-#if defined (_WIN32) || defined (__lv2ppu__) || defined (HAVE_EXOTIC)
+#if defined (_WIN32) || defined (__lv2ppu__)
 static inline void _ecore_signal_shutdown(void) { }
 
 static inline void _ecore_signal_init(void) { }

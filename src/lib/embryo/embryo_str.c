@@ -11,10 +11,6 @@
 # endif
 #endif
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

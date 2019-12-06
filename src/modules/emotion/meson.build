@@ -1,5 +1,4 @@
 emotion_loaders = [
-'gstreamer',
 'gstreamer1',
 'libvlc',
 'xine'

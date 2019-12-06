@@ -5,9 +5,11 @@ struct @beta Efl.Canvas.Animation_Player_Event_Running; [[Information of event r
 
 enum @beta Efl.Canvas.Animation_Repeat_Mode
 {
-   [[Animation repeat mode]]
+   [[Animation repeat mode.]]
 
-   restart = 0, [[Restart animation when the animation ends.]]
-   reverse = 1, [[Reverse animation when the animation ends.]]
+   restart = 0, [[Restart animation when the animation ends: The animation will play again from the beginning to the
+                  end.]]
+   reverse = 1, [[Reverse animation when the animation ends: The animation will continue playing from the end to the
+                  beginning.]]
    last
 }

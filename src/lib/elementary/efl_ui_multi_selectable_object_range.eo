@@ -1,6 +1,6 @@
 import efl_ui;
 
-interface @beta Efl.Ui.Multi_Selectable_Object_Range extends Efl.Ui.Multi_Selectable
+interface Efl.Ui.Multi_Selectable_Object_Range extends Efl.Ui.Multi_Selectable
 {
    [[Interface for getting access to a range of selected items.
 

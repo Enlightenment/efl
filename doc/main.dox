@@ -210,12 +210,6 @@
  */
 
 /**
- * @defgroup Escape Escape
- *
- * @brief PlayStation3 portability layer.
- */
-
-/**
  * @defgroup Ecore Ecore
  *
  * @brief Operating System Abstraction and Integration.

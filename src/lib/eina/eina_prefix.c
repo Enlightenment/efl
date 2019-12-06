@@ -46,10 +46,6 @@
 # include <evil_private.h> /* path_is_absolute realpath dladdr */
 #endif
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_alloca.h"

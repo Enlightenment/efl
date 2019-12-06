@@ -48,7 +48,6 @@ header_checks = [
   'sys/resource.h',
   'sys/times.h',
   'longinfo.h',
-  'exotic.h',
   'ieeefp.h',
   'node/uv.h',
   'sys/timerfd.h',

@@ -24,10 +24,6 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #ifdef HAVE_PIXMAN
 #include <pixman.h>
 #endif
@@ -35,10 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
 
 #include <Eina.h>
 #include <Eo.h>

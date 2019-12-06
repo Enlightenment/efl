@@ -118,7 +118,7 @@ main(void)
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_start_delay_set(efl_added, 5.0),
       efl_animation_duration_set(efl_added, 2.0),
-      efl_animation_repeat_count_set(efl_added, EFL_ANIMATION_REPEAT_INFINITE)
+      efl_animation_play_count_set(efl_added, 0)
     ),
    1.0, 0.0);
 
@@ -128,7 +128,7 @@ main(void)
     efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect2, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 2.0),
-      efl_animation_repeat_count_set(efl_added, EFL_ANIMATION_REPEAT_INFINITE),
+      efl_animation_play_count_set(efl_added, 0),
       efl_animation_repeat_mode_set(efl_added, EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
     ),
    1.0, 0.0);
@@ -139,7 +139,7 @@ main(void)
     efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect3, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 2.0),
-      efl_animation_repeat_count_set(efl_added, 3),
+      efl_animation_play_count_set(efl_added, 4),
       efl_animation_repeat_mode_set(efl_added, EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
     ),
    1.0, 0.0);
@@ -162,7 +162,7 @@ main(void)
     efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(5.0, 5.0), scale_rect5, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 5.0),
-      efl_animation_repeat_count_set(efl_added, EFL_ANIMATION_REPEAT_INFINITE)
+      efl_animation_play_count_set(efl_added, 0)
     ),
    1.0, 0.0);
    d.current_speed = 1.0;

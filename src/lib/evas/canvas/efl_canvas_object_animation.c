@@ -70,7 +70,7 @@ _animator_cb(void *data, const Efl_Event *ev EINA_UNUSED)
        (pd->in->speed > 0 && EINA_DBL_EQ(pd->in->progress, 1.0)))
      {
         //Repeat animation
-        if ((efl_animation_repeat_count_get(pd->in->animation) == EFL_ANIMATION_REPEAT_INFINITE) ||
+        if ((efl_animation_play_count_get(pd->in->animation) == 0) ||
             (pd->in->remaining_repeats > 0))
           {
              pd->in->remaining_repeats--;
@@ -167,7 +167,7 @@ _efl_canvas_object_animation_animation_start(Eo *obj, Efl_Canvas_Object_Animatio
 
    in->pause_state = EINA_FALSE;
    in->animation = efl_ref(animation);
-   in->remaining_repeats = efl_animation_repeat_count_get(animation); // -1 because one run is already going on
+   in->remaining_repeats = efl_animation_play_count_get(animation) - 1; // -1 because one run is already going on
    in->speed = speed;
    in->start_pos = start_pos;
    efl_event_callback_call(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, in->animation);

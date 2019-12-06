@@ -28,10 +28,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include <Eina.h>
 
 #include "Embryo.h"

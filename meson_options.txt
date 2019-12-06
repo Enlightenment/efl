@@ -209,8 +209,8 @@ option('ecore-imf-loaders-disabler',
 option('emotion-loaders-disabler',
   type : 'array',
   description : 'List of video back-ends to disable in efl',
-  choices : ['gstreamer', 'gstreamer1', 'libvlc', 'xine'],
-  value : ['gstreamer', 'libvlc', 'xine']
+  choices : ['gstreamer1', 'libvlc', 'xine'],
+  value : ['libvlc', 'xine']
 )
 
 option('emotion-generic-loaders-disabler',

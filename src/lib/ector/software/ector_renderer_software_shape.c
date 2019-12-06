@@ -570,8 +570,8 @@ static void
 _done_rle(void *data)
 {
    Ector_Software_Shape_Task *task = data;
-
-   task->pd->done = EINA_TRUE;
+   if (task && task->pd)
+     task->pd->done = EINA_TRUE;
 }
 
 static void

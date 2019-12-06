@@ -21,9 +21,12 @@ abstract @beta Efl.Canvas.Animation_Group extends Efl.Canvas.Animation
             @in animation: Efl.Canvas.Animation; [[Animation to remove from the group.]]
          }
       }
-      animations_get @const {
-         [[Gets the list of animations currently in the animation group.]]
-         return: iterator<Efl.Canvas.Animation> @move; [[List of animations in the group.]]
+      @property animations {
+         [[All animations that are currently part of this group.]]
+         get { }
+         values {
+            animations : iterator<Efl.Canvas.Animation> @move; [[The iterator carrying all animations of this group]]
+         }
       }
    }
    implements {

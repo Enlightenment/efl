@@ -34,7 +34,16 @@ EFL_START_TEST(efl_canvas_animation_negative_double_checking)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_canvas_animation_default_value)
+{
+   Efl_Canvas_Animation *animation = efl_new(EFL_CANVAS_ANIMATION_CLASS);
+
+   fail_if(efl_animation_duration_get(animation) == 0.0);
+}
+EFL_END_TEST
+
 void efl_test_canvas_animation(TCase *tc)
 {
    tcase_add_test(tc, efl_canvas_animation_negative_double_checking);
+   tcase_add_test(tc, efl_canvas_animation_default_value);
 }

@@ -35,14 +35,6 @@
 # include <evil_private.h>
 #endif
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_alloca.h"

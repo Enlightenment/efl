@@ -40,7 +40,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
       @property duration {
          [[The duration of a single animation "run".
            The @Efl.Playable.length implementation will return this duration adjusted by @.repeat_mode and
-           @.repeat_count.
+           @.play_count.
          ]]
          set {
          }
@@ -61,13 +61,15 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
             mode: Efl.Canvas.Animation_Repeat_Mode(Efl.Canvas.Animation_Repeat_Mode.restart); [[Repeat mode.]]
          }
       }
-      @property repeat_count {
-         [[How many times to repeat an animation once it finishes.
-           $[0] means that the animation only plays once (it is not repeated) and is the default value.
-           $[-1] means that the animation is repeated forever.
+      @property play_count {
+         [[How many times to play an animation.
+           $[1] means that the animation only plays once (it is not repeated), whereas $[2] will play it
+           again once it finishes the first time and then stop.
+           $[0] means that the animation is repeated forever.
+           @.repeat_mode controls the direction in which subsequent playbacks will run.
          ]]
          values {
-            count: int(0); [[Repeat count.]]
+            count: int(1); [[Play count.]]
          }
       }
       @property start_delay {
@@ -110,8 +112,17 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          }
          return: double; [[Final applied progress, after possible adjustments. See @.interpolator.]]
       }
+      @property default_duration @static {
+         [[Duration that will be used by default on all animations unless another value
+           is set per object using @.duration.
+         ]]
+         values {
+            animation_time : double; [[Default animation duration, in seconds.]]
+         }
+      }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Playable.length { get; }
       Efl.Playable.seekable { get; }
       Efl.Playable.playable { get; }

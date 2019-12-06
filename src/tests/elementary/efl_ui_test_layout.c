@@ -149,19 +149,46 @@ EFL_START_TEST(efl_ui_layout_test_layout_force)
 }
 EFL_END_TEST
 
+/* private */
+EAPI Eina_Bool elm_widget_theme_klass_set(Evas_Object *obj, const char *name);
+EAPI Eina_Bool elm_widget_theme_style_set(Evas_Object *obj, const char *name);
+
+EFL_START_TEST(efl_ui_layout_test_callback)
+{
+   Evas_Object *win;
+   int called = 0;
+   Eina_Bool klass, style;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   efl_add(EFL_UI_LAYOUT_CLASS, win,
+     efl_event_callback_add(efl_added, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, (void*)event_callback_single_call_int_data, &called),
+     klass = elm_widget_theme_klass_set(efl_added, "button"),
+     style = elm_widget_theme_style_set(efl_added, "anchor")
+   );
+   ck_assert_int_eq(klass, 1);
+   ck_assert_int_eq(style, 1);
+   ck_assert_int_eq(called, 1);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_layout_test_layout_theme)
 {
    Evas_Object *win;
    const char *klass, *group, *style;
+   Eina_Error err;
+   int called = 0;
 
    win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
-     efl_ui_layout_theme_set(efl_added, "win", "background", NULL)
+     efl_event_callback_add(efl_added, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, (void*)event_callback_single_call_int_data, &called),
+     err = efl_ui_layout_theme_set(efl_added, "button", NULL, "anchor")
    );
+   ck_assert_int_eq(err, 0);
    efl_ui_layout_theme_get(layout, &klass, &group, &style);
-   ck_assert_str_eq(klass, "win");
-   ck_assert_str_eq(group, "background");
-   ck_assert(!style);
+   ck_assert_str_eq(klass, "button");
+   ck_assert(!group);
+   ck_assert_str_eq(style, "anchor");
+   ck_assert_int_eq(called, 1);
 }
 EFL_END_TEST
 
@@ -189,5 +216,6 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_layout_force);
    tcase_add_test(tc, efl_ui_layout_test_layout_theme);
    tcase_add_test(tc, efl_ui_layout_test_api_ordering);
+   tcase_add_test(tc, efl_ui_layout_test_callback);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_provider);
 }

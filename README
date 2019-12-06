@@ -365,16 +365,6 @@ their behavior as if they were real physical objects.
 
 
 
-**Escape:**
-
-//GPL v2 license//
-
-This library is used as a compatibility library to provide missing
-libc APIs for porting to the Playstation 3 (PS3) native runtime
-environment.
-
-
-
 **Ethumb:**
 
 //LGPL v2 license//
@@ -436,7 +426,7 @@ Required by default:
   * bullet
   * libpng
   * libjpeg
-  * gstreamer (1.x, 0.10 support optional. Ensure all codecs you want are installed.)
+  * gstreamer (Ensure all codecs you want are installed.)
   * zlib
   * luajit (lua 5.1 or 5.2 support optional)
   * libtiff

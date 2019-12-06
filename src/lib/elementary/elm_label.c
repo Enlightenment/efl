@@ -5,6 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 
@@ -27,6 +28,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SLIDE_END, ""},
    {NULL, NULL}
 };
+
+static Eina_Bool
+_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   efl_event_callback_legacy_call(obj, EFL_INPUT_EVENT_CLICKED, NULL);
+   return EINA_TRUE;
+}
 
 static void
 _recalc(void *data)
@@ -414,6 +422,16 @@ elm_label_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(MY_CLASS, parent);
+}
+
+EOLIAN const Efl_Access_Action_Data *
+_elm_label_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *pd EINA_UNUSED)
+{
+   static Efl_Access_Action_Data access_actions[] = {
+        { "activate", "activate", NULL, _action_activate },
+        { NULL, NULL, NULL, NULL },
+   };
+   return &access_actions[0];
 }
 
 EOLIAN static Eo *

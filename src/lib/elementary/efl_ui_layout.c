@@ -540,7 +540,9 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
    if (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         if (sd->cb_theme_changed)
-          efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+          efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+        if (elm_widget_is_legacy(obj))
+          evas_object_smart_callback_call(obj, "theme,changed", NULL);
      }
 
    if (!_visuals_refresh(obj, sd))
@@ -556,6 +558,8 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    Elm_Widget_Smart_Data *wd = NULL;
    char buf[64];
    static unsigned int version = 0;
+
+   sd->needs_theme_apply = EINA_FALSE;
 
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
@@ -2699,6 +2703,7 @@ EOLIAN static Eo *
 _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    sd->obj = obj;
+   sd->needs_theme_apply = EINA_TRUE;
    sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 1;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -2708,12 +2713,17 @@ _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 }
 
 EOLIAN static Efl_Object*
-_efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED)
+_efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd)
 {
    Eo *eo, *win;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    eo = efl_finalize(efl_super(obj, MY_CLASS));
-   efl_ui_widget_theme_apply(eo);
+   if (pd->needs_theme_apply)
+     {
+        efl_ui_widget_theme_apply(eo);
+        /* handle case where subclass does not call into layout */
+        pd->needs_theme_apply = EINA_FALSE;
+     }
    efl_canvas_group_change(obj);
 
    Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
@@ -2975,7 +2985,7 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 EOLIAN static Eina_Bool
 _efl_ui_layout_base_efl_object_event_callback_priority_add(Eo *obj, Efl_Ui_Layout_Data *pd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
 {
-  if (desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+  if (desc == EFL_UI_LAYOUT_EVENT_THEME_CHANGED)
     {
        pd->cb_theme_changed = EINA_TRUE;
     }
@@ -2988,7 +2998,7 @@ _efl_ui_layout_base_efl_object_event_callback_array_priority_add(Eo *obj, Efl_Ui
 {
    for (int i = 0; array[i].desc; ++i)
      {
-        if (array[i].desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+        if (array[i].desc == EFL_UI_LAYOUT_EVENT_THEME_CHANGED)
           {
              pd->cb_theme_changed = EINA_TRUE;
           }

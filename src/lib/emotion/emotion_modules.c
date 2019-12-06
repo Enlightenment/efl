@@ -81,9 +81,6 @@ _emotion_modules_load(void)
              if (stat(buf, &st) == 0)
                {
                   const char *built_modules[] = {
-#ifdef EMOTION_BUILD_GSTREAMER
-                     "gstreamer",
-#endif
 #ifdef EMOTION_BUILD_GSTREAMER1
                      "gstreamer1",
 #endif
