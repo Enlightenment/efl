@@ -157,6 +157,7 @@ Eina_Error _elm_label_efl_ui_widget_theme_apply(Eo *obj, Elm_Label_Data *pd);
 
 Efl_Object *_elm_label_efl_part_part_get(const Eo *obj, Elm_Label_Data *pd, const char *name);
 
+const Efl_Access_Action_Data *_elm_label_efl_access_widget_action_elm_actions_get(const Eo *obj, Elm_Label_Data *pd);
 
 static Eina_Bool
 _elm_label_class_initializer(Efl_Class *klass)
@@ -186,6 +187,7 @@ _elm_label_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_label_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_label_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_part_get, _elm_label_efl_part_part_get),
+      EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_label_efl_access_widget_action_elm_actions_get),
       ELM_LABEL_EXTRA_OPS
    );
    opsp = &ops;
