@@ -43,7 +43,15 @@ _animator_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    duration = efl_animation_duration_get(pd->in->animation) / pd->in->speed;
    elapsed_time = current - pd->in->run_start_time;
-   vector = elapsed_time / duration;
+   if (EINA_DBL_EQ(duration, 0))
+     {
+        if (pd->in->speed < 0.0)
+          vector = -1.0;
+        else
+          vector = 1.0;
+     }
+   else
+     vector = elapsed_time / duration;
 
    /* When animation player starts, _animator_cb() is called immediately so
     * both elapsed time and progress are 0.0.

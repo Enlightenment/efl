@@ -42,8 +42,50 @@ EFL_START_TEST(efl_canvas_animation_default_value)
 }
 EFL_END_TEST
 
+static void
+_duration_zero_anim_running_cb(void *data, const Efl_Event *event)
+{
+   double animation_speed = *((double*) data);
+   double animation_running_position = *((double*) event->info);
+
+   if (animation_speed > 0.0)
+     ck_assert(EINA_DBL_EQ(animation_running_position, 1.0));
+   else
+     ck_assert(EINA_DBL_EQ(animation_running_position, 0.0));
+}
+
+static void
+helper_inc_int(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   int *called = (int*) data;
+   *called+=1;
+}
+
+EFL_START_TEST(efl_canvas_animation_duration_zero)
+{
+   int running = 0;
+   Evas *evas = EVAS_TEST_INIT_EVAS();
+   Efl_Canvas_Rectangle *obj = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
+   Efl_Canvas_Animation *animation = efl_add(EFL_CANVAS_ANIMATION_CLASS, evas, efl_animation_duration_set(efl_added, 0.0));
+
+   double animation_speed = 1.0;
+   efl_event_callback_add(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _duration_zero_anim_running_cb, &animation_speed);
+   efl_event_callback_add(obj, EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, helper_inc_int , &running);
+   efl_canvas_object_animation_start(obj, animation, animation_speed, 0.0);
+   ck_assert(EINA_DBL_EQ(efl_canvas_object_animation_progress_get(obj), -1.0));
+   ck_assert_int_eq(running, 1);
+
+   running = 0;
+   animation_speed = -1.0;
+   efl_canvas_object_animation_start(obj, animation, animation_speed, 0.0);
+   ck_assert(EINA_DBL_EQ(efl_canvas_object_animation_progress_get(obj), -1.0));
+   ck_assert_int_eq(running, 1);
+}
+EFL_END_TEST
+
 void efl_test_canvas_animation(TCase *tc)
 {
    tcase_add_test(tc, efl_canvas_animation_negative_double_checking);
    tcase_add_test(tc, efl_canvas_animation_default_value);
+   tcase_add_test(tc, efl_canvas_animation_duration_zero);
 }
