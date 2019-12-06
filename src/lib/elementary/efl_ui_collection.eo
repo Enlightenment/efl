@@ -53,6 +53,12 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       }
       @property position_manager @beta {
          [[Position manager object that handles placement of items.]]
+         get {
+            values {
+               position_manager : Efl.Ui.Position_Manager.Entity; [[A borrowed handle to the item container.]]
+            }
+         }
+         set { }
          values {
             position_manager : Efl.Ui.Position_Manager.Entity @move; [[Ownership is passed to the item container.]]
          }
