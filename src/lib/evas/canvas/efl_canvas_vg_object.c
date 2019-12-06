@@ -441,6 +441,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                }
 
              //For recovery context
+             //FIXME: It may occur async issue?
              int px, py, pw, ph, pstride;
              void *ppixels;
              ector_buffer_size_get(ector, &pw, &ph);
