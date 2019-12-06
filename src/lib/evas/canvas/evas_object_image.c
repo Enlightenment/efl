@@ -753,18 +753,22 @@ _efl_canvas_image_internal_efl_gfx_image_stretch_region_set(Eo *eo_obj, Evas_Ima
    // we do change it, we have to make sure nobody is accessing them anymore by
    // blocking rendering.
    evas_object_async_block(obj);
-   EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
-   {
-      if (state_write->free_stretch) free(state_write->stretch.horizontal.region);
-      state_write->stretch.horizontal.region = NULL;
+   if (pd->cur->stretch.horizontal.region ||
+       pd->cur->stretch.vertical.region)
+     {
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
+        {
+           if (state_write->free_stretch) free(state_write->stretch.horizontal.region);
+           state_write->stretch.horizontal.region = NULL;
 
-      if (state_write->free_stretch) free(state_write->stretch.vertical.region);
-      state_write->stretch.vertical.region = NULL;
+           if (state_write->free_stretch) free(state_write->stretch.vertical.region);
+           state_write->stretch.vertical.region = NULL;
 
-      state_write->free_stretch = EINA_FALSE;
-      state_write->stretch_loaded = EINA_FALSE;
-   }
-   EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
+           state_write->free_stretch = EINA_FALSE;
+           state_write->stretch_loaded = EINA_FALSE;
+        }
+        EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
+     }
 
    if (!horizontal && !vertical) return 0;
    if (!horizontal || !vertical) goto on_error;
