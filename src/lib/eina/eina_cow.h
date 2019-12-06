@@ -177,6 +177,24 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
   while (0);
 
 /**
+ * @def EINA_COW_WRITE_END_NOGC
+ * @brief Definition for the macro to close the writeable pointer without triggering the GC.
+ *
+ * @param[in,out] Cow The Eina_Cow where the const pointer came from.
+ * @param[in] Read The const pointer to get a writable handler from.
+ * @param[in] Write The name of the variable where to put the writeable pointer to.
+ *
+ * @since 1.8.0
+ *
+ * @note This macro closes the scope opened by EINA_COW_WRITE_BEGIN().
+ */
+#define EINA_COW_WRITE_END_NOGC(Cow, Read, Write)                       \
+      eina_cow_done(Cow, ((const Eina_Cow_Data**)&(Read)), Write,	\
+		    EINA_FALSE);                                        \
+    }									\
+  while (0);
+
+/**
  * @}
  */
 
