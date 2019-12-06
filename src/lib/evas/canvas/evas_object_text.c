@@ -2351,9 +2351,7 @@ evas_object_text_font_source_get(const Eo *obj)
 EAPI void
 evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size)
 {
-   /*Condition for legacy object*/
-   EINA_SAFETY_ON_NULL_RETURN(font);
-   EINA_SAFETY_ON_TRUE_RETURN(size <= 0);
+   if (!font || size <= 0) return; /*Condition for legacy object*/
 
    efl_text_font_family_set((Eo *) obj, font);
    efl_text_font_size_set((Eo *) obj, size);
