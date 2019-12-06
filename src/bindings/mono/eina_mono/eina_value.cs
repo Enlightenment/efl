@@ -194,7 +194,7 @@ static internal class UnsafeNativeMethods
     [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
     [return:
      MarshalAs(UnmanagedType.CustomMarshaler,
-	       MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))]
+	       MarshalTypeRef=typeof(Efl.Eo.StringOutPassOwnershipMarshaler))]
     internal static extern string eina_value_to_string(IntPtr handle); // We take ownership of the returned string.
 
     [DllImport(efl.Libs.CustomExports)]

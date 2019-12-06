@@ -43,7 +43,7 @@ internal static class Environment
 internal static partial class NativeCustomExportFunctions
 {
     [DllImport(efl.Libs.CustomExports, CharSet=CharSet.Ansi)]
-    [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringKeepOwnershipMarshaler))]
+    [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutKeepOwnershipMarshaler))]
     public static extern string efl_mono_native_getenv(string name);
 
     [DllImport(efl.Libs.CustomExports, CharSet=CharSet.Ansi)]

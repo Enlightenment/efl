@@ -51,13 +51,13 @@ static internal class StrbufNativeMethods
     [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
     [return:
      MarshalAs(UnmanagedType.CustomMarshaler,
-	       MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))]
+	       MarshalTypeRef=typeof(Efl.Eo.StringOutPassOwnershipMarshaler))]
     internal static extern string eina_strbuf_string_steal(IntPtr buf);
 
     [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
     [return:
      MarshalAs(UnmanagedType.CustomMarshaler,
-	       MarshalTypeRef=typeof(Efl.Eo.StringKeepOwnershipMarshaler))]
+	       MarshalTypeRef=typeof(Efl.Eo.StringOutKeepOwnershipMarshaler))]
     internal static extern string eina_strbuf_string_get(IntPtr buf);
 
     [DllImport(efl.Libs.Eina)]
