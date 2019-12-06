@@ -61,10 +61,6 @@ if get_option('xpresent')
   ecore_x_checks += [['Xpresent', 'Xpresent.h', 'Xpresent', 'XPresentQueryExtension']]
 endif
 
-if get_option('xgesture')
-  ecore_x_checks += [['Xgesture', 'gesture.h', 'Xgesture', 'XGestureQueryExtension']]
-endif
-
 if get_option('xinput2')
   ecore_x_checks += [['Xi2', 'XInput2.h', 'Xi', 'XIQueryDevice']]
 endif

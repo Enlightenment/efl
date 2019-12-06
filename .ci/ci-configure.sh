@@ -14,10 +14,11 @@ if [ "$DISTRO" != "" ] ; then
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
   # TODO:
-  # - No libelogind, Xgesture packages in fedora 30 repo
+  # - Enable C++ bindings: -Dbindings=luajit,cxx
+  # - No libelogind package in fedora 30 repo
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
-  -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
+  -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"

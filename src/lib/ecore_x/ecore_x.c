@@ -61,9 +61,6 @@ static int _ecore_x_event_fixes_selection_id = 0;
 #ifdef ECORE_XDAMAGE
 static int _ecore_x_event_damage_id = 0;
 #endif /* ifdef ECORE_XDAMAGE */
-#ifdef ECORE_XGESTURE
-static int _ecore_x_event_gesture_id = 0;
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
 static int _ecore_x_event_xkb_id = 0;
 #endif /* ifdef ECORE_XKB */
@@ -408,10 +405,6 @@ _ecore_x_init2(void)
    int damage_base = 0;
    int damage_err_base = 0;
 #endif /* ifdef ECORE_XDAMAGE */
-#ifdef ECORE_XGESTURE
-   int gesture_base = 0;
-   int gesture_err_base = 0;
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
    int xkb_base = 0;
 #endif /* ifdef ECORE_XKB */
@@ -470,12 +463,6 @@ _ecore_x_init2(void)
    ECORE_X_EVENT_HANDLERS_GROW(damage_base, XDamageNumberEvents);
 #endif /* ifdef ECORE_XDAMAGE */
 
-#ifdef ECORE_XGESTURE
-   if (XGestureQueryExtension(_ecore_x_disp, &gesture_base, &gesture_err_base))
-     _ecore_x_event_gesture_id = gesture_base;
-
-   ECORE_X_EVENT_HANDLERS_GROW(gesture_base, GestureNumberEvents);
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
      {
         int dummy;
@@ -577,20 +564,6 @@ _ecore_x_init2(void)
    _ecore_x_event_handlers[_ecore_x_event_xkb_id] = _ecore_x_event_handle_xkb;
 #endif /* ifdef ECORE_XKB */
 
-#ifdef ECORE_XGESTURE
-   if (_ecore_x_event_gesture_id)
-     {
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] = _ecore_x_event_handle_gesture_notify_flick;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] = _ecore_x_event_handle_gesture_notify_pan;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] = _ecore_x_event_handle_gesture_notify_pinchrotation;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] = _ecore_x_event_handle_gesture_notify_tap;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] = _ecore_x_event_handle_gesture_notify_tapnhold;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] = _ecore_x_event_handle_gesture_notify_hold;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] = _ecore_x_event_handle_gesture_notify_group;
-     }
-
-#endif /* ifdef ECORE_XGESTURE */
-
    ECORE_X_EVENT_ANY = ecore_event_type_new();
    ECORE_X_EVENT_MOUSE_IN = ecore_event_type_new();
    ECORE_X_EVENT_MOUSE_OUT = ecore_event_type_new();
@@ -691,7 +664,6 @@ _ecore_x_init2(void)
    _ecore_x_present_init();
    _ecore_x_dpms_init();
    _ecore_x_randr_init();
-   _ecore_x_gesture_init();
    _ecore_x_input_init();
    _ecore_x_events_init();
 

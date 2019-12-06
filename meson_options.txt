@@ -150,12 +150,6 @@ option('xpresent',
   description : 'X11 XPresent extension support in efl'
 )
 
-option('xgesture',
-  type : 'boolean',
-  value : false,
-  description : 'X11 XGesture support in efl'
-)
-
 option('xinput2',
   type : 'boolean',
   value : true,
