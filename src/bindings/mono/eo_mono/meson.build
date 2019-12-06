@@ -1,10 +1,11 @@
 mono_files += files(
   'iwrapper.cs',
   'workaround.cs',
+  'EoWrapper.cs',
   'FunctionWrapper.cs',
   'NativeModule.cs',
-  'EoWrapper.cs',
-  'WrapperSupervisor.cs'
+  'StringMarshalers.cs',
+  'WrapperSupervisor.cs',
 )
 
 if host_machine.system() == 'windows'
