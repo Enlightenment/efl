@@ -2417,6 +2417,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    gridrows = elm_box_add(scroller);
    evas_object_size_hint_weight_set(gridrows, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
+   elm_box_align_set(gridrows, 0.0, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
 
