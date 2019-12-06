@@ -109,7 +109,7 @@ option('crypto',
 
 option('glib',
   type : 'boolean',
-  value : false,
+  value : true,
   description : 'Main loop integration for glib in efl'
 )
 
