@@ -433,6 +433,25 @@ EFL_START_TEST(wl2_window_available_rotation)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_role)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   const char *role;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_role_set(win, "TEST");
+   role = ecore_wl2_window_role_get(win);
+
+   fail_if(strcmp(role, "TEST"));
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -461,5 +480,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_aspect);
         tcase_add_test(tc, wl2_window_class);
         tcase_add_test(tc, wl2_window_title);
+        tcase_add_test(tc, wl2_window_role);
      }
 }
