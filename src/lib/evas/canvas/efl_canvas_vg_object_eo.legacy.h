@@ -106,7 +106,7 @@ EAPI void evas_object_vg_viewbox_align_get(const Efl_VG *obj, double *align_x, d
  * It takes the ownership of the root node.
  *
  * @param[in] obj The object.
- * @param[in] root Root node of the VG canvas.
+ * @param[in] root Root node(Efl_Canvas_Vg_Container) of the VG canvas.
  *
  * @ingroup Evas_Object_Vg_Group
  */

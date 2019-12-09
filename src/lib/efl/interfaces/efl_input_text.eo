@@ -1,0 +1,274 @@
+enum @beta Efl.Input_Text.Panel_Layout_Type
+{
+   [[Input panel (virtual keyboard) layout types.
+     Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
+   ]]
+   normal,      [[Default layout.]]
+   number,      [[Number layout.]]
+   email,       [[Email layout.]]
+   url,         [[URL layout.]]
+   phonenumber, [[Phone Number layout.]]
+   ip,          [[IP layout.]]
+   month,       [[Month layout.]]
+   numberonly,  [[Number Only layout.]]
+   invalid,     [[Never use this.]]
+   hex,         [[Hexadecimal layout.]]
+   terminal,    [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization).]]
+   password,    [[Like normal, but no auto-correct, no auto-capitalization etc.]]
+   datetime,    [[Date and time layout
+
+                  @since 1.8]]
+   emoticon,    [[Emoticon layout
+
+                  @since 1.10]]
+   voice        [[Voice layout, but if the IME does not support voice layout, then normal layout will be shown.
+
+                  @since 1.19]]
+}
+
+enum @beta Efl.Input_Text.Panel_Language_Type
+{
+   [[Input panel (virtual keyboard) language modes.
+   ]]
+   automatic,    [[Automatic]]
+   alphabet      [[Alphabet]]
+}
+
+enum @beta Efl.Input_Text.Capitalize_Type
+{
+   [[Autocapitalization Types.
+     Choose method of auto-capitalization.
+   ]]
+   none,         [[No auto-capitalization when typing.]]
+   word,         [[Autocapitalize each word typed.]]
+   sentence,     [[Autocapitalize the start of each sentence.]]
+   allcharacter  [[Autocapitalize all letters.]]
+}
+
+enum @beta Efl.Input_Text.Panel_Return_Key_Type
+{
+   [["Return" Key types on the input panel (virtual keyboard).
+   ]]
+   default, [[Default.]]
+   done,    [[Done.]]
+   go,      [[Go.]]
+   join,    [[Join.]]
+   login,   [[Login.]]
+   next,    [[Next.]]
+   search,  [[Search string or magnifier icon.]]
+   send,    [[Send.]]
+   signin   [[Sign-in
+
+              @since 1.8]]
+}
+
+enum @beta Efl.Input_Text.Panel_Return_Key_State
+{
+   [["Return" Key state on the input panel (virtual keyboard).
+   ]]
+   auto,     [[The return key on input panel is disabled when the entry has no text,
+               if entry has text, return key is enabled.
+             ]]
+   enabled,  [[The return key on input panel is enabled.]]
+   disabled, [[The return key on input panel is disabled.]]
+}
+
+enum @beta Efl.Input_Text.Hints_Type
+{
+   [[Enumeration that defines the types of Input Hints.
+
+     @since 1.12
+   ]]
+   none                = 0,        [[No active hints
+
+                                     @since 1.12]]
+   auto_complete       = 1 << 0,   [[Suggest word auto completion
+
+                                     @since 1.12]]
+   sensitive_data      = 1 << 1,   [[Typed text should not be stored.
+
+                                     @since 1.12]]
+   autofill_credit_card_expiration_date   = 0x100, [[ Autofill hint for a credit card expiration date
+
+                                                      @since 1.21]]
+   autofill_credit_card_expiration_day    = 0x200, [[Autofill hint for a credit card expiration day
+
+                                                     @since 1.21]]
+   autofill_credit_card_expiration_month  = 0x300, [[ Autofill hint for a credit card expiration month
+
+                                                      @since 1.21]]
+   autofill_credit_card_expiration_year   = 0x400, [[ Autofill hint for a credit card expiration year
+
+                                                      @since 1.21]]
+   autofill_credit_card_number            = 0x500, [[ Autofill hint for a credit card number
+
+                                                      @since 1.21]]
+   autofill_email_address                 = 0x600, [[ Autofill hint for an email address
+
+                                                      @since 1.21]]
+   autofill_name                          = 0x700, [[ Autofill hint for a user's real name
+
+                                                      @since 1.21]]
+   autofill_phone                         = 0x800, [[ Autofill hint for a phone number
+
+                                                      @since 1.21]]
+   autofill_postal_address                = 0x900, [[ Autofill hint for a postal address
+
+                                                      @since 1.21]]
+   autofill_postal_code                   = 0xA00, [[ Autofill hint for a postal code
+
+                                                      @since 1.21]]
+   autofill_id                            = 0xB00  [[ Autofill hint for a user's ID
+
+                                                      @since 1.21]]
+}
+
+interface @beta Efl.Input_Text {
+   [[All the functionality relating to input hints
+   ]]
+   methods {
+      @property input_panel_show_on_demand {
+         [[Set/Get the attribute to show the input panel in case of only a user's explicit Mouse Up event.
+           It doesn't request to show the input panel even though it has focus.]]
+         set {
+         }
+         get {
+         }
+         values {
+            ondemand: bool; [[If $true, the input panel will be shown in case of only Mouse up event.
+            (Focus event will be ignored.)
+            ]]
+         }
+      }
+
+      // FIXME: I don't understand why this is needed in addition to Layout
+      @property input_panel_language {
+         [[The language mode of the input panel.
+           This API can be used if you want to show the alphabet keyboard mode.]]
+         set {
+         }
+         get {
+         }
+         values {
+            lang: Efl.Input_Text.Panel_Language_Type; [[Language to be set to the input panel.]]
+         }
+      }
+
+      // FIXME: What is this?
+      @property input_panel_layout_variation {
+         [[The input panel layout variation of the entry.]]
+         set {
+         }
+         get {
+         }
+         values {
+            variation: int; [[Layout variation type.]]
+         }
+      }
+
+      // FIXME: input_capitalize/capitalization ?
+      @property autocapitalization {
+         [[The autocapitalization type on the immodule.]]
+         set {
+         }
+         get {
+         }
+         values {
+            autocapital_type: Efl.Input_Text.Capitalize_Type; [[The type of autocapitalization.]]
+         }
+      }
+
+      // FIXME: rename
+      @property predictable {
+         [[Whether the entry should allow predictive text.]]
+         set {
+         }
+         get {
+         }
+         values {
+            prediction: bool; [[Whether the entry should allow predictive text.]]
+         }
+      }
+      // FIXME: I agree with Mike, looks bad
+      @property input_hint {
+         [[The input hint which allows input methods to fine-tune their behavior.]]
+         set {
+         }
+         get {
+         }
+         values {
+            hints: Efl.Input_Text.Hints_Type; [[Input hint.]]
+         }
+      }
+      @property input_panel_layout {
+         [[The input panel layout of the entry.]]
+         set {
+         }
+         get {
+         }
+         values {
+            layout: Efl.Input_Text.Panel_Layout_Type(Efl.Input_Text.Panel_Layout_Type.invalid); [[Layout type.]]
+         }
+      }
+      @property input_panel_return_key_type {
+         [[The "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+           An input panel displays the string or icon associated with this type.]]
+         set {
+         }
+         get {
+         }
+         values {
+            return_key_type: Efl.Input_Text.Panel_Return_Key_Type; [[The type of "return" key on the input panel.]]
+         }
+      }
+      // FIXME: shouldn't this be "autoshow" or something?
+      @property input_panel_autoshow {
+         [[The attribute to show the input panel automatically.]]
+         set {
+         }
+         get {
+         }
+         values {
+            enabled: bool; [[If $true, the input panel is appeared when entry is clicked or has a focus.]]
+         }
+      }
+
+      @property input_panel_return_key_state {
+         [[State for the return key on the input panel see @Efl.Input_Text.Panel_Return_Key_State.]]
+         set {
+         }
+         get {
+         }
+         values {
+            state: Efl.Input_Text.Panel_Return_Key_State; [[Enable state for return key, see @Efl.Input_Text.Panel_Return_Key_State.]]
+         }
+      }
+
+      input_panel_show {
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types and so on.
+
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_autoshow.set(en, $false).
+         ]]
+      }
+
+      input_panel_hide {
+         [[Hide the input panel (virtual keyboard).
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_autoshow.set(en, $false).
+         ]]
+      }
+
+      @property input_panel_imdata {
+         [[Set/Get the input panel-specific data to deliver to the input panel.
+
+           This API is used by applications to deliver specific data to the input panel.
+           The data format MUST be negotiated by both application and the input panel.
+           The size and format of data are defined by the input panel.
+         ]]
+         values {
+            value: slice<ubyte>; [[The specific data to be set/get to the input panel.]]
+         }
+      }
+   }
+}

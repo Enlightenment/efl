@@ -2302,7 +2302,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
         new_id = efl_ui_position_manager_entity_relative_item(cpd->manager,
                                                               item_id,
                                                               direction);
-        if (new_id == -1)
+        if (new_id < 0)
           {
              new_item = NULL;
           }
@@ -2326,7 +2326,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
                   _assert_item_available(new_item, new_id, cpd);
                }
 #else
-               uint64_t search_index = new_id;
+               uint64_t search_index = (uint64_t)new_id;
                lookup = (void*) eina_rbtree_inline_lookup(cpd->cache, &search_index,
                                            sizeof (new_id), _cache_tree_lookup,
                                            NULL);

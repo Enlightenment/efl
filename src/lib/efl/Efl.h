@@ -146,7 +146,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_draggable.eo.h"
 #include "interfaces/efl_ui_scrollable.eo.h"
 #include "interfaces/efl_ui_scrollbar.eo.h"
-#include "interfaces/efl_ui_text_selectable.eo.h"
 #include "interfaces/efl_ui_container_selectable.eo.h"
 #include "interfaces/efl_ui_zoom.eo.h"
 
@@ -213,6 +212,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_format.eo.h"
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
+#include "interfaces/efl_input_text.eo.h"
 
 /**
  * @brief Get a proxy object referring to a part of an object.

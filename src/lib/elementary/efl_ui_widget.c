@@ -1128,12 +1128,15 @@ elm_widget_focus_region_show(Eo *obj)
         if (_elm_scrollable_is(o) && !elm_widget_disabled_get(o))
           {
              Evas_Coord sx, sy;
-             elm_interface_scrollable_content_region_get(o, &sx, &sy, NULL, NULL);
+             Evas_Coord vx, vy;
 
-             // Get the object's on_focus_region position relative to the scroller.
+             elm_interface_scrollable_content_region_get(o, &sx, &sy, NULL, NULL);
+             elm_interface_scrollable_content_viewport_geometry_get(o, &vx, &vy, NULL, NULL);
+
+             // Get the object's on_focus_region position relative to the pan in the scroller.
              Evas_Coord rx, ry;
-             rx = ox + r.x - px + sx;
-             ry = oy + r.y - py + sy;
+             rx = ox + r.x - vx + sx;
+             ry = oy + r.y - vy + sy;
 
              switch (_elm_config->focus_autoscroll_mode)
                {

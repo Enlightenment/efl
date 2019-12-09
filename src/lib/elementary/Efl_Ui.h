@@ -227,7 +227,6 @@ typedef void (*Context_Item_Clicked_Cb)(void *data, Eo *obj, void *event_info);
 
 # include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
-# include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
 
 # include <efl_ui_animation_view.eo.h>

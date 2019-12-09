@@ -514,10 +514,11 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
             "blur { 3, ox = 1, oy = 1, color = 'black' }"
             "blend { color = 'lime' }";
 
-      o = code = efl_add(EFL_UI_TEXT_EDITABLE_CLASS, win,
-                         efl_ui_text_scrollable_set(efl_added, 1),
-                         efl_text_multiline_set(efl_added, 1));
-      efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed_hack, win);
+      o = code = efl_add(EFL_UI_TEXT_CLASS, win,
+                         efl_ui_text_scrollable_set(efl_added, EINA_TRUE),
+                         efl_text_interactive_editable_set(efl_added, EINA_TRUE),
+                         efl_text_multiline_set(efl_added, EINA_TRUE));
+      efl_event_callback_add(o, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, _code_changed_hack, win);
 
       // Insert filter code inside style string: DEFAULT='blah blah <here>'
       efl_gfx_filter_program_set(o, code_filter, "code");

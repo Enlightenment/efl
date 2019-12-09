@@ -32,6 +32,12 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
         [[This object defines how sub-widgets are rendered and animated.
           If it is not set, only the active sub-widget is shown and transitions are instantaneous (not animated).
         ]]
+        get {
+           values {
+              spotlight_manager : Efl.Ui.Spotlight.Manager; [[The Spotlight Manager object or $NULL.]]
+           }
+        }
+        set { }
         values {
           spotlight_manager : Efl.Ui.Spotlight.Manager @move; [[The Spotlight Manager object or $NULL.]]
         }
@@ -42,6 +48,12 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
           When this object is set, it is immediately updated to reflect the current state of the widget.
           Its location inside the container is controlled by the @.spotlight_manager.
         ]]
+        get {
+           values {
+              indicator : Efl.Ui.Spotlight.Indicator; [[The Indicator object or $NULL.]]
+           }
+        }
+        set { }
         values {
           indicator : Efl.Ui.Spotlight.Indicator @move; [[The Indicator object or $NULL.]]
         }

@@ -1588,7 +1588,7 @@ _paste_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_TEXT_EVENT_SELECTION_PASTE, NULL);
 
    sd->selection_asked = EINA_TRUE;
 
@@ -1643,7 +1643,7 @@ _cut_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_CUT, NULL);
+     (data, EFL_UI_TEXT_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1667,7 +1667,7 @@ _copy_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_COPY, NULL);
+     (data, EFL_UI_TEXT_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -2338,8 +2338,10 @@ _entry_selection_start_signal_cb(void *data,
      {
         if (entry != data) elm_entry_select_none(entry);
      }
+
+   Eina_Bool b_value = EINA_TRUE;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_START, NULL);
+     (data, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
 
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -2382,8 +2384,12 @@ _entry_selection_changed_signal_cb(void *data,
 
    if (!sd) return;
    sd->have_selection = EINA_TRUE;
+   Efl_Text_Range range = {0};
+   //FIXME how to get selection range in legacy !?
+   range.start = 0;
+   range.end = 0;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
+     (data, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, &range);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -2405,8 +2411,9 @@ _entry_selection_cleared_signal_cb(void *data,
    if (!sd->have_selection) return;
 
    sd->have_selection = EINA_FALSE;
+   Eina_Bool b_value = sd->have_selection;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
+     (data, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -2447,7 +2454,7 @@ _entry_paste_request_signal_cb(void *data,
    // supported
 //   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_TEXT_EVENT_SELECTION_PASTE, NULL);
 
    top = _entry_win_get(data);
    if (top)
@@ -4442,8 +4449,11 @@ _elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
         edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
      }
    if (sd->have_selection)
-     efl_event_callback_legacy_call
-       (obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
+     {
+        Eina_Bool b_value = sd->have_selection;
+        efl_event_callback_legacy_call
+       (obj, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+     }
 
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");

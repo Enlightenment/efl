@@ -17,7 +17,6 @@
 # include <elm_general.h>
 # include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
-# include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
 
 #define NUM_ITEMS 400

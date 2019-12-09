@@ -2713,15 +2713,11 @@ struct _Ecore_X_Event_Gesture_Notify_Group
    int                           group_id;
 };
 
-EAPI Eina_Bool                             ecore_x_gesture_supported(void);
-
-EAPI Eina_Bool                             ecore_x_gesture_events_select(Ecore_X_Window win, Ecore_X_Gesture_Event_Mask mask);
-
-EAPI Ecore_X_Gesture_Event_Mask            ecore_x_gesture_events_selected_get(Ecore_X_Window win);
-
-EAPI Eina_Bool                             ecore_x_gesture_event_grab(Ecore_X_Window win, Ecore_X_Gesture_Event_Type type, int num_fingers);
-
-EAPI Eina_Bool                             ecore_x_gesture_event_ungrab(Ecore_X_Window win, Ecore_X_Gesture_Event_Type type, int num_fingers);
+EINA_DEPRECATED EAPI Eina_Bool                             ecore_x_gesture_supported(void);
+EINA_DEPRECATED EAPI Eina_Bool                             ecore_x_gesture_events_select(Ecore_X_Window win, Ecore_X_Gesture_Event_Mask mask);
+EINA_DEPRECATED EAPI Ecore_X_Gesture_Event_Mask            ecore_x_gesture_events_selected_get(Ecore_X_Window win);
+EINA_DEPRECATED EAPI Eina_Bool                             ecore_x_gesture_event_grab(Ecore_X_Window win, Ecore_X_Gesture_Event_Type type, int num_fingers);
+EINA_DEPRECATED EAPI Eina_Bool                             ecore_x_gesture_event_ungrab(Ecore_X_Window win, Ecore_X_Gesture_Event_Type type, int num_fingers);
 
 EAPI void                                  ecore_x_e_illume_indicator_state_set(Ecore_X_Window win, Ecore_X_Illume_Indicator_State state);
 EAPI Ecore_X_Illume_Indicator_State        ecore_x_e_illume_indicator_state_get(Ecore_X_Window win);
