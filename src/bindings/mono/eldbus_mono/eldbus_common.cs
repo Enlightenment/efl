@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using static eldbus.EldbusMessageNativeFunctions;
 
@@ -1543,6 +1544,7 @@ public delegate void MessageDelegate(eldbus.Message msg, eldbus.Pending pending)
 /// Commons for eldbus.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 public static class Common
 {
     /// <summary>

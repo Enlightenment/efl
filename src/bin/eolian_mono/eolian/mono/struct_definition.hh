@@ -415,6 +415,7 @@ struct struct_definition_generator
         (
             indent << "[StructLayout(LayoutKind.Sequential)]\n"
          << indent << "[Efl.Eo.BindingEntity]\n"
+         << "[SuppressMessage(\"Microsoft.Naming\", \"CA1724:TypeNamesShouldNotMatchNamespaces\")]\n"
          << indent << "public struct " << struct_managed_name << " : IEquatable<" << struct_managed_name << ">\n"
          << indent << "{\n"
          )
