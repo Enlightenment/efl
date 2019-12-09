@@ -515,7 +515,7 @@ class TestProvider
     private class ProviderHolder : Dummy.TestObject
     {
         private Dummy.TestObject provider;
-        public string ProviderName
+        public static string ProviderName
         {
             get
             {
@@ -526,7 +526,7 @@ class TestProvider
         public ProviderHolder() : base(null)
         {
             this.provider = new Dummy.TestObject(this);
-            this.provider.Name = this.ProviderName;
+            this.provider.Name = ProviderHolder.ProviderName;
             this.provider.IfaceProp = 1997;
         }
 
@@ -553,7 +553,7 @@ class TestProvider
 
         provider = obj.CallFindProviderForIface();
         Test.AssertNotNull(provider, msg : "Provider of ITestIFace must not be null");
-        Test.AssertEquals(provider.Name, obj.ProviderName, "Provider name does not match expected");
+        Test.AssertEquals(provider.Name, ProviderHolder.ProviderName, "Provider name does not match expected");
         obj.Dispose();
     }
 }
