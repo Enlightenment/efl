@@ -279,14 +279,21 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
 }
 
 EOLIAN static void
+_efl_ui_scroller_efl_object_invalidate(Eo *obj, Efl_Ui_Scroller_Data *pd)
+{
+   efl_event_callback_del(pd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
+                          _efl_ui_scroller_pan_resized_cb, obj);
+   efl_del(pd->pan_obj);
+   pd->pan_obj = NULL;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
 _efl_ui_scroller_efl_object_destructor(Eo *obj,
                                        Efl_Ui_Scroller_Data *sd)
 {
    efl_ui_scroll_connector_unbind(obj);
-   efl_event_callback_del(sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
-                          _efl_ui_scroller_pan_resized_cb, obj);
-   efl_del(sd->pan_obj);
-   sd->pan_obj = NULL;
    sd->smanager = NULL;
 
    efl_destructor(efl_super(obj, MY_CLASS));
