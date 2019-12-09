@@ -472,7 +472,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
 {
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(obj, EFL_UI_TAGS_CLASS);
 
-   if (sd->editable) efl_ui_text_input_panel_show(sd->entry);
+   if (sd->editable) efl_input_text_input_panel_show(sd->entry);
 
    efl_event_callback_call(obj, EFL_INPUT_EVENT_CLICKED, NULL);
 }
@@ -758,7 +758,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
                        efl_text_multiline_set(efl_added, EINA_FALSE),
                        efl_text_set(efl_added, ""),
                        efl_ui_text_cnp_mode_set(efl_added, EFL_UI_SELECTION_FORMAT_MARKUP),
-                       efl_ui_text_input_panel_enabled_set(efl_added, EINA_FALSE),
+                       efl_input_text_input_panel_autoshow_set(efl_added, EINA_FALSE),
                        efl_text_interactive_editable_set(efl_added, EINA_TRUE),
                        efl_composite_attach(obj, efl_added));
 

@@ -25,6 +25,7 @@
 #include "interfaces/efl_text_style.eo.c"
 #include "interfaces/efl_text_format.eo.c"
 #include "interfaces/efl_text_markup.eo.c"
+#include "interfaces/efl_input_text.eo.c"
 
 #include "interfaces/efl_gfx_entity.eo.c"
 #include "interfaces/efl_gfx_buffer.eo.c"
@@ -72,7 +73,6 @@
 #include "interfaces/efl_ui_scrollable.eo.c"
 #include "interfaces/efl_ui_scrollbar.eo.c"
 #include "interfaces/efl_ui_container_selectable.eo.c"
-#include "interfaces/efl_ui_text_selectable.eo.c"
 
 #include "interfaces/efl_ui_zoom.eo.c"
 

@@ -13,20 +13,28 @@
 
 typedef struct _Efl_Ui_Internal_Text_Interactive_Data
 {
-   Efl_Text_Cursor       *sel_start, *sel_end;
-   Efl_Text_Cursor       *main_cursor;
-   Efl_Text_Cursor       *preedit_start, *preedit_end;
-   Eina_List             *seq;
-   char                  *selection;
-   Eina_Bool              composing : 1;
-   Eina_Bool              selecting : 1;
-   Eina_Bool              have_selection : 1;
-   Eina_Bool              select_allow : 1;
-   Eina_Bool              editable : 1;
-   Eina_Bool              had_sel : 1;
-   Eina_Bool              input_panel_enable : 1;
-   Eina_Bool              prediction_allow : 1;
-   Eina_Bool              anchors_updated : 1;
+   Efl_Text_Cursor                       *sel_start, *sel_end;
+   Efl_Text_Cursor                       *main_cursor;
+   Efl_Text_Cursor                       *preedit_start, *preedit_end;
+   Ecore_Timer                           *pw_timer;
+   Eina_List                             *seq;
+   char                                  *selection;
+   Eina_Bool                              composing : 1;
+   Eina_Bool                              selecting : 1;
+   Eina_Bool                              have_selection : 1;
+   Eina_Bool                              select_allow : 1;
+   Eina_Bool                              editable : 1;
+   Eina_Bool                              had_sel : 1;
+   Eina_Bool                              prediction_allow : 1;
+   Eina_Bool                              anchors_updated : 1;
+   Eina_Bool                              auto_return_key : 1;
+   int                                    input_panel_layout_variation;
+   Efl_Input_Text_Panel_Layout_Type       input_panel_layout;
+   Efl_Input_Text_Capitalize_Type         autocapital_type;
+   Efl_Input_Text_Panel_Language_Type     input_panel_lang;
+   Efl_Input_Text_Panel_Return_Key_Type   input_panel_return_key_type;
+   Efl_Input_Text_Hints_Type              input_hints;
+   Efl_Input_Text_Panel_Return_Key_State  input_panel_return_key_state;
 
 #ifdef HAVE_ECORE_IMF
    Eina_Bool              have_preedit : 1;
@@ -41,7 +49,32 @@ static void _sel_enable(Efl_Text_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUS
 static void _sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en);
 static void _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en);
 static const char *_entry_selection_get(Efl_Ui_Internal_Text_Interactive *obj, Efl_Ui_Internal_Text_Interactive_Data *en);
-static void _entry_imf_cursor_info_set(Eo *obj, Efl_Text_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en);
+static void _entry_imf_cursor_info_set(Efl_Ui_Internal_Text_Interactive_Data *en);
+
+static void
+_text_filter_format_prepend(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                            Efl_Text_Cursor *c, const char *text);
+
+static Efl_Text_Change_Info *
+_text_filter_text_prepend(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                          Efl_Text_Cursor *c,
+                          const char *text,
+                          const char *fmtpre, const char *fmtpost,
+                          Eina_Bool clearsel, Eina_Bool changeinfo);
+
+static Efl_Text_Change_Info *
+_text_filter_markup_prepend_internal(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                                     Efl_Text_Cursor *c,
+                                     char *text,
+                                     const char *fmtpre, const char *fmtpost,
+                                     Eina_Bool clearsel, Eina_Bool changeinfo);
+
+static Efl_Text_Change_Info *
+_text_filter_markup_prepend(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                            Efl_Text_Cursor *c,
+                            const char *text,
+                            const char *fmtpre, const char *fmtpost,
+                            Eina_Bool clearsel, Eina_Bool changeinfo);
 
 #ifdef HAVE_ECORE_IMF
 static void
@@ -103,11 +136,54 @@ _entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSE
 }
 
 static void
+_return_key_update(Evas_Object *obj)
+{
+#ifdef HAVE_ECORE_IMF
+   Eina_Bool return_key_disabled = EINA_FALSE;
+   Efl_Ui_Internal_Text_Interactive_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+
+   if (sd->input_panel_return_key_state != EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_AUTO) return;
+
+   if (efl_canvas_text_is_empty_get(obj) == EINA_TRUE)
+     return_key_disabled = EINA_TRUE;
+
+   if (sd->imf_context)
+     ecore_imf_context_input_panel_return_key_disabled_set(sd->imf_context, return_key_disabled);
+#else
+   (void)obj;
+#endif
+}
+
+Eina_Bool
+_entry_hide_visible_password(Eo *obj)
+{
+   Eina_Bool b_ret = EINA_FALSE;
+   const Evas_Object_Textblock_Node_Format *node;
+   node = evas_textblock_node_format_first_get(obj);
+   for (; node; node = evas_textblock_node_format_next_get(node))
+     {
+        const char *text = evas_textblock_node_format_text_get(node);
+        if (text)
+          {
+             if (!strcmp(text, "+ password=off"))
+               {
+                  evas_textblock_node_format_remove_pair(obj,
+                                                         (Evas_Object_Textblock_Node_Format *)node);
+                  b_ret = EINA_TRUE;
+               }
+          }
+     }
+
+   return b_ret;
+}
+
+static void
 _entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
 {
    Efl_Canvas_Text *obj = data;
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
    char *commit_str = event_info;
+   Efl_Text_Change_Info *info = NULL;
 
    if (en->have_selection)
      {
@@ -130,49 +206,211 @@ _entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void 
         return;
      }
 
-#if 0
-   Edje_Entry_Change_Info *info = NULL;
-   if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
-       _password_show_last)
-     _entry_hide_visible_password(en->rp);
-   if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
-       _password_show_last && (!en->preedit_start))
+   if (efl_text_password_get(obj) && (!en->preedit_start))
      {
-        info = _text_filter_text_prepend(en, cur, commit_str,
+        info = _text_filter_text_prepend(obj, en, en->main_cursor, commit_str,
                                          "+ password=off", "- password",
                                          EINA_TRUE, EINA_TRUE);
-        if (info)
-          {
-             if (en->pw_timer)
-               {
-                  ecore_timer_del(en->pw_timer);
-                  en->pw_timer = NULL;
-               }
-             if (_password_show_last_timeout >= 0)
-               en->pw_timer = ecore_timer_add
-                   (_password_show_last_timeout,
-                   _password_timer_cb, en);
-          }
      }
    else
      {
-        info = _text_filter_text_prepend(en, cur, commit_str,
+        info = _text_filter_text_prepend(obj, en, en->main_cursor, commit_str,
                                          NULL, NULL,
                                          EINA_TRUE, EINA_TRUE);
      }
 
    _entry_imf_cursor_info_set(en);
-   _anchors_get(cur, obj, en);
    if (info)
      {
-        _emit("entry,changed", rp->part->name);
-        _emit_full("entry,changed,user", rp->part->name,
-                        info, _free_entry_change_info);
-        _emit("cursor,changed", rp->part->name);
+        efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, info);
+        eina_stringshare_del(info->content);
+        free(info);
+        info = NULL;
      }
    _entry_imf_cursor_info_set(en);
-   _entry_real_part_configure(rp);
+}
+
+static Efl_Text_Change_Info *
+_text_filter_markup_prepend_internal(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                                     Efl_Text_Cursor *c,
+                                     char *text,
+                                     const char *fmtpre, const char *fmtpost,
+                                     Eina_Bool clearsel, Eina_Bool changeinfo)
+{
+   Eina_Bool have_sel = EINA_FALSE;
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _sel_range_del_emit(obj, en);
+        have_sel = EINA_TRUE;
+     }
+
+#ifdef HAVE_ECORE_IMF
+   // For skipping useless commit
+   if (en->have_preedit && (!text || !strcmp(text, "")))
+     en->commit_cancel = EINA_TRUE;
+   else
+     en->commit_cancel = EINA_FALSE;
 #endif
+   if (text)
+     {
+        Efl_Text_Change_Info *info = NULL;
+
+        if (changeinfo)
+          {
+             info = calloc(1, sizeof(*info));
+             info->insert = EINA_TRUE;
+             info->content = eina_stringshare_add(text);
+             info->length =
+             eina_unicode_utf8_get_len(info->content);
+          }
+        if (info)
+          {
+             if (have_sel)
+               {
+                  info->merge = EINA_TRUE;
+               }
+             info->position =
+                efl_text_cursor_position_get(efl_text_interactive_main_cursor_get(obj));
+          }
+        if (fmtpre) _text_filter_format_prepend(obj, en, efl_text_interactive_main_cursor_get(obj), fmtpre);
+        //evas_object_textblock_text_markup_prepend(c, text);
+        efl_text_cursor_text_insert(c, text);
+        free(text);
+        if (fmtpost) _text_filter_format_prepend(obj, en, efl_text_interactive_main_cursor_get(obj), fmtpost);
+        return info;
+     }
+   return NULL;
+}
+
+static Efl_Text_Change_Info *
+_text_filter_markup_prepend(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                            Efl_Text_Cursor *c,
+                            const char *text,
+                            const char *fmtpre, const char *fmtpost,
+                            Eina_Bool clearsel, Eina_Bool changeinfo)
+{
+   char *text2;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _sel_range_del_emit(obj, en);
+     }
+
+   text2 = strdup(text);
+   if (text2)
+     {
+        Efl_Text_Change_Info *info;
+
+        info = _text_filter_markup_prepend_internal(obj, en, c, text2,
+                                                    fmtpre, fmtpost,
+                                                    clearsel, changeinfo);
+        return info;
+     }
+   return NULL;
+}
+
+static Efl_Text_Change_Info *
+_text_filter_text_prepend(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                          Efl_Text_Cursor *c,
+                          const char *text,
+                          const char *fmtpre, const char *fmtpost,
+                          Eina_Bool clearsel, Eina_Bool changeinfo)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _sel_range_del_emit(obj, en);
+     }
+
+   if (text)
+     {
+        char *markup_text;
+        Efl_Text_Change_Info *info = NULL;
+
+        markup_text = evas_textblock_text_utf8_to_markup(NULL, text);
+        if (markup_text)
+          info = _text_filter_markup_prepend_internal(obj, en, c, markup_text,
+                                                      fmtpre, fmtpost,
+                                                      clearsel, changeinfo);
+        return info;
+     }
+   return NULL;
+}
+
+static void
+_text_filter_format_prepend(Efl_Canvas_Text *obj, Efl_Ui_Internal_Text_Interactive_Data *en,
+                            Efl_Text_Cursor *c, const char *text)
+{
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   if (text)
+     {
+        const char *s;
+        char *markup_text;
+        size_t size;
+
+        s = text;
+        if (*s == '+')
+          {
+             s++;
+             while (*s == ' ')
+               s++;
+             if (!*s)
+               {
+                  return;
+               }
+             size = strlen(s);
+             markup_text = (char *)malloc(size + 3);
+             if (markup_text)
+               {
+                  *(markup_text) = '<';
+                  memcpy((markup_text + 1), s, size);
+                  *(markup_text + size + 1) = '>';
+                  *(markup_text + size + 2) = '\0';
+               }
+          }
+        else if (s[0] == '-')
+          {
+             s++;
+             while (*s == ' ')
+               s++;
+             if (!*s)
+               {
+                  return;
+               }
+             size = strlen(s);
+             markup_text = (char *)malloc(size + 4);
+             if (markup_text)
+               {
+                  *(markup_text) = '<';
+                  *(markup_text + 1) = '/';
+                  memcpy((markup_text + 2), s, size);
+                  *(markup_text + size + 2) = '>';
+                  *(markup_text + size + 3) = '\0';
+               }
+          }
+        else
+          {
+             size = strlen(s);
+             markup_text = (char *)malloc(size + 4);
+             if (markup_text)
+               {
+                  *(markup_text) = '<';
+                  memcpy((markup_text + 1), s, size);
+                  *(markup_text + size + 1) = '/';
+                  *(markup_text + size + 2) = '>';
+                  *(markup_text + size + 3) = '\0';
+               }
+          }
+        if (markup_text)
+          _text_filter_markup_prepend_internal(obj, en, c, markup_text,
+                                               NULL, NULL,
+                                               EINA_FALSE, EINA_FALSE);
+     }
 }
 
 static void
@@ -181,6 +419,7 @@ _entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUS
    Efl_Canvas_Text *obj = data;
    Efl_Text_Cursor *cur = efl_text_interactive_main_cursor_get(obj);
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Text_Change_Info *info = NULL;
    int cursor_pos;
    int preedit_start_pos, preedit_end_pos;
    char *preedit_string;
@@ -256,38 +495,22 @@ _entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUS
         // For skipping useless commit
         if (!preedit_end_state)
           en->have_preedit = EINA_TRUE;
-#if 0
-        if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
-            _password_show_last)
-          {
-             Edje_Entry_Change_Info *info;
 
-             _entry_hide_visible_password(en->rp);
-             info = _text_filter_markup_prepend(en, cur,
+        if (efl_text_password_get(obj))
+          {
+             _entry_hide_visible_password(obj);
+             info = _text_filter_markup_prepend(obj, en, cur,
                                               eina_strbuf_string_get(buf),
                                               "+ password=off",
                                               "- password",
                                               EINA_TRUE, EINA_TRUE);
-             if (info)
-               {
-                  if (en->pw_timer)
-                    {
-                       ecore_timer_del(en->pw_timer);
-                       en->pw_timer = NULL;
-                    }
-                  if (_password_show_last_timeout >= 0)
-                    en->pw_timer = ecore_timer_add
-                        (_password_show_last_timeout,
-                        _password_timer_cb, en);
-                  free(info);
-               }
           }
         else
-          _text_filter_markup_prepend(en, cur,
+          _text_filter_markup_prepend(obj, en, cur,
                                       eina_strbuf_string_get(buf),
                                       NULL, NULL,
                                       EINA_TRUE, EINA_FALSE);
-#endif
+
         eina_strbuf_free(buf);
      }
 
@@ -316,7 +539,14 @@ _entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUS
         efl_text_cursor_position_set(cur, preedit_start_pos + cursor_pos);
      }
 
-   _entry_imf_cursor_info_set(obj, cur, en);
+   if (info)
+     {
+        _entry_imf_cursor_info_set(en);
+        efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_PREEDIT_CHANGED, info);
+        eina_stringshare_del(info->content);
+        free(info);
+        info = NULL;
+     }
 
    /* delete attribute list */
    if (attrs)
@@ -336,7 +566,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
    Ecore_IMF_Event_Delete_Surrounding *ev = event_info;
    Efl_Text_Cursor *del_start, *del_end;
-   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
    int cursor_pos;
    int start, end;
    char *tmp;
@@ -362,10 +592,10 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
 
    efl_text_cursor_range_delete(del_start, del_end);
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
    free(tmp);
 
-   _entry_imf_cursor_info_set(obj, cur, en);
+   _entry_imf_cursor_info_set(en);
 
 end:
    efl_del(del_start);
@@ -418,13 +648,13 @@ _entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED,
 #endif
 
 static void
-_entry_imf_cursor_location_set(Eo *obj EINA_UNUSED, Efl_Text_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en)
+_entry_imf_cursor_location_set(Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    Eina_Rect rect;
    if (!en->imf_context) return;
 
-   rect = efl_text_cursor_geometry_get(cur, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   rect = efl_text_cursor_geometry_get(en->main_cursor ,EFL_TEXT_CURSOR_TYPE_BEFORE);
    ecore_imf_context_cursor_location_set(en->imf_context, rect.x, rect.y, rect.w, rect.h);
    // FIXME: ecore_imf_context_bidi_direction_set(en->imf_context, (Ecore_IMF_BiDi_Direction)dir);
 #else
@@ -433,7 +663,7 @@ _entry_imf_cursor_location_set(Eo *obj EINA_UNUSED, Efl_Text_Cursor *cur, Efl_Ui
 }
 
 static void
-_entry_imf_cursor_info_set(Eo *obj, Efl_Text_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en)
+_entry_imf_cursor_info_set(Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    int cursor_pos;
 
@@ -448,11 +678,11 @@ _entry_imf_cursor_info_set(Eo *obj, Efl_Text_Cursor *cur, Efl_Ui_Internal_Text_I
           cursor_pos = efl_text_cursor_position_get(en->sel_end);
      }
    else
-     cursor_pos = efl_text_cursor_position_get(cur);
+     cursor_pos = efl_text_cursor_position_get(en->main_cursor);
 
    ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
 
-   _entry_imf_cursor_location_set(obj, cur, en);
+   _entry_imf_cursor_location_set(en);
 #else
    (void)en;
 #endif
@@ -463,13 +693,13 @@ _focus_in_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 {
 #ifdef HAVE_ECORE_IMF
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Text_Cursor *cur;
 
    if (!en->imf_context) return;
 
-   cur = efl_text_interactive_main_cursor_get(obj);
    ecore_imf_context_focus_in(en->imf_context);
-   _entry_imf_cursor_info_set(obj, cur, en);
+   _entry_imf_cursor_info_set(en);
+
+   _return_key_update(obj);
 #endif
 }
 
@@ -541,7 +771,26 @@ _sel_enable(Efl_Text_Cursor *c EINA_UNUSED,
         en->selection = NULL;
      }
 
+   Eina_Bool b_value = EINA_TRUE;
+   efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
    _entry_imf_context_reset(en);
+}
+
+static void
+_emit_sel_state( Eo *o, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   if (!efl_text_cursor_compare(en->sel_start, en->sel_end))
+     {
+        Eina_Bool b_value = EINA_FALSE;
+        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+     }
+   else
+     {
+        Efl_Text_Range range = {0};
+        range.start = efl_text_cursor_position_get(en->sel_start);
+        range.end = efl_text_cursor_position_get(en->sel_end);
+        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, &range);
+     }
 }
 
 static void
@@ -553,14 +802,15 @@ _sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive
 
    efl_text_cursor_copy(c, en->sel_end);
 
-   _entry_imf_cursor_info_set(o, c, en);
+   _entry_imf_cursor_info_set(en);
 
    if (en->selection)
      {
         free(en->selection);
         en->selection = NULL;
      }
-   efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED, NULL);
+
+   _emit_sel_state(o, en);
 }
 
 static void
@@ -575,24 +825,51 @@ _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en
    if (en->have_selection)
      {
         en->have_selection = EINA_FALSE;
+        Eina_Bool b_value = en->have_selection;
         efl_text_cursor_copy(en->sel_start, en->sel_end);
-        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED, NULL);
+        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
      }
 }
 
-static void
-_efl_ui_internal_text_interactive_efl_text_interactive_select_none(
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_text_interactive_all_unselect(
       Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    _sel_clear(obj, en);
 }
+
+EOLIAN static Eina_Bool
+_efl_ui_internal_text_interactive_efl_text_interactive_have_selection_get(
+         const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   return !efl_text_cursor_equal(en->sel_start, en->sel_end);
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_text_interactive_all_select(
+      Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   if (!efl_text_interactive_selection_allowed_get(obj))
+     return;
+
+   Efl_Text_Cursor *cur = efl_text_interactive_main_cursor_get(obj);
+   _entry_imf_context_reset(en);
+
+   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
+   _entry_imf_context_reset(en);
+   _sel_init(cur, obj, en);
+   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   _sel_extend(cur, obj, en);
+}
+
 
 static void
 _range_del_emit(Evas_Object *obj, Efl_Text_Cursor *cur1, Efl_Text_Cursor *cur2)
 {
    size_t start, end;
    char *tmp;
-   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    start = efl_text_cursor_position_get(cur1);
    end = efl_text_cursor_position_get(cur2);
@@ -608,8 +885,7 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor *cur1, Efl_Text_Cursor *cur2)
 
    efl_text_cursor_range_delete(cur1, cur2);
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
    if (tmp) free(tmp);
 }
 
@@ -621,26 +897,83 @@ _sel_range_del_emit(Evas_Object *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 }
 
 static void
-_delete_emit(Eo *obj, Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en EINA_UNUSED, size_t pos)
+_delete_emit(Eo *obj, Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en EINA_UNUSED, size_t pos,
+             Eina_Bool backspace)
 {
-   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
-   Eina_Unicode content[2];
-   content[0] = efl_text_cursor_content_get(c);
-   content[1] = 0;
-   if (!content[0])
-      return;
+   Eo * cur = efl_duplicate(c);
+   if (backspace)
+     {
+        if (!efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV))
+          {
+             return;
+          }
+        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
+     }
+   else
+     {
+        if (!efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT))
+          {
+             return;
+          }
+        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
+     }
+   efl_unref(cur);
+   cur = NULL;
 
-   char *tmp = eina_unicode_unicode_to_utf8(content, NULL);
+   Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
+   char *tmp = NULL;
+   info.insert = EINA_FALSE;
+   if (backspace)
+     {
+
+        Evas_Textblock_Cursor *cc = evas_object_textblock_cursor_new(obj);
+        evas_textblock_cursor_copy(efl_text_cursor_handle_get(c), cc);
+        Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_FALSE);
+        if (remove_cluster)
+          {
+             evas_textblock_cursor_cluster_prev(cc);
+          }
+        else
+          {
+             evas_textblock_cursor_char_prev(cc);
+          }
+
+        info.position = evas_textblock_cursor_pos_get(cc);
+        info.length = pos -info.position;
+
+        tmp = evas_textblock_cursor_range_text_get(efl_text_cursor_handle_get(c), cc, EVAS_TEXTBLOCK_TEXT_MARKUP);
+        evas_textblock_cursor_range_delete(efl_text_cursor_handle_get(c), cc);
+        evas_textblock_cursor_free(cc);
+     }
+   else
+     {
+        Evas_Textblock_Cursor *cc = evas_object_textblock_cursor_new(obj);
+        evas_textblock_cursor_copy(efl_text_cursor_handle_get(c), cc);
+
+        Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_TRUE);
+        if (remove_cluster)
+          {
+             evas_textblock_cursor_cluster_next(cc);
+          }
+        else
+          {
+             evas_textblock_cursor_char_next(cc);
+          }
+
+        info.position = pos;
+        info.length = evas_textblock_cursor_pos_get(cc) - info.position;
+
+        tmp = evas_textblock_cursor_range_text_get(efl_text_cursor_handle_get(c), cc, EVAS_TEXTBLOCK_TEXT_MARKUP);
+        evas_textblock_cursor_range_delete(efl_text_cursor_handle_get(c), cc);
+        evas_textblock_cursor_free(cc);
+     }
 
    info.insert = EINA_FALSE;
    info.position = pos;
    info.length = 1;
    info.content = tmp;
 
-   efl_text_cursor_char_delete(c);
-
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
    if (tmp) free(tmp);
 }
 
@@ -719,7 +1052,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    char *string = (char *)ev->string;
    Eina_Bool free_string = EINA_FALSE;
    Eina_Bool changed_user = EINA_FALSE;
-   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    if (!ev->key) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -728,6 +1061,25 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
    /* FIXME: Maybe allow selctions to happen even when not editable. */
    if (!en->editable) return;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        Ecore_IMF_Event_Key_Down ecore_ev;
+        //FIXME
+        //ecore_imf_evas_event_key_down_wrap(ev, &ecore_ev);
+        if (!en->composing)
+          {
+             if (ecore_imf_context_filter_event(en->imf_context,
+                                                ECORE_IMF_EVENT_KEY_DOWN,
+                                                (Ecore_IMF_Event *)&ecore_ev))
+               {
+                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                  return;
+               }
+          }
+     }
+#endif
 
    cur = efl_text_interactive_main_cursor_get(obj);
    old_cur_pos = efl_text_cursor_position_get(cur);
@@ -849,7 +1201,6 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
              _range_del_emit(obj, cur, tc);
 
-             //efl_del(tc);
              efl_del(tc);
           }
         else if ((alt) && (shift))
@@ -864,10 +1215,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                }
              else
                {
-                  if (efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV))
-                    {
-                       _delete_emit(obj, cur, en, old_cur_pos - 1);
-                    }
+                  _delete_emit(obj, cur, en, old_cur_pos, EINA_TRUE);
                }
           }
         _sel_clear(obj, en);
@@ -903,7 +1251,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                }
              else
                {
-                  _delete_emit(obj, cur, en, old_cur_pos);
+                  _delete_emit(obj, cur, en, old_cur_pos, EINA_FALSE);
                }
           }
         _sel_clear(obj, en);
@@ -937,6 +1285,54 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
            efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
 
         _key_down_sel_post(obj, cur, en, shift);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!strcmp(ev->keyname, "a")))
+#else
+   else if ((control) && (!strcmp(ev->keyname, "a")))
+#endif
+     {
+        _compose_seq_reset(en);
+        if (shift)
+          {
+             efl_text_interactive_all_unselect(obj);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
+        else
+          {
+             efl_text_interactive_all_select(obj);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
+     }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!strcmp(ev->keyname, "z")))
+#else
+   else if ((control) && (!strcmp(ev->keyname, "z")))
+#endif
+     {
+        _compose_seq_reset(en);
+        if (shift)
+          {
+             // redo
+             efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_REDO_REQUEST, NULL);
+          }
+        else
+          {
+             // undo
+             efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_UNDO_REQUEST, NULL);
+          }
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
+#if defined(__APPLE__) && defined(__MACH__)
+   else if ((super) && (!shift) && (!strcmp(ev->keyname, "y")))
+#else
+   else if ((control) && (!shift) && (!strcmp(ev->keyname, "y")))
+#endif
+     {
+        _compose_seq_reset(en);
+        // redo
+        efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_REDO_REQUEST, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (shift && !strcmp(ev->key, "Tab"))
@@ -1064,9 +1460,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 end:
    if (changed_user)
      {
-        efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
-        /* FIXME: this is kinda gross */
-        efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
+        efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
      }
    (void) 0;
 }
@@ -1213,9 +1607,6 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
           }
      }
 
-   if (ev->button == 2)
-     {
-     }
 end:
    (void) 0;
 }
@@ -1258,7 +1649,7 @@ _mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         en->selecting = EINA_FALSE;
      }
 
-   _entry_imf_cursor_info_set(obj, cur, en);
+   _entry_imf_cursor_info_set(en);
 }
 
 static void
@@ -1349,8 +1740,6 @@ _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_T
    efl_event_callback_add(efl_text_interactive_main_cursor_get(obj), EFL_TEXT_CURSOR_EVENT_CHANGED,
          _sel_cursor_changed, obj);
 
-   en->input_panel_enable = EINA_TRUE;
-
 #ifdef HAVE_ECORE_IMF
      {
         const char *ctx_id;
@@ -1417,9 +1806,32 @@ done:
 }
 
 EOLIAN static void
+_efl_ui_internal_text_interactive_efl_text_text_set(Eo *eo_obj, Efl_Ui_Internal_Text_Interactive_Data *o,
+      const char *text)
+{
+   efl_text_set(efl_super(eo_obj, MY_CLASS), text);
+   efl_text_cursor_move(o->main_cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+}
+
+EOLIAN void
+_efl_ui_internal_text_interactive_efl_text_markup_markup_set(Eo *eo_obj, Efl_Ui_Internal_Text_Interactive_Data *o,
+      const char *text)
+{
+   efl_text_markup_set(efl_super(eo_obj, MY_CLASS), text);
+   efl_text_cursor_move(o->main_cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+}
+
+EOLIAN static void
 _efl_ui_internal_text_interactive_efl_text_interactive_selection_allowed_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Eina_Bool allowed)
 {
+   if (pd->select_allow == allowed)
+     return;
+
    pd->select_allow = allowed;
+   if (!allowed)
+     {
+        _sel_clear(obj, pd);
+     }
 }
 
 EOLIAN static Eina_Bool
@@ -1454,6 +1866,333 @@ EOLIAN static Eina_Bool
 _efl_ui_internal_text_interactive_efl_text_interactive_editable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
 {
    return sd->editable;
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_hide(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_hide(en->imf_context);
+#else
+   (void)en;
+#endif
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Language_Type lang)
+{
+   en->input_panel_lang = lang;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_language_set(en->imf_context, (Ecore_IMF_Input_Panel_Lang)lang);
+#else
+   (void)en;
+   (void)lang;
+#endif
+}
+
+
+EOLIAN static Efl_Input_Text_Panel_Language_Type
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_language_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   return en->input_panel_lang;
+   (void)obj;
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Slice slice)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_imdata_set(en->imf_context, slice.mem, slice.len);
+#else
+   (void)en;
+   (void)data;
+   (void)len;
+#endif
+}
+
+
+EOLIAN static Eina_Slice
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_imdata_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   Eina_Slice slice = {0};
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        int len;
+        ecore_imf_context_input_panel_imdata_get(en->imf_context, &slice.mem, &len);
+        slice.len = (size_t)len;
+     }
+#else
+   (void)en;
+   (void)data;
+   (void)len;
+#endif
+   return slice;
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Return_Key_Type return_key_type)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_return_key_type_set(en->imf_context, (Ecore_IMF_Input_Panel_Return_Key_Type)return_key_type);
+#else
+   (void)en;
+   (void)return_key_type;
+#endif
+}
+
+
+EOLIAN static Efl_Input_Text_Panel_Return_Key_Type
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return (Efl_Input_Text_Panel_Return_Key_Type)ecore_imf_context_input_panel_return_key_type_get(en->imf_context);
+   return EFL_INPUT_TEXT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+#else
+   return EFL_INPUT_TEXT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+   (void)en;
+#endif
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_state_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Return_Key_State state)
+{
+   if (en->input_panel_return_key_state == state)
+     return;
+
+   en->input_panel_return_key_state = state;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        switch (state)
+        {
+           case EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_ENABLED:
+              ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, EINA_TRUE);
+           break;
+           case EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_DISABLED:
+              ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, EINA_FALSE);
+           break;
+           case EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_AUTO:
+              _return_key_update(obj);
+           break;
+        default:
+           break;
+        }
+     }
+#else
+   (void)obj;
+   (void)en;
+   (void)disabled;
+#endif
+}
+
+
+EOLIAN static Efl_Input_Text_Panel_Return_Key_State
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_state_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   return en->input_panel_return_key_state;
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool ondemand)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_show_on_demand_set(en->imf_context, ondemand);
+#else
+   (void)en;
+   (void)ondemand;
+#endif
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, Efl_Input_Text_Panel_Layout_Type layout)
+{
+   sd->input_panel_layout = layout;
+
+#ifdef HAVE_ECORE_IMF
+    if (sd->imf_context)
+     ecore_imf_context_input_panel_layout_set(sd->imf_context, (Ecore_IMF_Input_Panel_Layout)layout);
+#endif
+
+   if (layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_PASSWORD)
+     efl_input_text_input_hint_set(obj, ((sd->input_hints & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_HINTS_TYPE_SENSITIVE_DATA));
+   else if (layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_TERMINAL)
+     efl_input_text_input_hint_set(obj, (sd->input_hints & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE));
+}
+
+EOLIAN static Efl_Input_Text_Panel_Layout_Type
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+{
+   return sd->input_panel_layout;
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, int variation)
+{
+   sd->input_panel_layout_variation = variation;
+
+#ifdef HAVE_ECORE_IMF
+   if (sd->imf_context)
+     ecore_imf_context_input_panel_layout_variation_set(sd->imf_context, variation);
+#else
+   (void)variation;
+#endif
+}
+
+EOLIAN static int
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+{
+   return sd->input_panel_layout_variation;
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_show(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_show(en->imf_context);
+#else
+   (void)en;
+#endif
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_autoshow_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool enabled)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_enabled_set(en->imf_context, enabled);
+#else
+   (void)en;
+   (void)enabled;
+#endif
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_autoshow_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_panel_enabled_get(en->imf_context);
+#else
+   (void)en;
+#endif
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_show_on_demand_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        Eina_Bool ret = ecore_imf_context_input_panel_show_on_demand_get(en->imf_context);
+        return ret;
+     }
+#else
+   (void)en;
+#endif
+   return EINA_FALSE;
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_predictable_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool prediction)
+{
+   en->prediction_allow = prediction;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_prediction_allow_set(en->imf_context, prediction);
+#else
+   (void)en;
+   (void)prediction;
+#endif
+}
+
+
+EOLIAN static Eina_Bool
+_efl_ui_internal_text_interactive_efl_input_text_predictable_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   return en->prediction_allow;
+   (void)obj;
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_input_hint_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Hints_Type input_hints)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_hint_set(en->imf_context, (Ecore_IMF_Input_Hints)input_hints);
+   (void)obj;
+#else
+   (void)obj;
+   (void)en;
+   (void)input_hints;
+#endif
+}
+
+
+EOLIAN static Efl_Input_Text_Hints_Type
+_efl_ui_internal_text_interactive_efl_input_text_input_hint_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return (Efl_Input_Text_Hints_Type)ecore_imf_context_input_hint_get(en->imf_context);
+   (void)obj;
+#else
+   (void)obj;
+   (void)en;
+#endif
+
+   return ELM_INPUT_HINT_NONE;
+}
+
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_input_text_autocapitalization_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Capitalize_Type autocapital_type)
+{
+#ifdef HAVE_ECORE_IMF
+   if (efl_text_password_get(obj) == EINA_TRUE)
+     autocapital_type = EFL_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
+
+   if (en->imf_context)
+     ecore_imf_context_autocapital_type_set(en->imf_context, (Ecore_IMF_Autocapital_Type)autocapital_type);
+
+   (void)obj;
+#else
+   (void)obj;
+   (void)en;
+   (void)autocapital_type;
+#endif
+}
+
+
+EOLIAN static Efl_Input_Text_Capitalize_Type
+_efl_ui_internal_text_interactive_efl_input_text_autocapitalization_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return (Efl_Input_Text_Capitalize_Type)ecore_imf_context_autocapital_type_get(en->imf_context);
+   return EFL_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
+   (void)obj;
+#else
+   return EFL_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
+   (void)obj;
+   (void)en;
+#endif
 }
 
 #include "efl_ui_internal_text_interactive.eo.c"
