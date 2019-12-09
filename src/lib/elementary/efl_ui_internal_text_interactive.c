@@ -856,10 +856,10 @@ _efl_ui_internal_text_interactive_efl_text_interactive_all_select(
    Efl_Text_Cursor *cur = efl_text_interactive_main_cursor_get(obj);
    _entry_imf_context_reset(en);
 
-   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
+   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    _entry_imf_context_reset(en);
    _sel_init(cur, obj, en);
-   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
    _sel_extend(cur, obj, en);
 }
 
@@ -1810,7 +1810,7 @@ _efl_ui_internal_text_interactive_efl_text_text_set(Eo *eo_obj, Efl_Ui_Internal_
       const char *text)
 {
    efl_text_set(efl_super(eo_obj, MY_CLASS), text);
-   efl_text_cursor_move(o->main_cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   efl_text_cursor_move(o->main_cursor, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 }
 
 EOLIAN void
@@ -1818,7 +1818,7 @@ _efl_ui_internal_text_interactive_efl_text_markup_markup_set(Eo *eo_obj, Efl_Ui_
       const char *text)
 {
    efl_text_markup_set(efl_super(eo_obj, MY_CLASS), text);
-   efl_text_cursor_move(o->main_cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   efl_text_cursor_move(o->main_cursor, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 }
 
 EOLIAN static void
