@@ -124,6 +124,13 @@ EFL_START_TEST(no_leaking_canvas_object)
 }
 EFL_END_TEST
 
+
+EFL_START_TEST(no_err_on_creation)
+{
+   widget = efl_add(widget_klass, win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(no_err_on_shutdown)
 {
    efl_ref(widget);
@@ -204,4 +211,5 @@ efl_ui_widget_behavior_test(TCase *tc)
    tcase_add_test(tc, no_leaking_canvas_object);
    tcase_add_test(tc, no_err_on_shutdown);
    tcase_add_test(tc, correct_visibility_setting);
+   tcase_add_test(tc, no_err_on_creation);
 }
