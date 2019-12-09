@@ -147,12 +147,10 @@ public class Array<T> : IEnumerable<T>, IDisposable
     [EditorBrowsable(EditorBrowsableState.Never)]
     public Array(IntPtr handle, bool own)
     {
-        if (handle == IntPtr.Zero)
-        {
-            throw new ArgumentNullException("handle", "Handle can't be null");
-        }
-
-        Handle = handle;
+        Handle = (handle != IntPtr.Zero)
+            ? handle
+            : throw new ArgumentNullException(nameof(handle),
+                                              $"{nameof(Handle)} can't be null");
         Own = own;
         OwnContent = own;
     }
@@ -166,12 +164,10 @@ public class Array<T> : IEnumerable<T>, IDisposable
     [EditorBrowsable(EditorBrowsableState.Never)]
     public Array(IntPtr handle, bool own, bool ownContent)
     {
-        if (handle == IntPtr.Zero)
-        {
-            throw new ArgumentNullException("handle", "Handle can't be null");
-        }
-
-        Handle = handle;
+        Handle = (handle != IntPtr.Zero)
+            ? handle
+            : throw new ArgumentNullException(nameof(handle),
+                                              $"{nameof(Handle)} can't be null");
         Own = own;
         OwnContent = ownContent;
     }

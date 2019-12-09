@@ -24,7 +24,7 @@ using static eldbus.EldbusProxyNativeFunctions;
 namespace eldbus
 {
 
-[EditorBrowsable(EditorBrowsableState.Never)]    
+[EditorBrowsable(EditorBrowsableState.Never)]
 internal static class EldbusProxyNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
@@ -215,7 +215,7 @@ public class Proxy : IDisposable
 
         if (member == null)
         {
-            throw new ArgumentNullException("member");
+            throw new ArgumentNullException(nameof(member));
         }
 
         var ptr = eldbus_proxy_method_call_new(Handle, member);
@@ -233,7 +233,7 @@ public class Proxy : IDisposable
 
         if (msg == null)
         {
-            throw new ArgumentNullException("msg");
+            throw new ArgumentNullException(nameof(msg));
         }
 
         // Native send() takes ownership of the message. We ref here to keep the IDisposable
