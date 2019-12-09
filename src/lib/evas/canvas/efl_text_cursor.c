@@ -168,12 +168,12 @@ _efl_text_cursor_move(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_Text_Cu
          if (pos != evas_textblock_cursor_pos_get(pd->handle))
            moved = EINA_TRUE;
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_FIRST :
          evas_textblock_cursor_paragraph_first(pd->handle);
          if (pos != evas_textblock_cursor_pos_get(pd->handle))
            moved = EINA_TRUE;
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_LAST :
          evas_textblock_cursor_paragraph_last(pd->handle);
          if (pos != evas_textblock_cursor_pos_get(pd->handle))
            moved = EINA_TRUE;

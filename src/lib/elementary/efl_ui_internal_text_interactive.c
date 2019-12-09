@@ -1265,7 +1265,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         _key_down_sel_pre(obj, cur, en, shift, EINA_FALSE);
 
         if ((control) && (multiline))
-           efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
+           efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
         else
            efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
 
@@ -1280,7 +1280,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         _key_down_sel_pre(obj, cur, en, shift, EINA_TRUE);
 
         if ((control) && (multiline))
-           efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+           efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
         else
            efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
 
@@ -1480,14 +1480,14 @@ _cursor_char_coord_set(Efl_Canvas_Text *obj, Efl_Text_Cursor *cur, Evas_Coord ca
    cy = canvasy - y;
 
    line_cur = efl_canvas_text_cursor_create(obj);
-   efl_text_cursor_move(line_cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   efl_text_cursor_move(line_cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
    evas_textblock_cursor_line_geometry_get(efl_text_cursor_handle_get(line_cur), NULL, &cly, NULL, &lh);
    /* Consider a threshold of half the line height */
    if (cy > (cly + lh) && cy < (cly + lh + lh / 2))
      {
         cy = cly + lh - 1; // Make it inside Textblock
      }
-   efl_text_cursor_move(line_cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
+   efl_text_cursor_move(line_cur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    evas_textblock_cursor_line_geometry_get(efl_text_cursor_handle_get(line_cur), NULL, &cly, NULL, NULL);
 
    if (cy < cly && cy > (cly - lh / 2))
@@ -1692,7 +1692,7 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
         else
           {
              Evas_Coord lx, ly, lw, lh;
-             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
+             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
              evas_textblock_cursor_line_geometry_get(efl_text_cursor_handle_get(cur), &lx, &ly, &lw, &lh);
              efl_text_cursor_char_coord_set(cur, EINA_POSITION2D(cx, ly + (lh / 2)));
           }

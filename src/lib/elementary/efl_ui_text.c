@@ -2921,8 +2921,8 @@ _efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_D
    start = efl_ui_text_cursor_create(mobj);
    end = efl_ui_text_cursor_create(mobj);
 
-   efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
-   efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 
    annotations = efl_text_attribute_factory_range_attributes_get(start, end);
 
@@ -3341,8 +3341,8 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
    end = efl_canvas_text_cursor_create(sd->text_obj);
 
    /* Retrieve all annotations in the text. */
-   efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST);
-   efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST);
+   efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 
    it = efl_text_attribute_factory_range_attributes_get(start, end);
    efl_del(start);
