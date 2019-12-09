@@ -508,10 +508,19 @@ struct event_definition_generator
              }
         }
 
+      // Close summary
+      if (!as_generator(scope_tab << "/// </summary>\n").generate(sink, nullptr, context))
+        return false;
+
+      if (evt.type.is_engaged())
+        {
+            if (!as_generator(scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
+                 ).generate(sink, nullptr, context))
+              return false;
+        }
+
       if (!as_generator(
-            scope_tab << "/// </summary>\n"
-            << scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
-            << scope_tab << (is_concrete ? "public" : "protected virtual") << " void On" << event_name << "(" << event_args_type << " e)\n"
+            scope_tab << (is_concrete ? "public" : "protected virtual") << " void On" << event_name << "(" << (!evt.type.is_engaged() ? "" : event_args_type + " e") << ")\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "var key = \"_" << upper_c_name << "\";\n"
             << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(" << library_name << ", key);\n"
