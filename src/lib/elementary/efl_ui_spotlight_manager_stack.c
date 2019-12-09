@@ -105,6 +105,11 @@ EOLIAN static void
 _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Gfx_Entity *subobj, int index)
 {
    efl_canvas_group_member_remove(pd->container, subobj);
+   for (int i = 0; i < 2; ++i)
+     {
+        if (pd->content[i] == subobj)
+          pd->content[i] = NULL;
+     }
    _update_ids(obj, pd, index);
 }
 
