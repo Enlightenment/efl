@@ -2072,6 +2072,9 @@ _efl_ui_collection_view_efl_object_invalidate(Eo *obj,
 
    _all_cleanup(obj, pd);
 
+   if (pd->pan)
+     efl_del(pd->pan);
+
    efl_invalidate(efl_super(obj, EFL_UI_COLLECTION_VIEW_CLASS));
 }
 
