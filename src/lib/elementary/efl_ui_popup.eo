@@ -125,6 +125,7 @@ class Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Foc
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Canvas.Group.group_calculate;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set;}
