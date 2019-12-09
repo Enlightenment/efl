@@ -325,6 +325,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
             }
         }
     }
+
     internal Efl.EventCb GetInternalEventCallback<T>(EventHandler<T> handler, Func<IntPtr, T> createArgsInstance) where T:EventArgs
     {
         return (IntPtr data, ref Efl.Event.NativeStruct evt) =>
@@ -344,6 +345,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
            }
         };
     }
+
     internal Efl.EventCb GetInternalEventCallback(EventHandler handler)
     {
         return (IntPtr data, ref Efl.Event.NativeStruct evt) =>
@@ -362,6 +364,23 @@ public abstract class EoWrapper : IWrapper, IDisposable
               }
            }
         };
+    }
+
+    internal void CallNativeEventCallback(string lib, string key, IntPtr eventInfo, Action<IntPtr> freeAction)
+    {
+        try
+        {
+            IntPtr desc = Efl.EventDescription.GetNative(lib, key);
+            if (desc == IntPtr.Zero)
+                throw new ArgumentException($"Failed to get native event {key}", "key");
+
+            Efl.Eo.Globals.CallEventCallback(NativeHandle, desc, eventInfo);
+        }
+        finally
+        {
+            if (freeAction != null)
+               freeAction(eventInfo);
+        }
     }
 
     private static void OwnershipUniqueCallback(IntPtr data, ref Efl.Event.NativeStruct evt)
