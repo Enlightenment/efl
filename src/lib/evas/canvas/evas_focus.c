@@ -223,6 +223,8 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!efl_invalidating_get(eo_obj) && !efl_invalidated_get(eo_obj), EINA_FALSE);
+
    event_id = _evas_event_counter;
    if (seat) default_seat = _default_seat_get(eo_obj);
    else default_seat = seat = _default_seat_get(eo_obj);
