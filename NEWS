@@ -385,7 +385,7 @@ Features:
    * eo: Add "destruct" event
    * efl-wl: move to xdg-shell vfinal
    * wayland: add xdg-shell vfinal support for client-side
-   * Canvas image: add Efl.Canvas.Text.Factory + use in Ui.Text
+   * Canvas image: add Efl.Canvas.Textblock.Factory + use in Ui.Text
    * efl-wl: add functionality for directly passing through xkb objects
    * ecore-x: add more info to Ecore_X_Event_Xkb event
    * ecore-x: add some useful xkb function wrappers

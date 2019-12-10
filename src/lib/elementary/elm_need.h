@@ -71,21 +71,6 @@ EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
 EAPI Eina_Bool elm_need_eldbus(void);
 
 /**
- * Request that your elementary application needs elocation
- *
- * This initializes the elocation library when called and if
- * support exists it returns @c EINA_TRUE, otherwise returns
- * @c EINA_FALSE. This must be called before any elocation usage.
- *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
- *
- * @since 1.8.0
- *
- * @ingroup eldbus
- */
-EAPI Eina_Bool elm_need_elocation(void);
-
-/**
  * Request that your elementary application needs ethumb
  *
  * This initializes the Ethumb library when called and if support exists

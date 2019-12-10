@@ -146,17 +146,17 @@ public class Object : System.IDisposable
     {
         if (conn == null)
         {
-            throw new System.ArgumentNullException("conn");
+            throw new System.ArgumentNullException(nameof(conn));
         }
 
         if (bus == null)
         {
-            throw new System.ArgumentNullException("bus");
+            throw new System.ArgumentNullException(nameof(bus));
         }
 
         if (path == null)
         {
-            throw new System.ArgumentNullException("path");
+            throw new System.ArgumentNullException(nameof(path));
         }
 
         var handle = eldbus_object_get(conn.Handle, bus, path);
@@ -316,7 +316,7 @@ public class Object : System.IDisposable
 
         if (msg == null)
         {
-            throw new System.ArgumentNullException("msg");
+            throw new System.ArgumentNullException(nameof(msg));
         }
 
         IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();

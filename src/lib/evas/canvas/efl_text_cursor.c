@@ -1,6 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "efl_canvas_text_internal.h"
+#include "efl_canvas_textblock_internal.h"
 
 #define MY_CLASS EFL_TEXT_CURSOR_CLASS
 #define MY_CLASS_NAME "Efl.Text.Cursor"
@@ -168,12 +168,12 @@ _efl_text_cursor_move(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_Text_Cu
          if (pos != evas_textblock_cursor_pos_get(pd->handle))
            moved = EINA_TRUE;
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_FIRST :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_FIRST :
          evas_textblock_cursor_paragraph_first(pd->handle);
          if (pos != evas_textblock_cursor_pos_get(pd->handle))
            moved = EINA_TRUE;
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_LAST :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_LAST :
          evas_textblock_cursor_paragraph_last(pd->handle);
          if (pos != evas_textblock_cursor_pos_get(pd->handle))
            moved = EINA_TRUE;
@@ -434,7 +434,7 @@ void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_o
 {
    Efl_Text_Cursor_Data *pd = efl_data_scope_get(cursor, MY_CLASS);
    Efl_Text_Cursor_Handle *handle = NULL;
-   if (efl_isa(canvas_text_obj, EFL_CANVAS_TEXT_CLASS))
+   if (efl_isa(canvas_text_obj, EFL_CANVAS_TEXTBLOCK_CLASS))
      {
         pd->text_obj = text_obj;
         handle = evas_object_textblock_cursor_new(canvas_text_obj);

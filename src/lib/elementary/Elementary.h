@@ -73,10 +73,6 @@
 #include <Efreet_Trash.h>
 #include <Ethumb_Client.h>
 
-#ifdef ELM_ELOCATION
-#include <Elocation.h>
-#endif
-
 #ifdef ELM_EMAP
 #include <EMap.h>
 #endif

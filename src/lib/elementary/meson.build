@@ -85,7 +85,6 @@ pub_eo_files = [
   'efl_ui_popup_part_backwall.eo',
   'efl_ui_alert_popup.eo',
   'efl_ui_alert_popup_part_title.eo',
-  'efl_ui_text_editable.eo',
   'efl_ui_text_async.eo',
   'efl_ui_text_factory_images.eo',
   'efl_ui_text_factory_emoticons.eo',
@@ -953,7 +952,7 @@ elementary_src = [
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,
-                       edje, eldbus, efreet, efreet_mime, efreet_trash, ethumb_client, efl, elocation]
+                       edje, eldbus, efreet, efreet_mime, efreet_trash, ethumb_client, efl]
 
 elm_options = configuration_data()
 
@@ -968,7 +967,6 @@ else
   elm_options.set('DLL_EXPORT', '1')
 endif
 
-elm_options.set('ELM_ELOCATION', '1')
 elm_options.set('ELM_EFREET', '1')
 
 if config_h.has('HAVE_ALLOCA_H')

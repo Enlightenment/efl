@@ -1,5 +1,5 @@
-#ifndef _EFL_CANVAS_TEXT_INTERNAL_H
-#define _EFL_CANVAS_TEXT_INTERNAL_H
+#ifndef _EFL_CANVAS_TEXTBLOCK_INTERNAL_H
+#define _EFL_CANVAS_TEXTBLOCK_INTERNAL_H
 
 #include <Evas.h>
 
@@ -11,10 +11,10 @@
 /* private struct for textblock object internal data */
 /**
  * @internal
- * @typedef Efl_Canvas_Text_Data
+ * @typedef Efl_Canvas_Textblock_Data
  * The actual textblock object.
  */
-typedef struct _Evas_Object_Textblock             Efl_Canvas_Text_Data;
+typedef struct _Evas_Object_Textblock             Efl_Canvas_Textblock_Data;
 /**
  * @internal
  * @typedef Evas_Object_Style_Tag
@@ -89,22 +89,22 @@ typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Itera
 typedef struct _Efl_Text_Attribute_Handle_Iterator Efl_Text_Attribute_Handle_Iterator;
 /**
  * @internal
- * @typedef Efl_Canvas_Text_Filter
+ * @typedef Efl_Canvas_Textblock_Filter
  * A structure holding gfx filter information for a text item
  */
-typedef struct _Efl_Canvas_Text_Filter Efl_Canvas_Text_Filter;
+typedef struct _Efl_Canvas_Textblock_Filter Efl_Canvas_Textblock_Filter;
 /**
  * @internal
- * @typedef Efl_Canvas_Text_Filter_Post_Render
+ * @typedef Efl_Canvas_Textblock_Filter_Post_Render
  * Post-render data for async rendering of gfx filters
  */
-typedef struct _Efl_Canvas_Text_Filter_Post_Render Efl_Canvas_Text_Filter_Post_Render;
+typedef struct _Efl_Canvas_Textblock_Filter_Post_Render Efl_Canvas_Textblock_Filter_Post_Render;
 /**
  * @internal
- * @typedef Efl_Canvas_Text_Filter_Program
+ * @typedef Efl_Canvas_Textblock_Filter_Program
  * Filter name - code database
  */
-typedef struct _Efl_Canvas_Text_Filter_Program Efl_Canvas_Text_Filter_Program;
+typedef struct _Efl_Canvas_Textblock_Filter_Program Efl_Canvas_Textblock_Filter_Program;
 /**
  * @internal
  * @typedef Text_Item_Filter
@@ -235,7 +235,7 @@ _evas_textblock_annotations_set(Evas_Object *eo_obj,
       const char *format, Eina_Bool is_item);
 
 void
-_evas_textblock_annotation_remove(Evas_Object *eo_obj, Efl_Canvas_Text_Data *o,
+_evas_textblock_annotation_remove(Evas_Object *eo_obj, Efl_Canvas_Textblock_Data *o,
       Efl_Text_Attribute_Handle *an, Eina_Bool remove_nodes, Eina_Bool invalidate);
 
 void
@@ -312,4 +312,4 @@ EAPI Efl_Text_Cursor_Handle *efl_text_cursor_handle_get(const Eo *obj);
 #undef EAPI
 #define EAPI
 
-#endif//#ifndef _EFL_CANVAS_TEXT_INTERNAL_H
+#endif//#ifndef _EFL_CANVAS_TEXTBLOCK_INTERNAL_H

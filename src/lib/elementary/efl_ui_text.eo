@@ -61,7 +61,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
            "emoticon/happy" or "href=file://image.jpg" etc.
          ]]
          values {
-            item_factory: Efl.Canvas.Text_Factory; [[Factory to create items]]
+            item_factory: Efl.Canvas.Textblock_Factory; [[Factory to create items]]
          }
       }
       cursor_add {

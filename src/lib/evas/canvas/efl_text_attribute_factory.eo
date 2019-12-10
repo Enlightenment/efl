@@ -6,7 +6,7 @@ abstract @beta Efl.Text.Attribute.Factory extends Efl.Object {
 
      Attributes can be assigned to character ranges, selected using two @Efl.Text.Cursor instances.
      Cursor instances are already bound to a text object so there's no need to provide it to this class.
-     Style is specified using format strings as described in @Efl.Canvas.Text.style_apply.
+     Style is specified using format strings as described in @Efl.Canvas.Textblock.style_apply.
 
      There is no need to instantiate this class. Use directly the @.attribute_insert and @.attribute_clear static methods.]]
    methods {
@@ -15,7 +15,7 @@ abstract @beta Efl.Text.Attribute.Factory extends Efl.Object {
 
            The $format will be applied to the given range.
            The passed cursors must belong to same textObject, else insertion will be ignored.
-           Passed format parameter uses same format as style in @Efl.Canvas.Text.style_apply.
+           Passed format parameter uses same format as style in @Efl.Canvas.Textblock.style_apply.
          ]]
          params {
               start: const(Efl.Text.Cursor); [[Start of range.]]

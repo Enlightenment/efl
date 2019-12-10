@@ -36,7 +36,7 @@
 
 typedef struct _Efl_Ui_Internal_Text_Scroller_Data
 {
-   Efl_Canvas_Text *text_obj;
+   Efl_Canvas_Textblock *text_obj;
    Efl_Ui_Table *text_table;
    Eo *smanager;
 
@@ -101,7 +101,7 @@ _efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
         efl_event_freeze(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_table, view.size);
         efl_gfx_entity_size_set(sd->text_obj, view.size);
-        fsz = efl_canvas_text_size_formatted_get(sd->text_obj);
+        fsz = efl_canvas_textblock_size_formatted_get(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_table, sz);
         efl_gfx_entity_size_set(sd->text_obj, sz);
         efl_event_thaw(sd->text_obj);
@@ -152,7 +152,7 @@ _efl_ui_internal_text_scroller_efl_object_destructor(Eo *obj,
 EOLIAN static void
 _efl_ui_internal_text_scroller_initialize(Eo *obj,
                                        Efl_Ui_Internal_Text_Scroller_Data *sd,
-                                       Efl_Canvas_Text *text_obj,
+                                       Efl_Canvas_Textblock *text_obj,
                                        Efl_Ui_Table *text_table)
 {
    if (efl_finalized_get(obj))

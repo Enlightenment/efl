@@ -73,9 +73,10 @@ public class Example
         miles_label.SetSize(size);
         miles_label.SetVisible(true);
 
-        Efl.Ui.TextEditable miles_input = new Efl.Ui.TextEditable(miles_box);
+        Efl.Ui.Text miles_input = new Efl.Ui.Text(miles_box);
         miles_input.SetText("");
         miles_input.SetScrollable(true);
+        miles_input.SetEditable(true);
         miles_input.SetSize(size);
         miles_input.SetVisible(true);
 

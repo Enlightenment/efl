@@ -1,7 +1,7 @@
 //#define EFL_BETA_API_SUPPORT
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "efl_canvas_text_internal.h"
+#include "efl_canvas_textblock_internal.h"
 #include "efl_text_cursor.eo.h"
 
 #define MY_CLASS EFL_TEXT_ATTRIBUTE_FACTORY_CLASS
@@ -23,7 +23,7 @@ _efl_text_attribute_factory_attribute_insert(const Efl_Text_Cursor *start, const
 
    _evas_textblock_annotations_insert(eo_obj, efl_text_cursor_handle_get(start), efl_text_cursor_handle_get(end), format,
          EINA_FALSE);
-   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static unsigned int

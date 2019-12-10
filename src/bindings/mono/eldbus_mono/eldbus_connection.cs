@@ -298,7 +298,7 @@ public class Connection : IDisposable
 
         if (msg == null)
         {
-            throw new ArgumentNullException("msg");
+            throw new ArgumentNullException(nameof(msg));
         }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
@@ -347,7 +347,7 @@ public class Connection : IDisposable
 
         if (bus == null)
         {
-            throw new ArgumentNullException("bus");
+            throw new ArgumentNullException(nameof(bus));
         }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
@@ -376,7 +376,7 @@ public class Connection : IDisposable
 
         if (bus == null)
         {
-            throw new ArgumentNullException("bus");
+            throw new ArgumentNullException(nameof(bus));
         }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
@@ -405,7 +405,7 @@ public class Connection : IDisposable
 
         if (bus == null)
         {
-            throw new ArgumentNullException("bus");
+            throw new ArgumentNullException(nameof(bus));
         }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
@@ -434,7 +434,7 @@ public class Connection : IDisposable
 
         if (bus == null)
         {
-            throw new ArgumentNullException("bus");
+            throw new ArgumentNullException(nameof(bus));
         }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
@@ -533,7 +533,7 @@ public class Connection : IDisposable
 
         if (bus == null)
         {
-            throw new ArgumentNullException("bus");
+            throw new ArgumentNullException(nameof(bus));
         }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());

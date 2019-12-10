@@ -1,8 +1,0 @@
-class @beta Efl.Ui.Text_Editable extends Efl.Ui.Text
-{
-   [[Efl UI text editable class]]
-   data: null;
-   implements {
-      Efl.Object.constructor;
-   }
-}

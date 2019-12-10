@@ -300,6 +300,7 @@ struct klass
              documentation
              << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
              << "[Efl.Eo.BindingEntity]\n"
+             << "[SuppressMessage(\"Microsoft.Naming\", \"CA1724:TypeNamesShouldNotMatchNamespaces\")]\n"
              << "public "
              << (is_partial
                  ? class_type == "class"

@@ -1684,3 +1684,20 @@ EINA_DEPRECATED EAPI void elm_win_name_set(Evas_Object *obj, const char *name);
  * @ingroup Elm_Textpath_Group
  */
 EINA_DEPRECATED EAPI void elm_textpath_circle_set(Efl_Ui_Textpath *obj, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction);
+
+/**
+ * Request that your elementary application needs elocation
+ *
+ * This initializes the elocation library when called and if
+ * support exists it returns @c EINA_TRUE, otherwise returns
+ * @c EINA_FALSE. This must be called before any elocation usage.
+ *
+ * @return @c EINA_TRUE if support exists and initialization succeeded.
+ *
+ * @since 1.8.0
+ *
+ * @deprecated removed beta API
+ *
+ * @ingroup eldbus
+ */
+EINA_DEPRECATED EAPI Eina_Bool elm_need_elocation(void);
