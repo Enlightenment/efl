@@ -3,8 +3,9 @@
 #include <math.h>
 #include <assert.h>
 
+#ifdef EVAS_RENDER_DEBUG_TIMING
 #include <sys/time.h>
-
+#endif
 
 // FIXME: Ugly!
 #define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
@@ -3232,14 +3233,6 @@ _evas_planes(Evas_Public_Data *evas)
        }
 }
 
-double
-_ttime_get(void)
-{
-   struct timeval timev;
-   gettimeofday(&timev, NULL);
-   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-}
-
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
@@ -3289,10 +3282,6 @@ evas_render_updates_internal(Evas *eo_e,
 #ifdef EVAS_RENDER_DEBUG_TIMING
    double start_time = _time_get();
 #endif
-
-   double time1, time2;
-   double taccum = 0.06;
-   time1 = _ttime_get();
 
    evas_render_pre(eo_e, evas);
 
@@ -3804,10 +3793,6 @@ evas_render_updates_internal(Evas *eo_e,
 #ifdef EVAS_RENDER_DEBUG_TIMING
    _accumulate_time(start_time, do_async);
 #endif
-
-   time2 = _ttime_get();
-   taccum = (taccum + (time2 - time1)) * 0.5;
-   ERR("elapsed = %f", taccum);
 
    if (!do_async) _evas_render_cleanup();
    eina_evlog("-render_end", eo_e, 0.0, NULL);
