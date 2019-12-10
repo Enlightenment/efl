@@ -12,7 +12,7 @@ typedef struct _Efl_Ui_Text_Factory_Fallback_Data Efl_Ui_Text_Factory_Fallback_D
 
 struct _Efl_Ui_Text_Factory_Fallback_Data
 {
-   Efl_Canvas_Text_Factory *emoticon_factory, *image_factory;
+   Efl_Canvas_Textblock_Factory *emoticon_factory, *image_factory;
 };
 
 EOLIAN static Eo *
@@ -34,7 +34,7 @@ _efl_ui_text_factory_fallback_efl_object_destructor(Eo *obj,
 
 
 EOLIAN static Efl_Canvas_Object
-*_efl_ui_text_factory_fallback_efl_canvas_text_factory_create(
+*_efl_ui_text_factory_fallback_efl_canvas_textblock_factory_create(
       Eo *obj EINA_UNUSED,
       Efl_Ui_Text_Factory_Fallback_Data *pd EINA_UNUSED,
       Efl_Canvas_Object *object,
@@ -48,11 +48,11 @@ EOLIAN static Efl_Canvas_Object
    if (key && !strncmp(key, "file://", 7))
      {
         const char *fname = key + 7;
-        o = efl_canvas_text_factory_create(pd->image_factory, object, fname);
+        o = efl_canvas_textblock_factory_create(pd->image_factory, object, fname);
      }
    else
      {
-        o = efl_canvas_text_factory_create(pd->emoticon_factory, object, key);
+        o = efl_canvas_textblock_factory_create(pd->emoticon_factory, object, key);
      }
    return o;
 }

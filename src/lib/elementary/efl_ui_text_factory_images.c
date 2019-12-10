@@ -49,7 +49,7 @@ _efl_ui_text_factory_images_efl_object_destructor(Eo *obj,
 }
 
 EOLIAN static Efl_Canvas_Object *
-_efl_ui_text_factory_images_efl_canvas_text_factory_create(Eo *obj EINA_UNUSED,
+_efl_ui_text_factory_images_efl_canvas_textblock_factory_create(Eo *obj EINA_UNUSED,
       Efl_Ui_Text_Factory_Images_Data *pd EINA_UNUSED,
       Efl_Canvas_Object *object,
       const char *key)

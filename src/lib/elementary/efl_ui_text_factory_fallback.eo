@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Text_Factory.Fallback extends Efl.Object implements Efl.Canvas.Text_Factory
+class @beta Efl.Ui.Text_Factory.Fallback extends Efl.Object implements Efl.Canvas.Textblock_Factory
 {
    [[Internal factory for fallback cases.
 
@@ -10,6 +10,6 @@ class @beta Efl.Ui.Text_Factory.Fallback extends Efl.Object implements Efl.Canva
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Canvas.Text_Factory.create;
+      Efl.Canvas.Textblock_Factory.create;
    }
 }

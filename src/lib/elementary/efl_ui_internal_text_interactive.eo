@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Text implements Efl.Text_Interactive, Efl.Input_Text
+class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implements Efl.Text_Interactive, Efl.Input_Text
 {
    [[An internal object in charge of the interactive aspect of the text widget.
 

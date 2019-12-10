@@ -18,7 +18,7 @@
 #include "elm_hoversel_eo.h"
 #include "efl_ui_text_part.eo.h"
 #include "elm_part_helper.h"
-#include "efl_canvas_text_internal.h"
+#include "efl_canvas_textblock_internal.h"
 
 typedef struct _Efl_Ui_Text_Data        Efl_Ui_Text_Data;
 typedef struct _Efl_Ui_Text_Rectangle   Efl_Ui_Text_Rectangle;
@@ -65,8 +65,8 @@ struct _Efl_Ui_Text_Data
    int                                  gen;
    Eina_List                            *sel;
    Eina_List                            *items; /** context menu item list */
-   Efl_Canvas_Text_Factory              *item_factory;
-   Efl_Canvas_Text_Factory              *item_fallback_factory;
+   Efl_Canvas_Textblock_Factory              *item_factory;
+   Efl_Canvas_Textblock_Factory              *item_fallback_factory;
    Eina_List                            *markup_filters;
    Ecore_Job                            *hov_deljob;
    Mod_Api                              *api; // module api if supplied
@@ -851,9 +851,9 @@ _efl_ui_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Data *sd)
         efl_gfx_entity_size_set(sd->text_obj, EINA_SIZE2D(sz.w, 0));
         /* ignore current object size for single-line since we always need to know the actual size */
         if (!efl_text_multiline_get(obj))
-          min = efl_canvas_text_size_native_get(sd->text_obj);
+          min = efl_canvas_textblock_size_native_get(sd->text_obj);
         else
-          min = efl_canvas_text_size_formatted_get(sd->text_obj);
+          min = efl_canvas_textblock_size_formatted_get(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_obj, text_sz);
         efl_event_thaw(sd->text_obj);
         min.w += edmin.w;
@@ -1485,11 +1485,11 @@ _item_get(void *data, const char *item)
      {
         if (sd->item_factory)
           {
-             o = efl_canvas_text_factory_create(sd->item_factory, data, item);
+             o = efl_canvas_textblock_factory_create(sd->item_factory, data, item);
           }
         else if (sd->item_fallback_factory)
           {
-             o = efl_canvas_text_factory_create(sd->item_fallback_factory,
+             o = efl_canvas_textblock_factory_create(sd->item_fallback_factory,
                    data, item);
           }
      }
@@ -1967,7 +1967,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_UNDO_REQUEST, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_PREEDIT_CHANGED, obj);
    sd->text_obj = text_obj;
-   sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
+   sd->text_guide_obj = efl_add(EFL_CANVAS_TEXTBLOCK_CLASS, obj);
    sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
    efl_composite_attach(obj, text_obj);
 
@@ -2028,7 +2028,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
       (sd->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
          _efl_ui_text_changed_user_cb, obj);
-   efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
+   efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED,
          _efl_ui_text_selection_start_clear_cb, obj);
@@ -3337,8 +3337,8 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
 
    sd->gen++;
 
-   start = efl_canvas_text_cursor_create(sd->text_obj);
-   end = efl_canvas_text_cursor_create(sd->text_obj);
+   start = efl_canvas_textblock_cursor_create(sd->text_obj);
+   end = efl_canvas_textblock_cursor_create(sd->text_obj);
 
    /* Retrieve all annotations in the text. */
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
@@ -3645,7 +3645,7 @@ _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
 
 static void
 _efl_ui_text_item_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
-      Efl_Canvas_Text_Factory *item_factory)
+      Efl_Canvas_Textblock_Factory *item_factory)
 {
    if (pd->item_factory) efl_unref(pd->item_factory);
    pd->item_factory = efl_ref(item_factory);

@@ -1,6 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "efl_canvas_text_internal.h"
+#include "efl_canvas_textblock_internal.h"
 
 #define MY_CLASS EFL_TEXT_CURSOR_CLASS
 #define MY_CLASS_NAME "Efl.Text.Cursor"
@@ -434,7 +434,7 @@ void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_o
 {
    Efl_Text_Cursor_Data *pd = efl_data_scope_get(cursor, MY_CLASS);
    Efl_Text_Cursor_Handle *handle = NULL;
-   if (efl_isa(canvas_text_obj, EFL_CANVAS_TEXT_CLASS))
+   if (efl_isa(canvas_text_obj, EFL_CANVAS_TEXTBLOCK_CLASS))
      {
         pd->text_obj = text_obj;
         handle = evas_object_textblock_cursor_new(canvas_text_obj);
