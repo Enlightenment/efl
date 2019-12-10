@@ -98,13 +98,17 @@ struct marshall_annotation_visitor_generate
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutPassOwnershipMarshaler))";
           }},
           {"string", false, [] {
-                return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutKeepOwnershipMarshaler))";
+                // Non-owned returned strings are marshalled manually due to lifetime issues
+                return "";
+            //     return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutKeepOwnershipMarshaler))";
           }},
           {"mstring", true, [] {
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutPassOwnershipMarshaler))";
           }},
           {"mstring", false, [] {
-                return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutKeepOwnershipMarshaler))";
+                // Non-owned returned strings are marshalled manually due to lifetime issues
+                return "";
+            //     return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutKeepOwnershipMarshaler))";
           }},
           {"stringshare", true, [] {
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringsharePassOwnershipMarshaler))";
@@ -138,6 +142,9 @@ struct marshall_annotation_visitor_generate
 
         auto acceptCb = [this] (std::string const& marshalTag)
           {
+            if (marshalTag.empty())
+              return true;
+
             std::string prefix = is_return ? "return: " : "";
             return as_generator("[" << prefix << marshalTag << "]").generate(sink, nullptr, *context);
           };
