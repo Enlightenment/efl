@@ -18,13 +18,17 @@
 
 #include <iterator>
 
+#include <Eina.hh>
+
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
-#include "type_impl.hh" // For call_match
+#include "type_match.hh"
 #include "name_helpers.hh"
 #include "using_decl.hh"
 
 namespace eolian_mono {
+
+namespace eina = efl::eina;
 
 template<typename OutputIterator, typename Context>
 struct unpack_event_args_visitor
@@ -114,7 +118,7 @@ struct unpack_event_args_visitor
            return as_generator(conversion).generate(sink, attributes::unused, *context);
         };
 
-      if (eina::optional<bool> b = call_match(match_table, filter_func, accept_func))
+      if (eina::optional<bool> b = type_match::get_match(match_table, filter_func, accept_func))
         return *b;
       else
         {
@@ -188,7 +192,7 @@ struct pack_event_info_and_call_visitor
              ).generate(sink, attributes::unused, *context);
         };
 
-      if (eina::optional<bool> b = call_match(str_table, filter_func, str_accept_func))
+      if (eina::optional<bool> b = type_match::get_match(str_table, filter_func, str_accept_func))
         return *b;
 
       match const value_table [] =
@@ -206,7 +210,7 @@ struct pack_event_info_and_call_visitor
              ).generate(sink, attributes::unused, *context);
         };
 
-      if (eina::optional<bool> b = call_match(value_table, filter_func, value_accept_func))
+      if (eina::optional<bool> b = type_match::get_match(value_table, filter_func, value_accept_func))
         return *b;
 
       return value_accept_func("e.args");

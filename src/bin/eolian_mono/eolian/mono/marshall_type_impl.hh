@@ -21,6 +21,7 @@
 #include "grammar/case.hpp"
 #include "helpers.hh"
 #include "name_helpers.hh"
+#include "type_match.hh"
 #include "type_impl.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
@@ -192,7 +193,7 @@ struct marshall_type_visitor_generate
              return as_generator(string << ".NativeStruct")
                     .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
-        else if (eina::optional<bool> b = call_match
+        else if (eina::optional<bool> b = type_match::get_match
          (match_table
           , [&] (match const& m)
           {
@@ -296,7 +297,7 @@ struct marshall_type_visitor_generate
             && as_generator("<" << (type(false, false, true) % ", ") << ">").generate(sink, complex.subtypes, *context);
         };
 
-      if(eina::optional<bool> b = call_match
+      if(eina::optional<bool> b = type_match::get_match
          (matches
           , [&] (match const& m)
           {

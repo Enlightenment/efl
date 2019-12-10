@@ -21,25 +21,13 @@
 #include "grammar/case.hpp"
 #include "name_helpers.hh"
 #include "type_impl.hh"
+#include "type_match.hh"
 
 namespace eolian_mono {
 
 namespace eina = efl::eina;
 
 namespace detail {
-
-template <typename Array, typename SelectionPredicate, int N, typename AcceptFunc>
-eina::optional<bool> call_annotation_match(Array const (&array)[N], SelectionPredicate predicate, AcceptFunc acceptFunc)
-{
-   typedef Array const* iterator_type;
-   iterator_type match_iterator = &array[0], match_last = match_iterator + N;
-   match_iterator = std::find_if(match_iterator, match_last, predicate);
-   if(match_iterator != match_last)
-     {
-        return acceptFunc(match_iterator->function());
-     }
-   return {nullptr};
-}
   
 template <typename OutputIterator, typename Context>
 struct marshall_annotation_visitor_generate
@@ -157,7 +145,7 @@ struct marshall_annotation_visitor_generate
 
         const auto& match_table = is_return ? return_match_table : parameter_match_table;
 
-        if(eina::optional<bool> b = call_annotation_match(match_table, predicate, acceptCb))
+        if(eina::optional<bool> b = type_match::get_match(match_table, predicate, acceptCb))
           {
              return *b;
           }
