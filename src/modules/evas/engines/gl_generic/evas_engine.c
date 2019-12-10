@@ -3340,17 +3340,12 @@ module_open(Evas_Module *em)
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
-
-   tizen_vd_ecache_init();
-
    return 1;
 }
 
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-   tizen_vd_ecache_term();
-
    ector_shutdown();
    if (_evas_engine_GL_log_dom >= 0)
      {
