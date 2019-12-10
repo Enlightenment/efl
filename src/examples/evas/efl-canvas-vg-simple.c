@@ -43,6 +43,8 @@ Ecore_Animator *animator;
  * the end of the path.
  */
 static const char *batman = "M 256,213 C 245,181 206,187 234,262 147,181 169,71.2 233,18 220,56 235,81 283,88 285,78.7 286,69.3 288,60 289,61.3 290,62.7 291,64 291,64 297,63 300,63 303,63 309,64 309,64 310,62.7 311,61.3 312,60 314,69.3 315,78.7 317,88 365,82 380,56 367,18 431,71 453,181 366,262 394,187 356,181 344,213 328,185 309,184 300,284 291,184 272,185 256,213 Z";
+static const unsigned int batman_commandCnt = 17;
+static const unsigned int batman_pointCnt = 86;
 static const char *morph1[2] = {"M 0,0 L 0,0 L 100,0 L 100,0 L 100,100 L 100,100 L 0,100 L 0,100 L 0,0",
                                 "M 0,0 L 50,-80 L 100,0 L 180,50 L 100,100 L 50,180 L 0,100 L -80,50 L 0,0"};
 
@@ -422,7 +424,7 @@ _2_interpolation_test()
 {
   anim_index = 0;
 
-  Efl_VG *shape;
+  Efl_VG *shape, *container;
 
   reset_test();
 
@@ -430,13 +432,19 @@ _2_interpolation_test()
   animator = ecore_animator_timeline_add(1, _interpolation_keyframe, NULL);
   puts(interpolation_menu);
 
+  // Make Efl.Canvas.Vg.Container Object
+  container = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, d.vg);
+  // Set the root node of Efl.Canvas.Vg.Object
+  // The Efl.Canvas.Vg.Object searches and renders
+  // Efl.Canvas.Vg.Node(Shape, Container, etc...) from set root node.
+  efl_canvas_vg_object_root_node_set(d.vg, container);
+
   //Interpolation 'from' and 'to' Object
   shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, d.vg,
     efl_gfx_path_append_svg_path(efl_added, morph1[0]),           // Set SVG path
     efl_gfx_shape_stroke_color_set(efl_added, 255, 0, 0, 255),
     efl_gfx_shape_stroke_width_set(efl_added, 5),
-    efl_canvas_vg_node_origin_set(efl_added, 100, 100)
-);
+    efl_canvas_vg_node_origin_set(efl_added, 100, 100));
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, d.vg,
@@ -447,17 +455,15 @@ _2_interpolation_test()
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   // Base Object
-  shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, d.vg);
+  shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, container);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
-  efl_canvas_vg_object_root_node_set(d.vg, shape);
 }
 
 // 2. Interpolation Test Case END
 
 
 // 3. Gradient Test Case START
-
 static void
 _gradient_key_handle(void *data EINA_UNUSED, const Efl_Event *ev)
 {
@@ -559,7 +565,7 @@ _3_gradient_test()
 static void
 _main_menu()
 {
-  Efl_VG *shape;
+  Efl_VG *shape, *container;
   if (animator) ecore_animator_del(animator);
   animator = NULL;
   if(d.vg) efl_del(d.vg);
@@ -575,18 +581,23 @@ _main_menu()
   d.vg = efl_add(EFL_CANVAS_VG_OBJECT_CLASS, d.evas,
     efl_gfx_entity_visible_set(efl_added, EINA_TRUE));
 
+  // Make Efl.Canvas.Vg.Container Object
+  container = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, d.vg);
+  // Set the root node of Efl.Canvas.Vg.Object
+  // The Efl.Canvas.Vg.Object searches and renders
+  // Efl.Canvas.Vg.Node(Shape, Container, etc...) from set root node.
+  efl_canvas_vg_object_root_node_set(d.vg, container);
+
   // Make Efl.Canvas.Vg.Shape
-  shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, d.vg,
-    efl_gfx_path_append_svg_path(efl_added, batman),           // Set SVG path
+  shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, container,
     efl_gfx_shape_stroke_color_set(efl_added, 255, 0, 0, 255), // Set Stroke color
     efl_gfx_shape_stroke_width_set(efl_added, 5),              // Set Stroke width
     efl_gfx_color_set(efl_added, 255, 255, 0, 255),            // Set Fill color
     efl_canvas_vg_node_origin_set(efl_added, 25, 100));         // Set Position
 
-  // Set the root node of Efl.Canvas.Vg.Object
-  // The Efl.Canvas.Vg.Object searches and renders
-  // Efl.Canvas.Vg.Node(Shape, Container, etc...) from set root node.
-  efl_canvas_vg_object_root_node_set(d.vg, shape);
+  // Reserve memory for the number of commands and pointers
+  efl_gfx_path_reserve(shape, batman_commandCnt, batman_pointCnt);
+  efl_gfx_path_append_svg_path(shape, batman);           // Set SVG path
 
   _canvas_resize_cb(d.ee);
   puts(main_menu);
