@@ -54,6 +54,8 @@ struct native_function_definition_generator
 
     auto const& indent = current_indentation(context);
 
+    auto native_to_managed_context = marshall_direction::from_native_to_managed(context);
+
     // Delegate for the C# method we will export to EO as a method implementation.
     if(!as_generator
        (
@@ -69,7 +71,7 @@ struct native_function_definition_generator
          (marshall_annotation << " " << marshall_parameter)
         ) % ", ")
         << ");\n\n")
-       .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), context))
+       .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), native_to_managed_context))
       return false;
 
     // API delegate is the wrapper for the Eo methods exported from C that we will use from C#.

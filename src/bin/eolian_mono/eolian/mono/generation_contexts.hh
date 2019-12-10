@@ -50,6 +50,38 @@ struct class_context
     {}
 };
 
+struct marshall_direction
+{
+    enum direction {
+      managed_to_native, // Used for DllImport'd methods
+      native_to_managed, // Used for delegates of functions passed to C to be called back
+    };
+
+    direction current_dir;
+
+    constexpr marshall_direction(direction direction)
+      : current_dir(direction)
+    {}
+
+    template<typename Context>
+    static inline constexpr Context from_native_to_managed(Context const& context)
+    {
+      return efl::eolian::grammar::context_replace_tag(marshall_direction(marshall_direction::native_to_managed), context);
+    }
+
+    template<typename Context>
+    static inline constexpr Context from_managed_to_native(Context const& context)
+    {
+      return efl::eolian::grammar::context_replace_tag(marshall_direction(marshall_direction::managed_to_native), context);
+    }
+
+    template<typename Context>
+    static inline constexpr marshall_direction::direction current_direction(Context const& context)
+    {
+      return efl::eolian::grammar::context_find_tag<marshall_direction>(context).current_dir;
+    }
+};
+
 struct indentation_context
 {
   constexpr indentation_context(indentation_context const& other) = default;

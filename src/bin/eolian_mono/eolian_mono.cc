@@ -181,6 +181,7 @@ run(options_type const& opts)
    using efl::eolian::grammar::context_add_tag;
 
    auto context = context_add_tag(eolian_mono::indentation_context{0},
+                  context_add_tag(eolian_mono::marshall_direction{eolian_mono::marshall_direction::managed_to_native},
                   context_add_tag(eolian_mono::eolian_state_context{opts.state},
                   context_add_tag(eolian_mono::options_context{opts.want_beta,
                                                                opts.examples_dir},
@@ -188,7 +189,7 @@ run(options_type const& opts)
                                                                opts.v_major,
                                                                opts.v_minor,
                                                                opts.references_map},
-                                  efl::eolian::grammar::context_null()))));
+                                  efl::eolian::grammar::context_null())))));
 
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
