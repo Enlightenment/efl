@@ -50,6 +50,8 @@ struct marshall_type_visitor_generate
    {
       using attributes::regular_type_def;
 
+      auto is_native_dir = marshall_direction::current_direction(*context) == marshall_direction::native_to_managed;
+
       struct match
       {
         eina::optional<std::string> name;
@@ -69,6 +71,12 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+
+                // Non-owned strings returned will be manually handled
+                // due to lifetime issues.
+                if (is_native_dir && (is_out || is_return))
+                  return replace_base_type(r, "System.IntPtr");
+
                 return replace_base_type(r, "System.String");
               }}
            , {"mstring", true, [&]
@@ -81,6 +89,12 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+
+                // Non-owned strings returned will be manually handled
+                // due to lifetime issues.
+                if (is_native_dir && (is_out || is_return))
+                  return replace_base_type(r, "System.IntPtr");
+
                 return replace_base_type(r, "System.String");
               }}
            , {"stringshare", true, [&]

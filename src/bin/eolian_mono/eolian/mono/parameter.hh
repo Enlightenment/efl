@@ -834,6 +834,7 @@ struct convert_out_variable_generator
 
 } const convert_out_variable {};
 
+// Generates intermediate @out variables for native method wrappers (wrappers that are called from C)
 struct native_convert_out_variable_generator
 {
    template <typename OutputIterator, typename Context>
@@ -850,9 +851,15 @@ struct native_convert_out_variable_generator
              ).generate(sink, std::make_tuple(param, out_variable_name(param.param_name), param), context);
         }
       else if (helpers::need_struct_conversion(regular)
-          || param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT)
           || param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
+           return as_generator(
+                  type << " " << string << " = default(" << type << ");\n"
+             ).generate(sink, std::make_tuple(param, out_variable_name(param.param_name), param), context);
+        }
+      else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
+        {
+           // FIXME Replace with IntPtr interemediate variable
            return as_generator(
                   type << " " << string << " = default(" << type << ");\n"
              ).generate(sink, std::make_tuple(param, out_variable_name(param.param_name), param), context);
