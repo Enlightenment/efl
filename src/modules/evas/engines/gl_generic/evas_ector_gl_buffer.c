@@ -20,82 +20,110 @@ typedef struct _Evas_Ector_GL_Buffer_Data Evas_Ector_GL_Buffer_Data;
 
 static int _map_id = 0;
 
-typedef struct _Buffer_Cache
+////////////////////////////////////////////////////////////////////////
+/* OPTIMIZATION: A Basic Cache Buffer to save memory allocations.     */
+/* This first-aid method is applied for VD caption text filter effect */
+////////////////////////////////////////////////////////////////////////
+typedef struct _Ector_Cache_Buffer
 {
-   char *buffer;
+   void *buffer;
    int len;
-   Eina_Bool use;
-} Buffer_Cache;
+   Eina_Bool use : 1;
+} Ector_Cache_Buffer;
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-Buffer_Cache _buffer_cache[20];
-static int _ector_cnt = 0;
+#define BUFFER_CNT 40
+static Eina_Inarray *_ecache_list;
 
-char * _ector_buffer_get(int len)
+void
+tizen_vd_ecache_init()
 {
-   for (int i = 0; i < 10; i++)
+   _ecache_list = eina_inarray_new(sizeof(Ector_Cache_Buffer), 10);
+
+   //Why 40? a experimental number of text filters.
+   eina_inarray_resize(_ecache_list, 40);
+}
+
+void
+tizen_vd_ecache_term()
+{
+   Ector_Cache_Buffer *ecb;
+   EINA_INARRAY_FOREACH(_ecache_list, ecb)
+     free(ecb->buffer);
+
+   eina_inarray_free(_ecache_list);
+   _ecache_list = NULL;
+}
+
+static void *
+_ecache_buffer_request(int len, Eina_Bool clear)
+{
+   //Get Requested size
+   Ector_Cache_Buffer *ecb;
+   EINA_INARRAY_FOREACH(_ecache_list, ecb)
      {
-        if (_buffer_cache[i].use) continue;
-        if (_buffer_cache[i].len == 0)
+        if (ecb->use) continue;
+
+        //Get a new buffer
+        if (ecb->len == 0)
           {
-             _buffer_cache[i].use = 1;
-             _buffer_cache[i].buffer = malloc(len);
-             _buffer_cache[i].len = len;
-             printf("malloc = %d\n", len);
-             return _buffer_cache[i].buffer;
+             len = (int)(((float) len) * 1.25f);
+             ecb->use = EINA_TRUE;
+             ecb->buffer = malloc(len);
+             ecb->len = len;
+             if (clear) memset(ecb->buffer, 0x0, len);
+             return ecb->buffer;
           }
 
-        if (_buffer_cache[i].len >= len)
+        //Get an idle buffer
+        if (ecb->len >= len)
           {
-             _buffer_cache[i].use = 1;
-             return _buffer_cache[i].buffer;
+             ecb->use = EINA_TRUE;
+             if (clear) memset(ecb->buffer, 0x0, ecb->len);
+             return ecb->buffer;
           }
-        else
-          {
-             free(_buffer_cache[i].buffer);
-             _buffer_cache[i].use = 1;
-             _buffer_cache[i].buffer = malloc(len);
-             _buffer_cache[i].len = len;
-             printf("malloc = %d\n", len);
 
-             return _buffer_cache[i].buffer;
-          }
-        printf("What?!\n");
+        //Get an idle buffer after resizing
+        len = (int)(((float) len) * 1.25f);
+        ecb->buffer = realloc(ecb->buffer, len);
+        ecb->use = EINA_TRUE;
+        ecb->len = len;
+        if (clear) memset(ecb->buffer, 0x0, len);
+        return ecb->buffer;
      }
 
-   return NULL;
+   //Need to push a new item
+   Ector_Cache_Buffer necb;
+   len = (int)(((float) len) * 1.25f);
+   necb.use = EINA_TRUE;
+   necb.buffer = malloc(len);
+   if (clear) memset(necb.buffer, 0x0, len);
+   necb.len = len;
+   eina_inarray_push(_ecache_list, &necb);
+
+   return necb.buffer;
 }
 
-void _ector_buffer_return(char *buffer)
+static Eina_Bool
+_ecache_buffer_return(void *buffer)
 {
-   for (int i = 0; i < 10; i++)
+   //Get Requested size 
+   Ector_Cache_Buffer *ecb;
+
+   EINA_INARRAY_FOREACH(_ecache_list, ecb)
      {
-        if (_buffer_cache[i].buffer == buffer)
+        if (ecb->buffer == buffer)
           {
-             _buffer_cache[i].use = 0;
-             return;
+             ecb->use = EINA_FALSE;
+             return EINA_TRUE;
           }
      }
-   printf("What?!\n");
+
+   printf("what?!\n");
+   return EINA_FALSE;
 }
-
-static void _ector_buffer_term()
-{
-   for (int i = 0; i < 10; i++)
-     {
-        free(_buffer_cache[i].buffer);
-        _buffer_cache[i].buffer = NULL;
-        _buffer_cache[i].use = 0;
-        _buffer_cache[i].len = 0;
-     }
-}
-
-static void _ector_buffer_init()
-{
-}
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-
+////////////////////////////////////////////////////////////////////////
+/* End of OPTIMIZATION                                                */
+////////////////////////////////////////////////////////////////////////
 
 
 struct _Ector_GL_Buffer_Map
@@ -231,7 +259,7 @@ on_fail:
    evas_gl_common_image_free(pd->glim);
    pd->glim = NULL;
     */
-   pd->image_data = calloc(1, w * h * 4);
+   pd->image_data = _ecache_buffer_request((w * h * 4), EINA_TRUE);
    pd->w = w;
    pd->h = h;
    pd->re = re;
@@ -271,7 +299,7 @@ _image_get(Evas_Ector_GL_Buffer_Data *pd, Eina_Bool render)
              if (tofree)
                evas_gl_common_image_free(old_glim);
 
-             free(pd->image_data);
+             _ecache_buffer_return(pd->image_data);
              pd->image_data = NULL;
           }
         else
@@ -433,8 +461,7 @@ _evas_ector_gl_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buffer
    len = W * H;
    if (cspace == EFL_GFX_COLORSPACE_GRY8)
      {
-//        uint8_t *data8 = _ector_buffer_get(len);
-        uint8_t *data8 = malloc(len);
+        uint8_t *data8 = _ecache_buffer_request(len, EINA_FALSE);
         if (!data8) goto on_fail;
         _pixels_argb_to_gry8_convert(data8, data, len);
         map->allocated = EINA_TRUE;
@@ -532,7 +559,7 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
 
                                  if (pd->image_data != map->image_data)
                                    {
-                                      free(pd->image_data);
+                                      _ecache_buffer_return(pd->image_data);
                                       pd->image_data = map->image_data;
                                    }
 
@@ -547,7 +574,7 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
 
                                  if (pd->image_data != map->image_data)
                                    {
-                                      free(pd->image_data);
+                                      _ecache_buffer_return(pd->image_data);
                                       pd->image_data = map->image_data;
                                    }
 
@@ -601,7 +628,7 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
 
                                  if (pd->image_data != map->image_data)
                                    {
-                                      free(pd->image_data);
+                                      _ecache_buffer_return(pd->image_data);
                                       pd->image_data = map->image_data;
                                    }
 
@@ -614,7 +641,7 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
                }
              if (map->allocated)
                {
-                  free(map->base_data);
+                  _ecache_buffer_return(map->base_data);
                }
              free(map);
              return;
@@ -625,13 +652,8 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
 }
 
 EOLIAN static Efl_Object *
-_evas_ector_gl_buffer_efl_object_finalize(Eo *obj, Evas_Ector_GL_Buffer_Data *pd)
+_evas_ector_gl_buffer_efl_object_finalize(Eo *obj, Evas_Ector_GL_Buffer_Data *pd EINA_UNUSED)
 {
-   if (_ector_cnt == 0)
-     _ector_buffer_init();
-
-   ++_ector_cnt;
-//   printf("ector_cnt = %d", _ector_cnt);
    /* TIZEN_ONLY(20181130): evas ector - create a gl image when only it is going to be used
    if (!pd->glim)
      {
@@ -646,10 +668,9 @@ _evas_ector_gl_buffer_efl_object_finalize(Eo *obj, Evas_Ector_GL_Buffer_Data *pd
 EOLIAN static void
 _evas_ector_gl_buffer_efl_object_destructor(Eo *obj, Evas_Ector_GL_Buffer_Data *pd)
 {
-   --_ector_cnt;
    evas_gl_common_image_free(pd->glim);
    /* TIZEN_ONLY(20181130): evas ector - create a gl image when only it is going to be used */
-   free(pd->image_data);
+   _ecache_buffer_return(pd->image_data);
    pd->image_data = NULL;
    /* END */
    efl_destructor(efl_super(obj, MY_CLASS));

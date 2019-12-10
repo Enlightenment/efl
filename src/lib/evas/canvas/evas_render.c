@@ -3289,7 +3289,6 @@ evas_render_updates_internal(Evas *eo_e,
 #ifdef EVAS_RENDER_DEBUG_TIMING
    double start_time = _time_get();
 #endif
-
    double time1, time2;
    double taccum = 0.06;
    time1 = _ttime_get();
@@ -3806,8 +3805,7 @@ evas_render_updates_internal(Evas *eo_e,
 #endif
 
    time2 = _ttime_get();
-   taccum = (taccum + (time2 - time1)) * 0.5;
-   ERR("elapsed = %f", taccum);
+   ERR("elapsed = %f", time2 - time1);
 
    if (!do_async) _evas_render_cleanup();
    eina_evlog("-render_end", eo_e, 0.0, NULL);

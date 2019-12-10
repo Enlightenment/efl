@@ -29,6 +29,9 @@
 #include "evas_ector_gl_buffer.eo.h"
 #include "evas_ector_gl_image_buffer.eo.h"
 
+void tizen_vd_ecache_init();
+void tizen_vd_ecache_term();
+
 #undef EAPI
 #define EAPI
 
