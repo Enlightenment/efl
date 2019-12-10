@@ -184,10 +184,8 @@
  * (argument of @ref eina_hash_new too). The following picture illustrates the
  * basic idea:
  *
- * @htmlonly
- * <img src="01_hash-table.png" width="500" />
- * @endhtmlonly
  * @image latex 01_hash-table.eps
+ * @image html 01_hash-table.png
  *
  * Adding an element to the hash table involves the following steps:
  * @li calculate the hash for that key (using the specified hash function);

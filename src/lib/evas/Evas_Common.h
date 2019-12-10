@@ -1629,17 +1629,11 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * treated specially on resizing scales, by keeping their aspect. This
  * makes setting frames around other objects on UIs easy.
  * See the following figures for a visual explanation:\n
- * @htmlonly
- * <img src="image-borders.png" style="max-width: 100%;" />
- * <a href="image-borders.png">Full-size</a>
- * @endhtmlonly
  * @image rtf image-borders.png
+ * @image html image-borders.png
  * @image latex image-borders.eps width=\textwidth
- * @htmlonly
- * <img src="border-effect.png" style="max-width: 100%;" />
- * <a href="border-effect.png">Full-size</a>
- * @endhtmlonly
  * @image rtf border-effect.png
+ * @image html border-effect.png
  * @image latex border-effect.eps width=\textwidth
  *
  * @section Evas_Object_Image_Manipulation Manipulating pixels
