@@ -84,7 +84,6 @@ pub_eo_files = [
   'efl_ui_popup_part_backwall.eo',
   'efl_ui_alert_popup.eo',
   'efl_ui_alert_popup_part_title.eo',
-  'efl_ui_text_editable.eo',
   'efl_ui_text_async.eo',
   'efl_ui_text_factory_images.eo',
   'efl_ui_text_factory_emoticons.eo',
