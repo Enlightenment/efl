@@ -23,6 +23,7 @@
 #include "name_helpers.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
+#include <regex>
 
 #include <Eina.h>
 
@@ -250,6 +251,7 @@ struct documentation_generator
                   name_tail = token_text.substr(token_text.length() - 4, 4);
              }
            ::Eolian_Doc_Token_Type token_type = ::eolian_doc_token_type_get(&token);
+           std::regex rgx("(^|\n)( *)- ([a-zA-Z_]*):");
            switch(token_type)
            {
               case ::EOLIAN_DOC_TOKEN_TEXT:
@@ -259,6 +261,8 @@ struct documentation_generator
                 if ((previous_token_type == ::EOLIAN_DOC_TOKEN_REF) &&
                     (token_text.substr(0, 2)  == "()"))
                   token_text = token_text.substr(2, token_text.length() - 2);
+                // Special formatting for lists starting with a monospaced word: Replace by Bold.
+                token_text = std::regex_replace(token_text, rgx, "$2- <b>$3</b>:");
                 new_text += token_text;
                 break;
               case ::EOLIAN_DOC_TOKEN_REF:
