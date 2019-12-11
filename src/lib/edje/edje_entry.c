@@ -4750,6 +4750,7 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
                          }
                        *itr = 0;
 
+                       free(plain_text);
                        plain_text = strdup(u_text);
                        free(u_text);
                        u_text = NULL;
