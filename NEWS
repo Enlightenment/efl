@@ -8,7 +8,7 @@ Changes since 1.23.0:
 Removals:
 
    * emotion & evas: remove gstreamer 0.10 support
-   * esacpe: remove library from tree
+   * escape: remove library from tree
    * ecore_x: remove support XGesture extension
    * elocation: remove beta library
    * eeze: remove tizen module support from eeze sensor
