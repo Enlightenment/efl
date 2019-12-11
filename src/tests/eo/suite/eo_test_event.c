@@ -185,12 +185,47 @@ EFL_START_TEST(eo_event_generation_bug)
 }
 EFL_END_TEST
 
+static void
+_inc_when_called(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   int *called = (int*)data;
+   *called += 1;
+}
+
+EFL_START_TEST(eo_event_fowarder_test)
+{
+   Eo *obj1, *obj2;
+   int called = 0;
+
+   obj1 = efl_add_ref(efl_test_event_class_get(), NULL);
+   obj2 = efl_add_ref(efl_test_event_class_get(), NULL);
+   efl_event_callback_add(obj2, EFL_TEST_EVENT_EVENT_TESTER, _inc_when_called, &called);
+
+   efl_event_callback_forwarder_priority_add(obj1, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, obj2);
+   efl_event_callback_call(obj1, EFL_TEST_EVENT_EVENT_TESTER, NULL);
+   ck_assert_int_eq(called, 1);
+   called = 0;
+
+   //call it a second time with another forwarder
+   efl_event_callback_forwarder_priority_add(obj1, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, obj2);
+   efl_event_callback_call(obj1, EFL_TEST_EVENT_EVENT_TESTER, NULL);
+   ck_assert_int_eq(called, 1); //we still should only emit it once
+   called = 0;
+
+   //delete it, nothing should happen now
+   efl_event_callback_forwarder_del(obj1, EFL_TEST_EVENT_EVENT_TESTER, obj2);
+   efl_event_callback_call(obj1, EFL_TEST_EVENT_EVENT_TESTER, NULL);
+   ck_assert_int_eq(called, 0);
+
+}
+EFL_END_TEST
 
 void eo_test_event(TCase *tc)
 {
    tcase_add_test(tc, eo_event);
    tcase_add_test(tc, eo_event_call_in_call);
    tcase_add_test(tc, eo_event_generation_bug);
+   tcase_add_test(tc, eo_event_fowarder_test);
 }
 
 
