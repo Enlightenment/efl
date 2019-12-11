@@ -7,7 +7,7 @@ struct Efl.Model_Property_Event {
      invalidated_properties: array<stringshare>; [[Removed properties identified by name]]
 }
 
-struct @beta Efl.Model_Children_Event {
+struct Efl.Model_Children_Event {
      [[Every time a child is added the event @[Efl.Model.child,added] is dispatched
      passing along this structure.]]
      index: uint; [[index is a hint and is intended to provide a way for applications
