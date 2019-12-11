@@ -139,6 +139,7 @@ elementary_test_src = [
   'test_ui_table.c',
   'test_ui_popup.c',
   'test_ui_textpath.c',
+  'test_canvas_textblock.c',
   'test_video.c',
   'test_weather.c',
   'test_web.c',

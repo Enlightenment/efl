@@ -372,6 +372,7 @@ void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
 void test_efl_gfx_mapping(void *data, Edje_Object *obj, void *event_info);
 void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
+void test_canvas_textblock(void *data, Edje_Object *obj, void *event_info);
 
 void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_rotate(void *data, Evas_Object *obj, void *event_info);
@@ -1209,6 +1210,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label Colors", test_label_colors);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
    ADD_TEST_EO(NULL, "Text", "Efl.Ui.Textpath", test_ui_textpath);
+   ADD_TEST_EO(NULL, "Text", "Efl.Canvas.Textblock style", test_canvas_textblock);
 
    //------------------------------//
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);
