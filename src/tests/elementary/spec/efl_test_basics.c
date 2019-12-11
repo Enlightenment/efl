@@ -17,6 +17,7 @@
              "Efl.Ui.List_View",
              "Efl.Ui.Tab_Bar",
              "Efl.Ui.Tags",
+             "Efl.Ui.Textbox",
              "Efl.Ui.Panel",
              "Efl.Ui.Scroller",
              "Efl.Ui.Slider",
