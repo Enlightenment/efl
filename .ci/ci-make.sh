@@ -1,13 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
-. .ci/travis.sh
 
 if [ "$1" = "release-ready" ] ; then
   exit 0
 fi
 
-travis_fold ninja ninja
+travis_fold start "ninja"
+travis_time_start "ninja"
 if [ "$DISTRO" != "" ] ; then
   if [ "$1" = "coverity" ] ; then
     docker exec --env EIO_MONITOR_POLL=1 --env PATH="/src/cov-analysis-linux64-2019.03/bin:$PATH" $(cat $HOME/cid) sh -c "cov-build --dir cov-int ninja -C build"
@@ -27,4 +27,5 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
 else
   ninja -C build
 fi
-travis_endfold ninja
+travis_time_finish "ninja"
+travis_fold end "ninja"
