@@ -32,7 +32,7 @@ public class Example
     private static void ShowErrorPopup(Efl.Ui.Win win, string message)
     {
         Efl.Ui.AlertPopup popup = new Efl.Ui.AlertPopup(win);
-        Efl.Ui.Text popup_text = new Efl.Ui.Text(popup);
+        Efl.Ui.Textbox popup_text = new Efl.Ui.Textbox(popup);
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
         popup.SetVisible(true);
@@ -68,12 +68,12 @@ public class Example
 
         box.DoPack(miles_box);
 
-        Efl.Ui.Text miles_label = new Efl.Ui.Text(miles_box);
+        Efl.Ui.Textbox miles_label = new Efl.Ui.Textbox(miles_box);
         miles_label.SetText("Miles:");
         miles_label.SetSize(size);
         miles_label.SetVisible(true);
 
-        Efl.Ui.Text miles_input = new Efl.Ui.Text(miles_box);
+        Efl.Ui.Textbox miles_input = new Efl.Ui.Textbox(miles_box);
         miles_input.SetText("");
         miles_input.SetScrollable(true);
         miles_input.SetEditable(true);
@@ -95,12 +95,12 @@ public class Example
 
         box.DoPack(kms_box);
 
-        Efl.Ui.Text kms_label = new Efl.Ui.Text(kms_box);
+        Efl.Ui.Textbox kms_label = new Efl.Ui.Textbox(kms_box);
         kms_label.SetText("Kilometers:");
         kms_label.SetSize(size);
         kms_label.SetVisible(true);
 
-        Efl.Ui.TextEditable kms_input = new Efl.Ui.TextEditable(kms_box);
+        Efl.Ui.TextboxEditable kms_input = new Efl.Ui.TextboxEditable(kms_box);
         kms_input.SetText("");
         kms_input.SetScrollable(true);
         kms_input.SetSize(size);

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include <Efl_Ui.h>
 #include "elm_spinner_eo.h"
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 static const int default_font_size = 48;
 
 typedef struct _Filter_Image
@@ -349,8 +349,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE));
       efl_pack(box, box2);
 
-      /* FIXME: Efl.Ui.Text doesn't work as expected. */
-      o = efl_add(EFL_UI_TEXT_CLASS, win,
+      /* FIXME: Efl.Ui.Textbox doesn't work as expected. */
+      o = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                   efl_gfx_hint_weight_set(efl_added, 0.0, 1.0),
                   efl_gfx_hint_align_set(efl_added, 1.0, 0.5));
       efl_text_set(o, "Filter:");
@@ -514,8 +514,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
             "blur { 3, ox = 1, oy = 1, color = 'black' }"
             "blend { color = 'lime' }";
 
-      o = code = efl_add(EFL_UI_TEXT_CLASS, win,
-                         efl_ui_text_scrollable_set(efl_added, EINA_TRUE),
+      o = code = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                         efl_ui_textbox_scrollable_set(efl_added, EINA_TRUE),
                          efl_text_interactive_editable_set(efl_added, EINA_TRUE),
                          efl_text_multiline_set(efl_added, EINA_TRUE));
       efl_event_callback_add(o, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, _code_changed_hack, win);

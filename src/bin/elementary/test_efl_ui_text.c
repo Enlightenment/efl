@@ -11,8 +11,8 @@ _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {
    Efl_Text_Cursor *start, *end;
 
-   start = efl_ui_text_cursor_create(obj);
-   end = efl_ui_text_cursor_create(obj);
+   start = efl_ui_textbox_cursor_create(obj);
+   end = efl_ui_textbox_cursor_create(obj);
 
    efl_text_cursor_position_set(start, start_pos);
    efl_text_cursor_position_set(end, end_pos);
@@ -27,8 +27,8 @@ static Eo *
 _create_label(Eo *win, Eo *bx)
 {
    Eo *en;
-   en = efl_add(EFL_UI_TEXT_CLASS, win);
-   printf("Added Efl.Ui.Text object\n");
+   en = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   printf("Added Efl.Ui.Textbox object\n");
    efl_text_interactive_editable_set(en, EINA_FALSE);
    efl_pack(bx, en);
    return en;
@@ -156,13 +156,13 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_hint_weight_set(bx, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_content_set(win, bx);
 
-   en = efl_add(EFL_UI_TEXT_CLASS, bx,
+   en = efl_add(EFL_UI_TEXTBOX_CLASS, bx,
          efl_text_multiline_set(efl_added, EINA_TRUE));
 
-   printf("Added Efl.Ui.Text object\n");
+   printf("Added Efl.Ui.Textbox object\n");
 
    efl_text_interactive_editable_set(en, EINA_TRUE);
-   efl_ui_text_scrollable_set(en, EINA_TRUE);
+   efl_ui_textbox_scrollable_set(en, EINA_TRUE);
 
    efl_text_font_family_set(en, "Sans");
    efl_text_font_size_set(en, 12);
@@ -215,13 +215,13 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    efl_gfx_hint_weight_set(bx, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_content_set(win, bx);
 
-   en = efl_add(EFL_UI_TEXT_CLASS, bx,
+   en = efl_add(EFL_UI_TEXTBOX_CLASS, bx,
          efl_text_multiline_set(efl_added, EINA_FALSE));
 
    efl_text_interactive_editable_set(en, EINA_TRUE);
-   efl_ui_text_scrollable_set(en, EINA_TRUE);
+   efl_ui_textbox_scrollable_set(en, EINA_TRUE);
 
-   printf("Added Efl.Ui.Text object\n");
+   printf("Added Efl.Ui.Textbox object\n");
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
    efl_text_set(efl_part(en, "efl.text_guide"), "Enter you name here");
 
@@ -233,7 +233,7 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_text_multiline_set(en, EINA_TRUE);
-   efl_ui_text_scrollable_set(en, EINA_TRUE);
+   efl_ui_textbox_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
    efl_pack(bx, en);
 

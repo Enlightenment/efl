@@ -16,8 +16,8 @@
 //FIXME this can go away when efl_ui_text doesn't need elm_general
 # include <elm_general.h>
 # include <efl_text_interactive.eo.h>
-# include <efl_ui_text.eo.h>
-# include <efl_ui_text_async.eo.h>
+# include <efl_ui_textbox.eo.h>
+# include <efl_ui_textbox_async.eo.h>
 
 #define NUM_ITEMS 400
 
@@ -151,7 +151,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
              ibox = efl_add(EFL_UI_BOX_CLASS, item);
              efl_ui_layout_orientation_set(ibox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-             txt = efl_add(EFL_UI_TEXT_CLASS, ibox);
+             txt = efl_add(EFL_UI_TEXTBOX_CLASS, ibox);
              efl_gfx_hint_weight_set(txt, 0.95, EFL_GFX_HINT_EXPAND);
              efl_text_horizontal_align_set(txt, 0.2);
              efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
@@ -229,7 +229,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_pack_end(wbox, list);
 
    /*select mode */
-   txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, wbox);
    efl_gfx_hint_weight_set(txt, EFL_GFX_HINT_EXPAND, 0.01);
    efl_text_horizontal_align_set(txt, 0.02);
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
@@ -256,7 +256,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_event_callback_add(bbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _select_radio_changed, list);
 
   /* scroll mode */
-   txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, wbox);
    efl_gfx_hint_weight_set(txt, EFL_GFX_HINT_EXPAND, 0.01);
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
    efl_text_horizontal_align_set(txt, 0.02);

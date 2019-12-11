@@ -170,8 +170,8 @@
 //FIXME this needs to not use elm_general.h and go to Efl_Ui.h
 # include <elm_general.h>
 # include <efl_text_interactive.eo.h>
-# include <efl_ui_text.eo.h>
-# include <efl_ui_text_async.eo.h>
+# include <efl_ui_textbox.eo.h>
+# include <efl_ui_textbox_async.eo.h>
 
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;

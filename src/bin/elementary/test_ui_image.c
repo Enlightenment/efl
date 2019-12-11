@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #include <Efl_Ui.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 static const struct {
    Efl_Gfx_Image_Orientation orient;
    const char *name;
@@ -302,7 +302,7 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
    efl_gfx_hint_weight_set(box, 1.0, 1.0);
    efl_content_set(win, box);
 
-   o = efl_add(EFL_UI_TEXT_CLASS, box, efl_text_interactive_editable_set(efl_added, EINA_FALSE));
+   o = efl_add(EFL_UI_TEXTBOX_CLASS, box, efl_text_interactive_editable_set(efl_added, EINA_FALSE));
    efl_text_wrap_set(o, EFL_TEXT_FORMAT_WRAP_MIXED);
    efl_gfx_hint_weight_set(o, 1.0, 1.0);
    efl_gfx_hint_fill_set(o, EINA_TRUE, EINA_TRUE);
@@ -340,7 +340,7 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
    efl_gfx_hint_fill_set(o, EINA_TRUE, EINA_TRUE);
    efl_pack(box, box2);
 
-   o = efl_add(EFL_UI_TEXT_CLASS, box2,
+   o = efl_add(EFL_UI_TEXTBOX_CLASS, box2,
      efl_text_interactive_editable_set(efl_added, EINA_FALSE)
    );
    efl_text_set(o, "URL:");
@@ -388,7 +388,7 @@ test_click_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_in
    efl_pack(box, im);
    elm_object_focus_set(im, EINA_TRUE);
 
-   label = efl_add(EFL_UI_TEXT_CLASS, win, efl_text_interactive_editable_set(efl_added, EINA_FALSE));
+   label = efl_add(EFL_UI_TEXTBOX_CLASS, win, efl_text_interactive_editable_set(efl_added, EINA_FALSE));
    efl_text_set(label, "<b>Press Return/Space/KP_Return key on image to transit.</b>");
    efl_gfx_hint_weight_set(label, 0.0, 0.0);
    efl_gfx_hint_fill_set(label, EINA_TRUE, EINA_TRUE);
@@ -451,7 +451,7 @@ _create_image(Eo *data, Eina_Bool async, Eina_Bool preload, Eina_Bool logo)
    status_text = efl_key_data_get(win, "phld");
    if (!status_text)
      {
-        status_text = efl_add(EFL_UI_TEXT_CLASS, win, efl_text_interactive_editable_set(efl_added, EINA_FALSE));
+        status_text = efl_add(EFL_UI_TEXTBOX_CLASS, win, efl_text_interactive_editable_set(efl_added, EINA_FALSE));
         efl_gfx_hint_weight_set(status_text, 1.0, 0);
         efl_gfx_hint_fill_set(status_text, EINA_TRUE, EINA_TRUE);
         efl_key_data_set(win, "phld", status_text);
@@ -541,7 +541,7 @@ test_load_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_inf
    efl_gfx_hint_weight_set(hbox, 1.0, 0.0);
    efl_gfx_hint_fill_set(hbox, EINA_TRUE, EINA_FALSE);
    {
-      label = efl_add(EFL_UI_TEXT_CLASS, win,
+      label = efl_add(EFL_UI_TEXTBOX_CLASS, win,
         efl_text_set(efl_added, "Async load options:"),
         efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
         efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),

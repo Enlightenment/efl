@@ -258,7 +258,7 @@ void values_input(Eo* box, const char* type)
         char color_text[4][2] = { "R", "G", "B", "A" };
         for (int i = 0; i < 4; i++)
           {
-             values[i] =  efl_add(EFL_UI_TEXT_CLASS, box,
+             values[i] =  efl_add(EFL_UI_TEXTBOX_CLASS, box,
                                   efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
                                   efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
                                   efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -270,7 +270,7 @@ void values_input(Eo* box, const char* type)
      }
    else if (!strcmp(type, "StrokeWidth"))
      {
-        values[0] =  efl_add(EFL_UI_TEXT_CLASS, box,
+        values[0] =  efl_add(EFL_UI_TEXTBOX_CLASS, box,
                              efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
                              efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
                              efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -310,7 +310,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
                  efl_content_set(win, efl_added));
 
    //Create a label to show state of animation
-   label = efl_add(EFL_UI_TEXT_CLASS, win,
+   label = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                    efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0.1),
                    efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
                    efl_pack(box, efl_added));
@@ -329,7 +329,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
                   efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0.1),
                   efl_pack(box, efl_added));
    //Path
-   efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
            efl_text_set(efl_added, "Path examples : three_box.json\n"
@@ -346,7 +346,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
            efl_text_multiline_set(efl_added, EINA_TRUE),
            efl_pack(box_sub, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
            efl_gfx_hint_weight_set(efl_added, 0, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
            efl_text_set(efl_added, "[Value Provider]"),
@@ -361,7 +361,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
                   efl_pack(box, efl_added));
 
    //Path
-   efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
            efl_gfx_hint_weight_set(efl_added, 0, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -369,7 +369,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(box_sub, efl_added));
 
-   path_entry = efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   path_entry = efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
                    efl_gfx_hint_weight_set(efl_added, 0.1, 0),
                    efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
                    efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -378,7 +378,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    efl_gfx_hint_size_min_set(path_entry, EINA_SIZE2D(200, 10));
    efl_text_set(efl_part(path_entry, "efl.text_guide"), "Enter path(ex: ** or Layer.Shape.Fill) ");
 
-   efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
            efl_gfx_hint_weight_set(efl_added, 0, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -398,7 +398,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    elm_object_focus_set(type_hoversel, EINA_TRUE);
    efl_pack(box_sub, type_hoversel);
 
-   efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
            efl_gfx_hint_weight_set(efl_added, 0, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -479,7 +479,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    //Duration Text
    snprintf(buf, sizeof(buf), "Duration: %1.2fs", efl_ui_animation_view_duration_time_get(anim_view));
-   efl_add(EFL_UI_TEXT_CLASS, box_sub,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box_sub,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -583,7 +583,7 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
                  efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND),
                  efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, win,
+   efl_add(EFL_UI_TEXTBOX_CLASS, win,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0.1),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_text_set(efl_added, "Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image is available!"),

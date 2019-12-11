@@ -1,0 +1,9 @@
+class @beta Efl.Ui.Textbox_Async extends Efl.Ui.Textbox
+{
+   [[Efl UI textbox async class
+   ]]
+   data: null;
+   implements {
+      Efl.Object.constructor;
+   }
+}

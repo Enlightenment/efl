@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 /* A simple test, just displaying clock in its default format */
 
 Evas_Object *dt1, *dt2, *dt3, *dt4;
@@ -84,7 +84,7 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                  efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_pack(bx, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Editable Clock:"),
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5),

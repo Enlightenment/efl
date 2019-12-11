@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 static void
 _inc_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
@@ -28,7 +28,7 @@ test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                efl_ui_frame_autocollapse_set(efl_added, EINA_FALSE));
    efl_text_set(f, "Test 1");
 
-   txt = efl_add(EFL_UI_TEXT_CLASS, f);
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, f);
    efl_text_set(txt, "Not collapseable");
    efl_content_set(f, txt);
 
@@ -37,7 +37,7 @@ test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                efl_ui_frame_autocollapse_set(efl_added, EINA_TRUE));
    efl_text_set(f, "Test2");
 
-   txt = efl_add(EFL_UI_TEXT_CLASS, f);
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, f);
    efl_text_set(txt, "Collapseable");
    efl_content_set(f, txt);
 

@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 static void
 _slider_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
@@ -59,7 +59,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Horizontal"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
@@ -72,7 +72,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, _slider_drag_stop_cb, NULL),
            efl_pack(bx, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Horizontal Inverted"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
@@ -83,7 +83,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL | EFL_UI_LAYOUT_ORIENTATION_INVERTED),
            efl_pack(bx, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Manual step"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
@@ -94,7 +94,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_ui_range_step_set(efl_added, 0.1),
            efl_pack(bx, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Disabled"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
@@ -106,7 +106,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            elm_object_disabled_set(efl_added, EINA_TRUE),
            efl_pack(bx, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Vertical"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
@@ -139,7 +139,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL | EFL_UI_LAYOUT_ORIENTATION_INVERTED),
            efl_pack(hbx, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Limit"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));

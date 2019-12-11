@@ -1,9 +1,0 @@
-class @beta Efl.Ui.Text_Async extends Efl.Ui.Text
-{
-   [[Efl UI text async class
-   ]]
-   data: null;
-   implements {
-      Efl.Object.constructor;
-   }
-}
