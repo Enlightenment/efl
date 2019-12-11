@@ -124,19 +124,22 @@ public static class ListNativeFunctions
 /// <summary>Native wrapper around a linked list of items.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
-public class List<T> : IEnumerable<T>, IDisposable
+public class List<T> : IList<T>, IEnumerable<T>, IDisposable
 {
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public IntPtr Handle {get;set;} = IntPtr.Zero;
+    public IntPtr Handle {get; set; } = IntPtr.Zero;
+
     /// <summary>Whether this managed list owns the native one.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public bool Own {get;set;}
+    internal bool Own { get; set; }
+
     /// <summary>Whether the native list wrapped owns the content it points to.
     /// <para>Since EFL 1.23.</para>
     ///</summary>
-    public bool OwnContent {get;set;}
+    internal bool OwnContent { get; set; }
+
 
     /// <summary>Delegate for comparing two elements of this list.
     /// <para>Since EFL 1.23.</para>
@@ -146,14 +149,15 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <returns>-1, 0 or 1 for respectively smaller, equal or larger.</returns>
     public delegate int Compare(T a, T b);
 
-    /// <summary>The number of elements on this list.
-    /// <para>Since EFL 1.23.</para>
-    /// </summary>
-    public int Length
-    {
-        get { return Count(); }
-    }
+    public bool IsReadOnly { get => !OwnContent; }
 
+    /// <summary>The number of elements in this list.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    public int Count
+    {
+        get => (int)eina_list_count_custom_export_mono(Handle);
+    }
 
     private void InitNew()
     {
@@ -163,38 +167,85 @@ public class List<T> : IEnumerable<T>, IDisposable
     }
 
     private IntPtr InternalLast()
-    {
-        return eina_list_last_custom_export_mono(Handle);
-    }
+        => eina_list_last_custom_export_mono(Handle);
 
     private static IntPtr InternalNext(IntPtr list)
-    {
-        return eina_list_next_custom_export_mono(list);
-    }
+        => eina_list_next_custom_export_mono(list);
 
     private static IntPtr InternalPrev(IntPtr list)
-    {
-        return eina_list_prev_custom_export_mono(list);
-    }
+        => eina_list_prev_custom_export_mono(list);
 
     private static IntPtr InternalDataGet(IntPtr list)
-    {
-        return eina_list_data_get_custom_export_mono(list);
-    }
+        => eina_list_data_get_custom_export_mono(list);
 
     private static IntPtr InternalDataSet(IntPtr list, IntPtr data)
+        => eina_list_data_set_custom_export_mono(list, data);
+
+    private IntPtr GetNative(int idx, Func<IntPtr, uint, IntPtr> f)
     {
-        return eina_list_data_set_custom_export_mono(list, data);
+        if (!(0 <= idx && idx < Count))
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var ele = f(Handle, (uint)idx);
+        if (ele == IntPtr.Zero)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        return ele;
     }
 
+    private IntPtr GetNativeDataPointer(int idx)
+        => GetNative(idx, eina_list_nth);
+
+    private IntPtr GetNativePointer(int idx)
+        => GetNative(idx, eina_list_nth_list);
+
+    private void RequireWritable()
+    {
+        if (IsReadOnly)
+        {
+            throw new NotSupportedException("Cannot modify read-only container.");
+        }
+    }
+
+    private void CheckOwnerships()
+    {
+        if ((Own == false) && (OwnContent == true))
+        {
+            throw new InvalidOperationException(nameof(Own) + "/" + nameof(OwnContent));
+        }
+    }
+
+    private void DeleteData(IntPtr ele)
+    {
+        if (OwnContent)
+        {
+            NativeFree<T>(InternalDataGet(ele));
+        }
+    }
+
+    private U LoopingThrough<U>(T val, Func<int, U> f1, Func<U> f2)
+    {
+        int i = 0;
+        IntPtr cur = Handle;
+        for (; cur != IntPtr.Zero; ++i, cur = InternalNext(cur))
+        {
+            if (NativeToManaged<T>(InternalDataGet(cur)).Equals(val))
+            {
+                return f1(i);
+            }
+        }
+
+        return f2();
+    }
 
     /// <summary>Creates a new empty list.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public List()
-    {
-        InitNew();
-    }
+    public List() => InitNew();
 
     /// <summary>Creates a new list wrapping the given handle.</summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -203,6 +254,7 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = handle;
         Own = own;
         OwnContent = own;
+        CheckOwnerships();
     }
 
     /// <summary>Creates a new list wrapping the given handle.</summary>
@@ -212,15 +264,13 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = handle;
         Own = own;
         OwnContent = ownContent;
+        CheckOwnerships();
     }
 
     /// <summary>Finalizes this list.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ~List()
-    {
-        Dispose(false);
-    }
+    ~List() => Dispose(false);
 
     /// <summary>Disposes of this list.
     /// <para>Since EFL 1.23.</para>
@@ -236,12 +286,14 @@ public class List<T> : IEnumerable<T>, IDisposable
             return;
         }
 
-        if (Own && OwnContent)
+        for (IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
         {
-            for (IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
+            if (!OwnContent)
             {
-                NativeFree<T>(InternalDataGet(curr));
+                break;
             }
+
+            DeleteData(curr);
         }
 
         if (Own)
@@ -269,30 +321,17 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <summary>Disposes of this list.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public void Free()
-    {
-        Dispose();
-    }
-
-    /// <summary>Relinquishes of the native list.
-    /// <para>Since EFL 1.23.</para>
-    /// </summary>
-    /// <returns>The previously wrapped native list handle.</returns>
-    public IntPtr Release()
-    {
-        IntPtr h = Handle;
-        Handle = IntPtr.Zero;
-        return h;
-    }
+    public void Free() => Dispose();
 
     /// <summary>Sets whether this wrapper should own the native list or not.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="ownAll">If the hash own for all ownerships.</param>
-    public void SetOwnership(bool ownAll)
+    internal void SetOwnership(bool ownAll)
     {
         Own = ownAll;
         OwnContent = ownAll;
+        CheckOwnerships();
     }
 
     /// <summary>Sets whether this wrapper should own the native list and
@@ -301,19 +340,11 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <param name="own">If own the object.</param>
     /// <param name="ownContent">If own the content's object.</param>
-    public void SetOwnership(bool own, bool ownContent)
+    internal void SetOwnership(bool own, bool ownContent)
     {
         Own = own;
         OwnContent = ownContent;
-    }
-
-    /// <summary>Returns the number of elements in this list.
-    /// <para>Since EFL 1.23.</para>
-    /// </summary>
-    /// <returns>The number of elements.</returns>
-    public int Count()
-    {
-        return (int)eina_list_count_custom_export_mono(Handle);
+        CheckOwnerships();
     }
 
     /// <summary>Appends <c>val</c> to the list.
@@ -322,8 +353,9 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="val">The item to be appended.</param>
     public void Append(T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_list_append(Handle, ele);
+        RequireWritable();
+
+        Handle = eina_list_append(Handle, ManagedToNativeAlloc(val));
     }
 
     /// <summary>Prepends <c>val</c> to the list.
@@ -332,8 +364,9 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="val">The item to be prepended.</param>
     public void Prepend(T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_list_prepend(Handle, ele);
+        RequireWritable();
+
+        Handle = eina_list_prepend(Handle, ManagedToNativeAlloc(val));
     }
 
     /// <summary>Inserts <c>val</c> in the list in a sorted manner.
@@ -343,8 +376,11 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="val">The item to be inserted.</param>
     public void SortedInsert(T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_list_sorted_insert(Handle, EinaCompareCb<T>(), ele);
+        RequireWritable();
+
+        Handle = eina_list_sorted_insert(Handle,
+                                EinaCompareCb<T>(),
+                                ManagedToNativeAlloc(val));
     }
 
     /// <summary>Inserts <c>val</c> in the list in a sorted manner with the
@@ -356,8 +392,11 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="val">The item to be inserted.</param>
     public void SortedInsert(Compare compareCb, T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_list_sorted_insert(Handle, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)), ele);
+        RequireWritable();
+
+        Handle = eina_list_sorted_insert(Handle,
+                                         Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)),
+                                         ManagedToNativeAlloc(val));
     }
 
     /// <summary>Sorts <c>limit</c> elements in this list inplace.
@@ -366,6 +405,8 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="limit">The max number of elements to be sorted.</param>
     public void Sort(int limit = 0)
     {
+        RequireWritable();
+
         Handle = eina_list_sort(Handle, (uint)limit, EinaCompareCb<T>());
     }
 
@@ -375,7 +416,10 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="compareCb">The function to compare two elements of the list.</param>
     public void Sort(Compare compareCb)
     {
-        Handle = eina_list_sort(Handle, 0, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
+        RequireWritable();
+
+        Handle = eina_list_sort(Handle, (uint)0,
+                                Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
     }
 
     /// <summary>Sorts <c>limit</c> elements in this list inplace.
@@ -385,15 +429,16 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <param name="compareCb">The function to compare two elements of the list.</param>
     public void Sort(int limit, Compare compareCb)
     {
-        Handle = eina_list_sort(Handle, (uint)limit, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
+        RequireWritable();
+
+        Handle = eina_list_sort(Handle, (uint)limit,
+                                Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
     }
 
     private Eina.Callbacks.EinaCompareCb GetNativeCompareCb(Compare managedCb)
-    {
-        return (IntPtr a, IntPtr b) => {
-            return managedCb(NativeToManaged<T>(a), NativeToManaged<T>(b));
-        };
-    }
+        => (IntPtr a, IntPtr b)
+        => managedCb(NativeToManaged<T>(a), NativeToManaged<T>(b));
+    
 
     /// <summary>Returns the <c>n</c>th element of this list. Due to marshalling details, the returned element
     /// may be a different C# object from the one you used to append.
@@ -401,33 +446,20 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <param name="n">The 0-based index to be retrieved.</param>
     /// <returns>The value in the specified element.</returns>
-    public T Nth(int n)
-    {
-        // TODO: check bounds ???
-        IntPtr ele = eina_list_nth(Handle, (uint)n);
-        return NativeToManaged<T>(ele);
-    }
+    public T Nth(int n) => NativeToManaged<T>(GetNativeDataPointer(n));
 
     /// <summary>Sets the data at the <c>idx</c> position.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="idx">The 0-based index to be set.</param>
     /// <param name="val">The value to be inserted.</param>
-    public void DataSet(int idx, T val)
+    internal void DataSet(int idx, T val)
     {
-        IntPtr pos = eina_list_nth_list(Handle, (uint)idx);
-        if (pos == IntPtr.Zero)
-        {
-            throw new IndexOutOfRangeException();
-        }
+        RequireWritable();
 
-        if (OwnContent)
-        {
-            NativeFree<T>(InternalDataGet(pos));
-        }
-
-        IntPtr ele = ManagedToNativeAlloc(val);
-        InternalDataSet(pos, ele);
+        IntPtr pos = GetNativePointer(idx);
+        DeleteData(pos);
+        InternalDataSet(pos, ManagedToNativeAlloc(val));
     }
 
     /// <summary>Accessor for the data at the <c>idx</c> position.
@@ -451,10 +483,7 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <returns>The value contained in the last list position.</returns>
     public T LastDataGet()
-    {
-        IntPtr ele = eina_list_last_data_get_custom_export_mono(Handle);
-        return NativeToManaged<T>(ele);
-    }
+        => NativeToManaged<T>(eina_list_last_data_get_custom_export_mono(Handle));
 
     /// <summary>Reverses this list in place.
     /// <para>Since EFL 1.23.</para>
@@ -462,6 +491,8 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <returns>A reference to this object.</returns>
     public List<T> Reverse()
     {
+        RequireWritable();
+
         Handle = eina_list_reverse(Handle);
         return this;
     }
@@ -471,6 +502,8 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// </summary>
     public void Shuffle()
     {
+        RequireWritable();
+
         Handle = eina_list_shuffle(Handle, IntPtr.Zero);
     }
 
@@ -480,9 +513,10 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <returns>A managed array of the elements.</returns>
     public T[] ToArray()
     {
-        var managed = new T[Count()];
+        var managed = new T[Count];
         int i = 0;
-        for (IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr), ++i)
+        for (IntPtr curr = Handle; curr != IntPtr.Zero;
+             curr = InternalNext(curr), ++i)
         {
             managed[i] = NativeToManaged<T>(InternalDataGet(curr));
         }
@@ -494,8 +528,10 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="values">The values to be appended.</param>
-    public void AppendArray(T[] values)
+    public void Append(T[] values)
     {
+        RequireWritable();
+
         foreach (T v in values)
         {
             Append(v);
@@ -508,18 +544,14 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <returns>The iterator.</returns>
     public Eina.Iterator<T> GetIterator()
-    {
-        return new Eina.Iterator<T>(eina_list_iterator_new(Handle), true);
-    }
+        => new Eina.Iterator<T>(eina_list_iterator_new(Handle), true);
 
     /// <summary>Gets an iterator that iterates this list in reverse order.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The iterator.</returns>
     public Eina.Iterator<T> GetReversedIterator()
-    {
-        return new Eina.Iterator<T>(eina_list_iterator_reversed_new(Handle), true);
-    }
+        => new Eina.Iterator<T>(eina_list_iterator_reversed_new(Handle), true);
 
     /// <summary>Gets an enumerator into this list.
     /// <para>Since EFL 1.23.</para>
@@ -538,18 +570,136 @@ public class List<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <returns>The enumerator.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-        return this.GetEnumerator();
-    }
+        => this.GetEnumerator();
 
     /// <summary> Gets an Accessor for this List.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The accessor.</returns>
     public Eina.Accessor<T> GetAccessor()
+        => new Eina.Accessor<T>(eina_list_accessor_new(Handle),
+                                Ownership.Managed);
+
+    /// <summary>
+    ///   Removes the first occurrence of a specific object.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to remove.</param>
+    public bool Remove(T val)
     {
-        return new Eina.Accessor<T>(eina_list_accessor_new(Handle), Ownership.Managed);
+        RequireWritable();
+
+        var prev_count = Count;
+        var deleted = LoopingThrough(val,
+                                 (i) =>
+        {
+            RemoveAt(i);
+            return true;
+        },
+                                 () => false);
+
+        return deleted && (prev_count - 1 == Count);
     }
+
+    /// <summary>
+    ///   Adds an item.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to add.</param>
+    public void Add(T val) => Append(val);
+
+    /// <summary>
+    ///   Removes all items.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    public void Clear()
+    {
+        RequireWritable();
+        
+        for (; Handle != IntPtr.Zero;)
+        {
+            Handle = eina_list_remove_list(Handle, Handle);
+        }
+    }
+
+    /// <summary>
+    ///   Determines whether the <see cref="List{T}" /> contains a specific value.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to locate.</param>
+    public bool Contains(T val)
+        => LoopingThrough(val, (i) => true, () => false);
+
+    /// <summary>
+    ///   Determines the index of a specific item.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to locate.</param>
+    public int IndexOf(T val)
+        => LoopingThrough(val, (i) => i, () => -1);
+
+    /// <summary>
+    ///   Inserts an item to the <see cref="List{T}" /> at the specified index.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="idx">The zero-based index at which item should be inserted.</param>
+    /// <param name="val">The object to insert.</param>
+    public void Insert(int idx, T val)
+    {
+        RequireWritable();
+
+        if (idx == 0)
+        {
+            Prepend(val);
+            return;
+        }
+
+        if (idx == Count)
+        {
+            Append(val);
+            return;
+        }
+
+        if (idx < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(idx), $"{nameof(idx)} cannot be negative.");
+        }
+
+        if (Count < idx)
+        {
+            throw new ArgumentOutOfRangeException(nameof(idx), $"{nameof(idx)} cannot be greater than {nameof(Count)} + 1.");
+        }
+
+        Handle = eina_list_prepend_relative_list(Handle, ManagedToNativeAlloc(val),
+                                        GetNativePointer(idx));
+    }
+
+    /// <summary>
+    ///   Removes the <see cref="List{T}" /> item at the specified index.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="idx">The zero-based index of the item to remove.</param>
+    public void RemoveAt(int idx)
+    {
+        RequireWritable();
+
+        var ele = GetNativePointer(idx);
+        DeleteData(ele);
+        Handle = eina_list_remove_list(Handle, ele);
+    }
+
+    /// <summary>
+    ///   Copies the elements of the <see cref="List{T}" /> to an
+    /// <see cref="Array" />, starting at a particular <see cref="Array" /> index.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="array">The one-dimensional <see cref="Array" /> that is the
+    /// destination of the elements copied from <see cref="List{T}" />.
+    /// The <see cref="Array" /> must have zero-based indexing.</param>
+    /// <param name="arrayIndex">The zero-based index in array at which copying
+    /// begins.</param>
+    public void CopyTo(T[] array, int arrayIndex)
+        => ToArray().CopyTo(array, arrayIndex);
 }
 
 }
