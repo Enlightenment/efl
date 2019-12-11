@@ -1,6 +1,6 @@
 parse efl_app;
 
-class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
+class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
 {
    [[Efl UI Factory that provides object caching.
 

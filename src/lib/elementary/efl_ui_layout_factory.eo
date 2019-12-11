@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
+class Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
 {
    [[@Efl.Ui.Factory that creates @Efl.Ui.Layout objects with caching.
 
