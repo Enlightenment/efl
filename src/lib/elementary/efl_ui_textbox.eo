@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
+class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File, Efl.Input_Text
    composites
                  Efl.Text_Interactive, Efl.Text_Markup

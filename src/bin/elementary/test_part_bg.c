@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 #define MAX_NUM_OF_CONTENT 17
 
 const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
@@ -80,7 +80,7 @@ _create_box_contents(Evas_Object *box)
                      efl_pack_end(hbox, efl_added));
    evas_object_data_set(radio, "data", content);
 
-   content = efl_add(EFL_UI_TEXT_CLASS, content,
+   content = efl_add(EFL_UI_TEXTBOX_CLASS, content,
                      efl_text_set(efl_added, "box"),
                      efl_text_interactive_editable_set(efl_added, EINA_FALSE),
                      efl_pack_end(content, efl_added));
@@ -136,7 +136,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    content_class[5] = EFL_UI_BUTTON_CLASS;
    content_class[6] = EFL_UI_CHECK_CLASS;
    content_class[7] = EFL_UI_RADIO_CLASS;
-   content_class[8] = EFL_UI_TEXT_CLASS;
+   content_class[8] = EFL_UI_TEXTBOX_CLASS;
    content_class[9] = EFL_UI_FLIP_CLASS;
    content_class[10] = EFL_UI_PANES_CLASS;
    content_class[11] = EFL_UI_VIDEO_CLASS;

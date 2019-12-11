@@ -20,6 +20,7 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
 #include "name_helpers.hh"
+#include "type_match.hh"
 
 namespace eolian_mono {
 
@@ -68,19 +69,6 @@ attributes::complex_type_def replace_outer(attributes::complex_type_def v, attri
 {
   v.outer = regular;
   return v;
-}
-      
-template <typename Array, typename F, int N, typename A>
-eina::optional<bool> call_match(Array const (&array)[N], F f, A a)
-{
-   typedef Array const* iterator_type;
-   iterator_type match_iterator = &array[0], match_last = match_iterator + N;
-   match_iterator = std::find_if(match_iterator, match_last, f);
-   if(match_iterator != match_last)
-     {
-        return a(match_iterator->function());
-     }
-   return {nullptr};
 }
 
 template <typename OutputIterator, typename Context>
@@ -248,7 +236,7 @@ struct visitor_generate
               }} // FIXME add proper support for any_value_ref
         };
         std::string full_type_name = name_helpers::type_full_eolian_name(regular);
-        if(eina::optional<bool> b = call_match
+        if(eina::optional<bool> b = type_match::get_match
          (optional_match_table
           , [&] (match const& m)
           {
@@ -271,7 +259,7 @@ struct visitor_generate
           is_optional = false;
           return (*this)(r);
         }
-        else if(eina::optional<bool> b = call_match
+        else if(eina::optional<bool> b = type_match::get_match
          (match_table
           , [&] (match const& m)
           {
@@ -441,7 +429,7 @@ struct visitor_generate
             // && detail::generate_pointers(sink, pointers, *context, false);
         };
        
-      if(eina::optional<bool> b = call_match
+      if(eina::optional<bool> b = type_match::get_match
          (matches
           , [&] (match const& m)
           {

@@ -150,7 +150,11 @@ eina_value_flush(Eina_Value *value)
           }
         else if (type == EINA_VALUE_TYPE_STRING)
           {
-             if (value->value.ptr) free(value->value.ptr);
+             if (value->value.ptr)
+               {
+                  free(value->value.ptr);
+                  value->value.ptr = NULL;
+               }
           }
         else if (type->value_size > 8)
           eina_value_inner_free(type->value_size, mem);

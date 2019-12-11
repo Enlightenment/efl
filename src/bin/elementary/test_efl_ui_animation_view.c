@@ -151,7 +151,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                  efl_content_set(win, efl_added));
 
    //Create a label to show state of animation
-   label = efl_add(EFL_UI_TEXT_CLASS, win,
+   label = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                    efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0.1),
                    efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
                    efl_pack(box, efl_added));
@@ -201,7 +201,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    //Duration Text
    snprintf(buf, sizeof(buf), "Duration: %1.2fs", efl_ui_animation_view_duration_time_get(anim_view));
-   efl_add(EFL_UI_TEXT_CLASS, box2,
+   efl_add(EFL_UI_TEXTBOX_CLASS, box2,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
@@ -304,7 +304,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                  efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND),
                  efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, win,
+   efl_add(EFL_UI_TEXTBOX_CLASS, win,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0.1),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
            efl_text_set(efl_added, "Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image is available!"),

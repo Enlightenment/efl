@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 static const struct {
  Evas_Image_Orient orient;
  const char *name;
@@ -813,7 +813,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                 efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, bx,
+   efl_add(EFL_UI_TEXTBOX_CLASS, bx,
            efl_text_set(efl_added, "Clicking the image will play/pause animation."),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_gfx_hint_weight_set(efl_added, 1, 0),

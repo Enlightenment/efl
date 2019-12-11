@@ -34,19 +34,19 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 //   FIXME
 //   table.homogeneous_set(true);
 
-   efl::ui::Text label(instantiate, win);
+   efl::ui::Textbox label(instantiate, win);
    label.text_set("label 0");
    table.pack_table(label, 0, 0, 1, 1);
 
-   efl::ui::Text label1(instantiate, win);
+   efl::ui::Textbox label1(instantiate, win);
    label1.text_set("label 1");
    table.pack_table(label1, 1, 0, 1, 1);
 
-   efl::ui::Text label2(instantiate, win);
+   efl::ui::Textbox label2(instantiate, win);
    label2.text_set("label 2");
    table.pack_table(label2, 0, 1, 1, 1);
 
-   efl::ui::Text label3(instantiate, win);
+   efl::ui::Textbox label3(instantiate, win);
    label3.text_set("label 3");
    table.pack_table(label3, 1, 1, 1, 1);
 }

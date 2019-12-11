@@ -1588,7 +1588,7 @@ _paste_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_TEXT_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
 
    sd->selection_asked = EINA_TRUE;
 
@@ -1643,7 +1643,7 @@ _cut_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_TEXT_EVENT_SELECTION_CUT, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1667,7 +1667,7 @@ _copy_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_TEXT_EVENT_SELECTION_COPY, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -2454,7 +2454,7 @@ _entry_paste_request_signal_cb(void *data,
    // supported
 //   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_TEXT_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
 
    top = _entry_win_get(data);
    if (top)

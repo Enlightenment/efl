@@ -226,8 +226,8 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 typedef void (*Context_Item_Clicked_Cb)(void *data, Eo *obj, void *event_info);
 
 # include <efl_text_interactive.eo.h>
-# include <efl_ui_text.eo.h>
-# include <efl_ui_text_async.eo.h>
+# include <efl_ui_textbox.eo.h>
+# include <efl_ui_textbox_async.eo.h>
 
 # include <efl_ui_animation_view.eo.h>
 # include <efl_ui_clock.eo.h>

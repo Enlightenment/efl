@@ -4,7 +4,7 @@
 
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
 #include "test.h"
 static Eo *layout, *btn1, *btn2, *btn3;
 
@@ -153,7 +153,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2),
                   efl_pack(vbox, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, hbox,
+   efl_add(EFL_UI_TEXTBOX_CLASS, hbox,
            efl_text_set(efl_added, text),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_text_vertical_align_set(efl_added, 0.5),
@@ -207,7 +207,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_gfx_hint_weight_set(efl_added, 0, EFL_GFX_HINT_EXPAND),
            efl_pack(hbox, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, hbox,
+   efl_add(EFL_UI_TEXTBOX_CLASS, hbox,
            efl_text_set(efl_added, "to"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_text_horizontal_align_set(efl_added, 0.5),
@@ -215,7 +215,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_gfx_hint_weight_set(efl_added, 0, EFL_GFX_HINT_EXPAND),
            efl_pack(hbox, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, hbox,
+   efl_add(EFL_UI_TEXTBOX_CLASS, hbox,
            efl_text_set(efl_added, "relative"),
            efl_text_horizontal_align_set(efl_added, 0.5),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
@@ -234,7 +234,7 @@ _button_frame_add(Eo *box, Eo *btn)
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2),
                   efl_pack(vbox, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, hbox,
+   efl_add(EFL_UI_TEXTBOX_CLASS, hbox,
            efl_text_set(efl_added, "align_x"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(40, 0)),
@@ -254,7 +254,7 @@ _button_frame_add(Eo *box, Eo *btn)
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2),
                   efl_pack(vbox, efl_added));
 
-   efl_add(EFL_UI_TEXT_CLASS, hbox,
+   efl_add(EFL_UI_TEXTBOX_CLASS, hbox,
            efl_text_set(efl_added, "align_y"),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(40, 0)),

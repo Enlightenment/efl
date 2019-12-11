@@ -20,7 +20,7 @@
 #include "elm_part_helper.h"
 #include "efl_canvas_textblock_internal.h"
 
-typedef struct _Efl_Ui_Text_Data        Efl_Ui_Text_Data;
+typedef struct _Efl_Ui_Textbox_Data        Efl_Ui_Textbox_Data;
 typedef struct _Efl_Ui_Text_Rectangle   Efl_Ui_Text_Rectangle;
 typedef struct _Anchor                  Anchor;
 typedef struct _Selection_Loss_Data     Selection_Loss_Data;
@@ -28,7 +28,7 @@ typedef struct _Selection_Loss_Data     Selection_Loss_Data;
 /**
  * Base widget smart data extended with entry instance data.
  */
-struct _Efl_Ui_Text_Data
+struct _Efl_Ui_Textbox_Data
 {
    Evas_Object                          *hit_rect, *entry_edje, *scr_edje;
 
@@ -135,7 +135,7 @@ struct _Anchor
 };
 
 #define EFL_UI_TEXT_DATA_GET(o, sd) \
-  Efl_Ui_Text_Data * sd = efl_data_scope_get(o, EFL_UI_TEXT_CLASS)
+  Efl_Ui_Textbox_Data * sd = efl_data_scope_get(o, EFL_UI_TEXTBOX_CLASS)
 
 #define EFL_UI_TEXT_DATA_GET_OR_RETURN(o, ptr)         \
   EFL_UI_TEXT_DATA_GET(o, ptr);                        \
@@ -156,7 +156,7 @@ struct _Anchor
     }
 
 #define EFL_UI_TEXT_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_TEXT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_TEXTBOX_CLASS))) \
     return
 
 struct _Efl_Ui_Text_Rectangle
@@ -170,9 +170,9 @@ struct _Selection_Loss_Data
    Efl_Ui_Selection_Type stype;
 };
 
-#define MY_CLASS EFL_UI_TEXT_CLASS
-#define MY_CLASS_PFX efl_ui_text
-#define MY_CLASS_NAME "Efl.Ui.Text"
+#define MY_CLASS EFL_UI_TEXTBOX_CLASS
+#define MY_CLASS_PFX efl_ui_textbox
+#define MY_CLASS_NAME "Efl.Ui.Textbox"
 #define MY_CLASS_NAME_LEGACY "elm_entry"
 
 #include "efl_ui_internal_text_interactive.h"
@@ -203,28 +203,28 @@ static const char PART_NAME_CURSOR[] = "cursor";
 static const char PART_NAME_SELECTION[] = "selection";
 static const char PART_NAME_ANCHOR[] = "anchor";
 
-static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd);
+static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Textbox_Data *sd);
 static void _update_decorations(Eo *obj);
-static void _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd);
-static void _efl_ui_text_changed_cb(void *data, const Efl_Event *event);
-static void _efl_ui_text_changed_user_cb(void *data, const Efl_Event *event);
-static void _efl_ui_text_selection_start_clear_cb(void *data, const Efl_Event *event);
-static void _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event);
-static void _efl_ui_text_cursor_changed_cb(void *data, const Efl_Event *event);
+static void _create_text_cursors(Eo *obj, Efl_Ui_Textbox_Data *sd);
+static void _efl_ui_textbox_changed_cb(void *data, const Efl_Event *event);
+static void _efl_ui_textbox_changed_user_cb(void *data, const Efl_Event *event);
+static void _efl_ui_textbox_selection_start_clear_cb(void *data, const Efl_Event *event);
+static void _efl_ui_textbox_selection_changed_cb(void *data, const Efl_Event *event);
+static void _efl_ui_textbox_cursor_changed_cb(void *data, const Efl_Event *event);
 static void _text_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED);
 static void _scroller_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED);
 static void _text_position_changed_cb(void *data, const Efl_Event *event EINA_UNUSED);
-static void _efl_ui_text_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static const char* _efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd);
-static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
+static void _efl_ui_textbox_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static const char* _efl_ui_textbox_selection_get(const Eo *obj, Efl_Ui_Textbox_Data *sd);
+static void _edje_signal_emit(Efl_Ui_Textbox_Data *obj, const char *sig, const char *src);
 static void _decoration_defer_all(Eo *obj);
-static inline Eo * _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd, const char *source, Eina_Bool above);
+static inline Eo * _decoration_create(Eo *obj, Efl_Ui_Textbox_Data *sd, const char *source, Eina_Bool above);
 static void _decoration_defer(Eo *obj);
-static void _clear_text_selection(Efl_Ui_Text_Data *sd);
-static void _anchors_free(Efl_Ui_Text_Data *sd);
-static void _selection_defer(Eo *obj, Efl_Ui_Text_Data *sd);
-static Eina_Position2D _decoration_calc_offset(Efl_Ui_Text_Data *sd);
-static void _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd);
+static void _clear_text_selection(Efl_Ui_Textbox_Data *sd);
+static void _anchors_free(Efl_Ui_Textbox_Data *sd);
+static void _selection_defer(Eo *obj, Efl_Ui_Textbox_Data *sd);
+static Eina_Position2D _decoration_calc_offset(Efl_Ui_Textbox_Data *sd);
+static void _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd);
 
 static char *
 _file_load(Eo *obj)
@@ -347,7 +347,7 @@ _save_do(Evas_Object *obj)
 }
 
 static void
-_efl_ui_text_guide_update(Evas_Object *obj,
+_efl_ui_textbox_guide_update(Evas_Object *obj,
                         Eina_Bool has_text)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
@@ -658,7 +658,7 @@ _get_drop_format(Evas_Object *obj)
 
 /* we can't reuse layout's here, because it's on entry_edje only */
 EOLIAN static void
-_efl_ui_text_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
+_efl_ui_textbox_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool disabled)
 {
    const char *emission;
 
@@ -693,7 +693,7 @@ _efl_ui_text_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
 EOLIAN static Eina_Error
-_efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Eina_Error theme_apply;
 
@@ -742,7 +742,7 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
      }
 
    sd->has_text = !sd->has_text;
-   _efl_ui_text_guide_update(obj, !sd->has_text);
+   _efl_ui_textbox_guide_update(obj, !sd->has_text);
    efl_event_thaw(obj);
 
    efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
@@ -793,7 +793,7 @@ _cursor_geometry_recalc(Evas_Object *obj)
 #define SIZE2D_EQ(X, Y) (((X).w == (Y).w) && ((X).h == (Y).h))
 
 EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Eina_Size2D min = EINA_SIZE2D(0, 0);
    Eina_Size2D edmin = EINA_SIZE2D(0, 0);
@@ -863,7 +863,7 @@ _efl_ui_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;
@@ -919,7 +919,7 @@ _efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_text_efl_ui_widget_interest_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_ui_widget_interest_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
    Eina_Rect r = {};
@@ -1032,7 +1032,7 @@ _hoversel_item_paste_cb(void *data,
           Evas_Object *obj EINA_UNUSED,
           void *event_info EINA_UNUSED)
 {
-   efl_ui_text_selection_paste(data);
+   efl_ui_textbox_selection_paste(data);
 }
 
 static Eina_Value
@@ -1120,7 +1120,7 @@ _hoversel_item_cut_cb(void *data,
         Evas_Object *obj EINA_UNUSED,
         void *event_info EINA_UNUSED)
 {
-   efl_ui_text_selection_cut(data);
+   efl_ui_textbox_selection_cut(data);
 }
 
 static void
@@ -1128,7 +1128,7 @@ _hoversel_item_copy_cb(void *data,
          Evas_Object *obj EINA_UNUSED,
          void *event_info EINA_UNUSED)
 {
-   efl_ui_text_selection_copy(data);
+   efl_ui_textbox_selection_copy(data);
 }
 
 static void
@@ -1170,7 +1170,7 @@ _menu_call(Evas_Object *obj)
 
    if (sd->anchor_hover.hover) return;
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CONTEXT_OPEN, NULL);
+   efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_CONTEXT_OPEN, NULL);
 
    if ((sd->api) && (sd->api->obj_longpress))
      {
@@ -1319,17 +1319,17 @@ _key_down_cb(void *data,
           {
              if (!strncmp(ev->key, "c", 1))
                {
-                  efl_ui_text_selection_copy(data);
+                  efl_ui_textbox_selection_copy(data);
                   on_hold = EINA_TRUE;
                }
              else if (!strncmp(ev->key, "x", 1))
                {
-                  efl_ui_text_selection_cut(data);
+                  efl_ui_textbox_selection_cut(data);
                   on_hold = EINA_TRUE;
                }
              else if (!strncmp(ev->key, "v", 1))
                {
-                  efl_ui_text_selection_paste(data);
+                  efl_ui_textbox_selection_paste(data);
                   on_hold = EINA_TRUE;
                }
           }
@@ -1357,7 +1357,7 @@ _mouse_down_cb(void *data,
 
    if (ev->button == 2)
      {
-        efl_ui_text_selection_paste(data);
+        efl_ui_textbox_selection_paste(data);
      }
 
     /* If right button is pressed and context menu disabled is true,
@@ -1497,7 +1497,7 @@ _item_get(void *data, const char *item)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source)
+_efl_ui_textbox_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, const char *emission, const char *source)
 {
    /* always pass to both edje objs */
    efl_layout_signal_emit(sd->entry_edje, emission, source);
@@ -1513,7 +1513,7 @@ _efl_ui_text_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data
 }
 
 static Eina_Bool
-_efl_ui_text_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+_efl_ui_textbox_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    Eina_Bool ok;
 
@@ -1525,7 +1525,7 @@ _efl_ui_text_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_T
 }
 
 static Eina_Bool
-_efl_ui_text_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+_efl_ui_textbox_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    Eina_Bool ok;
 
@@ -1734,7 +1734,7 @@ _end_handler_mouse_move_cb(void *data,
 }
 
 static void
-_create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
+_create_selection_handlers(Evas_Object *obj, Efl_Ui_Textbox_Data *sd)
 {
    Evas_Object *handle;
 
@@ -1762,7 +1762,7 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
+_efl_ui_textbox_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
@@ -1774,7 +1774,7 @@ _efl_ui_text_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Pos
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
+_efl_ui_textbox_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -1786,7 +1786,7 @@ _efl_ui_text_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D 
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
+_efl_ui_textbox_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -1796,7 +1796,7 @@ _efl_ui_text_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
+_efl_ui_textbox_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Textbox_Data *sd, Evas_Object *member)
 {
    efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
 
@@ -1805,7 +1805,7 @@ _efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Ev
 }
 
 static void
-_update_guide_text(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_update_guide_text(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    const char *txt;
    Eina_Bool show_guide;
@@ -1897,7 +1897,7 @@ _format_color_parse(const char *str, int slen,
   * to allow users to override the theme during the construction of the widget.
   */
 static void
-_update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
+_update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    const char *font_name;
    const char *font_size;
@@ -1948,7 +1948,7 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static Eo *
-_efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Eo *text_obj;
 
@@ -1986,8 +1986,8 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static Eo *
-_efl_ui_text_efl_object_finalize(Eo *obj,
-                                 Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_object_finalize(Eo *obj,
+                                 Efl_Ui_Textbox_Data *sd)
 {
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
@@ -2027,19 +2027,19 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    evas_object_size_hint_align_set
       (sd->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
-         _efl_ui_text_changed_user_cb, obj);
+         _efl_ui_textbox_changed_user_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED,
-         _efl_ui_text_changed_cb, obj);
+         _efl_ui_textbox_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED,
-         _efl_ui_text_selection_start_clear_cb, obj);
+         _efl_ui_textbox_selection_start_clear_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
-         _efl_ui_text_selection_changed_cb, obj);
+         _efl_ui_textbox_selection_changed_cb, obj);
    efl_event_callback_add(efl_text_interactive_main_cursor_get(sd->text_obj), EFL_TEXT_CURSOR_EVENT_CHANGED,
-         _efl_ui_text_cursor_changed_cb, obj);
+         _efl_ui_textbox_cursor_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
          _text_position_changed_cb, obj);
    evas_object_event_callback_add(sd->entry_edje, EVAS_CALLBACK_MOVE,
-         _efl_ui_text_move_cb, obj);
+         _efl_ui_textbox_move_cb, obj);
 
    evas_object_event_callback_add
      (sd->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
@@ -2072,7 +2072,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_object_destructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Markup_Filter *tf;
@@ -2140,7 +2140,7 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_text_format_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
+_efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool password)
 {
    password = !!password;
 
@@ -2178,7 +2178,7 @@ _efl_ui_text_efl_text_format_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bo
 }
 
 static void
-_efl_ui_text_calc_force(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_calc_force(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    sd->calc_force = EINA_TRUE;
    edje_object_calc_force(sd->entry_edje);
@@ -2186,7 +2186,7 @@ _efl_ui_text_calc_force(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 static const char*
-_efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
+_efl_ui_textbox_selection_get(const Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
 {
    Efl_Text_Cursor *start_obj, *end_obj;
 
@@ -2197,20 +2197,20 @@ _efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_text_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
+_efl_ui_textbox_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool disabled)
 {
    if (sd->sel_handler_disabled == disabled) return;
    sd->sel_handler_disabled = disabled;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    return sd->sel_handler_disabled;
 }
 
 static void
-_efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
+_efl_ui_textbox_entry_insert(Eo *obj, Efl_Ui_Textbox_Data *sd, const char *entry)
 {
    Efl_Text_Cursor *cur_obj = efl_text_interactive_main_cursor_get(obj);
    efl_text_cursor_text_insert(cur_obj, entry);
@@ -2219,13 +2219,13 @@ _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
 }
 
 EOLIAN static void
-_efl_ui_text_cursor_add(Eo *obj, Efl_Ui_Text_Data *pd, Efl_Text_Cursor *cursor)
+_efl_ui_textbox_cursor_add(Eo *obj, Efl_Ui_Textbox_Data *pd, Efl_Text_Cursor *cursor)
 {
    efl_text_cursor_text_object_set(cursor, pd->text_obj, obj);
 }
 
 EOLIAN static Efl_Text_Cursor *
-_efl_ui_text_cursor_create(Eo *obj, Efl_Ui_Text_Data *pd)
+_efl_ui_textbox_cursor_create(Eo *obj, Efl_Ui_Textbox_Data *pd)
 {
    Eo* cursor = efl_add(EFL_TEXT_CURSOR_CLASS, pd->text_obj);
    efl_text_cursor_text_object_set(cursor, pd->text_obj, obj);
@@ -2233,7 +2233,7 @@ _efl_ui_text_cursor_create(Eo *obj, Efl_Ui_Text_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
+_efl_ui_textbox_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool editable)
 {
    if (efl_text_interactive_editable_get(obj) == editable) return;
 
@@ -2269,7 +2269,7 @@ _efl_ui_text_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Ei
 }
 
 static void
-_efl_ui_text_select_region_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, int start, int end)
+_efl_ui_textbox_select_region_set(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED, int start, int end)
 {
    Efl_Text_Cursor *sel_start, *sel_end;
 
@@ -2282,7 +2282,7 @@ _efl_ui_text_select_region_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, int st
 }
 
 EOLIAN static void
-_efl_ui_text_selection_cut(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_selection_cut(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Efl_Text_Cursor *start, *end;
    Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
@@ -2317,11 +2317,11 @@ _efl_ui_text_selection_cut(Eo *obj, Efl_Ui_Text_Data *sd)
    tmp = NULL;
    efl_text_interactive_all_unselect(obj);
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_SELECTION_CUT, NULL);
+   efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_CUT, NULL);
 }
 
 EOLIAN static void
-_efl_ui_text_selection_copy(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_selection_copy(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    if (efl_text_password_get(obj)) return;
 
@@ -2334,42 +2334,42 @@ _efl_ui_text_selection_copy(Eo *obj, Efl_Ui_Text_Data *sd)
         elm_widget_scroll_hold_pop(obj);
      }
    _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_SELECTION_COPY, NULL);
+   efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY, NULL);
 }
 
 EOLIAN static void
-_efl_ui_text_selection_paste(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
+_efl_ui_textbox_selection_paste(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Selection_Format formats = EFL_UI_SELECTION_FORMAT_TEXT | EFL_UI_SELECTION_FORMAT_MARKUP;
 
    efl_ui_selection_get(obj, EFL_UI_SELECTION_TYPE_CLIPBOARD, formats,
          NULL, _selection_data_cb, NULL, 1);
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_SELECTION_PASTE, NULL);
+   efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
 }
 
 EOLIAN static void
-_efl_ui_text_context_menu_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
+_efl_ui_textbox_context_menu_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool disabled)
 {
    if (sd->context_menu == !disabled) return;
    sd->context_menu = !disabled;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    return !sd->context_menu;
 }
 
 EOLIAN static Eina_Error
-_efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file)
+_efl_ui_textbox_efl_file_file_set(Eo *obj, Efl_Ui_Textbox_Data *sd, const char *file)
 {
    eina_stringshare_replace(&sd->file, file);
    return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
 
 EOLIAN static void
-_efl_ui_text_efl_file_unload(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_file_unload(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    efl_file_unload(efl_super(obj, MY_CLASS));
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
@@ -2377,7 +2377,7 @@ _efl_ui_text_efl_file_unload(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static Eina_Error
-_efl_ui_text_efl_file_load(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_efl_file_load(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Eina_Error err;
 
@@ -2390,7 +2390,7 @@ _efl_ui_text_efl_file_load(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Ui_Selection_Format cnp_mode)
+_efl_ui_textbox_cnp_mode_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Ui_Selection_Format cnp_mode)
 {
    Elm_Sel_Format dnd_format = EFL_UI_SELECTION_FORMAT_MARKUP;
 
@@ -2425,13 +2425,13 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Ui_Selection_Format
 }
 
 EOLIAN static Efl_Ui_Selection_Format
-_efl_ui_text_cnp_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_cnp_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    return sd->cnp_mode;
 }
 
 EOLIAN static void
-_efl_ui_text_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool scroll)
+_efl_ui_textbox_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll)
 {
    if (sd->scroll == scroll) return;
    sd->scroll = scroll;
@@ -2460,13 +2460,13 @@ _efl_ui_text_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_scrollable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_textbox_scrollable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    return sd->scroll;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_efl_ui_textbox_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
@@ -2485,7 +2485,7 @@ _efl_ui_text_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EIN
 // ATSPI Accessibility
 
 EOLIAN static Eina_Unicode
-_efl_ui_text_efl_access_text_character_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int offset)
+_efl_ui_textbox_efl_access_text_character_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, int offset)
 {
    const char *txt;
    int idx = 0;
@@ -2504,7 +2504,7 @@ _efl_ui_text_efl_access_text_character_get(const Eo *obj, Efl_Ui_Text_Data *_pd 
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_character_count_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_textbox_efl_access_text_character_count_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED)
 {
    const char *txt;
 
@@ -2514,7 +2514,7 @@ _efl_ui_text_efl_access_text_character_count_get(const Eo *obj, Efl_Ui_Text_Data
 }
 
 EOLIAN static char*
-_efl_ui_text_efl_access_text_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
+_efl_ui_textbox_efl_access_text_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    char *ret = NULL;
@@ -2595,7 +2595,7 @@ fail:
 }
 
 EOLIAN static char*
-_efl_ui_text_efl_access_text_access_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd EINA_UNUSED, int start_offset, int end_offset)
+_efl_ui_textbox_efl_access_text_access_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    char *ret = NULL;
@@ -2632,26 +2632,26 @@ fail:
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_caret_offset_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_textbox_efl_access_text_caret_offset_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED)
 {
    return efl_text_cursor_position_get(efl_text_interactive_main_cursor_get(obj));
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_caret_offset_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int offset)
+_efl_ui_textbox_efl_access_text_caret_offset_set(Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, int offset)
 {
    efl_text_cursor_position_set(efl_text_interactive_main_cursor_get(obj), offset);
    return EINA_TRUE;
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_selections_count_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_textbox_efl_access_text_selections_count_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED)
 {
-   return _efl_ui_text_selection_get(obj, _pd) ? 1 : 0;
+   return _efl_ui_textbox_selection_get(obj, _pd) ? 1 : 0;
 }
 
 EOLIAN static void
-_efl_ui_text_efl_access_text_access_selection_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+_efl_ui_textbox_efl_access_text_access_selection_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
    if (selection_number != 0) return;
 
@@ -2659,17 +2659,17 @@ _efl_ui_text_efl_access_text_access_selection_get(const Eo *obj, Efl_Ui_Text_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_access_selection_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
+_efl_ui_textbox_efl_access_text_access_selection_set(Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
 {
    if (selection_number != 0) return EINA_FALSE;
 
-   _efl_ui_text_select_region_set(obj, _pd, start_offset, end_offset);
+   _efl_ui_textbox_select_region_set(obj, _pd, start_offset, end_offset);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_selection_remove(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int selection_number)
+_efl_ui_textbox_efl_access_text_selection_remove(Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, int selection_number)
 {
    if (selection_number != 0) return EINA_FALSE;
    efl_text_interactive_all_unselect(obj);
@@ -2677,21 +2677,21 @@ _efl_ui_text_efl_access_text_selection_remove(Eo *obj, Efl_Ui_Text_Data *pd EINA
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_selection_add(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int start_offset, int end_offset)
+_efl_ui_textbox_efl_access_text_selection_add(Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, int start_offset, int end_offset)
 {
-   _efl_ui_text_select_region_set(obj, pd, start_offset, end_offset);
+   _efl_ui_textbox_select_region_set(obj, pd, start_offset, end_offset);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_efl_access_text_bounded_ranges_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
+_efl_ui_textbox_efl_access_text_bounded_ranges_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_offset_at_point_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
+_efl_ui_textbox_efl_access_text_offset_at_point_get(const Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
 {
    Evas_Textblock_Cursor *cur;
    int ret;
@@ -2724,7 +2724,7 @@ _efl_ui_text_efl_access_text_offset_at_point_get(const Eo *obj, Efl_Ui_Text_Data
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_character_extents_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
+_efl_ui_textbox_efl_access_text_character_extents_get(const Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
 {
    Evas_Textblock_Cursor *cur;
    int ret;
@@ -2755,7 +2755,7 @@ _efl_ui_text_efl_access_text_character_extents_get(const Eo *obj, Efl_Ui_Text_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_range_extents_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
+_efl_ui_textbox_efl_access_text_range_extents_get(const Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
    int ret;
@@ -2822,7 +2822,7 @@ _textblock_node_format_to_atspi_text_attr(Efl_Text_Attribute_Handle *annotation)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
+_efl_ui_textbox_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
 {
    Efl_Text_Cursor *cur1, *cur2;
    Efl_Access_Text_Attribute *attr;
@@ -2830,10 +2830,10 @@ _efl_ui_text_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Text_Data *_pd 
    Efl_Text_Attribute_Handle *an;
 
    Eo *mobj = (Eo *)obj;
-   cur1 = efl_ui_text_cursor_create(mobj);
+   cur1 = efl_ui_textbox_cursor_create(mobj);
    if (!cur1) return EINA_FALSE;
 
-   cur2 = efl_ui_text_cursor_create(mobj);
+   cur2 = efl_ui_textbox_cursor_create(mobj);
    if (!cur2)
      {
         efl_del(cur1);
@@ -2868,7 +2868,7 @@ _efl_ui_text_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Text_Data *_pd 
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int *start_offset, int *end_offset)
+_efl_ui_textbox_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
    Efl_Text_Cursor *cur1, *cur2;
    Eina_List *ret = NULL;
@@ -2876,10 +2876,10 @@ _efl_ui_text_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Text_Data
    Eina_Iterator *annotations;
    Efl_Text_Attribute_Handle *an;
    Eo *mobj = (Eo *)obj;
-   cur1 = efl_ui_text_cursor_create(mobj);
+   cur1 = efl_ui_textbox_cursor_create(mobj);
    if (!cur1) return NULL;
 
-   cur2 = efl_ui_text_cursor_create(mobj);
+   cur2 = efl_ui_textbox_cursor_create(mobj);
    if (!cur2)
      {
         efl_del(cur1);
@@ -2908,7 +2908,7 @@ _efl_ui_text_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Text_Data
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_textbox_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED)
 {
    Eina_List *ret = NULL;
    Efl_Access_Text_Attribute *attr;
@@ -2918,8 +2918,8 @@ _efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_D
 
    /* Retrieve all annotations in the text. */
    Eo *mobj = (Eo *)obj; /* XXX const */
-   start = efl_ui_text_cursor_create(mobj);
-   end = efl_ui_text_cursor_create(mobj);
+   start = efl_ui_textbox_cursor_create(mobj);
+   end = efl_ui_textbox_cursor_create(mobj);
 
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
@@ -2938,33 +2938,33 @@ _efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_D
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_text_content_set(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, const char *content)
+_efl_ui_textbox_efl_access_editable_text_text_content_set(Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, const char *content)
 {
    efl_text_set(obj, content);
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_insert(Eo *obj, Efl_Ui_Text_Data *pd, const char *string, int position)
+_efl_ui_textbox_efl_access_editable_text_insert(Eo *obj, Efl_Ui_Textbox_Data *pd, const char *string, int position)
 {
    Efl_Text_Cursor *cur_obj = efl_text_interactive_main_cursor_get(obj);
    efl_text_cursor_position_set(cur_obj, position);
-   _efl_ui_text_entry_insert(obj, pd, string);
+   _efl_ui_textbox_entry_insert(obj, pd, string);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_copy(Eo *obj, Efl_Ui_Text_Data *pd, int start, int end)
+_efl_ui_textbox_efl_access_editable_text_copy(Eo *obj, Efl_Ui_Textbox_Data *pd, int start, int end)
 {
-   _efl_ui_text_select_region_set(obj, pd, start, end);
-   efl_ui_text_selection_copy(obj);
+   _efl_ui_textbox_select_region_set(obj, pd, start, end);
+   efl_ui_textbox_selection_copy(obj);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_delete(Eo *obj, Efl_Ui_Text_Data *pd, int start_offset, int end_offset)
+_efl_ui_textbox_efl_access_editable_text_delete(Eo *obj, Efl_Ui_Textbox_Data *pd, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
    Eo *text_obj = pd->text_obj;
@@ -2989,33 +2989,33 @@ _efl_ui_text_efl_access_editable_text_delete(Eo *obj, Efl_Ui_Text_Data *pd, int 
    evas_textblock_cursor_free(cur1);
    evas_textblock_cursor_free(cur2);
 
-   _efl_ui_text_calc_force(obj, pd);
+   _efl_ui_textbox_calc_force(obj, pd);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_paste(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int position)
+_efl_ui_textbox_efl_access_editable_text_paste(Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED, int position)
 {
    Efl_Text_Cursor *cur_obj = efl_text_interactive_main_cursor_get(obj);
    efl_text_cursor_position_set(cur_obj, position);
-   efl_ui_text_selection_paste(obj);
+   efl_ui_textbox_selection_paste(obj);
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_cut(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int start, int end)
+_efl_ui_textbox_efl_access_editable_text_cut(Eo *obj, Efl_Ui_Textbox_Data *pd EINA_UNUSED, int start, int end)
 {
-   _efl_ui_text_select_region_set(obj, pd, start, end);
-   efl_ui_text_selection_cut(obj);
+   _efl_ui_textbox_select_region_set(obj, pd, start, end);
+   efl_ui_textbox_selection_cut(obj);
    return EINA_TRUE;
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_text_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_textbox_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Textbox_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS));
 
    if (efl_text_interactive_editable_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EDITABLE);
@@ -3024,17 +3024,17 @@ _efl_ui_text_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_p
 }
 
 EOLIAN static const char*
-_efl_ui_text_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Text_Data *pd)
+_efl_ui_textbox_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Textbox_Data *pd)
 {
    const char *name;
-   name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS));
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(pd->entry_edje, "efl.guide");
    return ret;
 }
 
 static void
-_edje_signal_emit(Efl_Ui_Text_Data *sd, const char *sig, const char *src)
+_edje_signal_emit(Efl_Ui_Textbox_Data *sd, const char *sig, const char *src)
 {
    edje_object_signal_emit(sd->entry_edje, sig, src);
    edje_object_signal_emit(sd->cursor, sig, src);
@@ -3042,7 +3042,7 @@ _edje_signal_emit(Efl_Ui_Text_Data *sd, const char *sig, const char *src)
 }
 
 static inline Eo *
-_decoration_create(Eo *obj, Efl_Ui_Text_Data *sd,
+_decoration_create(Eo *obj, Efl_Ui_Textbox_Data *sd,
       const char *group_name, Eina_Bool above)
 {
    Eo *ret = NULL;
@@ -3065,7 +3065,7 @@ _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd,
 }
 
 static void
-_create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
+_create_text_cursors(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    sd->cursor = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
    sd->cursor_bidi = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
@@ -3078,7 +3078,7 @@ _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 static Eina_Position2D
-_decoration_calc_offset(Efl_Ui_Text_Data *sd)
+_decoration_calc_offset(Efl_Ui_Textbox_Data *sd)
 {
    Eina_Position2D ret;
    Eina_Position2D text;
@@ -3146,7 +3146,7 @@ _update_text_cursors(Eo *obj)
 }
 
 static void
-_clear_text_selection(Efl_Ui_Text_Data *sd)
+_clear_text_selection(Efl_Ui_Textbox_Data *sd)
 {
    Efl_Ui_Text_Rectangle *r;
 
@@ -3224,7 +3224,7 @@ _update_text_selection(Eo *obj, Eo *text_obj)
 }
 
 static void
-_anchors_free(Efl_Ui_Text_Data *sd)
+_anchors_free(Efl_Ui_Textbox_Data *sd)
 {
    Anchor *an;
 
@@ -3282,7 +3282,7 @@ _anchor_format_parse(const char *item)
 }
 
 static Anchor *
-_anchor_get(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Text_Attribute_Handle *an)
+_anchor_get(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Text_Attribute_Handle *an)
 {
    Anchor *anc;
    Eina_List *i;
@@ -3322,7 +3322,7 @@ _anchor_get(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Text_Attribute_Handle *an)
  * Recreates and updates the anchors in the text.
  */
 static void
-_anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
+_anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Evas_Object *smart, *clip;
    Eina_Iterator *it;
@@ -3398,8 +3398,8 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
                   Eina_List *l;
                   Eina_Rectangle *r;
                   size_t count;
-                  start = efl_ui_text_cursor_create(obj);
-                  end = efl_ui_text_cursor_create(obj);
+                  start = efl_ui_textbox_cursor_create(obj);
+                  end = efl_ui_textbox_cursor_create(obj);
                   efl_text_attribute_factory_attribute_cursors_get(anc->annotation, start, end);
 
                   range = efl_text_cursor_range_geometry_get(start, end);
@@ -3528,7 +3528,7 @@ _decoration_defer(Eo *obj)
 }
 
 static void
-_selection_defer(Eo *obj, Efl_Ui_Text_Data *sd)
+_selection_defer(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    sd->deferred_decoration_selection = EINA_TRUE;
    _decoration_defer(obj);
@@ -3545,20 +3545,20 @@ _decoration_defer_all(Eo *obj)
 }
 
 static void
-_efl_ui_text_changed_cb(void *data, const Efl_Event *event)
+_efl_ui_textbox_changed_cb(void *data, const Efl_Event *event)
 {
    if (efl_invalidated_get(event->object)) return;
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->text_changed = EINA_TRUE;
    sd->cursor_update = EINA_TRUE;
    _update_guide_text(data, sd);
-   efl_event_callback_call(data, EFL_UI_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, EFL_UI_TEXTBOX_EVENT_CHANGED, NULL);
    efl_canvas_group_change(data);
    _decoration_defer(data);
 }
 
 static void
-_efl_ui_text_changed_user_cb(void *data, const Efl_Event *event)
+_efl_ui_textbox_changed_user_cb(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
 
@@ -3571,7 +3571,7 @@ _efl_ui_text_changed_user_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_efl_ui_text_cursor_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_textbox_cursor_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    if (efl_invalidated_get(event->object)) return;
    EFL_UI_TEXT_DATA_GET(data, sd);
@@ -3605,7 +3605,7 @@ _text_position_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_ui_text_selection_start_clear_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_textbox_selection_start_clear_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    if (efl_invalidated_get(event->object)) return;
    Eo *obj = data;
@@ -3626,7 +3626,7 @@ _efl_ui_text_selection_start_clear_cb(void *data, const Efl_Event *event EINA_UN
 }
 
 static void
-_efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_textbox_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    if (efl_invalidated_get(event->object)) return;
    Eo *obj = data;
@@ -3637,14 +3637,14 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
 }
 
 static void
-_efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
+_efl_ui_textbox_move_cb(void *data, Evas *e EINA_UNUSED,
       Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _decoration_defer_all(data);
 }
 
 static void
-_efl_ui_text_item_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+_efl_ui_textbox_item_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
       Efl_Canvas_Textblock_Factory *item_factory)
 {
    if (pd->item_factory) efl_unref(pd->item_factory);
@@ -3652,7 +3652,7 @@ _efl_ui_text_item_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
 }
 
 static Eo *
-_efl_ui_text_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
+_efl_ui_textbox_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd)
 {
    return pd->item_factory;
 }
@@ -3661,8 +3661,8 @@ _efl_ui_text_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
 
 #define STRCMP(X, Y) strncmp((X), (Y), strlen(X))
 
-EOLIAN static Eina_Bool
-_efl_ui_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+static Eina_Bool
+_efl_ui_textbox_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
       const char *part, const char *text)
 {
    if (!STRCMP("efl.text_guide", part))
@@ -3679,8 +3679,8 @@ _efl_ui_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
    return EINA_FALSE;
 }
 
-EOLIAN static const char *
-_efl_ui_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+static const char *
+_efl_ui_textbox_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
       const char *part)
 {
    if (!STRCMP("efl.text_guide", part))
@@ -3707,9 +3707,35 @@ _part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
    return EINA_TRUE;
 }
 
-ELM_PART_OVERRIDE_PARTIAL(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data, _part_is_efl_ui_text_part)
-ELM_PART_OVERRIDE_TEXT_SET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
-ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+//FIXME
+//ELM_PART_OVERRIDE_PARTIAL(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_text_part)
+EOLIAN static Efl_Object *
+_efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_UNUSED, const char *part) 
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   if (_part_is_efl_ui_text_part(obj, part)) return ELM_PART_IMPLEMENT(EFL_UI_TEXT_PART_CLASS, obj, part);
+   return efl_part_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS), part); 
+}
+
+//FIXME
+//ELM_PART_OVERRIDE_TEXT_SET(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
+EOLIAN static void
+_efl_ui_text_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, efl_ui_widget_part_class_get());
+   Efl_Ui_Textbox_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TEXTBOX_CLASS);
+   _efl_ui_textbox_text_set(pd->obj, sd, pd->part, text);
+}
+
+//FIXME
+//ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
+EOLIAN static const char *
+_efl_ui_text_part_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, efl_ui_widget_part_class_get());
+   Efl_Ui_Textbox_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TEXTBOX_CLASS);
+   return _efl_ui_textbox_text_get(pd->obj, sd, pd->part);
+}
 #include "efl_ui_text_part.eo.c"
 
 /* Efl.Part end */
@@ -3718,10 +3744,10 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 
 //EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
-#include "efl_ui_text.eo.c"
+#include "efl_ui_textbox.eo.c"
 
 EOLIAN static Eo *
-_efl_ui_text_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_textbox_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
@@ -3731,10 +3757,10 @@ _efl_ui_text_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    // Then, going to make new theme for these classes? ex) efl/text_async?
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
-   obj = efl_constructor(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_UI_TEXTBOX_ASYNC_CLASS));
 
    _update_text_theme(obj, sd);
    return obj;
 }
 
-#include "efl_ui_text_async.eo.c"
+#include "efl_ui_textbox_async.eo.c"

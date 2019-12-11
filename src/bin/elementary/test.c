@@ -937,9 +937,9 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Anchor2", test_entry_anchor2);
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
    ADD_TEST(NULL, "Entries", "Entry Password", test_entry_password);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Input Field", test_efl_ui_text_inputfield);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Textbox", test_efl_ui_text);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Textbox Input Field", test_efl_ui_text_inputfield);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Textbox Label", test_efl_ui_text_label);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Tags", test_ui_tags);
 
    //------------------------------//
