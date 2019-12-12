@@ -42,16 +42,13 @@ struct documentation_generator
        : scope_size(scope_size) {}
 
 
-   // Returns the number of parameters (values + keys) that a property method requires
+   // Returns the number of keys that a property method requires
    // Specify if you want the Setter or the Getter method.
-   static int property_num_parameters(const ::Eolian_Function *function, ::Eolian_Function_Type ftype)
+   static int property_num_keys(const ::Eolian_Function *function, ::Eolian_Function_Type ftype)
    {
       Eina_Iterator *itr = ::eolian_property_keys_get(function, ftype);
       Eolian_Function_Parameter *pr;
       int n = 0;
-      EINA_ITERATOR_FOREACH(itr, pr) { n++; }
-      eina_iterator_free(itr);
-      itr = ::eolian_property_values_get(function, ftype);
       EINA_ITERATOR_FOREACH(itr, pr) { n++; }
       eina_iterator_free(itr);
       return n;
@@ -125,14 +122,13 @@ struct documentation_generator
            break;
          case ::EOLIAN_PROPERTY:
            {
-             int getter_params = property_num_parameters(function, ::EOLIAN_PROP_GET);
-             int setter_params = property_num_parameters(function, ::EOLIAN_PROP_SET);
+             int getter_nkeys = property_num_keys(function, ::EOLIAN_PROP_GET);
+             int setter_nkeys = property_num_keys(function, ::EOLIAN_PROP_SET);
              std::string short_name = name_helpers::property_managed_name(klass_d, eo_name);
              bool blacklisted = blacklist::is_property_blacklisted(name + "." + short_name);
-             // EO properties with keys, with more than one value, or blacklisted, are not
-             // converted into C# properties.
+             // EO properties with keys or blacklisted are not converted into C# properties.
              // In these cases we refer to the getter method instead of the property.
-             if ((getter_params > 1) || (setter_params > 1) || (blacklisted)) name += ".Get" + short_name;
+             if ((getter_nkeys > 0) || (setter_nkeys > 0) || (blacklisted)) name += ".Get" + short_name;
              else if (name_tail == ".get") name += ".Get" + short_name;
              else if (name_tail == ".set") name += ".Set" + short_name;
              else name += "." + short_name;
