@@ -464,6 +464,61 @@ struct struct_definition_generator
   }
 
   template <typename OutputIterator, typename Context>
+  bool generate_deconstruct_method(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
+  {
+     auto const& indent = current_indentation(context);
+     auto struct_name = binding_struct_name(struct_);
+
+     if (!as_generator(
+         indent << scope_tab << "/// <summary>Unpacks " << struct_name << " into tuple.\n"
+         << indent << scope_tab << "/// <para>Since EFL 1.24.</para>\n"
+         << indent << scope_tab << "/// </summary>\n"
+         << indent << scope_tab << "public void Deconstruct(\n"
+         ).generate(sink, attributes::unused, context))
+       return false;
+
+     // parameters
+     {
+        auto i = 0u;
+        for (auto const& field : struct_.fields)
+          {
+             auto field_name = name_helpers::to_field_name(field.name);
+
+             auto suffix = i == struct_.fields.size() - 1 ? "\n" : ",\n";
+
+             if (!as_generator(
+                 indent << scope_tab << scope_tab << "out " << type << " " << field_name << suffix
+                 ).generate(sink, std::make_tuple(field.type), context))
+               return false;
+
+             ++i;
+          }
+     }
+
+     if (!as_generator(
+         indent << scope_tab << ")\n"
+         << indent << scope_tab << "{\n"
+         ).generate(sink, attributes::unused, context))
+       return false;
+
+     // assigments
+     for (auto const& field : struct_.fields)
+       {
+          auto field_name = name_helpers::to_field_name(field.name);
+
+          if (!as_generator(
+              indent << scope_tab << scope_tab << field_name << " = this." << field_name << ";\n"
+              ).generate(sink, attributes::unused, context))
+            return false;
+       }
+
+     // the end
+     return as_generator(
+             indent << scope_tab << "}\n"
+             ).generate(sink, attributes::unused, context);
+  }
+
+  template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
      EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "struct_definition_generator: " << struct_.cxx_name << std::endl;
@@ -536,6 +591,9 @@ struct struct_definition_generator
             return false;
 
           if (!generate_implicit_operator(struct_, sink, context))
+            return false;
+
+          if (!generate_deconstruct_method(sink, struct_, context))
             return false;
        }
 

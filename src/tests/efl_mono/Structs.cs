@@ -419,6 +419,16 @@ internal class TestStructEquality
         Test.AssertNotEquals(a.GetHashCode(), c.GetHashCode());
         Test.AssertNotEquals(a.GetHashCode(), singleDifferentField.GetHashCode());
     }
+
+#if !MONO
+    public static void test_deconstruct() {
+        var p = new Eina.Position2D(1, 2);
+        var (x, y) = p;
+
+        Test.AssertEquals(x, 1);
+        Test.AssertEquals(y, 2);
+    }
+#endif
 }
 
 internal class TestStructTuples
