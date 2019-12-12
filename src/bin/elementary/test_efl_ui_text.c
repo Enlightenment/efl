@@ -42,7 +42,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    Eo *en;
    char *markup;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                   efl_text_set(efl_added, "Efl Canvas_Layout"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

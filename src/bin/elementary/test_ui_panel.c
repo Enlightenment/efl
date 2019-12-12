@@ -10,7 +10,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    char buf[PATH_MAX] = {0};
    Eo *win, *table, *panel;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                           efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -102,7 +102,7 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    int i;
    Eo *win, *box, *check, *btn, *table, *list, *panel;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                           efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

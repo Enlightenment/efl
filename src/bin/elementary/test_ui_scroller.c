@@ -31,7 +31,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *win, *sc, *sc2, *sc3, *bx, *bx2, *gd, *gd2;
    int i, j;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl Ui Scroller"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
@@ -135,7 +135,7 @@ test_efl_ui_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Eo *win, *sc, *bx;
    int i;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl Ui Scroller Simple"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
@@ -170,7 +170,7 @@ test_efl_ui_scroller_simple2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    Eo *win, *sc, *tb;
    int i;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl Ui Scroller Simple2"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));

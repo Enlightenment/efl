@@ -92,7 +92,7 @@ test_win_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    indicator = _create_indicator();
 
    // FIXME: Resizing window should no cause sizing issues!
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl.Win.Indicator"),
                  efl_gfx_hint_size_max_set(efl_added, EINA_SIZE2D(300, -1)),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
