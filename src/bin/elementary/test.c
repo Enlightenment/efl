@@ -244,6 +244,7 @@ void test_textblock_fit(void *data, Evas_Object *obj, void *event_info);
 void test_label_ellipsis(void *data, Evas_Object *obj, void *event_info);
 void test_label_colors(void *data, Evas_Object *obj, void *event_info);
 void test_label_emoji(void *data, Evas_Object *obj, void *event_info);
+void test_label_variation_sequence(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
@@ -1211,6 +1212,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
    ADD_TEST(NULL, "Text", "Label Colors", test_label_colors);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
+   ADD_TEST(NULL, "Text", "Label Variation Sequnece", test_label_variation_sequence);
    ADD_TEST_EO(NULL, "Text", "Efl.Ui.Textpath", test_ui_textpath);
    ADD_TEST_EO(NULL, "Text", "Efl.Canvas.Textblock style", test_canvas_textblock);
 

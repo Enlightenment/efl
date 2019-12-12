@@ -1,6 +1,6 @@
 /*
  * TODO:
- * * Test different font lodaing mechanisms.
+ * * Test different font loading mechanisms.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -15,6 +15,7 @@
 
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
+#include "evas_buffer_helper.h"
 
 #define TESTS_DIC_DIR TESTS_SRC_DIR"/dicts"
 

@@ -687,7 +687,11 @@ evas_common_font_free(RGBA_Font *fn)
      evas_common_font_int_unref(fi);
    evas_common_font_flush();
    eina_list_free(fn->fonts);
-   if (fn->fash) fn->fash->freeme(fn->fash);
+   if (fn->fash)
+     {
+        fn->fash->freeme(fn->fash);
+        fn->fash = NULL;
+     }
    LKD(fn->lock);
    free(fn);
 }
