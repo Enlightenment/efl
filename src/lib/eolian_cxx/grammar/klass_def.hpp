@@ -1816,7 +1816,7 @@ template <>
 struct is_tuple<attributes::parameter_def> : std::true_type {};
 template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
-  
+
 }
 
 } } }

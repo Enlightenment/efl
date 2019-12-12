@@ -403,6 +403,66 @@ struct struct_internal_definition_generator
 
 struct struct_definition_generator
 {
+  /**
+   * Generates an implicit operator for packing only if the struct has more
+   * than one attribute. Then operator will receive a tuple with the same of
+   * each attribute's type in the same order they were declared.
+   *
+   * Remarks: due to the MCS compiler's limitations, no operator is generated
+   * for structs with more than 4 fields.
+   */
+  template <typename OutputIterator, typename Context>
+  bool generate_implicit_operator(attributes::struct_def const& struct_
+                              , OutputIterator sink
+                              , Context const& context) const
+  {
+     if (struct_.fields.size() <= 1 || struct_.fields.size() > 4)
+       return true;
+
+     auto struct_name = binding_struct_name(struct_);
+     auto const& indent = current_indentation(context);
+
+     if (!as_generator(
+           indent << scope_tab << "/// <summary>Packs tuple into " << struct_name << " object.\n"
+           << indent << scope_tab << "///<para>Since EFL 1.24.</para>\n"
+           << indent << scope_tab << "///</summary>\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!as_generator(
+          indent << scope_tab << "public static implicit operator " << struct_name << "(\n"
+          << indent << scope_tab << scope_tab << "(\n"
+          << ((indent << scope_tab << scope_tab << " " << field_argument_decl) % ",\n") << "\n"
+          << indent << scope_tab << scope_tab << ") tuple)\n"
+          << indent << scope_tab << "{\n"
+        ).generate(sink, struct_.fields, context))
+       return false;
+
+     // object constructor
+     if (!as_generator(
+          indent << scope_tab << scope_tab << "return new " << struct_name << "{\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     for (const auto& field: struct_.fields)
+       {
+          auto field_name = name_helpers::to_field_name(field.name);
+
+          if (!as_generator(
+               indent << scope_tab << scope_tab << scope_tab << field_name << " = tuple." << field_name << ",\n"
+             ).generate(sink, attributes::unused, context))
+            return false;
+       }
+
+     if (!as_generator(
+          indent << scope_tab << scope_tab << "};\n"
+          << indent << scope_tab << "}\n"
+        ).generate(sink, attributes::unused, context))
+       return false;
+
+     return true;
+  }
+
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
@@ -473,7 +533,10 @@ struct struct_definition_generator
                       << *(indent << scope_tab << scope_tab << field_argument_assignment << ";\n")
                       << indent << scope_tab << "}\n\n")
              .generate(sink, std::make_tuple(struct_.fields, struct_name, struct_.fields, struct_.fields), context))
-              return false;
+            return false;
+
+          if (!generate_implicit_operator(struct_, sink, context))
+            return false;
        }
 
      std::string since_line;
@@ -546,9 +609,9 @@ struct struct_definition_generator
               ).generate(sink, attributes::unused, context))
             return false;
        }
-     
-     
-     if (!as_generator(   
+
+
+     if (!as_generator(
              indent << scope_tab << scope_tab << ";\n"
              << indent << scope_tab << "}\n"
           ).generate(sink, attributes::unused, context))
