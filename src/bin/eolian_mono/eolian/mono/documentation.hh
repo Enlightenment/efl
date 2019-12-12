@@ -230,68 +230,84 @@ struct documentation_generator
    static std::string syntax_conversion(std::string text, const Eolian_State *state, bool want_beta)
    {
       std::string new_text, ref;
-      ::Eolian_Doc_Token token;
-      const char *text_ptr = text.c_str();
-      ::eolian_doc_token_init(&token);
       ::Eolian_Doc_Token_Type previous_token_type = ::EOLIAN_DOC_TOKEN_UNKNOWN;
-      while ((text_ptr = ::eolian_documentation_tokenize(text_ptr, &token)) != NULL)
+      ::Eina_List *paragraphs = ::eolian_documentation_string_split(text.c_str());
+      if (!paragraphs) return new_text;
+      ::Eina_List *data = paragraphs;
+      // For every paragraph
+      do
         {
-           std::string token_text, name_tail;
-           char *token_text_cstr = ::eolian_doc_token_text_get(&token);
-           if (token_text_cstr)
+           char *par = (char *)::eina_list_data_get(data);
+           const char *text_ptr = par;
+           ::Eolian_Doc_Token token;
+           ::eolian_doc_token_init(&token);
+           // For every token inside the paragraph
+           while ((text_ptr = ::eolian_documentation_tokenize(text_ptr, &token)) != NULL)
              {
-                token_text = token_text_cstr;
-                free(token_text_cstr);
-                if (token_text.length() > 4)
-                  name_tail = token_text.substr(token_text.length() - 4, 4);
-             }
-           ::Eolian_Doc_Token_Type token_type = ::eolian_doc_token_type_get(&token);
-           switch(token_type)
-           {
-              case ::EOLIAN_DOC_TOKEN_TEXT:
-                // If previous token was a reference and this text token starts with
-                // parentheses, remove them, since the reference will be rendered
-                // with the parentheses already.
-                if ((previous_token_type == ::EOLIAN_DOC_TOKEN_REF) &&
-                    (token_text.substr(0, 2)  == "()"))
-                  token_text = token_text.substr(2, token_text.length() - 2);
-                new_text += token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_REF:
-                ref = ref_conversion(&token, state, name_tail, want_beta);
-                if (ref != "")
+                std::string token_text, name_tail;
+                char *token_text_cstr = ::eolian_doc_token_text_get(&token);
+                if (token_text_cstr)
                   {
-                     if (utils::ends_with(ref, BETA_REF_SUFFIX))
-                       new_text += "<span class=\"text-muted\">" + ref + "</span>";
-                     else
-                       new_text += "<see cref=\"" + ref + "\"/>";
+                     token_text = token_text_cstr;
+                     free(token_text_cstr);
+                     if (token_text.length() > 4)
+                       name_tail = token_text.substr(token_text.length() - 4, 4);
                   }
-                else
-                  // Unresolved references are passed through.
-                  // They will appear in the docs as plain text, without link,
-                  // but at least they won't be removed by DocFX.
-                  new_text += token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_NOTE:
-                new_text += "<b>NOTE:</b>" + token_text.substr(5, token_text.length() - 5);
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_WARNING:
-                new_text += "<b>WARNING:</b>" + token_text.substr(8, token_text.length() - 8);
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_REMARK:
-                new_text += "<b>REMARK:</b>" + token_text.substr(7, token_text.length() - 7);
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_TODO:
-                new_text += "<b>TODO:</b>" + token_text.substr(5, token_text.length() - 5);
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE:
-                new_text += "<c>" + token_text + "</c>";
-                break;
-              default:
-                break;
-           }
-           previous_token_type = token_type;
-        }
+                ::Eolian_Doc_Token_Type token_type = ::eolian_doc_token_type_get(&token);
+                switch(token_type)
+                {
+                   case ::EOLIAN_DOC_TOKEN_TEXT:
+                     // If previous token was a reference and this text token starts with
+                     // parentheses, remove them, since the reference will be rendered
+                     // with the parentheses already.
+                     if ((previous_token_type == ::EOLIAN_DOC_TOKEN_REF) &&
+                         (token_text.substr(0, 2)  == "()"))
+                       token_text = token_text.substr(2, token_text.length() - 2);
+                     new_text += token_text;
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_REF:
+                     ref = ref_conversion(&token, state, name_tail, want_beta);
+                     if (ref != "")
+                       {
+                          if (utils::ends_with(ref, BETA_REF_SUFFIX))
+                            new_text += "<span class=\"text-muted\">" + ref + "</span>";
+                          else
+                            new_text += "<see cref=\"" + ref + "\"/>";
+                       }
+                     else
+                       // Unresolved references are passed through.
+                       // They will appear in the docs as plain text, without link,
+                       // but at least they won't be removed by DocFX.
+                       new_text += token_text;
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_NOTE:
+                     new_text += "<b>NOTE: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_WARNING:
+                     new_text += "<b>WARNING: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_REMARK:
+                     new_text += "<b>REMARK: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_TODO:
+                     new_text += "<b>TODO: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE:
+                     new_text += "<c>" + token_text + "</c>";
+                     break;
+                   default:
+                     break;
+                }
+                previous_token_type = token_type;
+              }
+           // Free this paragraph
+           free(par);
+           // Fetch the next paragraph
+           data = ::eina_list_next(data);
+           // If there's another paragraph afterwards, separate them with a blank line
+           if (data) new_text += "\n\n";
+        } while (data);
+      ::eina_list_free(paragraphs);
       return new_text;
    }
 
