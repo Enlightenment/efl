@@ -273,16 +273,16 @@ struct documentation_generator
                   new_text += token_text;
                 break;
               case ::EOLIAN_DOC_TOKEN_MARK_NOTE:
-                new_text += "NOTE: " + token_text;
+                new_text += "<b>NOTE:</b>" + token_text.substr(5, token_text.length() - 5);
                 break;
               case ::EOLIAN_DOC_TOKEN_MARK_WARNING:
-                new_text += "WARNING: " + token_text;
+                new_text += "<b>WARNING:</b>" + token_text.substr(8, token_text.length() - 8);
                 break;
               case ::EOLIAN_DOC_TOKEN_MARK_REMARK:
-                new_text += "REMARK: " + token_text;
+                new_text += "<b>REMARK:</b>" + token_text.substr(7, token_text.length() - 7);
                 break;
               case ::EOLIAN_DOC_TOKEN_MARK_TODO:
-                new_text += "TODO: " + token_text;
+                new_text += "<b>TODO:</b>" + token_text.substr(5, token_text.length() - 5);
                 break;
               case ::EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE:
                 new_text += "<c>" + token_text + "</c>";
