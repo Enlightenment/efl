@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
 #include <Efl_Ui.h>
 
 static Efl_Ui_Widget*
@@ -15,7 +14,7 @@ _item_add(Eo *box, const Efl_Class *c, int i)
    snprintf(buf, sizeof(buf), "%d - Test %d", i, i%13);
    efl_text_set(il, buf);
 
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(il));
+   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, il);
    switch (i % 5)
      {
       case 0:
@@ -49,7 +48,7 @@ _item_add(Eo *box, const Efl_Class *c, int i)
 }
 
 void test_efl_ui_item(void *data EINA_UNUSED,
-                      Evas_Object *obj EINA_UNUSED,
+                      Efl_Object *obj EINA_UNUSED,
                       void *event_info EINA_UNUSED)
 {
    Eo *win, *box, *o;

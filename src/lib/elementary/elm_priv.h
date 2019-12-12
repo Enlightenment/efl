@@ -167,12 +167,6 @@
 # include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
 
-//FIXME this needs to not use elm_general.h and go to Efl_Ui.h
-# include <elm_general.h>
-# include <efl_text_interactive.eo.h>
-# include <efl_ui_textbox.eo.h>
-# include <efl_ui_textbox_async.eo.h>
-
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;
 extern const char *_efl_model_property_selfw;

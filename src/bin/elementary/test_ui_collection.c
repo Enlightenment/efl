@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
 #include <Efl_Ui.h>
 
 static void
@@ -114,7 +113,7 @@ _add_item(Efl_Ui_Collection *c, Eo *cont)
    snprintf(buf, sizeof(buf), "%d - Test %d", i, i%13);
    efl_text_set(il, buf);
 
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(c));
+   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, c);
    switch (i % 5)
      {
       case 0:
@@ -312,14 +311,14 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
 }
 
 void test_efl_ui_collection_grid(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
+                                   Efl_Object *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
    create_item_container_ui(EFL_UI_GRID_CLASS, EFL_UI_GRID_DEFAULT_ITEM_CLASS, "Efl.Ui.Grid");
 }
 
 void test_efl_ui_collection_list(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
+                                   Efl_Object *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
    create_item_container_ui(EFL_UI_LIST_CLASS, EFL_UI_LIST_DEFAULT_ITEM_CLASS, "Efl.Ui.List");
