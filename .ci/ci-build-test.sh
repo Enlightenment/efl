@@ -2,17 +2,13 @@
 
 set -e
 . .ci/travis.sh
+
+if [ "$1" = "coverity" ] || [ "$1" = "mingw" ] || [ "$1" = "release-ready" ] ; then
+  exit 0
+fi
+
 travis_fold compile_test compile_test
 if [ "$DISTRO" != "" ] ; then
-  if [ "$1" = "coverity" ] ; then
-    exit 0
-  fi
-  if [ "$1" = "mingw" ] ; then
-    exit 0
-  fi
-  if [ "$1" = "release-ready" ] ; then
-    exit 0
-  fi
   docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-example.sh
 else
   exit 0
