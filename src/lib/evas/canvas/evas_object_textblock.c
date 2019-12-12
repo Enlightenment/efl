@@ -139,6 +139,12 @@ static const char o_type[] = "textblock";
 #define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
 #define EINA_INLIST_APPEND(l,i) do { l = (__typeof__(l)) eina_inlist_append(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
 
+/**
+ * @internal
+ * @typedef TEXT_FIT_CONTENT_CONFIG
+ * Configurations used to fit content inside Textblock
+ */
+typedef struct _TEXT_FIT_CONTENT_CONFIG TEXT_FIT_CONTENT_CONFIG;
 
 /**
  * @internal
@@ -420,6 +426,20 @@ typedef struct _User_Style_Entry
    const char *key;
 } User_Style_Entry;
 
+struct _TEXT_FIT_CONTENT_CONFIG
+{
+      unsigned int options;
+      unsigned int min_font_size,max_font_size;
+      unsigned int step_size;
+      unsigned int *p_size_array;
+      size_t size_list_length;
+      Eina_Size2D size_cache[256+1]; /** used hash font sizes 1-255 */
+      Eina_Size2D last_size;
+      int last_size_index;
+      Eina_Bool force_refit;
+      char fit_style[256];
+};
+
 #define _FMT(x) (o->default_format.format.x)
 #define _FMT_INFO(x) (o->default_format.info.x)
 
@@ -495,6 +515,7 @@ struct _Evas_Object_Textblock
       Eina_Hash                       *sources;
       Text_Item_Filter                *text_items; // inlist
    } gfx_filter;
+   TEXT_FIT_CONTENT_CONFIG             fit_content_config;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
    Eina_Bool                           pause_change : 1;
@@ -509,6 +530,7 @@ struct _Evas_Object_Textblock
    Eina_Bool                           multiline : 1;
    Eina_Bool                           wrap_changed : 1;
    Eina_Bool                           auto_styles : 1;
+   Eina_Bool                           fit_in_progress : 1;
 };
 
 struct _Evas_Textblock_Selection_Iterator
@@ -618,6 +640,19 @@ static int _evas_textblock_cursor_text_prepend(Efl_Text_Cursor_Handle *cur, cons
 static void _evas_textblock_cursor_copy(Efl_Text_Cursor_Handle *dst, const Efl_Text_Cursor_Handle *src);
 static void
 _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts, const char *key);
+
+
+/*********Internal fitting Functions and Defines*********/
+int fit_cache_clear(TEXT_FIT_CONTENT_CONFIG *fc,const unsigned int fit_cache_flags);
+int fit_text_block(Evas_Object *eo_obj);
+int fit_fill_internal_list(TEXT_FIT_CONTENT_CONFIG *fc);
+int fit_start_fitting(Evas_Object *eo_obj);
+int fit_finish_fitting(Evas_Object *eo_obj);
+Eina_Bool fit_is_fitting(const Evas_Object *eo_obj);
+const unsigned int FIT_CACHE_CANVAS_SIZE         =    0x0001;
+const unsigned int FIT_CACHE_INTERNAL_SIZE_ARRAY =    0x0002;
+const unsigned int FIT_CACHE_FORCE_REFIT         =    0x0004;
+const unsigned int FIT_CACHE_ALL                 =    0x000F;
 
 /** selection iterator */
 /**
@@ -7369,6 +7404,11 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
                   finalize = EINA_TRUE;
                }
           }
+          /* Extra Style used by fitting configure*/
+          if (*o->fit_content_config.fit_style)
+            {
+               _format_fill(c->obj, c->fmt, o->fit_content_config.fit_style, EINA_FALSE);
+            }
 
         if (finalize)
            _format_finalize(c->obj, c->fmt);
@@ -7463,7 +7503,9 @@ _relayout_if_needed(const Evas_Object *eo_obj, Efl_Canvas_Textblock_Data *o)
    if (obj->delete_me) return EINA_TRUE;
 
    /* XXX const */
-   evas_object_textblock_coords_recalc((Evas_Object *)eo_obj, obj, obj->private_data);
+   if(!fit_is_fitting(eo_obj))
+      evas_object_textblock_coords_recalc((Evas_Object *)eo_obj, obj, obj->private_data);
+
    if (o->formatted.valid)
      {
         return EINA_TRUE;
@@ -7620,6 +7662,10 @@ _efl_canvas_textblock_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Textblock_Da
    _FMT(password) = EINA_FALSE;
    _FMT(ellipsis) = -1;
    _FMT_INFO(bitmap_scalable) = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
+
+   /* Fit default properties*/
+   evas_textblock_fit_size_range_set(eo_obj,1,255);
+   evas_textblock_fit_step_size_set(eo_obj,1);
 
    o->auto_styles = EINA_TRUE;
 
@@ -11311,10 +11357,13 @@ _evas_textblock_changed(Efl_Canvas_Textblock_Data *o, Evas_Object *eo_obj)
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->content_changed = 1;
-   if (o->markup_text)
+   if (!fit_is_fitting(eo_obj))
      {
-        eina_stringshare_del(o->markup_text);
-        o->markup_text = NULL;
+        if (o->markup_text)
+          {
+             eina_stringshare_del(o->markup_text);
+             o->markup_text = NULL;
+          }
      }
 
    // FIXME: emit ONCE after this following checks
@@ -11324,6 +11373,15 @@ _evas_textblock_changed(Efl_Canvas_Textblock_Data *o, Evas_Object *eo_obj)
         _cursor_emit_if_changed(data_obj);
      }
 
+   /*
+      If format changed we need to refit content again.
+      If content already fitting then ignore fitting (fitting cause fall to this callback)
+   */
+   if (!fit_is_fitting(eo_obj))
+     {
+        fit_cache_clear(&o->fit_content_config, FIT_CACHE_ALL);
+        fit_text_block(eo_obj);
+     }
    evas_object_change(eo_obj, obj);
 }
 
@@ -14264,6 +14322,11 @@ evas_object_textblock_free(Evas_Object *eo_obj)
 
    /* remove obstacles */
    _obstacles_free(eo_obj, o);
+   if (o->fit_content_config.p_size_array)
+     {
+        free(o->fit_content_config.p_size_array);
+        o->fit_content_config.p_size_array = NULL;
+     }
 
 #ifdef HAVE_HYPHEN
   /* Hyphenation */
@@ -15350,6 +15413,7 @@ _efl_canvas_textblock_efl_gfx_filter_filter_source_get(const Eo *obj EINA_UNUSED
    return eina_hash_find(pd->gfx_filter.sources, name);
 }
 
+
 static void
 evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
                                     Evas_Object_Protected_Data *obj,
@@ -15406,6 +15470,17 @@ evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
 
         o->formatted.valid = 0;
         o->changed = 1;
+     }
+
+   Evas_Coord x,y,w,h;
+   evas_object_geometry_get(eo_obj, &x, &y, &w, &h);
+   if (
+       (w!=o->fit_content_config.last_size.w || h!=o->fit_content_config.last_size.h) &&
+       (o->fit_content_config.options & TEXTBLOCK_FIT_MODE_ALL) != TEXTBLOCK_FIT_MODE_NONE
+      )
+     {
+        fit_cache_clear(&o->fit_content_config, FIT_CACHE_INTERNAL_SIZE_ARRAY);
+        fit_text_block(eo_obj);
      }
 }
 
@@ -15532,6 +15607,54 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
 done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes,
                                          eo_obj, is_v, was_v);
+}
+
+void fit_style_update(Evas_Object *object, int i_font_size, Eina_Bool disable_ellipsis, Eina_Bool disable_wrap)
+{
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(object, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   memset(fc->fit_style,0,sizeof(fc->fit_style));
+   char * fit_style = fc->fit_style;
+   if (i_font_size >= 0)
+     {
+        char font_size[0xF] = {0};
+        char *pfont = font_size;
+        sprintf(font_size, "font_size=%i ", i_font_size);
+        while (*pfont)
+          {
+             *fit_style = *pfont;
+             pfont++;
+             fit_style++;
+          }
+     }
+
+   if (disable_ellipsis == EINA_TRUE)
+     {
+        *fit_style = ' ';
+        fit_style++;
+        char *p = "ellipsis=2.0";
+        while (*p)
+          {
+             *fit_style = *p;
+             p++;
+             fit_style++;
+          }
+     }
+
+   if (disable_wrap == EINA_TRUE)
+     {
+        *fit_style = ' ';
+        fit_style++;
+        char *p = "wrap=none";
+        while (*p)
+          {
+             *fit_style = *p;
+             p++;
+             fit_style++;
+          }
+     }
+
+  _canvas_text_format_changed(object,o);
 }
 
 static void
@@ -17025,6 +17148,371 @@ _efl_canvas_textblock_async_layout(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Textblock_
    o->layout_th = ecore_thread_run(_text_layout_async_do, _text_layout_async_done,
          NULL, ctx);
    return f;
+}
+/* Fitting Internal Functions*/
+
+int fit_cache_clear(TEXT_FIT_CONTENT_CONFIG *fc, unsigned int fit_cache_flags)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fc, EVAS_ERROR_INVALID_PARAM);
+   if ((fit_cache_flags&FIT_CACHE_CANVAS_SIZE) == FIT_CACHE_CANVAS_SIZE)
+     fc->last_size = EINA_SIZE2D(0, 0);
+   if ((fit_cache_flags&FIT_CACHE_INTERNAL_SIZE_ARRAY) == FIT_CACHE_INTERNAL_SIZE_ARRAY)
+     for(int i = 0 ; i < 255 ; i++) fc->size_cache[i] = EINA_SIZE2D(0,0);
+   if ((fit_cache_flags&FIT_CACHE_FORCE_REFIT) == FIT_CACHE_FORCE_REFIT)
+     fc->force_refit = EINA_TRUE;
+   return EVAS_ERROR_SUCCESS;
+}
+
+int fit_start_fitting(Evas_Object *eo_obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (o->fit_in_progress == EINA_TRUE)
+     return EVAS_ERROR_INVALID_OPERATION;
+
+   o->fit_in_progress = EINA_TRUE;
+   return EVAS_ERROR_SUCCESS;
+}
+
+int fit_finish_fitting(Evas_Object *eo_obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (o->fit_in_progress == EINA_FALSE)
+     return EVAS_ERROR_INVALID_OPERATION;
+
+   o->fit_in_progress = EINA_FALSE;
+   return EVAS_ERROR_SUCCESS;
+}
+
+Eina_Bool fit_is_fitting(const Evas_Object *eo_obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   return o->fit_in_progress;
+}
+
+int fit_text_block(Evas_Object *eo_obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Coord x,y,w,h;
+   Evas_Coord wf_new,hf_new;
+
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+
+   if (fc->options == TEXTBLOCK_FIT_MODE_NONE && !fc->force_refit)
+     return EVAS_ERROR_SUCCESS;
+
+
+   if (fc->options == TEXTBLOCK_FIT_MODE_NONE)
+     {
+        fit_start_fitting(eo_obj);
+        fc->force_refit = 0;
+        fit_style_update(eo_obj,-1, EINA_FALSE, EINA_FALSE);
+        fit_finish_fitting(eo_obj);
+        return EVAS_ERROR_SUCCESS;
+     }
+
+   evas_object_geometry_get(eo_obj, &x, &y, &w, &h);
+
+   if (w > 0 && h > 0)
+     {
+        Eina_Bool b_fit_width = ((fc->options & TEXTBLOCK_FIT_MODE_WIDTH) == TEXTBLOCK_FIT_MODE_WIDTH);
+        Eina_Bool b_fit_height = ((fc->options & TEXTBLOCK_FIT_MODE_HEIGHT) == TEXTBLOCK_FIT_MODE_HEIGHT);
+        //FIXME uncomment condition when style is not warp
+        if ( fc->force_refit || /*(w != fc->last_size.w && b_fit_width) || (h != fc->last_size.h && b_fit_height)*/ EINA_TRUE)
+          {
+             /* Extra Check to reduce recalculate */
+             Eina_Bool b_max_reached = (fc->last_size_index == ((int)fc->size_list_length) - 1);
+             Eina_Bool b_min_reached = (fc->last_size_index == 0);
+             /* 1 - If max font size reached and text block size increased*/
+             if (!fc->force_refit && b_max_reached && ((b_fit_width ? (w >= fc->last_size.w) : EINA_TRUE) && (b_fit_height ? (h >= fc->last_size.h) : EINA_TRUE)))
+               return EVAS_ERROR_SUCCESS;
+             /* 2- If min font size reached and text block size decreased*/
+             if (!fc->force_refit && b_min_reached && ((b_fit_width ? (w <= fc->last_size.w) : EINA_TRUE) && (b_fit_height ? (h <= fc->last_size.h) : EINA_TRUE)))
+               {
+                  /*This is needed to recalculate ellipsis, inside fitting to avoid losing markup_text*/
+                  fit_start_fitting(eo_obj);
+                  _canvas_text_format_changed(eo_obj, o);
+                  fit_finish_fitting(eo_obj);
+                  return EVAS_ERROR_SUCCESS;
+               }
+
+             fit_start_fitting(eo_obj);
+
+             fc->force_refit = EINA_FALSE;
+             fc->last_size.w = w;
+             fc->last_size.h = h;
+
+             int r = fc->size_list_length;
+             int l = 0;
+
+             Eina_Bool bwrap = EINA_FALSE;
+             if (fc->options == TEXTBLOCK_FIT_MODE_WIDTH)
+               {
+                  bwrap = EINA_TRUE;
+               }
+
+             while(r > l)
+               {
+                  int mid = (r + l) / 2;
+                  /*cache font sizes vaules from 0-255 in size_cache array*/
+                  size_t font_size = fc->p_size_array[mid];
+                  if (font_size <= 0xFF && (fc->size_cache[font_size].w != 0 && fc->size_cache[font_size].h != 0))
+                    {
+                        wf_new = fc->size_cache[font_size].w;
+                        hf_new = fc->size_cache[font_size].h;
+                    }
+                  else
+                    {
+                       fit_style_update(eo_obj,fc->p_size_array[mid],EINA_TRUE,bwrap);
+                       Eina_Size2D size = efl_canvas_textblock_size_formatted_get(eo_obj);
+                       wf_new = size.w;
+                       hf_new = size.h;
+                       if (fc->p_size_array[mid]<255)
+                         {
+                             fc->size_cache[font_size].w = wf_new;
+                             fc->size_cache[font_size].h = hf_new;
+                         }
+                    }
+
+                  if (
+                      ((wf_new > w) & ((fc->options & TEXTBLOCK_FIT_MODE_WIDTH) == TEXTBLOCK_FIT_MODE_WIDTH)) ||
+                      ((hf_new > h) & ((fc->options & TEXTBLOCK_FIT_MODE_HEIGHT) == TEXTBLOCK_FIT_MODE_HEIGHT)))
+                    {
+                       r = mid;
+                    }
+                  else
+                    {
+                       l = mid + 1;
+                    }
+                }
+
+                /*Lower bound founded, subtract one to move for nearest value*/
+                fc->last_size_index = MAX(l-1, 0);
+                fit_style_update(eo_obj,fc->p_size_array[fc->last_size_index],(fc->last_size_index != 0) && fc->options != TEXTBLOCK_FIT_MODE_HEIGHT ,EINA_FALSE);
+                fit_finish_fitting(eo_obj);
+          }
+     }
+   return EVAS_ERROR_SUCCESS;
+}
+
+int fit_fill_internal_list(TEXT_FIT_CONTENT_CONFIG *fc)
+{
+   int diff = (fc->max_font_size - fc->min_font_size);
+   if (fc->p_size_array)
+     {
+        free(fc->p_size_array);
+        fc->p_size_array = NULL;
+     }
+   if (diff == 0)
+     {
+        fc->size_list_length = 1;
+        fc->p_size_array = malloc(sizeof(unsigned int) * fc->size_list_length);
+        if (!fc->p_size_array)
+           return EVAS_ERROR_NO_MEMORY;
+        fc->p_size_array[0] = fc->max_font_size;
+        return EVAS_ERROR_SUCCESS;
+     }
+
+   fc->size_list_length = 2 + diff / MAX(fc->step_size, 1);
+   fc->p_size_array = malloc(sizeof(unsigned int) * fc->size_list_length);
+   if (!fc->p_size_array)
+     return EVAS_ERROR_NO_MEMORY;
+
+   size_t i ;
+   for (i = 0 ; i < fc->size_list_length - 1; i++)
+     {
+        fc->p_size_array[i] = fc->min_font_size + i * MAX(fc->step_size, 1);
+     }
+   fc->p_size_array[fc->size_list_length - 1] = fc->max_font_size;
+   fc->last_size_index = -1;
+   return EVAS_ERROR_SUCCESS;
+}
+
+
+
+EAPI int evas_textblock_fit_options_set(Evas_Object *obj,  unsigned int options)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   if (fc->options == options)
+     return EVAS_ERROR_SUCCESS;
+
+   fc->options = options;
+   fit_cache_clear(fc, FIT_CACHE_ALL);
+   fit_text_block(obj);
+   return EVAS_ERROR_SUCCESS;
+}
+
+EAPI int evas_textblock_fit_options_get(const Evas_Object *obj,  unsigned int *p_options)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   if (p_options)
+     *p_options = fc->options;
+   return EVAS_ERROR_SUCCESS;
+}
+
+EAPI int evas_textblock_fit_size_range_set(Evas_Object *obj,  unsigned int min_font_size, unsigned int max_font_size)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+
+   Eina_Bool max_changed = fc->max_font_size != max_font_size;
+   Eina_Bool min_changed = fc->min_font_size != min_font_size;
+
+   /* last_selected_size used for optimization calculations
+    * If last_size_index already recach last element in p_size_array
+    * Skip optimization by setting last_selected_size to -1
+   */
+   int last_selected_size = fc->last_size_index;
+   if (last_selected_size == ((int)fc->size_list_length-1))
+     last_selected_size = -1;
+
+   if (!max_changed && !min_changed)
+     return EVAS_ERROR_SUCCESS;
+
+   if (min_font_size < 0 || max_font_size <0)
+     return EVAS_ERROR_INVALID_PARAM;
+
+   if (max_font_size < min_font_size)
+     return EVAS_ERROR_INVALID_PARAM;
+
+   fc->max_font_size = max_font_size;
+   fc->min_font_size = min_font_size;
+
+   int n_ret = EVAS_ERROR_SUCCESS;
+   n_ret = fit_cache_clear(fc,FIT_CACHE_FORCE_REFIT);
+   if (n_ret) return n_ret;
+   n_ret = fit_fill_internal_list(fc);
+   if (n_ret) return n_ret;
+
+   /* Optimization to reduce calculations
+    * If only max size changed and last fit size index is still valid, then no need to recalculation
+    * Where changing max font size will not change content of p_size_array for sizes < max_size
+   */
+   if (min_changed || (last_selected_size == -1 || last_selected_size > ((int)fc->size_list_length-1)))
+     {
+        n_ret = fit_text_block(obj);
+        if (n_ret) return n_ret;
+     }
+   else
+     {
+        /* Keep fit size index */
+        fc->last_size_index = last_selected_size;
+     }
+   return EVAS_ERROR_SUCCESS;
+}
+
+EAPI int evas_textblock_fit_size_range_get(const Evas_Object *obj,  unsigned int *p_min_font_size, unsigned int *p_max_font_size)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+
+   if (p_min_font_size)
+     *p_min_font_size = fc->min_font_size;
+
+   if (p_max_font_size)
+     *p_max_font_size = fc->max_font_size;
+
+   return EVAS_ERROR_SUCCESS;
+}
+
+EAPI int evas_textblock_fit_step_size_set(Evas_Object *obj,  unsigned int step_size)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   if (fc->step_size == step_size)
+     return EVAS_ERROR_SUCCESS;
+
+   if (step_size == 0)
+     return EVAS_ERROR_INVALID_PARAM;
+
+   fc->step_size = step_size;
+   int n_ret = EVAS_ERROR_SUCCESS;
+   n_ret = fit_cache_clear(fc, FIT_CACHE_FORCE_REFIT);
+   if (n_ret) return n_ret;
+   n_ret = fit_fill_internal_list(fc);
+   if (n_ret) return n_ret;
+   n_ret = fit_text_block(obj);
+   if (n_ret) return n_ret;
+   return EVAS_ERROR_SUCCESS;
+}
+
+EAPI int evas_textblock_fit_step_size_get(const Evas_Object *obj,  unsigned int * p_step_size)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   if (p_step_size)
+     *p_step_size = fc->step_size;
+   return EVAS_ERROR_SUCCESS;
+}
+
+int compareUINT(const void * a, const void * b)
+{
+   unsigned int a_value = *(const unsigned int*)a;
+   unsigned int b_value = *(const unsigned int*)b;
+
+   if(a_value > b_value) return 1;
+   else if(a_value < b_value) return -1;
+   else return 0;
+}
+
+EAPI int evas_textblock_fit_size_array_set(Evas_Object *obj, const unsigned int *p_size_array, size_t size_array_len)
+{
+   int n_ret = EVAS_ERROR_SUCCESS;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   if (size_array_len == 0)
+     return EVAS_ERROR_INVALID_PARAM;
+
+   if (fc->p_size_array)
+     {
+        free(fc->p_size_array);
+        fc->p_size_array = NULL;
+        fc->size_list_length = 0;
+     }
+
+   fc->p_size_array = malloc(sizeof(unsigned int) * size_array_len);
+   if (!fc->p_size_array) return EVAS_ERROR_NO_MEMORY;
+   memcpy(fc->p_size_array,p_size_array,sizeof(unsigned int) * size_array_len);
+   fc->size_list_length = size_array_len;
+
+   fc->last_size_index = -1;
+
+   qsort(fc->p_size_array,fc->size_list_length,sizeof(unsigned int),compareUINT);
+
+   n_ret = fit_cache_clear(fc, FIT_CACHE_FORCE_REFIT);
+   if (n_ret) return n_ret;
+   n_ret = fit_text_block(obj);
+   if (n_ret) return n_ret;
+   return EVAS_ERROR_SUCCESS;
+}
+
+EAPI int evas_textblock_fit_size_array_get(const Evas_Object *obj, unsigned int *p_size_array, size_t *p_size_array_len, size_t passed_array_size)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   if (p_size_array)
+     {
+        size_t num = MIN(passed_array_size,fc->size_list_length);
+        memcpy(p_size_array,fc->p_size_array,sizeof(unsigned int)* num);
+     }
+   if (p_size_array_len)
+     {
+        *p_size_array_len = fc->size_list_length;
+     }
+   return EVAS_ERROR_SUCCESS;
 }
 
 #include "canvas/efl_canvas_textblock.eo.c"

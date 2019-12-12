@@ -4134,6 +4134,32 @@ EFL_START_TEST(evas_textblock_obstacle)
 }
 EFL_END_TEST;
 
+EFL_START_TEST(evas_textblock_fit)
+{
+   START_TB_TEST();
+   Evas_Coord fw, fh,fw_new, fh_new;
+   int n_ret;
+   const char *buf =
+      "This is an example text to demonstrate the textblock object"
+      " with content fit feature.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_resize(tb, 300, 300);
+   evas_object_textblock_size_formatted_get(tb, &fw, &fh);
+   n_ret = evas_textblock_fit_options_set(tb,TEXTBLOCK_FIT_MODE_ALL);
+   fail_if(n_ret != EVAS_ERROR_SUCCESS);
+   n_ret = evas_textblock_fit_size_range_set(tb,1,50);
+   fail_if(n_ret != EVAS_ERROR_SUCCESS);
+   evas_object_textblock_size_formatted_get(tb, &fw_new, &fh_new);
+   fail_if(fw_new == fw && fh_new == fh);
+   unsigned int size_array[3] = {150,200,250};
+   n_ret = evas_textblock_fit_size_array_set(tb,size_array,3);
+   fail_if(n_ret != EVAS_ERROR_SUCCESS);
+   evas_object_textblock_size_formatted_get(tb, &fw, &fh);
+   fail_if(fw_new == fw && fh_new == fh);
+   END_TB_TEST();
+}
+EFL_END_TEST;
+
 #ifdef HAVE_HYPHEN
 static void
 _hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
@@ -4654,6 +4680,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_items);
    tcase_add_test(tc, evas_textblock_delete);
    tcase_add_test(tc, evas_textblock_obstacle);
+   tcase_add_test(tc, evas_textblock_fit);
 #ifdef HAVE_HYPHEN
    tcase_add_test(tc, evas_textblock_hyphenation);
 #endif

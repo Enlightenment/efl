@@ -309,6 +309,238 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(win);
 }
 
+
+
+/*** FIT TEXT **************************************************************/
+enum BUTTON{
+   BUTTON_MODE             = 0,
+   BUTTON_MAX              = 1,
+   BUTTON_MIN              = 2,
+   BUTTON_STEP             = 3,
+   BUTTON_ARRAY            = 4,
+   BUTTON_CONTENT          = 5,
+   BUTTON_STYLE            = 6,
+   BUTTON_ALL              = BUTTON_STYLE+1,
+};
+
+char* BUTTON_STR[BUTTON_ALL] ={
+   "MODE",
+   "MAX",
+   "MIN",
+   "STEP",
+   "ARRAY",
+   "CONTENT",
+   "STYLE",
+};
+
+char *contents[] = {
+   "Hello World",
+   "This is Line<br>THis is other Line",
+   "This text contains <font_size=20 color=#F00>SPECIFIC SIZE</font_size>that does not effected by fit mode"
+   };
+
+char *styles[] = {
+   "DEFAULT='font=sans font_size=30 color=#000 wrap=mixed ellipsis=1.0'",
+   "DEFAULT='font=sans font_size=30 color=#000 wrap=mixed'",
+   "DEFAULT='font=sans font_size=30 color=#000 ellipsis=1.0'",
+   "DEFAULT='font=sans font_size=30 color=#000'",
+   };
+
+char *styles_names[] = {
+   "wrap=<color=#F00>mixed</color> ellipsis=<color=#F00>1.0</color>",
+   "wrap=<color=#F00>mixed</color> ellipsis=<color=#F00>NONE</color>",
+   "wrap=<color=#F00>NONE</color> ellipsis=<color=#F00>1.0</color>",
+   "wrap=<color=#F00>NONE</color> ellipsis=<color=#F00>NONE</color>",
+   };
+
+typedef struct _APP
+{
+   Evas_Object *win, *box, *txtblock,*bg, *boxHor, *boxHor2;
+   Eo *btn[BUTTON_ALL];
+   Eo *lbl_status;
+   char * str;
+   unsigned int i_contnet, i_style;
+} APP;
+APP *app;
+
+char * get_fit_status(Eo * textblock);
+
+static void _btn_clicked(void *data EINA_UNUSED, Eo *obj, void *eventInfo EINA_UNUSED){
+   if (obj == app->btn[BUTTON_MODE])
+     {
+        unsigned int options;
+        evas_textblock_fit_options_get(app->txtblock, &options);
+        if (options == TEXTBLOCK_FIT_MODE_NONE)
+           evas_textblock_fit_options_set(app->txtblock, TEXTBLOCK_FIT_MODE_HEIGHT);
+        else if (options == TEXTBLOCK_FIT_MODE_HEIGHT)
+           evas_textblock_fit_options_set(app->txtblock, TEXTBLOCK_FIT_MODE_WIDTH);
+        else if (options == TEXTBLOCK_FIT_MODE_WIDTH)
+           evas_textblock_fit_options_set(app->txtblock, TEXTBLOCK_FIT_MODE_ALL);
+        else if (options == TEXTBLOCK_FIT_MODE_ALL)
+           evas_textblock_fit_options_set(app->txtblock, TEXTBLOCK_FIT_MODE_NONE);
+     }
+   else if (obj == app->btn[BUTTON_MAX])
+     {
+        unsigned int min, max;
+        evas_textblock_fit_size_range_get(app->txtblock, &min, &max);
+        max -= 5;
+        evas_textblock_fit_size_range_set(app->txtblock, min, max);
+     }
+   else if (obj == app->btn[BUTTON_MIN])
+     {
+        unsigned int min, max;
+        evas_textblock_fit_size_range_get(app->txtblock, &min, &max);
+        min += 5;
+        evas_textblock_fit_size_range_set(app->txtblock, min, max);
+     }
+   else if (obj == app->btn[BUTTON_STEP])
+     {
+        unsigned int step;
+        evas_textblock_fit_step_size_get(app->txtblock, &step);
+        step++;
+        evas_textblock_fit_step_size_set(app->txtblock, step);
+     }
+   else if (obj == app->btn[BUTTON_ARRAY])
+     {
+        unsigned int font_size[] = {10, 50, 100 ,150};
+        evas_textblock_fit_size_array_set(app->txtblock,font_size,4);
+     }
+   else if (obj == app->btn[BUTTON_CONTENT])
+     {
+        app->i_contnet++;
+        if(app->i_contnet>=sizeof(contents)/sizeof(char*))
+           app->i_contnet=0;
+        evas_object_textblock_text_markup_set(app->txtblock,contents[app->i_contnet]);
+     }
+   else if (obj == app->btn[BUTTON_STYLE])
+     {
+        app->i_style++;
+        if(app->i_style>=sizeof(styles)/sizeof(char*))
+           app->i_style=0;
+
+        Evas_Textblock_Style *style = evas_object_textblock_style_get(app->txtblock);
+        evas_textblock_style_set(style,styles[app->i_style]);
+     }
+
+   elm_object_text_set(app->lbl_status, get_fit_status(app->txtblock));
+}
+
+char * get_fit_status(Eo * textblock)
+{
+   static char status[0xFFF];
+   unsigned int options,min,max,step,size_array[256];
+   size_t size_array_len;
+   evas_textblock_fit_options_get(textblock,&options);
+   evas_textblock_fit_size_range_get(textblock,&min,&max);
+   evas_textblock_fit_step_size_get(textblock,&step);
+   evas_textblock_fit_size_array_get(textblock,NULL,&size_array_len,0);
+   if (size_array_len>255)
+      size_array_len = 255;
+   evas_textblock_fit_size_array_get(textblock,size_array,NULL,size_array_len);
+
+   strcpy(status,"Mode : ");
+   if (options == TEXTBLOCK_FIT_MODE_NONE)
+      strcat(status,"MODE_NONE");
+   else if (options == TEXTBLOCK_FIT_MODE_HEIGHT)
+      strcat(status,"MODE_HEIGHT");
+   else if (options == TEXTBLOCK_FIT_MODE_WIDTH)
+      strcat(status,"MODE_WIDTH");
+   else if (options == TEXTBLOCK_FIT_MODE_ALL)
+      strcat(status,"MODE_ALL");
+
+   strcat(status,"<br>");
+   sprintf(status + strlen(status),"Max   : %d<br>",max);
+   sprintf(status + strlen(status),"Min   : %d<br>",min);
+   sprintf(status + strlen(status),"Step  : %d<br>",step);
+   sprintf(status + strlen(status),"Array  : [ ");
+   for (size_t i = 0 ; i < 10 ; i++)
+     {
+        if(i<size_array_len)
+           sprintf(status + strlen(status)," %d,",size_array[i]);
+     }
+
+   if(10<size_array_len)
+      sprintf(status + strlen(status)," ... ");
+   sprintf(status + strlen(status)," ]");
+
+   sprintf(status + strlen(status),"<br>");
+   sprintf(status + strlen(status),"%s",styles_names[app->i_style]);
+
+
+
+   return status;
+}
+
+void
+test_textblock_fit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  app = calloc(sizeof(APP), 1);
+
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   app->win = elm_win_util_standard_add("Main", "App");
+   elm_win_autodel_set(app->win, EINA_TRUE);
+
+   app->box = elm_box_add(app->win);
+   app->boxHor = elm_box_add(app->box);
+   app->boxHor2 = elm_box_add(app->box);
+   app->txtblock = evas_object_textblock_add(app->box);
+   app->bg = elm_bg_add(app->box);
+   elm_bg_color_set(app->bg,255,255,255);
+
+   Evas_Textblock_Style *style = evas_textblock_style_new();
+   evas_textblock_style_set(style,styles[0]);
+   evas_object_textblock_style_set(app->txtblock,style);
+   evas_object_textblock_text_markup_set(app->txtblock,contents[0]);
+
+   elm_box_horizontal_set(app->boxHor, EINA_TRUE);
+   elm_box_horizontal_set(app->boxHor2, EINA_TRUE);
+
+   evas_object_size_hint_weight_set(app->box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(app->box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+
+   evas_object_size_hint_weight_set(app->box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(app->box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   evas_object_show(app->txtblock);
+   evas_object_show(app->bg);
+   evas_object_show(app->box);
+   evas_object_show(app->boxHor);
+   evas_object_show(app->boxHor2);
+
+   elm_box_pack_end(app->box, app->bg);
+   elm_box_pack_end(app->box, app->boxHor);
+   elm_box_pack_end(app->box, app->boxHor2);
+
+   elm_object_content_set(app->bg,app->txtblock);
+
+   elm_win_resize_object_add(app->win, app->box);
+   evas_object_resize(app->win, 320, 480);
+
+   for(int i = 0 ; i < BUTTON_ALL ; i++)
+     {
+        app->btn[i] = elm_button_add(app->boxHor);
+        evas_object_smart_callback_add(app->btn[i], "clicked", _btn_clicked, NULL);
+        elm_object_text_set(app->btn[i], BUTTON_STR[i]);
+        elm_box_pack_end(app->boxHor, app->btn[i]);
+        evas_object_show(app->btn[i]);
+     }
+
+   app->lbl_status = elm_label_add(app->boxHor2);
+   elm_object_text_set(app->lbl_status, get_fit_status(app->txtblock));
+   elm_box_pack_end(app->boxHor2, app->lbl_status);
+   evas_object_show(app->lbl_status);
+
+   evas_object_size_hint_weight_set(app->txtblock, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(app->txtblock, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   evas_object_size_hint_weight_set(app->bg, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(app->bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   evas_object_show(app->win);
+}
+
 /*** Label Wrap **************************************************************/
 void
 test_label_wrap(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)

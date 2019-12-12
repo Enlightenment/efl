@@ -240,6 +240,7 @@ void test_flip_page_eo(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label_slide(void *data, Evas_Object *obj, void *event_info);
 void test_label_wrap(void *data, Evas_Object *obj, void *event_info);
+void test_textblock_fit(void *data, Evas_Object *obj, void *event_info);
 void test_label_ellipsis(void *data, Evas_Object *obj, void *event_info);
 void test_label_colors(void *data, Evas_Object *obj, void *event_info);
 void test_label_emoji(void *data, Evas_Object *obj, void *event_info);
@@ -1206,6 +1207,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label", test_label);
    ADD_TEST(NULL, "Text", "Label Slide", test_label_slide);
    ADD_TEST(NULL, "Text", "Label Wrap", test_label_wrap);
+   ADD_TEST(NULL, "Text", "Textblock Fit", test_textblock_fit);
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
    ADD_TEST(NULL, "Text", "Label Colors", test_label_colors);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);

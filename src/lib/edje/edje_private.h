@@ -1460,6 +1460,9 @@ struct _Edje_Part_Description_Spec_Text
    int            id_text_source; /* -1 if none */
    int            size_range_min;
    int            size_range_max; /* -1 means, no bound. */
+   unsigned int   fit_step;
+   /*FIXME THIS SHOULD BE EINA_LIST*/
+   Eina_List     *fit_size_array;
 
    unsigned char  fit_x; /* resize font size down to fit in x dir */
    unsigned char  fit_y; /* resize font size down to fit in y dir */
