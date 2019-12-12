@@ -455,6 +455,7 @@ internal class TestStructTuples
         Test.AssertEquals(v.Text, "Format");
     }
 
+#if EFL_BETA
     public static void test_complex_fields_assign_conversion() {
         var pos = new Eina.Position2D(1, 2);
         var action = Efl.Ui.SelectionAction.Unknown;
@@ -467,6 +468,7 @@ internal class TestStructTuples
         Test.AssertEquals(attr.Format, format);
         Test.AssertEquals(attr.Item, item);
     }
+#endif
 }
 
 }
