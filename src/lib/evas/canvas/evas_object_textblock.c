@@ -7330,6 +7330,10 @@ _layout_done(Ctxt *c, Evas_Coord *w_ret, Evas_Coord *h_ret)
 
         c->o->obstacle_changed = EINA_FALSE;
      }
+   else
+     {
+        efl_event_callback_call(c->obj, EFL_CANVAS_TEXTBLOCK_EVENT_LAYOUT_FINISHED, NULL);
+     }
 }
 
 static Eina_Bool
@@ -8510,7 +8514,6 @@ _efl_canvas_textblock_efl_text_markup_markup_set(Eo *eo_obj, Efl_Canvas_Textbloc
 {
    ASYNC_BLOCK;
    _evas_object_textblock_text_markup_set(eo_obj, o, text);
-   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -8525,6 +8528,7 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
    /* Stop calls for _evas_textblock_changed for each cursor_text_append or cursor_format_append
     * this should be done once, when markup_prepend finished */
    o->pause_change = EINA_TRUE;
+
    if (text)
      {
         char *s, *p;
@@ -8657,6 +8661,7 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
              p++;
           }
      }
+
    o->pause_change = EINA_FALSE;
    _evas_textblock_changed(o, eo_obj);
 }
@@ -11377,7 +11382,7 @@ _evas_textblock_changed(Efl_Canvas_Textblock_Data *o, Evas_Object *eo_obj)
       If format changed we need to refit content again.
       If content already fitting then ignore fitting (fitting cause fall to this callback)
    */
-   if (!fit_is_fitting(eo_obj))
+   if (!fit_is_fitting(eo_obj) && o->fit_content_config.options != TEXTBLOCK_FIT_MODE_NONE)
      {
         fit_cache_clear(&o->fit_content_config, FIT_CACHE_ALL);
         fit_text_block(eo_obj);
@@ -11406,6 +11411,7 @@ _evas_textblock_cursor_text_append(Efl_Text_Cursor_Handle *cur, const char *_tex
    int len = 0;
 
    if (!cur) return 0;
+   if (!_text || !(*_text)) return 0;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    text = eina_unicode_utf8_to_unicode(_text, &len);
@@ -11465,7 +11471,10 @@ _evas_textblock_cursor_text_append(Efl_Text_Cursor_Handle *cur, const char *_tex
    _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
 
    if (!o->pause_change)
-     _evas_textblock_changed(o, cur->obj);
+     {
+        _evas_textblock_changed(o, cur->obj);
+        efl_event_callback_call(cur->obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
+     }
    n->dirty = EINA_TRUE;
    free(text);
 
@@ -15654,7 +15663,7 @@ void fit_style_update(Evas_Object *object, int i_font_size, Eina_Bool disable_el
           }
      }
 
-  _canvas_text_format_changed(object,o);
+   _canvas_text_format_changed(object,o);
 }
 
 static void
@@ -15806,12 +15815,28 @@ _efl_canvas_textblock_efl_text_text_set(Eo *eo_obj, Efl_Canvas_Textblock_Data *o
       const char *text)
 {
    ASYNC_BLOCK;
+   const char *old_txt = efl_text_get(eo_obj);
+   Eina_Bool was_empty = (!old_txt || !(*old_txt));
+
+   // Nothing to do
+   if (was_empty && (!text || !(*text)))
+     return;
+
+   /*
+    * Reduce changed events to one time emit only, in the appending phase
+   */
+   efl_event_freeze(eo_obj);
    evas_object_textblock_text_markup_set(eo_obj, "");
-   _cursor_text_append(o->cursor, text);
+   efl_event_thaw(eo_obj);
+
+   if (text && *text)
+     _cursor_text_append(o->cursor, text);
+   else if(!was_empty)
+     efl_event_callback_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
+
    if (eo_obj)
      {
         _evas_textblock_changed(o, eo_obj);
-        efl_event_callback_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
      }
 }
 

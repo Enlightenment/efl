@@ -558,7 +558,6 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
    }
    events {
       changed: void; [[Called when canvas text changed ]]
-      attributes,changed: void; [[Called when attributes change]]
       layout,finished: void; [[Called when the object has been layed out]]
       style_insets,changed: void; [[Called when the property @.style_insets changed.]]
    }
