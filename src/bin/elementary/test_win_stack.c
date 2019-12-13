@@ -14,7 +14,7 @@ static void _bt_popto(void *data, Evas_Object *obj, void *event_info);
 static void _bt_pressed(void *data, Evas_Object *obj, void *event_info);
 
 static Evas_Object *
-_win_new(Evas_Object* parent, Evas_Object *stack_top, const char *title)
+_win_new(Evas_Object* parent, const char *title)
 {
    Evas_Object *bg, *bx, *bt, *lb, *win;
 
@@ -87,7 +87,7 @@ _bt_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 
    level++;
    snprintf(buf, sizeof(buf), "Level %i", level);
-   win = _win_new(win, obj, buf);
+   win = _win_new(win, buf);
    efl_ui_win_stack_master_id_set(win, efl_ui_win_stack_id_get(data));
 }
 
