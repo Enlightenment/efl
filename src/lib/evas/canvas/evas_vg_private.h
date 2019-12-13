@@ -15,6 +15,7 @@ typedef struct _Vg_Cache
 {
    Eina_Hash             *vfd_hash;
    Eina_Hash             *vg_entry_hash;
+   Eina_List             *vg_surface_keys;
    int                    ref;
 } Vg_Cache;
 
@@ -154,6 +155,7 @@ Eina_Bool                   evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* 
 Eina_Bool                   evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, int* startframe, int* endframe);
 unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
 Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);
+void *                      evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx);
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);
