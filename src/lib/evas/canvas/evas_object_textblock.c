@@ -14247,7 +14247,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    co->obj = eo_obj;
    evas_object_textblock_text_markup_set(eo_obj, "");
 
-   o->multiline = EINA_FALSE;
+   o->multiline = EINA_TRUE;
 #ifdef BIDI_SUPPORT
    o->inherit_paragraph_direction = EINA_TRUE;
 #endif
