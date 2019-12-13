@@ -406,8 +406,8 @@ struct _Eina_Iterator_Boolean
    Efl_Boolean_Model_Storage_Range *sr;
    Eina_Iterator *infix;
 
-   uint64_t index;
-   uint64_t total;
+   unsigned int index;
+   unsigned int total;
 
    Eina_Bool request;
 };
@@ -423,7 +423,7 @@ _efl_boolean_model_iterator_storage_index_find(Eina_Iterator_Boolean *it)
 
    while (offset < it->sr->length)
      {
-        uint64_t upidx;
+        unsigned int upidx;
 
         upidx = offset >> 3;
 

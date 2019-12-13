@@ -11,8 +11,8 @@ struct _Efl_Filter_Model_Mapping
 {
    EINA_RBTREE;
 
-   uint64_t original;
-   uint64_t mapped;
+   unsigned int original;
+   unsigned int mapped;
 
    EINA_REFCOUNT;
 };
@@ -28,10 +28,10 @@ struct _Efl_Filter_Model_Data
       void *data;
       EflFilterModel cb;
       Eina_Free_Cb free_cb;
-      uint64_t count;
+      unsigned int count;
    } filter;
 
-   uint64_t counted;
+   unsigned int counted;
    Eina_Bool counting_started : 1;
    Eina_Bool processed : 1;
 };
@@ -54,7 +54,7 @@ _filter_mapping_looking_cb(const Eina_Rbtree *node, const void *key,
                            int length EINA_UNUSED, void *data EINA_UNUSED)
 {
    const Efl_Filter_Model_Mapping *n = (const Efl_Filter_Model_Mapping *) node;
-   const uint64_t *k = key;
+   const unsigned int *k = key;
 
    return n->mapped - *k;
 }
@@ -85,7 +85,7 @@ struct _Efl_Filter_Request
    Efl_Filter_Model_Data *pd;
    Efl_Model *parent;
    Efl_Model *child;
-   uint64_t index;
+   unsigned int index;
 };
 
 static Efl_Filter_Model *
@@ -243,7 +243,7 @@ _efl_filter_model_child_removed(void *data, const Efl_Event *event)
    Efl_Filter_Model_Mapping *mapping;
    Efl_Filter_Model_Data *pd = data;
    Efl_Model_Children_Event *ev = event->info;
-   uint64_t removed = ev->index;
+   unsigned int removed = ev->index;
 
    mapping = (void *)eina_rbtree_inline_lookup(pd->mapping,
                                                &removed, sizeof (uint64_t),
@@ -370,10 +370,10 @@ _efl_filter_model_efl_model_children_slice_get(Eo *obj, Efl_Filter_Model_Data *p
 
    for (i = 0; i < count; i++)
      {
-        uint64_t lookup = start + i;
+        unsigned int lookup = start + i;
 
         mapping[i] = (void *)eina_rbtree_inline_lookup(pd->mapping,
-                                                       &lookup, sizeof (uint64_t),
+                                                       &lookup, sizeof (unsigned int),
                                                        _filter_mapping_looking_cb, NULL);
         if (!mapping[i]) goto on_error;
      }
@@ -410,7 +410,7 @@ typedef struct _Efl_Filter_Model_Result Efl_Filter_Model_Result;
 struct _Efl_Filter_Model_Result
 {
    Efl_Filter_Model_Data *pd;
-   uint64_t count;
+   unsigned int count;
    Efl_Model *targets[1];
 };
 
@@ -422,7 +422,7 @@ _efl_filter_model_array_result_request(Eo *o EINA_UNUSED, void *data, const Eina
    Efl_Filter_Model_Data *pd = req->pd;
    unsigned int i, len;
    Eina_Value request = EINA_VALUE_EMPTY;
-   uint64_t pcount = pd->filter.count;
+   unsigned int pcount = pd->filter.count;
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, request)
      {
@@ -465,7 +465,7 @@ static void
 _efl_filter_model_array_result_free(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    Efl_Filter_Model_Result *req = data;
-   uint64_t i;
+   unsigned int i;
 
    for (i = 0; i < req->count; i++)
      efl_unref(req->targets[i]);
