@@ -269,12 +269,45 @@ evas_cache_vg_init(void)
    vg_cache->ref++;
 }
 
+void *
+evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx)
+{
+   //This make a unique key pointer by arguments.
+   Eina_Strbuf *hash_key = eina_strbuf_new();
+   eina_strbuf_append_printf(hash_key, "%p/%d/%d/%d", root, w, h, frame_idx);
+   const char *new_key = eina_strbuf_string_get(hash_key);
+   if (!new_key) return NULL;
+
+   Eina_List *l;
+   char *key;
+   EINA_LIST_FOREACH(vg_cache->vg_surface_keys, l, key)
+     {
+        //Exisiting key!
+        if (!strcmp(key, new_key))
+          {
+             eina_strbuf_free(hash_key);
+             return key;
+          }
+     }
+
+   //New key comes.
+   key = eina_strbuf_string_steal(hash_key);
+   vg_cache->vg_surface_keys = eina_list_append(vg_cache->vg_surface_keys, key);
+   return (void *) key;
+}
+
 void
 evas_cache_vg_shutdown(void)
 {
    if (!vg_cache) return;
    vg_cache->ref--;
    if (vg_cache->ref > 0) return;
+
+   char *key;
+   EINA_LIST_FREE(vg_cache->vg_surface_keys, key)
+     free(key);
+   eina_list_free(vg_cache->vg_surface_keys);
+
    eina_hash_free(vg_cache->vfd_hash);
    eina_hash_free(vg_cache->vg_entry_hash);
    free(vg_cache);
