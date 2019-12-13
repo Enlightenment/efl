@@ -6,7 +6,13 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Text_Markup, Efl.Ui.I18n
 {
    [[This is the Canvas-level text class. This class only takes care of rendering text,
-     if you need user interaction consider the classes in $Efl.Ui.]]
+     if you need user interaction consider the classes in $[Efl.Ui].
+
+     Note: No text will be rendered until a font, a font size and a font color are specified.
+     This can be accomplished using @Efl.Text_Font.font_family, @Efl.Text_Font.font_size and
+     @Efl.Text_Style.normal_color.
+     Alternatively, @.style_apply can be used providing the attributes $font, $font_size and $color.
+   ]]
    methods {
       @property is_empty {
          [[Whether the object is empty (no text) or not.
@@ -80,337 +86,265 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
          }
       }
       style_apply {
-         [[Applies a style to the text object. Applied style attributes override old ones, leaving other attributes
-         unaffected.
-         This is similar to setting individual style attributes using properties like @Efl.Text_Font.font_slant or
-         @Efl.Text_Format.wrap.
+         [[Applies several style attributes at once using a formatting string.
+           Given style attributes override previous values, leaving other attributes unaffected.
+           This is akin to setting individual style attributes using properties like
+           @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap, for example.
 
-         The style can be set as "attribute"="Value".
-         Multible attribute can be set at once separated by space.
+           The formatting string is a whitespace-separated list of $[attribute=value] pairs.
 
-         The following styling attributes are accepted:
+           The following attributes are accepted:
 
-         - Font
-         - Font fallback
-         - Font size
-         - Font source
-         - Font weight
-         - Font style
-         - Font width
-         - Language
-         - Color
-         - Underline Color
-         - Second Underline Color
-         - Underline Dash Color
-         - Outline Color
-         - Shadow Color
-         - First Glow Color
-         - Second Glow Color
-         - Backing Color
-         - Strikethrough Color
-         - Horizontal Align
-         - Vertical Align
-         - Wrap
-         - Left margin
-         - Right margin
-         - Underline
-         - Strikethrough
-         - Backing
-         - Style
-         - Tabstops
-         - Line size
-         - Relative line size
-         - Line gap
-         - Relative line gap
-         - Item
-         - Line fill
-         - Ellipsis
-         - Password
-         - Underline dash width
-         - Underline dash gap
-         - Underline height
+           - $font: Name of the font to use.
+             Default value is empty, meaning that no text will be rendered.
+             Requires $font_size and $font_color.
+             See @Efl.Text_Font.font_family.
 
-         Font
-         This sets the name of the font to be used.
-         font=<font name>
+           - $font_fallbacks: Comma-delimited list of fonts to try if finding the primary font fails.
+             Example: $[font_fallbacks=consolas,courier,monospace].
+             Default value is empty.
+             See @Efl.Text_Font.font_fallbacks.
 
-         Font fallback
-         A comma delimited list of fonts to try if finding the primary font fails.
-         font_fallbacks=<font names>
+           - $font_size: Height of font, in points.
+             Default value is 0.
+             Requires $font and $font_color.
+             See @Efl.Text_Font.font_size.
 
-         Font size
-         This sets the the size of font in points to be used.
-         font_size=<size>
+           - $font_source: Path to the file containing the font to use.
+             Example: $[font_source=/usr/share/fonts/Sans.ttf].
+             Default value is empty.
+             See @Efl.Text_Font.font_source.
 
-         Font source
-         Specify source from which to search for the font.
-         font_source=<source>
+           - $font_weight: Thickness of the font. The value must be one of: $normal, $thin, $ultralight, $extralight,
+             $light, $book, $medium, $semibold, $bold, $ultrabold, $extrabold, $black and $extrablack.
+             Default value is $normal.
+             See @Efl.Text_Font.font_weight.
 
-         Font weight
-         Sets the weight of the font. The value must be one of:
-         "normal"
-         "thin"
-         "ultralight"
-         "extralight"
-         "light"
-         "book"
-         "medium"
-         "semibold"
-         "bold"
-         "ultrabold"
-         "extrabold"
-         "black"
-         "extrablack"
-         font_weight=<weight>
+           - $font_style: Style of the font. The value must be one of: $normal, $oblique and $italic.
+             Default value is $normal.
+             See @Efl.Text_Font.font_slant.
 
-         Font style
-         Sets the style of the font. The value must be one of:
-         "normal"
-         "oblique"
-         "italic"
-         font_style=<style>
+           - $font_width: How wide the font is, relative to its height. The value must be one of:
+             $normal, $ultracondensed, $extracondensed, $condensed, $semicondensed, $semiexpanded, $expanded,
+             $extraexpanded and $ultraexpanded.
+             Default value is $normal.
+             See @Efl.Text_Font.font_weight.
 
-         Font width
-         Sets the width of the font. The value must be one of:
-         "normal"
-         "ultracondensed"
-         "extracondensed"
-         "condensed"
-         "semicondensed"
-         "semiexpanded"
-         "expanded"
-         "extraexpanded"
-         "ultraexpanded"
-         font_width=<width>
+           - $lang: A 2-letter ISO 639-1 language code, $auto (to use the system locale setting) or $none (to disable
+             language support).
+             Example: $[lang=he].
+             Default value is empty.
+             See @Efl.Text_Font.font_lang.
 
-         Language
-         Overrides the language defined in font. For example, lang=he.
-         The value can either be a language text or one of presets:
-         "auto" - Respects system locale settings as language
-         "none" - Disable language support
-         lang=<language>
+           - $color: Color code for the text (See bottom for the complete list of supported codes).
+             Default value is $[rgba(0,0,0,0)] meaning that no text will be rendered.
+             Requires $font and $font_size.
+             See @Efl.Text_Style.normal_color.
 
-         Color Commands <color>:
-         The following formats are accepted:
-         "#RRGGBB"
-         "#RRGGBBAA"
-         "#RGB"
-         "#RGBA"
-         "rgb(r,g,b)"
-         "rgba(r,g,b,a)"
-         "color_name" like "red" (X11 color names)
+           - $underline_color: Color code for the text underline (See bottom for the complete list of supported codes).
+             Default value is $[rgba(0,0,0,0)] meaning that no underline will be rendered.
+             Requires $underline.
+             See @Efl.Text_Style.underline_color.
 
-         Color
-         Sets the color of the text.
-         color=<color>
+           - $underline2_color: Color code for the secondary text underline (See bottom for the complete list of
+             supported codes). Only valid when $[underline=double].
+             Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
+             See @Efl.Text_Style.underline2_color.
 
-         Underline Color
-         Sets the color of the underline.
-         underline_color=<color>
+           - $underline_dash_color: Color code for the dashed underline (See bottom for the complete list of supported
+             codes). Only valid when $[underline=dashed].
+             Default value is $[rgba(0,0,0,0)] meaning that dashed underline will not be rendered.
+             See @Efl.Text_Style.underline_dashed_color.
 
-         Second Underline Color
-         Sets the color of the second line of underline(when using underline mode "double").
-         underline2_color=<color>
+           - $outline_color: Color code for the text outline (See bottom for the complete list of supported codes).
+             Only valid when the $style attribute includes an outline.
+             Default value is $[rgba(0,0,0,0)] meaning that no outline will be rendered.
+             See @Efl.Text_Style.outline_color.
 
-         Underline Dash Color
-         Sets the color of dashed underline.
-         underline_dash_color=<color>
+           - $shadow_color: Color code for the text shadow (See bottom for the complete list of supported codes).
+             Only valid when the $style attribute includes a shadow.
+             Default value is $[rgba(0,0,0,0)] meaning that no shadow will be rendered.
+             See @Efl.Text_Style.shadow_color.
 
-         Outline Color
-         Sets the color of the outline of the text.
-         outline_color=<color>
+           - $glow_color: Color code for the glow component of the text (See bottom for the complete list of supported
+             codes). Only valid when the $style attribute includes a glow.
+             Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
+             See @Efl.Text_Style.glow_color.
 
-         Shadow Color
-         Sets the color of the shadow of the text.
-         shadow_color=<color>
+           - $glow2_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
+             list of supported codes). Only valid when the $style attribute includes a glow.
+             Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
+             See @Efl.Text_Style.glow2_color.
 
-         First Glow Color
-         Sets the first color of the glow of text.
-         glow_color=<color>
+           - $backing_color: Color code for the background of the text (See bottom for the complete list of supported
+             codes). Use a fully transparent color to disable the background.
+             Default value is $[rgba(0,0,0,0)] meaning that no backing will be rendered.
+             Requires $backing.
+             See @Efl.Text_Style.backing_color.
 
-         Second Glow Color
-         Sets the second color of the glow of text.
-         glow2_color=<color>
+           - $strikethrough_color: Color code for the line striking through the text (See bottom for the complete list
+             of supported codes). Only valid when $[strikethrough=on]
+             Default value is $[rgba(0,0,0,0)] meaning that no strike-through line will be rendered.
+             See @Efl.Text_Style.strikethrough_color.
 
-         Backing Color
-         Sets a background color for text.
-         backing_color=<color>
+           - $align: Horizontal alignment of the text. The value can either be a decimal number ($[0.0] means "left"
+             and $[1.0] means "right"), a percentage ($[0%] means "left" and $[100%] means "right") or one of:
+             $auto (Respects LTR/RTL settings), $locale (Respects language direction settings), $center
+             (Centers the text in the line), $middle (Alias for $center), $left (Puts the text at the left of the line),
+             $right (Puts the text at the right of the line), $start (Alias for $auto), $end (Puts the text at the
+             opposite side of LTR/RTL settings).
+             Default value is $auto.
+             See @Efl.Text_Format.horizontal_align.
 
-         Strikethrough Color
-         Sets the color of text that is striked through.
-         strikethrough_color=<color>
+           - $valign: Vertical alignment of the text. The value can either be a decimal number ($[0.0] means "top"
+             and $[1.0] means "bottom"), a percentage ($[0%] means "top" and $[100%] means "bottom") or one of:
+             $top (Puts the text at the top of the text box), $center (Puts the text at the middle of the text box),
+             $middle (Alias for $center), $bottom (Puts the text at the bottom of the text box),
+             $baseline (Puts the text's baseline at the middle of the text box), $base (Alias for $baseline).
+             Default value is $baseline.
+             See @Efl.Text_Format.vertical_align.
 
-         Horizontal Align
-         Sets the horizontal alignment of the text. The value can either be a number, a percentage or one of several presets:
-         "auto" - Respects LTR/RTL settings
-         "locale" - Respects locale(language) direction settings
-         "center" - Centers the text in the line
-         "middle" - Alias for "center"
-         "left" - Puts the text at the left of the line
-         "right" - Puts the text at the right of the line
-         "start" - Respects LTR/RTL settings. It is same with "auto"
-         "end" - Puts the text at the opposite side of LTR/RTL settings
-         <number> - A number between 0.0 and 1.0 where 0.0 represents "left" and 1.0 represents "right"
-         <number>% - A percentage between 0% and 100% where 0% represents "left" and 100% represents "right"
-         align=<value or preset>
+           - $wrap: Wrapping policy of the text. The value must be one of the following: $word (Only wraps lines at
+             word boundaries), $char (Wraps at any character), $mixed (Wraps at word boundaries if possible,
+             at any character if not), $hyphenation (Hyphenate if possible, otherwise try wrapping at word boundaries
+             or at any character) or $none to disable wrapping.
+             Default value is $none.
+             See @Efl.Text_Format.wrap.
 
-         Vertical Align
-         Sets the vertical alignment of the text.
-         The value can either be a number or one of the following presets:
-         "top" - Puts text at the top of the line
-         "center" - Centers the text in the line
-         "middle" - Alias for "center"
-         "bottom" - Puts the text at the bottom of the line
-         "baseline" - Baseline
-         "base" - Alias for "baseline"
-         <number> - A number between 0.0 and 1.0 where 0.0 represents "top" and 1.0 represents "bottom"
-         <number>% - A percentage between 0% and 100% where 0% represents "top" and 100% represents "bottom"
-         valign=<value or preset>
-         See explanation of baseline at: https://en.wikipedia.org/wiki/Baseline_%28typography%29
+           - $left_margin: Distance in pixels from the left side of the text block to the beginning of the text
+             (inner margin). The value can be a number (to set the margin), or a number preceded by $[+] or $[-]
+             to increment or decrement the existing margin value. $reset is also accepted, to set the margin to
+             0 pixels.
+             Default value is $[0].
+             Examples: $[left_margin=10], $[left_margin=+10], $[left_margin=reset].
 
-         Wrap
-         Sets the wrap policy of the text. The value must be one of the following:
-         "word" - Only wraps lines at word boundaries
-         "char" - Wraps at any character
-         "mixed" - Wrap at words if possible, if not at any character
-         "hyphenation" - Hyphenate if possible, if not wrap at words if possible, if not at any character
-         "none" - Don't wrap, this is the default value
-         wrap=<value or preset>
+           - $right_margin: Distance in pixels from the right side of the text block to the beginning of the text
+             (inner margin). The value can be a number (to set the margin), or a number preceded by $[+] or $[-]
+             to increment or decrement the existing margin value. $reset is also accepted, to set the margin to
+             0 pixels.
+             Default value is $[0].
+             Examples: $[right_margin=10], $[right_margin=+10], $[right_margin=reset].
 
-         Left margin
-         Sets the left margin of the text (in pixel). The value can be a number, an increment, decrement or "reset":
-         +<number> - Increments existing left margin by <number>
-         -<number> - Decrements existing left margin by <number>
-         <number> - Sets left margin to <number>
-         "reset" - Sets left margin to 0
-         left_margin=<value or reset>
+           - $underline: Style of the underline. The value must be one of $off (No underlining),
+             $single (A single line under the text), $on (Alias for $single), $double (Two lines under the text),
+             $dashed (A dashed line under the text).
+             Default value is $off.
+             Requires either $underline_color, $underline2_color or $underline_dash_color.
+             See @Efl.Text_Style.underline_type.
 
-         Right margin
-         Sets the right margin of the text (in pixel). The value can be a number, an increment, decrement or "reset":
-         +<number> - Increments existing right margin by <number>
-         -<number> - Decrements existing right margin by <number>
-         <number> - Sets left margin to <number>
-         "reset" - Sets left margin to 0
-         right_margin=<value or reset>
+           - $strikethrough: Enables crossed-out text. Possible values are $on and $off.
+             Default value is $off.
+             Requires $strikethrough_color.
+             See @Efl.Text_Style.strikethrough_type.
 
-         Underline
-         Sets if and how a text will be underlined. The value must be one of the following:
-         "off" - No underlining
-         "single" - A single line under the text
-         "on" - Alias for "single"
-         "double" - Two lines under the text
-         "dashed" - A dashed line under the text
-         underline=off/single/on/double/dashed
+           - $backing: Enables background color for the text. Possible values are $on and $off.
+             Default value is $off.
+             Requires $backing_color.
+             See @Efl.Text_Style.backing_type.
 
-         Strikethrough
-         Sets if the text will be striked through. The value must be one of the following:
-         "off" - No strikethrough
-         "on" - Strikethrough
-         strikethrough=on/off
+           - $style: Controls a number of decorations around the text, like shadow, outline and glow, including
+             combinations of them. Possible values are $plain (No decoration, alias for $off and $none),
+             $shadow, $outline, $soft_outline, $outline_shadow, $outline_soft_shadow, $glow (alias for $soft_outline),
+             $far_shadow, $soft_shadow and $far_soft_shadow.
+             All values involving a shadow accept a second parameter, separated by a comma, to indicate the shadow
+             direction. Valid positions are $bottom_right, $bottom, $bottom_left, $left, $top_left, $top, $top_right
+             and $right.
+             Default value is $plain.
+             Requires either $shadow_color, $glow_color or $outline_color.
+             Examples: $[style=outline], $[style=shadow,bottom_right], $[style=outline_shadow,bottom].
+             See @Efl.Text_Style.effect_type and @Efl.Text_Style.shadow_direction.
 
-         Backing
-         Sets if the text will have background color enabled or disabled. The value must be one of the following:
-         "off" - No backing
-         "on" - Backing
-         backing=on/off
+           - $tabstops: Size (in pixels) of the tab character. The value must be a number greater than one.
+             Default value is $[32].
+             See @Efl.Text_Format.tabstops.
 
-         Style
-         Sets the style of the text. The value must be a string composed of two comma separated parts.
-         The first part of the value sets the appearance of the text, the second the position.
-         The first part may be any of the following values:
-         "plain"
-         "off" - Alias for "plain"
-         "none" - Alias for "plain"
-         "shadow"
-         "outline"
-         "soft_outline"
-         "outline_shadow"
-         "outline_soft_shadow"
-         "glow"
-         "far_shadow"
-         "soft_shadow"
-         "far_soft_shadow" The second part may be any of the following values:
-         "bottom_right"
-         "bottom"
-         "bottom_left"
-         "left"
-         "top_left"
-         "top"
-         "top_right"
-         "right"
-         style=<appearance>,<position>
+           - $linesize: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
+             $[0] would render all lines on top of each other (However, this value will be ignored if it results in
+             overlapping lines of text).
+             Setting this value sets $linerelsize to $[0%] (disables it).
+             Default value is $[0].
 
-         Tabstops
-         Sets the size (in pixel) of the tab character. The value must be a number greater than one.
-         tabstops=<number>
+           - $linerelsize: Distance (in percentage over the natural line height) from the baseline of one line of
+             text to the next. A value of $[100%] does not have any impact, smaller values render lines closer together
+             and bigger values render them further apart.
+             Setting this value sets $linesize to $[0] (disables it).
+             Default value is $[0%].
 
-         Line size
-         Sets the size (in pixel) of line of text. The value should be a number.
-         Setting this value sets linerelsize to 0%!
-         linesize=<number>
+           - $linegap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
+             next. Setting this value sets $linerelgap to $[0%] (disables it).
+             Default value is $[0].
+             See @Efl.Text_Format.linegap.
 
-         Relative line size
-         Percentage indicating the wanted size of the line relative to the calculated size.
-         Setting this value sets linesize to 0!
-         linerelsize=<number>%
+           - $linerelgap: Additional empty space (in percentage over the natural line height) between the bottom of
+             one line of text and the top of the next.
+             Setting this value sets $linegap to $[0] (disables it).
+             Default value is $[0%].
+             See @Efl.Text_Format.linerelgap.
 
-         Line gap
-         Sets the size (in pixel) of the line gap in text (distance between lines). The value should be a number.
-         Setting this value sets linerelgap to 0%!
-         linegap=<number>
+           - $linefill: An alternate way to specify the $linesize as a percentage of the canvas height.
+             A value of $[100%] means that a single line fills the canvas, whereas $[25%] means that 4 lines
+             fit in the same height.
+             When both $linefill and $linesize are specified the one resulting in the smallest line size is used.
+             Default value is $[0].
 
-         Relative line gap
-         Sets the relative size of the line gap in text based calculated size. The value must be a percentage.
-         Setting this value sets linegap to 0!
-         linerelgap=<number>%
+           - $ellipsis: Controls automatic addition of ellipsis "..." to replace text which cannot be shown.
+             The value must be a number indicating the position of the ellipsis inside the visible text.
+             $[0.0] means the beginning of the text, $[1.0] means the end of the text, and values in between
+             mean the proportional position inside the text.
+             Any value smaller than 0 or greater than 1 disables ellipsis.
+             Default value is $[-1].
+             Examples: $[ellipsis=0.5
+             See @Efl.Text_Format.ellipsis.
 
-         Line fill
-         Sets the size of the line fill in text. The value must be a percentage (how much line fill its canvas).
-         For example setting value to 100%, means the one line will fill it canvas.
-         linefill=<number>%
+           - $password: Enabling this causes all characters to be replaced by $replacement_char.
+             This is useful for password input boxes.
+             Value must be either $on or $off.
+             Default value is $[off].
+             Requires $replacement_char.
+             See @Efl.Text_Format.password.
 
-         Ellipsis
-         Sets ellipsis mode. The value should be a number.
-         Any value smaller than 0.0 or greater than 1.0 disables ellipsis.
-         A value of 0 means ellipsizing the leftmost portion of the text first, 1 on the other hand the rightmost portion.
-         ellipsis=<number>
+           - $replacement_char: Character to use instead of the actual characters when $password is $on.
+             Default value is empty, meaning that no replacement will take place.
+             Requires $password.
+             Examples: $[replacement_char=*].
+             See @Efl.Text_Format.replacement_char.
 
-         Password
-         Sets if the text is being used for passwords.
-         Enabling this causes all characters to be substituted for '*'. Value must be one of the following:
-         "on" - Enable
-         "off" - Disable
-         password=on/off
+           - $underline_dash_width: Length (in pixels) of the dashes when $underline is $dashed.
+             Default value is $[6].
+             See @Efl.Text_Style.underline_dashed_width.
 
-         Underline dash width
-         Sets the width of the underline dash (in pixel). The value should be a number.
-         underline_dash_width=<number>
+           - $underline_dash_gap: Length (in pixels) of the gaps between the dashes when $underline is $dashed.
+             Default value is $[2].
+             See @Efl.Text_Style.underline_dashed_gap.
 
-         Underline dash gap
-         Sets the gap of the underline dash (in pixel). The value should be a number.
-         underline_dash_gap=<number>
+           - $underline_height: Width (in pixels) of the single underline when $underline is $single.
+             Default value is $[1].
+             See @Efl.Text_Style.underline_height.
 
-         Underline height
-         Sets the height of the single underline (in pixel). The value should be a floating number.
-         underline_height=<floatingnumber>
+           - $gfx_filter: Experimental filter name. See @Efl.Gfx.Filter for more information.
 
-         Gfx Filter
-         Experimental filter, see efl_gfx_filter for more information.
-         gfx_filter='filter name'
+           Color codes: Colors can be specified using any of the following formats:
+           $[#RRGGBB], $[#RRGGBBAA], $[#RGB], $[#RGBA], $[rgb(r,g,b)], $[rgba(r,g,b,a)].
+           Additionally, X11 color names like $red or $blanchedalmond can be used.
+           See https://en.wikipedia.org/wiki/X11_color_names for the full list.
          ]]
 
          params {
-            @in style: string; [[A whitespace-separated list of $[property=value] pairs, for example, $[font=sans font_size=30].]]
+            @in style: string; [[A whitespace-separated list of $[attribute=value] pairs, for example,
+                                 $[font=sans font_size=30 color=white].]]
          }
       }
       @property all_styles {
-         [[A string representing the complete set of styles applied to this text object.
+         [[A string representing the complete set of attributes applied to this text object.
            This includes the default attributes plus any additional style applied with @.style_apply
-           or individual style properties like @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap.]]
+           or individual style properties like @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap.
+
+           See @.style_apply for the description of all attributes.
+         ]]
          get {}
          values {
-            style: string; [[A whitespace-separated list of $[property=value] pairs, for example,
-                                 $[font=sans size=30]. Do not free.]]
+            style: string; [[A whitespace-separated list of $[attribute=value] pairs, for example,
+                             $[font=sans font_size=30 color=white].]]
          }
       }
       @property size_formatted {
