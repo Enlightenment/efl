@@ -369,7 +369,7 @@ _efl_canvas_vg_object_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Da
 
    /* default root node */
    pd->obj = obj;
-   pd->root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, eo_obj);
+   pd->root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
@@ -380,6 +380,12 @@ static Efl_Object *
 _efl_canvas_vg_object_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Object_Data *pd)
 {
    Evas *e = evas_object_evas_get(obj);
+
+   /* Container must have a set parent after construction.
+      efl_add_ref() with a parent won't work this case 
+      because container needs some jobs in overriding parent_set()
+      after proper intialization. */
+   efl_parent_set(pd->root, obj);
 
    // TODO: If we start to have to many Evas_Object_VG per canvas, it may be nice
    // to actually have one event per canvas and one array per canvas to.
