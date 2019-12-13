@@ -81,7 +81,8 @@ efl_mono_src = [
       'Value.cs',
       'ValueEolian.cs',
       'Inheritance.cs',
-      'Hash.cs'
+      'Hash.cs',
+      'List.cs',
 ]
 
 if get_option('dotnet')

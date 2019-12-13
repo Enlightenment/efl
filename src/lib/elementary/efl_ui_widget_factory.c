@@ -279,6 +279,10 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
      {
         Efl_Ui_Widget *w = NULL;
         Eina_Value r;
+        Evas *e;
+
+        e = evas_object_evas_get(obj);
+        evas_event_freeze(e);
 
         eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
 
@@ -286,10 +290,18 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
           {
              w = _efl_ui_widget_create(obj, pd->klass, pd->parenting_widget, model);
 
-             if (!w) return efl_loop_future_rejected(obj, ENOMEM);
+             if (!w)
+               {
+                  evas_event_thaw(e);
+                  evas_event_thaw_eval(e);
+                  return efl_loop_future_rejected(obj, ENOMEM);
+               }
              eina_value_array_append(&r, w);
           }
         eina_iterator_free(models);
+
+        evas_event_thaw(e);
+        evas_event_thaw_eval(e);
 
         return efl_loop_future_resolved(obj, r);
      }

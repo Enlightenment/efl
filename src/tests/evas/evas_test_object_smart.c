@@ -1,6 +1,6 @@
 /*
  * TODO:
- * * Test different font lodaing mechanisms.
+ * * Test different font loading mechanisms.
  */
 
 #ifdef HAVE_CONFIG_H

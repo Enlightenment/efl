@@ -13,12 +13,6 @@
 #include <Eio.h>
 #include <stdio.h>
 
-//FIXME this can go away when efl_ui_text doesn't need elm_general
-# include <elm_general.h>
-# include <efl_text_interactive.eo.h>
-# include <efl_ui_textbox.eo.h>
-# include <efl_ui_textbox_async.eo.h>
-
 #define NUM_ITEMS 400
 
 typedef struct _List_Scroll_Data {

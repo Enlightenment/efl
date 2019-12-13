@@ -1,25 +1,5 @@
 #include "edje_private.h"
 
-static double
-_edje_part_recalc_single_textblock_scale_range_adjust(Edje_Part_Description_Text *chosen_desc, double base_scale, double scale)
-{
-   double size, min, max;
-
-   if (chosen_desc->text.size == 0)
-     return scale;
-
-   min = base_scale * chosen_desc->text.size_range_min;
-   max = chosen_desc->text.size_range_max * base_scale;
-   size = chosen_desc->text.size * scale;
-
-   if ((size > max) && (max > 0))
-     scale = max / (double)chosen_desc->text.size;
-   else if (size < min)
-     scale = min / (double)chosen_desc->text.size;
-
-   return scale;
-}
-
 /*
  * Legacy function for min/max calculation of textblock part.
  * It can't calculate min/max properly in many cases.
@@ -528,7 +508,6 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
    if (chosen_desc)
      {
-        Eina_Size2D size;
 
         if (ep->part->scale)
           evas_object_scale_set(ep->object, TO_DOUBLE(sc));
@@ -539,76 +518,28 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
           {
              if ((chosen_desc->text.fit_x) || (chosen_desc->text.fit_y))
                {
-                  double base_s = 1.0;
-                  double orig_s;
-                  double s = base_s;
+                  unsigned int size_array[255];
+                  size_t size_array_len = 0;
+                  Eina_List *l;
+                  unsigned int *value;
+                  EINA_LIST_FOREACH(chosen_desc->text.fit_size_array, l, value)
+                    {
+                       size_array[size_array_len++] = *value;
+                    }
+                 unsigned int mode = TEXTBLOCK_FIT_MODE_NONE;
 
-                  if (ep->part->scale) base_s = TO_DOUBLE(sc);
-                  efl_gfx_entity_scale_set(ep->object, base_s);
-                  size = efl_canvas_textblock_size_native_get(ep->object);
-
-                  orig_s = base_s;
-                  /* Now make it bigger so calculations will be more accurate
-                   * and less influenced by hinting... */
-                  {
-                     orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
-                                                                                    orig_s * TO_INT(params->eval.w) / size.w);
-                     efl_gfx_entity_scale_set(ep->object, orig_s);
-                     size = efl_canvas_textblock_size_native_get(ep->object);
-                  }
                   if (chosen_desc->text.fit_x)
-                    {
-                       if (size.w > 0)
-                         {
-                            s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
-                                                                                      orig_s * TO_INT(params->eval.w) / size.w);
-                            efl_gfx_entity_scale_set(ep->object, s);
-                            efl_canvas_textblock_size_native_get(ep->object);
-                         }
-                    }
+                    mode |= TEXTBLOCK_FIT_MODE_WIDTH;
                   if (chosen_desc->text.fit_y)
+                    mode |= TEXTBLOCK_FIT_MODE_HEIGHT;
+                  evas_textblock_fit_options_set(ep->object, mode);
+                  evas_textblock_fit_step_size_set(ep->object, chosen_desc->text.fit_step);
+                  if ( chosen_desc->text.size_range_min || chosen_desc->text.size_range_max)
+                     evas_textblock_fit_size_range_set(ep->object, chosen_desc->text.size_range_min,  chosen_desc->text.size_range_max);
+                  if (size_array_len>0)
                     {
-                       if (size.h > 0)
-                         {
-                            double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
-                                                                                                 orig_s * TO_INT(params->eval.h) / size.h);
-                            /* If we already have X fit, restrict Y to be no bigger
-                             * than what we got with X. */
-                            if (!((chosen_desc->text.fit_x) && (tmp_s > s)))
-                              {
-                                 s = tmp_s;
-                              }
-
-                            efl_gfx_entity_scale_set(ep->object, s);
-                            efl_canvas_textblock_size_native_get(ep->object);
-                         }
+                       evas_textblock_fit_size_array_set(ep->object,size_array,size_array_len);
                     }
-
-                  /* Final tuning, try going down 90% at a time, hoping it'll
-                   * actually end up being correct. */
-                  {
-                     int i = 5;   /* Tries before we give up. */
-                     Eina_Size2D size;
-                     size = efl_canvas_textblock_size_native_get(ep->object);
-
-                     /* If we are still too big, try reducing the size to
-                      * 95% each try. */
-                     while ((i > 0) &&
-                            ((chosen_desc->text.fit_x && (size.w > TO_INT(params->eval.w))) ||
-                             (chosen_desc->text.fit_y && (size.h > TO_INT(params->eval.h)))))
-                       {
-                          double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, s * 0.95);
-
-                          /* Break if we are not making any progress. */
-                          if (EQ(tmp_s, s))
-                            break;
-                          s = tmp_s;
-
-                          efl_gfx_entity_scale_set(ep->object, s);
-                          size = efl_canvas_textblock_size_native_get(ep->object);
-                          i--;
-                       }
-                  }
                }
 
              if ((ed->file->efl_version.major >= 1) && (ed->file->efl_version.minor >= 19))

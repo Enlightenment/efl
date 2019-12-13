@@ -219,7 +219,7 @@ _win_del(void *data, const Efl_Event *ev EINA_UNUSED)
    /* only free pointer if the other window has already been freed */
    if (!p_data->win)
      free(p_data);
-   efl_unref(win);
+   efl_del(win);
    printf("window is deleted\n");
 }
 
@@ -232,7 +232,7 @@ _panel_win_del(void *data, const Efl_Event *ev EINA_UNUSED)
    /* only free pointer if the other window has already been freed */
    if (!p_data->win)
      free(p_data);
-   efl_unref(win);
+   efl_del(win);
    printf("window is deleted\n");
 }
 
@@ -241,14 +241,14 @@ test_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 {
    efl_ui_popup_data *p_data = (efl_ui_popup_data*)calloc(1, sizeof(efl_ui_popup_data));
 
-   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                      efl_text_set(efl_added, "Efl.Ui.Popup"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_event_callback_add(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _win_del, p_data);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
-   Eo *panel_win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   Eo *panel_win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                            efl_text_set(efl_added, "Efl.Ui.Popup Panel"),
                            efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_event_callback_add(panel_win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _panel_win_del, p_data);
@@ -360,7 +360,7 @@ test_ui_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 {
    char buf[PATH_MAX];
 
-   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                      efl_text_set(efl_added, "Efl.Ui.Popup.Alert"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -515,7 +515,7 @@ _alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 test_ui_scroll_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                      efl_text_set(efl_added, "Efl.Ui.Popup.Alert.Scroll"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -898,7 +898,7 @@ _alert_text_case14_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 test_ui_text_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                      efl_text_set(efl_added, "Efl.Ui.Popup.Alert.Text"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -1008,7 +1008,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    char buf[PATH_MAX];
 
-   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                      efl_text_set(efl_added, "Efl.Ui.Popup.Anchor"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_event_callback_add(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _win_del, p_data);

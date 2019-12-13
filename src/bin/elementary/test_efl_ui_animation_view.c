@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #include <Efl_Ui.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+
 #ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 #endif
@@ -141,7 +141,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Eo *win, *box, *box2, *box3, *box4, *label, *anim_view, *check, *slider;
    char buf[255];
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -295,7 +295,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Eo *win, *box;
    char buf[255];
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

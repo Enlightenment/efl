@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
+
 static double
 _step_size_calculate(double min, double max)
 {
@@ -33,7 +33,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *win, *bx, *hbx;
    double step;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                   efl_text_set(efl_added, "Efl.Ui.Slider_Interval"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

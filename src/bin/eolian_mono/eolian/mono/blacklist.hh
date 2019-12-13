@@ -150,9 +150,9 @@ inline bool is_alias_blacklisted(attributes::alias_def const& alias, Context con
    return name_helpers::alias_full_eolian_name(alias) == "Eina.Error";
 }
 
-inline bool is_property_blacklisted(std::string const& name)
+inline bool is_property_blacklisted(std::string const&)
 {
-    return name == "Efl.IText.Text";
+    return false;
 }
 
 template<typename Context>

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include <Efl_Ui.h>
 #include "elm_spinner_eo.h"
-#include "elm_priv.h" //FIXME remove this once efl.ui.textbox doesn't need elm_general.h
+
 static const int default_font_size = 48;
 
 typedef struct _Filter_Image
@@ -332,7 +332,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 {
    Eo *win, *box, *box2, *o, *text = NULL, *spinner, *code, *split, *flip, *tb;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_text_set(efl_added, "Gfx Filter Editor"),
                  efl_ui_win_autodel_set(efl_added, 1));
 

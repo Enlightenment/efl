@@ -372,19 +372,6 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
                  _ecore_exe_exec_it(exe_cmd, flags); /* no return */
              }
          }
-
-         /* Something went 'orribly wrong. */
-         vfork_exec_errno = errno;
-
-         /* Close the pipes. */
-         if (flags & ECORE_EXE_PIPE_ERROR)
-           E_NO_ERRNO(result, close(errorPipe[1]), ok);
-         if (flags & ECORE_EXE_PIPE_READ)
-           E_NO_ERRNO(result, close(readPipe[1]), ok);
-         if (flags & ECORE_EXE_PIPE_WRITE)
-           E_NO_ERRNO(result, close(writePipe[0]), ok);
-         E_NO_ERRNO(result, close(statusPipe[1]), ok);
-
          _exit(-1);
       }
       else   /* parent */

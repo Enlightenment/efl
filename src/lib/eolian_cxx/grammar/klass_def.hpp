@@ -260,7 +260,8 @@ struct documentation_def
       str = eolian_documentation_description_get(eolian_doc);
       if (str) {
         description = str;
-        full_text += "\n" + description;
+        // Separate summary from description with a blank line
+        full_text += "\n\n" + description;
       }
 
       str = eolian_documentation_since_get(eolian_doc);
@@ -1816,7 +1817,7 @@ template <>
 struct is_tuple<attributes::parameter_def> : std::true_type {};
 template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
-  
+
 }
 
 } } }

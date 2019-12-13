@@ -151,7 +151,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 
    pd = (pbdata *)calloc(1, sizeof(pbdata));
 
-   pd->win = win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   pd->win = win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                                                       efl_text_set(efl_added, "Efl.Ui.Progressbar"),
                            efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                            efl_event_callback_add(efl_added, EFL_UI_WIN_EVENT_DELETE_REQUEST,

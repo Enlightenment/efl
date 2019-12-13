@@ -520,6 +520,10 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    unsigned int i, len;
    uint64_t updated_size_start_id = 0, updated_entity_start_id = 0;
    Eina_Bool updated_size = EINA_FALSE, updated_entity = EINA_FALSE;
+   Evas *e;
+
+   e = evas_object_evas_get(obj);
+   evas_event_freeze(e);
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
@@ -626,6 +630,9 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                }
           }
      }
+
+   evas_event_thaw(e);
+   evas_event_thaw_eval(e);
 
    // Currently position manager will flush its entire size cache on update, so only do
    // it when necessary to improve performance.
@@ -1641,6 +1648,7 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
           {
             case 1:
               efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+                efl_provider_find(obj, EFL_UI_WIN_CLASS),
                 efl_ref(obj), _batch_entity_cb, _unref_cb,
                 efl_ref(obj), _batch_size_cb, _unref_cb,
                 count);
@@ -1985,6 +1993,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
      {
        case 1:
          efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+           efl_provider_find(data, EFL_UI_WIN_CLASS),
            efl_ref(data), _batch_entity_cb, _unref_cb,
            efl_ref(data), _batch_size_cb, _unref_cb,
            count);

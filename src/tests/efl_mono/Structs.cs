@@ -419,6 +419,56 @@ internal class TestStructEquality
         Test.AssertNotEquals(a.GetHashCode(), c.GetHashCode());
         Test.AssertNotEquals(a.GetHashCode(), singleDifferentField.GetHashCode());
     }
+
+#if !MONO
+    public static void test_deconstruct() {
+        var p = new Eina.Position2D(1, 2);
+        var (x, y) = p;
+
+        Test.AssertEquals(x, 1);
+        Test.AssertEquals(y, 2);
+    }
+#endif
+}
+
+internal class TestStructTuples
+{
+    private static Eina.Position2D simulate_position_usage(Eina.Position2D p) {
+        return p;
+    }
+
+    public static void test_same_type_fields_assign_conversion() {
+        Eina.Position2D p = (1, 2);
+        Test.AssertEquals(p.X, 1);
+        Test.AssertEquals(p.Y, 2);
+    }
+
+    public static void test_same_type_fields_call_conversion() {
+        var p = simulate_position_usage((1, 2));
+        Test.AssertEquals(p.X, 1);
+        Test.AssertEquals(p.Y, 2);
+    }
+
+    public static void test_different_type_fields_assign_conversion() {
+        Efl.Ui.FormatValue v = (1, "Format");
+        Test.AssertEquals(v.Value, 1);
+        Test.AssertEquals(v.Text, "Format");
+    }
+
+#if EFL_BETA
+    public static void test_complex_fields_assign_conversion() {
+        var pos = new Eina.Position2D(1, 2);
+        var action = Efl.Ui.SelectionAction.Unknown;
+        var format = Efl.Ui.SelectionFormat.None;
+        var item = null as Efl.Canvas.Vg.Object;
+
+        Efl.Dnd.DragPos attr = (pos, action, format, item);
+        Test.AssertEquals(attr.Pos, pos);
+        Test.AssertEquals(attr.Action, action);
+        Test.AssertEquals(attr.Format, format);
+        Test.AssertEquals(attr.Item, item);
+    }
+#endif
 }
 
 }

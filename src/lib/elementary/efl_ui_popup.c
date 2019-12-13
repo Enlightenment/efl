@@ -568,9 +568,15 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_efl_object_invalidate(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_DEL(pd->backwall);
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
    _anchor_detach(obj, pd);
 
    efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb,

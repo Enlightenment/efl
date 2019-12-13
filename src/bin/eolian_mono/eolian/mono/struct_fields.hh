@@ -28,6 +28,30 @@
 
 namespace eolian_mono {
 
+struct field_argument_name_generator
+{
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
+   {
+       if (!as_generator(name_helpers::to_field_name(field.name))
+               .generate(sink, attributes::unused, context))
+           return false;
+       return true;
+   }
+} const field_argument_name {};
+
+struct field_argument_decl_generator
+{
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
+   {
+       if (!as_generator(type << " " << string)
+               .generate(sink, std::make_tuple(field.type, name_helpers::to_field_name(field.name)), context))
+           return false;
+       return true;
+   }
+} const field_argument_decl {};
+
 struct field_argument_default_generator
 {
    template<typename OutputIterator, typename Context>
@@ -70,6 +94,16 @@ struct field_argument_docs_generator
 namespace efl { namespace eolian { namespace grammar {
 
 template<>
+struct is_eager_generator< ::eolian_mono::field_argument_name_generator> : std::true_type {};
+template<>
+struct is_generator< ::eolian_mono::field_argument_name_generator> : std::true_type {};
+
+template<>
+struct is_eager_generator< ::eolian_mono::field_argument_decl_generator> : std::true_type {};
+template<>
+struct is_generator< ::eolian_mono::field_argument_decl_generator> : std::true_type {};
+
+template<>
 struct is_eager_generator< ::eolian_mono::field_argument_default_generator> : std::true_type {};
 template<>
 struct is_generator< ::eolian_mono::field_argument_default_generator> : std::true_type {};
@@ -85,6 +119,12 @@ template<>
 struct is_generator< ::eolian_mono::field_argument_docs_generator> : std::true_type {};
 
 namespace type_traits {
+
+template <>
+struct attributes_needed< ::eolian_mono::field_argument_name_generator> : std::integral_constant<int, 1> {};
+
+template <>
+struct attributes_needed< ::eolian_mono::field_argument_decl_generator> : std::integral_constant<int, 1> {};
 
 template <>
 struct attributes_needed< ::eolian_mono::field_argument_default_generator> : std::integral_constant<int, 1> {};

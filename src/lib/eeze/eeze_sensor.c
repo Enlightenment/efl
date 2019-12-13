@@ -42,7 +42,6 @@ static Eina_Prefix *pfx;
  * re-think the priority handling, but we should do this when the need arise.
  */
 static const char *_module_priority[] = {
-   "tizen",
    "fake",
    "udev",
    NULL

@@ -1077,7 +1077,7 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
              EINA_LIST_FREE(events->events_whitelist, dev)
                efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
           }
-        EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
+        EINA_COW_WRITE_END_NOGC(evas_object_events_cow, obj->events, events);
 
         EINA_INLIST_FREE(pointer_grabs, pdata)
           {
@@ -1123,7 +1123,7 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
                   EINA_LIST_FREE(proxy_src->proxy_textures, texture)
                     evas_canvas3d_texture_source_set(texture, NULL);
                }
-             EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_src);
+             EINA_COW_WRITE_END_NOGC(evas_object_proxy_cow, obj->proxy, proxy_src);
           }
      }
 

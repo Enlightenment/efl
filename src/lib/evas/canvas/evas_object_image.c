@@ -753,18 +753,22 @@ _efl_canvas_image_internal_efl_gfx_image_stretch_region_set(Eo *eo_obj, Evas_Ima
    // we do change it, we have to make sure nobody is accessing them anymore by
    // blocking rendering.
    evas_object_async_block(obj);
-   EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
-   {
-      if (state_write->free_stretch) free(state_write->stretch.horizontal.region);
-      state_write->stretch.horizontal.region = NULL;
+   if (pd->cur->stretch.horizontal.region ||
+       pd->cur->stretch.vertical.region)
+     {
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
+        {
+           if (state_write->free_stretch) free(state_write->stretch.horizontal.region);
+           state_write->stretch.horizontal.region = NULL;
 
-      if (state_write->free_stretch) free(state_write->stretch.vertical.region);
-      state_write->stretch.vertical.region = NULL;
+           if (state_write->free_stretch) free(state_write->stretch.vertical.region);
+           state_write->stretch.vertical.region = NULL;
 
-      state_write->free_stretch = EINA_FALSE;
-      state_write->stretch_loaded = EINA_FALSE;
-   }
-   EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
+           state_write->free_stretch = EINA_FALSE;
+           state_write->stretch_loaded = EINA_FALSE;
+        }
+        EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
+     }
 
    if (!horizontal && !vertical) return 0;
    if (!horizontal || !vertical) goto on_error;
@@ -1677,14 +1681,17 @@ evas_object_image_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o EINA_UNUSED)
+_efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
+   // To avoid unecessary GC storage triggered during shutdown, we mark the content as dynamic
+   o->content_hint = EFL_GFX_IMAGE_CONTENT_HINT_DYNAMIC;
+
    if (obj->legacy.ctor)
      evas_object_image_video_surface_set(eo_obj, NULL);
-   evas_object_image_free(eo_obj, obj);
    efl_gfx_image_stretch_region_set(eo_obj, NULL, NULL);
+   evas_object_image_free(eo_obj, obj);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 

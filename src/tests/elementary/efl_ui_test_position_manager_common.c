@@ -71,6 +71,7 @@ _initial_setup(void)
    arr_size = eina_inarray_new(sizeof(Eina_Size2D), 10);
 
    efl_ui_position_manager_data_access_v1_data_access_set(position_manager,
+      win,
       NULL, _obj_accessor_get_at, NULL,
       NULL, _size_accessor_get_at, NULL,
       0);

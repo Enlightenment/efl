@@ -13,30 +13,37 @@
   Efl_Ui_Position_Manager_Grid_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   unsigned int size;
-   unsigned int groups;
+   Api_Callbacks callbacks;
+
+   Eina_Inarray *group_cache;
+   int *size_cache;
+   Eo *last_group;
+   Eina_Future *rebuild_absolut_size;
+   Efl_Ui_Win *window;
+   Evas *canvas;
+
+   Vis_Segment prev_run;
+
    Eina_Rect viewport;
    Eina_Vector2 scroll_position;
-   Efl_Ui_Layout_Orientation dir;
-   Vis_Segment prev_run;
-   unsigned int prev_consumed_space;
    Eina_Size2D max_min_size;
    Eina_Size2D last_viewport_size;
    Eina_Size2D prev_min_size;
 
-   Eina_Inarray *group_cache;
+   Efl_Ui_Layout_Orientation dir;
+
+   unsigned int size;
+   unsigned int groups;
+   unsigned int prev_consumed_space;
+
    Eina_Bool group_cache_dirty;
-   int *size_cache;
    Eina_Bool size_cache_dirty;
-   Eo *last_group;
-   Eina_Future *rebuild_absolut_size;
-   Api_Callbacks callbacks;
 } Efl_Ui_Position_Manager_Grid_Data;
 
 typedef struct {
-   Eina_Bool real_group;
    Eina_Size2D group_header_size;
    int items;
+   Eina_Bool real_group;
 } Group_Cache_Line;
 
 static inline void
@@ -769,7 +776,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_version(Eo *obj EIN
 }
 
 EOLIAN static void
-_efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
+_efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, Efl_Ui_Win *canvas, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
    // Cleanup cache first
    _group_cache_invalidate(obj, pd);
@@ -781,6 +788,9 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access
      pd->callbacks.size.free_cb(pd->callbacks.size.data);
 
    // Set them
+   efl_replace(&pd->window, canvas);
+   efl_replace(&pd->canvas, canvas ? evas_object_evas_get(canvas) : NULL);
+
    pd->callbacks.object.data = obj_access_data;
    pd->callbacks.object.access = obj_access;
    pd->callbacks.object.free_cb = obj_access_free_cb;
@@ -797,7 +807,7 @@ EOLIAN static void
 _efl_ui_position_manager_grid_efl_object_invalidate(Eo *obj,
                                                     Efl_Ui_Position_Manager_Grid_Data *pd EINA_UNUSED)
 {
-   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
    efl_invalidate(efl_super(obj, EFL_UI_POSITION_MANAGER_GRID_CLASS));
 }

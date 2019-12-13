@@ -1056,6 +1056,106 @@ EAPI void evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur);
  * @ingroup Evas_Textblock
  */
 EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *obj);
+
+
+
+/* TEXT BLOCK FIT OPTIONS FLAGS*/
+#define TEXTBLOCK_FIT_MODE_NONE        0x0000
+#define TEXTBLOCK_FIT_MODE_WIDTH       0x0001
+#define TEXTBLOCK_FIT_MODE_HEIGHT      0x0002
+#define TEXTBLOCK_FIT_MODE_ALL         0x0003
+
+/* TEXT BLOCK ERROR CODES*/
+/* FIXME this hould go to other public place*/
+#define EVAS_ERROR_SUCCESS              0x0000
+#define EVAS_ERROR_INVALID_PARAM        0x0001
+#define EVAS_ERROR_NO_MEMORY            0x0002
+#define EVAS_ERROR_INVALID_OPERATION    0x0003
+
+
+/** Get the object's content it options.
+ *
+ * @param obj The textblock object.
+ * @param[out] options content fitting options.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_options_get(const Evas_Object *obj,  unsigned int * p_options);
+
+/** Set the object's content it options.
+ *
+ * @param obj The textblock object.
+ * @param[in] options content fitting options.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_options_set(Evas_Object *obj,  unsigned int options);
+
+/** Get the object's max and min font sizes used for fitting content.
+ *
+ * @param obj The textblock object.
+ * @param[out] p_min_font_size min font size used when fitting content.
+ * @param[out] p_max_font_size max font size used when fitting content.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_size_range_get(const Evas_Object *obj,  unsigned int *p_min_font_size, unsigned int *p_max_font_size);
+
+/** Set the object's max and min font sizes used for fitting content.
+ *
+ * @param obj The textblock object.
+ * @param[in] min_font_size min font size used when fitting content.
+ * @param[in] max_font_size max font size used when fitting content.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_size_range_set(Evas_Object *obj,  unsigned int min_font_size, unsigned int max_font_size);
+
+
+/** Get the object's fitting step size when trying fonts between min font size and
+ *  max font size.
+ *
+ * @param obj The textblock object.
+ * @param[out] p_step_size step jumps between min and max font size.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_step_size_get(const Evas_Object *obj,  unsigned int *p_step_size);
+
+
+/** Set the object's fitting step size when trying fonts between min font size and
+ *  max font size.
+ *
+ * @param obj The textblock object.
+ * @param[out] step_size step jumps between min and max font size.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_step_size_set(Evas_Object *obj,  unsigned int step_size);
+
+/** Get copy of the object's fitting font size array used internally
+ *
+ * @param obj The textblock object.
+ * @param[out] p_size_array pointer to size array (passing NULL will ignore filling array).
+ * @param[out] p_size_array_len the length of internall font sizes array.
+ * @param[out] request_size_array request to fill specific amount in p_size_array.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_size_array_get(const Evas_Object *obj,  unsigned int *p_size_array, size_t *p_size_array_len,size_t request_size_array);
+
+/** Set the object's fitting font size array that will be used internally
+ *  Changing fitting step_size,min_font_size,max_font size will generate new array
+ *  Internall array will be sorted
+ *
+ * @param obj The textblock object.
+ * @param[in] p_size_array pointer to font sizes array.
+ * @param[in] size_array_len the length passed font sizes array.
+ * @return Returns error code.
+ */
+EAPI int evas_textblock_fit_size_array_set(Evas_Object *obj,  const unsigned int *p_size_array, size_t size_array_len);
+
+
+
+
+
+
+
+
+
 #include "canvas/efl_canvas_textblock_eo.legacy.h"
 /**
  * @}
