@@ -438,6 +438,7 @@ _efl_ui_collection_efl_object_invalidate(Eo *obj, Efl_Ui_Collection_Data *pd EIN
    while(pd->items)
      efl_del(pd->items->data);
 
+   // pan is given to edje, which reparents it, which forces us to manually deleting it
    efl_del(pd->pan);
 
    efl_invalidate(efl_super(obj, MY_CLASS));

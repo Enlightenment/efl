@@ -281,6 +281,7 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
 EOLIAN static void
 _efl_ui_scroller_efl_object_invalidate(Eo *obj, Efl_Ui_Scroller_Data *pd)
 {
+   // pan is given to edje, which reparents it, which forces us to manually deleting it
    efl_event_callback_del(pd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_pan_resized_cb, obj);
    efl_del(pd->pan_obj);
