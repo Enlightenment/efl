@@ -687,7 +687,6 @@ elementary_pub_headers = [
   'elm_segment_control_eo.legacy.h',
   'elm_segment_control_item_eo.legacy.h',
   'elm_separator_eo.legacy.h',
-  'elm_slider_eo.legacy.h',
   'elm_slider_part_indicator_eo.legacy.h',
   'elm_slideshow_eo.legacy.h',
   'elm_slideshow_item_eo.legacy.h',
