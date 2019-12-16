@@ -4400,7 +4400,10 @@ Eina_Bool
 _edje_text_cursor_coord_set(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c,
                              Evas_Coord x, Evas_Coord y)
 {
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
    Entry *en = rp->typedata.text->entry_data;
+   if (!en) return EINA_FALSE;
    if ((c == _cursor_get(rp, EDJE_CURSOR_SELECTION_BEGIN)) ||
        (c == _cursor_get(rp, EDJE_CURSOR_SELECTION_END)))
      {

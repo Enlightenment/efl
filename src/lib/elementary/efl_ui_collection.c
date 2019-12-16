@@ -438,6 +438,9 @@ _efl_ui_collection_efl_object_invalidate(Eo *obj, Efl_Ui_Collection_Data *pd EIN
    while(pd->items)
      efl_del(pd->items->data);
 
+   // pan is given to edje, which reparents it, which forces us to manually deleting it
+   efl_del(pd->pan);
+
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
@@ -704,6 +707,7 @@ unregister_item(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Item *item)
    efl_event_callback_array_del(item, active_item(), obj);
    efl_ui_position_manager_entity_item_removed(pd->pos_man, id, item);
    efl_ui_item_container_set(item, NULL);
+   efl_canvas_group_member_remove(pd->pan, item);
 
    return EINA_TRUE;
 }

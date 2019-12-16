@@ -110,7 +110,9 @@ _efl_ui_pan_efl_object_constructor(Eo *obj, Efl_Ui_Pan_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _efl_ui_pan_efl_object_destructor(Eo *obj, Efl_Ui_Pan_Data *sd EINA_UNUSED)
 {
-   efl_content_set(obj, NULL);
+   /* our implementation is a little bit incomplete, efl_content_set(obj, NULL) does not delete the content, However, if we do that, list grid and scroller would fail, because the assume ownership of the content */
+   Eo *content = efl_content_unset(obj);
+   efl_del(content);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

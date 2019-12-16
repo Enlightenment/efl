@@ -691,7 +691,8 @@ _obj_mouse_up(void *data,
    Evas_Event_Mouse_Up *ev = event_info;
 
    if (sd->still_in && (ev->flags == EVAS_BUTTON_NONE) &&
-       (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK))
+       (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK) &&
+       !efl_invalidated_get(data))
      elm_widget_focus_mouse_up_handle(evas_object_widget_parent_find(obj));
 
    sd->still_in = EINA_FALSE;
@@ -704,7 +705,8 @@ _obj_mouse_in(void *data,
               void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
-   if (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN)
+   if (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN &&
+       !efl_invalidated_get(data))
      elm_widget_focus_mouse_up_handle(evas_object_widget_parent_find(obj));
 }
 

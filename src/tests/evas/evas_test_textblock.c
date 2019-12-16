@@ -4472,11 +4472,20 @@ EFL_START_TEST(efl_text)
 }
 EFL_END_TEST
 
+static void
+_increment_int_changed(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   int *value = data;
+   (*value)++;
+}
+
 EFL_START_TEST(efl_canvas_textblock_cursor)
 {
    START_EFL_CANVAS_TEXTBLOCK_TEST();
    int pos;
 
+   int changed_emit = 0;
+   efl_event_callback_add(txt, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, _increment_int_changed, &changed_emit);
    const char *buf = "abcdefghij";
    efl_text_set(txt, buf);
    fail_if(strcmp(efl_text_get(txt), buf));
@@ -4500,6 +4509,12 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    efl_text_cursor_position_set(cursor1, 1);
    pos = efl_text_cursor_position_get(cursor1);
    ck_assert_int_eq(pos, 1);
+
+   efl_text_set(txt, "");
+   efl_text_set(txt, "");
+   efl_text_cursor_text_insert(cursor1, "aa");
+
+   ck_assert_int_eq(changed_emit, 3);
 
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }

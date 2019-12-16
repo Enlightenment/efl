@@ -158,21 +158,25 @@ Eina_Bool
 _entry_hide_visible_password(Eo *obj)
 {
    Eina_Bool b_ret = EINA_FALSE;
-   const Evas_Object_Textblock_Node_Format *node;
+   const Evas_Object_Textblock_Node_Format *node, *node_next;
    node = evas_textblock_node_format_first_get(obj);
-   for (; node; node = evas_textblock_node_format_next_get(node))
+
+   if (!node) return EINA_FALSE;
+
+   do
      {
+        node_next = evas_textblock_node_format_next_get(node);
         const char *text = evas_textblock_node_format_text_get(node);
         if (text)
           {
              if (!strcmp(text, "+ password=off"))
                {
-                  evas_textblock_node_format_remove_pair(obj,
-                                                         (Evas_Object_Textblock_Node_Format *)node);
+                  evas_textblock_node_format_remove_pair(obj, (Evas_Object_Textblock_Node_Format *)node);
                   b_ret = EINA_TRUE;
                }
           }
-     }
+        node = node_next;
+     } while (node);
 
    return b_ret;
 }
