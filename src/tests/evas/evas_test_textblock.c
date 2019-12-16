@@ -4628,6 +4628,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    fail_if(!strstr(style, "font=DejaVuSans,UnDotum,malayalam"));
    // default value
    fail_if(!strstr(style, "font_width=normal"));
+   fail_if(!strstr(style, "wrap=none"));
 
    // from functions
    fail_if(!strstr(style, "font_weight=extrabold"));
@@ -4640,6 +4641,9 @@ EFL_START_TEST(efl_canvas_textblock_style)
 
    efl_canvas_textblock_style_apply(txt, "font_width=ultracondensed");
    ck_assert_int_eq(efl_text_font_width_get(txt), EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
+
+   efl_canvas_textblock_style_apply(txt, "wrap=word");
+   ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_WORD);
 
    efl_canvas_textblock_style_apply(txt, "wrap=none");
    ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);

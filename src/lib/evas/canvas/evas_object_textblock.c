@@ -2921,6 +2921,8 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
           wrap = EFL_TEXT_FORMAT_WRAP_MIXED;
         else if (!strcmp("hyphenation", param))
           wrap = EFL_TEXT_FORMAT_WRAP_HYPHENATION;
+        else if (!strcmp("none", param))
+          wrap = EFL_TEXT_FORMAT_WRAP_NONE;
 
         if (_FMT_INFO(wrap) != wrap)
           {
@@ -3304,8 +3306,11 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
         case EFL_TEXT_FORMAT_WRAP_HYPHENATION:
           wrap_value_str = "hyphenation";
           break;
-        default:
+        case EFL_TEXT_FORMAT_WRAP_WORD:
           wrap_value_str = "word";
+          break;
+        default:
+          wrap_value_str = "none";
           break;
      }
 
