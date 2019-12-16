@@ -34,12 +34,17 @@ test_canvas_textblock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
    efl_add(EFL_UI_TEXTBOX_CLASS, box,
            efl_gfx_hint_weight_set(efl_added, 1, 0),
+           efl_text_interactive_selection_allowed_set(efl_added, EINA_FALSE),
+           efl_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_text_set(efl_added, "Live style editor. Enter a style string below:"),
            efl_pack(box, efl_added));
 
    input = efl_add(EFL_UI_TEXTBOX_CLASS, box,
                    efl_gfx_hint_weight_set(efl_added, 1, 0),
                    efl_text_set(efl_added, "font=Sans font_size=24 color=white"),
+                   efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 48)),
+                   efl_text_multiline_set(efl_added, EINA_TRUE),
+                   efl_text_wrap_set(efl_added, EFL_TEXT_FORMAT_WRAP_WORD),
                    efl_pack(box, efl_added));
    efl_ui_textbox_scrollable_set(input, EINA_TRUE);
 
