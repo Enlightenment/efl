@@ -4,7 +4,7 @@ class @beta Efl.Ui.Position_Manager.List extends Efl.Object
 {
    [[Implementation of @Efl.Ui.Position_Manager.Entity for a list
 
-     Every item in the list will get at least his minsize applied, changes to the misize are listened to and change
+     Every item in the list will get at least his min size applied, changes to the min size are listened to and change
      the layout of all items. This supports the vertical and horizontal orientation.
    ]]
    implements {
