@@ -774,21 +774,37 @@ public static class Globals
         }
     }
 
-    internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable)
+    internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable, bool isMoved)
     {
         if (enumerable == null)
+        {
             throw new ArgumentException("enumerable is null", nameof(enumerable));
-        IntPtr[] intPtrs = new IntPtr[enumerable.Count()];
+        }
 
-        int i = 0;
+        // If we are a wrapper around an existing Eina.Accessor, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedAccessor = enumerable as Eina.Accessor<T>;
+
+        if (wrappedAccessor != null && !isMoved)
+        {
+            return wrappedAccessor.Handle;
+        }
+
+        var list = new List<IntPtr>();
         foreach (T data in enumerable)
         {
-            intPtrs[i] = Eina.TraitFunctions.ManagedToNativeAlloc<T>(data);
-            i++;
+            list.Add(Eina.TraitFunctions.ManagedToNativeAlloc<T>(data));
         }
-        IntPtr[] dataArray = intPtrs.ToArray();
+        IntPtr[] dataArray = list.ToArray();
         GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned); //FIXME: Need to free.
-        return Eina.AccessorNativeFunctions.eina_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+        IntPtr ret = Eina.AccessorNativeFunctions.eina_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return ret;
     }
 
     internal static IEnumerable<T> IteratorToIEnumerable<T>(IntPtr iterator)
@@ -802,22 +818,38 @@ public static class Globals
         }
     }
 
-    internal static IntPtr IEnumerableToIterator<T>(IEnumerable<T> enumerable)
+    internal static IntPtr IEnumerableToIterator<T>(IEnumerable<T> enumerable, bool isMoved)
     {
         if (enumerable == null)
+        {
             throw new ArgumentException("enumerable is null", nameof(enumerable));
+        }
+
+        // If we are a wrapper around an existing Eina.Iterator, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedIterator = enumerable as Eina.Iterator<T>;
+
+        if (wrappedIterator != null && !isMoved)
+        {
+            return wrappedIterator.Handle;
+        }
 
         var list = new List<IntPtr>();
-        //IntPtr[] intPtrs = new IntPtr[enumerable.Count()];
-
         foreach (T data in enumerable)
         {
             list.Add(Eina.TraitFunctions.ManagedToNativeAlloc<T>(data));
         }
 
         IntPtr[] dataArray = list.ToArray();
-        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned); //FIXME: Need to free.
-        return Eina.IteratorNativeFunctions.eina_carray_length_iterator_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
+        IntPtr ret = Eina.IteratorNativeFunctions.eina_carray_length_iterator_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return ret;
     }
 
     internal static IEnumerable<T> ListToIEnumerable<T>(IntPtr list)
@@ -841,8 +873,9 @@ public static class Globals
         IntPtr list = IntPtr.Zero;
         foreach (T data in enumerable)
         {
-            list = Eina.ListNativeFunctions.eina_list_append(list, Eina.TraitFunctions.ManagedToNativeAlloc(data)); //FIXME: need to free
+            list = Eina.ListNativeFunctions.eina_list_append(list, Eina.TraitFunctions.ManagedToNativeAlloc(data));
         }
+        // FIXME need to free `list` if the returned list is not @moved
         return list;
     }
 

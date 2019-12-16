@@ -4100,10 +4100,10 @@ class TestEinaIterator
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
-        // Will take ownership of the Iterator
+        // Will copy the Iterator, owning the copy.
         Test.Assert(t.EinaIteratorIntInOwn(itr));
 
-        Test.Assert(!itr.Own);
+        Test.Assert(itr.Own);
         Test.Assert(arr.Own);
         // Content must continue to be owned by the array
         Test.Assert(arr.OwnContent);
@@ -4224,7 +4224,7 @@ class TestEinaIterator
 
         Test.Assert(t.EinaIteratorStrInOwn(itr));
 
-        Test.Assert(!itr.Own);
+        Test.Assert(itr.Own);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -4344,7 +4344,8 @@ class TestEinaIterator
 
         Test.Assert(t.EinaIteratorStrshareInOwn(itr));
 
-        Test.Assert(!itr.Own);
+        // Moving collections currently copy them, should not reflect on managed objects.
+        Test.Assert(itr.Own);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -4464,7 +4465,7 @@ class TestEinaIterator
 
         Test.Assert(t.EinaIteratorObjInOwn(itr));
 
-        Test.Assert(!itr.Own);
+        Test.Assert(itr.Own);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
