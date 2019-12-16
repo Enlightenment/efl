@@ -274,7 +274,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
          "char" - Wraps at any character
          "mixed" - Wrap at words if possible, if not at any character
          "hyphenation" - Hyphenate if possible, if not wrap at words if possible, if not at any character
-         "" - Don't wrap
+         "none" - Don't wrap, this is the default value
          wrap=<value or preset>
 
          Left margin
