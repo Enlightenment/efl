@@ -257,24 +257,46 @@ class TestVariables
 
 class TestEoAccessors
 {
-    public static void basic_eo_accessors()
+    private static void do_eo_accessors(IEnumerable<int> accessor)
     {
         var obj = new Dummy.TestObject();
-        Eina.List<int> lst = new Eina.List<int>();
-        lst.Append(4);
-        lst.Append(3);
-        lst.Append(2);
-        lst.Append(5);
-        IEnumerable<int> acc = obj.CloneAccessor(lst.GetAccessor());
 
-        var zipped = acc.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
+        IEnumerable<int> acc = obj.CloneAccessor(accessor);
+
+        var zipped = acc.Zip(accessor, (first, second) => new Tuple<int, int>(first, second));
 
         foreach (Tuple<int, int> pair in zipped)
         {
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
-        lst.Dispose();
         obj.Dispose();
+    }
+
+    public static void eina_eo_accessors()
+    {
+        Eina.List<int> lst = new Eina.List<int>();
+        lst.Append(4);
+        lst.Append(3);
+        lst.Append(2);
+        lst.Append(5);
+
+        // FIXME: Replace the first accessor with the list once Eina.List implements Eina.IList
+        do_eo_accessors(lst.GetAccessor());
+
+        lst.Dispose();
+    }
+
+    public static void managed_eo_accessors()
+    {
+        var obj = new Dummy.TestObject();
+
+        List<int> lst = new List<int>();
+        lst.Add(-1);
+        lst.Add(1);
+        lst.Add(4);
+        lst.Add(42);
+
+        do_eo_accessors(lst);
     }
 }
 

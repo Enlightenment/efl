@@ -759,7 +759,7 @@ struct convert_in_variable_generator
              return false;
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << "Efl.Eo.Globals.IEnumerableToIterator(" << escape_keyword(param.param_name) << ");\n"
+                 "var " << string << " = Efl.Eo.Globals.IEnumerableToIterator(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
               ).generate(sink, var_name, context))
              return false;
         }
@@ -770,7 +770,7 @@ struct convert_in_variable_generator
              return false;
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << "Efl.Eo.Globals.IEnumerableToAccessor(" << escape_keyword(param.param_name) << ");\n"
+                 "var " << string << " = Efl.Eo.Globals.IEnumerableToAccessor(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
               ).generate(sink, var_name, context))
              return false;
         }
@@ -1291,12 +1291,6 @@ struct native_convert_out_assign_generator
                ).generate(sink, outvar, context))
              return false;
 
-           // Iterators and Accessors can't own their content.
-           if (param.type.c_type == "Eina_Iterator *" || param.type.c_type == "const Eina_Iterator *"
-               || param.type.c_type == "Eina_Accessor *" || param.type.c_type == "const Eina_Accessor *"
-              )
-             return true;
-
            if ((param.type.has_own && (complex->subtypes.front().is_value_type && complex->subtypes.front().has_own))
                && !as_generator(
                                 string << ".OwnContent = false;\n"
@@ -1314,7 +1308,7 @@ struct native_convert_out_assign_generator
              return false;
            auto outvar = out_variable_name(param.param_name);
            if (!as_generator(
-                string << " = Efl.Eo.Globals.IEnumerableToAccessor(" << string << ");\n"
+                string << " = Efl.Eo.Globals.IEnumerableToAccessor(" << string << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
         }
@@ -1329,7 +1323,7 @@ struct native_convert_out_assign_generator
              return false;
            auto outvar = out_variable_name(param.param_name);
            if (!as_generator(
-                string << " = Efl.Eo.Globals.IEnumerableToIterator(" << string << ");\n"
+                string << " = Efl.Eo.Globals.IEnumerableToIterator(" << string << ", " << (param.type.has_own ? "true" : "false")<< ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
         }
@@ -1453,28 +1447,17 @@ struct native_convert_return_generator
               .generate(sink, attributes::unused, context))
             return false;
 
-           // Iterators and Accessors can't own their content.
-           if (ret_type.c_type != "Eina_Iterator *" && ret_type.c_type != "const Eina_Iterator *"
-               && ret_type.c_type != "Eina_Accessor *" && ret_type.c_type != "const Eina_Accessor *"
-              )
-             {
-               if ((ret_type.has_own && (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own))
-                    && !as_generator("_ret_var.OwnContent = false; ")
-                   .generate(sink, attributes::unused, context))
-                  return false;
-             }
-
           return as_generator("return _ret_var.Handle;")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Accessor *" || ret_type.c_type == "const Eina_Accessor *")
        {
-          return as_generator("return Efl.Eo.Globals.IEnumerableToAccessor(_ret_var);")
+          return as_generator(lit("return Efl.Eo.Globals.IEnumerableToAccessor(_ret_var, ") << (ret_type.has_own ? "true" : "false") << ");")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Iterator *" || ret_type.c_type == "const Eina_Iterator *")
        {
-          return as_generator("return Efl.Eo.Globals.IEnumerableToIterator(_ret_var);")
+          return as_generator(lit("return Efl.Eo.Globals.IEnumerableToIterator(_ret_var, ") << (ret_type.has_own ? "true" : "false") << ");")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type != "void")
