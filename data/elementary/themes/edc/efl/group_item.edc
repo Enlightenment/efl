@@ -8,7 +8,7 @@ Group: efl/group_item (@since 1.23)
 
 */
 
-group { "efl/group_item"; data.item: "version" "123"; nomouse; program_source: "efl";
+group { "efl/group_item"; data.item: "version" "124"; nomouse; program_source: "efl";
    images.image: "shadow_square_tiny.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
