@@ -619,7 +619,7 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
      }
    if (!version)
      {
-        snprintf(buf, sizeof(buf), "%d%d", EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
+        snprintf(buf, sizeof(buf), "%d%d", EFL_VERSION_MAJOR, EFL_VERSION_MINOR + (EFL_VERSION_MICRO == 99 ? 1 : 0));
         errno = 0;
         version = strtoul(buf, NULL, 10);
         if (errno)
