@@ -16750,7 +16750,7 @@ _efl_canvas_textblock_efl_text_format_multiline_get(const Eo *obj EINA_UNUSED, E
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_horizontal_align_auto_type_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
+_efl_canvas_textblock_efl_text_format_text_horizontal_align_auto_type_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
 {
    ASYNC_BLOCK;
    if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE)
@@ -16772,7 +16772,7 @@ _efl_canvas_textblock_efl_text_format_horizontal_align_auto_type_set(Eo *obj, Ef
 }
 
 static Efl_Text_Format_Horizontal_Alignment_Auto_Type
-_efl_canvas_textblock_efl_text_format_horizontal_align_auto_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_format_text_horizontal_align_auto_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    Efl_Text_Format_Horizontal_Alignment_Auto_Type ret =
       EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE;
@@ -16793,7 +16793,7 @@ _efl_canvas_textblock_efl_text_format_horizontal_align_auto_type_get(const Eo *o
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_horizontal_align_set(Eo *obj, Efl_Canvas_Textblock_Data *o,
+_efl_canvas_textblock_efl_text_format_text_horizontal_align_set(Eo *obj, Efl_Canvas_Textblock_Data *o,
       double value)
 {
    ASYNC_BLOCK;
@@ -16803,13 +16803,13 @@ _efl_canvas_textblock_efl_text_format_horizontal_align_set(Eo *obj, Efl_Canvas_T
 }
 
 static double
-_efl_canvas_textblock_efl_text_format_horizontal_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_text_horizontal_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(halign);
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_vertical_align_set(Eo *obj, Efl_Canvas_Textblock_Data *o,
+_efl_canvas_textblock_efl_text_format_text_vertical_align_set(Eo *obj, Efl_Canvas_Textblock_Data *o,
       double value)
 {
    ASYNC_BLOCK;
@@ -16821,7 +16821,7 @@ _efl_canvas_textblock_efl_text_format_vertical_align_set(Eo *obj, Efl_Canvas_Tex
 }
 
 static double
-_efl_canvas_textblock_efl_text_format_vertical_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_text_vertical_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return o->valign;
 }
