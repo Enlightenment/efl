@@ -150,29 +150,18 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     /// <returns>An enumerator to walk through the acessor items.</returns>
     public IEnumerator<T> GetEnumerator()
     {
-/*
         if (Handle == IntPtr.Zero)
         {
             throw new ObjectDisposedException(base.GetType().Name);
         }
 
-        IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(IntPtr)));
+        IntPtr tmp;
         uint position = 0;
-        try
+        while (eina_accessor_data_get(Handle, position, out tmp))
         {
-            while (eina_accessor_data_get(Handle, position, tmp))
-            {
-                IntPtr data = (IntPtr)Marshal.PtrToStructure(tmp, typeof(IntPtr));
-                yield return Convert(data);
-                position += 1;
-            }
+            yield return Convert(tmp); // No need to free as it is still owned by the container.
+            position += 1;
         }
-        finally
-        {
-            MemoryNative.Free(tmp);
-        }
-*/
-        yield break;
     }
 
     IEnumerator IEnumerable.GetEnumerator()

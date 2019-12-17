@@ -4577,6 +4577,9 @@ class TestEinaAccessor
             Test.AssertEquals(pair.Item1, pair.Item2);
         }
 
+        IEnumerable<int> seq = accessor;
+        Test.AssertEquals(seq.Count(), 4);
+
         lst.Dispose();
     }
 
