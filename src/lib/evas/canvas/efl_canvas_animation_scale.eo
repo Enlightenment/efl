@@ -1,4 +1,4 @@
-class @beta Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
+class Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
 {
    [[Animated scaling effect.
 
@@ -9,6 +9,8 @@ class @beta Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
 
      Note: Changing an object's geometry using @Efl.Gfx.Entity.position or @Efl.Gfx.Entity.size
      while this animation is running might lead to unexpected results.
+
+     @since 1.24
    ]]
    c_prefix: efl_animation_scale;
    data: Efl_Canvas_Animation_Scale_Data;

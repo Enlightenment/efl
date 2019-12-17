@@ -3,9 +3,9 @@
 
 struct @beta Efl.Canvas.Animation_Player_Event_Running; [[Information of event running]]
 
-enum @beta Efl.Canvas.Animation_Repeat_Mode
+enum Efl.Canvas.Animation_Repeat_Mode
 {
-   [[Animation repeat mode.]]
+   [[Animation repeat mode. @since 1.24]]
 
    restart = 0, [[Restart animation when the animation ends: The animation will play again from the beginning to the
                   end.]]
