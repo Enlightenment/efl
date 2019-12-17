@@ -9,10 +9,16 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#include <sys/wait.h>
-#include <sys/types.h>
-#ifdef HAVE_SYS_SYSINFO_H
-# include <sys/sysinfo.h>
+#ifdef HAVE_FORK
+# ifdef HAVE_SYS_WAIT_H
+#  include <sys/wait.h>
+# endif
+# ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+# endif
+# ifdef HAVE_SYS_SYSINFO_H
+#  include <sys/sysinfo.h>
+# endif
 #endif
 
 #ifndef EFL_EO_API_SUPPORT
@@ -1292,10 +1298,12 @@ int main(int argc, char **argv)
         if (chosen_fonts)
           {
              int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
-             dprintf(tmp_fd,
+             FILE *tmp_f = fdopen(tmp_fd, "wb");
+             fprintf(tmp_f,
                    "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
                    "<dir prefix=\"default\">%s/%s</dir>\n</fontconfig>\n",
                    fonts_dir, chosen_fonts);
+             fclose(tmp_f);
              close(tmp_fd);
 
              setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
@@ -1346,7 +1354,9 @@ int main(int argc, char **argv)
                   eina_strbuf_replace_all(sbuf, "$SRC", f_code);
                   eina_strbuf_replace_all(sbuf, "$DEST", f_output);
                   exe = ecore_exe_pipe_run(eina_strbuf_string_get(sbuf), ECORE_EXE_NONE, NULL);
+#ifdef HAVE_FORK
                   waitpid(ecore_exe_pid_get(exe), &status, 0);
+#endif
                }
           }
         if (!f_output)

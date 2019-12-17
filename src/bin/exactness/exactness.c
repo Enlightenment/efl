@@ -9,6 +9,10 @@
 
 #include "exactness_private.h"
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#endif
+
 #define SCHEDULER_CMD_SIZE 1024
 
 #define ORIG_SUBDIR "orig"

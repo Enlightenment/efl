@@ -485,10 +485,12 @@ int main(int argc, char **argv)
         if (_unit->fonts_path)
           {
              int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
-             dprintf(tmp_fd,
+             FILE *tmp_f = fdopen(tmp_fd, "wb");
+             fprintf(tmp_f,
                    "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
                    "<dir prefix=\"default\">%s/%s</dir>\n</fontconfig>\n",
                    fonts_dir, _unit->fonts_path);
+             fclose(tmp_f);
              close(tmp_fd);
 
              setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
