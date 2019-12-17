@@ -36,8 +36,9 @@ public static class ArrayNativeFunctions
         eina_array_free(IntPtr array);
     [DllImport(efl.Libs.Eina)] internal static extern void
         eina_array_flush(IntPtr array);
+    public delegate bool KeepCb(IntPtr data, IntPtr gdata);
     [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
-        eina_array_remove(IntPtr array, IntPtr keep, IntPtr gdata);
+        eina_array_remove(IntPtr array, KeepCb keep, IntPtr gdata);
     [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_array_push(IntPtr array, IntPtr data);
 
@@ -45,6 +46,10 @@ public static class ArrayNativeFunctions
         eina_array_iterator_new(IntPtr array);
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_array_accessor_new(IntPtr array);
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)]
+    internal static extern bool
+        eina_array_find(IntPtr array, IntPtr data,
+                        uint out_idx);
 
     [DllImport(efl.Libs.CustomExports)] internal static extern void
         eina_array_clean_custom_export_mono(IntPtr array);
@@ -61,6 +66,8 @@ public static class ArrayNativeFunctions
 
     [DllImport(efl.Libs.CustomExports)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_array_foreach_custom_export_mono(IntPtr array, IntPtr cb, IntPtr fdata);
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
+        eina_array_insert_at_custom_export_mono(IntPtr array, uint index, IntPtr data);
 }
 
 /// <summary>A container of contiguous allocated elements.
@@ -68,29 +75,41 @@ public static class ArrayNativeFunctions
 /// </summary>
 [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
                  Justification="This is a generalized container mapping the native one.")] 
-public class Array<T> : IEnumerable<T>, IDisposable
+public class Array<T> : IList<T>, IEnumerable<T>, IDisposable
 {
     public const uint DefaultStep = 32;
 
     /// <summary>Pointer to the native buffer.</summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public IntPtr Handle {get;set;} = IntPtr.Zero;
+    public IntPtr Handle { get; set; } = IntPtr.Zero;
+
     /// <summary>Whether this wrapper owns the native buffer.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public bool Own {get;set;}
+    internal bool Own { get; set; }
+
     /// <summary>Who is in charge of releasing the resources wrapped by
     /// this instance.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public bool OwnContent {get;set;}
-    /// <summary> Length of the array.
-    /// <para>Since EFL 1.23.</para>
+    internal bool OwnContent { get; set; }
+
+    /// <summary> Gets the number of elements contained in the <see cref="Array{T}" />.
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
-    public int Length
+    public int Count
     {
-        get { return Count(); }
+        get => (int)eina_array_count_custom_export_mono(Handle); 
     }
+
+    /// <summary>
+    ///   Gets a value indicating whether the <see cref="Array" /> is read-only.
+    /// <para>Since EFL 1.24.</para>
+    ///<para>
+    ///  It's the negative of <see cref="OwnContent" />.
+    ///</para>
+    /// </summary>
+    public bool IsReadOnly { get => !OwnContent; }
 
     private void InitNew(uint step)
     {
@@ -104,23 +123,62 @@ public class Array<T> : IEnumerable<T>, IDisposable
     }
 
     internal bool InternalPush(IntPtr ele)
-    {
-        return eina_array_push_custom_export_mono(Handle, ele);
-    }
+        => eina_array_push_custom_export_mono(Handle, ele);
 
     internal IntPtr InternalPop()
-    {
-        return eina_array_pop_custom_export_mono(Handle);
-    }
+        => eina_array_pop_custom_export_mono(Handle);
 
     internal IntPtr InternalDataGet(int idx)
-    {
-        return eina_array_data_get_custom_export_mono(Handle, (uint)idx); // TODO: Check bounds ???
-    }
+        => eina_array_data_get_custom_export_mono(Handle, CheckBounds(idx));
 
     internal void InternalDataSet(int idx, IntPtr ele)
+        => eina_array_data_set_custom_export_mono(Handle, CheckBounds(idx), ele);
+
+    private uint CheckBounds(int idx)
     {
-        eina_array_data_set_custom_export_mono(Handle, (uint)idx, ele); // TODO: Check bounds ???
+        if (!(0 <= idx && idx < Count))
+        {
+            throw new ArgumentOutOfRangeException(nameof(idx), $"{nameof(idx)} is out of bounds.");
+        }
+
+        return (uint)idx;
+    }
+
+    private U LoopingThrough<U>(T val, Func<int, U> f1, Func<U> f2)
+    {
+        for (int i = 0, count = Count; i < count; ++i)
+        {
+            if (NativeToManaged<T>(InternalDataGet(i)).Equals(val))
+            {
+                return f1(i);
+            }
+        }
+
+        return f2();
+    }
+
+    private void CheckOwnerships()
+    {
+        if ((Own == false) && (OwnContent == true))
+        {
+            throw new InvalidOperationException(nameof(Own) + "/" + nameof(OwnContent));
+        }
+    }
+
+    private void RequireWritable()
+    {
+        if (IsReadOnly)
+        {
+            throw new NotSupportedException("This object's instance is read only.");
+        }
+    }
+
+    private void DeleteData(IntPtr ele)
+    {
+        if (OwnContent)
+        {
+            NativeFree<T>(ele);
+        }
     }
 
     /// <summary>
@@ -156,6 +214,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
                                               $"{nameof(Handle)} can't be null");
         Own = own;
         OwnContent = own;
+        CheckOwnerships();
     }
 
     /// <summary>
@@ -173,6 +232,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
                                               $"{nameof(Handle)} can't be null");
         Own = own;
         OwnContent = ownContent;
+        CheckOwnerships();
     }
 
     /// <summary>
@@ -197,15 +257,17 @@ public class Array<T> : IEnumerable<T>, IDisposable
             return;
         }
 
-        if (Own && OwnContent)
+        for (int len = (int)eina_array_count_custom_export_mono(h),
+                 i = 0; i < len; ++i)
         {
-            int len = (int)eina_array_count_custom_export_mono(h);
-            for (int i = 0; i < len; ++i)
+            if (!OwnContent)
             {
-                NativeFree<T>(eina_array_data_get_custom_export_mono(h, (uint)i));
+                break;
             }
-        }
 
+            DeleteData(eina_array_data_get_custom_export_mono(h, (uint)i));
+        }
+        
         if (Own)
         {
             if (disposing)
@@ -236,27 +298,16 @@ public class Array<T> : IEnumerable<T>, IDisposable
         Dispose();
     }
 
-    /// <summary>
-    ///   Releases the native array.
-    /// <para>Since EFL 1.23.</para>
-    /// </summary>
-    /// <returns>The native array.</returns>
-    public IntPtr Release()
-    {
-        IntPtr h = Handle;
-        Handle = IntPtr.Zero;
-        return h;
-    }
-
     private void FreeElementsIfOwned()
     {
-        if (OwnContent)
+        if (IsReadOnly)
         {
-            int len = Length;
-            for (int i = 0; i < len; ++i)
-            {
-                NativeFree<T>(InternalDataGet(i));
-            }
+            throw new NotSupportedException("This object's instance is read only.");
+        }
+
+        for (int i = 0, count = Count; i < count; ++i)
+        {
+            DeleteData(InternalDataGet(i));
         }
     }
 
@@ -279,26 +330,18 @@ public class Array<T> : IEnumerable<T>, IDisposable
         eina_array_flush(Handle);
     }
 
-    /// <summary>
-    ///   Returns the number of elements in an array.
-    /// <para>Since EFL 1.23.</para>
-    /// </summary>
-    /// <returns>The number of elements.</returns>
-    public int Count()
-    {
-        return (int)eina_array_count_custom_export_mono(Handle);
-    }
-
-    public void SetOwnership(bool ownAll)
+    internal void SetOwnership(bool ownAll)
     {
         Own = ownAll;
         OwnContent = ownAll;
+        CheckOwnerships();
     }
 
-    public void SetOwnership(bool own, bool ownContent)
+    internal void SetOwnership(bool own, bool ownContent)
     {
         Own = own;
         OwnContent = ownContent;
+        CheckOwnerships();
     }
 
     /// <summary>
@@ -308,6 +351,8 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <param name="val">The value of the element to be inserted.</param>
     public bool Push(T val)
     {
+        RequireWritable();
+
         IntPtr ele = ManagedToNativeAlloc(val);
         var r = InternalPush(ele);
         if (!r)
@@ -334,11 +379,13 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <returns>The element at the end position.</returns>
     public T Pop()
     {
+        RequireWritable();
+
         IntPtr ele = InternalPop();
         var r = NativeToManaged<T>(ele);
-        if (OwnContent && ele != IntPtr.Zero)
+        if (ele != IntPtr.Zero)
         {
-            NativeFree<T>(ele);
+            DeleteData(ele);
         }
 
         return r;
@@ -351,10 +398,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <param name="idx">The position of the desired element.</param>
     /// <returns>The element at the specified position</returns>
     public T DataGet(int idx)
-    {
-        IntPtr ele = InternalDataGet(idx);
-        return NativeToManaged<T>(ele);
-    }
+        => NativeToManaged<T>(InternalDataGet(idx));
 
     /// <summary>
     ///   Returns the element of the array at the specified position.
@@ -363,9 +407,8 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <param name="idx">The position of the desired element.</param>
     /// <returns>The element at the specified position</returns>
     public T At(int idx)
-    {
-        return DataGet(idx);
-    }
+        => DataGet(idx);
+
 
     /// <summary>
     ///  Replaces the element at the specified position.
@@ -373,16 +416,17 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <param name="idx">The position of the desired element.</param>
     /// <param name="val">The value of the element to be inserted.</param>
-    public void DataSet(int idx, T val)
+    internal void DataSet(int idx, T val)
     {
-        IntPtr ele = InternalDataGet(idx); // TODO: check bondaries ??
-        if (OwnContent && ele != IntPtr.Zero)
+        RequireWritable();
+
+        IntPtr ele = InternalDataGet(idx);
+        if (ele != IntPtr.Zero)
         {
-            NativeFree<T>(ele);
+            DeleteData(ele);
         }
 
-        ele = ManagedToNativeAlloc(val);
-        InternalDataSet(idx, ele);
+        InternalDataSet(idx, ManagedToNativeAlloc(val));
     }
 
     /// <summary>
@@ -408,7 +452,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <returns>A array</returns>
     public T[] ToArray()
     {
-        int len = Length;
+        int len = Count;
         var managed = new T[len];
         for (int i = 0; i < len; ++i)
         {
@@ -440,17 +484,14 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     public Eina.Iterator<T> GetIterator()
-    {
-        return new Eina.Iterator<T>(eina_array_iterator_new(Handle), true);
-    }
+        => new Eina.Iterator<T>(eina_array_iterator_new(Handle), true);
 
     /// <summary> Gets an Enumerator for this Array.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     public IEnumerator<T> GetEnumerator()
     {
-        int len = Length;
-        for (int i = 0; i < len; ++i)
+        for (int i = 0, count = Count; i < count; ++i)
         {
             yield return DataGet(i);
         }
@@ -460,16 +501,113 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-        return this.GetEnumerator();
-    }
+        => this.GetEnumerator();
 
     /// <summary> Gets an Accessor for this Array.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     public Eina.Accessor<T> GetAccessor()
+        => new Eina.Accessor<T>(eina_array_accessor_new(Handle), Ownership.Managed);
+
+    /// <summary>
+    ///   Removes the first occurrence of a specific object.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to remove.</param>
+    public bool Remove(T val)
+        => LoopingThrough(val,
+                          (i) =>
+        {
+            RemoveAt(i);
+            return true;
+        }, () => false);
+
+    /// <summary>
+    ///   Adds an item.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to add.</param>
+    public void Add(T val) => Push(val);
+
+    /// <summary>
+    ///   Removes all items.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    public void Clear() => Clean();
+
+    /// <summary>
+    ///   Determines whether the <see cref="Array{T}" /> contains a specific value.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to locate.</param>
+    public bool Contains(T val)
+        => LoopingThrough(val, (i) => true, () => false);
+
+    /// <summary>
+    ///   Copies the elements of the <see cref="Array{T}" /> to an
+    /// <see cref="Array" />, starting at a particular <see cref="Array" /> index.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="array">The one-dimensional <see cref="Array" /> that is the
+    /// destination of the elements copied from <see cref="Array{T}" />.
+    /// The <see cref="Array" /> must have zero-based indexing.</param>
+    /// <param name="arrayIndex">The zero-based index in array at which copying
+    /// begins.</param>
+    public void CopyTo(T[] array, int arrayIndex)
+        => ToArray().CopyTo(array, arrayIndex);
+
+    /// <summary>
+    ///   Determines the index of a specific item.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="val">The object to locate.</param>
+    public int IndexOf(T val)
+        => LoopingThrough(val, (i) => i, () => -1);
+
+    /// <summary>
+    ///   Inserts an item to the <see cref="Array{T}" /> at the specified index.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="index">The zero-based index at which item should be inserted.</param>
+    /// <param name="val">The object to insert.</param>
+    public void Insert(int index, T val)
     {
-        return new Eina.Accessor<T>(eina_array_accessor_new(Handle), Ownership.Managed);
+        RequireWritable();
+
+        if (index < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"{nameof(index)} cannot be negative.");
+        }
+
+        if (Count < index)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"{nameof(index)} is greater than {nameof(Count)} + 1.");
+        }
+
+        if (index == Count)
+        {
+            Push(val);
+            return;
+        }
+        
+        eina_array_insert_at_custom_export_mono(Handle, (uint)index,
+                                                ManagedToNativeAlloc(val));
+    }
+
+    /// <summary>
+    ///   Removes the <see cref="Array{T}" /> item at the specified index.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="index">The zero-based index of the item to remove.</param>
+    public void RemoveAt(int index)
+    {
+        RequireWritable();
+
+        var ele = InternalDataGet(index);
+        DeleteData(ele);
+        eina_array_remove(Handle, (data,gdata)
+                          => ele != data,
+                          IntPtr.Zero);
     }
 }
 

@@ -209,7 +209,7 @@ public abstract class Application
             if (evt.arg.Initialization)
             {
                 var evtArgv = evt.arg.Argv;
-                int n = evtArgv.Length;
+                int n = evtArgv.Count;
                 var argv = new string[n];
                 for (int i = 0; i < n; ++i)
                 {

@@ -579,7 +579,7 @@ Eina_Bool _dummy_test_object_check_eina_array_int_out(EINA_UNUSED Eo *obj, EINA_
 {
    if (!_array_int_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_int_equal(_array_int_out_to_check, modified_seq_int, modified_seq_int_size);
+   Eina_Bool r = _array_int_equal(_array_int_out_to_check, base_seq_int, base_seq_int_size);
 
    unsigned int i;
    int *ele;
@@ -617,7 +617,7 @@ Eina_Bool _dummy_test_object_check_eina_array_int_return(EINA_UNUSED Eo *obj, EI
 {
    if (!_array_int_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_int_equal(_array_int_return_to_check, modified_seq_int, modified_seq_int_size);
+   Eina_Bool r = _array_int_equal(_array_int_return_to_check, base_seq_int, base_seq_int_size);
 
    unsigned int i;
    int *ele;
@@ -707,7 +707,7 @@ Eina_Bool _dummy_test_object_check_eina_array_str_out(EINA_UNUSED Eo *obj, EINA_
 {
    if (!_array_str_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_str_equal(_array_str_out_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_str_equal(_array_str_out_to_check, base_seq_str, base_seq_str_size);
 
    unsigned int i;
    char *ele;
@@ -745,7 +745,7 @@ Eina_Bool _dummy_test_object_check_eina_array_str_return(EINA_UNUSED Eo *obj, EI
 {
    if (!_array_str_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_str_equal(_array_str_return_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_str_equal(_array_str_return_to_check, base_seq_str,base_seq_str_size);
 
    unsigned int i;
    char *ele;
@@ -840,7 +840,7 @@ Eina_Bool _dummy_test_object_check_eina_array_strshare_out(EINA_UNUSED Eo *obj, 
 {
    if (!_array_strshare_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_strshare_equal(_array_strshare_out_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_strshare_equal(_array_strshare_out_to_check, base_seq_str, base_seq_str_size);
 
    unsigned int i;
    Eina_Stringshare *ele;
@@ -878,7 +878,7 @@ Eina_Bool _dummy_test_object_check_eina_array_strshare_return(EINA_UNUSED Eo *ob
 {
    if (!_array_strshare_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_strshare_equal(_array_strshare_return_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_strshare_equal(_array_strshare_return_to_check, base_seq_str, base_seq_str_size);
 
    unsigned int i;
    Eina_Stringshare *ele;
@@ -974,7 +974,7 @@ Eina_Bool _dummy_test_object_check_eina_array_obj_out(EINA_UNUSED Eo *obj, EINA_
 {
    if (!_array_obj_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_obj_equal(_array_obj_out_to_check, modified_seq_obj, modified_seq_obj_size);
+   Eina_Bool r = _array_obj_equal(_array_obj_out_to_check, base_seq_obj, base_seq_obj_size);
    if (!r) return r;
 
    unsigned int i;
@@ -1013,7 +1013,7 @@ Eina_Bool _dummy_test_object_check_eina_array_obj_return(EINA_UNUSED Eo *obj, EI
 {
    if (!_array_obj_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_obj_equal(_array_obj_return_to_check, modified_seq_obj, modified_seq_obj_size);
+   Eina_Bool r = _array_obj_equal(_array_obj_return_to_check, base_seq_obj, base_seq_obj_size);
    if (!r) return r;
 
    unsigned int i;

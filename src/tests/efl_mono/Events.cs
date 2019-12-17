@@ -239,7 +239,7 @@ class TestEoEvents
 
         obj.EmitEventWithArray(sent);
 
-        Test.AssertEquals(sent.Length, received.Length);
+        Test.AssertEquals(sent.Count, received.Count);
         var pairs = sent.Zip(received, (string sentItem, string receivedItem) => new { Sent = sentItem, Received = receivedItem } );
         foreach (var pair in pairs)
         {

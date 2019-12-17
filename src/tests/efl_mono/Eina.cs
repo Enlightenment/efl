@@ -787,16 +787,16 @@ class TestEinaArray
     {
         var a = new Eina.Array<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Length == 0);
+        Test.Assert(a.Count == 0);
         Test.Assert(a.Push(88));
         Test.Assert(a[0] == 88);
-        Test.Assert(a.Length == 1);
+        Test.Assert(a.Count == 1);
         Test.Assert(a.Push(44));
         Test.Assert(a[1] == 44);
-        Test.Assert(a.Length == 2);
+        Test.Assert(a.Count == 2);
         Test.Assert(a.Push(22));
         Test.Assert(a[2] == 22);
-        Test.Assert(a.Length == 3);
+        Test.Assert(a.Count == 3);
         a.Dispose();
     }
 
@@ -804,16 +804,16 @@ class TestEinaArray
     {
         var a = new Eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Length == 0);
+        Test.Assert(a.Count == 0);
         Test.Assert(a.Push("a"));
         Test.Assert(a[0] == "a");
-        Test.Assert(a.Length == 1);
+        Test.Assert(a.Count == 1);
         Test.Assert(a.Push("b"));
         Test.Assert(a[1] == "b");
-        Test.Assert(a.Length == 2);
+        Test.Assert(a.Count == 2);
         Test.Assert(a.Push("c"));
         Test.Assert(a[2] == "c");
-        Test.Assert(a.Length == 3);
+        Test.Assert(a.Count == 3);
         a.Dispose();
     }
 
@@ -821,16 +821,16 @@ class TestEinaArray
     {
         var a = new Eina.Array<Eina.Stringshare>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Length == 0);
+        Test.Assert(a.Count == 0);
         Test.Assert(a.Push("a"));
         Test.Assert(a[0] == "a");
-        Test.Assert(a.Length == 1);
+        Test.Assert(a.Count == 1);
         Test.Assert(a.Push("b"));
         Test.Assert(a[1] == "b");
-        Test.Assert(a.Length == 2);
+        Test.Assert(a.Count == 2);
         Test.Assert(a.Push("c"));
         Test.Assert(a[2] == "c");
-        Test.Assert(a.Length == 3);
+        Test.Assert(a.Count == 3);
         a.Dispose();
     }
 
@@ -951,7 +951,7 @@ class TestEinaArray
         Test.Assert(t.EinaArrayIntOut(out arr));
         Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
-        Test.Assert(arr.Append(append_seq_int));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(append_seq_int));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntOut());
@@ -976,8 +976,9 @@ class TestEinaArray
         var t = new Dummy.TestObject();
         var arr = t.EinaArrayIntReturn();
         Test.Assert(!arr.Own);
+        Test.Assert(!arr.OwnContent);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_int));
-        Test.Assert(arr.Append(append_seq_int));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(append_seq_int));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntReturn());
@@ -1031,7 +1032,7 @@ class TestEinaArray
         Test.Assert(t.EinaArrayStrOut(out arr));
         Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
-        Test.Assert(arr.Append(append_seq_str));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(append_seq_str));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrOut());
@@ -1057,7 +1058,7 @@ class TestEinaArray
         var arr = t.EinaArrayStrReturn();
         Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
-        Test.Assert(arr.Append(append_seq_str));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(append_seq_str));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrReturn());
@@ -1111,7 +1112,7 @@ class TestEinaArray
         Test.Assert(t.EinaArrayStrshareOut(out arr));
         Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
-        Test.Assert(arr.Append(append_seq_strshare));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(append_seq_strshare));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareOut());
@@ -1137,7 +1138,7 @@ class TestEinaArray
         var arr = t.EinaArrayStrshareReturn();
         Test.Assert(!arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
-        Test.Assert(arr.Append(append_seq_strshare));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(append_seq_strshare));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayStrshareReturn());
@@ -1192,7 +1193,7 @@ class TestEinaArray
         Test.Assert(t.EinaArrayObjOut(out arr));
         Test.Assert(!arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseSeqObj());
-        Test.Assert(arr.Append(AppendSeqObj()));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(AppendSeqObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjOut());
@@ -1218,7 +1219,7 @@ class TestEinaArray
         var arr = t.EinaArrayObjReturn();
         Test.Assert(!arr.Own);
         NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseSeqObj());
-        Test.Assert(arr.Append(AppendSeqObj()));
+        Test.AssertRaises<NotSupportedException>(() => arr.Append(AppendSeqObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayObjReturn());
@@ -1246,7 +1247,7 @@ class TestEinaArray
         var b = t.EinaArrayObjReturnIn(a);
         NumberwrapperSequenceAssertEqual(a.ToArray(), b.ToArray());
         NumberwrapperSequenceAssertEqual(a.ToArray(), BaseSeqObj());
-        int len = a.Length;
+        int len = a.Count;
         for (int i=0; i < len; ++i)
         {
             Test.Assert(a[i].NativeHandle == b[i].NativeHandle);
