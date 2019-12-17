@@ -1,9 +1,11 @@
-class @beta Efl.Spring_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Spring_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Spring interpolator. The value quickly reaches $[1.0] and then oscillates
      around it a number of times before stopping (as if linked with a spring).
 
      The number of oscillations and how quickly it stops can be customized.
+
+     @since 1.24
    ]]
    data: Efl_Spring_Interpolator_Data;
    methods {

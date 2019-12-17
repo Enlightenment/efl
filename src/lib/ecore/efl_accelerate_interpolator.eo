@@ -1,10 +1,12 @@
-class @beta Efl.Accelerate_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Accelerate_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Accelerated interpolator. It starts slow and accelerates, stopping abruptly when
      it reaches $[1.0].
 
      Internally it uses the first half of a sinus rise (from 0 to 0.5) and the steepness
      can be customized.
+
+     @since 1.24
    ]]
    data: Efl_Accelerate_Interpolator_Data;
    methods {

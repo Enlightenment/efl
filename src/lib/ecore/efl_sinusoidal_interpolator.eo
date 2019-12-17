@@ -1,9 +1,11 @@
-class @beta Efl.Sinusoidal_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Sinusoidal_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Sinusoidal interpolator. It starts slow, then moves quickly and then slows down
      again before stopping.
 
      How long it stays in the quick zone (the slope of the curve) can be customized.
+
+     @since 1.24
    ]]
    data: Efl_Sinusoidal_Interpolator_Data;
    methods {

@@ -1,10 +1,12 @@
-class @beta Efl.Cubic_Bezier_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Cubic_Bezier_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Cubic Bezier interpolator. It starts slow, then moves quickly and then slows down
      again before stopping.
 
      The exact shape of the mapping curve can be modified through the @.control_points
      property.
+
+     @since 1.24
    ]]
    data: Efl_Cubic_Bezier_Interpolator_Data;
    methods {
