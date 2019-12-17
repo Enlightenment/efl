@@ -19,6 +19,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using static Eina.TraitFunctions;
 using static Eina.IteratorNativeFunctions;
@@ -198,6 +199,8 @@ public static class HashNativeFunctions
 ///
 /// <para>Since EFL 1.23.</para>
 /// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+                 Justification = "This is a generalized container mapping the native one.")]
 public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDisposable
 {
     [EditorBrowsable(EditorBrowsableState.Never)]

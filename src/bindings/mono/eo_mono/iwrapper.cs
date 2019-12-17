@@ -828,11 +828,11 @@ class PrivateNativeClass : NativeClass
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public class BindingEntity: System.Attribute
+public class BindingEntityAttribute: System.Attribute
 {
     public static bool IsBindingEntity(System.Type t)
     {
-        return Attribute.GetCustomAttribute(t, typeof(BindingEntity), false) != null;
+        return Attribute.GetCustomAttribute(t, typeof(BindingEntityAttribute), false) != null;
     }
 }
 

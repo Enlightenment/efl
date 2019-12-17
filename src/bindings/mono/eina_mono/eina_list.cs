@@ -19,6 +19,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using static Eina.TraitFunctions;
 using static Eina.ListNativeFunctions;
@@ -124,6 +125,8 @@ public static class ListNativeFunctions
 /// <summary>Native wrapper around a linked list of items.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+                 Justification="This is a generalized container mapping the native one.")]
 public class List<T> : IList<T>, IEnumerable<T>, IDisposable
 {
 
