@@ -17,6 +17,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Eina
 {
@@ -153,6 +154,8 @@ public struct Error : IComparable<Error>, IEquatable<Error>
     /// back to the native code. For example, in an event handler.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate",
+                     Justification = "It's not an event.")]
     public static void RaiseIfUnhandledException()
     {
         Error e = Get();
@@ -167,6 +170,8 @@ public struct Error : IComparable<Error>, IEquatable<Error>
     ///   Raises an exception.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate",
+                     Justification = "It's not an event.")]
     public static void Raise(Error e)
     {
         if (e != 0)
