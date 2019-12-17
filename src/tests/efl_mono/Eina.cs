@@ -4118,11 +4118,9 @@ class TestEinaIterator
     public static void test_eina_iterator_int_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<int> itr;
+        IEnumerable<int> itr;
 
         Test.Assert(t.EinaIteratorIntOut(out itr));
-
-        Test.Assert(!itr.Own);
 
         int idx = 0;
         foreach (int e in itr)
@@ -4131,8 +4129,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_int.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorIntOut());
         t.Dispose();
@@ -4141,11 +4137,9 @@ class TestEinaIterator
     public static void test_eina_iterator_int_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<int> itr;
+        IEnumerable<int> itr;
 
         Test.Assert(t.EinaIteratorIntOutOwn(out itr));
-
-        Test.Assert(itr.Own);
 
         int idx = 0;
         foreach (int e in itr)
@@ -4155,7 +4149,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_int.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4165,8 +4158,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorIntReturn();
 
-        Test.Assert(!itr.Own);
-
         int idx = 0;
         foreach (int e in itr)
         {
@@ -4174,8 +4165,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_int.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorIntReturn());
         t.Dispose();
@@ -4187,8 +4176,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorIntReturnOwn();
 
-        Test.Assert(itr.Own);
-
         int idx = 0;
         foreach (int e in itr)
         {
@@ -4197,7 +4184,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_int.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4252,11 +4238,9 @@ class TestEinaIterator
     public static void test_eina_iterator_str_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<string> itr;
+        IEnumerable<string> itr;
 
         Test.Assert(t.EinaIteratorStrOut(out itr));
-
-        Test.Assert(!itr.Own);
 
         int idx = 0;
         foreach (string e in itr)
@@ -4265,8 +4249,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_str.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrOut());
         t.Dispose();
@@ -4275,11 +4257,9 @@ class TestEinaIterator
     public static void test_eina_iterator_str_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<string> itr;
+        IEnumerable<string> itr;
 
         Test.Assert(t.EinaIteratorStrOutOwn(out itr));
-
-        Test.Assert(itr.Own);
 
         int idx = 0;
         foreach (string e in itr)
@@ -4289,7 +4269,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_str.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4299,8 +4278,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorStrReturn();
 
-        Test.Assert(!itr.Own);
-
         int idx = 0;
         foreach (string e in itr)
         {
@@ -4308,8 +4285,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_str.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrReturn());
         t.Dispose();
@@ -4321,8 +4296,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorStrReturnOwn();
 
-        Test.Assert(itr.Own);
-
         int idx = 0;
         foreach (string e in itr)
         {
@@ -4331,7 +4304,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_str.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4386,11 +4358,9 @@ class TestEinaIterator
     public static void test_eina_iterator_strshare_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<Eina.Stringshare> itr;
+        IEnumerable<Eina.Stringshare> itr;
 
         Test.Assert(t.EinaIteratorStrshareOut(out itr));
-
-        Test.Assert(!itr.Own);
 
         int idx = 0;
         foreach (Eina.Stringshare e in itr)
@@ -4399,8 +4369,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_strshare.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrshareOut());
         t.Dispose();
@@ -4409,11 +4377,9 @@ class TestEinaIterator
     public static void test_eina_iterator_strshare_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<Eina.Stringshare> itr;
+        IEnumerable<Eina.Stringshare> itr;
 
         Test.Assert(t.EinaIteratorStrshareOutOwn(out itr));
-
-        Test.Assert(itr.Own);
 
         int idx = 0;
         foreach (Eina.Stringshare e in itr)
@@ -4423,7 +4389,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_strshare.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4433,8 +4398,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorStrshareReturn();
 
-        Test.Assert(!itr.Own);
-
         int idx = 0;
         foreach (Eina.Stringshare e in itr)
         {
@@ -4442,8 +4405,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_strshare.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorStrshareReturn());
         t.Dispose();
@@ -4455,8 +4416,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorStrshareReturnOwn();
 
-        Test.Assert(itr.Own);
-
         int idx = 0;
         foreach (Eina.Stringshare e in itr)
         {
@@ -4465,7 +4424,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_strshare.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4520,11 +4478,9 @@ class TestEinaIterator
     public static void test_eina_iterator_obj_out()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<Dummy.Numberwrapper> itr;
+        IEnumerable<Dummy.Numberwrapper> itr;
 
         Test.Assert(t.EinaIteratorObjOut(out itr));
-
-        Test.Assert(!itr.Own);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -4535,8 +4491,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorObjOut());
         t.Dispose();
@@ -4545,11 +4499,9 @@ class TestEinaIterator
     public static void test_eina_iterator_obj_out_own()
     {
         var t = new Dummy.TestObject();
-        Eina.Iterator<Dummy.Numberwrapper> itr;
+        IEnumerable<Dummy.Numberwrapper> itr;
 
         Test.Assert(t.EinaIteratorObjOutOwn(out itr));
-
-        Test.Assert(itr.Own);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -4561,7 +4513,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 
@@ -4571,8 +4522,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorObjReturn();
 
-        Test.Assert(!itr.Own);
-
         var base_seq_obj = BaseSeqObj();
 
         int idx = 0;
@@ -4582,8 +4531,6 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
-
-        itr.Dispose();
 
         Test.Assert(t.CheckEinaIteratorObjReturn());
         t.Dispose();
@@ -4595,8 +4542,6 @@ class TestEinaIterator
 
         var itr = t.EinaIteratorObjReturnOwn();
 
-        Test.Assert(itr.Own);
-
         var base_seq_obj = BaseSeqObj();
 
         int idx = 0;
@@ -4607,7 +4552,6 @@ class TestEinaIterator
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
 
-        itr.Dispose();
         t.Dispose();
     }
 } // < TestEinaIterator

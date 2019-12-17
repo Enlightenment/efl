@@ -45,6 +45,8 @@ public static class IteratorNativeFunctions
 
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_carray_iterator_new(IntPtr array);
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
+        eina_carray_length_iterator_new(IntPtr array, uint step, uint length);
 }
 
 /// <summary>Wrapper around a native Eina iterator.

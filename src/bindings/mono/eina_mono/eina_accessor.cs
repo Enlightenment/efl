@@ -29,8 +29,10 @@ namespace Eina
 
 internal class AccessorNativeFunctions
 {
+    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+        eina_carray_length_accessor_new(IntPtr array, uint step, uint length);
     [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
-        eina_accessor_data_get(IntPtr accessor, uint position, IntPtr data);
+        eina_accessor_data_get(IntPtr accessor, uint position, out IntPtr data);
     [DllImport(efl.Libs.Eina)] public static extern void
         eina_accessor_free(IntPtr accessor);
 }
@@ -148,6 +150,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     /// <returns>An enumerator to walk through the acessor items.</returns>
     public IEnumerator<T> GetEnumerator()
     {
+/*
         if (Handle == IntPtr.Zero)
         {
             throw new ObjectDisposedException(base.GetType().Name);
@@ -155,7 +158,6 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
 
         IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(IntPtr)));
         uint position = 0;
-
         try
         {
             while (eina_accessor_data_get(Handle, position, tmp))
@@ -169,6 +171,8 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
         {
             MemoryNative.Free(tmp);
         }
+*/
+        yield break;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
