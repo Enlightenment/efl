@@ -196,7 +196,7 @@ public static class HashNativeFunctions
 
 /// <summary>Wrapper around native dictionary mapping keys to values.
 ///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDisposable
 {

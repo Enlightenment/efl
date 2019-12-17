@@ -43,7 +43,7 @@ public enum Components : Int32
     /// <summary>
     ///   Elementary Widget toolkit: Elm.
     /// <para>it's depend of <see cref="Efl.Csharp.Components.Basic" />.</para>
-    /// <para>Since EFL 1.24</para>
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
     Ui = Basic | 0x2,
 

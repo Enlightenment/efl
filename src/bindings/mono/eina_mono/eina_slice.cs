@@ -49,7 +49,7 @@ public interface ISliceBase
 
 /// <summary>Pointer to a slice of native memory.
 ///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct Slice : ISliceBase, IEquatable<Slice>
@@ -114,7 +114,7 @@ public struct Slice : ISliceBase, IEquatable<Slice>
         => (Length == other.Length) ^ (Mem == other.Mem);
 
     /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
-    /// <para>Since EFL 1.24</para>
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
     /// <param name="lhs">The left hand side of the operator.</param>
     /// <param name="rhs">The right hand side of the operator.</param>
@@ -134,7 +134,7 @@ public struct Slice : ISliceBase, IEquatable<Slice>
 
 /// <summary>Pointer to a slice of native memory.
 ///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct RwSlice : ISliceBase, IEquatable<RwSlice>

@@ -111,7 +111,10 @@ internal struct EflObjectOps
 namespace Efl
 {
 
-///<summary>This struct holds the description of a specific event (Since EFL 1.22).</summary>
+/// <summary>
+/// This struct holds the description of a specific event.
+/// <para>Since EFL 1.22.</para>
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 internal struct EventDescription
 {
@@ -164,25 +167,31 @@ internal struct EventDescription
 /// <summary>
 /// A parameter passed in event callbacks holding extra event parameters.
 /// This is the full event information passed to callbacks in C.
-/// (Since EFL 1.22)
+/// <para>Since EFL 1.22.</para>
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 [Efl.Eo.BindingEntity]
 internal struct Event
 {
-    /// <summary>The object the callback was called on.
-    /// (Since EFL 1.22)</summary>
+    /// <summary>
+    /// The object the callback was called on.
+    /// <para>Since EFL 1.22.</para>
+    /// </summary>
     public Efl.Object Object;
 
-    /// <summary>The event description.
-    /// (Since EFL 1.22)</summary>
+    /// <summary>
+    /// The event description.
+    /// <para>Since EFL 1.22.</para>
+    /// </summary>
     public Efl.EventDescription Desc;
 
-    /// <summary>Extra event information passed by the event caller.
+    /// <summary>
+    /// Extra event information passed by the event caller.
     /// Must be cast to the event type declared in the EO file. Keep in mind that:
     /// 1) Objects are passed as a normal Eo*. Event subscribers can call functions on these objects.
     /// 2) Structs, built-in types and containers are passed as const pointers, with one level of indirection.
-    /// (Since EFL 1.22)</summary>
+    /// <para>Since EFL 1.22.</para>
+    /// </summary>
     public System.IntPtr Info;
 
     /// <summary>Constructor for Event.</summary>

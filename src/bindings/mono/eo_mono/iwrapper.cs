@@ -1034,7 +1034,7 @@ internal static class ClassRegister
 ///
 /// <para>For internal usage by generated code.</para>
 ///
-/// <para>Since EFL 1.24</para>
+/// <para>Since EFL 1.24.</para>
 /// </summary>
 class MarshalEoNoMove : ICustomMarshaler
 {
@@ -1117,7 +1117,7 @@ class MarshalEoNoMove : ICustomMarshaler
 ///
 /// <para>For internal usage by generated code.</para>
 ///
-/// <para>Since EFL 1.24</para>
+/// <para>Since EFL 1.24.</para>
 /// </summary>
 class MarshalEoMove : ICustomMarshaler
 {
