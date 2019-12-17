@@ -12,7 +12,7 @@ icon.setIcon("home");
 var path, group;
 r = icon.getFile(path, group);
 path = r[0];
-gruop = r[1];
+group = r[1];
 console.log("path = " + path + ", group = " + group);
 
 var name;
