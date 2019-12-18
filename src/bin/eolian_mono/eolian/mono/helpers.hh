@@ -29,6 +29,7 @@ namespace helpers {
 /* General helpers, not related directly with generating strings (those go in the name_helpers.hh). */
 
 namespace attributes = efl::eolian::grammar::attributes;
+namespace grammar = efl::eolian::grammar;
 
 inline bool need_struct_conversion(attributes::regular_type_def const* regular)
 {
@@ -353,8 +354,7 @@ has_property_wrapper_bit has_property_wrapper(attributes::property_def const& pr
        else if (is_concrete) return r;
     }
 
-  // EINA_LOG_ERR("Generating property %s", name_helpers::property_managed_name(property).c_str());
-  // C# interface can have only 
+  // C# interface can have only public methods.
   if (is_interface)
     {
        has_getter = has_getter && property.getter->scope == attributes::member_scope:: scope_public;
@@ -404,6 +404,24 @@ has_property_wrapper_bit has_property_wrapper(attributes::property_def const& pr
     r |= has_property_wrapper_bit::has_value_tuple;
 
   return r;
+}
+
+template<typename Context>
+bool is_impl_of_interface_property_indexer(attributes::property_def const& property
+                                           , attributes::klass_def const& klass_from_property
+                                           , attributes::klass_def const& implementing_klass
+                                           , Context const& context)
+{
+  bool is_self_property = implementing_klass == klass_from_property;
+
+    //  EINA_LOG_ERR("Generating indexer for property %s", name_helpers::property_managed_name(property).c_str());
+  if (is_self_property)
+    return false;
+  bool original_klass_is_interface = helpers::is_managed_interface(klass_from_property);
+  auto iface_context = grammar::context_add_tag(class_context{class_context::interface}, context);
+
+  auto wrapper_bit = helpers::has_property_wrapper(property, &klass_from_property, iface_context);
+  return wrapper_bit & helpers::has_property_wrapper_bit::has_indexer;
 }
 
 } // namespace helpers

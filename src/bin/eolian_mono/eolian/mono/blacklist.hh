@@ -165,7 +165,7 @@ inline bool is_property_blacklisted(std::string const& name)
        // Setter returns a future
        , "Efl.IModel.Property"
        // Protected
-       , "Efl.Access.IAction.ActionName"
+      //  , "Efl.Access.IAction.ActionName"
        , "Efl.Access.IAction.ActionLocalizedName"
        , "Efl.Access.IComponent.Extents"
        , "Efl.Access.IText.AccessSelection"

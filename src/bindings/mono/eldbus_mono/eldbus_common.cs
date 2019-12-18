@@ -40,7 +40,7 @@ public static class Timeout
 /// <summary>
 /// The path to an object.
 /// <para>Since EFL 1.23.</para>
-/// </summary>
+/// /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct ObjectPath : IEquatable<ObjectPath>
 {

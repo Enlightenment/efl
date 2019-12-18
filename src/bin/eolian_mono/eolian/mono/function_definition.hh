@@ -356,7 +356,6 @@ struct property_wrapper_definition_generator
                          , attributes::property_def const& property
                          , Context const& context
                          , std::string scope, std::string get_scope, std::string set_scope
-                         , std::string class_name
                          , C1 keys, C2 values
                          , bool is_interface
                          , bool is_concrete_for_interface
@@ -380,16 +379,15 @@ struct property_wrapper_definition_generator
 
      std::string parentship = "\n";
 
-     bool is_self_property = *implementing_klass == *klass_from_property;
-
-     if (!(is_self_property && !is_concrete_for_interface))
+     if (helpers::is_impl_of_interface_property_indexer(property, *klass_from_property, *implementing_klass, context))
        parentship = " : " + name_helpers::property_interface_indexer_name(property, *klass_from_property) + "\n";
 
+     auto klass_from_property_name = name_helpers::klass_full_concrete_or_interface_name(*klass_from_property);
      if (!as_generator
          (
           scope_tab << scope << "class " << name_helpers::property_concrete_indexer_name(property) << parentship
           << scope_tab << "{\n"
-          << scope_tab(2) << "public " << class_name << " Self {get; set;}\n"
+          << scope_tab(2) << "public " << klass_from_property_name << " Self {get; set;}\n"
           << scope_tab(2) << "public "
           << type_or_tuple << " this[" << type_or_tuple <<" i]\n"
           << scope_tab(2) << "{\n"
@@ -675,41 +673,44 @@ struct property_wrapper_definition_generator
 
       if (has_indexer)
       {
+        // The generated indexer wraps the actual property values inside the indexer, so a call like
+        // `obj.IndexedProperty[key] = value` calls the `[key]` indexer method in the indexer class.
+        // That said, we need to replace the property values with the indexer.
         assert (!!implementing_klass);
-        generate_indexer (sink, property, context, scope, get_scope, set_scope
-                          , klass_name, keys, values
+        generate_indexer (sink, property, context
+                          , scope, get_scope, set_scope
+                          , keys, values
                           , is_interface, is_concrete_for_interface, has_setter);
 
         generated_values.clear();
+        std::string base_type_name;
+        std::string c_type;
+
+        // FIXME this selection needs to be sorted out.
         if (!is_interface && *implementing_klass == *klass_from_property
             && !is_concrete_for_interface)
+        // if (!is_interface && !helpers::is_impl_of_interface_property_indexer(property, *klass_from_property, *implementing_klass, context))
         {
-          generated_values.push_back
-            (attributes::parameter_def
-             {parameter_direction::in
-                , attributes::type_def
-                {
-                  attributes::regular_type_def{name_helpers::property_concrete_indexer_name(property), {attributes::qualifier_info::is_none, ""}, {}}
-                  , name_helpers::property_concrete_indexer_name(property)
-                  , false, false, false, ""
-                }
-              , "indexer", {}, nullptr
-            });
+          base_type_name = name_helpers::property_concrete_indexer_name(property);
+          c_type = name_helpers::property_concrete_indexer_name(property);
         }
         else
         {
-          generated_values.push_back
+          base_type_name = name_helpers::property_interface_indexer_name(property, *klass_from_property);
+          c_type = name_helpers::property_interface_indexer_name(property, *klass_from_property);
+        }
+
+        generated_values.push_back
             (attributes::parameter_def
              {parameter_direction::in
                 , attributes::type_def
                 {
-                  attributes::regular_type_def{name_helpers::klass_full_concrete_or_interface_name (*klass_from_property) + managed_name + "Indexer", {attributes::qualifier_info::is_none, ""}, {}}
-                  , name_helpers::property_interface_indexer_name(property, *klass_from_property)
+                  attributes::regular_type_def{base_type_name, {attributes::qualifier_info::is_none, ""}, {}}
+                  , c_type
                   , false, false, false, ""
                 }
               , "indexer", {}, nullptr
             });
-        }
       }
 
       if (generated_values.size() == 1)
@@ -781,11 +782,42 @@ struct interface_property_indexer_definition_generator
       auto klass_name = name_helpers::klass_concrete_or_interface_name (*implementing_klass);
       std::string managed_name = name_helpers::property_managed_name(property);
 
+      auto has_wrapper = helpers::has_property_wrapper(property, implementing_klass, context);
+      // EINA_LOG_ERR("Wrapper bit for property %s of implementing class %s is 0x%X", managed_name.c_str(), 
+          // implementing_klass->eolian_name.c_str(), (unsigned int) has_wrapper);
+      if (!(has_wrapper & helpers::has_property_wrapper_bit::has_getter))
+        return true;
+
+      if (!(has_wrapper & helpers::has_property_wrapper_bit::has_indexer))
+        return true;
+
+      auto keys = property.getter->keys;
+      auto values = property.getter->values;
+
+      // Helper generator expressions
+      auto size_not_one = [] (std::vector<attributes::parameter_def> k) { return k.size() != 1; };
+      auto type_or_tuple
+        =
+        (
+         (
+          attribute_conditional(size_not_one)["("]
+          << (type(false) % ", ")
+          << ")"
+         )
+         | *type(false)
+        )
+        ;
+
       if (!as_generator
            ("public interface " << name_helpers::property_interface_indexer_short_name(property, *implementing_klass) << "\n"
            << "{\n"
+           << scope_tab << klass_name << " Self {get; set;}\n"
+           << scope_tab << type_or_tuple << " this[" << type_or_tuple << " i]\n"
+           << scope_tab << "{\n"
+           << scope_tab(2) << "get;\n"
+           << scope_tab << "}\n"
            << "}\n"
-           ).generate (sink, attributes::unused, context))
+           ).generate (sink, std::make_tuple(values, values, keys, keys), context))
         return false;
 
       return true;
