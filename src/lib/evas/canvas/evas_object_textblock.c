@@ -2900,7 +2900,7 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
    else if (cmd == langstr)
      {
         changed = eina_stringshare_replace(&(_FMT_INFO(font_lang)),
-                                           evas_font_lang_normalize(param));
+                                           param);
      }
    else if (cmd == gfx_filterstr)
      {
@@ -4097,7 +4097,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc = evas_font_desc_new();
 
              eina_stringshare_replace(&(fmt->font.fdesc->lang),
-                   evas_font_lang_normalize("auto"));
+                   evas_font_lang_normalize(_FMT_INFO(font_lang)));
              eina_stringshare_replace(&(fmt->font.fdesc->fallbacks),
                    _FMT_INFO(font_fallbacks));
 
@@ -4105,7 +4105,6 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->weight = _FMT_INFO(font_weight);
              fmt->font.fdesc->slant = _FMT_INFO(font_slant);
              fmt->font.fdesc->width = _FMT_INFO(font_width);
-             fmt->font.fdesc->lang = _FMT_INFO(font_lang);
              evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
              fmt->font.font = evas_font_load(evas_obj->layer->evas->font_path,
                                              evas_obj->layer->evas->hinting,
@@ -16237,19 +16236,10 @@ _efl_canvas_textblock_efl_text_font_font_fallbacks_get(const Eo *obj EINA_UNUSED
 static void
 _efl_canvas_textblock_efl_text_font_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_lang EINA_UNUSED)
 {
-   Eina_Stringshare *nfont_lang;
-   if (o->default_format.info.font_lang != font_lang)
+   if (_FMT_INFO(font_lang) != font_lang)
      {
-        nfont_lang = eina_stringshare_add(font_lang);
-        if (nfont_lang == _FMT_INFO(font_lang))
+        if (eina_stringshare_replace(&_FMT_INFO(font_lang), font_lang))
           {
-             /* Already stringshared here, unref */
-             eina_stringshare_del(nfont_lang);
-          }
-        else
-          {
-             // Set immediately, load font_lang later
-             _FMT_INFO(font_lang) = nfont_lang;
              _canvas_text_format_changed(obj, o);
           }
      }
