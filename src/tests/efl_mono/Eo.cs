@@ -402,15 +402,15 @@ class TestCsharpProperties
         obj.Dispose();
     }
 
-    public static void test_setter_only()
-    {
-        var obj = new Dummy.TestObject();
-        int val = -1984;
+    // public static void test_setter_only()
+    // {
+    //     var obj = new Dummy.TestObject();
+    //     int val = -1984;
 
-        obj.SetterOnly = val;
-        Test.AssertEquals(val, obj.GetSetterOnly());
-        obj.Dispose();
-    }
+    //     obj.SetterOnly = val;
+    //     Test.AssertEquals(val, obj.GetSetterOnly());
+    //     obj.Dispose();
+    // }
 
     public static void test_class_property()
     {
@@ -436,6 +436,25 @@ class TestCsharpProperties
         Test.AssertEquals(ret, (1, 2));
         obj.Dispose();
     }
+
+    public static void test_csharp_keyed_multi_valued_prop()
+    {
+        var obj = new Dummy.TestObject();
+        obj.KeyedMultiValuedProp[100] = (1, 2);
+        var ret = obj.KeyedMultiValuedProp[100];
+        Test.AssertEquals(ret, (1, 2));
+        obj.Dispose();
+    }
+
+    public static void test_csharp_multi_keyed_multi_valued_prop()
+    {
+        var obj = new Dummy.TestObject();
+        obj.MultiKeyedMultiValuedProp[(100, 101)] = (1, 2);
+        var ret = obj.MultiKeyedMultiValuedProp[(100, 101)];
+        Test.AssertEquals(ret, (1, 2));
+        obj.Dispose();
+    }
+
 }
 
 class TestEoGrandChildrenFinalize
