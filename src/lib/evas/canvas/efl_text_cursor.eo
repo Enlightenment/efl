@@ -10,8 +10,10 @@ enum @beta Efl.Text.Cursor_Move_Type
    [[Text cursor movement types.]]
    char_next,       [[Advances to the next character.]]
    char_prev,       [[Advances to the previous character.]]
-   cluster_next,    [[Advances to the next grapheme cluster (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
-   cluster_prev,    [[Advances to the previous grapheme cluster (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
+   cluster_next,    [[Advances to the next grapheme cluster
+                      (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
+   cluster_prev,    [[Advances to the previous grapheme cluster
+                      (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
    paragraph_start, [[Advances to the first character in current paragraph.]]
    paragraph_end,   [[Advances to the last character in current paragraph.]]
    word_start,      [[Advance to current word start.]]
@@ -125,7 +127,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
       }
 
       // FIXME: It's just implemented as range delete with cluster start + end.
-      // Sholud we have convenience wrappers for those though? This and cluster prev/next?
+      // Should we have convenience wrappers for those though? This and cluster prev/next?
       // cluster_delete {
 
       line_jump_by {
