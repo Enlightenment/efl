@@ -230,7 +230,7 @@ EFL_START_TEST(eina_accessor_list_simple)
 }
 EFL_END_TEST
 
-EFL_START_TEST(eina_accessor_carray_simple)
+EFL_START_TEST(eina_accessor_carray_simple_ptr)
 {
    Eina_Accessor *it;
    int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
@@ -257,11 +257,41 @@ EFL_START_TEST(eina_accessor_carray_simple)
    eina_accessor_free(it);
 }
 EFL_END_TEST
+
+EFL_START_TEST(eina_accessor_carray_simple)
+{
+   Eina_Accessor *it;
+   int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
+   int *j, c;
+
+   it = EINA_C_ARRAY_ACCESSOR_PTR_NEW(data);
+
+   EINA_ACCESSOR_FOREACH(it, c, j)
+     {
+        ck_assert_int_eq(data[c], *j);
+     }
+
+   fail_if(eina_accessor_data_get(it, 5, (void **)&j) != EINA_TRUE);
+   fail_if(*j != 1337);
+   fail_if(eina_accessor_data_get(it, 3, (void **)&j) != EINA_TRUE);
+   fail_if(*j != 1);
+   fail_if(eina_accessor_data_get(it, 3, (void **)&j) != EINA_TRUE);
+   fail_if(*j != 1);
+   fail_if(eina_accessor_data_get(it, 1, (void **)&j) != EINA_TRUE);
+   fail_if(*j != 9);
+   fail_if(eina_accessor_data_get(it, 5, (void **)&j) != EINA_TRUE);
+   fail_if(*j != 1337);
+
+   eina_accessor_free(it);
+}
+EFL_END_TEST
+
 void
 eina_test_accessor(TCase *tc)
 {
    tcase_add_test(tc, eina_accessor_array_simple);
    tcase_add_test(tc, eina_accessor_inlist_simple);
    tcase_add_test(tc, eina_accessor_list_simple);
+   tcase_add_test(tc, eina_accessor_carray_simple_ptr);
    tcase_add_test(tc, eina_accessor_carray_simple);
 }
