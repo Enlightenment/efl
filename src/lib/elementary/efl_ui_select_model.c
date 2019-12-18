@@ -536,7 +536,7 @@ static void
 _efl_ui_select_model_efl_ui_multi_selectable_all_select(Eo *obj,
                                                               Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
 {
-   unsigned long count, i;
+   unsigned int count, i;
 
    // Not the fastest way to implement it, but will reuse more code and be easier as a v1.
    // It also make it not very async which could be noticable.
@@ -544,7 +544,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_all_select(Eo *obj,
 
    for (i = 0; i < count; i++)
      {
-        Eina_Value p = eina_value_ulong_init(i);
+        Eina_Value p = eina_value_uint_init(i);
 
         efl_model_property_set(obj, "child.selected", &p);
 
@@ -554,17 +554,17 @@ _efl_ui_select_model_efl_ui_multi_selectable_all_select(Eo *obj,
 
 static void
 _efl_ui_select_model_efl_ui_multi_selectable_all_unselect(Eo *obj,
-                                                                Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+                                                          Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
 {
-   uint64_t count = efl_model_children_count_get(obj);
+   unsigned int count = efl_model_children_count_get(obj);
 
    efl_ui_multi_selectable_ndx_range_unselect(obj, 0, count - 1);
 }
 
 static void
 _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_select(Eo *obj,
-                                                                Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
-                                                                uint64_t a, uint64_t b)
+                                                                          Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
+                                                                          unsigned int a, unsigned int b)
 {
    unsigned long count, i;
 
@@ -605,8 +605,8 @@ _children_unselect_then(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Va
 
 static void
 _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *obj,
-                                                                  Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
-                                                                  uint64_t a, uint64_t b)
+                                                                            Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
+                                                                            unsigned int a, unsigned int b)
 {
    unsigned int count, batch, i;
 

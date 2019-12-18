@@ -16,13 +16,13 @@ interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
       selected_ndx_iterator_new {
          [[Gets an iterator over the indices of all the selected children.
          ]]
-         return: iterator<uint64> @move @no_unused; [[The iterator gives the indices of the selected children.
+         return: iterator<uint> @move @no_unused; [[The iterator gives the indices of the selected children.
                                                       It is valid until any change is made to the selection state.]]
       }
       unselected_ndx_iterator_new {
          [[Gets an iterator over the indices of all the unselected children.
          ]]
-         return: iterator<uint64> @move @no_unused; [[The iterator gives the indices of the unselected children.
+         return: iterator<uint> @move @no_unused; [[The iterator gives the indices of the unselected children.
                                                       It is valid until any change is made to the selection state.]]
       }
       ndx_range_select @beta {
@@ -34,8 +34,8 @@ interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
            $NULL is not allowed as either of the parameters.
          ]]
          params {
-           a : uint64; [[One side of the range.]]
-           b : uint64; [[The other side of the range.]]
+           a : uint; [[One side of the range.]]
+           b : uint; [[The other side of the range.]]
          }
       }
       ndx_range_unselect @beta {
@@ -48,8 +48,8 @@ interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
            Both of the passed values will also be unselected.
          ]]
          params {
-           a : uint64; [[One side of the range.]]
-           b : uint64; [[The other side of the range.]]
+           a : uint; [[One side of the range.]]
+           b : uint; [[The other side of the range.]]
          }
       }
    }
