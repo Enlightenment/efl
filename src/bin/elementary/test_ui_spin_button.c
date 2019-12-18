@@ -57,7 +57,7 @@ test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
            efl_ui_range_limits_set(efl_added, 1, 12),
            efl_ui_range_value_set(efl_added, 1),
            efl_ui_spin_button_direct_text_input_set(efl_added, EINA_FALSE),
-           efl_ui_format_values_set(efl_added, EINA_C_ARRAY_ACCESSOR_NEW(special_values)),
+           efl_ui_format_values_set(efl_added, EINA_C_ARRAY_ACCESSOR_PTR_NEW(special_values)),
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_pack(bx, efl_added));
 

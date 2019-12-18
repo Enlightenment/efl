@@ -195,7 +195,7 @@ _value_compare(const Efl_Ui_Format_Value *val1, const Efl_Ui_Format_Value *val2)
 EOLIAN static void
 _efl_ui_format_format_values_set(Eo *obj, Efl_Ui_Format_Data *pd, Eina_Accessor *values)
 {
-   Efl_Ui_Format_Value v;
+   Efl_Ui_Format_Value *v;
    int i;
    if (pd->format_values)
      {
@@ -219,7 +219,7 @@ _efl_ui_format_format_values_set(Eo *obj, Efl_Ui_Format_Data *pd, Eina_Accessor 
    pd->format_values = eina_inarray_new(sizeof(Efl_Ui_Format_Value), 4);
    EINA_ACCESSOR_FOREACH(values, i, v)
      {
-        Efl_Ui_Format_Value vcopy = { v.value, eina_stringshare_add(v.text) };
+        Efl_Ui_Format_Value vcopy = { v->value, eina_stringshare_add(v->text) };
         eina_inarray_insert_sorted(pd->format_values, &vcopy, (Eina_Compare_Cb)_value_compare);
      }
    eina_accessor_free(values);
