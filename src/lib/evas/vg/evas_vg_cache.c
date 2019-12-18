@@ -293,6 +293,9 @@ evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_
    //New key comes.
    key = eina_strbuf_string_steal(hash_key);
    vg_cache->vg_surface_keys = eina_list_append(vg_cache->vg_surface_keys, key);
+
+   eina_strbuf_free(hash_key);
+
    return (void *) key;
 }
 
