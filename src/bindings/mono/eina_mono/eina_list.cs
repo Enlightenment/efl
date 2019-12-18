@@ -188,13 +188,13 @@ public class List<T> : IList<T>, IEnumerable<T>, IDisposable
     {
         if (!(0 <= idx && idx < Count))
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(idx), $"{nameof(idx)} cannot be negative, neither smaller than {nameof(Count)}");
         }
 
         var ele = f(Handle, (uint)idx);
         if (ele == IntPtr.Zero)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(idx), $"There is no position {nameof(idx)}");
         }
 
         return ele;
