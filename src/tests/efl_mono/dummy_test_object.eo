@@ -1621,6 +1621,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: accessor<int> @move;
       }
 
+      clone_accessor_own {
+         params {
+            @in acc: accessor<int> @move;
+         }
+         return: accessor<int> @move;
+      }
+
       @property setter_only {
          set {}
          values {
