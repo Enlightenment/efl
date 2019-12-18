@@ -1,3 +1,6 @@
+#ifndef _ECORE_EVAS_EXTN_ENGINE_H_
+#define _ECORE_EVAS_EXTN_ENGINE_H_
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -222,3 +225,5 @@ struct _Ipc_Data_Ev_Key_Down
    unsigned int timestamp;
    Evas_Event_Flags event_flags;
 };
+
+#endif /*_ECORE_EVAS_EXTN_ENGINE_H_*/

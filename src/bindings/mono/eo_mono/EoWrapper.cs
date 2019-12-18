@@ -100,7 +100,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
                         [CallerFilePath] string file = null,
                         [CallerLineNumber] int line = 0)
     {
-        generated = Efl.Eo.BindingEntity.IsBindingEntity(((object)this).GetType());
+        generated = Efl.Eo.BindingEntityAttribute.IsBindingEntity(((object)this).GetType());
         IntPtr actual_klass = baseKlass;
         if (!generated)
         {

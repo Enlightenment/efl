@@ -87,7 +87,7 @@ public struct ObjectPath : IEquatable<ObjectPath>
     /// </summary>
     /// <param name="path">The ObjectPath to be converted.</param>
     public static string ToString(ObjectPath path) => path.value;
-    
+
     /// <summary>
     ///   Gets a hash for <see cref="ObjectPath" />.
     /// <para>Since EFL 1.24.</para>
@@ -1551,6 +1551,8 @@ public static class Common
     /// Register the NullError.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate",
+                     Justification = "It's not an event.")]
     public static void RaiseNullHandle()
     {
         if (NullHandleError == 0)

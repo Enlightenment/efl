@@ -43,7 +43,7 @@ public enum Components : Int32
     /// <summary>
     ///   Elementary Widget toolkit: Elm.
     /// <para>it's depend of <see cref="Efl.Csharp.Components.Basic" />.</para>
-    /// <para>Since EFL 1.24</para>
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
     Ui = Basic | 0x2,
 
@@ -199,7 +199,8 @@ public abstract class Application
         Init(components);
         Efl.App app = Efl.App.AppMain;
         var command_line = new Eina.Array<Eina.Stringshare>();
-        command_line.Append(Array.ConvertAll(Environment.GetCommandLineArgs(), s => (Eina.Stringshare)s));
+        //command_line.Add(List.ConvertAll(Environment.GetCommandLineArgs(), s => (Eina.Stringshare)s));
+        //command_line.AddRange(Environment.GetCommandLineArgs());
 #if EFL_BETA
         app.SetCommandArray(command_line);
 #endif

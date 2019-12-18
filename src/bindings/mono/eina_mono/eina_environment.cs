@@ -16,7 +16,7 @@ internal static class Environment
     /// <summary>
     /// Returns the value of the environment variable named <c>name</c>.
     ///
-    /// <para>Since EFL 1.24</para>
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
     /// <param name="name">The name of the variable to be retrieved</param>
     /// <returns>The value of the variable. <c>null</c> if not set.</returns>
@@ -28,7 +28,7 @@ internal static class Environment
     /// <summary>
     /// Sets a native environment variable.
     ///
-    /// <para>Since EFL 1.24</para>
+    /// <para>Since EFL 1.24.</para>
     /// </summary>
     /// <param name="name">The name of the variable</param>
     /// <param name="value">The value to be set.</param>

@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using static Eina.TraitFunctions;
 
@@ -28,8 +29,10 @@ namespace Eina
 
 internal class AccessorNativeFunctions
 {
+    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+        eina_carray_length_accessor_new(IntPtr array, uint step, uint length);
     [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
-        eina_accessor_data_get(IntPtr accessor, uint position, IntPtr data);
+        eina_accessor_data_get(IntPtr accessor, uint position, out IntPtr data);
     [DllImport(efl.Libs.Eina)] public static extern void
         eina_accessor_free(IntPtr accessor);
 }
@@ -38,6 +41,8 @@ internal class AccessorNativeFunctions
 /// similar to C++ STL's and C# IEnumerable.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+                 Justification="This is a generalized container mapping the native one.")]
 public class Accessor<T> : IEnumerable<T>, IDisposable
 {
     /// <summary>Pointer to the native accessor.</summary>
@@ -145,6 +150,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     /// <returns>An enumerator to walk through the acessor items.</returns>
     public IEnumerator<T> GetEnumerator()
     {
+/*
         if (Handle == IntPtr.Zero)
         {
             throw new ObjectDisposedException(base.GetType().Name);
@@ -152,7 +158,6 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
 
         IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(IntPtr)));
         uint position = 0;
-
         try
         {
             while (eina_accessor_data_get(Handle, position, tmp))
@@ -166,6 +171,8 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
         {
             MemoryNative.Free(tmp);
         }
+*/
+        yield break;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -177,6 +184,8 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
 /// <summary>Accessor for Inlists.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+                 Justification="This is a generalized container mapping the native one.")]
 public class AccessorInList<T> : Accessor<T>
 {
     /// <summary>Create a new accessor wrapping the given pointer.
@@ -202,6 +211,8 @@ public class AccessorInList<T> : Accessor<T>
 /// <summary>Accessor for Inarrays.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+                 Justification="This is a generalized container mapping the native one.")]
 public class AccessorInArray<T> : Accessor<T>
 {
     /// <summary>Create a new accessor wrapping the given pointer.

@@ -1,248 +1,257 @@
 enum @beta Efl.Text_Style_Backing_Type
 {
-   [[Whether to apply backing style to the displayed text or not]]
-   disabled = 0, [[Do not use backing]]
-   enabled,      [[Use backing style]]
+   [[Whether to add a background colored rectangle (backing) to each line of text or not.]]
+   disabled = 0, [[Do not use backing.]]
+   enabled,      [[Use backing.]]
 }
 
 enum @beta Efl.Text_Style_Strikethrough_Type
 {
-   [[Whether to apply strikethrough style to the displayed text or not]]
-   disabled = 0, [[Do not use strikethrough]]
-   enabled,      [[Use strikethrough style]]
+   [[Whether to add a strike-through decoration to the displayed text or not.]]
+   disabled = 0, [[Do not use strike-through.]]
+   enabled,      [[Use strike-through.]]
 }
 
 enum @beta Efl.Text_Style_Effect_Type
 {
-   [[Effect to apply to the displayed text]]
-   none = 0, [[No effect]]
+   [[Effect to apply to the displayed text.]]
+   none = 0, [[No effect.]]
 
    // colored with shadow_color
-   shadow, [[Shadow effect]]
-   far_shadow, [[Far shadow effect]]
-   soft_shadow, [[Soft shadow effect]]
-   far_soft_shadow, [[Far and soft shadow effect]]
+   shadow, [[Shadow effect.]]
+   far_shadow, [[Far shadow effect.]]
+   soft_shadow, [[Soft shadow effect.]]
+   far_soft_shadow, [[Far and soft shadow effect.]]
    // colored with glow_color
-   glow, [[Glow effect]]
+   glow, [[Glow effect.]]
    // colored with outline_color
-   outline, [[Outline effect]]
-   soft_outline, [[Soft outline effect]]
+   outline, [[Outline effect.]]
+   soft_outline, [[Soft outline effect.]]
    // colored with outline_color + shadow_color
-   outline_shadow, [[Outline shadow effect]]
-   outline_soft_shadow, [[Outline soft shadow effect]]
+   outline_shadow, [[Outline + shadow effect.]]
+   outline_soft_shadow, [[Outline + soft shadow effect.]]
 }
 
 enum @beta Efl.Text_Style_Shadow_Direction
 {
-   [[Direction of the shadow style, if used]]
-   bottom_right = 0, [[Shadow towards bottom right]]
-   bottom, [[Shadow towards botom]]
-   bottom_left, [[Shadow towards bottom left]]
-   left, [[Shadow towards left]]
-   top_left, [[Shadow towards top left]]
-   top, [[Shadow towards top]]
-   top_right, [[Shadow towards top right]]
-   right, [[Shadow towards right]]
+   [[Direction of the shadow.]]
+   bottom_right = 0, [[Shadow towards bottom right.]]
+   bottom, [[Shadow towards bottom.]]
+   bottom_left, [[Shadow towards bottom left.]]
+   left, [[Shadow towards left.]]
+   top_left, [[Shadow towards top left.]]
+   top, [[Shadow towards top.]]
+   top_right, [[Shadow towards top right.]]
+   right, [[Shadow towards right.]]
 }
 
 enum @beta Efl.Text_Style_Underline_Type
 {
-   [[Underline type of the displayed text]]
-   off = 0, [[Text without underline]]
-   on, [[Underline enabled]]
-   single, [[Underlined with a signle line]]
-   double, [[Underlined with a double line]]
-   dashed, [[Underlined with a dashed line]]
+   [[Type of underline of the displayed text.]]
+   off = 0, [[Text without underline.]]
+   on, [[Underline enabled.]]
+   single, [[Underlined with a single line.]]
+   double, [[Underlined with a double line.]]
+   dashed, [[Underlined with a dashed line.]]
 }
 
 interface @beta Efl.Text_Style {
-   [[Style to apply to the text
+   [[Decorations to add to the text.
 
-     A style can be coloring, effects, underline, strikethrough etc.
+     Decorations can be coloring, effects, underlines, strike-through etc.
    ]]
    c_prefix: efl_text;
    methods {
       @property normal_color {
-         [[Color of text, excluding style]]
+         [[Color of text, excluding decorations like, shadow, outline or glow.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property backing_type {
-          [[Enable or disable backing type]]
+         [[Enables rendering of a background rectangle behind each line of text.]]
          values
          {
-            type: Efl.Text_Style_Backing_Type; [[Backing type]]
+            type: Efl.Text_Style_Backing_Type; [[Backing type.]]
          }
       }
 
       @property backing_color {
-          [[Backing color]]
+          [[Color of the background rectangle (backing) behind each line of text.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property underline_type {
-         [[Sets an underline style on the text]]
+         [[Underline style for the text.]]
          values
          {
-            type: Efl.Text_Style_Underline_Type; [[Underline type]]
+            type: Efl.Text_Style_Underline_Type; [[Underline type.]]
          }
       }
 
       @property underline_color
       {
-         [[Color of normal underline style]]
+         [[Color of normal underline style.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property underline_height
       {
-         [[Height of underline style]]
+         [[Width (in pixels) of the single underline when @.underline_type is
+           @Efl.Text_Style_Underline_Type.single.]]
          values
          {
-            height: double; [[Height]]
+            height: double; [[Underline width in pixels.]]
          }
       }
 
       @property underline_dashed_color
       {
-         [[Color of dashed underline style]]
+         [[Color of the dashed underline. Only valid when @.underline_type is
+           @Efl.Text_Style_Underline_Type.dashed.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property underline_dashed_width
       {
-         [[Width of dashed underline style]]
+         [[Length (in pixels) of the dashes when @.underline_type is
+           @Efl.Text_Style_Underline_Type.dashed.]]
          values
          {
-            width: int; [[Width]]
+            width: int; [[Dash length in pixels.]]
          }
       }
 
       @property underline_dashed_gap
       {
-         [[Gap of dashed underline style]]
+         [[Length (in pixels) of the gaps between the dashes when @.underline_type is
+           @Efl.Text_Style_Underline_Type.dashed.]]
          values
          {
-            gap: int; [[Gap]]
+            gap: int; [[Gap length in pixels.]]
          }
       }
 
       @property underline2_color
       {
-         [[Color of underline2 style]]
+         [[Color of the secondary underline. Only valid when @.underline_type is
+           @Efl.Text_Style_Underline_Type.double.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property strikethrough_type {
-         [[Type of strikethrough style]]
+         [[Enables crossed-out text.]]
          values
          {
-            type: Efl.Text_Style_Strikethrough_Type; [[Strikethrough type]]
+            type: Efl.Text_Style_Strikethrough_Type; [[Strike-through type.]]
          }
       }
 
       @property strikethrough_color
       {
-         [[Color of strikethrough_style]]
+         [[Color of the line striking through the text.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property effect_type {
-         [[Type of effect used for the displayed text]]
+         [[Controls a number of decorations around the text, like shadow, outline
+           and glow, including combinations of them.]]
          values {
-            type: Efl.Text_Style_Effect_Type; [[Effect type]]
+            type: Efl.Text_Style_Effect_Type; [[Effect type.]]
          }
       }
       @property outline_color
       {
-         [[Color of outline effect]]
+         [[Color of the text outline.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property shadow_direction
       {
-         [[Direction of shadow effect]]
+         [[Direction of shadow effect.]]
          values
          {
-            type: Efl.Text_Style_Shadow_Direction; [[Shadow direction]]
+            type: Efl.Text_Style_Shadow_Direction; [[Shadow direction.]]
          }
       }
 
       @property shadow_color
       {
-         [[Color of shadow effect]]
+         [[Color of the shadow.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property glow_color
       {
-         [[Color of glow effect]]
+         [[Color of the glow decoration.]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 
       @property glow2_color
       {
-         [[Second color of the glow effect]]
+         [[Color of the secondary glow decoration.
+           This is the color of the inner glow (where it touches the text) which
+           gradually fades into @.glow_color as it reaches the edge.
+         ]]
          values
          {
-            r: ubyte; [[Red component]]
-            g: ubyte; [[Green component]]
-            b: ubyte; [[Blue component]]
-            a: ubyte; [[Alpha component]]
+            r: ubyte; [[Red component.]]
+            g: ubyte; [[Green component.]]
+            b: ubyte; [[Blue component.]]
+            a: ubyte; [[Alpha component.]]
          }
       }
 

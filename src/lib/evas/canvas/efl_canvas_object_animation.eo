@@ -1,5 +1,9 @@
 mixin @beta Efl.Canvas.Object_Animation requires Efl.Object
 {
+  [[A mixin that provides animation capabilities to @Efl.Canvas.Object.
+
+    By including this mixin canvas objects can be animated just by calling @.animation_start.
+  ]]
   methods {
     @property animation {
       [[The animation that is currently played on the canvas object.
@@ -13,43 +17,50 @@ mixin @beta Efl.Canvas.Object_Animation requires Efl.Object
       }
     }
     @property animation_progress {
-      [[The current progress of the animation, between 0.0 and 1.0.
+      [[The current progress of the animation, between $[0.0] and $[1.0].
 
-        Even if the animation is going backwards (speed < 0.0). the progress will still go from 0.0 to 1.0.
+        Even if the animation is going backwards (speed < 0.0) the progress will still go from $[0.0] to $[1.0].
 
-        If there is no animation going on, this will return -1.0.
+        If there is no animation going on, this will return $[-1.0].
       ]]
       get {
 
       }
       values {
-        progress : double; [[The progress the animation applying is currently in.]]
+        progress : double; [[Current progress of the animation.]]
       }
     }
     @property animation_pause {
-      [[Pause the animation
+      [[Pause the animation.
 
-        The animation will not be unset. When $pause is unset, the animation will be resumed at the same progress it has right now.
+        @.animation will not be unset. When $pause is $false, the animation will be resumed at the same progress it
+        was when it was paused.
       ]]
       values {
-        pause : bool;
+        pause : bool; [[Paused state.]]
       }
     }
     animation_start {
       [[Start a new animation.
 
-        If there is a animation going on, this is stopped. The previous @.animation object will be replaced. The lifetime is adjusted accordingly.
+        If there is an animation going on, it is stopped and the previous @.animation object is replaced.
+        Its lifetime is adjusted accordingly.
       ]]
       params {
-        animation : Efl.Canvas.Animation @move; [[The animation to start. When not needed anymore, the reference that was passed is given up.]]
-        speed : double; [[The speed of the playback. `1.0` is normal playback. Negative values mean backward playback.]]
-        starting_progress : double; [[The progress to start, must be between 0.0 and 1.0.]]
+        animation : Efl.Canvas.Animation @move; [[The animation to start. When not needed anymore,
+                                                  the reference that was passed is given up.]]
+        speed : double; [[The speed of the playback. $[1.0] is normal playback. Negative values mean reverse playback.
+                        ]]
+        starting_progress : double; [[The progress point where to start. Must be between $[0.0] and $[1.0].
+                                      Useful to revert an animation which has already started.
+                                    ]]
       }
     }
     animation_stop {
       [[Stop the animation.
 
-        After this call, @.animation will return $null. The reference that was taken during @.animation_start will be given up on.
+        After this call, @.animation will return $null.
+        The reference that was taken during @.animation_start will be given up.
       ]]
     }
   }

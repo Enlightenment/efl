@@ -759,6 +759,125 @@ public static class Globals
         Monitor.Exit(Efl.All.InitLock);
     }
 
+    internal static IEnumerable<T> AccessorToIEnumerable<T>(IntPtr accessor)
+    {
+        if (accessor == IntPtr.Zero)
+           throw new ArgumentException("accessor is null", nameof(accessor));
+
+        IntPtr data = IntPtr.Zero;
+        uint position = 0;
+
+        while (Eina.AccessorNativeFunctions.eina_accessor_data_get(accessor, position, out data))
+        {
+            yield return Eina.TraitFunctions.NativeToManaged<T>(data);
+            position += 1;
+        }
+    }
+
+    internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable, bool isMoved)
+    {
+        if (enumerable == null)
+        {
+            throw new ArgumentException("enumerable is null", nameof(enumerable));
+        }
+
+        // If we are a wrapper around an existing Eina.Accessor, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedAccessor = enumerable as Eina.Accessor<T>;
+
+        if (wrappedAccessor != null && !isMoved)
+        {
+            return wrappedAccessor.Handle;
+        }
+
+        var list = new List<IntPtr>();
+        foreach (T data in enumerable)
+        {
+            list.Add(Eina.TraitFunctions.ManagedToNativeAlloc<T>(data));
+        }
+        IntPtr[] dataArray = list.ToArray();
+        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned); //FIXME: Need to free.
+        IntPtr ret = Eina.AccessorNativeFunctions.eina_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return ret;
+    }
+
+    internal static IEnumerable<T> IteratorToIEnumerable<T>(IntPtr iterator)
+    {
+        if (iterator == IntPtr.Zero)
+           throw new ArgumentException("iterator is null", nameof(iterator));
+
+        while (Eina.IteratorNativeFunctions.eina_iterator_next(iterator, out IntPtr data))
+        {
+            yield return Eina.TraitFunctions.NativeToManaged<T>(data);
+        }
+    }
+
+    internal static IntPtr IEnumerableToIterator<T>(IEnumerable<T> enumerable, bool isMoved)
+    {
+        if (enumerable == null)
+        {
+            throw new ArgumentException("enumerable is null", nameof(enumerable));
+        }
+
+        // If we are a wrapper around an existing Eina.Iterator, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedIterator = enumerable as Eina.Iterator<T>;
+
+        if (wrappedIterator != null && !isMoved)
+        {
+            return wrappedIterator.Handle;
+        }
+
+        var list = new List<IntPtr>();
+        foreach (T data in enumerable)
+        {
+            list.Add(Eina.TraitFunctions.ManagedToNativeAlloc<T>(data));
+        }
+
+        IntPtr[] dataArray = list.ToArray();
+        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
+        IntPtr ret = Eina.IteratorNativeFunctions.eina_carray_length_iterator_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return ret;
+    }
+
+    internal static IEnumerable<T> ListToIEnumerable<T>(IntPtr list)
+    {
+        if (list == IntPtr.Zero)
+            throw new ArgumentException("list is null", nameof(list));
+
+        IntPtr l;
+
+        for (l = list; l != IntPtr.Zero; l = Eina.ListNativeFunctions.eina_list_next_custom_export_mono(l))
+        {
+            yield return Eina.TraitFunctions.NativeToManaged<T>(Eina.ListNativeFunctions.eina_list_data_get_custom_export_mono(l));
+        }
+    }
+
+    internal static IntPtr IEnumerableToList<T>(IEnumerable<T> enumerable)
+    {
+        if (enumerable == null)
+            throw new ArgumentException("enumerable is null", nameof(enumerable));
+
+        IntPtr list = IntPtr.Zero;
+        foreach (T data in enumerable)
+        {
+            list = Eina.ListNativeFunctions.eina_list_append(list, Eina.TraitFunctions.ManagedToNativeAlloc(data));
+        }
+        // FIXME need to free `list` if the returned list is not @moved
+        return list;
+    }
 
 
 } // Globals
@@ -828,11 +947,11 @@ class PrivateNativeClass : NativeClass
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public class BindingEntity: System.Attribute
+public class BindingEntityAttribute: System.Attribute
 {
     public static bool IsBindingEntity(System.Type t)
     {
-        return Attribute.GetCustomAttribute(t, typeof(BindingEntity), false) != null;
+        return Attribute.GetCustomAttribute(t, typeof(BindingEntityAttribute), false) != null;
     }
 }
 
@@ -1034,7 +1153,7 @@ internal static class ClassRegister
 ///
 /// <para>For internal usage by generated code.</para>
 ///
-/// <para>Since EFL 1.24</para>
+/// <para>Since EFL 1.24.</para>
 /// </summary>
 class MarshalEoNoMove : ICustomMarshaler
 {
@@ -1117,7 +1236,7 @@ class MarshalEoNoMove : ICustomMarshaler
 ///
 /// <para>For internal usage by generated code.</para>
 ///
-/// <para>Since EFL 1.24</para>
+/// <para>Since EFL 1.24.</para>
 /// </summary>
 class MarshalEoMove : ICustomMarshaler
 {

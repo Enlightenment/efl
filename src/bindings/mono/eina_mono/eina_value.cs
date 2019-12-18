@@ -927,7 +927,7 @@ static class ValueTypeMethods
 /// marshall_type_impl.hh in the generator). User-facing API still uses Eina.ValueType
 /// normally.</para>
 ///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 public class ValueTypeBox

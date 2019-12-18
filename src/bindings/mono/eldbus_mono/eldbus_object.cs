@@ -292,9 +292,7 @@ public class Object : System.IDisposable
     /// <summary>
     ///   Decrease object reference.
     /// <para>If reference == 0 object will be freed and all its children.</para>
-    ///<para>
-    ///  Since EFL 1.23.
-    ///</para>
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public void Unref()
     {
