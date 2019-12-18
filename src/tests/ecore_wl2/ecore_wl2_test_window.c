@@ -430,6 +430,8 @@ EFL_START_TEST(wl2_window_available_rotation)
    fail_if(ret_rots[0] != 90);
    fail_if(ret_rots[1] != 180);
    fail_if(ret_count != 2);
+
+   free(ret_rots);
 }
 EFL_END_TEST
 
