@@ -200,6 +200,7 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 {
    Efl_Gfx_Entity *old_content = pd->content;
 
+   efl_content_unset(pd->pan_obj);
    efl_event_callback_del(pd->content, EFL_EVENT_INVALIDATE, _efl_ui_scroller_content_del_cb, obj);
    pd->content = NULL;
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
