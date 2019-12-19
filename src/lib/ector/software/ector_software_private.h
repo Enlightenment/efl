@@ -48,7 +48,7 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
    uint32_t* color_table;
 
    Eina_Bool alpha;
-   Eina_Bool done;
+   int ctable_status;       //Ready for color table?
 } Ector_Renderer_Software_Gradient_Data;
 
 typedef struct _Shape_Rle_Data
