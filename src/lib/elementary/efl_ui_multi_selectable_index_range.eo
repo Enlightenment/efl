@@ -6,7 +6,10 @@ interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
 
      The implementor of this interface provides the possibility to select multiple @Efl.Ui.Selectable objects.
      If not, only @Efl.Ui.Single_Selectable should be implemented.
-     A widget can only provide either this interface or @Efl.Ui.Multi_Selectable_Object_Range, but not both.]]
+     A widget can only provide either this interface or @Efl.Ui.Multi_Selectable_Object_Range, but not both.
+
+     @since 1.24
+   ]]
    c_prefix: efl_ui_multi_selectable;
    methods
    {

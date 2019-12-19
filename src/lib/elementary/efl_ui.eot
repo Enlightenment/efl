@@ -89,7 +89,10 @@ enum @beta Efl.Ui.Widget_Orientation_Mode
 }
 
 enum Efl.Ui.Select_Mode {
-   [[Type of multi selectable object.]]
+   [[Type of multi selectable object.
+
+     @since 1.24
+   ]]
    single, [[Only single child is selected. If a child is selected,
              previous selected child will be unselected.]]
    multi, [[Allow multiple selection of children.]]

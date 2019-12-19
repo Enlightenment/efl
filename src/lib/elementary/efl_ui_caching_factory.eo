@@ -15,6 +15,7 @@ class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
      This is what this factory caching infrastructure provides. It will create the object from the class defined on it
      and set the parent and the model as needed for all created items. The View has to release the Item using the
      release function of the Factory interface for all of this to work properly.
+     @since 1.24
    ]]
    methods {
       @property memory_limit {

@@ -9,6 +9,8 @@ class Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
 
      This class inherits from @Efl.Ui.Caching_Factory and inherits
      all its properties.
+
+     @since 1.24
    ]]
    methods {
       theme_config {

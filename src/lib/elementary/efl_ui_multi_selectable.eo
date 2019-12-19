@@ -5,7 +5,10 @@ interface Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
    [[Interface for getting access to a range of selected items.
 
      The implementor of this interface provides the possibility to select multiple Selectables.
-     If not, only @Efl.Ui.Single_Selectable should be implemented.]]
+     If not, only @Efl.Ui.Single_Selectable should be implemented.
+
+     @since 1.24
+   ]]
    c_prefix: efl_ui_multi_selectable;
    methods
    {
