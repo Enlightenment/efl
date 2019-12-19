@@ -42,8 +42,6 @@ struct _Ector_Renderer_Software_Shape_Data
    Efl_Gfx_Vg_Composite_Method comp_method;
 
    Ector_Software_Shape_Task   *task;
-
-   Eina_Bool                    done;
 };
 
 typedef struct _Outline
@@ -535,43 +533,37 @@ _generate_shape_data(Ector_Renderer_Software_Shape_Data *pd)
 static Ector_Software_Shape_Task *
 _need_update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   Ector_Software_Shape_Task *r;
-   const Efl_Gfx_Path_Command *cmds;
-   const double *pts;
-   Efl_Gfx_Fill_Rule fill_rule;
-
-   if (!pd->done && pd->task) return pd->task;
+   if (pd->task) return pd->task;
 
    if (!_generate_stroke_data(pd) &&
        !_generate_shape_data(pd))
      return NULL;
 
+   const Efl_Gfx_Path_Command *cmds;
+   const double *pts;
    efl_gfx_path_get(obj, &cmds, &pts);
-   fill_rule = efl_gfx_shape_fill_rule_get(obj);
-
    if (!cmds) return NULL;
 
-   r = pd->task;
-   if (!r) r = malloc(sizeof (Ector_Software_Shape_Task));
-   if (!r) return NULL;
+   Ector_Software_Shape_Task *task = malloc(sizeof(Ector_Software_Shape_Task));
+   if (!task) return NULL;
 
-   r->pd = pd;
-   r->cmds = cmds;
-   r->pts = pts;
-   r->fill_rule = fill_rule;
+   task->pd = pd;
+   task->cmds = cmds;
+   task->pts = pts;
+   task->fill_rule = efl_gfx_shape_fill_rule_get(obj);
 
-   pd->done = EINA_FALSE;
-   pd->task = r;
+   pd->task = task;
 
-   return r;
+   return task;
 }
 
 static void
 _done_rle(void *data)
 {
    Ector_Software_Shape_Task *task = data;
-   if (task && task->pd)
-     task->pd->done = EINA_TRUE;
+   if (!task) return;
+   if (task->pd) task->pd->task = NULL;
+   free(task);
 }
 
 static void
@@ -635,30 +627,30 @@ static Eina_Bool
 _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
                                                       Ector_Renderer_Software_Shape_Data *pd)
 {
-   Ector_Software_Shape_Task *task;
-
    // FIXME: shouldn't this be moved to the software base object?
    if (!pd->surface)
      pd->surface = efl_data_xref(pd->base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
 
    // Asynchronously lazy build of the RLE data for this shape
-   task = _need_update_rle(obj, pd);
-   if (task) ector_software_schedule(_update_rle, _done_rle, task);
+   if (!pd->task)
+     {
+        Ector_Software_Shape_Task *task = _need_update_rle(obj, pd);
+        if (task) ector_software_schedule(_update_rle, _done_rle, task);
+     }
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
+_ector_renderer_software_shape_ector_renderer_draw(Eo *obj EINA_UNUSED,
                                                    Ector_Renderer_Software_Shape_Data *pd,
                                                    Efl_Gfx_Render_Op op, Eina_Array *clips,
                                                    unsigned int mul_col)
 {
-   Ector_Software_Shape_Task *task;
    int x, y;
 
    // check if RLE data are ready
-   task = _need_update_rle(obj, pd);
+   Ector_Software_Shape_Task *task = pd->task;
    if (task) ector_software_wait(_update_rle, _done_rle, task);
 
    // adjust the offset
@@ -757,8 +749,6 @@ _ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_So
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    if (!obj) return NULL;
 
-   pd->task = NULL;
-   pd->done = EINA_FALSE;
    pd->public_shape = efl_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
@@ -771,14 +761,13 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
 {
    // FIXME: As base class, destructor can't call destructor of mixin class.
    // Call explicit API to free shape data.
-   if (!pd->done && pd->task)
+   if (pd->task)
      ector_software_wait(_update_rle, _done_rle, pd->task);
 
    efl_gfx_path_reset(obj);
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
-   free(pd->task);
 
    efl_data_xunref(pd->base->surface, pd->surface, obj);
    efl_data_xunref(obj, pd->base, obj);
