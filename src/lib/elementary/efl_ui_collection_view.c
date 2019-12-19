@@ -2430,12 +2430,12 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
 
    if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
      {
-        int new_id;
+        unsigned int new_id;
 
-        new_id = efl_ui_position_manager_entity_relative_item(cpd->manager,
-                                                              item_id,
-                                                              direction);
-        if (new_id < 0)
+        if (!efl_ui_position_manager_entity_relative_item(cpd->manager,
+                                                          item_id,
+                                                          direction,
+                                                          &new_id))
           {
              new_item = NULL;
           }

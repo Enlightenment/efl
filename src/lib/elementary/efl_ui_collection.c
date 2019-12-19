@@ -1208,8 +1208,9 @@ _efl_ui_collection_focus_manager_efl_ui_focus_manager_request_move(Eo *obj, Efl_
 
    if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
      {
-        int new_id = efl_ui_position_manager_entity_relative_item(collection_pd->pos_man, efl_ui_item_index_get(item), direction);
-        if (new_id == -1)
+        unsigned int new_id;
+
+        if (!efl_ui_position_manager_entity_relative_item(collection_pd->pos_man, efl_ui_item_index_get(item), direction, &new_id))
           {
              new_item = NULL;
           }
