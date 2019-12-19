@@ -15631,9 +15631,9 @@ void fit_style_update(Evas_Object *object, int i_font_size, Eina_Bool disable_el
    char * fit_style = fc->fit_style;
    if (i_font_size >= 0)
      {
-        char font_size[0xF] = {0};
+        char font_size[24];
         char *pfont = font_size;
-        sprintf(font_size, "font_size=%i ", i_font_size);
+        snprintf(font_size, sizeof(font_size), "font_size=%i ", i_font_size);
         while (*pfont)
           {
              *fit_style = *pfont;
