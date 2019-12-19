@@ -28,7 +28,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class ArrayNativeFunctions
+internal static class ArrayNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_array_new(uint step);

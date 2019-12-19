@@ -31,7 +31,7 @@ namespace Eina
 
 [StructLayout(LayoutKind.Sequential)]
 [EditorBrowsable(EditorBrowsableState.Never)]    
-public struct HashTupleNative : IEquatable<HashTupleNative>
+internal struct HashTupleNative : IEquatable<HashTupleNative>
 {
     public IntPtr key;
     public IntPtr data;
@@ -85,7 +85,7 @@ public struct HashTupleNative : IEquatable<HashTupleNative>
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class HashNativeFunctions
+internal static class HashNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_new(IntPtr key_length_cb, IntPtr key_cmp_cb, IntPtr key_hash_cb, IntPtr data_free_cb, int buckets_power_size);

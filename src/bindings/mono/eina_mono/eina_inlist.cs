@@ -29,7 +29,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class InlistNativeFunctions
+internal static class InlistNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inlist_append(IntPtr in_list, IntPtr in_item);
