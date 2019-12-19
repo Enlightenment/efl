@@ -642,7 +642,7 @@ _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
 }
 
 static Eina_Bool
-_ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
+_ector_renderer_software_shape_ector_renderer_draw(Eo *obj EINA_UNUSED,
                                                    Ector_Renderer_Software_Shape_Data *pd,
                                                    Efl_Gfx_Render_Op op, Eina_Array *clips,
                                                    unsigned int mul_col)
@@ -651,7 +651,6 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
 
    // check if RLE data are ready
    Ector_Software_Shape_Task *task = pd->task;
-   if (!task) task = _need_update_rle(obj, pd);
    if (task) ector_software_wait(_update_rle, _done_rle, task);
 
    // adjust the offset
