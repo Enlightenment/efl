@@ -11,7 +11,6 @@ void _linear_helper_sse3(uint32_t *buffer, int length, Ector_Renderer_Software_G
 
 typedef void (*Ector_Radial_Helper_Func)(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                                           float det, float delta_det, float delta_delta_det, float b, float delta_b);
-
 typedef void (*Ector_Linear_Helper_Func)(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                                           int t_fixed, int inc_fixed);
 
@@ -22,8 +21,6 @@ static void
 _update_color_table(void *data, Ector_Software_Thread *t EINA_UNUSED)
 {
    Ector_Renderer_Software_Gradient_Data *gdata = data;
-
-   gdata->color_table = malloc(GRADIENT_STOPTABLE_SIZE * 4);
    gdata->alpha = efl_draw_generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count,
                                                          gdata->color_table, GRADIENT_STOPTABLE_SIZE);
 }
@@ -32,24 +29,27 @@ static void
 _done_color_table(void *data)
 {
    Ector_Renderer_Software_Gradient_Data *gdata = data;
-
-   gdata->done = EINA_TRUE;
+   gdata->ctable_status = CTABLE_READY_DONE;
 }
 
 void
 ector_software_gradient_color_update(Ector_Renderer_Software_Gradient_Data *gdata)
 {
-   if (!gdata->done)
-     {
-        ector_software_wait(_update_color_table, _done_color_table, gdata);
-        return ;
-     }
+   if (gdata->ctable_status == CTABLE_READY_DONE) return;
 
+   //OPTIMIZE: This color can be updated only when gradient properties are changed.
+
+   //Alloc only one time.
    if (!gdata->color_table)
+     gdata->color_table = malloc(GRADIENT_STOPTABLE_SIZE * 4);
+
+   if (gdata->ctable_status == CTABLE_NOT_READY)
      {
-        gdata->done = EINA_FALSE;
+        gdata->ctable_status = CTABLE_PROCESSING;
         ector_software_schedule(_update_color_table, _done_color_table, gdata);
      }
+   else if (gdata->ctable_status == CTABLE_PROCESSING)
+        ector_software_wait(_update_color_table, _done_color_table, gdata);
 }
 
 void

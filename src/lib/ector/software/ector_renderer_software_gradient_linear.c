@@ -8,19 +8,19 @@
 
 #include "ector_private.h"
 #include "ector_software_private.h"
+#include "ector_software_gradient.h"
 
 static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_prepare(Eo *obj,
                                                                 Ector_Renderer_Software_Gradient_Data *pd)
 {
+   pd->ctable_status = CTABLE_NOT_READY;
+
    if (!pd->surface)
      {
-        Ector_Renderer_Data *base;
-
-        base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
+        Ector_Renderer_Data *base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
         pd->surface = efl_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
-
    ector_software_gradient_color_update(pd);
 
    pd->linear.x1 = pd->gld->start.x;
@@ -55,23 +55,24 @@ _ector_renderer_software_gradient_linear_ector_renderer_draw(Eo *obj EINA_UNUSED
 
 static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_software_op_fill(Eo *obj EINA_UNUSED,
-                                                                      Ector_Renderer_Software_Gradient_Data *pd)
+                                                                         Ector_Renderer_Software_Gradient_Data *pd)
 {
    ector_software_rasterizer_linear_gradient_set(pd->surface->rasterizer, pd);
    ector_software_gradient_color_update(pd);
+
    return EINA_TRUE;
 }
 
 static Eo *
 _ector_renderer_software_gradient_linear_efl_object_constructor(Eo *obj,
-                                                             Ector_Renderer_Software_Gradient_Data *pd)
+                                                                Ector_Renderer_Software_Gradient_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS));
    if (!obj) return NULL;
 
    pd->gd  = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
    pd->gld = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN, obj);
-   pd->done = EINA_TRUE;
+   pd->ctable_status = CTABLE_NOT_READY;
 
    return obj;
 }
@@ -94,11 +95,10 @@ _ector_renderer_software_gradient_linear_efl_object_destructor(Eo *obj,
 }
 
 void
-_ector_renderer_software_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
+_ector_renderer_software_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
+                                                                   const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
    efl_gfx_gradient_stop_set(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS), colors, length);
-
-   destroy_color_table(pd);
 }
 
 static unsigned int
