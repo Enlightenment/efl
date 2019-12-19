@@ -381,6 +381,9 @@ struct klass
          std::copy(c.properties.begin(), c.properties.end(), std::back_inserter(implementable_properties));
      }
 
+     if (implementable_properties.size() == 0 && cls.parts.size() == 0)
+       return true;
+
      if(!as_generator
         (lit("#if EFL_BETA\n")
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
