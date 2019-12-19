@@ -5,6 +5,7 @@ focus_widget_tree_bench = executable('focus_widget_tree_bench',
 
 benchmark('focus_widget_tree', focus_widget_tree_bench,
   args: ['5'],
+  timeout: 60
 )
 
 item_container = executable('collection',
@@ -12,4 +13,4 @@ item_container = executable('collection',
   dependencies: [elementary, ecore_input_evas, eio],
 )
 
-benchmark('item_container', item_container)
+benchmark('item_container', item_container, timeout: 60)

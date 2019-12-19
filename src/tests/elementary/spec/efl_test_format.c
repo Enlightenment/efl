@@ -24,7 +24,7 @@ EFL_START_TEST(format_values)
   Eina_Strbuf *buf = eina_strbuf_new();
   Eina_Value eina_val;
 
-  efl_ui_format_values_set(widget, EINA_C_ARRAY_ACCESSOR_NEW(values));
+  efl_ui_format_values_set(widget, EINA_C_ARRAY_ACCESSOR_PTR_NEW(values));
   eina_val = eina_value_int_init(17);
   efl_ui_format_formatted_value_get(widget, buf, eina_val);
   ck_assert_str_eq(eina_strbuf_string_get(buf), "seventeen"); // Check that value works
@@ -141,7 +141,7 @@ EFL_START_TEST(format_mixed)
 
   // Now we check combinations of different options
   // Each one should be used in turn when the previous one fails: values, func, string, fallback
-  efl_ui_format_values_set(widget, EINA_C_ARRAY_ACCESSOR_NEW(values));
+  efl_ui_format_values_set(widget, EINA_C_ARRAY_ACCESSOR_PTR_NEW(values));
   efl_ui_format_func_set(widget, NULL, _partial_format_func, NULL);
   efl_ui_format_string_set(widget, "%d rabbits", EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 

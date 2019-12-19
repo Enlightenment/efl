@@ -91,9 +91,6 @@ before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
         docker pull stefanschmidt1/ci-support-files:$DISTRO
-      fi
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
         docker version
         docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
       fi
@@ -103,15 +100,12 @@ script:
   - .ci/ci-configure.sh "$CI_BUILD_TYPE"
   - .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE"
   - .ci/ci-make.sh "$CI_BUILD_TYPE"
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
-          .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
-      fi
   - .ci/ci-make-install.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
-  - |
   - .ci/ci-build-test.sh "$CI_BUILD_TYPE"
+
 before_cache:
   - .ci/ci-ccache-stats.sh
   - |

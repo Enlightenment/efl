@@ -1,11 +1,9 @@
 #!/bin/sh
 
 set -e
-
 . .ci/travis.sh
 
 if [ "$DISTRO" != "" ] ; then
-  # Normal build test of all targets
   # Why do we need to disable the imf loaders here?
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
@@ -14,9 +12,9 @@ if [ "$DISTRO" != "" ] ; then
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
   # TODO:
-  # - Enable C++ bindings: -Dbindings=luajit,cxx
   # - No libelogind package in fedora 30 repo
   # - RPM fusion repo for xine and libvlc
+  # - Ibus
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
@@ -44,29 +42,24 @@ if [ "$DISTRO" != "" ] ; then
 
   if [ "$1" = "default" ]; then
     OPTS="$OPTS $MONO_LINUX_COPTS"
-  fi
-
-  if [ "$1" = "options-enabled" ]; then
+  elif [ "$1" = "options-enabled" ]; then
     OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
-  fi
-
-  if [ "$1" = "options-disabled" ]; then
+  elif [ "$1" = "options-disabled" ]; then
     OPTS="$OPTS $DISABLED_LINUX_COPTS"
-  fi
-
-  if [ "$1" = "wayland" ]; then
+  elif [ "$1" = "wayland" ]; then
     OPTS="$OPTS $WAYLAND_LINUX_COPTS"
-  fi
-
-  if [ "$1" = "release-ready" ]; then
+  elif [ "$1" = "release-ready" ]; then
     OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
-  fi
-
-  if [ "$1" = "coverity" ]; then
+  elif [ "$1" = "coverity" ]; then
     OPTS="$OPTS $WAYLAND_LINUX_COPTS"
     travis_fold cov-download cov-download
     docker exec --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c '.ci/coverity-tools-install.sh'
     travis_endfold cov-download
+  elif [ "$1" = "mingw" ]; then
+    OPTS="$OPTS $MINGW_COPTS"
+    travis_fold cross-native cross-native
+    docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
+    travis_endfold cross-native
   fi
 
   if [ "$1" = "asan" ]; then
@@ -76,10 +69,6 @@ if [ "$DISTRO" != "" ] ; then
       --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS -Db_sanitize=address"
     travis_endfold meson
   elif [ "$1" = "mingw" ]; then
-    OPTS="$OPTS $MINGW_COPTS"
-    travis_fold cross-native cross-native
-    docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
-    travis_endfold cross-native
     travis_fold meson meson
     docker exec --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
        $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
@@ -96,7 +85,7 @@ if [ "$DISTRO" != "" ] ; then
       --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
     travis_endfold meson
   fi
-else
+elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   # Prepare OSX env for build
   mkdir -p ~/Library/LaunchAgents
   ln -sfv /usr/local/opt/d-bus/*.plist ~/Library/LaunchAgents

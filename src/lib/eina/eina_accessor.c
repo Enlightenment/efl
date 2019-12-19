@@ -197,7 +197,6 @@ struct _Eina_Accessor_CArray_Length
    Eina_Accessor accessor;
 
    void** array;
-   void** current;
 
    void** end;
    unsigned int step;
@@ -210,7 +209,16 @@ eina_carray_length_accessor_get_at(Eina_Accessor_CArray_Length *accessor, unsign
      return EINA_FALSE;
 
    memcpy(data, (void*) accessor->array + idx*accessor->step, accessor->step);
-   accessor->current += accessor->step;
+
+   return EINA_TRUE;
+}
+static Eina_Bool
+eina_carray_length_accessor_ptr_get_at(Eina_Accessor_CArray_Length *accessor, unsigned int idx, void **data)
+{
+   if (accessor->array + idx*accessor->step >= accessor->end)
+     return EINA_FALSE;
+
+   *data = (((void*)accessor->array) + idx*accessor->step);
 
    return EINA_TRUE;
 }
@@ -238,12 +246,34 @@ eina_carray_length_accessor_new(void** array, unsigned int step, unsigned int le
    EINA_MAGIC_SET(&accessor->accessor, EINA_MAGIC_ACCESSOR);
 
    accessor->array = array;
-   accessor->current = accessor->array;
-   accessor->end = accessor->current + length * step;
+   accessor->end = accessor->array + length * step;
    accessor->step = step;
 
    accessor->accessor.version = EINA_ACCESSOR_VERSION;
    accessor->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_carray_length_accessor_get_at);
+   accessor->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
+      eina_carray_length_accessor_get_container);
+   accessor->accessor.free = FUNC_ACCESSOR_FREE(eina_carray_length_accessor_free);
+
+   return &accessor->accessor;
+}
+
+EAPI Eina_Accessor *
+eina_carray_length_ptr_accessor_new(void** array, unsigned int step, unsigned int length)
+{
+   Eina_Accessor_CArray_Length *accessor;
+
+   accessor = calloc(1, sizeof (Eina_Accessor_CArray_Length));
+   if (!accessor) return NULL;
+
+   EINA_MAGIC_SET(&accessor->accessor, EINA_MAGIC_ACCESSOR);
+
+   accessor->array = array;
+   accessor->end = accessor->array + length * step;
+   accessor->step = step;
+
+   accessor->accessor.version = EINA_ACCESSOR_VERSION;
+   accessor->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_carray_length_accessor_ptr_get_at);
    accessor->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
       eina_carray_length_accessor_get_container);
    accessor->accessor.free = FUNC_ACCESSOR_FREE(eina_carray_length_accessor_free);

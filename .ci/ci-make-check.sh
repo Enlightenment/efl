@@ -1,25 +1,13 @@
 #!/bin/sh
 
+set -e
 . .ci/travis.sh
-if [ "$1" = "release-ready" ] ; then
-  exit 0
-fi
 
-if [ "$1" = "mingw" ] ; then
-  exit 0
-fi
-
-if [ "$1" = "coverity" ] ; then
-  exit 0
-fi
-
-#T7151
-if [ "$1" = "options-enabled" ] || [ "$1" = "options-disabled" ] ; then
+if [ "$1" = "release-ready" ] || [ "$1" = "mingw" ] || [ "$1" = "coverity" ] || [ "$1" = "options-enabled" ] || [ "$1" = "options-disabled" ]; then
   exit 0
 fi
 
 NUM_TRIES=5
-
 travis_fold check "ninja test"
 if [ "$DISTRO" != "" ] ; then
   for tries in $(seq 1 ${NUM_TRIES}); do

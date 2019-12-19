@@ -38,7 +38,7 @@ struct _Efl_Ui_Collection_Item_Lookup
 {
    EINA_RBTREE;
 
-   uint64_t index;
+   unsigned int index;
    Efl_Ui_Collection_Item item;
 };
 
@@ -46,7 +46,7 @@ struct _Efl_Ui_Collection_Viewport
 {
    Efl_Ui_Collection_Item *items;
 
-   uint64_t offset;
+   unsigned int offset;
    uint16_t count;
 };
 
@@ -54,8 +54,8 @@ struct _Efl_Ui_Collection_Request
 {
    Eina_Future *f;
 
-   uint64_t offset;
-   uint64_t length;
+   unsigned int offset;
+   unsigned int length;
 
    Eina_Bool need_size : 1;
    Eina_Bool need_entity : 1;
@@ -79,8 +79,8 @@ struct _Efl_Ui_Collection_View_Data
 
    Eina_List *requests; // Array of Efl_Ui_Collection_Request in progress
 
-   uint64_t start_id;
-   uint64_t end_id;
+   unsigned int start_id;
+   unsigned int end_id;
 
    Eina_Size2D content_min_size;
 
@@ -116,7 +116,7 @@ _cache_tree_lookup(const Eina_Rbtree *node, const void *key,
                    int length EINA_UNUSED, void *data EINA_UNUSED)
 {
    const Efl_Ui_Collection_Item_Lookup *n = (Efl_Ui_Collection_Item_Lookup *)node;
-   const uint64_t *index = key;
+   const unsigned int *index = key;
 
    if (n->index > *index)
      return 1;
@@ -344,7 +344,7 @@ _size_to_model(Efl_Model *model, Eina_Size2D state)
 
 static Eina_List *
 _request_add(Eina_List *requests, Efl_Ui_Collection_Request **request,
-             uint64_t index, Eina_Bool need_entity)
+             unsigned int index, Eina_Bool need_entity)
 {
    if (!(*request)) goto create;
 
@@ -393,7 +393,7 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
              if ((pd->viewport[v]->offset <= request->offset + i) &&
                  (request->offset + i < pd->viewport[v]->offset + pd->viewport[v]->count))
                {
-                  uint64_t index = request->offset + i - pd->viewport[v]->offset;
+                  unsigned int index = request->offset + i - pd->viewport[v]->offset;
 
                   efl_replace(&pd->viewport[v]->items[index].model, child);
                   child = NULL;
@@ -405,7 +405,7 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
         // When requesting a model, it should not be in the cache prior to the request
         if (!child) continue;
 
-        uint64_t search_index = request->offset + i;
+        unsigned int search_index = request->offset + i;
 
         insert = (void*) eina_rbtree_inline_lookup(pd->cache, &search_index,
                                                    sizeof (search_index), _cache_tree_lookup,
@@ -418,7 +418,7 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                   efl_replace(&insert->item.model, child);
                }
              else
-               ERR("Inserting a model that was already fetched, dropping new model %" PRIu64, search_index);
+               ERR("Inserting a model that was already fetched, dropping new model %u", search_index);
           }
         else
           {
@@ -518,7 +518,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    Efl_Ui_Collection_Request *request = data;
    Efl_Gfx_Entity *child;
    unsigned int i, len;
-   uint64_t updated_size_start_id = 0, updated_entity_start_id = 0;
+   unsigned int updated_size_start_id = 0, updated_entity_start_id = 0;
    Eina_Bool updated_size = EINA_FALSE, updated_entity = EINA_FALSE;
    Evas *e;
 
@@ -528,7 +528,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
         Efl_Ui_Collection_Item_Lookup *lookup;
-        uint64_t search_index;
+        unsigned int search_index;
         //unsigned int v;
 
         efl_key_data_set(child, COLLECTION_VIEW_MANAGED, COLLECTION_VIEW_MANAGED_YES);
@@ -546,7 +546,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
              if ((pd->viewport[v]->offset <= request->offset + i) &&
                  (request->offset + i < pd->viewport[v]->offset + pd->viewport[v]->count))
                {
-                  uint64_t index = request->offset + i - pd->viewport[v]->offset;
+                  unsigned int index = request->offset + i - pd->viewport[v]->offset;
 
                   if (pd->viewport[v]->items[index].entity)
                     {
@@ -597,7 +597,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
           }
         if (lookup->item.entity)
           {
-             ERR("Entity already existing for id %" PRIu64, search_index);
+             ERR("Entity already existing for id %u", search_index);
              _entity_cleanup(obj, pd->factory, &lookup->item, NULL);
           }
 
@@ -670,7 +670,7 @@ _entity_free_cb(Eo *o, void *data, const Eina_Future *dead_future EINA_UNUSED)
 static Eina_List *
 _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                   Efl_Ui_Collection_View_Data *pd,
-                  uint64_t search_index,
+                  unsigned int search_index,
                   Efl_Ui_Position_Manager_Size_Batch_Entity *target,
                   Eina_Size2D item_base)
 {
@@ -727,7 +727,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
 static Eina_List *
 _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                     Efl_Ui_Collection_View_Data *pd,
-                    uint64_t search_index,
+                    unsigned int search_index,
                     Efl_Ui_Position_Manager_Object_Batch_Entity *target)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
@@ -802,10 +802,10 @@ _batch_request_flush(Eina_List *requests,
 
         EINA_LIST_FOREACH(pd->requests, l, inflight)
           {
-             uint64_t istart = inflight->offset;
-             uint64_t iend = inflight->offset + inflight->length;
-             uint64_t rstart = request->offset;
-             uint64_t rend = request->offset + request->length;
+             unsigned int istart = inflight->offset;
+             unsigned int iend = inflight->offset + inflight->length;
+             unsigned int rstart = request->offset;
+             unsigned int rend = request->offset + request->length;
 
              // Way before
              if (rend < istart) continue;
@@ -923,11 +923,11 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
 
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE
-   if (pd->viewport[0] && ((uint64_t)(conf.range.start_id + idx) < pd->viewport[0]->offset))
+   if (pd->viewport[0] && ((unsigned int)(conf.range.start_id + idx) < pd->viewport[0]->offset))
      {
-        while ((uint64_t)(conf.range.start_id + idx) < pd->viewport[0]->offset && idx < limit)
+        while ((unsigned int)(conf.range.start_id + idx) < pd->viewport[0]->offset && idx < limit)
           {
-             uint64_t search_index = conf.range.start_id + idx;
+             unsigned int search_index = conf.range.start_id + idx;
              requests = _cache_size_fetch(requests, &request, pd,
                                           search_index, &sizes[idx], item_base);
              idx++;
@@ -943,7 +943,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
                (pd->viewport[i]->offset <= conf.range.start_id + idx) &&
                (conf.range.start_id + idx < (pd->viewport[i]->offset + pd->viewport[i]->count)))
           {
-             uint64_t offset = conf.range.start_id + idx - pd->viewport[i]->offset;
+             unsigned int offset = conf.range.start_id + idx - pd->viewport[i]->offset;
              Efl_Model *model = pd->viewport[i]->items[offset].model;
              Efl_Gfx_Entity *entity = pd->viewport[i]->items[offset].entity;
              Eina_Bool entity_request = EINA_FALSE;
@@ -999,7 +999,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    // Look in the temporary cache now for the end of the buffer
    while (idx < limit)
      {
-        uint64_t search_index = conf.range.start_id + idx;
+        unsigned int search_index = conf.range.start_id + idx;
         requests = _cache_size_fetch(requests, &request, pd,
                                      search_index, &sizes[idx], item_base);
         idx++;
@@ -1022,7 +1022,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
      {
         while (idx < limit)
           {
-             uint64_t search_index = conf.range.start_id + idx;
+             unsigned int search_index = conf.range.start_id + idx;
              requests = _cache_size_fetch(requests, &request, pd,
                                           search_index, &sizes[idx], item_base);
              idx++;
@@ -1063,11 +1063,11 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
 
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE
-   if (pd->viewport[0] && ((uint64_t)(range.start_id + idx) < pd->viewport[0]->offset))
+   if (pd->viewport[0] && ((unsigned int)(range.start_id + idx) < pd->viewport[0]->offset))
      {
-        while (idx < limit && (uint64_t)(range.start_id + idx) < pd->viewport[0]->offset)
+        while (idx < limit && (unsigned int)(range.start_id + idx) < pd->viewport[0]->offset)
           {
-             uint64_t search_index = range.start_id + idx;
+             unsigned int search_index = range.start_id + idx;
 
              requests = _cache_entity_fetch(requests, &request, pd,
                                             search_index, &entities[idx]);
@@ -1085,7 +1085,7 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
                (pd->viewport[i]->offset <= range.start_id + idx) &&
                (range.start_id + idx < (pd->viewport[i]->offset + pd->viewport[i]->count)))
           {
-             uint64_t offset = range.start_id + idx - pd->viewport[i]->offset;
+             unsigned int offset = range.start_id + idx - pd->viewport[i]->offset;
              Efl_Gfx_Entity *entity = pd->viewport[i]->items[offset].entity;
 
              if (!entity)
@@ -1112,7 +1112,7 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
    // Look in the temporary cache now for the end of the buffer
    while (idx < limit)
      {
-        uint64_t search_index = range.start_id + idx;
+        unsigned int search_index = range.start_id + idx;
 
         requests = _cache_entity_fetch(requests, &request, pd,
                                        search_index, &entities[idx]);
@@ -1188,7 +1188,7 @@ _viewport_walk_fill(Eina_List *requests,
    for (j = 0; j < viewport->count; j++)
      {
         Efl_Ui_Collection_Item_Lookup *lookup;
-        uint64_t index = viewport->offset + j;
+        unsigned int index = viewport->offset + j;
 
         if (viewport->items[j].model) goto check_entity;
 
@@ -1320,7 +1320,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    idx = lower_end;
    while (idx < upper_end)
      {
-        uint64_t search_index = idx;
+        unsigned int search_index = idx;
 
         requests = _cache_entity_fetch(requests, &request, pd,
                                        search_index, NULL);
@@ -1343,7 +1343,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    Eina_List *requests = NULL;
    long baseid;
    unsigned int delta, marginup, margindown;
-   uint64_t upperlimit_offset, lowerlimit_offset;
+   unsigned int upperlimit_offset, lowerlimit_offset;
    unsigned int i;
 
    pd->start_id = event->start_id;
@@ -1449,7 +1449,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         // We could optimize this to actually just move viewport around in most cases
         Efl_Ui_Collection_Item *items[3];
         unsigned int j = 0, t = 0;
-        uint64_t target, current;
+        unsigned int target, current;
 
         // Case where are at the top
         if (pd->start_id < delta && pd->viewport[0]->offset == 0) goto build_request;
@@ -1575,7 +1575,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(manager_cbs,
 static void
 _item_scroll_internal(Eo *obj EINA_UNUSED,
                       Efl_Ui_Collection_View_Data *pd,
-                      uint64_t index,
+                      unsigned int index,
                       double align EINA_UNUSED,
                       Eina_Bool anim)
 {
@@ -1793,7 +1793,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
    unsigned int upper_end;
    long length;
    unsigned int count;
-   uint64_t request_length;
+   unsigned int request_length;
 
    // FIXME: later optimization, instead of reloading everyone, we could actually track index and self
    // update would be more efficient, but it is also more tricky
@@ -2197,11 +2197,11 @@ _efl_ui_collection_view_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Vie
      {
         Efl_Model *model;
         Eina_Value *vindex;
-        uint64_t index;
+        unsigned int index;
 
         model = efl_ui_view_model_get(new_obj);
         vindex = efl_model_property_get(model, "child.index");
-        if (eina_value_uint64_convert(vindex, &index))
+        if (eina_value_uint_convert(vindex, &index))
           _item_scroll_internal(obj, pd, index, .0, EINA_TRUE);
         eina_value_free(vindex);
      }
@@ -2244,7 +2244,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo 
 {
    MY_DATA_GET(pd->collection, cpd);
    Efl_Ui_Item *item = NULL;
-   uint64_t item_id;
+   unsigned int item_id;
 
    if (focus == efl_ui_focus_manager_root_get(obj))
      {
@@ -2261,7 +2261,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo 
 
         model = efl_ui_view_model_get(item);
         vindex = efl_model_property_get(model, "child.index");
-        if (!eina_value_uint64_convert(vindex, &item_id)) return;
+        if (!eina_value_uint_convert(vindex, &item_id)) return;
         eina_value_free(vindex);
      }
 
@@ -2276,7 +2276,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo 
 }
 
 static int
-_id_from_item(Efl_Ui_Item *item, uint64_t *index)
+_id_from_item(Efl_Ui_Item *item, unsigned int *index)
 {
    Eina_Value *vindex;
    Efl_Model *model;
@@ -2284,7 +2284,7 @@ _id_from_item(Efl_Ui_Item *item, uint64_t *index)
    model = efl_ui_view_model_get(item);
 
    vindex = efl_model_property_get(model, "child.index");
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_uint64_convert(vindex, index), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_uint_convert(vindex, index), EINA_FALSE);
    eina_value_free(vindex);
    return EINA_TRUE;
 }
@@ -2294,7 +2294,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
 {
    MY_DATA_GET(pd->collection, cpd);
    Efl_Ui_Item *new_item, *item;
-   uint64_t item_id;
+   unsigned int item_id;
 
    if (!child)
      child = efl_ui_focus_manager_focus_get(obj);
@@ -2339,9 +2339,9 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
                   _assert_item_available(new_item, new_id, cpd);
                }
 #else
-               uint64_t search_index = (uint64_t)new_id;
+               unsigned int search_index = new_id;
                lookup = (void*) eina_rbtree_inline_lookup(cpd->cache, &search_index,
-                                           sizeof (new_id), _cache_tree_lookup,
+                                           sizeof (search_index), _cache_tree_lookup,
                                            NULL);
                if (lookup)
                  {

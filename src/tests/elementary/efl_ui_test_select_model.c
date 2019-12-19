@@ -84,7 +84,7 @@ EFL_START_TEST(efl_test_select_model)
    Efl_Ui_Select_Model *model;
    Eina_Future *future;
    Eina_Iterator *it;
-   uint64_t *index;
+   unsigned int *index;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
