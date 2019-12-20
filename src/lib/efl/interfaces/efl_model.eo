@@ -9,7 +9,10 @@ struct Efl.Model_Property_Event {
 
 struct Efl.Model_Children_Event {
      [[Every time a child is added the event @[Efl.Model.child,added] is dispatched
-     passing along this structure.]]
+       passing along this structure.
+
+       @since 1.24
+     ]]
      index: uint; [[index is a hint and is intended to provide a way for applications
                     to control/know children relative positions through listings.]]
      child: Efl.Object; [[If an object has been built for this index and it is currently tracked by
