@@ -1,8 +1,10 @@
-mixin @beta Efl.Canvas.Object_Animation requires Efl.Object
+mixin Efl.Canvas.Object_Animation requires Efl.Object
 {
   [[A mixin that provides animation capabilities to @Efl.Canvas.Object.
 
     By including this mixin canvas objects can be animated just by calling @.animation_start.
+
+    @since 1.24
   ]]
   methods {
     @property animation {

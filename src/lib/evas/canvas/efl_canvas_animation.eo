@@ -1,6 +1,6 @@
 import efl_canvas_animation_types;
 
-class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
+class Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
    [[Base class to be used by classes implementing specific canvas animations.
 
@@ -17,6 +17,8 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
      To avoid this, animations must finish in the same state as they begin, or the object's state must be
      matched to the animation's ending state once the animation finishes (using the @[Efl.Canvas.Object_Animation.animation,changed]
      event).
+
+     @since 1.24
    ]]
    c_prefix: efl_animation;
    methods {

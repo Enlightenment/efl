@@ -1,10 +1,12 @@
-class @beta Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
+class Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
 {
    [[Animated alpha blending effect.
 
      The @Efl.Canvas.Object will have its alpha (transparency) value multiplied by
      this animation.
      This can be used to create fade-in and fade-out transitions, for example.
+
+     @since 1.24
    ]]
    c_prefix: efl_animation_alpha;
    data: Efl_Canvas_Animation_Alpha_Data;

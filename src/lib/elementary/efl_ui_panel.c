@@ -699,10 +699,26 @@ _efl_ui_panel_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Panel_Dat
    return _panel_efl_ui_widget_widget_input_event_handler(obj, pd, eo_event, src);
 }
 
+
 static void
 _invalidate_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_content_set(data, NULL);
+   efl_content_unset(data);
+}
+
+static void
+_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Panel_Data *sd EINA_UNUSED)
+{
+   if (sd->content)
+     {
+        efl_event_callback_del(sd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
+        evas_object_box_remove(sd->bx, sd->content);
+        if (!sd->scrollable)
+          efl_ui_widget_sub_object_del(obj, sd->content);
+        else
+          efl_ui_widget_sub_object_del(sd->scr_ly, sd->content);
+        sd->content = NULL;
+     }
 }
 
 static Eina_Bool
@@ -712,10 +728,10 @@ _efl_ui_panel_efl_content_content_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Gfx_En
 
    if (sd->content)
      {
-        efl_event_callback_del(sd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
-        if (!efl_invalidated_get(sd->content) && !efl_invalidating_get(sd->content))
-          efl_del(sd->content);
-        sd->content = NULL;
+        Eo *c = sd->content;
+        _content_unset(obj, sd);
+        if (efl_alive_get(obj))
+          efl_del(c);
      }
    if (content && !elm_widget_sub_object_add(obj, content)) return EINA_FALSE;
    sd->content = content;
@@ -740,11 +756,12 @@ _efl_ui_panel_efl_content_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panel_Da
 }
 
 static Efl_Gfx_Entity*
-_efl_ui_panel_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Panel_Data *sd EINA_UNUSED)
+_efl_ui_panel_efl_content_content_unset(Eo *obj, Efl_Ui_Panel_Data *sd EINA_UNUSED)
 {
-   Efl_Gfx_Entity *ret = efl_content_get(obj);
-   efl_content_set(obj, NULL);
-   return ret;
+   Eo *o = sd->content;
+   _content_unset(obj, sd);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
+   return o;
 }
 
 static void

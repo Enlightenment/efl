@@ -1,4 +1,4 @@
-interface @beta Efl.Interpolator
+interface Efl.Interpolator
 {
    [[Interface providing interpolation capabilities.
    
@@ -11,6 +11,8 @@ interface @beta Efl.Interpolator
 
      For example implementations see @Efl.Accelerate_Interpolator, @Efl.Decelerate_Interpolator
      or @Efl.Bounce_Interpolator.
+
+     @since 1.24
    ]]
    methods {
       interpolate {

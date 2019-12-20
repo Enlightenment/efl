@@ -26,13 +26,11 @@ enum @beta Efl.Text.Cursor_Move_Type
    paragraph_prev   [[Advances to the end of the previous paragraph.]]
 }
 
-// Missing pen_geometry get? - probably not, that's the cursor geometry with under.
-// Should we always do split cursor and "under" should just be content geometry? -- probably!
-//  Problem with this is that it doesn't necessarily work correctly vertically.
 class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
    [[Cursor API.]]
    c_prefix: efl_text_cursor;
    methods {
+
       @property position {
          [[Cursor position.]]
          set {  }
@@ -41,6 +39,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
             position: int; [[Cursor position.]]
          }
       }
+
       @property content {
          [[The content of the cursor (the character under the cursor).]]
          get {
@@ -49,6 +48,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
             content: Eina.Unicode; [[The unicode codepoint of the character.]]
          }
       }
+
       @property content_geometry {
          [[The geometry of the item/char pointed by the cursor.]]
          get { }
@@ -56,6 +56,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
             geometry: Eina.Rect; [[The geometry in pixels.]]
          }
       }
+
       @property line_number {
          [[The line the cursor is on.]]
          set {  }
@@ -101,6 +102,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          }
          return: bool; [[$true if cursors are equal, $false otherwise.]]
       }
+
       compare @const {
          [[Compare two cursors
            Return <0 if cursor position less than dst, 0 if cursor == dest and >0 otherwise.]]
@@ -109,12 +111,14 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          }
          return: int; [[Difference between cursors.]]
       }
+
       copy @const {
          [[Copy existing cursor to destination cursor, like position and cursor text object.]]
          params {
             dst: Efl.Text.Cursor; [[Destination Cursor.]]
          }
       }
+
       move {
          [[Move the cursor.]]
          params {
@@ -122,13 +126,10 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          }
          return: bool; [[True if actually moved.]]
       }
+
       char_delete {
          [[Deletes a single character from position pointed by given cursor.]]
       }
-
-      // FIXME: It's just implemented as range delete with cluster start + end.
-      // Should we have convenience wrappers for those though? This and cluster prev/next?
-      // cluster_delete {
 
       line_jump_by {
          [[Jump the cursor by the given number of lines.]]
@@ -153,7 +154,6 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          }
       }
 
-      // FIXME: Add a way to add with a length parameter (always have it?) so we just copy n characters, or all if -1. Useful for saving copies when inserting from another source.
       text_insert {
          [[Adds text to the current cursor position and set the cursor to
            *after* the start of the text just added.]]
@@ -184,7 +184,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
             cur2: Efl.Text.Cursor; [[End of range.]]
          }
       }
-      // FIXME: returning an iterator here feels a bit stupid
+
       range_geometry_get {
          [[Get the simple geometry in pixels of a range in the text.
 
@@ -197,6 +197,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          return: iterator<Eina.Rect> @move; [[
             Iterator on all geoemtries of the given range.]]
       }
+
       range_precise_geometry_get {
          [[Get the "precise" geometry in pixels of a range.
 
@@ -208,6 +209,7 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
          return: iterator<Eina.Rect> @move; [[
             Iterator on all simple geometries of the given range.]]
       }
+
       range_delete {
          [[Deletes the range between given cursors.
 
@@ -226,7 +228,6 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
       }
    }
    events {
-      // FIXME: Needed for people who cache the position.
       changed: void; [[Called when its position has changed.]]
    }
 

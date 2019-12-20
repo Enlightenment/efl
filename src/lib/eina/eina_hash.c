@@ -410,7 +410,6 @@ _eina_hash_del_by_hash_el(Eina_Hash *hash,
                                                  hash_element), EINA_RBTREE_CMP_NODE_CB(
                                                  _eina_hash_key_rbtree_cmp_node),
                                                (const void *)hash->key_cmp_cb);
-   _eina_hash_el_free(hash_element, hash);
 
    if (!hash_head->head)
      {
@@ -430,6 +429,8 @@ _eina_hash_del_by_hash_el(Eina_Hash *hash,
         free(hash->buckets);
         hash->buckets = NULL;
      }
+
+   _eina_hash_el_free(hash_element, hash);
 
    return EINA_TRUE;
 }

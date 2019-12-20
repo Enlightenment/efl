@@ -1,4 +1,4 @@
-class @beta Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
+class Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
 {
    [[Animated rotation effect.
 
@@ -8,6 +8,8 @@ class @beta Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
 
      Note: Changing an object's position using @Efl.Gfx.Entity.position while this
      animation is running might lead to unexpected results.
+
+     @since 1.24
    ]]
    c_prefix: efl_animation_rotate;
    data: Efl_Canvas_Animation_Rotate_Data;
