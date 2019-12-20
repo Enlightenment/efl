@@ -208,6 +208,16 @@ EFL_START_TEST(efl_ui_layout_test_api_ordering)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_layout_test_versioning)
+{
+   Evas_Object *win;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   Eo *layout = efl_add(EFL_UI_BUTTON_CLASS, win);
+   ck_assert_int_eq(efl_ui_layout_theme_version_get(layout), 123);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_test_property_bind);
@@ -218,4 +228,5 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_api_ordering);
    tcase_add_test(tc, efl_ui_layout_test_callback);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_provider);
+   tcase_add_test(tc, efl_ui_layout_test_versioning);
 }
