@@ -134,7 +134,7 @@ efl_main(void *data EINA_UNUSED,
 
    efl_text_markup_set(efl_part(layout, "text"), "This is an example text. This is a layout text part.");
    efl_text_wrap_set(efl_part(layout, "text"), wraps[wrap_itr].wrap);
-   efl_text_normal_color_set(efl_part(layout, "text"), 255, 255, 0, 255);
+   efl_text_color_set(efl_part(layout, "text"), 255, 255, 0, 255);
    efl_text_font_family_set(efl_part(layout, "text"), "Serif");
    efl_text_font_size_set(efl_part(layout, "text"), 12);
 

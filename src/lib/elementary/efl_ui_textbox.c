@@ -1925,7 +1925,7 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
      colorcode = edje_object_data_get(wd->resize_obj, "style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
-        efl_text_normal_color_set(sd->text_obj, r, g, b, a);
+        efl_text_color_set(sd->text_obj, r, g, b, a);
      }
 
    // Guide Text
@@ -1943,7 +1943,7 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
      colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
-        efl_text_normal_color_set(sd->text_guide_obj, r, g, b, a);
+        efl_text_color_set(sd->text_guide_obj, r, g, b, a);
      }
 }
 

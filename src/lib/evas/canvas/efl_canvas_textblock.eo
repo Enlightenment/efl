@@ -10,7 +10,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
 
      Note: No text will be rendered until a font, a font size and a font color are specified.
      This can be accomplished using @Efl.Text_Font.font_family, @Efl.Text_Font.font_size and
-     @Efl.Text_Style.normal_color.
+     @Efl.Text_Style.text_color.
      Alternatively, @.style_apply can be used providing the attributes $font, $font_size and $color.
    ]]
    methods {
@@ -139,53 +139,53 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
            - $color: Color code for the text (See bottom for the complete list of supported codes).
              Default value is $[rgba(0,0,0,0)] meaning that no text will be rendered.
              Requires $font and $font_size.
-             See @Efl.Text_Style.normal_color.
+             See @Efl.Text_Style.text_color.
 
            - $underline_color: Color code for the text underline (See bottom for the complete list of supported codes).
              Default value is $[rgba(0,0,0,0)] meaning that no underline will be rendered.
              Requires $underline.
-             See @Efl.Text_Style.underline_color.
+             See @Efl.Text_Style.text_underline_color.
 
            - $underline2_color: Color code for the secondary text underline (See bottom for the complete list of
              supported codes). Only valid when $[underline=double].
              Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
-             See @Efl.Text_Style.underline2_color.
+             See @Efl.Text_Style.text_underline2_color.
 
            - $underline_dash_color: Color code for the dashed underline (See bottom for the complete list of supported
              codes). Only valid when $[underline=dashed].
              Default value is $[rgba(0,0,0,0)] meaning that dashed underline will not be rendered.
-             See @Efl.Text_Style.underline_dashed_color.
+             See @Efl.Text_Style.text_underline_dashed_color.
 
            - $outline_color: Color code for the text outline (See bottom for the complete list of supported codes).
              Only valid when the $style attribute includes an outline.
              Default value is $[rgba(0,0,0,0)] meaning that no outline will be rendered.
-             See @Efl.Text_Style.outline_color.
+             See @Efl.Text_Style.text_outline_color.
 
            - $shadow_color: Color code for the text shadow (See bottom for the complete list of supported codes).
              Only valid when the $style attribute includes a shadow.
              Default value is $[rgba(0,0,0,0)] meaning that no shadow will be rendered.
-             See @Efl.Text_Style.shadow_color.
+             See @Efl.Text_Style.text_shadow_color.
 
            - $glow_color: Color code for the glow component of the text (See bottom for the complete list of supported
              codes). Only valid when the $style attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
-             See @Efl.Text_Style.glow_color.
+             See @Efl.Text_Style.text_glow_color.
 
            - $glow2_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
              list of supported codes). Only valid when the $style attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
-             See @Efl.Text_Style.glow2_color.
+             See @Efl.Text_Style.text_glow2_color.
 
            - $backing_color: Color code for the background of the text (See bottom for the complete list of supported
              codes). Use a fully transparent color to disable the background.
              Default value is $[rgba(0,0,0,0)] meaning that no backing will be rendered.
              Requires $backing.
-             See @Efl.Text_Style.backing_color.
+             See @Efl.Text_Style.text_background_color.
 
            - $strikethrough_color: Color code for the line striking through the text (See bottom for the complete list
              of supported codes). Only valid when $[strikethrough=on]
              Default value is $[rgba(0,0,0,0)] meaning that no strike-through line will be rendered.
-             See @Efl.Text_Style.strikethrough_color.
+             See @Efl.Text_Style.text_strikethrough_color.
 
            - $align: Horizontal alignment of the text. The value can either be a decimal number ($[0.0] means "left"
              and $[1.0] means "right"), a percentage ($[0%] means "left" and $[100%] means "right") or one of:
@@ -230,17 +230,17 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              $dashed (A dashed line under the text).
              Default value is $off.
              Requires either $underline_color, $underline2_color or $underline_dash_color.
-             See @Efl.Text_Style.underline_type.
+             See @Efl.Text_Style.text_underline_type.
 
            - $strikethrough: Enables crossed-out text. Possible values are $on and $off.
              Default value is $off.
              Requires $strikethrough_color.
-             See @Efl.Text_Style.strikethrough_type.
+             See @Efl.Text_Style.text_strikethrough_type.
 
            - $backing: Enables background color for the text. Possible values are $on and $off.
              Default value is $off.
              Requires $backing_color.
-             See @Efl.Text_Style.backing_type.
+             See @Efl.Text_Style.text_background_type.
 
            - $style: Controls a number of decorations around the text, like shadow, outline and glow, including
              combinations of them. Possible values are $plain (No decoration, alias for $off and $none),
@@ -252,7 +252,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Default value is $plain.
              Requires either $shadow_color, $glow_color or $outline_color.
              Examples: $[style=outline], $[style=shadow,bottom_right], $[style=outline_shadow,bottom].
-             See @Efl.Text_Style.effect_type and @Efl.Text_Style.shadow_direction.
+             See @Efl.Text_Style.text_effect_type and @Efl.Text_Style.text_shadow_direction.
 
            - $tabstops: Size (in pixels) of the tab character. The value must be a number greater than one.
              Default value is $[32].
@@ -311,15 +311,15 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
 
            - $underline_dash_width: Length (in pixels) of the dashes when $underline is $dashed.
              Default value is $[6].
-             See @Efl.Text_Style.underline_dashed_width.
+             See @Efl.Text_Style.text_underline_dashed_width.
 
            - $underline_dash_gap: Length (in pixels) of the gaps between the dashes when $underline is $dashed.
              Default value is $[2].
-             See @Efl.Text_Style.underline_dashed_gap.
+             See @Efl.Text_Style.text_underline_dashed_gap.
 
            - $underline_height: Width (in pixels) of the single underline when $underline is $single.
              Default value is $[1].
-             See @Efl.Text_Style.underline_height.
+             See @Efl.Text_Style.text_underline_height.
 
            - $gfx_filter: Experimental filter name. See @Efl.Gfx.Filter for more information.
 
@@ -457,25 +457,25 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Font.font_slant { get; set; }
       Efl.Text_Font.font_width { get; set; }
       Efl.Text_Font.font_bitmap_scalable { get; set; }
-      Efl.Text_Style.normal_color { get; set; }
-      Efl.Text_Style.backing_type { get; set; }
-      Efl.Text_Style.backing_color { get; set; }
-      Efl.Text_Style.underline_type { get; set; }
-      Efl.Text_Style.underline_color { get; set; }
-      Efl.Text_Style.underline_height { get; set; }
-      Efl.Text_Style.underline_dashed_color { get; set; }
-      Efl.Text_Style.underline_dashed_width { get; set; }
-      Efl.Text_Style.underline_dashed_gap { get; set; }
-      Efl.Text_Style.underline2_color { get; set; }
-      Efl.Text_Style.strikethrough_type { get; set; }
-      Efl.Text_Style.strikethrough_color { get; set; }
-      Efl.Text_Style.effect_type { get; set; }
-      Efl.Text_Style.outline_color { get; set; }
-      Efl.Text_Style.shadow_direction { get; set; }
-      Efl.Text_Style.shadow_color { get; set; }
-      Efl.Text_Style.glow_color { get; set; }
-      Efl.Text_Style.glow2_color { get; set; }
-      Efl.Text_Style.gfx_filter { get; set; }
+      Efl.Text_Style.text_color { get; set; }
+      Efl.Text_Style.text_background_type { get; set; }
+      Efl.Text_Style.text_background_color { get; set; }
+      Efl.Text_Style.text_underline_type { get; set; }
+      Efl.Text_Style.text_underline_color { get; set; }
+      Efl.Text_Style.text_underline_height { get; set; }
+      Efl.Text_Style.text_underline_dashed_color { get; set; }
+      Efl.Text_Style.text_underline_dashed_width { get; set; }
+      Efl.Text_Style.text_underline_dashed_gap { get; set; }
+      Efl.Text_Style.text_underline2_color { get; set; }
+      Efl.Text_Style.text_strikethrough_type { get; set; }
+      Efl.Text_Style.text_strikethrough_color { get; set; }
+      Efl.Text_Style.text_effect_type { get; set; }
+      Efl.Text_Style.text_outline_color { get; set; }
+      Efl.Text_Style.text_shadow_direction { get; set; }
+      Efl.Text_Style.text_shadow_color { get; set; }
+      Efl.Text_Style.text_glow_color { get; set; }
+      Efl.Text_Style.text_glow2_color { get; set; }
+      Efl.Text_Style.text_gfx_filter { get; set; }
       Efl.Text_Format.ellipsis { get; set; }
       Efl.Text_Format.wrap { get; set; }
       Efl.Text_Format.multiline { get; set; }
