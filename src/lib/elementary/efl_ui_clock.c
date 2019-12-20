@@ -201,7 +201,7 @@ field_create(Eo *obj, Efl_Ui_Clock_Type  field_type)
           efl_text_multiline_set(efl_added, EINA_FALSE),
           efl_text_interactive_editable_set(efl_added, EINA_FALSE),
           efl_input_text_input_panel_autoshow_set(efl_added, EINA_FALSE),
-          efl_ui_textbox_context_menu_disabled_set(efl_added, EINA_TRUE));
+          efl_ui_textbox_context_menu_enabled_set(efl_added, EINA_FALSE));
      }
    evas_object_data_set(field_obj, "_field_type", (void *)field_type);
 
