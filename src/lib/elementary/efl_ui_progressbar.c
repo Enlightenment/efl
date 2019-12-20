@@ -407,23 +407,6 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
 }
 
 EOLIAN static void
-_efl_ui_progressbar_pulse_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, Eina_Bool pulse)
-{
-   pulse = !!pulse;
-   if (sd->pulse == pulse) return;
-
-   sd->pulse = pulse;
-
-   efl_ui_widget_theme_apply(obj);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
-{
-   return sd->pulse;
-}
-
-EOLIAN static void
 _efl_ui_progressbar_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Efl_Ui_Layout_Orientation dir)
 {
    if (sd->dir == dir) return;
@@ -514,6 +497,18 @@ _progress_part_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *par
 }
 
 static void
+_internal_theme_mode_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool pulse)
+{
+   if (elm_widget_is_legacy(obj))
+     return;
+   if (sd->pulse == pulse)
+     return;
+   sd->pulse = pulse;
+   efl_ui_widget_theme_apply(obj);
+}
+
+
+static void
 _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *part_name, double val)
 {
    Efl_Ui_Progress_Status *ps;
@@ -526,6 +521,8 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
      "elm.cur.progressbar",
    };
    Eina_Bool is_cur_progressbar = !strcmp(part_name, curprogresspart[elm_widget_is_legacy(obj)]);
+
+   _internal_theme_mode_pulse_set(obj, sd, EINA_FALSE);
 
    if ((!is_cur_progressbar) || sd->has_cur_progressbar_part)
      efl_ui_range_limits_get(efl_part(obj, part_name), &min, &max);
@@ -633,10 +630,13 @@ EOLIAN static void
 _efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
 {
    state = !!state;
-   if ((!sd->pulse) || (sd->pulse_state == state)) return;
+
+   if (sd->pulse_state == state)
+     return;
 
    sd->pulse_state = state;
 
+   _internal_theme_mode_pulse_set(obj, sd, EINA_TRUE);
    _apply_pulse_state(obj, sd);
 }
 
