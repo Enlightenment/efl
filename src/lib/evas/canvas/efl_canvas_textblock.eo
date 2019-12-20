@@ -54,7 +54,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       @property style_insets {
          [[Gets the left, right, top and bottom insets of the text.
 
-           The inset is any applied padding on the text.
+           The inset is any applied padding on the text (which is calculated
+           internally by styling applied to Textblock).
          ]]
          get {}
          values {
@@ -78,11 +79,13 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       }
       @property newline_as_paragraph_separator {
          [[When $true, the newline character will behave as a paragraph separator.
+           Paragraph separator equal U+2029, and new line equal U+000A.
+           This will effect a lot of text behaviour like @Efl.Text.Cursor.move method.
          ]]
          set {}
          get {}
          values {
-            mode: bool; [[$true for legacy mode, $false otherwise.]]
+            mode: bool; [[$true to treat new line as paragraph separator, $false otherwise.]]
          }
       }
       style_apply {
@@ -433,6 +436,10 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
 
            Once layout is complete, the result is returned as @Eina.Rect,
            with the $w and $h fields set.
+
+           This can be used to layout Textblock before it is required
+           to layout internally in back thread, which can enhance application
+           performance.
          ]]
          return: future<Eina.Rect>; [[Future for layout result.]]
       }
