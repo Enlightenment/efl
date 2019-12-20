@@ -981,7 +981,7 @@ class PrivateNativeClass : NativeClass
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public class BindingEntityAttribute: System.Attribute
+internal class BindingEntityAttribute: System.Attribute
 {
     public static bool IsBindingEntity(System.Type t)
     {
