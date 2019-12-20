@@ -4362,17 +4362,17 @@ EFL_START_TEST(evas_textblock_annotation)
 
    efl_text_cursor_position_set(start, 0);
    efl_text_cursor_position_set(end, 3);
-   efl_text_attribute_factory_attribute_insert(start, end, "font_size=80");
+   efl_text_formatter_attribute_insert(start, end, "font_size=80");
    efl_text_cursor_position_set(start, 1);
    efl_text_cursor_position_set(end, 2);
-   efl_text_attribute_factory_attribute_insert(start, end, "font=arial");
+   efl_text_formatter_attribute_insert(start, end, "font=arial");
    efl_text_cursor_position_set(start, 2);
    efl_text_cursor_position_set(end, 3);
-   efl_text_attribute_factory_attribute_insert(start, end, "color=#fff");
+   efl_text_formatter_attribute_insert(start, end, "color=#fff");
 
    efl_text_cursor_position_set(start, 0);
    efl_text_cursor_position_set(end, 3);
-   unsigned int count = efl_text_attribute_factory_attribute_clear(start, end);
+   unsigned int count = efl_text_formatter_attribute_clear(start, end);
    fail_if(count != 3);
 }
 EFL_END_TEST;

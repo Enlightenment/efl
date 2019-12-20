@@ -16,7 +16,7 @@ _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
    efl_text_cursor_position_set(start, start_pos);
    efl_text_cursor_position_set(end, end_pos);
 
-   efl_text_attribute_factory_attribute_insert(start, end, style);
+   efl_text_formatter_attribute_insert(start, end, style);
 
    efl_del(start);
    efl_del(end);

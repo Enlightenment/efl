@@ -148,7 +148,7 @@ struct _Efl_Canvas_Object_Animation_Event
  * @{
  */
 #include "canvas/efl_text_cursor.eo.h"
-#include "canvas/efl_text_attribute_factory.eo.h"
+#include "canvas/efl_text_formatter.eo.h"
 #include "canvas/efl_canvas_textblock.eo.h"
 #include "canvas/efl_canvas_textblock_factory.eo.h"
 /**

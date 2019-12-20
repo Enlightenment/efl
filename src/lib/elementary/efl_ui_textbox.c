@@ -2808,7 +2808,7 @@ _textblock_node_format_to_atspi_text_attr(Efl_Text_Attribute_Handle *annotation)
    Efl_Access_Text_Attribute *ret;
    const char *txt;
 
-   txt = efl_text_attribute_factory_attribute_get(annotation);
+   txt = efl_text_formatter_attribute_get(annotation);
    if (!txt) return NULL;
 
    ret = calloc(1, sizeof(Efl_Access_Text_Attribute));
@@ -2843,7 +2843,7 @@ _efl_ui_textbox_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Textbox_Data
    efl_text_cursor_position_set(cur1, *start_offset);
    efl_text_cursor_position_set(cur2, *end_offset);
 
-   annotations = efl_text_attribute_factory_range_attributes_get(cur1, cur2);
+   annotations = efl_text_formatter_range_attributes_get(cur1, cur2);
 
    efl_del(cur1);
    efl_del(cur2);
@@ -2889,7 +2889,7 @@ _efl_ui_textbox_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Textbo
    efl_text_cursor_position_set(cur1, *start_offset);
    efl_text_cursor_position_set(cur2, *end_offset);
 
-   annotations = efl_text_attribute_factory_range_attributes_get(cur1, cur2);
+   annotations = efl_text_formatter_range_attributes_get(cur1, cur2);
 
    efl_del(cur1);
    efl_del(cur2);
@@ -2924,7 +2924,7 @@ _efl_ui_textbox_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Tex
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 
-   annotations = efl_text_attribute_factory_range_attributes_get(start, end);
+   annotations = efl_text_formatter_range_attributes_get(start, end);
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
@@ -3288,14 +3288,14 @@ _anchor_get(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Text_Attribute_Handle *an)
    Eina_List *i;
    const char *str;
 
-   str = efl_text_attribute_factory_attribute_get(an);
+   str = efl_text_formatter_attribute_get(an);
 
    EINA_LIST_FOREACH(sd->anchors, i, anc)
      {
         if (anc->annotation == an) break;
      }
 
-   if (!anc && (efl_text_attribute_factory_attribute_is_item(an) || !strncmp(str, "a ", 2)))
+   if (!anc && (efl_text_formatter_attribute_is_item(an) || !strncmp(str, "a ", 2)))
      {
         const char *p;
 
@@ -3304,7 +3304,7 @@ _anchor_get(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Text_Attribute_Handle *an)
           {
              anc->obj = obj;
              anc->annotation = an;
-             anc->item = efl_text_attribute_factory_attribute_is_item(an);
+             anc->item = efl_text_formatter_attribute_is_item(an);
              p = strstr(str, "href=");
              if (p)
                {
@@ -3344,7 +3344,7 @@ _anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 
-   it = efl_text_attribute_factory_range_attributes_get(start, end);
+   it = efl_text_formatter_range_attributes_get(start, end);
    efl_del(start);
    efl_del(end);
 
@@ -3386,7 +3386,7 @@ _anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
                     }
 
                   rect = eina_list_data_get(anc->rects);
-                  efl_text_attribute_factory_item_geometry_get(anc->annotation, &cx, &cy, &cw, &ch);
+                  efl_text_formatter_item_geometry_get(anc->annotation, &cx, &cy, &cw, &ch);
                   efl_gfx_entity_size_set(rect->obj, EINA_SIZE2D(cw, ch));
                   efl_gfx_entity_position_set(rect->obj,
                         EINA_POSITION2D(off.x + cx, off.y + cy));
@@ -3400,7 +3400,7 @@ _anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
                   size_t count;
                   start = efl_ui_textbox_cursor_create(obj);
                   end = efl_ui_textbox_cursor_create(obj);
-                  efl_text_attribute_factory_attribute_cursors_get(anc->annotation, start, end);
+                  efl_text_formatter_attribute_cursors_get(anc->annotation, start, end);
 
                   range = efl_text_cursor_range_geometry_get(start, end);
                   count = eina_list_count(eina_iterator_container_get(range));
