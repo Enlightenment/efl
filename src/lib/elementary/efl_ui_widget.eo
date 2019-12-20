@@ -381,8 +381,8 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       }
    }
    parts {
-      shadow : Efl.Ui.Widget_Part_Shadow;
-      background : Efl.Ui.Widget_Part_Bg;
+      shadow : Efl.Ui.Widget_Part_Shadow; [[Drop-shadow or glow effect around the widget.]]
+      background : Efl.Ui.Widget_Part_Bg; [[Background of the widget.]]
    }
    implements {
       class.constructor;
