@@ -34,7 +34,7 @@ namespace Efl
 namespace Eo
 {
 
-public static class Globals
+internal static class Globals
 {
     /// <summary>Represents the type of the native Efl_Class.</summary>
     internal enum EflClassType
