@@ -920,15 +920,26 @@ internal struct WrappingHandle
     public IntPtr NativeHandle { get; private set; }
 }
 
+/// <summary>
+/// Manage the initialization and cleanup for the Efl object subsystem.
+/// <para>Since EFL 1.24.</para>
+/// </summary>
 public static class Config
 {
-
+    /// <summary>
+    /// Initialize the EFL object subsystem.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Init()
     {
         Globals.efl_object_init();
         Globals.SetNativeDisposeCallbacks();
     }
 
+    /// <summary>
+    /// Shutdown the EFL object subsystem.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Shutdown()
     {
         Globals.efl_object_shutdown();
