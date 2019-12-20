@@ -29,8 +29,13 @@
 # include <memcheck.h>
 #endif
 
-#ifdef HAVE_MMAP
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
+#endif
+
+#ifdef HAVE_MMAP
 
 // custom memory allocators to avoid malloc/free during backtrace handling
 // just in case we're inside some signal handler due to mem corruption and

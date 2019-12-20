@@ -1,14 +1,17 @@
-class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Composition, Efl.Ui.Direction,
-                          Efl.Access.Widget.Action
+class Efl.Ui.Spin_Button extends Efl.Ui.Spin
+                         implements Efl.Ui.Focus.Composition, Efl.Ui.Layout_Orientable, Efl.Ui.Range_Interactive,
+                                    Efl.Access.Widget.Action
 {
    [[A Button Spin.
 
      This is a widget which allows the user to increase or decrease
      numeric values using the arrow buttons or to edit values directly by clicking
      over them and inputting new ones.
+
+     @since 1.23
    ]]
    methods {
-      @property circulate {
+      @property wraparound {
          [[Control whether the spin should circulate value when it reaches its minimum or maximum value.
 
            Disabled by default. If disabled, when the user tries to increment the
@@ -21,7 +24,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
 
            If enabled, when the user tries to increment the value
            but displayed value plus step value is bigger than maximum value,
-           the new value will become the minimum value. When the the user tries to
+           the new value will become the minimum value. When the user tries to
            decrement it, if the value minus step is less than minimum value,
            the new displayed value will be the maximum value.
 
@@ -41,7 +44,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
             circulate: bool(false); [[$true to enable circulate or $false to disable it.]]
          }
       }
-      @property editable {
+      @property direct_text_input @beta {
          [[Control whether the spin can be directly edited by the user.
 
            Spin objects can have editing disabled, in which case they can only
@@ -56,7 +59,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
          get {
          }
          values {
-            editable: bool(false); [[$true to allow users to edit it or $false to don't allow users to edit it directly.]]
+            direct_text_input: bool(false); [[$true to allow users to directly edit the value.]]
          }
       }
    }
@@ -66,14 +69,13 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Range_Display.range_value { set; }
-      Efl.Ui.Direction.direction { get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-   }
-   events {
-      delay,changed: void; [[Called when spin delay is changed.]]
+      Efl.Ui.Format.apply_formatted_value;
+      Efl.Ui.Range_Interactive.range_step { get; set; }
    }
 }

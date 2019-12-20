@@ -43,7 +43,7 @@ interface @beta Efl.Net.Server {
               dispatched.
             ]]
             params {
-                address: string @nonull; [[Address to run server on]]
+                address: string; [[Address to run server on]]
             }
             return: Eina.Error; [[$0 on success, error code otherwise]]
         }

@@ -4,10 +4,6 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-/* FIXME: wtf? */
-#ifndef EFL_UI_RADIO_EVENT_CHANGED
-# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
-#endif
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +21,9 @@
 #ifdef ELM_DIRENT_H
 #include <dirent.h>
 #endif
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 #include <errno.h>
 
 #ifdef ELM_UNIX
@@ -49,10 +47,6 @@
 #endif
 #endif
 
-#include <Eina.h>
-#include <Eo.h>
-#include <Efl.h>
-
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
@@ -66,9 +60,7 @@
 # include <sys/siginfo.h>
 #else
 # include <sys/time.h>
-# if !defined (EXOTIC_NO_SIGNAL)
-#  include <signal.h>
-# endif
+# include <signal.h>
 #endif
 
 #include <sys/types.h>
@@ -78,25 +70,8 @@
 #include <Efl_Core.h>
 #include <Efl_Net.h>
 
-#include <Evas.h>
-#ifndef EFL_NOLEGACY_API_SUPPORT
-# include <Evas_GL.h>
-#endif
-#include <Eio.h>
-#include <Edje.h>
-#include <Eldbus.h>
-#include <Efreet.h>
-#include <Efreet_Mime.h>
-#include <Efreet_Trash.h>
-#include <Ethumb_Client.h>
-
-#ifdef ELM_ELOCATION
-#include <Elocation.h>
-#endif
-
-#ifdef ELM_EMAP
-#include <EMap.h>
-#endif
+#include <Efl_Canvas.h>
+#include <Efl_Layout.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -139,9 +114,13 @@ extern "C" {
 
 extern EAPI double _efl_startup_time;
 
+/** Successfully applied the requested style from the current theme. */
+extern EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
 #include "efl_ui_selection_types.eot.h"
+#include "efl_ui_dnd_types.eot.h"
 
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;
@@ -152,6 +131,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # ifdef EFL_BETA_API_SUPPORT
 EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # endif
+# include <efl_ui_focus_manager_window_root.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
@@ -173,15 +153,22 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget.eo.h>
+# include <efl_ui_widget_scrollable_content.eo.h>
 # include <efl_ui_widget_common.h>
 # include <efl_ui_widget_part.eo.h>
+# include <efl_ui_widget_part_bg.eo.h>
+# include <efl_ui_widget_part_shadow.eo.h>
 # include <efl_ui_layout_base.eo.h>
 # include <efl_ui_layout.eo.h>
 # include <efl_ui_layout_part.eo.h>
+# include <efl_ui_layout_part_bg.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
 # include <efl_ui_layout_part_text.eo.h>
 # include <efl_ui_layout_part_table.eo.h>
+# include <efl_ui_item.eo.h>
+# include <efl_ui_default_item.eo.h>
+# include <efl_ui_group_item.eo.h>
 # include <efl_ui_win_part.eo.h>
 # include <efl_ui_bg.eo.h>
 # include <efl_ui_box.eo.h>
@@ -190,51 +177,157 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_table.eo.h>
 # include <efl_ui_table_static.eo.h>
 # include <efl_ui_image.eo.h>
+# include <efl_ui_image_zoomable.eo.h>
 # include <efl_ui_win.eo.h>
 /* FIXME: what the actual fuck. */
-# include <elm_win_eo.h>
+#ifdef EFL_BETA_API_SUPPORT
+/**
+ * @brief Set the window's autodel state.
+ *
+ * When closing the window in any way outside of the program control, like
+ * pressing the X button in the titlebar or using a command from the Window
+ * Manager, a "delete,request" signal is emitted to indicate that this event
+ * occurred and the developer can take any action, which may include, or not,
+ * destroying the window object.
+ *
+ * When the @c autodel parameter is set, the window will be automatically
+ * destroyed when this event occurs, after the signal is emitted. If @c autodel
+ * is @c false, then the window will not be destroyed and is up to the program
+ * to do so when it's required.
+ *
+ * @param[in] obj The object.
+ * @param[in] autodel If @c true, the window will automatically delete itself
+ * when closed.
+ *
+ * Note: This function is only available in C.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel);
+
+/**
+ * @brief Get the window's autodel state.
+ *
+ * @param[in] obj The object.
+ *
+ * @return If @c true, the window will automatically delete itself when closed.
+ *
+ * Note: This function is only available in C.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
+#endif
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
-# include <efl_ui_relative_layout.eo.h>
+# include <efl_ui_relative_container.eo.h>
 
-/* FIXME: Efl.Ui.Text must not use elm_general.h */
-// no.
-//# warning Efl.Ui.Text is not available yet without Elementary.h
-# if 0
-# include <efl_ui_text_interactive.eo.h>
-# include <efl_ui_text.eo.h>
-# include <efl_ui_text_editable.eo.h>
-# include <efl_ui_text_async.eo.h>
-# endif
+// FIXME - Text object must stop using Context_Item_Clicked_Cb!
+typedef void (*Context_Item_Clicked_Cb)(void *data, Eo *obj, void *event_info);
 
-# include <efl_ui_clock.h>
+# include <efl_text_interactive.eo.h>
+# include <efl_ui_textbox.eo.h>
+# include <efl_ui_textbox_async.eo.h>
+
+# include <efl_ui_animation_view.eo.h>
+# include <efl_ui_clock.eo.h>
+# include <efl_ui_video.eo.h>
+
+# include <efl_ui_widget_factory.eo.h>
 # include <efl_ui_image_factory.eo.h>
-# include <efl_ui_video.h>
-# include <efl_ui_nstate.h>
-# include <efl_ui_calendar.h>
-# include <efl_ui_button_eo.h>
-
-# include "efl_ui_caching_factory.eo.h"
-# include "efl_ui_widget_factory.eo.h"
+# include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_caching_factory.eo.h>
+# include <efl_ui_text_factory_fallback.eo.h>
+# include <efl_ui_text_factory_images.eo.h>
+# include <efl_ui_text_factory_emoticons.eo.h>
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 
 # include <efl_ui_tags.eo.h>
+# include <efl_ui_button.eo.h>
+# include <efl_ui_check.eo.h>
+# include <efl_ui_radio.eo.h>
+# include <efl_ui_radio_group.eo.h>
+# include <efl_ui_radio_group_impl.eo.h>
+# include <efl_ui_radio_box.eo.h>
+# include <efl_ui_progressbar.eo.h>
 
-# include <efl_ui_flip_eo.h>
-# include <efl_ui_frame_eo.h>
-# include <efl_ui_check_eo.h>
-# include <efl_ui_image_zoomable_eo.h>
-# include <efl_ui_progressbar_eo.h>
-# include <efl_ui_radio_eo.h>
-# include <efl_ui_panes_eo.h>
+# include <efl_ui_flip.eo.h>
+# include <efl_ui_frame.eo.h>
+# include <efl_ui_panel.eo.h>
+# include <efl_ui_panes.eo.h>
 # include <efl_ui_panes_part.eo.h>
+
+#define _EFL_UI_SPOTLIGHT_MANAGEREO_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Spotlight_Manager;
+#define _EFL_UI_SPOTLIGHT_INDICATOR_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Spotlight_Indicator;
+
+# include <efl_ui_spotlight_container.eo.h>
+# include <efl_ui_spotlight_manager.eo.h>
+# include <efl_ui_spotlight_indicator.eo.h>
+# include <efl_ui_spotlight_indicator_icon.eo.h>
+# include <efl_ui_spotlight_manager_scroll.eo.h>
+# include <efl_ui_spotlight_manager_stack.eo.h>
+# include <efl_ui_spotlight_util.eo.h>
+# include <efl_ui_stack.eo.h>
+# include <efl_ui_pager.eo.h>
 
 # include <efl_ui_navigation_bar.eo.h>
 # include <efl_ui_navigation_bar_part.eo.h>
 # include <efl_ui_navigation_bar_part_back_button.eo.h>
 # include <efl_ui_navigation_layout.eo.h>
-# include <efl_ui_stack.eo.h>
+# include <efl_ui_action_connector.eo.h>
+# include <efl_ui_format.eo.h>
+# include <efl_ui_spin.eo.h>
+# include <efl_ui_spin_button.eo.h>
+# include <efl_ui_slider.eo.h>
+# include <efl_ui_slider_interval.eo.h>
+# include <efl_ui_item.eo.h>
+# include <efl_ui_position_manager_entity.eo.h>
+# include <efl_ui_position_manager_data_access_v1.eo.h>
+# include <canvas/efl_input_clickable.eo.h>
+# include <efl_ui_item_clickable.eo.h>
+# include <efl_ui_collection.eo.h>
+# include <efl_ui_position_manager_list.eo.h>
+# include <efl_ui_position_manager_grid.eo.h>
+# include <efl_ui_list_default_item.eo.h>
+# include <efl_ui_grid_default_item.eo.h>
+# include <efl_ui_list_placeholder_item.eo.h>
+# include <efl_ui_selectable.eo.h>
+# include <efl_ui_single_selectable.eo.h>
+# include <efl_ui_multi_selectable.eo.h>
+# include <efl_ui_multi_selectable_object_range.eo.h>
+# include <efl_ui_multi_selectable_index_range.eo.h>
+# include <efl_ui_popup.eo.h>
+# include <efl_ui_alert_popup.eo.h>
+# include <efl_ui_popup_part_backwall.eo.h>
+# include <efl_ui_grid.eo.h>
+# include <efl_ui_list.eo.h>
+# include <efl_ui_tab_bar_default_item.eo.h>
+# include <efl_ui_tab_bar.eo.h>
+# include <efl_ui_tab_page.eo.h>
+# include <efl_ui_tab_pager.eo.h>
+# include <efl_ui_select_model.eo.h>
+
+# include <efl_ui_list_view.eo.h>
+# include <efl_ui_view_model.eo.h>
+# include <efl_ui_collection_view.eo.h>
+# include <efl_ui_list_view.eo.h>
+# include <efl_ui_grid_view.eo.h>
+
+# include <efl_ui_scroller.eo.h>
+# include <efl_ui_pan.eo.h>
+# include <efl_ui_scroll_manager.eo.h>
+
+# include <efl_ui_widget_focus_manager.eo.h>
+# include <efl_ui_selection.eo.h>
+# include <efl_ui_dnd.eo.h>
+# include <efl_ui_dnd_container.eo.h>
+
+# include <efl_ui_timepicker.eo.h>
+# include <efl_ui_datepicker.eo.h>
+# include <efl_ui_calendar.eo.h>
 
 /**
  * Initialize Elementary

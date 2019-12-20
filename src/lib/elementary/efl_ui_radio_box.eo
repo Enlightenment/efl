@@ -1,0 +1,24 @@
+class Efl.Ui.Radio_Box extends Efl.Ui.Box composites Efl.Ui.Radio_Group
+{
+   [[A standard @Efl.Ui.Box container which automatically handles grouping of any @Efl.Ui.Radio
+     widget added to it in addition to regular widgets.
+
+     All @Efl.Ui.Radio widgets are added to the same internal group which you only indirectly
+     access through this object.
+
+     @since 1.24
+   ]]
+   implements {
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Object.constructor;
+   }
+}

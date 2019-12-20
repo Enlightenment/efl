@@ -1,3 +1,5 @@
+#ifndef _ELM_GENERAL_H
+#define _ELM_GENERAL_H
 /**
  * @defgroup Elm_General General
  * @ingroup Elementary
@@ -21,6 +23,190 @@
 // Legacy types
 #include "elm_general.eot.h"
 
+/** Possible values for the #ELM_OBJECT_SELECT_MODE policy.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Object
+ */
+typedef enum
+{
+  ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode. Once an item is
+                                       * selected, it would stay highlighted
+                                       * and not going to call selected
+                                       * callback again even it was clicked.
+                                       * Items can get focus. */
+  ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode. Item selected
+                                  * callbacks will be called every time for
+                                  * click events, even after the item was
+                                  * already selected. Items can get focus. */
+  ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode. Items will never be
+                                * highlighted and selected but the size will be
+                                * adjusted by the finger size configuration.
+                                * Items can't get focus. */
+  ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size
+                                        * rule. Items will never be highlighted
+                                        * and selected and ignore the finger
+                                        * size. So the item size can be reduced
+                                        * below than the finger size
+                                        * configuration. Items can't get focus.
+                                        */
+  ELM_OBJECT_SELECT_MODE_MAX /**< canary value: any value greater or equal to
+                              * ELM_OBJECT_SELECT_MODE_MAX is forbidden. */
+} Elm_Object_Select_Mode;
+
+/** Elementary icon types
+ *
+ * @ingroup Elm_Icon
+ */
+typedef enum
+{
+  ELM_ICON_NONE = 0, /**< Icon has no type set */
+  ELM_ICON_FILE, /**< Icon is of type file */
+  ELM_ICON_STANDARD /**< Icon is of type standard */
+} Elm_Icon_Type;
+
+/** Input panel (virtual keyboard) layout types. Type of input panel (virtual
+ * keyboard) to use - this is a hint and may not provide exactly what is
+ * desired.
+ *
+ * @ingroup Elm_Input_Panel
+ */
+typedef enum
+{
+  ELM_INPUT_PANEL_LAYOUT_NORMAL = 0, /**< Default layout. */
+  ELM_INPUT_PANEL_LAYOUT_NUMBER, /**< Number layout. */
+  ELM_INPUT_PANEL_LAYOUT_EMAIL, /**< Email layout. */
+  ELM_INPUT_PANEL_LAYOUT_URL, /**< URL layout. */
+  ELM_INPUT_PANEL_LAYOUT_PHONENUMBER, /**< Phone Number layout. */
+  ELM_INPUT_PANEL_LAYOUT_IP, /**< IP layout. */
+  ELM_INPUT_PANEL_LAYOUT_MONTH, /**< Month layout. */
+  ELM_INPUT_PANEL_LAYOUT_NUMBERONLY, /**< Number Only layout. */
+  ELM_INPUT_PANEL_LAYOUT_INVALID, /**< Never use this. */
+  ELM_INPUT_PANEL_LAYOUT_HEX, /**< Hexadecimal layout. */
+  ELM_INPUT_PANEL_LAYOUT_TERMINAL, /**< Command-line terminal layout including
+                                    * esc, alt, ctrl key, so on (no
+                                    * auto-correct, no auto-capitalization). */
+  ELM_INPUT_PANEL_LAYOUT_PASSWORD, /**< Like normal, but no auto-correct, no
+                                    * auto-capitalization etc. */
+  ELM_INPUT_PANEL_LAYOUT_DATETIME, /**< Date and time layout
+                                    *
+                                    * @since 1.8 */
+  ELM_INPUT_PANEL_LAYOUT_EMOTICON, /**< Emoticon layout
+                                    *
+                                    * @since 1.10 */
+  ELM_INPUT_PANEL_LAYOUT_VOICE /**< Voice layout, but if the IME does not
+                                * support voice layout, then normal layout will
+                                * be shown.
+                                *
+                                * @since 1.19 */
+} Elm_Input_Panel_Layout;
+
+/** Input panel (virtual keyboard) language modes.
+ *
+ * @ingroup Elm_Input_Panel
+ */
+typedef enum
+{
+  ELM_INPUT_PANEL_LANG_AUTOMATIC = 0, /**< Automatic */
+  ELM_INPUT_PANEL_LANG_ALPHABET /**< Alphabet */
+} Elm_Input_Panel_Lang;
+
+/** Autocapitalization Types. Choose method of auto-capitalization.
+ *
+ * @ingroup Elm_Autocapital
+ */
+typedef enum
+{
+  ELM_AUTOCAPITAL_TYPE_NONE = 0, /**< No auto-capitalization when typing. */
+  ELM_AUTOCAPITAL_TYPE_WORD, /**< Autocapitalize each word typed. */
+  ELM_AUTOCAPITAL_TYPE_SENTENCE, /**< Autocapitalize the start of each sentence.
+                                  */
+  ELM_AUTOCAPITAL_TYPE_ALLCHARACTER /**< Autocapitalize all letters. */
+} Elm_Autocapital_Type;
+
+/** "Return" Key types on the input panel (virtual keyboard).
+ *
+ * @ingroup Elm_Input_Panel_Return_Key
+ */
+typedef enum
+{
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT = 0, /**< Default. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_DONE, /**< Done. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO, /**< Go. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_JOIN, /**< Join. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN, /**< Login. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT, /**< Next. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH, /**< Search string or magnifier icon.
+                                           */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND, /**< Send. */
+  ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN /**< Sign-in
+                                          *
+                                          * @since 1.8 */
+} Elm_Input_Panel_Return_Key_Type;
+
+/** Enumeration that defines the types of Input Hints.
+ *
+ * @since 1.12
+ *
+ * @ingroup Elm_Input
+ */
+typedef enum
+{
+  ELM_INPUT_HINT_NONE = 0, /**< No active hints
+                            *
+                            * @since 1.12 */
+  ELM_INPUT_HINT_AUTO_COMPLETE = 1 /* 1 >> 0 */, /**< Suggest word auto
+                                                  * completion
+                                                  *
+                                                  * @since 1.12 */
+  ELM_INPUT_HINT_SENSITIVE_DATA = 2 /* 1 >> 1 */, /**< Typed text should not be
+                                                   * stored.
+                                                   *
+                                                   * @since 1.12 */
+  ELM_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_DATE = 256, /**< Autofill hint for a credit card
+                                                              * expiration date
+                                                              *
+                                                              * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_DAY = 512, /**< Autofill hint for a credit card
+                                                             * expiration day
+                                                             *
+                                                             * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_MONTH = 768, /**< Autofill hint for a credit card
+                                                               * expiration month
+                                                               *
+                                                               * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_YEAR = 1024, /**< Autofill hint for a credit card
+                                                               * expiration year
+                                                               *
+                                                               * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_CREDIT_CARD_NUMBER = 1280, /**< Autofill hint for a
+                                                      * credit card number
+                                                      *
+                                                      * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_EMAIL_ADDRESS = 1536, /**< Autofill hint for an email
+                                                 * address
+                                                 *
+                                                 * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_NAME = 1792, /**< Autofill hint for a user's real name
+                                        *
+                                        * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_PHONE = 2048, /**< Autofill hint for a phone number
+                                         *
+                                         * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_POSTAL_ADDRESS = 2304, /**< Autofill hint for a postal
+                                                  * address
+                                                  *
+                                                  * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_POSTAL_CODE = 2560, /**< Autofill hint for a postal
+                                               * code
+                                               *
+                                               * @since 1.21 */
+  ELM_INPUT_HINT_AUTOFILL_ID = 2816 /**< Autofill hint for a user's ID
+                                     *
+                                     * @since 1.21 */
+} Elm_Input_Hints;
+
 /** Data on the event when an Elementary policy has changed
  *
  * @ingroup Elm_Event
@@ -31,6 +217,41 @@ typedef struct _Elm_Event_Policy_Changed
   int new_value; /**< value the policy had before the change */
   int old_value; /**< new value the policy got */
 } Elm_Event_Policy_Changed;
+
+/** Policy identifiers.
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_POLICY_QUIT = 0, /**< under which circumstances the application should
+                        * quit automatically. See also @ref ELM_POLICY_QUIT. */
+  ELM_POLICY_EXIT, /**< defines elm_exit() behaviour. See also
+                    * @ref ELM_POLICY_EXIT.
+                    *
+                    * @since 1.8 */
+  ELM_POLICY_THROTTLE, /**< defines how throttling should work. See also
+                        * @ref ELM_POLICY_THROTTLE
+                        *
+                        * @since 1.8 */
+  ELM_POLICY_LAST /**< Sentinel value to indicate last enum field during
+                   * iteration */
+} Elm_Policy;
+
+/** Possible values for the @ref ELM_POLICY_QUIT policy
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_POLICY_QUIT_NONE = 0, /**< never quit the application automatically */
+  ELM_POLICY_QUIT_LAST_WINDOW_CLOSED, /**< quit when the application's last
+                                       * window is closed */
+  ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN /**< quit when the application's last
+                                      * window is hidden
+                                      *
+                                      * @since 1.14 */
+} Elm_Policy_Quit;
 
 /** Possible values for the @ref ELM_POLICY_EXIT policy.
  *
@@ -602,3 +823,4 @@ typedef enum
 /**
  * @}
  */
+#endif

@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -12,7 +13,10 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool stable;
-   Eina_Bool unimplemented;
+   Eina_Bool in_tree;
+   Eina_Bool unimplemented_beta;
+   Eina_Bool verify_since;
+   const char *since_ver;
 } Validate_State;
 
 static Eina_Bool
@@ -88,6 +92,60 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
 }
 
 static Eina_Bool
+_validate_doc_since(Validate_State *vals, Eolian_Documentation *doc)
+{
+   if (!doc || !vals->stable || !vals->verify_since)
+     return EINA_TRUE;
+
+   if (doc->since)
+     {
+        if (!doc->since[0])
+          {
+             /* this should not really happen */
+             _eo_parser_log(&doc->base, "empty @since tag");
+             return EINA_FALSE;
+          }
+        /* this is EFL; check the numbers */
+        if (vals->in_tree)
+          {
+             const char *snum = doc->since;
+             if (strncmp(snum, "1.", 2))
+               {
+                  _eo_parser_log(&doc->base, "invalid EFL version in @since");
+                  return EINA_FALSE;
+               }
+             snum += 2;
+             unsigned long min = strtoul(snum, NULL, 10);
+             if (min < 22)
+               {
+                  _eo_parser_log(&doc->base, "stable APIs must be 1.22 or higher");
+                  return EINA_FALSE;
+               }
+          }
+        vals->since_ver = doc->since;
+     }
+   else if (!vals->since_ver)
+     {
+        _eo_parser_log(&doc->base, "missing @since tag");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_validate_doc_since_reset(Validate_State *vals, Eolian_Documentation *doc)
+{
+   if (!doc || !doc->since)
+     return EINA_TRUE;
+
+   const char *old_since = vals->since_ver;
+   Eina_Bool ret = _validate_doc_since(vals, doc);
+   vals->since_ver = old_since;
+   return ret;
+}
+
+static Eina_Bool
 _validate_doc(Eolian_Documentation *doc)
 {
    if (!doc)
@@ -103,10 +161,15 @@ _validate_doc(Eolian_Documentation *doc)
    return _validate(&doc->base);
 }
 
-static Eina_Bool _validate_type(Validate_State *vals, Eolian_Type *tp);
+static Eina_Bool _validate_type(Validate_State *vals, Eolian_Type *tp,
+                                Eina_Bool by_ref, Eina_Bool is_ret);
+static Eina_Bool _validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
+                                       Eina_Bool by_ref, Eina_Bool move,
+                                       Eina_Bool is_ret);
 static Eina_Bool _validate_expr(Eolian_Expression *expr,
                                 const Eolian_Type *tp,
-                                Eolian_Expression_Mask msk);
+                                Eolian_Expression_Mask msk,
+                                Eina_Bool by_ref);
 static Eina_Bool _validate_function(Validate_State *vals,
                                     Eolian_Function *func,
                                     Eina_Hash *nhash);
@@ -121,12 +184,14 @@ static Eina_Bool
 _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Struct_Type_Field *sf, Cb_Ret *sc)
 {
-   sc->succ = _validate_type(sc->vals, sf->type);
+   sc->succ = _validate_type_by_ref(sc->vals, sf->type, sf->by_ref,
+                                    sf->move, EINA_FALSE);
 
    if (!sc->succ)
      return EINA_FALSE;
 
    sc->succ = _validate_doc(sf->doc);
+   if (sc->succ) sc->succ = _validate_doc_since_reset(sc->vals, sf->doc);
 
    return sc->succ;
 }
@@ -136,7 +201,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Enum_Type_Field *ef, Cb_Ret *sc)
 {
    if (ef->value)
-     sc->succ = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
+     sc->succ = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT, EINA_FALSE);
    else
      sc->succ = EINA_TRUE;
 
@@ -144,6 +209,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
      return EINA_FALSE;
 
    sc->succ = _validate_doc(ef->doc);
+   if (sc->succ) sc->succ = _validate_doc_since_reset(sc->vals, ef->doc);
 
    return sc->succ;
 }
@@ -154,20 +220,27 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
    if (tp->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(tp->doc))
-     return EINA_FALSE;
+   const char *old_since = vals->since_ver;
+   vals->since_ver = NULL;
 
    /* for the time being assume all typedecls are beta unless overridden */
    Eina_Bool was_stable = _set_stable(vals, !tp->base.is_beta);
 
+   if (!_validate_doc(tp->doc))
+     return EINA_FALSE;
+
+   if (!_validate_doc_since(vals, tp->doc))
+     return EINA_FALSE;
+
    switch (tp->type)
      {
       case EOLIAN_TYPEDECL_ALIAS:
-        if (!_validate_type(vals, tp->base_type))
+        if (!_validate_type(vals, tp->base_type, EINA_FALSE, EINA_FALSE))
           return _reset_stable(vals, was_stable, EINA_FALSE);
-        if (!tp->freefunc && tp->base_type->freefunc)
-          tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
+        if (tp->base_type->ownable)
+          tp->ownable = EINA_TRUE;
         _reset_stable(vals, was_stable, EINA_TRUE);
+        vals->since_ver = old_since;
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_STRUCT:
         {
@@ -176,24 +249,33 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
            if (!rt.succ)
              return _reset_stable(vals, was_stable, EINA_FALSE);
            _reset_stable(vals, was_stable, EINA_TRUE);
+           vals->since_ver = old_since;
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
         _reset_stable(vals, was_stable, EINA_TRUE);
+        vals->since_ver = old_since;
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_ENUM:
         {
+           if (vals->stable && tp->legacy)
+             {
+                _eo_parser_log(&tp->base, "legacy field not allowed in stable enums");
+                return EINA_FALSE;
+             }
            Cb_Ret rt = { vals, EINA_TRUE };
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &rt);
            if (!rt.succ)
              return _reset_stable(vals, was_stable, EINA_FALSE);
            _reset_stable(vals, was_stable, EINA_TRUE);
+           vals->since_ver = old_since;
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_FUNCTION_POINTER:
         if (!_validate_function(vals, tp->function_pointer, NULL))
           return _reset_stable(vals, was_stable, EINA_FALSE);
         _reset_stable(vals, was_stable, EINA_TRUE);
+        vals->since_ver = old_since;
         return _validate(&tp->base);
       default:
         return _reset_stable(vals, was_stable, EINA_FALSE);
@@ -203,47 +285,62 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
    return EINA_FALSE;
 }
 
-static const char * const eo_complex_frees[] =
-{
-   "eina_accessor_free", "eina_array_free", "(void)", /* future */
-   "eina_iterator_free", "eina_hash_free",
-   "eina_list_free"
-};
-
-static const char *eo_obj_free = "efl_del";
-static const char *eo_str_free = "free";
-static const char *eo_strshare_free = "eina_stringshare_del";
-static const char *eo_value_free = "eina_value_flush";
-static const char *eo_value_ptr_free = "eina_value_free";
-
 static Eina_Bool
-_validate_ownable(Eolian_Type *tp)
+_validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
 {
+   Eina_Bool maybe_ownable =
+     database_type_is_ownable(tp->base.unit, tp, EINA_FALSE, NULL);
+
+   /* only allow value types when @by_ref */
+   if (by_ref && maybe_ownable)
+     {
+        _eo_parser_log(&tp->base, "@by_ref is only allowed for value types");
+        return EINA_FALSE;
+     }
+
+   /* futures can be whatever... */
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
      return EINA_TRUE;
-   if (tp->owned && !tp->freefunc)
+
+   /* not marked @move, or marked @by_ref; just validate */
+   if (!move || by_ref)
+      return EINA_TRUE;
+
+   /* marked @move, not pointer-like or otherwise ownable, error */
+   if (!maybe_ownable || !tp->ownable)
      {
         _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
         return EINA_FALSE;
      }
-   return _validate(&tp->base);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
-_validate_type(Validate_State *vals, Eolian_Type *tp)
+_validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
+                      Eina_Bool by_ref, Eina_Bool move, Eina_Bool is_ret)
+{
+   if (!_validate_type(vals, tp, by_ref, is_ret))
+     return EINA_FALSE;
+
+   return _validate_by_ref(tp, by_ref, move);
+}
+
+static Eina_Bool
+_validate_type(Validate_State *vals, Eolian_Type *tp, Eina_Bool by_ref,
+               Eina_Bool is_ret)
 {
    const Eolian_Unit *src = tp->base.unit;
 
-   if (tp->owned && !database_type_is_ownable(src, tp, EINA_FALSE))
-     {
-        _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
-        return EINA_FALSE;
-     }
-
    if (tp->is_ptr)
      {
+        if (vals->stable)
+          {
+             _eo_parser_log(&tp->base, "ptr() used in stable API");
+             return EINA_FALSE;
+          }
         tp->is_ptr = EINA_FALSE;
-        Eina_Bool still_ownable = database_type_is_ownable(src, tp, EINA_FALSE);
+        Eina_Bool still_ownable = database_type_is_ownable(src, tp, EINA_FALSE, NULL);
         tp->is_ptr = EINA_TRUE;
         if (still_ownable)
           {
@@ -252,40 +349,78 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
           }
      }
 
+   if (tp->is_const && !tp->is_ptr)
+     {
+        if (database_type_is_ownable(src, tp, EINA_FALSE, NULL))
+          {
+             int kw = eo_lexer_keyword_str_to_id(tp->base.name);
+             switch (kw)
+               {
+                case KW_string:
+                case KW_mstring:
+                case KW_stringshare:
+                  _eo_parser_log(&tp->base, "spurious explicit const on string type");
+                  return EINA_FALSE;
+                default:
+                  {
+                     if (!is_ret)
+                       break;
+                     const char *ct = eo_lexer_get_c_type(kw);
+                     if (ct && ct[strlen(ct) - 1] != '*')
+                       {
+                          _eo_parser_log(&tp->base, "return const requires a C pointer");
+                          return EINA_FALSE;
+                       }
+                  }
+               }
+            }
+        else if (!by_ref && is_ret)
+          {
+             _eo_parser_log(&tp->base, "value returns cannot be const");
+             return EINA_FALSE;
+          }
+     }
+
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
+        return _validate(&tp->base);
       case EOLIAN_TYPE_UNDEFINED:
-        return _validate_ownable(tp);
+        if (vals->stable)
+          {
+             _eo_parser_log(&tp->base,
+               "__undefined_type not allowed in stable context");
+             return EINA_FALSE;
+          }
+        return _validate(&tp->base);
       case EOLIAN_TYPE_REGULAR:
         {
            if (tp->base_type)
              {
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
-                if (!tp->freefunc && kwid > KW_void)
+                if (kwid > KW_void)
+                  tp->ownable = EINA_TRUE;
+                if (kwid == KW_hash && vals->stable)
                   {
-                     tp->freefunc = eina_stringshare_add(eo_complex_frees[
-                       kwid - KW_accessor]);
+                     _eo_parser_log(&tp->base, "hashes not allowed in stable context");
+                     return EINA_FALSE;
                   }
                 Eolian_Type *itp = tp->base_type;
-                /* validate types in brackets so freefuncs get written... */
+                /* validate types in brackets so transitive fields get written */
                 while (itp)
                   {
-                     if (!_validate_type(vals, itp))
-                       return EINA_FALSE;
-                     if ((kwid >= KW_accessor) && (kwid <= KW_list) && (kwid != KW_future))
+                     if (vals->stable && itp->is_ptr)
                        {
-                          if (!database_type_is_ownable(src, itp, EINA_TRUE))
-                            {
-                               _eo_parser_log(&itp->base,
-                                        "%s cannot contain value types (%s)",
-                                        tp->base.name, itp->base.name);
-                               return EINA_FALSE;
-                            }
+                          _eo_parser_log(&itp->base,
+                                         "pointer types not allowed in '%s' in stable context",
+                                         tp->base.name);
+                          return EINA_FALSE;
                        }
+                     if (!_validate_type_by_ref(vals, itp, EINA_FALSE, itp->move, EINA_FALSE))
+                       return EINA_FALSE;
                      itp = itp->next_type;
                   }
-                return _validate_ownable(tp);
+                return _validate(&tp->base);
              }
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->base.name);
@@ -293,25 +428,26 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              {
                 if (!eo_lexer_is_type_keyword(id))
                   return EINA_FALSE;
-                if (!tp->freefunc)
-                  switch (id)
-                    {
-                     case KW_mstring:
-                       tp->freefunc = eina_stringshare_add(eo_str_free);
-                       break;
-                     case KW_stringshare:
-                       tp->freefunc = eina_stringshare_add(eo_strshare_free);
-                       break;
-                     case KW_any_value:
-                       tp->freefunc = eina_stringshare_add(eo_value_free);
-                       break;
-                     case KW_any_value_ptr:
-                       tp->freefunc = eina_stringshare_add(eo_value_ptr_free);
-                       break;
-                     default:
-                       break;
-                    }
-                return _validate_ownable(tp);
+                switch (id)
+                  {
+                   case KW_mstring:
+                   case KW_stringshare:
+                   case KW_any_value:
+                   case KW_any_value_ref:
+                   case KW_binbuf:
+                   case KW_strbuf:
+                     tp->ownable = EINA_TRUE;
+                     break;
+                   default:
+                     break;
+                  }
+                if (id == KW_void_ptr && vals->stable)
+                  {
+                     _eo_parser_log(&tp->base,
+                       "void pointers not allowed in stable context");
+                     return EINA_FALSE;
+                  }
+                return _validate(&tp->base);
              }
            /* user defined */
            tp->tdecl = database_type_decl_find(src, tp);
@@ -329,9 +465,10 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            if (!_validate_typedecl(vals, tp->tdecl))
              return EINA_FALSE;
-           if (tp->tdecl->freefunc && !tp->freefunc)
-             tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
-           return _validate_ownable(tp);
+           if (tp->tdecl->ownable)
+             tp->ownable = EINA_TRUE;
+           tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
+           return _validate(&tp->base);
         }
       case EOLIAN_TYPE_CLASS:
         {
@@ -348,22 +485,44 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                                tp->klass->base.name);
                 return EINA_FALSE;
              }
-           if (!tp->freefunc)
-             tp->freefunc = eina_stringshare_add(eo_obj_free);
-           return _validate_ownable(tp);
+           tp->ownable = EINA_TRUE;
+           tp->base.c_name = eina_stringshare_ref(tp->klass->base.c_name);
+           return _validate(&tp->base);
+        }
+      case EOLIAN_TYPE_ERROR:
+        {
+           tp->error = (Eolian_Error *)eolian_unit_error_by_name_get(src, tp->base.name);
+           if (!tp->error)
+             {
+                _eo_parser_log(&tp->base, "undefined error %s "
+                         "(likely wrong namespacing)", tp->base.name);
+                return EINA_FALSE;
+             }
+           else if (vals->stable && tp->error->base.is_beta)
+             {
+                _eo_parser_log(&tp->base, "beta error '%s' used in stable context",
+                               tp->error->base.name);
+                return EINA_FALSE;
+             }
+           tp->base.c_name = eina_stringshare_ref(tp->error->base.c_name);
+           if (tp->next_type && !_validate_type(vals, tp->next_type, EINA_FALSE, EINA_FALSE))
+             return EINA_FALSE;
+           return _validate(&tp->base);
         }
       default:
-        return EINA_FALSE;
+        break;
      }
-   return _validate_ownable(tp);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 _validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
-               Eolian_Expression_Mask msk)
+               Eolian_Expression_Mask msk, Eina_Bool by_ref)
 {
    Eolian_Value val;
-   if (tp)
+   if (by_ref)
+     val = database_expr_eval(expr->base.unit, expr, EOLIAN_MASK_NULL, NULL, NULL);
+   else if (tp)
      val = database_expr_eval_type(expr->base.unit, expr, tp, NULL, NULL);
    else
      val = database_expr_eval(expr->base.unit, expr, msk, NULL, NULL);
@@ -377,10 +536,10 @@ _validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
 static Eina_Bool
 _validate_param(Validate_State *vals, Eolian_Function_Parameter *param)
 {
-   if (!_validate_type(vals, param->type))
+   if (!_validate_type_by_ref(vals, param->type, param->by_ref, param->move, EINA_FALSE))
      return EINA_FALSE;
 
-   if (param->value && !_validate_expr(param->value, param->type, 0))
+   if (param->value && !_validate_expr(param->value, param->type, 0, param->by_ref))
      return EINA_FALSE;
 
    if (!_validate_doc(param->doc))
@@ -419,18 +578,22 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    /* need to preserve stable flag set from the class */
    Eina_Bool was_stable = _set_stable(vals, !func->base.is_beta && vals->stable);
 
-   if (func->get_ret_type && !_validate_type(vals, func->get_ret_type))
+   if (func->get_ret_type && !_validate_type_by_ref(vals, func->get_ret_type,
+       func->get_return_by_ref, func->get_return_move, EINA_TRUE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (func->set_ret_type && !_validate_type(vals, func->set_ret_type))
+   if (func->set_ret_type && !_validate_type_by_ref(vals, func->set_ret_type,
+       func->set_return_by_ref, func->set_return_move, EINA_TRUE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->get_ret_val && !_validate_expr(func->get_ret_val,
-                                            func->get_ret_type, 0))
+                                            func->get_ret_type, 0,
+                                            func->get_return_by_ref))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->set_ret_val && !_validate_expr(func->set_ret_val,
-                                            func->set_ret_type, 0))
+                                            func->set_ret_type, 0,
+                                            func->set_return_by_ref))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
 #define EOLIAN_PARAMS_VALIDATE(params) \
@@ -461,13 +624,13 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 }
 
 static Eina_Bool
-_validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
+_validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *phash)
 {
-   const Eolian_Object *oobj = eina_hash_find(nhash, &part->base.name);
+   const Eolian_Object *oobj = eina_hash_find(phash, &part->base.name);
    if (oobj)
      {
         _eo_parser_log(&part->base,
-                 "part '%s' conflicts with another symbol (at %s:%d:%d)",
+                 "part '%s' conflicts with another part (at %s:%d:%d)",
                  part->base.name, oobj->file, oobj->line, oobj->column);
         vals->warned = EINA_TRUE;
      }
@@ -476,13 +639,15 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
    if (part->base.validated)
      {
         if (!oobj)
-          eina_hash_add(nhash, &part->base.name, &part->base);
+          eina_hash_add(phash, &part->base.name, &part->base);
         return EINA_TRUE;
      }
 
    Eina_Bool was_stable = _set_stable(vals, !part->base.is_beta && vals->stable);
 
    if (!_validate_doc(part->doc))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
+   if (!_validate_doc_since_reset(vals, part->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* switch the class name for class */
@@ -503,7 +668,7 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
    part->klass = pcl;
 
    if (!oobj)
-     eina_hash_add(nhash, &part->base.name, &part->base);
+     eina_hash_add(phash, &part->base.name, &part->base);
 
    _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&part->base);
@@ -531,7 +696,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
 
    Eina_Bool was_stable = _set_stable(vals, !event->base.is_beta && vals->stable);
 
-   if (!_validate_type(vals, event->type))
+   if (!_validate_type(vals, event->type, EINA_FALSE, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* if this is an alias we need the lowest type in the stack, this is
@@ -550,17 +715,25 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              _eo_parser_log(&tp->base, "pointers not allowed in events");
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
+        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
         /* require containers to be const for now...
          *
          * this is FIXME, and decision wasn't reached before 1.22
          * it is a simple search-replace anyway
          */
-        if (database_type_is_ownable(tp->base.unit, tp, EINA_FALSE))
+        if (database_type_is_ownable(tp->base.unit, tp, EINA_FALSE, NULL))
           {
-             if (!tp->is_const)
+             switch (kwid)
                {
-                  _eo_parser_log(&tp->base, "event container types must be const");
-                  return _reset_stable(vals, was_stable, EINA_FALSE);
+                case KW_string:
+                case KW_stringshare:
+                  break;
+                default:
+                  if (!tp->is_const)
+                    {
+                       _eo_parser_log(&tp->base, "event container types must be const");
+                       return _reset_stable(vals, was_stable, EINA_FALSE);
+                    }
                }
           }
         else if (tp->is_const)
@@ -568,7 +741,6 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              _eo_parser_log(&tp->base, "event value types cannot be const");
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
-        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
         /* containers are allowed but not iterators/lists */
         if (kwid == KW_iterator || kwid == KW_list)
           {
@@ -582,12 +754,12 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
         /* any type past builtin value types and containers is not allowed,
-         * any_value is allowed but passed as const reference, any_value_ptr
-         * is not; string is allowed, but mutable strings or stringshares are
+         * any_value is allowed but passed as const reference, any_value_ref
+         * is not; string and stringshare is allowed, but mutable strings are
          * not and neither are string buffers, the type is never owned by the
          * callee, so all strings passed in are unowned and read-only
          */
-        if (kwid >= KW_any_value_ptr && kwid != KW_string)
+        if (kwid >= KW_any_value_ref && kwid != KW_string && kwid != KW_stringshare)
           {
              _eo_parser_log(&tp->base, "forbidden event type");
              return _reset_stable(vals, was_stable, EINA_FALSE);
@@ -595,6 +767,8 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
      }
 
    if (!_validate_doc(event->doc))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
+   if (!_validate_doc_since_reset(vals, event->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    eina_hash_set(nhash, &event->base.name, &event->base);
@@ -814,6 +988,22 @@ _extend_impl(Eina_Hash *fs, Eolian_Implement *impl, Eina_Bool as_iface)
    return !st;
 }
 
+/* fills a complete set of stuff implemented or inherited on a class
+ * this is used to check whether to auto-add composited interfaces into
+ * implemented/extended list
+ */
+static void
+_db_fill_ihash(Eolian_Class *icl, Eina_Hash *icls)
+{
+   if (icl->parent)
+     _db_fill_ihash(icl->parent, icls);
+   Eina_List *l;
+   Eolian_Class *sicl;
+   EINA_LIST_FOREACH(icl->extends, l, sicl)
+     _db_fill_ihash(sicl, icls);
+   eina_hash_set(icls, &icl, icl);
+}
+
 static void
 _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool parent)
 {
@@ -861,7 +1051,8 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs,
 
    Eina_Bool succ = EINA_TRUE;
 
-   if (!vals->unimplemented)
+   /* class is beta and we didn't enable unimplemented checking for those */
+   if (!vals->unimplemented_beta && cl->base.is_beta)
      return EINA_TRUE;
 
    Eina_List *l;
@@ -869,6 +1060,12 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs,
    EINA_LIST_FOREACH(cl->callables, l, impl)
      {
         const Eolian_Function *fid = impl->foo_id;
+        /* not checking beta and the function is beta: skip */
+        if (!vals->unimplemented_beta && fid->base.is_beta)
+          continue;
+        /* not checking beta and the function's class is beta: skip */
+        if (!vals->unimplemented_beta && fid->klass->base.is_beta)
+          continue;
         Impl_Status st = (Impl_Status)eina_hash_find(fs, &fid);
         /* found an interface this func was originally defined in in the
          * composite list; in that case, ignore it and assume it will come
@@ -1026,13 +1223,6 @@ _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
         succ = EINA_FALSE;
         _eo_parser_log(&cl->base, "non-interface class '%s' in composite list", icl->base.name);
      }
-   else if (iface_only && !_get_impl_class(cl, icl->base.name))
-     {
-        /* TODO: optimize check using a lookup hash later */
-        succ = EINA_FALSE;
-        _eo_parser_log(&cl->base, "interface '%s' not found within the inheritance tree of '%s'",
-                       icl->base.name, cl->base.name);
-     }
    else
      *out_cl = icl;
    eina_stringshare_del(in_cl);
@@ -1055,6 +1245,17 @@ _add_composite(Eolian_Class *cl, const Eolian_Class *icl, Eina_Hash *ch)
         cl->composite = eina_list_append(cl->composite, ccl);
         eina_hash_add(ch, &ccl, ccl);
      }
+}
+
+static void
+_add_implicit_composite(Eolian_Class *icl, Eina_Hash *ch, Eina_Bool try_tree)
+{
+   eina_hash_set(ch, &icl, icl);
+   if (!try_tree)
+     return;
+   Eina_List *l;
+   EINA_LIST_FOREACH(icl->extends, l, icl)
+     _add_implicit_composite(icl, ch, try_tree);
 }
 
 static Eina_Bool
@@ -1125,6 +1326,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
    /* replace the composite list with real instances and initial-fill the hash */
    il = cl->composite;
    cl->composite = NULL;
+   int ncomp = 0;
    EINA_LIST_FREE(il, inn)
      {
         Eolian_Class *out_cl = NULL;
@@ -1132,7 +1334,14 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
         if (!succ)
           continue;
         cl->composite = eina_list_append(cl->composite, out_cl);
-        eina_hash_set(ch, &out_cl, out_cl);
+        succ = _db_fill_inherits(vals, out_cl, fhash, errh);
+        ++ncomp;
+        /* for each thing that is composited, we need to add the entire
+         * inheritance tree of it into composite hash to check, so e.g.
+         * class A -> composites B -> extends C does not complain about
+         * A not implementing C
+         */
+        _add_implicit_composite(out_cl, ch, out_cl->type == EOLIAN_CLASS_INTERFACE);
      }
 
    /* parent can be abstract, those are not checked for unimplemented,
@@ -1157,6 +1366,37 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
      }
 
    eina_hash_add(fhash, &cl->base.name, cl);
+
+   /* there are more than zero of composites of its own */
+   if (ncomp > 0)
+     {
+        /* this one stores what is already in inheritance tree */
+        Eina_Hash *ih = eina_hash_pointer_new(NULL);
+
+        /* fill a complete inheritance tree set */
+        if (cl->parent)
+          _db_fill_ihash(cl->parent, ih);
+
+        EINA_LIST_FOREACH(cl->extends, il, icl)
+          _db_fill_ihash(icl, ih);
+
+        /* go through only the explicitly specified composite list part, as the
+         * rest was to be handled in parents already... add what hasn't been
+         * explicitly implemented so far into implements/extends
+         */
+        EINA_LIST_FOREACH(cl->composite, il, icl)
+          {
+             /* ran out of classes */
+             if (!ncomp--)
+               break;
+             /* found in inheritance tree, skip */
+             if (eina_hash_find(ih, &icl))
+               continue;
+             cl->extends = eina_list_append(cl->extends, icl);
+          }
+
+        eina_hash_free(ih);
+     }
 
    /* stores mappings from function to Impl_Status */
    Eina_Hash *fh = eina_hash_pointer_new(NULL);
@@ -1197,7 +1437,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
 }
 
 static Eina_Bool
-_validate_implement(Eolian_Implement *impl)
+_validate_implement(Validate_State *vals, Eolian_Implement *impl)
 {
    if (impl->base.validated)
      return EINA_TRUE;
@@ -1208,6 +1448,16 @@ _validate_implement(Eolian_Implement *impl)
      return EINA_FALSE;
    if (!_validate_doc(impl->set_doc))
      return EINA_FALSE;
+
+   /* common doc inherits @since into get/set doc */
+   const char *old_since = vals->since_ver;
+   if (impl->common_doc && !_validate_doc_since(vals, impl->common_doc))
+     return EINA_FALSE;
+   if (!_validate_doc_since_reset(vals, impl->get_doc))
+     return EINA_FALSE;
+   if (!_validate_doc_since_reset(vals, impl->set_doc))
+     return EINA_FALSE;
+   vals->since_ver = old_since;
 
    return _validate(&impl->base);
 }
@@ -1232,7 +1482,7 @@ _required_classes(Eolian_Class *mixin)
 
 static Eina_Bool
 _validate_class(Validate_State *vals, Eolian_Class *cl,
-                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *chash)
+                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *phash, Eina_Hash *chash)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -1273,7 +1523,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
              _eo_parser_log(&cl->base, "non-beta class cannot have beta parent");
              return EINA_FALSE;
           }
-        if (!_validate_class(vals, cl->parent, nhash, ehash, chash))
+        if (!_validate_class(vals, cl->parent, nhash, ehash, phash, chash))
           return EINA_FALSE;
      }
 
@@ -1305,7 +1555,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
              /* it's ok, interfaces are allowed */
              break;
           }
-        if (!_validate_class(vals, icl, nhash, ehash, chash))
+        if (!_validate_class(vals, icl, nhash, ehash, phash, chash))
           return EINA_FALSE;
      }
    if (cl->type == EOLIAN_CLASS_ABSTRACT || cl->type == EOLIAN_CLASS_REGULAR)
@@ -1336,6 +1586,10 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
      }
 
    _set_stable(vals, !cl->base.is_beta);
+   vals->since_ver = NULL;
+
+   if (!_validate_doc_since(vals, cl->doc))
+     return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(vals, func, nhash))
@@ -1350,11 +1604,11 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
-     if (!_validate_part(vals, part, nhash))
+     if (!_validate_part(vals, part, phash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!_validate_implement(impl))
+     if (!_validate_implement(vals, impl))
        return EINA_FALSE;
 
    /* all the checks that need to be done every time are performed now */
@@ -1375,23 +1629,30 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
 }
 
 static Eina_Bool
-_validate_variable(Validate_State *vals, Eolian_Variable *var)
+_validate_constant(Validate_State *vals, Eolian_Constant *var)
 {
    if (var->base.validated)
      return EINA_TRUE;
 
+   const char *old_since = vals->since_ver;
+   vals->since_ver = NULL;
+
    Eina_Bool was_stable = _set_stable(vals, !var->base.is_beta && vals->stable);
 
-   if (!_validate_type(vals, var->base_type))
+   if (!_validate_doc_since(vals, var->doc))
+     return EINA_FALSE;
+
+   if (!_validate_type(vals, var->base_type, EINA_FALSE, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (var->value && !_validate_expr(var->value, var->base_type, 0))
+   if (!_validate_expr(var->value, var->base_type, 0, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (!_validate_doc(var->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    _reset_stable(vals, was_stable, EINA_TRUE);
+   vals->since_ver = old_since;
    return _validate(&var->base);
 }
 
@@ -1403,10 +1664,10 @@ _typedecl_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 }
 
 static Eina_Bool
-_var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-             Eolian_Variable *var, Cb_Ret *sc)
+_constant_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+             Eolian_Constant *var, Cb_Ret *sc)
 {
-   return (sc->succ = _validate_variable(sc->vals, var));
+   return (sc->succ = _validate_constant(sc->vals, var));
 }
 
 Eina_Bool
@@ -1417,7 +1678,9 @@ database_validate(const Eolian_Unit *src)
    Validate_State vals = {
       EINA_FALSE,
       EINA_TRUE,
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
+      !!getenv("EFL_RUN_IN_TREE"),
+      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN"),
+      !!getenv("EOLIAN_ENFORCE_SINCE")
    };
 
    /* do an initial pass to refill inherits */
@@ -1446,22 +1709,26 @@ database_validate(const Eolian_Unit *src)
    iter = eolian_unit_classes_get(src);
    Eina_Hash *nhash = eina_hash_pointer_new(NULL);
    Eina_Hash *ehash = eina_hash_pointer_new(NULL);
+   Eina_Hash *phash = eina_hash_pointer_new(NULL);
    Eina_Hash *chash = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
         eina_hash_free_buckets(ehash);
+        eina_hash_free_buckets(phash);
         eina_hash_free_buckets(chash);
-        if (!_validate_class(&vals, cl, nhash, ehash, chash))
+        if (!_validate_class(&vals, cl, nhash, ehash, phash, chash))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);
              eina_hash_free(ehash);
+             eina_hash_free(phash);
              eina_hash_free(chash);
              return EINA_FALSE;
           }
      }
    eina_hash_free(chash);
+   eina_hash_free(phash);
    eina_hash_free(ehash);
    eina_hash_free(nhash);
    eina_iterator_free(iter);
@@ -1480,11 +1747,7 @@ database_validate(const Eolian_Unit *src)
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(src->globals, (Eina_Hash_Foreach)_var_map_cb, &rt);
-   if (!rt.succ)
-     return EINA_FALSE;
-
-   eina_hash_foreach(src->constants, (Eina_Hash_Foreach)_var_map_cb, &rt);
+   eina_hash_foreach(src->constants, (Eina_Hash_Foreach)_constant_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 

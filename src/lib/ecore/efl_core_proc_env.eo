@@ -2,7 +2,7 @@ class @beta Efl.Core.Proc_Env extends Efl.Core.Env
 {
    c_prefix: efl_env;
    methods {
-    self @class {
+    self @static {
       [[Get a instance of this object
 
         The object will apply the environment operations onto this process.

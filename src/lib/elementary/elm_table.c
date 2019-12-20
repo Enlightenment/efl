@@ -336,6 +336,7 @@ _elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    evas_object_smart_calculate(wd->resize_obj);
 }
 

@@ -232,7 +232,6 @@ _efl_canvas_object_clipper_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj
    if (obj->delete_me) goto err_obj_deleted;
    if (!obj->layer || !clip->layer) goto err_no_layer;
    if (obj->layer->evas != clip->layer->evas) goto err_diff_evas;
-   if ((clip->type != o_rect_type) && (clip->type != o_image_type)) goto err_type;
 
    return EINA_FALSE;
 
@@ -251,10 +250,6 @@ err_no_layer:
 err_diff_evas:
    CRI("Setting object %p from Evas (%p) to another Evas (%p)",
        obj, obj->layer->evas, clip->layer->evas);
-   return EINA_TRUE;
-err_type:
-   CRI("A clipper can only be an evas rectangle or image (got %s)",
-       efl_class_name_get(eo_clip));
    return EINA_TRUE;
 }
 
@@ -316,6 +311,28 @@ _efl_canvas_object_clipper_unset_common(Evas_Object_Protected_Data *obj, Eina_Bo
 }
 
 EOLIAN void
+_efl_canvas_object_has_fixed_size_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool enable)
+{
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
+
+   enable = !!enable;
+   if (obj->cur->has_fixed_size == enable) return;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     state_write->has_fixed_size = enable;
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+   /* this will take effect next time the object is rendered,
+    * no need to force re-render now.
+    */
+}
+
+EOLIAN Eina_Bool
+_efl_canvas_object_has_fixed_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, EINA_FALSE);
+   return obj->cur->has_fixed_size;
+}
+
+EOLIAN void
 _efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
    Evas_Object_Protected_Data *clip;
@@ -344,8 +361,8 @@ _efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
    /* unset cur clipper */
    _efl_canvas_object_clipper_unset_common(obj, EINA_TRUE);
 
-   /* image object clipper */
-   if (clip->type == o_image_type)
+   /* non-rect object clipper */
+   if (clip->type != o_rect_type)
      {
         EINA_COW_WRITE_BEGIN(evas_object_mask_cow, clip->mask, Evas_Object_Mask_Data, mask)
           mask->is_mask = EINA_TRUE;
@@ -380,7 +397,7 @@ _efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
    evas_object_recalc_clippees(obj);
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))) &&
-       evas_object_is_visible(eo_obj, obj))
+       evas_object_is_visible(obj))
      {
         _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas,
                                                            eo_obj,
@@ -430,7 +447,7 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))) &&
-       evas_object_is_visible(eo_obj, obj))
+       evas_object_is_visible(obj))
      {
         _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas,
                                                            eo_obj,

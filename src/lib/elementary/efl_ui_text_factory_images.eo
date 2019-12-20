@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Text_Factory.Images extends Efl.Object implements Efl.Canvas.Text_Factory
+class @beta Efl.Ui.Text_Factory.Images extends Efl.Object implements Efl.Canvas.Textblock_Factory
 {
    [[Factory that creates images given key string
 
@@ -62,6 +62,6 @@ class @beta Efl.Ui.Text_Factory.Images extends Efl.Object implements Efl.Canvas.
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Canvas.Text_Factory.create;
+      Efl.Canvas.Textblock_Factory.create;
    }
 }

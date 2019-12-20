@@ -9,7 +9,7 @@
 #include <Eina.h>
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_time_get dladdr */
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -857,8 +857,8 @@ err_klass:
    return EINA_FALSE;
 }
 
-EAPI Eo *
-_efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
+static Eo *
+_efl_add_internal_start_do(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
 {
    const char *func_name = __FUNCTION__;
    _Eo_Object *obj;
@@ -918,7 +918,8 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    if (parent_id) efl_parent_set(eo_id, parent_id);
 
    /* eo_id can change here. Freeing is done on the resolved object. */
-   eo_id = efl_constructor(eo_id);
+   if (!substitute_ctor) eo_id = efl_constructor(eo_id);
+   else eo_id = substitute_ctor(sub_ctor_data, eo_id);
    // not likely so use goto to alleviate l1 instruction cache of rare code
    if (!eo_id) goto err_noid;
    // not likely so use goto to alleviate l1 instruction cache of rare code
@@ -960,6 +961,17 @@ err_klass:
    _EO_POINTER_ERR(klass_id, "in %s:%d: Class (%p) is an invalid ref.", file, line, klass_id);
 err_parent:
    return NULL;
+}
+
+EAPI Eo *
+_efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
+{
+   return _efl_add_internal_start_do(file, line, klass_id, parent_id, ref, is_fallback, NULL, NULL);
+}
+
+EAPI Eo * _efl_add_internal_start_bindings(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
+{
+   return _efl_add_internal_start_do(file, line, klass_id, parent_id, ref, is_fallback, substitute_ctor, sub_ctor_data);
 }
 
 static Eo *
@@ -1933,6 +1945,9 @@ efl_ref(const Eo *obj_id)
    ++(obj->user_refcount);
    if (EINA_UNLIKELY(obj->user_refcount == 1))
      _efl_ref(obj);
+   else if (EINA_UNLIKELY(obj->ownership_track && obj->user_refcount == 2))
+     efl_event_callback_call((Eo *) obj_id, EFL_EVENT_OWNERSHIP_SHARED, NULL);
+
 #ifdef EO_DEBUG
    _eo_log_obj_ref_op(obj, EO_REF_OP_REF);
 #endif
@@ -1990,6 +2005,10 @@ efl_unref(const Eo *obj_id)
              return;
           }
         _efl_unref(obj);
+     }
+   else if (EINA_UNLIKELY(obj->ownership_track && obj->user_refcount == 1))
+     {
+        efl_event_callback_call((Eo *) obj_id, EFL_EVENT_OWNERSHIP_UNIQUE, NULL);
      }
 
    _apply_auto_unref(obj, obj_id);
@@ -2751,6 +2770,7 @@ efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Ite
    else return -1;
 }
 
+
 #ifdef EO_DEBUG
 /* NOTE: cannot use ecore_time_get()! */
 static inline double
@@ -2773,7 +2793,7 @@ _eo_log_time_now(void)
 
    return clk_conv * mach_absolute_time();
 #else
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined (HAVE_CLOCK_GETTIME)
    struct timespec t;
    static int clk_id = -1;
 
@@ -3613,13 +3633,13 @@ static const Efl_Object_Property_Reflection*
 _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
 {
    const _Efl_Class **klass_iter = klass->extensions;
-   const Efl_Object_Property_Reflection_Ops *ref = klass->reflection;
+   const Efl_Object_Property_Reflection_Ops *ref_ops = klass->reflection;
    unsigned int i;
 
-   for (i = 0; ref && i < ref->count; ++i)
+   for (i = 0; ref_ops && i < ref_ops->count; ++i)
      {
-        if (eina_streq(property_name, ref->table[i].property_name))
-          return &ref->table[i];
+        if (eina_streq(property_name, ref_ops->table[i].property_name))
+          return &ref_ops->table[i];
      }
 
    if (klass->parent)
@@ -3698,4 +3718,18 @@ efl_class_type_get(const Efl_Class *klass_id)
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EFL_CLASS_TYPE_INVALID);
 
    return klass->desc->type;
+}
+
+
+EAPI Eina_Bool
+efl_ownable_get(const Eo *obj)
+{
+   int ref = efl_ref_count(obj);
+
+   if (efl_parent_get(obj))
+     ref --;
+
+   if (ref <= 0)
+     ERR("There is no free reference to pass this object. Please check that this object is really owned by you.");
+   return (ref > 0);
 }

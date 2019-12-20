@@ -45,6 +45,7 @@ next_char(Eo_Lexer *ls)
 
 #define KW(x) #x
 #define KWAT(x) "@" #x
+#define KWH(x) "#" #x
 
 static const char * const tokens[] =
 {
@@ -75,18 +76,19 @@ static const char * const ctypes[] =
    "void",
 
    "Eina_Accessor *", "Eina_Array *", "Eina_Future *", "Eina_Iterator *",
-   "Eina_Hash *", "Eina_List *",
-   "Eina_Value", "Eina_Value *",
+   "Eina_List *",
+   "Eina_Value", "Eina_Value *", "Eina_Binbuf *", "Efl_Event *",
    "char *", "const char *", "Eina_Stringshare *", "Eina_Strbuf *",
 
+   "Eina_Hash *", 
    "void *",
 
-   "Eina_Free_Cb",
    "function",
 };
 
 #undef KW
 #undef KWAT
+#undef KWH
 
 #define is_newline(c) ((c) == '\n' || (c) == '\r')
 
@@ -520,8 +522,6 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 
    if (eina_strbuf_length_get(rbuf))
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
-   if (!doc->summary)
-     doc->summary = eina_stringshare_add("No description supplied.");
    if (!doc->since && ls->klass && ls->klass->doc)
      doc->since = eina_stringshare_ref(ls->klass->doc->since);
    eina_strbuf_free(rbuf);
@@ -989,10 +989,10 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 return TOK_NUMBER;
              }
            if (ls->current && (isalnum(ls->current)
-               || ls->current == '@' || ls->current == '_'))
+               || ls->current == '@' || ls->current == '#' || ls->current == '_'))
              {
                 int col = ls->column;
-                Eina_Bool at_kw = (ls->current == '@');
+                Eina_Bool pfx_kw = (ls->current == '@') || (ls->current == '#');
                 const char *str;
                 eina_strbuf_reset(ls->buff);
                 do
@@ -1007,7 +1007,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                                                         str);
                 ls->column = col + 1;
                 tok->value.s = eina_stringshare_add(str);
-                if (at_kw && tok->kw == 0)
+                if (pfx_kw && tok->kw == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
                 return TOK_VALUE;
              }
@@ -1054,8 +1054,8 @@ _node_free(Eolian_Object *obj)
       case EOLIAN_OBJECT_TYPE:
         database_type_del((Eolian_Type *)obj);
         break;
-      case EOLIAN_OBJECT_VARIABLE:
-        database_var_del((Eolian_Variable *)obj);
+      case EOLIAN_OBJECT_CONSTANT:
+        database_constant_del((Eolian_Constant *)obj);
         break;
       case EOLIAN_OBJECT_EXPRESSION:
         database_expr_del((Eolian_Expression *)obj);
@@ -1128,7 +1128,7 @@ eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj)
 {
    /* just for debug */
    assert(eina_hash_find(ls->nodes, &obj) && (obj->refcount >= 1));
-   eolian_object_unref(obj);
+   (void)eolian_object_unref(obj);
    eina_hash_set(ls->nodes, &obj, NULL);
    return obj;
 }

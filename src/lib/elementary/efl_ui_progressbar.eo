@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Display, Efl.Ui.Format,
-                          Efl.Ui.Direction, Efl.Access.Value,
+                          Efl.Ui.Layout_Orientable, Efl.Access.Value,
                           Efl.Text, Efl.Content, Efl.Text_Markup
 {
    [[Elementary progressbar class]]
@@ -27,18 +27,26 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
          }
       }
       @property pulse {
-         set {
-           [[Start/stop a given progress bar "pulsing" animation, if its under that mode
+         [[Start/stop a given progress bar "pulsing" animation, if its under that mode.
 
            Note: This call won't do anything if $obj is not under "pulsing mode". See @.pulse_mode.
-           ]]
+         ]]
+         set {
          }
          get {
-            [[ Get the pulsing state on a given progressbar widget. See @.pulse_mode.
-            ]]
          }
          values {
            state: bool; [[$true, to start the pulsing animation, $false to stop it]]
+         }
+      }
+      @property show_progress_label {
+         [[Whether a textual progress label is shown alongside the progressbar to give an exact
+           numerical indication of the current progress.
+
+           Not to be confused with the widget label set through @Efl.Text.text.
+         ]]
+         values {
+           show: bool; [[$true to show the progress label.]]
          }
       }
    }
@@ -46,9 +54,9 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Range_Display.range_value { get; set; }
-      Efl.Ui.Range_Display.range_min_max {get; set; }
-      Efl.Ui.Direction.direction { get; set; }
-      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Range_Display.range_limits {get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
+      Efl.Ui.Format.apply_formatted_value;
       Efl.Part.part_get;
       Efl.Access.Value.value_and_text { get; }
       Efl.Text.text { get; set; }
@@ -56,8 +64,5 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Ui.L10n.l10n_text { get; set; }
-   }
-   events {
-      changed: void; [[Called when progressbar changed]]
    }
 }

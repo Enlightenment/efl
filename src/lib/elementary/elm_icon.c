@@ -361,7 +361,7 @@ _elm_icon_efl_file_load(Eo *obj, Elm_Icon_Data *sd)
         return err;
      }
 
-   evas_object_geometry_set(id->img, id->img_x, id->img_y, id->img_w, id->img_h);
+   efl_gfx_entity_geometry_set(id->img, efl_gfx_entity_geometry_get(obj));
 
    return 0;
 }
@@ -441,7 +441,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
    if (ret)
      {
         eina_stringshare_replace(&sd->stdicon, name);
-        _efl_ui_image_sizing_eval(obj);
+        efl_canvas_group_change(obj);
         return EINA_TRUE;
      }
 

@@ -27,6 +27,10 @@ pub_eo_files = [
   'efl_input_pointer.eo',
   'efl_input_hold.eo',
   'efl_input_focus.eo',
+  'efl_input_clickable.eo',
+  'efl_input_device.eo',
+  'efl_canvas_pointer.eo',
+  'efl_canvas_scene.eo',
   'efl_canvas_animation.eo',
   'efl_canvas_animation_alpha.eo',
   'efl_canvas_animation_rotate.eo',
@@ -35,21 +39,25 @@ pub_eo_files = [
   'efl_canvas_animation_group.eo',
   'efl_canvas_animation_group_parallel.eo',
   'efl_canvas_animation_group_sequential.eo',
-  'efl_canvas_animation_player.eo',
-  'efl_canvas_text_factory.eo',
+  'efl_canvas_textblock_factory.eo',
   'efl_canvas_rectangle.eo',
   'efl_canvas_object.eo',
+  'efl_gfx_vg_value_provider.eo',
   'efl_canvas_vg_object.eo',
   'efl_canvas_vg_node.eo',
   'efl_canvas_vg_container.eo',
   'efl_canvas_vg_shape.eo',
+  'efl_canvas_vg_image.eo',
   'efl_canvas_vg_gradient.eo',
   'efl_canvas_vg_gradient_radial.eo',
   'efl_canvas_vg_gradient_linear.eo',
   'efl_canvas_group.eo',
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
-  'efl_canvas_text.eo'
+  'efl_text_cursor.eo',
+  'efl_canvas_textblock.eo',
+  'efl_text_formatter.eo',
+  'efl_canvas_object_animation.eo',
 ]
 
 evas_canvas_eo_files = pub_eo_files
@@ -73,7 +81,8 @@ endforeach
 
 pub_eo_types_files = [
     'evas_canvas3d_types.eot',
-    'efl_canvas_animation_types.eot'
+    'efl_canvas_animation_types.eot',
+    'efl_input_types.eot',
 ]
 
 evas_canvas_eot_files = pub_eo_types_files
@@ -97,7 +106,7 @@ evas_legacy_h = files([
   'efl_canvas_event_grabber_eo.legacy.h',
   'efl_canvas_group_eo.legacy.h',
   'efl_canvas_object_eo.legacy.h',
-  'efl_canvas_text_eo.legacy.h',
+  'efl_canvas_textblock_eo.legacy.h',
   'efl_canvas_vg_container_eo.legacy.h',
   'efl_canvas_vg_node_eo.legacy.h',
   'efl_canvas_vg_object_eo.legacy.h',
@@ -167,6 +176,8 @@ evas_src += files([
   'efl_input_pointer.c',
   'efl_input_hold.c',
   'efl_input_focus.c',
+  'efl_input_clickable.c',
+  'efl_input_device.c',
   'efl_canvas_animation.c',
   'efl_canvas_animation_alpha.c',
   'efl_canvas_animation_rotate.c',
@@ -175,7 +186,7 @@ evas_src += files([
   'efl_canvas_animation_group.c',
   'efl_canvas_animation_group_parallel.c',
   'efl_canvas_animation_group_sequential.c',
-  'efl_canvas_animation_player.c',
+  'efl_gfx_vg_value_provider.c',
   'efl_canvas_vg_object.c',
   'efl_canvas_vg_node.c',
   'efl_canvas_vg_container.c',
@@ -184,6 +195,7 @@ evas_src += files([
   'efl_canvas_vg_gradient_radial.c',
   'efl_canvas_vg_utils.c',
   'efl_canvas_vg_shape.c',
+  'efl_canvas_vg_image.c',
   'evas_filter_mixin.c',
   'evas_canvas3d_object.c',
   'evas_canvas3d_scene.c',
@@ -196,6 +208,9 @@ evas_src += files([
   'evas_canvas3d_primitive.c',
   'evas_canvas3d_node_callback.h',
   'evas_canvas3d_eet.c',
+  'efl_canvas_object_animation.c',
+  'efl_text_cursor.c',
+  'efl_text_formatter.c'
   ])
 
 evas_include_directories += include_directories('.')

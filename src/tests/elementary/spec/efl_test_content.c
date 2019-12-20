@@ -9,7 +9,7 @@
 /* spec-meta-start
       {"test-interface":"Efl.Content",
        "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Frame", "Efl.Ui.Grid_Default_Item",
-                   "Efl.Ui.List_Default_Item", "Efl.Ui.List_Empty_Item",
+                   "Efl.Ui.List_Default_Item", "Efl.Ui.List_Placeholder_Item",
                    "Efl.Ui.Navigation_Layout", "Efl.Ui.Panel", "Efl.Ui.Progressbar",
                    "Efl.Ui.Radio", "Efl.Ui.Popup", "Efl.Ui.Tab_Page", "Efl.Ui.Scroller"]}
 
@@ -27,6 +27,8 @@ EFL_START_TEST(content_set_get)
    ck_assert_int_eq(efl_content_set(widget, (void*)0x1), EINA_FALSE);
    EXPECT_ERROR_END;
    ck_assert_ptr_eq(efl_content_get(widget), NULL);
+
+   ck_assert_int_eq(efl_alive_get(w), EINA_FALSE);
 }
 EFL_END_TEST
 
@@ -39,7 +41,10 @@ EFL_START_TEST(content_set_get2)
    ck_assert_ptr_eq(efl_content_get(widget), w);
 
    ck_assert_int_eq(efl_content_set(widget, NULL), EINA_TRUE);
+   ck_assert_int_eq(efl_alive_get(w), EINA_FALSE);
    ck_assert_ptr_eq(efl_content_get(widget), NULL);
+
+   efl_del(widget);
 }
 EFL_END_TEST
 
@@ -49,8 +54,11 @@ EFL_START_TEST(content_unset)
    Efl_Ui_Widget *w = create_test_widget();
 
    ck_assert_int_eq(efl_content_set(widget, w), EINA_TRUE);
-   efl_content_unset(widget);
+   ck_assert_ptr_eq(efl_content_unset(widget), w);
    ck_assert_ptr_eq(efl_content_get(widget), NULL);
+
+   efl_del(widget);
+   ck_assert_int_eq(efl_alive_get(w), EINA_TRUE);
 }
 EFL_END_TEST
 

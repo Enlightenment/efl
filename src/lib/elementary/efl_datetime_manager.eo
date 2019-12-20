@@ -32,8 +32,8 @@ class @beta Efl.Datetime.Manager extends Efl.Object
          }
       }
       @property string {
+         [[Get the string that matches with the format.]]
          get {
-            [[Get the string that matches with the format.]]
          }
          keys {
             fmt: string; [[The format string]]

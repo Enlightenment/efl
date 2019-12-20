@@ -26,11 +26,20 @@ type Efl.Callback_Priority : short;
 ]]
 
 const Efl.Callback_Priority_Before : Efl.Callback_Priority = -100;
-[[Slightly more prioritized than default.]]
+[[Slightly more prioritized than default.
+
+  @since 1.22
+]]
 const Efl.Callback_Priority_Default : Efl.Callback_Priority = 0;
-[[Default priority.]]
+[[Default priority.
+
+  @since 1.22
+]]
 const Efl.Callback_Priority_After : Efl.Callback_Priority = 100;
-[[Slightly less prioritized than default.]]
+[[Slightly less prioritized than default.
+
+  @since 1.22
+]]
 
 abstract Efl.Object
 {
@@ -91,7 +100,7 @@ abstract Efl.Object
          get {
          }
          values {
-            parent: Efl.Object @nullable; [[The new parent.]]
+            parent: Efl.Object; [[The new parent.]]
          }
       }
       @property name {
@@ -108,7 +117,7 @@ abstract Efl.Object
          get {
          }
          values {
-           name: string @nullable; [[The name.]]
+           name: string; [[The name.]]
          }
       }
       @property comment {
@@ -123,7 +132,7 @@ abstract Efl.Object
          get {
          }
          values {
-           comment: string @nullable; [[The comment.]]
+           comment: string; [[The comment.]]
          }
       }
       debug_name_override {
@@ -143,29 +152,29 @@ abstract Efl.Object
             @in sb: strbuf; [[A string buffer, must not be $null.]]
          }
       }
-      @property event_global_freeze_count @class {
-         get {
-            [[Return the global count of freeze events.
+      @property event_global_freeze_count @static {
+         [[Return the global count of freeze events.
 
-              This is the amount of calls to @.event_global_freeze minus
-              the amount of calls to @.event_global_thaw.
-              EFL will not emit any event while this count is > 0 (Except
-              events marked $hot).
-            ]]
+           This is the amount of calls to @.event_global_freeze minus
+           the amount of calls to @.event_global_thaw.
+           EFL will not emit any event while this count is > 0 (Except
+           events marked $hot).
+         ]]
+         get {
          }
          values {
             fcount: int; [[The global event freeze count.]]
          }
       }
       @property event_freeze_count {
-         get {
-            [[Return the count of freeze events for this object.
+         [[Return the count of freeze events for this object.
 
-              This is the amount of calls to @.event_freeze minus
-              the amount of calls to @.event_thaw.
-              This object will not emit any event while this count is > 0
-              (Except events marked $hot).
-            ]]
+           This is the amount of calls to @.event_freeze minus
+           the amount of calls to @.event_thaw.
+           This object will not emit any event while this count is > 0
+           (Except events marked $hot).
+         ]]
+         get {
          }
          values {
             fcount: int; [[The event freeze count of this object.]]
@@ -205,7 +214,7 @@ abstract Efl.Object
 
           The object from the provider will then be returned.
           The base implementation calls the provider_find function on the object parent,
-          and returns its result. If no parent is present NULL is returned.
+          and returns its result. If no parent is present $NULL is returned.
           Each implementation has to support this function by overriding
           it and returning itself if the interface matches the parameter.
           If this is not done the class cannot be found up in the object tree.
@@ -259,7 +268,7 @@ abstract Efl.Object
            @.invalidate and then to @.destructor.
            See the Life Cycle section in this class' description.]]
       }
-      name_find @const {
+      name_find @const @beta {
          [[Find a child object with the given name and return it.
 
            The search string can be a glob (shell style, using *). It can also
@@ -288,15 +297,15 @@ abstract Efl.Object
            events again using @.event_thaw. Events marked $hot cannot be stopped.
          ]]
       }
-      event_global_thaw @class {
-         [[Gobally thaw events for ALL EFL OBJECTS.
+      event_global_thaw @static {
+         [[Globally thaw events for ALL EFL OBJECTS.
 
            Allows event callbacks to be called for all EFL objects after they have
            been disabled by @.event_global_freeze. The amount of thaws must match
            the amount of freezes for events to be re-enabled.
          ]]
       }
-      event_global_freeze @class {
+      event_global_freeze @static {
          [[Globally freeze events for ALL EFL OBJECTS.
 
            Prevents event callbacks from being called for all EFL objects.
@@ -330,25 +339,25 @@ abstract Efl.Object
          by inserting a handler at the right position in the stack of event handler on the object that
          emit the event.]]
          params {
-            @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
+            @in desc: const(Efl.Event_Description) @by_ref; [[The description of the event to listen to]]
             @in priority: Efl.Callback_Priority; [[The priority at which to insert the event forwarder handler
             in the existing list of handler on the source of event object. The lower the number, the higher
             the priority. As a shortcut @Efl.Callback_Priority_Before,
             @Efl.Callback_Priority_Default and @Efl.Callback_Priority_After can be used. See
             @Efl.Callback_Priority for more details.]]
-            @in source: Efl.Object @nonull; [[The object which emits the initial event]]
+            @in source: Efl.Object; [[The object which emits the initial event]]
          }
       }
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for a specified event and object.]]
          params {
-            @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
-            @in new_obj: Efl.Object @nonull; [[The object to emit events from]]
+            @in desc: const(Efl.Event_Description) @by_ref; [[The description of the event to listen to]]
+            @in new_obj: Efl.Object; [[The object to emit events from]]
          }
       }
       children_iterator_new {
-         [[Get an iterator on all childrens]]
-         return: iterator<Efl.Object> @owned @warn_unused; [[Children iterator]]
+         [[Get an iterator on all children.]]
+         return: iterator<Efl.Object> @move @no_unused; [[Children iterator]]
       }
       composite_attach @beta {
            [[Make an object a composite object of another.
@@ -402,6 +411,24 @@ abstract Efl.Object
                even if @.parent is not $null.]]
          }
       }
+      provider_register {
+         [[Will register a manager of a specific class to be answered by @.provider_find.]]
+         params {
+            @in klass: const(Efl.Class); [[The class provided by the registered provider.]]
+            @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that
+                                               said Efl.Class.]]
+         }
+         return: bool; [[$true if successfully register, $false otherwise.]]
+      }
+      provider_unregister {
+         [[Will unregister a manager of a specific class that was previously registered and answered by
+           @.provider_find.]]
+         params {
+            @in klass: const(Efl.Class); [[The class provided by the provider to unregister for.]]
+            @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
+         }
+         return: bool; [[$true if successfully unregistered, $false otherwise.]]
+      }
    }
    implements {
         class.constructor;
@@ -410,23 +437,15 @@ abstract Efl.Object
    events {
       del @hot: void; [[Object is being deleted. See @.destructor.]]
       invalidate @hot: void; [[Object is being invalidated and losing its parent. See @.invalidate.]]
-      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive. Advanced usage.]]
+      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive.
+                          Advanced usage.]]
+      ownership,unique @hot: void; [[Object has lost a reference and only one is left. It has just one owner now.
+                                     Triggered whenever the refcount goes from two to one.]]
+      ownership,shared @hot: void; [[Object has acquired a second reference. It has multiple owners now.
+                                     Triggered whenever increasing the refcount from one to two,
+                                     it will not trigger by further increasing the refcount beyond two.]]
       destruct @hot: void; [[Object has been fully destroyed. It can not be used
          beyond this point. This event should only serve to clean up any
          reference you keep to the object.]]
    }
-}
-
-struct Efl.Event {
-    [[A parameter passed in event callbacks holding extra event parameters.
-
-      This is the full event information passed to callbacks in C.
-    ]]
-    object: Efl.Object; [[The object the callback was called on.]]
-    desc: const(ptr(Efl.Event_Description)); [[The event description.]]
-    info: void_ptr; [[Extra event information passed by the event caller.
-      Must be cast to the event type declared in the EO file. Keep in mind that:
-      1) Objects are passed as a normal Eo*. Event subscribers can call functions on these objects.
-      2) Structs, built-in types and containers are passed as const pointers, with one level of indirection.
-    ]]
 }

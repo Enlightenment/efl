@@ -7,9 +7,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #define MY_CLASS EFL_INPUT_POINTER_CLASS
 
 
@@ -316,16 +313,16 @@ _efl_input_pointer_wheel_delta_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_
 }
 
 EOLIAN static int
-_efl_input_pointer_tool_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_touch_id_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
-   return pd->tool;
+   return pd->touch_id;
 }
 
 EOLIAN static void
-_efl_input_pointer_tool_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int id)
+_efl_input_pointer_touch_id_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int id)
 {
-   _efl_input_value_mark(pd, EFL_INPUT_VALUE_TOOL);
-   pd->tool = id;
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_TOUCH_ID);
+   pd->touch_id = id;
 }
 
 EOLIAN static Eina_Bool
@@ -438,8 +435,8 @@ _efl_input_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
         pd->pressed_buttons = (int) val;
         break;
 
-      case EFL_INPUT_VALUE_TOOL:
-        pd->tool = (int) val;
+      case EFL_INPUT_VALUE_TOUCH_ID:
+        pd->touch_id = (int) val;
         break;
 
       case EFL_INPUT_VALUE_X:
@@ -531,8 +528,8 @@ _efl_input_pointer_value_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *
       case EFL_INPUT_VALUE_BUTTONS_PRESSED:
         return (double) pd->pressed_buttons;
 
-      case EFL_INPUT_VALUE_TOOL:
-        return (double) pd->tool;
+      case EFL_INPUT_VALUE_TOUCH_ID:
+        return (double) pd->touch_id;
 
       case EFL_INPUT_VALUE_X:
         return pd->cur.x;

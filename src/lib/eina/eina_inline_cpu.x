@@ -23,10 +23,6 @@
 #ifndef EINA_INLINE_CPU_X_
 #define EINA_INLINE_CPU_X_
 
-#ifdef EINA_HAVE_BYTESWAP_H
-# include <byteswap.h>
-#endif
-
 #ifdef __has_builtin
 # define EINA_HAS_BUILTIN(x) __has_builtin(x)
 #elif (defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)))
@@ -35,10 +31,14 @@
 # define EINA_HAS_BUILTIN(x) 0  // Compatibility for the rest of the world
 #endif
 
+#ifdef EINA_HAVE_BYTESWAP_H
+# include <byteswap.h>
+#endif
+
 static inline unsigned short
 eina_swap16(unsigned short x)
 {
-#if defined EINA_HAVE_BSWAP16 && EINA_HAS_BUILTIN(__builtin_bswap16)
+#if EINA_HAS_BUILTIN(__builtin_bswap16)
   return __builtin_bswap16(x);
 #elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
   return _byteswap_ushort(x);
@@ -53,7 +53,7 @@ eina_swap16(unsigned short x)
 static inline unsigned int
 eina_swap32(unsigned int x)
 {
-#ifdef EINA_HAVE_BSWAP32
+#if EINA_HAS_BUILTIN(__builtin_bswap32)
   return __builtin_bswap32(x);
 #elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
   return _byteswap_ulong(x);
@@ -70,7 +70,7 @@ eina_swap32(unsigned int x)
 static inline unsigned long long
 eina_swap64(unsigned long long x)
 {
-#ifdef EINA_HAVE_BSWAP64
+#if EINA_HAS_BUILTIN(__builtin_bswap64)
   return __builtin_bswap64(x);
 #elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
   return _byteswap_uint64(x);
@@ -91,7 +91,7 @@ eina_swap64(unsigned long long x)
 static inline unsigned short
 eina_htons(unsigned short host)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return host;
 #else
    return eina_swap16(host);
@@ -101,7 +101,7 @@ eina_htons(unsigned short host)
 static inline unsigned int
 eina_htonl(unsigned int host)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return host;
 #else
    return eina_swap32(host);
@@ -111,7 +111,7 @@ eina_htonl(unsigned int host)
 static inline unsigned long long
 eina_htonll(unsigned long long host)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return host;
 #else
    return eina_swap64(host);
@@ -121,7 +121,7 @@ eina_htonll(unsigned long long host)
 static inline unsigned short
 eina_ntohs(unsigned short net)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return net;
 #else
    return eina_swap16(net);
@@ -131,7 +131,7 @@ eina_ntohs(unsigned short net)
 static inline unsigned int
 eina_ntohl(unsigned int net)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return net;
 #else
    return eina_swap32(net);
@@ -141,7 +141,7 @@ eina_ntohl(unsigned int net)
 static inline unsigned long long
 eina_ntohll(unsigned long long net)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return net;
 #else
    return eina_swap64(net);

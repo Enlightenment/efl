@@ -12,7 +12,7 @@
 
 #ifdef _WIN32
 # include <direct.h> /* getcwd */
-# include <Evil.h>
+# include <evil_private.h> /* dlopen,dlclose,etc */
 #endif
 
 #include <Emotion.h>
@@ -31,6 +31,8 @@
 #include "elm_gengrid_eo.h"
 #include "elm_widget_gengrid.h"
 
+#include "efl_ui.eot.c"
+
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
 #ifdef __CYGWIN__
@@ -39,7 +41,7 @@
 # define LIBEXT ".so"
 #endif
 
-Eina_Bool _use_build_config;
+Eina_Bool _running_in_tree;
 
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
@@ -347,6 +349,7 @@ _elm_old_clouseau_reload()
 static Eina_Bool
 _elm_clouseau_load()
 {
+   if (getenv("EFL_RUN_IN_TREE")) return EINA_FALSE;
    if (!_clouseau_info.is_init)
      {
         _clouseau_info.handle = eina_module_new(
@@ -404,16 +407,14 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
 }
 
 EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE = 0;
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_DEFAULT = 0;
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_GENERIC = 0;
 
 static void
 _efl_ui_theme_apply_error_init(void)
 {
    if (EFL_UI_THEME_APPLY_ERROR_DEFAULT) return;
    /* NONE should always be 0 */
-   EFL_UI_THEME_APPLY_ERROR_DEFAULT = eina_error_msg_static_register("Fallback to default style was enabled for this widget");
-   EFL_UI_THEME_APPLY_ERROR_GENERIC = eina_error_msg_static_register("An error occurred and no theme could be set for this widget");
+   EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+   EFL_UI_THEME_APPLY_ERROR_GENERIC;
 }
 
 // This is necessary to keep backward compatibility
@@ -587,7 +588,22 @@ elm_app_data_dir_get(void)
    if (app_data_dir) return app_data_dir;
    _prefix_check();
    if (!app_pfx) return "";
-   app_data_dir = eina_prefix_data_get(app_pfx);
+   /* only used to run inside efl src tree */
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        /* "/some/path/to/repo/build/src" */
+        const char *path = elm_app_prefix_dir_get();
+        /* "/some/path/to/repo/build/" */
+        const char *last_sep = strrchr(path, '/');
+        Eina_Strbuf *buf = eina_strbuf_new();
+        eina_strbuf_append_length(buf, path, last_sep - path + 1);
+        eina_strbuf_append(buf, "data/elementary");
+        app_data_dir = eina_strbuf_string_steal(buf);
+        eina_strbuf_free(buf);
+        /* yes this leaks app_data_dir but it's a one time allocation who cares */
+     }
+   else
+     app_data_dir = eina_prefix_data_get(app_pfx);
    return app_data_dir;
 }
 
@@ -674,30 +690,10 @@ _elm_unneed_eldbus(void)
    eldbus_shutdown();
 }
 
-#ifdef ELM_ELOCATION
-static Eina_Bool _elm_need_elocation = EINA_FALSE;
-#endif
 EAPI Eina_Bool
 elm_need_elocation(void)
 {
-#ifdef ELM_ELOCATION
-   if (_elm_need_elocation) return EINA_TRUE;
-   _elm_need_elocation = EINA_TRUE;
-   elocation_init();
-   return EINA_TRUE;
-#else
    return EINA_FALSE;
-#endif
-}
-
-static void
-_elm_unneed_elocation(void)
-{
-#ifdef ELM_ELOCATION
-   if (!_elm_need_elocation) return;
-   _elm_need_elocation = EINA_FALSE;
-   elocation_shutdown();
-#endif
 }
 
 static Eina_Bool _elm_need_efreet = EINA_FALSE;
@@ -770,7 +766,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
 {
    _elm_ql_init_count++;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
-   _use_build_config = !!getenv("EFL_RUN_IN_TREE");
+   _running_in_tree = !!getenv("EFL_RUN_IN_TREE");
    EINA_SAFETY_ON_FALSE_GOTO(eina_init(), fail_eina);
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
    EINA_SAFETY_ON_TRUE_GOTO(_elm_log_dom < 0, fail_eina_log);
@@ -813,7 +809,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
                          LOCALE_DIR);
    if (pfx)
      {
-        if (_use_build_config)
+        if (_running_in_tree)
           _elm_data_dir = eina_stringshare_add(PACKAGE_BUILD_DIR "/data/elementary");
         else
           _elm_data_dir = eina_stringshare_add(eina_prefix_data_get(pfx));
@@ -951,7 +947,6 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_unneed_eldbus();
-   _elm_unneed_elocation();
    _elm_unneed_ethumb();
    _elm_unneed_web();
 
@@ -1332,6 +1327,7 @@ elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
         const char *p, *pp;
         char *buf2;
         path = getenv("PATH");
+        if (!path) return NULL;
         buf2 = alloca(strlen(path) + 1);
         p = path;
         pp = p;
@@ -1774,12 +1770,12 @@ EAPI void
 elm_object_scroll_lock_x_set(Evas_Object *obj,
                              Eina_Bool    lock)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN(obj);
    block = elm_widget_scroll_lock_get(obj);
-   if (lock) block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
-   else block &= ~EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+   if (lock) block |= EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
+   else block &= ~EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    elm_widget_scroll_lock_set(obj, block);
 }
 
@@ -1787,33 +1783,33 @@ EAPI void
 elm_object_scroll_lock_y_set(Evas_Object *obj,
                              Eina_Bool    lock)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN(obj);
    block = elm_widget_scroll_lock_get(obj);
-   if (lock) block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
-   else block &= ~EFL_UI_SCROLL_BLOCK_VERTICAL;
+   if (lock) block |= EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
+   else block &= ~EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    elm_widget_scroll_lock_set(obj, block);
 }
 
 EAPI Eina_Bool
 elm_object_scroll_lock_x_get(const Evas_Object *obj)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    block = elm_widget_scroll_lock_get(obj);
-   return !!(block & EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+   return !!(block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 }
 
 EAPI Eina_Bool
 elm_object_scroll_lock_y_get(const Evas_Object *obj)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    block = elm_widget_scroll_lock_get(obj);
-   return !!(block & EFL_UI_SCROLL_BLOCK_VERTICAL);
+   return !!(block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 }
 
 EAPI void

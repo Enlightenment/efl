@@ -1,0 +1,55 @@
+interface Efl.Ui.Radio_Group extends Efl.Ui.Single_Selectable
+{
+   [[Interface for manually handling a group of @Efl.Ui.Radio buttons.
+
+     See the documentation of @Efl.Ui.Radio for an explanation of radio button grouping.
+
+     @since 1.23
+   ]]
+   methods {
+      @property selected_value {
+        [[The value associated with the currently selected button in the group.
+          Give each radio button in the group a different value using @Efl.Ui.Radio.state_value.
+
+          A value of -1 means that no button is selected.
+          Only values associated with the buttons in the group (and -1) can be used.
+        ]]
+        values {
+           selected_value : int; [[The value of the currently selected radio button, or -1.]]
+        }
+      }
+      register {
+        [[Register a new @Efl.Ui.Radio button to this group.
+          Keep in mind that registering to a group will only handle button grouping, you still
+          need to add the button to a layout for it to be rendered.
+
+          If the @Efl.Ui.Radio.state_value of the new button is already used by a previous
+          button in the group, the button will not be added.
+
+          See also @.unregister.
+        ]]
+        params {
+          radio : Efl.Ui.Radio; [[The radio button to add to the group.]]
+        }
+      }
+      unregister {
+        [[Unregister an @Efl.Ui.Radio button from this group.
+          This will unlink the behavior of this button from the other buttons in the group,
+          but if it still belongs to a layout, it will still be rendered.
+
+          If the button was not registered in the group the call is ignored.
+          If the button was selected, no button will be selected in the group after this call.
+
+          See also @.register.
+        ]]
+        params {
+          radio : Efl.Ui.Radio; [[The radio button to remove from the group.]]
+        }
+      }
+   }
+   events {
+     value,changed : int; [[Emitted each time the $selected_value changes. The event information
+                            contains the @Efl.Ui.Radio.state_value of the newly selected button or
+                            -1 if no button is now selected.]]
+   }
+}

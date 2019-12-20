@@ -1,40 +1,37 @@
-class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base implements Efl.File, Efl.Player, Efl.Access.Widget.Action
+class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base
+   implements Efl.File, Efl.Access.Widget.Action
+   composites Efl.Player
 {
    [[Efl UI video class]]
    methods {
       @property remember_position {
-         set {
-            [[Set whether the object can remember the last played position.
+         [[Whether the object can remember the last played position.
 
-              Note: This API only serves as indication. System support is
-              required.
-            ]]
+           Note: This API only serves as indication. System support is
+           required.
+         ]]
+         set {
          }
          get {
-            [[Set whether the object can remember the last played position.
-
-              Note: This API only serves as indication. System support is
-              required.
-            ]]
          }
          values {
             remember: bool; [[$true when the object can remember the last position, $false otherwise]]
          }
       }
       @property emotion {
+         [[The underlying Emotion object.]]
          get {
-            [[Get the underlying Emotion object.]]
             return: Efl.Canvas.Object; [[The underlying Emotion object.]]
          }
       }
       @property title {
+         [[The title (for instance DVD title) from this emotion object.
+
+           This function is only useful when playing a DVD.
+
+           Note: Don't change or free the string returned by this function.
+         ]]
          get {
-            [[Get the title (for instance DVD title) from this emotion object.
-
-              This function is only useful when playing a DVD.
-
-              Note: Don't change or free the string returned by this function.
-            ]]
             return: string; [[A string containing the title.]]
          }
       }
@@ -42,13 +39,11 @@ class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base implements Efl.File, Efl.Pla
    implements {
       Efl.Object.constructor;
       Efl.File.load;
+      Efl.File.unload;
+      Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Player.start;
-      Efl.Player.stop;
-      Efl.Player.play { get; set; }
-   }
-   composite {
-      Efl.Player;
+      Efl.Player.playing { get; set; }
+      Efl.Player.paused { get; set; }
    }
 }

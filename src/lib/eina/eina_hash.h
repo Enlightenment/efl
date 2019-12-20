@@ -184,10 +184,8 @@
  * (argument of @ref eina_hash_new too). The following picture illustrates the
  * basic idea:
  *
- * @htmlonly
- * <img src="01_hash-table.png" width="500" />
- * @endhtmlonly
  * @image latex 01_hash-table.eps
+ * @image html 01_hash-table.png
  *
  * Adding an element to the hash table involves the following steps:
  * @li calculate the hash for that key (using the specified hash function);
@@ -1036,6 +1034,21 @@ EAPI void           eina_hash_foreach(const Eina_Hash  *hash,
 EAPI void eina_hash_list_append(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
+ * @brief Appends data to an #Eina_List inside a hash using eina_hash_direct_add().
+ *
+ * This function is identical to the sequence of calling
+ * eina_hash_find(), eina_list_append(), eina_hash_set(),
+ * but with one fewer required hash lookup.
+ *
+ * @param[in,out] hash The hash table.
+ * @param[in] key The key associated with the data.
+ * @param[in] data The data to append to the list.
+ *
+ * @since 1.23
+ */
+EAPI void eina_hash_list_direct_append(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
  * @brief Prepends data to an #Eina_List inside a hash.
  *
  * This function is identical to the sequence of calling
@@ -1049,6 +1062,21 @@ EAPI void eina_hash_list_append(Eina_Hash *hash, const void *key, const void *da
  * @since 1.10
  */
 EAPI void eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Prepends data to an #Eina_List inside a hash using eina_hash_direct_add().
+ *
+ * This function is identical to the sequence of calling
+ * eina_hash_find(), eina_list_prepend(), eina_hash_set(),
+ * but with one fewer required hash lookup.
+ *
+ * @param[in,out] hash The hash table.
+ * @param[in] key The key associated with the data.
+ * @param[in] data The data to prepend to the list.
+ *
+ * @since 1.23
+ */
+EAPI void eina_hash_list_direct_prepend(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Removes data from an #Eina_List inside a hash.

@@ -56,17 +56,15 @@ struct _Efl_Ui_Image_Data
 
    double                scale;
    double                frame_duration;
+   double                playback_speed;
    double                align_x, align_y;
-
-   Evas_Coord            img_x, img_y, img_w, img_h;
 
    Eina_Size2D           load_size;
    int                   frame_count;
    int                   cur_frame;
 
    Elm_Image_Orient      image_orient; // to support EAPI
-   Efl_Orient            orient;
-   Efl_Flip              flip;
+   Efl_Gfx_Image_Orientation orient;
 
    struct {
       Ecore_Thread      *th;
@@ -75,7 +73,7 @@ struct _Efl_Ui_Image_Data
    } async;
 
    Efl_Ui_Image_Preload_Status preload_status;
-   Efl_Gfx_Image_Scale_Type scale_type;
+   Efl_Gfx_Image_Scale_Method scale_type;
 
    const char           *stdicon;
 
@@ -99,11 +97,13 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             edit : 1;
    Eina_Bool             edje : 1;
    Eina_Bool             anim : 1;
-   Eina_Bool             play : 1;
+   Eina_Bool             paused : 1;
    Eina_Bool             async_enable : 1;
    Eina_Bool             scale_up : 1;
    Eina_Bool             scale_down : 1;
    Eina_Bool             legacy_align : 1;
+   Eina_Bool             property_watch : 1;
+   Eina_Bool             in_calc : 1;
 };
 
 /**

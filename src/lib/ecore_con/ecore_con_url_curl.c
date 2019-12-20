@@ -12,10 +12,6 @@
 # include <ws2tcpip.h>
 #endif
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"
@@ -347,7 +343,7 @@ error:
 void
 _c_shutdown(void)
 {
-   if (!_c || _c->ref--) return;
+   if (!_c || --_c->ref) return;
    if (_c->_curlm)
      {
         _c->curl_multi_cleanup(_c->_curlm);

@@ -36,10 +36,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Eina.h>
 
 #include "embryo_cc_sc.h"
@@ -2093,7 +2089,7 @@ funcstub(int native)
 	     error(10);		/* illegal function or declaration */
 	     return;
 	  }			/* if */
-        assert(sizeof(str) <= sNAMEMAX);
+        assert(strlen(str) <= sNAMEMAX);
 	strcpy(symbolname, str);
      }				/* if */
    needtoken('(');		/* only functions may be native/forward */

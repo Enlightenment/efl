@@ -1,0 +1,505 @@
+import efl_text_types;
+
+class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
+                       Efl.Canvas.Filter.Internal, Efl.Text_Font,
+                       Efl.Text_Style, Efl.Text_Format,
+                       Efl.Text_Markup, Efl.Ui.I18n
+{
+   [[This is the Canvas-level text class. This class only takes care of rendering text,
+     if you need user interaction consider the classes in $[Efl.Ui].
+
+     Note: No text will be rendered until a font, a font size and a font color are specified.
+     This can be accomplished using @Efl.Text_Font.font_family, @Efl.Text_Font.font_size and
+     @Efl.Text_Style.text_color.
+     Alternatively, @.style_apply can be used providing the attributes $font, $font_size and $color.
+   ]]
+   methods {
+      @property is_empty {
+         [[Whether the object is empty (no text) or not.
+         ]]
+         get {
+         }
+         values {
+            is_empty: bool; [[$true if empty.]]
+         }
+      }
+      cursor_add {
+         [[Adds an existing cursor to the text object.
+           If the cursor already belonged to another text object it will be reassigned to the new one.
+           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.
+         ]]
+         params {
+            cursor: Efl.Text.Cursor; [[The text cursor to use.]]
+         }
+      }
+      cursor_create {
+         [[Creates a new cursor and adds it to the text object.
+           This cursor can be used to manipulate and iterate the content of the text object.
+         ]]
+         return: Efl.Text.Cursor @move; [[The created text cursor.]]
+      }
+      visible_range_get {
+         [[Returns the currently visible range.
+
+           The given $start and $end cursors are output variables:
+           they are set to the positions of the start and the end of the
+           visible range in the text, respectively.
+         ]]
+         return: bool; [[$true on success.]]
+         params {
+            @in start: Efl.Text.Cursor; [[Range start position.]]
+            @in end: Efl.Text.Cursor; [[Range end position.]]
+         }
+      }
+      @property style_insets {
+         [[Gets the left, right, top and bottom insets of the text.
+
+           The inset is any applied padding on the text (which is calculated
+           internally by styling applied to Textblock).
+         ]]
+         get {}
+         values {
+            l: int; [[Left padding.]]
+            r: int; [[Right padding.]]
+            t: int; [[Top padding.]]
+            b: int; [[Bottom padding.]]
+         }
+      }
+      @property bidi_delimiters {
+         [[BiDi delimiters are used for in-paragraph separation of bidirectional
+           segments. This is useful, for example, in the recipient fields of
+           e-mail clients where bidi oddities can occur when mixing RTL (right-to-left)
+           and LTR (left-to-right) text.
+         ]]
+         set {}
+         get {}
+         values {
+            delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
+         }
+      }
+      @property newline_as_paragraph_separator {
+         [[When $true, the newline character will behave as a paragraph separator.
+           Paragraph separator equal U+2029, and new line equal U+000A.
+           This will effect a lot of text behaviour like @Efl.Text.Cursor.move method.
+         ]]
+         set {}
+         get {}
+         values {
+            mode: bool; [[$true to treat new line as paragraph separator, $false otherwise.]]
+         }
+      }
+      style_apply {
+         [[Applies several style attributes at once using a formatting string.
+           Given style attributes override previous values, leaving other attributes unaffected.
+           This is akin to setting individual style attributes using properties like
+           @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap, for example.
+
+           The formatting string is a whitespace-separated list of $[attribute=value] pairs.
+
+           The following attributes are accepted:
+
+           - $font: Name of the font to use.
+             Default value is empty, meaning that no text will be rendered.
+             Requires $font_size and $font_color.
+             See @Efl.Text_Font.font_family.
+
+           - $font_fallbacks: Comma-delimited list of fonts to try if finding the primary font fails.
+             Example: $[font_fallbacks=consolas,courier,monospace].
+             Default value is empty.
+             See @Efl.Text_Font.font_fallbacks.
+
+           - $font_size: Height of font, in points.
+             Default value is 0.
+             Requires $font and $font_color.
+             See @Efl.Text_Font.font_size.
+
+           - $font_source: Path to the file containing the font to use.
+             Example: $[font_source=/usr/share/fonts/Sans.ttf].
+             Default value is empty.
+             See @Efl.Text_Font.font_source.
+
+           - $font_weight: Thickness of the font. The value must be one of: $normal, $thin, $ultralight, $extralight,
+             $light, $book, $medium, $semibold, $bold, $ultrabold, $extrabold, $black and $extrablack.
+             Default value is $normal.
+             See @Efl.Text_Font.font_weight.
+
+           - $font_style: Style of the font. The value must be one of: $normal, $oblique and $italic.
+             Default value is $normal.
+             See @Efl.Text_Font.font_slant.
+
+           - $font_width: How wide the font is, relative to its height. The value must be one of:
+             $normal, $ultracondensed, $extracondensed, $condensed, $semicondensed, $semiexpanded, $expanded,
+             $extraexpanded and $ultraexpanded.
+             Default value is $normal.
+             See @Efl.Text_Font.font_weight.
+
+           - $lang: A 2-letter ISO 639-1 language code, $auto (to use the system locale setting) or $none (to disable
+             language support).
+             Example: $[lang=he].
+             Default value is empty.
+             See @Efl.Text_Font.font_lang.
+
+           - $color: Color code for the text (See bottom for the complete list of supported codes).
+             Default value is $[rgba(0,0,0,0)] meaning that no text will be rendered.
+             Requires $font and $font_size.
+             See @Efl.Text_Style.text_color.
+
+           - $underline_color: Color code for the text underline (See bottom for the complete list of supported codes).
+             Default value is $[rgba(0,0,0,0)] meaning that no underline will be rendered.
+             Requires $underline.
+             See @Efl.Text_Style.text_underline_color.
+
+           - $underline2_color: Color code for the secondary text underline (See bottom for the complete list of
+             supported codes). Only valid when $[underline=double].
+             Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
+             See @Efl.Text_Style.text_underline2_color.
+
+           - $underline_dash_color: Color code for the dashed underline (See bottom for the complete list of supported
+             codes). Only valid when $[underline=dashed].
+             Default value is $[rgba(0,0,0,0)] meaning that dashed underline will not be rendered.
+             See @Efl.Text_Style.text_underline_dashed_color.
+
+           - $outline_color: Color code for the text outline (See bottom for the complete list of supported codes).
+             Only valid when the $style attribute includes an outline.
+             Default value is $[rgba(0,0,0,0)] meaning that no outline will be rendered.
+             See @Efl.Text_Style.text_outline_color.
+
+           - $shadow_color: Color code for the text shadow (See bottom for the complete list of supported codes).
+             Only valid when the $style attribute includes a shadow.
+             Default value is $[rgba(0,0,0,0)] meaning that no shadow will be rendered.
+             See @Efl.Text_Style.text_shadow_color.
+
+           - $glow_color: Color code for the glow component of the text (See bottom for the complete list of supported
+             codes). Only valid when the $style attribute includes a glow.
+             Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
+             See @Efl.Text_Style.text_glow_color.
+
+           - $glow2_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
+             list of supported codes). Only valid when the $style attribute includes a glow.
+             Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
+             See @Efl.Text_Style.text_glow2_color.
+
+           - $backing_color: Color code for the background of the text (See bottom for the complete list of supported
+             codes). Use a fully transparent color to disable the background.
+             Default value is $[rgba(0,0,0,0)] meaning that no backing will be rendered.
+             Requires $backing.
+             See @Efl.Text_Style.text_background_color.
+
+           - $strikethrough_color: Color code for the line striking through the text (See bottom for the complete list
+             of supported codes). Only valid when $[strikethrough=on]
+             Default value is $[rgba(0,0,0,0)] meaning that no strike-through line will be rendered.
+             See @Efl.Text_Style.text_strikethrough_color.
+
+           - $align: Horizontal alignment of the text. The value can either be a decimal number ($[0.0] means "left"
+             and $[1.0] means "right"), a percentage ($[0%] means "left" and $[100%] means "right") or one of:
+             $auto (Respects LTR/RTL settings), $locale (Respects language direction settings), $center
+             (Centers the text in the line), $middle (Alias for $center), $left (Puts the text at the left of the line),
+             $right (Puts the text at the right of the line), $start (Alias for $auto), $end (Puts the text at the
+             opposite side of LTR/RTL settings).
+             Default value is $auto.
+             See @Efl.Text_Format.text_horizontal_align.
+
+           - $valign: Vertical alignment of the text. The value can either be a decimal number ($[0.0] means "top"
+             and $[1.0] means "bottom"), a percentage ($[0%] means "top" and $[100%] means "bottom") or one of:
+             $top (Puts the text at the top of the text box), $center (Puts the text at the middle of the text box),
+             $middle (Alias for $center), $bottom (Puts the text at the bottom of the text box),
+             $baseline (Puts the text's baseline at the middle of the text box), $base (Alias for $baseline).
+             Default value is $baseline.
+             See @Efl.Text_Format.text_vertical_align.
+
+           - $wrap: Wrapping policy of the text. The value must be one of the following: $word (Only wraps lines at
+             word boundaries), $char (Wraps at any character), $mixed (Wraps at word boundaries if possible,
+             at any character if not), $hyphenation (Hyphenate if possible, otherwise try wrapping at word boundaries
+             or at any character) or $none to disable wrapping.
+             Default value is $none.
+             See @Efl.Text_Format.wrap.
+
+           - $left_margin: Distance in pixels from the left side of the text block to the beginning of the text
+             (inner margin). The value can be a number (to set the margin), or a number preceded by $[+] or $[-]
+             to increment or decrement the existing margin value. $reset is also accepted, to set the margin to
+             0 pixels.
+             Default value is $[0].
+             Examples: $[left_margin=10], $[left_margin=+10], $[left_margin=reset].
+
+           - $right_margin: Distance in pixels from the right side of the text block to the beginning of the text
+             (inner margin). The value can be a number (to set the margin), or a number preceded by $[+] or $[-]
+             to increment or decrement the existing margin value. $reset is also accepted, to set the margin to
+             0 pixels.
+             Default value is $[0].
+             Examples: $[right_margin=10], $[right_margin=+10], $[right_margin=reset].
+
+           - $underline: Style of the underline. The value must be one of $off (No underlining),
+             $single (A single line under the text), $on (Alias for $single), $double (Two lines under the text),
+             $dashed (A dashed line under the text).
+             Default value is $off.
+             Requires either $underline_color, $underline2_color or $underline_dash_color.
+             See @Efl.Text_Style.text_underline_type.
+
+           - $strikethrough: Enables crossed-out text. Possible values are $on and $off.
+             Default value is $off.
+             Requires $strikethrough_color.
+             See @Efl.Text_Style.text_strikethrough_type.
+
+           - $backing: Enables background color for the text. Possible values are $on and $off.
+             Default value is $off.
+             Requires $backing_color.
+             See @Efl.Text_Style.text_background_type.
+
+           - $style: Controls a number of decorations around the text, like shadow, outline and glow, including
+             combinations of them. Possible values are $plain (No decoration, alias for $off and $none),
+             $shadow, $outline, $soft_outline, $outline_shadow, $outline_soft_shadow, $glow (alias for $soft_outline),
+             $far_shadow, $soft_shadow and $far_soft_shadow.
+             All values involving a shadow accept a second parameter, separated by a comma, to indicate the shadow
+             direction. Valid positions are $bottom_right, $bottom, $bottom_left, $left, $top_left, $top, $top_right
+             and $right.
+             Default value is $plain.
+             Requires either $shadow_color, $glow_color or $outline_color.
+             Examples: $[style=outline], $[style=shadow,bottom_right], $[style=outline_shadow,bottom].
+             See @Efl.Text_Style.text_effect_type and @Efl.Text_Style.text_shadow_direction.
+
+           - $tabstops: Size (in pixels) of the tab character. The value must be a number greater than one.
+             Default value is $[32].
+             See @Efl.Text_Format.tabstops.
+
+           - $linesize: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
+             $[0] would render all lines on top of each other (However, this value will be ignored if it results in
+             overlapping lines of text).
+             Setting this value sets $linerelsize to $[0%] (disables it).
+             Default value is $[0].
+
+           - $linerelsize: Distance (in percentage over the natural line height) from the baseline of one line of
+             text to the next. A value of $[100%] does not have any impact, smaller values render lines closer together
+             and bigger values render them further apart.
+             Setting this value sets $linesize to $[0] (disables it).
+             Default value is $[0%].
+
+           - $linegap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
+             next. Setting this value sets $linerelgap to $[0%] (disables it).
+             Default value is $[0].
+             See @Efl.Text_Format.linegap.
+
+           - $linerelgap: Additional empty space (in percentage over the natural line height) between the bottom of
+             one line of text and the top of the next.
+             Setting this value sets $linegap to $[0] (disables it).
+             Default value is $[0%].
+             See @Efl.Text_Format.linerelgap.
+
+           - $linefill: An alternate way to specify the $linesize as a percentage of the canvas height.
+             A value of $[100%] means that a single line fills the canvas, whereas $[25%] means that 4 lines
+             fit in the same height.
+             When both $linefill and $linesize are specified the one resulting in the smallest line size is used.
+             Default value is $[0].
+
+           - $ellipsis: Controls automatic addition of ellipsis "..." to replace text which cannot be shown.
+             The value must be a number indicating the position of the ellipsis inside the visible text.
+             $[0.0] means the beginning of the text, $[1.0] means the end of the text, and values in between
+             mean the proportional position inside the text.
+             Any value smaller than 0 or greater than 1 disables ellipsis.
+             Default value is $[-1].
+             Examples: $[ellipsis=0.5
+             See @Efl.Text_Format.ellipsis.
+
+           - $password: Enabling this causes all characters to be replaced by $replacement_char.
+             This is useful for password input boxes.
+             Value must be either $on or $off.
+             Default value is $[off].
+             Requires $replacement_char.
+             See @Efl.Text_Format.password.
+
+           - $replacement_char: Character to use instead of the actual characters when $password is $on.
+             Default value is empty, meaning that no replacement will take place.
+             Requires $password.
+             Examples: $[replacement_char=*].
+             See @Efl.Text_Format.replacement_char.
+
+           - $underline_dash_width: Length (in pixels) of the dashes when $underline is $dashed.
+             Default value is $[6].
+             See @Efl.Text_Style.text_underline_dashed_width.
+
+           - $underline_dash_gap: Length (in pixels) of the gaps between the dashes when $underline is $dashed.
+             Default value is $[2].
+             See @Efl.Text_Style.text_underline_dashed_gap.
+
+           - $underline_height: Width (in pixels) of the single underline when $underline is $single.
+             Default value is $[1].
+             See @Efl.Text_Style.text_underline_height.
+
+           - $gfx_filter: Experimental filter name. See @Efl.Gfx.Filter for more information.
+
+           Color codes: Colors can be specified using any of the following formats:
+           $[#RRGGBB], $[#RRGGBBAA], $[#RGB], $[#RGBA], $[rgb(r,g,b)], $[rgba(r,g,b,a)].
+           Additionally, X11 color names like $red or $blanchedalmond can be used.
+           See https://en.wikipedia.org/wiki/X11_color_names for the full list.
+         ]]
+
+         params {
+            @in style: string; [[A whitespace-separated list of $[attribute=value] pairs, for example,
+                                 $[font=sans font_size=30 color=white].]]
+         }
+      }
+      @property all_styles {
+         [[A string representing the complete set of attributes applied to this text object.
+           This includes the default attributes plus any additional style applied with @.style_apply
+           or individual style properties like @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap.
+
+           See @.style_apply for the description of all attributes.
+         ]]
+         get {}
+         values {
+            style: string; [[A whitespace-separated list of $[attribute=value] pairs, for example,
+                             $[font=sans font_size=30 color=white].]]
+         }
+      }
+      @property size_formatted {
+         [[The formatted width and height of this text block.
+
+           This calculates the actual size after restricting the
+           text block to the current size of the object.
+
+           The main difference between this and @.size_native
+           is that the "native" function does not take wrapping into account:
+           it just calculates the real width of the object as if it was
+           placed on an infinite canvas, while @.size_formatted gives the
+           size after wrapping text according to the size restrictions of the
+           object.
+
+           For example a text block containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            size: Eina.Size2D; [[The formatted size of the object (after wrapping).]]
+         }
+      }
+      @property size_native {
+         [[The native width and height of this text block.
+
+           This calculates the actual size without taking account the
+           current size of the object.
+
+           The main difference between this and @.size_formatted
+           is that the "native" function does not take wrapping into account:
+           it just calculates the real width of the object as if it was
+           placed on an infinite canvas, while @.size_formatted gives the
+           size after wrapping text according to the size restrictions of the
+           object.
+
+           For example a text block containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            size: Eina.Size2D; [[The native size of the object (without wrapping).]]
+         }
+      }
+      // Obstacles
+      obstacle_add {
+         [[Add obstacle evas object $eo_obs to be observed during layout
+           of text.
+
+           The textblock does the layout of the text according to the
+           position of the obstacle.
+         ]]
+         params {
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object.]]
+         }
+         return: bool; [[$true on success.]]
+      }
+      obstacle_del {
+         [[Removes $eo_obs from observation during text layout.
+         ]]
+         params {
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object.]]
+         }
+         return: bool; [[$true on success.]]
+      }
+      obstacles_update {
+         [[Triggers for relayout due to obstacles' state change.
+
+           The obstacles alone don't affect the layout, until this is
+           called. Use this after doing changes (moving, positioning etc.)
+           in the obstacles that you  would like to be considered in the
+           layout.
+
+           For example: if you have just repositioned the obstacles to
+           different coordinates relative to the text block, you need to
+           call this so it will consider this new state and will relayout
+           the text.
+         ]]
+      }
+      async_layout {
+         [[Requests to layout the text off the mainloop.
+
+           Once layout is complete, the result is returned as @Eina.Rect,
+           with the $w and $h fields set.
+
+           This can be used to layout Textblock before it is required
+           to layout internally in back thread, which can enhance application
+           performance.
+         ]]
+         return: future<Eina.Rect>; [[Future for layout result.]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Object.paragraph_direction { get; set; }
+      Efl.Text.text { get; set; }
+      Efl.Gfx.Filter.filter_program { get; set; }
+      Efl.Gfx.Filter.filter_data { get; set; }
+      Efl.Gfx.Filter.filter_source { get; set; }
+      Efl.Canvas.Filter.Internal.filter_dirty;
+      Efl.Canvas.Filter.Internal.filter_input_render;
+      Efl.Canvas.Filter.Internal.filter_state_prepare;
+      Efl.Text_Font.font_family { get; set; }
+      Efl.Text_Font.font_size { get; set; }
+      Efl.Text_Font.font_source { get; set; }
+      Efl.Text_Font.font_fallbacks { get; set; }
+      Efl.Text_Font.font_lang { get; set; }
+      Efl.Text_Font.font_weight { get; set; }
+      Efl.Text_Font.font_slant { get; set; }
+      Efl.Text_Font.font_width { get; set; }
+      Efl.Text_Font.font_bitmap_scalable { get; set; }
+      Efl.Text_Style.text_color { get; set; }
+      Efl.Text_Style.text_background_type { get; set; }
+      Efl.Text_Style.text_background_color { get; set; }
+      Efl.Text_Style.text_underline_type { get; set; }
+      Efl.Text_Style.text_underline_color { get; set; }
+      Efl.Text_Style.text_underline_height { get; set; }
+      Efl.Text_Style.text_underline_dashed_color { get; set; }
+      Efl.Text_Style.text_underline_dashed_width { get; set; }
+      Efl.Text_Style.text_underline_dashed_gap { get; set; }
+      Efl.Text_Style.text_underline2_color { get; set; }
+      Efl.Text_Style.text_strikethrough_type { get; set; }
+      Efl.Text_Style.text_strikethrough_color { get; set; }
+      Efl.Text_Style.text_effect_type { get; set; }
+      Efl.Text_Style.text_outline_color { get; set; }
+      Efl.Text_Style.text_shadow_direction { get; set; }
+      Efl.Text_Style.text_shadow_color { get; set; }
+      Efl.Text_Style.text_glow_color { get; set; }
+      Efl.Text_Style.text_glow2_color { get; set; }
+      Efl.Text_Style.text_gfx_filter { get; set; }
+      Efl.Text_Format.ellipsis { get; set; }
+      Efl.Text_Format.wrap { get; set; }
+      Efl.Text_Format.multiline { get; set; }
+      Efl.Text_Format.text_horizontal_align { get; set; }
+      Efl.Text_Format.text_horizontal_align_auto_type { get; set; }
+      Efl.Text_Format.text_vertical_align { get; set; }
+      Efl.Text_Format.linegap { get; set; }
+      Efl.Text_Format.linerelgap { get; set; }
+      Efl.Text_Format.tabstops { get; set; }
+      Efl.Text_Format.password { get; set; }
+      Efl.Text_Format.replacement_char { get; set; }
+      Efl.Text_Markup.markup { set; get; }
+      Efl.Gfx.Entity.scale { set; }
+   }
+   events {
+      changed: void; [[Called when canvas text changed ]]
+      layout,finished: void; [[Called when the object has been layed out]]
+      style_insets,changed: void; [[Called when the property @.style_insets changed.]]
+   }
+}

@@ -2081,6 +2081,22 @@ EAPI void      elm_config_color_overlay_unset(const char *color_class);
 EAPI void      elm_config_color_overlay_apply(void);
 
 /**
+ * Get the desktop style entry enabled state
+ *
+ * @return The desktop style enabled state for entries
+ * @since 1.23
+ */
+EAPI Eina_Bool elm_config_desktop_entry_get(void);
+
+/**
+ * Set the desktop style entry enabled state
+ *
+ * @param enable The desktop style enabled state for entries
+ * @since 1.23
+ */
+EAPI void elm_config_desktop_entry_set(Eina_Bool enable);
+
+/**
  * Get the magnifier enabled state for entries
  *
  * @return The enabled state for magnifier

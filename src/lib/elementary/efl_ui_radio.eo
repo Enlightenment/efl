@@ -1,59 +1,38 @@
-class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action, Efl.Content
+class Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action
 {
-   [[Elementary radio class]]
+   [[Elementary radio button class.
+
+     Radio buttons are like check boxes in that they can be either checked or unchecked.
+     However, radio buttons are always bunched together in groups, and only one button in
+     each group can be checked at any given time. Pressing a different button in the group
+     will automatically uncheck any previously checked button.
+
+     They are a common way to allow a user to select one option among a list.
+
+     To handle button grouping, you can either use an @Efl.Ui.Radio_Group_Impl object or
+     use more convenient widgets like @Efl.Ui.Radio_Box.
+
+     @since 1.23
+   ]]
    methods {
       @property state_value {
-         set {
-            [[Set the integer value that this radio object represents.
+         [[Integer value that this radio button represents.
 
-              This sets the value of the radio.
-            ]]
-         }
-         get {
-            [[Get the integer value that this radio object represents.
+           Each radio button in a group must have a unique value. The selected button in a group
+           can then be set or retrieved through the @Efl.Ui.Radio_Group.selected_value property.
+           This value is also informed through the @[Efl.Ui.Radio_Group.value,changed] event.
 
-              This gets the value of the radio.
-            ]]
-         }
-         values {
-            value: int; [[The value to use if this radio object is selected.]]
-         }
-      }
-      @property value_pointer {
-         set {
-            [[Set a convenience pointer to an integer, which changes when radio group
-              value changes.
-
-              This sets a pointer to an integer that in addition to the radio
-              object state will also be modified directly. To stop setting the
-              object pointed to, simply use NULL as the valuep argument. If
-              valuep is not NULL then when called, the radio object
-              state will also be modified to reflect the value of the integer
-              valuep points to, just like calling elm_radio_value_set().
-            ]]
-         }
-         values {
-            valuep: ptr(int) @nullable; [[Pointer to the integer to modify]]
-         }
-      }
-      @property selected_object {
-         get {
-            [[Get the selected radio object.]]
-            return: Efl.Canvas.Object; [[The selected radio object]]
-         }
-      }
-      group_add {
-         [[Add this radio to a group of other radio objects
-
-           Radio objects work in groups. Each member should have a different
-           integer value assigned. In order to have them work as a group, they
-           need to know about each other. This adds the given radio object to
-           the group of which the group object indicated is a member.
+           All non-negative values are legal but keep in mind that 0 is the starting value for all new groups:
+           If no button in the group has this value, then no button in the group is initially
+           selected. -1 is the value that @Efl.Ui.Radio_Group.selected_value returns when no button
+           is selected and therefore cannot be used.
          ]]
-
-         params {
-            @in group: Efl.Ui.Radio; [[Any radio object whose group the obj is
-                                    to join.]]
+         set {}
+         get {}
+         values {
+            value: int; [[The value to use when this radio button is selected.
+                          Any value can be used but 0 and -1 have special meanings as described
+                          above.]]
          }
       }
    }
@@ -65,6 +44,6 @@ class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Actio
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Ui.Nstate.value { set; get; }
+      Efl.Ui.Selectable.selected {set;}
    }
 }

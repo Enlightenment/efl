@@ -10,10 +10,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "Eina.h"
 
 #ifdef ERR

@@ -30,7 +30,12 @@
 #  include <sys/wait.h>
 # endif
 # ifndef HAVE_CLEARENV
+#  if defined (__FreeBSD__) || defined (__OpenBSD__)
+#   include <dlfcn.h>
+static char ***_dl_environ;
+#  else
 extern char **environ;
+#  endif
 # endif
 #endif
 
@@ -51,7 +56,6 @@ struct _Efl_Exe_Data
       Eina_Bool can_write : 1;
    } fd;
 #else
-   Eina_Promise *promise;
    Eo *exit_handler;
    pid_t pid;
    struct {
@@ -93,7 +97,7 @@ _close_fds(Efl_Exe_Data *pd)
 }
 
 static void
-_exec(const char *cmd, Efl_Exe_Flags flags)
+_exec(const char *cmd, Efl_Exe_Flags flags, Efl_Task_Flags task_flags)
 {
    char use_sh = 1, *buf = NULL, **args = NULL;
 
@@ -144,7 +148,7 @@ _exec(const char *cmd, Efl_Exe_Flags flags)
           }
      }
 # ifdef HAVE_PRCTL
-   if (flags & EFL_EXE_FLAGS_EXIT_WITH_PARENT)
+   if (task_flags & EFL_TASK_FLAGS_EXIT_WITH_PARENT)
      prctl(PR_SET_PDEATHSIG, SIGTERM);
 # endif
 
@@ -173,47 +177,8 @@ _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
        (pd->fd.exited_read == -1) && (!pd->exit_called))
      {
         pd->exit_called = EINA_TRUE;
-        if (pd->promise)
-          {
-             Eina_Promise *p = pd->promise;
-             int exit_code = efl_task_exit_code_get(obj);
-             if ((exit_code != 0) && (!(efl_task_flags_get(obj) &
-                                        EFL_TASK_FLAGS_NO_EXIT_CODE_ERROR)))
-               {
-                  Eina_Error err = exit_code + 1000000;
-                  // Code  Meaning                        Example             Comments
-                  // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                  // 1     Catchall for general errors    let "var1 = 1/0"    Miscellaneous errors, such as "divide by zero" and other impermissible operations
-                  // 2     Misuse of shell builtins       empty_function() {} Missing keyword or command, or permission problem (and diff return code on a failed binary file comparison).
-                  // 126   Command invoked cannot execute /dev/null           Permission problem or command is not an executable
-                  // 127   "command not found"            illegal_command     Possible problem with $PATH or a typo
-                  // 128   Invalid argument to exit       exit 3.14159        exit takes only integer args in the range 0 - 255 (see first footnote)
-                  // 128+n Fatal error signal "n"         kill -9 $PPID       $? returns 137 (128 + 9)
-                  // 130   Script terminated by Control-C Ctl-C               Control-C is fatal error signal 2, (130 = 128 + 2, see above)
-                  // 255*  Exit status out of range       exit -1             exit takes only integer args in the range 0 - 255
-                  //
-                  // According to the above table, exit codes 1 - 2,
-                  // 126 - 165, and 255 [1] have special meanings, and
-                  // should therefore be avoided for user-specified exit
-                  // parameters. Ending a script with exit 127 would
-                  // certainly cause confusion when troubleshooting (is
-                  // the error code a "command not found" or a user-defined
-                  // one?). However, many scripts use an exit 1 as a general
-                  // bailout-upon-error. Since exit code 1 signifies so many
-                  // possible errors, it is not particularly useful in
-                  // debugging.
-                  if      (exit_code == 1  ) err = EBADF;
-                  else if (exit_code == 2  ) err = EDOM;
-                  else if (exit_code == 126) err = ENOEXEC;
-                  else if (exit_code == 127) err = ENOENT;
-                  else if (exit_code == 128) err = EINVAL;
-                  else if (exit_code == 129) err = EFAULT;
-                  else if (exit_code == 130) err = EINTR;
-                  else if ((exit_code >= 131) && (exit_code <= 165)) err = EFAULT;
-                  eina_promise_reject(p, err);
-               }
-             else eina_promise_resolve(p, eina_value_int_init(exit_code));
-          }
+        efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
+        efl_del(obj);
      }
 }
 
@@ -263,24 +228,6 @@ _cb_exe_in(void *data, const Efl_Event *event EINA_UNUSED)
    Eo *obj = data;
    efl_io_writer_can_write_set(obj, EINA_TRUE);
 }
-
-static Eina_Value
-_run_cancel_cb(Efl_Loop_Consumer *consumer, void *data EINA_UNUSED, Eina_Error error)
-{
-   if (error == ECANCELED) efl_task_end(consumer);
-
-   return eina_value_error_init(error);
-}
-
-static void
-_run_clean_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,
-              void *data,
-              const Eina_Future *dead_future EINA_UNUSED)
-{
-   Efl_Exe_Data *pd = data;
-   pd->promise = NULL;
-}
-
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -394,7 +341,7 @@ _efl_exe_efl_task_priority_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    return pri;
 }
 
-EOLIAN static Eina_Future *
+EOLIAN static Eina_Bool
 _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
@@ -409,20 +356,20 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
    int pipe_exited[2];
    int ret;
 
-   if (pd->run) return NULL;
-   if (pd->pid != -1) return NULL;
-   if (!td) return NULL;
+   if (pd->run) return EINA_FALSE;
+   if (pd->pid != -1) return EINA_FALSE;
+   if (!td) return EINA_FALSE;
 
    // get a cmdline to run
    cmd = efl_core_command_line_command_get(obj);
-   if (!cmd) return NULL;
+   if (!cmd) return EINA_FALSE;
 
    ret = pipe(pipe_exited);
    if (EINA_UNLIKELY(ret != 0))
      {
         const int error = errno;
         ERR("pipe() failed: %s", strerror(error));
-        return NULL;
+        return EINA_FALSE;
      }
 
    pd->fd.exited_read = pipe_exited[0];
@@ -437,7 +384,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
           {
              const int error = errno;
              ERR("pipe() failed: %s", strerror(error));
-             return NULL;
+             return EINA_FALSE;
           }
         pd->fd.in = pipe_stdin[1];
         if (fcntl(pd->fd.in, F_SETFL, O_NONBLOCK) < 0)
@@ -456,7 +403,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
           {
              const int error = errno;
              ERR("pipe() failed: %s", strerror(error));
-             return NULL;
+             return EINA_FALSE;
           }
         pd->fd.out = pipe_stdout[0];
         if (fcntl(pd->fd.out, F_SETFL, O_NONBLOCK) < 0)
@@ -483,7 +430,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
           {
              _close_fds(pd);
              _ecore_signal_pid_unlock();
-             return NULL;
+             return EINA_FALSE;
           }
         // register this pid in the core sigchild/pid exit code watcher
         _ecore_signal_pid_register(pd->pid, pd->fd.exited_write);
@@ -497,11 +444,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
                                               EFL_LOOP_HANDLER_FLAGS_READ));
         _ecore_signal_pid_unlock();
         pd->run = EINA_TRUE;
-        pd->promise = efl_loop_promise_new(obj);
-        return efl_future_then(obj, eina_future_new(pd->promise),
-                               .data = pd,
-                               .error = _run_cancel_cb,
-                               .free = _run_clean_cb);
+        return EINA_TRUE;
      }
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.
@@ -579,7 +522,13 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 # ifdef HAVE_CLEARENV
         clearenv();
 # else
+#  if defined (__FreeBSD__) || defined (__OpenBSD__)
+        _dl_environ = dlsym(NULL, "environ");
+        if (_dl_environ) *_dl_environ = NULL;
+        else ERR("Can't find envrion symbol");
+#  else
         environ = NULL;
+#  endif
 # endif
         itr = efl_core_env_content_get(pd->env);
 
@@ -591,14 +540,19 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
        pd->env = NULL;
      }
 
+   // close all fd's other than the first 3 (0, 1, 2) and exited write fd
+   int except[2] = { 0, -1 };
+   except[0] = pd->fd.exited_write;
+   eina_file_close_from(3, except);
+
    // actually execute!
-   _exec(cmd, pd->flags);
+   _exec(cmd, pd->flags, td->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
    if ((errno == EACCES)  || (errno == EINVAL) || (errno == ELOOP) ||
        (errno == ENOEXEC) || (errno == ENOMEM))
      exit(126);
    exit(127);
-   return NULL;
+   return EINA_FALSE;
 #endif
 }
 
@@ -630,7 +584,7 @@ _efl_exe_efl_object_constructor(Eo *obj, Efl_Exe_Data *pd)
    pd->fd.exited_read = -1;
 #endif
    pd->fd.can_write = EINA_TRUE;
-   pd->flags = EFL_EXE_FLAGS_EXIT_WITH_PARENT;
+   pd->flags = 0;
    pd->exit_signal = -1;
    return obj;
 }
@@ -640,7 +594,7 @@ _efl_exe_efl_object_destructor(Eo *obj, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
 #else
-   if (pd->promise)
+   if (!pd->exit_called)
      ERR("Exe being destroyed while child has not exited yet.");
    if (pd->fd.exited_read >= 0)
      {
@@ -797,6 +751,7 @@ _efl_exe_efl_io_writer_write(Eo *obj, Efl_Exe_Data *pd, Eina_Slice *slice, Eina_
 
    errno = 0;
    if (pd->fd.in == -1) goto err;
+   if (!slice) return EINVAL;
 
    do
      {
@@ -817,7 +772,7 @@ _efl_exe_efl_io_writer_write(Eo *obj, Efl_Exe_Data *pd, Eina_Slice *slice, Eina_
      }
    slice->len = r;
 
-   if ((slice) && (slice->len > 0))
+   if (slice->len > 0)
      efl_io_writer_can_write_set(obj, EINA_FALSE);
    if (r == 0)
      {

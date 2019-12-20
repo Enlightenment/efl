@@ -56,24 +56,18 @@ _mirrored_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_canvas_group_group_calculate(Eo *obj, Elm_Panel_Data *sd)
 {
-   Evas_Coord mw = 0, mh = 0;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
    if (sd->delete_me) return;
 
    if (sd->scrollable)
      {
-        if (sd->hidden) _drawer_close(obj, wd->w, wd->h, EINA_FALSE);
-        else _drawer_open(obj, wd->w, wd->h, EINA_FALSE);
+        Eina_Size2D size = efl_gfx_entity_size_get(obj);
+        if (sd->hidden) _drawer_close(obj, size.w, size.h, EINA_FALSE);
+        else _drawer_open(obj, size.w, size.h, EINA_FALSE);
      }
 
-   evas_object_smart_calculate(sd->bx);
-   edje_object_size_min_calc(wd->resize_obj, &mw, &mh);
-   evas_object_size_hint_min_set(obj, mw, mh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 static char *
@@ -229,6 +223,7 @@ _elm_panel_efl_ui_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   elm_interface_scrollable_reset_signals(obj);
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    if (sd->scrollable)
@@ -311,7 +306,7 @@ _drawer_open(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
    if (sd->freeze)
      {
         elm_interface_scrollable_movement_block_set
-              (obj, EFL_UI_SCROLL_BLOCK_NONE);
+              (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
         sd->freeze = EINA_FALSE;
         elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
      }
@@ -350,7 +345,6 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
    int x = 0, y = 0, cx, cy;
    Eina_Bool horizontal = EINA_FALSE;
 
-   elm_widget_tree_unfocusable_set(obj, EINA_TRUE);
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
@@ -381,10 +375,10 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
           {
              if (horizontal)
                elm_interface_scrollable_movement_block_set
-                  (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                  (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
              else
                elm_interface_scrollable_movement_block_set
-                  (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                  (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
              sd->freeze = EINA_TRUE;
              elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
           }
@@ -397,7 +391,7 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
         if (sd->freeze)
           {
              elm_interface_scrollable_movement_block_set
-                   (obj, EFL_UI_SCROLL_BLOCK_NONE);
+                   (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
              sd->freeze = EINA_FALSE;
              elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
           }
@@ -410,10 +404,10 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
           {
              if (horizontal)
                elm_interface_scrollable_movement_block_set
-                     (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                     (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
              else
                elm_interface_scrollable_movement_block_set
-                     (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                     (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
              sd->freeze = EINA_TRUE;
              elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
           }
@@ -462,7 +456,6 @@ _panel_toggle(void *data EINA_UNUSED,
           }
 
         //if the panel is hidden, make this thing unfocusable
-        elm_widget_tree_unfocusable_set(obj, sd->hidden);
         edje_object_message_signal_process(wd->resize_obj);
      }
 
@@ -539,7 +532,7 @@ _timer_cb(void *data)
    if (sd->freeze)
      {
         elm_interface_scrollable_movement_block_set
-              (obj, EFL_UI_SCROLL_BLOCK_NONE);
+              (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
         sd->freeze = EINA_FALSE;
         elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -647,7 +640,7 @@ _on_mouse_move(void *data,
          if (sd->timer && ((cur_y - sd->down_y) > finger_size))
            {
               elm_interface_scrollable_movement_block_set
-                 (obj, EFL_UI_SCROLL_BLOCK_NONE);
+                 (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -656,7 +649,7 @@ _on_mouse_move(void *data,
          if (sd->timer && ((sd->down_y - cur_y) > finger_size))
            {
               elm_interface_scrollable_movement_block_set
-                 (obj, EFL_UI_SCROLL_BLOCK_NONE);
+                 (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -666,7 +659,7 @@ _on_mouse_move(void *data,
               ((is_mirrored) && (sd->timer) && ((sd->down_x - cur_x) > finger_size)))
            {
               elm_interface_scrollable_movement_block_set
-                 (obj, EFL_UI_SCROLL_BLOCK_NONE);
+                 (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -676,7 +669,7 @@ _on_mouse_move(void *data,
               (!is_mirrored && (sd->timer) && ((sd->down_x - cur_x) > finger_size)))
            {
               elm_interface_scrollable_movement_block_set
-                 (obj, EFL_UI_SCROLL_BLOCK_NONE);
+                 (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
               sd->freeze = EINA_FALSE;
               elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
            }
@@ -856,6 +849,9 @@ _elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
    else
      {
         efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), priv->bx);
+        /* trigger box recalc on manual panel calc */
+        _efl_ui_layout_subobjs_calc_set(obj, EINA_TRUE);
+        efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
         if (edje_object_part_exists
             (wd->resize_obj, "elm.swallow.event"))
@@ -1014,12 +1010,12 @@ _elm_panel_orient_set(Eo *obj, Elm_Panel_Data *sd, Elm_Panel_Orient orient)
                   case ELM_PANEL_ORIENT_TOP:
                   case ELM_PANEL_ORIENT_BOTTOM:
                      elm_interface_scrollable_movement_block_set
-                           (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                           (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
                      break;
                   case ELM_PANEL_ORIENT_LEFT:
                   case ELM_PANEL_ORIENT_RIGHT:
                      elm_interface_scrollable_movement_block_set
-                           (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                           (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
                      break;
                }
 
@@ -1161,10 +1157,10 @@ _anim_stop_cb(Evas_Object *obj, void *data EINA_UNUSED)
      {
         if (horizontal)
           elm_interface_scrollable_movement_block_set
-                (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
         else
           elm_interface_scrollable_movement_block_set
-                (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
         sd->freeze = EINA_TRUE;
         elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
 
@@ -1194,7 +1190,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
    if (sd->freeze)
      {
         elm_interface_scrollable_movement_block_set
-              (obj, EFL_UI_SCROLL_BLOCK_NONE);
+              (obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
         sd->freeze = EINA_FALSE;
         elm_layout_signal_emit(sd->scr_ly, "elm,state,content,visible", "elm");
      }
@@ -1237,8 +1233,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
           }
         break;
      }
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL, (void *) &event);
+   evas_object_smart_callback_call(obj, "scroll", &event);
 }
 
 EOLIAN static void
@@ -1255,13 +1250,13 @@ _elm_panel_efl_ui_widget_disabled_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool dis
                   case ELM_PANEL_ORIENT_BOTTOM:
                   case ELM_PANEL_ORIENT_TOP:
                      elm_interface_scrollable_movement_block_set
-                        (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                        (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
                      break;
 
                   case ELM_PANEL_ORIENT_RIGHT:
                   case ELM_PANEL_ORIENT_LEFT:
                      elm_interface_scrollable_movement_block_set
-                        (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                        (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
                      break;
                }
 
@@ -1283,13 +1278,13 @@ _elm_panel_efl_ui_widget_disabled_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool dis
                   case ELM_PANEL_ORIENT_BOTTOM:
                   case ELM_PANEL_ORIENT_TOP:
                      elm_interface_scrollable_movement_block_set
-                        (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                        (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
                      break;
 
                   case ELM_PANEL_ORIENT_RIGHT:
                   case ELM_PANEL_ORIENT_LEFT:
                      elm_interface_scrollable_movement_block_set
-                        (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                        (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
                      break;
                }
 
@@ -1418,12 +1413,12 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
                 case ELM_PANEL_ORIENT_TOP:
                 case ELM_PANEL_ORIENT_BOTTOM:
                    elm_interface_scrollable_movement_block_set
-                      (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                      (obj, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
                    break;
                 case ELM_PANEL_ORIENT_LEFT:
                 case ELM_PANEL_ORIENT_RIGHT:
                    elm_interface_scrollable_movement_block_set
-                      (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                      (obj, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
                    break;
                }
           }
@@ -1479,7 +1474,6 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
              evas_object_repeat_events_set(obj, EINA_FALSE);
           }
 
-        elm_widget_tree_unfocusable_set(obj, sd->hidden);
         edje_object_message_signal_process(sd->panel_edje);
 
         evas_object_hide(sd->scr_ly);
@@ -1527,7 +1521,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_PANEL_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_panel), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_panel), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_panel)
 
 #include "elm_panel_eo.c"

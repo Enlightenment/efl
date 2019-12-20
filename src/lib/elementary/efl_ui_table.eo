@@ -1,7 +1,21 @@
-class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
-                   Efl.Ui.Direction, Efl.Gfx.Arrangement
+class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
+                   Efl.Ui.Layout_Orientable, Efl.Gfx.Arrangement
 {
-   [[Efl UI table class]]
+   [[Widget container that arranges its elements in a grid.
+
+     The amount of rows and columns can be controlled with @Efl.Pack_Table.table_rows
+     and @Efl.Pack_Table.table_columns, and elements can be manually positioned with
+     @Efl.Pack_Table.pack_table.
+     Additionally, a fill direction can be defined with @Efl.Ui.Layout_Orientable.orientation and
+     elements added with @Efl.Pack.pack. Elements are then added following this direction
+     (horizontal or vertical) and when the amount of columns or rows has been reached,
+     a step is taken in the orthogonal direction.
+     In this second case there is no need to define both the amount of columns and rows,
+     as the table will expand as needed.
+     The default fill direction is @Efl.Ui.Layout_Orientation.horizontal.
+
+     @since 1.23
+   ]]
    methods {
       @property homogeneous {
          [[Control homogeneous mode.
@@ -25,7 +39,7 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
       Efl.Gfx.Entity.size { set; }
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Ui.Direction.direction { get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
@@ -35,12 +49,14 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
       Efl.Pack_Table.pack_table;
       Efl.Pack_Table.table_content_get;
       Efl.Pack_Table.table_contents_get;
-      Efl.Pack_Table.table_position { get; }
+      Efl.Pack_Table.table_cell_column { get; set; }
+      Efl.Pack_Table.table_cell_row { get; set; }
       Efl.Pack_Table.table_size { get; set; }
       Efl.Pack_Table.table_columns { get; set; }
       Efl.Pack_Table.table_rows { get; set; }
-      Efl.Pack_Table.table_direction { get; set; }
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
+      @empty Efl.Ui.L10n.l10n_text { get; set; }
+      @empty Efl.Ui.I18n.language { get; set; }
    }
 }

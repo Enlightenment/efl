@@ -7,10 +7,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #if defined(__APPLE__) && defined(__MACH__)
 # include <mach/mach_time.h>
 #endif
@@ -20,7 +16,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined (HAVE_CLOCK_GETTIME)
 static clockid_t _ecore_time_clock_id;
 static Eina_Bool _ecore_time_got_clock_id = EINA_FALSE;
 #elif defined(__APPLE__) && defined(__MACH__)
@@ -30,7 +26,7 @@ static double _ecore_time_clock_conversion = 1e-9;
 EAPI double
 ecore_time_get(void)
 {
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME) 
+#if defined (HAVE_CLOCK_GETTIME)
    struct timespec t;
 
    if (EINA_UNLIKELY(!_ecore_time_got_clock_id))
@@ -86,7 +82,7 @@ ecore_loop_time_set(double t)
 void
 _ecore_time_init(void)
 {
-#if defined(HAVE_CLOCK_GETTIME) || defined(EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined(HAVE_CLOCK_GETTIME)
    struct timespec t;
 
    if (_ecore_time_got_clock_id) return;

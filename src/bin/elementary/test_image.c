@@ -100,14 +100,16 @@ im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 }
 
 static const struct {
-   Efl_Gfx_Image_Scale_Type scale_type;
+   Efl_Gfx_Image_Scale_Method scale_type;
    const char *name;
 } images_scale_type[] = {
-  { EFL_GFX_IMAGE_SCALE_TYPE_NONE, "None" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FILL, "Fill" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE, "Fit Inside" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE, "Fit Outside" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_TILE, "Tile" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_NONE, "None" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FILL, "Fill" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FIT, "Fit" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH, "Fit Horizontally" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT, "Fit Vertically" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_EXPAND, "Expand" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_TILE, "Tile" },
   { 0, NULL }
 };
 
@@ -119,9 +121,9 @@ my_im_scale_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
    Evas_Object *rdg = evas_object_data_get(win, "rdg");
    int v = elm_radio_value_get(rdg);
 
-   efl_gfx_image_scale_type_set(im, images_scale_type[v].scale_type);
+   efl_gfx_image_scale_method_set(im, images_scale_type[v].scale_type);
    fprintf(stderr, "Set %d[%s] and got %d\n",
-   images_scale_type[v].scale_type, images_scale_type[v].name, efl_gfx_image_scale_type_get(im));
+   images_scale_type[v].scale_type, images_scale_type[v].name, efl_gfx_image_scale_method_get(im));
 }
 
 void
@@ -232,12 +234,13 @@ test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, 
 static void
 _download_start_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win = data, *txt;
+   Evas_Object *win = data, *txt, *im;
    const char *url = NULL;
    char buf[4096] = {0};
 
    txt = evas_object_data_get(win, "txt");
-   elm_image_file_get(txt, &url, NULL);
+   im = evas_object_data_get(win, "im");
+   elm_image_file_get(im, &url, NULL);
    snprintf(buf, sizeof(buf) - 1, "Remote image download started:\n%s", url);
    elm_object_text_set(txt, buf);
    printf("%s\n", buf);
@@ -677,7 +680,7 @@ test_image_prescale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    hbox = elm_box_add(win);
    elm_box_horizontal_set(hbox, EINA_TRUE);
-   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    rd = elm_radio_add(win);

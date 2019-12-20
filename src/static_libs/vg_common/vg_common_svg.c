@@ -183,6 +183,8 @@ _eet_for_style_property(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "r", r, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "g", g, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "b", b, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "opacity", opacity, EET_T_INT);
+
    // for fill
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.flags", fill.flags, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.paint.r", fill.paint.r, EET_T_INT);
@@ -439,6 +441,7 @@ vg_common_svg_node_eet(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_vg_node, Svg_Node, "id", id, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_vg_node, Svg_Node, "style", style, _eet_style_property_node);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_vg_node, Svg_Node, "transform", transform, _eet_matrix3_node);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_vg_node, Svg_Node, "display", display, EET_T_INT);
 
    return _eet_vg_node;
 }
@@ -541,7 +544,7 @@ vg_common_svg_node_free(Svg_Node *node)
 }
 
 static Efl_VG *
-_apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_data)
+_apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_data, int fill_opacity)
 {
    Efl_VG *grad_obj = NULL;
    Efl_Gfx_Gradient_Stop *stops, *stop;
@@ -616,10 +619,18 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
              int min = (r.h > r.w) ? r.w : r.h;
              radius = sqrt(pow(min, 2) + pow(min, 2)) / sqrt(2.0);
           }
+        if (g->use_percentage)
+          {
+             g->radial->cx = g->radial->cx * r.w + r.x;
+             g->radial->cy = g->radial->cy * r.h + r.y;
+             g->radial->r = g->radial->r * radius;
+             g->radial->fx = g->radial->fx * r.w + r.x;
+             g->radial->fy = g->radial->fy * r.h + r.y;
+          }
         grad_obj = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);
-        efl_gfx_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
-        efl_gfx_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
-        efl_gfx_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
+        efl_gfx_gradient_radial_center_set(grad_obj, g->radial->cx, g->radial->cy);
+        efl_gfx_gradient_radial_radius_set(grad_obj, g->radial->r);
+        efl_gfx_gradient_radial_focal_set(grad_obj, g->radial->fx, g->radial->fy);
 
         /* in case of objectBoundingBox it need proper scaling */
         if (!g->user_space)
@@ -667,20 +678,26 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
         // not a known gradient
         return NULL;
      }
+
    // apply common prperty
    efl_gfx_gradient_spread_set(grad_obj, g->spread);
+
    // update the stops
    stop_count = eina_list_count(g->stops);
    if (stop_count)
      {
+        double opacity;
+        double fopacity = ((double) fill_opacity) / 255;   //fill opacity if any exists.
         stops = calloc(stop_count, sizeof(Efl_Gfx_Gradient_Stop));
         i = 0;
         EINA_LIST_FOREACH(g->stops, l, stop)
           {
-             stops[i].r = stop->r;
-             stops[i].g = stop->g;
-             stops[i].b = stop->b;
-             stops[i].a = stop->a;
+             // Use premultiplied color
+             opacity = ((double) stop->a / 255) * fopacity;
+             stops[i].r = (stop->r * opacity);
+             stops[i].g = (stop->g * opacity);
+             stops[i].b = (stop->b * opacity);
+             stops[i].a = (stop->a * fopacity);
              stops[i].offset = stop->offset;
              i++;
           }
@@ -697,17 +714,15 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    Svg_Style_Property *style = node->style;
 
    // update the vg name
-   if (node->id)
-     efl_name_set(vg, node->id);
+   if (node->id) efl_name_set(vg, node->id);
 
    // apply the transformation
-   if (node->transform)
-     efl_canvas_vg_node_transformation_set(vg, node->transform);
+   if (node->transform) efl_canvas_vg_node_transformation_set(vg, node->transform);
 
-   if ((node->type == SVG_NODE_G) || (node->type == SVG_NODE_DOC)) return;
+   if (node->type != SVG_NODE_DOC && !node->display) efl_gfx_entity_visible_set(vg, EINA_FALSE);
 
-   // apply the fill style property
-   efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
+   if (node->type == SVG_NODE_DOC) return;
+
    // if fill property is NULL then do nothing
    if (style->fill.paint.none)
      {
@@ -715,26 +730,42 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
      }
    else if (style->fill.paint.gradient)
      {
-        // if the fill has gradient then apply.
-        efl_canvas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient, vg, parent, vg_data));
+        Efl_VG *gradient = _apply_gradient_property(style->fill.paint.gradient, vg, parent, vg_data, style->fill.opacity);
+        efl_canvas_vg_shape_fill_set(vg, gradient);
      }
    else if (style->fill.paint.cur_color)
      {
         // apply the current style color
-        efl_gfx_color_set(vg, style->r, style->g,
-                          style->b, style->fill.opacity);
+        float fa = ((float) style->fill.opacity / 255);
+        efl_gfx_color_set(vg, ((float) style->r) * fa, ((float) style->g) * fa, ((float) style->b) * fa,
+                          style->fill.opacity);
      }
    else
      {
         // apply the fill color
-        efl_gfx_color_set(vg, style->fill.paint.r, style->fill.paint.g,
-                          style->fill.paint.b, style->fill.opacity);
+        float fa = ((float) style->fill.opacity / 255);
+        efl_gfx_color_set(vg, ((float) style->fill.paint.r) * fa, ((float) style->fill.paint.g) * fa,
+                          ((float) style->fill.paint.b) * fa, style->fill.opacity);
      }
 
+   //apply node opacity
+   if (style->opacity < 255)
+     {
+        int r, g, b, a;
+        efl_gfx_color_get(vg, &r, &g, &b, &a);
+        float fa = ((float) style->opacity / 255);
+        efl_gfx_color_set(vg, ((float) r) * fa, ((float) g) * fa, ((float) b) * fa, ((float) a) * fa);
+     }
+
+   if (node->type == SVG_NODE_G)  return;
+
+   // apply the fill style property
+   efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
    efl_gfx_shape_stroke_width_set(vg, style->stroke.width);
    efl_gfx_shape_stroke_cap_set(vg, style->stroke.cap);
    efl_gfx_shape_stroke_join_set(vg, style->stroke.join);
    efl_gfx_shape_stroke_scale_set(vg, style->stroke.scale);
+
    // if stroke property is NULL then do nothing
    if (style->stroke.paint.none)
      {
@@ -743,7 +774,8 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    else if (style->stroke.paint.gradient)
      {
         // if the fill has gradient then apply.
-        efl_canvas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient, vg, parent, vg_data));
+        Efl_VG *gradient = _apply_gradient_property(style->stroke.paint.gradient, vg, parent, vg_data, 255);
+        efl_canvas_vg_shape_stroke_fill_set(vg, gradient);
      }
    else if (style->stroke.paint.url)
      {
@@ -761,6 +793,15 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
         // apply the stroke color
         efl_gfx_shape_stroke_color_set(vg, style->stroke.paint.r, style->stroke.paint.g,
                                        style->stroke.paint.b, style->stroke.opacity);
+     }
+
+   //apply node opacity to stroke color
+   if (style->opacity < 255)
+     {
+        int r, g, b, a;
+        efl_gfx_shape_stroke_color_get(vg, &r, &g, &b, &a);
+        float fa = ((float) style->opacity / 255);
+        efl_gfx_shape_stroke_color_set(vg, ((float) r) * fa, ((float) g) * fa, ((float) b) * fa, ((float) a) * fa);
      }
 }
 
@@ -906,6 +947,7 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
    // default line join is miter
    node->style->stroke.join = EFL_GFX_JOIN_MITER;
    node->style->stroke.scale = 1.0;
+   node->style->opacity = 255;
 
    node->parent = parent;
    node->type = type;
@@ -943,7 +985,6 @@ _create_gradient_node(Efl_VG *vg)
         if (!grad->linear) goto oom_error;
         efl_gfx_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
         efl_gfx_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
-        grad->use_percentage = EINA_FALSE;
      }
    else
      {
@@ -954,6 +995,7 @@ _create_gradient_node(Efl_VG *vg)
         efl_gfx_gradient_radial_focal_get(vg, &grad->radial->fx, &grad->radial->fy);
         grad->radial->r = efl_gfx_gradient_radial_radius_get(vg);
      }
+   grad->use_percentage = EINA_FALSE;
 
    return grad;
 
@@ -980,6 +1022,8 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
      {
         node->id = eina_stringshare_add(id);
      }
+
+   node->display = efl_gfx_entity_visible_get(vg);
 
    if (node->type == SVG_NODE_G) return;
 

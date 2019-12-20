@@ -3,10 +3,15 @@
 <h1 id="{{id}}" data-uid="{{uid}}" class="text-break">{{>partials/title}}</h1>
 <div class="markdown level0 summary">{{{summary}}}</div>
 <div class="markdown level0 conceptual">{{{conceptual}}}</div>
+{{#remarks}}
+<div class="remarks">
+<h5 id="{{id}}_remarks"><strong>{{__global.remarks}}</strong></h5>
+{{{remarks}}}
+</div>
+{{/remarks}}
 {{#inClass}}
 <div class="inheritance">
-  <h5><a href="#collapsible-inheritance" class="expander collapsed" data-toggle="collapse">{{__global.inheritance}}</a></h5>
-  <div id="collapsible-inheritance" class="collapse">
+  <h5>{{__global.inheritance}}</h5>
   {{#inheritance}}
   <div class="level{{index}}"><xref uid="{{uid}}" text="{{fullName.0.value}}"/></div>
   {{/inheritance}}
@@ -14,7 +19,6 @@
   {{#derivedClasses}}
     <div class="level{{index}}"><xref uid="{{uid}}" text="{{fullName.0.value}}"/></div>
   {{/derivedClasses}}
-  </div>
 </div>
 {{/inClass}}
 
@@ -84,10 +88,6 @@
   </tbody>
 </table>
 {{/syntax.typeParameters.0}}
-{{#remarks}}
-<h5 id="{{id}}_remarks"><strong>{{__global.remarks}}</strong></h5>
-<div class="markdown level0 remarks">{{{remarks}}}</div>
-{{/remarks}}
 {{#example.0}}
 <h5 id="{{id}}_examples"><strong>{{__global.examples}}</strong></h5>
 {{/example.0}}

@@ -1,16 +1,18 @@
-interface @beta Efl.Pack_Linear extends Efl.Pack
+interface Efl.Pack_Linear extends Efl.Pack
 {
    [[Common interface for objects (containers) with multiple contents
      (sub-objects) which can be added and removed at runtime in a linear fashion.
 
      This means the sub-objects are internally organized in an ordered list.
+
+     @since 1.23
    ]]
    c_prefix: efl_pack;
    methods {
       pack_begin {
          [[Prepend an object at the beginning of this container.
 
-           This is the same as @.pack_at($subobj, 0).
+           This is the same as @.pack_at with a $[0] index.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
@@ -24,7 +26,7 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
       pack_end {
          [[Append object at the end of this container.
 
-           This is the same as @.pack_at($subobj, -1).
+           This is the same as @.pack_at with a $[-1] index.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
@@ -36,29 +38,35 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
          return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_before {
-         [[Prepend an object before an existing sub-object.
+         [[Prepend an object before the $existing sub-object.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
+
+           If $existing is $NULL this method behaves like @.pack_begin.
          ]]
          params {
             @in subobj: Efl.Gfx.Entity; [[Object to pack before $existing.]]
-            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object.]]
+            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object. Must already belong to the container
+                                                   or be $NULL.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
       }
       pack_after {
-         [[Append an object after an existing sub-object.
+         [[Append an object after the $existing sub-object.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
+
+           If $existing is $NULL this method behaves like @.pack_end.
          ]]
          params {
             @in subobj: Efl.Gfx.Entity; [[Object to pack after $existing.]]
-            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object.]]
+            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object. Must already belong to the container
+                                                   or be $NULL.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
@@ -66,14 +74,14 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
       pack_at {
           [[Inserts $subobj BEFORE the sub-object at position $index.
 
-            $index ranges from -$count to $count-1, where positive numbers go
-            from first sub-object (0) to last ($count-1), and negative numbers go
-            from last sub-object (-1) to first (-$count). $count is
+            $index ranges from $[-count] to $[count-1], where positive numbers go
+            from first sub-object ($[0]) to last ($[count-1]), and negative numbers go
+            from last sub-object ($[-1]) to first ($[-count]). $count is
             the number of sub-objects currently in the container as returned by
             @Efl.Container.content_count.
 
-            If $index is less than -$count, it will trigger @.pack_begin($subobj)
-            whereas $index greater than $count-1 will trigger @.pack_end($subobj).
+            If $index is less than $[-count], it will trigger @.pack_begin
+            whereas $index greater than $[count-1] will trigger @.pack_end.
 
             When this container is deleted, it will request deletion of the
             given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
@@ -82,7 +90,7 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
           params {
              @in subobj: Efl.Gfx.Entity; [[Object to pack.]]
              @in index:  int; [[Index of existing sub-object to insert BEFORE.
-                                Valid range is -$count to ($count-1).
+                                Valid range is $[-count] to $[count-1]).
                               ]]
           }
           return: bool; [[$false if $subobj could not be packed.]]
@@ -90,18 +98,18 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
       pack_content_get {
          [[Sub-object at a given $index in this container.
 
-           $index ranges from -$count to $count-1, where positive numbers go
-           from first sub-object (0) to last ($count-1), and negative numbers go
-           from last sub-object (-1) to first (-$count). $count is
+           $index ranges from $[-count] to $[count-1], where positive numbers go
+           from first sub-object ($[0]) to last ($[count-1]), and negative numbers go
+           from last sub-object ($[-1]) to first ($[-count]). $count is
            the number of sub-objects currently in the container as returned by
            @Efl.Container.content_count.
 
-           If $index is less than -$count, it will return the first sub-object
-           whereas $index greater than $count-1 will return the last sub-object.
+           If $index is less than $[-count], it will return the first sub-object
+           whereas $index greater than $[count-1] will return the last sub-object.
          ]]
          params {
             @in index: int; [[Index of the existing sub-object to retrieve.
-                              Valid range is -$count to ($count-1).
+                              Valid range is $[-count] to $[count-1].
                             ]]
          }
          return: Efl.Gfx.Entity; [[The sub-object contained at the given $index.]]
@@ -112,15 +120,15 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
             @in subobj: const(Efl.Gfx.Entity); [[An existing sub-object in this container.]]
          }
          return: int(-1); [[-1 in case $subobj is not found,
-                            or the index of $subobj in the range 0 to ($count-1).
+                            or the index of $subobj in the range $[0] to $[count-1].
                           ]]
       }
       pack_unpack_at {
          [[Pop out (remove) the sub-object at the specified $index.
 
-           $index ranges from -$count to $count-1, where positive numbers go
-           from first sub-object (0) to last ($count-1), and negative numbers go
-           from last sub-object (-1) to first (-$count). $count is
+           $index ranges from $[-count] to $[count-1], where positive numbers go
+           from first sub-object ($[0]) to last ($[count-1]), and negative numbers go
+           from last sub-object ($[-1]) to first ($[-count]). $count is
            the number of sub-objects currently in the container as returned by
            @Efl.Container.content_count.
 
@@ -129,7 +137,7 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
          ]]
          params {
             @in index: int; [[Index of the sub-object to remove.
-                              Valid range is -$count to ($count-1).
+                              Valid range is $[-count] to $[count-1].
                             ]]
          }
          return: Efl.Gfx.Entity; [[The sub-object if it could be removed.]]

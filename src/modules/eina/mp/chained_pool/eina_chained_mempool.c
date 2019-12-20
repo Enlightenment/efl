@@ -79,7 +79,7 @@ struct _Chained_Pool
    EINA_INLIST;
    EINA_RBTREE;
    Eina_Trash *base;
-   int usage;
+   unsigned int usage;
 
    unsigned char *last;
    unsigned char *limit;
@@ -91,11 +91,11 @@ struct _Chained_Mempool
    Eina_Inlist *first;
    Eina_Rbtree *root;
    const char *name;
-   int item_alloc;
-   int pool_size;
-   int alloc_size;
-   int group_size;
-   int usage;
+   unsigned int item_alloc;
+   unsigned int pool_size;
+   unsigned int alloc_size;
+   unsigned int group_size;
+   unsigned int usage;
    Chained_Pool* first_fill; //All allocation will happen in this chain,unless it is filled
 #ifdef EINA_DEBUG_MALLOC
    int minimal_size;
@@ -182,16 +182,10 @@ _eina_chained_mempool_usage_cmp(const Eina_Inlist *l1, const Eina_Inlist *l2)
 static void *
 _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
 {
-  void *mem;
+  void *mem = NULL;
 
-  if (p->last)
-    {
-      mem = p->last;
-      p->last += pool->item_alloc;
-      if (p->last >= p->limit)
-      p->last = NULL;
-    }
-  else
+  // Let's try to first recycle memory
+  if (p->base)
     {
 #ifndef NVALGRIND
       VALGRIND_MAKE_MEM_DEFINED(p->base, pool->item_alloc);
@@ -199,11 +193,18 @@ _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
       // Request a free pointer
       mem = eina_trash_pop(&p->base);
     }
-  
+  else if (p->last)
+    {
+      mem = p->last;
+      p->last += pool->item_alloc;
+      if (p->last >= p->limit)
+        p->last = NULL;
+    }
+
   // move to end - it just filled up
   if (!p->base && !p->last)
     pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
-  
+
   p->usage++;
   pool->usage++;
 
@@ -306,7 +307,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 
    // we have reached the end of the list - no free pools
    if (!p)
-     {
+      {
        //new chain created ,point it to be the first_fill chain
         pool->first_fill = _eina_chained_mp_pool_new(pool);
         if (!pool->first_fill)
@@ -370,6 +371,56 @@ eina_chained_mempool_free(void *data, void *ptr)
    return;
 }
 
+static void *
+eina_chained_mempool_malloc_near(void *data,
+                                 void *after, void *before,
+                                 unsigned int size EINA_UNUSED)
+{
+   Chained_Mempool *pool = data;
+   Chained_Pool *p = NULL;
+   void *mem = NULL;
+
+   if (!eina_spinlock_take(&pool->mutex))
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
+#endif
+     }
+
+   if (after)
+     {
+        Eina_Rbtree *r = eina_rbtree_inline_lookup(pool->root, after,
+                                                   0, _eina_chained_mp_pool_key_cmp, NULL);
+
+        if (r)
+          {
+             p = EINA_RBTREE_CONTAINER_GET(r, Chained_Pool);
+
+             if (!p->base && !p->last)
+               p = NULL;
+          }
+     }
+
+   if (before && p == NULL)
+     {
+        Eina_Rbtree *r = eina_rbtree_inline_lookup(pool->root, before,
+                                                   0, _eina_chained_mp_pool_key_cmp, NULL);
+        if (r)
+          {
+             p = EINA_RBTREE_CONTAINER_GET(r, Chained_Pool);
+             if (!p->base && !p->last)
+               p = NULL;
+          }
+     }
+
+   if (p) mem = _eina_chained_mempool_alloc_in(pool, p);
+
+   eina_spinlock_release(&pool->mutex);
+
+   if (!mem) return eina_chained_mempool_malloc(pool, size);
+   return mem;
+}
+
 static Eina_Bool
 eina_chained_mempool_from(void *data, void *ptr)
 {
@@ -411,6 +462,15 @@ eina_chained_mempool_from(void *data, void *ptr)
         goto end;
      }
 
+   // is the pointer in the allocated zone of the mempool
+   if (p->last != NULL && ((unsigned char *)ptr >= p->last))
+     {
+#ifdef DEBUG
+        ERR("%p has not been allocated yet from %p pool of %p '%s' Chained_Mempool.", ptr, p, pool, pool->name);
+#endif
+        goto end;
+     }
+
    // is it really a pointer returned by malloc
    if ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc)
      {
@@ -442,6 +502,85 @@ eina_chained_mempool_from(void *data, void *ptr)
  end:
    eina_spinlock_release(&pool->mutex);
    return ret;
+}
+
+typedef struct _Eina_Iterator_Chained_Mempool Eina_Iterator_Chained_Mempool;
+struct _Eina_Iterator_Chained_Mempool
+{
+   Eina_Iterator iterator;
+
+   Eina_Iterator *walker;
+   Chained_Pool *current;
+   Chained_Mempool *pool;
+
+   unsigned int offset;
+};
+
+static Eina_Bool
+eina_mempool_iterator_next(Eina_Iterator_Chained_Mempool *it, void **data)
+{
+   if (!it->current)
+     {
+        if (!eina_iterator_next(it->walker, (void**) &it->current))
+          return EINA_FALSE;
+        if (!it->current) return EINA_FALSE;
+     }
+
+ retry:
+   if (it->offset < it->pool->group_size)
+     {
+        unsigned char *ptr = (unsigned char *) (it->current + 1);
+
+        ptr += it->offset;
+        it->offset += it->pool->item_alloc;
+
+        if (!eina_chained_mempool_from(it->pool, ptr)) goto retry;
+
+        if (data) *data = (void *) ptr;
+        return EINA_TRUE;
+     }
+
+   if (!eina_iterator_next(it->walker, (void**) &it->current))
+     return EINA_FALSE;
+
+   it->offset = 0;
+   goto retry;
+}
+
+static Chained_Mempool *
+eina_mempool_iterator_get_container(Eina_Iterator_Chained_Mempool *it)
+{
+   return it->pool;
+}
+
+static void
+eina_mempool_iterator_free(Eina_Iterator_Chained_Mempool *it)
+{
+   eina_iterator_free(it->walker);
+   free(it);
+}
+
+static Eina_Iterator *
+eina_chained_mempool_iterator_new(void *data)
+{
+   Eina_Iterator_Chained_Mempool *it;
+   Chained_Mempool *pool = data;
+
+   it = calloc(1, sizeof (Eina_Iterator_Chained_Mempool));
+   if (!it) return NULL;
+
+   it->walker = eina_inlist_iterator_new(pool->first);
+   it->pool = pool;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_mempool_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+     eina_mempool_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_mempool_iterator_free);
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   return &it->iterator;
 }
 
 static void
@@ -636,7 +775,9 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
    NULL,
    &eina_chained_mempool_shutdown,
    &eina_chained_mempool_repack,
-   &eina_chained_mempool_from
+   &eina_chained_mempool_from,
+   &eina_chained_mempool_iterator_new,
+   &eina_chained_mempool_malloc_near
 };
 
 Eina_Bool chained_init(void)

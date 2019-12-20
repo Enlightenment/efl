@@ -31,12 +31,15 @@ eldbus_introspection_parse(const char *xml)
    Eldbus_Introspection_Node *node;
    Eina_Simple_XML_Node_Root *xml_root;
    Eina_Simple_XML_Node *xml_node;
+   Eina_Inlist *last = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(xml, NULL);
 
    node = NULL;
    xml_root = eina_simple_xml_node_load(xml, strlen(xml), EINA_TRUE);
-   xml_node = (Eina_Simple_XML_Node*)eina_inlist_last(xml_root->children);
+   if (xml_root && xml_root->children) last = xml_root->children->last;
+   xml_node = (Eina_Simple_XML_Node *)last;
+   if (!xml_node) goto free_root;
    EINA_SAFETY_ON_FALSE_GOTO(EINA_SIMPLE_XML_NODE_TAG == xml_node->type, free_root);
 
    node = (Eldbus_Introspection_Node*)_eldbus_introspection_parse_node((Eina_Simple_XML_Node_Tag*)xml_node);

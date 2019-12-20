@@ -35,20 +35,17 @@ EFL_END_TEST
 
 EFL_START_TEST(pack_padding)
 {
-#define TUPLE_CHECK(H, V, rh, rv, S, rs) \
+#define TUPLE_CHECK(H, V, rh, rv) \
   do { \
-   double v, h; \
-   Eina_Bool r; \
-   efl_gfx_arrangement_content_padding_set(widget, H, V, S); \
-   efl_gfx_arrangement_content_padding_get(widget, &h, &v, &r); \
+   unsigned int v, h; \
+   efl_gfx_arrangement_content_padding_set(widget, H, V); \
+   efl_gfx_arrangement_content_padding_get(widget, &h, &v); \
    ck_assert(v == rv); \
    ck_assert(h == rh); \
-   ck_assert_int_eq(r, S); \
   } while(0);
 
-  TUPLE_CHECK( 0.0, 0.0, 0.0, 0.0, EINA_TRUE, EINA_TRUE);
-  TUPLE_CHECK( -1.0, -123.0, 0.0, 0.0, EINA_FALSE, EINA_FALSE);
-  TUPLE_CHECK( -1.0,  123.0, 0.0, 123.0, EINA_FALSE, EINA_FALSE);
+  TUPLE_CHECK( 0, 0, 0, 0);
+  TUPLE_CHECK( 1,  123, 1, 123);
 #undef TUPLE_CHECK
 }
 EFL_END_TEST

@@ -66,7 +66,7 @@ _already_added(Efl_Io_Model_Data *pd, const char *path)
 
    EINA_LIST_FOREACH(pd->files, node, mi)
      {
-        if (!strcmp(mi->path, path))
+        if (eina_streq(mi->path, path))
           return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -99,7 +99,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    obj = pd->self;
 
    path = ecore_file_dir_get(ev->filename);
-   if (strcmp(pd->path, path) != 0)
+   if (!eina_streq(pd->path, path))
      goto end;
 
    spath = eina_stringshare_add(ev->filename);
@@ -154,37 +154,25 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
+static void
+_model_child_remove(Efl_Io_Model_Data *pd, Eina_Stringshare *path)
 {
    Efl_Io_Model_Info *mi;
    Eina_List *l;
-   Eio_Monitor_Event *ev = event;
-   Efl_Io_Model *obj;
-   Efl_Io_Model_Data *pd = data;
-   Eina_Stringshare *spath = NULL;
+   Efl_Io_Model *obj = pd->self;
    Efl_Model_Children_Event cevt = { 0 };
    unsigned int i = 0;
-
-   if (type != EIO_MONITOR_DIRECTORY_DELETED && type != EIO_MONITOR_FILE_DELETED)
-     return EINA_TRUE;
-
-   if (ev->monitor != pd->monitor) return EINA_TRUE;
-
-   obj = pd->self;
-
-   spath = eina_stringshare_add(ev->filename);
 
    // FIXME: Linear search is pretty slow
    EINA_LIST_FOREACH(pd->files, l, mi)
      {
-        if (mi->path == spath)
+        if (mi->path == path)
           break ;
         ++i;
      }
 
    if (i >= eina_list_count(pd->files))
-     goto end;
+     return;
 
    cevt.index = i;
    cevt.child = mi->object;
@@ -197,8 +185,22 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
 
    // This will only trigger the data destruction if no object is referencing them.
    _efl_io_model_info_free(mi, EINA_FALSE);
+}
 
- end:
+static Eina_Bool
+_efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
+{
+   Eio_Monitor_Event *ev = event;
+   Efl_Io_Model_Data *pd = data;
+   Eina_Stringshare *spath = NULL;
+
+   if (type != EIO_MONITOR_DIRECTORY_DELETED && type != EIO_MONITOR_FILE_DELETED)
+     return EINA_TRUE;
+
+   if (ev->monitor != pd->monitor) return EINA_TRUE;
+
+   spath = eina_stringshare_add(ev->filename);
+   _model_child_remove(pd, spath);
    eina_stringshare_del(spath);
 
    return EINA_TRUE;
@@ -221,7 +223,12 @@ static void
 _eio_done_unlink_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    Efl_Io_Model *child = data;
+   Efl_Io_Model_Data *child_pd, *pd;
 
+   child_pd = efl_data_scope_get(child, MY_CLASS);
+   pd = efl_data_scope_get(efl_parent_get(child), MY_CLASS);
+
+   _model_child_remove(pd, child_pd->path);
    _eio_del_cleanup(child);
 }
 
@@ -274,8 +281,10 @@ _efl_io_model_info_type_get(const Eina_File_Direct_Info *info, const Eina_Stat *
           return EINA_FILE_BLK;
         else if (S_ISFIFO(st->mode))
           return EINA_FILE_FIFO;
+#ifndef _WIN32
         else if (S_ISLNK(st->mode))
           return EINA_FILE_LNK;
+#endif
 #ifdef S_ISSOCK
         else if (S_ISSOCK(st->mode))
           return EINA_FILE_SOCK;
@@ -621,6 +630,62 @@ static struct {
   PP(mime_type)
 };
 
+typedef struct _Efl_Io_Model_Iterator Efl_Io_Model_Iterator;
+struct _Efl_Io_Model_Iterator
+{
+   Eina_Iterator iterator;
+   unsigned int i;
+   unsigned int end;
+};
+
+static Eina_Bool
+_efl_io_model_iterator_next(Efl_Io_Model_Iterator *it, void **data)
+{
+   const char **name = (const char **)data;
+
+   if (it->i >= it->end)
+     return EINA_FALSE;
+
+   *name = properties[it->i].name;
+   it->i++;
+
+   return EINA_TRUE;
+}
+
+static void*
+_efl_io_model_iterator_get_container(Efl_Io_Model_Iterator *it EINA_UNUSED)
+{
+   return &properties;
+}
+
+static void
+_efl_io_model_iterator_free(Efl_Io_Model_Iterator *it)
+{
+   free(it);
+}
+
+Eina_Iterator *
+_efl_io_model_properties_iterator_new(void)
+{
+   Efl_Io_Model_Iterator *it;
+
+   it = calloc(1, sizeof (Efl_Io_Model_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->i = 0;
+   it->end = EINA_C_ARRAY_LENGTH(properties);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_io_model_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+      _efl_io_model_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_io_model_iterator_free);
+
+   return &it->iterator;
+}
+
 /**
  * Interfaces impl.
  */
@@ -628,7 +693,7 @@ static Eina_Iterator *
 _efl_io_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                        Efl_Io_Model_Data *pd EINA_UNUSED)
 {
-   return EINA_C_ARRAY_ITERATOR_NEW(properties);
+   return _efl_io_model_properties_iterator_new();
 }
 
 static Eina_Value *
@@ -640,7 +705,7 @@ _efl_io_model_efl_model_property_get(const Eo *obj, Efl_Io_Model_Data *pd, const
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(properties); ++i)
      if (property == properties[i].name ||
-         !strcmp(property, properties[i].name))
+         eina_streq(property, properties[i].name))
        return properties[i].cb(obj, pd);
 
    return efl_model_property_get(efl_super(obj, EFL_IO_MODEL_CLASS), property);
@@ -660,7 +725,7 @@ _efl_io_model_efl_model_property_set(Eo *obj,
    if (!property) goto on_error;
 
    err = EFL_MODEL_ERROR_NOT_SUPPORTED;
-   if (strcmp(property, "path") != 0) goto on_error;
+   if (!eina_streq(property, "path")) goto on_error;
 
    if (finalized && pd->request.move) goto on_error;
 
@@ -697,6 +762,12 @@ _efl_io_model_efl_model_property_set(Eo *obj,
    return efl_loop_future_rejected(obj, err);
 }
 
+static Eina_Bool
+_monitor_has_context(Efl_Io_Model_Data *pd, const char *path)
+{
+   return eio_monitor_has_context(pd->monitor, path);
+}
+
 static void
 _efl_io_model_children_list(void *data, Eina_Array *entries)
 {
@@ -714,6 +785,7 @@ _efl_io_model_children_list(void *data, Eina_Array *entries)
      {
         Efl_Io_Model_Info *mi;
 
+        if (!_monitor_has_context(pd, info->path)) continue;
         if (_already_added(pd, info->path)) continue;
 
         if (pd->filter.cb)
@@ -1037,7 +1109,7 @@ _efl_io_model_efl_object_invalidate(Eo *obj , Efl_Io_Model_Data *priv)
    _efl_io_model_efl_model_monitor_del(priv);
 
    // Unlink the object from the parent
-   if (priv->info)
+   if (priv->info && priv->info->object)
      {
         efl_wref_del(priv->info->object, &priv->info->object);
         priv->info->object = NULL;

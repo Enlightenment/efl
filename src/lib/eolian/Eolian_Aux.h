@@ -134,7 +134,7 @@ EAPI Eina_List *eolian_aux_function_all_implements_get(const Eolian_Function *fu
 EAPI const Eolian_Implement *eolian_aux_implement_parent_get(const Eolian_Implement *impl);
 
 /**
- * @brief Get documentation for an implementaiton.
+ * @brief Get documentation for an implementation.
  *
  * This first checks if the implementation has documentation for the given
  * type. If so, it is returned; if not, parent implementations as specified

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include "Eo.h"
 #include "Eina.h"
 #include "Ecore.h"
@@ -23,44 +38,39 @@
 # endif
 #endif /* ! _WIN32 */
 
-typedef void (*Efl_Mono_Free_GCHandle_Cb)(void *gchandle);
-typedef void (*Efl_Mono_Remove_Events_Cb)(Eo *obj, void *gchandle);
 
-static Efl_Mono_Free_GCHandle_Cb _efl_mono_free_gchandle_call = NULL;
-static Efl_Mono_Remove_Events_Cb _efl_mono_remove_events_call = NULL;
-
-EAPI void efl_mono_gchandle_callbacks_set(Efl_Mono_Free_GCHandle_Cb free_gchandle_cb, Efl_Mono_Remove_Events_Cb remove_events_cb)
+EAPI const char *efl_mono_wrapper_supervisor_key_get()
 {
-    _efl_mono_free_gchandle_call = free_gchandle_cb;
-    _efl_mono_remove_events_call = remove_events_cb;
+   return "__c#_wrapper_supervisor";
 }
 
-EAPI void efl_mono_native_dispose(Eo *obj, void* gchandle)
+EAPI void *efl_mono_wrapper_supervisor_get(Eo *eo)
 {
-   if (gchandle) _efl_mono_remove_events_call(obj, gchandle);
-   efl_unref(obj);
-   if (gchandle) _efl_mono_free_gchandle_call(gchandle);
+   return efl_key_data_get(eo, efl_mono_wrapper_supervisor_key_get());
 }
 
-typedef struct _Efl_Mono_Native_Dispose_Data
+EAPI void efl_mono_wrapper_supervisor_set(Eo *eo, void *ws)
 {
-   Eo *obj;
-   void *gchandle;
-} Efl_Mono_Native_Dispose_Data;
-
-static void _efl_mono_native_dispose_cb(void *data)
-{
-   Efl_Mono_Native_Dispose_Data *dd = data;
-   efl_mono_native_dispose(dd->obj, dd->gchandle);
-   free(dd);
+   efl_key_data_set(eo, efl_mono_wrapper_supervisor_key_get(), ws);
 }
 
-EAPI void efl_mono_thread_safe_native_dispose(Eo *obj, void* gchandle)
+typedef void (*Efl_Mono_Free_Wrapper_Supervisor_Cb)(Eo *obj);
+
+static Efl_Mono_Free_Wrapper_Supervisor_Cb _efl_mono_free_wrapper_supervisor_call = NULL;
+
+EAPI void efl_mono_wrapper_supervisor_callbacks_set(Efl_Mono_Free_Wrapper_Supervisor_Cb free_wrapper_supervisor_cb)
 {
-   Efl_Mono_Native_Dispose_Data *dd = malloc(sizeof(Efl_Mono_Native_Dispose_Data));
-   dd->obj = obj;
-   dd->gchandle = gchandle;
-   ecore_main_loop_thread_safe_call_async(_efl_mono_native_dispose_cb, dd);
+   _efl_mono_free_wrapper_supervisor_call = free_wrapper_supervisor_cb;
+}
+
+EAPI void efl_mono_native_dispose(Eo *obj)
+{
+   _efl_mono_free_wrapper_supervisor_call(obj);
+}
+
+EAPI void efl_mono_thread_safe_native_dispose(Eo *obj)
+{
+   ecore_main_loop_thread_safe_call_async((Ecore_Cb)efl_mono_native_dispose, obj);
 }
 
 static void _efl_mono_unref_cb(void *obj)
@@ -130,6 +140,12 @@ EAPI void efl_mono_native_free_ref(void **ptr)
    free(*ptr);
 }
 
+EAPI void efl_mono_native_stringshare_del_ref(void **str)
+{
+   if (!str) return;
+   eina_stringshare_del(*str);
+}
+
 EAPI void *efl_mono_native_alloc_copy(const void *val, unsigned int size)
 {
     if (!val) return NULL;
@@ -166,9 +182,35 @@ EAPI Eina_Free_Cb efl_mono_native_free_addr_get()
     return (Eina_Free_Cb)free;
 }
 
+EAPI Eina_Free_Cb efl_mono_native_stringshare_del_addr_get()
+{
+    return (Eina_Free_Cb)eina_stringshare_del;
+}
+
 EAPI Eina_Free_Cb efl_mono_native_efl_unref_addr_get()
 {
     return (Eina_Free_Cb)efl_mono_thread_safe_efl_unref;
+}
+
+static Eo *_efl_mono_avoid_top_level_constructor_cb(void *data EINA_UNUSED, Eo *obj)
+{
+   return efl_constructor(efl_super(obj, efl_class_get(obj)));
+}
+
+EAPI Efl_Substitute_Ctor_Cb efl_mono_avoid_top_level_constructor_callback_addr_get()
+{
+   return &_efl_mono_avoid_top_level_constructor_cb;
+}
+
+// Environment wrappers //
+EAPI const char *efl_mono_native_getenv(const char *name)
+{
+   return getenv(name);
+}
+
+EAPI Eina_Error efl_mono_native_setenv(const char *name, const char *value, int overwrite)
+{
+   return setenv(name, value, overwrite);
 }
 
 // Iterator Wrapper //
@@ -405,8 +447,14 @@ EAPI const Eina_Value_Type *type_array() {
 EAPI const Eina_Value_Type *type_list() {
    return EINA_VALUE_TYPE_LIST;
 }
+EAPI const Eina_Value_Type *type_hash() {
+   return EINA_VALUE_TYPE_HASH;
+}
 EAPI const Eina_Value_Type *type_error() {
    return EINA_VALUE_TYPE_ERROR;
+}
+EAPI const Eina_Value_Type *type_object() {
+   return EINA_VALUE_TYPE_OBJECT;
 }
 
 EAPI const Eina_Value_Type *type_optional() {

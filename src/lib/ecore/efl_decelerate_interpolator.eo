@@ -1,19 +1,25 @@
-class @beta Efl.Decelerate_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Decelerate_Interpolator extends Efl.Object implements Efl.Interpolator
 {
-   [[Efl decelerate interpolator class
+   [[Decelerated interpolator. It starts fast and decelerates, stopping smoothly when
+     it reaches $[1.0].
 
-     output = sin(input * Pi / 2);
+     Internally it uses the second half of a sinus rise (from 0.5 to 1.0) and the steepness
+     can be customized through the @.slope property.
+
+     @since 1.24
    ]]
    data: Efl_Decelerate_Interpolator_Data;
    methods {
-      @property factor {
-         [[Factor property]]
+      @property slope {
+         [[Customize the deceleration effect.]]
          set {
          }
          get {
          }
          values {
-            factor: double; [[Factor of the interpolation function.]]
+            slope: double; [[How steep is the effect. $[0] performs a linear interpolation,
+                             $[1] corresponds to a sinus function and higher numbers produce
+                             an increasingly steep effect.]]
          }
       }
    }

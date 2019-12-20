@@ -4,18 +4,9 @@
 
 #include <stdlib.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
+#include "evil_private.h"
 
 #include <psapi.h> /*  EnumProcessModules(Ex) */
-
-#include "evil_macro.h"
-#include "evil_util.h"
-#include "evil_dlfcn.h"
-#include "evil_private.h"
 
 
 static char *_dl_err = NULL;

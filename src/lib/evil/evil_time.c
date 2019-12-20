@@ -7,9 +7,6 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "evil_macro.h"
-#include "evil_time.h"
-#include "evil_macro_wrapper.h"
 #include "evil_private.h"
 
 /*

@@ -109,11 +109,9 @@ efl_app_suite = executable('efl_app_suite',
 )
 
 test('ecore-suite', ecore_suite,
-  timeout : 10*60,
   env : test_env
 )
 
 test('efl-app', efl_app_suite,
-  timeout : 10*60,
   env : test_env
 )

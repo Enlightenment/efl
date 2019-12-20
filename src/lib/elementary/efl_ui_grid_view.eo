@@ -1,0 +1,17 @@
+class @beta Efl.Ui.Grid_View extends Efl.Ui.Collection_View
+{
+   [[A scrollable grid of @Efl.Ui.Item objects, typically @Efl.Ui.Grid_Default_Item objects.
+
+     Items are added asynchronously by an @Efl.Ui.Factory from the definition of an @Efl.Model.
+
+     The orientation (vertical or horizontal) of the grid can be set with
+     @Efl.Ui.Layout_Orientable.orientation.
+
+     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Index_Range.selected_ndx_iterator_new.
+   ]]
+   data: null;
+   implements {
+      Efl.Object.constructor;
+   }
+}

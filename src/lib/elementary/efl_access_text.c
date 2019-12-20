@@ -4,8 +4,6 @@
 
 #define EFL_ACCESS_TEXT_PROTECTED
 
-#include <Elementary.h>
-#include "elm_widget.h"
 #include "elm_priv.h"
 
 void

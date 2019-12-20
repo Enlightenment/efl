@@ -29,7 +29,7 @@ extern "C" {
 #include "efl_loop.eo.h"
 #include "efl_loop_consumer.eo.h"
 #include "efl_object.eo.h"
-#include "efl_orientation.eo.h"
+#include "efl_gfx_orientable.eo.h"
 #include "efl_ui_i18n.eo.h"
 #include "evas_image_eo.h"
 }
@@ -61,7 +61,7 @@ extern "C" {
 #include "efl_loop.eo.hh"
 #include "efl_loop_consumer.eo.hh"
 #include "efl_object.eo.hh"
-#include "efl_orientation.eo.hh"
+#include "efl_gfx_orientable.eo.hh"
 #include "efl_ui_i18n.eo.hh"
 #ifndef EVAS_IMAGE_FWD_GUARD
 #define EVAS_IMAGE_FWD_GUARD

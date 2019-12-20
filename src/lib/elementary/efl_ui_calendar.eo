@@ -16,7 +16,8 @@ enum @beta Efl.Ui.Calendar_Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format
+class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base
+                            implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format
 {
    [[Calendar widget
 
@@ -28,7 +29,7 @@ class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.C
       @property first_day_of_week {
          [[The first day of week to use on calendar widgets.
 
-           This is the day that will appear in the left-most column (eg. Monday
+           This is the day that will appear in the left-most column (e.g. Monday
            in France or Sunday in the US).
          ]]
          values {
@@ -39,19 +40,15 @@ class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.C
       @property date_min {
          [[Minimum date on calendar.]]
          set {
-            [[Set the minimum date on calendar.
-
-              Set the minimum date, changing the displayed month or year if needed.
-              Displayed day also to be disabled if it is smaller than minimum date.
-              If the minimum date is greater than current maximum date, the minimum
-              date would be changed to the maximum date with returning $false.
+            [[Setting the minimum date changes the displayed month or year if needed.
+              Displayed days may also be disabled if they are smaller than minimum date.
+              If the minimum date is greater than @.date_max date, the minimum
+              date will be changed to the maximum date returning $false.
             ]]
-            return: bool; [[$true, on success, $false otherwise]]
+            return: bool; [[$true on success.]]
          }
          get {
-            [[Get the minimum date.
-
-              Default value is 1 JAN,1902.
+            [[Default value is 1 JAN,1902.
             ]]
          }
          values {
@@ -61,19 +58,15 @@ class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.C
       @property date_max {
          [[Maximum date on calendar.]]
          set {
-            [[Set the maximum date on calendar.
-
-              Set the maximum date, changing the displayed month or year if needed.
-              Displayed day also to be disabled if it is bigger than maximum date.
-              If the maximum date is less than current minimum date, the maximum date
-              would be changed to the minimum date with returning $false.
+            [[Setting the maximum date changes the displayed month or year if needed.
+              Displayed days may also be disabled if they are bigger than maximum date.
+              If the maximum date is less than @.date_min, the maximum date
+              will be changed to the minimum date returning $false.
             ]]
-            return: bool; [[$true, on success, $false otherwise]]
+            return: bool; [[$true on success.]]
          }
          get {
-            [[Get the maximum date.
-
-              Default maximum year is -1.
+            [[Default maximum year is -1.
               Default maximum day and month are 31 and DEC.
 
               If the maximum year is a negative value, it will be limited depending
@@ -87,12 +80,10 @@ class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.C
       @property date {
          [[The selected date on calendar.]]
          set {
-            [[Set the selected date. If the date is greater than the maximum date,
-              the date would be changed to the maximum date with returning $false.
-              In the opposite case with the minimum date,
-              this would give the same result.
+            [[Dates will be clamped between @.date_min and @.date_max, returning $false
+              when trying to set out-of-bounds values.
             ]]
-            return: bool; [[$true, on success, $false otherwise]]
+            return: bool; [[$true on success.]]
          }
          get {
          }
@@ -111,8 +102,7 @@ class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.C
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Ui.Format.format_cb { set; }
-      Efl.Ui.Format.format_string { set; get;}
+      Efl.Ui.Format.apply_formatted_value;
    }
    events {
       changed: void; [[Emitted when the selected date in the calendar is changed]]

@@ -58,14 +58,23 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
   }
 SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED)
 SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
-SIG_FWD(LONGPRESSED, EFL_UI_EVENT_LONGPRESSED)
-SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED)
-SIG_FWD(CLICKED_DOUBLE, EFL_UI_EVENT_CLICKED_DOUBLE)
-SIG_FWD(SELECTION_PASTE, EFL_UI_EVENT_SELECTION_PASTE)
-SIG_FWD(SELECTION_COPY, EFL_UI_EVENT_SELECTION_COPY)
-SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT)
-SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED)
+SIG_FWD(SELECTION_PASTE, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE)
+SIG_FWD(SELECTION_COPY, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY)
+SIG_FWD(SELECTION_CUT, EFL_UI_TEXTBOX_EVENT_SELECTION_CUT)
 #undef SIG_FWD
+
+#define SIG_FWD(name, event)                                                      \
+  static void                                                               \
+  _##name##_fwd(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)             \
+  {                                                                         \
+     evas_object_smart_callback_call(data, event, event_info);              \
+  }
+SIG_FWD(CLICKED, "clicked")
+SIG_FWD(CLICKED_DOUBLE, "clicked,double")
+SIG_FWD(UNPRESSED, "unpressed")
+SIG_FWD(LONGPRESSED, "longpressed")
+#undef SIG_FWD
+
 
 static void
 _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
@@ -109,18 +118,6 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
 
    efl_event_callback_legacy_call
      (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->info);
-}
-
-EOLIAN static void
-_elm_fileselector_entry_elm_layout_sizing_eval(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 EOLIAN static Eina_Error
@@ -224,14 +221,19 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    efl_ui_mirrored_set(priv->button, efl_ui_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
    efl_composite_attach(obj, priv->button);
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
    elm_fileselector_expandable_set
      (priv->button, _elm_config->fileselector_expand_enable);
 
 #define SIG_FWD(name, event) \
+  evas_object_smart_callback_add(priv->button, event, _##name##_fwd, obj)
+   SIG_FWD(CLICKED, "clicked");
+   SIG_FWD(UNPRESSED, "unpressed");
+#undef SIG_FWD
+
+#define SIG_FWD(name, event) \
   efl_event_callback_add(priv->button, event, _##name##_fwd, obj)
-   SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
-   SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED);
    SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN);
 #undef SIG_FWD
 
@@ -247,14 +249,16 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    SIG_FWD(CHANGED, ELM_ENTRY_EVENT_CHANGED);
    SIG_FWD(ACTIVATED, ELM_ENTRY_EVENT_ACTIVATED);
    SIG_FWD(PRESS, ELM_ENTRY_EVENT_PRESS);
-   SIG_FWD(LONGPRESSED, EFL_UI_EVENT_LONGPRESSED);
-   SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
-   SIG_FWD(CLICKED_DOUBLE, EFL_UI_EVENT_CLICKED_DOUBLE);
-   SIG_FWD(SELECTION_PASTE, EFL_UI_EVENT_SELECTION_PASTE);
-   SIG_FWD(SELECTION_COPY, EFL_UI_EVENT_SELECTION_COPY);
-   SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT);
+   SIG_FWD(SELECTION_PASTE, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE);
+   SIG_FWD(SELECTION_COPY, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY);
+   SIG_FWD(SELECTION_CUT, EFL_UI_TEXTBOX_EVENT_SELECTION_CUT);
 #undef SIG_FWD
-
+#define SIG_FWD(name, event) \
+  evas_object_smart_callback_add(priv->entry, event, _##name##_fwd, obj)
+   SIG_FWD(LONGPRESSED, "longpressed");
+   SIG_FWD(CLICKED, "clicked");
+   SIG_FWD(CLICKED_DOUBLE, "clicked,double");
+#undef SIG_FWD
    efl_event_callback_forwarder_add(priv->entry, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, obj);
 
    if (!elm_layout_theme_set
@@ -571,7 +575,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_fileselector_entry, "button icon")
 
 #define ELM_FILESELECTOR_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_fileselector_entry), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
 #include "elm_fileselector_entry_eo.c"

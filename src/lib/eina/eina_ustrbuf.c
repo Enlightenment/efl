@@ -2,10 +2,6 @@
 # include "config.h"
 #endif
 
-#ifdef _WIN32
-#include "Evil.h"
-#endif
-
 #include "eina_strbuf_common.h"
 #include "eina_unicode.h"
 #include "eina_ustrbuf.h"

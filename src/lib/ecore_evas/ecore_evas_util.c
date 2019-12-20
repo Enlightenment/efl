@@ -11,6 +11,7 @@
 
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
+#define EFL_INTERNAL_UNSTABLE
 #include "Evas_Internal.h"
 
 static const char ASSOCIATE_KEY[] = "__Ecore_Evas_Associate";
@@ -136,7 +137,7 @@ _ecore_evas_object_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, 
    evas_object_size_hint_combined_min_get(obj, &w, &h);
    ecore_evas_size_min_set(ee, w, h);
 
-   evas_object_size_hint_max_get(obj, &w, &h);
+   evas_object_size_hint_combined_max_get(obj, &w, &h);
    if (w < 1) w = -1;
    if (h < 1) h = -1;
    ecore_evas_size_max_set(ee, w, h);

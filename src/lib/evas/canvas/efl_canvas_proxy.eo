@@ -30,7 +30,7 @@ class @beta Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
          }
          get {}
          values {
-            src: Efl.Canvas.Object @nonull; [[Source object to use for the proxy.]]
+            src: Efl.Canvas.Object; [[Source object to use for the proxy.]]
          }
       }
       @property source_clip {

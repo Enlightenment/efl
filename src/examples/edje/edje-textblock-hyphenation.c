@@ -82,7 +82,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_show(bg);
    ecore_evas_data_set(ee, "background", bg);
 
-   setlocale(LC_MESSAGES, "en_US.UTF-8");
+   setlocale(LC_ALL, "en_US.UTF-8");
 
    edje_obj = edje_object_add(evas);
 

@@ -203,6 +203,16 @@ _remove_invalid_chars(char *command)
      }
 }
 
+static void
+_clear_command(Efl_Core_Command_Line_Data *pd)
+{
+   if (!pd->command) return;
+   while (eina_array_count(pd->command) > 0)
+     eina_stringshare_del(eina_array_pop(pd->command));
+   eina_array_free(pd->command);
+   pd->command = NULL;
+}
+
 EOLIAN static Eina_Bool
 _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_Line_Data *pd, Eina_Array *array)
 {
@@ -210,6 +220,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
    Eina_Strbuf *command = eina_strbuf_new();
    unsigned int i = 0;
 
+   _clear_command(pd);
    pd->command = eina_array_new(array ? eina_array_count(array) : 0);
    for (i = 0; i < (array ? eina_array_count(array) : 0); ++i)
      {
@@ -219,7 +230,6 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
 
         if (!param)
           {
-             free(param);
              while (eina_array_count(pd->command) > 0)
               eina_stringshare_del(eina_array_pop(pd->command));
              eina_array_free(pd->command);
@@ -276,4 +286,12 @@ _efl_core_command_line_command_string_set(Eo *obj EINA_UNUSED, Efl_Core_Command_
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_efl_core_command_line_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Core_Command_Line_Data *pd)
+{
+   free(pd->string_command);
+   pd->string_command = NULL;
+   _clear_command(pd);
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
 #include "efl_core_command_line.eo.c"

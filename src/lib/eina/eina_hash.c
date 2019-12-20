@@ -410,7 +410,6 @@ _eina_hash_del_by_hash_el(Eina_Hash *hash,
                                                  hash_element), EINA_RBTREE_CMP_NODE_CB(
                                                  _eina_hash_key_rbtree_cmp_node),
                                                (const void *)hash->key_cmp_cb);
-   _eina_hash_el_free(hash_element, hash);
 
    if (!hash_head->head)
      {
@@ -430,6 +429,8 @@ _eina_hash_del_by_hash_el(Eina_Hash *hash,
         free(hash->buckets);
         hash->buckets = NULL;
      }
+
+   _eina_hash_el_free(hash_element, hash);
 
    return EINA_TRUE;
 }
@@ -1077,6 +1078,9 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
+   if (hash->population == 0)
+     return NULL;
+
    _eina_hash_compute(hash, key, &key_length, &key_hash);
 
    return eina_hash_find_by_hash(hash, key, key_length, key_hash);
@@ -1408,6 +1412,39 @@ eina_hash_list_append(Eina_Hash *hash, const void *key, const void *data)
 }
 
 EAPI void
+eina_hash_list_direct_append(Eina_Hash *hash, const void *key, const void *data)
+{
+   Eina_Hash_Tuple tuple;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
+   int key_length;
+   int key_hash;
+
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash->key_hash_cb);
+   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   _eina_hash_compute(hash, key, &key_length, &key_hash);
+
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
+      hash_element->tuple.data = eina_list_append(hash_element->tuple.data, data);
+   else
+     eina_hash_add_alloc_by_hash(hash,
+                            key,
+                            key_length,
+                            0,
+                            key_hash,
+                            eina_list_append(NULL, data));
+}
+
+EAPI void
 eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *data)
 {
    Eina_Hash_Tuple tuple;
@@ -1436,6 +1473,39 @@ eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *data)
                             key,
                             key_length,
                             key_length,
+                            key_hash,
+                            eina_list_append(NULL, data));
+}
+
+EAPI void
+eina_hash_list_direct_prepend(Eina_Hash *hash, const void *key, const void *data)
+{
+   Eina_Hash_Tuple tuple;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
+   int key_length;
+   int key_hash;
+
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash->key_hash_cb);
+   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   _eina_hash_compute(hash, key, &key_length, &key_hash);
+
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
+      hash_element->tuple.data = eina_list_prepend(hash_element->tuple.data, data);
+   else
+     eina_hash_add_alloc_by_hash(hash,
+                            key,
+                            key_length,
+                            0,
                             key_hash,
                             eina_list_append(NULL, data));
 }

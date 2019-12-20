@@ -1,5 +1,5 @@
 class @beta Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements Efl.Pack_Linear,
-                                  Efl.Ui.Direction_Readonly
+                                  Efl.Ui.Layout_Orientable_Readonly
 {
    [[Represents a Box created as part of a layout.
 
@@ -22,6 +22,6 @@ class @beta Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements
       Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Linear.pack_unpack_at;
       Efl.Pack_Linear.pack_index_get;
-      Efl.Ui.Direction.direction { get; [[Returns $default if unknown.]] }
+      Efl.Ui.Layout_Orientable.orientation { get; [[Returns $default if unknown.]] }
    }
 }

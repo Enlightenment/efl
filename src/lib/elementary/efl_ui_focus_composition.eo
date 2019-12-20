@@ -1,26 +1,28 @@
 mixin @beta Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
    [[This defines the inheriting widget as Composition widget.
 
-     A composition widget is a widget that's the logical parent of another set of widgets which can be used for interaction.
+     A composition widget is a widget that's the logical parent of another set of widgets
+     which can be used for interaction.
    ]]
    methods {
       @property composition_elements @protected  {
          [[Set the order of elements that will be used for composition
 
-           Elements of the list can be either an Efl.Ui.Widget, an Efl.Ui.Focus.Object or an Efl.Gfx.
+           Elements of the list can be either an @Efl.Ui.Widget, an @Efl.Ui.Focus.Object or an @Efl.Gfx.Entity.
 
-           If the element is an Efl.Gfx.Entity, then the geometry is used as focus geometry, the focus property is redirected to the evas focus property. The mixin will take care of registration.
+           If the element is an @Efl.Ui.Widget nothing is done and the widget is simply part of the order.
 
-           If the element is an Efl.Ui.Focus.Object, then the mixin will take care of registering the element.
+           If the element is an @Efl.Ui.Focus.Object, then the mixin will take care of registering the element.
 
-           If the element is a Efl.Ui.Widget nothing is done and the widget is simply part of the order.
+           If the element is an @Efl.Gfx.Entity, then the geometry is used as focus geometry,
+           the focus property is redirected to the evas focus property. The mixin will take care of registration.
          ]]
          values {
-            logical_order : list<Efl.Gfx.Entity> @owned; [[The order to use]]
+            logical_order : list<Efl.Gfx.Entity> @move; [[The order to use]]
          }
       }
       dirty @protected {
-         [[ Mark this widget as dirty, the children can be considered to be changed after that call
+         [[Mark this widget as dirty, the children can be considered to be changed after that call
          ]]
       }
       prepare @protected {

@@ -8,87 +8,87 @@ interface Efl.Layout.Group
    ]]
    methods {
       @property group_size_min {
-         get {
-            [[Gets the minimum size specified -- as an EDC property -- for a
-              given Edje object
+         [[The minimum size specified -- as an EDC property -- for a
+           given Edje object
 
-              This function retrieves the obj object's minimum size values, as
-              declared in its EDC group definition. For instance, for an Edje
-              object of minimum size 100x100 pixels:
-              collections {
-                 group {
-                    name: "a_group";
-                    min: 100 100;
-                 }
+           This property retrieves the obj object's minimum size values, as
+           declared in its EDC group definition. For instance, for an Edje
+           object of minimum size 100x100 pixels:
+           collections {
+              group {
+                 name: "a_group";
+                 min: 100 100;
               }
+           }
 
-              Note: If the $min EDC property was not declared for this object,
-              this call will return 0x0.
+           Note: If the $min EDC property was not declared for this object,
+           this call will return 0x0.
 
-              Note: On failure, this function also return 0x0.
+           Note: On failure, this function also return 0x0.
 
-              See also @.group_size_max.
-            ]]
+           See also @.group_size_max.
+         ]]
+         get {
          }
          values {
             min: Eina.Size2D; [[The minimum size as set in EDC.]]
          }
       }
       @property group_size_max {
-         get {
-            [[Gets the maximum size specified -- as an EDC property -- for a
-              given Edje object
+         [[The maximum size specified -- as an EDC property -- for a
+           given Edje object
 
-              This function retrieves the object's maximum size values, as
-              declared in its EDC group definition. For instance, for an Edje
-              object of maximum size 100x100 pixels:
-              collections {
-                 group {
-                    name: "a_group";
-                    max: 100 100;
-                 }
+           This property retrieves the object's maximum size values, as
+           declared in its EDC group definition. For instance, for an Edje
+           object of maximum size 100x100 pixels:
+           collections {
+              group {
+                 name: "a_group";
+                 max: 100 100;
               }
+           }
 
-              Note: If the $max EDC property was not declared for the object,
-              this call will return the maximum size a given Edje object may
-              have, for each axis.
+           Note: If the $max EDC property was not declared for the object,
+           this call will return the maximum size a given Edje object may
+           have, for each axis.
 
-              Note: On failure, this function will return 0x0.
+           Note: On failure, this function will return 0x0.
 
-              See also @.group_size_min.
-            ]]
+           See also @.group_size_min.
+         ]]
+         get {
          }
          values {
             max: Eina.Size2D; [[The maximum size as set in EDC.]]
          }
       }
       @property group_data {
-         get {
-            [[Retrives an EDC data field's value from a given Edje object's group.
+         [[The EDC data field's value from a given Edje object's group.
 
-              This function fetches an EDC data field's value, which is declared
-              on the objects building EDC file, under its group. EDC data blocks
-              are most commonly used to pass arbitrary parameters from an
-              application's theme to its code.
+           This property represents an EDC data field's value, which is declared
+           on the objects building EDC file, under its group. EDC data blocks
+           are most commonly used to pass arbitrary parameters from an
+           application's theme to its code.
 
-              EDC data fields always hold  strings as values, hence the return
-              type of this function. Check the complete "syntax reference" for
-              EDC files.
+           EDC data fields always hold  strings as values, hence the return
+           type of this function. Check the complete "syntax reference" for
+           EDC files.
 
-              This is how a data item is defined in EDC:
-              collections {
-                 group {
-                    name: "a_group";
-                    data {
-                       item: "key1" "value1";
-                       item: "key2" "value2";
-                    }
+           This is how a data item is defined in EDC:
+           collections {
+              group {
+                 name: "a_group";
+                 data {
+                    item: "key1" "value1";
+                    item: "key2" "value2";
                  }
               }
+           }
 
-              Warning: Do not confuse this call with edje_file_data_get(), which
-              queries for a global EDC data field on an EDC declaration file.
-            ]]
+           Warning: Do not confuse this call with edje_file_data_get(), which
+           queries for a global EDC data field on an EDC declaration file.
+         ]]
+         get {
          }
          keys {
             key: string; [[The data field's key string]]
@@ -111,9 +111,9 @@ interface Efl.Layout.Group
 
            See also @Efl.Canvas.Layout_Part.part_type.
          ]]
-         get { [[Returns $true if the part exists in the EDC group.]] }
+         get {}
          keys {
-            part: string @nonull; [[The part name to check.]]
+            part: string; [[The part name to check.]]
          }
          values {
             exists: bool; [[$true if the part exists, $false otherwise.]]

@@ -196,7 +196,10 @@ test_win_plug(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    evas_object_event_callback_add(plug, EVAS_CALLBACK_DEL, _timer_del, NULL);
    if (!elm_plug_connect(plug, "ello", 0, EINA_FALSE))
      {
-        _notify_error(data, "Unable to connect to the Window Socket!");
+        if (data)
+          _notify_error(data, "Unable to connect to the Window Socket!");
+        else
+          fprintf(stderr, "Unable to connect to the Window Socket!\n");
         evas_object_del(win);
         return;
      }

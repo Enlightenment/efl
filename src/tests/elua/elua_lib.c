@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv unsetenv */
+#endif
+
 #include <Eina.h>
 #include <Elua.h>
 

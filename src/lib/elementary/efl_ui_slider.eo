@@ -1,8 +1,17 @@
-class @beta Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Direction,
+class Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Layout_Orientable,
                      Efl.Access.Value,
                      Efl.Access.Widget.Action
 {
-   [[Elementary slider class]]
+   [[Elementary slider class
+
+     This lets the UI user select a numerical value inside the @Efl.Ui.Range_Display.range_limits limits.
+     The current value can be retrieved using the @Efl.Ui.Range_Interactive interface. Events monitoring its
+     changes are also available in that interface.
+     The visual representation of min and max can be swapped using @Efl.Ui.Layout_Orientable.orientation.
+     Normally the minimum of @Efl.Ui.Range_Display.range_limits is shown on the left side, the max on the right side.
+
+     @since 1.23
+   ]]
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
@@ -11,18 +20,18 @@ class @beta Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Int
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Range_Display.range_value { get; set; }
-      Efl.Ui.Range_Display.range_min_max {get; set; }
+      Efl.Ui.Range_Display.range_limits {get; set; }
       Efl.Ui.Range_Interactive.range_step { get; set; }
-      Efl.Ui.Direction.direction { get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      changed: void; [[Called when slider changed]]
-      delay,changed: void; [[Called when delay changed]]
-      slider,drag,start: void; [[Called when slider drag started]]
-      slider,drag,stop: void; [[Called when slider drag stopped]]
+      slider,drag,start: void; [[Called when a slider drag operation has started. This means a $press event
+                                 has been received on the slider thumb but not the $unpress.]]
+      slider,drag,stop: void; [[Called when a slider drag operation has finished. This means an $unpress event
+                                has been received on the slider thumb.]]
    }
 }

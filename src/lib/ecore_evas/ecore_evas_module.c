@@ -224,7 +224,8 @@ _ecore_evas_available_engines_get(void)
                   const char *name;
 
 #ifdef _WIN32
-                  EVIL_PATH_SEP_WIN32_TO_UNIX(info->path);
+                  name = strrchr(info->path, '\\');
+                  if (name) name++;
 #endif
                   name = strrchr(info->path, '/');
                   if (name) name++;

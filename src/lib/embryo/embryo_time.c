@@ -6,11 +6,7 @@
 #include <time.h>
 
 #ifdef _WIN32
-# include <Evil.h>
-#endif
-
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
+# include <evil_private.h> /* setenv unsetenv */
 #endif
 
 #include <Eina.h>

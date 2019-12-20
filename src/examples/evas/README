@@ -70,6 +70,7 @@ evas-map-aa-eo.c                - Eo API
 
 evas-vg-simple.c                - Introduction to vector graphics
 evas-vg-batman.c                - Animated vector graphics
+evas-vg-json.c                  - Play Lottie files
 
 
 == 3D Graphics - Basics ==

@@ -9,6 +9,7 @@
 #include "elm_widget.h"
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
+#include "suite_helpers.h"
 
 
 static int main_pid = -1;
@@ -16,22 +17,27 @@ static Eina_Bool did_shutdown;
 static Evas_Object *global_win;
 static Eina_Bool buffer = EINA_FALSE;
 static Eina_Bool legacy_mode = EINA_FALSE;
+static int log_abort;
+static int log_abort_level;
+
+Eina_Bool abort_on_warnings = EINA_FALSE;
 
 void elm_test_init(TCase *tc);
 
+static char *args[] = { "exe" };
+
 SUITE_INIT(elm)
 {
-   char *args[] = { "exe" };
    ck_assert_int_eq(elm_init(1, args), 1);
 }
 
 void
 _elm2_suite_init(void)
 {
-   char *args[] = { "exe" };
-
-   if (getpid() != main_pid)
+   if (is_forked())
      {
+        if (abort_on_warnings)
+          fail_on_errors_setup();
         ecore_fork_reset();
         return;
      }
@@ -42,6 +48,8 @@ _elm2_suite_init(void)
         did_shutdown = 1;
      }
    ck_assert_int_eq(elm_init(1, args), 1);
+   if (abort_on_warnings)
+     fail_on_errors_setup();
 }
 
 void
@@ -51,7 +59,7 @@ _elm_suite_shutdown(void)
    /* verify that ecore was de-initialized completely */
    ck_assert_int_eq(ecore_init(), 1);
    /* avoid slowdowns in fork mode */
-   if (getpid() != main_pid) return;
+   if (is_forked()) return;
    ck_assert_int_eq(ecore_shutdown(), 0);
 }
 
@@ -184,7 +192,7 @@ _ui_win_visibility_change(void *data EINA_UNUSED, const Efl_Event *ev)
 EFL_CLASS_SIMPLE_CLASS(efl_loop, "Efl.Loop", EFL_LOOP_CLASS)
 
 static Evas_Object *
-_elm_suite_win_create()
+_elm_suite_win_create(void)
 {
    Evas_Object *win;
    Eo *loop, *timer;
@@ -192,7 +200,7 @@ _elm_suite_win_create()
    if (legacy_mode)
      win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
    else
-     win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
+     win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get());
    if (!buffer) return win;
    loop = efl_add(efl_loop_realized_class_get(), win);
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop,
@@ -216,10 +224,19 @@ _elm_suite_win_create()
    return win;
 }
 
+#define TEST_FONT_DIR TESTS_SRC_DIR "/fonts/"
+
 Evas_Object *
-win_add()
+win_add(void)
 {
-   if (getpid() != main_pid)
+   static Eina_Bool font_path = EINA_FALSE;
+
+   if (!font_path)
+     {
+        evas_font_path_global_append(TEST_FONT_DIR);
+        font_path = EINA_TRUE;
+     }
+   if (is_forked())
      {
         if (global_win) return global_win;
      }
@@ -244,7 +261,7 @@ win_add_focused()
 {
    Evas_Object *win;
 
-   if (getpid() != main_pid)
+   if (is_forked())
      {
         if (global_win) return global_win;
      }
@@ -252,6 +269,26 @@ win_add_focused()
    win = _elm_suite_win_create();
    force_focus_win(win);
    return win;
+}
+
+Eina_Bool
+is_forked(void)
+{
+   return getpid() != main_pid;
+}
+
+Eina_Bool
+is_buffer(void)
+{
+   return buffer;
+}
+
+static void (*suite_setup_cb)(Eo*);
+
+void
+suite_setup_cb_set(void (*cb)(Eo*))
+{
+   suite_setup_cb = cb;
 }
 
 int
@@ -288,6 +325,7 @@ suite_setup(Eina_Bool legacy)
      {
         global_win = _elm_suite_win_create();
         force_focus_win(global_win);
+        if (suite_setup_cb) suite_setup_cb(global_win);
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
    /* preload default theme */
@@ -339,4 +377,244 @@ suite_setup(Eina_Bool legacy)
         elm_theme_group_path_find(NULL, "efl/colorselector/item/color");
      }
    return 0;
+}
+
+void
+fail_on_errors_teardown(void)
+{
+   eina_log_abort_on_critical_set(log_abort);
+   eina_log_abort_on_critical_level_set(log_abort_level);
+}
+
+void
+fail_on_errors_setup(void)
+{
+   log_abort = eina_log_abort_on_critical_get();
+   log_abort_level = eina_log_abort_on_critical_level_get();
+   eina_log_abort_on_critical_level_set(2);
+   eina_log_abort_on_critical_set(1);
+}
+
+static void
+next_event_job()
+{
+   ecore_main_loop_quit();
+}
+
+static void
+events_norendered(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, events_norendered);
+   ecore_job_add(next_event_job, NULL);
+}
+
+void
+get_me_to_those_events(Eo *obj)
+{
+   Evas *e = obj;
+
+   if ((!efl_isa(obj, EFL_CANVAS_SCENE_INTERFACE)) || efl_isa(obj, EFL_UI_WIN_CLASS))
+     e = evas_object_evas_get(obj);
+   evas_smart_objects_calculate(e);
+   evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, events_norendered, NULL);
+   ecore_main_loop_begin();
+}
+
+enum
+{
+   NONE = 0,
+   LEFT = 1 << 0,
+   RIGHT = 1 << 1,
+   TOP = 1 << 2,
+   BOTTOM = 1 << 3,
+};
+
+static Eina_Position2D
+attempt_to_find_the_right_point_for_mouse_positioning(Eo *obj, int dir)
+{
+   int x, y;
+   Eina_Rect r = efl_gfx_entity_geometry_get(obj);
+   if (dir & LEFT)
+     x = r.x + (.1 * r.w);
+   else if (dir & RIGHT)
+     x = r.x + (.9 * r.w);
+   else
+     x = r.x + r.w / 2;
+   if (dir & TOP)
+     y = r.y + (.1 * r.h);
+   else if (dir & BOTTOM)
+     y = r.y + (.9 * r.h);
+   else
+     y = r.y + r.h / 2;
+   return EINA_POSITION2D(x, y);
+}
+
+static void
+click_object_internal(Eo *obj, int dir, int flags)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
+   evas_event_feed_mouse_move(e, pos.x, pos.y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+void
+click_object(Eo *obj)
+{
+   click_object_internal(obj, NONE, 0);
+}
+
+void
+click_object_flags(Eo *obj, int flags)
+{
+   click_object_internal(obj, NONE, flags);
+}
+
+void
+click_part_flags(Eo *obj, const char *part, int flags)
+{
+   Efl_Part *part_obj = efl_ref(efl_part(obj, part));
+   Eo *content;
+   int dir = 0;
+
+   if (efl_canvas_layout_part_type_get(part_obj) == EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+     content = efl_content_get(part_obj);
+   else
+     {
+        content = part_obj;
+        if (strstr(part, "left"))
+          dir |= LEFT;
+        else if (strstr(part, "right"))
+          dir |= RIGHT;
+        if (strstr(part, "top"))
+          dir |= TOP;
+        else if (strstr(part, "bottom"))
+          dir |= BOTTOM;
+     }
+   click_object_internal(content, dir, flags);
+   if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(content);
+   edje_object_message_signal_process(obj);
+   efl_unref(part_obj);
+}
+
+void
+click_part(Eo *obj, const char *part)
+{
+   click_part_flags(obj, part, 0);
+}
+
+static void
+wheel_object_internal(Eo *obj, int dir, Eina_Bool horiz, Eina_Bool down)
+{
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
+   wheel_object_at(obj, pos.x, pos.y, horiz, down);
+}
+
+void
+wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down)
+{
+   wheel_object_internal(obj, NONE, horiz, down);
+}
+
+void
+wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down)
+{
+   Efl_Part *part_obj = efl_ref(efl_part(obj, part));
+   Eo *content;
+   int dir = 0;
+
+   if (efl_canvas_layout_part_type_get(part_obj) == EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+     content = efl_content_get(part_obj);
+   else
+     {
+        content = part_obj;
+        if (strstr(part, "left"))
+          dir |= LEFT;
+        else if (strstr(part, "right"))
+          dir |= RIGHT;
+        if (strstr(part, "top"))
+          dir |= TOP;
+        else if (strstr(part, "bottom"))
+          dir |= BOTTOM;
+     }
+   wheel_object_internal(content, dir, horiz, down);
+   if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(content);
+   edje_object_message_signal_process(obj);
+   efl_unref(part_obj);
+}
+
+void
+event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int *called = data;
+
+   ck_assert_int_eq(*called, 0);
+   *called = 1;
+}
+
+void
+event_callback_that_increments_an_int_when_called(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int *called = data;
+
+   *called += 1;
+}
+
+void
+event_callback_that_quits_the_main_loop_when_called()
+{
+   ecore_main_loop_quit();
+}
+
+void
+click_object_at(Eo *obj, int x, int y)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+void
+click_object_at_flags(Eo *obj, int x, int y, int flags)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+void
+wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_wheel(e, horiz, down, 0, NULL);
+}
+
+void
+drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
+{
+   Evas *e = evas_object_evas_get(obj);
+   int i;
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   if (iterate)
+     {
+        /* iterate twice to trigger timers */
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+      }
+   /* create DRAG_OBJECT_NUM_MOVES move events distinct from up/down */
+   for (i = 0; i < DRAG_OBJECT_NUM_MOVES; i++)
+     {
+        evas_event_feed_mouse_move(e, x + (i * dx / DRAG_OBJECT_NUM_MOVES), y + (i * dy / DRAG_OBJECT_NUM_MOVES), 0, NULL);
+        /* also trigger smart calc if we're iterating just in case that's important */
+        evas_smart_objects_calculate(e);
+     }
+   evas_event_feed_mouse_move(e, x + dx, y + dy, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
 }

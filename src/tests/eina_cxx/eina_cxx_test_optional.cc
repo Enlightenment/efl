@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -102,7 +117,14 @@ EFL_START_TEST(eina_cxx_optional_assignment)
 
   assert(!a); assert(b); assert(c); assert(d);
 
+  // NOTE: resistance to self assignment is exactly what is being tested here,
+  // so this compilation warning can be suppressed.
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wself-assign-overloaded"
+#endif
   a = a;
+#pragma GCC diagnostic pop
   ck_assert(a == a);
   ck_assert(!a);
 

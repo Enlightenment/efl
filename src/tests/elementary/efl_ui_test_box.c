@@ -228,16 +228,6 @@ layout_setup()
    layout = efl_add(EFL_UI_BOX_CLASS, win);
 }
 
-static void
-layout_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
-}
-
 EFL_START_TEST (efl_ui_box_class_check)
 {
    const char *class;
@@ -254,7 +244,7 @@ EFL_START_TEST (efl_ui_box_layout_update)
    int i, max_index = (sizeof(hints) / sizeof(Hint));
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
                      efl_pack_end(layout, efl_added));
@@ -273,7 +263,7 @@ EFL_START_TEST (efl_ui_box_layout_update_pack)
    Eo *btn, *btn2, *btn3;
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    max_index2 = ((sizeof(hints2) / sizeof(Hint)) / 2);
    max_index3 = ((sizeof(hints3) / sizeof(Hint)) / 3);
@@ -319,7 +309,7 @@ EFL_START_TEST (efl_ui_box_layout_update_pack)
    btn_geom_assert(&hints3[3][1], efl_gfx_entity_geometry_get(btn2));
    btn_geom_assert(&hints3[3][2], efl_gfx_entity_geometry_get(btn3));
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    hints3[3][0].layout_expected = hints3[3][0].layout_size = EINA_SIZE2D(300, 900);
    hints3[3][1].layout_expected = hints3[3][1].layout_size = EINA_SIZE2D(300, 900);
    hints3[3][2].layout_expected = hints3[3][2].layout_size = EINA_SIZE2D(300, 900);
@@ -369,7 +359,7 @@ EFL_START_TEST (efl_ui_box_size)
    Eo *btn, *btn2, *btn3;
    Eina_Size2D min, user_min;
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
                  efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 100)),
@@ -428,8 +418,12 @@ EFL_START_TEST (efl_ui_box_pack_unpack)
    ck_assert(efl_pack(layout, btn[1]));
    ck_assert_ptr_eq(efl_pack_content_get(layout, 0), btn[1]);
    ck_assert_int_eq(efl_pack_index_get(layout, btn[1]), 0);
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_end(layout, btn[1]));
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack(layout, NULL));
+   EXPECT_ERROR_END;
    ck_assert(efl_pack_after(layout, btn[3], btn[1]));
    ck_assert_ptr_eq(efl_pack_content_get(layout, 1), btn[3]);
    ck_assert_int_eq(efl_pack_index_get(layout, btn[3]), 1);
@@ -438,8 +432,12 @@ EFL_START_TEST (efl_ui_box_pack_unpack)
    ck_assert_int_eq(efl_pack_index_get(layout, btn[5]), 2);
    ck_assert_ptr_eq(efl_pack_content_get(layout, -1), btn[5]);
    ck_assert_int_eq(efl_pack_index_get(layout, btn[5]), 2);
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_after(layout, btn[5], NULL));
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_after(layout, NULL, btn[5]));
+   EXPECT_ERROR_END;
    ck_assert(efl_pack_before(layout, btn[4], btn[5]));
    ck_assert(efl_pack_begin(layout, btn[0]));
    ck_assert_ptr_eq(efl_pack_content_get(layout, 0), btn[0]);
@@ -472,15 +470,21 @@ EFL_START_TEST (efl_ui_box_pack_unpack)
 
    //unpack test
    ck_assert_ptr_eq(efl_pack_unpack_at(layout, 2), btn[2]);
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, btn[2]));
+   EXPECT_ERROR_END;
    efl_pack_at(layout, btn[2], 2);
    ck_assert(efl_pack_unpack(layout, efl_pack_content_get(layout, 2)));
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, btn[2]));
+   EXPECT_ERROR_END;
 
    efl_pack_at(layout, btn[2], 2);
    ck_assert_ptr_eq(efl_pack_unpack_at(layout, efl_pack_index_get(layout, btn[2])), btn[2]);
 
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, NULL));
+   EXPECT_ERROR_END;
    ck_assert_int_eq(efl_content_count(layout), BTN_NUM - 1);
 
    efl_pack_unpack_all(layout);
@@ -500,7 +504,7 @@ EFL_END_TEST
 EFL_START_TEST (efl_ui_box_properties)
 {
    double h, v;
-   Eina_Bool b;
+   unsigned int ph, pv;
 
    //align test
    efl_gfx_arrangement_content_align_get(layout, &h, &v);
@@ -518,31 +522,23 @@ EFL_START_TEST (efl_ui_box_properties)
    ck_assert(EINA_DBL_EQ(v, 1));
 
    //padding test
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0.0));
-   ck_assert(EINA_DBL_EQ(v, 0.0));
-   ck_assert_int_eq(b, 0);
+   efl_gfx_arrangement_content_padding_get(layout, &ph, &pv);
+   ck_assert_int_eq(ph, 0.0);
+   ck_assert_int_eq(pv, 0.0);
 
-   efl_gfx_arrangement_content_padding_set(layout, 0.3, 0.8234, 1);
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0.3));
-   ck_assert(EINA_DBL_EQ(v, 0.8234));
-   ck_assert_int_eq(b, 1);
-
-   efl_gfx_arrangement_content_padding_set(layout, -1.23, 123, 45);
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0));
-   ck_assert(EINA_DBL_EQ(v, 123));
-   ck_assert_int_eq(b, 1);
+   efl_gfx_arrangement_content_padding_set(layout, 3, 8234);
+   efl_gfx_arrangement_content_padding_get(layout, &ph, &pv);
+   ck_assert_int_eq(ph, 3);
+   ck_assert_int_eq(pv, 8234);
 
    //direction test
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_VERTICAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_DEFAULT);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_HORIZONTAL);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
    //homogeneous test
    ck_assert_int_eq(efl_ui_box_homogeneous_get(layout), 0);
@@ -565,7 +561,7 @@ EFL_END_TEST
 
 void efl_ui_test_box(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
+   tcase_add_checked_fixture(tc, layout_setup, NULL);
    tcase_add_test(tc, efl_ui_box_class_check);
    tcase_add_test(tc, efl_ui_box_layout_update);
    tcase_add_test(tc, efl_ui_box_layout_update_pack);

@@ -36,7 +36,7 @@ struct _Elm_Index_Data
                                   * small */
    Eina_List            *omit;
 
-   Efl_Ui_Dir            dir;
+   Efl_Ui_Layout_Orientation dir;
    int                   level;
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;

@@ -43,11 +43,7 @@
 
 #ifdef _WIN32
 # include <direct.h> /* getcwd */
-# include <Evil.h>
-#endif
-
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
+# include <evil_private.h> /* path_is_absolute realpath dladdr */
 #endif
 
 #include "eina_config.h"
@@ -507,7 +503,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
              datadir = tmp;
           }
      }
-   if (magicsharefile)
+   if (magicsharefile && (!getenv("EFL_RUN_IN_TREE")))
      {
         magic = alloca(strlen(magicsharefile) + 1);
         strcpy(magic, magicsharefile);

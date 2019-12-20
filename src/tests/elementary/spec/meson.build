@@ -1,9 +1,18 @@
-
 efl_ui_suite_behavior_test_files = files([
   'efl_test_pack.c',
   'efl_test_pack_linear.c',
   'efl_test_content.c',
-  'efl_test_gfx_arrangement.c'
+  'efl_test_gfx_arrangement.c',
+  'efl_test_clickable.c',
+  'efl_test_format.c',
+  'efl_test_range_display.c',
+  'efl_test_range_interactive.c',
+  'efl_test_ui_view.c',
+  'efl_test_single_selectable.c',
+  'efl_test_multi_selectable.c',
+  'efl_test_selectable.c',
+  'efl_test_gfx_view.c',
+  'efl_test_basics.c'
 ])
 
 efl_ui_suite_behavior_src = files([
@@ -23,7 +32,7 @@ generated_test_parts = custom_target('generate_test_suite',
 )
 
 efl_ui_behavior_suite = executable('efl_ui_spec_suite',
-  efl_ui_suite_behavior_src + [generated_test_parts],
+  efl_ui_suite_behavior_src + [generated_test_parts] + [priv_eo_file_target],
   dependencies: [check, eina, elementary, elementary_deps],
   include_directories : [config_dir] + [elementary_config_dir] + [include_directories('../')],
   c_args : [
@@ -35,5 +44,6 @@ efl_ui_behavior_suite = executable('efl_ui_spec_suite',
 )
 
 test('efl_ui_spec-suite', efl_ui_behavior_suite,
-  env : test_env
+  env : test_env,
+  timeout: 60
 )

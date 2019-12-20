@@ -349,6 +349,74 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
        (counter)++)
 
 /**
+ * @brief Creates an Eina_Accessor that wraps a plain fixed size C array
+ *
+ * @param[in] array The array
+ * @param[in] step  The size of one element in the array
+ * @param[in] length The number of elements in the array
+ * @return The accessor that will give access to the passed array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4, 1337, 42};
+ *
+ * Eina_Accessor* accessor = eina_carray_length_accessor_new(array, sizeof(int), sizeof(array)/sizeof(int));
+ *
+ * @since 1.23
+ */
+EAPI Eina_Accessor* eina_carray_length_accessor_new(void** array, unsigned int step, unsigned int length);
+
+
+/**
+ * @brief Creates an Eina_Accessor that wraps a plain fixed size C array
+ *
+ * @param[in] array The array
+ * @param[in] step  The size of one element in the array
+ * @param[in] length The number of elements in the array
+ * @return The accessor that will give access to the passed array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4, 1337, 42};
+ *
+ * Eina_Accessor* accessor = eina_carray_length_accessor_new(array, sizeof(int), sizeof(array)/sizeof(int));
+ *
+ * Note: The difference to eina_carray_length_accessor_new is that this will fill the pointer to the value into the data pointer. *
+
+ * @since 1.24
+ */
+EAPI Eina_Accessor* eina_carray_length_ptr_accessor_new(void** array, unsigned int step, unsigned int length);
+/**
+ * @def EINA_C_ARRAY_ACCESSOR_NEW
+ * @brief Creates an Eina_Accessor that wraps a plain fixed size C array
+ *
+ * @param[in] array The array
+ * @return The accessor that will give access to the passed array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4, 1337, 42};
+ *
+ * Eina_Accessor* accessor = EINA_C_ARRAY_ACCESSOR_NEW(array)
+ *
+ * @since 1.23
+ */
+#define EINA_C_ARRAY_ACCESSOR_NEW(Array) eina_carray_length_accessor_new((void**) Array, sizeof (Array[0]), EINA_C_ARRAY_LENGTH(Array))
+/**
+ * @def EINA_C_ARRAY_ACCESSOR_NEW
+ * @brief Creates an Eina_Accessor that wraps a plain fixed size C array
+ *
+ * @param[in] array The array
+ * @return The accessor that will give access to the passed array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4, 1337, 42};
+ *
+ * Eina_Accessor* accessor = EINA_C_ARRAY_ACCESSOR_NEW(array)
+ *
+ * @since 1.23
+ */
+#define EINA_C_ARRAY_ACCESSOR_PTR_NEW(Array) eina_carray_length_ptr_accessor_new((void**) Array, sizeof (Array[0]), EINA_C_ARRAY_LENGTH(Array))
+
+
+/**
  * @}
  */
 

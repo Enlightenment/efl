@@ -1,4 +1,4 @@
-class @beta Efl.Generic_Model extends Efl.Loop_Model
+class Efl.Generic_Model extends Efl.Loop_Model
 {
    [[
      Generic model that allows any property to be manually set.
@@ -9,6 +9,8 @@ class @beta Efl.Generic_Model extends Efl.Loop_Model
 
      It does not model anything in particular and does not affect anything else
      in the system.
+
+     @since 1.23
    ]]
    implements {
       Efl.Object.constructor;

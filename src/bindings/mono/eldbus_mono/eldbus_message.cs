@@ -1,14 +1,31 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static eldbus.EldbusMessageNativeFunctions;
 
 namespace eldbus
 {
 
-public static class EldbusMessageNativeFunctions
+[EditorBrowsable(EditorBrowsableState.Never)]
+internal static class EldbusMessageNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_message_ref(IntPtr msg);
@@ -189,8 +206,12 @@ public static class EldbusMessageNativeFunctions
 }
 
 
+/// <summary>Represents a DBus message.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 public class Message : IDisposable
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     public bool Own {get;set;} = true;
 
@@ -209,16 +230,26 @@ public class Message : IDisposable
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Message(IntPtr handle, bool own)
     {
         InitNew(handle, own);
     }
 
+    /// <summary>Finalizes with garbage collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Message()
     {
         Dispose(false);
     }
 
+
+    /// <summary>Disposes of this wrapper, releasing the native if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -241,17 +272,28 @@ public class Message : IDisposable
         }
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native handler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native handler.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -259,6 +301,15 @@ public class Message : IDisposable
         return h;
     }
 
+    /// <summary>
+    ///   Create a new message to invoke a method on a remote object.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dest">The bus name or unique id of the remote application.</param>
+    /// <param name="path">The object path.</param>
+    /// <param name="iface">The interface name.</param>
+    /// <param name="method">The name of the method to be called.</param>
+    /// <returns>A new <see cref="eldbus.Message" />.</returns>
     public static eldbus.Message NewMethodCall(string dest, string path, string iface, string method)
     {
         var ptr = eldbus_message_method_call_new(dest, path, iface, method);
@@ -270,6 +321,14 @@ public class Message : IDisposable
         return new eldbus.Message(ptr, true);
     }
 
+    /// <summary>
+    ///   Create a new signal message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="path">The object path.</param>
+    /// <param name="_interface">The interface name.</param>
+    /// <param name="name">The name of the signal to be broadcasted.</param>
+    /// <returns>A new <see cref="eldbus.Message" />.</returns>
     public static eldbus.Message NewSignal(string path, string _interface, string name)
     {
         var ptr = eldbus_message_signal_new(path, _interface, name);
@@ -281,18 +340,31 @@ public class Message : IDisposable
         return new eldbus.Message(ptr, true);
     }
 
+    /// <summary>
+    ///   Increase message reference.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Ref()
     {
         CheckHandle();
         eldbus_message_ref(Handle);
     }
 
+    /// <summary>
+    ///   Decrease message reference.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Unref()
     {
         CheckHandle();
         eldbus_message_unref(Handle);
     }
 
+    /// <summary>
+    ///   Get the eldbus message path.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the dbus message path.</returns>
     public string GetPath()
     {
         CheckHandle();
@@ -300,6 +372,11 @@ public class Message : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   The eldbus message interface.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the dbus message interface.</returns>
     public string GetInterface()
     {
         CheckHandle();
@@ -307,6 +384,11 @@ public class Message : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Get the eldbus message member.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the dbus message destination.</returns>
     public string GetMember()
     {
         CheckHandle();
@@ -314,6 +396,11 @@ public class Message : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Get the eldbus message destination.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the dbus message destination.</returns>
     public string GetDestination()
     {
         CheckHandle();
@@ -321,6 +408,11 @@ public class Message : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Get the eldbus message sender.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the dbus message sender.</returns>
     public string GetSender()
     {
         CheckHandle();
@@ -328,6 +420,11 @@ public class Message : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Get the eldbus message signature.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the dbus message signature.</returns>
     public string GetSignature()
     {
         CheckHandle();
@@ -335,6 +432,13 @@ public class Message : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Create a new message that is an error reply to another message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error_name">The error name.</param>
+    /// <param name="error_msg">The error message string.</param>
+    /// <returns>A new <see cref="eldbus.Message" />.</returns>
     public eldbus.Message NewError(string error_name, string error_msg)
     {
         CheckHandle();
@@ -347,6 +451,11 @@ public class Message : IDisposable
         return new eldbus.Message(ptr, false);
     }
 
+    /// <summary>
+    ///   Create a message that is a reply to a method call.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A new <see cref="eldbus.Message" />.</returns>
     public eldbus.Message NewMethodReturn()
     {
         CheckHandle();
@@ -359,6 +468,13 @@ public class Message : IDisposable
         return new eldbus.Message(ptr, false);
     }
 
+    /// <summary>
+    ///   Get the error text and name from a <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="name">Store the error name.</param>
+    /// <param name="text">Store the error text..</param>
+    /// <returns>true on success, false otherwise.</returns>
     public bool GetError(out string name, out string text)
     {
         CheckHandle();
@@ -370,12 +486,24 @@ public class Message : IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A byte that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out byte val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.ByteType.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A bool that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out bool val)
     {
         CheckHandle();
@@ -385,48 +513,96 @@ public class Message : IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A int16 that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out Int16 val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.Int16Type.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A unsigned int16 that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out UInt16 val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.UInt16Type.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A int32 that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out Int32 val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.Int32Type.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A unsigned int32 that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out UInt32 val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.UInt32Type.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A int64 that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out Int64 val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.Int64Type.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A unsigned int64 that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out UInt64 val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.UInt64Type.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A double that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out double val)
     {
         CheckHandle();
         return eldbus_message_arguments_get(Handle, Argument.DoubleType.Signature, out val);
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A string that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out string val)
     {
         CheckHandle();
@@ -436,6 +612,12 @@ public class Message : IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A <see cref="eldbus.ObjectPath" /> that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out eldbus.ObjectPath val)
     {
         CheckHandle();
@@ -445,6 +627,12 @@ public class Message : IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A <see cref="eldbus.SignatureString" /> that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out eldbus.SignatureString val)
     {
         CheckHandle();
@@ -454,6 +642,12 @@ public class Message : IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Get the arguments from an <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A <see cref="eldbus.UnixFd" /> that store the message arguments.</param>
+    /// <returns>true if the arguments were read successfully.</returns>
     public bool Get(out eldbus.UnixFd val)
     {
         CheckHandle();
@@ -463,6 +657,11 @@ public class Message : IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Appends the arguments.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="args">The arguments to be appended.</param>
     public void Append(params BasicMessageArgument[] args)
     {
         CheckHandle();
@@ -472,12 +671,23 @@ public class Message : IDisposable
         }
     }
 
+    /// <summary>
+    ///  Create and append a typed iterator to another iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="signature">The signature to be appended.</param>
+    /// <returns>A <see cref="eldbus.MessageIterator" />.</returns>
     public eldbus.MessageIterator AppendOpenContainer(string signature)
     {
         var iter = GetMessageIterator();
         return iter.AppendOpenContainer(signature);
     }
 
+    /// <summary>
+    ///   Get the main <see cref="eldbus.MessageIterator" /> from the <see cref="eldbus.Message" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A <see cref="eldbus.MessageIterator" /></returns>
     public eldbus.MessageIterator GetMessageIterator()
     {
         CheckHandle();
@@ -491,9 +701,19 @@ public class Message : IDisposable
     }
 }
 
+/// <summary>
+///   Iterator to a <see cref="eldbus.Message" />.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 public class MessageIterator
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+
+    /// <summary>
+    ///   The parent of the iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public IntPtr Parent {get;set;} = IntPtr.Zero;
 
     private void InitNew(IntPtr handle, IntPtr parent)
@@ -511,11 +731,17 @@ public class MessageIterator
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public MessageIterator(IntPtr handle, IntPtr parent)
     {
         InitNew(handle, parent);
     }
 
+    /// <summary>
+    ///   Releases the native handler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native handler.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -524,6 +750,11 @@ public class MessageIterator
         return h;
     }
 
+    /// <summary>
+    ///   Appends the arguments.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="args">The arguments to be appended.</param>
     public void Append(params BasicMessageArgument[] args)
     {
         CheckHandle();
@@ -534,6 +765,12 @@ public class MessageIterator
         }
     }
 
+    /// <summary>
+    ///   Create and append a typed iterator to another iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="signature">The signature to be appended.</param>
+    /// <returns>A <see cref="eldbus.MessageIterator" />.</returns>
     public eldbus.MessageIterator AppendOpenContainer(string signature)
     {
         CheckHandle();
@@ -557,6 +794,13 @@ public class MessageIterator
         return new eldbus.MessageIterator(new_iter, Handle);
     }
 
+    /// <summary>
+    ///   Appends a signature to a container.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="type">The type of the iterator.</param>
+    /// <param name="contained_signature">The signature to be appended.</param>
+    /// <returns>A <see cref="eldbus.MessageIterator" />.</returns>
     public eldbus.MessageIterator AppendOpenContainer(char type, string contained_signature)
     {
         CheckHandle();
@@ -571,6 +815,10 @@ public class MessageIterator
         return new eldbus.MessageIterator(new_iter, Handle);
     }
 
+    /// <summary>
+    ///   Closes a container-typed value appended to the message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void CloseContainer()
     {
         CheckHandle();
@@ -589,17 +837,38 @@ public class MessageIterator
         Parent = IntPtr.Zero;
     }
 
+    /// <summary>
+    ///   Returns the current signature of a message iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string containing the message iterator signature.</returns>
     public string GetSignature()
     {
         return eldbus_message_iter_signature_get(Handle);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A byte that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out byte val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.ByteType.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A bool that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out bool val)
     {
         CheckHandle();
@@ -609,48 +878,112 @@ public class MessageIterator
         return r;
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A int16 that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out Int16 val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.Int16Type.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A unsigned int16 that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out UInt16 val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.UInt16Type.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A int32 that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out Int32 val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.Int32Type.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A unsigned int32 that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out UInt32 val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.UInt32Type.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A int64 that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out Int64 val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.Int64Type.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A unsigned int64 that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out UInt64 val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.UInt64Type.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A double that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out double val)
     {
         CheckHandle();
         return eldbus_message_iter_get_and_next(Handle, Argument.DoubleType.Code, out val);
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A string that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out string val)
     {
         CheckHandle();
@@ -660,6 +993,14 @@ public class MessageIterator
         return r;
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A <see cref="eldbus.ObjectPath" /> that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out eldbus.ObjectPath val)
     {
         CheckHandle();
@@ -669,6 +1010,14 @@ public class MessageIterator
         return r;
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A <see cref="eldbus.SignatureString" /> that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out eldbus.SignatureString val)
     {
         CheckHandle();
@@ -678,6 +1027,14 @@ public class MessageIterator
         return r;
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">A <see cref="eldbus.UnixFd" /> that store the data.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out eldbus.UnixFd val)
     {
         CheckHandle();
@@ -687,6 +1044,17 @@ public class MessageIterator
         return r;
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="iter">A <see cref="eldbus.MessageIterator" /> that store
+    /// the data.</param>
+    /// <param name="typecode">The type of the
+    /// <see cref="eldbus.MessageIterator" />.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out eldbus.MessageIterator iter, char typecode)
     {
         CheckHandle();
@@ -702,6 +1070,17 @@ public class MessageIterator
         return r;
     }
 
+    /// <summary>
+    ///   Get a complete type from <see cref="eldbus.MessageIterator" /> if is
+    /// not at the end of iterator and move to next field.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="iter">A <see cref="eldbus.MessageIterator" /> that store
+    /// the data.</param>
+    /// <param name="signatue">The signatue of the
+    /// <see cref="eldbus.MessageIterator" />.</param>
+    /// <returns>if iterator was reach to end or if the type different of the
+    /// type that iterator pointes return false.</returns>
     public bool GetAndNext(out eldbus.MessageIterator iter, string signatue)
     {
         CheckHandle();
@@ -716,12 +1095,22 @@ public class MessageIterator
         return Next();
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out byte val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out bool val)
     {
         CheckHandle();
@@ -730,48 +1119,88 @@ public class MessageIterator
         val = (aux != 0);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out Int16 val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out UInt16 val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out Int32 val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out UInt32 val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out Int64 val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out UInt64 val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out double val)
     {
         CheckHandle();
         eldbus_message_iter_basic_get(Handle, out val);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out string val)
     {
         CheckHandle();
@@ -780,6 +1209,11 @@ public class MessageIterator
         val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out eldbus.ObjectPath val)
     {
         CheckHandle();
@@ -788,6 +1222,11 @@ public class MessageIterator
         val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out eldbus.SignatureString val)
     {
         CheckHandle();
@@ -796,6 +1235,11 @@ public class MessageIterator
         val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The basic type of the iterator.</param>
     public void Get(out eldbus.UnixFd val)
     {
         CheckHandle();
@@ -804,6 +1248,12 @@ public class MessageIterator
         val = aux;
     }
 
+    /// <summary>
+    ///   Get a basic type from <see cref="eldbus.MessageIterator" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="iter">The basic type of the iterator.</param>
+    /// <param name="signatue">The signatue of the <see cref="eldbus.MessageIterator" />.</param>
     public void Get(out eldbus.MessageIterator iter, string signatue)
     {
         CheckHandle();
@@ -816,12 +1266,21 @@ public class MessageIterator
         iter = new eldbus.MessageIterator(hdl, Handle);
     }
 
+    /// <summary>
+    ///   Moves the iterator to the next field, if any.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>If iterator was reach to end return false.</returns>
     public bool Next()
     {
         CheckHandle();
         return eldbus_message_iter_next(Handle);
     }
 
+    /// <summary>
+    ///   Manually delete the iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Del()
     {
         CheckHandle();
@@ -842,6 +1301,11 @@ public class MessageIterator
         }
     }
 
+    /// <summary>
+    ///   Copy the iterator to a given array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="array">The array to receive the copy.</param>
     public void GetFixedArray(out byte[] array)
     {
         IntPtr value;
@@ -851,6 +1315,11 @@ public class MessageIterator
         Marshal.Copy(value, array, 0, n_elements);
     }
 
+    /// <summary>
+    ///   Copy the iterator to a given array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="array">The array to receive the copy.</param>
     public void GetFixedArray(out bool[] array)
     {
         IntPtr value;
@@ -863,6 +1332,11 @@ public class MessageIterator
         array = Array.ConvertAll(aux, Convert.ToBoolean);
     }
 
+    /// <summary>
+    ///   Copy the iterator to a given array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="array">The array to receive the copy.</param>
     public void GetFixedArray(out Int16[] array)
     {
         IntPtr value;
@@ -881,6 +1355,11 @@ public class MessageIterator
 //         Marshal.Copy(value, array, 0, n_elements);
 //     }
 
+    /// <summary>
+    ///   Copy the iterator to a given array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="array">The array to receive the copy.</param>
     public void GetFixedArray(out Int32[] array)
     {
         IntPtr value;
@@ -899,6 +1378,11 @@ public class MessageIterator
 //         Marshal.Copy(value, array, 0, n_elements);
 //     }
 
+    /// <summary>
+    ///   Copy the iterator to a given array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="array">The array to receive the copy.</param>
     public void GetFixedArray(out Int64[] array)
     {
         IntPtr value;
@@ -917,6 +1401,11 @@ public class MessageIterator
 //         Marshal.Copy(value, array, 0, n_elements);
 //     }
 
+    /// <summary>
+    ///   Copy the iterator to a given array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="array">The array to receive the copy.</param>
     public void GetFixedArray(out eldbus.UnixFd[] array)
     {
         IntPtr value;

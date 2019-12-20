@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -57,6 +72,7 @@ class TestEoPromises
         loop.Iterate();
         Test.Assert(callbackCalled, "Future callback must have been called.");
         Test.AssertEquals(receivedValue, sentValue);
+        obj.Dispose();
     }
 
     public static void test_object_promise_cancel()
@@ -82,6 +98,7 @@ class TestEoPromises
         loop.Iterate();
         Test.Assert(callbackCalled, "Future callback must have been called.");
         Test.AssertEquals(receivedError, sentError);
+        obj.Dispose();
     }
 
 }
@@ -91,7 +108,7 @@ class LoopConsumer
     public static async Task Consume(Efl.Loop loop)
     {
         Task<Eina.Value> task = loop.IdleAsync();
-        Eina.Value v = await task;
+        Eina.Value v = await task.ConfigureAwait(false);
         loop.Quit(v);
     }
 }
@@ -129,6 +146,7 @@ class TestEoAsyncMethods
         int receivedValue;
         v.Get(out receivedValue);
         Test.AssertEquals(receivedValue, sentValue);
+        obj.Dispose();
     }
 
     public static void test_async_cancel()
@@ -158,6 +176,8 @@ class TestEoAsyncMethods
         }
 
         Test.Assert(raised, "AggregateException must have been raised.");
+        cancelSrc.Dispose();
+        obj.Dispose();
     }
 
     public static void test_async_reject()
@@ -190,6 +210,7 @@ class TestEoAsyncMethods
         }
 
         Test.Assert(raised, "AggregateException must have been raised.");
+        obj.Dispose();
     }
 }
 }

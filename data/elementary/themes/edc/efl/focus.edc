@@ -1,4 +1,11 @@
-group { name: "efl/focus_highlight/top";
+/**
+Group: efl/focus_highlight/top (@since 1.23)
+	 Signal: efl,focus,visible,off
+	 Signal: efl,focus,visible,on
+	 Signal: efl,state,animating,stopped
+Group: efl/focus_highlight/top:blank (@since 1.23)
+*/
+group { name: "efl/focus_highlight/top"; data.item: "version" "123";
    images.image: "box_glow.png" COMP;
    images.image: "box_outline.png" COMP;
    data.item: "animate" "on";
@@ -118,7 +125,7 @@ group { name: "efl/focus_highlight/top";
    }
    programs {
       program {
-         signal: "efl,action,focus,show"; source: "efl";
+         signal: "efl,focus,visible,on"; source: "efl";
          action: ACTION_STOP;
          target: "pulse";
          target: "pulse2";
@@ -132,17 +139,17 @@ group { name: "efl/focus_highlight/top";
          after: "go3";
       }
       program { name: "go3";
-         action: SIGNAL_EMIT "efl,action,focus,show,end" "efl";
+         action: SIGNAL_EMIT "efl,focus,visible,on,done" "efl";
       }
       program {
-         signal: "efl,action,focus,hide"; source: "efl";
+         signal: "efl,focus,visible,off"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.4;
          target: "clip";
          after: "stop2";
       }
       program { name: "stop2";
-         action: SIGNAL_EMIT "efl,action,focus,hide,end" "efl";
+         action: SIGNAL_EMIT "efl,focus,visible,off,done" "efl";
          after: "stop3";
       }
       program { name: "stop3";
@@ -164,14 +171,14 @@ group { name: "efl/focus_highlight/top";
          after: "pulse";
       }
       program {
-         signal: "efl,state,anim,stop"; source: "efl";
+         signal: "efl,state,animating,stopped"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
    }
 }
 
-group { name: "efl/focus_highlight/top:blank";
+group { name: "efl/focus_highlight/top:blank"; data.item: "version" "123";
    parts {
    }
 }

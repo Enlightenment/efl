@@ -451,7 +451,7 @@ _vget_response(char *str,...)
 
    va_start(ap, str);
    if (!eldbus_message_arguments_vget(message_vget, str, ap))
-     return;
+     printf("%s:%u failed\n", __FILE__, __LINE__);
 
    va_end(ap);
 }
@@ -531,7 +531,7 @@ _vget_iter_response(Eldbus_Message_Iter *iter,...)
 
    va_start(ap, iter);
    if (!eldbus_message_iter_arguments_vget(iter, "i", ap))
-     return;
+     printf("%s:%u failed\n", __FILE__, __LINE__);
 
    va_end(ap);
 }
@@ -874,7 +874,6 @@ EFL_START_TEST(utc_eldbus_message_ref_unref_p)
    ck_assert_msg(strcmp(path, path_msg) == 0, "%s != %s", path, path_msg);
 
    eldbus_message_unref(msg);
-   ck_assert_ptr_eq(NULL, eldbus_message_path_get(msg));
 
    eldbus_connection_unref(conn);
 }

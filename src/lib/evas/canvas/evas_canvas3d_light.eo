@@ -8,21 +8,18 @@ class @beta Evas.Canvas3D.Light extends Evas.Canvas3D.Object
 
    methods {
       @property directional {
+         [[The directional flag of the given light.
+
+           Directional light is a type of light which is infinitely far away with no
+           attenuation. The light direction is determined by the containing node's
+           forward vector (negative Z-axis).
+
+           By default, directional is not enabled.
+
+           \@ref evas_canvas3d_node_look_at_set]]
          set {
-            [[Set the directional flag of the given light.
-
-              Directional light is a type of light which is infinitely far away with no
-              attenuation. The light direction is determined by the containing node's
-              forward vector (negative Z-axis).
-
-              By default, directional is not enabled.
-
-              \@ref evas_canvas3d_node_look_at_set]]
          }
          get {
-            [[Get the directional flag of the given light.
-
-              See also @.directional.set]]
          }
          values {
             directional: bool; [[Whether the light is directional ($true), or not ($false).]]
@@ -30,22 +27,19 @@ class @beta Evas.Canvas3D.Light extends Evas.Canvas3D.Object
       }
 
       @property spot_exponent {
+         [[The spot exponent of the given light.
+
+           Higher spot exponent means intensity at the center of the cone is relatively
+           stronger. Zero exponent means the light intensity is evenly distributed. The
+           spot exponent has no effect when the light is not spot light (spot cutoff
+           angle is less than 180 degree).
+
+           Default spot exponent is 0.
+
+           See also @.spot_cutoff.set]]
          set {
-            [[Set the spot exponent of the given light.
-
-              Higher spot exponent means intensity at the center of the cone is relatively
-              stronger. Zero exponent means the light intensity is evenly distibuted. The
-              spot exponent has no effect when the light is not spot light (spot cutoff
-              angle is less than 180 degree).
-
-              Default spot exponent is 0.
-
-              See also @.spot_cutoff.set]]
          }
          get {
-            [[Get the spot exponent of the given light.
-
-              See also @.spot_exponent.set]]
          }
          values {
             exponent: Evas.Real; [[Spot exponent value.]]
@@ -53,18 +47,15 @@ class @beta Evas.Canvas3D.Light extends Evas.Canvas3D.Object
       }
 
       @property spot_cutoff {
+         [[The spot cutoff angle of the given light.
+
+           Only angle less than 180 degree will make it spot light, so that other spot
+           light attribute will take effect.
+
+           Default spot cutoff angle is 180.]]
          set {
-            [[Set the spot cutoff angle of the given light.
-
-              Only angle less than 180 degree will make it spot light, so that other spot
-              light attribute will take effect.
-
-              Default spot cutoff angle is 180.]]
          }
          get {
-            [[Get the spot cutoff angle of the given light.
-
-              See also @.spot_cutoff.set]]
          }
          values {
             cutoff: Evas.Real; [[Cutoff angle in degree..]]
@@ -72,17 +63,14 @@ class @beta Evas.Canvas3D.Light extends Evas.Canvas3D.Object
       }
 
       @property attenuation_enable {
+         [[The attenuation enable flag of the given light.
+
+           By default, light attenuation is not enabled.
+
+           See also @.attenuation_set]]
          set {
-            [[Set the attenuation enable flag of the given light.
-
-              By default, light attenuation is not enabled.
-
-              See also @.attenuation_set]]
          }
          get {
-            [[Get the attenuation enable flag of the given light.
-
-              See also @.attenuation_enable.set]]
          }
          values {
             enable: bool; [[Whether to enable attenuation ($true), or not ($false)..]]

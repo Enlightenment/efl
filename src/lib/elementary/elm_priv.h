@@ -23,7 +23,9 @@
 
 // Evas internal EO APIs
 # include "Evas.h"
+#define EFL_INTERNAL_UNSTABLE
 # include "Evas_Internal.h"
+# include "Emotion.h"
 
 #include "Elementary.h"
 #include "Efl_Ui.h"
@@ -153,16 +155,17 @@
 #include "elm_widget_item_static_focus_eo.h"
 #include "elm_win_eo.h"
 
-# include "efl_ui_focus_parent_provider.eo.h"
-# include "efl_ui_widget_focus_manager.eo.h"
-# include "efl_ui_focus_parent_provider_standard.eo.h"
-# include "elm_widget_item_static_focus_eo.h"
-# include "efl_ui_selection_manager.eo.h"
-# include "efl_datetime_manager.eo.h"
+
+#include "efl_ui_layout_legacy_eo.h"
 # include "efl_ui_size_model.eo.h"
 # include "efl_ui_homogeneous_model.eo.h"
 # include "efl_ui_exact_model.eo.h"
 # include "efl_ui_average_model.eo.h"
+
+# include "efl_ui_focus_parent_provider.eo.h"
+# include "efl_ui_focus_parent_provider_standard.eo.h"
+# include "efl_ui_selection_manager.eo.h"
+# include "efl_datetime_manager.eo.h"
 
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;
@@ -267,7 +270,7 @@ struct _Efl_Ui_Theme_Data
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x0015
+# define ELM_CONFIG_FILE_GENERATION 0x0016
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -318,6 +321,9 @@ extern const char *_elm_engines[];
 
 # define ELM_PRIV_SMART_CALLBACKS_DESC(name, signal, type) \
    {name, type},
+
+# define CLAMP(x, min, max) \
+   (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 
 struct _Elm_Config_Flags
 {
@@ -864,25 +870,11 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
                                                    const char *emission,
                                                    const char *source,
                                                    Edje_Signal_Cb func_cb);
- void                _efl_ui_image_sizing_eval(Evas_Object *obj);
 /* end of DEPRECATED */
 
 /* DO NOT USE THIS this is only for performance optimization! */
 void                 _elm_widget_full_eval(Eo *obj);
 void                 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *pd);
-
-EOAPI void			 efl_page_transition_page_size_set(Eo *obj, Eina_Size2D sz);
-EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);
-EOAPI void			 efl_page_transition_update(Eo *obj, double pos);
-EOAPI void			 efl_page_transition_pack(Eo *obj, int index);
-EOAPI void			 efl_page_transition_unpack_all(Eo *obj);
-EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, int diff);
-EOAPI Eina_Bool		 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
-
-EOAPI void			 efl_page_indicator_update(Eo *obj, double pos);
-EOAPI void			 efl_page_indicator_pack(Eo *obj, int index);
-EOAPI void			 efl_page_indicator_unpack(Eo *obj, int index);
-EOAPI void			 efl_page_indicator_unpack_all(Eo *obj);
 
 Eina_Bool _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa);
 
@@ -904,6 +896,8 @@ extern const char SIG_LAYOUT_FOCUSED[];
 extern const char SIG_LAYOUT_UNFOCUSED[];
 
 extern Eina_Stringshare *_property_style_ss;
+
+Efl_Ui_Win *efl_ui_widget_factory_widget_get(Efl_Ui_Widget_Factory *factory);
 
 extern Eina_Bool _config_profile_lock;
 
@@ -929,7 +923,7 @@ _elm_dgettext(const char *string)
 
 # endif
 
-extern Eina_Bool _use_build_config;
+extern Eina_Bool _running_in_tree;
 
 /* Used by the paste handler */
 void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
@@ -945,32 +939,32 @@ void *_elm_entry_signal_callback_del_legacy(Eo *obj, const char *emission, const
 void efl_ui_win_inlined_parent_set(Eo *obj, Efl_Canvas_Object *parent);
 
 /* Internal EO APIs */
-const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);
-const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);
+const Elm_Layout_Part_Alias_Description *efl_ui_layout_content_aliases_get(const Eo *obj);
+const Elm_Layout_Part_Alias_Description *efl_ui_layout_text_aliases_get(const Eo *obj);
 void efl_ui_slider_val_fetch(Evas_Object *obj, Eina_Bool user_event);
 void efl_ui_slider_val_set(Evas_Object *obj);
 void efl_ui_slider_down_knob(Evas_Object *obj, double button_x, double button_y);
 void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y);
 //void elm_layout_sizing_eval_eoapi(Eo *obj);
 
-# define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
+# define _EFL_UI_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
    static const Elm_Layout_Part_Alias_Description * \
    _##_pfx##_##_typ##_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED) \
    { \
       return _##_typ##_aliases; \
    }
 
-# define _ELM_LAYOUT_ALIASES_OPS(_pfx, _typ) \
-   EFL_OBJECT_OP_FUNC(elm_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
+# define _EFL_UI_LAYOUT_ALIASES_OPS(_pfx, _typ) \
+   EFL_OBJECT_OP_FUNC(efl_ui_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
 
-# define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
-# define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
+# define EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _EFL_UI_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
+# define EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _EFL_UI_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
 
-# define ELM_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, content)
-# define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
+# define EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _EFL_UI_LAYOUT_ALIASES_OPS(_pfx, content)
+# define EFL_UI_LAYOUT_TEXT_ALIASES_OPS(_pfx) _EFL_UI_LAYOUT_ALIASES_OPS(_pfx, text)
 
-# define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
-   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)
+# define EFL_CANVAS_GROUP_CALC_OPS(_pfx) \
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _##_pfx##_efl_canvas_group_group_calculate)
 
 # define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \
@@ -986,18 +980,26 @@ _##_pfx##_efl_ui_widget_widget_input_event_handler(Eo *obj, _typ *_pd EINA_UNUSE
    return EINA_TRUE; \
 }
 
-static inline Eina_Bool
-efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
+static inline Efl_Ui_Layout_Orientation
+efl_ui_layout_orientation_axis_get(Efl_Ui_Layout_Orientation orient)
 {
-   switch (dir)
+   return orient & EFL_UI_LAYOUT_ORIENTATION_AXIS_BITMASK;
+}
+
+static inline Eina_Bool
+efl_ui_layout_orientation_is_inverted(Efl_Ui_Layout_Orientation orient)
+{
+   return ((orient & EFL_UI_LAYOUT_ORIENTATION_INVERTED) ==  EFL_UI_LAYOUT_ORIENTATION_INVERTED) ? EINA_TRUE : EINA_FALSE;
+}
+
+static inline Eina_Bool
+efl_ui_layout_orientation_is_horizontal(Efl_Ui_Layout_Orientation orient, Eina_Bool def_val)
+{
+   switch (orient & EFL_UI_LAYOUT_ORIENTATION_AXIS_BITMASK)
      {
-      case EFL_UI_DIR_DEFAULT: return !!def_val;
-      case EFL_UI_DIR_HORIZONTAL: return EINA_TRUE;
-      case EFL_UI_DIR_VERTICAL: return EINA_FALSE;
-      case EFL_UI_DIR_LTR: return EINA_TRUE;
-      case EFL_UI_DIR_RTL: return EINA_TRUE;
-      case EFL_UI_DIR_DOWN: return EINA_FALSE;
-      case EFL_UI_DIR_UP: return EINA_FALSE;
+      case EFL_UI_LAYOUT_ORIENTATION_DEFAULT: return !!def_val;
+      case EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL: return EINA_TRUE;
+      case EFL_UI_LAYOUT_ORIENTATION_VERTICAL: return EINA_FALSE;
       default: return !!def_val;
      }
 }
@@ -1030,5 +1032,27 @@ void _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Objec
 void efl_ui_widget_internal_set(Eo *obj, Eina_Bool internal);
 Eina_Bool efl_ui_widget_internal_get(Eo *obj);
 
+/**
+ * Connect the default scrollable theme signals with the object events and vice versa
+ *
+ * @param obj The object where to listen for theme signals
+ * @param manager The scroll manager object where to listen for events
+ */
+void efl_ui_scroll_connector_bind(Eo *obj, Eo *manager);
+
+/**
+ * Connect the default scrollable theme signals with the object events and vice versa
+ *
+ * @param obj The object where we are listening for events
+ */
+void efl_ui_scroll_connector_unbind(Eo *obj);
+
+typedef struct
+{
+   Eina_Bool custom_parent_provider;
+   Eina_Bool legacy_focus_api_used;
+} Efl_Ui_Shared_Win_Data;
+
+Efl_Ui_Shared_Win_Data* efl_ui_win_shared_data_get(Efl_Ui_Win *win);
 
 #endif

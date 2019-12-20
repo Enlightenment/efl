@@ -1,5 +1,76 @@
 //Efl.Ui.Popup Themes
+/**
+Group: efl/popup (@since 1.23)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+Group: efl/popup/backwall (@since 1.23)
+	 Part Swallow: efl.content (required)
+	 Signal: efl,content,set
+	 Signal: efl,content,unset
+
+Group: efl/alert_popup/backwall (@since 1.23)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+Group: efl/alert_popup/button_layout2 (@since 1.23)
+  Part Swallow: efl.button1 (required)
+  Part Swallow: efl.button2 (required)
+Group: efl/alert_popup/right_button (@since 1.23)
+  Part Text: efl.text (required)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+  Signal: efl,state,animation,activated
+  Signal: efl,state,background,set
+  Signal: efl,state,background,unset
+  Signal: efl,state,disabled
+  Signal: efl,state,enabled
+  Signal: efl,text,set
+  Signal: efl,text,unset
+Group: efl/alert_popup (@since 1.23)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.buttons (required)
+  Part Swallow: efl.content (required)
+  Part Textblock: efl.text.title (required)
+  Signal: efl,buttons,visible,on
+  Signal: efl,title,visible,off
+  Signal: efl,title,visible,on
+Group: efl/alert_popup/button_layout3 (@since 1.23)
+  Part Swallow: efl.button1 (required)
+  Part Swallow: efl.button2 (required)
+  Part Swallow: efl.button3 (required)
+Group: efl/alert_popup/button (@since 1.23)
+  Part Text: efl.text (required)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+  Signal: efl,state,animation,activated
+  Signal: efl,state,background,set
+  Signal: efl,state,background,unset
+  Signal: efl,state,disabled
+  Signal: efl,state,enabled
+  Signal: efl,text,set
+  Signal: efl,text,unset
+Group: efl/alert_popup/button_layout1 (@since 1.23)
+  Part Swallow: efl.button1 (required)
+Group: efl/alert_popup/left_button (@since 1.23)
+  Part Text: efl.text (required)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+  Signal: efl,state,animation,activated
+  Signal: efl,state,background,set
+  Signal: efl,state,background,unset
+  Signal: efl,state,disabled
+  Signal: efl,state,enabled
+  Signal: efl,text,set
+  Signal: efl,text,unset
+*/
 group { "efl/popup";
+   data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
       spacer { "base";
@@ -15,7 +86,12 @@ group { "efl/popup";
             image.normal: "rounded_square.png";
          }
       }
-      swallow { "efl.content";
+      swallow { "efl.background"; required;
+         desc { "default";
+            rel.to: "bg";
+         }
+      }
+      swallow { "efl.content"; required;
          desc { "default";
             rel.to: "base";
          }
@@ -23,18 +99,20 @@ group { "efl/popup";
    }
 }
 
-group { "efl/alert_popup";
-   alias: "efl/scroll_alert_popup";
-   alias: "efl/text_alert_popup";
+group { "efl/alert_popup"; data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
-      alias: "title" "efl.text.title";
       image { "bg";
          desc { "default";
             min: 100 100;
             image.border: 15 15 15 15;
             image.normal: "rounded_square.png";
-          }
+         }
+      }
+      swallow { "efl.background"; required;
+         desc { "default";
+            rel.to: "bg";
+         }
       }
       spacer { "base";
          desc { "default";
@@ -57,7 +135,7 @@ group { "efl/alert_popup";
             min: 0 20;
          }
       }
-      textblock { "efl.text.title";
+      textblock { "efl.text.title"; required;
          scale;
          desc { "default";
             fixed: 1 1;
@@ -72,7 +150,7 @@ group { "efl/alert_popup";
             vis;
          }
       }
-      swallow { "efl.buttons";
+      swallow { "efl.buttons"; required;
          desc { "default";
             fixed: 0 1;
             rel.to: "base";
@@ -85,7 +163,7 @@ group { "efl/alert_popup";
             min: 0 30;
          }
       }
-      swallow { "efl.content";
+      swallow { "efl.content"; required;
          desc { "default";
             rel1.to_x: "base";
             rel1.to_y: "title_bg";
@@ -98,28 +176,27 @@ group { "efl/alert_popup";
    }
    programs {
       program {
-         signal: "efl,title,show"; source: "efl";
+         signal: "efl,title,visible,on"; source: "efl";
          action: STATE_SET "title_visible" 0.0;
          target: "title_bg";
          target: "efl.text.title";
       }
       program {
-         signal: "efl,buttons,show"; source: "efl";
+         signal: "efl,title,visible,off"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "title_bg";
+         target: "efl.text.title";
+      }
+      program {
+         signal: "efl,buttons,visible,on"; source: "efl";
          action: STATE_SET "button_visible" 0.0;
          target: "efl.buttons";
       }
    }
 }
 
-group { "efl/anchor_popup";
-   inherit: "efl/popup";
-}
-
-group { "efl/popup/backwall";
+group { "efl/popup/backwall"; data.item: "version" "123";
    alias: "efl/alert_popup/backwall";
-   alias: "efl/scroll_alert_popup/backwall";
-   alias: "efl/text_alert_popup/backwall";
-   alias: "efl/anchor_popup/backwall";
    parts {
       rect { "base";
          desc { "default";
@@ -130,7 +207,7 @@ group { "efl/popup/backwall";
             hid;
          }
       }
-      swallow { "efl.content";
+      swallow { "efl.content"; required;
          desc { "default";
             rel.to: "base";
             hid;
@@ -150,36 +227,32 @@ group { "efl/popup/backwall";
 
    programs {
       program {
-         signal: "efl,state,content,set"; source: "efl";
+         signal: "efl,content,set"; source: "efl";
          action: STATE_SET "content_visible" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
-         signal: "efl,state,content,unset"; source: "efl";
+         signal: "efl,content,unset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
          signal: "mouse,clicked,1"; source: "block";
-         action: SIGNAL_EMIT "efl,action,clicked" "efl";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
    }
 }
 
-group { "efl/alert_popup/button_layout1";
-   alias: "efl/scroll_alert_popup/button_layout1";
-   alias: "efl/text_alert_popup/button_layout1";
+group { "efl/alert_popup/button_layout1"; data.item: "version" "123";
    parts {
-      swallow { "efl.button1";
+      swallow { "efl.button1"; required;
       }
    }
 }
 
-group { "efl/alert_popup/button_layout2";
-   alias: "efl/scroll_alert_popup/button_layout2";
-   alias: "efl/text_alert_popup/button_layout2";
+group { "efl/alert_popup/button_layout2"; data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -188,13 +261,13 @@ group { "efl/alert_popup/button_layout2";
             min: 5 5;
          }
       }
-      swallow { "efl.button1";
+      swallow { "efl.button1"; required;
          desc { "default";
             rel2.to_x: "div1";
             rel2.relative: 0.0 1.0;
          }
       }
-      swallow { "efl.button2";
+      swallow { "efl.button2"; required;
          desc { "default";
             rel1.to_x: "div1";
             rel1.relative: 1.0 0.0;
@@ -203,9 +276,7 @@ group { "efl/alert_popup/button_layout2";
    }
 }
 
-group { "efl/alert_popup/button_layout3";
-   alias: "efl/scroll_alert_popup/button_layout3";
-   alias: "efl/text_alert_popup/button_layout3";
+group { "efl/alert_popup/button_layout3"; data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -221,13 +292,13 @@ group { "efl/alert_popup/button_layout3";
             min: 5 5;
          }
       }
-      swallow { "efl.button1";
+      swallow { "efl.button1"; required;
          desc { "default";
             rel2.to_x: "div1";
             rel2.relative: 0.0 1.0;
          }
       }
-      swallow { "efl.button2";
+      swallow { "efl.button2"; required;
          desc { "default";
             rel1.to_x: "div1";
             rel2.to_x: "div2";
@@ -235,7 +306,7 @@ group { "efl/alert_popup/button_layout3";
             rel2.relative: 0.0 1.0;
          }
       }
-      swallow { "efl.button3";
+      swallow { "efl.button3"; required;
          desc { "default";
             rel1.to_x: "div2";
             rel1.relative: 1.0 0.0;
@@ -246,45 +317,15 @@ group { "efl/alert_popup/button_layout3";
 
 group { "efl/alert_popup/left_button";
    inherit: "efl/button";
-   alias: "efl/scroll_alert_popup/left_button";
-   alias: "efl/text_alert_popup/left_button";
+   data.item: "version" "123";
 }
 
 group { "efl/alert_popup/right_button";
    inherit: "efl/button";
-   alias: "efl/scroll_alert_popup/right_button";
-   alias: "efl/text_alert_popup/right_button";
+   data.item: "version" "123";
 }
 
 group { "efl/alert_popup/button";
    inherit: "efl/button";
-   alias: "efl/scroll_alert_popup/button";
-   alias: "efl/text_alert_popup/button";
-}
-
-group { "efl/scroll_alert_popup/scroller";
-   inherit: "efl/scroller";
-   alias: "efl/text_alert_popup/scroller";
-   parts {
-       swallow { "efl.content";
-         desc { "default";
-            rel1.offset: 0 0;
-            rel2.offset: 0 0;
-         }
-      }
-      spacer { "inset";
-         desc { "default";
-            hid;
-         }
-      }
-      spacer { "shadow";
-         desc { "default";
-            hid;
-         }
-      }
-   }
-}
-
-group { "efl/text_alert_popup/text";
-   inherit: "efl/text";
+   data.item: "version" "123";
 }

@@ -8,7 +8,6 @@
 #include <Ecore.h>
 
 #include "ecore_internal.h"
-#include "efl_composite_model_private.h"
 
 typedef struct _Efl_Container_Property_Data Efl_Container_Property_Data;
 typedef struct _Efl_Container_Model_Data Efl_Container_Model_Data;

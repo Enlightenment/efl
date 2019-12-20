@@ -1,0 +1,16 @@
+import ector_renderer;
+
+mixin @beta Ector.Renderer.Image
+{
+   [[Ector image renderer mixin]]
+   c_prefix: ector_renderer_image;
+   methods {
+      @property buffer {
+         set {
+         }
+         values {
+            buffer : Ector.Buffer; [[Image buffer]]
+         }
+       }
+   }
+}

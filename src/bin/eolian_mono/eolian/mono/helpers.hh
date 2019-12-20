@@ -1,8 +1,24 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_HELPERS_HH
 #define EOLIAN_MONO_HELPERS_HH
 
 #include "grammar/klass_def.hpp"
 #include "blacklist.hh"
+#include "generation_contexts.hh"
 #include "name_helpers.hh"
 
 namespace eolian_mono {
@@ -163,13 +179,33 @@ bool has_regular_ancestor(attributes::klass_def const& cls)
 }
 
 /*
+ * Sugar for checking if a given class in in the inheritance tree
+ */
+bool inherits_from(attributes::klass_def const& cls, std::string const& name)
+{
+   return std::any_of(cls.inherits.begin(), cls.inherits.end(),
+           [&](attributes::klass_name const& inherit)
+           {
+                return name_helpers::klass_full_concrete_or_interface_name(inherit) == name;
+           });
+}
+
+/*
  * Gets all methods that this class should implement (i.e. that come from an unimplemented interface/mixin and the class itself)
  */
-std::vector<attributes::function_def> get_all_implementable_methods(attributes::klass_def const& cls)
+template<typename Context>
+std::vector<attributes::function_def> get_all_implementable_methods(attributes::klass_def const& cls, Context const& context)
 {
+   bool want_beta = efl::eolian::grammar::context_find_tag<options_context>(context).want_beta;
    std::vector<attributes::function_def> ret;
+   auto filter_beta = [&want_beta](attributes::function_def const& func) {
+       if (!want_beta)
+         return !func.is_beta;
+       else
+         return true;
+   };
 
-   std::copy(cls.functions.begin(), cls.functions.end(), std::back_inserter(ret));
+   std::copy_if(cls.functions.begin(), cls.functions.end(), std::back_inserter(ret), filter_beta);
 
    // Non implemented interfaces
    std::set<attributes::klass_name, attributes::compare_klass_name_by_name> implemented_interfaces;
@@ -206,10 +242,46 @@ std::vector<attributes::function_def> get_all_implementable_methods(attributes::
     for (auto&& inherit : interfaces)
     {
         attributes::klass_def klass(get_klass(inherit, cls.unit), cls.unit);
-        std::copy(klass.functions.cbegin(), klass.functions.cend(), std::back_inserter(ret));
+        std::copy_if(klass.functions.cbegin(), klass.functions.cend(), std::back_inserter(ret), filter_beta);
     }
 
   return ret;
+}
+
+template<typename Klass>
+inline bool is_managed_interface(Klass const& klass)
+{
+    return klass.type == attributes::class_type::interface_
+           || klass.type == attributes::class_type::mixin;
+}
+
+
+/*
+ * Gets all methods that this class should register (i.e. that comes from it and non-public interface methods
+ * that this class is the first one implementing)
+ */
+template<typename Context>
+std::vector<attributes::function_def> get_all_registerable_methods(attributes::klass_def const& cls, Context const& context)
+{
+   std::vector<attributes::function_def> ret;
+
+   auto implementable_methods = get_all_implementable_methods(cls, context);
+
+   std::copy_if(implementable_methods.cbegin(), implementable_methods.cend(), std::back_inserter(ret)
+                , [&cls](attributes::function_def const & func) {
+
+                    if (cls == func.klass)
+                      return true;
+
+                    if (is_managed_interface(func.klass) && func.is_static)
+                      return true;
+
+                    if (!is_managed_interface(func.klass) || func.scope != attributes::member_scope::scope_public)
+                      return true;
+                    return false;
+               });
+
+   return ret;
 }
 
 /*

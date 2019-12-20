@@ -286,6 +286,7 @@ typedef struct _Ecore_Wl2_Event_Window_Rotation
    int rotation, w, h, angle;
    Eina_Bool resize : 1;
 } Ecore_Wl2_Event_Window_Rotation;
+
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Request;
@@ -412,10 +413,6 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_HINT_SUPPORTED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_MESSAGE; /** @since 1.20 */
@@ -602,7 +599,6 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  * @param display The Ecore_Wl2_Display for which to retrieve the existing
  *                Wayland dmabuf interface from
  *
- *
  * @return The wl_dmabuf which this Ecore_Wl2_Display is using
  *
  * @ingroup Ecore_Wl2_Display_Group
@@ -644,8 +640,11 @@ EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, 
 
 /**
  * Get all the Ecore_Wl2_Input from the display.
+ *
  * @param display The display
+ *
  * @return A Eina_Iterator of Ecore_Wl2_Input or @c NULL on error
+ *
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.19
  */
@@ -653,9 +652,12 @@ EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
 
 /**
  * Find a seat for a given display object using the seat id
+ *
  * @param display The display
  * @param id The seat id
+ *
  * @return The corresponding Ecore_Wl2_Input object or @c NULL if no match is found
+ *
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
@@ -663,9 +665,12 @@ EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *disp
 
 /**
  * Find a seat for a given display object using the seat id
+ *
  * @param display The display
  * @param name The seat name
+ *
  * @return The corresponding Ecore_Wl2_Input object or @c NULL if no match is found
+ *
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
@@ -709,6 +714,47 @@ EAPI Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
 EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
 
 /**
+ * Finds an Ecore_Wl2_Window based on wl_surface
+ *
+ * @param display The display to search for the window
+ * @param surface The wl_surface of the window to find
+ *
+ * @return The Ecore_Wl2_Window if found, or NULL if no such window exists
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Display *display, struct wl_surface *surface);
+
+/**
+ * Gets the connected display object
+ *
+ * @brief This function is typically used by clients to get an
+ * ​existing Wayland display.
+ *
+ * ​@param name The display target name. If @c NULL, the default
+ *             display is assumed.
+ *
+ * ​@return The Ecore_Wl2_Display which was connected to
+ *
+ * ​@ingroup Ecore_Wl2_Display_Group
+ * ​@since 1.24
+ */
+EAPI Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
+
+/**
+ * Gets the wl_compositor which belongs to this display
+ *
+ * @param display The Ecore_Wl2_Display to get the compositor of
+ *
+ * @return The wl_compositor associated with this display
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.24
+ */
+EAPI struct wl_compositor *ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display);
+
+/**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
  *
@@ -730,6 +776,18 @@ EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
  * @since 1.17
  */
 EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
+
+/**
+ * Set a callback to be caleld just before the window is closed and freed
+ *
+ * @param window The window to listen to for a xdg toplevel close callback
+ * @param cb The callback function to call being passed data and window
+ * @param data The Data pointer to pass as data to the callback
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI void ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*cb) (void *data, Ecore_Wl2_Window *win), void *data);
 
 /**
  * Get the wl_surface which belongs to this window
@@ -761,6 +819,13 @@ EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
  * @since 1.21
  */
 EAPI void ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect);
+
+/**
+ * @see evas_object_size_hint_aspect_get
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI void ecore_wl2_window_aspect_get(Ecore_Wl2_Window *window, int *w, int *h, unsigned int *aspect);
 
 /**
  * Show a given Ecore_Wl2_Window
@@ -951,6 +1016,18 @@ EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
 
 /**
+ * Get the title of a given window
+ *
+ * @param window The window to set the title of
+ *
+ * @return A string if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI const char *ecore_wl2_window_title_get(Ecore_Wl2_Window *window);
+
+/**
  * Set the class of a given window
  *
  * @param window The window to set the class of
@@ -960,6 +1037,19 @@ EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title
  * @since 1.17
  */
 EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas);
+
+
+/**
+ * Get the class of a given window
+ *
+ * @param window The window to set the class of
+ *
+ * @return A string if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI const char *ecore_wl2_window_class_get(Ecore_Wl2_Window *window);
 
 /**
  * Get the geometry of a given window
@@ -1020,6 +1110,16 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
 /**
+ * Get the type of a given window
+ *
+ * @see Ecore_Wl2_Window_Type
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
+
+/**
  * Find the output that a given window is on
  *
  * @param window The window to find the output for
@@ -1030,17 +1130,6 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
  * @since 1.20
  */
 EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
-
-/**
- * Set a buffer transform on a given window
- *
- * @param window The window on which to set the buffer transform
- * @param transform The buffer transform being requested
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
 
 /**
  * Set if window rotation is supported by the window manager
@@ -1091,8 +1180,8 @@ EAPI Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
 /**
  * Set preferred rotation on a given window
  *
- * @param window
- * @param rot
+ * @param window The window to set preferred rotation on
+ * @param rot The value of the preferred rotation to set
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
@@ -1102,7 +1191,7 @@ EAPI void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int 
 /**
  * Get preferred rotation for a given window
  *
- * @param window
+ * @param window The window to get preferred rotation from
  *
  * @return Given windows preferred rotation
  *
@@ -1136,11 +1225,6 @@ EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, con
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count);
-
-EAPI void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
-EAPI void ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot);
-EAPI void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot);
-EAPI void ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h);
 
 /**
  * Get list of supported auxiliary window hints
@@ -1192,7 +1276,9 @@ EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
 
 /**
  * @brief Get the activated state of a window
- * @param window The window
+ *
+ * @param window The window to get activated state from
+ *
  * @return @c EINA_TRUE if activated
  *
  * @ingroup Ecore_Wl2_Window_Group
@@ -1202,6 +1288,7 @@ EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
 
 /**
  * @brief Set the seat for a popup window to be used with grab
+ *
  * @param window The window
  * @param input The seat
  *
@@ -1225,14 +1312,23 @@ EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_I
  */
 EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
 
-/** @since 1.17 */
+/**
+ * Get which display a given window is using
+ *
+ * @param window The window to get the display of
+ *
+ * @return The Ecore_Wl2_Display that this window is using, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
+ */
 EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
 
 /**
  * Set if this window should ignore focus requests
  *
- * @param window
- * @param focus_skip
+ * @param window The window to set ignore focus requests on
+ * @param focus_skip EINA_TRUE if this window should skip focus requests, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
@@ -1242,7 +1338,7 @@ EAPI void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool fo
 /**
  * Get if this window ignores focus requests
  *
- * @param window
+ * @param window The window to get the focus skip value from
  *
  * @return EINA_TRUE if a window should skip focus requests, EINA_FALSE otherwise
  *
@@ -1263,10 +1359,22 @@ EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
 
 /**
+ * Get the role of a given window
+ *
+ * @param window The window to set the class role
+ *
+ * @return A string if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI const char *ecore_wl2_window_role_get(Ecore_Wl2_Window *window);
+
+/**
  * Set if a given window is in floating mode
  *
- * @param window
- * @param floating
+ * @param window The window to set floating mode on
+ * @param floating EINA_TRUE if this window should be in floating mode, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
@@ -1276,7 +1384,7 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
 /**
  * Get if a given window is in floating mode
  *
- * @param window
+ * @param window The window to get floating mode
  *
  * @return EINA_TRUE if floating, EINA_FALSE otherwise
  *
@@ -1286,6 +1394,16 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
 EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
 
 /**
+ * Finds a window by surface
+ *
+ * @param surface The surface to find the window of
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Window *ecore_wl2_window_surface_find(struct wl_surface *surface);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
@@ -1293,8 +1411,16 @@ EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
  * Wayland Input
  */
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Get the wl_seat that an input is using
+ *
+ * @param input The Ecore_Wl2_Input to get the seat of
+ *
+ * @return The wl_seat of this input, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.17
+ */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
@@ -1309,8 +1435,11 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
 
 /**
  * Get the wayland's seat id from an input.
+ *
  * @param input The input
+ *
  * @return The seat id
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.19
  */
@@ -1318,8 +1447,11 @@ EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_
 
 /**
  * Get the display object of an input
+ *
  * @param input The input
+ *
  * @return The display
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1327,8 +1459,11 @@ EAPI Ecore_Wl2_Display *ecore_wl2_input_display_get(const Ecore_Wl2_Input *input
 
 /**
  * Get the xkb_keymap object of an input
+ *
  * @param input The input
+ *
  * @return The xkb_keymap object
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1336,8 +1471,11 @@ EAPI struct xkb_keymap *ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
 
 /**
  * Get the name of an input
+ *
  * @param input The input
+ *
  * @return The name
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1345,10 +1483,13 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 
 /**
  * Get the keyboard repeat rate and delay of an input
+ *
  * @param input The input
  * @param rate Pointer to store the repeat rate (in seconds)
  * @param rate Pointer to store the repeat delay (in seconds)
+ *
  * @return True if repeat is enabled
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1356,9 +1497,12 @@ EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input,
 
 /**
  * Get the Evas_Device for the seat belonging to a window from an input
+ *
  * @param input The input
  * @param window The window
+ *
  * @return The device object
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1418,7 +1562,6 @@ EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const cha
  * This call initializes a data source and offeres the given mimetypes
  *
  * @param input the input where to add on the data source
- *
  * @param types a null-terminated array of mimetypes
  *
  * @ingroup Ecore_Wl2_Dnd_Group
@@ -1430,10 +1573,9 @@ EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **type
  * Start a drag on the given input
  *
  * @param input the input to use
- *
  * @param window the window which is the origin of the drag operation
- *
  * @param drag_window the window which is used as window of the visible hint.
+ *
  * @return The serial for the start_drag request
  *
  * @ingroup Ecore_Wl2_Dnd_Group
@@ -1451,7 +1593,7 @@ EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window 
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.20
  */
-EAPI EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
+EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
 
 /**
  * End a drag started by a call to ecore_wl2_dnd_drag_start
@@ -1479,7 +1621,6 @@ EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
  * where the caller of this api must write the data (encoded in the given mimetype) to the fd
  *
  * @param input the input to provice this types on
- *
  * @param types a null-terminated array of mimetypes supported by the client
  *
  * @return serial of request on success, 0 on failure
@@ -1688,6 +1829,7 @@ EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
  * @param output The output to get the transform of
  *
  * @return The output's current transform value
+ *
  * @ingroup Ecore_Wl2_Output_Group
  * @since 1.20
  */
@@ -1711,6 +1853,7 @@ EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
  * @param offer Offer object to use
  *
  * @return or´ed values from Ecore_Wl2_Drag_Action which are describing the available actions
+ *
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
@@ -1748,6 +1891,7 @@ EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
  * @return a eina array of strdup´ed strings, this array must NOT be changed or freed
  *
  * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
  */
 EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
 
@@ -1852,20 +1996,20 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  * A surface that has been commit will be in the "pending" state until
  * the compositor tells us it's time to draw again via a frame callback.
  *
- * @surface surface to commit
- * @flush EINA_TRUE if we need to flush immediately.
+ * @param window The window whose surface we want to commit
+ * @param flush EINA_TRUE if we need to flush immediately.
  *
  * @since 1.21
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
-
-EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
 
 /**
  * Check if a wayland window's surface is in the pending state.
  *
  * A surface is pending if it's been commit but we haven't received a
  * frame callback for it yet.  This mean's we're not ready to draw yet.
+ *
+ * @param window The window whose surface we want to check
  *
  * @return whether the window's surface is pending or not.
  *
@@ -1876,9 +2020,9 @@ EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 /**
  * Add a callback that fires when the window's surface_frame callback fires
  *
- * @window the window to add a callback on
- * @cb The callback
- * @data user data to provide to the callback handler
+ * @param window The window to add a callback on
+ * @param cb The callback
+ * @param data User data to provide to the callback handler
  *
  * @since 1.21
  */
@@ -1887,30 +2031,12 @@ EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Wi
 /**
  * delete a callback that fires when the window's surface_frame callback fires
  *
- * @window the window to add a callback on
- * @cb The callback handle
+ * @param window The window to add a callback on
+ * @param cb The callback handle
  *
  * @since 1.21
  */
 EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle);
-
-/**
- * Attach a buffer to a window
- *
- * Note that the GL stack my attach buffers to a surface - we should call this
- * function at that time (with a NULL buffer) to track whether a surface
- * has a valid buffer.  That is, call with implicit true and buffer NULL at
- * the time of glSwapBuffers.
- *
- * @window the target window
- * @buffer the buffer to attach
- * @x x offset from corner
- * @y y offset from corner
- * @implicit true if an external library is doing the actual attaching
- *
- * @since 1.21
- */
-EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
 /**
  * Push buffered wayland protocol to compositor
@@ -1919,11 +2045,22 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  * so the display should be flushed at appropriate times, such
  * as after a commit.
  *
- * @param display
+ * @param display The display to flush
+ *
  * @since 1.21
  */
 EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 
+/**
+ * Get if a given window is resizing
+ *
+ * @param window The window to check for resizing
+ *
+ * @return EINA_TRUE if resizing, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.21
+ */
 EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
 
 /**
@@ -1936,43 +2073,11 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  * Events deferred during an update will automatically fire
  * immediately after the caller calls ecore_wl2_window_commit.
  *
- * @param window
+ * @param window The window whose state we want to latch
+ *
  * @since 1.21
  */
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
-
-EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
-
-EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
-EAPI Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha);
-EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
-EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf);
-EAPI void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride);
-EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
-EAPI void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
-EAPI void ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b);
-EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
-EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
-EAPI Eina_Bool ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer);
-EAPI void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
-EAPI int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
-EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age);
-EAPI void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
-EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
-
-EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
-EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha);
-EAPI void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
-EAPI int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-EAPI void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge);
-EAPI void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge);
-EAPI Ecore_Wl2_Buffer *ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface);
-EAPI int ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf);
-EAPI void ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf);
-EAPI Ecore_Wl2_Window *ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface);
-EAPI Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
 
 # endif
 

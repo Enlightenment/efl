@@ -394,6 +394,9 @@ EAPI Eio_File *eio_file_chmod(const char *path,
  *
  * This function will change the owner of a path, setting it to the user and
  * group passed as argument. It's equivalent to the chown shell command.
+ *
+ * @note Some platforms (including Windows) do not support chown(). In that
+ * case, this function returns @c NULL.
  */
 EAPI Eio_File *eio_file_chown(const char *path,
                               const char *user,
@@ -1254,6 +1257,24 @@ EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
  * @beta
  */
 EAPI Eina_Bool eio_monitor_fallback_check(const Eio_Monitor *monitor);
+
+/**
+ * @brief Check if a monitor has the context about a file or not
+ * @param monitor The Eio_Monitor to check
+ * @param path The path to check
+ * @return EINA_TRUE if there is context, EINA_FALSE otherwise.
+ *
+ * There are Monitors that need context about a file before they can monitor the file correctly.
+ * As an example: If you publish a file in your API before the monitor has this file in his context,
+ * and the file gets deleted as a reaction to this, the monitor will not be able to emit the correct DELETE
+ * event even if the file is in the monitors path.
+ *
+ * In case the monitor does not yet have context, you can be sure that the monitor will bring up an FILE_ADD event about that file.
+ *
+ * @since 1.23
+ * @beta
+ */
+EAPI Eina_Bool eio_monitor_has_context(const Eio_Monitor *monitor, const char *path);
 #endif
 /**
  * @}

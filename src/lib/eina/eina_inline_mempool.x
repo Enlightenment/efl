@@ -56,6 +56,16 @@ struct _Eina_Mempool_Backend
     * @see eina_mempool_from
     */
    Eina_Bool (*from)(void *data, void *element);
+   /** Function to get an Eina_Iterator that will walk every allocated element
+    * in the pool.
+    * @use eina_mempool_iterator_new
+    */
+   Eina_Iterator *(*iterator)(void *data);
+   /** Function to allocate memory near already allocated memory.
+    * @since 1.24
+    * @use eina_mempool_malloc_near
+    */
+   void *(*alloc_near)(void *data, void *after, void *before, unsigned int size);
 };
 
 struct _Eina_Mempool_Backend_ABI1
@@ -74,6 +84,8 @@ struct _Eina_Mempool_Backend_ABI2
 {
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
    Eina_Bool (*from)(void *data, void *element);
+   Eina_Iterator *(*iterator)(void *data);
+   void *(*alloc_near)(void *data, void *after, void *before, unsigned int size);
 };
 
 struct _Eina_Mempool
@@ -96,6 +108,14 @@ eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
 }
 
 static inline void *
+eina_mempool_malloc_near(Eina_Mempool *mp, void *after, void *before, unsigned int size)
+{
+   if (mp->backend2 && mp->backend2->alloc_near && (!(after == NULL && before == NULL)))
+     return mp->backend2->alloc_near(mp->backend_data, after, before, size);
+   return mp->backend.alloc(mp->backend_data, size);
+}
+
+static inline void *
 eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
 {
    void *r = mp->backend.alloc(mp->backend_data, size);
@@ -114,6 +134,13 @@ eina_mempool_from(Eina_Mempool *mp, void *element)
 {
    if (!element) return EINA_FALSE;
    return mp->backend2->from(mp->backend_data, element);
+}
+
+static inline Eina_Iterator *
+eina_mempool_iterator_new(Eina_Mempool *mp)
+{
+   if (!mp->backend2->iterator) return NULL;
+   return mp->backend2->iterator(mp->backend_data);
 }
 
 static inline unsigned int

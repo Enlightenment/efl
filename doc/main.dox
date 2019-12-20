@@ -43,7 +43,6 @@
  * <h3>Early stage libraries (BETA testing)</h3>
  *
  * @li @ref eolian_main an EO file parser and code generator.
- * @li @ref elocation_main awareness library.
  *
  * If you are looking for methods that do not fit into the above list you can
  * see the full <a href="modules.html" />module listing</a>.
@@ -207,12 +206,6 @@
  * @defgroup Evil Evil
  *
  * @brief Microsoft Windows portability layer.
- */
-
-/**
- * @defgroup Escape Escape
- *
- * @brief PlayStation3 portability layer.
  */
 
 /**

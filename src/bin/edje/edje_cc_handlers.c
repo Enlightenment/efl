@@ -34,9 +34,13 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <unistd.h>
 #include <ctype.h>
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #include "edje_cc.h"
 
@@ -415,6 +419,8 @@ static void       st_collections_group_parts_part_description_text_repch(void);
 static void       st_collections_group_parts_part_description_text_size(void);
 static void       st_collections_group_parts_part_description_text_size_range(void);
 static void       st_collections_group_parts_part_description_text_fit(void);
+static void       st_collections_group_parts_part_description_text_fit_step(void);
+static void       st_collections_group_parts_part_description_text_fit_size_array(void);
 static void       st_collections_group_parts_part_description_text_min(void);
 static void       st_collections_group_parts_part_description_text_max(void);
 static void       st_collections_group_parts_part_description_text_align(void);
@@ -497,6 +503,7 @@ static void       st_collections_group_parts_part_description_map_perspective_on
 static void       st_collections_group_parts_part_description_map_color(void);
 static void       st_collections_group_parts_part_description_map_zoom_x(void);
 static void       st_collections_group_parts_part_description_map_zoom_y(void);
+static void       st_collections_group_parts_part_description_map_zoom_center(void);
 static void       st_collections_group_parts_part_description_perspective_zplane(void);
 static void       st_collections_group_parts_part_description_perspective_focal(void);
 static void       st_collections_group_parts_part_api(void);
@@ -947,6 +954,8 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
    {"collections.group.parts.part.description.text.size_range", st_collections_group_parts_part_description_text_size_range},
    {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
+   {"collections.group.parts.part.description.text.fit_step", st_collections_group_parts_part_description_text_fit_step},
+   {"collections.group.parts.part.description.text.fit_size_array", st_collections_group_parts_part_description_text_fit_size_array},
    {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
    {"collections.group.parts.part.description.text.max", st_collections_group_parts_part_description_text_max},
    {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
@@ -1029,6 +1038,7 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.parts.part.description.map.color", st_collections_group_parts_part_description_map_color},
    {"collections.group.parts.part.description.map.zoom.x", st_collections_group_parts_part_description_map_zoom_x},
    {"collections.group.parts.part.description.map.zoom.y", st_collections_group_parts_part_description_map_zoom_y},
+   {"collections.group.parts.part.description.map.zoom.center", st_collections_group_parts_part_description_map_zoom_center},
    {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
    {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
    {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
@@ -6447,6 +6457,7 @@ _part_desc_free(Edje_Part_Collection *pc,
    part_lookup_del(pc, &(ed->map.id_persp));
    part_lookup_del(pc, &(ed->map.id_light));
    part_lookup_del(pc, &(ed->map.rot.id_center));
+   part_lookup_del(pc, &(ed->map.zoom.id_center));
 
    switch (ep->type)
      {
@@ -8600,6 +8611,7 @@ ob_collections_group_parts_part_description(void)
   ed->map.id_persp = -1;
   ed->map.id_light = -1;
   ed->map.rot.id_center = -1;
+  ed->map.zoom.id_center = -1;
   ed->map.rot.x = FROM_DOUBLE(0.0);
   ed->map.rot.y = FROM_DOUBLE(0.0);
   ed->map.rot.z = FROM_DOUBLE(0.0);
@@ -8759,6 +8771,7 @@ st_collections_group_parts_part_description_inherit(void)
    data_queue_copied_part_lookup(pc, &parent->map.id_persp, &ed->map.id_persp);
    data_queue_copied_part_lookup(pc, &parent->map.id_light, &ed->map.id_light);
    data_queue_copied_part_lookup(pc, &parent->map.rot.id_center, &ed->map.rot.id_center);
+   data_queue_copied_part_lookup(pc, &parent->map.zoom.id_center, &ed->map.zoom.id_center);
 
    /* make sure all the allocated memory is getting copied, not just
     * referenced
@@ -11645,6 +11658,83 @@ st_collections_group_parts_part_description_text_fit(void)
    ed->text.fit_y = parse_bool(1);
 }
 
+
+/**
+    @page edcref
+
+    @property
+        fit_step
+    @parameters
+        [font step size in points (pt)]
+    @effect
+        Sets the font step size for the text part. when fitting text
+
+        Defaults: 1
+    @since 1.24.0
+    @endproperty
+ */
+static void
+st_collections_group_parts_part_description_text_fit_step(void)
+{
+   Edje_Part_Description_Text *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_TEXTBLOCK)
+     {
+        ERR("parse error %s:%i. text attributes in non-TEXTBLOCK part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Text *)current_desc;
+
+   ed->text.fit_step = parse_int(0);
+
+   if (ed->text.fit_step < 1)
+     {
+          ERR("parse error %s:%i. fit step less than 1.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+
+    @property
+        fit
+    @parameters
+        [Array of font sizes in points]
+    @effect
+        Sets the allowed font sizes array for the text part.
+    @since 1.24.0
+    @endproperty
+ */
+static void
+st_collections_group_parts_part_description_text_fit_size_array(void)
+{
+   int n, argc;
+   Edje_Part_Description_Text *ed;
+
+   if (current_part->type != EDJE_PART_TYPE_TEXTBLOCK)
+     {
+        ERR("parse error %s:%i. text attributes in non-TEXTBLOCK part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Text *)current_desc;
+   check_min_arg_count(1);
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        unsigned int *value = malloc(sizeof(unsigned int));
+        *value = (unsigned int) parse_int(n);
+        ed->text.fit_size_array = eina_list_append(ed->text.fit_size_array, value);
+     }
+}
+
 /**
     @page edcref
 
@@ -14294,6 +14384,57 @@ st_collections_group_parts_part_description_map_light(void)
    }
 }
 
+/** @edcsubsection{collections_group_parts_description_map_zoom,
+ *                 Group.Parts.Part.Description.Map.Zoom} */
+
+/**
+    @page edcref
+    @block
+        rotation
+    @context
+    map {
+        ..
+        zoom {
+            center: "name";
+            x: 1.0;
+            y: 1.0;
+        }
+        ..
+    }
+    @description
+        Zooms the part, optionally from the center on another part.
+    @endblock
+
+    @property
+        center
+    @parameters
+        [another part's name]
+    @effect
+        This sets the part that is used as the center of zoom when
+        zooming the part with this description. The part's center point
+        is used as the zoom center when applying zoom from the
+        x and y axes. If no center is given, the parts original center
+        itself is used for the zoom center.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_zoom_center(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   {
+      char *name;
+
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_desc->map.zoom.id_center));
+      free(name);
+   }
+}
+
 /**
     @page edcref
     @property
@@ -14436,7 +14577,7 @@ static void
 st_collections_group_parts_part_description_map_color(void)
 {
    Edje_Map_Color *color;
-   Edje_Map_Color tmp;
+   Edje_Map_Color tmp = { 0 };
    int i;
 
    check_min_arg_count(2);

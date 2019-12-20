@@ -18,15 +18,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
-#endif
-
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
+# include <evil_private.h> /* dlsym */
 #endif
 
 #include "ecore_con_private.h"

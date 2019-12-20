@@ -3,6 +3,11 @@
 #endif
 
 #include <string.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* strcasestr */
+#endif
+
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "test.h"
@@ -55,7 +60,6 @@ void test_clock_pause(void *data, Evas_Object *obj, void *event_info);
 void test_combobox(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_check_toggle(void *data, Evas_Object *obj, void *event_info);
-void test_nstate(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
 void test_layout2(void *data, Evas_Object *obj, void *event_info);
@@ -182,8 +186,10 @@ void test_scroller4(void *data, Evas_Object *obj, void *event_info);
 void test_scroller5(void *data, Evas_Object *obj, void *event_info);
 void test_scroller6(void *data, Evas_Object *obj, void *event_info);
 void test_scroller7(void *data, Evas_Object *obj, void *event_info);
+void test_scroller_simple(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_scroller(void *data, Evas_Object *obj, void *event_info);
-void test_efl_ui_scroller2(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_scroller_simple(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_scroller_simple2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
@@ -234,8 +240,11 @@ void test_flip_page_eo(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label_slide(void *data, Evas_Object *obj, void *event_info);
 void test_label_wrap(void *data, Evas_Object *obj, void *event_info);
+void test_textblock_fit(void *data, Evas_Object *obj, void *event_info);
 void test_label_ellipsis(void *data, Evas_Object *obj, void *event_info);
+void test_label_colors(void *data, Evas_Object *obj, void *event_info);
 void test_label_emoji(void *data, Evas_Object *obj, void *event_info);
+void test_label_variation_sequence(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
@@ -310,6 +319,13 @@ void test_image_prescale(void *data, Evas_Object *obj, void *event_info);
 void test_remote_image(void *data, Evas_Object *obj, void *event_info);
 void test_click_image(void *data, Evas_Object *obj, void *event_info);
 void test_load_image(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image_scale_type(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image_swallow_align(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image_prescale(void *data, Evas_Object *obj, void *event_info);
+void test_remote_ui_image(void *data, Evas_Object *obj, void *event_info);
+void test_click_ui_image(void *data, Evas_Object *obj, void *event_info);
+void test_load_ui_image(void *data, Evas_Object *obj, void *event_info);
 void test_external_button(void *data, Evas_Object *obj, void *event_info);
 void test_external_slider(void *data, Evas_Object *obj, void *event_info);
 void test_external_scroller(void *data, Evas_Object *obj, void *event_info);
@@ -352,13 +368,13 @@ void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_inputfield(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
-void test_ui_text_item_factory(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
 void test_efl_gfx_mapping(void *data, Edje_Object *obj, void *event_info);
 void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
+void test_canvas_textblock(void *data, Edje_Object *obj, void *event_info);
 
 void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_rotate(void *data, Evas_Object *obj, void *event_info);
@@ -379,18 +395,29 @@ void test_efl_anim_interpolator(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
 
 void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
-void test_ui_pager(void *data, Evas_Object *obj, void *event_info);
-void test_ui_pager_scroll(void *data, Evas_Object *obj, void *event_info);
+void test_ui_spotlight_stack(void *data, Evas_Object *obj, void *event_info);
+void test_ui_spotlight_plain(void *data, Evas_Object *obj, void *event_info);
+void test_ui_spotlight_scroll(void *data, Evas_Object *obj, void *event_info);
 
-void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
+void test_ui_relative_container(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_collection_grid(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_collection_view(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_item(void *data, Evas_Object *obj, void *event_info);
+void test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+
+void test_efl_ui_animation_view(void *data, Evas_Object *obj, void *event_info);
+void test_efl_gfx_vg_value_provider(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
 static void *tt;
-static Eina_List *tests;
+static Eina_List *tests, *cur_test;;
 static Eina_Bool hide_legacy = EINA_FALSE;
 static Eina_Bool hide_beta = EINA_FALSE;
+static Eina_Bool all_tests = EINA_FALSE;
 
 struct elm_test
 {
@@ -562,6 +589,7 @@ _menu_create(const char *option_str)
           }
         pcat = t->category;
         if (t == tt) tt = cfr;
+        if (all_tests) t->cb(NULL, NULL, NULL);
      }
 }
 
@@ -624,6 +652,32 @@ _space_removed_string_get(const char *name)
      }
 
    return ret;
+}
+
+static Eina_Bool
+_my_win_key_up(void *d EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   struct elm_test *t;
+
+   if (eina_streq(ev->key, "comma") && (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+     {
+        if (cur_test)
+          cur_test = eina_list_prev(cur_test);
+        if (!cur_test)
+          cur_test = eina_list_last(tests);
+        t = eina_list_data_get(cur_test);
+        t->cb(NULL, NULL, NULL);
+     }
+   else if (eina_streq(ev->key, "period") && (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+     {
+        if (cur_test)
+          cur_test = eina_list_next(cur_test);
+        if (!cur_test)
+          cur_test = tests;
+        t = eina_list_data_get(cur_test);
+        t->cb(NULL, NULL, NULL);
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -810,7 +864,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photocam", test_photocam);
    ADD_TEST(NULL, "Images", "Photocam Remote", test_photocam_remote);
    ADD_TEST(NULL, "Images", "Photocam Icon", test_photocam_icon);
-   ADD_TEST(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
+   ADD_TEST_EO(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Image", test_image);
@@ -820,6 +874,13 @@ add_tests:
    ADD_TEST(NULL, "Images", "Image Click", test_click_image);
    ADD_TEST(NULL, "Images", "Image Async Load", test_load_image);
    ADD_TEST(NULL, "Images", "Image Prescale", test_image_prescale);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image", test_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Scale Type", test_ui_image_scale_type);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Align", test_ui_image_swallow_align);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Remote", test_remote_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Click", test_click_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Async Load", test_load_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Prescale", test_ui_image_prescale);
    ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
    ADD_TEST(NULL, "Images", "Video", test_video);
 
@@ -849,7 +910,12 @@ add_tests:
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table", test_ui_table);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table (Linear API)", test_ui_table_linear);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table_Static", test_ui_table_static);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Container", test_ui_relative_container);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection List", test_efl_ui_collection_list);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection Grid", test_efl_ui_collection_grid);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection_View", test_efl_ui_collection_view);
+   ADD_TEST_EO(NULL, "Containers", "Items", test_efl_ui_item);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Frame", test_ui_frame);
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Events", "Event Refeed", test_events);
@@ -874,10 +940,9 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Anchor2", test_entry_anchor2);
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
    ADD_TEST(NULL, "Entries", "Entry Password", test_entry_password);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Input Field", test_efl_ui_text_inputfield);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
-   ADD_TEST_EO(NULL, "Entries", "Ui.Text Item Factory", test_ui_text_item_factory);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Textbox", test_efl_ui_text);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Textbox Input Field", test_efl_ui_text_inputfield);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Textbox Label", test_efl_ui_text_label);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Tags", test_ui_tags);
 
    //------------------------------//
@@ -1061,6 +1126,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "DaySelector", test_dayselector);
    ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
    ADD_TEST(NULL, "Selectors", "Combobox", test_combobox);
+   ADD_TEST_EO(NULL, "Selectors", "Efl.Ui.Radio_Box", test_efl_ui_radio);
 
    //------------------------------//
    ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);
@@ -1076,7 +1142,10 @@ add_tests:
    ADD_TEST(NULL, "Scroller", "Scroller on Popup", test_scroller5);
    ADD_TEST(NULL, "Scroller", "Scroller 6", test_scroller6);
    ADD_TEST(NULL, "Scroller", "Scroller 7", test_scroller7);
+   ADD_TEST(NULL, "Scroller", "Scroller Simple", test_scroller_simple);
    ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller", test_efl_ui_scroller);
+   ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller Simple", test_efl_ui_scroller_simple);
+   ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller Simple2", test_efl_ui_scroller_simple2);
 
    //------------------------------//
    // FIXME: add frame test
@@ -1091,7 +1160,6 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Progressbar", test_ui_progressbar);
-   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Nstate", test_nstate);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider", test_ui_slider);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
 
@@ -1101,9 +1169,10 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Tab Pager", "Efl.Ui.Tab_Pager", test_ui_tab_pager);
-   ADD_TEST_EO(NULL, "Pager", "Efl.Ui.Pager", test_ui_pager);
-   ADD_TEST_EO(NULL, "Scroll Pager", "Efl.Ui.Pager (Scroll)", test_ui_pager_scroll);
-
+   ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Plain", test_ui_spotlight_plain);
+   ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Scroll", test_ui_spotlight_scroll);
+   ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Stack", test_ui_spotlight_stack);
+   ADD_TEST_EO(NULL, "Spotlight", "Navigation stack", test_ui_stack);
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
    ADD_TEST(NULL, "Popups", "Hover", test_hover);
@@ -1139,9 +1208,13 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label", test_label);
    ADD_TEST(NULL, "Text", "Label Slide", test_label_slide);
    ADD_TEST(NULL, "Text", "Label Wrap", test_label_wrap);
+   ADD_TEST(NULL, "Text", "Textblock Fit", test_textblock_fit);
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
+   ADD_TEST(NULL, "Text", "Label Colors", test_label_colors);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
+   ADD_TEST(NULL, "Text", "Label Variation Sequnece", test_label_variation_sequence);
    ADD_TEST_EO(NULL, "Text", "Efl.Ui.Textpath", test_ui_textpath);
+   ADD_TEST_EO(NULL, "Text", "Efl.Canvas.Textblock style", test_canvas_textblock);
 
    //------------------------------//
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);
@@ -1168,7 +1241,6 @@ add_tests:
    ADD_TEST(NULL, "Naviframe", "Naviframe 2", test_naviframe2);
    ADD_TEST(NULL, "Naviframe", "Naviframe 3", test_naviframe3);
    ADD_TEST(NULL, "Naviframe", "Naviframe: Complex", test_naviframe_complex);
-   ADD_TEST_EO(NULL, "Naviframe", "Efl.Ui.Stack", test_ui_stack);
 
    //------------------------------//
    ADD_TEST(NULL, "Geographic", "Map", test_map);
@@ -1231,6 +1303,11 @@ add_tests:
    //------------------------------//
    ADD_TEST_EO(NULL, "Widgets Part", "Part Background", test_part_background);
    ADD_TEST_EO(NULL, "Widgets Part", "Part Shadow", test_part_shadow);
+
+   //------------------------------//
+   ADD_TEST_EO(NULL, "Vector Animation", "Animation View", test_efl_ui_animation_view);
+   ADD_TEST_EO(NULL, "Vector Animation", "Value Provider", test_efl_gfx_vg_value_provider);
+
 #undef ADD_TEST
 
    if (autorun)
@@ -1270,7 +1347,10 @@ add_tests:
      }
 
    if (tests)
-     _menu_create(NULL);
+     {
+        _menu_create(NULL);
+        ecore_event_handler_add(ECORE_EVENT_KEY_UP, (Ecore_Event_Handler_Cb)_my_win_key_up, NULL);
+     }
 
    /* bring in autorun frame */
    if (autorun)
@@ -1357,33 +1437,41 @@ efl_main(void *data EINA_UNUSED,
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (eina_array_count(arge->argv) == 2)
+   if (eina_array_count(arge->argv) >= 2)
      {
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--help")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-help")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-h")))
+        unsigned int i;
+        for (i = 1; i < eina_array_count(arge->argv); i++)
           {
-             efl_loop_quit(ev->object,
-                           eina_value_string_init("Usages:\n"
-                                                  "$ elementary_test\n"
-                                                  "$ elementary_test --test-win-only [TEST_NAME]\n"
-                                                  "$ elementary_test -to [TEST_NAME]\n\n"
-                                                  "Examples:\n"
-                                                  "$ elementary_test -to Button\n\n"));
-             return ;
+             char *arg = eina_array_data_get(arge->argv, i);
+             if ((!strcmp(arg, "--help")) ||
+                 (!strcmp(arg, "-help")) ||
+                 (!strcmp(arg, "-h")))
+               {
+                  efl_loop_quit(ev->object,
+                                eina_value_string_init("Usages:\n"
+                                                       "$ elementary_test\n"
+                                                       "$ elementary_test --test-win-only [TEST_NAME]\n"
+                                                       "$ elementary_test -to [TEST_NAME]\n\n"
+                                                       "Examples:\n"
+                                                       "$ elementary_test -to Button\n\n"));
+                  return ;
+               }
+             /* Just a workaround to make the shot module more
+              * useful with elementary test. */
+             if ((!strcmp(arg, "--test-win-only")) ||
+                 (!strcmp(arg, "-to")))
+               {
+                  test_win_only = EINA_TRUE;
+               }
+             else if (eina_streq(arg, "--all") || eina_streq(arg, "-a"))
+               all_tests = EINA_TRUE;
+             else if ((i == eina_array_count(arge->argv) - 1) && (arg[0] != '-'))
+               autorun = arg;
+
           }
-        autorun = eina_array_data_get(arge->argv, 1);
      }
    else if (eina_array_count(arge->argv) == 3)
      {
-        /* Just a workaround to make the shot module more
-         * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
-          {
-             test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 2);
-          }
      }
 
    my_win_main(autorun, test_win_only); /* create main window */

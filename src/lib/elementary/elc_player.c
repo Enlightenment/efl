@@ -88,7 +88,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
 );
 
 EFL_CALLBACKS_ARRAY_DEFINE(_slider_cb,
-   { EFL_UI_SLIDER_EVENT_CHANGED, _update_position },
+   { EFL_UI_RANGE_EVENT_CHANGED, _update_position },
    { EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, _drag_start },
    { EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, _drag_stop }
 );
@@ -211,18 +211,6 @@ _elm_player_efl_ui_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
    return int_ret;
 }
 
-EOLIAN static void
-_elm_player_elm_layout_sizing_eval(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
-{
-   Evas_Coord w, h;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_get(wd->resize_obj, &w, &h);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &w, &h, w, h);
-   evas_object_size_hint_min_set(obj, w, h);
-}
-
 static void
 _update_slider(void *data, const Efl_Event *event EINA_UNUSED)
 {
@@ -289,7 +277,7 @@ _update_volume(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_forward(void *data, const Efl_Event *event EINA_UNUSED)
+_forward(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    double pos, length;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -305,21 +293,21 @@ _forward(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_info(void *data, const Efl_Event *event EINA_UNUSED)
+_info(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,info", "elm");
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_INFO_CLICKED, NULL);
 }
 
 static void
-_next(void *data, const Efl_Event *event EINA_UNUSED)
+_next(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,next", "elm");
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_NEXT_CLICKED, NULL);
 }
 
 static void
-_pause(void *data, const Efl_Event *event EINA_UNUSED)
+_pause(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -329,7 +317,7 @@ _pause(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_play(void *data, const Efl_Event *event EINA_UNUSED)
+_play(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -339,14 +327,14 @@ _play(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_prev(void *data, const Efl_Event *event EINA_UNUSED)
+_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_PREV_CLICKED, NULL);
    elm_layout_signal_emit(data, "elm,button,prev", "elm");
 }
 
 static void
-_rewind(void *data, const Efl_Event *event EINA_UNUSED)
+_rewind(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    double pos;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -361,14 +349,14 @@ _rewind(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_stop(void *data, const Efl_Event *event EINA_UNUSED)
+_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
    efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
 }
 
 static void
-_eject(void *data, const Efl_Event *event EINA_UNUSED)
+_eject(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -395,7 +383,7 @@ _mute_toggle(Evas_Object *obj)
 }
 
 static void
-_volume(void *data, const Efl_Event *event EINA_UNUSED)
+_volume(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,volume", "elm");
    _mute_toggle(data);
@@ -403,7 +391,7 @@ _volume(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_mute(void *data, const Efl_Event *event EINA_UNUSED)
+_mute(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,mute", "elm");
    _mute_toggle(data);
@@ -455,7 +443,7 @@ _video_del(void *data,
 static Evas_Object *
 _player_button_add(Evas_Object *obj,
                    const char *name,
-                   Efl_Event_Cb func)
+                   Evas_Smart_Cb func)
 {
    Evas_Object *ic;
    Evas_Object *bt;
@@ -475,8 +463,8 @@ _player_button_add(Evas_Object *obj,
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
    elm_object_style_set(bt, buf);
-   efl_event_callback_add
-            (bt, EFL_UI_EVENT_CLICKED, func, obj);
+   evas_object_smart_callback_add(bt, "clicked", func, obj);
+
    snprintf(buf, sizeof(buf), "elm.swallow.media_player.%s", name);
    if (!elm_layout_content_set(obj, buf, bt))
      {
@@ -596,6 +584,7 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
    priv->forward = _player_button_add(obj, "forward", _forward);
    priv->info = _player_button_add(obj, "info", _info);
    priv->next = _player_button_add(obj, "next", _next);
@@ -617,7 +606,6 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
      (priv->slider, _double_to_time, _str_free);
    elm_slider_units_format_function_set
      (priv->slider, _double_to_time, _str_free);
-   elm_slider_min_max_set(priv->slider, 0, 0);
    elm_slider_value_set(priv->slider, 0);
    elm_object_disabled_set(priv->slider, EINA_TRUE);
    evas_object_size_hint_align_set(priv->slider, EVAS_HINT_FILL, 0.5);
@@ -642,7 +630,7 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
    elm_layout_content_set(obj, "elm.swallow.media_player.volumeslider",
                           priv->vslider);
    efl_event_callback_add
-     (priv->vslider, EFL_UI_SLIDER_EVENT_CHANGED, _update_volume, obj);
+     (priv->vslider, EFL_UI_RANGE_EVENT_CHANGED, _update_volume, obj);
 
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -707,7 +695,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_player, "video")
 
 #define ELM_PLAYER_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_player), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_player), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
 
 #include "elm_player_eo.c"

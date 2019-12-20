@@ -30,10 +30,21 @@ _set_a_without_b(Eina_List *a, Eina_List *b)
 }
 
 static void
+_invalidate_cb(void *data, const Efl_Event *ev)
+{
+   MY_DATA(data, pd);
+
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   pd->current_border = eina_list_remove(pd->current_border, ev->object);
+}
+
+static void
 _register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Object *logical)
 {
    if (par_m)
      efl_ui_focus_manager_calc_register(par_m, node, logical, obj);
+   efl_event_callback_add(node, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
 }
 
 static void
@@ -41,6 +52,7 @@ _unregister(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager *par_m, 
 {
    if (par_m)
      efl_ui_focus_manager_calc_unregister(par_m, node);
+   efl_event_callback_del(node, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
 }
 
 static void
@@ -158,6 +170,8 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    if (!ev->info) return;
 
    manager = efl_ui_focus_object_focus_manager_get(ev->object);
+   /* no manager is set when object trees become unfocusable */
+   if (!manager) return;
    EINA_LIST_FOREACH(pd->current_border, n, b)
      {
         if (b == ev->object) continue;

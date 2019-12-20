@@ -225,17 +225,7 @@ layout_setup()
 
    layout = efl_add(EFL_UI_BOX_FLOW_CLASS, win,
                     efl_gfx_arrangement_content_align_set(efl_added, 0.8, 0.2),
-                    efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
-}
-
-static void
-layout_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
+                    efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 }
 
 EFL_START_TEST (efl_ui_box_flow_class_check)
@@ -313,7 +303,7 @@ EFL_START_TEST (efl_ui_box_flow_layout_update_pack)
    btn_geom_assert(&hints3[3][1], efl_gfx_entity_geometry_get(btn2));
    btn_geom_assert(&hints3[3][2], efl_gfx_entity_geometry_get(btn3));
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    hints3[3][0].layout_expected = hints3[3][0].layout_size = EINA_SIZE2D(300, 900);
    hints3[3][1].layout_expected = hints3[3][1].layout_size = EINA_SIZE2D(300, 900);
    hints3[3][2].layout_expected = hints3[3][2].layout_size = EINA_SIZE2D(300, 900);
@@ -408,7 +398,7 @@ EFL_END_TEST
 
 void efl_ui_test_box_flow(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
+   tcase_add_checked_fixture(tc, layout_setup, NULL);
    tcase_add_test(tc, efl_ui_box_flow_class_check);
    tcase_add_test(tc, efl_ui_box_flow_layout_update);
    tcase_add_test(tc, efl_ui_box_flow_layout_update_pack);

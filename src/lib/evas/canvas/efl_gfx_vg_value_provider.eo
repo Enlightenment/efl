@@ -1,0 +1,72 @@
+class @beta Efl.Gfx.Vg.Value_Provider extends Efl.Object
+{
+   [[Efl Vector Value Provider class.
+
+     This class is a set of that contain the value of several properties provided by content.
+     User can use this class to change the properties for the specific content specified by the keypath.
+   ]]
+   methods {
+      @property keypath {
+         [[ Keypath is the target a specific content or a set of contents that will be updated.
+            It can include the specific name of the contents, wildcard(*) or Globstar(**).
+         ]]
+         get {
+         }
+         set {
+         }
+         values {
+            keypath: stringshare; [[ The keypath of contents ]]
+         }
+      }
+      @property transform {
+         [[ User can adjust transform value of the content specified by the keypath. ]]
+         set {
+         }
+         get {
+         }
+         values {
+            m: ptr(Eina.Matrix3); [[ Matrix Value. ]]
+         }
+      }
+      @property fill_color {
+         [[ User can adjust color value of the fill content specified by the keypath. ]]
+         set {
+         }
+         get {
+         }
+         values {
+            r: int; [[ Red color value of fill. ]]
+            g: int; [[ Green color value of fill. ]]
+            b: int; [[ Blue color value of fill. ]]
+            a: int; [[ Alpha value of fill. ]]
+         }
+      }
+      @property stroke_color {
+         [[ User can adjust color value of the stroke content specified by the keypath. ]]
+         set {
+         }
+         get {
+         }
+         values {
+            r: int; [[ Red color value of stroke. ]]
+            g: int; [[ Green color value of stroke. ]]
+            b: int; [[ Blue color value of stroke. ]]
+            a: int; [[ Alpha value of stroke. ]]
+         }
+      }
+      @property stroke_width {
+         [[ User can adjust width value of the stroke content specified by the keypath. ]]
+         set {
+         }
+         get {
+         }
+         values {
+            width: double; [[ Width value of stroke. ]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

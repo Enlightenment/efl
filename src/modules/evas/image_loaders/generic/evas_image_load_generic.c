@@ -2,19 +2,20 @@
 # include "config.h"
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "evas_common_private.h"
 #include "evas_private.h"
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #ifndef O_BINARY
 # define O_BINARY 0
@@ -105,7 +106,7 @@ dotcat(char *dest, const char *src)
 
 static Eina_Bool
 _load(Eina_File *ef, const char *key,
-      Evas_Image_Property *prop,
+      Emile_Image_Property *prop,
       Evas_Image_Load_Opts *opts,
       void *pixels,
       int *error, Eina_Bool get_data)
@@ -426,7 +427,7 @@ evas_image_load_file_close_generic(void *loader_data)
 
 static Eina_Bool
 evas_image_load_file_head_generic(void *loader_data,
-                                  Evas_Image_Property *prop,
+                                  Emile_Image_Property *prop,
                                   int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
@@ -436,7 +437,7 @@ evas_image_load_file_head_generic(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_generic(void *loader_data,
-                                  Evas_Image_Property *prop,
+                                  Emile_Image_Property *prop,
                                   void *pixels,
                                   int *error)
 {
@@ -447,10 +448,12 @@ evas_image_load_file_data_generic(void *loader_data,
 
 Evas_Image_Load_Func evas_image_load_generic_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_generic,
   evas_image_load_file_close_generic,
-  evas_image_load_file_head_generic,
-  evas_image_load_file_data_generic,
+  (void*) evas_image_load_file_head_generic,
+  NULL,
+  (void*) evas_image_load_file_data_generic,
   NULL,
   EINA_TRUE,
   EINA_FALSE

@@ -28,10 +28,12 @@ static void
 _eina_mempool_test(Eina_Mempool *mp,
                    Eina_Bool with_realloc, Eina_Bool with_gc, Eina_Bool accurate_from)
 {
+   Eina_Iterator *it;
    int *tbl[512];
+   int *ptr;
    int i;
 
-        fail_if(!mp);
+   fail_if(!mp);
 
    for (i = 0; i < 512; ++i)
      {
@@ -50,6 +52,20 @@ _eina_mempool_test(Eina_Mempool *mp,
         eina_mempool_free(mp, tbl[i]);
         if (accurate_from)
           fail_if(eina_mempool_from(mp, tbl[i]) != EINA_FALSE);
+     }
+
+   it = eina_mempool_iterator_new(mp);
+   EINA_ITERATOR_FOREACH(it, ptr)
+     {
+        ck_assert_int_gt(*ptr, 255);
+        *ptr = 0;
+     }
+   eina_iterator_free(it);
+
+   if (it) // Only check if the mempool support iterator
+     {
+        for (; i < 512; ++i)
+          ck_assert_int_eq(*tbl[i], 0);
      }
 
    if (with_realloc)
@@ -88,6 +104,17 @@ EFL_START_TEST(eina_mempool_pass_through)
 EFL_END_TEST
 #endif
 
+#ifdef EINA_BUILD_ONE_BIG
+EFL_START_TEST(eina_mempool_one_big)
+{
+   Eina_Mempool *mp;
+
+   mp = eina_mempool_add("one_big", "test", NULL, sizeof (int), 384);
+   _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE, EINA_TRUE);
+}
+EFL_END_TEST
+#endif
+
 void
 eina_test_mempool(TCase *tc)
 {
@@ -96,5 +123,8 @@ eina_test_mempool(TCase *tc)
 #endif
 #ifdef EINA_BUILD_PASS_THROUGH
    tcase_add_test(tc, eina_mempool_pass_through);
+#endif
+#ifdef EINA_BUILD_ONE_BIG
+   tcase_add_test(tc, eina_mempool_one_big);
 #endif
 }

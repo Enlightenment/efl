@@ -31,7 +31,7 @@ _bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUS
    new_time.tm_sec = 0;
    elm_datetime_field_visible_set(dt1, ELM_DATETIME_HOUR, EINA_TRUE);
    elm_datetime_field_visible_set(dt1, ELM_DATETIME_MINUTE, EINA_TRUE);
-   efl_ui_clock_pause_set(dt1, EINA_TRUE);
+   elm_clock_pause_set(dt1, EINA_TRUE);
    elm_datetime_value_set(dt1, &new_time);
    elm_object_disabled_set(dt1, EINA_TRUE);
    elm_object_disabled_set(obj, EINA_TRUE);

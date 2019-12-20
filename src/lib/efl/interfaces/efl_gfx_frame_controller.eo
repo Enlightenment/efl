@@ -14,12 +14,12 @@ interface @beta Efl.Gfx.Frame_Controller
 
    methods {
       @property animated {
-         get {
-            [[Check if an object can be animated (has multiple frames).
+         [[Whether an object can be animated (has multiple frames).
 
-              This will be $true for animated object for instance but $false
-              for a single frame object.
-            ]]
+           This will be $true for animated object for instance but $false
+           for a single frame object.
+         ]]
+         get {
          }
          values {
             is_animated: bool; [[$true if the object is animated]]
@@ -28,11 +28,9 @@ interface @beta Efl.Gfx.Frame_Controller
       @property frame {
          [[Index of the current frame of an animated object.
 
-           Ranges from 1 to @.frame_count. Valid only if @.animated.
+           Ranges from 1 to @.frame_count. Valid only if @.animated is $true.
          ]]
          set {
-            [[Set the frame to current frame of an animated object.
-            ]]
             return: bool; [[Returns $true if the frame index is valid.]]
          }
          get {}
@@ -41,58 +39,56 @@ interface @beta Efl.Gfx.Frame_Controller
          }
       }
       @property frame_count {
-         get {
-            [[Get the total number of frames of the object, if animated.
+         [[The total number of frames of the object, if animated.
 
-              Returns -1 if not animated.
-            ]]
+           Returns -1 if not animated.
+         ]]
+         get {
             return: int; [[The number of frames in the animated object.]]
          }
       }
       @property loop_type {
          /* FIXME: external type used from evas / emile */
+         [[The kind of looping the animated object does.
+
+           If it returns @Efl.Gfx.Frame_Controller_Loop_Hint.loop, you should
+           display frames in a sequence like: 1->2->3->1->2->3->1...
+
+           If it returns @Efl.Gfx.Frame_Controller_Loop_Hint.pingpong, it is
+           better to display frames in a sequence like:
+           1->2->3->2->1->2->3->1...
+
+           The default type is @Efl.Gfx.Frame_Controller_Loop_Hint.loop.
+         ]]
          get {
-            [[Get the kind of looping the animated object does.
-
-              This returns the kind of looping the animated object wants to do.
-
-              If it returns @Efl.Gfx.Frame_Controller_Loop_Hint.loop, you should
-              display frames in a sequence like: 1->2->3->1->2->3->1...
-
-              If it returns @Efl.Gfx.Frame_Controller_Loop_Hint.pingpong, it is
-              better to display frames in a sequence like:
-              1->2->3->2->1->2->3->1...
-
-              The default type is @Efl.Gfx.Frame_Controller_Loop_Hint.loop.
-            ]]
             return: Efl.Gfx.Frame_Controller_Loop_Hint; [[Loop type of the animated object.]]
          }
       }
       @property loop_count {
+         [[The number times the animation of the object loops.
+
+           This returns loop count of animated object. The loop count is the number
+           of times the animation will play fully from first to last frame
+           until the animation should stop (at the final frame).
+
+           If 0 is returned, then looping should happen indefinitely
+           (no limit to the number of times it loops).
+         ]]
          get {
-            [[Get the number times the animation of the object loops.
-
-              This returns loop count of animated object. The loop count is the number
-              of times the animation will play fully from first to last frame
-              until the animation should stop (at the final frame).
-
-              If 0 is returned, then looping should happen indefinitely
-              (no limit to the number of times it loops).
-            ]]
             return: int; [[The number of loop of an animated object.]]
          }
       }
       @property frame_duration {
+         [[The duration of a sequence of frames.
+
+           This returns total duration in seconds that the specified
+           sequence of frames should take.
+
+           If $start_frame is 1 and $frame_num is 0, this returns the
+           duration of frame 1. If $start_frame is 1 and $frame_num is 1,
+           this returns the total duration of frame 1 + frame 2.
+         ]]
          get {
-            [[Get the duration of a sequence of frames.
-
-              This returns total duration in seconds that the specified
-              sequence of frames should take.
-
-              If $start_frame is 1 and $frame_num is 0, this returns the
-              duration of frame 1. If $start_frame is 1 and $frame_num is 1,
-              this returns the total duration of frame 1 + frame 2.
-            ]]
          }
          keys {
             start_frame: int; [[The first frame, rangers from 1 to @.frame_count.]]
@@ -100,6 +96,25 @@ interface @beta Efl.Gfx.Frame_Controller
          }
          values {
             duration: double; [[Duration in seconds]]
+         }
+      }
+      @property sector {
+         [[The sector for playing section.
+
+           Returns the start and end frame of the sector specified by the name.
+         ]]
+         set {
+            return: bool; [[ Returns $true if sector and frame set success. ]]
+         }
+         get {
+            return: bool; [[ Returns $true if frames get success. ]]
+         }
+         keys {
+            name: string; [[ The name of sector ]]
+         }
+         values {
+            startframe: int; [[ The start frame of sector ]]
+            endframe: int; [[ The end frame of sector ]]
          }
       }
    }

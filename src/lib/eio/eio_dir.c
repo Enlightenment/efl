@@ -17,6 +17,10 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#endif
+
 #include "eio_private.h"
 #include "Eio.h"
 
@@ -91,8 +95,10 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
               if (_eio_lstat(info->path, &buffer) != 0)
 		continue;
 
+#ifndef _WIN32
               if (S_ISLNK(buffer.st_mode))
                 info->type = EINA_FILE_LNK;
+#endif
            default:
               break;
           }
@@ -268,7 +274,7 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
    /* recreate all links */
    EINA_LIST_FOREACH(order->links, l, ln)
      {
-        ssize_t length;
+        ssize_t length = -1;
 
         eina_strbuf_reset(oldpath);
 
@@ -293,7 +299,8 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
           }
 
         /* read link target */
-        length = readlink(ln, target, bsz);
+        if (target)
+          length = readlink(ln, target, bsz);
         if (length < 0)
           goto on_error;
 

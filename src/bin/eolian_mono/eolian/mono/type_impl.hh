@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_TYPE_IMPL_HH
 #define EOLIAN_MONO_TYPE_IMPL_HH
 
@@ -5,6 +20,7 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
 #include "name_helpers.hh"
+#include "type_match.hh"
 
 namespace eolian_mono {
 
@@ -54,19 +70,6 @@ attributes::complex_type_def replace_outer(attributes::complex_type_def v, attri
   v.outer = regular;
   return v;
 }
-      
-template <typename Array, typename F, int N, typename A>
-eina::optional<bool> call_match(Array const (&array)[N], F f, A a)
-{
-   typedef Array const* iterator_type;
-   iterator_type match_iterator = &array[0], match_last = match_iterator + N;
-   match_iterator = std::find_if(match_iterator, match_last, f);
-   if(match_iterator != match_last)
-     {
-        return a(match_iterator->function());
-     }
-   return {nullptr};
-}
 
 template <typename OutputIterator, typename Context>
 struct visitor_regular_type_def_printer
@@ -99,6 +102,7 @@ struct visitor_generate
    bool is_return;
    bool is_ptr;
    mutable bool is_optional;
+   bool is_special_subtype;
 
    typedef visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -205,11 +209,21 @@ struct visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_special_subtype)
+                  return replace_base_type(r, "Eina.Stringshare");
                 return replace_base_type(r, "System.String");
               }}
            , {"strbuf", nullptr, [&]
               {
                 return regular_type_def{"Eina.Strbuf", regular.base_qualifier, {}};
+              }}
+           , {"binbuf", nullptr, [&]
+              {
+                return regular_type_def{"Eina.Binbuf", regular.base_qualifier, {}};
+              }}
+           , {"event", nullptr, [&]
+              {
+                return regular_type_def{"Efl.Event", regular.base_qualifier, {}};
               }}
            , {"any_value", true, [&]
               { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
@@ -217,12 +231,12 @@ struct visitor_generate
            , {"any_value", false, [&]
               { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
               }}
-           , {"any_value_ptr", nullptr, [&] 
+           , {"any_value_ref", nullptr, [&] 
               { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
-              }} // FIXME add proper support for any_value_ptr
+              }} // FIXME add proper support for any_value_ref
         };
         std::string full_type_name = name_helpers::type_full_eolian_name(regular);
-        if(eina::optional<bool> b = call_match
+        if(eina::optional<bool> b = type_match::get_match
          (optional_match_table
           , [&] (match const& m)
           {
@@ -245,7 +259,7 @@ struct visitor_generate
           is_optional = false;
           return (*this)(r);
         }
-        else if(eina::optional<bool> b = call_match
+        else if(eina::optional<bool> b = type_match::get_match
          (match_table
           , [&] (match const& m)
           {
@@ -379,16 +393,26 @@ struct visitor_generate
         , {"iterator", nullptr, nullptr, [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "Eina.Iterator";
+             c.outer.base_type = "IEnumerable";
              return c;
            }           
           }
         , {"accessor", nullptr, nullptr, [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "Eina.Accessor";
+             c.outer.base_type = "IEnumerable";
              return c;
            }           
+          }
+        , {"slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina.Slice", complex.outer.base_qualifier, {}};
+           }
+          }
+        , {"rw_slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina.RwSlice", complex.outer.base_qualifier, {}};
+           }
           }
       };
 
@@ -399,13 +423,13 @@ struct visitor_generate
           // pointers.swap(no_pointer_regular.pointers);
           // if(is_out)
           //   pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
-          return visitor_type{sink, context, c_type, false}(no_pointer_regular)
-            && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
+          return visitor_type{sink, context, c_type, false, false, false, false, false}(no_pointer_regular)
+            && as_generator("<" << (type(false, false, true) % ", ") << ">").generate(sink, complex.subtypes, *context)
           ;
             // && detail::generate_pointers(sink, pointers, *context, false);
         };
        
-      if(eina::optional<bool> b = call_match
+      if(eina::optional<bool> b = type_match::get_match
          (matches
           , [&] (match const& m)
           {

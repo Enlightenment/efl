@@ -103,7 +103,7 @@ _on_mouse_up(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 EOLIAN static void

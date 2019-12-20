@@ -5,13 +5,16 @@
 #include "region.h"
 
 #include <software/Ector_Software.h>
-#include "cairo/Ector_Cairo.h"
 #include "evas_ector_software.h"
 #include "draw.h"
 #include "evas_filter_private.h"
 
 #if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
+#endif
+
+#ifdef _WIN32
+# include <evil_private.h> /* dlsym */
 #endif
 
 #if defined HAVE_DLSYM
@@ -1047,6 +1050,48 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
+eng_image_content_region_get(void *engine EINA_UNUSED, void *image, Eina_Rectangle *content)
+{
+   RGBA_Image *im = image;
+
+   if (!im) return EINA_FALSE;
+
+   if (!im->cache_entry.need_data) return EINA_FALSE;
+
+   if (!im->image.data) evas_cache_image_load_data(&im->cache_entry);
+
+   if (!im->cache_entry.content.w ||
+       !im->cache_entry.content.h)
+     return EINA_FALSE;
+
+   if (!content) return EINA_FALSE;
+
+   memcpy(content, &im->cache_entry.content, sizeof (Eina_Rectangle));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eng_image_stretch_region_get(void *engine EINA_UNUSED, void *image,
+                             uint8_t **horizontal, uint8_t **vertical)
+{
+   RGBA_Image *im = image;
+
+   if (!im) return EINA_FALSE;
+
+   if (!im->cache_entry.need_data) return EINA_FALSE;
+
+   if (!im->image.data) evas_cache_image_load_data(&im->cache_entry);
+
+   if (!im->cache_entry.stretch.horizontal.region ||
+       !im->cache_entry.stretch.vertical.region)
+     return EINA_FALSE;
+
+   *horizontal = im->cache_entry.stretch.horizontal.region;
+   *vertical = im->cache_entry.stretch.vertical.region;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane,
                           Eina_Slice *slice, Evas_Colorspace *cspace,
                           Eina_Bool load, Eina_Bool *tofree)
@@ -1207,9 +1252,25 @@ eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
 static void *
 eng_image_size_set(void *data EINA_UNUSED, void *image, int w, int h)
 {
-   Image_Entry *im = image;
+   RGBA_Image *rm;
+   Image_Entry *im = image, *im2;
    if (!im) return NULL;
-   return evas_cache_image_size_set(im, w, h);
+
+   /* sw engine im could be changed and removed in evas_cache_image_size_set.
+      in this case, there is no chance to free its resource.  */
+   evas_cache_image_ref(im);
+   im2 = evas_cache_image_size_set(im, w, h);
+   if (im != im2 && im->references == 1)
+     {
+        rm = (RGBA_Image *)im;
+        if (rm->native.data)
+          {
+             if (rm->native.func.free)
+               rm->native.func.free(im);
+          }
+     }
+   evas_cache_image_drop(im);
+   return im2;
 }
 
 static void *
@@ -4147,26 +4208,13 @@ eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
 
 // Ector functions
 
-static Eina_Bool use_cairo;
-
 static Ector_Surface *
 eng_ector_create(void *engine EINA_UNUSED)
 {
    Ector_Surface *ector;
-   const char *ector_backend;
 
-   ector_backend = getenv("ECTOR_BACKEND");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   if (ector_backend && !strcasecmp(ector_backend, "default"))
-     {
-        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_FALSE;
-     }
-   else
-     {
-        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_TRUE;
-     }
+   ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
    efl_domain_current_pop();
    return ector;
 }
@@ -4398,12 +4446,15 @@ _draw_thread_ector_surface_set(void *data)
    if (surface)
      {
         pixels = evas_cache_image_pixels(&surface->cache_entry);
-        w = surface->cache_entry.w;
-        h = surface->cache_entry.h;
-        x = ector_surface->x;
-        y = ector_surface->y;
-        // clear the surface before giving to ector
-        if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+        if (pixels)
+          {
+             w = surface->cache_entry.w;
+             h = surface->cache_entry.h;
+             x = ector_surface->x;
+             y = ector_surface->y;
+             // clear the surface before giving to ector
+             if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+          }
      }
 
    ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
@@ -4415,7 +4466,7 @@ _draw_thread_ector_surface_set(void *data)
 static void
 eng_ector_begin(void *engine EINA_UNUSED, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
-                int x, int y, Eina_Bool clear, Eina_Bool do_async)
+                int x, int y, Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -4428,7 +4479,6 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         nes->pixels = surface;
         nes->x = x;
         nes->y = y;
-        nes->clear = clear;
 
         QCMD(_draw_thread_ector_surface_set, nes);
      }
@@ -4443,7 +4493,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
         // clear the surface before giving to ector
-        if (clear) memset(pixels, 0, (w * h * 4));
+        memset(pixels, 0, (w * h * 4));
 
         ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
@@ -4493,6 +4543,8 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
       case EVAS_FILTER_MODE_FILL: func = eng_filter_fill_func_get(cmd); break;
       case EVAS_FILTER_MODE_MASK: func = eng_filter_mask_func_get(cmd); break;
       case EVAS_FILTER_MODE_TRANSFORM: func = eng_filter_transform_func_get(cmd); break;
+      case EVAS_FILTER_MODE_GRAYSCALE: func = eng_filter_grayscale_func_get(cmd); break;
+      case EVAS_FILTER_MODE_INVERSE_COLOR: func = eng_filter_inverse_color_func_get(cmd); break;
       default: return NULL;
      }
 
@@ -4607,6 +4659,8 @@ static Evas_Func func =
      eng_image_data_map,
      eng_image_data_unmap,
      eng_image_data_maps_get,
+     eng_image_content_region_get,
+     eng_image_stretch_region_get,
      eng_image_data_slice_add,
      eng_image_prepare,
      eng_image_surface_noscale_new,

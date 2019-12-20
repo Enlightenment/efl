@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -14,7 +29,7 @@ void call_async(efl::eina::mutex& mutex, efl::eina::condition_variable& cond, in
 {
   efl::ecore::main_loop_thread_safe_call_async
     (
-     [&mutex,&cond,&done]
+     [&mutex,&done]
      {
        std::cout << "yeah" << std::endl;
        efl::eina::unique_lock<efl::eina::mutex> l(mutex);

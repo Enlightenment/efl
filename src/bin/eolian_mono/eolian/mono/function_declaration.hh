@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_FUNCTION_DECLARATION_HH
 #define EOLIAN_MONO_FUNCTION_DECLARATION_HH
 
@@ -23,11 +38,15 @@ struct function_declaration_generator
     if(blacklist::is_function_blacklisted(f, context) || f.is_static)
       return true;
 
-    if(!as_generator(documentation).generate(sink, f, context))
+    // C# interfaces can't have non-public members
+    if(f.scope != attributes::member_scope::scope_public)
+      return true;
+
+    if(!as_generator(documentation(1)).generate(sink, f, context))
       return false;
 
     return as_generator
-        (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
+      (scope_tab << eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n\n")
       .generate(sink, std::make_tuple(f.return_type, name_helpers::managed_method_name(f), f.parameters), context);
   }
 };

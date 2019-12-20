@@ -1,14 +1,32 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 #define CODE_ANALYSIS
 
 using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Globalization;
 
 using static Eina.EinaNative.UnsafeNativeMethods;
 using static Eina.TraitFunctions;
@@ -23,6 +41,7 @@ namespace EinaNative
 // Structs to be passed from/to C when dealing with containers and
 // optional values.
 [StructLayout(LayoutKind.Sequential)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 struct Value_Array
 {
     public IntPtr subtype;
@@ -31,6 +50,7 @@ struct Value_Array
 }
 
 [StructLayout(LayoutKind.Sequential)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 struct Value_List
 {
     public IntPtr subtype;
@@ -38,6 +58,7 @@ struct Value_List
 }
 
 [SuppressUnmanagedCodeSecurityAttribute]
+[EditorBrowsable(EditorBrowsableState.Never)]
 static internal class UnsafeNativeMethods
 {
     [DllImport(efl.Libs.Eina)]
@@ -45,6 +66,9 @@ static internal class UnsafeNativeMethods
 
     [DllImport(efl.Libs.Eina)]
     internal static extern void eina_value_free(IntPtr type);
+
+    [DllImport(efl.Libs.Eina)]
+    internal static extern IntPtr eina_value_type_name_get(IntPtr type);
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -168,7 +192,10 @@ static internal class UnsafeNativeMethods
     internal static extern int eina_value_compare_wrapper(IntPtr handle, IntPtr other);
 
     [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
-    internal static extern IntPtr eina_value_to_string(IntPtr handle); // We take ownership of the returned string.
+    [return:
+     MarshalAs(UnmanagedType.CustomMarshaler,
+	       MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))]
+    internal static extern string eina_value_to_string(IntPtr handle); // We take ownership of the returned string.
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -181,6 +208,10 @@ static internal class UnsafeNativeMethods
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_container_append_wrapper_string(IntPtr handle, string data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_ptr(IntPtr handle, IntPtr data);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -277,6 +308,10 @@ static internal class UnsafeNativeMethods
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_container_set_wrapper_string(IntPtr handle, int index, string value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_ptr(IntPtr handle, int index, IntPtr value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -377,6 +412,10 @@ static internal class UnsafeNativeMethods
     [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref string value);
+
+    [DllImport(efl.Libs.Eina)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref IntPtr value);
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -499,6 +538,8 @@ static internal class UnsafeNativeMethods
     internal static extern IntPtr type_array();
     [DllImport(efl.Libs.CustomExports)]
     internal static extern IntPtr type_list();
+    [DllImport(efl.Libs.CustomExports)]
+    internal static extern IntPtr type_hash();
 
     // Optional
     [DllImport(efl.Libs.CustomExports)]
@@ -507,12 +548,22 @@ static internal class UnsafeNativeMethods
     // Error
     [DllImport(efl.Libs.CustomExports)]
     internal static extern IntPtr type_error();
+
+    // Error
+    [DllImport(efl.Libs.CustomExports)]
+    internal static extern IntPtr type_object();
 }
 }
 
-/// <summary>Struct for passing Values by value to Unmanaged functions.</summary>
+/// <summary>Struct for passing Values by value to Unmanaged functions.
+///
+/// <para>Used internally by the marshalling code.</para>
+///
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct ValueNative
+[EditorBrowsable(EditorBrowsableState.Never)]
+public struct ValueNative : IEquatable<ValueNative>
 {
     public IntPtr Type;
     public IntPtr Value; // Actually an Eina_Value_Union, but it is padded to 8 bytes.
@@ -521,104 +572,249 @@ public struct ValueNative
     {
         return $"ValueNative<Type:0x{Type.ToInt64():x}, Value:0x{Value.ToInt64():x}>";
     }
+
+    /// <summary>
+    ///   Gets a hash for <see cref="ValueNative" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode() => Type.GetHashCode() ^ Value.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ValueNative" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ValueNative)) ? false : Equals((ValueNative)other);
+
+    /// <summary>Returns whether this <see cref="ValueNative" /> is equal
+    /// to the given <see cref="ValueNative" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ValueNative" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ValueNative other)
+        => (Type == other.Type) ^ (Value == other.Value);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ValueNative lhs, ValueNative rhs) => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ValueNative lhs, ValueNative rhs) => !(lhs == rhs);
 }
 
-/// <summary>Exception for failures when setting an container item.</summary>
+/// <summary>Exception for failures when setting an container item.
+///
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 [Serializable]
 public class SetItemFailedException : Exception
 {
-    /// <summary> Default constructor.</summary>
+    /// <summary>
+    /// Default constructor.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public SetItemFailedException() : base()
     {
     }
 
-    /// <summary> Most commonly used contructor.</summary>
+    /// <summary>
+    /// Most commonly used contructor. Allows setting a custom message.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="msg">The message of the exception.</param>
     public SetItemFailedException(string msg) : base(msg)
     {
     }
 
-    /// <summary> Wraps an inner exception.</summary>
+    /// <summary>
+    /// Wraps an inner exception.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="msg">The message of the exception.</param>
+    /// <param name="inner">The exception to be wrapped.</param>
     public SetItemFailedException(string msg, Exception inner) : base(msg, inner)
     {
     }
 
-    /// <summary> Serializable constructor.</summary>
+    /// <summary>
+    /// Serializable constructor.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// <param name="info">Serialized object data about the exception.</param>
+    /// <param name="context">Contextual information about the source or destination.</param>
+    /// </summary>
     protected SetItemFailedException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
 }
 
-/// <summary>Exception for methods that must have been called on a container.</summary>
+/// <summary>Exception for methods that must have been called on a container.
+///
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 [Serializable]
 public class InvalidValueTypeException: Exception
 {
-    /// <summary> Default constructor.</summary>
+    /// <summary>
+    /// Default constructor.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public InvalidValueTypeException() : base()
     {
     }
 
-    /// <summary> Most commonly used contructor.</summary>
+    /// <summary>
+    /// Most commonly used contructor. Allows setting a custom message.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="msg">The message of the exception.</param>
     public InvalidValueTypeException(string msg) : base(msg)
     {
     }
 
-    /// <summary> Wraps an inner exception.</summary>
+    /// <summary>
+    /// Wraps an inner exception.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="msg">The message of the exception.</param>
+    /// <param name="inner">The exception to be wrapped.</param>
     public InvalidValueTypeException(string msg, Exception inner) : base(msg, inner)
     {
     }
 
-    /// <summary> Serializable constructor.</summary>
+    /// <summary>
+    /// Serializable constructor.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// <param name="info">Serialized object data about the exception.</param>
+    /// <param name="context">Contextual information about the source or destination.</param>
+    /// </summary>
     protected InvalidValueTypeException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
 }
 
 
-/// <summary>Managed-side Enum to represent Eina_Value_Type constants</summary>
+/// <summary>Managed-side Enum to represent Eina_Value_Type constants.
+///
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 public enum ValueType
 {
-    /// <summary>Signed 8 bit integer. Same as 'sbyte'</summary>
+    /// <summary>Signed 8 bit integer. Same as 'sbyte'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     SByte,
-    /// <summary>Unsigned 8 bit integer. Same as 'byte'</summary>
+    /// <summary>Unsigned 8 bit integer. Same as 'byte'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Byte,
-    /// <summary>Signed 16 bit integer. Same as 'short'</summary>
+    /// <summary>Signed 16 bit integer. Same as 'short'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Short,
-    /// <summary>Unsigned 16 bit integer. Same as 'ushort'</summary>
+    /// <summary>Unsigned 16 bit integer. Same as 'ushort'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     UShort,
-    /// <summary>Signed 32 bit integer. Same as 'int'</summary>
+    /// <summary>Signed 32 bit integer. Same as 'int'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Int32,
-    /// <summary>Unsigned 32 bit integer. Same as 'uint'</summary>
+    /// <summary>Unsigned 32 bit integer. Same as 'uint'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     UInt32,
-    /// <summary>Signed long integer. Same as 'long'</summary>
+    /// <summary>Signed long integer. Same as 'long'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Long,
-    /// <summary>Unsigned long integer. Same as 'ulong'</summary>
+    /// <summary>Unsigned long integer. Same as 'ulong'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ULong,
-    /// <summary>Signed 64 bit integer. Same as 'long'</summary>
+    /// <summary>Signed 64 bit integer. Same as 'long'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Int64,
-    /// <summary>Unsigned 64 bit integer. Same as 'ulong'</summary>
+    /// <summary>Unsigned 64 bit integer. Same as 'ulong'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     UInt64,
-    /// <summary>4-byte float. Same as 'float'</summary>
+    /// <summary>4-byte float. Same as 'float'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Float,
-    /// <summary>8-byte double. Same as 'double'</summary>
+    /// <summary>8-byte double. Same as 'double'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Double,
-    /// <summary>Strings</summary>
+    /// <summary>Strings.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     String,
-    /// <summary>Array of Value items.</summary>
+    /// <summary>Array of Value items.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Array,
-    /// <summary>Linked list of Value items.</summary>
+    /// <summary>Linked list of Value items.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     List,
-    /// <summary>Map of string keys to Value items.</summary>
+    /// <summary>Map of string keys to Value items.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Hash,
-    /// <summary>Optional (aka empty) values.</summary>
+    /// <summary>Optional (aka empty) values.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Optional,
-    /// <summary>Error values.</summary>
+    /// <summary>Error values.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Error,
-    /// <summary>Empty values.</summary>
+    /// <summary>Eo Object values.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    Object,
+    /// <summary>Empty values.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Empty,
 }
 
+/// <summary>Extension methods for <see cref="Eina.ValueType" />.
+///
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 static class ValueTypeMethods
 {
+    /// <summary>Checks if this type is a numeric value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>Whether this type is a numeric one.</returns>
     public static bool IsNumeric(this ValueType val)
     {
         switch (val)
@@ -641,6 +837,11 @@ static class ValueTypeMethods
         }
     }
 
+    /// <summary>Checks if this type is a string value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>Whether this type is a string.</returns>
     public static bool IsString(this ValueType val)
     {
         switch (val)
@@ -652,6 +853,11 @@ static class ValueTypeMethods
         }
     }
 
+    /// <summary>Checks if this type is a container value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>Whether this type is a container.</returns>
     public static bool IsContainer(this ValueType val)
     {
         switch (val)
@@ -665,17 +871,41 @@ static class ValueTypeMethods
         }
     }
 
+    /// <summary>Checks if this type is optional. (i.e. can be empty).
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>Whether this type is optional.</returns>
     public static bool IsOptional(this ValueType val)
     {
         return val == ValueType.Optional;
     }
 
+    /// <summary>Checks if this type represents an error value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>Whether this type is a error one.</returns>
     public static bool IsError(this ValueType val)
     {
         return val == ValueType.Error;
     }
 
-    /// <summary>Returns the Marshal.SizeOf for the given ValueType native structure.</summary>
+    /// <summary>Checks if this type is an <see cref="Efl.Object" />.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>Whether this type is an <see cref="Efl.Object" />.</returns>
+    public static bool IsObject(this ValueType val)
+    {
+        return val == ValueType.Object;
+    }
+
+    /// <summary>Returns the Marshal.SizeOf for the given ValueType native structure.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static int MarshalSizeOf(this ValueType val)
     {
         switch (val)
@@ -690,10 +920,51 @@ static class ValueTypeMethods
     }
 }
 
-static class ValueTypeBridge
+/// <summary>Boxing class for custom marshalling of ValueType enums.
+///
+/// <para>As custom marshalling of enums (and other value types) is not supported, use
+/// use this boxing class as an intermediate at the Marshalling API level (like in
+/// marshall_type_impl.hh in the generator). User-facing API still uses Eina.ValueType
+/// normally.</para>
+///
+/// <para>Since EFL 1.23.</para>
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public class ValueTypeBox
+{
+    public ValueType _payload;
+
+    public ValueTypeBox(ValueType v)
+    {
+        _payload = v;
+    }
+
+    public static implicit operator ValueTypeBox(ValueType v)
+        => FromValueType(v);
+
+    public static ValueTypeBox FromValueType(ValueType v)
+        => new ValueTypeBox(v);
+
+    public static implicit operator ValueType(ValueTypeBox box)
+        => ToValueType(box);
+
+    public static ValueType ToValueType(ValueTypeBox box)
+    {
+        if (box == null)
+        {
+            return Eina.ValueType.Empty;
+        }
+
+        return box._payload;
+    }
+}
+
+internal static class ValueTypeBridge
 {
     private static Dictionary<ValueType, IntPtr> ManagedToNative = new Dictionary<ValueType, IntPtr>();
     private static Dictionary<IntPtr, ValueType> NativeToManaged = new Dictionary<IntPtr, ValueType>();
+    private static Dictionary<System.Type, ValueType> StandardToManaged = new Dictionary<System.Type, ValueType>();
+    private static Dictionary<ValueType, System.Type> ManagedToStandard = new Dictionary<ValueType, System.Type>();
     private static bool TypesLoaded; // CLR defaults to false;
 
     public static ValueType GetManaged(IntPtr native)
@@ -703,7 +974,16 @@ static class ValueTypeBridge
             LoadTypes();
         }
 
-        return NativeToManaged[native];
+        try
+        {
+            return NativeToManaged[native];
+        }
+        catch (KeyNotFoundException)
+        {
+            var name_ptr = eina_value_type_name_get(native);
+            var name = Marshal.PtrToStringAnsi(name_ptr);
+            throw new Efl.EflException($"Unknown native eina value Type: 0x{native.ToInt64():x} with name {name}");
+        }
     }
 
     public static IntPtr GetNative(ValueType valueType)
@@ -716,48 +996,106 @@ static class ValueTypeBridge
         return ManagedToNative[valueType];
     }
 
+    /// <summary>Returns the Eina.Value type associated with the given C# type.</summary>
+    public static ValueType GetManaged(System.Type type)
+    {
+        ValueType v;
+        if (StandardToManaged.TryGetValue(type, out v))
+        {
+            return v;
+        }
+        else
+        {
+            if (typeof(Efl.Object).IsAssignableFrom(type))
+            {
+                return ValueType.Object;
+            }
+            throw new Efl.EflException($"Unknown value type mapping for C# type {type}");
+        }
+    }
+
+    /// <summary>Returns the System.Type associated with the given Eina.Value type.</summary>
+    /// <param name="valueType">The intermediate type as returned by <see cref="Eina.Value.GetValueType()" />.</param>
+    /// <returns>The associated C# type with this value type.</returns>
+    public static System.Type GetStandard(ValueType valueType)
+    {
+        System.Type ret = null;
+        if (ManagedToStandard.TryGetValue(valueType, out ret))
+        {
+            return ret;
+        }
+        else
+        {
+            throw new Efl.EflException($"Unknown C# type mapping for value type {valueType}");
+        }
+    }
+
     private static void LoadTypes()
     {
         Eina.Config.Init(); // Make sure eina is initialized.
 
         ManagedToNative.Add(ValueType.SByte, type_sbyte());
         NativeToManaged.Add(type_sbyte(), ValueType.SByte);
+        StandardToManaged.Add(typeof(sbyte), ValueType.SByte);
+        ManagedToStandard.Add(ValueType.SByte, typeof(sbyte));
 
         ManagedToNative.Add(ValueType.Byte, type_byte());
         NativeToManaged.Add(type_byte(), ValueType.Byte);
+        StandardToManaged.Add(typeof(byte), ValueType.Byte);
+        ManagedToStandard.Add(ValueType.Byte, typeof(byte));
 
         ManagedToNative.Add(ValueType.Short, type_short());
         NativeToManaged.Add(type_short(), ValueType.Short);
+        StandardToManaged.Add(typeof(short), ValueType.Short);
+        ManagedToStandard.Add(ValueType.Short, typeof(short));
 
         ManagedToNative.Add(ValueType.UShort, type_ushort());
         NativeToManaged.Add(type_ushort(), ValueType.UShort);
+        StandardToManaged.Add(typeof(ushort), ValueType.UShort);
+        ManagedToStandard.Add(ValueType.UShort, typeof(ushort));
 
         ManagedToNative.Add(ValueType.Int32, type_int32());
         NativeToManaged.Add(type_int32(), ValueType.Int32);
+        StandardToManaged.Add(typeof(int), ValueType.Int32);
+        ManagedToStandard.Add(ValueType.Int32, typeof(int));
 
         ManagedToNative.Add(ValueType.UInt32, type_uint32());
         NativeToManaged.Add(type_uint32(), ValueType.UInt32);
+        StandardToManaged.Add(typeof(uint), ValueType.UInt32);
+        ManagedToStandard.Add(ValueType.UInt32, typeof(uint));
 
         ManagedToNative.Add(ValueType.Long, type_long());
         NativeToManaged.Add(type_long(), ValueType.Long);
+        ManagedToStandard.Add(ValueType.Long, typeof(long));
 
         ManagedToNative.Add(ValueType.ULong, type_ulong());
         NativeToManaged.Add(type_ulong(), ValueType.ULong);
+        ManagedToStandard.Add(ValueType.ULong, typeof(ulong));
 
         ManagedToNative.Add(ValueType.Int64, type_int64());
         NativeToManaged.Add(type_int64(), ValueType.Int64);
+        StandardToManaged.Add(typeof(long), ValueType.Int64);
+        ManagedToStandard.Add(ValueType.Int64, typeof(long));
 
         ManagedToNative.Add(ValueType.UInt64, type_uint64());
         NativeToManaged.Add(type_uint64(), ValueType.UInt64);
+        StandardToManaged.Add(typeof(ulong), ValueType.UInt64);
+        ManagedToStandard.Add(ValueType.UInt64, typeof(ulong));
 
         ManagedToNative.Add(ValueType.Float, type_float());
         NativeToManaged.Add(type_float(), ValueType.Float);
+        StandardToManaged.Add(typeof(float), ValueType.Float);
+        ManagedToStandard.Add(ValueType.Float, typeof(float));
 
         ManagedToNative.Add(ValueType.Double, type_double());
         NativeToManaged.Add(type_double(), ValueType.Double);
+        StandardToManaged.Add(typeof(double), ValueType.Double);
+        ManagedToStandard.Add(ValueType.Double, typeof(double));
 
         ManagedToNative.Add(ValueType.String, type_string());
         NativeToManaged.Add(type_string(), ValueType.String);
+        StandardToManaged.Add(typeof(string), ValueType.String);
+        ManagedToStandard.Add(ValueType.String, typeof(string));
 
         ManagedToNative.Add(ValueType.Array, type_array());
         NativeToManaged.Add(type_array(), ValueType.Array);
@@ -765,11 +1103,23 @@ static class ValueTypeBridge
         ManagedToNative.Add(ValueType.List, type_list());
         NativeToManaged.Add(type_list(), ValueType.List);
 
+        ManagedToNative.Add(ValueType.Hash, type_hash());
+        NativeToManaged.Add(type_hash(), ValueType.Hash);
+
         ManagedToNative.Add(ValueType.Optional, type_optional());
         NativeToManaged.Add(type_optional(), ValueType.Optional);
 
         ManagedToNative.Add(ValueType.Error, type_error());
         NativeToManaged.Add(type_error(), ValueType.Error);
+        StandardToManaged.Add(typeof(Eina.Error), ValueType.Error);
+        ManagedToStandard.Add(ValueType.Error, typeof(Eina.Error));
+
+        ManagedToNative.Add(ValueType.Object, type_object());
+        NativeToManaged.Add(type_object(), ValueType.Object);
+        // We don't use `typeof(Efl.Object)` directly in the StandartToManaged dictionary as typeof(myobj) may
+        // return a different type. For ManagedToStandard, we make use of C# generics covariance to create
+        // an collection of Efl.Objects when unwrapping.
+        ManagedToStandard.Add(ValueType.Object, typeof(Efl.Object));
 
         ManagedToNative.Add(ValueType.Empty, IntPtr.Zero);
         NativeToManaged.Add(IntPtr.Zero, ValueType.Empty);
@@ -786,6 +1136,8 @@ static class ValueTypeBridge
 /// <para>It comes with predefined types for numbers, strings, arrays, lists, hashes,
 /// blobs and structs. It is able to convert between data types, including
 /// to and from strings.</para>
+///
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 {
@@ -815,12 +1167,20 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
     internal IntPtr Handle { get; set;}
 
-    /// <summary> Whether this wrapper owns (can free) the native value. </summary>
+    /// <summary> Whether this wrapper owns (can free) the native value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <value>The kind of ownership of this wrapper.</value>
     public Ownership Ownership { get; protected set;}
 
     private bool Disposed;
 
-    /// <summary> Whether this is an Optional value (meaning it can have a value or not). </summary>
+    /// <summary> Whether this is an Optional value (meaning it can have a value or not).
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <value>True if this value may contain no value.</value>
     public bool Optional
     {
         get
@@ -837,7 +1197,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
          } */
     }
 
-    /// <summary> Whether this wrapper is actually empty/uninitialized (zeroed). This is different from an empty optional value. </summary>
+    /// <summary> Whether this wrapper is actually empty/uninitialized (zeroed).
+    ///
+    /// <para>This is different from an <see cref="Eina.ValueType.Optional" /> value. An
+    /// <c>Optional</c> value is an initialized value that may or may not hold a value,
+    /// while an <see cref="Eina.ValueType.Empty" /> value is an uninitialized value and it
+    /// should be initialized (e.g. with <see cref="Eina.Value.Setup(Eina.ValueType)" />)
+    /// with a non-empty value to actually store/retrieve values.</para>
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <value><c>true</c> if this value is unintialized.</value>
     public bool Empty
     {
         get
@@ -847,7 +1217,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary> Whether this optional value is empty. </summary>
+    /// <summary> Whether this optional value is empty.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <value><c>true</c> if this optional value is empty.</value>
     public bool OptionalEmpty
     {
         get
@@ -879,16 +1253,129 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     private Value()
     {
         this.Handle = Alloc();
+
+        if (this.Handle == IntPtr.Zero)
+        {
+            throw new OutOfMemoryException("Failed to allocate memory for Eina.Value");
+        }
+
         this.Ownership = Ownership.Managed;
+        MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
     }
 
+    /// <summary>Creates a new Value from the given C# value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The object to be wrapped.</param>
+    public Value(object obj) : this()
+    {
+        var objType = obj.GetType();
+
+        if (objType == typeof(sbyte))
+        {
+            Setup(ValueType.SByte);
+            Set((sbyte)obj);
+        }
+        else if (objType == typeof(byte))
+        {
+            Setup(ValueType.Byte);
+            Set((byte)obj);
+        }
+        else if (objType == typeof(short))
+        {
+            Setup(ValueType.Short);
+            Set((short)obj);
+        }
+        else if (objType == typeof(ushort))
+        {
+            Setup(ValueType.UShort);
+            Set((ushort)obj);
+        }
+        else if (objType == typeof(int))
+        {
+            Setup(ValueType.Int32);
+            Set((int)obj);
+        }
+        else if (objType == typeof(uint))
+        {
+            Setup(ValueType.UInt32);
+            Set((uint)obj);
+        }
+        else if (objType == typeof(long))
+        {
+            Setup(ValueType.Int64);
+            Set((long)obj);
+        }
+        else if (objType == typeof(ulong))
+        {
+            Setup(ValueType.UInt64);
+            Set((ulong)obj);
+        }
+        else if (objType == typeof(float))
+        {
+            Setup(ValueType.Float);
+            Set((float)obj);
+        }
+        else if (objType == typeof(double))
+        {
+            Setup(ValueType.Double);
+            Set((double)obj);
+        }
+        else if (objType == typeof(string))
+        {
+            Setup(ValueType.String);
+            Set(obj as string);
+        }
+        else if (typeof(Efl.Object).IsAssignableFrom(objType))
+        {
+            Setup(ValueType.Object);
+            Set(obj as Efl.Object);
+        }
+        else
+        {
+            // Container type conversion is supported only from IEnumerable<T>
+            if (!obj.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+            {
+                throw new ArgumentException($"Unsupported type for direct construction: {objType}");
+            }
+
+            Type[] genericArguments = objType.GetGenericArguments();
+            if (genericArguments.Length != 1)
+            {
+                throw new ArgumentException($"Unsupported type for direct construction: {objType}");
+            }
+
+            var genericArg = genericArguments[0];
+
+            var argValueType = ValueTypeBridge.GetManaged(genericArg);
+
+            Setup(ValueType.Array, argValueType);
+
+            foreach (var item in obj as System.Collections.IEnumerable)
+            {
+                Append(item);
+            }
+
+        }
+    }
+
+    /// <summary>Creates a new Value from the given native pointer.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Value(IntPtr handle, Ownership ownership = Ownership.Managed)
     {
         this.Handle = handle;
         this.Ownership = ownership;
     }
 
-    /// <summary>Creates a new value storage for values of type 'type'.</summary>
+    /// <summary>Creates a new value storage for values of type <c>type</c>.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="type">The type of the value that will be stored.</param>
     public Value(ValueType type)
     {
         if (type.IsContainer())
@@ -909,7 +1396,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         Setup(type);
     }
 
-    /// <summary>Constructor for container values, like Array, Hash.</summary>
+    /// <summary>Constructor for container values, like Array, Hash. It also requires an extra parameter
+    /// with the type of the contained items.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="containerType">The type of the container to store values.</param>
+    /// <param name="subtype">The type of the values contained.</param>
+    /// <param name="step">Amount to increase the capacity of the container by when it needs to grow.</param>
     public Value(ValueType containerType, ValueType subtype, uint step = 0)
     {
         if (!containerType.IsContainer())
@@ -923,7 +1417,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         Setup(containerType, subtype, step);
     }
 
-    /// <summary>Deep copies the given eina Value</summary>
+    /// <summary>Deep copies the given eina Value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The value to be copied.</param>
     public Value(Value v)
     {
         Handle = Alloc();
@@ -937,7 +1435,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
-    public Value(ValueNative value)
+    internal Value(ValueNative value)
     {
         IntPtr tmp = IntPtr.Zero;
         try
@@ -953,8 +1451,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 // free(), avoiding a call to eina_value_flush that would wipe the underlying value contents
                 // for pointer types like string.
                 tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(ValueNative)));
-                Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
-                this.Handle = Alloc();
+                Marshal.StructureToPtr<ValueNative>(value, tmp, false); // Can't get the address of a struct directly.
 
                 // Copy is used to deep copy the pointed payload (e.g. strings) inside this struct, so we can own this value.
                 if (!eina_value_copy(tmp, this.Handle))
@@ -979,7 +1476,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         this.Ownership = Ownership.Managed;
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(byte x) : this(ValueType.Byte)
     {
         if (!Set(x))
@@ -988,7 +1488,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(sbyte x) : this(ValueType.SByte)
     {
         if (!Set(x))
@@ -997,7 +1500,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(short x) : this(ValueType.Short)
     {
         if (!Set(x))
@@ -1006,7 +1512,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(ushort x) : this(ValueType.UShort)
     {
         if (!Set(x))
@@ -1015,7 +1524,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(int x) : this(ValueType.Int32)
     {
         if (!Set(x))
@@ -1024,7 +1536,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(uint x) : this(ValueType.UInt32)
     {
         if (!Set(x))
@@ -1033,7 +1548,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(long x) : this(ValueType.Long)
     {
         if (!Set(x))
@@ -1042,7 +1560,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(ulong x) : this(ValueType.ULong)
     {
         if (!Set(x))
@@ -1051,7 +1572,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(float x) : this(ValueType.Float)
     {
         if (!Set(x))
@@ -1060,7 +1584,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(double x) : this(ValueType.Double)
     {
         if (!Set(x))
@@ -1069,7 +1596,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Type-specific constructor, for convenience.</summary>
+    /// <summary>Type-specific constructor, for convenience.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The value to be wrapped.</param>
     public Value(string x) : this(ValueType.String)
     {
         if (!Set(x))
@@ -1078,283 +1608,578 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Implicit conversion from managed value to native struct representation.</summary>
-    public static implicit operator ValueNative(Value v)
-    {
-        return v.GetNative();
-    }
+    /// <summary>Implicit conversion from managed value to native struct representation.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static implicit operator ValueNative(Value v) => ToValueNative(v);
 
-    /// <summary>Implicit conversion from native struct representation to managed wrapper.</summary>
-    public static implicit operator Value(ValueNative v)
-    {
-        return new Value(v);
-    }
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static ValueNative ToValueNative(Value v) => v.GetNative();
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(byte x)
+    /// <summary>Implicit conversion from native struct representation to managed wrapper.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static implicit operator Value(ValueNative v) => FromValueNative(v);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static Value FromValueNative(ValueNative v) => new Value(v);
+
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(byte x) => FromByte(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="byte" />
+    /// </summary>
+    /// <param name="x">The <see cref="byte" /> to be converted.</param>
+    public static Value FromByte(byte x)
     {
         var v = new Eina.Value(ValueType.Byte);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator byte(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator byte(Value v) => ToByte(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="byte" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static byte ToByte(Value v)
     {
         byte b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(sbyte x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(sbyte x) => FromSByte(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="sbyte" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="sbyte" /> to be converted.</param>
+    public static Value FromSByte(sbyte x)
     {
         var v = new Eina.Value(ValueType.SByte);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator sbyte(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator sbyte(Value v) => ToSByte(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="sbyte" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static sbyte ToSByte(Value v)
     {
         sbyte b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(short x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(short x) => FromInt16(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="short" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="short" /> to be converted.</param>
+    public static Value FromInt16(short x)
     {
         var v = new Eina.Value(ValueType.Short);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator short(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator short(Value v) => ToInt16(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="short" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static short ToInt16(Value v)
     {
         short b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(ushort x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(ushort x) => FromUInt16(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="ushort" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="ushort" /> to be converted.</param>
+    public static Value FromUInt16(ushort x)
     {
         var v = new Eina.Value(ValueType.UShort);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator ushort(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator ushort(Value v) => ToUInt16(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="ushort" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static ushort ToUInt16(Value v)
     {
         ushort b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(int x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(int x) => FromInt32(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="int" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="int" /> to be converted.</param>
+    public static Value FromInt32(int x)
     {
         var v = new Eina.Value(ValueType.Int32);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
+
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator int(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator int(Value v) => ToInt32(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="int" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static int ToInt32(Value v)
     {
         int b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(uint x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(uint x) => FromUInt32(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="uint" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="uint" /> to be converted.</param>
+    public static Value FromUInt32(uint x)
     {
         var v = new Eina.Value(ValueType.UInt32);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator uint(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator uint(Value v) => ToUInt32(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="uint" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static uint ToUInt32(Value v)
     {
         uint b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(long x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(long x) => FromInt64(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="long" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="long" /> to be converted.</param>
+    public static Value FromInt64(long x)
     {
         var v = new Eina.Value(ValueType.Long);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator long(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator long(Value v) => ToInt64(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="long" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static long ToInt64(Value v)
     {
         long b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(ulong x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(ulong x) => FromUInt64(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="ulong" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="ulong" /> to be converted.</param>
+    public static Value FromUInt64(ulong x)
     {
         var v = new Eina.Value(ValueType.ULong);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator ulong(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator ulong(Value v) => ToUInt64(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="ulong" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static ulong ToUInt64(Value v)
     {
         ulong b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(float x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(float x) => FromSingle(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="float" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="float" /> to be converted.</param>
+    public static Value FromSingle(float x)
     {
         var v = new Eina.Value(ValueType.Float);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator float(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator float(Value v) => ToSingle(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="float" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static float ToSingle(Value v)
     {
         float b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(double x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(double x) => FromDouble(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="double" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="double" /> to be converted.</param>
+    public static Value FromDouble(double x)
     {
         var v = new Eina.Value(ValueType.Double);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator double(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator double(Value v) => ToDouble(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="double" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static double ToDouble(Value v)
     {
         double b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator Value(string x)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator Value(string x) => FromString(x);
+
+    /// <summary>
+    ///   Conversion to a <see cref="Value" /> from a <see cref="string" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="x">The <see cref="string" /> to be converted.</param>
+    public static Value FromString(string x)
     {
         var v = new Eina.Value(ValueType.String);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
 
-    /// <summary>Implicit conversion.</summary>
-    public static implicit operator string(Value v)
+    /// <summary>Implicit conversion.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static implicit operator string(Value v) => ToString(v);
+
+    /// <summary>
+    ///   Conversion to a <see cref="string" /> from a <see cref="Value" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static string ToString(Value v)
     {
         string b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
 
-    /// <summary>Creates an Value instance from a given array description.</summary>
+    /// <summary>Unwrap the value into its underlying C# value.
+    ///
+    /// <para>Useful for methods like <see crev="PropertyInfo.SetValue(object, object)" />
+    /// as it will unpack the value to it correct C# type.</para>
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The managed value wrapped by this value.</returns>
+    public object Unwrap()
+    {
+        switch (GetValueType())
+        {
+            case ValueType.SByte:
+                {
+                    sbyte o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Byte:
+                {
+                    byte o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Short:
+                {
+                    short o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.UShort:
+                {
+                    ushort o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Int32:
+                {
+                    int o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.UInt32:
+                {
+                    uint o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Int64:
+            case ValueType.Long:
+                {
+                    long o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.UInt64:
+            case ValueType.ULong:
+                {
+                    ulong o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Float:
+                {
+                    float o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Double:
+                {
+                    double o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.String:
+                {
+                    string o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Object:
+                {
+                    Efl.Object o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Array:
+            case ValueType.List:
+                {
+                    // Eina Array and Lists will be unwrapped into a System.Collections.Generic.List<T>
+                    // usually to be handled as IEnumerable<T> through LINQ.
+                    var genericType = ValueTypeBridge.GetStandard(GetValueSubType());
+                    Type[] typeArgs = { genericType };
+                    var containerType = typeof(System.Collections.Generic.List<>);
+                    var retType = containerType.MakeGenericType(typeArgs);
+                    object ret = Activator.CreateInstance(retType);
+
+                    var addMeth = retType.GetMethod("Add");
+
+                    if (addMeth == null)
+                    {
+                        throw new InvalidOperationException("Failed to get Add() method of container to wrap value");
+                    }
+
+                    for (int i = 0; i < Count(); i++)
+                    {
+                        object[] args = new object[]{ this[i] };
+                        addMeth.Invoke(ret, args);
+                    }
+
+                    return ret;
+                }
+            default:
+                throw new InvalidOperationException($"Unsupported value type to unwrap: {GetValueType()}");
+        }
+    }
+
+    // Efl.Object conversions are made explicit to avoid ambiguity between
+    // Set(Efl.Object) and Set(Value) when dealing with classes derived from
+    // Efl.Object.
+    /// <summary>Explicit conversion from EFL objects.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static explicit operator Value(Efl.Object obj) => FromObject(obj);
+
+    /// <summary>
+    ///   Converts a <see cref="Efl.Object" /> to a <see cref="Value" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The <see cref="Efl.Object" /> to be converted.</param>
+    public static Value FromObject(Efl.Object obj)
+    {
+        var v = new Eina.Value(ValueType.Object);
+        v.Set(obj);
+        return v;
+    }
+
+    /// <summary>Explicit conversion from Value to Efl.Objects.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public static explicit operator Efl.Object(Value v) => ToObject(v);
+
+    /// <summary>
+    ///   Converts a <see cref="Value" /> to a <see cref="Object" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="v">The <see cref="Value" /> to be converted.</param>
+    public static Efl.Object ToObject(Value v)
+    {
+        Efl.Object obj;
+        v.Get(out obj);
+
+        return obj;
+    }
+
+    /// <summary>Creates an Value instance from a given array description.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     private static Value FromArrayDesc(Eina.EinaNative.Value_Array arrayDesc)
     {
         Value value = new Value();
@@ -1364,7 +2189,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return value;
     }
 
-    /// <summary>Creates an Value instance from a given array description.</summary>
+    /// <summary>Creates an Value instance from a given array description.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     private static Value FromListDesc(Eina.EinaNative.Value_List listDesc)
     {
         Value value = new Value();
@@ -1374,26 +2201,36 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return value;
     }
 
-    /// <summary>Releases the ownership of the underlying value to C.</summary>
+    /// <summary>Releases the ownership of the underlying value to C.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void ReleaseOwnership()
     {
         this.Ownership = Ownership.Unmanaged;
     }
 
-    /// <summary>Takes the ownership of the underlying value to the Managed runtime.</summary>
+    /// <summary>Takes the ownership of the underlying value to the Managed runtime.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void TakeOwnership()
     {
         this.Ownership = Ownership.Managed;
     }
 
-    /// <summary>Public method to explicitly free the wrapped eina value.</summary>
+    /// <summary>Public method to explicitly free the wrapped eina value.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>Actually free the wrapped eina value. Can be called from Dispose() or through the GC.</summary>
+    /// <summary>Actually free the wrapped eina value. Can be called from Dispose() or through the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing"><c>true</c> if called from the method <see cref="Dispose()" />
+    /// <c>false</c> if called from the Garbage Collector.</param>
     protected virtual void Dispose(bool disposing)
     {
         if (this.Ownership == Ownership.Unmanaged)
@@ -1418,32 +2255,38 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         Disposed = true;
     }
 
-    /// <summary>Finalizer to be called from the Garbage Collector.</summary>
+    /// <summary>Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Value()
     {
         Dispose(false);
     }
 
     /// <summary>Returns the native handle wrapped by this object.</summary>
+    /// <value>The native pointer wrapped by this object.</value>
     public IntPtr NativeHandle
     {
         get
         {
             if (Disposed)
             {
-                throw new ObjectDisposedException(base.GetType().Name);
+                throw new ObjectDisposedException($"Value at 0x{this.Handle.ToInt64():x}");
             }
 
             return this.Handle;
         }
     }
 
-    /// <summary>Converts this storage to type 'type'</summary>
+    /// <summary>Converts this storage to type 'type'.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns><c>true</c> if the configuration was successul.</returns>
     public bool Setup(ValueType type)
     {
         if (Disposed)
         {
-            throw new ObjectDisposedException(base.GetType().Name);
+            throw new ObjectDisposedException($"Value at 0x{this.Handle.ToInt64():x}");
         }
 
         // Can't call setup with Empty value type (would give an eina error)
@@ -1468,6 +2311,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_setup_wrapper(this.Handle, ValueTypeBridge.GetNative(type));
     }
 
+    /// <summary>Converts the storage type of this value to the container type <c>containerType</c>.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="containerType">The type of the container to store values.</param>
+    /// <param name="subtype">The type of the values contained.</param>
+    /// <param name="step">Amount to increase the capacity of the container by when it needs to grow.</param>
+    /// <returns><c>true</c> if the configuration was successul.</returns>
     public bool Setup(ValueType containerType, ValueType subtype, uint step = 0)
     {
         IntPtr native_subtype = ValueTypeBridge.GetNative(subtype);
@@ -1489,7 +2340,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (Disposed)
         {
-            throw new ObjectDisposedException(GetType().Name);
+            throw new ObjectDisposedException($"Value at 0x{this.Handle.ToInt64():x}");
         }
     }
 
@@ -1538,12 +2389,20 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Get a ValueNative struct with the *value* pointed by this Eina.Value.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public ValueNative GetNative()
     {
+        SanityChecks();
         ValueNative value = (ValueNative)Marshal.PtrToStructure(this.Handle, typeof(ValueNative));
         return value;
     }
 
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(byte value)
     {
         SanityChecks();
@@ -1564,6 +2423,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_uchar(this.Handle, value);
     }
 
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(sbyte value)
     {
         SanityChecks();
@@ -1584,6 +2449,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_char(this.Handle, value);
     }
 
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(short value)
     {
         SanityChecks();
@@ -1604,6 +2475,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_short(this.Handle, value);
     }
 
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(ushort value)
     {
         SanityChecks();
@@ -1624,7 +2501,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_ushort(this.Handle, value);
     }
 
-    /// <summary>Stores the given uint value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(uint value)
     {
         SanityChecks();
@@ -1645,7 +2527,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_uint(this.Handle, value);
     }
 
-    /// <summary>Stores the given int value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(int value)
     {
         SanityChecks();
@@ -1666,7 +2553,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_int(this.Handle, value);
     }
 
-    /// <summary>Stores the given ulong value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(ulong value)
     {
         SanityChecks();
@@ -1687,7 +2579,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_ulong(this.Handle, value);
     }
 
-    /// <summary>Stores the given int value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(long value)
     {
         SanityChecks();
@@ -1708,7 +2605,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_long(this.Handle, value);
     }
 
-    /// <summary>Stores the given int value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(float value)
     {
         SanityChecks();
@@ -1729,7 +2631,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_float(this.Handle, value);
     }
 
-    /// <summary>Stores the given int value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(double value)
     {
         SanityChecks();
@@ -1750,7 +2657,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_double(this.Handle, value);
     }
 
-    /// <summary>Stores the given string value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(string value)
     {
         SanityChecks();
@@ -1765,14 +2677,19 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsString())
         {
             throw (new ArgumentException(
-                        "Trying to set non-string value on a string Eina.Value"));
+                        "Trying to set string value on a non-string Eina.Value"));
         }
 
         // No need to worry about ownership as eina_value_set will copy the passed string.
         return eina_value_set_wrapper_string(this.Handle, value);
     }
 
-    /// <summary>Stores the given error value.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(Eina.Error value)
     {
         SanityChecks();
@@ -1789,7 +2706,33 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_int(this.Handle, error_code);
     }
 
-    /// <summary>Stores the given value into this value. The target value must be an optional.</summary>
+    /// <summary>Sets the contained value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
+    public bool Set(Efl.Object value)
+    {
+        SanityChecks();
+
+        if (this.Optional)
+        {
+            IntPtr ptr = value.NativeHandle;
+            return eina_value_optional_pset(this.Handle,
+                                            ValueTypeBridge.GetNative(ValueType.Object),
+                                            ref ptr);
+        }
+        return eina_value_set_wrapper_ptr(this.Handle, value.NativeHandle);
+    }
+
+    /// <summary>Stores the given value into this value. This value's <see cref="Eina.Value.Optional" /> must
+    /// be <c>true</c>.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The value to be stored.</param>
+    /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(Value value)
     {
         OptionalSanityChecks();
@@ -1834,7 +2777,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a byte.</summary>
+    /// <summary>Gets the currently stored value as a byte.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out byte value)
     {
         SanityChecks();
@@ -1848,7 +2795,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a sbyte.</summary>
+    /// <summary>Gets the currently stored value as a sbyte.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out sbyte value)
     {
         SanityChecks();
@@ -1862,7 +2813,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a short.</summary>
+    /// <summary>Gets the currently stored value as a short.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out short value)
     {
         SanityChecks();
@@ -1876,7 +2831,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as an ushort.</summary>
+    /// <summary>Gets the currently stored value as an ushort.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out ushort value)
     {
         SanityChecks();
@@ -1890,7 +2849,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as an int.</summary>
+    /// <summary>Gets the currently stored value as an int.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out int value)
     {
         SanityChecks();
@@ -1904,7 +2867,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as an uint.</summary>
+    /// <summary>Gets the currently stored value as an uint.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out uint value)
     {
         SanityChecks();
@@ -1918,7 +2885,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a long.</summary>
+    /// <summary>Gets the currently stored value as a long.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out long value)
     {
         SanityChecks();
@@ -1932,7 +2903,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as an ulong.</summary>
+    /// <summary>Gets the currently stored value as an ulong.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out ulong value)
     {
         SanityChecks();
@@ -1946,7 +2921,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a float.</summary>
+    /// <summary>Gets the currently stored value as a float.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out float value)
     {
         SanityChecks();
@@ -1960,7 +2939,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a double.</summary>
+    /// <summary>Gets the currently stored value as a double.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out double value)
     {
         SanityChecks();
@@ -1974,7 +2957,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
-    /// <summary>Gets the currently stored value as a string.</summary>
+    /// <summary>Gets the currently stored value as a string.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out string value)
     {
         SanityChecks();
@@ -1997,7 +2984,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return true;
     }
 
-    /// <summary>Gets the currently stored value as an Eina.Error.</summary>
+    /// <summary>Gets the currently stored value as an Eina.Error.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out Eina.Error value)
     {
         SanityChecks();
@@ -2017,7 +3008,45 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return ret;
     }
 
-    /// <summary>Gets the currently stored value as an complex (e.g. container) Eina.Value.</summary>
+    /// <summary>Gets the currently stored value as an <see cref="Efl.Object"/>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
+    public bool Get(out Efl.Object obj)
+    {
+        // FIXME Implement me
+        SanityChecks();
+        IntPtr ptr;
+        bool ret;
+
+        if (this.Optional)
+        {
+            ret = eina_value_optional_pget(this.Handle, out ptr);
+        }
+        else
+        {
+            ret = eina_value_get_wrapper(this.Handle, out ptr);
+        }
+
+        if (ret)
+        {
+            obj = (Efl.Object) Efl.Eo.Globals.CreateWrapperFor(ptr);
+        }
+        else
+        {
+            obj = null;
+        }
+
+        return ret;
+    }
+
+
+    /// <summary>Gets the currently stored value as a complex (e.g. container) <see cref="Eina.Value" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="value">The target variable to receive the value.</param>
+    /// <returns>True if the value was correctly retrieved.</returns>
     public bool Get(out Value value)
     {
         SanityChecks();
@@ -2058,7 +3087,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return true;
     }
 
-    /// <summary>Gets the 'Type' this value is currently configured to store.</summary>
+    /// <summary>Gets the 'Type' this value is currently configured to store.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The type of the value stored in this object.</returns>
     public ValueType GetValueType()
     {
         if (Disposed)
@@ -2070,24 +3102,47 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return ValueTypeBridge.GetManaged(native_type);
     }
 
-    /// <summary>Converts the value on this storage to the type of 'target' and stores
-    /// the result in 'target'.</summary>
-    public bool ConvertTo(Value target)
+    /// <summary>Stores in <c>destination</c> a value converted from this one.
+    ///
+    /// <para>If the types of this value and <c>destination</c> differ, the library
+    /// searches this value's type for a conversion function to the type of <c>destination</c>.
+    /// If no such conversion is available, it searches the destination's type for a
+    /// function converting from the type of this value.</para>
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// var value = new Eina.Value("3.14"); // Type is string
+    /// var dest = new Eina.Value(Eina.ValueType.Float); // Type is float
+    /// value.ConvertTo(dest);
+    /// // Dest now contains 3.14.
+    /// </code>
+    ///
+    /// </example>
+    /// <param name="destination">The object to receive the converted value.</param>
+    /// <returns><c>true</c> if the value was successfully converted.</returns>
+    public bool ConvertTo(Value destination)
     {
-        if (target == null)
+        if (destination == null)
         {
             return false;
         }
 
         SanityChecks();
 
-        return eina_value_convert(this.Handle, target.Handle);
+        return eina_value_convert(this.Handle, destination.Handle);
     }
 
-    /// <summary>Compare two eina values.</summary>
+    /// <summary>Compare two <see cref="Eina.Value" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="other">The object to be compared to.</param>
+    /// <returns><c>-1</c>, <c>0</c> or <c>1</c> if this value is respectively smaller than, equal to or greater than
+    /// the <c>other</c>.</returns>
     public int CompareTo(Value other)
     {
-        if (other == null)
+        if (object.ReferenceEquals(other, null))
         {
             return 1;
         }
@@ -2097,11 +3152,28 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_compare_wrapper(this.Handle, other.Handle);
     }
 
-    public int Compare(Value other)
+    /// <summary>Compare two values.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left value.</param>
+    /// <param name="rhs">The right value.</param>
+    /// <returns><c>-1</c>, <c>0</c> or <c>1</c> if <c>lhs</c> is respectively
+    /// smaller than, equal to or greater than the <c>rhs</c>.</returns>
+    public static int Compare(Value lhs, Value rhs)
     {
-        return this.CompareTo(other);
+        if (object.ReferenceEquals(lhs, rhs))
+            return 0;
+        if (object.ReferenceEquals(lhs, null))
+            return -1;
+
+        return lhs.CompareTo(rhs);
     }
 
+    /// <summary>Returns whether this value is equal to the given object.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The object to be compared to.</param>
+    /// <returns><c>true</c> if this value is equal to <c>other</c>.</returns>
     public override bool Equals(object obj)
     {
         if (obj == null)
@@ -2109,91 +3181,124 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             return false;
         }
 
-        Value v = obj as Value;
-        if (v == null)
-        {
-            return false;
-        }
-
-        return this.Equals(v);
+        return this.Equals(obj as Value);
     }
 
-    public bool Equals(Value other)
-    {
-        try
-        {
-            return this.CompareTo(other) == 0;
-        }
-        catch (ObjectDisposedException)
-        {
-            return false;
-        }
-    }
+    /// <summary>Returns whether this value is equal to the given value.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="other">The value to be compared to.</param>
+    /// <returns><c>true</c> if this value is equal to <c>other</c>.</returns>
+    public bool Equals(Value other) => this.CompareTo(other) == 0;
 
+    /// <summary>Gets the hash code for this value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The hash code of this value.</returns>
     public override int GetHashCode()
     {
         return this.Handle.ToInt32();
     }
 
-    public static bool operator==(Value x, Value y)
+    /// <summary>Returns whether both values are null or <c>lhs</c> is equal to <c>rhs</c>.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if both parameters are <c>null</c> or if <c>lhs</c> is equal
+    /// to <c>lhs</c>.</returns>
+    public static bool operator==(Value lhs, Value rhs)
     {
-        if (object.ReferenceEquals(x, null))
-        {
-            return object.ReferenceEquals(y, null);
-        }
+        if (object.ReferenceEquals(lhs, null))
+            return  object.ReferenceEquals(rhs, null);
 
-        return x.Equals(y);
+        return lhs.Equals(rhs);
     }
 
-    public static bool operator!=(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null))
-        {
-            return !object.ReferenceEquals(y, null);
-        }
+    /// <summary>Returns whether <c>lhs</c> is different from <c>rhs</c>.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is different from <c>rhs</c>.</returns>
+    public static bool operator!=(Value lhs, Value rhs) => !(lhs == rhs);
 
-        return !x.Equals(y);
-    }
+    /// <summary>Returns whether <c>lhs</c> is less than <c>rhs</c>.
+    ///
+    /// <para>If either parameter is <c>null</c>, <c>false</c> is returned.</para>
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is less than <c>rhs</c>.</returns>
+    public static bool operator<(Value lhs, Value rhs) => (Compare(lhs, rhs) < 0);
 
-    public static bool operator>(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
-        {
-            return false;
-        }
+    /// <summary>Returns whether <c>lhs</c> is greater than <c>rhs</c>.
+    ///
+    /// <para>If either parameter is <c>null</c>, <c>false</c> is returned.</para>
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is greater than <c>rhs</c>.</returns>
+    public static bool operator>(Value lhs, Value rhs) => rhs < lhs;
 
-        return x.CompareTo(y) > 0;
-    }
+    /// <summary>
+    ///   Returns whether <c>lhs</c> is equal or less than <c>rhs</c>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// or less than <c>rhs</c>.</returns>
+    public static bool operator<=(Value lhs, Value rhs) => !(lhs > rhs);
 
-    public static bool operator<(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
-        {
-            return false;
-        }
+    /// <summary>
+    ///   Returns whether <c>lhs</c> is equal or greater than <c>rhs</c>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// or greater than <c>rhs</c>.</returns>
+    public static bool operator>=(Value lhs, Value rhs) => !(lhs < rhs);
 
-        return x.CompareTo(y) < 0;
-    }
 
-
-    /// <summary>Converts value to string.</summary>
+    /// <summary>Converts value to string.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string representation of this value.</returns>
     public override String ToString()
     {
         SanityChecks();
-        IntPtr ptr = eina_value_to_string(this.Handle);
-        String str = Marshal.PtrToStringAnsi(ptr);
-        MemoryNative.Free(ptr);
-        return str;
+        return eina_value_to_string(this.Handle);
+
     }
 
-    /// <summary>Empties an optional Eina.Value, freeing what was previously contained.</summary>
+    /// <summary>Empties an optional Eina.Value, freeing what was previously contained.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns><c>true</c> if the operation was successful.</returns>
     public bool Reset()
     {
         OptionalSanityChecks();
         return eina_value_optional_reset(this.Handle);
     }
 
-    // Container methods methods
+    // Container value methods
+
+    /// <summary>Gets the number of elements in this container value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The number of elements.</returns>
     public int Count()
     {
         ContainerSanityChecks();
@@ -2208,6 +3313,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return -1;
     }
 
+    /// <summary>Appends new values to this container.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="o">The new value to be appended.</param>
+    /// <returns><c>true</c> if the value was successfully appended.</returns>
     public bool Append(object o)
     {
         ContainerSanityChecks();
@@ -2216,76 +3327,86 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         {
             case ValueType.SByte:
                 {
-                    sbyte b = Convert.ToSByte(o);
+                    sbyte b = Convert.ToSByte(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_char(this.Handle, b);
                 }
 
             case ValueType.Byte:
                 {
-                    byte b = Convert.ToByte(o);
+                    byte b = Convert.ToByte(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_uchar(this.Handle, b);
                 }
 
             case ValueType.Short:
                 {
-                    short b = Convert.ToInt16(o);
+                    short b = Convert.ToInt16(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_short(this.Handle, b);
                 }
 
             case ValueType.UShort:
                 {
-                    ushort b = Convert.ToUInt16(o);
+                    ushort b = Convert.ToUInt16(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_ushort(this.Handle, b);
                 }
 
             case ValueType.Int32:
                 {
-                    int x = Convert.ToInt32(o);
+                    int x = Convert.ToInt32(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_int(this.Handle, x);
                 }
 
             case ValueType.UInt32:
                 {
-                    uint x = Convert.ToUInt32(o);
+                    uint x = Convert.ToUInt32(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_uint(this.Handle, x);
                 }
 
             case ValueType.Long:
             case ValueType.Int64:
                 {
-                    long x = Convert.ToInt64(o);
+                    long x = Convert.ToInt64(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_long(this.Handle, x);
                 }
 
             case ValueType.ULong:
             case ValueType.UInt64:
                 {
-                    ulong x = Convert.ToUInt64(o);
+                    ulong x = Convert.ToUInt64(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_ulong(this.Handle, x);
                 }
 
             case ValueType.Float:
                 {
-                    float x = Convert.ToSingle(o);
+                    float x = Convert.ToSingle(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_float(this.Handle, x);
                 }
 
             case ValueType.Double:
                 {
-                    double x = Convert.ToDouble(o);
+                    double x = Convert.ToDouble(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_double(this.Handle, x);
                 }
 
             case ValueType.String:
                 {
-                    string x = Convert.ToString(o);
+                    string x = Convert.ToString(o, CultureInfo.CurrentCulture);
                     return eina_value_container_append_wrapper_string(this.Handle, x);
+                }
+            case ValueType.Object:
+                {
+                    var x = (Efl.Object) o;
+                    return eina_value_container_append_wrapper_ptr(this.Handle, x.NativeHandle);
                 }
         }
 
         return false;
     }
 
+    /// <summary>Indexer for this container.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="i">The index of the element to be accessed/set.</param>
     public object this[int i]
     {
         get
@@ -2374,6 +3495,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                         eina_value_container_get_wrapper(this.Handle, i, out ptr);
                         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
                     }
+                case ValueType.Object:
+                    {
+                        IntPtr ptr = IntPtr.Zero;
+                        eina_value_container_get_wrapper(this.Handle, i, out ptr);
+                        return Efl.Eo.Globals.CreateWrapperFor(ptr);
+                    }
 
                 default:
                     throw new InvalidOperationException("Subtype not supported.");
@@ -2387,42 +3514,48 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             {
                 case ValueType.SByte:
                     {
-                        sbyte v = Convert.ToSByte(value);
+                        sbyte v = Convert.ToSByte(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_char(this.Handle, i, v);
                         break;
                     }
 
                 case ValueType.Byte:
                     {
-                        byte v = Convert.ToByte(value);
+                        byte v = Convert.ToByte(value,
+                                                CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_uchar(this.Handle, i, v);
                         break;
                     }
 
                 case ValueType.Short:
                     {
-                        short x = Convert.ToInt16(value);
+                        short x = Convert.ToInt16(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_short(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.UShort:
                     {
-                        ushort x = Convert.ToUInt16(value);
+                        ushort x = Convert.ToUInt16(value,
+                                                    CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_ushort(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Int32:
                     {
-                        int x = Convert.ToInt32(value);
+                        int x = Convert.ToInt32(value,
+                                                CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_int(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.UInt32:
                     {
-                        uint x = Convert.ToUInt32(value);
+                        uint x = Convert.ToUInt32(value,
+                                                  CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_uint(this.Handle, i, x);
                         break;
                     }
@@ -2430,7 +3563,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 case ValueType.Long:
                 case ValueType.Int64:
                     {
-                        long x = Convert.ToInt64(value);
+                        long x = Convert.ToInt64(value,
+                                                 CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_long(this.Handle, i, x);
                         break;
                     }
@@ -2438,35 +3572,49 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 case ValueType.ULong:
                 case ValueType.UInt64:
                     {
-                        ulong x = Convert.ToUInt64(value);
+                        ulong x = Convert.ToUInt64(value,
+                                                   CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_ulong(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Float:
                     {
-                        float x = Convert.ToSingle(value);
+                        float x = Convert.ToSingle(value,
+                                                   CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_float(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.Double:
                     {
-                        double x = Convert.ToDouble(value);
+                        double x = Convert.ToDouble(value, CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_double(this.Handle, i, x);
                         break;
                     }
 
                 case ValueType.String:
                     {
-                        string x = Convert.ToString(value);
+                        string x = Convert.ToString(value,
+                                                    CultureInfo.CurrentCulture);
                         eina_value_container_set_wrapper_string(this.Handle, i, x);
+                        break;
+                    }
+                case ValueType.Object:
+                    {
+                        Efl.Object x = (Efl.Object)value;
+                        eina_value_container_set_wrapper_ptr(this.Handle, i, x.NativeHandle);
                         break;
                     }
             }
         }
     }
 
+    /// <summary>Gets the type of the values in this container value.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The <see cref="Eina.ValueType" /> of the values contained in this container.</returns>
     public ValueType GetValueSubType()
     {
         ContainerSanityChecks();
@@ -2489,6 +3637,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
 /// <summary> Custom marshaler to convert value pointers to managed values and back,
 /// without changing ownership.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class ValueMarshaler : ICustomMarshaler
 {
     /// <summary>Creates a managed value from a C pointer, whitout taking ownership of it.</summary>
@@ -2540,6 +3689,7 @@ public class ValueMarshaler : ICustomMarshaler
 
 /// <summary> Custom marshaler to convert value pointers to managed values and back,
 /// also transferring the ownership to the other side.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class ValueMarshalerOwn : ICustomMarshaler
 {
     /// <summary>Creates a managed value from a C pointer, taking the ownership.</summary>
@@ -2589,6 +3739,52 @@ public class ValueMarshalerOwn : ICustomMarshaler
     }
 
     static private ValueMarshalerOwn marshaler;
+}
+
+/// <summary> Custom marshaler to convert value type pointers to managed boxed enum values
+/// and back.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public class ValueTypeMarshaler : ICustomMarshaler
+{
+    /// <summary>Creates a boxed ValueType enum value from a C pointer.</summary>
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        var r = ValueTypeBridge.GetManaged(pNativeData);
+        return new ValueTypeBox(r);
+    }
+    public static readonly Eina.ValueType vtype;
+
+    /// <summary>Retrieves the C pointer from a given boxed enum value type.</summary>
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
+        ValueTypeBox v = (ValueTypeBox)managedObj;
+        return ValueTypeBridge.GetNative(v);
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
+
+    public void CleanUpManagedData(object managedObj)
+    {
+    }
+
+    public int GetNativeDataSize()
+    {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
+            marshaler = new ValueTypeMarshaler();
+        }
+
+        return marshaler;
+    }
+
+    static private ValueTypeMarshaler marshaler;
 }
 
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_CXX_TYPE_IMPL_HH
 #define EOLIAN_CXX_TYPE_IMPL_HH
 
@@ -140,7 +155,31 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::strbuf");
               }}
-           /* FIXME: handle any_value_ptr */
+           , {"event", nullptr, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (r.base_qualifier.qualifier & qualifier_info::is_const)
+                {
+                  r.base_qualifier.qualifier ^= qualifier_info::is_const;
+                  return replace_base_type(r, " Efl_Event*");
+                }
+                else
+                  return replace_base_type(r, " Efl_Event const*");
+              }}
+           , {"binbuf", nullptr, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (r.base_qualifier.qualifier & qualifier_info::is_const)
+                {
+                  r.base_qualifier.qualifier ^= qualifier_info::is_const;
+                  return replace_base_type(r, " Eina_Binbuf*");
+                }
+                else
+                  return replace_base_type(r, " Eina_Binbuf const*");
+              }}
+           /* FIXME: handle any_value_ref */
            , {"any_value", true, nullptr, nullptr, [&]
               {
                 return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
@@ -148,11 +187,11 @@ struct visitor_generate
            , {"any_value", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
               }}
-           , {"any_value_ptr", true, nullptr, nullptr, [&]
+           , {"any_value_ref", true, nullptr, nullptr, [&]
               {
                 return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
-           , {"any_value_ptr", false, nullptr, nullptr, [&]
+           , {"any_value_ref", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
         };
@@ -329,6 +368,16 @@ struct visitor_generate
              (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}});
            }           
           }
+        , {"slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina_Slice", complex.outer.base_qualifier, {}};
+           }
+          }
+        , {"rw_slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina_Rw_Slice", complex.outer.base_qualifier, {}};
+           }
+          }
       };
 
       auto default_match = [&] (attributes::complex_type_def const& complex)
@@ -338,7 +387,7 @@ struct visitor_generate
           // pointers.swap(no_pointer_regular.pointers);
           // if(is_out)
           //   pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
-          return visitor_type{sink, context, c_type, false}(no_pointer_regular)
+          return visitor_type{sink, context, c_type, false, false}(no_pointer_regular)
             && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
           ;
             // && detail::generate_pointers(sink, pointers, *context, false);

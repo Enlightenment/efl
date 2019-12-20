@@ -3,7 +3,9 @@
 #endif
 
 #include <sys/types.h>
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 
 #include <Eina.h>
 

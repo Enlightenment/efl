@@ -3,7 +3,11 @@
 #endif
 
 #include <sys/types.h>
-#include <pwd.h>
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#else
+# include <pwd.h>
+#endif
 
 #include <Eina.h>
 
@@ -195,11 +199,11 @@ eina_vpath_shutdown(void)
    return EINA_TRUE;
 }
 
+#ifdef HAVE_GETPWENT
 static Eina_Bool
 _fetch_user_homedir(char **str, const char *name, const char *error)
 {
   *str = NULL;
-#ifdef HAVE_GETPWENT
   struct passwd *pwent;
 
   pwent = getpwnam(name);
@@ -211,12 +215,8 @@ _fetch_user_homedir(char **str, const char *name, const char *error)
   *str = pwent->pw_dir;
 
   return EINA_TRUE;
-#else
-  ERR("User fetching is disabled on this system\nThe string was: %s", error);
-  return EINA_FALSE;
-  (void) name;
-#endif
 }
+#endif
 
 static int
 _eina_vpath_resolve(const char *path, char *str, size_t size)
@@ -232,6 +232,10 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
           }
         // ~username/ <- homedir of user "username"
         else
+#ifndef HAVE_GETPWENT
+          ERR("User fetching is disabled on this system\nThe string was: %s", path);
+          return 0;
+#else
           {
              const char *p;
              char *name;
@@ -248,6 +252,7 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
                return 0;
              path = p;
            }
+#endif
          if (home)
            {
               return snprintf(str, size, "%s%s", home, path);
@@ -322,6 +327,7 @@ EAPI char *
 eina_vpath_resolve(const char* path)
 {
    char buf[PATH_MAX];
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
    if (_eina_vpath_resolve(path, buf, sizeof(buf)) > 0)
      return strdup(buf);

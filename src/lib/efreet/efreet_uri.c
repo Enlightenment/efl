@@ -8,10 +8,6 @@
 #define _POSIX_HOST_NAME_MAX 255
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM /* no logging in this file */
 
@@ -26,13 +22,16 @@ efreet_uri_decode(const char *full_uri)
     Efreet_Uri *uri;
     const char *p;
     char scheme[64], authority[_POSIX_HOST_NAME_MAX], path[PATH_MAX];
+    char *sep;
     int i = 0;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(full_uri, NULL);
 
     /* An uri should be in the form <scheme>:[<authority>][<path>][<query>][<fragment>] */
-    if (!strstr(full_uri, ":")) return NULL;
-
+    sep = strchr(full_uri, ':');
+    if (!sep) return NULL;
+    /* check if we have a Windows PATH, that is a letter follow by a colon */
+    if ((sep - full_uri) == 1) return NULL;
 
     memset(scheme, 0, 64);
     memset(authority, 0, _POSIX_HOST_NAME_MAX);

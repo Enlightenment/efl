@@ -90,12 +90,20 @@ eio_file_is_dir(const Eina_Stat *st)
  * @return EINA_TRUE if the path is a length.
  *
  * This function tell you if the stated path is a length or not.
+ *
+ * @note On Windows, this function returns always #EINA_FALSE.
  */
 static inline Eina_Bool
 eio_file_is_lnk(const Eina_Stat *st)
 {
+#ifdef _WIN32
+   /* no symbolic links on Windows */
+   return EINA_FALSE;
+   (void)st;
+#else
    if (!st) return EINA_FALSE;
    return (S_ISLNK(st->mode)) ? EINA_TRUE : EINA_FALSE;
+#endif
 }
 
 /**

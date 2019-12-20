@@ -222,10 +222,10 @@ Eina_Bool _elm_spinner_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Spinner_
 Eina_Bool _elm_spinner_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Spinner_Data *pd, const Efl_Event *eo_event, Efl_Canvas_Object *source);
 
 
-void _elm_spinner_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Spinner_Data *pd, double min, double max);
+void _elm_spinner_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Spinner_Data *pd, double min, double max);
 
 
-void _elm_spinner_efl_ui_range_display_range_min_max_get(const Eo *obj, Elm_Spinner_Data *pd, double *min, double *max);
+void _elm_spinner_efl_ui_range_display_range_limits_get(const Eo *obj, Elm_Spinner_Data *pd, double *min, double *max);
 
 
 void _elm_spinner_efl_ui_range_interactive_range_step_set(Eo *obj, Elm_Spinner_Data *pd, double step);
@@ -288,8 +288,8 @@ _elm_spinner_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_ui_widget_on_access_update, _elm_spinner_efl_ui_widget_on_access_update),
       EFL_OBJECT_OP_FUNC(efl_ui_focus_object_on_focus_update, _elm_spinner_efl_ui_focus_object_on_focus_update),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_spinner_efl_ui_widget_widget_input_event_handler),
-      EFL_OBJECT_OP_FUNC(efl_ui_range_min_max_set, _elm_spinner_efl_ui_range_display_range_min_max_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_range_min_max_get, _elm_spinner_efl_ui_range_display_range_min_max_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_range_limits_set, _elm_spinner_efl_ui_range_display_range_limits_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_range_limits_get, _elm_spinner_efl_ui_range_display_range_limits_get),
       EFL_OBJECT_OP_FUNC(efl_ui_range_step_set, _elm_spinner_efl_ui_range_interactive_range_step_set),
       EFL_OBJECT_OP_FUNC(efl_ui_range_step_get, _elm_spinner_efl_ui_range_interactive_range_step_get),
       EFL_OBJECT_OP_FUNC(efl_ui_range_value_set, _elm_spinner_efl_ui_range_display_range_value_set),
@@ -330,6 +330,6 @@ static const Efl_Class_Description _elm_spinner_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_spinner_class_get, &_elm_spinner_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_RANGE_INTERACTIVE_INTERFACE, EFL_UI_FOCUS_COMPOSITION_MIXIN, EFL_ACCESS_VALUE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_spinner_class_get, &_elm_spinner_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_RANGE_INTERACTIVE_INTERFACE, EFL_UI_FOCUS_COMPOSITION_MIXIN, EFL_ACCESS_VALUE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
 
 #include "elm_spinner_eo.legacy.c"

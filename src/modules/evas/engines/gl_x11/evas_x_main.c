@@ -824,6 +824,8 @@ eng_window_resurf(Outbuf *gw)
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
 #ifdef GL_GLES
+   if (gw->egl_surface)
+     eglDestroySurface(gw->egl_disp, gw->egl_surface);
    gw->egl_surface = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
@@ -1446,6 +1448,7 @@ eng_outbuf_swap_mode(Outbuf *ob)
              char buf[16];
              snprintf(buf, sizeof(buf), "! %i", (int)age);
              eina_evlog("!gl_buffer_age", ob, 0.0, buf);
+             swap_mode = MODE_FULL;
           }
         else
           {

@@ -36,19 +36,20 @@ struct _Efl_Ui_Table_Data
    int cols, rows;
    int req_cols, req_rows; // requested - 0 means infinite
    int last_col, last_row; // only used by pack api
-   Efl_Ui_Dir dir1, dir2;  // must be orthogonal (H,V or V,H)
+   Efl_Ui_Layout_Orientation fill_dir;    // direction in which cells are added when using pack()
    struct {
-      double h, v;
-      Eina_Bool scalable: 1;
+      unsigned int h, v;
    } pad;
    struct {
       double h, v;
    } align;
+   Eina_Position2D last_pos;
    Eina_Bool cols_recalc : 1;
    Eina_Bool rows_recalc : 1;
    Eina_Bool linear_recalc : 1;
    Eina_Bool homogeneoush : 1;
    Eina_Bool homogeneousv : 1;
+   Eina_Bool full_recalc : 1; //whether to force full recalc
 };
 
 struct _Table_Item_Iterator

@@ -8,18 +8,12 @@ class Function_As_Argument {
       }
     }
 
-    set_nonull_cb {
-      params {
-        cb: VoidFunc @nonull;
-      }
-    }
-
     call_cb {
       params {
         a: int;
         b: double;
       }
-      return: mstring @owned;
+      return: mstring @move;
     }
   }
 }

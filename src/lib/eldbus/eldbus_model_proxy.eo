@@ -15,7 +15,7 @@ class @beta Eldbus.Model.Proxy extends Eldbus.Model {
             [[Object]]
             set {}
             values {
-                @cref interface: Eldbus.Introspection.Interface; [[The introspected interface]]
+                interface: ptr(const(Eldbus.Introspection.Interface)); [[The introspected interface]]
             }
         }
         @property proxy_name {

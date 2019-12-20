@@ -16,7 +16,7 @@ Eina_Cow *_edje_calc_params_physics_cow = NULL;
 Edje_Global *_edje_global_obj = NULL;
 
 static const Edje_Calc_Params_Map default_calc_map = {
-   { 0, 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0.0, 0.0 }, NULL, 0
+   { 0, 0, 0 }, { 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0.0, 0.0 }, NULL, 0
 };
 
 static const Edje_Calc_Params_Physics default_calc_physics = {
@@ -84,9 +84,9 @@ edje_init(void)
    _edje_scale = FROM_DOUBLE(1.0);
    _edje_global_obj = efl_add(EDJE_GLOBAL_CLASS, efl_main_loop_get());
    EINA_SAFETY_ON_TRUE_GOTO(!_edje_global_obj, shutdown_efreet);
-   EINA_SAFETY_ON_TRUE_GOTO(!efl_loop_register(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN, _edje_global_obj), shutdown_efreet);
-   EINA_SAFETY_ON_TRUE_GOTO(!efl_loop_register(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
-   EINA_SAFETY_ON_TRUE_GOTO(!efl_loop_register(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
+   EINA_SAFETY_ON_TRUE_GOTO(!efl_provider_register(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN, _edje_global_obj), shutdown_efreet);
+   EINA_SAFETY_ON_TRUE_GOTO(!efl_provider_register(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
+   EINA_SAFETY_ON_TRUE_GOTO(!efl_provider_register(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
 
    _edje_edd_init();
    _edje_text_init();
@@ -154,9 +154,9 @@ shutdown_all:
    _edje_edd_shutdown();
    if (_edje_global_obj)
      {
-        efl_loop_unregister(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN, _edje_global_obj);
-        efl_loop_unregister(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj);
-        efl_loop_unregister(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj);
+        efl_provider_unregister(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN, _edje_global_obj);
+        efl_provider_unregister(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj);
+        efl_provider_unregister(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj);
         efl_del(_edje_global_obj);
         _edje_global_obj = NULL;
      }
@@ -213,9 +213,9 @@ _edje_shutdown_core(void)
    _edje_text_class_hash_free();
    _edje_size_class_hash_free();
    _edje_edd_shutdown();
-   efl_loop_unregister(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN, _edje_global_obj);
-   efl_loop_unregister(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj);
-   efl_loop_unregister(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj);
+   efl_provider_unregister(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN, _edje_global_obj);
+   efl_provider_unregister(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj);
+   efl_provider_unregister(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj);
    efl_del(_edje_global_obj);
    _edje_global_obj = NULL;
 

@@ -450,16 +450,15 @@ _evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
 }
 
 EOLIAN static void
-_evas_text_efl_text_font_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_Size size)
+_evas_text_efl_text_font_font_family_set(Eo *eo_obj, Evas_Text_Data *o, const char *font)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Font_Description *fdesc;
 
-   if ((!font) || (size <= 0)) return;
+   EINA_SAFETY_ON_NULL_RETURN(font);
 
    evas_object_async_block(obj);
-   if ((size == o->cur.size) &&
-       (o->cur.font && !strcmp(font, o->cur.font))) return;
+   if (eina_streq(font, o->cur.font)) return;
 
    /* We can't assume the given font is same with current fdesc by comparing string.
       Since Evas starts to supporting "auto" for language,
@@ -470,8 +469,7 @@ _evas_text_efl_text_font_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *fon
    eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize("auto"));
    evas_font_name_parse(fdesc, font);
 
-   if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
-       (size == o->cur.size))
+   if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc))
      {
         evas_font_desc_unref(fdesc);
         return;
@@ -479,19 +477,37 @@ _evas_text_efl_text_font_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *fon
 
    if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
    o->cur.fdesc = fdesc;
-
-   o->cur.size = size;
    eina_stringshare_replace(&o->cur.font, font);
    o->prev.font = NULL;
 
    _evas_text_font_reload(eo_obj, o);
 }
 
-EOLIAN static void
-_evas_text_efl_text_font_font_get(const Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char **font, Evas_Font_Size *size)
+EOLIAN static const char *
+_evas_text_efl_text_font_font_family_get(const Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   if (font) *font = o->cur.font;
-   if (size) *size = o->cur.size;
+   return o->cur.font;
+}
+
+EOLIAN static void
+_evas_text_efl_text_font_font_size_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Font_Size size)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   EINA_SAFETY_ON_TRUE_RETURN(size <= 0);
+   if (size == o->cur.size) return;
+
+   evas_object_async_block(obj);
+
+   o->cur.size = size;
+
+   _evas_text_font_reload(eo_obj, o);
+}
+
+EOLIAN static Evas_Font_Size
+_evas_text_efl_text_font_font_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
+{
+   return o->cur.size;
 }
 
 static void
@@ -1039,7 +1055,8 @@ _evas_text_efl_object_dbg_info_get(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED, Ef
 
    const char *text;
    int size;
-   efl_text_font_get(eo_obj, &text, &size);
+   text = efl_text_font_family_get(eo_obj);
+   size = efl_text_font_size_get(eo_obj);
    EFL_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
    EFL_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
@@ -2077,8 +2094,8 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
      }
    /* now figure what changed and add draw rects
     if it just became visible or invisible */
-   is_v = evas_object_is_visible(eo_obj, obj);
-   was_v = evas_object_was_visible(eo_obj, obj);
+   is_v = evas_object_is_visible(obj);
+   was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
         evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes,
@@ -2196,6 +2213,8 @@ _evas_text_efl_gfx_entity_scale_set(Evas_Object *eo_obj, Evas_Text_Data *o,
    font = eina_stringshare_add(o->cur.font);
    size = o->cur.size;
    if (o->cur.font) eina_stringshare_del(o->cur.font);
+   if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
+   o->cur.fdesc = NULL;
    o->cur.font = NULL;
    o->prev.font = NULL;
    o->cur.size = 0;
@@ -2332,13 +2351,17 @@ evas_object_text_font_source_get(const Eo *obj)
 EAPI void
 evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size)
 {
-   efl_text_font_set((Eo *) obj, font, size);
+   if (!font || size <= 0) return; /*Condition for legacy object*/
+
+   efl_text_font_family_set((Eo *) obj, font);
+   efl_text_font_size_set((Eo *) obj, size);
 }
 
 EAPI void
 evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_Size *size)
 {
-   efl_text_font_get((Eo *) obj, font, size);
+   if (font) *font = efl_text_font_family_get((Eo *) obj);
+   if (size) *size = efl_text_font_size_get((Eo *) obj);
 }
 
 EAPI void

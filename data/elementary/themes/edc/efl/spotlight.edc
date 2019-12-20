@@ -1,0 +1,55 @@
+group { "efl/spotlight"; data.item: "version" "123";
+   parts {
+      swallow { "efl.indicator";
+         scale;
+         desc { "default";
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            min: 0 50;
+         }
+      }
+   }
+}
+group { "efl/spotlight/indicator_holder"; data.item: "version" "123";
+   parts {
+      swallow { "efl.indicator";
+         scale;
+         desc { "default";
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            min: 0 50;
+         }
+      }
+   }
+}
+
+group { "efl/spotlight/indicator"; data.item: "version" "123";
+   images {
+      image: "ring_white_middle.png" COMP;
+   }
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+         }
+      }
+      image { "icon";
+         scale;
+         desc { "default";
+            image.normal: "ring_white_middle.png";
+            color: 0 0 0 255;
+            min: 6 6;
+         }
+         desc { "selected";
+            inherit: "default";
+            color: 255 0 0 255;
+         }
+      }
+   }
+   script {
+      public message(Msg_Type:type, id, ...) {
+         set_tween_state(PART:"icon", getfarg(2),
+                         "default", 0.0, "selected", 0.0);
+      }
+   }
+}

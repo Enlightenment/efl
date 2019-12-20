@@ -26,9 +26,6 @@
 
 #include "../evas/canvas/evas_box_eo.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #include "elm_part_helper.h"
 #include "efl_ui_win_part.eo.h"
 #include "elm_plug_eo.h"
@@ -269,6 +266,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool    bg_must_swallow_init : 1;
       Eina_Bool    ctor : 1; /**< legacy constructor: elm_win~add */
    } legacy;
+   Efl_Ui_Shared_Win_Data spd;
 
    Eina_Value exit_on_close;
 
@@ -963,7 +961,7 @@ _elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
    Eina_Size2D min, max;
 
    min = efl_gfx_hint_size_combined_min_get(win);
-   max = efl_gfx_hint_size_max_get(win);
+   max = efl_gfx_hint_size_combined_max_get(win);
    if (max.w < 1) max.w = -1;
    if (max.h < 1) max.h = -1;
 
@@ -1159,14 +1157,14 @@ _elm_win_focus_highlight_visible_set(Efl_Ui_Win_Data *sd,
         if (elm_widget_is_legacy(sd->obj))
           edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
         else
-          edje_object_signal_emit(fobj, "efl,action,focus,show", "efl");
+          edje_object_signal_emit(fobj, "efl,focus,visible,on", "efl");
      }
    else
      {
         if (elm_widget_is_legacy(sd->obj))
           edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
         else
-          edje_object_signal_emit(fobj, "efl,action,focus,hide", "efl");
+          edje_object_signal_emit(fobj, "efl,focus,visible,off", "efl");
      }
 }
 
@@ -1225,7 +1223,7 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
    if (elm_widget_is_legacy(sd->obj))
      edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
    else
-     edje_object_signal_emit(obj, "efl,state,anim,stop", "efl");
+     edje_object_signal_emit(obj, "efl,state,animating,stopped", "efl");
 }
 
 static void
@@ -1637,7 +1635,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
    _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -2044,26 +2042,14 @@ _elm_win_evas_focus_out(void *data,
 }
 
 static void
-_elm_win_evas_object_focus_in(void *data,
-                              Evas *e EINA_UNUSED,
-                              void *event_info)
+_evas_event_focus_object_cb(void *data, const Efl_Event *ev)
 {
-   Eo *object = event_info;
    Eo *win = data;
 
-   _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN, object);
-}
+   if (ev->desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
+     _elm_win_throttle_ok = EINA_TRUE;
 
-static void
-_elm_win_evas_object_focus_out(void *data,
-                               Evas *e EINA_UNUSED,
-                               void *event_info)
-{
-   Eo *object = event_info;
-   Eo *win = data;
-
-   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT, object);
+   efl_event_callback_call(win, ev->desc, ev->info);
 }
 
 static void
@@ -2178,26 +2164,26 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
           {
              if (!(sd->event_forward.focus_in++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_IN,
+               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
                                        _elm_win_evas_focus_in, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
           {
              if (!(sd->event_forward.focus_out++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
+               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
                                        _elm_win_evas_focus_out, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
           {
              if (!(sd->event_forward.object_focus_in++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
-                                       _elm_win_evas_object_focus_in, win);
+               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
+                                       _evas_event_focus_object_cb, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
           {
              if (!(sd->event_forward.object_focus_out++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
-                                       _elm_win_evas_object_focus_out, win);
+               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
+                                       _evas_event_focus_object_cb, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED)
           {
@@ -2321,14 +2307,14 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
           {
              if (!(--sd->event_forward.object_focus_in))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
-                                            _elm_win_evas_object_focus_in, win);
+               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
+                                            _evas_event_focus_object_cb, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
           {
              if (!(--sd->event_forward.object_focus_out))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
-                                            _elm_win_evas_object_focus_out, win);
+               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
+                                            _evas_event_focus_object_cb, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED)
           {
@@ -2658,8 +2644,8 @@ _efl_ui_win_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
         ptr = efl_input_pointer_instance_get( (Eo *) obj, (void **) &ptrdata);
         if (!ptrdata) break;
 
-        ptrdata->tool = evas_touch_point_list_nth_id_get(sd->evas, i);
-        _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOOL);
+        ptrdata->touch_id = evas_touch_point_list_nth_id_get(sd->evas, i);
+        _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOUCH_ID);
 
         // Note that "still" maps to "down" here.
         state = evas_touch_point_list_nth_state_get(sd->evas, i);
@@ -2704,6 +2690,12 @@ EOLIAN static void
 _efl_ui_win_efl_canvas_scene_group_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    evas_smart_objects_calculate(sd->evas);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_canvas_scene_group_objects_calculating_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return efl_canvas_scene_group_objects_calculating_get(sd->evas);
 }
 
 EOLIAN static Eina_Iterator *
@@ -2991,6 +2983,8 @@ _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
 EOLIAN static void
 _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 {
+   efl_event_freeze(sd->evas);
+
    if ((sd->modal) && (evas_object_visible_get(obj)))
      _elm_win_modality_decrement(sd);
 
@@ -3705,6 +3699,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    evas_object_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
    if ((!minw) && (!minh) && (!sd->deferred_resize_job)) return;
 
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
    // If content has a weight, make resizable
    efl_gfx_hint_weight_get(sd->legacy.edje, &wx, &wy);
 
@@ -3717,15 +3712,16 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
      wx = wy = 1;
 
    if (!wx) maxw = minw;
-   else if (maxw < 1) maxw = 32767;
+   if (maxw < 1) maxw = 32767;
    if (!wy) maxh = minh;
-   else if (maxh < 1) maxh = 32767;
+   if (maxh < 1) maxh = 32767;
    if (maxw < minw) maxw = minw;
    if (maxh < minh) maxh = minh;
    if (maxw > 32767) maxw = 32767;
    if (maxh > 32767) maxh = 32767;
 
    unresizable = ((minw == maxw) && (minh == maxh));
+
    if (sd->csd.need_unresizable != unresizable)
      {
         sd->csd.need_unresizable = unresizable;
@@ -3745,7 +3741,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
 
    sd->tmp_updating_hints = 1;
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(maxw, maxh));
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
 
@@ -4075,7 +4071,7 @@ _elm_win_focus_highlight_init(Efl_Ui_Win_Data *sd)
         else
           {
              edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                             "efl,action,focus,hide,end", "*",
+                                             "efl,focus,visible,off,done", "*",
                                              _elm_win_focus_highlight_hide, NULL);
              edje_object_signal_callback_add(sd->focus_highlight.fobj,
                                              "efl,action,focus,anim,end", "*",
@@ -4622,18 +4618,30 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    else
      {
         Eina_Bool set = EINA_FALSE;
+        Eina_Bool legacy = elm_widget_is_legacy(sd->obj);
 
-        sd->icon = elm_icon_add(sd->obj);
+        if (legacy)
+          sd->icon = elm_icon_add(sd->obj);
+        else
+          sd->icon = efl_add(EFL_UI_IMAGE_CLASS, sd->obj);
 
         if (sd->icon_name)
-          set = elm_icon_standard_set(sd->icon, sd->icon_name);
+          {
+             if (legacy)
+               set = elm_icon_standard_set(sd->icon, sd->icon_name);
+             else
+               set = efl_ui_image_icon_set(sd->icon, sd->icon_name);
+          }
         if (((!sd->icon_name) || (!set)) && _elm_appname)
           {
              Efreet_Desktop *d;
              d = efreet_util_desktop_exec_find(_elm_appname);
              if (d)
                {
-                  elm_icon_standard_set(sd->icon, d->icon);
+                  if (legacy)
+                    elm_icon_standard_set(sd->icon, d->icon);
+                  else
+                    efl_ui_image_icon_set(sd->icon, d->icon);
                   efreet_desktop_free(d);
                }
           }
@@ -5022,7 +5030,7 @@ _indicator_resized(void *data, const Efl_Event *event)
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
    Evas_Object *indicator = event->object;
    Evas_Coord_Size *size = (Evas_Coord_Size *)event->info;
-   efl_gfx_hint_size_restricted_min_set(indicator, EINA_SIZE2D(size->w, size->h));
+   efl_gfx_hint_size_min_set(indicator, EINA_SIZE2D(size->w, size->h));
    _elm_win_frame_obj_update(sd, 0);
 }
 
@@ -5118,9 +5126,37 @@ _gesture_manager_config_load(Eo *obj)
    eina_value_set(&val, _elm_config->glayer_double_tap_timeout);
    efl_gesture_manager_config_set(gm, "glayer_double_tap_timeout", &val);
 
-   eina_value_setup(&val, EINA_VALUE_TYPE_INT);
-   eina_value_set(&val, _elm_config->glayer_tap_finger_size);
-   efl_gesture_manager_config_set(gm, "glayer_tap_finger_size", &val);
+   eina_value_set(&val, _elm_config->thumbscroll_friction);
+   efl_gesture_manager_config_set(gm, "thumbscroll_friction", &val);
+
+   eina_value_set(&val, _elm_config->thumbscroll_momentum_threshold);
+   efl_gesture_manager_config_set(gm, "thumbscroll_momentum_threshold", &val);
+
+   eina_value_set(&val, _elm_config->glayer_line_min_length);
+   efl_gesture_manager_config_set(gm, "glayer_line_min_length", &val);
+
+   eina_value_set(&val, _elm_config->glayer_line_distance_tolerance);
+   efl_gesture_manager_config_set(gm, "glayer_line_distance_tolerance", &val);
+
+   eina_value_set(&val, _elm_config->glayer_line_angular_tolerance);
+   efl_gesture_manager_config_set(gm, "glayer_line_angular_tolerance", &val);
+
+   eina_value_set(&val, _elm_config->glayer_zoom_finger_factor);
+   efl_gesture_manager_config_set(gm, "glayer_zoom_finger_factor", &val);
+
+   eina_value_set(&val, _elm_config->glayer_zoom_distance_tolerance);
+   efl_gesture_manager_config_set(gm, "glayer_zoom_distance_tolerance", &val);
+
+   eina_value_setup(&val, EINA_VALUE_TYPE_UINT);
+   eina_value_set(&val, _elm_config->glayer_flick_time_limit_ms);
+   efl_gesture_manager_config_set(gm, "glayer_flick_time_limit_ms", &val);
+
+   eina_value_setup(&val, EINA_VALUE_TYPE_UCHAR);
+   eina_value_set(&val, _elm_config->glayer_continues_enable);
+   efl_gesture_manager_config_set(gm, "glayer_continues_enable", &val);
+
+   eina_value_set(&val, _elm_config->glayer_zoom_finger_enable);
+   efl_gesture_manager_config_set(gm, "glayer_zoom_finger_enable", &val);
 }
 
 static Eo *
@@ -5916,10 +5952,14 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    pd->obj = obj;
    pd->provider = efl_add_ref(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, NULL);
    pd->profile.available = eina_array_new(4);
+   pd->max_w = pd->max_h = -1;
 
    // For bindings: if no parent, allow simple unref
    if (!efl_parent_get(obj))
      efl_allow_parent_unref_set(obj, EINA_TRUE);
+
+   if (!elm_widget_is_legacy(obj))
+     pd->type = EFL_UI_WIN_TYPE_BASIC;
 
    return obj;
 }
@@ -5944,6 +5984,33 @@ EOLIAN static const char*
 _efl_ui_win_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->title;
+}
+
+EOLIAN void
+_efl_ui_win_efl_ui_i18n_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *locale)
+{
+   if (sd->frame_obj)
+     efl_ui_language_set(sd->frame_obj, locale);
+}
+
+EOLIAN const char *
+_efl_ui_win_efl_ui_i18n_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->frame_obj ? efl_ui_language_get(sd->frame_obj) : NULL;
+}
+
+EOLIAN static void
+_efl_ui_win_efl_ui_l10n_l10n_text_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *label, const char *domain)
+{
+   if (sd->frame_obj)
+     efl_ui_l10n_text_set(efl_part(obj, "efl.text.title"), label, domain);
+}
+
+EOLIAN static const char *
+_efl_ui_win_efl_ui_l10n_l10n_text_get(const Eo *obj, Efl_Ui_Win_Data *sd, const char **domain)
+{
+  return sd->frame_obj ?
+    efl_ui_l10n_text_get(efl_part(obj, "efl.text.title"), domain) : NULL;
 }
 
 EOLIAN static void
@@ -6936,8 +7003,15 @@ _efl_ui_win_efl_screen_screen_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win
 {
    //TODO: query to wm about device's rotation
    (void)sd;
-
+   WRN("Not yet implemented");
    return 0;
+}
+
+EOLIAN static float
+_efl_ui_win_efl_screen_screen_scale_factor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+{
+   WRN("Not yet implemented");
+   return 1.0;
 }
 
 EOLIAN static void
@@ -7633,6 +7707,19 @@ _efl_ui_win_part_color_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char 
    return EINA_FALSE;
 }
 
+static void
+_efl_ui_win_part_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *part_obj EINA_UNUSED, const char *part)
+{
+   sd->legacy.forbidden = EINA_TRUE;
+   if (eina_streq(part, "background"))
+     {
+        _elm_win_bg_set(sd, NULL);
+        return;
+     }
+
+   WIN_PART_ERR(part);
+}
+
 static Eina_Error
 _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const char *part)
 {
@@ -7650,7 +7737,7 @@ _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const cha
         if (file)
           {
              bg = efl_add(EFL_UI_IMAGE_CLASS, obj);
-             efl_gfx_image_scale_type_set(bg, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
+             efl_gfx_image_scale_method_set(bg, EFL_GFX_IMAGE_SCALE_METHOD_EXPAND);
              ok = efl_file_simple_load(bg, file, key);
              if (!ok) ELM_SAFE_DEL(bg);
              _elm_win_bg_set(sd, bg);
@@ -7740,6 +7827,14 @@ _efl_ui_win_part_efl_file_key_get(const Eo *obj, void *_pd EINA_UNUSED)
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_win_part_file_key_get(pd->obj, sd, obj, pd->part);
+}
+
+EOLIAN static void
+_efl_ui_win_part_efl_file_unload(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_win_part_file_unload(pd->obj, sd, obj, pd->part);
 }
 
 EOLIAN static Eina_Error
@@ -8789,7 +8884,6 @@ _elm_win_legacy_init(Efl_Ui_Win_Data *sd)
    else
      edje_object_part_swallow(sd->legacy.edje, "efl.contents", sd->legacy.box);
 
-   evas_object_geometry_set(sd->legacy.edje, 0, 0, 1, 1);
    if (sd->type != EFL_UI_WIN_TYPE_FAKE)
      {
         edje_object_update_hints_set(sd->legacy.edje, EINA_TRUE);
@@ -9295,6 +9389,10 @@ elm_win_name_get(const Evas_Object *obj)
 EAPI Elm_Win_Type
 elm_win_type_get(const Evas_Object *obj)
 {
+   if (!(efl_isa(obj, EFL_UI_WIN_CLASS) ||
+         efl_isa(obj, EFL_UI_WIN_LEGACY_CLASS) ||
+         efl_isa(obj, EFL_UI_WIN_INLINED_CLASS))) return ELM_WIN_UNKNOWN;
+
    return _efl_ui_win_type_to_elm_win_type(efl_ui_win_type_get(obj));
 }
 
@@ -9368,4 +9466,25 @@ EAPI const char *
 elm_win_focus_highlight_style_get(const Efl_Ui_Win *obj)
 {
    return efl_ui_win_focus_highlight_style_get(obj);
+}
+
+EAPI Efl_Ui_Shared_Win_Data*
+efl_ui_win_shared_data_get(Efl_Ui_Win *obj)
+{
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
+
+   return &pd->spd;
+}
+
+EAPI void
+efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel)
+{
+   elm_win_autodel_set(obj, autodel);
+}
+
+EAPI Eina_Bool
+efl_ui_win_autodel_get(const Efl_Ui_Win *obj)
+{
+   return elm_win_autodel_get(obj);
 }

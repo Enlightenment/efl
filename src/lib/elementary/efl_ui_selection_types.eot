@@ -11,7 +11,7 @@ enum @beta Efl.Ui.Selection_Format
 {
    [[Selection format]]
    targets = -1, [[For matching every possible atom]]
-   none = 0x0, [[Content is from outside of Elementary]]
+   none = 0x0, [[Content is from outside of EFL]]
    text = 0x01, [[Plain unformatted text: Used for things that don't want rich markup]]
    markup = 0x2, [[Edje textblock markup, including inline images]]
    image = 0x4, [[Images]]
@@ -52,6 +52,7 @@ function @beta Efl.Ui.Selection_Data_Ready {
 
 struct @beta Efl.Ui.Selection_Changed
 {
+   [[Selection-changed specific information.]] // TODO: This needs to be filled in.
    type: Efl.Ui.Selection_Type; [[Selection type]]
    seat: int; [[The seat on which the selection changed, or NULL for "default"]]
    display: void_ptr; [[The display connection object, NULL under X11]]

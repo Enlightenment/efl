@@ -1,0 +1,25 @@
+class @beta Efl.Canvas.Gesture_Recognizer_Triple_Tap extends Efl.Canvas.Gesture_Recognizer
+{
+   [[This is the recognizer for Triple-tap gestures.
+     See @Efl.Canvas.Gesture_Triple_Tap and @Efl.Canvas.Gesture_Recognizer.
+     For internal use only.
+   ]]
+   c_prefix: efl_gesture_recognizer_triple_tap;
+   methods {
+      @property timeout {
+         [[Minimum time between each consecutive tap to be recognized as a triple tap.]]
+         set {
+         }
+         get {
+         }
+         values {
+            time: double; [[Time in seconds.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.recognize;
+   }
+}

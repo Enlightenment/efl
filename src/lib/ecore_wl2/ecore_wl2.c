@@ -71,9 +71,9 @@ _ecore_wl2_surface_modules_init(void)
    const char *mod_dir;
 
 #ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
-#endif
+# endif
      {
         char path[PATH_MAX];
         //when running in tree we are ignoring all the settings
@@ -231,7 +231,7 @@ ecore_wl2_shutdown(void)
 {
    if (_ecore_wl2_init_count < 1)
      {
-        ERR("Ecore_Wl2 shutdown called without Ecore_Wl2 Init");
+        EINA_LOG_ERR("Ecore_Wl2 shutdown called without Ecore_Wl2 Init");
         return 0;
      }
 

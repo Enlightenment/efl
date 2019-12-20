@@ -10,9 +10,8 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    char buf[PATH_MAX] = {0};
    Eo *win, *table, *panel;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                     efl_text_set(efl_added, "Efl.Ui.Panel"),
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                                          efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    table = efl_add(EFL_UI_TABLE_CLASS, win,
@@ -67,7 +66,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 static void
 _check_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   elm_config_scroll_thumbscroll_enabled_set(efl_ui_nstate_value_get(ev->object));
+   elm_config_scroll_thumbscroll_enabled_set(efl_ui_selectable_selected_get(ev->object));
 }
 
 static void
@@ -76,7 +75,7 @@ _panel_toggled(void *data, const Efl_Event *ev)
    Evas_Object *list;
    int i;
 
-   if (!efl_ui_nstate_value_get(data)) return;
+   if (!efl_ui_selectable_selected_get(data)) return;
 
    list = efl_content_get(ev->object);
    evas_object_del(list);
@@ -103,25 +102,24 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    int i;
    Eo *win, *box, *check, *btn, *table, *list, *panel;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                     efl_text_set(efl_added, "Efl.Ui.Panel"),
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                                          efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
                  efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_CHECK_CLASS, box,
-           efl_ui_check_selected_set(efl_added, elm_config_scroll_thumbscroll_enabled_get()),
-           efl_text_set(efl_added, "Enable thumb scroll (temporarily"),
-           efl_event_callback_add(efl_added, EFL_UI_NSTATE_EVENT_CHANGED, _check_changed, NULL),
-           efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
-           efl_pack(box, efl_added));
+   check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_ui_selectable_selected_set(check, elm_config_scroll_thumbscroll_enabled_get());
+   efl_text_set(check, "Enable thumb scroll (temporarily");
+   efl_event_callback_add(check, EFL_UI_EVENT_SELECTED_CHANGED, _check_changed, NULL);
+   efl_gfx_hint_weight_set(check, EVAS_HINT_EXPAND, 0);
+   efl_pack(box, check);
 
-   check = efl_add(EFL_UI_CHECK_CLASS, box,
-                   efl_text_set(efl_added, "Reset content on toggle"),
-                   efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
-                   efl_pack(box, efl_added));
+   check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(check, "Reset content on toggle");
+   efl_gfx_hint_weight_set(check, EVAS_HINT_EXPAND, 0);
+   efl_pack(box, check);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "toggle"),
@@ -154,7 +152,7 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_content_set(panel, list);
 
    efl_event_callback_add(panel, EFL_UI_PANEL_EVENT_TOGGLED, _panel_toggled, check);
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _btn_clicked, panel);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _btn_clicked, panel);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
 }

@@ -60,7 +60,7 @@ mixin @beta Ector.Buffer
                                               map should try to convert the data into a new buffer]]
             @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: void_ptr @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         return: void_ptr @no_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       unmap @pure_virtual {
          [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
@@ -80,6 +80,16 @@ mixin @beta Ector.Buffer
             @in writable: bool; [[Buffer is writable]]
          }
          return: bool; [[True if pixels_set was successful]]
+      }
+      pixels_get @pure_virtual {
+         [[Gets the source pixels for the current buffer]]
+         params {
+            @out pixels: void_ptr; [[Returns buffer pixel pointer]]
+            @out width: int; [[Returns buffer width]]
+            @out height: int; [[Returns buffer height]]
+            @out stride: int; [[Returns buffer stride size]]
+         }
+         return: bool; [[True if returned pixels is writable]]
       }
       @property flags {
          [[The capabilities of this buffer]]

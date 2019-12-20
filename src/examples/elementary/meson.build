@@ -59,7 +59,6 @@ examples = [
   'list_example_01',
   'list_example_02',
   'list_example_03',
-  'location_example_01',
   'map_example_01',
   'map_example_02',
   'map_example_03',
@@ -114,9 +113,14 @@ examples = [
   'efl_ui_list_view_example_1',
   'efl_ui_list_view_example_2',
   'efl_ui_list_view_example_3',
+  'efl_ui_collection_view_example_1',
   'efl_canvas_layout_text',
   'efl_ui_theme_example_01',
-  'efl_ui_theme_example_02'
+  'efl_ui_theme_example_02',
+  'efl_ui_slideshow_example',
+  'efl_ui_radio_example_01',
+  'efl_ui_grid_example_1',
+  'efl_ui_grid_view_example_1'
 ]
 
 foreach example : examples

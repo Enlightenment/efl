@@ -612,8 +612,8 @@ _item_click_cb(void *data,
      }
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   efl_event_callback_legacy_call
-     (WIDGET(it), EFL_UI_EVENT_CLICKED, eo_it);
+   evas_object_smart_callback_call
+     ( WIDGET(it), "clicked", eo_it);
 }
 
 static char *
@@ -784,7 +784,7 @@ _theme_data_get(Evas_Object *obj)
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
    blank = eina_list_data_get(sd->right_blanks);
-   if (blank) return;
+   if (!blank) return;
 
    str = edje_object_data_get(blank, "len_threshold");
    if (str) sd->len_threshold = MAX(0, atoi(str));
@@ -862,8 +862,11 @@ _elm_diskselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
           }
      }
 
-   _theme_data_get(obj);
-   _sizing_eval(obj);
+   if (efl_finalized_get(obj))
+     {
+        _theme_data_get(obj);
+        _sizing_eval(obj);
+     }
 
    evas_event_thaw(evas);
    evas_event_thaw_eval(evas);
@@ -1046,7 +1049,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
    if (!it) return;
    _item_select(it);
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SCROLL_ANIM_STOP, EO_OBJ(it));
+     (data, EFL_UI_EVENT_SCROLL_ANIM_FINISHED, EO_OBJ(it));
 }
 
 static void
@@ -1054,7 +1057,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
                          void *data EINA_UNUSED)
 {
    efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_START, elm_diskselector_selected_item_get(obj));
+     (obj, EFL_UI_EVENT_SCROLL_ANIM_STARTED, elm_diskselector_selected_item_get(obj));
 }
 
 static void
@@ -1062,7 +1065,7 @@ _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
    efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_START, elm_diskselector_selected_item_get(obj));
+     (obj, EFL_UI_EVENT_SCROLL_DRAG_STARTED, elm_diskselector_selected_item_get(obj));
 }
 
 static void
@@ -1070,7 +1073,7 @@ _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
    efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, elm_diskselector_selected_item_get(obj));
+     (obj, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, elm_diskselector_selected_item_get(obj));
 }
 
 static void

@@ -6,11 +6,10 @@ interface @beta Efl.Gfx.Gradient
    c_prefix: efl_gfx_gradient;
    methods {
       @property stop {
+         [[The list of color stops for the gradient]]
          set {
-            [[Set the list of color stops for the gradient]]
          }
          get {
-            [[Get the list of color stops.]]
          }
          values {
             colors: ptr(const(Efl.Gfx.Gradient_Stop)); [[Color stops list]]
@@ -18,16 +17,15 @@ interface @beta Efl.Gfx.Gradient
          }
       }
       @property spread {
+         [[The spread method that should be used for this gradient.
+           The default is @Efl.Gfx.Gradient_Spread.pad.
+         ]]
          set {
-            [[Specifies the spread method that should be used for this gradient.]]
          }
          get {
-            [[Returns the spread method use by this gradient. The default is
-              EFL_GFX_GRADIENT_SPREAD_PAD.
-            ]]
          }
          values {
-            s: Efl.Gfx.Gradient_Spread; [[Spread type to be used]]
+            s: Efl.Gfx.Gradient_Spread; [[Spread type to be used.]]
          }
       }
    }

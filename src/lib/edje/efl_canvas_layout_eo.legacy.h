@@ -22,7 +22,7 @@ typedef Eo Efl_Canvas_Layout;
  *
  * If animations are disabled, transitions between states (as defined in EDC)
  * are then instantaneous. This is conceptually similar to setting the
- * @ref Efl.Player.play_speed to an infinitely high value.
+ * @ref Efl.Player.playback_speed to an infinitely high value.
  *
  * Start or stop animating this object.
  *
@@ -41,7 +41,7 @@ EAPI void edje_object_animation_set(Efl_Canvas_Layout *obj, Eina_Bool on);
  *
  * If animations are disabled, transitions between states (as defined in EDC)
  * are then instantaneous. This is conceptually similar to setting the
- * @ref Efl.Player.play_speed to an infinitely high value.
+ * @ref Efl.Player.playback_speed to an infinitely high value.
  *
  * Get the current state of animation, @c true by default.
  *

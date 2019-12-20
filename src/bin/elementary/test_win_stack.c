@@ -14,18 +14,18 @@ static void _bt_popto(void *data, Evas_Object *obj, void *event_info);
 static void _bt_pressed(void *data, Evas_Object *obj, void *event_info);
 
 static Evas_Object *
-_win_new(Evas_Object *stack_top, const char *title)
+_win_new(Evas_Object* parent, const char *title)
 {
    Evas_Object *bg, *bx, *bt, *lb, *win;
 
    if (level >= 3)
-     win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+     win = efl_add(EFL_UI_WIN_CLASS, parent,
                    efl_ui_win_name_set(efl_added, "window-stack"),
                    efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_NAVIFRAME_BASIC),
                    efl_text_set(efl_added, title),
                    efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    else
-     win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+     win = efl_add(EFL_UI_WIN_CLASS, parent,
                    efl_ui_win_name_set(efl_added, "window-stack"),
                    efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC),
                    efl_text_set(efl_added, title),
@@ -63,7 +63,7 @@ _win_new(Evas_Object *stack_top, const char *title)
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Push");
-   evas_object_smart_callback_add(bt, "clicked", _bt_pressed, stack_top);
+   evas_object_smart_callback_add(bt, "clicked", _bt_pressed, parent);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
@@ -82,12 +82,12 @@ _bt_popto(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
 static void
 _bt_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win;
+   Evas_Object *win = (Evas_Object*) data;
    char buf[100];
 
    level++;
    snprintf(buf, sizeof(buf), "Level %i", level);
-   win = _win_new(data, buf);
+   win = _win_new(win, buf);
    efl_ui_win_stack_master_id_set(win, efl_ui_win_stack_id_get(data));
 }
 

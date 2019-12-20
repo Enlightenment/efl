@@ -44,22 +44,18 @@ class @beta Evas.Canvas3D.Material extends Evas.Canvas3D.Object
       }
 
       @property enable {
+         [[The material attribute enable flag of the given material.
+
+           You might want to disable some material reflection contribution.
+           For example, Emission attribute is rarely used. Disabling unused
+           attributes might help the shading less complex so that can get
+           speed up.
+
+           By default, diffuse and specular is enabled.
+         ]]
          set {
-            [[Set the material attribute enable flag of the given material.
-
-              You might want to disable some material reflection contribution.
-              For example, Emission attribute is rarely used. Disabling unused
-              attributes might help the shading less complex so that can get
-              speed up.
-
-              By default, diffuse and specular is enabled.
-            ]]
          }
          get {
-            [[Get the material attribute enable flag of the given material.
-
-              See also @.enable.set.
-            ]]
          }
          keys {
             attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
@@ -70,22 +66,18 @@ class @beta Evas.Canvas3D.Material extends Evas.Canvas3D.Object
       }
 
       @property shininess {
+         [[The shininess of the given material.
+
+           Shininess is only used when specular attribute is enabled. Higher shininess
+           value will make the object more shiny.
+
+           Default shininess value is 150.0.
+
+           See also @.enable.set.
+         ]]
          set {
-            [[Set the shininess of the given material.
-
-              Shininess is only used when specular attribute is enabled. Higher shininess
-              value will make the object more shiny.
-
-              Default shininess value is 150.0.
-
-              See also @.enable.set.
-            ]]
          }
          get {
-            [[Get the shininess of the given material.
-
-              See also @.shininess.set.
-            ]]
          }
          values {
             shininess: Evas.Real; [[Shininess value.]]
@@ -93,19 +85,15 @@ class @beta Evas.Canvas3D.Material extends Evas.Canvas3D.Object
       }
 
       @property texture {
+         [[The texture of the given material.
+
+           You have to enable the desired attribute first.
+
+           See also @.enable.set.
+         ]]
          set {
-            [[Set the texture of the given material.
-
-              You have to enable the desired attribute first.
-
-              See also @.enable.set.
-            ]]
          }
          get {
-            [[Get the texture of the given material.
-
-              See also @.texture.set.
-            ]]
          }
 
          keys {

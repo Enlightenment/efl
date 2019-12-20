@@ -14,6 +14,7 @@ ector_src = [
   'ector_gl_internal.h',
   'ector_buffer.c',
   'ector_renderer_shape.c',
+  'ector_renderer_image.c',
   'ector_renderer.c',
   'ector_renderer_gradient.c',
   'ector_renderer_gradient_radial.c',
@@ -25,6 +26,7 @@ pub_eo_files = [
   'ector_buffer.eo',
   'ector_renderer.eo',
   'ector_renderer_shape.eo',
+  'ector_renderer_image.eo',
   'ector_renderer_gradient.eo',
   'ector_renderer_gradient_radial.eo',
   'ector_renderer_gradient_linear.eo'
@@ -48,7 +50,6 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-subdir('cairo')
 subdir('gl')
 
 pub_eo_types_files = [

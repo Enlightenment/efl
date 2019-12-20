@@ -1,7 +1,24 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` button_cxx_example_01.cc -o button_cxx_example_01
 
 #define EFL_CXXPERIMENTAL
+#ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 #include <Efl_Ui.hh>
 
 using efl::eo::instantiate;
@@ -27,7 +44,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.content_set(box);
 
    efl::ui::Box box_initial(instantiate, win);
-   box_initial.direction_set(EFL_UI_DIR_HORIZONTAL);
+   box_initial.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    box_initial.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    box.pack_end(box_initial);
 
@@ -65,37 +82,37 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
              wright->autorepeat_gap_timeout_set(t);
           }
      }, std::placeholders::_1);
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn, btn_options);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, btn, btn_options);
 
    efl::ui::Button btn2(instantiate, win);
    btn2.text_set("Initial: 1.0");
    box_initial.pack_end(btn2);
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn2, btn_options);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, btn2, btn_options);
 
    efl::ui::Button btn3(instantiate, win);
    btn3.text_set("Initial: 5.0");
    box_initial.pack_end(btn3);
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn3, btn_options);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, btn3, btn_options);
 
    efl::ui::Box box_gap(instantiate, win);
-   box_gap.direction_set(EFL_UI_DIR_HORIZONTAL);
+   box_gap.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    box_gap.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    box.pack_end(box_gap);
 
    efl::ui::Button btn4(instantiate, win);
    btn4.text_set("Gap: 0.1");
    box_gap.pack_end(btn4);
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn4, btn_options);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, btn4, btn_options);
 
    efl::ui::Button btn5(instantiate, win);
    btn5.text_set("Gap: 0.5");
    box_gap.pack_end(btn5);
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn5, btn_options);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, btn5, btn_options);
 
    efl::ui::Button btn6(instantiate, win);
    btn6.text_set("Gap: 1.0");
    box_gap.pack_end(btn6);
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn6, btn_options);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, btn6, btn_options);
 
    up.autorepeat_enabled_set(true);
    up.autorepeat_initial_timeout_set(1.0);
@@ -156,7 +173,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
           }
         cmid.hint_align_set(ax, ay);
      }, std::placeholders::_1);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, up, btn_cursors_move);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, up, btn_cursors_move);
 
    auto btn_cursors_release = std::bind(
             [wmid] ()
@@ -167,14 +184,14 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
              icon_still = nullptr;
           }
      });
-   efl::eolian::event_add(efl::ui::Clickable::unpressed_event, up, btn_cursors_release);
+   efl::eolian::event_add(efl::input::Clickable::unpressed_event, up, btn_cursors_release);
 
    efl::ui::Image icon_up(instantiate, win);
    icon_up.icon_set("arrow_up");
    up.content_set(icon_up);
 
    efl::ui::Box box_inferior(instantiate, win);
-   box_inferior.direction_set(EFL_UI_DIR_HORIZONTAL);
+   box_inferior.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    box.pack_end(box_inferior);
    box_inferior.visible_set(true);
 
@@ -185,8 +202,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    left.hint_fill_set(false, true);
    left.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(left);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, left, btn_cursors_move);
-   efl::eolian::event_add(efl::ui::Clickable::unpressed_event, left, btn_cursors_release);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, left, btn_cursors_move);
+   efl::eolian::event_add(efl::input::Clickable::unpressed_event, left, btn_cursors_release);
 
    efl::ui::Image icon_left(instantiate, win);
    icon_left.icon_set("arrow_left");
@@ -205,8 +222,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    right.hint_fill_set(false, true);
    right.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(right);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, right, btn_cursors_move);
-   efl::eolian::event_add(efl::ui::Clickable::unpressed_event, right, btn_cursors_release);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, right, btn_cursors_move);
+   efl::eolian::event_add(efl::input::Clickable::unpressed_event, right, btn_cursors_release);
 
    efl::ui::Image icon_right(instantiate, win);
    icon_right.icon_set("arrow_right");
@@ -219,8 +236,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    down.hint_fill_set(true, false);
    down.hint_align_set(0.5, 0.0);
    box.pack_end(down);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, down, btn_cursors_move);
-   efl::eolian::event_add(efl::ui::Clickable::unpressed_event, down, btn_cursors_release);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, down, btn_cursors_move);
+   efl::eolian::event_add(efl::input::Clickable::unpressed_event, down, btn_cursors_release);
 
    efl::ui::Image icon_down(instantiate, win);
    icon_down.icon_set("arrow_down");

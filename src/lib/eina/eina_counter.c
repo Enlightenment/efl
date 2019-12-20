@@ -33,10 +33,6 @@
 #include "eina_safety_checks.h"
 #include "eina_counter.h"
 
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #include "eina_private.h"
 
 /*============================================================================*

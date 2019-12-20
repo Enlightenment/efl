@@ -11,7 +11,7 @@
 
 #define EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, ...) \
    Evas_Smart_Data *o = efl_data_scope_safe_get(eo_obj, MY_CLASS); \
-   do { if (!o) { MAGIC_CHECK_FAILED(eo_obj,0,MAGIC_SMART) return __VA_ARGS__; } } while (0)
+   do { if (!o) { ERR("calling smart object API on non-smart object!"); return __VA_ARGS__; } } while (0)
 
 extern Eina_Hash* signals_hash_table;
 
@@ -51,6 +51,11 @@ struct _Evas_Smart_Data
    Eina_Bool         clipped : 1; /* If true, smart clipped */
    Eina_Bool         data_nofree : 1; /* If true, do NOT free the data */
    Eina_Bool         constructed : 1; /* constructor finished */
+   Eina_Bool         cb_move : 1; /* has "move" cb added */
+   Eina_Bool         cb_resize : 1; /* has "resize" cb added */
+   Eina_Bool         cb_restack : 1; /* has "restack" cb added */
+   Eina_Bool         cb_member_added : 1; /* has "member,added" cb added */
+   Eina_Bool         cb_member_removed : 1; /* has "member,removed" cb added */
 };
 
 typedef struct
@@ -330,7 +335,8 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (smart->smart.smart && smart->smart.smart->smart_class->member_add)
      smart->smart.smart->smart_class->member_add(smart_obj, eo_obj);
    evas_object_update_bounding_box(eo_obj, obj, member_o);
-   efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED, eo_obj);
+   if (o->cb_member_added)
+     efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED, eo_obj);
 }
 
 EAPI void
@@ -347,7 +353,7 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
+_efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *sd, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *smart;
@@ -357,7 +363,8 @@ _efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *_pd EINA_U
 
    evas_object_async_block(obj);
 
-   efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_REMOVED, eo_obj);
+   if (sd->cb_member_removed)
+     efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_REMOVED, eo_obj);
 
    smart = efl_data_scope_get(smart_obj, EFL_CANVAS_OBJECT_CLASS);
    if (smart->smart.smart && smart->smart.smart->smart_class->member_del)
@@ -983,6 +990,35 @@ evas_object_smart_callback_add(Evas_Object *eo_obj, const char *event, Evas_Smar
          EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
 }
 
+static void
+_smart_cb_check(Evas_Smart_Data *o, const char *event)
+{
+   if (!o->cb_move)
+     {
+        if (eina_streq(event, "move"))
+          {
+             o->cb_move = EINA_TRUE;
+             return;
+          }
+     }
+   if (!o->cb_resize)
+     {
+        if (eina_streq(event, "resize"))
+          {
+             o->cb_resize = EINA_TRUE;
+             return;
+          }
+     }
+   if (!o->cb_restack)
+     {
+        if (eina_streq(event, "restack"))
+          {
+             o->cb_restack = EINA_TRUE;
+             return;
+          }
+     }
+}
+
 EAPI void
 evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data)
 {
@@ -996,6 +1032,7 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
    cb_info->func = func;
    cb_info->data = (void *)data;
    cb_info->event = eo_desc;
+   _smart_cb_check(o, event);
 
    o->callbacks = eina_inlist_append(o->callbacks,
         EINA_INLIST_GET(cb_info));
@@ -1067,6 +1104,33 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
    if (!event) return;
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
    efl_event_callback_legacy_call(eo_obj, eo_desc, event_info);
+}
+
+void
+_evas_object_smart_callback_call_internal(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc)
+{
+   const char *event = NULL;
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
+
+   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
+     {
+        if (!o->cb_move) return;
+        event = "move";
+     }
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
+     {
+        if (!o->cb_resize) return;
+        event = "resize";
+     }
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
+     {
+        if (!o->cb_restack) return;
+        event = "restack";
+     }
+   else //invalidate
+     return;
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
+   efl_event_callback_legacy_call(eo_obj, eo_desc, NULL);
 }
 
 EAPI Eina_Bool
@@ -1555,7 +1619,7 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
           }
 
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-        evas_object_smart_data_set(eo_obj, NULL);
+        if (o->data) evas_object_smart_data_set(eo_obj, NULL);
      }
 
    obj->smart.parent = NULL;
@@ -1860,7 +1924,37 @@ _efl_canvas_group_group_clipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *sd,
 }
 
 /* Internal EO APIs */
+EOLIAN static Eina_Bool
+_efl_canvas_group_efl_object_event_callback_priority_add(Eo *obj, Evas_Smart_Data *sd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+  if (desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+    {
+       sd->cb_member_added = EINA_TRUE;
+    }
+  else if (desc == EFL_CANVAS_GROUP_EVENT_MEMBER_REMOVED)
+    {
+       sd->cb_member_added = EINA_TRUE;
+    }
 
+  return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_group_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Smart_Data *sd, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        if (array[i].desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+          {
+             sd->cb_member_added = EINA_TRUE;
+          }
+        else if (array[i].desc == EFL_CANVAS_GROUP_EVENT_MEMBER_REMOVED)
+          {
+             sd->cb_member_removed = EINA_TRUE;
+          }
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_add)
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_del)
 EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), Eina_Bool enable)
@@ -1868,6 +1962,8 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), E
 #define EFL_CANVAS_GROUP_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _efl_canvas_group_group_add), \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _efl_canvas_group_group_del), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_canvas_group_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_canvas_group_efl_object_event_callback_array_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_clipped_set, _efl_canvas_group_group_clipped_set)
 
 #include "canvas/efl_canvas_group.eo.c"

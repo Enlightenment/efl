@@ -786,7 +786,7 @@ eet_data_get_string_hash(const Eet_Dictionary *ed,
         if (eet_data_get_int(ed, src, src_end, &idx) < 0)
           return -1;
 
-        return eet_dictionary_string_get_hash(ed, idx);
+        return eet_dictionary_string_get_hash_unlocked(ed, idx);
      }
 
    return -1;
@@ -810,12 +810,12 @@ eet_data_get_string(const Eet_Dictionary *ed,
         if (eet_data_get_int(ed, src, src_end, &idx) < 0)
           return -1;
 
-        str = eet_dictionary_string_get_char(ed, idx);
+        str = eet_dictionary_string_get_char_unlocked(ed, idx);
         if (!str)
           return -1;
 
         *d = (char *)str;
-        return eet_dictionary_string_get_size(ed, idx);
+        return eet_dictionary_string_get_size_unlocked(ed, idx);
      }
 
    s = (char *)src;
@@ -996,7 +996,7 @@ eet_data_get_float(const Eet_Dictionary *ed,
    if (eet_data_get_int(ed, src, src_end, &idx) < 0)
      return -1;
 
-   if (!eet_dictionary_string_get_float(ed, idx, d))
+   if (!eet_dictionary_string_get_float_unlocked(ed, idx, d))
      return -1;
 
    return 1;
@@ -1073,7 +1073,7 @@ eet_data_get_double(const Eet_Dictionary *ed,
    if (eet_data_get_int(ed, src, src_end, &idx) < 0)
      return -1;
 
-   if (!eet_dictionary_string_get_double(ed, idx, d))
+   if (!eet_dictionary_string_get_double_unlocked(ed, idx, d))
      return -1;
 
    return 1;
@@ -1143,7 +1143,7 @@ eet_data_get_f32p32(const Eet_Dictionary *ed,
    if (eet_data_get_int(ed, src, src_end, &idx) < 0)
      return -1;
 
-   if (!eet_dictionary_string_get_fp(ed, idx, fp))
+   if (!eet_dictionary_string_get_fp_unlocked(ed, idx, fp))
      return -1;
 
    return 1;
@@ -2283,9 +2283,11 @@ eet_data_read_cipher(Eet_File            *ef,
           return NULL;
      }
 
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    data_dec = _eet_data_descriptor_decode(&context, ed, edd, data, size, NULL, 0);
    eet_free_context_shutdown(&context);
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    if (required_free)
      free((void *)data);
@@ -2322,9 +2324,11 @@ eet_data_read_cipher_buffer(Eet_File            *ef,
           return NULL;
      }
 
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    data_dec = _eet_data_descriptor_decode(&context, ed, edd, data, size, buffer, buffer_size);
    eet_free_context_shutdown(&context);
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    if (required_free)
      free((void *)data);
@@ -2357,9 +2361,11 @@ eet_data_node_read_cipher(Eet_File   *ef,
           return NULL;
      }
 
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    result = _eet_data_descriptor_decode(&context, ed, NULL, data, size, NULL, 0);
    eet_free_context_shutdown(&context);
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    if (required_free)
      free((void *)data);
@@ -2393,7 +2399,9 @@ eet_data_write_cipher(Eet_File            *ef,
 
    ed = eet_dictionary_get(ef);
 
+   // XXX: future manual lock?
    data_enc = _eet_data_descriptor_encode(ed, edd, data, &size);
+   // XXX: release manual eet_dictionary lock
    if (!data_enc)
      return 0;
 
@@ -4831,9 +4839,11 @@ eet_data_dump_cipher(Eet_File         *ef,
           return 0;
      }
 
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    result = _eet_data_descriptor_decode(&context, ed, NULL, data, size, NULL, 0);
    eet_free_context_shutdown(&context);
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    eet_node_dump(result, 0, dumpfunc, dumpdata);
 
@@ -4964,7 +4974,9 @@ eet_data_undump_cipher(Eet_File   *ef,
 
    ed = eet_dictionary_get(ef);
 
+   // XXX: in future put lock outside here - rare to dump
    data_enc = _eet_data_dump_parse(ed, &size, text, textlen);
+   // XXX: release manual eet_dictionary lock
    if (!data_enc)
      return 0;
 
@@ -5140,7 +5152,9 @@ eet_data_node_write_cipher(Eet_File   *ef,
 
    ed = eet_dictionary_get(ef);
 
+   // XXX: in future put lock outside here?
    data_enc = _eet_data_dump_encode(EET_G_UNKNOWN, ed, node, &size);
+   // XXX: release manual eet_dictionary lock
    if (!data_enc)
      return 0;
 

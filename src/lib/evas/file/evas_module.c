@@ -116,7 +116,14 @@ evas_module_paths_init(void)
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EFL_RUN_IN_TREE"))
+        static signed char run_in_tree = -1;
+
+        if (run_in_tree == -1)
+          {
+             if (getenv("EFL_RUN_IN_TREE")) run_in_tree = 1;
+             else run_in_tree = 0;
+          }
+        if (run_in_tree == 1)
           {
              struct stat st;
              const char mp[] = PACKAGE_BUILD_DIR"/src/modules/evas";
@@ -185,6 +192,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, wayland_egl);
 #if !EVAS_MODULE_NO_VG_LOADERS
 EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, svg);
+EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, json);
 #endif
 
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
@@ -273,6 +281,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_VG_EET
   EVAS_EINA_STATIC_MODULE_USE(vg_loader, eet),
+#endif
+#ifdef EVAS_STATIC_BUILD_VG_JSON
+  EVAS_EINA_STATIC_MODULE_USE(vg_loader, json),
 #endif
 #endif
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
@@ -428,9 +439,13 @@ evas_module_engine_list(void)
    const char *s, *s2;
    char buf[PATH_MAX];
 #ifdef NEED_RUN_IN_TREE
-   Eina_Bool run_in_tree;
+   static signed char run_in_tree = -1;
 
-   run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+   if (run_in_tree == -1)
+     {
+        if (getenv("EFL_RUN_IN_TREE")) run_in_tree = 1;
+        else run_in_tree = 0;
+     }
 #endif
 
    EINA_LIST_FOREACH(evas_module_paths, l, s)
@@ -451,7 +466,7 @@ evas_module_engine_list(void)
                   if (getuid() == geteuid())
 #endif
                     {
-                       if (run_in_tree)
+                       if (run_in_tree == 1)
                          {
                             bs_mod_dir_get(buf, sizeof(buf), "evas/engines", fname);
                             if (!evas_file_path_exists(buf))
@@ -545,7 +560,13 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
    Eina_Module *en;
    Eina_List *l;
 #ifdef NEED_RUN_IN_TREE
-   Eina_Bool run_in_tree;
+   static signed char run_in_tree = -1;
+
+   if (run_in_tree == -1)
+     {
+        if (getenv("EFL_RUN_IN_TREE")) run_in_tree = 1;
+        else run_in_tree = 0;
+     }
 #endif
 
    if ((unsigned int)type > 5) return NULL;
@@ -556,10 +577,6 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         if (evas_module_load(em)) return em;
         return NULL;
      }
-
-#ifdef NEED_RUN_IN_TREE
-   run_in_tree = !!getenv("EFL_RUN_IN_TREE");
-#endif
 
    EINA_LIST_FOREACH(evas_module_paths, l, path)
      {
@@ -580,7 +597,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         if (getuid() == geteuid())
 #endif
           {
-             if (run_in_tree)
+             if (run_in_tree == 1)
                {
                   char subsystem[PATH_MAX];
 
@@ -696,7 +713,7 @@ evas_module_clean(void)
 {
    static int call_count = 0;
 /*    int ago; */
-   int noclean = -1;
+   static signed char noclean = -1;
 /*    Eina_List *l; */
 /*    Evas_Module *em; */
 
@@ -707,10 +724,8 @@ evas_module_clean(void)
 
    if (noclean == -1)
      {
-        if (getenv("EVAS_NOCLEAN"))
-          noclean = 1;
-        else
-          noclean = 0;
+        if (getenv("EVAS_NOCLEAN")) noclean = 1;
+        else noclean = 0;
      }
    if (noclean == 1) return;
 

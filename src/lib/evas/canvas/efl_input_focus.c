@@ -9,11 +9,6 @@
 
 #include <Evas.h>
 
-#include <Evas_Internal.h>
-
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #define MY_CLASS EFL_INPUT_FOCUS_CLASS
 
 static void

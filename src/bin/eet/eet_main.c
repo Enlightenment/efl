@@ -7,10 +7,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif /* ifdef _WIN32 */
-
 #include <Eet.h>
 
 static int _eet_main_log_dom = -1;

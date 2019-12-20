@@ -1,12 +1,15 @@
 #include "efl_canvas_animation_private.h"
-
+#include <math.h>
 #define MY_CLASS EFL_CANVAS_ANIMATION_CLASS
+
+static double _default_animation_time = 0.2; //in seconds
 
 EOLIAN static void
 _efl_canvas_animation_duration_set(Eo *eo_obj EINA_UNUSED,
                             Efl_Canvas_Animation_Data *pd,
                             double sec)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(sec >= 0.0);
    pd->duration = sec;
 }
 
@@ -38,9 +41,8 @@ _efl_canvas_animation_repeat_mode_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Data *pd,
                                Efl_Canvas_Animation_Repeat_Mode mode)
 {
-   if ((mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_RESTART) ||
-       (mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE))
-     pd->repeat_mode = mode;
+   EINA_SAFETY_ON_FALSE_RETURN(mode >= 0 && mode < EFL_CANVAS_ANIMATION_REPEAT_MODE_LAST);
+   pd->repeat_mode = mode;
 }
 
 EOLIAN static Efl_Canvas_Animation_Repeat_Mode
@@ -50,20 +52,19 @@ _efl_canvas_animation_repeat_mode_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_A
 }
 
 EOLIAN static void
-_efl_canvas_animation_repeat_count_set(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_play_count_set(Eo *eo_obj EINA_UNUSED,
                                 Efl_Canvas_Animation_Data *pd,
                                 int count)
 {
-   //EFL_ANIMATION_REPEAT_INFINITE repeats animation infinitely
-   if ((count < 0) && (count != EFL_ANIMATION_REPEAT_INFINITE)) return;
+   EINA_SAFETY_ON_FALSE_RETURN(count >= 0);
 
-   pd->repeat_count = count;
+   pd->play_count = count;
 }
 
 EOLIAN static int
-_efl_canvas_animation_repeat_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
+_efl_canvas_animation_play_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
 {
-   return pd->repeat_count;
+   return pd->play_count;
 }
 
 EOLIAN static void
@@ -71,7 +72,7 @@ _efl_canvas_animation_start_delay_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Data *pd,
                                double sec)
 {
-   if (sec < 0.0) return;
+   EINA_SAFETY_ON_FALSE_RETURN(sec >= 0.0);
 
    pd->start_delay_time = sec;
 }
@@ -114,13 +115,12 @@ _efl_canvas_animation_animation_apply(Eo *eo_obj,
 EOLIAN static double
 _efl_canvas_animation_efl_playable_length_get(const Eo *eo_obj, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
-   if (efl_animation_repeat_count_get(eo_obj) == EFL_ANIMATION_REPEAT_INFINITE)
+   if (efl_animation_play_count_get(eo_obj) == 0)
      {
-        //TODO: what's correct?
-        return (double)EFL_ANIMATION_REPEAT_INFINITE;
+        return INFINITY;
      }
 
-   return (efl_animation_duration_get(eo_obj) * (efl_animation_repeat_count_get(eo_obj) + 1));
+   return (efl_animation_duration_get(eo_obj) * efl_animation_play_count_get(eo_obj));
 }
 
 EOLIAN static Eina_Bool
@@ -133,6 +133,27 @@ EOLIAN static Eina_Bool
 _efl_canvas_animation_efl_playable_seekable_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
+}
+
+EOLIAN static Efl_Object*
+_efl_canvas_animation_efl_object_constructor(Eo *obj, Efl_Canvas_Animation_Data *pd)
+{
+   pd->duration = _default_animation_time;
+   pd->play_count = 1;
+   return efl_constructor(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_canvas_animation_default_duration_set(double animation_time)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(animation_time >= 0.0);
+   _default_animation_time = animation_time;
+}
+
+EOLIAN static double
+_efl_canvas_animation_default_duration_get(void)
+{
+   return _default_animation_time;
 }
 
 #include "efl_canvas_animation.eo.c"

@@ -53,7 +53,7 @@ _efl_ui_container_layout_item_init(Eo* o, Efl_Ui_Container_Item_Hints *item)
    efl_gfx_hint_margin_get(o, &item[0].margin[0], &item[0].margin[1],
                                    &item[1].margin[0], &item[1].margin[1]);
    efl_gfx_hint_fill_get(o, &item[0].fill, &item[1].fill);
-   max = efl_gfx_hint_size_max_get(o);
+   max = efl_gfx_hint_size_combined_max_get(o);
    min = efl_gfx_hint_size_combined_min_get(o);
    efl_gfx_hint_aspect_get(o, &aspect_type, &aspect);
    item[0].aspect = aspect.w;
@@ -111,16 +111,12 @@ void
 _efl_ui_container_layout_init(Eo* obj, Efl_Ui_Container_Layout_Calc *calc)
 {
    Eina_Rect geom;
-   Eina_Bool pad_scalable;
 
    geom = efl_gfx_entity_geometry_get(obj);
    efl_gfx_hint_margin_get(obj, &calc[0].margin[0], &calc[0].margin[1],
                                      &calc[1].margin[0], &calc[1].margin[1]);
-   calc[0].scale = calc[1].scale = efl_gfx_entity_scale_get(obj);
 
-   efl_gfx_arrangement_content_padding_get(obj, &calc[0].pad, &calc[1].pad, &pad_scalable);
-   calc[0].pad = pad_scalable ? (calc[0].pad * calc[0].scale) : calc[0].pad;
-   calc[1].pad = pad_scalable ? (calc[1].pad * calc[1].scale) : calc[1].pad;
+   efl_gfx_arrangement_content_padding_get(obj, &calc[0].pad, &calc[1].pad);
 
    // pack align is used if "no item has a weight"
    efl_gfx_arrangement_content_align_get(obj, &calc[0].align, &calc[1].align);

@@ -801,6 +801,66 @@ _evgl_glFramebufferParameteri(GLenum target, GLenum pname, GLint param)
 }
 
 static void
+_evgl_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
+{
+    EVGL_Resource *rsc;
+    EVGL_Context *ctx;
+
+    if (!(rsc=_evgl_tls_resource_get()))
+      {
+         ERR("Unable to execute GL command. Error retrieving tls");
+         return;
+      }
+
+    if (!rsc->current_eng)
+      {
+         ERR("Unable to retrive Current Engine");
+         return;
+      }
+
+    ctx = rsc->current_ctx;
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if (ctx->version == EVAS_GL_GLES_2_X)
+           {
+              if (target == GL_FRAMEBUFFER && ctx->current_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+         else if (ctx->version == EVAS_GL_GLES_3_X)
+           {
+              if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+                {
+                   if (ctx->current_draw_fbo == 0)
+                     {
+                        SET_GL_ERROR(GL_INVALID_OPERATION);
+                        return;
+                     }
+                }
+              else if (target == GL_READ_FRAMEBUFFER)
+                {
+                   if (ctx->current_read_fbo == 0)
+                     {
+                        SET_GL_ERROR(GL_INVALID_OPERATION);
+                        return;
+                     }
+                }
+           }
+      }
+
+   _gles3_api.glFramebufferTexture(target, attachment, texture, level);
+}
+
+
+static void
 _evgl_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
     EVGL_Resource *rsc;
@@ -2724,114 +2784,55 @@ _normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
 
 // GLES 3.0 NEW APIs
 #define ORD(name) EVAS_API_OVERRIDE(name, funcs, evgl_gles3_)
-   ORD(glBeginQuery);
-   ORD(glBeginTransformFeedback);
-   ORD(glBindBufferBase);
-   ORD(glBindBufferRange);
-   ORD(glBindSampler);
-   ORD(glBindTransformFeedback);
-   ORD(glBindVertexArray);
-   ORD(glBlitFramebuffer);
-   ORD(glClearBufferfi);
-   ORD(glClearBufferfv);
-   ORD(glClearBufferiv);
-   ORD(glClearBufferuiv);
-   ORD(glClientWaitSync);
-   ORD(glCompressedTexImage3D);
-   ORD(glCompressedTexSubImage3D);
-   ORD(glCopyBufferSubData);
-   ORD(glCopyTexSubImage3D);
-   ORD(glDeleteQueries);
-   ORD(glDeleteSamplers);
-   ORD(glDeleteSync);
-   ORD(glDeleteTransformFeedbacks);
-   ORD(glDeleteVertexArrays);
-   ORD(glDrawArraysInstanced);
-   ORD(glDrawBuffers);
-   ORD(glDrawElementsInstanced);
-   ORD(glDrawRangeElements);
-   ORD(glEndQuery);
-   ORD(glEndTransformFeedback);
-   ORD(glFenceSync);
-   ORD(glFlushMappedBufferRange);
-   ORD(glFramebufferTextureLayer);
-   ORD(glGenQueries);
-   ORD(glGenSamplers);
-   ORD(glGenTransformFeedbacks);
-   ORD(glGenVertexArrays);
-   ORD(glGetActiveUniformBlockiv);
-   ORD(glGetActiveUniformBlockName);
-   ORD(glGetActiveUniformsiv);
-   ORD(glGetBufferParameteri64v);
-   ORD(glGetBufferPointerv);
-   ORD(glGetFragDataLocation);
-   ORD(glGetInteger64i_v);
-   ORD(glGetInteger64v);
-   ORD(glGetIntegeri_v);
-   ORD(glGetInternalformativ);
-   ORD(glGetProgramBinary);
-   ORD(glGetQueryiv);
-   ORD(glGetQueryObjectuiv);
-   ORD(glGetSamplerParameterfv);
-   ORD(glGetSamplerParameteriv);
-   ORD(glGetStringi);
-   ORD(glGetSynciv);
-   ORD(glGetTransformFeedbackVarying);
-   ORD(glGetUniformBlockIndex);
-   ORD(glGetUniformIndices);
-   ORD(glGetUniformuiv);
-   ORD(glGetVertexAttribIiv);
-   ORD(glGetVertexAttribIuiv);
-   ORD(glInvalidateFramebuffer);
-   ORD(glInvalidateSubFramebuffer);
-   ORD(glIsQuery);
-   ORD(glIsSampler);
-   ORD(glIsSync);
-   ORD(glIsTransformFeedback);
-   ORD(glIsVertexArray);
-   ORD(glMapBufferRange);
-   ORD(glPauseTransformFeedback);
-   ORD(glProgramBinary);
-   ORD(glProgramParameteri);
-   ORD(glReadBuffer);
-   ORD(glRenderbufferStorageMultisample);
-   ORD(glResumeTransformFeedback);
-   ORD(glSamplerParameterf);
-   ORD(glSamplerParameterfv);
-   ORD(glSamplerParameteri);
-   ORD(glSamplerParameteriv);
-   ORD(glTexImage3D);
-   ORD(glTexStorage2D);
-   ORD(glTexStorage3D);
-   ORD(glTexSubImage3D);
-   ORD(glTransformFeedbackVaryings);
-   ORD(glUniform1ui);
-   ORD(glUniform1uiv);
-   ORD(glUniform2ui);
-   ORD(glUniform2uiv);
-   ORD(glUniform3ui);
-   ORD(glUniform3uiv);
-   ORD(glUniform4ui);
-   ORD(glUniform4uiv);
-   ORD(glUniformBlockBinding);
-   ORD(glUniformMatrix2x3fv);
-   ORD(glUniformMatrix3x2fv);
-   ORD(glUniformMatrix2x4fv);
-   ORD(glUniformMatrix4x2fv);
-   ORD(glUniformMatrix3x4fv);
-   ORD(glUniformMatrix4x3fv);
-   ORD(glUnmapBuffer);
-   ORD(glVertexAttribDivisor);
-   ORD(glVertexAttribI4i);
-   ORD(glVertexAttribI4iv);
-   ORD(glVertexAttribI4ui);
-   ORD(glVertexAttribI4uiv);
-   ORD(glVertexAttribIPointer);
-   ORD(glWaitSync);
-
-   if (minor_version > 0)
+   switch (minor_version)
      {
-        //GLES 3.1
+      case 2:
+        ORD(glBlendBarrier);
+        ORD(glCopyImageSubData);
+        ORD(glDebugMessageControl);
+        ORD(glDebugMessageInsert);
+        ORD(glDebugMessageCallback);
+        ORD(glGetDebugMessageLog);
+        ORD(glPushDebugGroup);
+        ORD(glPopDebugGroup);
+        ORD(glObjectLabel);
+        ORD(glGetObjectLabel);
+        ORD(glObjectPtrLabel);
+        ORD(glGetObjectPtrLabel);
+        ORD(glGetPointerv);
+        ORD(glEnablei);
+        ORD(glDisablei);
+        ORD(glBlendEquationi);
+        ORD(glBlendEquationSeparatei);
+        ORD(glBlendFunci);
+        ORD(glBlendFuncSeparatei);
+        ORD(glColorMaski);
+        ORD(glIsEnabledi);
+        ORD(glDrawElementsBaseVertex);
+        ORD(glDrawRangeElementsBaseVertex);
+        ORD(glDrawElementsInstancedBaseVertex);
+        ORD(glFramebufferTexture);
+        ORD(glPrimitiveBoundingBox);
+        ORD(glGetGraphicsResetStatus);
+        ORD(glReadnPixels);
+        ORD(glGetnUniformfv);
+        ORD(glGetnUniformiv);
+        ORD(glGetnUniformuiv);
+        ORD(glMinSampleShading);
+        ORD(glPatchParameteri);
+        ORD(glTexParameterIiv);
+        ORD(glTexParameterIuiv);
+        ORD(glGetTexParameterIiv);
+        ORD(glGetTexParameterIuiv);
+        ORD(glSamplerParameterIiv);
+        ORD(glSamplerParameterIuiv);
+        ORD(glGetSamplerParameterIiv);
+        ORD(glGetSamplerParameterIuiv);
+        ORD(glTexBuffer);
+        ORD(glTexBufferRange);
+        ORD(glTexStorage3DMultisample);
+        EINA_FALLTHROUGH;
+      case 1:
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
         ORD(glDrawArraysIndirect);
@@ -2900,6 +2901,112 @@ _normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
         ORD(glVertexAttribIFormat);
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
+        EINA_FALLTHROUGH;
+      case 0:
+        ORD(glBeginQuery);
+        ORD(glBeginTransformFeedback);
+        ORD(glBindBufferBase);
+        ORD(glBindBufferRange);
+        ORD(glBindSampler);
+        ORD(glBindTransformFeedback);
+        ORD(glBindVertexArray);
+        ORD(glBlitFramebuffer);
+        ORD(glClearBufferfi);
+        ORD(glClearBufferfv);
+        ORD(glClearBufferiv);
+        ORD(glClearBufferuiv);
+        ORD(glClientWaitSync);
+        ORD(glCompressedTexImage3D);
+        ORD(glCompressedTexSubImage3D);
+        ORD(glCopyBufferSubData);
+        ORD(glCopyTexSubImage3D);
+        ORD(glDeleteQueries);
+        ORD(glDeleteSamplers);
+        ORD(glDeleteSync);
+        ORD(glDeleteTransformFeedbacks);
+        ORD(glDeleteVertexArrays);
+        ORD(glDrawArraysInstanced);
+        ORD(glDrawBuffers);
+        ORD(glDrawElementsInstanced);
+        ORD(glDrawRangeElements);
+        ORD(glEndQuery);
+        ORD(glEndTransformFeedback);
+        ORD(glFenceSync);
+        ORD(glFlushMappedBufferRange);
+        ORD(glFramebufferTextureLayer);
+        ORD(glGenQueries);
+        ORD(glGenSamplers);
+        ORD(glGenTransformFeedbacks);
+        ORD(glGenVertexArrays);
+        ORD(glGetActiveUniformBlockiv);
+        ORD(glGetActiveUniformBlockName);
+        ORD(glGetActiveUniformsiv);
+        ORD(glGetBufferParameteri64v);
+        ORD(glGetBufferPointerv);
+        ORD(glGetFragDataLocation);
+        ORD(glGetInteger64i_v);
+        ORD(glGetInteger64v);
+        ORD(glGetIntegeri_v);
+        ORD(glGetInternalformativ);
+        ORD(glGetProgramBinary);
+        ORD(glGetQueryiv);
+        ORD(glGetQueryObjectuiv);
+        ORD(glGetSamplerParameterfv);
+        ORD(glGetSamplerParameteriv);
+        ORD(glGetStringi);
+        ORD(glGetSynciv);
+        ORD(glGetTransformFeedbackVarying);
+        ORD(glGetUniformBlockIndex);
+        ORD(glGetUniformIndices);
+        ORD(glGetUniformuiv);
+        ORD(glGetVertexAttribIiv);
+        ORD(glGetVertexAttribIuiv);
+        ORD(glInvalidateFramebuffer);
+        ORD(glInvalidateSubFramebuffer);
+        ORD(glIsQuery);
+        ORD(glIsSampler);
+        ORD(glIsSync);
+        ORD(glIsTransformFeedback);
+        ORD(glIsVertexArray);
+        ORD(glMapBufferRange);
+        ORD(glPauseTransformFeedback);
+        ORD(glProgramBinary);
+        ORD(glProgramParameteri);
+        ORD(glReadBuffer);
+        ORD(glRenderbufferStorageMultisample);
+        ORD(glResumeTransformFeedback);
+        ORD(glSamplerParameterf);
+        ORD(glSamplerParameterfv);
+        ORD(glSamplerParameteri);
+        ORD(glSamplerParameteriv);
+        ORD(glTexImage3D);
+        ORD(glTexStorage2D);
+        ORD(glTexStorage3D);
+        ORD(glTexSubImage3D);
+        ORD(glTransformFeedbackVaryings);
+        ORD(glUniform1ui);
+        ORD(glUniform1uiv);
+        ORD(glUniform2ui);
+        ORD(glUniform2uiv);
+        ORD(glUniform3ui);
+        ORD(glUniform3uiv);
+        ORD(glUniform4ui);
+        ORD(glUniform4uiv);
+        ORD(glUniformBlockBinding);
+        ORD(glUniformMatrix2x3fv);
+        ORD(glUniformMatrix3x2fv);
+        ORD(glUniformMatrix2x4fv);
+        ORD(glUniformMatrix4x2fv);
+        ORD(glUniformMatrix3x4fv);
+        ORD(glUniformMatrix4x3fv);
+        ORD(glUnmapBuffer);
+        ORD(glVertexAttribDivisor);
+        ORD(glVertexAttribI4i);
+        ORD(glVertexAttribI4iv);
+        ORD(glVertexAttribI4ui);
+        ORD(glVertexAttribI4uiv);
+        ORD(glVertexAttribIPointer);
+        ORD(glWaitSync);
      }
 
 #undef ORD
@@ -3057,115 +3164,55 @@ _debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
    ORD(glBindFramebuffer);
    ORD(glBindRenderbuffer);
 
-   // GLES 3.0 new APIs
-   ORD(glBeginQuery);
-   ORD(glBeginTransformFeedback);
-   ORD(glBindBufferBase);
-   ORD(glBindBufferRange);
-   ORD(glBindSampler);
-   ORD(glBindTransformFeedback);
-   ORD(glBindVertexArray);
-   ORD(glBlitFramebuffer);
-   ORD(glClearBufferfi);
-   ORD(glClearBufferfv);
-   ORD(glClearBufferiv);
-   ORD(glClearBufferuiv);
-   ORD(glClientWaitSync);
-   ORD(glCompressedTexImage3D);
-   ORD(glCompressedTexSubImage3D);
-   ORD(glCopyBufferSubData);
-   ORD(glCopyTexSubImage3D);
-   ORD(glDeleteQueries);
-   ORD(glDeleteSamplers);
-   ORD(glDeleteSync);
-   ORD(glDeleteTransformFeedbacks);
-   ORD(glDeleteVertexArrays);
-   ORD(glDrawArraysInstanced);
-   ORD(glDrawBuffers);
-   ORD(glDrawElementsInstanced);
-   ORD(glDrawRangeElements);
-   ORD(glEndQuery);
-   ORD(glEndTransformFeedback);
-   ORD(glFenceSync);
-   ORD(glFlushMappedBufferRange);
-   ORD(glFramebufferTextureLayer);
-   ORD(glGenQueries);
-   ORD(glGenSamplers);
-   ORD(glGenTransformFeedbacks);
-   ORD(glGenVertexArrays);
-   ORD(glGetActiveUniformBlockiv);
-   ORD(glGetActiveUniformBlockName);
-   ORD(glGetActiveUniformsiv);
-   ORD(glGetBufferParameteri64v);
-   ORD(glGetBufferPointerv);
-   ORD(glGetFragDataLocation);
-   ORD(glGetInteger64i_v);
-   ORD(glGetInteger64v);
-   ORD(glGetIntegeri_v);
-   ORD(glGetInternalformativ);
-   ORD(glGetProgramBinary);
-   ORD(glGetQueryiv);
-   ORD(glGetQueryObjectuiv);
-   ORD(glGetSamplerParameterfv);
-   ORD(glGetSamplerParameteriv);
-   ORD(glGetStringi);
-   ORD(glGetSynciv);
-   ORD(glGetTransformFeedbackVarying);
-   ORD(glGetUniformBlockIndex);
-   ORD(glGetUniformIndices);
-   ORD(glGetUniformuiv);
-   ORD(glGetVertexAttribIiv);
-   ORD(glGetVertexAttribIuiv);
-   ORD(glInvalidateFramebuffer);
-   ORD(glInvalidateSubFramebuffer);
-   ORD(glIsQuery);
-   ORD(glIsSampler);
-   ORD(glIsSync);
-   ORD(glIsTransformFeedback);
-   ORD(glIsVertexArray);
-   ORD(glMapBufferRange);
-   ORD(glPauseTransformFeedback);
-   ORD(glProgramBinary);
-   ORD(glProgramParameteri);
-   ORD(glReadBuffer);
-   ORD(glRenderbufferStorageMultisample);
-   ORD(glResumeTransformFeedback);
-   ORD(glSamplerParameterf);
-   ORD(glSamplerParameterfv);
-   ORD(glSamplerParameteri);
-   ORD(glSamplerParameteriv);
-   ORD(glTexImage3D);
-   ORD(glTexStorage2D);
-   ORD(glTexStorage3D);
-   ORD(glTexSubImage3D);
-   ORD(glTransformFeedbackVaryings);
-   ORD(glUniform1ui);
-   ORD(glUniform1uiv);
-   ORD(glUniform2ui);
-   ORD(glUniform2uiv);
-   ORD(glUniform3ui);
-   ORD(glUniform3uiv);
-   ORD(glUniform4ui);
-   ORD(glUniform4uiv);
-   ORD(glUniformBlockBinding);
-   ORD(glUniformMatrix2x3fv);
-   ORD(glUniformMatrix3x2fv);
-   ORD(glUniformMatrix2x4fv);
-   ORD(glUniformMatrix4x2fv);
-   ORD(glUniformMatrix3x4fv);
-   ORD(glUniformMatrix4x3fv);
-   ORD(glUnmapBuffer);
-   ORD(glVertexAttribDivisor);
-   ORD(glVertexAttribI4i);
-   ORD(glVertexAttribI4iv);
-   ORD(glVertexAttribI4ui);
-   ORD(glVertexAttribI4uiv);
-   ORD(glVertexAttribIPointer);
-   ORD(glWaitSync);
-
-   if (minor_version > 0)
+   switch (minor_version)
      {
-        //GLES 3.1
+      case 2:
+        ORD(glBlendBarrier);
+        ORD(glCopyImageSubData);
+        ORD(glDebugMessageControl);
+        ORD(glDebugMessageInsert);
+        ORD(glDebugMessageCallback);
+        ORD(glGetDebugMessageLog);
+        ORD(glPushDebugGroup);
+        ORD(glPopDebugGroup);
+        ORD(glObjectLabel);
+        ORD(glGetObjectLabel);
+        ORD(glObjectPtrLabel);
+        ORD(glGetObjectPtrLabel);
+        ORD(glGetPointerv);
+        ORD(glEnablei);
+        ORD(glDisablei);
+        ORD(glBlendEquationi);
+        ORD(glBlendEquationSeparatei);
+        ORD(glBlendFunci);
+        ORD(glBlendFuncSeparatei);
+        ORD(glColorMaski);
+        ORD(glIsEnabledi);
+        ORD(glDrawElementsBaseVertex);
+        ORD(glDrawRangeElementsBaseVertex);
+        ORD(glDrawElementsInstancedBaseVertex);
+        ORD(glFramebufferTexture);
+        ORD(glPrimitiveBoundingBox);
+        ORD(glGetGraphicsResetStatus);
+        ORD(glReadnPixels);
+        ORD(glGetnUniformfv);
+        ORD(glGetnUniformiv);
+        ORD(glGetnUniformuiv);
+        ORD(glMinSampleShading);
+        ORD(glPatchParameteri);
+        ORD(glTexParameterIiv);
+        ORD(glTexParameterIuiv);
+        ORD(glGetTexParameterIiv);
+        ORD(glGetTexParameterIuiv);
+        ORD(glSamplerParameterIiv);
+        ORD(glSamplerParameterIuiv);
+        ORD(glGetSamplerParameterIiv);
+        ORD(glGetSamplerParameterIuiv);
+        ORD(glTexBuffer);
+        ORD(glTexBufferRange);
+        ORD(glTexStorage3DMultisample);
+        EINA_FALLTHROUGH;
+      case 1:
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
         ORD(glDrawArraysIndirect);
@@ -3234,6 +3281,112 @@ _debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
         ORD(glVertexAttribIFormat);
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
+        EINA_FALLTHROUGH;
+      case 0:
+        ORD(glBeginQuery);
+        ORD(glBeginTransformFeedback);
+        ORD(glBindBufferBase);
+        ORD(glBindBufferRange);
+        ORD(glBindSampler);
+        ORD(glBindTransformFeedback);
+        ORD(glBindVertexArray);
+        ORD(glBlitFramebuffer);
+        ORD(glClearBufferfi);
+        ORD(glClearBufferfv);
+        ORD(glClearBufferiv);
+        ORD(glClearBufferuiv);
+        ORD(glClientWaitSync);
+        ORD(glCompressedTexImage3D);
+        ORD(glCompressedTexSubImage3D);
+        ORD(glCopyBufferSubData);
+        ORD(glCopyTexSubImage3D);
+        ORD(glDeleteQueries);
+        ORD(glDeleteSamplers);
+        ORD(glDeleteSync);
+        ORD(glDeleteTransformFeedbacks);
+        ORD(glDeleteVertexArrays);
+        ORD(glDrawArraysInstanced);
+        ORD(glDrawBuffers);
+        ORD(glDrawElementsInstanced);
+        ORD(glDrawRangeElements);
+        ORD(glEndQuery);
+        ORD(glEndTransformFeedback);
+        ORD(glFenceSync);
+        ORD(glFlushMappedBufferRange);
+        ORD(glFramebufferTextureLayer);
+        ORD(glGenQueries);
+        ORD(glGenSamplers);
+        ORD(glGenTransformFeedbacks);
+        ORD(glGenVertexArrays);
+        ORD(glGetActiveUniformBlockiv);
+        ORD(glGetActiveUniformBlockName);
+        ORD(glGetActiveUniformsiv);
+        ORD(glGetBufferParameteri64v);
+        ORD(glGetBufferPointerv);
+        ORD(glGetFragDataLocation);
+        ORD(glGetInteger64i_v);
+        ORD(glGetInteger64v);
+        ORD(glGetIntegeri_v);
+        ORD(glGetInternalformativ);
+        ORD(glGetProgramBinary);
+        ORD(glGetQueryiv);
+        ORD(glGetQueryObjectuiv);
+        ORD(glGetSamplerParameterfv);
+        ORD(glGetSamplerParameteriv);
+        ORD(glGetStringi);
+        ORD(glGetSynciv);
+        ORD(glGetTransformFeedbackVarying);
+        ORD(glGetUniformBlockIndex);
+        ORD(glGetUniformIndices);
+        ORD(glGetUniformuiv);
+        ORD(glGetVertexAttribIiv);
+        ORD(glGetVertexAttribIuiv);
+        ORD(glInvalidateFramebuffer);
+        ORD(glInvalidateSubFramebuffer);
+        ORD(glIsQuery);
+        ORD(glIsSampler);
+        ORD(glIsSync);
+        ORD(glIsTransformFeedback);
+        ORD(glIsVertexArray);
+        ORD(glMapBufferRange);
+        ORD(glPauseTransformFeedback);
+        ORD(glProgramBinary);
+        ORD(glProgramParameteri);
+        ORD(glReadBuffer);
+        ORD(glRenderbufferStorageMultisample);
+        ORD(glResumeTransformFeedback);
+        ORD(glSamplerParameterf);
+        ORD(glSamplerParameterfv);
+        ORD(glSamplerParameteri);
+        ORD(glSamplerParameteriv);
+        ORD(glTexImage3D);
+        ORD(glTexStorage2D);
+        ORD(glTexStorage3D);
+        ORD(glTexSubImage3D);
+        ORD(glTransformFeedbackVaryings);
+        ORD(glUniform1ui);
+        ORD(glUniform1uiv);
+        ORD(glUniform2ui);
+        ORD(glUniform2uiv);
+        ORD(glUniform3ui);
+        ORD(glUniform3uiv);
+        ORD(glUniform4ui);
+        ORD(glUniform4uiv);
+        ORD(glUniformBlockBinding);
+        ORD(glUniformMatrix2x3fv);
+        ORD(glUniformMatrix3x2fv);
+        ORD(glUniformMatrix2x4fv);
+        ORD(glUniformMatrix4x2fv);
+        ORD(glUniformMatrix3x4fv);
+        ORD(glUniformMatrix4x3fv);
+        ORD(glUnmapBuffer);
+        ORD(glVertexAttribDivisor);
+        ORD(glVertexAttribI4i);
+        ORD(glVertexAttribI4iv);
+        ORD(glVertexAttribI4ui);
+        ORD(glVertexAttribI4uiv);
+        ORD(glVertexAttribIPointer);
+        ORD(glWaitSync);
      }
 
 #undef ORD
@@ -3259,118 +3412,55 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version,
    // Used to update extensions
    ORD(glGetString);
 
-   // GLES 3.0 new APIs
-   ORD(glBeginQuery);
-   ORD(glBeginTransformFeedback);
-   ORD(glBindBufferBase);
-   ORD(glBindBufferRange);
-   ORD(glBindSampler);
-   ORD(glBindTransformFeedback);
-   ORD(glBindVertexArray);
-   ORD(glBlitFramebuffer);
-   ORD(glClearBufferfi);
-   ORD(glClearBufferfv);
-   ORD(glClearBufferiv);
-   ORD(glClearBufferuiv);
-   ORD(glClientWaitSync);
-   ORD(glCompressedTexImage3D);
-   ORD(glCompressedTexSubImage3D);
-   ORD(glCopyBufferSubData);
-   ORD(glCopyTexSubImage3D);
-   ORD(glDeleteQueries);
-   ORD(glDeleteSamplers);
-   ORD(glDeleteSync);
-   ORD(glDeleteTransformFeedbacks);
-   ORD(glDeleteVertexArrays);
-   ORD(glDrawArraysInstanced);
-   ORD(glDrawBuffers);
-   ORD(glDrawElementsInstanced);
-   ORD(glDrawRangeElements);
-   ORD(glEndQuery);
-   ORD(glEndTransformFeedback);
-   ORD(glFenceSync);
-   ORD(glFlushMappedBufferRange);
-   ORD(glFramebufferTextureLayer);
-   ORD(glGenQueries);
-   ORD(glGenSamplers);
-   ORD(glGenTransformFeedbacks);
-   ORD(glGenVertexArrays);
-   ORD(glGetActiveUniformBlockiv);
-   ORD(glGetActiveUniformBlockName);
-   ORD(glGetActiveUniformsiv);
-   ORD(glGetBufferParameteri64v);
-   ORD(glGetBufferPointerv);
-   ORD(glGetFragDataLocation);
-   ORD(glGetInteger64i_v);
-   ORD(glGetInteger64v);
-   ORD(glGetIntegeri_v);
-   ORD(glGetInternalformativ);
-   ORD(glGetProgramBinary);
-   ORD(glGetQueryiv);
-   ORD(glGetQueryObjectuiv);
-   ORD(glGetSamplerParameterfv);
-   ORD(glGetSamplerParameteriv);
-   ORD(glGetStringi);
-   ORD(glGetSynciv);
-   ORD(glGetTransformFeedbackVarying);
-   ORD(glGetUniformBlockIndex);
-   ORD(glGetUniformIndices);
-   ORD(glGetUniformuiv);
-   ORD(glGetVertexAttribIiv);
-   ORD(glGetVertexAttribIuiv);
-   ORD(glInvalidateFramebuffer);
-   ORD(glInvalidateSubFramebuffer);
-   ORD(glIsQuery);
-   ORD(glIsSampler);
-   ORD(glIsSync);
-   ORD(glIsTransformFeedback);
-   ORD(glIsVertexArray);
-   ORD(glMapBufferRange);
-   ORD(glPauseTransformFeedback);
-   ORD(glProgramBinary);
-   ORD(glProgramParameteri);
-   ORD(glReadBuffer);
-   ORD(glRenderbufferStorageMultisample);
-   ORD(glResumeTransformFeedback);
-   ORD(glSamplerParameterf);
-   ORD(glSamplerParameterfv);
-   ORD(glSamplerParameteri);
-   ORD(glSamplerParameteriv);
-   ORD(glTexImage3D);
-   ORD(glTexStorage2D);
-   ORD(glTexStorage3D);
-   ORD(glTexSubImage3D);
-   ORD(glTransformFeedbackVaryings);
-   ORD(glUniform1ui);
-   ORD(glUniform1uiv);
-   ORD(glUniform2ui);
-   ORD(glUniform2uiv);
-   ORD(glUniform3ui);
-   ORD(glUniform3uiv);
-   ORD(glUniform4ui);
-   ORD(glUniform4uiv);
-   ORD(glUniformBlockBinding);
-   ORD(glUniformMatrix2x3fv);
-   ORD(glUniformMatrix3x2fv);
-   ORD(glUniformMatrix2x4fv);
-   ORD(glUniformMatrix4x2fv);
-   ORD(glUniformMatrix3x4fv);
-   ORD(glUniformMatrix4x3fv);
-   ORD(glUnmapBuffer);
-   ORD(glVertexAttribDivisor);
-   ORD(glVertexAttribI4i);
-   ORD(glVertexAttribI4iv);
-   ORD(glVertexAttribI4ui);
-   ORD(glVertexAttribI4uiv);
-   ORD(glVertexAttribIPointer);
-   ORD(glWaitSync);
-
-   if (minor_version > 0)
+   switch (minor_version)
      {
-        // OpenGL ES 3.0 is supported, return true even if 3.1 isn't there
-        ret_value = EINA_TRUE;
-
-        // OpenGL ES 3.1
+      case 2:
+        ORD(glBlendBarrier);
+        ORD(glCopyImageSubData);
+        ORD(glDebugMessageControl);
+        ORD(glDebugMessageInsert);
+        ORD(glDebugMessageCallback);
+        ORD(glGetDebugMessageLog);
+        ORD(glPushDebugGroup);
+        ORD(glPopDebugGroup);
+        ORD(glObjectLabel);
+        ORD(glGetObjectLabel);
+        ORD(glObjectPtrLabel);
+        ORD(glGetObjectPtrLabel);
+        ORD(glGetPointerv);
+        ORD(glEnablei);
+        ORD(glDisablei);
+        ORD(glBlendEquationi);
+        ORD(glBlendEquationSeparatei);
+        ORD(glBlendFunci);
+        ORD(glBlendFuncSeparatei);
+        ORD(glColorMaski);
+        ORD(glIsEnabledi);
+        ORD(glDrawElementsBaseVertex);
+        ORD(glDrawRangeElementsBaseVertex);
+        ORD(glDrawElementsInstancedBaseVertex);
+        ORD(glFramebufferTexture);
+        ORD(glPrimitiveBoundingBox);
+        ORD(glGetGraphicsResetStatus);
+        ORD(glReadnPixels);
+        ORD(glGetnUniformfv);
+        ORD(glGetnUniformiv);
+        ORD(glGetnUniformuiv);
+        ORD(glMinSampleShading);
+        ORD(glPatchParameteri);
+        ORD(glTexParameterIiv);
+        ORD(glTexParameterIuiv);
+        ORD(glGetTexParameterIiv);
+        ORD(glGetTexParameterIuiv);
+        ORD(glSamplerParameterIiv);
+        ORD(glSamplerParameterIuiv);
+        ORD(glGetSamplerParameterIiv);
+        ORD(glGetSamplerParameterIuiv);
+        ORD(glTexBuffer);
+        ORD(glTexBufferRange);
+        ORD(glTexStorage3DMultisample);
+        EINA_FALLTHROUGH;
+      case 1:
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
         ORD(glDrawArraysIndirect);
@@ -3439,6 +3529,112 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version,
         ORD(glVertexAttribIFormat);
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
+        EINA_FALLTHROUGH;
+      case 0:
+        ORD(glBeginQuery);
+        ORD(glBeginTransformFeedback);
+        ORD(glBindBufferBase);
+        ORD(glBindBufferRange);
+        ORD(glBindSampler);
+        ORD(glBindTransformFeedback);
+        ORD(glBindVertexArray);
+        ORD(glBlitFramebuffer);
+        ORD(glClearBufferfi);
+        ORD(glClearBufferfv);
+        ORD(glClearBufferiv);
+        ORD(glClearBufferuiv);
+        ORD(glClientWaitSync);
+        ORD(glCompressedTexImage3D);
+        ORD(glCompressedTexSubImage3D);
+        ORD(glCopyBufferSubData);
+        ORD(glCopyTexSubImage3D);
+        ORD(glDeleteQueries);
+        ORD(glDeleteSamplers);
+        ORD(glDeleteSync);
+        ORD(glDeleteTransformFeedbacks);
+        ORD(glDeleteVertexArrays);
+        ORD(glDrawArraysInstanced);
+        ORD(glDrawBuffers);
+        ORD(glDrawElementsInstanced);
+        ORD(glDrawRangeElements);
+        ORD(glEndQuery);
+        ORD(glEndTransformFeedback);
+        ORD(glFenceSync);
+        ORD(glFlushMappedBufferRange);
+        ORD(glFramebufferTextureLayer);
+        ORD(glGenQueries);
+        ORD(glGenSamplers);
+        ORD(glGenTransformFeedbacks);
+        ORD(glGenVertexArrays);
+        ORD(glGetActiveUniformBlockiv);
+        ORD(glGetActiveUniformBlockName);
+        ORD(glGetActiveUniformsiv);
+        ORD(glGetBufferParameteri64v);
+        ORD(glGetBufferPointerv);
+        ORD(glGetFragDataLocation);
+        ORD(glGetInteger64i_v);
+        ORD(glGetInteger64v);
+        ORD(glGetIntegeri_v);
+        ORD(glGetInternalformativ);
+        ORD(glGetProgramBinary);
+        ORD(glGetQueryiv);
+        ORD(glGetQueryObjectuiv);
+        ORD(glGetSamplerParameterfv);
+        ORD(glGetSamplerParameteriv);
+        ORD(glGetStringi);
+        ORD(glGetSynciv);
+        ORD(glGetTransformFeedbackVarying);
+        ORD(glGetUniformBlockIndex);
+        ORD(glGetUniformIndices);
+        ORD(glGetUniformuiv);
+        ORD(glGetVertexAttribIiv);
+        ORD(glGetVertexAttribIuiv);
+        ORD(glInvalidateFramebuffer);
+        ORD(glInvalidateSubFramebuffer);
+        ORD(glIsQuery);
+        ORD(glIsSampler);
+        ORD(glIsSync);
+        ORD(glIsTransformFeedback);
+        ORD(glIsVertexArray);
+        ORD(glMapBufferRange);
+        ORD(glPauseTransformFeedback);
+        ORD(glProgramBinary);
+        ORD(glProgramParameteri);
+        ORD(glReadBuffer);
+        ORD(glRenderbufferStorageMultisample);
+        ORD(glResumeTransformFeedback);
+        ORD(glSamplerParameterf);
+        ORD(glSamplerParameterfv);
+        ORD(glSamplerParameteri);
+        ORD(glSamplerParameteriv);
+        ORD(glTexImage3D);
+        ORD(glTexStorage2D);
+        ORD(glTexStorage3D);
+        ORD(glTexSubImage3D);
+        ORD(glTransformFeedbackVaryings);
+        ORD(glUniform1ui);
+        ORD(glUniform1uiv);
+        ORD(glUniform2ui);
+        ORD(glUniform2uiv);
+        ORD(glUniform3ui);
+        ORD(glUniform3uiv);
+        ORD(glUniform4ui);
+        ORD(glUniform4uiv);
+        ORD(glUniformBlockBinding);
+        ORD(glUniformMatrix2x3fv);
+        ORD(glUniformMatrix3x2fv);
+        ORD(glUniformMatrix2x4fv);
+        ORD(glUniformMatrix4x2fv);
+        ORD(glUniformMatrix3x4fv);
+        ORD(glUniformMatrix4x3fv);
+        ORD(glUnmapBuffer);
+        ORD(glVertexAttribDivisor);
+        ORD(glVertexAttribI4i);
+        ORD(glVertexAttribI4iv);
+        ORD(glVertexAttribI4ui);
+        ORD(glVertexAttribI4uiv);
+        ORD(glVertexAttribIPointer);
+        ORD(glWaitSync);
      }
 #undef ORD
 

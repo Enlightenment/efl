@@ -6,10 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_private.h"
 #include "eina_str.h"
 #include "eina_magic.h"

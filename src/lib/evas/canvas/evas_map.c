@@ -90,7 +90,12 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
    obj->map->cur.map->normal_geometry.y = yy1;
    obj->map->cur.map->normal_geometry.w = (x2 - x1);
    obj->map->cur.map->normal_geometry.h = (yy2 - yy1);
-   obj->changed_map = ch;
+
+   /* if change_map is true, it means that the prev map data
+      did not render before. even though both prev and cur
+      has same map points we need to draw it */
+   obj->changed_map |= ch;
+
    // This shouldn't really be needed, but without it we do have case
    // where the clip is wrong when a map doesn't change, so always forcing
    // it, as long as someone doesn't find a better fix.
@@ -739,10 +744,7 @@ evas_map_dup(const Evas_Map *m)
 EAPI void
 evas_map_free(Evas_Map *m)
 {
-   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
-   return;
-   MAGIC_CHECK_END();
-
+   if (!m) return;
    _evas_map_free(NULL, m);
 }
 

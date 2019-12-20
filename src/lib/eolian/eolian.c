@@ -68,3 +68,7 @@ EAPI int eolian_shutdown(void)
    return _eolian_init_counter;
 }
 
+EAPI unsigned short eolian_file_format_version_get(void)
+{
+   return EOLIAN_FILE_FORMAT_VERSION;
+}

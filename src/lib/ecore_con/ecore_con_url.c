@@ -159,7 +159,7 @@ struct _Ecore_Con_Url
 #define ECORE_CON_URL_CHECK_RETURN(u, ...) \
   do \
     { \
-       if (!ECORE_MAGIC_CHECK(u, ECORE_MAGIC_CON_URL)) \
+       if (!EINA_MAGIC_CHECK(u, ECORE_MAGIC_CON_URL)) \
          { \
             ECORE_MAGIC_FAIL(u, ECORE_MAGIC_CON_URL, __FUNCTION__); \
             return __VA_ARGS__; \

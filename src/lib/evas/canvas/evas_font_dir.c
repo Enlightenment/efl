@@ -3,7 +3,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_path_is_absolute */
 #endif
 
 #include <Eet.h>
@@ -429,12 +429,50 @@ static Style_Map _style_spacing_map[] =
 };
 
 #define _STYLE_MAP_LEN(x) (sizeof(x) / sizeof(*(x)))
+
+/**
+ * @internal
+ * Find the string from the map at a style
+ * @return the string at a style type
+ */
+static const char*
+_evas_font_style_find_str_internal(int type, Style_Map _map[], size_t map_len)
+{
+   size_t i;
+   for ( i = 0; i < map_len; i++ )
+     {
+        if (_map[i].type == type)
+          return _map[i].name;
+     }
+   return NULL;
+}
+
+const char*
+evas_font_style_find_str(int type, Evas_Font_Style style)
+{
+#define _RET_STYLE(x) \
+   return _evas_font_style_find_str_internal(type, \
+                   _style_##x##_map, _STYLE_MAP_LEN(_style_##x##_map));
+   switch (style)
+     {
+        case EVAS_FONT_STYLE_SLANT:
+           _RET_STYLE(slant);
+        case EVAS_FONT_STYLE_WEIGHT:
+           _RET_STYLE(weight);
+        case EVAS_FONT_STYLE_WIDTH:
+           _RET_STYLE(width);
+        default:
+           return NULL;
+     }
+#undef _RET_STYLE
+}
+
 /**
  * @internal
  * Find a certain attribute from the map in the style.
  * @return the index of the found one.
  */
-static int
+static unsigned int
 _evas_font_style_find_internal(const char *style, const char *style_end,
       Style_Map _map[], size_t map_len)
 {
@@ -462,7 +500,7 @@ _evas_font_style_find_internal(const char *style, const char *style_end,
    return 0;
 }
 
-int
+unsigned int
 evas_font_style_find(const char *start, const char *end,
       Evas_Font_Style style)
 {
@@ -1264,10 +1302,9 @@ object_text_font_cache_dir_add(char *dir)
              char *p;
 
              fn->type = 0;
-             strcpy(tmp2, file);
-             p = strrchr(tmp2, '.');
-             if (p) *p = 0;
-             fn->simple.name = eina_stringshare_add(tmp2);
+             p = strrchr(file, '.');
+             if (p) fn->simple.name = eina_stringshare_add_length(file, p - file);
+             else fn->simple.name = eina_stringshare_add(file);
              eina_file_path_join(tmp2, PATH_MAX, dir, file);
              fn->path = eina_stringshare_add(tmp2);
              fd->fonts = eina_list_append(fd->fonts, fn);

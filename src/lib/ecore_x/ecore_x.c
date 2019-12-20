@@ -61,9 +61,6 @@ static int _ecore_x_event_fixes_selection_id = 0;
 #ifdef ECORE_XDAMAGE
 static int _ecore_x_event_damage_id = 0;
 #endif /* ifdef ECORE_XDAMAGE */
-#ifdef ECORE_XGESTURE
-static int _ecore_x_event_gesture_id = 0;
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
 static int _ecore_x_event_xkb_id = 0;
 #endif /* ifdef ECORE_XKB */
@@ -166,6 +163,8 @@ EAPI int ECORE_X_LOCK_SHIFT = 0;
 EAPI int ECORE_X_RAW_BUTTON_PRESS = 0;
 EAPI int ECORE_X_RAW_BUTTON_RELEASE = 0;
 EAPI int ECORE_X_RAW_MOTION = 0;
+
+EAPI int ECORE_X_DEVICES_CHANGE = 0;
 
 #ifdef LOGRT
 static double t0 = 0.0;
@@ -406,10 +405,6 @@ _ecore_x_init2(void)
    int damage_base = 0;
    int damage_err_base = 0;
 #endif /* ifdef ECORE_XDAMAGE */
-#ifdef ECORE_XGESTURE
-   int gesture_base = 0;
-   int gesture_err_base = 0;
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
    int xkb_base = 0;
 #endif /* ifdef ECORE_XKB */
@@ -468,12 +463,6 @@ _ecore_x_init2(void)
    ECORE_X_EVENT_HANDLERS_GROW(damage_base, XDamageNumberEvents);
 #endif /* ifdef ECORE_XDAMAGE */
 
-#ifdef ECORE_XGESTURE
-   if (XGestureQueryExtension(_ecore_x_disp, &gesture_base, &gesture_err_base))
-     _ecore_x_event_gesture_id = gesture_base;
-
-   ECORE_X_EVENT_HANDLERS_GROW(gesture_base, GestureNumberEvents);
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
      {
         int dummy;
@@ -575,20 +564,6 @@ _ecore_x_init2(void)
    _ecore_x_event_handlers[_ecore_x_event_xkb_id] = _ecore_x_event_handle_xkb;
 #endif /* ifdef ECORE_XKB */
 
-#ifdef ECORE_XGESTURE
-   if (_ecore_x_event_gesture_id)
-     {
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] = _ecore_x_event_handle_gesture_notify_flick;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] = _ecore_x_event_handle_gesture_notify_pan;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] = _ecore_x_event_handle_gesture_notify_pinchrotation;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] = _ecore_x_event_handle_gesture_notify_tap;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] = _ecore_x_event_handle_gesture_notify_tapnhold;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] = _ecore_x_event_handle_gesture_notify_hold;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] = _ecore_x_event_handle_gesture_notify_group;
-     }
-
-#endif /* ifdef ECORE_XGESTURE */
-
    ECORE_X_EVENT_ANY = ecore_event_type_new();
    ECORE_X_EVENT_MOUSE_IN = ecore_event_type_new();
    ECORE_X_EVENT_MOUSE_OUT = ecore_event_type_new();
@@ -655,6 +630,8 @@ _ecore_x_init2(void)
    ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
    ECORE_X_RAW_MOTION = ecore_event_type_new();
 
+   ECORE_X_DEVICES_CHANGE = ecore_event_type_new();
+
    _ecore_x_modifiers_get();
 
    _ecore_x_atoms_init();
@@ -687,7 +664,6 @@ _ecore_x_init2(void)
    _ecore_x_present_init();
    _ecore_x_dpms_init();
    _ecore_x_randr_init();
-   _ecore_x_gesture_init();
    _ecore_x_input_init();
    _ecore_x_events_init();
 
@@ -779,7 +755,7 @@ ecore_x_init_from_display(Ecore_X_Display *display)
    eina_shutdown();
    return --_ecore_x_init_count;
 }
-
+static Eina_Bool _ecore_x_window_manage_succeeded = EINA_FALSE;
 int
 _ecore_x_shutdown(void)
 {
@@ -855,6 +831,7 @@ _ecore_x_shutdown(void)
    free(_ecore_x_event_handlers);
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_event_handlers = NULL;
+   _ecore_x_window_manage_succeeded = EINA_FALSE;
    _ecore_x_events_shutdown();
    _ecore_x_input_shutdown();
    _ecore_x_selection_shutdown();
@@ -889,6 +866,11 @@ _ecore_x_shutdown2(void)
 EAPI int
 ecore_x_shutdown(void)
 {
+   if (!_ecore_x_init_count)
+     {
+        CRI("Calling ecore_x_shutdown without init! BUG!");
+        return 0;
+     }
    if (--_ecore_x_init_count != 0)
      return _ecore_x_init_count;
    if (_ecore_x_shutdown()) return _ecore_x_init_count;
@@ -1342,13 +1324,12 @@ ecore_x_window_root_first_get(void)
 
 static void _ecore_x_window_manage_error(void *data);
 
-static int _ecore_x_window_manage_failed = 0;
 static void
 _ecore_x_window_manage_error(void *data EINA_UNUSED)
 {
    if ((ecore_x_error_request_get() == X_ChangeWindowAttributes) &&
        (ecore_x_error_code_get() == BadAccess))
-     _ecore_x_window_manage_failed = 1;
+     _ecore_x_window_manage_succeeded = EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -1362,7 +1343,7 @@ ecore_x_window_manage(Ecore_X_Window win)
      return EINA_FALSE;
 
    ecore_x_sync();
-   _ecore_x_window_manage_failed = 0;
+   _ecore_x_window_manage_succeeded = EINA_TRUE;
    ecore_x_error_handler_set(_ecore_x_window_manage_error, NULL);
    XSelectInput(_ecore_x_disp, win,
                 EnterWindowMask |
@@ -1377,9 +1358,8 @@ ecore_x_window_manage(Ecore_X_Window win)
                 att.your_event_mask);
    ecore_x_sync();
    ecore_x_error_handler_set(NULL, NULL);
-   if (_ecore_x_window_manage_failed)
+   if (!_ecore_x_window_manage_succeeded)
      {
-        _ecore_x_window_manage_failed = 0;
         return EINA_FALSE;
      }
 
@@ -1390,6 +1370,7 @@ EAPI void
 ecore_x_window_container_manage(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 SubstructureRedirectMask |
@@ -1402,6 +1383,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
 //		ResizeRedirectMask |
@@ -1421,9 +1403,21 @@ ecore_x_window_sniff(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
                 SubstructureNotifyMask);
+   if (_ecore_xlib_sync) ecore_x_sync();
+}
+
+/* this is internal-only for now */
+EAPI void
+ecore_x_window_root_properties_select(void)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (_ecore_x_window_manage_succeeded) return;
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   XSelectInput(_ecore_x_disp, ecore_x_window_root_first_get(), PropertyChangeMask);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
@@ -1431,6 +1425,7 @@ EAPI void
 ecore_x_window_client_sniff(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |

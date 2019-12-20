@@ -1,0 +1,24 @@
+interface Efl.Ui.Selectable {
+  [[Selectable interface for UI objects
+
+    An object implementing this interface can be selected.
+    When the selected property of this object changes, the @[Efl.Ui.Selectable.selected,changed] event is emitted.
+
+    @since 1.23
+  ]]
+  event_c_prefix: efl_ui;
+  methods {
+    @property selected {
+      [[The selected state of this object
+
+        A change to this property emits the changed event.
+      ]]
+      values {
+        selected : bool; [[The selected state of this object.]]
+      }
+    }
+  }
+  events {
+    selected,changed : bool; [[Called when the selected state has changed.]]
+  }
+}

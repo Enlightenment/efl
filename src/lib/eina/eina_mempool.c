@@ -68,7 +68,14 @@ _new_va(const char *name,
    Eina_Mempool_Backend *be;
    Eina_Mempool *mp = NULL;
 
-   if (getenv("EINA_MEMPOOL_PASS"))
+   static signed char mempool_pass = -1;
+
+   if (mempool_pass == -1)
+     {
+        if (getenv("EINA_MEMPOOL_PASS")) mempool_pass = 1;
+        else mempool_pass = 0;
+     }
+   if (mempool_pass == 1)
      {
         be = eina_hash_find(_backends, "pass_through");
         if (!be) be = eina_hash_find(_backends, name);
@@ -91,12 +98,14 @@ _new_va(const char *name,
    SBP(shutdown);
 #undef SBP
 
-   if (be->repack || be->from)
+   if (be->repack || be->from || be->iterator || be->alloc_near)
      {
         mp->backend2 = calloc(1, sizeof (Eina_Mempool_Backend_ABI2));
         if (!mp->backend2) goto on_error;
         mp->backend2->repack = be->repack;
         mp->backend2->from = be->from;
+        mp->backend2->iterator = be->iterator;
+        mp->backend2->alloc_near = be->alloc_near;
      }
 
    mp->backend_data = mp->backend.init(context, options, args);

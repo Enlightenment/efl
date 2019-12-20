@@ -125,12 +125,12 @@ struct _Efl_Ui_Image_Zoomable_Data
 
    Ecore_Timer          *anim_timer;
    double                frame_duration;
+   double                playback_speed;
    int                   cur_frame;
    int                   frame_count;
 
-   Eina_List   *grids;
-   Efl_Orient   orient;
-   Efl_Flip     flip;
+   Eina_List             *grids;
+   Efl_Gfx_Image_Orientation   orient;
 
    Eina_Bool    main_load_pending : 1;
    Eina_Bool    longpressed : 1;
@@ -141,7 +141,6 @@ struct _Efl_Ui_Image_Zoomable_Data
    Eina_Bool    on_hold : 1;
    Eina_Bool    paused : 1;
    Eina_Bool    orientation_changed : 1;
-   Eina_Bool    play : 1;
    Eina_Bool    anim : 1;
    Eina_Bool    freeze_want : 1;
    Eina_Bool    show_item: 1;

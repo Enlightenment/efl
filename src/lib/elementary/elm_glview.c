@@ -272,7 +272,7 @@ _elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
      priv->context = evas_gl_context_create(priv->evasgl, NULL);
    else
      priv->context = evas_gl_context_version_create(priv->evasgl, NULL, priv->gles_version);
-   if (!priv->context)
+   if ((!priv->context) || (!evas_gl_context_api_get(priv->evasgl, priv->context)))
      {
         ERR("Error Creating an Evas_GL Context.");
         ELM_SAFE_FREE(priv->config, evas_gl_config_free);

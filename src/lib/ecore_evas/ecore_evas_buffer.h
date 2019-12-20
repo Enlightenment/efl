@@ -9,7 +9,7 @@ struct _Ecore_Evas_Engine_Buffer_Data {
    void  (*free_func) (void *data, void *pix);
    void *(*alloc_func) (void *data, int size);
    void *data;
-   Eina_Bool in_render : 1;
+   Eina_Bool lock_data : 1;
    Eina_Bool resized : 1;
 };
 

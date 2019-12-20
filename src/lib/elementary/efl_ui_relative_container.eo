@@ -1,0 +1,97 @@
+import efl_gfx_types;
+class Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout, Efl.Pack
+{
+   [[The relative container class.
+
+     A relative container calculates the size and position of all the children
+     based on their relationship to each other.
+
+     @since 1.24
+   ]]
+   methods {
+      @property relation_left {
+         [[Specifies the left side edge of the $child object relative to the $base object.
+           When $relative_position is 0 the left edges of the two objects are aligned.
+           When $relative_position is 1 the left edge of the $child object is aligned
+           to the right edge of the $base object.]]
+         keys {
+            child: Efl.Gfx.Entity; [[The child object whose size and position is
+                                     being changed.]]
+         }
+         values {
+            base: Efl.Gfx.Entity; [[The object whose size and position is being used as reference.
+                                    $NULL means that the container object is used
+                                    (this is the default value).]]
+            relative_position: Efl.Gfx.Align(0.0); [[The ratio between left and right of the base,
+                                                     ranging from 0.0 to 1.0.]]
+         }
+      }
+      @property relation_right {
+         [[Specifies the right side edge of the $child object relative to the $base object.
+           When $relative_position is 0 the right edge of the $child object is aligned
+           to the left edge of the $base object.
+           When $relative_position is 1 the right edges of the two objects are aligned.]]
+         keys {
+            child: Efl.Gfx.Entity; [[The child object whose size and position is
+                                     being changed.]]
+         }
+         values {
+            base: Efl.Gfx.Entity; [[The object whose size and position is being used as reference.
+                                    $NULL means that the container object is used
+                                    (this is the default value).]]
+            relative_position: Efl.Gfx.Align(1.0); [[The ratio between left and right of the base,
+                                                     ranging from 0.0 to 1.0.]]
+         }
+      }
+      @property relation_top {
+         [[Specifies the top side edge of the $child object relative to the $base object.
+           When $relative_position is 0 the top edges of the two objects are aligned.
+           When $relative_position is 1 the top edge of the $child object is aligned
+           to the bottom edge of the $base object.]]
+         keys {
+            child: Efl.Gfx.Entity; [[The child object whose size and position is
+                                     being changed.]]
+         }
+         values {
+            base: Efl.Gfx.Entity; [[The object whose size and position is being used as reference.
+                                    $NULL means that the container object is used
+                                    (this is the default value).]]
+            relative_position: Efl.Gfx.Align(0.0); [[The ratio between top and bottom of the base,
+                                                     ranging from 0.0 to 1.0.]]
+         }
+      }
+      @property relation_bottom {
+         [[Specifies the bottom side edge of the $child object relative to the $base object.
+           When $relative_position is 0 the bottom edge of the $child object is aligned
+           to the top edge of the $base object.
+           When $relative_position is 1 the bottom edges of the two objects are aligned.]]
+         keys {
+            child: Efl.Gfx.Entity; [[The child object whose size and position is
+                                     being changed.]]
+         }
+         values {
+            base: Efl.Gfx.Entity; [[The object whose size and position is being used as reference.
+                                    $NULL means that the container object is used
+                                    (this is the default value).]]
+            relative_position: Efl.Gfx.Align(1.0); [[The ratio between top and bottom of the base,
+                                                     ranging from 0.0 to 1.0.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Pack_Layout.layout_update;
+      Efl.Pack_Layout.layout_request;
+   }
+}

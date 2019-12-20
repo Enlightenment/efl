@@ -22,7 +22,7 @@
 
 #ifdef HAVE_DLADDR
 # ifdef _WIN32
-#  include <Evil.h>
+#  include <evil_private.h> /* dladdr */
 # else
 #  include <dlfcn.h>
 # endif

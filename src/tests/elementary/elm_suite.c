@@ -7,6 +7,8 @@
 #include "../efl_check.h"
 #include "suite_helpers.h"
 
+extern Eina_Bool abort_on_warnings;
+
 static const Efl_Test_Case etc[] = {
   { "elm_config", elm_test_config },
   { "elm_check", elm_test_check },
@@ -84,6 +86,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_code_widget_selection", elm_code_test_widget_selection },
   { "elm_code_widget_undo", elm_code_test_widget_undo },
   { "elm_widget_focus", elm_test_widget_focus},
+  { "elm_widget_basics", elm_test_widget_basics},
   { NULL, NULL }
 };
 
@@ -96,6 +99,7 @@ main(int argc, char **argv)
      return 0;
 
    failed_count = suite_setup(EINA_TRUE);
+   abort_on_warnings = EINA_TRUE;
 
    failed_count += _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Elementary", etc, SUITE_INIT_FN(elm2), SUITE_SHUTDOWN_FN(elm));

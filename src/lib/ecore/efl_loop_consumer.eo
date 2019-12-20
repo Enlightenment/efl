@@ -9,12 +9,11 @@ abstract Efl.Loop_Consumer extends Efl.Object
    c_prefix: efl_loop;
    methods {
       @property loop {
-         [[The loop to which this object belongs to.]]
+         [[Handle of the loop this object belongs to.]]
          get {
-            [[Gets a handle to the loop.]]
          }
          values {
-            loop: Efl.Loop; [[Efl loop]]
+            loop: Efl.Loop; [[Efl loop.]]
          }
       }
       future_resolved @const {
@@ -51,8 +50,8 @@ abstract Efl.Loop_Consumer extends Efl.Object
       promise_new @const {
          [[Create a new promise with the scheduler coming from the loop provided by this object.
 
-	 Note: You should not use eina_promise_data_set as this function rely on controlling the promise data.]]
-	 return: ptr(Eina.Promise) @owned; [[The new promise.]]
+         Note: You should not use eina_promise_data_set as this function rely on controlling the promise data.]]
+         return: Eina.Promise @move @by_ref; [[The new promise.]]
       }
    }
    implements {

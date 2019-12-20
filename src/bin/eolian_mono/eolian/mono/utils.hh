@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_UTILS_HPP
 #define EOLIAN_MONO_UTILS_HPP
 
@@ -83,10 +98,24 @@ namespace eolian_mono { namespace utils {
 
    inline bool ends_with(std::string const& source, std::string suffix)
    {
-       if (source.size() > suffix.size())
+       if (source.size() >= suffix.size())
            return (0 == source.compare(source.size() - suffix.size(), suffix.size(), suffix));
        else
            return false;
+   }
+
+   inline std::string replace_all(std::string s, std::string target, std::string replace)
+   {
+       size_t pos = s.find(target);
+
+       while (pos != std::string::npos)
+       {
+           s.replace(pos, target.length(), replace);
+           pos += replace.length();
+           pos = s.find(target, pos);
+       }
+
+       return s;
    }
 } }
 

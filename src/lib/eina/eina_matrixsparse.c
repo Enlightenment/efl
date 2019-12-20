@@ -33,10 +33,6 @@
 #include <string.h>
 #include <assert.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"

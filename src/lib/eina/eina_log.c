@@ -34,7 +34,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <windows.h>
 #endif
 
 #ifdef HAVE_EXECINFO_H
@@ -1237,7 +1237,7 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
 
         if (!_log_domains)
            // special case for init, eina itself will allocate a dozen of domains
-           size = 24;
+           size = 64;
         else
            // grow 8 buckets to minimize reallocs
            size = _log_domains_allocated + 8;
@@ -1538,7 +1538,7 @@ eina_log_init(void)
 #endif
 
 #ifdef HAVE_SYSTEMD
-   if (getenv("NOTIFY_SOCKET"))
+   if (getenv("NOTIFY_SOCKET") && !getenv("EFL_RUN_IN_TREE"))
       _print_cb = eina_log_print_cb_journald;
 #endif
 
@@ -1562,10 +1562,6 @@ eina_log_init(void)
    // Global log level
    if ((level = getenv(EINA_LOG_ENV_LEVEL)))
       _log_level = atoi(level);
-#ifdef HAVE_SYSTEMD
-   else if (getenv("NOTIFY_SOCKET") && (_print_cb == eina_log_print_cb_journald))
-      _log_level = EINA_LOG_LEVEL_INFO;
-#endif
 
    // Register UNKNOWN domain, the default logger
    EINA_LOG_DOMAIN_GLOBAL = eina_log_domain_register("", NULL);

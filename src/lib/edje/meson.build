@@ -15,7 +15,7 @@ endif
 
 config_h.set('EDJE_CALC_CACHE', '1')
 
-if get_option('edje-sound-and-video')
+if get_option('audio') and get_option('edje-sound-and-video')
   config_h.set('ENABLE_MULTISENSE', '1')
   edje_deps += ecore_audio
 endif
@@ -52,7 +52,7 @@ foreach eo_file : pub_legacy_eo_files
 endforeach
 
 pub_eo_types_files = [
-  'edje_types.eot'
+  'efl_canvas_layout_types.eot'
 ]
 
 foreach eo_file : pub_eo_types_files
@@ -90,6 +90,7 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 
 edje_header_src = [
   'Edje.h',
+  'Efl_Layout.h',
   'Edje_Common.h',
   'Edje_Eo.h',
   'Edje_Legacy.h',

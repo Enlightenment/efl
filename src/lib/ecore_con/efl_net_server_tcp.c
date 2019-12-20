@@ -23,9 +23,6 @@
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
-#ifdef _WIN32
-# include <Evil.h>
-#endif
 
 #define MY_CLASS EFL_NET_SERVER_TCP_CLASS
 

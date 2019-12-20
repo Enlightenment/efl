@@ -7,6 +7,7 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include "evas_vg_private.h"
 
 /******************************************************************************************
  * SVG Compatible feature implementation
@@ -272,6 +273,7 @@ struct _Svg_Style_Property
    int                r;
    int                g;
    int                b;
+   int                opacity;
 };
 
 struct _Svg_Node
@@ -282,6 +284,7 @@ struct _Svg_Node
    Eina_Stringshare    *id;
    Svg_Style_Property  *style;
    Eina_Matrix3        *transform;
+   Eina_Bool           display;
    union
      {
         Svg_G_Node   g;
@@ -318,5 +321,11 @@ void vg_common_svg_node_eet_destroy(void);
 Vg_File_Data * vg_common_svg_create_vg_node(Svg_Node *node);
 Svg_Node *vg_common_svg_create_svg_node(Vg_File_Data *node);
 void vg_common_svg_node_free(Svg_Node *node);
+
+
+/******************************************************************************************
+ * Lottie Compatible feature implementation
+ ******************************************************************************************/
+Eina_Bool vg_common_json_create_vg_node(Vg_File_Data *vfd);
 
 #endif //EVAS_VG_COMMON_H_

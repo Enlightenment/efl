@@ -27,7 +27,7 @@ class @beta Ector.GL.Surface extends Ector.GL.Buffer implements Ector.Surface
          return: bool; [[$true on success, $false otherwise]]
     params {
             @in op: Efl.Gfx.Render_Op; [[Render operation]]
-       @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
+       @in clips: array<Eina.Rect>; [[Array of @Eina.Rect clip]]
     }
       }
    }

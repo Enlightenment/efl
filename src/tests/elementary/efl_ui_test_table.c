@@ -254,16 +254,6 @@ layout_setup()
    layout = efl_add(EFL_UI_TABLE_CLASS, win);
 }
 
-static void
-layout_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
-}
-
 EFL_START_TEST (efl_ui_table_class_check)
 {
    const char *class;
@@ -280,7 +270,7 @@ EFL_START_TEST (efl_ui_table_layout_update)
    int i, max_index = (sizeof(hints) / sizeof(Hint));
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
                      efl_pack_table(layout, efl_added, 0, 0, 1, 1));
@@ -299,7 +289,7 @@ EFL_START_TEST (efl_ui_table_layout_update_pack)
    Eo *btn, *btn2, *btn3;
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    max_index2 = ((sizeof(hints2) / sizeof(Hint)) / 2);
    max_index3 = ((sizeof(hints3) / sizeof(Hint)) / 3);
@@ -338,11 +328,11 @@ EFL_START_TEST (efl_ui_table_layout_update_matrix)
    Eo *btn[9];
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    efl_gfx_hint_margin_set(layout, 10, 10, 20, 20);
    efl_ui_table_homogeneous_set(layout, 0, 1);
-   efl_gfx_arrangement_content_padding_set(layout, 10, 5, 0);
+   efl_gfx_arrangement_content_padding_set(layout, 10, 5);
 
    for (i = 0; i < 3; i++)
      {
@@ -467,8 +457,9 @@ EFL_START_TEST (efl_ui_table_pack_table)
 
    //unpack test
    ck_assert(efl_pack_unpack(layout, btn[2]));
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, btn[2]));
-
+   EXPECT_ERROR_END;
    efl_pack_unpack_all(layout);
    ck_assert_int_eq(efl_content_count(layout), 0);
    ck_assert(!efl_invalidated_get(btn[0]));
@@ -486,9 +477,8 @@ EFL_END_TEST
 EFL_START_TEST (efl_ui_table_properties)
 {
    double h, v;
-   Eina_Bool b;
+   unsigned int ph, pv;
    Eina_Bool homogeneoush, homogeneousv;
-   Efl_Ui_Dir dirh, dirv;
 
    //align test
    efl_gfx_arrangement_content_align_get(layout, &h, &v);
@@ -506,45 +496,29 @@ EFL_START_TEST (efl_ui_table_properties)
    ck_assert(EINA_DBL_EQ(v, 1));
 
    //padding test
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0.0));
-   ck_assert(EINA_DBL_EQ(v, 0.0));
-   ck_assert_int_eq(b, 0);
+   efl_gfx_arrangement_content_padding_get(layout, &ph, &pv);
+   ck_assert_int_eq(ph, 0);
+   ck_assert_int_eq(pv, 0);
 
-   efl_gfx_arrangement_content_padding_set(layout, 0.3, 0.8234, 1);
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0.3));
-   ck_assert(EINA_DBL_EQ(v, 0.8234));
-   ck_assert_int_eq(b, 1);
-
-   efl_gfx_arrangement_content_padding_set(layout, -1.23, 123, 45);
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0));
-   ck_assert(EINA_DBL_EQ(v, 123));
-   ck_assert_int_eq(b, 1);
+   efl_gfx_arrangement_content_padding_set(layout, 3, 8234);
+   efl_gfx_arrangement_content_padding_get(layout, &ph, &pv);
+   ck_assert_int_eq(ph, 3);
+   ck_assert_int_eq(pv, 8234);
 
    //direction test
-   efl_pack_table_direction_get(layout, &dirh, &dirv);
-   ck_assert_int_eq(dirh, EFL_UI_DIR_RIGHT);
-   ck_assert_int_eq(dirv, EFL_UI_DIR_DOWN);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-   efl_pack_table_direction_set(layout, EFL_UI_DIR_VERTICAL, EFL_UI_DIR_HORIZONTAL);
-   efl_pack_table_direction_get(layout, &dirh, &dirv);
-   ck_assert_int_eq(dirh, EFL_UI_DIR_VERTICAL);
-   ck_assert_int_eq(dirv, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
-   efl_pack_table_direction_set(layout, EFL_UI_DIR_RIGHT, EFL_UI_DIR_RIGHT);
-   efl_pack_table_direction_get(layout, &dirh, &dirv);
-   ck_assert_int_eq(dirh, EFL_UI_DIR_RIGHT);
-   ck_assert_int_eq(dirv, EFL_UI_DIR_DOWN);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_DEFAULT);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
-
-   efl_ui_direction_set(layout, EFL_UI_DIR_HORIZONTAL);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
    //homogeneous test
    efl_ui_table_homogeneous_get(layout, &homogeneoush, &homogeneousv);
@@ -565,7 +539,7 @@ EFL_END_TEST
 
 void efl_ui_test_table(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
+   tcase_add_checked_fixture(tc, layout_setup, NULL);
    tcase_add_test(tc, efl_ui_table_class_check);
    tcase_add_test(tc, efl_ui_table_size);
    tcase_add_test(tc, efl_ui_table_layout_update);

@@ -6,8 +6,6 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 
-#define CX 180
-#define CY 150
 #define CR 100
 
 #define TEST_UI_TEXTPATH_LONG_TEXT "This text follows the path which you defined. This is a &lt;long&gt; text designed to make it ellipsis."
@@ -31,7 +29,7 @@ _direction_changed_cb(void *data, const Efl_Event *event)
    Eina_Bool val = elm_check_selected_get(event->object);
    Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                          EFL_UI_TEXTPATH_DIRECTION_CCW;
-   efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+   efl_ui_textpath_circular_set(txtpath, CR, angle, dir);
 }
 
 static void
@@ -43,7 +41,7 @@ _angle_changed_cb(void *data, const Efl_Event *event)
    Eina_Bool val = elm_check_selected_get(dir_chk);
    Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                          EFL_UI_TEXTPATH_DIRECTION_CCW;
-   efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+   efl_ui_textpath_circular_set(txtpath, CR, angle, dir);
 }
 
 static void
@@ -76,7 +74,7 @@ _change_shape_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
         Eina_Bool val = elm_check_selected_get(dir_chk);
         Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                               EFL_UI_TEXTPATH_DIRECTION_CCW;
-        efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+   efl_ui_textpath_circular_set(txtpath, CR, angle, dir);
      }
 }
 
@@ -109,7 +107,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    efl_text_set(txtpath, TEST_UI_TEXTPATH_LONG_TEXT);
 
-   efl_ui_textpath_circle_set(txtpath, CX, CY, CR, 0, EFL_UI_TEXTPATH_DIRECTION_CCW);
+   efl_ui_textpath_circular_set(txtpath, CR, 0, EFL_UI_TEXTPATH_DIRECTION_CCW);
    efl_gfx_entity_visible_set(txtpath, EINA_TRUE);
    path_type = 0;
 
@@ -120,23 +118,23 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_entity_visible_set(hbox, EINA_TRUE);
    elm_box_pack_end(box, hbox);
 
-   chk = elm_check_add(win);
-   elm_object_text_set(chk, "Ellipsis");
+   chk = efl_add(EFL_UI_CHECK_CLASS, win);
+   efl_text_set(chk, "Ellipsis");
    elm_check_state_set(chk, efl_ui_textpath_ellipsis_get(txtpath));
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_CHANGED, _ellipsis_changed_cb, txtpath);
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _ellipsis_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
 
-   chk = elm_check_add(win);
-   elm_object_text_set(chk, "Clockwise");
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_CHANGED, _direction_changed_cb, txtpath);
+   chk = efl_add(EFL_UI_CHECK_CLASS, win);
+   efl_text_set(chk, "Clockwise");
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _direction_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
    dir_chk = chk;
 
-   chk = elm_check_add(win);
-   elm_object_text_set(chk, "Short text");
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_CHANGED, _short_text_changed_cb, txtpath);
+   chk = efl_add(EFL_UI_CHECK_CLASS, win);
+   efl_text_set(chk, "Short text");
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _short_text_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
 
@@ -154,7 +152,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_hint_align_set(sld, 0.5, EVAS_HINT_FILL);
    efl_gfx_hint_weight_set(sld, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_gfx_hint_size_min_set(sld, EINA_SIZE2D(150, 0));
-   efl_event_callback_add(sld, EFL_UI_SLIDER_EVENT_CHANGED, _angle_changed_cb, txtpath);
+   efl_event_callback_add(sld, EFL_UI_RANGE_EVENT_CHANGED, _angle_changed_cb, txtpath);
    elm_box_pack_end(hbox, sld);
    efl_gfx_entity_visible_set(sld, EINA_TRUE);
    angle_sld = sld;
@@ -166,7 +164,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_hint_align_set(sld, 0.5, EVAS_HINT_FILL);
    efl_gfx_hint_weight_set(sld, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_gfx_hint_size_min_set(sld, EINA_SIZE2D(150, 0));
-   efl_event_callback_add(sld, EFL_UI_SLIDER_EVENT_CHANGED, _slice_no_changed_cb, txtpath);
+   efl_event_callback_add(sld, EFL_UI_RANGE_EVENT_CHANGED, _slice_no_changed_cb, txtpath);
    elm_box_pack_end(hbox, sld);
    efl_gfx_entity_visible_set(sld, EINA_TRUE);
    slice_sld = sld;

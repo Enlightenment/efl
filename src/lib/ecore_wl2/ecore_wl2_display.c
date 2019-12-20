@@ -1163,3 +1163,47 @@ ecore_wl2_display_flush(Ecore_Wl2_Display *display)
 
    _begin_recovery_maybe(display, code);
 }
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Display *display, struct wl_surface *surface)
+{
+   return _ecore_wl2_display_window_surface_find(display, surface);
+}
+
+EAPI Ecore_Wl2_Display *
+ecore_wl2_connected_display_get(const char *name)
+{
+   Ecore_Wl2_Display *ewd;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_client_displays, NULL);
+
+   if (!name)
+     {
+        const char *n;
+
+        /* client wants to connected to default display */
+        n = getenv("WAYLAND_DISPLAY");
+        if (!n) n = "wayland-0";
+
+        /* we have a default wayland display */
+
+        /* check hash of cached client displays for this name */
+        ewd = eina_hash_find(_client_displays, n);
+     }
+   else
+     {
+        /* client wants to connect to specific display */
+
+        /* check hash of cached client displays for this name */
+        ewd = eina_hash_find(_client_displays, name);
+     }
+
+   return ewd;
+}
+
+EAPI struct wl_compositor *
+ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->wl.compositor;
+}

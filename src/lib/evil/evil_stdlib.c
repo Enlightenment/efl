@@ -5,20 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <io.h>
+#include <direct.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #include <errno.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include "evil_macro.h"
-#include "evil_stdlib.h"
+#include "evil_private.h"
 
 /*
  * Environment variable related functions
@@ -146,7 +140,7 @@ mkdtemp(char *__template)
      {
         val = _mkstemp(suffix, val);
 
-        if (mkdir(__template) == 0)
+        if (_mkdir(__template) == 0)
           return __template;
 
         if (errno == EFAULT ||

@@ -5,6 +5,8 @@
 #include "edje_suite.h"
 #include "../efl_check.h"
 #include <Ecore_Evas.h>
+#include <Efreet.h>
+#include <Ecore.h>
 
 static const Efl_Test_Case etc[] = {
   { "Edje", edje_test_edje },
@@ -27,10 +29,11 @@ test_layout_get(const char *name)
    return filename;
 }
 
+static Evas *evas = NULL;
+
 Evas *
 _setup_evas(void)
 {
-   Evas *evas;
    Evas_Engine_Info *einfo;
 
    evas = evas_new();
@@ -53,6 +56,8 @@ SUITE_INIT(edje)
 
 SUITE_SHUTDOWN(edje)
 {
+   if (evas) evas_free(evas);
+   evas = NULL;
    ck_assert_int_eq(edje_shutdown(), 0);
    ck_assert_int_eq(ecore_evas_shutdown(), 0);
 }
@@ -68,6 +73,8 @@ main(int argc, char **argv)
 #ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
 #endif
+   ecore_app_no_system_modules();
+   efreet_cache_disable();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Edje", etc, SUITE_INIT_FN(edje), SUITE_SHUTDOWN_FN(edje));

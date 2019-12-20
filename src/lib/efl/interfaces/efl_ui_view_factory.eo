@@ -1,0 +1,19 @@
+class @beta Efl.Ui.View_Factory
+{
+   [[This class provide a utility function that class that wish to use @Efl.Ui.Factory.create should use.]]
+   data: null;
+   methods {
+      create_with_event @static {
+         [[Create a UI object from the necessary properties in the specified model and generate the created event on
+           the factory when the object is done building. This function must be use by all @Efl.Ui.View that need to
+           create object. They should not use @Efl.Ui.Factory.create directly.]]
+         params {
+            factory: Efl.Ui.Factory; [[The factory to use for requesting the new object from and generating the created
+                                 event onto.]]
+            models: iterator<Efl.Model> @move; [[Efl iterator providing the model to be associated to the new item. It should
+                                     remain valid until the end of the function call.]]
+         }
+         return: future<Efl.Gfx.Entity>; [[Created UI object]]
+      }
+   }
+}

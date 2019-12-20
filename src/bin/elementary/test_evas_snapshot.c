@@ -46,8 +46,12 @@ _anim_toggle(void *data, const Efl_Event *ev EINA_UNUSED)
    it = efl_content_iterate(table);
    EINA_ITERATOR_FOREACH(it, o)
      {
-        if (efl_isa(o, EFL_PLAYER_INTERFACE) && efl_player_playable_get(o))
-          efl_player_play_set(o, !efl_player_play_get(o));
+        if (efl_isa(o, EFL_PLAYER_INTERFACE) && efl_playable_get(o))
+          {
+             if (!efl_player_playing_get(o))
+               efl_player_playing_set(o, EINA_TRUE);
+             efl_player_paused_set(o, !efl_player_paused_get(o));
+          }
      }
    eina_iterator_free(it);
 }
@@ -120,12 +124,12 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Eo *win, *table, *o, *snap, *box;
    const char *path;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_text_set(efl_added, "Evas Snapshot"),
                  efl_ui_win_autodel_set(efl_added, 1));
 
    table = efl_add(EFL_UI_TABLE_CLASS, win,
-                  efl_gfx_arrangement_content_padding_set(efl_added, 5, 5, 1));
+                  efl_gfx_arrangement_content_padding_set(efl_added, 5, 5));
    efl_content_set(win, table);
 
    // Objects below the snapshot
@@ -173,10 +177,10 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            elm_slider_unit_format_set(efl_added, "%.0f px"),
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack_table(table, efl_added, 0, TABLE_SIZE, TABLE_SIZE, 1),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _radius_set, win));
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _radius_set, win));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                  efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                  efl_pack_table(table, efl_added, 0, TABLE_SIZE + 1, TABLE_SIZE, 1));
 
@@ -184,25 +188,25 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_text_set(efl_added, "Toggle animation"),
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _anim_toggle, win));
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _anim_toggle, win));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Save to file"),
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _save_image, win));
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _save_image, win));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Map"),
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, win));
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _toggle_map, win));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Close"),
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _close_do, win));
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _close_do, win));
 
    efl_key_wref_set(win, "snap", snap);
    efl_key_wref_set(win, "table", table);

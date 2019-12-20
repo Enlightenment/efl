@@ -1,28 +1,21 @@
-class @beta Efl.Ui.Layout_Part_Box extends Efl.Object implements Efl.Pack_Linear,
-                              Efl.Ui.Direction_Readonly
+class Efl.Ui.Layout_Part_Box extends Efl.Object implements Efl.Pack_Linear,
+                              Efl.Ui.Layout_Orientable_Readonly
 {
    [[Represents a Box created as part of a layout.
 
      Cannot be deleted. This is only a representation of an internal object
      of an EFL layout.
+
+     @since 1.23
    ]]
    data: Efl_Ui_Layout_Box_Data;
    methods {
-      /* FIXME: Remove this. */
-      @property real_part @protected {
-          [[Real part property]]
-         set {}
-         values {
-            layout: Efl.Object; [[Real part object]]
-            part: string; [[Real part name]]
-         }
-      }
    }
    implements {
       Efl.Object.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Ui.Direction.direction { get; }
+      Efl.Ui.Layout_Orientable.orientation { get; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

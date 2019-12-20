@@ -1,8 +1,10 @@
-interface @beta Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
+interface Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
 {
    [[Interface that extends the normal displaying properties with usage properties.
 
      The properties defined here are used to manipulate the way a user interacts with a displayed range.
+
+     @since 1.23
    ]]
    c_prefix: efl_ui_range;
    methods {
@@ -22,5 +24,12 @@ interface @beta Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
            step: double; [[The step value.]]
          }
       }
+   }
+   events {
+      steady: void; [[Called when the widget's value has changed and has remained unchanged for 0.2s.
+                      This allows filtering out unwanted "noise" from the widget if you are only
+                      interested in its final position.
+                      Use this event instead of @[Efl.Ui.Range_Display.changed] if you are going to perform a costly
+                      operation on its handler. ]]
    }
 }

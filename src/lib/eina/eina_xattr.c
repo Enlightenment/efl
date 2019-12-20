@@ -32,10 +32,6 @@
 
 #include <fcntl.h>
 
-#ifdef _WIN32
-#include "Evil.h"
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 

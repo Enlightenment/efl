@@ -30,7 +30,7 @@ _node_change(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd)
         if (pnd->flags != EFL_GFX_CHANGE_FLAG_NONE) break;
         pnd->flags = EFL_GFX_CHANGE_FLAG_ALL;
      }
-   if (efl_invalidated_get(nd->vg_obj)) return;
+   if (!nd->vg_obj || efl_invalidated_get(nd->vg_obj)) return;
    efl_canvas_vg_object_change(nd->vd);
 }
 
@@ -60,8 +60,10 @@ _efl_canvas_vg_node_transformation_set(Eo *obj,
         pd->m = NULL;
      }
 
-   pd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
+   /* NOTE: _node_change function is only executed
+            when pd->flags is EFL_GFX_CHANGE_FLAG_NONE to prevent duplicate calls.*/
    _node_change(obj, pd);
+   pd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
 }
 
 const Eina_Matrix3 *
@@ -71,10 +73,10 @@ _efl_canvas_vg_node_transformation_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_
 }
 
 static void
-_efl_canvas_vg_node_mask_set(Eo *obj EINA_UNUSED,
-                             Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED,
-                             Efl_Canvas_Vg_Node *mask EINA_UNUSED,
-                             int op EINA_UNUSED)
+_efl_canvas_vg_node_comp_method_set(Eo *obj EINA_UNUSED,
+                                    Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED,
+                                    Efl_Canvas_Vg_Node *target EINA_UNUSED,
+                                    Efl_Gfx_Vg_Composite_Method method EINA_UNUSED)
 {
 }
 
@@ -139,29 +141,32 @@ _efl_canvas_vg_node_efl_gfx_color_color_set(Eo *obj,
                                             Efl_Canvas_Vg_Node_Data *pd,
                                             int r, int g, int b, int a)
 {
-   if (r > 255) r = 255;
+   Eina_Bool perr = EINA_FALSE;
+
+   //Exception Handling.
    if (r < 0) r = 0;
-   if (g > 255) g = 255;
    if (g < 0) g = 0;
-   if (b > 255) b = 255;
    if (b < 0) b = 0;
    if (a > 255) a = 255;
-   if (a < 0) a = 0;
+   else if (a < 0) a = 0;
+
    if (r > a)
      {
         r = a;
-        ERR("Evas only handles pre multiplied colors!");
+        perr = EINA_TRUE;
      }
    if (g > a)
      {
         g = a;
-        ERR("Evas only handles pre multiplied colors!");
+        perr = EINA_TRUE;
      }
    if (b > a)
      {
         b = a;
-        ERR("Evas only handles pre multiplied colors!");
+        perr = EINA_TRUE;
      }
+
+   if (perr) ERR("Evas only handles pre-multiplied color!");
 
    pd->r = r;
    pd->g = g;

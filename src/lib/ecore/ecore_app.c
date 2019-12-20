@@ -5,10 +5,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 
@@ -21,8 +17,10 @@ ecore_app_args_set(int          argc,
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   if ((argc < 1) ||
-       (!argv)) return;
+   if ((argc < 1) || (!argv))
+     {
+        if (argc || argv) return;
+     }
    app_argc = argc;
    app_argv = (char **)argv;
 }

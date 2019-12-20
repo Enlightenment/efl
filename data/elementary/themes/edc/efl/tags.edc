@@ -1,4 +1,5 @@
 group { "efl/tags";
+   data.item: "version" "123";
    data.item: "horizontal_pad" 0;
    data.item: "vertical_pad" 0;
    data.item: "closed_height" 0;
@@ -24,6 +25,7 @@ group { "efl/tags";
 }
 
 group { "efl/tags/label";
+   data.item: "version" "123";
    parts {
       text { "efl.text";
          nomouse;
@@ -46,6 +48,7 @@ group { "efl/tags/label";
 }
 
 group { "efl/tags/btn";
+   data.item: "version" "123";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
    images.image: "sym_close_dark_normal.png" COMP;
@@ -289,6 +292,7 @@ group { "efl/tags/btn";
 }
 
 group { "efl/tags/number";
+   data.item: "version" "123";
    parts {
       text { "efl.text";
          nomouse;

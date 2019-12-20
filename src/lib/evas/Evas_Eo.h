@@ -122,13 +122,6 @@ typedef Eo Efl_Canvas_Animation_Group_Sequential;
 
 #endif
 
-#define EFL_ANIMATION_GROUP_DURATION_NONE -1
-#define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
-
-#define EFL_ANIMATION_REPEAT_INFINITE -1
-#define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
-
-
 struct _Efl_Canvas_Animation_Player_Event_Running
 {
    double progress;
@@ -150,13 +143,14 @@ struct _Efl_Canvas_Object_Animation_Event
  */
 
 /**
- * @ingroup Efl_Canvas_Text
+ * @ingroup Efl_Canvas_Textblock
  *
  * @{
  */
-//#include "canvas/efl_canvas_text_cursor.eo.h"
-#include "canvas/efl_canvas_text.eo.h"
-#include "canvas/efl_canvas_text_factory.eo.h"
+#include "canvas/efl_text_cursor.eo.h"
+#include "canvas/efl_text_formatter.eo.h"
+#include "canvas/efl_canvas_textblock.eo.h"
+#include "canvas/efl_canvas_textblock_factory.eo.h"
 /**
  * @}
  */
@@ -185,10 +179,45 @@ struct _Efl_Canvas_Object_Animation_Event
  * @}
  */
 
+/* Input events */
+#include "canvas/efl_input_types.eot.h"
+#include "canvas/efl_input_device.eo.h"
+#include "canvas/efl_canvas_pointer.eo.h"
+#include "canvas/efl_canvas_scene.eo.h"
+#include "canvas/efl_input_state.eo.h"
+#include "canvas/efl_input_event.eo.h"
+#include "canvas/efl_input_pointer.eo.h"
+#include "canvas/efl_input_key.eo.h"
+#include "canvas/efl_input_hold.eo.h"
+#include "canvas/efl_input_interface.eo.h"
+#include "canvas/efl_input_focus.eo.h"
+#include "canvas/efl_input_clickable.eo.h"
+
 #include "canvas/efl_canvas_animation_types.eot.h"
 
-#include "canvas/efl_canvas_object.eo.h"
+#include "gesture/efl_canvas_gesture_types.eot.h"
+#include "gesture/efl_canvas_gesture_touch.eo.h"
+#include "gesture/efl_canvas_gesture.eo.h"
+#include "gesture/efl_canvas_gesture_tap.eo.h"
+#include "gesture/efl_canvas_gesture_long_tap.eo.h"
+#include "gesture/efl_canvas_gesture_double_tap.eo.h"
+#include "gesture/efl_canvas_gesture_triple_tap.eo.h"
+#include "gesture/efl_canvas_gesture_momentum.eo.h"
+#include "gesture/efl_canvas_gesture_flick.eo.h"
+#include "gesture/efl_canvas_gesture_zoom.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_tap.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_long_tap.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_double_tap.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_triple_tap.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_momentum.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_flick.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_zoom.eo.h"
+#include "gesture/efl_canvas_gesture_manager.eo.h"
+#include "gesture/efl_gesture_events.eo.h"
 
+#include "canvas/efl_canvas_object.eo.h"
+#include "canvas/efl_canvas_object_animation.eo.h"
 #include "canvas/efl_canvas_animation.eo.h"
 #include "canvas/efl_canvas_animation_alpha.eo.h"
 #include "canvas/efl_canvas_animation_rotate.eo.h"
@@ -197,7 +226,6 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "canvas/efl_canvas_animation_group.eo.h"
 #include "canvas/efl_canvas_animation_group_parallel.eo.h"
 #include "canvas/efl_canvas_animation_group_sequential.eo.h"
-#include "canvas/efl_canvas_animation_player.eo.h"
 #include "canvas/efl_canvas_event_grabber.eo.h"
 
  /**
@@ -418,6 +446,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_canvas_proxy.eo.h"
 #include "canvas/efl_gfx_mapping.eo.h"
 
+#include "canvas/efl_gfx_vg_value_provider.eo.h"
 /**
  * @ingroup Evas_Object_VG
  *
@@ -431,22 +460,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_canvas_vg_node.eo.h"
 #include "canvas/efl_canvas_vg_container.eo.h"
 #include "canvas/efl_canvas_vg_shape.eo.h"
+#include "canvas/efl_canvas_vg_image.eo.h"
 #include "canvas/efl_canvas_vg_gradient.eo.h"
 #include "canvas/efl_canvas_vg_gradient_linear.eo.h"
 #include "canvas/efl_canvas_vg_gradient_radial.eo.h"
-
-#include "canvas/efl_input_state.eo.h"
-#include "canvas/efl_input_event.eo.h"
-#include "canvas/efl_input_pointer.eo.h"
-#include "canvas/efl_input_key.eo.h"
-#include "canvas/efl_input_hold.eo.h"
-#include "canvas/efl_input_interface.eo.h"
-#include "canvas/efl_input_focus.eo.h"
-
-# include "gesture/efl_canvas_gesture_types.eot.h"
-# include "gesture/efl_canvas_gesture_touch.eo.h"
-# include "gesture/efl_canvas_gesture.eo.h"
-# include "gesture/efl_canvas_gesture_tap.eo.h"
-# include "gesture/efl_canvas_gesture_long_tap.eo.h"
-# include "gesture/efl_canvas_gesture_recognizer.eo.h"
-# include "gesture/efl_canvas_gesture_manager.eo.h"

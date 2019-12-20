@@ -9,15 +9,19 @@ typedef struct _Efl_Canvas_Vg_Gradient_Data         Efl_Canvas_Vg_Gradient_Data;
 typedef struct _Efl_Canvas_Vg_Interpolation         Efl_Canvas_Vg_Interpolation;
 typedef struct _Efl_Canvas_Vg_Object_Data           Efl_Canvas_Vg_Object_Data;
 
+typedef enum _Efl_Gfx_Vg_Value_Provider_Change_Flag Efl_Gfx_Vg_Value_Provider_Change_Flag;
+
 typedef struct _Vg_Cache
 {
    Eina_Hash             *vfd_hash;
    Eina_Hash             *vg_entry_hash;
+   Eina_List             *vg_surface_keys;
    int                    ref;
 } Vg_Cache;
 
 typedef struct _Vg_Cache_Entry
 {
+   Evas                 *evas;
    char                 *hash_key;
    const Eina_File      *file;
    Eina_Stringshare     *key;
@@ -48,6 +52,7 @@ struct _Efl_Canvas_Vg_Object_Data
    Eina_Array                 cleanup;
    double                     align_x, align_y;
    Efl_Canvas_Vg_Fill_Mode    fill_mode;
+   int                        frame_idx;
 
    Eina_Bool                  changed : 1;
 };
@@ -65,7 +70,7 @@ struct _Efl_Canvas_Vg_Node_Data
    void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
          Efl_Canvas_Vg_Node_Data *nd,
          void *engine, void *output, void *contenxt, Ector_Surface *surface,
-         Eina_Matrix3 *ptransform, Ector_Buffer *mask, int mask_op, void *data);
+         Eina_Matrix3 *ptransform, int opacity, Ector_Buffer *comp, Efl_Gfx_Vg_Composite_Method comp_method, void *data);
    void *data;
 
    double x, y;
@@ -76,24 +81,35 @@ struct _Efl_Canvas_Vg_Node_Data
    Eina_Bool changed : 1;
 };
 
-typedef struct _Vg_Mask
+typedef struct _Vg_Composite
 {
-   Evas_Object_Protected_Data *vg_pd;  //Vector Object (for accessing backend engine)
-   Ector_Buffer *buffer;               //Mask Ector Buffer
-   void *pixels;                       //Mask pixel buffer (actual data)
-   Eina_Rect bound;                    //Mask boundary
-   Eina_List *target;                  //Mask target
-   int option;                         //Mask option
-} Vg_Mask;
+   Evas_Object_Protected_Data *vg_pd;      //Vector Object (for accessing backend engine)
+   Ector_Buffer *buffer;                   //Composite Ector Buffer
+   void *pixels;                           //Composite pixel buffer (actual data)
+   unsigned int length;                    //pixel buffer data size
+   unsigned int stride;                    //pixel buffer stride
+   Eina_Size2D size;                       //Composite boundary
+   Eina_List *src;                         //Composite Sources
+   Efl_Gfx_Vg_Composite_Method method;     //Composite Method
+} Vg_Comp;
 
 struct _Efl_Canvas_Vg_Container_Data
 {
    Eina_List *children;
    Eina_Hash *names;
 
-   //Masking feature.
-   Efl_Canvas_Vg_Node *mask_src;         //Mask Source
-   Vg_Mask mask;                         //Mask source data
+   //Composite feature.
+   Efl_Canvas_Vg_Node *comp_target; //Composite target
+   Vg_Comp comp;                    //Composite target data
+
+   /* Layer transparency feature.
+      This buffer is only valid when the layer has transparency. */
+   struct {
+        Ector_Buffer *buffer;
+        void *pixels;
+        unsigned int length;                //blend buffer data size
+        unsigned int stride;                //blend buffer stride
+   } blend;
 };
 
 struct _Efl_Canvas_Vg_Gradient_Data
@@ -114,19 +130,36 @@ struct _Efl_Canvas_Vg_Interpolation
    Eina_Point_3D skew;
 };
 
+enum _Efl_Gfx_Vg_Value_Provider_Change_Flag
+{
+   EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_NONE = 0,
+   EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_FILL_COLOR = 2,
+   EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_COLOR = 4,
+   EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_WIDTH = 8,
+   EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX = 16
+};
+Efl_Gfx_Vg_Value_Provider_Change_Flag efl_gfx_vg_value_provider_changed_flag_get(Eo *obj);
 
 void                        evas_cache_vg_init(void);
 void                        evas_cache_vg_shutdown(void);
 Vg_Cache_Entry*             evas_cache_vg_entry_resize(Vg_Cache_Entry *entry, int w, int h);
-Vg_Cache_Entry*             evas_cache_vg_entry_create(const Eina_File *file, const char *key, int w, int h);
-Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry);
+Vg_Cache_Entry*             evas_cache_vg_entry_create(Evas *evas, const Eina_File *file, const char *key, int w, int h, Eina_List *vp_list);
+Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num);
+void                        evas_cache_vg_entry_value_provider_update(Vg_Cache_Entry *vg_entry, Eina_List *vp_list);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
-Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key);
+Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key, Evas *e);
 Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const Efl_File_Save_Info *info);
 Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info);
+double                      evas_cache_vg_anim_duration_get(const Vg_Cache_Entry *vg_entry);
+Eina_Bool                   evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, int startframe, int endframe);
+Eina_Bool                   evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, int* startframe, int* endframe);
+unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
+Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);
+void *                      evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx);
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);
+void                        efl_canvas_vg_container_blend_buffer_clear(Efl_VG *obj, Efl_Canvas_Vg_Container_Data *cd);
 
 static inline void
 efl_canvas_vg_object_change(Efl_Canvas_Vg_Object_Data *vd)
@@ -141,13 +174,14 @@ _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
                     void *engine, void *output, void *context,
                     Ector_Surface *surface,
                     Eina_Matrix3 *transform,
-                    Ector_Buffer *mask, int mask_op)
+                    int opacity,
+                    Ector_Buffer *comp, Efl_Gfx_Vg_Composite_Method comp_method)
 {
    if (!child) return NULL;
    Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
    if (nd) nd->render_pre(vg_pd, child, nd,
                           engine, output, context, surface,
-                          transform, mask, mask_op, nd->data);
+                          transform, opacity, comp, comp_method, nd->data);
    return nd;
 }
 
@@ -172,5 +206,19 @@ _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
          }                                                              \
     }
 
+#define EFL_CANVAS_VG_COMPUTE_ALPHA(Current_r, Current_g, Current_b, Current_a, Parent_Opacity, Nd)   \
+  int Current_r = Nd->r;                                                \
+  int Current_g = Nd->g;                                                \
+  int Current_b = Nd->b;                                                \
+  int Current_a = Nd->a;                                                \
+                                                                        \
+  if (Parent_Opacity < 255)                                             \
+    {                                                                   \
+       double pa = (double)Parent_Opacity / 255.0;                      \
+       Current_r = (double)Current_r * pa;                              \
+       Current_g = (double)Current_g * pa;                              \
+       Current_b = (double)Current_b * pa;                              \
+       Current_a = (double)Current_a * pa;                              \
+    }
 
 #endif

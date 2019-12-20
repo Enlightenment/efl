@@ -36,7 +36,9 @@ EFL_START_TEST(elm_progressbar_custom_unit_check)
    win = win_add(NULL, "progressbar", ELM_WIN_BASIC);
 
    progressbar = elm_progressbar_add(win);
+   DISABLE_ABORT_ON_CRITICAL_START;
    elm_progressbar_unit_format_set(progressbar, format);
+   DISABLE_ABORT_ON_CRITICAL_END;
    elm_progressbar_value_set(progressbar, .50);
    ck_assert(!strcmp(elm_object_part_text_get(progressbar, "elm.text.status"), "50 percent (50%)"));
 }
@@ -57,9 +59,20 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_progressbar_unit_format_get_n)
+{
+   const char *fmt;
+
+   fmt = elm_progressbar_unit_format_get(NULL);
+
+   ck_assert(fmt == NULL);
+}
+EFL_END_TEST
+
 void elm_test_progressbar(TCase *tc)
 {
    tcase_add_test(tc, elm_progressbar_legacy_type_check);
    tcase_add_test(tc, elm_progressbar_custom_unit_check);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_progressbar_unit_format_get_n);
 }

@@ -15,7 +15,9 @@
 # include <langinfo.h>
 #endif
 
-#if defined(HAVE_SYS_MMAN_H) || defined(_WIN32)
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
 
@@ -24,7 +26,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_init/shutdown */
 #endif
 #include <Eina.h>
 #include <Efl.h>
@@ -273,9 +275,7 @@ ecore_init(void)
    if (!_ecore_event_init()) goto shutdown_event;
 
    _ecore_signal_init();
-#ifndef HAVE_EXOTIC
    _ecore_exe_init();
-#endif
    _ecore_thread_init();
    _ecore_job_init();
    _ecore_time_init();
@@ -432,9 +432,7 @@ ecore_shutdown(void)
      eina_lock_free(&_thread_feedback_mutex);
      eina_lock_free(&_thread_id_lock);
 
-#ifndef HAVE_EXOTIC
      _ecore_exe_shutdown();
-#endif
      _ecore_event_shutdown();
      _ecore_main_shutdown();
      _ecore_signal_shutdown();

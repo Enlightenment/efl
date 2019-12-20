@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_BLACKLIST_HH
 #define EOLIAN_MONO_BLACKLIST_HH
 
@@ -17,7 +32,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
   return
     c_name == "efl_event_callback_array_priority_add"
     || c_name == "efl_constructor"
-    || c_name == "efl_player_position_get"
+    || c_name == "efl_player_playback_position_get"
     || c_name == "efl_ui_widget_focus_set"
     || c_name == "efl_ui_widget_focus_get"
     || c_name == "efl_ui_text_password_get"
@@ -49,6 +64,12 @@ inline bool is_function_blacklisted(std::string const& c_name)
     || c_name == "efl_ui_list_model_size_get"
     || c_name == "efl_ui_list_relayout_layout_do"
     || c_name == "efl_event_callback_forwarder_priority_add" // Depends on constants support.
+    || c_name == "efl_event_callback_forwarder_del"
+    || c_name == "efl_ui_text_context_menu_item_add"
+    || c_name == "efl_ui_widget_input_event_handler"
+    || c_name == "efl_access_object_event_handler_add"
+    || c_name == "efl_access_object_event_handler_del"
+    || c_name == "efl_access_object_event_emit"
     ;
 }
 
@@ -62,6 +83,18 @@ inline bool is_function_blacklisted(attributes::function_def const& func, Contex
     return true;
 
   return is_function_blacklisted(c_name);
+}
+
+inline bool is_non_public_interface_member(attributes::function_def const& func, attributes::klass_def const&current_klass)
+{
+  if (current_klass.type == attributes::class_type::interface_
+      || current_klass.type == attributes::class_type::mixin)
+    {
+       if (func.scope != attributes::member_scope::scope_public)
+         return true;
+    }
+
+  return false;
 }
 
 
@@ -107,16 +140,19 @@ inline bool is_struct_blacklisted(attributes::regular_type_def const& struct_)
    return is_struct_blacklisted(name_helpers::type_full_eolian_name(struct_));
 }
 
-inline bool is_alias_blacklisted(attributes::alias_def const& alias)
+template <typename Context>
+inline bool is_alias_blacklisted(attributes::alias_def const& alias, Context const& context)
 {
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+   if (alias.is_beta && !options.want_beta)
+     return true;
+
    return name_helpers::alias_full_eolian_name(alias) == "Eina.Error";
 }
 
-inline bool is_property_blacklisted(std::string const& name)
+inline bool is_property_blacklisted(std::string const&)
 {
-    return name == "Efl.Input.Key.Key"
-        || name == "Efl.Input.Hold.Hold"
-        || name == "Efl.IText.Text";
+    return false;
 }
 
 template<typename Context>
@@ -135,17 +171,9 @@ inline bool is_property_blacklisted(attributes::property_def const& property, Co
 
 template<typename Context>
 inline bool is_property_blacklisted(attributes::property_def const& property,
-                                    attributes::klass_def const& implementing_class,
+                                    EINA_UNUSED attributes::klass_def const& implementing_class,
                                     Context const& context)
 {
-   std::string property_name = name_helpers::property_managed_name(property);
-   std::string klass_name = name_helpers::klass_concrete_or_interface_name(implementing_class);
-
-   // This property wrapper is invalidated as it would clash with the implementing
-   // class constructor. CS
-   if (property_name == klass_name)
-     return true;
-
    return is_property_blacklisted(property, context);
 }
 
@@ -171,7 +199,7 @@ inline bool is_event_blacklisted(attributes::event_def const& evt, Context const
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
 
-   return evt.beta && !options.want_beta;
+   return evt.is_beta && !options.want_beta;
 }
 
 }

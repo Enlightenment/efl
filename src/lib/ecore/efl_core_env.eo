@@ -4,7 +4,8 @@ class @beta Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
      A object of this type alone does not apply the object to the system.
      For getting the value into the system, see @Efl.Core.Proc_Env.
 
-     A object can be forked, which will only copy its values, changes to the returned object will not change the object where it is forked off.
+     A object can be forked, which will only copy its values, changes to the returned object will not change the object
+     where it is forked off.
    ]]
    methods {
       @property env {
@@ -46,7 +47,7 @@ class @beta Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
 
         }
         values {
-          iter : iterator<string>;
+          iter : iterator<string> @move;
         }
       }
    }

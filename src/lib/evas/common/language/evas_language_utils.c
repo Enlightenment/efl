@@ -29,10 +29,6 @@
 # define dgettext(domain, x) (x)
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Eina.h>
 
 #include "evas_language_utils.h"

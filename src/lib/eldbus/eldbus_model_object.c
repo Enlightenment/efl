@@ -167,7 +167,7 @@ _eldbus_model_object_concatenate_path(const char *root_path,
                                       const char *relative_path)
 {
    Eina_Strbuf *buffer;
-   const char *format = (strcmp(root_path, "/") != 0) ? "%s/%s" : "%s%s";
+   const char *format = (!eina_streq(root_path, "/")) ? "%s/%s" : "%s%s";
    char *absolute_path = NULL;
 
    buffer = eina_strbuf_new();

@@ -5,6 +5,10 @@
 # include <langinfo.h>
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* nl_langinfo */
+#endif
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -18,9 +22,8 @@ typedef struct
 {
    Efl_Time time;
    char format[MAX_FORMAT_LEN];
+   Eina_Bool init;
 } Efl_Datetime_Manager_Data;
-
-Eina_Bool init = EINA_FALSE;
 
 static void
 _time_init(Efl_Time *curr_time)
@@ -29,8 +32,6 @@ _time_init(Efl_Time *curr_time)
 
    t = time(NULL);
    localtime_r(&t, curr_time);
-
-   init = EINA_TRUE;
 }
 
 static char *
@@ -158,7 +159,8 @@ _efl_datetime_manager_value_set(Eo *obj EINA_UNUSED, Efl_Datetime_Manager_Data *
 EOLIAN static Efl_Time
 _efl_datetime_manager_value_get(const Eo *obj EINA_UNUSED, Efl_Datetime_Manager_Data *pd)
 {
-   if (!init) _time_init(&pd->time);
+   if (!pd->init) _time_init(&pd->time);
+   pd->init = EINA_TRUE;
 
    return pd->time;
 }

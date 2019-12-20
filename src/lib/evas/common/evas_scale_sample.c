@@ -100,31 +100,38 @@ static void
 _evas_common_scale_rgba_sample_scale_nomask(int y,
                                             int dst_clip_w, int dst_clip_h, int dst_w,
                                             DATA32 **row_ptr, int *lin_ptr,
-                                            DATA32 *dptr, RGBA_Gfx_Func func, unsigned int mul_col)
+                                            DATA32 *dptr, RGBA_Gfx_Func func, unsigned int mul_col,
+                                            DATA32 *srcptr, int src_w)
 {
-   DATA32 *buf, *dst_ptr;
    int x;
-
-   /* a scanline buffer */
-   buf = alloca(dst_clip_w * sizeof(DATA32));
-
    dptr = dptr + dst_w * y;
-   for (; y < dst_clip_h; y++)
+
+   if (srcptr)
      {
-        dst_ptr = buf;
-        for (x = 0; x < dst_clip_w; x++)
+        for (; y < dst_clip_h; y++)
           {
-             DATA32 *ptr;
-
-             ptr = row_ptr[y] + lin_ptr[x];
-             *dst_ptr = *ptr;
-             dst_ptr++;
+             /* * blend here [clip_w *] buf -> dptr * */
+             func(srcptr, NULL, mul_col, dptr, dst_clip_w);
+             dptr += dst_w;
+             srcptr += src_w;
           }
-
-        /* * blend here [clip_w *] buf -> dptr * */
-        func(buf, NULL, mul_col, dptr, dst_clip_w);
-
-        dptr += dst_w;
+     }
+   else
+     {
+        DATA32 *buf = alloca(dst_clip_w * sizeof(DATA32));
+        for (; y < dst_clip_h; y++)
+          {
+             DATA32 *dst_ptr = buf;
+             for (x = 0; x < dst_clip_w; x++)
+               {
+                  DATA32 *ptr = row_ptr[y] + lin_ptr[x];
+                  *dst_ptr = *ptr;
+                  dst_ptr++;
+               }
+             /* * blend here [clip_w *] buf -> dptr * */
+             func(buf, NULL, mul_col, dptr, dst_clip_w);
+             dptr += dst_w;
+          }
      }
 }
 
@@ -135,48 +142,58 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
                                           int mask_x, int mask_y,
                                           DATA32 **row_ptr, int *lin_ptr, RGBA_Image *mask_ie,
                                           DATA32 *dptr, RGBA_Gfx_Func func, RGBA_Gfx_Func func2,
-                                          unsigned int mul_col)
+                                          unsigned int mul_col,
+                                          DATA32 *srcptr, int src_w)
 {
-   DATA32 *buf, *dst_ptr;
+   DATA32 *buf;
    int x;
+
+   /* clamp/map to mask geometry */
+   if (EINA_UNLIKELY(dst_clip_x < mask_x))
+     dst_clip_x = mask_x;
+   if (EINA_UNLIKELY(dst_clip_y < mask_y))
+     dst_clip_y = mask_y;
+   if (EINA_UNLIKELY(dst_clip_x + dst_clip_w > mask_x + (int)mask_ie->cache_entry.w))
+     dst_clip_w = mask_x + mask_ie->cache_entry.w - dst_clip_x;
+   if (EINA_UNLIKELY(dst_clip_y + dst_clip_h > mask_y + (int)mask_ie->cache_entry.h))
+     dst_clip_h = mask_y + mask_ie->cache_entry.h - dst_clip_y;
 
    /* a scanline buffer */
    buf = alloca(dst_clip_w * sizeof(DATA32));
-
-   // Adjust clipping info
-   if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
-     dst_clip_x = mask_x;
-   if (EINA_UNLIKELY((dst_clip_y - mask_y + y) < 0))
-     dst_clip_y = mask_y + y;
-   if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
-     dst_clip_w = mask_x - mask_ie->cache_entry.w - dst_clip_x;
-   if (EINA_UNLIKELY((dst_clip_y - mask_y + y + dst_clip_h) > (int)mask_ie->cache_entry.h))
-     dst_clip_h = mask_y + y - mask_ie->cache_entry.h - dst_clip_y;
 
    dptr = dptr + dst_w * y;
    for (; y < dst_clip_h; y++)
      {
         DATA8 *mask;
 
-        dst_ptr = buf;
         mask = mask_ie->image.data8
           + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
           + (dst_clip_x - mask_x);
 
-        for (x = 0; x < dst_clip_w; x++)
+        if (!srcptr)
           {
-             DATA32 *ptr;
+             DATA32 *dst_ptr = buf;
+             for (x = 0; x < dst_clip_w; x++)
+               {
+                  DATA32 *ptr;
 
-             ptr = row_ptr[y] + lin_ptr[x];
-             *dst_ptr = *ptr;
-             dst_ptr++;
+                  ptr = row_ptr[y] + lin_ptr[x];
+                  *dst_ptr = *ptr;
+                  dst_ptr++;
+               }
           }
 
         /* * blend here [clip_w *] buf -> dptr * */
-        if (mul_col != 0xFFFFFFFF) func2(buf, NULL, mul_col, buf, dst_clip_w);
-        func(buf, mask, 0, dptr, dst_clip_w);
+        if (mul_col != 0xFFFFFFFF)
+          {
+             func2(srcptr ?: buf, NULL, mul_col, buf, dst_clip_w);
+             func(buf, mask, 0, dptr, dst_clip_w);
+          }
+        else
+          func(srcptr ?: buf, mask, 0, dptr, dst_clip_w);
 
         dptr += dst_w;
+        if (srcptr) srcptr += src_w;
      }
 }
 
@@ -185,10 +202,8 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
 {
    int      x, y;
    int     *lin_ptr;
-   DATA32  *buf, *dptr;
    DATA32 **row_ptr;
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
-   DATA8   *mask;
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func, func2 = NULL;
 
@@ -337,57 +352,28 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
           }
         else
           func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
-        // Adjust clipping info
-        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
-          dst_clip_x = mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
-          dst_clip_y = mask_y;
-        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
-          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
-          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {
         ptr = src_data + (((dst_clip_y - dst_region_y) + src_region_y) * src_w) + ((dst_clip_x - dst_region_x) + src_region_x);
 
-        /* image masking */
+
         if (mask_ie)
-          {
-             if (mul_col != 0xffffffff)
-               buf = alloca(dst_clip_w * sizeof(DATA32));
-
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  mask = mask_ie->image.data8
-                     + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
-                     + (dst_clip_x - mask_x);
-
-                  /* * blend here [clip_w *] ptr -> dst_ptr * */
-                  if (mul_col != 0xffffffff)
-                    {
-                       func2(ptr, NULL, mul_col, buf, dst_clip_w);
-                       func(buf, mask, 0, dst_ptr, dst_clip_w);
-                    }
-                  else
-                    func(ptr, mask, 0, dst_ptr, dst_clip_w);
-
-                  ptr += src_w;
-                  dst_ptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_mask(0,
+            dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+            dst_w, mask_x, mask_y,
+            NULL, NULL,
+            mask_ie, dst_ptr,
+            func, func2, mul_col,
+            ptr, src_w);
         else
-          {
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  /* * blend here [clip_w *] ptr -> dst_ptr * */
-                  func(ptr, NULL, mul_col, dst_ptr, dst_clip_w);
-
-                  ptr += src_w;
-                  dst_ptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_nomask(0,
+            dst_clip_w, dst_clip_h, dst_w,
+            NULL, NULL,
+            dst_ptr,
+            func, mul_col,
+            ptr, src_w);
      }
    else
      {
@@ -402,56 +388,21 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
           row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
                                     + src_region_y) * src_w);
 
-        /* scale to dst */
-        dptr = dst_ptr;
-
-        /* a scanline buffer */
-        buf = alloca(dst_clip_w * sizeof(DATA32));
-
-        /* image masking */
         if (mask_ie)
-          {
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  dst_ptr = buf;
-                  mask = mask_ie->image.data8
-                     + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
-                     + (dst_clip_x - mask_x);
-
-                  for (x = 0; x < dst_clip_w; x++)
-                    {
-                       ptr = row_ptr[y] + lin_ptr[x];
-                       *dst_ptr = *ptr;
-                       dst_ptr++;
-                    }
-
-                  /* * blend here [clip_w *] buf -> dptr * */
-                  if (mul_col != 0xffffffff)
-                    func2(buf, NULL, mul_col, buf, dst_clip_w);
-                  func(buf, mask, 0, dptr, dst_clip_w);
-
-                  dptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_mask(0,
+            dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+            dst_w, mask_x, mask_y,
+            row_ptr, lin_ptr,
+            mask_ie, dst_ptr,
+            func, func2, mul_col,
+            NULL, 0);
         else
-          {
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  dst_ptr = buf;
-
-                  for (x = 0; x < dst_clip_w; x++)
-                    {
-                       ptr = row_ptr[y] + lin_ptr[x];
-                       *dst_ptr = *ptr;
-                       dst_ptr++;
-                    }
-
-                  /* * blend here [clip_w *] buf -> dptr * */
-                  func(buf, NULL, mul_col, dptr, dst_clip_w);
-
-                  dptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_nomask(0,
+            dst_clip_w, dst_clip_h, dst_w,
+            row_ptr, lin_ptr,
+            dst_ptr,
+            func, mul_col,
+            NULL, 0);
      }
 }
 
@@ -465,10 +416,9 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 {
    int      x, y;
    int     *lin_ptr;
-   DATA32  *buf = NULL, *dptr;
+   DATA32 *dptr;
    DATA32 **row_ptr;
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
-   DATA8   *mask;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      src_w, src_h, dst_w, dst_h, mask_x, mask_y;
    RGBA_Gfx_Func func, func2 = NULL;
@@ -613,15 +563,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
         func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, dc->render_op);
         if (dc->mul.use)
           func2 = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, dst_clip_w, EVAS_RENDER_COPY);
-        // Adjust clipping info
-        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
-          dst_clip_x = mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
-          dst_clip_y = mask_y;
-        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
-          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
-          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
@@ -650,44 +591,24 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 # endif
 #endif
           {
+             int mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
              ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
 
-             /* image masking */
              if (mask_ie)
-               {
-                  if (dc->mul.use)
-                    buf = alloca(dst_clip_w * sizeof(DATA32));
-
-                  for (y = 0; y < dst_clip_h; y++)
-                    {
-                       mask = mask_ie->image.data8
-                          + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
-                          + (dst_clip_x - mask_x);
-
-                       /* * blend here [clip_w *] ptr -> dst_ptr * */
-                       if (dc->mul.use)
-                         {
-                            func2(ptr, NULL, dc->mul.col, buf, dst_clip_w);
-                            func(buf, mask, 0, dst_ptr, dst_clip_w);
-                         }
-                       else
-                         func(ptr, mask, 0, dst_ptr, dst_clip_w);
-
-                       ptr += src_w;
-                       dst_ptr += dst_w;
-                    }
-               }
+               _evas_common_scale_rgba_sample_scale_mask(0,
+                 dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+                 dst_w, mask_x, mask_y,
+                 NULL, NULL,
+                 mask_ie, dst_ptr,
+                 func, func2, mul_col,
+                 ptr, src_w);
              else
-               {
-                  for (y = 0; y < dst_clip_h; y++)
-                    {
-                       /* * blend here [clip_w *] ptr -> dst_ptr * */
-                       func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
-
-                       ptr += src_w;
-                       dst_ptr += dst_w;
-                    }
-               }
+               _evas_common_scale_rgba_sample_scale_nomask(0,
+                 dst_clip_w, dst_clip_h, dst_w,
+                 NULL, NULL,
+                 dst_ptr,
+                 func, mul_col,
+                 ptr, src_w);
           }
      }
    else
@@ -766,7 +687,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                                                                  dst_clip_w, dst_clip_h >> 1, dst_w,
                                                                  dc->clip.mask_x, dc->clip.mask_y,
                                                                  row_ptr, lin_ptr, dc->clip.mask,
-                                                                 dptr, func, func2, mul_col);
+                                                                 dptr, func, func2, mul_col,
+                                                                 NULL, 0);
 
                     }
                   else
@@ -774,7 +696,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                        _evas_common_scale_rgba_sample_scale_nomask(0,
                                                                    dst_clip_w, dst_clip_h >> 1, dst_w,
                                                                    row_ptr, lin_ptr,
-                                                                   dptr, func, mul_col);
+                                                                   dptr, func, mul_col,
+                                                                   NULL, 0);
                     }
 
                   msg = eina_thread_queue_wait(main_queue, &ref);
@@ -792,7 +715,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                                                                  dst_clip_w, dst_clip_h, dst_w,
                                                                  dc->clip.mask_x, dc->clip.mask_y,
                                                                  row_ptr, lin_ptr, dc->clip.mask,
-                                                                 dptr, func, func2, mul_col);
+                                                                 dptr, func, func2, mul_col,
+                                                                 NULL, 0);
 
                     }
                   else
@@ -800,7 +724,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                        _evas_common_scale_rgba_sample_scale_nomask(0,
                                                                    dst_clip_w, dst_clip_h, dst_w,
                                                                    row_ptr, lin_ptr,
-                                                                   dptr, func, mul_col);
+                                                                   dptr, func, mul_col,
+                                                                   NULL, 0);
                     }
                }
           }
@@ -843,13 +768,15 @@ _evas_common_scale_sample_thread(void *data EINA_UNUSED,
                                                          todo->mask_x, todo->mask_y,
                                                          todo->row_ptr, todo->lin_ptr, todo->mask8,
                                                          todo->dptr, todo->func, todo->func2,
-                                                         todo->mul_col);
+                                                         todo->mul_col,
+                                                         NULL, 0);
              else
                _evas_common_scale_rgba_sample_scale_nomask(h,
                                                            todo->dst_clip_w, todo->dst_clip_h,
                                                            todo->dst_w,
                                                            todo->row_ptr, todo->lin_ptr,
-                                                           todo->dptr, todo->func, todo->mul_col);
+                                                           todo->dptr, todo->func, todo->mul_col,
+                                                           NULL, 0);
           }
 
      end:

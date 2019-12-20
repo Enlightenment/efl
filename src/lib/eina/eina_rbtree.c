@@ -131,7 +131,7 @@ _eina_rbtree_iterator_free(Eina_Iterator_Rbtree *it)
           free(item);
      }
 
-   eina_array_flush(it->stack);
+   eina_array_clean(it->stack);
 
    eina_spinlock_take(&iterator_trash_lock);
    eina_array_push(&iterator_trash, it);

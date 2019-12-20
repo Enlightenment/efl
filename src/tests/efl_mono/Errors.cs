@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 
 namespace TestSuite
@@ -21,8 +36,10 @@ class TestEinaError
 class TestEolianError
 {
 
-    class CustomException : Exception {
+    public class CustomException : Exception {
+        public CustomException() {}
         public CustomException(string msg): base(msg) {}
+        public CustomException(string msg, Exception inner) : base(msg, inner) {}
     }
 
     class Overrider : Dummy.TestObject {
@@ -36,6 +53,7 @@ class TestEolianError
         var obj = new Overrider();
 
         Test.AssertRaises<Efl.EflException>(obj.CallChildrenRaiseError);
+        obj.Dispose();
     }
 
     // return eina_error
@@ -53,6 +71,7 @@ class TestEolianError
         error = obj.ReturnsError();
 
         Test.AssertEquals(expected, error);
+        obj.Dispose();
     }
 
     class ReturnOverride : Dummy.TestObject {
@@ -80,6 +99,7 @@ class TestEolianError
         error = obj.ReturnsError();
 
         Test.AssertEquals(new Eina.Error(expected * 2), error);
+        obj.Dispose();
     }
 
     // events
@@ -97,11 +117,13 @@ class TestEolianError
         // An event whose managed delegate generates an exception
         // must set an eina_error so it can be reported back to
         // the managed code
-        var obj = new Dummy.TestObject();
+        var  obj = new Dummy.TestObject();
         Listener listener = new Listener();
-        obj.EvtWithIntEvt += listener.callback;
+        obj.EvtWithIntEvent += listener.callback;
 
-        Test.AssertRaises<Efl.EflException>(() => { obj.EmitEventWithInt(2); });
+        Test.AssertRaises<Efl.EflException>(() =>
+        { obj.EmitEventWithInt(2); });
+        obj.Dispose();
     }
 }
 }

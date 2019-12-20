@@ -1,23 +1,17 @@
-struct @free(free_a) Test.A {
-   t : int;
-}
-
-class Owning {
+class @beta Owning {
    methods {
      test1 {
        params {
-         test1 : list<string> @owned;
-         test2 : iterator<string> @owned;
-         test3 : hash<string, string> @owned;
-         test4 : accessor<string> @owned;
+         test1 : list<string> @move;
+         test2 : iterator<string> @move;
+         test3 : hash<string, string> @move;
+         test4 : accessor<string> @move;
        }
      }
      test2 {
        params {
-         test1 : list<ptr(Test.A) @owned> @owned;
-         test2 : iterator<ptr(Test.A) @owned> @owned;
-         test3 : hash<string, ptr(Test.A) @owned> @owned;
-         test4 : accessor<ptr(Test.A) @owned> @owned;
+         test1 : list<array<int> @move> @move;
+         test2 : hash<string, array<int> @move> @move;
        }
      }
 

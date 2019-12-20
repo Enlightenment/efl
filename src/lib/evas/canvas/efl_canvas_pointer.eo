@@ -1,0 +1,35 @@
+import efl_input_device;
+
+interface Efl.Canvas.Pointer
+{
+   [[Efl Canvas Pointer interface
+
+     @since 1.22
+   ]]
+   methods {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property pointer_inside @beta {
+         [[Whether the mouse pointer is logically inside the canvas.
+
+           This value is $false or $true, depending on whether a pointer,in or pointer,out
+           event has been previously received.
+
+           A return value of $true indicates the mouse is logically
+           inside the canvas, and $false implies it is logically
+           outside the canvas.
+
+           A canvas begins with the mouse being assumed outside ($false).
+         ]]
+         get {
+         }
+         keys {
+            seat: Efl.Input.Device @optional; [[The seat to consider, if $null
+                     then the default seat will be used.]]
+         }
+         values {
+            inside: bool; [[$true if the mouse pointer is inside the canvas,
+                            $false otherwise]]
+         }
+      }
+   }
+}

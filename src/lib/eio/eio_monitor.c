@@ -371,7 +371,14 @@ eio_monitor_stringshared_add(const char *path)
 
    EINA_REFCOUNT_INIT(monitor);
 
-   if (getenv("EIO_MONITOR_POLL"))
+   static signed char monpoll = -1;
+
+   if (monpoll == -1)
+     {
+        if (getenv("EIO_MONITOR_POLL")) monpoll = 1;
+        else monpoll = 0;
+     }
+   if (monpoll)
      eio_monitor_fallback_add(monitor);
    else
      eio_monitor_backend_add(monitor);
@@ -403,4 +410,18 @@ eio_monitor_path_get(Eio_Monitor *monitor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, NULL);
    return monitor->path;
+}
+
+
+EAPI Eina_Bool
+eio_monitor_has_context(const Eio_Monitor *monitor, const char *path)
+{
+   if (monitor->fallback)
+     {
+        return eio_monitor_fallback_context_check(monitor, path);
+     }
+   else
+     {
+        return eio_monitor_context_check(monitor, path);
+     }
 }

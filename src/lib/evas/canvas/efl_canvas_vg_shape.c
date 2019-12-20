@@ -23,6 +23,8 @@ _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
                        Efl_Canvas_Vg_Shape_Data *pd,
                        Efl_Canvas_Vg_Node *f)
 {
+   if (pd->fill == f) return;
+
    Efl_Canvas_Vg_Node *tmp = pd->fill;
 
    pd->fill = efl_ref(f);
@@ -40,8 +42,9 @@ _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
                               Efl_Canvas_Vg_Shape_Data *pd,
                               Efl_Canvas_Vg_Node *f)
 {
-   Efl_Canvas_Vg_Node *tmp = pd->fill;
+   if (pd->stroke.fill == f) return;
 
+   Efl_Canvas_Vg_Node *tmp = pd->stroke.fill;
    pd->stroke.fill = efl_ref(f);
    efl_unref(tmp);
 }
@@ -78,8 +81,9 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
                                 void *engine, void *output, void *context,
                                 Ector_Surface *surface,
                                 Eina_Matrix3 *ptransform,
-                                Ector_Buffer *mask,
-                                int mask_op,
+                                int p_opacity,
+                                Ector_Buffer *comp,
+                                Efl_Gfx_Vg_Composite_Method comp_method,
                                 void *data)
 {
    Efl_Canvas_Vg_Shape_Data *pd = data;
@@ -90,16 +94,17 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
+   EFL_CANVAS_VG_COMPUTE_ALPHA(c_r, c_g, c_b, c_a, p_opacity, nd);
 
    fill = _evas_vg_render_pre(vg_pd, pd->fill,
                               engine, output, context,
-                              surface, ctransform, mask, mask_op);
+                              surface, ctransform, c_a, comp, comp_method);
    stroke_fill = _evas_vg_render_pre(vg_pd, pd->stroke.fill,
                                      engine, output, context,
-                                     surface, ctransform, mask, mask_op);
+                                     surface, ctransform, c_a, comp, comp_method);
    stroke_marker = _evas_vg_render_pre(vg_pd, pd->stroke.marker,
                                        engine, output, context,
-                                       surface, ctransform, mask, mask_op);
+                                       surface, ctransform, c_a, comp, comp_method);
 
    if (!nd->renderer)
      {
@@ -109,7 +114,7 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
      }
    ector_renderer_transformation_set(nd->renderer, ctransform);
    ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
-   ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
+   ector_renderer_color_set(nd->renderer, c_r, c_g, c_b, c_a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
    ector_renderer_shape_fill_set(nd->renderer, fill ? fill->renderer : NULL);
    ector_renderer_shape_stroke_fill_set(nd->renderer, stroke_fill ? stroke_fill->renderer : NULL);
@@ -117,7 +122,7 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
    efl_gfx_path_copy_from(nd->renderer, obj);
    efl_gfx_path_commit(nd->renderer);
    ector_renderer_prepare(nd->renderer);
-   ector_renderer_mask_set(nd->renderer, mask, mask_op);
+   ector_renderer_comp_method_set(nd->renderer, comp, comp_method);
 }
 
 static Eo *
@@ -131,6 +136,10 @@ _efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *p
    efl_gfx_shape_stroke_location_set(obj, 0.5);
    efl_gfx_shape_stroke_cap_set(obj, EFL_GFX_CAP_BUTT);
    efl_gfx_shape_stroke_join_set(obj, EFL_GFX_JOIN_MITER);
+
+   //NOTE: The default value is 4. It only refers to the standard of web svg.
+   //      https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+   efl_gfx_shape_stroke_miterlimit_set(obj, 4);
 
    nd = efl_data_scope_get(obj, EFL_CANVAS_VG_NODE_CLASS);
    nd->render_pre = _efl_canvas_vg_shape_render_pre;
@@ -203,23 +212,22 @@ _efl_canvas_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Shape_
    node = efl_duplicate(efl_super(obj, MY_CLASS));
    sd = efl_data_scope_get(node, MY_CLASS);
 
-   //FIXME: These fill, markers couldn't allow node as parent...
    if (pd->fill)
      {
         sd->fill = efl_duplicate(pd->fill);
-        efl_parent_set(sd->fill, node);
+        efl_parent_set(sd->fill, efl_parent_get(node));
      }
 
    if (pd->stroke.fill)
      {
         sd->stroke.fill = efl_duplicate(pd->stroke.fill);
-        efl_parent_set(sd->stroke.fill, node);
+        efl_parent_set(sd->stroke.fill, efl_parent_get(node));
      }
 
    if (pd->stroke.marker)
      {
         sd->stroke.marker = efl_duplicate(pd->stroke.marker);
-        efl_parent_set(sd->stroke.marker, node);
+        efl_parent_set(sd->stroke.marker, efl_parent_get(node));
      }
 
    efl_gfx_path_copy_from(node, obj);

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_CXX_TYPE_FUNCTION_DECLARATION_HH
 #define EOLIAN_CXX_TYPE_FUNCTION_DECLARATION_HH
 
@@ -37,9 +52,9 @@ struct type_function_declaration_generator {
 
       if (!as_generator(
              "template <typename F>\n"
-             "struct function_wrapper<" << string << ", F> {\n"
+             "struct function_wrapper<" << string << ", F, struct " << string << "__function_tag> {\n"
              << scope_tab << "function_wrapper(F cxx_func) : _cxx_func(cxx_func) {}\n"
-             ).generate(sink, f.c_name, ctx))
+             ).generate(sink, std::make_tuple(f.c_name, f.c_name), ctx))
         return false;
 
       if (!as_generator(
@@ -49,20 +64,25 @@ struct type_function_declaration_generator {
              << "private:\n"
              << scope_tab << "F _cxx_func;\n"
              << scope_tab << "static void deleter(void *data) {\n"
-             << scope_tab << scope_tab << "delete static_cast<function_wrapper<" << string << ", F>*>(data);\n"
+             << scope_tab << scope_tab << "delete static_cast<function_wrapper<" << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(data);\n"
              << scope_tab << "}\n"
-             ).generate(sink, std::make_tuple(f.c_name, f.c_name), ctx))
+             ).generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name), ctx))
         return false;
 
       std::vector<std::string> c_args;
       for (auto itr : f.parameters)
-        c_args.push_back(", " + itr.type.c_type + " " + itr.param_name);
+        {
+           std::string arg;
+           if (!as_generator(grammar::c_type << " " << string).generate(std::back_inserter(arg), std::make_tuple(itr, itr.param_name), ctx))
+             return false;
+           c_args.push_back(arg);
+        }
       if (!as_generator(
              scope_tab << "static " << string << " caller(void *cxx_call_data"
-             << *(string) << ") {\n"
+             << *(", " << string) << ") {\n"
              << scope_tab << scope_tab << "auto fw = static_cast<function_wrapper<"
-             << string << ", F>*>(cxx_call_data);\n"
-             ).generate(sink, std::make_tuple(f.return_type.c_type, c_args, f.c_name), ctx))
+             << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(cxx_call_data);\n"
+             ).generate(sink, std::make_tuple(f.return_type.c_type, c_args, f.c_name, f.c_name), ctx))
         return false;
 
       if (f.return_type != attributes::void_

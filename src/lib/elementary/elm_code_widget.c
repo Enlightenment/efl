@@ -311,7 +311,7 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 static void
 _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
-   Evas_Coord cx, cy, cw, ch;
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
 
    elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
 
@@ -542,6 +542,8 @@ _elm_code_widget_refresh(Elm_Code_Widget *widget, Elm_Code_Line *line)
      return ;
 
    _elm_code_widget_fill_update(widget, first_row, last_row, line);
+   if (pd->editable)
+     _elm_code_widget_cursor_update(widget, pd);
 }
 
 static void
@@ -713,7 +715,8 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
      _elm_code_widget_refresh(widget, line_obj);
    else
      _elm_code_widget_fill_line(widget, pd, elm_code_file_line_get(pd->code->file, pd->cursor_line));
-   elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
+   if (pd->editable && pd->cursor_rect)
+     elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
 }
 
 
@@ -797,6 +800,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
 
    grid = eina_list_nth(pd->grids, row - 1);
+   evas_object_smart_calculate(pd->gridbox);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
 
    if (x)
@@ -1890,7 +1894,7 @@ _elm_code_widget_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, E
    if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE;
 
    // FIXME: This should use key bindings and the standard implementation!
-   if (eina_streq(efl_input_key_get(ev), "BackSpace"))
+   if (eina_streq(efl_input_key_sym_get(ev), "BackSpace"))
      {
         efl_input_processed_set(ev, EINA_TRUE);
         return EINA_TRUE;
@@ -2413,6 +2417,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    gridrows = elm_box_add(scroller);
    evas_object_size_hint_weight_set(gridrows, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
+   elm_box_align_set(gridrows, 0.0, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
 

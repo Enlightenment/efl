@@ -1,0 +1,238 @@
+enum @beta Efl.Text.Cursor_Type
+{
+   [[Text cursor types.]]
+   before, [[Cursor type before.]]
+   under [[Cursor type under.]]
+}
+
+enum @beta Efl.Text.Cursor_Move_Type
+{
+   [[Text cursor movement types.]]
+   char_next,       [[Advances to the next character.]]
+   char_prev,       [[Advances to the previous character.]]
+   cluster_next,    [[Advances to the next grapheme cluster
+                      (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
+   cluster_prev,    [[Advances to the previous grapheme cluster
+                      (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
+   paragraph_start, [[Advances to the first character in current paragraph.]]
+   paragraph_end,   [[Advances to the last character in current paragraph.]]
+   word_start,      [[Advance to current word start.]]
+   word_end,        [[Advance to current word end.]]
+   line_start,      [[Advance to current line first character.]]
+   line_end,        [[Advance to current line last character.]]
+   first,           [[Advance to first character in the first paragraph.]]
+   last,            [[Advance to last character in the  last  paragraph.]]
+   paragraph_next,  [[Advances to the start of the next paragraph.]]
+   paragraph_prev   [[Advances to the end of the previous paragraph.]]
+}
+
+class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
+   [[Cursor API.]]
+   c_prefix: efl_text_cursor;
+   methods {
+
+      @property position {
+         [[Cursor position.]]
+         set {  }
+         get {  }
+         values {
+            position: int; [[Cursor position.]]
+         }
+      }
+
+      @property content {
+         [[The content of the cursor (the character under the cursor).]]
+         get {
+         }
+         values {
+            content: Eina.Unicode; [[The unicode codepoint of the character.]]
+         }
+      }
+
+      @property content_geometry {
+         [[The geometry of the item/char pointed by the cursor.]]
+         get { }
+         values {
+            geometry: Eina.Rect; [[The geometry in pixels.]]
+         }
+      }
+
+      @property line_number {
+         [[The line the cursor is on.]]
+         set {  }
+         get {  }
+         values {
+            line_number: int; [[The line number.]]
+         }
+      }
+
+      @property cursor_geometry {
+         [[Returns the geometry of cursor, if cursor is shown for the text 
+           of the same direction as paragraph,else  ("split cursor") will return 
+           and you need to consider the lower ("split cursor") @.lower_cursor_geometry
+
+           Split cursor geometry is valid only  in @Efl.Text.Cursor_Type.before cursor mode.]]
+         get {
+         }
+         keys {
+            ctype: Efl.Text.Cursor_Type; [[The type of the cursor.]]
+         }
+         values {
+            geometry: Eina.Rect; [[The geometry of the cursor (or upper cursor) in pixels.]]
+         }
+      }
+
+      @property lower_cursor_geometry {
+         [[Returns the geometry of the lower ("split cursor"), if logical cursor is
+           between LTR/RTL text.
+
+           To get the upper ("split cursor") @.cursor_geometry with @Efl.Text.Cursor_Type.before cursor mode.]]
+         get {
+            return: bool; [[$true if split cursor, $false otherwise.]]
+         }
+         values {
+            geometry: Eina.Rect; [[The geometry of the lower cursor in pixels.]]
+         }
+      }
+
+      equal @const {
+         [[Check if two cursors are equal - faster than compare if all you want is equality.]]
+         params {
+            dst: const(Efl.Text.Cursor); [[Destination Cursor.]]
+         }
+         return: bool; [[$true if cursors are equal, $false otherwise.]]
+      }
+
+      compare @const {
+         [[Compare two cursors
+           Return <0 if cursor position less than dst, 0 if cursor == dest and >0 otherwise.]]
+         params {
+            dst: const(Efl.Text.Cursor); [[Destination Cursor.]]
+         }
+         return: int; [[Difference between cursors.]]
+      }
+
+      copy @const {
+         [[Copy existing cursor to destination cursor, like position and cursor text object.]]
+         params {
+            dst: Efl.Text.Cursor; [[Destination Cursor.]]
+         }
+      }
+
+      move {
+         [[Move the cursor.]]
+         params {
+            @in type: Efl.Text.Cursor_Move_Type; [[The type of movement.]]
+         }
+         return: bool; [[True if actually moved.]]
+      }
+
+      char_delete {
+         [[Deletes a single character from position pointed by given cursor.]]
+      }
+
+      line_jump_by {
+         [[Jump the cursor by the given number of lines.]]
+         params {
+            by: int; [[Number of lines.]]
+         }
+         return: bool; [[True if actually moved.]]
+      }
+
+      char_coord_set {
+         [[Set cursor coordinates.]]
+         params {
+            @in coord: Eina.Position2D; [[The coordinates to set to.]]
+         }
+      }
+
+      cluster_coord_set {
+         [[Set cursor coordinates according to grapheme clusters.
+           It does not allow to put a cursor to the middle of a grapheme cluster.]]
+         params {
+            @in coord: Eina.Position2D; [[The coordinates to set to.]]
+         }
+      }
+
+      text_insert {
+         [[Adds text to the current cursor position and set the cursor to
+           *after* the start of the text just added.]]
+         params {
+            @in text: string; [[Text to append (UTF-8 format).]]
+         }
+      }
+
+      markup_insert {
+         [[Inserts a markup text at cursor position.]]
+         params {
+            @in markup: string; [[Text to append (UTF-8 format).]]
+         }
+      }
+
+      range_markup_get @const {
+         [[Markup of a given range in the text.]]
+         return: mstring @move; [[The markup in the given range.]]
+         params {
+            cur2: Efl.Text.Cursor; [[End of range.]]
+         }
+      }
+
+      range_text_get @const {
+         [[Returns the text in the range between cursor and $cur2.]]
+         return: mstring @move; [[The text in the given range.]]
+         params {
+            cur2: Efl.Text.Cursor; [[End of range.]]
+         }
+      }
+
+      range_geometry_get {
+         [[Get the simple geometry in pixels of a range in the text.
+
+           The geometry is the geometry in which rectangles in middle lines of
+           range are merged into one big rectangle. This is an optimized
+           version of @.range_precise_geometry_get.]]
+         params {
+             cur2: Efl.Text.Cursor; [[End of range.]]
+         }
+         return: iterator<Eina.Rect> @move; [[
+            Iterator on all geoemtries of the given range.]]
+      }
+
+      range_precise_geometry_get {
+         [[Get the "precise" geometry in pixels of a range.
+
+           The geometry is represented as rectangles for each of the line
+           segments in the given range [$cur1, $cur2].]]
+         params {
+             cur2: Efl.Text.Cursor; [[End of range.]]
+         }
+         return: iterator<Eina.Rect> @move; [[
+            Iterator on all simple geometries of the given range.]]
+      }
+
+      range_delete {
+         [[Deletes the range between given cursors.
+
+           This removes all the text in given range [$start,$end].]]
+         params {
+            @in cur2: Efl.Text.Cursor; [[Range end position.]]
+         }
+      }
+
+      @property text_object {
+         [[The text object this cursor is associated with.]]
+         get { }
+         values {
+            text_obj: Efl.Canvas.Object; [[The text object.]]
+         }
+      }
+   }
+   events {
+      changed: void; [[Called when its position has changed.]]
+   }
+
+   implements {
+       Efl.Object.destructor;
+       Efl.Duplicate.duplicate;
+   }
+}

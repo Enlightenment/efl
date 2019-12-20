@@ -2,11 +2,14 @@
 # include <config.h>
 #endif
 
+#define EFL_UI_FACTORY_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
 typedef struct _Efl_Ui_Caching_Factory_Data Efl_Ui_Caching_Factory_Data;
 typedef struct _Efl_Ui_Caching_Factory_Request Efl_Ui_Caching_Factory_Request;
+typedef struct _Efl_Ui_Caching_Factory_Group_Request Efl_Ui_Caching_Factory_Group_Request;
 
 struct _Efl_Ui_Caching_Factory_Data
 {
@@ -18,6 +21,7 @@ struct _Efl_Ui_Caching_Factory_Data
    // end of the list objects are added and removed.
    Eina_List *cache;
    Eina_Hash *lookup;
+   Eina_Future *flush;
 
    struct {
       unsigned int memory;
@@ -31,8 +35,13 @@ struct _Efl_Ui_Caching_Factory_Request
 {
    Efl_Ui_Caching_Factory_Data *pd;
 
+   Efl_Ui_Caching_Factory *factory;
    Eo *parent;
-   Efl_Model *model;
+};
+
+struct _Efl_Ui_Caching_Factory_Group_Request
+{
+   Eina_Value done;
 };
 
 // Clear the cache until it meet the constraint
@@ -49,15 +58,29 @@ _efl_ui_caching_factory_remove(Efl_Ui_Caching_Factory_Data *pd, Eina_List *l, Ef
 
 static void
 _efl_ui_caching_factory_item_del(Eo *obj, Efl_Ui_Caching_Factory_Data *pd,
-                                 Efl_Gfx_Entity *entity)
+                                 Eina_Iterator *entities)
 {
-   if (pd->klass) efl_del(entity);
-   else efl_ui_factory_release(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), entity);
+   if (!pd->klass)
+     {
+        efl_ui_factory_release(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), entities);
+     }
+   else
+     {
+        Efl_Gfx_Entity *entity;
+
+        EINA_ITERATOR_FOREACH(entities, entity)
+          efl_del(entity);
+        eina_iterator_free(entities);
+     }
 }
 
 static void
 _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 {
+   Eina_Array scheduled;
+
+   eina_array_step_set(&scheduled, sizeof (Eina_Array), 8);
+
    while (pd->limit.items != 0 &&
           pd->current.items > pd->limit.items)
      {
@@ -67,7 +90,8 @@ _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 
         _efl_ui_caching_factory_remove(pd, eina_list_last(pd->cache), entity);
         if (pd->lookup) eina_hash_del(pd->lookup, efl_ui_widget_style_get(entity), entity);
-        _efl_ui_caching_factory_item_del(obj, pd, entity);
+
+        eina_array_push(&scheduled, entity);
      }
 
    while (pd->limit.memory != 0 &&
@@ -79,93 +103,202 @@ _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 
         _efl_ui_caching_factory_remove(pd, eina_list_last(pd->cache), entity);
         if (pd->lookup) eina_hash_del(pd->lookup, efl_ui_widget_style_get(entity), entity);
-        _efl_ui_caching_factory_item_del(obj, pd, entity);
+
+        eina_array_push(&scheduled, entity);
      }
+
+   // We could improve this by doing some limited batch to reduce potential spike usage
+   _efl_ui_caching_factory_item_del(obj, pd, eina_array_iterator_new(&scheduled));
+   eina_array_flush(&scheduled);
 }
 
 static Eina_Value
-_efl_ui_caching_factory_create_then(Eo *obj EINA_UNUSED, void *data, const Eina_Value v)
+_efl_ui_caching_factory_uncap_then(Eo *model EINA_UNUSED,
+                                   void *data EINA_UNUSED,
+                                   const Eina_Value v)
+{
+   Efl_Ui_Widget *widget = NULL;
+
+   if (eina_value_array_count(&v) != 1) return eina_value_error_init(EINVAL);
+
+   eina_value_array_get(&v, 0, &widget);
+
+   return eina_value_object_init(widget);
+}
+
+static Eina_Value
+_efl_ui_caching_factory_create_then(Eo *model, void *data, const Eina_Value v)
 {
    Efl_Ui_Caching_Factory_Request *r = data;
    Efl_Ui_Widget *w;
-   const char *string = NULL;
+   const char *style = NULL;
 
-   if (!eina_value_string_get(&v, &string))
+   if (!eina_value_string_get(&v, &style))
      return eina_value_error_init(EFL_MODEL_ERROR_NOT_SUPPORTED);
 
-   w = eina_hash_find(r->pd->lookup, string);
+   w = eina_hash_find(r->pd->lookup, style);
    if (!w)
      {
         Eina_Future *f;
+        Eo *models[1] = { model };
 
         // No object of that style in the cache, need to create a new one
-        f = efl_ui_factory_create(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS),
-                                  r->model, r->parent);
+        // This is not ideal, we would want to gather all the request in one swoop here,
+        // left for later improvement.
+        f = efl_ui_factory_create(efl_super(r->factory, EFL_UI_CACHING_FACTORY_CLASS),
+                                  EINA_C_ARRAY_ITERATOR_NEW(models));
+        f = efl_future_then(r->factory, f,
+                            .success = _efl_ui_caching_factory_uncap_then,
+                            .success_type = EINA_VALUE_TYPE_ARRAY);
         return eina_future_as_value(f);
      }
 
-   eina_hash_del(r->pd->lookup, string, w);
-   _efl_ui_caching_factory_remove(r->pd, r->pd->cache, w);
+   eina_hash_del(r->pd->lookup, style, w);
+   _efl_ui_caching_factory_remove(r->pd, eina_list_data_find(r->pd->cache, w), w);
 
-   efl_parent_set(w, r->parent);
-   efl_ui_view_model_set(w, r->model);
+   efl_ui_view_model_set(w, model);
+   efl_event_callback_call(r->factory, EFL_UI_FACTORY_EVENT_ITEM_BUILDING, w);
 
    return eina_value_object_init(w);
 }
 
 static void
-_efl_ui_caching_factory_create_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+_efl_ui_caching_factory_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    Efl_Ui_Caching_Factory_Request *r = data;
 
-   efl_unref(r->model);
+   efl_unref(r->factory);
    efl_unref(r->parent);
    free(r);
+}
+
+static Eina_Value
+_efl_ui_caching_factory_group_create_then(Eo *obj EINA_UNUSED,
+                                          void *data,
+                                          const Eina_Value v)
+{
+   Efl_Ui_Caching_Factory_Group_Request *gr = data;
+   int len, i;
+   Efl_Ui_Widget *widget;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, widget)
+     eina_value_array_append(&gr->done, widget);
+
+   return eina_value_reference_copy(&gr->done);
+}
+
+static void
+_efl_ui_caching_factory_group_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_Caching_Factory_Group_Request *gr = data;
+
+   eina_value_flush(&gr->done);
+   free(gr);
 }
 
 static Eina_Future *
 _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
                                               Efl_Ui_Caching_Factory_Data *pd,
-                                              Efl_Model *model, Efl_Gfx_Entity *parent)
+                                              Eina_Iterator *models)
 {
+   Efl_Ui_Caching_Factory_Request *r = NULL;
+   Efl_Ui_Caching_Factory_Group_Request *gr = NULL;
    Efl_Gfx_Entity *w = NULL;
+   Efl_Model *model = NULL;
+   Eina_Future *f = NULL;
 
-   if (pd->cache)
+   if (pd->cache && pd->style && !pd->klass)
      {
-        if (pd->style && !pd->klass)
+        Eina_Future **all = NULL;
+        int count = 0;
+
+        r = calloc(1, sizeof (Efl_Ui_Caching_Factory_Request));
+        if (!r) return efl_loop_future_rejected(obj, ENOMEM);
+
+        r->pd = pd;
+        r->factory = efl_ref(obj);
+
+        all = calloc(1, sizeof (Eina_Future *));
+        if (!all) goto alloc_array_error;
+
+        EINA_ITERATOR_FOREACH(models, model)
           {
-             Efl_Ui_Caching_Factory_Request *r;
+             all[count++] = efl_future_then(model,
+                                            efl_model_property_ready_get(model, pd->style),
+                                            .success = _efl_ui_caching_factory_create_then,
+                                            .data = r);
 
-             r = calloc(1, sizeof (Efl_Ui_Caching_Factory_Request));
-             if (!r) return efl_loop_future_rejected(obj, ENOMEM);
+             Eina_Future **tmp = realloc(all, (count + 1) * sizeof (Eina_Future *));
+             if (!tmp)
+               {
+                 free(all);
+                 goto alloc_array_error;
+               }
+             all = tmp;
+          }
+        eina_iterator_free(models);
 
-             r->pd = pd;
-             r->parent = efl_ref(parent);
-             r->model = efl_ref(model);
+        all[count] = EINA_FUTURE_SENTINEL;
 
-             return efl_future_then(obj, efl_model_property_ready_get(obj, pd->style),
-                                    .success = _efl_ui_caching_factory_create_then,
-                                    .data = r,
-                                    .free = _efl_ui_caching_factory_create_cleanup);
+        return efl_future_then(obj, eina_future_all_array(all),
+                               .data = r,
+                               .free = _efl_ui_caching_factory_cleanup);
+     }
+
+   gr = calloc(1, sizeof (Efl_Ui_Caching_Factory_Group_Request));
+   if (!gr) return efl_loop_future_rejected(obj, ENOMEM);
+
+   eina_value_array_setup(&gr->done, EINA_VALUE_TYPE_OBJECT, 4);
+
+   // First get as much object from the cache as possible
+   if (pd->cache)
+     EINA_ITERATOR_FOREACH(models, model)
+       {
+          w = eina_list_data_get(pd->cache);
+          _efl_ui_caching_factory_remove(pd, pd->cache, w);
+
+          efl_ui_view_model_set(w, model);
+
+          eina_value_array_append(&gr->done, w);
+
+          if (!pd->cache) break;
+       }
+
+   // Now create object on the fly that are missing from the cache
+   if (pd->klass)
+     {
+        Efl_Ui_Widget *widget = efl_ui_widget_factory_widget_get(obj);
+
+        EINA_ITERATOR_FOREACH(models, model)
+          {
+             w = efl_add(pd->klass, widget,
+                         efl_ui_view_model_set(efl_added, model),
+                         efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_CONSTRUCTING, efl_added));
+             efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_BUILDING, w);
+             eina_value_array_append(&gr->done, w);
           }
 
-        w = eina_list_data_get(pd->cache);
+        f = efl_loop_future_resolved(obj, gr->done);
 
-        _efl_ui_caching_factory_remove(pd, pd->cache, w);
+        eina_value_flush(&gr->done);
+        free(gr);
 
-        efl_parent_set(w, parent);
+        return f;
      }
 
-   if (!w)
-     {
-        if (pd->klass) w = efl_add(pd->klass, parent);
-        else return efl_ui_factory_create(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS),
-                                          model, parent);
-     }
+   f = efl_ui_factory_create(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), models);
+   return efl_future_then(obj, f,
+                          .success = _efl_ui_caching_factory_group_create_then,
+                          .success_type = EINA_VALUE_TYPE_ARRAY,
+                          .data = gr,
+                          .free = _efl_ui_caching_factory_group_cleanup);
 
-   efl_ui_view_model_set(w, model);
-
-   return efl_loop_future_resolved(obj, eina_value_object_init(w));
+alloc_array_error:
+   efl_unref(r->parent);
+   efl_unref(r->factory);
+   free(r);
+   eina_iterator_free(models);
+   return efl_loop_future_rejected(obj, ENOMEM);
 }
 
 static void
@@ -236,62 +369,67 @@ _efl_ui_caching_factory_items_limit_get(const Eo *obj EINA_UNUSED,
    return pd->limit.items;
 }
 
-static void
-_efl_ui_caching_factory_efl_ui_factory_release(Eo *obj,
-                                               Efl_Ui_Caching_Factory_Data *pd,
-                                               Efl_Gfx_Entity *ui_view)
+static Eina_Value
+_schedule_cache_flush(Eo *obj, void *data, const Eina_Value v)
 {
-   // Are we invalidated ?
-   if (pd->invalidated)
-     {
-        _efl_ui_caching_factory_item_del(obj, pd, ui_view);
-        return;
-     }
-
-   // Change parent, disconnect the object and make it invisible
-   efl_parent_set(ui_view, obj);
-   efl_gfx_entity_visible_set(ui_view, EINA_FALSE);
-   efl_ui_view_model_set(ui_view, NULL);
-
-   // Add to the cache
-   pd->cache = eina_list_prepend(pd->cache, ui_view);
-   pd->current.items++;
-   pd->current.memory += efl_class_memory_size_get(ui_view);
-   if (efl_isa(ui_view, EFL_CACHED_ITEM_INTERFACE))
-     pd->current.memory += efl_cached_item_memory_size_get(ui_view);
-
-   // Fill lookup
-   if (!pd->klass && efl_ui_widget_style_get(ui_view))
-     {
-        if (!pd->lookup) pd->lookup = eina_hash_string_djb2_new(NULL);
-        eina_hash_direct_add(pd->lookup, efl_ui_widget_style_get(ui_view), ui_view);
-     }
+   Efl_Ui_Caching_Factory_Data *pd = data;
 
    // And check if the cache need some triming
    _efl_ui_caching_factory_flush(obj, pd);
+
+   return v;
 }
 
 static void
-_efl_ui_caching_factory_efl_object_invalidate(Eo *obj EINA_UNUSED,
-                                              Efl_Ui_Caching_Factory_Data *pd)
+_schedule_done(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
-   // As all the objects in the cache have the factory as parent, there's no need to unparent them
-   pd->cache = eina_list_free(pd->cache);
-   eina_hash_free(pd->lookup);
-   pd->lookup = NULL;
-   pd->invalidated = EINA_TRUE;
+   Efl_Ui_Caching_Factory_Data *pd = data;
+
+   pd->flush = NULL;
 }
 
-static Efl_App *
-_efl_ui_caching_factory_app_get(Eo *obj)
+static void
+_efl_ui_caching_factory_efl_ui_factory_release(Eo *obj,
+                                               Efl_Ui_Caching_Factory_Data *pd,
+                                               Eina_Iterator *ui_views)
 {
-   Efl_Object *p;
+   Efl_Gfx_Entity *ui_view;
 
-   p = efl_parent_get(obj);
-   if (!p) return NULL;
+   // Are we invalidated ?
+   if (pd->invalidated)
+     {
+        _efl_ui_caching_factory_item_del(obj, pd, ui_views);
+        return;
+     }
 
-   // It is acceptable to just have a loop as parent and not an app
-   return efl_provider_find(obj, EFL_APP_CLASS);
+   EINA_ITERATOR_FOREACH(ui_views, ui_view)
+     {
+        // Change parent, disconnect the object and make it invisible
+        efl_gfx_entity_visible_set(ui_view, EINA_FALSE);
+        efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
+
+        // Add to the cache
+        pd->cache = eina_list_prepend(pd->cache, ui_view);
+        pd->current.items++;
+        pd->current.memory += efl_class_memory_size_get(ui_view);
+        if (efl_isa(ui_view, EFL_CACHED_ITEM_INTERFACE))
+          pd->current.memory += efl_cached_item_memory_size_get(ui_view);
+
+        // Fill lookup
+        if (!pd->klass && efl_ui_widget_style_get(ui_view))
+          {
+             if (!pd->lookup) pd->lookup = eina_hash_string_djb2_new(NULL);
+             eina_hash_direct_add(pd->lookup, efl_ui_widget_style_get(ui_view), ui_view);
+          }
+     }
+   eina_iterator_free(ui_views);
+
+   // Schedule a cache flush if necessary
+   if (!pd->flush)
+     pd->flush = efl_future_then(obj, efl_loop_job(efl_loop_get(obj)),
+                                 .success = _schedule_cache_flush,
+                                 .free = _schedule_done,
+                                 .data = pd);
 }
 
 static void
@@ -300,8 +438,8 @@ _efl_ui_caching_factory_pause(void *data, const Efl_Event *event EINA_UNUSED)
    Efl_Ui_Caching_Factory_Data *pd = data;
    Efl_Gfx_Entity *entity;
 
-   // Application is going into background, let's free ressource
-   // Possible improvement would be to delay that by a few second.
+   // Application is going into background, let's free resources.
+   // Possible improvement would be to delay that by a few seconds.
    EINA_LIST_FREE(pd->cache, entity)
      efl_del(entity);
 
@@ -310,18 +448,42 @@ _efl_ui_caching_factory_pause(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_ui_caching_factory_efl_object_parent_set(Eo *obj, Efl_Ui_Caching_Factory_Data *pd, Efl_Object *parent)
+_invalidate(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Caching_Factory_Data *pd = data;
+
+   // As all the objects in the cache have the factory as parent, there's no need to unparent them
+   pd->cache = eina_list_free(pd->cache);
+   eina_hash_free(pd->lookup);
+   pd->lookup = NULL;
+   pd->invalidated = EINA_TRUE;
+}
+
+static Efl_Object *
+_efl_ui_caching_factory_efl_object_finalize(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 {
    Efl_App *a;
 
-   a = _efl_ui_caching_factory_app_get(obj);
-   if (a) efl_event_callback_del(a, EFL_APP_EVENT_PAUSE, _efl_ui_caching_factory_pause, pd);
+   obj = efl_finalize(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS));
+   if (!obj) return NULL;
 
-   efl_parent_set(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), parent);
-
-   // We are fetching the parent again, just in case the update was denied
-   a = _efl_ui_caching_factory_app_get(obj);
+   a = efl_provider_find(obj, EFL_APP_CLASS);
    if (a) efl_event_callback_add(a, EFL_APP_EVENT_PAUSE, _efl_ui_caching_factory_pause, pd);
+
+   // The order of the invalidate event is guaranteed to happen before any children is invalidated
+   // this is not the case for the children invalidate function, which can happen in random order.
+   efl_event_callback_add(efl_ui_widget_factory_widget_get(obj), EFL_EVENT_INVALIDATE, _invalidate, pd);
+
+   return obj;
+}
+
+static void
+_efl_ui_caching_factory_efl_object_invalidate(Eo *obj,
+                                              Efl_Ui_Caching_Factory_Data *pd)
+{
+   efl_event_callback_del(efl_ui_widget_factory_widget_get(obj), EFL_EVENT_INVALIDATE, _invalidate, pd);
+
+   efl_invalidate(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS));
 }
 
 static Eina_Error

@@ -7,14 +7,14 @@ static void
 _rd_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
                void *event_info EINA_UNUSED)
 {
-   printf("radio value : %d\n", elm_radio_value_get(obj));
+   printf("radio(%p) value : %d\n", obj, elm_radio_value_get(obj));
 }
 
 static void
 _rdg_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
                 void *event_info EINA_UNUSED)
 {
-   printf("radio group value : %d\n", elm_radio_value_get(obj));
+   printf("radio(%p) group value : %d\n", obj, elm_radio_value_get(obj));
 }
 
 static void

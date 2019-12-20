@@ -1,19 +1,33 @@
-class @beta Efl.Cubic_Bezier_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Cubic_Bezier_Interpolator extends Efl.Object implements Efl.Interpolator
 {
-   [[Efl cubic_bezier interpolator class]]
+   [[Cubic Bezier interpolator. It starts slow, then moves quickly and then slows down
+     again before stopping.
+
+     The exact shape of the mapping curve can be modified through the @.control_points
+     property.
+
+     @since 1.24
+   ]]
    data: Efl_Cubic_Bezier_Interpolator_Data;
    methods {
-      @property factors {
-         [[Factors property]]
+      @property control_points {
+         [[Cubic Bezier curves are described by 4 2D control points
+           (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+           For each control point, the X coordinate is an input value and the Y coordinate is the
+           corresponding output value.
+           The first one, P0, is set to $[(0,0)]: The input $[0.0] is mapped to the $[0.0] output.
+           The last one, P3, is set to $[(1,1)]: The input $[1.0] is mapped to the $[1.0] output.
+           The other two control points can be set through this property and control the shape of
+           the curve. Note that the control points do not need to be in the $[0...1] range, and
+           neither do the output values of the curve.
+         ]]
          set {
          }
          get {
          }
          values {
-            factor1: double; [[First factor of the interpolation function.]]
-            factor2: double; [[Second factor of the interpolation function.]]
-            factor3: double; [[Third factor of the interpolation function.]]
-            factor4: double; [[Fourth factor of the interpolation function.]]
+            p1: Eina.Vector2; [[P1 control point.]]
+            p2: Eina.Vector2; [[P2 control point.]]
          }
       }
    }

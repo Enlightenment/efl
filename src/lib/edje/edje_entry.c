@@ -1600,11 +1600,23 @@ static void
 _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
              Eina_Bool backspace)
 {
-   if (!evas_textblock_cursor_char_next(c))
+
+   if (backspace)
      {
-        return;
+        if (!evas_textblock_cursor_char_prev(c))
+          {
+             return;
+          }
+        evas_textblock_cursor_char_next(c);
      }
-   evas_textblock_cursor_char_prev(c);
+   else
+     {
+        if (!evas_textblock_cursor_char_next(c))
+          {
+             return;
+          }
+        evas_textblock_cursor_char_prev(c);
+     }
 
    Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
    if (!info)
@@ -1617,16 +1629,40 @@ _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
    info->insert = EINA_FALSE;
    if (backspace)
      {
-        info->change.del.start = pos - 1;
+
+        Evas_Textblock_Cursor *cc = evas_object_textblock_cursor_new(en->rp->object);
+        evas_textblock_cursor_copy(c, cc);
+        Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_FALSE);
+        if (remove_cluster)
+          {
+             evas_textblock_cursor_cluster_prev(cc);
+          }
+        else
+          {
+             evas_textblock_cursor_char_prev(cc);
+          }
+
+        info->change.del.start = evas_textblock_cursor_pos_get(cc);
         info->change.del.end = pos;
-        tmp = evas_textblock_cursor_content_get(c);
-        evas_textblock_cursor_char_delete(c);
+
+        tmp = evas_textblock_cursor_range_text_get(c, cc, EVAS_TEXTBLOCK_TEXT_MARKUP);
+        evas_textblock_cursor_range_delete(c, cc);
+        evas_textblock_cursor_free(cc);
      }
    else
      {
         Evas_Textblock_Cursor *cc = evas_object_textblock_cursor_new(en->rp->object);
         evas_textblock_cursor_copy(c, cc);
-        evas_textblock_cursor_cluster_next(cc);
+
+        Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_TRUE);
+        if (remove_cluster)
+          {
+             evas_textblock_cursor_cluster_next(cc);
+          }
+        else
+          {
+             evas_textblock_cursor_char_next(cc);
+          }
 
         info->change.del.start = evas_textblock_cursor_pos_get(cc);
         info->change.del.end = pos;
@@ -1954,7 +1990,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                }
              else
                {
-                  if (evas_textblock_cursor_char_prev(en->cursor))
+                  //if (evas_textblock_cursor_char_prev(en->cursor))
                     {
                        _delete_emit(ed, en->cursor, en, old_cur_pos, EINA_TRUE);
                     }
@@ -3014,9 +3050,9 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
 
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
      {
-        evas_object_show(en->cursor_bg);
-        evas_object_show(en->cursor_fg);
-        evas_object_show(en->cursor_fg2);
+        if (en->cursor_bg) evas_object_show(en->cursor_bg);
+        if (en->cursor_fg) evas_object_show(en->cursor_fg);
+        if (en->cursor_fg2) evas_object_show(en->cursor_fg2);
         en->input_panel_enable = EINA_TRUE;
 
 #ifdef HAVE_ECORE_IMF
@@ -4047,7 +4083,7 @@ _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_next(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_next(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
 
@@ -4081,7 +4117,7 @@ _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
 
 
 Eina_Bool
-_edje_text_cursor_prev(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_prev(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
 
@@ -4116,7 +4152,7 @@ _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_up(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_up(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
@@ -4156,7 +4192,7 @@ _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_down(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_down(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
@@ -4195,7 +4231,7 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4230,7 +4266,7 @@ _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_end(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4264,7 +4300,7 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_copy(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *d, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_copy(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *d, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
 
@@ -4294,7 +4330,7 @@ _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst)
 }
 
 void
-_edje_text_cursor_line_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_line_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4328,7 +4364,7 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_line_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_line_end(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c)
 {
    Entry *en;
    int old_cur_pos;
@@ -4361,10 +4397,13 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 Eina_Bool
-_edje_text_cursor_coord_set(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c,
+_edje_text_cursor_coord_set(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c,
                              Evas_Coord x, Evas_Coord y)
 {
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
    Entry *en = rp->typedata.text->entry_data;
+   if (!en) return EINA_FALSE;
    if ((c == _cursor_get(rp, EDJE_CURSOR_SELECTION_BEGIN)) ||
        (c == _cursor_get(rp, EDJE_CURSOR_SELECTION_END)))
      {
@@ -4408,7 +4447,7 @@ _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 char *
-_edje_text_cursor_content_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_content_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Handle *c)
 {
    return evas_textblock_cursor_content_get(c);
 }
@@ -4424,7 +4463,7 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 void
-_edje_text_cursor_pos_set(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *c, int pos)
+_edje_text_cursor_pos_set(Edje_Real_Part *rp, Efl_Text_Cursor_Handle *c, int pos)
 {
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -4453,7 +4492,7 @@ _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos)
 }
 
 int
-_edje_text_cursor_pos_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Cursor *c)
+_edje_text_cursor_pos_get(Edje_Real_Part *rp EINA_UNUSED, Efl_Text_Cursor_Handle *c)
 {
    return evas_textblock_cursor_pos_get(c);
 }
@@ -4700,9 +4739,24 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
                {
                   if (ecore_imf_context_input_hint_get(ctx) & ECORE_IMF_INPUT_HINT_SENSITIVE_DATA)
                     {
+                       int idx = 0;
                        char *itr = NULL;
-                       for (itr = plain_text; itr && *itr; ++itr)
-                         *itr = '*';
+                       size_t len = eina_unicode_utf8_get_len(plain_text);
+                       char *u_text = (char *)malloc(len * sizeof(char) + 1);
+                       if (!u_text) return EINA_FALSE;
+
+                       itr = u_text;
+                       while (eina_unicode_utf8_next_get(plain_text, &idx))
+                         {
+                            *itr = '*';
+                            itr++;
+                         }
+                       *itr = 0;
+
+                       free(plain_text);
+                       plain_text = strdup(u_text);
+                       free(u_text);
+                       u_text = NULL;
                     }
 
                   *text = strdup(plain_text);

@@ -28,7 +28,7 @@
 #include <fcntl.h>
 
 #ifdef _WIN32
-# include <windows.h>
+# include <evil_private.h> /* mkdir */
 #endif
 
 #include <Eina.h>
@@ -724,7 +724,10 @@ EFL_END_TEST
 EFL_START_TEST(eina_test_file_mktemp)
 {
    Eina_Tmpstr *tmpfile, *tmpdir = NULL;
-   char buf[PATH_MAX], fmt[256];
+   char buf[PATH_MAX];
+#ifndef _WIN32
+   char fmt[256];
+#endif
    Eina_File_Direct_Info *info;
    Eina_Iterator *it;
    Eina_File *file;

@@ -1714,7 +1714,11 @@ main(int argc, char **argv)
    printf("alpha 1\n");
    if (!head_only)
      {
+#ifdef _WIN32
+        if (shm_fd) printf("shmfile %s\n", shmfile);
+#else
         if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
+#endif
         else
           {
              // could also to "tmpfile %s\n" like shmfile but just

@@ -39,8 +39,6 @@ struct _Eldbus_Property_Promise
   Eina_Stringshare *property;
 };
 
-static void _eldbus_model_proxy_property_set_data_free(Eldbus_Model_Proxy_Property_Set_Data *);
-
 static Eina_Bool
 _eldbus_model_proxy_load(Eldbus_Model_Proxy_Data *pd)
 {
@@ -236,6 +234,9 @@ _eldbus_model_proxy_cancel_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,
    Eldbus_Model_Proxy_Property_Set_Data *sd = data;
 
    sd->promise = NULL;
+   eina_stringshare_del(sd->property);
+   eina_value_free(sd->value);
+   free(sd);
 }
 
 static Eldbus_Pending *
@@ -655,7 +656,6 @@ _eldbus_model_proxy_property_set_load_cb(void *data,
    if (!signature || !properties)
      {
         eina_promise_reject(set_data->promise, EFL_MODEL_ERROR_UNKNOWN);
-        _eldbus_model_proxy_property_set_data_free(set_data);
         goto end;
      }
 
@@ -688,7 +688,7 @@ _eldbus_model_proxy_property_set_cb(void *data,
      {
          ERR("%s: %s", error_name, error_text);
          eina_promise_reject(sd->promise, EFL_MODEL_ERROR_UNKNOWN);
-         goto end;
+         return;
      }
 
    value = eina_hash_find(pd->properties, sd->property);
@@ -705,9 +705,6 @@ _eldbus_model_proxy_property_set_cb(void *data,
           eina_promise_reject(sd->promise,
                               EFL_MODEL_ERROR_NOT_FOUND);
      }
-
- end:
-   _eldbus_model_proxy_property_set_data_free(sd);
 }
 
 static const char *
@@ -724,15 +721,6 @@ _eldbus_model_proxy_property_type_get(Eldbus_Model_Proxy_Data *pd,
      }
 
    return property_introspection->type;
-}
-
-static void
-_eldbus_model_proxy_property_set_data_free(Eldbus_Model_Proxy_Property_Set_Data *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   eina_stringshare_del(data->property);
-   eina_value_free(data->value);
-   free(data);
 }
 
 #include "eldbus_model_proxy.eo.c"

@@ -8,8 +8,6 @@
 #include "efl_ui_suite.h"
 #include "eo_internal.h"
 
-EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS)
-
 typedef struct {
    Efl_Ui_Widget *btn1, *btn2;
    Efl_Ui_Widget *box;
@@ -21,8 +19,7 @@ static void
 _small_ui(State *s)
 {
    s->win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
 
    s->ic = efl_add(EFL_UI_IMAGE_CLASS, s->win,
                  efl_ui_win_icon_object_set(s->win, efl_added));
@@ -235,8 +232,7 @@ EFL_START_TEST(efl_ui_test_widget_parent_relation)
    Efl_Ui_Win *win, *w1, *w2, *w3;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
    //first check the initial state
    w1 = efl_add(efl_ui_widget_realized_class_get(), win);
    ck_assert_ptr_eq(efl_ui_widget_parent_get(w1), win);
@@ -259,8 +255,7 @@ EFL_START_TEST(efl_ui_test_widget_disabled_parent)
    Efl_Ui_Win *win, *w1, *w2, *t;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
    //first check the initial state
    w1 = efl_add(efl_ui_widget_realized_class_get(), win);
    efl_ui_widget_disabled_set(w1, EINA_TRUE);
@@ -295,8 +290,7 @@ EFL_START_TEST(efl_ui_test_widget_disabled_behaviour)
    Efl_Ui_Win *win, *w1, *w2, *t;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
    //first check the initial state
    w1 = efl_add(efl_ui_widget_realized_class_get(), win);
    efl_ui_widget_disabled_set(w1, EINA_TRUE);
@@ -326,25 +320,6 @@ EFL_START_TEST(efl_ui_test_widget_disabled_behaviour)
 }
 EFL_END_TEST
 
-static int tree_abort;
-static int tree_abort_level;
-
-static void
-_shutdown(void)
-{
-   eina_log_abort_on_critical_set(tree_abort);
-   eina_log_abort_on_critical_level_set(tree_abort_level);
-}
-
-static void
-_setup(void)
-{
-   tree_abort = eina_log_abort_on_critical_get();
-   tree_abort_level = eina_log_abort_on_critical_level_get();
-   eina_log_abort_on_critical_level_set(2);
-   eina_log_abort_on_critical_set(1);
-}
-
 EFL_START_TEST(efl_ui_test_widget_win_provider_find)
 {
    State s;
@@ -359,7 +334,7 @@ EFL_END_TEST
 
 void efl_ui_test_widget(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _shutdown);
+   tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
    tcase_add_test(tc, efl_ui_test_widget_parent_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_sub_iterator);

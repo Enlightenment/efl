@@ -39,12 +39,13 @@ struct _Eolian_Unit
    Eolian_State  *state;
    Eina_Hash     *children;
    Eina_Hash     *classes;
-   Eina_Hash     *globals;
    Eina_Hash     *constants;
+   Eina_Hash     *errors;
    Eina_Hash     *aliases;
    Eina_Hash     *structs;
    Eina_Hash     *enums;
    Eina_Hash     *objects;
+   unsigned short version;
 };
 
 typedef struct _Eolian_State_Area
@@ -57,8 +58,8 @@ typedef struct _Eolian_State_Area
    Eina_Hash *aliases_f;
    Eina_Hash *structs_f;
    Eina_Hash *enums_f;
-   Eina_Hash *globals_f;
    Eina_Hash *constants_f;
+   Eina_Hash *errors_f;
    Eina_Hash *objects_f;
 } Eolian_State_Area;
 
@@ -85,6 +86,7 @@ struct _Eolian_Object
    Eolian_Unit *unit;
    Eina_Stringshare *file;
    Eina_Stringshare *name;
+   Eina_Stringshare *c_name;
    int line;
    int column;
    int refcount;
@@ -223,12 +225,16 @@ struct _Eolian_Function
    Eolian_Implement *impl;
    Eolian_Documentation *get_return_doc;
    Eolian_Documentation *set_return_doc;
-   Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
-   Eina_Bool get_return_warn_unused :1; /* also used for methods */
-   Eina_Bool set_return_warn_unused :1;
-   Eina_Bool is_class :1;
    Eina_List *ctor_of;
    Eolian_Class *klass;
+   Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
+   Eina_Bool get_return_no_unused :1; /* also used for methods */
+   Eina_Bool set_return_no_unused :1;
+   Eina_Bool get_return_move      :1;
+   Eina_Bool set_return_move      :1;
+   Eina_Bool get_return_by_ref    :1;
+   Eina_Bool set_return_by_ref    :1;
+   Eina_Bool is_static :1;
 };
 
 struct _Eolian_Part
@@ -249,11 +255,18 @@ struct _Eolian_Function_Parameter
    Eolian_Type *type;
    Eolian_Expression *value;
    Eolian_Documentation *doc;
-   Eolian_Parameter_Dir param_dir;
-   Eina_Bool nonull :1; /* True if this argument cannot be NULL - deprecated */
-   Eina_Bool nullable :1; /* True if this argument is nullable */
+   Eolian_Parameter_Direction param_dir;
    Eina_Bool optional :1; /* True if this argument is optional */
+   Eina_Bool by_ref   :1;
+   Eina_Bool move     :1;
 };
+
+typedef enum
+{
+   EOLIAN_C_TYPE_DEFAULT = 0,
+   EOLIAN_C_TYPE_PARAM,
+   EOLIAN_C_TYPE_RETURN
+} Eolian_C_Type_Type;
 
 struct _Eolian_Type
 {
@@ -262,15 +275,16 @@ struct _Eolian_Type
    Eolian_Type_Builtin_Type btype;
    Eolian_Type *base_type;
    Eolian_Type *next_type;
-   Eina_Stringshare *freefunc;
    union
    {
       Eolian_Class *klass;
       Eolian_Typedecl *tdecl;
+      Eolian_Error *error;
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
-   Eina_Bool owned     :1;
+   Eina_Bool move      :1;
+   Eina_Bool ownable   :1;
 };
 
 struct _Eolian_Typedecl
@@ -285,6 +299,7 @@ struct _Eolian_Typedecl
    Eina_Stringshare *legacy;
    Eina_Stringshare *freefunc;
    Eina_Bool is_extern :1;
+   Eina_Bool ownable :1;
 };
 
 struct _Eolian_Implement
@@ -311,7 +326,6 @@ struct _Eolian_Constructor
    Eolian_Object base;
    const Eolian_Class *klass;
    Eina_Bool is_optional: 1;
-   Eina_Bool is_ctor_param : 1;
 };
 
 struct _Eolian_Event
@@ -325,11 +339,21 @@ struct _Eolian_Event
    Eina_Bool is_restart :1;
 };
 
+struct _Eolian_Error
+{
+   Eolian_Object base;
+   Eina_Stringshare *msg;
+   Eolian_Documentation *doc;
+   Eina_Bool is_extern :1;
+};
+
 struct _Eolian_Struct_Type_Field
 {
    Eolian_Object     base;
    Eolian_Type      *type;
    Eolian_Documentation *doc;
+   Eina_Bool move     :1;
+   Eina_Bool by_ref   :1;
 };
 
 struct _Eolian_Enum_Type_Field
@@ -367,10 +391,9 @@ struct _Eolian_Expression
    Eina_Bool weak_rhs :1;
 };
 
-struct _Eolian_Variable
+struct _Eolian_Constant
 {
    Eolian_Object         base;
-   Eolian_Variable_Type  type;
    Eolian_Type          *base_type;
    Eolian_Expression    *value;
    Eolian_Documentation *doc;
@@ -404,12 +427,12 @@ void database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype);
+void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype, Eina_Bool by_ref);
 void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *src, const Eolian_Type *tp);
 
-Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp, Eina_Bool allow_void);
+Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp, Eina_Bool allow_void, const Eolian_Type **otp);
 
 /* expressions */
 
@@ -422,8 +445,8 @@ void database_expr_print(Eolian_Expression *expr);
 
 /* variables */
 
-void database_var_del(Eolian_Variable *var);
-void database_var_add(Eolian_Unit *unit, Eolian_Variable *var);
+void database_constant_del(Eolian_Constant *var);
+void database_constant_add(Eolian_Unit *unit, Eolian_Constant *var);
 
 /* classes */
 void database_class_del(Eolian_Class *cl);
@@ -447,5 +470,9 @@ void database_event_del(Eolian_Event *event);
 
 /* parts */
 void database_part_del(Eolian_Part *part);
+
+/* errors */
+void database_error_del(Eolian_Error *err);
+void database_error_add(Eolian_Unit *unit, Eolian_Error *err);
 
 #endif

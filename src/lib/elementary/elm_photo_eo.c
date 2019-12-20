@@ -56,6 +56,7 @@ _elm_photo_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_file_mmap_set, _elm_photo_efl_file_mmap_set),
       EFL_OBJECT_OP_FUNC(efl_file_mmap_get, _elm_photo_efl_file_mmap_get),
       EFL_OBJECT_OP_FUNC(efl_file_load, _elm_photo_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _elm_photo_efl_file_unload),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_photo_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_draggable_drag_target_set, _elm_photo_efl_ui_draggable_drag_target_set),
       EFL_OBJECT_OP_FUNC(efl_ui_draggable_drag_target_get, _elm_photo_efl_ui_draggable_drag_target_get),
@@ -76,4 +77,4 @@ static const Efl_Class_Description _elm_photo_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_photo_class_get, &_elm_photo_class_desc, EFL_UI_WIDGET_CLASS, EFL_FILE_MIXIN, EFL_UI_CLICKABLE_INTERFACE, EFL_UI_DRAGGABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_photo_class_get, &_elm_photo_class_desc, EFL_UI_WIDGET_CLASS, EFL_FILE_MIXIN, EFL_INPUT_CLICKABLE_MIXIN, EFL_UI_DRAGGABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);

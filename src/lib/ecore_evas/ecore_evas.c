@@ -14,18 +14,17 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#if defined(HAVE_SYS_MMAN_H) || defined(_WIN32)
-# include <sys/mman.h>
-#endif
-
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
 #endif
 
 #include <Ecore.h>
 #include "ecore_private.h"
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
+#define EFL_INTERNAL_UNSTABLE
 #include <Evas_Internal.h>
 
 #include "Ecore_Evas.h"
@@ -35,9 +34,6 @@
 #include "ecore_evas_cocoa.h"
 #include "ecore_evas_extn.h"
 #include "ecore_evas_win32.h"
-
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
 
 #include "ecore_private.h"
 
@@ -80,6 +76,8 @@ static Ecore_Animator *_ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, c
 static void _ecore_evas_animator_freeze(Ecore_Animator *animator);
 static void _ecore_evas_animator_thaw(Ecore_Animator *animator);
 static void *_ecore_evas_animator_del(Ecore_Animator *animator);
+
+static void _ecore_evas_event_del(void *data, const Efl_Event *ev EINA_UNUSED);
 
 static void
 _ecore_evas_focus_out_dispatch(Ecore_Evas *ee, Efl_Input_Device *seat)
@@ -3436,6 +3434,12 @@ _ecore_evas_free(Ecore_Evas *ee)
    Efl_Input_Device *dev;
    Ecore_Evas_Interface *iface;
 
+   if (ee->self_del)
+     {
+        efl_event_callback_del(ee->evas, EFL_EVENT_INVALIDATE, _ecore_evas_event_del, ee);
+        ee->self_del = EINA_FALSE;
+     }
+
    ee->deleted = EINA_TRUE;
    if (ee->refcount > 0) return;
 
@@ -3450,7 +3454,12 @@ _ecore_evas_free(Ecore_Evas *ee)
      }
    ee->animator_count = 0;
 
-   efl_event_callback_array_del(ee->evas, animator_watch(), ee);
+   /* not present in extn engine */
+   if (ee->evas)
+     {
+        efl_event_callback_array_del(ee->evas, animator_watch(), ee);
+        efl_event_callback_array_del(ee->evas, _ecore_evas_device_cbs(), ee);
+     }
    if (ee->anim)
      ecore_animator_del(ee->anim);
    ee->anim = NULL;
@@ -3491,10 +3500,13 @@ _ecore_evas_free(Ecore_Evas *ee)
      ecore_timer_del(ee->prop.wm_rot.manual_mode.timer);
    _ecore_evas_aux_hint_free(ee);
    ee->prop.wm_rot.manual_mode.timer = NULL;
-   efl_event_callback_array_del(ee->evas, _ecore_evas_device_cbs(), ee);
    eina_hash_free(ee->prop.cursors);
    ee->prop.cursors = NULL;
-   evas_free(ee->evas);
+   if (!ee->evas_dying)
+     {
+        ee->evas_dying = EINA_TRUE;
+        evas_free(ee->evas);
+     }
    ee->evas = NULL;
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
    ee->driver = NULL;
@@ -4819,7 +4831,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    if (info->double_click) ev->button_flags |= EFL_POINTER_FLAGS_DOUBLE_CLICK;
    if (info->triple_click) ev->button_flags |= EFL_POINTER_FLAGS_TRIPLE_CLICK;
    ev->timestamp = info->timestamp;
-   ev->tool = info->multi.device;
+   ev->touch_id = info->multi.device;
    _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
    ev->radius = info->multi.radius;
    ev->radius_x = info->multi.radius_x;
@@ -4880,7 +4892,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
 
    ev->action = EFL_POINTER_ACTION_MOVE;
    ev->timestamp = info->timestamp;
-   ev->tool = info->multi.device;
+   ev->touch_id = info->multi.device;
    _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
 
    ev->radius = info->multi.radius;
@@ -4996,7 +5008,7 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
 
    ev->action = EFL_POINTER_ACTION_AXIS;
    ev->timestamp = info->timestamp;
-   ev->tool = info->toolid;
+   ev->touch_id = info->toolid;
 
    // see also evas_events.c
    for (n = 0; n < info->naxis; n++)
@@ -5264,6 +5276,16 @@ ecore_evas_evas_new(Ecore_Evas *ee, int w, int h)
    return e;
 }
 
+static void
+_ecore_evas_event_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   if (ee->evas_dying) return;
+
+   ee->evas_dying = EINA_TRUE;
+   ecore_evas_free(ee);
+}
+
 EAPI void
 ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window)
 {
@@ -5277,6 +5299,9 @@ ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window)
 
    if (single_window)
      evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+
+   efl_event_callback_add(ee->evas, EFL_EVENT_INVALIDATE, _ecore_evas_event_del, ee);
+   ee->self_del = EINA_TRUE;
 }
 
 static Ecore_Animator *

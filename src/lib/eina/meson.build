@@ -297,13 +297,12 @@ endif
 if cc.has_header_symbol(pthread_np_header_file, 'pthread_attr_setaffinity_np', args : pthread_args)
    eina_config.set('EINA_HAVE_PTHREAD_AFFINITY', '1')
 endif
-# FIXME the author of eina_debug probebly never ran with EINA_HAVE_DEBUG_THREADS
-# however eina debug decides to init that lock and never frees it. which means
-# the code in eina_main.c will not work in the way it currently is there.
 
-#if debug_threads or get_option('debug-threads')
-#   eina_config.set('EINA_HAVE_DEBUG_THREADS', '1')
-#endif
+if debug_threads or get_option('debug-threads')
+   if cc.has_header_symbol('execinfo.h', 'backtrace')
+      eina_config.set('EINA_HAVE_DEBUG_THREADS', '1')
+   endif
+endif
 
 eina_config.set('EINA_SIZEOF_WCHAR_T', cc.sizeof('wchar_t',  prefix : '#include<wchar.h>'))
 
@@ -326,18 +325,6 @@ if cc.has_header('byteswap.h')
    eina_config.set('EINA_HAVE_BYTESWAP_H', '1')
 endif
 
-if cc.has_header_symbol('byteswap.h', 'bswap_16')
-   eina_config.set('EINA_HAVE_BSWAP16', '1')
-endif
-
-if cc.has_header_symbol('byteswap.h', 'bswap_32')
-   eina_config.set('EINA_HAVE_BSWAP32', '1')
-endif
-
-if cc.has_header_symbol('byteswap.h', 'bswap_64')
-   eina_config.set('EINA_HAVE_BSWAP64', '1')
-endif
-
 if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
    eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
 endif
@@ -358,7 +345,6 @@ endif
 eina_config_file = configure_file(
   output: 'eina_config.h',
   configuration: eina_config,
-  install: true,
   install_dir: dir_package_include)
 
 public_headers += eina_config_file

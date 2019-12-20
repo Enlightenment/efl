@@ -5,6 +5,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_UI_FORMAT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -68,22 +69,6 @@ static int _days_in_month[2][12] =
 };
 
 static Eina_Bool _efl_ui_calendar_smart_focus_next_enable = EINA_FALSE;
-
-EOLIAN static void
-_efl_ui_calendar_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Calendar_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   EFL_UI_CALENDAR_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->filling) return;
-   // 7x8 (1 month+year, days, 6 dates.)
-   elm_coords_finger_size_adjust(7, &minw, 8, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
 
 // Get the max day number for each month
 static inline int
@@ -167,37 +152,17 @@ _disable(Efl_Ui_Calendar_Data *sd,
 static void
 _set_month_year(Efl_Ui_Calendar_Data *sd)
 {
+   Eina_Strbuf *strbuf = eina_strbuf_new();
+   Eina_Value val;
 
    sd->filling = EINA_TRUE;
 
-   if (sd->format_cb)
-     {
-        Eina_Value val;
-        const char *buf;
-
-		eina_value_setup(&val, EINA_VALUE_TYPE_TM);
-        eina_value_set(&val, sd->shown_date);
-        eina_strbuf_reset(sd->format_strbuf);
-        sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
-        buf = eina_strbuf_string_get(sd->format_strbuf);
-		eina_value_flush(&val);
-
-        if (buf)
-          elm_layout_text_set(sd->obj, "month_text", buf);
-        else
-          elm_layout_text_set(sd->obj, "month_text", "");
-     }
-   else
-     {
-        char *buf;
-        buf = eina_strftime(E_("%B %Y"), &sd->shown_date);
-        if (buf)
-          {
-             elm_layout_text_set(sd->obj, "month_text", buf);
-             free(buf);
-          }
-        else elm_layout_text_set(sd->obj, "month_text", "");
-     }
+   eina_value_setup(&val, EINA_VALUE_TYPE_TM);
+   eina_value_set(&val, sd->shown_date);
+   efl_ui_format_formatted_value_get(sd->obj, strbuf, val);
+   elm_layout_text_set(sd->obj, "month_text", eina_strbuf_string_get(strbuf));
+   eina_value_flush(&val);
+   eina_strbuf_free(strbuf);
 
    sd->filling = EINA_FALSE;
 }
@@ -460,9 +425,9 @@ _btn_create(Eo *obj, const char *style, char *part)
                   efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
                   efl_ui_autorepeat_initial_timeout_set(efl_added, FIRST_INTERVAL),
                   efl_ui_autorepeat_gap_timeout_set(efl_added, INTERVAL),
-                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                          _inc_dec_btn_clicked_cb, obj),
-                  efl_event_callback_add(efl_added, EFL_UI_EVENT_REPEATED,
+                  efl_event_callback_add(efl_added, EFL_UI_AUTOREPEAT_EVENT_REPEATED,
                                          _inc_dec_btn_repeated_cb, obj),
                   efl_content_set(efl_part(obj, part), efl_added));
 }
@@ -826,12 +791,11 @@ _efl_ui_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Calendar_Da
 EOLIAN static void
 _efl_ui_calendar_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Calendar_Data *_pd EINA_UNUSED)
 {
-   elm_layout_freeze(obj);
-
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _set_headers(obj);
    _populate(obj);
 
-   elm_layout_thaw(obj);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -840,9 +804,6 @@ _efl_ui_calendar_efl_object_destructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
    int i;
 
    ecore_timer_del(sd->update_timer);
-
-   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
-   eina_strbuf_free(sd->format_strbuf);
 
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
@@ -919,7 +880,6 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
    priv->today_it = -1;
    priv->selected_it = -1;
    priv->first_day_it = -1;
-   priv->format_cb = NULL;
 
    edje_object_signal_callback_add
      (wd->resize_obj, "efl,action,selected", "*",
@@ -967,6 +927,8 @@ _efl_ui_calendar_efl_object_constructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
 
    obj = _efl_ui_calendar_constructor_internal(obj, sd);
+   // 7x8 (1 month+year, days, 6 dates.)
+   efl_ui_layout_finger_size_multiplier_set(obj, 7, 8);
 
    return obj;
 }
@@ -1146,62 +1108,9 @@ _efl_ui_calendar_date_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_calendar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Calendar_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
+_efl_ui_calendar_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Calendar_Data *pd EINA_UNUSED)
 {
-   if ((sd->format_cb_data == func_data) && (sd->format_cb == func))
-     return;
-
-   if (sd->format_cb_data && sd->format_free_cb)
-     sd->format_free_cb(sd->format_cb_data);
-
-   sd->format_cb = func;
-   sd->format_cb_data = func_data;
-   sd->format_free_cb = func_free_cb;
-   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
-
    evas_object_smart_changed(obj);
-}
-
-static void
-_calendar_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
-{
-   Efl_Ui_Calendar_Data *sd = data;
-   const Eina_Value_Type *type = eina_value_type_get(&value);
-   struct tm v;
-
-   if (type == EINA_VALUE_TYPE_TM)
-     {
-        eina_value_get(&value, &v);
-        eina_strbuf_append_strftime(str, sd->format_template, &v);
-     }
-}
-
-static void
-_calendar_format_free_cb(void *data)
-{
-   Efl_Ui_Calendar_Data *sd = data;
-
-   if (sd && sd->format_template)
-     {
-        eina_stringshare_del(sd->format_template);
-        sd->format_template = NULL;
-     }
-}
-
-EOLIAN static void
-_efl_ui_calendar_efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Calendar_Data *sd, const char *template)
-{
-   if (!template) return;
-
-   eina_stringshare_replace(&sd->format_template, template);
-
-   efl_ui_format_cb_set(obj, sd, _calendar_format_cb, _calendar_format_free_cb);
-}
-
-EOLIAN static const char *
-_efl_ui_calendar_efl_ui_format_format_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
-{
-   return sd->format_template;
 }
 
 EOLIAN static void
@@ -1243,11 +1152,6 @@ _efl_ui_calendar_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNU
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_calendar, Efl_Ui_Calendar_Data)
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_CALENDAR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_calendar)
 
 #include "efl_ui_calendar.eo.c"
 

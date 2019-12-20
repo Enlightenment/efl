@@ -5,6 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -37,14 +38,17 @@ _sizing_eval(Evas_Object *obj,
    evas_object_size_hint_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
 
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   if (elm_widget_is_legacy(obj))
+     evas_object_size_hint_max_set(obj, -1, -1);
+   else
+     efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
 }
 
 static void
 _recalc(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_calculate(data);
 }
 
 static void
@@ -60,7 +64,7 @@ _on_recalc_done(void *data,
      (wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
    sd->anim = EINA_FALSE;
 
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_calculate(data);
 }
 
 static void
@@ -87,21 +91,34 @@ _on_frame_clicked(void *data,
         sd->anim = EINA_TRUE;
         elm_widget_tree_unfocusable_set(data, sd->collapsed);
      }
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 /* using deferred sizing evaluation, just like the parent */
 EOLIAN static void
 _efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
 {
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
+   /* calling OWN sizing evaluate code here */
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   _sizing_eval(obj, sd);
+}
 
-   if (ld->needs_size_calc)
+static void
+_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   EFL_UI_FRAME_DATA_GET(data, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+
+   if (sd->anim) return;
+
+   if (sd->collapsible)
      {
-        /* calling OWN sizing evaluate code here */
-        _sizing_eval(obj, sd);
-        ld->needs_size_calc = EINA_FALSE;
+        efl_event_callback_add(wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
+        elm_layout_signal_emit(data, "efl,action,toggle", "efl");
+
+        sd->collapsed++;
+        sd->anim = EINA_TRUE;
+        elm_widget_tree_unfocusable_set(data, sd->collapsed);
      }
 }
 
@@ -128,9 +145,8 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
         edje_object_signal_callback_add
            (wd->resize_obj, "efl,anim,done", "efl",
             _on_recalc_done, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click", "efl",
-            _on_frame_clicked, obj);
+        efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
+        efl_event_callback_add(obj, EFL_INPUT_EVENT_CLICKED, _clicked_cb, obj);
      }
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -140,8 +156,6 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
                                        elm_widget_theme_element_get(obj),
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static Eo *

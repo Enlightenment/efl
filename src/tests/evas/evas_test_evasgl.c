@@ -12,7 +12,9 @@
 
 #include <stdio.h>
 
-#ifndef _WIN32
+#ifdef _WIN32
+# include <evil_private.h> /* dlopen */
+#else
 # include <dlfcn.h>
 #endif
 

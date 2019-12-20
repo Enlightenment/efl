@@ -21,6 +21,14 @@
 #define EFL_UI_SCROLLER_DATA_GET(o, sd) \
   Efl_Ui_Scroller_Data * sd = efl_data_scope_safe_get(o, EFL_UI_SCROLLER_CLASS)
 
+#define EFL_UI_SCROLLER_DATA_GET_OR_RETURN(o, ptr, ...) \
+  EFL_UI_SCROLLER_DATA_GET(o, ptr);                         \
+  if (EINA_UNLIKELY(!ptr))                            \
+    {                                                 \
+       ERR("No widget data for object %p (%s)",       \
+           o, evas_object_type_get(o));               \
+       return __VA_ARGS__;                                    \
+    }
 #define MY_CLASS EFL_UI_INTERNAL_TEXT_SCROLLER_CLASS
 #define MY_CLASS_PFX efl_ui_internal_text_scroller
 
@@ -28,7 +36,7 @@
 
 typedef struct _Efl_Ui_Internal_Text_Scroller_Data
 {
-   Efl_Canvas_Text *text_obj;
+   Efl_Canvas_Textblock *text_obj;
    Efl_Ui_Table *text_table;
    Eo *smanager;
 
@@ -55,7 +63,7 @@ _efl_ui_internal_text_scroller_efl_object_constructor(Eo *obj,
                                         Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   //EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   //EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd, NULL);
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
 
@@ -63,14 +71,15 @@ _efl_ui_internal_text_scroller_efl_object_constructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
+_efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
       Efl_Ui_Internal_Text_Scroller_Data *sd)
 {
    Eina_Size2D size = {-1, -1};
    Eina_Rect view = EINA_RECT(0, 0, 0, 0);
    Evas_Coord vmw = 0, vmh = 0;
 
-   EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -92,7 +101,7 @@ _efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
         efl_event_freeze(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_table, view.size);
         efl_gfx_entity_size_set(sd->text_obj, view.size);
-        efl_canvas_text_size_formatted_get(sd->text_obj, &fsz.w, &fsz.h);
+        fsz = efl_canvas_textblock_size_formatted_get(sd->text_obj);
         efl_gfx_entity_size_set(sd->text_table, sz);
         efl_gfx_entity_size_set(sd->text_obj, sz);
         efl_event_thaw(sd->text_obj);
@@ -116,10 +125,8 @@ _efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
                 fsz.w = view.w;
           }
 
-        // FIXME: should be restricted_min?
         efl_gfx_entity_size_set(sd->text_table, fsz);
-        efl_gfx_hint_size_min_set(obj, size);
-        efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, size.h));
+        efl_gfx_hint_size_restricted_min_set(obj, size);
      }
 }
 
@@ -145,7 +152,7 @@ _efl_ui_internal_text_scroller_efl_object_destructor(Eo *obj,
 EOLIAN static void
 _efl_ui_internal_text_scroller_initialize(Eo *obj,
                                        Efl_Ui_Internal_Text_Scroller_Data *sd,
-                                       Efl_Canvas_Text *text_obj,
+                                       Efl_Canvas_Textblock *text_obj,
                                        Efl_Ui_Table *text_table)
 {
    if (efl_finalized_get(obj))
@@ -163,7 +170,7 @@ _efl_ui_internal_text_scroller_scroller_mode_set(Eo *obj,
                                        Efl_Ui_Internal_Text_Scroller_Data *sd,
                                        Efl_Ui_Text_Scroller_Mode mode)
 {
-   EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd);
    sd->mode = mode;
    if (mode == EFL_UI_TEXT_SCROLLER_MODE_MULTILINE)
      {
@@ -181,13 +188,10 @@ EOLIAN static Eo *
 _efl_ui_internal_text_scroller_viewport_clip_get(const Eo *obj,
       Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
 {
-   EFL_UI_SCROLLER_DATA_GET(obj, psd);
+   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd, NULL);
    return evas_object_clip_get(psd->pan_obj);
 }
 
 /* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_INTERNAL_TEXT_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_internal_text_scroller)
 
 #include "efl_ui_internal_text_scroller.eo.c"

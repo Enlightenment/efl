@@ -81,10 +81,11 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
    _efl_ui_exact_model_list_find(list_index, compressed, &l);
 
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
+   if (!tbuf) return compressed;
+
    cbuf = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
    eina_binbuf_free(tbuf);
-
-   if (!tbuf || !cbuf) return compressed;
+   if (!cbuf) return compressed;
 
    // Make sure the list has all the buffer up to the needed one filled with valid data
    if (list_index)
@@ -95,10 +96,19 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
              unsigned char *zmem;
 
              zmem = calloc(EFL_UI_EXACT_MODEL_CONTENT, sizeof (unsigned int));
-             if (!zmem) return compressed;
+             if (!zmem)
+               {
+                  if (cbuf) eina_binbuf_free(cbuf);
+                  return compressed;
+               }
 
              tbuf = eina_binbuf_manage_new(zmem, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
-             if (!tbuf) return compressed;
+             if (!tbuf)
+               {
+                  if (cbuf) eina_binbuf_free(cbuf);
+                  if (zmem) free(zmem);
+                  return compressed;
+               }
 
              z = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
 
@@ -237,7 +247,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
 {
    if (pd->parent)
     {
-       if (!strcmp(property, _efl_model_property_selfw))
+       if (eina_streq(property, _efl_model_property_selfw))
          {
             unsigned int index;
             unsigned char found;
@@ -251,7 +261,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
               pd->parent->total_size.width = pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT];
             return efl_loop_future_resolved(obj, eina_value_uint_init(pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT]));
          }
-       if (!strcmp(property, _efl_model_property_selfh))
+       if (eina_streq(property, _efl_model_property_selfh))
          {
             unsigned int old_value;
             unsigned int index;
@@ -267,23 +277,23 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             return efl_loop_future_resolved(obj, eina_value_uint_init(pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT]));
          }
        // The following property are calculated by the model and so READ_ONLY
-       if (!strcmp(property, _efl_model_property_totalh))
+       if (eina_streq(property, _efl_model_property_totalh))
          {
             return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
          }
-       if (!strcmp(property, _efl_model_property_totalw))
+       if (eina_streq(property, _efl_model_property_totalw))
          {
             return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
          }
     }
 
-   if (!strcmp(property, _efl_model_property_itemw))
+   if (eina_streq(property, _efl_model_property_itemw))
      {
         // The exact model can not guess a general item size if asked
         // and should refuse to remember anything like that.
         return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
      }
-   if (!strcmp(property, _efl_model_property_itemh))
+   if (eina_streq(property, _efl_model_property_itemh))
      {
         // The exact model can not guess a general item size if asked
         // and should refuse to remember anything like that.
@@ -299,7 +309,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
 {
    if (pd->parent)
      {
-        if (!strcmp(property, _efl_model_property_selfw))
+        if (eina_streq(property, _efl_model_property_selfw))
           {
              unsigned int index;
              unsigned char found;
@@ -308,7 +318,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              found = _efl_ui_exact_model_slot_find(pd, index, EINA_TRUE, EINA_FALSE);
              return eina_value_uint_new(pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT]);
           }
-        if (!strcmp(property, _efl_model_property_selfh))
+        if (eina_streq(property, _efl_model_property_selfh))
           {
              unsigned int index;
              unsigned char found;
@@ -318,20 +328,20 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              return eina_value_uint_new(pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT]);
           }
      }
-   if (!strcmp(property, _efl_model_property_totalh))
+   if (eina_streq(property, _efl_model_property_totalh))
      {
         return eina_value_uint_new(pd->total_size.height);
      }
-   if (!strcmp(property, _efl_model_property_totalw))
+   if (eina_streq(property, _efl_model_property_totalw))
      {
         return eina_value_uint_new(pd->total_size.width);
      }
-   if (!strcmp(property, _efl_model_property_itemw))
+   if (eina_streq(property, _efl_model_property_itemw))
      {
         // The exact model can not guess a general item size if asked.
         return eina_value_error_new(EAGAIN);
      }
-   if (!strcmp(property, _efl_model_property_itemh))
+   if (eina_streq(property, _efl_model_property_itemh))
      {
         // The exact model can not guess a general item size if asked.
         return eina_value_error_new(EAGAIN);

@@ -242,9 +242,7 @@ evas_common_copy_pixels_rev_c(src, dst, len);
 static void
 evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len;
-   
-   while (dst < dst_end) *dst++ = *src++;
+	memcpy(dst, src, len * sizeof(DATA32));
 }
 
 #ifdef BUILD_MMX

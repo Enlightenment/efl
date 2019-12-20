@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EINA_INLIST_HH_
 #define EINA_INLIST_HH_
 
@@ -101,11 +116,12 @@ struct _inlist_iterator
     : _list(list), _node(node) {}
 
   /**
-   * @brief Copy constructor. Creates a copy of the given iterator.
+   * @brief Create a const iterator from this one.
    * @param other Other iterator.
    */
-  _inlist_iterator(_inlist_iterator<typename std::remove_const<T>::type> const& other)
-    : _list(other._list), _node(other._node) {}
+  operator _inlist_iterator<T const>() {
+    return _inlist_iterator<T const>{_list, _node};
+  }
 
   /**
    * @brief Move the iterator to the next position in the list.

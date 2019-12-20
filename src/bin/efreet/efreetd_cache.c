@@ -487,12 +487,14 @@ icon_changes_monitor_add(const struct stat *st, const char *path)
    const char *monpath = path;
 
    if (eina_hash_find(icon_change_monitors, path)) return;
+#ifndef _WIN32
    if (S_ISLNK(st->st_mode))
      {
         realp = ecore_file_realpath(path);
         if (!realp) return;
         monpath = realp;
      }
+#endif
    if (ecore_file_is_dir(monpath))
      {
         mon = eio_monitor_add(monpath);
@@ -513,12 +515,14 @@ desktop_changes_monitor_add(const struct stat *st, const char *path)
    const char *monpath = path;
 
    if (eina_hash_find(desktop_change_monitors, path)) return;
+#ifndef _WIN32
    if (S_ISLNK(st->st_mode))
      {
         realp = ecore_file_realpath(path);
         if (!realp) return;
         monpath = realp;
      }
+#endif
    if (ecore_file_is_dir(monpath))
      {
         mon = eio_monitor_add(monpath);

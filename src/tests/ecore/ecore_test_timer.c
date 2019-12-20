@@ -288,6 +288,134 @@ EFL_START_TEST(ecore_test_timer_in_order)
 }
 EFL_END_TEST
 
+EFL_START_TEST(ecore_test_timer_iteration)
+{
+   Ecore_Timer *timer;
+   count = 0;
+   /* verify that timers expire after exactly one loop iteration */
+   ecore_timer_add(0, _timer_cb, (void *) 1);
+   ecore_main_loop_iterate();
+   /* timers should not expire for one loop iteration */
+   ck_assert_int_eq(count, 0);
+   ecore_main_loop_iterate();
+   /* timers should expire after one loop iteration */
+   ck_assert_int_eq(count, 1);
+
+   /* verify multiple timer expiration in single mainloop iteration */
+   ecore_timer_add(0, _timer_cb, (void *) 2);
+   ecore_timer_add(0, _timer_cb, (void *) 3);
+   ecore_main_loop_iterate();
+   /* timers should not expire for one loop iteration */
+   ck_assert_int_eq(count, 1);
+   ecore_timer_add(0, _timer_cb, (void *) 4);
+   ecore_main_loop_iterate();
+   /* all pending and instantiated timers should expire after exactly one loop iteration */
+   ck_assert_int_eq(count, 3);
+   ecore_main_loop_iterate();
+   /* this should not interfere with successive timer processing */
+   ck_assert_int_eq(count, 4);
+
+   /* verify out-of-order timer processing solely based on timer times */
+   timer = ecore_timer_add(1, _timer_cb, (void *) 6);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 4);
+   ecore_timer_add(0, _timer_cb, (void *) 5);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 4);
+   /* timer should expire after exactly 2 iterations */
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 5);
+   ecore_timer_interval_set(timer, 0);
+   ecore_timer_reset(timer);
+   /* timer should expire after exactly 2 iterations since it becomes un-instantiated now */
+   ecore_main_loop_iterate();
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 6);
+}
+EFL_END_TEST
+
+static Eina_Bool
+_recursion()
+{
+   static unsigned int recurse = 0;
+   static Ecore_Timer *timer;
+
+   switch (recurse++)
+     {
+      case 0:
+        /* verify multiple timer expiration in single mainloop iteration */
+        ecore_timer_add(0, _timer_cb, (void *) 2);
+        ecore_timer_add(0, _timer_cb, (void *) 3);
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        ck_assert_int_eq(count, 6);
+        ecore_main_loop_quit();
+        break;
+      case 1:
+        /* timers should not expire for one loop iteration */
+        ck_assert_int_eq(count, 1);
+        ecore_timer_add(0, _timer_cb, (void *) 4);
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+      case 2:
+        /* all pending and instantiated timers should expire after exactly one loop iteration */
+        ck_assert_int_eq(count, 3);
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+      case 3:
+        /* this should not interfere with successive timer processing */
+        ck_assert_int_eq(count, 4);
+
+        /* verify out-of-order timer processing solely based on timer times */
+        timer = ecore_timer_add(1, _timer_cb, (void *) 6);
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+      case 4:
+        ck_assert_int_eq(count, 4);
+        ecore_timer_add(0, _timer_cb, (void *) 5);
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+      case 5:
+        ck_assert_int_eq(count, 4);
+        /* timer should expire after exactly 2 iterations */
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+      case 6:
+        ck_assert_int_eq(count, 5);
+        ecore_timer_interval_set(timer, 0);
+        ecore_timer_reset(timer);
+        /* timer should expire after exactly 2 iterations since it becomes un-instantiated now */
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+      case 7:
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+        break;
+     }
+   return EINA_FALSE;
+}
+
+EFL_START_TEST(ecore_test_timer_recursion)
+{
+   Eina_Bool crit = eina_log_abort_on_critical_get();
+   int critlevel = eina_log_abort_on_critical_level_get();
+   count = 1;
+   eina_log_abort_on_critical_set(1);
+   eina_log_abort_on_critical_level_set(1);
+   ecore_timer_add(0, _recursion, NULL);
+   ecore_main_loop_begin();
+   ck_assert_int_eq(count, 6);
+   eina_log_abort_on_critical_set(crit);
+   eina_log_abort_on_critical_level_set(critlevel);
+}
+EFL_END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
@@ -295,4 +423,6 @@ void ecore_test_timer(TCase *tc)
   tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
   tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
   tcase_add_test(tc, ecore_test_timer_in_order);
+  tcase_add_test(tc, ecore_test_timer_iteration);
+  tcase_add_test(tc, ecore_test_timer_recursion);
 }

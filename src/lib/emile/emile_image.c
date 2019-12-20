@@ -1750,8 +1750,8 @@ _emile_jpeg_data(Emile_Image *image,
    uint8_t *ptr, *line[16], *data;
    volatile uint32_t *ptr2 = NULL;
    uint32_t *ptr_rotate = NULL;
-   uint16_t *ptrag = NULL, *ptrag_rotate = NULL;
-   uint8_t *ptrg = NULL, *ptrg_rotate = NULL;
+   uint16_t *ptrag = NULL, *ptrag2 = NULL, *ptrag_rotate = NULL;
+   uint8_t *ptrg = NULL, *ptrg2 = NULL, *ptrg_rotate = NULL;
    unsigned int y, l, i, scans;
    volatile int region = 0;
    /* rotation setting */
@@ -2113,6 +2113,8 @@ _emile_jpeg_data(Emile_Image *image,
    /* We finally handle RGB with 1 component */
    else if (cinfo.output_components == 1)
      {
+        ptrg2 = ptrg;
+        ptrag2 = ptrag;
         for (i = 0; (int)i < cinfo.rec_outbuf_height; i++)
           line[i] = data + (i * w);
         for (l = 0; l < h; l += cinfo.rec_outbuf_height)
@@ -2132,10 +2134,10 @@ _emile_jpeg_data(Emile_Image *image,
                        switch (prop->cspace)
                          {
                           case EMILE_COLORSPACE_GRY8:
-                             _jpeg_gry8_convert_copy(&ptrg, &ptr, w);
+                             _jpeg_gry8_convert_copy(&ptrg2, &ptr, w);
                              break;
                           case EMILE_COLORSPACE_AGRY88:
-                             _jpeg_agry88_convert_copy(&ptrag, &ptr, w);
+                             _jpeg_agry88_convert_copy(&ptrag2, &ptr, w);
                              break;
                           default:
                              _jpeg_argb8888_convert_copy(&ptr2, &ptr, w);
@@ -2168,10 +2170,10 @@ _emile_jpeg_data(Emile_Image *image,
                                  switch (prop->cspace)
                                    {
                                     case EMILE_COLORSPACE_GRY8:
-                                       _jpeg_gry8_convert_copy(&ptrg, &ptr, opts_region.w);
+                                       _jpeg_gry8_convert_copy(&ptrg2, &ptr, opts_region.w);
                                        break;
                                     case EMILE_COLORSPACE_AGRY88:
-                                       _jpeg_agry88_convert_copy(&ptrag, &ptr, opts_region.w);
+                                       _jpeg_agry88_convert_copy(&ptrag2, &ptr, opts_region.w);
                                        break;
                                     default:
                                        _jpeg_argb8888_convert_copy(&ptr2, &ptr, opts_region.w);

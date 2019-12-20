@@ -359,32 +359,21 @@ struct _Ecore_Evas
    double async_render_start;
 #endif
 
-   /* A flag to show if sync_draw_done is sent by gl or by ecore_evas.
-      Some GL drivers do buffer copy in a separate thread.  We need to check
-      whether GL driver sends SYNC_DRAW_DONE message after buffer copy.
-      This is required to synchronize rendering and sync_draw_done message
-      sending.
-
-      -1 : uninitialized
-      0 : sync_draw_done is sent by ecore_evas
-      1 : sync_draw_done is sent by gl
-    */
-   signed char   gl_sync_draw_done;
-
    unsigned char ignore_events : 1;
    unsigned char manual_render : 1;
    unsigned char registered : 1;
    unsigned char no_comp_sync  : 1;
-   unsigned char semi_sync  : 1;
    unsigned char deleted : 1;
    unsigned char profile_supported : 1;
-
    unsigned char in_async_render : 1;
    unsigned char can_async_render : 1;
+
    unsigned char animator_registered : 1;
    unsigned char animator_ticked : 1;
    unsigned char animator_ran : 1;
    unsigned char first_frame : 1;
+   unsigned char self_del : 1;
+   unsigned char evas_dying : 1;
 };
 
 struct _Ecore_Evas_Aux_Hint

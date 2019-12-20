@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* strsep evil_path_absolute */
+#endif
+
 #define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
@@ -135,7 +139,7 @@ _elm_prefs_save(void *data)
         elm_prefs_data_save(sd->prefs_data, NULL, NULL);
 
         efl_event_callback_legacy_call
-          (wd->obj, ELM_PREFS_EVENT_PAGE_SAVED, (char *)sd->root->name);
+          (data, ELM_PREFS_EVENT_PAGE_SAVED, (char *)sd->root->name);
      }
 
    sd->dirty = EINA_FALSE;
@@ -299,7 +303,7 @@ _elm_prefs_item_changed_report(Eo *obj,
    snprintf(buf, sizeof(buf), "%s:%s", it->page->name, it->name);
 
    efl_event_callback_legacy_call
-     (wd->obj, ELM_PREFS_EVENT_ITEM_CHANGED, buf);
+     (obj, ELM_PREFS_EVENT_ITEM_CHANGED, buf);
 }
 
 static Elm_Prefs_Item_Node *
@@ -399,7 +403,7 @@ _prefs_data_autosaved_cb(void *cb_data,
    ELM_WIDGET_DATA_GET_OR_RETURN(cb_data, wd);
 
    efl_event_callback_legacy_call
-     (wd->obj, ELM_PREFS_EVENT_PAGE_SAVED, event_info);
+     (cb_data, ELM_PREFS_EVENT_PAGE_SAVED, event_info);
 
    sd->dirty = EINA_FALSE;
 }
@@ -529,7 +533,7 @@ _item_changed_cb(Evas_Object *it_obj)
    if (it->type == ELM_PREFS_TYPE_ACTION)
      {
         efl_event_callback_legacy_call
-          (wd->obj, ELM_PREFS_EVENT_ACTION, buf);
+          (it->prefs, ELM_PREFS_EVENT_ACTION, buf);
 
         return;
      }

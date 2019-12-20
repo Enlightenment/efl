@@ -4,15 +4,6 @@
 
 #include <stdio.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <winsock2.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include "evil_macro.h"
-#include "evil_unistd.h"
-#include "evil_main.h"
 #include "evil_private.h"
 
 
@@ -109,6 +100,8 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
        _evil_tls_index = TlsAlloc();
        if (_evil_tls_index == TLS_OUT_OF_INDEXES)
          return FALSE;
+       /* No break: Initialize the index for first thread. */
+       /* fall through */
      case DLL_THREAD_ATTACH:
        data = (LPVOID)LocalAlloc(LPTR, 4096);
        if (!data)

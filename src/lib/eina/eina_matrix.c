@@ -542,9 +542,17 @@ EAPI void
 eina_matrix3_rotate(Eina_Matrix3 *m, double rad)
 {
    double c, s;
-#if 0
-   c = cosf(rad);
-   s = sinf(rad);
+
+   /* Note: Local functions do not guarantee accuracy.
+    *       Errors occur in the calculation of very small or very large numbers.
+    *       Local cos and sin functions differ from the math header cosf and sinf functions
+    *       by result values. The 4th decimal place is different.
+    *       But local functions are certainly faster than functions in math library.
+    *       Later we would want someone to look at this and improve accuracy.
+    */
+#if 1
+   c = cos(rad);
+   s = sin(rad);
 #else
    /* normalize the angle between -pi,pi */
    rad = fmod(rad + M_PI, 2 * M_PI) - M_PI;

@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #ifdef _WIN32
-#include <Evil.h>
+#include <evil_private.h> /* realpath */
 #endif
 
 #include "eina_debug_private.h"

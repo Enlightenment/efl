@@ -2,13 +2,17 @@
 #include "evas_private.h"
 #include "evas_native_common.h"
 
-#if defined HAVE_DLSYM && ! defined _WIN32
+#if defined HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
+#elif _WIN32
+# include <evil_private.h> /* dlopen dlclose dlsym mmap */
 #else
 # warning native_dmabuf should not get compiled if dlsym is not found on the system!
 #endif
 
-#include <sys/mman.h>
+#ifndef _WIN32
+# include <sys/mman.h>
+#endif
 
 #define DRM_FORMAT_ARGB8888           0x34325241
 #define DRM_FORMAT_XRGB8888           0x34325258

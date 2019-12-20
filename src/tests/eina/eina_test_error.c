@@ -25,7 +25,7 @@
 #include <string.h>
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* setenv */
 #endif
 
 #include <Eina.h>

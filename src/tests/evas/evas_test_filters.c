@@ -9,6 +9,10 @@
 
 #include <stdio.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv */
+#endif
+
 #define EFL_GFX_FILTER_BETA
 
 #include "../../lib/evas/include/evas_common_private.h"

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Runtime.InteropServices;
 using System.Linq;
@@ -20,11 +35,13 @@ internal class TestStructs
         checkZeroedStructSimple(simple);
     }
 
+#if EFL_BETA
     private static void complex_default_instantiation()
     {
         var complex = new Dummy.StructComplex();
         checkZeroedStructComplex(complex);
     }
+#endif
 
     public static void parameter_initialization()
     {
@@ -45,8 +62,10 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         bool r = t.StructSimpleIn(simple);
         Test.Assert(r, "Function returned false");
+        t.Dispose();
     }
 
+    /*
     public static void simple_ptr_in()
     {
         var simple = structSimpleWithValues();
@@ -68,6 +87,7 @@ internal class TestStructs
         Test.AssertEquals(-original, result.Fint);
         Test.AssertEquals("nwO nI rtP tcurtS", result.Fmstring);
     }
+    */
 
     public static void simple_out()
     {
@@ -76,8 +96,10 @@ internal class TestStructs
         bool r = t.StructSimpleOut(out simple);
         Test.Assert(r, "Function returned false");
         checkStructSimple(simple);
+        t.Dispose();
     }
 
+    /*
     public static void simple_ptr_out()
     {
         Dummy.StructSimple simple;
@@ -95,14 +117,17 @@ internal class TestStructs
         Test.AssertEquals(result.Fint, simple.Fint);
         Test.AssertEquals(simple.Fstring, "Ptr Out Own");
     }
+    */
 
     public static void simple_return()
     {
         var t = new Dummy.TestObject();
         var simple = t.StructSimpleReturn();
         checkStructSimple(simple);
+        t.Dispose();
     }
 
+    /*
     public static void simple_ptr_return()
     {
         var t = new Dummy.TestObject();
@@ -116,6 +141,7 @@ internal class TestStructs
         var simple = t.StructSimplePtrReturnOwn();
         Test.AssertEquals(simple.Fstring, "Ret Ptr Own");
     }
+    */
 
     public class StructReturner : Dummy.TestObject
     {
@@ -136,6 +162,7 @@ internal class TestStructs
             return true;
         }
 
+        /*
         public override bool StructSimplePtrIn(ref Dummy.StructSimple simple)
         {
             called = true;
@@ -149,6 +176,7 @@ internal class TestStructs
             received = simple;
             return received;
         }
+        */
 
         public override bool StructSimpleOut(out Dummy.StructSimple simple) {
             called = true;
@@ -157,6 +185,7 @@ internal class TestStructs
             return true;
         }
 
+        /*
         public override Dummy.StructSimple StructSimplePtrOut(out Dummy.StructSimple simple) {
             called = true;
             // No way to explicitly define the ownership of the parameter.
@@ -172,6 +201,7 @@ internal class TestStructs
             simple.Fstring = "Virtual Struct Ptr Out Own";
             return simple;
         }
+        */
 
         public override Dummy.StructSimple StructSimpleReturn()
         {
@@ -181,6 +211,7 @@ internal class TestStructs
             return simple;
         }
 
+        /*
         public override Dummy.StructSimple StructSimplePtrReturn()
         {
             called = true;
@@ -196,6 +227,7 @@ internal class TestStructs
             simple.Fstring = "Virtual Struct Ptr Return Own";
             return simple;
         }
+        */
     }
 
     public static void simple_in_virtual()
@@ -207,8 +239,10 @@ internal class TestStructs
         t.CallStructSimpleIn(simple);
         Test.Assert(t.called);
         Test.AssertEquals(simple.Fstring, t.received.Fstring);
+        t.Dispose();
     }
 
+    /*
     public static void simple_ptr_in_virtual()
     {
         StructReturner t = new StructReturner();
@@ -230,6 +264,7 @@ internal class TestStructs
         Test.Assert(t.called);
         Test.AssertEquals(t.received.Fstring, simple.Fstring);
     }
+    */
 
     public static void simple_out_virtual()
     {
@@ -238,8 +273,10 @@ internal class TestStructs
         t.CallStructSimpleOut(out simple);
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Out", simple.Fstring);
+        t.Dispose();
     }
 
+    /*
     public static void simple_ptr_out_virtual()
     {
         StructReturner t = new StructReturner();
@@ -257,6 +294,7 @@ internal class TestStructs
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Ptr Out Own", simple.Fstring);
     }
+    */
 
     public static void simple_return_virtual()
     {
@@ -264,8 +302,10 @@ internal class TestStructs
         Dummy.StructSimple simple = t.CallStructSimpleReturn();
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Return", simple.Fstring);
+        t.Dispose();
     }
 
+    /*
     public static void simple_ptr_return_virtual()
     {
         StructReturner t = new StructReturner();
@@ -281,7 +321,9 @@ internal class TestStructs
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Ptr Return Own", simple.Fstring);
     }
+    */
 
+#if EFL_BETA
     // Complex Structs
     public static void complex_in()
     {
@@ -289,6 +331,7 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         bool r = t.StructComplexIn(complex);
         Test.Assert(r, "Function returned false");
+        t.Dispose();
     }
 
     // public static void complex_ptr_in()
@@ -306,6 +349,7 @@ internal class TestStructs
         bool r = t.StructComplexOut(out complex);
         Test.Assert(r, "Function returned false");
         checkStructComplex(complex);
+        t.Dispose();
     }
 
     // public static void complex_ptr_out()
@@ -321,8 +365,9 @@ internal class TestStructs
         var t = new Dummy.TestObject();
         var complex = t.StructComplexReturn();
         checkStructComplex(complex);
+        t.Dispose();
     }
-
+#endif
     // public static void complex_ptr_return()
     // {
     // }
@@ -330,6 +375,100 @@ internal class TestStructs
     // public static void complex_ptr_return_own()
     // {
     // }
+}
+
+internal class TestStructEquality
+{
+    static Dummy.StructSimple a = new Dummy.StructSimple(1, 2, (char)3, 4, Fstring: "", Fmstring: "", Fstringshare: "");
+    static Dummy.StructSimple b = new Dummy.StructSimple(1, 2, (char)3, 4, Fstring: "", Fmstring: "", Fstringshare: "");
+
+    static Dummy.StructSimple c = new Dummy.StructSimple(4, 3, (char)2, 1, Fstring: "", Fmstring: "", Fstringshare: "");
+
+    // to check if we differ on a single struct field
+    static Dummy.StructSimple singleDifferentField = new Dummy.StructSimple(1, 2, (char)3, 5, Fstring: "", Fmstring: "", Fstringshare: "");
+
+    public static void test_equals()
+    {
+        Test.AssertEquals(a, b);
+        Test.AssertNotEquals(a, c);
+        Test.AssertNotEquals(a, singleDifferentField);
+    }
+
+    public static void test_equals_different_types()
+    {
+        Test.Assert(!(a.Equals(new Object())));
+    }
+
+    public static void test_equatable()
+    {
+        Test.Assert(((IEquatable<Dummy.StructSimple>)a).Equals(b));
+        Test.Assert(!((IEquatable<Dummy.StructSimple>)a).Equals(c));
+        Test.Assert(!((IEquatable<Dummy.StructSimple>)a).Equals(singleDifferentField));
+    }
+
+    public static void test_equality_operators()
+    {
+        Test.Assert(a == b);
+        Test.Assert(a != c);
+        Test.Assert(a != singleDifferentField);
+    }
+
+    public static void test_hash_code()
+    {
+        Test.AssertEquals(a.GetHashCode(), b.GetHashCode());
+        Test.AssertNotEquals(a.GetHashCode(), c.GetHashCode());
+        Test.AssertNotEquals(a.GetHashCode(), singleDifferentField.GetHashCode());
+    }
+
+#if !MONO
+    public static void test_deconstruct() {
+        var p = new Eina.Position2D(1, 2);
+        var (x, y) = p;
+
+        Test.AssertEquals(x, 1);
+        Test.AssertEquals(y, 2);
+    }
+#endif
+}
+
+internal class TestStructTuples
+{
+    private static Eina.Position2D simulate_position_usage(Eina.Position2D p) {
+        return p;
+    }
+
+    public static void test_same_type_fields_assign_conversion() {
+        Eina.Position2D p = (1, 2);
+        Test.AssertEquals(p.X, 1);
+        Test.AssertEquals(p.Y, 2);
+    }
+
+    public static void test_same_type_fields_call_conversion() {
+        var p = simulate_position_usage((1, 2));
+        Test.AssertEquals(p.X, 1);
+        Test.AssertEquals(p.Y, 2);
+    }
+
+    public static void test_different_type_fields_assign_conversion() {
+        Efl.Ui.FormatValue v = (1, "Format");
+        Test.AssertEquals(v.Value, 1);
+        Test.AssertEquals(v.Text, "Format");
+    }
+
+#if EFL_BETA
+    public static void test_complex_fields_assign_conversion() {
+        var pos = new Eina.Position2D(1, 2);
+        var action = Efl.Ui.SelectionAction.Unknown;
+        var format = Efl.Ui.SelectionFormat.None;
+        var item = null as Efl.Canvas.Vg.Object;
+
+        Efl.Dnd.DragPos attr = (pos, action, format, item);
+        Test.AssertEquals(attr.Pos, pos);
+        Test.AssertEquals(attr.Action, action);
+        Test.AssertEquals(attr.Format, format);
+        Test.AssertEquals(attr.Item, item);
+    }
+#endif
 }
 
 }

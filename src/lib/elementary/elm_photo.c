@@ -232,7 +232,7 @@ _mouse_up(void *data,
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    if (!sd->drag_started)
-     efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
+     evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -333,6 +333,13 @@ _elm_photo_efl_object_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
    return obj;
+}
+
+EOLIAN static void
+_elm_photo_efl_file_unload(Eo *obj, Elm_Photo_Data *sd)
+{
+   elm_icon_standard_set(sd->icon, "no_photo");
+   _sizing_eval(obj);
 }
 
 EOLIAN static Eina_Error

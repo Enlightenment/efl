@@ -1,34 +1,192 @@
-enum @beta Efl.Ui.Scroll_Block
-{
-   [[Direction in which a scroller should be blocked.
+import eina_types;
+import efl_ui_layout_orientable;
 
-     Note: These options may be effective only in case of thumbscroll (i.e.
-     when scrolling by dragging).
+interface Efl.Ui.Scrollable
+{
+   [[Interface for widgets capable of displaying content through a viewport, which might be smaller
+     than the actual content.
+     This interface does not control how the content is added. This is typically done through @Efl.Content.
+
+     When the content does not fit inside the viewport, typically @Efl.Ui.Scrollbar widgets will be used,
+     but this is beyond the scope of this interface.
+
+     @since 1.23
    ]]
-   none = 0,      [[Don't block any movement.]]
-   vertical = 1,  [[Block vertical movement.]]
-   horizontal = 2 [[Block horizontal movement.]]
-}
+   event_c_prefix: efl_ui;
+   methods {
+      @property content_pos {
+         [[Position of the content inside the scroller.]]
+         set {
+         }
+         get {
+         }
+         values {
+            pos: Eina.Position2D; [[The position is a virtual value, where $[0,0] means the top-left corner.]]
+         }
+      }
+      @property content_size {
+         [[Current size of the content, for convenience.]]
+         get {
+         }
+         values {
+            size: Eina.Size2D; [[The content size in pixels.]]
+         }
+      }
+      @property viewport_geometry {
+         [[Current position and size of the viewport (or scroller window), for convenience.
 
-interface @beta Efl.Ui.Scrollable
-{
-   [[Efl UI scrollable interface]]
-   event_prefix: efl_ui;
+           This is the viewport through which the content is displayed.
+         ]]
+         get {
+         }
+         values {
+            rect: Eina.Rect; [[It is absolute geometry.]]
+         }
+      }
+      @property bounce_enabled {
+         [[When scrolling, the scroller may "bounce" when reaching the edge of the
+           content object. This is a visual way to indicate the end has been reached.
+           This is enabled by default for both axes. This property determines if bouncing is enabled
+           in each axis.
+           When bouncing is disabled, scrolling just stops upon reaching the end of the content.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            horiz: bool; [[Horizontal bouncing is enabled.]]
+            vert: bool; [[Vertical bouncing is enabled.]]
+         }
+      }
+      @property scroll_freeze {
+         [[Freezes scrolling movement (by input of a user).
+           Unlike @.movement_block, this property freezes bidirectionally.
+           If you want to freeze in only one direction,
+           see @.movement_block.
+         ]]
+         get {
+         }
+         set {
+         }
+         values {
+            freeze: bool; [[$true if freeze.]]
+         }
+      }
+      @property scroll_hold {
+         [[When hold turns on, it only scrolls by holding action.]]
+         get {
+         }
+         set {
+         }
+         values {
+            hold: bool; [[$true if hold.]]
+         }
+      }
+      @property looping {
+         [[Controls infinite looping for a scroller.]]
+         set {
+         }
+         get {
+         }
+         values {
+            loop_h: bool; [[Scroll horizontal looping is enabled.]]
+            loop_v: bool; [[Scroll vertical looping is enabled.]]
+         }
+      }
+      @property movement_block {
+         [[Blocking of scrolling (per axis).
+
+           This function will block scrolling movement (by input of a user) in
+           a given direction. You can disable movements in the X axis, the Y
+           axis or both.
+           The default value is @Efl.Ui.Layout_Orientation.default meaning that movements are
+           allowed in both directions.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            block: Efl.Ui.Layout_Orientation(Efl.Ui.Layout_Orientation.default); [[Which axis (or axes) to block.]]
+         }
+      }
+      @property gravity {
+         [[Control scrolling gravity on the scrollable.
+
+           The gravity defines how the scroller will adjust its view
+           when the size of the scroller contents increases.
+
+           The scroller will adjust the view to glue itself as follows:
+           $[x=0.0] to stay where it is relative to the left edge of the content.
+           $[x=1.0] to stay where it is relative to the right edge of the content.
+           $[y=0.0] to stay where it is relative to the top edge of the content.
+           $[y=1.0] to stay where it is relative to the bottom edge of the content.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            x: double(0.0); [[Horizontal scrolling gravity.]]
+            y: double(0.0); [[Vertical scrolling gravity.]]
+         }
+      }
+      @property match_content {
+         [[Prevent the scrollable from being smaller than the minimum size of the content.
+
+           By default the scroller will be as small as its design allows,
+           irrespective of its content. This will make the scroller minimum size the
+           right size horizontally and/or vertically to perfectly fit its content in
+           that direction.]]
+         set {
+         }
+         values {
+            w: bool; [[Whether to limit the minimum horizontal size.]]
+            h: bool; [[Whether to limit the minimum vertical size.]]
+         }
+      }
+      @property step_size {
+         [[Amount to scroll in response to cursor key presses.]]
+         set {
+         }
+         get {
+         }
+         values {
+            step: Eina.Position2D; [[The step size in pixels.]]
+         }
+      }
+      scroll {
+         [[Show a specific virtual region within the scroller content object.
+
+           This will ensure all (or part if it does not fit) of the designated
+           region in the virtual content object ($[0,0] starting at the top-left of the
+           virtual content object) is shown within the scroller. This allows the scroller to "smoothly slide"
+           to this location (if configuration in general calls for transitions). It
+           may not jump immediately to the new location and make take a while and
+           show other content along the way.
+           ]]
+         params {
+            @in rect: Eina.Rect; [[The position where to scroll and the size user want to see.]]
+            @in animation: bool; [[Whether to scroll with animation or not.]]
+         }
+      }
+   }
    events {
-      scroll,start: void; [[Called when scroll operation starts]]
-      scroll: void; [[Called when scrolling]]
-      scroll,stop: void; [[Called when scroll operation stops]]
-      scroll,up: void; [[Called when scrolling upwards]]
-      scroll,down: void; [[Called when scrolling downwards]]
-      scroll,left: void; [[Called when scrolling left]]
-      scroll,right: void; [[Called when scrolling right]]
-      edge,up: void; [[Called when hitting the top edge]]
-      edge,down: void; [[Called when hitting the bottom edge]]
-      edge,left: void; [[Called when hitting the left edge]]
-      edge,right: void; [[Called when hitting the right edge]]
-      scroll,anim,start: void; [[Called when scroll animation starts]]
-      scroll,anim,stop: void; [[Called when scroll animation stopps]]
-      scroll,drag,start: void; [[Called when scroll drag starts]]
-      scroll,drag,stop: void; [[Called when scroll drag stops]]
+      scroll,started: void; [[Called when scroll operation starts.]]
+      scroll,changed: void; [[Called when scrolling.]]
+      scroll,finished: void; [[Called when scroll operation finishes.]]
+      scroll,up: void; [[Called when scrolling upwards.]]
+      scroll,down: void; [[Called when scrolling downwards.]]
+      scroll,left: void; [[Called when scrolling left.]]
+      scroll,right: void; [[Called when scrolling right.]]
+      edge,up: void; [[Called when hitting the top edge.]]
+      edge,down: void; [[Called when hitting the bottom edge.]]
+      edge,left: void; [[Called when hitting the left edge.]]
+      edge,right: void; [[Called when hitting the right edge.]]
+      scroll,anim,started: void; [[Called when scroll animation starts.]]
+      scroll,anim,finished: void; [[Called when scroll animation finishes.]]
+      scroll,drag,started: void; [[Called when scroll drag starts.]]
+      scroll,drag,finished: void; [[Called when scroll drag finishes.]]
    }
 }

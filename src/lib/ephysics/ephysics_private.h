@@ -1,10 +1,6 @@
 #ifndef _EPHYSICS_PRIVATE_H
 #define _EPHYSICS_PRIVATE_H
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #pragma GCC diagnostic push
 #pragma GCC system_header
 

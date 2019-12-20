@@ -1,31 +1,31 @@
-class @beta Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Action
+class Efl.Ui.Check extends Efl.Ui.Layout_Base
+                         implements Efl.Access.Widget.Action, Efl.Text, Efl.Content, Efl.Input.Clickable,
+                                    Efl.Ui.Selectable
 {
-   [[Check widget
+   [[Check widget.
 
-   The check widget allows for toggling a value between true and false.
-   Check objects are a lot like radio objects in layout and functionality,
-   except they do not work as a group, but independently, and only toggle
-   the value of a boolean between false and true.
+     The check widget allows for toggling a value between $true and $false.
+     Check objects are a lot like @Efl.Ui.Radio objects in layout and functionality,
+     except they do not work as a group, but independently, and only toggle
+     the value of a boolean between $false and $true. The boolean value of the check can be retrieved using the
+     @Efl.Ui.Selectable.selected property.
+     Changes to @Efl.Ui.Selectable.selected can be listed to using the @[Efl.Ui.Selectable.selected,changed] event.
+
+     @since 1.23
    ]]
    methods {
-      @property selected {
-         [[The on/off state of the check object.]]
-         set {
-         }
-         get {
-         }
-         values {
-            value: bool; [[$true if the check object is selected, $false otherwise]]
-         }
-      }
    }
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_input_event_handler;
-      Efl.Ui.Nstate.value { set; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Text.text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
+      Efl.Ui.Selectable.selected {get; set; }
    }
 }

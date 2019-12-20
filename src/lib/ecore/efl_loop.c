@@ -55,6 +55,26 @@ EOLIAN static Eina_Value *
 _efl_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
    _ecore_main_loop_begin(obj, pd);
+   if (pd->thread_children)
+     {
+        Eina_List *l, *ll;
+        Eo *child;
+
+        // request all child threads to die and defer the quit until
+        // the children have all died and returned.
+        // run main loop again to clean out children and their exits
+        pd->quit_on_last_thread_child_del = EINA_TRUE;
+        EINA_LIST_FOREACH_SAFE(pd->thread_children, l, ll, child)
+          {
+             Efl_Task_Flags task_flags = efl_task_flags_get(child);
+
+             if (task_flags & EFL_TASK_FLAGS_EXIT_WITH_PARENT)
+               efl_task_end(child);
+             else
+               _efl_thread_child_remove(obj, pd, child);
+          }
+        if (pd->thread_children) _ecore_main_loop_begin(obj, pd);
+     }
    return &(pd->exit_code);
 }
 
@@ -85,19 +105,6 @@ efl_exit(int exit_code)
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
    eina_value_set(&v, exit_code);
    efl_loop_quit(efl_main_loop_get(), v);
-}
-
-EOLIAN static Efl_Object *
-_efl_loop_efl_object_provider_find(const Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
-{
-   Efl_Object *r;
-
-   if (klass == EFL_LOOP_CLASS) return (Efl_Object *) obj;
-
-   r = eina_hash_find(pd->providers, &klass);
-   if (r) return r;
-
-   return efl_provider_find(efl_super(obj, EFL_LOOP_CLASS), klass);
 }
 
 EAPI int
@@ -286,11 +293,10 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
    efl_event_callback_array_add(obj, event_catcher_watch(), pd);
 
    pd->loop_time = ecore_time_get();
-   pd->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
    pd->epoll_fd = -1;
    pd->timer_fd = -1;
    pd->future_message_handler = efl_add(EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, obj);
-   efl_loop_register(obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, pd->future_message_handler);
+   efl_provider_register(obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, pd->future_message_handler);
 
    return obj;
 }
@@ -301,10 +307,6 @@ _efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
    efl_invalidate(efl_super(obj, EFL_LOOP_CLASS));
 
    _ecore_main_content_clear(obj, pd);
-
-   // Even if we are just refcounting provider, efl_provider_find won't reach them after invalidate
-   eina_hash_free(pd->providers);
-   pd->providers = NULL;
 
    pd->poll_low = NULL;
    pd->poll_medium = NULL;
@@ -322,7 +324,8 @@ EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
    pd->future_message_handler = NULL;
-
+   while (pd->thread_children)
+     _efl_thread_child_remove(obj, pd, pd->thread_children->data);
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
 
@@ -517,21 +520,22 @@ timer_error:
 }
 
 static Eina_Bool
-_efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+_efl_loop_register(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED,
+                   const Efl_Class *klass, const Efl_Object *provider)
 {
-   // The passed object does not provide that said class.
-   if (!efl_isa(provider, klass)) return EINA_FALSE;
-
-   // Note: I would prefer to use efl_xref here, but I can't figure a nice way to
-   // call efl_xunref on hash destruction.
-   return eina_hash_add(pd->providers, &klass, efl_ref(provider));
+   return efl_provider_register(obj, klass, provider);
 }
+
+EFL_FUNC_BODYV(efl_loop_register, Eina_Bool, EINA_FALSE, EFL_FUNC_CALL(klass, provider), const Efl_Class *klass, const Efl_Object *provider);
 
 static Eina_Bool
-_efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+_efl_loop_unregister(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED,
+                     const Efl_Class *klass, const Efl_Object *provider)
 {
-   return eina_hash_del(pd->providers, &klass, provider);
+   return efl_provider_unregister(obj, klass, provider);
 }
+
+EFL_FUNC_BODYV(efl_loop_unregister, Eina_Bool, EINA_FALSE, EFL_FUNC_CALL(klass, provider), const Efl_Class *klass, const Efl_Object *provider);
 
 void
 _efl_loop_messages_filter(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, void *handler_pd)
@@ -617,6 +621,14 @@ _efl_loop_message_process(Eo *obj, Efl_Loop_Data *pd)
                }
              else free(msg);
           }
+
+        while (pd->message_pending_queue)
+          {
+             msg = (Message *)pd->message_pending_queue;
+             pd->message_pending_queue = eina_inlist_remove(pd->message_pending_queue,
+                                                            pd->message_pending_queue);
+             pd->message_queue = eina_inlist_append(pd->message_queue, EINA_INLIST_GET(msg));
+          }
      }
    return EINA_TRUE;
 }
@@ -638,21 +650,11 @@ efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
    _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
 }
 
-EOLIAN static Eina_Future *
+EOLIAN static Eina_Bool
 _efl_loop_efl_task_run(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
-   Eina_Value *ret;
-   int real;
-
-   ret = efl_loop_begin(obj);
-   real = efl_loop_exit_code_process(ret);
-   if (real == 0)
-     {
-        // we never return a valid future here because there is no loop
-        // any more to process the future callback as we would have quit
-        return NULL;
-     }
-   return NULL;
+   efl_loop_exit_code_process(efl_loop_begin(obj));
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -660,6 +662,10 @@ _efl_loop_efl_task_end(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    efl_loop_quit(obj, eina_value_int_init(0));
 }
+
+EFL_SCHEDULER_ARRAY_DEFINE(loop_scheduler,
+                           EFL_LOOP_EVENT_IDLE_ENTER,
+                           EFL_LOOP_EVENT_IDLE);
 
 EAPI Eina_Future_Scheduler *
 efl_loop_future_scheduler_get(const Eo *obj)
@@ -673,15 +679,7 @@ efl_loop_future_scheduler_get(const Eo *obj)
         Efl_Loop_Data *pd = efl_data_scope_get(obj, EFL_LOOP_CLASS);
 
         if (!pd) return NULL;
-        if (!pd->future_scheduler.loop)
-          {
-             Eina_Future_Scheduler *sched =
-               _ecore_event_future_scheduler_get();
-             pd->future_scheduler.eina_future_scheduler = *sched;
-             pd->future_scheduler.loop = obj;
-             pd->future_scheduler.loop_data = pd;
-          }
-        return &(pd->future_scheduler.eina_future_scheduler);
+        return efl_event_future_scheduler_get(obj, loop_scheduler());
      }
    if (efl_isa(obj, EFL_LOOP_CONSUMER_CLASS))
      return efl_loop_future_scheduler_get(efl_loop_get(obj));
@@ -693,7 +691,9 @@ efl_loop_future_scheduler_get(const Eo *obj)
    return NULL;
 }
 
-#define EFL_LOOP_EXTRA_OPS \
-  EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process)
+#define EFL_LOOP_EXTRA_OPS                                              \
+  EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process), \
+  EFL_OBJECT_OP_FUNC(efl_loop_register, _efl_loop_register),          \
+  EFL_OBJECT_OP_FUNC(efl_loop_unregister, _efl_loop_unregister)
 
 #include "efl_loop.eo.c"

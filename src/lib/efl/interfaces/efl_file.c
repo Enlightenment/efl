@@ -10,6 +10,7 @@ struct _Efl_File_Data
    Eina_Stringshare *vpath; /* efl_file_set */
    Eina_Stringshare *key; /* efl_file_key_set */
    Eina_File *file; /* efl_file_mmap_set */
+   time_t mtime;
    Eina_Bool file_opened : 1; /* if `file` was opened implicitly during load */
    Eina_Bool setting : 1; /* set when this file is internally calling methods to avoid infinite recursion */
    Eina_Bool loaded : 1; /* whether the currently set file properties have been loaded */
@@ -22,7 +23,8 @@ _efl_file_unload(Eo *obj, Efl_File_Data *pd)
    if (!pd->file) return;
    if (!pd->file_opened) return;
    pd->setting = 1;
-   eina_file_close(pd->file);
+   eina_file_close(pd->file); // close matching open (dup in _efl_file_mmap_set) OK
+   pd->file = NULL;
    efl_file_mmap_set(obj, NULL);
    pd->setting = 0;
    pd->loaded = pd->file_opened = EINA_FALSE;
@@ -46,7 +48,7 @@ _efl_file_load(Eo *obj, Efl_File_Data *pd)
         ret = efl_file_mmap_set(obj, f);
         pd->setting = 0;
         if (ret) pd->file_opened = EINA_FALSE;
-        eina_file_close(f);
+        eina_file_close(f); // close matching open OK
      }
    pd->loaded = !ret;
    return ret;
@@ -64,7 +66,7 @@ _efl_file_mmap_set(Eo *obj, Efl_File_Data *pd, const Eina_File *f)
         file = eina_file_dup(f);
         if (!file) return errno;
      }
-   if (pd->file) eina_file_close(pd->file);
+   if (pd->file) eina_file_close(pd->file); // close matching open (dup above) OK
    pd->file = file;
    pd->loaded = EINA_FALSE;
    
@@ -90,6 +92,7 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file)
    char *tmp;
    Eina_Error err = 0;
    Eina_Bool same;
+   struct stat st;
 
    tmp = (char*)(file);
    if (tmp)
@@ -97,9 +100,17 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file)
 
    same = !eina_stringshare_replace(&pd->vpath, tmp ?: file);
    free(tmp);
+   if (file)
+     {
+        err = stat(pd->vpath, &st);
+        if (same && (!err)) same = st.st_mtime == pd->mtime;
+     }
    if (same) return err;
+   pd->mtime = file && (!err) ? st.st_mtime : 0;
    pd->loaded = EINA_FALSE;
-   if (!pd->setting)
+   if (pd->setting)
+     err = 0; /* this is from mmap_set, which may provide a virtual file */
+   else
      {
         pd->setting = 1;
         err = efl_file_mmap_set(obj, NULL);
@@ -138,7 +149,10 @@ _efl_file_efl_object_destructor(Eo *obj, Efl_File_Data *pd)
 {
    eina_stringshare_del(pd->vpath);
    eina_stringshare_del(pd->key);
-   eina_file_close(pd->file);
+   eina_file_close(pd->file); // close matching open (dup in _efl_file_mmap_set) OK
+   pd->vpath = NULL;
+   pd->key = NULL;
+   pd->file = NULL;
    efl_destructor(efl_super(obj, EFL_FILE_MIXIN));
 }
 
@@ -158,7 +172,11 @@ efl_file_simple_load(Eo *obj, const char *file, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    efl_ref(obj);
-   EINA_SAFETY_ON_TRUE_GOTO(efl_file_set(obj, file), fail);
+   if (efl_file_set(obj, file))
+     {
+        EINA_LOG_ERR("File set to '%s' on '%s' failed.", file, efl_debug_name_get(obj));
+        goto fail;
+     }
    efl_file_key_set(obj, key);
    if (file)
      {

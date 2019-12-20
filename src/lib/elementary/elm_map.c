@@ -1163,8 +1163,7 @@ _zoom_do(Elm_Map_Data *sd,
       efl_event_callback_legacy_call
         (sd->obj, EFL_UI_EVENT_ZOOM_START, NULL);
 
-   if (sd->obj)
-     sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
+   sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
    efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
 
@@ -1308,8 +1307,7 @@ _scr_timeout_cb(void *data)
 
    _smooth_update(sd);
    sd->scr_timer = NULL;
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll,drag,stop", NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1322,12 +1320,10 @@ _scroll_cb(Evas_Object *obj,
 
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
    else
-      efl_event_callback_legacy_call
-        (sd->obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+      evas_object_smart_callback_call(sd->obj, "scroll,drag,start", NULL);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, obj);
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_SCROLL, NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll", NULL);
 }
 
 static void
@@ -1336,8 +1332,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
 {
    ELM_MAP_DATA_GET(obj, sd);
 
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll,anim,start", NULL);
 }
 
 static void
@@ -1346,8 +1341,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 {
    ELM_MAP_DATA_GET(obj, sd);
 
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll,anim,stop", NULL);
 }
 
 static Eina_Bool
@@ -1356,8 +1350,8 @@ _long_press_cb(void *data)
    ELM_MAP_DATA_GET(data, sd);
 
    sd->long_timer = NULL;
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_LONGPRESSED, &sd->ev);
+
+   evas_object_smart_callback_call(sd->obj, "longpressed", &sd->ev);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1376,8 +1370,8 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_legacy_call
-       (sd->obj, EFL_UI_EVENT_CLICKED_DOUBLE, ev);
+     evas_object_smart_callback_call
+       (sd->obj, "clicked,double", ev);
    else
      efl_event_callback_legacy_call
        (sd->obj, ELM_MAP_EVENT_PRESS, ev);
@@ -1407,8 +1401,9 @@ _mouse_up_cb(void *data,
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
    if (!sd->on_hold)
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_CLICKED, ev);
+
+   evas_object_smart_callback_call
+     (sd->obj, "clicked", ev);
    sd->on_hold = EINA_FALSE;
 }
 
@@ -3192,18 +3187,18 @@ _name_list_cb(void *data,
         sd->src_name->name_list_parse_cb(name_list);
         INF("Name List request success address");
         if (name_list->cb)
-          name_list->cb(name_list->data, wd->obj,
+          name_list->cb(name_list->data, sd->obj,
                         name_list->names);
         efl_event_callback_legacy_call
-          (wd->obj, ELM_MAP_EVENT_NAME_LOADED, NULL);
+          (sd->obj, ELM_MAP_EVENT_NAME_LOADED, NULL);
      }
    else
      {
         ERR("Name List request failed: %d", status);
         if (name_list->cb)
-          name_list->cb(name_list->data, wd->obj, NULL);
+          name_list->cb(name_list->data, sd->obj, NULL);
         efl_event_callback_legacy_call
-          (wd->obj, ELM_MAP_EVENT_NAME_LOADED_FAIL, NULL);
+          (sd->obj, ELM_MAP_EVENT_NAME_LOADED_FAIL, NULL);
      }
 
    edje_object_signal_emit(wd->resize_obj,
@@ -3306,7 +3301,7 @@ _name_list_request(const Evas_Object *obj,
 
    fname = _prepare_download();
    url = sd->src_name->url_cb
-   (wd->obj, method, address, lon, lat);
+   (obj, method, address, lon, lat);
    if (!url)
      {
         ERR("Name URL is NULL");
@@ -3335,7 +3330,7 @@ _name_list_request(const Evas_Object *obj,
    free(fname);
 
    efl_event_callback_legacy_call
-     (wd->obj, ELM_MAP_EVENT_NAME_LOAD, name_list->names);
+     ((Eo*)obj, ELM_MAP_EVENT_NAME_LOAD, name_list->names);
    edje_object_signal_emit(wd->resize_obj,
                            "elm,state,busy,start", "elm");
    return name_list->names;
@@ -3937,6 +3932,7 @@ _elm_map_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 {
    Evas_Coord w, h;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (w <= 0 || h <= 0) return;
 
@@ -4006,10 +4002,9 @@ _elm_map_efl_ui_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
-
    elm_widget_theme_object_set
       (obj, wd->resize_obj, "map", "base", elm_widget_style_get(obj));
-
+   elm_interface_scrollable_reset_signals(obj);
    _sizing_eval(obj);
 
    return int_ret;
@@ -4181,8 +4176,6 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    id_num++;
    _grid_all_create(priv);
 
-   _zoom_do(priv, 0);
-
    priv->mode = EFL_UI_ZOOM_MODE_MANUAL;
 
    if (!elm_need_efreet())
@@ -4319,6 +4312,7 @@ _elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
    legacy_object_focus_handle(obj);
+   _zoom_do(sd, 0);
 
    return obj;
 }

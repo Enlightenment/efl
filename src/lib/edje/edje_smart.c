@@ -402,6 +402,29 @@ _efl_canvas_layout_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *e
    _edje_recalc_do(ed);
 }
 
+EOLIAN static void
+_efl_canvas_layout_efl_file_unload(Eo *obj, Edje *ed)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+#ifdef HAVE_EPHYSICS
+   /* clear physics world  / shutdown ephysics */
+   if ((ed->collection) && (ed->collection->physics_enabled) && (ed->world))
+     {
+        if (EPH_LOAD())
+          {
+             EPH_CALL(ephysics_world_del)(ed->world);
+             EPH_CALL(ephysics_shutdown)();
+          }
+     }
+#endif
+   if (ed->persp) edje_object_perspective_set(obj, NULL);
+   _edje_file_del(ed);
+   eina_stringshare_replace(&ed->path, NULL);
+   eina_stringshare_replace(&ed->group, NULL);
+   eina_stringshare_replace(&ed->parent, NULL);
+}
+
 EOLIAN static Eina_Error
 _efl_canvas_layout_efl_file_load(Eo *obj, Edje *ed)
 {
@@ -443,6 +466,7 @@ edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 EAPI Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
+   /* mtime checking of file is handled in efl.file mixin */
    return efl_file_simple_load(obj, file, group);
 }
 
@@ -480,8 +504,7 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
      }
    else if (obs == _edje_text_class_member)
      {
-        _edje_textblock_styles_cache_free(ed, key);
-        _edje_textblock_style_all_update(ed);
+        _edje_file_textblock_style_all_update_text_class(ed->file, key);
 #ifdef EDJE_CALC_CACHE
         ed->text_part_change = EINA_TRUE;
 #endif
@@ -515,33 +538,31 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+_efl_canvas_layout_efl_playable_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
-EOLIAN void
-_efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
+EOLIAN Eina_Bool
+_efl_canvas_layout_efl_player_paused_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool paused)
 {
    double t;
    Eina_List *l;
    Edje_Running_Program *runp;
    unsigned short i;
 
-   if (!ed) return;
-   if (ed->delete_me) return;
-   if (play)
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   paused = !!paused;
+   if (ed->paused == paused) return EINA_TRUE;
+   if (!paused)
      {
-        if (!ed->paused) return;
-        ed->paused = EINA_FALSE;
         t = ecore_time_get() - ed->paused_at;
         EINA_LIST_FOREACH(ed->actions, l, runp)
           runp->start_time += t;
      }
    else
      {
-        if (ed->paused) return;
-        ed->paused = EINA_TRUE;
         ed->paused_at = ecore_time_get();
      }
 
@@ -553,37 +574,68 @@ _efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool 
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_play_set(rp->typedata.swallow->swallowed_object, play);
+          efl_player_paused_set(rp->typedata.swallow->swallowed_object, paused);
      }
-}
-
-EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_play_get(const Eo *obj EINA_UNUSED, Edje *ed)
-{
-   if (!ed) return EINA_FALSE;
-   if (ed->delete_me) return EINA_FALSE;
-   if (ed->paused) return EINA_FALSE;
-
    return EINA_TRUE;
 }
 
+EOLIAN Eina_Bool
+_efl_canvas_layout_efl_player_paused_get(const Eo *obj EINA_UNUSED, Edje *ed)
+{
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   return ed->paused;
+}
+
 EOLIAN void
-_efl_canvas_layout_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
+_efl_canvas_layout_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
 {
    if (speed <= 0.0) speed = 1.0;
    pd->duration_scale = 1.0/speed;
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
+_efl_canvas_layout_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
 {
    return 1.0/pd->duration_scale;
 }
 
 /* Internal EO APIs and hidden overrides */
+EOLIAN static Eina_Bool
+_efl_canvas_layout_efl_object_event_callback_priority_add(Eo *obj, Edje *pd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+  if (desc == EFL_LAYOUT_EVENT_RECALC)
+    {
+       pd->has_recalc_event_cb = EINA_TRUE;
+    }
+  else if (desc == EFL_CONTENT_EVENT_CONTENT_CHANGED)
+    {
+       pd->has_content_change_event_cb = EINA_TRUE;
+    }
 
+  return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_layout_efl_object_event_callback_array_priority_add(Eo *obj, Edje *pd, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        if (array[i].desc == EFL_LAYOUT_EVENT_RECALC)
+          {
+             pd->has_recalc_event_cb = EINA_TRUE;
+          }
+        else if (array[i].desc == EFL_CONTENT_EVENT_CONTENT_CHANGED)
+          {
+             pd->has_content_change_event_cb = EINA_TRUE;
+          }
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
 #define EFL_CANVAS_LAYOUT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_layout), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_canvas_layout_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_canvas_layout_efl_object_event_callback_array_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_layout_efl_object_dbg_info_get)
 
 #include "efl_canvas_layout.eo.c"

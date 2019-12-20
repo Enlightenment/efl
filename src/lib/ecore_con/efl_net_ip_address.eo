@@ -37,7 +37,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
     ]]
 
     methods {
-        create @class {
+        create @static {
             [[Creates an object given family, port and address.
 
               This is a convenience to create an object in a single
@@ -48,10 +48,10 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
                 port: uint16; [[Port number in Host/Native endianess]]
                 address: const(Eina.Slice); [[Address bytes. If 4 bytes, AF_INET will be used. If 16 bytes, AF_INET6 will be used. All other sizes will result in failure.]]
             }
-            return: Efl.Net.Ip_Address @owned; [[Newly created object or $NULL if parameters were invalid.]]
+            return: Efl.Net.Ip_Address @move; [[Newly created object or $NULL if parameters were invalid.]]
         }
 
-        create_sockaddr @class {
+        create_sockaddr @static {
             [[Creates an object given sockaddr
 
               This is a convenient way to create an object in a single call.
@@ -59,12 +59,12 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
               use @.create. To create from a string use @.parse.
             ]]
             params {
-                sockaddr: const(void_ptr) @nonull; [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
+                sockaddr: const(void_ptr); [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
             }
-            return: Efl.Net.Ip_Address @owned; [[Newly created object or $NULL if parameter was invalid.]]
+            return: Efl.Net.Ip_Address @move; [[Newly created object or $NULL if parameter was invalid.]]
         }
 
-        parse @class {
+        parse @static {
             [[Parses a numeric address and return an object representing it.
 
               This parses a numeric IPv4 or IPv6 address and optional
@@ -85,10 +85,10 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             params {
                 numeric_address: string; [[The numeric address to parse, such as '127.0.0.1:1234' or '[::1]:1234']]
             }
-            return: Efl.Net.Ip_Address @owned; [[The new IP address object or NULL if it failed to parse]]
+            return: Efl.Net.Ip_Address @move; [[The new IP address object or $NULL if it failed to parse]]
         }
 
-        resolve @class {
+        resolve @static {
             [[Asynchronously resolves host and port names.
 
               This will resolve the host and port names, returning the
@@ -104,7 +104,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
               and port.
             ]]
             params {
-                address: string @nonull; [[The address, such as enlightenment.org:http or enlightenment.org (port=0)]]
+                address: string; [[The address, such as enlightenment.org:http or enlightenment.org (port=0)]]
                 family: int @optional; [[Preferred family. AF_UNSPEC or 0 for both, otherwise one of AF_INET or AF_INET6]]
                 flags: int @optional; [[Flags to use with getaddrinfo(). If 0, default flags are used (AI_V4MAPPED | AI_ADDRCONFIG, if these exist in your system).]]
             }
@@ -123,7 +123,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             ]]
             get { }
             values {
-                str: string @nonull; [[Numeric address as string]]
+                str: string; [[Numeric address as string]]
             }
         }
 
@@ -167,7 +167,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
               May only be set once. Afterwards the object does not change.
             ]]
             values {
-                sockaddr: const(void_ptr) @nonull; [[Sockaddr struct. As usual with struct sockaddr, the first field, struct sockaddr::sa_family, defines the rest of the structure and how the whole structure must be interpreted. If AF_INET is struct sockaddr_in, AF_INET6 is struct sockaddr_in6.]]
+                sockaddr: const(void_ptr); [[Sockaddr struct. As usual with struct sockaddr, the first field, struct sockaddr::sa_family, defines the rest of the structure and how the whole structure must be interpreted. If AF_INET is struct sockaddr_in, AF_INET6 is struct sockaddr_in6.]]
             }
         }
 

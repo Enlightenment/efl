@@ -345,7 +345,7 @@ em_fps_num_get(void *video)
    int num;
 
    _em_fps_get(ev, &num, NULL);
-   
+
    return num;
 }
 
@@ -356,7 +356,7 @@ em_fps_den_get(void *video)
    int den;
 
    _em_fps_get(ev, NULL, &den);
-   
+
    return den;
 }
 
@@ -591,59 +591,59 @@ em_event_feed(void *video, int event)
    switch (event)
      {
       case EMOTION_EVENT_MENU1:
-	command = GST_NAVIGATION_COMMAND_MENU1;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU1;
+        break;
       case EMOTION_EVENT_MENU2:
-	command = GST_NAVIGATION_COMMAND_MENU2;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU2;
+        break;
       case EMOTION_EVENT_MENU3:
-	command = GST_NAVIGATION_COMMAND_MENU3;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU3;
+        break;
       case EMOTION_EVENT_MENU4:
-	command = GST_NAVIGATION_COMMAND_MENU4;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU4;
+        break;
       case EMOTION_EVENT_MENU5:
-	command = GST_NAVIGATION_COMMAND_MENU5;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU5;
+        break;
       case EMOTION_EVENT_MENU6:
-	command = GST_NAVIGATION_COMMAND_MENU6;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU6;
+        break;
       case EMOTION_EVENT_MENU7:
-	command = GST_NAVIGATION_COMMAND_MENU7;
-	break;
+        command = GST_NAVIGATION_COMMAND_MENU7;
+        break;
       case EMOTION_EVENT_UP:
-	command = GST_NAVIGATION_COMMAND_UP;
-	break;
+        command = GST_NAVIGATION_COMMAND_UP;
+        break;
       case EMOTION_EVENT_DOWN:
-	command = GST_NAVIGATION_COMMAND_DOWN;
-	break;
+        command = GST_NAVIGATION_COMMAND_DOWN;
+        break;
       case EMOTION_EVENT_LEFT:
-	command = GST_NAVIGATION_COMMAND_LEFT;
-	break;
+        command = GST_NAVIGATION_COMMAND_LEFT;
+        break;
       case EMOTION_EVENT_RIGHT:
-	command = GST_NAVIGATION_COMMAND_RIGHT;
-	break;
+        command = GST_NAVIGATION_COMMAND_RIGHT;
+        break;
       case EMOTION_EVENT_SELECT:
-	command = GST_NAVIGATION_COMMAND_ACTIVATE;
-	break;
+        command = GST_NAVIGATION_COMMAND_ACTIVATE;
+        break;
       case EMOTION_EVENT_NEXT:
         /* FIXME */
-	command = GST_NAVIGATION_COMMAND_RIGHT;
-	break;
+        command = GST_NAVIGATION_COMMAND_RIGHT;
+        break;
       case EMOTION_EVENT_PREV:
         /* FIXME */
-	command = GST_NAVIGATION_COMMAND_LEFT;
-	break;
+        command = GST_NAVIGATION_COMMAND_LEFT;
+        break;
       case EMOTION_EVENT_ANGLE_NEXT:
-	command = GST_NAVIGATION_COMMAND_NEXT_ANGLE;
-	break;
+        command = GST_NAVIGATION_COMMAND_NEXT_ANGLE;
+        break;
       case EMOTION_EVENT_ANGLE_PREV:
-	command = GST_NAVIGATION_COMMAND_PREV_ANGLE;
-	break;
+        command = GST_NAVIGATION_COMMAND_PREV_ANGLE;
+        break;
       case EMOTION_EVENT_FORCE:
         /* FIXME */
-	command = GST_NAVIGATION_COMMAND_ACTIVATE;
-	break;
+        command = GST_NAVIGATION_COMMAND_ACTIVATE;
+        break;
       case EMOTION_EVENT_0:
       case EMOTION_EVENT_1:
       case EMOTION_EVENT_2:
@@ -656,8 +656,8 @@ em_event_feed(void *video, int event)
       case EMOTION_EVENT_9:
       case EMOTION_EVENT_10:
       default:
-	return;
-	break;
+        return;
+        break;
      }
 
   gst_navigation_send_command (GST_NAVIGATION (ev->pipeline), command);
@@ -1021,14 +1021,14 @@ em_meta_artwork_get(void *video, Evas_Object *img, const char *path, Emotion_Art
    GstSample *sample;
    GstBuffer *buffer;
    GstMapInfo map;
-   
+
    const gchar *tag = GST_TAG_PREVIEW_IMAGE;
    if (type == EMOTION_ARTWORK_IMAGE) tag = GST_TAG_IMAGE;
 
    if (gst_tag_list_get_sample(tags, tag, &sample))
      {
         buffer = gst_sample_get_buffer(sample);
-        if (!buffer) 
+        if (!buffer)
           {
              evas_object_del(img);
              img = NULL;
@@ -1039,10 +1039,10 @@ em_meta_artwork_get(void *video, Evas_Object *img, const char *path, Emotion_Art
           {
              evas_object_image_memfile_set(img, map.data, map.size, NULL, NULL);
              evas_object_event_callback_add(img, EVAS_CALLBACK_DEL, _img_del_cb, buffer);
-          } 
+          }
         gst_sample_unref(sample);
-     } 
-   else 
+     }
+   else
      {
         evas_object_del(img);
         img = NULL;
@@ -1515,7 +1515,7 @@ _bus_main_handler(void *data)
                 gint n_audio, n_video;
 
                 ev->ready = EINA_TRUE;
-                
+
                 g_object_get(G_OBJECT(ev->pipeline),
                   "n-audio", &n_audio,
                   "n-video", &n_video,
@@ -1523,15 +1523,15 @@ _bus_main_handler(void *data)
 
                 if (n_audio == 0 && n_video == 0)
                   ERR("No audio nor video stream found");
-                
+
                 if (n_audio > 0 && n_video == 0)
                   {
                      GstElement *vis = NULL;
                      gint flags;
                      const char *vis_name;
-                     
+
                      if ((vis_name = emotion_visualization_element_name_get(ev->vis)))
-                       {                       
+                       {
                           vis = gst_element_factory_make(vis_name, "vis");
                           g_object_set(G_OBJECT(ev->pipeline), "vis-plugin", vis, NULL);
                           g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL);
@@ -1557,17 +1557,19 @@ _bus_main_handler(void *data)
                   {
                      /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
                      /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
-                     
+
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
                      if (getuid() == geteuid())
 #endif
                        {
                           if (getenv("EMOTION_GSTREAMER_DOT"))
-                            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
-                                                              GST_DEBUG_GRAPH_SHOW_ALL,
-                                                              getenv("EMOTION_GSTREAMER_DOT"));
+                            {
+                               GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                                                 GST_DEBUG_GRAPH_SHOW_ALL,
+                                                                 getenv("EMOTION_GSTREAMER_DOT"));
+                            }
                        }
-                       
+
                      _emotion_open_done(ev->obj);
                      _emotion_playback_started(ev->obj);
                   }
@@ -1578,12 +1580,12 @@ _bus_main_handler(void *data)
         {
            GError *err = NULL;
            gchar *name, *debug = NULL;
-           
+
            name = gst_object_get_path_string (msg->src);
            gst_message_parse_error (msg, &err, &debug);
-           
+
            ERR("ERROR: from element %s: %s\nAdditional debug info:\n%s", name, err->message, debug);
-           
+
            g_error_free (err);
            g_free (debug);
            g_free (name);
@@ -1600,12 +1602,12 @@ _bus_main_handler(void *data)
         {
            GError *err = NULL;
            gchar *name, *debug = NULL;
-           
+
            name = gst_object_get_path_string (msg->src);
            gst_message_parse_warning (msg, &err, &debug);
-           
+
            WRN("WARNING: from element %s: %s\nAdditional debug info:\n%s", name, err->message, debug);
-           
+
            g_error_free (err);
            g_free (debug);
            g_free (name);
@@ -1615,14 +1617,14 @@ _bus_main_handler(void *data)
       case GST_MESSAGE_BUFFERING:
         {
            gint percent = 0;
-           
+
            /* If the stream is live, we do not care about buffering. */
            if (ev->live)
              {
                 ev->buffering = FALSE;
                 break;
              }
-           
+
            gst_message_parse_buffering (msg, &percent);
 
            /* Wait until buffering is complete before start/resume playing */
@@ -1658,9 +1660,9 @@ _bus_sync_handler(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
    INF("Message %s from %s",
        GST_MESSAGE_TYPE_NAME(msg),
        GST_MESSAGE_SRC_NAME(msg));
-   
+
    send = emotion_gstreamer_message_alloc(ev, msg);
-   
+
    if (send)
      {
         _emotion_pending_ecore_begin();
@@ -1686,7 +1688,7 @@ _emotion_gstreamer_pause(void *data, Ecore_Thread *thread)
      {
         ev->live = EINA_TRUE;
         gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
-	gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+        gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
      }
 }
 
@@ -1701,7 +1703,12 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          {
+             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                               GST_DEBUG_GRAPH_SHOW_ALL,
+                                               getenv("EMOTION_GSTREAMER_DOT"));
+          }
      }
 
    emotion_gstreamer_unref(ev);
@@ -1723,7 +1730,12 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          {
+             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                               GST_DEBUG_GRAPH_SHOW_ALL,
+                                               getenv("EMOTION_GSTREAMER_DOT"));
+          }
      }
 
    emotion_gstreamer_unref(ev);
@@ -1791,7 +1803,12 @@ _create_pipeline(Emotion_Gstreamer *ev,
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          {
+             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin),
+                                               GST_DEBUG_GRAPH_SHOW_ALL,
+                                               getenv("EMOTION_GSTREAMER_DOT"));
+          }
      }
 
    return playbin;
@@ -1801,4 +1818,3 @@ _create_pipeline(Emotion_Gstreamer *ev,
    gst_object_unref(playbin);
    return NULL;
 }
-

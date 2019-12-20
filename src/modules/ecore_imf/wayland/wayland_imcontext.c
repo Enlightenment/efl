@@ -299,7 +299,6 @@ text_input_commit_string(void *data,
 
    if (old_preedit)
      {
-        ecore_imf_context_preedit_end_event_add(imcontext->ctx);
         ecore_imf_context_event_callback_call(imcontext->ctx, 
                                               ECORE_IMF_CALLBACK_PREEDIT_END,
                                               NULL);
@@ -331,7 +330,6 @@ text_input_commit_string(void *data,
              if (surrounding)
                free(surrounding);
 
-             ecore_imf_context_delete_surrounding_event_add(imcontext->ctx, ev.offset, ev.n_chars);
              ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
           }
      }
@@ -341,7 +339,6 @@ text_input_commit_string(void *data,
    imcontext->pending_commit.cursor = 0;
    imcontext->pending_commit.anchor = 0;
 
-   ecore_imf_context_commit_event_add(imcontext->ctx, text);
    ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)text);
 }
 
@@ -354,17 +351,13 @@ commit_preedit(WaylandIMContext *imcontext)
    if (!imcontext->ctx)
      return;
 
-   ecore_imf_context_preedit_changed_event_add(imcontext->ctx);
    ecore_imf_context_event_callback_call(imcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
                                          NULL);
 
-   ecore_imf_context_preedit_end_event_add(imcontext->ctx);
    ecore_imf_context_event_callback_call(imcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
 
-   ecore_imf_context_commit_event_add(imcontext->ctx, 
-                                      imcontext->preedit_commit);
    ecore_imf_context_event_callback_call(imcontext->ctx, 
                                          ECORE_IMF_CALLBACK_COMMIT, 
                                          (void *)imcontext->preedit_commit);
@@ -458,20 +451,17 @@ text_input_preedit_string(void *data,
 
    if (!old_preedit)
      {
-        ecore_imf_context_preedit_start_event_add(imcontext->ctx);
         ecore_imf_context_event_callback_call(imcontext->ctx, 
                                               ECORE_IMF_CALLBACK_PREEDIT_START, 
                                               NULL);
      }
 
-   ecore_imf_context_preedit_changed_event_add(imcontext->ctx);
    ecore_imf_context_event_callback_call(imcontext->ctx, 
                                          ECORE_IMF_CALLBACK_PREEDIT_CHANGED, 
                                          NULL);
 
    if (imcontext->preedit_text && strlen(imcontext->preedit_text) == 0)
      {
-        ecore_imf_context_preedit_end_event_add(imcontext->ctx);
         ecore_imf_context_event_callback_call(imcontext->ctx, 
                                               ECORE_IMF_CALLBACK_PREEDIT_END, 
                                               NULL);
@@ -492,7 +482,6 @@ text_input_delete_surrounding_text(void *data,
    imcontext->pending_commit.delete_index = ev.offset = index;
    imcontext->pending_commit.delete_length = ev.n_chars = length;
 
-   ecore_imf_context_delete_surrounding_event_add(imcontext->ctx, ev.offset, ev.n_chars);
    ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
 }
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_NAME_HELPERS_HH
 #define EOLIAN_MONO_NAME_HELPERS_HH
 
@@ -7,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
 #include "utils.hh"
 
 #include "grammar/integral.hpp"
@@ -60,6 +76,7 @@ inline std::string escape_keyword(std::string const& name)
      || is_equal(name, "string")
      || is_equal(name, "internal")
      || is_equal(name, "fixed")
+     || is_equal(name, "var")
      || is_equal(name, "base"))
     return "kw_" + name;
 
@@ -122,7 +139,42 @@ static const std::vector<std::string> verbs =
     "unpack",
     "emit",
     "call",
-    "append"
+    "append",
+    "apply",
+    "bind",
+    "cancel",
+    "copy",
+    "create",
+    "cut",
+    "delete",
+    "deselect",
+    "detach",
+    "do",
+    "gen",
+    "insert",
+    "iterate",
+    "join",
+    "leave",
+    "limit",
+    "paste",
+    "parse",
+    "prepend",
+    "process",
+    "query",
+    "refresh",
+    "remove",
+    "register",
+    "reject",
+    "release",
+    "reply",
+    "send",
+    "select",
+    "serialize",
+    "steal",
+    "sync",
+    "toggle",
+    "unbind",
+    "unregister"
   };
 
 const std::vector<std::string> not_verbs =
@@ -201,6 +253,30 @@ inline std::string managed_name(std::string const& name, char separator='_')
 {
   auto tokens = utils::split(name, separator);
   return utils::to_pascal_case(tokens);
+}
+
+inline std::string full_managed_name(std::string const& name)
+{
+  std::stringstream ss;
+
+  auto words = utils::split(name, '.');
+  std::transform(words.begin(), words.end(), words.begin(), [](std::string const& word) {
+     return managed_name(word);
+  });
+
+  auto b = std::begin(words), e = std::end(words);
+
+  if (b != e)
+    {
+      std::copy(b, std::prev(e), std::ostream_iterator<std::string>(ss, "."));
+      b = std::prev(e);
+    }
+
+  // Avoid trailing separator
+  if (b != e)
+    ss << *b;
+
+  return ss.str();
 }
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
@@ -292,11 +368,9 @@ struct klass_interface_name_generator
   template <typename T>
   std::string operator()(T const& klass) const
   {
-    std::string name = utils::remove_all(klass.eolian_name, '_');
-    if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
-      return "I" + name;
-    else
-      return name;
+     return ((klass.type == attributes::class_type::mixin
+              || klass.type == attributes::class_type::interface_) ? "I" : "")
+       + utils::remove_all(klass.eolian_name, '_');
   }
 
   template <typename OutputIterator, typename Attr, typename Context>
@@ -324,10 +398,9 @@ struct klass_full_interface_name_generator
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
-    return klass_interface_name(klass) + "Concrete";
-
-  return utils::remove_all(klass.eolian_name, '_');
+   return utils::remove_all(klass.eolian_name, '_') + ((klass.type == attributes::class_type::mixin
+           || klass.type == attributes::class_type::interface_)
+                                                       ? "Concrete" : "");
 }
 
 template<typename  T>
@@ -419,14 +492,12 @@ inline std::string klass_get_full_name(T const& clsname)
 // Events
 inline std::string managed_event_name(std::string const& name)
 {
-   return utils::to_pascal_case(utils::split(name, "_,"), "") + "Evt";
+   return utils::to_pascal_case(utils::split(name, "_,"), "") + "Event";
 }
 
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)
 {
-   std::string ret;
-     ret = klass_concrete_or_interface_name(evt.klass);
-   return ret + name_helpers::managed_event_name(evt.name) + "_Args";
+   return utils::remove_all(evt.klass.eolian_name, '_') + name_helpers::managed_event_name(evt.name) + "Args";
 }
 
 inline std::string managed_event_args_name(attributes::event_def evt)
@@ -446,15 +517,18 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
-  auto open_namespace = *("namespace " << string << " {\n\n");
-  return as_generator(open_namespace).generate(sink, namespaces, context);
+  std::string joined_namespace = join_namespaces(namespaces, '.');
+  if (joined_namespace.empty()) return true;
+  joined_namespace.pop_back();
+
+  return as_generator("namespace " << string << " {\n").generate(sink, joined_namespace, context);
 }
 
 template<typename OutputIterator, typename Context>
 bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
-     auto close_namespace = (lit("}") % "\n\n" ) << "\n\n";
-     return as_generator(close_namespace).generate(sink, namespaces, context);
+     if (namespaces.empty()) return true;
+     return as_generator("}\n\n").generate(sink, attributes::unused, context);
 }
 
 std::string constructor_managed_name(std::string full_name)
@@ -463,6 +537,43 @@ std::string constructor_managed_name(std::string full_name)
 
     return managed_name(tokens.at(tokens.size()-1));
 }
+
+std::string translate_value_type(std::string const& name)
+{
+  static std::map<std::string, std::string> table = {
+    {"sbyte", "SByte"},
+    {"byte","Byte"},
+    {"short","Int16"},
+    {"ushort","UInt16"},
+    {"int", "Int32"},
+    {"uint","UInt32"},
+    {"long","Int64"},
+    {"ulong","UInt64"},
+    {"char","Char"},
+    {"float","Single"},
+    {"double","Double"},
+    {"bool","Boolean"},
+    {"decimal","Decimal"},
+  };
+
+  auto found = table.find(name);
+
+  if (found != table.end())
+    return found->second;
+
+  return name;
+}
+
+
+// Field names //
+struct struct_field_name_generator
+{
+  template <typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
+  {
+    return as_generator(string).generate(sink, name_helpers::to_field_name(field.name), context);
+  }
+} const struct_field_name {};
 
 } // namespace name_helpers
 
@@ -491,9 +602,18 @@ struct is_eager_generator<eolian_mono::name_helpers::klass_full_concrete_name_ge
 template <>
 struct is_generator<eolian_mono::name_helpers::klass_full_concrete_name_generator> : std::true_type {};
 
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::struct_field_name_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::name_helpers::struct_field_name_generator> : std::true_type {};
+
 namespace type_traits {
 template <>
 struct attributes_needed<struct ::eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::integral_constant<int, 1> {};
+
+template <>
+struct attributes_needed< ::eolian_mono::name_helpers::struct_field_name_generator> : std::integral_constant<int, 1> {};
+
 }
       
 } } }

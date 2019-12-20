@@ -57,26 +57,6 @@ static char *tab_icon_get()
 	return tab_icons[tab_icon_count++];
 }
 
-static void
-_tab_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_Tab_Page_Tab_Changed_Event *ev = event->info;
-
-   switch (ev->changed_info)
-     {
-        case EFL_UI_TAB_PAGE_TAB_CHANGED_LABEL:
-          printf("[%p] tab label changed\n", event->object);
-          break;
-
-        case EFL_UI_TAB_PAGE_TAB_CHANGED_ICON:
-          printf("[%p] tab icon changed\n", event->object);
-          break;
-
-        default:
-          break;
-     }
-}
-
 Eo *
 content_add(Eo *parent, char *text)
 {
@@ -107,10 +87,9 @@ tab_page_add(Eo *parent)
 
    tab_page = efl_add(EFL_UI_TAB_PAGE_CLASS, parent);
    efl_content_set(tab_page, content);
-   efl_text_set(efl_part(tab_page, "tab"), label);
-   efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
-
-   efl_event_callback_add(tab_page, EFL_UI_TAB_PAGE_EVENT_TAB_CHANGED, _tab_changed_cb, NULL);
+   Eo *item = efl_ui_tab_page_tab_bar_item_get(tab_page);
+   efl_text_set(item, label);
+   efl_ui_tab_bar_default_item_icon_set(item, icon);
 
    return tab_page;
 }
@@ -118,15 +97,14 @@ tab_page_add(Eo *parent)
 void
 test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *layout, *navi, *list, *tp, *tb, *page;
+   Eo *win, *layout, *navi, *list, *tp, *page;
    //Efl_Page_Transition *tran;
    App_Data *ad = NULL;
    char buf[PATH_MAX];
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Tab_Pager"),
+                                  efl_text_set(efl_added, "Efl.Ui.Tab_Pager"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del_cb, ad));
 
@@ -151,17 +129,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    tp = efl_add(EFL_UI_TAB_PAGER_CLASS, layout,
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
-                efl_ui_pager_page_size_set(efl_added, EINA_SIZE2D(-1, -1)),
-                efl_ui_pager_padding_set(efl_added, 20),
                 efl_content_set(efl_part(layout, "tab_pager"), efl_added));
-
-   tb = efl_add(EFL_UI_TAB_BAR_CLASS, tp);
-   efl_ui_tab_pager_tab_bar_set(tp, tb);
-
-/*
-   tran = efl_add(EFL_PAGE_TRANSITION_SCROLL_CLASS, tp)
-   efl_ui_pager_transition_set(tp, tran);
-*/
 
    tab_label_count = 0;
    tab_icon_count = 0;
@@ -170,9 +138,9 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    {
       page = tab_page_add(tp);
       efl_pack_end(tp, page);
+      if (i == 0)
+        efl_ui_spotlight_active_element_set(tp, page);
    }
-
-   efl_ui_pager_current_page_set(tp, 0);
 
    ad = (App_Data*)calloc(1, sizeof(App_Data));
    ad->navi = navi;
@@ -206,7 +174,7 @@ static void
 _tab_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Tab_Set_Data *tsd = data;
-   efl_ui_pager_current_page_set(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
+   efl_ui_spotlight_active_element_set(tsd->tab_pager, efl_pack_content_get(tsd->tab_pager, elm_spinner_value_get(tsd->spinner)));
 }
 
 static void
@@ -229,15 +197,15 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Current", btn, NULL, efl_added, NULL));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
-                efl_ui_range_value_set(efl_added, efl_ui_pager_current_page_get(tab_pager)),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_value_set(efl_added, efl_content_count(tab_pager)),
                 efl_pack_end(box, efl_added));
 
    tsd->tab_pager = tab_pager;
@@ -245,7 +213,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Current Tab Page Set"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tab_set_btn_cb, tsd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tab_set_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _tab_set_btn_del_cb, tsd),
                  efl_pack_end(box, efl_added));
 }
@@ -277,10 +245,8 @@ _pack_before_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *tab_pager = data;
    Eo *tab_page, *cur_tab_page;
-   int index;
 
-   index = efl_ui_pager_current_page_get(tab_pager);
-   cur_tab_page = efl_pack_content_get(tab_pager, index);
+   cur_tab_page = efl_ui_spotlight_active_element_get(tab_pager);
 
    tab_page = tab_page_add(tab_pager);
 
@@ -292,10 +258,8 @@ _pack_after_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *tab_pager = data;
    Eo *tab_page, *cur_tab_page;
-   int index;
 
-   index = efl_ui_pager_current_page_get(tab_pager);
-   cur_tab_page = efl_pack_content_get(tab_pager, index);
+   cur_tab_page = efl_ui_spotlight_active_element_get(tab_pager);
 
    tab_page = tab_page_add(tab_pager);
 
@@ -311,7 +275,7 @@ _pack_at_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    tab_page = tab_page_add(tsd->tab_pager);
 
    efl_pack_at(tsd->tab_pager, tab_page, elm_spinner_value_get(tsd->spinner));
-   efl_ui_range_min_max_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
+   efl_ui_range_limits_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
 }
 
 static void
@@ -334,44 +298,44 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Pack", btn, NULL, efl_added, NULL));
 
    /* Pack Begin */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack Begin"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_begin_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_begin_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Pack End */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack End"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_end_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_end_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Pack Before */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack Before Current Tab Page"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_before_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_before_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Pack After */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack After Current Tab Page"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_after_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_after_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
-                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-                    efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
+                    efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                     efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
-                efl_ui_range_value_set(efl_added, efl_ui_pager_current_page_get(tab_pager)),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_value_set(efl_added, efl_content_count(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
    tsd->tab_pager = tab_pager;
@@ -380,7 +344,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    /* Pack At */
    btn = efl_add(EFL_UI_BUTTON_CLASS, in_box,
                  efl_text_set(efl_added, "Pack At"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_at_btn_cb, tsd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_at_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _pack_at_btn_del_cb, tsd),
                  efl_pack_end(in_box, efl_added));
 }
@@ -396,8 +360,9 @@ static void
 _unpack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *tab_pager = data;
-   int index = efl_ui_pager_current_page_get(tab_pager);
-   Eo *tab_page = efl_pack_content_get(tab_pager, index);
+
+   Eo *tab_page = efl_ui_spotlight_active_element_get(tab_pager);
+
    efl_pack_unpack(tab_pager, tab_page);
    efl_del(tab_page);
 }
@@ -415,7 +380,7 @@ _unpack_at_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Tab_Set_Data *tsd = data;
 
    efl_pack_unpack_at(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
-   efl_ui_range_min_max_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
+   efl_ui_range_limits_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
 }
 
 static void
@@ -438,40 +403,40 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Unpack", btn, NULL, efl_added, NULL));
 
    /* Clear */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Clear"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clear_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _clear_btn_cb, tab_pager),
                  efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    /* Unpack */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unpack"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _unpack_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Unpack All */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unpack All"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_all_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _unpack_all_btn_cb, tab_pager),
                  efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
-                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-                    efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
+                    efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                     efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
-                efl_ui_range_value_set(efl_added, efl_ui_pager_current_page_get(tab_pager)),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_value_set(efl_added, efl_content_count(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
    tsd->tab_pager = tab_pager;
@@ -480,7 +445,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    /* Unpack At */
    btn = efl_add(EFL_UI_BUTTON_CLASS, in_box,
                  efl_text_set(efl_added, "Unpack At"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_at_btn_cb, tsd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _unpack_at_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _unpack_at_btn_del_cb, tsd),
                  efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(in_box, efl_added));
@@ -494,22 +459,21 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *tab_page, *content;
    char *label = NULL;
    char *icon = NULL;
-   int cur;
-   cur = efl_ui_pager_current_page_get(tcd->tab_pager);
-   tab_page = efl_pack_content_get(tcd->tab_pager, cur);
 
-   if (efl_ui_nstate_value_get(tcd->label_check))
+   tab_page = efl_ui_spotlight_active_element_get(tcd->tab_pager);
+
+   if (efl_ui_selectable_selected_get(tcd->label_check))
    {
       label = tab_label_get();
-      efl_text_set(efl_part(tab_page, "tab"), label);
+      efl_text_set(efl_ui_tab_page_tab_bar_item_get(tab_page), label);
       content = content_add(tab_page, label);
       efl_content_set(tab_page, content);
    }
 
-   if (efl_ui_nstate_value_get(tcd->icon_check))
+   if (efl_ui_selectable_selected_get(tcd->icon_check))
    {
       icon = tab_icon_get();
-      efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
+      efl_ui_tab_bar_default_item_icon_set(efl_ui_tab_page_tab_bar_item_get(tab_page), icon);
    }
 }
 
@@ -533,21 +497,21 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Tab", btn, NULL, efl_added, NULL));
 
-   label_check = efl_add(EFL_UI_CHECK_CLASS, box,
-                         efl_text_set(efl_added, "Tab Label + Page"),
-                         efl_ui_nstate_value_set(efl_added, EINA_FALSE),
-                         efl_pack_end(box, efl_added));
+   label_check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(label_check, "Tab Label + Page");
+   efl_ui_selectable_selected_set(label_check, EINA_FALSE);
+   efl_pack_end(box, label_check);
 
-   icon_check = efl_add(EFL_UI_CHECK_CLASS, box,
-                        efl_text_set(efl_added, "Tab Icon"),
-                        efl_ui_nstate_value_set(efl_added, EINA_FALSE),
-                        efl_pack_end(box, efl_added));
+   icon_check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(icon_check, "Tab Icon");
+   efl_ui_selectable_selected_set(icon_check, EINA_FALSE);
+   efl_pack_end(box, icon_check);
 
    tcd->tab_pager = tab_pager;
    tcd->label_check = label_check;
@@ -555,22 +519,29 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Change"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _change_btn_cb, tcd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _change_btn_cb, tcd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _change_btn_del_cb, tcd),
                  efl_pack_end(box, efl_added));
 }
 
 static void
-_tran_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_tran_set_btn_scroll_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Page_Transition *tran = efl_add(EFL_PAGE_TRANSITION_SCROLL_CLASS, data);
-   efl_ui_pager_transition_set(data, tran);
+   Efl_Ui_Spotlight_Manager_Scroll *scroll = efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS);
+   efl_ui_spotlight_manager_set(data, scroll);
+}
+
+static void
+_tran_set_btn_stack_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Ui_Spotlight_Manager_Scroll *stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   efl_ui_spotlight_manager_set(data, stack);
 }
 
 static void
 _tran_unset_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_pager_transition_set(data, NULL);
+   efl_ui_spotlight_manager_set(data, NULL);
 }
 
 static void
@@ -586,19 +557,23 @@ _transition_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Transition", btn, NULL, efl_added, NULL));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
-                 efl_text_set(efl_added, "Set"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tran_set_btn_cb, tab_pager),
+                 efl_text_set(efl_added, "Scroll"),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tran_set_btn_scroll_cb, tab_pager),
+                 efl_pack_end(box, efl_added));
+   btn = efl_add(EFL_UI_BUTTON_CLASS, box,
+                 efl_text_set(efl_added, "Stack"),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tran_set_btn_stack_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unset"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tran_unset_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tran_unset_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 }

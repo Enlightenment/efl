@@ -1,0 +1,50 @@
+abstract @beta Efl.Ui.Spotlight.Indicator extends Efl.Object {
+  [[Object used by @Efl.Ui.Spotlight.Container to render an indication of the active widgets' position among
+    the rest of the container's widgets.
+
+    An example would be Android's little dots in the home screen.
+  ]]
+  methods {
+    bind @pure_virtual {
+      [[This method is called the first time an @Efl.Ui.Spotlight.Indicator is assigned to an
+        @Efl.Ui.Spotlight.Container, binding them together.
+
+        This call can be used to setup the indicator part of the $spotlight.
+
+        The Active View of the container (if there is any) will be informed to the indicator by a later call to
+        @.position_update.
+      ]]
+      params {
+        spotlight : Efl.Ui.Spotlight.Container; [[The container to bind this indicator to.]]
+      }
+    }
+    content_add @pure_virtual  {
+      [[A $subobj has been added at position $index in the bound container.]]
+      params {
+        subobj : Efl.Gfx.Entity; [[The new object that has been added to the container.]]
+        index : int; [[The index of the new object in the container's list.]]
+      }
+    }
+    content_del @pure_virtual  {
+      [[The $subobj at position $index in the bound container has been removed.]]
+      params {
+        subobj : Efl.Gfx.Entity; [[The object being removed from the container.]]
+        index : int; [[The index this object had in the container's list.]]
+      }
+    }
+    position_update @pure_virtual {
+      [[This method tells the indicator that @Efl.Ui.Spotlight.Container.active_element has changed in the bound
+        container.
+        $position ranges from -1 to the number of views in the bound container (@Efl.Container.content_count).
+        Notice this allows moving to a position before the first view or past the last view, which might happen if the
+        view is thumb-scrolled out-of-bounds. Indicators can choose to render these out-of-bounds positions or not.
+
+        Fractional values indicate positions in-between two views and should be respected to obtain smooth transitions.
+      ]]
+      params {
+        position : double; [[The index of the active view, or a value in-between views if a transition is currently
+                             playing.]]
+      }
+    }
+  }
+}

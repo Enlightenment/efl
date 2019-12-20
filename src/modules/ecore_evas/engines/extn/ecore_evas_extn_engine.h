@@ -1,3 +1,6 @@
+#ifndef _ECORE_EVAS_EXTN_ENGINE_H_
+#define _ECORE_EVAS_EXTN_ENGINE_H_
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -14,9 +17,13 @@
 #include <unistd.h>
 #include <math.h>
 #include <time.h>
-#ifdef HAVE_SYS_MMAN_H
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
@@ -218,3 +225,5 @@ struct _Ipc_Data_Ev_Key_Down
    unsigned int timestamp;
    Evas_Event_Flags event_flags;
 };
+
+#endif /*_ECORE_EVAS_EXTN_ENGINE_H_*/

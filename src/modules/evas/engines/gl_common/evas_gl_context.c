@@ -3679,6 +3679,191 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
      PUSH_6_COLORS(pn, r, g, b, a);
 }
 
+void
+evas_gl_common_filter_grayscale_push(Evas_Engine_GL_Context *gc,
+                                Evas_GL_Texture *tex,
+                                int x, int y, int w, int h)
+{
+   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
+   GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
+   GLfloat offsetx, offsety;
+   int r, g, b, a, nomul = 0, pn;
+   Evas_GL_Program *prog;
+   Eina_Bool blend = EINA_TRUE;
+   Eina_Bool smooth = EINA_TRUE;
+   Shader_Type type = SHD_FILTER_GRAYSCALE;
+
+   r = R_VAL(&gc->dc->mul.col);
+   g = G_VAL(&gc->dc->mul.col);
+   b = B_VAL(&gc->dc->mul.col);
+   a = A_VAL(&gc->dc->mul.col);
+   if (gc->dc->render_op == EVAS_RENDER_COPY)
+     blend = EINA_FALSE;
+
+   prog = evas_gl_common_shader_program_get(gc, type, NULL, 0, r, g, b, a,
+                                            w, h, w, h, smooth, tex, EINA_FALSE,
+                                            NULL, EINA_FALSE, EINA_FALSE, 0, 0,
+                                            EINA_FALSE, NULL, &nomul, NULL);
+
+   _filter_data_flush(gc, prog);
+   EINA_SAFETY_ON_NULL_RETURN(prog);
+
+   pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
+                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, 0, EINA_FALSE);
+
+   gc->pipe[pn].region.type = type;
+   gc->pipe[pn].shader.prog = prog;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texm = 0;
+   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.mask_smooth = 0;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = !nomul;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_mask = 0;
+   gc->pipe[pn].array.use_masksam = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+   PIPE_GROW(gc, pn, 6);
+
+   _filter_data_alloc(gc, pn, 0);
+
+   pw = tex->pt->w;
+   ph = tex->pt->h;
+
+   ox1 = x;
+   oy1 = y;
+   ox2 = x + w;
+   oy2 = y;
+   ox3 = x + w;
+   oy3 = y + h;
+   ox4 = x;
+   oy4 = y + h;
+
+   offsetx = tex->x;
+   offsety = tex->y;
+
+   tx1 = ((double)(offsetx) + ox1) / pw;
+   ty1 = ((double)(offsety) + oy1) / ph;
+   tx2 = ((double)(offsetx) + ox2) / pw;
+   ty2 = ((double)(offsety) + oy2) / ph;
+   tx3 = ((double)(offsetx) + ox3) / pw;
+   ty3 = ((double)(offsety) + oy3) / ph;
+   tx4 = ((double)(offsetx) + ox4) / pw;
+   ty4 = ((double)(offsety) + oy4) / ph;
+
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_QUAD(pn, tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4);
+
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
+}
+
+void
+evas_gl_common_filter_inverse_color_push(Evas_Engine_GL_Context *gc,
+                                         Evas_GL_Texture *tex,
+                                         int x, int y, int w, int h)
+{
+   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
+   GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
+   GLfloat offsetx, offsety;
+   int r, g, b, a, nomul = 0, pn;
+   Evas_GL_Program *prog;
+   Eina_Bool blend = EINA_TRUE;
+   Eina_Bool smooth = EINA_TRUE;
+   Shader_Type type = SHD_FILTER_INVERSE_COLOR;
+
+   r = R_VAL(&gc->dc->mul.col);
+   g = G_VAL(&gc->dc->mul.col);
+   b = B_VAL(&gc->dc->mul.col);
+   a = A_VAL(&gc->dc->mul.col);
+   if (gc->dc->render_op == EVAS_RENDER_COPY)
+     blend = EINA_FALSE;
+
+   prog = evas_gl_common_shader_program_get(gc, type, NULL, 0, r, g, b, a,
+                                            w, h, w, h, smooth, tex, EINA_FALSE,
+                                            NULL, EINA_FALSE, EINA_FALSE, 0, 0,
+                                            EINA_FALSE, NULL, &nomul, NULL);
+
+   _filter_data_flush(gc, prog);
+   EINA_SAFETY_ON_NULL_RETURN(prog);
+
+   pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
+                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, 0, EINA_FALSE);
+
+   gc->pipe[pn].region.type = type;
+   gc->pipe[pn].shader.prog = prog;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texm = 0;
+   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.mask_smooth = 0;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = !nomul;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_mask = 0;
+   gc->pipe[pn].array.use_masksam = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+   PIPE_GROW(gc, pn, 6);
+
+   _filter_data_alloc(gc, pn, 0);
+
+   pw = tex->pt->w;
+   ph = tex->pt->h;
+
+   ox1 = x;
+   oy1 = y;
+   ox2 = x + w;
+   oy2 = y;
+   ox3 = x + w;
+   oy3 = y + h;
+   ox4 = x;
+   oy4 = y + h;
+
+   offsetx = tex->x;
+   offsety = tex->y;
+
+   tx1 = ((double)(offsetx) + ox1) / pw;
+   ty1 = ((double)(offsety) + oy1) / ph;
+   tx2 = ((double)(offsetx) + ox2) / pw;
+   ty2 = ((double)(offsety) + oy2) / ph;
+   tx3 = ((double)(offsetx) + ox3) / pw;
+   ty3 = ((double)(offsety) + oy3) / ph;
+   tx4 = ((double)(offsetx) + ox4) / pw;
+   ty4 = ((double)(offsety) + oy4) / ph;
+
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_QUAD(pn, tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4);
+
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
+}
 // ----------------------------------------------------------------------------
 
 EAPI void
@@ -3769,8 +3954,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         pipe_done++;
         gc->flushnum++;
 
-        GLERRV("<flush err>");
-        if (prog && (prog != gc->state.current.prog))
+        if (prog != gc->state.current.prog)
           {
              glUseProgram(prog->prog);
              if (prog->reset)

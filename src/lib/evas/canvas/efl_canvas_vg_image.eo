@@ -1,0 +1,19 @@
+class @beta Efl.Canvas.Vg.Image extends Efl.Canvas.Vg.Node implements Efl.Gfx.Image
+{
+   [[Efl vector graphics image class]]
+   methods {
+      @property data {
+         [[Set image data]]
+         set {
+         }
+         values {
+            pixels: void_ptr; [[Image pixels data. The pixel data type is 32bit RGBA]]
+            size: Eina.Size2D; [[The size in pixels.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

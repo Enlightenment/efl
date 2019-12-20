@@ -518,14 +518,9 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Table_Data 
           }
 
         if (priv->is_mirrored)
-          {
-             evas_object_move(opt->obj, x + w - (cx - x + cw), cy);
-          }
+          evas_object_geometry_set(opt->obj, x + w - (cx - x + cw), cy, cw, ch);
         else
-          {
-             evas_object_move(child, cx, cy);
-          }
-        evas_object_resize(child, cw, ch);
+          evas_object_geometry_set(child, cx, cy, cw, ch);
      }
 }
 
@@ -859,14 +854,9 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Table_Data *pri
         _evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
 
         if (priv->is_mirrored)
-          {
-             evas_object_move(opt->obj, x + w + 2 * (0.5 - priv->align.h) * (totw - w) - (cx - x + cw), cy);
-          }
+          evas_object_geometry_set(opt->obj, x + w + 2 * (0.5 - priv->align.h) * (totw - w) - (cx - x + cw), cy, cw, ch);
         else
-          {
-             evas_object_move(child, cx, cy);
-          }
-        evas_object_resize(child, cw, ch);
+          evas_object_geometry_set(child, cx, cy, cw, ch);
      }
 
  end:
@@ -975,6 +965,7 @@ _evas_table_efl_canvas_group_group_calculate(Eo *o, Evas_Table_Data *priv)
      _evas_object_table_smart_calculate_regular(o, priv);
 
    evas_event_thaw(e);
+   evas_event_thaw_eval(e);
 }
 
 EAPI Evas_Object *

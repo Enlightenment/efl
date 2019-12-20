@@ -274,6 +274,7 @@ _ephysics_body_soft_body_slice_new(EPhysics_Body *body, double delta, double max
    faces = body->soft_body->m_faces;
 
    slice->index = index;
+   if (!faces.size()) return slice;
    slice->p[0].x = _ephysics_body_soft_body_slice_calc(
       faces[slice->index].m_n[0]->m_x.x(), delta, max);
    slice->p[0].y = 1 - _ephysics_body_soft_body_slice_calc(
@@ -763,7 +764,6 @@ ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
      }
 
    body->collision_groups = eina_list_remove(body->collision_groups, group_str);
-   eina_stringshare_del(group_str);
    eina_stringshare_del(group_str);
    ephysics_world_lock_release(body->world);
    return EINA_TRUE;

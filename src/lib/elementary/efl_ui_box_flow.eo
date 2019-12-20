@@ -1,6 +1,15 @@
-class @beta Efl.Ui.Box_Flow extends Efl.Ui.Box
+class Efl.Ui.Box_Flow extends Efl.Ui.Box
 {
-   [[A custom layout engine for @Efl.Ui.Box.]]
+   [[A Flow Box is a customized type of @Efl.Ui.Box. It will fill along the axis selected with
+     @Efl.Ui.Layout_Orientable.orientation (which defaults to Horizontal), until items will no
+     longer fit in the available space, at which point it will begin filling items in a new
+     row/column after the current one.
+     This is useful if an application wants to e.g., present a group of items and wrap them onto
+     subsequent lines when the number of items grows too large to fit on the screen.
+     Adding or removing items in the middle re-arrange the rest of the items as expected.
+
+     @since 1.23
+   ]]
    implements {
       Efl.Pack_Layout.layout_update;
    }

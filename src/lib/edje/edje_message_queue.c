@@ -6,14 +6,49 @@ static int _injob = 0;
 static Ecore_Job *_job = NULL;
 static Ecore_Timer *_job_loss_timer = NULL;
 
-static Eina_List *msgq = NULL;
-static Eina_List *tmp_msgq = NULL;
+static Eina_Inlist *msgq = NULL;
+static Eina_Inlist *tmp_msgq = NULL;
 static int tmp_msgq_processing = 0;
 static int tmp_msgq_restart = 0;
+
+static Eina_Inlist *_edje_msg_trash = NULL;
 
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
+
+#define INLIST_CONTAINER(container_type, list, list_entry) \
+   (container_type *)((unsigned char *)list - offsetof(container_type, list_entry))
+
+static Edje_Message *
+_edje_msg_trash_pop(void)
+{
+   Edje_Message *em;
+
+   if (!_edje_msg_trash) return NULL;
+   em = INLIST_CONTAINER(Edje_Message, _edje_msg_trash, inlist_main);
+   _edje_msg_trash = eina_inlist_remove(_edje_msg_trash, &(em->inlist_main));
+   memset(em, 0, sizeof(Edje_Message));
+   return em;
+}
+
+static void
+_edje_msg_trash_push(Edje_Message *em)
+{
+   _edje_msg_trash = eina_inlist_prepend(_edje_msg_trash, &(em->inlist_main));
+}
+
+static void
+_edje_msg_trash_clear(void)
+{
+   Edje_Message *em;
+
+   while (_edje_msg_trash)
+     {
+        em = _edje_msg_trash_pop();
+        free(em);
+     }
+}
 
 static void
 _edje_object_message_propagate_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop)
@@ -144,48 +179,50 @@ bad_type:
 static void
 _edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   Eina_List *l, *ln, *tmpq = NULL;
-   Edje *lookup_ed;
-   Eina_List *lg;
+   Eina_Inlist *l, *ln;
+   Edje *lookup_ed = NULL;
+   Eina_List *groups = NULL, *lg;
    Edje_Message *em;
-   Eina_List *groups = NULL;
    int gotos = 0;
 
    if (!ed) return;
 
    groups = ed->groups;
-
-   EINA_LIST_FOREACH_SAFE(msgq, l, ln, em)
+   if (groups)
      {
-        EINA_LIST_FOREACH(groups, lg, lookup_ed)
-          if (em->edje == lookup_ed)
-            {
-               tmpq = eina_list_append(tmpq, em);
-               msgq = eina_list_remove_list(msgq, l);
-               break;
-            }
-     }
-   /* a temporary message queue */
-   if (tmp_msgq)
-     {
-        EINA_LIST_FREE(tmpq, em)
-          tmp_msgq = eina_list_append(tmp_msgq, em);
-     }
-   else
-     {
-        tmp_msgq = tmpq;
-        tmpq = NULL;
+        for (l = msgq; l; l = ln)
+          {
+             ln = l->next;
+             em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+             EINA_LIST_FOREACH(groups, lg, lookup_ed)
+               {
+                  if (em->edje == lookup_ed)
+                    {
+                       msgq = eina_inlist_remove(msgq, &(em->inlist_main));
+                       tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
+                       em->in_tmp_msgq = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
      }
 
    tmp_msgq_processing++;
 again:
-   EINA_LIST_FOREACH_SAFE(tmp_msgq, l, ln, em)
+   for (l = ed->messages; l; l = ln)
      {
+        ln = l->next;
+        em = INLIST_CONTAINER(Edje_Message, l, inlist_edje);
+        if (!em->in_tmp_msgq) continue;
+        // so why this? any group edje is not the parent - skip this
+        lookup_ed = NULL;
         EINA_LIST_FOREACH(groups, lg, lookup_ed)
-          if (em->edje == lookup_ed)
-            break;
-        if (em->edje != lookup_ed) continue;
-        tmp_msgq = eina_list_remove_list(tmp_msgq, l);
+          {
+             if (em->edje == lookup_ed) break;
+          }
+        if (!lookup_ed) continue;
+        tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
+        lookup_ed->messages = eina_inlist_remove(lookup_ed->messages, &(em->inlist_edje));
         if (!lookup_ed->delete_me)
           {
              lookup_ed->processing_messages++;
@@ -258,6 +295,7 @@ _edje_job(void *data EINA_UNUSED)
    _job = NULL;
    _injob++;
    _edje_message_queue_process();
+   _edje_msg_trash_clear();
    _injob--;
 }
 
@@ -281,6 +319,7 @@ void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
+   _edje_msg_trash_clear();
    if (_job_loss_timer)
      {
         ecore_timer_del(_job_loss_timer);
@@ -314,13 +353,15 @@ _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
 {
    Edje_Message *em;
 
-   em = calloc(1, sizeof(Edje_Message));
+   em = _edje_msg_trash_pop();
+   if (em) memset(em, 0, sizeof(Edje_Message));
+   else em = calloc(1, sizeof(Edje_Message));
    if (!em) return NULL;
    em->edje = ed;
+   em->edje->message.num++;
    em->queue = queue;
    em->type = type;
    em->id = id;
-   em->edje->message.num++;
    return em;
 }
 
@@ -447,7 +488,7 @@ _edje_message_free(Edje_Message *em)
              break;
           }
      }
-   free(em);
+   _edje_msg_trash_push(em);
 }
 
 static void
@@ -635,7 +676,8 @@ _edje_message_propagate_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type,
      }
 
    em->msg = msg;
-   msgq = eina_list_append(msgq, em);
+   msgq = eina_inlist_append(msgq, &(em->inlist_main));
+   em->edje->messages = eina_inlist_append(em->edje->messages, &(em->inlist_edje));
 }
 
 void
@@ -848,6 +890,7 @@ void
 _edje_message_queue_process(void)
 {
    int i;
+   Edje_Message *em;
 
    if (!msgq) return;
 
@@ -856,29 +899,26 @@ _edje_message_queue_process(void)
    for (i = 0; (i < 8) && (msgq); i++)
      {
         /* a temporary message queue */
-        if (tmp_msgq)
+        while (msgq)
           {
-             while (msgq)
-               {
-                  tmp_msgq = eina_list_append(tmp_msgq, msgq->data);
-                  msgq = eina_list_remove_list(msgq, msgq);
-               }
-          }
-        else
-          {
-             tmp_msgq = msgq;
-             msgq = NULL;
+             Eina_Inlist *l = msgq;
+
+             em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+             msgq = eina_inlist_remove(msgq, &(em->inlist_main));
+             tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
+             em->in_tmp_msgq = EINA_TRUE;
           }
 
         tmp_msgq_processing++;
         while (tmp_msgq)
           {
-             Edje_Message *em;
+             Eina_Inlist *l = tmp_msgq;
              Edje *ed;
 
-             em = tmp_msgq->data;
+             em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
              ed = em->edje;
-             tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
+             tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
+             em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
              em->edje->message.num--;
              if (!ed->delete_me)
                {
@@ -924,22 +964,24 @@ _edje_message_queue_process(void)
 void
 _edje_message_queue_clear(void)
 {
+   Edje_Message *em;
+
    while (msgq)
      {
-        Edje_Message *em;
-
-        em = msgq->data;
-        msgq = eina_list_remove_list(msgq, msgq);
+        Eina_Inlist *l = msgq;
+        em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+        msgq = eina_inlist_remove(msgq, &(em->inlist_main));
         em->edje->message.num--;
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
         _edje_message_free(em);
      }
    while (tmp_msgq)
      {
-        Edje_Message *em;
-
-        em = tmp_msgq->data;
-        tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
+        Eina_Inlist *l = tmp_msgq;
+        em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+        tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
         em->edje->message.num--;
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
         _edje_message_free(em);
      }
 }
@@ -947,41 +989,22 @@ _edje_message_queue_clear(void)
 void
 _edje_message_del(Edje *ed)
 {
-   Eina_List *l;
+   Eina_Inlist *l, *ln;
+   Edje_Message *em;
 
    if (ed->message.num <= 0) return;
-   /* delete any messages on the main queue for this edje object */
-   for (l = msgq; l; )
+   // delete any messages on the main or tmp queue for this edje object
+   for (l = ed->messages; l; l = ln)
      {
-        Edje_Message *em;
-        Eina_List *lp;
-
-        em = eina_list_data_get(l);
-        lp = l;
-        l = eina_list_next(l);
-        if (em->edje == ed)
-          {
-             msgq = eina_list_remove_list(msgq, lp);
-             em->edje->message.num--;
-             _edje_message_free(em);
-          }
-        if (ed->message.num <= 0) return;
-     }
-   /* delete any on the processing queue */
-   for (l = tmp_msgq; l; )
-     {
-        Edje_Message *em;
-        Eina_List *lp;
-
-        em = eina_list_data_get(l);
-        lp = l;
-        l = eina_list_next(l);
-        if (em->edje == ed)
-          {
-             tmp_msgq = eina_list_remove_list(tmp_msgq, lp);
-             em->edje->message.num--;
-             _edje_message_free(em);
-          }
+        ln = l->next;
+        em = INLIST_CONTAINER(Edje_Message, l, inlist_edje);
+        em->edje->message.num--;
+        if (em->in_tmp_msgq)
+          tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
+        else
+          msgq = eina_inlist_remove(msgq, &(em->inlist_main));
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
+        _edje_message_free(em);
         if (ed->message.num <= 0) return;
      }
 }

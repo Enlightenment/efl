@@ -1394,6 +1394,7 @@ static Eina_Bool
 _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    Instruction_Param *param;
+   Eina_Inlist *last = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1404,9 +1405,16 @@ _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
    // TODO: Allow passing an array of 256 values as points.
    // It could be easily computed from another function in the script.
    _instruction_param_seq_add(instr, "points", VT_SPECIAL, _lua_curve_points_func, NULL);
-   param = EINA_INLIST_CONTAINER_GET(eina_inlist_last(instr->params), Instruction_Param);
-   param->allow_any_string = EINA_TRUE;
-
+   if (instr->params)
+     {
+        last = instr->params->last;
+        if (last)
+          {
+             param = EINA_INLIST_CONTAINER_GET(last, Instruction_Param);
+             param->allow_any_string = EINA_TRUE;
+          }
+     }
+     
    _instruction_param_seq_add(instr, "interpolation", VT_STRING, "linear");
    _instruction_param_seq_add(instr, "channel", VT_STRING, "rgb");
    _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
@@ -1777,6 +1785,46 @@ _transform_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction
    _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
    //_instruction_param_name_add(instr, "ox", VT_INT, 0);
    _instruction_param_name_add(instr, "oy", VT_INT, 0);
+
+   return EINA_TRUE;
+}
+
+/**
+  @page evasfiltersref
+  Remove color information from buffer's contents and leave only grayscale
+  TODO: write down more information
+ */
+
+static Eina_Bool
+_grayscale_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "grayscale"), EINA_FALSE);
+
+   instr->type = EVAS_FILTER_MODE_GRAYSCALE;
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
+
+   return EINA_TRUE;
+}
+
+/**
+  @page evasfiltersref
+  Apply inverse color
+  TODO: write down more information
+ */
+
+static Eina_Bool
+_inverse_color_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "inverse_color"), EINA_FALSE);
+
+   instr->type = EVAS_FILTER_MODE_INVERSE_COLOR;
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
 
    return EINA_TRUE;
 }
@@ -2241,6 +2289,8 @@ LUA_GENERIC_FUNCTION(grow)
 LUA_GENERIC_FUNCTION(mask)
 LUA_GENERIC_FUNCTION(padding_set)
 LUA_GENERIC_FUNCTION(transform)
+LUA_GENERIC_FUNCTION(grayscale)
+LUA_GENERIC_FUNCTION(inverse_color)
 
 static const luaL_Reg _lua_buffer_metamethods[] = {
    { "__call", _lua_buffer_new },
@@ -2254,7 +2304,13 @@ static char *_lua_color_code = NULL;
 static inline void
 _lua_import_path_get(char *path, size_t len, const char *name)
 {
-   const char *pfx = _evas_module_datadir_get();
+   const char *pfx = NULL;
+   /* a hack for in-tree runs, can point this to src/lib/evas */
+   if (getenv("EFL_RUN_IN_TREE"))
+     pfx = getenv("EFL_EVAS_FILTER_LUA_PREFIX");
+   /* the real path not for in-tree runs */
+   if (!pfx)
+     pfx = _evas_module_datadir_get();
    size_t r = 0;
 
 #ifdef FILTERS_DEBUG
@@ -2471,6 +2527,8 @@ _lua_state_create(Evas_Filter_Program *pgm)
    PUSH_LUA_FUNCTION(mask)
    PUSH_LUA_FUNCTION(padding_set)
    PUSH_LUA_FUNCTION(transform)
+   PUSH_LUA_FUNCTION(grayscale)
+   PUSH_LUA_FUNCTION(inverse_color)
 
    for (unsigned k = 0; k < (sizeof(fill_modes) / sizeof(fill_modes[0])); k++)
      {
@@ -3389,6 +3447,34 @@ _instr2cmd_transform(Evas_Filter_Context *ctx,
    return evas_filter_command_transform_add(ctx, dc, src->cid, dst->cid, flags, ox, oy);
 }
 
+static Evas_Filter_Command *
+_instr2cmd_grayscale(Evas_Filter_Context *ctx,
+                     Evas_Filter_Instruction *instr, void *dc)
+{
+   Buffer *src, *dst;
+
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
+
+   return evas_filter_command_grayscale_add(ctx, dc, src->cid, dst->cid);
+}
+
+static Evas_Filter_Command *
+_instr2cmd_inverse_color(Evas_Filter_Context *ctx,
+                         Evas_Filter_Instruction *instr, void *dc)
+{
+   Buffer *src, *dst;
+
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
+
+   return evas_filter_command_inverse_color_add(ctx, dc, src->cid, dst->cid);
+}
+
 static Eina_Bool
 _command_from_instruction(Evas_Filter_Context *ctx,
                           Evas_Filter_Instruction *instr, void *dc)
@@ -3424,6 +3510,12 @@ _command_from_instruction(Evas_Filter_Context *ctx,
         break;
       case EVAS_FILTER_MODE_TRANSFORM:
         instr2cmd = _instr2cmd_transform;
+        break;
+      case EVAS_FILTER_MODE_GRAYSCALE:
+        instr2cmd = _instr2cmd_grayscale;
+        break;
+      case EVAS_FILTER_MODE_INVERSE_COLOR:
+        instr2cmd = _instr2cmd_inverse_color;
         break;
       case EVAS_FILTER_MODE_PADDING_SET:
       case EVAS_FILTER_MODE_BUFFER:

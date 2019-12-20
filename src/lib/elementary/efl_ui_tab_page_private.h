@@ -8,6 +8,7 @@ struct _Efl_Ui_Tab_Page_Data
    Eo                                   *content;
    const char                           *tab_label;
    const char                           *tab_icon;
+   Eo                                   *tab_bar_icon;
 };
 
 
@@ -22,7 +23,5 @@ struct _Efl_Ui_Tab_Page_Data
            o, evas_object_type_get(o));              \
        return __VA_ARGS__;                           \
     }
-
-#include "efl_ui_tab_page_part_tab.eo.h"
 
 #endif

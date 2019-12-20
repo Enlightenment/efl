@@ -326,7 +326,7 @@ _elm_scroller_efl_ui_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd E
 }
 
 EOLIAN static void
-_elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_canvas_group_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h,
               vmw, vmh;
@@ -406,6 +406,7 @@ _elm_scroller_efl_ui_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUS
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   elm_interface_scrollable_reset_signals(obj);
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    elm_layout_sizing_eval(obj);
@@ -487,8 +488,7 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL, NULL);
+   evas_object_smart_callback_call(obj, "scroll", NULL);
 }
 
 static void
@@ -523,32 +523,29 @@ static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   evas_object_smart_callback_call(obj, "scroll,anim,start", NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   evas_object_smart_callback_call(obj, "scroll,anim,stop", NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   evas_object_smart_callback_call(obj, "scroll,drag,start", NULL);
 }
+
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   evas_object_smart_callback_call(obj, "scroll,drag,stop", NULL);
 }
 
 static void
@@ -879,6 +876,8 @@ _focused_element(void *data, const Efl_Event *event)
    pd = efl_data_scope_get(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
 
    if (!focus) return;
+   /* no scroller content set */
+   if (!pd->pan_obj) return;
 
    geom = efl_ui_focus_object_focus_geometry_get(focus);
    pos = efl_gfx_entity_position_get(obj);
@@ -1206,13 +1205,13 @@ elm_scroller_movement_block_set(Evas_Object *obj,
                                 Elm_Scroller_Movement_Block block)
 {
    ELM_SCROLLABLE_CHECK(obj);
-   Efl_Ui_Scroll_Block mode = EFL_UI_SCROLL_BLOCK_NONE;
+   Efl_Ui_Layout_Orientation mode = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
 
    // legacy -> eo
    if (block == ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
-     mode = EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+     mode = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else if (block == ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
-     mode = EFL_UI_SCROLL_BLOCK_VERTICAL;
+     mode = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    elm_interface_scrollable_movement_block_set(obj, mode);
 }
@@ -1220,16 +1219,16 @@ elm_scroller_movement_block_set(Evas_Object *obj,
 EAPI Elm_Scroller_Movement_Block
 elm_scroller_movement_block_get(const Evas_Object *obj)
 {
-   Efl_Ui_Scroll_Block mode;
+   Efl_Ui_Layout_Orientation mode;
 
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
 
    mode = elm_interface_scrollable_movement_block_get(obj);
 
    // eo -> legacy
-   if (mode == EFL_UI_SCROLL_BLOCK_HORIZONTAL)
+   if (mode == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      return ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL;
-   else if (mode == EFL_UI_SCROLL_BLOCK_VERTICAL)
+   else if (mode == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      return ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL;
 
    return ELM_SCROLLER_MOVEMENT_NO_BLOCK;
@@ -1400,7 +1399,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 
 #include "elm_scroller_eo.c"

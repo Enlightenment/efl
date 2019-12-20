@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 #define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
+#include "Evas_Internal.h"
 
 #define DEFAULT_TEXT "Click the white rectangle to get started"
 
@@ -56,10 +56,10 @@ _key_down(void *data, const Efl_Event *ev)
    // 2. ecore_evas -> evas -> focused obj (elm_win) -> here
 
    sprintf(str, "key=%s keyname=%s string=%s compose=%s",
-           efl_input_key_get(ev->info),
+           efl_input_key_sym_get(ev->info),
            efl_input_key_name_get(ev->info),
            efl_input_key_string_get(ev->info),
-           efl_input_key_compose_get(ev->info));
+           efl_input_key_compose_string_get(ev->info));
    elm_object_text_set(td->text, str);
 
    if (!efl_input_fake_get(ev->info))
@@ -197,7 +197,7 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-                efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
+                efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
    efl_content_set(win, bx);
    td->win = win;
 
@@ -227,9 +227,9 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_pack(bx, o);
 
-   efl_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
+   efl_event_callback_add(td->button, EFL_INPUT_EVENT_CLICKED, _clicked_button1, td);
    efl_event_callback_array_add(td->button, button_pointer_callbacks(), (void*)(intptr_t)0x1);
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _clicked_button2, td);
    efl_event_callback_add(win, EFL_EVENT_DEL, _win_del, td);
    efl_event_callback_array_add(o, rect_pointer_callbacks(), td);
    efl_event_callback_array_add(win, win_key_callbacks(), td);

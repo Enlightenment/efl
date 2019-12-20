@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* nl_langinfo */
+#endif
+
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_L10N_PROTECTED
 
@@ -25,6 +29,7 @@
 #define MAX_SEPARATOR_LEN              6
 #define MIN_DAYS_IN_MONTH              28
 #define BUFFER_SIZE                    1024
+#define CLOCK_FIELD_COUNT       8
 
 /* interface between EDC & C code (field & signal names). values 0 to
  * EFL_UI_CLOCK_TYPE_COUNT are in the valid range, and must get in the
@@ -91,49 +96,119 @@ static void _part_name_snprintf(char *buffer, int buffer_size,
    snprintf(buffer, buffer_size, template + 4, n);
 }
 
-static Elm_Module *
-_dt_mod_find(void)
+static void
+_ampm_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   static int tried_fallback = 0;
-   Elm_Module *mod = _elm_module_find_as("clock/api");
+   struct tm curr_time;
 
-   if (mod) return mod;
-   if (!tried_fallback &&
-       (!_elm_config->modules || !strstr(_elm_config->modules, "clock/api")))
-     {
-        // See also _config_update(): we hardcode here the default module
-        ERR("Elementary config does not contain the required module "
-            "name for the clock widget! Verify your installation.");
-        _elm_module_add("clock_input_ctxpopup", "clock/api");
-        mod = _elm_module_find_as("clock/api");
-        tried_fallback = EINA_TRUE;
-     }
-   return mod;
+   curr_time = efl_ui_clock_time_get(data);
+   if (curr_time.tm_hour >= 12) curr_time.tm_hour -= 12;
+   else curr_time.tm_hour += 12;
+   efl_ui_clock_time_set(data, curr_time);
 }
 
-static Clock_Mod_Api *
-_dt_mod_init()
+static void
+_access_set(Evas_Object *obj, Efl_Ui_Clock_Type field_type)
 {
-   Elm_Module *mod;
+   const char* type = NULL;
 
-   mod = _dt_mod_find();
-   if (!mod) return NULL;
-   if (mod->api) return mod->api;
-   mod->api = malloc(sizeof(Clock_Mod_Api));
-   if (!mod->api) return NULL;
+   switch (field_type)
+     {
+      case EFL_UI_CLOCK_TYPE_YEAR:
+         type = "datetime field, year";
+         break;
 
-   ((Clock_Mod_Api *)(mod->api))->obj_hook =
-     _elm_module_symbol_get(mod, "obj_hook");
-   ((Clock_Mod_Api *)(mod->api))->obj_unhook =
-     _elm_module_symbol_get(mod, "obj_unhook");
-   ((Clock_Mod_Api *)(mod->api))->obj_hide =
-     _elm_module_symbol_get(mod, "obj_hide");
-   ((Clock_Mod_Api *)(mod->api))->field_create =
-     _elm_module_symbol_get(mod, "field_create");
-   ((Clock_Mod_Api *)(mod->api))->field_value_display =
-     _elm_module_symbol_get(mod, "field_value_display");
+      case EFL_UI_CLOCK_TYPE_MONTH:
+         type = "datetime field, month";
+         break;
 
-   return mod->api;
+      case EFL_UI_CLOCK_TYPE_DATE:
+         type = "datetime field, date";
+         break;
+
+      case EFL_UI_CLOCK_TYPE_HOUR:
+         type = "datetime field, hour";
+         break;
+
+      case EFL_UI_CLOCK_TYPE_MINUTE:
+         type = "datetime field, minute";
+         break;
+
+      case EFL_UI_CLOCK_TYPE_AMPM:
+         type = "datetime field, AM PM";
+         break;
+
+      default:
+         break;
+     }
+
+   _elm_access_text_set
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, type);
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, NULL, NULL);
+}
+
+static const char *
+_field_format_get(Evas_Object *obj,
+                  Efl_Ui_Clock_Type field_type)
+{
+   Clock_Field *field;
+
+   if (field_type > EFL_UI_CLOCK_TYPE_AMPM) return NULL;
+
+   EFL_UI_CLOCK_DATA_GET(obj, sd);
+
+   field = sd->field_list + field_type;
+
+   return field->fmt;
+}
+
+static void
+field_value_display(Eo *obj, Evas_Object *item_obj)
+{
+   Efl_Ui_Clock_Type  field_type;
+   struct tm tim;
+   char buf[BUFFER_SIZE];
+   const char *fmt;
+
+   tim = efl_ui_clock_time_get(obj);
+   field_type = (Efl_Ui_Clock_Type )evas_object_data_get(item_obj, "_field_type");
+   fmt = _field_format_get(obj, field_type);
+   buf[0] = 0;
+   strftime(buf, sizeof(buf), fmt, &tim);
+   if ((!buf[0]) && ((!strcmp(fmt, "%p")) || (!strcmp(fmt, "%P"))))
+     {
+        // yes BUFFER_SIZE is more than 2 bytes!
+        if (tim.tm_hour < 12) strcpy(buf, "AM");
+        else strcpy(buf, "PM");
+     }
+   efl_text_set(item_obj, buf);
+}
+
+static Evas_Object *
+field_create(Eo *obj, Efl_Ui_Clock_Type  field_type)
+{
+   Evas_Object *field_obj;
+
+   if (field_type == EFL_UI_CLOCK_TYPE_AMPM)
+     {
+        field_obj = efl_add(EFL_UI_BUTTON_CLASS, obj,
+          efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _ampm_clicked_cb, obj));
+     }
+   else
+     {
+        field_obj = efl_add(EFL_UI_TEXTBOX_CLASS,obj,
+          efl_text_multiline_set(efl_added, EINA_FALSE),
+          efl_text_interactive_editable_set(efl_added, EINA_FALSE),
+          efl_input_text_input_panel_autoshow_set(efl_added, EINA_FALSE),
+          efl_ui_textbox_context_menu_enabled_set(efl_added, EINA_FALSE));
+     }
+   evas_object_data_set(field_obj, "_field_type", (void *)field_type);
+
+   // ACCESS
+   _access_set(field_obj, field_type);
+
+   return field_obj;
 }
 
 static void
@@ -141,18 +216,14 @@ _field_list_display(Evas_Object *obj)
 {
    Clock_Field *field;
    unsigned int idx = 0;
-   Clock_Mod_Api *dt_mod;
 
    EFL_UI_CLOCK_DATA_GET(obj, sd);
-
-   dt_mod = _dt_mod_init();
-   if (!dt_mod || !dt_mod->field_value_display) return;
 
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if (field->fmt_exist && field->visible)
-          dt_mod->field_value_display(sd->mod_data, field->item_obj);
+          field_value_display(obj, field->item_obj);
      }
 }
 
@@ -277,17 +348,13 @@ _field_list_arrange(Evas_Object *obj)
         _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_FIELD_STR,
                             field->location);
 
+        efl_gfx_entity_visible_set(efl_content_unset(efl_part(obj, buf)), EINA_FALSE);
         if (field->visible && field->fmt_exist)
-          {
-             evas_object_hide(elm_layout_content_unset(obj, buf));
-             elm_layout_content_set(obj, buf, field->item_obj);
-          }
-        else
-          evas_object_hide(elm_layout_content_unset(obj, buf));
+          efl_content_set(efl_part(obj, buf), field->item_obj);
      }
    sd->freeze_sizing = freeze;
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
    _field_list_display(obj);
 }
 
@@ -401,6 +468,7 @@ _reload_format(Evas_Object *obj)
         if (field->fmt_exist && field->visible)
           sd->enabled_field_count++;
      }
+   efl_ui_layout_finger_size_multiplier_set(obj, sd->enabled_field_count, 1);
 
    // assign locations to disabled fields for uniform usage
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
@@ -412,25 +480,19 @@ _reload_format(Evas_Object *obj)
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
                       field->location);
-             if (elm_widget_is_legacy(obj))
-               elm_layout_signal_emit(obj, buf, "elm");
-             else
-               elm_layout_signal_emit(obj, buf, "efl");
+             efl_layout_signal_emit(obj, buf, "efl");
           }
         else
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
                       field->location);
-             if (elm_widget_is_legacy(obj))
-               elm_layout_signal_emit(obj, buf, "elm");
-             else
-               elm_layout_signal_emit(obj, buf, "efl");
+             efl_layout_signal_emit(obj, buf, "efl");
           }
         if (field->location + 1)
           {
              _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_SEPARATOR_STR,
                                  field->location + 1);
-             elm_layout_text_set(obj, buf, field->separator);
+             efl_text_set(efl_part(obj, buf), field->separator);
           }
      }
 
@@ -478,40 +540,12 @@ _efl_ui_clock_edit_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
    return sd->edit_mode;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
-
-   if (!efl_ui_focus_object_focus_get(obj))
-     {
-        Clock_Mod_Api *dt_mod = _dt_mod_init();
-        if ((dt_mod) && (dt_mod->obj_hide))
-          dt_mod->obj_hide(sd->mod_data);
-     }
-
-   return EINA_TRUE;
-}
-
 EOLIAN static void
-_efl_ui_clock_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
-   Evas_Coord minw = -1, minh = -1;
-
-   if (sd->freeze_sizing) return;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->enabled_field_count)
-     elm_coords_finger_size_adjust(sd->enabled_field_count, &minw, 1, &minh);
-
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   /* FIXME: this seems dumb */
+   if (!sd->freeze_sizing)
+     efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Error
@@ -522,15 +556,11 @@ _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
    Clock_Field *field;
    char buf[BUFFER_SIZE];
    unsigned int idx;
-   Clock_Mod_Api *dt_mod;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
-
-   dt_mod = _dt_mod_init();
-   if ((!dt_mod) || (!dt_mod->field_value_display)) return EINA_TRUE;
 
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
      {
@@ -541,33 +571,26 @@ _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
                       field->location);
-             if (elm_widget_is_legacy(obj))
-               elm_layout_signal_emit(obj, buf, "elm");
-             else
-               elm_layout_signal_emit(obj, buf, "efl");
+             efl_layout_signal_emit(obj, buf, "efl");
 
              if (field->location)
                {
                   _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_SEPARATOR_STR,
                                       field->location);
-                  elm_layout_text_set(obj, buf, field->separator);
+                  efl_text_set(efl_part(obj, buf), field->separator);
                }
 
-             dt_mod->field_value_display(sd->mod_data, field->item_obj);
+             field_value_display(obj, field->item_obj);
           }
         else
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
                       field->location);
-             if (elm_widget_is_legacy(obj))
-               elm_layout_signal_emit(obj, buf, "elm");
-             else
-               elm_layout_signal_emit(obj, buf, "efl");
+             efl_layout_signal_emit(obj, buf, "efl");
           }
      }
 
    edje_object_message_signal_process(wd->resize_obj);
-   elm_layout_sizing_eval(obj);
 
    return int_ret;
 }
@@ -705,62 +728,6 @@ _apply_range_restrictions(struct tm *tim)
      }
 }
 
-static const char *
-_field_format_get(Evas_Object *obj,
-                  Efl_Ui_Clock_Type field_type)
-{
-   Clock_Field *field;
-
-   if (field_type > EFL_UI_CLOCK_TYPE_AMPM) return NULL;
-
-   EFL_UI_CLOCK_DATA_GET(obj, sd);
-
-   field = sd->field_list + field_type;
-
-   return field->fmt;
-}
-
-static void
-_field_limit_get(Evas_Object *obj,
-                 Efl_Ui_Clock_Type field_type,
-                 int *range_min,
-                 int *range_max)
-{
-   int min, max, max_days;
-   Clock_Field *field;
-   unsigned int idx;
-
-   if (field_type > EFL_UI_CLOCK_TYPE_DAY) return;
-
-   EFL_UI_CLOCK_DATA_GET(obj, sd);
-
-   field = sd->field_list + field_type;
-
-   min = field->min;
-   max = field->max;
-
-   CLOCK_TM_ARRAY(curr_timearr, &sd->curr_time);
-   CLOCK_TM_ARRAY(min_timearr, &sd->min_limit);
-   CLOCK_TM_ARRAY(max_timearr, &sd->max_limit);
-
-   for (idx = 0; idx < field->type; idx++)
-     if (*curr_timearr[idx] > *min_timearr[idx]) break;
-   if ((idx == field_type) && (min < *min_timearr[field_type]))
-     min = *min_timearr[field_type];
-   if (field_type == EFL_UI_CLOCK_TYPE_DATE)
-     {
-        max_days = _max_days_get(sd->curr_time.tm_year, sd->curr_time.tm_mon);
-        if (max > max_days) max = max_days;
-     }
-   for (idx = 0; idx < field->type; idx++)
-     if (*curr_timearr[idx] < *max_timearr[idx]) break;
-   if ((idx == field_type) && (max > *max_timearr[field_type]))
-     max = *max_timearr[field_type];
-
-   *range_min = min;
-   *range_max = max;
-}
-
 static void
 _field_list_init(Evas_Object *obj)
 {
@@ -828,11 +795,9 @@ _ticker(void *data)
 
    if (sd->curr_time.tm_sec > 0)
      {
-        Clock_Mod_Api *dt_mod = _dt_mod_init();
         field = sd->field_list + EFL_UI_CLOCK_TYPE_SECOND;
-        if (field->fmt_exist && field->visible &&
-            dt_mod && dt_mod->field_value_display)
-          dt_mod->field_value_display(sd->mod_data, field->item_obj);
+        if (field->fmt_exist && field->visible)
+          field_value_display(data, field->item_obj);
      }
    else
      _field_list_display(data);
@@ -848,7 +813,6 @@ EOLIAN static void
 _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
 {
    Clock_Field *field;
-   Clock_Mod_Api *dt_mod;
    int idx;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -862,33 +826,11 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
-   // module - initialise module for clock
-   dt_mod = _dt_mod_init();
-   if (dt_mod)
+   for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
      {
-        if (dt_mod->obj_hook)
-          {
-             priv->mod_data = dt_mod->obj_hook(obj);
-
-             // update module data
-             if (priv->mod_data)
-               {
-                  priv->mod_data->base = obj;
-                  priv->mod_data->field_limit_get = _field_limit_get;
-                  priv->mod_data->field_format_get = _field_format_get;
-               }
-          }
-
-        if (dt_mod->field_create)
-          {
-             for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
-               {
-                  field = priv->field_list + idx;
-                  field->item_obj = dt_mod->field_create(priv->mod_data, idx);
-               }
-          }
+        field = priv->field_list + idx;
+        field->item_obj = field_create(obj, idx);
      }
-   else WRN("Failed to load clock module, clock widget may not show properly!");
 
    priv->freeze_sizing = EINA_TRUE;
 
@@ -899,7 +841,6 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->freeze_sizing = EINA_FALSE;
-   elm_layout_sizing_eval(obj);
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -923,7 +864,6 @@ _efl_ui_clock_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
    Clock_Field *tmp;
    unsigned int idx;
-   Clock_Mod_Api *dt_mod;
 
    ecore_timer_del(sd->ticker);
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
@@ -932,10 +872,6 @@ _efl_ui_clock_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Clock_Data *sd)
         evas_object_del(tmp->item_obj);
         eina_stringshare_del(tmp->separator);
      }
-
-   dt_mod = _dt_mod_init();
-   if ((dt_mod) && (dt_mod->obj_unhook))
-     dt_mod->obj_unhook(sd->mod_data);  // module - unhook
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
@@ -1005,18 +941,15 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
 
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
                  field->location);
-        if (elm_widget_is_legacy(obj))
-          elm_layout_signal_emit(obj, buf, "elm");
-        else
-          elm_layout_signal_emit(obj, buf, "efl");
+        efl_layout_signal_emit(obj, buf, "efl");
 
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         edje_object_message_signal_process(wd->resize_obj);
 
         _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_FIELD_STR,
                             field->location);
-        elm_layout_content_unset(obj, buf);
-        elm_layout_content_set(obj, buf, field->item_obj);
+        efl_content_unset(efl_part(obj, buf));
+        efl_content_set(efl_part(obj, buf), field->item_obj);
      }
    else
      {
@@ -1026,28 +959,22 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
 
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
                  field->location);
-        if (elm_widget_is_legacy(obj))
-          elm_layout_signal_emit(obj, buf, "elm");
-        else
-          elm_layout_signal_emit(obj, buf, "efl");
+        efl_layout_signal_emit(obj, buf, "efl");
 
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         edje_object_message_signal_process(wd->resize_obj);
 
         _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_FIELD_STR,
                             field->location);
-        evas_object_hide(elm_layout_content_unset(obj, buf));
+        efl_gfx_entity_visible_set(efl_content_unset(efl_part(obj, buf)), EINA_FALSE);
      }
    sd->freeze_sizing = EINA_FALSE;
+   efl_ui_layout_finger_size_multiplier_set(obj, sd->enabled_field_count, 1);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    if (!visible) return;
-   {
-      Clock_Mod_Api *dt_mod = _dt_mod_init();
-      if (!dt_mod || !dt_mod->field_value_display) return;
-      dt_mod->field_value_display(sd->mod_data, field->item_obj);
-   }
+   field_value_display(obj, field->item_obj);
 }
 
 EOLIAN static void
@@ -1163,7 +1090,6 @@ _efl_ui_clock_time_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time maxtime)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_CLOCK_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_clock), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_clock)
 
 #include "efl_ui_clock.eo.c"

@@ -41,8 +41,44 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+static void
+_geometry_update(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Eina_Rectangle *geom = event_info;
+   int *set = data;
+   if ((geom->w >= 150) && (geom->h >= 150))
+     *set = 1;
+   else
+     *set = 0;
+}
+
+EFL_START_TEST(elm_ctxpopup_test_sizing)
+{
+   Eo *win, *bt, *ctx;
+   int pass = 0;
+
+   win = win_add();
+   bt = elm_button_add(win);
+   ctx = elm_ctxpopup_add(win);
+   evas_object_smart_callback_add(ctx, "geometry,update", _geometry_update, &pass);
+   elm_object_text_set(bt, "test");
+   evas_object_size_hint_min_set(bt, 150, 150);
+   elm_object_content_set(ctx, bt);
+   evas_object_show(win);
+
+   evas_object_resize(bt, 200, 200);
+   evas_object_resize(win, 200, 200);
+
+   evas_object_show(ctx);
+   get_me_to_those_events(win);
+
+   ck_assert_int_eq(pass, 1);
+}
+EFL_END_TEST
+
 void elm_test_ctxpopup(TCase *tc)
 {
    tcase_add_test(tc, elm_ctxpopup_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_ctxpopup_test_sizing);
 }

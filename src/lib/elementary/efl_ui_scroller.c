@@ -184,7 +184,7 @@ _efl_ui_scroller_efl_content_content_set(Eo *obj,
 
    efl_content_set(sd->pan_obj, content);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -200,6 +200,8 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 {
    Efl_Gfx_Entity *old_content = pd->content;
 
+   efl_content_unset(pd->pan_obj);
+   efl_ui_widget_sub_object_del(obj, old_content);
    efl_event_callback_del(pd->content, EFL_EVENT_INVALIDATE, _efl_ui_scroller_content_del_cb, obj);
    pd->content = NULL;
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
@@ -212,326 +214,12 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 }
 
 static void
-_efl_ui_scroller_bar_read_and_update(Eo *obj)
-{
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   double vx, vy;
-
-   edje_object_part_drag_value_get
-      (wd->resize_obj, "efl.dragable.vbar", NULL, &vy);
-   edje_object_part_drag_value_get
-      (wd->resize_obj, "efl.dragable.hbar", &vx, NULL);
-
-   efl_ui_scrollbar_bar_position_set(sd->smanager, vx, vy);
-}
-
-static void
-_efl_ui_scroller_reload_cb(void *data,
-                           Evas_Object *obj EINA_UNUSED,
-                           const char *emission EINA_UNUSED,
-                           const char *source EINA_UNUSED)
-{
-   Eo *scroller = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(scroller, sd);
-
-   efl_ui_scrollbar_bar_visibility_update(sd->smanager);
-}
-
-static void
-_efl_ui_scroller_vbar_drag_cb(void *data,
-                              Evas_Object *obj EINA_UNUSED,
-                              const char *emission EINA_UNUSED,
-                              const char *source EINA_UNUSED)
-{
-   _efl_ui_scroller_bar_read_and_update(data);
-
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
-}
-
-static void
-_efl_ui_scroller_vbar_press_cb(void *data,
-                               Evas_Object *obj EINA_UNUSED,
-                               const char *emission EINA_UNUSED,
-                               const char *source EINA_UNUSED)
-{
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
-}
-
-static void
-_efl_ui_scroller_vbar_unpress_cb(void *data,
-                                 Evas_Object *obj EINA_UNUSED,
-                                 const char *emission EINA_UNUSED,
-                                 const char *source EINA_UNUSED)
-{
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
-}
-
-static void
-_efl_ui_scroller_edje_drag_start_cb(void *data,
-                                 Evas_Object *obj EINA_UNUSED,
-                                 const char *emission EINA_UNUSED,
-                                 const char *source EINA_UNUSED)
-{
-   Eo *scroller = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(scroller, sd);
-
-   _efl_ui_scroller_bar_read_and_update(scroller);
-
-   sd->freeze_want = efl_ui_scrollable_scroll_freeze_get(sd->smanager);
-   efl_ui_scrollable_scroll_freeze_set(sd->smanager, EINA_TRUE);
-   efl_event_callback_call(scroller, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
-}
-
-static void
-_efl_ui_scroller_edje_drag_stop_cb(void *data,
-                                Evas_Object *obj EINA_UNUSED,
-                                const char *emission EINA_UNUSED,
-                                const char *source EINA_UNUSED)
-{
-   Eo *scroller = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(scroller, sd);
-
-   _efl_ui_scroller_bar_read_and_update(scroller);
-
-   efl_ui_scrollable_scroll_freeze_set(sd->smanager, sd->freeze_want);
-   efl_event_callback_call(scroller, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
-}
-
-static void
-_efl_ui_scroller_edje_drag_cb(void *data,
-                           Evas_Object *obj EINA_UNUSED,
-                           const char *emission EINA_UNUSED,
-                           const char *source EINA_UNUSED)
-{
-   _efl_ui_scroller_bar_read_and_update(data);
-}
-
-static void
-_efl_ui_scroller_hbar_drag_cb(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         const char *emission EINA_UNUSED,
-                         const char *source EINA_UNUSED)
-{
-   _efl_ui_scroller_bar_read_and_update(data);
-
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
-}
-
-static void
-_efl_ui_scroller_hbar_press_cb(void *data,
-                          Evas_Object *obj EINA_UNUSED,
-                          const char *emission EINA_UNUSED,
-                          const char *source EINA_UNUSED)
-{
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
-}
-
-static void
-_efl_ui_scroller_hbar_unpress_cb(void *data,
-                            Evas_Object *obj EINA_UNUSED,
-                            const char *emission EINA_UNUSED,
-                            const char *source EINA_UNUSED)
-{
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
-}
-
-static void
-_efl_ui_scroller_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Eo *obj = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   double width = 0.0, height = 0.0;
-
-   edje_object_calc_force(wd->resize_obj);
-   efl_ui_scrollbar_bar_size_get(sd->smanager, &width, &height);
-   edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.hbar", width, 1.0);
-   edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.vbar", 1.0, height);
-}
-
-static void
-_efl_ui_scroller_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Eo *obj = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   double posx = 0.0, posy = 0.0;
-
-   efl_ui_scrollbar_bar_position_get(sd->smanager, &posx, &posy);
-   edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.hbar", posx, 0.0);
-   edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.vbar", 0.0, posy);
-   edje_object_signal_emit(wd->resize_obj, "efl,action,scroll", "efl");
-}
-
-static void
-_efl_ui_scroller_bar_show_cb(void *data, const Efl_Event *event)
-{
-   Eo *obj = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
-
-   if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
-     edje_object_signal_emit(wd->resize_obj, "efl,action,show,hbar", "efl");
-   else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
-     edje_object_signal_emit(wd->resize_obj, "efl,action,show,vbar", "efl");
-}
-
-static void
-_efl_ui_scroller_bar_hide_cb(void *data, const Efl_Event *event)
-{
-   Eo *obj = data;
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
-
-   if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
-     edje_object_signal_emit(wd->resize_obj, "efl,action,hide,hbar", "efl");
-   else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
-     edje_object_signal_emit(wd->resize_obj, "efl,action,hide,vbar", "efl");
-}
-
-static void
-_scroll_edje_object_attach(Eo *obj)
-{
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-
-   efl_layout_signal_callback_add
-     (obj, "reload", "efl",
-      obj, _efl_ui_scroller_reload_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_vbar_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,set", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,start", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_start_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,stop", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_stop_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,step", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,page", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "efl,vbar,press", "efl",
-      obj, _efl_ui_scroller_vbar_press_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "efl,vbar,unpress", "efl",
-      obj, _efl_ui_scroller_vbar_unpress_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_hbar_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,set", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,start", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_start_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,stop", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_stop_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,step", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "drag,page", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "efl,hbar,press", "efl",
-      obj, _efl_ui_scroller_hbar_press_cb, NULL);
-   efl_layout_signal_callback_add
-     (obj, "efl,hbar,unpress", "efl",
-      obj, _efl_ui_scroller_hbar_unpress_cb, NULL);
-}
-
-static void
-_scroll_edje_object_detach(Evas_Object *obj)
-{
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, sd);
-
-   efl_layout_signal_callback_del
-     (obj, "reload", "efl",
-      obj, _efl_ui_scroller_reload_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_vbar_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,set", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,start", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_start_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,stop", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_stop_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,step", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,page", "efl.dragable.vbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "efl,vbar,press", "efl",
-      obj, _efl_ui_scroller_vbar_press_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "efl,vbar,unpress", "efl",
-      obj, _efl_ui_scroller_vbar_unpress_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_hbar_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,set", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,start", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_start_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,stop", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_stop_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,step", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "drag,page", "efl.dragable.hbar",
-      obj, _efl_ui_scroller_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "efl,hbar,press", "efl",
-      obj, _efl_ui_scroller_hbar_press_cb, NULL);
-   efl_layout_signal_callback_del
-     (obj, "efl,hbar,unpress", "efl",
-      obj, _efl_ui_scroller_hbar_unpress_cb, NULL);
-}
-
-static void
 _efl_ui_scroller_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
-}
-
-static void
-_efl_ui_scroller_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   elm_layout_sizing_eval(data);
-}
-
-static void
-_efl_ui_scroller_size_hint_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   elm_layout_sizing_eval(data);
+   if (efl_canvas_scene_group_objects_calculating_get(evas_object_evas_get(data)))
+     efl_canvas_group_calculate(data);
+   else
+     efl_canvas_group_change(data);
 }
 
 static void
@@ -555,26 +243,28 @@ _focused_element(void *data, const Efl_Event *event)
 
 EOLIAN static Eo *
 _efl_ui_scroller_efl_object_constructor(Eo *obj,
-                                        Efl_Ui_Scroller_Data *sd EINA_UNUSED)
+                                        Efl_Ui_Scroller_Data *sd)
 {
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "scroller");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+
+   sd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
+   efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
+   efl_composite_attach(obj, sd->smanager);
+
+   efl_ui_scroll_connector_bind(obj, sd->smanager);
 
    return obj;
 }
 
 EOLIAN static Eo *
 _efl_ui_scroller_efl_object_finalize(Eo *obj,
-                                     Efl_Ui_Scroller_Data *sd EINA_UNUSED)
+                                     Efl_Ui_Scroller_Data *sd)
 {
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   sd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
-   efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
-   efl_composite_attach(obj, sd->smanager);
 
    sd->pan_obj = efl_add(EFL_UI_PAN_CLASS, obj);
 
@@ -583,20 +273,6 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   _scroll_edje_object_attach(obj);
-
-   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
-                          _efl_ui_scroller_bar_size_changed_cb, obj);
-   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED,
-                          _efl_ui_scroller_bar_pos_changed_cb, obj);
-   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW,
-                          _efl_ui_scroller_bar_show_cb, obj);
-   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
-                          _efl_ui_scroller_bar_hide_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
-                          _efl_ui_scroller_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
-                          _efl_ui_scroller_size_hint_changed_cb, obj);
    efl_event_callback_add(sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_pan_resized_cb, obj);
 
@@ -605,46 +281,42 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_scroller_efl_object_destructor(Eo *obj,
-                                       Efl_Ui_Scroller_Data *sd EINA_UNUSED)
+_efl_ui_scroller_efl_object_invalidate(Eo *obj, Efl_Ui_Scroller_Data *pd)
 {
-   _scroll_edje_object_detach(obj);
-
-   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
-                          _efl_ui_scroller_bar_size_changed_cb, obj);
-   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED,
-                          _efl_ui_scroller_bar_pos_changed_cb, obj);
-   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW,
-                          _efl_ui_scroller_bar_show_cb, obj);
-   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
-                          _efl_ui_scroller_bar_hide_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
-                          _efl_ui_scroller_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
-                          _efl_ui_scroller_size_hint_changed_cb, obj);
-   efl_event_callback_del(sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
+   // pan is given to edje, which reparents it, which forces us to manually deleting it
+   efl_event_callback_del(pd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_pan_resized_cb, obj);
-   efl_del(sd->pan_obj);
-   sd->pan_obj = NULL;
+   efl_del(pd->pan_obj);
+   pd->pan_obj = NULL;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_scroller_efl_object_destructor(Eo *obj,
+                                       Efl_Ui_Scroller_Data *sd)
+{
+   efl_ui_scroll_connector_unbind(obj);
    sd->smanager = NULL;
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
+_efl_ui_scroller_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroller_Data *sd)
 {
    Eina_Size2D min = {0, 0}, max = {0, 0}, size = {-1, -1};
    Eina_Rect view = {};
    Evas_Coord vmw = 0, vmh = 0;
    double xw = 0.0, yw = 0.0;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->content)
      {
         min = efl_gfx_hint_size_combined_min_get(sd->content);
-        max = efl_gfx_hint_size_max_get(sd->content);
+        max = efl_gfx_hint_size_combined_max_get(sd->content);
         efl_gfx_hint_weight_get(sd->content, &xw, &yw);
      }
 
@@ -673,6 +345,7 @@ _efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
 
    if (sd->content) efl_gfx_entity_size_set(sd->content, EINA_SIZE2D(view.w, view.h));
 
+   edje_object_message_signal_process(wd->resize_obj);
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 
    if (sd->match_content_w) size.w = vmw + min.w;
@@ -682,7 +355,7 @@ _efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
 
-   efl_gfx_hint_size_min_set(obj, size);
+   efl_gfx_hint_size_restricted_min_set(obj, size);
 }
 
 EOLIAN static Eina_Error
@@ -694,13 +367,11 @@ _efl_ui_scroller_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Scroller_Data *sd)
 
    efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
 
-   elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
 EOLIAN static void
-_efl_ui_scroller_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED,
                                                                  Efl_Ui_Scroller_Data *sd,
                                                                  Eina_Bool match_content_w,
                                                                  Eina_Bool match_content_h)
@@ -710,7 +381,7 @@ _efl_ui_scroller_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UN
 
    efl_ui_scrollable_match_content_set(sd->smanager, match_content_w, match_content_h);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -736,8 +407,5 @@ _efl_ui_scroller_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_U
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_scroller, Efl_Ui_Scroller_Data)
 
 /* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_scroller)
 
 #include "efl_ui_scroller.eo.c"

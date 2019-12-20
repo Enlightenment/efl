@@ -12,7 +12,7 @@ _item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
-   int i = (int)(long)data;
+   int i = (int)(uintptr_t)data;
 
    if (!strcmp(part, "elm.text"))
      snprintf(buf, sizeof(buf), "Item # %i", i);
@@ -60,12 +60,12 @@ _genlist_add(Evas_Object *box)
 static void
 _genlist_fill(Evas_Object *list)
 {
-   int i;
+   unsigned int i;
 
    for (i = 0; i < N_ITEMS; i++)
      {
         elm_genlist_item_append(list, _itc,
-                                (void *)(long)i, NULL,
+                                (void *)(uintptr_t)i, NULL,
                                 ELM_GENLIST_ITEM_NONE,
                                 _item_sel_cb, NULL);
      }

@@ -90,6 +90,6 @@ static const Efl_Class_Description _elm_segment_control_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_segment_control_class_get, &_elm_segment_control_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_FOCUS_COMPOSITION_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_segment_control_class_get, &_elm_segment_control_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_FOCUS_COMPOSITION_MIXIN, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
 
 #include "elm_segment_control_eo.legacy.c"

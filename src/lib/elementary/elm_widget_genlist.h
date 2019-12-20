@@ -55,7 +55,6 @@ struct _Elm_Genlist_Data
    Elm_Object_Item                      *last_selected_item;
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
-   Ecore_Job                            *calc_job;
    int                                   walking;
    int                                   minw, minh;
    unsigned int                          item_count;
@@ -206,6 +205,7 @@ struct _Elm_Genlist_Data
 
    Eina_Bool                             tree_effect_animator : 1;
    Eina_Bool                             pin_item_top : 1;
+   Eina_Bool                             need_calc : 1; /* _calc_job() must be called in group_calc */
 };
 
 typedef struct _Item_Block Item_Block;
@@ -253,6 +253,7 @@ struct Elm_Gen_Item_Type
    Eina_Bool               queued : 1;
    Eina_Bool               before : 1;
    Eina_Bool               show_me : 1;
+   Eina_Bool               unfocusable : 1; /* item is not focusable; propagate to content */
 };
 
 struct _Item_Block

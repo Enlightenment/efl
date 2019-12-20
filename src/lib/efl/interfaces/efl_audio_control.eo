@@ -1,0 +1,33 @@
+interface @beta Efl.Audio_Control
+{
+   [[Player interface for audio related properties]]
+   methods {
+        @property volume {
+             [[Control the audio volume.
+
+               Controls the audio volume of the stream being played. This has
+               nothing to do with the system volume. This volume will be
+               multiplied by the system volume. e.g.: if the current volume
+               level is 0.5, and the system volume is 50%, it will be
+               0.5 * 0.5 = 0.25.
+             ]]
+             set {
+             }
+             get {
+             }
+             values {
+                  volume: double; [[The volume level]]
+             }
+        }
+        @property mute {
+             [[This property controls the audio mute state.]]
+             set {
+             }
+             get {
+             }
+             values {
+                  mute: bool; [[The mute state. $true or $false.]]
+             }
+        }
+    }
+}

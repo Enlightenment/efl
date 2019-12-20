@@ -6,13 +6,10 @@ pub_legacy_eo_files = [
   'efl_gfx_color.eo',
   'efl_gfx_image.eo',
   'efl_gfx_frame_controller.eo',
-  'efl_input_device.eo',
   'efl_ui_draggable.eo',
-  'efl_ui_clickable.eo',
   'efl_ui_scrollable.eo',
-  'efl_ui_scrollable_interactive.eo',
   'efl_ui_scrollbar.eo',
-  'efl_ui_selectable.eo',
+  'efl_ui_container_selectable.eo',
   'efl_ui_zoom.eo',
 ]
 
@@ -33,8 +30,6 @@ endforeach
 
 pub_eo_files = [
   'efl_playable.eo',
-  'efl_canvas_scene.eo',
-  'efl_canvas_pointer.eo',
   'efl_config.eo',
   'efl_control.eo',
   'efl_duplicate.eo',
@@ -43,14 +38,12 @@ pub_eo_files = [
   'efl_gfx_image_load_controller.eo',
   'efl_part.eo',
   'efl_player.eo',
+  'efl_audio_control.eo',
   'efl_text.eo',
   'efl_text_font.eo',
   'efl_text_style.eo',
   'efl_text_format.eo',
-  'efl_text_cursor.eo',
-  'efl_text_annotate.eo',
   'efl_text_markup.eo',
-  'efl_text_markup_interactive.eo',
   'efl_text_markup_util.eo',
   'efl_gfx_stack.eo',
   'efl_gfx_view.eo',
@@ -64,8 +57,9 @@ pub_eo_files = [
   'efl_gfx_blur.eo',
   'efl_gfx_hint.eo',
   'efl_model.eo',
+  'efl_model_provider.eo',
   'efl_interpolator.eo',
-  'efl_orientation.eo',
+  'efl_gfx_image_orientable.eo',
   'efl_container.eo',
   'efl_content.eo',
   'efl_pack.eo',
@@ -74,16 +68,16 @@ pub_eo_files = [
   'efl_pack_table.eo',
   'efl_gfx_arrangement.eo',
   'efl_ui_i18n.eo',
-  'efl_ui_direction.eo',
-  'efl_ui_direction_readonly.eo',
+  'efl_ui_layout_orientable.eo',
+  'efl_ui_layout_orientable_readonly.eo',
   'efl_ui_drag.eo',
   'efl_ui_range_display.eo',
   'efl_ui_range_interactive.eo',
   'efl_ui_view.eo',
   'efl_ui_property_bind.eo',
   'efl_ui_factory.eo',
+  'efl_ui_view_factory.eo',
   'efl_ui_factory_bind.eo',
-  'efl_ui_multi_selectable.eo',
   'efl_screen.eo',
   'efl_io_closer.eo',
   'efl_io_positioner.eo',
@@ -95,11 +89,11 @@ pub_eo_files = [
   'efl_observer.eo',
   'efl_observable.eo',
   'efl_ui_autorepeat.eo',
-  'efl_ui_format.eo',
   'efl_gfx_color_class.eo',
   'efl_gfx_text_class.eo',
   'efl_gfx_size_class.eo',
   'efl_cached_item.eo',
+  'efl_input_text.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -120,8 +114,7 @@ pub_eo_files += pub_legacy_eo_files
 
 pub_eo_types_files = [
   'efl_gfx_types.eot',
-  'efl_ui_types.eot',
-  'efl_input_types.eot',
+  'efl_ui_drag_types.eot',
   'efl_types.eot',
   'efl_text_types.eot',
 ]
@@ -157,7 +150,6 @@ efl_src += files([
   'efl_gfx_path.c',
   'efl_gfx_shape.c',
   'efl_gfx_color.c',
-  'efl_input_device.c',
   'efl_io_closer.c',
   'efl_io_positioner.c',
   'efl_io_reader.c',
@@ -167,14 +159,10 @@ efl_src += files([
   'efl_io_queue.c',
   'efl_observer.c',
   'efl_file.c',
-  'efl_ui_format.c',
-  'efl_ui_direction_readonly.c',
+  'efl_ui_layout_orientable_readonly.c',
   'efl_text_markup_util.c',
+  'efl_model_provider.c',
 ])
-
-#efl_header_src += files([
-#  'efl_common_internal.h'
-#])
 
 install_headers('efl_file.h',
   install_dir : join_paths(dir_package_include, 'interfaces'),

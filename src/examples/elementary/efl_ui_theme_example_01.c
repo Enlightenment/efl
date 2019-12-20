@@ -52,8 +52,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_ui_theme_extension_add(default_theme, EXAMPLE_EDJ_FILE_PATH);
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Theme example"),
+                                  efl_text_set(efl_added, "Efl.Ui.Theme example"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );
 
@@ -62,7 +61,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Unload extension"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_extension_clicked_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_extension_clicked_cb, NULL),
            efl_pack_end(box, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, box,

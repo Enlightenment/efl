@@ -22,7 +22,7 @@
 
 #define TIME_SET()                                                   \
    do {                                                              \
-     Efl_Time t;                                                     \
+     Efl_Time t = { 0 };                                             \
      t.tm_hour = pd->cur_time[TIMEPICKER_HOUR];                      \
      t.tm_min = pd->cur_time[TIMEPICKER_MIN];                        \
      efl_datetime_manager_value_set(pd->dt_manager, t);              \
@@ -59,7 +59,7 @@ _field_value_update(Eo *obj)
 
    if (!pd->is_24hour)
      {
-        if (pd->cur_time[TIMEPICKER_HOUR] >= 12)
+        if (pd->cur_time[TIMEPICKER_HOUR] > 12)
           {
              //TODO: gets text from strftime.
              efl_text_set(pd->ampm, "PM");
@@ -68,7 +68,7 @@ _field_value_update(Eo *obj)
         else
           {
              efl_text_set(pd->ampm, "AM");
-             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR] + 12);
+             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR]);
           }
      }
 
@@ -106,7 +106,7 @@ _field_changed_cb(void *data, const Efl_Event *ev)
      }
 
    TIME_SET();
-   efl_event_callback_call(data, EFL_UI_TIMEPICKER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, EFL_UI_TIMEPICKER_EVENT_TIME_CHANGED, NULL);
 }
 
 static void
@@ -122,21 +122,21 @@ _fields_init(Eo *obj)
 
    //Field create.
    pd->hour = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
-                      efl_ui_range_min_max_set(efl_added, 1, 12),
-                      efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
-                      efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                      efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                      efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
+                      efl_ui_range_limits_set(efl_added, 1, 12),
+                      efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
+                      efl_ui_spin_button_direct_text_input_set(efl_added, EINA_TRUE),
+                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
+                      efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->min = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
-                     efl_ui_range_min_max_set(efl_added, 0, 59),
-                     efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
-                     efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                     efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
+                     efl_ui_range_limits_set(efl_added, 0, 59),
+                     efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
+                     efl_ui_spin_button_direct_text_input_set(efl_added, EINA_TRUE),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
+                     efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->ampm = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                      efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _field_changed_cb, obj),
+                      efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _field_changed_cb, obj),
                       elm_widget_element_update(obj, efl_added, "button"));
 
    pd->dt_manager = efl_add(EFL_DATETIME_MANAGER_CLASS, obj);
@@ -173,16 +173,16 @@ _fields_init(Eo *obj)
                        //TODO: monitoring locale change and update field location.
                        if (field == 0)
                          {
-                            elm_object_signal_emit(obj, "efl,state,colon,visible,field1", "efl");
-                            elm_object_signal_emit(obj, "efl,state,colon,invisible,field0", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field1,visible,on", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field0,visible,off", "efl");
                          }
                        else
                          {
-                            elm_object_signal_emit(obj, "efl,state,colon,visible,field0", "efl");
-                            elm_object_signal_emit(obj, "efl,state,colon,invisible,field1", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field0,visible,on", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field1,visible,off", "efl");
                          }
 
-                       elm_layout_signal_emit(obj, "efl,state,ampm,visible", "efl");
+                       elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
                        edje_object_message_signal_process(elm_layout_edje_get(obj));
                        efl_content_set(efl_part(obj, buf), pd->ampm);
                     }
@@ -193,20 +193,6 @@ _fields_init(Eo *obj)
           }
         fmt++;
      }
-}
-
-EOLIAN static void
-_efl_ui_timepicker_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Timepicker_Data *_pd EINA_UNUSED)
-{
-    Evas_Coord minw = -1, minh = -1;
-    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    edje_object_size_min_restricted_calc
-    (wd->resize_obj, &minw, &minh, minw, minh);
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    evas_object_size_hint_min_set(obj, minw, minh);
-    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 EOLIAN static Eo *
@@ -259,25 +245,22 @@ _efl_ui_timepicker_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *p
 }
 
 EOLIAN static void
-_efl_ui_timepicker_ampm_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24hour)
+_efl_ui_timepicker_is_24hour_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24hour)
 {
    if (pd->is_24hour == is_24hour) return;
 
    pd->is_24hour = is_24hour;
    if (pd->is_24hour == EINA_TRUE)
-     elm_layout_signal_emit(obj, "efl,state,ampm,invisible", "efl");
+     elm_layout_signal_emit(obj, "efl,ampm,visible,off", "efl");
    else
-     elm_layout_signal_emit(obj, "efl,state,ampm,visible", "efl");
+     elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
    _field_value_update(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_timepicker_ampm_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *pd)
+_efl_ui_timepicker_is_24hour_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *pd)
 {
    return pd->is_24hour;
 }
-
-#define EFL_UI_TIMEPICKER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_timepicker), \
 
 #include "efl_ui_timepicker.eo.c"

@@ -153,10 +153,8 @@
  * The two lists, sharing some elements, can be represented by the following
  * picture:
  *
- * @htmlonly
- * <img src="eina_inlist-node_eg2-list-inlist.png" style="max-width: 100%;"/>
- * @endhtmlonly
  * @image rtf eina_inlist-node_eg2-list-inlist.png
+ * @image html eina_inlist-node_eg2-list-inlist.png
  * @image latex eina_inlist-node_eg2-list-inlist.eps "" width=\textwidth
  *
  * Accessing both lists is done normally, as if they didn't have any elements in
@@ -229,10 +227,8 @@
  *
  * And the resulting lists will be as follow:
  *
- * @htmlonly
- * <img src="eina_inlist-node_eg3-two-inlists.png" style="max-width: 100%;"/>
- * @endhtmlonly
  * @image rtf eina_inlist-node_eg3-two-inlists.png
+ * @image html eina_inlist-node_eg3-two-inlists.png
  * @image latex eina_inlist-node_eg3-two-inlists.eps "" width=\textwidth
  *
  * For the first list, we can use the macro @ref EINA_INLIST_FOREACH to iterate

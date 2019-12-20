@@ -112,7 +112,7 @@ EAPI void evas_object_textgrid_size_get(const Evas_Textgrid *obj, int *w, int *h
  * the textgrid object. @c width and @c height can be @c null. On error, they
  * are set to 0.
  *
- * See also @ref Efl.Text_Font.font.set and
+ * See also @ref efl_text_font_size_set, @ref efl_text_font_family_set and
  * @ref evas_object_textgrid_supported_font_styles_set
  *
  * @param[in] obj The object.

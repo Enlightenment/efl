@@ -1,27 +1,10 @@
 #include "edje_private.h"
 
 static int
-_edje_font_is_embedded(Edje_File *edf, char *font)
+_edje_font_is_embedded(Edje_File *edf, const char *font)
 {
    if (!eina_hash_find(edf->fonts, font)) return 0;
    return 1;
-}
-
-static void
-_edje_format_param_parse(char *item, char **key, char **val)
-{
-   char *p, *k, *v;
-
-   p = strchr(item, '=');
-   if (!p) return;
-
-   k = malloc(p - item + 1);
-   strncpy(k, item, p - item);
-   k[p - item] = 0;
-   *key = k;
-   p++;
-   v = strdup(p);
-   *val = v;
 }
 
 static char *
@@ -69,84 +52,75 @@ _edje_format_parse(const char **s)
    return NULL;
 }
 
-static int
-_edje_format_is_param(char *item)
-{
-   if (strchr(item, '=')) return 1;
-   return 0;
-}
+#define _IS_STRINGS_EQUAL(str1, len1, str2, len2) (((len1)==(len2)) && !strncmp(str1, str2, len1))
 
-static char *
-_edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
+static void
+_edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, Eina_Strbuf *result)
 {
-   Eina_Strbuf *txt, *tmp = NULL;
-   char *s2, *item, *ret;
+   char *s2, *item;
    const char *s;
 
-   txt = eina_strbuf_new();
    s = str;
    while ((item = _edje_format_parse(&s)))
      {
-        if (_edje_format_is_param(item))
+        const char *pos = strchr(item, '=');
+        if (pos)
           {
-             char *key = NULL, *val = NULL;
+             size_t key_len = pos - item;
+             const char *key = item;
+             const char *val = pos + 1;
 
-             _edje_format_param_parse(item, &key, &val);
-             if (!strcmp(key, "font_source"))
+             if (_IS_STRINGS_EQUAL(key, key_len, "font_source", 11))
                {
                   /* dont allow font sources */
                }
-             else if (!strcmp(key, "text_class"))
+             else if (_IS_STRINGS_EQUAL(key, key_len, "text_class", 10))
                {
                   if (tag_ret)
-                    (*tag_ret)->text_class = eina_stringshare_add(val);
+                    tag_ret->text_class = eina_stringshare_add(val);
+
+                  // no need to add text_class tag to style
+                  // as evas_textblock_style has no idea about
+                  // text_class tag.
+                  free(item);
+                  continue;
                }
-             else if (!strcmp(key, "font_size"))
+             else if (_IS_STRINGS_EQUAL(key, key_len, "font_size", 9))
                {
                   if (tag_ret)
-                    (*tag_ret)->font_size = atof(val);
+                    tag_ret->font_size = atof(val);
                }
-             else if (!strcmp(key, "font")) /* Fix fonts */
+             else if (_IS_STRINGS_EQUAL(key, key_len, "font", 4)) /* Fix fonts */
                {
                   if (tag_ret)
                     {
                        if (_edje_font_is_embedded(edf, val))
                          {
-                            if (!tmp)
-                              tmp = eina_strbuf_new();
-                            eina_strbuf_append(tmp, "edje/fonts/");
-                            eina_strbuf_append(tmp, val);
-                            (*tag_ret)->font = eina_stringshare_add(eina_strbuf_string_get(tmp));
-                            eina_strbuf_reset(tmp);
+                            char buffer[120];
+                            snprintf(buffer, sizeof(buffer), "edje/fonts/%s", val);
+                            tag_ret->font = eina_stringshare_add(buffer);
                          }
                        else
                          {
-                            (*tag_ret)->font = eina_stringshare_add(val);
+                            tag_ret->font = eina_stringshare_add(val);
                          }
                     }
                }
              s2 = eina_str_escape(item);
              if (s2)
                {
-                  if (eina_strbuf_length_get(txt)) eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, s2);
+                  if (eina_strbuf_length_get(result)) eina_strbuf_append(result, " ");
+                  eina_strbuf_append(result, s2);
                   free(s2);
                }
-             free(key);
-             free(val);
           }
         else
           {
-             if (eina_strbuf_length_get(txt)) eina_strbuf_append(txt, " ");
-             eina_strbuf_append(txt, item);
+             if (eina_strbuf_length_get(result)) eina_strbuf_append(result, " ");
+             eina_strbuf_append(result, item);
           }
         free(item);
      }
-   if (tmp)
-     eina_strbuf_free(tmp);
-   ret = eina_strbuf_string_steal(txt);
-   eina_strbuf_free(txt);
-   return ret;
 }
 
 
@@ -154,43 +128,40 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
  *
  * @param ed The edje containing the given style which need to be updated
  * @param style The style which need to be updated
- * @param force Update the given style forcely or not
+ * As now edje_style supports lazy computation of evas_textblock_style
+ * only call this function from _edje_textblock_style_get()
  */
 void
-_edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
+_edje_textblock_style_update(Edje *ed, Edje_Style *stl)
 {
    Eina_List *l;
    Eina_Strbuf *txt = NULL;
    Edje_Style_Tag *tag;
    Edje_Text_Class *tc;
-   int found = 0;
-   char *fontset = NULL, *fontsource = NULL;
+   char *fontset = _edje_fontset_append_escaped, *fontsource = NULL;
 
    if (!ed->file) return;
 
    /* Make sure the style is already defined */
    if (!stl->style) return;
 
-   /* No need to compute it again and again and again */
-   if (!force && stl->cache) return;
-
-   /* Make sure the style contains a text_class */
-   EINA_LIST_FOREACH(stl->tags, l, tag)
+   /* this check is only here to catch misuse of this function */
+   if (stl->readonly)
      {
-        if (tag->text_class)
-          {
-             found = 1;
-             break;
-          }
+        WRN("style_update() shouldn't be called for readonly style. performance regression : %s", stl->name);
+        return;
      }
 
-   /* No text classes , goto next style */
-   if (!found) return;
+   /* this check is only here to catch misuse of this function */
+   if (stl->cache)
+     {
+        WRN("style_update() shouldn't be called for cached style. performance regression : %s", stl->name);
+        return;
+     }
+
    if (!txt)
      txt = eina_strbuf_new();
 
-   if (_edje_fontset_append)
-     fontset = eina_str_escape(_edje_fontset_append);
    if (ed->file->fonts)
      fontsource = eina_str_escape(ed->file->path);
 
@@ -213,44 +184,36 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
           {
              if (fontset)
                {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_fallbacks=");
+                  eina_strbuf_append(txt, " font_fallbacks=");
                   eina_strbuf_append(txt, fontset);
                }
              if (fontsource)
                {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_source=");
+                  eina_strbuf_append(txt, " font_source=");
                   eina_strbuf_append(txt, fontsource);
                }
           }
-        if (!EINA_DBL_EQ(tag->font_size, 0))
+        if (tc && tc->size && !EINA_DBL_EQ(tag->font_size, 0))
           {
-             char font_size[32];
+             double new_size = _edje_text_size_calc(tag->font_size, tc);
+             if (!EINA_DBL_EQ(tag->font_size, new_size))
+               {
+                  char buffer[32];
 
-             if (tc && tc->size)
-               snprintf(font_size, sizeof(font_size), "%f",
-                        (double)_edje_text_size_calc(tag->font_size, tc));
-             else
-               snprintf(font_size, sizeof(font_size), "%f",
-                        tag->font_size);
-
-             eina_strbuf_append(txt, " ");
-             eina_strbuf_append(txt, "font_size=");
-             eina_strbuf_append(txt, font_size);
+                  snprintf(buffer, sizeof(buffer), "%.1f", new_size);
+                  eina_strbuf_append(txt, " font_size=");
+                  eina_strbuf_append(txt, buffer);
+               }
           }
         /* Add font name last to save evas from multiple loads */
-        if (tag->font)
+        if (tc && tc->font && tag->font)
           {
              const char *f;
              char *sfont = NULL;
 
-             eina_strbuf_append(txt, " ");
-             eina_strbuf_append(txt, "font=");
+             eina_strbuf_append(txt, " font=");
 
-             if (tc) f = _edje_text_font_get(tag->font, tc->font, &sfont);
-             else f = tag->font;
-
+             f = _edje_text_font_get(tag->font, tc->font, &sfont);
              eina_strbuf_append_escaped(txt, f);
 
              if (sfont) free(sfont);
@@ -258,7 +221,6 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
 
         eina_strbuf_append(txt, "'");
      }
-   if (fontset) free(fontset);
    if (fontsource) free(fontsource);
 
    /* Configure the style */
@@ -268,59 +230,79 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
      eina_strbuf_free(txt);
 }
 
-/* Update all evas_styles which are in an edje
+/*
+ * mark all the styles in the Edje_File dirty (except readonly styles)so that
+ * subsequent  request to style will update before giving the style.
+ * Note: this will enable lazy style computation (only when some
+ * widget request for new style it will get computed).
  *
  * @param ed The edje containing styles which need to be updated
  */
 void
-_edje_textblock_style_all_update(Edje *ed)
+_edje_file_textblock_style_all_update(Edje_File *edf)
 {
    Eina_List *l;
    Edje_Style *stl;
 
-   if (!ed->file) return;
+   if (!edf) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
-      _edje_textblock_style_update(ed, stl, EINA_FALSE);
+   EINA_LIST_FOREACH(edf->styles, l, stl)
+     if (stl && !stl->readonly) stl->cache = EINA_FALSE;
 }
 
 static inline Edje_Style *
 _edje_textblock_style_search(Edje *ed, const char *style)
 {
-   Edje_Style *stl = NULL;
-   Eina_List *l;
-
    if (!style) return NULL;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
-     {
-        if ((stl->name) &&
-            (stl->name == style || !strcmp(stl->name, style))) break;
-        stl = NULL;
-     }
-
-   return stl;
+   return eina_hash_find(ed->file->style_hash, style);
 }
 
 static inline void
-_edje_textblock_style_member_add(Edje *ed, Edje_Style *stl)
+_edje_textblock_style_observer_add(Edje_Style *stl, Efl_Observer* observer)
 {
+   Eina_List* l;
    Edje_Style_Tag *tag;
-   Eina_List *l;
-
-   if (!stl) return;
 
    EINA_LIST_FOREACH(stl->tags, l, tag)
      {
         if (tag->text_class)
-          {
-             efl_observable_observer_add(_edje_text_class_member, tag->text_class, ed->obj);
-
-             /* Newly added text_class member should be updated
-                according to the latest text_class's status. */
-             _edje_textblock_style_update(ed, stl, EINA_TRUE);
-          }
+          efl_observable_observer_add(_edje_text_class_member, tag->text_class, observer);
      }
+}
+
+static inline void
+_edje_textblock_style_observer_del(Edje_Style *stl, Efl_Observer* observer)
+{
+   Eina_List* l;
+   Edje_Style_Tag *tag;
+
+   EINA_LIST_FOREACH(stl->tags, l, tag)
+     {
+        if (tag->text_class)
+          efl_observable_observer_del(_edje_text_class_member, tag->text_class, observer);
+     }
+}
+
+static inline void
+_edje_textblock_style_add(Edje *ed, Edje_Style *stl)
+{
+   if (!stl) return;
+
+   if (stl->readonly) return;
+
+   _edje_textblock_style_observer_add(stl, ed->obj);
+
+   // mark it dirty to recompute it later.
+   stl->cache = EINA_FALSE;
+}
+
+static inline void
+_edje_textblock_style_del(Edje *ed, Edje_Style *stl)
+{
+   if (!stl) return;
+
+   _edje_textblock_style_observer_del(stl, ed->obj);
 }
 
 void
@@ -339,7 +321,8 @@ _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
    desc = (Edje_Part_Description_Text *)pt->default_desc;
    style = edje_string_get(&desc->text.style);
    stl = _edje_textblock_style_search(ed, style);
-   _edje_textblock_style_member_add(ed, stl);
+
+   _edje_textblock_style_add(ed, stl);
 
    /* If any other classes exist add them */
    for (i = 0; i < pt->other.desc_count; ++i)
@@ -347,7 +330,8 @@ _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
         stl = _edje_textblock_style_search(ed, style);
-        _edje_textblock_style_member_add(ed, stl);
+
+        _edje_textblock_style_add(ed, stl);
      }
 }
 
@@ -363,69 +347,64 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 
    desc = (Edje_Part_Description_Text *)pt->default_desc;
    style = edje_string_get(&desc->text.style);
-   if (style)
-     {
-        Eina_List *l;
 
-        EINA_LIST_FOREACH(ed->file->styles, l, stl)
-          {
-             if ((stl->name) && (!strcmp(stl->name, style))) break;
-             stl = NULL;
-          }
-     }
-   if (stl)
-     {
-        Edje_Style_Tag *tag;
-        Eina_List *l;
+   stl = _edje_textblock_style_search(ed, style);
 
-        EINA_LIST_FOREACH(stl->tags, l, tag)
-          {
-             if (tag->text_class)
-               efl_observable_observer_del(_edje_text_class_member, tag->text_class, ed->obj);
-          }
-     }
+   _edje_textblock_style_del(ed, stl);
 
    for (i = 0; i < pt->other.desc_count; ++i)
      {
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
-        if (style)
-          {
-             Eina_List *l;
+        stl = _edje_textblock_style_search(ed, style);
 
-             EINA_LIST_FOREACH(ed->file->styles, l, stl)
-               {
-                  if ((stl->name) && (!strcmp(stl->name, style))) break;
-                  stl = NULL;
-               }
-          }
-        if (stl)
-          {
-             Edje_Style_Tag *tag;
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(stl->tags, l, tag)
-               {
-                  if (tag->text_class)
-                    efl_observable_observer_del(_edje_text_class_member, tag->text_class, ed->obj);
-               }
-          }
+        _edje_textblock_style_del(ed, stl);
      }
 }
 
+/*
+ * returns a evas_textblock style for a given style_string.
+ * does lazy computation of the evas_textblock_style
+ * It will compute and cache it if not computed yet and
+ * will return the final textblock style.
+ */
+Evas_Textblock_Style *
+_edje_textblock_style_get(Edje *ed, const char *style)
+{
+   if (!style) return NULL;
+
+   Edje_Style *stl = _edje_textblock_style_search(ed, style);
+
+   if (!stl) return NULL;
+
+   /* readonly style naver change */
+   if (stl->readonly) return stl->style;
+
+   /* if style is dirty recompute */
+   if (!stl->cache)
+     _edje_textblock_style_update(ed, stl);
+
+   return stl->style;
+}
+
+/*
+ * Finds all the styles having text class tag as text_class and
+ * updates them.
+ */
 void
-_edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
+_edje_file_textblock_style_all_update_text_class(Edje_File *edf, const char *text_class)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
 
-   if (!ed->file) return;
+   if (!edf) return;
    if (!text_class) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   EINA_LIST_FOREACH(edf->styles, l, stl)
      {
         Edje_Style_Tag *tag;
-        Eina_Bool found = EINA_FALSE;
+
+        if (stl->readonly) continue;
 
         EINA_LIST_FOREACH(stl->tags, ll, tag)
           {
@@ -433,12 +412,12 @@ _edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
 
              if (!strcmp(tag->text_class, text_class))
                {
-                  found = EINA_TRUE;
+                  // just mark it dirty so the next request
+                  // for this style will trigger recomputation.
+                  stl->cache = EINA_FALSE;
                   break;
                }
           }
-        if (found)
-          stl->cache = EINA_FALSE;
      }
 }
 
@@ -449,98 +428,79 @@ _edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
  * followed by a list of tags.
  */
 void
-_edje_textblock_style_parse_and_fix(Edje_File *edf)
+_edje_file_textblock_style_parse_and_fix(Edje_File *edf)
 {
-   Eina_Strbuf *txt = NULL;
    Eina_List *l, *ll;
    Edje_Style *stl;
+   char *fontset = _edje_fontset_append_escaped;
+   Eina_Strbuf *reparseBuffer = eina_strbuf_new();
+   Eina_Strbuf *styleBuffer = eina_strbuf_new();
+   char *fontsource = edf->fonts ? eina_str_escape(edf->path) : NULL;
 
    EINA_LIST_FOREACH(edf->styles, l, stl)
      {
         Edje_Style_Tag *tag;
-        char *fontset = NULL, *fontsource = NULL, *ts;
 
         if (stl->style) break;
 
-        if (!txt)
-          txt = eina_strbuf_new();
+        stl->readonly = EINA_TRUE;
 
         stl->style = evas_textblock_style_new();
         evas_textblock_style_set(stl->style, NULL);
 
-        if (_edje_fontset_append)
-          fontset = eina_str_escape(_edje_fontset_append);
-        if (edf->fonts)
-          fontsource = eina_str_escape(edf->path);
-
+        eina_strbuf_reset(styleBuffer);
         /* Build the style from each tag */
         EINA_LIST_FOREACH(stl->tags, ll, tag)
           {
              if (!tag->key) continue;
 
-             /* Add Tag Key */
-             eina_strbuf_append(txt, tag->key);
-             eina_strbuf_append(txt, "='");
+             eina_strbuf_reset(reparseBuffer);
 
-             ts = _edje_format_reparse(edf, tag->value, &(tag));
+             /* Add Tag Key */
+             eina_strbuf_append(styleBuffer, tag->key);
+             eina_strbuf_append(styleBuffer, "='");
+
+             _edje_format_reparse(edf, tag->value, tag, reparseBuffer);
 
              /* Add and Handle tag parsed data */
-             if (ts)
+             if (eina_strbuf_length_get(reparseBuffer))
                {
                   if (edf->allocated_strings &&
                       eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
                     eina_stringshare_del(tag->value);
-                  tag->value = eina_stringshare_add(ts);
-                  eina_strbuf_append(txt, tag->value);
-                  free(ts);
+                  tag->value = eina_stringshare_add(eina_strbuf_string_get(reparseBuffer));
+                  eina_strbuf_append(styleBuffer, tag->value);
                }
 
              if (!strcmp(tag->key, "DEFAULT"))
                {
                   if (fontset)
                     {
-                       eina_strbuf_append(txt, " ");
-                       eina_strbuf_append(txt, "font_fallbacks=");
-                       eina_strbuf_append(txt, fontset);
+                       eina_strbuf_append(styleBuffer, " font_fallbacks=");
+                       eina_strbuf_append(styleBuffer, fontset);
                     }
                   if (fontsource)
                     {
-                       eina_strbuf_append(txt, " ");
-                       eina_strbuf_append(txt, "font_source=");
-                       eina_strbuf_append(txt, fontsource);
+                       eina_strbuf_append(styleBuffer, " font_source=");
+                       eina_strbuf_append(styleBuffer, fontsource);
                     }
                }
-             if (tag->font_size > 0)
-               {
-                  char font_size[32];
+             eina_strbuf_append(styleBuffer, "'");
 
-                  snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_size=");
-                  eina_strbuf_append(txt, font_size);
-               }
-             /* Add font name last to save evas from multiple loads */
-             if (tag->font)
-               {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font=");
-                  eina_strbuf_append_escaped(txt, tag->font);
-               }
-             eina_strbuf_append(txt, "'");
+             if (tag->text_class) stl->readonly = EINA_FALSE;
           }
-        if (fontset) free(fontset);
-        if (fontsource) free(fontsource);
-
-        /* Configure the style */
-        evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
-        eina_strbuf_reset(txt);
+        /* Configure the style  only if it will never change again*/
+        if (stl->readonly)
+          evas_textblock_style_set(stl->style, eina_strbuf_string_get(styleBuffer));
      }
-   if (txt)
-     eina_strbuf_free(txt);
+
+   if (fontsource) free(fontsource);
+   eina_strbuf_free(styleBuffer);
+   eina_strbuf_free(reparseBuffer);
 }
 
 void
-_edje_textblock_style_cleanup(Edje_File *edf)
+_edje_file_textblock_style_cleanup(Edje_File *edf)
 {
    Edje_Style *stl;
 

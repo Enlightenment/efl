@@ -44,9 +44,8 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_last_error_get */
 #endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 
@@ -332,6 +331,7 @@ _ecore_main_uv_poll_cb(uv_poll_t *handle, int status, int events)
      {
         DBG("not IDLE anymore");
         _ecore_main_uv_idling = EINA_FALSE;
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
@@ -528,9 +528,10 @@ _ecore_main_idlers_exist(Efl_Loop_Data *pd)
 }
 
 static void
-_ecore_main_idler_all_call(Eo *loop)
+_ecore_main_idler_all_call(Eo *loop, Efl_Loop_Data *pd)
 {
-   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
+   if (pd->idlers)
+     efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
    // just spin in an idler until the free queue is empty freeing 84 items
    // from the free queue each time.for now this seems like an ok balance
    // between going in and out of a reduce func with mutexes around it
@@ -795,6 +796,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    if (ecore_idling && events_ready)
      {
         _ecore_animator_run_reset();
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         ecore_idling = 0;
      }
@@ -802,13 +804,14 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
    if (ecore_idling)
      {
-        _ecore_main_idler_all_call(obj);
+        _ecore_main_idler_all_call(obj, pd);
 
         events_ready = pd->message_queue ? 1 : 0;
 
         if (ecore_fds_ready || events_ready || timers_ready)
           {
              _ecore_animator_run_reset();
+             eina_file_statgen_next();
              efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              ecore_idling = 0;
           }
@@ -868,6 +871,7 @@ _ecore_main_loop_timer_run(uv_timer_t *timer EINA_UNUSED)
    if (_ecore_main_uv_idling)
      {
         _ecore_main_uv_idling = EINA_FALSE;
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
@@ -1178,6 +1182,7 @@ _ecore_main_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
 void
 _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
+   pd->loop_active++;
    if (obj == ML_OBJ)
      {
 #ifdef HAVE_SYSTEMD
@@ -1241,11 +1246,13 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
         pd->do_quit = 0;
 #endif
      }
+   pd->loop_active--;
 }
 
 void
 _ecore_main_loop_quit(Eo *obj, Efl_Loop_Data *pd)
 {
+   if (!pd->loop_active) return;
    pd->do_quit = 1;
    if (obj != ML_OBJ) return;
 #ifdef USE_G_MAIN_LOOP
@@ -1818,7 +1825,8 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
      {
         // polling on the epoll fd will wake when fd in the epoll set is active
         max_fd = _ecore_get_epoll_fd(obj, pd);
-        FD_SET(max_fd, &rfds);
+        if (max_fd > -1)
+          FD_SET(max_fd, &rfds);
      }
 #endif
    EINA_LIST_FOREACH(pd->file_fd_handlers, l, fdh)
@@ -2230,7 +2238,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
 
    if (_ecore_main_uv_idling)
      {
-        _ecore_main_idler_all_call(obj);
+        _ecore_main_idler_all_call(obj, pd);
         DBG("called idles");
         if (_ecore_main_idlers_exist(pd) || (pd->message_queue)) t = 0.0;
      }
@@ -2241,6 +2249,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
 
         if (_ecore_main_uv_idling)
           {
+             eina_file_statgen_next();
              efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              _ecore_animator_run_reset();
              _ecore_main_uv_idling = EINA_FALSE;
@@ -2293,7 +2302,7 @@ _ecore_main_loop_spin_core(Eo *obj, Efl_Loop_Data *pd)
    // as we are spinning we need to update loop time per spin
    _update_loop_time(pd);
    // call all idlers
-   _ecore_main_idler_all_call(obj);
+   _ecore_main_idler_all_call(obj, pd);
    // which returns false if no more idelrs exist
    if (!_ecore_main_idlers_exist(pd)) return SPIN_RESTART;
    // sneaky - drop through or if checks - the first one to succeed
@@ -2471,6 +2480,7 @@ process_all: //-*********************************************************
    if (!once_only)
      {
         _ecore_animator_run_reset(); // XXX:
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
      }
    // call the fd handler per fd that became alive...

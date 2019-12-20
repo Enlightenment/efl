@@ -290,6 +290,11 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    eina_hash_del(_inotify_monitors, &backend->hwnd, backend);
 }
 
+Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor EINA_UNUSED, const char *path EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 
 /*============================================================================*
  *                                   API                                      *

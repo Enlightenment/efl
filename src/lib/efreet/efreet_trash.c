@@ -7,6 +7,14 @@
 #include <libgen.h>
 #include <errno.h>
 
+#ifdef _WIN32
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+# include <windows.h> /* GetCurrentProcessId */
+# undef WIN32_LEAN_AND_MEAN
+#endif
+
 #include <Ecore_File.h>
 
 /* define macros and variable for using the eina logging system  */

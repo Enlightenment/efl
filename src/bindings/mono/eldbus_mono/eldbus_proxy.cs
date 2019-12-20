@@ -1,14 +1,31 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static eldbus.EldbusProxyNativeFunctions;
 
 namespace eldbus
 {
 
-public static class EldbusProxyNativeFunctions
+[EditorBrowsable(EditorBrowsableState.Never)]
+internal static class EldbusProxyNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_get(IntPtr obj, string _interface);
@@ -65,9 +82,16 @@ public static class EldbusProxyNativeFunctions
         eldbus_proxy_event_callback_del(IntPtr proxy, int type, IntPtr cb, IntPtr cb_data);
 }
 
+/// <summary>Represents a DBus proxy object.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
 public class Proxy : IDisposable
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this managed list owns the native one.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;} = true;
 
     private void InitNew(IntPtr handle, bool own)
@@ -85,21 +109,36 @@ public class Proxy : IDisposable
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Proxy(IntPtr handle, bool own)
     {
         InitNew(handle, own);
     }
 
+    /// <summary>
+    ///   Constructor
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The <see cref="eldbus.Object" />.</param>
+    /// <param name="_interface">The interface name.</param>
     public Proxy(eldbus.Object obj, string _interface)
     {
         InitNew(eldbus_proxy_get(obj.Handle, _interface), true);
     }
 
+    /// <summary>Finalizes with garbage collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Proxy()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">Whether this was called from the finalizer (<c>false</c>) or from the
+    /// <see cref="Dispose()"/> method.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -122,17 +161,28 @@ public class Proxy : IDisposable
         }
     }
 
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native handler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native handler.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -165,7 +215,7 @@ public class Proxy : IDisposable
 
         if (member == null)
         {
-            throw new ArgumentNullException("member");
+            throw new ArgumentNullException(nameof(member));
         }
 
         var ptr = eldbus_proxy_method_call_new(Handle, member);
@@ -183,8 +233,12 @@ public class Proxy : IDisposable
 
         if (msg == null)
         {
-            throw new ArgumentNullException("msg");
+            throw new ArgumentNullException(nameof(msg));
         }
+
+        // Native send() takes ownership of the message. We ref here to keep the IDisposable
+        // behavior simpler and keeping the original object alive in case the user wants.
+        msg.Ref();
 
         IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
@@ -215,14 +269,15 @@ public class Proxy : IDisposable
     {
         CheckHandle();
 
-        var msg = NewMethodCall(member);
-
-        foreach (BasicMessageArgument arg in args)
+        using (var msg = NewMethodCall(member))
         {
-            arg.AppendTo(msg);
-        }
+            foreach (BasicMessageArgument arg in args)
+            {
+                arg.AppendTo(msg);
+            }
 
-        return Send(msg, dlgt, timeout);
+            return Send(msg, dlgt, timeout);
+        }
     }
 
     eldbus.Pending Call(string member, params BasicMessageArgument[] args)

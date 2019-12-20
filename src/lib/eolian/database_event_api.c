@@ -50,7 +50,7 @@ eolian_event_is_restart(const Eolian_Event *event)
 }
 
 EAPI Eina_Stringshare *
-eolian_event_c_name_get(const Eolian_Event *event)
+eolian_event_c_macro_get(const Eolian_Event *event)
 {
     char  buf[512];
     char *tmp = buf;

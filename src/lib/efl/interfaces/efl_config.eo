@@ -9,7 +9,7 @@ interface @beta Efl.Config
                name: string; [[Configuration option name.]]
             }
             values {
-               value: any_value_ptr @owned;
+               value: any_value_ref @move;
                   [[The value. It will be empty if it doesn't exist. The caller
                     must free it after use (using $eina_value_free() in C).]]
             }
@@ -19,7 +19,7 @@ interface @beta Efl.Config
                name: string; [[Configuration option name.]]
             }
             values {
-               value: const(any_value_ptr);
+               value: const(any_value_ref);
                   [[Configuration option value. May be $null if not found.]]
             }
             return: bool; [[$false in case of error: value type was invalid, the

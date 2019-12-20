@@ -294,11 +294,9 @@ _font_size_change(void *data, const Efl_Event *ev)
 {
    Eo *win = data;
    Eo *text;
-   const char *font;
 
    text = efl_key_wref_get(win, "text");
-   efl_text_font_get(text, &font, NULL);
-   efl_text_font_set(text, font, elm_spinner_value_get(ev->object));
+   efl_text_font_size_set(text, elm_spinner_value_get(ev->object));
 }
 
 static void
@@ -334,25 +332,25 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 {
    Eo *win, *box, *box2, *o, *text = NULL, *spinner, *code, *split, *flip, *tb;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_text_set(efl_added, "Gfx Filter Editor"),
                  efl_ui_win_autodel_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 
    efl_content_set(win, box);
 
    {
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_align_set(efl_added, 0.5, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE));
       efl_pack(box, box2);
 
-      /* FIXME: Efl.Ui.Text doesn't work as expected. */
-      o = efl_add(EFL_UI_TEXT_CLASS, win,
+      /* FIXME: Efl.Ui.Textbox doesn't work as expected. */
+      o = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                   efl_gfx_hint_weight_set(efl_added, 0.0, 1.0),
                   efl_gfx_hint_align_set(efl_added, 1.0, 0.5));
       efl_text_set(o, "Filter:");
@@ -378,16 +376,16 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                   efl_text_set(efl_added, "Flip"),
                   efl_gfx_hint_weight_set(efl_added, 0.0, 1.0),
                   efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _flip_click, win));
+                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _flip_click, win));
       efl_pack(box2, o);
    }
 
    {
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                     efl_gfx_arrangement_content_padding_set(efl_added, 5, 5, 1),
+                     efl_gfx_arrangement_content_padding_set(efl_added, 5, 5),
                      efl_gfx_hint_margin_set(efl_added, 5, 5, 5, 5),
                      efl_gfx_arrangement_content_align_set(efl_added, 0, 0.5));
       efl_pack(box, box2);
@@ -407,9 +405,9 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                        efl_file_set(efl_added, buf),
                        efl_name_set(efl_added, images[k].src_name),
                        elm_object_tooltip_text_set(efl_added, images[k].src_name));
-           if (efl_player_playable_get(o))
-             efl_player_play_set(o, 1);
-           efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _img_click, win);
+           if (efl_playable_get(o))
+             efl_player_playing_set(o, 1);
+           efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _img_click, win);
            efl_pack(box2, o);
         }
 
@@ -445,7 +443,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    }
 
    o = split = efl_add(EFL_UI_PANES_CLASS, win,
-                       efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                       efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
    efl_pack(box, split);
 
    {
@@ -453,7 +451,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_content_set(efl_part(split, "first"), flip);
 
       box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                      efl_gfx_arrangement_content_align_set(efl_added, 0.5, 0.5));
@@ -462,14 +460,15 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       // Note: No TEXT object with EO APIs
       o = text = evas_object_text_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _text_resize, NULL);
-      efl_text_font_set(o, "Sans:style=Bold", default_font_size);
+      efl_text_font_family_set(o, "Sans:style=Bold");
+      efl_text_font_size_set(o, default_font_size);
       efl_gfx_entity_scale_set(text, elm_config_scale_get());
       efl_text_set(o, "EFL");
       efl_gfx_entity_visible_set(o, 1);
       efl_pack(box2, o);
 
       o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
-                         efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                         efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                          efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                          efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                          efl_gfx_arrangement_content_align_set(efl_added, 0.5, 0.5));
@@ -492,7 +491,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
       // Experimental textblock support
       o = tb = evas_object_textblock_add(evas_object_evas_get(win));
-      efl_event_callback_add(o, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, _textblock_resize, NULL);
+      efl_event_callback_add(o, EFL_CANVAS_TEXTBLOCK_EVENT_STYLE_INSETS_CHANGED, _textblock_resize, NULL);
       efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
       evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=20 color=#FFF wrap=word'");
@@ -515,10 +514,11 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
             "blur { 3, ox = 1, oy = 1, color = 'black' }"
             "blend { color = 'lime' }";
 
-      o = code = efl_add(EFL_UI_TEXT_EDITABLE_CLASS, win,
-                         efl_ui_text_scrollable_set(efl_added, 1),
-                         efl_text_multiline_set(efl_added, 1));
-      efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed_hack, win);
+      o = code = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                         efl_ui_textbox_scrollable_set(efl_added, EINA_TRUE),
+                         efl_text_interactive_editable_set(efl_added, EINA_TRUE),
+                         efl_text_multiline_set(efl_added, EINA_TRUE));
+      efl_event_callback_add(o, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, _code_changed_hack, win);
 
       // Insert filter code inside style string: DEFAULT='blah blah <here>'
       efl_gfx_filter_program_set(o, code_filter, "code");

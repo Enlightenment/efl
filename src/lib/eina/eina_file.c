@@ -36,6 +36,10 @@
 #endif
 #include <fcntl.h>
 
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
+
 #define PATH_DELIM '/'
 
 #include "eina_config.h"
@@ -54,10 +58,6 @@
 #include "eina_log.h"
 #include "eina_xattr.h"
 #include "eina_file_common.h"
-
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
 
 /*============================================================================*
  *                                  Local                                     *
@@ -795,47 +795,58 @@ eina_file_open(const char *path, Eina_Bool shared)
    Eina_Stringshare *filename;
    struct stat file_stat;
    int fd = -1;
+   Eina_Statgen statgen;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
    filename = eina_file_sanitize(path);
    if (!filename) return NULL;
 
-   if (shared)
-#ifdef HAVE_SHM_OPEN
-     fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
-#else
-     goto on_error;
-#endif
-   else
-     fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
-
-   if (fd < 0) goto on_error;
-
-   if (!eina_file_close_on_exec(fd, EINA_TRUE))
-     goto on_error;
-
-   if (fstat(fd, &file_stat))
-     goto on_error;
-
+   statgen = eina_file_statgen_get();
    eina_lock_take(&_eina_file_lock_cache);
-
    file = eina_hash_find(_eina_file_cache, filename);
-   if ((file) && !_eina_file_timestamp_compare(file, &file_stat))
+   statgen = eina_file_statgen_get();
+   if ((!file) || (file->statgen != statgen) || (statgen == 0))
      {
-        file->delete_me = EINA_TRUE;
-        eina_hash_del(_eina_file_cache, file->filename, file);
-        file = NULL;
+        if (shared)
+          {
+#ifdef HAVE_SHM_OPEN
+             fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+             if ((fd != -1)  && (!eina_file_close_on_exec(fd, EINA_TRUE)))
+               goto on_error;
+#else
+             goto on_error;
+#endif
+          }
+        else
+          {
+#ifdef HAVE_OPEN_CLOEXEC
+             fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO | O_CLOEXEC);
+#else
+             fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+             if ((fd != -1)  && (!eina_file_close_on_exec(fd, EINA_TRUE)))
+               goto on_error;
+#endif
+          }
+        if (fd < 0) goto on_error;
+
+        if (fstat(fd, &file_stat))
+          goto on_error;
+        if (file) file->statgen = statgen;
+
+        if ((file) && !_eina_file_timestamp_compare(file, &file_stat))
+          {
+             file->delete_me = EINA_TRUE;
+             eina_hash_del(_eina_file_cache, file->filename, file);
+             file = NULL;
+          }
      }
 
    if (!file)
      {
         n = malloc(sizeof(Eina_File));
         if (!n)
-	  {
-             eina_lock_release(&_eina_file_lock_cache);
-             goto on_error;
-	  }
+          goto on_error;
 
         memset(n, 0, sizeof(Eina_File));
         n->filename = filename;
@@ -865,7 +876,7 @@ eina_file_open(const char *path, Eina_Bool shared)
      }
    else
      {
-        close(fd);
+        if (fd >= 0) close(fd);
         n = file;
      }
    eina_lock_take(&n->lock);
@@ -877,7 +888,8 @@ eina_file_open(const char *path, Eina_Bool shared)
    return n;
 
  on_error:
-   WRN("Could not open file [%s].", filename);
+   eina_lock_release(&_eina_file_lock_cache);
+   INF("Could not open file [%s].", filename);
    eina_stringshare_del(filename);
 
    if (fd >= 0) close(fd);
@@ -1240,3 +1252,83 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
    return 0;
 }
 
+EAPI void
+eina_file_close_from(int fd, int *except_fd)
+{
+#if defined(_WIN32)
+   // XXX: what do to here? anything?
+#else
+#ifdef HAVE_DIRENT_H
+   DIR *dir;
+
+   dir = opendir("/proc/sefl/fd");
+   if (!dir) dir = opendir("/dev/fd");
+   if (dir)
+     {
+        struct dirent *dp;
+        const char *fname;
+        int *closes = NULL;
+        int num_closes = 0, i;
+
+        for (;;)
+          {
+skip:
+             dp = readdir(dir);
+             if (!dp) break;
+             fname = dp->d_name;
+
+             if ((fname[0] >= '0') && (fname[0] <= '9'))
+               {
+                  int num = atoi(fname);
+                  if (num >= fd)
+                    {
+                       if (except_fd)
+                         {
+                            int j;
+
+                            for (j = 0; except_fd[j] >= 0; j++)
+                              {
+                                 if (except_fd[j] == num) goto skip;
+                              }
+                         }
+                       num_closes++;
+                       int *tmp = realloc(closes, num_closes * sizeof(int));
+                       if (!tmp) num_closes--;
+                       else
+                         {
+                            closes = tmp;
+                            closes[num_closes - 1] = num;
+                         }
+                    }
+               }
+          }
+        closedir(dir);
+        for (i = 0; i < num_closes; i++) close(closes[i]);
+        free(closes);
+        return;
+     }
+#endif
+   int i, max = 1024;
+
+# ifdef HAVE_SYS_RESOURCE_H
+   struct rlimit lim;
+   if (getrlimit(RLIMIT_NOFILE, &lim) < 0) return;
+   max = lim.rlim_max;
+# endif
+   for (i = fd; i < max;)
+     {
+        if (except_fd)
+          {
+             int j;
+
+             for (j = 0; except_fd[j] >= 0; j++)
+               {
+                  if (except_fd[j] == i) goto skip2;
+               }
+          }
+        close(i);
+skip2:
+        i++;
+     }
+#endif
+}

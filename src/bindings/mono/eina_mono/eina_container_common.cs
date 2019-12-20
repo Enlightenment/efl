@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -5,6 +20,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Reflection;
+using System.ComponentModel;
+using System.Globalization;
 
 using Eina.Callbacks;
 using static Eina.HashNativeFunctions;
@@ -15,28 +32,125 @@ using static Eina.NativeCustomExportFunctions;
 namespace Eina
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public enum ElementType
 {
     NumericType,
     StringType,
+    StringshareType,
     ObjectType
 };
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Sequential)]
-public struct InlistMem
+public struct InlistMem : IEquatable<InlistMem>
 {
     public IntPtr next {get;set;}
     public IntPtr prev {get;set;}
     public IntPtr last {get;set;}
+
+    /// <summary>
+    ///   Gets a hash for <see cref="InlistMem" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => next.GetHashCode() ^ prev.GetHashCode() ^ last.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="InlistMem" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is InlistMem)) ? false : Equals((InlistMem)other);
+
+    /// <summary>Returns whether this <see cref="InlistMem" /> is equal
+    /// to the given <see cref="InlistMem" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="InlistMem" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(InlistMem other)
+        => (next == other.next) && (prev == other.prev)
+        && (last == other.last);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(InlistMem lhs, InlistMem rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(InlistMem lhs, InlistMem rhs) => !(lhs == rhs);
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Sequential)]
-public struct InlistNode<T>
+public struct InlistNode<T> : IEquatable<InlistNode<T>>
 {
     public InlistMem __in_list {get;set;}
     public T Val {get;set;}
+
+    /// <summary>
+    ///   Gets a hash for <see cref="InlistNode{T}" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => __in_list.GetHashCode() ^ Val.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="InlistNode{T}" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is InlistNode<T>)) ? false : Equals((InlistNode<T>)other);
+
+    /// <summary>Returns whether this <see cref="InlistNode{T}" /> is equal
+    /// to the given <see cref="InlistNode{T}" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="InlistNode{T}" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(InlistNode<T> other)
+        => (__in_list == other.__in_list) && (Val.Equals(other.Val));
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(InlistNode<T> lhs, InlistNode<T> rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(InlistNode<T> lhs, InlistNode<T> rhs)
+        => !(lhs == rhs);
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
@@ -57,6 +171,7 @@ public interface IBaseElementTraits<T>
     IntPtr EinaHashIteratorKeyNew(IntPtr hash);
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class StringElementTraits : IBaseElementTraits<string>
 {
     public StringElementTraits()
@@ -195,6 +310,147 @@ public class StringElementTraits : IBaseElementTraits<string>
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
+public class StringshareElementTraits : IBaseElementTraits<Eina.Stringshare>
+{
+    public StringshareElementTraits()
+    {
+    }
+
+    public IntPtr ManagedToNativeAlloc(Eina.Stringshare man)
+    {
+        var strShare = MemoryNative.AddStringshare(man);
+        return strShare;
+    }
+
+    public IntPtr ManagedToNativeAllocInlistNode(Eina.Stringshare man)
+    {
+        var node = new InlistNode<IntPtr>();
+        node.Val = ManagedToNativeAlloc(man);
+        GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
+        IntPtr ptr = pinnedData.AddrOfPinnedObject();
+        IntPtr nat = MemoryNative.AllocCopy
+            (ptr, Marshal.SizeOf<InlistMem>() + Marshal.SizeOf<IntPtr>());
+        pinnedData.Free();
+        return nat;
+    }
+
+    public void ManagedToNativeCopyTo(Eina.Stringshare man, IntPtr mem)
+    {
+        IntPtr stringptr = ManagedToNativeAlloc(man);
+        Marshal.WriteIntPtr(mem, stringptr);
+    }
+
+    public void NativeFree(IntPtr nat)
+    {
+        if (nat != IntPtr.Zero)
+        {
+            MemoryNative.DelStringshare(nat);
+        }
+    }
+
+    public void NativeFreeInlistNodeElement(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            return;
+        }
+
+        var val = Marshal.PtrToStructure<IntPtr>
+            (nat + Marshal.SizeOf<InlistMem>());
+        NativeFree(val);
+    }
+
+    public void NativeFreeInlistNode(IntPtr nat, bool freeElement)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            return;
+        }
+
+        if (freeElement)
+        {
+            NativeFreeInlistNodeElement(nat);
+        }
+
+        MemoryNative.Free(nat);
+    }
+
+    public void NativeFreeInplace(IntPtr nat)
+    {
+        MemoryNative.DelStringshareRef(nat);
+    }
+
+    public void ResidueFreeInplace(IntPtr nat)
+    {
+    }
+
+    public Eina.Stringshare NativeToManaged(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            return default(Eina.Stringshare);
+        }
+
+        return StringConversion.NativeUtf8ToManagedString(nat);
+    }
+
+    public Eina.Stringshare NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(Eina.Stringshare);
+        }
+
+        IntPtr ptr_location = nat + Marshal.SizeOf<InlistMem>();
+        return NativeToManaged(Marshal.ReadIntPtr(ptr_location));
+    }
+
+    // Strings inplaced are always a pointer, because they are variable-sized
+    public Eina.Stringshare NativeToManagedInplace(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            return default(Eina.Stringshare);
+        }
+
+        nat = Marshal.ReadIntPtr(nat);
+        if (nat == IntPtr.Zero)
+        {
+            return default(Eina.Stringshare);
+        }
+
+        return NativeToManaged(nat);
+    }
+
+    public IntPtr EinaCompareCb()
+    {
+        return MemoryNative.StrCompareFuncPtrGet();
+    }
+
+    public IntPtr EinaFreeCb()
+    {
+        return MemoryNative.StringshareDelFuncPtrGet();
+    }
+
+    public IntPtr EinaHashNew()
+    {
+        return eina_hash_stringshared_new(MemoryNative.StringshareDelFuncPtrGet());
+    }
+
+    public IntPtr EinaInarrayNew(uint step)
+    {
+        return eina_inarray_new((uint)Marshal.SizeOf<IntPtr>(), step);
+    }
+
+    public IntPtr EinaHashIteratorKeyNew(IntPtr hash)
+    {
+        return eina_hash_iterator_key_new(hash);
+    }
+}
+
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 {
     public IntPtr ManagedToNativeAlloc(T man)
@@ -229,7 +485,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     {
         if (nat != IntPtr.Zero)
         {
-	    Efl.Eo.Globals.efl_mono_thread_safe_efl_unref(nat);
+            Efl.Eo.Globals.efl_mono_thread_safe_efl_unref(nat);
         }
     }
 
@@ -352,9 +608,10 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public abstract class PrimitiveElementTraits<T>
 {
-    private Eina_Compare_Cb dlgt = null;
+    private Eina.Callbacks.EinaCompareCb dlgt = null;
 
     public IntPtr ManagedToNativeAlloc(T man)
     {
@@ -431,7 +688,7 @@ public abstract class PrimitiveElementTraits<T>
     {
         if (dlgt == null)
         {
-            dlgt = new Eina_Compare_Cb(PrimitiveCompareCb);
+            dlgt = new Eina.Callbacks.EinaCompareCb(PrimitiveCompareCb);
         }
 
         return Marshal.GetFunctionPointerForDelegate(dlgt);
@@ -453,6 +710,7 @@ public abstract class PrimitiveElementTraits<T>
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
     private static IBaseElementTraits<Int32> int32Traits = null;
@@ -477,7 +735,7 @@ abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, I
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
-        return int32Traits.ManagedToNativeAlloc(Convert.ToInt32((object)man));
+        return int32Traits.ManagedToNativeAlloc(Convert.ToInt32((object)man, CultureInfo.CurrentCulture));
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)
@@ -491,6 +749,7 @@ abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, I
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
     private static IBaseElementTraits<Int64> int64Traits = null;
@@ -515,7 +774,7 @@ abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, I
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
-        return int64Traits.ManagedToNativeAlloc(Convert.ToInt64((object)man));
+        return int64Traits.ManagedToNativeAlloc(Convert.ToInt64((object)man, CultureInfo.CurrentCulture));
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)
@@ -529,6 +788,7 @@ abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, I
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class IntElementTraits : Primitive32ElementTraits<int>, IBaseElementTraits<int>
 {
     override public void ManagedToNativeCopyTo(int man, IntPtr mem)
@@ -553,6 +813,7 @@ public class IntElementTraits : Primitive32ElementTraits<int>, IBaseElementTrait
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class CharElementTraits : Primitive32ElementTraits<char>, IBaseElementTraits<char>
 {
     override public void ManagedToNativeCopyTo(char man, IntPtr mem)
@@ -577,6 +838,7 @@ public class CharElementTraits : Primitive32ElementTraits<char>, IBaseElementTra
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class LongElementTraits : Primitive64ElementTraits<long>, IBaseElementTraits<long>
 {
     override public void ManagedToNativeCopyTo(long man, IntPtr mem)
@@ -601,6 +863,7 @@ public class LongElementTraits : Primitive64ElementTraits<long>, IBaseElementTra
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class ShortElementTraits : Primitive32ElementTraits<short>, IBaseElementTraits<short>
 {
     override public void ManagedToNativeCopyTo(short man, IntPtr mem)
@@ -625,6 +888,7 @@ public class ShortElementTraits : Primitive32ElementTraits<short>, IBaseElementT
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class FloatElementTraits : Primitive32ElementTraits<float>, IBaseElementTraits<float>
 {
     override public void ManagedToNativeCopyTo(float man, IntPtr mem)
@@ -649,6 +913,7 @@ public class FloatElementTraits : Primitive32ElementTraits<float>, IBaseElementT
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class DoubleElementTraits : Primitive64ElementTraits<double>, IBaseElementTraits<double>
 {
     override public void ManagedToNativeCopyTo(double man, IntPtr mem)
@@ -673,6 +938,7 @@ public class DoubleElementTraits : Primitive64ElementTraits<double>, IBaseElemen
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class ByteElementTraits : Primitive32ElementTraits<byte>, IBaseElementTraits<byte>
 {
     override public void ManagedToNativeCopyTo(byte man, IntPtr mem)
@@ -697,6 +963,7 @@ public class ByteElementTraits : Primitive32ElementTraits<byte>, IBaseElementTra
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class TraitFunctions
 {
     public static bool IsEflObject(System.Type type)
@@ -709,6 +976,11 @@ public static class TraitFunctions
         return type == typeof(string);
     }
 
+    public static bool IsStringshare(System.Type type)
+    {
+        return type == typeof(Eina.Stringshare);
+    }
+
     public static Eina.ElementType GetElementTypeCode(System.Type type)
     {
         if (IsEflObject(type))
@@ -718,6 +990,10 @@ public static class TraitFunctions
         else if (IsString(type))
         {
             return ElementType.StringType;
+        }
+        else if (IsStringshare(type))
+        {
+            return ElementType.StringshareType;
         }
         else
         {
@@ -763,6 +1039,10 @@ public static class TraitFunctions
         else if (IsString(type))
         {
             traits = new StringElementTraits();
+        }
+        else if (IsStringshare(type))
+        {
+            traits = new StringshareElementTraits();
         }
         else if (type.IsValueType)
         {

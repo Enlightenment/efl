@@ -8,11 +8,11 @@ interface Efl.Container
      @since 1.22
    ]]
    c_prefix: efl_content;
-   event_prefix: efl_container;
+   event_c_prefix: efl_container;
    methods {
       content_iterate {
          [[Begin iterating over this object's contents.]]
-         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator on object's content.]]
+         return: iterator<Efl.Gfx.Entity> @move @no_unused; [[Iterator on object's content.]]
       }
       content_count {
          [[Returns the number of contained sub-objects.]]

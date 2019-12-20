@@ -1,17 +1,17 @@
 enum @beta Efl.Canvas.Layout_Part_Text_Expand
 {
-   [[Text layout policy to enforce. If none is set, min/max descriptions
-     are taken in considerations solely.
+   [[Text layout policy to enforce. If none is set, only min/max descriptions
+     are taken into account.
    ]]
-   none = 0, [[No policy. Use default description parameters.]]
-   min_x = 1,
-   min_y  = 1 << 1,
-   max_x  = 1 << 2,
-   max_y  = 1 << 3,
+   none = 0,        [[No policy. Use default description parameters.]]
+   min_x = 1,       [[Text is tied to the left side of the container.]]
+   min_y = 1 << 1,  [[Text is tied to the top side of the container.]]
+   max_x = 1 << 2,  [[Text is tied to the right side of the container.]]
+   max_y = 1 << 3,  [[Text is tied to the bottom side of the container.]]
 }
 
 class @beta Efl.Canvas.Layout_Part_Text extends Efl.Canvas.Layout_Part implements Efl.Text,
-Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
+Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
 {
    [[Represents a TEXT part of a layout
 
@@ -27,7 +27,7 @@ Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Text_Format, Efl.Text_Font, Ef
             line-wrapping etc.
            ]]
            values {
-              type: Efl.Canvas.Layout_Part_Text_Expand;
+              type: Efl.Canvas.Layout_Part_Text_Expand; [[Desired sizing policy.]]
            }
         }
 
@@ -36,40 +36,27 @@ Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Text_Format, Efl.Text_Font, Ef
    implements {
       Efl.Text.text { set; get; }
       Efl.Text_Markup.markup { get; set; }
-      Efl.Text_Markup_Interactive.cursor_markup_insert;
-      Efl.Text_Cursor.text_cursor { get; }
-      Efl.Text_Cursor.cursor_paragraph_first;
-      Efl.Text_Cursor.cursor_paragraph_last;
-      Efl.Text_Cursor.cursor_position { set; get; }
-      Efl.Text_Cursor.cursor_coord_set;
-      Efl.Text_Cursor.cursor_line_char_first;
-      Efl.Text_Cursor.cursor_line_char_last;
-      Efl.Text_Cursor.cursor_char_next;
-      Efl.Text_Cursor.cursor_char_prev;
-      Efl.Text_Cursor.cursor_line_jump_by;
-      Efl.Text_Cursor.cursor_copy;
-      Efl.Text_Cursor.cursor_content { get; }
-      Efl.Text_Cursor.cursor_geometry { get; }
       Efl.Text_Format.ellipsis { set; get; }
       Efl.Text_Format.wrap { set; get; }
-      Efl.Text_Font.font { set; get; }
-      Efl.Text_Style.normal_color { set; get; }
-      Efl.Text_Style.backing_type { set; get; }
-      Efl.Text_Style.backing_color { set; get;}
-      Efl.Text_Style.underline_type { set; }
-      Efl.Text_Style.underline_color { set; get; }
-      Efl.Text_Style.underline2_color { set; get; }
-      Efl.Text_Style.underline_dashed_color { set; get; }
-      Efl.Text_Style.underline_height { set; }
-      Efl.Text_Style.underline_dashed_width { set; }
-      Efl.Text_Style.underline_dashed_gap { set; }
-      Efl.Text_Style.strikethrough_type { set; }
-      Efl.Text_Style.strikethrough_color { set; get; }
-      Efl.Text_Style.effect_type { set; }
-      Efl.Text_Style.shadow_direction { set; }
-      Efl.Text_Style.outline_color { set; get; }
-      Efl.Text_Style.shadow_color { set; get; }
-      Efl.Text_Style.glow_color { set; get; }
-      Efl.Text_Style.glow2_color { set; get; }
+      Efl.Text_Font.font_family { set; get; }
+      Efl.Text_Font.font_size { set; get; }
+      Efl.Text_Style.text_color { set; get; }
+      Efl.Text_Style.text_background_type { set; get; }
+      Efl.Text_Style.text_background_color { set; get;}
+      Efl.Text_Style.text_underline_type { set; }
+      Efl.Text_Style.text_underline_color { set; get; }
+      Efl.Text_Style.text_underline2_color { set; get; }
+      Efl.Text_Style.text_underline_dashed_color { set; get; }
+      Efl.Text_Style.text_underline_height { set; }
+      Efl.Text_Style.text_underline_dashed_width { set; }
+      Efl.Text_Style.text_underline_dashed_gap { set; }
+      Efl.Text_Style.text_strikethrough_type { set; }
+      Efl.Text_Style.text_strikethrough_color { set; get; }
+      Efl.Text_Style.text_effect_type { set; }
+      Efl.Text_Style.text_shadow_direction { set; }
+      Efl.Text_Style.text_outline_color { set; get; }
+      Efl.Text_Style.text_shadow_color { set; get; }
+      Efl.Text_Style.text_glow_color { set; get; }
+      Efl.Text_Style.text_glow2_color { set; get; }
    }
 }

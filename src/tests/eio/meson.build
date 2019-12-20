@@ -26,5 +26,5 @@ eio_suite = executable('eio_suite',
 
 test('eio-suite', eio_suite,
   env : test_env,
-  timeout : 10*60 #10 min. can be realistic, this testsuite is slow!
+  timeout : 120
 )

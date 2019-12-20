@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -5,8 +20,10 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
+using System.Linq;
 
 using static Eina.NativeCustomExportFunctions;
 using EoG = Efl.Eo.Globals;
@@ -17,10 +34,10 @@ namespace Efl
 namespace Eo
 {
 
-public class Globals
+public static class Globals
 {
     /// <summary>Represents the type of the native Efl_Class.</summary>
-    public enum EflClassType
+    internal enum EflClassType
     {
         /// <summary>Regular EFL classes.</summary>
         Regular = 0,
@@ -35,203 +52,252 @@ public class Globals
     }
 
     [return: MarshalAs(UnmanagedType.U1)]
-    public delegate bool efl_object_init_delegate();
-    public static FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
+    internal delegate bool efl_object_init_delegate();
+    static readonly FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
         new FunctionWrapper<efl_object_init_delegate>(efl.Libs.EoModule, "efl_object_init");
-    public static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
+    internal static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
 
-    public delegate void efl_object_shutdown_delegate();
-    public static FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
-    public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
-    // [DllImport(efl.Libs.Eo)] public static extern void efl_object_shutdown();
-    public static FunctionWrapper<_efl_add_internal_start_delegate> _efl_add_internal_start_ptr = new FunctionWrapper<_efl_add_internal_start_delegate>(efl.Libs.EoModule, "_efl_add_internal_start");
-    public delegate  IntPtr
-        _efl_add_internal_start_delegate([MarshalAs(UnmanagedType.LPStr)] String file, int line,
-                                IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    internal delegate void efl_object_shutdown_delegate();
+    static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
+    internal static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
+    // [DllImport(efl.Libs.Eo)] internal static extern void efl_object_shutdown();
+
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr efl_mono_wrapper_supervisor_get(IntPtr eo);
+    [DllImport(efl.Libs.CustomExports)] internal static extern void efl_mono_wrapper_supervisor_set(IntPtr eo, IntPtr ws);
+
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
-    public delegate  IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
+        _efl_add_internal_start_bindings([MarshalAs(UnmanagedType.LPStr)] String file, int line, IntPtr klass, IntPtr parent,
+                                         byte is_ref, byte is_fallback, IntPtr substitute_ctor, IntPtr data);
+    internal delegate  IntPtr
         _efl_add_end_delegate(IntPtr eo, byte is_ref, byte is_fallback);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
-    public delegate  IntPtr
+    internal delegate  IntPtr
         efl_ref_delegate(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_ref(IntPtr eo);
-    public delegate  void
+    internal delegate  void
         efl_unref_delegate(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_unref(IntPtr eo);
-    public delegate  int
+    internal delegate  int
         efl_ref_count_delegate(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern int
+    [DllImport(efl.Libs.Eo)] internal static extern int
         efl_ref_count(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
-        efl_mono_gchandle_callbacks_set(Efl.FreeGCHandleCb freeGCHandleCb, Efl.RemoveEventsCb removeEventsCb);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
-        efl_mono_native_dispose(IntPtr eo, IntPtr gcHandle);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
-        efl_mono_thread_safe_native_dispose(IntPtr eo, IntPtr gcHandle);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
+        efl_mono_wrapper_supervisor_callbacks_set(Efl.FreeWrapperSupervisorCb freeWrapperSupervisorCb);
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
+        efl_mono_native_dispose(IntPtr eo);
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
+        efl_mono_thread_safe_native_dispose(IntPtr eo);
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_thread_safe_efl_unref(IntPtr eo);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_thread_safe_free_cb_exec(IntPtr free_cb, IntPtr cb_data);
 
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_name_get(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr extn48, IntPtr term);
 
-    public delegate  byte efl_class_functions_set_delegate(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
-    [DllImport(efl.Libs.Eo)] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
-    public delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
-    public delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
-    public delegate  IntPtr efl_class_get_delegate(IntPtr obj);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
-    [DllImport(efl.Libs.Eo)] public static extern EflClassType efl_class_type_get(IntPtr klass);
-    public delegate  IntPtr dlerror_delegate();
-    [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
+    internal delegate  byte efl_class_functions_set_delegate(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    [DllImport(efl.Libs.Eo)] internal static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    internal delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
+    internal delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
 
-    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    /// <summary>Gets a native pointer to <c>obj</c> that forwards the method call to its parent
+    /// implementation.
+    ///
+    /// <para>For generated code use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The native pointer to be prepared.</param>
+    /// <param name="klass">The current class.</param>
+    /// <returns>The native pointer to <c>obj</c> prepared to call the parent implementation of <c>klass</c>.</returns>
+    internal static IntPtr Super(IntPtr obj, IntPtr klass)
+    {
+        return efl_super(obj, klass);
+    }
+
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
+    internal delegate  IntPtr efl_class_get_delegate(IntPtr obj);
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_class_get(IntPtr obj);
+
+    /// <summary>Gets the native EO class pointer for the given object.
+    /// <para>For generated code use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The native pointer to the <see cref="Efl.Object" /> instance to get the native class
+    /// from.</param>
+    /// <returns>The native class pointer or <see cref="IntPtr.Zero" /> if no such class existis.</returns>
+    internal static IntPtr GetClass(IntPtr obj)
+    {
+        return efl_class_get(obj);
+    }
+
+    [DllImport(efl.Libs.Eo)] internal static extern EflClassType efl_class_type_get(IntPtr klass);
+    internal delegate  IntPtr dlerror_delegate();
+    [DllImport(efl.Libs.Evil)] internal static extern IntPtr dlerror();
+
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_constructor(IntPtr obj);
+
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr efl_mono_avoid_top_level_constructor_callback_addr_get();
+
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         efl_event_callback_priority_add(IntPtr obj, IntPtr desc, short priority, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         efl_event_callback_del(IntPtr obj, IntPtr desc, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         efl_event_callback_call(IntPtr obj, IntPtr desc, IntPtr event_info);
 
-    public const int RTLD_NOW = 2;
+    /// <summary>Calls the callbacks associated to an event.
+    /// <para>For generated code use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The native pointer to the <see cref="Efl.Object" /> instance that will be the emitter
+    /// of the event.</param>
+    /// <param name="desc">The native event description.</param>
+    /// <param name="event_info">The native payload of the event.</param>
+    /// <returns><c>false</c> if one of the callbacks aborted the call. <c>true</c> otherwise.</returns>
+    internal static bool CallEventCallback(IntPtr obj, IntPtr desc, IntPtr event_info)
+    {
+        return efl_event_callback_call(obj, desc, event_info);
+    }
 
-    public delegate byte class_initializer(IntPtr klass);
+    internal const int RTLD_NOW = 2;
 
-    public static T GetParamHelper<T>(Nullable<T> v) where T : struct
+    internal delegate byte class_initializer(IntPtr klass);
+
+    internal static T GetParamHelper<T>(Nullable<T> v) where T : struct
     {
         return v.Value;
     }
 
-    public static U GetParamHelper<U>(U v)
+    internal static U GetParamHelper<U>(U v)
     {
         return v;
     }
 
-    public static bool ParamHelperCheck<T>(Nullable<T> v) where T : struct
+    internal static bool ParamHelperCheck<T>(Nullable<T> v) where T : struct
     {
         return v.HasValue;
     }
 
-    public static bool ParamHelperCheck<U>(U v)
+    internal static bool ParamHelperCheck<U>(U v)
     {
         return v != null;
     }
 
-    public static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
+    internal static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
     {
         ClassDescription description;
         description.version = 2; // EO_VERSION
         description.name = class_name;
         description.class_type = 0; // REGULAR
-        description.data_size = (UIntPtr)8;
+        description.data_size = (UIntPtr)0;
         description.class_initializer = IntPtr.Zero;
         description.class_constructor = IntPtr.Zero;
         description.class_destructor = IntPtr.Zero;
@@ -245,6 +311,8 @@ public class Globals
 
         IntPtr description_ptr = Eina.MemoryNative.Alloc(Marshal.SizeOf(description));
         Marshal.StructureToPtr(description, description_ptr, false);
+
+        // FIXME: description_ptr seems to be leaking memory even after an eo_shutdown
 
         var interface_list = EoG.get_efl_interfaces(type);
 
@@ -262,7 +330,7 @@ public class Globals
         return klass;
     }
 
-    public static List<IntPtr> get_efl_interfaces(System.Type type)
+    internal static List<IntPtr> get_efl_interfaces(System.Type type)
     {
         System.Type base_type = type.BaseType;
 
@@ -302,57 +370,53 @@ public class Globals
         return null;
     }
 
-    public static System.Collections.Generic.List<System.Reflection.MethodInfo>
+    internal static System.Collections.Generic.List<string>
         GetUserMethods(System.Type type)
     {
-        var r = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
-        var flags = System.Reflection.BindingFlags.Instance
-                    | System.Reflection.BindingFlags.DeclaredOnly
-                    | System.Reflection.BindingFlags.Public
-                    | System.Reflection.BindingFlags.NonPublic;
-        r.AddRange(type.GetMethods(flags));
-        var base_type = type.BaseType;
+        var r = new System.Collections.Generic.List<string>();
+        var flags =
+            System.Reflection.BindingFlags.Instance
+            | System.Reflection.BindingFlags.DeclaredOnly
+            | System.Reflection.BindingFlags.Public
+            | System.Reflection.BindingFlags.NonPublic;
 
-        for (;base_type != null; base_type = base_type.BaseType)
+        for (var base_type = type;;base_type = base_type.BaseType)
         {
-            if (IsGeneratedClass(base_type))
+            r.AddRange(base_type.GetMethods(flags)
+                       .AsParallel().Select(info=>info.Name).ToList());
+            if (IsGeneratedClass(base_type.BaseType))
             {
-                return r;
+                break;
             }
 
-            r.AddRange(base_type.GetMethods(flags));
+            if (base_type.BaseType == null)
+            {
+                break;
+            }
         }
+
         return r;
     }
 
-    public static byte class_initializer_call(IntPtr klass, System.Type type)
+    internal static byte class_initializer_call(IntPtr klass, System.Type type)
     {
         Eina.Log.Debug($"called with 0x{klass.ToInt64():x} {type}");
-        Efl.Eo.NativeClass nativeClass = GetNativeClass(type.BaseType);
+        var derived = type.BaseType;
+        Efl.Eo.NativeClass nativeClass = GetNativeClass(derived);
+
+        while (nativeClass == null)
+        {
+            derived = derived.BaseType;
+            if (derived == null)
+                break;
+            nativeClass = GetNativeClass(derived);
+        }
 
         if (nativeClass != null)
         {
             Eina.Log.Debug("nativeClass != null");
-            var descs = nativeClass.GetEoOps(type);
+            var descs = nativeClass.GetEoOps(type, true);
             var count = descs.Count;
-
-            var all_interfaces = type.GetInterfaces();
-            var base_interfaces = type.BaseType.GetInterfaces();
-            foreach (var iface in all_interfaces)
-            {
-                if (!System.Array.Exists(base_interfaces, element => element == iface))
-                {
-                    var nc = GetNativeClass(iface);
-                    if (nc != null)
-                    {
-                        var moredescs = nc.GetEoOps(type);
-                        Eina.Log.Debug($"adding {moredescs.Count} more descs to registration");
-                        descs.AddRange(moredescs);
-                        count = descs.Count;
-                    }
-                }
-            }
-
             IntPtr descs_ptr = IntPtr.Zero;
 
             if (count > 0)
@@ -367,7 +431,7 @@ public class Globals
                ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));
             }
 
-            Efl_Object_Ops ops;
+            EflObjectOps ops;
             ops.descs = descs_ptr;
             ops.count = (UIntPtr)count;
             IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));
@@ -383,7 +447,7 @@ public class Globals
        return 1;
     }
 
-    public static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
+    internal static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
     {
         IntPtr nul = IntPtr.Zero;
         int iface_list_count = (il == null ? 0 : il.Count);
@@ -442,63 +506,29 @@ public class Globals
         }
     }
 
-    public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent,
-                                           [CallerFilePath] string file = null,
-                                           [CallerLineNumber] int line = 0)
+    internal static Efl.Eo.WrapperSupervisor WrapperSupervisorPtrToManaged(IntPtr wsPtr)
     {
-        Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
-        System.IntPtr parent_ptr = System.IntPtr.Zero;
-        if (parent != null)
-        {
-            parent_ptr = parent.NativeHandle;
-        }
-
-        System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start(file, line, klass, parent_ptr, 1, 0);
-        if (eo == System.IntPtr.Zero)
-        {
-            throw new Exception("Instantiation failed");
-        }
-
-        Eina.Log.Debug($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {Efl.Eo.Globals.efl_ref_count(eo)}");
-        Eina.Log.Debug($"Parent was 0x{parent_ptr.ToInt64()}");
-        return eo;
+        return (Efl.Eo.WrapperSupervisor) GCHandle.FromIntPtr(wsPtr).Target;
     }
 
-    public static IntPtr instantiate_end(IntPtr eo)
+    internal static Efl.Eo.WrapperSupervisor GetWrapperSupervisor(IntPtr eo)
     {
-        Eina.Log.Debug("calling efl_add_internal_end");
-        eo = Efl.Eo.Globals._efl_add_end(eo, 1, 0);
-        Eina.Log.Debug($"efl_add_end returned eo 0x{eo.ToInt64():x}");
-        return eo;
-    }
-
-    public static void PrivateDataSet(Efl.Eo.IWrapper obj)
-    {
-        Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
-        IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
-        {
-            GCHandle gch = GCHandle.Alloc(obj);
-            EolianPD epd;
-            epd.pointer = GCHandle.ToIntPtr(gch);
-            Marshal.StructureToPtr(epd, pd, false);
-        }
-    }
-
-    public static Efl.Eo.IWrapper PrivateDataGet(IntPtr pd)
-    {
-        EolianPD epd = (EolianPD)Marshal.PtrToStructure(pd, typeof(EolianPD));
-        if (epd.pointer != IntPtr.Zero)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(epd.pointer);
-            return (Efl.Eo.IWrapper)gch.Target;
-        }
-        else
+        var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(eo);
+        if (wsPtr == IntPtr.Zero)
         {
             return null;
         }
+
+        return WrapperSupervisorPtrToManaged(wsPtr);
     }
 
-    public static void free_dict_values(Dictionary<String, IntPtr> dict)
+    internal static void SetWrapperSupervisor(IntPtr eo, Efl.Eo.WrapperSupervisor ws)
+    {
+        GCHandle gch = GCHandle.Alloc(ws);
+        Efl.Eo.Globals.efl_mono_wrapper_supervisor_set(eo, GCHandle.ToIntPtr(gch));
+    }
+
+    internal static void free_dict_values(Dictionary<String, IntPtr> dict)
     {
         foreach (IntPtr ptr in dict.Values)
         {
@@ -506,21 +536,21 @@ public class Globals
         }
     }
 
-    public static void free_stringshare_values(Dictionary<String, IntPtr> dict)
+    internal static void free_stringshare_values(Dictionary<String, IntPtr> dict)
     {
         foreach (IntPtr ptr in dict.Values)
         {
-            Eina.Stringshare.eina_stringshare_del(ptr);
+            Eina.NativeMethods.eina_stringshare_del(ptr);
         }
     }
 
-    public static void free_gchandle(IntPtr ptr)
+    internal static void free_gchandle(IntPtr ptr)
     {
         GCHandle handle = GCHandle.FromIntPtr(ptr);
         handle.Free();
     }
 
-    public static System.Threading.Tasks.Task<Eina.Value> WrapAsync(Eina.Future future, CancellationToken token)
+    internal static System.Threading.Tasks.Task<Eina.Value> WrapAsync(Eina.Future future, CancellationToken token)
     {
         // Creates a task that will wait for SetResult for completion.
         // TaskCompletionSource is used to create tasks for 'external' Task sources.
@@ -544,13 +574,15 @@ public class Globals
                     }
                     else
                     {
-                        tcs.TrySetException(new Efl.FutureException(received));
+                        tcs.TrySetException(new Efl.FutureException(err));
                     }
                 }
                 else
                 {
-                    // Will mark the returned task below as completed.
-                    tcs.SetResult(received);
+                    // Async receiver methods may consume the value C# wrapper, like when awaiting in the start of an
+                    // using block. In order to continue to forward the value correctly to the next futures
+                    // in the chain, we give the Async wrapper a copy of the received wrapper.
+                    tcs.SetResult(new Eina.Value(received));
                 }
 
                 fulfilled = true;
@@ -583,17 +615,14 @@ public class Globals
 
     /// <summary>Creates a new wrapper for the given Eo id.
     ///
-    /// <para>If the Eo was created from a non-generated class (i.e. C#-pure class), it returns
-    /// the C# instance handle stored in the Eo's private data.</para>
-    ///
-    /// <para>For generated-class Eo instance, we use reflection to get the correct C# type to re-wrap
-    /// it.</para>
+    /// <para>If the Eo have a WrapperSupervisor, it returns the C# instance handle stored in its
+    /// WrapperSupervisor. otherwise, we use reflection to get the correct C# type to re-wrap it.</para>
     /// </summary>
     ///
     /// <param name="handle">The Eo id to be wrapped.</param>
     /// <param name="shouldIncRef">Whether we should increase the refcount of the Eo instance.</param>
     /// <returns>The C# wrapper for this instance.</returns>
-    public static Efl.Eo.IWrapper CreateWrapperFor(System.IntPtr handle, bool shouldIncRef=true)
+    internal static Efl.Eo.IWrapper CreateWrapperFor(System.IntPtr handle, bool shouldIncRef=true)
     {
 
         if (handle == IntPtr.Zero)
@@ -601,93 +630,102 @@ public class Globals
             return null;
         }
 
-        IntPtr eoKlass = efl_class_get(handle);
-
-        if (eoKlass == IntPtr.Zero)
+        Efl.Eo.Globals.efl_ref(handle);
+        try
         {
-            throw new InvalidOperationException($"Can't get Eo class for object handle 0x{handle.ToInt64():x}");
-        }
-
-        var managedType = ClassRegister.GetManagedType(eoKlass);
-
-        if (managedType == null)
-        {
-            IntPtr nativeName = efl_class_name_get(eoKlass);
-            var name = Eina.StringConversion.NativeUtf8ToManagedString(nativeName);
-
-            throw new InvalidOperationException($"Can't get Managed class for object handle 0x{handle.ToInt64():x} with native class [{name}]");
-        }
-
-        // Pure C# classes that inherit from generated classes store their C# instance in their
-        // Eo private data field.
-        if (!IsGeneratedClass(managedType))
-        {
-            Efl.Eo.IWrapper instance = null;
-            IntPtr pd = efl_data_scope_get(handle, eoKlass);
-
-            if (pd != IntPtr.Zero)
+            var ws = Efl.Eo.Globals.GetWrapperSupervisor(handle);
+            if (ws != null && ws.Target != null)
             {
-                instance = PrivateDataGet(pd);
+                if (!shouldIncRef)
+                {
+                    Efl.Eo.Globals.efl_unref(handle);
+                }
+
+                return ws.Target;
             }
 
-            return instance;
-        }
+            IntPtr eoKlass = efl_class_get(handle);
 
-        System.Reflection.ConstructorInfo constructor = null;
-
-        try
-        {
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            constructor = managedType.GetConstructor(flags, null, new Type[1] { typeof(System.IntPtr) }, null);
-        }
-        catch (InvalidOperationException)
-        {
-            throw new InvalidOperationException($"Can't get constructor for type {managedType}");
-        }
-
-        var ret = constructor.Invoke(new object[1] { handle }) as Efl.Eo.IWrapper;
-
-        if (ret != null && shouldIncRef)
-            Efl.Eo.Globals.efl_ref(handle);
-
-        return ret;
-    }
-
-    private static Efl.FreeGCHandleCb FreeGCHandleCallbackDelegate = new Efl.FreeGCHandleCb(FreeGCHandleCallback);
-    public static void FreeGCHandleCallback(IntPtr gcHandlePtr)
-    {
-        try
-        {
-            GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
-            gcHandle.Free();
-        }
-        catch (Exception e)
-        {
-            Eina.Log.Error(e.ToString());
-            Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);
-        }
-    }
-
-    private static Efl.RemoveEventsCb RemoveEventsCallbackDelegate = new Efl.RemoveEventsCb(RemoveEventsCallback);
-    public static void RemoveEventsCallback(IntPtr obj, IntPtr gcHandlePtr)
-    {
-        try
-        {
-            GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
-            var eoEvents = gcHandle.Target as Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>;
-            if (eoEvents == null)
+            if (eoKlass == IntPtr.Zero)
             {
-                Eina.Log.Error($"Invalid event dictionary [GCHandle pointer: {gcHandlePtr}]");
+                throw new InvalidOperationException($"Can't get Eo class for object handle 0x{handle.ToInt64():x}");
+            }
+
+            var managedType = ClassRegister.GetManagedType(eoKlass);
+
+            if (managedType == null)
+            {
+                IntPtr nativeName = efl_class_name_get(eoKlass);
+                var name = Eina.StringConversion.NativeUtf8ToManagedString(nativeName);
+
+                throw new InvalidOperationException($"Can't get Managed class for object handle 0x{handle.ToInt64():x} with native class [{name}]");
+            }
+
+            Debug.Assert(IsGeneratedClass(managedType));
+            System.Reflection.ConstructorInfo constructor = null;
+
+            try
+            {
+                var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                constructor = managedType.GetConstructor(flags, null, new Type[1] { typeof(WrappingHandle) }, null);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException($"Can't get constructor for type {managedType}");
+            }
+
+            WrappingHandle wh = new WrappingHandle(handle);
+            var ret = (Efl.Eo.IWrapper) constructor.Invoke(new object[1] { wh });
+
+            if (ret == null)
+            {
+                throw new InvalidOperationException($"Can't construct type {managedType} from IntPtr handle");
+            }
+
+            if (shouldIncRef)
+            {
+                Efl.Eo.Globals.efl_ref(handle);
+            }
+
+            return ret;
+        }
+        finally
+        {
+            Efl.Eo.Globals.efl_unref(handle);
+        }
+    }
+
+    private static Efl.FreeWrapperSupervisorCb FreeWrapperSupervisorCallbackDelegate = new Efl.FreeWrapperSupervisorCb(FreeWrapperSupervisorCallback);
+    internal static void FreeWrapperSupervisorCallback(IntPtr eo)
+    {
+        try
+        {
+            var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(eo);
+            if (wsPtr == IntPtr.Zero)
+            {
+                Eina.Log.Error($"Invalid wrapper supervisor [Eo pointer: {eo.ToInt64():x}]");
                 return;
             }
 
-            foreach (var item in eoEvents)
+            Efl.Eo.Globals.efl_mono_wrapper_supervisor_set(eo, IntPtr.Zero);
+
+            GCHandle gch = GCHandle.FromIntPtr(wsPtr);
+            var ws = (Efl.Eo.WrapperSupervisor) gch.Target;
+            foreach (var item in ws.EoEvents)
             {
-                if (!efl_event_callback_del(obj, item.Key.desc, item.Value.evtCallerPtr, IntPtr.Zero))
+                if (!efl_event_callback_del(eo, item.Key.desc, item.Value.evtCallerPtr, wsPtr))
                 {
-                    Eina.Log.Error($"Failed to remove event proxy for event {item.Key.desc} [cb: {item.Value.evtCallerPtr}]");
+                    Eina.Log.Error($"Failed to remove event proxy for event {item.Key.desc} [eo: {eo.ToInt64():x}; cb: {item.Value.evtCallerPtr.ToInt64():x}]");
                 }
             }
+
+            // Free the native eo
+            Efl.Eo.Globals.efl_unref(eo);
+
+            // now the WrapperSupervisor can be collected, and so its member:
+            //     - the event dictionary
+            //     - and the EoWrapper if it is still pinned
+            gch.Free();
         }
         catch (Exception e)
         {
@@ -696,14 +734,14 @@ public class Globals
         }
     }
 
-    public static void SetNativeDisposeCallbacks()
+    internal static void SetNativeDisposeCallbacks()
     {
-        efl_mono_gchandle_callbacks_set(FreeGCHandleCallbackDelegate, RemoveEventsCallbackDelegate);
+        efl_mono_wrapper_supervisor_callbacks_set(FreeWrapperSupervisorCallbackDelegate);
     }
 
-    public static void ThreadSafeFreeCbExec(EinaFreeCb cbFreeCb, IntPtr cbData)
+    internal static void ThreadSafeFreeCbExec(Eina.Callbacks.EinaFreeCb cbFreeCb, IntPtr cbData)
     {
-        EinaFreeCb cb = (IntPtr gcHandlePtr) => {
+        Eina.Callbacks.EinaFreeCb cb = (IntPtr gcHandlePtr) => {
             cbFreeCb(cbData);
             GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
             gcHandle.Free();
@@ -721,17 +759,187 @@ public class Globals
         Monitor.Exit(Efl.All.InitLock);
     }
 
+    internal static IEnumerable<T> AccessorToIEnumerable<T>(IntPtr accessor)
+    {
+        if (accessor == IntPtr.Zero)
+           throw new ArgumentException("accessor is null", nameof(accessor));
+
+        IntPtr data = IntPtr.Zero;
+        uint position = 0;
+
+        while (Eina.AccessorNativeFunctions.eina_accessor_data_get(accessor, position, out data))
+        {
+            yield return Eina.TraitFunctions.NativeToManaged<T>(data);
+            position += 1;
+        }
+    }
+
+    internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable, bool isMoved)
+    {
+        if (enumerable == null)
+        {
+            throw new ArgumentException("enumerable is null", nameof(enumerable));
+        }
+
+        // If we are a wrapper around an existing Eina.Accessor, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedAccessor = enumerable as Eina.Accessor<T>;
+
+        if (wrappedAccessor != null && !isMoved)
+        {
+            return wrappedAccessor.Handle;
+        }
+
+        // TODO: Check if we're either an Eina.List or Eina.Collection?
+        // We could just rewrap their native accessors
+        IntPtr[] intPtrs = new IntPtr[enumerable.Count()];
+
+        int i = 0;
+        foreach (T data in enumerable)
+        {
+            intPtrs[i] = Eina.TraitFunctions.ManagedToNativeAlloc<T>(data);
+            i++;
+        }
+
+        GCHandle pinnedArray = GCHandle.Alloc(intPtrs, GCHandleType.Pinned);
+        IntPtr nativeAccessor = IntPtr.Zero;
+
+        if (isMoved)
+        {
+            // We need a custom accessor that would unpin the data when freed.
+            nativeAccessor = Eina.AccessorNativeFunctions.eina_mono_owned_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(),
+                                                                                                     (uint)IntPtr.Size,
+                                                                                                     (uint)intPtrs.Length,
+                                                                                                     free_gchandle,
+                                                                                                     GCHandle.ToIntPtr(pinnedArray));
+        }
+        else
+        {
+            // FIXME: Leaking....
+            nativeAccessor = Eina.AccessorNativeFunctions.eina_carray_length_accessor_new(pinnedArray.AddrOfPinnedObject(),
+                                                                                          (uint)(IntPtr.Size),
+                                                                                          (uint)intPtrs.Length);
+        }
+
+        if (nativeAccessor == IntPtr.Zero)
+        {
+            pinnedArray.Free();
+            throw new InvalidOperationException("Failed to get native accessor for the given container");
+        }
+
+        return nativeAccessor;
+    }
+
+    internal static IEnumerable<T> IteratorToIEnumerable<T>(IntPtr iterator)
+    {
+        if (iterator == IntPtr.Zero)
+           throw new ArgumentException("iterator is null", nameof(iterator));
+
+        while (Eina.IteratorNativeFunctions.eina_iterator_next(iterator, out IntPtr data))
+        {
+            yield return Eina.TraitFunctions.NativeToManaged<T>(data);
+        }
+    }
+
+    internal static IntPtr IEnumerableToIterator<T>(IEnumerable<T> enumerable, bool isMoved)
+    {
+        if (enumerable == null)
+        {
+            throw new ArgumentException("enumerable is null", nameof(enumerable));
+        }
+
+        // If we are a wrapper around an existing Eina.Iterator, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedIterator = enumerable as Eina.Iterator<T>;
+
+        if (wrappedIterator != null && !isMoved)
+        {
+            return wrappedIterator.Handle;
+        }
+
+        var list = new List<IntPtr>();
+        foreach (T data in enumerable)
+        {
+            list.Add(Eina.TraitFunctions.ManagedToNativeAlloc<T>(data));
+        }
+
+        IntPtr[] dataArray = list.ToArray();
+        GCHandle pinnedArray = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
+        IntPtr ret = Eina.IteratorNativeFunctions.eina_carray_length_iterator_new(pinnedArray.AddrOfPinnedObject(), (uint)(IntPtr.Size), (uint)dataArray.Length);
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return ret;
+    }
+
+    internal static IEnumerable<T> ListToIEnumerable<T>(IntPtr list)
+    {
+        if (list == IntPtr.Zero)
+            throw new ArgumentException("list is null", nameof(list));
+
+        IntPtr l;
+
+        for (l = list; l != IntPtr.Zero; l = Eina.ListNativeFunctions.eina_list_next_custom_export_mono(l))
+        {
+            yield return Eina.TraitFunctions.NativeToManaged<T>(Eina.ListNativeFunctions.eina_list_data_get_custom_export_mono(l));
+        }
+    }
+
+    internal static IntPtr IEnumerableToList<T>(IEnumerable<T> enumerable)
+    {
+        if (enumerable == null)
+            throw new ArgumentException("enumerable is null", nameof(enumerable));
+
+        IntPtr list = IntPtr.Zero;
+        foreach (T data in enumerable)
+        {
+            list = Eina.ListNativeFunctions.eina_list_append(list, Eina.TraitFunctions.ManagedToNativeAlloc(data));
+        }
+        // FIXME need to free `list` if the returned list is not @moved
+        return list;
+    }
+
+
 } // Globals
 
+/// <summary>
+/// Internal struct used by the binding to pass the native handle pointer
+/// to the managed object wrapping constructor.
+/// Internal usage only: do not use this class in inherited classes.
+/// </summary>
+internal struct WrappingHandle
+{
+    public WrappingHandle(IntPtr h)
+    {
+        NativeHandle = h;
+    }
+
+    public IntPtr NativeHandle { get; private set; }
+}
+
+/// <summary>
+/// Manage the initialization and cleanup for the Efl object subsystem.
+/// <para>Since EFL 1.24.</para>
+/// </summary>
 public static class Config
 {
-
+    /// <summary>
+    /// Initialize the EFL object subsystem.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Init()
     {
         Globals.efl_object_init();
         Globals.SetNativeDisposeCallbacks();
     }
 
+    /// <summary>
+    /// Shutdown the EFL object subsystem.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Shutdown()
     {
         Globals.efl_object_shutdown();
@@ -743,25 +951,41 @@ public static class Config
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public abstract class NativeClass : System.Attribute
+abstract class NativeClass : System.Attribute
 {
-    public abstract IntPtr GetEflClass();
-    public abstract System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type);
+    internal abstract IntPtr GetEflClass();
+    internal abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
 }
 
 /// <summary>Attribute for private native classes.
 ///
 /// <para>For internal usage by generated code only.</para></summary>
-public class PrivateNativeClass : NativeClass
+class PrivateNativeClass : NativeClass
 {
-    public override IntPtr GetEflClass()
+    internal override IntPtr GetEflClass()
     {
         return IntPtr.Zero;
     }
 
-    public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)
+    internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
     {
         return null;
+    }
+}
+
+[System.AttributeUsage(System.AttributeTargets.Class |
+                       System.AttributeTargets.Interface |
+                       System.AttributeTargets.Enum |
+                       System.AttributeTargets.Delegate |
+                       System.AttributeTargets.Struct,
+                       AllowMultiple = false,
+                       Inherited = false)
+]
+public class BindingEntityAttribute: System.Attribute
+{
+    public static bool IsBindingEntity(System.Type t)
+    {
+        return Attribute.GetCustomAttribute(t, typeof(BindingEntityAttribute), false) != null;
     }
 }
 
@@ -780,9 +1004,9 @@ public interface IWrapper
     }
 }
 
-public static class ClassRegister
+internal static class ClassRegister
 {
-    public static System.Type GetManagedType(IntPtr klass)
+    internal static System.Type GetManagedType(IntPtr klass)
     {
         System.Type t;
         if (Efl.Eo.ClassRegister.typeFromKlass.TryGetValue(klass, out t))
@@ -796,26 +1020,26 @@ public static class ClassRegister
         {
             throw new System.InvalidOperationException($"Could not get Native class name. Handle: {klass}");
         }
-
+#pragma warning disable CA1307
         string name = Eina.StringConversion.NativeUtf8ToManagedString(namePtr)
-                      .Replace("_", ""); // Convert Efl C name to C# name
-
-        var klass_type = Efl.Eo.Globals.efl_class_type_get(klass);
+            .Replace("_", ""); // Convert Efl C name to C# name
+#pragma warning restore CA1307
 
         // Check if this is an internal implementation of an abstract class
         var abstract_impl_suffix = "Realized";
-        if (name.EndsWith(abstract_impl_suffix))
+        if (name.EndsWith(abstract_impl_suffix, StringComparison.Ordinal))
         {
             name = name.Substring(0, name.Length - abstract_impl_suffix.Length);
-            var lastDot = name.LastIndexOf(".");
+            var lastDot = name.LastIndexOf(".", StringComparison.Ordinal);
             var klassName = name.Substring(lastDot + 1);
             name += "+" + klassName + abstract_impl_suffix; // '+' is the separator for nested classes
         }
 
         // When converting to managed, interfaces and mixins gets the 'I' prefix.
+        var klass_type = Efl.Eo.Globals.efl_class_type_get(klass);
         if (klass_type == Efl.Eo.Globals.EflClassType.Interface || klass_type == Efl.Eo.Globals.EflClassType.Mixin)
         {
-            var pos = name.LastIndexOf(".");
+            var pos = name.LastIndexOf(".", StringComparison.Ordinal);
             name = name.Insert(pos + 1, "I"); // -1 if not found, inserts at 0 normally
         }
 
@@ -839,7 +1063,7 @@ public static class ClassRegister
 
             if (t == null)
             {
-                return typeof(Efl.Object);
+                return typeof(Efl.ObjectRealized);
             }
         }
 
@@ -847,7 +1071,7 @@ public static class ClassRegister
         return t;
     }
 
-    public static IntPtr GetKlass(System.Type objectType)
+    internal static IntPtr GetKlass(System.Type objectType)
     {
         IntPtr klass;
         if (klassFromType.TryGetValue(objectType, out klass))
@@ -874,7 +1098,7 @@ public static class ClassRegister
         return RegisterKlass(baseKlass, objectType);
     }
 
-    public static IntPtr GetInheritKlassOrRegister(IntPtr baseKlass, System.Type objectType)
+    internal static IntPtr GetInheritKlassOrRegister(IntPtr baseKlass, System.Type objectType)
     {
         IntPtr klass;
         if (klassFromType.TryGetValue(objectType, out klass))
@@ -944,89 +1168,190 @@ public static class ClassRegister
         return (IntPtr)(method.Invoke(null, null));
     }
 
-    public static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)
+    internal static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)
     {
         klassFromType[objectType] = klassPtr;
         typeFromKlass[klassPtr] = objectType;
     }
 
-    public static System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
         = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
 
-    public static System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
         = new System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type>();
 
     private static readonly object klassAllocLock = new object();
 }
 
-public interface IOwnershipTag
+/// <summary>Custom marshaler for Eo objects that do not move ownership between native and managed code.
+///
+/// <para>For internal usage by generated code.</para>
+///
+/// <para>Since EFL 1.24.</para>
+/// </summary>
+class MarshalEoNoMove : ICustomMarshaler
 {
-}
+    private static ICustomMarshaler instance = new MarshalEoNoMove();
 
-public class OwnTag : IOwnershipTag
-{
-}
+    /// <summary>
+    /// Gets an instance of this marshaler.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="cookie">Cookie to identify the marshaler. Unused.</param>
+    /// <returns>The marshaler instance.</returns>
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "The same marshaler is used for all cases.")]
+    public static ICustomMarshaler GetInstance(string cookie) => instance;
 
-public class NonOwnTag : IOwnershipTag
-{
-}
-
-public class MarshalEo<U> : ICustomMarshaler
-    where U : IOwnershipTag
-{
-    public static ICustomMarshaler GetInstance(string cookie)
-    {
-        Eina.Log.Debug("MarshalEo.GetInstace cookie " + cookie);
-        return new MarshalEo<U>();
-    }
-
+    /// <summary>
+    /// Clean ups the managed data.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be cleaned.</param>
     public void CleanUpManagedData(object ManagedObj)
     {
-        //Eina.Log.Warning("MarshalEo.CleanUpManagedData not implemented");
-        //throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Clean ups the native data if it was created.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native data to be cleaned.</param>
     public void CleanUpNativeData(IntPtr pNativeData)
     {
-        //Eina.Log.Warning("MarshalEo.CleanUpNativeData not implemented");
-        //throw new NotImplementedException();
     }
 
-    public int GetNativeDataSize()
-    {
-        Eina.Log.Debug("MarshalEo.GetNativeDataSize");
-        return 0;
-        //return 8;
-    }
+    /// <summary>
+    /// Gets the native data size.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>The data size in bytes.</returns>
+    public int GetNativeDataSize() => -1;
 
+    /// <summary>
+    /// Marshals the given managed object to its native handle.
+    /// <para>As this marshaler does not move the reference, the managed code
+    /// can keep its reference and does not need to incref.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be marshalled.</param>
+    /// <returns>The marshalled native data.</returns>
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        Eina.Log.Debug("MarshalEo.MarshallManagedToNative");
-
         if (ManagedObj == null)
         {
             return IntPtr.Zero;
         }
 
-        var r = ((IWrapper)ManagedObj).NativeHandle;
-        if (typeof(U) == typeof(OwnTag))
+        IWrapper wrapper = ManagedObj as IWrapper;
+
+        if (wrapper == null)
         {
-            Efl.Eo.Globals.efl_ref(r);
+            throw new ArgumentException("Managed object to be marshalled must be an IWrapper.");
         }
 
-        return r;
+        return wrapper.NativeHandle;
     }
 
+    /// <summary>
+    /// Marshals the given native pointer into a managed object.
+    /// <para>The given native object has its reference count incremented in order to make
+    /// the C# wrapper capable of accessing it while the wrapper is alive.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native pointer to the EO object.</param>
+    /// <returns>The managed wrapper for the given native object.</returns>
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
-        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : typeof(U) != typeof(OwnTag));
+        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : true);
+    }
+}
+
+/// <summary>Custom marshaler for Eo objects that move ownership between native and managed code.
+///
+/// <para>For internal usage by generated code.</para>
+///
+/// <para>Since EFL 1.24.</para>
+/// </summary>
+class MarshalEoMove : ICustomMarshaler
+{
+    private static ICustomMarshaler instance = new MarshalEoMove();
+
+    /// <summary>
+    /// Gets an instance of this marshaler.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="cookie">Cookie to identify the marshaler. Unused.</param>
+    /// <returns>The marshaler instance.</returns>
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "The same marshaler is used for all cases.")]
+    public static ICustomMarshaler GetInstance(string cookie) => instance;
+
+    /// <summary>
+    /// Clean ups the managed data.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be cleaned.</param>
+    public void CleanUpManagedData(object ManagedObj)
+    {
+    }
+
+    /// <summary>
+    /// Clean ups the native data if it was created.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native data to be cleaned.</param>
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
+
+    /// <summary>
+    /// Gets the native data size.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>The data size in bytes.</returns>
+    public int GetNativeDataSize() => -1;
+
+    /// <summary>
+    /// Marshals the given managed object to its native handle.
+    /// <para>The wrapper given as parameter needs to keep a reference to the native
+    /// object, so the EO has its refcount incremented.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="ManagedObj">The object to be marshalled.</param>
+    /// <returns>The marshalled native data.</returns>
+    public IntPtr MarshalManagedToNative(object ManagedObj)
+    {
+        if (ManagedObj == null)
+        {
+            return IntPtr.Zero;
+        }
+
+        IWrapper wrapper = ManagedObj as IWrapper;
+
+        if (wrapper == null)
+        {
+            throw new ArgumentException("Managed object to be marshalled must be an IWrapper.");
+        }
+
+        return Efl.Eo.Globals.efl_ref(wrapper.NativeHandle);
+    }
+
+    /// <summary>
+    /// Marshals the given native pointer into a managed object.
+    /// <para>The returned wrapper "steals" the reference to keep it alive.</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="pNativeData">The native pointer to the EO object.</param>
+    /// <returns>The managed wrapper for the given native object.</returns>
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        return Efl.Eo.Globals.CreateWrapperFor(pNativeData, shouldIncRef : false);
     }
 }
 
 ///<summary>Marshals between System.Type instances and Eo classes (IntPtrs).</summary>
-public class MarshalEflClass : ICustomMarshaler
+class MarshalEflClass : ICustomMarshaler
 {
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         Eina.Log.Debug("MarshalEflClass.GetInstance cookie " + cookie);
         return new MarshalEflClass();
@@ -1070,7 +1395,7 @@ public class MarshalEflClass : ICustomMarshaler
     }
 }
 
-public class StringPassOwnershipMarshaler : ICustomMarshaler
+class StringPassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1098,7 +1423,7 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1111,7 +1436,7 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler
     static private StringPassOwnershipMarshaler marshaler;
 }
 
-public class StringKeepOwnershipMarshaler: ICustomMarshaler
+class StringKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1137,7 +1462,7 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1150,18 +1475,18 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler
     static private StringKeepOwnershipMarshaler marshaler;
 }
 
-public class StringsharePassOwnershipMarshaler : ICustomMarshaler
+class StringsharePassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
         var ret = Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
-        Eina.Stringshare.eina_stringshare_del(pNativeData);
+        Eina.NativeMethods.eina_stringshare_del(pNativeData);
         return ret;
     }
 
     public IntPtr MarshalManagedToNative(object managedObj)
     {
-        return Eina.Stringshare.eina_stringshare_add((string)managedObj);
+        return Eina.MemoryNative.AddStringshare((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
@@ -1178,7 +1503,7 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1191,7 +1516,7 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
     static private StringsharePassOwnershipMarshaler marshaler;
 }
 
-public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
+class StringshareKeepOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1200,7 +1525,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
 
     public IntPtr MarshalManagedToNative(object managedObj)
     {
-        return Eina.Stringshare.eina_stringshare_add((string)managedObj);
+        return Eina.MemoryNative.AddStringshare((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
@@ -1217,7 +1542,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1230,7 +1555,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
     static private StringshareKeepOwnershipMarshaler marshaler;
 }
 
-public class StrbufPassOwnershipMarshaler : ICustomMarshaler
+class StrbufPassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1258,7 +1583,7 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1271,7 +1596,7 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler
     static private StrbufPassOwnershipMarshaler marshaler;
 }
 
-public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
+class StrbufKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1298,7 +1623,7 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1316,8 +1641,27 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
 /// <summary>General exception for errors inside the binding.</summary>
 public class EflException : Exception
 {
+    /// <summary>
+    ///   Default Constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public EflException()
+    {
+    }
+
     /// <summary>Create a new EflException with the given message.</summary>
     public EflException(string message) : base(message)
+    {
+    }
+
+    /// <summary>
+    ///   Create a new EflException with the given message and inner exception.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public EflException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }
@@ -1328,18 +1672,70 @@ public class FutureException : EflException
     /// <summary>The error code returned by the failed Eina.Future.</summary>
     public Eina.Error Error { get; private set; }
 
-    /// <summary>Construct a new exception from the Eina.Error stored in the given Eina.Value.</summary>
-    public FutureException(Eina.Value value) : base("Future failed.")
+    /// <summary>
+    ///   Default constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public FutureException() : this(Eina.Error.UNHANDLED_EXCEPTION)
     {
-        if (value.GetValueType() != Eina.ValueType.Error)
-        {
-            throw new ArgumentException("FutureException must receive an Eina.Value with Eina.Error.");
-        }
-
-        Eina.Error err;
-        value.Get(out err);
-        Error = err;
     }
-}
 
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given message
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    public FutureException(string message)
+        : this(Eina.Error.UNHANDLED_EXCEPTION, message)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given message and inner exception.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public FutureException(string message, Exception innerException)
+        : this(Eina.Error.UNHANDLED_EXCEPTION, message, innerException)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    public FutureException(Eina.Error error)
+        : this(error, "Future failed.")
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error and message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    /// <param name="message">The message of the exception.</param>
+    public FutureException(Eina.Error error, string message)
+        : this(error, message, null)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error, message and innerException.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public FutureException(Eina.Error error, string message,
+                           Exception innerException)
+        : base(message, innerException) => Error = error;
+}
 } // namespace efl

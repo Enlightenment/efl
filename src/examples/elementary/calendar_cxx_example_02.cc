@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #define EFL_CXXPERIMENTAL
 
 #include <Efl_Ui.hh>
@@ -26,17 +41,20 @@ struct appData
       auto wcal(cal._get_wref());
 
       // FIXME: How does one figure out the argument types for the function?
-      auto cb_a = std::bind([=](
+      auto cb_a = std::bind([](
                             efl::eina::strbuf_wrapper& sb,
-                            efl::eina::value_view const& value) {
+                            efl::eina::value_view const& value) -> bool {
            try {
               sb.append_strftime("%b. %y", efl::eina::get<tm>(value));
            } catch (std::system_error const&)  {
               sb.append(value.to_string());
            }
            std::cout << "Month: " << std::string(sb) << std::endl;
+           return true;
         }, _1, _2);
-      cal.format_cb_set(cb_a);
+      // FIXME XAR: I broke this and I do not know how to fix it
+      // cal.format_func_set(cb_a);
+      (void)cb_a;
    }
 
    void destroy() {

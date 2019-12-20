@@ -62,7 +62,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_flipselector_elm_layout_sizing_eval(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_canvas_group_group_calculate(Eo *obj, Elm_Flipselector_Data *sd)
 {
    char *tmp = NULL;
    Evas_Coord minw = -1, minh = -1, w, h;
@@ -93,6 +93,7 @@ _elm_flipselector_elm_layout_sizing_eval(Eo *obj, Elm_Flipselector_Data *sd)
    if (sd->sentinel)
      {
         elm_layout_text_set(obj, "elm.top", tmp);
+        efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
         free(tmp);
      }
 
@@ -473,7 +474,7 @@ _items_add(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
+_elm_flipselector_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
@@ -484,7 +485,7 @@ _elm_flipselector_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Flipselect
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
+_elm_flipselector_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -898,7 +899,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_flipselector, Elm_Flipselector_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_FLIPSELECTOR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_flipselector), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_flipselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_flipselector)
 
 #include "elm_flipselector_item_eo.c"

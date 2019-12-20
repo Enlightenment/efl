@@ -1,6 +1,6 @@
 /* FIXME: "dragable" is not as common as "draggable" outside EFL... */
 
-import efl_ui_types;
+import efl_ui_drag_types;
 
 interface @beta Efl.Ui.Drag
 {
@@ -25,14 +25,9 @@ interface @beta Efl.Ui.Drag
            in the draggable part theme is 1, and right if it is -1.
          ]]
          set {
-            [[Sets the draggable object location.
-
-             This places the draggable object at the given location.
-            ]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the draggable object location.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
@@ -50,11 +45,9 @@ interface @beta Efl.Ui.Drag
            the scroller's content.
          ]]
          set {
-            [[Sets the size of the draggable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the size of the dradgable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
@@ -70,7 +63,6 @@ interface @beta Efl.Ui.Drag
            reference documentation for more information.
          ]]
          get {
-            [[Gets the draggable direction.]]
             return: Efl.Ui.Drag_Dir; [[The direction(s) premitted for drag.]]
          }
       }
@@ -87,11 +79,9 @@ interface @beta Efl.Ui.Drag
            See also @.drag_page.
          ]]
          set {
-            [[Sets the x,y step increments for a draggable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the x and y step increments for the draggable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
@@ -128,11 +118,9 @@ interface @beta Efl.Ui.Drag
            See also @.drag_step.
          ]]
          set {
-            [[Sets the x,y page step increment values.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the x,y page step increments for the draggable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          values {

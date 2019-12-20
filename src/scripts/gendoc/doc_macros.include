@@ -7,14 +7,8 @@ ${UNTOKENIZE(tokens=obj.summary_tokens)}$#!
    <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 ${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).summary_tokens)}$#!
-      <!--(else)-->
-         <!--(for parent_impl in obj.class_.implements)-->
-            <!--(if parent_impl.function.name == obj.function.name)-->
-               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
-${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).summary_tokens)}$#!
-               <!--(end)-->
-            <!--(end)-->
-         <!--(end)-->
+      <!--(elif obj.documentation_fallback)-->
+${UNTOKENIZE(tokens=obj.documentation_fallback.summary_tokens)}$#!
       <!--(end)-->
    <!--(elif obj and obj.documentation)-->
 ${UNTOKENIZE(tokens=obj.documentation.summary_tokens)}$#!
@@ -31,14 +25,8 @@ ${UNTOKENIZE(tokens=obj.description_tokens)}$#!
    <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 ${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).description_tokens)}$#!
-      <!--(else)-->
-         <!--(for parent_impl in obj.class_.implements)-->
-            <!--(if parent_impl.function.name == obj.function.name)-->
-               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
-${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).description_tokens)}$#!
-               <!--(end)-->
-            <!--(end)-->
-         <!--(end)-->
+      <!--(elif obj.documentation_fallback)-->
+${UNTOKENIZE(tokens=obj.documentation_fallback.description_tokens)}$#!
       <!--(end)-->
    <!--(elif obj and obj.documentation)-->
 ${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
@@ -55,14 +43,8 @@ ${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
    <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 //Since ${obj.documentation_get(obj.function.type).since}$//
-      <!--(else)-->
-         <!--(for parent_impl in obj.class_.implements)-->
-            <!--(if parent_impl.function.name == obj.function.name)-->
-               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
-//Since ${parent_impl.documentation_get(parent_impl.function.type).since}$//
-               <!--(end)-->
-            <!--(end)-->
-         <!--(end)-->
+      <!--(elif obj.documentation_fallback)-->
+//Since ${obj.documentation_fallback.since}$//
       <!--(end)-->
    <!--(elif obj and obj.documentation and obj.documentation.since)-->
 //Since ${obj.documentation.since}$//
@@ -78,7 +60,17 @@ ${'\n\n' if i else ''}$#!
          <!--(if token.type == Eolian_Doc_Token_Type.TEXT)-->
 %%${token.text}$%%#!
          <!--(elif token.type == Eolian_Doc_Token_Type.REF)-->
-**REF ${token.text}$ ${token.ref}$ ??**#!
+            <!--(if token.ref_type == Eolian_Object_Type.FUNCTION)-->
+${CLS_LINK(cls=token.ref_obj)}$.${FUNC_LINK(func=token.ref_attr)}$#!
+            <!--(elif token.ref_type == Eolian_Object_Type.TYPEDECL)-->
+${TYPEDECL_LINK(typedecl=token.ref_obj)}$#!
+            <!--(elif token.ref_type == Eolian_Object_Type.CLASS)-->
+${CLS_LINK(cls=token.ref_obj)}$#!
+            <!--(elif token.ref_type == Eolian_Object_Type.EVENT)-->
+${EVENT_LINK(cls=token.ref_obj, ev=token.ref_attr)}$#!
+            <!--(else)-->
+**TODO REF ${token.ref_type}$** #!
+            <!--(end)-->
          <!--(elif token.type == Eolian_Doc_Token_Type.MARKUP_MONOSPACE)-->
 ''${token.text}$''#!
          <!--(elif token.type == Eolian_Doc_Token_Type.MARK_NOTE)-->
@@ -131,13 +123,12 @@ interface#!
 #!####  EVENT_LINK(cls, ev)  ###################################################
 #!##############################################################################
 <!--(macro EVENT_LINK)-->
-[[:develop:api#!
+''[[:develop:api#!
    <!--(for n in cls.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
 :${cls.short_name.lower()}$#!
-:event#!
-:${ev.short_name.lower().replace(',','_')}$|${ev.name}$]]
+#event_${ev.short_name.lower().replace(',','_')}$|${ev.name}$]]''
 <!--(end)-->
 #!##############################################################################
 #!####  TYPEDECL_LINK(typedecl)  ###############################################
@@ -157,7 +148,7 @@ interface#!
    <!--(for n in type.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${type.short_name.lower()}$|${type.name}$]]
+:${type.short_name}$|${type.name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  FUNC_LINK(func)  #######################################################
@@ -167,19 +158,16 @@ interface#!
    <!--(for n in func.class_.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-   <!--(if func.type == Eolian_Function_Type.METHOD)-->
-:method#!
-   <!--(else)-->
-:property#!
-   <!--(end)-->
-:${func.short_name}$|${func.short_name}$]]
+:${func.class_.short_name}$#!
+#${func.short_name}$#!
+|${func.short_name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  FUNC_SCOPE(func)  ######################################################
 #!##############################################################################
 <!--(macro FUNC_SCOPE)-->
-   <!--(if func.is_class)-->
- ''class method'' #!
+   <!--(if func.is_static)-->
+ ''static method'' #!
    <!--(end)-->
    <!--(if func.type == Eolian_Function_Type.PROPERTY)-->
       <!--(if func.getter_scope == Eolian_Object_Scope.PROTECTED)-->
@@ -219,6 +207,7 @@ interface#!
    <!--(elif ev.is_restart)-->
  ''restart'' #!
    <!--(end)-->
+${OBJ_TAGS(obj=ev)}$
 <!--(end)-->
 #!##############################################################################
 #!####  IMPLEMENT_TAGS(impl)  ##################################################
@@ -231,16 +220,25 @@ interface#!
    <!--(elif impl.is_prop_set)-->
  ''write only'' #!
    <!--(end)-->
+${OBJ_TAGS(obj=impl)}$
+<!--(end)-->
+#!##############################################################################
+#!####  OBJ_TAGS(obj)  #########################################################
+#!##############################################################################
+<!--(macro OBJ_TAGS)-->
+   <!--(if obj.is_beta)-->
+  ''beta'' #!
+   <!--(end)-->
 <!--(end)-->
 #!##############################################################################
 #!####  PARAM_DIRECTION_TAG(param)  ############################################
 #!##############################################################################
 <!--(macro PARAM_DIRECTION_TAG)-->
-      <!--(if param.direction == Eolian_Parameter_Dir.IN)-->
+      <!--(if param.direction == Eolian_Parameter_Direction.IN)-->
  ''in'' #!
-      <!--(elif param.direction == Eolian_Parameter_Dir.OUT)-->
+      <!--(elif param.direction == Eolian_Parameter_Direction.OUT)-->
  ''out'' #!
-      <!--(elif param.direction == Eolian_Parameter_Dir.INOUT)-->
+      <!--(elif param.direction == Eolian_Parameter_Direction.INOUT)-->
  ''inout'' #!
       <!--(end)-->
 <!--(end)-->
@@ -253,7 +251,7 @@ interface#!
       <!--(if i == 0)-->
 ^ parameters ^ type ^ description ^
       <!--(end)-->
-|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${par.type.name}$ #!
+|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${TYPE_LINK(type=par.type)}$ #!
 |${BEST_SUMMARY(obj=par)}$ ${BEST_DESCRIPTION(obj=par)}$|
    <!--(else)-->
 **This function does not accept any parameter.**
@@ -262,7 +260,7 @@ interface#!
    <!--(if func.method_return_type)-->
 ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
 ^ return ^ description ^
-|**${func.method_return_type.name}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
+|**${TYPE_LINK(type=func.method_return_type)}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
    <!--(else)-->
 **This function does not return anything.**
    <!--(end)-->
@@ -277,14 +275,14 @@ ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
       <!--(if i == 0)-->
 ^ values ^ type ^ description ^
       <!--(end)-->
-|**${val.name}$**|${val.type.name}$|${BEST_SUMMARY(obj=val)}$|
+|**${val.name}$**|${TYPE_LINK(type=val.type)}$|${BEST_SUMMARY(obj=val)}$|
    <!--(end)-->
 
    <!--(for i, key in enumerate(func.getter_keys or func.setter_keys))-->
       <!--(if i == 0)-->
 ^ keys ^ type ^ description ^
       <!--(end)-->
-|**${key.name}$**|${key.type.name}$|${BEST_SUMMARY(obj=key)}$|
+|**${key.name}$**|${TYPE_LINK(type=key.type)}$|${BEST_SUMMARY(obj=key)}$|
    <!--(end)-->
 
 <!--(end)-->
@@ -305,7 +303,7 @@ ${', ' if i else ''}$#!
       <!--(end)-->
    <!--(end)-->
 ) #!
-${IMPLEMENT_TAGS}$ #!
+${IMPLEMENT_TAGS(impl=impl)}$ #!
    <!--(if impl.is_method)-->
       <!--(if impl.function.method_return_type)-->
  => //${impl.function.method_return_type.short_name}$// #!

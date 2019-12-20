@@ -1,5 +1,5 @@
 group { "efl/win";
-   data.item: "version" "119";
+   data.item: "version" "123";
    parts {
       rect { "client_clip"; nomouse; }
       swallow { "efl.menu";

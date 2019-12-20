@@ -1,0 +1,11 @@
+interface @beta Efl.Ui.Container_Selectable
+{
+   [[Temporare interface, this is here until collection_view lands]]
+   event_c_prefix: efl_ui;
+   events {
+      /* FIXME: Called with multiple types of event_info! */
+      item,selected: Efl.Object; [[Called when selected]]
+      /* FIXME: Called with multiple types of event_info! */
+      item,unselected: Efl.Object; [[Called when no longer selected]]
+   }
+}

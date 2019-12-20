@@ -317,8 +317,10 @@ EAPI void ecore_main_loop_begin(void);
  * Quits the main loop once all the events currently on the queue have
  * been processed.
  *
- * This function returns immediately, but will mark the ecore_main_loop_begin()
- * function to return at the end of the current main loop iteration.
+ * This function returns immediately, but if called inside the main loop
+ * it will mark the ecore_main_loop_begin() function to return at the
+ * end of the current main loop iteration.
+ *
  */
 EAPI void ecore_main_loop_quit(void);
 
@@ -609,7 +611,7 @@ struct _Ecore_Event_Signal_User
    int       number;  /**< The signal number. Either 1 or 2 */
    void     *ext_data;  /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
+#if !defined (_WIN32) && !defined (__lv2ppu__)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -622,7 +624,7 @@ struct _Ecore_Event_Signal_Hup
 {
    void     *ext_data;  /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
+#if !defined (_WIN32) && !defined (__lv2ppu__)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -638,7 +640,7 @@ struct _Ecore_Event_Signal_Exit
    Eina_Bool terminate : 1; /**< Set if the exit request was a terminate signal */
    void     *ext_data; /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
+#if !defined (_WIN32) && !defined (__lv2ppu__)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -651,7 +653,7 @@ struct _Ecore_Event_Signal_Power
 {
    void     *ext_data;  /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
+#if !defined (_WIN32) && !defined (__lv2ppu__)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -664,7 +666,7 @@ struct _Ecore_Event_Signal_Realtime
 {
    int       num; /**< The realtime signal's number */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
+#if !defined (_WIN32) && !defined (__lv2ppu__)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -1069,7 +1071,7 @@ struct _Ecore_Exe_Event_Del
    Eina_Bool  exited    : 1; /**< Set to 1 if the process exited of its own accord */
    Eina_Bool  signalled : 1; /**< Set to 1 if the process exited due to uncaught signal */
    void      *ext_data; /**< Extension data - not used */
-#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
+#if !defined (_WIN32) && !defined (__lv2ppu__)
    siginfo_t  data; /**< Signal info */
 #endif
 };

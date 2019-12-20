@@ -1,16 +1,16 @@
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Container, Efl.Part,
-                         Efl.Observer, Efl.Layout.Calc,
+                         Efl.Observer, Efl.Ui.I18n, Efl.Layout.Calc,
                          Efl.Layout.Signal, Efl.Layout.Group,
-                         Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
+                         Efl.Player, Efl.Playable, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                          Efl.Gfx.Size_Class
 {
    [[Edje object class]]
-   event_prefix: efl_layout;
+   event_c_prefix: efl_layout;
    data: Edje;
    methods {
-      @property animation {
+      @property animated {
          [[Whether this object is animating or not.
 
            This property indicates whether animations are stopped or not.
@@ -18,14 +18,12 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
 
            If animations are disabled, transitions between states (as
            defined in EDC) are then instantaneous. This is conceptually similar
-           to setting the @Efl.Player.play_speed to an infinitely high
+           to setting the @Efl.Player.playback_speed to an infinitely high
            value.
          ]]
          get {
-            [[Get the current state of animation, $true by default.]]
          }
          set {
-            [[Start or stop animating this object.]]
          }
          values {
             on: bool; [[The animation state, $true by default.]]
@@ -34,18 +32,17 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
 
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
-         return: iterator<string> @owned; [[Part name iterator]]
+         return: iterator<string> @move; [[Part name iterator]]
       }
       @property seat {
+         [[The seat device given its Edje's name.
+
+           Edje references seats by a name that differs from Evas.
+           Edje naming follows a incrementional convention: first
+           registered name is "seat1", second is "seat2", differently
+           from Evas.
+         ]]
          get {
-            [[Returns the seat device given its Edje's name.
-
-              Edje references seats by a name that differs from Evas.
-              Edje naming follows a incrementional convention: first
-              registered name is "seat1", second is "seat2", differently
-              from Evas.
-            ]]
-
             return: Efl.Input.Device; [[The seat device or $null if not found.]]
          }
          keys {
@@ -53,14 +50,14 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
          }
       }
       @property seat_name {
-         get {
-            [[Gets the name given to a set by Edje.
+         [[The name given to a set by Edje.
 
-              Edje references seats by a name that differs from Evas.
-              Edje naming follows a incrementional convention: first
-              registered name is "seat1", second is "seat2", differently
-              from Evas.
-            ]]
+           Edje references seats by a name that differs from Evas.
+           Edje naming follows a incrementional convention: first
+           registered name is "seat1", second is "seat2", differently
+           from Evas.
+         ]]
+         get {
             return: stringshare; [[The name's character string or $null if not found.]]
          }
          keys {
@@ -68,8 +65,8 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
          }
       }
       @property layout_load_error {
+          [[The (last) file loading error for a given object.]]
           get {
-              [[Gets the (last) file loading error for a given object.]]
           }
           values {
              error: Eina.Error; [[The load error code.]]
@@ -124,12 +121,13 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
       Efl.Ui.I18n.language { set; get; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.File.load;
+      Efl.File.unload;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]
       Efl.Observer.update;
-      Efl.Player.playable { get; }
-      Efl.Player.play { get; set; }
-      Efl.Player.play_speed { get; set; }
+      Efl.Playable.playable { get; }
+      Efl.Player.paused { get; set; }
+      Efl.Player.playback_speed { get; set; }
    }
 }

@@ -1,8 +1,12 @@
-import efl_ui_direction;
-
-interface @beta Efl.Pack_Table extends Efl.Pack
+interface Efl.Pack_Table extends Efl.Pack
 {
-   [[2D containers aligned on a table with rows and columns]]
+   [[Interface for 2D containers which arrange their elements on a table with rows and columns.
+
+     Elements can be positioned on a specific row and column, or they can be simply added to
+     the table using @Efl.Pack.pack and the container will chose where to put them.
+
+     @since 1.23
+   ]]
    c_prefix: efl_pack;
    methods {
       pack_table {
@@ -23,7 +27,7 @@ interface @beta Efl.Pack_Table extends Efl.Pack
       }
       table_contents_get {
          [[Returns all objects at a given position in this table.]]
-         return: iterator<Efl.Gfx.Entity> @owned; [[Iterator to table contents]]
+         return: iterator<Efl.Gfx.Entity> @move; [[Iterator to table contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]
@@ -38,16 +42,27 @@ interface @beta Efl.Pack_Table extends Efl.Pack
             @in row: int; [[Row number]]
          }
       }
-      @property table_position {
-         [[Position and span of the $subobj in this container, may be modified to move the $subobj]]
+      @property table_cell_column {
+         [[column of the $subobj in this container.]]
+         set {}
          get { return: bool; [[Returns false if item is not a child]] }
          keys {
             subobj: Efl.Gfx.Entity; [[Child object]]
          }
          values {
             col: int; [[Column number]]
-            row: int; [[Row number]]
             colspan: int; [[Column span]]
+         }
+      }
+      @property table_cell_row {
+         [[row of the $subobj in this container.]]
+         set {}
+         get { return: bool; [[Returns false if item is not a child]] }
+         keys {
+            subobj: Efl.Gfx.Entity; [[Child object]]
+         }
+         values {
+            row: int; [[Row number]]
             rowspan: int; [[Row span]]
          }
       }
@@ -61,32 +76,23 @@ interface @beta Efl.Pack_Table extends Efl.Pack
          }
       }
       @property table_columns {
-          [[Gird columns property]]
-         set { [[Specifies limit for linear adds - if direction is horizontal]] }
-         get {}
-         values {
-            cols: int; [[Number of columns]]
-         }
-      }
-      @property table_rows {
-          [[Table rows property]]
-         set { [[Specifies limit for linear adds - if direction is vertical]] }
-         get {}
-         values {
-            rows: int; [[Number of rows]]
-         }
-      }
-      @property table_direction {
-         [[Primary and secondary up/left/right/down directions for linear apis.
-
-           Default is horizontal and vertical.
-           This overrides @Efl.Ui.Direction.direction.
+         [[Specifies the amount of columns the table will have when the fill direction is horizontal.
+           If it is vertical, the amount of columns depends on the amount of cells added and @.table_rows.
          ]]
          set {}
          get {}
          values {
-            primary: Efl.Ui.Dir(Efl.Ui.Dir.horizontal); [[Primary direction]]
-            secondary: Efl.Ui.Dir(Efl.Ui.Dir.vertical); [[Secondary direction]]
+            cols: int; [[Amount of columns.]]
+         }
+      }
+      @property table_rows {
+         [[Specifies the amount of rows the table will have when the fill direction is vertical.
+           If it is horizontal, the amount of rows depends on the amount of cells added and @.table_columns.
+         ]]
+         set {}
+         get {}
+         values {
+            rows: int; [[Amount of rows.]]
          }
       }
    }

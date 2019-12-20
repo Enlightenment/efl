@@ -19,15 +19,6 @@ typedef Evas_Coord Evas_Coord2;
 
 typedef Evas_Coord2 Evas_Coord3;
 
-typedef void (*Free)(void *data);
-
-typedef enum
-{
-  BAR_FIRST_ITEM = 0,
-  BAR_SECOND_ITEM,
-  BAR_LAST_ITEM
-} Enum_Bar;
-
 typedef enum
 {
   ELM_OBJECT_SELECT_MODE_DEFAULT = 0,
@@ -43,6 +34,6 @@ typedef enum
 
 EWAPI const Efl_Class *typedef_class_get(void);
 
-EOAPI char *typedef_foo(Eo *obj, int idx);
+EOAPI char *typedef_foo(Eo *obj, int idx) EFL_TRANSFER_OWNERSHIP EINA_WARN_UNUSED_RESULT;
 
 #endif

@@ -93,7 +93,7 @@ static Evas_Object*
 _custom_progressbar(Evas_Object *win)
 {
    Evas_Object *o = elm_progressbar_add(win);
-   efl_ui_widget_focus_allow_set(o, EINA_TRUE);
+   elm_object_focus_allow_set(o, EINA_TRUE);
    return o;
 }
 
@@ -157,7 +157,6 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
 
    box = elm_box_add(win);
    elm_win_resize_object_add(win, box);
-   evas_object_show(win);
    evas_object_show(box);
 
    resettor = o = elm_button_add(win);
@@ -168,6 +167,8 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
    for (int i = 0; simple_widgets[i].name; ++i)
      {
         o = simple_widgets[i].constructor(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(box, o);
         evas_object_show(o);
 
@@ -175,13 +176,9 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
       }
    evas_object_resize(win, 200, 200);
 
-   //I have no idea why this is needed - but if this here is not done,
-   // then elements that are part of a layout will NOT be shown even if
-   // the window and layout is shown
-   evas_object_hide(win);
    evas_object_show(win);
 
-   ecore_main_loop_begin();
+   get_me_to_those_events(win);
 
    for (int i = 0; simple_widgets[i].name; ++i)
       {
@@ -204,6 +201,8 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
          ck_assert_int_eq(flag_unfocused, EINA_TRUE);
          ck_assert_int_eq(elm_object_focus_get(resettor), EINA_TRUE);
          ck_assert_int_eq(elm_object_focus_get(o), EINA_FALSE);
+         evas_object_smart_callback_del_full(o, "focused", _eventing_test, &flag_focused);
+         evas_object_smart_callback_del_full(o, "unfocused", _eventing_test, &flag_unfocused);
       }
 
    eina_hash_free(map);

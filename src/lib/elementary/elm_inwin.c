@@ -26,20 +26,10 @@ typedef struct {
 } Elm_Inwin_Data;
 
 EOLIAN static void
-_elm_inwin_elm_layout_sizing_eval(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
+_elm_inwin_efl_canvas_group_group_calculate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
-   Evas_Object *content;
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   content = elm_layout_content_get(obj, NULL);
-
-   if (!content) return;
-
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   if (elm_layout_content_get(obj, NULL))
+     efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -132,6 +122,6 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(elm_inwin, Elm_Inwin_Data)
 
 #define ELM_INWIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin)
+   EFL_CANVAS_GROUP_CALC_OPS(elm_inwin)
 
 #include "elm_inwin_eo.c"

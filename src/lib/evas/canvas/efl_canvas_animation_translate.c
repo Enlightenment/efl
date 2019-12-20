@@ -8,36 +8,15 @@ typedef struct __Translate_Property_Double
    double y;
 } _Translate_Property_Double;
 
-static _Translate_Property_Double
-_translation_get(Eo *target)
-{
-   double x1, x2, y1, y2;
-   _Translate_Property_Double translate;
-   Eina_Rect geometry;
-
-   geometry = efl_gfx_entity_geometry_get(target);
-
-   efl_gfx_mapping_coord_absolute_get(target, 0, &x1, &y1, NULL);
-   efl_gfx_mapping_coord_absolute_get(target, 2, &x2, &y2, NULL);
-   translate.x = ((x1 + x2) / 2.0) - (geometry.x + (geometry.w / 2.0));
-   translate.y = ((y1 + y2) / 2.0) - (geometry.y + (geometry.h / 2.0));
-
-   return translate;
-}
-
 EOLIAN static void
 _efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
                                        Efl_Canvas_Animation_Translate_Data *pd,
-                                       Evas_Coord from_x,
-                                       Evas_Coord from_y,
-                                       Evas_Coord to_x,
-                                       Evas_Coord to_y)
+                                       Eina_Position2D from,
+                                       Eina_Position2D to)
 {
-   pd->from.move_x = from_x;
-   pd->from.move_y = from_y;
+   pd->from = from;
 
-   pd->to.move_x = to_x;
-   pd->to.move_y = to_y;
+   pd->to = to;
 
    pd->use_rel_move = EINA_TRUE;
 }
@@ -45,10 +24,8 @@ _efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
 EOLIAN static void
 _efl_canvas_animation_translate_translate_get(const Eo *eo_obj EINA_UNUSED,
                                        Efl_Canvas_Animation_Translate_Data *pd,
-                                       Evas_Coord *from_x,
-                                       Evas_Coord *from_y,
-                                       Evas_Coord *to_x,
-                                       Evas_Coord *to_y)
+                                       Eina_Position2D *from,
+                                       Eina_Position2D *to)
 {
    if (!pd->use_rel_move)
      {
@@ -56,30 +33,22 @@ _efl_canvas_animation_translate_translate_get(const Eo *eo_obj EINA_UNUSED,
         return;
      }
 
-   if (from_x)
-     *from_x = pd->from.move_x;
-   if (from_y)
-     *from_y = pd->from.move_y;
+   if (from)
+     *from = pd->from;
 
-   if (to_x)
-     *to_x = pd->to.move_x;
-   if (to_y)
-     *to_y = pd->to.move_y;
+   if (to)
+     *to = pd->to;
 }
 
 EOLIAN static void
 _efl_canvas_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
                                                 Efl_Canvas_Animation_Translate_Data *pd,
-                                                Evas_Coord from_x,
-                                                Evas_Coord from_y,
-                                                Evas_Coord to_x,
-                                                Evas_Coord to_y)
+                                                Eina_Position2D from,
+                                                Eina_Position2D to)
 {
-   pd->from.x = from_x;
-   pd->from.y = from_y;
+   pd->from = from;
 
-   pd->to.x = to_x;
-   pd->to.y = to_y;
+   pd->to = to;
 
    pd->use_rel_move = EINA_FALSE;
 }
@@ -87,10 +56,8 @@ _efl_canvas_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
 EOLIAN static void
 _efl_canvas_animation_translate_translate_absolute_get(const Eo *eo_obj EINA_UNUSED,
                                                 Efl_Canvas_Animation_Translate_Data *pd,
-                                                Evas_Coord *from_x,
-                                                Evas_Coord *from_y,
-                                                Evas_Coord *to_x,
-                                                Evas_Coord *to_y)
+                                                Eina_Position2D *from,
+                                                Eina_Position2D *to)
 {
    if (pd->use_rel_move)
      {
@@ -98,15 +65,11 @@ _efl_canvas_animation_translate_translate_absolute_get(const Eo *eo_obj EINA_UNU
         return;
      }
 
-   if (from_x)
-     *from_x = pd->from.x;
-   if (from_y)
-     *from_y = pd->from.y;
+   if (from)
+     *from = pd->from;
 
-   if (to_x)
-     *to_x = pd->to.x;
-   if (to_y)
-     *to_y = pd->to.y;
+   if (to)
+     *to = pd->to;
 }
 
 EOLIAN static double
@@ -115,25 +78,25 @@ _efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
                                                        double progress,
                                                        Efl_Canvas_Object *target)
 {
-   _Translate_Property_Double prev;
    _Translate_Property_Double new;
+   Eina_Rect geometry;
 
    progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
    if (!target) return progress;
 
-   prev = _translation_get(target);
    if (pd->use_rel_move)
-     {
-        new.x = GET_STATUS(pd->from.move_x, pd->to.move_x, progress);
-        new.y = GET_STATUS(pd->from.move_y, pd->to.move_y, progress);
-     }
-   else
      {
         new.x = GET_STATUS(pd->from.x, pd->to.x, progress);
         new.y = GET_STATUS(pd->from.y, pd->to.y, progress);
      }
+   else
+     {
+        geometry = efl_gfx_entity_geometry_get(target);
+        new.x = GET_STATUS(pd->from.x, pd->to.x, progress) - geometry.x;
+        new.y = GET_STATUS(pd->from.y, pd->to.y, progress) - geometry.y;
+     }
 
-   efl_gfx_mapping_translate(target, new.x - prev.x, new.y - prev.y, 0.0);
+   efl_gfx_mapping_translate(target, new.x, new.y, 0.0);
 
    return progress;
 }
@@ -144,15 +107,8 @@ _efl_canvas_animation_translate_efl_object_constructor(Eo *eo_obj,
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
-   pd->from.move_x = 0;
-   pd->from.move_y = 0;
-   pd->from.x = 0;
-   pd->from.y = 0;
-
-   pd->to.move_x = 0;
-   pd->to.move_y = 0;
-   pd->to.x = 0;
-   pd->to.y = 0;
+   pd->from = EINA_POSITION2D(0,0);
+   pd->to = EINA_POSITION2D(0,0);
 
    pd->use_rel_move = EINA_TRUE;
 

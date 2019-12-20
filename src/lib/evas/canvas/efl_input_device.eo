@@ -1,0 +1,102 @@
+enum Efl.Input.Device_Type
+{
+   [[General type of input device.
+
+     Legacy support since 1.8 as $Evas_Device_Class.
+
+     @since 1.23
+   ]]
+   none,     [[Not a device.]]
+   seat,     [[The user/seat (the user themselves).]]
+   keyboard, [[A regular keyboard, numberpad or attached buttons.]]
+   mouse,    [[A mouse, trackball or touchpad relative motion device.]]
+   touch,    [[A touchscreen with fingers or stylus.]]
+   pen,      [[A special pen device.]]
+   wand,     [[A laser pointer, wii-style or "Minority Report" pointing device.]]
+   gamepad,  [[A gamepad controller or joystick.]]
+}
+
+/* TODO: Add canvas property. Current problem is we need to return
+         Efl.Ui.Win and not Evas:
+  @property canvas { values { canvas: Efl.Canvas; } }
+*/
+
+class Efl.Input.Device extends Efl.Object
+{
+   [[Represents a pointing device such as a touch finger, pen or mouse.
+
+     @since 1.23
+   ]]
+   methods {
+      @property device_type {
+          [[Device type property]]
+         values {
+            klass: Efl.Input.Device_Type; [[Input device class]]
+         }
+      }
+      @property source {
+          [[Device source property]]
+         values {
+            src: Efl.Input.Device; [[Input device]]
+         }
+      }
+      @property seat {
+         [[Get the @Efl.Input.Device that represents a seat.
+
+           This method will find the seat the device belongs to.
+
+           For this, it walk through device's parents looking for a device
+           with @Efl.Input.Device_Type.seat. It may be
+           the device itself.
+
+           In case no seat is found, $null is returned.
+         ]]
+         get {}
+         values {
+            seat: Efl.Input.Device; [[The seat this device belongs to.]]
+         }
+      }
+      @property seat_id {
+         [[Seat id number
+         ]]
+          values {
+             id: uint; [[The id of the seat]]
+          }
+      }
+      children_iterate {
+         [[Lists the children attached to this device.
+
+           This is only meaningful with seat devices, as they are groups of
+           real input devices.
+         ]]
+         return: iterator<const(Efl.Input.Device)> @move; [[List of device children]]
+      }
+      @property pointer_device_count {
+         [[The number of pointer devices in this seat.
+
+           Pointer devices are the ones whose @.device_type is $mouse, $pen, $touch or $wand.
+           In case this device is not of the type $seat, -1 is returned.
+         ]]
+         get {
+
+         }
+         values {
+            devices : int; [[The number of pointer devices.]]
+         }
+      }
+      @property is_pointer_type {
+         [[$true if @.device_type is $mouse, $pen, $touch or $wand.]]
+         get {
+
+         }
+         values {
+            pointer_type : bool; [[$true if the device has pointing capabilities.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.parent { set; }
+   }
+}

@@ -138,7 +138,7 @@ _canvas_resize_cb(Ecore_Evas *_ee)
 }
 
 static void
-_color_class_callback_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+_color_class_callback_delete(void *data, Evas_Object *obj EINA_UNUSED,
                              const char *emission, void *source EINA_UNUSED)
 {
    if (!strcmp(data, "process"))

@@ -83,7 +83,7 @@ interface Efl.Gfx.Entity {
           This property is an individual scaling factor on the object (Edje
           or UI widget). This property (or Edje's global scaling factor, when
           applicable), will affect this object's part sizes. If scale is
-          not zero, than the individual scaling will override any global
+          not zero, then the individual scaling will override any global
           scaling set, for the object obj's parts. Set it back to zero to
           get the effects of the global scaling again.
 
@@ -98,8 +98,7 @@ interface Efl.Gfx.Entity {
            [[Gets an object's scaling factor.]]
         }
         values {
-           scale: double(0.0); [[The scaling factor (the default value is 0.0,
-                                 meaning individual scaling is not set)]]
+           scale: double(0.0); [[The scaling factor.]]
         }
       }
    }

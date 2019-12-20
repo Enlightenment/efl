@@ -1,6 +1,6 @@
 enum @beta Efl.Ui.Win_Type
 {
-   [[Defines the types of window that can be created
+   [[Defines the types of window that can be created.
 
      These are hints set on a window so that a running Window Manager knows
      how the window should be handled and/or what kind of decorations it
@@ -9,7 +9,7 @@ enum @beta Efl.Ui.Win_Type
      Currently, only the X11 backed engines use them.
    ]]
 
-   unknown = -1, [[Default, unknown, type]]
+   unknown = -1, [[Default, unknown type.]]
    basic, [[A normal window. Indicates a normal, top-level window. Almost every
             window will be created with this type.]]
    dialog_basic, [[Used for simple dialog windows.]]
@@ -17,28 +17,28 @@ enum @beta Efl.Ui.Win_Type
               desktop icons.]]
    dock, [[The window is used as a dock or panel. Usually would be kept on top
            of any other window by the Window Manager.]]
-   toolbar, [[The window is used to hold a floating toolbar, or similar.]]
-   menu, [[Similar to @.toolbar.]]
+   toolbar, [[The window is used to hold a floating toolbar or similar.]]
+   menu, [[Similar to @Efl.Ui.Win_Type.toolbar.]]
    utility, [[A persistent utility window, like a toolbox or palette.]]
    splash, [[Splash window for a starting up application.]]
    dropdown_menu, [[The window is a dropdown menu, as when an  entry in a
-                    menubar is clicked.
-                    This hint exists for completion only, as the EFL way of
+                    menu bar is clicked.
+                    This hint exists for completeness' sake, as the EFL way of
                     implementing a menu would not normally use a separate
                     window for its contents.]]
-   popup_menu, [[Like @.dropdown_menu, but for the menu triggered by
+   popup_menu, [[Like @Efl.Ui.Win_Type.dropdown_menu, but for the menu triggered by
                  right-clicking an object.]]
    tooltip, [[The window is a tooltip. A short piece of explanatory text that
               typically appear after the mouse cursor hovers over an object
-              for a while. Typically not very commonly used in the EFL.]]
+              for a while. Not commonly used in the EFL.]]
    notification, [[A notification window, like a warning about battery life or
                    a new E-Mail received.]]
-   combo, [[A window holding the contents of a combo box. Not usually used in
+   combo, [[A window holding the contents of a combo box. Not commonly used in
             the EFL.]]
-   dnd,
-   inlined_image,
-   socket_image,
-   fake,
+   dnd, [[Internal use.]]
+   inlined_image, [[Internal use.]]
+   socket_image, [[Internal use.]]
+   fake, [[Internal use.]]
    /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.
@@ -73,27 +73,27 @@ enum @beta Efl.Ui.Win_Keyboard_Mode
 
 enum Efl.Ui.Win_Indicator_Mode
 {
-   [[Defines the type indicator that can be shown
+   [[Defines the type indicator that can be shown.
 
       @since 1.22
    ]]
-   off, [[Request to deactivate the indicator]]
+   off, [[Request to deactivate the indicator.]]
    bg_opaque, [[The indicator icon is opaque, as is the indicator background.
                 The content of window is located at the end of the indicator.
-                The area of indicator and window content are not overlapped]]
+                The area of indicator and window content are not overlapped.]]
    bg_transparent, [[The icon of indicator is opaque, but the background is transparent.
                      The content of window is located under the indicator in Z-order.
-                     The area of indicator and window content are overlapped]]
+                     The area of indicator and window content are overlapped.]]
    hidden [[The indicator is hidden so user can see only the content of window such as in video mode.
             If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
 enum @beta Efl.Ui.Win_Modal_Mode
 {
-   [[Defines the mode of a modal window]]
+   [[Defines the mode of a modal window.]]
 
-   none, [[The window is not modal window.]]
-   modal [[The window is modal window.]]
+   none, [[The window is not a modal window.]]
+   modal [[The window is a modal window.]]
 }
 
 enum @beta Efl.Ui.Win_Urgent_Mode
@@ -106,7 +106,7 @@ enum @beta Efl.Ui.Win_Urgent_Mode
 
 enum Efl.Ui.Win_Move_Resize_Mode
 {
-   [[Define the move or resize mode of window.
+   [[Define the move or resize mode of a window.
 
      The user can request the display server to start moving or resizing
      the window by combining these modes. However only limited combinations
@@ -137,10 +137,11 @@ enum Efl.Ui.Win_Move_Resize_Mode
 class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.Window,
                   Efl.Access.Component, Efl.Access.Widget.Action,
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-                  Efl.Text, Efl.Config,
-                  Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root
+                  Efl.Text, Efl.Ui.Widget_Focus_Manager,
+                  Efl.Ui.Focus.Manager_Window_Root
+   composites     Efl.Config
 {
-   [[Efl UI window class
+   [[Efl UI window class.
 
      @since 1.22
    ]]
@@ -164,11 +165,10 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property keyboard_mode @beta {
+         [[The keyboard mode of the window.]]
          set {
-            [[Sets the keyboard mode of the window.]]
          }
          get {
-            [[Get the keyboard mode of the window.]]
          }
          values {
             mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of @Efl.Ui.Win_Keyboard_Mode.]]
@@ -204,45 +204,39 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property screen_constrain @beta {
-         set {
-            [[Constrain the maximum width and height of a window to the
-              width and height of the screen.
+         [[Constrain the maximum width and height of a window to the
+           width and height of the screen.
 
-              When $constrain is $true, $obj will never resize larger than
-              the screen.
-            ]]
+           When $constrain is $true, $obj will never resize larger than
+           the screen.
+         ]]
+         set {
          }
          get {
-            [[Get the constraints on the maximum width and height of a
-              window relative to the width and height of the screen.
-
-              When this function returns $true, $obj will never resize
-              larger than the screen.
-            ]]
          }
          values {
             constrain: bool; [[$true to restrict the window's maximum size.]]
          }
       }
       @property prop_focus_skip @beta {
+         [[Set the window to be skipped by keyboard focus.
+
+           This sets the window to be skipped by normal keyboard input.
+           This means a window manager will be asked not to focus this
+           window as well as omit it from things like the taskbar, pager,
+           "alt-tab" list etc. etc.
+
+           Call this and enable it on a window BEFORE you show it for
+           the first time, otherwise it may have no effect.
+
+           Use this for windows that have only output information or
+           might only be interacted with by the mouse or touchscreen,
+           never for typing. This may have
+           side-effects like making the window non-accessible in
+           some cases unless the window is specially handled. Use
+           this with care.
+         ]]
          set {
-            [[Set the window to be skipped by keyboard focus.
-
-              This sets the window to be skipped by normal keyboard input.
-              This means a window manager will be asked not to focus this
-              window as well as omit it from things like the taskbar, pager,
-              "alt-tab" list etc. etc.
-
-              Call this and enable it on a window BEFORE you show it for
-              the first time, otherwise it may have no effect.
-
-              Use this for windows that have only output information or
-              might only be interacted with by the mouse or touchscreen,
-              never for typing. This may have
-              side-effects like making the window non-accessible in
-              some cases unless the window is specially handled. Use
-              this with care.
-            ]]
          }
          values {
             skip: bool; [[The skip flag state ($true if it is to be skipped).]]
@@ -286,94 +280,84 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            windows are closed.
          ]]
          values {
-            exit_code: const(any_value_ptr); [[The exit code to use when exiting]]
+            exit_code: const(any_value_ref); [[The exit code to use when exiting]]
          }
       }
       @property icon_object {
-         set {
-            [[Set a window object's icon.
+         [[A window object's icon.
 
-              This sets an image to be used as the icon for the given
-              window, in the window manager decoration part. The exact
-              pixel dimensions of the object (not object size) will be
-              used and the image pixels will be used as-is when this
-              function is called. If the image object has been updated,
-              then call this function again to source the image pixels
-              and place them in the window's icon. Note that only objects of
-              type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
-            ]]
+           This sets an image to be used as the icon for the given
+           window, in the window manager decoration part. The exact
+           pixel dimensions of the object (not object size) will be
+           used and the image pixels will be used as-is when this
+           function is called. If the image object has been updated,
+           then call this function again to source the image pixels
+           and place them in the window's icon. Note that only objects of
+           type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
+         ]]
+         set {
             values {
-               icon: Efl.Canvas.Object @nullable;
+               icon: Efl.Canvas.Object;
                   [[The image object to use for an icon.]]
             }
          }
          get {
-            [[Get the icon object used for the window.
-
-              The object returns is the one marked by @.icon_object.set as
-              the object to use for the window icon.
-            ]]
             values {
-               icon: const(Efl.Canvas.Object) @nullable;
+               icon: const(Efl.Canvas.Object);
                   [[The Evas image object to use for an icon.]]
             }
          }
       }
       @property minimized {
+         [[The minimized state of a window.]]
          set {
-            [[Set the minimized state of a window.]]
          }
          get {
-            [[Get the minimized state of a window.]]
          }
          values {
             state: bool; [[If $true, the window is minimized.]]
          }
       }
       @property maximized {
+         [[The maximized state of a window.]]
          set {
-            [[Set the maximized state of a window.]]
          }
          get {
-            [[Get the maximized state of a window.]]
          }
          values {
             maximized: bool; [[If $true, the window is maximized.]]
          }
       }
       @property fullscreen {
+         [[The fullscreen state of a window.]]
          set {
-            [[Set the fullscreen state of a window.]]
          }
          get {
-            [[Get the fullscreen state of a window.]]
          }
          values {
             fullscreen: bool; [[If $true, the window is fullscreen.]]
          }
       }
       @property sticky @beta {
-         set {
-            [[Set the sticky state of the window.
+         [[The sticky state of the window.
 
-              Hints the Window Manager that the window in $obj should be
-              left fixed at its position even when the virtual desktop
-              it's on moves or changes.
-            ]]
+           Hints the Window Manager that the window in $obj should be
+           left fixed at its position even when the virtual desktop
+           it's on moves or changes.
+         ]]
+         set {
          }
          get {
-            [[Get the sticky state of the window.]]
          }
          values {
             sticky: bool; [[If $true, the window's sticky state is enabled.]]
          }
       }
       @property urgent @beta {
+         [[The urgent state of a window.]]
          set {
-            [[Set the urgent state of a window.]]
          }
          get {
-            [[Get the urgent state of a window.]]
          }
          values {
             urgent: Efl.Ui.Win_Urgent_Mode;
@@ -381,26 +365,24 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property modal @beta {
+         [[The modal state of a window.]]
          set {
-            [[Set the modal state of a window.]]
          }
          get {
-            [[Get the modal state of a window.]]
          }
          values {
             modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of @Efl.Ui.Win_Modal_Mode.]]
          }
       }
       @property borderless @beta {
-         set {
-            [[Set the borderless state of a window.
+         [[The borderless state of a window.
 
-              This function requests the Window Manager not to draw any
-              decoration around the window.
-            ]]
+           This function requests the Window Manager not to draw any
+           decoration around the window.
+         ]]
+         set {
          }
          get {
-            [[Get the borderless state of a window.]]
          }
          values {
             borderless: bool; [[If $true, the window is borderless.]]
@@ -412,17 +394,14 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
 
            It is a hint of how the Window Manager should handle it. Unlike
            @.win_type and @.win_name this can be changed at runtime.
+
+           The returned string is an internal one and should not be
+           freed or modified. It will also be invalid if a new role
+           is set or if the window is destroyed.
          ]]
          set {
-            [[Set the role of the window.]]
          }
          get {
-            [[Get the role of the window.
-
-              The returned string is an internal one and should not be
-              freed or modified. It will also be invalid if a new role
-              is set or if the window is destroyed.
-            ]]
          }
          values {
             role: string; [[The role to set.]]
@@ -439,12 +418,11 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            Note: Once set, it cannot be modified afterwards.
          ]]
          set {
-            [[Name can only be set before finalize.]]
          }
          get {
          }
          values {
-            name: string @nullable; [[Window name]]
+            name: string; [[Window name]]
          }
       }
       @property win_type @beta {
@@ -456,15 +434,15 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            creation time, before finalize. In C this means inside $efl_add().
 
            Note: Once set, it cannot be modified afterward.
+
+           If the object is not window object, returns @Efl.Ui.Win_Type.unknown.
          ]]
          set {
-            [[Type can on be set before finalize.]]
          }
          get {
-            [[If the object is not window object, returns $unknown.]]
          }
          values {
-            type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.unknown); [[Window type]]
+            type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.basic); [[Window type]]
          }
       }
       @property accel_preference @beta {
@@ -516,29 +494,26 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          set {
          }
          get {
-            [[This will return the value of "accel_preference" when the window
-              was created.]]
          }
       }
       @property alpha {
+         [[The alpha channel state of a window.
+
+           If $alpha is true, the alpha channel of the canvas will be
+           enabled possibly making parts of the window completely or
+           partially transparent. This is also subject to the underlying
+           system supporting it, for example a system using a
+           compositing manager.
+
+           Note: Alpha window can be enabled automatically by window
+           theme style's property. If "alpha" data.item is "1" or
+           "true" in window style(eg. elm/win/base/default), the window
+           is switched to alpha automatically without the explicit api
+           call.
+         ]]
          set {
-            [[Set the alpha channel state of a window.
-
-              If $alpha is true, the alpha channel of the canvas will be
-              enabled possibly making parts of the window completely or
-              partially transparent. This is also subject to the underlying
-              system supporting it, for example a system using a
-              compositing manager.
-
-              Note: Alpha window can be enabled automatically by window
-              theme style's property. If "alpha" data.item is "1" or
-              "true" in window style(eg. elm/win/base/default), the window
-              is switched to alpha automatically without the explicit api
-              call.
-            ]]
          }
          get {
-            [[Get the alpha channel state of a window.]]
          }
          values {
             alpha: bool; [[$true if the window alpha channel is enabled,
@@ -546,19 +521,19 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property stack_id @beta {
+         [[Get the stack ID string of the window as an opaque string.
+
+           This ID is immutable and can never be modified. It will be
+           an opaque string that has no specific defined format or
+           content other than being a string (no character with a
+           value of 0).
+
+           This string is intended for use as a stack master ID to be
+           use by other windows to make this window part of a stack
+           of windows to be placed on top of each other as if they are
+           a series of dialogs or questions one after the other, allowing
+           you to go back through history.]]
          get {
-            [[Get the stack ID string of the window as an opaque string.
-
-              This ID is immutable and can never be modified. It will be
-              an opaque string that has no specific defined format or
-              content other than being a string (no character with a
-              value of 0).
-
-              This string is intended for use as a stack master ID to be
-              use by other windows to make this window part of a stack
-              of windows to be placed on top of each other as if they are
-              a series of dialogs or questions one after the other, allowing
-              you to go back through history.]]
          }
          values {
             id: string; [[An opaque string that has no specific format
@@ -567,16 +542,15 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property stack_master_id @beta {
-         set {
-            [[Set the window stack ID to use as the master top-level.
+         [[The window stack ID to use as the master top-level.
 
-              This sets the ID string to be used as the master top-level
-              window as the base of a stack of windows. This must be set
-              before the first time the window is shown and should never
-              be changed afterwards.]]
+           This sets the ID string to be used as the master top-level
+           window as the base of a stack of windows. This must be set
+           before the first time the window is shown and should never
+           be changed afterwards.]]
+         set {
          }
          get {
-            [[Get the stack master Id that has been set.]]
          }
          values {
             id: string; [[An opaque string that has no specific format,
@@ -608,7 +582,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            This will try and delete all the windows in the stack that
            are above the window.]]
       }
-      @property exit_on_all_windows_closed @class {
+      @property exit_on_all_windows_closed @static {
          [[Enable quitting the main loop when all windows are closed.
 
            When set, the main loop will quit with the passed exit code once all windows have been closed.
@@ -619,7 +593,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            Note this is different from @.exit_on_close which exits when a given window is closed.
          ]]
          values {
-            exit_code: const(any_value_ptr); [[The exit code to use when exiting.]]
+            exit_code: const(any_value_ref); [[The exit code to use when exiting.]]
          }
       }
       activate {
@@ -734,7 +708,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            an object of type @Efl.Input.Pointer.
 
            Each finger in a multi touch environment can then be identified
-           by the @Efl.Input.Pointer.tool property. The order of the pointers
+           by the @Efl.Input.Pointer.touch_id property. The order of the pointers
            in this iterator is not defined.
 
            Note: If the input surface supports hovering input, some pointers
@@ -747,12 +721,13 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
             hover: bool @optional; [[$false by default, $true means to include
                                      fingers that are currently hovering.]]
          }
-         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
+         return: iterator<const(Efl.Input.Pointer)> @move; [[Iterator to pointer positions]]
       }
       @property win_rotation @beta {
          [[The rotation of this window
 
-           The value will automatically change when the WM of this window changes its rotation. This rotation is automatically applied to all @Efl.Ui.Layout objects.
+           The value will automatically change when the Window Manager of this window changes its rotation.
+           This rotation is automatically applied to all @Efl.Ui.Layout objects.
          ]]
          set {
          }
@@ -763,20 +738,14 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property focus_highlight_enabled {
-         [[Whether focus highlight is enabled or not.
+         [[Whether focus highlight is enabled or not on this window, regardless of the global setting.
 
            See also @.focus_highlight_style.
            See also @.focus_highlight_animate.
          ]]
          set {
-            [[Set the enabled status for the focus highlight in a window.
-
-              This function will enable or disable the focus highlight,
-              regardless of the global setting for it.
-            ]]
          }
          get {
-            [[Get the enabled value of the focus highlight for this window.]]
          }
          values {
             enabled: bool; [[The enabled value for the highlight.]]
@@ -797,7 +766,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          get {
          }
          values {
-            style: string @nullable; [[The name of the focus highlight style.]]
+            style: string; [[The name of the focus highlight style.]]
          }
       }
       @property focus_highlight_animate {
@@ -807,14 +776,8 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            See also @.focus_highlight_enabled.
          ]]
          set {
-            [[Set the animate status for the focus highlight for this window.
-
-              This function will enable or disable the animation of focus
-              highlight.
-            ]]
          }
          get {
-            [[Get the animate value of the focus highlight for this window.]]
          }
          values {
             animate: bool; [[The enabled value for the highlight animation.]]
@@ -848,15 +811,19 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
       Efl.Screen.screen_size_in_pixels { get; }
+      Efl.Screen.screen_scale_factor { get; }
       Efl.Gfx.Hint.hint_aspect { set; }
       Efl.Gfx.Hint.hint_weight { set; }
       Efl.Gfx.Hint.hint_size_max { set; }
       Efl.Text.text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
+      Efl.Ui.I18n.language { get; set; }
       Efl.Canvas.Scene.seat_default { get; }
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.Scene.image_max_size { get; }
       Efl.Canvas.Scene.group_objects_calculate;
+      Efl.Canvas.Scene.group_objects_calculating { get; }
       Efl.Canvas.Scene.objects_at_xy_get;
       Efl.Canvas.Scene.object_top_at_xy_get;
       Efl.Canvas.Scene.objects_in_rectangle_get;
@@ -889,8 +856,5 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       elm,action,block_menu @beta: void; [[Called when elementary block menu action occurs]]
       pause: void; [[Called when the window is not going be displayed for some time]]
       resume: void; [[Called before a window is rendered after a pause event]]
-   }
-   composite {
-      Efl.Config;
    }
 }

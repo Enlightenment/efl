@@ -1,23 +1,14 @@
 
-class @beta Efl.Ui.List_Default_Item extends Efl.Ui.List_Item implements
-                                Efl.Text,
-                                Efl.Text_Markup,
-                                Efl.Content
+class Efl.Ui.List_Default_Item extends Efl.Ui.Default_Item
 {
-   [[List Default Item class.
-     This class need to be sub object of list widget.
-     text and contents can be appliable by efl_text,
-     efl_content or efl_part APIs.]]
+   [[Default Item class to be used inside @Efl.Ui.List containers.
+     It displays the three parts in horizontal order: $icon, $text and $extra.
+     Theming can change this arrangement.
+
+     @since 1.23
+   ]]
    data: null;
    implements {
-      //Efl.Object
-      Efl.Object.finalize;
-      Efl.Object.destructor;
-      Efl.Text.text { get; set; }
-      Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.L10n.l10n_text { get; set; }
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
-      Efl.Part.part_get;
+      Efl.Object.constructor;
    }
 }

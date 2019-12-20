@@ -3538,6 +3538,29 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 
 /**
  * @ingroup Eet_Data_Group
+ * @brief Adds a linked list of unsigned integers to a data descriptor.
+ * @param edd The data descriptor to add the type to.
+ * @param struct_type The type of the struct.
+ * @param name The string name to use to encode/decode this member
+ *        (must be a constant global and never change).
+ * @param member The struct member itself to be encoded.
+ *
+ * This macro lets you easily add a linked list of unsigned int. All the
+ * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC().
+ *
+ * @since 1.24.0
+ */
+#define EET_DATA_DESCRIPTOR_ADD_LIST_UINT(edd, struct_type, name, member) \
+  do {                                                                      \
+       struct_type ___ett;                                                  \
+       eet_data_descriptor_element_add(edd, name, EET_T_UINT, EET_G_LIST, \
+                                       (char *)(& (___ett.member)) -        \
+                                       (char *)(& (___ett)),                \
+                                       0, /* 0,  */ NULL, NULL);            \
+    } while (0)
+
+/**
+ * @ingroup Eet_Data_Group
  * @brief Adds a hash type to a data descriptor.
  * @param edd The data descriptor to add the type to.
  * @param struct_type The type of the struct.

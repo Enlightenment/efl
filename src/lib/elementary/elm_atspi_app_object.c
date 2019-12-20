@@ -4,8 +4,6 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 
-#include <Elementary.h>
-#include "elm_widget.h"
 #include "elm_priv.h"
 
 extern Eina_List *_elm_win_list;

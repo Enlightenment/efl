@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
@@ -6,100 +21,135 @@ using System.Collections.Generic;
 
 ///<summary>Eo class description, passed to efl_class_new.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct ClassDescription
+internal struct ClassDescription : IEquatable<ClassDescription>
 {
     ///<summary>Current Eo version.</summary>
-    public uint version;
+    internal uint version;
     ///<summary>Name of the class.</summary>
-    [MarshalAs(UnmanagedType.LPStr)] public String name;
+    [MarshalAs(UnmanagedType.LPStr)] internal String name;
     ///<summary>Class type.</summary>
-    public int class_type;
+    internal int class_type;
     ///<summary>Size of data (private + protected + public) per instance.</summary>
-    public UIntPtr data_size;
+    internal UIntPtr data_size;
     ///<summary>Initializer for the class.</summary>
-    public IntPtr class_initializer;
+    internal IntPtr class_initializer;
     ///<summary>Constructor of the class.</summary>
-    public IntPtr class_constructor;
+    internal IntPtr class_constructor;
     ///<summary>Destructor of the class.</summary>
-    public IntPtr class_destructor;
+    internal IntPtr class_destructor;
+
+    /// <summary>
+    ///   Gets a hash for <see cref="ClassDescription" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => version.GetHashCode() ^ name.GetHashCode(StringComparison.Ordinal)
+        ^ class_type ^ data_size.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ClassDescription" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ClassDescription)) ? false
+        : Equals((ClassDescription)other);
+
+
+    /// <summary>Returns whether this <see cref="ClassDescription" /> is equal
+    /// to the given <see cref="ClassDescription" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ClassDescription" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ClassDescription other)
+        => (name == other.name) && (class_type == other.class_type);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ClassDescription lhs, ClassDescription rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ClassDescription lhs, ClassDescription rhs)
+        => !(lhs == rhs);
 }
 
 ///<summary>Description of an Eo API operation.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct Efl_Op_Description
+internal struct EflOpDescription
 {
     ///<summary>The EAPI function offering this op. (String with the name of the function on Windows)</summary>
-    public IntPtr api_func;
+    internal IntPtr api_func;
     ///<summary>The static function to be called for this op</summary>
-    public IntPtr func;
+    internal IntPtr func;
 }
 
 ///<summary>List of operations on a given Object.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct Efl_Object_Ops
+internal struct EflObjectOps
 {
     ///<summary>The op descriptions array of size count.</summary>
-    public IntPtr descs;
+    internal IntPtr descs;
     ///<summary>Number of op descriptions.</summary>
-    public UIntPtr count;
+    internal UIntPtr count;
 };
-
-[StructLayout(LayoutKind.Sequential)]
-public struct EolianPD
-{
-    public IntPtr pointer;
-}
-
-#pragma warning disable 0169
-
-public struct EvasObjectBoxLayout
-{
-    IntPtr o;
-    IntPtr priv;
-    IntPtr user_data;
-};
-
-[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct EvasObjectBoxData
-{
-}
-
-public struct EvasObjectBoxOption
-{
-    IntPtr obj;
-    [MarshalAsAttribute(UnmanagedType.U1)] bool max_reached;
-    [MarshalAsAttribute(UnmanagedType.U1)] bool min_reached;
-    Evas.Coord alloc_size;
-};
-
-#pragma warning restore 0169
 
 namespace Efl
 {
 
+/// <summary>
+/// This struct holds the description of a specific event.
+/// <para>Since EFL 1.22.</para>
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct EventDescription
+internal struct EventDescription
 {
+    ///<summary>Name of the event.</summary>
     public IntPtr Name;
+    ///<summary><c>true</c> if the event cannot be frozen.</summary>
     [MarshalAs(UnmanagedType.U1)] public bool Unfreezable;
+    ///<summary>Internal use: <c>true</c> if this is a legacy event.</summary>
     [MarshalAs(UnmanagedType.U1)] public bool Legacy_is;
+    ///<summary><c>true</c> if when the even is triggered again from a callback it
+    ///will start from where it was.</summary>
     [MarshalAs(UnmanagedType.U1)] public bool Restart;
 
     private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
-    public EventDescription(string module, string name)
+    ///<summary>Constructor for EventDescription</summary>
+    ///<param name="moduleName">The name of the module containing the event.</param>
+    ///<param name="name">The name of the event.</param>
+    public EventDescription(string moduleName, string name)
     {
-        this.Name = GetNative(module, name);
+        this.Name = GetNative(moduleName, name);
         this.Unfreezable = false;
         this.Legacy_is = false;
         this.Restart = false;
     }
 
-    public static IntPtr GetNative(string module, string name)
+    ///<summary>Get the native structure.</summary>
+    ///<param name="moduleName">The name of the module containing the event.</param>
+    ///<param name="name">The name of the event.</param>
+    ///<returns>Pointer to the native structure.</returns>
+    public static IntPtr GetNative(string moduleName, string name)
     {
         if (!descriptions.ContainsKey(name))
         {
-            IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(module, name);
+            IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(moduleName, name);
 
             if (data == IntPtr.Zero)
             {
@@ -114,125 +164,159 @@ public struct EventDescription
     }
 };
 
-public delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
-public delegate void FreeGCHandleCb(System.IntPtr gcHandle);
-public delegate void RemoveEventsCb(System.IntPtr obj, System.IntPtr gcHandle);
-
+/// <summary>
+/// A parameter passed in event callbacks holding extra event parameters.
+/// This is the full event information passed to callbacks in C.
+/// <para>Since EFL 1.22.</para>
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct TextCursorCursor
+[Efl.Eo.BindingEntity]
+internal struct Event
 {
-    IntPtr obj;
-    UIntPtr pos; // UIntPtr to automatically change size_t between 32/64
-    IntPtr node;
-    [MarshalAsAttribute(UnmanagedType.U1)]bool changed;
+    /// <summary>
+    /// The object the callback was called on.
+    /// <para>Since EFL 1.22.</para>
+    /// </summary>
+    public Efl.Object Object;
+
+    /// <summary>
+    /// The event description.
+    /// <para>Since EFL 1.22.</para>
+    /// </summary>
+    public Efl.EventDescription Desc;
+
+    /// <summary>
+    /// Extra event information passed by the event caller.
+    /// Must be cast to the event type declared in the EO file. Keep in mind that:
+    /// 1) Objects are passed as a normal Eo*. Event subscribers can call functions on these objects.
+    /// 2) Structs, built-in types and containers are passed as const pointers, with one level of indirection.
+    /// <para>Since EFL 1.22.</para>
+    /// </summary>
+    public System.IntPtr Info;
+
+    /// <summary>Constructor for Event.</summary>
+    public Event(
+        Efl.Object obj = default(Efl.Object),
+        Efl.EventDescription desc = default(Efl.EventDescription),
+        System.IntPtr info = default(System.IntPtr))
+    {
+        this.Object = obj;
+        this.Desc = desc;
+        this.Info = info;
+    }
+
+    /// <summary>Implicit conversion to the managed representation from a native pointer.</summary>
+    /// <param name="ptr">Native pointer to be converted.</param>
+    public static implicit operator Event(IntPtr ptr)
+    {
+        var tmp = (Event.NativeStruct) Marshal.PtrToStructure(ptr, typeof(Event.NativeStruct));
+        return tmp;
+    }
+
+    /// <summary>Internal wrapper for struct Event.</summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct NativeStruct
+    {
+        /// <summary>Internal wrapper for field Object</summary>
+        public System.IntPtr Object;
+
+        /// <summary>Internal wrapper for field Desc</summary>
+        public System.IntPtr Desc;
+
+        /// <summary>Internal wrapper for field Info</summary>
+        public System.IntPtr Info;
+
+        /// <summary>Implicit conversion to the internal/marshalling representation.</summary>
+        /// <param name="externalStruct">Managed struct to be converted.</param>
+        /// <returns>Native representation of the managed struct.</returns>
+        public static implicit operator Event.NativeStruct(Event externalStruct)
+        {
+            var internalStruct = new Event.NativeStruct();
+            internalStruct.Object = externalStruct.Object?.NativeHandle ?? System.IntPtr.Zero;
+            internalStruct.Desc = Eina.PrimitiveConversion.ManagedToPointerAlloc(externalStruct.Desc);
+            internalStruct.Info = externalStruct.Info;
+            return internalStruct;
+        }
+
+        /// <summary>Implicit conversion to the managed representation.</summary>
+        /// <param name="internalStruct">Native struct to be converted.</param>
+        /// <returns>Managed representation of the native struct.</returns>
+        public static implicit operator Event(Event.NativeStruct internalStruct)
+        {
+            var externalStruct = new Event();
+            externalStruct.Object = (Efl.Object) Efl.Eo.Globals.CreateWrapperFor(internalStruct.Object);
+            externalStruct.Desc = Eina.PrimitiveConversion.PointerToManaged<Efl.EventDescription>(internalStruct.Desc);
+            externalStruct.Info = internalStruct.Info;
+            return externalStruct;
+        }
+    }
 }
 
-[StructLayout(LayoutKind.Sequential)]
-public struct TextAnnotateAnnotation
-{
-    IntPtr list;
-    IntPtr obj;
-    IntPtr start_node;
-    IntPtr end_node;
-    [MarshalAsAttribute(UnmanagedType.U1)]bool is_item;
-}
-
-public delegate void SignalCb(IntPtr data, IntPtr obj, IntPtr emission, IntPtr source);
+internal delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
+internal delegate void FreeWrapperSupervisorCb(System.IntPtr obj);
 
 namespace Access
 {
 
-public struct ActionData
+public struct ActionData : IEquatable<ActionData>
 {
     public IntPtr name;
     public IntPtr action;
     public IntPtr param;
     public IntPtr func;
+
+
+    /// <summary>
+    ///   Gets a hash for <see cref="ActionData" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => name.GetHashCode() ^ action.GetHashCode()
+        ^ param.GetHashCode() ^ func.GetHashCode();
+
+    /// <summary>Returns whether this <see cref="ActionData" />
+    /// is equal to the given <see cref="object" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="object" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public override bool Equals(object other)
+        => (!(other is ActionData)) ? false
+        : Equals((ActionData)other);
+
+
+    /// <summary>Returns whether this <see cref="ActionData" /> is equal
+    /// to the given <see cref="ActionData" />.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="other">The <see cref="ActionData" /> to be compared to.</param>
+    /// <returns><c>true</c> if is equal to <c>other</c>.</returns>
+    public bool Equals(ActionData other)
+        => (name == other.name) && (action == other.action)
+        && (param == other.param) && (func == other.func);
+
+    /// <summary>Returns whether <c>lhs</c> is equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator==(ActionData lhs, ActionData rhs)
+        => lhs.Equals(rhs);
+
+    /// <summary>Returns whether <c>lhs</c> is not equal to <c>rhs</c>.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is not equal
+    /// to <c>rhs</c>.</returns>
+    public static bool operator!=(ActionData lhs, ActionData rhs)
+        => !(lhs == rhs);
 }
 
 } // namespace Access
 
 } // namespace Efl
-
-namespace Evas
-{
-
-public struct Coord
-{
-    int val;
-
-    public Coord(int value)
-    {
-        val = value;
-    }
-
-    static public implicit operator Coord(int val)
-    {
-        return new Coord(val);
-    }
-
-    static public implicit operator int(Coord coord)
-    {
-        return coord.val;
-    }
-}
-
-/* Copied from Evas_Legacy.h */
-public enum TextStyleType
-{
-    ///<summary> plain, standard text.</summary>
-    Plain = 0,
-    ///<summary> text with shadow underneath.</summary>
-    Shadow,
-    ///<summary> text with an outline.</summary>
-    Outline,
-    ///<summary> text with a soft outline.</summary>
-    SoftOutline,
-    ///<summary> text with a glow effect.</summary>
-    Glow,
-    ///<summary> text with both outline and shadow effects.</summary>
-    OutlineShadow,
-    ///<summary> text with (far) shadow underneath.</summary>
-    FarShadow,
-    ///<summary> text with outline and soft shadow effects combined.</summary>
-    OutlineSoftShadow,
-    ///<summary> text with (soft) shadow underneath.</summary>
-    SoftShadow,
-    ///<summary> text with (far soft) shadow underneath.</summary>
-    FarSoftShadow,
-
-    // Shadow direction modifiers
-    ///<summary> shadow growing to bottom right.</summary>
-    ShadowDirectionBottomRight = 0 /* 0 >> 4 */,
-    ///<summary> shadow growing to the bottom.</summary>
-    ShadowDirectionBottom = 16 /* 1 >> 4 */,
-    ///<summary> shadow growing to bottom left.</summary>
-    ShadowDirectionBottomLeft = 32 /* 2 >> 4 */,
-    ///<summary> shadow growing to the left.</summary>
-    ShadowDirectionLeft = 48 /* 3 >> 4 */,
-    ///<summary> shadow growing to top left.</summary>
-    ShadowDirectionTopLeft = 64 /* 4 >> 4 */,
-    ///<summary> shadow growing to the top.</summary>
-    ShadowDirectionTop = 80 /* 5 >> 4 */,
-    ///<summary> shadow growing to top right.</summary>
-    ShadowDirectionTopRight = 96 /* 6 >> 4 */,
-    ///<summary> shadow growing to the right.</summary>
-    ShadowDirectionRight = 112 /* 7 >> 4 */
-};
-
-} // namespace Evas
-
-// Global delegates
-public delegate int Eina_Compare_Cb(IntPtr a, IntPtr b);
-public delegate void ElmInterfaceScrollableCb(IntPtr obj, IntPtr data);
-public delegate void ElmInterfaceScrollableMinLimitCb(IntPtr obj,
-                                                      [MarshalAsAttribute(UnmanagedType.U1)]bool w,
-                                                      [MarshalAsAttribute(UnmanagedType.U1)]bool h);
-public delegate void ElmInterfaceScrollableResizeCb(IntPtr obj, Evas.Coord w, Evas.Coord h);
-[return: MarshalAsAttribute(UnmanagedType.U1)]
-public delegate bool ElmMultibuttonentryItemFilterCb(IntPtr obj, IntPtr item_label, IntPtr item_data, IntPtr data);
-public delegate IntPtr ElmMultibuttonentryFormatCb(int count, IntPtr data);
-public delegate void EinaFreeCb(IntPtr data);
-public delegate void EvasSmartCb(IntPtr data, IntPtr obj, IntPtr event_info);
-public delegate void ElmObjectItemSignalCb(IntPtr data, IntPtr item, IntPtr emission, IntPtr source);
-public delegate void ElmTooltipItemContentCb(IntPtr data, IntPtr obj, IntPtr tooltip, IntPtr item);

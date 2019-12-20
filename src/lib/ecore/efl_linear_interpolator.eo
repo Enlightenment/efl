@@ -1,6 +1,9 @@
-class @beta Efl.Linear_Interpolator extends Efl.Object implements Efl.Interpolator
+class Efl.Linear_Interpolator extends Efl.Object implements Efl.Interpolator
 {
-   [[Efl linear interpolator class]]
+   [[Linear interpolation (pass-through). Input values are used unmodified as output.
+
+     @since 1.24
+   ]]
    data: Efl_Linear_Interpolator_Data;
    implements {
       Efl.Interpolator.interpolate;

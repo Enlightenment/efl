@@ -2,6 +2,8 @@
 
 #include "efl_ui_test_focus_common.h"
 
+//#define DEBUG
+
 #define Q(o,_x,_y,_w,_h) \
   do {\
    Eina_Rect rect; \
@@ -42,15 +44,28 @@ focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
 
 
 Efl_Ui_Focus_Manager*
-focus_test_manager_new(Efl_Ui_Focus_Object **middle)
+focus_test_manager_new(Efl_Ui_Focus_Object **middle, Eina_Bool is_root)
 {
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *m;
 
-   root = focus_test_object_new("middle", 40, 40, 20, 20);
+
+   if (!is_root)
+     {
+        root = focus_test_object_new("middle", 40, 40, 20, 20);
+     }
+   else
+     {
+
+         root = efl_add_ref(FOCUS_MANAGER_TEST_CLASS, NULL,
+          efl_name_set(efl_added, "middle")
+         );
+         Q(root, 40,40,20,20);
+     }
    m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
+
    if (middle)
      *middle = root;
 
@@ -79,7 +94,9 @@ EOLIAN static void
 _focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Bool focus)
 {
    pd->focus = focus;
+#ifdef DEBUG
    printf("Object %p now focused\n", obj);
+#endif
    efl_ui_focus_object_focus_set(efl_super(obj, FOCUS_TEST_CLASS), focus);
 }
 
@@ -121,3 +138,9 @@ _focus_test_manager_set(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Efl_Ui_Focus_M
 
 
 #include "focus_test.eo.c"
+
+typedef struct {
+
+} Focus_Manager_Test_Data;
+
+#include "focus_manager_test.eo.c"

@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard@NETSTANDARD_VERSION@</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Efl.Csharp</PackageId>
+    <Version>@EFL_VERSION@</Version>
+    <Authors>EFL Team</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- <PropertyGroup Condition="'$(BuildType)'=='Beta'"> -->
+  <!--   <DefineConstants>EFL_BETA</DefineConstants> -->
+  <!-- </PropertyGroup> -->
+  <PropertyGroup>
+    <DefineConstants>@EFL_BETA@</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="@BINDING_SRC@/efl_mono/*.cs" />
+    <!-- FIXME Windows support -->
+    <Compile Include="@BINDING_SRC@/eo_mono/*.cs" Exclude="@BINDING_SRC@/eo_mono/*Windows.cs" />
+    <Compile Include="@BINDING_SRC@/eina_mono/*.cs" />
+    <Compile Include="@BINDING_SRC@/eolian_mono/*.cs" />
+    <Compile Include="@BINDING_SRC@/eldbus_mono/*.cs" />
+  </ItemGroup>
+
+  <!-- Calling `dotnet build` from a different folder seems to mess up the automatic source file discovery.
+       But we want them to be included only when building the lib itself.
+  -->
+  <ItemGroup Condition="'$(BuildingLib)'=='Yes'">
+    <Compile Include="./efl_mono/*.cs" />
+    <Compile Include="./*.cs" />
+  </ItemGroup>
+
+</Project>

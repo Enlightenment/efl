@@ -41,15 +41,24 @@ struct _Layout_Part_Data
    unsigned char          temp;
 };
 
+static void
+_efl_ui_layout_part_set_real_part(Eo *obj, struct _Layout_Part_Data *pd, Eo *layout, const char *part)
+{
+   pd->obj = layout;
+   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
+   eina_stringshare_replace(&pd->part, part);
+   pd->temp = 1;
+}
+
 Eo *
 _efl_ui_layout_pack_proxy_get(Efl_Ui_Layout *obj, Edje_Part_Type type, const char *part)
 {
    if (type == EDJE_PART_TYPE_BOX)
      return efl_add(BOX_CLASS, obj,
-                   efl_ui_layout_part_box_real_part_set(efl_added, obj, part));
+                   _efl_ui_layout_part_set_real_part(efl_added, efl_data_scope_get(efl_added, BOX_CLASS), obj, part));
    else if (type == EDJE_PART_TYPE_TABLE)
      return efl_add(TABLE_CLASS, obj,
-                   efl_ui_layout_part_table_real_part_set(efl_added, obj, part));
+                   _efl_ui_layout_part_set_real_part(efl_added, efl_data_scope_get(efl_added, TABLE_CLASS), obj, part));
    else
      return NULL;
 }
@@ -61,15 +70,6 @@ _efl_ui_layout_part_box_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data 
    efl_data_xunref(pd->obj, pd->sd, obj);
    eina_stringshare_del(pd->part);
    efl_destructor(efl_super(obj, BOX_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_layout_part_box_real_part_set(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Eo *layout, const char *part)
-{
-   pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
-   eina_stringshare_replace(&pd->part, part);
-   pd->temp = 1;
 }
 
 EOLIAN static Eina_Iterator *
@@ -203,25 +203,16 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_
    return efl_pack_index_get(pack, subobj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_layout_part_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_layout_part_box_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_DIR_DEFAULT);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
 
-   return efl_ui_direction_get(efl_part(wd->resize_obj, pd->part));
+   return efl_ui_layout_orientation_get(efl_part(wd->resize_obj, pd->part));
 }
 
 
 /* Table proxy implementation */
-
-EOLIAN static void
-_efl_ui_layout_part_table_real_part_set(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Eo *layout, const char *part)
-{
-   pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
-   eina_stringshare_replace(&pd->part, part);
-   pd->temp = 1;
-}
 
 EOLIAN static void
 _efl_ui_layout_part_table_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)
@@ -274,6 +265,48 @@ _efl_ui_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Tab
    return _efl_ui_layout_table_unpack(pd->obj, pd->sd, pd->part, subobj) == subobj;
 }
 
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_table_efl_pack_pack(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   int last_col = 0, last_row = 0;
+   int req_cols, req_rows;
+   Eina_Iterator *iter;
+   Eo *pack, *element;
+
+   pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+
+
+   //first lookup what the most lower / right element is
+   iter = evas_object_table_iterator_new(pack);
+   EINA_ITERATOR_FOREACH(iter, element)
+     {
+        unsigned short item_col, item_row;
+
+        evas_object_table_pack_get(pack, element, &item_col, &item_row, NULL, NULL);
+        if (item_row > last_row ||
+            (item_row == last_row && item_col > last_col))
+          {
+             last_col = item_col;
+             last_row = item_row;
+          }
+     }
+   eina_iterator_free(iter);
+
+   //now add the new element right to it, or do a linebreak and place
+   //that element in the next column on the first element
+   evas_object_table_col_row_size_get(pack, &req_cols, &req_rows);
+   last_col ++;
+   if (last_col > req_cols)
+     {
+        last_row ++;
+        last_col = 0;
+     }
+
+   return _efl_ui_layout_table_pack(obj, pd->sd, pd->part, subobj, last_col, last_row, 1, 1);
+}
+
+
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_table_efl_pack_table_pack_table(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj, int col, int row, int colspan, int rowspan)
 {
@@ -322,22 +355,63 @@ _efl_ui_layout_part_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_pack_table_table_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_layout_part_table_efl_pack_table_table_cell_column_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int *col, int *colspan)
 {
-   unsigned short c, r, cs, rs;
+   unsigned short c, cs;
    Eina_Bool ret;
 
    edje_object_freeze(pd->obj);
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
    edje_object_thaw(pd->obj);
 
-   ret = evas_object_table_pack_get(pack, subobj, &c, &r, &cs, &rs);
+   ret = evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
    if (col) *col = c;
-   if (row) *row = r;
    if (colspan) *colspan = cs;
+
+   return ret;
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_cell_column_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int col, int colspan)
+{
+   unsigned short r, rs;
+
+   edje_object_freeze(pd->obj);
+   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   edje_object_thaw(pd->obj);
+
+   evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
+   evas_object_table_pack(pack, subobj, col, r, colspan, rs);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_table_efl_pack_table_table_cell_row_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int *row, int *rowspan)
+{
+   unsigned short r, rs;
+   Eina_Bool ret;
+
+   edje_object_freeze(pd->obj);
+   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   edje_object_thaw(pd->obj);
+
+   ret = evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
+   if (row) *row = r;
    if (rowspan) *rowspan = rs;
 
    return ret;
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_cell_row_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int row, int rowspan)
+{
+   unsigned short c, cs;
+
+   edje_object_freeze(pd->obj);
+   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   edje_object_thaw(pd->obj);
+
+   evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
+   evas_object_table_pack(pack, subobj, c, row, cs, rowspan);
 }
 
 EOLIAN static void
@@ -371,6 +445,24 @@ _efl_ui_layout_part_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSE
    edje_object_thaw(pd->obj);
    evas_object_table_col_row_size_get(pack, &cols, &rows);
    return rows;
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_rows_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd EINA_UNUSED, int rows EINA_UNUSED)
+{
+   ERR("This API is currently not supported on table parts");
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_columns_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd EINA_UNUSED, int cols EINA_UNUSED)
+{
+   ERR("This API is currently not supported on table parts");
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd EINA_UNUSED, int cols EINA_UNUSED, int rows EINA_UNUSED)
+{
+   ERR("This API is currently not supported on table parts");
 }
 
 #include "efl_ui_layout_part_box.eo.c"

@@ -1,0 +1,34 @@
+abstract Efl.Ui.Default_Item extends Efl.Ui.Item implements
+                                Efl.Text,
+                                Efl.Text_Markup,
+                                Efl.Ui.L10n,
+                                Efl.Content
+{
+   [[Default Item Class.
+
+     This class defines the standard parts for most @Efl.Ui.Item: Text, Icon and Extra.
+     Placement and layout details for these parts are left to the extending classes like
+     @Efl.Ui.List_Default_Item and @Efl.Ui.Grid_Default_Item which should normally be used.
+     Text-related changes are mirrored to the $text part for convenience.
+     Content-related changes are mirrored to the $icon part.
+
+     @since 1.23
+   ]]
+   data: null;
+   parts {
+     text: Efl.Ui.Layout_Part_Text; [[The text part for default items.
+                                      This is the caption of the items.]]
+     icon: Efl.Ui.Layout_Part_Content; [[The icon part for default items.
+                                         This is the main content of the items.]]
+     extra : Efl.Ui.Layout_Part_Content; [[The extra part for default items.
+                                           This is used for additional details or badges.]]
+   }
+   implements {
+      Efl.Text.text { get; set; }
+      Efl.Text_Markup.markup { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Part.part_get;
+   }
+}

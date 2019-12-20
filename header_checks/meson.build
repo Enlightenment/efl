@@ -1,4 +1,5 @@
 if get_option('native-arch-optimization')
+  check_native_header = true
   if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
     native_header = 'immintrin.h'
   elif host_machine.cpu_family() == 'arm'
@@ -7,13 +8,17 @@ if get_option('native-arch-optimization')
     native_header = 'arm_neon.h'
   elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
     native_header = 'altivec.h'
+  else
+    check_native_header = false
   endif
 
-  if cc.has_header(native_header) == false
-    error('Error, header '+native_header+' is required')
-  endif
+  if check_native_header
+    if cc.has_header(native_header) == false
+      error('Error, header '+native_header+' is required')
+    endif
 
-  config_h.set10('HAVE_'+native_header.underscorify().to_upper(), true)
+    config_h.set10('HAVE_'+native_header.underscorify().to_upper(), true)
+  endif
 endif
 
 header_checks = [
@@ -29,7 +34,6 @@ header_checks = [
   'netinet/udp.h',
   'net/if.h',
   'stdlib.h',
-  'mman.h',
   'sys/auxv.h',
   'sys/inotify.h',
   'sys/ioctl.h',
@@ -44,7 +48,6 @@ header_checks = [
   'sys/resource.h',
   'sys/times.h',
   'longinfo.h',
-  'exotic.h',
   'ieeefp.h',
   'node/uv.h',
   'sys/timerfd.h',
@@ -73,6 +76,7 @@ function_checks = [
   ['alloca', ['alloca.h']],
   ['backtrace', ['execinfo.h']],
   ['backtrace_symbols', ['execinfo.h']],
+  ['chown', ['unistd.h']],
   ['clock_gettime', ['time.h']],
   ['dirfd', ['dirent.h sys/types.h']],
   ['fchmod', ['sys/stat.h']],
@@ -117,6 +121,20 @@ function_checks = [
   ['sched_getcpu', ['sched.h'],                         [],      '-D_GNU_SOURCE=1'],
   ['dladdr', ['dlfcn.h'],                               ['dl'],  '-D_GNU_SOURCE=1']
 ]
+
+open_cloexec = cc.compiles('''#include <sys/types.h>
+                              #include <sys/stat.h>
+                              #include <fcntl.h>
+                              int main(int argc, char **argv) {
+                                int res = open(argv[0], O_RDONLY | O_CLOEXEC);
+                                if (res < 0) return 1;
+                                return 0;
+                              }
+                           ''',
+                           name : 'open works with O_CLOEXEC')
+if open_cloexec
+  config_h.set10('HAVE_OPEN_CLOEXEC', true)
+endif
 
 strerror_r_char_p = cc.compiles('''#define _GNU_SOURCE
                   #include <string.h>
@@ -185,8 +203,8 @@ if (cc.has_header_symbol('sys/stat.h', 'fstatat'))
   config_h.set10('HAVE_ATFILE_SOURCE', true)
 endif
 
-if (cc.has_header('sys/mman.h'))
-  config_h.set10('HAVE_MMAN_H', true)
+if sys_linux and config_h.has('HAVE_LISTXATTR') and config_h.has('HAVE_SETXATTR') and config_h.has('HAVE_GETXATTR')
+  config_h.set10('HAVE_XATTR', true)
 endif
 
 regexp = []
@@ -229,8 +247,6 @@ config_h.set('SIZEOF_INT', cc.sizeof('int'))
 config_h.set('SIZEOF_LONG', cc.sizeof('long'))
 
 if sys_windows == true
-  config_h.set('HAVE_DLSYM', '1')
   config_h.set('HAVE_NOTIFY_WIN32', '1')
-  config_h.set10('HAVE_WINDOWS_H', true)
   config_h.set10('HAVE_DDRAW_H', true)
 endif

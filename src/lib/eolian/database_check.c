@@ -47,7 +47,7 @@ _check_expr_cb(const Eolian_Object *obj, void *data)
    switch (obj->type)
      {
       case EOLIAN_OBJECT_TYPEDECL:
-      case EOLIAN_OBJECT_VARIABLE:
+      case EOLIAN_OBJECT_CONSTANT:
         _add_dep(depset, obj->unit);
       default:
         break;
@@ -195,7 +195,7 @@ _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset, Eina_Hash *chash)
 }
 
 static void
-_check_variable(const Eolian_Variable *v, Eina_Hash *depset, Eina_Hash *chash)
+_check_constant(const Eolian_Constant *v, Eina_Hash *depset, Eina_Hash *chash)
 {
    if (_check_cycle(chash, &v->base))
      return;
@@ -230,8 +230,8 @@ _check_unit(const Eolian_Unit *unit)
            case EOLIAN_OBJECT_TYPEDECL:
              _check_typedecl((const Eolian_Typedecl *)obj, depset, chash);
              break;
-           case EOLIAN_OBJECT_VARIABLE:
-             _check_variable((const Eolian_Variable *)obj, depset, chash);
+           case EOLIAN_OBJECT_CONSTANT:
+             _check_constant((const Eolian_Constant *)obj, depset, chash);
              break;
            default:
              continue;

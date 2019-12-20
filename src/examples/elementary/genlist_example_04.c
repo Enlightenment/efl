@@ -14,7 +14,7 @@ _item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
-   int i = (int)(long)data;
+   int i = (int)(uintptr_t)data;
 
    if (!strcmp(part, "elm.text"))
      snprintf(buf, sizeof(buf), "Item # %i", i);
@@ -52,7 +52,7 @@ static char *
 _group_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
-   int i = (int)(long)data;
+   int i = (int)(uintptr_t)data;
 
    snprintf(buf, sizeof(buf), "Group %d (item #%d)", i / 7, i);
 
@@ -77,7 +77,7 @@ _append_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *list = data;
 
    elm_genlist_item_append(list, _itc,
-                           (void *)(long)nitems++, NULL,
+                           (void *)(uintptr_t)nitems++, NULL,
                            ELM_GENLIST_ITEM_NONE,
                            _item_sel_cb, NULL);
 
@@ -89,7 +89,7 @@ _prepend_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED
    Evas_Object *list = data;
 
    elm_genlist_item_prepend(list, _itc,
-                            (void *)(long)nitems++, NULL,
+                            (void *)(uintptr_t)nitems++, NULL,
                             ELM_GENLIST_ITEM_NONE,
                             _item_sel_cb, NULL);
 
@@ -104,7 +104,7 @@ _insert_before_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_
    if (!glit) return;
 
    elm_genlist_item_insert_before(list, _itc,
-                                  (void *)(long)nitems++, NULL,
+                                  (void *)(uintptr_t)nitems++, NULL,
                                   glit, ELM_GENLIST_ITEM_NONE,
                                   _item_sel_cb, NULL);
 
@@ -119,7 +119,7 @@ _insert_after_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_U
    if (!glit) return;
 
    elm_genlist_item_insert_after(list, _itc,
-                                 (void *)(long)nitems++, NULL,
+                                 (void *)(uintptr_t)nitems++, NULL,
                                  glit, ELM_GENLIST_ITEM_NONE,
                                  _item_sel_cb, NULL);
 
@@ -305,7 +305,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         if (i % 7 == 0)
           {
              glg = gli = elm_genlist_item_append(list, _itc_group,
-                                                 (void *)(long)nitems++, NULL,
+                                                 (void *)(uintptr_t)nitems++, NULL,
                                                  ELM_GENLIST_ITEM_GROUP,
                                                  _item_sel_cb, NULL);
              elm_genlist_item_select_mode_set(gli, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
@@ -313,7 +313,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         else
           {
              gli = elm_genlist_item_append(list, _itc,
-                                           (void *)(long)nitems++, glg,
+                                           (void *)(uintptr_t)nitems++, glg,
                                            ELM_GENLIST_ITEM_NONE,
                                            _item_sel_cb, NULL);
           }

@@ -274,6 +274,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    fd = open(monitor->path, O_RDONLY);
    if (fd < 0) goto error;
 
+   eina_file_close_on_exec(fd, EINA_TRUE);
    backend->fd = fd;
    backend->parent = monitor;
    monitor->backend = backend;
@@ -299,12 +300,29 @@ error:
 void eio_monitor_backend_del(Eio_Monitor *monitor)
 {
    Eio_Monitor_Backend *backend;
-   
+
    backend = monitor->backend;
    monitor->backend = NULL;
 
    eina_hash_del(_kevent_monitors, &backend->fd, backend);
 }
+
+Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor, const char *path)
+{
+   Eio_Monitor_Backend *backend = monitor->backend;
+   Eina_List *l;
+   Eio_File_Info *file;
+
+   EINA_LIST_FOREACH(backend->prev_list, l, file)
+     {
+        if (eina_streq(file->path, path))
+          {
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 
 
 /*============================================================================*

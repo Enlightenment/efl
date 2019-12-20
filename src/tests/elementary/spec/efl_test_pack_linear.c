@@ -9,21 +9,15 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Pack_Linear",
-       "test-widgets": ["Efl.Ui.Box", "Efl.Ui.Grid", "Efl.Ui.Pager"],
+       "test-widgets": ["Efl.Ui.Box", "Efl.Ui.Grid", "Efl.Ui.Spotlight.Container", "Efl.Ui.List", "Efl.Ui.Group_Item", "Efl.Ui.Tab_Bar"],
        "custom-mapping" : {
-          "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS"
+          "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.List" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.Group_Item" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.Tab_Bar" : "EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS"
         }
        }
    spec-meta-end */
-
-static void
-_fill_array(Efl_Ui_Widget *wid[3])
-{
-   for (int i = 0; i < 3; ++i)
-     {
-        wid[i] = create_test_widget();
-     }
-}
 
 static void
 _ordering_equals(Efl_Ui_Widget **wid, unsigned int len)
@@ -40,12 +34,11 @@ EFL_START_TEST(pack_begin1)
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
-
    for (int i = 2; i >= 0; i--)
      {
+        wid[i] = create_test_widget();
         efl_pack_begin(widget, wid[i]);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(wid[i]), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(wid[i]), widget);
      }
    _ordering_equals(wid, 3);
    efl_pack_begin(widget, inv);
@@ -59,12 +52,11 @@ EFL_START_TEST(pack_begin2)
 {
    Efl_Ui_Widget *wid[3];
 
-   _fill_array(wid);
-
    for (int i = 2; i >= 0; i--)
      {
+        wid[i] = create_test_widget();
         efl_pack_begin(widget, wid[i]);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(wid[i]), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(wid[i]), widget);
      }
 
    EXPECT_ERROR_START;
@@ -79,12 +71,11 @@ EFL_START_TEST(pack_end1)
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
-
    for (int i = 0; i < 3; i++)
      {
+        wid[i] = create_test_widget();
         efl_pack_end(widget, wid[i]);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(wid[i]), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(wid[i]), widget);
      }
 
    _ordering_equals(wid, 3);
@@ -99,12 +90,11 @@ EFL_START_TEST(pack_end2)
 {
    Efl_Ui_Widget *wid[3];
 
-   _fill_array(wid);
-
    for (int i = 0; i < 3; i++)
      {
+        wid[i] = create_test_widget();
         efl_pack_end(widget, wid[i]);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(wid[i]), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(wid[i]), widget);
      }
 
    EXPECT_ERROR_START;
@@ -119,19 +109,20 @@ EFL_START_TEST(pack_before1)
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
-
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
 
    ck_assert_int_eq(efl_pack_before(widget, inv, wid[0]), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    Efl_Ui_Widget *wid2[] = {inv, wid[0], wid[1], wid[2]};
    _ordering_equals(wid2, 4);
    efl_pack_unpack(widget, inv);
 
    ck_assert_int_eq(efl_pack_before(widget, inv, wid[2]), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    Efl_Ui_Widget *wid3[] = {wid[0], wid[1], inv, wid[2]};
    _ordering_equals(wid3, 4);
 }
@@ -142,13 +133,14 @@ EFL_START_TEST(pack_before2)
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
-
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
 
    ck_assert_int_eq(efl_pack_before(widget, inv, wid[0]), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    Efl_Ui_Widget *wid2[] = {inv, wid[0], wid[1], wid[2]};
    _ordering_equals(wid2, 4);
 
@@ -158,24 +150,63 @@ EFL_START_TEST(pack_before2)
 }
 EFL_END_TEST
 
+EFL_START_TEST(pack_before3)
+{
+   Efl_Ui_Widget *wid[3];
+   Efl_Ui_Widget *inv = create_test_widget();
+   Efl_Ui_Widget *inv2 = create_test_widget();
+
+   for (int i = 0; i < 3; i++)
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
+
+   EXPECT_ERROR_START;
+   ck_assert_int_eq(efl_pack_before(widget, inv, inv2), EINA_FALSE);
+   EXPECT_ERROR_END;
+   ck_assert_ptr_ne(efl_test_parent_get(inv), widget);
+
+   ck_assert_int_eq(efl_pack_before(widget, inv, wid[0]), EINA_TRUE);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
+}
+EFL_END_TEST
+
+EFL_START_TEST(pack_before4)
+{
+   Efl_Ui_Widget *wid[3];
+   Efl_Ui_Widget *inv = create_test_widget();
+
+   for (int i = 0; i < 3; i++)
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
+
+   ck_assert_int_eq(efl_pack_before(widget, inv, NULL), EINA_TRUE);
+   ck_assert_ptr_eq(efl_pack_content_get(widget, 0), inv);
+}
+EFL_END_TEST
+
 EFL_START_TEST(pack_after1)
 {
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
-
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
 
    ck_assert_int_eq(efl_pack_after(widget, inv, wid[0]), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    Efl_Ui_Widget *wid2[] = {wid[0], inv, wid[1], wid[2]};
    _ordering_equals(wid2, 4);
    efl_pack_unpack(widget, inv);
 
    ck_assert_int_eq(efl_pack_after(widget, inv, wid[2]), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    Efl_Ui_Widget *wid3[] = {wid[0], wid[1], wid[2], inv};
    _ordering_equals(wid3, 4);
 }
@@ -186,19 +217,58 @@ EFL_START_TEST(pack_after2)
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
-
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
 
    ck_assert_int_eq(efl_pack_after(widget, inv, wid[0]), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    Efl_Ui_Widget *wid2[] = {wid[0], inv, wid[1], wid[2]};
    _ordering_equals(wid2, 4);
 
    EXPECT_ERROR_START;
    ck_assert_int_eq(efl_pack_after(widget, inv, wid[2]), EINA_FALSE);
    EXPECT_ERROR_END;
+}
+EFL_END_TEST
+
+EFL_START_TEST(pack_after3)
+{
+   Efl_Ui_Widget *wid[3];
+   Efl_Ui_Widget *inv = create_test_widget();
+   Efl_Ui_Widget *inv2 = create_test_widget();
+
+   for (int i = 0; i < 3; i++)
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
+
+   EXPECT_ERROR_START;
+   ck_assert_int_eq(efl_pack_after(widget, inv, inv2), EINA_FALSE);
+   EXPECT_ERROR_END;
+   ck_assert_ptr_ne(efl_test_parent_get(inv), widget);
+
+   ck_assert_int_eq(efl_pack_after(widget, inv, wid[0]), EINA_TRUE);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
+}
+EFL_END_TEST
+
+EFL_START_TEST(pack_after4)
+{
+   Efl_Ui_Widget *wid[3];
+   Efl_Ui_Widget *inv = create_test_widget();
+
+   for (int i = 0; i < 3; i++)
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
+
+   ck_assert_int_eq(efl_pack_after(widget, inv, NULL), EINA_TRUE);
+   ck_assert_ptr_eq(efl_pack_content_get(widget, 3), inv);
 }
 EFL_END_TEST
 
@@ -210,12 +280,14 @@ EFL_START_TEST(pack_at1)
         Efl_Ui_Widget *inv = create_test_widget();
         unsigned int i;
 
-        _fill_array(wid);
         for (int i = 0; i < 3; i++)
-          efl_pack_end(widget, wid[i]);
+          {
+             wid[i] = create_test_widget();
+             efl_pack_end(widget, wid[i]);
+          }
 
         efl_pack_at(widget, inv, x);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
 
         for (i = 0; i < 4; ++i)
           {
@@ -241,12 +313,14 @@ EFL_START_TEST(pack_at2)
         Efl_Ui_Widget *inv = create_test_widget();
         unsigned int i;
 
-        _fill_array(wid);
         for (int i = 0; i < 3; i++)
-          efl_pack_end(widget, wid[i]);
+          {
+             wid[i] = create_test_widget();
+             efl_pack_end(widget, wid[i]);
+          }
 
         ck_assert_int_eq(efl_pack_at(widget, inv, x), EINA_TRUE);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
 
         EXPECT_ERROR_START;
         ck_assert_int_eq(efl_pack_at(widget, inv, x - 1), EINA_FALSE);
@@ -275,14 +349,16 @@ EFL_START_TEST(pack_at3)
    Efl_Ui_Widget *inv = create_test_widget();
    Efl_Ui_Widget *inv2 = create_test_widget();
 
-   _fill_array(wid);
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
 
    ck_assert_int_eq(efl_pack_at(widget,  inv,-100000), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
    ck_assert_int_eq(efl_pack_at(widget, inv2, 100000), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_widget_parent_get(inv2), widget);
+   ck_assert_ptr_eq(efl_test_parent_get(inv2), widget);
    Efl_Ui_Widget *wid2[] = {inv, wid[0], wid[1], wid[2], inv2};
    _ordering_equals(wid2, 5);
 }
@@ -291,20 +367,22 @@ EFL_END_TEST
 EFL_START_TEST(pack_content_get1)
 {
    Efl_Ui_Widget *wid[3];
-
-   _fill_array(wid);
+   int num_widgets = EINA_C_ARRAY_LENGTH(wid);
 
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
-
-   for (int i = -100000; i <= 100000; i++)
      {
-        if (i < -3)
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
+
+   for (int i = -num_widgets - 1; i <= num_widgets + 1; i++)
+     {
+        if (i <= -num_widgets)
           ck_assert_ptr_eq(efl_pack_content_get(widget, i), efl_pack_content_get(widget, 0));
-        else if (i >= -3 && i < 3)
-          ck_assert_ptr_eq(efl_pack_content_get(widget, i), wid[(i + 3) % 3]);
-        else
+        else if (i >= num_widgets)
           ck_assert_ptr_eq(efl_pack_content_get(widget, i), efl_pack_content_get(widget, 2));
+        else
+          ck_assert_ptr_eq(efl_pack_content_get(widget, i), wid[(i + num_widgets) % num_widgets]);
      }
 }
 EFL_END_TEST
@@ -314,9 +392,11 @@ EFL_START_TEST(pack_index_get1)
    Efl_Ui_Widget *wid[3];
    Efl_Ui_Widget *inv = create_test_widget();
 
-   _fill_array(wid);
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
    for (int i = 0; i < 3; i++)
      ck_assert_int_eq(efl_pack_index_get(widget, wid[i]), i);
 
@@ -329,9 +409,11 @@ EFL_START_TEST(pack_unpack_at1)
 {
    Efl_Ui_Widget *wid[3];
 
-   _fill_array(wid);
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
    for (int i = 0; i < 3; i++)
      ck_assert_int_eq(efl_pack_index_get(widget, wid[i]), i);
 
@@ -352,9 +434,11 @@ EFL_START_TEST(pack_unpack_at2)
 {
    Efl_Ui_Widget *wid[3];
 
-   _fill_array(wid);
    for (int i = 0; i < 3; i++)
-     efl_pack_end(widget, wid[i]);
+     {
+        wid[i] = create_test_widget();
+        efl_pack_end(widget, wid[i]);
+     }
    for (int i = 0; i < 3; i++)
      ck_assert_int_eq(efl_pack_index_get(widget, wid[i]), i);
 
@@ -371,28 +455,47 @@ EFL_START_TEST(pack_unpack_at3)
      {
         Efl_Ui_Widget *wid[3];
 
-        _fill_array(wid);
         for (int i = 0; i < 3; i++)
-          efl_pack_end(widget, wid[i]);
+          {
+             wid[i] = create_test_widget();
+             efl_pack_end(widget, wid[i]);
+          }
         ck_assert_ptr_eq(efl_pack_unpack_at(widget, x), wid[(3+x)%3]);
         ck_assert_int_eq(efl_content_count(widget), 2);
-        ck_assert_ptr_ne(efl_ui_widget_parent_get(wid[(3+x)%3]), widget);
+        ck_assert_ptr_ne(efl_test_parent_get(wid[(3+x)%3]), widget);
         efl_pack_unpack_all(widget);
      }
 }
 EFL_END_TEST
 
 void
+object_setup(void)
+{
+   if (widget_klass == EFL_UI_GROUP_ITEM_CLASS)
+     {
+        Efl_Ui_Collection *collection = collection_grid;
+        if (!collection) collection = efl_add(EFL_UI_GRID_CLASS, win);
+        efl_content_set(win, collection);
+        efl_pack_end(collection, widget);
+     }
+}
+
+void
 efl_pack_linear_behavior_test(TCase *tc)
 {
+   tcase_add_checked_fixture(tc, object_setup, NULL);
    tcase_add_test(tc, pack_begin1);
    tcase_add_test(tc, pack_begin2);
    tcase_add_test(tc, pack_end1);
    tcase_add_test(tc, pack_end2);
    tcase_add_test(tc, pack_before1);
    tcase_add_test(tc, pack_before2);
+   tcase_add_test(tc, pack_before3);
+   tcase_add_test(tc, pack_before4);
    tcase_add_test(tc, pack_after1);
    tcase_add_test(tc, pack_after2);
+   tcase_add_test(tc, pack_after3);
+   tcase_add_test(tc, pack_after4);
    tcase_add_test(tc, pack_at1);
    tcase_add_test(tc, pack_at2);
    tcase_add_test(tc, pack_at3);

@@ -8,10 +8,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -185,7 +181,11 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    FREESTRC(ie->cache_key);
    FREESTRC(ie->file);
    FREESTRC(ie->key);
-   if (ie->f && ie->flags.given_mmap) eina_file_close(ie->f);
+   if (ie->f && ie->flags.given_mmap)
+     {
+        eina_file_close(ie->f); // close matching open (in _evas_cache_image_entry_new) OK
+        ie->f = NULL;
+     }
    ie->cache = NULL;
    if ((cache) && (cache->func.surface_delete)) cache->func.surface_delete(ie);
 
@@ -1103,6 +1103,9 @@ evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
    im2->references = 1;
    im2->flags.loaded = EINA_TRUE;
    if (cache->func.debug) cache->func.debug("size_set", im2);
+   /* this drop is for handling refereces in this function */
+   evas_cache_image_drop(im);
+   /* we don't need im at this point, drop it! */
    evas_cache_image_drop(im);
    return im2;
 
@@ -1110,6 +1113,9 @@ on_error:
    SLKL(engine_lock);
    if (im2) _evas_cache_image_entry_delete(cache, im2);
    SLKU(engine_lock);
+   /* this drop is for handling refereces in this function */
+   evas_cache_image_drop(im);
+   /* we don't need im at this point, drop it! */
    evas_cache_image_drop(im);
    return NULL;
 }

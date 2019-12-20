@@ -1,0 +1,156 @@
+import eina_types;
+
+function Efl.Ui.Format_Func
+{
+   [[A function taking an @Eina.Value and producing its textual representation.
+     See @Efl.Ui.Format.format_func.
+
+     @since 1.23
+   ]]
+   params {
+      @in str: strbuf; [[Output formatted string. Its contents will be overwritten by this method.]]
+      @in value: const(any_value); [[The @Eina.Value to convert to text.]]
+   }
+   return: bool; [[Whether the conversion succeeded or not.]]
+};
+
+struct Efl.Ui.Format_Value
+{
+   [[A value which should always be displayed as a specific text string.
+     See @Efl.Ui.Format.format_values.
+
+     @since 1.23
+   ]]
+   value: int; [[Input value.]]
+   text: string; [[Text string to replace it.]]
+}
+
+enum Efl.Ui.Format_String_Type
+{
+   [[Type of formatting string. @since 1.23]]
+   simple, [[This is the simplest formatting mechanism, working pretty much like $printf.
+             Accepted formats are $s, $f, $F, $d, $u, $i, $o, $x and $X.
+             For example, "%1.2f meters", "%.0%%" or "%d items".
+           ]]
+   time    [[A strftime-style string used to format date and time values.
+             For example, "%A" for the full name of the day or "%y" for the year as a decimal number
+             without a century (range 00 to 99). Note that these are not the $printf formats.
+             See the man page for the $strftime function for the complete list.
+           ]]
+}
+
+mixin Efl.Ui.Format requires Efl.Object
+{
+   [[Helper mixin that simplifies converting numerical values to text.
+
+     A number of widgets represent a numerical value but display a text representation.
+     For example, an @Efl.Ui.Progressbar can hold the number 0.75 but display the string "75%",
+     or an @Efl.Ui.Spin can hold numbers 1 to 7, but display the strings "Monday" thru "Sunday".
+
+     This conversion can be controlled through the @.format_func, @.format_values and @.format_string properties.
+     Only one of them needs to be set. When more than one is set @.format_values has the highest priority,
+     followed by @.format_func and then @.format_string.
+     If one mechanism fails to produce a valid string the others will be tried (if provided) in descending
+     order of priority.
+     If no user-provided mechanism works, a fallback is used that just displays the value.
+
+     Widgets including this mixin offer their users different properties to control how
+     @Eina.Value's are converted to text.
+
+     @since 1.23
+   ]]
+   methods {
+      @property format_func {
+         [[User-provided function which takes care of converting an @Eina.Value into a text string.
+           The user is then completely in control of how the string is generated, but it is the
+           most cumbersome method to use.
+           If the conversion fails the other mechanisms will be tried, according to their priorities.
+         ]]
+         values {
+            func: Efl.Ui.Format_Func; [[User-provided formatting function.]]
+         }
+      }
+
+      @property format_values {
+         [[User-provided list of values which are to be rendered using specific text strings.
+           This is more convenient to use than @.format_func and is perfectly suited for cases
+           where the strings make more sense than the numerical values. For example, weekday names
+           ("Monday", "Tuesday", ...) are friendlier than numbers 1 to 7.
+           If a value is not found in the list, the other mechanisms will be tried according to their priorities.
+           List members do not need to be in any particular order. They are sorted internally for
+           performance reasons.
+         ]]
+         values {
+            values: accessor<Efl.Ui.Format_Value> @move; [[Accessor over a list of value-text pairs.
+                                                     The method will dispose of the accessor, but not of
+                                                     its contents.
+                                                     For convenience, Eina offers a range of helper
+                                                     methods to obtain accessors from Eina.Array,
+                                                     Eina.List or even plain C arrays.
+                                                   ]]
+         }
+      }
+
+      @property format_string {
+         [[A user-provided, string used to format the numerical value.
+
+           For example, "%1.2f meters", "%.0%%" or "%d items".
+
+           This is the simplest formatting mechanism, working pretty much like $printf.
+
+           Different format specifiers (the character after the %) are available, depending on the
+           $type used. Use @Efl.Ui.Format_String_Type.simple for simple numerical values and
+           @Efl.Ui.Format_String_Type.time for time and date values.
+           For instance, %d means "integer" when the first type is used, but it means "day of the month
+           as a decimal number" in the second.
+
+           Pass $NULL to disable this mechanism.
+         ]]
+         values {
+            string: string; [[Formatting string containing regular characters and format specifiers.]]
+            type: Efl.Ui.Format_String_Type(Efl.Ui.Format_String_Type.simple);
+                            [[Type of formatting string, which controls how the
+                              different format specifiers are to be translated.]]
+         }
+      }
+
+      formatted_value_get @protected {
+         [[Internal method to be used by widgets including this mixin to perform the conversion
+           from the internal numerical value into the text representation (Users of these widgets
+           do not need to call this method).
+
+           @.formatted_value_get uses any user-provided mechanism to perform the conversion, according to their
+           priorities, and implements a simple fallback if all mechanisms fail.
+         ]]
+         params {
+            @in str: strbuf; [[Output formatted string. Its contents will be overwritten by this method.]]
+            @in value: const(any_value); [[The @Eina.Value to convert to text.]]
+         }
+      }
+
+      decimal_places_get @protected {
+         [[Internal method to be used by widgets including this mixin.
+           It can only be used when a @.format_string has been supplied, and it returns the number
+           of decimal places that the format string will produce for floating point values.
+
+           For example, "%.2f" returns 2, and "%d" returns 0;
+         ]]
+         return: int; [[Number of decimal places, or 0 for non-floating point types.]]
+      }
+
+      apply_formatted_value @pure_virtual @protected {
+         [[Internal method to be implemented by widgets including this mixin.
+
+           The mixin will call this method to signal the widget that the formatting has changed
+           and therefore the current value should be converted and rendered again.
+           Widgets must typically call @.formatted_value_get and display the returned string. This
+           is something they are already doing (whenever the value changes, for example) so there
+           should be no extra code written to implement this method.
+         ]]
+      }
+   }
+
+   implements {
+      Efl.Object.destructor;
+   }
+}

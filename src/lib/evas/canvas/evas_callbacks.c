@@ -2,14 +2,12 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 EVAS_MEMPOOL(_mp_pc);
 
 extern Eina_Hash* signals_hash_table;
 
 /* Legacy events, do not use anywhere */
+void _evas_object_smart_callback_call_internal(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc);
 static const Efl_Event_Description _EVAS_OBJECT_EVENT_FREE = EFL_EVENT_DESCRIPTION("free");
 static const Efl_Event_Description _EVAS_OBJECT_EVENT_DEL = EFL_EVENT_DESCRIPTION("del");
 #define EVAS_OBJECT_EVENT_FREE (&(_EVAS_OBJECT_EVENT_FREE))
@@ -66,7 +64,7 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD,
                       EFL_CANVAS_SCENE_EVENT_RENDER_PRE,
                       EFL_CANVAS_SCENE_EVENT_RENDER_POST,
-                      EFL_GFX_IMAGE_EVENT_IMAGE_RESIZE,
+                      EFL_GFX_IMAGE_EVENT_IMAGE_RESIZED,
                       EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                       EFL_EVENT_POINTER_AXIS,
                       EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );
@@ -350,15 +348,11 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 static void
 _evas_callback_legacy_smart_compatibility_do_it(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc, void *event_info)
 {
-   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
-     evas_object_smart_callback_call(eo_obj, "move", NULL);
-   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
-     evas_object_smart_callback_call(eo_obj, "resize", NULL);
-   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
-     evas_object_smart_callback_call(eo_obj, "restack", NULL);
    /* this is inverted: the base call is the legacy compat and this is the new event */
-   else if ((efl_event_desc == EFL_GFX_ENTITY_EVENT_SHOW) || (efl_event_desc == EFL_GFX_ENTITY_EVENT_HIDE))
+   if ((efl_event_desc == EFL_GFX_ENTITY_EVENT_SHOW) || (efl_event_desc == EFL_GFX_ENTITY_EVENT_HIDE))
      efl_event_callback_call(eo_obj, EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED, event_info);
+   else if ((efl_event_desc == EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD) || (efl_event_desc == EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD))
+     efl_event_callback_call(eo_obj, EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD_STATE_CHANGED, event_info);
 }
 
 
@@ -399,7 +393,10 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         type == EVAS_CALLBACK_MULTI_DOWN ||
         type == EVAS_CALLBACK_MOUSE_UP ||
         type == EVAS_CALLBACK_MULTI_UP)
-     _efl_canvas_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
+     _efl_canvas_gesture_manager_filter_event(e->gmd, eo_obj, event_info);
+
+   if (obj->is_smart)
+     _evas_object_smart_callback_call_internal(eo_obj, efl_event_desc);
 
    if (!_evas_object_callback_has_by_type(obj, type))
      goto nothing_here;
@@ -800,32 +797,43 @@ _animator_repeater(void *data, const Efl_Event *event)
    DBG("Emitting animator tick on %p.", obj->object);
 }
 
-static void
-_check_event_catcher_add(void *data, const Efl_Event *event)
+void
+evas_object_callbacks_finalized(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   const Efl_Callback_Array_Item_Full *array = event->info;
-   Evas_Object_Protected_Data *obj = data;
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+
+   if (obj->animator_ref > 0)
+     {
+       if (obj->layer && obj->layer->evas)
+         {
+            efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+            DBG("Registering an animator tick on canvas %p for object %p.",
+                obj->layer->evas->evas, obj->object);
+         }
+     }
+}
+
+void
+evas_object_callbacks_event_catcher_add(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Callback_Array_Item *array)
+{
    Evas_Callback_Type type = EVAS_CALLBACK_LAST;
-   void *gd = NULL;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager &&
-            _efl_canvas_gesture_manager_watches(array[i].desc))
-          {
-             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
-
-             _efl_canvas_gesture_manager_callback_add_hook(gd, obj->object, array[i].desc);
-          }
+        if (obj->layer && obj->layer->evas && obj->layer->evas->gesture_manager)
+          _efl_canvas_gesture_manager_callback_add_hook(obj->layer->evas->gmd, obj->object, array[i].desc);
 
         if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if (obj->animator_ref++ > 0) break;
 
-             efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
-             DBG("Registering an animator tick on canvas %p for object %p.",
-                 obj->layer->evas->evas, obj->object);
+             if (efl_finalized_get(eo_obj))
+               {
+                  efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+                  DBG("Registering an animator tick on canvas %p for object %p.",
+                      obj->layer->evas->evas, obj->object);
+               }
           }
         else if ((type = _legacy_evas_callback_type(array[i].desc)) != EVAS_CALLBACK_LAST)
           {
@@ -839,12 +847,9 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
      }
 }
 
-static void
-_check_event_catcher_del(void *data, const Efl_Event *event)
+void
+evas_object_callbacks_event_catcher_del(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Callback_Array_Item *array)
 {
-   const Efl_Callback_Array_Item_Full *array = event->info;
-   Evas_Object_Protected_Data *obj = data;
-   void *gd = NULL;
    int i;
 
    if (!obj->layer ||
@@ -853,13 +858,8 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager &&
-            _efl_canvas_gesture_manager_watches(array[i].desc))
-          {
-             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
-
-             _efl_canvas_gesture_manager_callback_del_hook(gd, obj->object, array[i].desc);
-          }
+        if (obj->layer->evas->gesture_manager)
+          _efl_canvas_gesture_manager_callback_del_hook(obj->layer->evas->gmd, obj->object, array[i].desc);
 
         if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
@@ -872,18 +872,3 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
      }
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
-                          { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
-                          { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
-
-void
-evas_object_callback_init(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   efl_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
-}
-
-void
-evas_object_callback_shutdown(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   efl_event_callback_array_del(eo_obj, event_catcher_watch(), obj);
-}

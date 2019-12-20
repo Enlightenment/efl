@@ -1,5 +1,16 @@
 import eina_types;
 
+type Efl.Gfx.Align: double; [[Efl alignment type:
+                              As a horizontal component, 0.0 means the start of the axis
+                              in the direction that the current language reads, 1.0 means the end of the axis.
+
+                              As a vertical component, 0.0 is the top, 1.0 is the bottom.
+
+                              The default for this type is always 0.5 unless explicitly specified.
+
+                              @since 1.24
+                            ]]
+
 enum @beta Efl.Gfx.Colorspace {
   [[Graphics colorspace type]]
   argb8888,             [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32bit word at a time.]]
@@ -24,7 +35,10 @@ enum @beta Efl.Gfx.Colorspace {
 }
 
 enum Efl.Gfx.Render_Op {
-  [[Graphics render operation mode]]
+  [[Graphics render operation mode
+
+    @since 1.23
+  ]]
   blend = 0, [[Alpha blending onto destination (default); d = d*(1-sa) + s.]]
   copy  = 1, [[Copy source to destination; d = s.]]
   last       [[Sentinel value to indicate last enum field during iteration]]
@@ -132,6 +146,7 @@ struct @beta Efl.Gfx.Stroke
   dash_length: uint; [[Stroke dash length]]
   cap: Efl.Gfx.Cap; [[Stroke cap]]
   join: Efl.Gfx.Join; [[Stroke join]]
+  miterlimit: double; [[Stroke miterlimit]]
 }
 
 struct @beta Efl.Gfx.Shape_Public
@@ -140,9 +155,20 @@ struct @beta Efl.Gfx.Shape_Public
    stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
 }
 
-enum @beta Efl.Gfx.Border_Fill_Mode
+enum @beta Efl.Gfx.Vg_Composite_Method
 {
-   [[How an image's center region (the complement to the border region) should be rendered by EFL]]
+   none,
+   matte_alpha,
+   matte_alpha_inverse,
+   mask_add,
+   mask_substract,
+   mask_intersect,
+   mask_difference
+}
+
+enum Efl.Gfx.Center_Fill_Mode
+{
+   [[How an image's center region (the complement to the border region) should be rendered by EFL @since 1.23]]
    none = 0, [[Image's center region is $not to be rendered]]
    default = 1, [[Image's center region is to be $blended with objects underneath it, if it has transparency. This is the default behavior for image objects]]
    solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
@@ -151,22 +177,18 @@ enum @beta Efl.Gfx.Border_Fill_Mode
 enum Efl.Gfx.Change_Flag
 {
    [[What property got changed for this object @since 1.18]]
-   none    = 0x0, [[No change]]
-   matrix  = 0x1, [[matrix got changed]]
-   path    = 0x2, [[path got changes]]
-   fill    = 0x4, [[coloring or fill information changed, not geometry]]
-   all     = 0xffff [[all properties got changed]]
-}
-
-struct Efl.Gfx.Path_Change_Event {
-   what: Efl.Gfx.Change_Flag; [[Indicates what changed.]]
+   none    = 0x0, [[Nothing changed.]]
+   matrix  = 0x1, [[Matrix got changed.]]
+   path    = 0x2, [[Path got changed.]]
+   fill    = 0x4, [[Coloring or fill information changed, not geometry.]]
+   all     = 0xffff [[All properties got changed.]]
 }
 
 struct Efl.Gfx.Event.Render_Post
 {
-   [[Data sent along a "render,post" event, after a frame has been rendered.]]
-   updated_area: list<ptr(Eina.Rect)>; [[A list of rectangles that were
-                                         updated in the canvas.]]
+   [[Data sent along a "render,post" event, after a frame has been rendered. @since 1.23]]
+   updated_area: list<Eina.Rect>; [[A list of rectangles that were
+                                    updated in the canvas.]]
 }
 
 enum Efl.Gfx.Hint_Aspect
@@ -174,6 +196,8 @@ enum Efl.Gfx.Hint_Aspect
    [[Aspect types/policies for scaling size hints.
 
      See also @Efl.Gfx.Hint.hint_aspect.
+
+     @since 1.23
    ]]
 
    none = 0, [[No preference on either direction of the container
@@ -197,14 +221,14 @@ enum @beta Efl.Gfx.Color_Class_Layer {
 
 type @beta Efl.Font.Size: int; [[Efl font size type]]
 
-var @beta Efl.Gfx.Image.Load_Error.NONE: Eina.Error; [[No error on load]]
-var @beta Efl.Gfx.Image.Load_Error.GENERIC: Eina.Error; [[A non-specific error occurred]]
-var @beta Efl.Gfx.Image.Load_Error.DOES_NOT_EXIST: Eina.Error; [[File (or file path) does not exist]]
-var @beta Efl.Gfx.Image.Load_Error.PERMISSION_DENIED: Eina.Error; [[Permission denied to an existing file (or path)]]
-var @beta Efl.Gfx.Image.Load_Error.RESOURCE_ALLOCATION_FAILED: Eina.Error; [[Allocation of resources failure prevented load]]
-var @beta Efl.Gfx.Image.Load_Error.CORRUPT_FILE: Eina.Error; [[File corrupt (but was detected as a known format)]]
-var @beta Efl.Gfx.Image.Load_Error.UNKNOWN_FORMAT: Eina.Error; [[File is not a known format]]
-var @beta Efl.Gfx.Image.Load_Error.CANCELLED: Eina.Error; [[Reading operation has been cancelled during decoding]]
-var @beta Efl.Gfx.Image.Load_Error.INCOMPATIBLE_FILE: Eina.Error; [[(Edje only) The file pointed to is incompatible, i.e., it doesn't match the library's current version's format.]]
-var @beta Efl.Gfx.Image.Load_Error.UNKNOWN_COLLECTION: Eina.Error; [[(Edje only) The group/collection set to load from was not found in the file]]
-var @beta Efl.Gfx.Image.Load_Error.RECURSIVE_REFERENCE: Eina.Error; [[(Edje only) The group/collection set to load from had recursive references on its components]]
+error @extern @beta Efl.Gfx.Image.Load_Error.NONE = "XXX"; [[No error on load]]
+error @extern @beta Efl.Gfx.Image.Load_Error.GENERIC = "XXX"; [[A non-specific error occurred]]
+error @extern @beta Efl.Gfx.Image.Load_Error.DOES_NOT_EXIST = "XXX"; [[File (or file path) does not exist]]
+error @extern @beta Efl.Gfx.Image.Load_Error.PERMISSION_DENIED = "XXX"; [[Permission denied to an existing file (or path)]]
+error @extern @beta Efl.Gfx.Image.Load_Error.RESOURCE_ALLOCATION_FAILED = "XXX"; [[Allocation of resources failure prevented load]]
+error @extern @beta Efl.Gfx.Image.Load_Error.CORRUPT_FILE = "XXX"; [[File corrupt (but was detected as a known format)]]
+error @extern @beta Efl.Gfx.Image.Load_Error.UNKNOWN_FORMAT = "XXX"; [[File is not a known format]]
+error @extern @beta Efl.Gfx.Image.Load_Error.CANCELLED = "XXX"; [[Reading operation has been cancelled during decoding]]
+error @extern @beta Efl.Gfx.Image.Load_Error.INCOMPATIBLE_FILE = "XXX"; [[(Edje only) The file pointed to is incompatible, i.e., it doesn't match the library's current version's format.]]
+error @extern @beta Efl.Gfx.Image.Load_Error.UNKNOWN_COLLECTION = "XXX"; [[(Edje only) The group/collection set to load from was not found in the file]]
+error @extern @beta Efl.Gfx.Image.Load_Error.RECURSIVE_REFERENCE = "XXX"; [[(Edje only) The group/collection set to load from had recursive references on its components]]

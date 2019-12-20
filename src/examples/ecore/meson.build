@@ -31,7 +31,7 @@ if get_option('gstreamer') == true
   examples = [
     'ecore_pipe_gstreamer_example',
   ]
-
+  gstreamer = dependency('gstreamer-1.0')
   foreach example : examples
     executable(example, example + '.c', dependencies: [eina, ecore, gstreamer, ecore_file])
   endforeach
@@ -84,6 +84,15 @@ foreach example : examples
     c_args : [
       '-DPACKAGE_EXAMPLES_DIR="'+meson.current_source_dir()+'"']
   )
+endforeach
+
+examples = [
+  'efl_exe',
+  'efl_thread',
+]
+
+foreach example : examples
+  executable(example, example + '.c', dependencies: [eina, ecore, ecore_con])
 endforeach
 
 #  'ecore_imf_example',

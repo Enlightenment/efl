@@ -2,6 +2,11 @@
 # include "config.h"
 #endif
 
+#ifdef _WIN32
+/* normally, they will never be called as it's for Wayland */
+# include <evil_private.h> /* setenv unsetenv */
+#endif
+
 #include "emotion_private.h"
 #include "../../static_libs/buildsystem/buildsystem.h"
 #include <unistd.h>
@@ -76,9 +81,6 @@ _emotion_modules_load(void)
              if (stat(buf, &st) == 0)
                {
                   const char *built_modules[] = {
-#ifdef EMOTION_BUILD_GSTREAMER
-                     "gstreamer",
-#endif
 #ifdef EMOTION_BUILD_GSTREAMER1
                      "gstreamer1",
 #endif
@@ -330,7 +332,12 @@ _find_mod(const char *name)
              p > path;
              p--)
           {
-             if (*p == '/')
+             if ((*p == '/')
+/* FIXME : find a better way to handle Windows path in all the EFL */
+#ifdef _WIN32
+                 || (*p == '\\')
+#endif
+                 )
                {
                   found++;
                   // found == 1 -> p = /module.*

@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv realpath */
+#endif
+
 #define EFL_GFX_FILTER_BETA
 #define EFL_CANVAS_LAYOUT_BETA
 
@@ -51,7 +55,6 @@ EFL_START_TEST(edje_test_masking)
    clip2 = efl_canvas_object_clipper_get(sub);
    fail_if(clip != clip2);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -100,7 +103,6 @@ EFL_START_TEST(edje_test_filters)
 
    // TODO: Verify properly that the filter runs well
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -126,7 +128,6 @@ EFL_START_TEST(edje_test_snapshot)
 
    // TODO: Verify that evas snapshot actually works (and has a filter)
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -180,14 +181,11 @@ EFL_START_TEST(edje_test_size_class)
    b = edje_object_size_class_get(obj, "rect_size", &minw, &minh, NULL, NULL);
    fail_if(!b || minw != 150 || minh != 150);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
 EFL_START_TEST(edje_test_color_class)
 {
-   Evas *evas = _setup_evas();
-
    Eina_File *f;
    Eina_Iterator *it;
    Edje_Color_Class *itcc, *cc = NULL;
@@ -215,7 +213,6 @@ EFL_START_TEST(edje_test_color_class)
    eina_file_close(f);
    free(filename);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 

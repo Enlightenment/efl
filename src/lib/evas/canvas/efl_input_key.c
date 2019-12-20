@@ -7,9 +7,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
-
 #define MY_CLASS EFL_INPUT_KEY_CLASS
 
 EOAPI Eo*
@@ -95,13 +92,13 @@ _efl_input_key_key_name_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 }
 
 EOLIAN static void
-_efl_input_key_key_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
+_efl_input_key_key_sym_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->key, val);
 }
 
 EOLIAN static const char *
-_efl_input_key_key_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_key_sym_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->key;
 }
@@ -119,13 +116,13 @@ _efl_input_key_string_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 }
 
 EOLIAN static void
-_efl_input_key_compose_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
+_efl_input_key_compose_string_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->compose, val);
 }
 
 EOLIAN static const char *
-_efl_input_key_compose_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_compose_string_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->compose;
 }

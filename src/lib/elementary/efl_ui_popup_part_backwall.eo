@@ -1,30 +1,40 @@
-class @beta Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl.File
+class Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl.File
 {
-   [[Efl UI Popup internal part backwall class]]
+   [[A Popup backwall is the background object for an @Efl.Ui.Popup widget. It can be returned
+     from a given Popup widget by using the @Efl.Part API to fetch the "backwall" part.
+
+     This object provides functionality for determining the look and interaction methods
+     of a Popup's background.
+
+     If a Popup should allow input events to reach the objects behind the Popup,
+     @.repeat_events can be enabled.
+
+     To set an image to be used as a background for the Popup, the @Efl.File API can
+     be used directly on the backwall object.
+
+     @since 1.23
+   ]]
    data: null;
    methods {
       @property repeat_events {
+         [[If this property is set to $true, input events will be able to reach objects
+           below the Popup. This allows for e.g., a click to activate a widget below the Popup
+           while the Popup is active.
+         ]]
+
          set {
-            [[Set whether backwall is to repeat events.
-
-              If $repeat is $true, it will make events on $obj to also be
-              repeated for the next lower object in the objects' stack (see
-              @Efl.Gfx.Stack.below).
-
-              If $repeat is $false, events occurring on $obj will be
-              processed only on it.
-            ]]
          }
          get {
-            [[Determine whether backwall is set to repeat events.]]
          }
          values {
-            repeat: bool; [[Whether $obj is to repeat events ($true) or
-                            not ($false).]]
+            repeat: bool; [[Whether to repeat events to objects below the Popup. The default is $false.]]
          }
       }
    }
    implements {
+      Efl.File.file { get; }
+      Efl.File.key { get; }
       Efl.File.load;
+      Efl.File.unload;
    }
 }

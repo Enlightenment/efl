@@ -24,6 +24,5 @@ executable('ecore_cxx_suite_compile_test',
 )
 
 test('ecore_cxx-suite', ecore_cxx_suite,
-  timeout : 10*60,
   env : test_env
 )

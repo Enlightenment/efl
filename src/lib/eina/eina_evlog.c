@@ -29,10 +29,6 @@
 #include "eina_evlog.h"
 #include "eina_debug.h"
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #if defined(__APPLE__) && defined(__MACH__)
 # include <mach/mach_time.h>
 #endif
@@ -40,9 +36,11 @@
 #include <time.h>
 #include <unistd.h>
 
-# ifdef HAVE_MMAP
-#  include <sys/mman.h>
-# endif
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define SWAP_64(x) x
@@ -64,7 +62,7 @@ static int             _evlog_go = 0;
 static Eina_Evlog_Buf *buf; // current event log we are writing events to
 static Eina_Evlog_Buf  buffers[2]; // double-buffer our event log buffers
 
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined (HAVE_CLOCK_GETTIME)
 static clockid_t _eina_evlog_time_clock_id = -1;
 #elif defined(__APPLE__) && defined(__MACH__)
 static double _eina_evlog_time_clock_conversion = 1e-9;
@@ -75,7 +73,7 @@ static int _evlog_get_opcode = EINA_DEBUG_OPCODE_INVALID;
 static inline double
 get_time(void)
 {
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined (HAVE_CLOCK_GETTIME)
    struct timespec t;
 
    if (EINA_UNLIKELY(clock_gettime(_eina_evlog_time_clock_id, &t)))
@@ -290,7 +288,7 @@ eina_evlog_init(void)
 {
    eina_spinlock_new(&_evlog_lock);
    buf = &(buffers[0]);
-#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+#if defined (HAVE_CLOCK_GETTIME)
      {
         struct timespec t;
 

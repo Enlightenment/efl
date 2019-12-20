@@ -1,6 +1,11 @@
 typedef Eo Elm_Video;
 
 /**
+ * @defgroup Elm_Video Video
+ * @ingroup Elementary
+ */
+
+/**
  * @brief Add a new Elm_Player object to the given parent Elementary (container) object.
  *
  * @param parent The parent object

@@ -405,17 +405,18 @@ _cal_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
           max_date.tm_year + 1900);
 }
 
-static void
+static Eina_Bool
 _cal_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
 {
    struct tm current_time;
 
    //return if the value type is other than EINA_VALUE_TYPE_TM
    if (eina_value_type_get(&value) != EINA_VALUE_TYPE_TM)
-     return;
+     return EINA_FALSE;
 
    eina_value_get(&value, &current_time);
    eina_strbuf_append_strftime(str, "<< %b %y >>", &current_time);
+   return EINA_TRUE;
 }
 
 void
@@ -432,7 +433,7 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    current_date = time(NULL) + SEC_PER_YEAR;
    localtime_r(&current_date, &max_date);
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_text_set(efl_added, "Efl Ui Calendar"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -444,7 +445,7 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_calendar_date_max_set(efl_added, max_date),
            efl_ui_calendar_date_set(efl_added, selected_date),
            efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
-           efl_ui_format_string_set(efl_added, "%b"),
+           efl_ui_format_string_set(efl_added, "%b", EFL_UI_FORMAT_STRING_TYPE_TIME),
            efl_pack(box, efl_added));
 
    efl_add(EFL_UI_CALENDAR_CLASS, win,
@@ -452,7 +453,7 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_calendar_date_max_set(efl_added, max_date),
            efl_ui_calendar_date_set(efl_added, selected_date),
            efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
-           efl_ui_format_cb_set(efl_added, NULL, _cal_format_cb, NULL),
+           efl_ui_format_func_set(efl_added, NULL, _cal_format_cb, NULL),
            efl_pack(box, efl_added));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 300));

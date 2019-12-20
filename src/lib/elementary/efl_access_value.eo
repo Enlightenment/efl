@@ -3,9 +3,8 @@ interface @beta Efl.Access.Value
    [[Elementary Access value interface]]
    methods {
       @property value_and_text @protected @beta {
-          [[Value and text property]]
+          [[Value and text displayed bye accessible widget.]]
          get {
-            [[Gets value displayed by a accessible widget.]]
          }
          set {
             return: bool; [[$true if setting widgets value has succeeded, otherwise $false .]]
@@ -16,8 +15,8 @@ interface @beta Efl.Access.Value
          }
       }
       @property range @protected @beta {
+         [[The range of all possible values and its description]]
          get {
-            [[Gets a range of all possible values and its description]]
          }
          values {
             lower_limit: double; [[Lower limit of the range]]
@@ -26,8 +25,8 @@ interface @beta Efl.Access.Value
          }
       }
       @property increment @protected @beta {
+         [[Gets an minimal incrementation value]]
          get {
-            [[Gets an minimal incrementation value]]
          }
          values {
             increment: double; [[Minimal incrementation value]]

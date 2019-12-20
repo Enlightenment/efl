@@ -18,6 +18,8 @@ _indent_line(Eina_Strbuf *buf, int ind)
 #define DOC_LIMIT(ind) ((ind > DOC_LINE_TEST) ? (ind + DOC_LINE_OVER) \
                                               : DOC_LINE_LIMIT)
 
+#define SUMMARY_OR_DEFAULT(sum) (sum ? sum : "No description supplied.")
+
 static void
 _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf)
 {
@@ -27,13 +29,8 @@ _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf)
         char *n = strdup(eolian_object_name_get(decl));
         char *p = n;
         while ((p = strchr(p, '.'))) *p = '_';
-        if (eolian_object_type_get(decl) == EOLIAN_OBJECT_VARIABLE)
-          {
-             const Eolian_Variable *v = (const Eolian_Variable *)decl;
-             /* constants are emitted as macros */
-             if (eolian_variable_type_get(v) == EOLIAN_VAR_CONSTANT)
-               eina_str_toupper(&n);
-          }
+        if (eolian_object_type_get(decl) == EOLIAN_OBJECT_CONSTANT)
+          eina_str_toupper(&n);
         eina_strbuf_append(wbuf, n);
         free(n);
         return;
@@ -68,7 +65,7 @@ _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf)
              eina_stringshare_del(bname);
              goto noref;
           }
-        Eina_Stringshare *str = eolian_typedecl_enum_field_c_name_get(efl);
+        Eina_Stringshare *str = eolian_typedecl_enum_field_c_constant_get(efl);
         eina_strbuf_append(wbuf, str);
         eina_stringshare_del(bname);
         return;
@@ -126,7 +123,6 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
    Eina_Bool try_note = EINA_TRUE;
    while (*desc)
      {
-        eina_strbuf_reset(wbuf);
         while (*desc && isspace(*desc) && (*desc != '\n'))
           eina_strbuf_append_char(wbuf, *desc++);
         if (try_note)
@@ -155,6 +151,8 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
 #undef CHECK_NOTE
              try_note = EINA_FALSE;
           }
+        int limit = DOC_LIMIT(ind);
+        int wlen;
         if (*desc == '\\')
           {
              desc++;
@@ -180,7 +178,47 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
           }
         else if (*desc == '$')
           {
-             desc++;
+             if (*++desc == '[')
+               {
+                  ++desc;
+                  eina_strbuf_append(wbuf, "<tt>");
+                  wlen = eina_strbuf_length_get(wbuf);
+                  while ((*desc != '\0') && (*desc != ']') && (*desc != '\n'))
+                    {
+                       if (*desc == ' ')
+                         {
+                            eina_strbuf_append_char(wbuf, ' ');
+                            wlen = eina_strbuf_length_get(wbuf);
+                            if ((int)(curl + wlen) > limit)
+                              {
+                                 curl = 3;
+                                 eina_strbuf_append_char(buf, '\n');
+                                 curl += _indent_line(buf, ind);
+                                 eina_strbuf_append(buf, " * ");
+                                 if (*eina_strbuf_string_get(wbuf) == ' ')
+                                   eina_strbuf_remove(wbuf, 0, 1);
+                              }
+                            curl += eina_strbuf_length_get(wbuf);
+                            eina_strbuf_append(buf, eina_strbuf_string_get(wbuf));
+                            eina_strbuf_reset(wbuf);
+                            ++desc;
+                            continue;
+                         }
+                       /* skip escape */
+                       if (*desc == '\\')
+                         {
+                            ++desc;
+                            if ((*desc == '\0') || (*desc == '\n'))
+                              break;
+                         }
+                       eina_strbuf_append_char(wbuf, *desc++);
+                    }
+                  if (*desc == ']')
+                    ++desc;
+                  eina_strbuf_append(wbuf, "</tt>");
+                  curl += 5;
+                  goto split;
+               }
              if (isalpha(*desc))
                eina_strbuf_append(wbuf, "@c ");
              else
@@ -188,8 +226,8 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
           }
         while (*desc && !isspace(*desc))
           eina_strbuf_append_char(wbuf, *desc++);
-        int limit = DOC_LIMIT(ind);
-        int wlen = eina_strbuf_length_get(wbuf);
+split:
+        wlen = eina_strbuf_length_get(wbuf);
         if ((int)(curl + wlen) > limit)
           {
              curl = 3;
@@ -201,6 +239,7 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
           }
         curl += eina_strbuf_length_get(wbuf);
         eina_strbuf_append(buf, eina_strbuf_string_get(wbuf));
+        eina_strbuf_reset(wbuf);
         if (*desc == '\n')
           {
              desc++;
@@ -348,6 +387,7 @@ _gen_doc_buf(const Eolian_State *state, const Eolian_Documentation *doc,
    if (!doc) return NULL;
 
    const char *sum = eolian_documentation_summary_get(doc);
+   sum = SUMMARY_OR_DEFAULT(sum);
    const char *desc = eolian_documentation_description_get(doc);
    const char *since = eolian_documentation_since_get(doc);
 
@@ -380,7 +420,7 @@ eo_gen_docs_event_gen(const Eolian_State *state, const Eolian_Event *ev,
    if (rt)
      {
         p = buf;
-        Eina_Stringshare *rts = eolian_type_c_type_get(rt, EOLIAN_C_TYPE_DEFAULT);
+        Eina_Stringshare *rts = eolian_type_c_type_get(rt);
         snprintf(buf, sizeof(buf), "@return %s", rts);
         eina_stringshare_del(rts);
      }
@@ -512,7 +552,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
    /* only summary, nothing else; generate standard brief doc */
    if (!desc && !par && !vpar && !rdoc && (ftype == EOLIAN_METHOD || !pdoc))
      {
-        _gen_doc_brief(state, sum ? sum : "No description supplied.", since, group,
+        _gen_doc_brief(state, SUMMARY_OR_DEFAULT(sum), since, group,
                        NULL, indent, buf);
         return buf;
      }
@@ -523,7 +563,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
    curl += _indent_line(buf, indent);
    eina_strbuf_append(buf, " * @brief ");
    curl += sizeof(" * @brief ") - 1;
-   _append_section(state, sum ? sum : "No description supplied.",
+   _append_section(state, SUMMARY_OR_DEFAULT(sum),
                    indent, curl, buf, wbuf);
 
    eina_strbuf_append_char(buf, '\n');
@@ -551,7 +591,8 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
         const char *pdesc = eolian_documentation_description_get(pdoc);
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * ");
-        _append_section(state, eolian_documentation_summary_get(pdoc), indent,
+        const char *psum = eolian_documentation_summary_get(pdoc);
+        _append_section(state, SUMMARY_OR_DEFAULT(psum), indent,
             curl + 3, buf, wbuf);
         eina_strbuf_append_char(buf, '\n');
         if (pdesc)
@@ -570,7 +611,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
           }
      }
 
-   if (!eolian_function_is_class(fid))
+   if (!eolian_function_is_static(fid))
      {
         _indent_line(buf, indent);
         eina_strbuf_append(buf, " * @param[in] obj The object.\n");
@@ -586,17 +627,17 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
         const Eolian_Documentation *adoc = eolian_parameter_documentation_get(par);
         curl = _indent_line(buf, indent);
 
-        Eolian_Parameter_Dir dir = EOLIAN_OUT_PARAM;
+        Eolian_Parameter_Direction dir = EOLIAN_PARAMETER_OUT;
         if (!force_out)
           dir = eolian_parameter_direction_get(par);
 
         switch (dir)
           {
-           case EOLIAN_OUT_PARAM:
+           case EOLIAN_PARAMETER_OUT:
              eina_strbuf_append(buf, " * @param[out] ");
              curl += sizeof(" * @param[out] ") - 1;
              break;
-           case EOLIAN_INOUT_PARAM:
+           case EOLIAN_PARAMETER_INOUT:
              eina_strbuf_append(buf, " * @param[in,out] ");
              curl += sizeof(" * @param[in,out] ") - 1;
              break;
@@ -614,7 +655,8 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
           {
              eina_strbuf_append_char(buf, ' ');
              curl += 1;
-             _append_section(state, eolian_documentation_summary_get(adoc),
+             const char *asum = eolian_documentation_summary_get(adoc);
+             _append_section(state, SUMMARY_OR_DEFAULT(asum),
                              indent, curl, buf, wbuf);
           }
 
@@ -647,7 +689,8 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * @return ");
         curl += sizeof(" * @return ") - 1;
-        _append_section(state, eolian_documentation_summary_get(rdoc), indent,
+        const char *rsum = eolian_documentation_summary_get(rdoc);
+        _append_section(state, SUMMARY_OR_DEFAULT(rsum), indent,
             curl, buf, wbuf);
         eina_strbuf_append_char(buf, '\n');
         if (since)

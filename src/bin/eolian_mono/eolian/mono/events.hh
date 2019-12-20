@@ -1,15 +1,34 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_EVENTS_HH
-#define EOLINA_MONO_EVENTS_HH
+#define EOLIAN_MONO_EVENTS_HH
 
 #include <iterator>
 
+#include <Eina.hh>
+
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
-#include "type_impl.hh" // For call_match
+#include "type_match.hh"
 #include "name_helpers.hh"
 #include "using_decl.hh"
 
 namespace eolian_mono {
+
+namespace eina = efl::eina;
 
 template<typename OutputIterator, typename Context>
 struct unpack_event_args_visitor
@@ -22,7 +41,7 @@ struct unpack_event_args_visitor
    typedef bool result_type;
    bool operator()(grammar::attributes::regular_type_def const& regular) const
    {
-      std::string const& arg = "evt.Info";
+      std::string const& arg = "info";
       std::string arg_type = name_helpers::type_full_managed_name(regular);
 
       if (regular.is_struct())
@@ -30,7 +49,7 @@ struct unpack_event_args_visitor
            // Structs are usually passed by pointer to events, like having a ptr<> modifier
            // Uses implicit conversion from IntPtr
            return as_generator(
-                " evt.Info"
+                " info"
               ).generate(sink, attributes::unused, *context);
         }
       else if (type.is_ptr)
@@ -45,11 +64,44 @@ struct unpack_event_args_visitor
          eina::optional<std::string> name;
          std::function<std::string()> function;
       }
+      /// Sizes taken from https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/sizeof
       const match_table [] =
         {
-           {"bool", [&arg] { return arg + " != IntPtr.Zero"; }}
-           , {"int", [&arg] { return arg + ".ToInt32()"; }}
-           , {"uint", [&arg] { return "(uint)" + arg + ".ToInt32()";}}
+           {"bool", [&arg] { return "Marshal.ReadByte(" + arg + ") != 0"; }}
+
+           , {"ubyte", [&arg] { return "Marshal.ReadByte(" + arg + ")"; }}
+           , {"byte", [&arg] { return "(sbyte) Marshal.ReadByte(" + arg + ")"; }}
+
+           , {"char", [&arg] { return "(char) Marshal.ReadByte(" + arg + ")"; }}
+
+           , {"short", [&arg] { return "Marshal.ReadInt16(" + arg + ")"; }}
+           , {"ushort", [&arg] { return "(ushort) Marshal.ReadInt16(" + arg + ")"; }}
+
+           , {"int", [&arg] { return "Marshal.ReadInt32(" + arg + ")"; }}
+           , {"uint", [&arg] { return "(uint) Marshal.ReadInt32(" + arg + ")"; }}
+
+           , {"long", [&arg] { return "Marshal.ReadInt64(" + arg + ")"; }}
+           , {"ulong", [&arg] { return "(ulong) Marshal.ReadInt64(" + arg + ")"; }}
+
+           , {"llong", [&arg] { return "(long) Marshal.ReadInt64(" + arg + ")"; }}
+           , {"ullong", [&arg] { return "(ulong) Marshal.ReadInt64(" + arg + ")"; }}
+
+           , {"int8", [&arg] { return "(sbyte)Marshal.ReadByte(" + arg + ")"; }}
+           , {"uint8", [&arg] { return "Marshal.ReadByte(" + arg + ")"; }}
+
+           , {"int16", [&arg] { return "Marshal.ReadInt16(" + arg + ")"; }}
+           , {"uint16", [&arg] { return "(ushort)Marshal.ReadInt16(" + arg + ")"; }}
+
+           , {"int32", [&arg] { return "Marshal.ReadInt32(" + arg + ")"; }}
+           , {"uint32", [&arg] { return "(uint) Marshal.ReadInt32(" + arg + ")"; }}
+
+           // We don't support int128 as csharp has no similar datatype.
+           , {"int64", [&arg] { return "Marshal.ReadInt64(" + arg + ")"; }}
+           , {"uint64", [&arg] { return "(ulong) Marshal.ReadInt64(" + arg + ")"; }}
+
+           , {"float", [&arg] { return "Eina.PrimitiveConversion.PointerToManaged<float>(" + arg + ")"; }}
+           , {"double", [&arg] { return "Eina.PrimitiveConversion.PointerToManaged<double>(" + arg + ")"; }}
+
            , {"string", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
            , {"stringshare", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
            , {"Eina.Error", [&arg] { return "(Eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(Eina.Error))"; }}
@@ -66,18 +118,29 @@ struct unpack_event_args_visitor
            return as_generator(conversion).generate(sink, attributes::unused, *context);
         };
 
-      if (eina::optional<bool> b = call_match(match_table, filter_func, accept_func))
+      if (eina::optional<bool> b = type_match::get_match(match_table, filter_func, accept_func))
         return *b;
       else
-        return as_generator("default(" + arg_type + ")").generate(sink, attributes::unused, *context);
+        {
+           // Type defined in Eo is passed here. (e.g. enum type defined in Eo)
+           // Uses conversion from IntPtr with type casting to the given type.
+           return as_generator(
+                " (" << arg_type << ")info"
+              ).generate(sink, attributes::unused, *context);
+        }
    }
    bool operator()(grammar::attributes::klass_name const& cls) const
    {
-      return as_generator("(Efl.Eo.Globals.CreateWrapperFor(evt.Info) as " + name_helpers::klass_full_concrete_name(cls) + ")").generate(sink, attributes::unused, *context);
+      return as_generator("(Efl.Eo.Globals.CreateWrapperFor(info) as " + name_helpers::klass_full_concrete_name(cls) + ")").generate(sink, attributes::unused, *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& types) const
    {
-      return as_generator("new " << eolian_mono::type << "(evt.Info, false, false)").generate(sink, type, *context);
+      if (types.outer.base_type == "iterator")
+        return as_generator("Efl.Eo.Globals.IteratorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else if (types.outer.base_type == "accessor")
+        return as_generator("Efl.Eo.Globals.AccessorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else
+        return as_generator("new " << eolian_mono::type << "(info, false, false)").generate(sink, type, *context);
    }
 };
 
@@ -87,8 +150,8 @@ struct pack_event_info_and_call_visitor
    mutable OutputIterator sink;
    Context const* context;
    attributes::type_def const& type;
-
-   static auto constexpr native_call = "Efl.Eo.Globals.efl_event_callback_call(this.NativeHandle, desc, info);\n";
+   std::string library_name;
+   std::string evt_c_name;
 
    typedef pack_event_info_and_call_visitor<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -103,15 +166,7 @@ struct pack_event_info_and_call_visitor
         {
            return as_generator(
                 indent << "IntPtr info = Marshal.AllocHGlobal(Marshal.SizeOf(e.arg));\n"
-                << indent << "try\n"
-                << indent << "{\n"
-                << indent << scope_tab << "Marshal.StructureToPtr(e.arg, info, false);\n"
-                << indent << scope_tab << this->native_call
-                << indent << "}\n"
-                << indent << "finally\n"
-                << indent << "{\n"
-                << indent << scope_tab << "Marshal.FreeHGlobal(info);\n"
-                << indent << "}\n"
+                << indent << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Marshal.FreeHGlobal(p));\n"
               ).generate(sink, attributes::unused, *context);
         }
 
@@ -138,17 +193,11 @@ struct pack_event_info_and_call_visitor
         {
            return as_generator(
              indent << "IntPtr info = Eina.StringConversion.ManagedStringToNativeUtf8Alloc(" << conversion << ");\n"
-             << indent << "try\n"
-             << indent << "{\n"
-             << indent << scope_tab << this->native_call
-             << indent << "}\n"
-             << indent << "finally\n"
-             << indent << "{\n"
-             << indent << scope_tab << "Eina.MemoryNative.Free(info);\n"
-             << indent << "}\n").generate(sink, attributes::unused, *context);
+             << indent << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Eina.MemoryNative.Free(p));\n"
+             ).generate(sink, attributes::unused, *context);
         };
 
-      if (eina::optional<bool> b = call_match(str_table, filter_func, str_accept_func))
+      if (eina::optional<bool> b = type_match::get_match(str_table, filter_func, str_accept_func))
         return *b;
 
       match const value_table [] =
@@ -162,17 +211,11 @@ struct pack_event_info_and_call_visitor
         {
            return as_generator(
              indent << "IntPtr info = Eina.PrimitiveConversion.ManagedToPointerAlloc(" << conversion << ");\n"
-             << indent << "try\n"
-             << indent << "{\n"
-             << indent << scope_tab << this->native_call
-             << indent << "}\n"
-             << indent << "finally\n"
-             << indent << "{\n"
-             << indent << scope_tab << "Marshal.FreeHGlobal(info);\n"
-             << indent << "}\n").generate(sink, attributes::unused, *context);
+             << indent << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Marshal.FreeHGlobal(p));\n"
+             ).generate(sink, attributes::unused, *context);
         };
 
-      if (eina::optional<bool> b = call_match(value_table, filter_func, value_accept_func))
+      if (eina::optional<bool> b = type_match::get_match(value_table, filter_func, value_accept_func))
         return *b;
 
       return value_accept_func("e.args");
@@ -181,13 +224,18 @@ struct pack_event_info_and_call_visitor
    {
       auto const& indent = current_indentation(*context);
       return as_generator(indent << "IntPtr info = e.arg.NativeHandle;\n"
-                          << indent << this->native_call).generate(sink, attributes::unused, *context);
+                          << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
+                          ).generate(sink, attributes::unused, *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& type) const
    {
       auto const& indent = current_indentation(*context);
+      if ((type.outer.base_type == "iterator") || (type.outer.base_type == "accessor"))
+        return true;
+
       return as_generator(indent << "IntPtr info = e.arg.Handle;\n"
-                          << indent << this->native_call).generate(sink, attributes::unused, *context);
+                          << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
+                          ).generate(sink, attributes::unused, *context);
    }
 };
 
@@ -208,14 +256,62 @@ struct event_argument_wrapper_generator
 
       std::string evt_name = name_helpers::managed_event_name(evt.name);
 
-      return as_generator("///<summary>Event argument wrapper for event <see cref=\""
-                          << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
-                          << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.</summary>\n"
-                          << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
-                          << scope_tab << "///<summary>Actual event payload.</summary>\n"
-                          << scope_tab << "public " << type << " arg { get; set; }\n"
-                          << "}\n"
-                 ).generate(sink, *etype, context);
+      if (!as_generator("/// <summary>Event argument wrapper for event <see cref=\""
+                        << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
+                        << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.\n"
+             ).generate(sink, nullptr, context))
+        return false;
+
+      std::string since;
+
+      if (!evt.is_beta)
+        {
+           since = evt.documentation.since;
+
+           if (since.empty())
+             {
+                auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+                attributes::klass_def klass(get_klass(evt.klass, unit), unit);
+                since = klass.documentation.since;
+             }
+
+           if (!since.empty())
+             {
+
+                if (!as_generator(
+                      lit("/// <para>Since EFL ") << evt.documentation.since << ".</para>\n"
+                    ).generate(sink, nullptr, context))
+                  return false;
+             }
+           else
+             {
+                EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Event " << evt.name << " of class " << evt.klass.eolian_name
+                    << " is stable but has no 'Since' information.";
+                // We do not bail out here because there are some cases of this happening upstream.
+             }
+        }
+
+      if (!as_generator(lit("/// </summary>\n")
+                         << "[Efl.Eo.BindingEntity]\n"
+                         << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
+                         << scope_tab << "/// <summary>Actual event payload.\n"
+             ).generate(sink, nullptr, context))
+        return false;
+
+      if (since != "")
+        {
+           if (!as_generator(scope_tab << "/// <para>Since EFL " << since << ".</para>\n").generate(sink, nullptr, context))
+             return false;
+        }
+
+      if (!as_generator(scope_tab << "/// </summary>\n"
+                        << scope_tab << "/// <value>" << documentation_string << "</value>\n"
+                        << scope_tab << "public " << type << " arg { get; set; }\n"
+                        << "}\n\n"
+                 ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context))
+        return false;
+
+      return true;
    }
 } const event_argument_wrapper {};
 
@@ -238,10 +334,15 @@ struct event_declaration_generator
       if (evt.type.is_engaged())
         wrapper_args_type = "<" + name_helpers::managed_event_args_name(evt) + ">";
 
+      if (!as_generator(documentation(1))
+                        .generate(sink, evt, context)) return false;
+      if (evt.type.is_engaged())
+        if (!as_generator(
+                scope_tab << "/// <value><see cref=\"" << name_helpers::managed_event_args_name(evt) << "\"/></value>\n"
+             ).generate(sink, evt, context)) return false;
       if (!as_generator(
-                documentation(1)
-                << scope_tab << "event EventHandler" << wrapper_args_type << " " << evt_name << ";\n"
-             ).generate(sink, evt, context))
+              scope_tab << "event EventHandler" << wrapper_args_type << " " << evt_name << ";\n"
+           ).generate(sink, evt, context))
         return false;
 
       return true;
@@ -260,6 +361,7 @@ struct event_definition_generator
       if (blacklist::is_event_blacklisted(evt, context))
         return true;
 
+      auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       std::string managed_evt_name = name_helpers::managed_event_name(evt.name);
       auto const& indent = current_indentation(context);
 
@@ -289,7 +391,7 @@ struct event_definition_generator
       if (!etype.is_engaged())
         {
            auto event_call_site_sink = std::back_inserter(event_native_call);
-           if (!as_generator(indent.inc().inc() << "Efl.Eo.Globals.efl_event_callback_call(this.NativeHandle, desc, IntPtr.Zero);\n")
+           if (!as_generator(indent.inc().inc() << "CallNativeEventCallback(" << library_name << ", \"_" << utils::to_uppercase(evt.c_name) << "\", IntPtr.Zero, null);\n")
                  .generate(event_call_site_sink, attributes::unused, context))
              return false;
         }
@@ -304,22 +406,26 @@ struct event_definition_generator
 
            auto sub_context = change_indentation(indent.inc().inc(), context);
 
-           if (!as_generator(scope_tab(6) << wrapper_args_type << " args = new " << wrapper_args_type << "();\n"
-                             << scope_tab(6) << "args.arg = ").generate(arg_initializer_sink, attributes::unused, context))
+           if (!as_generator(", info => new " << wrapper_args_type << "{ "
+                             << "arg = ").generate(arg_initializer_sink, attributes::unused, context))
              return false;
            if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_initializer_sink), decltype(sub_context)>{arg_initializer_sink, &sub_context, *etype}))
              return false;
 
-           if (!(*etype).original_type.visit(pack_event_info_and_call_visitor<decltype(event_call_site_sink), decltype(sub_context)>{event_call_site_sink, &sub_context, *etype}))
+           if (!(*etype).original_type.visit(pack_event_info_and_call_visitor<decltype(event_call_site_sink), decltype(sub_context)>{event_call_site_sink, &sub_context, *etype, library_name, utils::to_uppercase(evt.c_name)}))
              return false;
 
-           arg_initializer += ";\n";
+           arg_initializer += " }";
 
            event_args = arg_initializer;
         }
 
       if(!as_generator(documentation(1)).generate(sink, evt, context))
         return false;
+      if (etype.is_engaged())
+        if (!as_generator(
+                scope_tab << "/// <value><see cref=\"" << wrapper_args_type << "\"/></value>\n"
+             ).generate(sink, evt, context)) return false;
 
       // Visible event declaration. Either a regular class member or an explicit interface implementation.
       if (klass.type == attributes::class_type::interface_ || klass.type == attributes::class_type::mixin)
@@ -363,19 +469,56 @@ struct event_definition_generator
    {
       auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
+      bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
+
       if (!as_generator(
-            scope_tab << "///<summary>Method to raise event "<< event_name << ".</summary>\n"
-            << scope_tab << "public void On" << event_name << "(" << event_args_type << " e)\n"
+            scope_tab << "/// <summary>Method to raise event "<< event_name << ".\n"
+         ).generate(sink, nullptr, context))
+        return false;
+
+      if (!evt.is_beta)
+        {
+           std::string since = evt.documentation.since;
+
+           if (since.empty())
+             {
+                auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+                attributes::klass_def klass(get_klass(evt.klass, unit), unit);
+                since = klass.documentation.since;
+             }
+
+           if (!since.empty())
+             {
+
+                if (!as_generator(
+                      scope_tab << "/// <para>Since EFL " << evt.documentation.since << ".</para>\n"
+                    ).generate(sink, nullptr, context))
+                  return false;
+             }
+           else
+             {
+                EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Event " << evt.name << " of class " << evt.klass.eolian_name
+                    << " is stable but has no 'Since' information.";
+                // We do not bail out here because there are some cases of this happening upstream.
+             }
+        }
+
+      // Close summary
+      if (!as_generator(scope_tab << "/// </summary>\n").generate(sink, nullptr, context))
+        return false;
+
+      if (evt.type.is_engaged())
+        {
+            if (!as_generator(scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
+                 ).generate(sink, nullptr, context))
+              return false;
+        }
+
+      if (!as_generator(
+            scope_tab << (is_concrete ? "public" : "protected virtual") << " void On" << event_name << "(" << (!evt.type.is_engaged() ? "" : event_args_type + " e") << ")\n"
             << scope_tab << "{\n"
-            << scope_tab << scope_tab << "var key = \"_" << upper_c_name << "\";\n"
-            << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(" << library_name << ", key);\n"
-            << scope_tab << scope_tab << "if (desc == IntPtr.Zero)\n"
-            << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << "return;\n"
-            << scope_tab << scope_tab << "}\n\n"
             << event_native_call
-            << scope_tab << "}\n"
+            << scope_tab << "}\n\n"
           ).generate(sink, nullptr, context))
        return false;
 
@@ -395,40 +538,18 @@ struct event_definition_generator
       return as_generator(
            scope_tab << "{\n"
            << scope_tab << scope_tab << "add\n"
-           << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << "lock (eventLock)\n"
-           << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "var wRef = new WeakReference(this);\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.EventCb callerCb = (IntPtr data, ref Efl.Event.NativeStruct evt) =>\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "var obj = wRef.Target as Efl.Eo.IWrapper;\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (obj != null)\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << event_args
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "try\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "value?.Invoke(obj, args);\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "catch (Exception e)\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error(e.ToString());\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "};\n\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "AddNativeEventHandler(" << library_name << ", key, callerCb, value);\n"
-           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
+           << scope_tab << scope_tab << "{\n"//evt.type.is_engaged()
+           << scope_tab << scope_tab << scope_tab << "Efl.EventCb callerCb = GetInternalEventCallback(value"
+           << (evt.type.is_engaged() ? event_args : "") << ");\n"
+           << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+           << scope_tab << scope_tab << scope_tab << "AddNativeEventHandler(" << library_name << ", key, callerCb, value);\n"
            << scope_tab << scope_tab << "}\n\n"
            << scope_tab << scope_tab << "remove\n"
            << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << "lock (eventLock)\n"
-           << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "RemoveNativeEventHandler(" << library_name << ", key, value);\n"
-           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
+           << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+           << scope_tab << scope_tab << scope_tab << "RemoveNativeEventHandler(" << library_name << ", key, value);\n"
            << scope_tab << scope_tab << "}\n"
-           << scope_tab << "}\n"
+           << scope_tab << "}\n\n"
            ).generate(sink, attributes::unused, context);
    }
 };

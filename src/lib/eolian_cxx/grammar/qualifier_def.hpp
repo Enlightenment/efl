@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_CXX_QUALIFIER_DEF_HH
 #define EOLIAN_CXX_QUALIFIER_DEF_HH
 
@@ -72,11 +87,11 @@ inline qualifier_bool operator^(qualifier_bool lhs, qualifier_info rhs)
   return lhs;
 }
 
-inline qualifier_info qualifiers(Eolian_Type const* type)
+inline qualifier_info qualifiers(Eolian_Type const* type, bool is_moved, bool is_by_ref)
 {
-  qualifier_info is_own = ::eolian_type_is_owned(type) ? qualifier_info::is_own : qualifier_info::is_none;
+  qualifier_info is_own = is_moved ? qualifier_info::is_own : qualifier_info::is_none;
   qualifier_info is_const = ::eolian_type_is_const(type) ? qualifier_info::is_const : qualifier_info::is_none;
-  qualifier_info is_ref = ::eolian_type_is_ptr(type) ? qualifier_info::is_ref : qualifier_info::is_none;
+  qualifier_info is_ref = is_by_ref ? qualifier_info::is_ref : qualifier_info::is_none;
   return is_own | is_const | is_ref;
 }
         

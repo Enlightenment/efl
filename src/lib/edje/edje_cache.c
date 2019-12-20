@@ -104,7 +104,14 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    if (ssp->signals_patterns)
      return;
 
-   if (getenv("EDJE_DUMP_PROGRAMS"))
+   static signed char dump_programs = -1;
+
+   if (dump_programs == -1)
+     {
+        if (getenv("EDJE_DUMP_PROGRAMS")) dump_programs = 1;
+        else dump_programs = 0;
+     }
+   if (dump_programs == 1)
      {
         INF("Group '%s' programs:", edc->part);
 #define EDJE_DUMP_PROGRAM(Section)                    \
@@ -133,9 +140,9 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    j = 0;
 
    /* FIXME: Build specialized data type for each case */
-#define EDJE_LOAD_PROGRAMS_ADD(Array, Edc, It, Git, All)      \
-  for (It = 0; It < Edc->programs.Array##_count; ++It, ++Git) \
-    All[Git] = Edc->programs.Array[It];
+#define EDJE_LOAD_PROGRAMS_ADD(Array, Edc, It, Git, All)                \
+   for (It = 0; It < Edc->programs.Array##_count; ++It, ++Git)          \
+     All[Git] = Edc->programs.Array[It];
 
    EDJE_LOAD_PROGRAMS_ADD(fnmatch, edc, i, j, all);
    EDJE_LOAD_PROGRAMS_ADD(strncmp, edc, i, j, all);
@@ -147,6 +154,104 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    ssp->u.programs.count = j;
    ssp->signals_patterns = edje_match_programs_signal_init(all, j);
    ssp->sources_patterns = edje_match_programs_source_init(all, j);
+}
+
+static inline void
+_edje_part_collection_fix(Edje_Part_Collection *edc)
+{
+   if (edc->checked) return;
+
+   edc->checked = 1;
+
+   unsigned int j;
+   Edje_Part *ep;
+   Eina_Array hist;
+
+   eina_array_step_set(&hist, sizeof(Eina_Array), 5);
+
+   for (j = 0; j < edc->parts_count; ++j)
+     {
+        Edje_Part *ep2;
+        ep = edc->parts[j];
+
+        /* Register any color classes in this parts descriptions. */
+        eina_array_push(&hist, ep);
+        ep2 = ep;
+        while (ep2->dragable.confine_id >= 0)
+          {
+             if (ep2->dragable.confine_id >= (int)edc->parts_count)
+               {
+                  ERR("confine_to above limit. invalidating it.");
+                  ep2->dragable.confine_id = -1;
+                  break;
+               }
+
+             ep2 = edc->parts[ep2->dragable.confine_id];
+             if (eina_array_find(&hist, ep2, NULL))
+               {
+                  ERR("confine_to loops. invalidating loop.");
+                  ep2->dragable.confine_id = -1;
+                  break;
+               }
+             eina_array_push(&hist, ep2);
+          }
+        eina_array_clean(&hist);
+
+        eina_array_push(&hist, ep);
+        ep2 = ep;
+        while (ep2->dragable.event_id >= 0)
+          {
+             Edje_Part *prev;
+
+             if (ep2->dragable.event_id >= (int)edc->parts_count)
+               {
+                  ERR("event_id above limit. invalidating it.");
+                  ep2->dragable.event_id = -1;
+                  break;
+               }
+             prev = ep2;
+
+             ep2 = edc->parts[ep2->dragable.event_id];
+             /* events_to may be used only with dragable */
+             if (!ep2->dragable.x && !ep2->dragable.y)
+               {
+                  prev->dragable.event_id = -1;
+                  break;
+               }
+
+             if (eina_array_find(&hist, ep2, NULL))
+               {
+                  ERR("events_to loops. invalidating loop.");
+                  ep2->dragable.event_id = -1;
+                  break;
+               }
+             eina_array_push(&hist, ep2);
+          }
+        eina_array_clean(&hist);
+
+        eina_array_push(&hist, ep);
+        ep2 = ep;
+        while (ep2->clip_to_id >= 0)
+          {
+             if (ep2->clip_to_id >= (int)edc->parts_count)
+               {
+                  ERR("clip_to_id above limit. invalidating it.");
+                  ep2->clip_to_id = -1;
+                  break;
+               }
+
+             ep2 = edc->parts[ep2->clip_to_id];
+             if (eina_array_find(&hist, ep2, NULL))
+               {
+                  ERR("clip_to loops. invalidating loop.");
+                  ep2->clip_to_id = -1;
+                  break;
+               }
+             eina_array_push(&hist, ep2);
+          }
+        eina_array_clean(&hist);
+     }
+     eina_array_flush(&hist);
 }
 
 static Edje_Part_Collection *
@@ -262,12 +367,14 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
           {
              edc->patterns.table_programs_size = n;
 
-#define EDJE_LOAD_BUILD_TABLE(Array, Edc, It, Tmp)     \
-  for (It = 0; It < Edc->programs.Array##_count; ++It) \
-    {                                                  \
-       Tmp = Edc->programs.Array[It];                  \
-       Edc->patterns.table_programs[Tmp->id] = Tmp;    \
-    }
+#define EDJE_LOAD_BUILD_TABLE(Array, Edc, It, Tmp)                      \
+             for (It = 0; It < Edc->programs.Array##_count; ++It)       \
+               {                                                        \
+                  Tmp = Edc->programs.Array[It];                        \
+                  Edc->patterns.table_programs[Tmp->id] = Tmp;          \
+                  if (!Edc->need_seat && Tmp->signal && !strncmp(Tmp->signal, "seat,", 5)) \
+                    Edc->need_seat = EINA_TRUE;                         \
+               }
 
              EDJE_LOAD_BUILD_TABLE(fnmatch, edc, i, pr);
              EDJE_LOAD_BUILD_TABLE(strcmp, edc, i, pr);
@@ -277,7 +384,113 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
           }
      }
 
+   /* Search for the use of allowed seat used by part if we still do not know if seat are needed. */
+   if (!edc->need_seat)
+     {
+        unsigned int i;
+
+        for (i = 0; i < edc->parts_count; i++)
+          {
+             Edje_Part *part = edc->parts[i];
+
+             if (part->allowed_seats)
+               {
+                  edc->need_seat = EINA_TRUE;
+                  break;
+               }
+          }
+     }
+
+   _edje_part_collection_fix(edc);
+
    return edc;
+}
+
+void
+_edje_extract_mo_files(Edje_File *edf)
+{
+   Eina_Strbuf *mo_id_str;
+   const void *data;
+   const char *cache_path;
+   const char *filename;
+   unsigned int crc;
+   time_t t;
+   size_t sz;
+   unsigned int i;
+   int len;
+
+   cache_path = efreet_cache_home_get();
+
+   t = eina_file_mtime_get(edf->f);
+   sz = eina_file_size_get(edf->f);
+   filename = eina_file_filename_get(edf->f);
+   crc = eina_crc(filename, strlen(filename), 0xffffffff, EINA_TRUE);
+
+   snprintf(edf->fid, sizeof(edf->fid), "%lld-%lld-%x",
+            (long long int)t,
+            (long long int)sz,
+            crc);
+
+   mo_id_str = eina_strbuf_new();
+
+   for (i = 0; i < edf->mo_dir->mo_entries_count; i++)
+     {
+        Edje_Mo *mo_entry;
+        char out[PATH_MAX + PATH_MAX + 128];
+        char outdir[PATH_MAX];
+        char *sub_str;
+        char *mo_src;
+
+        mo_entry = &edf->mo_dir->mo_entries[i];
+
+        eina_strbuf_append_printf(mo_id_str,
+                                  "edje/mo/%i/%s/LC_MESSAGES",
+                                  mo_entry->id,
+                                  mo_entry->locale);
+        data = eet_read_direct(edf->ef,
+                               eina_strbuf_string_get(mo_id_str),
+                               &len);
+
+        if (data)
+          {
+             snprintf(outdir, sizeof(outdir),
+                      "%s/edje/%s/LC_MESSAGES",
+                      cache_path, mo_entry->locale);
+             ecore_file_mkpath(outdir);
+             mo_src = strdup(mo_entry->mo_src);
+             sub_str = strstr(mo_src, ".po");
+
+             if (sub_str)
+               sub_str[1] = 'm';
+
+             snprintf(out, sizeof(out), "%s/%s-%s",
+                      outdir, edf->fid, mo_src);
+             if (ecore_file_exists(out))
+               {
+                  if (edf->mtime > ecore_file_mod_time(out))
+                    ecore_file_remove(out);
+               }
+             if (!ecore_file_exists(out))
+               {
+                  FILE *f;
+
+                  f = fopen(out, "wb");
+                  if (f)
+                    {
+                       if (fwrite(data, len, 1, f) != 1)
+                         ERR("Could not write mo: %s: %s", out, strerror(errno));
+                       fclose(f);
+                    }
+                  else
+                    ERR("Could not open for writing mo: %s: %s", out, strerror(errno));
+               }
+             free(mo_src);
+          }
+
+        eina_strbuf_reset(mo_id_str);
+     }
+
+   eina_strbuf_free(mo_id_str);
 }
 
 // XXX: this is not pretty. some oooooold edje files do not store strings
@@ -293,6 +506,7 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
    Edje_Color_Class *cc;
    Edje_Text_Class *tc;
    Edje_Size_Class *sc;
+   Edje_Style      *stl;
    Edje_File *edf;
    Eina_List *l, *ll;
    Eet_File *ef;
@@ -367,7 +581,12 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
    edf->references = 1;
 
    /* This should be done at edje generation time */
-   _edje_textblock_style_parse_and_fix(edf);
+   _edje_file_textblock_style_parse_and_fix(edf);
+
+   edf->style_hash = eina_hash_string_small_new(NULL);
+   EINA_LIST_FOREACH(edf->styles, l, stl)
+     if (stl->name)
+       eina_hash_direct_add(edf->style_hash, stl->name, stl);
 
    edf->color_tree_hash = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(edf->color_tree, l, ctn)
@@ -429,6 +648,22 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
           }
      }
 
+   if (edf->external_dir)
+     {
+        unsigned int i;
+
+        for (i = 0; i < edf->external_dir->entries_count; ++i)
+          edje_module_load(edf->external_dir->entries[i].entry);
+     }
+
+   // this call is unnecessary as we are doing same opeartion
+   // inside _edje_textblock_style_parse_and_fix() function
+   // remove ??
+   //_edje_textblock_style_all_update(ed);
+
+   if (edf->mo_dir)
+     _edje_extract_mo_files(edf);
+
    return edf;
 }
 
@@ -450,30 +685,21 @@ _edje_file_dangling(Edje_File *edf)
 
 #endif
 
-Edje_File *
-_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed EINA_UNUSED)
+static inline void
+_edje_file_cache_init()
 {
-   Edje_File *edf;
-   Eina_List *l, *hist;
-   Edje_Part_Collection *edc;
-   Edje_Part *ep;
-
    if (!_edje_id_hash)
      _edje_id_hash = eina_hash_stringshared_new(NULL);
    if (!_edje_file_hash)
-     {
-        _edje_file_hash = eina_hash_pointer_new(NULL);
-        goto find_list;
-     }
+     _edje_file_hash = eina_hash_pointer_new(NULL);
+}
 
-   edf = eina_hash_find(_edje_file_hash, &file);
-   if (edf)
-     {
-        edf->references++;
-        goto open;
-     }
+static inline Edje_File*
+_edje_file_cache_trash_pop(const Eina_File *file)
+{
+   Edje_File *edf;
+   Eina_List *l;
 
-find_list:
    EINA_LIST_FOREACH(_edje_file_cache, l, edf)
      {
         if (edf->f == file)
@@ -481,121 +707,61 @@ find_list:
              edf->references = 1;
              _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
              eina_hash_direct_add(_edje_file_hash, &edf->f, edf);
-             goto open;
+             return edf;
           }
      }
+   return NULL;
+}
 
-   edf = _edje_file_open(file, error_ret, eina_file_mtime_get(file), !!coll);
-   if (!edf) return NULL;
+static inline Edje_File*
+_edje_file_cache_find(const Eina_File *file)
+{
+   Edje_File *edf;
 
+   // initialize cache.
+   _edje_file_cache_init();
+
+   // serach in the file_hash.
+   edf = eina_hash_find(_edje_file_hash, &file);
+   if (edf)
+     {
+        edf->references++;
+        return edf;
+     }
+
+   // search in the trash list
+   return _edje_file_cache_trash_pop(file);
+}
+
+static inline void
+_edje_file_cache_add(Edje_File *edf)
+{
    eina_hash_direct_add(_edje_file_hash, &edf->f, edf);
    if (edf->id)
      eina_hash_list_append(_edje_id_hash, edf->id, edf);
-   /* return edf; */
+}
 
-open:
+Edje_File *
+_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed EINA_UNUSED)
+{
+   Edje_File *edf;
+   Edje_Part_Collection *edc;
+
+   edf = _edje_file_cache_find(file);
+
+   if (!edf)
+     {
+        edf = _edje_file_open(file, error_ret, eina_file_mtime_get(file), !!coll);
+        if (!edf) return NULL;
+        _edje_file_cache_add(edf);
+     }
+
    if (!coll)
      return edf;
 
    edc = _edje_file_coll_open(edf, coll);
    if (!edc)
-     {
-        *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
-     }
-   else
-     {
-        if (!edc->checked)
-          {
-             unsigned int j;
-
-             for (j = 0; j < edc->parts_count; ++j)
-               {
-                  Edje_Part *ep2;
-
-                  ep = edc->parts[j];
-
-                  /* Register any color classes in this parts descriptions. */
-                  hist = NULL;
-                  hist = eina_list_append(hist, ep);
-                  ep2 = ep;
-                  while (ep2->dragable.confine_id >= 0)
-                    {
-                       if (ep2->dragable.confine_id >= (int)edc->parts_count)
-                         {
-                            ERR("confine_to above limit. invalidating it.");
-                            ep2->dragable.confine_id = -1;
-                            break;
-                         }
-
-                       ep2 = edc->parts[ep2->dragable.confine_id];
-                       if (eina_list_data_find(hist, ep2))
-                         {
-                            ERR("confine_to loops. invalidating loop.");
-                            ep2->dragable.confine_id = -1;
-                            break;
-                         }
-                       hist = eina_list_append(hist, ep2);
-                    }
-                  eina_list_free(hist);
-                  hist = NULL;
-                  hist = eina_list_append(hist, ep);
-                  ep2 = ep;
-                  while (ep2->dragable.event_id >= 0)
-                    {
-                       Edje_Part *prev;
-
-                       if (ep2->dragable.event_id >= (int)edc->parts_count)
-                         {
-                            ERR("event_id above limit. invalidating it.");
-                            ep2->dragable.event_id = -1;
-                            break;
-                         }
-                       prev = ep2;
-
-                       ep2 = edc->parts[ep2->dragable.event_id];
-                       /* events_to may be used only with dragable */
-                       if (!ep2->dragable.x && !ep2->dragable.y)
-                         {
-                            prev->dragable.event_id = -1;
-                            break;
-                         }
-
-                       if (eina_list_data_find(hist, ep2))
-                         {
-                            ERR("events_to loops. invalidating loop.");
-                            ep2->dragable.event_id = -1;
-                            break;
-                         }
-                       hist = eina_list_append(hist, ep2);
-                    }
-                  eina_list_free(hist);
-                  hist = NULL;
-                  hist = eina_list_append(hist, ep);
-                  ep2 = ep;
-                  while (ep2->clip_to_id >= 0)
-                    {
-                       if (ep2->clip_to_id >= (int)edc->parts_count)
-                         {
-                            ERR("clip_to_id above limit. invalidating it.");
-                            ep2->clip_to_id = -1;
-                            break;
-                         }
-
-                       ep2 = edc->parts[ep2->clip_to_id];
-                       if (eina_list_data_find(hist, ep2))
-                         {
-                            ERR("clip_to loops. invalidating loop.");
-                            ep2->clip_to_id = -1;
-                            break;
-                         }
-                       hist = eina_list_append(hist, ep2);
-                    }
-                  eina_list_free(hist);
-                  hist = NULL;
-               }
-             edc->checked = 1;
-          }
-     }
+     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
 
    if (edc_ret) *edc_ret = edc;
 

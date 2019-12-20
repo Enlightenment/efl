@@ -1,33 +1,45 @@
-class @beta Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
+class Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
 {
-   [[Efl translate animation class]]
+   [[Animated translation effect.
+
+     The @Efl.Canvas.Object will move from one point to another.
+     Coordinates for the origin and destination points can be relative to the object
+     or absolute (relative to the containing canvas).
+
+     Note: Changing an object's position using @Efl.Gfx.Entity.position while this
+     animation is running might lead to unexpected results.
+
+     @since 1.24
+   ]]
    c_prefix: efl_animation_translate;
    data: Efl_Canvas_Animation_Translate_Data;
    methods {
       @property translate {
-         [[Translate property]]
+         [[Translation vector, relative to the starting position of the object.
+           So, for example, if $from is $[(0,0)], the object will move from its
+           current position to $to.
+         ]]
          set {
          }
          get {
          }
          values {
-            from_x: int; [[Distance moved along x axis when animation starts]]
-            from_y: int; [[Distance moved along y axis when animation starts]]
-            to_x: int; [[Distance moved along x axis when animation ends]]
-            to_y: int; [[Distance moved along y axis when animation ends]]
+            from : Eina.Position2D; [[Relative initial position.]]
+            to : Eina.Position2D; [[Relative ending position.]]
          }
       }
       @property translate_absolute {
-         [[Translate absolute property]]
+         [[Translation vector, relative to the canvas.
+           So, for example, if $from is $[(0,0)], the object will always start from the
+           origin of the canvas, regardless of the current object position.
+         ]]
          set {
          }
          get {
          }
          values {
-            from_x: int; [[X coordinate when animation starts]]
-            from_y: int; [[Y coordinate when animation starts]]
-            to_x: int; [[X coordinate when animation ends]]
-            to_y: int; [[Y coordinate when animation ends]]
+            from : Eina.Position2D; [[Absolute initial position.]]
+            to : Eina.Position2D; [[Absolute ending position.]]
          }
       }
    }

@@ -6,7 +6,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/mman.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #include <Ecore_File.h>
 

@@ -125,6 +125,29 @@ static inline void *eina_mempool_realloc(Eina_Mempool *mp, void *element, unsign
 static inline void *eina_mempool_malloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Allocates memory in the given mempool using locality hint to improve future memory access use.
+ *
+ * @param[in] mp The mempool
+ * @param[in] after Hint to the nearest pointer after which to try find an empty spot.
+ * @param[in] before Hint to the nearest pointer before which to try find an empty spot.
+ * @param[in] size The size in bytes to allocate
+ * @return The newly allocated data that might be near @p after and @p before.
+ *
+ * This function is to be used to improve cache locality of structure that are likely to be used
+ * one after another. An example of this use would be Eina_List.
+ *
+ * @note This function allocates and returns @p size bytes using the mempool @p mp.
+ *       If not used anymore, the data must be freed with eina_mempool_free().
+ * @note @p after and @p before must be either @c NULL or allocated by the same mempool
+ *       @p mp. They are hint and if no space near them is found, memory will be allocated
+ *       without locality improvement.
+ * @warning No checks are done for @p mp.
+ *
+ * @see eina_mempool_free()
+ */
+static inline void *eina_mempool_malloc_near(Eina_Mempool *mp, void *after, void *before, unsigned int size) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Allocates and zeros memory using the given mempool.
  *
  * @param[in] mp The mempool
@@ -196,6 +219,17 @@ static inline Eina_Bool eina_mempool_from(Eina_Mempool *mp, void *element);
  *
  */
 EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Provide an iterator to walk all allocated elements from a specified mempool.
+ *
+ * @param[in] mp The mempool
+ * @return @c NULL if it is not possible to iterate over the mempool, a valid iterator otherwise.
+ *
+ * @note This call is expected to be slow and should not be used in any performance critical area.
+ * @since 1.23
+ */
+static inline Eina_Iterator *eina_mempool_iterator_new(Eina_Mempool *mp);
 
 /**
  * @brief Registers the given memory pool backend.

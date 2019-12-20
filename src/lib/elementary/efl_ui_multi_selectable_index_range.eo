@@ -1,0 +1,56 @@
+import efl_ui;
+
+interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
+{
+   [[Interface for getting access to a range of selected items through their indices.
+
+     The implementor of this interface provides the possibility to select multiple @Efl.Ui.Selectable objects.
+     If not, only @Efl.Ui.Single_Selectable should be implemented.
+     A widget can only provide either this interface or @Efl.Ui.Multi_Selectable_Object_Range, but not both.
+
+     @since 1.24
+   ]]
+   c_prefix: efl_ui_multi_selectable;
+   methods
+   {
+      selected_ndx_iterator_new {
+         [[Gets an iterator over the indices of all the selected children.
+         ]]
+         return: iterator<uint> @move @no_unused; [[The iterator gives the indices of the selected children.
+                                                      It is valid until any change is made to the selection state.]]
+      }
+      unselected_ndx_iterator_new {
+         [[Gets an iterator over the indices of all the unselected children.
+         ]]
+         return: iterator<uint> @move @no_unused; [[The iterator gives the indices of the unselected children.
+                                                      It is valid until any change is made to the selection state.]]
+      }
+      ndx_range_select @beta {
+         [[Select a range of @Efl.Ui.Selectable objects using their indices inside the container.
+
+           This will select the range of @Efl.Ui.Selectable objects from $a to $b or from $b to $a depending on
+           which one comes first.
+           If $a or $b are not part of the widget, an error is returned, and no change is applied.
+           $NULL is not allowed as either of the parameters.
+         ]]
+         params {
+           a : uint; [[One side of the range.]]
+           b : uint; [[The other side of the range.]]
+         }
+      }
+      ndx_range_unselect @beta {
+         [[Unselect a range of @Efl.Ui.Selectable objects using their indices inside the container.
+
+           This will unselect the range of @Efl.Ui.Selectable objects from $a to $b or from $b to $a depending on
+           which one comes first.
+           If $a or $b are not part of the widget, an error is returned, and no change is applied.
+           $NULL is not allowed as either of the parameters.
+           Both of the passed values will also be unselected.
+         ]]
+         params {
+           a : uint; [[One side of the range.]]
+           b : uint; [[The other side of the range.]]
+         }
+      }
+   }
+}

@@ -6,6 +6,8 @@
 # include <config.h>
 #endif
 
+#include <evil_private.h> /* evil_format_message evil_last_error_get */
+
 #include "Ecore.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"

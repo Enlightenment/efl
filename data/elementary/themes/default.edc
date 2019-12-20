@@ -170,12 +170,12 @@ collections {
 #include "edc/O/icons.edc"
 
 // New efl ui themes
+#include "edc/efl/macros.edc"
 #include "edc/efl/bg.edc"
 #include "edc/efl/button.edc"
 #include "edc/efl/calendar.edc"
 #include "edc/efl/navigation_bar.edc"
 #include "edc/efl/navigation_layout.edc"
-#include "edc/efl/nstate.edc"
 // XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/efl/scroller.edc"
 #include "edc/efl/list.edc"
@@ -193,7 +193,7 @@ collections {
 #include "edc/efl/tags.edc"
 #include "edc/efl/panel.edc"
 #include "edc/efl/tooltip.edc"
-#include "edc/efl/photocam.edc"
+#include "edc/efl/image_zoomable.edc"
 #include "edc/efl/progress.edc"
 #include "edc/efl/border.edc"
 #include "edc/efl/spin.edc"
@@ -206,8 +206,10 @@ collections {
 #include "edc/efl/textpath.edc"
 #include "edc/efl/win.edc"
 #include "edc/efl/uiclock.edc"
-#include "edc/efl/pager.edc"
+#include "edc/efl/spotlight.edc"
 #include "edc/efl/tab_pager.edc"
 #include "edc/efl/tab_bar.edc"
 #include "edc/efl/tab_page.edc"
+#include "edc/efl/collection.edc"
+#include "edc/efl/group_item.edc"
 }

@@ -115,19 +115,36 @@ static void
 _ipc_launch(void)
 {
    char buf[PATH_MAX];
-   int num = 0;
+   int num;
+   int try_gap = 10000; // 10ms
+   int tries = 200; // 200 * 10ms == 2sec
+   const char *s;
 
+   s = getenv("EFREETD_CONNECT_TRIES");
+   if (s)
+     {
+        num = atoi(s);
+        if (num >= 0) tries = num;
+     }
+   s = getenv("EFREETD_CONNECT_TRY_GAP");
+   if (s)
+     {
+        num = atoi(s);
+        if (num >= 0) try_gap = num;
+     }
    if (run_in_tree)
      bs_binary_get(buf, sizeof(buf), "efreet", "efreetd");
    else
      snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
    ecore_exe_run(buf, NULL);
-   while ((!ipc) && (num < 500))
+   num = 0;
+   while ((!ipc) && (num < tries))
      {
         num++;
-        usleep(1000);
+        usleep(try_gap);
         ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
      }
+   if (!ipc) ERR("Timeout in trying to start and then connect to efreetd");
 }
 
 static Eina_Bool

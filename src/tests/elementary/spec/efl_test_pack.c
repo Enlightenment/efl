@@ -8,7 +8,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Pack",
-       "test-widgets": ["Efl.Ui.Table", "Efl.Ui.Relative_Layout"]}
+       "test-widgets": ["Efl.Ui.Table", "Efl.Ui.Relative_Container"]}
 
    spec-meta-end */
 
@@ -137,7 +137,7 @@ EFL_START_TEST(unpack1)
    _setup_std_pack(wid);
 
    ck_assert_int_eq(efl_pack_unpack(widget, wid[2]), EINA_TRUE);
-   ck_assert_ptr_ne(efl_ui_widget_parent_get(wid[2]), widget);
+   ck_assert_ptr_ne(efl_test_parent_get(wid[2]), widget);
    ck_assert_int_eq(efl_ref_count(wid[2]), 1);
    efl_test_container_content_equal(wid, 2);
 }
@@ -198,7 +198,7 @@ EFL_START_TEST(pack1)
    for (i = 0; i < sizeof(wid)/sizeof(Efl_Ui_Widget*); ++i)
      {
         ck_assert_int_eq(efl_ref_count(wid[i]), 1);
-        ck_assert_ptr_eq(efl_ui_widget_parent_get(wid[i]), widget);
+        ck_assert_ptr_eq(efl_test_parent_get(wid[i]), widget);
      }
 
    efl_test_container_content_equal(wid, 3);
@@ -292,6 +292,7 @@ EFL_END_TEST
 void
 efl_pack_behavior_test(TCase *tc)
 {
+   tcase_add_test(tc, pack2);
    tcase_add_test(tc, base2);
    tcase_add_test(tc, pack_clear1);
    tcase_add_test(tc, pack_clear2);
@@ -301,7 +302,6 @@ efl_pack_behavior_test(TCase *tc)
    tcase_add_test(tc, unpack2);
    tcase_add_test(tc, unpack3);
    tcase_add_test(tc, pack1);
-   tcase_add_test(tc, pack2);
    tcase_add_test(tc, pack3);
    tcase_add_test(tc, evt_content_added);
    tcase_add_test(tc, evt_content_removed);

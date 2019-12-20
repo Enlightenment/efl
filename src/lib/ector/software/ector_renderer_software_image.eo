@@ -1,0 +1,13 @@
+class @beta Ector.Renderer.Software.Image extends Ector.Renderer.Software implements Ector.Renderer.Image
+{
+   [[Ector software renderer image class]]
+   c_prefix: ector_renderer_software_image;
+   implements {
+      Ector.Renderer.prepare;
+      Ector.Renderer.draw;
+      Ector.Renderer.comp_method { set; }
+      Ector.Renderer.crc { get; }
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

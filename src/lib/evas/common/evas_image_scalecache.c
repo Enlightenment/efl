@@ -3,7 +3,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <windows.h>
 #endif
 
 #include <assert.h>
@@ -32,7 +32,7 @@ struct _ScaleitemKey
    int src_x, src_y;
    unsigned int src_w, src_h;
    unsigned int dst_w, dst_h;
-   Eina_Bool smooth : 1;   
+   Eina_Bool smooth : 1;
 };
 
 struct _Scaleitem
@@ -174,7 +174,7 @@ evas_common_rgba_image_scalecache_dirty(Image_Entry *ie)
      {
         Scaleitem *sci = im->cache.list->data;
 
-        im->cache.list = eina_list_remove(im->cache.list, sci);
+        im->cache.list = eina_list_remove_list(im->cache.list, im->cache.list);
         if ((sci->im) && (sci->im->cache_entry.references == 0))
           {
              SLKL(cache_lock);
@@ -192,7 +192,17 @@ evas_common_rgba_image_scalecache_dirty(Image_Entry *ie)
           }
 
         if (!sci->im)
-          free(sci);
+          {
+             Eina_Inlist *il = (Eina_Inlist *)sci;
+
+             if ((il->next) || (il->prev) || (il == cache_list))
+               {
+                  SLKL(cache_lock);
+                  cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
+                  SLKU(cache_lock);
+               }
+             free(sci);
+          }
      }
    eina_hash_free(im->cache.hash);
    im->cache.hash = NULL;
@@ -336,12 +346,18 @@ _sci_find(RGBA_Image *im,
              if (sci->im->cache_entry.references > 0) goto try_alloc;
 
              evas_common_rgba_image_free(&sci->im->cache_entry);
+             sci->im = NULL;
              if (!sci->forced_unload)
                cache_size -= sci->key.dst_w * sci->key.dst_h * 4;
              else
                cache_size -= sci->size_adjust;
 //             INF(" 1- %i", sci->dst_w * sci->dst_h * 4);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
+             if (max_scale_items < 1)
+               {
+                  free(sci);
+                  sci = NULL;
+               }
           }
         if (max_scale_items < 1) return NULL;
      }

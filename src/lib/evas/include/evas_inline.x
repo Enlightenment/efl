@@ -51,7 +51,7 @@ _evas_object_callback_has_by_type(Evas_Object_Protected_Data *obj, Evas_Callback
 }
 
 static inline int
-evas_object_was_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_was_visible(Evas_Object_Protected_Data *obj)
 {
    if (EINA_UNLIKELY(!obj->prev)) return 0;
    if ((obj->prev->visible) && (!obj->no_render) &&
@@ -60,7 +60,7 @@ evas_object_was_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
        || obj->prev->render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->was_visible)
-          return obj->func->was_visible(eo_obj);
+          return obj->func->was_visible(obj->object);
         return 1;
      }
    return 0;
@@ -98,7 +98,7 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 }
 
 static inline int
-evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_opaque(Evas_Object_Protected_Data *obj)
 {
    if (obj->is_smart || obj->no_render) return 0;
    if (obj->cur->render_op == EVAS_RENDER_COPY)
@@ -111,25 +111,25 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
             (obj->clip.mask))
           return 0;
         if (obj->func->is_opaque)
-          return obj->func->is_opaque(eo_obj, obj, obj->private_data);
+          return obj->func->is_opaque(obj->object, obj, obj->private_data);
         return 1;
      }
    return 0;
 }
 
 static inline int
-evas_object_is_on_plane(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_on_plane(Evas_Object_Protected_Data *obj)
 {
    if (obj->func->is_on_plane)
-     return obj->func->is_on_plane(eo_obj, obj, obj->private_data);
+     return obj->func->is_on_plane(obj->object, obj, obj->private_data);
    return 0;
 }
 
 static inline int
-evas_object_plane_changed(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_plane_changed(Evas_Object_Protected_Data *obj)
 {
    if (obj->func->plane_changed)
-     return obj->func->plane_changed(eo_obj, obj, obj->private_data);
+     return obj->func->plane_changed(obj->object, obj, obj->private_data);
    return 0;
 }
 
@@ -178,7 +178,7 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static inline int
-evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_visible(Evas_Object_Protected_Data *obj)
 {
    if (EINA_UNLIKELY(!obj->cur)) return 0;
    if ((obj->cur->visible) && (!obj->no_render) &&
@@ -187,7 +187,7 @@ evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
        || obj->cur->render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->is_visible)
-          return obj->func->is_visible(eo_obj);
+          return obj->func->is_visible(obj->object);
         return 1;
      }
    return 0;
@@ -209,7 +209,7 @@ evas_object_clippers_is_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static inline int
-evas_object_is_proxy_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_proxy_visible(Evas_Object_Protected_Data *obj)
 {
    if ((obj->cur->visible) &&
        //FIXME: Check the cached clipper visible properly.
@@ -218,7 +218,7 @@ evas_object_is_proxy_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         || obj->cur->render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->is_visible)
-          return obj->func->is_visible(eo_obj);
+          return obj->func->is_visible(obj->object);
         return 1;
      }
    return 0;
@@ -240,7 +240,7 @@ evas_object_is_in_output_rect(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prote
 static inline int
 evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (evas_object_is_visible(eo_obj, obj) || evas_object_was_visible(eo_obj, obj))
+   if (evas_object_is_visible(obj) || evas_object_was_visible(obj))
      {
         Evas_Public_Data *e = obj->layer->evas;
         int fx, fy;

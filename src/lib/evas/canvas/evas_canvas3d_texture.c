@@ -334,7 +334,8 @@ _evas_canvas3d_texture_efl_object_constructor(Eo *obj, Evas_Canvas3D_Texture_Dat
 EOLIAN static void
 _evas_canvas3d_texture_efl_object_destructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
 {
-   eina_file_close(pd->f);
+   eina_file_close(pd->f); // close matching open (matches open in _evas_canvas3d_texture_efl_file_load) OK
+   pd->f = NULL;
    _texture_fini(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -370,6 +371,15 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
                                        image);
    e->engine.func->image_free(_evas_engine_context(e), image);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
+}
+
+EOLIAN static void
+_evas_canvas3d_texture_efl_file_unload(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   eina_file_close(pd->f); // close matching open (matches open in _evas_canvas3d_texture_efl_file_load) OK
+   pd->f = NULL;
+   _texture_fini(obj);
 }
 
 EOLIAN static Eina_Error

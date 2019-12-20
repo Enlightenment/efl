@@ -18,6 +18,10 @@
 #define FIXPT_BITS 8
 #define FIXPT_SIZE (1<<FIXPT_BITS)
 
+#define CTABLE_NOT_READY 0
+#define CTABLE_PROCESSING 1
+#define CTABLE_READY_DONE 2
+
 static inline int
 _gradient_clamp(const Ector_Renderer_Software_Gradient_Data *data, int ipos)
 {

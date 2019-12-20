@@ -95,7 +95,7 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
          */
          set {} get {}
          values {
-            fmt: string @nullable; [[The clock format.]]
+            fmt: string; [[The clock format.]]
          }
       }
       @property pause {
@@ -130,6 +130,9 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
            Hour: default value will be in terms of 24 hr format (0~23)
 
            Minute: default value range is from 0 to 59.
+
+           Compare with @.field_limit which allows setting limits to each
+           individual time field.
          ]]
          values {
             mintime: Efl.Time; [[Time structure containing the minimum time value.]]
@@ -150,6 +153,9 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
            Hour: default value will be in terms of 24 hr format (0~23)
 
            Minute: default value range is from 0 to 59.
+
+           Compare with @.field_limit which allows setting limits to each
+           individual time field.
          ]]
          values {
             maxtime: Efl.Time; [[Time structure containing the maximum time value.]]
@@ -176,55 +182,59 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
          }
       }
       @property field_visible {
-         [[ The field to be visible/not.]]
+         [[Visibility of each field.
+         
+           Allows, for example, hiding the year field by setting
+           @Efl.Ui.Clock_Type.year's visibility to $false.
+
+           Setting this API to $true in itself doesn't ensure that the field is
+           visible. The field's format also must be present in the overall clock
+           format.  If a field's visibility is set to $false then it won't appear
+           even though its format is present. In summary, if this API is set to
+           true and the corresponding field's format is present in clock format,
+           the field is visible.
+
+           By default the field visibility is set to $true.
+         ]]
          set{} get{}
          keys {
-            fieldtype: Efl.Ui.Clock_Type; [[Type of the field. #EFL_UI_CLOCK_TYPE_YEAR etc.]]
+            fieldtype: Efl.Ui.Clock_Type; [[Type of the field.]]
          }
          values {
             visible: bool; [[$true field can be visible, $false otherwise.]]
          }
       }
       @property field_limit {
+         [[Numerical limits of each field.
+
+           Limits can be set to individual fields, independently, except
+           for the AM/PM field. Any field can display the values only in between
+           these minimum and maximum limits unless the corresponding time
+           value is restricted from MinTime to MaxTime. That is, min/max
+           field limits always work under the limitations of mintime/maxtime.
+
+           There is no provision to set the limits of AM/PM field.
+
+           Compare with @.time_min and @.time_max which set a global limit to
+           the acceptable dates instead of to each individual field.
+         ]]
          set {
-             [[Set a field to be visible or not.
-
-              Setting this API to $true in itself doen't ensure that the field is
-              visible. The field's format also must be present
-              in the overall clock format.  If a field's visibility is set
-              to $false then it won't appear even though its format is
-              present. In summary, if this API is
-              set to true and the corresponding field's format is present
-              in clock format, the field is visible.
-
-              By default the field visibility is set to $true.
-            ]]
          }
          get {
-            [[ Get the field limits of a field.
-
-              Limits can be set to individual fields, independently, except
-              for the AM/PM field. Any field can display the values only in between
-              these minimum and maximum limits unless the corresponding time
-              value is restricted from MinTime to MaxTime. That is, min/max
-              field limits always work under the limitations of mintime/maxtime.
-
-              There is no provision to set the limits of AM/PM field.
-            ]]
          }
          keys {
-            fieldtype: Efl.Ui.Clock_Type; [[Type of the field. #EFL_UI_CLOCK_TYPE_YEAR etc.]]
+            fieldtype: Efl.Ui.Clock_Type; [[Type of the field.]]
          }
          values {
-            min: int; [[Reference to field's minimum value.]]
-            max: int; [[Reference to field's maximum value.]]
+            min: int; [[Acceptable minimum value for this field.]]
+            max: int; [[Acceptable maximum value for this field.]]
          }
       }
    }
    implements {
       Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update;
    }
    events {

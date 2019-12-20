@@ -1196,6 +1196,17 @@ EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
  */
 EAPI Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a);
 
+/**
+ * Check if vblank is supported by the current video driver
+ *
+ * @param dev
+ *
+ * @return EINA_TRUE if vblank is supported, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.23 */
+EAPI Eina_Bool ecore_drm2_vblank_supported(Ecore_Drm2_Device *dev);
+
 # endif
 
 #endif

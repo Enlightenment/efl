@@ -1,24 +1,12 @@
-struct @extern Eo;
-
 type Evas.Coord: int; /* Simple type definition */
-type List_Objects: list<ptr(Eo)>; /* A little more complex */
+type List_Objects: list<Typedef>; /* A little more complex */
 
 type Evas.Coord2: Evas.Coord;
 type Evas.Coord3: Evas.Coord2;
 
 type @extern Evas.Pants: float; /* not generated */
 
-type Undef: __undefined_type; /* not generated */
-
-type Free: __builtin_free_cb; /* specially generated */
-
-enum Enum.Bar
-{
-   legacy: bar;
-   first_item  = 0,
-   second_item,
-   last_item
-}
+type @beta Undef: __undefined_type; /* not generated */
 
 enum Elm.Object.Select_Mode
 {
@@ -35,7 +23,7 @@ class Typedef {
          params {
             idx: int;
          }
-         return: mstring @owned;
+         return: mstring @move;
       }
    }
 }

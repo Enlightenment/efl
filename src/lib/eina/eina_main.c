@@ -40,10 +40,6 @@
 #include <mcheck.h>
 #endif
 
-#ifdef _WIN32
-#include "Evil.h"
-#endif
-
 #include "eina_lock.h"
 #include "eina_config.h"
 #include "eina_private.h"

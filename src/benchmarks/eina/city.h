@@ -43,7 +43,8 @@
 #ifndef CITY_HASH_H_
 #define CITY_HASH_H_
 
-#include <stdlib.h>  // for size_t.
+#include <sys/types.h>  // for ssize_t.
+#include <stdlib.h>
 #include <stdint.h>
 #include <utility>
 

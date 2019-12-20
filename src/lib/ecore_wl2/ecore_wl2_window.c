@@ -264,7 +264,11 @@ _xdg_toplevel_cb_close(void *data, struct xdg_toplevel *xdg_toplevel EINA_UNUSED
 
    win = data;
    if (!win) return;
-
+   if (win->cb_close)
+     {
+        win->cb_close(win->cb_close_data, win);
+        win->cb_close = NULL;
+     }
    ecore_wl2_window_free(win);
 }
 
@@ -566,6 +570,14 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    _ecore_wl2_window_surface_create(win);
 
    return win;
+}
+
+EAPI void
+ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*cb) (void *data, Ecore_Wl2_Window *win), void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->cb_close = cb;
+   window->cb_close_data = data;
 }
 
 EAPI struct wl_surface *
@@ -1005,6 +1017,14 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
    ecore_wl2_display_flush(window->display);
 }
 
+EAPI const char *
+ecore_wl2_window_title_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+
+   return window->title ? window->title : NULL;
+}
+
 EAPI void
 ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
 {
@@ -1019,6 +1039,14 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
    ecore_wl2_display_flush(window->display);
+}
+
+EAPI const char *
+ecore_wl2_window_class_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+
+   return window->class ? window->class : NULL;
 }
 
 EAPI void
@@ -1355,6 +1383,14 @@ ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role)
    eina_stringshare_replace(&window->role, role);
 }
 
+EAPI const char *
+ecore_wl2_window_role_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+
+   return window->role ? window->role : NULL;
+}
+
 EAPI void
 ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool floating)
 {
@@ -1389,6 +1425,16 @@ ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int
      efl_hints_set_aspect(window->display->wl.efl_hints,
                           window->xdg_surface, w, h, aspect);
    ecore_wl2_display_flush(window->display);
+}
+
+EAPI void
+ecore_wl2_window_aspect_get(Ecore_Wl2_Window *window, int *w, int *h, unsigned int *aspect)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (w) *w = window->aspect.w;
+   if (h) *h = window->aspect.h;
+   if (aspect) *aspect = window->aspect.aspect;
 }
 
 EAPI void
@@ -1728,4 +1774,26 @@ ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge)
 
    if (!window->wl2_surface) return;
    ecore_wl2_surface_flush(window->wl2_surface, purge);
+}
+
+EAPI Ecore_Wl2_Window_Type
+ecore_wl2_window_type_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, ECORE_WL2_WINDOW_TYPE_NONE);
+   return window->type;
+}
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_window_surface_find(struct wl_surface *surface)
+{
+   Ecore_Wl2_Display *ewd;
+   Ecore_Wl2_Window *win;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   ewd = ecore_wl2_connected_display_get(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
+
+   win = ecore_wl2_display_window_find_by_surface(ewd, surface);
+   return win;
 }

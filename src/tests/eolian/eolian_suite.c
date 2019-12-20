@@ -3,7 +3,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h> /* setenv */
+# include <evil_private.h> /* setenv */
 #endif
 
 #include "eolian_suite.h"

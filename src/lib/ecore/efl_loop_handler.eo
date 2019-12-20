@@ -20,7 +20,8 @@ class @beta Efl.Loop_Handler extends Efl.Object
          set { }
          get { }
          values {
-            flags: Efl.Loop_Handler_Flags; [[ The flags that indicate what kind of I/O should be listened for like read, write or error channels. ]]
+            flags: Efl.Loop_Handler_Flags; [[The flags that indicate what kind of I/O should be listened for like
+                                             read, write or error channels. ]]
          }
       }
       @property fd {

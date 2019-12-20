@@ -31,3 +31,16 @@ enum @beta Efl.Canvas.Gesture_Recognizer_Result
    cancel    = 0x0010, [[The event made it clear that it is not a gesture. If the gesture recognizer was in Triggered state before, then the gesture is canceled.]]
    result_mask = 0x00ff, [[The gesture result mask]]
 }
+
+enum @beta Efl.Canvas.Gesture_Recognizer_Type
+{
+   [[ This enum type describes the state of a touch event. ]]
+   legacy: efl_gesture;
+   tap = 0,
+   doubleTap,
+   tripleTap,
+   longTap,
+   momentum,
+   flick,
+   zoom,
+}

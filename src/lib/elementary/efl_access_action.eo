@@ -47,7 +47,7 @@ mixin @beta Efl.Access.Action
          get @pure_virtual {
          }
          values {
-            actions: list<ptr(Efl.Access.Action_Data)>;
+            actions: list<Efl.Access.Action_Data> @move;
                [[Contains statically allocated strings.]]
          }
       }
@@ -63,7 +63,7 @@ mixin @beta Efl.Access.Action
          params {
             @in id: int; [[ID for widget]]
          }
-         return: mstring @owned @warn_unused; [[Should be freed by the user.]]
+         return: mstring @move @no_unused; [[Should be freed by the user.]]
       }
    }
 }

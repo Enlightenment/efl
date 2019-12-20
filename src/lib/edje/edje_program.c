@@ -237,7 +237,8 @@ edje_transition_duration_factor_set(double scale)
 }
 
 Eina_Bool
-_edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source,
+_edje_object_signal_callback_add(Evas_Object *obj, Edje *ed,
+                                 const char *emission, const char *source,
                                  Edje_Signal_Cb func_legacy,
                                  Efl_Signal_Cb func_eo, Eina_Free_Cb func_free_cb, void *data)
 {
@@ -252,6 +253,14 @@ _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *sou
 
    sig = eina_stringshare_add(emission);
    src = eina_stringshare_add(source);
+
+   // Only load seat callbacks and trigger events just before we might need them.
+   if (!ed->need_seat && sig && !strncmp(sig, "seat,", 5))
+     {
+        ed->need_seat = EINA_TRUE;
+        if (ed->collection)
+          _edje_devices_add(ed, evas_object_evas_get(obj));
+     }
 
    gp = (Edje_Signal_Callback_Group *) ed->callbacks;
    ok = _edje_signal_callback_push(gp, sig, src, func_legacy, func_eo, func_free_cb, data, EINA_TRUE);
@@ -269,13 +278,13 @@ edje_object_propagate_callback_add(Evas_Object *obj, Efl_Signal_Cb func, void *d
 
    ed = _edje_fetch(obj);
    if (!ed || ed->delete_me) return;
-   _edje_object_signal_callback_add(ed, "*", "*", func, NULL, NULL, data);
+   _edje_object_signal_callback_add(obj, ed, "*", "*", func, NULL, NULL, data);
 }
 
 Eina_Bool
 _efl_canvas_layout_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
-   return _edje_object_signal_callback_add(ed, emission, source, NULL, func, func_free_cb, func_data);
+   return _edje_object_signal_callback_add(obj, ed, emission, source, NULL, func, func_free_cb, func_data);
 }
 
 Eina_Bool
@@ -311,7 +320,7 @@ _efl_canvas_layout_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, 
 
 /* FIXDOC: Verify/Expand */
 EOLIAN void
-_efl_canvas_layout_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
+_efl_canvas_layout_animated_set(Eo *obj, Edje *ed, Eina_Bool on)
 {
    Eina_List *l;
    unsigned short i;
@@ -381,7 +390,7 @@ break_prog:
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_animation_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_animated_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;
@@ -1638,7 +1647,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 
    ed->walking_callbacks++;
 
-   ssp = _edje_signal_callback_patterns_ref(ed->callbacks);
+   ssp = _edje_signal_callback_patterns_ref
+     ((Edje_Signal_Callback_Group *)ed->callbacks);
    if (ssp)
      {
         m = (Edje_Signal_Callback_Matches *)ed->callbacks->matches;

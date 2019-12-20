@@ -21,6 +21,10 @@
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, val); \
    EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_widget_is_legacy(obj), val);
 
+#define MARK_WINDOW_LEGACY_USAGE() \
+   if (pd->shared_win_data) \
+     ((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->legacy_focus_api_used = EINA_TRUE;
+
 #define MAPPING() \
         MAP(PREVIOUS, prev) \
         MAP(NEXT, next) \
@@ -106,6 +110,7 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
    API_ENTRY()
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(next, EFL_UI_WIDGET_CLASS));
    ELM_WIDGET_DATA_GET_OR_RETURN(next, next_pd);
+   MARK_WINDOW_LEGACY_USAGE()
 
    #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
    MAPPING()
@@ -121,6 +126,8 @@ elm_object_focus_custom_chain_set(Evas_Object *obj,
                                   Eina_List   *objs)
 {
    API_ENTRY()
+   MARK_WINDOW_LEGACY_USAGE()
+
    _custom_chain_set(obj, objs);
 }
 
@@ -128,6 +135,7 @@ EAPI void
 elm_object_focus_custom_chain_unset(Evas_Object *obj)
 {
    API_ENTRY()
+   MARK_WINDOW_LEGACY_USAGE()
 
    _custom_chain_set(obj, NULL);
 }
@@ -146,6 +154,7 @@ elm_object_focus_custom_chain_append(Evas_Object *obj,
                                      Evas_Object *relative_child)
 {
    API_ENTRY()
+   MARK_WINDOW_LEGACY_USAGE()
    Eina_List *tmp;
 
    tmp = eina_list_clone(pd->legacy_focus.custom_chain);
@@ -159,6 +168,7 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
                                       Evas_Object *relative_child)
 {
    API_ENTRY()
+   MARK_WINDOW_LEGACY_USAGE()
    Eina_List *tmp;
 
    tmp = eina_list_clone(pd->legacy_focus.custom_chain);
@@ -302,6 +312,7 @@ elm_object_focus_next_item_get(const Evas_Object  *obj,
                                Elm_Focus_Direction dir EINA_UNUSED)
 {
    API_ENTRY_VAL(NULL)
+   MARK_WINDOW_LEGACY_USAGE()
 
    #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.item_ ##field) return pd->legacy_focus.item_ ##field;
    MAPPING()
@@ -316,6 +327,7 @@ elm_object_focus_next_item_set(Evas_Object     *obj,
                                Elm_Focus_Direction dir EINA_UNUSED)
 {
    API_ENTRY()
+   MARK_WINDOW_LEGACY_USAGE()
 
    #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.item_ ##field = next_item;
    MAPPING()

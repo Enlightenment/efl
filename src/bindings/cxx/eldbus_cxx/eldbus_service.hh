@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef ELDBUS_CXX_ELDBUS_SERVICE_HH
 #define ELDBUS_CXX_ELDBUS_SERVICE_HH
 
@@ -293,11 +308,23 @@ void _create_methods_specification_impl(Method const& method, Eldbus_Method2& el
 
   eldbus::_fill_methods(*out_params, method.outs);
 
+  // NOTE: C pointer magic performed under the hood requires this conversion
+  // between incompatible function pointer types.
+  // C++ always raises a warning for such conversions, so this warning
+  // can be disabled just here.
+#pragma GCC diagnostic push
+#if !defined(__clang__) && __GNUC__ >= 8
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif
+  Eldbus_Method_Cb method_cb =
+    reinterpret_cast<Eldbus_Method_Cb>
+      (static_cast<Eldbus_Method_Data_Cb>
+        (&_method_callback<typename Method::function_type
+                           , typename Method::ins_type, typename Method::outs_type>));
+#pragma GCC diagnostic pop
+
   eldbus_method = {{method.name, &(*in_params)[0], &(*out_params)[0]
-                   , reinterpret_cast<Eldbus_Method_Cb>
-                    (static_cast<Eldbus_Method_Data_Cb>
-                     (&_method_callback<typename Method::function_type
-                      , typename Method::ins_type, typename Method::outs_type>))
+                   , method_cb
                    , ELDBUS_METHOD_FLAG_HAS_DATA}
                    , new std::tuple<typename Method::function_type
                    , typename Method::ins_type, typename Method::outs_type

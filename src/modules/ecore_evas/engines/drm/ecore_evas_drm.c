@@ -142,6 +142,8 @@ _drm_device_change(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
 static int
 _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const char *device)
 {
+   // XXX: this is broken. we init once but in a per ecore evas struct so
+   // we assume there will be only 1 of these drm ecore evas's ever...
    if (++_drm_init_count != 1) return _drm_init_count;
 
    if (!ecore_drm2_init())
@@ -206,8 +208,12 @@ _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
         ecore_job_del(edata->focus_job);
         edata->focus_job = NULL;
      }
-   ecore_drm2_outputs_destroy(edata->dev);
-   ecore_drm2_device_close(edata->dev);
+   if (edata->dev)
+     {
+        ecore_drm2_outputs_destroy(edata->dev);
+        ecore_drm2_device_close(edata->dev);
+        edata->dev = NULL;
+     }
    ecore_drm2_shutdown();
    ecore_event_evas_shutdown();
    EINA_LIST_FREE(handlers, h)
@@ -225,6 +231,8 @@ _drm_free(Ecore_Evas *ee)
 
    edata = ee->engine.data;
    canvases = eina_list_remove(canvases, ee);
+   ecore_main_fd_handler_del(edata->hdlr);
+   edata->hdlr = NULL;
    _ecore_evas_drm_shutdown(edata);
    free(edata);
 }
@@ -1031,6 +1039,17 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
    ee->engine.data = edata;
 
+   if (!ecore_drm2_vblank_supported(edata->dev))
+     {
+        ee->engine.func->fn_animator_register = NULL;
+        ee->engine.func->fn_animator_unregister = NULL;
+     }
+   else
+     {
+        ee->engine.func->fn_animator_register = _drm_animator_register;
+        ee->engine.func->fn_animator_unregister = _drm_animator_unregister;
+     }
+
    /* FIXME */
    /* if (edata->device) ee->name = strdup(edata->device); */
 
@@ -1125,7 +1144,9 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
 EAPI Ecore_Evas *
 ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED, int x, int y, int w, int h)
 {
-   dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
+   static void *libglapi = NULL;
+
+   if (!libglapi) libglapi = dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
    if (dlerror()) return NULL;
 
    return _ecore_evas_new_internal(device, x, y, w, h, EINA_TRUE);

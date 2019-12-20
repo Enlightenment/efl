@@ -691,7 +691,7 @@ _elm_list_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 }
 
 EOLIAN static void
-_elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
+_elm_list_efl_canvas_group_group_calculate(Eo *obj, Elm_List_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord minw = 0, minh = 0, maxw = 0, maxh = 0, w = 0, h = 0, vmw = 0, vmh = 0;
@@ -699,6 +699,9 @@ _elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!efl_finalized_get(obj)) return; //not constructed yet
+
+   if (efl_canvas_group_need_recalculate_get(sd->box))
+     efl_canvas_group_calculate(sd->box);
 
    evas_object_size_hint_combined_min_get(sd->box, &minw, &minh);
    evas_object_size_hint_max_get(sd->box, &maxw, &maxh);
@@ -751,6 +754,7 @@ _elm_list_content_min_limit_cb(Evas_Object *obj,
 
    if ((sd->mode == ELM_LIST_LIMIT) ||
        (sd->mode == ELM_LIST_EXPAND)) return;
+   if (!efl_alive_get(obj)) return;
    sd->scr_minw = !!w;
    sd->scr_minh = !!h;
 
@@ -835,6 +839,7 @@ _items_fix(Evas_Object *obj)
    Evas_Coord mw, mh;
    int i, redo = 0;
    Eina_Array walk;
+   Eina_Bool hints_changed = EINA_FALSE;
 
    const char *style;
    const char *it_odd;
@@ -998,6 +1003,12 @@ _items_fix(Evas_Object *obj)
                   mw = mw > ew ? mw : ew;
                   mh = mh > eh ? mh : eh;
                   */
+                  {
+                     int pmw, pmh;
+                     /* if size changed, flag box for recalc to pull in new sizes */
+                     evas_object_size_hint_min_get(VIEW(it), &pmw, &pmh);
+                     hints_changed |= pmw != mh || pmh != mh;
+                  }
                   evas_object_size_hint_min_set(VIEW(it), mw, mh);
                   evas_object_show(VIEW(it));
                }
@@ -1043,6 +1054,8 @@ _items_fix(Evas_Object *obj)
 
    sd->fixing_now = EINA_FALSE;
    _elm_list_unwalk(obj, sd);
+   if (hints_changed)
+     efl_canvas_group_need_recalculate_set(sd->box, 1);
 
    //focus highlight in_theme is set by list item theme.
    _elm_widget_item_highlight_in_theme(
@@ -1126,6 +1139,8 @@ _elm_list_efl_ui_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   elm_interface_scrollable_reset_signals(obj);
+
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    EINA_LIST_FOREACH(sd->items, n, eo_it)
@@ -1137,7 +1152,6 @@ _elm_list_efl_ui_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
      }
 
    _items_fix(obj);
-
    elm_layout_sizing_eval(obj);
 
    return int_ret;
@@ -1597,8 +1611,8 @@ _long_press_cb(void *data)
    if (it->base->disabled) goto end;
 
    sd->longpressed = EINA_TRUE;
-   efl_event_callback_legacy_call
-     (WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
+   evas_object_smart_callback_call
+     (WIDGET(it), "longpressed", EO_OBJ(it));
 
 end:
    return ECORE_CALLBACK_CANCEL;
@@ -1748,8 +1762,8 @@ _mouse_down_cb(void *data,
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        efl_event_callback_legacy_call
-          (WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
+        evas_object_smart_callback_call
+          ( WIDGET(it), "clicked,double", EO_OBJ(it));
         efl_event_callback_legacy_call
           (WIDGET(it), ELM_LIST_EVENT_ACTIVATED, EO_OBJ(it));
      }
@@ -1784,8 +1798,8 @@ _mouse_up_cb(void *data,
         if (dx < 0) dx = -dx;
         if (dy < 0) dy = -dy;
         if ((dx < 5) && (dy < 5))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_CLICKED_RIGHT, EO_OBJ(it));
+          evas_object_smart_callback_call
+            ( obj, "clicked,right", EO_OBJ(it));
         return;
      }
 
@@ -3210,7 +3224,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_list, Elm_List_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_LIST_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_list), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_list), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_list)
 
 #include "elm_list_eo.c"

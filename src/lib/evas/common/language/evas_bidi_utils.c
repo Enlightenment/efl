@@ -233,7 +233,9 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    EvasBiDiCharType *char_types = NULL;
    EvasBiDiLevel *embedding_levels = NULL;
    const FriBidiChar *ustr;
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
    FriBidiChar *base_ustr = NULL;
+#endif
    EvasBiDiLevel ret_level = 0;
 #if FRIBIDI_MAJOR_VERSION >= 1
    EvasBiDiBracketType *bracket_types = NULL;
@@ -392,8 +394,9 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
         free(bidi_props->char_types);
      }
    bidi_props->char_types = char_types;
-
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
    if (base_ustr) free(base_ustr);
+#endif
 #if FRIBIDI_MAJOR_VERSION >= 1
    /* Currently, bracket_types is not reused in other places. */
    if (bracket_types) free(bracket_types);
@@ -408,7 +411,9 @@ cleanup:
    if (bracket_types) free(bracket_types);
 #endif
    if (embedding_levels) free(embedding_levels);
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
    if (base_ustr) free(base_ustr);
+#endif
    if (bidi_props) evas_bidi_paragraph_props_unref(bidi_props); /* Clean up the bidi props */
    return NULL;
 }
@@ -441,7 +446,10 @@ Eina_Bool
 evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l)
 {
    EvasBiDiStrIndex *v_to_l = NULL;
-   FriBidiChar *ustr = NULL, *base_ustr = NULL;
+   FriBidiChar *ustr = NULL;
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+   FriBidiChar *base_ustr = NULL;
+#endif
 
    if (!props)
      return EINA_FALSE;
@@ -497,7 +505,9 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, 
    return EINA_FALSE;
 /* ERROR HANDLING */
 error:
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
    if (base_ustr) free(base_ustr);
+#endif
    _SAFE_FREE(v_to_l);
    return EINA_TRUE;
 }

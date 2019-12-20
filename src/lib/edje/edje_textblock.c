@@ -1,25 +1,5 @@
 #include "edje_private.h"
 
-static double
-_edje_part_recalc_single_textblock_scale_range_adjust(Edje_Part_Description_Text *chosen_desc, double base_scale, double scale)
-{
-   double size, min, max;
-
-   if (chosen_desc->text.size == 0)
-     return scale;
-
-   min = base_scale * chosen_desc->text.size_range_min;
-   max = chosen_desc->text.size_range_max * base_scale;
-   size = chosen_desc->text.size * scale;
-
-   if ((size > max) && (max > 0))
-     scale = max / (double)chosen_desc->text.size;
-   else if (size < min)
-     scale = min / (double)chosen_desc->text.size;
-
-   return scale;
-}
-
 /*
  * Legacy function for min/max calculation of textblock part.
  * It can't calculate min/max properly in many cases.
@@ -34,7 +14,8 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
                                                        int *minw, int *minh,
                                                        int *maxw, int *maxh)
 {
-   Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
+   Eina_Size2D size;
+   Evas_Coord ins_l, ins_r, ins_t, ins_b;
    unsigned char minx2 = 0, miny2 = 0, maxx2 = 0, maxy2 = 0;
 
    minx2 = chosen_desc->text.min_x;
@@ -57,18 +38,18 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
      {
         int mw = 0, mh = 0;
 
-        tw = th = 0;
+        size.w = size.h = 0;
         if (!minx2)
           {
              efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(TO_INT(params->eval.w),  TO_INT(params->eval.h)));
-             efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+             size = efl_canvas_textblock_size_formatted_get(ep->object);
           }
         else
-          evas_object_textblock_size_native_get(ep->object, &tw, &th);
+          size = efl_canvas_textblock_size_native_get(ep->object);
         evas_object_textblock_style_insets_get(ep->object, &ins_l,
                                                &ins_r, &ins_t, &ins_b);
-        mw = ins_l + tw + ins_r;
-        mh = ins_t + th + ins_b;
+        mw = ins_l + size.w + ins_r;
+        mh = ins_t + size.h + ins_b;
         if (minw && minx2)
           {
              if (mw > *minw) *minw = mw;
@@ -83,18 +64,18 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
      {
         int mw = 0, mh = 0;
 
-        tw = th = 0;
+        size.w = size.h = 0;
         if (!maxx2)
           {
              efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(TO_INT(params->eval.w),  TO_INT(params->eval.h)));
-             efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+             size = efl_canvas_textblock_size_formatted_get(ep->object);
           }
         else
-          evas_object_textblock_size_native_get(ep->object, &tw, &th);
+          size = efl_canvas_textblock_size_native_get(ep->object);
         evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
                                                &ins_t, &ins_b);
-        mw = ins_l + tw + ins_r;
-        mh = ins_t + th + ins_b;
+        mw = ins_l + size.w + ins_r;
+        mh = ins_t + size.h + ins_b;
         if (maxw && maxx2)
           {
              if (mw > *maxw) *maxw = mw;
@@ -115,6 +96,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                                                 int *minw, int *minh,
                                                 int *maxw, int *maxh)
 {
+   Eina_Size2D size;
    Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
    Evas_Coord min_calc_w = 0, min_calc_h = 0;
 
@@ -178,14 +160,17 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
              if (temp_w > 0)
                {
                   efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
-                  efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+                  size = efl_canvas_textblock_size_formatted_get(ep->object);
+                  tw = size.w;
+                  th = size.h;
 
                   tw += ins_l + ins_r;
                   th += ins_t + ins_b;
                }
              else
                {
-                  efl_canvas_text_size_native_get(ep->object, NULL, &th);
+                  size = efl_canvas_textblock_size_native_get(ep->object);
+                  th = size.h;
 
                   th += ins_t + ins_b;
                }
@@ -216,7 +201,9 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                     }
 
                   efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
-                  efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+                  size = efl_canvas_textblock_size_formatted_get(ep->object);
+                  tw = size.w;
+                  th = size.h;
 
                   tw += ins_l + ins_r;
                   th += ins_t + ins_b;
@@ -225,7 +212,8 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                    * don't get meaningless height for multiline */
                   if (temp_w <= 0)
                     {
-                       efl_canvas_text_size_native_get(ep->object, NULL, &th);
+                       size = efl_canvas_textblock_size_native_get(ep->object);
+                       th = size.h;
 
                        th += ins_t + ins_b;
                     }
@@ -238,7 +226,9 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                    * text.min: 1 X
                    * text.max: 0 X without max width.
                    * It is a singleline Textblock. */
-                  efl_canvas_text_size_native_get(ep->object, &tw, &th);
+                  size = efl_canvas_textblock_size_native_get(ep->object);
+                  tw = size.w;
+                  th = size.h;
 
                   tw += ins_l + ins_r;
                   th += ins_t + ins_b;
@@ -301,14 +291,17 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                   if (temp_w > 0)
                     {
                        efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
-                       efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+                       size = efl_canvas_textblock_size_formatted_get(ep->object);
+                       tw = size.w;
+                       th = size.h;
 
                        tw += ins_l + ins_r;
                        th += ins_t + ins_b;
                     }
                   else
                     {
-                       efl_canvas_text_size_native_get(ep->object, NULL, &th);
+                       size = efl_canvas_textblock_size_native_get(ep->object);
+                       th = size.h;
 
                        th += ins_t + ins_b;
                     }
@@ -322,7 +315,9 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                   /* text.min: 1 X
                    * text.max: 1 X
                    * Singleline. */
-                  efl_canvas_text_size_native_get(ep->object, &tw, &th);
+                  size = efl_canvas_textblock_size_native_get(ep->object);
+                  tw = size.w;
+                  th = size.h;
 
                   tw += ins_l + ins_r;
                   th += ins_t + ins_b;
@@ -359,7 +354,9 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                              * text.max: 1 1 */
 
                             efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
-                            efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+                            size = efl_canvas_textblock_size_formatted_get(ep->object);
+                            tw = size.w;
+                            th = size.h;
 
                             tw += ins_l + ins_r;
                             th += ins_t + ins_b;
@@ -368,7 +365,8 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                              * don't get meaningless height for multiline */
                             if (temp_w <= 0)
                               {
-                                 efl_canvas_text_size_native_get(ep->object, NULL, &th);
+                                 size = efl_canvas_textblock_size_native_get(ep->object);
+                                 th = size.h;
 
                                  th += ins_t + ins_b;
                               }
@@ -386,7 +384,9 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
 
                        temp_h = efl_gfx_entity_size_get(ep->object).h;
                        efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
-                       efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+                       size = efl_canvas_textblock_size_formatted_get(ep->object);
+                       tw = size.w;
+                       th = size.h;
 
                        tw += ins_l + ins_r;
                        th += ins_t + ins_b;
@@ -395,7 +395,8 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                         * don't get meaningless height for multiline */
                        if (temp_w <= 0)
                          {
-                            efl_canvas_text_size_native_get(ep->object, NULL, &th);
+                            size = efl_canvas_textblock_size_native_get(ep->object);
+                            th = size.h;
 
                             th += ins_t + ins_b;
                          }
@@ -416,6 +417,82 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
      }
 }
 
+Eina_Bool
+_edje_part_textblock_style_text_set(Edje *ed,
+                                    Edje_Real_Part *ep,
+                                    Edje_Part_Description_Text *chosen_desc)
+{
+   const char *text = "";
+   const char *style = "";
+   Evas_Textblock_Style *stl = NULL;
+   const char *tmp;
+
+   if (chosen_desc->text.id_source >= 0)
+     {
+        Edje_Part_Description_Text *et;
+        ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
+        et = _edje_real_part_text_source_description_get(ep, NULL);
+        tmp = edje_string_get(&et->text.style);
+        if (tmp) style = tmp;
+     }
+   else
+     {
+        ep->typedata.text->source = NULL;
+
+        tmp = edje_string_get(&chosen_desc->text.style);
+        if (tmp) style = tmp;
+     }
+
+   if (chosen_desc->text.id_text_source >= 0)
+     {
+        Edje_Part_Description_Text *et;
+        Edje_Real_Part *rp;
+
+        ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+
+        et = _edje_real_part_text_text_source_description_get(ep, &rp);
+        text = edje_string_get(&et->text.text);
+
+        if (rp->typedata.text->text) text = rp->typedata.text->text;
+     }
+   else
+     {
+        ep->typedata.text->text_source = NULL;
+        text = NULL;
+        if (chosen_desc->text.domain)
+          {
+             if (!chosen_desc->text.text.translated)
+               chosen_desc->text.text.translated = _set_translated_string(ed, ep);
+             if (chosen_desc->text.text.translated)
+               text = chosen_desc->text.text.translated;
+          }
+
+        if (!text) text = edje_string_get(&chosen_desc->text.text);
+
+        if (ep->typedata.text->text) text = ep->typedata.text->text;
+     }
+
+   stl = _edje_textblock_style_get(ed, style);
+   if (stl)
+     {
+        if (evas_object_textblock_style_get(ep->object) != stl)
+          evas_object_textblock_style_set(ep->object, stl);
+        // FIXME: need to account for editing
+        if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+          {
+             // do nothing - should be done elsewhere
+          }
+        else
+          {
+             evas_object_textblock_text_markup_set(ep->object, text);
+          }
+
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 void
 _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    Edje *ed,
@@ -431,154 +508,38 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
    if (chosen_desc)
      {
-        Evas_Coord tw, th;
-        const char *text = "";
-        const char *style = "";
-        Edje_Style *stl = NULL;
-        const char *tmp;
-        Eina_List *l;
-
-        if (chosen_desc->text.id_source >= 0)
-          {
-             Edje_Part_Description_Text *et;
-
-             ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
-
-             et = _edje_real_part_text_source_description_get(ep, NULL);
-             tmp = edje_string_get(&et->text.style);
-             if (tmp) style = tmp;
-          }
-        else
-          {
-             ep->typedata.text->source = NULL;
-
-             tmp = edje_string_get(&chosen_desc->text.style);
-             if (tmp) style = tmp;
-          }
-
-        if (chosen_desc->text.id_text_source >= 0)
-          {
-             Edje_Part_Description_Text *et;
-             Edje_Real_Part *rp;
-
-             ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
-
-             et = _edje_real_part_text_text_source_description_get(ep, &rp);
-             text = edje_string_get(&et->text.text);
-
-             if (rp->typedata.text->text) text = rp->typedata.text->text;
-          }
-        else
-          {
-             ep->typedata.text->text_source = NULL;
-             text = NULL;
-             if (chosen_desc->text.domain)
-               {
-                  if (!chosen_desc->text.text.translated)
-                    chosen_desc->text.text.translated = _set_translated_string(ed, ep);
-                  if (chosen_desc->text.text.translated)
-                    text = chosen_desc->text.text.translated;
-               }
-             if (!text)
-               text = edje_string_get(&chosen_desc->text.text);
-             if (ep->typedata.text->text) text = ep->typedata.text->text;
-          }
-
-        EINA_LIST_FOREACH(ed->file->styles, l, stl)
-          {
-             if ((stl->name) && (!strcmp(stl->name, style))) break;
-             stl = NULL;
-          }
 
         if (ep->part->scale)
           evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
-        if (stl)
+        //Gets textblock's style and text to set evas_object_textblock properties.
+        //If there is no style for it. don't need to calc.
+        if (_edje_part_textblock_style_text_set(ed, ep, chosen_desc))
           {
-             if (evas_object_textblock_style_get(ep->object) != stl->style)
-               evas_object_textblock_style_set(ep->object, stl->style);
-             // FIXME: need to account for editing
-             if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-               {
-                  // do nothing - should be done elsewhere
-               }
-             else
-               {
-                  evas_object_textblock_text_markup_set(ep->object, text);
-               }
-
              if ((chosen_desc->text.fit_x) || (chosen_desc->text.fit_y))
                {
-                  double base_s = 1.0;
-                  double orig_s;
-                  double s = base_s;
+                  unsigned int size_array[255];
+                  size_t size_array_len = 0;
+                  Eina_List *l;
+                  unsigned int *value;
+                  EINA_LIST_FOREACH(chosen_desc->text.fit_size_array, l, value)
+                    {
+                       size_array[size_array_len++] = *value;
+                    }
+                 unsigned int mode = TEXTBLOCK_FIT_MODE_NONE;
 
-                  if (ep->part->scale) base_s = TO_DOUBLE(sc);
-                  efl_gfx_entity_scale_set(ep->object, base_s);
-                  efl_canvas_text_size_native_get(ep->object, &tw, &th);
-
-                  orig_s = base_s;
-                  /* Now make it bigger so calculations will be more accurate
-                   * and less influenced by hinting... */
-                  {
-                     orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
-                                                                                    orig_s * TO_INT(params->eval.w) / tw);
-                     efl_gfx_entity_scale_set(ep->object, orig_s);
-                     efl_canvas_text_size_native_get(ep->object, &tw, &th);
-                  }
                   if (chosen_desc->text.fit_x)
-                    {
-                       if (tw > 0)
-                         {
-                            s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
-                                                                                      orig_s * TO_INT(params->eval.w) / tw);
-                            efl_gfx_entity_scale_set(ep->object, s);
-                            efl_canvas_text_size_native_get(ep->object, NULL, NULL);
-                         }
-                    }
+                    mode |= TEXTBLOCK_FIT_MODE_WIDTH;
                   if (chosen_desc->text.fit_y)
+                    mode |= TEXTBLOCK_FIT_MODE_HEIGHT;
+                  evas_textblock_fit_options_set(ep->object, mode);
+                  evas_textblock_fit_step_size_set(ep->object, chosen_desc->text.fit_step);
+                  if ( chosen_desc->text.size_range_min || chosen_desc->text.size_range_max)
+                     evas_textblock_fit_size_range_set(ep->object, chosen_desc->text.size_range_min,  chosen_desc->text.size_range_max);
+                  if (size_array_len>0)
                     {
-                       if (th > 0)
-                         {
-                            double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
-                                                                                                 orig_s * TO_INT(params->eval.h) / th);
-                            /* If we already have X fit, restrict Y to be no bigger
-                             * than what we got with X. */
-                            if (!((chosen_desc->text.fit_x) && (tmp_s > s)))
-                              {
-                                 s = tmp_s;
-                              }
-
-                            efl_gfx_entity_scale_set(ep->object, s);
-                            efl_canvas_text_size_native_get(ep->object, NULL, NULL);
-                         }
+                       evas_textblock_fit_size_array_set(ep->object,size_array,size_array_len);
                     }
-
-                  /* Final tuning, try going down 90% at a time, hoping it'll
-                   * actually end up being correct. */
-                  {
-                     int i = 5;   /* Tries before we give up. */
-                     Evas_Coord fw, fh;
-                     efl_canvas_text_size_native_get(ep->object, &fw, &fh);
-
-                     /* If we are still too big, try reducing the size to
-                      * 95% each try. */
-                     while ((i > 0) &&
-                            ((chosen_desc->text.fit_x && (fw > TO_INT(params->eval.w))) ||
-                             (chosen_desc->text.fit_y && (fh > TO_INT(params->eval.h)))))
-                       {
-                          double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, s * 0.95);
-
-                          /* Break if we are not making any progress. */
-                          if (EQ(tmp_s, s))
-                            break;
-                          s = tmp_s;
-
-                          efl_gfx_entity_scale_set(ep->object, s);
-                          efl_canvas_text_size_native_get(ep->object, &fw, &fh);
-                          i--;
-                       }
-                  }
                }
 
              if ((ed->file->efl_version.major >= 1) && (ed->file->efl_version.minor >= 19))

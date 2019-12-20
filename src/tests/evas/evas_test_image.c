@@ -655,6 +655,9 @@ _file_to_memory(const char *filename, char **result)
    return size;
 }
 
+static const Efl_Gfx_Image_Stretch_Region hsz[] = { { 8, 8 }, { 16, 555 } };
+static const Efl_Gfx_Image_Stretch_Region vsz[] = { { 8, 8 }, { 16, 512 } };
+
 EFL_START_TEST(evas_object_image_cached_data_comparision)
 {
    int i;
@@ -666,6 +669,7 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
    const uint32_t *d2, *n_d2;
    const char *img_path, *img_path2;
    Evas_Object *img, *img2;
+   Eina_Rect region;
 
    Evas *e = _setup_evas();
 
@@ -727,6 +731,26 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
         fail_if(w2 != n_w2 || h2 != n_h2);
         fail_if(memcmp(d2, n_d2, w2 * h2 * 4));
      }
+
+   region = efl_gfx_image_content_region_get(img);
+   ck_assert_int_eq(region.x, 0);
+   ck_assert_int_eq(region.y, 0);
+   ck_assert_int_eq(region.w, 250);
+   ck_assert_int_eq(region.h, 250);
+   efl_gfx_image_border_insets_set(img, 7, 14, 5, 10);
+   region = efl_gfx_image_content_region_get(img);
+   ck_assert_int_eq(region.x, 7);
+   ck_assert_int_eq(region.y, 5);
+   ck_assert_int_eq(region.w, 250 - 7 - 14);
+   ck_assert_int_eq(region.h, 250 - 5 - 10);
+
+   efl_gfx_image_stretch_region_set(img, EINA_C_ARRAY_ITERATOR_NEW(hsz),
+                                    EINA_C_ARRAY_ITERATOR_NEW(vsz));
+   region = efl_gfx_image_content_region_get(img);
+   ck_assert_int_eq(region.x, 8);
+   ck_assert_int_eq(region.y, 8);
+   ck_assert_int_eq(region.w, 120);
+   ck_assert_int_eq(region.h, 77);
 }
 EFL_END_TEST
 
@@ -1005,6 +1029,94 @@ EFL_START_TEST(evas_object_image_jp2k_loader_data)
 EFL_END_TEST
 #endif
 
+EFL_START_TEST(evas_object_image_9patch)
+{
+   Evas *e = _setup_evas();
+   Evas *sub_e;
+   Ecore_Evas *ee, *sub_ee;
+   Evas_Object *obj, *cmp, *ref;
+   Eina_Strbuf *str;
+
+   const char *files[] = {
+     "9patch_test.9.png"
+   };
+   unsigned int i;
+
+   ee = ecore_evas_ecore_evas_get(e);
+
+   cmp = ecore_evas_object_image_new(ee);
+   evas_object_image_filled_set(cmp, EINA_TRUE);
+   evas_object_image_size_set(cmp, 1024, 1024);
+   evas_object_resize(cmp, 1024, 1024);
+   evas_object_show(cmp);
+
+   sub_ee = ecore_evas_object_ecore_evas_get(cmp);
+   sub_e = ecore_evas_object_evas_get(cmp);
+
+   ecore_evas_alpha_set(sub_ee, EINA_TRUE);
+
+   obj = evas_object_rectangle_add(sub_e);
+   evas_object_color_set(obj, 0, 0, 0, 0);
+   evas_object_move(obj, 0, 0);
+   evas_object_resize(obj, 1024, 1024);
+   evas_object_show(obj);
+
+   obj = evas_object_image_filled_add(sub_e);
+   evas_object_image_alpha_set(obj, 1);
+   evas_object_move(obj, 0, 0);
+   evas_object_resize(obj, 1024, 1024);
+   ecore_evas_resize(sub_ee, 1024, 1024);
+   evas_object_show(obj);
+
+   Evas_Object *rect = evas_object_rectangle_add(sub_e);
+   evas_object_color_set(rect, 128, 0, 0, 128);
+   evas_object_show(rect);
+
+   ref = evas_object_image_add(e);
+   str = eina_strbuf_new();
+
+   for (i = 0; i < sizeof (files) / sizeof (files[0]); i++)
+     {
+        Eina_Rect content;
+        int r_w, r_h;
+        const uint32_t *d, *r_d;
+
+        eina_strbuf_append_printf(str, "%s/%s", TESTS_IMG_DIR, files[i]);
+        evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
+        ck_assert_int_eq(evas_object_image_load_error_get(obj), EVAS_LOAD_ERROR_NONE);
+        content = efl_gfx_image_content_region_get(obj);
+
+        evas_object_move(rect, content.x, content.y);
+        evas_object_resize(rect, content.w, content.h);
+
+        eina_strbuf_reset(str);
+
+        ecore_evas_manual_render(ee);
+
+        d = evas_object_image_data_get(cmp, EINA_FALSE);
+
+        eina_strbuf_append_printf(str, "%s/%s.png", TESTS_IMG_DIR, files[i]);
+        evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
+        ck_assert_int_eq(evas_object_image_load_error_get(ref), EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(ref, &r_w, &r_h);
+        r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        fail_if(r_w != 1024 || r_h != 1024);
+        for (int i = 0; i < r_w * r_h; i++)
+          fail_if(((d[i] - r_d[i]) & 0xF8F8F8F8) != 0);
+     }
+
+   evas_object_del(obj);
+   evas_object_del(ref);
+
+   eina_strbuf_free(str);
+
+   evas_free(e);
+}
+EFL_END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_api);
@@ -1030,6 +1142,7 @@ void evas_test_image_object(TCase *tc)
 #endif
    tcase_add_test(tc, evas_object_image_partially_load_orientation);
    tcase_add_test(tc, evas_object_image_cached_data_comparision);
+   tcase_add_test(tc, evas_object_image_9patch);
 }
 
 

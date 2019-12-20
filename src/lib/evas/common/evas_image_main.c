@@ -2,7 +2,9 @@
 # include "config.h"  /* so that EAPI in Eet.h is correctly defined */
 #endif
 
-#ifdef HAVE_SYS_MMAN_H
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
 
@@ -518,7 +520,11 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
              free(frame);
           }
      }
-   if (ie->f && !ie->flags.given_mmap) eina_file_close(ie->f);
+   if (ie->f && !ie->flags.given_mmap)
+     {
+        eina_file_close(ie->f); // close matching open (dup in _evas_image_file_header) OK
+        ie->f = NULL;
+     }
    eina_freeq_ptr_add(eina_freeq_main_get(), im, free, sizeof(*im));
 }
 

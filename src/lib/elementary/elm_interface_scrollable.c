@@ -77,8 +77,8 @@ static void _elm_scroll_momentum_animator(void *data, const Efl_Event *event);
 
 static const char iface_scr_legacy_dragable_hbar[]  = "elm.dragable.hbar";
 static const char iface_scr_legacy_dragable_vbar[]  = "elm.dragable.vbar";
-static const char iface_scr_efl_ui_dragable_hbar[]  = "efl.dragable.hbar";
-static const char iface_scr_efl_ui_dragable_vbar[]  = "efl.dragable.vbar";
+static const char iface_scr_efl_ui_dragable_hbar[]  = "efl.draggable.horizontal_bar";
+static const char iface_scr_efl_ui_dragable_vbar[]  = "efl.draggable.vertical_bar";
 
 static double
 _round(double value, int pos)
@@ -467,7 +467,7 @@ _elm_scroll_smooth_debug_shutdown(void)
 }
 
 static void
-_elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool rely_on_cache)
 {
    Eina_Bool go_left = EINA_TRUE, go_right = EINA_TRUE;
    Eina_Bool go_up = EINA_TRUE, go_down = EINA_TRUE;
@@ -479,11 +479,24 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
    elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
    elm_obj_pan_pos_get(sid->pan_obj, &x, &y);
 
-   if (x == minx) go_left = EINA_FALSE;
-   if (x == (mx + minx)) go_right = EINA_FALSE;
-   if (y == miny) go_up = EINA_FALSE;
-   if (y == (my + miny)) go_down = EINA_FALSE;
-   if (go_left != sid->go_left)
+   if (x <= minx) go_left = EINA_FALSE;
+   if (x >= (mx + minx)) go_right = EINA_FALSE;
+   if (y <= miny) go_up = EINA_FALSE;
+   if (y >= (my + miny)) go_down = EINA_FALSE;
+
+   if (sid->loop_v)
+     {
+        go_up = EINA_TRUE;
+        go_down = EINA_TRUE;
+     }
+
+   if (sid->loop_h)
+     {
+        go_right = EINA_TRUE;
+        go_left = EINA_TRUE;
+     }
+
+   if (!rely_on_cache || go_left != sid->go_left)
      {
         if (go_left)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,left", "elm");
@@ -491,7 +504,7 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
         sid->go_left = go_left;
      }
-   if (go_right != sid->go_right)
+   if (!rely_on_cache || go_right != sid->go_right)
      {
         if (go_right)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,right", "elm");
@@ -499,7 +512,7 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
         sid->go_right= go_right;
      }
-   if (go_up != sid->go_up)
+   if (!rely_on_cache ||go_up != sid->go_up)
      {
         if (go_up)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,up", "elm");
@@ -507,7 +520,7 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
         sid->go_up = go_up;
      }
-   if (go_down != sid->go_down)
+   if (!rely_on_cache ||go_down != sid->go_down)
      {
         if (go_down)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,down", "elm");
@@ -587,6 +600,7 @@ _elm_scroll_scroll_bar_h_visibility_apply(Elm_Scrollable_Smart_Interface_Data *s
      edje_object_signal_emit(sid->edje_obj, "elm,action,hide,hbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_direction_arrows_eval(sid, EINA_FALSE);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
 }
@@ -608,6 +622,7 @@ _elm_scroll_scroll_bar_v_visibility_apply(Elm_Scrollable_Smart_Interface_Data *s
        (sid->edje_obj, "elm,action,hide,vbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_direction_arrows_eval(sid, EINA_FALSE);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
 }
@@ -681,7 +696,7 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
 
    if (scroll_h_vis_change) _elm_scroll_scroll_bar_h_visibility_apply(sid);
 
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
    return scroll_h_vis_change;
 }
 
@@ -753,7 +768,7 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
      }
    if (scroll_v_vis_change) _elm_scroll_scroll_bar_v_visibility_apply(sid);
 
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
    return scroll_v_vis_change;
 }
 
@@ -1105,6 +1120,7 @@ _elm_scroll_policy_signal_emit(Elm_Scrollable_Smart_Interface_Data *sid)
        (sid->edje_obj, "elm,action,show_notalways,vbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_direction_arrows_eval(sid, EINA_FALSE);
 }
 
 static void
@@ -1773,7 +1789,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
           }
      }
 
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
 }
 
 EOLIAN static void
@@ -1964,6 +1980,7 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
      return;
 
    sid->content_info.resized = EINA_FALSE;
+   if (!sid->pan_obj) return;
 
    /* Flip to RTL cords only if init in RTL mode */
    if (sid->is_mirrored)
@@ -2238,11 +2255,11 @@ _elm_scroll_wheel_event_cb(void *data,
      return;
    if (direction)
      {
-        if (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL) return;
+        if (sid->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL) return;
      }
    else
      {
-        if (sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) return;
+        if (sid->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) return;
      }
 
    evas_post_event_callback_push(e, _scroll_wheel_post_event_cb, sid);
@@ -2256,7 +2273,7 @@ _elm_scroll_post_event_up(void *data,
 
    if (sid->obj)
      {
-        elm_widget_scroll_lock_set(sid->obj, EFL_UI_SCROLL_BLOCK_NONE);
+        elm_widget_scroll_lock_set(sid->obj, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
      }
    return EINA_TRUE;
 }
@@ -2720,8 +2737,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
 
    if (!sid->pan_obj) return;
 
-   if ((sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
-       (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if ((sid->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) &&
+       (sid->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      return;
 
 #ifdef SMOOTHDBG
@@ -2870,7 +2887,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
                        if (pgx != x &&
                            !(sid->block &
-                            EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+                            EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                             _elm_scroll_scroll_to_x
@@ -2884,7 +2901,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
                        if (pgy != y &&
                            !(sid->block &
-                            EFL_UI_SCROLL_BLOCK_VERTICAL))
+                            EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                             _elm_scroll_scroll_to_y
@@ -2971,8 +2988,8 @@ _elm_scroll_mouse_down_event_cb(void *data,
    sid = data;
    ev = event_info;
 
-   if ((sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
-       (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if ((sid->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) &&
+       (sid->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      return;
 
 #ifdef SMOOTHDBG
@@ -3121,7 +3138,7 @@ _elm_scroll_post_event_move(void *data,
                             Evas *e EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
    Eina_Bool horiz, vert;
    int start = 0;
 
@@ -3154,7 +3171,7 @@ _elm_scroll_post_event_move(void *data,
                   sid->down.dragged = EINA_TRUE;
                   if (sid->obj)
                     {
-                       block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+                       block |= EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
                        elm_widget_scroll_lock_set(sid->obj, block);
                     }
                   start = 1;
@@ -3177,7 +3194,7 @@ _elm_scroll_post_event_move(void *data,
                   sid->down.dragged = EINA_TRUE;
                   if (sid->obj)
                     {
-                       block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
+                       block |= EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
                        elm_widget_scroll_lock_set(sid->obj, block);
                     }
                   start = 1;
@@ -3432,8 +3449,8 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
    if (!sid->pan_obj) return;
 
-   if ((sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
-       (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if ((sid->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) &&
+       (sid->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      return;
 
    ev = event_info;
@@ -3448,7 +3465,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
    if (!sid->down.now) return;
 
    if ((sid->scrollto.x.animator) && (!sid->hold) && (!sid->freeze) &&
-       !(sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+       !(sid->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      {
         Evas_Coord px = 0;
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
@@ -3458,7 +3475,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
      }
 
    if ((sid->scrollto.y.animator) && (!sid->hold) && (!sid->freeze) &&
-       !(sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL))
+       !(sid->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
      {
         Evas_Coord py = 0;
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
@@ -3507,7 +3524,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        if (x > (y * 2))
                          {
                             if (!(sid->block &
-                                  EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+                                  EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
                               {
                                  sid->down.dir_x = EINA_TRUE;
                               }
@@ -3518,7 +3535,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                          {
                             sid->down.dir_x = EINA_FALSE;
                             if (!(sid->block &
-                                  EFL_UI_SCROLL_BLOCK_VERTICAL))
+                                  EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
                               {
                                  sid->down.dir_y = EINA_TRUE;
                               }
@@ -3527,12 +3544,12 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        if (!dodir)
                          {
                             if (!(sid->block &
-                                  EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+                                  EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
                               {
                                  sid->down.dir_x = EINA_TRUE;
                               }
                             if (!(sid->block &
-                                  EFL_UI_SCROLL_BLOCK_VERTICAL))
+                                  EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
                               {
                                  sid->down.dir_y = EINA_TRUE;
                               }
@@ -3544,7 +3561,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        if (x > y)
                          {
                             if (!(sid->block &
-                                  EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+                                  EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
                               {
                                  sid->down.dir_x = EINA_TRUE;
                               }
@@ -3554,7 +3571,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                          {
                             sid->down.dir_x = EINA_FALSE;
                             if (!(sid->block &
-                                  EFL_UI_SCROLL_BLOCK_VERTICAL))
+                                  EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
                               {
                                  sid->down.dir_y = EINA_TRUE;
                               }
@@ -3565,12 +3582,12 @@ _elm_scroll_mouse_move_event_cb(void *data,
         else
           {
              if (!(sid->block &
-                   EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+                   EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
                {
                   sid->down.dir_x = EINA_TRUE;
                }
              if (!(sid->block &
-                   EFL_UI_SCROLL_BLOCK_VERTICAL))
+                   EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
                {
                   sid->down.dir_y = EINA_TRUE;
                }
@@ -4011,6 +4028,21 @@ _scroll_event_object_detach(Evas_Object *obj)
 }
 
 EOLIAN static void
+_elm_interface_scrollable_reset_signals(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   sid->go_up = sid->go_down = sid->go_right = sid->go_left = EINA_FALSE;
+
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,down", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,vbar", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,hbar", "elm");
+
+   _elm_scroll_scroll_bar_visibility_adjust(sid);
+}
+
+EOLIAN static void
 _elm_interface_scrollable_objects_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Object *edje_object, Evas_Object *hit_rectangle)
 {
    Evas_Coord mw, mh;
@@ -4021,6 +4053,8 @@ _elm_interface_scrollable_objects_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
      _scroll_edje_object_detach(obj);
 
    sid->edje_obj = edje_object;
+
+   elm_interface_scrollable_reset_signals(obj);
 
    if (sid->event_rect)
      _scroll_event_object_detach(obj);
@@ -4120,7 +4154,7 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
      }
    if ((px != minx) || (py != miny))
      edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
 }
 
 static void
@@ -4518,7 +4552,7 @@ _elm_interface_scrollable_policy_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_I
    _elm_scroll_policy_signal_emit(sid);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
 }
 
 EOLIAN static void
@@ -4791,12 +4825,12 @@ _elm_interface_scrollable_gravity_get(const Eo *obj EINA_UNUSED, Elm_Scrollable_
 }
 
 EOLIAN static void
-_elm_interface_scrollable_movement_block_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Efl_Ui_Scroll_Block block)
+_elm_interface_scrollable_movement_block_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Efl_Ui_Layout_Orientation block)
 {
    sid->block = block;
 }
 
-EOLIAN static Efl_Ui_Scroll_Block
+EOLIAN static Efl_Ui_Layout_Orientation
 _elm_interface_scrollable_movement_block_get(const Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid)
 {
    return sid->block;
@@ -4824,8 +4858,8 @@ _elm_interface_scrollable_content_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_S
 EOLIAN static void
 _elm_interface_scrollable_content_loop_get(const Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool *loop_h, Eina_Bool *loop_v)
 {
-   *loop_h = sid->loop_h;
-   *loop_v = sid->loop_v;
+   if (loop_h) *loop_h = sid->loop_h;
+   if (loop_v) *loop_v = sid->loop_v;
 }
 
 EOLIAN static void
@@ -4858,7 +4892,7 @@ _elm_interface_scrollable_efl_canvas_group_group_add(Eo *obj, Elm_Scrollable_Sma
    sid->one_direction_at_a_time = ELM_SCROLLER_SINGLE_DIRECTION_SOFT;
    sid->momentum_animator_disabled = EINA_FALSE;
    sid->bounce_animator_disabled = EINA_FALSE;
-   sid->block = EFL_UI_SCROLL_BLOCK_NONE;
+   sid->block = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
 
    _elm_scroll_scroll_bar_reset(sid);
 

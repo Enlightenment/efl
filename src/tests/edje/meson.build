@@ -10,11 +10,14 @@ edje_suite_src = [
   'edje_test_signal.c',
   'edje_test_swallow.c',
   'edje_test_text.c',
+  'efl_test_layout.c',
+  'efl_test_layout2.c',
+  'efl_test_layout3.c',
 ]
 
 edje_suite = executable('edje_suite',
   edje_suite_src, themes,
-  dependencies: [check, eina, ecore_evas, edje],
+  dependencies: [check, eina, ecore_evas, edje, efreet],
   include_directories : config_dir,
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',

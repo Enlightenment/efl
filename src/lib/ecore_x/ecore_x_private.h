@@ -44,10 +44,6 @@
 #ifdef ECORE_XDAMAGE
 #include <X11/extensions/Xdamage.h>
 #endif /* ifdef ECORE_XDAMAGE */
-#ifdef ECORE_XGESTURE
-#include <X11/extensions/gesture.h>
-#include <X11/extensions/gestureproto.h>
-#endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XDPMS
 #include <X11/extensions/dpms.h>
 #endif /* ifdef ECORE_XDPMS */
@@ -248,15 +244,6 @@ void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
 void _ecore_x_event_handle_screensaver_notify(XEvent *xevent);
-#ifdef ECORE_XGESTURE
-void _ecore_x_event_handle_gesture_notify_flick(XEvent *xevent);
-void _ecore_x_event_handle_gesture_notify_pan(XEvent *xevent);
-void _ecore_x_event_handle_gesture_notify_pinchrotation(XEvent *xevent);
-void _ecore_x_event_handle_gesture_notify_tap(XEvent *xevent);
-void _ecore_x_event_handle_gesture_notify_tapnhold(XEvent *xevent);
-void _ecore_x_event_handle_gesture_notify_hold(XEvent *xevent);
-void _ecore_x_event_handle_gesture_notify_group(XEvent *xevent);
-#endif /* ifdef ECORE_XGESTURE */
 void _ecore_x_event_handle_sync_counter(XEvent *xevent);
 void _ecore_x_event_handle_sync_alarm(XEvent *xevent);
 #ifdef ECORE_XRANDR
@@ -405,5 +392,25 @@ int _ecore_x_shutdown(void);
 #else /* ifdef LOGFNS */
 #define LOGFN(fl, ln, fn)
 #endif /* ifdef LOGFNS */
+
+
+
+#ifdef EAPI
+# undef EAPI
+#endif // ifdef EAPI
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  define EAPI __attribute__ ((visibility("default")))
+# else // if __GNUC__ >= 4
+#  define EAPI
+# endif // if __GNUC__ >= 4
+#else // ifdef __GNUC__
+# define EAPI
+#endif // ifdef __GNUC__
+EAPI void ecore_x_window_root_properties_select(void);
+#undef EAPI
+#define EAPI
+
 
 #endif /* ifndef _ECORE_X_PRIVATE_H */

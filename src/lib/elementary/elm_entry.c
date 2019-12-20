@@ -730,6 +730,16 @@ _selection_data_cb(void *data EINA_UNUSED,
      }
    else
      {
+        if (!(sel_data->format & ELM_SEL_FORMAT_MARKUP))
+          {
+             char *txt = _elm_util_text_to_mkup(buf);
+             if (txt)
+               {
+                  _edje_entry_user_insert(obj, txt);
+                  free(txt);
+               }
+          }
+        else
         _edje_entry_user_insert(obj, buf);
      }
    free(buf);
@@ -925,7 +935,14 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
    eina_stringshare_del(stl_user);
 
-   cursor_pos = sd->cursor_pos;
+   cursor_pos = edje_object_part_text_cursor_pos_get
+                   (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
+
+   if (cursor_pos != sd->cursor_pos)
+     {
+        sd->cursor_pos = cursor_pos;
+        sd->cur_changed = EINA_TRUE;
+     }
 
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);
@@ -986,6 +1003,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
           elm_widget_theme_object_set
           (obj, sd->scr_edje, "scroller", "entry", style);
 
+        elm_interface_scrollable_reset_signals(obj);
         _elm_entry_background_switch(sd->entry_edje, sd->scr_edje);
 
         str = edje_object_data_get(sd->scr_edje, "focus_highlight");
@@ -1128,7 +1146,7 @@ _deferred_recalc_job(void *data)
 }
 
 EOLIAN static void
-_elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_canvas_group_group_calculate(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
@@ -1378,19 +1396,19 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_entry_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
     * elm,state,icon,{visible,hidden}, so we have to replicate this
     * smart function */
-   if (sobj == elm_layout_content_get(obj, "elm.swallow.icon"))
+   if (sobj == edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.icon"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,icon", "elm");
+        edje_object_signal_emit(sd->scr_edje, "elm,action,hide,icon", "elm");
      }
-   else if (sobj == elm_layout_content_get(obj, "elm.swallow.end"))
+   else if (sobj == edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.end"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
+        edje_object_signal_emit(sd->scr_edje, "elm,action,hide,end", "elm");
      }
 
    ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -1420,6 +1438,8 @@ _hoversel_position(Evas_Object *obj)
      edje_object_part_text_cursor_geometry_get
        (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
 
+   if (efl_canvas_group_need_recalculate_get(sd->hoversel))
+     efl_canvas_group_calculate(sd->hoversel);
    evas_object_size_hint_combined_min_get(sd->hoversel, &mw, &mh);
    if (cx + mw > w)
      cx = w - mw;
@@ -1568,7 +1588,7 @@ _paste_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
 
    sd->selection_asked = EINA_TRUE;
 
@@ -1623,7 +1643,7 @@ _cut_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_CUT, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1647,7 +1667,7 @@ _copy_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_COPY, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -1794,8 +1814,8 @@ _menu_call(Evas_Object *obj)
         if (sd->hoversel)
           {
              _hoversel_position(obj);
-             evas_object_show(sd->hoversel);
              elm_hoversel_hover_begin(sd->hoversel);
+             evas_object_show(sd->hoversel);
           }
 
         if (!_elm_config->desktop_entry)
@@ -1987,8 +2007,8 @@ _long_press_cb(void *data)
    sd->long_pressed = EINA_TRUE;
 
    sd->longpress_timer = NULL;
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_LONGPRESSED, NULL);
+   evas_object_smart_callback_call
+     (data, "longpressed", NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2318,8 +2338,10 @@ _entry_selection_start_signal_cb(void *data,
      {
         if (entry != data) elm_entry_select_none(entry);
      }
+
+   Eina_Bool b_value = EINA_TRUE;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_START, NULL);
+     (data, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
 
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -2362,8 +2384,12 @@ _entry_selection_changed_signal_cb(void *data,
 
    if (!sd) return;
    sd->have_selection = EINA_TRUE;
+   Efl_Text_Range range = {0};
+   //FIXME how to get selection range in legacy !?
+   range.start = 0;
+   range.end = 0;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
+     (data, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, &range);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -2385,8 +2411,9 @@ _entry_selection_cleared_signal_cb(void *data,
    if (!sd->have_selection) return;
 
    sd->have_selection = EINA_FALSE;
+   Eina_Bool b_value = sd->have_selection;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
+     (data, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -2427,7 +2454,7 @@ _entry_paste_request_signal_cb(void *data,
    // supported
 //   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
 
    top = _entry_win_get(data);
    if (top)
@@ -2658,7 +2685,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
    efl_event_callback_legacy_call(obj, ELM_ENTRY_EVENT_ANCHOR_HOVER_OPENED, &ei);
    efl_event_callback_add
-     (sd->anchor_hover.hover, EFL_UI_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
+     (sd->anchor_hover.hover, EFL_INPUT_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
 
    /* FIXME: Should just check if there's any callback registered to
     * the smart events instead.  This is used to determine if anyone
@@ -2791,8 +2818,8 @@ _entry_mouse_clicked_signal_cb(void *data,
                                const char *emission EINA_UNUSED,
                                const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked", NULL);
 }
 
 static void
@@ -2801,8 +2828,8 @@ _entry_mouse_double_signal_cb(void *data,
                               const char *emission EINA_UNUSED,
                               const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked,double", NULL);
 }
 
 static void
@@ -2811,8 +2838,8 @@ _entry_mouse_triple_signal_cb(void *data,
                               const char *emission EINA_UNUSED,
                               const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED_TRIPLE, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked,triple", NULL);
 }
 
 static Evas_Object *
@@ -3346,7 +3373,7 @@ _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *e
 
    /* If old and new text are the same do nothing */
    current_text = edje_object_part_text_get(sd->entry_edje, "elm.text");
-   if (current_text == entry || !strcmp(entry, current_text))
+   if (eina_streq(current_text, entry))
      goto done;
 
    ELM_SAFE_FREE(sd->text, eina_stringshare_del);
@@ -4422,8 +4449,11 @@ _elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
         edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
      }
    if (sd->have_selection)
-     efl_event_callback_legacy_call
-       (obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
+     {
+        Eina_Bool b_value = sd->have_selection;
+        efl_event_callback_legacy_call
+       (obj, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+     }
 
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");
@@ -5130,8 +5160,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
    /* here we need to emit the signal that the elm_scroller would have done */
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL, NULL);
+   evas_object_smart_callback_call(obj, "scroll", NULL);
 
    if (sd->have_selection)
      _update_selection_handler(obj);
@@ -5210,27 +5239,27 @@ _elm_entry_scrollable_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_icon_visible_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool setting)
+_elm_entry_icon_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool setting)
 {
-   if (!elm_layout_content_get(obj, "elm.swallow.icon")) return;
+   if (!edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.icon")) return;
 
    if (setting)
-     elm_layout_signal_emit(obj, "elm,action,show,icon", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,show,icon", "elm");
    else
-     elm_layout_signal_emit(obj, "elm,action,hide,icon", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,hide,icon", "elm");
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_entry_end_visible_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool setting)
+_elm_entry_end_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool setting)
 {
-   if (!elm_layout_content_get(obj, "elm.swallow.end")) return;
+   if (!edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.end")) return;
 
    if (setting)
-     elm_layout_signal_emit(obj, "elm,action,show,end", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,show,end", "elm");
    else
-     elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,hide,end", "elm");
 
    elm_layout_sizing_eval(obj);
 }
@@ -5586,8 +5615,8 @@ _activate(Evas_Object *obj)
    if (!elm_widget_disabled_get(obj) &&
        !evas_object_freeze_events_get(obj))
      {
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( obj, "clicked", NULL);
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }
@@ -6246,14 +6275,14 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_entry, "icon")
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_entry)
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_entry)
 
 #include "elm_entry_eo.c"

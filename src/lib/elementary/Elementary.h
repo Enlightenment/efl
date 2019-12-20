@@ -27,7 +27,9 @@
 #ifdef ELM_DIRENT_H
 #include <dirent.h>
 #endif
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 #include <errno.h>
 
 #ifdef ELM_UNIX
@@ -70,10 +72,6 @@
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
 #include <Ethumb_Client.h>
-
-#ifdef ELM_ELOCATION
-#include <Elocation.h>
-#endif
 
 #ifdef ELM_EMAP
 #include <EMap.h>
@@ -147,26 +145,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #include <Efl.h>
-/* FIXME: wtf? */
-#ifndef EFL_UI_RADIO_EVENT_CHANGED
-# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
-#endif
-# include <efl_ui.eot.h>
-//define focus manager earlier since focus object and manager is circular
-typedef Eo Efl_Ui_Focus_Manager;
-#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
-
-
-# include <efl_ui_focus_object.eo.h>
-# include <efl_ui_focus_manager.eo.h>
-# include <efl_ui_focus_manager_window_root.eo.h>
-# include <efl_ui_focus_manager_calc.eo.h>
-# include <efl_ui_focus_manager_sub.eo.h>
-# include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_util.eo.h>
-# include <efl_ui_l10n.eo.h>
-# include <efl_ui_focus_composition.eo.h>
-# include <efl_ui_focus_layer.eo.h>
 
 #ifdef EFL_BETA_API_SUPPORT
 # include <elm_interface_scrollable.h>
@@ -214,7 +192,8 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_button.h>
 #include <elm_cache.h>
 #include <elm_calendar.h>
-#include <efl_ui_calendar.h>
+/* this is elm_animation_view */
+#include <efl_ui_animation_view.h>
 #include <elm_check.h>
 #include <elm_clock.h>
 #include <elm_cnp.h>
@@ -252,7 +231,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_mirroring.h>
 #include <elm_need.h>
 #include <elm_notify.h>
-#include <efl_ui_nstate.h>
 #include <elm_object.h>
 
 #include <elm_panel.h>
@@ -278,103 +256,12 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_thumb.h>
 #include <elm_toolbar.h>
 #include <elm_transit.h>
+/* this is actually elm_video */
 #include <efl_ui_video.h>
 #include <elm_view_list.h>
 #include <elm_view_form.h>
 #include <elm_web.h>
 #include <elm_win.h>
-
-# include <efl_ui_selection_types.eot.h>
-# include <efl_ui_theme.eo.h>
-# include <efl_config_global.eo.h>
-# include <efl_ui_widget.eo.h>
-# include <efl_ui_widget_part.eo.h>
-# include <efl_ui_widget_part_bg.eo.h>
-# include <efl_ui_widget_part_shadow.eo.h>
-# include <efl_ui_layout.eo.h>
-# include <efl_ui_layout_part.eo.h>
-# include <efl_ui_layout_part_box.eo.h>
-# include <efl_ui_layout_part_content.eo.h>
-# include <efl_ui_layout_part_bg.eo.h>
-# include <efl_ui_layout_part_text.eo.h>
-# include <efl_ui_layout_part_table.eo.h>
-# include <efl_ui_win_part.eo.h>
-# include <efl_ui_bg.eo.h>
-# include <efl_ui_box.eo.h>
-# include <efl_ui_box_flow.eo.h>
-# include <efl_ui_box_stack.eo.h>
-# include <efl_ui_table.eo.h>
-# include <efl_ui_table_static.eo.h>
-# include <efl_ui_image.eo.h>
-# include <efl_ui_win.eo.h>
-# include <efl_ui_win_inlined.eo.h>
-# include <efl_ui_win_socket.eo.h>
-# include <efl_text_interactive.eo.h>
-# include <efl_ui_text.eo.h>
-# include <efl_ui_popup.eo.h>
-# include <efl_ui_alert_popup.eo.h>
-# include <efl_ui_scroll_alert_popup.eo.h>
-# include <efl_ui_text_alert_popup.eo.h>
-# include <efl_ui_anchor_popup.eo.h>
-# include <efl_ui_popup_part_backwall.eo.h>
-# include <efl_ui_text_factory_images.eo.h>
-# include <efl_ui_text_factory_emoticons.eo.h>
-# include <efl_ui_text_factory_fallback.eo.h>
-# include <efl_ui_text_editable.eo.h>
-# include <efl_ui_text_async.eo.h>
-# include <efl_ui_clock.eo.h>
-# include <efl_ui_spin.eo.h>
-# include <efl_ui_spin_button.eo.h>
-# include <efl_ui_datepicker.eo.h>
-# include <efl_ui_timepicker.eo.h>
-# include <efl_ui_tags.eo.h>
-# include <efl_ui_panel.eo.h>
-# include <efl_ui_image_factory.eo.h>
-# include <efl_ui_slider.eo.h>
-# include <efl_ui_slider_interval.eo.h>
-# include <efl_ui_layout_factory.eo.h>
-# include <efl_ui_item.eo.h>
-# include <efl_ui_list_item.eo.h>
-# include <efl_ui_list_default_item_part_icon.eo.h>
-# include <efl_ui_list_default_item_part_end.eo.h>
-# include <efl_ui_list_default_item.eo.h>
-# include <efl_ui_list_empty_item.eo.h>
-# include <efl_ui_list.eo.h>
-# include <efl_ui_grid_item.eo.h>
-# include <efl_ui_grid_default_item_part_icon.eo.h>
-# include <efl_ui_grid_default_item_part_end.eo.h>
-# include <efl_ui_grid_default_item.eo.h>
-# include <efl_ui_grid.eo.h>
-# include <efl_ui_list_view_types.eot.h>
-# include <efl_ui_list_view_model.eo.h>
-# include <efl_ui_list_view.eo.h>
-# include <efl_ui_list_view_pan.eo.h>
-# include <efl_ui_widget_factory.eo.h>
-# include <efl_ui_caching_factory.eo.h>
-# include <efl_ui_pan.eo.h>
-# include <efl_ui_scroll_manager.eo.h>
-# include <efl_ui_scroller.eo.h>
-# include <efl_ui_dnd_types.eot.h>
-# include <efl_ui_selection.eo.h>
-# include <efl_ui_dnd.eo.h>
-# include <efl_ui_dnd_container.eo.h>
-# include <efl_ui_relative_layout.eo.h>
-
-# ifndef _EFL_UI_PAGER_EO_CLASS_TYPE
-# define _EFL_UI_PAGER_EO_CLASS_TYPE
-typedef Eo Efl_Ui_Pager;
-# endif
-
-# include <efl_page_transition.eo.h>
-# include <efl_page_transition_scroll.eo.h>
-# include <efl_page_indicator.eo.h>
-# include <efl_page_indicator_icon.eo.h>
-# include <efl_ui_pager.eo.h>
-
-# include <efl_ui_tab_bar.eo.h>
-# include <efl_ui_tab_page.eo.h>
-# include <efl_ui_tab_page_part_tab.eo.h>
-# include <efl_ui_tab_pager.eo.h>
 
 /* include deprecated calls last of all */
 #include <elm_deprecated.h>

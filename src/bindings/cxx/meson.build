@@ -39,6 +39,24 @@ foreach lib : cxx_sublibs
   #generate files for each .eo files
   foreach eo_file_subdir : eo_file_subdirs
     if eo_file_subdir != ''
+      cxx_pub_eot_files = get_variable(package_name + '_' + eo_file_subdir +'_eot_files')
+    else
+      cxx_pub_eot_files = get_variable(package_name +'_eot_files')
+    endif
+    subdir_file_location = join_paths(file_location, eo_file_subdir)
+    foreach cxx_gen_file : cxx_pub_eot_files
+      cxx_generator_target += custom_target('eolian_cxx_gen_'+cxx_gen_file.underscorify()+'',
+        input : join_paths(subdir_file_location, cxx_gen_file),
+        output : [cxx_gen_file + '.hh'],
+        install : true,
+        install_dir : join_paths(dir_include, package_version_name, eo_file_subdir),
+        command : [eolian_cxx_gen, '-I', meson.current_source_dir(), eolian_include_directories,
+                                   '-o', join_paths(meson.current_build_dir(), cxx_gen_file + '.hh'),
+                                   '@INPUT@'])
+      eo_file_list += files(join_paths(subdir_file_location, cxx_gen_file))
+    endforeach
+
+    if eo_file_subdir != ''
       cxx_pub_eo_files = get_variable(package_name + '_' + eo_file_subdir +'_eo_files')
     else
       cxx_pub_eo_files = get_variable(package_name +'_eo_files')

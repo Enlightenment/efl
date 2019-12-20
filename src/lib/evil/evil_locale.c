@@ -12,8 +12,21 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#include "evil_macro.h"
-#include "evil_locale.h"
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef EFL_BUILD
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif
+#else
+# define EAPI __declspec(dllimport)
+#endif
+
+#include "evil_locale.h" /* LC_MESSAGES */
 
 /*
  * LOCALE_SISO639LANGNAME and LOCALE_SISO3166CTRYNAME need at least a buffer

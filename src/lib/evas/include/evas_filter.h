@@ -69,6 +69,8 @@ enum _Evas_Filter_Mode
    EVAS_FILTER_MODE_BUMP,         /**< Apply bump mapping (light effect) */
    EVAS_FILTER_MODE_TRANSFORM,    /**< Apply a simple geometrical transformation */
    EVAS_FILTER_MODE_PADDING_SET,  /**< Special padding_set instruction to force a specific padding value */
+   EVAS_FILTER_MODE_GRAYSCALE,    /**< Leave only grayscale information */
+   EVAS_FILTER_MODE_INVERSE_COLOR,/**< Apply inverse color */
    EVAS_FILTER_MODE_LAST
 };
 
@@ -305,6 +307,28 @@ Evas_Filter_Command     *evas_filter_command_bump_map_add(Evas_Filter_Context *c
  * @internal
  */
 Evas_Filter_Command     *evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags, int ox, int oy);
+
+/**
+ * @brief Remove color information from the buffer
+ * @param ctx            Current filter chain
+ * @param draw_context   Current Evas draw context (ignored)
+ * @param inbuf          Input buffer (Alpha or RGBA)
+ * @param outbuf         Output buffer (Alpha or RGBA), same size as inbuf
+ * @return               Filter command or NULL in case of error
+ * @internal
+ */
+Evas_Filter_Command     *evas_filter_command_grayscale_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf);
+
+/**
+ * @brief Apply inverse color of the buffer
+ * @param ctx            Current filter chain
+ * @param draw_context   Current Evas draw context (ignored)
+ * @param inbuf          Input buffer (Alpha or RGBA)
+ * @param outbuf         Output buffer (Alpha or RGBA), same size as inbuf
+ * @return               Filter command or NULL in case of error
+ * @internal
+ */
+Evas_Filter_Command     *evas_filter_command_inverse_color_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf);
 
 /* Simple binding between a filter object and its sources */
 struct _Evas_Filter_Proxy_Binding

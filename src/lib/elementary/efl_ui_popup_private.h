@@ -7,11 +7,12 @@ struct _Efl_Ui_Popup_Data
    Eo                *win_parent;
    Eo                *backwall;
    Efl_Ui_Popup_Align align;
+   Eo                 *anchor;
+   Efl_Ui_Popup_Align  priority[5];
+   Efl_Ui_Popup_Align  used_align;
    Ecore_Timer       *timer;
    double             timeout;
-   Eina_Bool          needs_group_calc : 1;
-   Eina_Bool          needs_size_calc : 1;
-   Eina_Bool          needs_align_calc : 1;
+   Eina_Bool          in_calc : 1;
 };
 
 #define EFL_UI_POPUP_DATA_GET_OR_RETURN(o, ptr, ...) \

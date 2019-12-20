@@ -8,10 +8,6 @@
 # include <arpa/inet.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "Ecore.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"

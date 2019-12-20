@@ -39,7 +39,8 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
    printf("Total downloaded bytes = %d\n",
            ecore_con_url_received_bytes_get(ev->url_con));
 
-   if (info && info->_tmpfd)
+   if (!info) return ECORE_CALLBACK_CANCEL;
+   if (info->_tmpfd)
      {
         status = ecore_con_url_status_code_get(ev->url_con);
         fail_if(status != 220);
@@ -167,7 +168,6 @@ error_user:
 EFL_START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
 {
    Ecore_Con_Url *ec_url;
-   url_test *info = NULL;
    int ret;
    char link[] = ECORE_CON_FTP_TEST_URL;
    char url[4096], *username, *password, *file = NULL, *dir = NULL;
@@ -190,7 +190,7 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
    fail_unless(ecore_con_url_ftp_upload(ec_url, file, username, password, dir));
 
    ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE,
-                           _url_compl_cb, info);
+                           _url_compl_cb, NULL);
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
@@ -202,7 +202,6 @@ EFL_END_TEST
 EFL_START_TEST(ecore_con_test_ecore_con_url_post)
 {
    Ecore_Con_Url *ec_url;
-   url_test *info = NULL;
    int ret;
    char link[] = ECORE_CON_HTTP_TEST_URL;
    char url_data[] = "test";
@@ -231,7 +230,7 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_post)
    fail_unless(ecore_con_url_post(ec_url, url_data, 4, NULL));
 
    ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE,
-                           _url_compl_cb, info);
+                           _url_compl_cb, NULL);
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
@@ -259,9 +258,11 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_download)
 
    ecore_con_url_verbose_set(url, EINA_TRUE);
 
+   fail_unless (ecore_con_url_url_get(url));
    fail_if (strcmp(ecore_con_url_url_get(url), link));
 
    ecore_con_url_data_set(url, url_data);
+   fail_unless (ecore_con_url_data_get(url));
    fail_if (strcmp(ecore_con_url_data_get(url), url_data));
 
    info = (url_test *) malloc(sizeof(url_test));

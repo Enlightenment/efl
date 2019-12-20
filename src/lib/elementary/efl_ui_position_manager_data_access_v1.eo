@@ -1,0 +1,130 @@
+
+struct @beta Efl.Ui.Position_Manager.Request_Range {
+   [[Representing the range of a request.]]
+   start_id : uint; [[The first item that must be filled into the passed slice.]]
+   end_id : uint; [[The last item that must be filled into the passed slice.]]
+}
+
+struct @beta Efl.Ui.Position_Manager.Object_Batch_Entity{
+  [[Struct that is getting filled by the object function callback.]]
+  entity : Efl.Gfx.Entity; [[The canvas object.]]
+  element_depth : ubyte; [[The depth change in this returned entity.
+                          Every Element has a depth, if the parent is $null the depth is 0.
+                          Every step deeper into the hierarchy is exactly one depth deeper.
+                          If this depth has been different to the previous item, then this element can be seen as the
+                          group leader. The following elements with the same depth are in the same group.]]
+  depth_leader : bool; [[$true if this is the leader of a group]]
+}
+
+struct @beta Efl.Ui.Position_Manager.Size_Batch_Entity{
+  [[Struct that is getting filled by the size function callback.]]
+  size : Eina.Size2D; [[The size of the element.]]
+  element_depth : ubyte; [[The depth change in this returned entity.
+                          Every Element has a depth, if the parent is $null the depth is 0.
+                          Every step deeper into the hierarchy is exactly one depth deeper.
+                          If this depth has been different to the previous item, then this element can be seen as the
+                          group leader. The following elements with the same depth are in the same group.]]
+  depth_leader : bool; [[$true if this is the leader of a group]]
+}
+
+struct @beta Efl.Ui.Position_Manager.Size_Batch_Result {
+   [[Struct returned by the size access callback.]]
+   parent_size : Eina.Size2D; [[The group size of the group where the first item is part of.]]
+   parent_depth : ubyte; [[The depth of the parent]]
+   filled_items : uint; [[The number of items that are filled into the slice.]]
+}
+
+struct @beta Efl.Ui.Position_Manager.Size_Call_Config {
+   [[Struct that is returned by the function callbacks.]]
+   range : Efl.Ui.Position_Manager.Request_Range; [[The range of items to fill into @.memory. The length of memory must
+                                                    be bigger or equal to the requested items]]
+                                                    // This struct does not contain a @.memory field.
+   cache_request : bool; [[Indicate if this request is made for caching or displaying.
+                           If it's for caching, the data-provider will fill in approximations, instead of doing heavy
+                           lifting from some back-end. If this is not a caching call, the exact size should be
+                           requested and delivered at some later point.]]
+}
+
+struct @beta Efl.Ui.Position_Manager.Object_Batch_Result {
+   [[Struct returned by the object access callback]]
+   group : Efl.Ui.Item; [[The group where the first item is part of]]
+   parent_depth : ubyte; [[The depth of the parent]]
+   filled_items : uint; [[The number of items that are filled into the slice]]
+}
+
+function @beta Efl.Ui.Position_Manager.Object_Batch_Callback {
+   [[ Function callback for getting a batch of items.]]
+   params {
+      range : Efl.Ui.Position_Manager.Request_Range; [[The range of items to fill into @.memory. The length of memory
+                                                       must be bigger or equal to the requested items]]
+      memory : rw_slice<Efl.Ui.Position_Manager.Object_Batch_Entity>; [[The slice to fill the information in, the full
+                                                                        slice will be filled if there are enough items.
+                                                                      ]]
+   }
+   return: Efl.Ui.Position_Manager.Object_Batch_Result; [[The returned stats of this function call.]]
+};
+
+
+function @beta Efl.Ui.Position_Manager.Size_Batch_Callback {
+   [[ Function callback for getting sizes of a batch of items.]]
+   params {
+      conf : Efl.Ui.Position_Manager.Size_Call_Config; [[The configuration for this call.]]
+      memory : rw_slice<Efl.Ui.Position_Manager.Size_Batch_Entity>; [[The slice to fill the information in, the full
+                                                                      slice will be filled if there are enough items.]]
+   }
+   return: Efl.Ui.Position_Manager.Size_Batch_Result; [[The returned stats of this function call]]
+};
+
+
+interface @beta Efl.Ui.Position_Manager.Data_Access_V1 {
+   [[Interface for abstracting the data access of the position managers.
+
+     The idea here is that a data-provider calls @.data_access on the position manager object and passes the functions
+     that are defined here. Later, the position manager can call these function callbacks to get sizes or objects.
+     A data-provider should always fill all requested items. If an item is not available $null should be inserted.
+     If a size is not available, an as-close-as-possible approximation should be inserted.
+     The Size callback is equipped with a parameter to specify caching requests. This flag can be used to differentiate
+     between two use cases: When the size is being requested to build up a cache over all items, and when the size is
+     being requested to apply it to the object. Since the data-provider might need to do expensive operations to find
+     the exact size, the as-close-as-possible approximation is usually enough when building caches.
+     If real object placement is happening, then real sizes must be requested.
+     If a size changes after it was returned due to batching, this change still should be announced with the
+     @Efl.Ui.Position_Manager.Entity.item_size_changed function.
+
+     The depth of the items is used to express a hierarchical structure on the items themselves.
+     Any given depth might or might not have a $depth_leader.
+     A group is ended when there is either a lower depth, or another $depth_leader.
+   ]]
+   methods {
+      @property data_access {
+         [[This gives access to items to be managed. The manager reads this information and modifies the retrieved
+           items' positions and sizes.
+
+           $obj_access gives access to the graphical entities to manage. Some of them might be $NULL, meaning they are
+           not yet ready to be displayed. Their size in the $size_access array will be correct, though, so other
+           entities can still be positioned correctly.
+           Typically, only entities inside the viewport will be retrieved.
+
+           $size_access gives access to the 2D sizes for the items to manage. All sizes will always be valid, and might
+           change over time (indicated through the @Efl.Ui.Position_Manager.Entity.item_size_changed method).
+           The whole range might need to be traversed in order to calculate the position of all items in some
+           arrangements.
+
+           You can access a batch of objects or sizes by calling the here passed function callbacks. Further details
+           can be found at the function definitions.
+         ]]
+         set {
+         }
+         values {
+           canvas: Efl.Ui.Win; [[Will use this object to freeze/thaw canvas events.]]
+           obj_access : Efl.Ui.Position_Manager.Object_Batch_Callback; [[Function callback for canvas objects, even if
+                                                                         the start_id is valid, the returned objects
+                                                                         may be $NULL.]]
+           size_access : Efl.Ui.Position_Manager.Size_Batch_Callback; [[Function callback for the size, returned values
+                                                                        are always valid, but might be changed later on.
+                                                                      ]]
+           size : int; [[valid size for start_id, 0 <= i < size]]
+         }
+      }
+   }
+}

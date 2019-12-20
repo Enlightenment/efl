@@ -38,17 +38,17 @@ struct _Efl_Ui_Progressbar_Data
 
    Eina_List            *progress_status; /**< The list of _Elm_Progress_Status. To save the progress value(in percentage) each part of given progress bar */
 
-   Efl_Ui_Format_Func_Cb format_cb;
-   Eina_Free_Cb          format_free_cb;
-   void                  *format_cb_data;
    Eina_Strbuf           *format_strbuf;
 
-   Efl_Ui_Dir            dir; /**< Orientation of the progressbar  */
+   Efl_Ui_Layout_Orientation dir; /**< Orientation of the progressbar  */
 
    Eina_Bool             pulse : 1; /**< Whether object is put in the pulsing mode */
    Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */
    Eina_Bool             is_legacy_format_string : 1;
    Eina_Bool             is_legacy_format_cb : 1;
+   Eina_Bool             has_status_text_part : 1;
+   Eina_Bool             has_cur_progressbar_part : 1;
+   Eina_Bool             show_progress_label : 1; /**< Show a progress text label besides the progressbar */
 };
 
 struct _Efl_Ui_Progress_Status
@@ -56,6 +56,7 @@ struct _Efl_Ui_Progress_Status
    const char           *part_name;
    double                val;
    double                val_min, val_max;
+   Eina_Bool part_exists : 1;
 };
 
 /**

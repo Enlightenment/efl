@@ -1,0 +1,54 @@
+parse efl_ui_layout_orientable;
+
+enum Efl.Gfx.Image_Orientation
+{
+   [[An orientation type, to rotate and flip images.
+
+     This is similar to EXIF's orientation.
+     Directional values ($up, $down, $left, $right) indicate the final direction in
+     which the top of the image will be facing (e.g. a picture of a house will have
+     its roof pointing to the right if the $right orientation is used).
+     Flipping values ($flip_horizontal and $flip_vertical) can be additionally added
+     to produce a mirroring in each axis.
+     Not to be confused with @Efl.Ui.Layout_Orientation which is meant for widgets, rather
+     than images and canvases. This enum is used to rotate images, videos and
+     the like.
+
+     @since 1.23
+   ]]
+   none = 0,             [[Default, same as up, do not rotate.]]
+   up = 0,               [[Orient up, do not rotate.]]
+   right = 1,            [[Orient right, rotate 90 degrees clock-wise.]]
+   down = 2,             [[Orient down, rotate 180 degrees.]]
+   left = 3,             [[Orient left, rotate 270 degrees clock-wise.]]
+   rotation_bitmask = 3, [[Bitmask that can be used to isolate rotation values, that is, $none, $up, $down, $left and
+                           $right.]]
+   flip_horizontal = 4,  [[Mirror horizontally. Can be added to the other values.]]
+   flip_vertical = 8,    [[Mirror vertically. Can be added to the other values.]]
+   flip_bitmask = 12     [[Bitmask that can be used to isolate flipping values, that is, $flip_vertical and
+                           $flip_horizontal.]]
+}
+
+interface Efl.Gfx.Image_Orientable
+{
+   [[Interface for images which can be rotated or flipped (mirrored).
+
+     Compare with @Efl.Ui.Layout_Orientable which works for layout objects and does
+     not include rotation.
+
+     @since 1.23
+   ]]
+   c_prefix: efl_gfx;
+   methods {
+       @property image_orientation {
+         [[Control the orientation (rotation and flipping) of a visual object.
+
+           This can be used to set the rotation on an image or a window, for
+           instance.
+         ]]
+         values {
+            dir: Efl.Gfx.Image_Orientation(Efl.Gfx.Image_Orientation.none); [[The final orientation of the object.]]
+         }
+      }
+   }
+}

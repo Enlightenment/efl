@@ -1264,13 +1264,13 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
                              int inbuf, int outbuf, int radius, Eina_Bool smooth,
                              Eina_Bool alphaonly)
 {
-   Evas_Filter_Command *blurcmd, *threshcmd, *blendcmd;
-   Evas_Filter_Buffer *tmp = NULL, *in, *out;
+   Evas_Filter_Command *blurcmd = NULL, *threshcmd = NULL, *blendcmd;
+   Evas_Filter_Buffer *tmp, *in, *out;
    int diam = abs(radius) * 2 + 1;
    DATA8 curve[256] = {0};
    int tmin = 0, growbuf;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ctx, fail);
 
    if (!radius)
      {
@@ -1280,15 +1280,15 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
      }
 
    in = _filter_buffer_get(ctx, inbuf);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(in, fail);
 
    out = _filter_buffer_get(ctx, outbuf);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(out, fail);
 
    if ((inbuf != outbuf) && out->dirty)
      {
         tmp = evas_filter_temporary_buffer_get(ctx, in->w, in->h, in->alpha_only, 1);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(tmp, NULL);
+        EINA_SAFETY_ON_NULL_GOTO(tmp, fail);
         growbuf = tmp->id;
      }
    else
@@ -1298,7 +1298,7 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
                                           EVAS_FILTER_BLUR_DEFAULT,
                                           abs(radius), abs(radius), 0, 0, 0,
                                           alphaonly);
-   if (!blurcmd) return NULL;
+   EINA_SAFETY_ON_NULL_GOTO(blurcmd, fail);
 
    if (diam > 255) diam = 255;
    if (radius > 0)
@@ -1323,29 +1323,29 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
           memset(curve + end, 255, 256 - end);
      }
 
-   threshcmd = evas_filter_command_curve_add(ctx, draw_context, growbuf, growbuf,
-                                             curve, EVAS_FILTER_CHANNEL_ALPHA);
-   if (!threshcmd)
-     {
-        _command_del(ctx, blurcmd);
-        return NULL;
-     }
+   /* Use a temp buffer here. Becuase curve_add is using a temp buffer as well
+      if inbuf and outbuf are same and doing blend_add. Then grow_add will do
+      blend_add twice. Using a temp buffer will save a calling blend_add */
+   tmp = evas_filter_temporary_buffer_get(ctx, in->w, in->h, in->alpha_only, 1);
+   EINA_SAFETY_ON_NULL_GOTO(tmp, fail);
 
-   if (tmp)
-     {
-        blendcmd = evas_filter_command_blend_add(ctx, draw_context, tmp->id,
-                                                 outbuf, 0, 0,
-                                                 EVAS_FILTER_FILL_MODE_NONE,
-                                                 alphaonly);
-        if (!blendcmd)
-          {
-             _command_del(ctx, threshcmd);
-             _command_del(ctx, blurcmd);
-             return NULL;
-          }
-     }
+   threshcmd = evas_filter_command_curve_add(ctx, draw_context, growbuf, tmp->id,
+                                             curve, EVAS_FILTER_CHANNEL_ALPHA);
+   EINA_SAFETY_ON_NULL_GOTO(threshcmd, fail);
+
+   blendcmd = evas_filter_command_blend_add(ctx, draw_context, tmp->id,
+                                            outbuf, 0, 0,
+                                            EVAS_FILTER_FILL_MODE_NONE,
+                                            alphaonly);
+   EINA_SAFETY_ON_NULL_GOTO(blendcmd, fail);
 
    return blurcmd;
+
+fail:
+   ERR("Failed to add grow");
+   if (threshcmd) _command_del(ctx, threshcmd);
+   if (blurcmd) _command_del(ctx, blurcmd);
+   return NULL;
 }
 
 Evas_Filter_Command *
@@ -1354,8 +1354,8 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
                               int inbuf, int outbuf, DATA8 *curve,
                               Evas_Filter_Channel channel)
 {
-   Evas_Filter_Command *cmd;
-   Evas_Filter_Buffer *in, *out;
+   Evas_Filter_Command *cmd, *blendcmd;
+   Evas_Filter_Buffer *in, *out, *tmp = NULL, *curve_out;
    DATA8 *copy;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
@@ -1370,12 +1370,20 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
      WRN("Incompatible formats for color curves, implicit conversion will be "
          "slow and may not produce the desired output.");
 
-   XDBG("Add curve %d -> %d", in->id, out->id);
+   if (in == out)
+     {
+        tmp = evas_filter_temporary_buffer_get(ctx, in->w, in->h, in->alpha_only, 1);
+        if (!tmp) return NULL;
+        curve_out = tmp;
+     }
+   else curve_out = out;
+
+   XDBG("Add curve %d -> %d", in->id, curve_out->id);
 
    copy = malloc(256 * sizeof(DATA8));
    if (!copy) return NULL;
 
-   cmd = _command_new(ctx, EVAS_FILTER_MODE_CURVE, in, NULL, out);
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_CURVE, in, NULL, curve_out);
    if (!cmd)
      {
         _free(copy);
@@ -1388,6 +1396,19 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
      cmd->curve.channel = EVAS_FILTER_CHANNEL_ALPHA;
    else
      cmd->curve.channel = channel;
+
+   if (tmp)
+     {
+        blendcmd = evas_filter_command_blend_add(ctx, draw_context, curve_out->id,
+                                                out->id, 0, 0,
+                                                EVAS_FILTER_FILL_MODE_NONE,
+                                                out->alpha_only);
+        if (!blendcmd)
+          {
+             _command_del(ctx, cmd);
+             return NULL;
+          }
+     }
 
    return cmd;
 }
@@ -1572,6 +1593,50 @@ evas_filter_command_transform_add(Evas_Filter_Context *ctx,
      }
    else
      cmd->draw.rop = EFL_GFX_RENDER_OP_BLEND;
+
+   return cmd;
+}
+
+Evas_Filter_Command *
+evas_filter_command_grayscale_add(Evas_Filter_Context *ctx,
+                                  void *draw_context EINA_UNUSED,
+                                  int inbuf, int outbuf)
+{
+   Evas_Filter_Command *cmd;
+   Evas_Filter_Buffer *in, *out;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+
+   in = _filter_buffer_get(ctx, inbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, NULL);
+
+   out = _filter_buffer_get(ctx, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
+
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_GRAYSCALE, in, NULL, out);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
+
+   return cmd;
+}
+
+Evas_Filter_Command *
+evas_filter_command_inverse_color_add(Evas_Filter_Context *ctx,
+                                     void *draw_context EINA_UNUSED,
+                                     int inbuf, int outbuf)
+{
+   Evas_Filter_Command *cmd;
+   Evas_Filter_Buffer *in, *out;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+
+   in = _filter_buffer_get(ctx, inbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, NULL);
+
+   out = _filter_buffer_get(ctx, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
+
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_INVERSE_COLOR, in, NULL, out);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, NULL);
 
    return cmd;
 }

@@ -21,20 +21,25 @@ enum Tokens
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
- * they just fill in the "kw" field of the token */
+ * they just fill in the "kw" field of the token
+ *
+ * reserved for the future: @nullable
+ */
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
-    KW(abstract), KW(c_prefix), KW(composite), KW(constructor), KW(constructors), \
-    KW(data), KW(destructor), KW(event_prefix), KW(events), KW(extends), \
+    KW(abstract), KW(c_prefix), KW(composites), KW(constructor), KW(constructors), \
+    KW(data), KW(destructor), KW(error), KW(event_c_prefix), KW(events), KW(extends), \
     KW(free), KW(get), KW(implements), KW(import), KW(interface), \
     KW(keys), KW(legacy), KW(methods), KW(mixin), KW(params), \
-    KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(var), KW(requires), \
+    KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(requires), \
     \
-    KWAT(auto), KWAT(beta), KWAT(class), KWAT(const), KWAT(cref), KWAT(empty), \
-    KWAT(extern), KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), KWAT(nonull), \
-    KWAT(nullable), KWAT(optional), KWAT(out), KWAT(owned), KWAT(private), \
-    KWAT(property), KWAT(protected), KWAT(restart), KWAT(pure_virtual), \
-    KWAT(warn_unused), \
+    KWAT(auto), KWAT(beta), KWAT(by_ref), KWAT(c_name), KWAT(const), \
+    KWAT(empty), KWAT(extern), KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), \
+    KWAT(move), KWAT(no_unused), KWAT(nullable), KWAT(optional), KWAT(out), \
+    KWAT(private), KWAT(property), KWAT(protected), KWAT(restart), \
+    KWAT(pure_virtual), KWAT(static), \
+    \
+    KWH(version), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \
@@ -54,20 +59,21 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(accessor), KW(array), KW(future), KW(iterator), KW(hash), KW(list), \
-    KW(any_value), KW(any_value_ptr), \
+    KW(accessor), KW(array), KW(future), KW(iterator), KW(list), \
+    KW(any_value), KW(any_value_ref), KW(binbuf), KW(event), \
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
+    KW(hash), \
     KW(void_ptr), \
-    KW(__builtin_free_cb), \
     KW(function), \
     KW(__undefined_type), \
     \
-    KW(true), KW(false), KW(null), KWAT(ctor_param)
+    KW(true), KW(false), KW(null)
 
 /* "regular" keyword and @ prefixed keyword */
 #define KW(x) KW_##x
 #define KWAT(x) KW_at_##x
+#define KWH(x) KW_hash_##x
 
 enum Keywords
 {
@@ -77,6 +83,7 @@ enum Keywords
 
 #undef KW
 #undef KWAT
+#undef KWH
 
 enum Numbers
 {
@@ -258,16 +265,16 @@ eo_lexer_typedecl_release(Eo_Lexer *ls, Eolian_Typedecl *tp)
    return (Eolian_Typedecl *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
 }
 
-static inline Eolian_Variable *
-eo_lexer_variable_new(Eo_Lexer *ls)
+static inline Eolian_Constant *
+eo_lexer_constant_new(Eo_Lexer *ls)
 {
-   return (Eolian_Variable *)eo_lexer_node_new(ls, sizeof(Eolian_Variable));
+   return (Eolian_Constant *)eo_lexer_node_new(ls, sizeof(Eolian_Constant));
 }
 
-static inline Eolian_Variable *
-eo_lexer_variable_release(Eo_Lexer *ls, Eolian_Variable *var)
+static inline Eolian_Constant *
+eo_lexer_constant_release(Eo_Lexer *ls, Eolian_Constant *var)
 {
-   return (Eolian_Variable *)eo_lexer_node_release(ls, (Eolian_Object *)var);
+   return (Eolian_Constant *)eo_lexer_node_release(ls, (Eolian_Object *)var);
 }
 
 static inline Eolian_Expression *
@@ -287,6 +294,18 @@ eo_lexer_expr_release_ref(Eo_Lexer *ls, Eolian_Expression *expr)
 {
    eolian_object_ref(&expr->base);
    return eo_lexer_expr_release(ls, expr);
+}
+
+static inline Eolian_Error *
+eo_lexer_error_new(Eo_Lexer *ls)
+{
+   return (Eolian_Error *)eo_lexer_node_new(ls, sizeof(Eolian_Error));
+}
+
+static inline Eolian_Error *
+eo_lexer_error_release(Eo_Lexer *ls, Eolian_Error *err)
+{
+   return (Eolian_Error *)eo_lexer_node_release(ls, (Eolian_Object *)err);
 }
 
 /* "stack" management, only to protect against errors (jumps) in parsing */

@@ -33,6 +33,8 @@ static float xa, xb, ua, va, ca[4];
    b = tmp
 
 /************************** ANTI-ALIASING CODE ********************************/
+#ifdef MAP_HIGH_ANTI_ALIASING
+
 static void
 _map_irregular_coverage_calc(AALine* spans, int eidx, int y, int diagonal,
                        int edge_dist, Eina_Bool reverse)
@@ -83,7 +85,7 @@ _map_horiz_coverage_calc(AALine *spans, int eidx, int y, int x, int x2)
 static void
 _map_aa_edge_calc_internal(AALine *spans, int eidx, int ystart, int yend)
 {
-   int y;
+   int y = 0;
    Evas_Coord_Point p_edge = {-1, -1};  //previous edge point
    Evas_Coord_Point edge_diff = {0, 0}; //temporary used for point distance 
 
@@ -114,12 +116,11 @@ do \
 
    yend -= ystart;
 
-   //Find Start Edge
-   for (y = 0; y < yend; y++)
+   //Start Edge
+   if (y < yend)
      {
         p_edge.x = spans[y].x[eidx];
         p_edge.y = y;
-        break;
      }
 
    //Calculates AA Edges
@@ -333,6 +334,7 @@ _map_aa_apply(AASpans *aa_spans, DATA32 *dst, int dw)
    free(aa_spans->lines);
    free(aa_spans);
 }
+#endif
 
 /************************** TEXTURE MAPPING CODE ******************************/
 static void
@@ -823,10 +825,12 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
 
    //Setup Anti-Aliasing?
    AASpans *aa_spans = NULL;
+
+#ifdef MAP_HIGH_ANTI_ALIASING
    if (anti_alias)
      {
         //Adjust AA Y range
-        float ystart = 9999999999, yend = -1;
+        float ystart = 9999999.0f, yend = -1.0f;
         for (int i = 0; i < 4; i++)
           {
              if (y[i] < ystart) ystart = y[i];
@@ -838,6 +842,7 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
         aa_spans =
            _map_aa_ready(dst->cache_entry.w, dst->cache_entry.h, ystart, yend);
      }
+#endif
 
    /* 
       1 polygon is consisted of 2 triangles, 4 polygons constructs 1 mesh.
@@ -901,7 +906,8 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
                            &poly, mul_col, aa_spans,
                            smooth, col_blend);
      }
-
+#ifdef MAP_HIGH_ANTI_ALIASING
    if (anti_alias)
      _map_aa_apply(aa_spans, dst->image.data, dst->cache_entry.w);
+#endif
 }

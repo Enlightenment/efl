@@ -204,6 +204,8 @@ _ector_software_surface_ector_surface_renderer_factory_new(Eo *obj,
 {
    if (type == ECTOR_RENDERER_SHAPE_MIXIN)
      return efl_add_ref(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
+   else if (type == ECTOR_RENDERER_IMAGE_MIXIN)
+     return efl_add_ref(ECTOR_RENDERER_SOFTWARE_IMAGE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN)
      return efl_add_ref(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN)
@@ -237,6 +239,15 @@ _ector_software_surface_efl_object_destructor(Eo *obj, Ector_Software_Surface_Da
 }
 
 static void
+_ector_software_surface_ector_surface_reference_point_get(const Eo *obj EINA_UNUSED,
+                                                          Ector_Software_Surface_Data *pd,
+                                                          int* x, int* y)
+{
+   if (x) *x = pd->x;
+   if (y) *y = pd->y;
+}
+
+static void
 _ector_software_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
                                                           Ector_Software_Surface_Data *pd,
                                                           int x, int y)
@@ -245,5 +256,33 @@ _ector_software_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
    pd->y = y;
 }
 
+static Eina_Bool
+_ector_software_surface_ector_surface_draw_image(Eo *obj EINA_UNUSED,
+                                                 Ector_Software_Surface_Data *pd,
+                                                 Ector_Buffer *buffer, int x, int y, int alpha)
+{
+   if (!buffer || !pd->rasterizer || !pd->rasterizer->fill_data.raster_buffer->pixels.u32)
+     return EINA_FALSE;
+
+   Ector_Software_Buffer_Base_Data *bd = efl_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   const int pix_stride = pd->rasterizer->fill_data.raster_buffer->stride / 4;
+
+   uint32_t *src = bd->pixels.u32;
+   if (!src) return EINA_FALSE;
+
+   for (unsigned int local_y = 0; local_y <  bd->generic->h; local_y++)
+     {
+        uint32_t *dst = pd->rasterizer->fill_data.raster_buffer->pixels.u32 + (x + ((local_y + y) * pix_stride));
+        for (unsigned int local_x = 0; local_x <  bd->generic->w; local_x++)
+          {
+             *src = draw_mul_256(alpha, *src);
+             int inv_alpha = 255 - ((*src) >> 24);
+             *dst = *src + draw_mul_256(inv_alpha, *dst);
+             dst++;
+             src++;
+          }
+     }
+   return EINA_TRUE;
+}
 #include "ector_software_surface.eo.c"
 #include "ector_renderer_software.eo.c"

@@ -5,6 +5,11 @@ vg_common_src = files([
   'vg_common.h',
 ])
 
+if get_option('evas-loaders-disabler').contains('json') == false
+  config_h.set('BUILD_VG_LOADER_JSON', '1')
+  vg_common_src += files('vg_common_json.c')
+endif
+
 vg_common_inc_dir = include_directories('.')
 
 vg_common = declare_dependency(

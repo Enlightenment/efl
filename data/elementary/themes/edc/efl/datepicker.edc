@@ -1,4 +1,23 @@
-group { "efl/datepicker";
+/**
+Group: efl/datepicker (@since 1.23)
+	 Part Swallow: efl.field0 (required)
+	 Part Swallow: efl.field1 (required)
+	 Part Swallow: efl.field2 (required)
+Group: efl/datepicker/spin_button (@since 1.23)
+	 Part Swallow: efl.dec_button (required)
+	 Part Swallow: efl.entry (required)
+	 Part Swallow: efl.inc_button (required)
+	 Part Swallow: efl.text_button (required)
+	 Signal: efl,button,visible,off
+	 Signal: efl,button,visible,on
+	 Signal: efl,entry,visible,off
+	 Signal: efl,entry,visible,on
+	 Signal: efl,state,access,active
+	 Signal: efl,state,access,inactive
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+*/
+group { "efl/datepicker"; data.item: "version" "123";
    parts {
       spacer { "base";
          scale;
@@ -97,7 +116,7 @@ group { "efl/datepicker";
             align: 1.0 1.0;
          }
       }
-      swallow { "efl.field0";
+      swallow { "efl.field0"; required;
          mouse;
          scale;
          desc { "default";
@@ -125,7 +144,7 @@ group { "efl/datepicker";
             align: 0.0 0.5;
          }
       }
-      swallow { "efl.field1";
+      swallow { "efl.field1"; required;
          mouse;
          scale;
          desc { "default";
@@ -156,7 +175,7 @@ group { "efl/datepicker";
             align: 1.0 0.5;
          }
       }
-      swallow { "efl.field2";
+      swallow { "efl.field2"; required;
          mouse;
          scale;
          desc { "default";
@@ -182,7 +201,7 @@ group { "efl/datepicker";
    }
 }
 
-group { "efl/datepicker/spin_button";
+group { "efl/datepicker/spin_button"; data.item: "version" "123";
    parts {
       rect { "clip";
          desc { "default";
@@ -215,7 +234,7 @@ group { "efl/datepicker/spin_button";
             vis;
          }
       }
-      swallow { "efl.inc_button";
+      swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
             align: 0.5 0.0;
@@ -224,7 +243,7 @@ group { "efl/datepicker/spin_button";
             fixed: 1 1;
          }
       }
-      swallow { "efl.dec_button";
+      swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
             align: 0.5 1.0;
@@ -233,7 +252,7 @@ group { "efl/datepicker/spin_button";
             fixed: 1 1;
          }
       }
-      swallow { "efl.entry";
+      swallow { "efl.entry"; required;
          clip: "clip";
          desc { "default";
             fixed: 1 1;
@@ -246,7 +265,7 @@ group { "efl/datepicker/spin_button";
             vis;
          }
       }
-      swallow { "efl.text_button";
+      swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             rel.to_x: "base";
@@ -282,25 +301,25 @@ group { "efl/datepicker/spin_button";
    }
    programs {
       program { "entry_active";
-         signal: "efl,state,entry,active";
+         signal: "efl,entry,visible,on";
          source: "efl";
          action: STATE_SET "active";
          target: "efl.entry";
       }
       program { "entry_inactive";
-         signal: "efl,state,entry,inactive";
+         signal: "efl,entry,visible,off";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.entry";
       }
       program { "text_button_active";
-         signal: "efl,state,button,active";
+         signal: "efl,button,visible,on";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.text_button";
       }
       program { "text_button_inactive";
-         signal: "efl,state,button,inactive";
+         signal: "efl,button,visible,off";
          source: "efl";
          action: STATE_SET "inactive";
          target: "efl.text_button";

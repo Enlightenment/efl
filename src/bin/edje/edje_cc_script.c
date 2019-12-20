@@ -187,6 +187,7 @@ code_parse_internal(Code *code)
                   if (tmp->str) free(tmp->str);
                   free(tmp);
                }
+             if (!sym) break;
              if ((begin - 1) > body)
                {
                   sym->body = mem_alloc(sizeof(char) * (begin - body - 1));

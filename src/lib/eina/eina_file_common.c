@@ -28,7 +28,7 @@
 #include <errno.h>
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* windows.h fcntl mkstemps mkdtemp */
 #endif
 
 #define COPY_BLOCKSIZE (4 * 1024 * 1024)
@@ -40,10 +40,6 @@
 #include "eina_safety_checks.h"
 #include "eina_file_common.h"
 #include "eina_xattr.h"
-
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
 
 #ifndef O_BINARY
 # define O_BINARY 0
@@ -73,6 +69,47 @@ Eina_Lock _eina_file_lock_cache;
 #else
 # define EINA_FILE_MAGIC_CHECK(f, ...) do {} while(0)
 #endif
+
+static Eina_Spinlock _eina_statgen_lock;
+static Eina_Statgen _eina_statgen = 0;
+
+EAPI void
+eina_file_statgen_next(void)
+{
+   eina_spinlock_take(&_eina_statgen_lock);
+   if (_eina_statgen != 0)
+     {
+        _eina_statgen++;
+        if (_eina_statgen == 0) _eina_statgen = 1;
+     }
+   eina_spinlock_release(&_eina_statgen_lock);
+}
+
+EAPI Eina_Statgen
+eina_file_statgen_get(void)
+{
+   Eina_Statgen s;
+   eina_spinlock_take(&_eina_statgen_lock);
+   s = _eina_statgen;
+   eina_spinlock_release(&_eina_statgen_lock);
+   return s;
+}
+
+EAPI void
+eina_file_statgen_enable(void)
+{
+   eina_spinlock_take(&_eina_statgen_lock);
+   if (_eina_statgen != 0) _eina_statgen = 1;
+   eina_spinlock_release(&_eina_statgen_lock);
+}
+
+EAPI void
+eina_file_statgen_disable(void)
+{
+   eina_spinlock_take(&_eina_statgen_lock);
+   _eina_statgen = 0;
+   eina_spinlock_release(&_eina_statgen_lock);
+}
 
 static char *
 _eina_file_escape(char *path, size_t len)
@@ -1072,6 +1109,10 @@ eina_file_init(void)
         return EINA_FALSE;
      }
 
+   eina_spinlock_new(&_eina_statgen_lock);
+   eina_spinlock_take(&_eina_statgen_lock);
+   if (getenv("EINA_STATGEN")) _eina_statgen = 1;
+   eina_spinlock_release(&_eina_statgen_lock);
    eina_lock_recursive_new(&_eina_file_lock_cache);
    eina_magic_string_set(EINA_FILE_MAGIC, "Eina_File");
 
@@ -1102,6 +1143,7 @@ eina_file_shutdown(void)
 
    eina_log_domain_unregister(_eina_file_log_dom);
    _eina_file_log_dom = -1;
+   eina_spinlock_free(&_eina_statgen_lock);
    return EINA_TRUE;
 }
 

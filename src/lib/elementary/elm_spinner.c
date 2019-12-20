@@ -60,9 +60,9 @@ static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
-   { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
-   { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
-   { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
+   { EFL_INPUT_EVENT_CLICKED, _inc_dec_button_clicked_cb},
+   { EFL_INPUT_EVENT_PRESSED, _inc_dec_button_pressed_cb},
+   { EFL_INPUT_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
    { EFL_EVENT_POINTER_MOVE, _inc_dec_button_mouse_move_cb }
 );
 
@@ -922,20 +922,6 @@ _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event)
      }
 }
 
-EOLIAN static void
-_elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eina_Bool
 _elm_spinner_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
 {
@@ -1222,7 +1208,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         elm_widget_can_focus_set(priv->text_button, _elm_config->access_mode);
 
         efl_event_callback_add
-          (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
+          (priv->text_button, EFL_INPUT_EVENT_CLICKED, _text_button_clicked_cb, obj);
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);
@@ -1372,13 +1358,13 @@ elm_spinner_add(Evas_Object *parent)
 EAPI void
 elm_spinner_min_max_set(Evas_Object *obj, double min, double max)
 {
-   efl_ui_range_min_max_set(obj, min, max);
+   efl_ui_range_limits_set(obj, min, max);
 }
 
 EAPI void
 elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   efl_ui_range_min_max_get(obj, min, max);
+   efl_ui_range_limits_get(obj, min, max);
 }
 
 EAPI void
@@ -1449,7 +1435,7 @@ _elm_spinner_label_format_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
+_elm_spinner_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
@@ -1464,7 +1450,7 @@ _elm_spinner_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Spinner_Data *s
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
+_elm_spinner_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -1718,7 +1704,6 @@ _elm_spinner_efl_access_object_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SPINNER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_spinner), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_spinner)
 
 #include "elm_spinner_eo.c"

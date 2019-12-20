@@ -15,7 +15,11 @@ _ector_renderer_efl_object_destructor(Eo *obj, Ector_Renderer_Data *pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 
    if (pd->m) free(pd->m);
-   efl_unref(pd->surface);
+   /*FIXME: pd-> surface will try efl_xref whenever surface_set is called.
+            desturctor is called from a subclass, ref and unref do not match.
+            So, Add this condition temporarily.*/
+   if (efl_ref_count(pd->surface) > 0)
+     efl_unref(pd->surface);
 }
 
 static Efl_Object *
@@ -142,10 +146,10 @@ _ector_renderer_crc_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_mask_set(Eo *obj EINA_UNUSED,
-                         Ector_Renderer_Data *pd EINA_UNUSED,
-                         Ector_Buffer *mask EINA_UNUSED,
-                         int op EINA_UNUSED)
+_ector_renderer_comp_method_set(Eo *obj EINA_UNUSED,
+                                Ector_Renderer_Data *pd EINA_UNUSED,
+                                Ector_Buffer *comp EINA_UNUSED,
+                                Efl_Gfx_Vg_Composite_Method method EINA_UNUSED)
 {
 }
 

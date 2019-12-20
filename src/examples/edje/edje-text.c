@@ -50,21 +50,47 @@ _on_text_change(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 static void
 _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
+   static char envbuf[20]; // doesn't have to be static, but a good habit
    char *env;
    lang_idx = (lang_idx + 1) % (sizeof (lang) / sizeof (lang[0]));
    fprintf(stderr, "Setting lang of this edje object to '%s'\n", lang[lang_idx]);
+
+   // unfortunately dealing with env vars portably means using putenv()
+   // which has issues that lead to complexity like below. the envbuf is
+   // static because in general  it's a good habit when dealing with putenv()
+   // but in this case it doesn't need to be. it's good to show good habits
+   // at any rate. read up pn putenv() and how it takes the string pointer
+   // directly into the env and takes "ownership" (but will never actually
+   // free it if its an allocated string etc.).
    env = getenv("LANGUAGE");
-   setenv("LANGUAGE", lang[lang_idx], 1);
+   if (env) env = strdup(env);
+   snprintf(envbuf, sizeof(envbuf), "LANGUAGE=%s", lang[lang_idx]);
+   putenv(envbuf);
+
    edje_object_language_set(o, lang[lang_idx]);
-   setenv("LANGUAGE", env, 1);
+
+   snprintf(envbuf, sizeof(envbuf), "LANGUAGE=%s", env ? env : "");
+   putenv(envbuf);
+   free(env);
 }
 
 static void
 _on_mouse_down_text(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   static char *env_lang_str = NULL;
+   char *s;
+
    lang_idx = (lang_idx + 1) % (sizeof (lang)/ sizeof (lang[0]));
    fprintf(stderr, "Setting lang to '%s'\n", lang[lang_idx]);
-   setenv("LANGUAGE", lang[lang_idx], 1);
+   s = malloc(10 + strlen(lang[lang_idx]));
+   if (s)
+     {
+        strcpy(s, "LANGUAGE=");
+        strcpy(s + 9, lang[lang_idx]);
+        putenv(s);
+        if (env_lang_str) free(env_lang_str);
+        env_lang_str = s;
+     }
    edje_language_set(lang[lang_idx]);
 }
 int
@@ -107,7 +133,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_move(edje_obj, 0, 20);
    evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj);
-   setenv("LANGUAGE", "en_IN", 1);
+   putenv("LANGUAGE=en_IN");
    edje_object_language_set(edje_obj, "en_IN");
    edje_object_text_change_cb_set(edje_obj, _on_text_change, NULL);
    edje_object_part_text_set(edje_obj, "part_two", "<b>Click here");

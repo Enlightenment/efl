@@ -32,8 +32,8 @@ class @beta Efl.Container_Model extends Efl.Composite_Model
            Value type is required for compatibility with the @Efl.Model API.]]
          params {
             name: string; [[Property name]]
-            @cref type: Eina.Value_Type; [[Property type]]
-            values: iterator<const(void_ptr)> @owned; [[Values to be added]]
+            @in type: ptr(const(Eina.Value_Type)); [[Property type]]
+            values: iterator<const(void_ptr)> @move; [[Values to be added]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }

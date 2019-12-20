@@ -2,9 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_SHM_OPEN
-# include <sys/mman.h>
-#endif
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -272,7 +269,11 @@ main(int argc, char **argv)
 
    if (!head_only)
      {
+#ifdef _WIN32
+        if (shm_fd)
+#else
         if (shm_fd >= 0)
+#endif
           {
              printf("shmfile %s\n", shmfile);
           }

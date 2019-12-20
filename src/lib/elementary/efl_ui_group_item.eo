@@ -1,0 +1,30 @@
+class @beta Efl.Ui.Group_Item extends Efl.Ui.Default_Item implements Efl.Pack_Linear
+{
+   [[Special @Efl.Ui.Item that acts as group header.
+   
+     Items in this group have to be added directly to the @Efl.Ui.Group_Item using the
+     @Efl.Pack_Linear interface, instead of being added to the container.
+     For example, an @Efl.Ui.List container where all items are inside a group will contain only
+     @Efl.Ui.Group_Item objects. Normal @Efl.Ui.Item objects will be contained inside the group items.
+
+     Each container chooses how group headers are rendered. See for example @Efl.Ui.List or @Efl.Ui.Grid.
+   ]]
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+   }
+}

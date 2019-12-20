@@ -227,7 +227,7 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_show(bg);
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
    elm_win_resize_object_add(win, box);
 
    win2 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);

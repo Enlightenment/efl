@@ -1,6 +1,6 @@
 class Class_Funcs {
    methods {
-      @property a @class {
+      @property a @static {
          get {
          }
       }
@@ -8,11 +8,11 @@ class Class_Funcs {
          get {
          }
       }
-      foo @class {
+      foo @static {
       }
       bar {
       }
-      baz @protected @class {
+      baz @protected @static {
       }
       bah @protected {
       }

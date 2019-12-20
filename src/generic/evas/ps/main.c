@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-#include <sys/mman.h>
 #include <fcntl.h>
 
 #include <libspectre/spectre.h>
@@ -270,7 +269,11 @@ main(int argc, char **argv)
 
    if (!head_only)
      {
+#ifdef _WIN32
+        if (shm_fd) printf("shmfile %s\n", shmfile);
+#else
         if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
+#endif
         else
           {
              // could also to "tmpfile %s\n" like shmfile but just

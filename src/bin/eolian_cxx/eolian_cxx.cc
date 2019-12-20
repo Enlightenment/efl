@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include <iostream>
 #include <fstream>
@@ -40,10 +55,6 @@ struct options_type
    bool main_header;
 
    options_type() : main_header(false) {}
-   ~options_type()
-     {
-        eolian_state_free(state);
-     }
 };
 
 static efl::eina::log_domain domain("eolian_cxx");
@@ -287,10 +298,10 @@ run(options_type const& opts)
      {
        const Eolian_Class *klass = nullptr;
        char* dup = strdup(opts.in_files[0].c_str());
-       char* base = basename(dup);
+       std::string base (basename(dup));
        std::string cpp_types_header;
        opts.unit = (Eolian_Unit*)opts.state;
-       klass = ::eolian_state_class_by_file_get(opts.state, base);
+       klass = ::eolian_state_class_by_file_get(opts.state, base.c_str());
        free(dup);
        if (klass)
          {
@@ -305,7 +316,26 @@ run(options_type const& opts)
          }
        else
          {
-           std::abort();
+           if (!types_generate(base, opts, cpp_types_header))
+             {
+               EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+                 << "Error generating: " << ::eolian_class_short_name_get(klass)
+                 << std::endl;
+               assert(false && "error generating class");
+             }
+           else
+             {
+               std::ofstream header_decl;
+               header_decl.open(opts.out_file);
+               if (!header_decl.good())
+               {
+                 EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+                   << "Can't open output file: " << opts.out_file << std::endl;
+                 assert(false && "error opening file");
+               }
+               std::copy (cpp_types_header.begin(), cpp_types_header.end()
+                          , std::ostream_iterator<char>(header_decl));
+             }
          }
      }
    else
@@ -327,8 +357,8 @@ run(options_type const& opts)
                  opts.unit = unit;
              }
            char* dup = strdup(name.c_str());
-           char* base = basename(dup);
-           Eolian_Class const* klass = ::eolian_state_class_by_file_get(opts.state, base);
+           std::string base(basename(dup));
+           Eolian_Class const* klass = ::eolian_state_class_by_file_get(opts.state, base.c_str());
            free(dup);
            if (klass)
              {
@@ -336,6 +366,10 @@ run(options_type const& opts)
                headers.insert(filename + std::string(".hh"));
                eo_files.insert(filename);
              }
+           else
+           {
+             headers.insert (base + std::string(".hh"));
+           }
          }
 
        using efl::eolian::grammar::header_include_directive;
@@ -360,19 +394,6 @@ run(options_type const& opts)
        main_header_grammar.generate(std::ostream_iterator<char>(main_header)
                                     , attributes, efl::eolian::grammar::context_null());
      }
-}
-
-static void
-state_init(options_type const& opts)
-{
-   Eolian_State *eos = ::eolian_state_new();
-   if (!eos)
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-          << "Eolian failed creating state";
-        assert(false && "Error creating Eolian state");
-     }
-   opts.state = eos;
 }
 
 static void
@@ -509,8 +530,9 @@ int main(int argc, char **argv)
      {
         efl::eina::eina_init eina_init;
         efl::eolian::eolian_init eolian_init;
+        efl::eolian::eolian_state eolian_state;
         eolian_cxx::options_type opts = opts_get(argc, argv);
-        eolian_cxx::state_init(opts);
+        opts.state = eolian_state.value;
         eolian_cxx::database_load(opts);
         eolian_cxx::run(opts);
      }

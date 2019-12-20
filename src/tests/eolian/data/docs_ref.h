@@ -56,11 +56,13 @@ typedef enum
  */
 typedef Bar Alias;
 
+#ifndef PANTS
 /** Docs for var.
  *
  * @ingroup pants
  */
-EWAPI extern int PANTS;
+#define PANTS 150
+#endif
 
 /** Opaque struct docs. See @ref Foo for another struct.
  *
@@ -74,7 +76,7 @@ typedef struct _Opaque Opaque;
  * @brief Docs for class.
  *
  * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
- * @ref pants @ref eo_docs_meth @ref eo_docs_prop_get @ref eo_docs_prop_get
+ * @ref PANTS @ref eo_docs_meth @ref eo_docs_prop_get @ref eo_docs_prop_get
  * @ref eo_docs_prop_set @ref Foo.field1 @ref BAR_FOO @ref Eo_Docs
  *
  * @since 1.18
@@ -129,6 +131,16 @@ EOAPI void eo_docs_prop_set(Eo *obj, int val);
  * @ingroup Eo_Docs
  */
 EOAPI int eo_docs_prop_get(const Eo *obj);
+
+EOAPI void eo_docs_no_doc_meth(Eo *obj);
+
+/** No description supplied.
+ *
+ * @since 1.18
+ *
+ * @ingroup Eo_Docs
+ */
+EOAPI void eo_docs_doc_with_empty_doc(Eo *obj);
 
 EWAPI extern const Efl_Event_Description _EO_DOCS_EVENT_CLICKED;
 

@@ -1,8 +1,13 @@
-class @beta Efl.Ui.Box_Stack extends Efl.Ui.Box
+class Efl.Ui.Box_Stack extends Efl.Ui.Box
 {
    [[A custom layout engine for @Efl.Ui.Box that stacks items.
 
-     Items will be stacked on top of each other (in the Z direction).
+     Items will be stacked on top of each other (in the Z direction) meaning that, in the absence of transparency,
+     only the last item added through the @Efl.Pack interface will actually be visible.
+
+     This can be useful to display transparent objects on top of each other, for example.
+
+     @since 1.23
    ]]
    data: null;
    implements {

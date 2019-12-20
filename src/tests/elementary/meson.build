@@ -1,6 +1,7 @@
 priv_eo_files = [
    'focus_test.eo',
-   'focus_test_sub_main.eo'
+   'focus_test_sub_main.eo',
+   'focus_manager_test.eo'
 ]
 
 priv_eo_file_target = []
@@ -98,7 +99,8 @@ elementary_suite_src = [
   'elm_code_test_widget_text.c',
   'elm_code_test_widget_selection.c',
   'elm_code_test_widget_undo.c',
-  'elm_test_widget_focus.c'
+  'elm_test_widget_focus.c',
+  'elm_test_widget_basics.c'
 ]
 
 elementary_suite = executable('elementary_suite',
@@ -119,8 +121,10 @@ efl_ui_suite_src = [
   'suite_helpers.c',
   'suite_helpers.h',
   'elm_test_init.c',
+  'efl_ui_test_win.c',
   'efl_ui_test_atspi.c',
   'efl_ui_test_callback.c',
+  'efl_ui_test_config.c',
   'efl_ui_test_focus_common.c',
   'efl_ui_test_focus_common.h',
   'efl_ui_test_focus.c',
@@ -130,13 +134,31 @@ efl_ui_suite_src = [
   'efl_ui_test_box_stack.c',
   'efl_ui_test_table.c',
   'efl_ui_test_grid.c',
-  'efl_ui_test_relative_layout.c',
+  'efl_ui_test_relative_container.c',
   'efl_ui_test_image.c',
   'efl_ui_test_image_zoomable.c',
   'efl_ui_test_layout.c',
   'efl_ui_suite.h',
   'efl_ui_model.c',
   'efl_ui_test_widget.c',
+  'efl_ui_test_spotlight.c',
+  'efl_ui_test_check.c',
+  'efl_ui_test_radio_group.c',
+  'efl_ui_test_progressbar.c',
+  'efl_ui_test_spin.c',
+  'efl_ui_test_spin_button.c',
+  'efl_ui_test_slider.c',
+  'efl_ui_test_collection_common.c',
+  'efl_ui_test_collection.c',
+  'efl_ui_test_list_collection.c',
+  'efl_ui_test_grid_collection.c',
+  'efl_ui_test_position_manager_common.c',
+  'efl_ui_test_popup.c',
+  'efl_ui_test_scroller.c',
+  'efl_ui_test_select_model.c',
+  'efl_ui_test_view_model.c',
+  'efl_ui_test_group_item.c',
+  'efl_ui_test_text.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',

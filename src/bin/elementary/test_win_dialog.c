@@ -40,7 +40,7 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    // - With EO APIs, efl_gfx_hint_size_min_set() is safe to call as EFL will
    //   only set the restricted min size (and combine them for calculation).
 
-   lb = efl_add(EFL_UI_TEXT_CLASS, dia,
+   lb = efl_add(EFL_UI_TEXTBOX_CLASS, dia,
                 efl_text_set(efl_added, "This is a non-resizable dialog."),
                 efl_gfx_hint_size_min_set(efl_added, size),
                 efl_gfx_hint_size_max_set(efl_added, size),
@@ -82,7 +82,7 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_text_set(efl_added, "Min/Max Size Dialog"));
 
-   //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
+   //lb = efl_add(EFL_UI_TEXTBOX_CLASS, dia);,
    lb = elm_label_add(dia);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_update, lb);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _size_update, lb);
@@ -102,14 +102,14 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 {
    Efl_Canvas_Object *dia, *lb;
 
-   dia = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   dia = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-4"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_text_set(efl_added, "Min/Max Size Dialog")
                 );
 
-   //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
+   //lb = efl_add(EFL_UI_TEXTBOX_CLASS, dia);,
    lb = elm_label_add(dia);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_update, lb);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _size_update, lb);

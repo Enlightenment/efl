@@ -7,6 +7,10 @@
 #include <string.h>
 #include <limits.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* unsetenv */
+#endif
+
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Efreet.h>

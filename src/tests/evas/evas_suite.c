@@ -10,6 +10,7 @@
 
 static const Efl_Test_Case etc[] = {
   { "Evas", evas_test_init },
+  { "Evas Focus", evas_test_focus },
   { "Evas New", evas_test_new },
   { "Object", evas_test_object },
   { "Object Textblock", evas_test_textblock },
@@ -27,6 +28,8 @@ static const Efl_Test_Case etc[] = {
   { "Evas GL", evas_test_evasgl },
   { "Object Smart", evas_test_object_smart },
   { "Matrix", evas_test_matrix },
+  { "Events", evas_test_events },
+  { "Efl Canvas Animation", efl_test_canvas_animation },
   { NULL, NULL }
 };
 

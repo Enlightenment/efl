@@ -63,7 +63,7 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+     evas_object_smart_callback_call(obj, "clicked", NULL);
    else
      efl_event_callback_legacy_call(obj, ELM_THUMB_EVENT_PRESS, NULL);
 }
@@ -82,7 +82,7 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (!sd->on_hold)
-     efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+     evas_object_smart_callback_call(obj, "clicked", NULL);
 
    sd->on_hold = EINA_FALSE;
 }
@@ -632,6 +632,36 @@ EOLIAN static Eina_Bool
 _elm_thumb_efl_file_loaded_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
 {
    return sd->loaded;
+}
+
+EOLIAN static void
+_elm_thumb_efl_file_unload(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+{
+   sd->is_video = EINA_FALSE;
+   eina_stringshare_replace(&(sd->thumb.file), NULL);
+   eina_stringshare_replace(&(sd->thumb.key), NULL);
+   sd->loaded = EINA_FALSE;
+
+   if (sd->thumb.request)
+     {
+        ethumb_client_thumb_async_cancel(_elm_ethumb_client, sd->thumb.request);
+        sd->thumb.request = NULL;
+     }
+   if (sd->thumb.retry)
+     {
+        retry = eina_list_remove(retry, sd);
+        efl_data_unref(sd->obj, sd);
+        sd->thumb.retry = EINA_FALSE;
+     }
+   evas_object_event_callback_del_full(sd->view, EVAS_CALLBACK_IMAGE_PRELOADED,
+                                       _on_thumb_preloaded, sd);
+
+   ELM_SAFE_FREE(sd->view, evas_object_del);
+   eina_stringshare_replace(&sd->thumb.thumb_path, NULL);
+   eina_stringshare_replace(&sd->thumb.thumb_key, NULL);
+
+   ELM_SAFE_FREE(sd->eeh, ecore_event_handler_del);
+
 }
 
 EOLIAN static Eina_Error

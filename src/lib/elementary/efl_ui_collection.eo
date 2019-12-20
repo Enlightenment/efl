@@ -1,0 +1,102 @@
+class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
+                   Efl.Pack_Linear,
+                   Efl.Ui.Layout_Orientable,
+                   Efl.Ui.Multi_Selectable_Object_Range,
+                   Efl.Ui.Focus.Manager_Sub,
+                   Efl.Ui.Widget_Focus_Manager,
+                   Efl.Ui.Item_Clickable
+   composites
+                   Efl.Ui.Scrollable,
+                   Efl.Ui.Scrollbar,
+                   Efl.Ui.Focus.Manager
+{
+   [[This widget displays a list of items in an arrangement controlled by an external @.position_manager
+     object. By using different @.position_manager objects this widget can show unidimensional lists or
+     two-dimensional grids of items, for example.
+
+     This class is intended to act as a base for widgets like @Efl.Ui.List or @Efl.Ui.Grid, which hide
+     this complexity from the user.
+
+     Items are added using the @Efl.Pack_Linear interface and must be of @Efl.Ui.Item type.
+
+     The direction of the arrangement can be controlled through @Efl.Ui.Layout_Orientable.orientation.
+
+     If all items do not fit in the current widget size scrolling facilities are provided.
+
+     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Object_Range.selected_iterator_new.
+
+     @since 1.23
+   ]]
+   methods {
+      item_scroll {
+         [[Brings the passed item into the viewport.]]
+         params {
+            @in item: Efl.Ui.Item; [[The target to move into view.]]
+            @in animation: bool; [[If you want to have an animated transition.]]
+         }
+      }
+      item_scroll_align {
+         [[Brings the passed item into the viewport and align it.
+
+           $align selects the final position of the object inside the viewport. 0.0 will move the object
+           to the first visible position inside the viewport, 1.0 will move it to the last visible
+           position, and values in between will move it accordingly to positions in between, along the
+           scrolling axis.
+         ]]
+         params {
+            @in item: Efl.Ui.Item; [[The target to move into view.]]
+            @in align: double; [[0.0 to have this item at the upper or left side of the viewport,
+                                 1.0 to have this item at the lower or right side of the viewport.]]
+            @in animation: bool; [[If you want to have an animated transition.]]
+         }
+      }
+      @property position_manager @beta {
+         [[Position manager object that handles placement of items.]]
+         get {
+            values {
+               position_manager : Efl.Ui.Position_Manager.Entity; [[A borrowed handle to the item container.]]
+            }
+         }
+         set { }
+         values {
+            position_manager : Efl.Ui.Position_Manager.Entity @move; [[Ownership is passed to the item container.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Object.invalidate;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Ui.Scrollable.match_content { set; }
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Focus.Manager.move;
+      Efl.Ui.Single_Selectable.last_selected { get; }
+      Efl.Ui.Multi_Selectable.select_mode {get; set;}
+      Efl.Ui.Multi_Selectable.all_select;
+      Efl.Ui.Multi_Selectable.all_unselect;
+      Efl.Ui.Multi_Selectable_Object_Range.selected_iterator_new;
+      Efl.Ui.Multi_Selectable_Object_Range.range_select;
+      Efl.Ui.Multi_Selectable_Object_Range.range_unselect;
+      Efl.Ui.Single_Selectable.fallback_selection {get; set;}
+   }
+}
+

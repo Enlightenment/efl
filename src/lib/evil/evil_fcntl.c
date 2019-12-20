@@ -8,8 +8,7 @@
 #include <winsock2.h> /* for ioctlsocket */
 #include <io.h>
 
-#include "evil_macro.h"
-#include "evil_fcntl.h"
+#include "evil_private.h"
 
 /* SOCKET is defined as a uintptr_t, so passing a fd (int) is not a problem */
 static int

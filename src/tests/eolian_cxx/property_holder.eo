@@ -38,5 +38,47 @@ class Property_Holder extends Efl.Object
             key: string;
          }
       }
+
+      @property multi_value_prop {
+         get {}
+         set {}
+         values {
+            x: int;
+            y: int;
+         }
+      }
+
+      @property setter_with_return {
+         get {}
+         set {
+            return: bool;
+         }
+         values {
+            data: int;
+         }
+      }
+
+      @property getter_with_return {
+         get {
+            return: bool;
+         }
+         set {}
+         values {
+            data: int;
+         }
+      }
+
+      @property value_override {
+         get {
+            values {
+               getter: const(Property_Holder);
+            }
+         }
+         set {
+            values {
+               setter: Property_Holder;
+            }
+         }
+      }
    }
 }

@@ -212,8 +212,49 @@ EAPI extern unsigned int _efl_object_init_generation;
  */
 typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
+/**
+ * This is a no-operation. Its presence behind a function parameter indicates that
+ * ownership of the parameter is transferred to the callee.
+ * When present after a method, it indicates that the return value of the method is
+ * transferred to the caller.
+ * For objects, ownership transfer means that exactly one reference is transferred.
+ * If you transfer ownership without owning a reference in the first place, you will
+ * get unexpected behavior.
+ * For non-Objects, ownership transfer means that the responsibility of freeing a
+ * segment of memory is passed on.
+ */
+#define EFL_TRANSFER_OWNERSHIP
+
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
+
+/**
+ * @brief A parameter passed in event callbacks holding extra event parameters.
+ *
+ * This is the full event information passed to callbacks in C.
+ *
+ * @since 1.22
+ *
+ * @ingroup Efl
+ */
+typedef struct _Efl_Event
+{
+  Efl_Object *object; /**< The object the callback was called on.
+                       *
+                       * @since 1.22 */
+  const Efl_Event_Description *desc; /**< The event description.
+                                      *
+                                      * @since 1.22 */
+  void *info; /**< Extra event information passed by the event caller. Must be
+               * cast to the event type declared in the EO file. Keep in mind
+               * that: 1) Objects are passed as a normal Eo*. Event subscribers
+               * can call functions on these objects. 2) Structs, built-in
+               * types and containers are passed as const pointers, with one
+               * level of indirection.
+               *
+               * @since 1.22 */
+} Efl_Event;
+
 #define EO_CLASS EFL_OBJECT_CLASS
 
 /** An event callback prototype. */
@@ -275,6 +316,18 @@ EOAPI Eina_Bool efl_event_callback_priority_add(Eo *obj, const Efl_Event_Descrip
  * @return Return @c true when the callback has been successfully removed.
  */
 EOAPI Eina_Bool efl_event_callback_del(Eo *obj, const Efl_Event_Description *desc, Efl_Event_Cb func, const void *user_data);
+
+/**
+ * @brief Get the Eina_Future scheduler that trigger them on a specific set of events on an object.
+ *
+ * @param[in] obj The object that the scheduler is attached to.
+ * @param[in] array The events that when triggered on the object will trigger the Eina_Future.
+ *
+ * @return Return a scheduler that will trigger future exactly when the event are triggered.
+ *
+ * @note You must use EFL_SCHEDULER_ARRAY_DEFINE() to create the @p array.
+ */
+EOAPI Eina_Future_Scheduler *efl_event_future_scheduler_get(const Eo *obj, Efl_Callback_Array_Item *array);
 
 /**
  * @brief Add an array of callbacks created by @ref EFL_CALLBACKS_ARRAY_DEFINE
@@ -1540,6 +1593,35 @@ EAPI Eo *_efl_added_get(void);
 EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
 
 /**
+ * @typedef Efl_Substitute_Ctor_Cb
+ * Callback to be called instead of the object constructor.
+ *
+ * Only intended for binding creators.
+ *
+ * @param data Additional data previously supplied by the user
+ * @param obj_id The object being constructed.
+ * @return The constructed object in case of success, NULL otherwise.
+ */
+typedef Eo *(*Efl_Substitute_Ctor_Cb)(void *data, Eo *obj_id);
+
+/**
+ * @brief Just like _efl_add_internal_start() but with additional options
+ *
+ * Only intended for binding creators.
+ *
+ * @param file File name of the call site, used for debug logs.
+ * @param line Line number of the call site,  used for debug logs.
+ * @param klass_id Pointer for the class being instantiated.
+ * @param ref Whether or not the object will have an additional reference if it has a parent.
+ * @param parent Object parent, can be NULL.
+ * @param is_fallback Whether or not the fallback @c efl_added behaviour is to be used.
+ * @param substitute_ctor Optional callback to replace the call for efl_constructor(), if NULL efl_constructor() will be called normally.
+ * @param sub_ctor_data Additional data to be passed to the @p substitute_ctor callback.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+EAPI Eo * _efl_add_internal_start_bindings(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data);
+
+/**
  * @brief Unrefs the object and reparents it to NULL.
  *
  * Because efl_del() unrefs and reparents to NULL, it doesn't really delete the
@@ -1829,7 +1911,6 @@ EOAPI void efl_wref_add(Eo *obj, Efl_Object **wref);
  */
 EOAPI void efl_wref_del(Eo *obj, Efl_Object **wref);
 
-
 /**
  * @brief Generic data with string key on an object.
  *
@@ -2114,6 +2195,32 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
   }
 
 /**
+ * Helper for creating global scheduler arrays. The callback will be set by scheduler get.
+ * Problems occur here in windows where you can't declare a static array with
+ * external symbols in them. These addresses are only known at runtime.
+ * This also allows for automatic sorting for better performance.
+ */
+#define EFL_SCHEDULER_ARRAY_DEFINE(Name, ...)                           \
+  static Efl_Callback_Array_Item *                                      \
+  Name(void)                                                            \
+  {                                                                     \
+     const Efl_Event_Description *tmp[] = { __VA_ARGS__ };              \
+     static Efl_Callback_Array_Item internal[EINA_C_ARRAY_LENGTH(tmp) + 1] = { { 0, 0 } }; \
+                                                                        \
+     if (internal[0].desc == NULL)                                      \
+       {                                                                \
+          unsigned int i;                                               \
+                                                                        \
+          for (i = 0; i < EINA_C_ARRAY_LENGTH(tmp); i++)                \
+            internal[i].desc = tmp[i];                                  \
+                                                                        \
+          qsort(internal, EINA_C_ARRAY_LENGTH(internal) - 1, sizeof (internal[0]), \
+                (int(*)(const void*,const void*)) efl_callbacks_cmp);   \
+       }                                                                \
+     return internal;                                                   \
+  }
+
+/**
  * @def efl_event_callback_add(obj, desc, cb, data)
  * Add a callback for an event.
  * @param[in] desc An #Efl_Event_Description of the event to listen to.
@@ -2159,6 +2266,17 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @ingroup Efl_Object
  */
 #define efl_event_callback_forwarder_add(obj, desc, new_obj) efl_event_callback_forwarder_priority_add(obj, desc, EFL_CALLBACK_PRIORITY_DEFAULT, new_obj)
+
+/**
+ * @brief Count the number of event handler registered for a specific event.
+ *
+ * @param[in] obj The object.
+ * @param[in] desc The specific event.
+ * @return The number of handler registered for this specific events.
+ *
+ * @ingroup Efl_Object
+ */
+EOAPI unsigned int efl_event_callback_count(const Eo *obj, const Efl_Event_Description *desc);
 
 /**
  * @def Replace the previous Eo pointer with new content.
@@ -2261,6 +2379,7 @@ efl_alive_get(const Eo *obj)
 {
   return efl_finalized_get(obj) && !efl_invalidating_get(obj) && !efl_invalidated_get(obj);
 }
+
 #endif /* EFL_BETA_API_SUPPORT */
 
 /**
@@ -2301,6 +2420,16 @@ EAPI Eina_Iterator *eo_classes_iterator_new(void);
  * @return an iterator on success, NULL otherwise
  */
 EAPI Eina_Iterator *eo_objects_iterator_new(void);
+
+/**
+ * @brief Check if a object can be owned
+ *
+ * This API checks if the passed object has at least one free reference that is not taken by the parent relation.
+ * If this is not the case, a ERR will be printed.
+ *
+ * @return EINA_TRUE if the object is ownable. EINA_FALSE if not.
+ */
+EAPI Eina_Bool efl_ownable_get(const Eo *obj);
 
 /**
  * @}

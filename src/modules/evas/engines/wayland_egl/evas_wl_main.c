@@ -46,16 +46,21 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
 
-   /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
-    * gets fixed. Currently it is incorrectly detecting wl_display and
-    * returning _EGL_PLATFORM_X11 instead of _EGL_PLATFORM_WAYLAND.
-    *
-    * See ticket #1972 for more info.
-    */
-
-   setenv("EGL_PLATFORM", "wayland", 1);
    wl_disp = ecore_wl2_display_get(gw->wl2_disp);
-   gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)wl_disp);
+   const char *s = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
+   if (s && strstr(s, "EXT_platform_base"))
+     {
+        EGLDisplay (*func) (EGLenum platform, void *native_display, const EGLint *attrib_list);
+        func = (void *)eglGetProcAddress("eglGetPlatformDisplayEXT");
+        if (!func) goto noext;
+        gw->egl_disp = func(EGL_PLATFORM_WAYLAND_EXT, wl_disp, NULL);
+     }
+   else
+     {
+noext:
+        putenv("EGL_PLATFORM=wayland");
+        gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)wl_disp);
+     }
    if (!gw->egl_disp)
      {
         ERR("eglGetDisplay() fail. code=%#x", eglGetError());
@@ -339,6 +344,8 @@ eng_window_resurf(Outbuf *gw)
           gw->win = wl_egl_window_create(wls, gw->h, gw->w);
      }
 
+   if (gw->egl_surface != EGL_NO_SURFACE)
+     eglDestroySurface(gw->egl_disp, gw->egl_surface);
    gw->egl_surface =
      eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                             (EGLNativeWindowType)gw->win, NULL);
@@ -409,6 +416,7 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
              char buf[16];
              snprintf(buf, sizeof(buf), "!%i", (int)age);
              eina_evlog("!gl_buffer_age", ob, 0.0, buf);
+             swap_mode = MODE_FULL;
           }
         else
           {

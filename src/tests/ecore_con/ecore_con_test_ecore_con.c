@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv unsetenv */
+#endif
+
 #include <Ecore.h>
 #include <Ecore_Con.h>
 

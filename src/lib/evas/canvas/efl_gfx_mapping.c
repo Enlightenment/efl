@@ -138,7 +138,7 @@ static const Gfx_Map gfx_mapping_cow_default = {
 #define PIVOT_REF(_pivot) (_pivot ? efl_xref((Eo *) _pivot, eo_obj) : NULL)
 #define PIVOT_UNREF(_pivot) (_pivot ? efl_xunref(_pivot, eo_obj) : NULL)
 
-static inline void _map_ops_clean(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd);
+static inline void _map_clean(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd);
 
 // ----------------------------------------------------------------------------
 
@@ -174,8 +174,7 @@ _efl_gfx_mapping_efl_object_destructor(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd)
 {
    if (pd->cow)
      {
-        _map_ops_clean(eo_obj, pd);
-        free(pd->cow->points);
+        _map_clean(eo_obj, pd);
         eina_cow_free(gfx_mapping_cow, (const Eina_Cow_Data **) &pd->cow);
      }
    efl_destructor(efl_super(eo_obj, MY_CLASS));
@@ -365,7 +364,7 @@ _map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Mapping_Dat
                   if (!op->pivot.pivot)
                     {
                        EINA_SAFETY_ERROR("safety check failed: op->pivot.pivot == NULL");
-                       if (map_alloc) free(m);
+                       if (map_alloc) evas_map_free(m);
                        return NULL;
                     }
 
@@ -471,8 +470,10 @@ _efl_gfx_mapping_update(Eo *eo_obj)
 }
 
 static inline void
-_map_ops_clean(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd)
+_map_clean(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd)
 {
+   free(pd->cow->points);
+   if (pd->cow->map) evas_map_free(pd->cow->map);
    if (pd->cow->ops)
      {
         Gfx_Map_Pivot *pivot;
@@ -514,7 +515,7 @@ _efl_gfx_mapping_mapping_reset(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd)
 
    alpha = pd->cow->alpha;
    smooth = pd->cow->smooth;
-   _map_ops_clean(eo_obj, pd);
+   _map_clean(eo_obj, pd);
    if (pd->cow->event_cbs)
      efl_event_callback_array_del(eo_obj, _geometry_changes(), obj);
 

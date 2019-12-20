@@ -66,7 +66,6 @@ widget_previews = [
   ['mapbuf', 'preview-00.png', 'widget_preview_mapbuf', '200', '200'],
   ['menu', 'preview-00.png', 'widget_preview_menu', '100', '100'],
   ['notify', 'preview-00.png', 'widget_preview_notify', '60', '30'],
-  ['nstate', 'preview-00.png', 'widget_preview_nstate', '45', '28'],
   ['panel', 'preview-00.png', 'widget_preview_panel', '150', '50'],
   ['panes', 'preview-00.png', 'widget_preview_panes', '200', '100'],
   ['photocam', 'preview-00.png', 'widget_preview_photocam', '243', '162'],
@@ -105,8 +104,6 @@ widget_preview_eps = custom_target('widget_preview_prefs_epc',
 
 shot_sh = find_program('shot.sh')
 tar = find_program('tar')
-convert = find_program('convert')
-
 foreach text_filter_property : text_filter_properties
   text = text_filter_property[0]
   font = text_filter_property[1]
@@ -115,7 +112,11 @@ foreach text_filter_property : text_filter_properties
   filter_code = run_command('cat', join_paths(meson.source_root(), 'src', 'examples', 'evas', 'filters', 'filter_'+name+'.lua'))
 
   doc_target += custom_target('preview_text_filters_'+name,
-                  command: [env, 'EFL_RUN_IN_TREE=1', preview_text_filter.full_path(), text, filter_code.stdout(), '@OUTPUT@', font, size],
+                  command: [
+                    env, 'EFL_RUN_IN_TREE=1',
+                    'EFL_EVAS_FILTER_LUA_PREFIX=' + join_paths(meson.source_root(), 'src', 'lib', 'evas'),
+                    preview_text_filter.full_path(), text, filter_code.stdout(), '@OUTPUT@', font, size
+                  ],
                   depends: preview_text_filter,
                   output:  'filter_'+name+'.png',
                   build_by_default: false
@@ -131,7 +132,7 @@ foreach widget_preview : widget_previews
       dependencies: elementary,
       build_by_default: false,
       c_args : [
-        '-DPACKAGE_DATA_DIR="'+meson.current_build_dir()+'"',
+        '-DPACKAGE_DATA_DIR="'+join_paths(meson.source_root(), 'data', 'elementary')+'"',
         '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
         '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"',
         '-DDOCW_DIR="'+meson.current_build_dir()+'"']
@@ -139,6 +140,8 @@ foreach widget_preview : widget_previews
     set_variable(binary, tmp)
   endif
 endforeach
+
+#convert = find_program('convert')
 
 foreach widget_preview : widget_previews
   directory = widget_preview[0]
@@ -178,14 +181,14 @@ doc_target += custom_target('doxygen',
 )
 
 compress_target = custom_target('package_doc_tar',
-  command: [tar, '-C', meson.build_root(), '-cf', 'efl-'+meson.version()+'.tar', 'html', 'man'],
-  output: 'efl-'+meson.version()+'.tar',
-  depends: doc_target,
+  command: [tar, '-C', meson.build_root(), '--xz',  '-cf', 'efl-'+meson.project_version()+'-doc.tar.xz', 'html', 'man'],
+  output: 'efl-'+meson.project_version()+'-doc.tar.xz',
+  depends: [doc_target],
   build_by_default: false
 )
 
 run_target('doc',
-  command: ['echo', 'Documentation sucessfully build!'],
+  command: ['echo', 'Documentation built successfully'],
   depends: compress_target,
 )
 

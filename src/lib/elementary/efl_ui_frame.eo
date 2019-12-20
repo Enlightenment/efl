@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Frame extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
+class @beta Efl.Ui.Frame extends Efl.Ui.Layout_Base implements Efl.Input.Clickable, Efl.Text, Efl.Text_Markup,
                     Efl.Content
 {
    [[Frame widget
@@ -9,35 +9,26 @@ class @beta Efl.Ui.Frame extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
    ]]
    methods {
       @property collapse {
+         [[Manually collapse a frame without animations.
+           Use this to toggle the collapsed state of a frame, bypassing animations.
+         ]]
          set {
-            [[Manually collapse a frame without animations
-              Use this to toggle the collapsed state of a frame, bypassing animations.
-            ]]
          }
          get {
-            [[Determine the collapse state of a frame
-              Use this to determine the collapse state of a frame.
-            ]]
          }
          values {
             collapse: bool; [[$true to collapse, $false to expand.]]
          }
       }
       @property autocollapse {
+         [[Toggle autocollapsing of a frame.
+           When $enable is $true, clicking a frame's label will collapse the frame
+           vertically, shrinking it to the height of the label.
+           By default, this is DISABLED.
+         ]]
          set {
-            [[Toggle autocollapsing of a frame
-              When $enable is $true, clicking a frame's label will collapse the frame
-              vertically, shrinking it to the height of the label.
-              By default, this is DISABLED.
-            ]]
          }
          get {
-            [[Determine autocollapsing of a frame
-
-              When this returns $true, clicking a frame's label will collapse the frame
-              vertically, shrinking it to the height of the label.
-              By default, this is DISABLED.
-            ]]
          }
          values {
             autocollapse: bool; [[Whether to enable autocollapse.]]

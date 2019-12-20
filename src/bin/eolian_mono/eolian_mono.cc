@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include <iostream>
 #include <fstream>
@@ -50,6 +65,7 @@ struct options_type
    int v_major;
    int v_minor;
    bool want_beta;
+   bool want_partial;
    std::map<const std::string, std::string> references_map;
 };
 
@@ -128,6 +144,25 @@ run(options_type const& opts)
          }
      }()};
 
+   if (!as_generator(
+              "/*\n"
+              " * Copyright 2019 by its authors. See AUTHORS.\n"
+              " *\n"
+              " * Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+              " * you may not use this file except in compliance with the License.\n"
+              " * You may obtain a copy of the License at\n"
+              " *\n"
+              " *     http://www.apache.org/licenses/LICENSE-2.0\n"
+              " *\n"
+              " * Unless required by applicable law or agreed to in writing, software\n"
+              " * distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+              " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+              " * See the License for the specific language governing permissions and\n"
+              " * limitations under the License.\n"
+              " */\n\n"
+        ).generate(iterator, attributes::unused, efl::eolian::grammar::context_null()))
+     throw std::runtime_error("Failed to generate license notice");
+
    if (!as_generator("#pragma warning disable CS1591\n").generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      throw std::runtime_error("Failed to generate pragma to disable missing docs");
 
@@ -136,7 +171,8 @@ run(options_type const& opts)
                      "using System.Collections.Generic;\n"
                      "using System.Linq;\n"
                      "using System.Threading;\n"
-                     "using System.ComponentModel;\n")
+                     "using System.ComponentModel;\n"
+                     "using System.Diagnostics.CodeAnalysis;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
         throw std::runtime_error("Failed to generate file preamble");
@@ -172,14 +208,16 @@ run(options_type const& opts)
                 throw std::runtime_error("Failed to generate alias.");
            }
      }
+   ::eina_iterator_free(aliases);
+
 
    // Constants
    {
       auto var_cxt = context_add_tag(class_context{class_context::variables}, context);
-      for (efl::eina::iterator<const Eolian_Variable> var_iterator( ::eolian_state_constants_by_file_get(opts.state, basename_input.c_str()))
+      for (efl::eina::iterator<const Eolian_Constant> var_iterator( ::eolian_state_constants_by_file_get(opts.state, basename_input.c_str()))
               , var_last; var_iterator != var_last; ++var_iterator)
         {
-           efl::eolian::grammar::attributes::variable_def var(&*var_iterator, opts.unit);
+           efl::eolian::grammar::attributes::constant_def var(&*var_iterator, opts.unit);
            if (!eolian_mono::constant_definition.generate(iterator, var, var_cxt))
              {
                 throw std::runtime_error("Failed to generate enum");
@@ -192,8 +230,9 @@ run(options_type const& opts)
        efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
        std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
-       if (!eolian_mono::klass
-         .generate(iterator, klass_def, context))
+       auto klass_gen = !opts.want_partial ? eolian_mono::klass
+         : eolian_mono::klass(eolian_mono::class_partial);
+       if (!klass_gen.generate(iterator, klass_def, context))
          {
             throw std::runtime_error("Failed to generate class");
          }
@@ -222,20 +261,6 @@ run(options_type const& opts)
              throw std::runtime_error("Failed to generate struct");
           }
      }
-}
-
-static void
-state_init(options_type const& opts)
-{
-   Eolian_State *eos = ::eolian_state_new();
-   if (!eos)
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
-          << "Eolian failed creating state";
-        assert(false && "Error creating state");
-     }
-   opts.state = eos;
-   opts.unit = (Eolian_Unit*)eos;
 }
 
 static void
@@ -297,6 +322,7 @@ _usage(const char *progname)
      << "  -v, --version           Print the version." << std::endl
      << "  -b, --beta              Enable @beta methods." << std::endl
      << "  -e, --example-dir <dir> Folder to search for example files." << std::endl
+     << "  -p, --partial           Create class as a partial class" << std::endl
      << "  -h, --help              Print this help." << std::endl;
    exit(EXIT_FAILURE);
 }
@@ -328,9 +354,10 @@ opts_get(int argc, char **argv)
        { "references", required_argument, 0, 'r'},
        { "beta", no_argument, 0, 'b'},
        { "example-dir", required_argument, 0,  'e' },
+       { "partial", no_argument, 0,  'p' },
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:M:m:ar:vhbe:";
+   const char* options = "I:D:o:c:M:m:ar:vhbpe:";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
@@ -391,6 +418,10 @@ opts_get(int argc, char **argv)
              opts.examples_dir = optarg;
              if (!opts.examples_dir.empty() && opts.examples_dir.back() != '/') opts.examples_dir += "/";
           }
+        else if (c == 'p')
+          {
+             opts.want_partial = true;
+          }
      }
    if (optind == argc-1)
      {
@@ -412,8 +443,10 @@ int main(int argc, char **argv)
      {
         efl::eina::eina_init eina_init;
         efl::eolian::eolian_init eolian_init;
+        efl::eolian::eolian_state eolian_state;
         eolian_mono::options_type opts = opts_get(argc, argv);
-        eolian_mono::state_init(opts);
+        opts.state = eolian_state.value;
+        opts.unit = eolian_state.as_unit();
         eolian_mono::database_load(opts);
         eolian_mono::run(opts);
      }

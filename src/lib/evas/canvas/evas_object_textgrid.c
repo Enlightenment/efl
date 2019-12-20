@@ -681,8 +681,8 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
-   is_v = evas_object_is_visible(eo_obj, obj);
-   was_v = evas_object_was_visible(eo_obj, obj);
+   is_v = evas_object_is_visible(obj);
+   was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
 	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
@@ -1192,16 +1192,14 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
 }
 
 EOLIAN static void
-_evas_textgrid_efl_text_font_font_set(Eo *eo_obj,
+_evas_textgrid_efl_text_font_font_family_set(Eo *eo_obj,
                                             Evas_Textgrid_Data *o,
-                                            const char *font_name,
-                                            Evas_Font_Size font_size)
+                                            const char *font_name)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Font_Description *fdesc;
 
-   if ((!font_name) || (!*font_name) || (font_size <= 0))
-     return;
+   EINA_SAFETY_ON_TRUE_RETURN((!font_name) || (!*font_name));
 
    evas_object_async_block(obj);
    fdesc = evas_font_desc_new();
@@ -1210,8 +1208,7 @@ _evas_textgrid_efl_text_font_font_set(Eo *eo_obj,
                             evas_font_lang_normalize("auto"));
    evas_font_name_parse(fdesc, font_name);
    if (o->cur.font_description_normal &&
-       !evas_font_desc_cmp(fdesc, o->cur.font_description_normal) &&
-       (font_size == o->cur.font_size))
+       !evas_font_desc_cmp(fdesc, o->cur.font_description_normal))
      {
         evas_font_desc_unref(fdesc);
         return;
@@ -1221,18 +1218,36 @@ _evas_textgrid_efl_text_font_font_set(Eo *eo_obj,
      evas_font_desc_unref(o->cur.font_description_normal);
    o->cur.font_description_normal = fdesc;
 
-   o->cur.font_size = font_size;
    eina_stringshare_replace(&o->cur.font_name, font_name);
    o->prev.font_name = NULL;
 
    _evas_textgrid_font_reload(eo_obj, o);
 }
 
-EOLIAN static void
-_evas_textgrid_efl_text_font_font_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, const char **font_name, Evas_Font_Size *font_size)
+EOLIAN static const char *
+_evas_textgrid_efl_text_font_font_family_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
 {
-   if (font_name) *font_name = o->cur.font_name;
-   if (font_size) *font_size = o->cur.font_size;
+   return o->cur.font_name;
+}
+
+EOLIAN static void
+_evas_textgrid_efl_text_font_font_size_set(Eo *eo_obj,
+                                            Evas_Textgrid_Data *o,
+                                            Evas_Font_Size font_size)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(font_size <= 0);
+
+   if (font_size == o->cur.font_size) return;
+
+   o->cur.font_size = font_size;
+
+   _evas_textgrid_font_reload(eo_obj, o);
+}
+
+EOLIAN static Evas_Font_Size
+_evas_textgrid_efl_text_font_font_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
+{
+   return o->cur.font_size;
 }
 
 EOLIAN static void
@@ -1442,7 +1457,8 @@ _evas_textgrid_efl_object_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UN
 
    const char *text;
    int size;
-   efl_text_font_get(eo_obj, &text, &size);
+   text = efl_text_font_family_get(eo_obj);
+   size = efl_text_font_size_get(eo_obj);
    EFL_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
    EFL_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
@@ -1475,13 +1491,15 @@ evas_object_textgrid_font_source_get(const Eo *obj)
 EAPI void
 evas_object_textgrid_font_set(Eo *obj, const char *font_name, Evas_Font_Size font_size)
 {
-   efl_text_font_set((Eo *) obj, font_name, font_size);
+   efl_text_font_family_set((Eo *) obj, font_name);
+   efl_text_font_size_set((Eo *) obj, font_size);
 }
 
 EAPI void
 evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_Size *font_size)
 {
-   efl_text_font_get((Eo *) obj, font_name, font_size);
+   if (font_name) *font_name = efl_text_font_family_get((Eo *) obj);
+   if (font_size) *font_size = efl_text_font_size_get((Eo *) obj);
 }
 
 EOLIAN static void

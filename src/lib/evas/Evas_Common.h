@@ -368,14 +368,12 @@ typedef enum _Evas_Aspect_Control
    EVAS_ASPECT_CONTROL_BOTH = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
 } Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
 
-typedef enum _Evas_BiDi_Direction
-{
-   EVAS_BIDI_DIRECTION_NATURAL,
-   EVAS_BIDI_DIRECTION_NEUTRAL = EVAS_BIDI_DIRECTION_NATURAL,
-   EVAS_BIDI_DIRECTION_LTR,
-   EVAS_BIDI_DIRECTION_RTL,
-   EVAS_BIDI_DIRECTION_INHERIT
-} Evas_BiDi_Direction;
+typedef Efl_Text_Bidirectional_Type Evas_BiDi_Direction;
+#define EVAS_BIDI_DIRECTION_NEUTRAL EFL_TEXT_BIDIRECTIONAL_TYPE_NEUTRAL
+#define EVAS_BIDI_DIRECTION_NATURAL EFL_TEXT_BIDIRECTIONAL_TYPE_NATURAL
+#define EVAS_BIDI_DIRECTION_LTR     EFL_TEXT_BIDIRECTIONAL_TYPE_LTR
+#define EVAS_BIDI_DIRECTION_RTL     EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
+#define EVAS_BIDI_DIRECTION_INHERIT EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
 
 /**
  * How the mouse pointer should be handled by Evas.
@@ -1161,7 +1159,7 @@ EAPI const char *evas_device_description_get(const Evas_Device *dev);
  *
  * @since 1.8
  */
-EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent);
+EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent) EINA_DEPRECATED;
 
 /**
  * Get the parent of a device
@@ -1631,17 +1629,11 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * treated specially on resizing scales, by keeping their aspect. This
  * makes setting frames around other objects on UIs easy.
  * See the following figures for a visual explanation:\n
- * @htmlonly
- * <img src="image-borders.png" style="max-width: 100%;" />
- * <a href="image-borders.png">Full-size</a>
- * @endhtmlonly
  * @image rtf image-borders.png
+ * @image html image-borders.png
  * @image latex image-borders.eps width=\textwidth
- * @htmlonly
- * <img src="border-effect.png" style="max-width: 100%;" />
- * <a href="border-effect.png">Full-size</a>
- * @endhtmlonly
  * @image rtf border-effect.png
+ * @image html border-effect.png
  * @image latex border-effect.eps width=\textwidth
  *
  * @section Evas_Object_Image_Manipulation Manipulating pixels
@@ -3484,23 +3476,28 @@ typedef Eo Efl_Animation_Group_Sequential;
 
 #endif
 
-#define EFL_ANIMATION_GROUP_DURATION_NONE -1
-#define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
-
-#define EFL_ANIMATION_REPEAT_INFINITE -1
-#define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
-
-#ifndef _EFL_INPUT_DEVICE_EO_H_
-#define _EFL_INPUT_DEVICE_EO_H_
+// The below type are necessary for legacy API and need to be manually kept in sync with .eo file.
+#ifndef _EFL_INPUT_DEVICE_EO_CLASS_TYPE
+#define _EFL_INPUT_DEVICE_EO_CLASS_TYPE
 typedef Eo Efl_Input_Device;
-typedef unsigned int Efl_Input_Device_Type;
+#endif
+
+#ifndef _EFL_INPUT_DEVICE_EO_TYPES
+#define _EFL_INPUT_DEVICE_EO_TYPES
+typedef enum
+{
+  EFL_INPUT_DEVICE_TYPE_NONE = 0,
+  EFL_INPUT_DEVICE_TYPE_SEAT,
+  EFL_INPUT_DEVICE_TYPE_KEYBOARD,
+  EFL_INPUT_DEVICE_TYPE_MOUSE,
+  EFL_INPUT_DEVICE_TYPE_TOUCH,
+  EFL_INPUT_DEVICE_TYPE_PEN,
+  EFL_INPUT_DEVICE_TYPE_WAND,
+  EFL_INPUT_DEVICE_TYPE_GAMEPAD
+} Efl_Input_Device_Type;
 
 #endif
 
-#ifndef _EFL_TEXT_CURSOR_EO_H_
-#define _EFL_TEXT_CURSOR_EO_H_
-
-#endif
 #ifndef _EFL_GFX_ENTITY_EO_H_
 #define _EFL_GFX_ENTITY_EO_H_
 

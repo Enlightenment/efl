@@ -1,6 +1,215 @@
 ==========
-EFL 1.22.0
+EFL 1.23.0
 ==========
+
+Changes since 1.23.0:
+---------------------
+
+Removals:
+
+   * emotion & evas: remove gstreamer 0.10 support
+   * escape: remove library from tree
+   * ecore_x: remove support XGesture extension
+   * elocation: remove beta library
+   * eeze: remove tizen module support from eeze sensor
+
+Changes since 1.22.0:
+---------------------
+
+Features:
+
+   * ecore-drm2: Add background_color to crtc atomic properties
+   * ecore-drm2: Fill in crtc background color (if supported) during atomic commits
+   * ecore-drm2: Add API function to set crtc background color
+   * eolian: remove @nullable keyword
+   * ecore-drm2: Add API to check if vblank is supported
+   * eolian: remove param @nonull
+   * eolian: rename @warn_unused and its associated API
+   * eolian: initial versioning implementation
+   * evas: enable setting any object as a clipper
+   * eina/hash: add direct variants of list append/prepend functions
+   * edje: improve user-defined data caching to handle data before file is set
+   * edje: Add support for map zoom to use other part center.
+   * efl_ui_textpath: introduce efl_ui_textpath_circular_set() interface.
+   * efl_ui/layout_base: add "finger_size_multiplier" property (T8059)
+   * evas: add 'has_fixed_size' property for canvas objects
+   * efl/hints: add restricted and combined max size hints (T8122)
+   * efl_ui_animation_view: introduce a new widget for controlling vector animation.
+   * efl_ui: add scrollable_content mixin
+
+Fixes:
+
+   * remove vpath test for user dir the test was broken and fixing is insane (T7728)
+   * tests - fix check header to always include eina due to windows
+   * tests - remove one of the eina strtod tests as libc is failing
+   * ecore_imf: do not loop forever on shutdown when there is no more a display
+   * efl_ui_list: fix to delete sub objects in efl_object_invalidate
+   * efl_ui_widget: Fix disabled set calling without meaning. (T7799)
+   * evas - fix crash/junk pixel content but with tiled rotate at 270 + neon
+   * ecore-drm2: Make atomic property values support uint64_t
+   * evas image: check format more strong way for wbmp.
+   * elm_atspi_bridget: Fix resource leak (CID1399424)
+   * elput: Remove useless call to eldbus_message_unref
+   * efl_core_command_line: Fix resource leak (CID1399105)
+   * ecore-evas-x: Fix double free (CID1382851)
+   * static_libs/vg_common: Fix resource leak (CID1382215)
+   * elm_theme: Check the ref count to delete or unref.
+   * elc_hoversel: Fix crash when no sd->last_location
+   * ecore drm2 - fix timeout in case case called from thread
+   * eina_test_file: Fix memory leak (CID1401072)
+   * efl_check: Fix memory leak (CID1401070)
+   * elm_test_widget_focus: Fix memory leak (CID1401069)
+   * emile_test_base64: Fix resource leak (CID1401062)
+   * evas_test_mesh: Fix memory leak (CID1401009)
+   * eina_test_binbuf: Fix memory leak (CID1401004)
+   * efl_ui_test_widget: Fix memory leak (CID1401003)
+   * efl_ui_test_widget: Fix memory leak (CID1400844)
+   * eina_bench_stringshare: Fix resourcce leak (CID1400975)
+   * evas_test_image: Fix resource leak (CID1400945)
+   * eina_test_file: Fix resource leak (CID1400926)
+   * eldbus_test_eldbus_message: Fix resource leak (CID1400921)
+   * efl_ui_test_widget: Fix memory leak (CID1400889)
+   * emile_test_base64: Fix resource leak (CID1400868)
+   * efl_ui_test_widget: Fix resource leak (CID1400857)
+   * emile_test_base64: Fix resource leak (CID1400852)
+   * ecore_test_ecore_file: Fix resource leak (CID1400825)
+   * efl_ui_test_widget: Fix resource leak (CID1400824)
+   * emile_test_base64: Fix resource leak (CID1400820)
+   * emile_test_base64: Fix memory leak (CID1400815)
+   * eina_test_ustr: Fix resource leak (CID1400784)
+   * eina_test_tiler: Fix resource leak (CID1401068)
+   * eo_test_manager_xattr: Fix resource leak (CID1400953)
+   * eina_test_strbuf: Fix resource leak (CID1400952)
+   * evas_object_textblock: Fix binary search fail.
+   * eolian: refactor parsing API and path handling (T7820)
+   * evas/image: fix broken auto_fill mechanism when manually changing fill
+   * elm_test: fix some bugs in elm_image tests
+   * ecore-evas-drm: Check if vblank is supported
+   * benchmarks: Fix copy-paste error (CID1401052)
+   * evas/render: fix proxy clipping when source_clip is disabled
+   * elm_color_class: use legacy event for genlist selection
+   * efl_ui_focus_manager_sub: handle manager change when tree is set to unfocusable
+   * edje/calc: correctly handle swallow/group objects as clippers for state clips
+   * gl_generic: handle image orientation setting when texture has not been created
+   * ecore/timer: fix handling of timer freeze during construction
+   * edje/load: (more) correctly handle part updates after changing edje group
+   * efl_canvas_layout: permit part_type_get on invalid parts
+   * eina/prefix: ignore magic files when running in tree
+   * efl_ui_focus_manager/calc: handle redirect setting if no previous redirect set
+   * elm/layout: do not trigger sizing eval on subobj deletion if no resize_obj set
+   * elm/layout: do not trigger sizing eval at end of canvas_group_add
+   * elm/colorselector: return early from theme apply if object is not yet finalized
+   * elm/diskselector: fix handling in theme data setup
+   * elm/diskselector: trigger sizing eval during theme set only if finalized
+   * elm/entry: use edje functions directly for interacting with edje objects
+   * elm/gengrid: handle cache item deletion without errors
+   * elm/gengrid: more null checks for setting mirrored state during construction
+   * elm/gengrid: handle focus events when no previous focus item was set
+   * elm/hovers: don't trigger more errors when setting null hover parent
+   * elm: fix value of datadir when running in tree
+   * elm/map: ignore zoom events during construction which cannot be handled
+   * elm/slider: avoid emitting double events when range slider value changes
+   * elm/slider: check for interval/range state before using that functionality
+   * efl_ui/button: check icon swallow existence before getting its content
+   * ecore-evas: check for internal evas presence before using it during free
+   * ecore-x: protect ecore_x_shutdown from creating a negative init count
+   * efl/io_model: check for parent object existence before removing wref
+   * eldbus: don't print warnings for user-canceled calls
+   * efl_ui/check: check icon swallow existence before getting its content
+   * efl_ui/image: check image object existence before using it in sizing
+   * efl_ui/layout: do not trigger sizing eval on hint change if object is dead
+   * efl_ui/layout: do not trigger sizing eval on subobj delete if layout is dead
+   * efl_ui/layout: only freeze internal layout during delete if it exists
+   * efl_ui/progressbar: check for part existence before using parts
+   * efl_ui/video: do not set 0x0 aspect hint
+   * efl_ui/widget: skip updating access info during parent_set(NULL) if dead
+   * elm/fileselector: return early in theme_apply during construction
+   * elm/popup: remove del callback for internal table object during destruction
+   * elm/code: check for cursor layout existence before emitting signals to it
+   * elm/gengrid: trigger unrealize event after unsetting unrealized flag
+   * elm/gen*: only call focus_object_setup_order_non_recursive if realized
+   * elm/genlist: unify all creation of calc jobs, skip if genlist is dead
+   * elm/genlist: trigger unrealize event after unsetting unrealized flag
+   * elm/genlist: handle cache item deletion without errors
+   * elm/genlist: handle genlist finding of nearest visible item when not realized
+   * elm/index: create event_rect[0] earlier in construction
+   * elm/interface_scrollable: return immediately from setting region if no content
+   * elm/list: return early from min_limit_cb if list object is dead
+   * elm/map: move setting initial zoom to later in construction
+   * elm/scroller: return immediately from updating focused scroll region without content
+   * elm_widget_item_static_focus: check for adapter existence in unrealize cb
+   * emotion: don't update crop clipper geometry if crop clipper doesn't exist
+   * ecore-imf/xim: only call ecore_x_shutdown if init was previously called
+   * elm/gengrid: handle gengrid finding of nearest visible item when not realized
+   * elm/fileselector_button: null fileselector model pointer on delete
+   * gl_generic: directly copy existing image when changing orientation
+   * theme: fix fileselector search button layout
+   * efl sel manager - flush wl conenction in cnp to avoid hangs...
+   * ecore_x - restore move event skipper that was removed long ago
+   * efl_ui_textpath: fix a center align but that doesn't happen at text_set().
+   * evas vector: set proper parents of clone objects.
+   * evas svg: fix missing node opacity attribute.
+   * elm - cursor - clear cursor job late to avoid crash
+   * edje - double make sure edje messages are zero'd due to a segv i saw
+   * ecore: also error when trying to add an event handler for a type 0 event
+   * edje: fix reapplying markup text on file/group change
+   * elm_actionslider: fix internal state when programmatically changing value
+   * elm/scrollable: avoid unnecessary edje recalcs
+   * evas/box: avoid triggering smart_move callback
+   * ecore: avoid breaking next main loop start if quit occurs outside of loop
+   * evas: fix type checking of Evas pointers in legacy functions
+   * evas/map: permit evas_map_free(NULL)
+   * ecore wl2 - fall back to shm if dmabuf fails in buf init
+   * ecore_evas buffer: fix a deadlock issue.
+   * efl_ui_widget: add safety checks to verify parents aren't being added as children
+   * [elm] Add missing sizing eval hook at radio
+   * [elm] Add missing sizing eval hook at check
+   * elm/glview: fix glview to (again) return null if context creation fails
+   * elm_test/plug: fix error handling
+   * elm/ctxpopup: check list existence before trying to delete list items
+   * efl_ui/popup: implement efl.file.unload for popup backwall part
+   * efl_ui/popup: unset callbacks on win object when parent is removed
+   * elm/config: monitor MODIFIED events on config files
+   * elm/config: fix config usage with EFL_RUN_IN_TREE set
+   * edje/calc: clamp part calc size to 0
+   * efl_ui: always set restricted_min size hints internally (T8059)
+   * evas events - fix segv if pointer data is freed by cb
+   * efl_ui/flow.box: fix item calc with mixed weights
+   * elm toolbar - fix packing options at start to avoid visual layout bugs
+   * elm toolbar - fix toolbar item separators and refactor aling/fill of item
+   * evas - gl_drm - delete old surfaces before creating new ones
+   * efl_ui_textpath: clear up path data when it's destructed.
+   * evas - png loader - fix leake in error case of pixels (CID1403027)
+   * elm - dnd - fix drop target del to not nuke handler all the time
+   * elm hoversel - avoid crash when items modified while popping down
+   * evas svg: fix svg spec compatibility.
+   * elm/hoversel: avoid calling api functions on null hoversel objects
+   * edje signal matches/patterns - handle re/alloc errors and missing ptrs
+   * edje - handle errors and eina file handles and vpath properly
+   * elm theme - handle error cases and eina file handles properly
+   * evas - font rendering - dont crash if we have color fonts and gl and sw
+   * eina file refs in edje/evas - audit them and plug holes where refs stay
+   * edje - signal callback matches/patterns try fix number 2
+   * emotion - webcam fix deletion of webcam still left in webcam list
+   * efl/io: fix race condition with child model deletion
+   * eio/poll: avoid ever dereferencing the backend's parent in a thread
+   * edje signal - let's not crash if something odd happens
+   * edje signal matches - try number 3 to try plug all the holes
+   * scalecache - handle possible use after free with sci still in list
+   * evas events: fix corrupted mouse events behavior on mapped object.
+   * evas -gl engines - buffer age - bring back fix for changing buffer age
+   * eio - don't call cb's after a cancel
+   * elm sel mgr - remove event handlers when no drop targets are left
+   * evas_vg: fix alpha animation bug in case of partial update
+   * elm_popup: calculate the label min size of popup before the popup group calculation
+   * vg_common_svg : Initialize "display" attribute
+   * fix a bunch of breaks that having a blind file unload has brought
+   * fix xpm loader to be threadable - fixes so much stuff...
+   * efl: check file's mtime in efl.file::file_set to determine if file is the same
+   * meson.build: allow to disable tiff evas loader
+   * ecore/signal: also use nonblock for writing side of signal pipe
+   * ector engine: +null checking.
+   * ecore-x: fix null derefs in window prop code
 
 Changes since 1.21.0:
 ---------------------
@@ -187,7 +396,7 @@ Features:
    * eo: Add "destruct" event
    * efl-wl: move to xdg-shell vfinal
    * wayland: add xdg-shell vfinal support for client-side
-   * Canvas image: add Efl.Canvas.Text.Factory + use in Ui.Text
+   * Canvas image: add Efl.Canvas.Textblock.Factory + use in Ui.Text
    * efl-wl: add functionality for directly passing through xkb objects
    * ecore-x: add more info to Ecore_X_Event_Xkb event
    * ecore-x: add some useful xkb function wrappers
@@ -4248,7 +4457,6 @@ Fixes:
    * edje: Edje_Edit - fix wrong behaviour on draggable.event processing while deleting parts.
    * evas/text: fix abnormal ellipsis logic when harfbuzz is enabled.
 
-
 Changes since 1.8.0:
 --------------------
 
@@ -4426,8 +4634,8 @@ Improvements:
 
 Fixes:
 
-    * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.
-    * edje freeze count can no longer become negative
+   * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.
+   * edje freeze count can no longer become negative
    * Revert "Evas font: Change font fallback to not depend on fontconfig >= 2.11." (T1006)
    * Evil: Fix parallel build for Windows
    * Emotion Generic: receiving the size on opening is correct.
@@ -5133,130 +5341,3 @@ Fixes:
      - Fix memory leak in error case.
     * Eeze:
      - Fix sensors to not segv on shutdown.
-Changes since 1.21.0:
----------------------
-
-Features:
-
-   * evas textblock: add/apply cursor cluster APIs based on grapheme cluster
-   * efl_ui_spin_button: Addded direction feature.
-   * scroller: refactory a momentum scroll animator
-   * elementary textpath: support legacy APIs
-   * elementary transit: add a convenient API.
-   * elementary transit: add a new api - elm_transit_progress_value_set()
-   * Text: add markup_range_get
-   * Canvas layout: support more Efl.Text.* with efl_part
-   * efl: Add support to elput for using elogind instead of systemd
-   * eina: add locale-independent eina_convert_strtod_c function
-   * elm perf tool - bring one back to efl
-   * eina: add locale-independent eina_convert_strtod_c function
-   * elm perf tool - bring one back to efl
-   * efl gfx_path: introduce efl_gfx_path_reserve()
-   * efl gfx_path: remove EFL_GFX_PATH_EVENT_CHANGED
-   * efl gfx_path: remove EFL_GFX_PATH_EVENT_CHANGED
-   * gfx: Add size hint fill (EO) (T3912)
-   * efl_app: add "standby" event (T5494)
-   * edje_cc: fail upon detecting invalid part description references in programs (T7016)
-   * elput: Add API to allow settings tap-to-click on pointer device
-   * ecore_drm2: Add API to allow settings tap-to-click on pointer device
-   * efl_ui_win: add 'exit_on_all_windows_closed' class property and unit test (T5494)
-   * efl_ui_win: add 'exit_on_close' property and unit test (T5494)
-   * eo: implement class overriding (+unit tests) (T7516)
-   * eolian gen: initial support for reflection api
-   * efl_ui_relative_layout: introduce new relative container (T5487)
-   * eolian: introduce typed slice types
-   * eolian: add support for inlist structs
-   * eolian: remove support for inlist/inarray
-   * ecore-drm2: Add API function to return output rotation (T7690)
-
-Fixes:
-
-   * ecore_wl2_dmabuf: Link with ecore_wl2 (T7327)
-   * ecore_wl2_dmabuf: Depend on ecore_wl2 (T7327)
-   * efl selection manager - avoid multiple selection get callbacks for req
-   * evas image: fix a bug in image preloading.
-   * evas canvas: fix null possibility of evas_object_above_get().
-   * edje: Remove hack code
-   * efl gfx_path: prevent buffer overflow.
-   * ecore_main: fix the invalid return value
-   * eina_vpath: fix the memory leak
-   * elementary: remove meaningless memory allocation and leaking
-   * elementary: fix memory leak from Efl.Ui.Layout.Object
-   * evas gl: fix invalid image size.
-   * elementary entry: apply scale to all edje objects
-   * eina debug: fix a double unlock issue
-   * elm_theme: fix return value when default style fallback is done
-   * evas vg: fix memory leak.
-   * devas vg: return default root node if possible.
-   * evas vg: fix memory leak at gradient.
-   * evas filter: remove critical messages from Evas Filter
-   * elementary transit: fix wrong pausing time calculation.
-   * Canvas text: fix line_jump_by logic
-   * cxx: explicitly require c++11 and fix tests to conform
-   * edje: fix an overflow issue for state values
-   * evas textblock: remove white space after line-break by a next item
-   * evas ector: fix memory leaks.
-   * evas vg: update render properly.
-   * ector software: make a pair of ref/unref.
-   * evas gl: recover current program state.
-   * ecore_evas - fix aninmator based frame render ticking to full framerate
-   * ecore evas - buffer - init ecore event evas as many times as shutdown
-   * eina: fix a build failure caused by missing 'locale_t' from OSX
-   * ecore_con: handle timeout of the attempt to connect.
-   * ecore_evas - fix aninmator based frame render ticking to full framerate
-   * ecore evas - buffer - init ecore event evas as many times as shutdown
-   * eina: fix a build failure caused by missing 'locale_t' from OSX
-   * ecore_con: handle timeout of the attempt to connect.
-   * evas gl - make GLintptr etc. also ndefed for GL_VERSION_1_5 fix typedef (T7502)
-   * ecore-drm2: Fix drmModeSetCrtc call during fb flip
-   * textblock: Fix crash with filters
-   * edje - stop trying to access ready deleted exrt/group swallow objects
-   * evas: remove memory leaks from deleted Textblock objects
-   * elm - dnd - restore to working as drop targets
-   * elm_config: Free data returned from eet_read
-   * ui/flip: fix efl_pack usage
-   * elm_entry: make file loading succeed on 0-sized files (T6562)
-   * theme: fix odd state setting on some items for list/genlist/gengrid
-   * theme: correct part name in program for elm/hover/base/main_menu_submenu/default (T6219)
-   * theme: remove a ton of invalid part description references in various programs (T6873)
-   * ecore-evas/extn: use evas from events when updating key masks (T5536)
-   * edje: apply maps to textblock cursors and backgrounds (T4977)
-   * ecore drm2 - work around kms/drm bug seemingly when no flip event comes
-   * elm textpath: reduces differences between actual pos and modified pos
-   * elm_map: Make more robust elm_map (T7443)
-   * Fix leak in elm atspi
-   * eina_file: set errno on open fail for win32 build
-   * evas-gl-drm: Fix issue of rotation not actually rotating (T7690)
-   * solve neon rotation issue by moving to the tiled rotator
-   * eo: Fix missing varags cleanup (CID1399080)
-   * efl_core_command_line: Fix logically dead code (CID1399106)
-   * efl_ui_widget_common: Fix potential resource leak (CID1399088)
-   * efl_ui_selection_manager: Fix unchecked return value (CID1399092)
-   * evas_device: Fix dereferencing null pointer (CID1399091)
-   * efl_ui_stack: Fix dereference null return value (CID1399082)
-   * efl_ui_datepicker: Fix uninitialized scalar value (CID1397006)
-   * efl_ui_grid: Fix dereferencing null pointer (CID1397000)
-   * ecore_con: Fix dereferencing of null pointer (CID1396990)
-   * elm_atspi_bridge: Fix resource leak (CID1399429)
-   * efl_ui_win: Fix dereference null return value (CID1399428)
-   * efl_ui_win: Fix dereference null return (CID1399427)
-   * efl_ui_win: Fix dereference null return (CID1399426)
-   * efl_ui_win: Fix dereference null return value (CID1399425)
-   * efreet: Fix resource leak (CID1399090)
-   * efl_ui_text: Fix resource leak (CID1396998)
-   * eldbus: Fix dereference after null check (CID1399422)
-   * efl_ui_focus_manager_calc: Fix resource leaks (CID1396984, CID1396965)
-   * elm_focus_legacy: Fix resource leaks (CID1399096, CID1399095)
-   * eldbus: Fix resource leak (CID1399097)
-   * efl_canvas_vg_object: Fix dereference after null check (CID1399423, CID1399421)
-   * efl_ui_win: fix hw accel detection
-   * efl_ui_layout: Eina_Error type has been modified to work correctly.
-   * ecore-drm2: Don't use AtomicAddProperty for plane rotation (T7690)
-   * ecore-drm2: Update plane state values based on FB (T7690)
-   * ecore-drm2: Factor in output rotation when getting output info (T7690)
-   * evas drm: Don't use eng_output_resize or redraws clear (T7690)
-   * evas drm: Fix software output rotation (T7690)
-   * efl_ui_image: remove job in sizing calc. (T7360)
-   * evas_render: Process deferred callback in the sync render case.
-   * efl_ui_selection_manager: Don't leak malloc'd data (CID1396949)
-   * ecore-drm2: Add missing @ingroup for some doxy

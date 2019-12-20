@@ -3,22 +3,18 @@ interface @beta Efl.Gfx.Size_Class
    [[Efl Gfx Size Class interface]]
    methods {
       @property size_class {
-         set {
-            [[Set width and height of size class.
+         [[Width and height of size class.
 
-              This function sets width and height for a size class.
-              This will make all edje parts in the specified object that have
-              the specified size class update their size with given values.
-            ]]
+           This property sets width and height for a size class.
+           This will make all edje parts in the specified object that have
+           the specified size class update their size with given values.
+           When reading, these values will only be valid until the size class is changed
+           or the edje object is deleted.
+         ]]
+         set {
             return: bool; [[$true, on success or $false, on error]]
          }
          get {
-            [[Get width and height of size class.
-
-              This function gets width and height for a size class.
-              These values will only be valid until the size class is changed
-              or the edje object is deleted.
-            ]]
             return: bool; [[$true, on success or $false, on error]]
          }
          keys {

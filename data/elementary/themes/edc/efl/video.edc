@@ -1,4 +1,5 @@
 group { name: "efl/video";
+   data.item: "version" "123";
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;

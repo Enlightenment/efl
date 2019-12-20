@@ -7,7 +7,7 @@ typedef struct _App_Data
 {
    Efl_Canvas_Animation        *show_anim;
    Efl_Canvas_Animation        *hide_anim;
-   Efl_Canvas_Animation_Player *anim_obj;
+   Elm_Button                  *button;
 
    Evas_Object          *pause_btn;
 
@@ -16,60 +16,54 @@ typedef struct _App_Data
 } App_Data;
 
 static void
-_anim_started_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_anim_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
+   Eo *anim = event->info;
    App_Data *ad = data;
 
-   printf("Animation has been started!\n");
-
-   elm_object_disabled_set(ad->pause_btn, EINA_FALSE);
-}
-
-static void
-_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   App_Data *ad = data;
-
-   printf("Animation has been ended!\n");
-
-   elm_object_disabled_set(ad->pause_btn, EINA_TRUE);
+   if (anim)
+     {
+        printf("Animation has been started!\n");
+        elm_object_disabled_set(ad->pause_btn, EINA_FALSE);
+     }
+   else
+     {
+        printf("Animation has been ended!\n");
+        elm_object_disabled_set(ad->pause_btn, EINA_TRUE);
+     }
 }
 
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
-   double progress = event_running->progress;
-   printf("Animation is running! Current progress(%lf)\n", progress);
+   double *progress = event->info;
+   printf("Animation is running! Current progress(%lf)\n", *progress);
 }
+
+EFL_CALLBACKS_ARRAY_DEFINE(animation_stats_cb,
+  {EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, _anim_changed_cb },
+  {EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _anim_running_cb },
+)
 
 static void
 _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    App_Data *ad = data;
 
-   if (ad->anim_obj)
-     {
-        ad->is_anim_paused = EINA_FALSE;
-        elm_object_text_set(ad->pause_btn, "Pause Animation");
-     }
-
    ad->is_btn_visible = !(ad->is_btn_visible);
 
    if (ad->is_btn_visible)
      {
         //Create Animation Object from Animation
-        efl_animation_player_animation_set(ad->anim_obj, ad->show_anim);
+        efl_canvas_object_animation_start(ad->button, ad->show_anim, 1.0, 0.0);
         efl_text_set(obj, "Start Alpha Animation from 1.0 to 0.0");
      }
    else
      {
         //Create Animation Object from Animation
-        efl_animation_player_animation_set(ad->anim_obj, ad->hide_anim);
+        efl_canvas_object_animation_start(ad->button, ad->hide_anim, 1.0, 0.0);
         efl_text_set(obj, "Start Alpha Animation from 0.0 to 1.0");
      }
-   //Let Animation Object start animation
-   efl_player_start(ad->anim_obj);
 }
 
 static void
@@ -82,13 +76,13 @@ _pause_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
    if (ad->is_anim_paused)
      {
         //Pause animation
-        efl_player_play_set(ad->anim_obj, EINA_FALSE);
+        efl_canvas_object_animation_pause_set(ad->button, EINA_TRUE);
         elm_object_text_set(obj, "Resume Animation");
      }
    else
      {
         //Resume animation
-        efl_player_play_set(ad->anim_obj, EINA_TRUE);
+        efl_canvas_object_animation_pause_set(ad->button, EINA_FALSE);
         elm_object_text_set(obj, "Pause Animation");
      }
 }
@@ -118,6 +112,7 @@ test_efl_anim_pause(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_resize(btn, 200, 200);
    evas_object_move(btn, 100, 50);
    evas_object_show(btn);
+   efl_event_callback_array_add(btn, animation_stats_cb(), ad);
 
    //Show Animation
    Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
@@ -152,24 +147,13 @@ test_efl_anim_pause(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    //Pause button becomes enabled only if the animation is started
    elm_object_disabled_set(pause_btn, EINA_TRUE);
 
-
    //Initialize App Data
    ad->show_anim = show_anim;
    ad->hide_anim = hide_anim;
-   ad->anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
-                          efl_animation_player_target_set(efl_added, btn));
-
-   //Register callback called when animation starts
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, ad);
-   //Register callback called when animation ends
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, ad);
-   //Register callback called while animation is executed
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
-
+   ad->button = btn;
    ad->pause_btn = pause_btn;
    ad->is_btn_visible = EINA_TRUE;
    ad->is_anim_paused = EINA_FALSE;
-
 
    evas_object_resize(win, 400, 450);
    evas_object_show(win);

@@ -1,7 +1,9 @@
-interface @beta Efl.Pack extends Efl.Container
+interface Efl.Pack extends Efl.Container
 {
    [[Common interface for objects (containers) with multiple contents
      (sub-objects) which can be added and removed at runtime.
+
+     @since 1.23
    ]]
    methods
    {

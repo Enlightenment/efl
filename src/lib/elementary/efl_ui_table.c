@@ -58,6 +58,14 @@ _on_child_del(void *data, const Efl_Event *event)
    gi = _efl_ui_table_item_date_get(table, pd, event->object);
    if (!gi) return;
 
+   if ((gi->col == pd->last_col) && (gi->row == pd->last_row))
+     pd->linear_recalc = EINA_TRUE;
+
+   if (gi->col + gi->col_span >= pd->cols)
+     pd->cols_recalc = EINA_TRUE;
+   if (gi->row + gi->row_span >= pd->rows)
+     pd->rows_recalc = EINA_TRUE;
+
    pd->items = (Table_Item *)
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    free(gi);
@@ -80,6 +88,7 @@ _efl_ui_table_last_position_get(Eo * obj, Efl_Ui_Table_Data *pd, int *last_col, 
    Table_Item *gi;
    int col = -1, row  = -1;
    int req_cols, req_rows;
+   int item_row, item_col;
 
    if (!pd->linear_recalc)
      {
@@ -90,21 +99,24 @@ _efl_ui_table_last_position_get(Eo * obj, Efl_Ui_Table_Data *pd, int *last_col, 
 
    efl_pack_table_size_get(obj, &req_cols, &req_rows);
 
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
+   if (efl_ui_layout_orientation_is_horizontal(pd->fill_dir, EINA_TRUE))
      {
         EINA_INLIST_REVERSE_FOREACH(EINA_INLIST_GET(pd->items), gi)
           {
-             if ((gi->row < row) || (req_cols < gi->col) || (req_rows < gi->row))
+             item_row = gi->row + gi->row_span - 1;
+             item_col = gi->col + gi->col_span - 1;
+             if ((item_row < row) || (req_cols < item_col) ||
+                 (req_rows < item_row))
                continue;
 
-             if (gi->row > row)
+             if (item_row > row)
                {
-                  row = gi->row;
-                  col = gi->col;
+                  row = item_row;
+                  col = item_col;
                }
-             else if (gi->col > col)
+             else if (item_col > col)
                {
-                  col = gi->col;
+                  col = item_col;
                }
           }
      }
@@ -112,17 +124,20 @@ _efl_ui_table_last_position_get(Eo * obj, Efl_Ui_Table_Data *pd, int *last_col, 
      {
         EINA_INLIST_REVERSE_FOREACH(EINA_INLIST_GET(pd->items), gi)
           {
-             if ((gi->col < col) || (req_cols < gi->col) || (req_rows < gi->row))
+             item_row = gi->row + gi->row_span - 1;
+             item_col = gi->col + gi->col_span - 1;
+             if ((item_col < col) || (req_cols < item_col) ||
+                 (req_rows < item_row))
                continue;
 
-             if (gi->col > col)
+             if (item_col > col)
                {
-                  col = gi->col;
-                  row = gi->row;
+                  col = item_col;
+                  row = item_row;
                }
-             else if (gi->row > row)
+             else if (item_row > row)
                {
-                  row = gi->row;
+                  row = item_row;
                }
           }
      }
@@ -167,6 +182,7 @@ _efl_ui_table_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Table_Data *pd)
 EOLIAN void
 _efl_ui_table_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Table_Data *_pd EINA_UNUSED)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    efl_pack_layout_update(obj);
 }
 
@@ -174,7 +190,7 @@ EOLIAN static void
 _efl_ui_table_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Table_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
-   efl_canvas_group_change(obj);
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static void
@@ -220,8 +236,7 @@ _efl_ui_table_efl_object_constructor(Eo *obj, Efl_Ui_Table_Data *pd)
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
-   pd->dir1 = EFL_UI_DIR_RIGHT;
-   pd->dir2 = EFL_UI_DIR_DOWN;
+   pd->fill_dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    pd->last_col = -1;
    pd->last_row = -1;
    pd->req_cols = 0;
@@ -244,31 +259,28 @@ _efl_ui_table_efl_object_invalidate(Eo *obj, Efl_Ui_Table_Data *pd)
    EINA_INLIST_FREE(EINA_INLIST_GET(pd->items), gi)
      {
         efl_event_callback_array_del(gi->object, efl_ui_table_callbacks(), obj);
+
+        pd->items = (Table_Item *)
+            eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
+        free(gi);
      }
 }
 
 EOLIAN static void
-_efl_ui_table_efl_gfx_arrangement_content_padding_set(Eo *obj, Efl_Ui_Table_Data *pd, double h, double v, Eina_Bool scalable)
+_efl_ui_table_efl_gfx_arrangement_content_padding_set(Eo *obj, Efl_Ui_Table_Data *pd, unsigned int h, unsigned int v)
 {
-   scalable = !!scalable;
-   if (h < 0) h = 0;
-   if (v < 0) v = 0;
-
-   if (EINA_DBL_EQ(pd->pad.h, h) && EINA_DBL_EQ(pd->pad.v, v) &&
-       (pd->pad.scalable == scalable))
+   if (pd->pad.h == h && pd->pad.v == v)
      return;
 
    pd->pad.h = h;
    pd->pad.v = v;
-   pd->pad.scalable = scalable;
 
    efl_pack_layout_request(obj);
 }
 
 EOLIAN static void
-_efl_ui_table_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, double *h, double *v, Eina_Bool *scalable)
+_efl_ui_table_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, unsigned int *h, unsigned int *v)
 {
-   if (scalable) *scalable = pd->pad.scalable;
    if (h) *h = pd->pad.h;
    if (v) *v = pd->pad.v;
 }
@@ -379,9 +391,9 @@ _efl_ui_table_efl_pack_table_pack_table(Eo *obj, Efl_Ui_Table_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_table_table_position_get(const Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_table_efl_pack_table_table_cell_column_get(const Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int *col, int *colspan)
 {
-   int c = -1, r = -1, cs = 0, rs = 0;
+   int c = -1, cs = 0;
    Table_Item *gi;
    Eina_Bool ret = EINA_FALSE;
 
@@ -389,17 +401,99 @@ _efl_ui_table_efl_pack_table_table_position_get(const Eo *obj, Efl_Ui_Table_Data
    if (gi)
      {
         c = gi->col;
-        r = gi->row;
         cs = gi->col_span;
-        rs = gi->row_span;
         ret = EINA_TRUE;
      }
 
    if (col) *col = c;
-   if (row) *row = r;
    if (colspan) *colspan = cs;
+   return ret;
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_table_table_cell_column_set(Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int col, int colspan)
+{
+   Table_Item *gi;
+
+   gi = _efl_ui_table_item_date_get((Eo *)obj, pd, subobj);
+   if (!gi)
+     return;
+
+   if (col < 0) col = 0;
+   if (colspan < 1) colspan = 1;
+
+   if (((int64_t) col + (int64_t) colspan) > (int64_t) INT_MAX)
+     colspan = INT_MAX - col;
+
+   if (pd->req_cols && ((col + colspan) > pd->req_cols))
+     {
+        ERR("table requested size exceeded! packing in extra cell at "
+            "%d+%d (table cols: %d)", col, colspan, pd->req_cols);
+     }
+
+   gi->col = col;
+   gi->col_span = colspan;
+
+   if (gi->col > pd->last_col)
+     pd->linear_recalc = EINA_TRUE;
+
+   if (pd->cols < gi->col + gi->col_span)
+     pd->cols = gi->col + gi->col_span;
+
+   efl_pack_layout_request(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_table_efl_pack_table_table_cell_row_get(const Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int *row, int *rowspan)
+{
+   int r = -1, rs = 0;
+   Table_Item *gi;
+   Eina_Bool ret = EINA_FALSE;
+
+   gi = _efl_ui_table_item_date_get((Eo *)obj, pd, subobj);
+   if (gi)
+     {
+        r = gi->row;
+        rs = gi->row_span;
+        ret = EINA_TRUE;
+     }
+
+   if (row) *row = r;
    if (rowspan) *rowspan = rs;
    return ret;
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_table_table_cell_row_set(Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int row, int rowspan)
+{
+   Table_Item *gi;
+
+   gi = _efl_ui_table_item_date_get((Eo *)obj, pd, subobj);
+   if (!gi)
+     return;
+
+   if (row < 0) row = 0;
+   if (rowspan < 1) rowspan = 1;
+
+   if (((int64_t) row + (int64_t) rowspan) > (int64_t) INT_MAX)
+     rowspan = INT_MAX - row;
+
+   if (pd->req_rows && ((row + rowspan) > pd->req_rows))
+     {
+        ERR("table requested size exceeded! packing in extra cell at "
+            "%d+%d (table rows: %d)", row, rowspan, pd->req_rows);
+     }
+
+   gi->row = row;
+   gi->row_span = rowspan;
+
+   if (gi->row > pd->last_row)
+     pd->linear_recalc = EINA_TRUE;
+
+   if (pd->rows < gi->row + gi->row_span)
+     pd->rows = gi->row + gi->row_span;
+
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static Efl_Gfx_Entity *
@@ -509,8 +603,9 @@ _efl_ui_table_efl_pack_unpack_all(Eo *obj, Efl_Ui_Table_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_table_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
+_efl_ui_table_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Table_Data *pd)
 {
+   pd->full_recalc = EINA_TRUE;
    efl_canvas_group_need_recalculate_set(obj, EINA_TRUE);
 }
 
@@ -620,64 +715,23 @@ _efl_ui_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED, Efl_Ui_Tabl
 }
 
 EOLIAN static void
-_efl_ui_table_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Dir dir)
+_efl_ui_table_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Layout_Orientation dir)
 {
-   if (pd->dir1 == dir)
+   if (pd->fill_dir == dir)
      return;
 
-   if (dir == EFL_UI_DIR_DEFAULT)
-     dir = EFL_UI_DIR_RIGHT;
+   if (dir == EFL_UI_LAYOUT_ORIENTATION_DEFAULT)
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
-   pd->dir1 = dir;
-
-   /* if both directions are either horizontal or vertical, need to adjust
-    * secondary direction (dir2) */
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE) ==
-       efl_ui_dir_is_horizontal(pd->dir2, EINA_FALSE))
-     {
-        if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
-          pd->dir2 = EFL_UI_DIR_DOWN;
-        else
-          pd->dir2 = EFL_UI_DIR_RIGHT;
-     }
+   pd->fill_dir = dir;
 
    efl_pack_layout_request(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_table_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_table_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
 {
-   return pd->dir1;
-}
-
-EOLIAN static void
-_efl_ui_table_efl_pack_table_table_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Dir primary, Efl_Ui_Dir secondary)
-{
-   if ((pd->dir1 == primary) && (pd->dir2 == secondary))
-     return;
-
-   pd->dir1 = primary;
-   pd->dir2 = secondary;
-
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE) ==
-       efl_ui_dir_is_horizontal(pd->dir2, EINA_FALSE))
-     {
-        ERR("specified two directions in the same axis, secondary directions "
-            " is reset to a valid default");
-        if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
-          pd->dir2 = EFL_UI_DIR_DOWN;
-        else
-          pd->dir2 = EFL_UI_DIR_RIGHT;
-     }
-
-   efl_pack_layout_request(obj);
-}
-
-EOLIAN static void
-_efl_ui_table_efl_pack_table_table_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Efl_Ui_Dir *primary, Efl_Ui_Dir *secondary)
-{
-   if (primary) *primary = pd->dir1;
-   if (secondary) *secondary = pd->dir2;
+   return pd->fill_dir;
 }
 
 EOLIAN static void
@@ -770,7 +824,7 @@ _efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subo
 
    _efl_ui_table_last_position_get(obj, pd, &last_col, &last_row);
 
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
+   if (efl_ui_layout_orientation_is_horizontal(pd->fill_dir, EINA_TRUE))
      {
         last_col++;
         if (pd->req_cols && (last_col >= pd->req_cols))

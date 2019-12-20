@@ -44,3 +44,5 @@ if get_option('vnc-server')
 
   subdir(join_paths('vnc_server'))
 endif
+
+config_h.set('BUILD_ECORE_EVAS_EWS', '1')

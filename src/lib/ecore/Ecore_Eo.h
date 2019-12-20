@@ -42,6 +42,13 @@
 #include "efl_app.eo.h"
 #include "efl_appthread.eo.h"
 
+/* To be deprecated at some point */
+
+/** Please use efl_provider_register instead. */
+EAPI Eina_Bool efl_loop_register(Efl_Loop *obj, const Efl_Class *klass, const Efl_Object *provider);
+/** Please use efl_provider_unregister instead. */
+EAPI Eina_Bool efl_loop_unregister(Efl_Loop *obj, const Efl_Class *klass, const Efl_Object *provider);
+
 /**
  * @brief Quits the main loop once all the events currently on the queue have
  * been processed.
@@ -118,9 +125,7 @@ EAPI Eo *efl_main_loop_get(void);
 #include "efl_container_model.eo.h"
 #include "efl_composite_model.eo.h"
 #include "efl_boolean_model.eo.h"
-#include "efl_select_model.eo.h"
 #include "efl_filter_model.eo.h"
-#include "efl_view_model.eo.h"
 
 /**
  * @}

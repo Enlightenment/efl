@@ -54,8 +54,11 @@ _eldbus_model_connection_set(Eo *obj EINA_UNUSED,
                              Eldbus_Model_Data *pd,
                              Eldbus_Connection *dbus)
 {
+   Eldbus_Connection *tounref = pd->connection;
+
    eldbus_connection_ref(dbus);
-   if (pd->connection) eldbus_connection_unref(pd->connection);
+   pd->connection = NULL;
+   if (tounref) eldbus_connection_unref(tounref);
    pd->connection = dbus;
 }
 
@@ -77,8 +80,10 @@ _eldbus_model_efl_object_finalize(Eo *obj, Eldbus_Model_Data *pd)
 static void
 _eldbus_model_efl_object_invalidate(Eo *obj, Eldbus_Model_Data *pd)
 {
-   if (pd->connection) eldbus_connection_unref(pd->connection);
+   Eldbus_Connection *connection = pd->connection;
+
    pd->connection = NULL;
+   if (connection) eldbus_connection_unref(connection);
 
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
@@ -121,7 +126,7 @@ _eldbus_model_efl_model_property_set(Eo *obj,
 {
    Eina_Error err = EFL_MODEL_ERROR_READ_ONLY;
 
-   if (strcmp(property, UNIQUE_NAME_PROPERTY))
+   if (!eina_streq(property, UNIQUE_NAME_PROPERTY))
      err = EFL_MODEL_ERROR_NOT_FOUND;
    return efl_loop_future_rejected(obj, err);
 }
@@ -133,7 +138,7 @@ _eldbus_model_efl_model_property_get(const Eo *obj,
 {
    DBG("(%p): property=%s", obj, property);
 
-   if (strcmp(property, UNIQUE_NAME_PROPERTY) != 0) goto on_error;
+   if (!eina_streq(property, UNIQUE_NAME_PROPERTY)) goto on_error;
 
    if (!pd->connection) eldbus_model_connect_do(pd);
 

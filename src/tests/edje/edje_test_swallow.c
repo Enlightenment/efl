@@ -40,7 +40,6 @@ EFL_START_TEST(edje_test_swallows)
    /* o1 is deleted at this point. */
    ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -60,7 +59,6 @@ EFL_START_TEST(edje_test_swallows_lifetime)
    evas_object_del(ly);
    fail_if(!efl_parent_get(o1));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -88,7 +86,6 @@ EFL_START_TEST(edje_test_swallows_invalidate)
    evas_object_del(ly);
    fail_if(!efl_parent_get(o1));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -119,7 +116,6 @@ EFL_START_TEST(edje_test_swallows_eoapi)
    /* o1 is deleted at this point. */
    ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -153,7 +149,6 @@ EFL_START_TEST(edje_test_swallows_container_api)
       eina_array_free(arr);
    }
 
-   evas_free(evas);
 }
 EFL_END_TEST
 

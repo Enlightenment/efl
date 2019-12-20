@@ -1,16 +1,11 @@
 project('efl', ['c','cpp'],
-  version: '1.22.99',
-  default_options : ['buildtype=release', 'cpp_std=c++11'],
+  version: '1.23.99',
+  default_options : ['buildtype=plain', 'cpp_std=c++11'],
   meson_version : '>=0.47'
 )
 
 if host_machine.system() == 'darwin'
   add_languages('objc')
-endif
-
-clean_check = run_command('meson/clean_check.sh')
-if clean_check.returncode() == 0
-  error('Meson build requires a clean source tree')
 endif
 
 pkgconfig = import('pkgconfig')
@@ -46,7 +41,7 @@ endif
 
 windows = ['windows', 'cygwin']
 #bsd for meson 0.46 and 0.47
-bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd']
+bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd', 'openbsd']
 linux = ['linux']
 osx = ['darwin']
 
@@ -216,7 +211,12 @@ else
   error('System '+host_machine.system()+' not known')
 endif
 
-if (get_option('crypto') == 'gnutls')
+if host_os == 'freebsd' or host_os == 'dragonfly'
+# This is necessary. We MUST use OpenSSL in base as bringing in
+# from ports can cause major issues (2 copies of the same library).
+  crypto = declare_dependency(link_args : [ '-lssl', '-lcrypto'])
+  config_h.set('HAVE_OPENSSL', '1')
+elif (get_option('crypto') == 'gnutls')
   # gcrypt does not want to provide a pkg config file so we try the lib
   crypto = [dependency('gnutls'), cc.find_library('gcrypt')]
   config_h.set('HAVE_GNUTLS', '1')
@@ -225,9 +225,18 @@ elif (get_option('crypto') == 'openssl')
   config_h.set('HAVE_OPENSSL', '1')
 endif
 
+if get_option('crypto') != ''
+  config_h.set('HAVE_CIPHER', '1')
+  config_h.set('HAVE_SIGNATURE', '1')
+endif
+
 config_h.set_quoted('SHARED_LIB_SUFFIX', '.'+sys_lib_extension)
 config_h.set_quoted('MOD_SUFFIX', '.'+sys_mod_extension)
-config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
+if sys_exe_extension == ''
+  config_h.set_quoted('EXE_SUFFIX', '')
+else
+  config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
+endif
 config_h.set('EFL_BUILD', '1')
 
 if get_option('tslib') == true
@@ -243,32 +252,7 @@ endif
 
 ecore_evas_wayland_engine_include_dir = []
 
-boot_strap_eolian = [
-  ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
-  ['eina'             ,[]                    , false,  true, false, false, false, false, [], []],
-  ['eolian'           ,[]                    , false,  true,  true, false, false, false, ['eina'], []],
-]
-
-evas_lib =         ['evas'                       ,[], false,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
-evas_img_modules = ['evas'                       ,[],  true, false, false, false, false, false, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
-evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
-evas_goal =        ['evas_goal'                  ,[], false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []]
-
-if get_option('evas-modules') == 'static'
-  evas_settings = [
-    evas_lib,
-    evas_img_modules,
-    evas_engines,
-    evas_goal,
-  ]
-else
-  evas_settings = [
-    evas_lib,
-    evas_img_modules,
-    evas_goal,
-    evas_engines,
-  ]
-endif
+evas_static_list = []
 
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
@@ -282,7 +266,7 @@ subprojects = [
 ['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']],
 ['eldbus'           ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'eo', 'efl'], []],
 ['ecore'            ,[]                    ,  true, false, false, false,  true,  true, ['eina', 'eo', 'efl'], []], #ecores modules depend on eldbus
-['ecore_audio'      ,[]                    , false,  true, false, false, false, false, ['eina', 'eo'], []],
+['ecore_audio'      ,['audio']             , false,  true, false, false, false, false, ['eina', 'eo'], []],
 ['ecore_avahi'      ,['avahi']             , false,  true, false, false, false,  true, ['eina', 'ecore'], []],
 ['ecore_con'        ,[]                    , false,  true,  true, false,  true, false, ['eina', 'eo', 'efl', 'ecore'], ['http-parser']],
 ['ecore_file'       ,[]                    , false,  true, false, false, false, false, ['eina'], []],
@@ -290,7 +274,7 @@ subprojects = [
 ['ecore_input'      ,[]                    , false,  true, false, false, false, false, ['eina', 'eo'], []],
 ['ecore_x'          ,['x11']               , false,  true, false, false, false, false, ['eina', 'efl'], []],
 ['ecore_fb'         ,['fb']                , false,  true, false, false, false, false, ['eina'], []],
-['ecore_wl2'        ,['wl']                ,  true,  true, false, false, false, false, ['eina'], ['libdrm']],
+['ecore_wl2'        ,['wl']                ,  true,  true, false, false, true, false, ['eina'], ['libdrm']],
 ['ecore_sdl'        ,['sdl']               , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_win32'      ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_ipc'        ,[]                    , false,  true, false, false, false, false, ['eina'], []],
@@ -298,7 +282,8 @@ subprojects = [
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
 ['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
-['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []]] + evas_settings +[
+['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
+['evas'             ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
 ['ecore_input_evas' ,[]                    , false,  true, false, false, false, false, ['eina', 'evas'], []],
 ['ecore_evas'       ,[]                    ,  true,  true,  true, false, false, false, ['evas', 'ector'], []],
 ['ecore_imf'        ,[]                    ,  true,  true, false, false, false, false, ['eina'], []],
@@ -312,8 +297,7 @@ subprojects = [
 ['emotion'          ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], []],
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
-['elocation'        ,[]                    , false,  true, false, false, false, false, ['ecore', 'eldbus'], []],
-['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio', 'elocation'], ['atspi']],
+['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
 ['efl_wl'           ,['wl']                , false,  true,  true, false, false, false, ['evas', 'ecore'], []],
 ['elua'             ,['elua']              , false,  true,  true, false,  true, false, ['eina', 'luajit'], []],
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, ['eina'], []],
@@ -327,13 +311,13 @@ config_dir += include_directories('.')
 #the other modules require theire package
 subdir(join_paths(local_module, 'eina'))
 
+#List of dependency objects that might be disabled due to configurations
+#If they are enabled, the object gets overwritten by the library file.
+ecore_audio = declare_dependency()
+
 test_dirs = []
 example_dirs = []
 tmp_empty = declare_dependency()
-
-if get_option('eolian-bootstrap')
-   subprojects = boot_strap_eolian
-endif
 
 foreach package : subprojects
   package_name = package[0]
@@ -434,28 +418,17 @@ foreach package : subprojects
 
 endforeach
 
-subdir('cmakeconfig')
 #build this later, as the debug services are depending on ecore
-if get_option('eolian-bootstrap') == false
-  subdir(join_paths('src', 'bin', 'efl'))
+subdir(join_paths('src', 'bin', 'efl'))
 
-  subdir(join_paths('src', 'generic', 'evas'))
-  if sys_windows == false
-    subdir(join_paths('src', 'generic', 'emotion'))
-  endif
-
-  bindings = get_option('bindings')
-  bindings_order = ['luajit', 'cxx', 'mono']
-
-  foreach binding : bindings_order
-    if bindings.contains(binding)
-      subdir(join_paths('src', 'bindings', binding))
-    endif
-  endforeach
-
-  subdir(join_paths('src', 'edje_external'))
-  subdir(join_paths('data'))
+subdir(join_paths('src', 'generic', 'evas'))
+if sys_windows == false
+  subdir(join_paths('src', 'generic', 'emotion'))
 endif
+subdir('cmakeconfig')
+subdir(join_paths('src', 'bindings'))
+subdir(join_paths('src', 'edje_external'))
+subdir(join_paths('data'))
 
 if get_option('build-tests')
   check = dependency('check')
@@ -484,7 +457,7 @@ endforeach
 
 doxygen = find_program('doxygen', required : false)
 
-if get_option('eolian-bootstrap') == false and doxygen.found()
+if doxygen.found()
   subdir('doc')
 endif
 
@@ -503,7 +476,6 @@ efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IM
 
 configure_file(
   output: 'config.h',
-  install: false,
   configuration: config_h
 )
 

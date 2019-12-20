@@ -120,8 +120,11 @@ static Eina_Bool
 promote(Eolian_Expression *a, Eolian_Expression *b)
 {
 #define CONVERT_CASE(id, dtp, expr, field, fnm) \
-   case EOLIAN_EXPR_##id: \
-     expr->value.field = (dtp)(expr->value.fnm); break;
+   case EOLIAN_EXPR_##id: { \
+      dtp nv = (dtp)(expr->value.fnm); \
+      expr->value.field = nv; \
+      break; \
+   }
 
 #define CONVERT(dtp, expr, field) \
    switch (expr->type) \
@@ -509,7 +512,7 @@ eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
                 return eval_exp(NULL, expr->expr, mask, out, cb, data);
              }
 
-           const Eolian_Variable *var = eolian_unit_constant_by_name_get
+           const Eolian_Constant *var = eolian_unit_constant_by_name_get
              (unit, expr->value.s);
            Eolian_Expression *exp = NULL;
 
@@ -610,7 +613,7 @@ database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr,
           return database_expr_eval(unit, expr, EOLIAN_MASK_NULL, cb, data);
         case EOLIAN_TYPE_REGULAR:
           {
-              if (database_type_is_ownable(unit, type, EINA_FALSE))
+              if (database_type_is_ownable(unit, type, EINA_FALSE, NULL))
                  return database_expr_eval(unit, expr, EOLIAN_MASK_NULL, cb, data);
               int  kw = eo_lexer_keyword_str_to_id(type->base.name);
               if (!kw || kw < KW_byte || kw >= KW_void)

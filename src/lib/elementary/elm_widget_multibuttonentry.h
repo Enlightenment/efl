@@ -103,7 +103,7 @@ struct _Elm_Multibuttonentry_Data
    void                               *add_callback_data;
    Ecore_Timer                        *longpress_timer;
 
-   Efl_Ui_Format_Func_Cb               format_cb;
+   Efl_Ui_Format_Func                  format_cb;
    Eina_Free_Cb                        format_free_cb;
    void                               *format_cb_data;
    Eina_Strbuf                        *format_strbuf;

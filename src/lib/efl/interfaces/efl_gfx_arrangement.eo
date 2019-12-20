@@ -1,25 +1,46 @@
-interface @beta Efl.Gfx.Arrangement
+import efl_gfx_types;
+interface Efl.Gfx.Arrangement
 {
-   [[API common to all UI container objects.]]
+   [[
+     This interface provides methods for manipulating how contents are arranged within a container,
+     providing more granularity for content positioning.
+
+     @since 1.23
+   ]]
    methods
    {
       @property content_align {
-         [[Alignment of the container within its bounds]]
+         [[This property determines how contents will be aligned within a container if there is
+           unused space.
+
+           It is different than the @Efl.Gfx.Hint.hint_align property in that it affects the position
+           of all the contents within the container instead of the container itself.
+           For example, if a box widget has extra space on the horizontal axis,
+           this property can be used to align the box's contents to the left or the right side.
+
+           See also @Efl.Gfx.Hint.hint_align.
+         ]]
          set {}
          get {}
          values {
-            align_horiz: double; [[Horizontal alignment]]
-            align_vert:  double; [[Vertical alignment]]
+            align_horiz: Efl.Gfx.Align(0.5); [[Controls the horizontal alignment.]]
+            align_vert:  Efl.Gfx.Align(0.5); [[Controls the vertical alignment.]]
          }
       }
-      @property content_padding {
-         [[Padding between items contained in this object.]]
+      @property content_padding @beta {
+         [[This property determines the space between a container's content items.
+
+           It is different than the @Efl.Gfx.Hint.hint_margin property in that it is applied to each
+           content item within the container instead of a single item. The calculation for these two properties
+           is cumulative.
+
+           See also @Efl.Gfx.Hint.hint_margin.
+         ]]
          set {}
          get {}
          values {
-            pad_horiz: double; [[Horizontal padding]]
-            pad_vert:  double; [[Vertical padding]]
-            scalable:  bool; [[$true if scalable, $false otherwise]]
+            pad_horiz: uint(0u); [[Horizontal padding.]]
+            pad_vert:  uint(0u); [[Vertical padding.]]
          }
       }
    }

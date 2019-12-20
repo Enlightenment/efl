@@ -5,14 +5,6 @@
 #include <sys/types.h>
 #include <direct.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include "evil_macro.h"
-#include "evil_stdio.h"
 #include "evil_private.h"
 
 #undef rename

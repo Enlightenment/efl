@@ -86,10 +86,8 @@ _ch_table(void *data, const Efl_Event *ev)
    Eo *table = data;
    int x, y, w, h;
 
-   // FIXME: old elm_table API doesn't need table object
-   //elm_grid_pack_get(obj, &x, &y, &w, &h);
-   //elm_grid_pack_set(obj, x - 1, y - 1, w + 2, h + 2);
-   efl_pack_table_position_get(table, ev->object, &x, &y, &w, &h);
+   efl_pack_table_cell_column_get(table, ev->object, &x, &w);
+   efl_pack_table_cell_row_get(table, ev->object, &y, &h);
    efl_pack_table(table, ev->object, x - 1, y - 1, w + 2, h + 2);
 }
 
@@ -105,7 +103,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *win, *table, *bt, *rc, *en;
    api_data *api = calloc(1, sizeof(*api));
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                 efl_ui_win_name_set(efl_added, "table"),
                 efl_text_set(efl_added, "Table"),
                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
@@ -133,7 +131,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _api_bt_clicked, api);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _api_bt_clicked, api);
    efl_pack_table(table, bt, 30, 0, 40, 10);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    efl_gfx_entity_visible_set(bt, 1);
@@ -162,7 +160,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Change");
    efl_pack_table(table, bt, 40, 40, 20, 20);
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_table, table);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _ch_table, table);
    efl_gfx_entity_visible_set(bt, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);

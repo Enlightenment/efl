@@ -1,0 +1,150 @@
+struct  @beta Efl.Ui.Spotlight.Transition_Event {
+   [[Information regarding transition events.]]
+   from : int; [[The index from where the transition started, -1 if not known.]]
+   to : int; [[The index to where the transition is headed, -1 if not known.]]
+}
+
+class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack_Linear
+{
+   [[The Spotlight widget is a container for other sub-widgets, where only one sub-widget is active at any given time.
+
+     Sub-widgets are added using the @Efl.Pack_Linear interface and the active one (the one in the "spotlight") is
+     selected using @.active_element.
+
+     The way the different sub-widgets are rendered can be customized through the @.spotlight_manager object.
+     For example, only the active sub-widget might be shown, or it might be shown in a central position whereas the
+     other sub-widgets are displayed on the sides, or grayed-out.
+     All sub-widgets are displayed with the same size, selected with @.spotlight_size.
+
+     Additionally, the transition from one sub-widget to another can be animated.
+     This animation is also controlled by the @.spotlight_manager object.
+
+     Also, an indicator widget can be used to show a visual cue of how many sub-widgets are there and which one is the
+     active one.
+
+     This class can be used to create other widgets like Pagers, Tabbed pagers or Stacks, where each sub-widget
+     represents a "page" full of other widgets. All these cases can be implemented with a different
+     @.spotlight_manager and use the same @Efl.Ui.Spotlight.Container.
+   ]]
+   c_prefix: efl_ui_spotlight;
+   methods {
+      @property spotlight_manager {
+        [[This object defines how sub-widgets are rendered and animated.
+          If it is not set, only the active sub-widget is shown and transitions are instantaneous (not animated).
+        ]]
+        get {
+           values {
+              spotlight_manager : Efl.Ui.Spotlight.Manager; [[The Spotlight Manager object or $NULL.]]
+           }
+        }
+        set { }
+        values {
+          spotlight_manager : Efl.Ui.Spotlight.Manager @move; [[The Spotlight Manager object or $NULL.]]
+        }
+      }
+      @property indicator {
+        [[An indicator object to use, which will display the current state of the spotlight (number of sub-widgets
+          and active one).
+          When this object is set, it is immediately updated to reflect the current state of the widget.
+          Its location inside the container is controlled by the @.spotlight_manager.
+        ]]
+        get {
+           values {
+              indicator : Efl.Ui.Spotlight.Indicator; [[The Indicator object or $NULL.]]
+           }
+        }
+        set { }
+        values {
+          indicator : Efl.Ui.Spotlight.Indicator @move; [[The Indicator object or $NULL.]]
+        }
+      }
+      @property active_element {
+         [[Currently active sub-widget (the one with the spotlight) among all the sub-widgets added to this widget
+
+           Changing this value might trigger an animation.
+         ]]
+         values {
+            element : Efl.Ui.Widget; [[Sub-widget that has the spotlight.
+            The element has to be added prior to this call via the @Efl.Pack_Linear interface.]]
+         }
+      }
+      @property spotlight_size {
+         [[The size to use when displaying the Sub-Widget which has the spotlight.
+           This is used by the @.spotlight_manager to perform the rendering.
+           Sub-Widgets other than the Active one may or may not use this size.]]
+         values {
+            size: Eina.Size2D; [[Render size for the spotlight.
+                                 (-1, -1) means that all available space inside the container can be used.]]
+         }
+      }
+      @property animated_transition {
+         [[When this flag is $true the transitions caused by @.push, @.pop or @.active_element are animated (if the @.spotlight_manager supports that). $false means immidiate displaying at the final position.]]
+         values {
+            enable : bool; [[$true to enable animated transitions. If $false, then any transition is displayed at the final position immidiatly]]
+         }
+      }
+      push @beta {
+         [[Packs a new sub-widget after @.active_element, and move the spotlight there.
+
+           This is the same behavior as a push operation on a stack.
+           When sub-widgets are added using only @.push and @.pop you don't have to worry about @.active_element
+           since only the last sub-widget is manipulated, and this container behaves like a traditional stack.
+
+           An animation might be triggered to give the new sub-widget the spotlight and come into position.
+         ]]
+         params {
+            widget : Efl.Gfx.Entity; [[Sub-Widget to add and set to be the spotlight sub-widget.]]
+         }
+      }
+      pop @beta {
+         [[Removes the sub-widget that has the spotlight from the widget.
+
+           The spotlight is moved to the previous sub-widget.
+           This is the same behavior as a pop operation on a stack.
+           When sub-widgets are added using only @.push and @.pop you don't have to worry about @.active_element
+           since only the last sub-widget is manipulated, and this container behaves like a traditional stack.
+
+           An animation might be triggered to give the new sub-widget the spotlight, come into position and the old
+           one disappear.
+
+           The removed sub-widget can be returned to the caller or deleted (depending on $delete_on_transition_end).
+         ]]
+         params {
+            deletion_on_transition_end : bool; [[If $true, then the object will be deleted before resolving the future,
+                                                 and a $NULL pointer is the value of the future.
+                                                 $false if no operation should be applied to it.]]
+         }
+         return : future<Efl.Gfx.Entity>; [[This Future gets resolved when any transition animation finishes and the
+                                            popped sub-widget is ready for collection.
+                                            If there is no animation, the Future resolves immediately.
+                                            If $deletion_on_transition_end is $true then this widget will destroy the
+                                            popped sub-widget and the Future will contain no Value.
+                                            Otherwise, the caller becomes the owner of the sub-widget contained in the
+                                            Future and must dispose of it appropriately. ]]
+      }
+   }
+   events {
+      transition,start : Efl.Ui.Spotlight.Transition_Event; [[A transition animation has started.]]
+      transition,end : Efl.Ui.Spotlight.Transition_Event; [[A transition animation has ended.]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.invalidate;
+      Efl.Container.content_count;
+      Efl.Container.content_iterate;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Canvas.Group.group_calculate;
+   }
+}

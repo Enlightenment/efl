@@ -88,7 +88,6 @@ typedef struct _Ecore_Factorized_Idle Ecore_Factorized_Idle;
 typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
 
 typedef struct _Efl_Loop_Timer_Data Efl_Loop_Timer_Data;
-typedef struct _Efl_Loop_Future_Scheduler Efl_Loop_Future_Scheduler;
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 
 typedef struct _Efl_Task_Data Efl_Task_Data;
@@ -104,21 +103,9 @@ struct _Message
    Eina_Bool delete_me;
 };
 
-struct _Efl_Loop_Future_Scheduler
-{
-   Eina_Future_Scheduler  eina_future_scheduler;
-   const Eo              *loop;
-   Efl_Loop_Data         *loop_data;
-
-   Eina_List             *future_entries;
-};
-
 struct _Efl_Loop_Data
 {
    double               loop_time;
-   Eina_Hash           *providers;
-
-   Efl_Loop_Future_Scheduler future_scheduler;
 
    Efl_Loop_Message_Handler *future_message_handler;
 
@@ -145,7 +132,10 @@ struct _Efl_Loop_Data
    Eina_List           *win32_handlers_to_delete;
 # endif
 
+   Eina_List           *thread_children;
+
    Eina_Inlist         *message_queue;
+   Eina_Inlist         *message_pending_queue;
    unsigned int         message_walking;
 
    unsigned int         throttle;
@@ -164,6 +154,7 @@ struct _Efl_Loop_Data
 
    int                  idlers;
    int                  in_loop;
+   unsigned int         loop_active;
 
    struct {
       int               high;
@@ -176,7 +167,8 @@ struct _Efl_Loop_Data
       char      **environ_copy;
    } env;
 
-   Eina_Bool            do_quit;
+   Eina_Bool            do_quit : 1;
+   Eina_Bool            quit_on_last_thread_child_del : 1;
 };
 
 struct _Efl_Task_Data
@@ -311,8 +303,6 @@ void        *_ecore_factorized_idle_del(Ecore_Idler *idler);
 void    _ecore_factorized_idle_process(void *data, const Efl_Event *event);
 void    _ecore_factorized_idle_event_del(void *data, const Efl_Event *event);
 
-Eina_Future_Scheduler *_ecore_event_future_scheduler_get(void);
-
 Eina_Bool    _ecore_event_init(void);
 void         _ecore_event_shutdown(void);
 int          _ecore_event_exist(void);
@@ -366,7 +356,7 @@ _ecore_main_win32_handler_del(Eo *obj,
 void       _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd);
 void       _ecore_main_shutdown(void);
 
-#if defined (_WIN32) || defined (__lv2ppu__) || defined (HAVE_EXOTIC)
+#if defined (_WIN32) || defined (__lv2ppu__)
 static inline void _ecore_signal_shutdown(void) { }
 
 static inline void _ecore_signal_init(void) { }
@@ -456,6 +446,8 @@ void _efl_loop_messages_call(Eo *obj, Efl_Loop_Data *pd, void *func, void *data)
 
 void _efl_loop_message_send_info_set(Eo *obj, Eina_Inlist *node, Eo *loop, Efl_Loop_Data *loop_data);
 void _efl_loop_message_unsend(Eo *obj);
+
+void _efl_thread_child_remove(Eo *loop, Efl_Loop_Data *pd, Eo *child);
 
 static inline Eina_Bool
 _ecore_call_task_cb(Ecore_Task_Cb func,

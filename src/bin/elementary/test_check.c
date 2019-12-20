@@ -117,6 +117,10 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    ck = elm_check_add(win);
    elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(win);
+   elm_box_pack_end(bx, ck);
    elm_object_text_set(ck, "text is visible when check state is true.");
    elm_check_state_set(ck, EINA_TRUE);
    evas_object_show(ck);

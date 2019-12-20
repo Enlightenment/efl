@@ -116,7 +116,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
    if (sd->more_item)
      {
         evas_object_geometry_get(sd->VIEW(more_item), NULL, NULL, &ciw, &cih);
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
         else *iw += ciw;
      }
 
@@ -125,7 +125,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
         if (it->prio.priority > sd->standard_priority)
           {
              evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
-             if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
              else *iw += ciw;
              //expand is the case where the bx_more stuff is used and the prio.visible is completly ignored.
              //if this is the case - then every item in there is just visible in the box - nothing (beside the items in the other box is hidden)
@@ -298,7 +298,7 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
 
         if (mw != -1 || mh != -1)
           {
-             if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) min = mh;
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) min = mh;
              else min = mw;
 
              if ((!full) && ((sumf + min) > view))
@@ -396,7 +396,7 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0, more_w = 0, more_h = 0;
 
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
              _items_visibility_fix(obj, sd, &ih, vh, EINA_FALSE, &more);
@@ -409,7 +409,7 @@ _resize_job(void *data)
         evas_object_geometry_get
           (sd->VIEW(more_item), NULL, NULL, &more_w, &more_h);
 
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              if ((ih - more_h) <= vh) ih -= more_h;
           }
@@ -422,8 +422,8 @@ _resize_job(void *data)
          * individual items won't trigger a resize. Items are be
          * readded below. */
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
-        if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
-            ( efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (iw > vw)) ||
+        if ((!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
+            ( efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE) && (iw > vw)) ||
             more)
           {
              Evas_Object *menu;
@@ -477,7 +477,7 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0;
 
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
              _items_visibility_fix(obj, sd, &ih, vh, EINA_FALSE, &more);
@@ -488,8 +488,8 @@ _resize_job(void *data)
              _items_visibility_fix(obj, sd, &iw, vw, EINA_FALSE, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
-        if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
-            ( efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (iw > vw)) ||
+        if ((!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
+            ( efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE) && (iw > vw)) ||
             more)
           {
              EINA_INLIST_FOREACH(sd->items, it)
@@ -517,12 +517,12 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0;
 
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           h = (vh >= mh) ? vh : mh;
         else
           w = (vw >= mw) ? vw : mw;
 
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           _items_visibility_fix(obj, sd, &ih, vh, EINA_TRUE, &more);
         else
           _items_visibility_fix(obj, sd, &iw, vw, EINA_TRUE, &more);
@@ -547,7 +547,7 @@ _resize_job(void *data)
         else
           evas_object_hide(sd->VIEW(more_item));
 
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              if (h > vh) _items_size_fit(obj, &h, vh);
              if (sd->item_count - sd->separator_count > 0)
@@ -564,7 +564,7 @@ _resize_job(void *data)
      }
    else
      {
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           h = (vh >= mh) ? vh : mh;
         else
           w = (vw >= mw) ? vw : mw;
@@ -578,7 +578,7 @@ _resize_job(void *data)
 
    if (sd->transverse_expanded)
      {
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           w = vw;
         else
           h = vh;
@@ -595,8 +595,8 @@ _resize_job(void *data)
              (VIEW(it) == eina_list_nth(list, eina_list_count(list) - 1))))
           {
              evas_object_box_remove(sd->bx_more, VIEW(it));
-             evas_object_move(VIEW(it), -9999, -9999);
              evas_object_hide(VIEW(it));
+             evas_object_move(VIEW(it), -9999, -9999);
           }
      }
    eina_list_free(list);
@@ -608,8 +608,8 @@ _resize_job(void *data)
              (VIEW(it) == eina_list_nth(list, eina_list_count(list) - 1))))
           {
              evas_object_box_remove(sd->bx_more2, VIEW(it));
-             evas_object_move(VIEW(it), -9999, -9999);
              evas_object_hide(VIEW(it));
+             evas_object_move(VIEW(it), -9999, -9999);
           }
      }
    eina_list_free(list);
@@ -723,8 +723,8 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 
    item_list = evas_object_box_children_get(sd->bx);
 
-   if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (iy < vy)) ||
-       ( efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (iw < vw)) ||
+   if ((!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE) && (iy < vy)) ||
+       ( efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE) && (iw < vw)) ||
        search_next)
      {
         while ((item_list = eina_list_next(item_list)))
@@ -1256,6 +1256,41 @@ _item_shrink_signal_emit(Evas_Object *view, Elm_Toolbar_Shrink_Mode shrink_mode)
 }
 
 static void
+_item_fill_align_set(Elm_Toolbar_Data *sd, Elm_Toolbar_Item_Data *it)
+{
+   if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
+     {
+        if (it->separator)
+          {
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+               evas_object_size_hint_weight_set(VIEW(it), -1.0, 0.0);
+             else
+               evas_object_size_hint_weight_set(VIEW(it), 0.0, -1.0);
+          }
+        else
+          {
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+               evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, 0.0);
+             else
+               evas_object_size_hint_weight_set(VIEW(it), 0.0, EVAS_HINT_EXPAND);
+          }
+     }
+   else
+     {
+        if (it->separator)
+          {
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+               evas_object_size_hint_weight_set(VIEW(it), -1.0, 0.0);
+             else
+               evas_object_size_hint_weight_set(VIEW(it), 0.0, -1.0);
+          }
+        else
+          evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+     }
+   evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+}
+
+static void
 _item_theme_hook(Evas_Object *obj,
                  Elm_Toolbar_Item_Data *it,
                  double scale,
@@ -1319,38 +1354,17 @@ _item_theme_hook(Evas_Object *obj,
 
    _item_shrink_signal_emit(view, sd->shrink_mode);
 
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      elm_layout_signal_emit(view, "elm,orient,vertical", "elm");
    else
      elm_layout_signal_emit(view, "elm,orient,horizontal", "elm");
 
-    edje_object_message_signal_process(elm_layout_edje_get(view));
-    if (!it->separator && !it->object)
-      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
-      {
-         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
-           {
-              evas_object_size_hint_weight_set(view, EVAS_HINT_EXPAND, -1.0);
-              evas_object_size_hint_align_set
-                (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-           }
-         else
-           {
-              evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
-              evas_object_size_hint_align_set
-                (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-           }
-      }
-    else
-      {
-         evas_object_size_hint_weight_set
-           (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-         evas_object_size_hint_align_set
-           (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-      }
-    _resizing_eval_item(it);
-    evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
+   edje_object_message_signal_process(elm_layout_edje_get(view));
+   if (!it->separator && !it->object)
+     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   _item_fill_align_set(sd, it);
+   _resizing_eval_item(it);
+   evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1421,7 +1435,7 @@ _sizing_eval(Evas_Object *obj)
      }
    else if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              minw = minw_bx + (w - vw);
              if (minh_bx <= vh) minh_bx = vh;
@@ -1436,7 +1450,7 @@ _sizing_eval(Evas_Object *obj)
      }
    else
      {
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              minw = minw_bx + (w - vw);
              minh = h - vh;
@@ -1450,7 +1464,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (sd->transverse_expanded)
      {
-        if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           minw_bx = vw;
         else
           minh_bx = vh;
@@ -1497,7 +1511,8 @@ _elm_toolbar_efl_ui_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",
      elm_widget_style_get(obj));
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   elm_interface_scrollable_reset_signals(obj);
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      edje_object_signal_emit(wd->resize_obj, "elm,orient,vertical", "elm");
    else
      edje_object_signal_emit(wd->resize_obj, "elm,orient,horizontal", "elm");
@@ -1505,7 +1520,7 @@ _elm_toolbar_efl_ui_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    if (!elm_layout_theme_set
        (sd->more, "toolbar", "more", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      elm_object_signal_emit(sd->more, "elm,orient,vertical", "elm");
    else
      elm_object_signal_emit(sd->more, "elm,orient,horizontal", "elm");
@@ -1731,7 +1746,7 @@ _mouse_clicked_cb(Elm_Toolbar_Item_Data *it,
    if (button == 1)
      {
         /* regular left click event */
-        efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_CLICKED, EO_OBJ(it));
+        evas_object_smart_callback_call(WIDGET(it), "clicked", EO_OBJ(it));
         return;
      }
    snprintf(buf, sizeof(buf), "elm,action,click,%d", button);
@@ -1987,7 +2002,7 @@ _mouse_move_reorder(Elm_Toolbar_Item_Data *item,
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      evas_object_move(item->proxy, x, ev->cur.canvas.y - (h / 2));
    else
      evas_object_move(item->proxy, ev->cur.canvas.x - (w / 2), y);
@@ -2121,7 +2136,7 @@ _long_press_cb(void *data)
    if (sd->reorder_mode)
      _item_reorder_start(it);
 
-   efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
+   evas_object_smart_callback_call(WIDGET(it), "longpressed", EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2154,7 +2169,7 @@ _mouse_down_cb(Elm_Toolbar_Item_Data *it,
 
    if (ev->button != 1) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
+     evas_object_smart_callback_call(WIDGET(it), "clicked,double", EO_OBJ(it));
    sd->mouse_down = EINA_TRUE;
    sd->long_press = EINA_FALSE;
    if (sd->long_timer)
@@ -2221,21 +2236,21 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL, NULL);
+   evas_object_smart_callback_call(obj, "scroll", NULL);
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   evas_object_smart_callback_call(obj, "scroll,anim,start", NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   evas_object_smart_callback_call(obj, "scroll,anim,stop", NULL);
 }
 
 static void
@@ -2245,14 +2260,14 @@ _scroll_drag_start_cb(Evas_Object *obj,
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   evas_object_smart_callback_call(obj, "scroll,drag,start", NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   evas_object_smart_callback_call(obj, "scroll,drag,stop", NULL);
 }
 
 static void
@@ -2265,7 +2280,7 @@ _layout(Evas_Object *o,
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
-   horizontal = efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE);
+   horizontal = efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE);
 
    _els_box_layout
      (o, priv, horizontal, sd->homogeneous, efl_ui_mirrored_get(obj));
@@ -2484,6 +2499,8 @@ _item_new(Evas_Object *obj,
      }
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
+
+   _item_fill_align_set(sd, it);
 
    efl_ui_focus_composition_dirty(obj);
 
@@ -2762,7 +2779,7 @@ _elm_toolbar_efl_canvas_group_group_add(Eo *obj, Elm_Toolbar_Data *priv)
    elm_interface_scrollable_objects_set(obj, edje, priv->hit_rect);
 
    priv->standard_priority = -99999;
-   priv->dir = EFL_UI_DIR_HORIZONTAL;
+   priv->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
    elm_interface_scrollable_bounce_allow_set
          (obj, _elm_config->thumbscroll_bounce_enable, EINA_FALSE);
@@ -2800,7 +2817,7 @@ _elm_toolbar_efl_canvas_group_group_add(Eo *obj, Elm_Toolbar_Data *priv)
    priv->more = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->more, "toolbar", "more", "default"))
      CRI("Failed to set layout!");
-   if (!efl_ui_dir_is_horizontal(priv->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(priv->dir, EINA_TRUE))
      elm_object_signal_emit(priv->more, "elm,orient,vertical", "elm");
    else
      elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
@@ -2920,7 +2937,7 @@ _elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it)
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
    r = EINA_RECT(ix, iy, iw, ih);
 
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      {
         //TODO: Enhance it later.
         if ((ix < vx) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
@@ -3080,6 +3097,7 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_before));
    evas_object_box_insert_before(sd->bx, VIEW(it), VIEW(_before));
    _item_theme_hook(obj, it, scale, sd->icon_size);
+   evas_object_show(VIEW(it));
    sd->item_count++;
 
    _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
@@ -3109,6 +3127,7 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_after));
    evas_object_box_insert_after(sd->bx, VIEW(it), VIEW(_after));
    _item_theme_hook(obj, it, scale, sd->icon_size);
+   evas_object_show(VIEW(it));
    sd->item_count++;
 
    _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
@@ -3349,7 +3368,7 @@ _elm_toolbar_item_separator_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *
    item->separator = separator;
    scale = (efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
    _item_theme_hook(obj, item, scale, sd->icon_size);
-   evas_object_size_hint_min_set(VIEW(item), -1, -1);
+   _item_fill_align_set(sd, item);
    if (separator) sd->separator_count++;
    else sd->separator_count--;
 }
@@ -3483,7 +3502,7 @@ _elm_toolbar_menu_parent_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 EOLIAN static void
 _elm_toolbar_align_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, double align)
 {
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      {
         if (sd->align != align)
           evas_object_box_align_set(sd->bx, 0.5, align);
@@ -3712,17 +3731,17 @@ _elm_toolbar_item_state_prev(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *ite
 }
 
 EOLIAN static void
-_elm_toolbar_efl_ui_direction_direction_set(Eo *obj, Elm_Toolbar_Data *sd, Efl_Ui_Dir dir)
+_elm_toolbar_efl_ui_layout_orientable_orientation_set(Eo *obj, Elm_Toolbar_Data *sd, Efl_Ui_Layout_Orientation dir)
 {
    // Adjust direction to be either horizontal or vertical.
-   if (efl_ui_dir_is_horizontal(dir, EINA_TRUE))
-     dir = EFL_UI_DIR_HORIZONTAL;
+   if (efl_ui_layout_orientation_is_horizontal(dir, EINA_TRUE))
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else
-     dir = EFL_UI_DIR_VERTICAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    sd->dir = dir;
 
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      evas_object_box_align_set(sd->bx, 0.5, sd->align);
    else
      evas_object_box_align_set(sd->bx, sd->align, 0.5);
@@ -3730,8 +3749,8 @@ _elm_toolbar_efl_ui_direction_direction_set(Eo *obj, Elm_Toolbar_Data *sd, Efl_U
    _sizing_eval(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_elm_toolbar_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_elm_toolbar_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    return sd->dir;
 }
@@ -3739,14 +3758,14 @@ _elm_toolbar_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Elm_Toolb
 EAPI void
 elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
 
    if (horizontal)
-     dir = EFL_UI_DIR_HORIZONTAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else
-     dir = EFL_UI_DIR_VERTICAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
-   efl_ui_direction_set(obj, dir);
+   efl_ui_layout_orientation_set(obj, dir);
 }
 
 EAPI Eina_Bool
@@ -3754,7 +3773,7 @@ elm_toolbar_horizontal_get(const Evas_Object *obj)
 {
    ELM_TOOLBAR_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
 
-   return efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE);
+   return efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE);
 }
 
 EOLIAN static unsigned int
@@ -4006,6 +4025,7 @@ _elm_toolbar_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolba
 EOLIAN void
 _elm_toolbar_efl_canvas_group_group_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 

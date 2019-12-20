@@ -9,11 +9,11 @@ static Elm_Prefs_Item_Type supported_types[] =
 };
 
 static void
-_item_changed_cb(void *data, const Efl_Event *event)
+_item_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
-   prefs_it_changed_cb(event->object);
+   prefs_it_changed_cb(obj);
 }
 
 static Evas_Object *
@@ -25,8 +25,7 @@ elm_prefs_button_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 {
    Evas_Object *obj = elm_button_add(prefs);
 
-   efl_event_callback_add
-     (obj, EFL_UI_EVENT_CLICKED, _item_changed_cb, cb);
+   evas_object_smart_callback_add(obj, "clicked", _item_changed_cb, cb);
 
    return obj;
 }

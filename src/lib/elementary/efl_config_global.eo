@@ -50,7 +50,7 @@ class @beta Efl.Config_Global extends Efl.Object implements Efl.Config
             hidden: bool @optional; [[If $true, gets the full list of profiles,
                                       including those stored in hidden files.]]
          }
-         return: iterator<string> @owned; [[Iterator to profiles]]
+         return: iterator<string> @move; [[Iterator to profiles]]
       }
       profile_exists {
          [[Returns whether a profile exists or not.]]
@@ -66,7 +66,7 @@ class @beta Efl.Config_Global extends Efl.Object implements Efl.Config
             is_user: bool; [[$true to lookup for a user profile or $false for
                              a system one.]]
          }
-         return: stringshare @owned; [[Directory of the profile, free after use.]]
+         return: stringshare @move; [[Directory of the profile, free after use.]]
       }
       profile_derived_add @protected {
          [[Add a new profile of the given name to be derived from the current

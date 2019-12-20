@@ -2,18 +2,14 @@
 
 set -e
 . .ci/travis.sh
-if [ "$1" = "release-ready" ] ; then
+if [ "$1" != "default" ] ; then
   exit 0
 fi
-travis_fold benchmark "make benchmark"
-if [ "$BUILDSYSTEM" = "ninja" ] ; then
-  echo "Nothing to do here, the benchmarks don't seem to terminate"
+travis_fold benchmark "ninja benchmark"
+if [ "$DISTRO" != "" ] ; then
+  docker exec --env EIO_MONITOR_POLL=1 --env ELM_ENGINE=buffer $(cat $HOME/cid) ninja benchmark -C build
 else
-  if [ "$DISTRO" != "" ] ; then
-    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make benchmark
-  else
-    export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
-    make benchmark
-  fi
+  export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
+  ninja benchmark -C build
 fi
 travis_endfold benchmark

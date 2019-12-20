@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_CXX_CLASS_DEFINITION_HH
 #define EOLIAN_CXX_CLASS_DEFINITION_HH
 
@@ -137,7 +152,7 @@ struct class_definition_generator
 
      for (auto&& e : cls.events)
        {
-          if (e.beta)
+          if (e.is_beta)
             {
                suffix = "BETA";
                if(!as_generator
@@ -145,7 +160,7 @@ struct class_definition_generator
                      .generate(sink, std::make_tuple(cls.namespaces, cls.eolian_name, suffix), add_upper_case_context(context)))
                  return false;
             }
-          if (e.protect)
+          if (e.is_protected)
             {
                suffix = "PROTECTED";
                if(!as_generator
@@ -193,9 +208,9 @@ struct class_definition_generator
           if (!as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
 
-          if (e.beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
+          if (e.is_beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
-          if (e.protect && !as_generator("#endif\n").generate(sink, attributes::unused, context))
+          if (e.is_protected && !as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
        }
      

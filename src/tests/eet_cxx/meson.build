@@ -16,6 +16,5 @@ eet_cxx_suite = executable('eet_cxx_suite',
 
 
 test('ecore_cxx-suite', eet_cxx_suite,
-  timeout : 10*60,
   env : test_env
 )

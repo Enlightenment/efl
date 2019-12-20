@@ -89,11 +89,18 @@ _callables_find(const Eolian_Class *cl, Eina_List **funcs,
 
    const Eolian_Class *pcl = eolian_class_parent_get(cl);
    if (pcl)
-     total += _callables_find_body(pcl, funcs, events, written);
+     {
+        total += _callables_find_body(pcl, funcs, events, written);
+        total += _callables_find(pcl, funcs, events, written);
+     }
 
    Eina_Iterator *itr = eolian_class_extensions_get(cl);
    EINA_ITERATOR_FOREACH(itr, pcl)
-     total += _callables_find_body(pcl, funcs, events, written);
+     {
+        total += _callables_find_body(pcl, funcs, events, written);
+        total += _callables_find(pcl, funcs, events, written);
+     }
+   eina_iterator_free(itr);
 
    return total;
 }

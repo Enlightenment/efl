@@ -1,7 +1,10 @@
-class @beta Efl.Ui.Layout_Part_Text extends Efl.Ui.Layout_Part implements Efl.Text, Efl.Text_Markup,
+class Efl.Ui.Layout_Part_Text extends Efl.Ui.Layout_Part implements Efl.Text, Efl.Text_Markup,
                                Efl.Ui.L10n
 {
-   [[Elementary layout internal part class]]
+   [[Elementary layout internal part class
+
+     @since 1.23
+   ]]
    data: null;
    implements {
       Efl.Text.text { set; get; }

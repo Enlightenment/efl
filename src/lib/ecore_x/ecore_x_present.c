@@ -13,12 +13,9 @@ static Eina_Bool _ecore_x_present_exists = EINA_FALSE;
 void
 _ecore_x_present_init(void)
 {
-   if (ECORE_X_EVENT_PRESENT_CONFIGURE == 0)
-     {
-        ECORE_X_EVENT_PRESENT_CONFIGURE = ecore_event_type_new();
-        ECORE_X_EVENT_PRESENT_COMPLETE = ecore_event_type_new();
-        ECORE_X_EVENT_PRESENT_IDLE = ecore_event_type_new();
-     }
+   ECORE_X_EVENT_PRESENT_CONFIGURE = ecore_event_type_new();
+   ECORE_X_EVENT_PRESENT_COMPLETE = ecore_event_type_new();
+   ECORE_X_EVENT_PRESENT_IDLE = ecore_event_type_new();
 #ifdef ECORE_XPRESENT
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_present_exists = XPresentQueryExtension(_ecore_x_disp, &_ecore_x_present_major, NULL, NULL);

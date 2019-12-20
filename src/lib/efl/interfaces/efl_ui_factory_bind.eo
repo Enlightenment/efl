@@ -1,10 +1,13 @@
-interface @beta Efl.Ui.Factory_Bind
+interface Efl.Ui.Factory_Bind
 {
    [[Efl UI Property interface.
      view object can have @Efl.Model and need to set cotent with those model stored data.
      the interface can help binding the factory to create object with model property data.
      see @Efl.Model
-     see @Efl.Ui.Factory]]
+     see @Efl.Ui.Factory
+
+     @since 1.23
+   ]]
    methods {
       factory_bind {
          [[bind the factory with the given key string. when the data is ready or changed,
@@ -14,6 +17,7 @@ interface @beta Efl.Ui.Factory_Bind
             key: string; [[Key string for bind model property data]]
             factory: Efl.Ui.Factory; [[@Efl.Ui.Factory for create and bind model property data]]
          }
+         return: Eina.Error; [[0 when it succeed, an error code otherwise.]]
       }
    }
 }

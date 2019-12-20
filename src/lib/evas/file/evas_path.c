@@ -17,7 +17,7 @@
 #include <sys/param.h>
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_path_is_absolute */
 #endif
 
 #include "evas_common_private.h"

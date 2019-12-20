@@ -5,6 +5,7 @@ evas_suite_src = [
   'evas_test_object.c',
   'evas_test_object_smart.c',
   'evas_test_textblock.c',
+  'evas_buffer_helper.c',
   'evas_test_text.c',
   'evas_test_callbacks.c',
   'evas_test_render_engines.c',
@@ -14,8 +15,14 @@ evas_suite_src = [
   'evas_test_mask.c',
   'evas_test_evasgl.c',
   'evas_test_matrix.c',
+  'evas_test_focus.c',
+  'evas_test_events.c',
   'evas_tests_helpers.h',
-  'evas_suite.h'
+  'evas_suite.h',
+  'efl_test_canvas.c',
+  'efl_test_canvas2.c',
+  'efl_test_canvas3.c',
+  'efl_canvas_animation.c',
 ]
 
 evas_suite = executable('evas_suite',

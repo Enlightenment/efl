@@ -5,6 +5,7 @@
 #include "sw_ft_raster.h"
 #include "sw_ft_stroker.h"
 #include "../ector_private.h"
+#include "draw.h"
 
 typedef struct _Ector_Software_Surface_Data Ector_Software_Surface_Data;
 typedef struct _Ector_Software_Thread Ector_Software_Thread;
@@ -47,7 +48,7 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
    uint32_t* color_table;
 
    Eina_Bool alpha;
-   Eina_Bool done;
+   int ctable_status;       //Ready for color table?
 } Ector_Renderer_Software_Gradient_Data;
 
 typedef struct _Shape_Rle_Data
@@ -82,8 +83,8 @@ typedef struct _Span_Data
 
    int              offx, offy;
    Clip_Data        clip;
-   Ector_Software_Buffer_Base_Data    *mask;
-   int mask_op;
+   Ector_Software_Buffer_Base_Data    *comp;
+   Efl_Gfx_Vg_Composite_Method comp_method;
    Eina_Matrix3     inv;
    Span_Data_Type   type;
    Eina_Bool        fast_matrix;
@@ -117,7 +118,7 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);
 
 void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer,
                                           double width,
-                                          Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m);
+                                          Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m, double miterlimit);
 
 void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t);
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a);
@@ -135,8 +136,8 @@ void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                              int x, int y, uint32_t mul_col,
                                              Efl_Gfx_Render_Op op,
                                              Shape_Rle_Data* rle,
-                                             Ector_Buffer *mask,
-                                             int mask_op);
+                                             Ector_Buffer *comp,
+                                             Efl_Gfx_Vg_Composite_Method comp_method);
 
 void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 

@@ -315,9 +315,7 @@
 # include <sys/siginfo.h>
 #else
 # include <sys/time.h>
-# if !defined (EXOTIC_NO_SIGNAL)
-#  include <signal.h>
-# endif
+# include <signal.h>
 #endif
 
 #include <sys/types.h>

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 
 public class Example
@@ -17,13 +32,13 @@ public class Example
     private static void ShowErrorPopup(Efl.Ui.Win win, string message)
     {
         Efl.Ui.AlertPopup popup = new Efl.Ui.AlertPopup(win);
-        Efl.Ui.Text popup_text = new Efl.Ui.Text(popup);
+        Efl.Ui.Textbox popup_text = new Efl.Ui.Textbox(popup);
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
         popup.SetVisible(true);
         popup.SetButton(Efl.Ui.AlertPopupButton.Positive, "Ok", null);
         popup.SetSize(new Eina.Size2D(150, 30));
-        popup.ButtonClickedEvt += (object sender, Efl.Ui.AlertPopupButtonClickedEvt_Args e) => {
+        popup.ButtonClickedEvent += (object sender, Efl.Ui.AlertPopupButtonClickedEventArgs e) => {
             popup.SetParent(null);
             popup.Invalidate();
         };
@@ -53,14 +68,15 @@ public class Example
 
         box.DoPack(miles_box);
 
-        Efl.Ui.Text miles_label = new Efl.Ui.Text(miles_box);
+        Efl.Ui.Textbox miles_label = new Efl.Ui.Textbox(miles_box);
         miles_label.SetText("Miles:");
         miles_label.SetSize(size);
         miles_label.SetVisible(true);
 
-        Efl.Ui.TextEditable miles_input = new Efl.Ui.TextEditable(miles_box);
+        Efl.Ui.Textbox miles_input = new Efl.Ui.Textbox(miles_box);
         miles_input.SetText("");
         miles_input.SetScrollable(true);
+        miles_input.SetEditable(true);
         miles_input.SetSize(size);
         miles_input.SetVisible(true);
 
@@ -79,12 +95,12 @@ public class Example
 
         box.DoPack(kms_box);
 
-        Efl.Ui.Text kms_label = new Efl.Ui.Text(kms_box);
+        Efl.Ui.Textbox kms_label = new Efl.Ui.Textbox(kms_box);
         kms_label.SetText("Kilometers:");
         kms_label.SetSize(size);
         kms_label.SetVisible(true);
 
-        Efl.Ui.TextEditable kms_input = new Efl.Ui.TextEditable(kms_box);
+        Efl.Ui.TextboxEditable kms_input = new Efl.Ui.TextboxEditable(kms_box);
         kms_input.SetText("");
         kms_input.SetScrollable(true);
         kms_input.SetSize(size);
@@ -99,7 +115,7 @@ public class Example
         kms_box.DoPack(kms_input);
         kms_box.DoPack(kms_button);
 
-        ((Efl.Ui.Clickable)kms_button).ClickedEvt += (object sender, EventArgs e) => {
+        ((Efl.Ui.Clickable)kms_button).ClickedEvent += (object sender, EventArgs e) => {
             try
             {
                 string text = kms_input.GetText();
@@ -115,7 +131,7 @@ public class Example
             }
         };
 
-        ((Efl.Ui.Clickable)miles_button).ClickedEvt += (object sender, EventArgs e) => {
+        ((Efl.Ui.Clickable)miles_button).ClickedEvent += (object sender, EventArgs e) => {
             try
             {
                 string text = miles_input.GetText();

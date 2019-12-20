@@ -6,6 +6,7 @@
 # include "Ecore_Input.h"
 # include <xkbcommon/xkbcommon-compose.h>
 # include "www-client-protocol.h"
+# include "ecore_wl2_internal.h"
 
 # define EFL_TEAMWORK_VERSION 2
 # include "teamwork-client-protocol.h"
@@ -189,6 +190,9 @@ struct _Ecore_Wl2_Window
    struct zxdg_surface_v6 *zxdg_surface;
    struct zxdg_toplevel_v6 *zxdg_toplevel;
    struct zxdg_popup_v6 *zxdg_popup;
+
+   void (*cb_close) (void *data, Ecore_Wl2_Window *win);
+   void  *cb_close_data;
 
    Eina_Stringshare *uuid;
 
@@ -566,6 +570,9 @@ typedef struct _Ecore_Wl2_Surface
    Eina_Bool alpha : 1;
 } Ecore_Wl2_Surface;
 
+EAPI extern int _ecore_wl2_event_window_www;
+EAPI extern int _ecore_wl2_event_window_www_drag;
+
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
 void _display_event_free(void *d, void *event EINA_UNUSED);
 
@@ -604,9 +611,6 @@ Eina_Bool _ecore_wl2_display_sync_get(void);
 void _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd);
 
 EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h);
-
-EAPI extern int _ecore_wl2_event_window_www;
-EAPI extern int _ecore_wl2_event_window_www_drag;
 
 Ecore_Wl2_Output *_ecore_wl2_output_find(Ecore_Wl2_Display *dsp, struct wl_output *op);
 

@@ -24,14 +24,6 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
-#ifdef HAVE_ESCAPE
-# include <Escape.h>
-#endif
-
 #ifdef HAVE_PIXMAN
 #include <pixman.h>
 #endif
@@ -39,10 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#ifdef HAVE_EXOTIC
-# include <Exotic.h>
-#endif
 
 #include <Eina.h>
 #include <Eo.h>
@@ -58,6 +46,7 @@
 
 #include "Evas.h"
 
+#define EFL_INTERNAL_UNSTABLE
 #include "Evas_Internal.h"
 
 #include "../common/evas_font.h"
@@ -602,6 +591,7 @@ struct _Image_Entry
 
    unsigned char          need_unload : 1;
    unsigned char          load_failed : 1;
+   unsigned char          need_data : 1;
 
    struct
      {
@@ -637,6 +627,14 @@ struct _Image_Entry
    int                    connect_num;
    int                    channel;
    Evas_Load_Error        load_error;
+
+   struct {
+      struct {
+         uint8_t *region;
+      } horizontal, vertical;
+   } stretch;
+
+   Eina_Rectangle content;
 };
 
 struct _Engine_Image_Entry

@@ -1,4 +1,5 @@
-class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Slider
+class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive,
+                              Efl.Ui.Layout_Orientable, Efl.Access.Value, Efl.Access.Widget.Action
 {
     [[An interval slider.
 
@@ -19,7 +20,24 @@ class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Slider
         }
     }
     implements {
-         Efl.Object.constructor;
-         Efl.Object.destructor;
+       Efl.Object.constructor;
+       Efl.Object.destructor;
+       Efl.Ui.Widget.theme_apply;
+       Efl.Ui.Widget.on_access_activate;
+       Efl.Ui.Widget.widget_input_event_handler;
+       Efl.Ui.Range_Display.range_value { get; set; }
+       Efl.Ui.Range_Display.range_limits {get; set; }
+       Efl.Ui.Range_Interactive.range_step { get; set; }
+       Efl.Ui.Layout_Orientable.orientation { get; set; }
+       Efl.Access.Value.value_and_text { get; set; }
+       Efl.Access.Value.range { get; }
+       Efl.Access.Value.increment { get; }
+       Efl.Access.Widget.Action.elm_actions { get; }
     }
+    events {
+      slider,drag,start: void; [[Called when a slider drag operation has started. This means a $press event
+                                 has been received on the slider thumb but not the $unpress.]]
+      slider,drag,stop: void; [[Called when a slider drag operation has finished. This means an $unpress event
+                                has been received on the slider thumb.]]
+   }
 }

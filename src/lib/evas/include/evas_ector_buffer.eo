@@ -1,4 +1,4 @@
-interface Evas.Ector.Buffer
+interface @beta Evas.Ector.Buffer
 {
    [[Binding layer between ector buffers and evas images.
 

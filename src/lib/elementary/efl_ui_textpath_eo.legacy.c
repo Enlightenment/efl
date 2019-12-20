@@ -1,8 +1,8 @@
 
 EAPI void
-elm_textpath_circle_set(Efl_Ui_Textpath *obj, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
+elm_textpath_circular_set(Efl_Ui_Textpath *obj, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
 {
-   efl_ui_textpath_circle_set(obj, x, y, radius, start_angle, direction);
+   efl_ui_textpath_circular_set(obj, radius, start_angle, direction);
 }
 
 EAPI void
@@ -22,6 +22,7 @@ elm_textpath_ellipsis_set(Efl_Ui_Textpath *obj, Eina_Bool ellipsis)
 {
    efl_ui_textpath_ellipsis_set(obj, ellipsis);
 }
+
 
 EAPI Eina_Bool
 elm_textpath_ellipsis_get(const Efl_Ui_Textpath *obj)

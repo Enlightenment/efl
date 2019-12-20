@@ -126,7 +126,6 @@ ephysics_quaternion_euler_set(EPhysics_Quaternion *quat, double yaw, double pitc
         return;
      }
 
-   bt_quat = btQuaternion();
    bt_quat.setEuler(yaw / RAD_TO_DEG, pitch / RAD_TO_DEG, roll / RAD_TO_DEG);
    _ephysics_quaternion_update(quat, &bt_quat);
 }

@@ -1,0 +1,12 @@
+class @beta Efl.Ui.Spotlight.Manager_Stack extends Efl.Ui.Spotlight.Manager
+{
+   implements {
+      Efl.Ui.Spotlight.Manager.bind;
+      Efl.Ui.Spotlight.Manager.content_add;
+      Efl.Ui.Spotlight.Manager.content_del;
+      Efl.Ui.Spotlight.Manager.switch_to;
+      Efl.Ui.Spotlight.Manager.size {set;}
+      Efl.Ui.Spotlight.Manager.animated_transition {set; get;}
+      Efl.Object.invalidate;
+   }
+}

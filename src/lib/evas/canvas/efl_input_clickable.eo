@@ -1,0 +1,72 @@
+struct Efl.Input.Clickable_Clicked {
+   [[A struct that expresses a click in elementary. @since 1.23]]
+   repeated : uint; [[The amount of how often the clicked event was repeated in a certain amount of time]]
+   button : uint; [[The Button that is pressed]]
+}
+
+mixin Efl.Input.Clickable
+{
+   [[Efl input clickable interface.
+
+     @since 1.23
+   ]]
+   event_c_prefix: efl_input;
+   methods {
+      press @protected {
+         [[Change internal states that a button got pressed.
+
+           When the button is already pressed, this is silently ignored.
+         ]]
+         params {
+            button : uint; [[The number of the button. FIXME ensure to have the right interval of possible input]]
+         }
+      }
+      unpress @protected {
+         [[Change internal states that a button got unpressed.
+
+           When the button is not pressed, this is silently ignored.
+         ]]
+         params {
+            button : uint; [[The number of the button. FIXME ensure to have the right interval of possible input]]
+         }
+      }
+      button_state_reset @protected {
+         [[This aborts the internal state after a press call.
+
+           This will stop the timer for longpress and set the state of the clickable mixin back into the unpressed
+           state.
+         ]]
+         params {
+            button : uint;
+         }
+      }
+      longpress_abort @protected {
+         [[This aborts ongoing longpress event.
+
+           That is, this will stop the timer for longpress.
+         ]]
+         params {
+            button : uint;
+         }
+      }
+      @property interaction {
+         [[This returns true if the given object is currently in event emission]]
+         get {
+
+         }
+         values {
+            interaction : bool;
+         }
+      }
+   }
+   events {
+      clicked: Efl.Input.Clickable_Clicked; [[Called when object is in sequence pressed and unpressed by the primary
+                                              button]]
+      clicked,any: Efl.Input.Clickable_Clicked; [[Called when object is in sequence pressed and unpressed by any
+                                                  button. The button that triggered the event can be found in the event
+                                                  information.]]
+      pressed: int; [[Called when the object is pressed, event_info is the button that got pressed]]
+      unpressed: int; [[Called when the object is no longer pressed, event_info is the button that got pressed]]
+      longpressed: int; [[Called when the object receives a long press, event_info is the button that got pressed]]
+   }
+}

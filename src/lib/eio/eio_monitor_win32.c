@@ -17,6 +17,8 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <evil_private.h> /* evil_wchar_to_char evil_last_error_get */
+
 #include "eio_private.h"
 #include "Eio.h"
 
@@ -419,6 +421,11 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    _eio_monitor_win32_watcher_free(monitor->backend->watcher_file);
    free(monitor->backend);
    monitor->backend = NULL;
+}
+
+Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor, const char *path)
+{
+   return EINA_TRUE;
 }
 
 

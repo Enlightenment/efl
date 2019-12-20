@@ -1377,6 +1377,13 @@ _next_command(char *path, char *cmd, double *arr, int *count)
         path++;
         *count = _number_count(*cmd);
      }
+   else 
+     {
+        if (*cmd == 'm')
+          *cmd = 'l';
+        else if (*cmd == 'M')
+          *cmd = 'L';
+     }
    if ( *count == 7)
      {
         // special case for arc command
@@ -1527,6 +1534,13 @@ _efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
    pd->convex = from->convex;
 
    _efl_gfx_path_path_set(obj, pd, from->commands, from->points);
+}
+
+EOLIAN static void
+_efl_gfx_path_efl_object_destructor(Eo *obj, Efl_Gfx_Path_Data *pd)
+{
+   _efl_gfx_path_reset(obj, pd);
+   efl_destructor(efl_super(obj, EFL_GFX_PATH_MIXIN));
 }
 
 #include "interfaces/efl_gfx_path.eo.c"

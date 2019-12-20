@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "evil_macro.h"
-#include "evil_langinfo.h"
+#include "evil_private.h"
 
 
 static char *

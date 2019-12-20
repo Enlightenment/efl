@@ -6,6 +6,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -71,21 +72,16 @@ _activate(Evas_Object *obj)
           _elm_access_say(E_("Clicked"));
         if (!elm_widget_disabled_get(obj) &&
             !evas_object_freeze_events_get(obj))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_CLICKED, NULL);
+          {
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, "clicked", NULL);
+             else
+               {
+                  efl_input_clickable_press(obj, 1);
+                  efl_input_clickable_unpress(obj, 1);
+               }
+          }
      }
-}
-
-EOLIAN static void
-_efl_ui_button_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
 }
 
 EOLIAN static Eina_Bool
@@ -95,13 +91,18 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
-   efl_event_callback_legacy_call
-      (obj, EFL_UI_EVENT_CLICKED, NULL);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, "clicked", NULL);
+   else
+     {
+        efl_input_clickable_press(obj, 1);
+        efl_input_clickable_unpress(obj, 1);
+     }
 
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
    else
-     elm_layout_signal_emit(obj, "efl,anim,activate", "efl");
+     elm_layout_signal_emit(obj, "efl,state,animation,activated", "efl");
 
    return EINA_TRUE;
 }
@@ -112,7 +113,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
    else
-     elm_layout_signal_emit(obj, "efl,anim,activate", "efl");
+     elm_layout_signal_emit(obj, "efl,state,animation,activated", "efl");
    _activate(obj);
    return EINA_TRUE;
 }
@@ -131,8 +132,11 @@ _autorepeat_send(void *data)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN_VAL(data, sd, ECORE_CALLBACK_CANCEL);
 
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_REPEATED, NULL);
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call(data, "repeated", NULL);
+   else
+     efl_event_callback_call(data, EFL_UI_AUTOREPEAT_EVENT_REPEATED, NULL);
+
    if (!sd->repeating)
      {
         sd->timer = NULL;
@@ -172,8 +176,10 @@ _on_pressed_signal(void *data,
               (sd->ar_initial_timeout, _autorepeat_initial_send, data);
      }
 
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_PRESSED, NULL);
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call
+        (data, "pressed", NULL);
+
 }
 
 static void
@@ -186,8 +192,10 @@ _on_unpressed_signal(void *data,
 
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_UNPRESSED, NULL);
+
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call
+        (data, "unpressed", NULL);
 }
 
 static char *
@@ -234,14 +242,12 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
    else
      {
         edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click", "*",
-            _on_clicked_signal, obj);
-        edje_object_signal_callback_add
            (wd->resize_obj, "efl,action,press", "*",
             _on_pressed_signal, obj);
         edje_object_signal_callback_add
            (wd->resize_obj, "efl,action,unpress", "*",
             _on_unpressed_signal, obj);
+        efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
      }
 
    _elm_access_object_register(obj, wd->resize_obj);
@@ -368,11 +374,10 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"
@@ -398,12 +403,13 @@ _icon_signal_emit(Evas_Object *obj)
    char buf[64];
 
    if (!elm_widget_resize_object_get(obj)) return;
+   if (!edje_object_part_exists(obj, "elm.swallow.content")) return;
    snprintf(buf, sizeof(buf), "elm,state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot

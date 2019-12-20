@@ -6,15 +6,11 @@
 
 static Evas_Object *_test_code_win_create(const char *id, const char *name)
 {
-   Evas_Object *win, *bg;
+   Evas_Object *win;
 
-   win = elm_win_add(NULL, id, ELM_WIN_BASIC);
+   win = elm_win_util_standard_add(id, name);
    elm_win_title_set(win, name);
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    evas_object_resize(win, 360 * elm_config_scale_get(), 220 * elm_config_scale_get());
    return win;

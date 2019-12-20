@@ -2,6 +2,10 @@
 # include <config.h>
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv */
+#endif
+
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
 
@@ -109,7 +113,7 @@ _cb_client_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (clients == 0)
      {
         if (quit_timer) ecore_timer_del(quit_timer);
-        quit_timer = ecore_timer_add(10.0, _cb_quit_timer, NULL);
+        quit_timer = ecore_timer_add(2.0, _cb_quit_timer, NULL);
      }
    return ECORE_CALLBACK_DONE;
 }
@@ -207,7 +211,7 @@ ipc_init(void)
         ecore_ipc_shutdown();
         return EINA_FALSE;
      }
-   quit_timer = ecore_timer_add(10.0, _cb_quit_timer, NULL);
+   quit_timer = ecore_timer_add(2.0, _cb_quit_timer, NULL);
    hnd_add = ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD,
                                      _cb_client_add, NULL);
    hnd_del = ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL,

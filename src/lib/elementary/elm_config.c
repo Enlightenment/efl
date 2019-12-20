@@ -4,8 +4,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include <pwd.h>
 
+#include "../../static_libs/buildsystem/buildsystem.h"
 #include "efl_config_global.eo.h"
 
 EAPI int ELM_EVENT_CONFIG_ALL_CHANGED = 0;
@@ -35,6 +35,7 @@ Eina_Bool _config_profile_lock = EINA_FALSE;
 static Ecore_Timer *_config_change_delay_timer = NULL;
 static Ecore_Timer *_config_profile_change_delay_timer = NULL;
 static Ecore_Event_Handler *_monitor_file_created_handler = NULL;
+static Ecore_Event_Handler *_monitor_file_modified_handler = NULL;
 static Ecore_Event_Handler *_monitor_directory_created_handler = NULL;
 static Eio_Monitor *_eio_config_monitor = NULL;
 static Eio_Monitor *_eio_profile_monitor = NULL;
@@ -633,6 +634,35 @@ end:
    return off;
 }
 
+static Eina_Hash *_getenv_once_envs = NULL;
+static const char *_getenv_once_empty = "";
+
+static const char *
+_getenv_once(const char *env)
+{
+   const char *s;
+
+   if (_getenv_once_envs)
+     {
+        s = eina_hash_find(_getenv_once_envs, env);
+        if (s == _getenv_once_empty) return NULL;
+        if (s) return s;
+     }
+   else _getenv_once_envs = eina_hash_string_superfast_new(NULL);
+   s = getenv(env);
+   if (s)
+     {
+        s = eina_stringshare_add(s);
+        eina_hash_add(_getenv_once_envs, env, s);
+        return s;
+     }
+   else
+     {
+        eina_hash_add(_getenv_once_envs, env, _getenv_once_empty);
+     }
+   return NULL;
+}
+
 size_t
 _elm_config_user_dir_snprintf(char       *dst,
                               size_t      size,
@@ -646,7 +676,7 @@ _elm_config_user_dir_snprintf(char       *dst,
 
    if (use_xdg_config == -1)
      {
-        if (getenv("ELM_CONFIG_DIR_XDG")) use_xdg_config = 1;
+        if (_getenv_once("ELM_CONFIG_DIR_XDG")) use_xdg_config = 1;
         else use_xdg_config = 0;
      }
    if (use_xdg_config)
@@ -779,9 +809,11 @@ _elm_config_profile_derived_save(const char *profile, Elm_Config_Derived *derive
         eet_close(ef);
         if (ret)
           {
-             if (!ecore_file_cp(buf, buf2))
-               ERR("Error saving Elementary's derived configuration profile file");
-             ecore_file_unlink(buf);
+             if (!ecore_file_mv(buf, buf2))
+               {
+                  ERR("Error saving Elementary's derived configuration profile file");
+                  ecore_file_unlink(buf);
+               }
           }
         else
           {
@@ -964,7 +996,8 @@ _elm_config_profile_dir_get(const char *prof,
    if (!is_user)
      goto not_user;
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
+   if ((!_running_in_tree) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
+     _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
 
    // See elm_config_profile_dir_free: always use strdup+free
    if (ecore_file_is_dir(buf))
@@ -973,7 +1006,8 @@ _elm_config_profile_dir_get(const char *prof,
    return NULL;
 
 not_user:
-   snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
+   if ((!_running_in_tree) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
+     snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
 
    // See elm_config_profile_dir_free: always use strdup+free
    if (ecore_file_is_dir(buf))
@@ -1355,9 +1389,15 @@ _elm_config_profiles_list(Eina_Bool hide_profiles)
    Eina_Iterator *file_it;
    char buf[PATH_MAX];
    const char *dir;
-   size_t len;
+   size_t len = 0;
 
-   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
+   if (_running_in_tree)
+     {
+        len = bs_data_path_get(buf, sizeof(buf), "elementary", "config");
+        if (len) len = strlen(buf);
+     }
+   if (!len)
+     len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
 
    file_it = eina_file_stat_ls(buf);
    if (!file_it) goto sys;
@@ -1434,12 +1474,14 @@ list_free:
 static void
 _profile_fetch_from_conf(void)
 {
-   char buf[PATH_MAX], *p, *s;
+   char buf[PATH_MAX], *p;
+   const char *s;
    Eet_File *ef = NULL;
    int len = 0, i;
 
+   if (_running_in_tree) goto end;
    // if env var - use profile without question
-   s = getenv("ELM_PROFILE");
+   s = _getenv_once("ELM_PROFILE");
    if (s)
      {
         _elm_profile = strdup(s);
@@ -1458,7 +1500,7 @@ _profile_fetch_from_conf(void)
           }
      }
 
-   for (i = 0; i < 2 && !_use_build_config; i++)
+   for (i = 0; i < 2; i++)
      {
         // user profile
         if (i == 0)
@@ -1488,7 +1530,7 @@ _profile_fetch_from_conf(void)
              eet_close(ef);
           }
      }
-
+end:
    _elm_profile = strdup("default");
 }
 
@@ -1693,6 +1735,11 @@ _config_system_load(void)
         EINA_SAFETY_ON_FALSE_RETURN_VAL(eet_data_undump(ef, "config", embedded_config, strlen(embedded_config)-1, EINA_FALSE), NULL);
         eet_close(ef);
         ef = eet_open(tmp, EET_FILE_MODE_READ);
+        if (!ef)
+          {
+             ERR("Failed to load a fallback config file.");
+             return NULL;
+          }
         cfg = eet_data_read(ef, _config_edd, "config");
         eet_close(ef);
      }
@@ -1712,8 +1759,8 @@ _config_load(void)
    if (_efl_config_obj)
      {
         efl_del_intercept_set(_efl_config_obj, NULL);
-        efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
-        efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+        efl_provider_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
+        efl_provider_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
         ELM_SAFE_FREE(_efl_config_obj, efl_del);
         ELM_SAFE_FREE(_elm_config, _config_free);
         _elm_font_overlays_del_free();
@@ -1721,10 +1768,10 @@ _config_load(void)
         ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);
      }
    _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_CLASS, efl_main_loop_get());
-   efl_loop_register(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
-   efl_loop_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+   efl_provider_register(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
+   efl_provider_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
-   if (!_use_build_config)
+   if (!_running_in_tree)
      {
         _elm_config = _config_user_load();
         if (_elm_config)
@@ -1994,6 +2041,7 @@ _config_flush_get(void)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _config_sub_apply();
    evas_font_reinit();
@@ -2001,7 +2049,6 @@ _config_flush_get(void)
    _elm_config_color_overlay_apply();
    if (pre_scale != _elm_config->scale)
      _elm_rescale();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    _elm_win_access(_elm_config->access_mode);
@@ -2082,7 +2129,7 @@ _elm_config_profile_save(const char *profile)
    Eet_File *ef;
    size_t len;
 
-   if ((s = getenv("ELM_PROFILE_NOSAVE")) && atoi(s))
+   if (_running_in_tree || ((s = _getenv_once("ELM_PROFILE_NOSAVE")) && atoi(s)))
      return EINA_TRUE;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -2110,14 +2157,12 @@ _elm_config_profile_save(const char *profile)
         goto err;
      }
 
-   ret = ecore_file_cp(buf2, buf);
+   ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
         ERR("Error saving Elementary's configuration profile file");
         goto err;
      }
-
-   ecore_file_unlink(buf2);
 
    derived = _elm_config_derived_load(profile ? profile : _elm_profile);
    if (derived)
@@ -2203,14 +2248,13 @@ _elm_config_save(Elm_Config *cfg, const char *profile)
         goto err;
      }
 
-   ret = ecore_file_cp(buf2, buf);
+   ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
         ERR("Error saving Elementary's configuration file");
         goto err;
      }
 
-   ecore_file_unlink(buf2);
    return EINA_TRUE;
 
 err:
@@ -2250,6 +2294,36 @@ _elm_key_bindings_update(Elm_Config *cfg, Elm_Config *syscfg EINA_UNUSED)
                }
           }
      }
+}
+
+static void
+_elm_key_bindings_copy_missing_bindings(Elm_Config *cfg, Elm_Config *syscfg)
+{
+   Eina_Hash *safed_bindings = eina_hash_string_superfast_new(NULL);
+   Elm_Config_Bindings_Widget *wd;
+   Eina_List *n, *nnext;
+   Eina_Bool missing_bindings = EINA_FALSE;
+
+   EINA_LIST_FOREACH(cfg->bindings, n, wd)
+     {
+        eina_hash_add(safed_bindings, wd->name, wd);
+     }
+
+   EINA_LIST_FOREACH_SAFE(syscfg->bindings, n, nnext, wd)
+     {
+         if (!eina_hash_find(safed_bindings, wd->name))
+           {
+              syscfg->bindings = eina_list_remove_list(syscfg->bindings, n);
+              cfg->bindings = eina_list_append(cfg->bindings, wd);
+              printf("Upgraded keybindings for %s!\n", wd->name);
+              missing_bindings = EINA_TRUE;
+           }
+     }
+   if (missing_bindings)
+     {
+        printf("There have been missing Key bindings in the config, config is now adjusted\n");
+     }
+   eina_hash_free(safed_bindings);
 }
 
 static void
@@ -2375,6 +2449,13 @@ _config_update(void)
    _elm_config->win_no_border = EINA_FALSE;
    IFCFGEND
 
+   IFCFG(0x0022)
+
+   _elm_key_bindings_copy_missing_bindings(_elm_config, tcfg);
+   /* after this function call, the tcfg is partly invalidated, reload! */
+   _config_free(tcfg);
+   tcfg = _config_system_load();
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
@@ -2395,10 +2476,10 @@ _config_update(void)
 static void
 _env_get(void)
 {
-   char *s;
+   const char *s;
    double friction;
 
-   s = getenv("ELM_ENGINE");
+   s = _getenv_once("ELM_ENGINE");
    if (s)
      {
         if ((!strcasecmp(s, "x11")) ||
@@ -2455,47 +2536,47 @@ _env_get(void)
           eina_stringshare_replace(&_elm_preferred_engine, _elm_config->engine);
      }
 
-   s = getenv("ELM_VSYNC");
+   s = _getenv_once("ELM_VSYNC");
    if (s) _elm_config->vsync = !!atoi(s);
 
-   s = getenv("ELM_THUMBSCROLL_ENABLE");
+   s = _getenv_once("ELM_THUMBSCROLL_ENABLE");
    if (s) _elm_config->thumbscroll_enable = !!atoi(s);
-   s = getenv("ELM_THUMBSCROLL_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_THRESHOLD");
    if (s) _elm_config->thumbscroll_threshold = atoi(s);
-   s = getenv("ELM_THUMBSCROLL_HOLD_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_HOLD_THRESHOLD");
    if (s) _elm_config->thumbscroll_hold_threshold = atoi(s);
    // FIXME: floatformat locale issues here 1.0 vs 1,0 - should just be 1.0
-   s = getenv("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
    if (s) _elm_config->thumbscroll_momentum_threshold = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_FLICK_DISTANCE_TOLERANCE");
+   s = _getenv_once("ELM_THUMBSCROLL_FLICK_DISTANCE_TOLERANCE");
    if (s) _elm_config->thumbscroll_flick_distance_tolerance = atoi(s);
-   s = getenv("ELM_THUMBSCROLL_MOMENTUM_DISTANCE_MAX");
+   s = _getenv_once("ELM_THUMBSCROLL_MOMENTUM_DISTANCE_MAX");
    if (s) _elm_config->thumbscroll_momentum_distance_max = atoi(s);
-   s = getenv("ELM_THUMBSCROLL_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_FRICTION");
    if (s) _elm_config->thumbscroll_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_MOMENTUM_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_MOMENTUM_FRICTION");
    if (s) _elm_config->thumbscroll_momentum_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_MIN_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_MIN_FRICTION");
    if (s) _elm_config->thumbscroll_min_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_FRICTION_STANDARD");
+   s = _getenv_once("ELM_THUMBSCROLL_FRICTION_STANDARD");
    if (s) _elm_config->thumbscroll_friction_standard = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_BOUNCE_ENABLE");
+   s = _getenv_once("ELM_THUMBSCROLL_BOUNCE_ENABLE");
    if (s) _elm_config->thumbscroll_bounce_enable = !!atoi(s);
-   s = getenv("ELM_THUMBSCROLL_BOUNCE_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_BOUNCE_FRICTION");
    if (s) _elm_config->thumbscroll_bounce_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_ACCELERATION_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_ACCELERATION_THRESHOLD");
    if (s) _elm_config->thumbscroll_acceleration_threshold = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_ACCELERATION_TIME_LIMIT");
+   s = _getenv_once("ELM_THUMBSCROLL_ACCELERATION_TIME_LIMIT");
    if (s) _elm_config->thumbscroll_acceleration_time_limit = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_ACCELERATION_WEIGHT");
+   s = _getenv_once("ELM_THUMBSCROLL_ACCELERATION_WEIGHT");
    if (s) _elm_config->thumbscroll_acceleration_weight = _elm_atof(s);
-   s = getenv("ELM_PAGE_SCROLL_FRICTION");
+   s = _getenv_once("ELM_PAGE_SCROLL_FRICTION");
    if (s) _elm_config->page_scroll_friction = _elm_atof(s);
-   s = getenv("ELM_BRING_IN_SCROLL_FRICTION");
+   s = _getenv_once("ELM_BRING_IN_SCROLL_FRICTION");
    if (s) _elm_config->bring_in_scroll_friction = _elm_atof(s);
-   s = getenv("ELM_ZOOM_FRICTION");
+   s = _getenv_once("ELM_ZOOM_FRICTION");
    if (s) _elm_config->zoom_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_BORDER_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_BORDER_FRICTION");
    if (s)
      {
         friction = _elm_atof(s);
@@ -2507,7 +2588,7 @@ _env_get(void)
 
         _elm_config->thumbscroll_border_friction = friction;
      }
-   s = getenv("ELM_THUMBSCROLL_SENSITIVITY_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_SENSITIVITY_FRICTION");
    if (s)
      {
         friction = _elm_atof(s);
@@ -2519,23 +2600,23 @@ _env_get(void)
 
         _elm_config->thumbscroll_sensitivity_friction = friction;
      }
-   s = getenv("ELM_SCROLL_SMOOTH_START_ENABLE");
+   s = _getenv_once("ELM_SCROLL_SMOOTH_START_ENABLE");
    if (s) _elm_config->scroll_smooth_start_enable = !!atoi(s);
-   s = getenv("ELM_SCROLL_ANIMATION_DISABLE");
+   s = _getenv_once("ELM_SCROLL_ANIMATION_DISABLE");
    if (s) _elm_config->scroll_animation_disable = !!atoi(s);
-   s = getenv("ELM_SCROLL_ACCEL_FACTOR");
+   s = _getenv_once("ELM_SCROLL_ACCEL_FACTOR");
    if (s) _elm_config->scroll_accel_factor = atof(s);
-//   s = getenv("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
+//   s = _getenv_once("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_time_interval = atof(s); // not used anymore
-   s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
+   s = _getenv_once("ELM_SCROLL_SMOOTH_AMOUNT");
    if (s) _elm_config->scroll_smooth_amount = _elm_atof(s);
-//   s = getenv("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT"); // not used anymore
+//   s = _getenv_once("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_history_weight = _elm_atof(s); // not used anymore
-//   s = getenv("ELM_SCROLL_SMOOTH_FUTURE_TIME"); // not used anymore
+//   s = _getenv_once("ELM_SCROLL_SMOOTH_FUTURE_TIME"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_future_time = _elm_atof(s); // not used anymore
-   s = getenv("ELM_SCROLL_SMOOTH_TIME_WINDOW");
+   s = _getenv_once("ELM_SCROLL_SMOOTH_TIME_WINDOW");
    if (s) _elm_config->scroll_smooth_time_window = _elm_atof(s);
-   s = getenv("ELM_FOCUS_AUTOSCROLL_MODE");
+   s = _getenv_once("ELM_FOCUS_AUTOSCROLL_MODE");
    if (s)
      {
         if (!strcmp(s, "ELM_FOCUS_AUTOSCROLL_MODE_NONE"))
@@ -2545,7 +2626,7 @@ _env_get(void)
         else
           _elm_config->focus_autoscroll_mode = ELM_FOCUS_AUTOSCROLL_MODE_SHOW;
      }
-   s = getenv("ELM_SLIDER_INDICATOR_VISIBLE_MODE");
+   s = _getenv_once("ELM_SLIDER_INDICATOR_VISIBLE_MODE");
    if (s)
      {
         if (!strcmp(s, "ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT"))
@@ -2557,10 +2638,10 @@ _env_get(void)
         else
           _elm_config->slider_indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE;
      }
-   s = getenv("ELM_THEME");
+   s = _getenv_once("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
-   s = getenv("ELM_FONT_HINTING");
+   s = _getenv_once("ELM_FONT_HINTING");
    if (s)
      {
         if      (!strcasecmp(s, "none")) _elm_config->font_hinting = 0;
@@ -2570,7 +2651,7 @@ _env_get(void)
           _elm_config->font_hinting = 2;
      }
 
-   s = getenv("ELM_FONT_PATH");
+   s = _getenv_once("ELM_FONT_PATH");
    if (s)
      {
         const char *p, *pp;
@@ -2608,22 +2689,22 @@ _env_get(void)
           }
      }
 
-   s = getenv("ELM_IMAGE_CACHE");
+   s = _getenv_once("ELM_IMAGE_CACHE");
    if (s) _elm_config->image_cache = atoi(s);
 
-   s = getenv("ELM_FONT_CACHE");
+   s = _getenv_once("ELM_FONT_CACHE");
    if (s) _elm_config->font_cache = atoi(s);
 
-   s = getenv("ELM_SCALE");
+   s = _getenv_once("ELM_SCALE");
    if (s) _elm_config->scale = _elm_atof(s);
 
-   s = getenv("ELM_FINGER_SIZE");
+   s = _getenv_once("ELM_FINGER_SIZE");
    if (s) _elm_config->finger_size = atoi(s);
 
-   s = getenv("ELM_PASSWORD_SHOW_LAST");
+   s = _getenv_once("ELM_PASSWORD_SHOW_LAST");
    if (s) _elm_config->password_show_last = !!atoi(s);
 
-   s = getenv("ELM_PASSWORD_SHOW_LAST_TIMEOUT");
+   s = _getenv_once("ELM_PASSWORD_SHOW_LAST_TIMEOUT");
    if (s)
      {
         double pw_show_last_timeout = _elm_atof(s);
@@ -2631,14 +2712,14 @@ _env_get(void)
           _elm_config->password_show_last_timeout = pw_show_last_timeout;
      }
 
-   s = getenv("ELM_FPS");
+   s = _getenv_once("ELM_FPS");
    if (s) _elm_config->fps = _elm_atof(s);
    if (_elm_config->fps < 1.0) _elm_config->fps = 1.0;
 
-   s = getenv("ELM_MODULES");
+   s = _getenv_once("ELM_MODULES");
    if (s) eina_stringshare_replace(&_elm_config->modules, s);
 
-   s = getenv("ELM_TOOLTIP_DELAY");
+   s = _getenv_once("ELM_TOOLTIP_DELAY");
    if (s)
      {
         double delay = _elm_atof(s);
@@ -2646,113 +2727,113 @@ _env_get(void)
           _elm_config->tooltip_delay = delay;
      }
 
-   s = getenv("ELM_CURSOR_ENGINE_ONLY");
+   s = _getenv_once("ELM_CURSOR_ENGINE_ONLY");
    if (s) _elm_config->cursor_engine_only = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_HIGHLIGHT_ENABLE");
+   s = _getenv_once("ELM_FOCUS_HIGHLIGHT_ENABLE");
    if (s) _elm_config->focus_highlight_enable = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_HIGHLIGHT_ANIMATE");
+   s = _getenv_once("ELM_FOCUS_HIGHLIGHT_ANIMATE");
    if (s) _elm_config->focus_highlight_animate = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_HIGHLIGHT_CLIP_DISABLE");
+   s = _getenv_once("ELM_FOCUS_HIGHLIGHT_CLIP_DISABLE");
    if (s) _elm_config->focus_highlight_clip_disable = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_MOVE_POLICY");
+   s = _getenv_once("ELM_FOCUS_MOVE_POLICY");
    if (s) _elm_config->focus_move_policy = !!atoi(s);
 
-   s = getenv("ELM_ITEM_SELECT_ON_FOCUS_DISABLE");
+   s = _getenv_once("ELM_ITEM_SELECT_ON_FOCUS_DISABLE");
    if (s) _elm_config->item_select_on_focus_disable = !!atoi(s);
 
-   s = getenv("ELM_FIRST_ITEM_FOCUS_ON_FIRST_FOCUS_IN");
+   s = _getenv_once("ELM_FIRST_ITEM_FOCUS_ON_FIRST_FOCUS_IN");
    if (s) _elm_config->first_item_focus_on_first_focus_in = !!atoi(s);
 
-   s = getenv("ELM_TOOLBAR_SHRINK_MODE");
+   s = _getenv_once("ELM_TOOLBAR_SHRINK_MODE");
    if (s) _elm_config->toolbar_shrink_mode = atoi(s);
 
-   s = getenv("ELM_FILESELECTOR_EXPAND_ENABLE");
+   s = _getenv_once("ELM_FILESELECTOR_EXPAND_ENABLE");
    if (s) _elm_config->fileselector_expand_enable = !!atoi(s);
 
-   s = getenv("ELM_FILESELECTOR_DOUBLE_TAP_NAVIGATION_ENABLE");
+   s = _getenv_once("ELM_FILESELECTOR_DOUBLE_TAP_NAVIGATION_ENABLE");
    if (s) _elm_config->fileselector_double_tap_navigation_enable = !!atoi(s);
 
-   s = getenv("ELM_INWIN_DIALOGS_ENABLE");
+   s = _getenv_once("ELM_INWIN_DIALOGS_ENABLE");
    if (s) _elm_config->inwin_dialogs_enable = !!atoi(s);
 
-   s = getenv("ELM_ICON_SIZE");
+   s = _getenv_once("ELM_ICON_SIZE");
    if (s) _elm_config->icon_size = atoi(s);
 
-   s = getenv("ELM_CONTEXT_MENU_DISABLED");
+   s = _getenv_once("ELM_CONTEXT_MENU_DISABLED");
    if (s) _elm_config->context_menu_disabled = !!atoi(s);
 
-   s = getenv("ELM_LONGPRESS_TIMEOUT");
+   s = _getenv_once("ELM_LONGPRESS_TIMEOUT");
    if (s) _elm_config->longpress_timeout = _elm_atof(s);
    if (_elm_config->longpress_timeout < 0.0)
      _elm_config->longpress_timeout = 0.0;
 
-   s = getenv("ELM_EFFECT_ENABLE");
+   s = _getenv_once("ELM_EFFECT_ENABLE");
    if (s) _elm_config->effect_enable = !!atoi(s);
 
-   s = getenv("ELM_DESKTOP_ENTRY");
+   s = _getenv_once("ELM_DESKTOP_ENTRY");
    if (s) _elm_config->desktop_entry = !!atoi(s);
-   s = getenv("ELM_ACCESS_MODE");
+   s = _getenv_once("ELM_ACCESS_MODE");
    if (s) _elm_config->access_mode = ELM_ACCESS_MODE_ON;
 
-   s = getenv("ELM_SELECTION_CLEAR_ENABLE");
+   s = _getenv_once("ELM_SELECTION_CLEAR_ENABLE");
    if (s) _elm_config->selection_clear_enable = !!atoi(s);
 
-   s = getenv("ELM_AUTO_THROTTLE");
+   s = _getenv_once("ELM_AUTO_THROTTLE");
    if (s) _elm_config->auto_throttle = EINA_TRUE;
-   s = getenv("ELM_AUTO_THROTTLE_AMOUNT");
+   s = _getenv_once("ELM_AUTO_THROTTLE_AMOUNT");
    if (s) _elm_config->auto_throttle_amount = _elm_atof(s);
-   s = getenv("ELM_AUTO_NORENDER_WITHDRAWN");
+   s = _getenv_once("ELM_AUTO_NORENDER_WITHDRAWN");
    if (s) _elm_config->auto_norender_withdrawn = EINA_TRUE;
-   s = getenv("ELM_AUTO_NORENDER_ICONIFIED_SAME_AS_WITHDRAWN");
+   s = _getenv_once("ELM_AUTO_NORENDER_ICONIFIED_SAME_AS_WITHDRAWN");
    if (s) _elm_config->auto_norender_iconified_same_as_withdrawn = EINA_TRUE;
-   s = getenv("ELM_AUTO_FLUSH_WITHDRAWN");
+   s = _getenv_once("ELM_AUTO_FLUSH_WITHDRAWN");
    if (s) _elm_config->auto_flush_withdrawn = EINA_TRUE;
-   s = getenv("ELM_AUTO_DUMP_WIDTHDRAWN");
+   s = _getenv_once("ELM_AUTO_DUMP_WIDTHDRAWN");
    if (s) _elm_config->auto_dump_withdrawn = EINA_TRUE;
 
-   s = getenv("ELM_INDICATOR_SERVICE_0");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_0");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_0, s);
-   s = getenv("ELM_INDICATOR_SERVICE_90");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_90");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_90, s);
-   s = getenv("ELM_INDICATOR_SERVICE_180");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_180");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_180, s);
-   s = getenv("ELM_INDICATOR_SERVICE_270");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_270");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_270, s);
-   s = getenv("ELM_DISABLE_EXTERNAL_MENU");
+   s = _getenv_once("ELM_DISABLE_EXTERNAL_MENU");
    if (s) _elm_config->disable_external_menu = !!atoi(s);
 
-   s = getenv("ELM_CLOUSEAU");
+   s = _getenv_once("ELM_CLOUSEAU");
    if (s) _elm_config->clouseau_enable = atoi(s);
-   s = getenv("ELM_MAGNIFIER_ENABLE");
+   s = _getenv_once("ELM_MAGNIFIER_ENABLE");
    if (s) _elm_config->magnifier_enable = !!atoi(s);
-   s = getenv("ELM_MAGNIFIER_SCALE");
+   s = _getenv_once("ELM_MAGNIFIER_SCALE");
    if (s) _elm_config->magnifier_scale = _elm_atof(s);
-   s = getenv("ELM_ATSPI_MODE");
+   s = _getenv_once("ELM_ATSPI_MODE");
    if (s) _elm_config->atspi_mode = ELM_ATSPI_MODE_ON;
-   s = getenv("ELM_SPINNER_MIN_MAX_FILTER_ENABLE");
+   s = _getenv_once("ELM_SPINNER_MIN_MAX_FILTER_ENABLE");
    if (s) _elm_config->spinner_min_max_filter_enable = !!atoi(s);
 
-   s = getenv("ELM_TRANSITION_DURATION_FACTOR");
+   s = _getenv_once("ELM_TRANSITION_DURATION_FACTOR");
    if (s) _elm_config->transition_duration_factor = atof(s);
 
-   s = getenv("ELM_POPUP_HORIZONTAL_ALIGN");
+   s = _getenv_once("ELM_POPUP_HORIZONTAL_ALIGN");
    if (s) _elm_config->popup_horizontal_align = _elm_atof(s);
-   s = getenv("ELM_POPUP_VERTICAL_ALIGN");
+   s = _getenv_once("ELM_POPUP_VERTICAL_ALIGN");
    if (s) _elm_config->popup_vertical_align = _elm_atof(s);
-   s = getenv("ELM_POPUP_SCROLLABLE");
+   s = _getenv_once("ELM_POPUP_SCROLLABLE");
    if (s) _elm_config->popup_scrollable = atoi(s);
 
-   s = getenv("ELM_GLAYER_TAP_FINGER_SIZE");
+   s = _getenv_once("ELM_GLAYER_TAP_FINGER_SIZE");
    if (s) _elm_config->glayer_tap_finger_size = atoi(s);
 
-   s = getenv("EFL_UI_DND_DRAG_ANIM_DURATION");
+   s = _getenv_once("EFL_UI_DND_DRAG_ANIM_DURATION");
    if (s) _elm_config->drag_anim_duration = _elm_atof(s);
 
-   s = getenv("ELM_WIN_NO_BORDER");
+   s = _getenv_once("ELM_WIN_NO_BORDER");
    if (s) _elm_config->win_no_border = EINA_TRUE;
 }
 
@@ -3001,6 +3082,11 @@ elm_config_profile_exists(const char *profile)
 
    if (!profile) return EINA_FALSE;
 
+   if (_running_in_tree)
+     {
+        if (!bs_data_path_get(buf, sizeof(buf), "elementary/config", profile)) return EINA_FALSE;
+        return ecore_file_exists(buf);
+     }
    _elm_config_user_dir_snprintf(buf, sizeof(buf),
                                  "config/%s/base.cfg", profile);
    if (ecore_file_exists(buf)) return EINA_TRUE;
@@ -3944,6 +4030,19 @@ elm_config_glayer_double_tap_timeout_set(double double_tap_timeout)
 }
 
 EAPI Eina_Bool
+elm_config_desktop_entry_get(void)
+{
+   return _elm_config->desktop_entry;
+}
+
+EAPI void
+elm_config_desktop_entry_set(Eina_Bool enable)
+{
+   _elm_config->priv.desktop_entry = EINA_TRUE;
+   _elm_config->desktop_entry = !!enable;
+}
+
+EAPI Eina_Bool
 elm_config_magnifier_enable_get(void)
 {
    return _elm_config->magnifier_enable;
@@ -4093,6 +4192,7 @@ elm_config_all_flush(void)
    int ok = 0;
    size_t len;
 
+   if (_running_in_tree) return;
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
    if (len + 1 >= sizeof(buf))
      return;
@@ -4173,10 +4273,10 @@ _elm_config_init(void)
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_gl_preference, eina_stringshare_del);
    _translation_init();
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
@@ -4197,7 +4297,9 @@ _elm_config_sub_shutdown(void)
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
    ELM_SAFE_FREE(_config_profile_change_delay_timer, ecore_timer_del);
    ELM_SAFE_FREE(_monitor_file_created_handler, ecore_event_handler_del);
+   ELM_SAFE_FREE(_monitor_file_modified_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(_monitor_directory_created_handler, ecore_event_handler_del);
+   _running_in_tree = EINA_FALSE;
 }
 
 static Eina_Bool
@@ -4227,7 +4329,7 @@ _config_change_delay_cb(void *data EINA_UNUSED)
 
 static Eina_Bool
 _elm_config_file_monitor_cb(void *data EINA_UNUSED,
-                            int type EINA_UNUSED,
+                            int type,
                             void *event)
 {
    Eio_Monitor_Event *ev = event;
@@ -4235,7 +4337,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 
    if (ev->monitor == _eio_config_monitor)
      {
-        if (type == EIO_MONITOR_FILE_CREATED)
+        if ((type == EIO_MONITOR_FILE_CREATED) || (type == EIO_MONITOR_FILE_MODIFIED))
           {
              if (!strcmp(file, "base.cfg"))
                {
@@ -4247,7 +4349,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
      }
    if (ev->monitor == _eio_profile_monitor)
      {
-        if (type == EIO_MONITOR_FILE_CREATED)
+        if ((type == EIO_MONITOR_FILE_CREATED) || (type == EIO_MONITOR_FILE_MODIFIED))
           {
              if ((!_config_profile_lock) && (!strcmp(file, "profile.cfg")))
                {
@@ -4289,8 +4391,13 @@ _elm_config_sub_init(void)
    char buf[PATH_MAX];
    int ok = 0;
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
-   ok = ecore_file_mkpath(buf);
+   if (_running_in_tree)
+     ok = bs_data_path_get(buf, sizeof(buf), "elementary", "config");
+   else
+     {
+        _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
+        ok = ecore_file_mkpath(buf);
+     }
    if (!ok)
      {
         ERR("Problem accessing Elementary's user configuration directory: %s",
@@ -4300,6 +4407,8 @@ _elm_config_sub_init(void)
    _eio_profile_monitor = eio_monitor_add(buf);
    _monitor_file_created_handler = ecore_event_handler_add
      (EIO_MONITOR_FILE_CREATED, _elm_config_file_monitor_cb, NULL);
+   _monitor_file_modified_handler = ecore_event_handler_add
+     (EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
    _monitor_directory_created_handler = ecore_event_handler_add
      (EIO_MONITOR_DIRECTORY_CREATED, _elm_config_file_monitor_cb, NULL);
 
@@ -4348,6 +4457,7 @@ _elm_config_reload(void)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
@@ -4372,7 +4482,6 @@ _elm_config_reload(void)
       )
      _elm_rescale();
 #undef CMP
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
@@ -4649,11 +4758,11 @@ _elm_config_profile_set(const char *profile)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
    _elm_rescale();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
@@ -4662,14 +4771,15 @@ void
 _elm_config_shutdown(void)
 {
    efl_del_intercept_set(_efl_config_obj, NULL);
-   efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
-   efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+   efl_provider_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
+   efl_provider_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    ELM_SAFE_FREE(_efl_config_obj, efl_del);
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_cache_flush_poller, ecore_poller_del);
    ELM_SAFE_FREE(_elm_profile, free);
+   ELM_SAFE_FREE(_getenv_once_envs, eina_hash_free);
    _elm_font_overlays_del_free();
 
    _elm_config_profile_derived_shutdown();
@@ -4762,16 +4872,6 @@ static const struct {
 { EFL_UI_SOFTCURSOR_MODE_AUTO, "auto" },
 { EFL_UI_SOFTCURSOR_MODE_ON, "on" },
 { EFL_UI_SOFTCURSOR_MODE_OFF, "off" }
-};
-
-static const struct {
-   Efl_Ui_Slider_Indicator_Visible_Mode  val;
-   const char                           *str;
-} _enum_map_slider_indicator_visible_mode[] = {
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_DRAG, "on_drag" },
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always" },
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS, "on_focus" },
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE, "none" },
 };
 
 static const struct {
@@ -4883,7 +4983,6 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETD(scroll_thumbscroll_momentum_animation_duration_max_limit);
 
    CONFIG_SETE(focus_autoscroll_mode);
-   CONFIG_SETE(slider_indicator_visible_mode);
    CONFIG_SETD(longpress_timeout);
    CONFIG_SETE(softcursor_mode);
    CONFIG_SETD(tooltip_delay);
@@ -5027,7 +5126,6 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETD(scroll_thumbscroll_momentum_animation_duration_max_limit);
 
    CONFIG_GETE(focus_autoscroll_mode);
-   CONFIG_GETE(slider_indicator_visible_mode);
    CONFIG_GETD(longpress_timeout);
    CONFIG_GETE(softcursor_mode);
    CONFIG_GETD(tooltip_delay);

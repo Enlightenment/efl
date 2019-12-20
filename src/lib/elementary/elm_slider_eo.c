@@ -29,7 +29,7 @@ void _elm_slider_efl_text_markup_markup_set(Eo *obj, Elm_Slider_Data *pd, const 
 const char *_elm_slider_efl_text_markup_markup_get(const Eo *obj, Elm_Slider_Data *pd);
 
 
-void _elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *pd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb);
+void _elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *pd, void *func_data, Efl_Ui_Format_Func func, Eina_Free_Cb func_free_cb);
 
 
 void _elm_slider_efl_ui_l10n_l10n_text_set(Eo *obj, Elm_Slider_Data *pd, const char *label, const char *domain);
@@ -40,6 +40,7 @@ const char *_elm_slider_efl_ui_l10n_l10n_text_get(const Eo *obj, Elm_Slider_Data
 
 Efl_Object *_elm_slider_efl_part_part_get(const Eo *obj, Elm_Slider_Data *pd, const char *name);
 
+void _elm_slider_efl_ui_format_apply_formatted_value(Eo *obj, Elm_Slider_Data *pd);
 
 static Eina_Bool
 _elm_slider_class_initializer(Efl_Class *klass)
@@ -63,7 +64,8 @@ _elm_slider_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_text_get, _elm_slider_efl_text_text_get),
       EFL_OBJECT_OP_FUNC(efl_text_markup_set, _elm_slider_efl_text_markup_markup_set),
       EFL_OBJECT_OP_FUNC(efl_text_markup_get, _elm_slider_efl_text_markup_markup_get),
-      EFL_OBJECT_OP_FUNC(efl_ui_format_cb_set, _elm_slider_efl_ui_format_format_cb_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_format_func_set, _elm_slider_efl_ui_format_format_cb_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_format_apply_formatted_value, _elm_slider_efl_ui_format_apply_formatted_value),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_text_set, _elm_slider_efl_ui_l10n_l10n_text_set),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_text_get, _elm_slider_efl_ui_l10n_l10n_text_get),
       EFL_OBJECT_OP_FUNC(efl_part_get, _elm_slider_efl_part_part_get),
@@ -84,4 +86,4 @@ static const Efl_Class_Description _elm_slider_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_slider_class_get, &_elm_slider_class_desc, EFL_UI_SLIDER_INTERVAL_CLASS, EFL_UI_LEGACY_INTERFACE, EFL_TEXT_INTERFACE, EFL_TEXT_MARKUP_INTERFACE, EFL_UI_FORMAT_MIXIN, NULL);
+EFL_DEFINE_CLASS(elm_slider_class_get, &_elm_slider_class_desc, EFL_UI_LAYOUT_BASE_CLASS, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, EFL_TEXT_INTERFACE, EFL_TEXT_MARKUP_INTERFACE, EFL_UI_FORMAT_MIXIN, NULL);

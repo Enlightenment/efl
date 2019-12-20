@@ -4,7 +4,10 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#ifdef HAVE_MMAN_H
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
 
@@ -257,7 +260,7 @@ _update_sel_lost_list(Efl_Object *obj, Efl_Ui_Selection_Type type,
 static Tmp_Info *
 _tempfile_new(int size)
 {
-#ifdef HAVE_MMAN_H
+#ifdef HAVE_MMAP
    Tmp_Info *info;
    const char *tmppath = NULL;
    mode_t cur_umask;
@@ -1251,8 +1254,8 @@ _x11_efl_sel_manager_selection_set(Efl_Ui_Selection_Manager_Data *pd, Efl_Object
    sel->active = EINA_TRUE;
    sel->format = format;
 
-   sel->set(xwin, &sel, sizeof(&sel));
-   sel_debug("data: %p (%zu)", &sel, sizeof(&sel));
+   sel->set(xwin, &sel, sizeof(Sel_Manager_Selection *));
+   sel_debug("data: %p (%zu)", &sel, sizeof(Sel_Manager_Selection *));
 
    return _update_sel_lost_list(owner, type, seat_sel);
 }
@@ -1480,7 +1483,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj EINA_UNUSED, Efl_Ui_Selection_Manager_Da
    /* TODO BUG: should increase dnd-awareness, in case it's drop target as well. See _x11_drag_mouse_up() */
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    ecore_x_dnd_callback_pos_update_set(_x11_drag_move, seat_sel);
-   ecore_x_dnd_self_begin(xwin, (unsigned char *)&sel, sizeof(Sel_Manager_Selection));
+   ecore_x_dnd_self_begin(xwin, (unsigned char *)sel, sizeof(Sel_Manager_Selection));
    actx = _x11_dnd_action_rev_map(seat_sel->drag_action);
    ecore_x_dnd_source_action_set(actx);
    ecore_x_pointer_grab(xwin);
@@ -2426,6 +2429,7 @@ _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int 
                   memcpy(tmp, data, size);
                   if (data_ret) *data_ret = tmp;
                   if (size_ret) *size_ret = size;
+                  if (!data_ret) free(tmp);
                }
           }
         else
@@ -2723,6 +2727,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
    free(data_ret);
 
    close(ev->fd);
+   ecore_wl2_display_flush(ev->display);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2763,6 +2768,7 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
 
    seat_sel->accept = EINA_FALSE;
 
+   ecore_wl2_display_flush(ev->display);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2976,6 +2982,7 @@ _wl_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Ui_Selection_Ma
                                                      _wl_selection_receive, sel);
 
             ecore_wl2_offer_receive(offer, (char*)sm_wl_convertion[i].translates[j]);
+            ecore_wl2_display_flush(ecore_wl2_input_display_get(input));
             return EINA_TRUE;
          }
      }
@@ -4996,6 +5003,7 @@ _efl_ui_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Ui_Selection_
 {
    Sel_Manager_Dropable *dropable = NULL;
    Sel_Manager_Seat_Selection *seat_sel;
+   Eina_Bool remove_handler = EINA_FALSE;
 
    dropable = efl_key_data_get(target_obj, "__elm_dropable");
    if (dropable)
@@ -5037,14 +5045,22 @@ _efl_ui_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Ui_Selection_
                   break;
                }
           }
-        if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+        if (!have_drop_list)
+          {
+             ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+             remove_handler = EINA_TRUE;
+          }
      }
+   else remove_handler = EINA_TRUE;
 #endif
-   seat_sel = _sel_manager_seat_selection_init(pd, seat);
-   ELM_SAFE_FREE(seat_sel->pos_handler, ecore_event_handler_del);
-   ELM_SAFE_FREE(seat_sel->drop_handler, ecore_event_handler_del);
-   ELM_SAFE_FREE(seat_sel->enter_handler, ecore_event_handler_del);
-   ELM_SAFE_FREE(seat_sel->leave_handler, ecore_event_handler_del);
+   if (remove_handler)
+     {
+        seat_sel = _sel_manager_seat_selection_init(pd, seat);
+        ELM_SAFE_FREE(seat_sel->pos_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(seat_sel->drop_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(seat_sel->enter_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(seat_sel->leave_handler, ecore_event_handler_del);
+     }
 }
 
 EOLIAN static void
@@ -5459,8 +5475,9 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
                                                      _efl_sel_manager_x11_selection_notify, pd);
         pd->clear_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
                                                     _x11_selection_clear, pd);
-        pd->fix_handler = ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
-                                                  _x11_fixes_selection_notify, pd);
+        if (ECORE_X_EVENT_FIXES_SELECTION_NOTIFY) // If XFIXES is not available ECORE_X_EVENT_FIXES_SELECTION_NOTIFY would be NULL
+          pd->fix_handler = ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
+                                                    _x11_fixes_selection_notify, pd);
      }
 #endif
 
@@ -5472,12 +5489,15 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
    pd->text_uri = eina_stringshare_add("text/uri-list");
 
 #ifdef HAVE_ELEMENTARY_WL2
-   pd->send_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
-                           _wl_selection_send, pd);
-   pd->changed_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
-                           _wl_selection_changed, pd);
-   pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
-                                             _wl_dnd_end, pd);
+   if (_elm_wl_display)
+     {
+        pd->send_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
+                                _wl_selection_send, pd);
+        pd->changed_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
+                                _wl_selection_changed, pd);
+        pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
+                                                  _wl_dnd_end, pd);
+     }
 #endif
    managers = eina_list_append(managers, obj);
    return obj;

@@ -581,16 +581,6 @@ check_nameless_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Descript
 static void
 check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Common *ed, Eet_File *ef)
 {
-   /* FIXME: When smart masks are supported, remove this check */
-   if (ed->clip_to_id != -1 &&
-       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
-       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_IMAGE) &&
-       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_PROXY))
-     error_and_abort(ef, "Collection %i: part: '%s' state: '%s' %g clip_to points to "
-                         "a non RECT/IMAGE part '%s'!",
-                     pc->id, ep->name, ed->state.name, ed->state.value,
-                     pc->parts[ed->clip_to_id]->name);
-
    check_nameless_state(pc, ep, ed, ef);
 }
 
@@ -675,14 +665,6 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
            default: break;
           }
      }
-
-   /* FIXME: When smart masks are supported, remove this check */
-   if (ep->clip_to_id != -1 &&
-       (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
-       (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_IMAGE) &&
-       (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_PROXY))
-     error_and_abort(ef, "Collection %i: clip_to point to a non RECT/IMAGE part '%s' !",
-                     pc->id, pc->parts[ep->clip_to_id]->name);
 }
 
 static void
@@ -751,6 +733,20 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
    EINA_LIST_FOREACH(ep->targets, l, et)
      {
         Edje_Part *part;
+
+        /*
+         * we are accessing part with an id,
+         * if actions is ACTION_STOP or ACTION_TYPE_SCRIPT, then id is NOT from the parts array.
+         * In order to not crash here, we should continue here.
+         */
+        if (ep->action == EDJE_ACTION_TYPE_ACTION_STOP || ep->action == EDJE_ACTION_TYPE_SCRIPT)
+          continue;
+
+        if (et->id >= (int) pc->parts_count)
+          {
+             ERR("Target id '%d' greater than possible index '%d'.", et->id, (int) pc->parts_count - 1);
+             exit(-1);
+          }
 
         part = pc->parts[et->id];
         /* verify existence of description in part */

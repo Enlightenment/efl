@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_MARSHALL_TYPE_IMPL_HH
 #define EOLIAN_MONO_MARSHALL_TYPE_IMPL_HH
 
@@ -6,6 +21,7 @@
 #include "grammar/case.hpp"
 #include "helpers.hh"
 #include "name_helpers.hh"
+#include "type_match.hh"
 #include "type_impl.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
@@ -25,6 +41,7 @@ struct marshall_type_visitor_generate
    bool is_out;
    bool is_return;
    bool is_ptr;
+   bool is_special_subtype;
 
    typedef marshall_type_visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -70,12 +87,16 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_special_subtype)
+                  return replace_base_type(r, "Eina.Stringshare");
                 return replace_base_type(r, "System.String");
               }}
            , {"stringshare", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_special_subtype)
+                  return replace_base_type(r, "Eina.Stringshare");
                 return replace_base_type(r, "System.String");
               }}
            , {"strbuf", nullptr, [&]
@@ -95,6 +116,20 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_type = "System.IntPtr";
+                r.namespaces.clear();
+                return r;
+              }}
+           , {"binbuf", nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_type = "System.IntPtr";
+                r.namespaces.clear();
+                return r;
+              }}
+           , {"event", nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_type = "Efl.Event.NativeStruct";
                 r.namespaces.clear();
                 return r;
               }}
@@ -118,14 +153,14 @@ struct marshall_type_visitor_generate
                     r.base_type = "Eina.ValueNative";
                 return r;
                }}
-           , {"any_value_ptr", true, [&]
+           , {"any_value_ref", true, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 r.base_type = "Eina.Value";
                 return r;
                }}
-           , {"any_value_ptr", false, [&]
+           , {"any_value_ref", false, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
@@ -142,6 +177,13 @@ struct marshall_type_visitor_generate
                     r.base_type = "void";
                 return r;
                }}
+           , {"Value_Type", nullptr, [&]
+               {
+                regular_type_def r = regular;
+                r.namespaces.clear();
+                r.base_type = "Eina.ValueTypeBox";
+                return r;
+               }}
         };
 
         if (regular.is_struct() && !blacklist::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
@@ -151,7 +193,7 @@ struct marshall_type_visitor_generate
              return as_generator(string << ".NativeStruct")
                     .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
-        else if (eina::optional<bool> b = call_match
+        else if (eina::optional<bool> b = type_match::get_match
          (match_table
           , [&] (match const& m)
           {
@@ -171,16 +213,43 @@ struct marshall_type_visitor_generate
            regular_type_def r = regular;
            r.base_type = "System.IntPtr";
            r.namespaces.clear();
-           return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(r);
+           return visitor_generate<OutputIterator, Context>{
+             sink
+             , context
+             , c_type
+             , is_out
+             , is_return
+             , is_ptr
+             , false
+             , is_special_subtype
+           }(r);
         }
       else
         {
-          return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(regular);
+          return visitor_generate<OutputIterator, Context>{
+            sink
+            , context
+            , c_type
+            , is_out
+            , is_return
+            , is_ptr
+            , false
+            , is_special_subtype
+          }(regular);
         }
    }
    bool operator()(attributes::klass_name klass_name) const
    {
-     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(klass_name);
+     return visitor_generate<OutputIterator, Context>{
+       sink
+       , context
+       , c_type
+       , is_out
+       , is_return
+       , is_ptr
+       , false
+       , is_special_subtype
+     }(klass_name);
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {
@@ -224,11 +293,11 @@ struct marshall_type_visitor_generate
       auto default_match = [&] (attributes::complex_type_def const& complex)
         {
           regular_type_def no_pointer_regular = complex.outer;
-          return visitor_type{sink, context, c_type, false}(no_pointer_regular)
-            && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context);
+          return visitor_type{sink, context, c_type, false, false, false, false}(no_pointer_regular)
+            && as_generator("<" << (type(false, false, true) % ", ") << ">").generate(sink, complex.subtypes, *context);
         };
 
-      if(eina::optional<bool> b = call_match
+      if(eina::optional<bool> b = type_match::get_match
          (matches
           , [&] (match const& m)
           {
@@ -250,7 +319,16 @@ struct marshall_type_visitor_generate
            return *b;
         }
 
-     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(complex);
+     return visitor_generate<OutputIterator, Context>{
+       sink
+       , context
+       , c_type
+       , is_out
+       , is_return
+       , is_ptr
+       , false
+       , is_special_subtype
+     }(complex);
    }
 };
 } }

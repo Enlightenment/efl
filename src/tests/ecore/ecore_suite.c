@@ -60,6 +60,9 @@ SUITE_INIT(ecore)
 {
    timeout_reached = 0;
    ck_assert_int_eq(ecore_init(), 1);
+#ifdef HAVE_FORK
+   if (eina_streq(getenv("CK_FORK"), "no")) return;
+#endif
    timeout = ecore_timer_add(5.0, timeout_cb, NULL);
    ck_assert_msg(!!timeout, "timeout timer creation failed!");
 }

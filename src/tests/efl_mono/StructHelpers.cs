@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -41,7 +56,6 @@ internal class StructHelpers
         simple.Ffloat = -16777216.0f;
         simple.Fdouble = -9007199254740992.0;
         simple.Fbool = true;
-        simple.Fvoid_ptr = (IntPtr) 0xFE;
         simple.Fenum = Dummy.SampleEnum.V2;
         simple.Fstring = "test/string";
         simple.Fmstring = "test/mstring";
@@ -78,7 +92,6 @@ internal class StructHelpers
         Test.Assert(simple.Ffloat == -16777216.0f);
         Test.Assert(simple.Fdouble == -9007199254740992.0);
         Test.Assert(simple.Fbool == true);
-        Test.Assert(simple.Fvoid_ptr == (IntPtr) 0xFE);
         Test.Assert(simple.Fenum == Dummy.SampleEnum.V2);
         Test.Assert(simple.Fstring == "test/string");
         Test.Assert(simple.Fmstring == "test/mstring");
@@ -113,21 +126,21 @@ internal class StructHelpers
         Test.Assert(simple.Ffloat == 0);
         Test.Assert(simple.Fdouble == 0);
         Test.Assert(simple.Fbool == false);
-        Test.Assert(simple.Fvoid_ptr == IntPtr.Zero);
         Test.Assert(simple.Fenum == Dummy.SampleEnum.V0);
         Test.Assert(simple.Fstring == null);
         Test.Assert(simple.Fmstring == null);
         Test.Assert(simple.Fstringshare == null);
     }
 
+#if EFL_BETA
     internal static Dummy.StructComplex structComplexWithValues()
     {
         var complex = new Dummy.StructComplex();
 
-        complex.Farray = new Eina.Array<int>();
-        complex.Farray.Push(0x0);
-        complex.Farray.Push(0x2A);
-        complex.Farray.Push(0x42);
+        complex.Farray = new Eina.Array<string>();
+        complex.Farray.Push("0x0");
+        complex.Farray.Push("0x2A");
+        complex.Farray.Push("0x42");
 
         complex.Flist = new Eina.List<string>();
         complex.Flist.Append("0x0");
@@ -144,8 +157,8 @@ internal class StructHelpers
         complex.Fany_value = new Eina.Value(Eina.ValueType.Double);
         complex.Fany_value.Set(-9007199254740992.0);
 
-        complex.Fany_value_ptr = new Eina.Value(Eina.ValueType.String);
-        complex.Fany_value_ptr.Set("abc");
+        complex.Fany_value_ref = new Eina.Value(Eina.ValueType.String);
+        complex.Fany_value_ref.Set("abc");
 
         complex.Fbinbuf = new Eina.Binbuf();
         complex.Fbinbuf.Append(126);
@@ -162,7 +175,7 @@ internal class StructHelpers
 
     internal static void checkStructComplex(Dummy.StructComplex complex)
     {
-        Test.Assert(complex.Farray.ToArray().SequenceEqual(base_seq_int));
+        Test.Assert(complex.Farray.ToArray().SequenceEqual(base_seq_str));
 
         Test.Assert(complex.Flist.ToArray().SequenceEqual(base_seq_str));
 
@@ -171,18 +184,19 @@ internal class StructHelpers
         Test.Assert(complex.Fhash["cc"] == "ccc");
 
         int idx = 0;
-        foreach (int e in complex.Fiterator)
+        foreach (string e in complex.Fiterator)
         {
-            Test.Assert(e == base_seq_int[idx]);
+            Test.Assert(e == base_seq_str[idx]);
             ++idx;
         }
+        Test.AssertEquals(idx, base_seq_str.Length);
 
         double double_val = 0;
         Test.Assert(complex.Fany_value.Get(out double_val));
         Test.Assert(double_val == -9007199254740992.0);
 
         string str_val = null;
-        Test.Assert(complex.Fany_value_ptr.Get(out str_val));
+        Test.Assert(complex.Fany_value_ref.Get(out str_val));
         Test.Assert(str_val == "abc");
 
         Test.Assert(complex.Fbinbuf.Length == 1);
@@ -203,7 +217,7 @@ internal class StructHelpers
         Test.Assert(complex.Fhash == null);
         Test.Assert(complex.Fiterator == null);
         Test.Assert(complex.Fany_value == null);
-        Test.Assert(complex.Fany_value_ptr == null);
+        Test.Assert(complex.Fany_value_ref == null);
         Test.Assert(complex.Fbinbuf == null);
 
         Test.Assert(complex.Fslice.Length == 0);
@@ -212,6 +226,7 @@ internal class StructHelpers
         Test.Assert(complex.Fobj == null);
     }
 
+#endif
 
 }
 

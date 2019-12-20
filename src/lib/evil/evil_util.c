@@ -8,14 +8,7 @@
 #include <limits.h>
 #include <wchar.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include "evil_macro.h"
-#include "evil_util.h"
+#include "evil_private.h"
 
 DWORD _evil_tls_index;
 

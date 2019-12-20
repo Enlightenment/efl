@@ -67,7 +67,7 @@ static void _entry_clicked_cb(void *data, const Efl_Event *event);
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
-   { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
+   { EFL_INPUT_EVENT_CLICKED, _entry_clicked_cb }
 );
 
 EOLIAN static void
@@ -947,21 +947,6 @@ _elm_multibuttonentry_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUS
    return EINA_FALSE;
 }
 
-EOLIAN static void
-_elm_multibuttonentry_elm_layout_sizing_eval(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-	      (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
-}
-
 static void
 _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          Evas_Object *obj,
@@ -972,7 +957,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
 
    if (sd->editable) elm_entry_input_panel_show(sd->entry);
 
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(obj, "clicked", NULL);
 }
 
 static void
@@ -2029,7 +2014,6 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, Elm_Multi
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_MULTIBUTTONENTRY_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_multibuttonentry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_multibuttonentry)
 
 #include "elm_multibuttonentry_item_eo.c"

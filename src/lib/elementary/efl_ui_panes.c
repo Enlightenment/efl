@@ -6,6 +6,7 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_GFX_HINT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -102,7 +103,7 @@ _efl_ui_panes_theme_group_get(Evas_Object *obj, Efl_Ui_Panes_Data *sd)
           }
      }
 
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      eina_strbuf_append(new_group, "horizontal");
    else
      eina_strbuf_append(new_group, "vertical");
@@ -128,7 +129,7 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    evas_object_hide(sd->event);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(sd->event, minw, minh);
+   efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
@@ -149,8 +150,6 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
           elm_layout_signal_emit(obj, "efl,panes,fixed", "efl");
      }
 
-   elm_layout_sizing_eval(obj);
-
    elm_panes_content_left_size_set(obj, size);
 
    return int_ret;
@@ -162,7 +161,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -183,6 +182,7 @@ _on_pressed(void *data,
             const char *source EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_PANES_EVENT_PRESS, NULL);
+   efl_input_clickable_press(data, 1);
 }
 
 static void
@@ -193,32 +193,31 @@ _on_unpressed(void *data,
 {
    EFL_UI_PANES_DATA_GET(data, sd);
    efl_event_callback_legacy_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
-
+   efl_input_clickable_unpress(data, 1);
    if (sd->double_clicked)
      {
-        efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+        evas_object_smart_callback_call(data, "clicked,double", NULL);
         sd->double_clicked = EINA_FALSE;
      }
 }
 
 EOLIAN static void
-_efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
+_efl_ui_panes_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Panes_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eo *first_content, *second_content;
    Eina_Size2D min;
 
-   if (elm_widget_is_legacy(obj))
-     {
-        first_content = efl_content_get(efl_part(obj, "elm.swallow.left"));
-        second_content = efl_content_get(efl_part(obj, "elm.swallow.right"));
-     }
-   else
-     {
-        first_content = efl_content_get(efl_part(obj, "first"));
-        second_content = efl_content_get(efl_part(obj, "second"));
-     }
+   /* Legacy panes did not consider its content's min size.
+    * Therefore, to keep the backward compatibility, the following calculation
+    * is not done for legacy panes. */
+   if (elm_widget_is_legacy(obj)) return;
+
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+
+   first_content = efl_content_get(efl_part(obj, "first"));
+   second_content = efl_content_get(efl_part(obj, "second"));
 
    if (first_content)
      {
@@ -236,7 +235,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
           sd->second_min = efl_gfx_hint_size_min_get(second_content);
      }
 
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      {
         min.w = MAX(sd->first_min.w, sd->second_min.w);
         min.h = sd->first_min.h + sd->second_min.h;
@@ -265,7 +264,7 @@ _set_min_size_new(void *data)
 
    evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, &h);
 
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      {
         if (first_min.h + second_min.h > h)
           {
@@ -329,7 +328,7 @@ _set_min_size(void *data)
         sizer = sizer / sum;
         sizel = sizel / sum;
      }
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      {
         edje_object_part_drag_value_set
            (wd->resize_obj, "right_constraint", 0.0, (1 - sizer));
@@ -355,7 +354,7 @@ _update_fixed_sides(void *data)
 
    if (sd->right_min_size_is_relative)
      {
-        if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+        if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
            sd->right_min_size = (int)(h * sd->right_min_relative_size);
         else
            sd->right_min_size =(int)(w * sd->right_min_relative_size);
@@ -363,15 +362,15 @@ _update_fixed_sides(void *data)
    else
      {
         sd->right_min_relative_size = 0;
-        if (sd->dir == EFL_UI_DIR_HORIZONTAL && (h > 0))
+        if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL && (h > 0))
               sd->right_min_relative_size = sd->right_min_size / (double)h;
-        if (sd->dir == EFL_UI_DIR_VERTICAL && (w > 0))
+        if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL && (w > 0))
               sd->right_min_relative_size = sd->right_min_size / (double)w;
      }
 
    if(sd->left_min_size_is_relative)
      {
-        if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+        if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
              sd->left_min_size = (int)(h * sd->left_min_relative_size);
         else
            sd->left_min_size = (int)(w * sd->left_min_relative_size);
@@ -379,9 +378,9 @@ _update_fixed_sides(void *data)
    else
      {
         sd->left_min_relative_size = 0;
-        if (sd->dir == EFL_UI_DIR_HORIZONTAL && (h > 0))
+        if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL && (h > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)h;
-        if (sd->dir == EFL_UI_DIR_VERTICAL && (w > 0))
+        if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL && (w > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)w;
      }
 
@@ -437,24 +436,13 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
      }
    else
      {
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click", "*",
-            _on_clicked, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click,double", "*",
-            _double_clicked, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,press", "*",
-            _on_pressed, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,unpress", "*",
-            _on_unpressed, obj);
+        efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
      }
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_RESIZE,
      _on_resize, obj);
 
-   sd->dir = EFL_UI_DIR_VERTICAL;
+   sd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    sd->right_min_size_is_relative = EINA_TRUE;
    sd->left_min_size_is_relative = EINA_TRUE;
    sd->right_min_size = 0;
@@ -478,7 +466,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
              Evas_Coord minw = 0, minh = 0;
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             evas_object_size_hint_min_set(sd->event, minw, minh);
+             efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
              elm_layout_content_set(obj, "elm.swallow.event", sd->event);
           }
      }
@@ -490,13 +478,11 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
              Evas_Coord minw = 0, minh = 0;
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             evas_object_size_hint_min_set(sd->event, minw, minh);
+             efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
              elm_layout_content_set(obj, "efl.event", sd->event);
           }
      }
    elm_widget_sub_object_add(obj, sd->event);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static Eo *
@@ -520,7 +506,7 @@ _efl_ui_panes_split_ratio_get(const Eo *obj, Efl_Ui_Panes_Data *sd)
    else
      edje_object_part_drag_value_get(wd->resize_obj, "efl.bar", &w, &h);
 
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      return h;
    else return w;
 }
@@ -533,7 +519,7 @@ _efl_ui_panes_split_ratio_set(Eo *obj, Efl_Ui_Panes_Data *sd, double ratio)
    if (ratio < 0.0) ratio = 0.0;
    else if (ratio > 1.0) ratio = 1.0;
 
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (sd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      {
         if (elm_widget_is_legacy(obj))
           edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", 0.0, ratio);
@@ -550,13 +536,13 @@ _efl_ui_panes_split_ratio_set(Eo *obj, Efl_Ui_Panes_Data *sd, double ratio)
 }
 
 EOLIAN static void
-_efl_ui_panes_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl_Ui_Dir dir)
+_efl_ui_panes_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl_Ui_Layout_Orientation dir)
 {
    double size = elm_panes_content_left_size_get(obj);
-   if (efl_ui_dir_is_horizontal(dir, EINA_FALSE))
-     dir = EFL_UI_DIR_HORIZONTAL;
+   if (efl_ui_layout_orientation_is_horizontal(dir, EINA_FALSE))
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else
-     dir = EFL_UI_DIR_VERTICAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    sd->dir = dir;
    efl_ui_widget_theme_apply(obj);
@@ -566,8 +552,8 @@ _efl_ui_panes_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl
    elm_panes_content_left_size_set(obj, size);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_panes_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_panes_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
    return sd->dir;
 }
@@ -620,7 +606,7 @@ _part_is_efl_ui_panes_part(const Eo *obj, const char *part)
         if ((eina_streq(part, "elm.swallow.left")) || (eina_streq(part, "elm.swallow.right")))
           return EINA_TRUE;
      }
-   
+
    return (eina_streq(part, "first")) || (eina_streq(part, "second"));
 }
 
@@ -637,13 +623,13 @@ _efl_ui_panes_part_hint_min_allow_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool 
      {
         if (sd->first_hint_min_allow == allow) return;
         sd->first_hint_min_allow = allow;
-        elm_layout_sizing_eval(pd->obj);
+        efl_canvas_group_change(pd->obj);
      }
    else if (!strcmp(pd->part, "second"))
      {
         if (sd->second_hint_min_allow == allow) return;
         sd->second_hint_min_allow = allow;
-        elm_layout_sizing_eval(pd->obj);
+        efl_canvas_group_change(pd->obj);
      }
 }
 
@@ -707,12 +693,11 @@ _efl_ui_panes_part_split_ratio_min_set(Eo *obj, void *_pd EINA_UNUSED, double ra
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
 
 #define EFL_UI_PANES_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_panes), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes)
 
 #include "efl_ui_panes.eo.c"
 #include "efl_ui_panes_eo.legacy.c"
@@ -843,14 +828,14 @@ elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    EFL_UI_PANES_CHECK(obj);
 
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
 
    if (horizontal)
-     dir = EFL_UI_DIR_HORIZONTAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else
-     dir = EFL_UI_DIR_VERTICAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
-   efl_ui_direction_set(obj, dir);
+   efl_ui_layout_orientation_set(obj, dir);
 }
 
 EAPI Eina_Bool
@@ -858,9 +843,9 @@ elm_panes_horizontal_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_CHECK(obj) EINA_FALSE;
 
-   Efl_Ui_Dir dir = efl_ui_direction_get(obj);
+   Efl_Ui_Layout_Orientation dir = efl_ui_layout_orientation_get(obj);
 
-   if (dir == EFL_UI_DIR_HORIZONTAL)
+   if (dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      return EINA_TRUE;
 
    return EINA_FALSE;

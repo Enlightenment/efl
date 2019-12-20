@@ -236,7 +236,7 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
                      hash->free_key(node->key);
 
                   if (hash->free_value)
-                     hash->free_key(node->value);
+                     hash->free_value(node->value);
 
                   node->key = old->key;
                   node->value = old->value;
@@ -416,6 +416,7 @@ ecore_hash_dump_stats(Ecore_Hash *hash)
    unsigned int i;
    double variance, sum_n_2 = 0, sum_n = 0;
 
+   if (!hash->size) return;
    for (i = 0; i < ecore_prime_table[hash->size]; i++)
      {
         if (hash->buckets[i])

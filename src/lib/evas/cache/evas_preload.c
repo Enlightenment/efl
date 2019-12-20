@@ -1,9 +1,6 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#ifdef _WIN32
-# include <Evil.h>
-#endif
 #ifdef __linux__
 # include <sys/syscall.h>
 #endif

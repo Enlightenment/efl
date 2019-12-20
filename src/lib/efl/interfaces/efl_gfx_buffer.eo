@@ -95,7 +95,7 @@ interface @beta Efl.Gfx.Buffer
            image object to be updated (redrawn) at the next rendering cycle.
          ]]
          params {
-            @cref region: Eina.Rect @optional; [[The updated region.]]
+            @in region: ptr(const(Eina.Rect)) @optional; [[The updated region.]]
          }
       }
 
@@ -131,7 +131,7 @@ interface @beta Efl.Gfx.Buffer
          params {
             @in mode: Efl.Gfx.Buffer_Access_Mode; [[Specifies whether to map for read-only,
                                                     write-only or read-write access (OR combination of flags).]]
-            @cref region: Eina.Rect @optional; [[The region to map.]]
+            @in region: ptr(const(Eina.Rect)) @optional; [[The region to map.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If different from the internal cspace,
                                                         map should try to convert the data into a new buffer.
                                                         argb8888 by default.]]
@@ -174,7 +174,7 @@ interface @beta Efl.Gfx.Buffer
            $slice should not be the return value of @.buffer_managed_get.
          ]]
          params {
-            @cref slice: Eina.Slice @nullable; [[If $null, allocates an empty buffer]]
+            @in slice: ptr(const(Eina.Slice)); [[If $null, allocates an empty buffer]]
             @in size: Eina.Size2D; [[The size in pixels.]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
@@ -199,7 +199,7 @@ interface @beta Efl.Gfx.Buffer
            internally.
          ]]
          params {
-            @cref slice: Eina.Slice @nullable; [[If $null, detaches the previous buffer.]]
+            @in slice: ptr(const(Eina.Slice)); [[If $null, detaches the previous buffer.]]
             @in size: Eina.Size2D; [[The size in pixels.]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]

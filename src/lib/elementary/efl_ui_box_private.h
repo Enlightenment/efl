@@ -14,20 +14,22 @@ typedef struct _Efl_Ui_Box_Data Efl_Ui_Box_Data;
 
 struct _Efl_Ui_Box_Data
 {
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
    Eo *clipper;
    Eina_List *children;
 
    struct {
-      double h, v;
-      Eina_Bool scalable: 1;
+      unsigned int h, v;
    } pad;
 
    struct {
       double h, v;
    } align;
 
+   Eina_Position2D last_pos;
+
    Eina_Bool homogeneous : 1;
+   Eina_Bool full_recalc : 1; //whether to force full recalc
 };
 
 #endif

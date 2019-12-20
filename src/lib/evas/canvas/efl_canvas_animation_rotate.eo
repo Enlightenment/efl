@@ -1,34 +1,53 @@
-class @beta Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
+class Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
 {
-   [[Efl rotate animation class]]
+   [[Animated rotation effect.
+
+     The @Efl.Canvas.Object will rotate around a pivot point from one degree to another.
+     Coordinates for the pivot point can be relative to another object or absolute
+     (relative to the containing canvas).
+
+     Note: Changing an object's position using @Efl.Gfx.Entity.position while this
+     animation is running might lead to unexpected results.
+
+     @since 1.24
+   ]]
    c_prefix: efl_animation_rotate;
    data: Efl_Canvas_Animation_Rotate_Data;
    methods {
       @property rotate {
-         [[Rotate property]]
+         [[Degree range to animate and pivot object.
+           The object will rotate from $from_degree to $to_degree around the pivot point.
+           All of the object's vertices (i.e. the corners, if it's a rectangular object)
+           will be rotated by these degrees, relative to the pivot point inside the pivot object.
+           The pivot point is another object $pivot plus an additional offset $center_point.
+         ]]
          set {
          }
          get {
          }
          values {
-            from_degree: double; [[Rotation degree when animation starts]]
-            to_degree: double; [[Rotation degree when animation ends]]
-            pivot: Efl.Canvas.Object; [[Pivot object for the center point. If the pivot object is NULL, then the object is rotated on itself.]]
-            cx: double; [[X relative coordinate of the center point. The left end is 0.0 and the right end is 1.0 (the center is 0.5).]]
-            cy: double; [[Y relative coordinate of the center point. The top end is 0.0 and the bottom end is 1.0 (the center is 0.5).]]
+            from_degree: double; [[Initial rotation (from 0 to 360). 0 means no rotation.]]
+            to_degree: double; [[Ending rotation (from 0 to 360). 0 means no rotation.]]
+            pivot: Efl.Canvas.Object; [[Object to use as pivot. $NULL means the animated object itself.]]
+            center_point: Eina.Vector2; [[Position in pixels of the pivot point inside the pivot object.
+                                         $[(0,0)] means the upper-left corner.]]
          }
       }
       @property rotate_absolute {
-         [[Rotate absolute property]]
+         [[Degree range to animate and absolute pivot point.
+           The object will rotate from $from_degree to $to_degree around the pivot point.
+           All of the object's vertices (i.e. the corners, if it's a rectangular object)
+           will be rotated by these degrees, relative to an absolute pivot point.
+           The pivot point is relative to the canvas.
+         ]]
          set {
          }
          get {
          }
          values {
-            from_degree: double; [[Rotation degree when animation starts]]
-            to_degree: double; [[Rotation degree when animation ends]]
-            cx: int; [[X absolute coordinate of the center point.]]
-            cy: int; [[Y absolute coordinate of the center point.]]
+            from_degree: double; [[Initial rotation (from 0 to 360). 0 means no rotation.]]
+            to_degree: double; [[Ending rotation (from 0 to 360). 0 means no rotation.]]
+            pivot_point : Eina.Position2D; [[Position of the pivot point relative to the canvas.]]
          }
       }
    }

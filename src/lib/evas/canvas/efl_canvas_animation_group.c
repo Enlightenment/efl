@@ -8,10 +8,7 @@ _efl_canvas_animation_group_animation_add(Eo *eo_obj,
    if (!animation) return;
 
    double duration = efl_animation_duration_get(efl_super(eo_obj, MY_CLASS));
-   /* if group animation duration is available value, then the duration is
-    * propagated to its child. */
-   if (duration != EFL_ANIMATION_GROUP_DURATION_NONE)
-     efl_animation_duration_set(animation, duration);
+   efl_animation_duration_set(animation, duration);
 
    Eina_Bool keep_final_state = efl_animation_final_state_keep_get(eo_obj);
    efl_animation_final_state_keep_set(animation, keep_final_state);
@@ -41,11 +38,11 @@ _efl_canvas_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
      }
 }
 
-EOLIAN static Eina_List *
+EOLIAN static Eina_Iterator*
 _efl_canvas_animation_group_animations_get(const Eo *eo_obj EINA_UNUSED,
                                     Efl_Canvas_Animation_Group_Data *pd)
 {
-   return pd->animations;
+   return eina_list_iterator_new(pd->animations);
 }
 
 EOLIAN static void
@@ -53,9 +50,8 @@ _efl_canvas_animation_group_efl_canvas_animation_duration_set(Eo *eo_obj,
                                                 Efl_Canvas_Animation_Group_Data *pd,
                                                 double duration)
 {
-   if (duration == EFL_ANIMATION_GROUP_DURATION_NONE) goto end;
-
-   if (duration < 0.0) return;
+   efl_animation_duration_set(efl_super(eo_obj, MY_CLASS), duration);
+   duration = efl_animation_duration_get(eo_obj);
 
    Eina_List *l;
    Efl_Canvas_Animation *anim;
@@ -63,9 +59,6 @@ _efl_canvas_animation_group_efl_canvas_animation_duration_set(Eo *eo_obj,
      {
         efl_animation_duration_set(anim, duration);
      }
-
-end:
-   efl_animation_duration_set(efl_super(eo_obj, MY_CLASS), duration);
 }
 
 EOLIAN static void
@@ -105,9 +98,6 @@ _efl_canvas_animation_group_efl_object_constructor(Eo *eo_obj,
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
    pd->animations = NULL;
-
-   //group animation does not affect its child duration by default.
-   efl_animation_duration_set(eo_obj, EFL_ANIMATION_GROUP_DURATION_NONE);
 
    return eo_obj;
 }

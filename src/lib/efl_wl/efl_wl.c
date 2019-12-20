@@ -3685,16 +3685,19 @@ anonymous_fd_get(off_t size)
    fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
    if (fd < 0)
      {
-        EINA_LOG_ERR("mkstemp failed!\n");
+        EINA_LOG_ERR("mkstemp failed!");
         return - 1;
      }
    if (!eina_file_close_on_exec(fd, 1))
      {
-        EINA_LOG_ERR("Failed to set CLOEXEC on fd %d\n", fd);
+        EINA_LOG_ERR("Failed to set CLOEXEC on fd %d", fd);
         close(fd);
         return - 1;
      }
-   ftruncate(fd, size);
+   if (ftruncate(fd, size) == -1)
+     {
+        EINA_LOG_ERR("ftruncate failed!");
+     }
    eina_file_unlink(file);
    eina_tmpstr_del(file);
 

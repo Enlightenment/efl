@@ -1,36 +1,49 @@
 import efl_canvas_gesture_types;
+parse efl_gesture_events;
 
 abstract @beta Efl.Canvas.Gesture extends Efl.Object
 {
-   [[EFL Gesture abstract class]]
+   [[Base abstract class to support gesture-specific classes.
+
+     A gesture object holds the current state of that gesture (i.e. whether the gesture has
+     just been started, it is in progress or it has finished) along with any gesture-specific
+     information it needs (like the number of taps so far, to detect triple-taps, for example).
+
+     Typically this class is not used directly, instead, some sub-class of it (like
+     @Efl.Canvas.Gesture_Tap or @Efl.Canvas.Gesture_Zoom) is retrieved from gesture events
+     (like @[Efl.Gesture.Events.gesture,tap] or @[Efl.Gesture.Events.gesture,zoom]).
+   ]]
    c_prefix: efl_gesture;
    methods {
-      @property type {
-         [[This property holds the type of the gesture.]]
-         get {
-         }
-         values {
-            @cref type: Efl.Event_Description; [[gesture type]]
-         }
-      }
       @property state {
-         [[This property holds the current state of the gesture.]]
+         [[Current state of the gesture, from initial detection to successful recognition.]]
          get {
          }
          set {
          }
          values {
-            state: Efl.Canvas.Gesture_State; [[gesture state]]
+            state: Efl.Canvas.Gesture_State; [[State.]]
          }
       }
       @property hotspot {
-         [[This property holds the hotspot of the current gesture.]]
+         [[Hotspot of the gesture currently being analyzed.
+           The exact meaning depends on the gesture type.]]
          get {
          }
          set {
          }
          values {
-            hotspot: Eina.Vector2;[[hotspot co-ordinate]]
+            hotspot: Eina.Position2D;[[Hotspot coordinates.]]
+         }
+      }
+      @property timestamp {
+         [[Moment when the gesture currently being analyzed started.]]
+         get {
+         }
+         set {
+         }
+         values {
+            timestamp: uint;[[The time-stamp.]]
          }
       }
    }

@@ -1,8 +1,25 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #pragma warning disable 1591
 
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using static Eina.TraitFunctions;
 using static Eina.InarrayNativeFunctions;
@@ -10,71 +27,86 @@ using static Eina.InarrayNativeFunctions;
 namespace Eina
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class InarrayNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_new(uint member_size, uint step);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_free(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_step_set(IntPtr array, uint sizeof_eina_inarray, uint member_size, uint step);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_flush(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_push(IntPtr array, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_grow(IntPtr array, uint size);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_insert(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_insert_sorted(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_remove(IntPtr array, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_pop(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_nth(IntPtr array, uint position);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_insert_at(IntPtr array, uint position, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_alloc_at(IntPtr array, uint position, uint member_count);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_replace_at(IntPtr array, uint position, IntPtr data);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_remove_at(IntPtr array, uint position);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_reverse(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_sort(IntPtr array, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_search(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_search_sorted(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_foreach(IntPtr array, IntPtr function, IntPtr user_data);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_foreach_remove(IntPtr array, IntPtr match, IntPtr user_data);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_resize(IntPtr array, uint new_size);
-    [DllImport(efl.Libs.Eina)] public static extern uint
+    [DllImport(efl.Libs.Eina)] internal static extern uint
         eina_inarray_count(IntPtr array);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_iterator_new(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_iterator_reversed_new(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_accessor_new(IntPtr array);
 }
 
+/// <summary>Wrapper around an inplace array.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
+[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+                 Justification="This is a generalized container mapping the native one.")]
 public class Inarray<T> : IEnumerable<T>, IDisposable
 {
-    public static uint DefaultStep = 0;
-
+    public const uint DefaultStep = 0;
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this wrapper owns the native buffer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;}
+    /// <summary>Who is in charge of releasing the resources wrapped by
+    /// this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool OwnContent {get;set;}
-
+    /// <summary> Length of the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public int Length
     {
         get { return Count(); }
@@ -92,16 +124,26 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>
+    ///   Default constructor
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Inarray()
     {
         InitNew(DefaultStep);
     }
 
+    /// <summary>
+    ///   Constructor with step.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="step">Step size of the array.</param>
     public Inarray(uint step)
     {
         InitNew(step);
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Inarray(IntPtr handle, bool own)
     {
         Handle = handle;
@@ -109,6 +151,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         OwnContent = own;
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Inarray(IntPtr handle, bool own, bool ownContent)
     {
         Handle = handle;
@@ -116,11 +159,20 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         OwnContent = ownContent;
     }
 
+    /// <summary>
+    ///   Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Inarray()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this wrapper, releasing the native array if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -152,17 +204,28 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native array.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -182,29 +245,54 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>
+    ///   Removes every member from the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Flush()
     {
         FreeElementsIfOwned();
         eina_inarray_flush(Handle);
     }
 
+    /// <summary>
+    ///   Counts the number of members in an array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>THe number of members in the array.</returns>
     public int Count()
     {
         return (int)eina_inarray_count(Handle);
     }
 
+    /// <summary>Sets all ownership.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="ownAll">If the hash own for all ownerships.</param>
     public void SetOwnership(bool ownAll)
     {
         Own = ownAll;
         OwnContent = ownAll;
     }
 
+    /// <summary>Sets own individually.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="own">If own the object.</param>
+    /// <param name="ownContent">If own the content's object.</param>
     public void SetOwnership(bool own, bool ownContent)
     {
         Own = own;
         OwnContent = ownContent;
     }
 
+
+    /// <summary>
+    ///   Puts the value as the last member of the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The value to be pushed.</param>
+    /// <returns>The index of the new member, otherwise -1 on errors.</returns>
     public int Push(T val)
     {
         IntPtr ele = IntPtr.Zero;
@@ -233,6 +321,11 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 //         }
 //     }
 
+    /// <summary>
+    ///   Removes the last member of the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The data poppep out of the array.</returns>
     public T Pop()
     {
         IntPtr ele = eina_inarray_pop(Handle);
@@ -245,17 +338,36 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Gets the member at the given position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The member position.</param>
+    /// <returns>The element of the given position.</returns>
     public T Nth(uint idx)
     {
         IntPtr ele = eina_inarray_nth(Handle, idx);
         return NativeToManagedInplace<T>(ele);
     }
 
+    /// <summary>
+    ///   Gets the member at the given position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The member position.</param>
+    /// <returns>The element of the given position.</returns>
     public T At(int idx)
     {
         return Nth((uint)idx);
     }
 
+    /// <summary>
+    ///   Inserts the value at the given position in the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The position to insert the member at.</param>
+    /// <param name="val">The value to be inserted.</param>
+    /// <returns> true on success, false on failure.</returns>
     public bool InsertAt(uint idx, T val)
     {
         IntPtr ele = IntPtr.Zero;
@@ -274,6 +386,12 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return r;
     }
 
+    /// <summary>
+    ///   Replaces the value at the given position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The position to replace the member at.</param>
+    /// <param name="val">The value to replace.</param>
     public bool ReplaceAt(uint idx, T val)
     {
         var old = eina_inarray_nth(Handle, idx);
@@ -298,6 +416,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return r;
     }
 
+    ///  <summary> Accessor by index to the elements of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public T this[int idx]
     {
         get
@@ -310,6 +431,12 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>
+    ///   Removes a member from the given position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The position to remove the member at.</param>
+    /// <returns>true on success, false on failure.</returns>
     public bool RemoveAt(uint idx)
     {
         IntPtr ele = eina_inarray_nth(Handle, idx);
@@ -326,11 +453,20 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return eina_inarray_remove_at(Handle, idx);
     }
 
+    /// <summary>
+    ///   Reverses members in the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Reverse()
     {
         eina_inarray_reverse(Handle);
     }
 
+    /// <summary>
+    ///   Returns a array containing all of the elements in proper sequence.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A array</returns>
     public T[] ToArray()
     {
         int len = Length;
@@ -343,6 +479,10 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return managed;
     }
 
+    ///  <summary> Appends all elements at the end of array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>true on success, false otherwise.</returns>
     public bool Append(T[] values)
     {
         foreach (T v in values)
@@ -356,16 +496,25 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return true;
     }
 
+    /// <summary> Gets an Iterator for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Iterator<T> GetIterator()
     {
-        return new Eina.Iterator<T>(eina_inarray_iterator_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_inarray_iterator_new(Handle), true);
     }
 
+    /// <summary> Gets an Iterator for this Array with reversed order.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Iterator<T> GetReversedIterator()
     {
-        return new Eina.Iterator<T>(eina_inarray_iterator_reversed_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_inarray_iterator_reversed_new(Handle), true);
     }
 
+    /// <summary> Gets an Enumerator for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public IEnumerator<T> GetEnumerator()
     {
         int len = Length;
@@ -380,7 +529,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return this.GetEnumerator();
     }
 
-    /// <summary> Gets an Accessor for this Array.</summary>
+    /// <summary> Gets an Accessor for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Accessor<T> GetAccessor()
     {
         return new Eina.AccessorInArray<T>(eina_inarray_accessor_new(Handle), Ownership.Managed);

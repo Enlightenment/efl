@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_FUNCTION_DEFINITION_HELPERS_HH
 #define EOLIAN_MONO_FUNCTION_DEFINITION_HELPERS_HH
 
@@ -34,14 +49,14 @@ struct native_function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                *(scope_tab << scope_tab << native_convert_in_variable)
-                << *(scope_tab << scope_tab << native_convert_out_variable)
-                << *(scope_tab << scope_tab << native_convert_function_pointer)
-                << scope_tab << scope_tab << scope_tab << native_convert_return_variable
+                *(native_convert_in_variable)
+                << *(native_convert_out_variable)
+                << *(native_convert_function_pointer)
+                << native_convert_return_variable
                 ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
-      return as_generator("\n").generate(sink, attributes::unused, context);
+      return as_generator("").generate(sink, attributes::unused, context);
   }
 };
 
@@ -57,11 +72,11 @@ struct function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                  *(scope_tab << scope_tab << convert_in_variable)
-                  << *(scope_tab << scope_tab << convert_out_variable)
-                  << *(scope_tab << scope_tab << convert_function_pointer)
-                  << scope_tab << scope_tab << convert_return_variable
-                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
+                        *(convert_in_variable)
+                        << *(convert_out_variable)
+                        << *(convert_function_pointer)
+                        << convert_return_variable
+                        ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -82,9 +97,9 @@ struct native_function_definition_epilogue_generator
           return false;
 
       if (!as_generator(
-                  *(scope_tab << scope_tab << native_convert_out_assign(*klass))
-                  << *(scope_tab << scope_tab << native_convert_in_ptr_assign)
-                  << scope_tab << scope_tab << native_convert_return(*klass)
+                  *(native_convert_out_assign(*klass))
+                  << *(native_convert_in_ptr_assign)
+                  << scope_tab(2) << native_convert_return(*klass)
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
@@ -99,10 +114,10 @@ struct function_definition_epilogue_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
       if (!as_generator(
-                  scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-                  << *(scope_tab << scope_tab << convert_out_assign)
-                  << *(scope_tab << scope_tab << convert_in_ptr_assign)
-                  << scope_tab << scope_tab << convert_return
+                  "Eina.Error.RaiseIfUnhandledException();\n"
+                  << *(convert_out_assign)
+                  << *(convert_in_ptr_assign)
+                  << scope_tab(2) << convert_return << "\n"
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
@@ -161,6 +176,28 @@ struct function_definition_epilogue_terminal
 function_definition_epilogue_generator const as_generator(function_definition_epilogue_terminal)
 {
     return function_definition_epilogue_generator{};
+}
+
+inline std::string function_scope_get(attributes::function_def const& f)
+{
+  switch (f.scope)
+    {
+     case attributes::member_scope::scope_public:
+       return "public ";
+     case attributes::member_scope::scope_private:
+       return "private ";
+     case attributes::member_scope::scope_protected:
+       // Efl.Part.part.get is protected in C to force developers to use `efl_part`.
+       // There is no such restriction in C# as the binding takes care of the returned
+       // object lifetime.
+       if (f.c_name == "efl_part_get")
+         return "public ";
+       return "protected ";
+     case attributes::member_scope::scope_unknown:
+       // This should trigger a compilation error
+       return "unkown_scope ";
+    }
+  return " ";
 }
 
 } // namespace eolian_mono

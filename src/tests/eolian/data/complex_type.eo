@@ -1,23 +1,21 @@
-struct @free(efl_del) @extern Eo;
-
 class Complex_Type {
    methods {
       @property a {
          set {
-            return: list<array<ptr(Eo) @owned> > @owned;
+            return: list<array<strbuf @move> > @move;
          }
          get {
          }
          values {
-            value: list<string> @owned;
+            value: list<string> @move;
          }
       }
       foo {
          params {
-            buf: mstring @owned;
+            buf: mstring @move;
             sl: slice<ubyte>;
          }
-         return: list<stringshare> @owned; [[comment for method return]]
+         return: list<stringshare> @move; [[comment for method return]]
       }
    }
 }

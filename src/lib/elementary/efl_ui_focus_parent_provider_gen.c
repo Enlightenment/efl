@@ -37,6 +37,11 @@ _efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Pro
    EINA_SAFETY_ON_NULL_RETURN(efl_parent_get(pd->container));
 
    pd->provider = efl_provider_find(efl_parent_get(pd->container), EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE);
+
+   ELM_WIDGET_DATA_GET(pd->container, wid_pd);
+
+   if (wid_pd->shared_win_data)
+     ((Efl_Ui_Shared_Win_Data*)wid_pd->shared_win_data)->custom_parent_provider = EINA_TRUE;
 }
 
 EOLIAN static Efl_Ui_Widget*

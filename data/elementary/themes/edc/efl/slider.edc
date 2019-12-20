@@ -1,5 +1,21 @@
+/**
+Group: efl/slider/horizontal (@since 1.23)
+	 Part Rectangle: efl.draggable.slider
+	 Part Swallow: efl.bar
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+	 Signal: efl,state,inverted,off
+	 Signal: efl,state,inverted,on
+Group: efl/slider/vertical (@since 1.23)
+	 Part Rectangle: efl.draggable.slider
+	 Part Swallow: efl.bar
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+	 Signal: efl,state,inverted,off
+	 Signal: efl,state,inverted,on
+*/
 group { "efl/slider/horizontal";
-   alias: "efl/slider/horizontal:disabled";
+   data.item: "version" "123";
    images.image: "slider_run_base_horiz.png" COMP;
    images.image: "slider_run_bevel_horiz.png" COMP;
    images.image: "slider_run_base_light_horiz.png" COMP;
@@ -89,7 +105,7 @@ group { "efl/slider/horizontal";
             rel1.to: "base";
             rel2.relative: 0.5 1.0;
             rel2.offset: -1 -2;
-            rel2.to_x: "efl.dragable.slider";
+            rel2.to_x: "efl.draggable.slider";
             rel2.to_y: "base";
             image.border: 0 4 0 0;
          }
@@ -101,7 +117,7 @@ group { "efl/slider/horizontal";
             image.normal: "horiz_glow_run_rev.png";
             rel1.relative: 0.5 0.0;
             rel1.offset: 0 1;
-            rel1.to_x: "efl.dragable.slider";
+            rel1.to_x: "efl.draggable.slider";
             rel1.to_y: "base";
             rel2.offset: -2 -2;
             rel2.to: "base";
@@ -121,7 +137,7 @@ group { "efl/slider/horizontal";
             fill.smooth: 0;
          }
       }
-      part { name: "efl.dragable.slider"; type: RECT;
+      part { name: "efl.draggable.slider"; type: RECT;
          nomouse;
          scale: 1;
          dragable.x: 1 1 0;
@@ -146,9 +162,9 @@ group { "efl/slider/horizontal";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
             rel1.offset: -4 -4;
-            rel2.to: "efl.dragable.slider";
+            rel2.to: "efl.draggable.slider";
             rel2.offset: 3 3;
          }
          description { state: "clicked" 0.0;
@@ -159,19 +175,12 @@ group { "efl/slider/horizontal";
          nomouse;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "efl.dragable.slider";
+         dragable.events: "efl.draggable.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
+            rel2.to: "efl.draggable.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -187,12 +196,12 @@ group { "efl/slider/horizontal";
    }
    programs {
       program {
-         signal: "mouse,down,1"; source: "efl.dragable.slider";
+         signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
       program {
-         signal: "mouse,up,1"; source: "efl.dragable.slider";
+         signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
@@ -235,7 +244,7 @@ group { "efl/slider/horizontal";
 }
 
 group { "efl/slider/vertical";
-   alias: "efl/slider/vertical:disabled";
+   data.item: "version" "123";
    images.image: "slider_run_base_vert.png" COMP;
    images.image: "slider_run_bevel_vert.png" COMP;
    images.image: "slider_run_base_light_vert.png" COMP;
@@ -323,7 +332,7 @@ group { "efl/slider/vertical";
             image.normal: "vert_glow_run.png";
             rel1.relative: 0.0 0.5;
             rel1.offset: 1 0;
-            rel1.to_y: "efl.dragable.slider";
+            rel1.to_y: "efl.draggable.slider";
             rel1.to_x: "base";
             rel2.offset: -2 -2;
             rel2.to: "base";
@@ -339,7 +348,7 @@ group { "efl/slider/vertical";
             rel1.to: "base";
             rel2.relative: 1.0 0.5;
             rel2.offset: -2 -1;
-            rel2.to_y: "efl.dragable.slider";
+            rel2.to_y: "efl.draggable.slider";
             rel2.to_x: "base";
             image.border: 0 0 0 4;
          }
@@ -357,7 +366,7 @@ group { "efl/slider/vertical";
             fill.smooth: 0;
          }
       }
-      part { name: "efl.dragable.slider"; type: RECT;
+      part { name: "efl.draggable.slider"; type: RECT;
          nomouse;
          scale: 1;
          dragable.x: 0 0 0;
@@ -382,9 +391,9 @@ group { "efl/slider/vertical";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
             rel1.offset: -4 -4;
-            rel2.to: "efl.dragable.slider";
+            rel2.to: "efl.draggable.slider";
             rel2.offset: 3 3;
          }
          description { state: "clicked" 0.0;
@@ -395,19 +404,12 @@ group { "efl/slider/vertical";
          nomouse;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "efl.dragable.slider";
+         dragable.events: "efl.draggable.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
+            rel2.to: "efl.draggable.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -423,12 +425,12 @@ group { "efl/slider/vertical";
    }
    programs {
       program {
-         signal: "mouse,down,1"; source: "efl.dragable.slider";
+         signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
       program {
-         signal: "mouse,up,1"; source: "efl.dragable.slider";
+         signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
@@ -473,7 +475,7 @@ group { "efl/slider/vertical";
 //Range
 
 group { "efl/slider_interval/horizontal";
-   alias: "efl/slider/horizontal:disabled";
+   data.item: "version" "123";
    images.image: "slider_run_base_horiz.png" COMP;
    images.image: "slider_run_bevel_horiz.png" COMP;
    images.image: "slider_run_base_light_horiz.png" COMP;
@@ -566,11 +568,11 @@ group { "efl/slider_interval/horizontal";
             image.normal: "horiz_glow_range.png";
             rel1.relative: 0.5 1.0;
             rel1.offset: -1 -2;
-            rel1.to_x: "efl.dragable.slider";
+            rel1.to_x: "efl.draggable.slider";
             rel1.to_y: "base";
             rel2.relative: 0.5 1.0;
             rel2.offset: -1 -2;
-            rel2.to_x: "efl.dragable2.slider";
+            rel2.to_x: "efl.draggable2.slider";
             rel2.to_y: "base";
             fixed: 0 1;
             image.border: 0 4 0 0;
@@ -581,8 +583,8 @@ group { "efl/slider_interval/horizontal";
          }
          description { state: "range_reverse" 0.0;
             inherit: "default" 0.0;
-            rel1.to_x: "efl.dragable2.slider";
-            rel2.to_x: "efl.dragable.slider";
+            rel1.to_x: "efl.draggable2.slider";
+            rel2.to_x: "efl.draggable.slider";
          }
          description { state: "disabled_range_reverse" 0.0;
             inherit: "range_reverse" 0.0;
@@ -598,7 +600,7 @@ group { "efl/slider_interval/horizontal";
             fill.smooth: 0;
          }
       }
-      part { name: "efl.dragable.slider"; type: RECT;
+      part { name: "efl.draggable.slider"; type: RECT;
          nomouse;
          scale: 1;
          dragable.x: 1 1 0;
@@ -623,9 +625,9 @@ group { "efl/slider_interval/horizontal";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
             rel1.offset: -4 -4;
-            rel2.to: "efl.dragable.slider";
+            rel2.to: "efl.draggable.slider";
             rel2.offset: 3 3;
          }
          description { state: "clicked" 0.0;
@@ -636,22 +638,15 @@ group { "efl/slider_interval/horizontal";
          nomouse;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "efl.dragable.slider";
+         dragable.events: "efl.draggable.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
+            rel2.to: "efl.draggable.slider";
             color: 0 0 0 0;
          }
       }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
-         }
-      }
-      part { name: "efl.dragable2.slider"; type: RECT;
+      part { name: "efl.draggable2.slider"; type: RECT;
          nomouse;
          scale: 1;
          dragable.x: 1 1 0;
@@ -676,9 +671,9 @@ group { "efl/slider_interval/horizontal";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.dragable2.slider";
+            rel1.to: "efl.draggable2.slider";
             rel1.offset: -4 -4;
-            rel2.to: "efl.dragable2.slider";
+            rel2.to: "efl.draggable2.slider";
             rel2.offset: 3 3;
          }
          description { state: "clicked" 0.0;
@@ -689,19 +684,12 @@ group { "efl/slider_interval/horizontal";
          nomouse;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "efl.dragable2.slider";
+         dragable.events: "efl.draggable2.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "efl.dragable2.slider";
-            rel2.to: "efl.dragable2.slider";
+            rel1.to: "efl.draggable2.slider";
+            rel2.to: "efl.draggable2.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track2.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable2.slider";
-            rel2.to: "efl.dragable2.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -717,18 +705,18 @@ group { "efl/slider_interval/horizontal";
    }
    programs {
       program {
-         signal: "mouse,down,1"; source: "efl.dragable.slider";
+         signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
       program {
-         signal: "mouse,up,1"; source: "efl.dragable.slider";
+         signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
       program {
          signal: "drag";
-         source: "efl.dragable*";
+         source: "efl.draggable*";
          script {
             update_glow();
          }
@@ -755,7 +743,7 @@ group { "efl/slider_interval/horizontal";
 }
 
 group { "efl/slider_interval/vertical";
-   alias: "efl/slider/vertical:disabled";
+   data.item: "version" "123";
    images.image: "slider_run_base_vert.png" COMP;
    images.image: "slider_run_bevel_vert.png" COMP;
    images.image: "slider_run_base_light_vert.png" COMP;
@@ -849,11 +837,11 @@ group { "efl/slider_interval/vertical";
             rel1.relative: 0.5 1.0;
             rel1.offset: -1 -2;
             rel1.to_x: "base";
-            rel1.to_y: "efl.dragable.slider";
+            rel1.to_y: "efl.draggable.slider";
             rel2.relative: 0.5 1.0;
             rel2.offset: -1 -2;
             rel2.to_x: "base";
-            rel2.to_y: "efl.dragable2.slider";
+            rel2.to_y: "efl.draggable2.slider";
             fixed: 1 0;
             image.border: 0 4 0 0;
          }
@@ -863,8 +851,8 @@ group { "efl/slider_interval/vertical";
          }
          description { state: "range_reverse" 0.0;
             inherit: "default" 0.0;
-            rel1.to_y: "efl.dragable2.slider";
-            rel2.to_y: "efl.dragable.slider";
+            rel1.to_y: "efl.draggable2.slider";
+            rel2.to_y: "efl.draggable.slider";
          }
          description { state: "disabled_range_reverse" 0.0;
             inherit: "range_reverse" 0.0;
@@ -880,7 +868,7 @@ group { "efl/slider_interval/vertical";
             fill.smooth: 0;
          }
       }
-      part { name: "efl.dragable.slider"; type: RECT;
+      part { name: "efl.draggable.slider"; type: RECT;
          nomouse;
          scale: 1;
          dragable.x: 0 0 0;
@@ -905,9 +893,9 @@ group { "efl/slider_interval/vertical";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
             rel1.offset: -4 -4;
-            rel2.to: "efl.dragable.slider";
+            rel2.to: "efl.draggable.slider";
             rel2.offset: 3 3;
          }
          description { state: "clicked" 0.0;
@@ -918,22 +906,15 @@ group { "efl/slider_interval/vertical";
          nomouse;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "efl.dragable.slider";
+         dragable.events: "efl.draggable.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
+            rel1.to: "efl.draggable.slider";
+            rel2.to: "efl.draggable.slider";
             color: 0 0 0 0;
          }
       }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
-         }
-      }
-      part { name: "efl.dragable2.slider"; type: RECT;
+      part { name: "efl.draggable2.slider"; type: RECT;
          nomouse;
          scale: 1;
          dragable.x: 0 0 0;
@@ -958,9 +939,9 @@ group { "efl/slider_interval/vertical";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.dragable2.slider";
+            rel1.to: "efl.draggable2.slider";
             rel1.offset: -4 -4;
-            rel2.to: "efl.dragable2.slider";
+            rel2.to: "efl.draggable2.slider";
             rel2.offset: 3 3;
          }
          description { state: "clicked" 0.0;
@@ -971,19 +952,12 @@ group { "efl/slider_interval/vertical";
          nomouse;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "efl.dragable2.slider";
+         dragable.events: "efl.draggable2.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "efl.dragable2.slider";
-            rel2.to: "efl.dragable2.slider";
+            rel1.to: "efl.draggable2.slider";
+            rel2.to: "efl.draggable2.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track2.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable2.slider";
-            rel2.to: "efl.dragable2.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -999,18 +973,18 @@ group { "efl/slider_interval/vertical";
    }
    programs {
       program {
-         signal: "mouse,down,1"; source: "efl.dragable.slider";
+         signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
       program {
-         signal: "mouse,up,1"; source: "efl.dragable.slider";
+         signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
       program {
          signal: "drag";
-         source: "efl.dragable*";
+         source: "efl.draggable*";
          script {
             update_glow();
          }

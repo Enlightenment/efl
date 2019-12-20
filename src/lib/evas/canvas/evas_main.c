@@ -10,10 +10,11 @@
 
 #include "eo_internal.h"
 
-#include <Ecore.h>
+#ifdef _WIN32
+# include <evil_private.h> /* evil_init evil_shutdown */
+#endif
 
-#define EFL_INTERNAL_UNSTABLE
-#include "interfaces/efl_common_internal.h"
+#include <Ecore.h>
 
 #define MY_CLASS EVAS_CANVAS_CLASS
 
@@ -311,6 +312,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_clist_init(&e->calc_done);
 
    efl_wref_add(efl_add(EFL_CANVAS_GESTURE_MANAGER_CLASS, eo_obj), &e->gesture_manager);
+   e->gmd = efl_data_scope_get(e->gesture_manager, EFL_CANVAS_GESTURE_MANAGER_CLASS);
 
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
@@ -353,9 +355,8 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 EAPI void
 evas_free(Evas *eo_e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   if (!eo_e) return;
+   EVAS_TYPE_CHECK(eo_e);
    if (efl_parent_get(eo_e))
      efl_del(eo_e);
    else
@@ -850,21 +851,12 @@ _evas_canvas_data_attach_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 static void
-_evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Device *seat,
+_evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Device *seat EINA_UNUSED,
                                   Eina_Bool in)
 {
-   Efl_Input_Focus_Data *ev_data;
-   Efl_Input_Focus *evt;
-
-   evt = efl_input_focus_instance_get(eo_e, (void **) &ev_data);
-   if (!evt) return;
-
-   ev_data->device = efl_ref(seat);
-   ev_data->timestamp = time(NULL);
-   efl_event_callback_call(eo_e,
-                           in ? EFL_EVENT_FOCUS_IN : EFL_EVENT_FOCUS_OUT,
-                           evt);
-   efl_unref(evt);
+   efl_event_callback_legacy_call(eo_e,
+                                  in ? EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN : EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
+                                  NULL);
 }
 
 EOLIAN static void
@@ -1235,9 +1227,7 @@ _evas_canvas_efl_canvas_scene_image_max_size_get(const Eo *eo_e EINA_UNUSED, Eva
 EAPI void
 evas_output_framespace_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1256,9 +1246,7 @@ evas_output_framespace_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
 EAPI void
 evas_output_framespace_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1271,9 +1259,7 @@ evas_output_framespace_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_
 EAPI void
 evas_output_method_set(Evas *eo_e, int render_method)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1345,9 +1331,7 @@ evas_output_method_set(Evas *eo_e, int render_method)
 EAPI int
 evas_output_method_get(const Evas *eo_e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return RENDER_METHOD_INVALID;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e, RENDER_METHOD_INVALID);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1357,9 +1341,7 @@ evas_output_method_get(const Evas *eo_e)
 EAPI void
 evas_output_size_set(Evas *eo_e, int w, int h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1387,9 +1369,7 @@ evas_output_size_set(Evas *eo_e, int w, int h)
 EAPI void
 evas_output_size_get(const Evas *eo_e, int *w, int *h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1400,9 +1380,7 @@ evas_output_size_get(const Evas *eo_e, int *w, int *h)
 EAPI void
 evas_output_viewport_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1430,9 +1408,7 @@ evas_output_viewport_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, E
 EAPI void
 evas_output_viewport_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -1966,9 +1942,7 @@ evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
 EAPI void
 evas_font_available_list_free(Evas *eo_e, Eina_List *available)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   EVAS_TYPE_CHECK(eo_e);
 
    evas_font_dir_available_list_free(available);
 }
@@ -1983,7 +1957,7 @@ _evas_canvas_efl_canvas_scene_group_objects_calculate(Eo *eo_e, Evas_Public_Data
 EAPI void
 evas_smart_objects_calculate(Eo *eo_e)
 {
-   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+   EVAS_TYPE_CHECK(eo_e);
    evas_call_smarts_calculate(eo_e);
 }
 
@@ -1996,6 +1970,7 @@ _evas_canvas_efl_canvas_scene_group_objects_calculating_get(const Eo *eo_e EINA_
 EAPI Eina_Bool
 evas_smart_objects_calculating_get(const Eo *obj)
 {
+   EVAS_TYPE_CHECK(obj, EINA_FALSE);
    return efl_canvas_scene_group_objects_calculating_get(obj);
 }
 
@@ -2009,18 +1984,21 @@ _evas_canvas_smart_objects_calculate_count_get(const Eo *eo_e EINA_UNUSED, Evas_
 EAPI Eina_Bool
 evas_pointer_inside_get(const Evas *obj)
 {
+   EVAS_TYPE_CHECK(obj, EINA_FALSE);
    return efl_canvas_pointer_inside_get(obj, NULL);
 }
 
 EAPI Eina_Bool
 evas_pointer_inside_by_device_get(const Evas *obj, Eo *dev)
 {
+   EVAS_TYPE_CHECK(obj, EINA_FALSE);
    return efl_canvas_pointer_inside_get(obj, dev);
 }
 
 EAPI Eina_List*
 evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
+   EVAS_TYPE_CHECK(eo_e, NULL);
    return _efl_canvas_evas_canvas_objects_at_xy_get_helper(eo_e, efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS), x, y, include_pass_events_objects, include_hidden_objects);
 }
 /* Internal EO APIs */
@@ -2034,5 +2012,43 @@ EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
 EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
    EFL_EVENT_DESCRIPTION("viewport,resize");
 
+#define CHECK_ADD(var, ev, member) \
+  if ((var) == (ev)) \
+    { \
+       e->member = EINA_TRUE; \
+    }
+
+
+EOLIAN static Eina_Bool
+_evas_canvas_efl_object_event_callback_priority_add(Eo *obj, Evas_Public_Data *e, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+   CHECK_ADD(desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE, cb_render_flush_pre)
+   else CHECK_ADD(desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_POST, cb_render_flush_post)
+   else CHECK_ADD(desc, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, cb_render_pre)
+   else CHECK_ADD(desc, EFL_CANVAS_SCENE_EVENT_RENDER_POST, cb_render_post)
+
+   return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Public_Data *e, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        CHECK_ADD(array[i].desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE, cb_render_flush_pre)
+        else CHECK_ADD(array[i].desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_POST, cb_render_flush_post)
+        else CHECK_ADD(array[i].desc, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, cb_render_pre)
+        else CHECK_ADD(array[i].desc, EFL_CANVAS_SCENE_EVENT_RENDER_POST, cb_render_post)
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
+#undef CHECK_ADD
+#define EVAS_CANVAS_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _evas_canvas_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _evas_canvas_efl_object_event_callback_array_priority_add)
+
+
 #include "evas_stack.x"
 #include "canvas/evas_canvas_eo.c"
+#include "efl_canvas_pointer.eo.c"
+#include "efl_canvas_scene.eo.c"

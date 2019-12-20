@@ -29,6 +29,7 @@ examples = [
   'evas-images3',
   'evas-images4',
   'evas-images5',
+  'evas-images6',
   'evas-images',
   'evas-init-shutdown',
   'evas-map-aa',
@@ -48,6 +49,9 @@ examples = [
   'evas-transparent',
   'evas-vg-batman',
   'evas-vg-simple',
+  'evas-vg-json',
+  'efl-canvas-animation',
+  'efl-canvas-vg-simple',
 ]
 
 foreach example : examples

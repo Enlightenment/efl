@@ -81,9 +81,9 @@ _init_cow(void)
    return EINA_TRUE;
 }
 
-static Evas_Object_Pointer_Data *
-_evas_object_pointer_data_find(Evas_Object_Protected_Data *obj,
-                               Efl_Input_Device *pointer)
+Evas_Object_Pointer_Data *
+evas_object_pointer_data_find(Evas_Object_Protected_Data *obj,
+                              Efl_Input_Device *pointer)
 {
    Evas_Object_Pointer_Data *pdata;
 
@@ -93,22 +93,6 @@ _evas_object_pointer_data_find(Evas_Object_Protected_Data *obj,
           return pdata;
      }
    return NULL;
-}
-
-static void
-_evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj, Evas_Object_Pointer_Data *pdata);
-
-static void
-_evas_device_del_cb(void *data, const Efl_Event *ev)
-{
-   Evas_Object_Protected_Data *obj;
-   Evas_Object_Pointer_Data *pdata;
-
-   obj = efl_data_scope_safe_get(data, MY_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   pdata = _evas_object_pointer_data_find(obj, ev->object);
-   if (!pdata) return;
-   _evas_object_pointer_grab_del(obj, pdata);
 }
 
 static void
@@ -138,9 +122,9 @@ _evas_object_proxy_grab_del(Evas_Object_Protected_Data *obj,
      }
 }
 
-static void
-_evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
-                              Evas_Object_Pointer_Data *pdata)
+void
+evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
+                             Evas_Object_Pointer_Data *pdata)
 {
    if ((pdata->mouse_grabbed > 0) && (obj->layer) && (obj->layer->evas))
      pdata->evas_pdata->seat->mouse_grabbed -= pdata->mouse_grabbed;
@@ -151,11 +135,12 @@ _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
         if (obj->proxy->is_proxy && obj->proxy->src_events)
           _evas_object_proxy_grab_del(obj, pdata);
      }
-   efl_event_callback_del(pdata->evas_pdata->pointer, EFL_EVENT_DEL,
-                          _evas_device_del_cb, obj->object);
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     events->pointer_grabs = eina_inlist_remove(events->pointer_grabs, EINA_INLIST_GET(pdata));
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
+   if (obj->events->pointer_grabs)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
+          events->pointer_grabs = eina_inlist_remove(events->pointer_grabs, EINA_INLIST_GET(pdata));
+        EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
+     }
 
    free(pdata);
 }
@@ -170,14 +155,13 @@ _evas_object_pointer_data_add(Evas_Pointer_Data *evas_pdata,
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
    pdata->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    pdata->evas_pdata = evas_pdata;
+   pdata->obj = obj;
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
      events->pointer_grabs = eina_inlist_append(events->pointer_grabs,
                                                 EINA_INLIST_GET(pdata));
    EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
 
-   efl_event_callback_priority_add(evas_pdata->pointer, EFL_EVENT_DEL,
-                                   EFL_CALLBACK_PRIORITY_BEFORE,
-                                   _evas_device_del_cb, obj->object);
+   efl_input_device_grab_register(evas_pdata->pointer, obj->object, pdata);
    return pdata;
 }
 
@@ -187,7 +171,7 @@ _evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata,
 {
    Evas_Object_Pointer_Data *pdata;
 
-   pdata = _evas_object_pointer_data_find(obj, evas_pdata->pointer);
+   pdata = evas_object_pointer_data_find(obj, evas_pdata->pointer);
 
    //The pointer does not exist yet - create one.
    if (!pdata)
@@ -225,7 +209,6 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
    obj->events = eina_cow_alloc(evas_object_events_cow);
 
    evas_object_inject(eo_obj, obj, evas);
-   evas_object_callback_init(eo_obj, obj);
 
    return eo_obj;
 
@@ -255,7 +238,17 @@ _efl_canvas_object_efl_object_finalize(Eo *eo_obj, Evas_Object_Protected_Data *o
    e->finalize_objects = eina_list_prepend(e->finalize_objects, eo_obj);
 
 end:
+    evas_object_callbacks_finalized(eo_obj, obj);
    return efl_finalize(efl_super(eo_obj, MY_CLASS));
+}
+
+EOLIAN const Efl_Canvas_Gesture_Manager *
+_efl_canvas_object_gesture_manager_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *pd)
+{
+   if (!pd->layer || !pd->layer->evas)
+     return NULL;
+
+   return (pd->layer->evas)->gesture_manager;
 }
 
 void
@@ -466,7 +459,6 @@ evas_object_free(Evas_Object_Protected_Data *obj, Eina_Bool clean_layer)
    if (!obj) return ;
    eo_obj = obj->object;
 
-   evas_object_callback_shutdown(eo_obj, obj);
    if (efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      _evas_object_image_free(eo_obj);
    evas_object_map_set(eo_obj, NULL);
@@ -757,7 +749,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
 
    if (obj->is_smart) goto end;
 
-   if (evas_object_is_on_plane(eo_obj, obj))
+   if (evas_object_is_on_plane(obj))
      {
         /* We need some damage to occur if only planes are being updated,
            or nothing will provoke a page flip.
@@ -1060,29 +1052,39 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
    evas_object_hide(eo_obj);
 
    if (obj->events)
-     EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-       {
-          Evas_Public_Data *edata = NULL;
+     {
+        Eina_Inlist *pointer_grabs;
 
-          if (!efl_invalidated_get(evas_object_evas_get(eo_obj)))
-            edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
+        EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
+          {
+             Evas_Public_Data *edata = NULL;
 
-          EINA_LIST_FREE (events->focused_by_seats, dev)
-            {
-               event_id = _evas_event_counter;
-               efl_event_callback_del(dev, EFL_EVENT_INVALIDATE,
-                                      _evas_focus_device_invalidate_cb, obj);
-               if (edata) eina_hash_del_by_key(edata->focused_objects, &dev);
-               _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
-               if ((obj->layer) && (obj->layer->evas))
-                 _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
-            }
-          EINA_INLIST_FREE(events->pointer_grabs, pdata)
-            _evas_object_pointer_grab_del(obj, pdata);
-          EINA_LIST_FREE(events->events_whitelist, dev)
-            efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
-       }
-     EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
+             if (!efl_invalidated_get(evas_object_evas_get(eo_obj)))
+               edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
+
+             EINA_LIST_FREE (events->focused_by_seats, dev)
+               {
+                  event_id = _evas_event_counter;
+                  efl_event_callback_del(dev, EFL_EVENT_INVALIDATE,
+                                         _evas_focus_device_invalidate_cb, obj);
+                  if (edata) eina_hash_del_by_key(edata->focused_objects, &dev);
+                  _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
+                  if ((obj->layer) && (obj->layer->evas))
+                    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
+               }
+             pointer_grabs = events->pointer_grabs;
+             events->pointer_grabs = NULL;
+             EINA_LIST_FREE(events->events_whitelist, dev)
+               efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
+          }
+        EINA_COW_WRITE_END_NOGC(evas_object_events_cow, obj->events, events);
+
+        EINA_INLIST_FREE(pointer_grabs, pdata)
+          {
+             pointer_grabs = eina_inlist_remove(pointer_grabs, EINA_INLIST_GET(pdata));
+             efl_input_device_grab_unregister(pdata->evas_pdata->pointer, eo_obj, pdata);
+          }
+     }
 
    event_id = _evas_object_event_new();
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, event_id, NULL);
@@ -1121,12 +1123,17 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
                   EINA_LIST_FREE(proxy_src->proxy_textures, texture)
                     evas_canvas3d_texture_source_set(texture, NULL);
                }
-             EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_src);
+             EINA_COW_WRITE_END_NOGC(evas_object_proxy_cow, obj->proxy, proxy_src);
           }
      }
 
-   if (obj->cur && obj->cur->clipper) evas_object_clip_unset(eo_obj);
-   if (obj->prev) _efl_canvas_object_clipper_prev_reset(obj, EINA_FALSE);
+   if (obj->cur)
+     {
+        if (obj->cur->clipper)
+          evas_object_clip_unset(eo_obj);
+        if (obj->prev)
+          _efl_canvas_object_clipper_prev_reset(obj, EINA_FALSE);
+     }
 
    if (obj->map) evas_object_map_set(eo_obj, NULL);
 
@@ -1292,6 +1299,18 @@ _efl_canvas_object_efl_gfx_entity_size_set(Eo *eo_obj, Evas_Object_Protected_Dat
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
 
+   if (obj->cur->have_clipees)
+     {
+        const Eina_List *l;
+        Evas_Object_Protected_Data *clipee;
+
+        EINA_LIST_FOREACH(obj->clip.clipees, l, clipee)
+          {
+             if (clipee->cur->has_fixed_size)
+               ERR("resizing static clipper! this is a bug!!!!");
+          }
+     }
+
    if (sz.w < 0) sz.w = 0;
    if (sz.h < 0) sz.h = 0;
 
@@ -1384,6 +1403,8 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
    obj->size_hints = EVAS_MEMPOOL_ALLOC(_mp_sh, Evas_Size_Hints);
    if (!obj->size_hints) return;
    EVAS_MEMPOOL_PREP(_mp_sh, obj->size_hints, Evas_Size_Hints);
+   obj->size_hints->user_max.w = -1;
+   obj->size_hints->user_max.h = -1;
    obj->size_hints->max.w = -1;
    obj->size_hints->max.h = -1;
    obj->size_hints->align.x = 0.5;
@@ -1423,6 +1444,37 @@ evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
 }
 
 EOLIAN static Eina_Size2D
+_efl_canvas_object_efl_gfx_hint_hint_size_restricted_max_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   if ((!obj->size_hints) || obj->delete_me)
+     return EINA_SIZE2D(0, 0);
+
+   return obj->size_hints->max;
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_gfx_hint_hint_size_restricted_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Size2D sz)
+{
+   if (obj->delete_me)
+     return;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
+   evas_object_async_block(obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!sz.w && !sz.h) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
+   if (EINA_SIZE2D_EQ(obj->size_hints->max, sz)) return;
+   obj->size_hints->max = sz;
+   if ((obj->size_hints->max.w != -1) && (obj->size_hints->max.w < obj->size_hints->min.w))
+     ERR("restricted max width hint is now smaller than restricted min width hint! (%d < %d)", obj->size_hints->max.w, obj->size_hints->min.w);
+   if ((obj->size_hints->max.h != -1) && (obj->size_hints->max.h < obj->size_hints->min.h))
+     ERR("restricted max height hint is now smaller than restricted min height hint! (%d < %d)", obj->size_hints->max.h, obj->size_hints->min.h);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
+}
+
+EOLIAN static Eina_Size2D
 _efl_canvas_object_efl_gfx_hint_hint_size_restricted_min_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if ((!obj->size_hints) || obj->delete_me)
@@ -1444,9 +1496,12 @@ _efl_canvas_object_efl_gfx_hint_hint_size_restricted_min_set(Eo *eo_obj, Evas_Ob
         if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->min.w == sz.w) && (obj->size_hints->min.h == sz.h)) return;
+   if (EINA_SIZE2D_EQ(obj->size_hints->min, sz)) return;
    obj->size_hints->min = sz;
-
+   if ((obj->size_hints->max.w != -1) && (obj->size_hints->max.w < obj->size_hints->min.w))
+     ERR("restricted max width hint is now smaller than restricted min width hint! (%d < %d)", obj->size_hints->max.w, obj->size_hints->min.w);
+   if ((obj->size_hints->max.h != -1) && (obj->size_hints->max.h < obj->size_hints->min.h))
+     ERR("restricted max height hint is now smaller than restricted min height hint! (%d < %d)", obj->size_hints->max.h, obj->size_hints->min.h);
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
@@ -1458,8 +1513,50 @@ _efl_canvas_object_efl_gfx_hint_hint_size_combined_min_get(const Eo *eo_obj EINA
    if ((!obj->size_hints) || obj->delete_me)
      return sz;
 
-   sz.w = MAX(obj->size_hints->min.w, obj->size_hints->user_min.w);
-   sz.h = MAX(obj->size_hints->min.h, obj->size_hints->user_min.h);
+   sz.w = obj->size_hints->user_min.w;
+   if (obj->size_hints->max.w != -1)
+     sz.w = obj->size_hints->max.w;
+   sz.h = obj->size_hints->user_min.h;
+   if (obj->size_hints->max.h != -1)
+     sz.h = obj->size_hints->max.h;
+
+   /* clamp user min to restricted max here */
+   sz.w = MAX(obj->size_hints->min.w, MIN(sz.w, obj->size_hints->user_min.w));
+   sz.h = MAX(obj->size_hints->min.h, MIN(sz.h, obj->size_hints->user_min.h));
+   return sz;
+}
+
+EOLIAN static Eina_Size2D
+_efl_canvas_object_efl_gfx_hint_hint_size_combined_max_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   Eina_Size2D sz = { -1, -1 };
+
+   if ((!obj->size_hints) || obj->delete_me)
+     return sz;
+
+   sz.w = obj->size_hints->user_max.w;
+   sz.h = obj->size_hints->user_max.h;
+
+   /* clamp user max to restricted max here */
+   if (obj->size_hints->max.w != -1)
+     {
+        if (sz.w == -1)
+          sz.w = obj->size_hints->max.w;
+        else
+          sz.w = MIN(obj->size_hints->max.w, sz.w);
+     }
+   if (obj->size_hints->max.h != -1)
+     {
+        if (sz.h == -1)
+          sz.h = obj->size_hints->max.h;
+        else
+          sz.h = MIN(obj->size_hints->max.h, sz.h);
+     }
+   /* then clamp to restricted min */
+   if ((sz.w != -1) && obj->size_hints->min.w > 0)
+     sz.w = MAX(sz.w, obj->size_hints->min.w);
+   if ((sz.h != -1) && obj->size_hints->min.h > 0)
+     sz.h = MAX(sz.h, obj->size_hints->min.h);
    return sz;
 }
 
@@ -1469,7 +1566,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_get(const Eo *eo_obj EINA_UNUSED, 
    if ((!obj->size_hints) || obj->delete_me)
      return EINA_SIZE2D(-1, -1);
 
-   return obj->size_hints->max;
+   return obj->size_hints->user_max;
 }
 
 EOLIAN static void
@@ -1485,9 +1582,9 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_set(Eo *eo_obj, Evas_Object_Protec
         if ((sz.w == -1) && (sz.h == -1)) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->max.w == sz.w) && (obj->size_hints->max.h == sz.h)) return;
-   obj->size_hints->max.w = sz.w;
-   obj->size_hints->max.h = sz.h;
+   if (EINA_SIZE2D_EQ(obj->size_hints->user_max, sz)) return;
+   obj->size_hints->user_max.w = sz.w;
+   obj->size_hints->user_max.h = sz.h;
 
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
@@ -1549,9 +1646,8 @@ _efl_canvas_object_efl_gfx_hint_hint_size_min_set(Eo *eo_obj, Evas_Object_Protec
         if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->user_min.w == sz.w) && (obj->size_hints->user_min.h == sz.h)) return;
+   if (EINA_SIZE2D_EQ(obj->size_hints->user_min, sz)) return;
    obj->size_hints->user_min = sz;
-
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
@@ -1773,7 +1869,7 @@ static void
 _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (obj->anim_player)
-     efl_player_stop(obj->anim_player);
+     efl_player_playing_set(obj->anim_player, EINA_FALSE);
    if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->show)
      {
         obj->smart.smart->smart_class->show(eo_obj);
@@ -2333,6 +2429,73 @@ _efl_canvas_object_coords_inside_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_P
    return RECTS_INTERSECT(pos.x, pos.y, 1, 1, c.x, c.y, c.w, c.h);
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_priority_add(Eo *obj, Evas_Object_Protected_Data *pd,
+                                        const Efl_Event_Description *desc,
+                                        Efl_Callback_Priority priority,
+                                        Efl_Event_Cb func,
+                                        const void *user_data)
+{
+   Efl_Callback_Array_Item full[2] = {
+    {desc, func},
+    {NULL, NULL}
+   };
+
+   if (efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data))
+     {
+        evas_object_callbacks_event_catcher_add(obj, pd, full);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_del(Eo *obj, Evas_Object_Protected_Data *pd,
+                               const Efl_Event_Description *desc,
+                               Efl_Event_Cb func,
+                               const void *user_data)
+{
+   Efl_Callback_Array_Item full[2] = {
+    {desc, func},
+    {NULL, NULL}
+   };
+
+   if (efl_event_callback_del(efl_super(obj, MY_CLASS), desc, func, user_data))
+     {
+        evas_object_callbacks_event_catcher_del(obj, pd, full);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Object_Protected_Data *pd,
+                                              const Efl_Callback_Array_Item *array,
+                                              Efl_Callback_Priority priority,
+                                              const void *user_data)
+{
+
+   if (efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data))
+     {
+        evas_object_callbacks_event_catcher_add(obj, pd, array);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_array_del(Eo *obj, Evas_Object_Protected_Data *pd,
+                                     const Efl_Callback_Array_Item *array,
+                                     const void *user_data)
+{
+   if (efl_event_callback_array_del(efl_super(obj, MY_CLASS), array, user_data))
+     {
+        evas_object_callbacks_event_catcher_del(obj, pd, array);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 {
@@ -2419,7 +2582,7 @@ _efl_canvas_object_event_animation_cancel(Eo *eo_obj)
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
 
    if (obj)
-     efl_player_stop(obj->anim_player);
+     efl_player_playing_set(obj->anim_player, EINA_FALSE);
 }
 
 /* legacy */
@@ -2601,7 +2764,11 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_type_set, EFL_FUNC_CALL(type), const
    EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_set, _efl_canvas_object_is_frame_object_set), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_get, _efl_canvas_object_is_frame_object_get), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_canvas_object_legacy_ctor), \
-   EFL_OBJECT_OP_FUNC(efl_canvas_object_type_set, _efl_canvas_object_type_set)
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_type_set, _efl_canvas_object_type_set), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_canvas_object_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_canvas_object_efl_object_event_callback_array_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_del, _efl_canvas_object_efl_object_event_callback_del), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_canvas_object_efl_object_event_callback_array_del)
 
 #include "canvas/efl_canvas_object.eo.c"
 #include "canvas/efl_canvas_object_eo.legacy.c"

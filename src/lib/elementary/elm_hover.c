@@ -315,7 +315,7 @@ _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_efl_canvas_group_group_calculate(Eo *obj, Elm_Hover_Data *sd)
 {
    Evas_Coord ofs_x, x = 0, y = 0, w = 0, h = 0, x2 = 0,
               y2 = 0, w2 = 0, h2 = 0;
@@ -566,14 +566,14 @@ _hov_dismiss_cb(void *data,
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
         _hide_signals_emit(data);
-        efl_event_callback_legacy_call
-          (data, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( data, "clicked", NULL);
      }
    else
      {
         evas_object_hide(data);
-        efl_event_callback_legacy_call
-          (data, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( data, "clicked", NULL);
         efl_event_callback_legacy_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
      } // for backward compatibility
 }
@@ -616,8 +616,8 @@ _elm_hover_efl_canvas_group_group_del(Eo *obj, Elm_Hover_Data *sd)
 
    if (evas_object_visible_get(obj))
      {
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( obj, "clicked", NULL);
         efl_event_callback_legacy_call(obj, ELM_HOVER_EVENT_DISMISSED, NULL);
      }
 
@@ -759,7 +759,8 @@ elm_hover_parent_set(Evas_Object *obj,
 {
    ELM_HOVER_CHECK(obj);
    ELM_HOVER_DATA_GET(obj, sd);
-   efl_ui_widget_sub_object_add(parent, obj);
+   if (parent)
+     efl_ui_widget_sub_object_add(parent, obj);
    _parent_setup(obj, sd, parent);
 }
 
@@ -871,12 +872,12 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-// ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX) is overridden with an if()
-// ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX) somehow doesn't compile!?
+// EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX) is overridden with an if()
+// EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX) somehow doesn't compile!?
 
 #define ELM_HOVER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hover), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_hover), \
-   _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
+   EFL_CANVAS_GROUP_CALC_OPS(elm_hover), \
+   _EFL_UI_LAYOUT_ALIASES_OPS(elm_hover, content)
 
 #include "elm_hover_eo.c"

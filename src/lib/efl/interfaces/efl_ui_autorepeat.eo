@@ -1,4 +1,4 @@
-interface @beta Efl.Ui.Autorepeat {
+interface Efl.Ui.Autorepeat {
    [[Interface for autorepeating clicks.
 
      This interface abstracts functions for enabling / disabling this feature.
@@ -6,6 +6,8 @@ interface @beta Efl.Ui.Autorepeat {
      event until the button is released. The time it takes until it starts
      emitting the event is given by @.autorepeat_initial_timeout, and the
      time between each new emission by @.autorepeat_gap_timeout.
+
+     @since 1.23
    ]]
    methods {
       @property autorepeat_initial_timeout {
@@ -44,5 +46,8 @@ interface @beta Efl.Ui.Autorepeat {
             on: bool; [[A bool to turn on/off the repeat event generation.]]
          }
       }
+   }
+   events {
+      repeated: void; [[Called when a repeated event is emitted]]
    }
 }

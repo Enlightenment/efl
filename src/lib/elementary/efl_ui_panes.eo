@@ -1,8 +1,8 @@
-class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
-                    Efl.Ui.Clickable
+class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Layout_Orientable,
+                                                               Efl.Input.Clickable
 {
    [[Elementary panes class]]
-   event_prefix: elm_panes;
+   event_c_prefix: elm_panes;
    methods {
       @property split_ratio {
          [[Set the split ratio between panes widget first and second parts.
@@ -47,8 +47,10 @@ class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
    }
    implements {
       Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
+      Efl.Ui.Layout_Orientable.orientation { get; set; [[Only supports $vertical and $horizontal.
+                                                         Default is $vertical.]] }
       Efl.Part.part_get;
    }
    events {

@@ -1,22 +1,26 @@
-class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
-{
-   [[Efl Ui Factory that provides object caching.
+parse efl_app;
 
-     This factory handles caching of one type of object that must be an @Efl.Gfx.Entity with an @Efl.Ui.View interface defined.
-     This factory will rely on its parent class @Efl.Ui.Widget_Factory for creating the subset of class that match @Efl.Ui.Widget
-     interface.
-     The factory will automatically empties the cache when the application goes into pause.
+class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
+{
+   [[Efl UI Factory that provides object caching.
+
+     This factory handles caching of one type of object that must be an @Efl.Gfx.Entity with an @Efl.Ui.View interface
+     defined.
+     This factory will rely on its parent class @Efl.Ui.Widget_Factory for creating the subset of class that match the
+     @Efl.Ui.Widget interface.
+     The factory will automatically empty the cache when the application goes into the background
+     (@[Efl.App.pause] event).
 
      Creating objects is costly and time consuming, keeping a few on hand for when you next will need them helps a lot.
-     This is what this factory caching infrastructure provides. It will create the object from the class defined on it and
-     set the parent and the model as needed for all created items. The View has to release the Item using the
+     This is what this factory caching infrastructure provides. It will create the object from the class defined on it
+     and set the parent and the model as needed for all created items. The View has to release the Item using the
      release function of the Factory interface for all of this to work properly.
-
-     The cache might decide to flush itself when the application event pause is triggered.
+     @since 1.24
    ]]
    methods {
       @property memory_limit {
-         [[Define the maxium size in Bytes that all the object waiting on standby in the cache take. They must provide the @Efl.Cached.Item interface for an accurate accounting.]]
+         [[Define the maximum size in Bytes that all the objects waiting on standby in the cache can take.
+           They must provide the @Efl.Cached.Item interface for an accurate accounting.]]
          get {}
          set {}
          values {
@@ -39,6 +43,6 @@ class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Widget_Factory.item_class { get; set; }
       Efl.Object.invalidate;
-      Efl.Object.parent { set; }
+      Efl.Object.finalize;
    }
 }

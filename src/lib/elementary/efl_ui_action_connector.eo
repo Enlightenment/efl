@@ -1,0 +1,37 @@
+class @beta Efl.Ui.Action_Connector {
+  [[Helper class that connects theme signals or object events to the interfaces which are for actions.
+
+    For example, this simplifies creating widgets that implement the @Efl.Input.Clickable interface.
+  ]]
+  methods {
+    bind_clickable_to_theme @static {
+      [[This will listen to the standard "click" events on a theme and emit the appropriate
+        events through the @Efl.Input.Clickable interface.
+
+        Using these methods widgets do not need to listen to the theme signals. This class
+        does it and calls the correct clickable functions.
+
+        This handles theme signals "efl,action,press", "efl,action,unpress" and "efl,action,mouse_out",
+        and the @[Efl.Input.Interface.pointer,move] event.
+      ]]
+      params {
+        object : Efl.Canvas.Layout; [[The object to listen on.]]
+        clickable : Efl.Input.Clickable; [[The object to call the clickable methods on.]]
+      }
+    }
+    bind_clickable_to_object @static {
+      [[This will listen to the standard "click" events on an object, and emit the appropriate
+        events through the @Efl.Input.Clickable interface.
+
+        Using these methods widgets do not need to listen to the object events. This class
+        does it and calls the correct clickable functions.
+
+        The handled events are @[Efl.Input.Interface.pointer,up] and @[Efl.Input.Interface.pointer,down].
+      ]]
+      params {
+        object : Efl.Input.Interface; [[The object to listen on.]]
+        clickable : Efl.Input.Clickable; [[The object to call the clickable methods on.]]
+      }
+    }
+  }
+}

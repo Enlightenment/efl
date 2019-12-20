@@ -1,47 +1,44 @@
 import eina_types;
 
-abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path
+abstract @beta Efl.Canvas.Vg.Node extends Efl.Object
+                                  implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path
 {
    [[Efl vector graphics abstract class]]
    methods {
       @property transformation {
-         set {
-            [[Sets the transformation matrix to be used for this node object.
+         [[The transformation matrix to be used for this node object.
 
-              Note: Pass $null to cancel the applied transformation.
-            ]]
+           Note: Pass $null to cancel the applied transformation.
+         ]]
+         set {
          }
          get {
-            [[Gets the transformation matrix used for this node object.
-            ]]
          }
          values {
-            @cref m: Eina.Matrix3; [[Transformation matrix.]]
+            m: ptr(const(Eina.Matrix3)); [[Transformation matrix.]]
          }
       }
       @property origin {
-         set {
-            [[Sets the origin position of the node object.
+         [[The origin position of the node object.
 
-              This origin position affects node transformation.
-            ]]
+           This origin position affects node transformation.
+         ]]
+         set {
          }
          get {
-            [[Gets the origin position of the node object.
-            ]]
          }
          values {
             x: double; [[$origin x position.]]
             y: double; [[$origin y position.]]
          }
       }
-      @property mask {
-         [[Set Mask Node to this renderer]]
+      @property comp_method {
+         [[Set a composite target node to this node object.]]
          set {
          }
          values {
-            mask: Efl.Canvas.Vg.Node; [[Mask object]]
-            op: int; [[Masking Option. Reserved]]
+            target: Efl.Canvas.Vg.Node; [[Composite target node]]
+            method: Efl.Gfx.Vg_Composite_Method; [[Composite Method.]]
          }
       }
    }

@@ -1,101 +1,23 @@
-import efl_ui_grid_item;
-
-class @beta Efl.Ui.Grid extends Efl.Ui.Layout_Base implements
-                   Efl.Ui.Scrollable_Interactive,
-                   Efl.Ui.Scrollbar,
-                   Efl.Pack_Linear, Efl.Pack_Layout,
-                   Efl.Ui.Direction,
-                   Efl.Ui.Clickable,
-                   Efl.Ui.Selectable,
-                   Efl.Ui.Multi_Selectable,
-                   Efl.Gfx.Arrangement
+class Efl.Ui.Grid extends Efl.Ui.Collection
 {
-   [[Simple grid widget with Pack interface.]]
-   methods {
-      @property item_size {
-         [[Property data of item size.]]
-         set {}
-         get {}
-         values {
-            size: Eina.Size2D; [[last selected item of grid.]]
-         }
-      }
-      item_scroll {
-         [[scroll move the item to show in the viewport.]]
-         params {
-            @in item: Efl.Ui.Grid_Item; [[Target item.]]
-            @in animation: bool; [[Boolean value for animation of scroll move.]]
-         }
-      }
-      item_scroll_align {
-         [[scroll move the item to show at the align position of the viewport.]]
-         params {
-            @in item: Efl.Ui.Grid_Item; [[Target item.]]
-            @in align: double; [[align value in Viewport.]]
-            @in animation: bool; [[Boolean value for animation of scroll move.]]
-         }
-      }
-      @property last_selected_item {
-         [[Property data of last selected item.]]
-         get {}
-         values {
-            item: Efl.Ui.Grid_Item; [[last selected item of grid.]]
-         }
-      }
-      selected_items_get {
-         [[Get the selected items iterator. The iterator sequence will be decided by selection.]]
-         return: iterator<Efl.Ui.Grid_Item> @owned @warn_unused; [[Iterator covered by selected items list.
-                                                                   user have to free the iterator after used.]]
-      }
-   }
+   [[A scrollable grid of @Efl.Ui.Item objects, typically @Efl.Ui.Grid_Default_Item objects.
+
+     Items are added using the @Efl.Pack_Linear interface.
+
+     The orientation (vertical or horizontal) of the grid can be set with
+     @Efl.Ui.Layout_Orientable.orientation.
+
+     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Object_Range.selected_iterator_new.
+
+     @Efl.Ui.Grid supports grouping by using @Efl.Ui.Group_Item objects.
+     Group headers are displayed at the top of the viewport if items belonging to the group
+     are visible in the viewport.
+
+     @since 1.23
+   ]]
+   data: null;
    implements {
-      //Efl.Object
       Efl.Object.constructor;
-      Efl.Object.finalize;
-      Efl.Object.destructor;
-      Efl.Object.invalidate;
-
-      //Efl.Canvas
-      Efl.Canvas.Group.group_calculate;
-      //Efl.Container
-      Efl.Container.content_iterate;
-      Efl.Container.content_count;
-
-      Efl.Ui.Direction.direction { get; set; }
-
-      //Efl.Ui.Widget
-      Efl.Ui.Widget.theme_apply;
-
-      //Efl.Ui.Focus
-      //Efl.Ui.Focus.Object.on_focus_update;
-
-      //Efl.Pack
-      Efl.Pack.pack_clear;
-      Efl.Pack.unpack_all;
-      Efl.Pack.unpack;
-      Efl.Pack.pack;
-      Efl.Pack_Linear.pack_end;
-
-      Efl.Pack_Linear.pack_begin;
-      Efl.Pack_Linear.pack_before;
-      Efl.Pack_Linear.pack_after;
-      Efl.Pack_Linear.pack_at;
-      Efl.Pack_Linear.pack_unpack_at;
-      Efl.Pack_Linear.pack_index_get;
-      Efl.Pack_Linear.pack_content_get;
-      Efl.Pack_Layout.layout_update;
-      Efl.Pack_Layout.layout_request;
-      Efl.Gfx.Arrangement.content_padding { get; set; }
-      Efl.Gfx.Arrangement.content_align { get; set; }
-
-      //Efl.Ui.Scrollable
-      Efl.Ui.Scrollable_Interactive.match_content { set; }
-
-      //Efl.Ui.Multi_Selectable
-      Efl.Ui.Multi_Selectable.select_mode {get; set;}
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
-      Efl.Ui.Scrollbar;
    }
 }

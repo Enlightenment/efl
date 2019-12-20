@@ -103,6 +103,7 @@
    }
 
 group { "efl/uiclock";
+   data.item: "version" "123";
    parts {
       rect { "bg";
          desc { "default";
@@ -213,15 +214,18 @@ group { "efl/uiclock";
 
 // AM_PM_BUTTON
 group { "efl/uiclock/ampm"
+   data.item: "version" "123";
    inherit: "efl/button";
 }
 
 //ENTRY
 group { "efl/uiclock/text"
+   data.item: "version" "123";
    inherit: "efl/text";
    alias: "efl/uiclock/text/single";
    alias: "efl/uiclock/text/single-noedit";
 }
 group { "efl/uiclock/text/selection"
+   data.item: "version" "123";
    inherit: "efl/text/selection";
 }

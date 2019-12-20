@@ -3,6 +3,7 @@
 #endif
 
 #include "Ecore_Wl2.h"
+#include "ecore_wl2_internal.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

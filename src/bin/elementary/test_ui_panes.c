@@ -9,9 +9,8 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 {
    Eo *win, *panes, *panes_h;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Panes"),
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                                  efl_text_set(efl_added, "Efl.Ui.Panes"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );
 
@@ -27,7 +26,7 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
           );
 
    panes_h = efl_add(EFL_UI_PANES_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_content_set(efl_part(panes, "second"), efl_added)
                     );
    efl_add(EFL_UI_BUTTON_CLASS, win,

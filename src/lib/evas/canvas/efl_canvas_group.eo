@@ -57,7 +57,7 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
            from both the @Efl.Object children list as well as the @Efl.Container
            content list.
          ]]
-         return: iterator<Efl.Canvas.Object> @owned;
+         return: iterator<Efl.Canvas.Object> @move;
             [[Iterator to object children]]
       }
       group_member_add {
@@ -77,7 +77,7 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
            See also @.group_member_is.
          ]]
          params {
-            @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
+            @in sub_obj: Efl.Canvas.Object; [[The member object.]]
          }
       }
       group_member_remove {
@@ -111,7 +111,6 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
             clipper: const(Efl.Canvas.Object); [[A clipper rectangle.]]
          }
          get {
-            [[Get the internal clipper.]]
          }
       }
    }

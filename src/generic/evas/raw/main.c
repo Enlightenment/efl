@@ -3,7 +3,6 @@
 #endif
 #include <fcntl.h>
 #include <stdio.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -13,6 +12,12 @@
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
 #endif
 
 #include <Eina.h>
@@ -204,7 +209,7 @@ int main(int argc, char **argv)
      }
 
    timeout_init(4);
-   
+
    if (!_raw_init(file)) return -1;
    if (head_only != 0)
      {
@@ -221,7 +226,11 @@ int main(int argc, char **argv)
           {
              printf("size %d %d\n", width, height);
              printf("alpha 1\n");
+#ifdef _WIN32
+             if (shm_fd) printf("shmfile %s\n", shmfile);
+#else
              if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
+#endif
              else
                {
                   printf("data\n");

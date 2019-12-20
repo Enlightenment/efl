@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv unsetenv */
+#endif
+
 #include <Ecore_File.h>
 #include <Efreet.h>
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_DOCUMENTATION_HPP
 #define EOLIAN_MONO_DOCUMENTATION_HPP
 
@@ -11,6 +26,11 @@
 
 #include <Eina.h>
 
+static const std::string BETA_REF_SUFFIX = " (object still in beta stage)";
+static const std::string BETA_CLASS_REMARK = "This is a \\<b\\>BETA\\</b\\> class. It can be modified or removed in the future. Do not use it for product development.";
+static const std::string BETA_PROPERTY_REMARK = "\n\n\\<b\\>This is a BETA property\\</b\\>. It can be modified or removed in the future. Do not use it for product development.";
+static const std::string BETA_METHOD_REMARK = "\n\n\\<b\\>This is a BETA method\\</b\\>. It can be modified or removed in the future. Do not use it for product development.";
+
 namespace eolian_mono {
 
 struct documentation_generator
@@ -18,20 +38,17 @@ struct documentation_generator
 
    int scope_size = 0;
 
-   documentation_generator(int scope_size)
+   documentation_generator(int scope_size = 0)
        : scope_size(scope_size) {}
 
 
-   // Returns the number of parameters (values + keys) that a property method requires
+   // Returns the number of keys that a property method requires
    // Specify if you want the Setter or the Getter method.
-   static int property_num_parameters(const ::Eolian_Function *function, ::Eolian_Function_Type ftype)
+   static int property_num_keys(const ::Eolian_Function *function, ::Eolian_Function_Type ftype)
    {
       Eina_Iterator *itr = ::eolian_property_keys_get(function, ftype);
       Eolian_Function_Parameter *pr;
       int n = 0;
-      EINA_ITERATOR_FOREACH(itr, pr) { n++; }
-      eina_iterator_free(itr);
-      itr = ::eolian_property_values_get(function, ftype);
       EINA_ITERATOR_FOREACH(itr, pr) { n++; }
       eina_iterator_free(itr);
       return n;
@@ -65,8 +82,27 @@ struct documentation_generator
       const char* eo_name = ::eolian_function_name_get(function);
       std::string name = object_ref_conversion(klass);
 
-      // Klass is needed to check the property naming rulles
+      // Klass is needed to check the property naming rules
       attributes::klass_def klass_d((const ::Eolian_Class *)klass, eolian_object_unit_get(klass));
+
+      // Comment the block below to enable @see reference conversion for non-public interface members.
+      // As they are not generated, this causes a doc warning that fails the build, but can be useful to track
+      // public methods referencing protected stuff.
+      if (ftype != EOLIAN_PROPERTY)
+        {
+           bool is_func_public = ::eolian_function_scope_get(function, ftype) == EOLIAN_SCOPE_PUBLIC;
+
+           if (helpers::is_managed_interface(klass_d) && !is_func_public)
+             return "";
+        }
+      else
+        {
+           bool is_get_public = ::eolian_function_scope_get(function, EOLIAN_PROP_GET) == EOLIAN_SCOPE_PUBLIC;
+           bool is_set_public = ::eolian_function_scope_get(function, EOLIAN_PROP_SET) == EOLIAN_SCOPE_PUBLIC;
+
+           if (helpers::is_managed_interface(klass_d) && !(is_get_public || is_set_public))
+             return "";
+        }
 
       switch(ftype)
       {
@@ -86,14 +122,13 @@ struct documentation_generator
            break;
          case ::EOLIAN_PROPERTY:
            {
-             int getter_params = property_num_parameters(function, ::EOLIAN_PROP_GET);
-             int setter_params = property_num_parameters(function, ::EOLIAN_PROP_SET);
+             int getter_nkeys = property_num_keys(function, ::EOLIAN_PROP_GET);
+             int setter_nkeys = property_num_keys(function, ::EOLIAN_PROP_SET);
              std::string short_name = name_helpers::property_managed_name(klass_d, eo_name);
              bool blacklisted = blacklist::is_property_blacklisted(name + "." + short_name);
-             // EO properties with keys, with more than one value, or blacklisted, are not
-             // converted into C# properties.
+             // EO properties with keys or blacklisted are not converted into C# properties.
              // In these cases we refer to the getter method instead of the property.
-             if ((getter_params > 1) || (setter_params > 1) || (blacklisted)) name += ".Get" + short_name;
+             if ((getter_nkeys > 0) || (setter_nkeys > 0) || (blacklisted)) name += ".Get" + short_name;
              else if (name_tail == ".get") name += ".Get" + short_name;
              else if (name_tail == ".set") name += ".Set" + short_name;
              else name += "." + short_name;
@@ -107,6 +142,8 @@ struct documentation_generator
 
    static std::string function_conversion(attributes::function_def const& func)
    {
+      // This function is called only from the constructor reference conversion, so it does not
+      // need to check whether this function non-public in a interface returning an empty reference (yet).
       std::string name = name_helpers::klass_full_concrete_or_interface_name(func.klass);
       switch (func.type)
       {
@@ -128,44 +165,47 @@ struct documentation_generator
    }
 
    // Turns an Eolian reference like @Efl.Input.Pointer.tool into a <see> tag
-   static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail)
+   static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail,
+                                     bool want_beta)
    {
       const Eolian_Object *data, *data2;
       ::Eolian_Object_Type type =
         ::eolian_doc_token_ref_resolve(token, state, &data, &data2);
       std::string ref;
+      bool is_beta = false;
       switch(type)
       {
          case ::EOLIAN_OBJECT_STRUCT_FIELD:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
            ref += ".";
            ref += ::eolian_object_name_get(data2);
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            if (blacklist::is_struct_blacklisted(ref)) return "";
            break;
          case ::EOLIAN_OBJECT_EVENT:
            ref = object_ref_conversion(data);
            ref += ".";
            ref += name_helpers::managed_event_name(::eolian_object_name_get(data2));
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_ENUM_FIELD:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
            ref += ".";
            ref += name_helpers::enum_field_managed_name(::eolian_object_name_get(data2));
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_FUNCTION:
            ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail);
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
-         case ::EOLIAN_OBJECT_VARIABLE:
-           if (::eolian_variable_type_get((::Eolian_Variable *)data) == ::EOLIAN_VAR_CONSTANT)
-             {
-                auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
-                names.pop_back(); // Remove var name
-                ref = name_helpers::join_namespaces(names, '.');
-                ref += "Constants.";
-                ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
-             }
-           // Otherwise, do nothing and no <see> tag will be generated. Because, who would
-           // reference a global (non-constant) variable in the docs?
+         case ::EOLIAN_OBJECT_CONSTANT:
+           {
+              auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
+              names.pop_back(); // Remove var name
+              ref = name_helpers::join_namespaces(names, '.');
+              ref += "Constants.";
+              ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
+           }
            break;
          case ::EOLIAN_OBJECT_UNKNOWN:
            // If the reference cannot be resolved, just return an empty string and
@@ -173,75 +213,101 @@ struct documentation_generator
            break;
          case ::EOLIAN_OBJECT_CLASS:
            ref = object_ref_conversion(data);
+           is_beta = eolian_object_is_beta(data);
            break;
          default:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           is_beta = eolian_object_is_beta(data);
            break;
       }
+
+      if (!ref.empty() && !want_beta && is_beta)
+        ref += BETA_REF_SUFFIX;
       return ref;
    }
 
    // Turns EO documentation syntax into C# triple-slash XML comment syntax
-   static std::string syntax_conversion(std::string text, const Eolian_State *state)
+   static std::string syntax_conversion(std::string text, const Eolian_State *state, bool want_beta)
    {
       std::string new_text, ref;
-      ::Eolian_Doc_Token token;
-      const char *text_ptr = text.c_str();
-      ::eolian_doc_token_init(&token);
       ::Eolian_Doc_Token_Type previous_token_type = ::EOLIAN_DOC_TOKEN_UNKNOWN;
-      while ((text_ptr = ::eolian_documentation_tokenize(text_ptr, &token)) != NULL)
+      ::Eina_List *paragraphs = ::eolian_documentation_string_split(text.c_str());
+      if (!paragraphs) return new_text;
+      ::Eina_List *data = paragraphs;
+      // For every paragraph
+      do
         {
-           std::string token_text, name_tail;
-           char *token_text_cstr = ::eolian_doc_token_text_get(&token);
-           if (token_text_cstr)
+           char *par = (char *)::eina_list_data_get(data);
+           const char *text_ptr = par;
+           ::Eolian_Doc_Token token;
+           ::eolian_doc_token_init(&token);
+           // For every token inside the paragraph
+           while ((text_ptr = ::eolian_documentation_tokenize(text_ptr, &token)) != NULL)
              {
-                token_text = token_text_cstr;
-                free(token_text_cstr);
-                if (token_text.length() > 4)
-                  name_tail = token_text.substr(token_text.length() - 4, 4);
-             }
-           ::Eolian_Doc_Token_Type token_type = ::eolian_doc_token_type_get(&token);
-           switch(token_type)
-           {
-              case ::EOLIAN_DOC_TOKEN_TEXT:
-                // If previous token was a reference and this text token starts with
-                // parentheses, remove them, since the reference will be rendered
-                // with the parentheses already.
-                if ((previous_token_type == ::EOLIAN_DOC_TOKEN_REF) &&
-                    (token_text.substr(0, 2)  == "()"))
-                  token_text = token_text.substr(2, token_text.length() - 2);
-                new_text += token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_REF:
-                ref = ref_conversion(&token, state, name_tail);
-                if (ref != "")
-                  new_text += "<see cref=\"" + ref + "\"/>";
-                else
-                  // Unresolved references are passed through.
-                  // They will appear in the docs as plain text, without link,
-                  // but at least they won't be removed by DocFX.
-                  new_text += token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_NOTE:
-                new_text += "NOTE: " + token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_WARNING:
-                new_text += "WARNING: " + token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_REMARK:
-                new_text += "REMARK: " + token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARK_TODO:
-                new_text += "TODO: " + token_text;
-                break;
-              case ::EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE:
-                new_text += "<c>" + token_text + "</c>";
-                break;
-              default:
-                break;
-           }
-           previous_token_type = token_type;
-        }
+                std::string token_text, name_tail;
+                char *token_text_cstr = ::eolian_doc_token_text_get(&token);
+                if (token_text_cstr)
+                  {
+                     token_text = token_text_cstr;
+                     free(token_text_cstr);
+                     if (token_text.length() > 4)
+                       name_tail = token_text.substr(token_text.length() - 4, 4);
+                  }
+                ::Eolian_Doc_Token_Type token_type = ::eolian_doc_token_type_get(&token);
+                switch(token_type)
+                {
+                   case ::EOLIAN_DOC_TOKEN_TEXT:
+                     // If previous token was a reference and this text token starts with
+                     // parentheses, remove them, since the reference will be rendered
+                     // with the parentheses already.
+                     if ((previous_token_type == ::EOLIAN_DOC_TOKEN_REF) &&
+                         (token_text.substr(0, 2)  == "()"))
+                       token_text = token_text.substr(2, token_text.length() - 2);
+                     new_text += token_text;
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_REF:
+                     ref = ref_conversion(&token, state, name_tail, want_beta);
+                     if (ref != "")
+                       {
+                          if (utils::ends_with(ref, BETA_REF_SUFFIX))
+                            new_text += "<span class=\"text-muted\">" + ref + "</span>";
+                          else
+                            new_text += "<see cref=\"" + ref + "\"/>";
+                       }
+                     else
+                       // Unresolved references are passed through.
+                       // They will appear in the docs as plain text, without link,
+                       // but at least they won't be removed by DocFX.
+                       new_text += token_text;
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_NOTE:
+                     new_text += "<b>NOTE: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_WARNING:
+                     new_text += "<b>WARNING: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_REMARK:
+                     new_text += "<b>REMARK: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARK_TODO:
+                     new_text += "<b>TODO: </b>";
+                     break;
+                   case ::EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE:
+                     new_text += "<c>" + token_text + "</c>";
+                     break;
+                   default:
+                     break;
+                }
+                previous_token_type = token_type;
+              }
+           // Free this paragraph
+           free(par);
+           // Fetch the next paragraph
+           data = ::eina_list_next(data);
+           // If there's another paragraph afterwards, separate them with a blank line
+           if (data) new_text += "\n\n";
+        } while (data);
+      ::eina_list_free(paragraphs);
       return new_text;
    }
 
@@ -264,7 +330,8 @@ struct documentation_generator
       std::string new_text;
       if (!as_generator(html_escaped_string).generate(std::back_inserter(new_text), text, context))
         return false;
-      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state );
+      auto options = context_find_tag<options_context>(context);
+      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state, options.want_beta);
 
       std::string tabs;
       as_generator(scope_tab(scope_size) << "/// ").generate (std::back_inserter(tabs), attributes::unused, context);
@@ -324,20 +391,34 @@ struct documentation_generator
       auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
       // Example embedding not requested
       if (options.examples_dir.empty()) return true;
-      std::string file_name = options.examples_dir + full_object_name + ".cs";
+      bool is_plain_code = false;
+      std::string file_name = options.examples_dir + full_object_name + ".xml";
       std::ifstream exfile(file_name);
-      // There is no example file for this class or method, just return
-      if (!exfile.good()) return true;
+      if (!exfile.good())
+        {
+           // There is no example XML file for this class, try a CS file
+           file_name = options.examples_dir + full_object_name + ".cs";
+           exfile.open(file_name);
+           // There are no example files for this class or method, just return
+           if (!exfile.good()) return true;
+           is_plain_code = true;
+        }
       std::stringstream example_buff;
       // Start with a newline so the first line renders with same indentation as the rest
       example_buff << std::endl << exfile.rdbuf();
 
       if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
-      if (!generate_opening_tag(sink, "example", context)) return false;
-      if (!generate_opening_tag(sink, "code", context)) return false;
+      if (is_plain_code)
+        {
+           if (!generate_opening_tag(sink, "example", context)) return false;
+           if (!generate_opening_tag(sink, "code", context)) return false;
+        }
       if (!generate_escaped_content(sink, example_buff.str(), context)) return false;
-      if (!generate_closing_tag(sink, "code", context)) return false;
-      if (!generate_closing_tag(sink, "example", context)) return false;
+      if (is_plain_code)
+        {
+           if (!generate_closing_tag(sink, "code", context)) return false;
+           if (!generate_closing_tag(sink, "example", context)) return false;
+        }
       return as_generator("\n").generate(sink, attributes::unused, context);
    }
 
@@ -371,6 +452,11 @@ struct documentation_generator
    {
        if (!generate(sink, klass.documentation, context)) return false;
 
+       if (klass.is_beta)
+         {
+            if (!generate_tag(sink, "remarks", BETA_CLASS_REMARK, context)) return false;
+         }
+
        std::string klass_name = name_helpers::klass_full_concrete_or_interface_name(klass);
        return generate_tag_example(sink, klass_name, context);
    }
@@ -378,10 +464,24 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& prop, Context const& context) const
    {
-       if (!generate(sink, prop.documentation, context))
-         return false;
+       // Generate docs by merging Property, Accessor, Since and Beta pieces.
+       std::string text = prop.documentation.full_text;
+       if (!prop.documentation.since.empty())
+         text += "\\<br/\\>\nSince EFL " + prop.documentation.since + ".";
+       if (prop.setter.is_engaged() && !prop.setter->documentation.full_text.empty())
+         text += "\\<br/\\>\n\\<b\\>Note on writing:\\</b\\> " + prop.setter->documentation.full_text;
+       if (prop.getter.is_engaged() && !prop.getter->documentation.full_text.empty())
+         text += "\\<br/\\>\n\\<b\\>Note on reading:\\</b\\> " + prop.getter->documentation.full_text;
+       if (!prop.klass.is_beta)
+         {
+            if ((prop.setter.is_engaged() && prop.setter->is_beta) ||
+                (prop.getter.is_engaged() && prop.getter->is_beta))
+              text += BETA_PROPERTY_REMARK;
+         }
+       if (!generate_tag_summary(sink, text, context))
+              return false;
 
-       std::string text;
+       text = "";
        if (prop.setter.is_engaged())
          text = prop.setter->parameters[0].documentation.full_text;
        else if (prop.getter.is_engaged())
@@ -409,16 +509,18 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_property(OutputIterator sink, attributes::function_def const& func, Context const& context) const
    {
-
-       // First, try the get/set specific documentation
-       if (!func.documentation.summary.empty())
+       if (!func.documentation.full_text.empty() ||
+           !func.property_documentation.full_text.empty())
          {
-            if (!generate(sink, func.documentation, context))
-              return false;
-         }
-       else // fallback to common property documentation
-         {
-            if (!generate(sink, func.property_documentation, context))
+            // Generate docs by merging Property, Accessor, Since and Beta pieces.
+            std::string text = func.property_documentation.full_text;
+            if (!func.property_documentation.since.empty())
+              text += "\\<br/\\>\nSince EFL " + func.property_documentation.since + ".";
+            if (!func.documentation.full_text.empty())
+              text += "\\<br/\\>\n\\<b\\>Note:\\</b\\> " + func.documentation.full_text;
+            if (!func.klass.is_beta && func.is_beta)
+              text += BETA_METHOD_REMARK;
+            if (!generate_tag_summary(sink, text, context))
               return false;
          }
 
@@ -438,7 +540,13 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_function(OutputIterator sink, attributes::function_def const& func, Context const& context) const
    {
-       if (!generate(sink, func.documentation, context))
+       std::string tail_text = "";
+       if (!func.klass.is_beta && func.is_beta)
+         {
+            tail_text = BETA_METHOD_REMARK;
+         }
+
+       if (!generate(sink, func.documentation, context, tail_text))
          return false;
 
        for (auto&& param : func.parameters)
@@ -457,15 +565,31 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_parameter(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), param.documentation.full_text, context);
+      auto text = param.documentation.full_text;
+      if (param.default_value.is_engaged())
+      {
+          auto value = param.default_value->serialized;
+
+          if (param.default_value->is_name_ref)
+            {
+               value = name_helpers::full_managed_name(value);
+               text += "\\<br/\\>The default value is \\<see cref=\\\"" + value + "\\\"/\\>.";
+            }
+          else
+            {
+               text += "\\<br/\\>The default value is \\<c\\>" + value + "\\</c\\>.";
+            }
+      }
+      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), text, context);
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context) const
+   bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context, std::string tail_text = "") const
    {
       std::string str = doc.full_text;
       if (!doc.since.empty())
-        str += "\n(Since EFL " + doc.since + ")";
+        str += "\\<br/\\>Since EFL " + doc.since + ".";
+      str += tail_text;
       return generate_tag_summary(sink, str, context);
    }
 
@@ -486,9 +610,18 @@ struct documentation_generator
 
       for (auto &&param : ctor.function.parameters)
         {
-          if (!as_generator(
-                      scope_tab << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See <see cref=\"" << function_conversion(func) << "\"/></param>\n"
-                      ).generate(sink, param, context))
+          auto ref = function_conversion(func);
+
+          if (!context_find_tag<options_context>(context).want_beta && func.is_beta)
+            {
+               ref += BETA_REF_SUFFIX;
+               ref = "<span class=\"text-muted\">" + ref + "</span>";
+            }
+          else
+            ref = "<see cref=\"" + ref + "\" />";
+
+          if (!as_generator(scope_tab(scope_size) << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See " << ref <<  "</param>\n")
+                            .generate(sink, param, context))
             return false;
         }
       return true;
@@ -508,8 +641,44 @@ documentation_generator as_generator(documentation_terminal)
     return documentation_generator(0);
 }
 
-} // namespace eolian_mono
+/// Escape a single string, HTML-escaping and converting the syntax
+struct documentation_string_generator
+{
+  template<typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, std::string const& text, Context const& context) const
+  {
+      std::string escaped;
+      if (!as_generator(html_escaped_string).generate(std::back_inserter(escaped), text, context))
+        return false;
 
+      auto options = context_find_tag<options_context>(context);
+      auto state = context_find_tag<eolian_state_context>(context).state;
+      if (!as_generator(string).generate(sink, documentation_generator::syntax_conversion(escaped, state, options.want_beta), context))
+        return false;
+
+      return true;
+  }
+
+} const documentation_string {};
+
+namespace documentation_helpers
+{
+
+template<typename OutputIterator, typename Indent, typename Context>
+bool generate_since_tag_line(OutputIterator sink, attributes::documentation_def const& doc, Indent indentation, Context context)
+{
+  if (doc.since.empty())
+    return true;
+
+  return as_generator
+            (
+                indentation << ("/// <para>Since EFL " + doc.since + ".</para>\n")
+            ).generate(sink, attributes::unused, context);
+}
+
+} // documentation_helpers
+
+} // namespace eolian_mono
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -519,6 +688,11 @@ template<>
 struct is_generator<::eolian_mono::documentation_generator> : std::true_type {};
 
 template<>
+struct is_eager_generator<::eolian_mono::documentation_string_generator> : std::true_type {};
+template<>
+struct is_generator<::eolian_mono::documentation_string_generator> : std::true_type {};
+
+template<>
 struct is_generator<::eolian_mono::documentation_terminal> : std::true_type {};
 
 namespace type_traits {
@@ -526,6 +700,8 @@ template<>
 struct attributes_needed<struct ::eolian_mono::documentation_generator> : std::integral_constant<int, 1> {};
 template<>
 struct attributes_needed<struct ::eolian_mono::documentation_terminal> : std::integral_constant<int, 1> {};
+template<>
+struct attributes_needed<struct ::eolian_mono::documentation_string_generator> : std::integral_constant<int, 1> {};
 }
 } } }
 

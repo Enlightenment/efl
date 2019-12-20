@@ -57,6 +57,7 @@ _elm_thumb_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_thumb_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_finalize, _elm_thumb_efl_object_finalize),
       EFL_OBJECT_OP_FUNC(efl_file_load, _elm_thumb_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _elm_thumb_efl_file_unload),
       EFL_OBJECT_OP_FUNC(efl_file_loaded_get, _elm_thumb_efl_file_loaded_get),
       EFL_OBJECT_OP_FUNC(efl_file_set, _elm_thumb_efl_file_file_set),
       EFL_OBJECT_OP_FUNC(efl_file_get, _elm_thumb_efl_file_file_get),
@@ -82,4 +83,4 @@ static const Efl_Class_Description _elm_thumb_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_thumb_class_get, &_elm_thumb_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_FILE_MIXIN, EFL_UI_CLICKABLE_INTERFACE, EFL_UI_DRAGGABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_thumb_class_get, &_elm_thumb_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_FILE_MIXIN, EFL_INPUT_CLICKABLE_MIXIN, EFL_UI_DRAGGABLE_INTERFACE, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);

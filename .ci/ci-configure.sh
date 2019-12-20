@@ -1,162 +1,103 @@
 #!/bin/sh
 
 set -e
-
 . .ci/travis.sh
 
-if [ "$BUILDSYSTEM" = "ninja" ] ; then
-  if [ "$DISTRO" != "" ] ; then
-    # Normal build test of all targets
-    OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Davahi=false -Dbindings=luajit"
+if [ "$DISTRO" != "" ] ; then
+  # Why do we need to disable the imf loaders here?
+  OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
-    WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl"
+  MONO_LINUX_COPTS=" -Dbindings=luajit,cxx,mono -Dmono-beta=true"
 
-    ENABLED_LINUX_COPTS=" -Dharfbuzz=true -Dhyphen=true"
+  WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
-    DISABLED_LINUX_COPTS=" -Dsystemd=false"
+  # TODO:
+  # - No libelogind package in fedora 30 repo
+  # - RPM fusion repo for xine and libvlc
+  # - Ibus
+  ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
+  -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
+  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
+  -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
+  -Dvnc-server=true -Dbindings=luajit,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
-    RELEASE_READY_LINUX_COPTS=" --buildtype=release"
+  # Enabled png, jpeg evas loader for in tree edje file builds
+  DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
+  -Dopengl=none -Deina-magic-debug=false -Dbuild-examples=false -Dbuild-tests=false \
+  -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
+  -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false \
+  -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
+  -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer1,libvlc,xine \
+  -Demotion-generic-loaders-disabler=vlc -Dfribidi=false -Dfontconfig=false \
+  -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
+  -Delua=true -Dnls=false -Dbindings= -Dlua-interpreter=luajit -Dnative-arch-optimization=false"
+  #evas_filter_parser.c:(.text+0xc59): undefined reference to `lua_getglobal' with interpreter lua
 
-    if [ "$1" = "options-enabled" ]; then
-      OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
-    fi
+  RELEASE_READY_LINUX_COPTS=" --buildtype=release"
 
-    if [ "$1" = "options-disabled" ]; then
-      OPTS="$OPTS $DISABLED_LINUX_COPTS"
-    fi
+  MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
+  -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
+  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg \
+  -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
 
-    if [ "$1" = "wayland" ]; then
-      OPTS="$OPTS $WAYLAND_LINUX_COPTS"
-    fi
-
-    if [ "$1" = "release-ready" ]; then
-      OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
-    fi
-    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
-        --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-        --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
-  else
-    # Prepare OSX env for build
-    mkdir -p ~/Library/LaunchAgents
-    ln -sfv /usr/local/opt/d-bus/*.plist ~/Library/LaunchAgents
-    launchctl load ~/Library/LaunchAgents/org.freedesktop.dbus-session.plist
-    export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
-
-    export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
-    export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
-    LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
-    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
-    mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
+  if [ "$1" = "default" ]; then
+    OPTS="$OPTS $MONO_LINUX_COPTS"
+  elif [ "$1" = "options-enabled" ]; then
+    OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
+  elif [ "$1" = "options-disabled" ]; then
+    OPTS="$OPTS $DISABLED_LINUX_COPTS"
+  elif [ "$1" = "wayland" ]; then
+    OPTS="$OPTS $WAYLAND_LINUX_COPTS"
+  elif [ "$1" = "release-ready" ]; then
+    OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
+  elif [ "$1" = "coverity" ]; then
+    OPTS="$OPTS $WAYLAND_LINUX_COPTS"
+    travis_fold cov-download cov-download
+    docker exec --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c '.ci/coverity-tools-install.sh'
+    travis_endfold cov-download
+  elif [ "$1" = "mingw" ]; then
+    OPTS="$OPTS $MINGW_COPTS"
+    travis_fold cross-native cross-native
+    docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
+    travis_endfold cross-native
   fi
-else
-  CI_BUILD_TYPE="$1"
 
-  DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings --disable-dependency-tracking -C"
-
-  WAYLAND_LINUX_COPTS=" --enable-wayland --enable-elput --enable-drm \
-  --enable-wayland-ivi-shell --enable-gl-drm --with-opengl=es --enable-egl"
-
-  ENABLED_LINUX_COPTS=" --enable-harfbuzz --enable-liblz4 --enable-image-loader-webp --enable-xinput22 \
-  --enable-multisense --enable-lua-old --enable-xpresent --enable-hyphen \
-  --enable-pixman --enable-pixman-font --enable-pixman-rect --enable-pixman-line \
-  --enable-pixman-poly --enable-pixman-image --enable-pixman-image-scale-sample \
-  --enable-image-loader-generic --enable-libuv --enable-tile-rotate --enable-vnc-server \
-  --enable-fb --enable-v4l2 --enable-cserve \
-  --enable-ecore-wayland --enable-ecore-drm --enable-cancel-ok --with-crypto=gnutls \
-  --enable-debug --disable-gstreamer1 --enable-gstreamer"
-
-  # Not compatible with Open GL ES and thus the wayland options. Need to think about having different
-  # jobs for the different supported GL flavours.
-  #--enable-sdl
-
-  DISABLED_LINUX_COPTS=" --disable-neon --disable-libeeze --disable-systemd --disable-magic-debug \
-  --disable-valgrind --disable-gstreamer1 \
-  --disable-fontconfig --disable-fribidi --disable-poppler --disable-spectre --disable-libraw \
-  --disable-librsvg --disable-xcf --disable-libmount --disable-tslib --disable-audio \
-  --disable-pulseaudio --disable-avahi --disable-xinput2 --disable-xim --disable-scim \
-  --disable-ibus --disable-physics --disable-quick-launch --disable-elua"
-
-  RELEASE_READY_LINUX_COPTS=" --with-profile=release"
-
-  MINGW_COPTS=" --prefix=/ewpi-64-install --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/bin/eolian_gen \
-  --with-edje-cc=/usr/bin/edje_cc --with-eet-eet=/usr/bin/eet \
-  --with-bin-elm-prefs-cc=/usr/bin/elm_prefs_cc \
-  --disable-static --with-tests=regular --with-crypto=openssl \
-  --disable-libmount --disable-valgrind --disable-avahi --disable-spectre --disable-libraw \
-  --disable-librsvg --disable-pulseaudio --disable-cxx-bindings"
-
-  patch -p1 < .ci/efl.m4.diff
-  sed -i.orig 's/AC_INIT\(.*\)efl_version-[a-zA-Z0-9]\+/AC_INIT\1efl_version/g' configure.ac
-
-  if [ "$DISTRO" != "" ] ; then
-    # Normal build test of all targets
-    OPTS="$DEFAULT_LINUX_COPTS"
-
-    if [ "$1" = "options-enabled" ]; then
-      OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
-    fi
-
-    if [ "$1" = "options-disabled" ]; then
-      OPTS="$OPTS $DISABLED_LINUX_COPTS"
-    fi
-
-    if [ "$1" = "wayland" ]; then
-      OPTS="$OPTS $WAYLAND_LINUX_COPTS"
-    fi
-
-    if [ "$1" = "release-ready" ]; then
-      OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
-    fi
-
-    if [ "$1" = "mingw" ]; then
-      OPTS="$OPTS $MINGW_COPTS"
-      docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
-      docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap_eolian.sh'
-    fi
-    docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
-    travis_fold autoreconf autoreconf
-    if [ "$1" = "mingw" ]; then
-      docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
-      docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CFLAGS="-pipe" --env CXXFLAGS="-pipe" \
-        --env CPPFLAGS="-I/ewpi-64-install/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/ewpi-64-install/lib/" --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
-        $(cat $HOME/cid) sh -c "autoreconf -iv"
-    else
-      docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
-        --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-        --env LD="ld.gold" $(cat $HOME/cid) sh -c "LIBTOOLIZE_OPTIONS='--no-warn' autoreconf -iv"
-    fi
-    travis_endfold autoreconf
-    travis_fold configure "configure $OPTS"
-    if [ "$1" = "mingw" ]; then
-      docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CFLAGS="-pipe" --env CXXFLAGS="-pipe" \
-        --env CPPFLAGS="-I/ewpi-64-install/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/ewpi-64-install/lib/" --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
-        $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
-    else
-      docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
-        --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-        --env LD="ld.gold" $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
-    fi
+  if [ "$1" = "asan" ]; then
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+      --env CXX="ccache g++" --env CFLAGS="-O0 -g" --env CXXFLAGS="-O0 -g" \
+      --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS -Db_sanitize=address"
+    travis_endfold meson
+  elif [ "$1" = "mingw" ]; then
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
+       $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    travis_endfold meson
+  elif [ "$1" = "coverity" ]; then
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env CFLAGS="-fdirectives-only"  --env CC="gcc" --env CXX="g++"\
+    --env CXXFLAGS="-fdirectives-only" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    travis_endfold meson
   else
-    OSX_COPTS="--disable-cxx-bindings --with-tests=regular --disable-dependency-tracking -C"
-
-    # Prepare OSX env for build
-    mkdir -p ~/Library/LaunchAgents
-    ln -sfv /usr/local/opt/d-bus/*.plist ~/Library/LaunchAgents
-    launchctl load ~/Library/LaunchAgents/org.freedesktop.dbus-session.plist
-    export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
-
-    export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
-    export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
-    LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
-    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
-
-    # Normal build test of all targets
-    rm -f ~/.ccache/ccache.conf
-    travis_fold autoreconf autoreconf
-    LIBTOOLIZE_OPTIONS='--no-warn' autoreconf -iv
-    travis_endfold autoreconf
-    travis_fold configure "configure $OSX_COPTS"
-    .ci/configure.sh $OSX_COPTS
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+      --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
+      --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    travis_endfold meson
   fi
-    travis_endfold configure
+elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
+  # Prepare OSX env for build
+  mkdir -p ~/Library/LaunchAgents
+  ln -sfv /usr/local/opt/d-bus/*.plist ~/Library/LaunchAgents
+  launchctl load ~/Library/LaunchAgents/org.freedesktop.dbus-session.plist
+  export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
+
+  export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
+  export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
+  LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
+  export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
+  export CC="ccache gcc"
+  travis_fold meson meson
+  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer1,libvlc,xine
+  travis_endfold meson
 fi

@@ -729,7 +729,6 @@ _ecore_imf_context_ibus_commit_text_cb(IBusInputContext *ibuscontext EINA_UNUSED
 
    if (ibusimcontext->ctx)
      {
-        ecore_imf_context_commit_event_add(ibusimcontext->ctx, text->text);
         ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                               ECORE_IMF_CALLBACK_COMMIT,
                                               (void *)commit_str);
@@ -803,7 +802,6 @@ _ecore_imf_context_ibus_delete_surrounding_text_cb(IBusInputContext *ibuscontext
    ev.ctx = _focus_im_context;
    ev.n_chars = nchars;
    ev.offset = offset_from_cursor;
-   ecore_imf_context_delete_surrounding_event_add(_focus_im_context, offset_from_cursor, nchars);
    ecore_imf_context_event_callback_call(_focus_im_context,
                                          ECORE_IMF_CALLBACK_DELETE_SURROUNDING,
                                          &ev);
@@ -928,13 +926,11 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
      {
         if (flag)
           {
-             ecore_imf_context_preedit_start_event_add(ibusimcontext->ctx);
              ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                                    ECORE_IMF_CALLBACK_PREEDIT_START,
                                                    NULL);
           }
 
-        ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
         ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                               ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
                                               NULL);
@@ -943,13 +939,11 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
      {
         if (flag)
           {
-             ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
              ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                                    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
                                                    NULL);
           }
 
-        ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
         ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                               ECORE_IMF_CALLBACK_PREEDIT_END,
                                               NULL);
@@ -969,13 +963,11 @@ _ecore_imf_context_ibus_show_preedit_text_cb(IBusInputContext *ibuscontext EINA_
    ibusimcontext->preedit_visible = EINA_TRUE;
 
    // call preedit start
-   ecore_imf_context_preedit_start_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_START,
                                          NULL);
 
    // call preedit changed
-   ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
                                          NULL);
@@ -996,13 +988,11 @@ _ecore_imf_context_ibus_hide_preedit_text_cb(IBusInputContext *ibuscontext EINA_
    ibusimcontext->preedit_visible = EINA_FALSE;
 
    // call preedit changed
-   ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
                                          NULL);
 
    // call preedit end
-   ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_END,
                                          NULL);
@@ -1025,13 +1015,11 @@ _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
    ibusimcontext->preedit_string = NULL;
 
    // call preedit changed
-   ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
                                          NULL);
 
    // call preedit end
-   ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx,
                                          ECORE_IMF_CALLBACK_PREEDIT_END,
                                          NULL);

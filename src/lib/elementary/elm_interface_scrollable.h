@@ -31,9 +31,8 @@
  * Elm_Scrollable_Smart_Interface::extern_pan_set.
  */
 
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_pan_eo.legacy.h"
-#endif
+#include <elm_pan_eo.legacy.h>
+#include <elm_scroller.h>
 
 /**
  * Elementary scroller panning base smart data.
@@ -75,7 +74,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    Elm_Scroller_Policy           hbar_flags, vbar_flags;
    Elm_Scroller_Single_Direction one_direction_at_a_time;
-   Efl_Ui_Scroll_Block           block;
+   Elm_Scroller_Movement_Block     block;
 
    struct
    {
@@ -229,7 +228,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
    Eina_Bool  loop_h : 1;
    Eina_Bool  loop_v : 1;
 
-   Efl_Ui_Focus_Manager *manager;
+   void *manager; /* Efl_Ui_Focus_Manager */
 };
 
 #define ELM_SCROLLABLE_CHECK(obj, ...)                                       \

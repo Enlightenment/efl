@@ -174,6 +174,7 @@ _efl_appthread_efl_io_writer_write(Eo *obj, Efl_Appthread_Data *pd, Eina_Slice *
 
    errno = 0;
    if (pd->fd.in == -1) goto err;
+   if (!slice) return EINVAL;
 
    do
      {
@@ -194,7 +195,7 @@ _efl_appthread_efl_io_writer_write(Eo *obj, Efl_Appthread_Data *pd, Eina_Slice *
      }
    slice->len = r;
 
-   if ((slice) && (slice->len > 0))
+   if (slice->len > 0)
      efl_io_writer_can_write_set(obj, EINA_FALSE);
    if (r == 0)
      {
@@ -240,18 +241,18 @@ _efl_appthread_efl_io_writer_can_write_get(const Eo *obj EINA_UNUSED, Efl_Appthr
    return pd->fd.can_write;
 }
 
-void _appthread_threadio_call(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb);
+void _appthread_threadio_call(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EflThreadIOCall func, Eina_Free_Cb func_free_cb);
 
 EOLIAN static void
-_efl_appthread_efl_threadio_call(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+_efl_appthread_efl_threadio_call(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EflThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
    _appthread_threadio_call(obj, pd, func_data, func, func_free_cb);
 }
 
-void *_appthread_threadio_call_sync(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb);
+void *_appthread_threadio_call_sync(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EflThreadIOCallSync func, Eina_Free_Cb func_free_cb);
 
 EOLIAN static void *
-_efl_appthread_efl_threadio_call_sync(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+_efl_appthread_efl_threadio_call_sync(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EflThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
    return _appthread_threadio_call_sync(obj, pd, func_data, func, func_free_cb);
 }

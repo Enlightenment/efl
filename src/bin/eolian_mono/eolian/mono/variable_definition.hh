@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_VARIABLE_DEFINITION_HH
 #define EOLIAN_MONO_VARIABLE_DEFINITION_HH
 
@@ -28,13 +43,13 @@ namespace eolian_mono {
 struct constant_definition_generator
 {
   template<typename OutputIterator, typename Context>
-  bool generate(OutputIterator sink, attributes::variable_def constant, Context const& context) const
+  bool generate(OutputIterator sink, attributes::constant_def constant, Context const& context) const
   {
-    // Open partial class
+    // Open static partial class
     if (!name_helpers::open_namespaces(sink, constant.namespaces, context))
       return false;
 
-    if (!as_generator("public partial class Constants\n{\n").generate(sink, attributes::unused, context))
+    if (!as_generator("public static partial class Constants\n{\n").generate(sink, attributes::unused, context))
       return false;
 
     std::string literal;
@@ -68,7 +83,7 @@ struct constant_definition_generator
 
     // FIXME missing documentation generator
 
-    // Close partial class
+    // Close static partial class
     if (!as_generator("}\n").generate(sink, attributes::unused, context))
       return false;
 

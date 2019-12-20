@@ -5,7 +5,9 @@
 #include <Eina.h>
 #include <check.h>
 #include "eina_suite.h"
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 
 EFL_START_TEST(eina_test_vpath_valid)
 {
@@ -61,9 +63,26 @@ EFL_START_TEST(eina_test_vpath_snprintf)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_test_vpath_user)
+{
+#ifdef HAVE_GETPWENT
+   char buf[PATH_MAX];
+   char cmp[PATH_MAX];
+   struct passwd *pwent;
+
+   pwent = getpwuid(getuid());
+
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "~%s/foo/bar/king/kong/", pwent->pw_name);
+   snprintf(cmp, sizeof(cmp), "%s/foo/bar/king/kong/", pwent->pw_dir);
+   ck_assert_str_eq(buf, cmp);
+#endif
+}
+EFL_END_TEST
+
 void eina_test_vpath(TCase *tc)
 {
    tcase_add_test(tc, eina_test_vpath_invalid);
    tcase_add_test(tc, eina_test_vpath_valid);
    tcase_add_test(tc, eina_test_vpath_snprintf);
+   tcase_add_test(tc, eina_test_vpath_user);
 }

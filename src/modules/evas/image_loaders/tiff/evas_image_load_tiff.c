@@ -7,10 +7,6 @@
 #include <unistd.h>
 #include <tiffio.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -107,7 +103,7 @@ evas_image_load_file_close_tiff(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_tiff(void *loader_data,
-			       Evas_Image_Property *prop,
+			       Emile_Image_Property *prop,
 			       int *error)
 {
    Eina_File *f = loader_data;
@@ -190,7 +186,7 @@ evas_image_load_file_head_tiff(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_tiff(void *loader_data,
-			       Evas_Image_Property *prop,
+			       Emile_Image_Property *prop,
                                void *pixels,
 			       int *error)
 {
@@ -336,10 +332,12 @@ evas_image_load_file_data_tiff(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_tiff_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_tiff,
   evas_image_load_file_close_tiff,
-  evas_image_load_file_head_tiff,
-  evas_image_load_file_data_tiff,
+  (void*) evas_image_load_file_head_tiff,
+  NULL,
+  (void*) evas_image_load_file_data_tiff,
   NULL,
   EINA_TRUE,
   EINA_FALSE

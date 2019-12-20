@@ -23,10 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_magic.h"

@@ -41,6 +41,7 @@ PYTHON_PATH, fe:
 """
 import os
 import datetime
+import atexit
 
 try:
     from . import eolian
@@ -70,11 +71,13 @@ if not eolian_db.all_eot_files_parse():
 if not eolian_db.all_eo_files_parse():
     raise(RuntimeError('Eolian, failed to parse all EO files'))
 
+
 # cleanup the database on exit
-import atexit
 def cleanup_db():
     global eolian_db
     del eolian_db
+
+
 atexit.register(cleanup_db)
 
 
@@ -92,11 +95,12 @@ class Template(pyratemp.Template):
         filename: Template file to load. (REQUIRED)
         context: User provided context for the template (dict).
     """
+
     def __init__(self, filename, encoding='utf-8', context=None, escape=None,
-                       loader_class=pyratemp.LoaderFile,
-                       parser_class=pyratemp.Parser,
-                       renderer_class=pyratemp.Renderer,
-                       eval_class=pyratemp.EvalPseudoSandbox):
+                 loader_class=pyratemp.LoaderFile,
+                 parser_class=pyratemp.Parser,
+                 renderer_class=pyratemp.Renderer,
+                 eval_class=pyratemp.EvalPseudoSandbox):
 
         # Build the global context for the template
         global_ctx = {}
@@ -125,21 +129,22 @@ class Template(pyratemp.Template):
             'Enum_Type_Field': eolian.Enum_Type_Field,
             'Struct_Type_Field': eolian.Struct_Type_Field,
             'Expression': eolian.Expression,
-            'Variable': eolian.Variable,
+            'Constant': eolian.Constant,
             'Documentation': eolian.Documentation,
             'Documentation_Token': eolian.Documentation_Token,
+            'Error': eolian.Error,
             # Eolian Enums
+            'Eolian_Object_Type': eolian.Eolian_Object_Type,
             'Eolian_Function_Type': eolian.Eolian_Function_Type,
-            'Eolian_Parameter_Dir': eolian.Eolian_Parameter_Dir,
+            'Eolian_Parameter_Direction': eolian.Eolian_Parameter_Direction,
             'Eolian_Class_Type': eolian.Eolian_Class_Type,
             'Eolian_Object_Scope': eolian.Eolian_Object_Scope,
             'Eolian_Typedecl_Type': eolian.Eolian_Typedecl_Type,
             'Eolian_Type_Type': eolian.Eolian_Type_Type,
             'Eolian_Type_Builtin_Type': eolian.Eolian_Type_Builtin_Type,
-            'Eolian_C_Type_Type': eolian.Eolian_C_Type_Type,
+            # 'Eolian_C_Type_Type': eolian.Eolian_C_Type_Type,
             'Eolian_Expression_Type': eolian.Eolian_Expression_Type,
             'Eolian_Expression_Mask': eolian.Eolian_Expression_Mask,
-            'Eolian_Variable_Type': eolian.Eolian_Variable_Type,
             'Eolian_Binary_Operator': eolian.Eolian_Binary_Operator,
             'Eolian_Unary_Operator': eolian.Eolian_Unary_Operator,
             'Eolian_Doc_Token_Type': eolian.Eolian_Doc_Token_Type,
@@ -155,7 +160,7 @@ class Template(pyratemp.Template):
                                    eval_class=eval_class)
 
     def render(self, filename=None, verbose=True, cls=None, ns=None,
-                     struct=None, enum=None, alias=None, **kargs):
+               struct=None, enum=None, alias=None, **kargs):
         # Build the context for the template
         ctx = {}
         if kargs:

@@ -30,10 +30,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_quadtree.h"
 #include "eina_magic.h"
 #include "eina_mempool.h"

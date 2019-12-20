@@ -279,6 +279,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
           }
      }
 
+   if (ob->egl.surface != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface);
    ob->egl.surface = EGL_NO_SURFACE;
 #ifdef EGL_MESA_platform_gbm
    if (dlsym_eglCreatePlatformWindowSurfaceEXT)
@@ -500,6 +502,8 @@ evas_outbuf_resurf(Outbuf *ob)
    if (ob->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", ob);
 
+   if (ob->egl.surface != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface);
    ob->egl.surface =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
                             (EGLNativeWindowType)ob->surface, NULL);
@@ -590,6 +594,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
              char buf[16];
              snprintf(buf, sizeof(buf), "! %i", (int)age);
              eina_evlog("!gl_buffer_age", ob, 0.0, buf);
+             swap_mode = MODE_FULL;
           }
         else
           {
@@ -604,8 +609,6 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
      }
    else
      return MODE_FULL;
-
-   return ob->swap_mode;
 }
 
 int

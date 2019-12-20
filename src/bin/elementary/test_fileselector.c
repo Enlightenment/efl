@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir stelocale */
+#endif
+
 #include <Elementary.h>
 #ifndef ENABLE_NLS
 # ifndef setlocale

@@ -70,7 +70,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
    Item_Calc *items, *item;
    Row_Calc *rows, *row;
    Efl_Ui_Container_Item_Hints *hints, *hint;
-   Eina_Bool axis = !efl_ui_dir_is_horizontal(bd->dir, EINA_FALSE);
+   Eina_Bool axis = !efl_ui_layout_orientation_is_horizontal(bd->dir, EINA_FALSE);
    Eina_Bool c_axis = !axis;
    int want[2] = { 0, 0 };
    int rc = 0, count, i = 0, id, item_last = 0;
@@ -193,6 +193,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
 
         cross_min_sum += row->cross_space;
         cross_weight_sum += row->cross_weight;
+        item_last += row->item_count;
 
         if (bd->homogeneous)
           continue;
@@ -205,7 +206,6 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
              calc_size = box_size;
              inlist = NULL;
 
-             item_last += row->item_count;
              for (; i < item_last; i++)
                {
                   double denom;
@@ -246,6 +246,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
         else if (EINA_DBL_EQ(row->weight_sum, 0))
           {
              row->cur_pos += (box_size - row->min_sum) * box_calc[axis].align;
+             i += row->item_count;
           }
      }
 

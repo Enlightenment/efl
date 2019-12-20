@@ -35,7 +35,7 @@ static const struct ext_loader_s loaders[] =
 
 static const char *loaders_name[] =
 { /* in order of most likely needed */
-  "eet", "svg"
+  "eet", "json", "svg"
 };
 
 static const struct ext_saver_s savers[] =
@@ -154,9 +154,10 @@ _evas_cache_vg_entry_free_cb(void *data)
         if (vg_entry->vfd->ref <= 0)
           {
              Eina_Strbuf *hash_key = eina_strbuf_new();
-             eina_strbuf_append_printf(hash_key, "%s/%s",
+             eina_strbuf_append_printf(hash_key, "%s/%s/%p",
                                        eina_file_filename_get(vg_entry->file),
-                                       vg_entry->key);
+                                       vg_entry->key,
+                                       vg_entry->evas);
              if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
                ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
              eina_strbuf_free(hash_key);
@@ -194,14 +195,8 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const Efl_Fi
    return EINA_TRUE;
 }
 
-static Efl_VG*
-_cached_root_get(Vg_Cache_Entry *vg_entry)
-{
-   return vg_entry->root;
-}
-
 static void
-_caching_root_update(Vg_Cache_Entry *vg_entry)
+_root_update(Vg_Cache_Entry *vg_entry)
 {
    Vg_File_Data *vfd = vg_entry->vfd;
 
@@ -216,6 +211,7 @@ _caching_root_update(Vg_Cache_Entry *vg_entry)
            to this root pointer. */
         vg_entry->root = efl_duplicate(vfd->root);
      }
+   //Shareable??
    else if (vg_entry->root != vfd->root)
      {
         if (vg_entry->root) efl_unref(vg_entry->root);
@@ -273,12 +269,48 @@ evas_cache_vg_init(void)
    vg_cache->ref++;
 }
 
+void *
+evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx)
+{
+   //This make a unique key pointer by arguments.
+   Eina_Strbuf *hash_key = eina_strbuf_new();
+   eina_strbuf_append_printf(hash_key, "%p/%d/%d/%d", root, w, h, frame_idx);
+   const char *new_key = eina_strbuf_string_get(hash_key);
+   if (!new_key) return NULL;
+
+   Eina_List *l;
+   char *key;
+   EINA_LIST_FOREACH(vg_cache->vg_surface_keys, l, key)
+     {
+        //Exisiting key!
+        if (!strcmp(key, new_key))
+          {
+             eina_strbuf_free(hash_key);
+             return key;
+          }
+     }
+
+   //New key comes.
+   key = eina_strbuf_string_steal(hash_key);
+   vg_cache->vg_surface_keys = eina_list_append(vg_cache->vg_surface_keys, key);
+
+   eina_strbuf_free(hash_key);
+
+   return (void *) key;
+}
+
 void
 evas_cache_vg_shutdown(void)
 {
    if (!vg_cache) return;
    vg_cache->ref--;
    if (vg_cache->ref > 0) return;
+
+   char *key;
+   EINA_LIST_FREE(vg_cache->vg_surface_keys, key)
+     free(key);
+   eina_list_free(vg_cache->vg_surface_keys);
+
    eina_hash_free(vg_cache->vfd_hash);
    eina_hash_free(vg_cache->vg_entry_hash);
    free(vg_cache);
@@ -286,13 +318,13 @@ evas_cache_vg_shutdown(void)
 }
 
 Vg_File_Data *
-evas_cache_vg_file_open(const Eina_File *file, const char *key)
+evas_cache_vg_file_open(const Eina_File *file, const char *key, Evas *e)
 {
    Vg_File_Data *vfd;
    Eina_Strbuf *hash_key;
 
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%s/%s", eina_file_filename_get(file), key);
+   eina_strbuf_append_printf(hash_key, "%s/%s/%p", eina_file_filename_get(file), key, e);
    vfd = eina_hash_find(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key));
    if (!vfd)
      {
@@ -307,13 +339,14 @@ evas_cache_vg_file_open(const Eina_File *file, const char *key)
 Vg_Cache_Entry*
 evas_cache_vg_entry_resize(Vg_Cache_Entry *vg_entry, int w, int h)
 {
-   return evas_cache_vg_entry_create(vg_entry->file, vg_entry->key, w, h);
+   return evas_cache_vg_entry_create(vg_entry->evas, vg_entry->file, vg_entry->key, w, h, vg_entry->vfd->vp_list);
 }
 
 Vg_Cache_Entry*
-evas_cache_vg_entry_create(const Eina_File *file,
+evas_cache_vg_entry_create(Evas *evas,
+                           const Eina_File *file,
                            const char *key,
-                           int w, int h)
+                           int w, int h, Eina_List *vp_list)
 {
    Vg_Cache_Entry* vg_entry;
    Eina_Strbuf *hash_key;
@@ -321,9 +354,8 @@ evas_cache_vg_entry_create(const Eina_File *file,
    if (!vg_cache) return NULL;
 
    //TODO: zero-sized entry is useless. how to skip it?
-
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%p/%s/%d/%d", file, key, w, h);
+   eina_strbuf_append_printf(hash_key, "%p/%p/%s/%d/%d/%p", evas, file, key, w, h, vp_list);
    vg_entry = eina_hash_find(vg_cache->vg_entry_hash, eina_strbuf_string_get(hash_key));
    if (!vg_entry)
      {
@@ -338,13 +370,14 @@ evas_cache_vg_entry_create(const Eina_File *file,
         vg_entry->key = eina_stringshare_add(key);
         vg_entry->w = w;
         vg_entry->h = h;
+        vg_entry->evas = evas;
         vg_entry->hash_key = eina_strbuf_string_steal(hash_key);
         eina_hash_direct_add(vg_cache->vg_entry_hash, vg_entry->hash_key, vg_entry);
      }
    eina_strbuf_free(hash_key);
    vg_entry->ref++;
 
-   vg_entry->vfd = evas_cache_vg_file_open(file, key);
+   vg_entry->vfd = evas_cache_vg_file_open(file, key, vg_entry->evas);
    //No File??
    if (!vg_entry->vfd)
      {
@@ -352,12 +385,81 @@ evas_cache_vg_entry_create(const Eina_File *file,
         return NULL;
      }
    vg_entry->vfd->ref++;
+   vg_entry->vfd->vp_list = vp_list;
 
    return vg_entry;
 }
 
+double
+evas_cache_vg_anim_duration_get(const Vg_Cache_Entry* vg_entry)
+{
+   if (!vg_entry->vfd->anim_data) return 0;
+   return vg_entry->vfd->anim_data->duration;
+}
+
+unsigned int
+evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry* vg_entry)
+{
+   if (!vg_entry) return 0;
+   Vg_File_Data *vfd = vg_entry->vfd;
+   if (!vfd || !vfd->anim_data) return 0;
+   return vfd->anim_data->frame_cnt;
+}
+
+Eina_Bool
+evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, int startframe, int endframe)
+{
+   if (!vg_entry) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
+   if (!name) return EINA_FALSE;
+
+   Vg_File_Anim_Data_Marker *marker;
+   Vg_File_Anim_Data_Marker new_marker;
+   int i = 0;
+
+   EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
+     {
+        if (!strcmp(marker->name, name))
+          {
+             marker->startframe = startframe;
+             marker->endframe = endframe;
+             return EINA_TRUE;
+          }
+        i++;
+     }
+
+   new_marker.name = eina_stringshare_add(name);
+   new_marker.startframe = startframe;
+   new_marker.endframe = endframe;
+   eina_inarray_push(vg_entry->vfd->anim_data->markers, &new_marker);
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, int* startframe, int* endframe)
+{
+   if (!vg_entry) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
+   if (!name) return EINA_FALSE;
+
+   Vg_File_Anim_Data_Marker *marker;
+   EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
+     {
+        if (!strcmp(marker->name, name))
+          {
+             if (startframe) *startframe = marker->startframe;
+             if (endframe) *endframe = marker->endframe;
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 Efl_VG*
-evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
+evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 {
    if (!vg_entry) return NULL;
    if ((vg_entry->w < 1) || (vg_entry->h < 1)) return NULL;
@@ -365,8 +467,18 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
    Vg_File_Data *vfd = vg_entry->vfd;
    if (!vfd) return NULL;
 
-   Efl_VG *root = _cached_root_get(vg_entry);
-   if (root) return root;
+   //No need to update.
+   if (vfd->anim_data)
+     {
+        if (vg_entry->root &&
+            vfd->anim_data->frame_num == frame_num)
+          return vg_entry->root;
+     }
+   else
+     {
+        if (vg_entry->root)
+          return vg_entry->root;
+     }
 
    if (!vfd->static_viewbox)
      {
@@ -374,13 +486,26 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
         vfd->view_box.h = vg_entry->h;
      }
 
+   if (vfd->anim_data) vfd->anim_data->frame_num = frame_num;
+
    if (!vfd->loader->file_data(vfd)) return NULL;
 
-   _caching_root_update(vg_entry);
+   _root_update(vg_entry);
 
    _local_transform(vg_entry->root, vg_entry->w, vg_entry->h, vfd);
 
    return vg_entry->root;
+}
+
+void
+evas_cache_vg_entry_value_provider_update(Vg_Cache_Entry *vg_entry, Eina_List *vp_list)
+{
+   if (!vg_entry) return;
+
+   Vg_File_Data *vfd = vg_entry->vfd;
+   if (!vfd) return;
+
+   vfd->vp_list = vp_list;
 }
 
 void
@@ -393,11 +518,18 @@ evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry)
      ERR("Failed to delete vg_entry = (%p) from hash", vg_entry);
 }
 
+Eina_Size2D
+evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry)
+{
+   if (!vg_entry) return EINA_SIZE2D(0, 0);
+   return EINA_SIZE2D(vg_entry->vfd->w, vg_entry->vfd->h);
+}
+
 Eina_Bool
 evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Vg_File_Data *vfd =
-      evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
+      evas_cache_vg_file_open(vg_entry->file, vg_entry->key, vg_entry->evas);
 
    if (!vfd) return EINA_FALSE;
 

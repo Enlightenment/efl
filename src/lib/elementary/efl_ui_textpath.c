@@ -17,7 +17,6 @@
 #define MY_CLASS_NAME "Efl.Ui.Textpath"
 
 #define SLICE_DEFAULT_NO 99
-
 typedef struct _Efl_Ui_Textpath_Point Efl_Ui_Textpath_Point;
 typedef struct _Efl_Ui_Textpath_Line Efl_Ui_Textpath_Line;
 typedef struct _Efl_Ui_Textpath_Segment Efl_Ui_Textpath_Segment;
@@ -71,10 +70,17 @@ struct _Efl_Ui_Textpath_Data
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Eina_List *lines;
 #endif
+   Eina_Bool circular : 1;   //TODO: Remove this flag when elm_textpath_circle_set() is removed.
 };
 
 #define EFL_UI_TEXTPATH_DATA_GET(o, sd) \
    Efl_Ui_Textpath_Data *sd = efl_data_scope_get(o, EFL_UI_TEXTPATH_CLASS)
+
+static inline double
+_rad_to_deg(double rad)
+{
+   return 180 * rad / M_PI;
+}
 
 static inline double
 _deg_to_rad(double angle)
@@ -346,7 +352,6 @@ _text_draw(void *data)
         return;
      }
    map = evas_map_new(map_point_no);
-   evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Evas_Object *line;
@@ -398,12 +403,12 @@ _text_draw(void *data)
 }
 
 static void
-_path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
+_path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    const Efl_Gfx_Path_Command_Type *cmd;
    const double *points;
    Efl_Ui_Textpath_Segment *seg;
-   Eina_Position2D opos;
+   Eina_Position2D obj_pos;
 
    EINA_INLIST_FREE(pd->segments, seg)
      {
@@ -411,7 +416,16 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
         free(seg);
      }
 
-   opos = efl_gfx_entity_position_get(obj);
+   obj_pos = efl_gfx_entity_position_get(obj);
+
+   /* textpath calculates boundary with the middle of text height.
+      this has better precise boundary than circle_set() behavior. */
+   if (pd->circular)
+     {
+        Eina_Size2D text_size = efl_gfx_entity_size_get(pd->text_obj);
+        obj_pos.x += (text_size.h / 2);
+        obj_pos.y += (text_size.h / 2);
+     }
 
    pd->total_length = 0;
    efl_gfx_path_get(obj, &cmd, &points);
@@ -426,9 +440,9 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
              if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
                {
                   pos++;
-                  px0 = points[pos] + opos.x;
+                  px0 = points[pos] + obj_pos.x;
                   pos++;
-                  py0 = points[pos] + opos.y;
+                  py0 = points[pos] + obj_pos.y;
                }
              else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
                {
@@ -437,17 +451,17 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   Eina_Rect brect;
 
                   pos++;
-                  ctrl_x0 = points[pos] + opos.x;
+                  ctrl_x0 = points[pos] + obj_pos.x;
                   pos++;
-                  ctrl_y0 = points[pos] + opos.y;
+                  ctrl_y0 = points[pos] + obj_pos.y;
                   pos++;
-                  ctrl_x1 = points[pos] + opos.x;
+                  ctrl_x1 = points[pos] + obj_pos.x;
                   pos++;
-                  ctrl_y1 = points[pos] + opos.y;
+                  ctrl_y1 = points[pos] + obj_pos.y;
                   pos++;
-                  px1 = points[pos] + opos.x;
+                  px1 = points[pos] + obj_pos.x;
                   pos++;
-                  py1 = points[pos] + opos.y;
+                  py1 = points[pos] + obj_pos.y;
 
                   eina_bezier_values_set(&bz, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
                   seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
@@ -477,9 +491,9 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   Eina_Rect lrect;
 
                   pos++;
-                  px1 = points[pos] + opos.x;
+                  px1 = points[pos] + obj_pos.x;
                   pos++;
-                  py1 = points[pos] + opos.y;
+                  py1 = points[pos] + obj_pos.y;
 
                   seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
                   if (!seg)
@@ -502,10 +516,6 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   eina_rectangle_union(&rect.rect, &lrect.rect);
                }
              cmd++;
-          }
-        if (set_min)
-          {
-             efl_gfx_hint_size_min_set(obj, rect.size);
           }
      }
 }
@@ -542,7 +552,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd, Eo *obj)
      tb = edje_object_part_object_get(pd->text_obj, "efl.text");
 
    evas_object_textblock_size_native_get(tb, &w, &h);
-   evas_object_size_hint_min_set(pd->text_obj, w, h);
+   efl_gfx_hint_size_restricted_min_set(pd->text_obj, EINA_SIZE2D(w, h));
    if (pd->ellipsis)
      {
         if (w > pd->total_length)
@@ -558,8 +568,83 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd, Eo *obj)
 static void
 _efl_ui_textpath_efl_gfx_path_commit(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
-   _path_data_get(obj, pd, EINA_TRUE);
+   _path_data_get(obj, pd);
    _sizing_eval(pd);
+}
+
+static void
+_path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
+{
+   Eina_Rect r;
+   Efl_Ui_Textpath_Segment *seg;
+   Eina_Vector2 first = { 0, 0 };
+   Eina_Vector2 last = { 0, 0 };
+   int remained_w, len;
+   double rad, t, offset_angle;
+
+   if (pd->direction != EFL_UI_TEXTPATH_DIRECTION_CW_CENTER  &&
+       pd->direction != EFL_UI_TEXTPATH_DIRECTION_CCW_CENTER)
+     return;
+
+   r = efl_gfx_entity_geometry_get(pd->text_obj);
+   remained_w = r.w;
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        if (remained_w <= 0)
+          break;
+
+        len = seg->length;
+        if (remained_w < len)
+          {
+             t = remained_w / (double)len;
+             eina_bezier_point_at(&seg->bezier, t, &last.x, &last.y);
+          }
+
+        if (remained_w == r.w)
+          eina_bezier_point_at(&seg->bezier, 0, &first.x, &first.y);
+
+        remained_w -= len;
+     }
+
+   first.x -= (pd->circle.x + r.x);
+   first.y -= (pd->circle.y + r.y);
+   last.x -= (pd->circle.x + r.x);
+   last.y -= (pd->circle.y + r.y);
+
+   eina_vector2_normalize(&first, &first);
+   eina_vector2_normalize(&last, &last);
+   rad = acos(eina_vector2_dot_product(&first, &last));
+   if (rad == 0) return;
+
+   offset_angle = _rad_to_deg(rad);
+   if (r.w > pd->total_length / 2)
+     offset_angle = 360 - offset_angle;
+   offset_angle /= 2.0;
+
+   efl_gfx_path_reset(obj);
+
+   if (pd->direction == EFL_UI_TEXTPATH_DIRECTION_CW_CENTER)
+     {
+        efl_gfx_path_append_arc(obj,
+                                pd->circle.x - pd->circle.radius,
+                                pd->circle.y - pd->circle.radius,
+                                pd->circle.radius * 2,
+                                pd->circle.radius * 2,
+                                pd->circle.start_angle + offset_angle,
+                                -360);
+     }
+   else
+     {
+        efl_gfx_path_append_arc(obj,
+                                pd->circle.x - pd->circle.radius,
+                                pd->circle.y - pd->circle.radius,
+                                pd->circle.radius * 2,
+                                pd->circle.radius * 2,
+                                pd->circle.start_angle - offset_angle,
+                                360);
+     }
+   _path_data_get(obj, pd);
 }
 
 static Eina_Bool
@@ -571,14 +656,20 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
    if (!text) text = "";
    ret = edje_object_part_text_set(pd->text_obj, part, text);
    _ellipsis_set(pd, obj);
+
+   //Only if circlular textpath
+   if (pd->circle.radius > 0)
+     _path_start_angle_adjust(obj, pd);
+
    _sizing_eval(pd);
 
    return ret;
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _sizing_eval(pd);
 }
 
@@ -630,6 +721,8 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
       evas_object_del(line);
 #endif
 
+   efl_gfx_path_reset(obj);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -675,46 +768,125 @@ _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 EOLIAN static void
 _efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Position2D pos)
 {
+   Eina_Position2D ppos, diff;
+   Efl_Ui_Textpath_Segment *seg;
+   double sx, sy, csx, csy, cex, cey, ex, ey;
+
+   ppos = efl_gfx_entity_position_get(obj);
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
-   _path_data_get(obj, pd, EINA_FALSE);
-   _sizing_eval(pd);
+
+   if (ppos.x == pos.x && ppos.y == pos.y) return;
+
+   diff.x = pos.x - ppos.x;
+   diff.y = pos.y - ppos.y;
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        eina_bezier_values_get(&seg->bezier, &sx, &sy, &csx, &csy,
+                               &cex, &cey, &ex, &ey);
+        sx += diff.x;
+        sy += diff.y;
+        csx += diff.x;
+        csy += diff.y;
+        cex += diff.x;
+        cey += diff.y;
+        ex += diff.x;
+        ey += diff.y;
+
+        eina_bezier_values_set(&seg->bezier, sx, sy, csx, csy,
+                               cex, cey, ex, ey);
+     }
+
+   _text_draw(pd);
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Eina_Size2D sz)
+_efl_ui_textpath_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Eina_Size2D size)
 {
-   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   Eina_Size2D psize, diff;
+   Efl_Ui_Textpath_Segment *seg;
+   double sx, sy, csx, csy, cex, cey, ex, ey;
+
+   psize = efl_gfx_entity_size_get(obj);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
+
+   if (psize.w == size.w && psize.h == size.h) return;
+
+   //TODO: Remove this condition if circle_set() is removed
+   if (pd->circle.radius > 0 && !pd->circular) return;
+
+   diff.w = (size.w - psize.w) * 0.5;
+   diff.h = (size.h - psize.h) * 0.5;
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        eina_bezier_values_get(&seg->bezier, &sx, &sy, &csx, &csy,
+                               &cex, &cey, &ex, &ey);
+        sx += diff.w;
+        sy += diff.h;
+        csx += diff.w;
+        csy += diff.h;
+        cex += diff.w;
+        cey += diff.h;
+        ex += diff.w;
+        ey += diff.h;
+
+        eina_bezier_values_set(&seg->bezier, sx, sy, csx, csy,
+                               cex, cey, ex, ey);
+     }
+
+   _text_draw(pd);
 }
 
 EOLIAN static void
-_efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
+_efl_ui_textpath_circular_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
 {
-   if (pd->circle.x == x && pd->circle.y == y &&
-       pd->circle.radius == radius &&
+   Eina_Size2D text_size;
+   double sweep_length, x, y;
+
+   if (pd->circle.radius == radius &&
        pd->circle.start_angle == start_angle &&
        pd->direction == direction &&
        _map_point_calc(pd) > 0)
         return;
-   pd->circle.x = x;
-   pd->circle.y = y;
+
+   Eina_Size2D obj_size = efl_gfx_entity_size_get(obj);
+
+   //textpath min size is same to circle bounadary */
+   text_size = efl_gfx_entity_size_get(pd->text_obj);
+
+   x = (obj_size.w - text_size.h - (2 * radius)) * 0.5;
+   y = (obj_size.h - text_size.h - (2 * radius)) * 0.5;
+
+   /* User leaves center position to textpath itself.
+      Now textpath automatically updates circle text according to
+      object position. */
+   pd->circle.x = radius + x;
+   pd->circle.y = radius + y;
    pd->circle.radius = radius;
    pd->circle.start_angle = start_angle;
    pd->direction = direction;
+   pd->circular = EINA_TRUE;
 
    efl_gfx_path_reset(obj);
-   if (direction == EFL_UI_TEXTPATH_DIRECTION_CW)
-     {
-        efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
-                                radius * 2,  start_angle, -360);
-     }
-   else
-     {
-        efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
-                                radius * 2,  start_angle, 360);
-     }
 
-   _path_data_get(obj, pd, EINA_TRUE);
+   if (direction == EFL_UI_TEXTPATH_DIRECTION_CW ||
+       direction == EFL_UI_TEXTPATH_DIRECTION_CW_CENTER)
+     sweep_length = 360;
+   else
+     sweep_length = -360;
+
+   efl_gfx_path_append_arc(obj,
+                           pd->circle.x - pd->circle.radius,
+                           pd->circle.y - pd->circle.radius,
+                           radius * 2,
+                           radius * 2,  start_angle, sweep_length);
+
+   _path_data_get(obj, pd);
+   _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
+
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D((radius * 2) + text_size.h, (radius * 2) + text_size.h));
 }
 
 EOLIAN static int
@@ -748,7 +920,18 @@ _efl_ui_textpath_ellipsis_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *p
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data)
+
+static Eina_Bool
+_part_is_efl_ui_textpath_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   //Use Efl.Ui.Widget's "background" and "shadow" parts
+   if (eina_streq(part, "background") || eina_streq(part, "shadow"))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data, _part_is_efl_ui_textpath_part)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data)
 #include "efl_ui_textpath_part.eo.c"
@@ -784,6 +967,46 @@ elm_textpath_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(EFL_UI_TEXTPATH_LEGACY_CLASS, parent);
+}
+
+EAPI void
+elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
+{
+   double sweep_length;
+
+   EFL_UI_TEXTPATH_DATA_GET(obj, pd);
+   if (!pd) return;
+
+   if (pd->circle.x == x && pd->circle.y == y &&
+       pd->circle.radius == radius &&
+       pd->circle.start_angle == start_angle &&
+       pd->direction == direction &&
+       _map_point_calc(pd) > 0)
+        return;
+
+   pd->circle.x = x;
+   pd->circle.y = y;
+   pd->circle.radius = radius;
+   pd->circle.start_angle = start_angle;
+   pd->direction = direction;
+   pd->circular = EINA_FALSE;
+
+   efl_gfx_path_reset(obj);
+
+   if (direction == EFL_UI_TEXTPATH_DIRECTION_CW ||
+       direction == EFL_UI_TEXTPATH_DIRECTION_CW_CENTER)
+     sweep_length = - 360;
+   else
+     sweep_length = 360;
+
+   efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
+                           radius * 2,  start_angle, sweep_length);
+
+   _path_data_get(obj, pd);
+   _path_start_angle_adjust(obj, pd);
+   _sizing_eval(pd);
+
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
 }
 
 #include "efl_ui_textpath_legacy_eo.c"

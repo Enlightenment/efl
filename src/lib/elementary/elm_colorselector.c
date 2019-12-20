@@ -604,8 +604,8 @@ _update_hsla_from_colorbar(Evas_Object *obj, Color_Type type, double x)
    _update_colorbars(sd);
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
-   efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(obj, "changed", NULL);
+   evas_object_smart_callback_call(obj, "changed,user", NULL);
 }
 
 static void
@@ -662,7 +662,7 @@ _colors_set(Evas_Object *obj,
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
    if (!mode_change)
-     efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
+     evas_object_smart_callback_call(obj, "changed", NULL);
 }
 
 static void
@@ -707,7 +707,7 @@ _spinner_changed_cb(void *data, const Efl_Event *event)
          break;
      }
    evas_object_data_del(event->object, "_changed");
-   efl_event_callback_legacy_call(parent, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(parent, "changed,user", NULL);
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -737,13 +737,13 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 }
 
 static void
-_start_grab_pick_cb(void *data, const Efl_Event *event)
+_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *o = data;
 
    ELM_COLORSELECTOR_DATA_GET(o, sd);
 
-   elm_object_disabled_set(event->object, EINA_TRUE);
+   elm_object_disabled_set(obj, EINA_TRUE);
 
    sd->grab.mouse_motion = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _mouse_grab_pixels, o);
    sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, o);
@@ -795,7 +795,7 @@ _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    _unselect_selected_item(sd);
    _colors_set(o, r, g, b, 0xFF, EINA_FALSE);
-   efl_event_callback_legacy_call(o, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(o, "changed,user", NULL);
 
    return EINA_TRUE;
 }
@@ -937,8 +937,7 @@ _create_colorpicker(Evas_Object *obj)
         sd->button = elm_button_add(sd->picker);
         elm_object_style_set(sd->button, style);
         elm_object_text_set(sd->button, E_("Pick a color"));
-        efl_event_callback_add
-              (sd->button, EFL_UI_EVENT_CLICKED, _start_grab_pick_cb, obj);
+        evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
         elm_box_pack_end(bx, sd->button);
         evas_object_show(sd->button);
      }
@@ -1101,12 +1100,12 @@ _button_clicked_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_button_repeat_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_button_repeat_cb(void *data, Evas_Object *object, void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
 
-   if (event->object == cb_data->rbt) step = 1.0 / BASE_STEP;
+   if (object == cb_data->rbt) step = 1.0 / BASE_STEP;
    else step = -1.0 / BASE_STEP;
 
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
@@ -1288,14 +1287,14 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.l_button", sd->cb_data[i]->lbt);
         efl_event_callback_add
-          (sd->cb_data[i]->lbt, EFL_UI_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->lbt, EFL_INPUT_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
         elm_button_autorepeat_set(sd->cb_data[i]->lbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->lbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->lbt, (1.0 / _elm_config->fps));
-        efl_event_callback_add
-          (sd->cb_data[i]->lbt, EFL_UI_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
+        evas_object_smart_callback_add
+          (sd->cb_data[i]->lbt, "repeated", _button_repeat_cb, sd->cb_data[i]);
 
         /* load right button */
         if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(sd->col_bars_area);
@@ -1306,14 +1305,14 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.r_button", sd->cb_data[i]->rbt);
         efl_event_callback_add
-          (sd->cb_data[i]->rbt, EFL_UI_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->rbt, EFL_INPUT_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
         elm_button_autorepeat_set(sd->cb_data[i]->rbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->rbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->rbt, (1.0 / _elm_config->fps));
-        efl_event_callback_add
-          (sd->cb_data[i]->rbt, EFL_UI_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
+        evas_object_smart_callback_add
+          (sd->cb_data[i]->lbt, "repeated", _button_repeat_cb, sd->cb_data[i]);
      }
 }
 
@@ -1334,6 +1333,9 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   /* none of the below objects are created before finalize */
+   if (!efl_finalized_get(obj)) return int_ret;
+
    if ((sd->mode == ELM_COLORSELECTOR_PALETTE) ||
        (sd->mode == ELM_COLORSELECTOR_ALL) ||
        (sd->mode == ELM_COLORSELECTOR_BOTH))
@@ -1346,9 +1348,8 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
         vpadstr = edje_object_data_get
             (wd->resize_obj, "vertical_pad");
         if (vpadstr) v_pad = atoi(vpadstr);
-
         scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
-        efl_gfx_arrangement_content_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
+        elm_box_padding_set(sd->palette_box, h_pad * scale, v_pad * scale);
 
         EINA_LIST_FOREACH(sd->items, elist, eo_item)
           {
@@ -1498,7 +1499,7 @@ _picker_sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_canvas_group_group_calculate(Eo *obj, Elm_Colorselector_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
 
@@ -1533,7 +1534,7 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
         return;
      }
 
-   efl_pack_layout_request(sd->palette_box);
+   efl_canvas_group_calculate(sd->palette_box);
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 }
@@ -1567,8 +1568,7 @@ _on_color_long_press(void *data)
 
    sd->longpress_timer = NULL;
 
-   efl_event_callback_legacy_call
-     (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED, EO_OBJ(item));
+   evas_object_smart_callback_call(WIDGET(item), "color,item,longpressed", EO_OBJ(item));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1642,8 +1642,7 @@ _on_color_released(void *data,
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
-   efl_event_callback_legacy_call
-     (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, EO_OBJ(item));
+   evas_object_smart_callback_call(WIDGET(item), "color,item,selected", EO_OBJ(item));
 
    eo_temp_item = eina_list_data_get(sd->selected);
    if (eo_temp_item && (eo_temp_item != EO_OBJ(item)))
@@ -1873,7 +1872,7 @@ _palette_colors_load(Evas_Object *obj)
         item->color->b = color->b;
         item->color->a = color->a;
 
-        efl_pack(sd->palette_box, VIEW(item));
+        elm_box_pack_end(sd->palette_box, VIEW(item));
         evas_object_color_set(item->color_obj,
                               (item->color->r * item->color->a) / 255,
                               (item->color->g * item->color->a) / 255,
@@ -1884,14 +1883,6 @@ _palette_colors_load(Evas_Object *obj)
      }
 
    sd->config_load = EINA_TRUE;
-}
-
-static inline void
-_palette_box_prepare(Eo *o)
-{
-   efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_entity_visible_set(o, EINA_FALSE);
 }
 
 static void
@@ -1906,16 +1897,15 @@ _create_colorpalette(Evas_Object *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->palette_box) return;
-   if (elm_widget_is_legacy(obj))
-     {
-        sd->palette_box = elm_legacy_add(EFL_UI_BOX_FLOW_CLASS, obj);
-        evas_object_size_hint_align_set(sd->palette_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-   else
-     {
-        sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj);
-     }
-   _palette_box_prepare(sd->palette_box);
+   sd->palette_box = elm_box_add(obj);
+   elm_box_layout_set
+     (sd->palette_box, evas_object_box_layout_flow_horizontal, NULL, NULL);
+   elm_box_horizontal_set(sd->palette_box, EINA_TRUE);
+   evas_object_size_hint_weight_set
+     (sd->palette_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set
+     (sd->palette_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_homogeneous_set(sd->palette_box, EINA_TRUE);
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
@@ -1923,8 +1913,8 @@ _create_colorpalette(Evas_Object *obj)
    if (vpadstr) v_pad = atoi(vpadstr);
 
    scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
-   efl_gfx_arrangement_content_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
-   efl_gfx_arrangement_content_align_set(sd->palette_box, 0.0, 0.0);
+   elm_box_padding_set(sd->palette_box, h_pad * scale, v_pad * scale);
+   elm_box_align_set(sd->palette_box, 0.0, 0.0);
    if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
      elm_layout_content_set(obj, "palette", sd->palette_box);
    sd->palette_name = eina_stringshare_add("default");
@@ -2465,7 +2455,7 @@ _elm_colorselector_palette_color_add(Eo *obj, Elm_Colorselector_Data *sd, int r,
    item->color->b = b;
    item->color->a = a;
 
-   efl_pack(sd->palette_box, VIEW(item));
+   elm_box_pack_end(sd->palette_box, VIEW(item));
    evas_object_color_set(item->color_obj,
                          (item->color->r * item->color->a) / 255,
                          (item->color->g * item->color->a) / 255,
@@ -2538,8 +2528,7 @@ _elm_color_item_selected_set(Eo *eo_item,
           if (eo_item == eo_temp_item) sd->selected = l;
 
         elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
-        efl_event_callback_legacy_call
-          (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, eo_item);
+        evas_object_smart_callback_call(WIDGET(item), "color,item,selected", EO_OBJ(item));
      }
 }
 
@@ -2745,7 +2734,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_colorselector, Elm_Colorselector_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_COLORSELECTOR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_colorselector), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_colorselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_colorselector)
 
 #include "elm_colorselector_eo.c"

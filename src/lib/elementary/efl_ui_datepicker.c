@@ -18,15 +18,15 @@
      Efl_Time t = efl_datetime_manager_value_get(pd->dt_manager);    \
      pd->cur_date[DATEPICKER_YEAR] = t.tm_year + 1900;               \
      pd->cur_date[DATEPICKER_MONTH] = t.tm_mon + 1;                  \
-     pd->cur_date[DATEPICKER_DAY] = t.tm_mday;                       \
+     pd->cur_date[DATEPICKER_DAY] = t.tm_mday + 1;                   \
    } while (0)
 
 #define DATE_SET()                                                   \
    do {                                                              \
-     Efl_Time t;                                                     \
+     Efl_Time t = { 0 };                                             \
      t.tm_year = pd->cur_date[DATEPICKER_YEAR] - 1900;               \
      t.tm_mon = pd->cur_date[DATEPICKER_MONTH] - 1;                  \
-     t.tm_mday = pd->cur_date[DATEPICKER_DAY];                       \
+     t.tm_mday = pd->cur_date[DATEPICKER_DAY]  - 1;                  \
      t.tm_sec = 0;                                                   \
      efl_datetime_manager_value_set(pd->dt_manager, t);              \
    } while (0)
@@ -133,7 +133,7 @@ _field_changed_cb(void *data, const Efl_Event *ev)
    if (!(ev->object == pd->day))
      {
         max_day = _max_days_get((pd->cur_date[DATEPICKER_YEAR] - 1900), (pd->cur_date[DATEPICKER_MONTH] - 1));
-        efl_ui_range_min_max_set(pd->day, 1, max_day);
+        efl_ui_range_limits_set(pd->day, 1, max_day);
      }
 
    if (_validate_date_limits(pd->cur_date, pd->min_date, EINA_FALSE) ||
@@ -144,7 +144,7 @@ _field_changed_cb(void *data, const Efl_Event *ev)
      }
 
    DATE_SET();
-   efl_event_callback_call(data, EFL_UI_DATEPICKER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, EFL_UI_DATEPICKER_EVENT_DATE_CHANGED, NULL);
 }
 
 static void
@@ -160,25 +160,25 @@ _fields_init(Eo *obj)
 
    //Field create.
    pd->year = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
-                      efl_ui_range_min_max_set(efl_added, 1970, 2037),
-                      efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
-                      efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                      efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                      efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
+                      efl_ui_range_limits_set(efl_added, 1900, 2037),
+                      efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
+                      efl_ui_spin_button_direct_text_input_set(efl_added, EINA_TRUE),
+                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
+                      efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->month = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
-                       efl_ui_range_min_max_set(efl_added, 1, 12),
-                       efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
-                       efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                       efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                       efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
+                       efl_ui_range_limits_set(efl_added, 1, 12),
+                       efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
+                       efl_ui_spin_button_direct_text_input_set(efl_added, EINA_TRUE),
+                       efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
+                       efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->day = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
-                     efl_ui_range_min_max_set(efl_added, 1, 31),
-                     efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
-                     efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                     efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
+                     efl_ui_range_limits_set(efl_added, 1, 31),
+                     efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
+                     efl_ui_spin_button_direct_text_input_set(efl_added, EINA_TRUE),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
+                     efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
 
    DATE_GET();
    //Using system config?
@@ -222,20 +222,6 @@ _fields_init(Eo *obj)
      }
 }
 
-EOLIAN static void
-_efl_ui_datepicker_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Datepicker_Data *_pd EINA_UNUSED)
-{
-    Evas_Coord minw = -1, minh = -1;
-    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    edje_object_size_min_restricted_calc
-    (wd->resize_obj, &minw, &minh, minw, minh);
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    evas_object_size_hint_min_set(obj, minw, minh);
-    evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eo *
 _efl_ui_datepicker_efl_object_constructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
 {
@@ -261,14 +247,13 @@ _efl_ui_datepicker_efl_object_constructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_datepicker_efl_object_destructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
+_efl_ui_datepicker_efl_object_destructor(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED)
 {
-   efl_del(pd->dt_manager);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_datepicker_min_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
+_efl_ui_datepicker_date_min_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
 {
    int new_time[EFL_UI_DATEPICKER_TYPE_COUNT] = {year, month, day};
 
@@ -285,7 +270,7 @@ _efl_ui_datepicker_min_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int 
 }
 
 EOLIAN static void
-_efl_ui_datepicker_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
+_efl_ui_datepicker_date_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
 {
    *year = pd->min_date[DATEPICKER_YEAR];
    *month = pd->min_date[DATEPICKER_MONTH];
@@ -293,7 +278,7 @@ _efl_ui_datepicker_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd
 }
 
 EOLIAN static void
-_efl_ui_datepicker_max_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
+_efl_ui_datepicker_date_max_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
 {
    int new_time[EFL_UI_DATEPICKER_TYPE_COUNT] = {year, month, day};
 
@@ -310,7 +295,7 @@ _efl_ui_datepicker_max_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int 
 }
 
 EOLIAN static void
-_efl_ui_datepicker_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
+_efl_ui_datepicker_date_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
 {
    *year = pd->max_date[DATEPICKER_YEAR];
    *month = pd->max_date[DATEPICKER_MONTH];
@@ -341,8 +326,5 @@ _efl_ui_datepicker_date_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *p
    *month = pd->cur_date[DATEPICKER_MONTH];
    *day = pd->cur_date[DATEPICKER_DAY];
 }
-
-#define EFL_UI_DATEPICKER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_datepicker), \
 
 #include "efl_ui_datepicker.eo.c"

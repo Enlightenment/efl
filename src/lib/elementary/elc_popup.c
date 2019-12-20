@@ -234,7 +234,7 @@ _focus_changed_popup(void *data, const Efl_Event *ev)
 EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed_popup },
 )
-
+static void _on_table_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 EOLIAN static void
 _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
 {
@@ -248,6 +248,9 @@ _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
+   if (sd->tbl)
+     evas_object_event_callback_del_full(sd->tbl, EVAS_CALLBACK_DEL,
+                                    _on_table_del, obj);
    efl_event_callback_array_del(sd->notify, composition_cb(), obj);
 
    sd->last_button_number = 0;
@@ -455,7 +458,7 @@ _item_sizing_eval(Elm_Popup_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_canvas_group_group_calculate(Eo *obj, Elm_Popup_Data *sd)
 {
    Eina_List *elist;
    Elm_Popup_Item_Data *it;
@@ -1036,8 +1039,11 @@ _content_text_set(Evas_Object *obj,
    evas_object_event_callback_add
      (sd->text_content_obj, EVAS_CALLBACK_DEL, _on_text_content_del, obj);
 
-   elm_label_line_wrap_set(sd->text_content_obj, sd->content_text_wrap_type);
+   elm_label_line_wrap_set(sd->text_content_obj, ELM_WRAP_NONE);
    elm_object_text_set(sd->text_content_obj, text);
+   efl_canvas_group_calculate(sd->text_content_obj);
+   elm_label_line_wrap_set(sd->text_content_obj, sd->content_text_wrap_type);
+
    evas_object_size_hint_weight_set
      (sd->text_content_obj, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set
@@ -1865,7 +1871,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_POPUP_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
 #include "elm_popup_eo.c"

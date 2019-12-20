@@ -298,11 +298,21 @@
  */
 
 #include "elm_object_item.h"
+#include "efl_ui.eot.h"
+typedef Eo Efl_Ui_Focus_Manager;
+
+extern EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+
+#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
+#include "efl_ui_focus_object.eo.h"
+#include "efl_ui_focus_manager.eo.h"
 
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Object_Item *item, const char *emission, const char *source);
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
+typedef void (*Elm_Widget_On_Show_Region_Cb)(void *data, Evas_Object *obj, Eina_Rect region);
+
 
 #include "efl_ui_widget.eo.h"
 #include "elm_widget_item_container_eo.h"
@@ -321,9 +331,7 @@ typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
  */
 typedef struct _Elm_Widget_Smart_Data
 {
-   Evas_Object                  *obj; /**< object pointer for this widget smart data */
    Evas_Object                  *parent_obj; /**< parent object of a widget in the elementary tree */
-   Evas_Coord                    x, y, w, h;
    Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
@@ -349,21 +357,19 @@ typedef struct _Elm_Widget_Smart_Data
    const char                   *style;
    const char                   *access_info;
    const char                   *accessible_name;
-   unsigned int                  focus_order;
-   Eina_Bool                     focus_order_on_calc;
 
    int                           child_drag_x_locked;
    int                           child_drag_y_locked;
    int                           disabled;
+   int                           tree_unfocusable;
 
    Eina_Inlist                  *translate_strings;
-   Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
    /* this is a hook to be set on-the-fly on widgets. this is code
     * handling the request of showing a specific region from an inner
     * widget (mainly issued by entries, on cursor moving) */
    void                         *on_show_region_data;
-   Efl_Ui_Scrollable_On_Show_Region on_show_region;
+   Elm_Widget_On_Show_Region_Cb  on_show_region;
    Eina_Free_Cb                  on_show_region_data_free;
 
    Elm_Focus_Move_Policy         focus_move_policy;
@@ -386,16 +392,19 @@ typedef struct _Elm_Widget_Smart_Data
    } legacy_focus;
    struct {
       Efl_Model *model;
+      Efl_Model_Provider *provider;
       Eina_Hash *model_lookup;
       Eina_Hash *view_lookup;
+      Eina_Bool  registered : 1;
+      Eina_Bool  callback_to_provider : 1;
    } properties;
+   void                          *shared_win_data;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
    Eina_Bool                     can_focus : 1;
    Eina_Bool                     focused : 1;
    Eina_Bool                     top_win_focused : 1;
-   Eina_Bool                     tree_unfocusable : 1;
    Eina_Bool                     focus_move_policy_auto_mode : 1; /* This is TRUE by default */
    Eina_Bool                     highlight_ignore : 1;
    Eina_Bool                     highlight_in_theme : 1;
@@ -588,7 +597,7 @@ EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
 EAPI Eina_Error  elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
-EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb data_free);
+EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Elm_Widget_On_Show_Region_Cb func, Eina_Free_Cb data_free);
 EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
@@ -661,8 +670,8 @@ EAPI void             elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt);
 EAPI void             elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt);
 EAPI void             elm_widget_cursor_add(Evas_Object *obj, Elm_Cursor *cur);
 EAPI void             elm_widget_cursor_del(Evas_Object *obj, Elm_Cursor *cur);
-EAPI void             elm_widget_scroll_lock_set(Evas_Object *obj, Efl_Ui_Scroll_Block block);
-EAPI Efl_Ui_Scroll_Block elm_widget_scroll_lock_get(const Evas_Object *obj);
+EAPI void             elm_widget_scroll_lock_set(Evas_Object *obj, Efl_Ui_Layout_Orientation block);
+EAPI Efl_Ui_Layout_Orientation elm_widget_scroll_lock_get(const Evas_Object *obj);
 EAPI int              elm_widget_scroll_child_locked_x_get(const Evas_Object *obj);
 EAPI int              elm_widget_scroll_child_locked_y_get(const Evas_Object *obj);
 EAPI Eina_Error  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);

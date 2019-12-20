@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` popup_cxx_example.cc -o popup_cxx_example
 
 #define EFL_CXXPERIMENTAL
@@ -84,7 +99,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    auto repeat_events_test_cb(std::bind([]() {
         std::cout << "Repeat Test Button is clicked" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, repeat_events_test_btn, repeat_events_test_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, repeat_events_test_btn, repeat_events_test_cb);
    g_repeat_events_test_btn = repeat_events_test_btn;
 
 
@@ -110,7 +125,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
           }
         }
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, create_btn, create_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, create_btn, create_cb);
 
 
    //Delete Button
@@ -128,7 +143,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         else
           std::cout << "Efl.Ui.Popup does not exist" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, delete_btn, delete_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, delete_btn, delete_cb);
 
 
    //Repeat Events Button
@@ -156,7 +171,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
            repeat_events_btn.text_set("Unset Repeat Events");
         }
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, repeat_events_btn, repeat_events_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, repeat_events_btn, repeat_events_cb);
 
 
    //Dummy Button
@@ -184,7 +199,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
            dummy_btn.text_set("Hide Dummy Button");
         }
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, dummy_btn, dummy_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, dummy_btn, dummy_cb);
 
 
    //Backwall Button
@@ -215,7 +230,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
            backwall_btn.text_set("Set Backwall");
         }
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, backwall_btn, backwall_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, backwall_btn, backwall_cb);
 
 
    //Timeout Button
@@ -227,10 +242,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    auto timeout_set_cb(std::bind([]() {
         if (!g_popup) return;
 
-        g_popup.timeout_set(3);
+        g_popup.closing_timeout_set(3);
         std::cout << "Timeout is set to 3 seconds" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, timeout_btn, timeout_set_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, timeout_btn, timeout_set_cb);
 
 
    //Center Button
@@ -245,7 +260,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         g_popup.align_set(EFL_UI_POPUP_ALIGN_CENTER);
         std::cout << "Align Center" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, center_btn, center_align_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, center_btn, center_align_cb);
 
 
    //Top Button
@@ -260,7 +275,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         g_popup.align_set(EFL_UI_POPUP_ALIGN_TOP);
         std::cout << "Align Top" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, top_btn, top_align_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, top_btn, top_align_cb);
 
 
    //Left Button
@@ -275,7 +290,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         g_popup.align_set(EFL_UI_POPUP_ALIGN_LEFT);
         std::cout << "Align Left" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, left_btn, left_align_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, left_btn, left_align_cb);
 
 
    //Right Button
@@ -290,7 +305,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         g_popup.align_set(EFL_UI_POPUP_ALIGN_RIGHT);
         std::cout << "Align Right" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, right_btn, right_align_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, right_btn, right_align_cb);
 
 
    //Bottom Button
@@ -305,7 +320,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         g_popup.align_set(EFL_UI_POPUP_ALIGN_BOTTOM);
         std::cout << "Align Bottom" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, bottom_btn, bottom_align_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, bottom_btn, bottom_align_cb);
 
 
    //Position Button
@@ -320,6 +335,6 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         g_popup.position_set({0, 0});
         std::cout << "Position is set to (0, 0)" << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, position_btn, position_set_cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, position_btn, position_set_cb);
 }
 EFL_MAIN()

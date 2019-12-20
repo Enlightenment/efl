@@ -693,14 +693,9 @@ _ecore_con_eet_base_efl_object_destructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 EOLIAN static Efl_Object *
 _ecore_con_eet_base_efl_object_finalize(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 {
-   if (pd->server) return efl_finalize(efl_super(obj, ECORE_CON_EET_BASE_CLASS));
+   if (!pd->server) return NULL;
 
-   eet_data_descriptor_free(pd->edd);
-   eet_data_descriptor_free(pd->matching);
-   eina_hash_free(pd->data_callbacks);
-   eina_hash_free(pd->raw_data_callbacks);
-
-   return NULL;
+   return efl_finalize(efl_super(obj, ECORE_CON_EET_BASE_CLASS));
 }
 
 EOLIAN static void

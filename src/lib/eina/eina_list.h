@@ -23,10 +23,16 @@
 
 #include "eina_config.h"
 
+// magic number checks for eina list nodes - this costs extra memory and a
+// few cycles for some safety = aybe during debugging/devel only?
+//#define EINA_LIST_MAGIC 1
+
 #include "eina_types.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
-#include "eina_magic.h"
+#ifdef EINA_LIST_MAGIC
+# include "eina_magic.h"
+#endif
 
 /**
  * @page eina_list_01_example_page Adding elements to Eina_List
@@ -43,11 +49,8 @@
  * @until eina_init
  * Here we add a sequence of elements to our list. By using append we add
  * elements to the end of the list, so the list will look like this:@n
- * @htmlonly
- * <img src="eina_list_example_01_a.png" style="max-width: 100%;" />
- * <a href="eina_list_example_01_a.png">Full-size</a>
- * @endhtmlonly
  * @image rtf eina_list_example_01_a.png
+ * @image html eina_list_example_01_a.png
  * @image latex eina_list_example_01_a.eps "" width=\textwidth
  * @until roslin
  * There are a couple of interesting things happening here, first is that we are
@@ -76,11 +79,8 @@
  * far:
  * @until lampkin
  * With this additions our list now looks like this:@n
- * @htmlonly
- * <img src="eina_list_example_01_b.png" style="max-width: 100%;" />
- * <a href="eina_list_example_01_b.png">Full-size</a>
- * @endhtmlonly
  * @image rtf eina_list_example_01_b.png
+ * @image html eina_list_example_01_b.png
  * @image latex eina_list_example_01_b.eps "" width=\textwidth
  *
  * Once done using the list it needs to be freed, and since we are done with
@@ -249,11 +249,8 @@
  * @ref Eina_List nodes keep references to the previous node, the next node, its
  * data and to an accounting structure.
  *
- * @htmlonly
- * <img src="eina_list.png" style="max-width: 100%;" />
- * <a href="eina_list.png">Full-size</a>
- * @endhtmlonly
  * @image rtf eina_list.png
+ * @image html eina_list.png
  * @image latex eina_list.eps width=5cm
  *
  * @ref Eina_List_Accounting is used to improve the performance of some
@@ -323,8 +320,9 @@ struct _Eina_List
    Eina_List            *next; /**< Next member in the list */
    Eina_List            *prev; /**< Previous member in the list */
    Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
-
+#ifdef EINA_LIST_MAGIC
    EINA_MAGIC
+#endif
 };
 
 /**
@@ -1381,11 +1379,8 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
- * @htmlonly
- * <img src="eina-list-foreach.png" style="max-width: 100%;" />
- * <a href="eina-list-foreach.png">Full-size</a>
- * @endhtmlonly
  * @image latex eina-list-foreach.eps "" width=\textwidth
+ * @image html eina-list-foreach.png
  *
  * It can be used to free list data, as in the following example:
  *
@@ -1443,11 +1438,8 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
- * @htmlonly
- * <img src="eina-list-reverse-foreach.png" style="max-width: 100%;" />
- * <a href="eina-list-reverse-foreach.png">Full-size</a>
- * @endhtmlonly
  * @image latex eina-list-reverse-foreach.eps "" width=\textwidth
+ * @image html eina-list-reverse-foreach.png
  *
  * It can be used to free list data, as in the following example:
  *
@@ -1506,11 +1498,8 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * The following diagram illustrates this macro iterating over a list of four
  * elements ("one", "two", "three" and "four"):
- * @htmlonly
- * <img src="eina-list-foreach-safe.png" style="max-width: 100%;" />
- * <a href="eina-list-foreach-safe.png">Full-size</a>
- * @endhtmlonly
  * @image latex eina-list-foreach-safe.eps "" width=\textwidth
+ * @image html eina-list-foreach-safe.png
  *
  * This macro can be used to free list nodes, as in the following example:
  *
@@ -1567,11 +1556,8 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * The following diagram illustrates this macro iterating over a list of four
  * elements ("one", "two", "three" and "four"):
- * @htmlonly
- * <img src="eina-list-reverse-foreach-safe.png" style="max-width: 100%;" />
- * <a href="eina-list-reverse-foreach-safe.png">Full-size</a>
- * @endhtmlonly
  * @image latex eina-list-reverse-foreach-safe.eps "" width=\textwidth
+ * @image html eina-list-reverse-foreach-safe.png
  *
  * This macro can be used to free list nodes, as in the following example:
  *
@@ -1620,11 +1606,8 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * The following diagram illustrates this macro iterating over a list of four
  * elements ("one", "two", "three" and "four"):
- * @htmlonly
- * <img src="eina-list-free.png" style="max-width: 100%;" />
- * <a href="eina-list-free.png">Full-size</a>
- * @endhtmlonly
  * @image latex eina-list-free.eps "" width=\textwidth
+ * @image html eina-list-free.png
  *
  * If you do not need to release node data, it is easier to call #eina_list_free().
  *

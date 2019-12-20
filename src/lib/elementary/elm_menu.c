@@ -395,7 +395,7 @@ _parent_del_cb(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _parent_resize_cb, wd->obj);
+     (obj, EVAS_CALLBACK_RESIZE, _parent_resize_cb, data);
    sd->parent = NULL;
 }
 
@@ -437,8 +437,8 @@ static void
 _hover_dismissed_cb(void *data, const Efl_Event *event)
 {
    _menu_hide(data, event->object, event->info);
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked", NULL);
    efl_event_callback_legacy_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
 }
 
@@ -780,13 +780,13 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
         if (menu_bar)
           {
              efl_event_callback_add
-               (item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+               (item->submenu.hv, EFL_INPUT_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "main_menu_submenu//%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
         else
           {
-             efl_event_callback_del(item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+             efl_event_callback_del(item->submenu.hv, EFL_INPUT_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "submenu/%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }

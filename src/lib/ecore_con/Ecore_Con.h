@@ -1126,12 +1126,8 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  * server to client and client to server, can be represented in the following
  * sequence diagram:
  *
- * @htmlonly
- * <img src="ecore_con-client-server.png" style="max-width: 400px"/>
- * <a href="ecore_con-client-server.png">Full size</a>
- * @endhtmlonly
- *
  * @image rtf ecore_con-client-server.png
+ * @image html ecore_con-client-server.png
  * @image latex ecore_con-client-server.eps width=\\textwidth
  *
  * Please notice the important difference between these two codes: the first is

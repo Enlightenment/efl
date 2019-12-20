@@ -59,9 +59,7 @@ pub_eo_files = [
   'efl_generic_model.eo',
   'efl_container_model.eo',
   'efl_boolean_model.eo',
-  'efl_select_model.eo',
   'efl_composite_model.eo',
-  'efl_view_model.eo',
   'efl_core_env.eo',
   'efl_core_proc_env.eo',
   'efl_core_command_line.eo',
@@ -141,11 +139,6 @@ ecore_src = [
   'efl_container_model.c',
   'efl_composite_model.c',
   'efl_boolean_model.c',
-  'efl_select_model.c',
-  'efl_composite_model_private.h',
-  'efl_model_accessor_view.c',
-  'efl_model_accessor_view_private.h',
-  'efl_view_model.c',
   'efl_filter_model.c',
   'efl_linear_interpolator.c',
   'efl_accelerate_interpolator.c',
@@ -192,12 +185,11 @@ if get_option('glib') == true and sys_windows == false
 endif
 
 if get_option('g-mainloop') == true
-  config_h.set('USE_G_MAIN_LOOP', '1')
-endif
-
-if get_option('gstreamer') == true
-  gstreamer = dependency('gstreamer-1.0')
-  ecore_deps += gstreamer
+  if get_option('glib') == false
+    error('g-mainloop enabled by glib not. Please enable with -Dglib=true')
+  else
+    config_h.set('USE_G_MAIN_LOOP', '1')
+  endif
 endif
 
 if get_option('systemd') == true

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 by its authors. See AUTHORS.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef EOLIAN_MONO_FUNCTION_DEFINITION_HH
 #define EOLIAN_MONO_FUNCTION_DEFINITION_HH
 
@@ -6,10 +21,12 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 
+#include "grammar/kleene.hpp"
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
+#include "grammar/counter.hpp"
 #include "logging.hh"
 #include "type.hh"
 #include "name_helpers.hh"
@@ -59,7 +76,7 @@ struct native_function_definition_generator
     if(!as_generator
        (
         indent << eolian_mono::marshall_annotation(true) << "\n"
-        << indent << "public delegate "
+        << indent << "internal delegate "
         << eolian_mono::marshall_type(true)
         << " "
         << string << "_api_delegate(" << (f.is_static ? "" : "System.IntPtr obj")
@@ -74,10 +91,19 @@ struct native_function_definition_generator
 
     // Delegate holder (so it can't be collected).
     if(!as_generator
-       (indent << "public static Efl.Eo.FunctionWrapper<" << string << "_api_delegate> " << string << "_ptr = new Efl.Eo.FunctionWrapper<"
+       (indent << "internal static readonly Efl.Eo.FunctionWrapper<" << string << "_api_delegate> " << string << "_ptr = new Efl.Eo.FunctionWrapper<"
           << string << "_api_delegate>(Module, \"" << string << "\");\n\n")
        .generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name, f.c_name), context))
       return false;
+
+    // We do not generate the wrapper to be called from C for non public interface member directly.
+    if (blacklist::is_non_public_interface_member(f, *klass))
+      return true;
+
+    // Do not generate static method in interface
+    if (((klass->type == attributes::class_type::interface_) ||
+        (klass->type == attributes::class_type::mixin)) && f.is_static)
+      return true;
 
     // Actual method implementation to be called from C.
     std::string return_type;
@@ -85,18 +111,20 @@ struct native_function_definition_generator
       return false;
 
     std::string klass_cast_name;
-    if (klass->type != attributes::class_type::interface_)
-      klass_cast_name = name_helpers::klass_inherit_name(*klass);
-    else
+    if ((klass->type == attributes::class_type::interface_) ||
+        ((klass->type == attributes::class_type::mixin) && !f.is_static))
       klass_cast_name = name_helpers::klass_interface_name(*klass);
+    else
+      klass_cast_name = name_helpers::klass_inherit_name(*klass);
 
-    std::string self = "Efl.Eo.Globals.efl_super(obj, Efl.Eo.Globals.efl_class_get(obj))";
+    std::string self = "Efl.Eo.Globals.Super(obj, Efl.Eo.Globals.GetClass(obj))";
 
     if (f.is_static)
       self = "";
 
     if(!as_generator
-       (indent << "private static "
+       (indent << "[SuppressMessage(\"Microsoft.Reliability\", \"CA2000:DisposeObjectsBeforeLosingScope\", Justification = \"The instantiated objects can be stored in the called Managed API method.\")]\n"
+        << indent << "private static "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
@@ -104,14 +132,14 @@ struct native_function_definition_generator
         << ")\n"
         << indent << "{\n"
         << indent << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
-        << indent << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.PrivateDataGet(pd);\n"
-        << indent << scope_tab << "if (wrapper != null)\n"
+        << indent << scope_tab << "var ws = Efl.Eo.Globals.GetWrapperSupervisor(obj);\n"
+        << indent << scope_tab << "if (ws != null)\n"
         << indent << scope_tab << "{\n"
-        << eolian_mono::native_function_definition_preamble()
+        << indent << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble() << "\n"
         << indent << scope_tab << scope_tab << "try\n"
         << indent << scope_tab << scope_tab << "{\n"
         << indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
-        << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")wrapper).") << string
+        << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << indent << scope_tab << scope_tab << "}\n"
         << indent << scope_tab << scope_tab << "catch (Exception e)\n"
@@ -119,7 +147,7 @@ struct native_function_definition_generator
         << indent << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
         << indent << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
         << indent << scope_tab << scope_tab << "}\n\n"
-        << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
+        << indent << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
         << indent << scope_tab << "}\n"
         << indent << scope_tab << "else\n"
         << indent << scope_tab << "{\n"
@@ -159,12 +187,18 @@ struct function_definition_generator
   function_definition_generator(bool do_super = false)
     : do_super(do_super)
   {}
-  
+
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
+
+    bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
     if(blacklist::is_function_blacklisted(f, context))
+      return true;
+
+    // Do not generate static function for concrete class
+    if (is_concrete && f.is_static)
       return true;
 
     std::string return_type;
@@ -177,22 +211,23 @@ struct function_definition_generator
 
     std::string self = "this.NativeHandle";
 
-    // inherited is set in the constructor, true if this instance is from a pure C# class (not generated).
+    // IsGeneratedBindingClass is set in the constructor, true if this
+    // instance is from a pure C# class (not generated).
     if (do_super && !f.is_static)
-      self = "(inherited ? Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass) : " + self + ")";
+      self = "(IsGeneratedBindingClass ? " + self + " : Efl.Eo.Globals.Super(" + self + ", this.NativeClass))";
     else if (f.is_static)
       self = "";
 
     if(!as_generator
-       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
-        << ") {\n "
-        << eolian_mono::function_definition_preamble()
+       (scope_tab << eolian_mono::function_scope_get(f) << ((do_super && !f.is_static) ? "virtual " : "") << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+        << ") {\n"
+        << scope_tab(2) << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
         << self
-        << ((!f.is_static && (f.parameters.size() > 0)) ? "," : "")
+        << ((!f.is_static && (f.parameters.size() > 0)) ? ", " : "")
         << (argument_invocation % ", ") << ");\n"
-        << eolian_mono::function_definition_epilogue()
-        << " }\n")
+        << scope_tab(2) << eolian_mono::function_definition_epilogue()
+        << scope_tab(1) << "}\n\n")
        .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters, f, f.c_name, f.parameters, f), context))
       return false;
 
@@ -221,24 +256,95 @@ struct native_function_definition_parameterized
   }
 } const native_function_definition;
 
+struct property_extension_method_definition_generator
+{
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::property_def const& property, Context context) const
+   {
+      if (blacklist::is_property_blacklisted(property, context))
+        return true;
+
+      auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+
+      if (!options.want_beta)
+        return true; // Bindable is a beta feature for now.
+
+      auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
+      auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
+
+      std::string managed_name = name_helpers::property_managed_name(property);
+
+      if (get_params > 0 || set_params > 1)
+        return true;
+
+      std::string dir_mod;
+      if (property.setter.is_engaged())
+        dir_mod = direction_modifier(property.setter->parameters[0]);
+
+      if (property.setter.is_engaged())
+        {
+          attributes::type_def prop_type = property.setter->parameters[0].type;
+          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+                            << name_helpers::klass_full_concrete_or_interface_name(cls)
+                            << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+                            << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(\"" << property.name << "\", fac);\n"
+                            << scope_tab << "}\n\n"
+                            ).generate(sink, std::make_tuple(prop_type, prop_type), context))
+            return false;
+        }
+
+      // Do we need BindablePart extensions for this class?
+      // IContent parts are handled directly through BindableFactoryParts
+      if (!helpers::inherits_from(cls, "Efl.Ui.LayoutPart") || helpers::inherits_from(cls, "Efl.IContent"))
+        return true;
+
+      if (property.setter.is_engaged())
+        {
+          attributes::type_def prop_type = property.setter->parameters[0].type;
+          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
+                            << name_helpers::klass_full_concrete_or_interface_name(cls)
+                            << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+                            << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
+                            << scope_tab << "}\n\n"
+                            ).generate(sink, std::make_tuple(prop_type, prop_type), context))
+            return false;
+        }
+
+      return true;
+   }
+
+   grammar::attributes::klass_def const& cls;
+};
+
+property_extension_method_definition_generator property_extension_method_definition (grammar::attributes::klass_def const& cls)
+{
+  return {cls};
+}
+
 struct property_wrapper_definition_generator
 {
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& property, Context const& context) const
    {
+      using efl::eolian::grammar::attribute_reorder;
+      using efl::eolian::grammar::counter;
+      using efl::eolian::grammar::attributes::parameter_direction;
+      using efl::eolian::grammar::attributes::parameter_def;
+
       if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
         return true;
 
-      bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
+      bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
       bool is_static = (property.getter.is_engaged() && property.getter->is_static)
                        || (property.setter.is_engaged() && property.setter->is_static);
+      bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
 
 
-      if (interface && is_static)
+      if ((is_concrete || is_interface) && is_static)
         return true;
 
       auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
-      auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
+      //auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
 
       // C# properties must have a single value.
       //
@@ -246,16 +352,62 @@ struct property_wrapper_definition_generator
       // meaning they should have 0 parameters.
       //
       // For setters, we ignore the return type - usually boolean.
-      if (get_params > 0 || set_params > 1)
+      // if (get_params > 0 || set_params > 1)
+      //   return true;
+
+      if (property.getter
+          && std::find_if (property.getter->parameters.begin()
+                           , property.getter->parameters.end()
+                           , [] (parameter_def const& p)
+                           {
+                             return p.direction != parameter_direction::out;
+                           }) != property.getter->parameters.end())
+        return true;
+      if (property.setter
+          && std::find_if (property.setter->parameters.begin()
+                           , property.setter->parameters.end()
+                           , [] (parameter_def const& p)
+                           {
+                             return p.direction != parameter_direction::in;
+                           }) != property.setter->parameters.end())
         return true;
 
-      attributes::type_def prop_type;
+      if (property.getter && property.setter)
+      {
+        if (get_params != 0 && property.setter->parameters.size() != property.getter->parameters.size())
+          return true;
+      }
 
-      if (property.getter.is_engaged())
-        prop_type = property.getter->return_type;
-      else if (property.setter.is_engaged())
-        prop_type = property.setter->parameters[0].type;
-      else
+      std::vector<attributes::parameter_def> parameters;
+
+      if (property.setter.is_engaged())
+      {
+        std::transform (property.setter->parameters.begin(), property.setter->parameters.end()
+                        , std::back_inserter(parameters)
+                        , [] (parameter_def p) -> parameter_def
+                        {
+                          //p.direction = efl::eolian::attributes::parameter_direction::in;
+                          return p;
+                        });
+      }
+      else if (property.getter.is_engaged())
+      {
+        // if getter has parameters, then we ignore return type, otherwise
+        // we use the return type.
+        if (get_params == 0)
+          parameters.push_back({parameter_direction::in
+                , property.getter->return_type, "propertyResult", {}
+                , property.getter->unit});
+        else
+          std::transform (property.getter->parameters.begin(), property.getter->parameters.end()
+                          , std::back_inserter(parameters)
+                          , [] (parameter_def p) -> parameter_def
+                          {
+                            p.direction = parameter_direction::in;
+                            return p;
+                          });
+      }
+        else
         {
            EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Property must have either a getter or a setter." << std::endl;
            return false;
@@ -267,23 +419,126 @@ struct property_wrapper_definition_generator
 
       std::string managed_name = name_helpers::property_managed_name(property);
 
-      if (!as_generator(
-                  documentation(1)
-                  << scope_tab << (interface ? "" : "public ") << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
-            ).generate(sink, std::make_tuple(property, prop_type), context))
-        return false;
+      std::string scope = "public ";
+      std::string get_scope = property.getter.is_engaged() ? eolian_mono::function_scope_get(*property.getter) : "";
+      bool is_get_public = get_scope == "public ";
+      std::string set_scope = property.setter.is_engaged() ? eolian_mono::function_scope_get(*property.setter) : "";
+      bool is_set_public = set_scope == "public ";
 
-      if (property.getter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << "get " << (interface ? ";" : "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }") << "\n"
+      // No need to generate this wrapper as no accessor is public.
+      if (is_interface && (!is_get_public && !is_set_public))
+          return true;
+
+      // C# interface members are declared automatically as public
+      if (is_interface)
+        {
+           scope = "";
+           get_scope = "";
+           set_scope = "";
+        }
+      else if ((get_scope != "") && (get_scope == set_scope))
+        {
+           scope = get_scope;
+           get_scope = "";
+           set_scope = "";
+        }
+      else if (!property.setter.is_engaged() || (get_scope == scope))
+        {
+           scope = get_scope;
+           get_scope = "";
+        }
+      else if (!property.getter.is_engaged() || (set_scope == scope))
+        {
+           scope = set_scope;
+           set_scope = "";
+        }
+
+      if (parameters.size() == 1)
+      {
+        if (!as_generator(
+                    documentation(1)
+                    << scope_tab << scope << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
+              ).generate(sink, std::make_tuple(property, parameters[0].type), context))
+          return false;
+      }
+      else
+      {
+        if (!as_generator
+            (
+             documentation(1)
+             << scope_tab << scope << (is_static ? "static (" : "(")
+             << (attribute_reorder<1, -1>(type(true) /*<< " " << argument*/) % ", ") << ") "
+             << managed_name << " {\n"
+            ).generate(sink, std::make_tuple(property, parameters), context))
+          return false;
+      }
+
+      if (property.getter.is_engaged() && is_interface)
+      {
+        if (is_get_public)
+          if (!as_generator(scope_tab << scope_tab << set_scope <<  "get;\n"
+                            ).generate(sink, attributes::unused, context))
+            return false;
+      }
+      else if (property.getter.is_engaged() && get_params == 0/*parameters.size() == 1 && property.getter.is_engaged()*/)
+      {
+        if (!as_generator
+            (scope_tab << scope_tab << get_scope
+             << "get " << "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }\n"
             ).generate(sink, attributes::unused, context))
           return false;
+      }
+      else if (parameters.size() >= 1 && property.getter)
+      {
+        if (!as_generator
+                 (scope_tab << scope_tab << get_scope << "get "
+                  << "{\n"
+                  << *attribute_reorder<1, -1, 1>
+                    (scope_tab(3) << type(true) << " _out_"
+                     << argument(false) << " = default(" << type(true) << ");\n"
+                    )
+                  << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
+                  << "(" << (("out _out_" << argument(false)) % ", ") << ");\n"
+                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
+                  << scope_tab(2) << "}" << "\n"
+                 ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
+          return false;
+      }
+      // else if (parameters.size() == 1)
+      // {
+      //   if (!as_generator
+      //            (scope_tab << scope_tab << get_scope << "get "
+      //             << "{\n"
+      //             << *attribute_reorder<1, -1, 1>(scope_tab(3) << type(true) << " _out_" << argument(false) << " = default(" << type(true) << ");\n")
+      //             << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
+      //             << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
+      //             << scope_tab(3) << "return " << (("_out_"<< argument(false)) % ",") << ";\n"
+      //             << scope_tab(2) << "}" << "\n"
+      //            ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
+      //     return false;
+      // }
 
-      if (property.setter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << "set " << (interface ? ";" : "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }") << "\n"
+      if (property.setter.is_engaged() && is_interface)
+      {
+        if (is_set_public)
+          if (!as_generator(scope_tab << scope_tab << set_scope <<  "set;\n"
+                            ).generate(sink, attributes::unused, context))
+            return false;
+      }
+      else if (parameters.size() == 1 && property.setter.is_engaged())
+      {
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }\n"
             ).generate(sink, attributes::unused, context))
           return false;
+      }
+      else if (parameters.size() > 1 && property.setter.is_engaged())
+      {
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << ("{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod) << ((" value.Item" << counter(1)) % ", ") << "); }" << "\n"
+           ).generate(sink, parameters, context))
+          return false;
+      }
 
-      if (!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, context))
+      if (!as_generator(scope_tab << "}\n\n").generate(sink, attributes::unused, context))
         return false;
 
       return true;
@@ -311,6 +566,8 @@ struct is_eager_generator< ::eolian_mono::function_definition_generator> : std::
 template <>
 struct is_eager_generator< ::eolian_mono::native_function_definition_generator> : std::true_type {};
 template <>
+struct is_eager_generator< ::eolian_mono::property_extension_method_definition_generator> : std::true_type {};
+template <>
 struct is_eager_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
 template <>
 struct is_eager_generator< ::eolian_mono::property_wrapper_definition_parameterized> : std::true_type {};
@@ -320,6 +577,8 @@ template <>
 struct is_generator< ::eolian_mono::native_function_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::function_definition_parameterized> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::property_extension_method_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
 template <>
@@ -334,6 +593,9 @@ struct attributes_needed< ::eolian_mono::function_definition_parameterized> : st
 
 template <>
 struct attributes_needed< ::eolian_mono::native_function_definition_generator> : std::integral_constant<int, 1> {};
+
+template <>
+struct attributes_needed< ::eolian_mono::property_extension_method_definition_generator> : std::integral_constant<int, 1> {};
 
 template <>
 struct attributes_needed< ::eolian_mono::property_wrapper_definition_generator> : std::integral_constant<int, 1> {};
