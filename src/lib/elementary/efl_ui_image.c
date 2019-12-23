@@ -215,27 +215,22 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
            case EFL_GFX_IMAGE_SCALE_METHOD_FIT:
               w = ow;
               h = ((double)ih * w) / (double)iw;
-
               if (h > oh)
                 {
                    h = oh;
                    w = ((double)iw * h) / (double)ih;
                 }
-
-
               break;
            case EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH:
               w = ow;
               h = ((double)ih * w) / (double)iw;
-
               break;
            case EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT:
               h = oh;
               w = ((double)iw * h) / (double)ih;
-
               break;
            case EFL_GFX_IMAGE_SCALE_METHOD_EXPAND:
-              if (ow > oh)
+              if ((ow - iw) > (oh - ih))
                 {
                    w = ow;
                    h = ((double)ih * w) / (double)iw;
