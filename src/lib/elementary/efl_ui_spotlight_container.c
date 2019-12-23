@@ -670,7 +670,7 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
         _animated_transition_manager_eval(obj, pd);
         efl_ui_spotlight_manager_animated_transition_set(pd->transition, efl_finalized_get(obj));
         efl_ui_spotlight_manager_bind(pd->transition, obj);
-        efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);
+        _emit_page_size(obj, pd);
         efl_event_callback_add(pd->transition, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, _pos_updated, obj);
      }
 
