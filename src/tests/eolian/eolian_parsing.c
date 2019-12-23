@@ -1150,7 +1150,8 @@ EFL_START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for enum Bar."));
    fail_if(eolian_documentation_description_get(doc));
-   fail_if(eolian_documentation_since_get(doc));
+   fail_if(strcmp(eolian_documentation_since_get(doc),
+                  "1.55"));
 
    fail_if(!(efl = eolian_typedecl_enum_field_get(tdl, "blah")));
    fail_if(eolian_typedecl_enum_field_documentation_get(efl));

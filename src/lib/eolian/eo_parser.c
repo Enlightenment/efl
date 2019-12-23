@@ -536,6 +536,8 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
 qual_end:
         check_next(ls, ';');
         FILL_DOC(ls, fdef, doc);
+        if (def->doc && fdef->doc && def->doc->since && !fdef->doc->since)
+          fdef->doc->since = eina_stringshare_ref (def->doc->since);
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column, TYPEDECL);
@@ -656,6 +658,8 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         if (want_next)
           eo_lexer_get(ls);
         FILL_DOC(ls, fdef, doc);
+        if (def->doc && fdef->doc && def->doc->since && !fdef->doc->since)
+          fdef->doc->since = eina_stringshare_ref (def->doc->since);
         if (!want_next || ls->t.token == '}')
           break;
      }
