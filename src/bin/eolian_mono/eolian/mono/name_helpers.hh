@@ -174,7 +174,8 @@ static const std::vector<std::string> verbs =
     "sync",
     "toggle",
     "unbind",
-    "unregister"
+    "unregister",
+    "unselect"
   };
 
 const std::vector<std::string> not_verbs =
