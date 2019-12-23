@@ -230,7 +230,7 @@ typedef void (*Context_Item_Clicked_Cb)(void *data, Eo *obj, void *event_info);
 # include <efl_ui_textbox_async.eo.h>
 
 # include <efl_ui_animation_view.eo.h>
-# include <efl_ui_clock.eo.h>
+//# include <efl_ui_clock.eo.h>
 # include <efl_ui_video.eo.h>
 
 # include <efl_ui_widget_factory.eo.h>
@@ -244,7 +244,7 @@ typedef void (*Context_Item_Clicked_Cb)(void *data, Eo *obj, void *event_info);
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 
 # include <efl_ui_tags.eo.h>
-# include <efl_ui_button.eo.h>
+//# include <efl_ui_button.eo.h>
 # include <efl_ui_check.eo.h>
 # include <efl_ui_radio.eo.h>
 # include <efl_ui_radio_group.eo.h>
@@ -273,14 +273,14 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_stack.eo.h>
 # include <efl_ui_pager.eo.h>
 
-# include <efl_ui_navigation_bar.eo.h>
-# include <efl_ui_navigation_bar_part.eo.h>
-# include <efl_ui_navigation_bar_part_back_button.eo.h>
+//# include <efl_ui_navigation_bar.eo.h>
+//# include <efl_ui_navigation_bar_part.eo.h>
+//# include <efl_ui_navigation_bar_part_back_button.eo.h>
 # include <efl_ui_navigation_layout.eo.h>
 # include <efl_ui_action_connector.eo.h>
 # include <efl_ui_format.eo.h>
 # include <efl_ui_spin.eo.h>
-# include <efl_ui_spin_button.eo.h>
+//# include <efl_ui_spin_button.eo.h>
 # include <efl_ui_slider.eo.h>
 # include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_item.eo.h>
@@ -300,7 +300,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_multi_selectable_object_range.eo.h>
 # include <efl_ui_multi_selectable_index_range.eo.h>
 # include <efl_ui_popup.eo.h>
-# include <efl_ui_alert_popup.eo.h>
+//# include <efl_ui_alert_popup.eo.h>
 # include <efl_ui_popup_part_backwall.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list.eo.h>
@@ -325,9 +325,9 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
 
-# include <efl_ui_timepicker.eo.h>
-# include <efl_ui_datepicker.eo.h>
-# include <efl_ui_calendar.eo.h>
+//# include <efl_ui_timepicker.eo.h>
+//# include <efl_ui_datepicker.eo.h>
+//# include <efl_ui_calendar.eo.h>
 
 /**
  * Initialize Elementary

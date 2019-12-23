@@ -172,12 +172,12 @@ EAPI extern Elm_Version *elm_version;
 
 /* other includes */
 #include <elc_ctxpopup.h>
-#include <elc_combobox.h>
+//#include <elc_combobox.h>
 #include <elm_dayselector.h>
-#include <elc_fileselector_button.h>
-#include <elc_fileselector_entry.h>
-#include <elc_fileselector.h>
-#include <elc_hoversel.h>
+//#include <elc_fileselector_button.h>
+//#include <elc_fileselector_entry.h>
+//#include <elc_fileselector.h>
+//#include <elc_hoversel.h>
 #include <elc_multibuttonentry.h>
 #include <elc_naviframe.h>
 #include <elc_popup.h>
@@ -202,7 +202,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_color_class.h>
 #include <elm_conform.h>
 #include <elm_cursor.h>
-#include <elm_datetime.h>
+//#include <elm_datetime.h>
 #include <elm_debug.h>
 #include <elm_diskselector.h>
 
