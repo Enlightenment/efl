@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 
 namespace Eina
 {
@@ -214,6 +215,7 @@ public class Binbuf : IDisposable
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte[] str)
     {
+        Contract.Requires(str != null, nameof(str));
         return 0 != eina_binbuf_append_length(Handle, str, (UIntPtr)(str.Length));
     }
 
@@ -238,6 +240,7 @@ public class Binbuf : IDisposable
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(Binbuf bb)
     {
+        Contract.Requires(bb != null, nameof(bb));
         return 0 != eina_binbuf_append_buffer(Handle, bb.Handle);
     }
 
@@ -273,6 +276,7 @@ public class Binbuf : IDisposable
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte[] str, uint pos)
     {
+        Contract.Requires(str != null, nameof(str));
         return 0 != eina_binbuf_insert_length(Handle, str, (UIntPtr)(str.Length), (UIntPtr)pos);
     }
 

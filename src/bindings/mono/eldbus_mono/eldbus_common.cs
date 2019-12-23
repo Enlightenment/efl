@@ -19,6 +19,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static eldbus.EldbusMessageNativeFunctions;
 
@@ -948,12 +949,14 @@ public class ByteMessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -997,12 +1000,14 @@ public class BoolMessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1046,12 +1051,14 @@ public class Int16MessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1095,12 +1102,14 @@ public class UInt16MessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1144,12 +1153,14 @@ public class Int32MessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1193,12 +1204,14 @@ public class UInt32MessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1242,12 +1255,14 @@ public class Int64MessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1291,12 +1306,14 @@ public class UInt64MessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1340,12 +1357,14 @@ public class DoubleMessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1371,12 +1390,14 @@ public abstract class StringLikeMessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
@@ -1522,12 +1543,14 @@ public class UnixFdMessageArgument : BasicMessageArgument
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
+        Contract.Requires(msg != null, nameof(msg));
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override bool InternalAppendTo(eldbus.MessageIterator iter)
     {
+        Contract.Requires(iter != null, nameof(iter));
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }

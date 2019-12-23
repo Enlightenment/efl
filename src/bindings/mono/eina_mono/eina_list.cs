@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static Eina.TraitFunctions;
 using static Eina.ListNativeFunctions;
@@ -533,6 +534,7 @@ public class List<T> : IList<T>, IEnumerable<T>, IDisposable
     /// <param name="values">The values to be appended.</param>
     public void Append(T[] values)
     {
+        Contract.Requires(values != null, nameof(values));
         RequireWritable();
 
         foreach (T v in values)

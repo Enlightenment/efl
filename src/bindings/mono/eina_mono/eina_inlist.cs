@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static Eina.TraitFunctions;
 using static Eina.InlistNativeFunctions;
@@ -422,6 +423,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     /// <param name="values">The values to be added.</param>
     public void AppendArray(T[] values)
     {
+        Contract.Requires(values != null, nameof(values));
         foreach (T v in values)
         {
             Append(v);
