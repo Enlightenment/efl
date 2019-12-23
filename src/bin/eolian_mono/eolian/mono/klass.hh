@@ -385,7 +385,16 @@ struct klass
          std::copy(c.properties.begin(), c.properties.end(), std::back_inserter(implementable_properties));
      }
 
-     if (implementable_properties.size() == 0 && cls.parts.size() == 0)
+     std::stringstream extension_method_stream;
+     std::ostream_iterator<char> extension_method_iterator(extension_method_stream);
+
+     if (!as_generator
+         (*property_extension_method_definition(cls)
+          << *part_extension_method_definition(cls))
+         .generate(extension_method_iterator, std::make_tuple(implementable_properties, cls.parts), context))
+       return false;
+
+     if (extension_method_stream.tellp() <= 0)
        return true;
 
      if(!as_generator
@@ -393,12 +402,11 @@ struct klass
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
          <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
          << "_ExtensionMethods {\n"
-         << *(property_extension_method_definition(cls))
-         << *(part_extension_method_definition(cls))
+         << extension_method_stream.str()
          << "}\n"
          << "#pragma warning restore CS1591\n"
          << "#endif\n")
-        .generate(sink, std::make_tuple(cls.namespaces, implementable_properties, cls.parts), context))
+        .generate(sink, cls.namespaces, context))
      return false;
 
      return true;
