@@ -1,7 +1,7 @@
 efl = require('efl');
 
 function setIcon(widget, icon) {
-    container = widget.part("icon").cast("Efl.Content");
+    var container = widget.part("icon").cast("Efl.Content");
     container.setContent(icon);
 }
 

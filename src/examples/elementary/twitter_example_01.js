@@ -43,7 +43,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
     if (error)
         return;
 
-    for(i=0; i < tweets.length; i++){
+    for(var i=0; i < tweets.length; i++){
         var user_name = tweets[i].user.name;
         var screen_name = tweets[i].user.screen_name;
         var text = tweets[i].text;
@@ -58,7 +58,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var entry = new efl.Elm.Entry(win);
         entry.setPartText("elm.text", text);
         entry.setEditable(false);
-        part = layout.part("tweet_text").cast("Efl.Content");
+        var part = layout.part("tweet_text").cast("Efl.Content");
         part.setContent(entry);
 
         layout.setHintMin(127, 96);
@@ -68,7 +68,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var icon = new efl.Efl.Ui.Image(win);
         icon.fillInside = true;
         icon_array.push(icon);
-        user_icon = layout.part("user_icon").cast("Efl.Content");
+        var user_icon = layout.part("user_icon").cast("Efl.Content");
         user_icon.setContent(icon);
         item = tweet_box.packEnd(layout);
         layout.setVisible(true);
@@ -78,7 +78,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
     var file = fs.createWriteStream(icon_filename);
     file.on('finish', function() {
         console.log("finished loading the icon file.");
-        for (i=0; i < icon_array.length; i++) {
+        for (var i=0; i < icon_array.length; i++) {
             icon_array[i].setFile(icon_filename, null);
         }
     });
