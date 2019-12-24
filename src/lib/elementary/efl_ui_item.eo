@@ -27,7 +27,11 @@ abstract Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Ef
       @property index {
          [[The index of this item inside its container.
 
-           The container must be set through the @Efl.Ui.Item.container property.]]
+           The container must be set through the @Efl.Ui.Item.container property and be exposing an @Efl.Pack_Linear interface.
+           If the container is not an @Efl.Pack_Linear, -1 will be returned.
+
+           Finally, it is a very slow API that must not be used in any performance constrained case.
+         ]]
          get {}
          values {
             index : int; [[The index where to find this item in its @.container.]]
