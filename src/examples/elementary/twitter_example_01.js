@@ -52,7 +52,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var filename = path.join(__dirname, 'twitter_example_01.edj');
         layout.setFile(filename, "tweet");
 
-        layout.setPartText("user_name", screen_name);
+        layout.setPartText("user_name", user_name);
         layout.setPartText("screen_name", " - @"+screen_name);
 
         var entry = new efl.Elm.Entry(win);
