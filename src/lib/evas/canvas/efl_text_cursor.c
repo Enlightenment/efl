@@ -203,7 +203,7 @@ _efl_text_cursor_line_jump_by(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, int
    Eina_Bool moved = EINA_FALSE;
    int pos = evas_textblock_cursor_pos_get(pd->handle);
    evas_textblock_cursor_line_jump_by(pd->handle, by);
-   moved = (pos == evas_textblock_cursor_pos_get(pd->handle));
+   moved = (pos != evas_textblock_cursor_pos_get(pd->handle));
    return moved;
 }
 

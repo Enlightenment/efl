@@ -4488,12 +4488,12 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    efl_event_callback_add(txt, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, _increment_int_changed, &changed_emit);
    const char *buf = "abcdefghij";
    efl_text_set(txt, buf);
-   fail_if(strcmp(efl_text_get(txt), buf));
+   ck_assert_int_eq(strcmp(efl_text_get(txt), buf), 0);
 
-   efl_text_cursor_line_jump_by(cur_obj, -1);
+   ck_assert(!efl_text_cursor_line_jump_by(cur_obj, -1));
    pos = efl_text_cursor_position_get(cur_obj);
    ck_assert_int_eq(pos, 0);
-   efl_text_cursor_line_jump_by(cur_obj, 1);
+   ck_assert(efl_text_cursor_line_jump_by(cur_obj, 1));
    pos = efl_text_cursor_position_get(cur_obj);
    ck_assert_int_eq(pos, 10);
 
