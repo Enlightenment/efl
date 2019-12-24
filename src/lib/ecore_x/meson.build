@@ -75,7 +75,7 @@ endif
 
 x11 = dependency('x11', required: false)
 if x11.found() == false
-  x11 = cc.find_library('x11', required: true)
+  x11 = cc.find_library('X11', required: true)
 endif
 
 xcb = dependency('xcb', required: false)
@@ -85,7 +85,7 @@ endif
 
 x11_xcb = dependency('x11-xcb', required: false)
 if x11_xcb.found() == false
-  x11_xcb = cc.find_library('x11-xcb', required: true)
+  x11_xcb = cc.find_library('X11-xcb', required: true)
 endif
 
 foreach ecore_x_check : ecore_x_checks
