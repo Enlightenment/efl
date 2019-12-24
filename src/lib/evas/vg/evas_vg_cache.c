@@ -276,7 +276,11 @@ evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_
    Eina_Strbuf *hash_key = eina_strbuf_new();
    eina_strbuf_append_printf(hash_key, "%p/%d/%d/%d", root, w, h, frame_idx);
    const char *new_key = eina_strbuf_string_get(hash_key);
-   if (!new_key) return NULL;
+   if (!new_key)
+     {
+        eina_strbuf_free(hash_key);
+        return NULL;
+     }
 
    Eina_List *l;
    char *key;
