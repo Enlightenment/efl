@@ -17397,9 +17397,6 @@ EAPI int evas_textblock_fit_size_range_set(Evas_Object *obj,  unsigned int min_f
    if (!max_changed && !min_changed)
      return EVAS_ERROR_SUCCESS;
 
-   if (min_font_size < 0 || max_font_size <0)
-     return EVAS_ERROR_INVALID_PARAM;
-
    if (max_font_size < min_font_size)
      return EVAS_ERROR_INVALID_PARAM;
 
