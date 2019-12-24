@@ -102,7 +102,7 @@ struct _Efl_Ui_Textbox_Data
         Eina_Future                      *primary;
         Eina_Future                      *clipboard;
      } sel_future;
-   Eina_Bool                             sel_handler_disabled : 1;
+   Eina_Bool                             sel_handler_enabled : 1;
    Eina_Bool                             start_handler_down : 1;
    Eina_Bool                             start_handler_shown : 1;
    Eina_Bool                             end_handler_down : 1;
@@ -110,7 +110,7 @@ struct _Efl_Ui_Textbox_Data
    Eina_Bool                             deferred_decoration_selection : 1;
    Eina_Bool                             deferred_decoration_cursor : 1;
    Eina_Bool                             deferred_decoration_anchor : 1;
-   Eina_Bool                             context_menu : 1;
+   Eina_Bool                             context_menu_enabled : 1;
    Eina_Bool                             long_pressed : 1;
    Eina_Bool                             auto_save : 1;
    Eina_Bool                             has_text : 1;
@@ -465,7 +465,7 @@ _update_selection_handler(Eo *obj)
         return;
      }
 
-   if (!sd->sel_handler_disabled)
+   if (sd->sel_handler_enabled)
      {
         Eina_Rect rect;
         Eina_Position2D off;
@@ -1176,7 +1176,7 @@ _menu_call(Evas_Object *obj)
      {
         sd->api->obj_longpress(obj);
      }
-   else if (sd->context_menu)
+   else if (sd->context_menu_enabled)
      {
         const char *context_menu_orientation;
         Eina_Bool ownersel;
@@ -1925,7 +1925,7 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
      colorcode = edje_object_data_get(wd->resize_obj, "style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
-        efl_text_normal_color_set(sd->text_obj, r, g, b, a);
+        efl_text_color_set(sd->text_obj, r, g, b, a);
      }
 
    // Guide Text
@@ -1943,7 +1943,7 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
      colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
-        efl_text_normal_color_set(sd->text_guide_obj, r, g, b, a);
+        efl_text_color_set(sd->text_guide_obj, r, g, b, a);
      }
 }
 
@@ -1974,13 +1974,13 @@ _efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
    sd->entry_edje = wd->resize_obj;
    sd->cnp_mode = EFL_UI_SELECTION_FORMAT_TEXT;
    sd->line_wrap = ELM_WRAP_WORD;
-   sd->context_menu = EINA_TRUE;
+   sd->context_menu_enabled = EINA_TRUE;
    sd->auto_save = EINA_TRUE;
    efl_text_interactive_editable_set(obj, EINA_TRUE);
    efl_text_interactive_selection_allowed_set(obj, EINA_TRUE);
    sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    sd->last.scroll = EINA_SIZE2D(0, 0);
-   sd->sel_handler_disabled = EINA_TRUE;
+   sd->sel_handler_enabled = EINA_FALSE;
 
    return obj;
 }
@@ -2197,16 +2197,16 @@ _efl_ui_textbox_selection_get(const Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED
 }
 
 EOLIAN static void
-_efl_ui_textbox_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool disabled)
+_efl_ui_textbox_selection_handler_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool enabled)
 {
-   if (sd->sel_handler_disabled == disabled) return;
-   sd->sel_handler_disabled = disabled;
+   if (sd->sel_handler_enabled == enabled) return;
+   sd->sel_handler_enabled = enabled;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_textbox_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+_efl_ui_textbox_selection_handler_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
-   return sd->sel_handler_disabled;
+   return sd->sel_handler_enabled;
 }
 
 static void
@@ -2349,16 +2349,16 @@ _efl_ui_textbox_selection_paste(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_textbox_context_menu_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool disabled)
+_efl_ui_textbox_context_menu_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool enabled)
 {
-   if (sd->context_menu == !disabled) return;
-   sd->context_menu = !disabled;
+   if (sd->context_menu_enabled == enabled) return;
+   sd->context_menu_enabled = enabled;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_textbox_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+_efl_ui_textbox_context_menu_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
-   return !sd->context_menu;
+   return sd->context_menu_enabled;
 }
 
 EOLIAN static Eina_Error
@@ -2808,7 +2808,7 @@ _textblock_node_format_to_atspi_text_attr(Efl_Text_Attribute_Handle *annotation)
    Efl_Access_Text_Attribute *ret;
    const char *txt;
 
-   txt = efl_text_attribute_factory_attribute_get(annotation);
+   txt = efl_text_formatter_attribute_get(annotation);
    if (!txt) return NULL;
 
    ret = calloc(1, sizeof(Efl_Access_Text_Attribute));
@@ -2843,7 +2843,7 @@ _efl_ui_textbox_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Textbox_Data
    efl_text_cursor_position_set(cur1, *start_offset);
    efl_text_cursor_position_set(cur2, *end_offset);
 
-   annotations = efl_text_attribute_factory_range_attributes_get(cur1, cur2);
+   annotations = efl_text_formatter_range_attributes_get(cur1, cur2);
 
    efl_del(cur1);
    efl_del(cur2);
@@ -2889,7 +2889,7 @@ _efl_ui_textbox_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Textbo
    efl_text_cursor_position_set(cur1, *start_offset);
    efl_text_cursor_position_set(cur2, *end_offset);
 
-   annotations = efl_text_attribute_factory_range_attributes_get(cur1, cur2);
+   annotations = efl_text_formatter_range_attributes_get(cur1, cur2);
 
    efl_del(cur1);
    efl_del(cur2);
@@ -2924,7 +2924,7 @@ _efl_ui_textbox_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Tex
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 
-   annotations = efl_text_attribute_factory_range_attributes_get(start, end);
+   annotations = efl_text_formatter_range_attributes_get(start, end);
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
@@ -3288,14 +3288,14 @@ _anchor_get(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Text_Attribute_Handle *an)
    Eina_List *i;
    const char *str;
 
-   str = efl_text_attribute_factory_attribute_get(an);
+   str = efl_text_formatter_attribute_get(an);
 
    EINA_LIST_FOREACH(sd->anchors, i, anc)
      {
         if (anc->annotation == an) break;
      }
 
-   if (!anc && (efl_text_attribute_factory_attribute_is_item(an) || !strncmp(str, "a ", 2)))
+   if (!anc && (efl_text_formatter_attribute_is_item(an) || !strncmp(str, "a ", 2)))
      {
         const char *p;
 
@@ -3304,7 +3304,7 @@ _anchor_get(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Text_Attribute_Handle *an)
           {
              anc->obj = obj;
              anc->annotation = an;
-             anc->item = efl_text_attribute_factory_attribute_is_item(an);
+             anc->item = efl_text_formatter_attribute_is_item(an);
              p = strstr(str, "href=");
              if (p)
                {
@@ -3344,7 +3344,7 @@ _anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
    efl_text_cursor_move(start, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
    efl_text_cursor_move(end, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
 
-   it = efl_text_attribute_factory_range_attributes_get(start, end);
+   it = efl_text_formatter_range_attributes_get(start, end);
    efl_del(start);
    efl_del(end);
 
@@ -3386,7 +3386,7 @@ _anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
                     }
 
                   rect = eina_list_data_get(anc->rects);
-                  efl_text_attribute_factory_item_geometry_get(anc->annotation, &cx, &cy, &cw, &ch);
+                  efl_text_formatter_item_geometry_get(anc->annotation, &cx, &cy, &cw, &ch);
                   efl_gfx_entity_size_set(rect->obj, EINA_SIZE2D(cw, ch));
                   efl_gfx_entity_position_set(rect->obj,
                         EINA_POSITION2D(off.x + cx, off.y + cy));
@@ -3400,7 +3400,7 @@ _anchors_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
                   size_t count;
                   start = efl_ui_textbox_cursor_create(obj);
                   end = efl_ui_textbox_cursor_create(obj);
-                  efl_text_attribute_factory_attribute_cursors_get(anc->annotation, start, end);
+                  efl_text_formatter_attribute_cursors_get(anc->annotation, start, end);
 
                   range = efl_text_cursor_range_geometry_get(start, end);
                   count = eina_list_count(eina_iterator_container_get(range));

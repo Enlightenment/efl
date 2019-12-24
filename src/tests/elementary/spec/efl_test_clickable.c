@@ -12,7 +12,7 @@
 #include "elm_widget.h"
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Item.Realized", "Efl.Ui.Radio", "Efl.Ui.Check"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Grid_Default_Item", "Efl.Ui.List_Default_Item", "Efl.Ui.Radio", "Efl.Ui.Check"]
        }
    spec-meta-end
  */
@@ -64,10 +64,6 @@ prepare_window(void)
      }
    else if (efl_isa(widget, EFL_UI_ITEM_CLASS))
      {
-        elm_widget_theme_klass_set(widget, "grid_item");
-        elm_widget_theme_element_set(widget, NULL);
-        elm_widget_theme_style_set(widget, NULL);
-        efl_ui_widget_theme_apply(widget);
         pos->x = 30;
         pos->y = 30;
      }

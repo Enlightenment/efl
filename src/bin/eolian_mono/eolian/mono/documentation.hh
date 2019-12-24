@@ -21,6 +21,7 @@
 #include "grammar/html_escaped_string.hpp"
 #include "using_decl.hh"
 #include "name_helpers.hh"
+#include "helpers.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
 
@@ -76,7 +77,11 @@ struct documentation_generator
    // The name_tail parameter is the last 4 chars of the original string, which
    // could be ".set" or ".get" and in this case they are ignored by Eolian.
    // We want them to know what the documentation intended to reference.
-   static std::string function_conversion(const ::Eolian_Object *klass, const ::Eolian_Function *function, std::string name_tail)
+   template<typename Context>
+   static std::string function_conversion(const ::Eolian_Object *klass
+                                         , const ::Eolian_Function *function
+                                         , std::string name_tail
+                                         , Context const& context)
    {
       ::Eolian_Function_Type ftype = ::eolian_function_type_get(function);
       const char* eo_name = ::eolian_function_name_get(function);
@@ -122,13 +127,27 @@ struct documentation_generator
            break;
          case ::EOLIAN_PROPERTY:
            {
-             int getter_nkeys = property_num_keys(function, ::EOLIAN_PROP_GET);
-             int setter_nkeys = property_num_keys(function, ::EOLIAN_PROP_SET);
              std::string short_name = name_helpers::property_managed_name(klass_d, eo_name);
-             bool blacklisted = blacklist::is_property_blacklisted(name + "." + short_name);
-             // EO properties with keys or blacklisted are not converted into C# properties.
-             // In these cases we refer to the getter method instead of the property.
-             if ((getter_nkeys > 0) || (setter_nkeys > 0) || (blacklisted)) name += ".Get" + short_name;
+
+             // We need to replace the current class context with the context
+             // from the class that originated this property.
+             class_context::wrapper_kind klass_kind;
+             if (helpers::is_managed_interface(klass_d))
+               klass_kind = class_context::interface;
+             else
+               klass_kind = class_context::inherit;
+
+             auto my_context = grammar::context_replace_tag(class_context{klass_kind}, context);
+
+             auto unit = eolian_object_unit_get((const Eolian_Object*)function);
+             attributes::function_def getter_func{function, ::EOLIAN_PROP_GET, nullptr, unit};
+             attributes::function_def setter_func{function, ::EOLIAN_PROP_SET, nullptr, unit};
+             attributes::property_def prop{function, getter_func, setter_func, unit};
+
+             auto has_wrapper = helpers::has_property_wrapper(prop, &klass_d, my_context);
+
+             if (has_wrapper == helpers::has_property_wrapper_bit::has_none)
+               name += ".Get" + short_name;
              else if (name_tail == ".get") name += ".Get" + short_name;
              else if (name_tail == ".set") name += ".Set" + short_name;
              else name += "." + short_name;
@@ -165,9 +184,13 @@ struct documentation_generator
    }
 
    // Turns an Eolian reference like @Efl.Input.Pointer.tool into a <see> tag
-   static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail,
-                                     bool want_beta)
+   template<typename Context>
+   static std::string ref_conversion(const ::Eolian_Doc_Token *token
+                                    , const Eolian_State *state
+                                    , std::string name_tail
+                                    , Context const& context)
    {
+      bool want_beta = context_want_beta(context);
       const Eolian_Object *data, *data2;
       ::Eolian_Object_Type type =
         ::eolian_doc_token_ref_resolve(token, state, &data, &data2);
@@ -195,7 +218,7 @@ struct documentation_generator
            is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_FUNCTION:
-           ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail);
+           ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail, context);
            is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_CONSTANT:
@@ -227,7 +250,8 @@ struct documentation_generator
    }
 
    // Turns EO documentation syntax into C# triple-slash XML comment syntax
-   static std::string syntax_conversion(std::string text, const Eolian_State *state, bool want_beta)
+   template<typename Context>
+   static std::string syntax_conversion(std::string text, const Eolian_State *state, Context const& context)
    {
       std::string new_text, ref;
       ::Eolian_Doc_Token_Type previous_token_type = ::EOLIAN_DOC_TOKEN_UNKNOWN;
@@ -266,7 +290,7 @@ struct documentation_generator
                      new_text += token_text;
                      break;
                    case ::EOLIAN_DOC_TOKEN_REF:
-                     ref = ref_conversion(&token, state, name_tail, want_beta);
+                     ref = ref_conversion(&token, state, name_tail, context);
                      if (ref != "")
                        {
                           if (utils::ends_with(ref, BETA_REF_SUFFIX))
@@ -331,7 +355,7 @@ struct documentation_generator
       if (!as_generator(html_escaped_string).generate(std::back_inserter(new_text), text, context))
         return false;
       auto options = context_find_tag<options_context>(context);
-      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state, options.want_beta);
+      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state, context);
 
       std::string tabs;
       as_generator(scope_tab(scope_size) << "/// ").generate (std::back_inserter(tabs), attributes::unused, context);
@@ -653,7 +677,7 @@ struct documentation_string_generator
 
       auto options = context_find_tag<options_context>(context);
       auto state = context_find_tag<eolian_state_context>(context).state;
-      if (!as_generator(string).generate(sink, documentation_generator::syntax_conversion(escaped, state, options.want_beta), context))
+      if (!as_generator(string).generate(sink, documentation_generator::syntax_conversion(escaped, state, context), context))
         return false;
 
       return true;

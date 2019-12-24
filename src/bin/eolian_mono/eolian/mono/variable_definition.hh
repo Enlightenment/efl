@@ -45,11 +45,11 @@ struct constant_definition_generator
   template<typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::constant_def constant, Context const& context) const
   {
-    // Open partial class
+    // Open static partial class
     if (!name_helpers::open_namespaces(sink, constant.namespaces, context))
       return false;
 
-    if (!as_generator("public partial class Constants\n{\n").generate(sink, attributes::unused, context))
+    if (!as_generator("public static partial class Constants\n{\n").generate(sink, attributes::unused, context))
       return false;
 
     std::string literal;
@@ -83,7 +83,7 @@ struct constant_definition_generator
 
     // FIXME missing documentation generator
 
-    // Close partial class
+    // Close static partial class
     if (!as_generator("}\n").generate(sink, attributes::unused, context))
       return false;
 

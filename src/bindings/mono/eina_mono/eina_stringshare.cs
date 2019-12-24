@@ -25,7 +25,7 @@ namespace Eina
 
 // TODO: move all native functions to a "NativeMethods" class
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static partial class NativeMethods
+internal static partial class NativeMethods
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_stringshare_add(IntPtr str);

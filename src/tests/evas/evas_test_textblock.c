@@ -4362,17 +4362,17 @@ EFL_START_TEST(evas_textblock_annotation)
 
    efl_text_cursor_position_set(start, 0);
    efl_text_cursor_position_set(end, 3);
-   efl_text_attribute_factory_attribute_insert(start, end, "font_size=80");
+   efl_text_formatter_attribute_insert(start, end, "font_size=80");
    efl_text_cursor_position_set(start, 1);
    efl_text_cursor_position_set(end, 2);
-   efl_text_attribute_factory_attribute_insert(start, end, "font=arial");
+   efl_text_formatter_attribute_insert(start, end, "font=arial");
    efl_text_cursor_position_set(start, 2);
    efl_text_cursor_position_set(end, 3);
-   efl_text_attribute_factory_attribute_insert(start, end, "color=#fff");
+   efl_text_formatter_attribute_insert(start, end, "color=#fff");
 
    efl_text_cursor_position_set(start, 0);
    efl_text_cursor_position_set(end, 3);
-   unsigned int count = efl_text_attribute_factory_attribute_clear(start, end);
+   unsigned int count = efl_text_formatter_attribute_clear(start, end);
    fail_if(count != 3);
 }
 EFL_END_TEST;
@@ -4649,7 +4649,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);
 
    efl_canvas_textblock_style_apply(txt, "backing=on");
-   ck_assert_int_eq(efl_text_backing_type_get(txt), EFL_TEXT_STYLE_BACKING_TYPE_ENABLED);
+   ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_ENABLED);
 
    efl_canvas_textblock_style_apply(txt, "style=far_soft_shadow");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
@@ -4667,7 +4667,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
 
    efl_canvas_textblock_style_apply(txt, "color=#EF596C");
-   efl_text_normal_color_get(txt, &r, &g, &b, &a);
+   efl_text_color_get(txt, &r, &g, &b, &a);
    ck_assert_int_eq(r, 0xEF);
    ck_assert_int_eq(g, 0x59);
    ck_assert_int_eq(b, 0x6C);

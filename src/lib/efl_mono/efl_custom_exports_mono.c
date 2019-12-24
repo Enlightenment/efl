@@ -294,6 +294,17 @@ EAPI Eina_Bool eina_array_foreach_custom_export_mono(Eina_Array *array, Eina_Eac
    return eina_array_foreach(array, cb, fdata);
 }
 
+EAPI void eina_array_insert_at_custom_export_mono(Eina_Array* array, unsigned int index, void* const data)
+{
+   eina_array_push(array, data);
+   for (unsigned int i = eina_array_count(array) - 1; i > index; --i)
+     {
+        void* tmp = eina_array_data_get(array, i);
+        eina_array_data_set(array, i, eina_array_data_get(array, i - 1));
+        eina_array_data_set(array, i - 1, tmp);
+     }
+}
+
 // List //
 
 EAPI Eina_List *eina_list_last_custom_export_mono(const Eina_List *list)

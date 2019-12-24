@@ -106,6 +106,10 @@ struct klass
                                         name_helpers::klass_full_concrete_or_interface_name(cls)},
                                         context);
 
+       // Property wrappers
+       if (!as_generator(*(interface_property_indexer_definition(cls))).generate(sink, cls.properties, iface_cxt))
+         return false;
+       
        if(!as_generator(documentation).generate(sink, cls, iface_cxt))
          return false;
 
@@ -158,7 +162,7 @@ struct klass
             ).generate(sink, p, iface_cxt))
            return false;
 
-       if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, iface_cxt))
+       if (!as_generator(*(property_wrapper_definition(cls, cls))).generate(sink, cls.properties, iface_cxt))
          return false;
 
        // End of interface declaration
@@ -259,13 +263,13 @@ struct klass
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, concrete_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls, cls))).generate(sink, cls.properties, concrete_cxt))
            return false;
 
          for (auto&& klass : helpers::non_implemented_interfaces(cls, concrete_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, concrete_cxt))
+              if (!as_generator(*(property_wrapper_definition(cls, c))).generate(sink, c.properties, concrete_cxt))
                 return false;
            }
 
@@ -343,13 +347,13 @@ struct klass
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, inherit_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls, cls))).generate(sink, cls.properties, inherit_cxt))
            return false;
 
          for (auto&& klass : helpers::non_implemented_interfaces(cls, inherit_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, inherit_cxt))
+              if (!as_generator(*(property_wrapper_definition(cls, c))).generate(sink, c.properties, inherit_cxt))
                 return false;
            }
 
@@ -381,7 +385,16 @@ struct klass
          std::copy(c.properties.begin(), c.properties.end(), std::back_inserter(implementable_properties));
      }
 
-     if (implementable_properties.size() == 0 && cls.parts.size() == 0)
+     std::stringstream extension_method_stream;
+     std::ostream_iterator<char> extension_method_iterator(extension_method_stream);
+
+     if (!as_generator
+         (*property_extension_method_definition(cls)
+          << *part_extension_method_definition(cls))
+         .generate(extension_method_iterator, std::make_tuple(implementable_properties, cls.parts), context))
+       return false;
+
+     if (extension_method_stream.tellp() <= 0)
        return true;
 
      if(!as_generator
@@ -389,12 +402,11 @@ struct klass
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
          <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
          << "_ExtensionMethods {\n"
-         << *(property_extension_method_definition(cls))
-         << *(part_extension_method_definition(cls))
+         << extension_method_stream.str()
          << "}\n"
          << "#pragma warning restore CS1591\n"
          << "#endif\n")
-        .generate(sink, std::make_tuple(cls.namespaces, implementable_properties, cls.parts), context))
+        .generate(sink, cls.namespaces, context))
      return false;
 
      return true;

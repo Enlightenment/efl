@@ -56,7 +56,7 @@ group { "efl/list_view";
    data.item: "version" "123";
 }
 
-group { "efl/list_item"; data.item: "version" "123";
+group { "efl/list_item"; data.item: "version" "124";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    images.image: "bevel_curved_horiz_out.png" COMP;
@@ -65,15 +65,6 @@ group { "efl/list_item"; data.item: "version" "123";
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shine.png" COMP;
    parts {
-      rect { "event";
-         desc { "default";
-            color: 0 0 0 0;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-      }
       rect { "base"; nomouse;
          desc { "default";
             color: 64 64 64 255;
@@ -218,6 +209,15 @@ group { "efl/list_item"; data.item: "version" "123";
             hid;
          }
       }
+      rect { "event";
+         desc { "default";
+            color: 0 0 0 0;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
       //##//
       swallow { "efl.icon";
          desc { "default";
@@ -268,6 +268,7 @@ group { "efl/list_item"; data.item: "version" "123";
       }
    }
    programs {
+      EFL_UI_CLICKABLE_PART_BIND("event")
       program {
          signal: "efl,state,odd"; source: "efl";
          action: STATE_SET "odd";
@@ -343,7 +344,7 @@ group { "efl/list_item"; data.item: "version" "123";
    }
 }
 
-group { "efl/list_item:placeholder"; data.item: "version" "123";
+group { "efl/list_item:placeholder"; data.item: "version" "124";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    images.image: "bevel_curved_horiz_out.png" COMP;
@@ -352,15 +353,6 @@ group { "efl/list_item:placeholder"; data.item: "version" "123";
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shine.png" COMP;
    parts {
-      rect { "event";
-         desc { "default";
-            color: 0 0 0 0;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-      }
       rect { "base"; nomouse;
          desc { "default";
             color: 64 64 64 255;
@@ -425,6 +417,15 @@ group { "efl/list_item:placeholder"; data.item: "version" "123";
             vis;
          }
       }
+      rect { "event";
+         desc { "default";
+            color: 0 0 0 0;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
       //##//
       swallow { "efl.content"; mouse;
          scale;
@@ -463,6 +464,7 @@ group { "efl/list_item:placeholder"; data.item: "version" "123";
       }
    }
    programs {
+      EFL_UI_CLICKABLE_PART_BIND("event")
       program {
          signal: "efl,state,odd"; source: "efl";
          action: STATE_SET "odd";

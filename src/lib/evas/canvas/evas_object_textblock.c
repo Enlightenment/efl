@@ -16345,40 +16345,40 @@ _efl_canvas_textblock_efl_text_font_font_bitmap_scalable_get(const Eo *obj EINA_
    if (changed) _canvas_text_format_changed(obj, o);
 
 static void
-_efl_canvas_textblock_efl_text_style_normal_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(normal);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_normal_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(normal);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_backing_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Backing_Type type EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_background_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Background_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(backing, type);
 }
 
-static Efl_Text_Style_Backing_Type
-_efl_canvas_textblock_efl_text_style_backing_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+static Efl_Text_Style_Background_Type
+_efl_canvas_textblock_efl_text_style_text_background_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(backing);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_backing_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_background_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(backing);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_backing_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_background_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(backing);
 }
@@ -16396,7 +16396,7 @@ static struct
 };
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(underline, _style_underline_map[type].underline_single);
@@ -16406,111 +16406,111 @@ _efl_canvas_textblock_efl_text_style_underline_type_set(Eo *obj EINA_UNUSED, Efl
 }
 
 static Efl_Text_Style_Underline_Type
-_efl_canvas_textblock_efl_text_style_underline_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(underline);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(underline);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(underline);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_height_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double height EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_height_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double height EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(underline_height, height);
 }
 
 static double
-_efl_canvas_textblock_efl_text_style_underline_height_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_height_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(underline_height);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_dashed_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_dashed_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(underline_dash);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_dashed_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_dashed_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(underline_dash);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_dashed_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int width EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_dashed_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int width EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(underline_dash_width, width);
 }
 
 static int
-_efl_canvas_textblock_efl_text_style_underline_dashed_width_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_dashed_width_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(underline_dash_width);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline_dashed_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int gap EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_dashed_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int gap EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(underline_dash_gap, gap);
 }
 
 static int
-_efl_canvas_textblock_efl_text_style_underline_dashed_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_dashed_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(underline_dash_width);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(underline2);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_underline2_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline2_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(underline2);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_strikethrough_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Strikethrough_Type type EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_strikethrough_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Strikethrough_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(strikethrough, type);
 }
 
 static Efl_Text_Style_Strikethrough_Type
-_efl_canvas_textblock_efl_text_style_strikethrough_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_strikethrough_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(strikethrough);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_strikethrough_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_strikethrough_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(strikethrough);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_strikethrough_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_strikethrough_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(strikethrough);
 }
@@ -16578,7 +16578,7 @@ _get_dir_from_map(Efl_Text_Style_Shadow_Direction dir)
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_effect_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Effect_Type type EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_effect_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Effect_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(effect, type);
@@ -16590,26 +16590,26 @@ _efl_canvas_textblock_efl_text_style_effect_type_set(Eo *obj EINA_UNUSED, Efl_Ca
 }
 
 static Efl_Text_Style_Effect_Type
-_efl_canvas_textblock_efl_text_style_effect_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_effect_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(effect);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_outline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_outline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(outline);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_outline_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_outline_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(outline);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_shadow_direction_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Shadow_Direction type EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_shadow_direction_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Shadow_Direction type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(shadow_direction, type);
@@ -16619,52 +16619,52 @@ _efl_canvas_textblock_efl_text_style_shadow_direction_set(Eo *obj EINA_UNUSED, E
 }
 
 static Efl_Text_Style_Shadow_Direction
-_efl_canvas_textblock_efl_text_style_shadow_direction_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_shadow_direction_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(shadow_direction);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_shadow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_shadow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(shadow);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_shadow_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_shadow_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(shadow);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_glow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_glow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(glow);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_glow_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_glow_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(glow);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_glow2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_glow2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(glow2);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_glow2_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_glow2_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(glow2);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_gfx_filter_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED,
+_efl_canvas_textblock_efl_text_style_text_gfx_filter_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED,
       const char *gfx_filter_name)
 {
    ASYNC_BLOCK;
@@ -16688,7 +16688,7 @@ _efl_canvas_textblock_efl_text_style_gfx_filter_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static const char *
-_efl_canvas_textblock_efl_text_style_gfx_filter_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_gfx_filter_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(gfx_filter)?_FMT(gfx_filter->name):NULL;
 }

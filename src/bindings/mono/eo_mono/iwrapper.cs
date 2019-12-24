@@ -34,7 +34,7 @@ namespace Efl
 namespace Eo
 {
 
-public static class Globals
+internal static class Globals
 {
     /// <summary>Represents the type of the native Efl_Class.</summary>
     internal enum EflClassType
@@ -920,15 +920,26 @@ internal struct WrappingHandle
     public IntPtr NativeHandle { get; private set; }
 }
 
+/// <summary>
+/// Manage the initialization and cleanup for the Efl object subsystem.
+/// <para>Since EFL 1.24.</para>
+/// </summary>
 public static class Config
 {
-
+    /// <summary>
+    /// Initialize the EFL object subsystem.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Init()
     {
         Globals.efl_object_init();
         Globals.SetNativeDisposeCallbacks();
     }
 
+    /// <summary>
+    /// Shutdown the EFL object subsystem.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Shutdown()
     {
         Globals.efl_object_shutdown();
@@ -970,7 +981,7 @@ class PrivateNativeClass : NativeClass
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public class BindingEntityAttribute: System.Attribute
+internal class BindingEntityAttribute: System.Attribute
 {
     public static bool IsBindingEntity(System.Type t)
     {

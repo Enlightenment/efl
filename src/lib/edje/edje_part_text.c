@@ -41,9 +41,9 @@ _efl_canvas_layout_part_text_efl_text_markup_markup_set(Eo *obj,
 /* More Efl.Text.* API (@since 1.22) */
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_backing_type_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_background_type_set(Eo *obj,
       void *_pd EINA_UNUSED,
-      Efl_Text_Style_Backing_Type type)
+      Efl_Text_Style_Background_Type type)
 {
    Edje_User_Defined *eud;
 
@@ -53,19 +53,19 @@ _efl_canvas_layout_part_text_efl_text_style_backing_type_set(Eo *obj,
    eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
 
    eud->u.text_style.types |= EDJE_PART_TEXT_PROP_NONE;
-   efl_text_backing_type_set(pd->rp->object, type);
+   efl_text_background_type_set(pd->rp->object, type);
 }
 
-EOLIAN static Efl_Text_Style_Backing_Type
-_efl_canvas_layout_part_text_efl_text_style_backing_type_get(const Eo *obj,
+EOLIAN static Efl_Text_Style_Background_Type
+_efl_canvas_layout_part_text_efl_text_style_text_background_type_get(const Eo *obj,
       void *_pd EINA_UNUSED)
 {
 
    PROXY_DATA_GET(obj, pd);
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT)
-      return EFL_TEXT_STYLE_BACKING_TYPE_DISABLED;
+      return EFL_TEXT_STYLE_BACKGROUND_TYPE_DISABLED;
 
-   return efl_text_backing_type_get(pd->rp->object);
+   return efl_text_background_type_get(pd->rp->object);
 }
 
 #define TEXT_COLOR_IMPL(x, X) \
@@ -82,7 +82,7 @@ _efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_set(Eo *obj, \
    eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part); \
  \
    eud->u.text_style.types |= EDJE_PART_TEXT_PROP_COLOR_ ##X; \
-   efl_text_ ##x ##_color_set(pd->rp->object, r, g, b, a); \
+   efl_ ##x ##_color_set(pd->rp->object, r, g, b, a); \
 } \
 \
 EOLIAN static void \
@@ -93,22 +93,22 @@ _efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_get(const Eo *obj, \
    PROXY_DATA_GET(obj, pd); \
    *r = *g = *b = *a = 0; \
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return; \
-   efl_text_ ##x ##_color_get(pd->rp->object, r, g, b, a); \
+   efl_ ##x ##_color_get(pd->rp->object, r, g, b, a); \
 }
 
-TEXT_COLOR_IMPL(backing, BACKING)
-TEXT_COLOR_IMPL(glow, GLOW)
-TEXT_COLOR_IMPL(glow2, GLOW2)
-TEXT_COLOR_IMPL(normal, NORMAL)
-TEXT_COLOR_IMPL(outline, OUTLINE)
-TEXT_COLOR_IMPL(shadow, SHADOW)
-TEXT_COLOR_IMPL(strikethrough, STRIKETHROUGH)
-TEXT_COLOR_IMPL(underline, UNDERLINE)
-TEXT_COLOR_IMPL(underline2, UNDERLINE2)
-TEXT_COLOR_IMPL(underline_dashed, UNDERLINE_DASHED)
+TEXT_COLOR_IMPL(text_background, BACKING)
+TEXT_COLOR_IMPL(text_glow, GLOW)
+TEXT_COLOR_IMPL(text_glow2, GLOW2)
+TEXT_COLOR_IMPL(text, NORMAL)
+TEXT_COLOR_IMPL(text_outline, OUTLINE)
+TEXT_COLOR_IMPL(text_shadow, SHADOW)
+TEXT_COLOR_IMPL(text_strikethrough, STRIKETHROUGH)
+TEXT_COLOR_IMPL(text_underline, UNDERLINE)
+TEXT_COLOR_IMPL(text_underline2, UNDERLINE2)
+TEXT_COLOR_IMPL(text_underline_dashed, UNDERLINE_DASHED)
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_effect_type_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_effect_type_set(Eo *obj,
       void *_pd EINA_UNUSED,
       Efl_Text_Style_Effect_Type type)
 {
@@ -201,7 +201,7 @@ _efl_canvas_layout_part_text_efl_text_font_font_size_get(const Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_shadow_direction_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_shadow_direction_set(Eo *obj,
       void *_pd EINA_UNUSED,
       Efl_Text_Style_Shadow_Direction type)
 {
@@ -217,7 +217,7 @@ _efl_canvas_layout_part_text_efl_text_style_shadow_direction_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_strikethrough_type_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_strikethrough_type_set(Eo *obj,
       void *_pd EINA_UNUSED,
       Efl_Text_Style_Strikethrough_Type type)
 {
@@ -233,7 +233,7 @@ _efl_canvas_layout_part_text_efl_text_style_strikethrough_type_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_underline_type_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_underline_type_set(Eo *obj,
       void *_pd EINA_UNUSED,
       Efl_Text_Style_Underline_Type type)
 {
@@ -250,7 +250,7 @@ _efl_canvas_layout_part_text_efl_text_style_underline_type_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_underline_height_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_underline_height_set(Eo *obj,
       void *_pd EINA_UNUSED,
       double value)
 {
@@ -266,7 +266,7 @@ _efl_canvas_layout_part_text_efl_text_style_underline_height_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_underline_dashed_width_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_underline_dashed_width_set(Eo *obj,
       void *_pd EINA_UNUSED,
       int value)
 {
@@ -282,7 +282,7 @@ _efl_canvas_layout_part_text_efl_text_style_underline_dashed_width_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_underline_dashed_gap_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_style_text_underline_dashed_gap_set(Eo *obj,
       void *_pd EINA_UNUSED,
       int value)
 {
@@ -353,28 +353,28 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
         Edje_Part_Text_Prop *prop;
 
         prop = _prop_new(props, EDJE_PART_TEXT_PROP_BACKING_TYPE);
-        prop->val.backing = efl_text_backing_type_get(rp->object);
+        prop->val.backing = efl_text_background_type_get(rp->object);
      }
 #define STYLE_COLOR_COLLECT(x, X) \
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_ ##X) \
      { \
         Edje_Part_Text_Prop *prop; \
         prop = _prop_new(props, EDJE_PART_TEXT_PROP_COLOR_ ##X); \
-        efl_text_ ##x ##_color_get(rp->object, \
+        efl_ ##x ##_color_get(rp->object, \
               &prop->val.color.r, &prop->val.color.g, \
               &prop->val.color.b, &prop->val.color.a); \
      } \
 
-   STYLE_COLOR_COLLECT(backing, BACKING)
-      STYLE_COLOR_COLLECT(glow, GLOW)
-      STYLE_COLOR_COLLECT(glow2, GLOW2)
-      STYLE_COLOR_COLLECT(normal, NORMAL)
-      STYLE_COLOR_COLLECT(outline, OUTLINE)
-      STYLE_COLOR_COLLECT(shadow, SHADOW)
-      STYLE_COLOR_COLLECT(strikethrough, STRIKETHROUGH)
-      STYLE_COLOR_COLLECT(underline, UNDERLINE)
-      STYLE_COLOR_COLLECT(underline2, UNDERLINE2)
-      STYLE_COLOR_COLLECT(underline_dashed, UNDERLINE_DASHED)
+      STYLE_COLOR_COLLECT(text_background, BACKING)
+      STYLE_COLOR_COLLECT(text_glow, GLOW)
+      STYLE_COLOR_COLLECT(text_glow2, GLOW2)
+      STYLE_COLOR_COLLECT(text, NORMAL)
+      STYLE_COLOR_COLLECT(text_outline, OUTLINE)
+      STYLE_COLOR_COLLECT(text_shadow, SHADOW)
+      STYLE_COLOR_COLLECT(text_strikethrough, STRIKETHROUGH)
+      STYLE_COLOR_COLLECT(text_underline, UNDERLINE)
+      STYLE_COLOR_COLLECT(text_underline2, UNDERLINE2)
+      STYLE_COLOR_COLLECT(text_underline_dashed, UNDERLINE_DASHED)
 #undef STYLE_COLOR_COLLECT
 
       if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_EFFECT_TYPE)
@@ -468,7 +468,7 @@ _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj,
      {
 
       case EDJE_PART_TEXT_PROP_BACKING_TYPE:
-        efl_text_backing_type_set(
+        efl_text_background_type_set(
               efl_part(obj,
                  eud->part),
               prop->val.backing);
@@ -476,7 +476,7 @@ _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj,
 
 #define STYLE_COLOR_CASE(x, X) \
       case EDJE_PART_TEXT_PROP_COLOR_##X : \
-        efl_text_##x ##_color_set(efl_part(obj, \
+        efl_##x ##_color_set(efl_part(obj, \
                  eud->part), \
                  prop->val.color.r, \
                  prop->val.color.g, \
@@ -484,16 +484,16 @@ _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj,
                  prop->val.color.a); \
         break;
 
-      STYLE_COLOR_CASE(backing, BACKING)
-      STYLE_COLOR_CASE(glow, GLOW)
-      STYLE_COLOR_CASE(glow2, GLOW2)
-      STYLE_COLOR_CASE(normal, NORMAL)
-      STYLE_COLOR_CASE(outline, OUTLINE)
-      STYLE_COLOR_CASE(shadow, SHADOW)
-      STYLE_COLOR_CASE(strikethrough, STRIKETHROUGH)
-      STYLE_COLOR_CASE(underline, UNDERLINE)
-      STYLE_COLOR_CASE(underline2, UNDERLINE2)
-      STYLE_COLOR_CASE(underline_dashed, UNDERLINE_DASHED)
+      STYLE_COLOR_CASE(text_background, BACKING)
+      STYLE_COLOR_CASE(text_glow, GLOW)
+      STYLE_COLOR_CASE(text_glow2, GLOW2)
+      STYLE_COLOR_CASE(text, NORMAL)
+      STYLE_COLOR_CASE(text_outline, OUTLINE)
+      STYLE_COLOR_CASE(text_shadow, SHADOW)
+      STYLE_COLOR_CASE(text_strikethrough, STRIKETHROUGH)
+      STYLE_COLOR_CASE(text_underline, UNDERLINE)
+      STYLE_COLOR_CASE(text_underline2, UNDERLINE2)
+      STYLE_COLOR_CASE(text_underline_dashed, UNDERLINE_DASHED)
 #undef STYLE_COLOR_CASE
 
       case EDJE_PART_TEXT_PROP_EFFECT_TYPE:

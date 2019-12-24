@@ -4,15 +4,15 @@
 #include "efl_canvas_textblock_internal.h"
 #include "efl_text_cursor.eo.h"
 
-#define MY_CLASS EFL_TEXT_ATTRIBUTE_FACTORY_CLASS
+#define MY_CLASS EFL_TEXT_FORMATTER_CLASS
 
 typedef struct
 {
 
-} Efl_Text_Attribute_Factory_Data;
+} Efl_Text_Formatter_Data;
 
 EOLIAN static void
-_efl_text_attribute_factory_attribute_insert(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end, const char *format)
+_efl_text_formatter_attribute_insert(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end, const char *format)
 {
    EINA_SAFETY_ON_TRUE_RETURN(!efl_text_cursor_handle_get(start) ||
                               !efl_text_cursor_handle_get(end) ||
@@ -27,19 +27,19 @@ _efl_text_attribute_factory_attribute_insert(const Efl_Text_Cursor *start, const
 }
 
 EOLIAN static unsigned int
-_efl_text_attribute_factory_attribute_clear(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end)
+_efl_text_formatter_attribute_clear(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end)
 {
    unsigned int ret = 0;
    Eina_Iterator *annotations;
    Efl_Text_Attribute_Handle *an;
-   annotations = efl_text_attribute_factory_range_attributes_get(start, end);
+   annotations = efl_text_formatter_range_attributes_get(start, end);
 
    if (!annotations) return ret;
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
         ret++;
-        efl_text_attribute_factory_remove(an);
+        efl_text_formatter_remove(an);
      }
    eina_iterator_free(annotations);
 
@@ -47,7 +47,7 @@ _efl_text_attribute_factory_attribute_clear(const Efl_Text_Cursor *start, const 
 }
 
 const char *
-efl_text_attribute_factory_attribute_get(Efl_Text_Attribute_Handle *annotation)
+efl_text_formatter_attribute_get(Efl_Text_Attribute_Handle *annotation)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!annotation || !(annotation->obj), NULL);
 
@@ -55,7 +55,7 @@ efl_text_attribute_factory_attribute_get(Efl_Text_Attribute_Handle *annotation)
 }
 
 Eina_Iterator *
-efl_text_attribute_factory_range_attributes_get(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end)
+efl_text_formatter_range_attributes_get(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end)
 {
    Eina_List *lst = NULL;
    Efl_Text_Attribute_Handle *it;
@@ -86,7 +86,7 @@ efl_text_attribute_factory_range_attributes_get(const Efl_Text_Cursor *start, co
 }
 
 void
-efl_text_attribute_factory_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor *start, Efl_Text_Cursor *end)
+efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor *start, Efl_Text_Cursor *end)
 {
    EINA_SAFETY_ON_TRUE_RETURN (!handle || !(handle->obj));
 
@@ -97,7 +97,7 @@ efl_text_attribute_factory_attribute_cursors_get(const Efl_Text_Attribute_Handle
 }
 
 void
-efl_text_attribute_factory_remove(Efl_Text_Attribute_Handle *annotation)
+efl_text_formatter_remove(Efl_Text_Attribute_Handle *annotation)
 {
    EINA_SAFETY_ON_TRUE_RETURN (!annotation || !(annotation->obj));
 
@@ -106,7 +106,7 @@ efl_text_attribute_factory_remove(Efl_Text_Attribute_Handle *annotation)
 }
 
 Eina_Bool
-efl_text_attribute_factory_attribute_is_item(Efl_Text_Attribute_Handle *annotation)
+efl_text_formatter_attribute_is_item(Efl_Text_Attribute_Handle *annotation)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!annotation || !(annotation->obj), EINA_FALSE);
 
@@ -114,7 +114,7 @@ efl_text_attribute_factory_attribute_is_item(Efl_Text_Attribute_Handle *annotati
 }
 
 Eina_Bool
-efl_text_attribute_factory_item_geometry_get(const Efl_Text_Attribute_Handle *annotation, int *x, int *y, int *w, int *h)
+efl_text_formatter_item_geometry_get(const Efl_Text_Attribute_Handle *annotation, int *x, int *y, int *w, int *h)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!annotation || !(annotation->obj), EINA_FALSE);
 
@@ -130,4 +130,4 @@ efl_text_attribute_factory_item_geometry_get(const Efl_Text_Attribute_Handle *an
    return evas_textblock_cursor_format_item_geometry_get(&cur, x, y, w, h);
 }
 
-#include "efl_text_attribute_factory.eo.c"
+#include "efl_text_formatter.eo.c"

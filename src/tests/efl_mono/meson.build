@@ -83,6 +83,7 @@ efl_mono_src = [
       'Inheritance.cs',
       'Hash.cs',
       'List.cs',
+      'Array.cs',
 ]
 
 if get_option('dotnet')

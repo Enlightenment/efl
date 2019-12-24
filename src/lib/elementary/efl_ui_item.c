@@ -129,7 +129,10 @@ _efl_ui_item_efl_object_finalize(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
    /* Support Item Focus Feature */
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   efl_ui_action_connector_bind_clickable_to_object(wd->resize_obj, obj);
+   if (efl_ui_layout_theme_version_get(obj) == 123)
+     efl_ui_action_connector_bind_clickable_to_object(wd->resize_obj, obj);
+   else
+     efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
    return eo;
 }
 

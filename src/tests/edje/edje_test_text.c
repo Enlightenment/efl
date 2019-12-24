@@ -180,7 +180,7 @@ START_TEST(edje_test_text_color)
    efl_file_key_set(layout, "test");
    ck_assert(!efl_file_load(layout));
 
-   efl_text_normal_color_set(efl_part(layout, "text"), 255, 255, 255, 255);
+   efl_text_color_set(efl_part(layout, "text"), 255, 255, 255, 255);
 
 }
 END_TEST
@@ -195,9 +195,9 @@ _basic_check(Eo *layout, Eina_Bool set)
         // Just normal_color is enough
         if (set)
           {
-             efl_text_normal_color_set(efl_part(layout, "text"),
+             efl_text_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
-             efl_text_backing_color_set(efl_part(layout, "text"),
+             efl_text_background_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
              efl_text_glow_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
@@ -217,13 +217,13 @@ _basic_check(Eo *layout, Eina_Bool set)
                    255, 255, 255, 255);
           }
 
-        efl_text_normal_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
+        efl_text_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
         ck_assert_int_eq(r, 255);
         ck_assert_int_eq(g, 255);
         ck_assert_int_eq(b, 255);
         ck_assert_int_eq(a, 255);
 
-        efl_text_backing_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
+        efl_text_background_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
         ck_assert_int_eq(r, 255);
         ck_assert_int_eq(g, 255);
         ck_assert_int_eq(b, 255);

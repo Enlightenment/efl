@@ -19,14 +19,14 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
             scroll: bool; [[$true to enable scrolling. Default is $false.]]
          }
       }
-      @property context_menu_disabled {
-         [[This disables the entry's contextual (longpress) menu.]]
+      @property context_menu_enabled {
+         [[This enables or disables the entry's contextual (longpress) menu.]]
          set {
          }
          get {
          }
          values {
-            disabled: bool; [[If $true, the menu is disabled.]]
+            enabled: bool; [[If $true, the menu is enabled.]]
          }
       }
       @property cnp_mode {
@@ -45,14 +45,14 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
             format: Efl.Ui.Selection_Format; [[Format for copy & paste.]]
          }
       }
-      @property selection_handler_disabled {
-         [[This disables the entry's selection handlers.]]
+      @property selection_handler_enabled {
+         [[This enables or disables the entry's selection handlers.]]
          set {
          }
          get {
          }
          values {
-            disabled: bool; [[If $true, the selection handlers are disabled.]]
+            enabled: bool; [[If $true, the selection handlers are enabled.]]
          }
       }
 

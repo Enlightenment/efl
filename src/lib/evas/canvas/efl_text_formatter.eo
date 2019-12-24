@@ -1,7 +1,7 @@
 import efl_text_types;
 
-abstract @beta Efl.Text.Attribute.Factory extends Efl.Object {
-   [[Attribute factory API to manage text attributes.
+abstract @beta Efl.Text.Formatter extends Efl.Object {
+    [[Text Formatter API to manage text formatting(attributes).
      Use it to insert and remove style attributes (font, size, color, ...) using @Efl.Text.Cursor on EFL Widgets.
 
      Attributes can be assigned to character ranges, selected using two @Efl.Text.Cursor instances.

@@ -16,7 +16,7 @@ _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
    efl_text_cursor_position_set(start, start_pos);
    efl_text_cursor_position_set(end, end_pos);
 
-   efl_text_attribute_factory_attribute_insert(start, end, style);
+   efl_text_formatter_attribute_insert(start, end, style);
 
    efl_del(start);
    efl_del(end);
@@ -166,7 +166,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_font_family_set(en, "Sans");
    efl_text_font_size_set(en, 12);
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
-   efl_text_normal_color_set(en, 255, 255, 255, 255);
+   efl_text_color_set(en, 255, 255, 255, 255);
 
    efl_text_set(en,
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\n"

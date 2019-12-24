@@ -2341,7 +2341,7 @@ typedef struct
     int ni; // number integer
     int nd; // number double
     Efl_Text_Format_Wrap wrap;
-    Efl_Text_Style_Backing_Type backing;
+    Efl_Text_Style_Background_Type backing;
     Efl_Text_Style_Underline_Type underline;
     struct
     {

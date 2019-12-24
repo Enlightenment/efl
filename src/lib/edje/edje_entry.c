@@ -799,20 +799,16 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
 static Eina_Bool
 _edje_entry_style_tag_check(Edje_Real_Part *rp, const char *tag)
 {
+    if (!tag) return EINA_FALSE;
     const Evas_Textblock_Style *ts = NULL;
 
     ts = evas_object_textblock_style_user_peek(rp->object);
+    if (!ts) ts = evas_object_textblock_style_get(rp->object);
     if (ts)
       {
-         if (strstr(evas_textblock_style_get(ts), tag)) return EINA_TRUE;
-      }
-    else
-      {
-         ts = evas_object_textblock_style_get(rp->object);
-         if (ts)
-           {
-              if (strstr(evas_textblock_style_get(ts), tag)) return EINA_TRUE;
-           }
+         const char *style_str = evas_textblock_style_get(ts);
+         if (!style_str) return EINA_FALSE;
+         if (strstr(style_str, tag)) return EINA_TRUE;
       }
 
    return EINA_FALSE;
