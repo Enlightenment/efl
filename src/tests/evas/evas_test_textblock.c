@@ -4516,6 +4516,12 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
 
    ck_assert_int_eq(changed_emit, 3);
 
+   Eo *cursor_temp = efl_add(EFL_TEXT_CURSOR_CLASS, txt);
+   efl_text_cursor_copy(cursor1 ,cursor_temp);
+   ck_assert_ptr_eq(
+      efl_text_cursor_text_object_get(cursor1),
+      efl_text_cursor_text_object_get(cursor_temp));
+
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
 EFL_END_TEST

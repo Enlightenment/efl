@@ -105,10 +105,13 @@ _efl_text_cursor_compare(const Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, co
 EOLIAN static void
 _efl_text_cursor_copy(const Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_Text_Cursor *dst)
 {
+   Efl_Text_Cursor_Data *pd_dest = efl_data_scope_safe_get(dst, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(pd_dest);
    if (!pd->handle) return;
 
    Efl_Text_Cursor_Handle *handle = evas_object_textblock_cursor_new(pd->handle->obj);
    evas_textblock_cursor_copy(pd->handle, handle);
+   pd_dest->text_obj = pd->text_obj;
    efl_text_cursor_handle_set(dst, handle);
    evas_textblock_cursor_unref(handle, NULL);
 }
@@ -432,7 +435,8 @@ efl_text_cursor_handle_get(const Eo *obj)
 
 void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_obj)
 {
-   Efl_Text_Cursor_Data *pd = efl_data_scope_get(cursor, MY_CLASS);
+   Efl_Text_Cursor_Data *pd = efl_data_scope_safe_get(cursor, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
    Efl_Text_Cursor_Handle *handle = NULL;
    if (efl_isa(canvas_text_obj, EFL_CANVAS_TEXTBLOCK_CLASS))
      {
