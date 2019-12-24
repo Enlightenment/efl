@@ -10,7 +10,7 @@ fs = require('fs');
 request = require('request');
 Twitter = require('twitter');
 
-user_acount = 'EnlightenmentKo'
+user_acount = 'EnlightenmentKo';
 
 var twit = new Twitter({
   consumer_key: '', // replace with consumer_key
