@@ -254,6 +254,39 @@ ecore_evas_wayland_engine_include_dir = []
 
 evas_static_list = []
 
+luaold_interpreters = [
+  ['lua',     ['>=5.1.0','<5.3.0']],
+  ['lua51',   ['>=5.1.0','<5.2.0']],
+  ['lua-5.1', ['>=5.1.0','<5.2.0']],
+  ['lua5.1',  ['>=5.1.0','<5.2.0']],
+  ['lua52',   ['>=5.2.0','<5.3.0']],
+  ['lua-5.2', ['>=5.2.0','<5.3.0']],
+  ['lua5.2',  ['>=5.2.0','<5.3.0']],
+]
+
+lua_pc_name = ''
+
+if get_option('lua-interpreter') == 'lua'
+  foreach l : luaold_interpreters
+    lua = dependency(l[0], version: l[1], required:false)
+    lua_pc_name = l[0]
+    if lua.found() == true
+      break
+    endif
+  endforeach
+else
+  lua = dependency(get_option('lua-interpreter'))
+  lua_pc_name = 'luajit'
+endif
+
+if sys_osx == true and get_option('lua-interpreter') == 'luajit'
+# luajit on macro is broken, this means we need to generate our own dependency with our arguments, a library later still needs to link to luajit for the pagesize argument thingy
+  lua = declare_dependency(
+    include_directories: include_directories(lua.get_pkgconfig_variable('includedir')),
+    link_args: ['-L'+lua.get_pkgconfig_variable('libdir'), '-l'+lua.get_pkgconfig_variable('libname')]
+  )
+endif
+
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
 ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
@@ -293,7 +326,7 @@ subprojects = [
 ['efreet'           ,[]                    , false, false,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ecore_imf_evas'   ,[]                    , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ephysics'         ,['physics']           , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
-['edje'             ,[]                    , false,  true,  true, false,  true,  true, ['evas', 'eo', 'efl', get_option('lua-interpreter')], []],
+['edje'             ,[]                    , false,  true,  true, false,  true,  true, ['evas', 'eo', 'efl', lua_pc_name], []],
 ['emotion'          ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], []],
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
