@@ -10153,11 +10153,11 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(last_it);
                        Evas_Text_Props_Info *info = ti->text_props.info;
                        int it_index = ((inc) ? cur->pos : ret) - last_it->text_pos;
-
+                       *is_single_glyph = EINA_FALSE;
                        Evas_Font_OT_Info ot = {0};
+                       Evas_BiDi_Direction itdir = ti->text_props.bidi_dir;
                        if (ti->text_props.len != ti->text_props.text_len)/*if code point count same as glyph count skip it*/
                          {
-                            Evas_BiDi_Direction itdir = ti->text_props.bidi_dir;
                             int i = 0;
                             if (itdir == EFL_TEXT_BIDIRECTIONAL_TYPE_RTL)
                               {
@@ -10200,9 +10200,14 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                                    }
                               }
                          }
-                       else
+                       if (*is_single_glyph == EINA_FALSE)
                          {
-                            is_single_glyph = EINA_FALSE;
+                           Eina_Unicode content = 0;
+                           if (!inc && cur->pos > 0)
+                              content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos - 1];
+                           else if (inc && cur->pos >= 0 && eina_ustrbuf_length_get(cur->node->unicode) > (cur->pos + 1))
+                              content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos + 1];
+                           if (VAR_SEQ(content)) *is_single_glyph = EINA_TRUE;
                          }
                     }
 #else//#ifdef OT_SUPPORT
