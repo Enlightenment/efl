@@ -9954,6 +9954,7 @@ evas_textblock_cursor_word_start(Efl_Text_Cursor_Handle *cur)
    const Eina_Unicode *text;
    size_t i;
    char *breaks;
+   size_t old_cursor_pos = cur->pos;
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -10004,8 +10005,12 @@ evas_textblock_cursor_word_start(Efl_Text_Cursor_Handle *cur)
    cur->pos = i;
 
    free(breaks);
-   _evas_textblock_cursor_object_changed(cur);
-   return EINA_TRUE;
+   if (cur->pos != old_cursor_pos)
+     {
+        _evas_textblock_cursor_object_changed(cur);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -10015,6 +10020,7 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
    const Eina_Unicode *text;
    size_t i;
    char *breaks;
+   size_t old_cursor_pos = cur->pos;
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -10022,8 +10028,9 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
 
+   // No movement happend, return false
    if (cur->pos == len)
-      return EINA_TRUE;
+     return EINA_FALSE;
 
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
@@ -10059,8 +10066,12 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
    cur->pos = i;
 
    free(breaks);
-   _evas_textblock_cursor_object_changed(cur);
-   return EINA_TRUE;
+   if (cur->pos != old_cursor_pos)
+     {
+        _evas_textblock_cursor_object_changed(cur);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static char *

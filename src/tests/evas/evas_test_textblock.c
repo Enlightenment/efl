@@ -4513,7 +4513,6 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    efl_text_set(txt, "");
    efl_text_set(txt, "");
    efl_text_cursor_text_insert(cursor1, "aa");
-
    ck_assert_int_eq(changed_emit, 3);
 
    Eo *cursor_temp = efl_add(EFL_TEXT_CURSOR_CLASS, txt);
@@ -4528,6 +4527,21 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    efl_text_cursor_line_jump_by(cur_obj, -1);
    ck_assert_int_eq(efl_text_cursor_position_get(cur_obj), 0);
 
+   efl_text_set(txt, "Word");
+   efl_text_cursor_position_set(cur_obj, 1);
+   changed_emit = 0;
+   efl_event_callback_add(cur_obj, EFL_TEXT_CURSOR_EVENT_CHANGED, _increment_int_changed, &changed_emit);
+   ck_assert(efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START));
+   ck_assert_int_eq(changed_emit, 1);
+
+   ck_assert(!efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START));
+   ck_assert_int_eq(changed_emit, 1);
+
+   ck_assert(efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END));
+   ck_assert_int_eq(changed_emit, 2);
+
+   ck_assert(!efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END));
+   ck_assert_int_eq(changed_emit, 2);
 
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
