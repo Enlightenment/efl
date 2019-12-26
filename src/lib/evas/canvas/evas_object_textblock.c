@@ -16140,7 +16140,7 @@ _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Textblock_Data *o)
 /* Efl.Text.Font interface implementation */
 
 static void
-_efl_canvas_textblock_efl_text_font_font_family_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font)
+_efl_canvas_textblock_efl_text_font_properties_font_family_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font)
 {
    ASYNC_BLOCK;
    Eina_Bool changed = EINA_FALSE;
@@ -16172,13 +16172,13 @@ _efl_canvas_textblock_efl_text_font_font_family_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static const char *
-_efl_canvas_textblock_efl_text_font_font_family_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_font_properties_font_family_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    return o->default_format.info.font;
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o, int size)
+_efl_canvas_textblock_efl_text_font_properties_font_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o, int size)
 {
    ASYNC_BLOCK;
    EINA_SAFETY_ON_FALSE_RETURN(size > 0);
@@ -16190,13 +16190,13 @@ _efl_canvas_textblock_efl_text_font_font_size_set(Eo *obj EINA_UNUSED, Efl_Canva
 }
 
 static Efl_Font_Size
-_efl_canvas_textblock_efl_text_font_font_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_font_properties_font_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    return o->default_format.info.size;
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_source_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_source EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_source_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_source EINA_UNUSED)
 {
    Eina_Stringshare *nfont_source;
    if (o->default_format.info.font_source != font_source)
@@ -16217,13 +16217,13 @@ _efl_canvas_textblock_efl_text_font_font_source_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static const char*
-_efl_canvas_textblock_efl_text_font_font_source_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_source_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_source);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_fallbacks EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_fallbacks EINA_UNUSED)
 {
    Eina_Stringshare *nfont_fallbacks;
    if (o->default_format.info.font_fallbacks != font_fallbacks)
@@ -16244,13 +16244,13 @@ _efl_canvas_textblock_efl_text_font_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_
 }
 
 static const char*
-_efl_canvas_textblock_efl_text_font_font_fallbacks_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_fallbacks_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_fallbacks);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_lang EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_lang EINA_UNUSED)
 {
    if (_FMT_INFO(font_lang) != font_lang)
      {
@@ -16262,13 +16262,13 @@ _efl_canvas_textblock_efl_text_font_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canva
 }
 
 static const char*
-_efl_canvas_textblock_efl_text_font_font_lang_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_lang_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_lang);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_weight_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Weight font_weight EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_weight_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Weight font_weight EINA_UNUSED)
 {
    if (_FMT_INFO(font_weight) == font_weight) return;
    _FMT_INFO(font_weight) = font_weight;
@@ -16276,13 +16276,13 @@ _efl_canvas_textblock_efl_text_font_font_weight_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static Efl_Text_Font_Weight
-_efl_canvas_textblock_efl_text_font_font_weight_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_weight_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_weight);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Slant font_slant EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Slant font_slant EINA_UNUSED)
 {
    ASYNC_BLOCK;
    if (_FMT_INFO(font_slant) == font_slant) return;
@@ -16291,13 +16291,13 @@ _efl_canvas_textblock_efl_text_font_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canv
 }
 
 static Efl_Text_Font_Slant
-_efl_canvas_textblock_efl_text_font_font_slant_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_slant_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_slant);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Width font_width EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Width font_width EINA_UNUSED)
 {
    ASYNC_BLOCK;
    if (_FMT_INFO(font_width) == font_width) return;
@@ -16306,13 +16306,13 @@ _efl_canvas_textblock_efl_text_font_font_width_set(Eo *obj EINA_UNUSED, Efl_Canv
 }
 
 static Efl_Text_Font_Width
-_efl_canvas_textblock_efl_text_font_font_width_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_width_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_width);
 }
 
 EOLIAN static void
-_efl_canvas_textblock_efl_text_font_font_bitmap_scalable_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
+_efl_canvas_textblock_efl_text_font_properties_font_bitmap_scalable_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    if (_FMT_INFO(bitmap_scalable) == bitmap_scalable) return;
    _FMT_INFO(bitmap_scalable) = bitmap_scalable;
@@ -16320,7 +16320,7 @@ _efl_canvas_textblock_efl_text_font_font_bitmap_scalable_set(Eo *obj, Efl_Canvas
 }
 
 EOLIAN static Efl_Text_Font_Bitmap_Scalable
-_efl_canvas_textblock_efl_text_font_font_bitmap_scalable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_font_properties_font_bitmap_scalable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    return _FMT_INFO(bitmap_scalable);
 }

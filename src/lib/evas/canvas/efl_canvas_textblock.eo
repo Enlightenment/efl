@@ -1,7 +1,7 @@
 import efl_text_types;
 
 class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
-                       Efl.Canvas.Filter.Internal, Efl.Text_Font,
+                       Efl.Canvas.Filter.Internal, Efl.Text.Font.Properties,
                        Efl.Text_Style, Efl.Text_Format,
                        Efl.Text_Markup, Efl.Ui.I18n
 {
@@ -9,7 +9,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
      if you need user interaction consider the classes in $[Efl.Ui].
 
      Note: No text will be rendered until a font, a font size and a font color are specified.
-     This can be accomplished using @Efl.Text_Font.font_family, @Efl.Text_Font.font_size and
+     This can be accomplished using @Efl.Text.Font.Properties.font_family, @Efl.Text.Font.Properties.font_size and
      @Efl.Text_Style.text_color.
      Alternatively, @.style_apply can be used providing the attributes $font, $font_size and $color.
    ]]
@@ -92,7 +92,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
          [[Applies several style attributes at once using a formatting string.
            Given style attributes override previous values, leaving other attributes unaffected.
            This is akin to setting individual style attributes using properties like
-           @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap, for example.
+           @Efl.Text.Font.Properties.font_slant or @Efl.Text_Format.wrap, for example.
 
            The formatting string is a whitespace-separated list of $[attribute=value] pairs.
 
@@ -101,43 +101,43 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
            - $font: Name of the font to use.
              Default value is empty, meaning that no text will be rendered.
              Requires $font_size and $font_color.
-             See @Efl.Text_Font.font_family.
+             See @Efl.Text.Font.Properties.font_family.
 
            - $font_fallbacks: Comma-delimited list of fonts to try if finding the primary font fails.
              Example: $[font_fallbacks=consolas,courier,monospace].
              Default value is empty.
-             See @Efl.Text_Font.font_fallbacks.
+             See @Efl.Text.Font.Properties.font_fallbacks.
 
            - $font_size: Height of font, in points.
              Default value is 0.
              Requires $font and $font_color.
-             See @Efl.Text_Font.font_size.
+             See @Efl.Text.Font.Properties.font_size.
 
            - $font_source: Path to the file containing the font to use.
              Example: $[font_source=/usr/share/fonts/Sans.ttf].
              Default value is empty.
-             See @Efl.Text_Font.font_source.
+             See @Efl.Text.Font.Properties.font_source.
 
            - $font_weight: Thickness of the font. The value must be one of: $normal, $thin, $ultralight, $extralight,
              $light, $book, $medium, $semibold, $bold, $ultrabold, $extrabold, $black and $extrablack.
              Default value is $normal.
-             See @Efl.Text_Font.font_weight.
+             See @Efl.Text.Font.Properties.font_weight.
 
            - $font_style: Style of the font. The value must be one of: $normal, $oblique and $italic.
              Default value is $normal.
-             See @Efl.Text_Font.font_slant.
+             See @Efl.Text.Font.Properties.font_slant.
 
            - $font_width: How wide the font is, relative to its height. The value must be one of:
              $normal, $ultracondensed, $extracondensed, $condensed, $semicondensed, $semiexpanded, $expanded,
              $extraexpanded and $ultraexpanded.
              Default value is $normal.
-             See @Efl.Text_Font.font_weight.
+             See @Efl.Text.Font.Properties.font_weight.
 
            - $lang: A 2-letter ISO 639-1 language code, $auto (to use the system locale setting) or $none (to disable
              language support).
              Example: $[lang=he].
              Default value is empty.
-             See @Efl.Text_Font.font_lang.
+             See @Efl.Text.Font.Properties.font_lang.
 
            - $color: Color code for the text (See bottom for the complete list of supported codes).
              Default value is $[rgba(0,0,0,0)] meaning that no text will be rendered.
@@ -340,7 +340,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       @property all_styles {
          [[A string representing the complete set of attributes applied to this text object.
            This includes the default attributes plus any additional style applied with @.style_apply
-           or individual style properties like @Efl.Text_Font.font_slant or @Efl.Text_Format.wrap.
+           or individual style properties like @Efl.Text.Font.Properties.font_slant or @Efl.Text_Format.wrap.
 
            See @.style_apply for the description of all attributes.
          ]]
@@ -455,15 +455,15 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_state_prepare;
-      Efl.Text_Font.font_family { get; set; }
-      Efl.Text_Font.font_size { get; set; }
-      Efl.Text_Font.font_source { get; set; }
-      Efl.Text_Font.font_fallbacks { get; set; }
-      Efl.Text_Font.font_lang { get; set; }
-      Efl.Text_Font.font_weight { get; set; }
-      Efl.Text_Font.font_slant { get; set; }
-      Efl.Text_Font.font_width { get; set; }
-      Efl.Text_Font.font_bitmap_scalable { get; set; }
+      Efl.Text.Font.Properties.font_family { get; set; }
+      Efl.Text.Font.Properties.font_size { get; set; }
+      Efl.Text.Font.Properties.font_source { get; set; }
+      Efl.Text.Font.Properties.font_fallbacks { get; set; }
+      Efl.Text.Font.Properties.font_lang { get; set; }
+      Efl.Text.Font.Properties.font_weight { get; set; }
+      Efl.Text.Font.Properties.font_slant { get; set; }
+      Efl.Text.Font.Properties.font_width { get; set; }
+      Efl.Text.Font.Properties.font_bitmap_scalable { get; set; }
       Efl.Text_Style.text_color { get; set; }
       Efl.Text_Style.text_background_type { get; set; }
       Efl.Text_Style.text_background_color { get; set; }

@@ -207,7 +207,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_io_queue.eo.h"
 
 /* Text interfaces */
-#include "interfaces/efl_text_font.eo.h"
+#include "interfaces/efl_text_font_properties.eo.h"
 #include "interfaces/efl_text_style.eo.h"
 #include "interfaces/efl_text_format.eo.h"
 #include "interfaces/efl_text_markup.eo.h"

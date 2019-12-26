@@ -21,7 +21,7 @@
 #include "interfaces/efl_player.eo.c"
 #include "interfaces/efl_audio_control.eo.c"
 #include "interfaces/efl_text.eo.c"
-#include "interfaces/efl_text_font.eo.c"
+#include "interfaces/efl_text_font_properties.eo.c"
 #include "interfaces/efl_text_style.eo.c"
 #include "interfaces/efl_text_format.eo.c"
 #include "interfaces/efl_text_markup.eo.c"
