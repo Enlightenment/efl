@@ -11033,7 +11033,7 @@ evas_textblock_cursor_line_jump_by(Efl_Text_Cursor_Handle *cur, int by)
    pnode = cur->node;
    ppos = cur->pos;
 
-   evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE);
    cx += (cw / 2);
    evas_textblock_cursor_paragraph_last(cur);
    last = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL);

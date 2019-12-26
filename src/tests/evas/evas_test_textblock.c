@@ -4522,6 +4522,13 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
       efl_text_cursor_text_object_get(cursor1),
       efl_text_cursor_text_object_get(cursor_temp));
 
+   efl_text_set(txt, "occaecat \n mollit");
+   efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   efl_text_cursor_line_jump_by(cur_obj, 1);
+   efl_text_cursor_line_jump_by(cur_obj, -1);
+   ck_assert_int_eq(efl_text_cursor_position_get(cur_obj), 0);
+
+
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
 EFL_END_TEST
