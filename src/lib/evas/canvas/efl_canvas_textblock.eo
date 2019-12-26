@@ -259,7 +259,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
 
            - $tabstops: Size (in pixels) of the tab character. The value must be a number greater than one.
              Default value is $[32].
-             See @Efl.Text_Format.tabstops.
+             See @Efl.Text_Format.tab_stops.
 
            - $linesize: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
              $[0] would render all lines on top of each other (However, this value will be ignored if it results in
@@ -276,13 +276,13 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
            - $linegap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
              next. Setting this value sets $linerelgap to $[0%] (disables it).
              Default value is $[0].
-             See @Efl.Text_Format.linegap.
+             See @Efl.Text_Format.line_gap.
 
            - $linerelgap: Additional empty space (in percentage over the natural line height) between the bottom of
              one line of text and the top of the next.
              Setting this value sets $linegap to $[0] (disables it).
              Default value is $[0%].
-             See @Efl.Text_Format.linerelgap.
+             See @Efl.Text_Format.line_rel_gap.
 
            - $linefill: An alternate way to specify the $linesize as a percentage of the canvas height.
              A value of $[100%] means that a single line fills the canvas, whereas $[25%] means that 4 lines
@@ -489,9 +489,9 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Format.text_horizontal_align { get; set; }
       Efl.Text_Format.text_horizontal_align_auto_type { get; set; }
       Efl.Text_Format.text_vertical_align { get; set; }
-      Efl.Text_Format.linegap { get; set; }
-      Efl.Text_Format.linerelgap { get; set; }
-      Efl.Text_Format.tabstops { get; set; }
+      Efl.Text_Format.line_gap { get; set; }
+      Efl.Text_Format.line_rel_gap { get; set; }
+      Efl.Text_Format.tab_stops { get; set; }
       Efl.Text_Format.password { get; set; }
       Efl.Text_Format.replacement_char { get; set; }
       Efl.Text_Markup.markup { set; get; }

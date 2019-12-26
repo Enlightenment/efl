@@ -4877,7 +4877,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
    efl_text_font_weight_set(txt, EFL_TEXT_FONT_WEIGHT_EXTRABOLD);
    efl_text_font_slant_set(txt, EFL_TEXT_FONT_SLANT_OBLIQUE);
-   efl_text_tabstops_set(txt, 20);
+   efl_text_tab_stops_set(txt, 20);
 
    efl_canvas_textblock_style_apply(txt, "color=#90E135");
 

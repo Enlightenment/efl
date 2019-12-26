@@ -16833,7 +16833,7 @@ _efl_canvas_textblock_efl_text_format_text_vertical_align_get(const Eo *obj EINA
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_linegap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
 {
    ASYNC_BLOCK;
    double linerelgap = _FMT(linerelgap);
@@ -16852,13 +16852,13 @@ _efl_canvas_textblock_efl_text_format_linegap_set(Eo *obj EINA_UNUSED, Efl_Canva
 }
 
 static double
-_efl_canvas_textblock_efl_text_format_linegap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(linegap);
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_linerelgap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_rel_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
 {
    ASYNC_BLOCK;
    double linegap = _FMT(linegap);
@@ -16876,20 +16876,20 @@ _efl_canvas_textblock_efl_text_format_linerelgap_set(Eo *obj EINA_UNUSED, Efl_Ca
 }
 
 static double
-_efl_canvas_textblock_efl_text_format_linerelgap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_rel_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(linerelgap);
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_tabstops_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int value EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_tab_stops_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int value EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(tabstops, value);
 }
 
 static int
-_efl_canvas_textblock_efl_text_format_tabstops_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_tab_stops_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(tabstops);
 }
