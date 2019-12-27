@@ -9954,6 +9954,7 @@ evas_textblock_cursor_word_start(Efl_Text_Cursor_Handle *cur)
    const Eina_Unicode *text;
    size_t i;
    char *breaks;
+   size_t old_cursor_pos = cur->pos;
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -10004,8 +10005,12 @@ evas_textblock_cursor_word_start(Efl_Text_Cursor_Handle *cur)
    cur->pos = i;
 
    free(breaks);
-   _evas_textblock_cursor_object_changed(cur);
-   return EINA_TRUE;
+   if (cur->pos != old_cursor_pos)
+     {
+        _evas_textblock_cursor_object_changed(cur);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -10015,6 +10020,7 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
    const Eina_Unicode *text;
    size_t i;
    char *breaks;
+   size_t old_cursor_pos = cur->pos;
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -10022,8 +10028,9 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
 
+   // No movement happend, return false
    if (cur->pos == len)
-      return EINA_TRUE;
+     return EINA_FALSE;
 
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
@@ -10059,8 +10066,12 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
    cur->pos = i;
 
    free(breaks);
-   _evas_textblock_cursor_object_changed(cur);
-   return EINA_TRUE;
+   if (cur->pos != old_cursor_pos)
+     {
+        _evas_textblock_cursor_object_changed(cur);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static char *
@@ -10153,11 +10164,11 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(last_it);
                        Evas_Text_Props_Info *info = ti->text_props.info;
                        int it_index = ((inc) ? cur->pos : ret) - last_it->text_pos;
-
+                       *is_single_glyph = EINA_FALSE;
                        Evas_Font_OT_Info ot = {0};
+                       Evas_BiDi_Direction itdir = ti->text_props.bidi_dir;
                        if (ti->text_props.len != ti->text_props.text_len)/*if code point count same as glyph count skip it*/
                          {
-                            Evas_BiDi_Direction itdir = ti->text_props.bidi_dir;
                             int i = 0;
                             if (itdir == EFL_TEXT_BIDIRECTIONAL_TYPE_RTL)
                               {
@@ -10200,9 +10211,14 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                                    }
                               }
                          }
-                       else
+                       if (*is_single_glyph == EINA_FALSE)
                          {
-                            is_single_glyph = EINA_FALSE;
+                           Eina_Unicode content = 0;
+                           if (!inc && cur->pos > 0)
+                              content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos - 1];
+                           else if (inc && cur->pos >= 0 && eina_ustrbuf_length_get(cur->node->unicode) > (cur->pos + 1))
+                              content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos + 1];
+                           if (VAR_SEQ(content)) *is_single_glyph = EINA_TRUE;
                          }
                     }
 #else//#ifdef OT_SUPPORT
@@ -11028,7 +11044,7 @@ evas_textblock_cursor_line_jump_by(Efl_Text_Cursor_Handle *cur, int by)
    pnode = cur->node;
    ppos = cur->pos;
 
-   evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE);
    cx += (cw / 2);
    evas_textblock_cursor_paragraph_last(cur);
    last = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL);
@@ -16124,7 +16140,7 @@ _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Textblock_Data *o)
 /* Efl.Text.Font interface implementation */
 
 static void
-_efl_canvas_textblock_efl_text_font_font_family_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font)
+_efl_canvas_textblock_efl_text_font_properties_font_family_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font)
 {
    ASYNC_BLOCK;
    Eina_Bool changed = EINA_FALSE;
@@ -16156,13 +16172,13 @@ _efl_canvas_textblock_efl_text_font_font_family_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static const char *
-_efl_canvas_textblock_efl_text_font_font_family_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_font_properties_font_family_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    return o->default_format.info.font;
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o, int size)
+_efl_canvas_textblock_efl_text_font_properties_font_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o, int size)
 {
    ASYNC_BLOCK;
    EINA_SAFETY_ON_FALSE_RETURN(size > 0);
@@ -16174,13 +16190,13 @@ _efl_canvas_textblock_efl_text_font_font_size_set(Eo *obj EINA_UNUSED, Efl_Canva
 }
 
 static Efl_Font_Size
-_efl_canvas_textblock_efl_text_font_font_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_font_properties_font_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    return o->default_format.info.size;
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_source_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_source EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_source_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_source EINA_UNUSED)
 {
    Eina_Stringshare *nfont_source;
    if (o->default_format.info.font_source != font_source)
@@ -16201,13 +16217,13 @@ _efl_canvas_textblock_efl_text_font_font_source_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static const char*
-_efl_canvas_textblock_efl_text_font_font_source_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_source_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_source);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_fallbacks EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_fallbacks EINA_UNUSED)
 {
    Eina_Stringshare *nfont_fallbacks;
    if (o->default_format.info.font_fallbacks != font_fallbacks)
@@ -16228,13 +16244,13 @@ _efl_canvas_textblock_efl_text_font_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_
 }
 
 static const char*
-_efl_canvas_textblock_efl_text_font_font_fallbacks_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_fallbacks_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_fallbacks);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_lang EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, const char *font_lang EINA_UNUSED)
 {
    if (_FMT_INFO(font_lang) != font_lang)
      {
@@ -16246,13 +16262,13 @@ _efl_canvas_textblock_efl_text_font_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canva
 }
 
 static const char*
-_efl_canvas_textblock_efl_text_font_font_lang_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_lang_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_lang);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_weight_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Weight font_weight EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_weight_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Weight font_weight EINA_UNUSED)
 {
    if (_FMT_INFO(font_weight) == font_weight) return;
    _FMT_INFO(font_weight) = font_weight;
@@ -16260,13 +16276,13 @@ _efl_canvas_textblock_efl_text_font_font_weight_set(Eo *obj EINA_UNUSED, Efl_Can
 }
 
 static Efl_Text_Font_Weight
-_efl_canvas_textblock_efl_text_font_font_weight_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_weight_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_weight);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Slant font_slant EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Slant font_slant EINA_UNUSED)
 {
    ASYNC_BLOCK;
    if (_FMT_INFO(font_slant) == font_slant) return;
@@ -16275,13 +16291,13 @@ _efl_canvas_textblock_efl_text_font_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canv
 }
 
 static Efl_Text_Font_Slant
-_efl_canvas_textblock_efl_text_font_font_slant_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_slant_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_slant);
 }
 
 static void
-_efl_canvas_textblock_efl_text_font_font_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Width font_width EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Font_Width font_width EINA_UNUSED)
 {
    ASYNC_BLOCK;
    if (_FMT_INFO(font_width) == font_width) return;
@@ -16290,13 +16306,13 @@ _efl_canvas_textblock_efl_text_font_font_width_set(Eo *obj EINA_UNUSED, Efl_Canv
 }
 
 static Efl_Text_Font_Width
-_efl_canvas_textblock_efl_text_font_font_width_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_font_properties_font_width_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_width);
 }
 
 EOLIAN static void
-_efl_canvas_textblock_efl_text_font_font_bitmap_scalable_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
+_efl_canvas_textblock_efl_text_font_properties_font_bitmap_scalable_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    if (_FMT_INFO(bitmap_scalable) == bitmap_scalable) return;
    _FMT_INFO(bitmap_scalable) = bitmap_scalable;
@@ -16304,7 +16320,7 @@ _efl_canvas_textblock_efl_text_font_font_bitmap_scalable_set(Eo *obj, Efl_Canvas
 }
 
 EOLIAN static Efl_Text_Font_Bitmap_Scalable
-_efl_canvas_textblock_efl_text_font_font_bitmap_scalable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
+_efl_canvas_textblock_efl_text_font_properties_font_bitmap_scalable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
    return _FMT_INFO(bitmap_scalable);
 }
@@ -16817,7 +16833,7 @@ _efl_canvas_textblock_efl_text_format_text_vertical_align_get(const Eo *obj EINA
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_linegap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
 {
    ASYNC_BLOCK;
    double linerelgap = _FMT(linerelgap);
@@ -16836,13 +16852,13 @@ _efl_canvas_textblock_efl_text_format_linegap_set(Eo *obj EINA_UNUSED, Efl_Canva
 }
 
 static double
-_efl_canvas_textblock_efl_text_format_linegap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(linegap);
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_linerelgap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_rel_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
 {
    ASYNC_BLOCK;
    double linegap = _FMT(linegap);
@@ -16860,20 +16876,20 @@ _efl_canvas_textblock_efl_text_format_linerelgap_set(Eo *obj EINA_UNUSED, Efl_Ca
 }
 
 static double
-_efl_canvas_textblock_efl_text_format_linerelgap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_line_rel_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(linerelgap);
 }
 
 static void
-_efl_canvas_textblock_efl_text_format_tabstops_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int value EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_tab_stops_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, int value EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_SET(tabstops, value);
 }
 
 static int
-_efl_canvas_textblock_efl_text_format_tabstops_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_format_tab_stops_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
    return _FMT(tabstops);
 }
@@ -17396,9 +17412,6 @@ EAPI int evas_textblock_fit_size_range_set(Evas_Object *obj,  unsigned int min_f
 
    if (!max_changed && !min_changed)
      return EVAS_ERROR_SUCCESS;
-
-   if (min_font_size < 0 || max_font_size <0)
-     return EVAS_ERROR_INVALID_PARAM;
 
    if (max_font_size < min_font_size)
      return EVAS_ERROR_INVALID_PARAM;

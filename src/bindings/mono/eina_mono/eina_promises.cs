@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-
+using System.Diagnostics.Contracts;
 
 using static Eina.EinaNative.PromiseNativeMethods;
 
@@ -207,6 +207,7 @@ public class Promise : IDisposable
     /// </summary>
     public void Resolve(Eina.Value value)
     {
+        Contract.Requires(value != null, nameof(value));
         SanityChecks();
         eina_promise_resolve(this.Handle, value);
         // Promise will take care of releasing this value correctly.
@@ -280,6 +281,7 @@ public class Future
     /// <param name="cb">The callback to be called when the attached promise resolves.</param>
     public Future(Promise promise, ResolvedCb cb = null)
     {
+        Contract.Requires(promise != null, nameof(promise));
         IntPtr intermediate = eina_future_new(promise.Handle);
         Handle = ThenRaw(intermediate, (Eina.Value value) =>
         {

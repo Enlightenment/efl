@@ -293,6 +293,6 @@ static const Efl_Class_Description _evas_text_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(evas_text_class_get, &_evas_text_class_desc, EFL_CANVAS_OBJECT_CLASS, EFL_TEXT_INTERFACE, EFL_TEXT_FONT_INTERFACE, EFL_CANVAS_FILTER_INTERNAL_MIXIN, NULL);
+EFL_DEFINE_CLASS(evas_text_class_get, &_evas_text_class_desc, EFL_CANVAS_OBJECT_CLASS, EFL_TEXT_INTERFACE, EFL_TEXT_FONT_PROPERTIES_INTERFACE, EFL_CANVAS_FILTER_INTERNAL_MIXIN, NULL);
 
 #include "evas_text_eo.legacy.c"

@@ -122,6 +122,6 @@ static const Efl_Class_Description _evas_textgrid_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(evas_textgrid_class_get, &_evas_textgrid_class_desc, EFL_CANVAS_OBJECT_CLASS, EFL_TEXT_FONT_INTERFACE, NULL);
+EFL_DEFINE_CLASS(evas_textgrid_class_get, &_evas_textgrid_class_desc, EFL_CANVAS_OBJECT_CLASS, EFL_TEXT_FONT_PROPERTIES_INTERFACE, NULL);
 
 #include "evas_textgrid_eo.legacy.c"

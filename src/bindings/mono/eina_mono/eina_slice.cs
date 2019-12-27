@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 
 namespace Eina
 {
@@ -235,6 +236,7 @@ public static class Eina_SliceUtils
 {
     public static byte[] GetBytes(this Eina.ISliceBase slc)
     {
+        Contract.Requires(slc != null, nameof(slc));
         var size = (int)(slc.Len);
         byte[] mArray = new byte[size];
         Marshal.Copy(slc.Mem, mArray, 0, size);

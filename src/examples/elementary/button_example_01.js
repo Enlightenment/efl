@@ -1,7 +1,7 @@
 efl = require('efl');
 
 function setIcon(widget, icon) {
-    container = widget.part("icon").cast("Efl.Content");
+    var container = widget.part("icon").cast("Efl.Content");
     container.setContent(icon);
 }
 
@@ -144,7 +144,7 @@ up.setHintWeight(1.0, 0.0);
 up.setHintAlign(-1.0, 0.0);
 box.packEnd(up);
 up.setVisible(true);
-up.on('repeated', _btn_cursors_move)
+up.on('repeated', _btn_cursors_move);
 up.on('unpressed', _btn_cursors_release);
 icon_up = new efl.Efl.Ui.Image(win);
 icon_up.setIcon("arrow_up");
@@ -164,7 +164,7 @@ left.setHintWeight(0.0, 1.0);
 left.setHintAlign(0.0, -1.0);
 box_inferior.packEnd(left);
 left.setVisible(true);
-left.on('repeated', _btn_cursors_move)
+left.on('repeated', _btn_cursors_move);
 left.on('unpressed', _btn_cursors_release);
 
 icon_left = new efl.Efl.Ui.Image(win);

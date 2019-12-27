@@ -27,6 +27,7 @@ using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Globalization;
+using System.Diagnostics.Contracts;
 
 using static Eina.EinaNative.UnsafeNativeMethods;
 using static Eina.TraitFunctions;
@@ -1268,8 +1269,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="obj">The object to be wrapped.</param>
+    [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification="Could not remove warning!")]
     public Value(object obj) : this()
     {
+        Contract.Requires(obj != null, nameof(obj));
         var objType = obj.GetType();
 
         if (objType == typeof(sbyte))
@@ -1424,6 +1427,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The value to be copied.</param>
     public Value(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         Handle = Alloc();
         if (!eina_value_copy(v.Handle, this.Handle))
         {
@@ -1615,7 +1619,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator ValueNative(Value v) => ToValueNative(v);
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static ValueNative ToValueNative(Value v) => v.GetNative();
+    public static ValueNative ToValueNative(Value v)
+    {
+        Contract.Requires(v != null, nameof(v));
+        return v.GetNative();
+    }
 
     /// <summary>Implicit conversion from native struct representation to managed wrapper.
     /// <para>Since EFL 1.23.</para>
@@ -1655,6 +1663,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static byte ToByte(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         byte b;
         v.Get(out b);
 
@@ -1691,6 +1700,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static sbyte ToSByte(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         sbyte b;
         v.Get(out b);
 
@@ -1727,6 +1737,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static short ToInt16(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         short b;
         v.Get(out b);
 
@@ -1763,6 +1774,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static ushort ToUInt16(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         ushort b;
         v.Get(out b);
 
@@ -1800,6 +1812,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static int ToInt32(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         int b;
         v.Get(out b);
 
@@ -1836,6 +1849,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static uint ToUInt32(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         uint b;
         v.Get(out b);
 
@@ -1872,6 +1886,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static long ToInt64(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         long b;
         v.Get(out b);
 
@@ -1908,6 +1923,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static ulong ToUInt64(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         ulong b;
         v.Get(out b);
 
@@ -1944,6 +1960,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static float ToSingle(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         float b;
         v.Get(out b);
 
@@ -1980,6 +1997,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static double ToDouble(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         double b;
         v.Get(out b);
 
@@ -2016,6 +2034,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static string ToString(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         string b;
         v.Get(out b);
 
@@ -2171,6 +2190,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <param name="v">The <see cref="Value" /> to be converted.</param>
     public static Efl.Object ToObject(Value v)
     {
+        Contract.Requires(v != null, nameof(v));
         Efl.Object obj;
         v.Get(out obj);
 
@@ -2714,6 +2734,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(Efl.Object value)
     {
+        Contract.Requires(value != null, nameof(value));
         SanityChecks();
 
         if (this.Optional)
@@ -2735,6 +2756,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <returns><c>true</c> if the value was successfully stored.</returns>
     public bool Set(Value value)
     {
+        Contract.Requires(value != null, nameof(value));
         OptionalSanityChecks();
         ValueType subtype = value.GetValueType();
 
@@ -3321,6 +3343,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <returns><c>true</c> if the value was successfully appended.</returns>
     public bool Append(object o)
     {
+        Contract.Requires(o != null, nameof(o));
         ContainerSanityChecks();
 
         switch (GetValueSubType())
@@ -3508,6 +3531,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
         set
         {
+            Contract.Requires(value != null, nameof(value));
             ContainerSanityChecks(i);
 
             switch (GetValueSubType())
@@ -3650,6 +3674,7 @@ public class ValueMarshaler : ICustomMarshaler
     /// keeping the managed ownership.</summary>
     public IntPtr MarshalManagedToNative(object managedObj)
     {
+        Contract.Requires(managedObj != null, nameof(managedObj));
         try
         {
             Value v = (Value)managedObj;
@@ -3703,6 +3728,7 @@ public class ValueMarshalerOwn : ICustomMarshaler
     /// when not needed. </summary>
     public IntPtr MarshalManagedToNative(object managedObj)
     {
+        Contract.Requires(managedObj != null, nameof(managedObj));
         try
         {
             Value v = (Value)managedObj;

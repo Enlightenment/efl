@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static Eina.TraitFunctions;
 using static Eina.InarrayNativeFunctions;
@@ -485,6 +486,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     /// <returns>true on success, false otherwise.</returns>
     public bool Append(T[] values)
     {
+        Contract.Requires(values != null, nameof(values));
         foreach (T v in values)
         {
             if (Push(v) == -1)

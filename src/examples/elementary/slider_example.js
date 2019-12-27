@@ -91,13 +91,13 @@ sl.setVisible(true);
 
 sl.on('changed', function(obj)
                   {
-                     val = obj.getProgressValue();
+                     var val = obj.getProgressValue();
                      console.log("Changed to " + val);
                   });
 
 sl.on('delay_changed', function(obj)
                  {
-                     val = obj.getProgressValue();
+                     var val = obj.getProgressValue();
                      console.log("Delay changed to " + val);
                  });
 

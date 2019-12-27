@@ -149,7 +149,7 @@ _efl_canvas_layout_part_text_efl_text_format_ellipsis_get(const Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_font_font_family_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_font_properties_font_family_set(Eo *obj,
       void *_pd EINA_UNUSED, const char *font)
 {
    Edje_User_Defined *eud;
@@ -165,7 +165,7 @@ _efl_canvas_layout_part_text_efl_text_font_font_family_set(Eo *obj,
 }
 
 EOLIAN static const char *
-_efl_canvas_layout_part_text_efl_text_font_font_family_get(const Eo *obj,
+_efl_canvas_layout_part_text_efl_text_font_properties_font_family_get(const Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
@@ -175,7 +175,7 @@ _efl_canvas_layout_part_text_efl_text_font_font_family_get(const Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_font_font_size_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_font_properties_font_size_set(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Font_Size size)
 {
    Edje_User_Defined *eud;
@@ -191,7 +191,7 @@ _efl_canvas_layout_part_text_efl_text_font_font_size_set(Eo *obj,
 }
 
 EOLIAN static Efl_Font_Size
-_efl_canvas_layout_part_text_efl_text_font_font_size_get(const Eo *obj,
+_efl_canvas_layout_part_text_efl_text_font_properties_font_size_get(const Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
