@@ -15,12 +15,11 @@ abstract @beta Efl.Text.Formatter extends Efl.Object {
 
            The $format will be applied to the given range.
            The passed cursors must belong to same text object, otherwise insertion will be ignored.
-           Passed format parameter uses same format as style in @Efl.Canvas.Textblock.style_apply.
          ]]
          params {
               start: const(Efl.Text.Cursor); [[Start of range.]]
               end: const(Efl.Text.Cursor); [[End of range.]]
-              format: string; [[Attribute format.]]
+              format: string; [[Format string. Uses same format as $style in @Efl.Canvas.Textblock.style_apply.]]
          }
       }
 
