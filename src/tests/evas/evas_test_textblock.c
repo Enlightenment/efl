@@ -4908,7 +4908,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);
 
    efl_canvas_textblock_style_apply(txt, "backing=on");
-   ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_ENABLED);
+   ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_SOLID_COLOR);
 
    efl_canvas_textblock_style_apply(txt, "style=far_soft_shadow");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
