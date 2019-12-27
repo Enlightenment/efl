@@ -699,16 +699,16 @@ class TestProtectedInterfaceMembers
     {
         var type = typeof(Dummy.ITestIface);
         var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         // Fully protected property
         Test.AssertNull(methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
         Test.AssertNull(methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
 
         // Partially protected property
-        Test.AssertNotNull(methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(properties.SingleOrDefault(m => m.Name == "PublicGetterPrivateSetter"));
         Test.AssertNull(methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
 
-        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
         Test.AssertNull(properties.SingleOrDefault(m => m.Name == "ProtectedProp"));
         Test.AssertNotNull(properties.SingleOrDefault(m => m.Name == "PublicGetterPrivateSetter"));
     }

@@ -163,7 +163,7 @@ inline bool is_property_blacklisted(std::string const& name)
        // Will be bound manually
        , "Efl.Core.Env.Env"
        // Setter returns a future
-       , "Efl.IModel.Property"
+       //, "Efl.IModel.Property"
        // Protected
        , "Efl.Access.IAction.ActionName"
        , "Efl.Access.IAction.ActionLocalizedName"

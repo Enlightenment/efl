@@ -53,6 +53,63 @@ struct function_declaration_generator
 
 function_declaration_generator const function_declaration = {};
 
+struct property_declaration_generator
+{
+  template <typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::property_def const& property, Context const& context) const
+  {
+    if(blacklist::is_property_blacklisted(property, *implementing_klass, context))
+      return true;
+
+    auto has_wrapper = helpers::has_property_wrapper (property, implementing_klass, context);
+    bool has_getter_wrapper = has_wrapper & helpers::has_property_wrapper_bit::has_getter;
+    bool has_setter_wrapper = has_wrapper & helpers::has_property_wrapper_bit::has_setter;
+
+    auto gen = [&] (attributes::function_def const& f)
+    {
+      // C# interfaces can't have non-public members
+      if(f.scope != attributes::member_scope::scope_public)
+        return true;
+
+      if (f.is_static)
+        return true;
+
+      if(!as_generator(documentation(1)).generate(sink, f, context))
+        return false;
+
+      return as_generator
+        (scope_tab << eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n\n")
+        .generate(sink, std::make_tuple(f.return_type, name_helpers::managed_method_name(f), f.parameters), context);
+    };
+    bool r = true;
+    if (property.getter)
+    {
+      if (!has_getter_wrapper)
+        r &= gen (*property.getter);
+      // else
+      //   r &= function_declaration.generate(sink, *property.getter, context);
+    }
+    if (r && property.setter)
+    {
+      if (!has_setter_wrapper)
+        r &= gen (*property.setter);
+      // else
+      //   r &= function_declaration.generate(sink, *property.setter, context);
+    }
+    return r;
+  }
+  attributes::klass_def const* implementing_klass, *klass_from_property;
+};
+
+struct property_declaration_parameterized
+{
+  property_declaration_generator operator()(attributes::klass_def const& klass
+                                            , attributes::klass_def const& prop_from_klass) const
+  {
+    return {&klass, &prop_from_klass};
+  }
+} const property_declaration;
+  
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -60,11 +117,23 @@ namespace efl { namespace eolian { namespace grammar {
 template <>
 struct is_eager_generator< ::eolian_mono::function_declaration_generator> : std::true_type {};
 template <>
+struct is_eager_generator< ::eolian_mono::property_declaration_generator> : std::true_type {};
+template <>
+struct is_eager_generator< ::eolian_mono::property_declaration_parameterized> : std::true_type {};
+template <>
 struct is_generator< ::eolian_mono::function_declaration_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::property_declaration_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::property_declaration_parameterized> : std::true_type {};
 
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::function_declaration_generator> : std::integral_constant<int, 1> {};
+template <>
+struct attributes_needed< ::eolian_mono::property_declaration_generator> : std::integral_constant<int, 1> {};
+template <>
+struct attributes_needed< ::eolian_mono::property_declaration_parameterized> : std::integral_constant<int, 1> {};
 }
       
 } } }

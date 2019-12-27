@@ -118,13 +118,7 @@ struct documentation_generator
            name += name_helpers::managed_method_name({function, ftype, NULL, eolian_object_unit_get(EOLIAN_OBJECT(function))});
            break;
          case ::EOLIAN_PROP_SET:
-           name += ".Set";
-           name += name_helpers::property_managed_name(klass_d, eo_name);
-           break;
          case ::EOLIAN_PROP_GET:
-           name += ".Get";
-           name += name_helpers::property_managed_name(klass_d, eo_name);
-           break;
          case ::EOLIAN_PROPERTY:
            {
              std::string short_name = name_helpers::property_managed_name(klass_d, eo_name);
@@ -146,11 +140,16 @@ struct documentation_generator
 
              auto has_wrapper = helpers::has_property_wrapper(prop, &klass_d, my_context);
 
-             if (has_wrapper == helpers::has_property_wrapper_bit::has_none)
-               name += ".Get" + short_name;
-             else if (name_tail == ".get") name += ".Get" + short_name;
-             else if (name_tail == ".set") name += ".Set" + short_name;
-             else name += "." + short_name;
+             if (has_wrapper & helpers::has_property_wrapper_bit::has_getter
+                 // If there is no getter, there's no property.
+                 &&
+                 (
+                  (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROPERTY)
+                  || (has_wrapper & helpers::has_property_wrapper_bit::has_setter && ftype == EOLIAN_PROP_SET))
+                 )
+                 name += "." + short_name;
+             else if (ftype == EOLIAN_PROP_GET || name_tail == ".get") name += ".Get" + short_name;
+             else if (ftype == EOLIAN_PROP_SET || name_tail == ".set") name += ".Set" + short_name;
            }
            break;
          default:
@@ -159,18 +158,69 @@ struct documentation_generator
       return name;
    }
 
-   static std::string function_conversion(attributes::function_def const& func)
+   template <typename Context>
+   static std::string function_conversion(attributes::function_def const& func, Context const& context)
    {
       // This function is called only from the constructor reference conversion, so it does not
       // need to check whether this function non-public in a interface returning an empty reference (yet).
       std::string name = name_helpers::klass_full_concrete_or_interface_name(func.klass);
       switch (func.type)
       {
-          // managed_method_name takes care of reordering the function name so the get/set goes first
-          // for properties
-          case attributes::function_type::method:
+          case attributes::function_type::property:
           case attributes::function_type::prop_set:
           case attributes::function_type::prop_get:
+            {
+              auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+              auto klass = get_klass(func.klass, unit);
+              attributes::klass_def klass_d(klass, unit);
+
+              auto eo_name = func.name;
+              auto prop_name = eo_name;
+              if (prop_name.size () > 4
+                  &&
+                  ( prop_name.substr(prop_name.size() - 4) == "_set"
+                    || prop_name.substr(prop_name.size() - 4) == "_get"))
+              {
+                prop_name = prop_name.substr(0, prop_name.size() - 4);
+              }
+              std::string short_name = name_helpers::property_managed_name(klass_d, prop_name);
+              assert (prop_name.size() <= 4 ||
+                      (prop_name.substr(prop_name.size() - 4) != "_set"
+                       && prop_name.substr(prop_name.size() - 4) != "_get"));
+              assert (short_name.size() <= 3 ||
+                      (short_name.substr(short_name.size() - 3) != "Set"
+                       && short_name.substr(short_name.size() - 3) != "Get"));
+
+              // We need to replace the current class context with the context
+              // from the class that originated this property.
+              class_context::wrapper_kind klass_kind;
+              if (helpers::is_managed_interface(klass_d))
+                klass_kind = class_context::interface;
+              else
+                klass_kind = class_context::inherit;
+
+              auto my_context = grammar::context_replace_tag(class_context{klass_kind}, context);
+
+              auto function = eolian_class_function_by_name_get (klass, prop_name.c_str(), EOLIAN_PROPERTY);
+              attributes::function_def getter_func{function, ::EOLIAN_PROP_GET, nullptr, unit};
+              attributes::function_def setter_func{function, ::EOLIAN_PROP_SET, nullptr, unit};
+              attributes::property_def prop{function, getter_func, setter_func, unit};
+
+              auto has_wrapper = helpers::has_property_wrapper(prop, &klass_d, my_context);
+
+              if (has_wrapper & helpers::has_property_wrapper_bit::has_getter
+                  // If there is no getter, there's no property.
+                  &&
+                  (
+                   (func.type == attributes::function_type::prop_get || func.type == attributes::function_type::property)
+                   || (has_wrapper & helpers::has_property_wrapper_bit::has_setter && func.type == attributes::function_type::prop_set))
+                  )
+                name += "." + short_name;
+              else if (func.type == attributes::function_type::prop_get) name += ".Get" + short_name;
+              else if (func.type == attributes::function_type::prop_set) name += ".Set" + short_name;
+            }
+            break;
+          case attributes::function_type::method:
             if (blacklist::is_function_blacklisted(func.c_name))return "";
             if (!name.empty()) name += ".";
             name += name_helpers::managed_method_name(func);
@@ -218,8 +268,10 @@ struct documentation_generator
            is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_FUNCTION:
-           ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail, context);
-           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
+           {
+             ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail, context);
+             is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
+           }
            break;
          case ::EOLIAN_OBJECT_CONSTANT:
            {
@@ -634,7 +686,7 @@ struct documentation_generator
 
       for (auto &&param : ctor.function.parameters)
         {
-          auto ref = function_conversion(func);
+          auto ref = function_conversion(func, context);
 
           if (!context_find_tag<options_context>(context).want_beta && func.is_beta)
             {

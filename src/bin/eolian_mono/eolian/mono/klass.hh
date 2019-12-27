@@ -107,7 +107,7 @@ struct klass
                                         context);
 
        // Property wrappers
-       if (!as_generator(*(interface_property_indexer_definition(cls))).generate(sink, cls.properties, iface_cxt))
+       if (!as_generator("\n\n" << *(interface_property_indexer_definition(cls))).generate(sink, cls.properties, iface_cxt))
          return false;
        
        if(!as_generator(documentation).generate(sink, cls, iface_cxt))
@@ -146,7 +146,19 @@ struct klass
        if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
-       if(!as_generator(*(function_declaration)).generate(sink, cls.functions, iface_cxt))
+       if(!as_generator("\n\n" << *(property_declaration(cls, cls))).generate(sink, cls.properties, iface_cxt))
+         return false;
+
+       std::vector<attributes::function_def> methods;
+       std::copy_if (cls.functions.begin(), cls.functions.end()
+                     , std::back_inserter(methods)
+                     , [] (attributes::function_def const& f) -> bool
+                     {
+                       return !(f.type == attributes::function_type::property
+                                || f.type == attributes::function_type::prop_set
+                                || f.type == attributes::function_type::prop_get);
+                     });
+       if(!as_generator("\n" << scope_tab << "//* Methods\n\n" << *(function_declaration)).generate(sink, methods, iface_cxt))
          return false;
 
        if(!as_generator(*(async_function_declaration)).generate(sink, cls.functions, iface_cxt))
@@ -253,23 +265,32 @@ struct klass
          if(!as_generator(*(part_definition))
             .generate(sink, cls.parts, concrete_cxt)) return false;
 
-         // Concrete function definitions
-         auto implemented_methods = helpers::get_all_implementable_methods(cls, concrete_cxt);
-         if(!as_generator(*(function_definition))
-            .generate(sink, implemented_methods, concrete_cxt)) return false;
+         // Property concrete function definitions
+         auto implemented_properties = helpers::get_all_implementable_properties(cls, concrete_cxt);
+         if(!as_generator("\n\n"
+                          << *(
+                                property_function_definition(cls, cls, false)
+                              ))
+            .generate(sink, implemented_properties, concrete_cxt)) return false;
 
+         auto implemented_methods = helpers::get_all_implementable_methods(cls, concrete_cxt);
+         if(!as_generator("\n" << scope_tab << "\n\n" << *(function_definition))
+            .generate(sink, implemented_methods, concrete_cxt)) return false;
+         
          // Async wrappers
-         if(!as_generator(*(async_function_definition)).generate(sink, implemented_methods, concrete_cxt))
+         if(!as_generator(*(async_function_definition)).generate(sink, helpers::get_all_implementable_methods(cls, concrete_cxt, true), concrete_cxt))
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition(cls, cls))).generate(sink, cls.properties, concrete_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls, cls)))
+             .generate(sink, cls.properties, concrete_cxt))
            return false;
 
-         for (auto&& klass : helpers::non_implemented_interfaces(cls, concrete_cxt))
+         for (auto&& klass : helpers::non_implemented_interfaces_and_beta(cls, concrete_cxt))
            {
-              attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition(cls, c))).generate(sink, c.properties, concrete_cxt))
+              attributes::klass_def c(get_klass(klass.first, cls.unit), cls.unit);
+              bool force_protected = (!context_find_tag<options_context>(concrete_cxt).want_beta && klass.second);
+              if (!as_generator(*(property_wrapper_definition(cls, c, force_protected))).generate(sink, c.properties, concrete_cxt))
                 return false;
            }
 
@@ -291,8 +312,9 @@ struct klass
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
        }
 
-     // Inheritable class
-     if(class_type == "class" || class_type == "abstract class")
+     // // Inheritable class
+     // if(class_type == "class" || class_type == "abstract class")
+     else
        {
         auto inherit_cxt = context_add_tag(class_context{class_context::inherit,
                                            name_helpers::klass_full_concrete_or_interface_name(cls)},
@@ -337,23 +359,31 @@ struct klass
          if(!as_generator(*(part_definition))
             .generate(sink, cls.parts, inherit_cxt)) return false;
 
+         // Property concrete function definitions
+         auto implemented_properties = helpers::get_all_implementable_properties(cls, inherit_cxt);
+         if(!as_generator(*(property_function_definition(cls, cls, true, true)))
+            .generate(sink, implemented_properties, inherit_cxt)) return false;
+
          // Inherit function definitions
          auto implemented_methods = helpers::get_all_implementable_methods(cls, inherit_cxt);
-         if(!as_generator(*(function_definition(true)))
+         if(!as_generator("\n" << scope_tab << "//* Methods\n\n" << *(function_definition(true)))
             .generate(sink, implemented_methods, inherit_cxt)) return false;
 
          // Async wrappers
-         if(!as_generator(*(async_function_definition(true))).generate(sink, implemented_methods, inherit_cxt))
+         if(!as_generator(*(async_function_definition(true))).generate(sink, helpers::get_all_implementable_methods(cls, inherit_cxt, true), inherit_cxt))
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition(cls, cls))).generate(sink, cls.properties, inherit_cxt))
+         if (!as_generator("\n\n" << *property_wrapper_definition(cls, cls)
+                           ).generate(sink, cls.properties, inherit_cxt))
            return false;
 
-         for (auto&& klass : helpers::non_implemented_interfaces(cls, inherit_cxt))
+         for (auto&& klass : helpers::non_implemented_interfaces_and_beta(cls, inherit_cxt))
            {
-              attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition(cls, c))).generate(sink, c.properties, inherit_cxt))
+              attributes::klass_def c(get_klass(klass.first, cls.unit), cls.unit);
+              assert (c != cls);
+              bool force_protected = (!context_find_tag<options_context>(inherit_cxt).want_beta && klass.second);
+              if (!as_generator(*(property_wrapper_definition(cls, c, force_protected))).generate(sink, c.properties, inherit_cxt))
                 return false;
            }
 
@@ -424,6 +454,7 @@ struct klass
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
          auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
+         auto implementable_properties = helpers::get_all_implementable_properties(cls, inative_cxt);
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
          std::string klass_since;
@@ -450,7 +481,8 @@ struct klass
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
 
-         if(implementable_methods.size() >= 1)
+         if(implementable_methods.size() >= 1
+            || implementable_properties.size() >= 1)
            {
               if(!as_generator(
                     indent << scope_tab << "private static Efl.Eo.NativeModule Module = new Efl.Eo.NativeModule("
@@ -533,6 +565,12 @@ struct klass
                 << indent << scope_tab << "#pragma warning restore CA1707, CS1591, SA1300, SA1600\n\n")
             .generate(sink, implementable_methods, change_indentation(indent.inc(), inative_cxt))) return false;
 
+         if(!as_generator(
+                indent << scope_tab << "#pragma warning disable CA1707, CS1591, SA1300, SA1600\n\n"
+                <<  *(native_property_function_definition(cls, cls))
+                << indent << scope_tab << "#pragma warning restore CA1707, CS1591, SA1300, SA1600\n\n")
+            .generate(sink, implementable_properties, change_indentation(indent.inc(), inative_cxt))) return false;
+         
          if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }
      return true;

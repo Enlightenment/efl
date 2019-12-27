@@ -1082,6 +1082,52 @@ struct property_def
   }
 };
 
+template <>
+struct tuple_element<0ul, property_def>
+{
+   typedef std::string type;
+   static type& get(property_def& p) { return p.name; }
+   static type const& get(property_def const& p) { return p.name; }
+};
+
+template <>
+struct tuple_element<1ul, property_def>
+{
+   typedef documentation_def type;
+   static type& get(property_def& p) { return p.documentation; }
+   static type const& get(property_def const& p) { return p.documentation; }
+};
+
+template <>
+struct tuple_element<2ul, property_def>
+{
+   typedef efl::eina::optional<function_def> type;
+   static type& get(property_def& p) { return p.getter; }
+   static type const& get(property_def const& p) { return p.getter; }
+};
+
+template <>
+struct tuple_element<3ul, property_def>
+{
+   typedef efl::eina::optional<function_def> type;
+   static type& get(property_def& p) { return p.setter; }
+   static type const& get(property_def const& p) { return p.setter; }
+};
+
+template <std::size_t I>
+typename tuple_element<I, property_def>::type const&
+get(property_def const& f)
+{
+  return tuple_element<I, property_def>::get(f);
+}
+
+template <std::size_t I>
+typename tuple_element<I, property_def>::type&
+get(property_def& f)
+{
+  return tuple_element<I, property_def>::get(f);
+}
+
 struct constant_def
 {
   std::string name;
@@ -1164,6 +1210,18 @@ struct compare_klass_name_by_name
   {
     return lhs.namespaces < rhs.namespaces
         || (!(rhs.namespaces < lhs.namespaces) && lhs.eolian_name < rhs.eolian_name);
+  }
+  template <typename T>
+  bool operator()(std::pair<klass_name, T> const& lhs, std::pair<klass_name, T> const& rhs) const
+  {
+    return lhs.first.namespaces < rhs.first.namespaces
+        || (!(rhs.first.namespaces < lhs.first.namespaces) && lhs.first.eolian_name < rhs.first.eolian_name);
+  }
+  template <typename T>
+  bool operator()(std::pair<T, klass_name> const& lhs, std::pair<T, klass_name> const& rhs) const
+  {
+    return lhs.second.namespaces < rhs.second.namespaces
+        || (!(rhs.second.namespaces < lhs.second.namespaces) && lhs.second.eolian_name < rhs.second.eolian_name);
   }
 };
 
@@ -1815,6 +1873,10 @@ namespace type_traits {
 
 template <>
 struct is_tuple<attributes::parameter_def> : std::true_type {};
+template <>
+struct is_tuple<attributes::property_def> : std::true_type {};
+template <>
+struct is_tuple<attributes::function_def> : std::true_type {};
 template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
 

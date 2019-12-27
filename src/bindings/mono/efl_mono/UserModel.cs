@@ -42,7 +42,7 @@ internal class ModelHelper
         var properties = typeof(T).GetProperties();
         foreach (var prop in properties)
         {
-            using (var v = child.GetProperty(prop.Name))
+            using (var v = child.Property[prop.Name])
             {
                 SetPropertyFromValue(o, prop, v);
             }

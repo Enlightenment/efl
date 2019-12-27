@@ -31,30 +31,30 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    }
 
    /// <summary>The list of properties available in the wrapped model.</summary>
+   /// <returns>The list of properties in the model.</returns>
    public IEnumerable<System.String> Properties
    {
-      get { return GetProperties(); }
+       get { return model.Properties; }
    }
 
-   /// <summary>The number of children in the wrapped model.</summary>
+
+   /// <summary>Returns the number of children in the wrapped model.</summary>
+   /// <returns>The number of children.</returns>
    public  uint ChildrenCount
    {
-      get { return GetChildrenCount(); }
-   }
-
-   /// <summary>The list of properties available in the wrapped model.</summary>
-   /// <returns>The list of properties in the model.</returns>
-   public IEnumerable<System.String> GetProperties()
-   {
-       return model.GetProperties();
+      get { return model.ChildrenCount; }
    }
 
    /// <summary>Gets the value of the given property in the wrapped model.</summary>
    /// <param name="property">The property of the model.</param>
    /// <returns>The value of the property.</returns>
-   public Eina.Value GetProperty(System.String property)
+   public Efl.IModelPropertyIndexer Property
    {
-       return model.GetProperty(property);
+       get
+       {
+           return model.Property;
+       }
+       set{}
    }
 
    /// <summary>Sets the value of the given property in the given model.</summary>
@@ -65,13 +65,6 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    public Eina.Future SetProperty(System.String property,   Eina.Value value)
    {
        return model.SetProperty(property, value);
-   }
-
-   /// <summary>Returns the number of children in the wrapped model.</summary>
-   /// <returns>The number of children.</returns>
-   public uint GetChildrenCount()
-   {
-       return model.GetChildrenCount();
    }
 
    /// <summary>Returns an <see cref="Eina.Future" /> that will resolve when the property is ready to be read.</summary>

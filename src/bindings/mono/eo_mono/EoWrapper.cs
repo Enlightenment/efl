@@ -227,7 +227,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     public void Del()
     {
         // FIXME Implement this
-        ((Efl.Object)this).SetParent(null);
+        ((Efl.Object)this).Parent = null;
         Dispose();
     }
 

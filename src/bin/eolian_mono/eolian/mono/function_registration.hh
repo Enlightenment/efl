@@ -55,6 +55,11 @@ struct function_registration_generator
     if(blacklist::is_non_public_interface_member(f, *klass))
       return true;
 
+    if (f.type == attributes::function_type::property
+        || f.type == attributes::function_type::prop_get
+        || f.type == attributes::function_type::prop_set)
+      return true;
+
     if(!as_generator(
                indent << "if (" << f.c_name << "_static_delegate == null)\n"
                << indent << "{\n"

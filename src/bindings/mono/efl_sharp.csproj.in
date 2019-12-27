@@ -14,7 +14,7 @@
 
   <PropertyGroup>
     <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- TreatWarningsAsErrors>true</TreatWarningsAsErrors -->
   </PropertyGroup>
 
   <!-- <PropertyGroup Condition="'$(BuildType)'=='Beta'"> -->
