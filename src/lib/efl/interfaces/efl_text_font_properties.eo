@@ -36,9 +36,6 @@ enum @beta Efl.Text_Font_Slant {
     italic, [[Italic font slant.]]
 }
 
-/* FIXME: It needs to support "normal" option for non-color bitmap font.
-   For supporting "normal" option, S/W glyph drawing engine should be updated.
- */
 enum @beta Efl.Text_Font_Bitmap_Scalable {
    [[Scalable of bitmap fonts.
    ]]
