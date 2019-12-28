@@ -18,7 +18,7 @@ _rdg_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_group_1_create(Evas_Object *bx)
+_group_1_create(Evas_Object *bx, const char *style)
 {
    Evas_Object *bx2, *fr, *ic, *rd, *rdg;
    char buf[PATH_MAX];
@@ -41,6 +41,7 @@ _group_1_create(Evas_Object *bx)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 0);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
@@ -60,6 +61,7 @@ _group_1_create(Evas_Object *bx)
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 1);
    elm_radio_group_add(rd, rdg);
    elm_object_text_set(rd, "Icon no scale");
@@ -69,6 +71,7 @@ _group_1_create(Evas_Object *bx)
    evas_object_smart_callback_add(rd, "changed", _rd_changed_cb, NULL);
 
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 2);
    elm_radio_group_add(rd, rdg); // add a radio button rd to a radio group rdg.
    elm_object_text_set(rd, "Label Only");
@@ -77,6 +80,7 @@ _group_1_create(Evas_Object *bx)
    evas_object_smart_callback_add(rd, "changed", _rd_changed_cb, NULL);
 
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 3);
    elm_radio_group_add(rd, rdg); // add a radio button rd to a radio group rdg.
    elm_object_text_set(rd, "Disabled");
@@ -91,6 +95,7 @@ _group_1_create(Evas_Object *bx)
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 4);
    elm_radio_group_add(rd, rdg); // add a radio button rd to a radio group rdg.
    elm_object_part_content_set(rd, "icon", ic);
@@ -104,6 +109,7 @@ _group_1_create(Evas_Object *bx)
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 5);
    elm_radio_group_add(rd, rdg); // add a radio button rd to a radio group rdg.
    elm_object_part_content_set(rd, "icon", ic);
@@ -116,7 +122,7 @@ _group_1_create(Evas_Object *bx)
 }
 
 static void
-_group_2_create(Evas_Object *bx)
+_group_2_create(Evas_Object *bx, const char *style)
 {
    Evas_Object *bx2, *fr, *rd, *rdg;
 
@@ -134,6 +140,7 @@ _group_2_create(Evas_Object *bx)
 
    // radio 1
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 1);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
@@ -148,6 +155,7 @@ _group_2_create(Evas_Object *bx)
 
    // radio 2
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 2);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
@@ -158,6 +166,7 @@ _group_2_create(Evas_Object *bx)
 
    // radio 2
    rd = elm_radio_add(bx2);
+   elm_object_style_set(rd, style);
    elm_radio_state_value_set(rd, 3);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
@@ -171,19 +180,42 @@ void
 test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx;
+   Evas_Object *win, *bx, *bx0;
 
    win = elm_win_util_standard_add("radios", "Radios");
    elm_win_autodel_set(win, EINA_TRUE);
 
+   bx0 = elm_box_add(win);
+   elm_box_horizontal_set(bx0, EINA_TRUE);
+   elm_win_resize_object_add(win, bx0);
+   evas_object_show(bx0);
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
 
-   _group_1_create(bx);
-   _group_2_create(bx);
+   _group_1_create(bx, "default");
+   _group_2_create(bx, "default");
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_pack_end(bx0, bx);
+   evas_object_show(bx);
+
+   _group_1_create(bx, "plain");
+   _group_2_create(bx, "plain");
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_pack_end(bx0, bx);
+   evas_object_show(bx);
+
+   _group_1_create(bx, "icon");
+   _group_2_create(bx, "icon");
 
    evas_object_show(win);
 }

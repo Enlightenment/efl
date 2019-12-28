@@ -29,25 +29,18 @@ state_changed_cb2(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EIN
       elm_object_text_set(obj, "text is visible when check state is true.");
 }
 
-void
-test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+check_style(Evas_Object *win, Evas_Object *bx, const char *style)
 {
-   Evas_Object *win, *bx, *ic, *ck, *ck0;
+   Evas_Object *ic, *ck, *ck0;
    char buf[PATH_MAX];
-
-   win = elm_win_util_standard_add("check", "Check");
-   elm_win_autodel_set(win, EINA_TRUE);
-
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   evas_object_show(bx);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_text_set(ck, "Icon sized to check");
    elm_object_part_content_set(ck, "icon", ic);
    elm_check_state_set(ck, EINA_TRUE);
@@ -62,6 +55,7 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_image_file_set(ic, buf, NULL);
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_text_set(ck, "Icon not resizable");
    elm_object_part_content_set(ck, "icon", ic);
    elm_box_pack_end(bx, ck);
@@ -71,17 +65,20 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_smart_callback_add(ck, "changed", changed_cb, ck0);
 
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_text_set(ck, "Label Only");
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_text_set(ck, "Use State Pointer");
    elm_check_state_pointer_set(ck, &eb);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_text_set(ck, "Print State Pointer Value");
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
@@ -92,6 +89,7 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_text_set(ck, "Disabled check");
    elm_object_part_content_set(ck, "icon", ic);
    elm_check_state_set(ck, EINA_TRUE);
@@ -101,6 +99,7 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(ic);
 
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_box_pack_end(bx, ck);
    elm_object_disabled_set(ck, EINA_TRUE);
    evas_object_show(ck);
@@ -110,21 +109,63 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_image_file_set(ic, buf, NULL);
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_object_part_content_set(ck, "icon", ic);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
 
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
    ck = elm_check_add(win);
+   elm_object_style_set(ck, style);
    elm_box_pack_end(bx, ck);
    elm_object_text_set(ck, "text is visible when check state is true.");
    elm_check_state_set(ck, EINA_TRUE);
    evas_object_show(ck);
    evas_object_smart_callback_add(ck, "changed", state_changed_cb2, NULL);
+}
+
+void
+test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bx0;
+
+   win = elm_win_util_standard_add("check", "Check");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx0 = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bx0, EINA_TRUE);
+   elm_win_resize_object_add(win, bx0);
+   evas_object_show(bx0);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_FALSE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx0, bx);
+   evas_object_show(bx);
+
+   check_style(win, bx, "default");
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_FALSE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx0, bx);
+   evas_object_show(bx);
+
+   check_style(win, bx, "plain");
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_FALSE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx0, bx);
+   evas_object_show(bx);
+
+   check_style(win, bx, "icon");
 
    evas_object_show(win);
 }
