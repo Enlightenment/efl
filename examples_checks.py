@@ -95,7 +95,6 @@ example_preparation = {
   "eina_file_02" : prep_eina_file_02,
   "eina_xattr_01" : prep_eina_xattr_01,
   "eina_xattr_02" : prep_eina_xattr_02,
-  "eet-data-simple" : prep_eet_data_simple,
   "eet-data-nested" : prep_eet_data_nested,
   "eet-data-simple" : prep_eet_data_simple,
   "eet-data-file_descriptor_01" : prep_eet_data_file_descriptor_01,

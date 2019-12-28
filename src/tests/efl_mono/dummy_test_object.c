@@ -16,6 +16,7 @@
 
 #define DUMMY_TEST_IFACE_PROTECTED
 
+#include <assert.h>
 #include "libefl_mono_native_test.h"
 
 typedef struct Dummy_Test_Object_Data
@@ -579,7 +580,7 @@ Eina_Bool _dummy_test_object_check_eina_array_int_out(EINA_UNUSED Eo *obj, EINA_
 {
    if (!_array_int_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_int_equal(_array_int_out_to_check, modified_seq_int, modified_seq_int_size);
+   Eina_Bool r = _array_int_equal(_array_int_out_to_check, base_seq_int, base_seq_int_size);
 
    unsigned int i;
    int *ele;
@@ -617,7 +618,7 @@ Eina_Bool _dummy_test_object_check_eina_array_int_return(EINA_UNUSED Eo *obj, EI
 {
    if (!_array_int_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_int_equal(_array_int_return_to_check, modified_seq_int, modified_seq_int_size);
+   Eina_Bool r = _array_int_equal(_array_int_return_to_check, base_seq_int, base_seq_int_size);
 
    unsigned int i;
    int *ele;
@@ -707,7 +708,7 @@ Eina_Bool _dummy_test_object_check_eina_array_str_out(EINA_UNUSED Eo *obj, EINA_
 {
    if (!_array_str_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_str_equal(_array_str_out_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_str_equal(_array_str_out_to_check, base_seq_str, base_seq_str_size);
 
    unsigned int i;
    char *ele;
@@ -745,7 +746,7 @@ Eina_Bool _dummy_test_object_check_eina_array_str_return(EINA_UNUSED Eo *obj, EI
 {
    if (!_array_str_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_str_equal(_array_str_return_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_str_equal(_array_str_return_to_check, base_seq_str,base_seq_str_size);
 
    unsigned int i;
    char *ele;
@@ -840,7 +841,7 @@ Eina_Bool _dummy_test_object_check_eina_array_strshare_out(EINA_UNUSED Eo *obj, 
 {
    if (!_array_strshare_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_strshare_equal(_array_strshare_out_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_strshare_equal(_array_strshare_out_to_check, base_seq_str, base_seq_str_size);
 
    unsigned int i;
    Eina_Stringshare *ele;
@@ -878,7 +879,7 @@ Eina_Bool _dummy_test_object_check_eina_array_strshare_return(EINA_UNUSED Eo *ob
 {
    if (!_array_strshare_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_strshare_equal(_array_strshare_return_to_check, modified_seq_str, modified_seq_str_size);
+   Eina_Bool r = _array_strshare_equal(_array_strshare_return_to_check, base_seq_str, base_seq_str_size);
 
    unsigned int i;
    Eina_Stringshare *ele;
@@ -974,7 +975,7 @@ Eina_Bool _dummy_test_object_check_eina_array_obj_out(EINA_UNUSED Eo *obj, EINA_
 {
    if (!_array_obj_out_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_obj_equal(_array_obj_out_to_check, modified_seq_obj, modified_seq_obj_size);
+   Eina_Bool r = _array_obj_equal(_array_obj_out_to_check, base_seq_obj, base_seq_obj_size);
    if (!r) return r;
 
    unsigned int i;
@@ -1013,7 +1014,7 @@ Eina_Bool _dummy_test_object_check_eina_array_obj_return(EINA_UNUSED Eo *obj, EI
 {
    if (!_array_obj_return_to_check) return EINA_FALSE;
 
-   Eina_Bool r = _array_obj_equal(_array_obj_return_to_check, modified_seq_obj, modified_seq_obj_size);
+   Eina_Bool r = _array_obj_equal(_array_obj_return_to_check, base_seq_obj, base_seq_obj_size);
    if (!r) return r;
 
    unsigned int i;
@@ -4608,6 +4609,36 @@ void _dummy_test_object_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_T
 
 void _dummy_test_object_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop1, int prop2)
 {
+    pd->prop1 = prop1;
+    pd->prop2 = prop2;
+}
+
+void _dummy_test_object_keyed_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int* prop1, int* prop2)
+{
+    assert (prop_key1 == 100);
+    *prop1 = pd->prop1;
+    *prop2 = pd->prop2;
+}
+
+void _dummy_test_object_keyed_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int prop1, int prop2)
+{
+    assert (prop_key1 == 100);
+    pd->prop1 = prop1;
+    pd->prop2 = prop2;
+}
+
+void _dummy_test_object_multi_keyed_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int prop_key2, int* prop1, int* prop2)
+{
+    assert (prop_key1 == 100);
+    assert (prop_key2 == 101);
+    *prop1 = pd->prop1;
+    *prop2 = pd->prop2;
+}
+
+void _dummy_test_object_multi_keyed_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int prop_key2, int prop1, int prop2)
+{
+    assert (prop_key1 == 100);
+    assert (prop_key2 == 101);
     pd->prop1 = prop1;
     pd->prop2 = prop2;
 }

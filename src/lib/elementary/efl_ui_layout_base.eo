@@ -87,6 +87,22 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
           orientation : int; [[The new rotation angle, in degrees.]]
         }
       }
+      @property theme_version {
+        [[The version a theme does offer
+
+          A theme might offer older theme versions, with this property you can detect which version is running. The theme version is bound to the efl-version, the oldest version you will get here is 123. The newest of released EFL.
+
+          This property is only valid after @Efl.Ui.Widget.theme_apply has been called.
+
+          In case there is no version specified, 0 is returned.
+        ]]
+        get {
+
+        }
+        values {
+          version : int; [[Theme version of this objec, for a EFL version called 1.23, this property will return 123.]]
+        }
+      }
    }
    implements {
       class.constructor;

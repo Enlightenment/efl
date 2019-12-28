@@ -19,7 +19,9 @@ struct Foo {
 }
 
 enum Bar {
-    [[Docs for enum Bar.]]
+    [[Docs for enum Bar.
+      @since 1.55
+    ]]
     blah = 0,
     foo = 1, [[Docs for foo.]]
     bar = 2 [[Docs for bar.]]

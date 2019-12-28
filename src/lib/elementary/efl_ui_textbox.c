@@ -2451,7 +2451,10 @@ _efl_ui_textbox_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Ein
      }
    else
      {
-        efl_content_set(sd->scroller, NULL);
+        /* sd->text_table should not be deleted, so we need to use content_unset
+         * instead of efl_content_set(sd->scroller, NULL)
+        */
+        efl_content_unset(sd->scroller);
         edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_table);
         efl_del(sd->scroller);
         sd->scroller = NULL;

@@ -28,7 +28,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class IteratorNativeFunctions
+internal static class IteratorNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern void
         eina_iterator_free(IntPtr iterator);

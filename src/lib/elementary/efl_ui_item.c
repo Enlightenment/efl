@@ -129,7 +129,10 @@ _efl_ui_item_efl_object_finalize(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
    /* Support Item Focus Feature */
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   efl_ui_action_connector_bind_clickable_to_object(wd->resize_obj, obj);
+   if (efl_ui_layout_theme_version_get(obj) == 123)
+     efl_ui_action_connector_bind_clickable_to_object(wd->resize_obj, obj);
+   else
+     efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
    return eo;
 }
 
@@ -144,6 +147,8 @@ _efl_ui_item_efl_object_destructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 EOLIAN static int
 _efl_ui_item_index_get(const Eo *obj, Efl_Ui_Item_Data *pd)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->container, -1);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(pd->container, EFL_PACK_LINEAR_INTERFACE), -1);
    return efl_pack_index_get(pd->container, obj);
 }
 

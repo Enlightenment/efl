@@ -34,7 +34,7 @@ namespace Efl
 namespace Eo
 {
 
-public static class Globals
+internal static class Globals
 {
     /// <summary>Represents the type of the native Efl_Class.</summary>
     internal enum EflClassType
@@ -981,7 +981,7 @@ class PrivateNativeClass : NativeClass
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public class BindingEntityAttribute: System.Attribute
+internal class BindingEntityAttribute: System.Attribute
 {
     public static bool IsBindingEntity(System.Type t)
     {

@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static Eina.TraitFunctions;
 using static Eina.InlistNativeFunctions;
@@ -29,7 +30,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class InlistNativeFunctions
+internal static class InlistNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inlist_append(IntPtr in_list, IntPtr in_item);
@@ -422,6 +423,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     /// <param name="values">The values to be added.</param>
     public void AppendArray(T[] values)
     {
+        Contract.Requires(values != null, nameof(values));
         foreach (T v in values)
         {
             Append(v);

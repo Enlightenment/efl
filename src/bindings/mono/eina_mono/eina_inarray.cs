@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static Eina.TraitFunctions;
 using static Eina.InarrayNativeFunctions;
@@ -28,7 +29,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class InarrayNativeFunctions
+internal static class InarrayNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_new(uint member_size, uint step);
@@ -485,6 +486,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     /// <returns>true on success, false otherwise.</returns>
     public bool Append(T[] values)
     {
+        Contract.Requires(values != null, nameof(values));
         foreach (T v in values)
         {
             if (Push(v) == -1)

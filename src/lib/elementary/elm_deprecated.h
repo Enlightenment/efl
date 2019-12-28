@@ -1679,7 +1679,7 @@ EINA_DEPRECATED EAPI void elm_win_name_set(Evas_Object *obj, const char *name);
  * @param[in] start_angle Start angle of the circle
  * @param[in] direction Textpath direction
  *
- * @deprecated Use elm_textpath_circluar_set() instead.
+ * @deprecated Use elm_textpath_circular_set() instead.
  *
  * @ingroup Elm_Textpath_Group
  */

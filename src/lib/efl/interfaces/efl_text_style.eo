@@ -2,7 +2,7 @@ enum @beta Efl.Text_Style_Background_Type
 {
    [[Whether to add a background colored rectangle (background) to each line of text or not.]]
    disabled = 0, [[Do not use background.]]
-   enabled,      [[Use background.]]
+   solid_color,  [[Use solid color background.]]
 
 }
 
@@ -10,7 +10,7 @@ enum @beta Efl.Text_Style_Strikethrough_Type
 {
    [[Whether to add a strike-through decoration to the displayed text or not.]]
    disabled = 0, [[Do not use strike-through.]]
-   enabled,      [[Use strike-through.]]
+   solid_color,  [[Use solid color strike-through.]]
 
 }
 

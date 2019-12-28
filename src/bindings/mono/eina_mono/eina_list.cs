@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using static Eina.TraitFunctions;
 using static Eina.ListNativeFunctions;
@@ -29,7 +30,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class ListNativeFunctions
+internal static class ListNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_append(IntPtr list, IntPtr data);
@@ -188,13 +189,13 @@ public class List<T> : IList<T>, IEnumerable<T>, IDisposable
     {
         if (!(0 <= idx && idx < Count))
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(idx), $"{nameof(idx)} cannot be negative, neither smaller than {nameof(Count)}");
         }
 
         var ele = f(Handle, (uint)idx);
         if (ele == IntPtr.Zero)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(idx), $"There is no position {nameof(idx)}");
         }
 
         return ele;
@@ -533,6 +534,7 @@ public class List<T> : IList<T>, IEnumerable<T>, IDisposable
     /// <param name="values">The values to be appended.</param>
     public void Append(T[] values)
     {
+        Contract.Requires(values != null, nameof(values));
         RequireWritable();
 
         foreach (T v in values)

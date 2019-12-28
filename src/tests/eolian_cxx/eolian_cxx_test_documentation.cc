@@ -279,7 +279,7 @@ EFL_START_TEST(eolian_cxx_test_struct_docs)
    doc = field_iter->documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Field documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 
    field_iter++;
 
@@ -293,7 +293,7 @@ EFL_START_TEST(eolian_cxx_test_struct_docs)
    doc = field_iter->documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Another field documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 }
 EFL_END_TEST
 

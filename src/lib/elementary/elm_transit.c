@@ -61,6 +61,7 @@ struct _Elm_Transit
      } repeat;
    double progress;
    double inter_progress;
+   double base_progress;
    double revert_begin_progress;
    double revert_duration;
    double total_revert_time;
@@ -359,6 +360,7 @@ _transit_animate_cb(void *data)
      }
 
    /* Intervention Progress */
+   transit->base_progress = transit->progress;
    transit->progress += transit->inter_progress;
 
    switch (transit->tween_mode)
@@ -956,7 +958,7 @@ elm_transit_progress_value_set(Elm_Transit *transit, double progress)
    if (progress < 0) progress = 0;
    else if (progress > 1) progress = 1;
 
-   transit->inter_progress = (progress - transit->progress);
+   transit->inter_progress = (progress - transit->base_progress);
 }
 
 EAPI double

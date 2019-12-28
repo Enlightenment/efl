@@ -20,7 +20,7 @@ extern "C" {
 #include "efl_loop.eo.h"
 #include "efl_loop_consumer.eo.h"
 #include "efl_object.eo.h"
-#include "efl_text_font.eo.h"
+#include "efl_text_font_properties.eo.h"
 #include "efl_ui_i18n.eo.h"
 #include "evas_textgrid_eo.h"
 }
@@ -43,7 +43,7 @@ extern "C" {
 #include "efl_loop.eo.hh"
 #include "efl_loop_consumer.eo.hh"
 #include "efl_object.eo.hh"
-#include "efl_text_font.eo.hh"
+#include "efl_text_font_properties.eo.hh"
 #include "efl_ui_i18n.eo.hh"
 #ifndef EVAS_TEXTGRID_FWD_GUARD
 #define EVAS_TEXTGRID_FWD_GUARD

@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 
 using static eldbus.EldbusProxyNativeFunctions;
 
@@ -123,6 +124,7 @@ public class Proxy : IDisposable
     /// <param name="_interface">The interface name.</param>
     public Proxy(eldbus.Object obj, string _interface)
     {
+        Contract.Requires(obj != null, nameof(obj));
         InitNew(eldbus_proxy_get(obj.Handle, _interface), true);
     }
 

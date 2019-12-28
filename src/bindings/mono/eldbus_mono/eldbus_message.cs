@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 
 using static eldbus.EldbusMessageNativeFunctions;
 
@@ -773,6 +774,7 @@ public class MessageIterator
     /// <returns>A <see cref="eldbus.MessageIterator" />.</returns>
     public eldbus.MessageIterator AppendOpenContainer(string signature)
     {
+        Contract.Requires(signature != null, nameof(signature));
         CheckHandle();
 
         IntPtr new_iter = IntPtr.Zero;

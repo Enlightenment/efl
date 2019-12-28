@@ -77,7 +77,7 @@ interface @beta Efl.Text_Format {
          }
       }
 
-      @property linegap {
+      @property line_gap {
          [[Minimal line gap (top and bottom) for each line in the text.
 
            $value is absolute size.
@@ -88,7 +88,7 @@ interface @beta Efl.Text_Format {
          }
       }
 
-      @property linerelgap {
+      @property line_rel_gap {
          [[Relative line gap (top and bottom) for each line in the text.
 
            The original line gap value is multiplied by $value.
@@ -99,7 +99,7 @@ interface @beta Efl.Text_Format {
          }
       }
 
-      @property tabstops {
+      @property tab_stops {
          [[Size of the tab character.]]
          values
          {

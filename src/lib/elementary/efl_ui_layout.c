@@ -645,6 +645,12 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
+EOLIAN static int
+_efl_ui_layout_base_theme_version_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd)
+{
+   return pd->version;
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_layout_base_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
