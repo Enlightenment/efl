@@ -63,6 +63,7 @@ group { name: "elm/check/base/default";
       text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
+            fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
                min: 0 0;
