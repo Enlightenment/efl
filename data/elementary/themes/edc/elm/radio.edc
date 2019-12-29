@@ -535,6 +535,7 @@ group { name: "elm/radio/base/plain";
          }
       }
       rect { "bar"; nomouse;
+         scale: 1;
          desc { "default";
             color: 51 153 255 0;
             fixed: 0 1;
@@ -877,6 +878,7 @@ group { name: "elm/radio/base/icon";
          }
       }
       rect { "bar"; nomouse;
+         scale: 1;
          desc { "default";
             color: 51 153 255 0;
             fixed: 0 1;
