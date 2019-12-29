@@ -1459,9 +1459,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
              info.position = efl_text_cursor_position_get(cur);
              info.length = eina_unicode_utf8_get_len(string);
 
-             efl_event_freeze(obj);
              efl_text_cursor_text_insert(cur, string);
-             efl_event_thaw(obj);
              changed_user = EINA_TRUE;
 
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
