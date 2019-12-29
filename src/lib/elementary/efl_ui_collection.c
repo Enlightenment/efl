@@ -1087,7 +1087,7 @@ _efl_ui_collection_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Data *pd
      }
    else
      {
-        _item_scroll_internal(obj, pd, new_obj, .0, EINA_TRUE);
+        _item_scroll_internal(obj, pd, efl_provider_find(new_obj, EFL_UI_ITEM_CLASS), .0, EINA_TRUE);
      }
 
    return new_obj;
