@@ -543,9 +543,6 @@ group { name: "elm/radio/base/plain";
       program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
-      }
       program { signal: "elm,state,*,on"; source: "elm";
          script {
             new m = get_int(btmode);
@@ -865,9 +862,6 @@ group { name: "elm/radio/base/icon";
       }
       program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
-      }
-      program { signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
       }
       program { signal: "elm,state,*,on"; source: "elm";
          script {
