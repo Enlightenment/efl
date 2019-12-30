@@ -19,6 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="../../bindings/mono/efl_sharp.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+	  <CodeAnalysisRuleSet>@CA_RULESET@</CodeAnalysisRuleSet>
+  </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="@BINDING_TEST_SRC@/*.cs" />

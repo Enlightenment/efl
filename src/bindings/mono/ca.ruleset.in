@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="CustomRulset" Description="Custom Rulset" ToolsVersion="14.0">
+	<Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+		<!-- Do not declare static members on Generic Types --> 
+		@CA1000@
+		<!-- Consider making Raise an event --> 
+		@CA1030@
+		<!-- Catch generic exception -->
+		@CA1031@
+		<!-- Add extra exception constructors --> 
+		@CA1032@
+		<!-- Do not nest NativeTypes --> 
+		@CA1034@
+		<!-- IComparable must implement other comparison operators --> 
+		@CA1036@
+		<!-- Avoid empty interface --> 
+		@CA1040@
+		<!-- Use Integral Or String Argument For Indexers --> 
+		@CA1043@
+		<!-- Consider making property with getter --> 
+		@CA1044@
+		<!-- Visible instance fields -->
+		@CA1051@
+		<!-- Static holder can be static -->
+		@CA1052@
+		<!-- Using parameters before checking for null -->
+		@CA1062@
+		<!-- Remove IDisposable as Object already has it -->
+		@CA1063@
+		<!-- Exceptions must be public -->
+		@CA1064@
+		<!-- Do not raise exception in unexpected locations -->
+		@CA1065@
+		<!-- String localization -->
+		@CA1303@
+		<!-- Specify IFormatProvider --> 
+		@CA1305@
+		<!-- Specify Stringcomparison --> 
+		@CA1307@
+		<!-- PInvoke should not be visible -->
+		@CA1401@
+		<!-- Use nameof --> 
+		@CA1507@
+		<!-- Parameter underscore -->
+		@CA1707@
+		<!-- Attribute classes must have the Attribute Suffix --> 
+		@CA1710@
+		<!-- Replace generic parameter with T -->
+		@CA1715@
+		<!-- Parameter End conflicts with VB -->
+		@CA1716@
+		<!-- Enum field must be plural -->
+		@CA1717@
+		<!-- Variable has type name -->
+		@CA1720@
+		<!-- Property with same name as getter -->
+		@CA1721@
+		<!-- Type name must not match namespace -->
+		@CA1724@
+		<!-- Unused parameter. Lots of warnings regarding Dispose(disposing) -->
+		@CA1801@
+		<!-- Do not ignore function result -->
+		@CA1806@
+		<!-- Remove static constructors -->
+		@CA1810@
+		<!-- Realized classes are never instantiated --> 
+		@CA1812@
+		<!-- Override equal and operator equal on Value Types--> 
+		@CA1815@
+		<!-- Dispose must call SuppressFinalizers --> 
+		@CA1816@
+		<!-- Member can be static -->
+		@CA1822@
+		<!-- Consider zero length array allocation --> 
+		@CA1825@
+		<!-- Count() is used where Any() could be used instead to improve performance -->
+		@CA1827@
+		<!-- Use Count instead of Count() -->
+		@CA1829@
+		<!-- Call dispose before going out of scope -->
+		@CA2000@
+		<!-- Call ConfigureWait-->
+		@CA2007@
+		<!-- PInvoke should specify string marshalling -->
+		@CA2101@
+		<!-- Rethrow loses stack info -->
+		@CA2200@
+		<!-- Declare static fields when they are declared and remove static constructor -->
+		@CA2207@
+		<!-- Instantiate exception params correctly -->
+		@CA2208@
+		<!-- Dot not call overrideable methods in constructors --> 
+		@CA2214@
+		<!-- Replace implicit operator -->
+		@CA2225@
+		<!-- Change 'XXXXX' to be read-only by removing the property setter -->
+		@CA2227@
+
+
+
+	</Rules>
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+		<!-- Ignore docs -->
+		@SA0001@
+
+		<!-- 10** Spacing rules -->
+		@SA1000@
+		@SA1001@
+		@SA1002@
+		@SA1003@
+		<!-- Documentation must start with single space -->
+		@SA1004@
+		@SA1005@
+		@SA1006@
+		@SA1007@
+		@SA1008@
+		@SA1009@
+		@SA1010@
+		@SA1011@
+		@SA1012@
+		@SA1013@
+		@SA1014@
+		@SA1015@
+		@SA1016@
+		@SA1017@
+		@SA1018@
+		@SA1019@
+		@SA1020@
+		@SA1021@
+		@SA1022@
+		@SA1023@
+		@SA1024@
+		@SA1025@
+		@SA1026@
+		@SA1027@
+		@SA1028@
+
+		<!-- Readability -->
+		@SA1100@
+		@SA1101@
+		@SA1102@
+		@SA1103@
+		@SA1104@
+		@SA1105@
+		@SA1106@
+		@SA1107@
+		@SA1108@
+		@SA1109@
+		@SA1110@
+		@SA1111@
+		@SA1112@
+		@SA1113@
+		@SA1114@
+		@SA1115@
+		@SA1116@
+		@SA1117@
+		@SA1118@
+		@SA1119@
+		@SA1120@
+		@SA1121@
+		@SA1122@
+		@SA1123@
+		@SA1124@
+		@SA1125@
+		@SA1126@
+		@SA1127@
+		@SA1128@
+		@SA1129@
+		@SA1130@
+		@SA1131@
+		@SA1132@
+		@SA1133@
+		@SA1134@
+		@SA1135@
+		@SA1136@
+		@SA1137@
+		@SA1138@
+		@SA1139@
+
+		<!-- 12** Ordering -->
+		<!-- FIXME Check if this somehow affects docfx output -->
+		@SA1200@
+		@SA1201@
+		@SA1202@
+		@SA1203@
+		@SA1204@
+		@SA1205@
+		@SA1206@
+		@SA1207@
+		@SA1208@
+		@SA1209@
+		@SA1210@
+		@SA1211@
+		@SA1212@
+		@SA1213@
+		@SA1214@
+		@SA1215@
+		@SA1216@
+		@SA1217@
+
+		<!-- 13**  Naming Rules -->
+		<!-- Element start with upper case -->
+		@SA1300@
+		@SA1301@
+		<!-- Interface start with I -->
+		@SA1302@
+		<!-- Upper/lower score rules -->
+		@SA1303@
+		@SA1304@
+		@SA1305@
+		@SA1306@
+		@SA1307@
+		<!-- Variable field prefixes -->
+		@SA1308@
+		@SA1309@
+		@SA1310@
+		@SA1311@
+		@SA1312@
+		@SA1313@
+		@SA1314@
+
+		<!-- 14** Maintainability -->
+		<!-- Access modifier -->
+		@SA1400@
+		<!-- Field must be private -->
+		@SA1401@
+		<!-- File Must contain single class or namespace -->
+		@SA1402@
+		@SA1403@
+		<!-- CodeAnalysis suppress does not have justification -->
+		@SA1404@
+		<!-- Debug.Assert/Fail must provide a message -->
+		@SA1405@
+		@SA1406@
+		<!-- Arithmetic/Conditional expression must declare precedence -->
+		@SA1407@
+		@SA1408@
+		<!-- Remove unecessary code -->
+		@SA1409@
+		<!-- Delegate/Attribute parentheses -->
+		@SA1410@
+		@SA1411@
+		<!-- Utf8 file -->
+		@SA1412@
+		<!-- Trailing commas multiline initializer -->
+		@SA1413@
+
+		<!-- 15** Layout Rules -->
+		@SA1500@
+		@SA1501@
+		@SA1502@
+		@SA1503@
+		@SA1504@
+		@SA1505@
+		@SA1506@
+		@SA1507@
+		@SA1508@
+		@SA1509@
+		@SA1510@
+		@SA1511@
+		@SA1512@
+		@SA1513@
+		@SA1514@
+		@SA1515@
+		@SA1516@
+		@SA1517@
+		@SA1518@
+		@SA1519@
+		@SA1520@
+
+		<!-- 16** Documentation rules -->
+		<!-- Things must be documented -->
+		@SA1600@
+		@SA1601@
+		@SA1602@
+		<!-- Valid xml in docs -->
+		@SA1603@
+		@SA1604@
+		@SA1605@
+		@SA1606@
+		@SA1607@
+		@SA1608@
+		@SA1609@
+		@SA1610@
+		@SA1611@
+		@SA1612@
+		@SA1613@
+		@SA1614@
+		@SA1615@
+		@SA1616@
+		@SA1617@
+		@SA1618@
+		@SA1619@
+		@SA1620@
+		@SA1621@
+		@SA1622@
+		@SA1623@
+		@SA1624@
+		@SA1625@
+		@SA1626@
+		@SA1627@
+		@SA1628@
+		@SA1629@
+		@SA1630@
+		@SA1631@
+		@SA1632@
+		<!-- File headers -->
+		@SA1633@
+		@SA1634@
+		@SA1635@
+		@SA1636@
+		@SA1637@
+		@SA1638@
+		@SA1639@
+		@SA1640@
+		@SA1641@
+		<!-- Constructor/Destructor -->
+		@SA1642@
+		@SA1643@
+		<!-- File header -->
+		@SA1644@
+		<!-- Miscellaneous doc -->
+		@SA1645@
+		@SA1646@
+		@SA1647@
+		@SA1648@
+		<!-- Filename must match file type -->
+		@SA1649@
+		<!-- Spelling -->
+		@SA1650@
+		<!-- Placeholder -->
+		@SA1651@
+	</Rules>
+</RuleSet>

@@ -124,8 +124,9 @@ efl_mono_conf_data.set('ELDBUS', eldbus_lib.full_path())
 efl_mono_conf_data.set('ELEMENTARY', elementary_lib.full_path())
 
 efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
-                                 output : 'efl_mono.dll.config',
-                                 configuration : efl_mono_conf_data)
+                                     output : 'efl_mono.dll.config',
+                                     configuration : efl_mono_conf_data)
+
 
 extra_cs_args = runtime_assemblies
 
@@ -137,8 +138,69 @@ efl_mono_install_dir = join_paths(dir_lib, 'efl-mono-'+version_major)
 efl_mono_xml_doc = join_paths(meson.current_build_dir(), 'efl_mono.xml')
 
 if (get_option('dotnet'))
+  styles = ['CA1000', 'CA1030', 'CA1031', 'CA1032', 'CA1034', 'CA1036', 'CA1040',
+            'CA1043', 'CA1044', 'CA1051', 'CA1052', 'CA1062', 'CA1063', 'CA1064',
+            'CA1065', 'CA1303', 'CA1305', 'CA1307', 'CA1401', 'CA1507', 'CA1707',
+            'CA1710', 'CA1715', 'CA1716', 'CA1717', 'CA1720', 'CA1721', 'CA1724',
+            'CA1801', 'CA1806', 'CA1810', 'CA1812', 'CA1815', 'CA1816', 'CA1822',
+            'CA1825', 'CA1827', 'CA1829', 'CA2000', 'CA2007', 'CA2101', 'CA2200',
+            'CA2207', 'CA2208', 'CA2214', 'CA2225', 'CA2227', 'SA0001', 'SA1000',
+            'SA1001', 'SA1002', 'SA1003', 'SA1004', 'SA1005',
+            'SA1006', 'SA1007', 'SA1008', 'SA1009', 'SA1010', 'SA1011', 'SA1012',
+            'SA1013', 'SA1014', 'SA1015', 'SA1016', 'SA1017', 'SA1018', 'SA1019',
+            'SA1020', 'SA1021', 'SA1022', 'SA1023', 'SA1024', 'SA1025', 'SA1026',
+            'SA1027', 'SA1028', 'SA1100', 'SA1101', 'SA1102', 'SA1103', 'SA1104',
+            'SA1105', 'SA1106', 'SA1107', 'SA1108', 'SA1109', 'SA1110', 'SA1111',
+            'SA1112', 'SA1113', 'SA1114', 'SA1115', 'SA1116', 'SA1117', 'SA1118',
+            'SA1119', 'SA1120', 'SA1121', 'SA1122', 'SA1123', 'SA1124', 'SA1125',
+            'SA1126', 'SA1127', 'SA1128', 'SA1129', 'SA1130', 'SA1131', 'SA1132',
+            'SA1133', 'SA1134', 'SA1135', 'SA1136', 'SA1137', 'SA1138', 'SA1139',
+            'SA1200', 'SA1201', 'SA1202', 'SA1203', 'SA1204', 'SA1205', 'SA1206',
+            'SA1207', 'SA1208', 'SA1209', 'SA1210', 'SA1211', 'SA1212', 'SA1213',
+            'SA1214', 'SA1215', 'SA1216', 'SA1217', 'SA1300', 'SA1301', 'SA1302',
+            'SA1303', 'SA1304', 'SA1305', 'SA1306', 'SA1307', 'SA1308', 'SA1309',
+            'SA1310', 'SA1311', 'SA1312', 'SA1313', 'SA1314', 'SA1400', 'SA1401',
+            'SA1402', 'SA1403', 'SA1404', 'SA1405', 'SA1406', 'SA1407', 'SA1408',
+            'SA1409', 'SA1410', 'SA1411', 'SA1412', 'SA1413', 'SA1500', 'SA1501',
+            'SA1502', 'SA1503', 'SA1504', 'SA1505', 'SA1506', 'SA1507', 'SA1508',
+            'SA1509', 'SA1510', 'SA1511', 'SA1512', 'SA1513', 'SA1514', 'SA1515',
+            'SA1516', 'SA1517', 'SA1518', 'SA1519', 'SA1520', 'SA1600', 'SA1601',
+            'SA1602', 'SA1603', 'SA1604', 'SA1605', 'SA1606', 'SA1607', 'SA1608',
+            'SA1609', 'SA1610', 'SA1611', 'SA1612', 'SA1613', 'SA1614', 'SA1615',
+            'SA1616', 'SA1617', 'SA1618', 'SA1619', 'SA1620', 'SA1621', 'SA1622',
+            'SA1623', 'SA1624', 'SA1625', 'SA1626', 'SA1627', 'SA1628', 'SA1629',
+            'SA1630', 'SA1631', 'SA1632', 'SA1633', 'SA1634', 'SA1635', 'SA1636',
+            'SA1637', 'SA1638', 'SA1639', 'SA1640', 'SA1641', 'SA1642', 'SA1643',
+            'SA1644', 'SA1645', 'SA1646', 'SA1647', 'SA1648', 'SA1649', 'SA1650',
+            'SA1651']
+
+  efl_stylecop_data = configuration_data()
+  watched_styles = []
+  severity_styles = get_option('dotnet-stylecop-severity')
+  if get_option('dotnet-stylecop') == '*'
+    watched_styles = styles
+  elif get_option('dotnet-stylecop') != ''
+    s = get_option('dotnet-stylecop').to_upper().split(',')
+    foreach cc : s
+      if cc.startswith('CA') or cc.startswith('SA')
+        watched_styles += cc
+      endif
+    endforeach
+  endif
+
+  foreach s : styles
+    if s in watched_styles
+      efl_stylecop_data.set('@0@'.format(s), '<Rule Id="@0@" Action="@1@"/>'.format(s, severity_styles))
+    else
+      efl_stylecop_data.set('@0@'.format(s), '<Rule Id="@0@" Action="None"/>'.format(s))
+    endif
+  endforeach
+
+  ca_ruleset = configure_file(input : 'ca.ruleset.in',
+                              output : 'ca.ruleset',
+                              configuration : efl_stylecop_data)
+
   dotnet = find_program('dotnet')
-  warning('Dotnet support is still experimental.')
 
   lib_csproj_conf_data = configuration_data()
 
@@ -160,6 +222,7 @@ if (get_option('dotnet'))
 
   lib_csproj_conf_data.set('NETSTANDARD_VERSION', dotnet_standard_version)
   lib_csproj_conf_data.set('BINDING_SRC', meson.current_source_dir())
+  lib_csproj_conf_data.set('CA_RULESET', join_paths(meson.build_root(), '@0@'.format(ca_ruleset)))
   lib_csproj_conf_data.set('EFL_VERSION', meson.project_version())
 
   if get_option('mono-beta')
@@ -173,7 +236,7 @@ if (get_option('dotnet'))
                               configuration: lib_csproj_conf_data)
 
   efl_mono = custom_target('efl_mono',
-    input: mono_generator_target + mono_files + [efl_src] + [lib_csproj],
+    input: mono_generator_target + mono_files + [efl_src] + [lib_csproj] + [ca_ruleset],
     output: 'efl_sharp.dll',
     build_by_default: true,
     command: [dotnet,
