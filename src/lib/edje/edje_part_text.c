@@ -63,7 +63,7 @@ _efl_canvas_layout_part_text_efl_text_style_text_background_type_get(const Eo *o
 
    PROXY_DATA_GET(obj, pd);
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT)
-      return EFL_TEXT_STYLE_BACKGROUND_TYPE_DISABLED;
+      return EFL_TEXT_STYLE_BACKGROUND_TYPE_NONE;
 
    return efl_text_background_type_get(pd->rp->object);
 }
