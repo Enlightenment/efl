@@ -4,14 +4,15 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
 {
    [[Elementary progressbar class]]
    methods {
-      @property pulse {
-         [[Start/stop a given progress bar "pulsing" animation, if its under that mode.]]
+      @property infinite_mode {
+         [[Start/stop a given progress bar "pulsing" animation, if this mode is enabled.]]
          set {
          }
          get {
          }
          values {
-           state: bool; [[$true, to start the pulsing animation, $false to stop it]]
+           state: bool; [[$true if the progressbar should animate infinitely,
+                          $false if the progressbar should animate based on a fixed endpoint.]]
          }
       }
       @property show_progress_label {

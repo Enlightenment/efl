@@ -628,7 +628,7 @@ _apply_pulse_state(Eo *obj, Efl_Ui_Progressbar_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
+_efl_ui_progressbar_infinite_mode_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
 {
    state = !!state;
 
@@ -642,7 +642,7 @@ _efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool st
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_infinite_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return (sd->pulse_state && sd->pulse);
 }

@@ -179,7 +179,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
    pd->pb2 = efl_add(EFL_UI_PROGRESSBAR_CLASS, bx,
                      efl_pack(bx, efl_added),
                      efl_text_set(efl_added, "10-100"),
-                     efl_ui_progressbar_pulse_set(efl_added, EINA_TRUE),
+                     efl_ui_progressbar_infinite_mode_set(efl_added, EINA_TRUE),
                      efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20)),
                      efl_ui_range_limits_set(efl_added, 10, 100),
                      efl_ui_range_value_set(efl_added, 10)

@@ -37,11 +37,11 @@ pulse_start(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Test_Data *td = data;
 
-   efl_ui_progressbar_pulse_set(td->pb1, EINA_TRUE);
-   efl_ui_progressbar_pulse_set(td->pb2, EINA_TRUE);
-   efl_ui_progressbar_pulse_set(td->pb3, EINA_TRUE);
-   efl_ui_progressbar_pulse_set(td->pb4, EINA_TRUE);
-   efl_ui_progressbar_pulse_set(td->pb5, EINA_TRUE);
+   efl_ui_progressbar_infinite_mode_set(td->pb1, EINA_TRUE);
+   efl_ui_progressbar_infinite_mode_set(td->pb2, EINA_TRUE);
+   efl_ui_progressbar_infinite_mode_set(td->pb3, EINA_TRUE);
+   efl_ui_progressbar_infinite_mode_set(td->pb4, EINA_TRUE);
+   efl_ui_progressbar_infinite_mode_set(td->pb5, EINA_TRUE);
 
    efl_ui_widget_disabled_set(td->btn_start, EINA_TRUE);
    efl_ui_widget_disabled_set(td->btn_stop, EINA_FALSE);
@@ -54,11 +54,11 @@ pulse_stop(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Test_Data *td = data;
 
-   efl_ui_progressbar_pulse_set(td->pb1, EINA_FALSE);
-   efl_ui_progressbar_pulse_set(td->pb2, EINA_FALSE);
-   efl_ui_progressbar_pulse_set(td->pb3, EINA_FALSE);
-   efl_ui_progressbar_pulse_set(td->pb4, EINA_FALSE);
-   efl_ui_progressbar_pulse_set(td->pb5, EINA_FALSE);
+   efl_ui_progressbar_infinite_mode_set(td->pb1, EINA_FALSE);
+   efl_ui_progressbar_infinite_mode_set(td->pb2, EINA_FALSE);
+   efl_ui_progressbar_infinite_mode_set(td->pb3, EINA_FALSE);
+   efl_ui_progressbar_infinite_mode_set(td->pb4, EINA_FALSE);
+   efl_ui_progressbar_infinite_mode_set(td->pb5, EINA_FALSE);
 
    efl_ui_widget_disabled_set(td->btn_start, EINA_FALSE);
    efl_ui_widget_disabled_set(td->btn_stop, EINA_TRUE);
