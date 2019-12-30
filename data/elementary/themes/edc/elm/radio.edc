@@ -1,7 +1,16 @@
 group { name: "elm/radio/base/default";
    images.image: "radio.png" COMP;
+#define SELECTED 8
    script {
       BUTTONMODE_SCRIPT
+      public sel;
+      public eval_sel(m) {
+         if (m) {
+            set_state(PART:"ck_check", "selected", 0.0);
+         } else {
+            set_state(PART:"ck_check", "default", 0.0);
+         }
+      }
    }
    parts {
       part { name: "shadow"; type: SPACER;
@@ -196,107 +205,81 @@ group { name: "elm/radio/base/default";
       }
    }
    programs {
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
       }
-      program {
-         signal: "elm,state,radio,on"; source: "elm";
-         action:  STATE_SET "selected" 0.0;
-         target: "ck_check";
+      program { signal: "elm,state,radio,on"; source: "elm";
+         script {
+            new m = get_int(sel) | SELECTED;
+            set_int(sel, m);
+            eval_sel(m);
+         }
       }
-      program {
-         signal: "elm,state,radio,off"; source: "elm";
-         action:  STATE_SET "default" 0.0;
-         target: "ck_check";
+      program { signal: "elm,state,radio,off"; source: "elm";
+         script {
+            new m = get_int(sel) & ~SELECTED;
+            set_int(sel, m);
+            eval_sel(m);
+         }
       }
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,press" "elm";
          after: "button_click_anim";
-      }
-      program {
-         signal: "mouse,down,1"; source: "event";
-         action: STATE_SET "pressed" 0.0;
-         target: "ck_check";
       }
       program { name: "button_click_anim";
          script { flag_set(PRESSED); }
       }
-      program { name: "button_unclick";
-         signal: "mouse,up,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
+         script { eval_sel(get_int(sel) | SELECTED); }
+      }
+      program { signal: "mouse,up,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
          after: "button_unclick_anim";
-      }
-      program {
-         signal: "mouse,up,1"; source: "event";
-         action: STATE_SET "default" 0.0;
-         target: "ck_check";
       }
       program { name: "button_unclick_anim";
          script { flag_unset(PRESSED); }
       }
-      program { name: "buttonactivate";
-         signal: "elm,anim,activate"; source: "elm";
-         action: STATE_SET "pressed" 0.0;
-         target: "ck_check";
-         after: "button_unpressed_anim";
+      program { signal: "mouse,up,1"; source: "event";
+         script { eval_sel(get_int(sel)); }
       }
-      program { name: "button_unpressed_anim";
-         in: 0.5 0.0;
-         action: STATE_SET "default" 0.0;
-         target: "ck_check";
-      }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { name: "button_text_visible";
-         signal: "elm,state,text,visible"; source: "elm";
+      program { signal: "elm,state,text,visible"; source: "elm";
          script { flag_set(LABEL); }
       }
-      program { name: "button_text_hidden";
-         signal: "elm,state,text,hidden"; source: "elm";
+      program { signal: "elm,state,text,hidden"; source: "elm";
          script { flag_unset(LABEL); }
       }
-      program { name: "button_icon_visible";
-         signal: "elm,state,icon,visible"; source: "elm";
+      program { signal: "elm,state,icon,visible"; source: "elm";
          script { flag_set(ICON); }
       }
-      program { name: "button_icon_hidden";
-         signal: "elm,state,icon,hidden"; source: "elm";
+      program { signal: "elm,state,icon,hidden"; source: "elm";
          script { flag_unset(ICON); }
       }
-      program { name: "button_background_visible";
-         signal: "elm,state,background,visible"; source: "elm";
+      program { signal: "elm,state,background,visible"; source: "elm";
          script { flag_set(BACKGROUND); }
       }
-      program { name: "button_background_hidden";
-         signal: "elm,state,background,hidden"; source: "elm";
+      program { signal: "elm,state,background,hidden"; source: "elm";
          script { flag_unset(BACKGROUND); }
       }
-      program { name: "button_state_disabled";
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          script { flag_set(DISABLE); }
       }
-      program { name: "button_state_enabled";
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          script { flag_unset(DISABLE); }
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action:  STATE_SET "disabled" 0.0;
          target: "ck_check";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "ck_check";
       }
    }
 }
 
-#define SELECTED 8
 group { name: "elm/radio/base/plain";
    alias: "elm/check/base/plain";
    images.image: "win_shadow.png" COMP;
@@ -435,9 +418,9 @@ group { name: "elm/radio/base/plain";
             visible: 0;
             align: 0.0 0.5;
             max: 0 0;
-            rel1.offset: 0 6;
+            rel1.offset: 0 8;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 0 -7;
+            rel2.offset: 0 -9;
             offscale;
          }
          description { state: "icononly" 0.0;
@@ -446,18 +429,17 @@ group { name: "elm/radio/base/plain";
             align: 0.5 0.5;
             max: 9999 9999;
             min: 16 16;
-            rel1.offset: 6 6;
-            rel2.offset: 6 -7;
+            rel1.offset: 8 8;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -5 -5;
+            rel2.offset: -9 -9;
             fixed: 0 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0;
-            rel1.offset: 6 6;
-            rel2.offset: 6 -7;
+            rel1.offset: 8 8;
+            rel2.offset: 8 -9;
             max: 9999 9999;
             min: 16 16;
          }
@@ -497,10 +479,10 @@ group { name: "elm/radio/base/plain";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: 0 6;
+            rel1.offset: 0 8;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
-            rel2.offset: -7 -7;
+            rel2.offset: -9 -9;
             color: 192 192 192 255;
             text { font: FN; size: 10;
               min: 0 0;
@@ -516,7 +498,7 @@ group { name: "elm/radio/base/plain";
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             fixed: 0 0;
-            rel1.offset: 6 6;
+            rel1.offset: 8 8;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -528,7 +510,7 @@ group { name: "elm/radio/base/plain";
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
             color: 96 96 96 255;
-            rel1.offset: 6 6;
+            rel1.offset: 8 8;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -576,9 +558,6 @@ group { name: "elm/radio/base/plain";
       }
       program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
-      }
-      program { signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
       }
       program { signal: "elm,state,*,on"; source: "elm";
          script {
@@ -777,9 +756,9 @@ group { name: "elm/radio/base/icon";
             visible: 0;
             align: 0.5 0.0;
             max: 0 0;
-            rel1.offset: 6 0;
+            rel1.offset: 8 0;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -7 0;
+            rel2.offset: -9 0;
             offscale;
          }
          description { state: "icononly" 0.0;
@@ -788,18 +767,17 @@ group { name: "elm/radio/base/icon";
             align: 0.5 0.5;
             max: 9999 9999;
             min: 16 16;
-            rel1.offset: 6 6;
-            rel2.offset: 6 -7;
+            rel1.offset: 8 8;
+            rel2.offset: -9 -9;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -5 -5;
             fixed: 0 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0;
-            rel1.offset: 6 5;
-            rel2.offset: -5 5;
+            rel1.offset: 8 8;
+            rel2.offset: -9 8;
             max: 9999 9999;
             min: 16 16;
             fixed: 1 1;
@@ -840,10 +818,10 @@ group { name: "elm/radio/base/icon";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: 6 0;
+            rel1.offset: 8 0;
             rel1.to_y: "elm.swallow.content";
             rel1.relative: 0.0 1.0;
-            rel2.offset: -7 -7;
+            rel2.offset: -9 -9;
             color: 192 192 192 255;
             text { font: FN; size: 10;
               min: 0 0;
@@ -859,7 +837,7 @@ group { name: "elm/radio/base/icon";
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             fixed: 0 0;
-            rel1.offset: 6 6;
+            rel1.offset: 8 8;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -871,7 +849,7 @@ group { name: "elm/radio/base/icon";
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
             color: 96 96 96 255;
-            rel1.offset: 6 6;
+            rel1.offset: 8 8;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -920,9 +898,6 @@ group { name: "elm/radio/base/icon";
       program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
-      }
       program { signal: "elm,state,*,on"; source: "elm";
          script {
             new m = get_int(btmode);
@@ -981,318 +956,3 @@ group { name: "elm/radio/base/icon";
       }
    }
 }
-/*
-group { name: "elm/radio/base/icon";
-   alias: "elm/check/base/icon";
-   images.image: "button_normal.png" COMP;
-   images.image: "button_clicked.png" COMP;
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
-   script {
-      public btmode;
-      public eval_mode(m) {
-         new m1 = m & MASK;
-         new d = m & DISABLE;
-         new s = m & SELECTED;
-         if (s) {
-            set_state(PART:"base", "selected", 0.0);
-            set_state(PART:"bar", "selected", 0.0);
-         } else {
-            set_state(PART:"base", "default", 0.0);
-            set_state(PART:"bar", "default", 0.0);
-         }
-         if (m1 == (ICON | LABEL)) {
-            if (!d) {
-               set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
-               set_state(PART:"elm.text", "visible", 0.0);
-               set_state(PART:"clip", "default", 0.0);
-               set_state(PART:"event", "default", 0.0);
-            } else {
-               set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
-               set_state(PART:"elm.text", "disabled_visible", 0.0);
-               set_state(PART:"clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         } else if (m1 == (ICON)) {
-            if (!d) {
-               set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
-               set_state(PART:"elm.text", "default", 0.0);
-               set_state(PART:"clip", "default", 0.0);
-               set_state(PART:"event", "default", 0.0);
-            } else {
-               set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
-               set_state(PART:"elm.text", "disabled", 0.0);
-               set_state(PART:"clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         } else if (m1 == (LABEL)) {
-            if (!d) {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"elm.text", "visible", 0.0);
-               set_state(PART:"clip", "default", 0.0);
-               set_state(PART:"event", "default", 0.0);
-            } else {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"elm.text", "disabled_visible", 0.0);
-               set_state(PART:"clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         } else {
-            if (!d) {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"elm.text", "default", 0.0);
-               set_state(PART:"clip", "default", 0.0);
-               set_state(PART:"event", "default", 0.0);
-            } else {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"elm.text", "default", 0.0);
-               set_state(PART:"clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         }
-      }
-   }
-   parts {
-      part { name: "base"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: -1 0;
-            rel2.offset: 0 1;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
-            fill.smooth: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "button_clicked.png";
-            image.border: 5 5 4 6;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-         }
-      }
-      part { name: "clip"; type: RECT;
-         description { state: "default" 0.0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "elm.swallow.content"; type: SWALLOW;
-         scale: 1;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-            fixed: 1 0;
-            visible: 0;
-            align: 0.5 0.0;
-            max: 0 0;
-            rel1.offset: 6 2;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -7 2;
-            rel2.to: "base";
-         }
-         description { state: "icononly" 0.0;
-            inherit: "default" 0.0;
-            fixed: 0 0;
-            visible: 1;
-            align: 0.5 0.5;
-            max: 9999 9999;
-            min: 16 16;
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -7 -8;
-            fixed: 0 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            fixed: 0 0;
-            visible: 1;
-            rel1.offset: 6 5;
-            rel2.offset: -7 5;
-            aspect: 1.0 1.0;
-            max: 9999 9999;
-            min: 16 16;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "radio_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: "M";
-            }
-         }
-         description { state: "icononly" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: "M";
-            }
-         }
-      }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.offset: 6 2;
-            rel1.to_y: "elm.swallow.content";
-            rel1.relative: 0.0 1.0;
-            rel2.offset: -8 -8;
-            rel2.to: "base";
-            color: FN_COL_DEFAULT;
-            color_class: "radio_text";
-            text { font: FN; size: 10;
-              min: 0 0;
-              align: 0.5 1.0;
-              text_class: "radio";
-            }
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            color_class: "radio_text_disabled";
-            color3: 255 255 255 255;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            text.min: 1 1;
-            text.ellipsis: -1;
-         }
-         description { state: "disabled_visible" 0.0;
-            inherit: "default" 0.0;
-            color_class: "radio_text_disabled";
-            color3: 255 255 255 255;
-            visible: 1;
-            text.min: 1 1;
-            text.ellipsis: -1;
-         }
-      }
-      image { "bar"; nomouse;
-         desc { "default";
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            fill.smooth: 0;
-            fixed: 0 1;
-            rel.to: "base";
-            rel1.relative: 0.0 1.0;
-            rel1.offset: 1 -12;
-            rel2.offset: -2 -3;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         desc { "selected";
-           inherit: "default";
-           color: 255 255 255 255;
-           visible: 1;
-         }
-      }
-      part { name: "event"; type: RECT;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-   }
-   programs {
-      program { signal: "mouse,down,1"; source: "event";
-         action:  STATE_SET "selected" 0.0;
-         target: "base";
-      }
-      program { signal: "mouse,up,1"; source: "event";
-         script {
-            new m = get_int(btmode);
-            eval_mode(m);
-         }
-      }
-      program { signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
-      }
-      program { signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
-      }
-      program { signal: "elm,state,*,on"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m |= SELECTED; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,*,off"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m &= ~SELECTED; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,text,visible"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m |= LABEL; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,text,hidden"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m &= ~LABEL; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,icon,visible"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m |= ICON; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,icon,hidden"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m &= ~ICON; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,disabled"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m |= DISABLE; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-      program { signal: "elm,state,enabled"; source: "elm";
-         script {
-            new m = get_int(btmode);
-            m &= ~DISABLE; set_int(btmode, m);
-            eval_mode(m);
-         }
-      }
-   }
-}
-*/
