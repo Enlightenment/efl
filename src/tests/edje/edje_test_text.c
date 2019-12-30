@@ -102,13 +102,52 @@ EFL_START_TEST(edje_test_textblock)
    evas = _setup_evas();
 
    obj = edje_object_add(evas);
-   fail_unless(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
+   ck_assert(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
    txt = edje_object_part_text_get(obj, "text");
-   fail_if(!txt || strcmp(txt, "Bye"));
+   ck_assert(txt || !strcmp(txt, "Bye"));
    edje_object_part_text_set(obj, "text", buf);
    txt = edje_object_part_text_get(obj, "text");
-   fail_if(!txt || strcmp(txt, buf));
+   ck_assert(txt || !strcmp(txt, buf));
 
+   Evas_Object *obj2 = edje_object_add(evas);
+   ck_assert(edje_object_file_set(obj2, test_layout_get("test_textblock.edj"), "test_tc_textblock"));
+   Evas_Object *tb = (Evas_Object*)edje_object_part_object_get(obj2, "tb");
+   ck_assert_ptr_ne(tb, NULL);
+   int w = 0, h = 0;
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   Evas_Textblock_Style *st = evas_object_textblock_style_get(tb);
+   txt = evas_textblock_style_get(st);
+   ck_assert_str_eq(txt, "DEFAULT='color=#ff0 font_size=18.0 font=Serif'");
+   ck_assert_int_ne(w, 0);
+   ck_assert_int_ne(h, 0);
+
+   edje_object_text_class_set(obj2, "tc1", "Sans", 15);
+   edje_object_calc_force(obj2);
+   int w2 = 0, h2 = 0;
+   evas_object_textblock_size_formatted_get(tb, &w2, &h2);
+   ck_assert_int_ne(w2, 0);
+   ck_assert_int_ne(h2, 0);
+   ck_assert_int_ne(w, w2);
+   ck_assert_int_ne(h, h2);
+
+   ck_assert(edje_object_file_set(obj2, test_layout_get("test_textblock.edj"), "test_tc_textblock2"));
+   tb = (Evas_Object*)edje_object_part_object_get(obj2, "tb2");
+   ck_assert_ptr_ne(tb, NULL);
+   st = evas_object_textblock_style_get(tb);
+   txt = evas_textblock_style_get(st);
+   ck_assert_str_eq(txt, "DEFAULT='color=#0ff'");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_eq(w, 0);
+   ck_assert_int_eq(h, 0);
+
+   edje_object_text_class_set(obj2, "tc2", "Sans", 15);
+   edje_object_calc_force(obj2);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_ne(w, 0);
+   ck_assert_int_ne(h, 0);
+   st = evas_object_textblock_style_get(tb);
+   txt = evas_textblock_style_get(st);
+   ck_assert_str_eq(txt, "DEFAULT='color=#0ff font_size=15.0 font=Sans'");
 }
 EFL_END_TEST
 
