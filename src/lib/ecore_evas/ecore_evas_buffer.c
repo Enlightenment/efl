@@ -20,6 +20,8 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
 
+   ecore_evas_input_event_unregister(ee);
+
    if (!bdata) return;
    if (bdata->image)
      {
