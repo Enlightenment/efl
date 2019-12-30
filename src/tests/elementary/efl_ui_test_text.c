@@ -132,10 +132,32 @@ EFL_START_TEST(text_user_change)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_scroll_mode)
+{
+   Eo *txt, *win, *cur;
+   win = win_add();
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   cur = efl_text_interactive_main_cursor_get(txt);
+   efl_text_set(txt, "Hello");
+   /*scroll mode is false by default*/
+   fail_if(efl_ui_textbox_scrollable_get(txt));
+   efl_ui_textbox_scrollable_set(txt, !efl_ui_textbox_scrollable_get(txt));
+   efl_text_cursor_text_insert(cur, "World");
+   fail_if(!efl_ui_textbox_scrollable_get(txt));
+   efl_ui_textbox_scrollable_set(txt, !efl_ui_textbox_scrollable_get(txt));
+   efl_text_cursor_text_insert(cur, "!!!");
+
+   ck_assert_str_eq(efl_text_get(txt),"HelloWorld!!!");
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
    tcase_add_test(tc, text_all_select_all_unselect);
    tcase_add_test(tc, text_selection);
    tcase_add_test(tc, text_user_change);
+   tcase_add_test(tc, text_scroll_mode);
 }

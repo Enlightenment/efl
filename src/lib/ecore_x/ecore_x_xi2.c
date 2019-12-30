@@ -1035,9 +1035,10 @@ ecore_x_input_device_property_get(int slot, const char *prop, int *num_ret,
 
    if ((slot < 0) || (slot >= _ecore_x_xi2_num)) goto err;
    a = XInternAtom(_ecore_x_disp, prop, False);
-   if (!XIGetProperty(_ecore_x_disp, _ecore_x_xi2_devs[slot].deviceid,
+   // XIGetProperty returns 0 AKA `Success` if everything is good
+   if (XIGetProperty(_ecore_x_disp, _ecore_x_xi2_devs[slot].deviceid,
                       a, 0, 65536, False, AnyPropertyType, &a_type, &fmt,
-                      &num, &dummy, &data)) goto err;
+                      &num, &dummy, &data) != 0) goto err;
    *format_ret = a_type;
    *num_ret = num;
    *unit_size_ret = fmt;

@@ -16412,19 +16412,25 @@ static struct
 };
 
 static void
-_efl_canvas_textblock_efl_text_style_text_underline_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_type_set(Eo *obj, Efl_Canvas_Textblock_Data *o, Efl_Text_Style_Underline_Type type)
 {
-   ASYNC_BLOCK;
-   _FMT_SET(underline, _style_underline_map[type].underline_single);
-   _FMT_SET(underline2, _style_underline_map[type].underline_double);
-   _FMT_SET(underline_dash, _style_underline_map[type].underline_dashed);
+   if (efl_text_underline_type_get(obj) == type)
+     return;
 
+   ASYNC_BLOCK;
+   _FMT(underline) = _style_underline_map[type].underline_single;
+   _FMT(underline2) = _style_underline_map[type].underline_double;
+   _FMT(underline_dash) = _style_underline_map[type].underline_dashed;
+   _canvas_text_format_changed(obj, o);
 }
 
 static Efl_Text_Style_Underline_Type
-_efl_canvas_textblock_efl_text_style_text_underline_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_underline_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o)
 {
-   return _FMT(underline);
+   if(_FMT(underline_dash)) return EFL_TEXT_STYLE_UNDERLINE_TYPE_DASHED;
+   else if (_FMT(underline2)) return EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE;
+   else if (_FMT(underline)) return EFL_TEXT_STYLE_UNDERLINE_TYPE_SINGLE;
+   else return EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE;
 }
 
 static void

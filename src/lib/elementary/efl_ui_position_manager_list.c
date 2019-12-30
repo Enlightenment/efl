@@ -520,31 +520,30 @@ _efl_ui_position_manager_list_efl_object_invalidate(Eo *obj, Efl_Ui_Position_Man
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static int
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_relative_item(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, unsigned int current_id, Efl_Ui_Focus_Direction direction)
+EOLIAN static Eina_Bool
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_relative_item(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, unsigned int current_id, Efl_Ui_Focus_Direction direction, unsigned int *index)
 {
-   int new_id = current_id;
    switch(direction)
      {
         case EFL_UI_FOCUS_DIRECTION_RIGHT:
         case EFL_UI_FOCUS_DIRECTION_NEXT:
         case EFL_UI_FOCUS_DIRECTION_DOWN:
-          new_id +=  1;
-        break;
+           if (current_id + 1 >= pd->size) return EINA_FALSE;
+           current_id +=  1;
+           break;
         case EFL_UI_FOCUS_DIRECTION_LEFT:
         case EFL_UI_FOCUS_DIRECTION_PREVIOUS:
         case EFL_UI_FOCUS_DIRECTION_UP:
-          new_id -=  1;
-        break;
+           if (current_id == 0) return EINA_FALSE;
+           current_id -=  1;
+           break;
         default:
-          ERR("Uncaught case!");
-          new_id = -1;
-        break;
+           ERR("Uncaught case!");
+           return EINA_FALSE;
      }
-   if (new_id < 0 || new_id > (int)pd->size)
-     return -1;
-   else
-     return new_id;
+
+   if (index) *index = current_id;
+   return EINA_TRUE;
 }
 
 EOLIAN static int

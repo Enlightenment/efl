@@ -4908,7 +4908,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);
 
    efl_canvas_textblock_style_apply(txt, "backing=on");
-   ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_ENABLED);
+   ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_SOLID_COLOR);
 
    efl_canvas_textblock_style_apply(txt, "style=far_soft_shadow");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
@@ -4931,6 +4931,23 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert_int_eq(g, 0x59);
    ck_assert_int_eq(b, 0x6C);
    ck_assert_int_eq(a, 0xFF);
+
+   END_EFL_CANVAS_TEXTBLOCK_TEST();
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_text_style)
+{
+   START_EFL_CANVAS_TEXTBLOCK_TEST();
+
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_SINGLE);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_SINGLE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DASHED);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_DASHED);
 
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
@@ -4972,5 +4989,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_canvas_textblock_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
    tcase_add_test(tc, efl_canvas_textblock_style);
+   tcase_add_test(tc, efl_text_style);
 }
 

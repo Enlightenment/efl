@@ -1,16 +1,16 @@
 enum @beta Efl.Text_Style_Background_Type
 {
    [[Whether to add a background colored rectangle (background) to each line of text or not.]]
-   disabled = 0, [[Do not use background.]]
-   enabled,      [[Use background.]]
+   none = 0, [[Do not use background.]]
+   solid_color,  [[Use solid color background.]]
 
 }
 
 enum @beta Efl.Text_Style_Strikethrough_Type
 {
    [[Whether to add a strike-through decoration to the displayed text or not.]]
-   disabled = 0, [[Do not use strike-through.]]
-   enabled,      [[Use strike-through.]]
+   none = 0, [[Do not use strike-through.]]
+   single,  [[Strikethrough with a single line.]]
 
 }
 
@@ -50,8 +50,7 @@ enum @beta Efl.Text_Style_Shadow_Direction
 enum @beta Efl.Text_Style_Underline_Type
 {
    [[Type of underline of the displayed text.]]
-   off = 0, [[Text without underline.]]
-   on, [[Underline enabled.]]
+   none = 0, [[Text without underline.]]
    single, [[Underlined with a single line.]]
    double, [[Underlined with a double line.]]
    dashed, [[Underlined with a dashed line.]]

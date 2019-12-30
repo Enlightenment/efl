@@ -107,8 +107,9 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
         params {
           current_id : uint; [[The id where the direction is oriented at]]
           direction : Efl.Ui.Focus.Direction; [[The direction where the new id is]]
+          @out index: uint; [[The relative item index after the translation has been applied.]]
         }
-        return : int; [[The id of the item in that direction, or -1 if there is no item in that direction]]
+        return : bool; [[$true if there is a next item, $false otherwise.]]
       }
    }
    events {
