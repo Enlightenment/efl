@@ -96,7 +96,6 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    pb = efl_add(EFL_UI_PROGRESSBAR_CLASS, win);
    efl_gfx_hint_weight_set(pb, EFL_GFX_HINT_EXPAND, 0);
-   efl_ui_progressbar_pulse_mode_set(pb, EINA_TRUE);
    efl_pack(bx, pb);
    td->pb1 = pb;
 
@@ -122,7 +121,6 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_unref(shadow);
 
    pb = efl_add(EFL_UI_PROGRESSBAR_CLASS, win);
-   efl_ui_progressbar_pulse_mode_set(pb, EINA_TRUE);
    efl_gfx_hint_weight_set(pb, EFL_GFX_HINT_EXPAND, 0);
    efl_pack(bx, pb);
    td->pb4 = pb;
@@ -150,7 +148,6 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    // FIXME: Needs wheel progressbar class
    pb = efl_add(EFL_UI_PROGRESSBAR_CLASS, win,
                 efl_ui_widget_style_set(efl_added, "wheel"));
-   efl_ui_progressbar_pulse_mode_set(pb, EINA_TRUE);
    efl_pack(hbx, pb);
    td->pb2 = pb;
 
@@ -163,7 +160,6 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    pb = efl_add(EFL_UI_PROGRESSBAR_CLASS, win,
                 efl_ui_widget_style_set(efl_added, "wheel"));
-   efl_ui_progressbar_pulse_mode_set(pb, EINA_TRUE);
    efl_pack(hbx, pb);
    td->pb3 = pb;
 
