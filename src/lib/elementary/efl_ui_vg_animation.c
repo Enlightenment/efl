@@ -75,8 +75,8 @@ _proxy_create(Eo *source)
    efl_canvas_proxy_source_clip_set(proxy, EINA_FALSE);
    efl_canvas_proxy_source_set(proxy, source);
 
-   efl_gfx_entity_visible_set(proxy, EINA_FALSE);
-   efl_gfx_entity_visible_set(source, EINA_FALSE);
+   efl_gfx_entity_visible_set(proxy, EINA_TRUE);
+   efl_gfx_entity_visible_set(source, EINA_TRUE);
 
    return proxy;
 }
