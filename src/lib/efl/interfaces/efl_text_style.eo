@@ -50,8 +50,7 @@ enum @beta Efl.Text_Style_Shadow_Direction
 enum @beta Efl.Text_Style_Underline_Type
 {
    [[Type of underline of the displayed text.]]
-   off = 0, [[Text without underline.]]
-   on, [[Underline enabled.]]
+   none = 0, [[Text without underline.]]
    single, [[Underlined with a single line.]]
    double, [[Underlined with a double line.]]
    dashed, [[Underlined with a dashed line.]]

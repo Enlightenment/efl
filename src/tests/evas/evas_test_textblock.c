@@ -4936,6 +4936,23 @@ EFL_START_TEST(efl_canvas_textblock_style)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_text_style)
+{
+   START_EFL_CANVAS_TEXTBLOCK_TEST();
+
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_SINGLE);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_SINGLE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
+   efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DASHED);
+   ck_assert_int_eq(efl_text_underline_type_get(txt), EFL_TEXT_STYLE_UNDERLINE_TYPE_DASHED);
+
+   END_EFL_CANVAS_TEXTBLOCK_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -4972,5 +4989,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_canvas_textblock_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
    tcase_add_test(tc, efl_canvas_textblock_style);
+   tcase_add_test(tc, efl_text_style);
 }
 
