@@ -3,11 +3,23 @@
 set -e
 . .ci/travis.sh
 
-if [ "$1" = "release-ready" ] || [ "$1" = "mingw" ] || [ "$1" = "coverity" ] || [ "$1" = "options-enabled" ] || [ "$1" = "options-disabled" ]; then
+if [ "$1" = "release-ready" ] || [ "$1" = "mingw" ] || [ "$1" = "coverity" ] || [ "$1" = "options-enabled" ] || [ "$1" = "options-disabled" ] ; then
   exit 0
 fi
 
 NUM_TRIES=5
+
+if [ "$1" = "codecov" ] ; then
+  for tries in $(seq 1 ${NUM_TRIES}); do
+    meson test -t 120 -C build --wrapper dbus-launch && break
+    cat build/meson-logs/testlog-dbus-launch.txt
+    if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
+      false
+  done
+  curl -s https://codecov.io/bash | bash -s -
+  exit 0
+fi
+
 travis_fold check "ninja test"
 if [ "$DISTRO" != "" ] ; then
   for tries in $(seq 1 ${NUM_TRIES}); do
