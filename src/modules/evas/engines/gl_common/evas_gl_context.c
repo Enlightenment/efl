@@ -4301,7 +4301,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         if (gc->pipe[i].array.line)
           {
-             if (gc->pipe[i].array.anti_alias)
+             //LINE_SMOOTH is supported at gles 1.x spec.
+             if ((gc->gles_version == 1) && gc->pipe[i].array.anti_alias)
                {
                   glEnable(GL_BLEND);
                   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
