@@ -391,29 +391,13 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 static void
 _efl_canvas_vg_node_efl_gfx_stack_raise_to_top(Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
-   Efl_Canvas_Vg_Container_Data *cd;
-   Eina_List *lookup, *next;
-   Eo *parent;
+   Efl_Canvas_Vg_Node *parent = efl_parent_get(obj);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) return;
 
-   parent = efl_parent_get(obj);
-   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
-   cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
-
-   // FIXME: this could become slow with to much object
-   lookup = eina_list_data_find_list(cd->children, obj);
-   if (!lookup) goto on_error;
-
-   next = eina_list_next(lookup);
-   if (!next) return ;
-
-   cd->children = eina_list_remove_list(cd->children, lookup);
-   cd->children = eina_list_append_relative_list(cd->children, obj, next);
-
+   Efl_Canvas_Vg_Container_Data *cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
+   cd->children = eina_list_remove(cd->children, obj);
+   cd->children = eina_list_append(cd->children, obj);
    _node_change(parent, efl_data_scope_get(parent, MY_CLASS));
-   return;
-
- on_error:
-   ERR("Err");
 }
 
 static void
@@ -479,29 +463,13 @@ _efl_canvas_vg_node_efl_gfx_stack_stack_below(Eo *obj,
 static void
 _efl_canvas_vg_node_efl_gfx_stack_lower_to_bottom(Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
-   Efl_Canvas_Vg_Container_Data *cd;
-   Eina_List *lookup, *prev;
-   Eo *parent;
+   Efl_Canvas_Vg_Node *parent = efl_parent_get(obj);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) return;
 
-   parent = efl_parent_get(obj);
-   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
-   cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
-
-   // FIXME: this could become slow with to much object
-   lookup = eina_list_data_find_list(cd->children, obj);
-   if (!lookup) goto on_error;
-
-   prev = eina_list_prev(lookup);
-   if (!prev) return;
-
-   cd->children = eina_list_remove_list(cd->children, lookup);
-   cd->children = eina_list_prepend_relative_list(cd->children, obj, prev);
-
+   Efl_Canvas_Vg_Container_Data *cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
+   cd->children = eina_list_remove(cd->children, obj);
+   cd->children = eina_list_prepend(cd->children, obj);
    _node_change(parent, efl_data_scope_get(parent, MY_CLASS));
-   return;
-
- on_error:
-   ERR("Err");
 }
 
 static const Eo *
