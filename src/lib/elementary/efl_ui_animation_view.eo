@@ -3,15 +3,14 @@ enum @beta Efl.Ui.Animation_View_State
 {
    [[State of animation view]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
-   play, [[Animation is playing. See @Efl.Ui.Animation_View.play.]]
-   play_back, [[Animation is playing back (rewinding). See @Efl.Ui.Animation_View.play_back.]]
-   pause, [[Animation has been paused. To continue animation call @Efl.Ui.Animation_View.resume.
-            See @Efl.Ui.Animation_View.pause.]]
+   play, [[Animation is playing.]]
+   play_back, [[Animation is playing back (rewinding).]]
+   pause, [[Animation has been paused.]]
    stop [[Animation view successfully loaded a file then readied for playing.
-          Otherwise after finished animation or stopped forcibly by request. See @Efl.Ui.Animation_View.stop.]]
+          Otherwise after finished animation or stopped forcibly by request.]]
 }
 
-class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File
+class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player
 {
    [[Elementary Animation view class.
      Animation view is designed to show and play animation of
@@ -26,10 +25,10 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
    ]]
    event_c_prefix: efl_ui_animation_view;
    methods {
-      @property auto_play {
+      @property autoplay {
          [[Animation will be started automatically when it's possible.
 
-           If @.auto_play is $true, animation will be started when it's readied.
+           If @.autoplay is $true, animation will be started when it's readied.
            The condition of $auto play is when animation view opened file successfully,
            yet to play it plus when the object is visible.
            If animation view is disabled, invisible,
@@ -45,14 +44,14 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          get {
          }
          values {
-            auto_play: bool(false); [[Auto play mode.]]
+            autoplay: bool(false); [[Auto play mode.]]
          }
       }
-      @property auto_repeat {
+      @property autorepeat {
          [[Turn on/off animation looping.
 
-           If @.auto_repeat is $true, it repeats animation when animation frame is reached to
-           end. This auto repeat mode is valid to both play and play_back cases.
+           If @.autorepeat is $true, it repeats animation when animation frame is reached to
+           end. This auto repeat mode is valid to both playing and playing_backward cases.
 
            $true Enable auto play mode, disable otherwise.
          ]]
@@ -61,25 +60,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          get {
          }
          values {
-            auto_repeat: bool; [[Loop mode, Default is $false.]]
-         }
-      }
-      @property speed {
-         [[Control animation speed.
-
-           Control animation speed by multiplying $speed value. If you want to play
-           animation double-time faster, you can give $speed 2. If you want to play
-           animation double-time slower, you can give $speed 0.5.
-
-           Warning: speed must be greater than zero.
-         ]]
-         set {
-            return: bool; [[$true when it's successful. $false otherwise.]]
-         }
-         get {
-         }
-         values {
-            speed: double(1.0); [[Speed factor.]]
+            autorepeat: bool; [[Loop mode, Default is $false.]]
          }
       }
       @property duration_time {
@@ -104,8 +85,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          ]]
          set {
          }
-         get {
-         }
          values {
             progress: double; [[Progress position. Value must be 0 ~ 1.]]
          }
@@ -123,19 +102,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
             frame_num: int; [[Current frame number.]]
          }
       }
-      play {
-         [[Play animation one time instantly when it's available.
-
-           If current keyframe is on a certain position by playing back, this will
-           play forward from there.
-
-           Warning: Play request will be ignored if animation source is not set yet or
-           animation is paused state or it's already on playing.
-         ]]
-
-         return: bool; [[$true when it's successful. $false otherwise.]]
-      }
-      play_sector {
+      playing_sector {
          [[Play animation of sector one time instantly when it's available.
 
            If end sector is NULL, only start sector is referenced.
@@ -152,46 +119,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
             @in start: string; [[ The name of start sector ]]
             @in end: string; [[ The name of end sector ]]
          }
-         return: bool; [[$true when it's successful. $false otherwise.]]
-      }
-      play_back {
-         [[Play back animation one time instantly when it's available.
-
-           If current keyframe is on a certain position by playing, this will
-           play backward from there.
-
-           Warning: Play back request will be ignored if animation source is not set yet or
-           animation is paused state or it's already on playing back.
-         ]]
-
-         return: bool; [[$true when it's successful. $false otherwise.]]
-      }
-      pause {
-         [[Pause current animation instantly.
-
-           Once animation is paused, animation view must get resume to play continue again.
-
-           Warning: Animation must be on playing or playing back status.
-         ]]
-
-         return: bool; [[$true when it's successful. $false otherwise.]]
-      }
-      resume {
-         [[Resume paused animation to continue animation.
-
-           Warning: This resume must be called on animation paused status.
-         ]]
-
-         return: bool; [[$true when it's successful. $false otherwise.]]
-      }
-      stop {
-         [[Stop playing animation.
-
-           Stop animation instantly regardless of its status and reset to
-           show first frame of animation. Even though current animation is paused,
-           the animation status will be stopped.
-         ]]
-
          return: bool; [[$true when it's successful. $false otherwise.]]
       }
       @property default_view_size {
@@ -212,12 +139,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          values {
             state: Efl.Ui.Animation_View_State; [[Current animation view state]]
          }
-      }
-      is_playing_back {
-         [[Returns the status whether current animation is on playing forward or backward.
-           Note: If animation view is not on playing, it will return $false.
-         ]]
-         return: bool; [[$true, if animation on playing back, $false otherwise.]]
       }
       @property frame_count {
          [[The index of end frame of the animation view, if it's animated.
@@ -300,6 +221,11 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { set; get; }
+      Efl.Player.playing { set; get; }
+      Efl.Player.paused { set; get; }
+      Efl.Player.playback_position { set; get; }
+      Efl.Player.playback_progress { get; }
+      Efl.Player.playback_speed { set; get; }
    }
    events {
       play,start: void; [[Called when animation is just started]]

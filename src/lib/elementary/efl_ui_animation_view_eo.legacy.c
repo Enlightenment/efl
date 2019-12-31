@@ -2,37 +2,39 @@
 EAPI void
 elm_animation_view_auto_play_set(Efl_Ui_Animation_View *obj, Eina_Bool auto_play)
 {
-   efl_ui_animation_view_auto_play_set(obj, auto_play);
+   efl_ui_animation_view_autoplay_set(obj, auto_play);
 }
 
 EAPI Eina_Bool
 elm_animation_view_auto_play_get(const Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_auto_play_get(obj);
+   return efl_ui_animation_view_autoplay_get(obj);
 }
 
 EAPI void
-elm_animation_view_auto_repeat_set(Efl_Ui_Animation_View *obj, Eina_Bool auto_repeat)
+elm_animation_view_auto_repeat_set(Efl_Ui_Animation_View *obj, Eina_Bool autorepeat)
 {
-   efl_ui_animation_view_auto_repeat_set(obj, auto_repeat);
+   efl_ui_animation_view_autorepeat_set(obj, autorepeat);
 }
 
 EAPI Eina_Bool
 elm_animation_view_auto_repeat_get(const Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_auto_repeat_get(obj);
+   return efl_ui_animation_view_autorepeat_get(obj);
 }
 
 EAPI Eina_Bool
 elm_animation_view_speed_set(Efl_Ui_Animation_View *obj, double speed)
 {
-   return efl_ui_animation_view_speed_set(obj, speed);
+   if (!obj) return EINA_FALSE;
+   efl_player_playback_speed_set(obj, speed);
+   return EINA_TRUE;
 }
 
 EAPI double
 elm_animation_view_speed_get(const Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_speed_get(obj);
+   return efl_player_playback_speed_get(obj);
 }
 
 EAPI double
@@ -50,7 +52,7 @@ elm_animation_view_progress_set(Efl_Ui_Animation_View *obj, double progress)
 EAPI double
 elm_animation_view_progress_get(const Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_progress_get(obj);
+   return efl_player_playback_progress_get(obj);
 }
 
 EAPI void
@@ -68,31 +70,33 @@ elm_animation_view_frame_get(const Efl_Ui_Animation_View *obj)
 EAPI Eina_Bool
 elm_animation_view_play(Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_play(obj);
+   return efl_player_playing_set(obj, EINA_TRUE);
 }
 
 EAPI Eina_Bool
 elm_animation_view_play_back(Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_play_back(obj);
+   double speed = efl_player_playback_speed_get(obj);
+   efl_player_playback_speed_set(obj, speed < 0 ? speed * -1 : speed);
+   return efl_player_playing_set(obj, EINA_TRUE);
 }
 
 EAPI Eina_Bool
 elm_animation_view_pause(Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_pause(obj);
+   return efl_player_paused_set(obj, EINA_TRUE);
 }
 
 EAPI Eina_Bool
 elm_animation_view_resume(Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_resume(obj);
+   return efl_player_paused_set(obj, EINA_FALSE);
 }
 
 EAPI Eina_Bool
 elm_animation_view_stop(Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_stop(obj);
+   return efl_player_playing_set(obj, EINA_FALSE);
 }
 
 EAPI Eina_Size2D
@@ -104,7 +108,7 @@ elm_animation_view_default_size_get(const Efl_Ui_Animation_View *obj)
 EAPI Eina_Bool
 elm_animation_view_is_playing_back(Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_is_playing_back(obj);
+   return (efl_ui_animation_view_state_get(obj) == EFL_UI_ANIMATION_VIEW_STATE_PLAY_BACK);
 }
 
 EAPI int

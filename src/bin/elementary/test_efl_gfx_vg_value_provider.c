@@ -78,15 +78,23 @@ btn_clicked_cb(void *data , const Efl_Event *ev )
    if (!text) return;
 
    if (!strcmp("Play", text))
-     efl_ui_animation_view_play((Evas_Object*)data);
+     {
+        double speed = efl_player_playback_speed_get(anim_view);
+        efl_player_playback_speed_set(anim_view, speed < 0 ? speed * -1 : speed);
+        efl_player_playing_set(anim_view, EINA_TRUE);
+     }
    else if (!strcmp("Pause", text))
-     efl_ui_animation_view_pause((Evas_Object*)data);
+     efl_player_paused_set((Evas_Object*)data, EINA_TRUE);
    else if (!strcmp("Resume", text))
-     efl_ui_animation_view_resume((Evas_Object*)data);
+     efl_player_paused_set((Evas_Object*)data, EINA_FALSE);
    else if (!strcmp("Play Back", text))
-     efl_ui_animation_view_play_back((Evas_Object*)data);
+     {
+        double speed = efl_player_playback_speed_get(anim_view);
+        efl_player_playback_speed_set(anim_view, speed > 0 ? speed * -1 : speed);
+        efl_player_playing_set(anim_view, EINA_TRUE);
+     }
    else if (!strcmp("Stop", text))
-     efl_ui_animation_view_stop((Evas_Object*)data);
+     efl_player_playing_set((Evas_Object*)data, EINA_FALSE);
    else if (!strcmp("ADD", text))
      {
         Evas_Object *list = (Evas_Object*)data;
@@ -145,7 +153,7 @@ static void
 check_changed_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *anim_view = data;
-   efl_ui_animation_view_auto_repeat_set(anim_view, efl_ui_selectable_selected_get(event->object));
+   efl_ui_animation_view_autorepeat_set(anim_view, efl_ui_selectable_selected_get(event->object));
 }
 
 static void
@@ -154,7 +162,7 @@ speed_changed_cb(void *data, const Efl_Event *event)
    Evas_Object *anim_view = data;
    double speed = 1;
    if (efl_ui_selectable_selected_get(event->object)) speed = 0.25;
-   efl_ui_animation_view_speed_set(anim_view, speed);
+   efl_player_playback_speed_set(anim_view, speed);
 }
 
 static void
@@ -206,7 +214,7 @@ static void
 _play_updated(void *data, Evas_Object *obj, void *ev EINA_UNUSED)
 {
    Evas_Object *slider = data;
-   efl_ui_range_value_set(slider, efl_ui_animation_view_progress_get(obj));
+   efl_ui_range_value_set(slider, efl_player_playback_progress_get(obj));
 }
 
 static void

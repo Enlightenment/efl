@@ -12,7 +12,7 @@ struct _Efl_Ui_Animation_View_Data
    Efl_Ui_Animation_View_State state;
    Elm_Transit *transit;
    Eina_Stringshare *file;
-   double speed;
+   double playback_speed;
    double progress;
    double frame_cnt;
    int repeat_times;
@@ -21,10 +21,11 @@ struct _Efl_Ui_Animation_View_Data
    double max_progress;
    Eina_List *vp_list;
 
-   Eina_Bool play_back : 1;
-   Eina_Bool auto_play : 1;
-   Eina_Bool auto_play_pause: 1;
-   Eina_Bool auto_repeat : 1;
+   Eina_Bool playing_reverse : 1;
+   Eina_Bool autoplay : 1;
+   Eina_Bool autoplay_pause: 1;
+   Eina_Bool autorepeat : 1;
+   Eina_Bool playback_direction_changed : 1;
 };
 
 #define EFL_UI_ANIMATION_VIEW_DATA_GET(o, sd) \
