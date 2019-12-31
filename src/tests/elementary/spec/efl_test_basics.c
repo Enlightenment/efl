@@ -45,7 +45,7 @@
              "Efl.Ui.Timepicker",
              "Efl.Ui.Navigation_Bar",
              "Efl.Ui.Relative_Container",
-             "Efl.Ui.Animation_View",
+             "Efl.Ui.Vg_Animation",
              "Efl.Ui.Table",
              "Efl.Ui.Flip",
              "Efl.Ui.Stack",

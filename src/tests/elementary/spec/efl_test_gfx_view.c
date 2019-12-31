@@ -8,7 +8,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Gfx.View",
-       "test-widgets": ["Efl.Ui.Animation_View"]}
+       "test-widgets": ["Efl.Ui.Vg_Animation"]}
    spec-meta-end */
 
 EFL_START_TEST(view_size)

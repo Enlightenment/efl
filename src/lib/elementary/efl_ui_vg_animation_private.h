@@ -1,15 +1,15 @@
-#ifndef EFL_UI_ANIMATION_VIEW_PRIVATE_H
-#define EFL_UI_ANIMATION_VIEW_PRIVATE_H
+#ifndef EFL_UI_VG_ANIMATION_PRIVATE_H
+#define EFL_UI_VG_ANIMATION_PRIVATE_H
 
 #include "Elementary.h"
-#include "efl_ui_animation_view.eo.h"
+#include "efl_ui_vg_animation.eo.h"
 
-typedef struct _Efl_Ui_Animation_View_Data Efl_Ui_Animation_View_Data;
+typedef struct _Efl_Ui_Vg_Animation_Data Efl_Ui_Vg_Animation_Data;
 
-struct _Efl_Ui_Animation_View_Data
+struct _Efl_Ui_Vg_Animation_Data
 {
    Eo* vg;                            //Evas_Object_Vg
-   Efl_Ui_Animation_View_State state;
+   Efl_Ui_Vg_Animation_State state;
    Elm_Transit *transit;
    Eina_Stringshare *file;
    double playback_speed;
@@ -28,11 +28,11 @@ struct _Efl_Ui_Animation_View_Data
    Eina_Bool playback_direction_changed : 1;
 };
 
-#define EFL_UI_ANIMATION_VIEW_DATA_GET(o, sd) \
-  Efl_Ui_Animation_View_Data * sd = efl_data_scope_safe_get(o, EFL_UI_ANIMATION_VIEW_CLASS)
+#define EFL_UI_VG_ANIMATION_DATA_GET(o, sd) \
+  Efl_Ui_Vg_Animation_Data * sd = efl_data_scope_safe_get(o, EFL_UI_VG_ANIMATION_CLASS)
 
-#define EFL_UI_ANIMATION_VIEW_DATA_GET_OR_RETURN(o, ptr)   \
-  EFL_UI_ANIMATION_VIEW_DATA_GET(o, ptr);                  \
+#define EFL_UI_VG_ANIMATION_DATA_GET_OR_RETURN(o, ptr)   \
+  EFL_UI_VG_ANIMATION_DATA_GET(o, ptr);                  \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
        ERR("No widget data for object %p (%s)",         \

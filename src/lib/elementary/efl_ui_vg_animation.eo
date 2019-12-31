@@ -1,37 +1,37 @@
 
-enum @beta Efl.Ui.Animation_View_State
+enum @beta Efl.Ui.Vg_Animation_State
 {
-   [[State of animation view]]
+   [[State of vg_animation]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
    playing, [[Animation is playing.]]
    playing_backwards, [[Animation is playing backwards (rewinding).]]
    paused, [[Animation has been paused.]]
-   stopped [[Animation view successfully loaded a file then readied for playing.
+   stopped [[Vg Animation successfully loaded a file then readied for playing.
           Otherwise after finished animation or stopped forcibly by request.]]
 }
 
-class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player
+class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player
 {
-   [[Elementary Animation view class.
-     Animation view is designed to show and play animation of
+   [[Elementary Vector Graphcis Animation class.
+     Vg Animation is designed to show and play animation of
      vector graphics based content. It hides all @Efl.Canvas.Vg.Object details
      but just open an API to read vector data from file. Also, it implements
      details of animation control methods of Vector.
 
      Vector data could contain static or animatable vector elements including
      animation information. Available vector data file formats are SVG, JSON and EET.
-     @Efl.Ui.Animation_View currently only supports the animation information contained in
+     @Efl.Ui.Vg_Animation currently only supports the animation information contained in
      JSON (known as Lottie file as well) and EET files.
    ]]
-   event_c_prefix: efl_ui_animation_view;
+   event_c_prefix: efl_ui_vg_animation;
    methods {
       @property autoplay {
          [[Animation will be started automatically when it's possible.
 
            If @.autoplay is $true, animation will be started when it's readied.
-           The condition of $auto play is when animation view opened file successfully,
+           The condition of $auto play is when vg animation opened file successfully,
            yet to play it plus when the object is visible.
-           If animation view is disabled, invisible,
+           If vg animation is disabled, invisible,
            it turns to pause state then resume animation when it's visible again.
 
            $true Enable auto play mode, disable otherwise.
@@ -96,7 +96,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            Play is played and stoped at starting point of each sector.
 
            If start is null and end is valid, playback starts from 0 frame to the start frame of the end sector.
-           If both sectors start and end are invalid. Play from 0 frame to the last frame of animation view object.
+           If both sectors start and end are invalid. Play from 0 frame to the last frame of vg animation object.
 
            Note: This method use to @.min_frame, @.max_frame (@.min_progress, @.max_progress) internally.
                  So if you have changed the min or max frame(progress) it can be changed to the sector frame.
@@ -117,17 +117,17 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          }
       }
       @property state {
-         [[Current animation view state.
-           See @Efl.Ui.Animation_View_State
+         [[Current vg animation state.
+           See @Efl.Ui.Vg_Animation_State
          ]]
          get{
          }
          values {
-            state: Efl.Ui.Animation_View_State; [[Current animation view state]]
+            state: Efl.Ui.Vg_Animation_State; [[Current vg animation state]]
          }
       }
       @property frame_count {
-         [[The index of end frame of the animation view, if it's animated.
+         [[The index of end frame of the vg animation, if it's animated.
            Note : frame number starts with 0.
          ]]
          get {
@@ -190,7 +190,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            Eo *vp = efl_add(EFL_GFX_VG_VALUE_PROVIDER_CLASS, NULL);
            @Efl.Gfx.Vg.Value_Provider.keypath.set(vp, "SomeLayer:SomeObject:SomeContents");
            // Set vp property
-           @.value_provider_override(target_animation_view, vg);
+           @.value_provider_override(target_vg_animation, vg);
            See @Efl.Gfx.Vg.Value_Provider
          ]]
          params {

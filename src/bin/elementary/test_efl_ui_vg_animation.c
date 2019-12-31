@@ -46,7 +46,7 @@ static void
 check_changed_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *anim_view = data;
-   efl_ui_animation_view_autorepeat_set(anim_view, efl_ui_selectable_selected_get(event->object));
+   efl_ui_vg_animation_autorepeat_set(anim_view, efl_ui_selectable_selected_get(event->object));
 }
 
 static void
@@ -62,18 +62,18 @@ static void
 limit_frame_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *anim_view = data;
-   int frame_count = efl_ui_animation_view_frame_count_get(anim_view);
+   int frame_count = efl_ui_vg_animation_frame_count_get(anim_view);
    printf("Total Frame Count : %d\n", frame_count);
    if (efl_ui_selectable_selected_get(event->object))
      {
-        efl_ui_animation_view_min_frame_set(anim_view, 5);
-        efl_ui_animation_view_max_frame_set(anim_view, 10);
+        efl_ui_vg_animation_min_frame_set(anim_view, 5);
+        efl_ui_vg_animation_max_frame_set(anim_view, 10);
         printf("Frames to show 5-10 only\n");
      }
    else
      {
-        efl_ui_animation_view_min_frame_set(anim_view, 0);
-        efl_ui_animation_view_max_frame_set(anim_view, frame_count);
+        efl_ui_vg_animation_min_frame_set(anim_view, 0);
+        efl_ui_vg_animation_max_frame_set(anim_view, frame_count);
         printf("Showing all frames now\n");
      }
 }
@@ -81,23 +81,23 @@ limit_frame_cb(void *data, const Efl_Event *event)
 static void
 update_anim_view_state(Evas_Object *anim_view, Evas_Object *label)
 {
-   Efl_Ui_Animation_View_State state = efl_ui_animation_view_state_get(anim_view);
+   Efl_Ui_Vg_Animation_State state = efl_ui_vg_animation_state_get(anim_view);
 
    switch (state)
      {
-      case EFL_UI_ANIMATION_VIEW_STATE_NOT_READY:
+      case EFL_UI_VG_ANIMATION_STATE_NOT_READY:
          efl_text_set(label, "State = Not Ready");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PLAYING:
+      case EFL_UI_VG_ANIMATION_STATE_PLAYING:
          efl_text_set(label, "State = Playing");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS:
+      case EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS:
          efl_text_set(label, "State = Playing Backwards");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PAUSED:
+      case EFL_UI_VG_ANIMATION_STATE_PAUSED:
          efl_text_set(label, "State = Paused");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_STOPPED:
+      case EFL_UI_VG_ANIMATION_STATE_STOPPED:
          efl_text_set(label, "State = Stopped");
          break;
      }
@@ -144,13 +144,13 @@ _slider_reset(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 }
 
 void
-test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_efl_ui_vg_animation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win, *box, *box2, *box3, *box4, *label, *anim_view, *check, *slider;
    char buf[255];
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                                  efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
+                                  efl_text_set(efl_added, "Efl_Ui_Vg_Animation demo"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    // Create a box in Canvas
@@ -166,7 +166,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    //Create Animation View to play animation directly from JSON file
    snprintf(buf, sizeof(buf), "%s/images/emoji_wink.json", elm_app_data_dir_get());
-   anim_view = efl_add(EFL_UI_ANIMATION_VIEW_CLASS, win,
+   anim_view = efl_add(EFL_UI_VG_ANIMATION_CLASS, win,
                        efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND),
                        efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
                        efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(600, 600)),
@@ -208,7 +208,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
 
    //Duration Text
-   snprintf(buf, sizeof(buf), "Duration: %1.2fs", efl_ui_animation_view_duration_time_get(anim_view));
+   snprintf(buf, sizeof(buf), "Duration: %1.2fs", efl_ui_vg_animation_duration_time_get(anim_view));
    efl_add(EFL_UI_TEXTBOX_CLASS, box2,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
@@ -298,13 +298,13 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 #else
 
 void
-test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_efl_ui_vg_animation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win, *box;
    char buf[255];
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                                  efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
+                                  efl_text_set(efl_added, "Efl_Ui_Vg_Animation demo"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    // Create a box

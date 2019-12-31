@@ -1,5 +1,5 @@
 
-#include "efl_ui_animation_view_eo.legacy.h"
+#include "efl_ui_vg_animation_eo.legacy.h"
 
 /**
  * Add a new animation view widget to the parent's canvas

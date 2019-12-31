@@ -7,12 +7,12 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "efl_ui_animation_view_private.h"
+#include "efl_ui_vg_animation_private.h"
 
-#define MY_CLASS EFL_UI_ANIMATION_VIEW_CLASS
+#define MY_CLASS EFL_UI_VG_ANIMATION_CLASS
 
-#define MY_CLASS_NAME "Efl_Ui_Animation_View"
-#define MY_CLASS_NAME_LEGACY "efl_ui_animation_view"
+#define MY_CLASS_NAME "Efl_Ui_Vg_Animation"
+#define MY_CLASS_NAME_LEGACY "efl_ui_vg_animation"
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
@@ -24,7 +24,7 @@ static const char SIG_PLAY_RESUME[] = "play,resume";
 static const char SIG_PLAY_STOP[] = "play,stop";
 static const char SIG_PLAY_UPDATE[] = "play,update";
 
-/* smart callbacks coming from Efl_Ui_Animation_View objects: */
+/* smart callbacks coming from Efl_Ui_Vg_Animation objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_FOCUSED, ""},
    {SIG_UNFOCUSED, ""},
@@ -41,7 +41,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void
 _sizing_eval(Eo *obj, void *data)
 {
-   Efl_Ui_Animation_View_Data *pd = data;
+   Efl_Ui_Vg_Animation_Data *pd = data;
    if (!efl_file_loaded_get(obj)) return;
 
    double hw,hh;
@@ -63,13 +63,13 @@ _size_hint_event_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_transit_go_facade(Eo* obj, Efl_Ui_Animation_View_Data *pd)
+_transit_go_facade(Eo* obj, Efl_Ui_Vg_Animation_Data *pd)
 {
    pd->repeat_times = 0;
    if (pd->playing_reverse)
-     pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS;
+     pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
    else
-     pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING;
+     pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
    evas_object_smart_callback_call(obj, SIG_PLAY_START, NULL);
    if (pd->transit) elm_transit_go(pd->transit);}
 
@@ -98,20 +98,20 @@ _visible_check(Eo *obj)
 }
 
 static void
-_autoplay(Eo *obj, Efl_Ui_Animation_View_Data *pd, Eina_Bool vis)
+_autoplay(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool vis)
 {
    if (!pd->autoplay || !pd->transit) return;
 
    //Resume Animation
    if (vis)
      {
-        if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PAUSED && pd->autoplay_pause)
+        if (pd->state == EFL_UI_VG_ANIMATION_STATE_PAUSED && pd->autoplay_pause)
           {
              elm_transit_paused_set(pd->transit, EINA_FALSE);
              if (pd->playing_reverse)
-               pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS;
+               pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
              else
-               pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING;
+               pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
              pd->autoplay_pause = EINA_FALSE;
              evas_object_smart_callback_call(obj, SIG_PLAY_RESUME, NULL);
           }
@@ -119,11 +119,11 @@ _autoplay(Eo *obj, Efl_Ui_Animation_View_Data *pd, Eina_Bool vis)
    //Pause Animation
    else
      {
-        if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING) ||
-            (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS))
+        if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING) ||
+            (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS))
           {
              elm_transit_paused_set(pd->transit, EINA_TRUE);
-             pd->state = EFL_UI_ANIMATION_VIEW_STATE_PAUSED;
+             pd->state = EFL_UI_VG_ANIMATION_STATE_PAUSED;
              pd->autoplay_pause = EINA_TRUE;
              evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
           }
@@ -134,21 +134,21 @@ static void
 _transit_del_cb(Elm_Transit_Effect *effect, Elm_Transit *transit)
 {
    Eo *obj = (Eo *) effect;
-   EFL_UI_ANIMATION_VIEW_DATA_GET(obj, pd);
+   EFL_UI_VG_ANIMATION_DATA_GET(obj, pd);
    if (!pd) return;
 
-   if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING && pd->progress == 1) ||
-       (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS && pd->progress == 0))
+   if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && pd->progress == 1) ||
+       (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && pd->progress == 0))
      evas_object_smart_callback_call(obj, SIG_PLAY_DONE, NULL);
 
    if (pd->transit != transit) return;
 
-   Efl_Ui_Animation_View_State prev_state = pd->state;
-   pd->state = EFL_UI_ANIMATION_VIEW_STATE_STOPPED;
+   Efl_Ui_Vg_Animation_State prev_state = pd->state;
+   pd->state = EFL_UI_VG_ANIMATION_STATE_STOPPED;
    pd->transit = NULL;
    pd->autoplay_pause = EINA_FALSE;
 
-   if (prev_state != EFL_UI_ANIMATION_VIEW_STATE_STOPPED)
+   if (prev_state != EFL_UI_VG_ANIMATION_STATE_STOPPED)
      {
         evas_object_smart_callback_call(obj, SIG_PLAY_STOP, NULL);
         pd->progress = 0;
@@ -159,11 +159,11 @@ static void
 _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
    Eo *obj = (Eo *) effect;
-   EFL_UI_ANIMATION_VIEW_DATA_GET(obj, pd);
+   EFL_UI_VG_ANIMATION_DATA_GET(obj, pd);
 
    if (!pd || !pd->vg)
      {
-        ERR("Vector Object is removed in wrong way!, Efl_Ui_Animation_View = %p", obj);
+        ERR("Vector Object is removed in wrong way!, Efl_Ui_Vg_Animation = %p", obj);
         elm_transit_del(transit);
         return;
      }
@@ -180,10 +180,10 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 
    if (pd->playing_reverse)
      {
-        pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS;
+        pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
         progress = 1 - progress;
      }
-   else pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING;
+   else pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
 
    pd->progress = progress;
    int minframe = (pd->frame_cnt - 1) * pd->min_progress;
@@ -214,7 +214,7 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Animation_View_Data *priv)
+_efl_ui_vg_animation_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Vg_Animation_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -232,7 +232,7 @@ _efl_ui_animation_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Animation_View
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Animation_View_Data *pd EINA_UNUSED)
+_efl_ui_vg_animation_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    if (pd->transit)
      {
@@ -240,14 +240,14 @@ _efl_ui_animation_view_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Animation_View
         pd->transit = NULL;   //Skip perform transit_del_cb()
         elm_transit_del(transit);
      }
-   pd->state = EFL_UI_ANIMATION_VIEW_STATE_NOT_READY;
+   pd->state = EFL_UI_VG_ANIMATION_STATE_NOT_READY;
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_object_destructor(Eo *obj,
-                                          Efl_Ui_Animation_View_Data *pd EINA_UNUSED)
+_efl_ui_vg_animation_efl_object_destructor(Eo *obj,
+                                          Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    Efl_Gfx_Vg_Value_Provider *vp;
    EINA_LIST_FREE(pd->vp_list, vp)
@@ -258,8 +258,8 @@ _efl_ui_animation_view_efl_object_destructor(Eo *obj,
 }
 
 EOLIAN static Eo *
-_efl_ui_animation_view_efl_object_constructor(Eo *obj,
-                                           Efl_Ui_Animation_View_Data *pd EINA_UNUSED)
+_efl_ui_vg_animation_efl_object_constructor(Eo *obj,
+                                           Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -269,7 +269,7 @@ _efl_ui_animation_view_efl_object_constructor(Eo *obj,
 }
 
 static void
-_update_frame_duration(Efl_Ui_Animation_View_Data *pd)
+_update_frame_duration(Efl_Ui_Vg_Animation_Data *pd)
 {
    int frame_count = evas_object_vg_animated_frame_count_get(pd->vg);
    int min_frame = (frame_count - 1) * pd->min_progress;
@@ -283,10 +283,10 @@ _update_frame_duration(Efl_Ui_Animation_View_Data *pd)
 }
 
 static Eina_Bool
-_ready_play(Eo *obj, Efl_Ui_Animation_View_Data *pd)
+_ready_play(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
 {
    pd->autoplay_pause = EINA_FALSE;
-   pd->state = EFL_UI_ANIMATION_VIEW_STATE_STOPPED;
+   pd->state = EFL_UI_VG_ANIMATION_STATE_STOPPED;
 
    if (pd->transit) elm_transit_del(pd->transit);
 
@@ -314,16 +314,16 @@ _ready_play(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
-   pd->state = EFL_UI_ANIMATION_VIEW_STATE_NOT_READY;
+   pd->state = EFL_UI_VG_ANIMATION_STATE_NOT_READY;
    pd->frame_cnt = 0;
    pd->frame_duration = 0;
    if (pd->transit) elm_transit_del(pd->transit);
 }
 
 EOLIAN static Eina_Error
-_efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_file_load(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
 {
    Eina_Error err;
    Eina_Bool ret;
@@ -357,7 +357,7 @@ _efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
         if (!_visible_check(obj))
           {
              elm_transit_paused_set(pd->transit, EINA_TRUE);
-             pd->state = EFL_UI_ANIMATION_VIEW_STATE_PAUSED;
+             pd->state = EFL_UI_VG_ANIMATION_STATE_PAUSED;
              pd->autoplay_pause = EINA_TRUE;
              evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
           }
@@ -366,8 +366,8 @@ _efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_gfx_entity_position_set(Eo *obj,
-                                                Efl_Ui_Animation_View_Data *pd,
+_efl_ui_vg_animation_efl_gfx_entity_position_set(Eo *obj,
+                                                Efl_Ui_Vg_Animation_Data *pd,
                                                 Eina_Position2D pos EINA_UNUSED)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
@@ -379,8 +379,8 @@ _efl_ui_animation_view_efl_gfx_entity_position_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_gfx_entity_size_set(Eo *obj,
-                                            Efl_Ui_Animation_View_Data *pd,
+_efl_ui_vg_animation_efl_gfx_entity_size_set(Eo *obj,
+                                            Efl_Ui_Vg_Animation_Data *pd,
                                             Eina_Size2D size)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
@@ -394,8 +394,8 @@ _efl_ui_animation_view_efl_gfx_entity_size_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_gfx_entity_visible_set(Eo *obj,
-                                                  Efl_Ui_Animation_View_Data *pd,
+_efl_ui_vg_animation_efl_gfx_entity_visible_set(Eo *obj,
+                                                  Efl_Ui_Vg_Animation_Data *pd,
                                                   Eina_Bool vis)
 {
   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
@@ -407,8 +407,8 @@ _efl_ui_animation_view_efl_gfx_entity_visible_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED,
-                                                  Efl_Ui_Animation_View_Data *pd,
+_efl_ui_vg_animation_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED,
+                                                  Efl_Ui_Vg_Animation_Data *pd,
                                                   Eina_Size2D size)
 {
    Eina_Rect viewbox;
@@ -420,8 +420,8 @@ _efl_ui_animation_view_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN Eina_Size2D
-_efl_ui_animation_view_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED,
-                                                  Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED,
+                                                  Efl_Ui_Vg_Animation_Data *pd)
 {
    Eina_Rect viewbox = efl_canvas_vg_object_viewbox_get(pd->vg);
 
@@ -429,7 +429,7 @@ _efl_ui_animation_view_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_animation_view_autorepeat_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, Eina_Bool autorepeat)
+_efl_ui_vg_animation_autorepeat_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool autorepeat)
 {
    if (pd->autorepeat == autorepeat) return;
    pd->autorepeat = autorepeat;
@@ -441,13 +441,13 @@ _efl_ui_animation_view_autorepeat_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_animation_view_autorepeat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_autorepeat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->autorepeat;
 }
 
 EOLIAN static void
-_efl_ui_animation_view_autoplay_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd,
+_efl_ui_vg_animation_autoplay_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd,
                                   Eina_Bool autoplay)
 {
    pd->autoplay = autoplay;
@@ -455,12 +455,12 @@ _efl_ui_animation_view_autoplay_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_D
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_animation_view_autoplay_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_autoplay_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->autoplay;
 }
 
-Eina_Bool _efl_ui_animation_view_playing_sector(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *start, const char *end)
+Eina_Bool _efl_ui_vg_animation_playing_sector(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, const char *start, const char *end)
 {
    int start_frame = 0;
    int end_frame = evas_object_vg_animated_frame_count_get(pd->vg) - 1;
@@ -482,9 +482,9 @@ Eina_Bool _efl_ui_animation_view_playing_sector(Eo *obj, Efl_Ui_Animation_View_D
           }
      }
 
-   efl_ui_animation_view_min_frame_set(obj, start_frame);
+   efl_ui_vg_animation_min_frame_set(obj, start_frame);
    if (start_frame < end_frame)
-      efl_ui_animation_view_max_frame_set(obj, end_frame);
+      efl_ui_vg_animation_max_frame_set(obj, end_frame);
 
    if (!efl_player_playing_set(obj, EINA_TRUE))
       return EINA_FALSE;
@@ -492,62 +492,62 @@ Eina_Bool _efl_ui_animation_view_playing_sector(Eo *obj, Efl_Ui_Animation_View_D
 }
 
 Eina_Bool
-_playing_stop(Eo* obj, Efl_Ui_Animation_View_Data *pd)
+_playing_stop(Eo* obj, Efl_Ui_Vg_Animation_Data *pd)
 {
    if (!pd->transit) return EINA_FALSE;
 
-   if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_NOT_READY) ||
-       (pd->state == EFL_UI_ANIMATION_VIEW_STATE_STOPPED))
+   if ((pd->state == EFL_UI_VG_ANIMATION_STATE_NOT_READY) ||
+       (pd->state == EFL_UI_VG_ANIMATION_STATE_STOPPED))
      return EINA_FALSE;
 
    evas_object_vg_animated_frame_set(pd->vg, 0);
    pd->progress = 0;
-   pd->state = EFL_UI_ANIMATION_VIEW_STATE_STOPPED;
+   pd->state = EFL_UI_VG_ANIMATION_STATE_STOPPED;
    evas_object_smart_callback_call(obj, SIG_PLAY_STOP, NULL);
    elm_transit_del(pd->transit);
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_efl_ui_animation_view_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int frame_num)
+_efl_ui_vg_animation_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, int frame_num)
 {
    efl_player_playback_progress_set(obj, (double) frame_num / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
 }
 
 EOLIAN static int
-_efl_ui_animation_view_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    double progress = (pd->progress * (pd->max_progress - pd->min_progress)) +  pd->min_progress;
    return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * progress);
 }
 
 EOLIAN static double
-_efl_ui_animation_view_duration_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_duration_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->frame_duration;
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_animation_view_default_view_size_get(const Eo *obj EINA_UNUSED,
-                                             Efl_Ui_Animation_View_Data *pd EINA_UNUSED)
+_efl_ui_vg_animation_default_view_size_get(const Eo *obj EINA_UNUSED,
+                                             Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    return efl_canvas_vg_object_default_size_get(pd->vg);
 }
 
-EOLIAN static Efl_Ui_Animation_View_State
-_efl_ui_animation_view_state_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+EOLIAN static Efl_Ui_Vg_Animation_State
+_efl_ui_vg_animation_state_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->state;
 }
 
 EOLIAN static int
-_efl_ui_animation_view_frame_count_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_frame_count_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return efl_gfx_frame_controller_frame_count_get(pd->vg);
 }
 
 EOLIAN static void
-_efl_ui_animation_view_min_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double min_progress)
+_efl_ui_vg_animation_min_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, double min_progress)
 {
    if (min_progress < 0.0 || min_progress > 1.0 || min_progress > pd->max_progress) return;
 
@@ -556,13 +556,13 @@ _efl_ui_animation_view_min_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_Vi
 }
 
 EOLIAN static double
-_efl_ui_animation_view_min_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_min_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->min_progress;
 }
 
 EOLIAN static void
-_efl_ui_animation_view_max_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double max_progress)
+_efl_ui_vg_animation_max_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, double max_progress)
 {
    if (max_progress < 0.0 || max_progress > 1.0 || max_progress < pd->min_progress) return;
 
@@ -571,13 +571,13 @@ _efl_ui_animation_view_max_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_Vi
 }
 
 EOLIAN static double
-_efl_ui_animation_view_max_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_max_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->max_progress;
 }
 
 EOLIAN static void
-_efl_ui_animation_view_min_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int min_frame)
+_efl_ui_vg_animation_min_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, int min_frame)
 {
    int frame_count = evas_object_vg_animated_frame_count_get(pd->vg);
    if (min_frame < 0) min_frame = 0;
@@ -592,13 +592,13 @@ _efl_ui_animation_view_min_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_
 }
 
 EOLIAN static int
-_efl_ui_animation_view_min_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_min_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->min_progress * (evas_object_vg_animated_frame_count_get(pd->vg) - 1);
 }
 
 EOLIAN static void
-_efl_ui_animation_view_max_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int max_frame)
+_efl_ui_vg_animation_max_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, int max_frame)
 {
    int frame_count = evas_object_vg_animated_frame_count_get(pd->vg);
    if (max_frame > frame_count - 1) max_frame = frame_count - 1;
@@ -613,13 +613,13 @@ _efl_ui_animation_view_max_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_
 }
 
 EOLIAN static int
-_efl_ui_animation_view_max_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_max_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->max_progress * (evas_object_vg_animated_frame_count_get(pd->vg) - 1);
 }
 
 EOLIAN static void
-_efl_ui_animation_view_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, Efl_Gfx_Vg_Value_Provider *value_provider)
+_efl_ui_vg_animation_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, Efl_Gfx_Vg_Value_Provider *value_provider)
 {
    if (!value_provider) return;
 
@@ -651,17 +651,17 @@ _efl_ui_animation_view_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Anima
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_animation_view_efl_player_playing_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, Eina_Bool playing)
+_efl_ui_vg_animation_efl_player_playing_set(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool playing)
 {
    if (playing)
      {
-        if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING && pd->playback_speed > 0)
-           || (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS && pd->playback_speed <= 0))
+        if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && pd->playback_speed > 0)
+           || (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && pd->playback_speed <= 0))
           return EINA_FALSE;
 
         Eina_Bool rewind = EINA_FALSE;
-        if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING && pd->playback_speed <= 0)
-           || (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS && pd->playback_speed > 0))
+        if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && pd->playback_speed <= 0)
+           || (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && pd->playback_speed > 0))
           rewind = EINA_TRUE;
 
         if (pd->playback_speed <= 0)
@@ -675,7 +675,7 @@ _efl_ui_animation_view_efl_player_playing_set(Eo *obj, Efl_Ui_Animation_View_Dat
         if (!pd->transit && !_ready_play(obj, pd)) return EINA_FALSE;
 
 
-        if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_STOPPED)
+        if (pd->state == EFL_UI_VG_ANIMATION_STATE_STOPPED)
           {
              if (pd->playing_reverse && pd->progress == 0) pd->progress = 1.0;
              _transit_go_facade(obj, pd);
@@ -694,37 +694,37 @@ _efl_ui_animation_view_efl_player_playing_set(Eo *obj, Efl_Ui_Animation_View_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_animation_view_efl_player_playing_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_player_playing_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
-   if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING)
+   if (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING)
      return EINA_TRUE;
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_animation_view_efl_player_paused_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, Eina_Bool paused)
+_efl_ui_vg_animation_efl_player_paused_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool paused)
 {
 
    if (paused)
      {
-        if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING) ||
-            (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS))
+        if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING) ||
+            (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS))
           {
              elm_transit_paused_set(pd->transit, paused);
-             pd->state = EFL_UI_ANIMATION_VIEW_STATE_PAUSED;
+             pd->state = EFL_UI_VG_ANIMATION_STATE_PAUSED;
              pd->autoplay_pause = EINA_FALSE;
              evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
           }
      }
    else
      {
-        if (pd->transit && pd->state == EFL_UI_ANIMATION_VIEW_STATE_PAUSED)
+        if (pd->transit && pd->state == EFL_UI_VG_ANIMATION_STATE_PAUSED)
           {
              elm_transit_paused_set(pd->transit, paused);
              if (pd->playing_reverse)
-               pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS;
+               pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
              else
-               pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAYING;
+               pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
              pd->autoplay_pause = EINA_FALSE;
 
              evas_object_smart_callback_call(obj, SIG_PLAY_RESUME, NULL);
@@ -734,15 +734,15 @@ _efl_ui_animation_view_efl_player_paused_set(Eo *obj EINA_UNUSED, Efl_Ui_Animati
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_animation_view_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
-   if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PAUSED)
+   if (pd->state == EFL_UI_VG_ANIMATION_STATE_PAUSED)
      return EINA_TRUE;
    return EINA_FALSE;
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_player_playback_position_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, double sec)
+_efl_ui_vg_animation_efl_player_playback_position_set(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, double sec)
 {
    EINA_SAFETY_ON_TRUE_RETURN(sec < 0);
    EINA_SAFETY_ON_TRUE_RETURN(sec > pd->frame_duration);
@@ -751,19 +751,19 @@ _efl_ui_animation_view_efl_player_playback_position_set(Eo *obj, Efl_Ui_Animatio
 }
 
 EOLIAN static double
-_efl_ui_animation_view_efl_player_playback_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_player_playback_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->frame_duration * pd->progress;
 }
 
 EOLIAN static double
-_efl_ui_animation_view_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->progress;
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double progress)
+_efl_ui_vg_animation_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, double progress)
 {
    if (progress < 0) progress = 0;
    else if (progress > 1) progress = 1;
@@ -784,11 +784,11 @@ _efl_ui_animation_view_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl
 }
 
 EOLIAN static void
-_efl_ui_animation_view_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double speed)
+_efl_ui_vg_animation_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, double speed)
 {
    // pd->playback_direction_changed is used only during playback.
-   if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING ||
-        pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS)
+   if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING ||
+        pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS)
         && ((pd->playback_speed > 0 && speed < 0) || (pd->playback_speed < 0 && speed > 0)))
      pd->playback_direction_changed = EINA_TRUE;
 
@@ -799,7 +799,7 @@ _efl_ui_animation_view_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static double
-_efl_ui_animation_view_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_vg_animation_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->playback_speed;
 }
@@ -822,21 +822,21 @@ elm_animation_view_state_get(Elm_Animation_View *obj)
 {
    Elm_Animation_View_State state = ELM_ANIMATION_VIEW_STATE_NOT_READY;
 
-   switch (efl_ui_animation_view_state_get(obj))
+   switch (efl_ui_vg_animation_state_get(obj))
      {
-      case EFL_UI_ANIMATION_VIEW_STATE_PLAYING:
+      case EFL_UI_VG_ANIMATION_STATE_PLAYING:
          state = ELM_ANIMATION_VIEW_STATE_PLAY;
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS:
+      case EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS:
          state = ELM_ANIMATION_VIEW_STATE_PLAY_BACK;
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PAUSED:
+      case EFL_UI_VG_ANIMATION_STATE_PAUSED:
          state = ELM_ANIMATION_VIEW_STATE_PAUSE;
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_STOPPED:
+      case EFL_UI_VG_ANIMATION_STATE_STOPPED:
          state = ELM_ANIMATION_VIEW_STATE_STOP;
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_NOT_READY:
+      case EFL_UI_VG_ANIMATION_STATE_NOT_READY:
       default:
          break;
      }
@@ -845,8 +845,8 @@ elm_animation_view_state_get(Elm_Animation_View *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-#define EFL_UI_ANIMATION_VIEW_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_animation_view)
+#define EFL_UI_VG_ANIMATION_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_vg_animation)
 
-#include "efl_ui_animation_view_eo.legacy.c"
-#include "efl_ui_animation_view.eo.c"
+#include "efl_ui_vg_animation_eo.legacy.c"
+#include "efl_ui_vg_animation.eo.c"
