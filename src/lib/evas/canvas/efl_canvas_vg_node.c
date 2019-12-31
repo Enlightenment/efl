@@ -395,6 +395,8 @@ _efl_canvas_vg_node_efl_gfx_stack_raise_to_top(Eo *obj, Efl_Canvas_Vg_Node_Data 
    if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) return;
 
    Efl_Canvas_Vg_Container_Data *cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
+   if (!cd->children) return;
+   if (eina_list_data_get(eina_list_last(cd->children)) == obj) return;
    cd->children = eina_list_remove(cd->children, obj);
    cd->children = eina_list_append(cd->children, obj);
    _node_change(parent, efl_data_scope_get(parent, MY_CLASS));
@@ -467,6 +469,8 @@ _efl_canvas_vg_node_efl_gfx_stack_lower_to_bottom(Eo *obj, Efl_Canvas_Vg_Node_Da
    if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) return;
 
    Efl_Canvas_Vg_Container_Data *cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
+   if (!cd->children) return;
+   if (eina_list_data_get(cd->children) == obj) return;
    cd->children = eina_list_remove(cd->children, obj);
    cd->children = eina_list_prepend(cd->children, obj);
    _node_change(parent, efl_data_scope_get(parent, MY_CLASS));
