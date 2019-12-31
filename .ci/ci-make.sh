@@ -12,6 +12,7 @@ if [ "$1" = "asan" ]; then
   docker exec --env EIO_MONITOR_POLL=1 --env ASAN_OPTIONS=abort_on_error=0 --env LSAN_OPTIONS=suppressions=/src/.ci/asan-ignore-leaks.supp $(cat $HOME/cid) ninja -C build
   exit $?
 fi
+
 if [ "$DISTRO" != "" ] ; then
   if [ "$1" = "coverity" ] ; then
     docker exec --env EIO_MONITOR_POLL=1 --env PATH="/src/cov-analysis-linux64-2019.03/bin:$PATH" $(cat $HOME/cid) sh -c "cov-build --dir cov-int ninja -C build"
@@ -20,8 +21,10 @@ if [ "$DISTRO" != "" ] ; then
   else
     docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) ninja -C build
   fi
-else
+elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   export PATH="$(brew --prefix gettext)/bin:$PATH"
+  ninja -C build
+else
   ninja -C build
 fi
 travis_endfold ninja

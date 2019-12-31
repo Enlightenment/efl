@@ -193,7 +193,7 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
                   eina_strbuf_append(txt, fontsource);
                }
           }
-        if (tc && tc->size && !EINA_DBL_EQ(tag->font_size, 0))
+        if (tc && tc->size)
           {
              double new_size = _edje_text_size_calc(tag->font_size, tc);
              if (!EINA_DBL_EQ(tag->font_size, new_size))
@@ -206,7 +206,7 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
                }
           }
         /* Add font name last to save evas from multiple loads */
-        if (tc && tc->font && tag->font)
+        if (tc && tc->font)
           {
              const char *f;
              char *sfont = NULL;

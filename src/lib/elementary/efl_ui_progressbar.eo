@@ -4,39 +4,15 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
 {
    [[Elementary progressbar class]]
    methods {
-      @property pulse_mode {
-         [[Control whether a given progress bar widget is at "pulsing mode" or not.
-
-           By default progress bars display values from low to
-           high boundaries. There are situations however in which the
-           progress of a given task is unknown. In these cases,
-           you can set a progress bar widget to a "pulsing state" to give
-           the user an idea that some computation is being done
-           without showing the precise progress rate. In the default theme, it will
-           animate the bar with content, switching constantly between filling it and back
-           to non-filled in a loop. To start and stop this pulsing
-           animation you need to explicitly call @.pulse.set().
-         ]]
-
+      @property infinite_mode {
+         [[Start/stop a given progress bar "pulsing" animation, if this mode is enabled.]]
          set {
          }
          get {
          }
          values {
-            pulse: bool; [[$true to put $obj in pulsing mode, $false to put it back to its default one]]
-         }
-      }
-      @property pulse {
-         [[Start/stop a given progress bar "pulsing" animation, if its under that mode.
-
-           Note: This call won't do anything if $obj is not under "pulsing mode". See @.pulse_mode.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-           state: bool; [[$true, to start the pulsing animation, $false to stop it]]
+           state: bool; [[$true if the progressbar should animate infinitely,
+                          $false if the progressbar should animate based on a fixed endpoint.]]
          }
       }
       @property show_progress_label {

@@ -407,23 +407,6 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
 }
 
 EOLIAN static void
-_efl_ui_progressbar_pulse_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, Eina_Bool pulse)
-{
-   pulse = !!pulse;
-   if (sd->pulse == pulse) return;
-
-   sd->pulse = pulse;
-
-   efl_ui_widget_theme_apply(obj);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
-{
-   return sd->pulse;
-}
-
-EOLIAN static void
 _efl_ui_progressbar_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Efl_Ui_Layout_Orientation dir)
 {
    if (sd->dir == dir) return;
@@ -514,6 +497,18 @@ _progress_part_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *par
 }
 
 static void
+_internal_theme_mode_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool pulse)
+{
+   if (elm_widget_is_legacy(obj))
+     return;
+   if (sd->pulse == pulse)
+     return;
+   sd->pulse = pulse;
+   efl_ui_widget_theme_apply(obj);
+}
+
+
+static void
 _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *part_name, double val)
 {
    Efl_Ui_Progress_Status *ps;
@@ -526,6 +521,8 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
      "elm.cur.progressbar",
    };
    Eina_Bool is_cur_progressbar = !strcmp(part_name, curprogresspart[elm_widget_is_legacy(obj)]);
+
+   _internal_theme_mode_pulse_set(obj, sd, EINA_FALSE);
 
    if ((!is_cur_progressbar) || sd->has_cur_progressbar_part)
      efl_ui_range_limits_get(efl_part(obj, part_name), &min, &max);
@@ -618,32 +615,34 @@ _efl_ui_progressbar_efl_ui_range_display_range_value_get(const Eo *obj, Efl_Ui_P
      return efl_ui_range_value_get(efl_part(obj, "efl.cur.progressbar"));
 }
 
+static void
+_apply_pulse_state(Eo *obj, Efl_Ui_Progressbar_Data *sd)
+{
+   Eina_Bool legacy = elm_widget_is_legacy(obj);
+   const char *emitter = legacy ? "elm" : "efl";
+   const char *signal = legacy ? "elm,state,pulse," : "efl,state,pulse,";
+   char signal_buffer[strlen(signal) + strlen("start") + 1];
+
+   snprintf(signal_buffer, sizeof(signal_buffer), "%s%s", signal, sd->pulse_state ? "start" : "stop");
+   elm_layout_signal_emit(obj, signal_buffer, emitter);
+}
+
 EOLIAN static void
-_efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
+_efl_ui_progressbar_infinite_mode_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
 {
    state = !!state;
-   if ((!sd->pulse) || (sd->pulse_state == state)) return;
+
+   if (sd->pulse_state == state)
+     return;
 
    sd->pulse_state = state;
 
-   if (elm_widget_is_legacy(obj))
-     {
-        if (sd->pulse_state)
-          elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
-        else
-          elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
-     }
-   else
-     {
-        if (sd->pulse_state)
-          elm_layout_signal_emit(obj, "efl,state,pulse,start", "efl");
-        else
-          elm_layout_signal_emit(obj, "efl,state,pulse,stop", "efl");
-     }
+   _internal_theme_mode_pulse_set(obj, sd, EINA_TRUE);
+   _apply_pulse_state(obj, sd);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_infinite_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return (sd->pulse_state && sd->pulse);
 }
@@ -899,25 +898,40 @@ elm_progressbar_add(Evas_Object *parent)
 EAPI void
 elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse)
 {
-   efl_ui_progressbar_pulse_mode_set(obj, pulse);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+   pulse = !!pulse;
+   if (sd->pulse == pulse) return;
+
+   sd->pulse = pulse;
+
+   efl_ui_widget_theme_apply(obj);
 }
 
 EAPI Eina_Bool
 elm_progressbar_pulse_get(const Evas_Object *obj)
 {
-   return efl_ui_progressbar_pulse_mode_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+   return sd->pulse;
 }
 
 EAPI void
 elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
 {
-   efl_ui_progressbar_pulse_set(obj, state);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+
+   state = !!state;
+   if ((!sd->pulse) || (sd->pulse_state == state)) return;
+
+   sd->pulse_state = state;
+
+   _apply_pulse_state(obj, sd);
 }
 
 EAPI Eina_Bool
 elm_progressbar_is_pulsing_get(const Evas_Object *obj)
 {
-   return efl_ui_progressbar_pulse_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+   return (sd->pulse_state && sd->pulse);
 }
 
 EAPI void

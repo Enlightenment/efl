@@ -100,4 +100,8 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   travis_fold meson meson
   mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer1,libvlc,xine
   travis_endfold meson
+else
+  travis_fold meson meson
+  mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Db_coverage=true
+  travis_endfold meson
 fi

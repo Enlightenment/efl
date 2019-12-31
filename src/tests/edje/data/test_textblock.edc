@@ -1,7 +1,20 @@
 collections {
+   text_classes {
+      text_class {
+         name: "tc1";
+         font: "Serif";
+         size: 18;
+      }
+   }
    styles {
       style { name: "tb_style";
          base: "font=Sans font_size=20 color=#fff";
+      }
+      style { name: "tb_tc_style";
+         base: "color=#ff0 text_class=tc1";
+      }
+      style { name: "tb_tc2_style";
+         base: "color=#0ff text_class=tc2";
       }
    }
    group { name: "test_textblock";
@@ -13,6 +26,34 @@ collections {
                text {
                   text: "Bye";
                   style: "tb_style";
+               }
+            }
+         }
+      }
+   }
+   group { name: "test_tc_textblock";
+      parts {
+         part { name: "tb";
+            type: TEXTBLOCK;
+            description { state: "default" 0.0;
+               min: 300 300;
+               text {
+                  text: "Hello World";
+                  style: "tb_tc_style";
+               }
+            }
+         }
+      }
+   }
+   group { name: "test_tc_textblock2";
+      parts {
+         part { name: "tb2";
+            type: TEXTBLOCK;
+            description { state: "default" 0.0;
+               min: 300 300;
+               text {
+                  text: "Hello World";
+                  style: "tb_tc2_style";
                }
             }
          }

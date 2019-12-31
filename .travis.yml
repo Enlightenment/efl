@@ -5,7 +5,7 @@ cache:
   directories:
     - $HOME/cachedir
     - $HOME/.ccache
-dist: trusty
+dist: bionic
 
 osx_image: xcode10.2
 
@@ -74,6 +74,9 @@ jobs:
     - os: linux
       if: type = cron
       env: DISTRO=Fedora31 CI_BUILD_TYPE=asan
+    - os: linux
+      if: type = cron
+      env: CI_BUILD_TYPE=codecov
 
 services:
   - docker
@@ -93,6 +96,10 @@ before_script:
         docker pull stefanschmidt1/ci-support-files:$DISTRO
         docker version
         docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
+      fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" == "" ]]; then
+        .ci/ubuntu-bionic-install-deps.sh
       fi
   - .ci/ci-ccache-stats.sh
 
