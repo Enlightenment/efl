@@ -43,7 +43,7 @@ enum @beta Efl.Text_Font_Bitmap_Scalable {
    color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
 }
 
-interface @beta Efl.Text.Font.Properties {
+interface @beta Efl.Text_Font_Properties {
    [[Font settings for text.
    ]]
    c_prefix: efl_text;
