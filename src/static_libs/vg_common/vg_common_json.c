@@ -22,8 +22,13 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 {
    if (!parent) return;
 
+   //This list is used for layer order verification
+   Eina_List *list = (Eina_List*) efl_canvas_vg_container_children_direct_get(parent);
+
    for (unsigned int i = 0; i < layer->mNodeList.size; i++)
      {
+        if (i > 0) list = eina_list_next(list);
+
         LOTNode *node = layer->mNodeList.ptr[i];
         if (!node) continue;
 
@@ -63,7 +68,13 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
              efl_key_data_set(parent, key, shape);
           }
         else
-          efl_gfx_path_reset(shape);
+          {
+             efl_gfx_path_reset(shape);
+
+             //Layer order is mismatched!
+             if (eina_list_data_get(list) != shape)
+               efl_gfx_stack_raise_to_top(shape);
+          }
 
         //Skip Invisible Stroke?
         if (node->mStroke.enable && node->mStroke.width == 0)
