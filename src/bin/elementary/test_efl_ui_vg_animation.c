@@ -208,7 +208,7 @@ test_efl_ui_vg_animation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 
 
    //Duration Text
-   snprintf(buf, sizeof(buf), "Duration: %1.2fs", efl_ui_vg_animation_duration_time_get(anim_view));
+   snprintf(buf, sizeof(buf), "Duration(Length): %1.2fs", efl_playable_length_get(anim_view));
    efl_add(EFL_UI_TEXTBOX_CLASS, box2,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
            efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),

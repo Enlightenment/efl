@@ -10,7 +10,7 @@ enum @beta Efl.Ui.Vg_Animation_State
           Otherwise after finished animation or stopped forcibly by request.]]
 }
 
-class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player
+class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player, Efl.Playable
 {
    [[Elementary Vector Graphcis Animation class.
      Vg Animation is designed to show and play animation of
@@ -61,18 +61,6 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
          }
          values {
             autorepeat: bool; [[Loop mode, Default is $false.]]
-         }
-      }
-      @property duration_time {
-         [[Get the duration of animation in seconds.
-
-           This API returns total duration time of current animation in the seconds.
-           If current animation source isn't animatable, it returns zero.
-         ]]
-         get {
-         }
-         values {
-            frame_duration: double; [[duration time in the seconds]]
          }
       }
       @property frame {
@@ -212,6 +200,9 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
       Efl.Player.playback_position { set; get; }
       Efl.Player.playback_progress { get; set; }
       Efl.Player.playback_speed { set; get; }
+      Efl.Playable.length { get; }
+      Efl.Playable.playable { get; }
+      Efl.Playable.seekable { get; }
    }
    events {
       play,start: void; [[Called when animation is just started]]

@@ -521,12 +521,6 @@ _efl_ui_vg_animation_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Da
    return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * progress);
 }
 
-EOLIAN static double
-_efl_ui_vg_animation_duration_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
-{
-   return pd->frame_duration;
-}
-
 EOLIAN static Eina_Size2D
 _efl_ui_vg_animation_default_view_size_get(const Eo *obj EINA_UNUSED,
                                              Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
@@ -802,6 +796,26 @@ EOLIAN static double
 _efl_ui_vg_animation_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
    return pd->playback_speed;
+}
+
+EOLIAN static double
+_efl_ui_vg_animation_efl_playable_length_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
+{
+   return pd->frame_duration;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_vg_animation_efl_playable_playable_get(const Eo *obj, Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
+{
+   if (!efl_file_loaded_get(obj)) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_vg_animation_efl_playable_seekable_get(const Eo *obj, Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
+{
+   if (!efl_file_loaded_get(obj)) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 EAPI Elm_Animation_View*

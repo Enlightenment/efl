@@ -40,7 +40,7 @@ elm_animation_view_speed_get(const Efl_Ui_Vg_Animation *obj)
 EAPI double
 elm_animation_view_duration_time_get(const Efl_Ui_Vg_Animation *obj)
 {
-   return efl_ui_vg_animation_duration_time_get(obj);
+   return efl_playable_length_get(obj);
 }
 
 EAPI void
