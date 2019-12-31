@@ -3,10 +3,10 @@ enum @beta Efl.Ui.Animation_View_State
 {
    [[State of animation view]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
-   play, [[Animation is playing.]]
-   play_back, [[Animation is playing back (rewinding).]]
-   pause, [[Animation has been paused.]]
-   stop [[Animation view successfully loaded a file then readied for playing.
+   playing, [[Animation is playing.]]
+   playing_backwards, [[Animation is playing backwards (rewinding).]]
+   paused, [[Animation has been paused.]]
+   stopped [[Animation view successfully loaded a file then readied for playing.
           Otherwise after finished animation or stopped forcibly by request.]]
 }
 
@@ -51,7 +51,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          [[Turn on/off animation looping.
 
            If @.autorepeat is $true, it repeats animation when animation frame is reached to
-           end. This auto repeat mode is valid to both playing and playing_backward cases.
+           end. This auto repeat mode is valid to both playing and playing_backwards cases.
 
            $true Enable auto play mode, disable otherwise.
          ]]

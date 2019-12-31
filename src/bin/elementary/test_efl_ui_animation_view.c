@@ -32,7 +32,7 @@ btn_clicked_cb(void *data , const Efl_Event *ev )
      efl_player_paused_set(anim_view, EINA_TRUE);
    else if (!strcmp("Resume", text))
      efl_player_paused_set(anim_view, EINA_FALSE);
-   else if (!strcmp("Play Back", text))
+   else if (!strcmp("Play Backwards", text))
      {
         double speed = efl_player_playback_speed_get(anim_view);
         efl_player_playback_speed_set(anim_view, speed > 0 ? speed * -1 : speed);
@@ -88,16 +88,16 @@ update_anim_view_state(Evas_Object *anim_view, Evas_Object *label)
       case EFL_UI_ANIMATION_VIEW_STATE_NOT_READY:
          efl_text_set(label, "State = Not Ready");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PLAY:
+      case EFL_UI_ANIMATION_VIEW_STATE_PLAYING:
          efl_text_set(label, "State = Playing");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PLAY_BACK:
-         efl_text_set(label, "State = Playing Back");
+      case EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS:
+         efl_text_set(label, "State = Playing Backwards");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_PAUSE:
+      case EFL_UI_ANIMATION_VIEW_STATE_PAUSED:
          efl_text_set(label, "State = Paused");
          break;
-      case EFL_UI_ANIMATION_VIEW_STATE_STOP:
+      case EFL_UI_ANIMATION_VIEW_STATE_STOPPED:
          efl_text_set(label, "State = Stopped");
          break;
      }
@@ -244,7 +244,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_add(EFL_UI_BUTTON_CLASS, box3,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
-           efl_text_set(efl_added, "Play Back"),
+           efl_text_set(efl_added, "Play Backwards"),
            efl_pack(box3, efl_added),
            efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, btn_clicked_cb, anim_view));
 

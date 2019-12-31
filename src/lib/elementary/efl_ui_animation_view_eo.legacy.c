@@ -108,7 +108,7 @@ elm_animation_view_default_size_get(const Efl_Ui_Animation_View *obj)
 EAPI Eina_Bool
 elm_animation_view_is_playing_back(Efl_Ui_Animation_View *obj)
 {
-   return (efl_ui_animation_view_state_get(obj) == EFL_UI_ANIMATION_VIEW_STATE_PLAY_BACK);
+   return (efl_ui_animation_view_state_get(obj) == EFL_UI_ANIMATION_VIEW_STATE_PLAYING_BACKWARDS);
 }
 
 EAPI int
