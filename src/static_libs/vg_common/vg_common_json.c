@@ -378,11 +378,11 @@ _reset_vg_tree(Efl_VG *node)
    //Hide all nodes visibility
    if (efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
+        Eina_List *list = (Eina_List*) efl_canvas_vg_container_children_direct_get(node);
+        Eina_List *list2;
         Efl_VG* child;
-        Eina_Iterator *itr = efl_canvas_vg_container_children_get(node);
-        EINA_ITERATOR_FOREACH(itr, child)
+        EINA_LIST_FOREACH(list, list2, child)
           _reset_vg_tree(child);
-        if (itr) eina_iterator_free(itr);
      }
    efl_gfx_entity_visible_set(node, EINA_FALSE);
 }

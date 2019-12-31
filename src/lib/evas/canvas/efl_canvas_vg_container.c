@@ -304,6 +304,12 @@ _efl_canvas_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Contain
    return eina_list_iterator_new(pd->children);
 }
 
+static const Eina_List *
+_efl_canvas_vg_container_children_direct_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Container_Data *pd)
+{
+   return pd->children;
+}
+
 static Eina_Bool
 _efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Container_Data *pd, const Efl_VG *from, const Efl_VG *to, double pos_map)
 {

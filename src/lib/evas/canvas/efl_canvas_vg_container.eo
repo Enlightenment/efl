@@ -13,6 +13,10 @@ class @beta Efl.Canvas.Vg.Container extends Efl.Canvas.Vg.Node
          [[Get all children of container]]
          return: iterator<Efl.Canvas.Vg.Node> @move @no_unused; [[Iterator to children]]
       }
+      children_direct_get {
+         [[Get all children of container]]
+         return: const(list<Efl.Canvas.Vg.Node>) @no_unused; [[List to children]]
+      }
    }
    implements {
       Efl.Object.constructor;
