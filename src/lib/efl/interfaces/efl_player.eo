@@ -67,9 +67,11 @@ interface Efl.Player
         @property playback_progress {
            [[How much of the file has been played.
 
-             This function gets the progress in playing the file, the
-             return value is in the [0, 1] range.
+             This function sets or gets the progress in playing the file, the
+             value is in the [0, 1] range.
            ]]
+           set {
+           }
            get {
            }
            values {

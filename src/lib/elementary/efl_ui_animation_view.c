@@ -509,30 +509,9 @@ _playing_stop(Eo* obj, Efl_Ui_Animation_View_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_animation_view_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double progress)
-{
-   if (progress < 0) progress = 0;
-   else if (progress > 1) progress = 1;
-   if (pd->progress == progress) return;
-
-   pd->progress = progress;
-
-   if (pd->frame_cnt > 0)
-     evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * progress));
-
-   if (pd->transit)
-     {
-        if (pd->playing_reverse)
-          elm_transit_progress_value_set(pd->transit, 1 - progress);
-        else
-          elm_transit_progress_value_set(pd->transit, progress);
-     }
-}
-
-EOLIAN static void
 _efl_ui_animation_view_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int frame_num)
 {
-   efl_ui_animation_view_progress_set(obj, (double) frame_num / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
+   efl_player_playback_progress_set(obj, (double) frame_num / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
 }
 
 EOLIAN static int
@@ -768,7 +747,7 @@ _efl_ui_animation_view_efl_player_playback_position_set(Eo *obj, Efl_Ui_Animatio
    EINA_SAFETY_ON_TRUE_RETURN(sec < 0);
    EINA_SAFETY_ON_TRUE_RETURN(sec > pd->frame_duration);
 
-   efl_ui_animation_view_progress_set(obj, pd->frame_duration != 0 ? sec / pd->frame_duration : 0);
+   efl_player_playback_progress_set(obj, pd->frame_duration != 0 ? sec / pd->frame_duration : 0);
 }
 
 EOLIAN static double
@@ -781,6 +760,27 @@ EOLIAN static double
 _efl_ui_animation_view_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
 {
    return pd->progress;
+}
+
+EOLIAN static void
+_efl_ui_animation_view_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double progress)
+{
+   if (progress < 0) progress = 0;
+   else if (progress > 1) progress = 1;
+   if (pd->progress == progress) return;
+
+   pd->progress = progress;
+
+   if (pd->frame_cnt > 0)
+     evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * progress));
+
+   if (pd->transit)
+     {
+        if (pd->playing_reverse)
+          elm_transit_progress_value_set(pd->transit, 1 - progress);
+        else
+          elm_transit_progress_value_set(pd->transit, progress);
+     }
 }
 
 EOLIAN static void

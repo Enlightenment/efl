@@ -1217,6 +1217,13 @@ _efl_canvas_video_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Ef
    return sd->progress.stat;
 }
 
+EOLIAN static void
+_efl_canvas_video_efl_player_playback_progress_set(Eo *obj, Efl_Canvas_Video_Data *sd EINA_UNUSED, double progress)
+{
+   const char *info = emotion_object_progress_info_get((const Evas_Object*)obj);
+   _emotion_progress_set(obj, (char*)info, progress);
+}
+
 EOLIAN static double
 _efl_canvas_video_efl_playable_length_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {

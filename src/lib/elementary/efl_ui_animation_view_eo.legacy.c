@@ -46,7 +46,7 @@ elm_animation_view_duration_time_get(const Efl_Ui_Animation_View *obj)
 EAPI void
 elm_animation_view_progress_set(Efl_Ui_Animation_View *obj, double progress)
 {
-   efl_ui_animation_view_progress_set(obj, progress);
+   efl_player_playback_progress_set(obj, progress);
 }
 
 EAPI double

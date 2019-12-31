@@ -241,7 +241,7 @@ static void
 _slider_changed_cb(void *data, const Efl_Event *ev)
 {
    Evas_Object *anim_view = data;
-   efl_ui_animation_view_progress_set(anim_view, efl_ui_range_value_get(ev->object));
+   efl_player_playback_progress_set(anim_view, efl_ui_range_value_get(ev->object));
 }
 
 static void
