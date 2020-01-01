@@ -279,10 +279,6 @@ group { "efl/spin_button/horizontal/inc_button";
    images.image: "sym_right_light_normal.png" COMP;
    images.image: "sym_right_glow_normal.png" COMP;
    images.image: "sym_right_dark_normal.png" COMP;
-   script {
-      public mouse_down = 0;
-      public multi_down = 0;
-   }
    parts {
       part { name: "arrow.image";
          scale: 1;
@@ -321,64 +317,31 @@ group { "efl/spin_button/horizontal/inc_button";
       }
    }
    programs {
+      EFL_UI_CLICKABLE_PART_BIND(over)
       program { name: "button_press";
          signal: "mouse,down,1";
          source: "over";
-         script {
-            if ((get_int(multi_down) == 0) &&
-                (get_int(mouse_down) == 0)) {
-                  set_int(mouse_down, 1);
-                  run_program(PROGRAM:"button_press2");
-            }
-         }
-      }
-      program { name: "button_press2";
-         action: SIGNAL_EMIT "efl,action,press" "";
-         after: "button_press_anim";
-      }
-      program { name: "button_press_anim";
          action: STATE_SET "pressed" 0.0;
          target: "arrow.image";
       }
       program { name: "button_unpress";
          signal: "mouse,up,1";
          source: "over";
-         script {
-            if (get_int(mouse_down) == 1) {
-                  set_int(mouse_down, 0);
-                  run_program(PROGRAM:"button_unpress2");
-                  run_program(PROGRAM:"button_unpress_anim");
-            }
-         }
-      }
-      program { name: "button_unpress2";
-         action: SIGNAL_EMIT "efl,action,unpress" "";
-      }
-      program { name: "button_unpress_anim";
          action: STATE_SET "default" 0.0;
          target: "arrow.image";
-      }
-      program { name: "button_click";
-         signal: "mouse,clicked,1";
-         source: "over";
-         script {
-            if (get_int(multi_down) == 0) {
-              run_program(PROGRAM:"button_click2");
-            }
-         }
       }
       program { name: "action_unpressed";
          signal: "efl,action,unpressed";
          source: "efl";
-         after: "button_unpress_anim";
+         action: STATE_SET "default" 0.0;
+         target: "arrow.image";
+
       }
       program { name: "action_pressed";
          signal: "efl,action,pressed";
          source: "efl";
-         after: "button_press_anim";
-      }
-      program { name: "button_click2";
-         action: SIGNAL_EMIT "efl,action,click" "";
+         action: STATE_SET "pressed" 0.0;
+         target: "arrow.image";
       }
       program { name: "access_pressed";
          signal: "efl,state,animation,activated";
@@ -405,22 +368,6 @@ group { "efl/spin_button/horizontal/inc_button";
          action: STATE_SET "default" 0.0;
          target: "arrow.image";
          target: "disabler";
-      }
-      program {
-         name: "multi_down";
-         signal: "efl,action,multi,down";
-         source: "efl";
-         script {
-            set_int(multi_down, 1);
-         }
-      }
-      program {
-         name: "multi_up";
-         signal: "efl,action,multi,up";
-         source: "efl";
-         script {
-            set_int(multi_down, 0);
-         }
       }
    }
 }
