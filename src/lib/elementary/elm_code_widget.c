@@ -800,6 +800,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
 
    grid = eina_list_nth(pd->grids, row - 1);
+   evas_object_smart_calculate(pd->scroller);
    evas_object_smart_calculate(pd->gridbox);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
 
