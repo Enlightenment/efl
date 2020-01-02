@@ -97,6 +97,7 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Ui.Multi_Selectable_Object_Range.range_select;
       Efl.Ui.Multi_Selectable_Object_Range.range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
+      Efl.Ui.Single_Selectable.allow_manual_deselection {get; set;}
    }
 }
 

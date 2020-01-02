@@ -12,5 +12,6 @@ class Efl.Ui.Radio_Group_Impl extends Efl.Object implements Efl.Ui.Radio_Group
       Efl.Ui.Radio_Group.unregister;
       Efl.Ui.Single_Selectable.last_selected {get;}
       Efl.Ui.Single_Selectable.fallback_selection {set; get;}
+      Efl.Ui.Single_Selectable.allow_manual_deselection {set; get;}
    }
 }

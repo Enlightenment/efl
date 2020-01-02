@@ -16,6 +16,18 @@ typedef struct {
    Eina_Bool in_value_change;
 } Efl_Ui_Radio_Group_Impl_Data;
 
+EOLIAN static void
+_efl_ui_radio_group_impl_efl_ui_single_selectable_allow_manual_deselection_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd EINA_UNUSED, Eina_Bool allow_manual_deselection EINA_UNUSED)
+{
+   if (allow_manual_deselection == EINA_FALSE)
+     ERR("This is right now not supported.");
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_radio_group_impl_efl_ui_single_selectable_allow_manual_deselection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
 
 EOLIAN static void
 _efl_ui_radio_group_impl_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd, Efl_Ui_Selectable *fallback)

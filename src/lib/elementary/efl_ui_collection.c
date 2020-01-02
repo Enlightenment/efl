@@ -146,6 +146,7 @@ typedef struct {
    Fast_Accessor size_accessor;
    Efl_Gfx_Entity *sizer;
    unsigned int start_id, end_id;
+   Eina_Bool allow_manual_deselection : 1;
 } Efl_Ui_Collection_Data;
 
 static Eina_Bool register_item(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Item *item);
@@ -359,6 +360,8 @@ EOLIAN static Efl_Object*
 _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EINA_UNUSED)
 {
    Eo *o;
+
+   efl_ui_selectable_allow_manual_deselection_set(obj, EINA_TRUE);
 
    pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
@@ -1175,6 +1178,19 @@ _efl_ui_collection_efl_ui_single_selectable_fallback_selection_get(const Eo *obj
 {
    return pd->fallback;
 }
+
+EOLIAN static void
+_efl_ui_collection_efl_ui_single_selectable_allow_manual_deselection_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool allow_manual_deselection)
+{
+   pd->allow_manual_deselection = !!allow_manual_deselection;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_collection_efl_ui_single_selectable_allow_manual_deselection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+{
+   return pd->allow_manual_deselection;
+}
+
 
 #include "efl_ui_collection.eo.c"
 

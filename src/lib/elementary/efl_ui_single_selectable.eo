@@ -30,6 +30,12 @@ interface Efl.Ui.Single_Selectable {
             fallback : Efl.Ui.Selectable;
          }
       }
+      @property allow_manual_deselection {
+         [[This controlls if a selected item can be deselected due to clicking]]
+         values {
+            allow_manual_deselection : bool; [[$true if clicking while selected results in a state change to unselected]]
+         }
+      }
    }
    events {
       selection_changed : void; [[Emitted when there is a change in the selection state. This event will collect all
