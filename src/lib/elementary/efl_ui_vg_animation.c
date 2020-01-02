@@ -75,7 +75,7 @@ _proxy_create(Eo *source)
    efl_canvas_proxy_source_clip_set(proxy, EINA_FALSE);
    efl_canvas_proxy_source_set(proxy, source);
 
-   efl_gfx_entity_visible_set(proxy, EINA_TRUE);
+   //efl_gfx_entity_visible_set(proxy, EINA_TRUE);
    efl_gfx_entity_visible_set(source, EINA_TRUE);
 
    return proxy;
@@ -106,6 +106,7 @@ _node_get(Efl_VG *node, const char *part)
    if (!efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS)) return NULL;
 
    char *name = efl_key_data_get(node, "_lot_node_name");
+//printf("name : %s\n", name);
 
    //Find the target recursiveldy
    if (!name || strcmp(name, part))
@@ -157,7 +158,7 @@ _part_draw(Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d, Eina_Position2D offset, Eina
    double ctrl[4];
    Eina_Inarray *inarray;
    Efl_Ui_Vg_Animation_Point *pt, *pt2;
-   Eo *target = sub_d->proxy;
+   Eo *target = sub_d->obj;
    Eina_Bool fast_path = EINA_TRUE;
 
    efl_gfx_path_get(sub_d->node, &cmd, &points);
