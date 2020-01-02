@@ -4530,7 +4530,12 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    efl_text_set(txt, "");
    efl_text_set(txt, "");
    efl_text_cursor_text_insert(cursor1, "aa");
-   ck_assert_int_eq(changed_emit, 3);
+   ck_assert_int_eq(changed_emit, 4);
+
+   efl_text_markup_set(txt, "Hello<br/>Word");
+   efl_text_markup_set(txt, "Hello<br/>Word");
+   efl_text_cursor_markup_insert(cursor1, "aa");
+   ck_assert_int_eq(changed_emit, 6);
 
    efl_text_set(txt, "");
    ck_assert(!efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT));
@@ -4549,7 +4554,7 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    ck_assert(!efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_LAST));
    ck_assert_int_eq(efl_text_cursor_position_get(cur_obj), 0);
 
-   ck_assert_int_eq(changed_emit, 4);
+   ck_assert_int_eq(changed_emit, 7);
 
    efl_text_markup_set(txt, "Hello World<ps/>This is EFL<br/>Enlightenment");
    ck_assert(efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT));
