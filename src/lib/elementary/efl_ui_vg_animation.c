@@ -53,18 +53,18 @@ typedef struct
    Eo *obj;
    Eo *proxy;
    const Efl_VG *node;
-} Efl_Ui_Animation_View_Sub_Obj_Data;
+} Efl_Ui_Vg_Animation_Sub_Obj_Data;
 
 typedef struct
 {
    float x1, x2;
    float y;
-} Efl_Ui_Animation_View_Span_Data;
+} Efl_Ui_Vg_Animation_Span_Data;
 
 typedef struct
 {
    float x, y;
-} Efl_Ui_Animation_View_Point;
+} Efl_Ui_Vg_Animation_Point;
 
 static Eo *
 _proxy_create(Eo *source)
@@ -83,10 +83,10 @@ _proxy_create(Eo *source)
 }
 
 static void
-_proxy_map_disable(Efl_Ui_Animation_View_Data *pd)
+_proxy_map_disable(Efl_Ui_Vg_Animation_Data *pd)
 {
    Eina_List *l;
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
 
    EINA_LIST_FOREACH(pd->subs, l, sub_d)
      {
@@ -144,7 +144,7 @@ _node_get(Efl_VG *node, const char *part)
 }
 
 static Eina_Bool
-_part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset, Eina_Size2D tsize)
+_part_draw(Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d, Eina_Position2D offset, Eina_Size2D tsize)
 {
    const Efl_Gfx_Path_Command_Type *cmd, *tcmd;
    const double *points;
@@ -157,7 +157,7 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset, Ei
    double begin_x = 0, begin_y = 0, end_x = 0, end_y  = 0;
    double ctrl[4];
    Eina_Inarray *inarray;
-   Efl_Ui_Animation_View_Point *pt, *pt2;
+   Efl_Ui_Vg_Animation_Point *pt, *pt2;
    Eo *target = sub_d->proxy;
    Eina_Bool fast_path = EINA_TRUE;
 
@@ -222,7 +222,7 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset, Ei
      }
 
    //Case 2. Arbitrary Geometry mapping
-   inarray = eina_inarray_new(sizeof(Efl_Ui_Animation_View_Point), GROW_SIZE);
+   inarray = eina_inarray_new(sizeof(Efl_Ui_Vg_Animation_Point), GROW_SIZE);
    if (!inarray) return EINA_FALSE;
    eina_inarray_resize(inarray, QUEUE_SIZE);
    inarray_size = QUEUE_SIZE;
@@ -316,7 +316,7 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset, Ei
    pt->y = pt2->y;
 
    float y_segment = (max_y - min_y) * inv_segment;
-   Efl_Ui_Animation_View_Span_Data spans[T_SEGMENT_N + 1];
+   Efl_Ui_Vg_Animation_Span_Data spans[T_SEGMENT_N + 1];
    float min_x, max_x;
    float a, b;
 
@@ -437,7 +437,7 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset, Ei
 }
 
 static void
-_update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
+_update_part_contents(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
 {
    if (!pd->subs) return;
 
@@ -448,7 +448,7 @@ _update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 
    Eina_List *l;
    Eina_Position2D pos = efl_gfx_entity_position_get(pd->vg);
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
    Eina_Size2D tsize = efl_gfx_entity_size_get(obj);
 
    EINA_LIST_FOREACH(pd->subs, l, sub_d)
@@ -459,12 +459,12 @@ _update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
         if (sub_d->node)
           _part_draw(sub_d, pos, tsize);
         else
-          ERR("part(%s) is invalid in Efl_Ui_Animation_View(%p)", sub_d->part, obj);
+          ERR("part(%s) is invalid in Efl_Ui_Vg_Animation(%p)", sub_d->part, obj);
      }
 }
 
 static void
-_frame_set_facade(Eo *obj, Efl_Ui_Animation_View_Data *pd, int frame)
+_frame_set_facade(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, int frame)
 {
    int pframe = evas_object_vg_animated_frame_get(pd->vg);
    evas_object_vg_animated_frame_set(pd->vg, frame);
@@ -775,7 +775,7 @@ _efl_ui_vg_animation_efl_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Da
    if (pd->transit) elm_transit_del(pd->transit);
 
    //Remove all part exising contents
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
    Eo *content;
    Eina_List *l, *ll;
 
@@ -848,7 +848,7 @@ _efl_ui_vg_animation_efl_gfx_entity_position_set(Eo *obj,
 
    Eina_Bool vis = _visible_check(obj);
    if (!vis) _proxy_map_disable(pd);
-   _auto_play(obj, pd, vis);
+   _autoplay(obj, pd, vis);
 }
 
 EOLIAN static void
@@ -878,7 +878,7 @@ _efl_ui_vg_animation_efl_gfx_entity_visible_set(Eo *obj,
 
    vis = _visible_check(obj);
    if (!vis) _proxy_map_disable(pd);
-   _auto_play(obj, pd, vis);
+   _autoplay(obj, pd, vis);
 }
 
 EOLIAN static void
@@ -1089,13 +1089,13 @@ _efl_ui_vg_animation_max_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animatio
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_vg_animation_efl_part_part_get(const Eo* obj, Efl_Ui_Animation_View_Data *pd EINA_UNUSED, const char *part)
+_efl_ui_vg_animation_efl_part_part_get(const Eo* obj, Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED, const char *part)
 {
-   return ELM_PART_IMPLEMENT(EFL_UI_ANIMATION_VIEW_PART_CLASS, obj, part);
+   return ELM_PART_IMPLEMENT(EFL_UI_VG_ANIMATION_PART_CLASS, obj, part);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_vg_animation_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Animation_View_Data *pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_vg_animation_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1112,10 +1112,10 @@ _efl_ui_vg_animation_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Animati
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_vg_animation_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Animation_View_Data *pd, Evas_Object *sobj)
+_efl_ui_vg_animation_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, Evas_Object *sobj)
 {
    Eina_List *l;
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
    Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -1391,9 +1391,9 @@ elm_animation_view_state_get(Elm_Animation_View *obj)
 }
 
 static Eina_Bool
-_efl_ui_vg_animation_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part, Efl_Gfx_Entity *content)
+_efl_ui_vg_animation_content_set(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, const char *part, Efl_Gfx_Entity *content)
 {
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
    Eina_List *l;
 
    if (!efl_file_loaded_get(obj)) return EINA_FALSE;
@@ -1426,7 +1426,7 @@ _efl_ui_vg_animation_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, const 
      {
         if (!elm_widget_sub_object_add(obj, content)) return EINA_FALSE;
 
-        sub_d = ELM_NEW(Efl_Ui_Animation_View_Sub_Obj_Data);
+        sub_d = ELM_NEW(Efl_Ui_Vg_Animation_Sub_Obj_Data);
         if (!sub_d)
           {
              ERR("failed to allocate memory!");
@@ -1449,10 +1449,10 @@ end:
 }
 
 static Efl_Gfx_Entity *
-_efl_ui_vg_animation_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, const char *part)
+_efl_ui_vg_animation_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, const char *part)
 {
    const Eina_List *l;
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
 
    EINA_LIST_FOREACH(pd->subs, l, sub_d)
      {
@@ -1464,9 +1464,9 @@ _efl_ui_vg_animation_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_Vie
 }
 
 static Efl_Gfx_Entity *
-_efl_ui_vg_animation_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part)
+_efl_ui_vg_animation_content_unset(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, const char *part)
 {
-   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Efl_Ui_Vg_Animation_Sub_Obj_Data *sub_d;
    Eina_List *l;
    Eo *content;
 
@@ -1506,9 +1506,9 @@ _efl_ui_vg_animation_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
 
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_vg_animation, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_vg_animation, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_vg_animation, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_vg_animation, EFL_UI_VG_ANIMATION, Efl_Ui_Vg_Animation_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_vg_animation, EFL_UI_VG_ANIMATION, Efl_Ui_Vg_Animation_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_vg_animation, EFL_UI_VG_ANIMATION, Efl_Ui_Vg_Animation_Data)
 #include "efl_ui_vg_animation_part.eo.c"
 /* Efl.Part end */
 
