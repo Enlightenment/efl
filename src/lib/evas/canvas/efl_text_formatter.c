@@ -121,7 +121,8 @@ efl_text_formatter_item_geometry_get(const Efl_Text_Attribute_Handle *annotation
    Efl_Text_Cursor_Handle cur;
 
    Eo *eo_obj = annotation->obj;
-   Evas_Object_Protected_Data *obj_data = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj_data = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj_data, EINA_FALSE);
    evas_object_async_block(obj_data);
    _evas_textblock_relayout_if_needed(eo_obj);
 
