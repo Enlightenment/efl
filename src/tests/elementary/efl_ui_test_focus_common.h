@@ -16,6 +16,8 @@
   Efl_Ui_Focus_Object* name; \
   name = focus_test_object_new("" #name "",x, y, w, h); \
 
+/* This is an internal function at the moment, but an exported symbol and can be used by tests */
+Eina_Bool efl_ui_focus_manager_calc_update_children(Eo *obj, Efl_Ui_Focus_Object *parent, Eina_List *children EFL_TRANSFER_OWNERSHIP);
 
 Efl_Ui_Focus_Object* focus_test_object_new(const char *name, int x, int y, int w, int h);
 

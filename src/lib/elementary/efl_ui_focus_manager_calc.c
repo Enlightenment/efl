@@ -2061,7 +2061,27 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_unfreeze(Eo *obj, Ef
     }
 }
 
+static void
+_efl_ui_focus_manager_calc_update_children_ownership_fallback(Efl_Ui_Focus_Object *parent, Eina_List *children)
+{
+   (void)parent;
+   eina_list_free(children);
+}
+
+EOAPI EFL_FUNC_BODYV_FALLBACK(efl_ui_focus_manager_calc_update_children, Eina_Bool, 0, _efl_ui_focus_manager_calc_update_children_ownership_fallback(parent, children);, EFL_FUNC_CALL(parent, children), Efl_Ui_Focus_Object *parent, Eina_List *children);
+
+static void
+_efl_ui_focus_manager_calc_update_order_ownership_fallback(Efl_Ui_Focus_Object *parent, Eina_List *children)
+{
+   (void)parent;
+   eina_list_free(children);
+}
+
+EOAPI EFL_VOID_FUNC_BODYV_FALLBACK(efl_ui_focus_manager_calc_update_order, _efl_ui_focus_manager_calc_update_order_ownership_fallback(parent, children);, EFL_FUNC_CALL(parent, children), Efl_Ui_Focus_Object *parent, Eina_List *children);
+
 #define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
-   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)
+  EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get), \
+  EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_update_children, _efl_ui_focus_manager_calc_update_children), \
+  EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_update_order, _efl_ui_focus_manager_calc_update_order)
 
 #include "efl_ui_focus_manager_calc.eo.c"
