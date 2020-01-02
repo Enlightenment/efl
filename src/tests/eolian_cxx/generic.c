@@ -125,9 +125,20 @@ static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
   const char *s = "42";
   Eina_List* p = eina_list_append(NULL, s);
 
-  Generic_Event e = {.field1 = 42, .field2 = p};
+  Generic_Beta_Event e = {.field1 = 42, .field2 = p};
   efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT5, &e);
   eina_list_free(p);
+}
+static void _generic_call_event6(Eo *obj, Generic_Data* pd EINA_UNUSED)
+{
+  const char *s = "42";
+  Eina_Array* p = eina_array_new(1);
+
+  eina_array_push(p, s);
+
+  Generic_Event e = {.field1 = 42, .field2 = p};
+  efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT6, &e);
+  eina_array_free(p);
 }
 static void _generic_protected_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED)
 {

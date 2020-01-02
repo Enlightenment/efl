@@ -21,6 +21,7 @@
 
 #include <map>
 
+#define GENERIC_BETA
 #include <generic.eo.hh>
 #include <generic.eo.impl.hh>
 #include <name1_name2_type_generation.eo.hh>
@@ -160,8 +161,8 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
   efl::eo::eo_init i;
 
   bool event1 = false, event2 = false, event3 = false, event4 = false
-    , event5 = false;
-  
+    , event5 = false, event6 = false;
+
   nonamespace::Generic g(efl::eo::instantiate);
   efl::eolian::event_add(g.prefix_event1_event, g, [&] (nonamespace::Generic)
                          {
@@ -183,9 +184,13 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
                            // FIXME eina::range_array is incompatible with eina::string_view
                            //ck_assert(*e.begin() == efl::eina::string_view{"42"});
                          });
-  efl::eolian::event_add(g.prefix_event5_event, g, [&] (nonamespace::Generic, Generic_Event)
+  efl::eolian::event_add(g.prefix_event5_event, g, [&] (nonamespace::Generic, Generic_Beta_Event)
                          {
                            event5 = true;
+                         });
+  efl::eolian::event_add(g.prefix_event6_event, g, [&] (nonamespace::Generic, Generic_Event)
+                         {
+                           event6 = true;
                          });
 
   g.call_event1();
@@ -193,12 +198,14 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
   g.call_event3();
   g.call_event4();
   g.call_event5();
+  g.call_event6();
 
   ck_assert(event1);
   ck_assert(event2);
   ck_assert(event3);
   ck_assert(event4);
   ck_assert(event5);
+  ck_assert(event6);
 }
 EFL_END_TEST
 
