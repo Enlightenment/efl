@@ -65,7 +65,6 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
         pd->alpha_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
         efl_animation_alpha_set(pd->alpha_anim, 0.0, 1.0);
         efl_animation_duration_set(pd->alpha_anim, 0.5);
-        efl_animation_final_state_keep_set(pd->alpha_anim, EINA_TRUE);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
