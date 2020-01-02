@@ -24,7 +24,7 @@
 //when a item is pressed but not released, this time passes by
 //until another step is added or removed from the current value.
 //given in seconds
-#define REPEAT_INTERVAL 0.85
+#define REPEAT_INTERVAL 0.2
 
 static const char PART_NAME_ENTRY[] = "entry";
 static const char PART_NAME_DEC_BUTTON[] = "dec_button";
