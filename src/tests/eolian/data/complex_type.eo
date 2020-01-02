@@ -1,6 +1,6 @@
 class Complex_Type {
    methods {
-      @property a {
+      @property a @beta {
          set {
             return: list<array<strbuf @move> > @move;
          }
@@ -10,7 +10,7 @@ class Complex_Type {
             value: list<string> @move;
          }
       }
-      foo {
+      foo @beta {
          params {
             buf: mstring @move;
             sl: slice<ubyte>;

@@ -106,6 +106,7 @@ EFL_START_TEST(eolian_dev_impl_code)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/object_impl.eo", "-gi", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/object_impl_ref.c", output_filepath, "c"));
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/object_impl_add.eo", "-gi", output_filepath));
+   fprintf(stderr, "[%s]\n", output_filepath);
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/object_impl_add_ref.c", output_filepath, "c"));
 }
 EFL_END_TEST

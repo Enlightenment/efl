@@ -20,7 +20,7 @@ _object_impl_a_get(const Eo *obj, Object_Impl_Data *pd, const char *part)
 }
 
 EOLIAN static void
-_object_impl_b_set(Eo *obj, Object_Impl_Data *pd, Eina_List *value)
+_object_impl_b_set(Eo *obj, Object_Impl_Data *pd, Eina_Iterator *value)
 {
 
 }

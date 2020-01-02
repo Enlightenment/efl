@@ -1,6 +1,6 @@
 abstract Object_Impl extends Base {
    methods {
-      @property a {
+      @property a @beta {
          set {
             values {
                 value: const(list<string>);
@@ -23,7 +23,7 @@ abstract Object_Impl extends Base {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            value: list<string> @move;
+            value: iterator<string> @move;
          }
       }
       constructor_1 {
