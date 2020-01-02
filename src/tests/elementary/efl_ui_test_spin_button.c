@@ -173,6 +173,25 @@ EFL_START_TEST (spin_wraparound)
 }
 EFL_END_TEST
 
+EFL_START_TEST (spin_double_values)
+{
+   double step = 0.1;
+   efl_ui_range_limits_set(spin, 10, 30);
+   efl_ui_range_value_set(spin, 20);
+   efl_ui_range_step_set(spin, step);
+   ck_assert(EINA_DBL_EQ(efl_ui_range_step_get(spin), step));
+   get_me_to_those_events(spin);
+   ck_assert(EINA_DBL_EQ(efl_ui_range_value_get(spin), 20.0));
+
+   for (int i = 0; i < 5; ++i)
+     {
+        click_part(spin, "efl.inc_button");
+        get_me_to_those_events(spin);
+     }
+   ck_assert_int_eq(EINA_DBL_EQ(efl_ui_range_value_get(spin), 20.5), 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_spin_button(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
@@ -182,4 +201,5 @@ void efl_ui_test_spin_button(TCase *tc)
    tcase_add_test(tc, spin_value_inc_max);
    tcase_add_test(tc, spin_value_dec_min);
    tcase_add_test(tc, spin_wraparound);
+   tcase_add_test(tc, spin_double_values);
 }
