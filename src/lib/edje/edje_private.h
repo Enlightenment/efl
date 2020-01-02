@@ -1723,6 +1723,7 @@ struct _Edje
 
    Eina_List            *groups;
 
+   Eina_Hash            *styles;
    Edje_Perspective     *persp;
 
    Ecore_Animator       *animator;
@@ -2802,14 +2803,17 @@ void          _edje_message_del             (Edje *ed);
 Evas_Textblock_Style * _edje_textblock_style_get(Edje *ed, const char *style);
 void _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep);
 void _edje_textblock_styles_del(Edje *ed, Edje_Part *pt);
+void _edje_object_textblock_style_all_update_text_class(Edje *ed, const char *text_class);
+void _edje_object_textblock_styles_cache_cleanup(Edje *ed);
 
 // Edje File level textblock style api
 void _edje_file_textblock_style_all_update(Edje_File *ed);
-void _edje_file_textblock_style_all_update_text_class(Edje_File *edf, const char *text_class);
+void _edje_file_textblock_styles_all_update_text_class(Edje *ed, const char *text_class);
 void _edje_file_textblock_style_parse_and_fix(Edje_File *edf);
 void _edje_file_textblock_style_cleanup(Edje_File *edf);
 
 Edje_File *_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed);
+Edje_File *_edje_file_cache_find(const Eina_File *file);
 void _edje_cache_coll_clean(Edje_File *edf);
 void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);

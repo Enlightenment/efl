@@ -518,6 +518,78 @@ EFL_START_TEST(elm_entry_file_get_set)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_test_text_class)
+{
+   Evas_Object *win, *entry1, *entry2, *entry3, *entry4;
+   const char *filename = NULL;
+   int w1 = 0, h1 = 0, w2 = 0, h2 = 0, w3 = 0, h3 = 0;
+   const char *font;
+   int font_size;
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   entry1 = elm_entry_add(win);
+   entry2 = elm_entry_add(win);
+   entry3 = elm_entry_add(win);
+
+   elm_object_text_set(entry1, "hello");
+   elm_object_text_set(entry2, "hello");
+   elm_object_text_set(entry3, "hello");
+
+   edje_object_file_get(elm_layout_edje_get(entry1), &filename, NULL);
+   ck_assert(filename != NULL);
+
+   ck_assert(edje_file_text_class_set(filename, "entry_text", "Serif:Style=Bold", 24));
+
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry1), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 24);
+   ck_assert_str_eq(font, "Serif:Style=Bold");
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry2), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 24);
+   ck_assert_str_eq(font, "Serif:Style=Bold");
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry3), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 24);
+   ck_assert_str_eq(font, "Serif:Style=Bold");
+
+   evas_object_textblock_size_formatted_get(elm_entry_textblock_get(entry1), &w1, &h1);
+   evas_object_textblock_size_formatted_get(elm_entry_textblock_get(entry2), &w2, &h2);
+   evas_object_textblock_size_formatted_get(elm_entry_textblock_get(entry3), &w3, &h3);
+
+   ck_assert_int_eq(w1, w2);
+   ck_assert_int_eq(h1, h2);
+   ck_assert_int_eq(w2, w3);
+   ck_assert_int_eq(h2, h3);
+
+   ck_assert(edje_object_text_class_set(elm_layout_edje_get(entry1), "entry_text", "Sans", 50));
+   ck_assert(edje_object_text_class_set(elm_layout_edje_get(entry2), "entry_text", "Serif", 20));
+
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry1), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 50);
+   ck_assert_str_eq(font, "Sans");
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry2), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 20);
+   ck_assert_str_eq(font, "Serif");
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry3), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 24);
+   ck_assert_str_eq(font, "Serif:Style=Bold");
+
+   evas_object_textblock_size_formatted_get(elm_entry_textblock_get(entry1), &w1, &h1);
+   evas_object_textblock_size_formatted_get(elm_entry_textblock_get(entry2), &w2, &h2);
+   evas_object_textblock_size_formatted_get(elm_entry_textblock_get(entry3), &w3, &h3);
+
+   ck_assert_int_ne(w1, w2);
+   ck_assert_int_ne(h1, h2);
+   ck_assert_int_ne(w2, w3);
+   ck_assert_int_ne(h2, h3);
+
+   entry4 = elm_entry_add(win);
+
+   elm_object_text_set(entry4, "hello");
+   ck_assert(edje_object_text_class_get(elm_layout_edje_get(entry4), "entry_text", &font, &font_size));
+   ck_assert_int_eq(font_size, 24);
+   ck_assert_str_eq(font, "Serif:Style=Bold");
+}
+EFL_END_TEST
+
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_legacy_type_check);
@@ -535,4 +607,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_text_set);
    tcase_add_test(tc, elm_entry_magnifier);
    tcase_add_test(tc, elm_entry_file_get_set);
+   tcase_add_test(tc, elm_entry_test_text_class);
 }

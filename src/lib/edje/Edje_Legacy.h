@@ -3147,6 +3147,44 @@ EAPI void edje_object_perspective_set(Evas_Object *obj, Edje_Perspective *ps);
 EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj);
 
 /**
+ * @brief Sets Edje text class for edje file (if loaded)
+ *
+ * This function sets the text class for All Edje Objects created from Edje file.
+ * (if edje file loaded before)
+ *
+ * @param[in] file edje file path
+ * @param[in] text_class The text class name
+ * @param[in] font Font name
+ * @param[in] size Font Size
+ *
+ * @return @c true, on success or @c false, on error
+ */
+EAPI Eina_Bool edje_file_text_class_set(const char *file, const char *text_class, const char *font, Evas_Font_Size size);
+
+/**
+ * @brief Delete the file text class.
+ *
+ * This function deletes any values at the file level for the specified
+ * file and text class.
+ *
+ * @param[in] text_class The text class to be deleted.
+ */
+EAPI Eina_Bool edje_file_text_class_del(const char *file, const char *text_class);
+
+/**
+ * @brief Gets font and font size from edje file if loaded.
+ *
+ * This function gets the font and the font size from the file text class.
+ *
+ * @param[in] text_class The text class name
+ * @param[out] font Font name
+ * @param[out] size Font Size
+ *
+ * @return @c true, on success or @c false, on error
+ */
+EAPI Eina_Bool edje_file_text_class_get(const char *file, const char * text_class, const char **font, Evas_Font_Size *size);
+
+/**
  * @}
  */
 
