@@ -434,7 +434,7 @@ _viewport_region_get(Evas_Object *obj)
    parent = efl_ui_widget_parent_get(obj);
    while (parent)
      {
-        if (efl_isa(parent, ELM_INTERFACE_SCROLLABLE_MIXIN))
+        if (efl_isa(parent, EFL_UI_SCROLLABLE_INTERFACE))
           {
              Eina_Rectangle r;
              EINA_RECTANGLE_SET(&r, 0, 0, 0, 0);
