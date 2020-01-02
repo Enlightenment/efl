@@ -406,7 +406,11 @@ _spin_value(Efl_Ui_Spin *obj, Eina_Bool inc)
 {
    Efl_Ui_Spin_Button_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_BUTTON_CLASS);
 
+   printf("1.: %f\n", pd->step);
+
    double absolut_value = efl_ui_range_value_get(obj) + (inc ? pd->step : -pd->step);
+
+   printf("2.: %f\n", absolut_value);
 
    _value_set(obj, absolut_value);
 }
@@ -415,6 +419,8 @@ static void
 _inc_dec_button_clicked_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
+
+   printf("--> PRESSED\n");
 
    if (sd->entry_visible) _entry_value_apply(data);
 

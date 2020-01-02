@@ -454,6 +454,7 @@ click_object_internal(Eo *obj, int dir, int flags)
 {
    Evas *e = evas_object_evas_get(obj);
    Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
+   printf("---> CLICKING %d %d\n", pos.x, pos.y);
    evas_event_feed_mouse_move(e, pos.x, pos.y, 0, NULL);
    evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
@@ -492,6 +493,7 @@ click_part_flags(Eo *obj, const char *part, int flags)
         else if (strstr(part, "bottom"))
           dir |= BOTTOM;
      }
+   printf("---> INTERNAL %p\n", content);
    click_object_internal(content, dir, flags);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
