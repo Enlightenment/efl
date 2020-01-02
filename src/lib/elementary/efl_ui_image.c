@@ -230,7 +230,7 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
               w = ((double)iw * h) / (double)ih;
               break;
            case EFL_GFX_IMAGE_SCALE_METHOD_EXPAND:
-              if (iw < ih)
+              if ((iw - ow) < (ih - oh))
                 {
                    w = ow;
                    h = ((double)ih * w) / (double)iw;
