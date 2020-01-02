@@ -1,0 +1,164 @@
+#define BZ5_EXIST   1
+#define BZ5_ON      2
+#define BZ5_VISIBLE 4
+#define BZ5_SCAN    8
+
+group { name: "e/modules/bluez5/main";
+   images.image: "bz5_none.png" COMP;
+   images.image: "bz5_logo.png" COMP;
+   images.image: "radio.png" COMP;
+   max: 160 160;
+   script {
+      public bzmode;
+      eval_mode(m) {
+         new prev = get_int(bzmode);
+         if (m & BZ5_ON)
+            set_state(PART:"base", "on", 0.0);
+         else if (m & BZ5_EXIST)
+            set_state(PART:"base", "exist", 0.0);
+         else
+            set_state(PART:"base", "default", 0.0);
+
+         if      ((!(prev & BZ5_VISIBLE)) && ( (m & BZ5_VISIBLE))) {
+            run_program(PROGRAM:"visible0");
+         }
+         else if (( (prev & BZ5_VISIBLE)) && (!(m & BZ5_VISIBLE))) {
+            stop_program(PROGRAM:"visible0");
+            stop_program(PROGRAM:"visible1");
+            run_program(PROGRAM:"visiblereset");
+         }
+
+         if      ((!(prev & BZ5_SCAN)) && ( (m & BZ5_SCAN))) {
+            run_program(PROGRAM:"scan0");
+         }
+         else if (( (prev & BZ5_SCAN)) && (!(m & BZ5_SCAN))) {
+            stop_program(PROGRAM:"scan0");
+            stop_program(PROGRAM:"scan1");
+            run_program(PROGRAM:"scanreset");
+         }
+      }
+      flag_set(flag) {
+         new m = get_int(bzmode) | flag;
+         eval_mode(m); set_int(bzmode, m);
+      }
+      flag_unset(flag) {
+         new m = get_int(bzmode) & ~flag;
+         eval_mode(m); set_int(bzmode, m);
+      }
+   }
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.relative: (25/380) (25/380);
+            rel2.relative: (365/380) (365/380);
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "bz5_none.png";
+            color: 160 160 160 255;
+         }
+         description { state: "exist" 0.0;
+            inherit;
+            image.normal: "bz5_logo.png";
+            color: 160 160 160 128;
+         }
+         description { state: "on" 0.0;
+            inherit;
+            image.normal: "bz5_logo.png";
+            color: 160 160 160 255;
+         }
+      }
+      part { name: "visible";
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.relative: 0.0 0.8;
+            rel2.relative: 0.2 1.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "radio.png";
+            color: 51 153 255 255;
+            visible: 0;
+            min: 1 1;
+         }
+         description { state: "on" 0.0;
+            inherit;
+            visible: 1;
+         }
+      }
+      part { name: "scan";
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.relative: 0.8 0.8;
+            rel2.relative: 1.0 1.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "radio.png";
+            color: 255 153 51 255;
+            visible: 0;
+            min: 1 1;
+         }
+         description { state: "on" 0.0;
+            inherit;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { signal: "e,state,exist"; source: "e";
+         script { flag_set(BZ5_EXIST); }
+      }
+      program { signal: "e,state,noexist"; source: "e";
+         script { flag_unset(BZ5_EXIST); }
+      }
+      program { signal: "e,state,on"; source: "e";
+         script { flag_set(BZ5_ON); }
+      }
+      program { signal: "e,state,off"; source: "e";
+         script { flag_unset(BZ5_ON); }
+      }
+      program { signal: "e,state,visible"; source: "e";
+         script { flag_set(BZ5_VISIBLE); }
+      }
+      program { signal: "e,state,invisible"; source: "e";
+         script { flag_unset(BZ5_VISIBLE); }
+      }
+      program { signal: "e,state,scanning"; source: "e";
+//         action: STATE_SET "on" 0.0;
+//         target: "scan";
+         script { flag_set(BZ5_SCAN); }
+      }
+      program { signal: "e,state,unscanning"; source: "e";
+//         action: STATE_SET "default" 0.0;
+//         target: "scan";
+         script { flag_unset(BZ5_SCAN); }
+      }
+      program { name: "visible0";
+         action: STATE_SET "on" 0.0;
+         target: "visible";
+         in: 0.5 0.0;
+         after: "visible1";
+      }
+      program { name: "visible1";
+         action: STATE_SET "default" 0.0;
+         target: "visible";
+         in: 0.5 0.0;
+         after: "visible0";
+      }
+      program { name: "visiblereset";
+         action: STATE_SET "default" 0.0;
+         target: "visible";
+      }
+      program { name: "scan0";
+         action: STATE_SET "on" 0.0;
+         target: "scan";
+         in: 0.5 0.0;
+         after: "scan1";
+      }
+      program { name: "scan1";
+         action: STATE_SET "default" 0.0;
+         target: "scan";
+         in: 0.5 0.0;
+         after: "scan0";
+      }
+      program { name: "scanreset";
+         action: STATE_SET "default" 0.0;
+         target: "scan";
+      }
+   }
+}

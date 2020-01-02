@@ -1,21 +1,20 @@
 group { name: "e/modules/clock/digital";
+   alias: "e/gadget/clock/digital";
    min: 64 16;
    max: 512 128;
-   images.image: "O/digit_na.png" COMP;
-   images.image: "O/digit_nm.png" COMP;
-   images.image: "O/digit_0.png" COMP;
-   images.image: "O/digit_1.png" COMP;
-   images.image: "O/digit_2.png" COMP;
-   images.image: "O/digit_3.png" COMP;
-   images.image: "O/digit_4.png" COMP;
-   images.image: "O/digit_5.png" COMP;
-   images.image: "O/digit_6.png" COMP;
-   images.image: "O/digit_7.png" COMP;
-   images.image: "O/digit_8.png" COMP;
-   images.image: "O/digit_9.png" COMP;
-   images.image: "O/digit_am.png" COMP;
-   images.image: "O/digit_pm.png" COMP;
-   images.image: "hole_tiny.png" COMP;
+   images.image: "digit_0.png" COMP;
+   images.image: "digit_1.png" COMP;
+   images.image: "digit_2.png" COMP;
+   images.image: "digit_3.png" COMP;
+   images.image: "digit_4.png" COMP;
+   images.image: "digit_5.png" COMP;
+   images.image: "digit_6.png" COMP;
+   images.image: "digit_7.png" COMP;
+   images.image: "digit_8.png" COMP;
+   images.image: "digit_9.png" COMP;
+   images.image: "digit_am.png" COMP;
+   images.image: "digit_pm.png" COMP;
+   images.image: "digit_sep.png" COMP;
    script {
       public do_seconds, do_24h, do_date, tick_timer;
 
@@ -186,8 +185,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "hours1"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (0/16) 0.0;
-            rel2.relative: (2/16) 1.0;
+            rel1.relative: (0/30) 0.0;
+            rel2.relative: (4/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -195,8 +194,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "hours2"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (2/16) 0.0;
-            rel2.relative: (4/16) 1.0;
+            rel1.relative: (4/30) 0.0;
+            rel2.relative: (8/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -204,8 +203,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "mins1"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (5/16) 0.0;
-            rel2.relative: (7/16) 1.0;
+            rel1.relative: (9/30) 0.0;
+            rel2.relative: (13/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -213,8 +212,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "mins2"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (7/16) 0.0;
-            rel2.relative: (9/16) 1.0;
+            rel1.relative: (13/30) 0.0;
+            rel2.relative: (17/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -222,8 +221,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "secs1"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (10/16) 0.0;
-            rel2.relative: (12/16) 1.0;
+            rel1.relative: (18/30) 0.0;
+            rel2.relative: (22/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -231,8 +230,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "secs2"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (12/16) 0.0;
-            rel2.relative: (14/16) 1.0;
+            rel1.relative: (22/30) 0.0;
+            rel2.relative: (26/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -240,8 +239,8 @@ group { name: "e/modules/clock/digital";
       }
       part { name: "ampm"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: (14/16) 0.0;
-            rel2.relative: (16/16) 1.0;
+            rel1.relative: (26/30) 0.0;
+            rel2.relative: (30/30) 1.0;
             rel1.to: "timearea";
             rel2.to: "timearea";
             visible: 0;
@@ -250,55 +249,47 @@ group { name: "e/modules/clock/digital";
       part { name: "c00";
          description { state: "default" 0.0;
             rel1.to: "hours2";
-            rel1.relative: 1.0 0.5;
-            rel1.offset: 0 -2;
+            rel1.relative: 1.0 0.39;
             rel2.to: "mins1";
-            rel2.relative: 0.0 0.5;
-            rel2.offset: 0 -2;
-            align: 0.5 1.0;
-            FIXED_SIZE(4, 4)
-            image.normal: "hole_tiny.png";
+            rel2.relative: 0.0 0.45;
+            image.normal: "digit_sep.png";
+            color: 160 160 160 255;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
          }
       }
       part { name: "c01";
          description { state: "default" 0.0;
             rel1.to: "hours2";
-            rel1.relative: 1.0 0.5;
-            rel1.offset: 0 1;
+            rel1.relative: 1.0 0.55;
             rel2.to: "mins1";
-            rel2.relative: 0.0 0.5;
-            rel2.offset: 0 1;
-            align: 0.5 0.0;
-            FIXED_SIZE(4, 4)
-            image.normal: "hole_tiny.png";
+            rel2.relative: 0.0 0.61;
+            image.normal: "digit_sep.png";
+            color: 160 160 160 255;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
          }
       }
       part { name: "c10";
          clip_to: "secclip";
          description { state: "default" 0.0;
             rel1.to: "mins2";
-            rel1.relative: 1.0 0.5;
-            rel1.offset: 0 -2;
+            rel1.relative: 1.0 0.39;
             rel2.to: "secs1";
-            rel2.relative: 0.0 0.5;
-            rel2.offset: 0 -2;
-            align: 0.5 1.0;
-            FIXED_SIZE(4, 4)
-            image.normal: "hole_tiny.png";
+            rel2.relative: 0.0 0.45;
+            image.normal: "digit_sep.png";
+            color: 160 160 160 255;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
          }
       }
       part { name: "c11";
          clip_to: "secclip";
          description { state: "default" 0.0;
             rel1.to: "mins2";
-            rel1.relative: 1.0 0.5;
-            rel1.offset: 0 1;
+            rel1.relative: 1.0 0.55;
             rel2.to: "secs1";
-            rel2.relative: 0.0 0.5;
-            rel2.offset: 0 1;
-            align: 0.5 0.0;
-            FIXED_SIZE(4, 4)
-            image.normal: "hole_tiny.png";
+            rel2.relative: 0.0 0.61;
+            image.normal: "digit_sep.png";
+            color: 160 160 160 255;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
          }
       }
 #define ELEM(_NAME, _TO, _DIGIT) \
@@ -306,14 +297,14 @@ group { name: "e/modules/clock/digital";
       description { state: "default" 0.0; \
          rel1.to: _TO; rel2.to: _TO; \
          aspect: (52/72) (52/72); aspect_preference: BOTH; \
-         image.normal: "O/digit_"_DIGIT".png"; \
+         image.normal: "digit_"_DIGIT".png"; \
          visible: 0; \
-         color: 255 255 255 0; \
+         color: 160 160 160 0; \
       } \
       description { state: "active" 0.0; \
          inherit: "default" 0.0; \
          visible: 1; \
-         color: 255 255 255 255; \
+         color: 160 160 160 255; \
       } \
    }
 #define DIGIT(_NAME, _TO) \
@@ -333,14 +324,14 @@ group { name: "e/modules/clock/digital";
       description { state: "default" 0.0; \
          rel1.to: _TO; rel2.to: _TO; \
          aspect: (52/72) (52/72); aspect_preference: BOTH; \
-         image.normal: "O/digit_"_DIGIT".png"; \
+         image.normal: "digit_"_DIGIT".png"; \
          visible: 0; \
-         color: 255 255 255 0; \
+         color: 160 160 160 0; \
       } \
       description { state: "active" 0.0; \
          inherit: "default" 0.0; \
          visible: 1; \
-         color: 255 255 255 255; \
+         color: 160 160 160 255; \
       } \
    }
 #define DIGITC(_NAME, _TO, _CLIP) \
@@ -361,42 +352,14 @@ group { name: "e/modules/clock/digital";
       description { state: "default" 0.0; \
          rel1.to: _TO; rel2.to: _TO; \
          aspect: (48/31) (48/31); aspect_preference: BOTH; \
-         image.normal: "O/digit_am.png"; \
+         image.normal: "digit_am.png"; \
+         color: 160 160 160 255; \
       } \
       description { state: "active" 0.0; \
          inherit: "default" 0.0; \
-         image.normal: "O/digit_pm.png"; \
+         image.normal: "digit_pm.png"; \
       } \
    }
-#define BASE(_NAME, _BASE, _IMG) \
-   part { name: _NAME; \
-      description { state: "default" 0.0; \
-         rel1.to: _BASE; \
-         rel2.to: _BASE; \
-         image.normal: _IMG; \
-         color: 255 255 255 128; \
-      } \
-   }
-#define BASEC(_NAME, _CLIP, _BASE, _IMG) \
-   part { name: _NAME; \
-      clip_to: _CLIP; \
-      description { state: "default" 0.0; \
-         rel1.to: _BASE; \
-         rel2.to: _BASE; \
-         image.normal: _IMG; \
-         color: 255 255 255 128; \
-      } \
-   }
-      
-      BASE ("ha", "h0-0", "O/digit_na.png")
-      BASE ("hb", "h1-0", "O/digit_na.png")
-      BASE ("ma", "m0-0", "O/digit_na.png")
-      BASE ("mb", "m1-0", "O/digit_na.png")
-              
-      BASEC("sa", "secclip", "s0-0", "O/digit_na.png")
-      BASEC("sb", "secclip", "s1-0", "O/digit_na.png")
-      BASEC("aa", "ampmclip", "ap", "O/digit_nm.png")
-        
       DIGIT ("h0", "hours1")
       DIGIT ("h1", "hours2")
       DIGIT ("m0", "mins1")
@@ -408,20 +371,17 @@ group { name: "e/modules/clock/digital";
 #undef TAG
 #undef ELEM
 #undef ELEMC
-#undef BASE
-#undef BASEC
 #undef DIGIT
 #undef DIGITC
 
        part { name: "e.text.today"; type: TEXT;
-          effect: GLOW;
           scale: 1;
           description { state: "default" 0.0;
              rel1.relative: 0.0 1.0;
              rel1.offset: 0 1;
-             rel2.offset: -1 1;
+             rel2.offset: -1 -1;
              align: 0.5 1.0;
-             color: FN_COL_HIGHLIGHT;
+             color: 160 160 160 255;
              text { font: FN; size: 8;
                 text_class: "module_small";
                 align: 0.5 0.5;
@@ -438,7 +398,6 @@ group { name: "e/modules/clock/digital";
              text.ellipsis: -1;
           }
        }
-                       
        part { name: "event"; type: RECT;
           description { state: "default" 0.0;
              color: 0 0 0 0;
@@ -506,13 +465,12 @@ group { name: "e/modules/clock/digital";
       program { \
          signal: "show,"_NAME; source: "c"; \
          action: STATE_SET "active" 0.0; \
-         transition: BOUNCE 0.3 0.5 2; \
          target: _NAME; \
       } \
       program { \
          signal: "hide,"_NAME; source: "c"; \
          action: STATE_SET "default" 0.0; \
-         transition: DECELERATE 0.3; \
+         transition: DECELERATE 0.1; \
          target: _NAME; \
       }
 #define DIGPRGS(_NAME) \
@@ -539,107 +497,62 @@ group { name: "e/modules/clock/digital";
 }
 
 group { name: "e/modules/clock/main";
+   alias: "e/gadget/clock/analog";
    images.image: "clock_base.png" COMP;
-   images.image: "inset_round_hilight.png" COMP;
-   images.image: "inset_round_shadow.png" COMP;
-   images.image: "inset_round_shading.png" COMP;
    set { name: "tacho_hand_big";
       image { image: "tacho_hand_big.png" COMP; size: 73 73 99999 99999; }
       image { image: "tacho_hand_big2.png" COMP; size: 37 37 72 72; }
       image { image: "tacho_hand_big3.png" COMP; size: 19 19 36 36; }
       image { image: "tacho_hand_big4.png" COMP; size: 0 0 18 18; }
    }
-   images.image: "tacho_hand_big_shadow.png" COMP;
    set { name: "tacho_hand_small_min";
       image { image: "tacho_hand_small_min.png" COMP; size: 73 73 99999 99999; }
       image { image: "tacho_hand_small_min2.png" COMP; size: 37 37 72 72; }
       image { image: "tacho_hand_small_min3.png" COMP; size: 19 19 36 36; }
       image { image: "tacho_hand_small_min4.png" COMP; size: 0 0 18 18; }
    }
-   set { name: "knob";
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
+   set { name: "tacho_hand_small_sec";
+      image { image: "tacho_hand_small_sec.png" COMP; size: 73 73 99999 99999; }
+      image { image: "tacho_hand_small_sec2.png" COMP; size: 37 37 72 72; }
+      image { image: "tacho_hand_small_sec3.png" COMP; size: 19 19 36 36; }
+      image { image: "tacho_hand_small_sec4.png" COMP; size: 0 0 18 18; }
    }
    min: 16 16;
    max: 160 160;
    script {
       public do_seconds, tick_timer;
-      
+
          public clock_cb(val) {
             new year, month, day, yearday, weekday, hour, minute;
             new Float:second;
             new v, dosec, tim;
-            
+
             date(year, month, day, yearday, weekday, hour, minute, second);
             dosec = get_int(do_seconds);
             if (dosec) {
                v = round(second, FLOOR);
                tim = timer(1.0 - (second - v), "clock_cb", 1);
-               
+
                custom_state(PART:"seconds", "default", 0.0);
                set_state_val(PART:"seconds", STATE_MAP_ROT_Z, (v * 360.0) / 60.0);
                set_state(PART:"seconds", "custom", 0.0);
-               
-               custom_state(PART:"seconds-sh", "default", 0.0);
-               set_state_val(PART:"seconds-sh", STATE_MAP_ROT_Z, (v * 360.0) / 60.0);
-               set_state(PART:"seconds-sh", "custom", 0.0);
             }
             else {
                tim = timer(60.0 - (second), "clock_cb", 1);
             }
             set_int(tick_timer, tim);
-            
+
             custom_state(PART:"minutes", "default", 0.0);
             set_state_val(PART:"minutes", STATE_MAP_ROT_Z, (float(minute) * 360.0) / 60.0);
             set_state(PART:"minutes", "custom", 0.0);
-            
-            custom_state(PART:"minutes-sh", "default", 0.0);
-            set_state_val(PART:"minutes-sh", STATE_MAP_ROT_Z, (float(minute) * 360.0) / 60.0);
-            set_state(PART:"minutes-sh", "custom", 0.0);
-            
+
             custom_state(PART:"hours", "default", 0.0);
             set_state_val(PART:"hours", STATE_MAP_ROT_Z, ((float(hour) + (float(minute) / 60.0)) * 360.0) / 12.0);
             set_state(PART:"hours", "custom", 0.0);
-            
-            custom_state(PART:"hours-sh", "default", 0.0);
-            set_state_val(PART:"hours-sh", STATE_MAP_ROT_Z, ((float(hour) + (float(minute) / 60.0)) * 360.0) / 12.0);
-            set_state(PART:"hours-sh", "custom", 0.0);
          }
    }
-   parts {   
-      part { name: "event"; type: RECT;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "base-sh";
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 0 -1;
-            rel2.to: "base";
-            rel2.offset: -1 -2;
-            image.normal: "inset_round_shadow.png";
-         }
-      }
-      part { name: "base-hi";
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 0 1;
-            rel2.to: "base";
-            rel2.offset: -1 0;
-            image.normal: "inset_round_hilight.png";
-         }
-      }
-      part { name: "base";
+   parts {
+      part { name: "base"; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.relative: (25/380) (25/380);
             rel2.relative: (365/380) (365/380);
@@ -647,24 +560,9 @@ group { name: "e/modules/clock/main";
             image.normal: "clock_base.png";
          }
       }
-      part { name: "seconds-sh"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "tacho_hand_big_shadow.png";
-            rel1.to: "hours-sh";
-            rel2.to: "hours-sh";
-            map {
-               on: 1;
-               rotation.center: "seconds-sh";
-            }
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
       part { name: "seconds"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "tacho_hand_big";
+            image.normal: "tacho_hand_small_sec";
             color: 255 0 0 255;
             rel1.to: "base";
             rel2.to: "base";
@@ -678,17 +576,6 @@ group { name: "e/modules/clock/main";
             visible: 0;
          }
       }
-      part { name: "minutes-sh"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "tacho_hand_big_shadow.png";
-            rel1.to: "hours-sh";
-            rel2.to: "hours-sh";
-            map {
-               on: 1;
-               rotation.center: "minutes-sh";
-            }
-         }
-      }
       part { name: "minutes"; mouse_events: 0;
          description { state: "default" 0.0000;
             color: 255 255 255 255;
@@ -698,21 +585,6 @@ group { name: "e/modules/clock/main";
             map {
                on: 1;
                rotation.center: "base";
-            }
-         }
-      }
-      part { name: "hours-sh"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "tacho_hand_small_shadow.png";
-            rel1.to: "hours";
-            rel1.relative: 0.0 (15/380);
-            rel1.offset: 0 1;
-            rel2.to: "hours";
-            rel2.relative: 1.0 (395/380);
-            rel2.offset: -1 0;
-            map {
-               on: 1;
-               rotation.center: "hours-sh";
             }
          }
       }
@@ -728,33 +600,9 @@ group { name: "e/modules/clock/main";
             }
          }
       }
-      part { name: "over"; mouse_events: 0;
+      part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "inset_round_shading.png";
-         }
-      }
-      part { name: "knob"; type: SPACER;
-         description { state: "default" 0.0;
-            rel1.relative: (140/340) (140/340);
-            rel1.to: "base";
-            rel2.relative: (205/340) (205/340);
-            rel2.to: "base";
-            min: 4 4;
-            step: 2 2;
-            max: 24 24;
-         }
-      }
-      part { name: "knob2";
-         description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel1.to: "knob";
-            rel2.offset: 3 3;
-            rel2.to: "knob";
-            min: 12 12;
-            max: 32 32;
-            image.normal: "knob";
+            color: 0 0 0 0;
          }
       }
    }
@@ -769,13 +617,12 @@ group { name: "e/modules/clock/main";
          signal: "e,state,seconds,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "seconds";
-         target: "seconds-sh";
          after: "sec2";
       }
       program { name: "sec2";
          script {
             new tim;
-            
+
             set_int(do_seconds, 1);
             tim = get_int(tick_timer);
             if (tim) {
@@ -789,13 +636,12 @@ group { name: "e/modules/clock/main";
          signal: "e,state,seconds,off"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "seconds";
-         target: "seconds-sh";
          after: "sec3";
       }
       program { name: "sec3";
          script {
             new tim;
-            
+
             set_int(do_seconds, 0);
             tim = get_int(tick_timer);
             if (tim) {
@@ -809,12 +655,12 @@ group { name: "e/modules/clock/main";
 }
 
 group { name: "e/modules/clock/calendar/dayname";
+   alias: "e/gadget/clock/calendar/dayname";
    parts {
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
-            color: FN_COL_DISABLE;
+            color: 160 160 160 255;
             text { font: FN; size: 8;
                text: "WWe";
                min: 1 1;
@@ -825,7 +671,7 @@ group { name: "e/modules/clock/calendar/dayname";
          }
          description { state: "weekend" 0.0;
             inherit: "default" 0.0;
-            color: 48 48 48 255;
+            color: 51 153 255 255;
          }
       }
    }
@@ -844,39 +690,55 @@ group { name: "e/modules/clock/calendar/dayname";
 }
 
 group { name: "e/modules/clock/calendar/day";
+   alias: "e/gadget/clock/calendar/day";
    script {
       public day_state = 0;
       evalstate() {
          new vv = get_int(day_state);
-         
+
          if (vv & 2)
            {
               set_state(PART:"e.text.label", "today", 0.0);
               set_state(PART:"label2", "today", 0.0);
+              set_state(PART:"base", "today", 0.0);
            }
          else if (vv & 4)
            {
               set_state(PART:"e.text.label", "hidden", 0.0);
               set_state(PART:"label2", "default", 0.0);
+              set_state(PART:"base", "default", 0.0);
            }
          else if (vv & 1)
            {
               set_state(PART:"e.text.label", "weekend", 0.0);
-              set_state(PART:"label2", "default", 0.0);
-           }
+              set_state(PART:"label2", "default", 0.0); 
+              set_state(PART:"base", "default", 0.0);
+          }
          else
            {
               set_state(PART:"e.text.label", "default", 0.0);
               set_state(PART:"label2", "default", 0.0);
+              set_state(PART:"base", "default", 0.0);
            }
       }
    }
    parts {
+      part { name: "base"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 64;
+            visible: 0;
+         }
+         description { state: "today" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
-            color: FN_COL_DEFAULT;
+            color: 160 160 160 255;
+            rel1.offset: 3 3;
+            rel2.offset: -4 -4;
             text { font: FN; size: 10;
                text: "00";
                min: 1 1;
@@ -890,22 +752,19 @@ group { name: "e/modules/clock/calendar/day";
          }
          description { state: "weekend" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_MID_GREY;
+            color: 51 153 255 255;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
+            color: 40 40 40 255;
          }
       }
       part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -3 -3;
+            color: 255 255 255 255;
             rel1.to: "e.text.label";
-            rel2.offset: 2 1;
             rel2.to: "e.text.label";
-            color: FN_COL_HIGHLIGHT;
             text { font: FN; size: 10;
                text_source: "e.text.label";
                min: 1 1;
@@ -937,7 +796,7 @@ group { name: "e/modules/clock/calendar/day";
             evalstate();
          }
       }
-      
+
       program {
          signal: "e,state,today"; source: "e";
          script {
@@ -954,7 +813,7 @@ group { name: "e/modules/clock/calendar/day";
             evalstate();
          }
       }
-      
+
       program {
          signal: "e,state,hidden"; source: "e";
          script {
@@ -975,14 +834,11 @@ group { name: "e/modules/clock/calendar/day";
 }
 
 group { name: "e/modules/clock/calendar";
-   images.image: "separator_horiz.png" COMP;
-   images.image: "sym_left_light_normal.png" COMP;
-   images.image: "sym_right_light_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_right_glow_normal.png" COMP;
+   alias: "e/gadget/clock/calendar";
+   images.image: "calendar_prev.png" COMP;
+   images.image: "calendar_next.png" COMP;
    parts {
       part { name: "e.text.month"; type: TEXT;
-         effect: SHADOW BOTTOM;
          mouse_events: 1;
          scale: 1;
          description { state: "default" 0.0;
@@ -990,8 +846,9 @@ group { name: "e/modules/clock/calendar";
             align: 0.0 0.0;
             rel1.to_x: "prev";
             rel1.relative: 1.0 0.0;
+            rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
-            color: FN_COL_DEFAULT;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                text: "000000000000";
                align: 0.0 0.5;
@@ -1001,15 +858,15 @@ group { name: "e/modules/clock/calendar";
          }
       }
       part { name: "e.text.year"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 1.0 0.0;
             rel1.relative: 0.0 0.0;
             rel2.to_x: "next";
+            rel2.offset: -5 -1;
             rel2.relative: 0.0 0.0;
-            color: FN_COL_DEFAULT;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                text: "0000";
                align: 1.0 0.5;
@@ -1020,15 +877,16 @@ group { name: "e/modules/clock/calendar";
       }
       part { name: "previm"; mouse_events: 0;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 15 15;
             max: 15 15;
-            rel1.to: "prev";
-            rel2.to: "prev";
-            image.normal: "sym_left_light_normal.png";
+            rel.to: "prev";
+            image.normal: "calendar_prev.png";
+            color: 160 160 160 255;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            image.normal: "sym_left_glow_normal.png";
+            color: 255 255 255 255;
          }
       }
       part { name: "prev"; type: RECT;
@@ -1058,15 +916,16 @@ group { name: "e/modules/clock/calendar";
       }
       part { name: "nextim"; mouse_events: 0;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 15 15;
             max: 15 15;
-            rel1.to: "next";
-            rel2.to: "next";
-            image.normal: "sym_right_light_normal.png";
+            rel.to: "next";
+            image.normal: "calendar_next.png";
+            color: 160 160 160 255;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            image.normal: "sym_right_glow_normal.png";
+            color: 255 255 255 255;
          }
       }
       part { name: "next"; type: RECT;
@@ -1094,29 +953,30 @@ group { name: "e/modules/clock/calendar";
             action: SIGNAL_EMIT "e,action,next" "";
          }
       }
-      part { name: "sel";
+      part { name: "sep"; type: RECT;
          description { state: "default" 0.0;
-            image.normal: "separator_horiz.png";
+            color: 80 80 80 255;
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 0;
+            rel1.offset: 8 0;
             rel1.to: "e.table.daynames";
-            rel2.offset: -1 1;
-            rel2.to: "e.table.daynames";
-            min: 0 2;
-            fill.smooth: 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -9 -1;
+            rel2.to_y: "e.table.days";
+            min: 0 1;
+            max: 99999 1;
          }
       }
-      
+
       part { name: "e.table.daynames"; type: TABLE;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.5 0.0;
             rel1.to_y: "e.text.month";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 2 2;
+            rel1.offset: 8 2;
             rel2.to_y: "e.text.month";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 2;
+            rel2.offset: -9 2;
             step: 7 1;
             table { homogeneous: TABLE;
                padding: 1 1;
@@ -1143,8 +1003,8 @@ item { \
          description { state: "default" 0.0;
             rel1.to_y: "e.table.daynames";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
+            rel1.offset: 8 16;
+            rel2.offset: -9 -9;
             step: 7 5;
             table { homogeneous: TABLE;
                padding: 1 1;

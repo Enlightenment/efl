@@ -7,6 +7,22 @@
 #define FIXED_SIZE(_WIDTH, _HEIGHT) \
    min: _WIDTH _HEIGHT; max: _WIDTH _HEIGHT; fixed: 1 1;
 
+#define SPACER_TEXT "NN";
+
+#define BACKGROUND_COMP LOSSY 99
+//#define BACKGROUND_COMP LOSSY_ETC1
+//#define BACKGROUND_COMP LOSSY_ETC2
+#define BACKGROUND_IMG \
+   set { name: "background"; \
+     image { image: "p-5120.png" BACKGROUND_COMP; size: 3841 2161 51200 28800; } \
+     image { image: "p-3840.png" BACKGROUND_COMP; size: 3201 1801  3840  2160; } \
+     image { image: "p-3200.png" BACKGROUND_COMP; size: 2561 1441  3200  1800; } \
+     image { image: "p-2560.png" BACKGROUND_COMP; size: 1921 1081  2560  1440; } \
+     image { image: "p-1920.png" BACKGROUND_COMP; size: 1601  900  1920  1080; } \
+     image { image: "p-1600.png" BACKGROUND_COMP; size: 1281  721  1600   900; } \
+     image { image: "p-1280.png" BACKGROUND_COMP; size:    0    0  1280   720; } \
+   }
+
 #define DARK_GREY_BG_COLOR 48 48 48 255
 #define DARK_GREY_BG_DISABLED_COLOR 64 64 64 255
 
@@ -17,6 +33,16 @@
    rel1.offset: -21 -14; \
    rel2.offset: 20 27; \
    fill.smooth: 0
+#define WIN_SHADOW_SMALL \
+   image.normal: "win_shadow.png"; \
+   image.border: 44 44 44 44; \
+   image.border_scale: 1; \
+   image.border_scale_by: 0.5; \
+   image.middle: 0; \
+   rel1.offset: -10 -7; \
+   rel2.offset: 9 10; \
+   fill.smooth: 0; \
+   offscale
 #define WIN_SHADOW_SPACER \
    rel1.offset: 21 14; \
    rel2.offset: -21 -28
@@ -27,3 +53,232 @@
    rel1.offset: -21 -14; \
    rel2.offset: 20 27; \
    fill.smooth: 0
+
+#define WIN_SHADOW_ANGLE_SMALL(_img) \
+   image.normal: _img; \
+   image.border: 22 22 16 30; \
+   image.border_scale: 1; \
+   image.border_scale_by: 0.5; \
+   image.middle: 0; \
+   rel1.offset: -10 -7; \
+   rel2.offset: 9 13; \
+   fill.smooth: 0; \
+   offscale
+
+#define IMAGE_RING(x, sz) \
+   set { name: x; \
+      image { image: x"1.png" COMP; size:  (sz/2)   (sz/2)  99999   99999;   } \
+      image { image: x"2.png" COMP; size:  (sz/4)   (sz/4)  (sz/2)  (sz/2);  } \
+      image { image: x"3.png" COMP; size:  (sz/8)   (sz/8)  (sz/4)  (sz/4);  } \
+      image { image: x"4.png" COMP; size:  (sz/16)  (sz/16) (sz/8)  (sz/8);  } \
+      image { image: x"5.png" COMP; size:       0        0  (sz/16) (sz/16); } \
+   }
+#define BUSY(x, start1, start2, stop1, stop2) \
+   program { signal: start1; source: start2; \
+      action: STATE_SET "visible" 0.0; \
+      transition: SINUSOIDAL 1.0; \
+      target: "busy"; } \
+   program { signal: start1; source: start2; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy1"; \
+      target: "busy2"; \
+      target: "busy3"; \
+      after: "busy-p11"; \
+      after: "busy-p21"; \
+      after: "busy-p31"; } \
+   program { signal: stop1; source: stop2; \
+      action: STATE_SET "default" 0.0; \
+      transition: SINUSOIDAL 1.0; \
+      target: "busy"; \
+      after: "busy_stop2"; } \
+   program { name: "busy_stop2"; \
+      action: ACTION_STOP; \
+      target: "busy-p11"; \
+      target: "busy-p12"; \
+      target: "busy-p21"; \
+      target: "busy-p22"; \
+      target: "busy-p31"; \
+      target: "busy-p32"; } \
+   part { name: "busy"; type: RECT; \
+      description { state: "default" 0.0; \
+         rel1.to: x; rel2.to: x; \
+         color: 255 255 255 0; visible: 0; } \
+      description { state: "visible" 0.0; \
+         inherit: "default" 0.0; \
+         color: 255 255 255 255; visible: 1; } } \
+   part { name: "busy1"; \
+      clip_to: "busy"; \
+      description { state: "default" 0.0; \
+         rel1.to: "busy"; rel2.to: "busy"; \
+         aspect: 1.0 1.0; aspect_preference: BOTH; \
+         image.normal: "ringa"; \
+         color: 255 255 255 255; \
+         map.on: 1; \
+         map.smooth: 1; \
+         map.rotation.center: "busy"; \
+         map.rotation.z: 0; } \
+      description { state: "default" 1.0; \
+         inherit: "default" 0.0; \
+         map.rotation.z: 360; } } \
+   program { name: "busy-p11"; \
+      action: STATE_SET "default" 1.0; \
+      transition: LINEAR 1.0; \
+      target: "busy1"; \
+      after: "busy-p12"; } \
+   program { name: "busy-p12"; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy1"; \
+      after: "busy-p11"; } \
+   part { name: "busy2"; \
+      clip_to: "busy"; \
+      description { state: "default" 0.0; \
+         rel1.to: "busy"; rel2.to: "busy"; \
+         aspect: 1.0 1.0; aspect_preference: BOTH; \
+         image.normal: "ringb"; \
+         color: 255 255 255 128; \
+         map.on: 1; \
+         map.smooth: 1; \
+         map.rotation.center: "busy"; \
+         map.rotation.z: 420; } \
+      description { state: "default" 1.0; \
+         inherit: "default" 0.0; \
+         map.rotation.z: 80; } } \
+   program { name: "busy-p21"; \
+      action: STATE_SET "default" 1.0; \
+      transition: LINEAR 0.7; \
+      target: "busy2"; \
+      after: "busy-p22"; } \
+   program { name: "busy-p22"; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy2"; \
+      after: "busy-p21"; } \
+   part { name: "busy3"; \
+      clip_to: "busy"; \
+      description { state: "default" 0.0; \
+         rel1.to: "busy"; rel2.to: "busy"; \
+         aspect: 1.0 1.0; aspect_preference: BOTH; \
+         image.normal: "ringc"; \
+         color: 51 153 255 128; \
+         map.on: 1; \
+         map.smooth: 1; \
+         map.rotation.center: "busy"; \
+         map.rotation.z: 170; } \
+      description { state: "default" 1.0; \
+         inherit: "default" 0.0; \
+         map.rotation.z: 530; } } \
+   program { name: "busy-p31"; \
+      action: STATE_SET "default" 1.0; \
+      transition: LINEAR 1.4; \
+      target: "busy3"; \
+      after: "busy-p32"; } \
+   program { name: "busy-p32"; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy3"; \
+      after: "busy-p31"; }
+
+#define ICON         1
+#define LABEL        2
+#define MASK         3
+#define DISABLE      4
+#define PRESSED      8
+#define BACKGROUND  16
+#define BUTTONMODE_SCRIPT \
+      public btmode; \
+      public eval_mode(m) { \
+         new m1 = m & MASK; \
+         new d  = m & DISABLE; \
+         new p  = m & PRESSED; \
+         new bg = m & BACKGROUND; \
+         if (bg) { \
+            set_state(PART:"base", "hidden", 0.0); \
+            set_state(PART:"elm.swallow.background", "visible", 0.0); \
+         } else { \
+            set_state(PART:"elm.swallow.background", "default", 0.0); \
+            if (!d) { \
+               if (!p) { \
+                  set_state(PART:"base", "default", 0.0); \
+                  set_state(PART:"shadow", "default", 0.0); \
+               } else { \
+                  set_state(PART:"base", "pressed", 0.0); \
+                  set_state(PART:"shadow", "pressed", 0.0); \
+               } \
+            } else { \
+               set_state(PART:"base", "disabled", 0.0); \
+               set_state(PART:"shadow", "disabled", 0.0); \
+            } \
+         } \
+         if (m1 == (ICON | LABEL)) { \
+            if (!d) { \
+               set_state(PART:"elm.swallow.content", "visible", 0.0); \
+               set_state(PART:"sizer_content", "visible", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+               if (!p) { \
+                  set_state(PART:"elm.text", "visible", 0.0); \
+                  set_state(PART:"icon_clip", "default", 0.0); \
+               } else { \
+                  set_state(PART:"elm.text", "pressed_visible", 0.0); \
+                  set_state(PART:"icon_clip", "pressed", 0.0); \
+               } \
+            } else { \
+               set_state(PART:"elm.swallow.content", "visible", 0.0); \
+               set_state(PART:"sizer_content", "visible", 0.0); \
+               set_state(PART:"elm.text", "disabled_visible", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } else if (m1 == (ICON)) { \
+            if (!d) { \
+               set_state(PART:"elm.swallow.content", "icononly", 0.0); \
+               set_state(PART:"sizer_content", "icononly", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+               set_state(PART:"elm.text", "default", 0.0); \
+               if (!p) \
+                  set_state(PART:"icon_clip", "default", 0.0); \
+               else \
+                  set_state(PART:"icon_clip", "pressed", 0.0); \
+            } else { \
+               set_state(PART:"elm.swallow.content", "icononly", 0.0); \
+               set_state(PART:"sizer_content", "icononly", 0.0); \
+               set_state(PART:"elm.text", "default", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } else if (m1 == (LABEL)) { \
+            if (!d) { \
+               set_state(PART:"elm.swallow.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"icon_clip", "default", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+               if (!p) \
+                  set_state(PART:"elm.text", "textonly", 0.0); \
+               else \
+                  set_state(PART:"elm.text", "pressed_textonly", 0.0); \
+            } else { \
+               set_state(PART:"elm.swallow.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"elm.text", "disabled_textonly", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } else { \
+            if (!d) { \
+               set_state(PART:"elm.swallow.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"icon_clip", "default", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+            } else { \
+               set_state(PART:"elm.swallow.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } \
+      } \
+      flag_set(flag) { \
+         new m = get_int(btmode) | flag; \
+         set_int(btmode, m); eval_mode(m); \
+      } \
+      flag_unset(flag) { \
+         new m = get_int(btmode) & ~flag; \
+         set_int(btmode, m); eval_mode(m); \
+      }

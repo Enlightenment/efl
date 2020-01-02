@@ -452,7 +452,7 @@
       }                                               \
    }
 
-   MIMEICON("inode/directory","icon_efm_folder.png", 128);
+//   MIMEICON("inode/directory","icon_efm_folder.png", 128);
 
    MIMEICON("application/x-deb","icon_mime_deb.png", 128);
    MIMEICON("application/x-bzip","icon_mime_package.png", 128);

@@ -1,37 +1,53 @@
 group { name: "e/theme/about";
    // data.item: "borderless" "1";
    // data.item: "shaped" "1";
-   images.image: "bevel_dark_out.png" COMP;
-   images.image: "screen_circular_shadow.png" COMP;
-   images.image: "button_normal.png" COMP;
-   images.image: "button_clicked.png" COMP;
-   min: 220 220;
-   max: 220 220;
+//   images.image: "check_fill.png" COMP;
+   images.image: "clouds.jpg" LOSSY 99;
+   min: 220 320;
    parts {
       part { name: "sizer"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
-            min: 220 220;
+            min: 220 320;
          }
       }
-      part { name: "bg";
+/*
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            image.normal: "bg_radgrad.png";
-            image.scale_hint: STATIC;
-            fill.smooth: 0;
-            ASPECT_FILL((1024/653))
+            color: 64 64 64 255;
          }
       }
-      part { name: "name"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "check";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: FN_COL_HIGHLIGHT;
+            color: 56 56 56 255;
+            image.normal: "check_fill.png";
+            min: 5120 5120;
+            align: 0.0 0.0;
+            fill {
+              size.relative: 0.05 0.05;
+              smooth: 0;
+            }
+         }
+      }
+ */
+      part { name: "image";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "clouds.jpg";
+            aspect: 1.0 1.0; aspect_preference: NONE;
+         }
+      }
+      part { name: "name"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            color: 255 255 255 255;
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
-            text { font: FNBD; size: 64;
-               text: "Dark";
+            text { font: FNBD; size: 48;
+               text: "FLAT";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
@@ -39,67 +55,47 @@ group { name: "e/theme/about";
          }
       }
       part { name: "name2"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: FN_COL_HIGHLIGHT;
-            rel1.relative: 0.5 0.9;
+            color: 255 255 255 192;
+            rel1.relative: 0.0 1.0;
             rel1.to: "name";
-            rel2.relative: 0.5 0.9;
+            rel1.offset: 0 16;
+            rel2.relative: 1.0 1.0;
             rel2.to: "name";
-            align: 0.5 1.0;
+            rel2.offset: -1 16;
+            align: 0.5 0.0;
             text { font: FN; size: 10;
                text: "The default theme for Enlightenment";
                min: 1 1;
                ellipsis: -1;
-               align: 0.5 1.0;
+               align: 0.5 0.0;
             }
          }
       }
-      part { name: "shadow"; mouse_events: 0;
+      ////////////////////////////////////////////////////////////////
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 1.0;
-            image.normal: "screen_circular_shadow.png";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "bevel";
-         description { state: "default" 0.0;
-            image.normal: "bevel_dark_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "base";
-         description { state: "default" 0.0;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
             rel1.offset: -6 -6;
             rel1.to: "e.text.label";
             rel2.offset: 5 5;
             rel2.to: "e.text.label";
-            fill.smooth: 0;
-                     }
+            color: 48 48 48 255;
+         }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            image.normal: "button_clicked.png";
-            image.border: 5 5 4 6;
+            color: 32 32 32 255;
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -14 -14;
             rel1.relative: 1.0 1.0;
             rel2.offset: -14 -14;
             rel2.relative: 1.0 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "button_text";
+            color: 160 160 160 255;
             align: 1.0 1.0;
             min: 85 0;
             text { font: FN; size: 10;
@@ -110,34 +106,49 @@ group { name: "e/theme/about";
             }
             fixed: 1 1;
          }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
       }
-      part { name: "base2";
+      program {
+         signal: "mouse,down,1*"; source: "base";
+         action: STATE_SET "clicked" 0.0;
+         target: "base";
+         target: "e.text.label";
+      }
+      program {
+         signal: "mouse,up,1"; source: "base";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "e.text.label";
+      }
+      program {
+         signal: "mouse,clicked,1*"; source: "base";
+         action: SIGNAL_EMIT "e,action,close" "";
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "base2"; type: RECT;
          description { state: "default" 0.0;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
             rel1.offset: -6 -6;
             rel1.to: "e.text.theme";
             rel2.offset: 5 5;
             rel2.to: "e.text.theme";
-            fill.smooth: 0;
-                     }
+            color: 48 48 48 255;
+         }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            image.normal: "button_clicked.png";
-            image.border: 5 5 4 6;
+            color: 32 32 32 255;
          }
       }
       part { name: "e.text.theme"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 13 -14;
             rel1.relative: 0.0 1.0;
             rel2.offset: 13 -14;
             rel2.relative: 0.0 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "button_text";
+            color: 160 160 160 255;
             align: 0.0 1.0;
             min: 85 0;
             text { font: FN; size: 10;
@@ -148,32 +159,22 @@ group { name: "e/theme/about";
             }
             fixed: 1 1;
          }
-      }
-   }
-   programs {
-      program {
-         signal: "mouse,down,1*"; source: "base";
-         action: STATE_SET "clicked" 0.0;
-         target: "base";
-      }
-      program {
-         signal: "mouse,up,1"; source: "base";
-         action: STATE_SET "default" 0.0;
-         target: "base";
-      }
-      program {
-         signal: "mouse,clicked,1*"; source: "base";
-         action: SIGNAL_EMIT "e,action,close" "";
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
       }
       program {
          signal: "mouse,down,1*"; source: "base2";
          action: STATE_SET "clicked" 0.0;
          target: "base2";
+         target: "e.text.theme";
       }
       program {
          signal: "mouse,up,1"; source: "base2";
          action: STATE_SET "default" 0.0;
          target: "base2";
+         target: "e.text.theme";
       }
       program {
          signal: "mouse,clicked,1*"; source: "base2";

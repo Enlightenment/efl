@@ -1,18 +1,13 @@
 group { name: "elm/scroller/entry/default";
    inherit: "elm/scroller/base/default";
-   image: "bg_glow_in.png" COMP;
    parts {
-      part { name: "elm.swallow.background"; type: SWALLOW;
-         clip_to: "clipper";
+      part { name: "bg";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
+            color: DARK_GREY_BG_COLOR;
          }
       }
-      part { name: "validation_glow";
-         type: RECT;
-         insert_before: "bg";
-         mouse_events: 0;
+      part { name: "validation_glow"; type: RECT; mouse_events: 0;
+         insert_after: "elm.swallow.background";
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
@@ -22,117 +17,6 @@ group { name: "elm/scroller/entry/default";
          description { state: "fail" 0.0;
             color: 255 0 0 90;
          }
-      }
-      part { name: "bg";
-         description { state: "default" 0.0;
-            color: DARK_GREY_BG_COLOR;
-         }
-      }
-      part { name: "elm.swallow.content";
-         description { state: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 0 0;
-            rel2.to: "elm.swallow.end";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -1;
-         }
-      }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
-         clip_to: "clipper";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "clipper";
-            rel1.offset: 1 1;
-            rel2.to: "clipper";
-            rel2.offset: 1 -2;
-            rel2.relative: 0.0 1.0;
-            visible: 0;
-            align: 1.0 0.0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            align: 0.0 0.0;
-         }
-      }
-      program {
-         signal: "elm,action,show,icon"; source: "elm";
-         action: STATE_SET "visible" 0.0;
-         target: "elm.swallow.icon";
-      }
-      program {
-         signal: "elm,action,hide,icon"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.swallow.icon";
-      }
-      part { name: "elm.swallow.end"; type: SWALLOW;
-         clip_to: "clipper";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "clipper";
-            rel1.offset: -2 1;
-            rel1.relative: 1.0 0.0;
-            rel2.to: "clipper";
-            rel2.offset: -2 -2;
-            visible: 0;
-            align: 0.0 0.0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            align: 1.0 0.0;
-         }
-      }
-      program {
-         signal: "elm,action,show,end"; source: "elm";
-         action: STATE_SET "visible" 0.0;
-         target: "elm.swallow.end";
-      }
-      program {
-         signal: "elm,action,hide,end"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.swallow.end";
-      }
-      part { name: "glow";
-         insert_after: "shadow";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            image.normal: "bg_glow_in.png";
-            image.border: 7 7 7 7;
-            image.middle: 0;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-         description { state: "focused2" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-   }
-   programs {
-      program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
-         action: STATE_SET "focused" 0.0;
-         target: "glow";
-         after: "focus_in2";
-      }
-      program { name: "focus_in2";
-         action: STATE_SET "focused2" 0.0;
-         transition: DECELERATE 0.5;
-         target: "glow";
-      }
-      program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
-         target: "glow";
       }
       program { name: "validation_fail";
          signal: "validation,default,fail";
@@ -152,29 +36,126 @@ group { name: "elm/scroller/entry/default";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         insert_before: "elm.swallow.content";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bg";
+            rel1.offset: 0 0;
+            color: 51 153 255 0;
+            visible: 0;
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 0 -3;
+            color: 51 153 255 255;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,action,focus_highlight,show"; source: "elm";
+         action: STATE_SET "focused" 0.0;
+         transition: DECELERATE 0.3;
+         target: "glow";
+      }
+      program {
+         signal: "elm,action,focus_highlight,hide"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.3;
+         target: "glow";
+      }
+      part { name: "elm.swallow.content";
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 0 0;
+            rel2.to: "elm.swallow.end";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -1 -1;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         clip_to: "clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "bg";
+            rel1.offset: 0 2;
+            rel2.to: "bg";
+            rel2.offset: 0 -3;
+            rel2.relative: 0.0 1.0;
+            visible: 0;
+            align: 0.0 0.5;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
+            min: 16 16;
+            aspect_preference: VERTICAL;
+            aspect: 1.0 1.0;
+         }
+      }
+      program {
+         signal: "elm,action,show,icon"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.swallow.icon";
+      }
+      program {
+         signal: "elm,action,hide,icon"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         clip_to: "clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "bg";
+            rel1.offset: 0 2;
+            rel1.relative: 1.0 0.0;
+            rel2.to: "bg";
+            rel2.offset: 0 -3;
+            visible: 0;
+            align: 1.0 0.5;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
+            min: 16 16;
+            aspect_preference: VERTICAL;
+            aspect: 1.0 1.0;
+         }
+      }
+      program {
+         signal: "elm,action,show,end"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.swallow.end";
+      }
+      program {
+         signal: "elm,action,hide,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.end";
+      }
    }
 }
 
 group { name: "elm/scroller/entry_single/default";
-   images.image: "bevel_in.png" COMP;
-   images.image: "inset_shadow.png" COMP;
-   image: "bg_glow_in.png" COMP;
-   
+   images.image: "shadow_circle_horiz.png" COMP;
+   images.image: "shadow_circle_vert.png" COMP;
+
    data.item: "focus_highlight" "on";
-   
    parts {
-      part { name: "validation_glow";
-         type: RECT;
-         insert_before: "bg";
-         mouse_events: 0;
+      part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "pass" 0.0;
-            color: 0 255 0 90;
-         }
-         description { state: "fail" 0.0;
-            color: 255 0 0 90;
          }
       }
       part { name: "sb_vbar_base"; type: RECT;
@@ -216,6 +197,7 @@ group { name: "elm/scroller/entry_single/default";
             rel2.to: "sb_hbar_base";
             visible: 0;
          }
+
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
@@ -225,42 +207,85 @@ group { name: "elm/scroller/entry_single/default";
             color_class: "scroller_bg";
          }
       }
-      part { name: "clipper"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "elm.swallow.background";
-            rel2.to: "elm.swallow.background";
-         }
-      }
       part { name: "elm.swallow.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
          }
       }
+      part { name: "validation_glow"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "pass" 0.0;
+            color: 0 255 0 90;
+         }
+         description { state: "fail" 0.0;
+            color: 255 0 0 90;
+         }
+      }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bg";
+            rel1.offset: 0 0;
+            color: 51 153 255 0;
+            visible: 0;
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 0 -3;
+            color: 51 153 255 255;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,action,focus_highlight,show"; source: "elm";
+         action: STATE_SET "focused" 0.0;
+         transition: DECELERATE 0.2;
+         target: "glow";
+      }
+      program {
+         signal: "elm,action,focus_highlight,hide"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.2;
+         target: "glow";
+      }
+
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
+            rel1.to_x: "elm.swallow.icon";
             rel1.relative: 1.0 0.0;
-            rel2.to: "elm.swallow.end";
+            rel1.offset: 2 2;
+            rel2.to_x: "elm.swallow.end";
             rel2.relative: 0.0 1.0;
+            rel2.offset: -3 -3;
+            offscale;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.offset: 1 1;
-            rel2.offset: 1 -2;
             rel2.relative: 0.0 1.0;
+            rel1.offset: -1 2;
+            rel2.offset: -1 -3;
             visible: 0;
-            align: 1.0 0.5;
+            align: 0.0 0.5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
             visible: 1;
-            align: 0.0 0.5;
+            min: 16 16;
+            aspect_preference: VERTICAL;
+            aspect: 1.0 1.0;
          }
       }
       program {
@@ -273,20 +298,26 @@ group { name: "elm/scroller/entry_single/default";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
       }
+
       part { name: "elm.swallow.end"; type: SWALLOW;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.offset: -2 1;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -2 -2;
+            rel1.offset: 0 2;
+            rel2.offset: 0 -3;
             visible: 0;
-            align: 0.0 0.5;
+            align: 1.0 0.5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
             visible: 1;
-            align: 1.0 0.5;
+            min: 16 16;
+            aspect_preference: VERTICAL;
+            aspect: 1.0 1.0;
          }
       }
       program {
@@ -299,75 +330,85 @@ group { name: "elm/scroller/entry_single/default";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.end";
       }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel1.offset: -1 -1;
-            rel2.to: "bg";
-            rel2.offset: 0 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            fill.smooth: 0;
-            color: 255 255 255 128;
-         }
-      }
+
       part { name: "elm.swallow.overlay"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
+            rel1.to: "elm.swallow.icon";
+            rel2.to: "elm.swallow.end";
          }
       }
-      part { name: "glow";
-         mouse_events: 0;
+
+      part { name: "sh_left"; mouse_events: 0;
+         scale: 1;
+         clip_to: "sh_clip";
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            image.normal: "bg_glow_in.png";
-            image.border: 7 7 7 7;
-            image.middle: 0;
-            fill.smooth: 0;
             color: 255 255 255 0;
+            rel.to: "bg";
+            rel1.offset: -1 0;
+            rel2.offset: -1 -1;
+            rel2.relative: 0.0 1.0;
+            image.normal: "shadow_circle_vert.png";
+            visible: 0;
+            offscale;
          }
-         description { state: "focused" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 128;
+            rel1.offset: -16 0;
+            rel2.offset: 15 -1;
+            visible: 1;
          }
-         description { state: "focused2" 0.0;
+      }
+      program { signal: "elm,action,show,left"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.3;
+         target: "sh_left";
+      }
+      program { signal: "elm,action,hide,left"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.3;
+         target: "sh_left";
+      }
+      part { name: "sh_right"; mouse_events: 0;
+         scale: 1;
+         clip_to: "sh_clip";
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel.to: "bg";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: 0 -1;
+            image.normal: "shadow_circle_vert.png";
+            visible: 0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 128;
+            rel1.offset: -16 0;
+            rel2.offset: 15 -1;
+            visible: 1;
+         }
+      }
+      program { signal: "elm,action,show,right"; source: "elm";
+        action: STATE_SET "visible" 0.0;
+        transition: DECELERATE 0.3;
+        target: "sh_right";
+      }
+      program { signal: "elm,action,hide,right"; source: "elm";
+        action: STATE_SET "default" 0.0;
+        transition: DECELERATE 0.3;
+        target: "sh_right";
+      }
+
+      part { name: "sh_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "elm.swallow.background";
          }
       }
    }
    programs {
-      program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
-         action: STATE_SET "focused" 0.0;
-         target: "glow";
-         after: "focus_in2";
-      }
-      program { name: "focus_in2";
-         action: STATE_SET "focused2" 0.0;
-         transition: DECELERATE 0.5;
-         target: "glow";
-      }
-      program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
-         target: "glow";
-      }
       program { name: "validation_fail";
          signal: "validation,default,fail";
          source: "elm";
@@ -391,23 +432,17 @@ group { name: "elm/scroller/entry_single/default";
 
 group { name: "elm/entry/cursor/default";
    min: 1 0;
-   images.image: "white_bar_vert_glow.png" COMP;
    parts {
-      part { name: "cursor"; mouse_events: 0;
+      part { name: "cursor"; type: RECT; mouse_events: 0;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            image.normal: "white_bar_vert_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            color_class: "entry_cursor";
-            min: 9 10;
+            min: 1 10;
+            visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            visible: 1;
          }
       }
       part { name: "clipper"; type: RECT;
@@ -477,7 +512,6 @@ group { name: "elm/entry/cursor/default";
       program { name: "cursor_hide";
          action: STATE_SET "default" 0.0;
          target: "cursor";
-         transition: SINUSOIDAL 0.2;
          after: "cursor_hide_timer";
       }
       program { name: "cursor_show_timer";
@@ -485,7 +519,7 @@ group { name: "elm/entry/cursor/default";
          after: "cursor_hide";
       }
       program { name: "cursor_hide_timer";
-         in: 0.2 0.0;
+         in: 0.3 0.0;
          after: "cursor_show";
       }
    }
@@ -495,7 +529,7 @@ group { name: "elm/entry/selection/default";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color: 51 153 255 128;
          }
       }
    }
@@ -504,21 +538,22 @@ group { name: "elm/entry/selection/default";
 group { name: "elm/entry/anchor/default";
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
    parts {
-      part { name: "bar";
+      part { name: "bar"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
+            color: 51 135 255 255;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.offset: -3 -5;
-            rel2.offset: 2 4;
+            rel1.offset: -1 -1;
+            rel2.offset: 0 -1;
+            offscale;
          }
       }
    }
 }
 
 group { name: "elm/entry/base/default";
+/*
    sounds {
       sample { name: "key-tap1" LOSSY 64;
          source: "kbd-tap.wav";
@@ -536,26 +571,26 @@ group { name: "elm/entry/base/default";
          source: "kbd-tap5.wav";
       }
    }
-   
+ */
    styles {
       style { name: "entry_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=word text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=word text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_disabled_style";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -563,15 +598,12 @@ group { name: "elm/entry/base/default";
    parts {
       part { name: "elm.swallow.background"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
          }
       }
       part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
+            rel.to: "elm.text";
             text { style: "entry_guide_style";
                min: 0 1;
                align: 0.0 0.0;
@@ -604,12 +636,11 @@ group { name: "elm/entry/base/default";
                min: 0 1;
                align: 0.0 0.0;
             }
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_disabled_style";
-               min: 0 1;
-            }
+            text.style: "entry_disabled_style";
          }
       }
    }
@@ -639,6 +670,7 @@ group { name: "elm/entry/base/default";
          action: STATE_SET "default" 0.0;
          target: "elm.guide";
       }
+/*
       program { name: "key-down";
          signal: "entry,keydown"; source: "elm.text";
          script {
@@ -662,6 +694,7 @@ group { name: "elm/entry/base/default";
       program { name: "key-down5";
          action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
       }
+ */
    }
 }
 
@@ -669,28 +702,22 @@ group { name: "elm/entry/base-mixedwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=mixed text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=mixed text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=mixed text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=mixed text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
       part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
-         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            text { style: "entry_guide_style_mixedwrap";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_guide_style_mixedwrap";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -700,10 +727,7 @@ group { name: "elm/entry/base-mixedwrap/default";
       part { name: "elm.text";
          description { state: "default" 0.0;
             fixed: 1 0;
-            text { style: "entry_style_mixedwrap";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_style_mixedwrap";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -719,15 +743,15 @@ group { name: "elm/entry/base-charwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_charwrap";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=char text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=char text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_charwrap";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=char text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_charwrap";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=char text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -735,12 +759,7 @@ group { name: "elm/entry/base-charwrap/default";
       part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            text { style: "entry_guide_style_charwrap";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_guide_style_charwrap";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -750,10 +769,7 @@ group { name: "elm/entry/base-charwrap/default";
       part { name: "elm.text";
          description { state: "default" 0.0;
             fixed: 1 1;
-            text { style: "entry_style_charwrap";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_style_charwrap";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -771,12 +787,7 @@ group { name: "elm/entry/base-nowrap/default";
       part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            text { style: "entry_guide_style";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_guide_style";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -788,7 +799,6 @@ group { name: "elm/entry/base-nowrap/default";
             text { style: "entry_nowrap_style";
                min: 1 1;
                ellipsis: -1;
-               align: 0.0 0.0;
             }
          }
          description { state: "disabled" 0.0;
@@ -805,15 +815,15 @@ group { name: "elm/entry/base-single/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_single_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_disabled_style";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=none text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_guide_style";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=none text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -821,10 +831,7 @@ group { name: "elm/entry/base-single/default";
       part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
             text { style: "entry_single_guide_style";
-               min: 0 1;
                align: 0.0 0.5;
             }
          }
@@ -845,8 +852,7 @@ group { name: "elm/entry/base-single/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_single_disabled_style";
-            }
+            text.style: "entry_single_disabled_style";
          }
       }
    }
@@ -857,7 +863,7 @@ group { name: "elm/entry/base-single/spinner/default";
    inherit: "elm/entry/base-single/default";
    styles {
       style { name: "entry_single_spinner_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 align=center wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 align=center wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
    }
@@ -889,8 +895,7 @@ group { name: "elm/entry/base-single-noedit/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_single_disabled_style";
-            }
+            text.style: "entry_single_disabled_style";
          }
       }
    }
@@ -906,15 +911,10 @@ group { name: "elm/entry/base-noedit/default";
          source6: "elm/entry/anchor/default"; // anchor over
          description { state: "default" 0.0;
             fixed: 1 0;
-            text { style: "entry_style";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_disabled_style";
-            }
+            text.style: "entry_disabled_style";
          }
       }
    }
@@ -930,15 +930,11 @@ group { name: "elm/entry/base-noedit-mixedwrap/default";
          source6: "elm/entry/anchor/default"; // anchor over
          description { state: "default" 0.0;
             fixed: 1 0;
-            text { style: "entry_style_mixedwrap";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_style_mixedwrap";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_disabled_style_mixedwrap";
-            }
+            text.style: "entry_disabled_style_mixedwrap";
          }
       }
    }
@@ -954,15 +950,11 @@ group { name: "elm/entry/base-noedit-charwrap/default";
          source6: "elm/entry/anchor/default"; // anchor under
          description { state: "default" 0.0;
             fixed: 1 0;
-            text { style: "entry_style_charwrap";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
+            text.style: "entry_style_charwrap";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_disabled_style_charwrap";
-            }
+            text.style: "entry_disabled_style_charwrap";
          }
       }
    }
@@ -998,12 +990,7 @@ group { name: "elm/entry/base-password/default";
       part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            text { style: "entry_single_guide_style";
-               min: 0 1;
-               align: 0.0 0.5;
-            }
+            text.style: "entry_single_guide_style";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -1027,23 +1014,32 @@ group { name: "elm/entry/base-password/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_single_disabled_style";
-            }
+            text.style: "entry_single_disabled_style";
          }
       }
    }
 }
 
 group { name: "elm/entry/magnifier/default";
-   images.image: "frame_rounded.png" COMP;
    parts {
-      part { name: "bg"; type: RECT; mouse_events: 0;
+      part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.offset: 10 10;
-            rel1.to: "over";
-            rel2.offset: -11 -11;
-            rel2.to: "over";
+            rel.to: "bg";
+            WIN_SHADOW;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "bg"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 80 40;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
             color: 48 48 48 255;
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -1052,25 +1048,7 @@ group { name: "elm/entry/magnifier/default";
       }
       part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.offset: 10 10;
-            rel1.to: "over";
-            rel2.offset: -11 -11;
-            rel2.to: "over";
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "over"; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 128 64;
-            align: 0 0;
-            image.normal: "frame_rounded.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            fill.smooth: 0;
+            rel.to: "bg";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -1079,19 +1057,17 @@ group { name: "elm/entry/magnifier/default";
       }
    }
    programs {
-      program { name: "magnifier_show";
-         signal: "elm,action,show,magnifier"; source: "elm";
+      program { signal: "elm,action,show,magnifier"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.content";
          target: "bg";
-         target: "over";
+         target: "shadow";
       }
-      program { name: "magnifier_hide";
-         signal: "elm,action,hide,magnifier"; source: "elm";
+      program { signal: "elm,action,hide,magnifier"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "elm.swallow.content";
          target: "bg";
-         target: "over";
+         target: "shadow";
       }
    }
 }
@@ -1102,10 +1078,10 @@ group { name: "elm/entry/handler/start/default";
       part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 27; // 42 54
             image.normal: "handle_pick_up_left.png";
+            min: 21 27; // 42 54
             align: (29/42) (11/54);
-            color_class: "entry_selection_handler";
+            color: 51 153 255 255;
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1116,9 +1092,8 @@ group { name: "elm/entry/handler/start/default";
       part { name: "event"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "base";
             color: 0 0 0 0;
-            rel1.to: "base";
-            rel2.to: "base";
             min: 32 32;
             visible: 0;
          }
@@ -1129,14 +1104,12 @@ group { name: "elm/entry/handler/start/default";
       }
    }
    programs {
-      program {
-         signal: "elm,handler,show"; source: "elm";
+      program { signal: "elm,handler,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
-      program {
-         signal: "elm,handler,hide"; source: "elm";
+      program { signal: "elm,handler,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
@@ -1150,10 +1123,10 @@ group { name: "elm/entry/handler/end/default";
       part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 27; // 42 54
             image.normal: "handle_pick_up_right.png";
+            min: 21 27; // 42 54
             align: (12/42) (11/54);
-            color_class: "entry_selection_handler";
+            color: 51 153 255 255;
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1164,9 +1137,8 @@ group { name: "elm/entry/handler/end/default";
       part { name: "event"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "base";
             color: 0 0 0 0;
-            rel1.to: "base";
-            rel2.to: "base";
             min: 32 32;
             visible: 0;
          }
@@ -1177,14 +1149,12 @@ group { name: "elm/entry/handler/end/default";
       }
    }
    programs {
-      program {
-         signal: "elm,handler,show"; source: "elm";
+      program { signal: "elm,handler,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
-      program {
-         signal: "elm,handler,hide"; source: "elm";
+      program { signal: "elm,handler,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
@@ -1192,6 +1162,114 @@ group { name: "elm/entry/handler/end/default";
    }
 }
 
+group { name: "elm/efl_ui_text/base/default";
+/*
+   sounds {
+      sample { name: "key-tap1" LOSSY 64;
+         source: "kbd-tap.wav";
+      }
+      sample { name: "key-tap2" LOSSY 64;
+         source: "kbd-tap2.wav";
+      }
+      sample { name: "key-tap3" LOSSY 64;
+         source: "kbd-tap3.wav";
+      }
+      sample { name: "key-tap4" LOSSY 64;
+         source: "kbd-tap4.wav";
+      }
+      sample { name: "key-tap5" LOSSY 64;
+         source: "kbd-tap5.wav";
+      }
+   }
+ */
+//   data.item: "context_menu_orientation" "horizontal";
+   parts {
+      part { name: "elm.swallow.background"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+      }
+      part { name: "elm.text"; type: SWALLOW;
+         scale: 1;
+         entry_mode: EDITABLE;
+         select_mode: DEFAULT;
+//         select_mode: EXPLICIT;
+         cursor_mode: BEFORE;
+         multiline: 1;
+         source: "elm/entry/selection/default"; // selection under
+//         source2: "X"; // selection over
+//         source3: "X"; // cursor under
+         source4: "elm/entry/cursor/default"; // cursorover
+//         source5: "elm/entry/anchor/default"; // anchor under
+         source6: "elm/entry/anchor/default"; // anchor over
+         description { state: "default" 0.0;
+            /* we gotta use 0 0 here, because of scrolled entries */
+            fixed: 0 0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "load"; source: "";
+         action: FOCUS_SET;
+         target: "elm.text";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+      }
+#if 0
+      program {
+         signal: "elm,guide,disabled"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "elm.guide";
+      }
+      program {
+         signal: "elm,guide,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.guide";
+      }
+#endif
+/*
+      program { name: "key-down";
+         signal: "entry,keydown"; source: "elm.text";
+         script {
+            new buf[32];
+            snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
+            run_program(get_program_id(buf));
+         }
+      }
+      program { name: "key-down1";
+         action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
+      }
+      program { name: "key-down2";
+         action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
+      }
+      program { name: "key-down3";
+         action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
+      }
+      program { name: "key-down4";
+         action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
+      }
+      program { name: "key-down5";
+         action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
+      }
+ */
+   }
+}
 ///////////////////////////////////////////////////////////////////////////////
 // emoticon images from:
 // Tanya - Latvia

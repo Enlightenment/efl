@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="160"
+   height="160"
+   viewBox="0 0 160 160"
+   sodipodi:docname="O-wifi.svgz"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/cloud-conn.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#404040"
+     bordercolor="#000000"
+     borderopacity="0.25098039"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1600"
+     inkscape:window-height="837"
+     id="namedview4"
+     showgrid="true"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:zoom="4.21875"
+     inkscape:cx="71.348148"
+     inkscape:cy="83.771684"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     inkscape:showpageshadow="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4138"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <path
+     inkscape:connector-curvature="0"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none"
+     d="M 80,30 A 90,90 0 0 0 16.400391,56.400391 l 7.115234,7.115234 A 80,80 0 0 1 80.095703,40 80,80 0 0 1 136.58008,63.419922 l 7.01953,-7.019531 A 90,90 0 0 0 80,30 Z"
+     id="path4174" />
+  <path
+     inkscape:connector-curvature="0"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none"
+     d="M 79.999999,50 A 70,70 0 0 0 30.533201,70.533203 l 7.111328,7.111328 A 60.044445,60.266666 0 0 1 80.044921,60 60.044445,60.266666 0 0 1 122.39648,77.603516 l 7.07032,-7.070313 A 70,70 0 0 0 79.999999,50 Z"
+     id="path3354" />
+  <path
+     inkscape:connector-curvature="0"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none"
+     d="M 79.732421,70 A 49.707302,49.837036 0 0 0 44.613279,84.61328 l 7.056641,7.05664 A 39.733334,39.837036 0 0 1 79.732421,80 39.733334,39.837036 0 0 1 108.07227,91.92773 l 7.03906,-7.03906 A 49.707302,49.837036 0 0 0 79.732421,70 Z"
+     id="ellipse3349" />
+  <path
+     inkscape:connector-curvature="0"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none"
+     d="m 79.999999,90 a 30,30 0 0 0 -21.19922,8.80078 l 7.066408,7.06641 A 20,20 0 0 1 79.999999,100 a 20,20 0 0 1 14.132812,5.86719 l 7.066409,-7.06641 A 30,30 0 0 0 79.999999,90 Z"
+     id="circle3344" />
+  <circle
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path5460"
+     cx="80"
+     cy="120"
+     r="10" />
+</svg>

@@ -135,8 +135,7 @@ group { name: "elm/hover/base/default";
       }
       part { name: "elm.swallow.slot.middle"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.size";
-            rel2.to: "elm.swallow.size";
+            rel.to: "elm.swallow.size";
          }
       }
    }
@@ -165,30 +164,30 @@ group { name: "elm/hover/base/default";
 
 group { name: "elm/hover/base/popout";
    data.item: "dismiss" "on";
-   images.image: "button_normal.png" COMP;
+   images.image: "shad_angle_l.png" COMP;
+   images.image: "shad_angle_r.png" COMP;
+   images.image: "shad_angle_t.png" COMP;
+   images.image: "shad_angle_b.png" COMP;
    script {
       public on_dismiss = 0;
    }
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          description { state: "default" 0.0;
-            align: 0.0 0.0;
             fixed: 1 1;
-            rel1.relative: 0.0 0.0;
+            align: 0.0 0.0;
             rel2.relative: 0.0 0.0;
          }
       }
       part { name: "elm.swallow.size"; type: SWALLOW;
          description { state: "default" 0.0;
-            align: 0.0 0.0;
             fixed: 1 1;
-            rel1.to: "elm.swallow.offset";
+            align: 0.0 0.0;
+            rel.to: "elm.swallow.offset";
             rel1.relative: 1.0 1.0;
-            rel2.to: "elm.swallow.offset";
-            rel2.relative: 1.0 1.0;
          }
       }
-      part { name: "base"; type: RECT; mouse_events: 1;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
@@ -204,17 +203,66 @@ group { name: "elm/hover/base/popout";
             rel2.offset: 1 -1;
          }
       }
-      part { name: "left";
+      part { name: "shad_left"; nomouse;
+         scale: 1;
          clip_to: "leftclip";
          description { state: "default" 0.0;
             visible: 0;
-            rel1.to: "elm.swallow.slot.left";
-            rel1.offset: -5 -5;
-            rel2.to: "elm.swallow.slot.left";
-            rel2.offset: 4 4;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
+            rel.to: "left";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_l.png");
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "shad_right"; nomouse;
+         scale: 1;
+         clip_to: "rightclip";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel.to: "right";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_r.png");
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "shad_top"; nomouse;
+         scale: 1;
+         clip_to: "topclip";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel.to: "top";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_t.png");
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "shad_bottom"; nomouse;
+         scale: 1;
+         clip_to: "bottomclip";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel.to: "bottom";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_b.png");
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "left"; type: RECT;
+         clip_to: "leftclip";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel.to: "elm.swallow.slot.left";
+            rel1.offset: -6 -6;
+            rel2.offset: -1 5;
+            color: 64 64 64 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -224,14 +272,11 @@ group { name: "elm/hover/base/popout";
       part { name: "elm.swallow.slot.left"; type: SWALLOW;
          clip_to: "leftclip";
          description { state: "default" 0.0;
-            align: 0.0 0.5;
             fixed: 1 0;
-            rel1.to: "elm.swallow.slot.middle";
-            rel1.relative: 0.0 0.0;
+            align: 0.0 0.5;
+            rel.to: "elm.swallow.slot.middle";
             rel1.offset: -1 0;
-            rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -1;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -247,17 +292,14 @@ group { name: "elm/hover/base/popout";
             rel1.offset: -2 0;
          }
       }
-      part { name: "right";
+      part { name: "right"; type: RECT;
          clip_to: "rightclip";
          description { state: "default" 0.0;
             visible: 0;
-            rel1.to: "elm.swallow.slot.right";
-            rel1.offset: -5 -5;
-            rel2.to: "elm.swallow.slot.right";
-            rel2.offset: 4 4;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
+            rel.to: "elm.swallow.slot.right";
+            rel1.offset: 0 -6;
+            rel2.offset: 5 5;
+            color: 64 64 64 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -267,13 +309,10 @@ group { name: "elm/hover/base/popout";
       part { name: "elm.swallow.slot.right"; type: SWALLOW;
          clip_to: "rightclip";
          description { state: "default" 0.0;
-            align: 1.0 0.5;
             fixed: 1 0;
-            rel1.to: "elm.swallow.slot.middle";
+            align: 1.0 0.5;
+            rel.to: "elm.swallow.slot.middle";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 0;
-            rel2.to: "elm.swallow.slot.middle";
-            rel2.relative: 1.0 1.0;
             rel2.offset: 0 -1;
          }
          description { state: "visible" 0.0;
@@ -290,17 +329,14 @@ group { name: "elm/hover/base/popout";
             rel2.offset: -1 1;
          }
       }
-      part { name: "top";
+      part { name: "top"; type: RECT;
          clip_to: "topclip";
          description { state: "default" 0.0;
             visible: 0;
-            rel1.to: "elm.swallow.slot.top";
-            rel1.offset: -5 -5;
-            rel2.to: "elm.swallow.slot.top";
-            rel2.offset: 4 4;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
+            rel.to: "elm.swallow.slot.top";
+            rel1.offset: -6 -6;
+            rel2.offset: 5 -1;
+            color: 64 64 64 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -310,15 +346,11 @@ group { name: "elm/hover/base/popout";
       part { name: "elm.swallow.slot.top"; type: SWALLOW;
          clip_to: "topclip";
          description { state: "default" 0.0;
-            visible: 1;
-            align: 0.5 0.0;
             fixed: 0 1;
-            rel1.to: "elm.swallow.slot.middle";
-            rel1.relative: 0.0 0.0;
+            align: 0.5 0.0;
+            rel.to: "elm.swallow.slot.middle";
             rel1.offset: 0 -1;
-            rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -1 -1;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -334,17 +366,14 @@ group { name: "elm/hover/base/popout";
             rel1.offset: -1 -2;
          }
       }
-      part { name: "bottom";
+      part { name: "bottom"; type: RECT;
          clip_to: "bottomclip";
          description { state: "default" 0.0;
             visible: 0;
-            rel1.to: "elm.swallow.slot.bottom";
-            rel1.offset: -5 -5;
-            rel2.to: "elm.swallow.slot.bottom";
-            rel2.offset: 4 4;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
+            rel.to: "elm.swallow.slot.bottom";
+            rel1.offset: -6 0;
+            rel2.offset: 5 5;
+            color: 64 64 64 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -354,13 +383,10 @@ group { name: "elm/hover/base/popout";
       part { name: "elm.swallow.slot.bottom"; type: SWALLOW;
          clip_to: "bottomclip";
          description { state: "default" 0.0;
-            align: 0.5 1.0;
             fixed: 0 1;
-            rel1.to: "elm.swallow.slot.middle";
+            align: 0.5 1.0;
+            rel.to: "elm.swallow.slot.middle";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 0;
-            rel2.to: "elm.swallow.slot.middle";
-            rel2.relative: 1.0 1.0;
             rel2.offset: -1 0;
          }
          description { state: "visible" 0.0;
@@ -370,21 +396,17 @@ group { name: "elm/hover/base/popout";
             align: 0.5 0.0;
          }
       }
-      part { name: "pop"; mouse_events: 1;
+      part { name: "pop"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.slot.middle";
+            rel.to: "elm.swallow.slot.middle";
             rel1.offset: -6 -6;
-            rel2.to: "elm.swallow.slot.middle";
             rel2.offset: 5 5;
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
+            color: 64 64 64 255;
          }
       }
       part { name: "elm.swallow.slot.middle"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.size";
-            rel2.to: "elm.swallow.size";
+            rel.to: "elm.swallow.size";
          }
       }
    }
@@ -419,57 +441,65 @@ group { name: "elm/hover/base/popout";
       program { name: "leftshow";
          signal: "elm,action,slot,left,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "left";
+         target: "shad_left";
          target: "elm.swallow.slot.left";
       }
       program { name: "lefthide";
          signal: "elm,action,slot,left,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "left";
+         target: "shad_left";
          target: "elm.swallow.slot.left";
       }
       program { name: "rightshow";
          signal: "elm,action,slot,right,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "right";
+         target: "shad_right";
          target: "elm.swallow.slot.right";
       }
       program { name: "righthide";
          signal: "elm,action,slot,right,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "right";
+         target: "shad_right";
          target: "elm.swallow.slot.right";
       }
       program { name: "topshow";
          signal: "elm,action,slot,top,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "top";
+         target: "shad_top";
          target: "elm.swallow.slot.top";
       }
       program { name: "tophide";
          signal: "elm,action,slot,top,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "top";
+         target: "shad_top";
          target: "elm.swallow.slot.top";
       }
       program { name: "bottomshow";
          signal: "elm,action,slot,bottom,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "bottom";
+         target: "shad_bottom";
          target: "elm.swallow.slot.bottom";
       }
       program { name: "bottomhide";
          signal: "elm,action,slot,bottom,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "bottom";
+         target: "shad_bottom";
          target: "elm.swallow.slot.bottom";
       }
    }
@@ -479,8 +509,8 @@ group { name: "elm/hover/base/hoversel_vertical/default";
    alias: "elm/hover/base/hoversel_vertical/entry";
    alias: "elm/hover/base/combobox_vertical/entry";
    alias: "elm/hover/base/combobox_vertical/default";
-   images.image: "button_normal.png" COMP;
-   images.image: "vertical_separated_bar_glow.png" COMP;
+   images.image: "shad_angle_t.png" COMP;
+   images.image: "shad_angle_b.png" COMP;
    data.item: "dismiss" "on";
    // max_size limits the maximum size of expanded hoversel
    // when it's scrollable.
@@ -509,50 +539,58 @@ group { name: "elm/hover/base/hoversel_vertical/default";
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          description { state: "default" 0.0;
-            align: 0.0 0.0;
             fixed: 1 1;
-            rel1.relative: 0.0 0.0;
+            align: 0.0 0.0;
             rel2.relative: 0.0 0.0;
          }
       }
       part { name: "elm.swallow.size"; type: SWALLOW;
          description { state: "default" 0.0;
-            align: 0.0 0.0;
             fixed: 1 1;
-            rel1.to: "elm.swallow.offset";
+            align: 0.0 0.0;
+            rel.to: "elm.swallow.offset";
             rel1.relative: 1.0 1.0;
-            rel2.to: "elm.swallow.offset";
-            rel2.relative: 1.0 1.0;
          }
       }
-      part { name: "button_image"; mouse_events: 1;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to_x: "limit0";
-            rel1.to_y: "elm.swallow.slot.top";
-            rel1.offset: -2 -4;
-            rel2.to_x: "limit1";
-            rel2.to_y: "elm.swallow.slot.middle";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: 9 4;
-            image {
-               normal: "button_normal.png";
-               border: 7 7 7 7;
-            }
-            image.middle: SOLID;
+            color: 0 0 0 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "shad"; nomouse;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "button_image";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_t.png");
          }
          description { state: "bottom" 0.0;
+            rel.to: "button_image";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_b.png");
+         }
+      }
+      part { name: "button_image"; type: RECT;
+         description { state: "default" 0.0;
             rel1.to_x: "limit0";
+            rel2.to_x: "limit1";
+            rel1.to_y: "elm.swallow.slot.top";
+            rel2.to_y: "elm.swallow.slot.middle";
+            rel2.relative: 1.0 0.0;
+            rel1.offset: 1 0;
+            rel2.offset: -2 1;
+            color: 80 80 80 255;
+         }
+         description { state: "bottom" 0.0;
+            inherit: "default"  0.0;
             rel1.to_y: "elm.swallow.slot.middle";
             rel1.relative: 0.0 1.0;
-            rel1.offset: -2 -4;
-            rel2.to_x: "limit1";
             rel2.to_y: "elm.swallow.slot.bottom";
-            rel2.offset: 9 4;
-            image {
-               normal: "button_normal.png";
-               border: 7 7 7 7;
-            }
-            image.middle: SOLID;
+            rel2.relative: 1.0 1.0;
+            rel1.offset: 1 -2;
+            rel2.offset: -2 -1;
          }
       }
       part { name: "limit0"; type: SPACER;
@@ -587,28 +625,14 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             rel2.to_x: "elm.swallow.slot.bottom";
          }
       }
-      part { name: "select_line"; mouse_events: 0;
+      part { name: "select_line"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             fixed: 1 1;
             align: 1.0 0.5;
-            min: 15 10;
-            rel1.to: "button_image";
+            min: 5 0;
+            rel.to: "button_image";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 -3;
-            rel2.to: "button_image";
-            rel2.offset: 1 0;
-            image.normal: "vertical_separated_bar_glow.png";
-            image.border: 7 7 7 7;
-            fill.smooth : 0;
-         }
-      }
-      part { name: "base"; type: RECT;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 0 0 0 0;
+            color: 51 153 255 255;
          }
       }
       part { name: "topclip"; type: RECT;
@@ -639,12 +663,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             align: 1.0 0.0;
-            rel2.offset: -9 0;
+            rel2.offset: -9 -1;
          }
          description { state: "right_visible" 0.0;
             inherit: "default" 0.0;
             align: 1.0 1.0;
-            rel2.offset: -9 0;
+            rel2.offset: -9 -1;
          }
       }
       part { name: "bottomclip"; type: RECT;
@@ -660,12 +684,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             fixed: 0 1;
             rel1.to: "elm.swallow.slot.middle";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 0;
+            rel1.offset: 1 0;
             rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 1.0 1.0;
             /* set negative offset along x axis not to make
                "select_line" part exceed parent's width */
-            rel2.offset: -9 2;
+            rel2.offset: -9 -1;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -674,19 +698,17 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             align: 1.0 1.0;
-            rel2.offset: -9 0;
+            rel2.offset: -9 -1;
          }
          description { state: "right_visible" 0.0;
             inherit: "default" 0.0;
             align: 1.0 0.0;
-            rel2.offset: -9 0;
+            rel2.offset: -9 -1;
          }
       }
-      part { name: "elm.swallow.slot.middle";
-         type: SWALLOW;
+      part { name: "elm.swallow.slot.middle"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.size";
-            rel2.to: "elm.swallow.size";
+            rel.to: "elm.swallow.size";
          }
       }
    }
@@ -708,7 +730,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       program { name: "hide";
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.3;
          target: "base";
          after: "hidefinished";
       }
@@ -730,18 +752,19 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             set_state(PART:"limit0", "default", 0.0);
             set_state(PART:"limit1", "default", 0.0);
             set_state(PART:"button_image", "default", 0.0);
+            set_state(PART:"shad", "default", 0.0);
             topshow2();
          }
       }
       program { name: "topshow_default";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.slot.top";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "topshow_right";
          action: STATE_SET "right_visible" 0.0;
          target: "elm.swallow.slot.top";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "tophide";
          signal: "elm,action,slot,top,hide";
@@ -757,12 +780,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       program { name: "tophide_default";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.slot.top";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "tophide_right";
          action: STATE_SET "right" 0.0;
          target: "elm.swallow.slot.top";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "bottomshow";
          signal: "elm,action,slot,bottom,show"; source: "elm";
@@ -770,18 +793,19 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             set_state(PART:"limit0", "bottom", 0.0);
             set_state(PART:"limit1", "bottom", 0.0);
             set_state(PART:"button_image", "bottom", 0.0);
+            set_state(PART:"shad", "bottom", 0.0);
             bottomshow2();
          }
       }
       program { name: "bottomshow_default";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.slot.bottom";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "bottomshow_right";
          action: STATE_SET "right_visible" 0.0;
          target: "elm.swallow.slot.bottom";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "bottomhide";
          signal: "elm,action,slot,bottom,hide"; source: "elm";
@@ -798,12 +822,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       program { name: "bottomhide_default";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.slot.bottom";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "bottomhide_right";
          action: STATE_SET "right" 0.0;
          target: "elm.swallow.slot.bottom";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
       }
       program { name: "align_right";
          signal: "elm,state,align,right"; source: "elm";
@@ -838,8 +862,9 @@ group { name: "elm/hover/base/hoversel_vertical/default";
 
 group { name: "elm/hover/base/hoversel_horizontal/default";
    alias: "elm/hover/base/hoversel_horizontal/entry";
-   images.image: "button_normal.png" COMP;
    data.item: "dismiss" "on";
+   images.image: "shad_angle_l.png" COMP;
+   images.image: "shad_angle_r.png" COMP;
    script {
       public on_dismiss = 0;
    }
@@ -874,37 +899,41 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
             color: 0 0 0 0;
          }
       }
-      part { name: "button_image"; mouse_events: 0;
+      part { name: "shad"; nomouse;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "button_image";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_l.png");
+         }
+         description { state: "right" 0.0;
+            rel.to: "button_image";
+            WIN_SHADOW_ANGLE_SMALL("shad_angle_r.png");
+         }
+      }
+      part { name: "button_image"; type: RECT; nomouse;
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.slot.left";
             rel1.to_y: "elm.swallow.slot.left";
-            rel1.offset: -10 0;
             rel2.to_x: "elm.swallow.slot.middle";
             rel2.to_y: "elm.swallow.slot.left";
             rel2.relative: 0.0 1.0;
-            rel2.offset: 4 9;
-            image {
-               normal: "button_normal.png";
-               border: 7 7 7 7;
-            }
-            image.middle: SOLID;
+            rel1.offset: -4 0;
+            rel2.offset: 1 -1;
+            color: 80 80 80 255;
          }
          description { state: "right" 0.0;
+            inherit: "default"  0.0;
             rel1.to_x: "elm.swallow.slot.middle";
             rel1.to_y: "elm.swallow.slot.right";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: -5 0;
             rel2.to_x: "elm.swallow.slot.right";
             rel2.to_y: "elm.swallow.slot.right";
-            rel2.offset: 10 9;
-            image {
-               normal: "button_normal.png";
-               border: 7 7 7 7;
-            }
-            image.middle: SOLID;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            rel1.offset: -2 0;
+            rel2.offset: 3 -1;
          }
       }
-      
+
       part { name: "leftclip"; type: RECT;
          description { state: "default" 0.0;
             rel2.to_x: "elm.swallow.slot.middle";
@@ -918,15 +947,13 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
             fixed: 1 0;
             rel1.to: "elm.swallow.slot.middle";
             rel1.relative: 0.0 0.0;
-            rel1.offset: -1 0;
+            rel1.offset: -1 2;
             rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -1;
+            rel2.offset: -1 -3;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: -7 0;
-            rel2.offset: -7 -1;
             align: 1.0 0.0;
          }
       }
@@ -943,22 +970,18 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
             fixed: 1 0;
             rel1.to: "elm.swallow.slot.middle";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 0;
+            rel1.offset: -2 2;
             rel2.to: "elm.swallow.slot.middle";
-            rel2.relative: 1.0 1.0;
-            rel2.offset: 0 -1;
+            rel2.offset: -1 -3;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: 6 0;
-            rel2.offset: -6 -1;
             align: 0.0 0.0;
          }
       }
       part { name: "elm.swallow.slot.middle"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.size";
-            rel2.to: "elm.swallow.size";
+            rel.to: "elm.swallow.size";
          }
       }
    }
@@ -975,13 +998,13 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
       program { name: "show";
          signal: "elm,action,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "base";
       }
       program { name: "hide";
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "base";
          after: "hidefinished";
       }
@@ -995,38 +1018,40 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
       program { name: "leftshow";
          signal: "elm,action,slot,left,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "elm.swallow.slot.left";
       }
       program { name: "leftshow3";
          signal: "elm,action,slot,left,show"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "button_image";
+         target: "shad";
       }
       program { name: "lefthide";
          signal: "elm,action,slot,left,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "elm.swallow.slot.left";
       }
-      
+
       program { name: "rightshow";
          signal: "elm,action,slot,right,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "elm.swallow.slot.right";
       }
       program { name: "rightshow3";
          signal: "elm,action,slot,right,show"; source: "elm";
          action: STATE_SET "right" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "button_image";
+         target: "shad";
       }
       program { name: "righthide";
          signal: "elm,action,slot,right,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "elm.swallow.slot.right";
       }
    }
