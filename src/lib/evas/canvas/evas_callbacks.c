@@ -872,3 +872,10 @@ evas_object_callbacks_event_catcher_del(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
      }
 }
 
+void
+evas_object_callbacks_shutdown(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   if (obj->animator_ref > 0)
+     efl_event_callback_del(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+   obj->animator_ref = 0;
+}

@@ -1179,7 +1179,7 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
 end:
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
-
+   evas_object_callbacks_shutdown(eo_obj, obj);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
