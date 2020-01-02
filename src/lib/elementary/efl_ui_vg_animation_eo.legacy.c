@@ -70,6 +70,8 @@ elm_animation_view_frame_get(const Efl_Ui_Vg_Animation *obj)
 EAPI Eina_Bool
 elm_animation_view_play(Efl_Ui_Vg_Animation *obj)
 {
+   double speed = efl_player_playback_speed_get(obj);
+   efl_player_playback_speed_set(obj, speed < 0 ? speed * -1 : speed);
    return efl_player_playing_set(obj, EINA_TRUE);
 }
 
@@ -77,7 +79,7 @@ EAPI Eina_Bool
 elm_animation_view_play_back(Efl_Ui_Vg_Animation *obj)
 {
    double speed = efl_player_playback_speed_get(obj);
-   efl_player_playback_speed_set(obj, speed < 0 ? speed * -1 : speed);
+   efl_player_playback_speed_set(obj, speed > 0 ? speed * -1 : speed);
    return efl_player_playing_set(obj, EINA_TRUE);
 }
 
