@@ -245,7 +245,7 @@ _elm_code_widget_fill_line_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
         cursor_line = elm_code_file_line_get(line->file, pd->cursor_line);
         if (_elm_code_widget_line_in_scope(line, cursor_line))
           cells[gutter-1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG;
-        else
+        else if (pd->show_line_numbers)
           cells[gutter-1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
      }
    else
