@@ -172,7 +172,8 @@ run(options_type const& opts)
                      "using System.Linq;\n"
                      "using System.Threading;\n"
                      "using System.ComponentModel;\n"
-                     "using System.Diagnostics.CodeAnalysis;\n")
+                     "using System.Diagnostics.CodeAnalysis;\n"
+                     "using System.Diagnostics.Contracts;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
         throw std::runtime_error("Failed to generate file preamble");

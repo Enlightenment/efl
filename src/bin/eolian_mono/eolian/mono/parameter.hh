@@ -693,10 +693,10 @@ struct convert_in_variable_generator
         }
       else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
         {
-           auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << escape_keyword(param.param_name) << ".Handle;\n"
-              ).generate(sink, var_name, context))
+                             "Contract.Requires(" << string << " != null, nameof(" << string << "));\n"
+                             << scope_tab(2) << "var " << string << " = " << string << ".Handle;\n"
+                             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), escape_keyword(param.param_name), in_variable_name(param.param_name), escape_keyword(param.param_name)), context))
              return false;
            if (param.type.has_own)
              {
@@ -710,10 +710,10 @@ struct convert_in_variable_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
            if (!complex || complex->subtypes.size() != 2)
              return false;
-           auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << escape_keyword(param.param_name) << ".Handle;\n"
-              ).generate(sink, var_name, context))
+                             "Contract.Requires(" << string << " != null, nameof(" << string << "));\n"
+                             << scope_tab(2) << "var " << string << " = " << string << ".Handle;\n"
+                             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), escape_keyword(param.param_name), in_variable_name(param.param_name), escape_keyword(param.param_name)), context))
              return false;
            if (param.type.has_own && !as_generator(
                      escape_keyword(param.param_name) << ".SetOwn(false);\n"
@@ -736,10 +736,12 @@ struct convert_in_variable_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
            if (!complex)
              return false;
-           auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
-                 "var " << string << " = " << escape_keyword(param.param_name) << ".Handle;\n"
-              ).generate(sink, var_name, context))
+                             "Contract.Requires(" << string << " != null, nameof(" << string << "));\n"
+                             << "var " << string << " = " << string << ".Handle;\n"
+                             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), escape_keyword(param.param_name),
+                                                         in_variable_name(param.param_name), escape_keyword(param.param_name))
+                                        , context))
              return false;
            if (param.type.has_own && !as_generator(
                      escape_keyword(param.param_name) << ".Own = false;\n"
@@ -777,8 +779,9 @@ struct convert_in_variable_generator
      else if (param.type.c_type == "Eina_Value")
        {
           return as_generator(
-                "var " << string << " = " << string << ".GetNative();\n"
-                  ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.param_name), context);
+                              "Contract.Requires(" << string << " != null, nameof(" << string << "));\n"
+                              "var " << string << " = " << string << ".GetNative();\n"
+                              ).generate(sink, std::make_tuple(param.param_name, param.param_name, in_variable_name(param.param_name), param.param_name), context);
        }
       return true;
    }
