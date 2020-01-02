@@ -3058,7 +3058,7 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
    if (anim)
      {
         sd->frame_count = evas_object_image_animated_frame_count_get(sd->img);
-        sd->cur_frame = 1;
+        sd->cur_frame = 0;
         sd->frame_duration =
           evas_object_image_animated_frame_duration_get
             (sd->img, sd->cur_frame, 0);
@@ -3178,10 +3178,25 @@ _efl_ui_image_zoomable_efl_player_playback_progress_get(const Eo *obj EINA_UNUSE
 {
    if (sd->edje)
      efl_player_playback_progress_get(sd->edje);
-   else if ((sd->frame_count > 0) && (sd->frame_duration > 0.0))
-     return (sd->cur_frame * sd->frame_duration) / sd->frame_count;
+   else if (sd->frame_count > 1)
+     return sd->cur_frame / (sd->frame_count - 1);
    return 0.0;
 }
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, double progress)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(progress > 1 || progress < 0);
+   if (sd->edje)
+     {
+        efl_player_playback_progress_set(sd->img, progress);
+     }
+   else if (sd->frame_count > 1)
+     sd->cur_frame = lround(progress * (sd->frame_count - 1));
+   else
+     sd->cur_frame = 0;
+}
+
 
 EOLIAN static void
 _efl_ui_image_zoomable_class_constructor(Efl_Class *klass EINA_UNUSED)

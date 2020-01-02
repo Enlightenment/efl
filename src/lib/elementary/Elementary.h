@@ -193,7 +193,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_cache.h>
 #include <elm_calendar.h>
 /* this is elm_animation_view */
-#include <efl_ui_animation_view.h>
+#include <efl_ui_vg_animation.h>
 #include <elm_check.h>
 #include <elm_clock.h>
 #include <elm_cnp.h>

@@ -311,6 +311,18 @@ option('mono-beta',
   description: 'Mono/C# @beta Eo methods enabled in the efl'
 )
 
+option('dotnet-stylecop',
+  type: 'string',
+  description: 'Dotnet StyleCop checks. Use * for all, or use comma listed: -Ddotnet-stylecop=ca1062,CA1032, sa0001, SA0002, cA2225'
+)
+
+option('dotnet-stylecop-severity',
+  type: 'combo',
+  choices: ['Warning', 'Error'],
+  value: 'Warning',
+  description: 'Dotnet StyleCop checks cause compilation errors or just warnings'
+)
+
 option('mono-examples-dir',
   type: 'string',
   value: '',

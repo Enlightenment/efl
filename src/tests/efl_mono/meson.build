@@ -94,6 +94,7 @@ if get_option('dotnet')
   dotnet_test_conf_data.set('BINDING_BUILD', join_paths(meson.current_build_dir(),
                                                         '..', '..', 'bindings', 'mono'))
   dotnet_test_conf_data.set('BINDING_TEST_SRC', meson.current_source_dir())
+  dotnet_test_conf_data.set('CA_RULESET', join_paths(meson.build_root(), '@0@'.format(ca_ruleset)))
 
   dotnet_test_conf_data.set('NETCOREAPP_VERSION', dotnet_core_app_version)
 

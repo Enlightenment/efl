@@ -245,7 +245,7 @@ _elm_code_widget_fill_line_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
         cursor_line = elm_code_file_line_get(line->file, pd->cursor_line);
         if (_elm_code_widget_line_in_scope(line, cursor_line))
           cells[gutter-1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG;
-        else
+        else if (pd->show_line_numbers)
           cells[gutter-1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
      }
    else
@@ -800,6 +800,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
 
    grid = eina_list_nth(pd->grids, row - 1);
+   evas_object_smart_calculate(pd->scroller);
    evas_object_smart_calculate(pd->gridbox);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
 

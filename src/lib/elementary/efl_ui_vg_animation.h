@@ -26,7 +26,7 @@
  * @ingroup Elm_Animation_View
  */
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_ui_animation_view_legacy.h"
+#include "efl_ui_vg_animation_legacy.h"
 #endif
 /**
  * @}

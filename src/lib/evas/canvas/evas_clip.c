@@ -461,9 +461,7 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EAPI void
 evas_object_clip_unset(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
-   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
-   _clip_unset(eo_obj, obj);
+   efl_canvas_object_clipper_set(eo_obj, NULL);
 }
 
 static void

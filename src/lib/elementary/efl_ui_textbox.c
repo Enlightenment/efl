@@ -870,9 +870,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
 
    if (!efl_text_interactive_editable_get(obj)) return EINA_FALSE;
 
-   top = elm_widget_top_get(obj);
-   if (top && efl_isa(top, EFL_UI_WIN_CLASS))
-     top_is_win = EINA_TRUE;
+   top = efl_provider_find(obj, EFL_UI_WIN_CLASS);
 
    if (efl_ui_focus_object_focus_get(obj))
      {
@@ -882,7 +880,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
         if (sd->scroll)
           efl_layout_signal_emit(sd->scr_edje, "efl,action,focus", "efl");
 
-        if (top && top_is_win && efl_input_text_input_panel_autoshow_get(obj) && !efl_input_text_input_panel_show_on_demand_get(obj))
+        if (top && efl_input_text_input_panel_autoshow_get(obj) && !efl_input_text_input_panel_show_on_demand_get(obj))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);

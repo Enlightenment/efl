@@ -1137,8 +1137,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           {
              _key_down_sel_pre(obj, cur, en, shift, EINA_FALSE);
 
-             efl_text_cursor_line_jump_by(cur, -1);
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (efl_text_interactive_have_selection_get(obj))
+               ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (efl_text_cursor_line_jump_by(cur, -1))
+               ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
              _key_down_sel_post(obj, cur, en, shift);
           }
@@ -1151,8 +1153,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           {
              _key_down_sel_pre(obj, cur, en, shift, EINA_TRUE);
 
-             efl_text_cursor_line_jump_by(cur, 1);
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (efl_text_interactive_have_selection_get(obj))
+               ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (efl_text_cursor_line_jump_by(cur, 1))
+               ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
              _key_down_sel_post(obj, cur, en, shift);
           }
@@ -1163,14 +1167,16 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         _compose_seq_reset(en);
         _key_down_sel_pre(obj, cur, en, shift, EINA_FALSE);
 
-        efl_text_cursor_move(cur,EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
 #if defined(__APPLE__) && defined(__MACH__)
         if (altgr) efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
 #else
         /* If control is pressed, go to the start of the word */
         if (control) efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
 #endif
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (efl_text_interactive_have_selection_get(obj))
+          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (efl_text_cursor_move(cur,EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV))
+          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
      }
@@ -1186,8 +1192,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         /* If control is pressed, go to the end of the word */
         if (control) efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
 #endif
-        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (efl_text_interactive_have_selection_get(obj))
+          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT))
+          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
      }

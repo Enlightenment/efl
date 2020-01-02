@@ -234,7 +234,6 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    efl_text_multiline_set(en, EINA_TRUE);
    efl_ui_textbox_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
-   efl_pack(bx, en);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 

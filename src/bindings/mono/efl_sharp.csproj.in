@@ -12,11 +12,6 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-
   <!-- <PropertyGroup Condition="'$(BuildType)'=='Beta'"> -->
   <!--   <DefineConstants>EFL_BETA</DefineConstants> -->
   <!-- </PropertyGroup> -->
@@ -40,5 +35,14 @@
     <Compile Include="./efl_mono/*.cs" />
     <Compile Include="./*.cs" />
   </ItemGroup>
+
+  <!-- Code style configuration -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+  </ItemGroup>
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>@CA_RULESET@</CodeAnalysisRuleSet>
+  </PropertyGroup>
 
 </Project>
