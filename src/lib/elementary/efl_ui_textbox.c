@@ -816,24 +816,10 @@ _efl_ui_textbox_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Textbox_Data *s
 
    if (sd->scroll)
      {
-        if (!efl_text_multiline_get(obj))
-          {
-             efl_ui_internal_text_scroller_mode_set(sd->scroller,
-                   EFL_UI_TEXT_SCROLLER_MODE_SINGLELINE);
-          }
-        else
-          {
-             efl_ui_internal_text_scroller_mode_set(sd->scroller,
-                   EFL_UI_TEXT_SCROLLER_MODE_MULTILINE);
-
-          }
-
         efl_canvas_group_calculate(sd->scroller);
         min = efl_gfx_hint_size_min_get(sd->scroller);
         if (!efl_text_multiline_get(obj))
           {
-             efl_ui_internal_text_scroller_mode_set(sd->scroller,
-                   EFL_UI_TEXT_SCROLLER_MODE_SINGLELINE);
              edje_object_size_min_calc(wd->resize_obj, &edmin.w, &edmin.h);
              min.w = edmin.w;
              min.h = edmin.h;
@@ -2138,6 +2124,26 @@ _efl_ui_textbox_efl_object_destructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 }
 
 EOLIAN static void
+_efl_ui_textbox_efl_text_format_multiline_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool enabled)
+{
+   enabled = !!enabled;
+   if (efl_text_multiline_get(obj) == enabled) return;
+   efl_text_multiline_set(sd->text_obj, enabled);
+
+   if (sd->scroller)
+     {
+        if (enabled)
+          {
+             efl_ui_internal_text_scroller_mode_set(sd->scroller, EFL_UI_TEXT_SCROLLER_MODE_MULTILINE);
+          }
+        else
+          {
+             efl_ui_internal_text_scroller_mode_set(sd->scroller, EFL_UI_TEXT_SCROLLER_MODE_SINGLELINE);
+          }
+     }
+}
+
+EOLIAN static void
 _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool password)
 {
    password = !!password;
@@ -2429,7 +2435,7 @@ _efl_ui_textbox_cnp_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_textbox_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll)
+_efl_ui_textbox_scrollable_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll)
 {
    if (sd->scroll == scroll) return;
    sd->scroll = scroll;
@@ -2440,7 +2446,12 @@ _efl_ui_textbox_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Ein
         sd->scroller = efl_add(EFL_UI_INTERNAL_TEXT_SCROLLER_CLASS, obj,
               efl_ui_internal_text_scroller_initialize(efl_added,
                  sd->text_obj, sd->text_table));
-        efl_ui_scrollbar_bar_mode_set(sd->scroller, EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO);
+
+        if (efl_text_multiline_get(obj))
+          efl_ui_internal_text_scroller_mode_set(sd->scroller, EFL_UI_TEXT_SCROLLER_MODE_MULTILINE);
+        else
+          efl_ui_internal_text_scroller_mode_set(sd->scroller, EFL_UI_TEXT_SCROLLER_MODE_SINGLELINE);
+
         efl_content_set(efl_part(sd->entry_edje, "efl.text"), sd->scroller);
         efl_canvas_object_clipper_set(sd->cursor,
               efl_ui_internal_text_scroller_viewport_clip_get(sd->scroller));
@@ -3711,11 +3722,11 @@ _part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
 //FIXME
 //ELM_PART_OVERRIDE_PARTIAL(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_text_part)
 EOLIAN static Efl_Object *
-_efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_UNUSED, const char *part) 
+_efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (_part_is_efl_ui_text_part(obj, part)) return ELM_PART_IMPLEMENT(EFL_UI_TEXT_PART_CLASS, obj, part);
-   return efl_part_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS), part); 
+   return efl_part_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS), part);
 }
 
 //FIXME

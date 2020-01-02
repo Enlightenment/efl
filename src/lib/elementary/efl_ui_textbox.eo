@@ -103,6 +103,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.disabled {set;}
       Efl.Text_Format.password {set;}
+      Efl.Text_Format.multiline {set;}
       //Efl.Ui.Widget.widget_sub_object_del;
       //Elm.Interface_Scrollable.policy { set; }
       //Elm.Interface_Scrollable.bounce_allow { set; }

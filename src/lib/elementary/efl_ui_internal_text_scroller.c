@@ -63,7 +63,6 @@ _efl_ui_internal_text_scroller_efl_object_constructor(Eo *obj,
                                         Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   //EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd, NULL);
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
 
@@ -138,7 +137,6 @@ _efl_ui_internal_text_scroller_efl_object_finalize(Eo *obj,
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
    efl_content_set(obj, sd->text_table);
-
    return obj;
 }
 
@@ -170,16 +168,15 @@ _efl_ui_internal_text_scroller_scroller_mode_set(Eo *obj,
                                        Efl_Ui_Internal_Text_Scroller_Data *sd,
                                        Efl_Ui_Text_Scroller_Mode mode)
 {
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(obj, psd);
    sd->mode = mode;
    if (mode == EFL_UI_TEXT_SCROLLER_MODE_MULTILINE)
      {
-        efl_ui_scrollbar_bar_mode_set(psd->smanager,
+        efl_ui_scrollbar_bar_mode_set(obj,
               EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO);
      }
    else // default (single-line)
      {
-        efl_ui_scrollbar_bar_mode_set(psd->smanager,
+        efl_ui_scrollbar_bar_mode_set(obj,
               EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
      }
 }
