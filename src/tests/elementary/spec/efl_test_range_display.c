@@ -124,6 +124,10 @@ EFL_START_TEST (range_display_value_events)
    changed = EINA_FALSE;
    min_reached = EINA_FALSE;
    max_reached = EINA_FALSE;
+   efl_event_callback_del(widget, EFL_UI_RANGE_EVENT_CHANGED, _set_flag, &changed);
+   efl_event_callback_del(widget, EFL_UI_RANGE_EVENT_MIN_REACHED, _set_flag, &min_reached);
+   efl_event_callback_del(widget, EFL_UI_RANGE_EVENT_MAX_REACHED, _set_flag, &max_reached);
+
 }
 EFL_END_TEST
 

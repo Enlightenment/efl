@@ -11,7 +11,7 @@ enum @beta Efl.Canvas.Layout_Part_Text_Expand
 }
 
 class @beta Efl.Canvas.Layout_Part_Text extends Efl.Canvas.Layout_Part implements Efl.Text,
-Efl.Text_Markup, Efl.Text_Format, Efl.Text.Font.Properties, Efl.Text_Style
+Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font_Properties, Efl.Text_Style
 {
    [[Represents a TEXT part of a layout
 
@@ -38,8 +38,8 @@ Efl.Text_Markup, Efl.Text_Format, Efl.Text.Font.Properties, Efl.Text_Style
       Efl.Text_Markup.markup { get; set; }
       Efl.Text_Format.ellipsis { set; get; }
       Efl.Text_Format.wrap { set; get; }
-      Efl.Text.Font.Properties.font_family { set; get; }
-      Efl.Text.Font.Properties.font_size { set; get; }
+      Efl.Text_Font_Properties.font_family { set; get; }
+      Efl.Text_Font_Properties.font_size { set; get; }
       Efl.Text_Style.text_color { set; get; }
       Efl.Text_Style.text_background_type { set; get; }
       Efl.Text_Style.text_background_color { set; get;}

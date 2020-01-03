@@ -5,6 +5,7 @@
 #define EFL_LAYOUT_CALC_PROTECTED
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
+#include "Evas_Legacy.h"
 
 static void
 increment_int_changed(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
@@ -153,6 +154,30 @@ EFL_START_TEST(text_scroll_mode)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_change_event)
+{
+   Eo *txt;
+   Eo *win = win_add();
+
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
+   efl_text_set(txt, "Hello");
+   int i_changed = 0;
+   efl_event_callback_add(txt, EFL_UI_TEXTBOX_EVENT_CHANGED, increment_int_changed, &i_changed);
+   efl_gfx_entity_visible_set(txt, EINA_TRUE);
+   Evas *e = evas_object_evas_get(txt);
+   efl_ui_focus_util_focus(txt);
+   evas_event_feed_key_down(e, "s", "s", "s", "s", time(NULL), NULL);
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(txt),"Hellos");
+   ck_assert_int_eq(i_changed,1);
+   ecore_main_loop_iterate();
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
@@ -160,4 +185,5 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_selection);
    tcase_add_test(tc, text_user_change);
    tcase_add_test(tc, text_scroll_mode);
+   tcase_add_test(tc, text_change_event);
 }

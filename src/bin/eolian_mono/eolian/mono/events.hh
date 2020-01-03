@@ -165,7 +165,8 @@ struct pack_event_info_and_call_visitor
       if (regular.is_struct())
         {
            return as_generator(
-                indent << "IntPtr info = Marshal.AllocHGlobal(Marshal.SizeOf(e.arg));\n"
+                indent << "Contract.Requires(e != null, nameof(e));\n"
+                << indent << "IntPtr info = Marshal.AllocHGlobal(Marshal.SizeOf(e.arg));\n"
                 << indent << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Marshal.FreeHGlobal(p));\n"
               ).generate(sink, attributes::unused, *context);
         }
@@ -192,7 +193,8 @@ struct pack_event_info_and_call_visitor
       auto str_accept_func = [&](std::string const& conversion)
         {
            return as_generator(
-             indent << "IntPtr info = Eina.StringConversion.ManagedStringToNativeUtf8Alloc(" << conversion << ");\n"
+             indent << "Contract.Requires(e != null, nameof(e));\n"
+             << indent << "IntPtr info = Eina.StringConversion.ManagedStringToNativeUtf8Alloc(" << conversion << ");\n"
              << indent << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Eina.MemoryNative.Free(p));\n"
              ).generate(sink, attributes::unused, *context);
         };
@@ -210,7 +212,8 @@ struct pack_event_info_and_call_visitor
       auto value_accept_func = [&](std::string const& conversion)
         {
            return as_generator(
-             indent << "IntPtr info = Eina.PrimitiveConversion.ManagedToPointerAlloc(" << conversion << ");\n"
+             indent << "Contract.Requires(e != null, nameof(e));\n"
+             << indent << "IntPtr info = Eina.PrimitiveConversion.ManagedToPointerAlloc(" << conversion << ");\n"
              << indent << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Marshal.FreeHGlobal(p));\n"
              ).generate(sink, attributes::unused, *context);
         };
@@ -223,7 +226,9 @@ struct pack_event_info_and_call_visitor
    bool operator()(grammar::attributes::klass_name const&) const
    {
       auto const& indent = current_indentation(*context);
-      return as_generator(indent << "IntPtr info = e.arg.NativeHandle;\n"
+      return as_generator(
+                          indent << "Contract.Requires(e != null, nameof(e));\n"
+                          << indent << "IntPtr info = e.arg.NativeHandle;\n"
                           << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }
@@ -233,7 +238,9 @@ struct pack_event_info_and_call_visitor
       if ((type.outer.base_type == "iterator") || (type.outer.base_type == "accessor"))
         return true;
 
-      return as_generator(indent << "IntPtr info = e.arg.Handle;\n"
+      return as_generator(
+                          indent << "Contract.Requires(e != null, nameof(e));\n"
+                          << indent << "IntPtr info = e.arg.Handle;\n"
                           << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }

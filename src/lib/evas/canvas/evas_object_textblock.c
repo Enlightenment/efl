@@ -8524,7 +8524,7 @@ static void
 _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
       Efl_Text_Cursor_Handle *cur, const char *text)
 {
-   if (!cur) return;
+   if (!cur || !text || !*text) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    TB_HEAD();
@@ -8533,140 +8533,138 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
     * this should be done once, when markup_prepend finished */
    o->pause_change = EINA_TRUE;
 
-   if (text)
+   char *s, *p;
+   char *tag_start, *tag_end, *esc_start, *esc_end;
+
+   tag_start = tag_end = esc_start = esc_end = NULL;
+   p = (char *)text;
+   s = p;
+   /* This loop goes through all of the mark up text until it finds format
+    * tags, escape sequences or the terminating NULL. When it finds either
+    * of those, it appends the text found up until that point to the textblock
+    * proccesses whatever found. It repeats itself until the terminating
+    * NULL is reached. */
+   for (;;)
      {
-        char *s, *p;
-        char *tag_start, *tag_end, *esc_start, *esc_end;
-
-        tag_start = tag_end = esc_start = esc_end = NULL;
-        p = (char *)text;
-        s = p;
-        /* This loop goes through all of the mark up text until it finds format
-         * tags, escape sequences or the terminating NULL. When it finds either
-         * of those, it appends the text found up until that point to the textblock
-         * proccesses whatever found. It repeats itself until the terminating
-         * NULL is reached. */
-        for (;;)
+        size_t text_len;
+        /* If we got to the end of string or just finished/started tag
+         * or escape sequence handling. */
+        if ((*p == 0) ||
+              (tag_end) || (esc_end) ||
+              (tag_start) || (esc_start))
           {
-             size_t text_len;
-             /* If we got to the end of string or just finished/started tag
-              * or escape sequence handling. */
-             if ((*p == 0) ||
-                   (tag_end) || (esc_end) ||
-                   (tag_start) || (esc_start))
+             if (tag_end)
                {
-                  if (tag_end)
-                    {
-                       /* If we reached to a tag ending, analyze the tag */
-                       char *ttag;
-                       size_t ttag_len = tag_end - tag_start;
+                  /* If we reached to a tag ending, analyze the tag */
+                  char *ttag;
+                  size_t ttag_len = tag_end - tag_start;
 
 
-                       ttag = malloc(ttag_len + 1);
-                       if (ttag)
-                         {
-                            memcpy(ttag, tag_start, ttag_len);
-                            ttag[ttag_len] = 0;
-                            evas_textblock_cursor_format_prepend(cur, ttag);
-                            free(ttag);
-                         }
-                       tag_start = tag_end = NULL;
-                    }
-                  else if (esc_end)
+                  ttag = malloc(ttag_len + 1);
+                  if (ttag)
                     {
-                       _prepend_escaped_char(cur, esc_start, esc_end + 1);
-                       esc_start = esc_end = NULL;
+                       memcpy(ttag, tag_start, ttag_len);
+                       ttag[ttag_len] = 0;
+                       evas_textblock_cursor_format_prepend(cur, ttag);
+                       free(ttag);
                     }
-                  else if (*p == 0 && esc_start) /* escape start with no end, append it as text */
-                    {
-                       _prepend_text_run(cur, esc_start, p);
-                       esc_start = esc_end = NULL;
-                       s = NULL;
-                    }
-                  else if (*p == 0)
-                    {
-                       _prepend_text_run(cur, s, p);
-                       s = NULL;
-                    }
-                  if (*p == 0)
-                    break;
+                  tag_start = tag_end = NULL;
                }
-             if (*p == '<')
+             else if (esc_end)
                {
-                  if (esc_start) /* escape start with no end, append it as text */
-                    {
-                       _prepend_text_run(cur, esc_start, p);
-                       esc_start = esc_end = NULL;
-                       s = NULL;
-                    }
-                  if (!esc_start)
-                    {
-                       /* Append the text prior to this to the textblock and mark
-                        * the start of the tag */
-                       tag_start = p;
-                       tag_end = NULL;
-                       _prepend_text_run(cur, s, p);
-                       s = NULL;
-                    }
+                  _prepend_escaped_char(cur, esc_start, esc_end + 1);
+                  esc_start = esc_end = NULL;
                }
-             else if (*p == '>')
+             else if (*p == 0 && esc_start) /* escape start with no end, append it as text */
                {
-                  if (tag_start)
-                    {
-                       tag_end = p + 1;
-                       s = p + 1;
-                    }
+                  _prepend_text_run(cur, esc_start, p);
+                  esc_start = esc_end = NULL;
+                  s = NULL;
                }
-             else if (*p == '&')
+             else if (*p == 0)
                {
-                  if (esc_start) /* escape start with no end, append it as text */
-                    {
-                       _prepend_text_run(cur, esc_start, p);
-                       esc_start = esc_end = NULL;
-                       s = NULL;
-                    }
-                  if (!tag_start)
-                    {
-                       /* Append the text prior to this to the textblock and mark
-                        * the start of the escape sequence */
-                       esc_start = p;
-                       esc_end = NULL;
-                       _prepend_text_run(cur, s, p);
-                       s = NULL;
-                    }
-               }
-             else if (*p == ';')
-               {
-                  if (esc_start)
-                    {
-                       esc_end = p;
-                       s = p + 1;
-                    }
-               }
-             /* Unicode object replacement char */
-             else if (!strncmp(_REPLACEMENT_CHAR_UTF8, p,
-                      text_len = strlen(_REPLACEMENT_CHAR_UTF8)) ||
-                   !strncmp(_NEWLINE_UTF8, p,
-                      text_len = strlen(_NEWLINE_UTF8)) ||
-                   !strncmp(_TAB_UTF8, p,
-                      text_len = strlen(_TAB_UTF8)) ||
-                   !strncmp(_PARAGRAPH_SEPARATOR_UTF8, p,
-                      text_len = strlen(_PARAGRAPH_SEPARATOR_UTF8)))
-               {
-                  /*FIXME: currently just remove them, maybe do something
-                   * fancier in the future, atm it breaks if this char
-                   * is inside <> */
                   _prepend_text_run(cur, s, p);
-                  /* it's also advanced later in this loop need +text_len
-                     in total*/
-                  p += text_len - 1;
-                  s = p + 1; /* One after the end of the replacement char */
+                  s = NULL;
                }
-             p++;
+             if (*p == 0)
+               break;
           }
+        if (*p == '<')
+          {
+             if (esc_start) /* escape start with no end, append it as text */
+               {
+                  _prepend_text_run(cur, esc_start, p);
+                  esc_start = esc_end = NULL;
+                  s = NULL;
+               }
+             if (!esc_start)
+               {
+                  /* Append the text prior to this to the textblock and mark
+                   * the start of the tag */
+                  tag_start = p;
+                  tag_end = NULL;
+                  _prepend_text_run(cur, s, p);
+                  s = NULL;
+               }
+          }
+        else if (*p == '>')
+          {
+             if (tag_start)
+               {
+                  tag_end = p + 1;
+                  s = p + 1;
+               }
+          }
+        else if (*p == '&')
+          {
+             if (esc_start) /* escape start with no end, append it as text */
+               {
+                  _prepend_text_run(cur, esc_start, p);
+                  esc_start = esc_end = NULL;
+                  s = NULL;
+               }
+             if (!tag_start)
+               {
+                  /* Append the text prior to this to the textblock and mark
+                   * the start of the escape sequence */
+                  esc_start = p;
+                  esc_end = NULL;
+                  _prepend_text_run(cur, s, p);
+                  s = NULL;
+               }
+          }
+        else if (*p == ';')
+          {
+             if (esc_start)
+               {
+                  esc_end = p;
+                  s = p + 1;
+               }
+          }
+        /* Unicode object replacement char */
+        else if (!strncmp(_REPLACEMENT_CHAR_UTF8, p,
+                 text_len = strlen(_REPLACEMENT_CHAR_UTF8)) ||
+              !strncmp(_NEWLINE_UTF8, p,
+                 text_len = strlen(_NEWLINE_UTF8)) ||
+              !strncmp(_TAB_UTF8, p,
+                 text_len = strlen(_TAB_UTF8)) ||
+              !strncmp(_PARAGRAPH_SEPARATOR_UTF8, p,
+                 text_len = strlen(_PARAGRAPH_SEPARATOR_UTF8)))
+          {
+             /*FIXME: currently just remove them, maybe do something
+              * fancier in the future, atm it breaks if this char
+              * is inside <> */
+             _prepend_text_run(cur, s, p);
+             /* it's also advanced later in this loop need +text_len
+                in total*/
+             p += text_len - 1;
+             s = p + 1; /* One after the end of the replacement char */
+          }
+        p++;
      }
 
    o->pause_change = EINA_FALSE;
+   efl_event_callback_call(cur->obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
    _evas_textblock_changed(o, eo_obj);
 }
 

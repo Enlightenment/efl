@@ -96,7 +96,10 @@ _item_unpressed(void *data, const Efl_Event *ev EINA_UNUSED)
    m = _fetch_state(pd->container);
 
    if (pd->selected)
-     efl_ui_selectable_selected_set(obj, EINA_FALSE);
+     {
+        if (efl_ui_selectable_allow_manual_deselection_get(pd->container))
+          efl_ui_selectable_selected_set(obj, EINA_FALSE);
+     }
    else if (m != EFL_UI_SELECT_MODE_NONE)
      efl_ui_selectable_selected_set(obj, EINA_TRUE);
 }

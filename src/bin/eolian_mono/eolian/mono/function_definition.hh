@@ -305,6 +305,7 @@ struct property_extension_method_definition_generator
           if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+                            << scope_tab << scope_tab << "Contract.Requires(part != null, nameof(part));\n"
                             << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
                             << scope_tab << "}\n\n"
                             ).generate(sink, std::make_tuple(prop_type, prop_type), context))

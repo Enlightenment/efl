@@ -1,5 +1,72 @@
 #include "edje_private.h"
 
+void _edje_textblock_style_update(Edje *ed, Edje_Style *stl);
+
+static Edje_Style *
+_edje_textblock_style_copy(Edje_Style *stl)
+{
+   Edje_Style *new_stl;
+
+   new_stl = calloc(1, sizeof(Edje_Style));
+   if (!new_stl) return NULL;
+
+   new_stl->style = evas_textblock_style_new();
+   evas_textblock_style_set(new_stl->style, NULL);
+
+   // just keep a reference.
+   new_stl->tags = stl->tags;
+   new_stl->name = stl->name;
+   new_stl->cache = EINA_FALSE;
+
+   return new_stl;
+}
+
+static void
+_edje_object_textblock_styles_cache_style_free(void *data)
+{
+   Edje_Style *obj_stl = data;
+
+   if (!obj_stl) return;
+
+   if (obj_stl->style) evas_textblock_style_free(obj_stl->style);
+   free(obj_stl);
+}
+
+static Edje_Style *
+_edje_object_textblock_styles_cache_add(Edje *ed, Edje_Style *stl)
+{
+   Edje_Style *obj_stl = eina_hash_find(ed->styles, stl->name);
+   // Find the style in the object cache
+
+   if (!obj_stl)
+     {
+        obj_stl = _edje_textblock_style_copy(stl);
+
+        if (obj_stl)
+          {
+             if (!ed->styles) ed->styles = eina_hash_stringshared_new(_edje_object_textblock_styles_cache_style_free);
+             eina_hash_direct_add(ed->styles, obj_stl->name, obj_stl);
+             _edje_textblock_style_update(ed, obj_stl);
+          }
+     }
+   return obj_stl;
+}
+
+void
+_edje_object_textblock_styles_cache_cleanup(Edje *ed)
+{
+   if (!ed || !ed->styles) return;
+   eina_hash_free(ed->styles);
+   ed->styles = NULL;
+}
+
+static Edje_Style *
+_edje_object_textblock_styles_cache_get(Edje *ed, const char *stl)
+{
+   // Find the style in the object cache
+   return eina_hash_find(ed->styles, stl);
+}
+
 static int
 _edje_font_is_embedded(Edje_File *edf, const char *font)
 {
@@ -230,26 +297,6 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
      eina_strbuf_free(txt);
 }
 
-/*
- * mark all the styles in the Edje_File dirty (except readonly styles)so that
- * subsequent  request to style will update before giving the style.
- * Note: this will enable lazy style computation (only when some
- * widget request for new style it will get computed).
- *
- * @param ed The edje containing styles which need to be updated
- */
-void
-_edje_file_textblock_style_all_update(Edje_File *edf)
-{
-   Eina_List *l;
-   Edje_Style *stl;
-
-   if (!edf) return;
-
-   EINA_LIST_FOREACH(edf->styles, l, stl)
-     if (stl && !stl->readonly) stl->cache = EINA_FALSE;
-}
-
 static inline Edje_Style *
 _edje_textblock_style_search(Edje *ed, const char *style)
 {
@@ -371,9 +418,18 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 Evas_Textblock_Style *
 _edje_textblock_style_get(Edje *ed, const char *style)
 {
+   Edje_Style *stl;
+
    if (!style) return NULL;
 
-   Edje_Style *stl = _edje_textblock_style_search(ed, style);
+   // First search in Edje_Object styles list
+   stl = _edje_object_textblock_styles_cache_get(ed, style);
+
+   if (!stl)
+     {
+        // If not found in Edje_Object search in Edje_File styles list
+        stl = _edje_textblock_style_search(ed, style);
+     }
 
    if (!stl) return NULL;
 
@@ -387,19 +443,21 @@ _edje_textblock_style_get(Edje *ed, const char *style)
    return stl->style;
 }
 
-/*
- * Finds all the styles having text class tag as text_class and
- * updates them.
- */
-void
-_edje_file_textblock_style_all_update_text_class(Edje_File *edf, const char *text_class)
+static void
+_edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class, Eina_Bool is_object_level)
 {
-   Eina_List *l, *ll;
+   Eina_List *ll, *l;
    Edje_Style *stl;
+   Edje_Style *obj_stl;
+   Edje_File *edf;
 
-   if (!edf) return;
+   if (!ed) return;
+   if (!ed->file) return;
    if (!text_class) return;
 
+   edf = ed->file;
+
+   // check if there is styles in file that uses this text_class
    EINA_LIST_FOREACH(edf->styles, l, stl)
      {
         Edje_Style_Tag *tag;
@@ -412,13 +470,47 @@ _edje_file_textblock_style_all_update_text_class(Edje_File *edf, const char *tex
 
              if (!strcmp(tag->text_class, text_class))
                {
-                  // just mark it dirty so the next request
-                  // for this style will trigger recomputation.
-                  stl->cache = EINA_FALSE;
+                  if (is_object_level)
+                    {
+                       obj_stl = _edje_object_textblock_styles_cache_get(ed, stl->name);
+                       if (obj_stl)
+                         // If already in Edje styles just make it dirty
+                         obj_stl->cache = EINA_FALSE;
+                       else
+                         // create a copy from it if it's not exists
+                         _edje_object_textblock_styles_cache_add(ed, stl);
+                    }
+                  else
+                    {
+                       // just mark it dirty so the next request
+                       // for this style will trigger recomputation.
+                       stl->cache = EINA_FALSE;
+                    }
+                  // don't need to continue searching
                   break;
                }
           }
      }
+}
+
+/*
+ * Finds all the styles having text class tag as text_class and
+ * updates them in object level.
+ */
+void
+_edje_object_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
+{
+   _edje_textblock_style_all_update_text_class(ed, text_class, EINA_TRUE);
+}
+
+/*
+ * Finds all the styles having text class tag as text_class and
+ * updates them in file level.
+ */
+void
+_edje_file_textblock_styles_all_update_text_class(Edje *ed, const char *text_class)
+{
+   _edje_textblock_style_all_update_text_class(ed, text_class, EINA_FALSE);
 }
 
 /* When we get to here the edje file had been read into memory

@@ -65,7 +65,6 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
         pd->alpha_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
         efl_animation_alpha_set(pd->alpha_anim, 0.0, 1.0);
         efl_animation_duration_set(pd->alpha_anim, 0.5);
-        efl_animation_final_state_keep_set(pd->alpha_anim, EINA_TRUE);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
@@ -144,6 +143,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_
           {
              efl_event_callback_add(pd->content[0], EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, _hide_object_cb, obj);
              efl_event_callback_add(pd->content[0], EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _running_cb, obj);
+             efl_gfx_stack_above(pd->content[1], pd->content[0]); //Stack the "to content" above the "from content"
           }
      }
    else

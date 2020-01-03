@@ -1336,6 +1336,140 @@ _edje_text_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key
    return EINA_TRUE;
 }
 
+static Edje_File *
+_edje_file_find(const char *file)
+{
+   char *tmp = NULL;
+   Eina_File *f = NULL;
+   Edje_File *edf = NULL;
+
+   if (!file) return NULL;
+
+   tmp = eina_vpath_resolve(file);
+   if (!tmp) return NULL;
+
+   f = eina_file_open(tmp, EINA_FALSE);
+
+   if (tmp) free(tmp);
+   if (!f) return NULL;
+
+   edf = _edje_file_cache_find(f);
+
+   eina_file_close(f);
+   return edf;
+}
+
+EAPI Eina_Bool
+edje_file_text_class_get(const char *file, const char * text_class, const char **font, Evas_Font_Size *size)
+{
+   Edje_Text_Class *tc = NULL;
+   Edje_File *edf = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (font) *font = NULL;
+   if (size) *size = 0;
+
+   if ((!file) || (!text_class)) return ret;
+   if ((!font) && (!size)) return ret; // No need to go deep
+
+   edf = _edje_file_find(file);
+   if (!edf) return ret;
+
+   tc = eina_hash_find(edf->text_hash, text_class);
+   if (!tc) goto end;
+
+   if (font) *font = tc->font;
+   if (size) *size = tc->size;
+   ret = EINA_TRUE;
+
+end:
+   _edje_cache_file_unref(edf);
+   return ret;
+}
+
+EAPI Eina_Bool
+edje_file_text_class_del(const char *file, const char *text_class)
+{
+   Edje_Text_Class *tc = NULL;
+   Edje_File *edf = NULL;
+   Eina_Bool ret = EINA_FALSE;
+   if ((!file) || (!text_class)) return ret;
+
+   edf = _edje_file_find(file);
+   if (!edf) return ret;
+
+   tc = eina_hash_find(edf->text_hash, text_class);
+   if (!tc) goto end;
+
+   eina_hash_del(edf->text_hash, text_class, tc);
+   eina_stringshare_del(tc->name);
+   eina_stringshare_del(tc->font);
+   free(tc);
+
+   /* Tell all members of the text class to recalc */
+   efl_observable_observers_update(_edje_text_class_member, text_class, edf);
+
+   ret = EINA_TRUE;
+end:
+   _edje_cache_file_unref(edf);
+   return ret;
+}
+
+EAPI Eina_Bool
+edje_file_text_class_set(const char *file, const char *text_class, const char *font, Evas_Font_Size size)
+{
+   Edje_File *edf = NULL;
+   Edje_Text_Class *tc = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   if ((!file) || (!text_class)) return ret;
+
+   edf = _edje_file_find(file);
+   if (!edf) return ret;
+
+   // update text_class properties, or create new text_class if not found
+   if (edf->text_hash) tc = eina_hash_find(edf->text_hash, text_class);
+   if (!tc)
+     {
+        /* Create new text class */
+        tc = calloc(1, sizeof(Edje_Text_Class));
+        if (!tc) goto error_end;
+        tc->name = eina_stringshare_add(text_class);
+        if (!tc->name)
+          {
+             free(tc);
+             goto error_end;
+          }
+        if (!edf->text_hash) edf->text_hash = eina_hash_string_small_new(NULL);
+        eina_hash_direct_add(edf->text_hash, text_class, tc);
+
+        tc->font = eina_stringshare_add(font);
+        tc->size = size;
+     }
+   else
+     {
+        /* Match and the same, return */
+        if (((tc->font && font) && !strcmp(tc->font, font)) &&
+            (tc->size == size))
+             goto success_end;
+
+        /* Update the class found */
+        eina_stringshare_replace(&tc->font, font);
+        tc->size = size;
+     }
+
+
+   /* Tell all members of the text class to recalc */
+   efl_observable_observers_update(_edje_text_class_member, text_class, edf);
+
+success_end:
+   ret = EINA_TRUE;
+
+error_end:
+   _edje_cache_file_unref(edf);
+   return ret;
+}
+
 EAPI Eina_Bool
 edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
 {
@@ -1401,7 +1535,7 @@ _efl_canvas_layout_efl_gfx_text_class_text_class_set(Eo *obj EINA_UNUSED, Edje *
                                  text_class, font, size);
      }
 
-   efl_observer_update(obj, _edje_text_class_member, text_class, NULL);
+   efl_observer_update(obj, _edje_text_class_member, text_class, ed);
 
    return EINA_TRUE;
 }
@@ -1460,7 +1594,7 @@ _efl_canvas_layout_efl_gfx_text_class_text_class_del(Eo *obj EINA_UNUSED, Edje *
           efl_gfx_text_class_del(rp->typedata.swallow->swallowed_object, text_class);
      }
 
-   efl_observer_update(obj, _edje_text_class_member, text_class, NULL);
+   efl_observer_update(obj, _edje_text_class_member, text_class, ed);
 }
 
 typedef struct _Edje_File_Text_Class_Iterator Edje_File_Text_Class_Iterator;
@@ -5828,24 +5962,28 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 Edje_Text_Class *
 _edje_text_class_find(Edje *ed, const char *text_class)
 {
-   Edje_Text_Class *tc;
+   Edje_Text_Class *tc = NULL;
 
-   if ((!ed) || (!text_class)) return NULL;
+   if (!text_class) return NULL;
+
+   if (!ed)
+     {
+        /* If ed object is NULL, then look through the global scope only */
+        return eina_hash_find(_edje_text_class_hash, text_class);
+     }
 
    /* first look through the object scope */
    tc = eina_hash_find(ed->text_classes, text_class);
-   if (tc) return tc;
-
+ 
    /* next look through the global scope */
-   tc = eina_hash_find(_edje_text_class_hash, text_class);
-   if (tc) return tc;
+   if (!tc)
+     tc = eina_hash_find(_edje_text_class_hash, text_class);
 
    /* finally, look through the file scope */
-   if (ed->file)
+   if (!tc && ed->file)
      tc = eina_hash_find(ed->file->text_hash, text_class);
-   if (tc) return tc;
 
-   return NULL;
+   return tc;
 }
 
 static Eina_Bool

@@ -246,7 +246,8 @@ _cursor_text_append(Efl_Text_Cursor_Handle *cur,
    const char *off = text;
    int len = 0;
 
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
    evas_object_async_block(obj);
 
    while (*off)
@@ -412,7 +413,8 @@ _efl_text_cursor_range_delete(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl
 EAPI void
 efl_text_cursor_handle_set(Eo *obj, Efl_Text_Cursor_Handle *handle)
 {
-   Efl_Text_Cursor_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Text_Cursor_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
    if (handle == pd->handle)
      return;
 
@@ -429,7 +431,8 @@ efl_text_cursor_handle_set(Eo *obj, Efl_Text_Cursor_Handle *handle)
 EAPI Efl_Text_Cursor_Handle *
 efl_text_cursor_handle_get(const Eo *obj)
 {
-   Efl_Text_Cursor_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Text_Cursor_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
    return pd->handle;
 }
 

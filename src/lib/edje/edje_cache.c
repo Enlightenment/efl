@@ -600,8 +600,13 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
 
    edf->text_hash = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(edf->text_classes, l, tc)
-      if (tc->name)
-         eina_hash_direct_add(edf->text_hash, tc->name, tc);
+     {
+        if (tc->name)
+          eina_hash_direct_add(edf->text_hash, tc->name, tc);
+
+        if (tc->font)
+          tc->font = eina_stringshare_add(tc->font);
+     }
 
    edf->size_hash = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(edf->size_classes, l, sc)
@@ -713,7 +718,7 @@ _edje_file_cache_trash_pop(const Eina_File *file)
    return NULL;
 }
 
-static inline Edje_File*
+Edje_File*
 _edje_file_cache_find(const Eina_File *file)
 {
    Edje_File *edf;

@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.Contracts;
 
 namespace EinaTestData
 {
@@ -95,6 +96,8 @@ public static class BaseData
         [ CallerLineNumber ] int line = 0,
         [ CallerFilePath ] string file = null,
         [ CallerMemberName ] string member = null) {
+        Contract.Requires(a != null, nameof(a));
+        Contract.Requires(b != null, nameof(b));
         Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
         for (int i = 0; i < a.Length; ++i)
         {

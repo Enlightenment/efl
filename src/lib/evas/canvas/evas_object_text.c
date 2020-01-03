@@ -410,6 +410,8 @@ _evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
 
+   if (o->cur.size == 0 || (!o->cur.font && !o->cur.source)) return ;
+
    if (!(obj->layer->evas->is_frozen))
      {
         pass = evas_event_passes_through(eo_obj, obj);

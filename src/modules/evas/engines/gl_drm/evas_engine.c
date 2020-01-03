@@ -3,8 +3,6 @@
 #include "../gl_common/evas_gl_define.h"
 #include "../software_generic/evas_native_common.h"
 
-#include <wayland-client.h>
-
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
