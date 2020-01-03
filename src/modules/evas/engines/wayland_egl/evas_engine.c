@@ -1317,7 +1317,7 @@ eng_image_native_set(void *engine, void *image, void *native)
                else
                  ERR("Try eglCreateImage on EGL with no support");
                if (!n->ns_data.tbm.surface)
-                 ERR("eglCreateImage() for %p failed", buffer);
+                 WRN("eglCreateImage() for %p failed", buffer);
                img->native.yinvert     = 1;
                img->native.loose       = 0;
                img->native.disp        = ob->egl_disp;
