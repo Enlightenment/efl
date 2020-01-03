@@ -139,11 +139,11 @@ EFL_START_TEST(test_efl_ui_collection_view_select)
    sel_val = efl_model_property_get(model, "child.selected");
    ck_assert(eina_value_type_get(sel_val) == EINA_VALUE_TYPE_ERROR);
 
-   click_object_at(lv, 50, 5);
-   get_me_to_those_events(lv);
+   efl_future_then(model, efl_model_property_ready_get(model, "child.selected"), .success = _quit);
 
-   //efl_future_then(model, efl_model_property_ready_get(model, "child.selected"), .success = _quit);
-   //ecore_main_loop_begin();
+   click_object_at(lv, 50, 5);
+   ecore_main_loop_begin();
+
    sel_val = efl_model_property_get(model, "child.selected");
    ck_assert(eina_value_type_get(sel_val) == EINA_VALUE_TYPE_ULONG);
    ck_assert(eina_value_ulong_get(sel_val, &sel));
