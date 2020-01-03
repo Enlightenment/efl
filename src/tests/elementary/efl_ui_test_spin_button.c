@@ -193,6 +193,23 @@ EFL_START_TEST (spin_double_values)
 }
 EFL_END_TEST
 
+EFL_START_TEST (spin_double_values_hitting_max_with_step)
+{
+   //idea is to check that spin button can hit max with inc, even if value is not multiple is 2.7
+   efl_ui_range_limits_set(spin, 10, 30);
+   efl_ui_range_value_set(spin, 27);
+   efl_ui_range_step_set(spin, 2.7);
+   get_me_to_those_events(spin);
+
+   for (int i = 0; i < 2; ++i)
+     {
+        click_part(spin, "efl.inc_button");
+        get_me_to_those_events(spin);
+     }
+   ck_assert_int_eq(EINA_DBL_EQ(efl_ui_range_value_get(spin), 30), 1);
+}
+EFL_END_TEST
+
 static inline void
 _try_direct_text_input(const char *text, double result)
 {
@@ -253,6 +270,7 @@ void efl_ui_test_spin_button(TCase *tc)
    tcase_add_test(tc, spin_value_dec_min);
    tcase_add_test(tc, spin_wraparound);
    tcase_add_test(tc, spin_double_values);
+   tcase_add_test(tc, spin_double_values_hitting_max_with_step);
    tcase_add_test(tc, spin_direct_text_input);
    tcase_add_test(tc, spin_direct_text_input_comma_value);
 }
