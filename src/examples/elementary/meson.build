@@ -120,7 +120,8 @@ examples = [
   'efl_ui_slideshow_example',
   'efl_ui_radio_example_01',
   'efl_ui_grid_example_1',
-  'efl_ui_grid_view_example_1'
+  'efl_ui_grid_view_example_1',
+  'efl_canvas_textblock_obstacles_example'
 ]
 
 foreach example : examples
