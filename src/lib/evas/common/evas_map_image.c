@@ -651,7 +651,7 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
 #  undef SCALE_USING_NEON
 #endif
 
-//#include "evas_map_image_internal_high.c"
+#include "evas_map_image_internal_high.c"
 
 #ifdef BUILD_MMX
 void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
@@ -683,7 +683,6 @@ void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Dr
 }
 #endif
 
-#if 0
 void evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
 {
    int clip_x, clip_y, clip_w, clip_h;
@@ -711,7 +710,6 @@ void evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst, RGBA_D
                                        p, smooth, dc->anti_alias, level,
                                        dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
 }
-#endif
 
 void evas_common_map_rgba_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
 {
@@ -866,13 +864,11 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
 {
    Evas_Common_Map_RGBA_Cb cb;
 
-#if 0
    if (dc->anti_alias && smooth)
      {
         cb = evas_common_map_rgba_internal_high;
      }
    else
-#endif
      {
 #ifdef BUILD_MMX
         int mmx, sse, sse2;
@@ -897,7 +893,6 @@ EAPI void
 evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    //The best quaility requsted.
-#if 0
    if (anti_alias && smooth)
      {
         _evas_common_map_rgba_internal_high(src, dst,
@@ -907,7 +902,6 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
                                             mask_ie, mask_x, mask_y);
      }
    else
-#endif
      {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
