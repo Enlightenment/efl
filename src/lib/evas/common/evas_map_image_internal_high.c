@@ -391,8 +391,8 @@ _map_triangle_draw_linear(RGBA_Image *src, RGBA_Image *dst,
              if (aa_spans->lines[ay].x[0] > x1) aa_spans->lines[ay].x[0] = x1;
              if (aa_spans->lines[ay].x[1] < x2) aa_spans->lines[ay].x[1] = x2;
           }
-
         if ((x2 - x1) < 1) goto next;
+        if ((x1 >= (cx + cw)) || (x2 <= cx)) goto next;
 
         //Perform subtexel pre-stepping on UV
         dx = 1 - (_xa - x1);
