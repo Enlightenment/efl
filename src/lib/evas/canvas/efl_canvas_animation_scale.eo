@@ -48,7 +48,9 @@ class Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
          values {
             from_scale: Eina.Vector2; [[Initial scale value.]]
             to_scale: Eina.Vector2; [[Ending scale value.]]
-            pivot_point: Eina.Position2D; [[Position of the pivot point relative to the canvas. If $null the target passed to @Efl.Canvas.Animation.animation_apply is used as pivot element]]
+            pivot_point: Eina.Position2D; [[Position of the pivot point relative to the canvas.
+                                            If $null the target passed to @Efl.Canvas.Animation.animation_apply
+                                            is used as pivot element.]]
          }
       }
    }
