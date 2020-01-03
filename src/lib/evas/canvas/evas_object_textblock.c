@@ -6569,7 +6569,7 @@ _layout_par(Ctxt *c)
                        Evas_Coord cw = c->w;
                        if (obs)
                          {
-                            cw -= obs->w;
+                            cw = obs->x;
                          }
                        if (it->format->wrap_word)
                           wrap = _layout_get_wordwrap(c, it->format, it,
