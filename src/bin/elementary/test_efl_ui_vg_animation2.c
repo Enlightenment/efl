@@ -48,7 +48,7 @@ static void
 check_changed_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *anim_view = data;
-   efl_player_playback_loop_set(anim_view, efl_ui_selectable_selected_get(event->object));
+   efl_ui_vg_animation_autorepeat_set(anim_view, efl_ui_selectable_selected_get(event->object));
 }
 
 static void
@@ -323,7 +323,7 @@ right_box_content(Evas_Object* box)
                        efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(300, 300)),
                        efl_file_set(efl_added, buf),
                        efl_pack(box, efl_added));
-   efl_player_playback_loop_set(anim_view, EINA_TRUE);
+   efl_ui_vg_animation_autorepeat_set(anim_view, EINA_TRUE);
    efl_player_playing_set(anim_view, EINA_TRUE);
 
    //Slider
