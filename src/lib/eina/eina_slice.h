@@ -464,6 +464,30 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
 #else
 #define EINA_SLICE_STR(str) {.len = strlen((str)), .mem = (str)}
 #endif
+/**
+ * @def EINA_SLICE_STR_FULL(str)
+ *
+ * Same as EINA_SLICE_STR_FULL, but it also contains the \0 element of the string
+ *
+ * @param[in] str The string to create the slice from.
+ * @return The initialized slice object.
+ *
+ * @note This macro is usable with both Eina_Slice or Eina_Rw_Slice.
+ *
+ * @code
+ * Eina_Slice ro_slice = EINA_SLICE_STR_FULL("hello world");
+ * @endcode
+ *
+ * @see EINA_SLICE_STR_FULL() for specific version using literals.
+ *
+ * @since 1.24
+ */
+#ifdef __cplusplus
+#define EINA_SLICE_STR_FULL(str) {strlen((str)) + 1, (str)}
+#else
+#define EINA_SLICE_STR_FULL(str) {.len = strlen((str)) + 1, .mem = (str)}
+#endif
+
 
 /**
  * @def EINA_SLICE_STR_FMT

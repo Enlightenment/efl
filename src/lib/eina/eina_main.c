@@ -154,6 +154,7 @@ extern Eina_Lock       _sysmon_lock;
    S(slstr);
    S(promise);
    S(vpath);
+   S(abstract_content);
 #undef S
 
 struct eina_desc_setup
@@ -202,6 +203,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(safepointer),
    S(slstr),
    S(promise),
+   S(abstract_content)
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /
