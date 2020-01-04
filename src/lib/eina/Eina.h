@@ -272,6 +272,7 @@ extern "C" {
 #include <eina_debug.h>
 #include <eina_promise.h>
 #include <eina_vpath.h>
+#include <eina_abstract_content.h>
 
 #undef EAPI
 #define EAPI

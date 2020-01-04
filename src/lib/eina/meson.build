@@ -107,6 +107,7 @@ public_sub_headers = [
 'eina_freeq.h',
 'eina_slstr.h',
 'eina_vpath.h',
+'eina_abstract_content.h'
 ]
 
 public_headers = [
@@ -188,7 +189,8 @@ sources = [
 'eina_freeq.c',
 'eina_slstr.c',
 'eina_vpath.c',
-'eina_vpath_xdg.c'
+'eina_vpath_xdg.c',
+'eina_abstract_content.c',
 ]
 
 if sys_windows == true
