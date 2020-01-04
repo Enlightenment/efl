@@ -525,13 +525,13 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
           {
              //emit signal and focus eval old and new
              ELM_WIDGET_DATA_GET(old_parent, old_pd);
-             _full_eval(old_parent, old_pd);
+             if (old_pd) _full_eval(old_parent, old_pd);
           }
 
         if (efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
           {
              ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
-             _full_eval(pd->logical.parent, new_pd);
+             if (new_pd) _full_eval(pd->logical.parent, new_pd);
           }
      }
 
@@ -562,8 +562,7 @@ void
 _elm_widget_full_eval(Eo *obj)
 {
    ELM_WIDGET_DATA_GET(obj, pd);
-
-   _full_eval(obj, pd);
+   if (pd) _full_eval(obj, pd);
 }
 
 /**
@@ -652,6 +651,7 @@ _obj_mouse_down(void *data,
    Evas_Object *top;
 
    ELM_WIDGET_DATA_GET(data, sd);
+   if (!sd) return;
    Evas_Event_Mouse_Down *ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
@@ -667,6 +667,7 @@ _obj_mouse_move(void *data,
                 void *event_info)
 {
    ELM_WIDGET_DATA_GET(data, sd);
+   if (!sd) return;
    Evas_Event_Mouse_Move *ev = event_info;
    if (!sd->still_in) return;
 
@@ -688,6 +689,7 @@ _obj_mouse_up(void *data,
               void *event_info)
 {
    ELM_WIDGET_DATA_GET(data, sd);
+   if (!sd) return;
    Evas_Event_Mouse_Up *ev = event_info;
 
    if (sd->still_in && (ev->flags == EVAS_BUTTON_NONE) &&
@@ -705,6 +707,7 @@ _obj_mouse_in(void *data,
               void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
+   if (!sd) return;
    if (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN &&
        !efl_invalidated_get(data))
      elm_widget_focus_mouse_up_handle(evas_object_widget_parent_find(obj));
@@ -4804,7 +4807,8 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
         else
           {
              ELM_WIDGET_DATA_GET(parent, parent_sd);
-             sd->shared_win_data = parent_sd->shared_win_data;
+             if (parent_sd)
+               sd->shared_win_data = parent_sd->shared_win_data;
           }
      }
    else
@@ -5161,6 +5165,7 @@ elm_widget_on_show_region_hook_set(Eo *obj, void *data, Elm_Widget_On_Show_Regio
 {
    ELM_WIDGET_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if ((sd->on_show_region_data == data) && (sd->on_show_region == func))
      return;
 
@@ -5854,6 +5859,7 @@ _efl_ui_model_property_bind_changed(void *data, const Efl_Event *event)
    const char *prop;
    unsigned int i;
 
+   if (!pd) return;
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
         Efl_Ui_Property_Bound *lookup;
@@ -5872,6 +5878,7 @@ _efl_ui_view_property_bind_changed(void *data, const Efl_Event *event)
    Eina_Stringshare *prop;
    unsigned int i;
 
+   if (!pd) return;
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
         Efl_Ui_Property_Bound *lookup;
@@ -5905,6 +5912,7 @@ _efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event)
 {
    ELM_WIDGET_DATA_GET(data, pd);
 
+   if (!pd) return;
    efl_replace(&pd->properties.model,
                efl_ui_view_model_get(pd->properties.provider));
    _efl_ui_widget_model_update(data, pd);
@@ -5917,6 +5925,7 @@ _efl_ui_widget_model_provider_invalidate(void *data, const Efl_Event *event EINA
 {
    ELM_WIDGET_DATA_GET(data, pd);
 
+   if (!pd) return;
    efl_event_callback_array_del(pd->properties.provider,
                                 efl_ui_widget_model_provider_callbacks(),
                                 data);
