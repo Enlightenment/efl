@@ -30,7 +30,7 @@ group { name: "e/modules/battery/main";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 128 128 128 255;
+            color: 160 160 160 255;
          }
       }
       part { name: "fill_clip"; type: RECT;
@@ -75,8 +75,8 @@ group { name: "e/modules/battery/main";
          description { state: "default" 0.0;
             align: 0.5 0.0;
             rel.to: "bg";
-            rel1.relative: 0.2 0.15;
-            rel2.relative: 0.8 0.53;
+            rel1.relative: 0.25 0.15;
+            rel2.relative: 0.75 0.53;
             color: 255 255 255 255;
             text { font: "Sans"; size: 8;
                min: 0 1;
@@ -93,8 +93,8 @@ group { name: "e/modules/battery/main";
          description { state: "default" 0.0;
             align: 0.5 1.0;
             rel.to: "bg";
-            rel1.relative: 0.2 0.47;
-            rel2.relative: 0.8 0.85;
+            rel1.relative: 0.25 0.47;
+            rel2.relative: 0.75 0.85;
             color: 255 255 255 255;
             text { font: "Sans"; size: 8;
                min: 0 1;
