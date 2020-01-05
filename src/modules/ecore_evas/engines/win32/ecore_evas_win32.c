@@ -1284,6 +1284,9 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL, //fn_pointer_device_xy_get
      NULL, //fn_prepare
      NULL, //fn_last_tick_get
+     NULL, //fn_selection_claim
+     NULL, //fn_selection_has_owner
+     NULL, //fn_selection_request
 };
 
 #endif /* BUILD_ECORE_EVAS_WIN32 */

@@ -652,6 +652,10 @@ ecore_evas_init(void)
    iface.del = _ecore_evas_animator_del;
    ecore_evas_object_animator_init(&iface);
 
+   ecore_evas_no_matching_type = eina_error_msg_register("No fitting type could be found");
+   ecore_evas_no_selection = eina_error_msg_register("No selection available");
+   ecore_evas_request_replaced = eina_error_msg_register("Selection request replaced");
+
    return _ecore_evas_init_count;
 
  shutdown_ecore:
@@ -2818,7 +2822,7 @@ ecore_evas_shadow_geometry_get(const Ecore_Evas *ee, int *l, int *r, int *t, int
    if (b) *b = ee->shadow.b;
 }
 
-EAPI void 
+EAPI void
 ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
    if (x) *x = 0;
@@ -2828,7 +2832,7 @@ ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
    IFE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 {
    ECORE_EVAS_CHECK(ee, EINA_FALSE);
@@ -2905,7 +2909,7 @@ ecore_evas_pixmap_visual_get(const Ecore_Evas *ee)
    return NULL;
 }
 
-EAPI unsigned long 
+EAPI unsigned long
 ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee)
 {
    ECORE_EVAS_CHECK(ee, 0);
@@ -2932,7 +2936,7 @@ ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee)
    return 0;
 }
 
-EAPI int 
+EAPI int
 ecore_evas_pixmap_depth_get(const Ecore_Evas *ee)
 {
    ECORE_EVAS_CHECK(ee, 0);
@@ -3524,6 +3528,9 @@ _ecore_evas_free(Ecore_Evas *ee)
      free(iface);
 
    ee->engine.ifaces = NULL;
+
+   if (ee->fallback_interface)
+     fallback_selection_shutdown(ee);
    free(ee);
 }
 
@@ -3542,7 +3549,7 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
 {
    if (ee->engine.idle_flush_timer)
      ecore_timer_del(ee->engine.idle_flush_timer);
-   ee->engine.idle_flush_timer = 
+   ee->engine.idle_flush_timer =
      ecore_timer_loop_add(IDLE_FLUSH_TIME, _ecore_evas_cb_idle_flush, ee);
 }
 
@@ -4007,7 +4014,7 @@ ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent,
 
 }
 
-EAPI Ecore_X_Pixmap 
+EAPI Ecore_X_Pixmap
 ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Software_X11 *iface;
@@ -4082,7 +4089,7 @@ ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x
 
 }
 
-EAPI Ecore_X_Pixmap 
+EAPI Ecore_X_Pixmap
 ecore_evas_gl_x11_pixmap_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Gl_X11 *iface;
@@ -5448,4 +5455,345 @@ _ecore_evas_animator_thaw(Ecore_Animator *in)
    ee->ee_anim.active = eina_inlist_append(ee->ee_anim.active,
                                            EINA_INLIST_GET(animator));
    _ticking_start(ee);
+}
+
+EAPI void
+ecore_evas_callback_selection_changed_set(Ecore_Evas *ee, Ecore_Evas_Selection_Changed_Cb func)
+{
+   ECORE_EVAS_CHECK(ee);
+   ee->func.fn_selection_changed = func;
+}
+
+static Ecore_Evas_Selection_Seat_Buffers*
+_fetch_selection_buffers_of_seat(Ecore_Evas *ee, unsigned int seat, Eina_Bool create)
+{
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+   if (!ee->selection_buffers)
+     ee->selection_buffers = eina_hash_int32_new(free);
+
+   buffers = eina_hash_find(ee->selection_buffers, &seat);
+
+   if (!buffers && create)
+     {
+        buffers = calloc(1, sizeof(Ecore_Evas_Selection_Seat_Buffers));
+        buffers->seat = seat;
+        eina_hash_add(ee->selection_buffers, &seat, buffers);
+     }
+   return buffers;
+}
+
+static Eina_Bool
+_deliver_cb(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice)
+{
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+   Eina_Content *content;
+   Eina_Content *converted = NULL;
+   Eina_Bool result = EINA_FALSE;
+
+   INF("Delivery request on seat %d in buffer %d", seat, buffer);
+
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_GOTO(buffers, free_everything);
+   content = buffers->selection_buffer[buffer];
+   EINA_SAFETY_ON_NULL_GOTO(content, free_everything);
+   if (!eina_streq(type, eina_content_type_get(content)))
+     converted = eina_content_convert(content, type);
+   else
+     converted = content;
+
+   EINA_SAFETY_ON_NULL_GOTO(converted, free_everything);
+   *slice = eina_slice_dup(eina_content_data_get(converted));
+   result = EINA_TRUE;
+
+   if (buffer == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     {
+        ee->drag.accepted = EINA_TRUE;
+     }
+
+free_everything:
+   if (converted && content && !eina_streq(type, eina_content_type_get(content)))
+     eina_content_free(converted);
+
+   return result;
+}
+
+static void
+_cancel_cb(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer)
+{
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+
+   INF("Cancel request on seat %d in buffer %d", seat, buffer);
+
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN(buffers);
+   EINA_SAFETY_ON_FALSE_RETURN(buffers->selection_buffer[buffer]);
+   eina_content_free(buffers->selection_buffer[buffer]);
+   buffers->selection_buffer[buffer] = NULL;
+
+   if (buffer == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     {
+        ee->drag.rep = NULL;
+        if (ee->drag.free)
+          ee->drag.free(ee, seat, ee->drag.data, EINA_FALSE);
+        ee->drag.free = NULL;
+     }
+}
+
+#define CALL(call)  (ee->engine.func->fn_ ##call ? : fallback_ ##call)
+
+static Eina_Array*
+_iterator_to_array(Eina_Iterator *iter, const char *existing_type)
+{
+   Eina_Array *ret = eina_array_new(10);
+   const char *type;
+
+   if (existing_type)
+     eina_array_push(ret, existing_type);
+
+   EINA_ITERATOR_FOREACH(iter, type)
+     {
+        eina_array_push(ret, type);
+     }
+   eina_iterator_free(iter);
+
+   return ret;
+}
+
+EAPI Eina_Bool
+ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, Eina_Content *content)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(buffer >= 0 && buffer < ECORE_EVAS_SELECTION_BUFFER_LAST, EINA_FALSE);
+   Eina_Iterator *available_type = NULL;
+   Eina_Bool success;
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+
+   INF("Selection set on seat %d in buffer %d", seat, buffer);
+
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_TRUE);
+
+   if (content)
+     available_type = eina_content_possible_conversions(content);
+
+   if (buffer == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     {
+        ERR("You cannot set a selection with this API, please use the API to start a drag operation");
+        return EINA_FALSE;
+     }
+
+   success = CALL(selection_claim)(ee, seat, buffer, _iterator_to_array(available_type, content ? eina_content_type_get(content) : NULL), content ? _deliver_cb : NULL, content ? _cancel_cb : NULL);
+   if (success)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(buffers->selection_buffer[buffer] == NULL, EINA_FALSE);
+        //keep this after the claim, the claim might call cancel, which would overwrite this.
+        buffers->selection_buffer[buffer] = content;
+     }
+   else
+     {
+        eina_content_free(content);
+     }
+
+   return success;
+}
+
+EAPI Eina_Bool
+ecore_evas_selection_exists(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(buffer >= 0 && buffer < ECORE_EVAS_SELECTION_BUFFER_LAST, EINA_FALSE);
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+
+   INF("Exists request on seat %d in buffer %d", seat, buffer);
+
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_TRUE);
+   if (buffers->selection_buffer[buffer])
+     return EINA_TRUE;
+   else
+     {
+        return CALL(selection_has_owner)(ee, seat, buffer);
+     }
+}
+
+static Eina_Array*
+_iterator_to_array_stringshared(Eina_Iterator *iter)
+{
+   Eina_Array *ret = eina_array_new(10);
+   const char *type;
+
+   EINA_ITERATOR_FOREACH(iter, type)
+     {
+        eina_array_push(ret, eina_stringshare_add(type));
+     }
+   eina_iterator_free(iter);
+
+   return ret;
+}
+
+EAPI Eina_Future*
+ecore_evas_selection_get(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, Eina_Iterator *acceptable_types)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(buffer >= 0 && buffer < ECORE_EVAS_SELECTION_BUFFER_LAST, NULL);
+
+   INF("Selection get request on seat %d in buffer %d", seat, buffer);
+
+   return CALL(selection_request)(ee, seat, buffer, _iterator_to_array_stringshared(acceptable_types));
+}
+
+EAPI Eina_Bool
+ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep, const char* action, Ecore_Evas_Drag_Finished terminate_cb, void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(content, EINA_FALSE);
+   Eina_Iterator *available_type = eina_content_possible_conversions(content);
+   Eina_Bool success;
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+
+   INF("Drag start on seat %d", seat);
+
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_TRUE);
+   success = CALL(dnd_start)(ee, seat, _iterator_to_array(available_type, eina_content_type_get(content)), drag_rep, _deliver_cb, _cancel_cb, action);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(buffers->selection_buffer[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER] == NULL, EINA_FALSE);
+   //keep this after the claim, the claim might call cancel, which would overwrite this.
+   buffers->selection_buffer[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER] = content;
+
+   ee->drag.rep = drag_rep;
+   ee->drag.free = terminate_cb;
+   ee->drag.data = data;
+   ee->drag.accepted = EINA_FALSE;
+
+   return success;
+}
+
+EAPI Eina_Bool
+ecore_evas_drag_cancel(Ecore_Evas *ee, unsigned int seat)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+
+   INF("Drag cancel on seat %d", seat);
+
+   return CALL(dnd_stop)(ee, seat);
+}
+
+EAPI void
+ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Motion_Cb cb)
+{
+   ECORE_EVAS_CHECK(ee);
+   ee->func.fn_dnd_motion = cb;
+}
+
+EAPI void
+ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_State_Changed cb)
+{
+   ECORE_EVAS_CHECK(ee);
+   ee->func.fn_dnd_state_change = cb;
+}
+
+EAPI void
+ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb cb)
+{
+   ECORE_EVAS_CHECK(ee);
+   ee->func.fn_dnd_drop = cb;
+}
+
+typedef struct {
+   Eina_Array *available_mime_types;
+   Eina_Position2D pos;
+} Ecore_Evas_Active_Dnd;
+
+static void
+_ecore_evas_active_dnd_free(Ecore_Evas_Active_Dnd *dnd)
+{
+   eina_array_free(dnd->available_mime_types);
+   free(dnd);
+}
+
+EAPI void
+ecore_evas_dnd_enter(Ecore_Evas *ee, unsigned int seat, Eina_Iterator *available_types, Eina_Position2D pos)
+{
+   Eina_Stringshare *s;
+   Ecore_Evas_Active_Dnd *dnd;
+
+   ECORE_EVAS_CHECK(ee);
+   if (!ee->active_drags)
+     {
+        ee->active_drags = eina_hash_int32_new((Eina_Free_Cb)_ecore_evas_active_dnd_free);
+     }
+
+   dnd = calloc(1, sizeof(Ecore_Evas_Active_Dnd));
+   dnd->available_mime_types = eina_array_new(5);
+   eina_hash_add(ee->active_drags, &seat, dnd);
+
+   EINA_ITERATOR_FOREACH(available_types, s)
+     {
+        eina_array_push(dnd->available_mime_types, s);
+     }
+   eina_iterator_free(available_types);
+
+   if (ee->func.fn_dnd_state_change)
+     ee->func.fn_dnd_state_change(ee, seat, pos, EINA_TRUE);
+}
+
+EAPI void
+ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos)
+{
+   Ecore_Evas_Active_Dnd *dnd;
+
+   ECORE_EVAS_CHECK(ee);
+   EINA_SAFETY_ON_NULL_RETURN(ee->active_drags);
+   dnd = eina_hash_find(ee->active_drags, &seat);
+   EINA_SAFETY_ON_NULL_RETURN(dnd);
+   dnd->pos = pos;
+   if (ee->func.fn_dnd_motion)
+     ee->func.fn_dnd_motion(ee, seat, pos);
+}
+
+EAPI void
+ecore_evas_dnd_leave(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos)
+{
+   Ecore_Evas_Active_Dnd *dnd;
+
+   ECORE_EVAS_CHECK(ee);
+   EINA_SAFETY_ON_NULL_RETURN(ee->active_drags);
+   dnd = eina_hash_find(ee->active_drags, &seat);
+   EINA_SAFETY_ON_NULL_RETURN(dnd);
+
+   if (ee->func.fn_dnd_state_change)
+     ee->func.fn_dnd_state_change(ee, seat, pos, EINA_FALSE);
+   eina_hash_del(ee->active_drags, &seat, dnd);
+   if (eina_hash_population(ee->active_drags) == 0)
+     {
+        eina_hash_free(ee->active_drags);
+        ee->active_drags = NULL;
+     }
+}
+
+EAPI Eina_Position2D
+ecore_evas_dnd_pos_get(Ecore_Evas *ee, unsigned int seat)
+{
+   Ecore_Evas_Active_Dnd *dnd;
+
+   ECORE_EVAS_CHECK_GOTO(ee, err);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee->active_drags, EINA_POSITION2D(0, 0));
+   dnd = eina_hash_find(ee->active_drags, &seat);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dnd, EINA_POSITION2D(0, 0));
+
+   return dnd->pos;
+err:
+   return EINA_POSITION2D(0, 0);
+}
+
+EAPI Eina_Accessor*
+ecore_evas_drop_available_types_get(Ecore_Evas *ee, unsigned int seat)
+{
+   Ecore_Evas_Active_Dnd *dnd;
+
+   ECORE_EVAS_CHECK_GOTO(ee, err);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee->active_drags, NULL);
+   dnd = eina_hash_find(ee->active_drags, &seat);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dnd, NULL);
+
+   return eina_array_accessor_new(dnd->available_mime_types);
+err:
+   return NULL;
 }

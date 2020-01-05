@@ -947,7 +947,7 @@ elementary_src = [
   'efl_ui_collection_view.c',
   'efl_ui_pager.c',
   'efl_ui_stack.c',
-  'efl_ui_separator.c'
+  'efl_ui_separator.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
