@@ -23,7 +23,8 @@ ecore_evas_src = [
   'ecore_evas_cocoa.h',
   'ecore_evas_win32.h',
   'ecore_evas_x11.h',
-  'ecore_evas_util.c'
+  'ecore_evas_util.c',
+  'ecore_evas_fallback_selection.c'
 ]
 
 

@@ -881,14 +881,14 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                     {
                        /* resize the canvas */
                        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                       evas_output_viewport_set(ee->evas, 0, 0, 
+                       evas_output_viewport_set(ee->evas, 0, 0,
                                                 ee->req.w, ee->req.h);
                     }
                   else
                     {
                        /* resize the canvas */
                        evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
-                       evas_output_viewport_set(ee->evas, 0, 0, 
+                       evas_output_viewport_set(ee->evas, 0, 0,
                                                 ee->req.h, ee->req.w);
                     }
                }
@@ -2474,6 +2474,9 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_pointer_device_xy_get,
    _ecore_evas_wl_common_prepare,
    NULL, //fn_last_tick_get
+   NULL, //fn_selection_claim
+   NULL, //fn_selection_has_owner
+   NULL, //fn_selection_request
 };
 
 static void

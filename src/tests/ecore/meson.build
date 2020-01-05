@@ -13,6 +13,7 @@ ecore_suite_src = [
   'ecore_test_job.c',
   'ecore_test_args.c',
   'ecore_test_pipe.c',
+  'ecore_test_ecore_evas_selection.c',
   'ecore_suite.h'
 ]
 
@@ -114,4 +115,9 @@ test('ecore-suite', ecore_suite,
 
 test('efl-app', efl_app_suite,
   env : test_env
+)
+
+executable('ecore_evas_cnp_slave',
+  'ecore_evas_cnp_slave.c',
+  dependencies: ecore_evas,
 )

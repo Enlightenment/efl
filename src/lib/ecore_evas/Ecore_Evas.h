@@ -3669,6 +3669,219 @@ EAPI unsigned long ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee);
  */
 EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
 
+typedef enum {
+   ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER = 0,      /**< Stores selected / highlighted selection */
+   ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER = 1, /**< Stores copied things (Ctrl + C) */
+   ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER = 2,  /**< Stores dragged things while drag and drop is happening. */
+   ECORE_EVAS_SELECTION_BUFFER_LAST = 3,
+} Ecore_Evas_Selection_Buffer;
+
+/**
+ * @brief Callback called when the content of one of the selection buffers changes.
+ *
+ * @param[in] ee The Ecore_Evas that handles this selection.
+ * @param[in] selection The selection buffer that has changed.
+ */
+typedef void (*Ecore_Evas_Selection_Changed_Cb)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
+
+/**
+ * @brief Sets a callback for Ecore_Evas to be called when a selection buffer changes.
+ *
+ * @param[in] ee The Ecore_Evas to set the callback on.
+ * @param[in] cb The function to call.
+ *
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee selections change.
+ * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
+ * times overwrites previous functions. Use a NULL @p func to stop being notified.
+ *
+ * You will not be notified about selection changes caused by yourself. (TODO: bu5hm4n?)
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
+EAPI void ecore_evas_callback_selection_changed_set(Ecore_Evas *ee, Ecore_Evas_Selection_Changed_Cb cb);
+
+/**
+ * @brief Sets the content of the specified selection buffer.
+ *
+ * @param[in] ee The Ecore_Evas to set the selection buffer on.
+ * @param[in] buffer The selection buffer to set.
+ * @param[in] content Content to set to the selection buffer. The Eina_Content specifies the MIME type of the data.
+ * Ownership of the content is transferred.
+ *
+ * @note Only ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER and ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER
+ * buffers can be set. Drag and drop operations use a different set of methods.
+ */
+EAPI Eina_Bool ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, Eina_Content *content);
+
+/**
+ * @brief Checks if the specified selection buffer has content.
+ *
+ * @param[in] ee The ecore evas to query
+ * @param[in] buffer Which selection buffer to ask
+ *
+ * @return EINA_TRUE if there is an available selection for the specified buffer.
+ *
+ * EINA_TRUE is also returned when the selection is in the window associated with @p ee
+ *
+ * @note Due to the asynchronous nature of selection buffers, this method might not return
+ * the right result when invoked from the selection callback set with ecore_evas_callback_selection_changed_set.
+ */
+EAPI Eina_Bool ecore_evas_selection_exists(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer);
+
+/**
+ * @brief Retrieves the content of the specified selection buffer.
+ *
+ * @param[in] ee The ecore evas to query.
+ * @param[in] buffer Selection buffer to retrieve.
+ * @param[in] acceptable_types MIME types which are acceptable for the returned Eina_Content.
+ * The iterator contains plain strings (char *). Ownership is transferred for the iterator but not for the strings.
+ * This is convenient for the usual case of a hard-coded array of strings, since the iterator can be generated
+ * on the fly, used and forgotten.
+ *
+ * @return An Eina_Future containing an Eina_Content which has one of the types in @p acceptable_type.
+ * An error is delivered when no matching type is found or when the requested selection buffer is empty.
+ *
+ * This method is time consuming, therefore, it is recommended to verify the existence of a selection
+ * using ecore_evas_selection_exists before calling it.
+ */
+EAPI Eina_Future* ecore_evas_selection_get(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, Eina_Iterator *acceptable_types);
+
+/**
+ * @brief This method is called when the mouse pointer enters or exits the specified window while
+ * performing a drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] p Position (in window coordinates) where the event occurred.
+ * @param[in] inside @c EINA_TRUE if the pointer just entered this window. @c EINA_FALSE if it has just exited.
+ *
+ * Set this callback using ecore_evas_callback_drop_state_changed_set.
+ */
+typedef void (*Ecore_Evas_Drag_Finished)(Ecore_Evas *ee, void *data, Eina_Bool accepted);
+
+/**
+ * @brief Starts a new drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] content The content to delivery at the drop site (ownership is transferred).
+ * The Eina_Content has data and its associated MIME type, plus a list of alternate types that can be provided.
+ * @param[in] drag_rep An Ecore_Evas used as a visual representation of the content being dragged.
+ * It must have the same type as @p ee. This is the transparent object dragged along the mouse pointer to indicate that
+ * a drag operation is in progress.
+ * @p terminate_cb will be called when @p drag_rep is not needed anymore and it must be disposed of.
+ * Use @p data to convey @p drag_rep to @p terminate_cb. For example, if @p drag_rep is owned by an Efl_Window, @p data
+ * can point to that window.
+ * @param[in] action Action the target application should perform upon receiving this content. It is entirely up to the
+ * target application to honor (or even understand) this request.
+ * @return @c EINA_TRUE if the drag operation has been successfully started.
+ *
+ * This method must be called when a drag operation is initiated in order to provide the necessary information.
+ */
+EAPI Eina_Bool ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep, const char* action, Ecore_Evas_Drag_Finished terminate_cb, void *data);
+
+/**
+ * @brief Cancels an ongoing drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @return @c EINA_TRUE if the drag operation has been successfully cancelled.
+ *
+ * The initiator of a drag operation can call this method to abort it.
+ */
+EAPI Eina_Bool ecore_evas_drag_cancel(Ecore_Evas *ee, unsigned int seat);
+
+/**
+ * @brief This method is called when the mouse pointer enters or exits the specified window while
+ * performing a drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] p Position (in window coordinates) where the event occurred.
+ * @param[in] inside @c EINA_TRUE if the pointer just entered this window. @c EINA_FALSE if it has just exited.
+ *
+ * Set this callback using ecore_evas_callback_drop_state_changed_set.
+ */
+typedef void (*Ecore_Evas_State_Changed)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
+
+/**
+ * @brief Sets the method (callback) to call when the mouse pointer enters or exits the specified window while
+ * performing a drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] cb Method to call when the events are received.
+ *
+ * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
+ * times overwrites previous functions. Use a NULL @cb func to stop being notified.
+ */
+EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_State_Changed cb);
+
+/**
+ * @brief This method is called when the mouse pointer moves over the specified window while
+ * performing a drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] p Position (in window coordinates) where the event occurred.
+ *
+ * Set this callback using ecore_evas_callback_drop_motion_set.
+ */
+
+typedef void (*Ecore_Evas_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
+/**
+ * @brief Sets the method (callback) to call when the mouse pointer moves over the specified window while
+ * performing a drag operation.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] cb Method to call when the events are received.
+ *
+ * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
+ * times overwrites previous functions. Use a NULL @cb func to stop being notified.
+ */
+EAPI void ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Motion_Cb cb);
+
+/**
+ * @brief This method is called when the mouse pointer is released over the specified window while
+ * performing a drag operation (thus dropping the dragged content over the window).
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] p Position (in window coordinates) where the event occurred.
+ *
+ * The dropped data can be retrieved using ecore_evas_selection_get and the
+ * ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER buffer.
+ *
+ * Set this callback using ecore_evas_callback_drop_drop_set.
+ */
+typedef void (*Ecore_Evas_Drop_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, const char *action);
+
+/**
+ * @brief Sets the method (callback) to call when the mouse pointer is released over the specified window while
+ * performing a drag operation (thus dropping the dragged content over the window).
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] cb Method to call when the events are received.
+ *
+ * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
+ * times overwrites previous functions. Use a NULL @cb func to stop being notified.
+ */
+EAPI void ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb cb);
+
+// app calls this (from one of the motion cb's, for example) to know the type (and auto conversion) of the thing being dragged.
+// This is the same as calling selection_get and retrieving the types from there (but faster).
+/**
+ * @brief Retrieves the list of types the data currently being dragged can be automatically converted to.
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @return
+ *
+ * This can be used in any of the drag and drop callbacks (Ecore_Evas_State_Changed, Ecore_Evas_Motion_Cb and
+ * Ecore_Evas_Drop_Cb) to check if the data being dragged is acceptable and give the user some early feedback
+ * before the data is actually dropped on the window.
+ *
+ * This is functionally equivalent to calling ecore_evas_selection_get and examining the available types in the
+ * returned Eina_Content, but much faster since the actual data does not have to be asynchronously requested to the
+ * initiator application.
+ */
+EAPI Eina_Accessor* ecore_evas_drop_available_types_get(Ecore_Evas *ee, unsigned int seat);
+
+
 /**
  * @}
  */
@@ -3685,3 +3898,4 @@ EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
 #define EAPI
 
 #endif
+
