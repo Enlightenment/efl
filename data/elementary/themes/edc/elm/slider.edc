@@ -1403,11 +1403,7 @@ group { name: "elm/slider/vertical/indicator/default";
 //Range
 
 group { name: "elm/slider/range/horizontal/default";
-   alias: "elm/slider/horizontal/disabled";
-   alias: "elm/slider/horizontal/media_player/position/default";
-   alias: "elm/slider/horizontal/media_player/position/flush";
-   alias: "elm/slider/horizontal/media_player/volume/default";
-   alias: "elm/slider/horizontal/media_player/volume/flush";
+   alias: "elm/range/horizontal/disabled";
    images.image: "speaker_vol.png" COMP;
 #define ICON    1
 #define LABEL   2
@@ -2157,11 +2153,7 @@ group { name: "elm/slider/range/horizontal/default";
 }
 
 group { name: "elm/slider/range/vertical/default";
-   alias: "elm/slider/vertical/disabled";
-   alias: "elm/slider/vertical/media_player/position/default";
-   alias: "elm/slider/vertical/media_player/position/flush";
-   alias: "elm/slider/vertical/media_player/volume/default";
-   alias: "elm/slider/vertical/media_player/volume/flush";
+   alias: "elm/range/vertical/disabled";
    images.image: "speaker_vol.png" COMP;
 #define ICON    1
 #define LABEL   2
