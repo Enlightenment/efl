@@ -404,7 +404,7 @@ struct klass
         (lit("#if EFL_BETA\n")
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
          << "public static class " << name_helpers::klass_concrete_name(cls)
-         << "ExtensionMethods {\n"
+         << "Extensions {\n"
          << extension_method_stream.str()
          << "}\n"
          << "#pragma warning restore CS1591\n"

@@ -232,7 +232,9 @@ public struct RwSlice : ISliceBase, IEquatable<RwSlice>
 
 }
 
-public static class Eina_SliceUtils
+namespace Eina
+{
+public static class SliceExtensions
 {
     public static byte[] GetBytes(this Eina.ISliceBase slc)
     {
@@ -242,4 +244,5 @@ public static class Eina_SliceUtils
         Marshal.Copy(slc.Mem, mArray, 0, size);
         return mArray;
     }
+}
 }
