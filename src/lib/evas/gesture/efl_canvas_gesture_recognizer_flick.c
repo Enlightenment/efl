@@ -70,8 +70,8 @@ _single_line_process(Eo *obj,
 {
    switch (efl_gesture_touch_state_get(event))
      {
-       case EFL_GESTURE_TOUCH_BEGIN:
-       case EFL_GESTURE_TOUCH_UPDATE:
+       case EFL_GESTURE_TOUCH_STATE_BEGIN:
+       case EFL_GESTURE_TOUCH_STATE_UPDATE:
          if (!pd->t_st)
            {
               pd->st_line = efl_gesture_touch_cur_point_get(event);
@@ -84,7 +84,7 @@ _single_line_process(Eo *obj,
 
          break;
 
-       case EFL_GESTURE_TOUCH_END:
+       case EFL_GESTURE_TOUCH_STATE_END:
          {
             if (!pd->t_st) return;
 
@@ -177,7 +177,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    double angle;
    Eina_Value *val;
    unsigned char glayer_continues_enable;
-   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
+   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    Eina_Bool touch_up = EINA_FALSE;
    Efl_Canvas_Gesture_Flick_Data *fd = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_FLICK_CLASS);
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
@@ -190,14 +190,14 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    //without mouse up.
    //Recognizing the gesture again, even though it was canceled during gesture
    //recognition.
-   if (efl_gesture_state_get(gesture) == EFL_GESTURE_CANCELED)
-     efl_gesture_state_set(gesture, EFL_GESTURE_NONE);
+   if (efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_CANCELED)
+     efl_gesture_state_set(gesture, EFL_GESTURE_STATE_NONE);
 
-   if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_END)
+   if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
      touch_up = EINA_TRUE;
 
    //This is to handle a case with a mouse click on the target object.
-   if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_END && !pd->touched)
+   if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END && !pd->touched)
      efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_FLICK);
 
    if (glayer_continues_enable && !pd->touched)
@@ -206,7 +206,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
        pd->line_angle = -1.0;
        rd->continues = EINA_TRUE;
 
-       return EFL_GESTURE_IGNORE;
+       return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
 
    _single_line_process(obj, pd, gesture, fd, event);
@@ -238,7 +238,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
                   if (touch_up) rd->continues = EINA_FALSE;
 
-                  return EFL_GESTURE_CANCEL;
+                  return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
                }
 
              /* We may finish line if momentum is zero */
@@ -273,7 +273,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
                   if (touch_up) rd->continues = EINA_FALSE;
 
-                  return EFL_GESTURE_CANCEL;
+                  return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
                }
           }
      }
@@ -296,42 +296,42 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
      if (touch_up) rd->continues = EINA_FALSE;
 
-     return EFL_GESTURE_CANCEL;
+     return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    }
 
    switch (efl_gesture_touch_state_get(event))
      {
-      case EFL_GESTURE_TOUCH_BEGIN:
-      case EFL_GESTURE_TOUCH_UPDATE:
+      case EFL_GESTURE_TOUCH_STATE_BEGIN:
+      case EFL_GESTURE_TOUCH_STATE_UPDATE:
         {
            if (pd->t_st)
              {
                 if (glayer_continues_enable && pd->t_end)
                   {
-                     result = EFL_GESTURE_FINISH;
+                     result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
                   }
                 else
                   {
-                     result = EFL_GESTURE_TRIGGER;
+                     result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
                   }
              }
            break;
         }
 
-      case EFL_GESTURE_TOUCH_END:
+      case EFL_GESTURE_TOUCH_STATE_END:
         {
            if (!pd->t_st)
              {
                 pd->touched = EINA_FALSE;
                 rd->continues = EINA_FALSE;
 
-                return EFL_GESTURE_CANCEL;
+                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
              }
            if (pd->t_st && pd->t_end)
              {
                 rd->continues = EINA_FALSE;
 
-                result = EFL_GESTURE_FINISH;
+                result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
              }
 
            efl_gesture_hotspot_set(gesture, efl_gesture_touch_cur_point_get(event));

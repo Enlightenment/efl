@@ -30,7 +30,7 @@ _long_tap_timeout_cb(void *data)
    /* FIXME: Needs to propagate this event back to evas! */
    pd->is_timeout = EINA_TRUE;
 
-   efl_gesture_state_set(pd->gesture, EFL_GESTURE_UPDATED);
+   efl_gesture_state_set(pd->gesture, EFL_GESTURE_STATE_UPDATED);
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_LONG_TAP, pd->gesture);
 
    return ECORE_CALLBACK_RENEW;
@@ -47,7 +47,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
    double timeout = EFL_GESTURE_LONG_TAP_TIME_OUT;
    Eina_Position2D pos;
    Eina_Vector2 dist;
-   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
+   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    pd->target = watched;
@@ -70,7 +70,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
 
    switch (efl_gesture_touch_state_get(event))
      {
-      case EFL_GESTURE_TOUCH_BEGIN:
+      case EFL_GESTURE_TOUCH_STATE_BEGIN:
         {
            pos = efl_gesture_touch_start_point_get(event);
            efl_gesture_hotspot_set(gesture, pos);
@@ -82,12 +82,12 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
            pd->timeout = ecore_timer_add(timeout,
                                          _long_tap_timeout_cb, pd);
 
-           result = EFL_GESTURE_TRIGGER;
+           result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
            break;
         }
 
-      case EFL_GESTURE_TOUCH_UPDATE:
+      case EFL_GESTURE_TOUCH_STATE_UPDATE:
         {
            dist = efl_gesture_touch_distance(event, 0);
            length = fabs(dist.x) + fabs(dist.y);
@@ -100,17 +100,17 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
                      pd->timeout = NULL;
                   }
 
-                result = EFL_GESTURE_CANCEL;
+                result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
              }
            else
              {
-                result = EFL_GESTURE_MAYBE;
+                result = EFL_GESTURE_RECOGNIZER_RESULT_MAYBE;
              }
 
            break;
         }
 
-      case EFL_GESTURE_TOUCH_END:
+      case EFL_GESTURE_TOUCH_STATE_END:
         {
            if (pd->timeout)
              {
@@ -118,18 +118,18 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
                 pd->timeout = NULL;
              }
 
-           if (efl_gesture_state_get(gesture) != EFL_GESTURE_NONE &&
+           if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
                !efl_gesture_touch_multi_touch_get(event))
              {
                 dist = efl_gesture_touch_distance(event, 0);
                 length = fabs(dist.x) + fabs(dist.y);
                 if (length <= rd->finger_size && pd->is_timeout)
                   {
-                     result = EFL_GESTURE_FINISH;
+                     result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
                   }
                 else
                   {
-                     result = EFL_GESTURE_CANCEL;
+                     result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
                   }
              }
 

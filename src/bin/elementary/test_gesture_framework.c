@@ -370,13 +370,13 @@ tap_gesture_cb(void *data , const Efl_Event *ev)
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
-      case EFL_GESTURE_STARTED:
+      case EFL_GESTURE_STATE_STARTED:
          finger_tap_start(data, g);
          break;
-      case EFL_GESTURE_CANCELED:
+      case EFL_GESTURE_STATE_CANCELED:
          finger_tap_abort(data, g);
          break;
-      case EFL_GESTURE_FINISHED:
+      case EFL_GESTURE_STATE_FINISHED:
          finger_tap_end(data, g);
          break;
       default:
@@ -390,13 +390,13 @@ flick_gesture_cb(void *data , const Efl_Event *ev)
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
-      case EFL_GESTURE_STARTED:
+      case EFL_GESTURE_STATE_STARTED:
          finger_flick_start(data, g);
          break;
-      case EFL_GESTURE_CANCELED:
+      case EFL_GESTURE_STATE_CANCELED:
          finger_flick_abort(data, g);
          break;
-      case EFL_GESTURE_FINISHED:
+      case EFL_GESTURE_STATE_FINISHED:
          finger_flick_end(data, g);
          break;
       default:
@@ -410,16 +410,16 @@ momentum_gesture_cb(void *data , const Efl_Event *ev)
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
-      case EFL_GESTURE_STARTED:
+      case EFL_GESTURE_STATE_STARTED:
          finger_momentum_start(data, g);
          break;
-      case EFL_GESTURE_UPDATED:
+      case EFL_GESTURE_STATE_UPDATED:
          finger_momentum_update(data, g);
          break;
-      case EFL_GESTURE_CANCELED:
+      case EFL_GESTURE_STATE_CANCELED:
          finger_momentum_abort(data, g);
          break;
-      case EFL_GESTURE_FINISHED:
+      case EFL_GESTURE_STATE_FINISHED:
          finger_momentum_end(data, g);
          break;
       default:
@@ -433,16 +433,16 @@ triple_tap_gesture_cb(void *data , const Efl_Event *ev)
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
-      case EFL_GESTURE_STARTED:
+      case EFL_GESTURE_STATE_STARTED:
          finger_triple_tap_start(data, g);
          break;
-      case EFL_GESTURE_UPDATED:
+      case EFL_GESTURE_STATE_UPDATED:
          finger_triple_tap_update(data, g);
          break;
-      case EFL_GESTURE_CANCELED:
+      case EFL_GESTURE_STATE_CANCELED:
          finger_triple_tap_abort(data, g);
          break;
-      case EFL_GESTURE_FINISHED:
+      case EFL_GESTURE_STATE_FINISHED:
          finger_triple_tap_end(data, g);
          break;
       default:
@@ -456,16 +456,16 @@ double_tap_gesture_cb(void *data , const Efl_Event *ev)
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
-      case EFL_GESTURE_STARTED:
+      case EFL_GESTURE_STATE_STARTED:
          finger_double_tap_start(data, g);
          break;
-      case EFL_GESTURE_UPDATED:
+      case EFL_GESTURE_STATE_UPDATED:
          finger_double_tap_update(data, g);
          break;
-      case EFL_GESTURE_CANCELED:
+      case EFL_GESTURE_STATE_CANCELED:
          finger_double_tap_abort(data, g);
          break;
-      case EFL_GESTURE_FINISHED:
+      case EFL_GESTURE_STATE_FINISHED:
          finger_double_tap_end(data, g);
          break;
       default:
@@ -479,16 +479,16 @@ long_tap_gesture_cb(void *data , const Efl_Event *ev)
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
-      case EFL_GESTURE_STARTED:
+      case EFL_GESTURE_STATE_STARTED:
          finger_long_tap_start(data, g);
          break;
-      case EFL_GESTURE_UPDATED:
+      case EFL_GESTURE_STATE_UPDATED:
          finger_long_tap_update(data, g);
          break;
-      case EFL_GESTURE_CANCELED:
+      case EFL_GESTURE_STATE_CANCELED:
          finger_long_tap_abort(data, g);
          break;
-      case EFL_GESTURE_FINISHED:
+      case EFL_GESTURE_STATE_FINISHED:
          finger_long_tap_end(data, g);
          break;
       default:

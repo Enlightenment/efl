@@ -17,7 +17,7 @@ _touch_points_reset(Efl_Canvas_Gesture_Touch_Data *pd)
    eina_hash_free(pd->touch_points);
    pd->touch_points = eina_hash_int32_new(EINA_FREE_CB(_hash_free_cb));
    pd->touch_down = 0;
-   pd->state = EFL_GESTURE_TOUCH_UNKNOWN;
+   pd->state = EFL_GESTURE_TOUCH_STATE_UNKNOWN;
 }
 
 EOLIAN static Efl_Object *
@@ -101,15 +101,15 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
 
    if (!id && (action ==  EFL_POINTER_ACTION_DOWN))
      {
-        pd->state = EFL_GESTURE_TOUCH_BEGIN;
+        pd->state = EFL_GESTURE_TOUCH_STATE_BEGIN;
      }
    else if (action ==  EFL_POINTER_ACTION_UP)
      {
-        pd->state = EFL_GESTURE_TOUCH_END;
+        pd->state = EFL_GESTURE_TOUCH_STATE_END;
      }
    else
      {
-        pd->state = EFL_GESTURE_TOUCH_UPDATE;
+        pd->state = EFL_GESTURE_TOUCH_STATE_UPDATE;
      }
    return;
 

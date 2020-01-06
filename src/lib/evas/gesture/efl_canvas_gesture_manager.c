@@ -182,7 +182,7 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
 
              //This is for handling the case that mouse event pairs dont match.
 			 //Such as the case of canceling gesture recognition after a mouse down.
-             if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_UNKNOWN)
+             if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_STATE_UNKNOWN)
                continue;
 
              recognizer = eina_hash_find(pd->m_recognizers, &gesture_type);
@@ -194,30 +194,30 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
 
 			 //Gesture detecting.
              recog_result = efl_gesture_recognizer_recognize(recognizer, gesture, target, touch_event);
-             recog_state = recog_result & EFL_GESTURE_RESULT_MASK;
+             recog_state = recog_result & EFL_GESTURE_RECOGNIZER_RESULT_RESULT_MASK;
 
              Efl_Canvas_Gesture_Recognizer_Data *rd =
                efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
-             if (recog_state == EFL_GESTURE_TRIGGER)
+             if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER)
                {
-                  if (efl_gesture_state_get(gesture) == EFL_GESTURE_NONE)
-                    efl_gesture_state_set(gesture, EFL_GESTURE_STARTED);
+                  if (efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_NONE)
+                    efl_gesture_state_set(gesture, EFL_GESTURE_STATE_STARTED);
                   else
-                    efl_gesture_state_set(gesture, EFL_GESTURE_UPDATED);
+                    efl_gesture_state_set(gesture, EFL_GESTURE_STATE_UPDATED);
                }
-             else if (recog_state == EFL_GESTURE_FINISH)
+             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH)
                {
-                  efl_gesture_state_set(gesture, EFL_GESTURE_FINISHED);
+                  efl_gesture_state_set(gesture, EFL_GESTURE_STATE_FINISHED);
                }
-             else if (recog_state == EFL_GESTURE_MAYBE)
+             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_MAYBE)
                {
                   continue;
                }
-             else if (recog_state == EFL_GESTURE_CANCEL)
+             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)
                {
-                  if (efl_gesture_state_get(gesture) != EFL_GESTURE_NONE)
-                    efl_gesture_state_set(gesture, EFL_GESTURE_CANCELED);
+                  if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
+                    efl_gesture_state_set(gesture, EFL_GESTURE_STATE_CANCELED);
                   else
                     {
                        //Need to recognize events that occur consecutively
@@ -226,7 +226,7 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
                          continue;
                     }
                }
-             else if (recog_state == EFL_GESTURE_IGNORE)
+             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_IGNORE)
                {
                   continue;
                }
@@ -235,7 +235,7 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
              efl_event_callback_call(target, gesture_type, gesture);
 
              //If the current event recognizes the gesture continuously, dont delete gesture.
-             if (((recog_state == EFL_GESTURE_FINISH) || (recog_state == EFL_GESTURE_CANCEL)) &&
+             if (((recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH) || (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)) &&
                  !rd->continues)
                {
                   _cleanup_cached_gestures(pd, target, gesture_type);
@@ -314,37 +314,37 @@ _find_match_recognizer(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Canvas_Gesture_R
 
    switch (type)
      {
-       case EFL_GESTURE_TAP:
+       case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
          {
             event_type = EFL_EVENT_GESTURE_TAP;
             break;
          }
-       case EFL_GESTURE_DOUBLETAP:
+       case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLETAP:
          {
             event_type = EFL_EVENT_GESTURE_DOUBLE_TAP;
             break;
          }
-       case EFL_GESTURE_TRIPLETAP:
+       case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLETAP:
          {
             event_type = EFL_EVENT_GESTURE_TRIPLE_TAP;
             break;
          }
-       case EFL_GESTURE_LONGTAP:
+       case EFL_GESTURE_RECOGNIZER_TYPE_LONGTAP:
          {
             event_type = EFL_EVENT_GESTURE_LONG_TAP;
             break;
          }
-       case EFL_GESTURE_MOMENTUM:
+       case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
          {
             event_type = EFL_EVENT_GESTURE_MOMENTUM;
             break;
          }
-       case EFL_GESTURE_FLICK:
+       case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
          {
             event_type = EFL_EVENT_GESTURE_FLICK;
             break;
          }
-       case EFL_GESTURE_ZOOM:
+       case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
          {
             event_type = EFL_EVENT_GESTURE_ZOOM;
             break;
@@ -410,8 +410,8 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
             object_gesture->type == type)
          {
             //The gesture is already processed waiting for cleanup
-            if (((efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_FINISHED) ||
-                (efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_CANCELED)) &&
+            if (((efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_FINISHED) ||
+                (efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_CANCELED)) &&
                 (!rd->continues))
               {
                  _cleanup_cached_gestures(pd, target, type);
