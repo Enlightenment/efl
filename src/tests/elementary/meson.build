@@ -129,6 +129,7 @@ efl_ui_suite_src = [
   'efl_ui_test_focus_common.h',
   'efl_ui_test_focus.c',
   'efl_ui_test_focus_sub.c',
+  'efl_ui_test_gesture.c',
   'efl_ui_test_box.c',
   'efl_ui_test_box_flow.c',
   'efl_ui_test_box_stack.c',
