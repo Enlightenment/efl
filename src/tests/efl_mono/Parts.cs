@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Efl.Ui;
 
 namespace TestSuite {
 

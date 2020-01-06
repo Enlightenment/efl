@@ -397,17 +397,23 @@ struct klass
      if (extension_method_stream.tellp() <= 0)
        return true;
 
+     if (!name_helpers::open_namespaces(sink, cls.namespaces, context))
+       return false;
+
      if(!as_generator
         (lit("#if EFL_BETA\n")
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
-         <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
-         << "_ExtensionMethods {\n"
+         << "public static class " << name_helpers::klass_concrete_name(cls)
+         << "ExtensionMethods {\n"
          << extension_method_stream.str()
          << "}\n"
          << "#pragma warning restore CS1591\n"
          << "#endif\n")
         .generate(sink, cls.namespaces, context))
      return false;
+
+     if (!name_helpers::close_namespaces(sink, cls.namespaces, context))
+       return false;
 
      return true;
    }
