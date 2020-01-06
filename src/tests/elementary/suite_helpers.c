@@ -19,6 +19,7 @@ static Eina_Bool buffer = EINA_FALSE;
 static Eina_Bool legacy_mode = EINA_FALSE;
 static int log_abort;
 static int log_abort_level;
+static unsigned int ts = 1;
 
 Eina_Bool abort_on_warnings = EINA_FALSE;
 
@@ -50,6 +51,7 @@ _elm2_suite_init(void)
    ck_assert_int_eq(elm_init(1, args), 1);
    if (abort_on_warnings)
      fail_on_errors_setup();
+   ts = 1;
 }
 
 void
@@ -454,9 +456,9 @@ click_object_internal(Eo *obj, int dir, int flags)
 {
    Evas *e = evas_object_evas_get(obj);
    Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
-   evas_event_feed_mouse_move(e, pos.x, pos.y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, pos.x, pos.y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
 
 void
@@ -573,18 +575,18 @@ void
 click_object_at(Eo *obj, int x, int y)
 {
    Evas *e = evas_object_evas_get(obj);
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
 
 void
 click_object_at_flags(Eo *obj, int x, int y, int flags)
 {
    Evas *e = evas_object_evas_get(obj);
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
 
 void
@@ -600,8 +602,8 @@ drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
 {
    Evas *e = evas_object_evas_get(obj);
    int i;
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
    if (iterate)
      {
         /* iterate twice to trigger timers */
@@ -611,10 +613,10 @@ drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
    /* create DRAG_OBJECT_NUM_MOVES move events distinct from up/down */
    for (i = 0; i < DRAG_OBJECT_NUM_MOVES; i++)
      {
-        evas_event_feed_mouse_move(e, x + (i * dx / DRAG_OBJECT_NUM_MOVES), y + (i * dy / DRAG_OBJECT_NUM_MOVES), 0, NULL);
+        evas_event_feed_mouse_move(e, x + (i * dx / DRAG_OBJECT_NUM_MOVES), y + (i * dy / DRAG_OBJECT_NUM_MOVES), ts++, NULL);
         /* also trigger smart calc if we're iterating just in case that's important */
         evas_smart_objects_calculate(e);
      }
-   evas_event_feed_mouse_move(e, x + dx, y + dy, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x + dx, y + dy, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
