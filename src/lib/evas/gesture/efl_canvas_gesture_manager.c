@@ -220,10 +220,9 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
                     efl_gesture_state_set(gesture, EFL_GESTURE_STATE_CANCELED);
                   else
                     {
-                       //Need to recognize events that occur consecutively
-                       //in a mouse-down state.
                        if (rd->continues)
                          continue;
+                       goto post_event;
                     }
                }
              else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_IGNORE)
@@ -233,7 +232,7 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
 
              efl_gesture_timestamp_set(gesture, efl_gesture_touch_cur_timestamp_get(touch_event));
              efl_event_callback_call(target, gesture_type, gesture);
-
+post_event:
              //If the current event recognizes the gesture continuously, dont delete gesture.
              if (((recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH) || (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)) &&
                  !rd->continues)
