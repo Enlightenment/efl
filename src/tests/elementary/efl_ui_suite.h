@@ -33,6 +33,7 @@ void efl_ui_test_image(TCase *tc);
 void efl_ui_test_callback(TCase *tc);
 void efl_ui_test_focus(TCase *tc);
 void efl_ui_test_focus_sub(TCase *tc);
+void efl_ui_test_gesture(TCase *tc);
 void efl_ui_model(TCase *tc);
 void efl_ui_test_widget(TCase *tc);
 void efl_ui_test_spotlight(TCase *tc);
