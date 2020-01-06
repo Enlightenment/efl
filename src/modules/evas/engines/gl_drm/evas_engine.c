@@ -1459,7 +1459,7 @@ eng_image_native_set(void *engine, void *image, void *native)
 
                   if (!n->ns_data.wl_surface.surface)
                     {
-                       ERR("eglCreatePixmapSurface() for %p failed", wl_buf);
+                       WRN("eglCreatePixmapSurface() for %p failed", wl_buf);
                        eina_hash_del(ob->gl_context->shared->native_wl_hash,
                                      &wlid, img);
                        glsym_evas_gl_common_image_free(img);

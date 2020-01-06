@@ -398,7 +398,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       }
       // Obstacles
       obstacle_add {
-         [[Add obstacle evas object $eo_obs to be observed during layout
+         [[Add obstacle object $eo_obs to be avoided during layout
            of text.
 
            The textblock does the layout of the text according to the

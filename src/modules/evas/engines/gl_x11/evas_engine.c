@@ -1964,7 +1964,7 @@ _native_bind_cb(void *image)
                                                           (void *)n->ns_data.x11.pixmap,
                                                           NULL);
                  if (!n->ns_data.x11.surface)
-                   ERR("eglCreateImage() for Pixmap 0x%#lx failed: %#x", n->ns_data.x11.pixmap, eglGetError());
+                   WRN("eglCreateImage() for Pixmap 0x%#lx failed: %#x", n->ns_data.x11.pixmap, eglGetError());
 
               }
             if (glsym_glEGLImageTargetTexture2DOES)
@@ -2567,7 +2567,7 @@ eng_image_native_set(void *engine, void *image, void *native)
 
                  if (!n->ns_data.x11.surface)
                    {
-                      ERR("eglCreateImage() for Pixmap %#lx failed: %#x", pm, eglGetError());
+                      WRN("eglCreateImage() for Pixmap %#lx failed: %#x", pm, eglGetError());
                       free(n);
                       return NULL;
                    }
@@ -2854,7 +2854,7 @@ eng_image_native_set(void *engine, void *image, void *native)
                  else
                    ERR("Try eglCreateImage on EGL with no support");
                  if (!n->ns_data.tbm.surface)
-                   ERR("eglCreateImage() for %p failed", buffer);
+                   WRN("eglCreateImage() for %p failed", buffer);
                  im->native.yinvert     = 1;
                  im->native.loose       = 0;
                  im->native.disp        = ob->egl_disp;
@@ -2965,7 +2965,7 @@ eng_image_native_set(void *engine, void *image, void *native)
 
                   if (!n->ns_data.wl_surface.surface)
                     {
-                       ERR("eglCreatePixmapSurface() for %p failed", wl_buf);
+                       WRN("eglCreatePixmapSurface() for %p failed", wl_buf);
                        eina_hash_del(gl_context->shared->native_wl_hash,
                                      &wlid, im);
                        glsym_evas_gl_common_image_free(im);

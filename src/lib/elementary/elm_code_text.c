@@ -19,6 +19,9 @@ elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length)
    if (length)
      *length = line->length;
 
+   if (!line->length)
+     return "";
+
    if (line->modified)
      return line->modified;
    return line->content;
