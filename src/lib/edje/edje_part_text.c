@@ -98,13 +98,13 @@ _efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_get(const Eo *obj, \
 
 TEXT_COLOR_IMPL(text_background, BACKING)
 TEXT_COLOR_IMPL(text_glow, GLOW)
-TEXT_COLOR_IMPL(text_glow2, GLOW2)
+TEXT_COLOR_IMPL(text_secondary_glow, GLOW2)
 TEXT_COLOR_IMPL(text, NORMAL)
 TEXT_COLOR_IMPL(text_outline, OUTLINE)
 TEXT_COLOR_IMPL(text_shadow, SHADOW)
 TEXT_COLOR_IMPL(text_strikethrough, STRIKETHROUGH)
 TEXT_COLOR_IMPL(text_underline, UNDERLINE)
-TEXT_COLOR_IMPL(text_underline2, UNDERLINE2)
+TEXT_COLOR_IMPL(text_secondary_underline, UNDERLINE2)
 TEXT_COLOR_IMPL(text_underline_dashed, UNDERLINE_DASHED)
 
 EOLIAN static void
@@ -367,13 +367,13 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
 
       STYLE_COLOR_COLLECT(text_background, BACKING)
       STYLE_COLOR_COLLECT(text_glow, GLOW)
-      STYLE_COLOR_COLLECT(text_glow2, GLOW2)
+      STYLE_COLOR_COLLECT(text_secondary_glow, GLOW2)
       STYLE_COLOR_COLLECT(text, NORMAL)
       STYLE_COLOR_COLLECT(text_outline, OUTLINE)
       STYLE_COLOR_COLLECT(text_shadow, SHADOW)
       STYLE_COLOR_COLLECT(text_strikethrough, STRIKETHROUGH)
       STYLE_COLOR_COLLECT(text_underline, UNDERLINE)
-      STYLE_COLOR_COLLECT(text_underline2, UNDERLINE2)
+      STYLE_COLOR_COLLECT(text_secondary_underline, UNDERLINE2)
       STYLE_COLOR_COLLECT(text_underline_dashed, UNDERLINE_DASHED)
 #undef STYLE_COLOR_COLLECT
 
@@ -486,13 +486,13 @@ _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj,
 
       STYLE_COLOR_CASE(text_background, BACKING)
       STYLE_COLOR_CASE(text_glow, GLOW)
-      STYLE_COLOR_CASE(text_glow2, GLOW2)
+      STYLE_COLOR_CASE(text_secondary_glow, GLOW2)
       STYLE_COLOR_CASE(text, NORMAL)
       STYLE_COLOR_CASE(text_outline, OUTLINE)
       STYLE_COLOR_CASE(text_shadow, SHADOW)
       STYLE_COLOR_CASE(text_strikethrough, STRIKETHROUGH)
       STYLE_COLOR_CASE(text_underline, UNDERLINE)
-      STYLE_COLOR_CASE(text_underline2, UNDERLINE2)
+      STYLE_COLOR_CASE(text_secondary_underline, UNDERLINE2)
       STYLE_COLOR_CASE(text_underline_dashed, UNDERLINE_DASHED)
 #undef STYLE_COLOR_CASE
 

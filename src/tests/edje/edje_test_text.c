@@ -240,7 +240,7 @@ _basic_check(Eo *layout, Eina_Bool set)
                    255, 255, 255, 255);
              efl_text_glow_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
-             efl_text_glow2_color_set(efl_part(layout, "text"),
+             efl_text_secondary_glow_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
              efl_text_outline_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
@@ -250,7 +250,7 @@ _basic_check(Eo *layout, Eina_Bool set)
                    255, 255, 255, 255);
              efl_text_underline_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
-             efl_text_underline2_color_set(efl_part(layout, "text"),
+             efl_text_secondary_underline_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
              efl_text_underline_dashed_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
@@ -274,7 +274,7 @@ _basic_check(Eo *layout, Eina_Bool set)
         ck_assert_int_eq(b, 255);
         ck_assert_int_eq(a, 255);
 
-        efl_text_glow2_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
+        efl_text_secondary_glow_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
         ck_assert_int_eq(r, 255);
         ck_assert_int_eq(g, 255);
         ck_assert_int_eq(b, 255);
@@ -304,7 +304,7 @@ _basic_check(Eo *layout, Eina_Bool set)
         ck_assert_int_eq(b, 255);
         ck_assert_int_eq(a, 255);
 
-        efl_text_underline2_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
+        efl_text_secondary_underline_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
         ck_assert_int_eq(r, 255);
         ck_assert_int_eq(g, 255);
         ck_assert_int_eq(b, 255);
