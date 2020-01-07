@@ -196,8 +196,7 @@ option('evas-loaders-disabler',
 option('ecore-imf-loaders-disabler',
   type : 'array',
   description : 'List of input methods to disable in efl',
-  choices : ['xim', 'ibus', 'scim'],
-  value : ['ibus']
+  choices : ['xim', 'ibus', 'scim']
 )
 
 option('emotion-loaders-disabler',
