@@ -1542,8 +1542,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                   Eina_List *l, *ll;
 
                   it = eina_hash_iterator_data_new(collect);
-                  /* the eud structs get manually freed below */
-                  eina_hash_free_cb_set(collect, (void*)eina_list_free);
                   EINA_ITERATOR_FOREACH(it, l)
                     {
                        EINA_LIST_FOREACH(l, ll, eud)
