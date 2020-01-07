@@ -536,7 +536,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
         efl_text_interactive_all_unselect(obj);
      }
    cur = efl_text_interactive_main_cursor_get(obj);
-   info.insert = EINA_TRUE;
+   info.insertion = EINA_TRUE;
    info.position = efl_text_cursor_position_get(cur);
    info.length = len;
    info.content = buf;
@@ -2199,7 +2199,7 @@ _efl_ui_textbox_selection_cut(Eo *obj, Efl_Ui_Textbox_Data *sd)
    start_pos = efl_text_cursor_position_get(start);
    end_pos = efl_text_cursor_position_get(end);
    tmp = efl_text_cursor_range_text_get(start, end);
-   info.insert = EINA_FALSE;
+   info.insertion = EINA_FALSE;
    info.position = start_pos;
    info.length = end_pos - start_pos;
    info.content = tmp;
