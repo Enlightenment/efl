@@ -19,6 +19,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
+using Eina;
 using EinaTestData;
 using static EinaTestData.BaseData;
 

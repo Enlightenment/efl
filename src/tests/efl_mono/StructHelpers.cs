@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using Eina;
 using static EinaTestData.BaseData;
 
 namespace TestSuite
