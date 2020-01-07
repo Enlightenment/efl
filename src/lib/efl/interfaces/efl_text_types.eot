@@ -28,5 +28,3 @@ struct @beta Efl.Text_Range {
    start: int; [[The start postion.]]
    end: int; [[The end position.]]
 }
-
-struct @extern @beta Efl.Text_Attribute_Handle; [[EFL text annotations data structure]]
