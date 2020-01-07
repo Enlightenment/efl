@@ -8503,6 +8503,15 @@ _evas_object_textblock_text_markup_set(Eo *eo_obj, Efl_Canvas_Textblock_Data *o,
    evas_textblock_cursor_paragraph_first(o->cursor);
 
    evas_object_textblock_text_markup_prepend(o->cursor, text);
+
+   /*If there was no text markup_prepend will not call change function
+     So we will call it inside markup_set*/
+   if (!text || !*text)
+     {
+        efl_event_callback_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
+        _evas_textblock_changed(o, eo_obj);
+     }
+
    efl_event_freeze(eo_obj);
    /* Point all the cursors to the starrt */
      {
