@@ -769,7 +769,6 @@ _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
 {
    Efl_Canvas_Vg_Object_Data *pd = type_private_data;
    int is_v, was_v;
-   Ector_Surface *s;
 
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
@@ -788,12 +787,6 @@ _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
                                             obj->cur->clipper,
                                             obj->cur->clipper->private_data);
      }
-
-   // FIXME: handle damage only on changed renderer.
-   // FIXME: Move this render_pre to efl_canvas_vg_render()
-   s = evas_ector_get(obj->layer->evas);
-   if (pd->root && s)
-     _evas_vg_render_pre(obj, pd->root, NULL, NULL, NULL, s, NULL, 255, NULL, 0);
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
