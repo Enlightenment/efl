@@ -104,10 +104,12 @@ EFL_START_TEST(edje_test_textblock)
    obj = edje_object_add(evas);
    ck_assert(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
    txt = edje_object_part_text_get(obj, "text");
-   ck_assert(txt || !strcmp(txt, "Bye"));
+   ck_assert_ptr_ne(txt, NULL);
+   ck_assert_int_eq(strcmp(txt, "Bye"), 0);
    edje_object_part_text_set(obj, "text", buf);
    txt = edje_object_part_text_get(obj, "text");
-   ck_assert(txt || !strcmp(txt, buf));
+   ck_assert_ptr_ne(txt, NULL);
+   ck_assert_int_eq(strcmp(txt, buf), 0);
 
    Evas_Object *obj2 = edje_object_add(evas);
    ck_assert(edje_object_file_set(obj2, test_layout_get("test_textblock.edj"), "test_tc_textblock"));
