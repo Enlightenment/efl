@@ -2432,6 +2432,7 @@ EAPI void               ecore_x_region_window_shape_set(Ecore_X_Region region, E
 EAPI void               ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore_X_Picture picture, int x_origin, int y_origin);
 EAPI void               ecore_x_cursor_show(void);
 EAPI void               ecore_x_cursor_hide(void);
+EAPI void               ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num); /** @since 1.24 */
 
 /**
  * xfixes selection notification request.
