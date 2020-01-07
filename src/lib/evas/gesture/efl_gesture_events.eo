@@ -1,5 +1,7 @@
 interface @beta Efl.Gesture.Events
 {
+   [[Interface for objects capable of emitting gesture events, like @Efl.Canvas.Object.
+   ]]
    event_c_prefix: efl;
    events {
       gesture,tap: Efl.Canvas.Gesture_Tap; [[Emitted when a Tap gesture has been detected.
