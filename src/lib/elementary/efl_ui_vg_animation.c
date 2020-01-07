@@ -780,11 +780,22 @@ _efl_ui_vg_animation_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_U
 EOLIAN static void
 _efl_ui_vg_animation_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, double speed)
 {
+   Eina_Bool rewind = EINA_FALSE;
+
+   if ((pd->playback_speed > 0 && speed < 0) || (pd->playback_speed < 0 && speed > 0))
+     rewind = EINA_TRUE;
+
    // pd->playback_direction_changed is used only during playback.
-   if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING ||
-        pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS)
-        && ((pd->playback_speed > 0 && speed < 0) || (pd->playback_speed < 0 && speed > 0)))
-     pd->playback_direction_changed = EINA_TRUE;
+   if (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && rewind)
+     {
+        pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
+        pd->playback_direction_changed = EINA_TRUE;
+     }
+   else if (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && rewind)
+     {
+        pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
+        pd->playback_direction_changed = EINA_TRUE;
+     }
 
    pd->playback_speed = speed;
    speed = speed < 0 ? speed * -1 : speed;
