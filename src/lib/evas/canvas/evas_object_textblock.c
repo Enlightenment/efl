@@ -1398,11 +1398,13 @@ static const char *langstr = NULL;
 static const char *colorstr = NULL;
 static const char *underline_colorstr = NULL;
 static const char *underline2_colorstr = NULL;
+static const char *secondary_underline_colorstr = NULL;
 static const char *underline_dash_colorstr = NULL;
 static const char *outline_colorstr = NULL;
 static const char *shadow_colorstr = NULL;
 static const char *glow_colorstr = NULL;
 static const char *glow2_colorstr = NULL;
+static const char *secondary_glow_colorstr = NULL;
 static const char *backing_colorstr = NULL;
 static const char *strikethrough_colorstr = NULL;
 static const char *alignstr = NULL;
@@ -1585,11 +1587,13 @@ _format_command_init(void)
         colorstr = eina_stringshare_add("color");
         underline_colorstr = eina_stringshare_add("underline_color");
         underline2_colorstr = eina_stringshare_add("underline2_color");
+        secondary_underline_colorstr = eina_stringshare_add("secondary_underline_color");
         underline_dash_colorstr = eina_stringshare_add("underline_dash_color");
         outline_colorstr = eina_stringshare_add("outline_color");
         shadow_colorstr = eina_stringshare_add("shadow_color");
         glow_colorstr = eina_stringshare_add("glow_color");
         glow2_colorstr = eina_stringshare_add("glow2_color");
+        secondary_glow_colorstr = eina_stringshare_add("secondary_glow_color");
         backing_colorstr = eina_stringshare_add("backing_color");
         strikethrough_colorstr = eina_stringshare_add("strikethrough_color");
         alignstr = eina_stringshare_add("align");
@@ -1640,11 +1644,13 @@ _format_command_shutdown(void)
    eina_stringshare_del(colorstr);
    eina_stringshare_del(underline_colorstr);
    eina_stringshare_del(underline2_colorstr);
+   eina_stringshare_del(secondary_underline_colorstr);
    eina_stringshare_del(underline_dash_colorstr);
    eina_stringshare_del(outline_colorstr);
    eina_stringshare_del(shadow_colorstr);
    eina_stringshare_del(glow_colorstr);
    eina_stringshare_del(glow2_colorstr);
+   eina_stringshare_del(secondary_glow_colorstr);
    eina_stringshare_del(backing_colorstr);
    eina_stringshare_del(strikethrough_colorstr);
    eina_stringshare_del(alignstr);
@@ -1936,7 +1942,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      evas_common_format_color_parse(param, len,
            &(fmt->color.underline.r), &(fmt->color.underline.g),
            &(fmt->color.underline.b), &(fmt->color.underline.a));
-   else if (cmd == underline2_colorstr)
+   else if (cmd == underline2_colorstr || cmd == secondary_underline_colorstr)
      /**
       * @page evas_textblock_style_page Evas Textblock Style Options
       *
@@ -2045,7 +2051,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      evas_common_format_color_parse(param, len,
            &(fmt->color.glow.r), &(fmt->color.glow.g),
            &(fmt->color.glow.b), &(fmt->color.glow.a));
-   else if (cmd == glow2_colorstr)
+   else if (cmd == glow2_colorstr || cmd == secondary_glow_colorstr)
      /**
       * @page evas_textblock_style_page Evas Textblock Style Options
       *
@@ -16497,14 +16503,14 @@ _efl_canvas_textblock_efl_text_style_text_underline_dashed_gap_get(const Eo *obj
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_text_underline2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_secondary_underline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(underline2);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_text_underline2_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_secondary_underline_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(underline2);
 }
@@ -16671,14 +16677,14 @@ _efl_canvas_textblock_efl_text_style_text_glow_color_get(const Eo *obj EINA_UNUS
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_text_glow2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_secondary_glow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_COLOR_SET(glow2);
 }
 
 static void
-_efl_canvas_textblock_efl_text_style_text_glow2_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+_efl_canvas_textblock_efl_text_style_text_secondary_glow_color_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(glow2);
 }

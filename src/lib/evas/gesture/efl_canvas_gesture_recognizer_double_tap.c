@@ -29,7 +29,7 @@ _tap_timeout_cb(void *data)
    rd = efl_data_scope_get(data, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
    pd = efl_data_scope_get(data, EFL_CANVAS_GESTURE_RECOGNIZER_DOUBLE_TAP_CLASS);
 
-   efl_gesture_state_set(pd->gesture, EFL_GESTURE_CANCELED);
+   efl_gesture_state_set(pd->gesture, EFL_GESTURE_STATE_CANCELED);
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_DOUBLE_TAP, pd->gesture);
 
    efl_gesture_manager_gesture_clean_up(rd->manager, pd->target, EFL_EVENT_GESTURE_DOUBLE_TAP);
@@ -50,7 +50,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
    double timeout = TAP_TIME_OUT;
    Eina_Position2D pos;
    Eina_Vector2 dist;
-   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
+   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    pd->target = watched;
@@ -72,7 +72,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
 
    switch (efl_gesture_touch_state_get(event))
      {
-      case EFL_GESTURE_TOUCH_BEGIN:
+      case EFL_GESTURE_TOUCH_STATE_BEGIN:
            {
               pos = efl_gesture_touch_start_point_get(event);
               efl_gesture_hotspot_set(gesture, pos);
@@ -82,16 +82,16 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
               else
                 pd->timeout = ecore_timer_add(timeout, _tap_timeout_cb, obj);
 
-              result = EFL_GESTURE_TRIGGER;
+              result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
               break;
            }
 
-      case EFL_GESTURE_TOUCH_UPDATE:
+      case EFL_GESTURE_TOUCH_STATE_UPDATE:
            {
-              result = EFL_GESTURE_IGNORE;
+              result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
-              if (efl_gesture_state_get(gesture) != EFL_GESTURE_NONE &&
+              if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
                   !efl_gesture_touch_multi_touch_get(event))
                 {
                    dist = efl_gesture_touch_distance(event, 0);
@@ -105,7 +105,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
                              pd->timeout = NULL;
                           }
 
-                        result = EFL_GESTURE_CANCEL;
+                        result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
 
                         pd->tap_count = 0;
                      }
@@ -113,10 +113,10 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
 
               break;
            }
-      case EFL_GESTURE_TOUCH_END:
+      case EFL_GESTURE_TOUCH_STATE_END:
            {
 
-              if (efl_gesture_state_get(gesture) != EFL_GESTURE_NONE &&
+              if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
                   !efl_gesture_touch_multi_touch_get(event))
                 {
                    dist = efl_gesture_touch_distance(event, 0);
@@ -130,7 +130,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
                              if (pd->timeout)
                                ecore_timer_reset(pd->timeout);
 
-                             result = EFL_GESTURE_TRIGGER;
+                             result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
                           }
                         else
                           {
@@ -140,10 +140,10 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
                                   pd->timeout = NULL;
                                }
 
-                             if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_END)
-                               result = EFL_GESTURE_FINISH;
+                             if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
+                               result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
                              else
-                               result = EFL_GESTURE_TRIGGER;
+                               result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
                              pd->tap_count = 0;
                           }
@@ -156,7 +156,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
                              pd->timeout = NULL;
                           }
 
-                        result = EFL_GESTURE_CANCEL;
+                        result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
 
                         pd->tap_count = 0;
                      }

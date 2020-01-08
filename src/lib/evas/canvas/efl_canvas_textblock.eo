@@ -149,10 +149,10 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Requires $underline.
              See @Efl.Text_Style.text_underline_color.
 
-           - $underline2_color: Color code for the secondary text underline (See bottom for the complete list of
+           - $secondary_underline_color: Color code for the secondary text underline (See bottom for the complete list of
              supported codes). Only valid when $[underline=double].
              Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
-             See @Efl.Text_Style.text_underline2_color.
+             See @Efl.Text_Style.text_secondary_underline_color.
 
            - $underline_dash_color: Color code for the dashed underline (See bottom for the complete list of supported
              codes). Only valid when $[underline=dashed].
@@ -174,10 +174,10 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
              See @Efl.Text_Style.text_glow_color.
 
-           - $glow2_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
+           - $secondary_glow_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
              list of supported codes). Only valid when the $style attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
-             See @Efl.Text_Style.text_glow2_color.
+             See @Efl.Text_Style.text_secondary_glow_color.
 
            - $backing_color: Color code for the background of the text (See bottom for the complete list of supported
              codes). Use a fully transparent color to disable the background.
@@ -232,7 +232,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              $single (A single line under the text), $on (Alias for $single), $double (Two lines under the text),
              $dashed (A dashed line under the text).
              Default value is $off.
-             Requires either $underline_color, $underline2_color or $underline_dash_color.
+             Requires either $underline_color, $secondary_underline_color or $underline_dash_color.
              See @Efl.Text_Style.text_underline_type.
 
            - $strikethrough: Enables crossed-out text. Possible values are $on and $off.
@@ -473,7 +473,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Style.text_underline_dashed_color { get; set; }
       Efl.Text_Style.text_underline_dashed_width { get; set; }
       Efl.Text_Style.text_underline_dashed_gap { get; set; }
-      Efl.Text_Style.text_underline2_color { get; set; }
+      Efl.Text_Style.text_secondary_underline_color { get; set; }
       Efl.Text_Style.text_strikethrough_type { get; set; }
       Efl.Text_Style.text_strikethrough_color { get; set; }
       Efl.Text_Style.text_effect_type { get; set; }
@@ -481,7 +481,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Style.text_shadow_direction { get; set; }
       Efl.Text_Style.text_shadow_color { get; set; }
       Efl.Text_Style.text_glow_color { get; set; }
-      Efl.Text_Style.text_glow2_color { get; set; }
+      Efl.Text_Style.text_secondary_glow_color { get; set; }
       Efl.Text_Style.text_gfx_filter { get; set; }
       Efl.Text_Format.ellipsis { get; set; }
       Efl.Text_Format.wrap { get; set; }

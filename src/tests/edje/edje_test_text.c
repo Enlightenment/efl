@@ -104,10 +104,12 @@ EFL_START_TEST(edje_test_textblock)
    obj = edje_object_add(evas);
    ck_assert(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
    txt = edje_object_part_text_get(obj, "text");
-   ck_assert(txt || !strcmp(txt, "Bye"));
+   ck_assert_ptr_ne(txt, NULL);
+   ck_assert_int_eq(strcmp(txt, "Bye"), 0);
    edje_object_part_text_set(obj, "text", buf);
    txt = edje_object_part_text_get(obj, "text");
-   ck_assert(txt || !strcmp(txt, buf));
+   ck_assert_ptr_ne(txt, NULL);
+   ck_assert_int_eq(strcmp(txt, buf), 0);
 
    Evas_Object *obj2 = edje_object_add(evas);
    ck_assert(edje_object_file_set(obj2, test_layout_get("test_textblock.edj"), "test_tc_textblock"));
@@ -240,7 +242,7 @@ _basic_check(Eo *layout, Eina_Bool set)
                    255, 255, 255, 255);
              efl_text_glow_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
-             efl_text_glow2_color_set(efl_part(layout, "text"),
+             efl_text_secondary_glow_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
              efl_text_outline_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
@@ -250,7 +252,7 @@ _basic_check(Eo *layout, Eina_Bool set)
                    255, 255, 255, 255);
              efl_text_underline_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
-             efl_text_underline2_color_set(efl_part(layout, "text"),
+             efl_text_secondary_underline_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
              efl_text_underline_dashed_color_set(efl_part(layout, "text"),
                    255, 255, 255, 255);
@@ -274,7 +276,7 @@ _basic_check(Eo *layout, Eina_Bool set)
         ck_assert_int_eq(b, 255);
         ck_assert_int_eq(a, 255);
 
-        efl_text_glow2_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
+        efl_text_secondary_glow_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
         ck_assert_int_eq(r, 255);
         ck_assert_int_eq(g, 255);
         ck_assert_int_eq(b, 255);
@@ -304,7 +306,7 @@ _basic_check(Eo *layout, Eina_Bool set)
         ck_assert_int_eq(b, 255);
         ck_assert_int_eq(a, 255);
 
-        efl_text_underline2_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
+        efl_text_secondary_underline_color_get(efl_part(layout, "text"), &r, &g, &b, &a);
         ck_assert_int_eq(r, 255);
         ck_assert_int_eq(g, 255);
         ck_assert_int_eq(b, 255);

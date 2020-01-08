@@ -45,7 +45,7 @@ Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font_Properties, Efl.Text_Style
       Efl.Text_Style.text_background_color { set; get;}
       Efl.Text_Style.text_underline_type { set; }
       Efl.Text_Style.text_underline_color { set; get; }
-      Efl.Text_Style.text_underline2_color { set; get; }
+      Efl.Text_Style.text_secondary_underline_color { set; get; }
       Efl.Text_Style.text_underline_dashed_color { set; get; }
       Efl.Text_Style.text_underline_height { set; }
       Efl.Text_Style.text_underline_dashed_width { set; }
@@ -57,6 +57,6 @@ Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font_Properties, Efl.Text_Style
       Efl.Text_Style.text_outline_color { set; get; }
       Efl.Text_Style.text_shadow_color { set; get; }
       Efl.Text_Style.text_glow_color { set; get; }
-      Efl.Text_Style.text_glow2_color { set; get; }
+      Efl.Text_Style.text_secondary_glow_color { set; get; }
    }
 }

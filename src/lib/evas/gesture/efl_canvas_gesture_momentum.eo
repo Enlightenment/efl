@@ -5,6 +5,8 @@ class @beta Efl.Canvas.Gesture_Momentum extends Efl.Canvas.Gesture
    [[Momentum gesture class holding state information.
      See @Efl.Canvas.Gesture to see what this state is and
      @[Efl.Gesture.Events.gesture,momentum] for a description of the Momentum gesture.
+
+     Application developers receive these objects inside a gesture event and do not typically need to create their own.
    ]]
    c_prefix: efl_gesture_momentum;
    methods {

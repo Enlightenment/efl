@@ -156,7 +156,7 @@ interface @beta Efl.Text_Style {
          }
       }
 
-      @property text_underline2_color
+      @property text_secondary_underline_color
       {
          [[Color of the secondary underline. Only valid when @.text_underline_type is
            @Efl.Text_Style_Underline_Type.double.]]
@@ -241,7 +241,7 @@ interface @beta Efl.Text_Style {
          }
       }
 
-      @property text_glow2_color
+      @property text_secondary_glow_color
       {
          [[Color of the secondary glow decoration.
            This is the color of the inner glow (where it touches the text) which

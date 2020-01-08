@@ -1,7 +1,7 @@
 enum @beta Efl.Canvas.Gesture_Touch_State
 {
    [[ This enum type describes the state of a touch event. ]]
-   legacy: efl_gesture_touch;
+   legacy: efl_gesture_touch_state;
    unknown = 0, [[Gesture Touch State unknown]]
    begin ,      [[First fingure touch down]]
    update,      [[fingure touch update]]
@@ -11,7 +11,7 @@ enum @beta Efl.Canvas.Gesture_Touch_State
 enum @beta Efl.Canvas.Gesture_State
 {
    [[ This enum type describes the state of a gesture. ]]
-   legacy: efl_gesture;
+   legacy: efl_gesture_state;
    none    = 0, [[No gesture state]]
    started = 1, [[A continuous gesture has started.]]
    updated,     [[A gesture continues.]]
@@ -22,7 +22,7 @@ enum @beta Efl.Canvas.Gesture_State
 enum @beta Efl.Canvas.Gesture_Recognizer_Result
 {
    [[ This enum type describes the state of a gesture recognizer. ]]
-   legacy: efl_gesture;
+   legacy: efl_gesture_recognizer_result;
 
    ignore    = 0x0001, [[The event does not change the state of the recognizer.]]
    maybe     = 0x0002, [[The event changed the internal state of the recognizer, but it isn't clear yet if it is a  gesture or not. The recognizer needs to filter more events to decide.]]
@@ -35,7 +35,7 @@ enum @beta Efl.Canvas.Gesture_Recognizer_Result
 enum @beta Efl.Canvas.Gesture_Recognizer_Type
 {
    [[ This enum type describes the state of a touch event. ]]
-   legacy: efl_gesture;
+   legacy: efl_gesture_recognizer_type;
    tap = 0,
    doubleTap,
    tripleTap,
