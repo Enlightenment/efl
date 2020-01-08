@@ -65,7 +65,7 @@ setup(void)
    RESET;
 
    win = win_add();
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(1000, 1000));
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_content_set(win, rect);
@@ -128,6 +128,7 @@ EFL_END_TEST
 
 EFL_START_TEST(test_efl_ui_gesture_flick)
 {
+   int moves, i;
    Eo *rect = setup();
 
    /* basic flick */
@@ -144,6 +145,161 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* reverse flick */
+   drag_object(rect, 75, 0, -75, 0, EINA_FALSE);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+   /* updated but canceled */
+   CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
+   /* triggered */
+   CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* vertical flick */
+   drag_object(rect, 0, 0, 0, 75, EINA_FALSE);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+   /* updated but canceled */
+   CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
+   /* triggered */
+   CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* reverse vertical flick */
+   drag_object(rect, 0, 75, 0, -75, EINA_FALSE);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+   /* updated but canceled */
+   CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
+   /* triggered */
+   CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+
+   /* diagonal flick */
+   drag_object(rect, 0, 0, 75, 75, EINA_FALSE);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+   /* updated but canceled */
+   CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
+   /* triggered */
+   CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* off-canvas flick */
+   drag_object(rect, 999, 0, 50, 0, EINA_FALSE);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+   CHECK_START(MOMENTUM, 1);
+   CHECK_FINISH(MOMENTUM, 0);
+   CHECK_CANCEL(MOMENTUM, 1);
+   CHECK_START(FLICK, 1);
+   CHECK_FINISH(FLICK, 1);
+   CHECK_CANCEL(FLICK, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* definitely not a flick */
+   moves = drag_object_around(rect, 500, 500, 450, 180);
+   for (i = 0; i <= TRIPLE_TAP; i++)
+     {
+        /* canceled */
+        CHECK_START(TAP, 1);
+        CHECK_CANCEL(TAP, 1);
+     }
+   /* completed: a momentum gesture is any completed motion */
+   CHECK_ALL(MOMENTUM, 1, moves - 2, 1, 0);
+   /* NOT triggered; this is going to have some crazy number of update events since it ignores a bunch */
+   CHECK_FINISH(FLICK, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* definitely not a flick, also outside canvas */
+   moves = drag_object_around(rect, 25, 50, 50, 180);
+   for (i = 0; i <= TRIPLE_TAP; i++)
+     {
+        /* canceled */
+        CHECK_START(TAP, 1);
+        CHECK_CANCEL(TAP, 1);
+     }
+   /* momentum should only begin at the initial press or if canceled due to timeout */
+   CHECK_START(MOMENTUM, 1);
+   CHECK_FINISH(MOMENTUM, 1);
+   /* canceled: the motion ends outside the canvas, so there is no momentum */
+   CHECK_CANCEL(MOMENTUM, 0);
+
+   /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
+   ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_STARTED - 1], 1);
+   CHECK_FINISH(FLICK, 0);
+   /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
+   ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_CANCELED - 1], 1);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   /* definitely not a flick, test re-entering canvas */
+   moves = drag_object_around(rect, 500, 750, 400, 180);
+   for (i = 0; i <= TRIPLE_TAP; i++)
+     {
+        /* canceled */
+        CHECK_START(TAP, 1);
+        CHECK_CANCEL(TAP, 1);
+     }
+   /* momentum should only begin at the initial press or if canceled due to timeout */
+   CHECK_START(MOMENTUM, 1);
+   /* finished: the motion ends outside the canvas, but we still count it */
+   CHECK_FINISH(MOMENTUM, 1);
+   CHECK_CANCEL(MOMENTUM, 0);
+
+   /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
+   ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_STARTED - 1], 1);
+   CHECK_FINISH(FLICK, 0);
+   /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
+   ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_CANCELED - 1], 1);
    CHECK_ZERO(ZOOM);
 
    RESET;
