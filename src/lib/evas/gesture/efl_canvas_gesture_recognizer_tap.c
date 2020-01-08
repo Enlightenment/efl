@@ -1,6 +1,6 @@
 #include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS
+#define MY_CLASS                                 EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS
 
 //FIXME: It doesnt have matched config value.
 //       may using dobule tap timeout value?
@@ -25,7 +25,6 @@ _tap_timeout_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
 _efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *obj,
                                                                            Efl_Canvas_Gesture_Recognizer_Tap_Data *pd,
@@ -45,44 +44,44 @@ _efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *o
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-        {
-           pos = efl_gesture_touch_start_point_get(event);
-           efl_gesture_hotspot_set(gesture, pos);
+      {
+         pos = efl_gesture_touch_start_point_get(event);
+         efl_gesture_hotspot_set(gesture, pos);
 
-           if (pd->timeout)
-             ecore_timer_del(pd->timeout);
-           pd->timeout = ecore_timer_add(EFL_GESTURE_RECOGNIZER_TYPE_TAP_TIME_OUT, _tap_timeout_cb, pd);
+         if (pd->timeout)
+           ecore_timer_del(pd->timeout);
+         pd->timeout = ecore_timer_add(EFL_GESTURE_RECOGNIZER_TYPE_TAP_TIME_OUT, _tap_timeout_cb, pd);
 
-           result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+         result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
-           break;
-        }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
       case EFL_GESTURE_TOUCH_STATE_END:
-        {
-           if (pd->timeout)
-             {
-                ecore_timer_del(pd->timeout);
-                pd->timeout = NULL;
-             }
+      {
+         if (pd->timeout)
+           {
+              ecore_timer_del(pd->timeout);
+              pd->timeout = NULL;
+           }
 
-           if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-               !efl_gesture_touch_multi_touch_get(event))
-             {
-                dist = efl_gesture_touch_distance(event, 0);
-                length = fabs(dist.x) + fabs(dist.y);
-                if (length <= rd->finger_size)
-                  {
-                     if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
-                       result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-                     else
-                       result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-                  }
-             }
+         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
+             !efl_gesture_touch_multi_touch_get(event))
+           {
+              dist = efl_gesture_touch_distance(event, 0);
+              length = fabs(dist.x) + fabs(dist.y);
+              if (length <= rd->finger_size)
+                {
+                   if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
+                     result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+                   else
+                     result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+                }
+           }
 
-           break;
-        }
+         break;
+      }
 
       default:
 

@@ -28,7 +28,6 @@ _efl_canvas_gesture_hotspot_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd
    pd->hotspot = hotspot;
 }
 
-
 EOLIAN static Eina_Position2D
 _efl_canvas_gesture_hotspot_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
 {
@@ -40,7 +39,6 @@ _efl_canvas_gesture_timestamp_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *
 {
    pd->timestamp = timestamp;
 }
-
 
 EOLIAN static unsigned int
 _efl_canvas_gesture_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)

@@ -1,6 +1,6 @@
 #include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS
+#define MY_CLASS     EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS
 
 #define TAP_TIME_OUT 0.33
 
@@ -59,7 +59,7 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_canvas_gesture_recognizer_recogniz
    if (!pd->start_timeout)
      {
         double time;
-        Eina_Value *val =  efl_gesture_recognizer_config_get(obj, "glayer_doublee_tap_timeout");
+        Eina_Value *val = efl_gesture_recognizer_config_get(obj, "glayer_doublee_tap_timeout");
 
         if (val)
           {
@@ -73,80 +73,64 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_canvas_gesture_recognizer_recogniz
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-           {
-              pos = efl_gesture_touch_start_point_get(event);
-              efl_gesture_hotspot_set(gesture, pos);
+      {
+         pos = efl_gesture_touch_start_point_get(event);
+         efl_gesture_hotspot_set(gesture, pos);
 
-              if (pd->timeout)
-                ecore_timer_reset(pd->timeout);
-              else
-                pd->timeout = ecore_timer_add(timeout, _tap_timeout_cb, obj);
+         if (pd->timeout)
+           ecore_timer_reset(pd->timeout);
+         else
+           pd->timeout = ecore_timer_add(timeout, _tap_timeout_cb, obj);
 
-              result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+         result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
-              break;
-           }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
+      {
+         result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+
+         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
+             !efl_gesture_touch_multi_touch_get(event))
            {
-              result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+              dist = efl_gesture_touch_distance(event, 0);
+              length = fabs(dist.x) + fabs(dist.y);
 
-              if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-                  !efl_gesture_touch_multi_touch_get(event))
+              if (length > rd->finger_size)
                 {
-                   dist = efl_gesture_touch_distance(event, 0);
-                   length = fabs(dist.x) + fabs(dist.y);
+                   if (pd->timeout)
+                     {
+                        ecore_timer_del(pd->timeout);
+                        pd->timeout = NULL;
+                     }
 
-                   if (length > rd->finger_size)
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+
+                   pd->tap_count = 0;
+                }
+           }
+
+         break;
+      }
+
+      case EFL_GESTURE_TOUCH_STATE_END:
+      {
+         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
+             !efl_gesture_touch_multi_touch_get(event))
+           {
+              dist = efl_gesture_touch_distance(event, 0);
+              length = fabs(dist.x) + fabs(dist.y);
+
+              if (length <= rd->finger_size)
+                {
+                   pd->tap_count++;
+                   if (pd->tap_count < 3)
                      {
                         if (pd->timeout)
-                          {
-                             ecore_timer_del(pd->timeout);
-                             pd->timeout = NULL;
-                          }
+                          ecore_timer_reset(pd->timeout);
 
-                        result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-
-                        pd->tap_count = 0;
-                     }
-                }
-
-              break;
-           }
-      case EFL_GESTURE_TOUCH_STATE_END:
-           {
-
-              if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-                  !efl_gesture_touch_multi_touch_get(event))
-                {
-                   dist = efl_gesture_touch_distance(event, 0);
-                   length = fabs(dist.x) + fabs(dist.y);
-
-                   if (length <= rd->finger_size)
-                     {
-                        pd->tap_count++;
-                        if (pd->tap_count < 3)
-                          {
-                             if (pd->timeout)
-                               ecore_timer_reset(pd->timeout);
-
-                             result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-                          }
-                        else
-                          {
-                             if (pd->timeout)
-                               {
-                                  ecore_timer_del(pd->timeout);
-                                  pd->timeout = NULL;
-                               }
-
-                             if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
-                               result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-                             else
-                               result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-
-                             pd->tap_count = 0;
-                          }
+                        result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
                      }
                    else
                      {
@@ -156,14 +140,30 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_canvas_gesture_recognizer_recogniz
                              pd->timeout = NULL;
                           }
 
-                        result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+                        if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
+                          result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+                        else
+                          result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
                         pd->tap_count = 0;
                      }
                 }
+              else
+                {
+                   if (pd->timeout)
+                     {
+                        ecore_timer_del(pd->timeout);
+                        pd->timeout = NULL;
+                     }
 
-              break;
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+
+                   pd->tap_count = 0;
+                }
            }
+
+         break;
+      }
 
       default:
 

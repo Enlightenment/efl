@@ -1,11 +1,11 @@
 #include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS
+#define MY_CLASS                       EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS
 
-#define MOMENTUM_TIMEOUT 50
-#define THUMBSCROLL_FRICTION 0.95
+#define MOMENTUM_TIMEOUT               50
+#define THUMBSCROLL_FRICTION           0.95
 #define THUMBSCROLL_MOMENTUM_THRESHOLD 100.0
-#define EFL_GESTURE_MINIMUM_MOMENTUM 0.001
+#define EFL_GESTURE_MINIMUM_MOMENTUM   0.001
 
 #define RAD2DEG(x) ((x) * 57.295779513)
 #define DEG2RAD(x) ((x) / 57.295779513)
@@ -70,32 +70,32 @@ _single_line_process(Eo *obj,
 {
    switch (efl_gesture_touch_state_get(event))
      {
-       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-         if (!pd->t_st)
-           {
-              pd->st_line = efl_gesture_touch_cur_point_get(event);
-              pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
+      case EFL_GESTURE_TOUCH_STATE_BEGIN:
+      case EFL_GESTURE_TOUCH_STATE_UPDATE:
+        if (!pd->t_st)
+          {
+             pd->st_line = efl_gesture_touch_cur_point_get(event);
+             pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
 
-              efl_gesture_hotspot_set(gesture, pd->st_line);
+             efl_gesture_hotspot_set(gesture, pd->st_line);
 
-              return;
-           }
+             return;
+          }
+
+        break;
+
+      case EFL_GESTURE_TOUCH_STATE_END:
+      {
+         if (!pd->t_st) return;
+
+         pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
 
          break;
+      }
 
-       case EFL_GESTURE_TOUCH_STATE_END:
-         {
-            if (!pd->t_st) return;
+      default:
 
-            pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
-
-            break;
-         }
-
-       default:
-
-         return;
+        return;
      }
 
    _momentum_set(obj, fd, pd->st_line, efl_gesture_touch_cur_point_get(event),
@@ -135,8 +135,8 @@ _angle_get(Evas_Coord xx1,
              if (xx2 < xx1) rt = 180;
              else rt = 0.0;
           }
-        else
-          {  /* Vertical line */
+        else /* Vertical line */
+          {
              if (yy2 < yy1) rt = 90;
              else rt = 270;
           }
@@ -152,7 +152,6 @@ _angle_get(Evas_Coord xx1,
 
    return rt;
 }
-
 
 static void
 _vector_get(Eina_Position2D v1,
@@ -202,11 +201,11 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
    if (glayer_continues_enable && !pd->touched)
      {
-       pd->touched = EINA_TRUE;
-       pd->line_angle = -1.0;
-       rd->continues = EINA_TRUE;
+        pd->touched = EINA_TRUE;
+        pd->line_angle = -1.0;
+        rd->continues = EINA_TRUE;
 
-       return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+        return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
 
    _single_line_process(obj, pd, gesture, fd, event);
@@ -262,7 +261,6 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
              if (pd->line_length >= line_min_length)
                fd->angle = pd->line_angle = angle;
-
           }
 
         if (pd->t_end)
@@ -291,57 +289,57 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    else time_limit_ms = 120;
 
    if ((tm_end - pd->t_st) > time_limit_ms)
-   {
-     memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+     {
+        memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
 
-     if (touch_up) rd->continues = EINA_FALSE;
+        if (touch_up) rd->continues = EINA_FALSE;
 
-     return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-   }
+        return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+     }
 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-        {
-           if (pd->t_st)
-             {
-                if (glayer_continues_enable && pd->t_end)
-                  {
-                     result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-                  }
-                else
-                  {
-                     result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-                  }
-             }
-           break;
-        }
+      {
+         if (pd->t_st)
+           {
+              if (glayer_continues_enable && pd->t_end)
+                {
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+                }
+              else
+                {
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+                }
+           }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_END:
-        {
-           if (!pd->t_st)
-             {
-                pd->touched = EINA_FALSE;
-                rd->continues = EINA_FALSE;
+      {
+         if (!pd->t_st)
+           {
+              pd->touched = EINA_FALSE;
+              rd->continues = EINA_FALSE;
 
-                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
-           if (pd->t_st && pd->t_end)
-             {
-                rd->continues = EINA_FALSE;
+              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
+         if (pd->t_st && pd->t_end)
+           {
+              rd->continues = EINA_FALSE;
 
-                result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-             }
+              result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+           }
 
-           efl_gesture_hotspot_set(gesture, efl_gesture_touch_cur_point_get(event));
+         efl_gesture_hotspot_set(gesture, efl_gesture_touch_cur_point_get(event));
 
-           memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+         memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
 
-		   rd->continues = EINA_FALSE;
+         rd->continues = EINA_FALSE;
 
-           break;
-        }
+         break;
+      }
 
       default:
 

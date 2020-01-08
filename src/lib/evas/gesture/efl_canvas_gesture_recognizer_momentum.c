@@ -1,11 +1,11 @@
 #include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_MOMENTUM_CLASS
+#define MY_CLASS                       EFL_CANVAS_GESTURE_RECOGNIZER_MOMENTUM_CLASS
 
-#define MOMENTUM_TIMEOUT 50
-#define THUMBSCROLL_FRICTION 0.95
+#define MOMENTUM_TIMEOUT               50
+#define THUMBSCROLL_FRICTION           0.95
 #define THUMBSCROLL_MOMENTUM_THRESHOLD 100.0
-#define EFL_GESTURE_MINIMUM_MOMENTUM 0.001
+#define EFL_GESTURE_MINIMUM_MOMENTUM   0.001
 
 EOLIAN static Efl_Canvas_Gesture *
 _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_add(Eo *obj, Efl_Canvas_Gesture_Recognizer_Momentum_Data *pd EINA_UNUSED, Efl_Object *target EINA_UNUSED)
@@ -32,7 +32,7 @@ _momentum_set(Eo *obj,
      {
         velx = (dx * 1000) / dt;
         vely = (dy * 1000) / dt;
-	 }
+     }
 
    vel = sqrt((velx * velx) + (vely * vely));
 
@@ -70,9 +70,9 @@ _direction_get(Evas_Coord xx1,
 
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
 _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(Eo *obj,
-                                                                                  Efl_Canvas_Gesture_Recognizer_Momentum_Data *pd,
-                                                                                  Efl_Canvas_Gesture *gesture, Efl_Object *watched EINA_UNUSED,
-                                                                                  Efl_Canvas_Gesture_Touch *event)
+                                                                                Efl_Canvas_Gesture_Recognizer_Momentum_Data *pd,
+                                                                                Efl_Canvas_Gesture *gesture, Efl_Object *watched EINA_UNUSED,
+                                                                                Efl_Canvas_Gesture_Touch *event)
 {
    Eina_Value *val;
    unsigned char glayer_continues_enable;
@@ -87,104 +87,104 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
    //It does not have any meanging of this gesture.
    if (glayer_continues_enable && !pd->touched)
      {
-       pd->touched = EINA_TRUE;
+        pd->touched = EINA_TRUE;
 
-	   return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
-	 }
+        return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-        {
-           if (!pd->t_st)
-             {
-                if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_BEGIN ||
-                    glayer_continues_enable)
-                  {
-                     pd->t_st = pd->t_end =  efl_gesture_touch_cur_timestamp_get(event);
+      {
+         if (!pd->t_st)
+           {
+              if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_BEGIN ||
+                  glayer_continues_enable)
+                {
+                   pd->t_st = pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
 
-                     pd->st_line = pd->end_line =
-                        efl_gesture_touch_start_point_get(event);
+                   pd->st_line = pd->end_line =
+                       efl_gesture_touch_start_point_get(event);
 
-                     efl_gesture_hotspot_set(gesture, pd->st_line);
+                   efl_gesture_hotspot_set(gesture, pd->st_line);
 
-                     return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-                  }
-             }
+                   return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+                }
+           }
 
-           if ((efl_gesture_touch_cur_timestamp_get(event) - MOMENTUM_TIMEOUT) >
-               pd->t_end)
-             {
-                pd->st_line = efl_gesture_touch_cur_point_get(event);
-				pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
-				pd->xdir = pd->ydir = 0;
-			 }
-		   else
-		     {
-                int xdir, ydir;
-                Eina_Position2D cur_p = efl_gesture_touch_cur_point_get(event);
+         if ((efl_gesture_touch_cur_timestamp_get(event) - MOMENTUM_TIMEOUT) >
+             pd->t_end)
+           {
+              pd->st_line = efl_gesture_touch_cur_point_get(event);
+              pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
+              pd->xdir = pd->ydir = 0;
+           }
+         else
+           {
+              int xdir, ydir;
+              Eina_Position2D cur_p = efl_gesture_touch_cur_point_get(event);
 
-                xdir = _direction_get(pd->end_line.x, cur_p.x);
-                ydir = _direction_get(pd->end_line.y, cur_p.y);
+              xdir = _direction_get(pd->end_line.x, cur_p.x);
+              ydir = _direction_get(pd->end_line.y, cur_p.y);
 
-                if (xdir && (xdir != pd->xdir))
-                  {
-                     pd->st_line.x = pd->end_line.x;
-					 pd->t_st = pd->t_end;
-                     pd->xdir = xdir;
-                  }
+              if (xdir && (xdir != pd->xdir))
+                {
+                   pd->st_line.x = pd->end_line.x;
+                   pd->t_st = pd->t_end;
+                   pd->xdir = xdir;
+                }
 
-                if (ydir && (ydir != pd->ydir))
-                  {
-                     pd->st_line.y = pd->end_line.y;
-					 pd->t_st = pd->t_end;
-                     pd->ydir = ydir;
-                  }
-             }
+              if (ydir && (ydir != pd->ydir))
+                {
+                   pd->st_line.y = pd->end_line.y;
+                   pd->t_st = pd->t_end;
+                   pd->ydir = ydir;
+                }
+           }
 
-           pd->end_line = efl_gesture_touch_cur_point_get(event);
-		   pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
-           efl_gesture_hotspot_set(gesture, pd->end_line);
+         pd->end_line = efl_gesture_touch_cur_point_get(event);
+         pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
+         efl_gesture_hotspot_set(gesture, pd->end_line);
 
-           _momentum_set(obj, md, pd->st_line, efl_gesture_touch_cur_point_get(event),
-                         pd->t_st, efl_gesture_touch_cur_timestamp_get(event));
+         _momentum_set(obj, md, pd->st_line, efl_gesture_touch_cur_point_get(event),
+                       pd->t_st, efl_gesture_touch_cur_timestamp_get(event));
 
-           result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+         result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
-           break;
-        }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_END:
-        {
-           if (!pd->t_st)
-             {
-                pd->touched = EINA_FALSE;
+      {
+         if (!pd->t_st)
+           {
+              pd->touched = EINA_FALSE;
 
-                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
+              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
 
-           if ((efl_gesture_touch_cur_timestamp_get(event) - MOMENTUM_TIMEOUT) > pd->t_end)
-             {
-                pd->st_line = efl_gesture_touch_cur_point_get(event);
-                pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
-                pd->xdir = pd->ydir = 0;
-             }
+         if ((efl_gesture_touch_cur_timestamp_get(event) - MOMENTUM_TIMEOUT) > pd->t_end)
+           {
+              pd->st_line = efl_gesture_touch_cur_point_get(event);
+              pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
+              pd->xdir = pd->ydir = 0;
+           }
 
-           pd->end_line = efl_gesture_touch_cur_point_get(event);
-		   pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
-           efl_gesture_hotspot_set(gesture, pd->end_line);
+         pd->end_line = efl_gesture_touch_cur_point_get(event);
+         pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
+         efl_gesture_hotspot_set(gesture, pd->end_line);
 
-           if ((fabs(md->momentum.x) > EFL_GESTURE_MINIMUM_MOMENTUM) ||
-               (fabs(md->momentum.y) > EFL_GESTURE_MINIMUM_MOMENTUM))
-                result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-           else
-                result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+         if ((fabs(md->momentum.x) > EFL_GESTURE_MINIMUM_MOMENTUM) ||
+             (fabs(md->momentum.y) > EFL_GESTURE_MINIMUM_MOMENTUM))
+           result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+         else
+           result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
 
-           memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Momentum_Data));
+         memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Momentum_Data));
 
-		   break;
-        }
+         break;
+      }
 
       default:
 

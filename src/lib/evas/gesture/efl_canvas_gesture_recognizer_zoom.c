@@ -4,11 +4,11 @@
 
 static Evas_Coord
 _finger_gap_length_get(Evas_Coord xx1,
-		Evas_Coord yy1,
-		Evas_Coord xx2,
-		Evas_Coord yy2,
-		Evas_Coord *x,
-		Evas_Coord *y)
+                       Evas_Coord yy1,
+                       Evas_Coord xx2,
+                       Evas_Coord yy2,
+                       Evas_Coord *x,
+                       Evas_Coord *y)
 {
    double a, b, xx, yy, gap;
    xx = abs(xx2 - xx1);
@@ -67,7 +67,7 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
    //unsigned int tm_end = (pd->zoom_mv.cur.timestamp > pd->zoom_mv1.cur.timestamp) ?
    //   pd->zoom_mv.cur.timestamp : pd->zoom_mv1.cur.timestamp;
 
-   int x,y; //Hot spot
+   int x, y; //Hot spot
    Evas_Coord diam = _finger_gap_length_get(xx1, yy1, xx2, yy2,
                                             &x, &y);
 
@@ -80,7 +80,7 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
      }
 
    if (pd->zoom_distance_tolerance) /* zoom tolerance <> ZERO, means
-                                     * zoom action NOT started yet */
+                                    * zoom action NOT started yet */
      {
         /* avoid jump with zoom value when break tolerance */
         if (diam < (pd->zoom_base - pd->zoom_distance_tolerance))
@@ -147,7 +147,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
    else zoom_finger_enable = 1;
 
    val = efl_gesture_recognizer_config_get(obj, "glayer_zoom_finger_factor");
-   if (val)  eina_value_get(val, &pd->zoom_finger_factor);
+   if (val) eina_value_get(val, &pd->zoom_finger_factor);
    else pd->zoom_finger_factor = 1.0;
 
    rd->continues = EINA_TRUE;
@@ -156,7 +156,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
      {
         pd->calc_temp = EINA_TRUE;
         val = efl_gesture_recognizer_config_get(obj, "glayer_zoom_distance_tolerance");
-        if (val)  eina_value_get(val, &pd->zoom_distance_tolerance);
+        if (val) eina_value_get(val, &pd->zoom_distance_tolerance);
         else pd->zoom_distance_tolerance = 1.0;
 
         pd->zoom_distance_tolerance *= rd->finger_size;
@@ -165,108 +165,109 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-        {
-           if ((!glayer_continues_enable) && (!pd->zoom_st.cur.timestamp))
-             {
-                return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
-             }
-           EINA_FALLTHROUGH;
-        }
+      {
+         if ((!glayer_continues_enable) && (!pd->zoom_st.cur.timestamp))
+           {
+              return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+           }
+         EINA_FALLTHROUGH;
+      }
+
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-        {
-           if (td->touch_down > 2)
-             {
-                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
+      {
+         if (td->touch_down > 2)
+           {
+              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
 
-           if (!pd->zoom_st.cur.timestamp) /* Now scan touched-devices list
+         if (!pd->zoom_st.cur.timestamp)   /* Now scan touched-devices list
                                             * and find other finger */
-             {
-                if (!efl_gesture_touch_multi_touch_get(event))
-                  return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
-
-                Pointer_Data *p1 = eina_hash_find(td->touch_points, &id1);
-                Pointer_Data *p2 = eina_hash_find(td->touch_points, &id2);
-
-                memcpy(&pd->zoom_st, p2, sizeof(Pointer_Data));
-                memcpy(&pd->zoom_st1, p1, sizeof(Pointer_Data));
-
-                memcpy(&pd->zoom_mv, p2, sizeof(Pointer_Data));
-                memcpy(&pd->zoom_mv1, p1, sizeof(Pointer_Data));
-
-                int x,y; //Hot spot
-                zd->zoom = 1.0;
-                pd->zoom_base = _finger_gap_length_get(pd->zoom_st1.cur.pos.x,
-                                                       pd->zoom_st1.cur.pos.y,
-                                                       pd->zoom_st.cur.pos.x,
-                                                       pd->zoom_st.cur.pos.y,
-                                                       &x, &y);
-
-                zd->radius = pd->zoom_base / 2.0;
-
-                if ((efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_STARTED) &&
-                    (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_UPDATED))
-                  return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-
-                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
-
-           Pointer_Data *p2 = eina_hash_find(td->touch_points, &id2);
-           if (p2->id == pd->zoom_mv.id)
-             memcpy(&pd->zoom_mv, p2, sizeof(Pointer_Data));
-           else if (p2->id == pd->zoom_mv1.id)
-             memcpy(&pd->zoom_mv1, p2, sizeof(Pointer_Data));
-
-           zd->zoom = _zoom_compute(pd, zd, pd->zoom_mv.cur.pos.x,
-                                    pd->zoom_mv.cur.pos.y, pd->zoom_mv1.cur.pos.x,
-                                    pd->zoom_mv1.cur.pos.y, pd->zoom_finger_factor);
-
-
-           if (!pd->zoom_distance_tolerance)
-             {
-                double d = zd->zoom - pd->next_step;
-
-                if (d < 0.0) d = (-d);
-
-                if (d >= pd->zoom_step)
-                  {
-                     pd->next_step = zd->zoom;
-
-                     return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-                  }
-             }
-
-           return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
-        }
-      case EFL_GESTURE_TOUCH_STATE_END:
-        {
-           if (td->touch_down == 0)
-             {
-                rd->continues = EINA_FALSE;
-
-                memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
-                efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_ZOOM);
-
+           {
+              if (!efl_gesture_touch_multi_touch_get(event))
                 return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
-             }
-           if ((pd->zoom_base) && (pd->zoom_distance_tolerance == 0))
-             {
-                memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
 
-                return EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-             }
+              Pointer_Data *p1 = eina_hash_find(td->touch_points, &id1);
+              Pointer_Data *p2 = eina_hash_find(td->touch_points, &id2);
 
-           if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
-             {
-                memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+              memcpy(&pd->zoom_st, p2, sizeof(Pointer_Data));
+              memcpy(&pd->zoom_st1, p1, sizeof(Pointer_Data));
 
-                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
-        }
+              memcpy(&pd->zoom_mv, p2, sizeof(Pointer_Data));
+              memcpy(&pd->zoom_mv1, p1, sizeof(Pointer_Data));
+
+              int x, y;  //Hot spot
+              zd->zoom = 1.0;
+              pd->zoom_base = _finger_gap_length_get(pd->zoom_st1.cur.pos.x,
+                                                     pd->zoom_st1.cur.pos.y,
+                                                     pd->zoom_st.cur.pos.x,
+                                                     pd->zoom_st.cur.pos.y,
+                                                     &x, &y);
+
+              zd->radius = pd->zoom_base / 2.0;
+
+              if ((efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_STARTED) &&
+                  (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_UPDATED))
+                return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+
+              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
+
+         Pointer_Data *p2 = eina_hash_find(td->touch_points, &id2);
+         if (p2->id == pd->zoom_mv.id)
+           memcpy(&pd->zoom_mv, p2, sizeof(Pointer_Data));
+         else if (p2->id == pd->zoom_mv1.id)
+           memcpy(&pd->zoom_mv1, p2, sizeof(Pointer_Data));
+
+         zd->zoom = _zoom_compute(pd, zd, pd->zoom_mv.cur.pos.x,
+                                  pd->zoom_mv.cur.pos.y, pd->zoom_mv1.cur.pos.x,
+                                  pd->zoom_mv1.cur.pos.y, pd->zoom_finger_factor);
+
+         if (!pd->zoom_distance_tolerance)
+           {
+              double d = zd->zoom - pd->next_step;
+
+              if (d < 0.0) d = (-d);
+
+              if (d >= pd->zoom_step)
+                {
+                   pd->next_step = zd->zoom;
+
+                   return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+                }
+           }
+
+         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+      }
+
+      case EFL_GESTURE_TOUCH_STATE_END:
+      {
+         if (td->touch_down == 0)
+           {
+              rd->continues = EINA_FALSE;
+
+              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+              efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_ZOOM);
+
+              return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+           }
+         if ((pd->zoom_base) && (pd->zoom_distance_tolerance == 0))
+           {
+              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+
+              return EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+           }
+
+         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
+           {
+              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+
+              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
+      }
 
       default:
 
-         break;
+        break;
      }
 
    return result;

@@ -4,33 +4,33 @@
 
 typedef struct _Object_Gesture
 {
-   Eo                                    *object;
-   const Efl_Event_Description           *type;
-   Efl_Canvas_Gesture                    *gesture;
-   Efl_Canvas_Gesture_Recognizer         *recognizer;
+   Eo                            *object;
+   const Efl_Event_Description   *type;
+   Efl_Canvas_Gesture            *gesture;
+   Efl_Canvas_Gesture_Recognizer *recognizer;
 } Object_Gesture;
 
 typedef struct _Efl_Canvas_Gesture_Manager_Data
 {
    //Keeps track of all the gesture request for a particular target
-   Eina_Hash    *m_gesture_contex;  // (*target, *event_desc)
+   Eina_Hash *m_gesture_contex;     // (*target, *event_desc)
    //Keeps all the event directed to this particular object from touch_begin till touch_end
-   Eina_Hash    *m_object_events;  // (*target, *efl_gesture_touch)
+   Eina_Hash *m_object_events;     // (*target, *efl_gesture_touch)
    //Keeps all the recognizer registered to gesture manager
-   Eina_Hash    *m_recognizers; // (*gesture_type, *recognizer)
+   Eina_Hash *m_recognizers;    // (*gesture_type, *recognizer)
    //Keeps track of all current object gestures.
-   Eina_List    *m_object_gestures; //(List of *object_gesture)
+   Eina_List *m_object_gestures;    //(List of *object_gesture)
    //Lazy deletion of gestures
-   Eina_List    *m_gestures_to_delete;
+   Eina_List *m_gestures_to_delete;
    //Kepps config values for gesture recognize
-   Eina_Hash    *m_config;
+   Eina_Hash *m_config;
 } Efl_Canvas_Gesture_Manager_Data;
 
 static void _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
-                                     Eo *target, const Efl_Event_Description *type);
-static Efl_Canvas_Gesture*
-_get_state(Efl_Canvas_Gesture_Manager_Data *pd, Eo *target,
-                       Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
+                                      Eo *target, const Efl_Event_Description *type);
+static Efl_Canvas_Gesture *
+            _get_state(Efl_Canvas_Gesture_Manager_Data *pd, Eo *target,
+           Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
 
 static void
 _cleanup_object(Eina_List *list)
@@ -131,7 +131,7 @@ _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_
 {
    Efl_Canvas_Gesture_Manager_Data *pd = data;
    //If there is a recognizer registered for that event then add it to the gesture context
-   Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
+   Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find(pd->m_recognizers, &type);
    if (recognizer)
      {
         //Add it to the gesture context.
@@ -144,7 +144,7 @@ _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_
 {
    Efl_Canvas_Gesture_Manager_Data *pd = data;
    //If there is a recognizer registered for that event then add it to the gesture context
-   Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
+   Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find(pd->m_recognizers, &type);
    if (recognizer)
      {
         eina_hash_list_remove(pd->m_gesture_contex, &target, type);
@@ -181,18 +181,18 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
              efl_gesture_touch_point_record(touch_event, event);
 
              //This is for handling the case that mouse event pairs dont match.
-			 //Such as the case of canceling gesture recognition after a mouse down.
+             //Such as the case of canceling gesture recognition after a mouse down.
              if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_STATE_UNKNOWN)
                continue;
 
              recognizer = eina_hash_find(pd->m_recognizers, &gesture_type);
 
-			 //If the gesture canceled or already finished by recognizer.
+             //If the gesture canceled or already finished by recognizer.
              gesture = _get_state(pd, target, recognizer, gesture_type);
              if (!gesture)
                continue;
 
-			 //Gesture detecting.
+             //Gesture detecting.
              recog_result = efl_gesture_recognizer_recognize(recognizer, gesture, target, touch_event);
              recog_state = recog_result & EFL_GESTURE_RECOGNIZER_RESULT_RESULT_MASK;
 
@@ -242,7 +242,6 @@ post_event:
                   //FIXME: delete it by object not list.
                   _cleanup_object(pd->m_gestures_to_delete);
                   pd->m_gestures_to_delete = NULL;
-
                }
           }
      }
@@ -271,7 +270,7 @@ _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_
 
 EOLIAN static void
 _efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
-                                           Efl_Canvas_Gesture_Recognizer *recognizer)
+                                                  Efl_Canvas_Gesture_Recognizer *recognizer)
 {
    Eina_List *l, *l_next;
    Object_Gesture *object_gesture;
@@ -282,7 +281,7 @@ _efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canva
 
    //Find the type of the recognizer
    dummy = efl_gesture_recognizer_add(recognizer, 0);
-   if (!dummy)return;
+   if (!dummy) return;
 
    type = _efl_gesture_type_get(dummy);
    efl_del(dummy);
@@ -313,43 +312,50 @@ _find_match_recognizer(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Canvas_Gesture_R
 
    switch (type)
      {
-       case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
-         {
-            event_type = EFL_EVENT_GESTURE_TAP;
-            break;
-         }
-       case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLETAP:
-         {
-            event_type = EFL_EVENT_GESTURE_DOUBLE_TAP;
-            break;
-         }
-       case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLETAP:
-         {
-            event_type = EFL_EVENT_GESTURE_TRIPLE_TAP;
-            break;
-         }
-       case EFL_GESTURE_RECOGNIZER_TYPE_LONGTAP:
-         {
-            event_type = EFL_EVENT_GESTURE_LONG_TAP;
-            break;
-         }
-       case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
-         {
-            event_type = EFL_EVENT_GESTURE_MOMENTUM;
-            break;
-         }
-       case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
-         {
-            event_type = EFL_EVENT_GESTURE_FLICK;
-            break;
-         }
-       case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
-         {
-            event_type = EFL_EVENT_GESTURE_ZOOM;
-            break;
-         }
-       default:
-         return NULL;
+      case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
+      {
+         event_type = EFL_EVENT_GESTURE_TAP;
+         break;
+      }
+
+      case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLETAP:
+      {
+         event_type = EFL_EVENT_GESTURE_DOUBLE_TAP;
+         break;
+      }
+
+      case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLETAP:
+      {
+         event_type = EFL_EVENT_GESTURE_TRIPLE_TAP;
+         break;
+      }
+
+      case EFL_GESTURE_RECOGNIZER_TYPE_LONGTAP:
+      {
+         event_type = EFL_EVENT_GESTURE_LONG_TAP;
+         break;
+      }
+
+      case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
+      {
+         event_type = EFL_EVENT_GESTURE_MOMENTUM;
+         break;
+      }
+
+      case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
+      {
+         event_type = EFL_EVENT_GESTURE_FLICK;
+         break;
+      }
+
+      case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
+      {
+         event_type = EFL_EVENT_GESTURE_ZOOM;
+         break;
+      }
+
+      default:
+        return NULL;
      }
 
    return eina_hash_find(pd->m_recognizers, &event_type);
@@ -386,7 +392,7 @@ _efl_canvas_gesture_manager_recognizer_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gestu
 // }
 
 //Get or create a gesture object that will represent the state for a given object, used by the recognizer
-Efl_Canvas_Gesture*
+Efl_Canvas_Gesture *
 _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
            Eo *target, Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type)
 {
@@ -407,20 +413,20 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
         if (object_gesture->object == target &&
             object_gesture->recognizer == recognizer &&
             object_gesture->type == type)
-         {
-            //The gesture is already processed waiting for cleanup
-            if (((efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_FINISHED) ||
-                (efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_CANCELED)) &&
-                (!rd->continues))
-              {
-                 _cleanup_cached_gestures(pd, target, type);
-                 eina_hash_del(pd->m_object_events, &type, NULL);
-                 _cleanup_object(pd->m_gestures_to_delete);
-                 pd->m_gestures_to_delete = NULL;
-                 return NULL;
-              }
-            return object_gesture->gesture;
-         }
+          {
+             //The gesture is already processed waiting for cleanup
+             if (((efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_FINISHED) ||
+                  (efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_CANCELED)) &&
+                 (!rd->continues))
+               {
+                  _cleanup_cached_gestures(pd, target, type);
+                  eina_hash_del(pd->m_object_events, &type, NULL);
+                  _cleanup_object(pd->m_gestures_to_delete);
+                  pd->m_gestures_to_delete = NULL;
+                  return NULL;
+               }
+             return object_gesture->gesture;
+          }
      }
 
    gesture = efl_gesture_recognizer_add(recognizer, target);
