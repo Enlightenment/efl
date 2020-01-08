@@ -4,6 +4,7 @@
 #include <Evas.h>
 
 #define DRAG_OBJECT_NUM_MOVES 4
+#define DRAG_OBJECT_AROUND_NUM_MOVES 60
 
 int suite_setup(Eina_Bool legacy);
 void _elm2_suite_init(void);
@@ -23,6 +24,7 @@ void click_part_flags(Eo *obj, const char *part, int flags);
 void click_object_at(Eo *obj, int x, int y);
 void click_object_at_flags(Eo *obj, int x, int y, int flags);
 void drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate);
+int drag_object_around(Eo *obj, int cx, int cy, int radius, int degrees);
 void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
 void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);
