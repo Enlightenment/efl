@@ -620,3 +620,31 @@ drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
    evas_event_feed_mouse_move(e, x + dx, y + dy, ts++, NULL);
    evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
+
+int
+drag_object_around(Eo *obj, int cx, int cy, int radius, int degrees)
+{
+   Evas *e = evas_object_evas_get(obj);
+   /* clamp num mouse moves to a vaguely sane value */
+   int i, num = MIN(degrees, DRAG_OBJECT_AROUND_NUM_MOVES);
+   int last_x = round(cx + radius);
+   int last_y = round(cy);
+   /* start at 0 degrees */
+   evas_event_feed_mouse_move(e, last_x, last_y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+   for (i = 1; i < num; i++)
+     {
+        /* x = cx + r * cos(a), y = cy + r * sin(a) */
+        int ax, ay;
+        /* each iteration is 1 degree */
+        double angle = (i * (degrees / DRAG_OBJECT_AROUND_NUM_MOVES)) * M_PI / 180.0;
+        ax = round(cx + radius * cos(angle));
+        ay = round(cy + radius * sin(angle));
+        if ((ax == last_x) && (ay == last_y)) continue;
+        evas_event_feed_mouse_move(e, ax, ay, ts++, NULL);
+        last_x = ax, last_y = ay;
+     }
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+   /* only count arc motion: subtract initial move, mouse down, mouse up */
+   return num;
+}
