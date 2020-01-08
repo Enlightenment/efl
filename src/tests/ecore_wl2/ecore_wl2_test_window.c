@@ -486,6 +486,39 @@ EFL_START_TEST(wl2_window_opaque_region)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_popup_input)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Input *input;
+   Eina_Iterator *itr;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ecore_wl2_window_type_set(win, ECORE_WL2_WINDOW_TYPE_MENU);
+
+   itr = ecore_wl2_display_inputs_get(disp);
+   ck_assert(itr != NULL);
+
+   EINA_ITERATOR_FOREACH(itr, input)
+     {
+        if (ecore_wl2_input_seat_capabilities_get(input) !=
+            ECORE_WL2_SEAT_CAPABILITIES_POINTER)
+          continue;
+
+        ecore_wl2_window_popup_input_set(win, input);
+        fail_if(ecore_wl2_window_popup_input_get(win) != input);
+        break;
+     }
+
+   eina_iterator_free(itr);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -516,5 +549,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_role);
         tcase_add_test(tc, wl2_window_input_region);
         tcase_add_test(tc, wl2_window_opaque_region);
+        tcase_add_test(tc, wl2_window_popup_input);
      }
 }
