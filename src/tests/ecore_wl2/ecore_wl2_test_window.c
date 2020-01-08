@@ -19,24 +19,25 @@
 #define WIDTH 480
 #define HEIGHT 360
 
-typedef struct _Test_Data {
-     Ecore_Wl2_Display *display;
-     Ecore_Wl2_Window *win;
-     Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
-     Ecore_Event_Handler *handler;
+typedef struct _Test_Data
+{
+   Ecore_Wl2_Display *display;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
+   Ecore_Event_Handler *handler;
 
-     struct wl_surface *surface;
-     struct wl_egl_window *egl_window;
+   struct wl_surface *surface;
+   struct wl_egl_window *egl_window;
 
-     int width;
-     int height;
-     int frame_callback_count;
+   int width;
+   int height;
+   int frame_callback_count;
 
 #ifdef GL_GLES
-     EGLDisplay egl_display;
-     EGLConfig egl_conf;
-     EGLSurface egl_surface;
-     EGLContext egl_context;
+   EGLDisplay egl_display;
+   EGLConfig egl_conf;
+   EGLSurface egl_surface;
+   EGLContext egl_context;
 #endif
 } Test_Data;
 
@@ -72,16 +73,19 @@ _init_egl(Test_Data *td)
         EGL_NONE
    };
 
-   td->egl_display = eglGetDisplay((EGLNativeDisplayType)ecore_wl2_display_get(td->display));
+   td->egl_display =
+     eglGetDisplay((EGLNativeDisplayType)ecore_wl2_display_get(td->display));
    eglInitialize(td->egl_display, NULL, NULL);
    eglChooseConfig(td->egl_display, attributes, &td->egl_conf, 1, &num_config);
-   td->egl_context = eglCreateContext(td->egl_display, td->egl_conf, EGL_NO_CONTEXT, NULL);
+   td->egl_context =
+     eglCreateContext(td->egl_display, td->egl_conf, EGL_NO_CONTEXT, NULL);
 
    td->egl_window = wl_egl_window_create(td->surface, td->width, td->height);
-   td->egl_surface = eglCreateWindowSurface(td->egl_display,
-                                            td->egl_conf, td->egl_window, NULL);
+   td->egl_surface =
+     eglCreateWindowSurface(td->egl_display, td->egl_conf, td->egl_window, NULL);
 
-   eglMakeCurrent(td->egl_display, td->egl_surface, td->egl_surface, td->egl_context);
+   eglMakeCurrent(td->egl_display, td->egl_surface, td->egl_surface,
+                  td->egl_context);
 }
 
 static void
@@ -423,7 +427,9 @@ _test_activated_configure_complete(void *data, int type EINA_UNUSED, void *event
 {
    Test_Data *td = data;
 
-   td->frame_callback_handler = ecore_wl2_window_frame_callback_add(td->win, _test_activated_frame_cb, td);
+   td->frame_callback_handler =
+     ecore_wl2_window_frame_callback_add(td->win,
+                                         _test_activated_frame_cb, td);
    ecore_wl2_window_commit(td->win, EINA_TRUE);
 
    return ECORE_CALLBACK_PASS_ON;
@@ -463,8 +469,9 @@ EFL_START_TEST(wl2_window_activated)
    ecore_wl2_window_show(td->win);
 
    _init_egl(td);
-   td->handler = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
-                                         _test_activated_configure_complete, td);
+   td->handler =
+     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                             _test_activated_configure_complete, td);
    ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ACTIVATE,
                            _test_activated_window_activate, NULL);
 
@@ -603,7 +610,8 @@ _test_commit_configure_complete(void *data, int type EINA_UNUSED, void *event EI
 {
    Test_Data *td = data;
 
-   td->frame_callback_handler = ecore_wl2_window_frame_callback_add(td->win, _test_commit_frame_cb, td);
+   td->frame_callback_handler =
+     ecore_wl2_window_frame_callback_add(td->win, _test_commit_frame_cb, td);
    ecore_wl2_window_commit(td->win, EINA_TRUE);
 
    return ECORE_CALLBACK_PASS_ON;
@@ -633,8 +641,9 @@ EFL_START_TEST(wl2_window_commit)
 
    ecore_wl2_window_show(td->win);
 
-   td->handler = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
-                                         _test_commit_configure_complete, td);
+   td->handler =
+     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                             _test_commit_configure_complete, td);
 
    ecore_main_loop_begin();
 
@@ -664,7 +673,9 @@ _test_frame_callback_configure_complete(void *data, int type EINA_UNUSED, void *
 {
    Test_Data *td = data;
 
-   td->frame_callback_handler = ecore_wl2_window_frame_callback_add(td->win, _test_frame_callback_frame_cb, td);
+   td->frame_callback_handler =
+     ecore_wl2_window_frame_callback_add(td->win,
+                                         _test_frame_callback_frame_cb, td);
    ecore_wl2_window_commit(td->win, EINA_TRUE);
 
    return ECORE_CALLBACK_PASS_ON;
@@ -694,8 +705,9 @@ EFL_START_TEST(wl2_window_frame_callback)
 
    ecore_wl2_window_show(td->win);
 
-   td->handler = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
-                                         _test_frame_callback_configure_complete, td);
+   td->handler =
+     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                             _test_frame_callback_configure_complete, td);
 
    ecore_main_loop_begin();
 
