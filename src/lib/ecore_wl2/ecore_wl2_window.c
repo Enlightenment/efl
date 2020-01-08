@@ -845,6 +845,17 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 }
 
 EAPI void
+ecore_wl2_window_opaque_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (x) *x = window->opaque.x;
+   if (y) *y = window->opaque.y;
+   if (w) *w = window->opaque.w;
+   if (h) *h = window->opaque.h;
+}
+
+EAPI void
 ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
 {
    int nx = 0, ny = 0, nw = 0, nh = 0;
@@ -891,6 +902,17 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    window->input_rect.h = nh;
    window->input_set = x || y || w || h;
    window->pending.input = EINA_TRUE;
+}
+
+EAPI void
+ecore_wl2_window_input_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (x) *x = window->input_rect.x;
+   if (y) *y = window->input_rect.y;
+   if (w) *w = window->input_rect.w;
+   if (h) *h = window->input_rect.h;
 }
 
 EAPI Eina_Bool
@@ -1115,6 +1137,14 @@ ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *inpu
    EINA_SAFETY_ON_NULL_RETURN(input);
    EINA_SAFETY_ON_TRUE_RETURN(window->type != ECORE_WL2_WINDOW_TYPE_MENU);
    window->grab = input;
+}
+
+EAPI Ecore_Wl2_Input *
+ecore_wl2_window_popup_input_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   return window->grab;
 }
 
 EAPI Ecore_Wl2_Display *
