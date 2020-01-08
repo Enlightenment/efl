@@ -8,9 +8,17 @@ ecore_wl2_suite_src = [
   'ecore_wl2_test_input.c'
 ]
 
+wl2_test_gl_deps = []
+
+if get_option('opengl') == 'es-egl'
+    wl2_test_gl_deps += dependency('egl')
+    wl2_test_gl_deps += dependency('gl')
+endif
+
 ecore_wl2_suite = executable('ecore_wl2_suite',
   ecore_wl2_suite_src,
-  dependencies: [ecore_wl2, ecore, check, wayland_protocol],
+  dependencies: [ecore_wl2, ecore, ecore_input, check, wayland_protocol, wayland_client, dependency('wayland-egl'), wl2_test_gl_deps],
+
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
