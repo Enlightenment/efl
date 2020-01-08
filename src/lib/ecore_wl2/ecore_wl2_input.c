@@ -1824,17 +1824,6 @@ ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, 
    return input->repeat.enabled;
 }
 
-EAPI Eo *
-ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window)
-{
-   Ecore_Wl2_Input_Devices *devices;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
-
-   devices = _ecore_wl2_devices_get(input, window);
-   return devices ?  devices->seat_dev : NULL;
-}
-
 EAPI void
 ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y)
 {

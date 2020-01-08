@@ -1525,19 +1525,6 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
 
 /**
- * Get the Evas_Device for the seat belonging to a window from an input
- *
- * @param input The input
- * @param window The window
- *
- * @return The device object
- *
- * @ingroup Ecore_Wl2_Input_Group
- * @since 1.20
- */
-EAPI Eo *ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window);
-
-/**
  * Retrieves the mouse position of the seat
  *
  * @param input The seat
