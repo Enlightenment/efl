@@ -1116,17 +1116,6 @@ EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y
 EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /**
- * Iconify a window
- *
- * @param win The window to iconifiy
- * @param iconified The new iconified state to set
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
-
-/**
  * Set the type of a given window
  *
  * @param window The window to set the type of
@@ -2042,20 +2031,6 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  * @since 1.21
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
-
-/**
- * Check if a wayland window's surface is in the pending state.
- *
- * A surface is pending if it's been commit but we haven't received a
- * frame callback for it yet.  This mean's we're not ready to draw yet.
- *
- * @param window The window whose surface we want to check
- *
- * @return whether the window's surface is pending or not.
- *
- * @since 1.21
- */
-EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
 /**
  * Add a callback that fires when the window's surface_frame callback fires

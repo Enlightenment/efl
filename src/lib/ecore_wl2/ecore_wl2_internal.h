@@ -100,6 +100,31 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  */
 EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
 
+/**
+ * Iconify a window
+ *
+ * @param win The window to iconifiy
+ * @param iconified The new iconified state to set
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
+ */
+EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
+
+/**
+ * Check if a wayland window's surface is in the pending state.
+ *
+ * A surface is pending if it's been commit but we haven't received a
+ * frame callback for it yet.  This mean's we're not ready to draw yet.
+ *
+ * @param window The window whose surface we want to check
+ *
+ * @return whether the window's surface is pending or not.
+ *
+ * @since 1.21
+ */
+EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
+
 # undef EAPI
 # define EAPI
 
