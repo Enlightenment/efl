@@ -6,7 +6,8 @@
 //that are directed to a particular object from the
 //first finger down to the last finger up
 
-static void _hash_free_cb(Pointer_Data *point)
+static void
+_hash_free_cb(Pointer_Data *point)
 {
    free(point);
 }
@@ -99,11 +100,11 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
      }
    point->action = action;
 
-   if (!id && (action ==  EFL_POINTER_ACTION_DOWN))
+   if (!id && (action == EFL_POINTER_ACTION_DOWN))
      {
         pd->state = EFL_GESTURE_TOUCH_STATE_BEGIN;
      }
-   else if (action ==  EFL_POINTER_ACTION_UP)
+   else if (action == EFL_POINTER_ACTION_UP)
      {
         pd->state = EFL_GESTURE_TOUCH_STATE_END;
      }
