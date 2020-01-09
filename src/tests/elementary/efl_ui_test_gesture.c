@@ -4,6 +4,9 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
+/* mouse feeding */
+#include <Evas_Legacy.h>
+#include <evas_canvas_eo.h>
 
 /*
 typedef enum
@@ -123,6 +126,73 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
    CHECK_ZERO(ZOOM);
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_ui_gesture_long_tap)
+{
+   Eo *rect = setup();
+   double timeout = 1.2;
+   Eina_Value *val;
+   Eo *e = efl_provider_find(rect, EVAS_CANVAS_CLASS);
+
+   val = efl_gesture_manager_config_get(efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS), "glayer_long_tap_start_timeout");
+   eina_value_get(val, &timeout);
+
+   /* press */
+   press_object(rect);
+   CHECK_ALL(TAP, 1, 0, 0, 0);
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 0);
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 0);
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 0);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   wait_timer(timeout + 0.01);
+
+   /* verify longpress */
+   CHECK_ALL(TAP, 0, 0, 0, 1);
+   CHECK_ALL(LONG_TAP, 0, 1, 0, 0);
+   CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
+   CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+   evas_event_feed_mouse_up(e, 1, 0, 2, NULL);
+
+   CHECK_ZERO(TAP);
+   CHECK_ALL(LONG_TAP, 0, 0, 1, 0);
+   CHECK_ZERO(DOUBLE_TAP);
+   CHECK_ZERO(TRIPLE_TAP);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+   press_object_at(rect, 0, 0);
+   RESET;
+
+   /* move off-canvas */
+   evas_event_feed_mouse_move(e, -1, 0, 2, NULL);
+   wait_timer(timeout + 0.01);
+
+   /* verify longpress */
+   CHECK_ALL(TAP, 0, 1, 0, 0);
+   CHECK_ALL(LONG_TAP, 0, 1, 0, 0);
+   CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
+   CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
+   CHECK_ALL(MOMENTUM, 1, 0, 0, 0);
+   CHECK_ALL(FLICK, 1, 0, 0, 0);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+   evas_event_feed_mouse_up(e, 1, 0, 3, NULL);
 }
 EFL_END_TEST
 
@@ -309,5 +379,6 @@ EFL_END_TEST
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
+   tcase_add_test(tc, test_efl_ui_gesture_long_tap);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
 }
