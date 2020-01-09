@@ -257,37 +257,37 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Examples: $[style=outline], $[style=shadow,bottom_right], $[style=outline_shadow,bottom].
              See @Efl.Text_Style.text_effect_type and @Efl.Text_Style.text_shadow_direction.
 
-           - $tabstops: Size (in pixels) of the tab character. The value must be a number greater than one.
+           - $tab_stops: Size (in pixels) of the tab character. The value must be a number greater than one.
              Default value is $[32].
              See @Efl.Text_Format.tab_stops.
 
-           - $linesize: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
+           - $line_size: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
              $[0] would render all lines on top of each other (However, this value will be ignored if it results in
              overlapping lines of text).
-             Setting this value sets $linerelsize to $[0%] (disables it).
+             Setting this value sets $line_rel_size to $[0%] (disables it).
              Default value is $[0].
 
-           - $linerelsize: Distance (in percentage over the natural line height) from the baseline of one line of
+           - $line_rel_size: Distance (in percentage over the natural line height) from the baseline of one line of
              text to the next. A value of $[100%] does not have any impact, smaller values render lines closer together
              and bigger values render them further apart.
-             Setting this value sets $linesize to $[0] (disables it).
+             Setting this value sets $line_size to $[0] (disables it).
              Default value is $[0%].
 
-           - $linegap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
-             next. Setting this value sets $linerelgap to $[0%] (disables it).
+           - $line_gap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
+             next. Setting this value sets $line_rel_gap to $[0%] (disables it).
              Default value is $[0].
              See @Efl.Text_Format.line_gap.
 
-           - $linerelgap: Additional empty space (in percentage over the natural line height) between the bottom of
+           - $line_rel_gap: Additional empty space (in percentage over the natural line height) between the bottom of
              one line of text and the top of the next.
-             Setting this value sets $linegap to $[0] (disables it).
+             Setting this value sets $line_gap to $[0] (disables it).
              Default value is $[0%].
              See @Efl.Text_Format.line_rel_gap.
 
-           - $linefill: An alternate way to specify the $linesize as a percentage of the canvas height.
+           - $line_fill: An alternate way to specify the $line_size as a percentage of the canvas height.
              A value of $[100%] means that a single line fills the canvas, whereas $[25%] means that 4 lines
              fit in the same height.
-             When both $linefill and $linesize are specified the one resulting in the smallest line size is used.
+             When both $line_fill and $line_size are specified the one resulting in the smallest line size is used.
              Default value is $[0].
 
            - $ellipsis: Controls automatic addition of ellipsis "..." to replace text which cannot be shown.

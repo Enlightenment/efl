@@ -4896,7 +4896,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
 
    // from functions
    fail_if(!strstr(style, "font_weight=extrabold"));
-   fail_if(!strstr(style, "tabstops=20"));
+   fail_if(!strstr(style, "tab_stops=20"));
    fail_if(!strstr(style, "color=rgba(144,225,53,255)"));
    fail_if(!strstr(style, "password=off"));
    efl_text_password_set(txt, EINA_TRUE);

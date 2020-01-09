@@ -1418,12 +1418,18 @@ static const char *strikethroughstr = NULL;
 static const char *backingstr = NULL;
 static const char *stylestr = NULL;
 static const char *tabstopsstr = NULL;
+static const char *tab_stopsstr = NULL;
 static const char *linesizestr = NULL;
+static const char *line_sizestr = NULL;
 static const char *linerelsizestr = NULL;
+static const char *line_rel_sizestr = NULL;
 static const char *linegapstr = NULL;
+static const char *line_gapstr = NULL;
 static const char *linerelgapstr = NULL;
+static const char *line_rel_gapstr = NULL;
 static const char *itemstr = NULL;
 static const char *linefillstr = NULL;
+static const char *line_fillstr = NULL;
 static const char *ellipsisstr = NULL;
 static const char *passwordstr = NULL;
 static const char *replacement_charstr = NULL;
@@ -1607,12 +1613,18 @@ _format_command_init(void)
         backingstr = eina_stringshare_add("backing");
         stylestr = eina_stringshare_add("style");
         tabstopsstr = eina_stringshare_add("tabstops");
+        tab_stopsstr = eina_stringshare_add("tab_stops");
         linesizestr = eina_stringshare_add("linesize");
+        line_sizestr = eina_stringshare_add("line_size");
         linerelsizestr = eina_stringshare_add("linerelsize");
+        line_rel_sizestr = eina_stringshare_add("line_rel_size");
         linegapstr = eina_stringshare_add("linegap");
+        line_gapstr = eina_stringshare_add("line_gap");
         linerelgapstr = eina_stringshare_add("linerelgap");
+        line_rel_gapstr = eina_stringshare_add("line_rel_gap");
         itemstr = eina_stringshare_add("item");
         linefillstr = eina_stringshare_add("linefill");
+        line_fillstr = eina_stringshare_add("line_fill");
         ellipsisstr = eina_stringshare_add("ellipsis");
         passwordstr = eina_stringshare_add("password");
         replacement_charstr = eina_stringshare_add("replacement_char");
@@ -1664,12 +1676,18 @@ _format_command_shutdown(void)
    eina_stringshare_del(backingstr);
    eina_stringshare_del(stylestr);
    eina_stringshare_del(tabstopsstr);
+   eina_stringshare_del(tab_stopsstr);
    eina_stringshare_del(linesizestr);
+   eina_stringshare_del(line_sizestr);
    eina_stringshare_del(linerelsizestr);
+   eina_stringshare_del(line_rel_sizestr);
    eina_stringshare_del(linegapstr);
+   eina_stringshare_del(line_gapstr);
    eina_stringshare_del(linerelgapstr);
+   eina_stringshare_del(line_rel_gapstr);
    eina_stringshare_del(itemstr);
    eina_stringshare_del(linefillstr);
+   eina_stringshare_del(line_fillstr);
    eina_stringshare_del(ellipsisstr);
    eina_stringshare_del(passwordstr);
    eina_stringshare_del(replacement_charstr);
@@ -2524,7 +2542,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         if (*part2)
           _format_shadow_direction_set(fmt, part2, EINA_FALSE, NULL);
      }
-   else if (cmd == tabstopsstr)
+   else if (cmd == tabstopsstr || cmd == tab_stopsstr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2540,7 +2558,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         fmt->tabstops = atoi(param);
         if (fmt->tabstops < 1) fmt->tabstops = 1;
      }
-   else if (cmd == linesizestr)
+   else if (cmd == linesizestr || cmd == line_sizestr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2556,7 +2574,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         fmt->linesize = atoi(param);
         fmt->linerelsize = 0.0;
      }
-   else if (cmd == linerelsizestr)
+   else if (cmd == linerelsizestr || cmd == line_rel_sizestr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2584,7 +2602,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
                }
           }
      }
-   else if (cmd == linegapstr)
+   else if (cmd == linegapstr || cmd == line_gapstr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2601,7 +2619,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         fmt->linegap = atoi(param);
         fmt->linerelgap = 0.0;
      }
-   else if (cmd == linerelgapstr)
+   else if (cmd == linerelgapstr || cmd == line_rel_gapstr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2644,7 +2662,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         // itemstr == replacement object items in textblock - inline imges
         // for example
      }
-   else if (cmd == linefillstr)
+   else if (cmd == linefillstr || cmd == line_fillstr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -3329,7 +3347,7 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    PRINTF_APPEND_COLOR(underline_colorstr, fmt->color.underline.r, fmt->color.underline.g,
                              fmt->color.underline.b, fmt->color.underline.a);
 
-   PRINTF_APPEND_COLOR(underline2_colorstr, fmt->color.underline2.r, fmt->color.underline2.g,
+   PRINTF_APPEND_COLOR(secondary_underline_colorstr, fmt->color.underline2.r, fmt->color.underline2.g,
                              fmt->color.underline2.b, fmt->color.underline2.a);
 
    PRINTF_APPEND_COLOR(underline_dash_colorstr, fmt->color.underline_dash.r, fmt->color.underline_dash.g,
@@ -3344,7 +3362,7 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    PRINTF_APPEND_COLOR(glow_colorstr, fmt->color.glow.r, fmt->color.glow.g,
                              fmt->color.glow.b, fmt->color.glow.a);
 
-   PRINTF_APPEND_COLOR(glow2_colorstr, fmt->color.glow2.r, fmt->color.glow2.g,
+   PRINTF_APPEND_COLOR(secondary_glow_colorstr, fmt->color.glow2.r, fmt->color.glow2.g,
                              fmt->color.glow2.b, fmt->color.glow2.a);
 
    PRINTF_APPEND_COLOR(backing_colorstr, fmt->color.backing.r, fmt->color.backing.g,
@@ -3496,12 +3514,12 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    else
      PRINTF_APPEND_STR(stylestr, style_value_str_1);
 
-   PRINTF_APPEND_INT(tabstopsstr, fmt->tabstops);
-   PRINTF_APPEND_INT(linesizestr, fmt->linesize);
-   PRINTF_APPEND_PERCENT_FLOAT(linerelsizestr, (fmt->linerelsize*100));
-   PRINTF_APPEND_INT(linegapstr, fmt->linegap);
-   PRINTF_APPEND_PERCENT_FLOAT(linerelgapstr, (fmt->linerelgap*100));
-   PRINTF_APPEND_PERCENT_FLOAT(linefillstr, (fmt->linefill*100));
+   PRINTF_APPEND_INT(tab_stopsstr, fmt->tabstops);
+   PRINTF_APPEND_INT(line_sizestr, fmt->linesize);
+   PRINTF_APPEND_PERCENT_FLOAT(line_rel_sizestr, (fmt->linerelsize*100));
+   PRINTF_APPEND_INT(line_gapstr, fmt->linegap);
+   PRINTF_APPEND_PERCENT_FLOAT(line_rel_gapstr, (fmt->linerelgap*100));
+   PRINTF_APPEND_PERCENT_FLOAT(line_fillstr, (fmt->linefill*100));
    PRINTF_APPEND_FLOAT(ellipsisstr, fmt->ellipsis);
    PRINTF_APPEND_STR(passwordstr, (fmt->password == 0 ? "off" : "on"));
 
