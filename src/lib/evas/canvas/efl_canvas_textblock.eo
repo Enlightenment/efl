@@ -23,15 +23,6 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
             is_empty: bool; [[$true if empty.]]
          }
       }
-      cursor_add {
-         [[Adds an existing cursor to the text object.
-           If the cursor already belonged to another text object it will be reassigned to the new one.
-           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.
-         ]]
-         params {
-            cursor: Efl.Text.Cursor; [[The text cursor to use.]]
-         }
-      }
       cursor_create {
          [[Creates a new cursor and adds it to the text object.
            This cursor can be used to manipulate and iterate the content of the text object.

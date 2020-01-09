@@ -2108,16 +2108,10 @@ _efl_ui_textbox_entry_insert(Eo *obj, Efl_Ui_Textbox_Data *sd, const char *entry
    efl_canvas_group_change(obj);
 }
 
-EOLIAN static void
-_efl_ui_textbox_cursor_add(Eo *obj, Efl_Ui_Textbox_Data *pd, Efl_Text_Cursor *cursor)
-{
-   efl_text_cursor_text_object_set(cursor, pd->text_obj, obj);
-}
-
 EOLIAN static Efl_Text_Cursor *
 _efl_ui_textbox_cursor_create(Eo *obj, Efl_Ui_Textbox_Data *pd)
 {
-   Eo* cursor = efl_add(EFL_TEXT_CURSOR_CLASS, pd->text_obj);
+   Eo* cursor = efl_text_cursor_create(pd->text_obj);;
    efl_text_cursor_text_object_set(cursor, pd->text_obj, obj);
    return cursor;
 }

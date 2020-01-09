@@ -8077,16 +8077,10 @@ _efl_canvas_textblock_all_styles_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Te
    return o->default_format.default_style_str;
 }
 
-EOLIAN static void
-_efl_canvas_textblock_cursor_add(Eo *obj, Efl_Canvas_Textblock_Data *pd EINA_UNUSED, Efl_Text_Cursor *cursor)
-{
-   efl_text_cursor_text_object_set(cursor, obj, obj);
-}
-
 EOLIAN static Efl_Text_Cursor *
 _efl_canvas_textblock_cursor_create(Eo *obj, Efl_Canvas_Textblock_Data *pd EINA_UNUSED)
 {
-   Eo* cursor = efl_add(EFL_TEXT_CURSOR_CLASS, obj);
+   Eo* cursor = efl_text_cursor_create(obj);
    efl_text_cursor_text_object_set(cursor, obj, obj);
    return cursor;
 }
