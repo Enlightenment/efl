@@ -4463,7 +4463,7 @@ _draw_thread_ector_surface_set(void *data)
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
 }
 
-static void
+static Eina_Bool
 eng_ector_begin(void *engine EINA_UNUSED, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
                 int x, int y, Eina_Bool do_async)
@@ -4473,7 +4473,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         Evas_Thread_Command_Ector_Surface *nes;
 
         nes = eina_mempool_malloc(_mp_command_ector_surface, sizeof (Evas_Thread_Command_Ector_Surface));
-        if (!nes) return;
+        if (!nes) return EINA_FALSE;
 
         nes->ector = ector;
         nes->pixels = surface;
@@ -4490,6 +4490,8 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         unsigned int h = 0;
 
         pixels = evas_cache_image_pixels(&sf->cache_entry);
+        if (!pixels) return EINA_FALSE;
+
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
         // clear the surface before giving to ector
@@ -4498,6 +4500,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
+   return EINA_TRUE;
 }
 
 static void

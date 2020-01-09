@@ -519,7 +519,11 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, 255, NULL, 0);
 
    //Actual content drawing
-   ENFN->ector_begin(engine, buffer, context, ector, 0, 0, do_async);
+   if (!ENFN->ector_begin(engine, buffer, context, ector, 0, 0, do_async))
+     {
+        ERR("Failed ector begin!");
+        return NULL;
+     }
 
    //draw on buffer
    _evas_vg_render(obj, pd,
@@ -546,6 +550,8 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
                          int x, int y, int w, int h,
                          Eina_Bool do_async, Eina_Bool cacheable)
 {
+   if (!buffer) return;
+
    Eina_Bool async_unref;
 
    //Draw the buffer as image to canvas
