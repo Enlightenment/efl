@@ -45,7 +45,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
             format: Efl.Ui.Selection_Format; [[Format for copy & paste.]]
          }
       }
-      @property selection_handler_enabled {
+      @property selection_handles_enabled {
          [[This enables or disables the entry's selection handlers.]]
          set {
          }

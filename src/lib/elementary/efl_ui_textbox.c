@@ -89,7 +89,7 @@ struct _Efl_Ui_Textbox_Data
         Eina_Future                      *primary;
         Eina_Future                      *clipboard;
      } sel_future;
-   Eina_Bool                             sel_handler_enabled : 1;
+   Eina_Bool                             sel_handles_enabled : 1;
    Eina_Bool                             start_handler_down : 1;
    Eina_Bool                             start_handler_shown : 1;
    Eina_Bool                             end_handler_down : 1;
@@ -428,7 +428,7 @@ _update_selection_handler(Eo *obj)
         return;
      }
 
-   if (sd->sel_handler_enabled)
+   if (sd->sel_handles_enabled)
      {
         Eina_Rect rect;
         Eina_Position2D off;
@@ -1886,7 +1886,7 @@ _efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
    efl_text_interactive_selection_allowed_set(obj, EINA_TRUE);
    sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    sd->last.scroll = EINA_SIZE2D(0, 0);
-   sd->sel_handler_enabled = EINA_FALSE;
+   sd->sel_handles_enabled = EINA_FALSE;
 
    return obj;
 }
@@ -2089,16 +2089,16 @@ _efl_ui_textbox_selection_get(const Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED
 }
 
 EOLIAN static void
-_efl_ui_textbox_selection_handler_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool enabled)
+_efl_ui_textbox_selection_handles_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool enabled)
 {
-   if (sd->sel_handler_enabled == enabled) return;
-   sd->sel_handler_enabled = enabled;
+   if (sd->sel_handles_enabled == enabled) return;
+   sd->sel_handles_enabled = enabled;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_textbox_selection_handler_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+_efl_ui_textbox_selection_handles_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
-   return sd->sel_handler_enabled;
+   return sd->sel_handles_enabled;
 }
 
 static void
