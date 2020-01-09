@@ -466,29 +466,42 @@ attempt_to_find_the_right_point_for_mouse_positioning(Eo *obj, int dir)
 }
 
 static void
-click_object_internal(Eo *obj, int dir, int flags)
+click_object_internal(Eo *obj, int dir, int flags, Eina_Bool up)
 {
    Evas *e = evas_object_evas_get(obj);
    Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
    evas_event_feed_mouse_move(e, pos.x, pos.y, ts++, NULL);
    evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+   if (up)
+     evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
 
 void
 click_object(Eo *obj)
 {
-   click_object_internal(obj, NONE, 0);
+   click_object_internal(obj, NONE, 0, EINA_TRUE);
+}
+
+void
+press_object(Eo *obj)
+{
+   click_object_internal(obj, NONE, 0, EINA_FALSE);
 }
 
 void
 click_object_flags(Eo *obj, int flags)
 {
-   click_object_internal(obj, NONE, flags);
+   click_object_internal(obj, NONE, flags, EINA_TRUE);
 }
 
 void
-click_part_flags(Eo *obj, const char *part, int flags)
+press_object_flags(Eo *obj, int flags)
+{
+   click_object_internal(obj, NONE, flags, EINA_FALSE);
+}
+
+static void
+click_part_flags_internal(Eo *obj, const char *part, int flags, Eina_Bool up)
 {
    Efl_Part *part_obj = efl_ref(efl_part(obj, part));
    Eo *content;
@@ -508,7 +521,7 @@ click_part_flags(Eo *obj, const char *part, int flags)
         else if (strstr(part, "bottom"))
           dir |= BOTTOM;
      }
-   click_object_internal(content, dir, flags);
+   click_object_internal(content, dir, flags, up);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
    edje_object_message_signal_process(obj);
@@ -516,9 +529,27 @@ click_part_flags(Eo *obj, const char *part, int flags)
 }
 
 void
+click_part_flags(Eo *obj, const char *part, int flags)
+{
+   click_part_flags_internal(obj, part, flags, EINA_TRUE);
+}
+
+void
+press_part_flags(Eo *obj, const char *part, int flags)
+{
+   click_part_flags_internal(obj, part, flags, EINA_FALSE);
+}
+
+void
 click_part(Eo *obj, const char *part)
 {
    click_part_flags(obj, part, 0);
+}
+
+void
+press_part(Eo *obj, const char *part)
+{
+   press_part_flags(obj, part, 0);
 }
 
 static void
@@ -595,12 +626,28 @@ click_object_at(Eo *obj, int x, int y)
 }
 
 void
+press_object_at(Eo *obj, int x, int y)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+}
+
+void
 click_object_at_flags(Eo *obj, int x, int y, int flags)
 {
    Evas *e = evas_object_evas_get(obj);
    evas_event_feed_mouse_move(e, x, y, ts++, NULL);
    evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
    evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+}
+
+void
+press_object_at_flags(Eo *obj, int x, int y, int flags)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
 }
 
 void
