@@ -125,6 +125,99 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
  */
 EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
+/**
+ * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that deal with creating, destroying, or interacting with
+ * Wayland Drag-n-Drop
+ */
+
+/**
+ * Set the types which are supported by a possible drag and drop operation.
+ * This call initializes a data source and offeres the given mimetypes
+ *
+ * @param input the input where to add on the data source
+ * @param types a null-terminated array of mimetypes
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.17
+ */
+EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
+
+/**
+ * Start a drag on the given input
+ *
+ * @param input the input to use
+ * @param window the window which is the origin of the drag operation
+ * @param drag_window the window which is used as window of the visible hint.
+ *
+ * @return The serial for the start_drag request
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.17
+ */
+EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
+
+/**
+ * Call wl_data_source.set_actions on an existing source
+ *
+ * @param input the input to use
+ *
+ * @see ecore_wl2_dnd_drag_start for a more useful function.
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
+
+/**
+ * End a drag started by a call to ecore_wl2_dnd_drag_start
+ *
+ * @param input the input object on which the drag was started
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.17
+ */
+EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
+
+/**
+ * Get the offer which is currently resposible for the clipboard
+ *
+ * @param input the input object to use
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
+
+/**
+ * Set the types which are available from this client
+ * Later the event ECORE_WL2_EVENT_DATA_SOURCE_SEND is emitted,
+ * where the caller of this api must write the data (encoded in the given mimetype) to the fd
+ *
+ * @param input the input to provice this types on
+ * @param types a null-terminated array of mimetypes supported by the client
+ *
+ * @return serial of request on success, 0 on failure
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.17
+ */
+EAPI uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
+
+/**
+ * Clear the selection currently setted on this input.
+ *
+ * @param input the input to clear
+ *
+ * @return serial of request on success, 0 on failure
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.17
+ */
+EAPI uint32_t ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
+
 # undef EAPI
 # define EAPI
 
