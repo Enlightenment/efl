@@ -218,6 +218,136 @@ EAPI uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **t
  */
 EAPI uint32_t ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
+/**
+ * Get the actions available from the data source
+ *
+ * @param offer Offer object to use
+ *
+ * @return or´ed values from Ecore_Wl2_Drag_Action which are describing the available actions
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_actions_get(Ecore_Wl2_Offer *offer);
+
+/**
+ * Set the actions which are supported by you
+ *
+ * @param offer Offer object to use
+ * @param actions A or´ed value of mutliple Ecore_Wl2_Drag_Action values
+ * @param action the preferred action out of the actions
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI void ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Action actions, Ecore_Wl2_Drag_Action action);
+
+/**
+ * Get action which is set by either the data source or in the last call of actions_set
+ *
+ * @param offer Offer object to use
+ *
+ * @return the preferred action
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
+
+/**
+ * Get the mime types which are given by the source
+ *
+ * @param offer the offer to query
+ *
+ * @return a eina array of strdup´ed strings, this array must NOT be changed or freed
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
+
+/**
+ * Set mimetypes you are accepting under this offer
+ *
+ * @param offer the offer to use
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI void ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes);
+
+/**
+ * Accept a single mime type for an offer
+ *
+ * @param offer the offer to use
+ * @param mime_type the mime type
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type);
+
+/**
+ * Request the data from this offer.
+ * The event ECORE_WL2_EVENT_OFFER_DATA_READY is called when the data is available.
+ * There offer will be not destroyed as long as requested data is not emitted by the event.
+ *
+ * @param offer the offer to use
+ * @param mime the mimetype to receive
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
+
+/**
+ * Request the data from this offer on an externally managed fd.
+ * The event ECORE_WL2_EVENT_OFFER_DATA_READY is called when the data is available.
+ * There offer will be not destroyed as long as requested data is not emitted by the event.
+ *
+ * @param offer the offer to use
+ * @param mime the mimetype to receive
+ * @param fd the fd to pass for receiving
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd);
+
+/**
+ * End the use of a proxy received offer. This may invalidate the offer object
+ *
+ * @param offer the offer
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer);
+
+/**
+ * Check if the given offer supports the given mimetype
+ *
+ * @param offer the offer to use
+ * @param mime the mimetype to check
+ *
+ * @return Returns true if the mimetype is supported by this offer, false if not
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char *mime);
+
+/**
+ * Mark this offer as finished
+ * This will call the dnd_finished event on the source of the sender.
+ *
+ * @param offer the offer to use
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
+ */
+EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
+
 # undef EAPI
 # define EAPI
 
