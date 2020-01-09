@@ -9,15 +9,7 @@
 #include <Ecore_Wl2.h>
 
 #include "ecore_wl2_suite.h"
-
-static Ecore_Wl2_Display *
-_display_connect(void)
-{
-   Ecore_Wl2_Display *disp;
-
-   disp = ecore_wl2_display_connect(NULL);
-   return disp;
-}
+#include "ecore_wl2_tests_helpers.h"
 
 EFL_START_TEST(wl2_input_seat_get)
 {

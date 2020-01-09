@@ -11,6 +11,12 @@
 #include "ecore_wl2_suite.h"
 #include "ecore_wl2_tests_helpers.h"
 
+static Ecore_Wl2_Display *
+_display_setup(void)
+{
+   return ecore_wl2_display_create(NULL);
+}
+
 EFL_START_TEST(wl2_display_create)
 {
    Ecore_Wl2_Display *disp;

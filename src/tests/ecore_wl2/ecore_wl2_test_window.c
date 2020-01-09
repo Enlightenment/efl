@@ -9,18 +9,10 @@
 #include <Ecore_Wl2.h>
 
 #include "ecore_wl2_suite.h"
+#include "ecore_wl2_tests_helpers.h"
 
 #define WIDTH 480
 #define HEIGHT 360
-
-static Ecore_Wl2_Display *
-_display_connect(void)
-{
-   Ecore_Wl2_Display *disp;
-
-   disp = ecore_wl2_display_connect(NULL);
-   return disp;
-}
 
 static Ecore_Wl2_Window *
 _window_create(Ecore_Wl2_Display *disp)
