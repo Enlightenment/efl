@@ -144,6 +144,20 @@ real_timer_add(double in, Ecore_Task_Cb cb, void *data)
    return ecore_timer_add(in, cb, data);
 }
 
+static Eina_Bool
+_timer_quit()
+{
+   ecore_main_loop_quit();
+   return EINA_FALSE;
+}
+
+void
+wait_timer(double in)
+{
+   ecore_timer_add(in, _timer_quit, NULL);
+   ecore_main_loop_begin();
+}
+
 static void
 _win_manual_render(void *data, const Efl_Event *event EINA_UNUSED)
  {
