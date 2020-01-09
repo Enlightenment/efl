@@ -259,7 +259,7 @@ _load_do(Evas_Object *obj)
 
    if (!sd->file)
      {
-        elm_object_text_set(obj, "");
+        efl_text_set(obj, "");
         return 0;
      }
 
@@ -556,15 +556,13 @@ static void
 _dnd_enter_cb(void *data EINA_UNUSED,
               Evas_Object *obj)
 {
-   elm_object_focus_set(obj, EINA_TRUE);
+   efl_ui_focus_util_focus(obj);
 }
 
 static void
 _dnd_leave_cb(void *data EINA_UNUSED,
               Evas_Object *obj)
 {
-   if (_elm_config->desktop_entry)
-     elm_object_focus_set(obj, EINA_FALSE);
 }
 
 static void
@@ -820,7 +818,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
 
    if (efl_ui_focus_object_focus_get(obj))
      {
-        evas_object_focus_set(sd->text_obj, EINA_TRUE);
+        efl_canvas_object_key_focus_set(sd->text_obj, EINA_TRUE);
 
         _edje_signal_emit(sd, "efl,action,focus", "efl");
 
@@ -834,7 +832,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
         Eo *sw = sd->text_obj;
 
         _edje_signal_emit(sd, "efl,action,unfocus", "efl");
-        evas_object_focus_set(sw, EINA_FALSE);
+        efl_canvas_object_key_focus_set(sw, EINA_FALSE);
 
         if (top && top_is_win && efl_input_text_input_panel_autoshow_get(obj))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
@@ -2173,6 +2171,17 @@ _efl_ui_textbox_select_region_set(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED, 
    efl_text_cursor_position_set(sel_end, end);
 }
 
+static void
+_efl_ui_textbox_select_region_get(Eo *obj, int *start, int *end)
+{
+   Efl_Text_Cursor *sel_start, *sel_end;
+
+   efl_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
+
+   if(start) *start = efl_text_cursor_position_get(sel_start);
+   if(end) *end = efl_text_cursor_position_get(sel_end);
+}
+
 EOLIAN static void
 _efl_ui_textbox_selection_cut(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
@@ -2264,7 +2273,7 @@ EOLIAN static void
 _efl_ui_textbox_efl_file_unload(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
 {
    efl_file_unload(efl_super(obj, MY_CLASS));
-   elm_object_text_set(obj, "");
+   efl_text_set(obj, "");
 }
 
 EOLIAN static Eina_Error
@@ -2553,7 +2562,7 @@ _efl_ui_textbox_efl_access_text_access_selection_get(const Eo *obj, Efl_Ui_Textb
 {
    if (selection_number != 0) return;
 
-   elm_obj_entry_select_region_get(obj, start_offset, end_offset);
+   _efl_ui_textbox_select_region_get((Eo *)obj, start_offset, end_offset);
 }
 
 EOLIAN static Eina_Bool
