@@ -561,7 +561,7 @@ _dnd_enter_cb(void *data EINA_UNUSED,
 
 static void
 _dnd_leave_cb(void *data EINA_UNUSED,
-              Evas_Object *obj)
+              Evas_Object *obj EINA_UNUSED)
 {
 }
 
