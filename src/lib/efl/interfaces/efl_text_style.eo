@@ -1,70 +1,80 @@
 enum @beta Efl.Text_Style_Background_Type
 {
-   [[Whether to add a background colored rectangle (background) to each line of text or not.]]
-   none = 0, [[Do not use background.]]
-   solid_color,  [[Use solid color background.]]
-
+   [[Type of background to use behind each line of text.]]
+   none = 0,    [[Do not use background.]]
+   solid_color, [[Use a solid-color rectangle as background.
+                  Requires @Efl.Text_Style.text_background_color.]]
 }
 
 enum @beta Efl.Text_Style_Strikethrough_Type
 {
    [[Whether to add a strike-through decoration to the displayed text or not.]]
    none = 0, [[Do not use strike-through.]]
-   single,  [[Strikethrough with a single line.]]
-
+   single,   [[Strike-through with a single line.
+               Requires @Efl.Text_Style.text_strikethrough_color.]]
 }
 
 enum @beta Efl.Text_Style_Effect_Type
 {
    [[Effect to apply to the displayed text.]]
-   none = 0, [[No effect.]]
-
-   // colored with shadow_color
-   shadow, [[Shadow effect.]]
-   far_shadow, [[Far shadow effect.]]
-   soft_shadow, [[Soft shadow effect.]]
-   far_soft_shadow, [[Far and soft shadow effect.]]
-   // colored with glow_color
-   glow, [[Glow effect.]]
-   // colored with outline_color
-   outline, [[Outline effect.]]
-   soft_outline, [[Soft outline effect.]]
-   // colored with outline_color + shadow_color
-   outline_shadow, [[Outline + shadow effect.]]
-   outline_soft_shadow, [[Outline + soft shadow effect.]]
+   none = 0,            [[No effect.]]
+   shadow,              [[Shadow effect.
+                          Uses @Efl.Text_Style.text_shadow_color and @Efl.Text_Style.text_shadow_direction.]]
+   far_shadow,          [[Far shadow effect.
+                          Uses @Efl.Text_Style.text_shadow_color and @Efl.Text_Style.text_shadow_direction.]]
+   soft_shadow,         [[Soft shadow effect.
+                          Uses @Efl.Text_Style.text_shadow_color and @Efl.Text_Style.text_shadow_direction.]]
+   far_soft_shadow,     [[Far and soft shadow effect.
+                          Uses @Efl.Text_Style.text_shadow_color and @Efl.Text_Style.text_shadow_direction.]]
+   glow,                [[Glow effect.
+                          Uses @Efl.Text_Style.text_glow_color and @Efl.Text_Style.text_secondary_glow_color.]]
+   outline,             [[Outline effect.
+                          Uses @Efl.Text_Style.text_outline_color.]]
+   soft_outline,        [[Soft outline effect.
+                          Uses @Efl.Text_Style.text_outline_color.]]
+   outline_shadow,      [[Outline + shadow effect.
+                          Uses @Efl.Text_Style.text_shadow_color, @Efl.Text_Style.text_shadow_direction and
+                          @Efl.Text_Style.text_outline_color.]]
+   outline_soft_shadow, [[Outline + soft shadow effect.
+                          Uses @Efl.Text_Style.text_shadow_color, @Efl.Text_Style.text_shadow_direction and
+                          @Efl.Text_Style.text_outline_color.]]
 }
 
 enum @beta Efl.Text_Style_Shadow_Direction
 {
-   [[Direction of the shadow.]]
+   [[Direction of the shadow effect.]]
    bottom_right = 0, [[Shadow towards bottom right.]]
-   bottom, [[Shadow towards bottom.]]
-   bottom_left, [[Shadow towards bottom left.]]
-   left, [[Shadow towards left.]]
-   top_left, [[Shadow towards top left.]]
-   top, [[Shadow towards top.]]
-   top_right, [[Shadow towards top right.]]
-   right, [[Shadow towards right.]]
+   bottom,           [[Shadow towards bottom.]]
+   bottom_left,      [[Shadow towards bottom left.]]
+   left,             [[Shadow towards left.]]
+   top_left,         [[Shadow towards top left.]]
+   top,              [[Shadow towards top.]]
+   top_right,        [[Shadow towards top right.]]
+   right,            [[Shadow towards right.]]
 }
 
 enum @beta Efl.Text_Style_Underline_Type
 {
-   [[Type of underline of the displayed text.]]
+   [[Type of underline for the displayed text.]]
    none = 0, [[Text without underline.]]
-   single, [[Underlined with a single line.]]
-   double, [[Underlined with a double line.]]
-   dashed, [[Underlined with a dashed line.]]
+   single,   [[Underlined with a single line.
+               Requires @Efl.Text_Style.text_underline_color.]]
+   double,   [[Underlined with a double line.
+               Requires @Efl.Text_Style.text_underline_color and @Efl.Text_Style.text_secondary_underline_color.]]
+   dashed,   [[Underlined with a dashed line.
+               Requires @Efl.Text_Style.text_underline_dashed_color, @Efl.Text_Style.text_underline_dashed_width and
+               @Efl.Text_Style.text_underline_dashed_gap.]]
 }
 
 interface @beta Efl.Text_Style {
    [[Decorations to add to the text.
 
-     Decorations can be coloring, effects, underlines, strike-through etc.
+     Decorations include text color, glow, outline, underline, strike-through and shadows.
    ]]
    c_prefix: efl_text;
    methods {
       @property text_color {
-         [[Color of text, excluding decorations like, shadow, outline or glow.]]
+         [[Color of text, excluding all other decorations. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -75,7 +85,7 @@ interface @beta Efl.Text_Style {
       }
 
       @property text_background_type {
-         [[Enables rendering of a background rectangle behind each line of text.]]
+         [[Type of background to use behind each line of text.]]
          values
          {
             type: Efl.Text_Style_Background_Type; [[Background type.]]
@@ -83,7 +93,7 @@ interface @beta Efl.Text_Style {
       }
 
       @property text_background_color {
-          [[Color of the background rectangle (backing) behind each line of text.]]
+         [[Color of the background behind each line of text. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -94,7 +104,7 @@ interface @beta Efl.Text_Style {
       }
 
       @property text_underline_type {
-         [[Underline style for the text.]]
+         [[Type of underline to use for the text.]]
          values
          {
             type: Efl.Text_Style_Underline_Type; [[Underline type.]]
@@ -103,7 +113,7 @@ interface @beta Efl.Text_Style {
 
       @property text_underline_color
       {
-         [[Color of normal underline style.]]
+         [[Color of the primary underline. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -126,7 +136,7 @@ interface @beta Efl.Text_Style {
       @property text_underline_dashed_color
       {
          [[Color of the dashed underline. Only valid when @.text_underline_type is
-           @Efl.Text_Style_Underline_Type.dashed.]]
+           @Efl.Text_Style_Underline_Type.dashed. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -159,7 +169,7 @@ interface @beta Efl.Text_Style {
       @property text_secondary_underline_color
       {
          [[Color of the secondary underline. Only valid when @.text_underline_type is
-           @Efl.Text_Style_Underline_Type.double.]]
+           @Efl.Text_Style_Underline_Type.double. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -179,7 +189,7 @@ interface @beta Efl.Text_Style {
 
       @property text_strikethrough_color
       {
-         [[Color of the line striking through the text.]]
+         [[Color of the line striking through the text. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -198,7 +208,7 @@ interface @beta Efl.Text_Style {
       }
       @property text_outline_color
       {
-         [[Color of the text outline.]]
+         [[Color of the text outline. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -210,7 +220,7 @@ interface @beta Efl.Text_Style {
 
       @property text_shadow_direction
       {
-         [[Direction of shadow effect.]]
+         [[Direction of the shadow effect.]]
          values
          {
             type: Efl.Text_Style_Shadow_Direction; [[Shadow direction.]]
@@ -219,7 +229,7 @@ interface @beta Efl.Text_Style {
 
       @property text_shadow_color
       {
-         [[Color of the shadow.]]
+         [[Color of the text shadow. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -231,7 +241,7 @@ interface @beta Efl.Text_Style {
 
       @property text_glow_color
       {
-         [[Color of the glow decoration.]]
+         [[Color of the text glow. By default it is invisible.]]
          values
          {
             r: ubyte; [[Red component.]]
@@ -245,7 +255,8 @@ interface @beta Efl.Text_Style {
       {
          [[Color of the secondary glow decoration.
            This is the color of the inner glow (where it touches the text) which
-           gradually fades into @.text_glow_color as it reaches the edge.
+           gradually fades into @.text_glow_color as it reaches the outer edge.
+           By default it is invisible.
          ]]
          values
          {
@@ -264,7 +275,7 @@ interface @beta Efl.Text_Style {
          ]]
          values
          {
-            code: string; [[Filter code]]
+            code: string; [[Filter code.]]
          }
       }
    }

@@ -6,7 +6,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
      like automatic scrollbars, virtual keyboard, clipboard, configurable
-     context menus or autocapitalization, for example.]]
+     context menus or auto-capitalization, for example.]]
    methods {
       @property scrollable {
          [[Enable or disable scrolling in the widget.
@@ -16,17 +16,19 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          set {}
          get {}
          values {
-            scroll: bool; [[$true to enable scrolling. Default is $false.]]
+            scroll: bool(false); [[$true to enable scrolling.]]
          }
       }
       @property context_menu_enabled {
-         [[This enables or disables the entry's contextual (longpress) menu.]]
+         [[This enables or disables the widget's contextual menu, typically
+           accessible through a long-press or a right-button click.
+         ]]
          set {
          }
          get {
          }
          values {
-            enabled: bool; [[If $true, the menu is enabled.]]
+            enabled: bool; [[$true to enable the contextual menu.]]
          }
       }
       @property cnp_mode {
@@ -46,13 +48,14 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          }
       }
       @property selection_handles_enabled {
-         [[This enables or disables the entry's selection handlers.]]
+         [[This enables or disables the visual handles around selected text,
+           to allow simpler modification on touch screens.]]
          set {
          }
          get {
          }
          values {
-            enabled: bool; [[If $true, the selection handlers are enabled.]]
+            enabled: bool; [[$true to enable the selection handles.]]
          }
       }
 
@@ -69,13 +72,13 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          return: Efl.Text.Cursor @move; [[Text cursor.]]
       }
       selection_copy {
-         [[This executes a "copy" action on the selected text in the entry.]]
+         [[This executes a "copy" action on the selected text in the widget.]]
       }
       selection_paste {
-         [[This executes a "paste" action in the entry.]]
+         [[This executes a "paste" action in the widget.]]
       }
       selection_cut {
-         [[This executes a "cut" action on the selected text in the entry.]]
+         [[This executes a "cut" action on the selected text in the widget.]]
       }
    }
    implements {

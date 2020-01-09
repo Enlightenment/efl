@@ -140,8 +140,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Requires $underline.
              See @Efl.Text_Style.text_underline_color.
 
-           - $secondary_underline_color: Color code for the secondary text underline (See bottom for the complete list of
-             supported codes). Only valid when $[underline=double].
+           - $secondary_underline_color: Color code for the secondary text underline (See bottom for the complete list
+             of supported codes). Only valid when $[underline=double].
              Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
              See @Efl.Text_Style.text_secondary_underline_color.
 
@@ -165,8 +165,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
              See @Efl.Text_Style.text_glow_color.
 
-           - $secondary_glow_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
-             list of supported codes). Only valid when the $style attribute includes a glow.
+           - $secondary_glow_color: Color code for the secondary (inner) glow component of the text (See bottom for
+             the complete list of supported codes). Only valid when the $style attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
              See @Efl.Text_Style.text_secondary_glow_color.
 
