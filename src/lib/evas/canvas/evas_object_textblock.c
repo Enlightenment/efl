@@ -16781,7 +16781,7 @@ _efl_canvas_textblock_efl_text_format_text_horizontal_align_auto_type_set(Eo *ob
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE);
      }
-   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_END)
+   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_OPPOSITE)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_END);
      }
@@ -16799,7 +16799,7 @@ _efl_canvas_textblock_efl_text_format_text_horizontal_align_auto_type_get(const 
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_END)
      {
-        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_END;
+        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_OPPOSITE;
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
      {

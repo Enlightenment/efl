@@ -13,7 +13,7 @@ enum @beta Efl.Text_Format_Horizontal_Alignment_Auto_Type {
    none,   [[No auto-alignment rule: Horizontal Alignment is decided by @Efl.Text_Format.text_horizontal_align]]
    auto,   [[Respects LTR/RTL (bidirectional) characters found inside the text content.]]
    locale, [[Respects the system's language settings.]]
-   end     [[Text is placed at opposite side of LTR/RTL (bidirectional) settings.]]
+   opposite  [[Text is placed at opposite side of LTR/RTL (bidirectional) settings.]]
 }
 
 interface @beta Efl.Text_Format {
