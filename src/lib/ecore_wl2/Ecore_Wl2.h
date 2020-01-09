@@ -1135,18 +1135,6 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
 EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
 
 /**
- * Find the output that a given window is on
- *
- * @param window The window to find the output for
- *
- * @return An Ecore_Wl2_Output if found, or NULL otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
-
-/**
  * Set if window rotation is supported by the window manager
  *
  * @param window
