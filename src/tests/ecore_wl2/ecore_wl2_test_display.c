@@ -185,7 +185,12 @@ EFL_START_TEST(wl2_display_input_find_by_name)
    disp = _display_connect();
    ck_assert(disp != NULL);
 
-   input = ecore_wl2_display_input_find_by_name(disp, "default");
+   /* NB: Enlightenment uses "seat0" here, but Weston uses "default" */
+   if (getenv("E_START"))
+     input = ecore_wl2_display_input_find_by_name(disp, "seat0");
+   else
+     input = ecore_wl2_display_input_find_by_name(disp, "default");
+
    ck_assert(input != NULL);
 }
 EFL_END_TEST
