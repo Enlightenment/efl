@@ -29,13 +29,13 @@ interface @beta Efl.Gesture.Events
       ]]
 
       gesture,momentum: Efl.Canvas.Gesture_Momentum; [[Emitted when a Momentum gesture has been detected.
-        A Momentum gesture consists of a quick displacement of the finger while touching the screen (or while
-        holding down a mouse button).
+        A Momentum gesture is any motion of the finger while touching the screen (or while
+        holding down a mouse button). This gesture is also known as swipe.
       ]]
 
       gesture,flick: Efl.Canvas.Gesture_Flick; [[Emitted when a Flick gesture has been detected.
-        A Flick gesture consists of a quick displacement of the finger while touching the screen (or while
-        holding down a mouse button) followed by a release before slowing down.
+        A Flick gesture consists of a quick motion of the finger while touching the screen (or while
+        holding down a mouse button) with the release occurring before slowing down.
       ]]
 
       gesture,zoom: Efl.Canvas.Gesture_Zoom; [[Emitted when a Zoom gesture has been detected.
