@@ -2712,7 +2712,7 @@ eng_ector_surface_cache_drop(void *engine, void *key)
    generic_cache_data_drop(e->software.surface_cache, key);
 }
 
-static void
+static Eina_Bool
 eng_ector_begin(void *engine, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
                 int x, int y, Eina_Bool do_async EINA_UNUSED)
@@ -2720,6 +2720,7 @@ eng_ector_begin(void *engine, void *surface,
    if (use_gl)
      {
         //FIXME: No implementation yet
+        return EINA_FALSE;
      }
    else
      {
@@ -2729,6 +2730,7 @@ eng_ector_begin(void *engine, void *surface,
         int load_err;
 
         glim = eng_image_data_get(engine, glim, EINA_TRUE, &pixels, &load_err,NULL);
+        if (!glim || !pixels) return EINA_FALSE;
         eng_image_stride_get(engine, glim, &stride);
         eng_image_size_get(engine, glim, &w, &h);
 
@@ -2737,8 +2739,8 @@ eng_ector_begin(void *engine, void *surface,
         // it just uses the software backend to draw for now
         ector_buffer_pixels_set(ector, pixels, w, h, stride, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
-
      }
+   return EINA_TRUE;
 }
 
 static void
