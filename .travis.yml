@@ -95,7 +95,7 @@ before_script:
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
         docker pull stefanschmidt1/ci-support-files:$DISTRO
         docker version
-        docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
+        docker run --cap-add SYS_PTRACE --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
       fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" == "" ]]; then

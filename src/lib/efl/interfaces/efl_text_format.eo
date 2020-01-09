@@ -9,10 +9,10 @@ enum @beta Efl.Text_Format_Wrap {
 }
 
 enum @beta Efl.Text_Format_Horizontal_Alignment_Auto_Type {
-   [[Auto-horizontal alignment of the text.]]
-   none,   [[No auto-alignment rule.]]
-   normal, [[Respects LTR/RTL (bidirectional) settings.]]
-   locale, [[Respects locale's language settings.]]
+   [[Auto-horizontal alignment setting for the text (Left-To-Right or Right-To-Left).]]
+   none,   [[No auto-alignment rule: Horizontal Alignment is decided by @Efl.Text_Format.text_horizontal_align]]
+   auto,   [[Respects LTR/RTL (bidirectional) characters found inside the text content.]]
+   locale, [[Respects the system's language settings.]]
    end     [[Text is placed at opposite side of LTR/RTL (bidirectional) settings.]]
 }
 
@@ -55,7 +55,7 @@ interface @beta Efl.Text_Format {
       }
 
       @property text_horizontal_align_auto_type {
-         [[Horizontal alignment of text.]]
+         [[Specifies when the text's horizontal alignment should be set automatically.]]
          values {
             value: Efl.Text_Format_Horizontal_Alignment_Auto_Type; [[Alignment type.]]
          }
@@ -63,7 +63,12 @@ interface @beta Efl.Text_Format {
 
       @property text_horizontal_align {
          [[Horizontal alignment of text. $[0.0] means "left"
-           and $[1.0] means "right".]]
+           and $[1.0] means "right".
+           Setting this value also sets @.text_horizontal_align_auto_type to
+           @Efl.Text_Format_Horizontal_Alignment_Auto_Type.none.
+           This value is ignored when @.text_horizontal_align_auto_type is set to anything other than
+           @Efl.Text_Format_Horizontal_Alignment_Auto_Type.none.
+         ]]
          values {
             value: double; [[Alignment value between $[0.0] and $[1.0].]]
          }

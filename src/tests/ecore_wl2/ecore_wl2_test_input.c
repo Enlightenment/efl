@@ -102,7 +102,9 @@ EFL_START_TEST(wl2_input_keymap_get)
 
    EINA_ITERATOR_FOREACH(itr, input)
      {
-        ck_assert(ecore_wl2_input_keymap_get(input) != NULL);
+        if (ecore_wl2_input_seat_capabilities_get(input) ==
+            ECORE_WL2_SEAT_CAPABILITIES_KEYBOARD)
+          ck_assert(ecore_wl2_input_keymap_get(input) != NULL);
      }
 
    eina_iterator_free(itr);
@@ -130,6 +132,30 @@ EFL_START_TEST(wl2_input_name_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_input_seat_capabilities)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Input *input;
+   Eina_Iterator *itr;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   itr = ecore_wl2_display_inputs_get(disp);
+   ck_assert(itr != NULL);
+
+   EINA_ITERATOR_FOREACH(itr, input)
+     {
+        Ecore_Wl2_Seat_Capabilities cap = ECORE_WL2_SEAT_CAPABILITIES_NONE;
+
+        cap = ecore_wl2_input_seat_capabilities_get(input);
+        ck_assert(cap != ECORE_WL2_SEAT_CAPABILITIES_NONE);
+     }
+
+   eina_iterator_free(itr);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_input(TCase *tc)
 {
@@ -140,5 +166,6 @@ ecore_wl2_test_input(TCase *tc)
         tcase_add_test(tc, wl2_input_display_get);
         tcase_add_test(tc, wl2_input_keymap_get);
         tcase_add_test(tc, wl2_input_name_get);
+        tcase_add_test(tc, wl2_input_seat_capabilities);
      }
 }

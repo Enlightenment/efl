@@ -918,6 +918,20 @@ EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /**
+ * Get the opaque region of the Ecore_Wl2_Window
+ *
+ * @param win The window
+ * @param x The left point of the region.
+ * @param y The top point of the region.
+ * @param w The width of the region.
+ * @param h The height of the region.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI void ecore_wl2_window_opaque_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
+
+/**
  * Set the input region of the Ecore_Wl2_Window.
  *
  * To set an empty region, pass width and height as 0.
@@ -934,6 +948,20 @@ EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, in
  * @since 1.17
  */
 EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+
+/**
+ * Get the input region of the Ecore_Wl2_Window.
+ *
+ * @param window The window to set the input region of
+ * @param x The left point of the region.
+ * @param y The top point of the region.
+ * @param w The width of the region.
+ * @param h The height of the region.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI void ecore_wl2_window_input_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
 /**
  * Get if a given window is maximized
@@ -1086,17 +1114,6 @@ EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y
  * @since 1.17
  */
 EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
-
-/**
- * Iconify a window
- *
- * @param win The window to iconifiy
- * @param iconified The new iconified state to set
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
 
 /**
  * Set the type of a given window
@@ -1301,6 +1318,18 @@ EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
 
 /**
+ * @brief Get the seat for a popup window to be used with grab
+ *
+ * @param window The window
+ *
+ * @return Returns Ecore_Wl2_Input if the window has an input.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Input *ecore_wl2_window_popup_input_get(Ecore_Wl2_Window *window);
+
+/**
  * Check if a window has a shell surface - without one it can't be visible.
  *
  * @param The window to check
@@ -1494,19 +1523,6 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
-
-/**
- * Get the Evas_Device for the seat belonging to a window from an input
- *
- * @param input The input
- * @param window The window
- *
- * @return The device object
- *
- * @ingroup Ecore_Wl2_Input_Group
- * @since 1.20
- */
-EAPI Eo *ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window);
 
 /**
  * Retrieves the mouse position of the seat
@@ -2002,20 +2018,6 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  * @since 1.21
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
-
-/**
- * Check if a wayland window's surface is in the pending state.
- *
- * A surface is pending if it's been commit but we haven't received a
- * frame callback for it yet.  This mean's we're not ready to draw yet.
- *
- * @param window The window whose surface we want to check
- *
- * @return whether the window's surface is pending or not.
- *
- * @since 1.21
- */
-EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
 /**
  * Add a callback that fires when the window's surface_frame callback fires
