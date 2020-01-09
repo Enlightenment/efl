@@ -18,6 +18,7 @@ static Eina_Bool
 _tap_timeout_cb(void *data)
 {
    Efl_Canvas_Gesture_Recognizer_Tap_Data *pd = data;
+   pd->timeout = NULL;
 
    efl_gesture_state_set(pd->gesture, EFL_GESTURE_STATE_CANCELED);
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_TAP, pd->gesture);

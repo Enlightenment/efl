@@ -29,6 +29,7 @@ _long_tap_timeout_cb(void *data)
 
    /* FIXME: Needs to propagate this event back to evas! */
    pd->is_timeout = EINA_TRUE;
+   pd->timeout = NULL;
 
    efl_gesture_state_set(pd->gesture, EFL_GESTURE_STATE_UPDATED);
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_LONG_TAP, pd->gesture);
