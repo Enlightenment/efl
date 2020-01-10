@@ -77,6 +77,10 @@ jobs:
     - os: linux
       if: type = cron
       env: CI_BUILD_TYPE=codecov
+    - os: linux
+      if: type = cron
+      arch: arm64
+      env: CI_BUILD_TYPE=default
 
 services:
   - docker
