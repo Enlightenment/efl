@@ -106,6 +106,8 @@ EFL_START_TEST(test_efl_ui_collection_view_basic)
    f = efl_model_children_slice_get(lv, 0, efl_model_children_count_get(lv));
    f = efl_future_then(lv, f, .success_type = EINA_VALUE_TYPE_ARRAY, .success = _children_get);
    ecore_main_loop_iterate();
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED, (void*)event_callback_that_increments_an_int_when_called, &count_realize);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED, (void*)event_callback_that_increments_an_int_when_called, &count_unrealize);
 }
 EFL_END_TEST
 
