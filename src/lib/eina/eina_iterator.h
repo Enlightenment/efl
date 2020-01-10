@@ -377,7 +377,7 @@ EAPI Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EIN
  *
  * Processes every node in the input iterator and returns a new iterator containing
  * the processed nodes. This is akin to a Map function:
- * @see https://en.wikipedia.org/wiki/Map_(higher-order_function)
+ * https://en.wikipedia.org/wiki/Map_(higher-order_function)
  *
  * @since 1.24
  */

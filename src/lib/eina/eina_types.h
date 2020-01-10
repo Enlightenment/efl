@@ -542,7 +542,11 @@ typedef int (*Eina_Random_Cb)(const int min, const int max);
 /**
  * @typedef Eina_Process_Cb
  * Method that processes some data and returns new data.
- * It's meant to be used as a callback to process all nodes inside a container (See eina_iterator_processed_new, for example.)
+ * It's meant to be used as a callback to process all nodes inside a container
+ * (See eina_iterator_processed_new, for example.)
+ * @param data The data to process.
+ * @param fdata Context data.
+ * @return The processed data.
  */
 typedef void* (*Eina_Process_Cb)(const void *container, void *data, void *fdata);
 
