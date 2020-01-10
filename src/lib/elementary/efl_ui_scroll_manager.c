@@ -2188,6 +2188,13 @@ _efl_ui_scrollbar_v_visibility_adjust(Eo *obj)
 }
 
 EOLIAN static void
+_efl_ui_scroll_manager_efl_ui_scrollbar_bar_visibility_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *hbar, Eina_Bool *vbar)
+{
+   if (hbar) *hbar = sd->hbar_visible;
+   if (vbar) *vbar = sd->vbar_visible;
+}
+
+EOLIAN static void
 _efl_ui_scroll_manager_efl_ui_scrollbar_bar_visibility_update(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd EINA_UNUSED)
 {
    _efl_ui_scrollbar_h_visibility_adjust(obj);
