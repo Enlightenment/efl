@@ -429,3 +429,62 @@ eina_iterator_filter_new(Eina_Iterator *iterator, Eina_Each_Cb filter, Eina_Free
 
    return &it->iterator;
 }
+
+typedef struct {
+   Eina_Iterator iterator;
+
+   void *data;
+   Eina_Iterator *original;
+   Eina_Process_Cb cb;
+   Eina_Free_Cb free;
+} Eina_Iterator_Processor;
+
+static Eina_Bool
+eina_iterator_process_next(Eina_Iterator_Processor *it, void **data)
+{
+   if (!eina_iterator_next(it->original, data))
+     return EINA_FALSE;
+
+   *data = it->cb(it->original, *data, it->data);
+
+   return EINA_TRUE;
+}
+
+static void*
+eina_iterator_process_get_container(Eina_Iterator_Processor *it)
+{
+   return it->original;
+}
+
+static void
+eina_iterator_process_free(Eina_Iterator_Processor *it)
+{
+   if (it->free)
+     it->free(it->data);
+   eina_iterator_free(it->original);
+   free(it);
+}
+
+EAPI Eina_Iterator*
+eina_iterator_processed_new(Eina_Iterator *iterator, Eina_Process_Cb process, Eina_Free_Cb free_cb, void *data)
+{
+   Eina_Iterator_Processor *it;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(process, NULL);
+
+   it = calloc(1, sizeof(Eina_Iterator_Processor));
+   it->data = data;
+   it->cb = process;
+   it->free = free_cb;
+   it->original = iterator;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_iterator_process_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_iterator_process_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_iterator_process_free);
+
+   return &it->iterator;
+}

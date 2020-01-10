@@ -365,6 +365,24 @@ EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_
  */
 EAPI Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
+
+/**
+ * @brief Calls the process method on each node of iterator, producing new "processed"
+ * nodes and returning a new iterator which contains them.
+ *
+ * @param[in] original Iterator containing the nodes to process.
+ * @param[in] process Method to call on each node.
+ * @param[in] free_cb Method called when all nodes have been processed. It receives "data" as a parameter.
+ * @param[in] data Additional data passed to the process method.
+ *
+ * Processes every node in the input iterator and returns a new iterator containing
+ * the processed nodes. This is akin to a Map function:
+ * @see https://en.wikipedia.org/wiki/Map_(higher-order_function)
+ *
+ * @since 1.24
+ */
+EAPI Eina_Iterator* eina_iterator_processed_new(Eina_Iterator *iterator, Eina_Process_Cb process, Eina_Free_Cb free_cb, void *fdata) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @def eina_multi_iterator_new
  * @brief Creates an Eina_Iterator that iterates through a series
