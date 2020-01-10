@@ -23,15 +23,6 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
             is_empty: bool; [[$true if empty.]]
          }
       }
-      cursor_add {
-         [[Adds an existing cursor to the text object.
-           If the cursor already belonged to another text object it will be reassigned to the new one.
-           It is typically more convenient to obtain a cursor directly from the text object using @.cursor_create.
-         ]]
-         params {
-            cursor: Efl.Text.Cursor; [[The text cursor to use.]]
-         }
-      }
       cursor_create {
          [[Creates a new cursor and adds it to the text object.
            This cursor can be used to manipulate and iterate the content of the text object.
@@ -149,8 +140,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Requires $underline.
              See @Efl.Text_Style.text_underline_color.
 
-           - $secondary_underline_color: Color code for the secondary text underline (See bottom for the complete list of
-             supported codes). Only valid when $[underline=double].
+           - $secondary_underline_color: Color code for the secondary text underline (See bottom for the complete list
+             of supported codes). Only valid when $[underline=double].
              Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
              See @Efl.Text_Style.text_secondary_underline_color.
 
@@ -174,8 +165,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
              See @Efl.Text_Style.text_glow_color.
 
-           - $secondary_glow_color: Color code for the secondary (inner) glow component of the text (See bottom for the complete
-             list of supported codes). Only valid when the $style attribute includes a glow.
+           - $secondary_glow_color: Color code for the secondary (inner) glow component of the text (See bottom for
+             the complete list of supported codes). Only valid when the $style attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
              See @Efl.Text_Style.text_secondary_glow_color.
 
@@ -257,37 +248,37 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Examples: $[style=outline], $[style=shadow,bottom_right], $[style=outline_shadow,bottom].
              See @Efl.Text_Style.text_effect_type and @Efl.Text_Style.text_shadow_direction.
 
-           - $tabstops: Size (in pixels) of the tab character. The value must be a number greater than one.
+           - $tab_stops: Size (in pixels) of the tab character. The value must be a number greater than one.
              Default value is $[32].
              See @Efl.Text_Format.tab_stops.
 
-           - $linesize: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
+           - $line_size: Distance (in pixels) from the baseline of one line of text to the next. This is, a value of
              $[0] would render all lines on top of each other (However, this value will be ignored if it results in
              overlapping lines of text).
-             Setting this value sets $linerelsize to $[0%] (disables it).
+             Setting this value sets $line_rel_size to $[0%] (disables it).
              Default value is $[0].
 
-           - $linerelsize: Distance (in percentage over the natural line height) from the baseline of one line of
+           - $line_rel_size: Distance (in percentage over the natural line height) from the baseline of one line of
              text to the next. A value of $[100%] does not have any impact, smaller values render lines closer together
              and bigger values render them further apart.
-             Setting this value sets $linesize to $[0] (disables it).
+             Setting this value sets $line_size to $[0] (disables it).
              Default value is $[0%].
 
-           - $linegap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
-             next. Setting this value sets $linerelgap to $[0%] (disables it).
+           - $line_gap: Additional empty space (in pixels) between the bottom of one line of text and the top of the
+             next. Setting this value sets $line_rel_gap to $[0%] (disables it).
              Default value is $[0].
              See @Efl.Text_Format.line_gap.
 
-           - $linerelgap: Additional empty space (in percentage over the natural line height) between the bottom of
+           - $line_rel_gap: Additional empty space (in percentage over the natural line height) between the bottom of
              one line of text and the top of the next.
-             Setting this value sets $linegap to $[0] (disables it).
+             Setting this value sets $line_gap to $[0] (disables it).
              Default value is $[0%].
              See @Efl.Text_Format.line_rel_gap.
 
-           - $linefill: An alternate way to specify the $linesize as a percentage of the canvas height.
+           - $line_fill: An alternate way to specify the $line_size as a percentage of the canvas height.
              A value of $[100%] means that a single line fills the canvas, whereas $[25%] means that 4 lines
              fit in the same height.
-             When both $linefill and $linesize are specified the one resulting in the smallest line size is used.
+             When both $line_fill and $line_size are specified the one resulting in the smallest line size is used.
              Default value is $[0].
 
            - $ellipsis: Controls automatic addition of ellipsis "..." to replace text which cannot be shown.

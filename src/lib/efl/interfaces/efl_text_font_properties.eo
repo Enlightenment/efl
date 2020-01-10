@@ -1,50 +1,54 @@
 import efl_gfx_types;
 enum @beta Efl.Text_Font_Weight {
-   [[Type of font weight.]]
-   normal, [[Normal font weight.]]
-   thin, [[Thin font weight.]]
-   ultralight, [[Ultralight font weight.]]
-   extralight, [[Extralight font weight.]]
-   light, [[Light font weight.]]
-   book, [[Book font weight.]]
-   medium, [[Medium font weight.]]
-   semibold, [[Semibold font weight.]]
-   bold, [[Bold font weight.]]
-   ultrabold, [[Ultrabold font weight.]]
-   extrabold, [[Extrabold font weight.]]
-   black, [[Black font weight.]]
-   extrablack, [[Extrablack font weight.]]
+   [[The weight of a particular font is the thickness of the character outlines relative to their height.
+     The given numerical values follow the TrueType scale (from 100 to 900) and are approximate.
+     It is up to each font to provide all of them.]]
+   normal,     [[Normal font weight (400).]]
+   thin,       [[Thin font weight (100).]]
+   ultralight, [[Ultralight font weight (200).]]
+   extralight, [[Extralight font weight (200).]]
+   light,      [[Light font weight (300).]]
+   book,       [[Book font weight (350).]]
+   medium,     [[Medium font weight (500).]]
+   semibold,   [[Semibold font weight (600).]]
+   bold,       [[Bold font weight (700).]]
+   ultrabold,  [[Ultrabold font weight (800).]]
+   extrabold,  [[Extrabold font weight (800).]]
+   black,      [[Black font weight (900).]]
+   extrablack, [[Extrablack font weight (950).]]
 }
 
 enum @beta Efl.Text_Font_Width {
-   [[Type of font width.]]
-   normal, [[Normal font width.]]
+   [[Font width relative to its height.
+     It is up to each font to provide all these widths.]]
+   normal,         [[Normal font width.]]
    ultracondensed, [[Ultracondensed font width.]]
    extracondensed, [[Extracondensed font width.]]
-   condensed, [[Condensed font width.]]
-   semicondensed, [[Semicondensed font width.]]
-   semiexpanded, [[Semiexpanded font width.]]
-   expanded, [[Expanded font width.]]
-   extraexpanded, [[Extraexpanded font width.]]
-   ultraexpanded, [[Ultraexpanded font width.]]
+   condensed,      [[Condensed font width.]]
+   semicondensed,  [[Semicondensed font width.]]
+   semiexpanded,   [[Semiexpanded font width.]]
+   expanded,       [[Expanded font width.]]
+   extraexpanded,  [[Extraexpanded font width.]]
+   ultraexpanded,  [[Ultraexpanded font width.]]
 }
 
 enum @beta Efl.Text_Font_Slant {
     [[Type of font slant.]]
-    normal, [[Normal font slant.]]
-    oblique, [[Oblique font slant.]]
-    italic, [[Italic font slant.]]
+    normal,  [[Normal font slant: Sets the text to the normal font (non-italicized).]]
+    oblique, [[Oblique font slant: Sets the text to use a simulated version of an italic font,
+               created by algorithmically slanting the normal version.]]
+    italic,  [[Italic font slant: Sets the text to use the italic version of the font if available.
+               If not available, it will simulate italics with oblique instead.]]
 }
 
 enum @beta Efl.Text_Font_Bitmap_Scalable {
-   [[Scalable of bitmap fonts.
-   ]]
-   none = 0,         [[Disable scalable feature for bitmap fonts.]]
-   color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
+   [[When are bitmap fonts allowed to be scaled.]]
+   none = 0,         [[Disable scaling for bitmap fonts.]]
+   color = (1 << 0), [[Enable scaling for color bitmap fonts.]]
 }
 
 interface @beta Efl.Text_Font_Properties {
-   [[Font settings for text.
+   [[Properties related to font handling.
    ]]
    c_prefix: efl_text;
    methods {
@@ -72,9 +76,9 @@ interface @beta Efl.Text_Font_Properties {
       }
 
       @property font_size {
-         [[The font size for a given text object.
+         [[The font size to use, in points.
 
-           This property controls the font size of a text object.
+           If the specified @.font_family does not provide this particular size, it will be scaled.
          ]]
          set {}
          get {}
@@ -112,7 +116,7 @@ interface @beta Efl.Text_Font_Properties {
       }
 
       @property font_weight {
-         [[Type of weight of the displayed font
+         [[Type of weight (e.g. bold or normal) of the displayed font
 
            Default is @Efl.Text_Font_Weight.normal.
          ]]
@@ -122,7 +126,7 @@ interface @beta Efl.Text_Font_Properties {
       }
 
       @property font_slant {
-         [[Type of slant of the displayed font.
+         [[Type of slant (e.g. italic or normal) of the displayed font.
 
            Default is @Efl.Text_Font_Slant.normal.
          ]]
@@ -132,7 +136,7 @@ interface @beta Efl.Text_Font_Properties {
       }
 
       @property font_width {
-         [[Type of width of the displayed font.
+         [[Type of width (e.g. condensed, expanded or normal) of the displayed font.
 
            Default is @Efl.Text_Font_Width.normal.
          ]]
@@ -155,14 +159,14 @@ interface @beta Efl.Text_Font_Properties {
       }
 
       @property font_bitmap_scalable {
-           [[The bitmap fonts have fixed size glyphs for several available sizes.
-             Basically, it is not scalable. But, it needs to be scalable for some use cases.
-             (e.g. colorful emoji fonts)
+           [[Bitmap fonts have fixed size glyphs for several available sizes.
+             Other sizes need to be algorithmically scaled, resulting in blurry glyphs.
+             This property controls whether scaling of non-provided sizes is allowed.
 
              Default is @Efl.Text_Font_Bitmap_Scalable.none.
            ]]
            values {
-              scalable: Efl.Text_Font_Bitmap_Scalable; [[Scalable.]]
+              scalable: Efl.Text_Font_Bitmap_Scalable; [[When should bitmap fonts be scaled.]]
            }
       }
    }

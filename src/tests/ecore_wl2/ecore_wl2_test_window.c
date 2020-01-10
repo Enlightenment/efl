@@ -9,18 +9,10 @@
 #include <Ecore_Wl2.h>
 
 #include "ecore_wl2_suite.h"
+#include "ecore_wl2_tests_helpers.h"
 
 #define WIDTH 480
 #define HEIGHT 360
-
-static Ecore_Wl2_Display *
-_display_connect(void)
-{
-   Ecore_Wl2_Display *disp;
-
-   disp = ecore_wl2_display_connect(NULL);
-   return disp;
-}
 
 static Ecore_Wl2_Window *
 _window_create(Ecore_Wl2_Display *disp)
@@ -89,23 +81,6 @@ EFL_START_TEST(wl2_window_rotation)
 
    rot = ecore_wl2_window_rotation_get(win);
    fail_if(rot != 90);
-}
-EFL_END_TEST
-
-EFL_START_TEST(wl2_window_output_find)
-{
-   Ecore_Wl2_Display *disp;
-   Ecore_Wl2_Window *win;
-   Ecore_Wl2_Output *out;
-
-   disp = _display_connect();
-   ck_assert(disp != NULL);
-
-   win = _window_create(disp);
-   ck_assert(win != NULL);
-
-   out = ecore_wl2_window_output_find(win);
-   ck_assert(out != NULL);
 }
 EFL_END_TEST
 
@@ -528,7 +503,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_new);
         tcase_add_test(tc, wl2_window_surface_test);
         tcase_add_test(tc, wl2_window_rotation);
-        tcase_add_test(tc, wl2_window_output_find);
         if (getenv("E_START"))
           tcase_add_test(tc, wl2_window_aux_hints_supported_get);
         tcase_add_test(tc, wl2_window_display_get);

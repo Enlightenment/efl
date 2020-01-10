@@ -294,6 +294,14 @@ EAPI void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *t
 
 
 /**
+ * Internally create instance of cursor object.
+ *
+ * @param parent  the parent of the cursor object.
+ */
+EAPI Eo* efl_text_cursor_create(Eo *parent);
+
+
+/**
  * Internally sets cursor handle(legacy textblock cursor) into cursor object.
  *
  * @param obj     the cursor object.

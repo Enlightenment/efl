@@ -16,6 +16,7 @@
 
 #include "Ecore_Evas.h"
 #include "Ecore_Wl2.h"
+#include "ecore_wl2_internal.h"
 #include "Ecore_Input.h"
 #include "Evas_GL.h"
 

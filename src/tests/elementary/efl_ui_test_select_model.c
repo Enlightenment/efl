@@ -102,8 +102,11 @@ EFL_START_TEST(efl_test_select_model)
    model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
                    efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
-   future = efl_model_property_set(model, "child.selected", eina_value_int_new(2));
+
+   future = efl_model_property_ready_get(model, "child.selected");
    eina_future_then(future, _wait_propagate, NULL, NULL);
+
+   efl_model_property_set(model, "child.selected", eina_value_int_new(2));
    ecore_main_loop_begin();
 
    future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
@@ -120,6 +123,8 @@ EFL_START_TEST(efl_test_select_model)
    EINA_ITERATOR_FOREACH(it, index)
      fail_if(*index == 2);
    eina_iterator_free(it);
+
+   efl_model_property_set(model, "child.selected", eina_value_int_new(1));
 }
 EFL_END_TEST
 

@@ -24,9 +24,14 @@ struct _Efl_Ui_Select_Model_Data
    Efl_Ui_Select_Model *last_model;
 
    Efl_Ui_Select_Mode selection;
-
-   Eina_Bool none : 1;
 };
+
+static void
+_efl_ui_select_model_apply_last_model(Eo *obj, Efl_Ui_Select_Model_Data *pd, Eo *last_model)
+{
+   efl_replace(&pd->last_model, last_model);
+   efl_model_properties_changed(obj, "child.selected");
+}
 
 static void
 _efl_ui_select_model_child_removed(void *data, const Efl_Event *event)
@@ -35,7 +40,7 @@ _efl_ui_select_model_child_removed(void *data, const Efl_Event *event)
    Efl_Model_Children_Event *ev = event->info;
 
    if (ev->child == pd->last_model)
-     efl_replace(&pd->last_model, NULL);
+     _efl_ui_select_model_apply_last_model(event->object, pd, NULL);
 }
 
 static Eo*
@@ -49,7 +54,6 @@ _efl_ui_select_model_efl_object_constructor(Eo *obj,
    efl_boolean_model_boolean_add(obj, "selected", EINA_FALSE);
 
    efl_event_callback_add(obj, EFL_MODEL_EVENT_CHILD_REMOVED, _efl_ui_select_model_child_removed, pd);
-   pd->none = EINA_TRUE;
 
    parent = efl_parent_get(obj);
    if (efl_isa(parent, EFL_UI_SELECT_MODEL_CLASS))
@@ -64,7 +68,6 @@ _efl_ui_select_model_efl_object_invalidate(Eo *obj,
 {
    efl_replace(&pd->fallback_model, NULL);
    efl_replace(&pd->last_model, NULL);
-   pd->none = EINA_TRUE;
 
    efl_invalidate(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS));
 }
@@ -75,7 +78,7 @@ _efl_ui_select_model_fallback(Efl_Ui_Select_Model_Data *pd)
    Eina_Value selected;
 
    if (!pd->parent) return;
-   if (!pd->parent->none) return;
+   if (!pd->parent->last_model) return;
    if (!pd->parent->fallback_model) return;
    // I think it only make sense to trigger the fallback on single mode
    if (pd->parent->selection != EFL_UI_SELECT_MODE_SINGLE) return;
@@ -129,8 +132,7 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
    if (selflag)
      {
         // select case
-        pd->none = EINA_FALSE;
-        efl_replace(&pd->last_model, child);
+        _efl_ui_select_model_apply_last_model(parent, pd, child);
         efl_event_callback_call(child, EFL_UI_SELECT_MODEL_EVENT_SELECTED, child);
      }
    else
@@ -139,8 +141,7 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
         // There should only be one model which represent the same data at all in memory
         if (pd->last_model == child) // direct comparison of pointer is ok
           {
-             efl_replace(&pd->last_model, NULL);
-             pd->none = EINA_TRUE;
+             _efl_ui_select_model_apply_last_model(parent, pd, NULL);
 
              // Just in case we need to refill the fallback
              _efl_ui_select_model_fallback(pd);
@@ -401,13 +402,12 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
                {
                   if (pd->parent->last_model == obj && !newflag)
                     {
-                       efl_replace(&pd->last_model, NULL);
-                       pd->parent->none = EINA_TRUE;
+                       _efl_ui_select_model_apply_last_model(efl_parent_get(obj), pd->parent, NULL);
 
                        _efl_ui_select_model_fallback(pd);
                     }
                }
-             else
+             else if (pd->parent->last_model)
                {
                   Eo *parent;
                   unsigned long selected = 0;
@@ -431,6 +431,10 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
                                                 .error = _untangle_error,
                                                 .free = _untangle_free);
                }
+             else
+               {
+                  _efl_ui_select_model_apply_last_model(efl_parent_get(obj), pd->parent, obj);
+               }
           }
 
         return efl_future_then(efl_ref(obj), chain,
@@ -450,10 +454,10 @@ _efl_ui_select_model_efl_model_property_get(const Eo *obj, Efl_Ui_Select_Model_D
    // Last selected child
    if (eina_streq("child.selected", property))
      {
-        if (pd->none)
-          return eina_value_error_new(EFL_MODEL_ERROR_INCORRECT_VALUE);
-        else if (pd->last_model)
+        if (pd->last_model)
           return eina_value_ulong_new(efl_composite_model_index_get(pd->last_model));
+        else if (pd->fallback_model)
+          return eina_value_ulong_new(efl_composite_model_index_get(pd->fallback_model));
         else // Nothing selected yet, try again later
           return eina_value_error_new(EAGAIN);
      }
@@ -653,7 +657,7 @@ _efl_ui_select_model_efl_ui_single_selectable_fallback_selection_set(Eo *obj,
 
    efl_replace(&pd->fallback_model, fallback);
 
-   if (!pd->none) return ;
+   if (!pd->last_model) return ;
 
    // When we provide a fallback, we should use it!
    index = efl_model_property_get(fallback, EFL_COMPOSITE_MODEL_CHILD_INDEX);

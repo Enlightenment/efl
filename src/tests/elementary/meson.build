@@ -150,6 +150,7 @@ efl_ui_suite_src = [
   'efl_ui_test_slider.c',
   'efl_ui_test_collection_common.c',
   'efl_ui_test_collection.c',
+  'efl_ui_test_collection_view.c',
   'efl_ui_test_list_collection.c',
   'efl_ui_test_grid_collection.c',
   'efl_ui_test_position_manager_common.c',

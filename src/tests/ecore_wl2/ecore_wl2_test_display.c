@@ -11,6 +11,12 @@
 #include "ecore_wl2_suite.h"
 #include "ecore_wl2_tests_helpers.h"
 
+static Ecore_Wl2_Display *
+_display_setup(void)
+{
+   return ecore_wl2_display_create(NULL);
+}
+
 EFL_START_TEST(wl2_display_create)
 {
    Ecore_Wl2_Display *disp;
@@ -185,7 +191,12 @@ EFL_START_TEST(wl2_display_input_find_by_name)
    disp = _display_connect();
    ck_assert(disp != NULL);
 
-   input = ecore_wl2_display_input_find_by_name(disp, "default");
+   /* NB: Enlightenment uses "seat0" here, but Weston uses "default" */
+   if (getenv("E_START"))
+     input = ecore_wl2_display_input_find_by_name(disp, "seat0");
+   else
+     input = ecore_wl2_display_input_find_by_name(disp, "default");
+
    ck_assert(input != NULL);
 }
 EFL_END_TEST

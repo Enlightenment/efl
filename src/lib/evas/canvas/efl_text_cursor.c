@@ -1,6 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include "efl_canvas_textblock_internal.h"
+#include "eo_internal.h"
 
 #define MY_CLASS EFL_TEXT_CURSOR_CLASS
 #define MY_CLASS_NAME "Efl.Text.Cursor"
@@ -19,6 +20,8 @@ struct _Evas_Textblock_Selection_Iterator
 };
 
 typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Iterator;
+
+EFL_CLASS_SIMPLE_CLASS(efl_text_cursor, "efl_text_cursor", EFL_TEXT_CURSOR_CLASS)
 
 EOLIAN static void
 _efl_text_cursor_position_set(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, int position)
@@ -102,11 +105,15 @@ _efl_text_cursor_compare(const Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, co
    return evas_textblock_cursor_compare(pd->handle, efl_text_cursor_handle_get(dst));
 }
 
-EOLIAN static void
-_efl_text_cursor_copy(const Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_Text_Cursor *dst)
+static void
+_efl_text_cursor_copy(const Efl_Text_Cursor *obj, Efl_Text_Cursor *dst)
 {
+   Efl_Text_Cursor_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
    Efl_Text_Cursor_Data *pd_dest = efl_data_scope_safe_get(dst, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(pd_dest);
+
    if (!pd->handle) return;
 
    Efl_Text_Cursor_Handle *handle = evas_object_textblock_cursor_new(pd->handle->obj);
@@ -119,9 +126,9 @@ _efl_text_cursor_copy(const Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_T
 EOLIAN static Efl_Text_Cursor *
 _efl_text_cursor_efl_duplicate_duplicate(const Eo *obj, Efl_Text_Cursor_Data *pd EINA_UNUSED)
 {
-  Efl_Text_Cursor *dup = efl_new(MY_CLASS);
+  Efl_Text_Cursor *dup = efl_text_cursor_create(efl_parent_get(obj));
 
-  efl_text_cursor_copy(obj, dup);
+  _efl_text_cursor_copy(obj, dup);
 
   return dup;
 }
@@ -434,6 +441,11 @@ efl_text_cursor_handle_get(const Eo *obj)
    Efl_Text_Cursor_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
    return pd->handle;
+}
+
+Eo* efl_text_cursor_create(Eo *parent)
+{
+   return efl_add(efl_text_cursor_realized_class_get(), parent);
 }
 
 void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_obj)

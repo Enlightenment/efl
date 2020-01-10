@@ -8,6 +8,7 @@
 # endif
 # ifdef HAVE_ELEMENTARY_WL2
 #  include <Ecore_Wl2.h>
+#  include "ecore_wl2_internal.h"
 # endif
 # ifdef HAVE_ELEMENTARY_DRM
 #  include <Ecore_Drm2.h>

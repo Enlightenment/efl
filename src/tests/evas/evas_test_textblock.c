@@ -4515,14 +4515,12 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    efl_text_cursor_line_number_set(cur_obj, 0);
    ck_assert_int_eq(efl_text_cursor_position_get(cur_obj), 0);
 
-   Eo * cursor1 = efl_add(EFL_TEXT_CURSOR_CLASS, txt);
-   pos = efl_text_cursor_position_get(cursor1);
-   ck_assert_int_eq(pos, -1);
-   efl_text_cursor_position_set(cursor1, 10);
-   pos = efl_text_cursor_position_get(cursor1);
-   ck_assert_int_eq(pos, -1);
+   Eo * cursor_temp = efl_duplicate(cur_obj);
+   ck_assert_ptr_ne(cursor_temp, NULL);
+   efl_del(cursor_temp);
+   cursor_temp = NULL;
 
-   efl_canvas_textblock_cursor_add(txt, cursor1);
+   Eo * cursor1 = efl_canvas_textblock_cursor_create(txt);
    efl_text_cursor_position_set(cursor1, 1);
    pos = efl_text_cursor_position_get(cursor1);
    ck_assert_int_eq(pos, 1);
@@ -4633,13 +4631,12 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    ck_assert_int_eq(efl_text_cursor_position_get(cur_obj), 0);
 #endif
 
-   Eo *nCur = efl_add(EFL_TEXT_CURSOR_CLASS, txt), *nCur2 = efl_add(EFL_TEXT_CURSOR_CLASS, txt), *nCur3 = efl_add(EFL_TEXT_CURSOR_CLASS, txt);
+   Eo *nCur = efl_canvas_textblock_cursor_create(txt);
+   Eo *nCur2 = efl_canvas_textblock_cursor_create(txt);
+   Eo *nCur3 = efl_canvas_textblock_cursor_create(txt);
    efl_text_markup_set(txt, "Hello World<ps/>This is EFL<br/>Enlightenment");
    efl_text_cursor_position_set(cur_obj, 0);
-   efl_text_cursor_copy(cur_obj, nCur);
    ck_assert_ptr_ne(nCur, NULL);
-   efl_text_cursor_copy(cur_obj, nCur2);
-   efl_text_cursor_copy(cur_obj, nCur3);
    ck_assert_ptr_ne(nCur2, NULL);
    ck_assert_ptr_ne(nCur3, NULL);
 
@@ -4655,7 +4652,7 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    ck_assert(efl_text_cursor_move(nCur, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_NEXT));
    ck_assert_int_lt(efl_text_cursor_compare(cur_obj, nCur), 0);
    ck_assert_int_gt(efl_text_cursor_compare(nCur, cur_obj), 0);
-   efl_text_cursor_copy(nCur, nCur2);
+   efl_text_cursor_position_set(nCur2, efl_text_cursor_position_get(nCur));
    ck_assert_int_lt(efl_text_cursor_compare(cur_obj, nCur2), 0);
    ck_assert_int_gt(efl_text_cursor_compare(nCur2, cur_obj), 0);
    ck_assert(!efl_text_cursor_equal(nCur2, nCur3));
@@ -4896,7 +4893,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
 
    // from functions
    fail_if(!strstr(style, "font_weight=extrabold"));
-   fail_if(!strstr(style, "tabstops=20"));
+   fail_if(!strstr(style, "tab_stops=20"));
    fail_if(!strstr(style, "color=rgba(144,225,53,255)"));
    fail_if(!strstr(style, "password=off"));
    efl_text_password_set(txt, EINA_TRUE);

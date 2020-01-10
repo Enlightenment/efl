@@ -26,7 +26,7 @@ enum @beta Efl.Text.Cursor_Move_Type
    paragraph_prev   [[Advances to the end of the previous paragraph.]]
 }
 
-class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
+abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
    [[Cursor API.]]
    c_prefix: efl_text_cursor;
    methods {
@@ -110,13 +110,6 @@ class @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
             dst: const(Efl.Text.Cursor); [[Destination Cursor.]]
          }
          return: int; [[Difference between cursors.]]
-      }
-
-      copy @const {
-         [[Copy existing cursor to destination cursor, like position and cursor text object.]]
-         params {
-            dst: Efl.Text.Cursor; [[Destination Cursor.]]
-         }
       }
 
       move {

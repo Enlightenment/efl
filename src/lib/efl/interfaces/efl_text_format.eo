@@ -1,5 +1,5 @@
 enum @beta Efl.Text_Format_Wrap {
-   [[Wrapping policy of the text.]]
+   [[Wrapping policy for the text.]]
    none, [[No wrapping.]]
    char, [[Wrap at character boundaries.]]
    word, [[Wrap at word boundaries.]]
@@ -9,11 +9,11 @@ enum @beta Efl.Text_Format_Wrap {
 }
 
 enum @beta Efl.Text_Format_Horizontal_Alignment_Auto_Type {
-   [[Auto-horizontal alignment setting for the text (Left-To-Right or Right-To-Left).]]
+   [[Automatic horizontal alignment setting for the text (Left-To-Right or Right-To-Left).]]
    none,   [[No auto-alignment rule: Horizontal Alignment is decided by @Efl.Text_Format.text_horizontal_align]]
    auto,   [[Respects LTR/RTL (bidirectional) characters found inside the text content.]]
    locale, [[Respects the system's language settings.]]
-   end     [[Text is placed at opposite side of LTR/RTL (bidirectional) settings.]]
+   opposite  [[Text is placed at opposite side of LTR/RTL (bidirectional) settings.]]
 }
 
 interface @beta Efl.Text_Format {
@@ -33,36 +33,42 @@ interface @beta Efl.Text_Format {
          ]]
          values
          {
-            value: double; [[Ellipsis value.]]
+            value: double; [[Position of the ellipsis inside the text, from $[0.0] to $[1.0].]]
          }
       }
 
       @property wrap {
-         [[Wrapping policy of the text. Requires @.multiline to be $true.]]
+         [[Wrapping policy for the text.
+
+           When text does not fit the widget in a single line, it can be automatically wrapped at
+           character or word boundaries, for example.
+
+           Requires @.multiline to be $true.
+         ]]
          values {
-            wrap: Efl.Text_Format_Wrap; [[Wrap mode.]]
+            wrap: Efl.Text_Format_Wrap; [[Wrapping policy.]]
          }
       }
 
       @property multiline {
          [[Enables text to span multiple lines.
-         
+
            When $false, new-line characters are ignored and no text wrapping occurs.
          ]]
          values {
-            enabled: bool; [[$true if multiline is enabled.]]
+            enabled: bool; [[$true if multiple lines should be rendered.]]
          }
       }
 
       @property text_horizontal_align_auto_type {
          [[Specifies when the text's horizontal alignment should be set automatically.]]
          values {
-            value: Efl.Text_Format_Horizontal_Alignment_Auto_Type; [[Alignment type.]]
+            value: Efl.Text_Format_Horizontal_Alignment_Auto_Type; [[Automatic horizontal alignment type.]]
          }
       }
 
       @property text_horizontal_align {
-         [[Horizontal alignment of text. $[0.0] means "left"
+         [[Manual horizontal alignment of text. $[0.0] means "left"
            and $[1.0] means "right".
            Setting this value also sets @.text_horizontal_align_auto_type to
            @Efl.Text_Format_Horizontal_Alignment_Auto_Type.none.
@@ -75,7 +81,7 @@ interface @beta Efl.Text_Format {
       }
 
       @property text_vertical_align {
-         [[Vertical alignment of text.$[0.0] means "top"
+         [[Vertical alignment of text. $[0.0] means "top"
            and $[1.0] means "bottom"]]
          values {
             value: double; [[Alignment value between $[0.0] and $[1.0].]]
@@ -105,16 +111,16 @@ interface @beta Efl.Text_Format {
       }
 
       @property tab_stops {
-         [[Size of the tab character.]]
+         [[Size (in pixels) of the tab character.]]
          values
          {
-            value: int; [[Size in pixels.]]
+            value: int; [[Size in pixels, greater than 1.]]
          }
       }
 
       @property password {
          [[Enabling this causes all characters to be replaced by @.replacement_char.
-         
+
            This is useful for password input boxes.
          ]]
          values
@@ -124,13 +130,12 @@ interface @beta Efl.Text_Format {
       }
 
       @property replacement_char {
-         [[The character used to replace characters that can't be displayed
+         [[The character used to replace characters that can't be displayed.
 
-           Currently only used to replace characters if @.password
-           is enabled.
+           Only used to replace characters if @.password is enabled.
          ]]
          values {
-            repch: string; [[Replacement character]]
+            repch: string; [[Replacement character.]]
          }
       }
    }
