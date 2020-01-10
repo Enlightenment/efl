@@ -654,6 +654,49 @@ EFL_START_TEST(eina_iterator_multi)
 }
 EFL_END_TEST
 
+static void*
+_return_x(const void *container EINA_UNUSED, void *data, void *fdata)
+{
+   Eina_Rectangle *rect = data;
+   ck_assert_int_eq(*((int*)fdata), 1337);
+
+   return &rect->x;
+}
+
+static void
+_free_cb(void *data)
+{
+   int *free_data = data;
+
+   *free_data = 0;
+}
+
+EFL_START_TEST(eina_iterator_process)
+{
+   Eina_Inarray *rects = eina_inarray_new(sizeof(Eina_Rectangle), 5);
+   Eina_Rectangle rect_arr[] = {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}, {12, 13, 14, 15}, {16, 17, 18, 19}};
+   Eina_Iterator *it;
+   int free = 1337;
+   int *a, i = 0;
+
+   eina_inarray_push(rects, &rect_arr[0]);
+   eina_inarray_push(rects, &rect_arr[1]);
+   eina_inarray_push(rects, &rect_arr[2]);
+   eina_inarray_push(rects, &rect_arr[3]);
+   eina_inarray_push(rects, &rect_arr[4]);
+
+   it = eina_iterator_processed_new(eina_inarray_iterator_new(rects), _return_x, _free_cb, &free);
+   EINA_ITERATOR_FOREACH(it, a)
+     {
+         ck_assert_int_eq(*a, i*4);
+         i++;
+     }
+   ck_assert_int_eq(i, 5);
+   eina_iterator_free(it);
+   ck_assert_int_eq(free, 0);
+}
+EFL_END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
@@ -667,4 +710,5 @@ eina_test_iterator(TCase *tc)
    tcase_add_test(tc, eina_iterator_filter_free);
    tcase_add_test(tc, eina_iterator_carray_length);
    tcase_add_test(tc, eina_iterator_multi);
+   tcase_add_test(tc, eina_iterator_process);
 }
