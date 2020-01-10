@@ -462,7 +462,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
 
    int curl = 0;
 
-   const char *group = eolian_class_name_get(eolian_function_class_get(fid));
+   const char *group = eolian_class_c_name_get(eolian_function_class_get(fid));
    const Eolian_Implement *fimp = eolian_function_implement_get(fid);
 
    if (ftype == EOLIAN_METHOD)

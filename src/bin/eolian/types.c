@@ -8,7 +8,7 @@ static Eina_Strbuf *
 _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
                Eina_Bool full)
 {
-   char *grp = strdup(eolian_typedecl_name_get(tp));
+   char *grp = strdup(eolian_typedecl_c_name_get(tp));
    char *p = strrchr(grp, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(state, eolian_typedecl_documentation_get(tp),
@@ -30,7 +30,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
         {
            const Eolian_Struct_Type_Field *memb;
-           char *fn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tp));
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_c_name_get(tp));
            if (tpt == EOLIAN_TYPEDECL_STRUCT_OPAQUE || !full)
              {
                 eina_strbuf_append_printf(buf, "typedef struct _%s %s", fn, fn);
@@ -119,7 +119,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
                 eina_strbuf_append(buf, "\n");
              }
            eina_iterator_free(membs);
-           char *fn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tp));
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_c_name_get(tp));
            eina_strbuf_append_printf(buf, "} %s", fn);
            free(fn);
            break;
@@ -142,7 +142,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
              }
 
            /* Function name */
-           char *fn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tp));
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_c_name_get(tp));
            eina_strbuf_append_printf(buf, "(*%s)", fn);
            free(fn);
 
@@ -170,7 +170,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
 static Eina_Strbuf *
 _const_generate(const Eolian_State *state, const Eolian_Constant *vr)
 {
-   char *fn = strdup(eolian_constant_name_get(vr));
+   char *fn = strdup(eolian_constant_c_name_get(vr));
    char *p = strrchr(fn, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(state, eolian_constant_documentation_get(vr),
@@ -211,7 +211,7 @@ _const_generate(const Eolian_State *state, const Eolian_Constant *vr)
 static Eina_Strbuf *
 _err_generate(const Eolian_State *state, const Eolian_Error *err)
 {
-   char *fn = strdup(eolian_error_name_get(err));
+   char *fn = strdup(eolian_error_c_name_get(err));
    char *p = strrchr(fn, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(state, eolian_error_documentation_get(err),
@@ -319,7 +319,7 @@ _source_gen_error(Eina_Strbuf *buf, const Eolian_Error *err)
    if (eolian_error_is_extern(err))
      return;
 
-   char *fn = strdup(eolian_error_name_get(err));
+   char *fn = strdup(eolian_error_c_name_get(err));
    for (char *p = strchr(fn, '.'); p; p = strchr(p, '.'))
      *p = '_';
    eina_str_tolower(&fn);
@@ -385,7 +385,7 @@ Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_State *eos, const char *eof)
    const Eolian_Class *cl = eolian_state_class_by_file_get(eos, eof);
    if (!cl)
      return NULL;
-   char *clfn = eo_gen_c_full_name_get(eolian_class_name_get(cl));
+   char *clfn = eo_gen_c_full_name_get(eolian_class_c_name_get(cl));
    if (!clfn)
      return NULL;
    Eina_Strbuf *ret = eina_strbuf_new();
