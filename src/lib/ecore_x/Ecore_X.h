@@ -2444,6 +2444,14 @@ EAPI void               ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *scre
  */
 EAPI Eina_Bool          ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection);
 
+/**
+ * xfixes selection notification request.
+ *
+ * In addition to ecore_x_fixes_selection_notification_request you can also specify for which window you want to get them
+ */
+EAPI Eina_Bool          ecore_x_fixes_window_selection_notification_request(Ecore_X_Window window, Ecore_X_Atom selection);
+
+
 /* XComposite Extension Support */
 EAPI Eina_Bool          ecore_x_composite_query(void);
 EAPI void               ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
