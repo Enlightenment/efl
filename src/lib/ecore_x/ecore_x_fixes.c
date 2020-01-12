@@ -112,6 +112,26 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
    return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+ecore_x_fixes_window_selection_notification_request(Ecore_X_Window window, Ecore_X_Atom selection)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+
+#ifdef ECORE_XFIXES
+   if (_fixes_available)
+     {
+        XFixesSelectSelectionInput (_ecore_x_disp,
+                                    window,
+                                    selection,
+                                    XFixesSetSelectionOwnerNotifyMask |
+                                    XFixesSelectionWindowDestroyNotifyMask |
+                                    XFixesSelectionClientCloseNotifyMask);
+        return EINA_TRUE;
+     }
+#endif
+   return EINA_FALSE;
+}
+
 EAPI Ecore_X_Region
 ecore_x_region_new(Ecore_X_Rectangle *rects,
                    int num)
