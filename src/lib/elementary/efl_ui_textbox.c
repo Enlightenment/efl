@@ -635,7 +635,7 @@ _efl_ui_textbox_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Ein
    efl_layout_signal_emit(sd->entry_edje, emission, "efl");
    if (sd->scroll)
      {
-        elm_interface_scrollable_freeze_set(obj, efl_ui_widget_disabled_get(obj));
+        efl_ui_scrollable_scroll_freeze_set(obj, efl_ui_widget_disabled_get(obj));
      }
 
    if (!efl_ui_widget_disabled_get(obj))
@@ -681,7 +681,7 @@ _efl_ui_textbox_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textbox_Data *sd)
    // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
    // -> smart_objects_calculate will call all smart calculate functions,
    // and one of them can delete elm_entry.
-   evas_object_ref(obj);
+   efl_ref(obj);
 
    if (efl_ui_focus_object_focus_get(obj))
      {
@@ -705,7 +705,7 @@ _efl_ui_textbox_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
-   evas_object_unref(obj);
+   efl_unref(obj);
 
    return theme_apply;
 }
@@ -1669,9 +1669,6 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Textbox_Data *sd)
 EOLIAN static void
 _efl_ui_textbox_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
-     return;
-
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    efl_gfx_entity_position_set(sd->hit_rect, pos);
 
@@ -1681,9 +1678,6 @@ _efl_ui_textbox_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Ei
 EOLIAN static void
 _efl_ui_textbox_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
-     return;
-
    efl_gfx_entity_size_set(sd->hit_rect, sz);
    _update_selection_handler(obj);
 
@@ -1693,9 +1687,6 @@ _efl_ui_textbox_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_S
 EOLIAN static void
 _efl_ui_textbox_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED, Eina_Bool vis)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
-     return;
-
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
    if (vis) _update_selection_handler(obj);
 }
