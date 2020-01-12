@@ -927,7 +927,7 @@ _delete_emit(Eo *obj, Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data 
           }
         efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
      }
-   efl_unref(cur);
+   efl_del(cur);
    cur = NULL;
 
    Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
