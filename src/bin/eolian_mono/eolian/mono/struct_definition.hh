@@ -296,7 +296,7 @@ struct struct_internal_definition_generator
      auto const& indent = current_indentation(context);
      if (!as_generator
          (
-          indent << "#pragma warning disable CS1591\n\n"
+          "#pragma warning disable CS1591\n\n"
           << indent << "/// <summary>Internal wrapper for struct " << string << ".</summary>\n"
           << indent << "[StructLayout(LayoutKind.Sequential)]\n"
           << indent << "internal struct " << string << "\n"
@@ -398,7 +398,7 @@ struct struct_internal_definition_generator
 
      // close internal class
      if(!as_generator(indent << "}\n"
-                      << indent << "#pragma warning restore CS1591\n"
+                      << "#pragma warning restore CS1591\n"
                  ).generate(sink, attributes::unused, context)) return false;
 
      return true;
@@ -426,7 +426,7 @@ struct struct_definition_generator
        return true;
 
      auto struct_name = binding_struct_name(struct_);
-     auto const& indent = current_indentation(context);
+     auto const& indent = current_indentation(context).inc();
 
      if (!as_generator(
            indent << scope_tab << "/// <summary>Packs tuple into " << struct_name << " object.\n"
@@ -472,7 +472,7 @@ struct struct_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate_deconstruct_method(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-     auto const& indent = current_indentation(context);
+     auto const& indent = current_indentation(context).inc();
      auto struct_name = binding_struct_name(struct_);
 
      if (!as_generator(
@@ -528,15 +528,15 @@ struct struct_definition_generator
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
      EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "struct_definition_generator: " << struct_.cxx_name << std::endl;
-     auto const& indent = current_indentation(context);
-     if(!as_generator(documentation).generate(sink, struct_, context))
+     auto const& indent = current_indentation(context).inc();
+     if(!as_generator(documentation(1)).generate(sink, struct_, context))
        return false;
      auto struct_managed_name = binding_struct_name(struct_);
      if(!as_generator
         (
             indent << "[StructLayout(LayoutKind.Sequential)]\n"
          << indent << "[Efl.Eo.BindingEntity]\n"
-         << "[SuppressMessage(\"Microsoft.Naming\", \"CA1724:TypeNamesShouldNotMatchNamespaces\")]\n"
+         << indent << "[SuppressMessage(\"Microsoft.Naming\", \"CA1724:TypeNamesShouldNotMatchNamespaces\")]\n"
          << indent << "public struct " << struct_managed_name << " : IEquatable<" << struct_managed_name << ">\n"
          << indent << "{\n"
          )

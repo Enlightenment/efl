@@ -37,14 +37,14 @@ struct part_definition_generator
        return true;
 
      auto part_klass_name = name_helpers::klass_full_concrete_or_interface_name(part.klass);
-     return as_generator(documentation(1)
-                       << scope_tab << "public " << part_klass_name << " " << name_helpers::managed_part_name(part) << "\n"
-                       << scope_tab << "{\n"
-                       << scope_tab << scope_tab << "get\n"
-                       << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << "return GetPart(\"" << part.name << "\") as " << part_klass_name << ";\n"
-                       << scope_tab << scope_tab << "}\n"
-                       << scope_tab << "}\n"
+     return as_generator(documentation(2)
+                       << scope_tab(2) << "public " << part_klass_name << " " << name_helpers::managed_part_name(part) << "\n"
+                       << scope_tab(2) << "{\n"
+                       << scope_tab(2) << scope_tab << "get\n"
+                       << scope_tab(2) << scope_tab << "{\n"
+                       << scope_tab(2) << scope_tab << scope_tab << "return GetPart(\"" << part.name << "\") as " << part_klass_name << ";\n"
+                       << scope_tab(2) << scope_tab << "}\n"
+                       << scope_tab(2) << "}\n"
             ).generate(sink, part.documentation, context);
   }
 
@@ -70,12 +70,12 @@ struct part_extension_method_definition_generator
         bindableClass = "Efl.BindableFactoryPart";
 
       if (!as_generator(
-                scope_tab << "public static " << bindableClass << "<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+                scope_tab(2) << "public static " << bindableClass << "<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T> x=null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
-                << scope_tab << "{\n"
-                << scope_tab << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\", fac);\n"
-                << scope_tab << "}\n\n"
+                << scope_tab(2) << "{\n"
+                << scope_tab(2) << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\", fac);\n"
+                << scope_tab(2) << "}\n\n"
             ).generate(sink, attributes::unused, context))
         return false;
 

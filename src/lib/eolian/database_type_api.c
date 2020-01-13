@@ -121,7 +121,7 @@ eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl)
    if (fl->base_enum->legacy)
      eina_strbuf_append(buf, fl->base_enum->legacy);
    else
-     eina_strbuf_append(buf, fl->base_enum->base.name);
+     eina_strbuf_append(buf, fl->base_enum->base.c_name);
    eina_strbuf_append_char(buf, '_');
    eina_strbuf_append(buf, fl->base.name);
    bufp = eina_strbuf_string_steal(buf);

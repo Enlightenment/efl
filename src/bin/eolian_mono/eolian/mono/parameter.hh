@@ -1612,11 +1612,11 @@ struct constructor_invocation_generator
   {
      auto params = ctor.function.parameters;
      if (!as_generator(
-                       "if (" <<
+                       scope_tab << "if (" <<
                        (efl::eolian::grammar::attribute_reorder<-1>
                         ("Efl.Eo.Globals.ParamHelperCheck(" << constructor_parameter_name(ctor) << ")") % " || ") << ")\n"
-                       << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << name_helpers::managed_method_name(ctor.function) << "("
+                       << scope_tab(2) << scope_tab << "{\n"
+                       << scope_tab(2) << scope_tab << scope_tab << name_helpers::managed_method_name(ctor.function) << "("
              ).generate(sink, params, context))
        return false;
 
@@ -1633,7 +1633,7 @@ struct constructor_invocation_generator
 
      if (!as_generator(
                  ");\n"
-                 << scope_tab << scope_tab << "}\n").generate(sink, attributes::unused, context))
+                 << scope_tab(2) << scope_tab << "}\n").generate(sink, attributes::unused, context))
        return false;
      return true;
   }

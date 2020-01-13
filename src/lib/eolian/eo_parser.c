@@ -219,6 +219,7 @@ parse_c_name(Eo_Lexer *ls)
         check_match(ls, ')', '(', pline, pcol);
         return NULL; /* unreachable */
      }
+   eo_lexer_get(ls);
    return cname;
 }
 
@@ -481,10 +482,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         def->ownable = EINA_TRUE;
      }
    if (cname)
-     {
-        def->base.c_name = cname;
-        eo_lexer_dtor_pop(ls);
-     }
+     def->base.c_name = eina_stringshare_ref(cname);
    else
      def->base.c_name = make_c_name(name);
    /* we can't know the order, pop when both are filled */
@@ -865,7 +863,7 @@ tags_done:
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
      {
-        def->base.c_name = cname;
+        def->base.c_name = eina_stringshare_ref(cname);
         eo_lexer_dtor_pop(ls);
      }
    else
@@ -922,7 +920,7 @@ tags_done:
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
      {
-        def->base.c_name = cname;
+        def->base.c_name = eina_stringshare_ref(cname);
         eo_lexer_dtor_pop(ls);
      }
    else
@@ -986,7 +984,7 @@ tags_done:
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
      {
-        def->base.c_name = cname;
+        def->base.c_name = eina_stringshare_ref(cname);
         eo_lexer_dtor_pop(ls);
      }
    else
@@ -1448,7 +1446,7 @@ tags_done:
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
      {
-        def->base.c_name = cname;
+        def->base.c_name = eina_stringshare_ref(cname);
         eo_lexer_dtor_pop(ls);
      }
    else
@@ -2263,7 +2261,7 @@ tags_done:
    ls->klass->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
      {
-        ls->klass->base.c_name = cname;
+        ls->klass->base.c_name = eina_stringshare_ref(cname);
         eo_lexer_dtor_pop(ls);
      }
    else
@@ -2490,7 +2488,7 @@ postparams:
                   }
                 def->base.name = name;
                 if (cname)
-                  def->base.c_name = cname;
+                  def->base.c_name = eina_stringshare_ref(cname);
                 /* we can't know the order, pop when both are filled */
                 if (freefunc && cname)
                   {

@@ -117,7 +117,7 @@ struct function_definition_epilogue_generator
                   "Eina.Error.RaiseIfUnhandledException();\n"
                   << *(convert_out_assign)
                   << *(convert_in_ptr_assign)
-                  << scope_tab(2) << convert_return << "\n"
+                  << scope_tab(3) << convert_return << "\n"
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
