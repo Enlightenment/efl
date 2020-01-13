@@ -126,6 +126,51 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
    CHECK_ZERO(ZOOM);
+
+   /* clear states */
+   wait_timer(0.4);
+   RESET;
+
+   /* verify multiple simultaneous presses treated as same press */
+   multi_click_object(rect, 2);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
+   CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a zoom start */
+   CHECK_ALL(ZOOM, 1, 0, 0, 1);
+
+   RESET;
+
+   multi_click_object(rect, 2);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* UPDATE -> FINISH */
+   CHECK_ALL(DOUBLE_TAP, 0, 1, 1, 0);
+   CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a zoom start */
+   CHECK_ALL(ZOOM, 1, 0, 0, 1);
+
+   RESET;
+
+   multi_click_object(rect, 2);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* UPDATE -> FINISH */
+   CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
+   CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a zoom start */
+   CHECK_ALL(ZOOM, 1, 0, 0, 1);
+   /* clear states */
+   wait_timer(0.4);
+   RESET;
+
 }
 EFL_END_TEST
 
