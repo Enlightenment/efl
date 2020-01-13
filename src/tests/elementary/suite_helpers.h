@@ -22,6 +22,7 @@ void click_part(Eo *obj, const char *part);
 void click_part_flags(Eo *obj, const char *part, int flags);
 void click_object_at(Eo *obj, int x, int y);
 void click_object_at_flags(Eo *obj, int x, int y, int flags);
+void write_key_sequence(Eo *obj, const char *seqence);
 void drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate);
 void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
