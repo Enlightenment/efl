@@ -134,11 +134,13 @@ struct _Efl_Canvas_Gesture_Data
 
 struct _Efl_Canvas_Gesture_Momentum_Data
 {
+   int id;
    Eina_Vector2                    momentum;
 };
 
 struct _Efl_Canvas_Gesture_Flick_Data
 {
+   int id;
    Eina_Vector2                    momentum;
    double                          angle;
 };

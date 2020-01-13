@@ -204,9 +204,18 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
         pd->touched = EINA_TRUE;
         pd->line_angle = -1.0;
         rd->continues = EINA_TRUE;
+        fd->id = -1;
 
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
+   if (pd->touched && (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
+     {
+        /* a second finger was pressed at the same time-ish as the first: combine into same event */
+        if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
+   if (pd->t_st && (fd->id != efl_gesture_touch_cur_data_get(event)->id))
+     return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
    _single_line_process(obj, pd, gesture, fd, event);
    _vector_get(pd->st_line, efl_gesture_touch_cur_point_get(event),
@@ -300,6 +309,9 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
+        if (!glayer_continues_enable)
+          fd->id = efl_gesture_touch_cur_data_get(event)->id;
+        EINA_FALLTHROUGH;
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
       {
          if (pd->t_st)
