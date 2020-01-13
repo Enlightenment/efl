@@ -211,6 +211,7 @@ static void _anchors_free(Efl_Ui_Textbox_Data *sd);
 static void _selection_defer(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static Eina_Position2D _decoration_calc_offset(Efl_Ui_Textbox_Data *sd);
 static void _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd);
+static void _efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Selection_Type type);
 
 static char *
 _file_load(Eo *obj)
@@ -1235,7 +1236,7 @@ _mouse_down_cb(void *data,
 
    if (ev->button == 2)
      {
-        efl_ui_textbox_selection_paste(data);
+        _efl_ui_textbox_selection_paste_type(data, EFL_UI_SELECTION_TYPE_PRIMARY);
      }
 
     /* If right button is pressed and context menu disabled is true,
@@ -2186,15 +2187,21 @@ _efl_ui_textbox_selection_copy(Eo *obj, Efl_Ui_Textbox_Data *sd)
    efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY, NULL);
 }
 
-EOLIAN static void
-_efl_ui_textbox_selection_paste(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
+static void
+_efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Selection_Type type)
 {
    Efl_Ui_Selection_Format formats = EFL_UI_SELECTION_FORMAT_TEXT | EFL_UI_SELECTION_FORMAT_MARKUP;
 
-   efl_ui_selection_get(obj, EFL_UI_SELECTION_TYPE_CLIPBOARD, formats,
+   efl_ui_selection_get(obj, type, formats,
          NULL, _selection_data_cb, NULL, 1);
 
    efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
+}
+
+EOLIAN static void
+_efl_ui_textbox_selection_paste(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
+{
+   _efl_ui_textbox_selection_paste_type(obj, EFL_UI_SELECTION_TYPE_CLIPBOARD);
 }
 
 EOLIAN static void
