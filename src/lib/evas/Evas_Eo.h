@@ -214,7 +214,7 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "gesture/efl_canvas_gesture_recognizer_flick.eo.h"
 #include "gesture/efl_canvas_gesture_recognizer_zoom.eo.h"
 #include "gesture/efl_canvas_gesture_manager.eo.h"
-#include "gesture/efl_gesture_events.eo.h"
+#include "gesture/efl_canvas_gesture_events.eo.h"
 
 #include "canvas/efl_canvas_object.eo.h"
 #include "canvas/efl_canvas_object_animation.eo.h"

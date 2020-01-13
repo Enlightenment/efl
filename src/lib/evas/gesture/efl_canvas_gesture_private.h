@@ -4,7 +4,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "efl_gesture_events.eo.h"
+#include "efl_canvas_gesture_events.eo.h"
 
 #include <Ecore.h>
 
