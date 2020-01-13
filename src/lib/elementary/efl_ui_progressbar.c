@@ -134,62 +134,13 @@ _val_set(Evas_Object *obj)
      }
 }
 
-//TODO: efl_ui_slider also use this.
-static const char *
-_theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len, Eina_Bool is_legacy)
+static void
+_sync_widget_theme_klass(Eo *obj, Efl_Ui_Progressbar_Data *pd)
 {
-   const char *pos = NULL;
-   const char *temp_str = NULL;
-
-   if (is_legacy)
-     return cur_group;
-
-   temp_str = cur_group + len - strlen(search);
-   if (temp_str >= cur_group)
-     {
-         if (!strcmp(temp_str, search))
-           pos = temp_str;
-     }
-
-   return pos;
-}
-
-static char *
-_efl_ui_progressbar_theme_group_get(Evas_Object *obj, Efl_Ui_Progressbar_Data *sd)
-{
-   const char *pos = NULL;
-   const char *cur_group = elm_widget_theme_element_get(obj);
-   Eina_Strbuf *new_group = eina_strbuf_new();
-   Eina_Bool is_legacy = elm_widget_is_legacy(obj);
-   size_t len = 0;
-
-   if (cur_group)
-     {
-        len = strlen(cur_group);
-        pos = _theme_group_modify_pos_get(cur_group, "horizontal", len, is_legacy);
-        if (!pos)
-          pos = _theme_group_modify_pos_get(cur_group, "vertical", len, is_legacy);
-
-
-        // TODO: change separator when it is decided.
-        //       can skip when prev_group == cur_group
-        if (!pos)
-          {
-              eina_strbuf_append(new_group, cur_group);
-              eina_strbuf_append(new_group, "/");
-          }
-        else
-          {
-              eina_strbuf_append_length(new_group, cur_group, pos - cur_group);
-          }
-     }
-
-   if (_is_horizontal(sd->dir))
-     eina_strbuf_append(new_group, "horizontal");
+   if (efl_ui_layout_orientation_is_horizontal(pd->dir, EINA_TRUE))
+     elm_widget_theme_element_set(obj, "horizontal");
    else
-     eina_strbuf_append(new_group, "vertical");
-
-   return eina_strbuf_release(new_group);
+     elm_widget_theme_element_set(obj, "vertical");
 }
 
 EOLIAN static Eina_Error
@@ -197,7 +148,7 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
 {
    Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
-   char *group;
+
    const char *statuspart[] =
    {
      "efl.text.status",
@@ -208,13 +159,7 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
      "efl.cur.progressbar",
      "elm.cur.progressbar",
    };
-
-   group = _efl_ui_progressbar_theme_group_get(obj, sd);
-   if (group)
-     {
-        elm_widget_theme_element_set(obj, group);
-        free(group);
-     }
+   _sync_widget_theme_klass(obj, sd);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
@@ -284,6 +229,11 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
 
    edje_object_message_signal_process(wd->resize_obj);
 
+   if (elm_widget_is_legacy(obj))
+     elm_layout_content_set(obj, "elm.swallow.bar", sd->spacer);
+   else
+     elm_layout_content_set(obj, "efl.bar", sd->spacer);
+
    return int_ret;
 }
 
@@ -330,10 +280,7 @@ EOLIAN static void
 _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   char *group;
 
-   if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "progressbar");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
    efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
@@ -341,25 +288,12 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
    priv->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    priv->val = MIN_RATIO_LVL;
    priv->val_max = 1.0;
-   group = _efl_ui_progressbar_theme_group_get(obj, priv);
-
-   if (elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       group,
-                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-
-   free(group);
 
    efl_ui_format_string_set(obj, "%.0f%%", EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 
    priv->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
-
-   if (elm_widget_is_legacy(obj))
-     elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
-   else
-     elm_layout_content_set(obj, "efl.bar", priv->spacer);
 
    _units_set(obj);
    _val_set(obj);
@@ -398,6 +332,9 @@ _efl_ui_progressbar_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Progressbar_Data 
 EOLIAN static Eo *
 _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
 {
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "progressbar");
+
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
