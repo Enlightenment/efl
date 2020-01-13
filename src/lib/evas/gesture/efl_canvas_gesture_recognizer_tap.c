@@ -46,6 +46,7 @@ _efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *o
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
       {
+new_tap:
          pos = efl_gesture_touch_start_point_get(event);
          efl_gesture_hotspot_set(gesture, pos);
 
@@ -59,6 +60,19 @@ _efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *o
       }
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
+        /* multi-touch */
+        if (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN)
+          {
+             /* a second finger was pressed at the same time-ish as the first: combine into same event */
+             if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+               {
+                  result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+                  break;
+               }
+             /* another distinct touch occurred, treat this as a new touch */
+             goto new_tap;
+          }
+        EINA_FALLTHROUGH;
       case EFL_GESTURE_TOUCH_STATE_END:
       {
          if (pd->timeout)

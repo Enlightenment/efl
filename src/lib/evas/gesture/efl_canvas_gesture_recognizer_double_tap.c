@@ -89,6 +89,16 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
       {
+        /* multi-touch */
+        if (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN)
+          {
+             /* a second finger was pressed at the same time-ish as the first: combine into same event */
+             if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+               {
+                  result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+                  break;
+               }
+          }
          result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
@@ -119,6 +129,20 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
              !efl_gesture_touch_multi_touch_get(event))
            {
+              if (efl_gesture_touch_prev_data_get(event))
+                {
+                   Efl_Pointer_Action prev_act = efl_gesture_touch_prev_data_get(event)->action;
+                   /* multi-touch */
+                   if ((prev_act == EFL_POINTER_ACTION_UP) || (prev_act == EFL_POINTER_ACTION_CANCEL))
+                     {
+                        /* a second finger was pressed at the same time-ish as the first: combine into same event */
+                        if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+                          {
+                             result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+                             break;
+                          }
+                     }
+                }
               dist = efl_gesture_touch_distance(event, 0);
               length = fabs(dist.x) + fabs(dist.y);
 
