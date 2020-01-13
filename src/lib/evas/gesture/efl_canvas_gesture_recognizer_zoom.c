@@ -177,6 +177,10 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
            {
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }
+         if (td->touch_down == 1)
+           {
+              return EFL_GESTURE_RECOGNIZER_RESULT_MAYBE;
+           }
 
          if (!pd->zoom_st.cur.timestamp)   /* Now scan touched-devices list
                                             * and find other finger */
