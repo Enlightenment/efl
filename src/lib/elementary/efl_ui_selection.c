@@ -217,6 +217,9 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
    f = efl_ui_selection_manager_selection_set(sel_man, obj, (Efl_Ui_Selection_Type)type,
                                            (Efl_Ui_Selection_Format)format, data, seatid);
 
+   if (!f)
+     return EINA_FALSE;
+
    ldata->obj = obj;
    ldata->type = type;
    eina_future_then_easy(f, _selection_lost_cb, NULL, NULL, EINA_VALUE_TYPE_UINT, ldata);
