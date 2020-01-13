@@ -618,16 +618,3 @@ drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
    evas_event_feed_mouse_move(e, x + dx, y + dy, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
 }
-
-void
-write_key_sequence(Eo *obj, const char *seqence)
-{
-  Evas *e = evas_object_evas_get(obj);
-  for (unsigned int i = 0; i < strlen(seqence); ++i)
-    {
-       const char part_seq[] = {seqence[i], '\0'};
-       evas_event_feed_key_down(e, part_seq, part_seq, part_seq, part_seq, 0, NULL);
-       evas_event_feed_key_up(e, part_seq, part_seq, part_seq, part_seq, 0, NULL);
-       ecore_main_loop_iterate();
-    }
-}
