@@ -1,4 +1,4 @@
-interface @beta Efl.Text_Markup {
+interface Efl.Text_Markup {
    [[Markup data that populates the text object's style and format
    ]]
    methods {

@@ -1,4 +1,4 @@
-enum @beta Efl.Text_Format_Wrap {
+enum Efl.Text_Format_Wrap {
    [[Wrapping policy for the text.]]
    none, [[No wrapping.]]
    char, [[Wrap at character boundaries.]]
@@ -8,7 +8,7 @@ enum @beta Efl.Text_Format_Wrap {
                  at any character.]]
 }
 
-enum @beta Efl.Text_Format_Horizontal_Alignment_Auto_Type {
+enum Efl.Text_Format_Horizontal_Alignment_Auto_Type {
    [[Automatic horizontal alignment setting for the text (Left-To-Right or Right-To-Left).]]
    none,   [[No auto-alignment rule: Horizontal Alignment is decided by @Efl.Text_Format.text_horizontal_align]]
    auto,   [[Respects LTR/RTL (bidirectional) characters found inside the text content.]]
@@ -16,7 +16,7 @@ enum @beta Efl.Text_Format_Horizontal_Alignment_Auto_Type {
    opposite  [[Text is placed at opposite side of LTR/RTL (bidirectional) settings.]]
 }
 
-interface @beta Efl.Text_Format {
+interface Efl.Text_Format {
    [[The look and layout of the text.
 
      The text format can affect the geometry of the text object, as well as

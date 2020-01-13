@@ -1,5 +1,5 @@
 import efl_gfx_types;
-enum @beta Efl.Text_Font_Weight {
+enum Efl.Text_Font_Weight {
    [[The weight of a particular font is the thickness of the character outlines relative to their height.
      The given numerical values follow the TrueType scale (from 100 to 900) and are approximate.
      It is up to each font to provide all of them.]]
@@ -18,7 +18,7 @@ enum @beta Efl.Text_Font_Weight {
    extrablack, [[Extrablack font weight (950).]]
 }
 
-enum @beta Efl.Text_Font_Width {
+enum Efl.Text_Font_Width {
    [[Font width relative to its height.
      It is up to each font to provide all these widths.]]
    normal,         [[Normal font width.]]
@@ -32,7 +32,7 @@ enum @beta Efl.Text_Font_Width {
    ultraexpanded,  [[Ultraexpanded font width.]]
 }
 
-enum @beta Efl.Text_Font_Slant {
+enum Efl.Text_Font_Slant {
     [[Type of font slant.]]
     normal,  [[Normal font slant: Sets the text to the normal font (non-italicized).]]
     oblique, [[Oblique font slant: Sets the text to use a simulated version of an italic font,
@@ -41,13 +41,13 @@ enum @beta Efl.Text_Font_Slant {
                If not available, it will simulate italics with oblique instead.]]
 }
 
-enum @beta Efl.Text_Font_Bitmap_Scalable {
+enum Efl.Text_Font_Bitmap_Scalable {
    [[When are bitmap fonts allowed to be scaled.]]
    none = 0,         [[Disable scaling for bitmap fonts.]]
    color = (1 << 0), [[Enable scaling for color bitmap fonts.]]
 }
 
-interface @beta Efl.Text_Font_Properties {
+interface Efl.Text_Font_Properties {
    [[Properties related to font handling.
    ]]
    c_prefix: efl_text;

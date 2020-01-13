@@ -10,7 +10,7 @@ enum Efl.Text_Bidirectional_Type {
    inherit [[Inherit text type]]
 }
 
-struct @beta Efl.Text_Change_Info {
+struct Efl.Text_Change_Info {
    [[This structure includes all the information about content changes.
 
      It's meant to be used to implement undo/redo.
@@ -22,7 +22,7 @@ struct @beta Efl.Text_Change_Info {
    mergeable: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
 
-struct @beta Efl.Text_Range {
+struct Efl.Text_Range {
    [[This structure includes text position range (from/to).
    ]]
    start: int; [[The start postion.]]

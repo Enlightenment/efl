@@ -1,11 +1,11 @@
-enum @beta Efl.Text.Cursor_Type
+enum Efl.Text.Cursor_Type
 {
    [[Text cursor types.]]
    before, [[Cursor type before.]]
    under [[Cursor type under.]]
 }
 
-enum @beta Efl.Text.Cursor_Move_Type
+enum Efl.Text.Cursor_Move_Type
 {
    [[Text cursor movement types.]]
    char_next,       [[Advances to the next character.]]
@@ -26,7 +26,7 @@ enum @beta Efl.Text.Cursor_Move_Type
    paragraph_prev   [[Advances to the end of the previous paragraph.]]
 }
 
-abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
+abstract Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
    [[Cursor API.]]
    c_prefix: efl_text_cursor;
    methods {
