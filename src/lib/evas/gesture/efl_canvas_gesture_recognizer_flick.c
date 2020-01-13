@@ -180,6 +180,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    Eina_Bool touch_up = EINA_FALSE;
    Efl_Canvas_Gesture_Flick_Data *fd = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_FLICK_CLASS);
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
+   Eina_Bool dead = EINA_FALSE;
 
    val = efl_gesture_recognizer_config_get(obj, "glayer_continues_enable");
    if (val) eina_value_get(val, &glayer_continues_enable);
@@ -197,16 +198,30 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
    //This is to handle a case with a mouse click on the target object.
    if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END && !pd->touched)
-     efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_FLICK);
+     {
+        efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_FLICK);
+        dead = EINA_TRUE;
+     }
 
    if (glayer_continues_enable && !pd->touched)
      {
         pd->touched = EINA_TRUE;
         pd->line_angle = -1.0;
         rd->continues = EINA_TRUE;
+        /* this has been deleted */
+        if (!dead)
+          fd->id = -1;
 
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
+   if (pd->touched && (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
+     {
+        /* a second finger was pressed at the same time-ish as the first: combine into same event */
+        if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
+   if (pd->t_st && (fd->id != efl_gesture_touch_cur_data_get(event)->id))
+     return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
    _single_line_process(obj, pd, gesture, fd, event);
    _vector_get(pd->st_line, efl_gesture_touch_cur_point_get(event),
@@ -300,6 +315,9 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
+        if (!glayer_continues_enable)
+          fd->id = efl_gesture_touch_cur_data_get(event)->id;
+        EINA_FALLTHROUGH;
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
       {
          if (pd->t_st)

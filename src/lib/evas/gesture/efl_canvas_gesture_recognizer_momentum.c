@@ -91,6 +91,14 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
 
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
+   if (pd->touched && (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
+     {
+        /* a second finger was pressed at the same time-ish as the first: combine into same event */
+        if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
+   if (pd->t_st && (md->id != efl_gesture_touch_cur_data_get(event)->id))
+     return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
    switch (efl_gesture_touch_state_get(event))
      {
@@ -102,12 +110,19 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
               if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_BEGIN ||
                   glayer_continues_enable)
                 {
+                   if (efl_gesture_touch_prev_data_get(event))
+                     {
+                        if (efl_gesture_touch_prev_data_get(event)->action == efl_gesture_touch_cur_data_get(event)->action)
+                          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+                     }
                    pd->t_st = pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
 
                    pd->st_line = pd->end_line =
                        efl_gesture_touch_start_point_get(event);
 
                    efl_gesture_hotspot_set(gesture, pd->st_line);
+                   if (!glayer_continues_enable)
+                     md->id = efl_gesture_touch_cur_data_get(event)->id;
 
                    return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
                 }
