@@ -626,11 +626,54 @@ click_object_at(Eo *obj, int x, int y)
 }
 
 void
+multi_click_object(Eo *obj, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, NONE);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, pos.x + i, pos.y + i, 1, 1, 1, 1, 0, pos.x + i, pos.y + i, 0, ts, NULL);
+   ts++;
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_up(e, i, pos.x + i, pos.y + i, 1, 1, 1, 1, 0, pos.x + i, pos.y + i, 0, ts, NULL);
+}
+
+void
+multi_press_object(Eo *obj, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, NONE);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, pos.x + i, pos.y + i, 1, 1, 1, 1, 0, pos.x + i, pos.y + i, 0, ts, NULL);
+   ts++;
+}
+
+void
+multi_click_object_at(Eo *obj, int x, int y, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, x + i, y + i, 1, 1, 1, 1, 0, x + i, y + i, 0, ts, NULL);
+   ts++;
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_up(e, i, x + i, y + i, 1, 1, 1, 1, 0, x + i, y + i, 0, ts, NULL);
+   ts++;
+}
+
+void
 press_object_at(Eo *obj, int x, int y)
 {
    Evas *e = evas_object_evas_get(obj);
    evas_event_feed_mouse_move(e, x, y, ts++, NULL);
    evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+}
+
+void
+multi_press_object_at(Eo *obj, int x, int y, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, x + i, y + i, 1, 1, 1, 1, 0, x + i, y + i, 0, ts, NULL);
+   ts++;
 }
 
 void
