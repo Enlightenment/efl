@@ -25,22 +25,13 @@ typedef struct _Efl_Canvas_Gesture_Momentum_Data               Efl_Canvas_Gestur
 typedef struct _Efl_Canvas_Gesture_Flick_Data                  Efl_Canvas_Gesture_Flick_Data;
 typedef struct _Efl_Canvas_Gesture_Zoom_Data                   Efl_Canvas_Gesture_Zoom_Data;
 
-typedef struct _Pointer_Data
-{
-   struct
-     {
-        Eina_Position2D pos;
-        unsigned int timestamp;
-     } start, prev, cur;
-   int id;
-   Efl_Pointer_Action action;
-} Pointer_Data;
-
 typedef struct _Efl_Canvas_Gesture_Touch_Data
 {
    Efl_Canvas_Gesture_Touch_State state;
-   Eina_Hash              *touch_points;
+   Eina_Array             *touch_points;
    int                     touch_down;
+   Efl_Gesture_Touch_Point_Data *cur_touch;
+   Efl_Gesture_Touch_Point_Data *prev_touch;
    Eina_Bool               multi_touch;
    Eo                     *target;
 } Efl_Canvas_Gesture_Touch_Data;
@@ -115,11 +106,11 @@ struct _Efl_Canvas_Gesture_Recognizer_Flick_Data
 
 struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data
 {
-   Pointer_Data                    zoom_st;
-   Pointer_Data                    zoom_st1;
+   Efl_Gesture_Touch_Point_Data                    zoom_st;
+   Efl_Gesture_Touch_Point_Data                    zoom_st1;
 
-   Pointer_Data                    zoom_mv;
-   Pointer_Data                    zoom_mv1;
+   Efl_Gesture_Touch_Point_Data                    zoom_mv;
+   Efl_Gesture_Touch_Point_Data                    zoom_mv1;
 
    Evas_Coord                      zoom_base; /* Holds gap between fingers on
 							                   * zoom-start  */

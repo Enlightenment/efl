@@ -126,8 +126,6 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
                                                                             Efl_Object *watched,
                                                                             Efl_Canvas_Gesture_Touch *event)
 {
-   int id1 = 0;
-   int id2 = 1;
    Eina_Value *val;
    unsigned char zoom_finger_enable;
    unsigned char glayer_continues_enable;
@@ -186,14 +184,14 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
               if (!efl_gesture_touch_multi_touch_get(event))
                 return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
-              Pointer_Data *p1 = eina_hash_find(td->touch_points, &id1);
-              Pointer_Data *p2 = eina_hash_find(td->touch_points, &id2);
+              const Efl_Gesture_Touch_Point_Data *p1 = efl_gesture_touch_data_get(event, 0);
+              const Efl_Gesture_Touch_Point_Data *p2 = efl_gesture_touch_data_get(event, 1);
 
-              memcpy(&pd->zoom_st, p2, sizeof(Pointer_Data));
-              memcpy(&pd->zoom_st1, p1, sizeof(Pointer_Data));
+              memcpy(&pd->zoom_st, p2, sizeof(Efl_Gesture_Touch_Point_Data));
+              memcpy(&pd->zoom_st1, p1, sizeof(Efl_Gesture_Touch_Point_Data));
 
-              memcpy(&pd->zoom_mv, p2, sizeof(Pointer_Data));
-              memcpy(&pd->zoom_mv1, p1, sizeof(Pointer_Data));
+              memcpy(&pd->zoom_mv, p2, sizeof(Efl_Gesture_Touch_Point_Data));
+              memcpy(&pd->zoom_mv1, p1, sizeof(Efl_Gesture_Touch_Point_Data));
 
               int x, y;  //Hot spot
               zd->zoom = 1.0;
@@ -212,11 +210,11 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }
 
-         Pointer_Data *p2 = eina_hash_find(td->touch_points, &id2);
+         const Efl_Gesture_Touch_Point_Data *p2 = efl_gesture_touch_data_get(event, 1);
          if (p2->id == pd->zoom_mv.id)
-           memcpy(&pd->zoom_mv, p2, sizeof(Pointer_Data));
+           memcpy(&pd->zoom_mv, p2, sizeof(Efl_Gesture_Touch_Point_Data));
          else if (p2->id == pd->zoom_mv1.id)
-           memcpy(&pd->zoom_mv1, p2, sizeof(Pointer_Data));
+           memcpy(&pd->zoom_mv1, p2, sizeof(Efl_Gesture_Touch_Point_Data));
 
          zd->zoom = _zoom_compute(pd, zd, pd->zoom_mv.cur.pos.x,
                                   pd->zoom_mv.cur.pos.y, pd->zoom_mv1.cur.pos.x,
