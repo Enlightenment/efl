@@ -1116,14 +1116,16 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
      {
         if (multiline)
           {
-             if (shift || efl_canvas_textblock_newline_as_paragraph_separator_get(obj))
+             //FIXME this should be Fixed when multiline set works fine with PARAGRAPH_SEPARATOR
+             //Now only \n can work with multiline set
+             //if (shift || efl_canvas_textblock_newline_as_paragraph_separator_get(obj))
                {
                   string = "\n";
                }
-             else
+             /*else
                {
                   string = _PARAGRAPH_SEPARATOR_UTF8;
-               }
+               }*/
           }
      }
 
