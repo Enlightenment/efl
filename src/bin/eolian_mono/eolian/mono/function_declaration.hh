@@ -42,11 +42,11 @@ struct function_declaration_generator
     if(f.scope != attributes::member_scope::scope_public)
       return true;
 
-    if(!as_generator(documentation(1)).generate(sink, f, context))
+    if(!as_generator(documentation(2)).generate(sink, f, context))
       return false;
 
     return as_generator
-      (scope_tab << eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n\n")
+      (scope_tab(2) << eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n\n")
       .generate(sink, std::make_tuple(f.return_type, name_helpers::managed_method_name(f), f.parameters), context);
   }
 };

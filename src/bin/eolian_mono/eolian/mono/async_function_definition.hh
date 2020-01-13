@@ -72,30 +72,30 @@ struct async_function_declaration_generator
       return true;
 
     if (!as_generator(
-            scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
+            scope_tab(2) << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
         ).generate(sink, attributes::unused, context))
       return false;
 
     if (!f.documentation.since.empty())
       if (!as_generator
-          (scope_tab << "/// <para>Since EFL " + f.documentation.since + ".</para>\n")
+          (scope_tab(2) << "/// <para>Since EFL " + f.documentation.since + ".</para>\n")
           .generate (sink, attributes::unused, context))
       return false;
 
     if (!as_generator(
-            scope_tab << "/// </summary>\n"
+            scope_tab(2) << "/// </summary>\n"
         ).generate(sink, attributes::unused, context))
       return false;
 
     // generate_parameter is not a proper as_generator-compatible generator, so we had to do an old fashioned loop
     for (auto&& param : f.parameters)
-      if (!documentation(1).generate_parameter(sink, param, context))
+      if (!documentation(2).generate_parameter(sink, param, context))
         return false;
 
     if (!as_generator(
-            scope_tab << "/// <param name=\"token\">Token to notify the async operation of external request to cancel.</param>\n"
-            << scope_tab << "/// <returns>An async task wrapping the result of the operation.</returns>\n"
-            << scope_tab << "System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ", ") <<
+            scope_tab(2) << "/// <param name=\"token\">Token to notify the async operation of external request to cancel.</param>\n"
+            << scope_tab(2) << "/// <returns>An async task wrapping the result of the operation.</returns>\n"
+            << scope_tab(2) << "System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ", ") <<
                                     " System.Threading.CancellationToken token = default(System.Threading.CancellationToken));\n\n"
         ).generate(sink, f.parameters, context))
       return false;
@@ -130,18 +130,18 @@ struct async_function_definition_generator
     std::transform(f.parameters.begin(), f.parameters.end(), std::back_inserter(param_forwarding), parameter_forwarding);
 
     if (!as_generator(
-            scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
+            scope_tab(2) << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
         ).generate(sink, attributes::unused, context))
       return false;
 
     if (!f.documentation.since.empty())
       if (!as_generator
-          (scope_tab << "/// <para>Since EFL " + f.documentation.since + ".</para>\n")
+          (scope_tab(2) << "/// <para>Since EFL " + f.documentation.since + ".</para>\n")
           .generate (sink, attributes::unused, context))
       return false;
 
     if (!as_generator(
-            scope_tab << "/// </summary>\n"
+            scope_tab(2) << "/// </summary>\n"
         ).generate(sink, attributes::unused, context))
       return false;
 
@@ -151,13 +151,13 @@ struct async_function_definition_generator
         return false;
 
     if(!as_generator(
-            scope_tab << "/// <param name=\"token\">Token to notify the async operation of external request to cancel.</param>\n"
-            << scope_tab << "/// <returns>An async task wrapping the result of the operation.</returns>\n"
-            << scope_tab << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ", ") << " System.Threading.CancellationToken token = default(System.Threading.CancellationToken))\n"
-            << scope_tab << "{\n"
-            << scope_tab << scope_tab << "Eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ", ") << ");\n"
-            << scope_tab << scope_tab << "return Efl.Eo.Globals.WrapAsync(future, token);\n"
-            << scope_tab << "}\n\n"
+            scope_tab(2) << "/// <param name=\"token\">Token to notify the async operation of external request to cancel.</param>\n"
+            << scope_tab(2) << "/// <returns>An async task wrapping the result of the operation.</returns>\n"
+            << scope_tab(2) << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ", ") << " System.Threading.CancellationToken token = default(System.Threading.CancellationToken))\n"
+            << scope_tab(2) << "{\n"
+            << scope_tab(2) << scope_tab << "Eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ", ") << ");\n"
+            << scope_tab(2) << scope_tab << "return Efl.Eo.Globals.WrapAsync(future, token);\n"
+            << scope_tab(2) << "}\n\n"
         ).generate(sink, std::make_tuple(f.parameters, param_forwarding), context))
       return false;
     return true;

@@ -110,21 +110,21 @@ struct klass
        if (!as_generator(*(interface_property_indexer_definition(cls))).generate(sink, cls.properties, iface_cxt))
          return false;
        
-       if(!as_generator(documentation).generate(sink, cls, iface_cxt))
+       if(!as_generator(documentation(1)).generate(sink, cls, iface_cxt))
          return false;
 
        // Mark the interface with the proper native Efl_Class* getter
-       if(!as_generator(lit("[") << name_helpers::klass_full_native_inherit_name(cls) << "]\n")
+       if(!as_generator(scope_tab << lit("[") << name_helpers::klass_full_native_inherit_name(cls) << "]\n")
           .generate(sink, attributes::unused, iface_cxt))
          return false;
 
-       if(!as_generator("[Efl.Eo.BindingEntity]\n").generate(sink, attributes::unused, iface_cxt))
+       if(!as_generator(scope_tab << "[Efl.Eo.BindingEntity]\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
        using efl::eolian::grammar::lit;
        if(!as_generator
         (
-         lit("public ") << (is_partial ? "partial ":"")
+         scope_tab << lit("public ") << (is_partial ? "partial ":"")
          /*<< class_type*/ << "interface" /*<<*/ " " << string << " : "
          )
         .generate(sink, name_helpers::klass_interface_name(cls), iface_cxt))
@@ -140,10 +140,10 @@ struct klass
                 return false;
          }
 
-       if(!as_generator("\n" << scope_tab << "Efl.Eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
+       if(!as_generator("\n" << scope_tab(2) << "Efl.Eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
          return false;
 
-       if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
+       if(!as_generator("\n" << scope_tab << "{\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
        if(!as_generator(*(function_declaration)).generate(sink, cls.functions, iface_cxt))
@@ -157,7 +157,7 @@ struct klass
 
        for (auto &&p : cls.parts)
          if (!as_generator(
-              documentation(1)
+              documentation(2)
               << name_helpers::klass_full_concrete_or_interface_name(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
             ).generate(sink, p, iface_cxt))
            return false;
@@ -166,7 +166,7 @@ struct klass
          return false;
 
        // End of interface declaration
-       if(!as_generator("}\n\n").generate(sink, attributes::unused, iface_cxt)) return false;
+       if(!as_generator(scope_tab << "}\n\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
 
      // Events arguments go in the top namespace to avoid the Concrete suffix clutter in interface events.
@@ -204,12 +204,12 @@ struct klass
          // other classes that implement the interface.
          if(!as_generator
             (
-             documentation
-             << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
-             << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "")
-             << ",\n" << scope_tab << interface_name
-             << *(",\n" << scope_tab << name_helpers::klass_full_concrete_or_interface_name) << "\n"
-             << "{\n"
+             documentation(1)
+             << scope_tab << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
+             << scope_tab(2) << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "")
+             << ",\n" << scope_tab(2) << interface_name
+             << *(",\n" << scope_tab(2) << name_helpers::klass_full_concrete_or_interface_name) << "\n"
+             << scope_tab << "{\n"
             ).generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), concrete_cxt))
               return false;
 
@@ -218,27 +218,27 @@ struct klass
 
          if (!as_generator
             (
-             scope_tab << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
-             << scope_tab << "/// Do not call this constructor directly.</summary>\n"
-             << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
-             << scope_tab << "private " << concrete_name << "(ConstructingHandle ch) : base(ch)\n"
-             << scope_tab << "{\n"
-             << scope_tab << "}\n\n"
+             scope_tab(2) << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
+             << scope_tab(2) << "/// Do not call this constructor directly.</summary>\n"
+             << scope_tab(2) << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
+             << scope_tab(2) << "private " << concrete_name << "(ConstructingHandle ch) : base(ch)\n"
+             << scope_tab(2) << "{\n"
+             << scope_tab(2) << "}\n\n"
             )
             .generate(sink, attributes::unused, concrete_cxt))
            return false;
 
          if (!as_generator
             (
-             scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
+             scope_tab(2) << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
-             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
-             << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
-             << scope_tab << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
-             << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-             << scope_tab << "private " << concrete_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
-             << scope_tab << "{\n"
-             << scope_tab << "}\n\n"
+             << scope_tab(2) << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
+             << scope_tab(2) << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
+             << scope_tab(2) << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
+             << scope_tab(2) << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
+             << scope_tab(2) << "private " << concrete_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
+             << scope_tab(2) << "{\n"
+             << scope_tab(2) << "}\n\n"
             )
             .generate(sink, attributes::unused, concrete_cxt))
            return false;
@@ -278,17 +278,17 @@ struct klass
 
          // Copied from nativeinherit class, used when setting up providers.
          if(!as_generator(
-              scope_tab << "private static IntPtr GetEflClassStatic()\n"
-              << scope_tab << "{\n"
-              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n\n"
+              scope_tab(2) << "private static IntPtr GetEflClassStatic()\n"
+              << scope_tab(2) << "{\n"
+              << scope_tab(2) << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab(2) << "}\n\n"
            ).generate(sink, attributes::unused, concrete_cxt))
            return false;
 
          if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), concrete_cxt)))
            return true;
 
-         if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
+         if(!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
        }
 
      // Inheritable class
@@ -301,11 +301,11 @@ struct klass
         // Class header
         if(!as_generator
             (
-             documentation
-             << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
-             << "[Efl.Eo.BindingEntity]\n"
-             << "[SuppressMessage(\"Microsoft.Naming\", \"CA1724:TypeNamesShouldNotMatchNamespaces\")]\n"
-             << "public "
+             documentation(1)
+             << scope_tab << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
+             << scope_tab << "[Efl.Eo.BindingEntity]\n"
+             << scope_tab << "[SuppressMessage(\"Microsoft.Naming\", \"CA1724:TypeNamesShouldNotMatchNamespaces\")]\n"
+             << scope_tab<< "public "
              << (is_partial
                  ? class_type == "class"
                  ? "partial class"
@@ -317,7 +317,7 @@ struct klass
              << (root ? "Efl.Eo.EoWrapper" : "") // ... or root
              << (inherit_interfaces.empty() ? "" : ", ")
              << (klass_full_concrete_or_interface_name % ", ") // interfaces
-             << "\n{\n"
+             << "\n" << scope_tab << "{\n"
              )
            .generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), inherit_cxt))
            return false;
@@ -359,17 +359,17 @@ struct klass
 
          // Copied from nativeinherit class, used when setting up providers.
          if(!as_generator(
-              scope_tab << "private static IntPtr GetEflClassStatic()\n"
-              << scope_tab << "{\n"
-              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n\n"
+              scope_tab(2) << "private static IntPtr GetEflClassStatic()\n"
+              << scope_tab(2) << "{\n"
+              << scope_tab(2) << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab(2) << "}\n\n"
            ).generate(sink, attributes::unused, inherit_cxt))
            return false;
 
          if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), inherit_cxt)))
            return true;
 
-         if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
+         if(!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 
 
@@ -403,10 +403,10 @@ struct klass
      if(!as_generator
         (lit("#if EFL_BETA\n")
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
-         << "public static class " << name_helpers::klass_concrete_name(cls)
+         << scope_tab << "public static class " << name_helpers::klass_concrete_name(cls)
          << "Extensions {\n"
          << extension_method_stream.str()
-         << "}\n"
+         << scope_tab << "}\n"
          << "#pragma warning restore CS1591\n"
          << "#endif\n")
         .generate(sink, cls.namespaces, context))
@@ -431,7 +431,7 @@ struct klass
          auto inherit_name = name_helpers::klass_inherit_name(cls);
          auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
-         auto const& indent = current_indentation(inative_cxt);
+         auto const& indent = current_indentation(inative_cxt).inc();
          std::string klass_since;
 
          if (!documentation_helpers::generate_since_tag_line(std::back_inserter(klass_since), cls.documentation, indent, context))
@@ -517,7 +517,7 @@ struct klass
            return false;
 
          if (!klass_since.empty())
-             klass_since = static_cast<std::string>(scope_tab) + klass_since;
+             klass_since = static_cast<std::string>(scope_tab(2)) + klass_since;
 
          // Attribute getter of the native 'Efl_Class *' handle (for proper inheritance from additional explicit interfaces)
          if(!as_generator(
@@ -539,7 +539,7 @@ struct klass
                 << indent << scope_tab << "#pragma warning restore CA1707, CS1591, SA1300, SA1600\n\n")
             .generate(sink, implementable_methods, change_indentation(indent.inc(), inative_cxt))) return false;
 
-         if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
+         if(!as_generator(indent << "}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }
      return true;
    }
@@ -554,21 +554,21 @@ struct klass
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
      if(!as_generator(
-                scope_tab << "/// <summary>Pointer to the native class description.</summary>\n"
-                << scope_tab << "public override System.IntPtr NativeClass\n"
-                << scope_tab << "{\n"
-                << scope_tab << scope_tab << "get\n"
-                << scope_tab << scope_tab << "{\n"
-                << scope_tab << scope_tab << scope_tab << "if (((object)this).GetType() == typeof(" << inherit_name << "))\n"
-                << scope_tab << scope_tab << scope_tab << "{\n"
-                << scope_tab << scope_tab << scope_tab << scope_tab << "return GetEflClassStatic();\n"
-                << scope_tab << scope_tab << scope_tab << "}\n"
-                << scope_tab << scope_tab << scope_tab << "else\n"
-                << scope_tab << scope_tab << scope_tab << "{\n"
-                << scope_tab << scope_tab << scope_tab << scope_tab << "return Efl.Eo.ClassRegister.klassFromType[((object)this).GetType()];\n"
-                << scope_tab << scope_tab << scope_tab << "}\n"
-                << scope_tab << scope_tab << "}\n"
-                << scope_tab << "}\n\n"
+                scope_tab(2) << "/// <summary>Pointer to the native class description.</summary>\n"
+                << scope_tab(2) << "public override System.IntPtr NativeClass\n"
+                << scope_tab(2) << "{\n"
+                << scope_tab(2) << scope_tab << "get\n"
+                << scope_tab(2) << scope_tab << "{\n"
+                << scope_tab(2) << scope_tab << scope_tab << "if (((object)this).GetType() == typeof(" << inherit_name << "))\n"
+                << scope_tab(2) << scope_tab << scope_tab << "{\n"
+                << scope_tab(2) << scope_tab << scope_tab << scope_tab << "return GetEflClassStatic();\n"
+                << scope_tab(2) << scope_tab << scope_tab << "}\n"
+                << scope_tab(2) << scope_tab << scope_tab << "else\n"
+                << scope_tab(2) << scope_tab << scope_tab << "{\n"
+                << scope_tab(2) << scope_tab << scope_tab << scope_tab << "return Efl.Eo.ClassRegister.klassFromType[((object)this).GetType()];\n"
+                << scope_tab(2) << scope_tab << scope_tab << "}\n"
+                << scope_tab(2) << scope_tab << "}\n"
+                << scope_tab(2) << "}\n\n"
             ).generate(sink, attributes::unused, context))
          return false;
 
@@ -581,9 +581,9 @@ struct klass
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
      if(!as_generator(
-             scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
+             scope_tab(2) << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
-             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
+             << scope_tab(2) << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
             ).generate(sink, attributes::unused, context))
        return false;
 
@@ -595,40 +595,40 @@ struct klass
      });
 
      std::string klass_since;
-     if (!documentation_helpers::generate_since_tag_line(std::back_inserter(klass_since), cls.documentation, scope_tab, context))
+     if (!documentation_helpers::generate_since_tag_line(std::back_inserter(klass_since), cls.documentation, scope_tab(2), context))
        return false;
 
      // Public (API) constructors
      if (!as_generator(
-                     scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
+                     scope_tab(2) << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                      << klass_since
-                     << scope_tab << "/// </summary>\n"
-                     << scope_tab << "/// <param name=\"parent\">Parent instance.</param>\n"
-                     << *(documentation)
+                     << scope_tab(2) << "/// </summary>\n"
+                     << scope_tab(2) << "/// <param name=\"parent\">Parent instance.</param>\n"
+                     << *(documentation(1))
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
-                     << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null")
+                     << scope_tab(2) << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null")
                      << *(", " << constructor_param ) << ") : "
                      << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
-                     << scope_tab << "{\n"
+                     << scope_tab(2) << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
-                     << scope_tab << scope_tab << "FinishInstantiation();\n"
-                     << scope_tab << "}\n\n"
-                     << scope_tab << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
-                     << scope_tab << "/// Do not call this constructor directly.\n"
+                     << scope_tab(2) << scope_tab << "FinishInstantiation();\n"
+                     << scope_tab(2) << "}\n\n"
+                     << scope_tab(2) << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
+                     << scope_tab(2) << "/// Do not call this constructor directly.\n"
                      << klass_since
-                     << scope_tab << "/// </summary>\n"
-                     << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
-                     << scope_tab << "protected " << inherit_name << "(ConstructingHandle ch) : base(ch)\n"
-                     << scope_tab << "{\n"
-                     << scope_tab << "}\n\n"
-                     << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
-                     << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.\n"
+                     << scope_tab(2) << "/// </summary>\n"
+                     << scope_tab(2) << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
+                     << scope_tab(2) << "protected " << inherit_name << "(ConstructingHandle ch) : base(ch)\n"
+                     << scope_tab(2) << "{\n"
+                     << scope_tab(2) << "}\n\n"
+                     << scope_tab(2) << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
+                     << scope_tab(2) << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.\n"
                      << klass_since
-                     << scope_tab << "/// </summary>\n"
-                     << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-                     << scope_tab << "internal " << inherit_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
-                     << scope_tab << "{\n"
-                     << scope_tab << "}\n\n"
+                     << scope_tab(2) << "/// </summary>\n"
+                     << scope_tab(2) << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
+                     << scope_tab(2) << "internal " << inherit_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
+                     << scope_tab(2) << "{\n"
+                     << scope_tab(2) << "}\n\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
          return false;
 
@@ -638,27 +638,27 @@ struct klass
      if (cls.type == attributes::class_type::abstract_)
      {
          if (!as_generator(
-                scope_tab << "[Efl.Eo.PrivateNativeClass]\n"
-                << scope_tab << "private class " << inherit_name << "Realized : " << inherit_name << "\n"
-                << scope_tab << "{\n"
-                << scope_tab << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.WrappingHandle wh) : base(wh)\n"
-                << scope_tab << scope_tab << "{\n"
-                << scope_tab << scope_tab << "}\n"
-                << scope_tab << "}\n"
+                scope_tab(2) << "[Efl.Eo.PrivateNativeClass]\n"
+                << scope_tab(2) << "private class " << inherit_name << "Realized : " << inherit_name << "\n"
+                << scope_tab(2) << "{\n"
+                << scope_tab(2) << scope_tab << "private " << inherit_name << "Realized(Efl.Eo.WrappingHandle wh) : base(wh)\n"
+                << scope_tab(2) << scope_tab << "{\n"
+                << scope_tab(2) << scope_tab << "}\n"
+                << scope_tab(2) << "}\n"
             ).generate(sink, attributes::unused, context))
            return false;
      }
 
      return as_generator(
-                 scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
-                 << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.\n"
+                 scope_tab(2) << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
+                 << scope_tab(2) << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.\n"
                  << klass_since
-                 << scope_tab << "/// </summary>\n"
-                 << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
-                 << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
-                 << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, Efl.Object parent) : base(baseKlass, parent)\n"
-                 << scope_tab << "{\n"
-                 << scope_tab << "}\n\n"
+                 << scope_tab(2) << "/// </summary>\n"
+                 << scope_tab(2) << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
+                 << scope_tab(2) << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
+                 << scope_tab(2) << "protected " << inherit_name << "(IntPtr baseKlass, Efl.Object parent) : base(baseKlass, parent)\n"
+                 << scope_tab(2) << "{\n"
+                 << scope_tab(2) << "}\n\n"
               ).generate(sink, attributes::unused, context);
    }
 

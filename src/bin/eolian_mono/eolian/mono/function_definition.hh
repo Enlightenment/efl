@@ -207,7 +207,7 @@ struct function_definition_generator
       return false;
 
     if(!as_generator
-       (documentation(1)).generate(sink, f, context))
+       (documentation(2)).generate(sink, f, context))
       return false;
 
     std::string self = "this.NativeHandle";
@@ -220,15 +220,15 @@ struct function_definition_generator
       self = "";
 
     if(!as_generator
-       (scope_tab << eolian_mono::function_scope_get(f) << ((do_super && !f.is_static) ? "virtual " : "") << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab(2) << eolian_mono::function_scope_get(f) << ((do_super && !f.is_static) ? "virtual " : "") << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n"
-        << scope_tab(2) << eolian_mono::function_definition_preamble()
+        << scope_tab(3) << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
         << self
         << ((!f.is_static && (f.parameters.size() > 0)) ? ", " : "")
         << (argument_invocation % ", ") << ");\n"
-        << scope_tab(2) << eolian_mono::function_definition_epilogue()
-        << scope_tab(1) << "}\n\n")
+        << scope_tab(3) << eolian_mono::function_definition_epilogue()
+        << scope_tab(2) << "}\n\n")
        .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters, f, f.c_name, f.parameters, f), context))
       return false;
 
@@ -285,11 +285,11 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+          if (!as_generator(scope_tab(2) << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
-                            << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(\"" << property.name << "\", fac);\n"
-                            << scope_tab << "}\n\n"
+                            << scope_tab(2) << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(\"" << property.name << "\", fac);\n"
+                            << scope_tab(2) << "}\n\n"
                             ).generate(sink, std::make_tuple(prop_type, prop_type), context))
             return false;
         }
@@ -302,12 +302,12 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
+          if (!as_generator(scope_tab(2) << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
-                            << scope_tab << scope_tab << "Contract.Requires(part != null, nameof(part));\n"
-                            << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
-                            << scope_tab << "}\n\n"
+                            << scope_tab(2) << scope_tab << "Contract.Requires(part != null, nameof(part));\n"
+                            << scope_tab(2) << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
+                            << scope_tab(2) << "}\n\n"
                             ).generate(sink, std::make_tuple(prop_type, prop_type), context))
             return false;
         }
@@ -332,19 +332,19 @@ struct property_wrapper_definition_generator
    {
      if (is_interface)
      {
-        if (!as_generator(scope_tab << scope_tab << get_scope <<  "get;\n"
+        if (!as_generator(scope_tab(3) << get_scope <<  "get;\n"
                           ).generate(sink, attributes::unused, context))
           return false;
      }
      else
      {
-        if (!as_generator(scope_tab << scope_tab << get_scope << "get\n"
-                          << scope_tab << scope_tab << "{\n"
-                          << scope_tab << scope_tab(2) << "var i = new "
+        if (!as_generator(scope_tab(2) << scope_tab << get_scope << "get\n"
+                          << scope_tab(2) << scope_tab << "{\n"
+                          << scope_tab(2) << scope_tab(2) << "var i = new "
                           << name_helpers::property_concrete_indexer_name(property) << "();\n"
-                          << scope_tab << scope_tab(2) << "i.Self = this;\n"
-                          << scope_tab << scope_tab(2) << "return i;\n"
-                          << scope_tab << scope_tab << "}\n"
+                          << scope_tab(2) << scope_tab(2) << "i.Self = this;\n"
+                          << scope_tab(2) << scope_tab(2) << "return i;\n"
+                          << scope_tab(2) << scope_tab << "}\n"
                           ).generate(sink, attributes::unused, context))
           return false;
      }
@@ -388,12 +388,12 @@ struct property_wrapper_definition_generator
 
      if (!as_generator
          (
-          scope_tab << scope << "class " << name_helpers::property_concrete_indexer_name(property) << parentship
-          << scope_tab << "{\n"
-          << scope_tab(2) << "public " << class_name << " Self {get; set;}\n"
-          << scope_tab(2) << "public "
-          << type_or_tuple << " this[" << type_or_tuple <<" i]\n"
+          scope_tab(2) << scope << "class " << name_helpers::property_concrete_indexer_name(property) << parentship
           << scope_tab(2) << "{\n"
+          << scope_tab(3) << "public " << class_name << " Self {get; set;}\n"
+          << scope_tab(3) << "public "
+          << type_or_tuple << " this[" << type_or_tuple <<" i]\n"
+          << scope_tab(3) << "{\n"
          ).generate(sink, make_tuple(values, values, keys, keys), context))
        return false;
 
@@ -421,8 +421,8 @@ struct property_wrapper_definition_generator
 
      if (!as_generator
          (
-          scope_tab(2) << "}\n"
-          << scope_tab << "};\n"
+          scope_tab(3) << "}\n"
+          << scope_tab(2) << "};\n"
           ).generate(sink, attributes::unused, context))
        return false;
      return true;
@@ -437,20 +437,20 @@ struct property_wrapper_definition_generator
      using efl::eolian::grammar::counter;
      if (is_interface)
      {
-       if (!as_generator(scope_tab << scope_tab << set_scope <<  "set;\n"
+       if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set;\n"
                          ).generate(sink, attributes::unused, context))
          return false;
      }
      else if (values.size() == 1)
      {
-       if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << "{ " << name_prefix << name_helpers::managed_method_name(*property.setter) + "(" << *(string << ",") << "value); }\n"
+       if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set " << "{ " << name_prefix << name_helpers::managed_method_name(*property.setter) + "(" << *(string << ",") << "value); }\n"
             ).generate(sink, keys, context))
          return false;
      }
      else if (values.size() > 1)
      {
        if (!as_generator(
-            scope_tab << scope_tab << set_scope <<  "set "
+            scope_tab(2) << scope_tab << set_scope <<  "set "
             << ("{ " << name_prefix << name_helpers::managed_method_name(*property.setter) + "(")
             << *(string << ",") << ((" value.Item" << counter(1)) % ", ")
             << "); }\n"
@@ -472,7 +472,7 @@ struct property_wrapper_definition_generator
 
       if (is_interface) // only declaration
       {
-        if (!as_generator(scope_tab << scope_tab << get_scope <<  "get;\n"
+        if (!as_generator(scope_tab(2) << scope_tab << get_scope <<  "get;\n"
                           ).generate(sink, attributes::unused, context))
           return false;
       }
@@ -480,7 +480,7 @@ struct property_wrapper_definition_generator
       if (/*has_getter && */values.size() == 1)
       {
         if (!as_generator
-            (scope_tab << scope_tab << get_scope
+            (scope_tab(2) << scope_tab << get_scope
              << "get " << "{ return " << name_prefix << name_helpers::managed_method_name(*property.getter)
              << "(" << (string % ",") << "); }\n"
             ).generate(sink, keys, context))
@@ -489,16 +489,16 @@ struct property_wrapper_definition_generator
       else if (/*has_getter && */values.size() > 1)
       {
         if (!as_generator
-                 (scope_tab << scope_tab << get_scope << "get "
+                 (scope_tab(2) << scope_tab << get_scope << "get "
                   << "{\n"
                   << *attribute_reorder<1, -1, 1>
-                    (scope_tab(3) << type(true) << " _out_"
+                    (scope_tab(4) << type(true) << " _out_"
                      << argument(false) << " = default(" << type(true) << ");\n"
                     )
-                  << scope_tab(3) << name_prefix << name_helpers::managed_method_name(*property.getter)
+                  << scope_tab(4) << name_prefix << name_helpers::managed_method_name(*property.getter)
                   << "(" << *(string << ",") << (("out _out_" << argument(false)) % ", ") << ");\n"
-                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
-                  << scope_tab(2) << "}" << "\n"
+                  << scope_tab(4) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
+                  << scope_tab(3) << "}" << "\n"
                  ).generate(sink, std::make_tuple(values, keys, values, values), context))
           return false;
       }
@@ -716,8 +716,8 @@ struct property_wrapper_definition_generator
       if (generated_values.size() == 1)
       {
         if (!as_generator(
-                    documentation(1)
-                    << scope_tab << scope << (is_static ? "static " : virtual_mod) << type(true) << " " << managed_name << " {\n"
+                    documentation(2)
+                    << scope_tab(2) << scope << (is_static ? "static " : virtual_mod) << type(true) << " " << managed_name << " {\n"
               ).generate(sink, std::make_tuple(property, generated_values[0].type), context))
           return false;
       }
@@ -725,8 +725,8 @@ struct property_wrapper_definition_generator
       {
         if (!as_generator
             (
-             documentation(1)
-             << scope_tab << scope << (is_static ? "static (" : "(")
+             documentation(2)
+             << scope_tab(2) << scope << (is_static ? "static (" : "(")
              << (attribute_reorder<1, -1>(type(true) /*<< " " << argument*/) % ", ") << ") "
              << managed_name << " {\n"
             ).generate(sink, std::make_tuple(property, generated_values), context))
@@ -746,7 +746,7 @@ struct property_wrapper_definition_generator
           generate_set (sink, property, context, set_scope, empty_keys, values, is_interface);
       }
 
-      if (!as_generator(scope_tab << "}\n\n").generate(sink, attributes::unused, context))
+      if (!as_generator(scope_tab(2) << "}\n\n").generate(sink, attributes::unused, context))
         return false;
 
       return true;
@@ -783,9 +783,9 @@ struct interface_property_indexer_definition_generator
       std::string managed_name = name_helpers::property_managed_name(property);
 
       if (!as_generator
-           ("public interface " << name_helpers::property_interface_indexer_short_name(property, *implementing_klass) << "\n"
-           << "{\n"
-           << "}\n"
+           (scope_tab << "public interface " << name_helpers::property_interface_indexer_short_name(property, *implementing_klass) << "\n"
+           << scope_tab << "{\n"
+           << scope_tab << "}\n"
            ).generate (sink, attributes::unused, context))
         return false;
 

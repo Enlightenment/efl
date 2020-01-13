@@ -49,10 +49,11 @@ struct enum_definition_generator
 
      if(!as_generator
         (
-         documentation
-         << flags_attribute
-         << "[Efl.Eo.BindingEntity]\n"
-         "public enum " << enum_name << "\n{\n"
+         documentation(1)
+         << scope_tab << flags_attribute << "\n"
+         << scope_tab << "[Efl.Eo.BindingEntity]\n"
+         << scope_tab << "public enum " << enum_name << "\n"
+         << scope_tab << "{\n"
          )
         .generate(sink, enum_, context))
        return false;
@@ -65,13 +66,14 @@ struct enum_definition_generator
           auto literal = (*first).value.literal;
           if (!as_generator
               (
-               documentation << string << " = " << string << ",\n"
+               documentation(2)
+               << scope_tab(2) << string << " = " << string << ",\n"
               )
               .generate(sink, std::make_tuple(*first, name, literal), context))
             return false;
        }
 
-     if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, context)) return false;
 
      if(!name_helpers::close_namespaces(sink, enum_.namespaces, context))
        return false;
