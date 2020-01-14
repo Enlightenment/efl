@@ -15,7 +15,6 @@
 
 #include "elm_entry_common.h"
 #include "elm_widget_entry.h"
-#include "elm_hoversel_eo.h"
 #include "efl_ui_text_part.eo.h"
 #include "elm_part_helper.h"
 #include "efl_canvas_textblock_internal.h"
@@ -32,7 +31,8 @@ struct _Efl_Ui_Textbox_Data
 {
    Evas_Object                          *hit_rect, *entry_edje;
 
-   Evas_Object                          *hoversel;
+   Eo                                   *popup;
+   Eo                                   *popup_list;
    Eo                                   *text_obj;
    Eo                                   *text_guide_obj;
    Eo                                   *text_table;
@@ -59,7 +59,6 @@ struct _Efl_Ui_Textbox_Data
    Eina_List                            *sel;
    Efl_Canvas_Textblock_Factory              *item_factory;
    Efl_Canvas_Textblock_Factory              *item_fallback_factory;
-   Ecore_Job                            *hov_deljob;
    Mod_Api                              *api; // module api if supplied
    int                                   cursor_pos;
    Elm_Scroller_Policy                   policy_h, policy_v;
@@ -841,7 +840,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
 
         if (_elm_config->selection_clear_enable)
           {
-             if ((efl_text_interactive_have_selection_get(obj)) && (!sd->hoversel))
+             if ((efl_text_interactive_have_selection_get(obj)) && (!sd->popup))
                {
                   sd->sel_mode = EINA_FALSE;
                   efl_ui_widget_scroll_hold_pop(obj);
@@ -882,7 +881,7 @@ _efl_ui_textbox_efl_ui_widget_interest_region_get(const Eo *obj EINA_UNUSED, Efl
 }
 
 static void
-_hoversel_position(Evas_Object *obj)
+_popup_position(Evas_Object *obj)
 {
    Evas_Coord cx, cy, cw, ch, x, y, mw, mh, w, h;
 
@@ -902,74 +901,12 @@ _hoversel_position(Evas_Object *obj)
      edje_object_part_text_cursor_geometry_get
        (sd->entry_edje, "efl.text", &cx, &cy, &cw, &ch);
 
-   evas_object_size_hint_min_get(sd->hoversel, &mw, &mh);
+   evas_object_size_hint_min_get(sd->popup, &mw, &mh);
    if (cx + mw > w)
      cx = w - mw;
    if (cy + mh > h)
      cy = h - mh;
-   evas_object_geometry_set(sd->hoversel, x + cx, y + cy, mw, mh);
-}
-
-static void
-_hover_del_job(void *data)
-{
-   EFL_UI_TEXT_DATA_GET(data, sd);
-
-   ELM_SAFE_FREE(sd->hoversel, evas_object_del);
-   sd->hov_deljob = NULL;
-}
-
-static void
-_hover_dismissed_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   EFL_UI_TEXT_DATA_GET(data, sd);
-
-   sd->use_down = 0;
-   if (sd->hoversel) evas_object_hide(sd->hoversel);
-   if (sd->sel_mode)
-     {
-        if (!_elm_config->desktop_entry)
-          {
-             if (!efl_text_password_get(data))
-               edje_object_part_text_select_allow_set
-                 (sd->entry_edje, "efl.text", EINA_TRUE);
-          }
-     }
-   efl_ui_widget_scroll_freeze_pop(data);
-   ecore_job_del(sd->hov_deljob);
-   sd->hov_deljob = ecore_job_add(_hover_del_job, data);
-}
-
-static void
-_hover_selected_cb(void *data,
-                   Evas_Object *obj EINA_UNUSED,
-                   void *event_info EINA_UNUSED)
-{
-   EFL_UI_TEXT_DATA_GET(data, sd);
-
-   if (!efl_text_interactive_selection_allowed_get(obj)) return;
-
-   sd->sel_mode = EINA_TRUE;
-   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
-
-   if (!_elm_config->desktop_entry)
-     {
-        if (!efl_text_password_get(data))
-          edje_object_part_text_select_allow_set
-            (sd->entry_edje, "efl.text", EINA_TRUE);
-     }
-   efl_layout_signal_emit(sd->entry_edje, "efl,state,select,on", "efl");
-
-   if (!_elm_config->desktop_entry)
-     efl_ui_widget_scroll_hold_push(data);
-}
-
-static void
-_hoversel_item_paste_cb(void *data,
-          Evas_Object *obj EINA_UNUSED,
-          void *event_info EINA_UNUSED)
-{
-   efl_ui_textbox_selection_paste(data);
+   evas_object_geometry_set(sd->popup, x + cx, y + cy, mw, mh);
 }
 
 static Eina_Value
@@ -1053,43 +990,63 @@ end:
 }
 
 static void
-_hoversel_item_cut_cb(void *data,
-        Evas_Object *obj EINA_UNUSED,
-        void *event_info EINA_UNUSED)
+_popup_dismiss( Efl_Ui_Textbox_Data *sd)
 {
+   efl_del(sd->popup_list);
+   efl_del(sd->popup);
+   sd->popup = NULL;
+   sd->popup_list = NULL;
+}
+
+static void
+_backwall_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   EFL_UI_TEXT_DATA_GET(data, sd);
+   _popup_dismiss(sd);
+}
+
+static void
+_popup_item_cut_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   EFL_UI_TEXT_DATA_GET(data, sd);
    efl_ui_textbox_selection_cut(data);
+   _popup_dismiss(sd);
 }
 
 static void
-_hoversel_item_copy_cb(void *data,
-         Evas_Object *obj EINA_UNUSED,
-         void *event_info EINA_UNUSED)
+_popup_item_copy_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
+   EFL_UI_TEXT_DATA_GET(data, sd);
    efl_ui_textbox_selection_copy(data);
+   _popup_dismiss(sd);
 }
 
 static void
-_hover_cancel_cb(void *data,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+_popup_item_cancel_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
 
-   sd->sel_mode = EINA_FALSE;
-   if (!_elm_config->desktop_entry)
-     edje_object_part_text_select_allow_set
-       (sd->entry_edje, "efl.text", EINA_FALSE);
-   efl_layout_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
+   if (!efl_text_interactive_selection_allowed_get(data)) return;
+
    if (!_elm_config->desktop_entry)
      efl_ui_widget_scroll_hold_pop(data);
-   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
+
+   sd->sel_mode = EINA_FALSE;
+   efl_text_interactive_all_unselect(data);
+   _popup_dismiss(sd);
+}
+
+static void
+_popup_item_paste_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   EFL_UI_TEXT_DATA_GET(data, sd);
+   efl_ui_textbox_selection_paste(data);
+   _popup_dismiss(sd);
 }
 
 static void
 _menu_call(Evas_Object *obj)
 {
-   Evas_Object *top;
-
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if (sd->anchor_hover.hover) return;
@@ -1102,7 +1059,6 @@ _menu_call(Evas_Object *obj)
      }
    else if (sd->context_menu_enabled)
      {
-        const char *context_menu_orientation;
         Eina_Bool ownersel;
 
         ownersel = elm_selection_selection_has_owner(obj);
@@ -1110,83 +1066,90 @@ _menu_call(Evas_Object *obj)
         if (efl_text_interactive_have_selection_get(obj) && efl_text_password_get(obj)) return;
         if (_elm_config->desktop_entry && (!efl_text_interactive_have_selection_get(obj)) && ((!efl_text_interactive_editable_get(obj)) || (!ownersel)))
         return;
-        if (sd->hoversel) evas_object_del(sd->hoversel);
+        if (sd->popup) _popup_dismiss(sd);
         else efl_ui_widget_scroll_freeze_push(obj);
 
-        sd->hoversel = elm_hoversel_add(obj);
-        context_menu_orientation = efl_layout_group_data_get
-            (sd->entry_edje, "context_menu_orientation");
+        sd->popup = efl_add(EFL_UI_POPUP_CLASS, obj);
 
-        if ((context_menu_orientation) &&
-            (!strcmp(context_menu_orientation, "horizontal")))
-          elm_hoversel_horizontal_set(sd->hoversel, EINA_TRUE);
+        sd->popup_list = efl_add(EFL_UI_LIST_CLASS, sd->popup);
+        efl_content_set(sd->popup, sd->popup_list);
+        efl_gfx_hint_align_set(sd->popup_list, 1.0, 1.0);
+        efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
 
-        elm_object_style_set(sd->hoversel, "entry");
-        efl_ui_widget_sub_object_add(obj, sd->hoversel);
-        elm_object_text_set(sd->hoversel, "Text");
-        top = elm_widget_top_get(obj);
+        efl_ui_widget_sub_object_add(obj, sd->popup);
+        efl_ui_popup_anchor_set(sd->popup, obj);
+        efl_event_callback_add(sd->popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED, _backwall_clicked, obj);
 
-        if (top) elm_hoversel_hover_parent_set(sd->hoversel, top);
-
-        efl_event_callback_add
-          (sd->hoversel, ELM_HOVERSEL_EVENT_DISMISSED, _hover_dismissed_cb, obj);
         if (efl_text_interactive_have_selection_get(obj))
           {
              if (!efl_text_password_get(obj))
                {
                   if (efl_text_interactive_editable_get(obj))
-                    elm_hoversel_item_add
-                       (sd->hoversel, E_("Cut"), NULL, ELM_ICON_NONE,
-                        _hoversel_item_cut_cb, obj);
-                  elm_hoversel_item_add
-                     (sd->hoversel, E_("Copy"), NULL, ELM_ICON_NONE,
-                      _hoversel_item_copy_cb, obj);
-                  if (efl_text_interactive_editable_get(obj) && ownersel)
-                    elm_hoversel_item_add
-                       (sd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
-                        _hoversel_item_paste_cb, obj);
-                  elm_hoversel_item_add
-                    (sd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
-                    _hover_cancel_cb, obj);
+                    {
+                       Eo *il = NULL;
+                       il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, sd->popup_list);
+                       efl_text_set(il, E_("Cut"));
+                       efl_gfx_hint_align_set(il, 1.0, 1.0);
+                       efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
+                       efl_pack_end(sd->popup_list, il);
+                       efl_event_callback_add(il, EFL_UI_EVENT_SELECTED_CHANGED, _popup_item_cut_cb, obj);
+
+                       il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, sd->popup_list);
+                       efl_text_set(il, E_("Copy"));
+                       efl_gfx_hint_align_set(il, 1.0, 1.0);
+                       efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
+                       efl_pack_end(sd->popup_list, il);
+                       efl_event_callback_add(il, EFL_UI_EVENT_SELECTED_CHANGED, _popup_item_copy_cb, obj);
+
+                       il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, sd->popup_list);
+                       efl_text_set(il, E_("Paste"));
+                       efl_gfx_hint_align_set(il, 1.0, 1.0);
+                       efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
+                       efl_pack_end(sd->popup_list, il);
+                       efl_event_callback_add(il, EFL_UI_EVENT_SELECTED_CHANGED, _popup_item_paste_cb, obj);
+
+                       il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, sd->popup_list);
+                       efl_text_set(il, E_("Cancel"));
+                       efl_gfx_hint_align_set(il, 1.0, 1.0);
+                       efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
+                       efl_pack_end(sd->popup_list, il);
+                       efl_event_callback_add(il, EFL_UI_EVENT_SELECTED_CHANGED, _popup_item_cancel_cb, obj);
+                    }
                }
           }
         else
           {
              if (!sd->sel_mode)
                {
-                  if (efl_text_interactive_selection_allowed_get(obj) && !_elm_config->desktop_entry)
-                    {
-                       if (!efl_text_password_get(obj))
-                         elm_hoversel_item_add
-                           (sd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
-                           _hover_selected_cb, obj);
-                    }
                   if (ownersel)
                     {
                        if (efl_text_interactive_editable_get(obj))
-                         elm_hoversel_item_add
-                           (sd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
-                           _hoversel_item_paste_cb, obj);
+                         {
+                            Eo *il = NULL;
+                            il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, sd->popup_list);
+                            efl_text_set(il, E_("Paste"));
+                            efl_gfx_hint_align_set(il, 1.0, 1.0);
+                            efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
+                            efl_pack_end(sd->popup_list, il);
+                            efl_event_callback_add(il, EFL_UI_EVENT_SELECTED_CHANGED, _popup_item_paste_cb, obj);
+                         }
                     }
                }
              else
-               elm_hoversel_item_add
-                  (sd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
-                   _hover_cancel_cb, obj);
+               {
+                  Eo *il = NULL;
+                  il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, sd->popup_list);
+                  efl_text_set(il, E_("Cancel"));
+                  efl_gfx_hint_align_set(il, 1.0, 1.0);
+                  efl_gfx_hint_weight_set(sd->popup_list, 1.0, 1.0);
+                  efl_pack_end(sd->popup_list, il);
+                  efl_event_callback_add(il, EFL_UI_EVENT_SELECTED_CHANGED, _popup_item_cancel_cb, obj);
+               }
           }
 
-        if (sd->hoversel)
+        if (sd->popup)
           {
-             _hoversel_position(obj);
-             evas_object_show(sd->hoversel);
-             elm_hoversel_hover_begin(sd->hoversel);
-          }
-
-        if (!_elm_config->desktop_entry)
-          {
-             edje_object_part_text_select_allow_set
-               (sd->entry_edje, "efl.text", EINA_FALSE);
-             edje_object_part_text_select_abort(sd->entry_edje, "efl.text");
+             _popup_position(obj);
           }
      }
 }
@@ -1672,7 +1635,7 @@ _efl_ui_textbox_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Ei
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    efl_gfx_entity_position_set(sd->hit_rect, pos);
 
-   if (sd->hoversel) _hoversel_position(obj);
+   if (sd->popup) _popup_position(obj);
 }
 
 EOLIAN static void
@@ -1973,7 +1936,7 @@ _efl_ui_textbox_efl_object_destructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    eina_stringshare_del(sd->file);
 
-   ecore_job_del(sd->hov_deljob);
+   _popup_dismiss(sd);
    if ((sd->api) && (sd->api->obj_unhook))
      sd->api->obj_unhook(obj);  // module - unhook
 
