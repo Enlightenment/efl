@@ -4865,6 +4865,20 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
    _edje_entry_real_part_configure(ed, rp);
 }
 
+static int
+_sort_cb(const void *a1, const void *a2)
+{
+   Ecore_IMF_Preedit_Attr *attr1 = (Ecore_IMF_Preedit_Attr *)a1;
+   Ecore_IMF_Preedit_Attr *attr2 = (Ecore_IMF_Preedit_Attr *)a2;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attr1, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attr2, 0);
+
+   if (attr1->start_index < attr2->start_index) return -1;
+   else if (attr1->start_index == attr2->start_index) return 0;
+   else return 1;
+}
+
 static void
 _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -4927,10 +4941,11 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
         buf = eina_strbuf_new();
         if (attrs)
           {
+             attrs = eina_list_sort(attrs, 0, EINA_COMPARE_CB(_sort_cb));
+
              EINA_LIST_FOREACH(attrs, l, attr)
                {
-                  if (attr->preedit_type < preedit_type_size &&
-                      tagname[attr->preedit_type])
+                  if (attr->preedit_type < preedit_type_size)
                     {
                        preedit_attr_str = eina_strbuf_new();
                        if (preedit_attr_str)
@@ -4940,7 +4955,10 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
 
                             if (markup_txt)
                               {
-                                 eina_strbuf_append_printf(buf, "<%s>%s</%s>", tagname[attr->preedit_type], markup_txt, tagname[attr->preedit_type]);
+                                 if (tagname[attr->preedit_type])
+                                   eina_strbuf_append_printf(buf, "<%s>%s</%s>", tagname[attr->preedit_type], markup_txt, tagname[attr->preedit_type]);
+                                 else
+                                   eina_strbuf_append_printf(buf, "%s", markup_txt);
                                  free(markup_txt);
                               }
                             eina_strbuf_free(preedit_attr_str);
