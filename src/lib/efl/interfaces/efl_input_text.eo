@@ -15,15 +15,9 @@ enum @beta Efl.Input_Text.Panel_Layout_Type
    hex,         [[Hexadecimal layout.]]
    terminal,    [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization).]]
    password,    [[Like normal, but no auto-correct, no auto-capitalization etc.]]
-   datetime,    [[Date and time layout
-
-                  @since 1.8]]
-   emoticon,    [[Emoticon layout
-
-                  @since 1.10]]
-   voice        [[Voice layout, but if the IME does not support voice layout, then normal layout will be shown.
-
-                  @since 1.19]]
+   datetime,    [[Date and time layout.]]
+   emoticon,    [[Emoticon layout.]]
+   voice        [[Voice layout, but if the IME does not support voice layout, then normal layout will be shown.]]
 }
 
 enum @beta Efl.Input_Text.Panel_Language_Type
@@ -57,9 +51,7 @@ enum @beta Efl.Input_Text.Panel_Return_Key_Type
    next,    [[Next.]]
    search,  [[Search string or magnifier icon.]]
    send,    [[Send.]]
-   signin   [[Sign-in
-
-              @since 1.8]]
+   signin   [[Sign-in.]]
 }
 
 enum @beta Efl.Input_Text.Panel_Return_Key_State
@@ -75,53 +67,48 @@ enum @beta Efl.Input_Text.Panel_Return_Key_State
 
 enum @beta Efl.Input_Text.Hints_Type
 {
-   [[Enumeration that defines the types of Input Hints.
-
-     @since 1.12
-   ]]
-   none                = 0,        [[No active hints
-
-                                     @since 1.12]]
-   auto_complete       = 1 << 0,   [[Suggest word auto completion
-
-                                     @since 1.12]]
-   sensitive_data      = 1 << 1,   [[Typed text should not be stored.
-
-                                     @since 1.12]]
-   autofill_credit_card_expiration_date   = 0x100, [[ Autofill hint for a credit card expiration date
-
-                                                      @since 1.21]]
-   autofill_credit_card_expiration_day    = 0x200, [[Autofill hint for a credit card expiration day
-
-                                                     @since 1.21]]
-   autofill_credit_card_expiration_month  = 0x300, [[ Autofill hint for a credit card expiration month
-
-                                                      @since 1.21]]
-   autofill_credit_card_expiration_year   = 0x400, [[ Autofill hint for a credit card expiration year
-
-                                                      @since 1.21]]
-   autofill_credit_card_number            = 0x500, [[ Autofill hint for a credit card number
-
-                                                      @since 1.21]]
-   autofill_email_address                 = 0x600, [[ Autofill hint for an email address
-
-                                                      @since 1.21]]
-   autofill_name                          = 0x700, [[ Autofill hint for a user's real name
-
-                                                      @since 1.21]]
-   autofill_phone                         = 0x800, [[ Autofill hint for a phone number
-
-                                                      @since 1.21]]
-   autofill_postal_address                = 0x900, [[ Autofill hint for a postal address
-
-                                                      @since 1.21]]
-   autofill_postal_code                   = 0xA00, [[ Autofill hint for a postal code
-
-                                                      @since 1.21]]
-   autofill_id                            = 0xB00  [[ Autofill hint for a user's ID
-
-                                                      @since 1.21]]
+   [[Enumeration that defines the types of Input Hints.]]
+   none                = 0,        [[No active hints.]]
+   auto_complete       = 1 << 0,   [[Suggest word auto completion.]]
+   sensitive_data      = 1 << 1,   [[Typed text should not be stored.]]
+   autofill_credit_card_expiration_date   = 0x100, [[ Autofill hint for a credit card expiration date.]]
+   autofill_credit_card_expiration_day    = 0x200, [[Autofill hint for a credit card expiration day.]]
+   autofill_credit_card_expiration_month  = 0x300, [[ Autofill hint for a credit card expiration month.]]
+   autofill_credit_card_expiration_year   = 0x400, [[ Autofill hint for a credit card expiration year.]]
+   autofill_credit_card_number            = 0x500, [[ Autofill hint for a credit card number.]]
+   autofill_email_address                 = 0x600, [[ Autofill hint for an email address.]]
+   autofill_name                          = 0x700, [[ Autofill hint for a user's real name.]]
+   autofill_phone                         = 0x800, [[ Autofill hint for a phone number.]]
+   autofill_postal_address                = 0x900, [[ Autofill hint for a postal address.]]
+   autofill_postal_code                   = 0xA00, [[ Autofill hint for a postal code.]]
+   autofill_id                            = 0xB00  [[ Autofill hint for a user's ID.]]
 }
+
+enum @beta Efl.Input_Text.Panel_Layout_Normal_Variation_Type
+{
+   [[Enumeration for defining the types of @Efl.Input_Text.Panel_Layout_Type for normal variation.]]
+   normal          , [[The plain normal layout.]]
+   filename        , [[Filename layout. Symbols such as '/' should be disabled.]]
+   person_name     , [[The name of a person, @Efl.Input_Text.autocapitalization will be set to @Efl.Input_Text.Capitalize_Type.word.]]
+}
+
+enum @beta Efl.Input_Text.Panel_Layout_Numberonly_Variation_Type
+{
+   [[Enumeration for defining the types of @Efl.Input_Text.Panel_Layout_Type for normal variation.]]
+   normal             , [[The plain normal number layout.]]
+   signed             , [[The number layout to allow a positive or negative sign at the start.]]
+   decimal            , [[The number layout to allow decimal point to provide fractional value.]]
+   signed_and_decimal , [[The number layout to allow decimal point and negative sign.]]
+}
+
+enum @beta Efl.Input_Text.Panel_Layout_Password_Variation_Type
+{
+   [[Enumeration for defining the types of @Efl.Input_Text.Panel_Layout_Type for normal variation.]]
+   normal          , [[The normal password layout.]]
+   numberonly      , [[The password layout to allow only number.]]
+}
+
+
 
 interface @beta Efl.Input_Text {
    [[All the functionality relating to input hints
@@ -154,9 +141,10 @@ interface @beta Efl.Input_Text {
          }
       }
 
-      // FIXME: What is this?
       @property input_panel_layout_variation {
-         [[The input panel layout variation of the entry.]]
+         [[The input panel layout variation of the entry, this can be
+           @Efl.Input_Text.Panel_Layout_Normal_Variation_Type , @Efl.Input_Text.Panel_Layout_Numberonly_Variation_Type
+           or @Efl.Input_Text.Panel_Layout_Password_Variation_Type.]]
          set {
          }
          get {

@@ -2067,6 +2067,10 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_variation_se
 #else
    (void)variation;
 #endif
+
+   if (sd->input_panel_layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_NORMAL &&
+       variation == EFL_INPUT_TEXT_PANEL_LAYOUT_NORMAL_VARIATION_TYPE_PERSON_NAME)
+     efl_input_text_autocapitalization_set(obj, EFL_INPUT_TEXT_CAPITALIZE_TYPE_WORD);
 }
 
 EOLIAN static int
