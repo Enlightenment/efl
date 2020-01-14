@@ -198,10 +198,10 @@ public abstract class Application
     {
         Init(components);
         Efl.App app = Efl.App.AppMain;
+#if EFL_BETA
         var command_line = new List<Eina.Stringshare>();
         //command_line.Add(List.ConvertAll(Environment.GetCommandLineArgs(), s => (Eina.Stringshare)s));
         //command_line.AddRange(Environment.GetCommandLineArgs());
-#if EFL_BETA
         app.SetCommandArray(command_line);
 #endif
         app.ArgumentsEvent += (object sender, LoopArgumentsEventArgs evt) =>
