@@ -875,33 +875,107 @@ internal static class Globals
         return ret;
     }
 
-    internal static IEnumerable<T> ListToIEnumerable<T>(IntPtr list)
+    internal static IList<T> NativeListToIList<T>(IntPtr nativeList)
     {
-        if (list == IntPtr.Zero)
-            throw new ArgumentException("list is null", nameof(list));
+        if (nativeList == IntPtr.Zero)
+            throw new ArgumentException("nativeList is null", nameof(nativeList));
 
         IntPtr l;
-
-        for (l = list; l != IntPtr.Zero; l = Eina.ListNativeFunctions.eina_list_next_custom_export_mono(l))
+        List<T> list = new List<T>();
+        for (l = nativeList; l != IntPtr.Zero; l = Eina.ListNativeFunctions.eina_list_next_custom_export_mono(l))
         {
-            yield return Eina.TraitFunctions.NativeToManaged<T>(Eina.ListNativeFunctions.eina_list_data_get_custom_export_mono(l));
+            list.Add(Eina.TraitFunctions.NativeToManaged<T>(Eina.ListNativeFunctions.eina_list_data_get_custom_export_mono(l)));
         }
+        return list;
     }
 
-    internal static IntPtr IEnumerableToList<T>(IEnumerable<T> enumerable)
+    internal static IntPtr IListToNativeList<T>(IList<T> list, bool isMoved)
     {
-        if (enumerable == null)
-            throw new ArgumentException("enumerable is null", nameof(enumerable));
+        if (list == null)
+            throw new ArgumentException("list is null", nameof(list));
 
-        IntPtr list = IntPtr.Zero;
-        foreach (T data in enumerable)
+        // If we are a wrapper around an existing Eina.List, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedList = list as Eina.List<T>;
+
+        if (wrappedList != null && !isMoved)
         {
-            list = Eina.ListNativeFunctions.eina_list_append(list, Eina.TraitFunctions.ManagedToNativeAlloc(data));
+            return wrappedList.Handle;
         }
+
+        IntPtr nativeList = IntPtr.Zero;
+        foreach (T data in list)
+        {
+            nativeList = Eina.ListNativeFunctions.eina_list_append(nativeList, Eina.TraitFunctions.ManagedToNativeAlloc(data)); //FIXME: need to free
+        }
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return nativeList;
+    }
+
+    internal static IList<T> NativeArrayToIList<T>(IntPtr nativeArray)
+    {
+        if (nativeArray == IntPtr.Zero)
+            throw new ArgumentException("nativeArray is null", nameof(nativeArray));
+
+        List<T> list = new List<T>();
+        UpdateListFromNativeArray(list, nativeArray);
+
         // FIXME need to free `list` if the returned list is not @moved
         return list;
     }
 
+    internal static IntPtr IListToNativeArray<T>(IList<T> list, bool isMoved)
+    {
+        if (list == null)
+            throw new ArgumentException("list is null", nameof(list));
+
+        // If we are a wrapper around an existing Eina.Array, we can just forward
+        // it and avoid unnecessary copying in non-owning transfers.
+        var wrappedArray = list as Eina.Array<T>;
+
+        if (wrappedArray != null && !isMoved)
+        {
+            return wrappedArray.Handle;
+        }
+
+        IntPtr nativeArray = Eina.ArrayNativeFunctions.eina_array_new(4);
+        foreach (T data in list)
+        {
+            Eina.ArrayNativeFunctions.eina_array_push_custom_export_mono(nativeArray, Eina.TraitFunctions.ManagedToNativeAlloc(data)); //FIXME: need to free
+        }
+
+        if (!isMoved)
+        {
+            // FIXME Need to free ret and unpin pinnedArray in the future.
+        }
+
+        return nativeArray;
+    }
+
+    internal static void UpdateListFromNativeArray<T>(IList<T> list, IntPtr nativeArray)
+    {
+        // Do not update if list Handle is same to nativeArray. They already updated in native code.
+        var wrappedArray = list as Eina.Array<T>;
+        if (wrappedArray != null && wrappedArray.Handle == nativeArray)
+            return;
+
+        list.Clear();
+        if (nativeArray == IntPtr.Zero)
+        {
+            return;
+        }
+
+        uint count = Eina.ArrayNativeFunctions.eina_array_count_custom_export_mono(nativeArray);
+        for (uint i = 0; i < count; i++)
+        {
+            list.Add(Eina.TraitFunctions.NativeToManaged<T>(Eina.ArrayNativeFunctions.eina_array_data_get_custom_export_mono(nativeArray, i)));
+        }
+    }
 
 } // Globals
 

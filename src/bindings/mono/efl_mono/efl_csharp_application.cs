@@ -198,7 +198,7 @@ public abstract class Application
     {
         Init(components);
         Efl.App app = Efl.App.AppMain;
-        var command_line = new Eina.Array<Eina.Stringshare>();
+        var command_line = new List<Eina.Stringshare>();
         //command_line.Add(List.ConvertAll(Environment.GetCommandLineArgs(), s => (Eina.Stringshare)s));
         //command_line.AddRange(Environment.GetCommandLineArgs());
 #if EFL_BETA
@@ -234,7 +234,6 @@ public abstract class Application
             OnTerminate();
         };
         app.Begin();
-        command_line.Dispose();
         Shutdown();
     }
 }

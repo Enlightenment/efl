@@ -16,6 +16,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 using Eina;
 using static EinaTestData.BaseData;
@@ -139,21 +140,21 @@ internal class StructHelpers
         var complex = new Dummy.StructComplex();
 
         complex.Farray = new Eina.Array<string>();
-        complex.Farray.Push("0x0");
-        complex.Farray.Push("0x2A");
-        complex.Farray.Push("0x42");
+        complex.Farray.Add("0x0");
+        complex.Farray.Add("0x2A");
+        complex.Farray.Add("0x42");
 
         complex.Flist = new Eina.List<string>();
-        complex.Flist.Append("0x0");
-        complex.Flist.Append("0x2A");
-        complex.Flist.Append("0x42");
+        complex.Flist.Add("0x0");
+        complex.Flist.Add("0x2A");
+        complex.Flist.Add("0x42");
 
         complex.Fhash = new Eina.Hash<string, string>();
         complex.Fhash["aa"] = "aaa";
         complex.Fhash["bb"] = "bbb";
         complex.Fhash["cc"] = "ccc";
 
-        complex.Fiterator = complex.Farray.GetIterator();
+        complex.Fiterator = ((Eina.Array<string>)complex.Farray).GetIterator();
 
         complex.Fany_value = new Eina.Value(Eina.ValueType.Double);
         complex.Fany_value.Set(-9007199254740992.0);

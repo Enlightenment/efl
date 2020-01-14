@@ -368,13 +368,13 @@ struct visitor_generate
         {"list", nullptr, nullptr, [&]
          {
            complex_type_def c = complex;
-           c.outer.base_type = "Eina.List";
+           c.outer.base_type = "IList";
            return c;
          }}
         , {"array", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
-           c.outer.base_type = "Eina.Array";
+           c.outer.base_type = "IList";
            return c;
          }}
         , {"hash", nullptr, nullptr
