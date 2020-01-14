@@ -31,7 +31,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
             enabled: bool; [[$true to enable the contextual menu.]]
          }
       }
-      @property cnp_mode {
+      @property cnp_mode @beta {
          /* FIXME: Efl.Ui.Selection_Format does not allow markup without images! */
          [[Control pasting of text and images for the widget.
 
@@ -59,7 +59,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          }
       }
 
-      @property item_factory {
+      @property item_factory @beta {
          [[The factory that provides item in the text e.g.
            "emoticon/happy" or "href=file://image.jpg" etc.
          ]]
