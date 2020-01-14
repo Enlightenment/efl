@@ -405,10 +405,11 @@ static void
 _spin_value(Efl_Ui_Spin *obj, Eina_Bool inc)
 {
    Efl_Ui_Spin_Button_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_BUTTON_CLASS);
+   double val = efl_ui_range_value_get(obj);
+   double step = inc ? pd->step : -pd->step;
 
-   double absolut_value = efl_ui_range_value_get(obj) + (inc ? pd->step : -pd->step);
-
-   _value_set(obj, absolut_value);
+   /* clamp to step before setting new value */
+   _value_set(obj, round((val + step) / step) * step);
 }
 
 static void

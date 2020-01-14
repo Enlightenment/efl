@@ -71,6 +71,10 @@ _field_value_update(Eo *obj)
              efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR]);
           }
      }
+   else
+     {
+        efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR]);
+     }
 
    efl_ui_range_value_set(pd->min, pd->cur_time[TIMEPICKER_MIN]);
 
@@ -112,12 +116,6 @@ _field_changed_cb(void *data, const Efl_Event *ev)
 static void
 _fields_init(Eo *obj)
 {
-   const char *fmt;
-   char ch;
-   int i;
-   int field = 0;
-   char buf[FMT_LEN_MAX];
-
    Efl_Ui_Timepicker_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
    //Field create.
@@ -147,6 +145,25 @@ _fields_init(Eo *obj)
 
    _field_value_update(obj);
 
+}
+
+
+EOLIAN static Eina_Error
+_efl_ui_timepicker_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Timepicker_Data *pd)
+{
+   const char *fmt;
+   char ch;
+   int i;
+   char buf[FMT_LEN_MAX];
+   int field = 0;
+   Eina_Error ret = EFL_UI_THEME_APPLY_ERROR_NONE;
+
+   ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
+
+   if (ret != EFL_UI_THEME_APPLY_ERROR_NONE)
+     goto end;
+
+
    fmt = efl_datetime_manager_format_get(pd->dt_manager);
    if (!fmt)
      {
@@ -171,7 +188,8 @@ _fields_init(Eo *obj)
                   else
                     {
                        //TODO: monitoring locale change and update field location.
-                       if (field == 0)
+                       //FIXME: disabled this code, as it caused issues, see T8546
+                       /*if (field == 0)
                          {
                             elm_object_signal_emit(obj, "efl,colon_field1,visible,on", "efl");
                             elm_object_signal_emit(obj, "efl,colon_field0,visible,off", "efl");
@@ -182,8 +200,11 @@ _fields_init(Eo *obj)
                             elm_object_signal_emit(obj, "efl,colon_field1,visible,off", "efl");
                          }
 
-                       elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
-                       edje_object_message_signal_process(elm_layout_edje_get(obj));
+                       if (pd->is_24hour)
+                         elm_layout_signal_emit(obj, "efl,ampm,visible,off", "efl");
+                       else
+                         elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
+                       edje_object_message_signal_process(elm_layout_edje_get(obj));*/
                        efl_content_set(efl_part(obj, buf), pd->ampm);
                     }
 
@@ -193,7 +214,11 @@ _fields_init(Eo *obj)
           }
         fmt++;
      }
+end:
+   return ret;
 }
+
+
 
 EOLIAN static Eo *
 _efl_ui_timepicker_efl_object_constructor(Eo *obj, Efl_Ui_Timepicker_Data *pd EINA_UNUSED)
@@ -203,12 +228,6 @@ _efl_ui_timepicker_efl_object_constructor(Eo *obj, Efl_Ui_Timepicker_Data *pd EI
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "timepicker");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-
-   if (elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Failed to set layout!");
 
    _fields_init(obj);
 
@@ -250,10 +269,17 @@ _efl_ui_timepicker_is_24hour_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool 
    if (pd->is_24hour == is_24hour) return;
 
    pd->is_24hour = is_24hour;
-   if (pd->is_24hour == EINA_TRUE)
-     elm_layout_signal_emit(obj, "efl,ampm,visible,off", "efl");
+   if (!pd->is_24hour)
+     {
+        efl_ui_widget_disabled_set(pd->ampm, EINA_FALSE);
+        efl_ui_range_limits_set(pd->hour, 1, 12);
+     }
    else
-     elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
+     {
+        efl_ui_widget_disabled_set(pd->ampm, EINA_TRUE);
+        efl_ui_range_limits_set(pd->hour, 0, 23);
+     }
+
    _field_value_update(obj);
 }
 

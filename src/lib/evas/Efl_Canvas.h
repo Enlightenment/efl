@@ -121,7 +121,7 @@ extern "C" {
 #include <gesture/efl_canvas_gesture_tap.eo.h>
 #include <gesture/efl_canvas_gesture_triple_tap.eo.h>
 #include <gesture/efl_canvas_gesture_zoom.eo.h>
-#include <gesture/efl_gesture_events.eo.h>
+#include <gesture/efl_canvas_gesture_events.eo.h>
 
 
 #ifdef __cplusplus

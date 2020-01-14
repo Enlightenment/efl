@@ -2,7 +2,7 @@ class @beta Efl.Canvas.Gesture_Triple_Tap extends Efl.Canvas.Gesture
 {
    [[Triple-tap gesture class holding state information.
      See @Efl.Canvas.Gesture to see what this state is and
-     @[Efl.Gesture.Events.gesture,triple_tap] for a description of the Triple-tap gesture.
+     @[Efl.Canvas.Gesture_Events.gesture,triple_tap] for a description of the Triple-tap gesture.
 
      Application developers receive these objects inside a gesture event and do not typically need to create their own.
    ]]

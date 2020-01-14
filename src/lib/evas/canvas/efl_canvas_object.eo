@@ -11,7 +11,7 @@ struct Efl.Event_Animator_Tick {
 
 abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack,
                             Efl.Input.Interface, Efl.Gfx.Hint,
-                            Efl.Gfx.Mapping, Efl.Canvas.Pointer, Efl.Gesture.Events, Efl.Canvas.Object_Animation
+                            Efl.Gfx.Mapping, Efl.Canvas.Pointer, Efl.Canvas.Gesture_Events, Efl.Canvas.Object_Animation
 {
    [[Efl canvas object abstract class
 

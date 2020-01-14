@@ -60,7 +60,7 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
-type @extern @beta Eina.Unicode: uint32; [[Eina unicode type]]
+type @extern Eina.Unicode: uint32; [[Eina unicode type. @since 1.24]]
 
 struct @extern @beta Eina.File_Direct_Info; [[Eina file direct information data structure]]
 /*{

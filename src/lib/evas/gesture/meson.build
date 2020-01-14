@@ -17,7 +17,7 @@ pub_eo_files = [
   'efl_canvas_gesture_recognizer_flick.eo',
   'efl_canvas_gesture_recognizer_zoom.eo',
   'efl_canvas_gesture_manager.eo',
-  'efl_gesture_events.eo'
+  'efl_canvas_gesture_events.eo'
 ]
 
 evas_gesture_eo_files = pub_eo_files

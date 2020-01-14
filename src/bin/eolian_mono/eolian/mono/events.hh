@@ -229,7 +229,7 @@ struct pack_event_info_and_call_visitor
       return as_generator(
                           indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
                           << indent.inc() << "IntPtr info = e.arg.NativeHandle;\n"
-                          << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
+                          << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }
    bool operator()(attributes::complex_type_def const& type) const
@@ -241,7 +241,7 @@ struct pack_event_info_and_call_visitor
       return as_generator(
                           indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
                           << indent.inc() << "IntPtr info = e.arg.Handle;\n"
-                          << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
+                          << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }
 };
