@@ -7,7 +7,7 @@ enum @beta Efl.Ui.Selection_Type
    clipboard [[Clipboard selection (ctrl+C)]]
 }
 
-enum @beta Efl.Ui.Selection_Format
+enum Efl.Ui.Selection_Format
 {
    [[Selection format]]
    targets = -1, [[For matching every possible atom]]

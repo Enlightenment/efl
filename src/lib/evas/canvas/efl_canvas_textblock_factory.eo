@@ -1,4 +1,4 @@
-interface @beta Efl.Canvas.Textblock_Factory
+interface Efl.Canvas.Textblock_Factory
 {
    [[Object factory that creates Efl.Canvas.Object objects.
 
