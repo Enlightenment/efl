@@ -25,8 +25,10 @@
 # include <sys/socket.h>
 # ifdef HAVE_PRCTL
 #  include <sys/prctl.h>
+# elif defined(HAVE_PROCCTL)
+#  include <sys/procctl.h>
 # endif
-# ifdef HAVE_SYS_WAIT_H
+#ifdef HAVE_SYS_WAIT_H
 #  include <sys/wait.h>
 # endif
 # ifndef HAVE_CLEARENV
@@ -150,7 +152,13 @@ _exec(const char *cmd, Efl_Exe_Flags flags, Efl_Task_Flags task_flags)
 # ifdef HAVE_PRCTL
    if (task_flags & EFL_TASK_FLAGS_EXIT_WITH_PARENT)
      prctl(PR_SET_PDEATHSIG, SIGTERM);
-# endif
+#elif defined(HAVE_PROCCTL)
+   if (task_flags & EFL_TASK_FLAGS_EXIT_WITH_PARENT)
+     {
+        int sig = SIGTERM;
+        procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
+     }
+#endif
 
    if (flags & EFL_EXE_FLAGS_GROUP_LEADER) setsid();
    if (use_sh) // We have to use a shell to run this.
