@@ -12,4 +12,5 @@
 typedef struct _Efl_Canvas_Animation_Group_Data
 {
    Eina_List *animations;
+   Eina_Bool is_duration_set : 1; //EINA_TRUE if duration is set
 } Efl_Canvas_Animation_Group_Data;
