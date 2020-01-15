@@ -20,24 +20,25 @@
 #define WIDTH 480
 #define HEIGHT 360
 
-typedef struct _Test_Data {
-     Ecore_Wl2_Display *display;
-     Ecore_Wl2_Window *win;
-     Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
-     Ecore_Event_Handler *handler;
+typedef struct _Test_Data
+{
+   Ecore_Wl2_Display *display;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
+   Ecore_Event_Handler *handler;
 
-     struct wl_surface *surface;
-     struct wl_egl_window *egl_window;
+   struct wl_surface *surface;
+   struct wl_egl_window *egl_window;
 
-     int width;
-     int height;
-     int frame_callback_count;
+   int width;
+   int height;
+   int frame_callback_count;
 
 #ifdef GL_GLES
-     EGLDisplay egl_display;
-     EGLConfig egl_conf;
-     EGLSurface egl_surface;
-     EGLContext egl_context;
+   EGLDisplay egl_display;
+   EGLConfig egl_conf;
+   EGLSurface egl_surface;
+   EGLContext egl_context;
 #endif
 } Test_Data;
 
