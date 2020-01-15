@@ -15,6 +15,7 @@
  */
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace TestSuite
 {
@@ -226,7 +227,7 @@ class TestEoEvents
     public static void event_with_array_payload()
     {
         var obj = new Dummy.TestObject();
-        Eina.Array<string> received = null;
+        List<string> received = null;
         Eina.Array<string> sent = new Eina.Array<string>();
 
         sent.Append("Abc");
@@ -234,7 +235,7 @@ class TestEoEvents
         sent.Append("Ghi");
 
         obj.EvtWithArrayEvent += (object sender, Dummy.TestObjectEvtWithArrayEventArgs e) => {
-            received = e.arg;
+            received = e.arg as List<string>;
         };
 
         obj.EmitEventWithArray(sent);
@@ -246,7 +247,6 @@ class TestEoEvents
             Test.AssertEquals(pair.Sent, pair.Received);
         }
         sent.Dispose();
-        received.Dispose();
         obj.Dispose();
     }
 }

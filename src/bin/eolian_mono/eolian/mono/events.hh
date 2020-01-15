@@ -139,6 +139,10 @@ struct unpack_event_args_visitor
         return as_generator("Efl.Eo.Globals.IteratorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
       else if (types.outer.base_type == "accessor")
         return as_generator("Efl.Eo.Globals.AccessorTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else if (types.outer.base_type == "array")
+        return as_generator("Efl.Eo.Globals.NativeArrayTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
+      else if (types.outer.base_type == "list")
+        return as_generator("Efl.Eo.Globals.NativeListTo" << eolian_mono::type << "(info)").generate(sink, type, *context);
       else
         return as_generator("new " << eolian_mono::type << "(info, false, false)").generate(sink, type, *context);
    }
@@ -229,19 +233,28 @@ struct pack_event_info_and_call_visitor
       return as_generator(
                           indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
                           << indent.inc() << "IntPtr info = e.arg.NativeHandle;\n"
-                          << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
+                          << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", info, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }
    bool operator()(attributes::complex_type_def const& type) const
    {
       auto const& indent = current_indentation(*context);
-      if ((type.outer.base_type == "iterator") || (type.outer.base_type == "accessor"))
-        return true;
+      bool is_own = type.outer.base_qualifier & attributes::qualifier_info::is_own;
+      std::string info_variable;
 
-      return as_generator(
-                          indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
-                          << indent.inc() << "IntPtr info = e.arg.Handle;\n"
-                          << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", IntPtr.Zero, null);\n"
+      if (type.outer.base_type == "iterator")
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IEnumerableToIterator(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+      else if (type.outer.base_type == "accessor")
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IEnumerableToAccessor(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+      else if (type.outer.base_type == "array")
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IListToNativeArray(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+      else if (type.outer.base_type == "list")
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IListToNativeList(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+      else
+        info_variable = "IntPtr info = e.arg.Handle;\n";
+      return as_generator(indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
+                          << indent.inc() << info_variable
+                          << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", info, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }
 };
