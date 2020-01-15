@@ -224,7 +224,6 @@
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 #  define EINA_SENTINEL __attribute__((__sentinel__))
 #  ifndef __clang__
-#   define EINA_PRINTF(fmt, arg) __attribute__((__format__ (__printf__, fmt, arg)))
 #   if __GNUC__ >= 7
 #    define EINA_FALLTHROUGH __attribute__ ((fallthrough));
 #   else
