@@ -18,6 +18,7 @@ static Ecore_Event_Handler *hnd_add = NULL;
 static Ecore_Event_Handler *hnd_del = NULL;
 static Ecore_Event_Handler *hnd_data = NULL;
 static int clients = 0;
+static Ecore_Timer *quit_timer_start = NULL;
 static Ecore_Timer *quit_timer = NULL;
 
 static Eina_Bool
@@ -25,6 +26,15 @@ _cb_quit_timer(void *data EINA_UNUSED)
 {
    quit_timer = NULL;
    quit();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_cb_quit_timer_start(void *data EINA_UNUSED)
+{
+   quit_timer_start = NULL;
+   if (quit_timer) ecore_timer_del(quit_timer);
+   quit_timer = ecore_timer_add(10.0, _cb_quit_timer, NULL);
    return EINA_FALSE;
 }
 
@@ -100,6 +110,11 @@ _cb_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         ecore_timer_del(quit_timer);
         quit_timer = NULL;
+     }
+   if (quit_timer_start)
+     {
+        ecore_timer_del(quit_timer_start);
+        quit_timer_start = NULL;
      }
    clients++;
    return ECORE_CALLBACK_DONE;
@@ -211,7 +226,7 @@ ipc_init(void)
         ecore_ipc_shutdown();
         return EINA_FALSE;
      }
-   quit_timer = ecore_timer_add(2.0, _cb_quit_timer, NULL);
+   quit_timer_start = ecore_timer_add(10.0, _cb_quit_timer_start, NULL);
    hnd_add = ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD,
                                      _cb_client_add, NULL);
    hnd_del = ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL,
@@ -228,6 +243,10 @@ ipc_shutdown(void)
    if (init <= 0) return EINA_TRUE;
    init--;
    if (init > 0) return EINA_TRUE;
+   if (quit_timer) ecore_timer_del(quit_timer);
+   if (quit_timer_start) ecore_timer_del(quit_timer_start);
+   quit_timer = NULL;
+   quit_timer_start = NULL;
    ecore_ipc_server_del(ipc);
    ecore_event_handler_del(hnd_add);
    ecore_event_handler_del(hnd_del);

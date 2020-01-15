@@ -117,7 +117,7 @@ _ipc_launch(void)
    char buf[PATH_MAX];
    int num;
    int try_gap = 10000; // 10ms
-   int tries = 200; // 200 * 10ms == 2sec
+   int tries = 1000; // 1000 * 10ms == 10sec
    const char *s;
 
    s = getenv("EFREETD_CONNECT_TRIES");

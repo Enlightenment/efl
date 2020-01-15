@@ -96,13 +96,19 @@ eina_strndup(const char *str, size_t n)
 {
    char *ret;
    const char *p;
-   size_t slen;
+   size_t slen = 0;
 
    if (!str)
      return NULL;
-
-   for (p = str; (*p) && ((size_t)(p - str) < n); p++)
-     slen = (size_t)(p - str);
+   for (p = str; *p; p++)
+     {
+        slen = (size_t)(p - str) + 1;
+        if (slen > n)
+          {
+             slen = n;
+             break;
+          }
+     }
    ret = (char *)malloc(slen + 1); /* cast for C++ code */
    if (!ret)
      return NULL;
