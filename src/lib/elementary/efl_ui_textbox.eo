@@ -1,7 +1,7 @@
 class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
-                 Efl.Access.Text, Efl.Access.Editable.Text, Efl.File, Efl.Input_Text
+                 Efl.Access.Text, Efl.Access.Editable.Text, Efl.File
    composites
-                 Efl.Text_Interactive, Efl.Text_Markup
+                 Efl.Text_Interactive, Efl.Text_Markup, Efl.Input_Text
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
