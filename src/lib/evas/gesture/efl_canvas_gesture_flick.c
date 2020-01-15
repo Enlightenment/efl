@@ -16,13 +16,13 @@ _efl_canvas_gesture_flick_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Fli
 }
 
 EOLIAN static Eina_Vector2
-_efl_canvas_gesture_flick_momentum_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Flick_Data *pd)
+_efl_canvas_gesture_flick_momentum_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Flick_Data *pd)
 {
    return pd->momentum;
 }
 
 EOLIAN static double
-_efl_canvas_gesture_flick_angle_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Flick_Data *pd)
+_efl_canvas_gesture_flick_angle_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Flick_Data *pd)
 {
    return pd->angle;
 }

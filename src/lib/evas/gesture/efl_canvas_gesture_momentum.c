@@ -16,7 +16,7 @@ _efl_canvas_gesture_momentum_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_
 }
 
 EOLIAN static Eina_Vector2
-_efl_canvas_gesture_momentum_momentum_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Momentum_Data *pd)
+_efl_canvas_gesture_momentum_momentum_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Momentum_Data *pd)
 {
    return pd->momentum;
 }

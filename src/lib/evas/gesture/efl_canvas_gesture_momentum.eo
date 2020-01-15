@@ -10,9 +10,13 @@ class @beta Efl.Canvas.Gesture_Momentum extends Efl.Canvas.Gesture
    ]]
    c_prefix: efl_gesture_momentum;
    methods {
-      momentum_get {
-         [[Gets the momentum value, this is, the direction in which the action occurred.]]
-         return: Eina.Vector2; [[The momentum vector.]]
+      @property momentum {
+         [[The momentum value, this is, the direction in which the action occurred.]]
+         get {
+         }
+         values {
+            momentum: Eina.Vector2; [[The momentum vector.]]
+         }
       }
    }
    implements {
