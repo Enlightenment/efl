@@ -12,7 +12,6 @@
 #define MY_CLASS EFL_UI_VG_ANIMATION_CLASS
 
 #define MY_CLASS_NAME "Efl_Ui_Vg_Animation"
-#define MY_CLASS_NAME_LEGACY "efl_ui_vg_animation"
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
@@ -262,7 +261,6 @@ _efl_ui_vg_animation_efl_object_constructor(Eo *obj,
                                            Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    return obj;
@@ -829,11 +827,27 @@ _efl_ui_vg_animation_efl_playable_seekable_get(const Eo *obj, Efl_Ui_Vg_Animatio
    return EINA_TRUE;
 }
 
+#define MY_CLASS_NAME_LEGACY "elm_animation_view"
+
+static void
+_efl_ui_vg_animation_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_vg_animation_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_VG_ANIMATION_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
 EAPI Elm_Animation_View*
 elm_animation_view_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
+   return elm_legacy_add(EFL_UI_VG_ANIMATION_LEGACY_CLASS, parent);
 }
 
 EAPI Eina_Bool
