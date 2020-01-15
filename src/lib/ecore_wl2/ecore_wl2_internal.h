@@ -517,6 +517,54 @@ EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_B
  */
 EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
 
+/**
+ * Get list of supported auxiliary window hints
+ *
+ * @param window
+ *
+ * @return An Eina_List of supported auxiliary hints, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_List *ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window);
+
+/**
+ * Add a supported auxiliary hint to a given window
+ *
+ * @param window
+ * @param id
+ * @param hint
+ * @param val
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint, const char *val);
+
+/**
+ * Change an auxiliary hint on a given window
+ *
+ * @param window
+ * @param id
+ * @param val
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val);
+
+/**
+ * Delete an auxiliary hint on a given window
+ *
+ * @param window
+ * @param id
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
+
 # undef EAPI
 # define EAPI
 

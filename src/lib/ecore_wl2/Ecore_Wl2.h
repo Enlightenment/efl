@@ -1230,54 +1230,6 @@ EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, con
 EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count);
 
 /**
- * Get list of supported auxiliary window hints
- *
- * @param window
- *
- * @return An Eina_List of supported auxiliary hints, or NULL otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI Eina_List *ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window);
-
-/**
- * Add a supported auxiliary hint to a given window
- *
- * @param window
- * @param id
- * @param hint
- * @param val
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint, const char *val);
-
-/**
- * Change an auxiliary hint on a given window
- *
- * @param window
- * @param id
- * @param val
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val);
-
-/**
- * Delete an auxiliary hint on a given window
- *
- * @param window
- * @param id
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
-
-/**
  * @brief Get the activated state of a window
  *
  * @param window The window to get activated state from
