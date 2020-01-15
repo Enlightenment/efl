@@ -148,23 +148,6 @@ EFL_START_TEST(wl2_window_rotation)
 }
 EFL_END_TEST
 
-EFL_START_TEST(wl2_window_aux_hints_supported_get)
-{
-   Ecore_Wl2_Display *disp;
-   Ecore_Wl2_Window *win;
-   Eina_List *l;
-
-   disp = _display_connect();
-   ck_assert(disp != NULL);
-
-   win = _window_create(disp);
-   ck_assert(win != NULL);
-
-   l = ecore_wl2_window_aux_hints_supported_get(win);
-   ck_assert(l != NULL);
-}
-EFL_END_TEST
-
 EFL_START_TEST(wl2_window_display_get)
 {
    Ecore_Wl2_Display *disp;
@@ -990,7 +973,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_rotation);
         if (getenv("E_START"))
           {
-             tcase_add_test(tc, wl2_window_aux_hints_supported_get);
              tcase_add_test(tc, wl2_window_commit);
              tcase_add_test(tc, wl2_window_frame_callback);
              tcase_add_test(tc, wl2_window_free);
