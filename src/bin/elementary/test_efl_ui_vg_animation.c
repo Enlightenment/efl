@@ -14,6 +14,12 @@
 
 #ifdef BUILD_VG_LOADER_JSON
 
+typedef struct _App_Data
+{
+   Eo *label;
+   Eo *slider;
+} App_Data;
+
 static void
 btn_clicked_cb(void *data , const Efl_Event *ev )
 {
@@ -79,6 +85,13 @@ limit_frame_cb(void *data, const Efl_Event *event)
 }
 
 static void
+_slider_changed_cb(void *data, const Efl_Event *ev)
+{
+   Evas_Object *anim_view = data;
+   efl_player_playback_progress_set(anim_view, efl_ui_range_value_get(ev->object));
+}
+
+static void
 update_anim_view_state(Evas_Object *anim_view, Evas_Object *label)
 {
    Efl_Ui_Vg_Animation_State state = efl_ui_vg_animation_state_get(anim_view);
@@ -104,43 +117,57 @@ update_anim_view_state(Evas_Object *anim_view, Evas_Object *label)
 }
 
 static void
-_play_updated(void *data, Evas_Object *obj, void *ev EINA_UNUSED)
+_animation_playing_changed_cb(void *data, const Efl_Event *event)
 {
-   Evas_Object *slider = data;
-   efl_ui_range_value_set(slider, efl_player_playback_progress_get(obj));
+   Eina_Bool playing = *(Eina_Bool*)event->info;
+   App_Data *ad = data;
+   update_anim_view_state(event->object, ad->label);
+   //Stopped
+   if (!playing)
+     efl_ui_range_value_set(ad->slider, 0);
 }
 
 static void
-_state_update(void *data, Evas_Object *obj, void *ev EINA_UNUSED)
+_animation_paused_changed_cb(void *data, const Efl_Event *event)
 {
-   Evas_Object *label = data;
-   update_anim_view_state(obj, label);
+   App_Data *ad = data;
+   update_anim_view_state(event->object, ad->label);
 }
 
 static void
-_play_done(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+_animation_playback_progress_changed_cb(void *data, const Efl_Event *event)
+{
+   double progress = *(double*)event->info;
+   App_Data *ad = data;
+   efl_ui_range_value_set(ad->slider, progress);
+}
+
+static void
+_animation_playback_repeated_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   int repeated_times = *(int*)event->info;
+   printf("repeated! (times: %d)\n", repeated_times);
+}
+
+static void
+_animation_playback_finished_changed_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    printf("done!\n");
 }
 
-static void
-_play_repeated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
-{
-   printf("repeated!\n");
-}
+EFL_CALLBACKS_ARRAY_DEFINE(animation_stats_cb,
+  {EFL_PLAYER_EVENT_PLAYING_CHANGED, _animation_playing_changed_cb },
+  {EFL_PLAYER_EVENT_PAUSED_CHANGED, _animation_paused_changed_cb },
+  {EFL_PLAYER_EVENT_PLAYBACK_PROGRESS_CHANGED, _animation_playback_progress_changed_cb },
+  {EFL_PLAYER_EVENT_PLAYBACK_REPEATED, _animation_playback_repeated_changed_cb },
+  {EFL_PLAYER_EVENT_PLAYBACK_FINISHED, _animation_playback_finished_changed_cb },
+)
 
 static void
-_slider_changed_cb(void *data, const Efl_Event *ev)
+_win_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Evas_Object *anim_view = data;
-   efl_player_playback_progress_set(anim_view, efl_ui_range_value_get(ev->object));
-}
-
-static void
-_slider_reset(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
-{
-   Evas_Object *slider = data;
-   efl_ui_range_value_set(slider, 0);
+   App_Data *ad = data;
+   free(ad);
 }
 
 void
@@ -148,10 +175,13 @@ test_efl_ui_vg_animation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 {
    Eo *win, *box, *box2, *box3, *box4, *label, *anim_view, *check, *slider;
    char buf[255];
+   App_Data *ad = calloc(1, sizeof(App_Data));
+   if (!ad) return;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                                  efl_text_set(efl_added, "Efl_Ui_Vg_Animation demo"),
-                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+                 efl_text_set(efl_added, "Efl_Ui_Vg_Animation demo"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
+                 efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del_cb, ad));
 
    // Create a box in Canvas
    box = efl_add(EFL_UI_BOX_CLASS, win,
@@ -279,18 +309,12 @@ test_efl_ui_vg_animation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
            efl_pack(box4, efl_added),
            efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, btn_clicked_cb, anim_view));
 
-   evas_object_smart_callback_add(anim_view, "play,start", _state_update, label);
-   evas_object_smart_callback_add(anim_view, "play,stop", _state_update, label);
-   evas_object_smart_callback_add(anim_view, "play,pause", _state_update, label);
-   evas_object_smart_callback_add(anim_view, "play,resume", _state_update, label);
-
-   evas_object_smart_callback_add(anim_view, "play,repeat", _play_repeated, label);
-   evas_object_smart_callback_add(anim_view, "play,done", _play_done, label);
-
-   evas_object_smart_callback_add(anim_view, "play,update", _play_updated, slider);
-   evas_object_smart_callback_add(anim_view, "play,stop", _slider_reset, slider);
+   efl_event_callback_array_add(anim_view, animation_stats_cb(), ad);
 
    update_anim_view_state(anim_view, label);
+
+   ad->label = label;
+   ad->slider = slider;
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(600, 730));
 }
