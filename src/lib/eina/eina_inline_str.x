@@ -19,6 +19,8 @@
 #ifndef EINA_STR_INLINE_H_
 #define EINA_STR_INLINE_H_
 
+#include <string.h>
+
 /**
  * @addtogroup Eina_String_Group String
  *
@@ -92,14 +94,15 @@ eina_strdup(const char *str)
 static inline char *
 eina_strndup(const char *str, size_t n)
 {
-#ifdef _WIN32
    char *ret;
+   const char *p;
    size_t slen;
 
    if (!str)
      return NULL;
 
-   slen = strnlen(str, n);
+   for (p = str; (*p) && ((size_t)(p - str) < n); p++)
+     slen = (size_t)(p - str);
    ret = (char *)malloc(slen + 1); /* cast for C++ code */
    if (!ret)
      return NULL;
@@ -108,9 +111,6 @@ eina_strndup(const char *str, size_t n)
    ret[slen] = '\0';
 
    return ret;
-#else
-   return str ? strndup(str, n) : NULL;
-#endif
 }
 
 /**
