@@ -15,7 +15,7 @@
 
 #include "elm_entry_common.h"
 #include "elm_widget_entry.h"
-#include "efl_ui_text_part.eo.h"
+#include "efl_ui_textbox_part.eo.h"
 #include "elm_part_helper.h"
 #include "efl_canvas_textblock_internal.h"
 
@@ -3560,7 +3560,7 @@ _efl_ui_textbox_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
 #undef STRCMP
 
 static Eina_Bool
-_part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
+_part_is_efl_ui_textbox_part(const Eo *obj EINA_UNUSED, const char *part)
 {
    //Use Efl.Ui.Widget's "background" and "shadow" parts
    if (eina_streq(part, "background") || eina_streq(part, "shadow"))
@@ -3569,30 +3569,11 @@ _part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Object *
-_efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_UNUSED, const char *part)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-   if (_part_is_efl_ui_text_part(obj, part)) return ELM_PART_IMPLEMENT(EFL_UI_TEXT_PART_CLASS, obj, part);
-   return efl_part_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS), part);
-}
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_textbox_part)
+ELM_PART_OVERRIDE_TEXT_SET(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
+ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
 
-EOLIAN static void
-_efl_ui_text_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, efl_ui_widget_part_class_get());
-   Efl_Ui_Textbox_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TEXTBOX_CLASS);
-   _efl_ui_textbox_text_set(pd->obj, sd, pd->part, text);
-}
-
-EOLIAN static const char *
-_efl_ui_text_part_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, efl_ui_widget_part_class_get());
-   Efl_Ui_Textbox_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TEXTBOX_CLASS);
-   return _efl_ui_textbox_text_get(pd->obj, sd, pd->part);
-}
-#include "efl_ui_text_part.eo.c"
+#include "efl_ui_textbox_part.eo.c"
 
 /* Efl.Part end */
 
