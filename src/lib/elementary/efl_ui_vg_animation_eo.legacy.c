@@ -14,13 +14,13 @@ elm_animation_view_auto_play_get(const Efl_Ui_Vg_Animation *obj)
 EAPI void
 elm_animation_view_auto_repeat_set(Efl_Ui_Vg_Animation *obj, Eina_Bool autorepeat)
 {
-   efl_ui_vg_animation_autorepeat_set(obj, autorepeat);
+   efl_ui_vg_animation_looping_set(obj, autorepeat);
 }
 
 EAPI Eina_Bool
 elm_animation_view_auto_repeat_get(const Efl_Ui_Vg_Animation *obj)
 {
-   return efl_ui_vg_animation_autorepeat_get(obj);
+   return efl_ui_vg_animation_looping_get(obj);
 }
 
 EAPI Eina_Bool

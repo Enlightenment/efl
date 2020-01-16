@@ -24,7 +24,7 @@ struct _Efl_Ui_Vg_Animation_Data
    Eina_Bool playing_reverse : 1;
    Eina_Bool autoplay : 1;
    Eina_Bool autoplay_pause: 1;
-   Eina_Bool autorepeat : 1;
+   Eina_Bool looping : 1;
    Eina_Bool playback_direction_changed : 1;
 };
 

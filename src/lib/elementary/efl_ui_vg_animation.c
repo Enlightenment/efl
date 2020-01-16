@@ -217,7 +217,7 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 
    evas_object_vg_animated_frame_set(pd->vg, update_frame);
 
-   if (pd->autorepeat)
+   if (pd->looping)
      {
         int repeat_times = elm_transit_current_repeat_times_get(pd->transit);
         if (pd->repeat_times != repeat_times)
@@ -327,7 +327,7 @@ _ready_play(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
         double speed = pd->playback_speed < 0 ? pd->playback_speed * -1 : pd->playback_speed;
         Elm_Transit *transit = elm_transit_add();
         elm_transit_object_add(transit, pd->vg);
-        if (pd->autorepeat) elm_transit_repeat_times_set(transit, -1);
+        if (pd->looping) elm_transit_repeat_times_set(transit, -1);
         elm_transit_effect_add(transit, _transit_cb, obj, _transit_del_cb);
         elm_transit_progress_value_set(transit, pd->progress);
         elm_transit_objects_final_state_keep_set(transit, EINA_TRUE);
@@ -462,21 +462,21 @@ _efl_ui_vg_animation_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_vg_animation_autorepeat_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool autorepeat)
+_efl_ui_vg_animation_looping_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool looping)
 {
-   if (pd->autorepeat == autorepeat) return;
-   pd->autorepeat = autorepeat;
+   if (pd->looping == looping) return;
+   pd->looping = looping;
    if (pd->transit)
      {
-        if (autorepeat) elm_transit_repeat_times_set(pd->transit, -1);
+        if (looping) elm_transit_repeat_times_set(pd->transit, -1);
         else elm_transit_repeat_times_set(pd->transit, 0);
      }
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_vg_animation_autorepeat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
+_efl_ui_vg_animation_looping_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd)
 {
-   return pd->autorepeat;
+   return pd->looping;
 }
 
 EOLIAN static void
