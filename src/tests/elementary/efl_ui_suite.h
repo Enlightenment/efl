@@ -54,6 +54,7 @@ void efl_ui_test_select_model(TCase *tc);
 void efl_ui_test_view_model(TCase *tc);
 void efl_ui_test_group_item(TCase *tc);
 void efl_ui_test_text(TCase *tc);
+void efl_ui_test_vg_animation(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 

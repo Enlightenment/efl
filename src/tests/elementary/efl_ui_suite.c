@@ -43,6 +43,9 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_view_model", efl_ui_test_view_model },
   { "efl_ui_group_item", efl_ui_test_group_item },
   { "efl_ui_text", efl_ui_test_text},
+#ifdef BUILD_VG_LOADER_JSON
+  { "efl_ui_vg_animation", efl_ui_test_vg_animation},
+#endif
   { NULL, NULL }
 };
 
