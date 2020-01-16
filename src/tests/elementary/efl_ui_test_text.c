@@ -178,6 +178,43 @@ EFL_START_TEST(text_change_event)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_keys_handler)
+{
+   Eo *txt;
+   Eo *win = win_add();
+
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
+   efl_text_set(txt, "Hello");
+
+   efl_gfx_entity_visible_set(txt, EINA_TRUE);
+   Evas *e = evas_object_evas_get(txt);
+   efl_ui_focus_util_focus(txt);
+
+   efl_text_cursor_move(efl_text_interactive_main_cursor_get(txt), EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+   evas_key_modifier_on(e, "Control");
+   evas_event_feed_key_down(e, "BackSpace", "BackSpace", "\b", "\b", time(NULL), NULL);
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(txt),"");
+   ck_assert_int_eq(efl_text_cursor_position_get(efl_text_interactive_main_cursor_get(txt)), 0);
+   evas_event_feed_key_up(e, "BackSpace", "BackSpace", "\b", "\b", time(NULL), NULL);
+   ecore_main_loop_iterate();
+
+   efl_text_set(txt, "Hello");
+   efl_text_cursor_position_set(efl_text_interactive_main_cursor_get(txt), 0);
+   evas_key_modifier_on(e, "Control");
+   evas_event_feed_key_down(e, "Delete", "Delete", "\177", "\177", time(NULL), NULL);
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(txt),"");
+   ck_assert_int_eq(efl_text_cursor_position_get(efl_text_interactive_main_cursor_get(txt)), 0);
+   evas_event_feed_key_up(e, "Delete", "Delete", "\177", "\177", time(NULL), NULL);
+   ecore_main_loop_iterate();
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
@@ -186,4 +223,5 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_user_change);
    tcase_add_test(tc, text_scroll_mode);
    tcase_add_test(tc, text_change_event);
+   tcase_add_test(tc, text_keys_handler);
 }

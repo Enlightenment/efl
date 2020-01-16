@@ -1215,7 +1215,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
              // del to start of previous word
              Efl_Text_Cursor *tc = efl_canvas_textblock_cursor_create(obj);
 
-             _cur_pos_copy(tc, cur);
+             _cur_pos_copy(cur, tc);
              efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
              efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
 
@@ -1250,7 +1250,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
              // del to end of next word
              Efl_Text_Cursor *tc = efl_canvas_textblock_cursor_create(obj);
 
-             _cur_pos_copy(tc, cur);
+             _cur_pos_copy(cur, tc);
              efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
              efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
 
