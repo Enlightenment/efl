@@ -425,7 +425,7 @@ group { name: "elm/toolbar/item/default";
             visible: 1;
          }
       }
-
+      
       part { name: "icon_clip"; type: RECT;
          description { state: "default" 0.0;
          }
@@ -456,15 +456,16 @@ group { name: "elm/toolbar/item/default";
             }
          }
          desc { "noicon"; inherit;
-            rel.to: "elm.swallow.icon";
+            rel.to: "elm.swallow.icon_new";
             text {
               min: 0 0;
               ellipsis: -1;
               text: SPACER_TEXT;
             }
+            fixed: 1 1;
          }
          desc { "icononly"; inherit;
-            rel.to: "elm.swallow.icon";
+            rel.to: "elm.swallow.icon_new";
             text {
               min: 1 1;
               ellipsis: -1;
