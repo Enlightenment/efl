@@ -3569,8 +3569,6 @@ _part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
    return EINA_TRUE;
 }
 
-//FIXME
-//ELM_PART_OVERRIDE_PARTIAL(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_text_part)
 EOLIAN static Efl_Object *
 _efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_UNUSED, const char *part)
 {
@@ -3579,8 +3577,6 @@ _efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_
    return efl_part_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS), part);
 }
 
-//FIXME
-//ELM_PART_OVERRIDE_TEXT_SET(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
 EOLIAN static void
 _efl_ui_text_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text)
 {
@@ -3589,8 +3585,6 @@ _efl_ui_text_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *
    _efl_ui_textbox_text_set(pd->obj, sd, pd->part, text);
 }
 
-//FIXME
-//ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
 EOLIAN static const char *
 _efl_ui_text_part_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
