@@ -1,8 +1,10 @@
 enum @beta Efl.Text.Cursor_Type
 {
-   [[Text cursor types.]]
-   before, [[Cursor type before.]]
-   under [[Cursor type under.]]
+   [[Shape of the text cursor.
+     This is normally used in @Efl.Text.Cursor methods to retrieve the cursor's geometry.
+   ]]
+   before, [[Cursor is a vertical bar (I-beam) placed before the selected character.]]
+   under   [[Cursor is an horizontal line (underscore) placed under the selected character.]]
 }
 
 enum @beta Efl.Text.Cursor_Move_Type

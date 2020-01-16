@@ -20,24 +20,25 @@
 #define WIDTH 480
 #define HEIGHT 360
 
-typedef struct _Test_Data {
-     Ecore_Wl2_Display *display;
-     Ecore_Wl2_Window *win;
-     Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
-     Ecore_Event_Handler *handler;
+typedef struct _Test_Data
+{
+   Ecore_Wl2_Display *display;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
+   Ecore_Event_Handler *handler;
 
-     struct wl_surface *surface;
-     struct wl_egl_window *egl_window;
+   struct wl_surface *surface;
+   struct wl_egl_window *egl_window;
 
-     int width;
-     int height;
-     int frame_callback_count;
+   int width;
+   int height;
+   int frame_callback_count;
 
 #ifdef GL_GLES
-     EGLDisplay egl_display;
-     EGLConfig egl_conf;
-     EGLSurface egl_surface;
-     EGLContext egl_context;
+   EGLDisplay egl_display;
+   EGLConfig egl_conf;
+   EGLSurface egl_surface;
+   EGLContext egl_context;
 #endif
 } Test_Data;
 
@@ -144,23 +145,6 @@ EFL_START_TEST(wl2_window_rotation)
 
    rot = ecore_wl2_window_rotation_get(win);
    fail_if(rot != 90);
-}
-EFL_END_TEST
-
-EFL_START_TEST(wl2_window_aux_hints_supported_get)
-{
-   Ecore_Wl2_Display *disp;
-   Ecore_Wl2_Window *win;
-   Eina_List *l;
-
-   disp = _display_connect();
-   ck_assert(disp != NULL);
-
-   win = _window_create(disp);
-   ck_assert(win != NULL);
-
-   l = ecore_wl2_window_aux_hints_supported_get(win);
-   ck_assert(l != NULL);
 }
 EFL_END_TEST
 
@@ -989,7 +973,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_rotation);
         if (getenv("E_START"))
           {
-             tcase_add_test(tc, wl2_window_aux_hints_supported_get);
              tcase_add_test(tc, wl2_window_commit);
              tcase_add_test(tc, wl2_window_frame_callback);
              tcase_add_test(tc, wl2_window_free);

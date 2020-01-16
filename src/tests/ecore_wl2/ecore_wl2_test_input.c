@@ -148,6 +148,35 @@ EFL_START_TEST(wl2_input_seat_capabilities)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_input_pointer_xy)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Input *input;
+   Eina_Iterator *itr;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   itr = ecore_wl2_display_inputs_get(disp);
+   ck_assert(itr != NULL);
+
+   EINA_ITERATOR_FOREACH(itr, input)
+     {
+        if (ecore_wl2_input_seat_capabilities_get(input) ==
+            ECORE_WL2_SEAT_CAPABILITIES_POINTER)
+          {
+             int x = 0, y = 0;
+
+             ecore_wl2_input_pointer_xy_get(input, &x, &y);
+             ck_assert_int_ne(x, 0);
+             ck_assert_int_ne(y, 0);
+          }
+     }
+
+   eina_iterator_free(itr);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_input(TCase *tc)
 {
@@ -159,5 +188,6 @@ ecore_wl2_test_input(TCase *tc)
         tcase_add_test(tc, wl2_input_keymap_get);
         tcase_add_test(tc, wl2_input_name_get);
         tcase_add_test(tc, wl2_input_seat_capabilities);
+        tcase_add_test(tc, wl2_input_pointer_xy);
      }
 }

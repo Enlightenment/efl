@@ -15,7 +15,6 @@
 #define MY_CLASS EFL_UI_VG_ANIMATION_CLASS
 
 #define MY_CLASS_NAME "Efl_Ui_Vg_Animation"
-#define MY_CLASS_NAME_LEGACY "efl_ui_vg_animation"
 
 #define GROW_SIZE 50
 #define QUEUE_SIZE 350
@@ -517,12 +516,16 @@ _size_hint_event_cb(void *data, const Efl_Event *event)
 static void
 _transit_go_facade(Eo* obj, Efl_Ui_Vg_Animation_Data *pd)
 {
+   Eina_Bool playing = EINA_TRUE;
    pd->repeat_times = 0;
    if (pd->playing_reverse)
      pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
    else
      pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
-   evas_object_smart_callback_call(obj, SIG_PLAY_START, NULL);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, SIG_PLAY_START, NULL);
+   else
+     efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYING_CHANGED, &playing);
    if (pd->transit) elm_transit_go(pd->transit);}
 
 static Eina_Bool
@@ -559,25 +562,33 @@ _autoplay(Eo *obj, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool vis)
      {
         if (pd->state == EFL_UI_VG_ANIMATION_STATE_PAUSED && pd->autoplay_pause)
           {
+             Eina_Bool paused = EINA_FALSE;
              elm_transit_paused_set(pd->transit, EINA_FALSE);
              if (pd->playing_reverse)
                pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS;
              else
                pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
              pd->autoplay_pause = EINA_FALSE;
-             evas_object_smart_callback_call(obj, SIG_PLAY_RESUME, NULL);
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, SIG_PLAY_RESUME, NULL);
+             else
+               efl_event_callback_call(obj, EFL_PLAYER_EVENT_PAUSED_CHANGED, &paused);
           }
      }
    //Pause Animation
    else
      {
+        Eina_Bool paused = EINA_TRUE;
         if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING) ||
             (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS))
           {
              elm_transit_paused_set(pd->transit, EINA_TRUE);
              pd->state = EFL_UI_VG_ANIMATION_STATE_PAUSED;
              pd->autoplay_pause = EINA_TRUE;
-             evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
+             else
+               efl_event_callback_call(obj, EFL_PLAYER_EVENT_PAUSED_CHANGED, &paused);
           }
      }
 }
@@ -591,7 +602,12 @@ _transit_del_cb(Elm_Transit_Effect *effect, Elm_Transit *transit)
 
    if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && pd->progress == 1) ||
        (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && pd->progress == 0))
-     evas_object_smart_callback_call(obj, SIG_PLAY_DONE, NULL);
+     {
+        if (elm_widget_is_legacy(obj))
+          evas_object_smart_callback_call(obj, SIG_PLAY_DONE, NULL);
+        else
+          efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+     }
 
    if (pd->transit != transit) return;
 
@@ -602,7 +618,11 @@ _transit_del_cb(Elm_Transit_Effect *effect, Elm_Transit *transit)
 
    if (prev_state != EFL_UI_VG_ANIMATION_STATE_STOPPED)
      {
-        evas_object_smart_callback_call(obj, SIG_PLAY_STOP, NULL);
+        Eina_Bool playing = EINA_FALSE;
+        if (elm_widget_is_legacy(obj))
+          evas_object_smart_callback_call(obj, SIG_PLAY_STOP, NULL);
+        else
+          efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYING_CHANGED, &playing);
         pd->progress = 0;
      }
 }
@@ -654,15 +674,25 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
         int repeat_times = elm_transit_current_repeat_times_get(pd->transit);
         if (pd->repeat_times != repeat_times)
           {
-             evas_object_smart_callback_call(obj, SIG_PLAY_REPEAT, NULL);
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, SIG_PLAY_REPEAT, NULL);
+             else
+               efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYBACK_REPEATED, &repeat_times);
              pd->repeat_times = repeat_times;
           }
      }
 
    //transit_cb is always called with a progress value 0 ~ 1.
    //SIG_PLAY_UPDATE callback is called only when there is a real change.
-   if (update_frame != current_frame)
+   if (update_frame == current_frame) return;
+   if (elm_widget_is_legacy(obj))
      evas_object_smart_callback_call(obj, SIG_PLAY_UPDATE, NULL);
+   else
+     {
+        double position = pd->frame_duration * pd->progress;
+        efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYBACK_POSITION_CHANGED, &position);
+        efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYBACK_PROGRESS_CHANGED, &pd->progress);
+     }
 }
 
 EOLIAN static void
@@ -714,7 +744,6 @@ _efl_ui_vg_animation_efl_object_constructor(Eo *obj,
                                            Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    return obj;
@@ -827,10 +856,14 @@ _efl_ui_vg_animation_efl_file_load(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
 
         if (!_visible_check(obj))
           {
+             Eina_Bool paused = EINA_TRUE;
              elm_transit_paused_set(pd->transit, EINA_TRUE);
              pd->state = EFL_UI_VG_ANIMATION_STATE_PAUSED;
              pd->autoplay_pause = EINA_TRUE;
-             evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
+             else
+               efl_event_callback_call(obj, EFL_PLAYER_EVENT_PAUSED_CHANGED, &paused);
           }
      }
    return 0;
@@ -969,6 +1002,7 @@ Eina_Bool _efl_ui_vg_animation_playing_sector(Eo *obj, Efl_Ui_Vg_Animation_Data 
 Eina_Bool
 _playing_stop(Eo* obj, Efl_Ui_Vg_Animation_Data *pd)
 {
+   Eina_Bool playing = EINA_FALSE;
    if (!pd->transit) return EINA_FALSE;
 
    if ((pd->state == EFL_UI_VG_ANIMATION_STATE_NOT_READY) ||
@@ -979,7 +1013,11 @@ _playing_stop(Eo* obj, Efl_Ui_Vg_Animation_Data *pd)
 
    pd->progress = 0;
    pd->state = EFL_UI_VG_ANIMATION_STATE_STOPPED;
-   evas_object_smart_callback_call(obj, SIG_PLAY_STOP, NULL);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, SIG_PLAY_STOP, NULL);
+   else
+     efl_event_callback_call(obj, EFL_PLAYER_EVENT_PLAYING_CHANGED, &playing);
+
    elm_transit_del(pd->transit);
    return EINA_TRUE;
 }
@@ -1231,7 +1269,7 @@ _efl_ui_vg_animation_efl_player_playing_get(const Eo *obj EINA_UNUSED, Efl_Ui_Vg
 EOLIAN static Eina_Bool
 _efl_ui_vg_animation_efl_player_paused_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animation_Data *pd, Eina_Bool paused)
 {
-
+   paused = !!paused;
    if (paused)
      {
         if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING) ||
@@ -1240,7 +1278,10 @@ _efl_ui_vg_animation_efl_player_paused_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animat
              elm_transit_paused_set(pd->transit, paused);
              pd->state = EFL_UI_VG_ANIMATION_STATE_PAUSED;
              pd->autoplay_pause = EINA_FALSE;
-             evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, SIG_PLAY_PAUSE, NULL);
+             else
+               efl_event_callback_call(obj, EFL_PLAYER_EVENT_PAUSED_CHANGED, &paused);
           }
      }
    else
@@ -1253,8 +1294,10 @@ _efl_ui_vg_animation_efl_player_paused_set(Eo *obj EINA_UNUSED, Efl_Ui_Vg_Animat
              else
                pd->state = EFL_UI_VG_ANIMATION_STATE_PLAYING;
              pd->autoplay_pause = EINA_FALSE;
-
-             evas_object_smart_callback_call(obj, SIG_PLAY_RESUME, NULL);
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, SIG_PLAY_RESUME, NULL);
+             else
+               efl_event_callback_call(obj, EFL_PLAYER_EVENT_PAUSED_CHANGED, &paused);
           }
      }
    return EINA_TRUE;
@@ -1362,11 +1405,27 @@ _efl_ui_vg_animation_efl_playable_seekable_get(const Eo *obj, Efl_Ui_Vg_Animatio
    return EINA_TRUE;
 }
 
+#define MY_CLASS_NAME_LEGACY "elm_animation_view"
+
+static void
+_efl_ui_vg_animation_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_vg_animation_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_VG_ANIMATION_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
 EAPI Elm_Animation_View*
 elm_animation_view_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
+   return elm_legacy_add(EFL_UI_VG_ANIMATION_LEGACY_CLASS, parent);
 }
 
 EAPI Eina_Bool

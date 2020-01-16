@@ -7,8 +7,14 @@ _efl_canvas_animation_group_animation_add(Eo *eo_obj,
 {
    if (!animation) return;
 
-   double duration = efl_animation_duration_get(efl_super(eo_obj, MY_CLASS));
-   efl_animation_duration_set(animation, duration);
+   /* To preserve each animation's duration, group animation's duration is
+    * copied to each animation's duration only if group animation's duration is
+    * set. */
+   if (pd->is_duration_set)
+     {
+        double duration = efl_animation_duration_get(efl_super(eo_obj, MY_CLASS));
+        efl_animation_duration_set(animation, duration);
+     }
 
    Eina_Bool keep_final_state = efl_animation_final_state_keep_get(eo_obj);
    efl_animation_final_state_keep_set(animation, keep_final_state);
@@ -50,6 +56,8 @@ _efl_canvas_animation_group_efl_canvas_animation_duration_set(Eo *eo_obj,
                                                 Efl_Canvas_Animation_Group_Data *pd,
                                                 double duration)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(duration >= 0.0);
+
    efl_animation_duration_set(efl_super(eo_obj, MY_CLASS), duration);
    duration = efl_animation_duration_get(eo_obj);
 
@@ -59,6 +67,8 @@ _efl_canvas_animation_group_efl_canvas_animation_duration_set(Eo *eo_obj,
      {
         efl_animation_duration_set(anim, duration);
      }
+
+   pd->is_duration_set = EINA_TRUE;
 }
 
 EOLIAN static void
@@ -96,7 +106,6 @@ _efl_canvas_animation_group_efl_object_constructor(Eo *eo_obj,
                                             Efl_Canvas_Animation_Group_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
-
    pd->animations = NULL;
 
    return eo_obj;

@@ -207,13 +207,4 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
       Efl.Playable.playable { get; }
       Efl.Playable.seekable { get; }
    }
-   events {
-      play,start: void; [[Called when animation is just started]]
-      play,repeat: void; [[Called when animation is just repeated]]
-      play,done: void; [[Called when animation is just finished]]
-      play,pause: void; [[Called when animation is just paused]]
-      play,resume: void; [[Called when animation is just resumed]]
-      play,stop: void; [[Called when animation is just stopped]]
-      play,update: void; [[Called when animation is just updated]]
-   }
 }

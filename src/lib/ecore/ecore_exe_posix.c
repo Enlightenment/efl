@@ -16,6 +16,8 @@
 
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>
+#elif defined(HAVE_PROCCTL)
+# include <sys/procctl.h>
 #endif
 
 #ifdef HAVE_SYS_WAIT_H
@@ -999,6 +1001,12 @@ _ecore_exe_exec_it(const char     *exe_cmd,
    if ((flags & ECORE_EXE_TERM_WITH_PARENT))
      {
         prctl(PR_SET_PDEATHSIG, SIGTERM);
+     }
+#elif defined(HAVE_PROCCTL)
+   if ((flags & ECORE_EXE_TERM_WITH_PARENT))
+     {
+        int sig = SIGTERM;
+        procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
      }
 #endif
 

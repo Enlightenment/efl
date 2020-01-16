@@ -514,4 +514,14 @@ EAPI void elm_animation_view_max_frame_set(Elm_Animation_View *obj, int max_fram
  */
 EAPI int elm_animation_view_max_frame_get(const Elm_Animation_View *obj);
 
+#ifdef EFL_BETA_API_SUPPORT
+/** Elementary vg_animation class
+ *
+ * @ingroup Efl_Ui_VG_Animation_Legacy
+ */
+#define EFL_UI_VG_ANIMATION_LEGACY_CLASS efl_ui_vg_animation_legacy_class_get()
+
+EWAPI const Efl_Class *efl_ui_vg_animation_legacy_class_get(void);
+#endif /* EFL_BETA_API_SUPPORT */
+
 #endif

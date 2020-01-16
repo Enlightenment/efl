@@ -97,6 +97,7 @@ function_checks = [
   ['mmap', ['sys/mman.h']],
   ['mtrace', ['mcheck.h']],
   ['prctl', ['sys/prctl.h']],
+  ['procctl', ['sys/procctl.h']],
   ['realpath', ['stdlib.h']],
   ['setxattr', ['sys/types.h', 'sys/xattr.h']],
   ['siglongjmp', ['setjmp.h']],

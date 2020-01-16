@@ -21,13 +21,13 @@ _efl_canvas_gesture_zoom_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Zoom_
 }
 
 EOLIAN static double
-_efl_canvas_gesture_zoom_radius_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Zoom_Data *pd)
+_efl_canvas_gesture_zoom_radius_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Zoom_Data *pd)
 {
    return pd->radius;
 }
 
 EOLIAN static double
-_efl_canvas_gesture_zoom_zoom_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Zoom_Data *pd)
+_efl_canvas_gesture_zoom_zoom_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Zoom_Data *pd)
 {
    return pd->zoom;
 }

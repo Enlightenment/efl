@@ -94,4 +94,12 @@ interface Efl.Player
              }
         }
    }
+   events {
+      playing,changed: bool; [[Called when the playing state has changed. The event value reflects the current state. @since 1.24]]
+      paused,changed: bool; [[Called when the paused state has changed. The event value reflects the current state. @since 1.24]]
+      playback_progress,changed: double; [[Called when the playback_progress state has changed. The event value reflects the current state. @since 1.24]]
+      playback_position,changed: double; [[Called when the playback_position state has changed. The event value reflects the current state. @since 1.24]]
+      playback,repeated: int; [[Called when the player has begun to repeat its data stream. The event value is the current number of repeats. @since 1.24]]
+      playback,finished: void; [[Called when the player has completed playing its data stream. @since 1.24]]
+   }
 }
