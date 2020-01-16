@@ -3551,11 +3551,10 @@ _efl_ui_textbox_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
 static Eina_Bool
 _part_is_efl_ui_textbox_part(const Eo *obj EINA_UNUSED, const char *part)
 {
-   //Use Efl.Ui.Widget's "background" and "shadow" parts
-   if (eina_streq(part, "background") || eina_streq(part, "shadow"))
-     return EINA_FALSE;
+   if (eina_streq(part, "efl.text_guide") || eina_streq(part, "efl.text"))
+     return EINA_TRUE;
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 ELM_PART_OVERRIDE_PARTIAL(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_textbox_part)
