@@ -53,8 +53,4 @@ class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Layout_Ori
                                                          Default is $vertical.]] }
       Efl.Part.part_get;
    }
-   events {
-      press: void; [[Called when panes got pressed]]
-      unpress: void; [[Called when panes are no longer pressed]]
-   }
 }

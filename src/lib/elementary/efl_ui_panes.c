@@ -181,7 +181,7 @@ _on_pressed(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, ELM_PANES_EVENT_PRESS, NULL);
+   evas_object_smart_callback_call(data, "press", NULL);
    efl_input_clickable_press(data, 1);
 }
 
@@ -192,7 +192,7 @@ _on_unpressed(void *data,
               const char *source EINA_UNUSED)
 {
    EFL_UI_PANES_DATA_GET(data, sd);
-   efl_event_callback_legacy_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
+   evas_object_smart_callback_call(data, "unpress", NULL);
    efl_input_clickable_unpress(data, 1);
    if (sd->double_clicked)
      {
