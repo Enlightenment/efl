@@ -190,7 +190,7 @@ abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
              cur2: Efl.Text.Cursor; [[End of range.]]
          }
          return: iterator<Eina.Rect> @move; [[
-            Iterator on all geoemtries of the given range.]]
+            Iterator on all geometries of the given range.]]
       }
 
       range_precise_geometry_get {
