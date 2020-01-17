@@ -1,0 +1,29 @@
+group { name: "efl/separator/horizontal";
+   data.item: "version" "124";
+   images.image: "bevel_dark_in.png" COMP;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            min: 2 2;
+            max: 99999 2;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            image.normal: "bevel_dark_in.png";
+            image.border: 2 2 2 2;
+            fill.smooth: 0;
+         }
+      }
+   }
+}
+group { name: "efl/separator/vertical";
+   data.item: "version" "124";
+   inherit: "efl/separator/horizontal";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            max: 2 99999;
+         }
+      }
+   }
+}
+

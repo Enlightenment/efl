@@ -49,7 +49,8 @@
              "Efl.Ui.Table",
              "Efl.Ui.Flip",
              "Efl.Ui.Stack",
-             "Efl.Ui.Pager"
+             "Efl.Ui.Pager",
+             "Efl.Ui.Separator"
              ],
        "custom-mapping" : {
           "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",

@@ -409,6 +409,7 @@ void test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
 void test_efl_ui_vg_animation(void *data, Evas_Object *obj, void *event_info);
 void test_efl_gfx_vg_value_provider(void *data, Evas_Object *obj, void *event_info);
+void test_ui_separator(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 static void _list_udpate(void);
 
@@ -1151,7 +1152,7 @@ add_tests:
    // FIXME: add frame test
    ADD_TEST(NULL, "Boundaries", "Bubble", test_bubble);
    ADD_TEST(NULL, "Boundaries", "Separator", test_separator);
-
+   ADD_TEST_EO(NULL, "Boundaries", "Separator", test_ui_separator);
    //------------------------------//
    ADD_TEST(NULL, "Range Values", "Spinner", test_spinner);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Spin", test_ui_spin);
