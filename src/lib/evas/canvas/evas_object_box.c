@@ -412,17 +412,15 @@ _evas_box_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Box_Data *priv)
 EOLIAN static void
 _evas_box_efl_canvas_group_group_del(Eo *o, Evas_Object_Box_Data *priv)
 {
-   Eina_List *l;
-
-   l = priv->children;
-   while (l)
+   while (priv->children)
      {
-        Evas_Object_Box_Option *opt = l->data;
+        Evas_Object_Box_Option *opt = eina_list_data_get(priv->children);
 
         _evas_object_box_child_callbacks_unregister(opt->obj, o);
         evas_obj_box_internal_option_free(o, opt);
-        l = eina_list_remove_list(l, l);
+        priv->children = eina_list_remove_list(priv->children, priv->children);
      }
+
 
    if (priv->layout.data && priv->layout.free_data)
      priv->layout.free_data(priv->layout.data);
