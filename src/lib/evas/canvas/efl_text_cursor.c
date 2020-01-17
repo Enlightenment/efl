@@ -21,7 +21,7 @@ struct _Evas_Textblock_Selection_Iterator
 
 typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Iterator;
 
-EFL_CLASS_SIMPLE_CLASS(efl_text_cursor, "efl_text_cursor", EFL_TEXT_CURSOR_CLASS)
+EFL_CLASS_SIMPLE_CLASS(efl_text_cursor, "Efl.Text.Cursor", EFL_TEXT_CURSOR_CLASS)
 
 EOLIAN static void
 _efl_text_cursor_position_set(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, int position)
