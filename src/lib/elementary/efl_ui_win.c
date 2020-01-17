@@ -210,6 +210,7 @@ struct _Efl_Ui_Win_Data
    int          norender;
    int          modal_count;
    int          response;
+   int          ignore_frame_resize;
    Eina_Bool    req_wh : 1;
    Eina_Bool    req_xy : 1;
 
@@ -1558,16 +1559,25 @@ _elm_win_frame_geometry_adjust(Efl_Ui_Win_Data *sd)
      {
         int fw, fh, ox, oy, ow, oh;
         evas_object_geometry_get(sd->frame_obj, NULL, NULL, &fw, &fh);
+        sd->ignore_frame_resize++;
+        evas_object_resize(sd->frame_obj, 1000, 1000);
         if (elm_widget_is_legacy(sd->obj))
           edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                         &ox, &oy, &ow, &oh);
         else
           edje_object_part_geometry_get(sd->frame_obj, "efl.spacer.opaque",
                                         &ox, &oy, &ow, &oh);
+        evas_object_resize(sd->frame_obj, fw, fh);
+        sd->ignore_frame_resize--;
+        fw = 1000; fh = 1000;
         l = ox;
         t = oy;
         r = fw - ow - l;
         b = fh - oh - t;
+        if (l < 0) l = 0;
+        if (r < 0) r = 0;
+        if (t < 0) t = 0;
+        if (b < 0) b = 0;
      }
    ecore_evas_shadow_geometry_set(sd->ee, l, r, t, b);
 }
@@ -1590,17 +1600,22 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
    int ox, oy, ow, oh;
    int cx, cy, cw, ch;
    int w, h;
+   int l, r, t, b;
 
    if (!sd->frame_obj) return;
    if (!sd->csd.need) return;
    _elm_win_frame_geometry_adjust(sd);
+   ecore_evas_shadow_geometry_get(sd->ee, &l, &r, &t, &b);
+   sd->ignore_frame_resize++;
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
+   evas_object_resize(sd->frame_obj, 1000, 1000);
    if (elm_widget_is_legacy(sd->obj))
      edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
    else
      edje_object_part_geometry_get(sd->frame_obj, "efl.spacer.content", &cx, &cy, &cw, &ch);
-
-   if (!_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch) && (!force)) return;
+   evas_object_resize(sd->frame_obj, ow, oh);
+   sd->ignore_frame_resize--;
+   if (!_elm_win_framespace_set(sd, cx, cy, 1000 - cw, 1000 - ch) && (!force)) return;
    _elm_win_frame_geometry_adjust(sd);
 
    if (!sd->first_draw) return;
@@ -3733,10 +3748,10 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
         int fw, fh;
 
         evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
-        minw += fw;
-        minh += fh;
-        maxw += fw;
-        maxh += fh;
+//        minw += fw;
+//        minh += fh;
+//        maxw += fw;
+//        maxh += fh;
      }
 
    sd->tmp_updating_hints = 1;
@@ -4215,6 +4230,7 @@ _elm_win_frame_obj_resize(void *data,
 
    if (!(sd = data)) return;
    if (!sd->legacy.edje) return;
+   if (sd->ignore_frame_resize > 0) return;
 
    _elm_win_frame_obj_update(sd, 0);
 }

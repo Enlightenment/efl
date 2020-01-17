@@ -1534,6 +1534,8 @@ _ecore_evas_x_shadow_update(Ecore_Evas *ee)
                                     ECORE_X_ATOM_CARDINAL, 32, shadow, 4);
 }
 
+static void _ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee);
+
 static Eina_Bool
 _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -1672,6 +1674,8 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
                     }
                }
           }
+        if (framespace_resized)
+          _ecore_evas_x_size_pos_hints_update(ee);
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1763,15 +1767,19 @@ _ecore_evas_x_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 static void
 _ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee)
 {
+   int fw, fh;
+
+   fw = ee->framespace.w;
+   fh = ee->framespace.h;
    ecore_x_icccm_size_pos_hints_set(ee->prop.window,
                                     ee->prop.request_pos /*request_pos */,
                                     ECORE_X_GRAVITY_NW /* gravity */,
-                                    ee->prop.min.w /* min_w */,
-                                    ee->prop.min.h /* min_h */,
-                                    ee->prop.max.w /* max_w */,
-                                    ee->prop.max.h /* max_h */,
-                                    ee->prop.base.w /* base_w */,
-                                    ee->prop.base.h /* base_h */,
+                                    ee->prop.min.w + fw /* min_w */,
+                                    ee->prop.min.h + fh /* min_h */,
+                                    ee->prop.max.w + fw /* max_w */,
+                                    ee->prop.max.h + fh /* max_h */,
+                                    ee->prop.base.w + fw /* base_w */,
+                                    ee->prop.base.h + fh /* base_h */,
                                     ee->prop.step.w /* step_x */,
                                     ee->prop.step.h /* step_y */,
                                     ee->prop.aspect /* min_aspect */,
