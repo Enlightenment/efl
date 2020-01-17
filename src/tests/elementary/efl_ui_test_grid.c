@@ -89,16 +89,15 @@ EFL_START_TEST(efl_ui_grid_unpack_all)
 
    ck_assert(grid_item_pack(grid, count_before, NULL) != EINA_FALSE);
 
-   itor = efl_content_iterate(grid);
    efl_pack_unpack_all(grid);
 
    count = efl_content_count(grid);
    ck_assert(count == 0);
 
+   itor = efl_content_iterate(grid);
    EINA_ITERATOR_FOREACH(itor, item)
-     efl_del(item);
-
-   free(itor);
+     ck_assert(EINA_FALSE);
+   eina_iterator_free(itor);
 }
 EFL_END_TEST
 
