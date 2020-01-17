@@ -47,20 +47,20 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
             autoplay: bool(false); [[Auto play mode.]]
          }
       }
-      @property autorepeat {
+      @property looping {
          [[Turn on/off animation looping.
 
-           If @.autorepeat is $true, it repeats animation when animation frame is reached to
-           end. This auto repeat mode is valid to both playing and playing_backwards cases.
+           When $true, animation is restarted when it reaches the last frame.
+           This works both when playing forward and backward.
 
-           $true Enable auto play mode, disable otherwise.
+           $true Enable loop mode, disable otherwise.
          ]]
          set {
          }
          get {
          }
          values {
-            autorepeat: bool; [[Loop mode, Default is $false.]]
+            looping: bool; [[Loop mode, Default is $false.]]
          }
       }
       @property frame {

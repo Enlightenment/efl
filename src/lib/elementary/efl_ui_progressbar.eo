@@ -2,24 +2,41 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
                           Efl.Ui.Layout_Orientable, Efl.Access.Value,
                           Efl.Text, Efl.Content, Efl.Text_Markup
 {
-   [[Elementary progressbar class]]
+   [[Progress bar widget.
+
+     It shows a graphical indication of the current progress of some lengthy operation,
+     typically as a bar that gradually fills or a pointer that moves from one side of the
+     bar to the other. The bar can be horizontal or vertical, controlled with @Efl.Ui.Layout_Orientable.
+
+     The minimum and maximum values (or starting and ending values), along with the current
+     value can be set using the @Efl.Ui.Range_Display interface.
+
+     @.infinite_mode can be set when the progress state is unknown.
+     An optional textual label can be shown to indicate the exact numerical value of the progress.
+   ]]
    methods {
       @property infinite_mode {
-         [[Start/stop a given progress bar "pulsing" animation, if this mode is enabled.]]
+         [[When this mode is enabled the progress bar indicates that there is an operation
+           going on, but does not give information about its progress.
+           This is typically shown as a "pulsing" animation or an endless spinning bar,
+           depending on the theme.
+         ]]
          set {
          }
          get {
          }
          values {
-           state: bool; [[$true if the progressbar should animate infinitely,
-                          $false if the progressbar should animate based on a fixed endpoint.]]
+           state: bool; [[$true if the progress bar should animate infinitely.]]
          }
       }
       @property show_progress_label {
-         [[Whether a textual progress label is shown alongside the progressbar to give an exact
-           numerical indication of the current progress.
+         [[Whether a textual progress label is shown alongside the progress bar to give an exact
+           numerical indication of the current progress. Control the conversion of the numerical
+           value to a text string using @Efl.Ui.Format.
 
            Not to be confused with the widget label set through @Efl.Text.text.
+
+           The exact location and appearance of the progress label depend on the theme.
          ]]
          values {
            show: bool; [[$true to show the progress label.]]

@@ -164,7 +164,7 @@ pub_eo_files = [
   'elm_multibuttonentry_part.eo',
   'elm_interface_scrollable.eo',
   'efl_ui_image_zoomable_pan.eo',
-  'efl_ui_text_part.eo',
+  'efl_ui_textbox_part.eo',
   'efl_ui_caching_factory.eo',
   'efl_ui_widget_factory.eo',
   'efl_ui_property_bind_part.eo',

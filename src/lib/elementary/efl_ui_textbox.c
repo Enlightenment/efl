@@ -15,7 +15,7 @@
 
 #include "elm_entry_common.h"
 #include "elm_widget_entry.h"
-#include "efl_ui_text_part.eo.h"
+#include "efl_ui_textbox_part.eo.h"
 #include "elm_part_helper.h"
 #include "efl_canvas_textblock_internal.h"
 
@@ -623,6 +623,9 @@ _efl_ui_textbox_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Ein
 {
    const char *emission;
 
+   if (efl_ui_widget_disabled_get(obj) == disabled)
+     return;
+
    efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
    elm_drop_target_del(obj, sd->drop_format,
@@ -659,10 +662,10 @@ _efl_ui_textbox_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   // Note: We are skipping elm_layout here! This is by design.
-   // This assumes the following inheritance: my_class -> layout -> widget ...
-   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
+   theme_apply = efl_ui_widget_theme_apply(efl_super(obj,MY_CLASS));
    if (theme_apply == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
+
+   _update_text_theme(obj, sd);
 
    efl_event_freeze(obj);
 
@@ -706,6 +709,15 @@ _efl_ui_textbox_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textbox_Data *sd)
    efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    efl_unref(obj);
+
+   if (efl_content_get(efl_part(sd->entry_edje, "efl.text")) == NULL && !sd->scroller)
+     {
+        efl_pack_table(sd->text_table, sd->text_obj, 0, 0, 1, 1);
+        efl_pack_table(sd->text_table, sd->text_guide_obj, 0, 0, 1, 1);
+        efl_content_set(efl_part(sd->entry_edje, "efl.text"), sd->text_table);
+     }
+
+   _create_text_cursors(obj, sd);
 
    return theme_apply;
 }
@@ -1772,25 +1784,25 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    // Main Text
    // font_set
-   font_name = edje_object_data_get(wd->resize_obj, "font.name");
-   font_size = edje_object_data_get(wd->resize_obj, "font.size");
+   font_name = efl_layout_group_data_get(wd->resize_obj, "font.name");
+   font_size = efl_layout_group_data_get(wd->resize_obj, "font.size");
    font_size_n = font_size ? atoi(font_size) : 0;
    efl_text_font_family_set(sd->text_obj, font_name);
    efl_text_font_size_set(sd->text_obj, font_size_n);
 
    // color
    if (disabled)
-     colorcode = edje_object_data_get(wd->resize_obj, "style.color_disabled");
+     colorcode = efl_layout_group_data_get(wd->resize_obj, "style.color_disabled");
    if (!colorcode)
-     colorcode = edje_object_data_get(wd->resize_obj, "style.color");
+     colorcode = efl_layout_group_data_get(wd->resize_obj, "style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
         efl_text_color_set(sd->text_obj, r, g, b, a);
      }
 
    // Guide Text
-   font_name = edje_object_data_get(wd->resize_obj, "guide.font.name");
-   font_size = edje_object_data_get(wd->resize_obj, "guide.font.size");
+   font_name = efl_layout_group_data_get(wd->resize_obj, "guide.font.name");
+   font_size = efl_layout_group_data_get(wd->resize_obj, "guide.font.size");
    font_size_n = font_size ? atoi(font_size) : 0;
    efl_text_font_family_set(sd->text_guide_obj, font_name);
    efl_text_font_size_set(sd->text_guide_obj, font_size_n);
@@ -1798,9 +1810,9 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
    colorcode = NULL;
    // color
    if (disabled)
-     colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color_disabled");
+     colorcode = efl_layout_group_data_get(wd->resize_obj, "guide.style.color_disabled");
    if (!colorcode)
-     colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
+     colorcode = efl_layout_group_data_get(wd->resize_obj, "guide.style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
         efl_text_color_set(sd->text_guide_obj, r, g, b, a);
@@ -1850,32 +1862,13 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
 {
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
    elm_drop_target_add(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   if (elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Failed to set layout!");
-
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
-
-   //TODO: complete the usage of the text theme
-   _update_text_theme(obj, sd);
-   //efl_text_font_set(sd->text_obj, "Sans", 12);
-
-   efl_pack_table(sd->text_table, sd->text_obj, 0, 0, 1, 1);
-   efl_pack_table(sd->text_table, sd->text_guide_obj, 0, 0, 1, 1);
-
-   //edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_obj);
-   //edje_object_part_swallow(sd->entry_edje, "efl.text_guide", sd->text_guide_obj);
-   edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_table);
 
    _update_guide_text(obj, sd);
 
@@ -1919,10 +1912,6 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
    efl_input_text_input_panel_autoshow_set(obj, EINA_TRUE);
    efl_input_text_predictable_set(obj, EINA_TRUE);
    efl_input_text_input_hint_set(obj, EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE);
-
-   _mirrored_set(obj, efl_ui_mirrored_get(obj));
-
-   _create_text_cursors(obj, sd);
 
    sd->calc_force = EINA_TRUE;
 
@@ -3560,39 +3549,19 @@ _efl_ui_textbox_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
 #undef STRCMP
 
 static Eina_Bool
-_part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
+_part_is_efl_ui_textbox_part(const Eo *obj EINA_UNUSED, const char *part)
 {
-   //Use Efl.Ui.Widget's "background" and "shadow" parts
-   if (eina_streq(part, "background") || eina_streq(part, "shadow"))
-     return EINA_FALSE;
+   if (eina_streq(part, "efl.text_guide") || eina_streq(part, "efl.text"))
+     return EINA_TRUE;
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
-EOLIAN static Efl_Object *
-_efl_ui_textbox_efl_part_part_get(const Eo *obj, Efl_Ui_Textbox_Data *priv EINA_UNUSED, const char *part)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-   if (_part_is_efl_ui_text_part(obj, part)) return ELM_PART_IMPLEMENT(EFL_UI_TEXT_PART_CLASS, obj, part);
-   return efl_part_get(efl_super(obj, EFL_UI_TEXTBOX_CLASS), part);
-}
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_textbox_part)
+ELM_PART_OVERRIDE_TEXT_SET(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
+ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)
 
-EOLIAN static void
-_efl_ui_text_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, efl_ui_widget_part_class_get());
-   Efl_Ui_Textbox_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TEXTBOX_CLASS);
-   _efl_ui_textbox_text_set(pd->obj, sd, pd->part, text);
-}
-
-EOLIAN static const char *
-_efl_ui_text_part_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, efl_ui_widget_part_class_get());
-   Efl_Ui_Textbox_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TEXTBOX_CLASS);
-   return _efl_ui_textbox_text_get(pd->obj, sd, pd->part);
-}
-#include "efl_ui_text_part.eo.c"
+#include "efl_ui_textbox_part.eo.c"
 
 /* Efl.Part end */
 
