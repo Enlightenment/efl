@@ -380,7 +380,6 @@ evas_cache_vg_entry_create(Evas *evas,
      }
    eina_strbuf_free(hash_key);
    vg_entry->ref++;
-
    vg_entry->vfd = evas_cache_vg_file_open(file, key, vg_entry->evas);
    //No File??
    if (!vg_entry->vfd)

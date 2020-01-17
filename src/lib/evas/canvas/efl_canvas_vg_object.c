@@ -263,11 +263,13 @@ _efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *p
              evas_object_change(eo_obj, obj);
              pd->vg_entry = NULL;
              evas_object_change(eo_obj, obj);
+             pd->changed = EINA_TRUE;
           }
      }
 
    Eina_Error err;
    err = efl_file_set(efl_super(eo_obj, MY_CLASS), file);
+
    if (err) return err;
 
    return 0;
@@ -292,6 +294,7 @@ _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
                                              obj->cur->geometry.w,
                                              obj->cur->geometry.h, NULL);
    evas_object_change(eo_obj, obj);
+   pd->changed = EINA_TRUE;
 
    return 0;
 }
