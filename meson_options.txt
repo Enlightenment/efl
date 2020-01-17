@@ -300,7 +300,7 @@ option('nls',
 option('bindings',
   type : 'array',
   choices : ['luajit', 'cxx', 'mono'],
-  value : ['luajit', 'cxx'],
+  value : ['mono'],
   description : 'Which auto-generated language bindings for efl to enable',
 )
 
