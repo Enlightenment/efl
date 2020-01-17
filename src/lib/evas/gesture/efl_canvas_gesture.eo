@@ -46,5 +46,15 @@ abstract @beta Efl.Canvas.Gesture extends Efl.Object
             timestamp: uint;[[The time-stamp.]]
          }
       }
+      @property touch_count {
+         [[The current number of touch points recorded in the gesture.]]
+         get {
+         }
+         set @protected {
+         }
+         values {
+            touch_count: uint;[[The count of the touch points.]]
+         }
+      }
    }
 }

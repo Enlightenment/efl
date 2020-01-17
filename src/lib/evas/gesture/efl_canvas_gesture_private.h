@@ -130,6 +130,7 @@ struct _Efl_Canvas_Gesture_Data
    Efl_Canvas_Gesture_State        state;
    Eina_Position2D                 hotspot;
    unsigned int                    timestamp;
+   unsigned int                    touch_count;
 };
 
 struct _Efl_Canvas_Gesture_Momentum_Data

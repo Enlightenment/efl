@@ -60,6 +60,14 @@ class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
             return: bool; [[returns $true if its a multi touch]]
          }
       }
+      @property touch_points_count {
+         [[This provides the number of touch points active.]]
+         get {
+         }
+         values {
+            touch_count: uint; [[The number of active touch points.]]
+         }
+      }
       @property state {
          [[This property holds the state of the touch event.]]
          get {

@@ -1,3 +1,4 @@
+#define EFL_CANVAS_GESTURE_PROTECTED
 #include "efl_canvas_gesture_private.h"
 
 #define MY_CLASS EFL_CANVAS_GESTURE_MANAGER_CLASS
@@ -191,6 +192,9 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
              gesture = _get_state(pd, target, recognizer, gesture_type);
              if (!gesture)
                continue;
+
+             /* this is the "default" value for the event, recognizers may modify it if necessary */
+             efl_gesture_touch_count_set(gesture, efl_gesture_touch_points_count_get(touch_event));
 
              //Gesture detecting.
              recog_result = efl_gesture_recognizer_recognize(recognizer, gesture, target, touch_event);
