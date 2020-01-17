@@ -122,6 +122,12 @@ _efl_canvas_gesture_touch_multi_touch_get(const Eo *obj EINA_UNUSED, Efl_Canvas_
    return pd->multi_touch;
 }
 
+EOLIAN static unsigned int
+_efl_canvas_gesture_touch_touch_points_count_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+{
+   return pd->touch_down;
+}
+
 EOLIAN static const Efl_Gesture_Touch_Point_Data *
 _efl_canvas_gesture_touch_cur_data_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
