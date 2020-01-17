@@ -18,6 +18,26 @@
 #include <sys/un.h>
 #endif
 
+// BSD workaround - unable to reproduce.... but we seem to
+// get a blocking bind here if 2 processes fight over the same
+// socket where one of them loses out by sitting here and
+// blockign forever - as i can't reproduce in the freebsd vm
+// i have, so i'm limited in what to do so this is a
+// workaround to try mitigate this
+#if defined (__FreeBSD__)
+# define BIND_HANG_WORKAROUND 1
+#else
+// only need on freebsd
+//# define BIND_HANG_WORKAROUND 1
+#endif
+
+#ifdef BIND_HANG_WORKAROUND
+# include <sys/file.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+#endif
+
 /* no include EVIL as it's not supposed to be compiled on Windows */
 
 #define MY_CLASS EFL_NET_SERVER_UNIX_CLASS
@@ -29,6 +49,52 @@ typedef struct _Efl_Net_Server_Unix_Data
    Eina_Bool unlink_before_bind;
 } Efl_Net_Server_Unix_Data;
 
+#ifdef BIND_HANG_WORKAROUND
+static Eina_Error
+_efl_net_server_unix_bind_hang_lock_workaround(const char *address, Eina_Bool lock)
+{
+   size_t addrlen;
+   char *lockfile;
+   int lockfile_fd, ret;
+   Eina_Error err = 0;
+
+   if (strncmp(address, "abstract:", strlen("abstract:")) == 0) return err;
+
+   addrlen = strlen(address);
+   lockfile = malloc(addrlen + 1 + 5);
+   if (!lockfile) return err;
+
+   strcpy(lockfile, address);
+   strncpy(lockfile + addrlen, ".lock", 6);
+#ifdef HAVE_OPEN_CLOEXEC
+   lockfile_fd = open(lockfile, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC,
+                      S_IRUSR | S_IWUSR);
+   if (lockfile_fd < 0) return err;
+#else
+   lockfile_fd = open(lockfile, O_RDWR | O_CREAT | O_TRUNC,
+                      S_IRUSR | S_IWUSR);
+   if (lockfile_fd < 0) return err;
+   eina_file_close_on_exec(lockfile_fd, EINA_TRUE);
+#endif
+
+   errno = 0;
+   if (lock)
+     {
+        ret = flock(lockfile_fd, LOCK_EX | LOCK_NB);
+        if ((ret != 0) && (errno == EWOULDBLOCK))
+          err = EADDRINUSE;
+     }
+   else
+     {
+        flock(lockfile_fd, LOCK_UN | LOCK_NB);
+        unlink(lockfile);
+     }
+   close(lockfile_fd);
+   free(lockfile);
+   return err;
+}
+#endif
+
 EOLIAN static void
 _efl_net_server_unix_efl_object_destructor(Eo *o, Efl_Net_Server_Unix_Data *pd EINA_UNUSED)
 {
@@ -38,7 +104,12 @@ _efl_net_server_unix_efl_object_destructor(Eo *o, Efl_Net_Server_Unix_Data *pd E
      {
         const char *address = efl_net_server_address_get(o);
         if ((address) && (strncmp(address, "abstract:", strlen("abstract:")) != 0))
-          unlink(address);
+          {
+             unlink(address);
+#ifdef BIND_HANG_WORKAROUND
+             _efl_net_server_unix_bind_hang_lock_workaround(address, EINA_FALSE);
+#endif
+          }
      }
 
    efl_destructor(efl_super(o, MY_CLASS));
@@ -101,6 +172,10 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
              unlink(addr.sun_path);
           }
 
+#ifdef BIND_HANG_WORKAROUND
+        if (_efl_net_server_unix_bind_hang_lock_workaround(address, EINA_TRUE))
+          goto error;
+#endif
         r = bind(fd, (struct sockaddr *)&addr, addrlen);
         if (r != 0)
           {
