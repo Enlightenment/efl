@@ -1499,9 +1499,9 @@ _evas_pointer_data_remove(Evas_Public_Data *edata, Evas_Device *pointer, Eina_Bo
      }
    EINA_SAFETY_ON_NULL_RETURN(hit);
    if (hit->pointers) return;
-   eina_list_free(hit->object.in);
+   hit->object.in = eina_list_free(hit->object.in);
    edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(hit));
-   free(hit);
+   if (!nofree) free(hit);
 }
 
 Eina_List *
