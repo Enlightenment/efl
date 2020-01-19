@@ -1,45 +1,57 @@
-import efl_ui_selection_types;
+import eina_types;
 
-mixin @beta Efl.Ui.Selection {
-   [[Efl Ui Selection class]]
-   data: null;
-   methods {
-      selection_set {
-         [[Set the selection data to the object]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
-            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
-            @in data: Eina.Slice; [[Selection data]]
-            @in seat: uint;[[Specified seat for multiple seats case.]]
-         }
-         return: future<void>; [[Future for tracking when the selection is lost]]
+enum @beta Efl.Ui.Cnp_Buffer{
+   selection = 0,
+   copy_and_paste = 1,
+}
+
+struct @beta Efl.Ui.Wm_Selection_Changed {
+   buffer : Efl.Ui.Cnp_Buffer;
+   caused_by : Efl.Ui.Selection;
+   seat : uint;
+}
+
+mixin @beta Efl.Ui.Selection requires Efl.Object {
+  methods {
+    selection_set {
+      [[Set the selection data to the object]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer;
+        content : Eina.Content @by_ref;
+        seat : uint;
       }
-      selection_get {
-         [[Get the data from the object that has selection]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
-            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
-            @in data_func: Efl.Ui.Selection_Data_Ready; [[Data ready function pointer]]
-            @in seat: uint;[[Specified seat for multiple seats case.]]
-         }
+    }
+    selection_clear {
+      [[Clear the selection data from the object]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer;
+        seat : uint;
       }
-      selection_clear {
-         [[Clear the selection data from the object]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
+    }
+    selection_get {
+      [[Get the data from the object that has selection]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer;
+        seat : uint;
+        acceptable_types : iterator<string>;
       }
-      has_owner {
-         [[Determine whether the selection data has owner]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection type]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
-         return: bool; [[EINA_TRUE if there is object owns selection, otherwise EINA_FALSE]]
+      return : future<Eina.Content> @move;
+    }
+    has_selection {
+      [[Determine whether the selection data has owner]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer;
+        seat : uint;
       }
-   }
-   events {
-      wm_selection,changed: Efl.Ui.Selection_Changed; [[Called when display server's selection has changed]]
-   }
+      return : bool; [[$true if there is a available selection, $false if not]]
+    }
+  }
+  implements {
+    Efl.Object.constructor;
+    Efl.Object.invalidate;
+    Efl.Object.finalize;
+  }
+  events {
+    wm_selection,changed : Efl.Ui.Wm_Selection_Changed;
+  }
 }

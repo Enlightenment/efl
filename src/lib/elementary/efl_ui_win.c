@@ -213,6 +213,9 @@ struct _Efl_Ui_Win_Data
    int          ignore_frame_resize;
    Eina_Bool    req_wh : 1;
    Eina_Bool    req_xy : 1;
+   Eina_Array   *selection_changed;
+   Eina_Array   *planned_changes;
+   Eina_Inarray *drop_target;
 
    struct {
       short     pointer_move;
@@ -382,6 +385,8 @@ static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emi
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize);
 static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force);
+static void _ee_backbone_init(Efl_Ui_Win *obj, Efl_Ui_Win_Data *pd);
+static void _ee_backbone_shutdown(Efl_Ui_Win *obj, Efl_Ui_Win_Data *pd);
 
 static inline Efl_Ui_Win_Type
 _elm_win_type_to_efl_ui_win_type(Elm_Win_Type type)
@@ -5930,6 +5935,7 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
             efl_file_mmap_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)))
           efl_file_load(efl_part(obj, "background"));
      }
+   _ee_backbone_init(obj, sd);
    return obj;
 }
 
@@ -5965,6 +5971,8 @@ _efl_ui_win_efl_object_destructor(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
    if (pd->finalize_future)
      eina_future_cancel(pd->finalize_future);
 
+   _ee_backbone_shutdown(obj, pd);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 
    efl_unref(pd->provider);
@@ -5981,6 +5989,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    pd->provider = efl_add_ref(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, NULL);
    pd->profile.available = eina_array_new(4);
    pd->max_w = pd->max_h = -1;
+   pd->planned_changes = eina_array_new(10);
 
    // For bindings: if no parent, allow simple unref
    if (!efl_parent_get(obj))
@@ -9184,6 +9193,249 @@ elm_win_teamwork_uri_open(Efl_Ui_Win *obj EINA_UNUSED, const char *uri EINA_UNUS
    ERR("Calling deprecrated function '%s'", __FUNCTION__);
 }
 
+/* What here follows is code that implements the glue between ecore evas and efl_ui* side */
+typedef struct {
+   Eo *obj;
+   Eina_Bool currently_inside;
+} Ui_Dnd_Target;
+
+static inline Efl_Ui_Cnp_Buffer
+_ui_buffer_get(Ecore_Evas_Selection_Buffer buffer)
+{
+   if (buffer == ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER)
+     return EFL_UI_CNP_BUFFER_SELECTION;
+   else if (buffer == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     return EFL_UI_CNP_BUFFER_COPY_AND_PASTE;
+
+   return -1;
+}
+
+void
+_register_selection_changed(Efl_Ui_Selection *selection)
+{
+   ELM_WIN_DATA_GET(efl_provider_find(selection, EFL_UI_WIN_CLASS), pd);
+
+   eina_array_push(pd->planned_changes, selection);
+}
+
+static Eina_Bool
+_remove_object(void *data, void *gdata)
+{
+   if (data == gdata)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static void
+_selection_changed_cb(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection)
+{
+   Efl_Ui_Win_Data *pd = _elm_win_associate_get(ee);
+   Efl_Ui_Wm_Selection_Changed changed = {
+      .seat = seat,
+      .buffer = _ui_buffer_get(selection),
+      .caused_by = eina_array_count(pd->planned_changes) > 0 ? eina_array_data_get(pd->planned_changes, 0) : NULL,
+   };
+
+   for (unsigned int i = 0; i < eina_array_count(pd->selection_changed); ++i)
+     {
+        Eo *obj = eina_array_data_get(pd->selection_changed, i);
+
+        efl_event_callback_call(obj, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, &changed);
+     }
+
+   if (changed.caused_by)
+     eina_array_remove(pd->planned_changes, _remove_object, changed.caused_by);
+}
+
+static void
+_motion_cb(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p)
+{
+   Efl_Ui_Win_Data *pd = _elm_win_associate_get(ee);
+   for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
+     {
+        Ui_Dnd_Target *target = eina_inarray_nth(pd->drop_target, i);
+        Eina_Rect rect = efl_gfx_entity_geometry_get(target->obj);
+        Eina_Bool inside = eina_rectangle_coords_inside(&rect.rect, p.x, p.y);
+        Efl_Ui_Drop_Event ev = {p, seat, ecore_evas_drop_available_types_get(ee, seat)};
+
+        if (target->currently_inside && !inside)
+          {
+             target->currently_inside = EINA_FALSE;
+             efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_LEFT, &ev);
+          }
+        else if (!target->currently_inside && inside)
+          {
+             target->currently_inside = EINA_TRUE;
+             efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_ENTERED, &ev);
+          }
+        else if (target->currently_inside && inside)
+          {
+             efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_POSITION_CHANGED, &ev);
+          }
+        eina_accessor_free(ev.available_types);
+     }
+}
+
+static void
+_enter_state_change_cb(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Eina_Position2D p, Eina_Bool move_inside)
+{
+   Efl_Ui_Win_Data *pd = _elm_win_associate_get(ee);
+   for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
+     {
+        Ui_Dnd_Target *target = eina_inarray_nth(pd->drop_target, i);
+        Eina_Rect rect = efl_gfx_entity_geometry_get(target->obj);
+        Eina_Bool inside = eina_rectangle_coords_inside(&rect.rect, p.x, p.y);
+        Efl_Ui_Drop_Event ev = {p, seat, ecore_evas_drop_available_types_get(ee, seat)};
+
+        if (inside && move_inside)
+          {
+             target->currently_inside = EINA_TRUE;
+             efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_ENTERED, &ev);
+          }
+        else if (!move_inside && !target->currently_inside)
+          {
+             target->currently_inside = EINA_FALSE;
+             efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_LEFT, &ev);
+          }
+     }
+}
+
+static void
+_drop_cb(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Eina_Position2D p, const char *action)
+{
+   Eina_List *itr, *top_objects_list = NULL;
+   Efl_Ui_Win_Data *pd = _elm_win_associate_get(ee);
+   Eina_Array *tmp = eina_array_new(10);
+   Eo *top_obj;
+
+   for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
+     {
+        Ui_Dnd_Target *target = eina_inarray_nth(pd->drop_target, i);
+        Eina_Rect rect = efl_gfx_entity_geometry_get(target->obj);
+        Eina_Bool inside = eina_rectangle_coords_inside(&rect.rect, p.x, p.y);
+
+        if (inside)
+          {
+             EINA_SAFETY_ON_FALSE_GOTO(target->currently_inside, end);
+             eina_array_push(tmp, target->obj);
+          }
+     }
+
+   /* We retrieve the (non-smart) objects pointed by (px, py) */
+   top_objects_list = evas_tree_objects_at_xy_get(ecore_evas_get(ee), NULL, p.x, p.y);
+   /* We walk on this list from the last because if the list contains more than one
+    * element, all but the last will repeat events. The last one can repeat events
+    * or not. Anyway, this last one is the first that has to be taken into account
+    * for the determination of the drop target.
+    */
+   EINA_LIST_REVERSE_FOREACH(top_objects_list, itr, top_obj)
+     {
+        Evas_Object *object = top_obj;
+        /* We search for the dropable data into the object. If not found, we search into its parent.
+         * For example, if a button is a drop target, the first object will be an (internal) image.
+         * The drop target is attached to the button, i.e to image's parent. That's why we need to
+         * walk on the parents until NULL.
+         * If we find this dropable data, we found our drop target.
+         */
+        while (object)
+          {
+             unsigned int out_idx;
+             if (!eina_array_find(tmp, object, &out_idx))
+               {
+                  object = evas_object_smart_parent_get(object);
+               }
+             else
+               {
+                  Efl_Ui_Drop_Dropped_Event ev = {{p, seat, ecore_evas_drop_available_types_get(ee, seat)}, action};
+                  efl_event_callback_call(object, EFL_UI_DND_EVENT_DROP_DROPPED, &ev);
+                  goto end;
+               }
+          }
+     }
+end:
+   eina_list_free(top_objects_list);
+   eina_array_free(tmp);
+}
+
+static void
+_ee_backbone_init(Efl_Ui_Win *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+{
+   pd->selection_changed = eina_array_new(1);
+   pd->drop_target = eina_inarray_new(sizeof(Ui_Dnd_Target), 1);
+
+   ecore_evas_callback_selection_changed_set(pd->ee, _selection_changed_cb);
+   ecore_evas_callback_drop_drop_set(pd->ee, _drop_cb);
+   ecore_evas_callback_drop_motion_set(pd->ee, _motion_cb);
+   ecore_evas_callback_drop_state_changed_set(pd->ee, _enter_state_change_cb);
+}
+
+static void
+_ee_backbone_shutdown(Efl_Ui_Win *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+{
+   ecore_evas_callback_selection_changed_set(pd->ee, NULL);
+   ecore_evas_callback_drop_drop_set(pd->ee, NULL);
+   ecore_evas_callback_drop_motion_set(pd->ee, NULL);
+   ecore_evas_callback_drop_state_changed_set(pd->ee, NULL);
+
+   eina_array_free(pd->selection_changed);
+   pd->selection_changed = NULL;
+   eina_inarray_free(pd->drop_target);
+   pd->drop_target = NULL;
+
+}
+
+static Eina_Bool
+_remove(void *data, void *gdata)
+{
+   if (data == gdata)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+void
+_drop_event_register(Eo *obj)
+{
+   Ui_Dnd_Target target = {obj, EINA_FALSE};
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   eina_inarray_push(pd->drop_target, &target);
+}
+
+void
+_drop_event_unregister(Eo *obj)
+{
+   int idx = -1;
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+
+   for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
+     {
+        Ui_Dnd_Target *target = eina_inarray_nth(pd->drop_target, i);
+        if (target->obj == obj)
+          {
+             //FIXME emit drop
+             target->currently_inside = EINA_FALSE;
+             idx = i;
+          }
+     }
+   if (idx != -1)
+     eina_inarray_remove_at(pd->drop_target, idx);
+}
+
+void
+_selection_changed_event_register(Eo *obj)
+{
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+
+   eina_array_push(pd->selection_changed, obj);
+}
+void
+_selection_changed_event_unregister(Eo *obj)
+{
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+
+   eina_array_remove(pd->selection_changed, _remove, obj);
+}
 /* Internal EO APIs and hidden overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)

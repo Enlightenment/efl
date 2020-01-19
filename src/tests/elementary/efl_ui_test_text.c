@@ -44,6 +44,12 @@ EFL_START_TEST(text_cnp)
 }
 EFL_END_TEST
 
+static void
+_stop_event_soon(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   efl_event_callback_stop(ev->object);
+}
+
 EFL_START_TEST(text_all_select_all_unselect)
 {
    Eo *txt;
@@ -57,7 +63,7 @@ EFL_START_TEST(text_all_select_all_unselect)
                 efl_event_callback_add(efl_added, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
                             increment_int_changed, &i_selection)
                 );
-
+   efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    efl_text_set(txt, "Hello");
    efl_text_interactive_all_select(txt);
    Efl_Text_Cursor *c1=NULL, *c2 =NULL;
@@ -122,6 +128,7 @@ EFL_START_TEST(text_selection)
    Eo *win = win_add();
 
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
    efl_text_set(txt, "Hello");
    get_me_to_those_events(txt);
@@ -160,7 +167,7 @@ EFL_START_TEST(text_user_change)
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                 efl_event_callback_add(efl_added, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, user_changed, &info)
                 );
-
+   efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    efl_text_set(txt, "Hello");
    efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
    efl_text_interactive_all_select(txt);
@@ -177,6 +184,7 @@ EFL_START_TEST(text_scroll_mode)
    Eo *txt, *win, *cur;
    win = win_add();
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    cur = efl_text_interactive_main_cursor_get(txt);
    efl_text_set(txt, "Hello");
    /*scroll mode is false by default*/
@@ -199,6 +207,7 @@ EFL_START_TEST(text_change_event)
    Eo *win = win_add();
 
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
    efl_text_set(txt, "Hello");
    int i_changed = 0;
@@ -223,6 +232,7 @@ EFL_START_TEST(text_keys_handler)
    Eo *win = win_add();
 
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
    efl_text_set(txt, "Hello");
 

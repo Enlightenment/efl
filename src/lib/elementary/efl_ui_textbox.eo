@@ -1,3 +1,10 @@
+enum Efl.Ui.Textbox_Cnp_Content {
+   Nothing = 0, [[You can paste or drop nothing]]
+   Text = 1, [[You can paste normal Text]]
+   Markup = 3, [[You can paste Markup (Normal text is also just markup)]]
+   Image = 4, [[You can paste Images]]
+}
+
 class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text
    composites
@@ -31,8 +38,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
             enabled: bool; [[$true to enable the contextual menu.]]
          }
       }
-      @property cnp_mode @beta {
-         /* FIXME: Efl.Ui.Selection_Format does not allow markup without images! */
+      @property cnp_dnd_mode @beta {
          [[Control pasting of text and images for the widget.
 
            Normally the entry allows both text and images to be pasted.
@@ -44,7 +50,7 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          get {
          }
          values {
-            format: Efl.Ui.Selection_Format; [[Format for copy & paste.]]
+            allowed_formats : Efl.Ui.Textbox_Cnp_Content; [[Format for cnp]]
          }
       }
       @property selection_handles_enabled {

@@ -165,7 +165,6 @@
 
 # include "efl_ui_focus_parent_provider.eo.h"
 # include "efl_ui_focus_parent_provider_standard.eo.h"
-# include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
 
 extern const char *_efl_model_property_itemw;
@@ -668,9 +667,6 @@ void                 _elm_prefs_data_init(void);
 void                 _elm_prefs_data_shutdown(void);
 
 /* init functions for dnd and cnp */
-Eo*                  _efl_ui_selection_manager_get(Eo *obj);
-void                 _efl_ui_dnd_shutdown(void);
-
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
 void                 _elm_ews_wm_rescale(Elm_Theme *th,
@@ -1059,5 +1055,11 @@ typedef struct
 } Efl_Ui_Shared_Win_Data;
 
 Efl_Ui_Shared_Win_Data* efl_ui_win_shared_data_get(Efl_Ui_Win *win);
+
+void _selection_changed_event_register(Eo *obj);
+void _selection_changed_event_unregister(Eo *obj);
+void _drop_event_register(Eo *obj);
+void _drop_event_unregister(Eo *obj);
+void _register_selection_changed(Efl_Ui_Selection *selection);
 
 #endif

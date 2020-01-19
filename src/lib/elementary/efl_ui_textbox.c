@@ -22,7 +22,6 @@
 typedef struct _Efl_Ui_Textbox_Data        Efl_Ui_Textbox_Data;
 typedef struct _Efl_Ui_Text_Rectangle   Efl_Ui_Text_Rectangle;
 typedef struct _Anchor                  Anchor;
-typedef struct _Selection_Loss_Data     Selection_Loss_Data;
 
 /**
  * Base widget smart data extended with entry instance data.
@@ -69,7 +68,7 @@ struct _Efl_Ui_Textbox_Data
         const char  *hover_style; /**< style of a hover object */
      } anchor_hover;
 
-   Efl_Ui_Selection_Format               cnp_mode;
+   const char                           *cnp_mime_type;
    Elm_Sel_Format                        drop_format;
 
    struct {
@@ -81,11 +80,7 @@ struct _Efl_Ui_Textbox_Data
         Eina_Size2D                      scroll;
         Eina_Size2D                      layout;
    } last;
-   struct
-     {
-        Eina_Future                      *primary;
-        Eina_Future                      *clipboard;
-     } sel_future;
+   Efl_Ui_Textbox_Cnp_Content            content;
    Eina_Bool                             sel_handles_enabled : 1;
    Eina_Bool                             start_handler_down : 1;
    Eina_Bool                             start_handler_shown : 1;
@@ -147,12 +142,6 @@ struct _Efl_Ui_Text_Rectangle
    Evas_Object             *obj_bg, *obj_fg, *obj;
 };
 
-struct _Selection_Loss_Data
-{
-   Eo *obj;
-   Efl_Ui_Selection_Type stype;
-};
-
 #define MY_CLASS EFL_UI_TEXTBOX_CLASS
 #define MY_CLASS_PFX efl_ui_textbox
 #define MY_CLASS_NAME "Efl.Ui.Textbox"
@@ -208,7 +197,7 @@ static void _anchors_free(Efl_Ui_Textbox_Data *sd);
 static void _selection_defer(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static Eina_Position2D _decoration_calc_offset(Efl_Ui_Textbox_Data *sd);
 static void _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd);
-static void _efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Selection_Type type);
+static void _efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Ui_Cnp_Buffer type);
 
 static Eina_Bool _key_action_copy(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_paste(Evas_Object *obj, const char *params);
@@ -407,16 +396,19 @@ _update_selection_handler(Eo *obj)
      }
 }
 
-static void
-_selection_data_cb(void *data EINA_UNUSED, Eo *obj,
-                   Efl_Ui_Selection_Data *sel_data)
+static Eina_Value
+_selection_data_cb(Efl_Ui_Textbox *obj, void *data EINA_UNUSED, const Eina_Value value)
 {
+   Eina_Content *content;
+   Eina_Slice slice;
    Efl_Text_Cursor *cur, *start, *end;
    Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
-   char *buf = eina_slice_strdup(sel_data->content);
-   size_t len = sel_data->content.len;
+   if (eina_value_type_get(&value) != EINA_VALUE_TYPE_CONTENT)
+     return EINA_VALUE_EMPTY;
 
+   content = eina_value_to_content(&value);
+   slice = eina_content_data_get(content);
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    if (!efl_text_cursor_equal(start, end))
      {
@@ -426,83 +418,130 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
    cur = efl_text_interactive_main_cursor_get(obj);
    info.type = EFL_TEXT_CHANGE_TYPE_INSERT;
    info.position = efl_text_cursor_position_get(cur);
-   info.length = len;
-   info.content = buf;
-   if (sel_data->format == EFL_UI_SELECTION_FORMAT_MARKUP)
+   info.length = slice.len;
+   info.content = slice.mem;
+   if (eina_streq(eina_content_type_get(content), "application/x-elementary-markup"))
      {
-        efl_text_cursor_markup_insert(cur, buf);
+        efl_text_cursor_markup_insert(cur, slice.mem);
+     }
+   else if (!strncmp(eina_content_type_get(content), "image/", strlen("image/")))
+     {
+        Eina_Strbuf *result = eina_strbuf_new();
+        eina_strbuf_append_printf(result, "<item absize=240x180 href=");
+        eina_strbuf_append_slice(result, slice);
+        eina_strbuf_append_printf(result, "></item>");
+        efl_text_cursor_markup_insert(cur, eina_strbuf_string_get(result));
+        eina_strbuf_free(result);
      }
    else // TEXT
      {
-        efl_text_cursor_text_insert(cur, buf);
+        efl_text_cursor_text_insert(cur, slice.mem);
      }
    efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
-   free(buf);
+
+   return EINA_VALUE_EMPTY;
+}
+
+static Eina_Array*
+_figure_out_types(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   Eina_Array *types = eina_array_new(10);
+
+   if (sd->content & EFL_UI_TEXTBOX_CNP_CONTENT_MARKUP)
+     eina_array_push(types, "application/x-elementary-markup");
+   if (sd->content & EFL_UI_TEXTBOX_CNP_CONTENT_IMAGE)
+     {
+        eina_array_push(types, "image/png");
+        eina_array_push(types, "image/jpeg");
+        eina_array_push(types, "image/x-ms-bmp");
+        eina_array_push(types, "image/gif");
+        eina_array_push(types, "image/tiff");
+        eina_array_push(types, "image/svg+xml");
+        eina_array_push(types, "image/x-xpixmap");
+        eina_array_push(types, "image/x-tga");
+        eina_array_push(types, "image/x-portable-pixmap");
+     }
+   if (sd->content & EFL_UI_TEXTBOX_CNP_CONTENT_TEXT)
+     eina_array_push(types, "text/plain;charset=utf-8");
+   return types;
+}
+
+static Eina_Bool
+_accepting_drops(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Accessor *mime_types)
+{
+   int i = 0;
+   const char *mime_type;
+
+   if (efl_ui_widget_disabled_get(obj)) return EINA_FALSE;
+
+   EINA_ACCESSOR_FOREACH(mime_types, i, mime_type)
+     {
+        if (sd->content & EFL_UI_TEXTBOX_CNP_CONTENT_TEXT &&
+            eina_streq(mime_type, "text/plain;charset=utf-8"))
+          return EINA_TRUE;
+
+        if (sd->content & EFL_UI_TEXTBOX_CNP_CONTENT_IMAGE &&
+            strncmp(mime_type, "image/", strlen("image/")))
+          return EINA_TRUE;
+
+        if (sd->content & EFL_UI_TEXTBOX_CNP_CONTENT_MARKUP &&
+            eina_streq(mime_type, "application/x-elementary-markup"))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static void
 _dnd_enter_cb(void *data EINA_UNUSED,
-              Evas_Object *obj)
+              const Efl_Event *ev)
 {
-   efl_ui_focus_util_focus(obj);
+   Efl_Ui_Drop_Event *dnd_enter = ev->info;
+   EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   if (_accepting_drops(ev->object, sd, dnd_enter->available_types))
+     efl_ui_focus_util_focus(ev->object);
 }
 
 static void
-_dnd_leave_cb(void *data EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED)
+_dnd_pos_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-}
+   Efl_Ui_Drop_Event *dnd_pos = ev->info;
+   Eina_Position2D po, pe, pos;
+   EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   int cursor_pos;
 
-static void
-_dnd_pos_cb(void *data EINA_UNUSED,
-            Evas_Object *obj,
-            Evas_Coord x,
-            Evas_Coord y,
-            Elm_Xdnd_Action action EINA_UNUSED)
-{
-   int pos;
-   Eina_Rect o, e;
+   if (!_accepting_drops(ev->object, sd, dnd_pos->available_types))
+     return;
 
-   EFL_UI_TEXT_DATA_GET(obj, sd);
-
-   o = efl_gfx_entity_geometry_get(obj);
-   e = efl_gfx_entity_geometry_get(sd->entry_edje);
-   x = x + o.x - e.x;
-   y = y + o.y - e.y;
+   po = efl_gfx_entity_position_get(ev->object);
+   pe = efl_gfx_entity_position_get(sd->entry_edje);
+   pos.x = dnd_pos->position.x + po.x - pe.x;
+   pos.y = dnd_pos->position.y + po.x - pe.y;
 
    edje_object_part_text_cursor_coord_set
-      (sd->entry_edje, "efl.text", EDJE_CURSOR_USER, x, y);
-   pos = edje_object_part_text_cursor_pos_get
+      (sd->entry_edje, "efl.text", EDJE_CURSOR_USER, pos.x, pos.y);
+   cursor_pos = edje_object_part_text_cursor_pos_get
       (sd->entry_edje, "efl.text", EDJE_CURSOR_USER);
    edje_object_part_text_cursor_pos_set(sd->entry_edje, "efl.text",
-                                        EDJE_CURSOR_MAIN, pos);
+                                        EDJE_CURSOR_MAIN, cursor_pos);
 }
 
-static Eina_Bool
-_dnd_drop_cb(void *data EINA_UNUSED,
-              Evas_Object *obj,
-              Elm_Selection_Data *drop)
+static void
+_dnd_drop_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   Eina_Bool rv;
+   Efl_Ui_Drop_Event *drop = ev->info;
+   Eina_Future *future;
+   Eina_Array *types;
 
-   EFL_UI_TEXT_DATA_GET(obj, sd);
+   EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   types = _figure_out_types(ev->object, sd);
 
-   rv = edje_object_part_text_cursor_coord_set
-       (sd->entry_edje, "efl.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
+   if (!_accepting_drops(ev->object, sd, drop->available_types))
+     return;
 
-   if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
+   future = efl_ui_dnd_drop_data_get(ev->object, 0, eina_array_iterator_new(types));
+   eina_array_free(types);
 
-   //rv = _selection_data_cb(NULL, obj, drop);
-
-   return rv;
-}
-
-static Elm_Sel_Format
-_get_drop_format(Evas_Object *obj)
-{
-   if (efl_text_interactive_editable_get(obj) && (efl_text_multiline_get(obj)) && (!efl_text_password_get(obj)) && (!efl_ui_widget_disabled_get(obj)))
-     return EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
-   return EFL_UI_SELECTION_FORMAT_MARKUP;
+   efl_future_then(ev->object, future, _selection_data_cb);
 }
 
 /* we can't reuse layout's here, because it's on entry_edje only */
@@ -516,12 +555,6 @@ _efl_ui_textbox_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Ein
 
    efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
-   elm_drop_target_del(obj, sd->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
-
    emission = efl_ui_widget_disabled_get(obj) ? "efl,state,disabled" : "efl,state,enabled";
    efl_layout_signal_emit(sd->entry_edje, emission, "efl");
    if (sd->scroll)
@@ -529,15 +562,6 @@ _efl_ui_textbox_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Ein
         efl_ui_scrollable_scroll_freeze_set(obj, efl_ui_widget_disabled_get(obj));
      }
 
-   if (!efl_ui_widget_disabled_get(obj))
-     {
-        sd->drop_format = _get_drop_format(obj);
-        elm_drop_target_add(obj, sd->drop_format,
-                            _dnd_enter_cb, NULL,
-                            _dnd_leave_cb, NULL,
-                            _dnd_pos_cb, NULL,
-                            _dnd_drop_cb, NULL);
-     }
    _update_text_theme(obj, sd);
 }
 
@@ -804,83 +828,36 @@ _popup_position(Evas_Object *obj)
    efl_gfx_entity_geometry_set(sd->popup, EINA_RECT(r.x + cx, r.y + cy, m.w, m.h));
 }
 
-static Eina_Value
-_selection_lost_cb(void *data, const Eina_Value value)
+static void
+_selection_lost_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   Selection_Loss_Data *sdata = data;
-    EFL_UI_TEXT_DATA_GET(sdata->obj, sd);
+   Efl_Ui_Wm_Selection_Changed *changed = ev->info;
+   EFL_UI_TEXT_DATA_GET(ev->object, sd);
 
-   efl_text_interactive_all_unselect(sdata->obj);
-   _selection_defer(sdata->obj, sd);
-   switch (sdata->stype)
+   if (changed->buffer == EFL_UI_CNP_BUFFER_SELECTION && changed->caused_by != ev->object)
      {
-      case EFL_UI_SELECTION_TYPE_CLIPBOARD:
-         sd->sel_future.clipboard = NULL;
-         break;
-      case EFL_UI_SELECTION_TYPE_PRIMARY:
-      default:
-         sd->sel_future.primary = NULL;
-         break;
+        efl_text_interactive_all_unselect(ev->object);
+        _selection_defer(ev->object, sd);
      }
-
-   return value;
 }
 
 static void
-_selection_store(Efl_Ui_Selection_Type seltype,
+_selection_store(Efl_Ui_Cnp_Buffer buffer,
                  Evas_Object *obj)
 {
    char *sel;
    Efl_Text_Cursor *start, *end;
-   Efl_Ui_Selection_Format selformat = EFL_UI_SELECTION_FORMAT_MARKUP;
-   Eina_Slice slice;
-   Selection_Loss_Data *ldata;
-   Eina_Future *f;
-
-   EFL_UI_TEXT_DATA_GET(obj, sd);
+   Eina_Content *content;
 
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    sel = efl_text_cursor_range_markup_get(start, end);
 
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
 
-   slice.len = strlen(sel);
-   slice.mem = sel;
+   content = eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(sel), "application/x-elementary-markup");
 
-   switch (seltype)
-     {
-      case EFL_UI_SELECTION_TYPE_CLIPBOARD:
-         if (sd->sel_future.clipboard)
-           {
-              eina_future_cancel(sd->sel_future.clipboard);
-           }
+   efl_ui_selection_set(obj, buffer, content, 0);
 
-         f = sd->sel_future.clipboard = efl_ui_selection_set(obj, seltype,
-               selformat, slice, 1);
-         break;
-
-      case EFL_UI_SELECTION_TYPE_PRIMARY:
-      default:
-         if (sd->sel_future.primary)
-           {
-              eina_future_cancel(sd->sel_future.primary);
-           }
-
-         f = sd->sel_future.primary = efl_ui_selection_set(obj, seltype,
-               selformat, slice, 1);
-         break;
-     }
-
-   ldata = calloc(1, sizeof(Selection_Loss_Data));
-   if (!ldata) goto end;
-
-   ldata->obj = obj;
-   eina_future_then_easy(f, _selection_lost_cb, NULL, NULL, EINA_VALUE_TYPE_UINT, ldata);
-
-   //if (seltype == EFL_UI_SELECTION_TYPE_CLIPBOARD)
-   //  eina_stringshare_replace(&sd->cut_sel, sel);
-
-end:
    free(sel);
 }
 
@@ -956,7 +933,7 @@ _menu_call(Evas_Object *obj)
      {
         Eina_Bool ownersel;
 
-        ownersel = elm_selection_selection_has_owner(obj);
+        ownersel = elm_cnp_clipboard_selection_has_owner(obj);
         /* prevent stupid blank hoversel */
         if (efl_text_interactive_have_selection_get(obj) && efl_text_password_get(obj)) return;
         if (_elm_config->desktop_entry && (!efl_text_interactive_have_selection_get(obj)) && ((!efl_text_interactive_editable_get(obj)) || (!ownersel)))
@@ -1133,7 +1110,7 @@ _mouse_down_cb(void *data, const Efl_Event *event)
 
    if (ev->button == 2)
      {
-        _efl_ui_textbox_selection_paste_type(data, EFL_UI_SELECTION_TYPE_PRIMARY);
+        _efl_ui_textbox_selection_paste_type(data, sd, EFL_UI_CNP_BUFFER_SELECTION);
      }
 
     /* If right button is pressed and context menu disabled is true,
@@ -1654,10 +1631,18 @@ _efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    Eo *text_obj;
 
+   sd->content = EFL_UI_TEXTBOX_CNP_CONTENT_MARKUP;
+
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
+
+   efl_event_callback_add(obj, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, _selection_lost_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_DND_EVENT_DROP_ENTERED, _dnd_enter_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_DND_EVENT_DROP_POSITION_CHANGED, _dnd_pos_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_DND_EVENT_DROP_DROPPED, _dnd_drop_cb, NULL);
+
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_callback_add(obj, EFL_INPUT_EVENT_LONGPRESSED, _long_press_cb, obj);
 
@@ -1674,11 +1659,9 @@ _efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
    efl_composite_attach(obj, text_obj);
 
    sd->entry_edje = wd->resize_obj;
-   sd->cnp_mode = EFL_UI_SELECTION_FORMAT_TEXT;
    sd->context_menu_enabled = EINA_TRUE;
    efl_text_interactive_editable_set(obj, EINA_TRUE);
    efl_text_interactive_selection_allowed_set(obj, EINA_TRUE);
-   sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    sd->last.scroll = EINA_SIZE2D(0, 0);
    sd->sel_handles_enabled = EINA_FALSE;
 
@@ -1690,12 +1673,6 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
                                  Efl_Ui_Textbox_Data *sd)
 {
    obj = efl_finalize(efl_super(obj, MY_CLASS));
-
-   elm_drop_target_add(obj, sd->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
 
@@ -1805,11 +1782,6 @@ _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, E
      efl_text_replacement_char_set(obj, ENTRY_PASSWORD_MASK_CHARACTER_UTF8);
    efl_text_password_set(sd->text_obj, password);
 
-   elm_drop_target_del(obj, sd->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
    if (password)
      {
         efl_text_multiline_set(obj, EINA_FALSE);
@@ -1819,12 +1791,6 @@ _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, E
    else
      {
         efl_text_multiline_set(obj, EINA_TRUE);
-        sd->drop_format = _get_drop_format(obj);
-        elm_drop_target_add(obj, sd->drop_format,
-                            _dnd_enter_cb, NULL,
-                            _dnd_leave_cb, NULL,
-                            _dnd_pos_cb, NULL,
-                            _dnd_drop_cb, NULL);
         efl_input_text_input_content_type_set(obj, ((efl_input_text_input_content_type_get(obj) | EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE) & ~EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA));
         efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
@@ -1891,19 +1857,8 @@ _efl_ui_textbox_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Textbox_Data *
    efl_ui_widget_theme_apply(obj);
    efl_ui_widget_focus_allow_set(obj, editable);
 
-   elm_drop_target_del(obj, sd->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
    if (editable)
      {
-        sd->drop_format = _get_drop_format(obj);
-        elm_drop_target_add(obj, sd->drop_format,
-                            _dnd_enter_cb, NULL,
-                            _dnd_leave_cb, NULL,
-                            _dnd_pos_cb, NULL,
-                            _dnd_drop_cb, NULL);
         if (sd->cursor)
           {
              efl_gfx_entity_visible_set(sd->cursor, EINA_TRUE);
@@ -1961,7 +1916,7 @@ _efl_ui_textbox_selection_cut(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    /*In password mode, cut will remove text only*/
    if (!efl_text_password_get(obj))
-     _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
+     _selection_store(EFL_UI_CNP_BUFFER_COPY_AND_PASTE, obj);
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
 
    start_pos = efl_text_cursor_position_get(start);
@@ -1993,25 +1948,27 @@ _efl_ui_textbox_selection_copy(Eo *obj, Efl_Ui_Textbox_Data *sd)
         efl_layout_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
         efl_ui_widget_scroll_hold_pop(obj);
      }
-   _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
+   _selection_store(EFL_UI_CNP_BUFFER_COPY_AND_PASTE, obj);
    efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY, NULL);
 }
-
 static void
-_efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Selection_Type type)
+_efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Ui_Cnp_Buffer type)
 {
-   Efl_Ui_Selection_Format formats = EFL_UI_SELECTION_FORMAT_TEXT | EFL_UI_SELECTION_FORMAT_MARKUP;
+   Eina_Future *future;
+   Eina_Array *types = _figure_out_types(obj, sd);
 
-   efl_ui_selection_get(obj, type, formats,
-         NULL, _selection_data_cb, NULL, 1);
+   future = efl_ui_selection_get(obj, type, 0, eina_array_iterator_new(types));
+
+   efl_future_then(obj, future, _selection_data_cb);
 
    efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_PASTE, NULL);
+   eina_array_free(types);
 }
 
 EOLIAN static void
-_efl_ui_textbox_selection_paste(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
+_efl_ui_textbox_selection_paste(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
-   _efl_ui_textbox_selection_paste_type(obj, EFL_UI_SELECTION_TYPE_CLIPBOARD);
+   _efl_ui_textbox_selection_paste_type(obj, sd, EFL_UI_CNP_BUFFER_COPY_AND_PASTE);
 }
 
 EOLIAN static void
@@ -2028,44 +1985,15 @@ _efl_ui_textbox_context_menu_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textb
 }
 
 EOLIAN static void
-_efl_ui_textbox_cnp_mode_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Ui_Selection_Format cnp_mode)
+_efl_ui_textbox_cnp_dnd_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Efl_Ui_Textbox_Cnp_Content content)
 {
-   Elm_Sel_Format dnd_format = EFL_UI_SELECTION_FORMAT_MARKUP;
-
-   if (cnp_mode != EFL_UI_SELECTION_FORMAT_TARGETS)
-     {
-        if (cnp_mode & EFL_UI_SELECTION_FORMAT_VCARD)
-          ERR("VCARD format not supported for copy & paste!");
-        else if (cnp_mode & EFL_UI_SELECTION_FORMAT_HTML)
-          ERR("HTML format not supported for copy & paste!");
-        cnp_mode &= ~EFL_UI_SELECTION_FORMAT_VCARD;
-        cnp_mode &= ~EFL_UI_SELECTION_FORMAT_HTML;
-     }
-
-   if (sd->cnp_mode == cnp_mode) return;
-   sd->cnp_mode = cnp_mode;
-   if (sd->cnp_mode == EFL_UI_SELECTION_FORMAT_TEXT)
-     dnd_format = EFL_UI_SELECTION_FORMAT_TEXT;
-   else if (cnp_mode == EFL_UI_SELECTION_FORMAT_IMAGE)
-     dnd_format |= EFL_UI_SELECTION_FORMAT_IMAGE;
-
-   elm_drop_target_del(obj, sd->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
-   sd->drop_format = dnd_format;
-   elm_drop_target_add(obj, sd->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
+   sd->content = content;
 }
 
-EOLIAN static Efl_Ui_Selection_Format
-_efl_ui_textbox_cnp_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+EOLIAN static Efl_Ui_Textbox_Cnp_Content
+_efl_ui_textbox_cnp_dnd_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
-   return sd->cnp_mode;
+   return sd->content;
 }
 
 EOLIAN static void
@@ -3279,7 +3207,7 @@ _efl_ui_textbox_selection_changed_cb(void *data, const Efl_Event *event EINA_UNU
    Eo *obj = data;
    EFL_UI_TEXT_DATA_GET(obj, sd);
    _edje_signal_emit(sd, "selection,changed", "efl.text");
-   _selection_store(EFL_UI_SELECTION_TYPE_PRIMARY, obj);
+   _selection_store(EFL_UI_CNP_BUFFER_SELECTION, obj);
    _selection_defer(obj, sd);
 }
 
