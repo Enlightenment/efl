@@ -467,6 +467,69 @@ _elm_win_first_frame_do(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
    evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _elm_win_first_frame_do, data);
 }
 
+Ecore_X_Window
+_elm_ee_xwin_get(const Ecore_Evas *ee)
+{
+#ifdef HAVE_ELEMENTARY_X
+   const char *engine_name;
+   if (!ee) return 0;
+
+   engine_name = ecore_evas_engine_name_get(ee);
+   if (EINA_UNLIKELY(!engine_name)) return 0;
+
+   if (!strcmp(engine_name, ELM_SOFTWARE_X11))
+     {
+        return ecore_evas_software_x11_window_get(ee);
+     }
+   else if (!strcmp(engine_name, ELM_OPENGL_X11))
+     {
+        return ecore_evas_gl_x11_window_get(ee);
+     }
+#else
+   (void)ee;
+#endif
+   return 0;
+}
+
+#ifdef HAVE_ELEMENTARY_X
+static void
+_internal_elm_win_xwindow_get(Efl_Ui_Win_Data *sd)
+{
+   Ecore_X_Window pwin = sd->x.xwin;
+   sd->x.xwin = _elm_ee_xwin_get(sd->ee);
+   if (sd->x.xwin != pwin)
+     {
+        char buf[128];
+
+        snprintf(buf, sizeof(buf), "%x", sd->x.xwin);
+        eina_stringshare_del(sd->stack_id);
+        sd->stack_id = eina_stringshare_add(buf);
+     }
+}
+#endif
+
+Ecore_Wl2_Window *
+_elm_ee_wlwin_get(const Ecore_Evas *ee)
+{
+#ifdef HAVE_ELEMENTARY_WL2
+   const char *engine_name;
+
+   if (!ee) return NULL;
+
+   engine_name = ecore_evas_engine_name_get(ee);
+   if (EINA_UNLIKELY(!engine_name)) return NULL;
+
+   if ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+       (!strcmp(engine_name, ELM_WAYLAND_EGL)))
+     {
+        return ecore_evas_wayland2_window_get(ee);
+     }
+#else
+   (void)ee;
+#endif
+   return NULL;
+}
+
 static void
 _win_noblank_eval(void)
 {
@@ -482,6 +545,7 @@ _win_noblank_eval(void)
 
         if (sd->x.xwin)
           {
+             _internal_elm_win_xwindow_get(sd);
              if ((sd->noblank) && (!sd->minimized) && (!sd->withdrawn) &&
                  evas_object_visible_get(obj))
                noblanks++;
@@ -526,6 +590,7 @@ _elm_win_apply_alpha(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 #ifdef HAVE_ELEMENTARY_X
         if (sd->x.xwin)
           {
+             _internal_elm_win_xwindow_get(sd);
              enabled |= (sd->csd.need && !sd->fullscreen);
              if (!ecore_x_screen_is_composited(0))
                {
@@ -1083,7 +1148,10 @@ _elm_win_pre_render(Ecore_Evas *ee)
         if (sd->pointer.obj) evas_object_show(sd->pointer.obj);
 #ifdef ELEMENTARY_X
         if (sd->type == ELM_WIN_TOOLTIP)
-          ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
+          {
+             _internal_elm_win_xwindow_get(sd);
+             ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
+          }
 #endif
         sd->first_draw = EINA_TRUE;
         /* set this to handle ecore-evas engine code which incorrectly
@@ -1622,7 +1690,9 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
 
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    if (w && h)
-     TRAP(sd, resize, w, h);
+     {
+        TRAP(sd, resize, w, h);
+     }
 }
 
 static int
@@ -3223,7 +3293,7 @@ _efl_ui_win_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz
         evas_object_image_size_set(sd->img_obj, sz.w, sz.h);
      }
 
-   _elm_win_frame_geometry_adjust(sd);
+   _elm_win_frame_obj_update(sd, 1);
    if (!sd->response)
      {
         sd->req_wh = EINA_TRUE;
@@ -3266,69 +3336,6 @@ _elm_win_delete_request(Ecore_Evas *ee)
    if (autodel) evas_object_del(obj);
    else sd->autodel_clear = NULL;
    evas_object_unref(obj);
-}
-
-Ecore_X_Window
-_elm_ee_xwin_get(const Ecore_Evas *ee)
-{
-#ifdef HAVE_ELEMENTARY_X
-   const char *engine_name;
-   if (!ee) return 0;
-
-   engine_name = ecore_evas_engine_name_get(ee);
-   if (EINA_UNLIKELY(!engine_name)) return 0;
-
-   if (!strcmp(engine_name, ELM_SOFTWARE_X11))
-     {
-        return ecore_evas_software_x11_window_get(ee);
-     }
-   else if (!strcmp(engine_name, ELM_OPENGL_X11))
-     {
-        return ecore_evas_gl_x11_window_get(ee);
-     }
-#else
-   (void)ee;
-#endif
-   return 0;
-}
-
-#ifdef HAVE_ELEMENTARY_X
-static void
-_internal_elm_win_xwindow_get(Efl_Ui_Win_Data *sd)
-{
-   Ecore_X_Window pwin = sd->x.xwin;
-   sd->x.xwin = _elm_ee_xwin_get(sd->ee);
-   if (sd->x.xwin != pwin)
-     {
-        char buf[128];
-
-        snprintf(buf, sizeof(buf), "%x", sd->x.xwin);
-        eina_stringshare_del(sd->stack_id);
-        sd->stack_id = eina_stringshare_add(buf);
-     }
-}
-#endif
-
-Ecore_Wl2_Window *
-_elm_ee_wlwin_get(const Ecore_Evas *ee)
-{
-#ifdef HAVE_ELEMENTARY_WL2
-   const char *engine_name;
-
-   if (!ee) return NULL;
-
-   engine_name = ecore_evas_engine_name_get(ee);
-   if (EINA_UNLIKELY(!engine_name)) return NULL;
-
-   if ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-       (!strcmp(engine_name, ELM_WAYLAND_EGL)))
-     {
-        return ecore_evas_wayland2_window_get(ee);
-     }
-#else
-   (void)ee;
-#endif
-   return NULL;
 }
 
 #ifdef HAVE_ELEMENTARY_WL2
@@ -3491,6 +3498,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
    _internal_elm_win_xwindow_get(sd);
 
    if (!sd->x.xwin) return;  /* nothing more to do */
+   _internal_elm_win_xwindow_get(sd);
 
    if (sd->stack_master_id)
      {
@@ -3509,6 +3517,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
         if (sd->parent)
           {
              ELM_WIN_DATA_GET(sd->parent, sdp);
+             _internal_elm_win_xwindow_get(sdp);
              if (sdp) ecore_x_icccm_transient_for_set(sd->x.xwin, sdp->x.xwin);
           }
      }
@@ -3896,6 +3905,7 @@ _elm_win_client_message(void *data,
    Ecore_X_Event_Client_Message *e = event;
 
    if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
+   _internal_elm_win_xwindow_get(sd);
    if (e->message_type == ECORE_X_ATOM_E_COMP_FLUSH)
      {
         if ((unsigned int)e->data.l[0] == sd->x.xwin)
@@ -3998,6 +4008,7 @@ _elm_win_property_change(void *data,
 
    if (e->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE)
      {
+        _internal_elm_win_xwindow_get(sd);
         if (e->win == sd->x.xwin)
           {
              sd->legacy.indmode = (Elm_Win_Indicator_Mode)ecore_x_e_illume_indicator_state_get(e->win);
@@ -4319,6 +4330,7 @@ _win_move_start(Efl_Ui_Win_Data *sd)
      {
         int x, y;
 
+        _internal_elm_win_xwindow_get(sd);
         sd->resizing = EINA_TRUE;
         ecore_x_pointer_ungrab();
         ecore_x_pointer_root_xy_get(&x, &y);
@@ -4372,6 +4384,7 @@ _win_move_resize_start(Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
    if (sd->x.xwin)
      {
         int x, y;
+        _internal_elm_win_xwindow_get(sd);
         ecore_x_pointer_ungrab();
         ecore_x_pointer_root_xy_get(&x, &y);
         ecore_x_netwm_moveresize_request_send(sd->x.xwin, x, y, ri->x_dir, 1);
@@ -4777,7 +4790,9 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    _elm_win_frame_geometry_adjust(sd);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    if ((w > 1) && (h > 1))
-     ecore_evas_resize(sd->ee, w, h);
+     {
+        ecore_evas_resize(sd->ee, w, h);
+     }
 }
 
 static void
@@ -6240,6 +6255,7 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
                   static Ecore_X_Atom state = 0;
                   static Ecore_X_Atom centered = 0;
 
+                  _internal_elm_win_xwindow_get(sd);
                   if (!centered) centered = ecore_x_atom_get
                     ("__E_ATOM_WINDOW_STATE_CENTERED");
                   if (!state) state = ecore_x_atom_get
@@ -6924,8 +6940,11 @@ _efl_ui_win_keyboard_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_W
    sd->kbdmode = mode;
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.xwin)
-     ecore_x_e_virtual_keyboard_state_set
-       (sd->x.xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ecore_x_e_virtual_keyboard_state_set
+          (sd->x.xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
+     }
 #endif
 }
 
@@ -7147,7 +7166,8 @@ _efl_ui_win_stack_master_id_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const 
    if (sd->shown) return;
    eina_stringshare_replace(&(sd->stack_master_id), id);
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin) _elm_win_xwin_update(sd);
+   if (sd->x.xwin)
+     _elm_win_xwin_update(sd);
    else
 #endif
      {
@@ -7230,6 +7250,7 @@ _efl_ui_win_stack_pop_to(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
         int i, num = 0;
         Eina_Bool del = EINA_FALSE;
 
+        _internal_elm_win_xwindow_get(sd);
         ecore_x_grab();
         _x_transients_for_list
           (ecore_x_window_root_get(sd->x.xwin),
@@ -7285,6 +7306,7 @@ elm_win_floating_mode_set(Evas_Object *obj, Eina_Bool floating)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
+        _internal_elm_win_xwindow_get(sd);
         if (sd->floating)
           ecore_x_e_illume_window_state_set
              (sd->x.xwin, ECORE_X_ILLUME_WINDOW_STATE_FLOATING);
@@ -7900,6 +7922,7 @@ elm_win_xwindow_get(const Evas_Object *obj)
    if (!sd) return 0;
 
 #ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin) return sd->x.xwin;
    if (sd->parent) return elm_win_xwindow_get(sd->parent);
 #endif
@@ -8023,6 +8046,7 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
+        _internal_elm_win_xwindow_get(sd);
         ecore_x_e_illume_quickpanel_set(sd->x.xwin, quickpanel);
         if (quickpanel)
           {
@@ -8049,7 +8073,10 @@ elm_win_quickpanel_get(const Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
+     }
 #else
    (void)sd;
 #endif
@@ -8066,7 +8093,10 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     ecore_x_e_illume_quickpanel_priority_major_set(sd->x.xwin, priority);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ecore_x_e_illume_quickpanel_priority_major_set(sd->x.xwin, priority);
+     }
 #else
    (void)sd;
    (void)priority;
@@ -8082,7 +8112,10 @@ elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
+     }
 #else
    (void)sd;
 #endif
@@ -8099,7 +8132,10 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     ecore_x_e_illume_quickpanel_priority_minor_set(sd->x.xwin, priority);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ecore_x_e_illume_quickpanel_priority_minor_set(sd->x.xwin, priority);
+     }
 #else
    (void)sd;
    (void)priority;
@@ -8115,7 +8151,10 @@ elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
+     }
 #else
    (void)sd;
 #endif
@@ -8132,7 +8171,10 @@ elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     ecore_x_e_illume_quickpanel_zone_set(sd->x.xwin, zone);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ecore_x_e_illume_quickpanel_zone_set(sd->x.xwin, zone);
+     }
 #else
    (void)sd;
    (void)zone;
@@ -8148,7 +8190,10 @@ elm_win_quickpanel_zone_get(const Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
+     }
 #else
    (void)sd;
 #endif
@@ -8176,6 +8221,7 @@ elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode)
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.xwin)
      {
+        _internal_elm_win_xwindow_get(sd);
         if (sd->legacy.indmode == ELM_WIN_INDICATOR_SHOW)
           ecore_x_e_illume_indicator_state_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
@@ -8221,6 +8267,7 @@ elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode m
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
+        _internal_elm_win_xwindow_get(sd);
         if (sd->legacy.ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
           ecore_x_e_illume_indicator_opacity_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
@@ -8260,7 +8307,10 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     ecore_x_e_virtual_keyboard_set(sd->x.xwin, is_keyboard);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ecore_x_e_virtual_keyboard_set(sd->x.xwin, is_keyboard);
+     }
 #else
    (void)sd;
    (void)is_keyboard;
@@ -8275,7 +8325,11 @@ elm_win_keyboard_win_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin) return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
+   if (sd->x.xwin)
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
+     }
 #else
    (void)sd;
 #endif
@@ -8291,7 +8345,10 @@ elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     ecore_x_e_illume_conformant_set(sd->x.xwin, conformant);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ecore_x_e_illume_conformant_set(sd->x.xwin, conformant);
+     }
 #else
    (void)sd;
    (void)conformant;
@@ -8307,7 +8364,10 @@ elm_win_conformant_get(const Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_conformant_get(sd->x.xwin);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return ecore_x_e_illume_conformant_get(sd->x.xwin);
+     }
 #else
    (void)sd;
 #endif
@@ -8610,6 +8670,7 @@ elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
+        _internal_elm_win_xwindow_get(sd);
         switch (command)
           {
            case ELM_ILLUME_COMMAND_FOCUS_BACK:
@@ -8719,7 +8780,11 @@ _elm_win_window_id_get(Efl_Ui_Win_Data *sd)
 #endif
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin) return (Ecore_Window)sd->x.xwin;
+   if (sd->x.xwin)
+     {
+        _internal_elm_win_xwindow_get(sd);
+        return (Ecore_Window)sd->x.xwin;
+     }
    if (sd->parent)
      {
         Ecore_Window xwin = elm_win_xwindow_get(sd->parent);
@@ -8788,6 +8853,7 @@ elm_win_main_menu_get(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    if (use_dbus && _elm_dbus_menu_register(sd->main_menu))
      {
+        _internal_elm_win_xwindow_get(sd);
         _elm_dbus_menu_app_menu_register(sd->x.xwin, sd->main_menu,
                                          _dbus_menu_set, obj);
      }
@@ -8970,6 +9036,7 @@ elm_win_keygrab_set(Elm_Win *obj, const char *key,
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
+        _internal_elm_win_xwindow_get(sd);
         Ecore_X_Win_Keygrab_Mode x_grab_mode;
         switch (grab_mode)
           {
@@ -9010,7 +9077,10 @@ elm_win_keygrab_unset(Elm_Win *obj, const char *key,
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
+     {
+        _internal_elm_win_xwindow_get(sd);
+        ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
+     }
 #else
    (void)obj;
    (void)key;
