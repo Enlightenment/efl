@@ -43,8 +43,6 @@
  * @{
  */
 
-# include <efl_ui_selection_types.eot.h>
-
 /**
  * Event notifying that the selection has changed
  * @see Elm_Cnp_Event_Selection_Changed

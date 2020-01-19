@@ -1,29 +1,40 @@
-import efl_ui_dnd_types;
+import eina_types;
 
-mixin @beta Efl.Ui.Dnd {
-   data: null;
+struct @beta Efl.Ui.Drop_Event {
+   [[Event struct that contains information about what is avaiable at which position, in which seat]]
+   position : Eina.Position2D; [[The position of the Drop event]]
+   seat : uint; [[In which seat it is happening]]
+   available_types : accessor<string>; [[which types are avaiable, you should use one of these for a call to @Efl.Ui.Dnd.drop_data_get ]]
+}
+
+struct @beta Efl.Ui.Drop_Dropped_Event {
+   dnd : Efl.Ui.Drop_Event; [[The overall information]]
+   action : string; [[The action the client should take]]
+}
+
+struct @beta Efl.Ui.Drag_Started_Event {
+   seat : uint;
+}
+
+struct @beta Efl.Ui.Drag_Finished_Event {
+   seat : uint;
+   accepted : bool;
+}
+
+mixin @beta Efl.Ui.Dnd requires Efl.Object {
    methods {
       drag_start {
-         [[Start a drag and drop process at the drag side.
-           During dragging, there are three events emitted as belows:
-              - EFL_UI_DND_EVENT_DRAG_POS
-              - EFL_UI_DND_EVENT_DRAG_ACCEPT
-              - EFL_UI_DND_EVENT_DRAG_DONE
+         [[Start a drag from this client.
+
+           @[Efl.Ui.Dnd.drag,started] will be emitted each time a successfull drag will be started.
+           @[Efl.Ui.Dnd.drag,finished] will be emitted every time a drag is finished.
          ]]
          params {
-            @in format: Efl.Ui.Selection_Format; [[The data format]]
-            @in data: Eina.Slice; [[The drag data]]
-            @in action: Efl.Ui.Selection_Action; [[Action when data is transferred]]
-            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+            content : Eina.Content @by_ref; [[The content you want to provide via dnd]]
+            @in action: string; [[Action when data is transferred]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
-      }
-      drag_action_set {
-         [[Set the action for the drag]]
-         params {
-            @in action: Efl.Ui.Selection_Action; [[Drag action]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
+         return : Efl.Content; [[A UI element where you can just set your visual representation into]]
       }
       drag_cancel {
          [[Cancel the on-going drag]]
@@ -31,33 +42,26 @@ mixin @beta Efl.Ui.Dnd {
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
-      drop_target_add {
-         [[Make the current object as drop target.
-           There are four events emitted:
-            - EFL_UI_DND_EVENT_DRAG_ENTER
-            - EFL_UI_DND_EVENT_DRAG_LEAVE
-            - EFL_UI_DND_EVENT_DRAG_POS
-            - EFL_UI_DND_EVENT_DRAG_DROP.]]
+      drop_data_get {
+         [[Get the data from the object that has selection]]
          params {
-            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
+           seat : uint;  [[Specified seat for multiple seats case.]]
+           acceptable_types : iterator<string>; [[The types that are acceptable for you]]
          }
-      }
-      drop_target_del {
-         [[Delete the dropable status from object]]
-         params {
-            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
+         return : future<Eina.Content> @move; [[fullfilled when the content is transmitted, and ready to use]]
       }
    }
    events {
-      /* FIXME: This is not very future-proof. Better return a struct. */
-      drag,accept: ptr(bool); [[accept drag data]]
-      drag,done: void; [[drag is done (mouse up)]]
-      drag,enter: void; [[called when the drag object enters this object]]
-      drag,leave: void; [[called when the drag object leaves this object]]
-      drag,pos: Efl.Dnd.Drag_Pos; [[called when the drag object changes drag position]]
-      drag,drop: Efl.Ui.Selection_Data; [[called when the drag object dropped on this object]]
+      drop,entered : Efl.Ui.Drop_Event;
+      drop,left : Efl.Ui.Drop_Event;
+      drop,position,changed : Efl.Ui.Drop_Event;
+      drop,dropped : Efl.Ui.Drop_Dropped_Event;
+      drag,started : Efl.Ui.Drag_Started_Event;
+      drag,finished : Efl.Ui.Drag_Finished_Event;
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Object.finalize;
    }
 }

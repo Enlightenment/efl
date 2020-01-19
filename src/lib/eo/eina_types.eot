@@ -60,6 +60,8 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ value.]]
 }
 
+struct @extern Eina.Content;
+
 struct @extern Eina.Matrix4 {
    [[A bidimensional array of floating point values with 4 rows and 4 columns.
 

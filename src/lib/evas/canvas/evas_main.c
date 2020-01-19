@@ -120,6 +120,21 @@ _efl_gfx_image_load_error_to_evas_load_error(Eina_Error err)
    return EVAS_LOAD_ERROR_GENERIC;
 }
 
+static Eina_Content*
+_markup_to_utf8(Eina_Content *from, const char *to_type)
+{
+   Eina_Slice slice = eina_content_data_get(from);
+   char *utf8 = evas_textblock_text_markup_to_utf8(NULL, slice.mem);
+   return eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(utf8), to_type);
+}
+
+static Eina_Content*
+_utf8_to_markup(Eina_Content *from, const char *to_type)
+{
+   Eina_Slice slice = eina_content_data_get(from);
+   char *markup = evas_textblock_text_utf8_to_markup(NULL, slice.mem);
+   return eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(markup), to_type);
+}
 
 EAPI int
 evas_init(void)
@@ -178,6 +193,9 @@ evas_init(void)
    evas_focus_init();
 
    _efl_gfx_image_load_error_init();
+
+   eina_content_converter_conversion_register("application/x-elementary-markup", "text/plain;charset=utf-8", _markup_to_utf8);
+   eina_content_converter_conversion_register("text/plain;charset=utf-8", "application/x-elementary-markup", _utf8_to_markup);
 
    return _evas_init_count;
 
