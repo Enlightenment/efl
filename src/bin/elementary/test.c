@@ -1362,7 +1362,7 @@ add_tests:
      }
 
    /* set an initial window size */
-   evas_object_resize(win, 480 * elm_config_scale_get(), 480 * elm_config_scale_get());
+   evas_object_resize(win, 480 * elm_config_scale_get(), 490 * elm_config_scale_get());
    evas_object_show(win);
 }
 
