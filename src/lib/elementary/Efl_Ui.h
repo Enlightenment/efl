@@ -119,8 +119,6 @@ extern EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
 
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
-#include "efl_ui_selection_types.eot.h"
-#include "efl_ui_dnd_types.eot.h"
 
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;
@@ -323,7 +321,6 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_widget_focus_manager.eo.h>
 # include <efl_ui_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
-# include <efl_ui_dnd_container.eo.h>
 
 # include <efl_ui_timepicker.eo.h>
 # include <efl_ui_datepicker.eo.h>
