@@ -1,10 +1,10 @@
-#include "efl_canvas_animation_alpha_private.h"
+#include "efl_canvas_alpha_animation_private.h"
 
-#define MY_CLASS EFL_CANVAS_ANIMATION_ALPHA_CLASS
+#define MY_CLASS EFL_CANVAS_ALPHA_ANIMATION_CLASS
 
 EOLIAN static void
-_efl_canvas_animation_alpha_alpha_set(Eo *eo_obj EINA_UNUSED,
-                               Efl_Canvas_Animation_Alpha_Data *pd,
+_efl_canvas_alpha_animation_alpha_set(Eo *eo_obj EINA_UNUSED,
+                               Efl_Canvas_Alpha_Animation_Data *pd,
                                double from_alpha,
                                double to_alpha)
 {
@@ -13,8 +13,8 @@ _efl_canvas_animation_alpha_alpha_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_alpha_alpha_get(const Eo *eo_obj EINA_UNUSED,
-                               Efl_Canvas_Animation_Alpha_Data *pd,
+_efl_canvas_alpha_animation_alpha_get(const Eo *eo_obj EINA_UNUSED,
+                               Efl_Canvas_Alpha_Animation_Data *pd,
                                double *from_alpha,
                                double *to_alpha)
 {
@@ -26,8 +26,8 @@ _efl_canvas_animation_alpha_alpha_get(const Eo *eo_obj EINA_UNUSED,
 
 
 EOLIAN static double
-_efl_canvas_animation_alpha_efl_canvas_animation_animation_apply(Eo *eo_obj,
-                               Efl_Canvas_Animation_Alpha_Data *pd EINA_UNUSED,
+_efl_canvas_alpha_animation_efl_canvas_animation_animation_apply(Eo *eo_obj,
+                               Efl_Canvas_Alpha_Animation_Data *pd EINA_UNUSED,
                                double progress,
                                Efl_Canvas_Object *target)
 {
@@ -50,8 +50,8 @@ _efl_canvas_animation_alpha_efl_canvas_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_canvas_animation_alpha_efl_object_constructor(Eo *eo_obj,
-                                            Efl_Canvas_Animation_Alpha_Data *pd)
+_efl_canvas_alpha_animation_efl_object_constructor(Eo *eo_obj,
+                                            Efl_Canvas_Alpha_Animation_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -61,4 +61,4 @@ _efl_canvas_animation_alpha_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_canvas_animation_alpha.eo.c"
+#include "efl_canvas_alpha_animation.eo.c"

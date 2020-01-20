@@ -1,8 +1,8 @@
-#include "efl_canvas_animation_group_private.h"
+#include "efl_canvas_group_animation_private.h"
 
 EOLIAN static void
-_efl_canvas_animation_group_animation_add(Eo *eo_obj,
-                                   Efl_Canvas_Animation_Group_Data *pd,
+_efl_canvas_group_animation_animation_add(Eo *eo_obj,
+                                   Efl_Canvas_Group_Animation_Data *pd,
                                    Efl_Canvas_Animation *animation)
 {
    if (!animation) return;
@@ -24,8 +24,8 @@ _efl_canvas_animation_group_animation_add(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_canvas_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
-                                   Efl_Canvas_Animation_Group_Data *pd,
+_efl_canvas_group_animation_animation_del(Eo *eo_obj EINA_UNUSED,
+                                   Efl_Canvas_Group_Animation_Data *pd,
                                    Efl_Canvas_Animation *animation)
 {
    Eina_List *list;
@@ -45,15 +45,15 @@ _efl_canvas_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Iterator*
-_efl_canvas_animation_group_animations_get(const Eo *eo_obj EINA_UNUSED,
-                                    Efl_Canvas_Animation_Group_Data *pd)
+_efl_canvas_group_animation_animations_get(const Eo *eo_obj EINA_UNUSED,
+                                    Efl_Canvas_Group_Animation_Data *pd)
 {
    return eina_list_iterator_new(pd->animations);
 }
 
 EOLIAN static void
-_efl_canvas_animation_group_efl_canvas_animation_duration_set(Eo *eo_obj,
-                                                Efl_Canvas_Animation_Group_Data *pd,
+_efl_canvas_group_animation_efl_canvas_animation_duration_set(Eo *eo_obj,
+                                                Efl_Canvas_Group_Animation_Data *pd,
                                                 double duration)
 {
    EINA_SAFETY_ON_FALSE_RETURN(duration >= 0.0);
@@ -72,8 +72,8 @@ _efl_canvas_animation_group_efl_canvas_animation_duration_set(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_canvas_animation_group_efl_canvas_animation_final_state_keep_set(Eo *eo_obj,
-                                                        Efl_Canvas_Animation_Group_Data *pd,
+_efl_canvas_group_animation_efl_canvas_animation_final_state_keep_set(Eo *eo_obj,
+                                                        Efl_Canvas_Group_Animation_Data *pd,
                                                         Eina_Bool keep_final_state)
 {
    Eina_List *l;
@@ -87,8 +87,8 @@ _efl_canvas_animation_group_efl_canvas_animation_final_state_keep_set(Eo *eo_obj
 }
 
 EOLIAN static void
-_efl_canvas_animation_group_efl_canvas_animation_interpolator_set(Eo *eo_obj,
-                                                    Efl_Canvas_Animation_Group_Data *pd,
+_efl_canvas_group_animation_efl_canvas_animation_interpolator_set(Eo *eo_obj,
+                                                    Efl_Canvas_Group_Animation_Data *pd,
                                                     Efl_Interpolator *interpolator)
 {
    Eina_List *l;
@@ -102,8 +102,8 @@ _efl_canvas_animation_group_efl_canvas_animation_interpolator_set(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_canvas_animation_group_efl_object_constructor(Eo *eo_obj,
-                                            Efl_Canvas_Animation_Group_Data *pd)
+_efl_canvas_group_animation_efl_object_constructor(Eo *eo_obj,
+                                            Efl_Canvas_Group_Animation_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
    pd->animations = NULL;
@@ -112,8 +112,8 @@ _efl_canvas_animation_group_efl_object_constructor(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_canvas_animation_group_efl_object_destructor(Eo *eo_obj,
-                                           Efl_Canvas_Animation_Group_Data *pd)
+_efl_canvas_group_animation_efl_object_destructor(Eo *eo_obj,
+                                           Efl_Canvas_Group_Animation_Data *pd)
 {
    Efl_Canvas_Animation *anim;
 
@@ -123,4 +123,4 @@ _efl_canvas_animation_group_efl_object_destructor(Eo *eo_obj,
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
-#include "efl_canvas_animation_group.eo.c"
+#include "efl_canvas_group_animation.eo.c"

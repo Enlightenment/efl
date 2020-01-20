@@ -90,13 +90,13 @@ test_efl_anim_alpha(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    efl_event_callback_array_add(btn, animation_stats_cb(), ad);
 
    //Show Animation
-   Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ALPHA_ANIMATION_CLASS, win);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 1.0);
    efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
 
    //Hide Animation
-   Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ALPHA_ANIMATION_CLASS, win);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 1.0);
    efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);

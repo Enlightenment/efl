@@ -1,9 +1,9 @@
-#include "efl_canvas_animation_group_sequential_private.h"
+#include "efl_canvas_sequential_group_animation_private.h"
 
-#define MY_CLASS EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_CLASS
+#define MY_CLASS EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_CLASS
 
 EOLIAN static double
-_efl_canvas_animation_group_sequential_efl_canvas_animation_animation_apply(Eo *eo_obj,
+_efl_canvas_sequential_group_animation_efl_canvas_animation_animation_apply(Eo *eo_obj,
                                                               void *_pd EINA_UNUSED,
                                                               double progress,
                                                               Efl_Canvas_Object *target)
@@ -58,7 +58,7 @@ _efl_canvas_animation_group_sequential_efl_canvas_animation_animation_apply(Eo *
 }
 
 EOLIAN static double
-_efl_canvas_animation_group_sequential_efl_canvas_animation_duration_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_sequential_group_animation_efl_canvas_animation_duration_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    double total_duration = 0.0;
    double child_total_duration;
@@ -78,4 +78,4 @@ _efl_canvas_animation_group_sequential_efl_canvas_animation_duration_get(const E
    return total_duration;
 }
 
-#include "efl_canvas_animation_group_sequential.eo.c"
+#include "efl_canvas_sequential_group_animation.eo.c"

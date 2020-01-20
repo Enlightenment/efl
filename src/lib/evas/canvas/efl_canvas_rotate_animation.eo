@@ -1,4 +1,6 @@
-class Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
+import eina_types;
+
+class Efl.Canvas.Rotate_Animation extends Efl.Canvas.Animation
 {
    [[Animated rotation effect.
 
@@ -12,7 +14,7 @@ class Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
      @since 1.24
    ]]
    c_prefix: efl_animation_rotate;
-   data: Efl_Canvas_Animation_Rotate_Data;
+   data: Efl_Canvas_Rotate_Animation_Data;
    methods {
       @property rotate {
          [[Degree range to animate and pivot object.

@@ -9,7 +9,7 @@ class Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
      The value of the changed properties moves smoothly as the provided progress value
      evolves from $[0] to $[1].
 
-     For example implementations see @Efl.Canvas.Animation_Translate or @Efl.Canvas.Animation_Scale.
+     For example implementations see @Efl.Canvas.Translate_Animation or @Efl.Canvas.Scale_Animation.
 
      Note: Unless @.final_state_keep is used, when an animation finishes any effect it introduced on the object is
      removed. This means that if the animation does not end in the object's initial state there will be a noticeable
@@ -103,7 +103,7 @@ class Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
       animation_apply {
          [[Overwrite this method to implement your own animation subclasses.
 
-           This is used for example by @Efl.Canvas.Animation_Translate or @Efl.Canvas.Animation_Scale.
+           This is used for example by @Efl.Canvas.Translate_Animation or @Efl.Canvas.Scale_Animation.
 
            Subclasses should call their parent's @.animation_apply to get the adjusted $progress value
            and then perform the animation by modifying the $target's properties.

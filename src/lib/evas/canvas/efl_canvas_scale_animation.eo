@@ -1,4 +1,6 @@
-class Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
+import eina_types;
+
+class Efl.Canvas.Scale_Animation extends Efl.Canvas.Animation
 {
    [[Animated scaling effect.
 
@@ -13,7 +15,7 @@ class Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
      @since 1.24
    ]]
    c_prefix: efl_animation_scale;
-   data: Efl_Canvas_Animation_Scale_Data;
+   data: Efl_Canvas_Scale_Animation_Data;
    methods {
       @property scale {
          [[Scale range and pivot object.

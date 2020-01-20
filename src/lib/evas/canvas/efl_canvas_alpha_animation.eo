@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
+class Efl.Canvas.Alpha_Animation extends Efl.Canvas.Animation
 {
    [[Animated alpha blending effect.
 
@@ -9,7 +9,7 @@ class Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
      @since 1.24
    ]]
    c_prefix: efl_animation_alpha;
-   data: Efl_Canvas_Animation_Alpha_Data;
+   data: Efl_Canvas_Alpha_Animation_Data;
    methods {
       @property alpha {
          [[Alpha range to animate. $[0.0] means the object is transparent and $[1.0] means

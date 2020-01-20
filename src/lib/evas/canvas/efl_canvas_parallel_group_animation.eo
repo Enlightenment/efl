@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Group_Parallel extends Efl.Canvas.Animation_Group
+class Efl.Canvas.Parallel_Group_Animation extends Efl.Canvas.Group_Animation
 {
    [[Combined animation which plays its individual animations in parallel
      (all of them simultaneously).
@@ -6,11 +6,10 @@ class Efl.Canvas.Animation_Group_Parallel extends Efl.Canvas.Animation_Group
      For instance, this could be used to move an @Efl.Canvas.Object from one position to another
      while rotating it along the way.
 
-     Use @Efl.Canvas.Animation_Group.animation_add to append individual animations.
+     Use @Efl.Canvas.Group_Animation.animation_add to append individual animations.
 
      @since 1.24
    ]]
-   c_prefix: efl_animation_group_parallel;
    data: null;
    methods {
    }

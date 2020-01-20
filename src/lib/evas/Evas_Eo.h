@@ -17,52 +17,52 @@ typedef Eo Efl_Canvas_Animation;
 
 #endif
 
-#ifndef _EFL_CANVAS_ANIMATION_ALPHA_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_ALPHA_EO_CLASS_TYPE
+#ifndef _EFL_CANVAS_ALPHA_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_ALPHA_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Animation_Alpha;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_ROTATE_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_ROTATE_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Rotate;
+typedef Eo Efl_Canvas_Alpha_Animation;
 
 #endif
 
-#ifndef _EFL_CANVAS_ANIMATION_SCALE_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_SCALE_EO_CLASS_TYPE
+#ifndef _EFL_CANVAS_ROTATE_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_ROTATE_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Animation_Scale;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_TRANSLATE_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_TRANSLATE_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Translate;
+typedef Eo Efl_Canvas_Rotate_Animation;
 
 #endif
 
-#ifndef _EFL_CANVAS_ANIMATION_GROUP_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_GROUP_EO_CLASS_TYPE
+#ifndef _EFL_CANVAS_SCALE_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_SCALE_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Animation_Group;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Group_Parallel;
+typedef Eo Efl_Canvas_Scale_Animation;
 
 #endif
 
-#ifndef _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#ifndef _EFL_CANVAS_TRANSLATE_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_TRANSLATE_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Animation_Group_Sequential;
+typedef Eo Efl_Canvas_Translate_Animation;
+
+#endif
+
+#ifndef _EFL_CANVAS_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_GROUP_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Group_Animation;
+
+#endif
+
+#ifndef _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Parallel_Group_Animation;
+
+#endif
+
+#ifndef _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Sequential_Group_Animation;
 
 #endif
 
@@ -108,17 +108,17 @@ typedef Eo Efl_Canvas_Animation_Player_Group;
 
 #endif
 
-#ifndef _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
+#ifndef _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Animation_Group_Parallel;
+typedef Eo Efl_Canvas_Parallel_Group_Animation;
 
 #endif
 
-#ifndef _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#ifndef _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Animation_Group_Sequential;
+typedef Eo Efl_Canvas_Sequential_Group_Animation;
 
 #endif
 
@@ -219,13 +219,13 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "canvas/efl_canvas_object.eo.h"
 #include "canvas/efl_canvas_object_animation.eo.h"
 #include "canvas/efl_canvas_animation.eo.h"
-#include "canvas/efl_canvas_animation_alpha.eo.h"
-#include "canvas/efl_canvas_animation_rotate.eo.h"
-#include "canvas/efl_canvas_animation_scale.eo.h"
-#include "canvas/efl_canvas_animation_translate.eo.h"
-#include "canvas/efl_canvas_animation_group.eo.h"
-#include "canvas/efl_canvas_animation_group_parallel.eo.h"
-#include "canvas/efl_canvas_animation_group_sequential.eo.h"
+#include "canvas/efl_canvas_alpha_animation.eo.h"
+#include "canvas/efl_canvas_rotate_animation.eo.h"
+#include "canvas/efl_canvas_scale_animation.eo.h"
+#include "canvas/efl_canvas_translate_animation.eo.h"
+#include "canvas/efl_canvas_group_animation.eo.h"
+#include "canvas/efl_canvas_parallel_group_animation.eo.h"
+#include "canvas/efl_canvas_sequential_group_animation.eo.h"
 #include "canvas/efl_canvas_event_grabber.eo.h"
 
  /**

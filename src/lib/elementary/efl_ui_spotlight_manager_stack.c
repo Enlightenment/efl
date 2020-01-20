@@ -62,7 +62,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
      {
         pd->container = spotlight;
 
-        pd->alpha_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
+        pd->alpha_anim = efl_add(EFL_CANVAS_ALPHA_ANIMATION_CLASS, obj);
         efl_animation_alpha_set(pd->alpha_anim, 0.0, 1.0);
         efl_animation_duration_set(pd->alpha_anim, 0.5);
 

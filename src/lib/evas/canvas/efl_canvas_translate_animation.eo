@@ -1,4 +1,6 @@
-class Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
+import eina_types;
+
+class Efl.Canvas.Translate_Animation extends Efl.Canvas.Animation
 {
    [[Animated translation effect.
 
@@ -12,7 +14,7 @@ class Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
      @since 1.24
    ]]
    c_prefix: efl_animation_translate;
-   data: Efl_Canvas_Animation_Translate_Data;
+   data: Efl_Canvas_Translate_Animation_Data;
    methods {
       @property translate {
          [[Translation vector, relative to the starting position of the object.

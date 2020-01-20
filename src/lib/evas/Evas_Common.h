@@ -3371,52 +3371,52 @@ typedef Eo Efl_Animation;
 
 #endif
 
-#ifndef _EFL_ANIMATION_ALPHA_EO_CLASS_TYPE
-#define _EFL_ANIMATION_ALPHA_EO_CLASS_TYPE
+#ifndef _EFL_ALPHA_ANIMATION_EO_CLASS_TYPE
+#define _EFL_ALPHA_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Alpha;
-
-#endif
-
-#ifndef _EFL_ANIMATION_ROTATE_EO_CLASS_TYPE
-#define _EFL_ANIMATION_ROTATE_EO_CLASS_TYPE
-
-typedef Eo Efl_Animation_Rotate;
+typedef Eo Efl_Alpha_Animation;
 
 #endif
 
-#ifndef _EFL_ANIMATION_SCALE_EO_CLASS_TYPE
-#define _EFL_ANIMATION_SCALE_EO_CLASS_TYPE
+#ifndef _EFL_ROTATE_ANIMATION_EO_CLASS_TYPE
+#define _EFL_ROTATE_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Scale;
-
-#endif
-
-#ifndef _EFL_ANIMATION_TRANSLATE_EO_CLASS_TYPE
-#define _EFL_ANIMATION_TRANSLATE_EO_CLASS_TYPE
-
-typedef Eo Efl_Animation_Translate;
+typedef Eo Efl_Rotate_Animation;
 
 #endif
 
-#ifndef _EFL_ANIMATION_GROUP_EO_CLASS_TYPE
-#define _EFL_ANIMATION_GROUP_EO_CLASS_TYPE
+#ifndef _EFL_SCALE_ANIMATION_EO_CLASS_TYPE
+#define _EFL_SCALE_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Group;
-
-#endif
-
-#ifndef _EFL_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
-#define _EFL_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
-
-typedef Eo Efl_Animation_Group_Parallel;
+typedef Eo Efl_Scale_Animation;
 
 #endif
 
-#ifndef _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
-#define _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#ifndef _EFL_TRANSLATE_ANIMATION_EO_CLASS_TYPE
+#define _EFL_TRANSLATE_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Group_Sequential;
+typedef Eo Efl_Translate_Animation;
+
+#endif
+
+#ifndef _EFL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_GROUP_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Group_Animation;
+
+#endif
+
+#ifndef _EFL_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Parallel_Group_Animation;
+
+#endif
+
+#ifndef _EFL_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Sequential_Group_Animation;
 
 #endif
 
@@ -3462,17 +3462,17 @@ typedef Eo Efl_Animation_Player_Group;
 
 #endif
 
-#ifndef _EFL_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
-#define _EFL_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
+#ifndef _EFL_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Group_Parallel;
+typedef Eo Efl_Parallel_Group_Animation;
 
 #endif
 
-#ifndef _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
-#define _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#ifndef _EFL_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
+#define _EFL_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Group_Sequential;
+typedef Eo Efl_Sequential_Group_Animation;
 
 #endif
 
