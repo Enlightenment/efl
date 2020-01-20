@@ -328,6 +328,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_timepicker.eo.h>
 # include <efl_ui_datepicker.eo.h>
 # include <efl_ui_calendar.eo.h>
+# include <efl_ui_separator.eo.h>
 
 /**
  * Initialize Elementary

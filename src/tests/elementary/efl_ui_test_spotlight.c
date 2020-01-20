@@ -6,8 +6,8 @@
 #include "efl_ui_suite.h"
 #include "eo_internal.h"
 
-EFL_CLASS_SIMPLE_CLASS(efl_ui_spotlight_manager, "efl_ui_spotlight_manager", EFL_UI_SPOTLIGHT_MANAGER_CLASS);
-EFL_CLASS_SIMPLE_CLASS(efl_ui_spotlight_indicator, "efl_ui_spotlight_indicator", EFL_UI_SPOTLIGHT_INDICATOR_CLASS);
+EFL_CLASS_SIMPLE_CLASS(efl_ui_spotlight_manager, "Efl.Ui.Spotlight.Manager", EFL_UI_SPOTLIGHT_MANAGER_CLASS);
+EFL_CLASS_SIMPLE_CLASS(efl_ui_spotlight_indicator, "Efl.Ui.Spotlight.Indicator", EFL_UI_SPOTLIGHT_INDICATOR_CLASS);
 
 static Efl_Ui_Win *win;
 static Efl_Ui_Spotlight_Container *container;

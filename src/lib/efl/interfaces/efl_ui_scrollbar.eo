@@ -60,6 +60,18 @@ interface Efl.Ui.Scrollbar
                             and $[1.0] (the bottom side of the thumb is touching the bottom edge of the widget).]]
          }
       }
+      @property bar_visibility {
+         [[Current visibility state of the scrollbars.
+           This is useful in @Efl.Ui.Scrollbar_Mode.auto mode where EFL decides if the scrollbars
+           are shown or hidden. See also the @[.bar,show] and @[.bar,hide] events.
+         ]]
+         get {
+         }
+         values {
+            hbar: bool; [[Whether the horizontal scrollbar is currently visible.]]
+            vbar: bool; [[Whether the vertical scrollbar is currently visible.]]
+         }
+      }
       bar_visibility_update @protected @beta{
          [[Update bar visibility.
 

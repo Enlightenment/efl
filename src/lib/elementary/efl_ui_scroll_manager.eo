@@ -39,6 +39,7 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
       Efl.Ui.Scrollbar.bar_mode { get; set; }
       Efl.Ui.Scrollbar.bar_size { get; }
       Efl.Ui.Scrollbar.bar_position { get; set; }
+      Efl.Ui.Scrollbar.bar_visibility { get; }
       Efl.Ui.Scrollbar.bar_visibility_update;
       Efl.Ui.Scrollable.scroll;
    }

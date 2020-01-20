@@ -1,0 +1,20 @@
+class Efl.Ui.Separator extends Efl.Ui.Item implements Efl.Ui.Layout_Orientable
+{
+  [[Vertical or horizontal separator line.
+
+    Use it to separate groups of buttons in a toolbar, for example, or items on a list.
+    The length of the line adapts to the size of the container, and its width is
+    controlled by the theme.
+
+    @since 1.24
+  ]]
+
+  implements {
+      Efl.Object.constructor;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
+  }
+  constructors {
+      Efl.Ui.Layout_Orientable.orientation;
+  }
+}

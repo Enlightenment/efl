@@ -313,7 +313,7 @@ static void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
-   int ow, oh, ew, eh;
+   int ow, oh, ew, eh, fw, fh;
    int diff = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -326,6 +326,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    ee->req.w = w;
    ee->req.h = h;
 
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
    /* TODO: wayland client can resize the ecore_evas directly.
     * In the future, we will remove ee->req value in wayland backend */
    ew = ee->w;
@@ -335,55 +337,52 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
    if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel && wdata->win->pending.min)
      {
-        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ee->prop.min.w + fw, ee->prop.min.h + fh);
         wdata->win->pending.min = 0;
      }
    if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel && wdata->win->pending.max)
      {
-        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ee->prop.max.w + fw, ee->prop.max.h + fh);
         wdata->win->pending.max = 0;
      }
 
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel && wdata->win->pending.min)
      {
-        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w + fw, ee->prop.min.h + fh);
         wdata->win->pending.min = 0;
      }
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel && wdata->win->pending.max)
      {
-        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ee->prop.max.w + fw, ee->prop.max.h + fh);
         wdata->win->pending.max = 0;
      }
 
    if (!ee->prop.fullscreen)
      {
-        int fw = 0, fh = 0;
         int maxw = 0, maxh = 0;
         int minw = 0, minh = 0;
-
-        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if (ECORE_EVAS_PORTRAIT(ee))
           {
              if (ee->prop.min.w > 0)
-               minw = (ee->prop.min.w - fw);
+               minw = (ee->prop.min.w);
              if (ee->prop.min.h > 0)
-               minh = (ee->prop.min.h - fh);
+               minh = (ee->prop.min.h);
              if (ee->prop.max.w > 0)
-               maxw = (ee->prop.max.w + fw);
+               maxw = (ee->prop.max.w);
              if (ee->prop.max.h > 0)
-               maxh = (ee->prop.max.h + fh);
+               maxh = (ee->prop.max.h);
           }
         else
           {
              if (ee->prop.min.w > 0)
-               minw = (ee->prop.min.w - fh);
+               minw = (ee->prop.min.w);
              if (ee->prop.min.h > 0)
-               minh = (ee->prop.min.h - fw);
+               minh = (ee->prop.min.h);
              if (ee->prop.max.w > 0)
-               maxw = (ee->prop.max.w + fh);
+               maxw = (ee->prop.max.w);
              if (ee->prop.max.h > 0)
-               maxh = (ee->prop.max.h + fw);
+               maxh = (ee->prop.max.h);
           }
 
         if ((maxw > 0) && (w > maxw))
@@ -401,13 +400,13 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
              /* calc new size using base size & step size */
              if (ee->prop.step.w > 1)
                {
-                  int bw = ee->prop.base.w ?: minw;
+                  int bw = ee->prop.base.w;
                   w = (bw + (((w - bw) / ee->prop.step.w) * ee->prop.step.w));
                }
 
              if (ee->prop.step.h > 1)
                {
-                  int bh = ee->prop.base.h ?: minh;
+                  int bh = ee->prop.base.h;
                   h = (bh + (((h - bh) / ee->prop.step.h) * ee->prop.step.h));
                }
 
@@ -1671,6 +1670,7 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
 static void
 _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 {
+   int fw, fh;
    Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1682,14 +1682,15 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
    ee->prop.min.w = w;
    ee->prop.min.h = h;
    wdata = ee->engine.data;
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
    if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel)
      {
-        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, w, h);
+        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, w + fw, h + fh);
         wdata->win->pending.min = 0;
      }
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel)
      {
-        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w, h);
+        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w + fw, h + fh);
         wdata->win->pending.min = 0;
      }
    else
@@ -1700,6 +1701,7 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 static void
 _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
 {
+   int fw, fh;
    Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1710,14 +1712,15 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    ee->prop.max.w = w;
    ee->prop.max.h = h;
    wdata = ee->engine.data;
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
    if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel)
      {
-        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, w, h);
+        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, w + fw, h + fh);
         wdata->win->pending.max = 0;
      }
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel)
      {
-        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w, h);
+        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w + fw, h + fh);
         wdata->win->pending.max = 0;
      }
    else
@@ -2153,30 +2156,29 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
      {
         int fw, fh;
 
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel && wdata->win->pending.min)
           {
-             wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+             wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ee->prop.min.w + fw, ee->prop.min.h + fh);
              wdata->win->pending.min = 0;
           }
         if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel && wdata->win->pending.max)
           {
-             wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+             wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ee->prop.max.w + fw, ee->prop.max.h + fh);
              wdata->win->pending.max = 0;
           }
         if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel && wdata->win->pending.min)
           {
-             wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+             wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w + fw, ee->prop.min.h + fh);
              wdata->win->pending.min = 0;
           }
         if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel && wdata->win->pending.max)
           {
-             wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+             wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ee->prop.max.w + fw, ee->prop.max.h + fh);
              wdata->win->pending.max = 0;
           }
 
         _ecore_evas_wayland_window_update(ee, wdata, ee->alpha);
-
-        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         ecore_wl2_window_show(wdata->win);
         einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);

@@ -49,7 +49,7 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
-EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS);
+EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "Efl.Ui.Widget", EFL_UI_WIDGET_CLASS);
 
 int
 main(int argc, char **argv)

@@ -38,6 +38,20 @@ _scroll_connector_reload_cb(void *data,
                        const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
+   ELM_WIDGET_DATA_GET_OR_RETURN(ctx->obj, wd);
+   Eina_Bool hbar_visible = EINA_FALSE, vbar_visible = EINA_FALSE;
+
+   efl_ui_scrollbar_bar_visibility_get(ctx->smanager, &hbar_visible, &vbar_visible);
+
+   if (hbar_visible)
+     efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,on", "efl");
+   else
+     efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,off", "efl");
+
+   if (vbar_visible)
+     efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,on", "efl");
+   else
+     efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,off", "efl");
 
    efl_ui_scrollbar_bar_visibility_update(ctx->smanager);
 }

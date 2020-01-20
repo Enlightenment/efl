@@ -108,7 +108,9 @@ _del_cb(void *data, const Efl_Event *ev)
      }
 
    if (devtype == EFL_INPUT_DEVICE_TYPE_MOUSE)
-     _evas_pointer_data_remove(e, ev->object);
+     {
+        _evas_pointer_data_remove(e, ev->object, EINA_TRUE);
+     }
    eina_hash_del_by_key(e->locks.masks, &ev->object);
    eina_hash_del_by_key(e->modifiers.masks, &ev->object);
    efl_event_callback_call(e->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
@@ -363,7 +365,7 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
      return;
 
    if (_is_pointer(klass))
-     _evas_pointer_data_remove(edata, dev);
+     _evas_pointer_data_remove(edata, dev, EINA_FALSE);
 
    efl_input_device_type_set(dev, clas);
 

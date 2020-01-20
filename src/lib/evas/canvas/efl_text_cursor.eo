@@ -10,22 +10,22 @@ enum @beta Efl.Text.Cursor_Type
 enum @beta Efl.Text.Cursor_Move_Type
 {
    [[Text cursor movement types.]]
-   char_next,       [[Advances to the next character.]]
-   char_prev,       [[Advances to the previous character.]]
-   cluster_next,    [[Advances to the next grapheme cluster
+   character_next,      [[Advances to the next character.]]
+   character_previous,  [[Advances to the previous character.]]
+   cluster_next,        [[Advances to the next grapheme cluster
                       (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
-   cluster_prev,    [[Advances to the previous grapheme cluster
+   cluster_previous,    [[Advances to the previous grapheme cluster
                       (A character sequence rendered together. See https://unicode.org/reports/tr29/).]]
-   paragraph_start, [[Advances to the first character in current paragraph.]]
-   paragraph_end,   [[Advances to the last character in current paragraph.]]
-   word_start,      [[Advance to current word start.]]
-   word_end,        [[Advance to current word end.]]
-   line_start,      [[Advance to current line first character.]]
-   line_end,        [[Advance to current line last character.]]
-   first,           [[Advance to first character in the first paragraph.]]
-   last,            [[Advance to last character in the  last  paragraph.]]
-   paragraph_next,  [[Advances to the start of the next paragraph.]]
-   paragraph_prev   [[Advances to the end of the previous paragraph.]]
+   paragraph_start,     [[Advances to the first character in current paragraph.]]
+   paragraph_end,       [[Advances to the last character in current paragraph.]]
+   word_start,          [[Advance to current word start.]]
+   word_end,            [[Advance to current word end.]]
+   line_start,          [[Advance to current line first character.]]
+   line_end,            [[Advance to current line last character.]]
+   first,               [[Advance to first character in the first paragraph.]]
+   last,                [[Advance to last character in the  last  paragraph.]]
+   paragraph_next,      [[Advances to the start of the next paragraph.]]
+   paragraph_previous   [[Advances to the end of the previous paragraph.]]
 }
 
 abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
@@ -190,7 +190,7 @@ abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
              cur2: Efl.Text.Cursor; [[End of range.]]
          }
          return: iterator<Eina.Rect> @move; [[
-            Iterator on all geoemtries of the given range.]]
+            Iterator on all geometries of the given range.]]
       }
 
       range_precise_geometry_get {

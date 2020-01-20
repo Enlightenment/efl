@@ -283,7 +283,14 @@ struct visitor_generate
         }
       else
         {
-          if(as_generator
+          if(regular.type_type == attributes::typedecl_type::struct_
+             || regular.type_type == attributes::typedecl_type::struct_opaque)
+          {
+            std::copy (c_type.begin(), c_type.end(), sink);
+            return true;
+          }
+          else
+            if(as_generator
              (
               *(string << "_")
               << string

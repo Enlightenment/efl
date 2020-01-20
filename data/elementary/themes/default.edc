@@ -212,4 +212,5 @@ collections {
 #include "edc/efl/tab_page.edc"
 #include "edc/efl/collection.edc"
 #include "edc/efl/group_item.edc"
+#include "edc/efl/separator.edc"
 }

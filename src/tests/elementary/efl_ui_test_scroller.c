@@ -144,7 +144,58 @@ EFL_START_TEST(efl_ui_test_scroller_events)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_test_scroller_scrollbar)
+{
+   Eo *sc;
+
+   Eo *win = win_add();
+   Eina_Bool hbar_visible = EINA_FALSE, vbar_visible = EINA_FALSE;
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
+
+   sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
+                efl_ui_scrollbar_bar_mode_set(efl_added, EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO),
+                efl_content_set(win, efl_added));
+
+   /*Scrollbar auto mode test.*/
+   efl_loop_iterate(efl_main_loop_get());
+
+   efl_ui_scrollbar_bar_visibility_get(sc, &hbar_visible, &vbar_visible);
+   ck_assert(hbar_visible == EINA_FALSE);
+   ck_assert(vbar_visible == EINA_FALSE);
+
+   /*Scrollbar auto mode test.*/
+   efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(sc),
+           efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(5000, 5000)),
+           efl_content_set(sc, efl_added));
+
+   efl_loop_iterate(efl_main_loop_get());
+
+   efl_ui_scrollbar_bar_visibility_get(sc, &hbar_visible, &vbar_visible);
+   ck_assert(hbar_visible == EINA_TRUE);
+   ck_assert(vbar_visible == EINA_TRUE);
+
+   /*Scrollbar off mode test.*/
+   efl_ui_scrollbar_bar_mode_set(sc, EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
+
+   efl_loop_iterate(efl_main_loop_get());
+
+   efl_ui_scrollbar_bar_visibility_get(sc, &hbar_visible, &vbar_visible);
+   ck_assert(hbar_visible == EINA_FALSE);
+   ck_assert(vbar_visible == EINA_FALSE);
+
+   /*Scrollbar on mode test.*/
+   efl_ui_scrollbar_bar_mode_set(sc, EFL_UI_SCROLLBAR_MODE_ON, EFL_UI_SCROLLBAR_MODE_ON);
+
+   efl_loop_iterate(efl_main_loop_get());
+
+   efl_ui_scrollbar_bar_visibility_get(sc, &hbar_visible, &vbar_visible);
+   ck_assert(hbar_visible == EINA_TRUE);
+   ck_assert(vbar_visible == EINA_TRUE);
+}
+EFL_END_TEST
+
 void efl_ui_test_scroller(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_scroller_events);
+   tcase_add_test(tc, efl_ui_test_scroller_scrollbar);
 }

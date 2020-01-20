@@ -450,7 +450,7 @@ _elm_fileselector_entry_efl_ui_view_model_get(const Eo *obj, Elm_Fileselector_En
    ret = efl_add_ref(efl_class_get(bmodel), (Eo*) obj,
                      efl_io_model_path_set(efl_added, sd->path),
                      efl_loop_model_volatile_make(efl_added));
-   eina_freeq_ptr_add(postponed_fq, ret, EINA_FREE_CB(efl_unref), sizeof (void*));
+   eina_freeq_ptr_add(postponed_fq, ret, EINA_FREE_CB(efl_unref), 0);
 
    return ret;
 }

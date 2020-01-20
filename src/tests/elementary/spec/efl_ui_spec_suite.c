@@ -13,8 +13,8 @@ Evas_Object *widget = NULL;
 Eo *collection_grid = NULL;
 const Efl_Class *test_content_klass = NULL;
 const Efl_Class *widget_klass = NULL;
-EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS);
-EFL_CLASS_SIMPLE_CLASS(efl_ui_item, "efl_ui_item", EFL_UI_ITEM_CLASS);
+EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "Efl.Ui.Widget", EFL_UI_WIDGET_CLASS);
+EFL_CLASS_SIMPLE_CLASS(efl_ui_item, "Efl.Ui.Item", EFL_UI_ITEM_CLASS);
 #define EFL_UI_ITEM_REALIZED_CLASS efl_ui_item_realized_class_get()
 
 
