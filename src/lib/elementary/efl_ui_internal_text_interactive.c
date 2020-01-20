@@ -33,7 +33,7 @@ typedef struct _Efl_Ui_Internal_Text_Interactive_Data
    Efl_Input_Text_Capitalize_Type         autocapital_type;
    Efl_Input_Text_Panel_Language_Type     input_panel_lang;
    Efl_Input_Text_Panel_Return_Key_Type   input_panel_return_key_type;
-   Efl_Input_Text_Hints_Type              input_hints;
+   Efl_Input_Text_Content_Type            input_hints;
    Efl_Input_Text_Panel_Return_Key_State  input_panel_return_key_state;
 
 #ifdef HAVE_ECORE_IMF
@@ -2044,9 +2044,9 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_set(Eo *obj 
 #endif
 
    if (layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_PASSWORD)
-     efl_input_text_input_hint_set(obj, ((sd->input_hints & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_HINTS_TYPE_SENSITIVE_DATA));
+     efl_input_text_input_content_type_set(obj, ((sd->input_hints & ~EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA));
    else if (layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_TERMINAL)
-     efl_input_text_input_hint_set(obj, (sd->input_hints & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE));
+     efl_input_text_input_content_type_set(obj, (sd->input_hints & ~EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE));
 }
 
 EOLIAN static Efl_Input_Text_Panel_Layout_Type
@@ -2152,7 +2152,7 @@ _efl_ui_internal_text_interactive_efl_input_text_predictable_get(const Eo *obj, 
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_hint_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Hints_Type input_hints)
+_efl_ui_internal_text_interactive_efl_input_text_input_content_type_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Content_Type input_hints)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2166,12 +2166,12 @@ _efl_ui_internal_text_interactive_efl_input_text_input_hint_set(Eo *obj, Efl_Ui_
 }
 
 
-EOLIAN static Efl_Input_Text_Hints_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_hint_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+EOLIAN static Efl_Input_Text_Content_Type
+_efl_ui_internal_text_interactive_efl_input_text_input_content_type_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
-     return (Efl_Input_Text_Hints_Type)ecore_imf_context_input_hint_get(en->imf_context);
+     return (Efl_Input_Text_Content_Type)ecore_imf_context_input_hint_get(en->imf_context);
    (void)obj;
 #else
    (void)obj;

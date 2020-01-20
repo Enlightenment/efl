@@ -1903,7 +1903,7 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
    efl_input_text_input_panel_layout_set(obj, EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_NORMAL);
    efl_input_text_input_panel_autoshow_set(obj, EINA_TRUE);
    efl_input_text_predictable_set(obj, EINA_TRUE);
-   efl_input_text_input_hint_set(obj, EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE);
+   efl_input_text_input_content_type_set(obj, EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE);
 
    sd->calc_force = EINA_TRUE;
 
@@ -1984,7 +1984,7 @@ _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, E
    if (password)
      {
         efl_text_multiline_set(obj, EINA_FALSE);
-        efl_input_text_input_hint_set(obj, ((efl_input_text_input_hint_get(obj) & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_HINTS_TYPE_SENSITIVE_DATA));
+        efl_input_text_input_content_type_set(obj, ((efl_input_text_input_content_type_get(obj) & ~EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA));
         efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
      }
    else
@@ -1996,7 +1996,7 @@ _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, E
                             _dnd_leave_cb, NULL,
                             _dnd_pos_cb, NULL,
                             _dnd_drop_cb, NULL);
-        efl_input_text_input_hint_set(obj, ((efl_input_text_input_hint_get(obj) | EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE) & ~EFL_INPUT_TEXT_HINTS_TYPE_SENSITIVE_DATA));
+        efl_input_text_input_content_type_set(obj, ((efl_input_text_input_content_type_get(obj) | EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE) & ~EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA));
         efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
 
