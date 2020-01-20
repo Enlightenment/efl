@@ -150,34 +150,9 @@ inline bool is_alias_blacklisted(attributes::alias_def const& alias, Context con
    return name_helpers::alias_full_eolian_name(alias) == "Eina.Error";
 }
 
-inline bool is_property_blacklisted(std::string const& name)
+inline bool is_property_blacklisted(std::string const&)
 {
-    auto properties = std::vector<std::string>{
-       // These properties encode (void* arr, int len) arrays
-       "Efl.Gfx.IGradient.Stop"
-       , "Efl.Gfx.GradientConcrete.Stop"
-       , "Efl.Gfx.IShape.StrokeDash"
-       , "Efl.Gfx.ShapeConcrete.StrokeDash"
-       , "Efl.Gfx.Vg.ValueProvider.Transform"
-       , "Efl.Canvas.Vg.Node.Transformation"
-       // Will be bound manually
-       , "Efl.Core.Env.Env"
-       // Setter returns a future
-       , "Efl.IModel.Property"
-       // Protected
-       , "Efl.Access.IAction.ActionName"
-       , "Efl.Access.IAction.ActionLocalizedName"
-       , "Efl.Access.IComponent.Extents"
-       , "Efl.Access.IText.AccessSelection"
-       , "Efl.Access.IText.AccessText"
-       , "Efl.Access.IText.BoundedRanges"
-       , "Efl.Access.IText.Character"
-       , "Efl.Access.IText.OffsetAtPoint"
-       , "Efl.Access.IText.String"
-       , "Efl.Access.IText.TextAttributes"
-    };
-
-    return std::find(std::begin(properties), std::end(properties), name) != std::end(properties);
+    return false;
 }
 
 template<typename Context>

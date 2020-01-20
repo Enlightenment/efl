@@ -183,14 +183,13 @@ run(options_type const& opts)
 
    auto context = context_add_tag(eolian_mono::indentation_context{0},
                   context_add_tag(eolian_mono::eolian_state_context{opts.state},
-                  context_add_tag(eolian_mono::class_context{eolian_mono::class_context::none},
                   context_add_tag(eolian_mono::options_context{opts.want_beta,
                                                                opts.examples_dir},
                   context_add_tag(eolian_mono::library_context{opts.dllimport,
                                                                opts.v_major,
                                                                opts.v_minor,
                                                                opts.references_map},
-                                  efl::eolian::grammar::context_null())))));
+                                  efl::eolian::grammar::context_null()))));
 
    EINA_ITERATOR_FOREACH(aliases, tp)
      {

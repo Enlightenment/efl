@@ -402,15 +402,15 @@ class TestCsharpProperties
         obj.Dispose();
     }
 
-    // public static void test_setter_only()
-    // {
-    //     var obj = new Dummy.TestObject();
-    //     int val = -1984;
+    public static void test_setter_only()
+    {
+        var obj = new Dummy.TestObject();
+        int val = -1984;
 
-    //     obj.SetterOnly = val;
-    //     Test.AssertEquals(val, obj.GetSetterOnly());
-    //     obj.Dispose();
-    // }
+        obj.SetterOnly = val;
+        Test.AssertEquals(val, obj.GetSetterOnly());
+        obj.Dispose();
+    }
 
     public static void test_class_property()
     {
@@ -435,52 +435,6 @@ class TestCsharpProperties
         var ret = obj.MultiValuedProp;
         Test.AssertEquals(ret, (1, 2));
         obj.Dispose();
-    }
-
-    public static void test_csharp_keyed_multi_valued_prop()
-    {
-        var obj = new Dummy.TestObject();
-        obj.KeyedMultiValuedProp[100] = (1, 2);
-        Test.AssertEquals(obj.KeyedMultiValuedProp[100], (1, 2));
-        obj.Dispose();
-    }
-
-    public static void test_csharp_multi_keyed_multi_valued_prop()
-    {
-        var obj = new Dummy.TestObject();
-        obj.MultiKeyedMultiValuedProp[(100, 101)] = (1, 2);
-        Test.AssertEquals(obj.MultiKeyedMultiValuedProp[(100, 101)], (1, 2));
-        obj.Dispose();
-    }
-
-    public static void test_csharp_multi_prop()
-    {
-        var obj = new Dummy.TestObject();
-        obj.MultiKeyedMultiValuedProp[(100, 101)] = (1, 2);
-        obj.KeyedMultiValuedProp[100] = (1, 2);
-        Test.AssertEquals(obj.KeyedMultiValuedProp[100],
-                          obj.MultiKeyedMultiValuedProp[(100, 101)]);
-        int a1, b1, a2, b2;
-#if __MonoCS__
-        (int a, int b) t1 = obj.MultiKeyedMultiValuedProp[(100, 101)];
-        (a1, b1) = (t1.Item1, t1.Item2);
-        (int a, int b) t2 = obj.KeyedMultiValuedProp[100];
-        (a2, b2) = (t2.Item1, t2.Item2);
-#else
-        (a1, b1) = obj.MultiKeyedMultiValuedProp[(100, 101)];
-        (a2, b2) = obj.KeyedMultiValuedProp[100];
-#endif
-        Test.AssertEquals(a1, a2);
-        Test.AssertEquals(b1, b2);
-        var i = (100, 101);
-        var j = 100;
-        Test.AssertEquals(obj.KeyedMultiValuedProp[j],
-                          obj.MultiKeyedMultiValuedProp[i]);
-        obj.MultiKeyedMultiValuedProp[i] = (1, 3);
-        obj.KeyedMultiValuedProp[j] = obj.MultiKeyedMultiValuedProp[i];
-        Test.AssertEquals(obj.KeyedMultiValuedProp[j],
-                          obj.MultiKeyedMultiValuedProp[i]);
-
     }
 }
 

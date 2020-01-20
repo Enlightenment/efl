@@ -334,6 +334,28 @@ inline std::string to_field_name(std::string const& in)
   return utils::capitalize(in);
 }
 
+
+
+template<typename T>
+inline std::string property_managed_name(T const& klass, std::string const& name)
+{
+  auto names = utils::split(name, '_');
+  // No need to escape keyword here as it will be capitalized and already
+  // namespaced inside the owner class.
+  auto managed_name = utils::to_pascal_case(names);
+  auto managed_klass_name = klass_concrete_or_interface_name(klass);
+
+  if (managed_name == "Type")
+    managed_name = managed_klass_name + managed_name;
+
+  return managed_name;
+}
+
+inline std::string property_managed_name(attributes::property_def const& property)
+{
+  return property_managed_name(property.klass, property.name);
+}
+
 inline std::string managed_part_name(attributes::part_def const& part)
 {
   std::vector<std::string> names = utils::split(part.name, '_');
@@ -488,45 +510,6 @@ inline std::string managed_event_args_name(attributes::event_def evt)
 inline std::string translate_inherited_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
 {
    return join_namespaces(klass.namespaces, '_') + klass_interface_name(klass) + "_" + managed_event_name(evt.name);
-}
-
-// Properties
-
-template<typename T>
-inline std::string property_managed_name(T const& klass, std::string const& name)
-{
-  auto names = utils::split(name, '_');
-  // No need to escape keyword here as it will be capitalized and already
-  // namespaced inside the owner class.
-  auto managed_name = utils::to_pascal_case(names);
-  auto managed_klass_name = klass_concrete_or_interface_name(klass);
-
-  if (managed_name == "Type")
-    managed_name = managed_klass_name + managed_name;
-
-  return managed_name;
-}
-
-inline std::string property_managed_name(attributes::property_def const& property)
-{
-  return property_managed_name(property.klass, property.name);
-}
-
-inline std::string property_concrete_indexer_name(attributes::property_def const& property)
-{
-  return property_managed_name(property) + "Indexer";
-}
-
-template<typename T>
-inline std::string property_interface_indexer_name(attributes::property_def const& property, T const& current_klass)
-{
-  return name_helpers::klass_full_interface_name(current_klass) + property_concrete_indexer_name(property);
-}
-
-template<typename T>
-inline std::string property_interface_indexer_short_name(attributes::property_def const& property, T const& current_klass)
-{
-  return name_helpers::klass_interface_name(current_klass) + property_concrete_indexer_name(property);
 }
 
 // Open/close namespaces

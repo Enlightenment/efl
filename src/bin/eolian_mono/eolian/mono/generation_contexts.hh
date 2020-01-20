@@ -26,7 +26,6 @@ namespace eolian_mono {
 struct class_context
 {
     enum wrapper_kind {
-        none,
         interface,
         concrete,
         inherit,
@@ -109,12 +108,6 @@ struct options_context {
     bool want_beta;
     std::string examples_dir;
 };
-
-template<typename Context>
-bool context_want_beta(Context const& context)
-{
-  return efl::eolian::grammar::context_find_tag<options_context>(context).want_beta;
-}
 
 }
 

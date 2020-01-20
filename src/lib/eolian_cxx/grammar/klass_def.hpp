@@ -897,7 +897,7 @@ struct function_def
            }
          else if(type == EOLIAN_PROP_GET)
            {
-             for(auto v : values)
+             for(auto&& v : values)
                {
                  v.direction = parameter_direction::out;
                  parameters.push_back(v);

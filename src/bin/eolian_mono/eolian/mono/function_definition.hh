@@ -26,7 +26,6 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
-#include "grammar/eps.hpp"
 #include "grammar/counter.hpp"
 #include "logging.hh"
 #include "type.hh"
@@ -45,7 +44,7 @@ namespace eolian_mono {
 struct native_function_definition_generator
 {
   attributes::klass_def const* klass;
-
+  
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
@@ -182,7 +181,7 @@ struct native_function_definition_generator
     return true;
   }
 };
-
+  
 struct function_definition_generator
 {
   function_definition_generator(bool do_super = false)
@@ -323,199 +322,6 @@ property_extension_method_definition_generator property_extension_method_definit
 
 struct property_wrapper_definition_generator
 {
-   template <typename OutputIterator, typename Context>
-   bool generate_get_indexer(OutputIterator sink, attributes::property_def const& property, Context const& context
-                             , std::string get_scope
-                             , bool is_interface) const
-   {
-     if (is_interface)
-     {
-        if (!as_generator(scope_tab(3) << get_scope <<  "get;\n"
-                          ).generate(sink, attributes::unused, context))
-          return false;
-     }
-     else
-     {
-        if (!as_generator(scope_tab(2) << scope_tab << get_scope << "get\n"
-                          << scope_tab(2) << scope_tab << "{\n"
-                          << scope_tab(2) << scope_tab(2) << "var i = new "
-                          << name_helpers::property_concrete_indexer_name(property) << "();\n"
-                          << scope_tab(2) << scope_tab(2) << "i.Self = this;\n"
-                          << scope_tab(2) << scope_tab(2) << "return i;\n"
-                          << scope_tab(2) << scope_tab << "}\n"
-                          ).generate(sink, attributes::unused, context))
-          return false;
-     }
-
-     return true;
-   }
-
-   template <typename OutputIterator, typename Context, typename C1, typename C2>
-   bool generate_indexer(OutputIterator sink
-                         , attributes::property_def const& property
-                         , Context const& context
-                         , std::string scope, std::string get_scope, std::string set_scope
-                         , std::string class_name
-                         , C1 keys, C2 values
-                         , bool is_interface
-                         , bool is_concrete_for_interface
-                         , bool has_setter) const
-   {
-     if (is_interface)
-       return true;
-
-     auto size_not_one = [] (std::vector<attributes::parameter_def> k) { return k.size() != 1; };
-     auto type_or_tuple
-       =
-       (
-        (
-         attribute_conditional(size_not_one)["("]
-         << (type(false) % ", ")
-         << ")"
-        )
-        | *type(false)
-       )
-       ;
-
-     std::string parentship = "\n";
-
-     bool is_self_property = *implementing_klass == *klass_from_property;
-
-     if (!(is_self_property && !is_concrete_for_interface))
-       parentship = " : " + name_helpers::property_interface_indexer_name(property, *klass_from_property) + "\n";
-
-     if (!as_generator
-         (
-          scope_tab(2) << scope << "class " << name_helpers::property_concrete_indexer_name(property) << parentship
-          << scope_tab(2) << "{\n"
-          << scope_tab(3) << "public " << class_name << " Self {get; set;}\n"
-          << scope_tab(3) << "public "
-          << type_or_tuple << " this[" << type_or_tuple <<" i]\n"
-          << scope_tab(3) << "{\n"
-         ).generate(sink, make_tuple(values, values, keys, keys), context))
-       return false;
-
-     assert (!keys.empty());
-     std::vector<std::string> get_keys;
-     if(keys.size() != 1)
-     {
-       unsigned int i = 0;
-       for (auto&& key : keys)
-       {
-         static_cast<void>(key);
-         ++i;
-         get_keys.push_back("i.Item" + std::to_string(i));
-       }
-     }
-     else
-     {
-       get_keys.push_back ("i");
-     }
-     assert (!get_keys.empty());
-
-     generate_get(sink, property, context, get_scope, get_keys, values, is_interface, "Self.");
-     if (has_setter)
-       generate_set(sink, property, context, set_scope, get_keys, values, is_interface, "Self.");
-
-     if (!as_generator
-         (
-          scope_tab(3) << "}\n"
-          << scope_tab(2) << "};\n"
-          ).generate(sink, attributes::unused, context))
-       return false;
-     return true;
-   }
-   template <typename OutputIterator, typename Context, typename CK, typename CV>
-   bool generate_set(OutputIterator sink, attributes::property_def const& property, Context const& context
-                     , std::string set_scope
-                     , CK keys, CV values
-                     , bool is_interface
-                     , std::string name_prefix = "") const
-   {
-     using efl::eolian::grammar::counter;
-     if (is_interface)
-     {
-       if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set;\n"
-                         ).generate(sink, attributes::unused, context))
-         return false;
-     }
-     else if (values.size() == 1)
-     {
-       if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set " << "{ " << name_prefix << name_helpers::managed_method_name(*property.setter) + "(" << *(string << ",") << "value); }\n"
-            ).generate(sink, keys, context))
-         return false;
-     }
-     else if (values.size() > 1)
-     {
-       if (!as_generator(
-            scope_tab(2) << scope_tab << set_scope <<  "set "
-            << ("{ " << name_prefix << name_helpers::managed_method_name(*property.setter) + "(")
-            << *(string << ",") << ((" value.Item" << counter(1)) % ", ")
-            << "); }\n"
-          ).generate(sink, std::make_tuple(keys, values), context))
-         return false;
-     }
-     return true;
-   }
-   template <typename OutputIterator, typename Context, typename CK, typename CV>
-   bool generate_get(OutputIterator sink, attributes::property_def const& property, Context const& context
-                     , std::string get_scope
-                     , CK keys, CV values
-                     , bool is_interface
-                     , std::string name_prefix = "") const
-   {
-      using efl::eolian::grammar::attribute_reorder;
-      using efl::eolian::grammar::attributes::parameter_direction;
-      using efl::eolian::grammar::attributes::parameter_def;
-
-      if (is_interface) // only declaration
-      {
-        if (!as_generator(scope_tab(2) << scope_tab << get_scope <<  "get;\n"
-                          ).generate(sink, attributes::unused, context))
-          return false;
-      }
-      else
-      if (/*has_getter && */values.size() == 1)
-      {
-        if (!as_generator
-            (scope_tab(2) << scope_tab << get_scope
-             << "get " << "{ return " << name_prefix << name_helpers::managed_method_name(*property.getter)
-             << "(" << (string % ",") << "); }\n"
-            ).generate(sink, keys, context))
-          return false;
-      }
-      else if (/*has_getter && */values.size() > 1)
-      {
-        if (!as_generator
-                 (scope_tab(2) << scope_tab << get_scope << "get "
-                  << "{\n"
-                  << *attribute_reorder<1, -1, 1>
-                    (scope_tab(4) << type(true) << " _out_"
-                     << argument(false) << " = default(" << type(true) << ");\n"
-                    )
-                  << scope_tab(4) << name_prefix << name_helpers::managed_method_name(*property.getter)
-                  << "(" << *(string << ",") << (("out _out_" << argument(false)) % ", ") << ");\n"
-                  << scope_tab(4) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
-                  << scope_tab(3) << "}" << "\n"
-                 ).generate(sink, std::make_tuple(values, keys, values, values), context))
-          return false;
-      }
-      // else if (values.size() == 1)
-      // {
-      //   if (!as_generator
-      //            (scope_tab << scope_tab << get_scope << "get "
-      //             << "{\n"
-      //             << *attribute_reorder<1, -1, 1>(scope_tab(3) << type(true) << " _out_" << argument(false) << " = default(" << type(true) << ");\n")
-      //             << scope_tab(3) << name_prefix << name_helpers::managed_method_name(*property.getter)
-      //             << "(" << *(string << ",") << (("out _out_" << argument(false)) % ",") << ");\n"
-      //             << scope_tab(3) << "return " << (("_out_"<< argument(false)) % ",") << ";\n"
-      //             << scope_tab(2) << "}" << "\n"
-      //            ).generate(sink, std::make_tuple(values, keys, values, values), context))
-      //     return false;
-      // }
-      return true;
-   }
-
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& property, Context const& context) const
    {
@@ -524,127 +330,103 @@ struct property_wrapper_definition_generator
       using efl::eolian::grammar::attributes::parameter_direction;
       using efl::eolian::grammar::attributes::parameter_def;
 
-      /// C(k) = keys count, C(v) = values count
-      ///                                             /------------\           /------\.
-      ///                                             |blacklisted?|---yes-----| skip |--------------\.
-      ///                                             \------------/           \------/              |
-      ///                                                 |                       |                  |
-      ///                                                 no                     yes                 |
-      ///                                                 |                       |                  |
-      ///                                             /---------\            /------------\          |
-      ///                                             |is-static|----yes-----|is-interface|          |
-      ///                                             \---------/            \------------/          |
-      ///                                                 |                       |                  |
-      ///                                                 no                      no                 |
-      ///                                                 |                       |                  |
-      ///                                             /--------\             /-----------\           |
-      ///                                             |has-get?|---no-conc---|is-concrete|-----yes---/
-      ///                                             \--------/             \-----------/
-      ///                                              /     \.
-      ///                                            no      yes
-      ///                                            /         \.
-      ///                                         /----\     /--------------------------------------\.
-      ///                                         |skip|-yes-|explicit return != Eina.Error or void |
-      ///                                         \----/     \--------------------------------------/
-      ///                                                        |
-      ///                                                        no
-      ///                                                        |
-      ///                                                    /--------\.
-      ///                                                    |has-set?|
-      ///                                                    \--------/
-      ///                                                     /     \.
-      ///                                                   no      yes
-      ///                                                   /         \.
-      ///                                                /------\    /--------------------------------------\.
-      ///                             /------------------|no-set|    |explicit return != Eina.Error or void |---- yes --\.
-      ///                             |                  \------/    \--------------------------------------/           |
-      ///                             |                     \------------|----------------------------------------------/
-      ///                             |                                  no
-      ///                             |                                  |
-      ///                             |                              /--------\.
-      ///                             |                              |has-both|
-      ///                             |                              \--------/
-      ///                             |                                  |
-      ///                             |                      /-------------------\.
-      ///                             |                      |set-keys = get-keys|
-      ///                             |                      \-------------------/
-      ///                             |                       /              |
-      ///                             |                     no               |
-      ///                             |                     /                |
-      ///                             |                /----\       /-----------------------\.
-      ///                             |                |skip|--no---|set-values = get-values|
-      ///                             |                \----/       \-----------------------/
-      ///                             |                                /
-      ///                             |                              yes
-      ///                             |                              /
-      ///                             |                         /--------\.
-      ///                             \-------------------------|  keys  |
-      ///                                                       \--------/
-      ///                                                       /        \.
-      ///                                                      0         >0
-      ///                                                     /           \.
-      ///                                              /----------\    /----------\.
-      ///                                              |no-indexer|    | keys > 1 |
-      ///                                              \----------/    \----------/
-      ///                                                |              /      |
-      ///                                                |            no      yes
-      ///                                                |            /        |
-      ///                                                |           /         |
-      ///                                                |   /---------\ /-------------------\.
-      ///                                                |   | indexer | | indexer tuple key |
-      ///                                                |   \---------/ \-------------------/
-      ///                                                |     /           |
-      ///                                              /--------\          |
-      ///                                              | values |----------/
-      ///                                              \--------/
-      ///                                               /       \.
-      ///                                              1        >1
-      ///                                             /           \.
-      ///                                     /----------------\  /-------------\.
-      ///                                     | no tuple value |  | tuple value |
-      ///                                     \----------------/  \-------------/
-      ///
-
-      auto has_wrapper = helpers::has_property_wrapper (property, implementing_klass, context);
-      bool has_getter = has_wrapper & helpers::has_property_wrapper_bit::has_getter;
-      if (!has_getter) return true;
-      bool has_setter = has_wrapper & helpers::has_property_wrapper_bit::has_setter;
-      bool has_indexer = has_wrapper & helpers::has_property_wrapper_bit::has_indexer;
+      if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
+        return true;
 
       bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
       bool is_static = (property.getter.is_engaged() && property.getter->is_static)
                        || (property.setter.is_engaged() && property.setter->is_static);
       bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
-      bool is_concrete_for_interface = is_concrete
-        && (implementing_klass->type == attributes::class_type::interface_
-            || implementing_klass->type == attributes::class_type::mixin);
 
-      //if (name_helpers::klass_concrete_or_interface_name (*implementing_klass) == "IMapping")
-      if (false)
+
+      if ((is_concrete || is_interface) && is_static)
+        return true;
+
+      auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
+      //auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
+
+      // C# properties must have a single value.
+      //
+      // Single values in getters are automatically converted to return_type,
+      // meaning they should have 0 parameters.
+      //
+      // For setters, we ignore the return type - usually boolean.
+      // if (get_params > 0 || set_params > 1)
+      //   return true;
+
+      if (property.getter
+          && std::find_if (property.getter->parameters.begin()
+                           , property.getter->parameters.end()
+                           , [] (parameter_def const& p)
+                           {
+                             return p.direction != parameter_direction::out;
+                           }) != property.getter->parameters.end())
+        return true;
+      if (property.setter
+          && std::find_if (property.setter->parameters.begin()
+                           , property.setter->parameters.end()
+                           , [] (parameter_def const& p)
+                           {
+                             return p.direction != parameter_direction::in;
+                           }) != property.setter->parameters.end())
+        return true;
+
+      if (property.getter && property.setter)
       {
-        if (!as_generator(grammar::lit("/// is interface ") << (int)is_interface
-                          << " is static " << (int)is_static
-                          << " is concrete " << (int)is_concrete
-                          << " is concrete_for_interface " << (int)is_concrete_for_interface
-                          << " klass_from_property->type " << (int)klass_from_property->type
-                          << " has_setter " << (int)has_setter
-                          << " property.setter->explicit_return_type != attributes::void_ " << (property.setter && property.setter->explicit_return_type != attributes::void_)
-                          << " property.setter->keys != property.getter->keys " << (property.setter && property.setter->keys != property.getter->keys)
-                          << " property.setter->values != property.getter->values " << (property.setter && property.setter->values != property.getter->values)
-                          << " has_setter && property.setter->scope != attributes::member_scope::scope_public " << (property.setter && property.setter->scope != attributes::member_scope::scope_public)
-                          << "\n")
-            .generate (sink, attributes::unused, context))
-          return false;
+        if (get_params != 0 && property.setter->parameters.size() != property.getter->parameters.size())
+          return true;
       }
 
-      if (blacklist::is_property_blacklisted(property, context))
-        return true;
+      std::vector<attributes::parameter_def> parameters;
+
+      if (property.setter.is_engaged())
+      {
+        std::transform (property.setter->parameters.begin(), property.setter->parameters.end()
+                        , std::back_inserter(parameters)
+                        , [] (parameter_def p) -> parameter_def
+                        {
+                          //p.direction = efl::eolian::attributes::parameter_direction::in;
+                          return p;
+                        });
+      }
+      else if (property.getter.is_engaged())
+      {
+        // if getter has parameters, then we ignore return type, otherwise
+        // we use the return type.
+        if (get_params == 0)
+          parameters.push_back({parameter_direction::in
+                , property.getter->return_type, "propertyResult", {}
+                , property.getter->unit});
+        else
+          std::transform (property.getter->parameters.begin(), property.getter->parameters.end()
+                          , std::back_inserter(parameters)
+                          , [] (parameter_def p) -> parameter_def
+                          {
+                            p.direction = parameter_direction::in;
+                            return p;
+                          });
+      }
+        else
+        {
+           EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Property must have either a getter or a setter." << std::endl;
+           return false;
+        }
+
+      std::string dir_mod;
+      if (property.setter.is_engaged())
+        dir_mod = direction_modifier(property.setter->parameters[0]);
 
       std::string managed_name = name_helpers::property_managed_name(property);
 
       std::string scope = "public ";
-      std::string get_scope = eolian_mono::function_scope_get(*property.getter);
-      std::string set_scope = has_setter ? eolian_mono::function_scope_get(*property.setter) : "";
+      std::string get_scope = property.getter.is_engaged() ? eolian_mono::function_scope_get(*property.getter) : "";
+      bool is_get_public = get_scope == "public ";
+      std::string set_scope = property.setter.is_engaged() ? eolian_mono::function_scope_get(*property.setter) : "";
+      bool is_set_public = set_scope == "public ";
+
+      // No need to generate this wrapper as no accessor is public.
+      if (is_interface && (!is_get_public && !is_set_public))
+          return true;
 
       // C# interface members are declared automatically as public
       if (is_interface)
@@ -659,64 +441,23 @@ struct property_wrapper_definition_generator
            get_scope = "";
            set_scope = "";
         }
-      else if (!has_setter || (get_scope == scope))
+      else if (!property.setter.is_engaged() || (get_scope == scope))
         {
            scope = get_scope;
            get_scope = "";
         }
-
-      std::string virtual_mod = (is_static || is_interface || is_concrete) ? "" : "virtual ";
-
-      auto keys = property.getter->keys;
-      auto values = property.getter->values;
-      auto generated_values = values;
-      auto klass_name = name_helpers::klass_concrete_or_interface_name (*implementing_klass);
-
-      if (has_indexer)
-      {
-        assert (!!implementing_klass);
-        generate_indexer (sink, property, context, scope, get_scope, set_scope
-                          , klass_name, keys, values
-                          , is_interface, is_concrete_for_interface, has_setter);
-
-        generated_values.clear();
-        if (!is_interface && *implementing_klass == *klass_from_property
-            && !is_concrete_for_interface)
+      else if (!property.getter.is_engaged() || (set_scope == scope))
         {
-          generated_values.push_back
-            (attributes::parameter_def
-             {parameter_direction::in
-                , attributes::type_def
-                {
-                  attributes::regular_type_def{name_helpers::property_concrete_indexer_name(property), {attributes::qualifier_info::is_none, ""}, {}}
-                  , name_helpers::property_concrete_indexer_name(property)
-                  , false, false, false, ""
-                }
-              , "indexer", {}, nullptr
-            });
+           scope = set_scope;
+           set_scope = "";
         }
-        else
-        {
-          generated_values.push_back
-            (attributes::parameter_def
-             {parameter_direction::in
-                , attributes::type_def
-                {
-                  attributes::regular_type_def{name_helpers::klass_full_concrete_or_interface_name (*klass_from_property) + managed_name + "Indexer", {attributes::qualifier_info::is_none, ""}, {}}
-                  , name_helpers::property_interface_indexer_name(property, *klass_from_property)
-                  , false, false, false, ""
-                }
-              , "indexer", {}, nullptr
-            });
-        }
-      }
 
-      if (generated_values.size() == 1)
+      if (parameters.size() == 1)
       {
         if (!as_generator(
                     documentation(2)
-                    << scope_tab(2) << scope << (is_static ? "static " : virtual_mod) << type(true) << " " << managed_name << " {\n"
-              ).generate(sink, std::make_tuple(property, generated_values[0].type), context))
+                    << scope_tab(2) << scope << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
+              ).generate(sink, std::make_tuple(property, parameters[0].type), context))
           return false;
       }
       else
@@ -727,21 +468,73 @@ struct property_wrapper_definition_generator
              << scope_tab(2) << scope << (is_static ? "static (" : "(")
              << (attribute_reorder<1, -1>(type(true) /*<< " " << argument*/) % ", ") << ") "
              << managed_name << " {\n"
-            ).generate(sink, std::make_tuple(property, generated_values), context))
+            ).generate(sink, std::make_tuple(property, parameters), context))
           return false;
       }
 
-      if (has_indexer)
+      if (property.getter.is_engaged() && is_interface)
       {
-        generate_get_indexer (sink, property, context, get_scope, is_interface);
+        if (is_get_public)
+          if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "get;\n"
+                            ).generate(sink, attributes::unused, context))
+            return false;
       }
-      else
+      else if (property.getter.is_engaged() && get_params == 0/*parameters.size() == 1 && property.getter.is_engaged()*/)
       {
-        std::vector<std::string> empty_keys;
-        generate_get(sink, property, context, get_scope, empty_keys, values, is_interface);
+        if (!as_generator
+            (scope_tab(2) << scope_tab << get_scope
+             << "get " << "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }\n"
+            ).generate(sink, attributes::unused, context))
+          return false;
+      }
+      else if (parameters.size() >= 1 && property.getter)
+      {
+        if (!as_generator
+                 (scope_tab(2) << scope_tab << get_scope << "get "
+                  << "{\n"
+                  << *attribute_reorder<1, -1, 1>
+                    (scope_tab(4) << type(true) << " _out_"
+                     << argument(false) << " = default(" << type(true) << ");\n"
+                    )
+                  << scope_tab(4) << name_helpers::managed_method_name(*property.getter)
+                  << "(" << (("out _out_" << argument(false)) % ", ") << ");\n"
+                  << scope_tab(4) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
+                  << scope_tab(3) << "}" << "\n"
+                 ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
+          return false;
+      }
+      // else if (parameters.size() == 1)
+      // {
+      //   if (!as_generator
+      //            (scope_tab << scope_tab << get_scope << "get "
+      //             << "{\n"
+      //             << *attribute_reorder<1, -1, 1>(scope_tab(3) << type(true) << " _out_" << argument(false) << " = default(" << type(true) << ");\n")
+      //             << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
+      //             << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
+      //             << scope_tab(3) << "return " << (("_out_"<< argument(false)) % ",") << ";\n"
+      //             << scope_tab(2) << "}" << "\n"
+      //            ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
+      //     return false;
+      // }
 
-        if (has_setter)
-          generate_set (sink, property, context, set_scope, empty_keys, values, is_interface);
+      if (property.setter.is_engaged() && is_interface)
+      {
+        if (is_set_public)
+          if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set;\n"
+                            ).generate(sink, attributes::unused, context))
+            return false;
+      }
+      else if (parameters.size() == 1 && property.setter.is_engaged())
+      {
+        if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set " << "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }\n"
+            ).generate(sink, attributes::unused, context))
+          return false;
+      }
+      else if (parameters.size() > 1 && property.setter.is_engaged())
+      {
+        if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set " << ("{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod) << ((" value.Item" << counter(1)) % ", ") << "); }" << "\n"
+           ).generate(sink, parameters, context))
+          return false;
       }
 
       if (!as_generator(scope_tab(2) << "}\n\n").generate(sink, attributes::unused, context))
@@ -749,56 +542,16 @@ struct property_wrapper_definition_generator
 
       return true;
    }
-   attributes::klass_def const* implementing_klass, *klass_from_property;
+   attributes::klass_def const* implementing_klass;
 };
 struct property_wrapper_definition_parameterized
 {
-  property_wrapper_definition_generator operator()(attributes::klass_def const& klass
-                                                   , attributes::klass_def const& prop_from_klass) const
-  {
-    return {&klass, &prop_from_klass};
-  }
-} const property_wrapper_definition;
-property_wrapper_definition_generator as_generator(property_wrapper_definition_parameterized)
-{
-   return {};
-}
-
-struct interface_property_indexer_definition_generator
-{
-   template<typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::property_def const& property, Context const& context) const
-   {
-      using efl::eolian::grammar::attribute_reorder;
-      using efl::eolian::grammar::counter;
-      using efl::eolian::grammar::attributes::parameter_direction;
-      using efl::eolian::grammar::attributes::parameter_def;
-
-      bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
-
-      assert (is_interface);
-      auto klass_name = name_helpers::klass_concrete_or_interface_name (*implementing_klass);
-      std::string managed_name = name_helpers::property_managed_name(property);
-
-      if (!as_generator
-           (scope_tab << "public interface " << name_helpers::property_interface_indexer_short_name(property, *implementing_klass) << "\n"
-           << scope_tab << "{\n"
-           << scope_tab << "}\n"
-           ).generate (sink, attributes::unused, context))
-        return false;
-
-      return true;
-   }
-   attributes::klass_def const* implementing_klass;
-};
-struct interface_property_indexer_definition_parameterized
-{
-  interface_property_indexer_definition_generator operator()(attributes::klass_def const& klass) const
+  property_wrapper_definition_generator operator()(attributes::klass_def const& klass) const
   {
      return {&klass};
   }
-} const interface_property_indexer_definition;
-interface_property_indexer_definition_generator as_generator(interface_property_indexer_definition_parameterized)
+} const property_wrapper_definition;
+property_wrapper_definition_generator as_generator(property_wrapper_definition_parameterized)
 {
    return {};
 }
@@ -818,10 +571,6 @@ struct is_eager_generator< ::eolian_mono::property_wrapper_definition_generator>
 template <>
 struct is_eager_generator< ::eolian_mono::property_wrapper_definition_parameterized> : std::true_type {};
 template <>
-struct is_eager_generator< ::eolian_mono::interface_property_indexer_definition_parameterized> : std::true_type {};
-template <>
-struct is_eager_generator< ::eolian_mono::interface_property_indexer_definition_generator> : std::true_type {};
-template <>
 struct is_generator< ::eolian_mono::function_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::native_function_definition_generator> : std::true_type {};
@@ -833,10 +582,6 @@ template <>
 struct is_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::property_wrapper_definition_parameterized> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::interface_property_indexer_definition_parameterized> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::interface_property_indexer_definition_generator> : std::true_type {};
 
 namespace type_traits {
 template <>
@@ -855,13 +600,8 @@ template <>
 struct attributes_needed< ::eolian_mono::property_wrapper_definition_generator> : std::integral_constant<int, 1> {};
 template <>
 struct attributes_needed< ::eolian_mono::property_wrapper_definition_parameterized> : std::integral_constant<int, 1> {};
-
-template <>
-struct attributes_needed< ::eolian_mono::interface_property_indexer_definition_parameterized> : std::integral_constant<int, 1> {};
-template <>
-struct attributes_needed< ::eolian_mono::interface_property_indexer_definition_generator> : std::integral_constant<int, 1> {};
 }
-
+      
 } } }
 
 #endif
