@@ -140,16 +140,16 @@ _efl_text_cursor_move(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_Text_Cu
    int pos = evas_textblock_cursor_pos_get(pd->handle);
 
    switch (type) {
-      case EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT :
          moved = evas_textblock_cursor_char_next(pd->handle);
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS :
          moved = evas_textblock_cursor_char_prev(pd->handle);
          break;
       case EFL_TEXT_CURSOR_MOVE_TYPE_CLUSTER_NEXT :
          moved = evas_textblock_cursor_cluster_next(pd->handle);
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_CLUSTER_PREV :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_CLUSTER_PREVIOUS :
          moved = evas_textblock_cursor_cluster_prev(pd->handle);
          break;
       case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_START :
@@ -191,7 +191,7 @@ _efl_text_cursor_move(Eo *obj EINA_UNUSED, Efl_Text_Cursor_Data *pd, Efl_Text_Cu
       case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_NEXT :
          moved = evas_textblock_cursor_paragraph_next(pd->handle);
          break;
-      case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_PREV :
+      case EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_PREVIOUS :
          moved = evas_textblock_cursor_paragraph_prev(pd->handle);
          break;
      }

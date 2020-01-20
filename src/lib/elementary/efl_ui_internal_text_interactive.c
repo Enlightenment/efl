@@ -540,7 +540,7 @@ _entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUS
 
         for (i = 0; i < (preedit_end_pos - preedit_start_pos); i++)
           {
-             efl_text_cursor_move(en->preedit_start, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
+             efl_text_cursor_move(en->preedit_start, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS);
           }
 
         en->have_preedit = EINA_TRUE;
@@ -913,19 +913,19 @@ _delete_emit(Eo *obj, Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data 
    Eo * cur = efl_duplicate(c);
    if (backspace)
      {
-        if (!efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV))
+        if (!efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS))
           {
              return;
           }
-        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
+        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
      }
    else
      {
-        if (!efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT))
+        if (!efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT))
           {
              return;
           }
-        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
+        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS);
      }
    efl_del(cur);
    cur = NULL;
@@ -1183,7 +1183,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 #endif
         if (efl_text_interactive_have_selection_get(obj))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (efl_text_cursor_move(cur,EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV))
+        if (efl_text_cursor_move(cur,EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
@@ -1202,7 +1202,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 #endif
         if (efl_text_interactive_have_selection_get(obj))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT))
+        if (efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
@@ -1214,9 +1214,8 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           {
              // del to start of previous word
              Efl_Text_Cursor *tc = efl_canvas_textblock_cursor_create(obj);
-
              _cur_pos_copy(cur, tc);
-             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_PREV);
+             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS);
              efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
 
              _range_del_emit(obj, cur, tc);
@@ -1252,7 +1251,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
              _cur_pos_copy(cur, tc);
              efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
-             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
+             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
 
              _range_del_emit(obj, cur, tc);
 
@@ -1589,7 +1588,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
                   else
                     {
                        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
-                       efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
+                       efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
                     }
                   _sel_extend(cur, obj, en);
                }
@@ -1603,7 +1602,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
                   _sel_init(cur, obj, en);
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
-                  efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHAR_NEXT);
+                  efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
                   _sel_extend(cur, obj, en);
                }
              goto end;
