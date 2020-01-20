@@ -4,7 +4,7 @@ struct  @beta Efl.Ui.Spotlight.Transition_Event {
    to : int; [[The index to where the transition is headed, -1 if not known.]]
 }
 
-class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack_Linear
+class Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack_Linear
 {
    [[The Spotlight widget is a container for other sub-widgets, where only one sub-widget is active at any given time.
 
@@ -28,7 +28,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
    ]]
    c_prefix: efl_ui_spotlight;
    methods {
-      @property spotlight_manager {
+      @property spotlight_manager @beta {
         [[This object defines how sub-widgets are rendered and animated.
           If it is not set, only the active sub-widget is shown and transitions are instantaneous (not animated).
         ]]
@@ -42,7 +42,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
           spotlight_manager : Efl.Ui.Spotlight.Manager @move; [[The Spotlight Manager object or $NULL.]]
         }
       }
-      @property indicator {
+      @property indicator @beta {
         [[An indicator object to use, which will display the current state of the spotlight (number of sub-widgets
           and active one).
           When this object is set, it is immediately updated to reflect the current state of the widget.
@@ -124,8 +124,8 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack
       }
    }
    events {
-      transition,start : Efl.Ui.Spotlight.Transition_Event; [[A transition animation has started.]]
-      transition,end : Efl.Ui.Spotlight.Transition_Event; [[A transition animation has ended.]]
+      transition,start @beta : Efl.Ui.Spotlight.Transition_Event; [[A transition animation has started.]]
+      transition,end @beta : Efl.Ui.Spotlight.Transition_Event; [[A transition animation has ended.]]
    }
    implements {
       Efl.Object.constructor;
