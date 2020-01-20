@@ -821,8 +821,7 @@ _efl_ui_textbox_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Textbox_Data *s
 EOLIAN static Eina_Bool
 _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
-   Evas_Object *top;
-   Eina_Bool top_is_win = EINA_FALSE;
+   Efl_Object *top;
 
    if (!efl_text_interactive_editable_get(obj)) return EINA_FALSE;
 
@@ -834,7 +833,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
 
         _edje_signal_emit(sd, "efl,action,focus", "efl");
 
-        if (top && efl_input_text_input_panel_autoshow_get(obj) && !efl_input_text_input_panel_show_on_demand_get(obj))
+        if (efl_input_text_input_panel_autoshow_get(obj) && !efl_input_text_input_panel_show_on_demand_get(obj))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
@@ -846,7 +845,7 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
         _edje_signal_emit(sd, "efl,action,unfocus", "efl");
         efl_canvas_object_key_focus_set(sw, EINA_FALSE);
 
-        if (top && top_is_win && efl_input_text_input_panel_autoshow_get(obj))
+        if (efl_input_text_input_panel_autoshow_get(obj))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_FALSE);
@@ -1270,8 +1269,7 @@ _mouse_up_cb(void *data,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
-   Eina_Bool top_is_win = EINA_FALSE;
-   Evas_Object *top;
+   Efl_Object *top;
 
    EFL_UI_TEXT_DATA_GET(data, sd);
 
@@ -1292,15 +1290,9 @@ _mouse_up_cb(void *data,
           }
         else
           {
-             top = elm_widget_top_get(data);
-             if (top)
-               {
-                  if (efl_isa(top, EFL_UI_WIN_CLASS))
-                    top_is_win = EINA_TRUE;
-
-                  if (top_is_win && efl_input_text_input_panel_autoshow_get(data) && efl_input_text_input_panel_show_on_demand_get(data))
-                    elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-               }
+             top = efl_provider_find(data, EFL_UI_WIN_CLASS);
+             if (efl_input_text_input_panel_autoshow_get(data) && efl_input_text_input_panel_show_on_demand_get(data))
+               elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
           }
      }
   /* Since context menu disabled flag was checked at mouse right key down,
