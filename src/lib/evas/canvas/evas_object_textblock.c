@@ -8450,7 +8450,7 @@ _cursor_emit_if_changed(Efl_Text_Cursor_Handle *cur)
 
 /**
  * @internal
- * prepends the escaped char beteewn s and s_end to the curosr
+ * Prepends the escaped char between s and s_end to the cursor
  *
  *
  * @param s the start of the string
