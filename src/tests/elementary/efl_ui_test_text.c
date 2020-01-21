@@ -72,45 +72,6 @@ EFL_START_TEST(text_all_select_all_unselect)
    ecore_main_loop_iterate();
    ck_assert_int_eq(i_have_selection, 2);
    ck_assert_int_eq(i_selection, 1);
-
-   /*Partial select, the select all*/
-   Eo *sel1, *sel2;
-   i_selection = 0;
-   efl_text_interactive_selection_cursors_get(txt, &sel1, &sel2);
-   efl_text_cursor_position_set(sel1, 1);
-   efl_text_cursor_position_set(sel2, 2);
-   ck_assert_int_eq(i_selection, 2);
-   efl_text_interactive_all_select(txt);
-   ck_assert_int_eq(i_selection, 3);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel1), 0);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel2), 5);
-
-   Eo *cur1 = efl_ui_textbox_cursor_create(txt);
-   Eo *cur2 = efl_ui_textbox_cursor_create(txt);
-   efl_text_cursor_position_set(cur1, 1);
-   efl_text_cursor_position_set(cur2, 2);
-   efl_text_interactive_selection_cursors_set(txt, cur1, cur2);
-   ck_assert_int_eq(i_selection, 4);
-   efl_text_interactive_selection_cursors_get(txt, &sel1, &sel2);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel1),1);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel2),2);
-
-
-   /*Select part then select all*/
-   efl_text_interactive_all_unselect(txt);
-   i_have_selection = 0, i_selection = 0;
-   efl_text_cursor_position_set(cur1, 1);
-   efl_text_cursor_position_set(cur2, 2);
-   efl_text_interactive_selection_cursors_set(txt, cur1, cur2);
-   ck_assert_int_eq(i_selection, 1);
-   ck_assert_int_eq(i_have_selection, 1);
-   efl_text_interactive_all_select(txt);
-   ck_assert_int_eq(i_selection, 2);
-   ck_assert_int_eq(i_have_selection, 1);
-   efl_text_interactive_all_unselect(txt);
-   ck_assert_int_eq(i_have_selection, 2);
-
-
    efl_del(txt);
    efl_del(win);
 }
