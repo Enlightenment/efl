@@ -1,94 +1,15 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdio.h>
-#include <unistd.h>
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_Wl2.h>
-#include <wayland-egl.h>
-
-#ifdef GL_GLES
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#endif
-
 #include "ecore_wl2_suite.h"
 #include "ecore_wl2_tests_helpers.h"
 
-#define WIDTH 480
-#define HEIGHT 360
-
-typedef struct _Test_Data
-{
-   Ecore_Wl2_Display *display;
-   Ecore_Wl2_Window *win;
-   Ecore_Wl2_Frame_Cb_Handle *frame_callback_handler;
-   Ecore_Event_Handler *handler;
-
-   struct wl_surface *surface;
-   struct wl_egl_window *egl_window;
-
-   int width;
-   int height;
-   int frame_callback_count;
-
 #ifdef GL_GLES
-   EGLDisplay egl_display;
-   EGLConfig egl_conf;
-   EGLSurface egl_surface;
-   EGLContext egl_context;
+#include "ecore_wl2_tests_helper_egl.h"
 #endif
-} Test_Data;
-
-static Ecore_Wl2_Window *
-_window_create(Ecore_Wl2_Display *disp)
-{
-   return ecore_wl2_window_new(disp, NULL, 100, 100, WIDTH, HEIGHT);
-}
 
 static struct wl_surface *
 _surface_get(Ecore_Wl2_Window *win)
 {
    return ecore_wl2_window_surface_get(win);
 }
-
-#ifdef GL_GLES
-static void
-_init_egl(Test_Data *td)
-{
-   eglBindAPI(EGL_OPENGL_API);
-   EGLint num_config;
-
-   EGLint attributes[] = {
-        EGL_RED_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_BLUE_SIZE, 8,
-        EGL_NONE
-   };
-
-   td->egl_display = eglGetDisplay((EGLNativeDisplayType)ecore_wl2_display_get(td->display));
-   eglInitialize(td->egl_display, NULL, NULL);
-   eglChooseConfig(td->egl_display, attributes, &td->egl_conf, 1, &num_config);
-   td->egl_context = eglCreateContext(td->egl_display, td->egl_conf, EGL_NO_CONTEXT, NULL);
-
-   td->egl_window = wl_egl_window_create(td->surface, td->width, td->height);
-   td->egl_surface = eglCreateWindowSurface(td->egl_display,
-                                            td->egl_conf, td->egl_window, NULL);
-
-   eglMakeCurrent(td->egl_display, td->egl_surface, td->egl_surface, td->egl_context);
-}
-
-static void
-_term_egl(Test_Data *td)
-{
-   eglDestroySurface(td->egl_display, td->egl_surface);
-   wl_egl_window_destroy(td->egl_window);
-   eglDestroyContext(td->egl_display, td->egl_context);
-   eglTerminate(td->egl_display);
-}
-#endif
 
 EFL_START_TEST(wl2_window_new)
 {

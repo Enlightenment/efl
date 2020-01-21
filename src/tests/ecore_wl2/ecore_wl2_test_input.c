@@ -1,13 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdio.h>
-#include <unistd.h>
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_Wl2.h>
-
 #include "ecore_wl2_suite.h"
 #include "ecore_wl2_tests_helpers.h"
 
@@ -124,16 +114,14 @@ EFL_START_TEST(wl2_input_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST(wl2_input_seat_capabilities)
+static Eina_Bool
+_test_input_seat_capa_configure_complete(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Ecore_Wl2_Display *disp;
+   Test_Data *td = data;
    Ecore_Wl2_Input *input;
    Eina_Iterator *itr;
 
-   disp = _display_connect();
-   ck_assert(disp != NULL);
-
-   itr = ecore_wl2_display_inputs_get(disp);
+   itr = ecore_wl2_display_inputs_get(td->display);
    ck_assert(itr != NULL);
 
    EINA_ITERATOR_FOREACH(itr, input)
@@ -145,6 +133,38 @@ EFL_START_TEST(wl2_input_seat_capabilities)
      }
 
    eina_iterator_free(itr);
+
+   ecore_main_loop_quit();
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+EFL_START_TEST(wl2_input_seat_capabilities)
+{
+   Test_Data *td;
+
+   ecore_wl2_init();
+
+   td = calloc(1, sizeof(Test_Data));
+   td->width = WIDTH;
+   td->height = HEIGHT;
+
+   td->display = _display_connect();
+   ck_assert(td->display != NULL);
+
+   td->win = _window_create(td->display);
+   ck_assert(td->win != NULL);
+
+   ecore_wl2_window_show(td->win);
+
+   td->handler = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                                         _test_input_seat_capa_configure_complete, td);
+
+   ecore_main_loop_begin();
+
+   ecore_wl2_shutdown();
+   free(td);
+
 }
 EFL_END_TEST
 

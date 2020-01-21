@@ -1,14 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include <stdio.h>
-#include <unistd.h>
-
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_Wl2.h>
-
 #include "ecore_wl2_suite.h"
 
 EFL_START_TEST(ecore_wl2_simple)
