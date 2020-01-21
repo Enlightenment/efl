@@ -565,6 +565,20 @@ EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, con
  */
 EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
 
+/**
+ * Terminate a Wayland display's main loop
+ *
+ * @brief This function is typically used by servers to terminate the
+ * Wayland display main loop. This is usually only called when a server
+ * encounters an error.
+ *
+ * @param display The Ecore_Wl2_Display to terminate
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
+ */
+EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
+
 # undef EAPI
 # define EAPI
 

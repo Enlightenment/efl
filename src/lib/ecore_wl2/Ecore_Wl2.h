@@ -551,20 +551,6 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
 
 /**
- * Terminate a Wayland display's main loop
- *
- * @brief This function is typically used by servers to terminate the
- * Wayland display main loop. This is usually only called when a server
- * encounters an error.
- *
- * @param display The Ecore_Wl2_Display to terminate
- *
- * @ingroup Ecore_Wl2_Display_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
-
-/**
  * Retrieve the existing Wayland display
  *
  * @param display The Ecore_Wl2_Display for which to retrieve the existing
