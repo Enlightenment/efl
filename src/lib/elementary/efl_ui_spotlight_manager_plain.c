@@ -10,6 +10,7 @@ typedef struct {
    Efl_Ui_Spotlight_Container * container;
    Eina_Size2D page_size;
    Efl_Ui_Widget *current_content;
+   Efl_Gfx_Entity *clipper;
    Eina_Bool animation;
    double last_pos;
 } Efl_Ui_Spotlight_Manager_Plain_Data;
@@ -36,6 +37,7 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
    goal.size = pd->page_size;
    goal.y = (group_pos.y + group_pos.h/2)-pd->page_size.h/2;
    goal.x = (group_pos.x + group_pos.w/2)-pd->page_size.w/2;
+   efl_gfx_entity_geometry_set(pd->clipper, goal);
    efl_gfx_entity_geometry_set(entity, goal);
 }
 
@@ -48,8 +50,15 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 
         pd->container = spotlight;
 
+        pd->clipper = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
+                              evas_object_evas_get(spotlight));
+        evas_object_static_clip_set(pd->clipper, EINA_TRUE);
+        efl_canvas_group_member_add(spotlight, pd->clipper);
+
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
+           efl_key_data_set(elem, "_elm_leaveme", spotlight);
+           efl_canvas_object_clipper_set(elem, pd->clipper);
            efl_canvas_group_member_add(pd->container, elem);
            efl_gfx_entity_visible_set(elem, EINA_FALSE);
         }
@@ -81,6 +90,8 @@ _content_changed(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 EOLIAN static void
 _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_add(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
+   efl_key_data_set(subobj, "_elm_leaveme", pd->container);
+   efl_canvas_object_clipper_set(subobj, pd->clipper);
    efl_canvas_group_member_add(pd->container, subobj);
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
    _content_changed(obj, pd);
@@ -89,6 +100,8 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_add(Eo *obj, Ef
 EOLIAN static void
 _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_del(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
+   efl_key_data_set(subobj, "_elm_leaveme", NULL);
+   efl_canvas_object_clipper_set(subobj, NULL);
    efl_canvas_group_member_remove(pd->container, subobj);
    if (pd->current_content == subobj)
      pd->current_content = NULL;
@@ -147,5 +160,17 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animated_transition_get
    return pd->animation;
 }
 
+EOLIAN static void
+_efl_ui_spotlight_manager_plain_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+{
+   efl_del(pd->clipper);
+
+   for (int i = 0; i < efl_content_count(pd->container); ++i)
+     {
+        efl_canvas_object_clipper_set(efl_pack_content_get(pd->container, i), NULL);
+     }
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
 
 #include "efl_ui_spotlight_manager_plain.eo.c"

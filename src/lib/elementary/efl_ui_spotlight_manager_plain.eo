@@ -8,5 +8,6 @@ class @beta Efl.Ui.Spotlight.Manager_Plain extends Efl.Ui.Spotlight.Manager
       Efl.Ui.Spotlight.Manager.size {set;}
       Efl.Ui.Spotlight.Manager.animated_transition {set; get;}
       Efl.Object.destructor;
+      Efl.Object.invalidate;
    }
 }
