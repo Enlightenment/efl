@@ -14,7 +14,7 @@ typedef struct _Object_Gesture
 typedef struct _Efl_Canvas_Gesture_Manager_Data
 {
    //Keeps track of all the gesture request for a particular target
-   Eina_Hash *m_gesture_contex;     // (*target, *event_desc)
+   Eina_Hash *m_gesture_contex;     // (*target, Eina_Hash(type, int))
    //Keeps all the event directed to this particular object from touch_begin till touch_end
    Eina_Hash *m_object_events;     // (*target, *efl_gesture_touch)
    //Keeps all the recognizer registered to gesture manager
@@ -59,7 +59,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->m_recognizers = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
-   pd->m_gesture_contex = eina_hash_pointer_new(NULL);
+   pd->m_gesture_contex = eina_hash_pointer_new(EINA_FREE_CB(eina_hash_free));
    pd->m_object_events = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
    pd->m_object_gestures = NULL;
    pd->m_gestures_to_delete = NULL;
@@ -136,7 +136,18 @@ _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_
    if (recognizer)
      {
         //Add it to the gesture context.
-        eina_hash_list_append(pd->m_gesture_contex, &target, type);
+        Eina_Hash *thisisreallystupid = eina_hash_find(pd->m_gesture_contex, &target);
+        int count = 0;
+        /* already present */
+        if (thisisreallystupid)
+          count = (intptr_t)eina_hash_find(thisisreallystupid, &type);
+        else
+          {
+             thisisreallystupid = eina_hash_pointer_new(NULL);
+             eina_hash_set(pd->m_gesture_contex, &target, thisisreallystupid);
+          }
+        count++;
+        eina_hash_set(thisisreallystupid, &type, (intptr_t*)(long)count);
      }
 }
 
@@ -148,7 +159,17 @@ _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_
    Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find(pd->m_recognizers, &type);
    if (recognizer)
      {
-        eina_hash_list_remove(pd->m_gesture_contex, &target, type);
+        Eina_Hash *thisisreallystupid = eina_hash_find(pd->m_gesture_contex, &target);
+        int count;
+
+        if (!thisisreallystupid) return;
+        count = (intptr_t)eina_hash_find(thisisreallystupid, &type);
+        if (!count) return;
+        count--;
+        if (count) return;
+        eina_hash_del_by_key(thisisreallystupid, &type);
+        if (eina_hash_population(thisisreallystupid)) return;
+        eina_hash_del_by_key(pd->m_gesture_contex, &target);
         _cleanup_cached_gestures(pd, target, type);
      }
 }
@@ -157,98 +178,100 @@ void
 _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
 {
    Efl_Canvas_Gesture_Manager_Data *pd = data;
-   Eina_List *l, *gesture_context;
-   const Efl_Event_Description *gesture_type;
+   Eina_Hash *thisisreallystupid;
+   Eina_Iterator *it;
+   const Efl_Event_Description **gtype;
    Efl_Canvas_Gesture_Recognizer *recognizer;
    Efl_Canvas_Gesture *gesture;
    Efl_Canvas_Gesture_Recognizer_Result recog_result;
    Efl_Canvas_Gesture_Recognizer_Result recog_state;
    Efl_Canvas_Gesture_Touch *touch_event;
 
-   gesture_context = eina_hash_find(pd->m_gesture_contex, &target);
-   if (gesture_context)
+   thisisreallystupid = eina_hash_find(pd->m_gesture_contex, &target);
+   if (!thisisreallystupid) return;
+   it = eina_hash_iterator_key_new(thisisreallystupid);
+   EINA_ITERATOR_FOREACH(it, gtype)
      {
-        EINA_LIST_FOREACH(gesture_context, l, gesture_type)
+        const Efl_Event_Description *gesture_type = *gtype;
+        //Check there is already created event exist or not.
+        touch_event = eina_hash_find(pd->m_object_events, &gesture_type);
+
+        if (!touch_event)
           {
-             //Check there is already created event exist or not.
-             touch_event = eina_hash_find(pd->m_object_events, &gesture_type);
+             touch_event = efl_add_ref(EFL_CANVAS_GESTURE_TOUCH_CLASS, NULL);
+             eina_hash_add(pd->m_object_events, &gesture_type, touch_event);
+          }
 
-             if (!touch_event)
+        efl_gesture_touch_point_record(touch_event, event);
+
+        //This is for handling the case that mouse event pairs dont match.
+        //Such as the case of canceling gesture recognition after a mouse down.
+        if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_STATE_UNKNOWN)
+          continue;
+
+        recognizer = eina_hash_find(pd->m_recognizers, &gesture_type);
+
+        //If the gesture canceled or already finished by recognizer.
+        gesture = _get_state(pd, target, recognizer, gesture_type);
+        if (!gesture)
+          continue;
+
+        /* this is the "default" value for the event, recognizers may modify it if necessary */
+        efl_gesture_touch_count_set(gesture, efl_gesture_touch_points_count_get(touch_event));
+
+        //Gesture detecting.
+        recog_result = efl_gesture_recognizer_recognize(recognizer, gesture, target, touch_event);
+        recog_state = recog_result & EFL_GESTURE_RECOGNIZER_RESULT_RESULT_MASK;
+
+        Efl_Canvas_Gesture_Recognizer_Data *rd =
+          efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
+
+        if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER)
+          {
+             if (efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_NONE)
+               efl_gesture_state_set(gesture, EFL_GESTURE_STATE_STARTED);
+             else
+               efl_gesture_state_set(gesture, EFL_GESTURE_STATE_UPDATED);
+          }
+        else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH)
+          {
+             efl_gesture_state_set(gesture, EFL_GESTURE_STATE_FINISHED);
+          }
+        else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_MAYBE)
+          {
+             continue;
+          }
+        else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)
+          {
+             if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
+               efl_gesture_state_set(gesture, EFL_GESTURE_STATE_CANCELED);
+             else
                {
-                  touch_event = efl_add_ref(EFL_CANVAS_GESTURE_TOUCH_CLASS, NULL);
-                  eina_hash_add(pd->m_object_events, &gesture_type, touch_event);
-               }
-
-             efl_gesture_touch_point_record(touch_event, event);
-
-             //This is for handling the case that mouse event pairs dont match.
-             //Such as the case of canceling gesture recognition after a mouse down.
-             if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_STATE_UNKNOWN)
-               continue;
-
-             recognizer = eina_hash_find(pd->m_recognizers, &gesture_type);
-
-             //If the gesture canceled or already finished by recognizer.
-             gesture = _get_state(pd, target, recognizer, gesture_type);
-             if (!gesture)
-               continue;
-
-             /* this is the "default" value for the event, recognizers may modify it if necessary */
-             efl_gesture_touch_count_set(gesture, efl_gesture_touch_points_count_get(touch_event));
-
-             //Gesture detecting.
-             recog_result = efl_gesture_recognizer_recognize(recognizer, gesture, target, touch_event);
-             recog_state = recog_result & EFL_GESTURE_RECOGNIZER_RESULT_RESULT_MASK;
-
-             Efl_Canvas_Gesture_Recognizer_Data *rd =
-               efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
-
-             if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER)
-               {
-                  if (efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_NONE)
-                    efl_gesture_state_set(gesture, EFL_GESTURE_STATE_STARTED);
-                  else
-                    efl_gesture_state_set(gesture, EFL_GESTURE_STATE_UPDATED);
-               }
-             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH)
-               {
-                  efl_gesture_state_set(gesture, EFL_GESTURE_STATE_FINISHED);
-               }
-             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_MAYBE)
-               {
-                  continue;
-               }
-             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)
-               {
-                  if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
-                    efl_gesture_state_set(gesture, EFL_GESTURE_STATE_CANCELED);
-                  else
-                    {
-                       if (rd->continues)
-                         continue;
-                       goto post_event;
-                    }
-               }
-             else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_IGNORE)
-               {
-                  continue;
-               }
-
-             efl_gesture_timestamp_set(gesture, efl_gesture_touch_cur_timestamp_get(touch_event));
-             efl_event_callback_call(target, gesture_type, gesture);
-post_event:
-             //If the current event recognizes the gesture continuously, dont delete gesture.
-             if (((recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH) || (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)) &&
-                 !rd->continues)
-               {
-                  _cleanup_cached_gestures(pd, target, gesture_type);
-                  eina_hash_del(pd->m_object_events, &gesture_type, NULL);
-                  //FIXME: delete it by object not list.
-                  _cleanup_object(pd->m_gestures_to_delete);
-                  pd->m_gestures_to_delete = NULL;
+                  if (rd->continues)
+                    continue;
+                  goto post_event;
                }
           }
+        else if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_IGNORE)
+          {
+             continue;
+          }
+
+        efl_gesture_timestamp_set(gesture, efl_gesture_touch_cur_timestamp_get(touch_event));
+        efl_event_callback_call(target, gesture_type, gesture);
+post_event:
+        //If the current event recognizes the gesture continuously, dont delete gesture.
+        if (((recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH) || (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)) &&
+            !rd->continues)
+          {
+             _cleanup_cached_gestures(pd, target, gesture_type);
+             eina_hash_del(pd->m_object_events, &gesture_type, NULL);
+             //FIXME: delete it by object not list.
+             _cleanup_object(pd->m_gestures_to_delete);
+             pd->m_gestures_to_delete = NULL;
+          }
      }
+   eina_iterator_free(it);
 }
 
 EOLIAN static void
