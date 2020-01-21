@@ -311,11 +311,10 @@ ecore_wl2_test_display(TCase *tc)
         tcase_add_test(tc, wl2_display_input_find);
         tcase_add_test(tc, wl2_display_flush);
         tcase_add_test(tc, wl2_display_sync_is_done);
-     }
-
-   if (!getenv("E_START"))
-     {
-        tcase_add_test(tc, wl2_display_dmabuf_get);
-        tcase_add_test(tc, wl2_display_screen_size_get);
+        if (!getenv("E_START"))
+          {
+             tcase_add_test(tc, wl2_display_dmabuf_get);
+             tcase_add_test(tc, wl2_display_screen_size_get);
+          }
      }
 }
