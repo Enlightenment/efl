@@ -23,6 +23,7 @@ struct _Evas_Smart_Data
       Eina_Rectangle bounding_box;
    } cur, prev;
    Evas_Object      *object;
+   Evas_Object      *filter_img;
    void             *engine_data;
    void             *data;
    Eina_Inlist      *callbacks;
@@ -909,6 +910,9 @@ _efl_canvas_group_efl_gfx_entity_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Ein
 
         efl_gfx_entity_visible_set(clipper, vis);
      }
+
+   if (o->filter_img)
+      efl_gfx_entity_visible_set(o->filter_img, vis);
 }
 
 EOLIAN static void
@@ -927,6 +931,55 @@ _efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Ei
    if (o->clipped && !is_overridden)
      _evas_object_smart_clipped_smart_move_internal(eo_obj, pos.x, pos.y);
    efl_gfx_entity_position_set(efl_super(eo_obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(o->filter_img, pos);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_entity_size_set(Eo *obj, Evas_Smart_Data *o, Eina_Size2D size)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
+     return;
+
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
+   efl_gfx_entity_size_set(o->filter_img, size);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Smart_Data *o,
+                                                    const char *code, const char *name)
+{
+   Evas_Object_Protected_Data *obj, *fobj;
+   obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+
+   if (!code && !name)
+     {
+        if (o->filter_img)
+          {
+             evas_object_del(o->filter_img);
+             o->filter_img = NULL;
+          }
+        return;
+     }
+
+   if (o->filter_img)
+     {
+        efl_gfx_filter_program_set(o->filter_img, code, name);
+        return;
+     }
+
+   o->filter_img = efl_add(EFL_CANVAS_PROXY_CLASS, eo_obj,
+                           efl_gfx_fill_auto_set(efl_added, EINA_TRUE),
+                           efl_canvas_group_member_add(obj->object, efl_added),
+                           efl_canvas_proxy_source_events_set(efl_added, EINA_TRUE),
+                           efl_canvas_proxy_source_set(efl_added, eo_obj),
+                           evas_object_repeat_events_set(efl_added, EINA_TRUE),
+                           efl_gfx_filter_program_set(efl_added, code, name),
+                           efl_gfx_entity_geometry_set(efl_added, (Eina_Rect)obj->cur->geometry),
+                           efl_gfx_entity_visible_set(efl_added, obj->cur->visible));
+
+   fobj = efl_data_scope_get(o->filter_img, EFL_CANVAS_OBJECT_CLASS);
+   if (!fobj) return;
+   fobj->is_filter_object = EINA_TRUE;
 }
 
 EOLIAN static void
