@@ -4,6 +4,8 @@ class Dummy.Event_Manager extends Efl.Object {
 
    methods {
       @property emitter {
+         set {
+         }
          values {
             emitter: Efl.Object @move;
          }

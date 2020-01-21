@@ -1,10 +1,10 @@
-#include "efl_canvas_animation_rotate_private.h"
+#include "efl_canvas_rotate_animation_private.h"
 
-#define MY_CLASS EFL_CANVAS_ANIMATION_ROTATE_CLASS
+#define MY_CLASS EFL_CANVAS_ROTATE_ANIMATION_CLASS
 
 EOLIAN static void
-_efl_canvas_animation_rotate_rotate_set(Eo *eo_obj EINA_UNUSED,
-                                 Efl_Canvas_Animation_Rotate_Data *pd,
+_efl_canvas_rotate_animation_rotate_set(Eo *eo_obj EINA_UNUSED,
+                                 Efl_Canvas_Rotate_Animation_Data *pd,
                                  double from_degree,
                                  double to_degree,
                                  Efl_Canvas_Object *pivot,
@@ -20,8 +20,8 @@ _efl_canvas_animation_rotate_rotate_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_rotate_rotate_get(const Eo *eo_obj EINA_UNUSED,
-                                 Efl_Canvas_Animation_Rotate_Data *pd,
+_efl_canvas_rotate_animation_rotate_get(const Eo *eo_obj EINA_UNUSED,
+                                 Efl_Canvas_Rotate_Animation_Data *pd,
                                  double *from_degree,
                                  double *to_degree,
                                  Efl_Canvas_Object **pivot,
@@ -47,8 +47,8 @@ _efl_canvas_animation_rotate_rotate_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_rotate_rotate_absolute_set(Eo *eo_obj EINA_UNUSED,
-                                          Efl_Canvas_Animation_Rotate_Data *pd,
+_efl_canvas_rotate_animation_rotate_absolute_set(Eo *eo_obj EINA_UNUSED,
+                                          Efl_Canvas_Rotate_Animation_Data *pd,
                                           double from_degree,
                                           double to_degree,
                                           Eina_Position2D abs)
@@ -61,8 +61,8 @@ _efl_canvas_animation_rotate_rotate_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_rotate_rotate_absolute_get(const Eo *eo_obj EINA_UNUSED,
-                                          Efl_Canvas_Animation_Rotate_Data *pd,
+_efl_canvas_rotate_animation_rotate_absolute_get(const Eo *eo_obj EINA_UNUSED,
+                                          Efl_Canvas_Rotate_Animation_Data *pd,
                                           double *from_degree,
                                           double *to_degree,
                                           Eina_Position2D *abs)
@@ -84,8 +84,8 @@ _efl_canvas_animation_rotate_rotate_absolute_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_canvas_animation_rotate_efl_canvas_animation_animation_apply(Eo *eo_obj,
-                                                    Efl_Canvas_Animation_Rotate_Data *pd,
+_efl_canvas_rotate_animation_efl_canvas_animation_animation_apply(Eo *eo_obj,
+                                                    Efl_Canvas_Rotate_Animation_Data *pd,
                                                     double progress,
                                                     Efl_Canvas_Object *target)
 {
@@ -114,8 +114,8 @@ _efl_canvas_animation_rotate_efl_canvas_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_canvas_animation_rotate_efl_object_constructor(Eo *eo_obj,
-                                             Efl_Canvas_Animation_Rotate_Data *pd)
+_efl_canvas_rotate_animation_efl_object_constructor(Eo *eo_obj,
+                                             Efl_Canvas_Rotate_Animation_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -134,4 +134,4 @@ _efl_canvas_animation_rotate_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_canvas_animation_rotate.eo.c"
+#include "efl_canvas_rotate_animation.eo.c"

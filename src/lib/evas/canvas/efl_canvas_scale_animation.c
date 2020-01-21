@@ -1,10 +1,10 @@
-#include "efl_canvas_animation_scale_private.h"
+#include "efl_canvas_scale_animation_private.h"
 
-#define MY_CLASS EFL_CANVAS_ANIMATION_SCALE_CLASS
+#define MY_CLASS EFL_CANVAS_SCALE_ANIMATION_CLASS
 
 EOLIAN static void
-_efl_canvas_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
-                               Efl_Canvas_Animation_Scale_Data *pd,
+_efl_canvas_scale_animation_scale_set(Eo *eo_obj EINA_UNUSED,
+                               Efl_Canvas_Scale_Animation_Data *pd,
                                Eina_Vector2 from_scale,
                                Eina_Vector2 to_scale,
                                Efl_Canvas_Object *pivot,
@@ -21,8 +21,8 @@ _efl_canvas_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_scale_scale_get(const Eo *obj EINA_UNUSED,
-                              Efl_Canvas_Animation_Scale_Data *pd,
+_efl_canvas_scale_animation_scale_get(const Eo *obj EINA_UNUSED,
+                              Efl_Canvas_Scale_Animation_Data *pd,
                               Eina_Vector2 *from_scale, Eina_Vector2 *to_scale,
                               Efl_Canvas_Object **pivot, Eina_Vector2 *pivot_pos)
 {
@@ -46,8 +46,8 @@ _efl_canvas_animation_scale_scale_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_scale_scale_absolute_set(Eo *obj EINA_UNUSED,
-                            Efl_Canvas_Animation_Scale_Data *pd,
+_efl_canvas_scale_animation_scale_absolute_set(Eo *obj EINA_UNUSED,
+                            Efl_Canvas_Scale_Animation_Data *pd,
                             Eina_Vector2 from_scale, Eina_Vector2 to_scale,
                             Eina_Position2D pos)
 {
@@ -61,8 +61,8 @@ _efl_canvas_animation_scale_scale_absolute_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_scale_scale_absolute_get(const Eo *obj EINA_UNUSED,
-                            Efl_Canvas_Animation_Scale_Data *pd,
+_efl_canvas_scale_animation_scale_absolute_get(const Eo *obj EINA_UNUSED,
+                            Efl_Canvas_Scale_Animation_Data *pd,
                             Eina_Vector2 *from_scale, Eina_Vector2 *to_scale,
                             Eina_Position2D *pos)
 {
@@ -83,8 +83,8 @@ _efl_canvas_animation_scale_scale_absolute_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_canvas_animation_scale_efl_canvas_animation_animation_apply(Eo *eo_obj,
-                                                   Efl_Canvas_Animation_Scale_Data *pd,
+_efl_canvas_scale_animation_efl_canvas_animation_animation_apply(Eo *eo_obj,
+                                                   Efl_Canvas_Scale_Animation_Data *pd,
                                                    double progress,
                                                    Efl_Canvas_Object *target)
 {
@@ -114,8 +114,8 @@ _efl_canvas_animation_scale_efl_canvas_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_canvas_animation_scale_efl_object_constructor(Eo *eo_obj,
-                                            Efl_Canvas_Animation_Scale_Data *pd)
+_efl_canvas_scale_animation_efl_object_constructor(Eo *eo_obj,
+                                            Efl_Canvas_Scale_Animation_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -130,4 +130,4 @@ _efl_canvas_animation_scale_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_canvas_animation_scale.eo.c"
+#include "efl_canvas_scale_animation.eo.c"

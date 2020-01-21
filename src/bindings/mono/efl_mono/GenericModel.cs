@@ -52,7 +52,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <summary>Gets the value of the given property in the wrapped model.</summary>
    /// <param name="property">The property of the model.</param>
    /// <returns>The value of the property.</returns>
-   public Eina.Value GetProperty(System.String property)
+   public Eina.Value GetProperty(  System.String property)
    {
        return model.GetProperty(property);
    }
@@ -62,7 +62,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <param name="value">The value of the property.</param>
    /// <returns>An <see cref="Eina.Future" /> that resolves when the property has
    /// been set or reports an error if it could not be set.</returns>
-   public Eina.Future SetProperty(System.String property,   Eina.Value value)
+   public Eina.Future SetProperty(  System.String property,   Eina.Value value)
    {
        return model.SetProperty(property, value);
    }
@@ -77,7 +77,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <summary>Returns an <see cref="Eina.Future" /> that will resolve when the property is ready to be read.</summary>
    /// <param name="property">The property of the model.</param>
    /// <returns>An <see cref="Eina.Future" /> that resolves when the property is ready.</returns>
-   public Eina.Future GetPropertyReady(System.String property)
+   public Eina.Future GetPropertyReady(  System.String property)
    {
        return model.GetPropertyReady(property);
    }
@@ -87,7 +87,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <param name="count">The size of the range.</param>
    /// <returns>An <see cref="Eina.Future" />  that resolves to an
    /// <see cref="Eina.Array&lt;T&gt;" /> of children models.</returns>
-   public Eina.Future GetChildrenSlice(uint start,   uint count)
+   public Eina.Future GetChildrenSlice(  uint start,   uint count)
    {
        return model.GetChildrenSlice(start, count);
    }
@@ -141,7 +141,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <param name="token">The token for the task's cancellation.</param>
    /// <returns>Task that resolves when the property has been set or could not
    /// be set.</returns>
-   public System.Threading.Tasks.Task<Eina.Value> SetPropertyAsync(System.String property,  Eina.Value value, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
+   public System.Threading.Tasks.Task<Eina.Value> SetPropertyAsync(  System.String property,  Eina.Value value, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
        return model.SetPropertyAsync(property, value, token);
    }
@@ -151,7 +151,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <param name="token">The token for the task's cancellation.</param>
    /// <returns>Task that resolves when the given property is ready to be
    /// read.</returns>
-   public System.Threading.Tasks.Task<Eina.Value> GetPropertyReadyAsync(System.String property, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
+   public System.Threading.Tasks.Task<Eina.Value> GetPropertyReadyAsync(  System.String property, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
        return model.GetPropertyReadyAsync(property, token);
    }
@@ -162,7 +162,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <param name="token">Token to notify the async operation of external request to cancel.</param>
    /// <returns>Task that resolves when the desired <see cref="Eina.Array&lt;T&gt;" /> of
    /// children models is ready.</returns>
-   public System.Threading.Tasks.Task<Eina.Value> GetChildrenSliceAsync(uint start,  uint count, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
+   public System.Threading.Tasks.Task<Eina.Value> GetChildrenSliceAsync(  uint start,  uint count, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
        return model.GetChildrenSliceAsync(start, count, token);
    }

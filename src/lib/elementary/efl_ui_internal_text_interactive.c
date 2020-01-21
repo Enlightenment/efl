@@ -14,6 +14,7 @@
 typedef struct _Efl_Ui_Internal_Text_Interactive_Data
 {
    Efl_Text_Cursor                       *sel_start, *sel_end;
+   int                                   sel_start_pos, sel_end_pos;
    Efl_Text_Cursor                       *main_cursor;
    Efl_Text_Cursor                       *preedit_start, *preedit_end;
    Ecore_Timer                           *pw_timer;
@@ -33,7 +34,7 @@ typedef struct _Efl_Ui_Internal_Text_Interactive_Data
    Efl_Input_Text_Capitalize_Type         autocapital_type;
    Efl_Input_Text_Panel_Language_Type     input_panel_lang;
    Efl_Input_Text_Panel_Return_Key_Type   input_panel_return_key_type;
-   Efl_Input_Text_Hints_Type              input_hints;
+   Efl_Input_Text_Content_Type            input_hints;
    Efl_Input_Text_Panel_Return_Key_State  input_panel_return_key_state;
 
 #ifdef HAVE_ECORE_IMF
@@ -44,10 +45,11 @@ typedef struct _Efl_Ui_Internal_Text_Interactive_Data
 } Efl_Ui_Internal_Text_Interactive_Data;
 
 static void _sel_range_del_emit(Evas_Object *obj, Efl_Ui_Internal_Text_Interactive_Data *en);
-static void _sel_init(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en);
-static void _sel_enable(Efl_Text_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en);
-static void _sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en);
-static void _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en);
+static void _sel_init(Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en);
+static void _sel_enable(Evas_Object *o,Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool emit_event);
+static void _sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool emit_event);
+static void _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool emit_event);
+static void _emit_sel_state( Eo *o, Efl_Ui_Internal_Text_Interactive_Data *en);
 static const char *_entry_selection_get(Efl_Ui_Internal_Text_Interactive *obj, Efl_Ui_Internal_Text_Interactive_Data *en);
 static void _entry_imf_cursor_info_set(Efl_Ui_Internal_Text_Interactive_Data *en);
 
@@ -201,7 +203,7 @@ _entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void 
           {
              /* delete selected characters */
              _sel_range_del_emit(obj, en);
-             _sel_clear(obj, en);
+             _sel_clear(obj, en, EINA_TRUE);
           }
      }
 
@@ -626,12 +628,12 @@ _entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED
      }
    else
      {
-        _sel_clear(obj, en);
+        _sel_clear(obj, en, EINA_TRUE);
         efl_text_cursor_position_set(cur, ev->start);
-        _sel_enable(cur, obj, en);
-        _sel_init(cur, obj, en);
+        _sel_enable(obj, en, EINA_TRUE);
+        _sel_init(cur, en);
         efl_text_cursor_position_set(cur, ev->end);
-        _sel_extend(cur, obj, en);
+        _sel_extend(cur, obj, en, EINA_TRUE);
      }
 }
 
@@ -747,18 +749,64 @@ _entry_selection_get(Efl_Ui_Internal_Text_Interactive *obj EINA_UNUSED, Efl_Ui_I
 }
 
 static void
-_sel_cursor_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-//   Eo *obj = data;
+_sel_reset(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en){
+   if (!en->have_selection && efl_text_cursor_equal(en->sel_start, en->sel_end))
+     return;
+
+   if ( en->sel_start_pos == efl_text_cursor_position_get(en->sel_start) &&
+        en->sel_end_pos == efl_text_cursor_position_get(en->sel_end))
+     return;
+
+   if (en->have_selection)
+     {
+        if (efl_text_cursor_equal(en->sel_start, en->sel_end))
+          {
+             _sel_clear(obj, en, EINA_TRUE);
+          }
+        else
+          {
+             _entry_imf_cursor_info_set(en);
+             if (en->selection)
+               {
+                  free(en->selection);
+                  en->selection = NULL;
+               }
+             _emit_sel_state(obj, en);
+          }
+     }
+   else
+     {
+        if (!efl_text_cursor_equal(en->sel_start, en->sel_end))
+          {
+             _sel_enable(obj, en, EINA_TRUE);
+             _entry_imf_cursor_info_set(en);
+             if (en->selection)
+               {
+                  free(en->selection);
+                  en->selection = NULL;
+               }
+             _emit_sel_state(obj, en);
+          }
+     }
 }
 
 static void
-_sel_init(Efl_Text_Cursor *c, Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_sel_cursor_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Internal_Text_Interactive *obj = data;
+   Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
+   _sel_reset(obj, en);
+}
+
+static void
+_sel_init(Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    if (en->have_selection)
       return;
 
+   en->sel_start_pos = efl_text_cursor_position_get(c);
    _cur_pos_copy(c, en->sel_start);
+   en->sel_end_pos = efl_text_cursor_position_get(c);
    _cur_pos_copy(c, en->sel_end);
 
    en->have_selection = EINA_FALSE;
@@ -770,8 +818,7 @@ _sel_init(Efl_Text_Cursor *c, Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_I
 }
 
 static void
-_sel_enable(Efl_Text_Cursor *c EINA_UNUSED,
-            Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_sel_enable(Eo *o, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool emit_event)
 {
    if (en->have_selection) return;
    en->have_selection = EINA_TRUE;
@@ -781,8 +828,11 @@ _sel_enable(Efl_Text_Cursor *c EINA_UNUSED,
         en->selection = NULL;
      }
 
-   Eina_Bool b_value = EINA_TRUE;
-   efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+   if (emit_event)
+     {
+        Eina_Bool b_value = EINA_TRUE;
+        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+     }
    _entry_imf_context_reset(en);
 }
 
@@ -791,8 +841,7 @@ _emit_sel_state( Eo *o, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    if (!efl_text_cursor_compare(en->sel_start, en->sel_end))
      {
-        Eina_Bool b_value = EINA_FALSE;
-        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+        _sel_clear(o, en, EINA_TRUE);
      }
    else
      {
@@ -804,12 +853,12 @@ _emit_sel_state( Eo *o, Efl_Ui_Internal_Text_Interactive_Data *en)
 }
 
 static void
-_sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en)
+_sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool emit_event)
 {
-   if (!en->sel_end) return;
-   _sel_enable(c, o, en);
+   _sel_enable(o, en, emit_event);
    if (efl_text_cursor_equal(c, en->sel_end)) return;
 
+   en->sel_end_pos = efl_text_cursor_position_get(c);
    _cur_pos_copy(c, en->sel_end);
 
    _entry_imf_cursor_info_set(en);
@@ -824,7 +873,7 @@ _sel_extend(Efl_Text_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive
 }
 
 static void
-_sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool emit_change)
 {
    en->had_sel = EINA_FALSE;
    if (en->selection)
@@ -836,8 +885,10 @@ _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en
      {
         en->have_selection = EINA_FALSE;
         Eina_Bool b_value = en->have_selection;
+        en->sel_start_pos = en->sel_end_pos = efl_text_cursor_position_get(en->sel_start);
         _cur_pos_copy(en->sel_start, en->sel_end);
-        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+        if (emit_change)
+          efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
      }
 }
 
@@ -845,32 +896,32 @@ EOLIAN static void
 _efl_ui_internal_text_interactive_efl_text_interactive_all_unselect(
       Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
-   _sel_clear(obj, en);
+   _sel_clear(obj, en, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_internal_text_interactive_efl_text_interactive_have_selection_get(
          const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
+   if (!en->have_selection) return en->have_selection;
    return !efl_text_cursor_equal(en->sel_start, en->sel_end);
 }
 
 
 EOLIAN static void
 _efl_ui_internal_text_interactive_efl_text_interactive_all_select(
-      Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+      Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en EINA_UNUSED)
 {
    if (!efl_text_interactive_selection_allowed_get(obj))
      return;
 
-   Efl_Text_Cursor *cur = efl_text_interactive_main_cursor_get(obj);
-   _entry_imf_context_reset(en);
+   Eo *c1 = efl_canvas_textblock_cursor_create(obj);
+   Eo *c2 = efl_canvas_textblock_cursor_create(obj);
 
-   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
-   _entry_imf_context_reset(en);
-   _sel_init(cur, obj, en);
-   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
-   _sel_extend(cur, obj, en);
+   efl_text_cursor_move(c1, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   efl_text_cursor_move(c2, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+
+   efl_text_interactive_selection_cursors_set(obj, c1, c2);
 }
 
 
@@ -903,7 +954,7 @@ static void
 _sel_range_del_emit(Evas_Object *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    _range_del_emit(obj, en->sel_start, en->sel_end);
-   _sel_clear(obj, en);
+   _sel_clear(obj, en, EINA_TRUE);
 }
 
 static void
@@ -1024,7 +1075,7 @@ _key_down_sel_pre(Efl_Ui_Internal_Text_Interactive *obj, Efl_Text_Cursor *cur, E
      {
         if (shift)
           {
-             _sel_init(cur, obj, en);
+             _sel_init(cur, en);
           }
         else if (en->have_selection)
           {
@@ -1032,8 +1083,9 @@ _key_down_sel_pre(Efl_Ui_Internal_Text_Interactive *obj, Efl_Text_Cursor *cur, E
              if ((sel_forward && movement_forward) || (!sel_forward && !movement_forward))
                 _cur_pos_copy(en->sel_end, cur);
              else
-                _cur_pos_copy(en->sel_start, cur);
-             _sel_clear(obj, en);
+
+             _cur_pos_copy(en->sel_start, cur);
+             _sel_clear(obj, en, EINA_TRUE);
           }
      }
 }
@@ -1043,8 +1095,8 @@ _key_down_sel_post(Efl_Ui_Internal_Text_Interactive *obj, Efl_Text_Cursor *cur, 
 {
    if (en->select_allow)
      {
-        if (shift) _sel_extend(cur, obj, en);
-        else _sel_clear(obj, en);
+        if (shift) _sel_extend(cur, obj, en, EINA_TRUE);
+        else _sel_clear(obj, en, EINA_TRUE);
      }
 }
 
@@ -1237,7 +1289,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                   _delete_emit(obj, cur, en, old_cur_pos, EINA_TRUE);
                }
           }
-        _sel_clear(obj, en);
+        _sel_clear(obj, en, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Delete") ||
@@ -1273,7 +1325,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                   _delete_emit(obj, cur, en, old_cur_pos, EINA_FALSE);
                }
           }
-        _sel_clear(obj, en);
+        _sel_clear(obj, en, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((!alt) &&
@@ -1561,19 +1613,19 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
                     efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
                   else
                     efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
-                  _sel_extend(cur, obj, en);
+                  _sel_extend(cur, obj, en, EINA_TRUE);
                }
              else
                {
                   en->have_selection = EINA_FALSE;
                   en->selecting = EINA_FALSE;
-                  _sel_clear(obj, en);
+                  _sel_clear(obj, en, EINA_TRUE);
                   tc = efl_canvas_textblock_cursor_create(obj);
                   _cur_pos_copy(cur, tc);
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
-                  _sel_init(cur, obj, en);
+                  _sel_init(cur, en);
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
-                  _sel_extend(cur, obj, en);
+                  _sel_extend(cur, obj, en, EINA_TRUE);
                }
              goto end;
           }
@@ -1590,20 +1642,20 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
                        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
                        efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
                     }
-                  _sel_extend(cur, obj, en);
+                  _sel_extend(cur, obj, en, EINA_TRUE);
                }
              else
                {
                   en->have_selection = EINA_FALSE;
                   en->selecting = EINA_FALSE;
-                  _sel_clear(obj, en);
+                  _sel_clear(obj, en, EINA_TRUE);
                   tc = efl_canvas_textblock_cursor_create(obj);
                   _cur_pos_copy(cur, tc);
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
-                  _sel_init(cur, obj, en);
+                  _sel_init(cur, en);
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
                   efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
-                  _sel_extend(cur, obj, en);
+                  _sel_extend(cur, obj, en, EINA_TRUE);
                }
              goto end;
           }
@@ -1614,13 +1666,13 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
      {
         if ((en->have_selection) && (shift))
           {
-             _sel_extend(cur, obj, en);
+             _sel_extend(cur, obj, en, EINA_TRUE);
           }
         else
           {
              en->selecting = EINA_TRUE;
-             _sel_clear(obj, en);
-             _sel_init(cur, obj, en);
+             _sel_clear(obj, en, EINA_TRUE);
+             _sel_init(cur, en);
           }
      }
 
@@ -1716,10 +1768,10 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 
         if (en->select_allow)
           {
-             _sel_extend(cur, obj, en);
+             _sel_extend(cur, obj, en, EINA_TRUE);
 
              if (!efl_text_cursor_equal(en->sel_start, en->sel_end))
-               _sel_enable(cur, obj, en);
+               _sel_enable(obj, en, EINA_TRUE);
           }
         efl_del(tc);
      }
@@ -1754,7 +1806,9 @@ _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_T
    en->sel_start = efl_canvas_textblock_cursor_create(obj);
    en->sel_end = efl_canvas_textblock_cursor_create(obj);
 
-   efl_event_callback_add(efl_text_interactive_main_cursor_get(obj), EFL_TEXT_CURSOR_EVENT_CHANGED,
+   efl_event_callback_add(en->sel_start, EFL_TEXT_CURSOR_EVENT_CHANGED,
+         _sel_cursor_changed, obj);
+   efl_event_callback_add(en->sel_end, EFL_TEXT_CURSOR_EVENT_CHANGED,
          _sel_cursor_changed, obj);
 
 #ifdef HAVE_ECORE_IMF
@@ -1847,7 +1901,7 @@ _efl_ui_internal_text_interactive_efl_text_interactive_selection_allowed_set(Eo 
    pd->select_allow = allowed;
    if (!allowed)
      {
-        _sel_clear(obj, pd);
+        _sel_clear(obj, pd, EINA_TRUE);
      }
 }
 
@@ -1871,6 +1925,16 @@ _efl_ui_internal_text_interactive_efl_text_interactive_selection_cursors_get(con
         if (start) *start = pd->sel_start;
         if (end) *end = pd->sel_end;
      }
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_text_interactive_selection_cursors_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Text_Cursor *start, Efl_Text_Cursor *end)
+{
+   en->sel_start_pos = efl_text_cursor_position_get(start);
+   en->sel_end_pos = efl_text_cursor_position_get(en->sel_end);
+   efl_text_cursor_position_set(en->sel_start, en->sel_start_pos);
+   en->sel_end_pos = -1;
+   efl_text_cursor_position_set(en->sel_end, efl_text_cursor_position_get(end));
 }
 
 EOLIAN static void
@@ -2044,9 +2108,9 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_set(Eo *obj 
 #endif
 
    if (layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_PASSWORD)
-     efl_input_text_input_hint_set(obj, ((sd->input_hints & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_HINTS_TYPE_SENSITIVE_DATA));
+     efl_input_text_input_content_type_set(obj, ((sd->input_hints & ~EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE) | EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA));
    else if (layout == EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_TERMINAL)
-     efl_input_text_input_hint_set(obj, (sd->input_hints & ~EFL_INPUT_TEXT_HINTS_TYPE_AUTO_COMPLETE));
+     efl_input_text_input_content_type_set(obj, (sd->input_hints & ~EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE));
 }
 
 EOLIAN static Efl_Input_Text_Panel_Layout_Type
@@ -2152,7 +2216,7 @@ _efl_ui_internal_text_interactive_efl_input_text_predictable_get(const Eo *obj, 
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_hint_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Hints_Type input_hints)
+_efl_ui_internal_text_interactive_efl_input_text_input_content_type_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Content_Type input_hints)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2166,12 +2230,12 @@ _efl_ui_internal_text_interactive_efl_input_text_input_hint_set(Eo *obj, Efl_Ui_
 }
 
 
-EOLIAN static Efl_Input_Text_Hints_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_hint_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+EOLIAN static Efl_Input_Text_Content_Type
+_efl_ui_internal_text_interactive_efl_input_text_input_content_type_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
-     return (Efl_Input_Text_Hints_Type)ecore_imf_context_input_hint_get(en->imf_context);
+     return (Efl_Input_Text_Content_Type)ecore_imf_context_input_hint_get(en->imf_context);
    (void)obj;
 #else
    (void)obj;

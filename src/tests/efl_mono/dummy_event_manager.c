@@ -43,12 +43,6 @@ _dummy_event_manager_emitter_set(EINA_UNUSED Eo *obj, Dummy_Event_Manager_Data *
    pd->emitter = emitter;
 }
 
-static Efl_Object*
-_dummy_event_manager_emitter_get(EINA_UNUSED Eo const *obj, Dummy_Event_Manager_Data *pd)
-{
-   return pd->emitter;
-}
-
 static Eina_Bool
 _dummy_event_manager_emit_with_int(EINA_UNUSED Eo *obj, Dummy_Event_Manager_Data *pd, int data)
 {

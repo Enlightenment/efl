@@ -16,7 +16,6 @@
 
 #define DUMMY_TEST_IFACE_PROTECTED
 
-#include <assert.h>
 #include "libefl_mono_native_test.h"
 
 typedef struct Dummy_Test_Object_Data
@@ -4609,36 +4608,6 @@ void _dummy_test_object_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_T
 
 void _dummy_test_object_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop1, int prop2)
 {
-    pd->prop1 = prop1;
-    pd->prop2 = prop2;
-}
-
-void _dummy_test_object_keyed_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int* prop1, int* prop2)
-{
-    assert (prop_key1 == 100);
-    *prop1 = pd->prop1;
-    *prop2 = pd->prop2;
-}
-
-void _dummy_test_object_keyed_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int prop1, int prop2)
-{
-    assert (prop_key1 == 100);
-    pd->prop1 = prop1;
-    pd->prop2 = prop2;
-}
-
-void _dummy_test_object_multi_keyed_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int prop_key2, int* prop1, int* prop2)
-{
-    assert (prop_key1 == 100);
-    assert (prop_key2 == 101);
-    *prop1 = pd->prop1;
-    *prop2 = pd->prop2;
-}
-
-void _dummy_test_object_multi_keyed_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop_key1, int prop_key2, int prop1, int prop2)
-{
-    assert (prop_key1 == 100);
-    assert (prop_key2 == 101);
     pd->prop1 = prop1;
     pd->prop2 = prop2;
 }

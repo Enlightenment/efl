@@ -65,7 +65,7 @@ enum @beta Efl.Input_Text.Panel_Return_Key_State
    disabled, [[The return key on input panel is disabled.]]
 }
 
-enum @beta Efl.Input_Text.Hints_Type
+enum @beta Efl.Input_Text.Content_Type
 {
    [[Enumeration that defines the types of Input Hints.]]
    none                = 0,        [[No active hints.]]
@@ -178,14 +178,14 @@ interface @beta Efl.Input_Text {
          }
       }
       // FIXME: I agree with Mike, looks bad
-      @property input_hint {
+      @property input_content_type @beta {
          [[The input hint which allows input methods to fine-tune their behavior.]]
          set {
          }
          get {
          }
          values {
-            hints: Efl.Input_Text.Hints_Type; [[Input hint.]]
+            hints: Efl.Input_Text.Content_Type; [[Input hint.]]
          }
       }
       @property input_panel_layout {

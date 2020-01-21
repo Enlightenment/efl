@@ -17,7 +17,6 @@
 #define EOLIAN_MONO_HELPERS_HH
 
 #include "grammar/klass_def.hpp"
-#include "grammar/context.hpp"
 #include "blacklist.hh"
 #include "generation_contexts.hh"
 #include "name_helpers.hh"
@@ -304,106 +303,6 @@ inline std::vector<attributes::constructor_def> reorder_constructors(std::vector
   auto is_required = [](attributes::constructor_def const& ctr) { return !ctr.is_optional; };
   std::stable_partition(constructors.begin(), constructors.end(), is_required);
   return constructors;
-}
-
-enum class has_property_wrapper_bit
-{
- has_none               = 0
- , has_getter           = 1 << 0
- , has_setter           = 1 << 1
- , has_indexer          = 1 << 2
- , has_key_tuple        = 1 << 3
- , has_value_tuple      = 1 << 4
- , has_set_error_check  = 1 << 5
- , has_get_error_check  = 1 << 6
-};
-
-has_property_wrapper_bit& operator|=(has_property_wrapper_bit& self, has_property_wrapper_bit bit)
-{
-  self = static_cast<has_property_wrapper_bit>(static_cast<int>(self) | static_cast<int>(bit));
-  return self;
-}
-
-bool operator&(has_property_wrapper_bit self, has_property_wrapper_bit bit)
-{
-  return static_cast<int>(self) & static_cast<int>(bit);
-}
-
-template <typename Context>
-has_property_wrapper_bit has_property_wrapper(attributes::property_def const& property, attributes::klass_def const* implementing_klass
-                                              , Context const& context)
-{
-  using efl::eolian::grammar::context_find_tag;
-  has_property_wrapper_bit r = has_property_wrapper_bit::has_none;
-  
-  if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
-    return r;
-
-  bool has_getter = property.getter.is_engaged();
-  bool has_setter = property.setter.is_engaged();
-
-  bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
-  bool is_static = (property.getter.is_engaged() && property.getter->is_static)
-    || (has_setter && property.setter->is_static);
-  bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
-      
-  if (is_static)
-    {
-       if (is_interface) return r;
-       else if (is_concrete) return r;
-    }
-
-  // EINA_LOG_ERR("Generating property %s", name_helpers::property_managed_name(property).c_str());
-  // C# interface can have only 
-  if (is_interface)
-    {
-       has_getter = has_getter && property.getter->scope == attributes::member_scope:: scope_public;
-    }
-
-  if (!has_getter)
-    {
-       return r;
-    }
-
-  if (property.getter->explicit_return_type != attributes::void_)
-    {
-       return r;
-    }
-  else if (has_setter)
-    {
-       if (property.setter->explicit_return_type != attributes::void_)
-         has_setter = false; // do not generate setter
-       else if (property.setter->keys != property.getter->keys)
-         has_setter = false;
-       else if (property.setter->values != property.getter->values)
-         has_setter = false;
-    }
-
-  if (is_interface)
-    {
-       if (property.getter->scope != attributes::member_scope::scope_public)
-         return r;
-       else if (has_setter && property.setter->scope != attributes::member_scope::scope_public)
-         has_setter = false;
-    }
-  
-  if (has_getter)
-    r |= has_property_wrapper_bit::has_getter;
-  if (has_setter)
-    r |= has_property_wrapper_bit::has_setter;
-  
-  if (property.getter->keys.size() == 1)
-    r |= has_property_wrapper_bit::has_indexer;
-  else if (property.getter->keys.size() > 1)
-  {
-    r |= has_property_wrapper_bit::has_indexer;
-    r |= has_property_wrapper_bit::has_key_tuple;
-  }
-
-  if (property.getter->values.size() > 1)
-    r |= has_property_wrapper_bit::has_value_tuple;
-
-  return r;
 }
 
 } // namespace helpers

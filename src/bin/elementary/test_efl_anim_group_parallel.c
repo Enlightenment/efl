@@ -88,19 +88,19 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    efl_event_callback_array_add(btn, animation_stats_cb(), ad);
 
    //Hide Animation
-   Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ALPHA_ANIMATION_CLASS, win);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Canvas_Animation *cw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
+   Efl_Canvas_Animation *cw_45_degrees_anim = efl_add(EFL_CANVAS_ROTATE_ANIMATION_CLASS, win);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, EINA_VECTOR2(0.5, 0.5));
 
    //Scale Animation to zoom in
-   Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
+   Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_SCALE_ANIMATION_CLASS, win);
    efl_animation_scale_set(scale_double_anim, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(2.0, 2.0), NULL, EINA_VECTOR2(0.5, 0.5));
 
    //Hide Parallel Group Animation
-   Efl_Canvas_Animation *parallel_hide_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_PARALLEL_CLASS, win);
+   Efl_Canvas_Animation *parallel_hide_anim = efl_add(EFL_CANVAS_PARALLEL_GROUP_ANIMATION_CLASS, win);
    efl_animation_duration_set(parallel_hide_anim, 1.0);
    efl_animation_final_state_keep_set(parallel_hide_anim, EINA_TRUE);
 

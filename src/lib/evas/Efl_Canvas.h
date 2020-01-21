@@ -64,14 +64,14 @@ extern "C" {
 #include <gesture/efl_canvas_gesture_manager.eo.h>
 #include <canvas/efl_canvas_object.eo.h>
 
-#include <canvas/efl_canvas_animation_alpha.eo.h>
+#include <canvas/efl_canvas_alpha_animation.eo.h>
 #include <canvas/efl_canvas_animation.eo.h>
-#include <canvas/efl_canvas_animation_group.eo.h>
-#include <canvas/efl_canvas_animation_group_parallel.eo.h>
-#include <canvas/efl_canvas_animation_group_sequential.eo.h>
-#include <canvas/efl_canvas_animation_rotate.eo.h>
-#include <canvas/efl_canvas_animation_scale.eo.h>
-#include <canvas/efl_canvas_animation_translate.eo.h>
+#include <canvas/efl_canvas_group_animation.eo.h>
+#include <canvas/efl_canvas_parallel_group_animation.eo.h>
+#include <canvas/efl_canvas_sequential_group_animation.eo.h>
+#include <canvas/efl_canvas_rotate_animation.eo.h>
+#include <canvas/efl_canvas_scale_animation.eo.h>
+#include <canvas/efl_canvas_translate_animation.eo.h>
 #include <canvas/efl_canvas_event_grabber.eo.h>
 #include <canvas/efl_canvas_group.eo.h>
 #include <canvas/efl_canvas_image.eo.h>

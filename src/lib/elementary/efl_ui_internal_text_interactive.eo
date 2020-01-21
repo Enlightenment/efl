@@ -9,7 +9,7 @@ class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implem
       Efl.Object.finalize;
       Efl.Text_Interactive.main_cursor { get; }
       Efl.Text_Interactive.selection_allowed { get; set; }
-      Efl.Text_Interactive.selection_cursors { get; }
+      Efl.Text_Interactive.selection_cursors { get; set; }
       Efl.Text_Interactive.editable { get; set; }
       Efl.Text_Interactive.all_unselect;
       Efl.Text_Interactive.all_select;
@@ -22,7 +22,7 @@ class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implem
       Efl.Input_Text.autocapitalization { get; set; }
       Efl.Input_Text.input_panel_return_key_state { get; set; }
       Efl.Input_Text.predictable { get; set; }
-      Efl.Input_Text.input_hint { get; set; }
+      Efl.Input_Text.input_content_type { get; set; }
       Efl.Input_Text.input_panel_layout { get; set; }
       Efl.Input_Text.input_panel_return_key_type { get; set; }
       Efl.Input_Text.input_panel_autoshow { get; set; }

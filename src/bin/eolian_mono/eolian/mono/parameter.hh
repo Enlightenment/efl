@@ -65,7 +65,7 @@ struct is_generator< ::eolian_mono::parameter_generator> : std::true_type {};
 
 namespace type_traits {
 template <>
-struct attributes_needed< ::eolian_mono::parameter_generator> : std::integral_constant<int, 1> {};
+struct attributes_needed< ::eolian_mono::parameter_generator> : std::integral_constant<int, 1> {};  
 }
 
 template <>
@@ -75,9 +75,9 @@ struct is_generator< ::eolian_mono::marshall_parameter_generator> : std::true_ty
 
 namespace type_traits {
 template <>
-struct attributes_needed< ::eolian_mono::marshall_parameter_generator> : std::integral_constant<int, 1> {};
+struct attributes_needed< ::eolian_mono::marshall_parameter_generator> : std::integral_constant<int, 1> {};  
 }
-
+      
 template <>
 struct is_eager_generator< ::eolian_mono::argument_generator> : std::true_type {};
 template <>
@@ -85,9 +85,9 @@ struct is_generator< ::eolian_mono::argument_generator> : std::true_type {};
 
 namespace type_traits {
 template <>
-struct attributes_needed< ::eolian_mono::argument_generator> : std::integral_constant<int, 1> {};
+struct attributes_needed< ::eolian_mono::argument_generator> : std::integral_constant<int, 1> {};  
 }
-
+      
 template <>
 struct is_eager_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
 template <>
@@ -1588,7 +1588,7 @@ struct native_convert_function_pointer_generator
 
 struct constructor_parameter_name_generator
 {
-
+   
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {

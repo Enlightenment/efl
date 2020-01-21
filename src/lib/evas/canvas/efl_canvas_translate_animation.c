@@ -1,6 +1,6 @@
-#include "efl_canvas_animation_translate_private.h"
+#include "efl_canvas_translate_animation_private.h"
 
-#define MY_CLASS EFL_CANVAS_ANIMATION_TRANSLATE_CLASS
+#define MY_CLASS EFL_CANVAS_TRANSLATE_ANIMATION_CLASS
 
 typedef struct __Translate_Property_Double
 {
@@ -9,8 +9,8 @@ typedef struct __Translate_Property_Double
 } _Translate_Property_Double;
 
 EOLIAN static void
-_efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
-                                       Efl_Canvas_Animation_Translate_Data *pd,
+_efl_canvas_translate_animation_translate_set(Eo *eo_obj EINA_UNUSED,
+                                       Efl_Canvas_Translate_Animation_Data *pd,
                                        Eina_Position2D from,
                                        Eina_Position2D to)
 {
@@ -22,8 +22,8 @@ _efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_translate_translate_get(const Eo *eo_obj EINA_UNUSED,
-                                       Efl_Canvas_Animation_Translate_Data *pd,
+_efl_canvas_translate_animation_translate_get(const Eo *eo_obj EINA_UNUSED,
+                                       Efl_Canvas_Translate_Animation_Data *pd,
                                        Eina_Position2D *from,
                                        Eina_Position2D *to)
 {
@@ -41,8 +41,8 @@ _efl_canvas_animation_translate_translate_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
-                                                Efl_Canvas_Animation_Translate_Data *pd,
+_efl_canvas_translate_animation_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
+                                                Efl_Canvas_Translate_Animation_Data *pd,
                                                 Eina_Position2D from,
                                                 Eina_Position2D to)
 {
@@ -54,8 +54,8 @@ _efl_canvas_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_translate_translate_absolute_get(const Eo *eo_obj EINA_UNUSED,
-                                                Efl_Canvas_Animation_Translate_Data *pd,
+_efl_canvas_translate_animation_translate_absolute_get(const Eo *eo_obj EINA_UNUSED,
+                                                Efl_Canvas_Translate_Animation_Data *pd,
                                                 Eina_Position2D *from,
                                                 Eina_Position2D *to)
 {
@@ -73,8 +73,8 @@ _efl_canvas_animation_translate_translate_absolute_get(const Eo *eo_obj EINA_UNU
 }
 
 EOLIAN static double
-_efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
-                                                       Efl_Canvas_Animation_Translate_Data *pd,
+_efl_canvas_translate_animation_efl_canvas_animation_animation_apply(Eo *eo_obj,
+                                                       Efl_Canvas_Translate_Animation_Data *pd,
                                                        double progress,
                                                        Efl_Canvas_Object *target)
 {
@@ -102,8 +102,8 @@ _efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_canvas_animation_translate_efl_object_constructor(Eo *eo_obj,
-                                                Efl_Canvas_Animation_Translate_Data *pd)
+_efl_canvas_translate_animation_efl_object_constructor(Eo *eo_obj,
+                                                Efl_Canvas_Translate_Animation_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -115,4 +115,4 @@ _efl_canvas_animation_translate_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_canvas_animation_translate.eo.c"
+#include "efl_canvas_translate_animation.eo.c"

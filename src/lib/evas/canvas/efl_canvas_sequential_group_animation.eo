@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Group_Sequential extends Efl.Canvas.Animation_Group
+class Efl.Canvas.Sequential_Group_Animation extends Efl.Canvas.Group_Animation
 {
    [[Combined animation which plays its individual animations in a sequential order
      (one after the other).
@@ -6,7 +6,7 @@ class Efl.Canvas.Animation_Group_Sequential extends Efl.Canvas.Animation_Group
      For instance, this could be used to move an @Efl.Canvas.Object from one position to another
      and then start rotating it once it reaches its destination.
 
-     Use @Efl.Canvas.Animation_Group.animation_add to append individual animations.
+     Use @Efl.Canvas.Group_Animation.animation_add to append individual animations.
      Animations are played in the order in which they are added.
 
      @since 1.24

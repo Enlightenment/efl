@@ -1581,31 +1581,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      @property keyed_multi_valued_prop {
-         get {}
-         set {}
-         keys {
-           key1: int;
-         }
-         values {
-           prop1: int;
-           prop2: int;
-         }
-      }
-
-      @property multi_keyed_multi_valued_prop {
-         get {}
-         set {}
-         keys {
-           key1: int;
-           key2: int;
-         }
-         values {
-           prop1: int;
-           prop2: int;
-         }
-      }
-
       @property klass_prop @static {
          get {}
          set {}

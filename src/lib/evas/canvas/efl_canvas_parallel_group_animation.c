@@ -1,9 +1,9 @@
-#include "efl_canvas_animation_group_parallel_private.h"
+#include "efl_canvas_parallel_group_animation_private.h"
 
-#define MY_CLASS EFL_CANVAS_ANIMATION_GROUP_PARALLEL_CLASS
+#define MY_CLASS EFL_CANVAS_PARALLEL_GROUP_ANIMATION_CLASS
 
 EOLIAN static double
-_efl_canvas_animation_group_parallel_efl_canvas_animation_animation_apply(Eo *eo_obj,
+_efl_canvas_parallel_group_animation_efl_canvas_animation_animation_apply(Eo *eo_obj,
                                                             void *_pd EINA_UNUSED,
                                                             double progress,
                                                             Efl_Canvas_Object *target)
@@ -53,7 +53,7 @@ _efl_canvas_animation_group_parallel_efl_canvas_animation_animation_apply(Eo *eo
 }
 
 EOLIAN static double
-_efl_canvas_animation_group_parallel_efl_canvas_animation_duration_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_parallel_group_animation_efl_canvas_animation_duration_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    double child_total_duration;
    double total_duration = 0.0;
@@ -74,4 +74,4 @@ _efl_canvas_animation_group_parallel_efl_canvas_animation_duration_get(const Eo 
    return total_duration;
 }
 
-#include "efl_canvas_animation_group_parallel.eo.c"
+#include "efl_canvas_parallel_group_animation.eo.c"

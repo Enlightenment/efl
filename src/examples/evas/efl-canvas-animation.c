@@ -114,7 +114,7 @@ main(void)
    Evas_Object *scale_rect = _new_rectangle_add(d.evas);
    efl_gfx_entity_geometry_set(scale_rect, EINA_RECT(50, 50, 50, 50));
    efl_canvas_object_animation_start(scale_rect,
-    efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
+    efl_new(EFL_CANVAS_SCALE_ANIMATION_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_start_delay_set(efl_added, 5.0),
       efl_animation_duration_set(efl_added, 2.0),
@@ -125,7 +125,7 @@ main(void)
    Evas_Object *scale_rect2 = _new_rectangle_add(d.evas);
    efl_gfx_entity_geometry_set(scale_rect2, EINA_RECT(50, 200, 50, 50));
    efl_canvas_object_animation_start(scale_rect2,
-    efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
+    efl_new(EFL_CANVAS_SCALE_ANIMATION_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect2, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 2.0),
       efl_animation_play_count_set(efl_added, 0),
@@ -136,7 +136,7 @@ main(void)
    Evas_Object *scale_rect3 = _new_rectangle_add(d.evas);
    efl_gfx_entity_geometry_set(scale_rect3, EINA_RECT(50, 350, 50, 50));
    efl_canvas_object_animation_start(scale_rect3,
-    efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
+    efl_new(EFL_CANVAS_SCALE_ANIMATION_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect3, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 2.0),
       efl_animation_play_count_set(efl_added, 4),
@@ -147,7 +147,7 @@ main(void)
    Evas_Object *scale_rect4 = _new_rectangle_add(d.evas);
    efl_gfx_entity_geometry_set(scale_rect4, EINA_RECT(200, 50, 50, 50));
    efl_canvas_object_animation_start(scale_rect4,
-    efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
+    efl_new(EFL_CANVAS_SCALE_ANIMATION_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(3.0, 3.0), scale_rect4, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 2.0),
       efl_animation_final_state_keep_set(efl_added, EINA_TRUE)
@@ -159,7 +159,7 @@ main(void)
    efl_gfx_color_set(scale_rect5, 255, 0, 0, 255);
    efl_gfx_entity_geometry_set(scale_rect5, EINA_RECT(200, 200, 50, 50));
    efl_canvas_object_animation_start(scale_rect5,
-    efl_new(EFL_CANVAS_ANIMATION_SCALE_CLASS,
+    efl_new(EFL_CANVAS_SCALE_ANIMATION_CLASS,
       efl_animation_scale_set(efl_added, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(5.0, 5.0), scale_rect5, EINA_VECTOR2(0.5, 0.5)),
       efl_animation_duration_set(efl_added, 5.0),
       efl_animation_play_count_set(efl_added, 0)
