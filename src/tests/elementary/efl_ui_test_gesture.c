@@ -60,6 +60,13 @@ gesture_cb(void *data , const Efl_Event *ev)
    count[efl_gesture_state_get(g) - 1]++;
 }
 
+static void
+test_cb(void *data EINA_UNUSED , const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+
+
 static Eo *
 setup(void)
 {
@@ -73,6 +80,8 @@ setup(void)
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_content_set(win, rect);
 
+   /* add extra random cb to verify that we aren't getting double events */
+   efl_event_callback_add(rect, EFL_EVENT_GESTURE_MOMENTUM, test_cb, NULL);
 #define WATCH(type) \
    efl_event_callback_add(rect, EFL_EVENT_GESTURE_##type, gesture_cb, &count[(type)])
    WATCH(TAP);
