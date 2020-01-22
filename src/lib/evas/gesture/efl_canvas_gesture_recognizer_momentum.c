@@ -58,16 +58,6 @@ _momentum_set(Eo *obj,
      }
 }
 
-static int
-_direction_get(Evas_Coord xx1,
-               Evas_Coord xx2)
-{
-   if (xx2 < xx1) return -1;
-   if (xx2 > xx1) return 1;
-
-   return 0;
-}
-
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
 _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(Eo *obj,
                                                                                 Efl_Canvas_Gesture_Recognizer_Momentum_Data *pd,
