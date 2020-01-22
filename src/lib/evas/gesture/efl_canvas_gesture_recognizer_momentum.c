@@ -77,18 +77,42 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
    //It does not have any meanging of this gesture.
    if (glayer_continues_enable && !pd->touched)
      {
-        pd->touched = EINA_TRUE;
+        if (efl_gesture_touch_state_get(event) != EFL_GESTURE_TOUCH_STATE_END)
+          {
+             /* guard against successive multi-touch cancels */
+             if (efl_gesture_touch_points_count_get(event) == 1)
+               {
+                  pd->touched = EINA_TRUE;
+                  md->id = -1;
+               }
+          }
 
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
    if (pd->touched && (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
      {
         /* a second finger was pressed at the same time-ish as the first: combine into same event */
-        if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+        if (efl_gesture_touch_points_count_get(event) > 1)
+          {
+             if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_touch_prev_data_get(event)->cur.timestamp < TAP_TOUCH_TIME_THRESHOLD)
+               return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+          }
+        else if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
           return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
-   if (pd->t_st && (md->id != efl_gesture_touch_cur_data_get(event)->id))
-     return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+   if (pd->t_st && (md->id != -1) && (md->id != efl_gesture_touch_cur_data_get(event)->id))
+     {
+        int xdir, ydir;
+        const Efl_Gesture_Touch_Point_Data *data = efl_gesture_touch_cur_data_get(event);
+        xdir = _direction_get(data->prev.pos.x, data->cur.pos.x);
+        ydir = _direction_get(data->prev.pos.y, data->cur.pos.y);
+        if ((xdir != pd->xdir) || (ydir != pd->ydir))
+          {
+             memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Momentum_Data));
+             return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+          }
+        return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
 
    switch (efl_gesture_touch_state_get(event))
      {

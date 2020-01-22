@@ -178,6 +178,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    unsigned char glayer_continues_enable;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    Eina_Bool touch_up = EINA_FALSE;
+   int points = efl_gesture_touch_points_count_get(event);
    Efl_Canvas_Gesture_Flick_Data *fd = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_FLICK_CLASS);
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
@@ -214,8 +215,26 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
         if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
           return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
-   if (pd->t_st && (fd->id != efl_gesture_touch_cur_data_get(event)->id))
-     return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+   if (pd->t_st && (points > 1) && (fd->id != efl_gesture_touch_cur_data_get(event)->id))
+     {
+        int xdir[2], ydir[2];
+        const Efl_Gesture_Touch_Point_Data *data = efl_gesture_touch_cur_data_get(event);
+        const Efl_Gesture_Touch_Point_Data *data2;
+
+        if (fd->id == -1) return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+        data2 = efl_gesture_touch_data_get(event, fd->id);
+        xdir[0] = _direction_get(data->prev.pos.x, data->cur.pos.x);
+        ydir[0] = _direction_get(data->prev.pos.y, data->cur.pos.y);
+        xdir[1] = _direction_get(data2->prev.pos.x, data2->cur.pos.x);
+        ydir[1] = _direction_get(data2->prev.pos.y, data2->cur.pos.y);
+        if ((xdir[0] != xdir[1]) || (ydir[0] != ydir[1]))
+          {
+             rd->continues = EINA_FALSE;
+             memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+             return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+          }
+        return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
 
    _single_line_process(obj, pd, gesture, fd, event);
    _vector_get(pd->st_line, efl_gesture_touch_cur_point_get(event),
