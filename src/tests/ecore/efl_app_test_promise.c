@@ -775,6 +775,34 @@ EFL_START_TEST(efl_test_promise_future_all)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_test_promise_future_all_iterator)
+{
+   Eina_Future *futures[11];
+   Eina_Iterator *it;
+   unsigned int i, futures_called = 0, len = EINA_C_ARRAY_LENGTH(futures);
+
+   fail_if(!ecore_init());
+   for (i = 0; i < len; i++)
+     {
+        Eina_Future *f;
+        if (i % 2 == 0)
+          f = _str_future_get();
+        else
+          f = _int_future_get();
+        fail_if(!f);
+        futures[i] = eina_future_then(f, _future_all_count, &futures_called);
+        fail_if(!futures[i]);
+     }
+
+   it = EINA_C_ARRAY_ITERATOR_NEW(futures);
+   fail_if(!eina_future_then(eina_future_all_iterator(it), _all_cb, &len));
+
+   ecore_main_loop_begin();
+   ecore_shutdown();
+   fail_if(futures_called != len);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_test_promise_future_race)
 {
    Race_Ctx ctx = { 0 };
@@ -1446,6 +1474,7 @@ void efl_app_test_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_convert);
    tcase_add_test(tc, efl_test_promise_future_easy);
    tcase_add_test(tc, efl_test_promise_future_all);
+   tcase_add_test(tc, efl_test_promise_future_all_iterator);
    tcase_add_test(tc, efl_test_promise_future_race);
    tcase_add_test(tc, efl_test_promise_future_ignore_error);
    tcase_add_test(tc, efl_test_promise_future_success);
