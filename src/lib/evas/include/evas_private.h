@@ -1228,6 +1228,7 @@ struct _Evas_Object_Protected_Data
 
    Eina_Bool                   events_filter_enabled : 1;
    Eina_Bool                   is_pointer_inside_legacy : 1;
+   Eina_Bool                   is_filter_object : 1;
 };
 
 struct _Evas_Data_Node

@@ -1,13 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdio.h>
-#include <unistd.h>
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_Wl2.h>
-
 #include "ecore_wl2_suite.h"
 #include "ecore_wl2_tests_helpers.h"
 
@@ -183,21 +173,115 @@ EFL_START_TEST(wl2_display_compositor_version_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST(wl2_display_input_find_by_name)
+Ecore_Wl2_Input *test_input;
+
+static Eina_Bool
+_test_input_find_configure_complete(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Test_Data *td = data;
+
+   /* NB: Enlightenment uses "seat0" here, but Weston uses "default" */
+   if (getenv("E_START"))
+     test_input = ecore_wl2_display_input_find_by_name(td->display, "seat0");
+   else
+     test_input = ecore_wl2_display_input_find_by_name(td->display, "default");
+
+   ck_assert(test_input != NULL);
+   test_input = NULL;
+
+   if (getenv("E_START"))
+     {
+        test_input = ecore_wl2_display_input_find(td->display, 13);
+        ck_assert(test_input != NULL);
+     }
+
+   ecore_main_loop_quit();
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+EFL_START_TEST(wl2_display_input_find)
+{
+   Test_Data *td;
+
+   ecore_wl2_init();
+
+   td = calloc(1, sizeof(Test_Data));
+   td->width = WIDTH;
+   td->height = HEIGHT;
+
+   td->display = _display_connect();
+   ck_assert(td->display != NULL);
+
+   td->win = _window_create(td->display);
+   ck_assert(td->win != NULL);
+
+   ecore_wl2_window_show(td->win);
+
+   td->handler = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                                         _test_input_find_configure_complete, td);
+
+   ecore_main_loop_begin();
+
+   ecore_wl2_shutdown();
+   free(td);
+}
+
+EFL_END_TEST
+
+EFL_START_TEST(wl2_display_flush)
 {
    Ecore_Wl2_Display *disp;
-   Ecore_Wl2_Input *input;
 
    disp = _display_connect();
    ck_assert(disp != NULL);
 
-   /* NB: Enlightenment uses "seat0" here, but Weston uses "default" */
-   if (getenv("E_START"))
-     input = ecore_wl2_display_input_find_by_name(disp, "seat0");
-   else
-     input = ecore_wl2_display_input_find_by_name(disp, "default");
+   //FIXME: Ambiguous way to check with code to make sure flushing was successful.
+   //       We might think it's being verified by another TC that actually draws to the screen buffer ...
+   ecore_wl2_display_flush(disp);
+}
+EFL_END_TEST
 
-   ck_assert(input != NULL);
+static Eina_Bool
+_test_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Test_Data *td = data;
+   Eina_Bool ret;
+
+   ret = ecore_wl2_display_sync_is_done(td->display);
+
+   fail_if(ret == EINA_FALSE);
+
+   ecore_main_loop_quit();
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+EFL_START_TEST(wl2_display_sync_is_done)
+{
+   Test_Data *td;
+
+   ecore_wl2_init();
+
+   td = calloc(1, sizeof(Test_Data));
+   td->width = WIDTH;
+   td->height = HEIGHT;
+
+   td->display = _display_connect();
+   ck_assert(td->display != NULL);
+
+   td->win = _window_create(td->display);
+   ck_assert(td->win != NULL);
+
+   ecore_wl2_window_show(td->win);
+
+   ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE,
+                          _test_sync_done, td);
+
+   ecore_main_loop_begin();
+
+   ecore_wl2_shutdown();
+   free(td);
 }
 EFL_END_TEST
 
@@ -221,11 +305,16 @@ ecore_wl2_test_display(TCase *tc)
         tcase_add_test(tc, wl2_display_disconnect);
         tcase_add_test(tc, wl2_display_registry_get);
         tcase_add_test(tc, wl2_display_shm_get);
-        tcase_add_test(tc, wl2_display_dmabuf_get);
         tcase_add_test(tc, wl2_display_globals_get);
-        tcase_add_test(tc, wl2_display_screen_size_get);
         tcase_add_test(tc, wl2_display_inputs_get);
         tcase_add_test(tc, wl2_display_compositor_version_get);
-        tcase_add_test(tc, wl2_display_input_find_by_name);
+        tcase_add_test(tc, wl2_display_input_find);
+        tcase_add_test(tc, wl2_display_flush);
+        tcase_add_test(tc, wl2_display_sync_is_done);
+        if (!getenv("E_START"))
+          {
+             tcase_add_test(tc, wl2_display_dmabuf_get);
+             tcase_add_test(tc, wl2_display_screen_size_get);
+          }
      }
 }

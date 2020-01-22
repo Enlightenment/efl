@@ -320,7 +320,7 @@ class TestEventWithDeadWrappers
                                           EventHandler<Dummy.TestObjectEvtWithIntEventArgs> cb)
     {
         var obj = new Dummy.TestObject();
-        manager.Emitter = obj;
+        manager.SetEmitter(obj);
 
         obj.EvtWithIntEvent += cb;
         return new WeakReference(obj);

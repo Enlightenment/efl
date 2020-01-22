@@ -1,4 +1,4 @@
-class Efl.Canvas.Group extends Efl.Canvas.Object
+class Efl.Canvas.Group extends Efl.Canvas.Object implements Efl.Gfx.Filter
 {
    [[A group object is a container for other canvas objects. Its children
      move along their parent and are often clipped with a common clipper.
@@ -127,6 +127,8 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
       Efl.Gfx.Color.color { set; }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Filter.filter_program { set; }
       Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { get; set; }

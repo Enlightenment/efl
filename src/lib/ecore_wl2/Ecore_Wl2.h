@@ -551,20 +551,6 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
 
 /**
- * Terminate a Wayland display's main loop
- *
- * @brief This function is typically used by servers to terminate the
- * Wayland display main loop. This is usually only called when a server
- * encounters an error.
- *
- * @param display The Ecore_Wl2_Display to terminate
- *
- * @ingroup Ecore_Wl2_Display_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
-
-/**
  * Retrieve the existing Wayland display
  *
  * @param display The Ecore_Wl2_Display for which to retrieve the existing
@@ -1487,21 +1473,6 @@ EAPI Eina_Bool ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int 
  * @since 1.20
  */
 EAPI void ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
-
-/**
- * Set a specific cursor on a given seat
- *
- * @brief This function will try to find a matching cursor inside the existing
- * cursor theme and set the pointer for the specified seat to be
- * the specified cursor
- *
- * @param input The seat to set the cursor on
- * @param cursor The name of the cursor to try and set
- *
- * @ingroup Ecore_Wl2_Input_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
 
 /**
  * @defgroup Ecore_Wl2_Output_Group Wayland Library Output Functions

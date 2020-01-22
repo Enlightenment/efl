@@ -428,6 +428,10 @@ struct property_wrapper_definition_generator
       if (is_interface && (!is_get_public && !is_set_public))
           return true;
 
+      // Do not generate set-only proeprty
+      if (property.setter.is_engaged() && !property.getter.is_engaged())
+          return true;
+
       // C# interface members are declared automatically as public
       if (is_interface)
         {

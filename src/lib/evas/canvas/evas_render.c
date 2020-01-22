@@ -2170,6 +2170,13 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
+                          /* skip proxy object if its source is its smart parent.
+                             who makes this relation? a proxy object working for
+                             a smart object to set a filter program. the proxy
+                             object should be a member of smart object to sync
+                             stacking changes. */
+                          if (obj2->is_filter_object) continue;
+
                           clean_them |= evas_render_mapped(evas, obj2->object,
                                                            obj2, ctx,
                                                            output, surface,

@@ -9,7 +9,7 @@ class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implem
       Efl.Object.finalize;
       Efl.Text_Interactive.main_cursor { get; }
       Efl.Text_Interactive.selection_allowed { get; set; }
-      Efl.Text_Interactive.selection_cursors { get; set; }
+      Efl.Text_Interactive.selection_cursors { get; }
       Efl.Text_Interactive.editable { get; set; }
       Efl.Text_Interactive.all_unselect;
       Efl.Text_Interactive.all_select;

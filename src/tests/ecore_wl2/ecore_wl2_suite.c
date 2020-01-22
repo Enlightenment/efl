@@ -1,10 +1,4 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include "ecore_wl2_suite.h"
-#include "../efl_check.h"
-#include <Ecore_Wl2.h>
 
 static const Efl_Test_Case etc[] =
 {

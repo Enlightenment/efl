@@ -185,6 +185,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_S
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
+           efl_key_data_set(elem, "_elm_leaveme", spotlight);
            efl_canvas_object_clipper_set(elem, pd->backclip);
            efl_canvas_group_member_add(pd->container, elem);
            efl_gfx_entity_visible_set(elem, EINA_TRUE);
@@ -197,6 +198,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_S
 EOLIAN static void
 _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_add(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
+   efl_key_data_set(subobj, "_elm_leaveme", pd->container);
    efl_gfx_entity_visible_set(subobj, EINA_TRUE);
    efl_canvas_object_clipper_set(subobj, pd->backclip);
    efl_canvas_group_member_add(pd->container, subobj);
@@ -209,6 +211,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_add(Eo *obj EI
 EOLIAN static void
 _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
+   efl_key_data_set(subobj, "_elm_leaveme", NULL);
    efl_canvas_object_clipper_set(subobj, NULL);
    efl_canvas_group_member_remove(pd->container, subobj);
 

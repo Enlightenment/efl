@@ -11,6 +11,7 @@ ecore_wl2_suite_src = [
 wl2_test_gl_deps = []
 
 if get_option('opengl') == 'es-egl'
+    ecore_wl2_suite_src += 'ecore_wl2_tests_helper_egl.h'
     wl2_test_gl_deps += dependency('egl')
     wl2_test_gl_deps += dependency('gl')
 endif
