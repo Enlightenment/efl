@@ -999,6 +999,7 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd)
    const Eina_File *f;
    const char *key;
    const char *file = efl_file_get(obj);
+   efl_file_unload(obj);
 
    if (eina_str_has_extension(file, ".edj"))
      return _efl_ui_image_edje_file_set(obj);
