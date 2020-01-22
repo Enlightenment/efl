@@ -126,18 +126,6 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
 EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
 /**
- * Find the output that a given window is on
- *
- * @param window The window to find the output for
- *
- * @return An Ecore_Wl2_Output if found, or NULL otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
-
-/**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group
  *
