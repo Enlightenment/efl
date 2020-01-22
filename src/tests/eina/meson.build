@@ -29,6 +29,7 @@ eina_test_src = files(
 'eina_test_benchmark.c',
 'eina_test_mempool.c',
 'eina_test_rectangle.c',
+'eina_test_range.c',
 'eina_test_list.c',
 'eina_test_matrixsparse.c',
 'eina_test_tiler.c',
