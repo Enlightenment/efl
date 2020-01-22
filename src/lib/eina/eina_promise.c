@@ -8,6 +8,7 @@
 #include "eina_mempool.h"
 #include "eina_promise_private.h"
 #include "eina_internal.h"
+#include "eina_iterator.h"
 
 #include <errno.h>
 #include <stdarg.h>
@@ -1223,7 +1224,7 @@ _race_then_cb(void *data, const Eina_Value v,
    //This is not allowed!
    assert(v.type != &EINA_VALUE_TYPE_PROMISE);
    found = _future_unset(&ctx->base, &i, dead_ptr);
-   assert(found);
+   assert(found); (void) found;
 
    if (ctx->dispatching) return EINA_VALUE_EMPTY;
    ctx->dispatching = EINA_TRUE;
@@ -1262,7 +1263,7 @@ _all_then_cb(void *data, const Eina_Value v,
    assert(v.type != &EINA_VALUE_TYPE_PROMISE);
 
    found = _future_unset(&ctx->base, &i, dead_ptr);
-   assert(found);
+   assert(found); (void) found;
 
    ctx->processed++;
    eina_value_array_set(&ctx->values, i, v);
@@ -1323,6 +1324,70 @@ promise_proxy_of_future_array_create(Eina_Future *array[],
    eina_mempool_free(_promise_mp, ctx->promise);
    ctx->promise = NULL;
    return EINA_FALSE;
+}
+
+EAPI Eina_Promise *
+eina_promise_all_iterator(Eina_Iterator *it)
+{
+   All_Promise_Ctx *ctx;
+   Eina_Future *f;
+   unsigned int i = 1;
+   Eina_Bool r;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(it, NULL);
+   ctx = calloc(1, sizeof(All_Promise_Ctx));
+   EINA_SAFETY_ON_NULL_GOTO(ctx, err_ctx);
+   r = eina_value_array_setup(&ctx->values, EINA_VALUE_TYPE_VALUE, 0);
+   EINA_SAFETY_ON_FALSE_GOTO(r, err_array);
+   r = eina_iterator_next(it, (void**) &f);
+   EINA_SAFETY_ON_FALSE_GOTO(r, err_array);
+
+   ctx->base.promise = eina_promise_new(_scheduler_get(f), _all_promise_cancel, ctx);
+   EINA_SAFETY_ON_NULL_GOTO(ctx->base.promise, err_array);
+
+   ctx->base.futures_len = 1;
+   ctx->base.futures = calloc(1, sizeof (Eina_Future *));
+   EINA_SAFETY_ON_NULL_GOTO(ctx->base.futures, err_futures);
+
+   ctx->base.futures[0] = eina_future_then(f, _all_then_cb, ctx, NULL);
+
+   EINA_ITERATOR_FOREACH(it, f)
+     {
+        Eina_Future **tmp;
+
+        ctx->base.futures_len++;
+        tmp = realloc(ctx->base.futures, ctx->base.futures_len * sizeof (Eina_Future *));
+
+        EINA_SAFETY_ON_NULL_GOTO(tmp, err_futures);
+        ctx->base.futures = tmp;
+        ctx->base.futures[i] = eina_future_then(f, _all_then_cb, ctx, NULL);
+        EINA_SAFETY_ON_NULL_GOTO(ctx->base.futures[i++], err_futures);
+     }
+
+   for (i = 0; i < ctx->base.futures_len; i++)
+     {
+        Eina_Value v = { 0 };
+        //Stub values...
+        r = eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+        EINA_SAFETY_ON_FALSE_GOTO(r, err_futures);
+        r = eina_value_array_append(&ctx->values, v);
+        eina_value_flush(&v);
+        EINA_SAFETY_ON_FALSE_GOTO(r, err_futures);
+     }
+   return ctx->base.promise;
+
+ err_futures:
+   while (i >= 1) _eina_future_free(ctx->base.futures[--i]);
+   free(ctx->base.futures);
+   ctx->base.futures = NULL;
+
+   eina_mempool_free(_promise_mp, ctx->base.promise);
+   eina_value_flush(&ctx->values);
+ err_array:
+   free(ctx);
+ err_ctx:
+   eina_iterator_free(it);
+   return NULL;
 }
 
 EAPI Eina_Promise *
