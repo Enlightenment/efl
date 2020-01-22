@@ -1173,8 +1173,11 @@ _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, 
      }
 
    input->repeat.enabled = EINA_TRUE;
-   input->repeat.rate = (1.0 / rate);
-   input->repeat.delay = (delay / 1000.0);
+   if (!input->repeat.changed)
+     {
+        input->repeat.rate = (1.0 / rate);
+        input->repeat.delay = (delay / 1000.0);
+     }
    ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
    if (ev)
      {
@@ -1615,6 +1618,7 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    input->repeat.rate = 0.025;
    input->repeat.delay = 0.4;
    input->repeat.enabled = EINA_TRUE;
+   input->repeat.changed = EINA_FALSE;
 
    wl_array_init(&input->data.selection.types);
    wl_array_init(&input->data.drag.types);
@@ -1811,6 +1815,18 @@ ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
    EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(input->wl.keyboard, NULL);
    return input->xkb.keymap;
+}
+
+EAPI Eina_Bool
+ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double delay)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(input->wl.keyboard, EINA_FALSE);
+   input->repeat.rate = rate;
+   input->repeat.delay = delay;
+   input->repeat.changed = EINA_TRUE;
+   return input->repeat.enabled;
 }
 
 EAPI Eina_Bool

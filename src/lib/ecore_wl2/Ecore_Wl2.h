@@ -1449,6 +1449,17 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
 
 /**
+ * Set the keyboard repeat rate and delay of an input
+ * @param input The input
+ * @param rate Pointer to store the repeat rate (in seconds)
+ * @param rate Pointer to store the repeat delay (in seconds)
+ * @return True if repeat is enabled
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.24
+ */
+EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double delay);
+
+/**
  * Retrieves the mouse position of the seat
  *
  * @param input The seat
