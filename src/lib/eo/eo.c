@@ -529,6 +529,10 @@ efl_super(const Eo *eo_id, const Efl_Class *cur_klass)
 {
    return _efl_super_cast(eo_id, cur_klass, EINA_TRUE);
 }
+EAPI void
+efl_super2(void)
+{
+}
 
 EAPI Eo *
 efl_cast(const Eo *eo_id, const Efl_Class *cur_klass)

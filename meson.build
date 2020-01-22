@@ -248,6 +248,11 @@ if get_option('tslib') == true
   config_h.set('HAVE_TSLIB', '1')
 endif
 
+#if get_option('compiler-plugins') == true
+  #gcc_plugin = dependency('gcc-plugin')
+  subdir(join_paths('src', 'compiler-plugins'))
+#endif
+
 subdir('header_checks')
 subdir('po')
 
@@ -313,7 +318,7 @@ subprojects = [
 ['evil'             ,[]                    , false,  true, false, false, false, false,  true, [], []],
 ['eina'             ,[]                    , false,  true,  true,  true,  true,  true,  true, [], []],
 ['eolian'           ,[]                    , false,  true,  true, false,  true, false, false, ['eina'], []],
-['eo'               ,[]                    , false,  true, false,  true,  true, false,  true, ['eina'], []],
+['eo'               ,[]                    , false,  true, false,  true,  true, false,  true,  ['eina', 'compiler_plugin'], []],
 ['efl'              ,[]                    , false,  true, false, false,  true, false,  true, ['eo'], []],
 ['emile'            ,[]                    , false,  true, false, false,  true,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
 ['eet'              ,[]                    , false,  true,  true, false,  true,  true,  true, ['eina', 'emile', 'efl'], []],
@@ -420,6 +425,8 @@ foreach package : subprojects
       '-DNEED_RUN_IN_TREE=1',
       '-DEFL_BUILD=1',
     ]
+# '-fdump-passes',
+#'-fdump-tree-gimple',
     if (package[3])
       subdir(join_paths(local_lib, package_name))
       set_variable(package_name + '_eo_files', pub_eo_files)
