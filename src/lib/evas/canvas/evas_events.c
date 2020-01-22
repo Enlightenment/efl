@@ -1037,7 +1037,35 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
 
    if (pdata->seat->mouse_grabbed == 0)
      {
-        if (pdata->seat->downs > 1) addgrab = pdata->seat->downs - 1;
+        if (pdata->seat->downs > 1)
+          addgrab = pdata->seat->downs - 1;
+        else  /* this is the first touch, which means it's also a move event, which means we need to redo this */
+          {
+             Eina_List *ins = NULL;
+
+             if (src->is_smart)
+               {
+                  int no_rep = 0;
+                  ins = _evas_event_object_list_raw_in_get
+                        (e->evas, ins, evas_object_smart_members_get_direct(eo_src), NULL, NULL,
+                         ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE, EINA_FALSE);
+               }
+             if (src->is_event_parent)
+               {
+                  int no_rep = 0;
+                  ins = _evas_event_object_list_raw_in_get
+                        (e->evas, ins, NULL, evas_object_event_grabber_members_list(eo_src), NULL,
+                         ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE, EINA_FALSE);
+               }
+             else
+               ins = eina_list_append(ins, eo_src);
+             EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+               {
+                  eina_list_free(proxy_write->src_event_in);
+                  proxy_write->src_event_in = ins;
+               }
+             EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
+          }
      }
 
    EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
@@ -3006,7 +3034,17 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    _evas_touch_point_append(eo_e, ev->touch_id, ev->cur.x, ev->cur.y);
    if (pdata->seat->mouse_grabbed == 0)
      {
-        if (pdata->seat->downs > 1) addgrab = pdata->seat->downs - 1;
+        if (pdata->seat->downs > 1)
+          addgrab = pdata->seat->downs - 1;
+        else /* this is the first touch, which means it's also a move event, which means we need to redo this */
+          {
+             /* get all new in objects */
+             Eina_List *ins = evas_event_objects_event_list(eo_e, NULL, ev->cur.x, ev->cur.y);
+             /* free our old list of ins */
+             eina_list_free(pdata->seat->object.in);
+             /* and set up the new one */
+             pdata->seat->object.in = ins;
+          }
      }
    copy = evas_event_list_copy(pdata->seat->object.in);
    EINA_LIST_FOREACH(copy, l, eo_obj)
