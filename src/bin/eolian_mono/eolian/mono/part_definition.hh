@@ -70,8 +70,9 @@ struct part_extension_method_definition_generator
         bindableClass = "Efl.BindableFactoryPart";
 
       if (!as_generator(
-                scope_tab(2) << "public static " << bindableClass << "<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac) where T : "
-                            << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
+                scope_tab(2) << "public static " << bindableClass << "<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+                            << name_helpers::klass_full_concrete_or_interface_name(cls)
+                            << ", T> x=null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
                 << scope_tab(2) << "{\n"
                 << scope_tab(2) << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\", fac);\n"
                 << scope_tab(2) << "}\n\n"
