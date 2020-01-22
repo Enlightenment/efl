@@ -193,98 +193,9 @@ struct klass
          auto concrete_cxt = context_add_tag(class_context{class_context::concrete,
                                              name_helpers::klass_full_concrete_or_interface_name(cls)},
                                              context);
-         auto concrete_name = name_helpers::klass_concrete_name(cls);
-         auto interface_name = name_helpers::klass_interface_name(cls);
 
-         // We can't make these internal yet as they have methods that are used by
-         // other classes that implement the interface.
-         if(!as_generator
-            (
-             documentation(1)
-             << scope_tab << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
-             << scope_tab(2) << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "")
-             << ",\n" << scope_tab(2) << interface_name
-             << *(",\n" << scope_tab(2) << name_helpers::klass_full_concrete_or_interface_name) << "\n"
-             << scope_tab << "{\n"
-            ).generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), concrete_cxt))
-              return false;
-
-         if (!generate_fields(sink, cls, concrete_cxt))
-           return false;
-
-         if (!as_generator
-            (
-             scope_tab(2) << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
-             << scope_tab(2) << "/// Do not call this constructor directly.</summary>\n"
-             << scope_tab(2) << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
-             << scope_tab(2) << "private " << concrete_name << "(ConstructingHandle ch) : base(ch)\n"
-             << scope_tab(2) << "{\n"
-             << scope_tab(2) << "}\n\n"
-            )
-            .generate(sink, attributes::unused, concrete_cxt))
-           return false;
-
-         if (!as_generator
-            (
-             scope_tab(2) << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
-             << ")] internal static extern System.IntPtr\n"
-             << scope_tab(2) << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
-             << scope_tab(2) << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
-             << scope_tab(2) << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
-             << scope_tab(2) << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
-             << scope_tab(2) << "private " << concrete_name << "(Efl.Eo.WrappingHandle wh) : base(wh)\n"
-             << scope_tab(2) << "{\n"
-             << scope_tab(2) << "}\n\n"
-            )
-            .generate(sink, attributes::unused, concrete_cxt))
-           return false;
-
-         if (!generate_events(sink, cls, concrete_cxt))
-             return false;
-
-         if (!as_generator(lit("#pragma warning disable CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
-            return false;
-
-         // Parts
-         if(!as_generator(*(part_definition))
-            .generate(sink, cls.parts, concrete_cxt)) return false;
-
-         // Concrete function definitions
-         auto implemented_methods = helpers::get_all_implementable_methods(cls, concrete_cxt);
-         if(!as_generator(*(function_definition))
-            .generate(sink, implemented_methods, concrete_cxt)) return false;
-
-         // Async wrappers
-         if(!as_generator(*(async_function_definition)).generate(sink, implemented_methods, concrete_cxt))
-           return false;
-
-         // Property wrappers
-         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, concrete_cxt))
-           return false;
-
-         for (auto&& klass : helpers::non_implemented_interfaces(cls, concrete_cxt))
-           {
-              attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, concrete_cxt))
-                return false;
-           }
-
-         if (!as_generator(lit("#pragma warning restore CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
-            return false;
-
-         // Copied from nativeinherit class, used when setting up providers.
-         if(!as_generator(
-              scope_tab(2) << "private static IntPtr GetEflClassStatic()\n"
-              << scope_tab(2) << "{\n"
-              << scope_tab(2) << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab(2) << "}\n\n"
-           ).generate(sink, attributes::unused, concrete_cxt))
-           return false;
-
-         if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), concrete_cxt)))
+         if(!generate_native_inherit_class(sink, cls, change_indentation(indent, concrete_cxt)))
            return true;
-
-         if(!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
        }
 
      // Inheritable class
@@ -427,6 +338,7 @@ struct klass
          auto inherit_name = name_helpers::klass_inherit_name(cls);
          auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
+         bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
          auto const& indent = current_indentation(inative_cxt).inc();
          std::string klass_since;
 
@@ -447,10 +359,22 @@ struct klass
              << klass_since
              << indent << "/// </summary>\n"
              << indent << "[EditorBrowsable(EditorBrowsableState.Never)]\n"
-             << indent << "internal new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
+             << indent << "internal " << (is_concrete ? "" : "new ") << "class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
              << indent << "{\n"
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
+
+         if(is_concrete)
+           {
+              if (!as_generator
+                 (
+                  scope_tab(2) << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
+                  << ")] internal static extern System.IntPtr\n"
+                  << scope_tab(2) << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
+                 )
+                 .generate(sink, attributes::unused, inative_cxt))
+                return false;
+           }
 
          if(implementable_methods.size() >= 1)
            {
@@ -502,7 +426,7 @@ struct klass
            ).generate(sink, attributes::unused, inative_cxt))
              return false;
 
-         if (!root || context_find_tag<class_context>(context).current_wrapper_kind != class_context::concrete)
+         if (!root || !is_concrete)
            if(!as_generator(indent << scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type, false));\n").generate(sink, attributes::unused, inative_cxt))
              return false;
 

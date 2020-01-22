@@ -1003,22 +1003,6 @@ internal static class TraitFunctions
 
     private static IDictionary<System.Type, object> register = new Dictionary<System.Type, object>();
 
-    private static System.Type AsEflInstantiableType(System.Type type)
-    {
-        if (!IsEflObject(type))
-        {
-            return null;
-        }
-
-        if (type.IsInterface)
-        {
-            string fullName = type.FullName + "Concrete";
-            return type.Assembly.GetType(fullName); // That was our best guess...
-        }
-
-        return type; // Not interface, so it should be a concrete.
-    }
-
     public static object RegisterTypeTraits<T>()
     {
         Eina.Log.Debug($"Finding TypeTraits for {typeof(T).Name}");
@@ -1026,14 +1010,6 @@ internal static class TraitFunctions
         var type = typeof(T);
         if (IsEflObject(type))
         {
-            System.Type concrete = AsEflInstantiableType(type);
-            if (concrete == null || !type.IsAssignableFrom(concrete))
-            {
-                throw new Exception("Failed to get a suitable concrete class for this type.");
-            }
-
-            // No need to pass concrete as the traits class will use reflection to get the actually most
-            // derived type returned.
             traits = new EflObjectElementTraits<T>();
         }
         else if (IsString(type))

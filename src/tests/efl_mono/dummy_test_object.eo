@@ -1664,6 +1664,23 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
             obj: Efl.Object;
          }
       }
+      @property iface_value_prop {
+         values {
+            prop: Dummy.Test_Iface;
+         }
+      }
+      @property iface_klass_prop {
+         set {}
+         values {
+            klass: Efl.Class;
+         }
+      }
+      @property iface_value_from_c {
+         get {}
+         values {
+            prop: Dummy.Test_Iface;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
