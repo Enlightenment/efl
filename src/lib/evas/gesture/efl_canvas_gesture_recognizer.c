@@ -24,4 +24,14 @@ _efl_canvas_gesture_recognizer_efl_object_constructor(Eo *obj, Efl_Canvas_Gestur
 
    return obj;
 }
+
+int
+_direction_get(Evas_Coord xx1, Evas_Coord xx2)
+{
+   if (xx2 < xx1) return -1;
+   if (xx2 > xx1) return 1;
+
+   return 0;
+}
+
 #include "efl_canvas_gesture_recognizer.eo.c"
