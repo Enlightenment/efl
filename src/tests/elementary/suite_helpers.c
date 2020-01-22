@@ -752,3 +752,29 @@ drag_object_around(Eo *obj, int cx, int cy, int radius, int degrees)
    /* only count arc motion: subtract initial move, mouse down, mouse up */
    return num;
 }
+
+
+int
+pinch_object(Eo *obj, int x, int y, int x2, int y2, int dx, int dy, int dx2, int dy2)
+{
+   Evas *e = evas_object_evas_get(obj);
+   int i, idx, idy, idx2, idy2;
+   evas_event_feed_multi_down(e, 0, x, y, 1, 1, 1, 1, 0, x, y, 0, ts, NULL);
+   evas_event_feed_multi_down(e, 1, x2, y2, 1, 1, 1, 1, 0, x2, y2, 0, ts++, NULL);
+   for (i = 1; i < abs(dx); i++)
+     {
+        idx = (i * dx / abs(dx));
+        idy = (i * dy / abs(dx));
+        idx2 = (i * dx2 / abs(dx));
+        idy2 = (i * dy2 / abs(dx));
+        /* move first point along positive vector */
+        evas_event_feed_multi_move(e, 0, x + idx, y + idy, 1, 1, 1, 1, 0, x + idx, y + idy, ts, NULL);
+        /* move second point along negative vector */
+        evas_event_feed_multi_move(e, 1, x2 + idx2, y2 + idy2, 1, 1, 1, 1, 0, x2 + idx2, y2 + idy2, ts++, NULL);
+        /* also trigger smart calc if we're iterating just in case that's important */
+        evas_smart_objects_calculate(e);
+     }
+   evas_event_feed_multi_up(e, 0, x + idx, y + idy, 1, 1, 1, 1, 0, x + idx, y + idy, 0, ts, NULL);
+   evas_event_feed_multi_up(e, 1, x2 + idx2, y2 + idy2, 1, 1, 1, 1, 0, x2 + idx2, y2 + idy2, 0, ts++, NULL);
+   return i - 2;
+}

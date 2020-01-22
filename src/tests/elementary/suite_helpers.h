@@ -36,6 +36,7 @@ void multi_click_object_at(Eo *obj, int x, int y, int ids);
 void multi_press_object_at(Eo *obj, int x, int y, int ids);
 void drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate);
 int drag_object_around(Eo *obj, int cx, int cy, int radius, int degrees);
+int pinch_object(Eo *obj, int x, int y, int x2, int y2, int dx, int dy, int dx2, int dy2);
 void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
 void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);
