@@ -1871,3 +1871,17 @@ ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y)
    if (y) *y = input->pointer.sy;
    return EINA_TRUE;
 }
+
+EAPI Ecore_Wl2_Input *
+ecore_wl2_input_default_input_get(const Ecore_Wl2_Display *ewd)
+{
+   Ecore_Wl2_Input *input;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd->inputs, NULL);
+
+   input = ecore_wl2_display_input_find_by_name(ewd, "seat0");
+   if (!input) input = ecore_wl2_display_input_find_by_name(ewd, "default");
+
+   return input;
+}
