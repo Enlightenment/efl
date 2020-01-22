@@ -407,7 +407,7 @@ class TestCsharpProperties
         var obj = new Dummy.TestObject();
         int val = -1984;
 
-        obj.SetterOnly = val;
+        obj.SetSetterOnly(val);
         Test.AssertEquals(val, obj.GetSetterOnly());
         obj.Dispose();
     }
