@@ -1,4 +1,4 @@
-eo_deps = []
+eo_deps = [compiler_plugin]
 eo_pub_deps = [eina]
 eo_ext_deps = [valgrind, dl, execinfo]
 

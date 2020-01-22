@@ -248,6 +248,11 @@ if get_option('tslib')
   config_h.set('HAVE_TSLIB', '1')
 endif
 
+#if get_option('compiler-plugins') == true
+  #gcc_plugin = dependency('gcc-plugin')
+  subdir(join_paths('src', 'compiler-plugins'))
+#endif
+
 subdir('header_checks')
 subdir('po')
 

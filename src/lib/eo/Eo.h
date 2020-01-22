@@ -1458,6 +1458,7 @@ EAPI Eo * _efl_add_end(Eo *obj, Eina_Bool is_ref, Eina_Bool is_fallback);
  * @see efl_cast
  */
 EAPI Eo *efl_super(const Eo *obj, const Efl_Class *cur_klass);
+EAPI void efl_super2(void);
 
 /**
  * @brief Prepare a call to cast to a parent class implementation of a function.
