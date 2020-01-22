@@ -579,21 +579,6 @@ EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
  */
 EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
 
-/**
- * Set a specific cursor on a given seat
- *
- * @brief This function will try to find a matching cursor inside the existing
- * cursor theme and set the pointer for the specified seat to be
- * the specified cursor
- *
- * @param input The seat to set the cursor on
- * @param cursor The name of the cursor to try and set
- *
- * @ingroup Ecore_Wl2_Input_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
-
 # undef EAPI
 # define EAPI
 
