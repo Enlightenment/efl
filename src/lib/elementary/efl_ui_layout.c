@@ -551,6 +551,23 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
    return ret;
 }
 
+static void
+_deferred_signals_emit(Efl_Ui_Layout_Data *pd)
+{
+   do
+     {
+        Deferred_Version_Signal *dvs = eina_inarray_pop(pd->deferred_signals);
+
+        if (pd->version < dvs->version_threshold)
+          efl_layout_signal_emit(pd->obj, dvs->old_sig, "efl");
+        else
+          efl_layout_signal_emit(pd->obj, dvs->new_sig, "efl");
+        eina_stringshare_del(dvs->old_sig);
+        eina_stringshare_del(dvs->new_sig);
+     } while (eina_inarray_count(pd->deferred_signals));
+   ELM_SAFE_FREE(pd->deferred_signals, eina_inarray_free);
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
@@ -603,20 +620,8 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
           }
      }
    if (sd->deferred_signals)
-     {
-        do
-          {
-             Deferred_Version_Signal *dvs = eina_inarray_pop(sd->deferred_signals);
+     _deferred_signals_emit(sd);
 
-             if (sd->version < dvs->version_threshold)
-               efl_layout_signal_emit(sd->obj, dvs->old_sig, "efl");
-             else
-               efl_layout_signal_emit(sd->obj, dvs->new_sig, "efl");
-             eina_stringshare_del(dvs->old_sig);
-             eina_stringshare_del(dvs->new_sig);
-          } while (eina_inarray_count(sd->deferred_signals));
-        ELM_SAFE_FREE(sd->deferred_signals, eina_inarray_free);
-     }
    if (!version)
      {
         snprintf(buf, sizeof(buf), "%d%d", EFL_VERSION_MAJOR, EFL_VERSION_MINOR + (EFL_VERSION_MICRO == 99 ? 1 : 0));
@@ -2730,6 +2735,8 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd)
         /* handle case where subclass does not call into layout */
         pd->needs_theme_apply = EINA_FALSE;
      }
+   else if (pd->deferred_signals)
+     _deferred_signals_emit(pd);
    efl_canvas_group_change(obj);
 
    Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
