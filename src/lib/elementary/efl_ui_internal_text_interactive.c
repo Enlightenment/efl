@@ -20,12 +20,15 @@ typedef struct _Efl_Ui_Internal_Text_Interactive_Data
    Ecore_Timer                           *pw_timer;
    Eina_List                             *seq;
    char                                  *selection;
+   const char                            *file;
+   Elm_Text_Format                        format;
    Eina_Bool                              composing : 1;
    Eina_Bool                              selecting : 1;
    Eina_Bool                              have_selection : 1;
    Eina_Bool                              select_allow : 1;
    Eina_Bool                              editable : 1;
    Eina_Bool                              had_sel : 1;
+   Eina_Bool                              auto_save : 1;
    Eina_Bool                              prediction_allow : 1;
    Eina_Bool                              anchors_updated : 1;
    Eina_Bool                              auto_return_key : 1;
@@ -1812,6 +1815,14 @@ _efl_ui_internal_text_interactive_efl_object_constructor(Eo *obj, Efl_Ui_Interna
    return obj;
 }
 
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_object_destructor(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *sd)
+{
+   eina_stringshare_del(sd->file);
+   sd->file = NULL;
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Efl_Object *
 _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
@@ -2314,6 +2325,155 @@ _efl_ui_internal_text_interactive_efl_input_text_autocapitalization_get(const Eo
    (void)en;
 #endif
 }
+
+
+static char *
+_file_load(Eo *obj)
+{
+   Eina_File *f;
+   char *text = NULL;
+   void *tmp = NULL;
+
+   f = eina_file_dup(efl_file_mmap_get(obj));
+
+   tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!tmp) goto on_error;
+
+   text = malloc(eina_file_size_get(f) + 1);
+   if (!text) goto on_error;
+
+   memcpy(text, tmp, eina_file_size_get(f));
+   text[eina_file_size_get(f)] = 0;
+
+   if (eina_file_map_faulted(f, tmp))
+     {
+        ELM_SAFE_FREE(text, free);
+     }
+
+ on_error:
+   if (tmp) eina_file_map_free(f, tmp);
+   eina_file_close(f);
+
+   return text;
+}
+
+static char *
+_plain_load(Eo *obj)
+{
+   return _file_load(obj);
+}
+
+static Eina_Error
+_load_do(Evas_Object *obj)
+{
+   char *text;
+   Eina_Error err = 0;
+
+   Efl_Ui_Internal_Text_Interactive_Data * sd = efl_data_scope_get(obj, MY_CLASS);
+
+   if (!sd->file)
+     {
+        efl_text_set(obj, "");
+        return 0;
+     }
+
+   switch (sd->format)
+     {
+      /* Only available format */
+      case ELM_TEXT_FORMAT_PLAIN_UTF8:
+         text = _plain_load(obj);
+         if (!text)
+           {
+              err = errno;
+              if (!err) err = ENOENT;
+           }
+         break;
+
+      default:
+         text = NULL;
+         break;
+     }
+
+   if (text)
+     {
+        efl_text_set(obj, text);
+        free(text);
+        return 0;
+     }
+   efl_text_set(obj, "");
+   return err;
+}
+
+static void
+_text_save(const char *file,
+           const char *text)
+{
+   FILE *f;
+
+   if (!text)
+     {
+        ecore_file_unlink(file);
+        return;
+     }
+
+   f = fopen(file, "wb");
+   if (!f)
+     {
+        ERR("Failed to open %s for writing", file);
+        return;
+     }
+
+   if (fputs(text, f) == EOF)
+     ERR("Failed to write text to file %s", file);
+   fclose(f);
+}
+
+static void
+_save_do(Evas_Object *obj)
+{
+   Efl_Ui_Internal_Text_Interactive_Data * sd = efl_data_scope_get(obj, MY_CLASS);
+
+   if (!sd->file) return;
+   switch (sd->format)
+     {
+      /* Only supported format */
+      case ELM_TEXT_FORMAT_PLAIN_UTF8:
+        _text_save(sd->file, efl_text_get(obj));
+        break;
+
+      case ELM_TEXT_FORMAT_MARKUP_UTF8:
+      default:
+        break;
+     }
+}
+
+
+EOLIAN static Eina_Error
+_efl_ui_internal_text_interactive_efl_file_file_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *sd, const char *file)
+{
+   eina_stringshare_replace(&sd->file, file);
+   return efl_file_set(efl_super(obj, MY_CLASS), file);
+}
+
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_file_unload(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *sd EINA_UNUSED)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   efl_text_set(obj, "");
+}
+
+EOLIAN static Eina_Error
+_efl_ui_internal_text_interactive_efl_file_load(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *sd)
+{
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+   if (sd->auto_save) _save_do(obj);
+   return _load_do(obj);
+}
+
 
 #include "efl_ui_internal_text_interactive.eo.c"
 #include "efl_text_interactive.eo.c"

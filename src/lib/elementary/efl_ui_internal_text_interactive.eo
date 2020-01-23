@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implements Efl.Text_Interactive, Efl.Input_Text
+class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implements Efl.Text_Interactive, Efl.Input_Text, Efl.File
 {
    [[An internal object in charge of the interactive aspect of the text widget.
 
@@ -6,6 +6,7 @@ class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implem
    ]]
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Text_Interactive.main_cursor { get; }
       Efl.Text_Interactive.selection_allowed { get; set; }
@@ -29,5 +30,9 @@ class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implem
       Efl.Input_Text.input_panel_show;
       Efl.Input_Text.input_panel_hide;
       Efl.Input_Text.input_panel_imdata { get; set; }
+      //FIXME Efl.File should be implemented later at Efl.Ui.TextBox level
+      Efl.File.file { set; }
+      Efl.File.load;
+      Efl.File.unload;
    }
 }
