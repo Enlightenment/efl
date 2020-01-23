@@ -883,6 +883,57 @@ EFL_START_TEST(wl2_window_update_begin)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_move)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   //FIXME: Need some discussion about how to validate this API in TC.
+   ecore_wl2_window_move(NULL, NULL);
+   ecore_wl2_window_move(win, NULL);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_resize)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   //FIXME: Need some discussion about how to validate this API in TC.
+   ecore_wl2_window_resize(NULL, NULL, 0);
+   ecore_wl2_window_resize(win, NULL, 0);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_window_resizing_get)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Eina_Bool ret;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   ret = ecore_wl2_window_resizing_get(win);
+   fail_if (ret == EINA_TRUE);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -922,5 +973,8 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_input_region);
         tcase_add_test(tc, wl2_window_opaque_region);
         tcase_add_test(tc, wl2_window_popup_input);
+        tcase_add_test(tc, wl2_window_move);
+        tcase_add_test(tc, wl2_window_resize);
+        tcase_add_test(tc, wl2_window_resizing_get);
      }
 }

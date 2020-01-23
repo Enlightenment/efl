@@ -385,6 +385,16 @@ class TestEoMultipleChildClasses
 
 class TestCsharpProperties
 {
+
+    private class MyObject : Dummy.TestObject
+    {
+        public MyObject(Efl.Object parent = null) : base(parent)
+        {
+        }
+        private MyObject(ConstructingHandle ch) : base(ch)
+        {
+        }
+    }
     public static void test_csharp_properties()
     {
         var obj = new Dummy.TestObject();
@@ -426,6 +436,28 @@ class TestCsharpProperties
         iface.IfaceProp = val;
         Test.AssertEquals(val, iface.IfaceProp);
         iface.Dispose();
+    }
+
+    public static void test_iface_value_property()
+    {
+        var obj = new Dummy.TestObject();
+        var prop = new MyObject();
+
+        obj.IfaceValueProp = prop;
+        Test.AssertEquals(obj.IfaceValueProp, prop);
+
+        obj.Dispose();
+        prop.Dispose();
+    }
+
+    public static void test_iface_value_from_c()
+    {
+        var obj = new Dummy.TestObject();
+
+        obj.SetIfaceKlassProp(typeof(MyObject));
+        Test.AssertEquals(obj.IfaceValueFromC.GetType(), typeof(MyObject));
+
+        obj.Dispose();
     }
 
     public static void test_csharp_multi_valued_prop()

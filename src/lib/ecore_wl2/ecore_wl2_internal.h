@@ -126,18 +126,6 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
 EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
 /**
- * Find the output that a given window is on
- *
- * @param window The window to find the output for
- *
- * @return An Ecore_Wl2_Output if found, or NULL otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
-
-/**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group
  *
@@ -578,21 +566,6 @@ EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
  * @since 1.17
  */
 EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
-
-/**
- * Set a specific cursor on a given seat
- *
- * @brief This function will try to find a matching cursor inside the existing
- * cursor theme and set the pointer for the specified seat to be
- * the specified cursor
- *
- * @param input The seat to set the cursor on
- * @param cursor The name of the cursor to try and set
- *
- * @ingroup Ecore_Wl2_Input_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
 
 # undef EAPI
 # define EAPI

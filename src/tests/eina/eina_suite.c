@@ -57,6 +57,7 @@ static const Efl_Test_Case etc[] = {
    { "Benchmark", eina_test_benchmark },
    { "Mempool", eina_test_mempool },
    { "Rectangle", eina_test_rectangle },
+   { "Range", eina_test_range },
    { "MatrixSparse", eina_test_matrixsparse },
    { "Tiler", eina_test_tiler },
    { "Strbuf", eina_test_strbuf },

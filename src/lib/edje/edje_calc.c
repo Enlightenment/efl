@@ -552,7 +552,7 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
    Edje_Image_Directory_Set_Entry *entry;
    Edje_Image_Directory_Set *set = NULL;
    Eina_List *l;
-   int w = 0, h = 0, id;
+   int w = 0, h = 0, id, maxw = 0, maxh = 0;
 
    if (!st && !imid) return -1;
    if (st && !st->image.set) return st->image.id;
@@ -581,8 +581,15 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
 
    if (!set) set = ed->file->image_dir->sets + id;
 
+   if (set->entries)
+     evas_image_max_size_get(evas_object_evas_get(obj), &maxw, &maxh);
    EINA_LIST_FOREACH(set->entries, l, entry)
      {
+        // skip images that exceed max size
+        if ((maxw > 0) && (maxh > 0) &&
+            (entry->size.w > 0) && (entry->size.h > 0) &&
+            ((w > entry->size.w) || (h > entry->size.h)))
+          continue;
         if ((entry->size.min.w <= w) && (w <= entry->size.max.w))
           {
              if ((entry->size.min.h <= h) && (h <= entry->size.max.h))

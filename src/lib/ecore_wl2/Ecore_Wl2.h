@@ -1121,6 +1121,18 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
 EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
 
 /**
+ * Find the output that a given window is on
+ *
+ * @param window The window to find the output for
+ *
+ * @return An Ecore_Wl2_Output if found, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
+
+/**
  * Set if window rotation is supported by the window manager
  *
  * @param window
@@ -1449,6 +1461,17 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
 
 /**
+ * Set the keyboard repeat rate and delay of an input
+ * @param input The input
+ * @param rate Pointer to store the repeat rate (in seconds)
+ * @param rate Pointer to store the repeat delay (in seconds)
+ * @return True if repeat is enabled
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.24
+ */
+EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double delay);
+
+/**
  * Retrieves the mouse position of the seat
  *
  * @param input The seat
@@ -1473,6 +1496,31 @@ EAPI Eina_Bool ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int 
  * @since 1.20
  */
 EAPI void ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
+
+/**
+ * Set a specific cursor on a given seat
+ *
+ * @brief This function will try to find a matching cursor inside the existing
+ * cursor theme and set the pointer for the specified seat to be
+ * the specified cursor
+ *
+ * @param input The seat to set the cursor on
+ * @param cursor The name of the cursor to try and set
+ *
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
+
+/**
+ * Gets default input of a given display
+ *
+ * @param display The display
+ *
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Input *ecore_wl2_input_default_input_get(const Ecore_Wl2_Display *ewd);
 
 /**
  * @defgroup Ecore_Wl2_Output_Group Wayland Library Output Functions

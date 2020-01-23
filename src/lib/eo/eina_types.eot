@@ -60,6 +60,12 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
+struct @extern @beta Eina.Range {
+   [[A range sequence of values.]]
+   start: size; [[Start of the range.]]
+   length: size; [[Length of the range.]]
+}
+
 type @extern Eina.Unicode: uint32; [[Eina unicode type. @since 1.24]]
 
 struct @extern @beta Eina.File_Direct_Info; [[Eina file direct information data structure]]

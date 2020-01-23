@@ -1221,14 +1221,12 @@ internal static class ClassRegister
 
         if (objectType.IsInterface)
         {
-            // Try to get the *Concrete class
-            var assembly = objectType.Assembly;
-            objectType = assembly.GetType(objectType.FullName + "Concrete");
-
-            if (objectType == null)
-            {
+            // Try to get the *NativeMethods class
+            var nativeMethods = (Efl.Eo.NativeClass)System.Attribute.GetCustomAttributes(objectType)?.FirstOrDefault(attr => attr is Efl.Eo.NativeClass);
+            if (nativeMethods == null)
                 return IntPtr.Zero;
-            }
+
+            return nativeMethods.GetEflClass();
         }
 
         var method = objectType.GetMethod("GetEflClassStatic",

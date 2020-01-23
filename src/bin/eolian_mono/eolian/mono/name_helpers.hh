@@ -399,9 +399,7 @@ struct klass_full_interface_name_generator
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-   return utils::remove_all(klass.eolian_name, '_') + ((klass.type == attributes::class_type::mixin
-           || klass.type == attributes::class_type::interface_)
-                                                       ? "Concrete" : "");
+   return utils::remove_all(klass.eolian_name, '_');
 }
 
 template<typename  T>
@@ -467,14 +465,19 @@ inline std::string klass_inherit_name(T const& klass)
 }
 
 template<typename T>
-inline std::string klass_native_inherit_name(EINA_UNUSED T const& klass)
+inline std::string klass_native_inherit_name(T const& klass)
 {
-  return "NativeMethods";
+  return ((klass.type == attributes::class_type::mixin
+           || klass.type == attributes::class_type::interface_) ? klass_interface_name(klass) : "") + "NativeMethods";
 }
 
 template<typename T>
 inline std::string klass_full_native_inherit_name(T const& klass)
 {
+  if(klass.type == attributes::class_type::mixin
+     || klass.type == attributes::class_type::interface_)
+    return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_native_inherit_name(klass);
+
   return klass_full_concrete_name(klass) + "." + klass_native_inherit_name(klass);
 }
 
@@ -487,6 +490,10 @@ inline std::string klass_get_name(T const& clsname)
 template<typename T>
 inline std::string klass_get_full_name(T const& clsname)
 {
+  if(clsname.type == attributes::class_type::mixin
+     || clsname.type == attributes::class_type::interface_)
+    return klass_get_name(clsname);
+
   return klass_full_concrete_name(clsname) + "." + klass_get_name(clsname);
 }
 

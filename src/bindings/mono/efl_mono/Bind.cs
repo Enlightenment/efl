@@ -148,6 +148,20 @@ public class BindableFactoryPart<T>
     }
 }
 
+namespace Csharp
+{
+
+/// <summary>Helper class to differentiate between factory extension methods.
+///
+/// For internal use only.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public class ExtensionTag<TBase, TInherited>
+    where TInherited : TBase
+{
+}
+
+}
+
 }
 
 #endif
