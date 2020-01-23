@@ -60,6 +60,32 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
+struct @extern Eina.Matrix4 {
+   [[Eina 4x4 Matrix
+
+     @since 1.24
+   ]]
+   xx: double; [[XX matrix value]]
+   xy: double; [[XY matrix value]]
+   xz: double; [[XZ matrix value]]
+   xw: double; [[XW matrix value]]
+
+   yx: double; [[YX matrix value]]
+   yy: double; [[YY matrix value]]
+   yz: double; [[YZ matrix value]]
+   yw: double; [[YW matrix value]]
+
+   zx: double; [[ZX matrix value]]
+   zy: double; [[ZY matrix value]]
+   zz: double; [[ZZ matrix value]]
+   zw: double; [[ZW matrix value]]
+
+   wx: double; [[WX matrix value]]
+   wy: double; [[WY matrix value]]
+   wz: double; [[WZ matrix value]]
+   ww: double; [[WW matrix value]]
+}
+
 struct @extern @beta Eina.Range {
    [[A range sequence of values.]]
    start: size; [[Start of the range.]]
