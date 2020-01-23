@@ -43,47 +43,47 @@ struct @extern Eina.Vector2 {
 }
 
 struct @extern Eina.Matrix3 {
-   [[Eina 3x3 Matrix
+   [[A bidimensional array of floating point values with 3 rows and 3 columns.
 
      @since 1.22
    ]]
-   xx: double; [[XX matrix value]]
-   xy: double; [[XY matrix value]]
-   xz: double; [[XZ matrix value]]
+   xx: double; [[XX value.]]
+   xy: double; [[XY value.]]
+   xz: double; [[XZ value.]]
 
-   yx: double; [[YX matrix value]]
-   yy: double; [[YY matrix value]]
-   yz: double; [[YZ matrix value]]
+   yx: double; [[YX value.]]
+   yy: double; [[YY value.]]
+   yz: double; [[YZ value.]]
 
-   zx: double; [[ZX matrix value]]
-   zy: double; [[ZY matrix value]]
-   zz: double; [[ZZ matrix value]]
+   zx: double; [[ZX value.]]
+   zy: double; [[ZY value.]]
+   zz: double; [[ZZ value.]]
 }
 
 struct @extern Eina.Matrix4 {
-   [[Eina 4x4 Matrix
+   [[A bidimensional array of floating point values with 4 rows and 4 columns.
 
      @since 1.24
    ]]
-   xx: double; [[XX matrix value]]
-   xy: double; [[XY matrix value]]
-   xz: double; [[XZ matrix value]]
-   xw: double; [[XW matrix value]]
+   xx: double; [[XX value.]]
+   xy: double; [[XY value.]]
+   xz: double; [[XZ value.]]
+   xw: double; [[XW value.]]
 
-   yx: double; [[YX matrix value]]
-   yy: double; [[YY matrix value]]
-   yz: double; [[YZ matrix value]]
-   yw: double; [[YW matrix value]]
+   yx: double; [[YX value.]]
+   yy: double; [[YY value.]]
+   yz: double; [[YZ value.]]
+   yw: double; [[YW value.]]
 
-   zx: double; [[ZX matrix value]]
-   zy: double; [[ZY matrix value]]
-   zz: double; [[ZZ matrix value]]
-   zw: double; [[ZW matrix value]]
+   zx: double; [[ZX value.]]
+   zy: double; [[ZY value.]]
+   zz: double; [[ZZ value.]]
+   zw: double; [[ZW value.]]
 
-   wx: double; [[WX matrix value]]
-   wy: double; [[WY matrix value]]
-   wz: double; [[WZ matrix value]]
-   ww: double; [[WW matrix value]]
+   wx: double; [[WX value.]]
+   wy: double; [[WY value.]]
+   wz: double; [[WZ value.]]
+   ww: double; [[WW value.]]
 }
 
 struct @extern @beta Eina.Range {
