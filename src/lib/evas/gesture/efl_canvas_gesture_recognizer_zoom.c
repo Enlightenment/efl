@@ -175,6 +175,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
       {
          if (td->touch_down > 2)
            {
+              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }
          if (td->touch_down == 1)
