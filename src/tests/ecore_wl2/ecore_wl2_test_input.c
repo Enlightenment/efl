@@ -218,8 +218,8 @@ EFL_START_TEST(wl2_input_keyboard_repeat)
 
              ecore_wl2_input_keyboard_repeat_set(input, 2.0, 2.0);
              ecore_wl2_input_keyboard_repeat_get(input, &rate, &delay);
-             ck_assert_double_ne(rate, 2.0);
-             ck_assert_double_ne(delay, 2.0);
+             ck_assert(!EINA_DBL_EQ(rate, 2.0));
+             ck_assert(!EINA_DBL_EQ(delay, 2.0));
           }
      }
 
