@@ -51,6 +51,7 @@ enum @beta Efl.Canvas.Gesture_Recognizer_Type
 struct @beta @c_name(Efl_Gesture_Touch_Point_Info) Efl.Canvas.Gesture_Touch_Point_Info {
    [[This struct represents the underlying data of a touch point.]]
    pos: Eina.Position2D; [[The canvas position of the touch point data.]]
+   pressed: bool; [[Whether this touch point is being pressed down.]]
    timestamp: uint; [[The timestamp of the touch point data.]]
 }
 
