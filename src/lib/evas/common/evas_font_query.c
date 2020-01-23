@@ -68,6 +68,7 @@ get_top_font:
 
    /* Find the longest run of the same font starting from the start position
     * and update cur_fi accordingly. */
+   Eina_Unicode variation_sequence = 0;
    itr = text;
    while (itr < run_end)
      {
@@ -85,7 +86,17 @@ get_top_font:
              if (evas_common_language_char_script_get(*itr) == EVAS_SCRIPT_INHERITED)
                 continue;
 
-             Eina_Unicode variation_sequence =  VAR_SEQ_SAFE(itr+1);
+             if (!variation_sequence)
+               {
+                  variation_sequence =  VAR_SEQ_SAFE(itr+1);
+               }
+             else
+               {
+                  /* Variation sequence treated as single run, if we found one, we keep looking adding to same
+                   * run, but if it is not, then we need to start a new one */
+                  if (variation_sequence != VAR_SEQ_SAFE(itr+1))
+                    break;
+               }
 
              /* Break if either it's not in the font, or if it is in the
               * script's font. */
