@@ -75,7 +75,7 @@ interface @beta Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
                                event but only the last one will emit a @[.changed,user] event.
                              ]]
       have_selection,changed: bool; [[Emitted when the @.have_selection property value changes.]]
-      selection,changed: Efl.Text_Range; [[Emitted when selection has changed. Query using @.selection_cursors.]]
+      selection,changed: Eina.Range; [[Emitted when selection has changed. Query using @.selection_cursors.]]
       redo,request: void; [[Emitted when a redo operation is requested.]]
       undo,request: void; [[Emitted when a undo operation is requested.]]
       changed,user: Efl.Text_Change_Info; [[Emitted when the text content has changed due to user interaction.]]

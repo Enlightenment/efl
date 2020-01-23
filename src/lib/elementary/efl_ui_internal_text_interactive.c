@@ -796,9 +796,8 @@ _emit_sel_state( Eo *o, Efl_Ui_Internal_Text_Interactive_Data *en)
      }
    else
      {
-        Efl_Text_Range range = {0};
-        range.start = efl_text_cursor_position_get(en->sel_start);
-        range.end = efl_text_cursor_position_get(en->sel_end);
+        Eina_Range range = eina_range_from_to(efl_text_cursor_position_get(en->sel_start),
+                                              efl_text_cursor_position_get(en->sel_end));
         efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, &range);
      }
 }

@@ -2384,10 +2384,8 @@ _entry_selection_changed_signal_cb(void *data,
 
    if (!sd) return;
    sd->have_selection = EINA_TRUE;
-   Efl_Text_Range range = {0};
    //FIXME how to get selection range in legacy !?
-   range.start = 0;
-   range.end = 0;
+   Eina_Range range = EINA_RANGE_EMPTY();
    efl_event_callback_legacy_call
      (data, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, &range);
    // XXX: still try primary selection even if on wl in case it's
