@@ -82,11 +82,12 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
    else
      {
         //New finger
-        if (!id && (action != EFL_POINTER_ACTION_DOWN))
+        if (action != EFL_POINTER_ACTION_DOWN)
           {
              //Discard any other event
              return;
           }
+
         point = calloc(1, sizeof(Efl_Gesture_Touch_Point_Data));
         if (!point) return;
         point->start.pos = point->prev.pos = point->cur.pos = _pos;
