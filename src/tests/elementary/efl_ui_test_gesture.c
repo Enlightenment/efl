@@ -48,6 +48,11 @@ static int count[LAST][4] = {0};
     for (int i = 0; i < 4; i++) \
       ck_assert_int_eq(count[(type)][i], state_vals[i]); \
   } while (0)
+#define CHECK_NONZERO(type) \
+  do {\
+    for (int i = 0; i < 4; i++) \
+      ck_assert_int_ne(count[(type)][i], 0); \
+  } while (0)
 #define CHECK_ZERO(type) CHECK_ALL((type), 0, 0, 0, 0)
 #define RESET memset(count, 0, sizeof(count))
 
@@ -430,9 +435,73 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
 }
 EFL_END_TEST
 
+EFL_START_TEST(test_efl_ui_gesture_zoom)
+{
+   Eo *rect = setup();
+   int moves;
+
+   moves = pinch_object(rect, 500, 500, 501, 501, -250, -250, 250, 250);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+
+   CHECK_START(MOMENTUM, 1);
+   CHECK_UPDATE(MOMENTUM, moves * 2 + 1);
+   CHECK_FINISH(MOMENTUM, 0);
+   CHECK_CANCEL(MOMENTUM, 1);
+
+   /* only finish is verifiable */
+   CHECK_FINISH(FLICK, 0);
+   /* started 1x */
+   CHECK_START(ZOOM, 1);
+   /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
+   ck_assert_int_ge(count[ZOOM][EFL_GESTURE_STATE_UPDATED - 1], moves);
+   /* finished 1x */
+   CHECK_FINISH(ZOOM, 1);
+   CHECK_CANCEL(ZOOM, 0);
+
+   RESET;
+
+
+   moves = pinch_object(rect, 250, 250, 750, 750, 250, 250, -250, -250);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+
+   CHECK_START(MOMENTUM, 1);
+   CHECK_UPDATE(MOMENTUM, moves * 2 + 1);
+   CHECK_FINISH(MOMENTUM, 0);
+   CHECK_CANCEL(MOMENTUM, 1);
+
+   /* only finish is verifiable */
+   CHECK_FINISH(FLICK, 0);
+   /* started 1x */
+   CHECK_START(ZOOM, 1);
+   /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
+   ck_assert_int_ge(count[ZOOM][EFL_GESTURE_STATE_UPDATED - 1], moves);
+   /* finished 1x */
+   CHECK_FINISH(ZOOM, 1);
+   CHECK_CANCEL(ZOOM, 0);
+
+   RESET;
+
+}
+EFL_END_TEST
+
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
    tcase_add_test(tc, test_efl_ui_gesture_long_tap);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
+   tcase_add_test(tc, test_efl_ui_gesture_zoom);
 }
