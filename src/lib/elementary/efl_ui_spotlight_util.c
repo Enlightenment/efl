@@ -12,7 +12,7 @@ typedef struct {
 EOLIAN static Efl_Ui_Spotlight_Container*
 _efl_ui_spotlight_util_stack_gen(Efl_Ui_Widget *parent)
 {
-   Efl_Ui_Spotlight_Manager *manager = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   Efl_Ui_Spotlight_Manager *manager = efl_new(EFL_UI_SPOTLIGHT_STACK_MANAGER_CLASS);
    return efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, parent,
                   efl_ui_spotlight_manager_set(efl_added, manager));
 }

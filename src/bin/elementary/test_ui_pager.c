@@ -316,7 +316,7 @@ static void indicator_icon_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Params *params = data;
 
-   params->indicator = efl_add(EFL_PAGE_INDICATOR_ICON_CLASS, params->pager);
+   params->indicator = efl_add(EFL_PAGE_ICON_INDICATOR_CLASS, params->pager);
    efl_ui_pager_indicator_set(params->pager, params->indicator);
 }
 

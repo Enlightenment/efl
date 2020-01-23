@@ -14,12 +14,12 @@ typedef struct {
    int ids[2]; //only used when in animation
    Eina_Size2D page_size;
    Eina_Bool animation;
-} Efl_Ui_Spotlight_Manager_Stack_Data;
+} Efl_Ui_Spotlight_Stack_Manager_Data;
 
-#define MY_CLASS EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS
+#define MY_CLASS EFL_UI_SPOTLIGHT_STACK_MANAGER_CLASS
 
 static void
-_geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
+_geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Stack_Manager_Data *pd)
 {
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->container);
    Eina_Rect goal = EINA_RECT_EMPTY();
@@ -37,7 +37,7 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 static void
 _running_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Ui_Spotlight_Manager_Stack_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
+   Efl_Ui_Spotlight_Stack_Manager_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
    double absolut_position;
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
@@ -58,7 +58,7 @@ _hide_object_cb(void *data, const Efl_Event *ev)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Stack_Manager_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
    if (spotlight)
      {
@@ -90,7 +90,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 }
 
 static void
-_update_ids(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, int avoid_index)
+_update_ids(Eo *obj, Efl_Ui_Spotlight_Stack_Manager_Data *pd, int avoid_index)
 {
    for (int i = 0; i < 2; ++i)
      {
@@ -102,7 +102,7 @@ _update_ids(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, int avoid_index)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_add(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_content_add(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Stack_Manager_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_key_data_set(subobj, "_elm_leaveme", pd->container);
    efl_canvas_object_clipper_set(subobj, pd->clipper);
@@ -112,7 +112,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_add(Eo *obj EIN
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Efl_Gfx_Entity *subobj, int index)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Stack_Manager_Data *pd, Efl_Gfx_Entity *subobj, int index)
 {
    efl_key_data_set(subobj, "_elm_leaveme", NULL);
    efl_canvas_object_clipper_set(subobj, NULL);
@@ -135,7 +135,7 @@ is_valid(Eo *obj, int index)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, int from, int to)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Stack_Manager_Data *pd, int from, int to)
 {
    if (efl_pack_content_get(pd->container, to) == pd->content[1])
      return;
@@ -175,14 +175,14 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_size_set(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Eina_Size2D size)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_size_set(Eo *obj, Efl_Ui_Spotlight_Stack_Manager_Data *pd, Eina_Size2D size)
 {
    pd->page_size = size;
    _geom_sync(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
+_efl_ui_spotlight_stack_manager_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Stack_Manager_Data *pd)
 {
    efl_invalidate(efl_super(obj, MY_CLASS));
 
@@ -201,7 +201,7 @@ _efl_ui_spotlight_manager_stack_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd, Eina_Bool animation)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Stack_Manager_Data *pd, Eina_Bool animation)
 {
    for (int i = 0; i < 2; ++i)
      {
@@ -212,10 +212,10 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animated_transition_set
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
+_efl_ui_spotlight_stack_manager_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Stack_Manager_Data *pd)
 {
    return pd->animation;
 }
 
 
-#include "efl_ui_spotlight_manager_stack.eo.c"
+#include "efl_ui_spotlight_stack_manager.eo.c"

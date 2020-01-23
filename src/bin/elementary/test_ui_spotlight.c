@@ -396,7 +396,7 @@ indicator_icon_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Params *params = data;
 
-   params->indicator = efl_new(EFL_UI_SPOTLIGHT_INDICATOR_ICON_CLASS);
+   params->indicator = efl_new(EFL_UI_SPOTLIGHT_ICON_INDICATOR_CLASS);
    efl_ui_spotlight_indicator_set(params->spotlight, params->indicator);
 }
 
