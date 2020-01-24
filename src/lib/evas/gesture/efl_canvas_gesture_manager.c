@@ -142,6 +142,7 @@ _efl_canvas_gesture_manager_config_set(Eo *obj, Efl_Canvas_Gesture_Manager_Data 
    v = eina_value_new(eina_value_type_get(value));
    eina_value_copy(value, v);
    eina_hash_add(pd->m_config, name, v);
+   efl_event_callback_call(obj, EFL_GESTURE_MANAGER_EVENT_CONFIG_CHANGED, (void*)name);
    if (!eina_streq(name, "glayer_tap_finger_size")) return;
    eina_value_get(value, &finger_size);
    _update_finger_sizes(pd, finger_size);
