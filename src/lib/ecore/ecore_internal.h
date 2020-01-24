@@ -129,6 +129,39 @@ _efl_composite_lookup(const Efl_Class *self, Eo *parent, Efl_Model *view, unsign
    EFL_COMPOSITE_REMEMBER_RETURN(remember, view);
 }
 
+/* Result from eina_future_all_* is an EINA_VALUE_TYPE_ARRAY that contain Eina_Value of
+   Eo Model. It is expected that children slice get return an EINA_VALUE_TYPE_ARRAY that
+   contain Eo Model directly.
+*/
+static inline Eina_Value
+_efl_future_all_repack(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   unsigned int i, len;
+   Eina_Value created = EINA_VALUE_EMPTY;
+   Eina_Value r = EINA_VALUE_EMPTY;
+
+   eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, created)
+     {
+        Eo *target = NULL;
+
+        if (eina_value_type_get(&created) != EINA_VALUE_TYPE_OBJECT)
+          goto on_error;
+
+        target = eina_value_object_get(&created);
+        if (!target) goto on_error;
+
+        eina_value_array_append(&r, target);
+     }
+
+   return r;
+
+ on_error:
+   eina_value_flush(&r);
+   return eina_value_error_init(EFL_MODEL_ERROR_UNKNOWN);
+}
+
 #undef EAPI
 #define EAPI
 

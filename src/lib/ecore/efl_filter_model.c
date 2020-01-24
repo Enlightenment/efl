@@ -314,39 +314,6 @@ _filter_remove_array(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
    return eina_value_object_init(target);
 }
 
-/* Result from eina_future_all_array is an EINA_VALUE_TYPE_ARRAY that contain Eina_Value of
-   Eo Model. It is expected that children slice get return an EINA_VALUE_TYPE_ARRAY that
-   contain Eo Model directly.
-*/
-static Eina_Value
-_filter_cleanup_array(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
-{
-   unsigned int i, len;
-   Eina_Value created = EINA_VALUE_EMPTY;
-   Eina_Value r = EINA_VALUE_EMPTY;
-
-   eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
-
-   EINA_VALUE_ARRAY_FOREACH(&v, len, i, created)
-     {
-        Eo *target = NULL;
-
-        if (eina_value_type_get(&created) != EINA_VALUE_TYPE_OBJECT)
-          goto on_error;
-
-        target = eina_value_object_get(&created);
-        if (!target) goto on_error;
-
-        eina_value_array_append(&r, target);
-     }
-
-   return r;
-
- on_error:
-   eina_value_flush(&r);
-   return eina_value_error_init(EFL_MODEL_ERROR_UNKNOWN);
-}
-
 static Eina_Future *
 _efl_filter_model_efl_model_children_slice_get(Eo *obj, Efl_Filter_Model_Data *pd,
                                                unsigned int start, unsigned int count)
@@ -389,7 +356,7 @@ _efl_filter_model_efl_model_children_slice_get(Eo *obj, Efl_Filter_Model_Data *p
      }
    r[i] = EINA_FUTURE_SENTINEL;
 
-   f = efl_future_then(obj, eina_future_all_array(r), .success = _filter_cleanup_array);
+   f = efl_future_then(obj, eina_future_all_array(r), .success = _efl_future_all_repack);
    free(r);
    free(mapping);
 
