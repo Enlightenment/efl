@@ -56,7 +56,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
    if (!pd->start_timeout)
      {
         double time;
-        Eina_Value *val = efl_gesture_recognizer_config_get(obj, "glayer_long_tap_start_timeout");
+        Eina_Value *val = _recognizer_config_get(obj, "glayer_long_tap_start_timeout");
 
         if (val)
           {
