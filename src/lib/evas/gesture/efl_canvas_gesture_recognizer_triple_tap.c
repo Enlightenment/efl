@@ -23,16 +23,14 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_object_destructor(Eo *obj,
 static Eina_Bool
 _tap_timeout_cb(void *data)
 {
-   Efl_Canvas_Gesture_Recognizer_Data *rd;
    Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *pd;
 
-   rd = efl_data_scope_get(data, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
    pd = efl_data_scope_get(data, EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS);
 
    efl_gesture_state_set(pd->gesture, EFL_GESTURE_STATE_CANCELED);
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_TRIPLE_TAP, pd->gesture);
 
-   efl_gesture_manager_gesture_clean_up(rd->manager, pd->target, EFL_EVENT_GESTURE_TRIPLE_TAP);
+   efl_gesture_manager_gesture_clean_up(efl_provider_find(data, EFL_CANVAS_GESTURE_MANAGER_CLASS), pd->target, EFL_EVENT_GESTURE_TRIPLE_TAP);
 
    pd->timeout = NULL;
    pd->tap_count = 0;
