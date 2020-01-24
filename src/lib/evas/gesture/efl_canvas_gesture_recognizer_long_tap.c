@@ -49,7 +49,6 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
    Eina_Position2D pos;
    Eina_Vector2 dist;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-   Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    pd->target = watched;
    pd->gesture = gesture;
@@ -92,7 +91,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
          dist = efl_gesture_touch_distance(event, 0);
          length = fabs(dist.x) + fabs(dist.y);
 
-         if ((efl_gesture_touch_multi_touch_get(event)) || (length > rd->finger_size))
+         if ((efl_gesture_touch_multi_touch_get(event)) || (length > pd->finger_size))
            {
               if (pd->timeout)
                 {
@@ -123,7 +122,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
            {
               dist = efl_gesture_touch_distance(event, 0);
               length = fabs(dist.x) + fabs(dist.y);
-              if (length <= rd->finger_size && pd->is_timeout)
+              if (length <= pd->finger_size && pd->is_timeout)
                 {
                    result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
                 }

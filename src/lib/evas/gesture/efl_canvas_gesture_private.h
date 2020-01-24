@@ -44,7 +44,6 @@ struct _Efl_Canvas_Gesture_Recognizer_Data
 {
    Eo                            *manager; // keeps a reference of the manager
    Eo                            *gesture;
-   int                            finger_size;
    Eina_Bool                      continues;
 };
 
@@ -53,6 +52,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Tap_Data
    Eo                             *target;
    Eo                             *gesture;
    Ecore_Timer                    *timeout;
+   int                            finger_size;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Long_Tap_Data
@@ -63,6 +63,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Long_Tap_Data
    Ecore_Timer                    *timeout;
    double                          start_timeout;
    Eina_Bool                       is_timeout;
+   int                            finger_size;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Double_Tap_Data
@@ -74,6 +75,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Double_Tap_Data
    double                          start_timeout;
    Eina_Bool                       is_timeout;
    int                             tap_count;
+   int                            finger_size;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data
@@ -85,6 +87,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data
    double                          start_timeout;
    Eina_Bool                       is_timeout;
    int                             tap_count;
+   int                            finger_size;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Momentum_Data
@@ -105,6 +108,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Flick_Data
    unsigned int                    t_end;
    int                             line_length;
    double                          line_angle;
+   int                            finger_size;
    Eina_Bool                       touched;
 };
 
@@ -123,6 +127,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data
    double                          zoom_step;
    double                          next_step;
    Eina_Bool                       calc_temp;
+   int                            finger_size;
 };
 
 struct _Efl_Canvas_Gesture_Data
