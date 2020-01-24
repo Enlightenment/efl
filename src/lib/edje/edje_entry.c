@@ -853,7 +853,7 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
           {
              an->en->have_link_pressed = EINA_TRUE;
              evas_textblock_cursor_format_append(an->start, "<link_pressed>");
-             evas_textblock_cursor_format_prepend(an->end, "</>");
+             evas_textblock_cursor_format_prepend(an->end, "</link_pressed>");
           }
      }
    ev->event_flags |= rp->mask_flags;
