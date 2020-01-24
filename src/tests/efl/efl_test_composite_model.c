@@ -154,6 +154,25 @@ _assert_on_error(Eo *o EINA_UNUSED, void *data EINA_UNUSED, Eina_Error error)
    return eina_value_error_init(error);
 }
 
+static unsigned int request[3] = { 3, 1, 5 };
+
+static Eina_Value
+_children_random_index(Eo *model EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   unsigned int i, len;
+   Efl_Model *child;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        unsigned int index;
+
+        index = efl_composite_model_index_get(child);
+        ck_assert_int_eq(index, request[i]);
+     }
+
+   return v;
+}
+
 EFL_START_TEST(efl_test_boolean_model)
 {
    Efl_Generic_Model *base_model, *child;
@@ -194,6 +213,14 @@ EFL_START_TEST(efl_test_boolean_model)
                             .success_type = EINA_VALUE_TYPE_ARRAY);
    future = efl_future_then(model, future,
                             .success = _children_odd_even_check_after_removal,
+                            .success_type = EINA_VALUE_TYPE_ARRAY);
+   future = efl_future_then(model, future, .error = _assert_on_error, .free = _cleanup);
+
+   ecore_main_loop_begin();
+
+   future = efl_model_children_index_get(model, EINA_C_ARRAY_ITERATOR_NEW(request));
+   future = efl_future_then(model, future,
+                            .success = _children_random_index,
                             .success_type = EINA_VALUE_TYPE_ARRAY);
    future = efl_future_then(model, future, .error = _assert_on_error, .free = _cleanup);
 
