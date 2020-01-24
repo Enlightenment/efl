@@ -141,6 +141,18 @@ interface Efl.Model
             /* XXX: is this right? */
             return: future<array<Efl.Object>>; [[Array of children]]
          }
+         children_index_get {
+              [[Get children as specified by iterator.
+
+                Provided index have to be between 0 and @.children_count.get.
+
+                This function might rely on @.children_slice_get as a fallback.
+              ]]
+            params {
+               @in indices: iterator<uint>; [[Indices of the requested children.]]
+            }
+            return: future<array<Efl.Object>>; [[Array of children]]
+         }
          @property children_count {
             [[Number of children.
 
