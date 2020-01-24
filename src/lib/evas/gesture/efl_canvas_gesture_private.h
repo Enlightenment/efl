@@ -43,7 +43,6 @@ typedef struct _Efl_Canvas_Gesture_Touch_Data
 
 struct _Efl_Canvas_Gesture_Recognizer_Data
 {
-   Eo                            *gesture;
    Eina_Bool                      continues;
 };
 
