@@ -318,7 +318,6 @@ EOLIAN static void
 _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
                                                 Efl_Canvas_Gesture_Recognizer *recognizer)
 {
-   Efl_Canvas_Gesture_Recognizer_Data *rpd;
    Efl_Canvas_Gesture *dummy = efl_gesture_recognizer_add(recognizer, NULL);
 
    if (!dummy)
@@ -328,9 +327,6 @@ _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_
 
    //Add the recognizer to the m_recognizers
    eina_hash_add(pd->m_recognizers, &type, efl_ref(recognizer));
-   //Update the manager
-   rpd = efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
-   rpd->manager = obj;
 
    efl_del(dummy);
 }

@@ -263,7 +263,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
               rd->continues = EINA_FALSE;
 
               _reset_recognizer(pd);
-              efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_ZOOM);
+              efl_gesture_manager_gesture_clean_up(efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS), watched, EFL_EVENT_GESTURE_ZOOM);
 
               return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
            }

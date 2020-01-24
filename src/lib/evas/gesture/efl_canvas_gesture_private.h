@@ -43,7 +43,6 @@ typedef struct _Efl_Canvas_Gesture_Touch_Data
 
 struct _Efl_Canvas_Gesture_Recognizer_Data
 {
-   Eo                            *manager; // keeps a reference of the manager
    Eo                            *gesture;
    Eina_Bool                      continues;
 };
