@@ -146,17 +146,17 @@ group { name: "notification/main";
    }
    programs {
       program {
-         signal: "mouse,down,1"; source: "e.event.close";
+         signal: "mouse,down,1"; source: "notification.event.close";
          action: STATE_SET "selected" 0.0;
          target: "close";
       }
       program {
-         signal: "mouse,up,1"; source: "e.event.close";
+         signal: "mouse,up,1"; source: "notification.event.close";
          action: STATE_SET "default" 0.0;
          target: "close";
       }
       program {
-         signal: "mouse,clicked,1"; source: "e.event.close";
+         signal: "mouse,clicked,1"; source: "notification.event.close";
          action: SIGNAL_EMIT "notification,close" "theme";
       }
       program {
