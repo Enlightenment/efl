@@ -52,7 +52,4 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
          }
       }
    }
-   implements {
-      Efl.Object.constructor;
-   }
 }

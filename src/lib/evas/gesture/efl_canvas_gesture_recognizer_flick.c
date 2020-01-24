@@ -10,6 +10,18 @@
 #define RAD2DEG(x) ((x) * 57.295779513)
 #define DEG2RAD(x) ((x) / 57.295779513)
 
+#define memset do not use memset to reset flick data, use _reset_recognizer
+
+static void
+_reset_recognizer(Efl_Canvas_Gesture_Recognizer_Flick_Data *pd)
+{
+   pd->st_line = EINA_POSITION2D(0, 0);
+   pd->t_st = pd->t_end = 0;
+   pd->line_length = 0;
+   pd->line_angle = -1;
+   pd->touched = EINA_FALSE;
+}
+
 EOLIAN static Efl_Canvas_Gesture *
 _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_add(Eo *obj, Efl_Canvas_Gesture_Recognizer_Flick_Data *pd EINA_UNUSED, Efl_Object *target EINA_UNUSED)
 {
@@ -236,7 +248,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
         if ((xdir[0] != xdir[1]) || (ydir[0] != ydir[1]))
           {
              rd->continues = EINA_FALSE;
-             memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+             _reset_recognizer(pd);
              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
           }
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
@@ -258,7 +270,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
              if (val) eina_value_get(val, &line_distance_tolerance);
              else line_distance_tolerance = 3.0;
 
-             line_distance_tolerance *= rd->finger_size;
+             line_distance_tolerance *= pd->finger_size;
 
              val = efl_gesture_recognizer_config_get(obj, "glayer_line_angular_tolerance");
              if (val) eina_value_get(val, &line_angular_tolerance);
@@ -267,7 +279,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
              if ((d > line_distance_tolerance) ||
                  (a > line_angular_tolerance))
                {
-                  memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+                  _reset_recognizer(pd);
 
                   if (touch_up) rd->continues = EINA_FALSE;
 
@@ -291,7 +303,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
              if (val) eina_value_get(val, &line_min_length);
              else line_min_length = 1.0;
 
-             line_min_length *= rd->finger_size;
+             line_min_length *= pd->finger_size;
 
              if (pd->line_length >= line_min_length)
                fd->angle = pd->line_angle = angle;
@@ -301,7 +313,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
           {
              if (pd->line_angle < 0.0)
                {
-                  memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+                  _reset_recognizer(pd);
 
                   if (touch_up) rd->continues = EINA_FALSE;
 
@@ -324,7 +336,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
    if ((tm_end - pd->t_st) > time_limit_ms)
      {
-        memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+        _reset_recognizer(pd);
 
         if (touch_up) rd->continues = EINA_FALSE;
 
@@ -371,7 +383,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
          efl_gesture_hotspot_set(gesture, efl_gesture_touch_cur_point_get(event));
 
-         memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+         _reset_recognizer(pd);
 
          rd->continues = EINA_FALSE;
 

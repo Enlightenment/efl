@@ -2,6 +2,20 @@
 
 #define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_ZOOM_CLASS
 
+static void
+_reset_recognizer(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd)
+{
+   memset(&pd->zoom_st, 0, sizeof(Efl_Gesture_Touch_Point_Data));
+   memset(&pd->zoom_st1, 0, sizeof(Efl_Gesture_Touch_Point_Data));
+   memset(&pd->zoom_mv, 0, sizeof(Efl_Gesture_Touch_Point_Data));
+   memset(&pd->zoom_mv1, 0, sizeof(Efl_Gesture_Touch_Point_Data));
+   pd->zoom_base = 0;
+   pd->zoom_step = pd->next_step = pd->zoom_finger_factor = pd->zoom_distance_tolerance = 0;
+   pd->calc_temp = EINA_FALSE;
+}
+
+#define memset do not use memset to reset zoom data, use _reset_recognizer
+
 static Evas_Coord
 _finger_gap_length_get(Evas_Coord xx1,
                        Evas_Coord yy1,
@@ -157,7 +171,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
         if (val) eina_value_get(val, &pd->zoom_distance_tolerance);
         else pd->zoom_distance_tolerance = 1.0;
 
-        pd->zoom_distance_tolerance *= rd->finger_size;
+        pd->zoom_distance_tolerance *= pd->finger_size;
      }
 
    switch (efl_gesture_touch_state_get(event))
@@ -175,7 +189,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
       {
          if (td->touch_down > 2)
            {
-              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+              _reset_recognizer(pd);
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }
          if (td->touch_down == 1)
@@ -248,21 +262,21 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
            {
               rd->continues = EINA_FALSE;
 
-              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+              _reset_recognizer(pd);
               efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_ZOOM);
 
               return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
            }
          if ((pd->zoom_base) && (pd->zoom_distance_tolerance == 0))
            {
-              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+              _reset_recognizer(pd);
 
               return EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
            }
 
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
            {
-              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Zoom_Data));
+              _reset_recognizer(pd);
 
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }

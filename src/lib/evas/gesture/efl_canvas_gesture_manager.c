@@ -2,6 +2,7 @@
 #include "efl_canvas_gesture_private.h"
 
 #define MY_CLASS EFL_CANVAS_GESTURE_MANAGER_CLASS
+#define EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE 10
 
 typedef struct _Object_Gesture
 {
@@ -53,8 +54,52 @@ _hash_unref_cb(Eo *obj)
    efl_unref(obj);
 }
 
+/* updates the data for in-tree recognizers without needing to watch events */
+static void
+_update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
+{
+   Efl_Canvas_Gesture_Recognizer *r;
+   Efl_Canvas_Gesture_Recognizer_Tap_Data *td;
+   Efl_Canvas_Gesture_Recognizer_Double_Tap_Data *dtd;
+   Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *ttd;
+   Efl_Canvas_Gesture_Recognizer_Long_Tap_Data *ltd;
+   Efl_Canvas_Gesture_Recognizer_Flick_Data *fd;
+   Efl_Canvas_Gesture_Recognizer_Zoom_Data *zd;
+   const Efl_Event_Description *type;
+
+   type = EFL_EVENT_GESTURE_TAP;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   td = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS);
+   td->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_DOUBLE_TAP;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   dtd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_DOUBLE_TAP_CLASS);
+   dtd->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_TRIPLE_TAP;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   ttd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS);
+   ttd->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_LONG_TAP;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   ltd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS);
+   ltd->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_FLICK;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   fd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS);
+   fd->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_ZOOM;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   zd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_ZOOM_CLASS);
+   zd->finger_size = finger_size;
+}
+
 EOLIAN static Efl_Object *
-_efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd EINA_UNUSED)
+_efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
@@ -65,6 +110,8 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    pd->m_gestures_to_delete = NULL;
 
    pd->m_config = eina_hash_string_superfast_new(EINA_FREE_CB(eina_value_free));
+   /* this needs to always be present */
+   eina_hash_add(pd->m_config, "glayer_tap_finger_size", eina_value_int_new(EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE));
 
    //Register all types of recognizers at very first time.
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS, obj));
@@ -74,6 +121,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_MOMENTUM_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ZOOM_CLASS, obj));
+   _update_finger_sizes(pd, EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE);
 
    return obj;
 }
@@ -85,27 +133,18 @@ _efl_canvas_gesture_manager_config_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Ges
 }
 
 EOLIAN static void
-_efl_canvas_gesture_manager_config_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const char *name, Eina_Value *value)
+_efl_canvas_gesture_manager_config_set(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd, const char *name, Eina_Value *value)
 {
-   Eina_Value *v = eina_value_new(eina_value_type_get(value));
+   Eina_Value *v;
+   int finger_size;
+
+   EINA_SAFETY_ON_NULL_RETURN(name);
+   v = eina_value_new(eina_value_type_get(value));
    eina_value_copy(value, v);
    eina_hash_add(pd->m_config, name, v);
-
-   //Sets recognizer class property.
-   if (!strcmp(name, "glayer_tap_finger_size"))
-     {
-        int finger_size;
-        Efl_Canvas_Gesture_Recognizer *r;
-        Efl_Canvas_Gesture_Recognizer_Data *rd;
-
-        eina_value_get(value, &finger_size);
-
-        const Efl_Event_Description *type = EFL_EVENT_GESTURE_TAP;
-
-        r = eina_hash_find(pd->m_recognizers, &type);
-        rd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
-        rd->finger_size = finger_size;
-     }
+   if (!eina_streq(name, "glayer_tap_finger_size")) return;
+   eina_value_get(value, &finger_size);
+   _update_finger_sizes(pd, finger_size);
 }
 
 EOLIAN static void

@@ -27,7 +27,7 @@ _tap_timeout_cb(void *data)
 }
 
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
-_efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *obj,
+_efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *obj EINA_UNUSED,
                                                                            Efl_Canvas_Gesture_Recognizer_Tap_Data *pd,
                                                                            Efl_Canvas_Gesture *gesture,
                                                                            Efl_Object *watched,
@@ -37,7 +37,6 @@ _efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *o
    Eina_Position2D pos;
    Eina_Vector2 dist;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-   Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    pd->target = watched;
    pd->gesture = gesture;
@@ -86,7 +85,7 @@ new_tap:
            {
               dist = efl_gesture_touch_distance(event, 0);
               length = fabs(dist.x) + fabs(dist.y);
-              if (length <= rd->finger_size)
+              if (length <= pd->finger_size)
                 {
                    if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END)
                      result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
