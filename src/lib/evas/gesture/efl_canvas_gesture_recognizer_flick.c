@@ -51,11 +51,11 @@ _momentum_set(Eo *obj,
 
    vel = sqrt((velx * velx) + (vely * vely));
 
-   tf = efl_gesture_recognizer_config_get(obj, "thumbscroll_friction");
+   tf = _recognizer_config_get(obj, "thumbscroll_friction");
    if (tf) eina_value_get(tf, &thumbscroll_friction);
    else thumbscroll_friction = THUMBSCROLL_FRICTION;
 
-   tmt = efl_gesture_recognizer_config_get(obj, "thumbscroll_momentum_threshold");
+   tmt = _recognizer_config_get(obj, "thumbscroll_momentum_threshold");
    if (tmt) eina_value_get(tmt, &thumbscroll_momentum_threshold);
    else thumbscroll_momentum_threshold = THUMBSCROLL_MOMENTUM_THRESHOLD;
 
@@ -194,7 +194,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    Efl_Canvas_Gesture_Flick_Data *fd = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_FLICK_CLASS);
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
-   val = efl_gesture_recognizer_config_get(obj, "glayer_continues_enable");
+   val = _recognizer_config_get(obj, "glayer_continues_enable");
    if (val) eina_value_get(val, &glayer_continues_enable);
    else glayer_continues_enable = 1;
 
@@ -260,13 +260,13 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
              double a = fabs(angle - pd->line_angle);
              double d = (tan(DEG2RAD(a))) * pd->line_length;
 
-             val = efl_gesture_recognizer_config_get(obj, "glayer_line_distance_tolerance");
+             val = _recognizer_config_get(obj, "glayer_line_distance_tolerance");
              if (val) eina_value_get(val, &line_distance_tolerance);
              else line_distance_tolerance = 3.0;
 
              line_distance_tolerance *= pd->finger_size;
 
-             val = efl_gesture_recognizer_config_get(obj, "glayer_line_angular_tolerance");
+             val = _recognizer_config_get(obj, "glayer_line_angular_tolerance");
              if (val) eina_value_get(val, &line_angular_tolerance);
              else line_angular_tolerance = 20.0;
 
@@ -293,7 +293,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
           {
              double line_min_length;
 
-             val = efl_gesture_recognizer_config_get(obj, "glayer_line_min_length");
+             val = _recognizer_config_get(obj, "glayer_line_min_length");
              if (val) eina_value_get(val, &line_min_length);
              else line_min_length = 1.0;
 
@@ -324,7 +324,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
      }
 
    unsigned int time_limit_ms;
-   val = efl_gesture_recognizer_config_get(obj, "glayer_flick_time_limit_ms");
+   val = _recognizer_config_get(obj, "glayer_flick_time_limit_ms");
    if (val) eina_value_get(val, &time_limit_ms);
    else time_limit_ms = 120;
 

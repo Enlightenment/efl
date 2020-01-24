@@ -4,10 +4,12 @@
 #define MY_CLASS                                    EFL_CANVAS_GESTURE_RECOGNIZER_CLASS
 #include "efl_canvas_gesture_recognizer.eo.h"
 
-EOLIAN static Eina_Value *
-_efl_canvas_gesture_recognizer_config_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Data *pd, const char *name)
+Eina_Value *
+_recognizer_config_get(const Eo *obj, const char *name)
 {
-   return efl_gesture_manager_config_get(pd->manager, name);
+   Eo *manager = efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, NULL);
+   return efl_gesture_manager_config_get(manager, name);
 }
 
 EOLIAN static void

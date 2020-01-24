@@ -150,15 +150,15 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
 
    //FIXME: Wheel zoom test first here.
 
-   val = efl_gesture_recognizer_config_get(obj, "glayer_continues_enable");
+   val = _recognizer_config_get(obj, "glayer_continues_enable");
    if (val) eina_value_get(val, &glayer_continues_enable);
    else glayer_continues_enable = 1;
 
-   val = efl_gesture_recognizer_config_get(obj, "glayer_zoom_finger_enable");
+   val = _recognizer_config_get(obj, "glayer_zoom_finger_enable");
    if (val) eina_value_get(val, &zoom_finger_enable);
    else zoom_finger_enable = 1;
 
-   val = efl_gesture_recognizer_config_get(obj, "glayer_zoom_finger_factor");
+   val = _recognizer_config_get(obj, "glayer_zoom_finger_factor");
    if (val) eina_value_get(val, &pd->zoom_finger_factor);
    else pd->zoom_finger_factor = 1.0;
 
@@ -167,7 +167,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
    if (!pd->zoom_distance_tolerance && !pd->calc_temp)
      {
         pd->calc_temp = EINA_TRUE;
-        val = efl_gesture_recognizer_config_get(obj, "glayer_zoom_distance_tolerance");
+        val = _recognizer_config_get(obj, "glayer_zoom_distance_tolerance");
         if (val) eina_value_get(val, &pd->zoom_distance_tolerance);
         else pd->zoom_distance_tolerance = 1.0;
 

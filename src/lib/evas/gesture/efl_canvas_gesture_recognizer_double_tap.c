@@ -58,7 +58,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
    if (!pd->start_timeout)
      {
         double time;
-        Eina_Value *val = efl_gesture_recognizer_config_get(obj, "glayer_double_tap_timeout");
+        Eina_Value *val = _recognizer_config_get(obj, "glayer_double_tap_timeout");
 
         if (val)
           {

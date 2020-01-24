@@ -36,11 +36,11 @@ _momentum_set(Eo *obj,
 
    vel = sqrt((velx * velx) + (vely * vely));
 
-   tf = efl_gesture_recognizer_config_get(obj, "thumbscroll_friction");
+   tf = _recognizer_config_get(obj, "thumbscroll_friction");
    if (tf) eina_value_get(tf, &thumbscroll_friction);
    else thumbscroll_friction = THUMBSCROLL_FRICTION;
 
-   tmt = efl_gesture_recognizer_config_get(obj, "thumbscroll_momentum_threshold");
+   tmt = _recognizer_config_get(obj, "thumbscroll_momentum_threshold");
    if (tmt) eina_value_get(tmt, &thumbscroll_momentum_threshold);
    else thumbscroll_momentum_threshold = THUMBSCROLL_MOMENTUM_THRESHOLD;
 
@@ -69,7 +69,7 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    Efl_Canvas_Gesture_Momentum_Data *md = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_MOMENTUM_CLASS);
 
-   val = efl_gesture_recognizer_config_get(obj, "glayer_continues_enable");
+   val = _recognizer_config_get(obj, "glayer_continues_enable");
    if (val) eina_value_get(val, &glayer_continues_enable);
    else glayer_continues_enable = 1;
 
