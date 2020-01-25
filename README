@@ -361,7 +361,8 @@ pointers to be indirect table lookups for increased safety at runtime.
 
 This library provides a wrapper around the Bullet physics library,
 allowing for it to be linked directly with Evas objects and control
-their behavior as if they were real physical objects.
+their behavior as if they were real physical objects. This is now
+disabled by default as it's rarely if ever used by anything.
 
 
 
@@ -423,7 +424,6 @@ to C++ libraries like Bullet and our C++ bindings.
 
 Required by default:
 
-  * bullet
   * libpng
   * libjpeg
   * gstreamer (Ensure all codecs you want are installed.)
@@ -437,6 +437,7 @@ Required by default:
   * fontconfig
   * freetype2
   * fribidi
+  * harfbuzz
   * libpulse
   * libsndfile
   * libx11
@@ -452,10 +453,9 @@ Required by default:
   * libxss
   * libxtst
   * libxcursor
-  * libxp
   * libxi (2.2 or newer)
   * opengl(mesa etc.) (opengl/glx/full or opengl-es2/egl. full opengl only on osx - must be explicitly specified to be full to have support)
-  * giflib
+  * giflib/libgif
   * util-linux (limbount + libblkid)
   * systemd / libudev
   * poppler / poppler-cpp
