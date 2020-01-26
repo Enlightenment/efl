@@ -4096,31 +4096,31 @@ _item_mouse_move_cb(void *data,
         if (dy < 0)
           {
              if (ady > adx)
-               efl_event_callback_legacy_call
-                 (WIDGET(it), EFL_UI_EVENT_DRAG_START_UP, eo_it);
+               evas_object_smart_callback_call
+                 (WIDGET(it), "drag,start,up", eo_it);
              else
                {
                   if (dx < 0)
-                    efl_event_callback_legacy_call
-                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_LEFT, eo_it);
+                    evas_object_smart_callback_call
+                      (WIDGET(it), "drag,start,left", eo_it);
                   else
-                    efl_event_callback_legacy_call
-                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_RIGHT, eo_it);
+                    evas_object_smart_callback_call
+                      (WIDGET(it), "drag,start,right", eo_it);
                }
           }
         else
           {
              if (ady > adx)
-               efl_event_callback_legacy_call
-                 (WIDGET(it), EFL_UI_EVENT_DRAG_START_DOWN, eo_it);
+               evas_object_smart_callback_call
+                 (WIDGET(it), "drag,start,down", eo_it);
              else
                {
                   if (dx < 0)
-                    efl_event_callback_legacy_call
-                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_LEFT, eo_it);
+                    evas_object_smart_callback_call
+                      (WIDGET(it), "drag,start,left", eo_it);
                   else
-                    efl_event_callback_legacy_call
-                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_RIGHT, eo_it);
+                    evas_object_smart_callback_call
+                      (WIDGET(it), "drag,start,right", eo_it);
                }
           }
      }
@@ -4316,8 +4316,8 @@ _item_multi_down_cb(void *data,
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
-        efl_event_callback_legacy_call
-              (WIDGET(it), EFL_UI_EVENT_DRAG_STOP, EO_OBJ(it));
+        evas_object_smart_callback_call
+              (WIDGET(it), "drag,stop", EO_OBJ(it));
      }
    ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);
    if (sd->on_hold)
@@ -5112,8 +5112,8 @@ _item_mouse_up_cb(void *data,
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
-        efl_event_callback_legacy_call
-              (WIDGET(it), EFL_UI_EVENT_DRAG_STOP, EO_OBJ(it));
+        evas_object_smart_callback_call
+              (WIDGET(it), "drag,stop", EO_OBJ(it));
         dragged = 1;
      }
    ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);

@@ -22,16 +22,4 @@ interface @beta Efl.Ui.Draggable
              }
         }
    }
-
-   events {
-      /* FIXME: Explain what is the object passed through the event_infos */
-      drag: Efl.Object; [[Called when drag operation starts]]
-      drag,start: void; [[Called when drag started]]
-      drag,stop: Efl.Object; [[Called when drag stopped]]
-      drag,end: void; [[Called when drag operation ends]]
-      drag,start,up: Efl.Object; [[Called when drag starts into up direction]]
-      drag,start,down: Efl.Object; [[Called when drag starts into down direction]]
-      drag,start,right: Efl.Object; [[Called when drag starts into right direction]]
-      drag,start,left: Efl.Object; [[Called when drag starts into left direction]]
-   }
 }
