@@ -785,7 +785,7 @@ _item_mouse_move_cb(void *data,
    if ((it->dragging) && (it->down))
      {
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_DRAG, eo_it);
+        evas_object_smart_callback_call(WIDGET(it), "drag", eo_it);
         return;
      }
 
@@ -834,17 +834,17 @@ _item_mouse_move_cb(void *data,
 
    if ((adx > minw) || (ady > minh))
      {
-        const Efl_Event_Description *left_drag, *right_drag;
+        const char *left_drag, *right_drag;
 
         if (!efl_ui_mirrored_get(WIDGET(it)))
           {
-             left_drag = EFL_UI_EVENT_DRAG_START_LEFT;
-             right_drag = EFL_UI_EVENT_DRAG_START_RIGHT;
+             left_drag = "drag,start,left";
+             right_drag = "drag,start,right";
           }
         else
           {
-             left_drag = EFL_UI_EVENT_DRAG_START_RIGHT;
-             right_drag = EFL_UI_EVENT_DRAG_START_LEFT;
+             right_drag = "drag,start,left";
+             left_drag = "drag,start,right";
           }
 
         it->dragging = 1;
@@ -858,25 +858,23 @@ _item_mouse_move_cb(void *data,
         if (dy < 0)
           {
              if (ady > adx)
-               efl_event_callback_legacy_call
-                     (WIDGET(it), EFL_UI_EVENT_DRAG_START_UP, eo_it);
+               evas_object_smart_callback_call(WIDGET(it), "drag,start,up", eo_it);
              else
                {
                   if (dx < 0)
-                    efl_event_callback_legacy_call(WIDGET(it), left_drag, eo_it);
+                    evas_object_smart_callback_call(WIDGET(it), left_drag, eo_it);
                }
           }
         else
           {
              if (ady > adx)
-               efl_event_callback_legacy_call
-                 (WIDGET(it), EFL_UI_EVENT_DRAG_START_DOWN, eo_it);
+               evas_object_smart_callback_call(WIDGET(it), "drag,start,down", eo_it);
              else
                {
                   if (dx < 0)
-                    efl_event_callback_legacy_call(WIDGET(it), left_drag, eo_it);
+                    evas_object_smart_callback_call(WIDGET(it), left_drag, eo_it);
                   else
-                    efl_event_callback_legacy_call(WIDGET(it), right_drag, eo_it);
+                    evas_object_smart_callback_call(WIDGET(it), right_drag, eo_it);
                }
           }
      }
@@ -1320,8 +1318,8 @@ _item_mouse_up_cb(void *data,
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
-        efl_event_callback_legacy_call
-          (WIDGET(it), EFL_UI_EVENT_DRAG_STOP, eo_it);
+        evas_object_smart_callback_call
+          (WIDGET(it), "drag,stop", eo_it);
         dragged = EINA_TRUE;
      }
 
