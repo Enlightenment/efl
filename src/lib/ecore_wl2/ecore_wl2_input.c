@@ -1235,7 +1235,7 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
 
    input = data;
    if (!input) return;
-   if (!input->focus.touch) return;
+   EINA_SAFETY_ON_NULL_RETURN(input->focus.touch); //if this is happening, then we are getting up events in a invalid state
 
    input->timestamp = timestamp;
    input->display->serial = serial;
