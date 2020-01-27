@@ -185,6 +185,17 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    wait_timer(0.4);
    RESET;
 
+   multi_click_object(rect, 10);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a zoom start */
+   CHECK_ALL(ZOOM, 1, 0, 0, 1);
+   RESET;
+
 }
 EFL_END_TEST
 
