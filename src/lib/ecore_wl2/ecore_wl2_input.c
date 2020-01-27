@@ -1218,7 +1218,7 @@ _touch_cb_down(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int seri
 
    _pointer_cb_enter(data, NULL, serial, surface, x, y);
 
-   if ((!input->grab.window) && (input->focus.touch))
+   if ((!input->grab.window) && (input->focus.touch) && input->grab.touch_count == 1)
      {
         _ecore_wl2_input_grab(input, input->focus.touch, BTN_LEFT);
         input->grab.timestamp = timestamp;
@@ -1246,7 +1246,7 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
    if (input->grab.count) input->grab.count--;
    if (input->grab.touch_count) input->grab.touch_count--;
    if ((input->grab.window) && (input->grab.button == BTN_LEFT) &&
-       (!input->grab.count))
+       (!input->grab.count) && !input->grab.touch_count)
      _ecore_wl2_input_ungrab(input);
 
    if (input->grab.touch_count == 0) input->focus.touch = NULL;
