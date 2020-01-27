@@ -261,7 +261,8 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
 
       case EFL_GESTURE_TOUCH_STATE_END:
       {
-         if (td->touch_down == 0)
+         /* no gesture was started, so no gesture should be detected */
+         if ((td->touch_down == 0) || (!pd->zoom_st.cur.timestamp))
            {
               rd->continues = EINA_FALSE;
 
