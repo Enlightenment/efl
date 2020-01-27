@@ -1256,36 +1256,6 @@ _item_get(void *data, const char *item)
    return o;
 }
 
-EOLIAN static void
-_efl_ui_textbox_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, const char *emission, const char *source)
-{
-   /* always pass to both edje objs */
-   efl_layout_signal_emit(sd->entry_edje, emission, source);
-
-   // FIXME: This should not be here!
-   efl_layout_signal_process(sd->entry_edje, EINA_TRUE);
-}
-
-static Eina_Bool
-_efl_ui_textbox_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
-{
-   Eina_Bool ok;
-
-   ok = efl_layout_signal_callback_add(pd->entry_edje, emission, source, func_data, func, func_free_cb);
-
-   return ok;
-}
-
-static Eina_Bool
-_efl_ui_textbox_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
-{
-   Eina_Bool ok;
-
-   ok = efl_layout_signal_callback_del(pd->entry_edje, emission, source, func_data, func, func_free_cb);
-
-   return ok;
-}
-
 static void
 _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler)
 {

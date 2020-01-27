@@ -90,9 +90,6 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
       Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;
-      Efl.Layout.Signal.signal_callback_add;
-      Efl.Layout.Signal.signal_callback_del;
-      Efl.Layout.Signal.signal_emit;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
