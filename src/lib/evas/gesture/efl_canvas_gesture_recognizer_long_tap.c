@@ -44,7 +44,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
                                                                                 Efl_Object *watched,
                                                                                 Efl_Canvas_Gesture_Touch *event)
 {
-   double length; // Manhattan distance
+   double length, start_timeout = pd->start_timeout; // Manhattan distance
    double timeout = EFL_GESTURE_LONG_TAP_TIME_OUT;
    Eina_Position2D pos;
    Eina_Vector2 dist;
@@ -53,7 +53,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
    pd->target = watched;
    pd->gesture = gesture;
 
-   if (!pd->start_timeout)
+   if (!EINA_DBL_NONZERO(start_timeout))
      {
         double time;
         Eina_Value *val = _recognizer_config_get(obj, "glayer_long_tap_start_timeout");
@@ -65,7 +65,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
           }
      }
    else
-     timeout = pd->start_timeout;
+     timeout = start_timeout;
 
    switch (efl_gesture_touch_state_get(event))
      {

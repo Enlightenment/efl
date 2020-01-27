@@ -45,7 +45,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
                                                                                   Efl_Canvas_Gesture *gesture, Efl_Object *watched,
                                                                                   Efl_Canvas_Gesture_Touch *event)
 {
-   double length;
+   double length, start_timeout = pd->start_timeout;
    double timeout = TAP_TIME_OUT;
    Eina_Position2D pos;
    Eina_Vector2 dist;
@@ -54,7 +54,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
    pd->target = watched;
    pd->gesture = gesture;
 
-   if (!pd->start_timeout)
+   if (!EINA_DBL_NONZERO(start_timeout))
      {
         double time;
         Eina_Value *val = _recognizer_config_get(obj, "glayer_double_tap_timeout");
@@ -66,7 +66,7 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
           }
      }
    else
-     timeout = pd->start_timeout;
+     timeout = start_timeout;
 
    switch (efl_gesture_touch_state_get(event))
      {

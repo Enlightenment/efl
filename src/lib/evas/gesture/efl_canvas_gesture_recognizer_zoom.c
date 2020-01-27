@@ -76,7 +76,7 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
               Evas_Coord yy2,
               double zoom_finger_factor)
 {
-   double rt = 1.0;
+   double rt = 1.0, zoom_distance_tolerance = pd->zoom_distance_tolerance;
    //TODO: Enable below code if the zoom momentum is need
    //unsigned int tm_end = (pd->zoom_mv.cur.timestamp > pd->zoom_mv1.cur.timestamp) ?
    //   pd->zoom_mv.cur.timestamp : pd->zoom_mv1.cur.timestamp;
@@ -93,7 +93,7 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
         return zd->zoom;
      }
 
-   if (pd->zoom_distance_tolerance) /* zoom tolerance <> ZERO, means
+   if (EINA_DBL_NONZERO(zoom_distance_tolerance)) /* zoom tolerance <> ZERO, means
                                     * zoom action NOT started yet */
      {
         /* avoid jump with zoom value when break tolerance */
@@ -147,6 +147,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
    Efl_Canvas_Gesture_Zoom_Data *zd = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_ZOOM_CLASS);
    Efl_Canvas_Gesture_Touch_Data *td = efl_data_scope_get(event, EFL_CANVAS_GESTURE_TOUCH_CLASS);
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
+   double zoom_distance_tolerance = pd->zoom_distance_tolerance;
 
    //FIXME: Wheel zoom test first here.
 
@@ -164,7 +165,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
 
    rd->continues = EINA_TRUE;
 
-   if (!pd->zoom_distance_tolerance && !pd->calc_temp)
+   if (!EINA_DBL_NONZERO(zoom_distance_tolerance) && !pd->calc_temp)
      {
         pd->calc_temp = EINA_TRUE;
         val = _recognizer_config_get(obj, "glayer_zoom_distance_tolerance");
@@ -239,7 +240,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
                                   pd->zoom_mv.cur.pos.y, pd->zoom_mv1.cur.pos.x,
                                   pd->zoom_mv1.cur.pos.y, pd->zoom_finger_factor);
 
-         if (!pd->zoom_distance_tolerance)
+         if (!EINA_DBL_NONZERO(zoom_distance_tolerance))
            {
               double d = zd->zoom - pd->next_step;
 

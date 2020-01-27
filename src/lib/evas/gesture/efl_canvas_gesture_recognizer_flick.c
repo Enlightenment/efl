@@ -185,7 +185,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
                                                                              Efl_Canvas_Gesture *gesture, Efl_Object *watched,
                                                                              Efl_Canvas_Gesture_Touch *event)
 {
-   double angle;
+   double angle, line_angle;
    Eina_Value *val;
    unsigned char glayer_continues_enable;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
@@ -258,12 +258,13 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    _vector_get(pd->st_line, efl_gesture_touch_cur_point_get(event),
                &pd->line_length, &angle);
 
+   line_angle = pd->line_angle;
    if (pd->t_st)
      {
-        if (pd->line_angle >= 0.0)
+        if ((line_angle > 0.0) || EINA_DBL_EQ(line_angle, 0.0))
           {
              double line_distance_tolerance, line_angular_tolerance;
-             double a = fabs(angle - pd->line_angle);
+             double a = fabs(angle - line_angle);
              double d = (tan(DEG2RAD(a))) * pd->line_length;
 
              val = _recognizer_config_get(obj, "glayer_line_distance_tolerance");
@@ -306,12 +307,12 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
              line_min_length *= pd->finger_size;
 
              if (pd->line_length >= line_min_length)
-               fd->angle = pd->line_angle = angle;
+               line_angle = fd->angle = pd->line_angle = angle;
           }
 
         if (pd->t_end)
           {
-             if (pd->line_angle < 0.0)
+             if (line_angle < 0.0)
                {
                   _reset_recognizer(pd);
 
