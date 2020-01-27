@@ -133,7 +133,10 @@ _ecore_event_evas_lookup(Evas_Device *evas_device, unsigned int device,
    //the number of last event is small, simple check is ok.
    EINA_LIST_FOREACH(_last_events, l, eel)
      if ((eel->device == device) && (eel->buttons == buttons) && (eel->evas_device == evas_device))
-       return eel;
+       {
+          _last_events = eina_list_promote_list(_last_events, l);
+          return eel;
+       }
    if (!create_new) return NULL;
    eel = malloc(sizeof (Ecore_Event_Last));
    if (!eel) return NULL;
@@ -147,7 +150,7 @@ _ecore_event_evas_lookup(Evas_Device *evas_device, unsigned int device,
    eel->win = win;
    eel->evas_device = evas_device;
 
-   _last_events = eina_list_append(_last_events, eel);
+   _last_events = eina_list_prepend(_last_events, eel);
    return eel;
 }
 
@@ -670,6 +673,8 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 {
    Ecore_Input_Window *lookup;
    Eo *seat;
+   Eina_List *l;
+   Ecore_Event_Last *eel;
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
@@ -696,6 +701,15 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
          break;
      }
 
+   /* check whether we have a multi-touch press event here */
+   EINA_LIST_FOREACH(_last_events, l, eel)
+     {
+        if ((eel->state == ECORE_INPUT_DOWN) && eel->device)
+          return ECORE_CALLBACK_PASS_ON;
+        if (eel->state != ECORE_INPUT_DOWN) break;
+     }
+   /* a multi-touch event sequence will emit move events normally along with
+    * accurate device info, so we have no need to do anything here */
    lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
    return ECORE_CALLBACK_PASS_ON;
 }
