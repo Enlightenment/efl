@@ -191,6 +191,8 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
          if (td->touch_down > 2)
            {
               _reset_recognizer(pd);
+              if (efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_CANCELED)
+                return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }
          if (td->touch_down == 1)
