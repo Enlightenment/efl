@@ -695,8 +695,17 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
       default:
          break;
      }
-
-   lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
+   int number = efl_input_device_pointer_device_count_get(efl_parent_get(e->dev));
+   // In case a mouse in or out is happening, we should move with the correct function, either multi or mouse
+   // we assume that the number of the device is the count of the current devices.
+   if (number > 1)
+     lookup->move_multi(lookup->window, number,
+                        e->x, e->y, 1,
+                        1, 1,
+                        1.0, 0.0,
+                        e->x, e->y, e->timestamp);
+   else
+     lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
    return ECORE_CALLBACK_PASS_ON;
 }
 
