@@ -79,9 +79,8 @@ new_tap:
               ecore_timer_del(pd->timeout);
               pd->timeout = NULL;
            }
-
-         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-             !efl_gesture_touch_multi_touch_get(event))
+         if (efl_gesture_touch_multi_touch_get(event)) return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
            {
               dist = efl_gesture_touch_distance(event, 0);
               length = fabs(dist.x) + fabs(dist.y);
