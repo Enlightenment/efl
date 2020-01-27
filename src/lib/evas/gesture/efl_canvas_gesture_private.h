@@ -34,11 +34,11 @@ typedef struct _Efl_Canvas_Gesture_Touch_Data
 {
    Efl_Canvas_Gesture_Touch_State state;
    Eina_Array             *touch_points;
-   int                     touch_down;
    Efl_Gesture_Touch_Point_Data *cur_touch;
    Efl_Gesture_Touch_Point_Data *prev_touch;
    Eina_Bool               multi_touch;
    Eo                     *target;
+   int                     touch_down;
 } Efl_Canvas_Gesture_Touch_Data;
 
 struct _Efl_Canvas_Gesture_Recognizer_Data
@@ -56,37 +56,37 @@ struct _Efl_Canvas_Gesture_Recognizer_Tap_Data
 
 struct _Efl_Canvas_Gesture_Recognizer_Long_Tap_Data
 {
+   double                          start_timeout;
    Eina_List                      *target_timeout;
    Eo                             *target;
    Efl_Canvas_Gesture             *gesture;
    Ecore_Timer                    *timeout;
-   double                          start_timeout;
-   Eina_Bool                       is_timeout;
    int                            finger_size;
+   Eina_Bool                       is_timeout;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Double_Tap_Data
 {
+   double                          start_timeout;
    Eina_List                      *target_timeout;
    Eo                             *target;
    Eo                             *gesture;
    Ecore_Timer                    *timeout;
-   double                          start_timeout;
-   Eina_Bool                       is_timeout;
    int                             tap_count;
    int                            finger_size;
+   Eina_Bool                       is_timeout;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data
 {
+   double                          start_timeout;
    Eina_List                      *target_timeout;
    Eo                             *target;
    Eo                             *gesture;
    Ecore_Timer                    *timeout;
-   double                          start_timeout;
-   Eina_Bool                       is_timeout;
    int                             tap_count;
    int                            finger_size;
+   Eina_Bool                       is_timeout;
 };
 
 struct _Efl_Canvas_Gesture_Recognizer_Momentum_Data
@@ -102,11 +102,11 @@ struct _Efl_Canvas_Gesture_Recognizer_Momentum_Data
 
 struct _Efl_Canvas_Gesture_Recognizer_Flick_Data
 {
+   double                          line_angle;
    Eina_Position2D                 st_line;
    unsigned int                    t_st;
    unsigned int                    t_end;
    int                             line_length;
-   double                          line_angle;
    int                            finger_size;
    Eina_Bool                       touched;
 };
@@ -119,20 +119,21 @@ struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data
    Efl_Gesture_Touch_Point_Data                    zoom_mv;
    Efl_Gesture_Touch_Point_Data                    zoom_mv1;
 
-   Evas_Coord                      zoom_base; /* Holds gap between fingers on
-							                   * zoom-start  */
    double                          zoom_distance_tolerance;
    double                          zoom_finger_factor;
    double                          zoom_step;
    double                          next_step;
-   Eina_Bool                       calc_temp;
+
+   Evas_Coord                      zoom_base; /* Holds gap between fingers on
+							                   * zoom-start  */
    int                            finger_size;
+   Eina_Bool                       calc_temp;
 };
 
 struct _Efl_Canvas_Gesture_Data
 {
-   const Efl_Event_Description    *type;
    Efl_Canvas_Gesture_State        state;
+   const Efl_Event_Description    *type;
    Eina_Position2D                 hotspot;
    unsigned int                    timestamp;
    unsigned int                    touch_count;
@@ -140,15 +141,15 @@ struct _Efl_Canvas_Gesture_Data
 
 struct _Efl_Canvas_Gesture_Momentum_Data
 {
-   int id;
    Eina_Vector2                    momentum;
+   int id;
 };
 
 struct _Efl_Canvas_Gesture_Flick_Data
 {
-   int id;
    Eina_Vector2                    momentum;
    double                          angle;
+   int id;
 };
 
 struct _Efl_Canvas_Gesture_Zoom_Data
