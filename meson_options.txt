@@ -190,7 +190,7 @@ option('evas-loaders-disabler',
   type : 'array',
   description : 'List of modular image/vector loaders to disable in efl',
   choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'rsvg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm', 'json'],
-  value : ['webp', 'json']
+  value : ['json']
 )
 
 option('ecore-imf-loaders-disabler',

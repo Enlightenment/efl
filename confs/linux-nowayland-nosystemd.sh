@@ -1,3 +1,3 @@
 #!/bin/sh -e
-meson -Dfb=true -Dsystemd=false -Devas-loaders-disabler=json \
+meson -Dfb=true -Dsystemd=false\
  $@ . build

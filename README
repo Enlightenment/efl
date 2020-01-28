@@ -464,11 +464,7 @@ Required by default:
   * libspectre
   * librsvg
   * openmp (clang needs libomp, while gcc uses libgomp)
-
-You might want webp support so disable fewer loaders and remove webp
-from the disablers with:
-
-    -Devas-loaders-disabler=json
+  * libwebp
 
 Wayland support:
 
