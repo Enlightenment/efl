@@ -173,17 +173,24 @@ internal struct EventDescription
 [Efl.Eo.BindingEntity]
 internal struct Event
 {
+    /// <summary>Internal wrapper for field Object</summary>
+    private System.IntPtr obj;
+    /// <summary>Internal wrapper for field Desc</summary>
+    private System.IntPtr desc;
+    /// <summary>Internal wrapper for field Info</summary>
+    private System.IntPtr info;
+
     /// <summary>
     /// The object the callback was called on.
     /// <para>Since EFL 1.22.</para>
     /// </summary>
-    public Efl.Object Object;
+    public Efl.Object Object { get => (Efl.Object) Efl.Eo.Globals.CreateWrapperFor(obj); }
 
     /// <summary>
     /// The event description.
     /// <para>Since EFL 1.22.</para>
     /// </summary>
-    public Efl.EventDescription Desc;
+    public Efl.EventDescription Desc { get => Eina.PrimitiveConversion.PointerToManaged<Efl.EventDescription>(desc); }
 
     /// <summary>
     /// Extra event information passed by the event caller.
@@ -192,7 +199,7 @@ internal struct Event
     /// 2) Structs, built-in types and containers are passed as const pointers, with one level of indirection.
     /// <para>Since EFL 1.22.</para>
     /// </summary>
-    public System.IntPtr Info;
+    public System.IntPtr Info { get => info; }
 
     /// <summary>Constructor for Event.</summary>
     public Event(
@@ -200,59 +207,21 @@ internal struct Event
         Efl.EventDescription desc = default(Efl.EventDescription),
         System.IntPtr info = default(System.IntPtr))
     {
-        this.Object = obj;
-        this.Desc = desc;
-        this.Info = info;
+        this.obj = obj?.NativeHandle ?? System.IntPtr.Zero;
+        this.desc = Eina.PrimitiveConversion.ManagedToPointerAlloc(desc);
+        this.info = info;
     }
 
     /// <summary>Implicit conversion to the managed representation from a native pointer.</summary>
     /// <param name="ptr">Native pointer to be converted.</param>
     public static implicit operator Event(IntPtr ptr)
     {
-        var tmp = (Event.NativeStruct) Marshal.PtrToStructure(ptr, typeof(Event.NativeStruct));
+        var tmp = (Event) Marshal.PtrToStructure(ptr, typeof(Event));
         return tmp;
-    }
-
-    /// <summary>Internal wrapper for struct Event.</summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct NativeStruct
-    {
-        /// <summary>Internal wrapper for field Object</summary>
-        public System.IntPtr Object;
-
-        /// <summary>Internal wrapper for field Desc</summary>
-        public System.IntPtr Desc;
-
-        /// <summary>Internal wrapper for field Info</summary>
-        public System.IntPtr Info;
-
-        /// <summary>Implicit conversion to the internal/marshalling representation.</summary>
-        /// <param name="externalStruct">Managed struct to be converted.</param>
-        /// <returns>Native representation of the managed struct.</returns>
-        public static implicit operator Event.NativeStruct(Event externalStruct)
-        {
-            var internalStruct = new Event.NativeStruct();
-            internalStruct.Object = externalStruct.Object?.NativeHandle ?? System.IntPtr.Zero;
-            internalStruct.Desc = Eina.PrimitiveConversion.ManagedToPointerAlloc(externalStruct.Desc);
-            internalStruct.Info = externalStruct.Info;
-            return internalStruct;
-        }
-
-        /// <summary>Implicit conversion to the managed representation.</summary>
-        /// <param name="internalStruct">Native struct to be converted.</param>
-        /// <returns>Managed representation of the native struct.</returns>
-        public static implicit operator Event(Event.NativeStruct internalStruct)
-        {
-            var externalStruct = new Event();
-            externalStruct.Object = (Efl.Object) Efl.Eo.Globals.CreateWrapperFor(internalStruct.Object);
-            externalStruct.Desc = Eina.PrimitiveConversion.PointerToManaged<Efl.EventDescription>(internalStruct.Desc);
-            externalStruct.Info = internalStruct.Info;
-            return externalStruct;
-        }
     }
 }
 
-internal delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
+internal delegate void EventCb(System.IntPtr data, ref Event evt);
 internal delegate void FreeWrapperSupervisorCb(System.IntPtr obj);
 
 namespace Access

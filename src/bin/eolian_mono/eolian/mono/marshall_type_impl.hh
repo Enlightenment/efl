@@ -129,7 +129,7 @@ struct marshall_type_visitor_generate
            , {"event", nullptr, [&]
               {
                 regular_type_def r = regular;
-                r.base_type = "Efl.Event.NativeStruct";
+                r.base_type = "Efl.Event";
                 r.namespaces.clear();
                 return r;
               }}
@@ -190,7 +190,7 @@ struct marshall_type_visitor_generate
           {
              if ((is_out || is_return) && is_ptr)
                  return as_generator("System.IntPtr").generate(sink, attributes::unused, *context);
-             return as_generator(string << ".NativeStruct")
+             return as_generator(string)
                     .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
         else if (eina::optional<bool> b = type_match::get_match

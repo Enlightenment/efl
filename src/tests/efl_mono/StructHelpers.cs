@@ -30,40 +30,38 @@ internal class StructHelpers
 
     internal static Dummy.StructSimple structSimpleWithValues()
     {
-        var simple = new Dummy.StructSimple();
-
-        simple.Fbyte = (sbyte)-126;
-        simple.Fubyte = (byte) 254u;
-        simple.Fchar = '~';
-        simple.Fshort = (short) -32766;
-        simple.Fushort = (ushort) 65534u;
-        simple.Fint = -32766;
-        simple.Fuint = 65534u;
-        simple.Flong = -2147483646;
-        simple.Fulong = 4294967294u;
-        simple.Fllong = -9223372036854775806;
-        simple.Fullong = 18446744073709551614u;
-        simple.Fint8 = (sbyte) -126;
-        simple.Fuint8 = (byte) 254u;
-        simple.Fint16 = (short) -32766;
-        simple.Fuint16 = (ushort) 65534u;
-        simple.Fint32 = -2147483646;
-        simple.Fuint32 = 4294967294u;
-        simple.Fint64 = -9223372036854775806;
-        simple.Fuint64 = 18446744073709551614u;
-        simple.Fssize = -2147483646;
-        simple.Fsize = 4294967294u;
-        simple.Fintptr = (IntPtr) 0xFE;
-        simple.Fptrdiff = -2147483646;
-        simple.Ffloat = -16777216.0f;
-        simple.Fdouble = -9007199254740992.0;
-        simple.Fbool = true;
-        simple.Fenum = Dummy.SampleEnum.V2;
-        simple.Fstring = "test/string";
-        simple.Fmstring = "test/mstring";
-        simple.Fstringshare = "test/stringshare";
-
-        return simple;
+        return  new Dummy.StructSimple(
+           fbyte: (sbyte)-126,
+           fubyte: (byte) 254u,
+           fchar: '~',
+           fshort: (short) -32766,
+           fushort: (ushort) 65534u,
+           fint: -32766,
+           fuint: 65534u,
+           flong: -2147483646,
+           fulong: 4294967294u,
+           fllong: -9223372036854775806,
+           fullong: 18446744073709551614u,
+           fint8: (sbyte) -126,
+           fuint8: (byte) 254u,
+           fint16: (short) -32766,
+           fuint16: (ushort) 65534u,
+           fint32: -2147483646,
+           fuint32: 4294967294u,
+           fint64: -9223372036854775806,
+           fuint64: 18446744073709551614u,
+           fssize: -2147483646,
+           fsize: 4294967294u,
+           fintptr: (IntPtr) 0xFE,
+           fptrdiff: -2147483646,
+           ffloat: -16777216.0f,
+           fdouble: -9007199254740992.0,
+           fbool: true,
+           fenum: Dummy.SampleEnum.V2,
+           fstring: "test/string",
+           fmstring: "test/mstring",
+           fstringshare: "test/stringshare"
+        );
     }
 
     internal static void checkStructSimple(Dummy.StructSimple simple)
@@ -137,42 +135,41 @@ internal class StructHelpers
 #if EFL_BETA
     internal static Dummy.StructComplex structComplexWithValues()
     {
-        var complex = new Dummy.StructComplex();
+        var Farray = new Eina.Array<string>();
+        Farray.Add("0x0");
+        Farray.Add("0x2A");
+        Farray.Add("0x42");
 
-        complex.Farray = new Eina.Array<string>();
-        complex.Farray.Add("0x0");
-        complex.Farray.Add("0x2A");
-        complex.Farray.Add("0x42");
+        var Flist = new Eina.List<string>();
+        Flist.Add("0x0");
+        Flist.Add("0x2A");
+        Flist.Add("0x42");
 
-        complex.Flist = new Eina.List<string>();
-        complex.Flist.Add("0x0");
-        complex.Flist.Add("0x2A");
-        complex.Flist.Add("0x42");
+        var Fhash = new Eina.Hash<string, string>();
+        Fhash["aa"] = "aaa";
+        Fhash["bb"] = "bbb";
+        Fhash["cc"] = "ccc";
 
-        complex.Fhash = new Eina.Hash<string, string>();
-        complex.Fhash["aa"] = "aaa";
-        complex.Fhash["bb"] = "bbb";
-        complex.Fhash["cc"] = "ccc";
+        var Fiterator = ((Eina.Array<string>)Farray).GetIterator();
 
-        complex.Fiterator = ((Eina.Array<string>)complex.Farray).GetIterator();
+        var Fany_value = new Eina.Value(Eina.ValueType.Double);
+        Fany_value.Set(-9007199254740992.0);
 
-        complex.Fany_value = new Eina.Value(Eina.ValueType.Double);
-        complex.Fany_value.Set(-9007199254740992.0);
+        var Fany_value_ref = new Eina.Value(Eina.ValueType.String);
+        Fany_value_ref.Set("abc");
 
-        complex.Fany_value_ref = new Eina.Value(Eina.ValueType.String);
-        complex.Fany_value_ref.Set("abc");
+        var Fbinbuf = new Eina.Binbuf();
+        Fbinbuf.Append(126);
 
-        complex.Fbinbuf = new Eina.Binbuf();
-        complex.Fbinbuf.Append(126);
+        var Fslice = new Eina.Slice(Eina.MemoryNative.Alloc(1), (UIntPtr)1);
+        Marshal.WriteByte(Fslice.Mem, 125);
 
-        complex.Fslice.Length = 1;
-        complex.Fslice.Mem = Eina.MemoryNative.Alloc(1);
-        Marshal.WriteByte(complex.Fslice.Mem, 125);
+        var Fobj = new Dummy.Numberwrapper();
+        Fobj.SetNumber(42);
 
-        complex.Fobj = new Dummy.Numberwrapper();
-        complex.Fobj.SetNumber(42);
-
-        return complex;
+        return new Dummy.StructComplex(farray: Farray, flist: Flist, fhash: Fhash,
+            fiterator: Fiterator, fanyValue:Fany_value, fanyValueRef: Fany_value_ref,
+            fbinbuf: Fbinbuf, fslice:Fslice, fobj: Fobj);
     }
 
     internal static void checkStructComplex(Dummy.StructComplex complex)
@@ -194,11 +191,11 @@ internal class StructHelpers
         Test.AssertEquals(idx, base_seq_str.Length);
 
         double double_val = 0;
-        Test.Assert(complex.Fany_value.Get(out double_val));
+        Test.Assert(complex.FanyValue.Get(out double_val));
         Test.Assert(double_val == -9007199254740992.0);
 
         string str_val = null;
-        Test.Assert(complex.Fany_value_ref.Get(out str_val));
+        Test.Assert(complex.FanyValueRef.Get(out str_val));
         Test.Assert(str_val == "abc");
 
         Test.Assert(complex.Fbinbuf.Length == 1);
@@ -218,8 +215,8 @@ internal class StructHelpers
         Test.Assert(complex.Flist == null);
         Test.Assert(complex.Fhash == null);
         Test.Assert(complex.Fiterator == null);
-        Test.Assert(complex.Fany_value == null);
-        Test.Assert(complex.Fany_value_ref == null);
+        Test.Assert(complex.FanyValue == null);
+        Test.Assert(complex.FanyValueRef == null);
         Test.Assert(complex.Fbinbuf == null);
 
         Test.Assert(complex.Fslice.Length == 0);

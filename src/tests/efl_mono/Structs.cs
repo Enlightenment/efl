@@ -180,8 +180,7 @@ internal class TestStructs
 
         public override bool StructSimpleOut(out Dummy.StructSimple simple) {
             called = true;
-            simple = new Dummy.StructSimple();
-            simple.Fstring = "Virtual Struct Out";
+            simple = new Dummy.StructSimple(fstring: "Virtual Struct Out");
             return true;
         }
 
@@ -206,8 +205,7 @@ internal class TestStructs
         public override Dummy.StructSimple StructSimpleReturn()
         {
             called = true;
-            var simple = new Dummy.StructSimple();
-            simple.Fstring = "Virtual Struct Return";
+            var simple = new Dummy.StructSimple(fstring: "Virtual Struct Return");
             return simple;
         }
 
@@ -234,7 +232,6 @@ internal class TestStructs
     {
         StructReturner t = new StructReturner();
         var simple = structSimpleWithValues();
-        simple.Fstring = "Virtual Struct In";
 
         t.CallStructSimpleIn(simple);
         Test.Assert(t.called);
@@ -379,13 +376,13 @@ internal class TestStructs
 
 internal class TestStructEquality
 {
-    static Dummy.StructSimple a = new Dummy.StructSimple(1, 2, (char)3, 4, Fstring: "", Fmstring: "", Fstringshare: "");
-    static Dummy.StructSimple b = new Dummy.StructSimple(1, 2, (char)3, 4, Fstring: "", Fmstring: "", Fstringshare: "");
+    static Dummy.StructSimple a = new Dummy.StructSimple(1, 2, (char)3, 4, fstring: "", fmstring: "", fstringshare: "");
+    static Dummy.StructSimple b = new Dummy.StructSimple(1, 2, (char)3, 4, fstring: "", fmstring: "", fstringshare: "");
 
-    static Dummy.StructSimple c = new Dummy.StructSimple(4, 3, (char)2, 1, Fstring: "", Fmstring: "", Fstringshare: "");
+    static Dummy.StructSimple c = new Dummy.StructSimple(4, 3, (char)2, 1, fstring: "", fmstring: "", fstringshare: "");
 
     // to check if we differ on a single struct field
-    static Dummy.StructSimple singleDifferentField = new Dummy.StructSimple(1, 2, (char)3, 5, Fstring: "", Fmstring: "", Fstringshare: "");
+    static Dummy.StructSimple singleDifferentField = new Dummy.StructSimple(1, 2, (char)3, 5, fstring: "", fmstring: "", fstringshare: "");
 
     public static void test_equals()
     {

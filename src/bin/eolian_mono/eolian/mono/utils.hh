@@ -90,6 +90,28 @@ namespace eolian_mono { namespace utils {
         return ret;
     }
 
+   std::string to_camel_case(const std::vector<std::string> &names, std::string const& delim="")
+   {
+     std::vector<std::string> outv(names.size());
+        std::stringstream osstream;
+
+        std::transform(names.begin(), names.end(), outv.begin(),
+              [](std::string name) {
+                name[0] = std::toupper(name[0]);
+                return name;
+              });
+
+        std::copy(outv.begin(), outv.end(), std::ostream_iterator<std::string>(osstream, delim.c_str()));
+
+        std::string ret = osstream.str();
+
+        if (delim != "")
+            ret.pop_back(); // We could implement an infix_iterator but this pop is enough for now.
+
+        ret[0] = std::tolower(ret[0]);
+        return ret;
+    }
+
    inline std::string remove_all(std::string name, char target)
    {
        name.erase(std::remove(name.begin(), name.end(), target), name.end());

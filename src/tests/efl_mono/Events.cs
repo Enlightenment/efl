@@ -196,8 +196,7 @@ class TestEoEvents
             received_struct = e.arg;
         };
 
-        Dummy.StructSimple sent_struct = default(Dummy.StructSimple);
-        sent_struct.Fstring = "Struct Event";
+        Dummy.StructSimple sent_struct = new Dummy.StructSimple(fstring: "Struct Event");
 
         obj.EmitEventWithStruct(sent_struct);
 

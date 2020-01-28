@@ -69,11 +69,121 @@ struct field_argument_assignment_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-       auto field_name = name_helpers::to_field_name(field.name);
-       if (!as_generator("this." << field_name << " = " << field_name)
-               .generate(sink, attributes::unused, context))
-           return false;
-       return true;
+      auto field_name = to_field_name(field.name);
+      // FIXME Replace need_struct_conversion(regular) with need_struct_conversion(type)
+      auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
+      auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
+      auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
+
+      if (klass)
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << "?.NativeHandle ?? System.IntPtr.Zero;\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if ((complex && (complex->outer.base_type == "array")))
+        {
+           if (!as_generator(
+                 "this." << string << " = Efl.Eo.Globals.IListToNativeArray(" << string << ", " << (field.type.has_own ? "true" : "false") << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if ((complex && (complex->outer.base_type == "list")))
+        {
+           if (!as_generator(
+                 "this." << string << " = Efl.Eo.Globals.IListToNativeList(" << string << ", " << (field.type.has_own ? "true" : "false") << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if ((complex && (complex->outer.base_type == "iterator")))
+        {
+           if (!as_generator(
+                 "this." << string << " = Efl.Eo.Globals.IEnumerableToIterator(" << string << ", " << (field.type.has_own ? "true" : "false")  << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if ((complex && (complex->outer.base_type == "hash"))
+            || field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
+        {
+           // Always assumes pointer
+           if (!as_generator(
+                 "this." << string << " = " << string << ".Handle;\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
+        {
+           if (!as_generator(
+                 "this." << string << " = Eina.PrimitiveConversion.ManagedToPointerAlloc(" << string << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (helpers::need_struct_conversion(regular))
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (regular && (regular->base_type == "string" || regular->base_type == "mstring"))
+        {
+           if (!as_generator(
+                 "this." << string << " = Eina.MemoryNative.StrDup(" << string << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (regular && regular->base_type == "stringshare")
+        {
+           if (!as_generator(
+                 "this." << string << " = Eina.MemoryNative.AddStringshare(" << string << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (field.type.c_type == "Eina_Slice" || field.type.c_type == "const Eina_Slice"
+               || field.type.c_type == "Eina_Rw_Slice" || field.type.c_type == "const Eina_Rw_Slice")
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (field.type.c_type == "Eina_Value" || field.type.c_type == "const Eina_Value")
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << ".GetNative();\n"
+               ).generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << "?.NativeHandle ?? System.IntPtr.Zero;\n"
+               ).generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (!field.type.is_ptr && regular && regular->base_type == "bool")
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << " ? (byte)1 : (byte)0;\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (!field.type.is_ptr && regular && regular->base_type == "char")
+        {
+           if (!as_generator(
+                 "this." << string << " = (byte)" << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else // primitives and enums
+        {
+           if (!as_generator(
+                 "this." << string << " = " << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      return true;
    }
 } const field_argument_assignment {};
 

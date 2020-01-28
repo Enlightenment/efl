@@ -328,7 +328,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
     internal Efl.EventCb GetInternalEventCallback<T>(EventHandler<T> handler, Func<IntPtr, T> createArgsInstance) where T:EventArgs
     {
-        return (IntPtr data, ref Efl.Event.NativeStruct evt) =>
+        return (IntPtr data, ref Efl.Event evt) =>
         {
            var obj = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data).Target;
            if (obj != null)
@@ -348,7 +348,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
     internal Efl.EventCb GetInternalEventCallback(EventHandler handler)
     {
-        return (IntPtr data, ref Efl.Event.NativeStruct evt) =>
+        return (IntPtr data, ref Efl.Event evt) =>
         {
            var obj = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data).Target;
            if (obj != null)
@@ -383,13 +383,13 @@ public abstract class EoWrapper : IWrapper, IDisposable
         }
     }
 
-    private static void OwnershipUniqueCallback(IntPtr data, ref Efl.Event.NativeStruct evt)
+    private static void OwnershipUniqueCallback(IntPtr data, ref Efl.Event evt)
     {
         var ws = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data);
         ws.MakeUnique();
     }
 
-    private static void OwnershipSharedCallback(IntPtr data, ref Efl.Event.NativeStruct evt)
+    private static void OwnershipSharedCallback(IntPtr data, ref Efl.Event evt)
     {
         var ws = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data);
         ws.MakeShared();

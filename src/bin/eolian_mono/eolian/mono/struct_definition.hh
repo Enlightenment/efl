@@ -181,7 +181,6 @@ struct to_external_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto const& indent = current_indentation(context);
       auto field_name = name_helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
@@ -191,113 +190,108 @@ struct to_external_field_convert_generator
         {
            auto interface_name = name_helpers::klass_full_interface_name(*klass);
            if (!as_generator(
-                 "\n"
-                 << indent << scope_tab << scope_tab << "_external_struct." << string
-                 << " = (" << interface_name << ") Efl.Eo.Globals.CreateWrapperFor(_internal_struct." << string << ");\n"
+                 "(" << interface_name << ") Efl.Eo.Globals.CreateWrapperFor(" << string << ");"
                  ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = new " << type << "(_internal_struct." << string << ", false);\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 "new " << type << "(" << string << ", false);")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }
       else if (complex && (complex->outer.base_type == "array"))
         {
            // Always assumes pointer
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Efl.Eo.Globals.NativeArrayTo" << type << "(_internal_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 "Efl.Eo.Globals.NativeArrayTo" << type << "(" << string << ");")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }
       else if (complex && (complex->outer.base_type == "list"))
         {
            // Always assumes pointer
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Efl.Eo.Globals.NativeListTo" << type << "(_internal_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 "Efl.Eo.Globals.NativeListTo" << type << "(" << string << ");")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }
       else if (complex && complex->outer.base_type == "hash")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = new " << type << "(_internal_struct." << string << ", false, false, false);\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 "new " << type << "(" << string << ", false, false, false);")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }
       else if (complex && complex->outer.base_type == "iterator")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Efl.Eo.Globals.IteratorTo" << type << "(_internal_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 "Efl.Eo.Globals.IteratorTo" << type << "(" << string << ");")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }
       else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 "Eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << string << ");")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }
       else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = _internal_struct." << string << ";\n")
-               .generate(sink, std::make_tuple(field_name, field_name), context))
+                 string << ";")
+               .generate(sink, field_name, context))
              return false;
         }
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring" || regular->base_type == "stringshare"))
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = Eina.StringConversion.NativeUtf8ToManagedString(_internal_struct." << string << ");\n")
+                 "Eina.StringConversion.NativeUtf8ToManagedString(" << string << ");")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Slice" || field.type.c_type == "const Eina_Slice"
                || field.type.c_type == "Eina_Rw_Slice" || field.type.c_type == "const Eina_Rw_Slice")
         {
-           if (!as_generator(
-                 "\n" <<
-                 indent << scope_tab << scope_tab << "_external_struct." << field_name << ".Len = _internal_struct." << field_name << ".Len;\n" <<
-                 indent << scope_tab << scope_tab << "_external_struct." << field_name << ".Mem = _internal_struct." << field_name << ".Mem;\n")
+           if (!as_generator(field_name << ";")
                .generate(sink, attributes::unused, context))
              return false;
         }
       else if (field.type.c_type == "Eina_Value" || field.type.c_type == "const Eina_Value")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ");\n"
-               ).generate(sink, std::make_tuple(field_name, field_name), context))
+                 "new Eina.Value(" << string << ");"
+               ).generate(sink, std::make_tuple(field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ", Eina.Ownership.Unmanaged);\n"
-               ).generate(sink, std::make_tuple(field_name, field_name), context))
+                 "new Eina.Value(" << string << ", Eina.Ownership.Unmanaged);"
+               ).generate(sink, std::make_tuple(field_name), context))
              return false;
         }
       else if (!field.type.is_ptr && regular && regular->base_type == "bool")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = _internal_struct." << string << " != 0;\n"
-               ).generate(sink, std::make_tuple(field_name, field_name), context))
+                 string << " != 0;"
+               ).generate(sink, std::make_tuple(field_name), context))
              return false;
         }
       else if (!field.type.is_ptr && regular && regular->base_type == "char")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = (char)_internal_struct." << string << ";\n"
-               ).generate(sink, std::make_tuple(field_name, field_name), context))
+                 "(char)" << string << ";"
+               ).generate(sink, std::make_tuple(field_name), context))
              return false;
         }
       else // primitives and enums
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = _internal_struct." << string << ";\n")
-               .generate(sink, std::make_tuple(field_name, field_name), context))
+                 field_name << ";"
+               ).generate(sink, attributes::unused, context))
              return false;
         }
       return true;
@@ -306,22 +300,12 @@ struct to_external_field_convert_generator
 
 // Internal Struct //
 
-struct struct_internal_definition_generator
+struct struct_private_property_generator
 {
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
      auto const& indent = current_indentation(context);
-     if (!as_generator
-         (
-          "#pragma warning disable CS1591\n\n"
-          << indent << "/// <summary>Internal wrapper for struct " << string << ".</summary>\n"
-          << indent << "[StructLayout(LayoutKind.Sequential)]\n"
-          << indent << "internal struct " << string << "\n"
-          << indent << "{\n"
-         )
-         .generate(sink, std::make_tuple<>(binding_struct_name(struct_), struct_internal_decl_name()), context))
-       return false;
 
      // iterate struct fields
      for (auto const& field : struct_.fields)
@@ -337,7 +321,7 @@ struct struct_internal_definition_generator
                               || regular->base_type == "any_value_ref")))
             {
                if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
-                                 << indent << scope_tab << "public System.IntPtr " << field_name << ";\n")
+                                 << indent << scope_tab << "private System.IntPtr " << field_name << ";\n")
                    .generate(sink, nullptr, context))
                  return false;
             }
@@ -345,7 +329,7 @@ struct struct_internal_definition_generator
                    && regular->base_type == "bool")
             {
                if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
-                                 << indent << scope_tab << "public System.Byte " << field_name << ";\n")
+                                 << indent << scope_tab << "private System.Byte " << field_name << ";\n")
                    .generate(sink, nullptr, context))
                  return false;
             }
@@ -353,12 +337,12 @@ struct struct_internal_definition_generator
                    && regular->base_type == "char")
             {
                if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
-                                 << indent << scope_tab << "public System.Byte " << field_name << ";\n")
+                                 << indent << scope_tab << "private System.Byte " << field_name << ";\n")
                    .generate(sink, nullptr, context))
                  return false;
             }
           else if (!as_generator(indent << scope_tab << eolian_mono::marshall_annotation(false) << "\n"
-                                 << indent << scope_tab << "public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
+                                 << indent << scope_tab << "private " << eolian_mono::marshall_type(false) << " " << string << ";\n")
                    .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
             return false;
        }
@@ -369,59 +353,18 @@ struct struct_internal_definition_generator
      // those 'mini-amd64.c condition fields not met' crashes.
      if (struct_.fields.size() == 0)
        {
-           if (!as_generator(indent << scope_tab << "internal IntPtr field;\n").generate(sink, nullptr, context))
+           if (!as_generator(indent << scope_tab << "/// <summary>Placeholder field</summary>\n"
+                             << indent << scope_tab << "private IntPtr field;\n").generate(sink, nullptr, context))
              return false;
        }
 
-     auto external_name = binding_struct_name(struct_);
-     auto internal_name = binding_struct_internal_name(struct_);
-
-     // to internal
-     if (!as_generator(
-           indent << scope_tab << "/// <summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
-           << indent << scope_tab << "public static implicit operator " << string << "(" << string << " _external_struct)\n"
-           << indent << scope_tab << "{\n"
-           << indent << scope_tab << scope_tab << "var _internal_struct = new " << string << "();\n"
-           ).generate(sink, std::make_tuple(internal_name, external_name, internal_name), context))
+     if(!as_generator("\n")
+        .generate(sink, attributes::unused, context))
        return false;
-
-     for (auto const& field : struct_.fields)
-       {
-          if (!to_internal_field_convert.generate(sink, field, context))
-            return false;
-       }
-
-     if (!as_generator(indent << scope_tab << scope_tab << "return _internal_struct;\n"
-                       << indent << scope_tab << "}\n\n").generate(sink, nullptr, context))
-       return false;
-
-     // to managed
-     if (!as_generator(
-           indent << scope_tab << "/// <summary>Implicit conversion to the managed representation.</summary>\n"
-           << indent << scope_tab << "public static implicit operator " << string << "(" << string << " _internal_struct)\n"
-           << indent << scope_tab << "{\n"
-           << indent << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n"
-           ).generate(sink, std::make_tuple(external_name, internal_name, external_name), context))
-       return false;
-
-     for (auto const& field : struct_.fields)
-       {
-          if (!to_external_field_convert.generate(sink, field, context))
-            return false;
-       }
-
-     if (!as_generator(indent << scope_tab << scope_tab << "return _external_struct;\n"
-                       << indent << scope_tab << "}\n").generate(sink, nullptr, context))
-       return false;
-
-     // close internal class
-     if(!as_generator(indent << "}\n"
-                      << "#pragma warning restore CS1591\n"
-                 ).generate(sink, attributes::unused, context)) return false;
 
      return true;
   }
-} const struct_internal_definition {};
+} const struct_private_property {};
 
 // Managed Struct //
 
@@ -454,34 +397,22 @@ struct struct_definition_generator
        return false;
 
      if (!as_generator(
-          indent << scope_tab << "public static implicit operator " << struct_name << "(\n"
-          << indent << scope_tab << scope_tab << "(\n"
-          << ((indent << scope_tab << scope_tab << " " << field_argument_decl) % ",\n") << "\n"
-          << indent << scope_tab << scope_tab << ") tuple)\n"
-          << indent << scope_tab << "{\n"
+          indent << scope_tab << "public static implicit operator " << struct_name << "(("
+          << (field_argument_decl % ", ")
+          << ") tuple)\n"
         ).generate(sink, struct_.fields, context))
        return false;
 
      // object constructor
      if (!as_generator(
-          indent << scope_tab << scope_tab << "return new " << struct_name << "{\n"
+          indent << scope_tab << scope_tab << "=> new " << struct_name << "("
         ).generate(sink, attributes::unused, context))
        return false;
 
-     for (const auto& field: struct_.fields)
-       {
-          auto field_name = name_helpers::to_field_name(field.name);
-
-          if (!as_generator(
-               indent << scope_tab << scope_tab << scope_tab << field_name << " = tuple." << field_name << ",\n"
-             ).generate(sink, attributes::unused, context))
-            return false;
-       }
-
      if (!as_generator(
-          indent << scope_tab << scope_tab << "};\n"
-          << indent << scope_tab << "}\n"
-        ).generate(sink, attributes::unused, context))
+          (("tuple." << struct_field_name) % ", ")
+          << ");\n\n"
+        ).generate(sink, struct_.fields, context))
        return false;
 
      return true;
@@ -528,10 +459,11 @@ struct struct_definition_generator
      // assigments
      for (auto const& field : struct_.fields)
        {
-          auto field_name = name_helpers::to_field_name(field.name);
+          auto field_name = name_helpers::managed_name(field.name);
+          auto param_name = name_helpers::to_field_name(field.name);
 
           if (!as_generator(
-              indent << scope_tab << scope_tab << field_name << " = this." << field_name << ";\n"
+              indent << scope_tab << scope_tab << param_name << " = this." << field_name << ";\n"
               ).generate(sink, attributes::unused, context))
             return false;
        }
@@ -561,6 +493,9 @@ struct struct_definition_generator
         .generate(sink, attributes::unused, context))
        return false;
 
+     if (!struct_private_property.generate(sink, struct_, change_indentation(indent, context)))
+       return false;
+
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
@@ -574,23 +509,13 @@ struct struct_definition_generator
                  return false;
             }
 
-          if (!as_generator(indent << scope_tab << "public " << type << " " << name_helpers::to_field_name(field.name) << ";\n").generate(sink, field.type, context))
+          if (!as_generator(indent << scope_tab << "public " << type << " " << name_helpers::managed_name(field.name) << " { get => " << to_external_field_convert << " }\n").generate(sink, std::make_tuple(field.type, field), context))
             return false;
        }
 
       auto struct_name = binding_struct_name(struct_);
 
-     // Check whether this is an extern struct without declared fields in .eo file and generate a
-     // placeholder field if positive.
-     // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
-     // those 'mini-amd64.c condition fields not met' crashes.
-     if (struct_.fields.size() == 0)
-       {
-           if (!as_generator(indent << scope_tab << "/// <summary>Placeholder field</summary>\n"
-                             << indent << scope_tab << "public IntPtr field;\n").generate(sink, nullptr, context))
-             return false;
-       }
-     else
+     if (struct_.fields.size() != 0)
        {
           // Constructor with default parameters for easy struct initialization
           if(!as_generator(
@@ -608,9 +533,9 @@ struct struct_definition_generator
                       << *(indent << scope_tab << field_argument_docs << "\n")
                       << indent << scope_tab << "public " << string << "(\n"
                       << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
-                      << indent << scope_tab << ")\n"
+                      << ")\n"
                       << indent << scope_tab << "{\n"
-                      << *(indent << scope_tab << scope_tab << field_argument_assignment << ";\n")
+                      << *(indent << scope_tab << scope_tab << field_argument_assignment)
                       << indent << scope_tab << "}\n\n")
              .generate(sink, std::make_tuple(struct_.fields, struct_name, struct_.fields, struct_.fields), context))
             return false;
@@ -638,7 +563,14 @@ struct struct_definition_generator
           ).generate(sink, attributes::unused, context))
        return false;
 
-     if (struct_.fields.size() != 0 )
+     if (struct_.fields.size() == 1 )
+       {
+          if (!as_generator(
+                indent << scope_tab << scope_tab  << "return " << name_helpers::managed_name(struct_.fields[0].name) << ".GetHashCode();\n"
+              ).generate(sink, attributes::unused, context))
+            return false;
+       }
+     else if (struct_.fields.size() != 0 )
        {
           // int hash = 17;
           // hash = 23 * fieldA.GetHashCode();
@@ -647,7 +579,7 @@ struct struct_definition_generator
           // return hash
           if (!as_generator(
                 indent << scope_tab << scope_tab << "int hash = 17;\n"
-                << *(grammar::attribute_reorder<-1, -1>(indent << scope_tab << scope_tab << "hash = hash * 23 + " << name_helpers::struct_field_name << ".GetHashCode(" << culture_info << ");\n"))
+                << *(grammar::attribute_reorder<-1, -1>(indent << scope_tab << scope_tab << "hash = hash * 23 + " << name_helpers::struct_property_name << ".GetHashCode(" << culture_info << ");\n"))
                 << indent << scope_tab << scope_tab << "return hash;\n"
               ).generate(sink, struct_.fields, context))
             return false;
@@ -656,7 +588,7 @@ struct struct_definition_generator
        {
           // Just compare the place holder pointers
           if (!as_generator(
-                "return field.GetHashCode();\n"
+                indent << scope_tab << scope_tab  << "return field.GetHashCode();\n"
               ).generate(sink, attributes::unused, context))
             return false;
        }
@@ -680,7 +612,7 @@ struct struct_definition_generator
      if (struct_.fields.size() != 0 )
        {
           if (!as_generator(
-                grammar::attribute_reorder<-1, -1>((name_helpers::struct_field_name << " == other." << name_helpers::struct_field_name)) % " && "
+                grammar::attribute_reorder<-1, -1>((name_helpers::struct_property_name << " == other." << name_helpers::struct_property_name)) % " && "
               ).generate(sink, struct_.fields, context))
             return false;
        }
@@ -695,7 +627,7 @@ struct struct_definition_generator
 
 
      if (!as_generator(
-             indent << scope_tab << scope_tab << ";\n"
+             ";\n"
              << indent << scope_tab << "}\n"
           ).generate(sink, attributes::unused, context))
       return false;
@@ -745,8 +677,7 @@ struct struct_definition_generator
             << indent << scope_tab << "/// <param name=\"ptr\">Native pointer to be converted.</param>\n"
             << indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
             << indent << scope_tab << "{\n"
-            << indent << scope_tab << scope_tab << "var tmp = (" << struct_name << ".NativeStruct)Marshal.PtrToStructure(ptr, typeof(" << struct_name << ".NativeStruct));\n"
-            << indent << scope_tab << scope_tab << "return tmp;\n"
+            << indent << scope_tab << scope_tab << "return (" << struct_name << ")Marshal.PtrToStructure(ptr, typeof(" << struct_name << "));\n"
             << indent << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, context))
        return false;
@@ -769,9 +700,6 @@ struct struct_definition_generator
             << indent << scope_tab << scope_tab << "return ptr;\n"
             << indent << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, context))
-       return false;
-
-     if (!struct_internal_definition.generate(sink, struct_, change_indentation(indent.inc(), context)))
        return false;
 
      if(!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context)) return false;
@@ -809,9 +737,9 @@ template <>
 struct is_generator< ::eolian_mono::struct_definition_generator> : std::true_type {};
 
 template <>
-struct is_eager_generator< ::eolian_mono::struct_internal_definition_generator> : std::true_type {};
+struct is_eager_generator< ::eolian_mono::struct_private_property_generator> : std::true_type {};
 template <>
-struct is_generator< ::eolian_mono::struct_internal_definition_generator> : std::true_type {};
+struct is_generator< ::eolian_mono::struct_private_property_generator> : std::true_type {};
 
 template <>
 struct is_eager_generator< ::eolian_mono::to_internal_field_convert_generator> : std::true_type {};
@@ -833,7 +761,7 @@ template <>
 struct attributes_needed< ::eolian_mono::struct_definition_generator> : std::integral_constant<int, 1> {};
 
 template <>
-struct attributes_needed< ::eolian_mono::struct_internal_definition_generator> : std::integral_constant<int, 1> {};
+struct attributes_needed< ::eolian_mono::struct_private_property_generator> : std::integral_constant<int, 1> {};
 
 template <>
 struct attributes_needed< ::eolian_mono::to_internal_field_convert_generator> : std::integral_constant<int, 1> {};
