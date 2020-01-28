@@ -52,7 +52,7 @@ static void
 check_changed_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *anim_view = data;
-   efl_ui_vg_animation_looping_set(anim_view, efl_ui_selectable_selected_get(event->object));
+   efl_player_playback_loop_set(anim_view, efl_ui_selectable_selected_get(event->object));
 }
 
 static void

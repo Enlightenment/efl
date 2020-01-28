@@ -93,6 +93,45 @@ interface Efl.Player
                   speed: double; [[The play speed in the [0, infinity) range.]]
              }
         }
+        @property autoplay {
+           [[When $true, playback will start as soon as the media is ready.
+
+             This means that the media file has been successfully loaded and the
+             object is visible.
+
+             If the object becomes invisible later on the playback is paused,
+             resuming when it is visible again.
+
+             Changing this property affects the next media being loaded,
+             so set it before setting the media file.
+
+             @since 1.24
+           ]]
+           set {
+           }
+           get {
+           }
+           values {
+              autoplay: bool; [[Auto play mode, Default is $false.]]
+           }
+        }
+        @property playback_loop {
+           [[Enable playback looping.
+
+             When $true, playback continues from the beginning when it reaches the last frame.
+             Otherwise, playback stops.
+             This works both when playing forward and backward.
+
+             @since 1.24
+           ]]
+           set {
+           }
+           get {
+           }
+           values {
+              looping: bool; [[Loop mode, Default is $false.]]
+           }
+        }
    }
    events {
       playing,changed: bool; [[Called when the playing state has changed. The event value reflects the current state. @since 1.24]]

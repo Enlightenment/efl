@@ -3171,7 +3171,6 @@ _efl_ui_image_zoomable_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl
      sd->cur_frame = 0;
 }
 
-
 EOLIAN static void
 _efl_ui_image_zoomable_class_constructor(Efl_Class *klass EINA_UNUSED)
 {

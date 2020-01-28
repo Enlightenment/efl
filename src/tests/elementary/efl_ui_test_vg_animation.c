@@ -50,12 +50,12 @@ EFL_START_TEST(vg_anim_playing_control)
    ck_assert_int_eq(efl_ui_vg_animation_state_get(vg_anim), EFL_UI_VG_ANIMATION_STATE_STOPPED);
 
    // Auto repeat
-   efl_ui_vg_animation_looping_set(vg_anim, EINA_TRUE);
-   ck_assert_int_eq(efl_ui_vg_animation_looping_get(vg_anim), EINA_TRUE);
+   efl_player_playback_loop_set(vg_anim, EINA_TRUE);
+   ck_assert_int_eq(efl_player_playback_loop_get(vg_anim), EINA_TRUE);
 
    // Auto play
-   efl_ui_vg_animation_autoplay_set(vg_anim, EINA_TRUE);
-   ck_assert_int_eq(efl_ui_vg_animation_autoplay_get(vg_anim), EINA_TRUE);
+   efl_player_autoplay_set(vg_anim, EINA_TRUE);
+   ck_assert_int_eq(efl_player_autoplay_get(vg_anim), EINA_TRUE);
 }
 EFL_END_TEST
 

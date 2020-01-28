@@ -25,44 +25,6 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
    ]]
    event_c_prefix: efl_ui_vg_animation;
    methods {
-      @property autoplay {
-         [[Animation will be started automatically when it's possible.
-
-           If @.autoplay is $true, animation will be started when it's readied.
-           The condition of $auto play is when vg animation opened file successfully,
-           yet to play it plus when the object is visible.
-           If vg animation is disabled, invisible,
-           it turns to pause state then resume animation when it's visible again.
-
-           $true Enable auto play mode, disable otherwise.
-
-           Warning: This auto play will be only affected to the next animation source.
-           So must be called before setting animation file.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-            autoplay: bool(false); [[Auto play mode.]]
-         }
-      }
-      @property looping {
-         [[Turn on/off animation looping.
-
-           When $true, animation is restarted when it reaches the last frame.
-           This works both when playing forward and backward.
-
-           $true Enable loop mode, disable otherwise.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-            looping: bool; [[Loop mode, Default is $false.]]
-         }
-      }
       @property frame {
          [[Number of current frame.
 
@@ -203,5 +165,7 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
       Efl.Playable.length { get; }
       Efl.Playable.playable { get; }
       Efl.Playable.seekable { get; }
+      Efl.Player.autoplay { set; get; }
+      Efl.Player.playback_loop { set; get; }
    }
 }
