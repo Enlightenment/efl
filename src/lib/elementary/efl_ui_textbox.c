@@ -3283,18 +3283,18 @@ _efl_ui_textbox_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data 
 
 /* Efl.Part begin */
 
-#define STRCMP(X, Y) strncmp((X), (Y), strlen(X))
-
 static Eina_Bool
 _efl_ui_textbox_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
       const char *part, const char *text)
 {
-   if (!STRCMP("efl.text_guide", part))
+   if (!part) return EINA_FALSE;
+
+   if (!strcmp("efl.text_guide", part))
      {
         efl_text_set(pd->text_guide_obj, text);
         return EINA_TRUE;
      }
-   else if (!STRCMP("efl.text", part))
+   else if (!strcmp("efl.text", part))
      {
         efl_text_set(pd->text_obj, text);
         return EINA_TRUE;
@@ -3307,19 +3307,19 @@ static const char *
 _efl_ui_textbox_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
       const char *part)
 {
-   if (!STRCMP("efl.text_guide", part))
+   if (!part) return EINA_FALSE;
+
+   if (!strcmp("efl.text_guide", part))
      {
         return efl_text_get(pd->text_guide_obj);
      }
-   else if (!STRCMP("efl.text", part))
+   else if (!strcmp("efl.text", part))
      {
         return efl_text_get(pd->text_obj);
      }
 
    return NULL;
 }
-
-#undef STRCMP
 
 static Eina_Bool
 _part_is_efl_ui_textbox_part(const Eo *obj EINA_UNUSED, const char *part)
