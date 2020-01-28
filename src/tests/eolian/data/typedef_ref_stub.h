@@ -5,7 +5,7 @@ typedef Eo Typedef;
 
 typedef int Evas_Coord;
 
-typedef Eina_List *List_Objects;
+typedef Eina_Iterator *List_Objects;
 
 typedef Evas_Coord Evas_Coord2;
 

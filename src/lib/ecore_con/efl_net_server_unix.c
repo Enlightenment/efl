@@ -45,53 +45,63 @@
 typedef struct _Efl_Net_Server_Unix_Data
 {
    unsigned int leading_directories_create_mode;
-   Eina_Bool leading_directories_create;
-   Eina_Bool unlink_before_bind;
+#ifdef BIND_HANG_WORKAROUND
+   int lock_fd;
+   Eina_Bool have_lock_fd : 1;
+#endif
+   Eina_Bool leading_directories_create : 1;
+   Eina_Bool unlink_before_bind : 1;
 } Efl_Net_Server_Unix_Data;
 
 #ifdef BIND_HANG_WORKAROUND
-static Eina_Error
-_efl_net_server_unix_bind_hang_lock_workaround(const char *address, Eina_Bool lock)
+static int
+_efl_net_server_unix_bind_hang_lock_workaround(const char *address, Eina_Bool lock, int lockfile_fd)
 {
    size_t addrlen;
    char *lockfile;
-   int lockfile_fd, ret;
-   Eina_Error err = 0;
+   int ret;
 
-   if (strncmp(address, "abstract:", strlen("abstract:")) == 0) return err;
+   if (strncmp(address, "abstract:", strlen("abstract:")) == 0) return -1;
 
    addrlen = strlen(address);
    lockfile = malloc(addrlen + 1 + 5);
-   if (!lockfile) return err;
+   if (!lockfile) return -1;
 
    strcpy(lockfile, address);
    strncpy(lockfile + addrlen, ".lock", 6);
+   if (lock)
+     {
 #ifdef HAVE_OPEN_CLOEXEC
-   lockfile_fd = open(lockfile, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC,
-                      S_IRUSR | S_IWUSR);
-   if (lockfile_fd < 0) return err;
+        lockfile_fd = open(lockfile, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC,
+                           S_IRUSR | S_IWUSR);
+        if (lockfile_fd < 0) return -1;
 #else
-   lockfile_fd = open(lockfile, O_RDWR | O_CREAT | O_TRUNC,
-                      S_IRUSR | S_IWUSR);
-   if (lockfile_fd < 0) return err;
-   eina_file_close_on_exec(lockfile_fd, EINA_TRUE);
+        lockfile_fd = open(lockfile, O_RDWR | O_CREAT | O_TRUNC,
+                           S_IRUSR | S_IWUSR);
+        if (lockfile_fd < 0) return -1;
+        eina_file_close_on_exec(lockfile_fd, EINA_TRUE);
 #endif
+     }
 
    errno = 0;
    if (lock)
      {
         ret = flock(lockfile_fd, LOCK_EX | LOCK_NB);
         if ((ret != 0) && (errno == EWOULDBLOCK))
-          err = EADDRINUSE;
+          {
+             close(lockfile_fd);
+             lockfile_fd = -1;
+          }
      }
    else
      {
         flock(lockfile_fd, LOCK_UN | LOCK_NB);
         unlink(lockfile);
+        close(lockfile_fd);
+        lockfile_fd = -1;
      }
-   close(lockfile_fd);
    free(lockfile);
-   return err;
+   return lockfile_fd;
 }
 #endif
 
@@ -107,7 +117,13 @@ _efl_net_server_unix_efl_object_destructor(Eo *o, Efl_Net_Server_Unix_Data *pd E
           {
              unlink(address);
 #ifdef BIND_HANG_WORKAROUND
-             _efl_net_server_unix_bind_hang_lock_workaround(address, EINA_FALSE);
+             if ((pd->have_lock_fd) && (pd->lock_fd >= 0))
+               {
+                  _efl_net_server_unix_bind_hang_lock_workaround
+                    (address, EINA_FALSE, pd->lock_fd);
+                  pd->lock_fd = -1;
+                  pd->have_lock_fd = EINA_FALSE;
+               }
 #endif
           }
      }
@@ -173,8 +189,14 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
           }
 
 #ifdef BIND_HANG_WORKAROUND
-        if (_efl_net_server_unix_bind_hang_lock_workaround(address, EINA_TRUE))
-          goto error;
+        pd->lock_fd = _efl_net_server_unix_bind_hang_lock_workaround
+                        (address, EINA_TRUE, -1);
+        if (pd->lock_fd < 0)
+          {
+             err = EADDRINUSE;
+             goto error;
+          }
+        pd->have_lock_fd = EINA_TRUE;
 #endif
         r = bind(fd, (struct sockaddr *)&addr, addrlen);
         if (r != 0)

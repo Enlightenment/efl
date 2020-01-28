@@ -1972,32 +1972,6 @@ _efl_ui_image_zoomable_efl_layout_group_group_size_max_get(const Eo *obj EINA_UN
      return EINA_SIZE2D(0, 0);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED,
-                                                             const char *emission, const char *source,
-                                                             void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
-{
-   Eina_Bool ok;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   ok = efl_layout_signal_callback_add(wd->resize_obj, emission, source, func_data, func, func_free_cb);
-
-   return ok;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED,
-                                                             const char *emission, const char *source,
-                                                             void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
-{
-   Eina_Bool ok;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   ok = efl_layout_signal_callback_del(wd->resize_obj, emission, source, func_data, func, func_free_cb);
-
-   return ok;
-}
-
 static Eina_Error
 _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
                Eina_Bool resize)
@@ -3040,7 +3014,7 @@ _efl_ui_image_zoomable_animate_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool anim)
 {
    anim = !!anim;

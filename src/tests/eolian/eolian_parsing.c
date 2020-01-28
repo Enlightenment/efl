@@ -368,7 +368,7 @@ EFL_START_TEST(eolian_typedef)
    fail_if(strcmp(type_name, "List_Objects"));
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(!(type_name = eolian_type_c_type_get(type)));
-   fail_if(strcmp(type_name, "Eina_List *"));
+   fail_if(strcmp(type_name, "Eina_Iterator *"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));

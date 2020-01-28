@@ -25,13 +25,17 @@ interface @beta Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
       }
       @property selection_cursors {
          [[The cursors used for selection handling.
-
            If the cursors are equal there's no selection.
-
-           You are allowed to retain and modify them. Modifying them modifies
-           the selection of the object.
          ]]
-         get {}
+         get {
+            [[You are allowed to retain and modify them. Modifying them modifies
+              the selection of the object (recommended to extend selection range).]]
+         }
+         set {
+           [[The positions of passed cursors will be used to set selection cursors positions.
+             Further modification for passed @Efl.Text.Cursor objects, will not affect selection.
+             Setter is recommended to set new range for selection.]]
+         }
          values {
             start: Efl.Text.Cursor; [[The start of the selection.]]
             end: Efl.Text.Cursor; [[The end of the selection.]]
@@ -75,7 +79,7 @@ interface @beta Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
                                event but only the last one will emit a @[.changed,user] event.
                              ]]
       have_selection,changed: bool; [[Emitted when the @.have_selection property value changes.]]
-      selection,changed: Efl.Text_Range; [[Emitted when selection has changed. Query using @.selection_cursors.]]
+      selection,changed: Eina.Range; [[Emitted when selection has changed. Query using @.selection_cursors.]]
       redo,request: void; [[Emitted when a redo operation is requested.]]
       undo,request: void; [[Emitted when a undo operation is requested.]]
       changed,user: Efl.Text_Change_Info; [[Emitted when the text content has changed due to user interaction.]]

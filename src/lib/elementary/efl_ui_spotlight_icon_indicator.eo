@@ -1,4 +1,5 @@
-class @beta Efl.Ui.Spotlight.Indicator_Icon extends Efl.Ui.Spotlight.Indicator {
+class @beta Efl.Ui.Spotlight.Icon_Indicator extends Efl.Ui.Spotlight.Indicator {
+  c_prefix: efl_ui_spotlight_indicator_icon;
   implements {
       Efl.Ui.Spotlight.Indicator.bind;
       Efl.Ui.Spotlight.Indicator.content_del;

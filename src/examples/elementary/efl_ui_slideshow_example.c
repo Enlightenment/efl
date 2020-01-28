@@ -93,8 +93,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    container = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
                        efl_event_callback_add(efl_added, EFL_UI_SPOTLIGHT_EVENT_TRANSITION_END, _container_end, NULL),
                        efl_pack_table(table, efl_added, 0, 0, 1, 1));
-   efl_ui_spotlight_indicator_set(container, efl_new(EFL_UI_SPOTLIGHT_INDICATOR_ICON_CLASS));
-   efl_ui_spotlight_manager_set(container, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
+   efl_ui_spotlight_indicator_set(container, efl_new(EFL_UI_SPOTLIGHT_ICON_INDICATOR_CLASS));
+   efl_ui_spotlight_manager_set(container, efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS));
 
    for (int i = 0; i < IMG_NUM; i++)
      {

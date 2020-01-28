@@ -388,7 +388,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
          }
       }
       // Obstacles
-      obstacle_add {
+      obstacle_add @beta {
          [[Add obstacle object $eo_obs to be avoided during layout
            of text.
 
@@ -400,7 +400,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
          }
          return: bool; [[$true on success.]]
       }
-      obstacle_del {
+      obstacle_del @beta {
          [[Removes $eo_obs from observation during text layout.
          ]]
          params {
@@ -408,7 +408,7 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
          }
          return: bool; [[$true on success.]]
       }
-      obstacles_update {
+      obstacles_update @beta {
          [[Triggers for relayout due to obstacles' state change.
 
            The obstacles alone don't affect the layout, until this is

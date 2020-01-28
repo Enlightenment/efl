@@ -3,47 +3,47 @@ class Complex extends Efl.Object
    data: Complex_Data;
    methods {
       // container test
-      inptrcont {
+      inptrcont @beta {
          params {
            l: list<string>;
          }
       }
-      inclasscont {
+      inclasscont @beta {
          params {
            l: list<Efl.Object>;
          }
       }
-      incontcont {
+      incontcont @beta {
          params {
            l: list<list<string>>;
          }
       }
-      incontcontown {
+      incontcontown @beta {
          params {
            l: list<list<string>> @move;
          }
       }
-      incontowncontown {
+      incontowncontown @beta {
          params {
            l: list<list<string> @move> @move;
          }
       }
-      incontowncont {
+      incontowncont @beta {
          params {
            l: list<list<string> @move>;
          }
       }
-      instringcont {
+      instringcont @beta {
          params {
            l: list<string>;
          }
       }
-      instringowncont {
+      instringowncont @beta {
          params {
            l: list<mstring @move>;
          }
       }
-      instringcontown {
+      instringcontown @beta {
          params {
            l: list<string> @move;
          }
@@ -89,42 +89,42 @@ class Complex extends Efl.Object
          }
       }
       // out
-      outclasscont {
+      outclasscont @beta {
          params {
            @out l: list<Efl.Object>;
          }
       }
-      outcontcont {
+      outcontcont @beta {
          params {
            @out l: list<list<string>>;
          }
       }
-      outcontcontown {
+      outcontcontown @beta {
          params {
            @out l: list<list<string>> @move;
          }
       }
-      outcontowncontown {
+      outcontowncontown @beta {
          params {
            @out l: list<list<string> @move> @move;
          }
       }
-      outcontowncont {
+      outcontowncont @beta {
          params {
            @out l: list<list<string> @move>;
          }
       }
-      outstringcont {
+      outstringcont @beta {
          params {
            @out l: list<string>;
          }
       }
-      outstringowncont {
+      outstringowncont @beta {
          params {
            @out l: list<mstring @move>;
          }
       }
-      outstringcontown {
+      outstringcontown @beta {
          params {
            @out l: list<string> @move;
          }
@@ -169,7 +169,7 @@ class Complex extends Efl.Object
            @out l: accessor<int> @move;
          }
       }
-      foo {
+      foo @beta {
          params {
             l: list<string>;
          }

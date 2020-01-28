@@ -18,7 +18,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj, Efl_Ui_Pager_Data *sd EINA_UNUSED)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   scroller = efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS);
+   scroller = efl_new(EFL_UI_SPOTLIGHT_SCROLL_MANAGER_CLASS);
    efl_ui_spotlight_manager_set(obj, scroller);
 
    return obj;

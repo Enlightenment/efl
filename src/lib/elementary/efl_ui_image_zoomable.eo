@@ -67,9 +67,6 @@ class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
       Efl.Gfx.Image_Orientable.image_orientation { get; set; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
-     Efl.Layout.Signal.signal_callback_add;
-     Efl.Layout.Signal.signal_callback_del;
-      //Efl.Canvas.Layout_Group.group_data { get; }
    }
    events {
       press: void; [[Called when photocam got pressed]]

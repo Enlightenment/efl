@@ -564,12 +564,13 @@ struct struct_definition_generator
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
-          if (!as_generator(documentation(indent.n + 1)).generate(sink, field, context))
+          auto docs = documentation(indent.n + 1);
+          if (!as_generator(docs).generate(sink, field, context))
             return false;
 
           if (!field.type.doc_summary.empty())
             {
-               if (!as_generator(indent << scope_tab << "/// <value>" << field.type.doc_summary << "</value>\n").generate(sink, attributes::unused, context))
+               if (!docs.generate_tag_value(sink, field.type.doc_summary, context))
                  return false;
             }
 

@@ -4,7 +4,7 @@
 
 #include <Efl_Ui.h>
 #include "elm_priv.h"
-#include "efl_ui_spotlight_manager_plain.eo.h"
+#include "efl_ui_spotlight_plain_manager.eo.h"
 
 typedef struct _Efl_Ui_Spotlight_Container_Data
 {
@@ -236,7 +236,7 @@ _efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Contai
    //set a view manager in case nothing is here
    if (!manager)
      {
-         efl_ui_spotlight_manager_set(obj, efl_new(EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS));
+         efl_ui_spotlight_manager_set(obj, efl_new(EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS));
      }
    else
      {
@@ -648,7 +648,7 @@ EOLIAN static void
 _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Spotlight_Manager *transition)
 {
    if (!transition)
-     pd->transition = efl_add(EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS, obj);
+     pd->transition = efl_add(EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS, obj);
    else
      EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_SPOTLIGHT_MANAGER_CLASS));
 
@@ -679,7 +679,7 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
 EOLIAN static Efl_Ui_Spotlight_Manager*
 _efl_ui_spotlight_container_spotlight_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
 {
-   if (efl_isa(pd->transition, EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS))
+   if (efl_isa(pd->transition, EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS))
      return NULL;
    else
      return pd->transition;

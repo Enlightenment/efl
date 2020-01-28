@@ -1,5 +1,6 @@
-class @beta Efl.Ui.Spotlight.Manager_Stack extends Efl.Ui.Spotlight.Manager
+class @beta Efl.Ui.Spotlight.Fade_Manager extends Efl.Ui.Spotlight.Manager
 {
+   c_prefix: efl_ui_spotlight_manager_fade;
    implements {
       Efl.Ui.Spotlight.Manager.bind;
       Efl.Ui.Spotlight.Manager.content_add;

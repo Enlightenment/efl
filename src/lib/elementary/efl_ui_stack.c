@@ -18,7 +18,7 @@ _efl_ui_stack_efl_object_constructor(Eo *obj, Efl_Ui_Stack_Data *sd EINA_UNUSED)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   stack = efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS);
    efl_ui_spotlight_manager_set(obj, stack);
 
    return obj;

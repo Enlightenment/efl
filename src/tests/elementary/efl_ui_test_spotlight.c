@@ -645,7 +645,7 @@ EFL_START_TEST (efl_ui_spotlight_animated_transition)
    ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(container)), EINA_FALSE);
 
    //now check with a real spotlight manager
-   efl_ui_spotlight_manager_set(container, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
+   efl_ui_spotlight_manager_set(container, efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS));
    efl_ui_spotlight_animated_transition_set(container, EINA_TRUE);
    ck_assert_int_eq(efl_ui_spotlight_animated_transition_get(container), EINA_TRUE);
    ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(container)), EINA_TRUE);
@@ -654,7 +654,7 @@ EFL_START_TEST (efl_ui_spotlight_animated_transition)
    ck_assert_int_eq(efl_ui_spotlight_animated_transition_get(container), EINA_FALSE);
    ck_assert_int_eq(efl_ui_spotlight_manager_animated_transition_get(efl_ui_spotlight_manager_get(container)), EINA_FALSE);
 
-   Eo *manager2 = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   Eo *manager2 = efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS);
    Eina_Bool animated_transition_manager;
    efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
     efl_ui_spotlight_manager_set(efl_added, manager2),

@@ -49,8 +49,6 @@ struct _Efl_Ui_Textbox_Data
    int                                   append_text_len;
    /* Only for clipboard */
    const char                           *text;
-   const char                           *file;
-   Elm_Text_Format                       format;
    Evas_Coord                            ent_w, ent_h;
    Evas_Coord                            downx, downy;
    Evas_Coord                            ox, oy;
@@ -98,7 +96,6 @@ struct _Efl_Ui_Textbox_Data
    Eina_Bool                             deferred_decoration_anchor : 1;
    Eina_Bool                             context_menu_enabled : 1;
    Eina_Bool                             long_pressed : 1;
-   Eina_Bool                             auto_save : 1;
    Eina_Bool                             has_text : 1;
    Eina_Bool                             use_down : 1;
    Eina_Bool                             sel_mode : 1;
@@ -212,126 +209,6 @@ static void _selection_defer(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static Eina_Position2D _decoration_calc_offset(Efl_Ui_Textbox_Data *sd);
 static void _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static void _efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Selection_Type type);
-
-static char *
-_file_load(Eo *obj)
-{
-   Eina_File *f;
-   char *text = NULL;
-   void *tmp = NULL;
-
-   f = eina_file_dup(efl_file_mmap_get(obj));
-
-   tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
-   if (!tmp) goto on_error;
-
-   text = malloc(eina_file_size_get(f) + 1);
-   if (!text) goto on_error;
-
-   memcpy(text, tmp, eina_file_size_get(f));
-   text[eina_file_size_get(f)] = 0;
-
-   if (eina_file_map_faulted(f, tmp))
-     {
-        ELM_SAFE_FREE(text, free);
-     }
-
- on_error:
-   if (tmp) eina_file_map_free(f, tmp);
-   eina_file_close(f);
-
-   return text;
-}
-
-static char *
-_plain_load(Eo *obj)
-{
-   return _file_load(obj);
-}
-
-static Eina_Error
-_load_do(Evas_Object *obj)
-{
-   char *text;
-   Eina_Error err = 0;
-
-   EFL_UI_TEXT_DATA_GET(obj, sd);
-
-   if (!sd->file)
-     {
-        efl_text_set(obj, "");
-        return 0;
-     }
-
-   switch (sd->format)
-     {
-      /* Only available format */
-      case ELM_TEXT_FORMAT_PLAIN_UTF8:
-         text = _plain_load(obj);
-         if (!text)
-           {
-              err = errno;
-              if (!err) err = ENOENT;
-           }
-         break;
-
-      default:
-         text = NULL;
-         break;
-     }
-
-   if (text)
-     {
-        efl_text_set(obj, text);
-        free(text);
-        return 0;
-     }
-   efl_text_set(obj, "");
-   return err;
-}
-
-static void
-_text_save(const char *file,
-           const char *text)
-{
-   FILE *f;
-
-   if (!text)
-     {
-        ecore_file_unlink(file);
-        return;
-     }
-
-   f = fopen(file, "wb");
-   if (!f)
-     {
-        ERR("Failed to open %s for writing", file);
-        return;
-     }
-
-   if (fputs(text, f) == EOF)
-     ERR("Failed to write text to file %s", file);
-   fclose(f);
-}
-
-static void
-_save_do(Evas_Object *obj)
-{
-   EFL_UI_TEXT_DATA_GET(obj, sd);
-
-   if (!sd->file) return;
-   switch (sd->format)
-     {
-      /* Only supported format */
-      case ELM_TEXT_FORMAT_PLAIN_UTF8:
-        _text_save(sd->file, efl_text_get(obj));
-        break;
-
-      case ELM_TEXT_FORMAT_MARKUP_UTF8:
-      default:
-        break;
-     }
-}
 
 static void
 _efl_ui_textbox_guide_update(Evas_Object *obj,
@@ -1379,36 +1256,6 @@ _item_get(void *data, const char *item)
    return o;
 }
 
-EOLIAN static void
-_efl_ui_textbox_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, const char *emission, const char *source)
-{
-   /* always pass to both edje objs */
-   efl_layout_signal_emit(sd->entry_edje, emission, source);
-
-   // FIXME: This should not be here!
-   efl_layout_signal_process(sd->entry_edje, EINA_TRUE);
-}
-
-static Eina_Bool
-_efl_ui_textbox_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
-{
-   Eina_Bool ok;
-
-   ok = efl_layout_signal_callback_add(pd->entry_edje, emission, source, func_data, func, func_free_cb);
-
-   return ok;
-}
-
-static Eina_Bool
-_efl_ui_textbox_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
-{
-   Eina_Bool ok;
-
-   ok = efl_layout_signal_callback_del(pd->entry_edje, emission, source, func_data, func, func_free_cb);
-
-   return ok;
-}
-
 static void
 _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler)
 {
@@ -1838,7 +1685,6 @@ _efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
    sd->entry_edje = wd->resize_obj;
    sd->cnp_mode = EFL_UI_SELECTION_FORMAT_TEXT;
    sd->context_menu_enabled = EINA_TRUE;
-   sd->auto_save = EINA_TRUE;
    efl_text_interactive_editable_set(obj, EINA_TRUE);
    efl_text_interactive_selection_allowed_set(obj, EINA_TRUE);
    sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
@@ -1915,8 +1761,6 @@ EOLIAN static void
 _efl_ui_textbox_efl_object_destructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {
    efl_event_freeze(obj);
-
-   eina_stringshare_del(sd->file);
 
    _popup_dismiss(sd);
    if ((sd->api) && (sd->api->obj_unhook))
@@ -2196,32 +2040,6 @@ EOLIAN static Eina_Bool
 _efl_ui_textbox_context_menu_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
 {
    return sd->context_menu_enabled;
-}
-
-EOLIAN static Eina_Error
-_efl_ui_textbox_efl_file_file_set(Eo *obj, Efl_Ui_Textbox_Data *sd, const char *file)
-{
-   eina_stringshare_replace(&sd->file, file);
-   return efl_file_set(efl_super(obj, MY_CLASS), file);
-}
-
-EOLIAN static void
-_efl_ui_textbox_efl_file_unload(Eo *obj, Efl_Ui_Textbox_Data *sd EINA_UNUSED)
-{
-   efl_file_unload(efl_super(obj, MY_CLASS));
-   efl_text_set(obj, "");
-}
-
-EOLIAN static Eina_Error
-_efl_ui_textbox_efl_file_load(Eo *obj, Efl_Ui_Textbox_Data *sd)
-{
-   Eina_Error err;
-
-   if (efl_file_loaded_get(obj)) return 0;
-   err = efl_file_load(efl_super(obj, MY_CLASS));
-   if (err) return err;
-   if (sd->auto_save) _save_do(obj);
-   return _load_do(obj);
 }
 
 EOLIAN static void

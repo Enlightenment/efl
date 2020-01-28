@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
-                 Efl.Access.Text, Efl.Access.Editable.Text, Efl.File
+                 Efl.Access.Text, Efl.Access.Editable.Text
    composites
                  Efl.Text_Interactive, Efl.Text_Markup, Efl.Input_Text
 {
@@ -90,9 +90,6 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
       Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;
-      Efl.Layout.Signal.signal_callback_add;
-      Efl.Layout.Signal.signal_callback_del;
-      Efl.Layout.Signal.signal_emit;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
@@ -100,9 +97,6 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
       Efl.Ui.Widget.disabled {set;}
       Efl.Text_Format.password {set;}
       Efl.Text_Format.multiline {set;}
-      //Efl.Ui.Widget.widget_sub_object_del;
-      //Elm.Interface_Scrollable.policy { set; }
-      //Elm.Interface_Scrollable.bounce_allow { set; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Text.access_text { get; }
@@ -127,9 +121,6 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
       Efl.Access.Editable.Text.cut;
       Efl.Access.Editable.Text.delete;
       Efl.Access.Editable.Text.paste;
-      Efl.File.file { set; }
-      Efl.File.load;
-      Efl.File.unload;
       Efl.Text_Interactive.editable { set; }
       Efl.Part.part_get;
    }

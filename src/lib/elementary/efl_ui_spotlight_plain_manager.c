@@ -4,7 +4,7 @@
 
 #include <Efl_Ui.h>
 #include "elm_priv.h"
-#include "efl_ui_spotlight_manager_plain.eo.h"
+#include "efl_ui_spotlight_plain_manager.eo.h"
 
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
@@ -13,12 +13,12 @@ typedef struct {
    Efl_Gfx_Entity *clipper;
    Eina_Bool animation;
    double last_pos;
-} Efl_Ui_Spotlight_Manager_Plain_Data;
+} Efl_Ui_Spotlight_Plain_Manager_Data;
 
-#define MY_CLASS EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS
+#define MY_CLASS EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS
 
 static void
-_emit_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+_emit_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Plain_Manager_Data *pd)
 {
    double absolut_position = efl_pack_index_get(pd->container, pd->current_content);
    if (pd->last_pos != absolut_position)
@@ -28,7 +28,7 @@ _emit_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 }
 
 static void
-_geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+_geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Plain_Manager_Data *pd)
 {
    Efl_Gfx_Entity *entity = pd->current_content;
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->container);
@@ -42,7 +42,7 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
    if (spotlight)
      {
@@ -74,7 +74,7 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 }
 
 static void
-_content_changed(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+_content_changed(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd)
 {
    if (efl_ui_spotlight_active_element_get(pd->container) != pd->current_content)
      {
@@ -88,7 +88,7 @@ _content_changed(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_add(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_content_add(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_key_data_set(subobj, "_elm_leaveme", pd->container);
    efl_canvas_object_clipper_set(subobj, pd->clipper);
@@ -98,7 +98,7 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_add(Eo *obj, Ef
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_del(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_content_del(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_key_data_set(subobj, "_elm_leaveme", NULL);
    efl_canvas_object_clipper_set(subobj, NULL);
@@ -108,7 +108,7 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_content_del(Eo *obj, Ef
    _content_changed(obj, pd);
 }
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, int from EINA_UNUSED, int to)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, int from EINA_UNUSED, int to)
 {
    Efl_Gfx_Entity *to_obj, *from_obj;
    to_obj = efl_pack_content_get(pd->container, to);
@@ -130,14 +130,14 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_size_set(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Eina_Size2D size)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_size_set(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, Eina_Size2D size)
 {
    pd->page_size = size;
    _geom_sync(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd EINA_UNUSED)
+_efl_ui_spotlight_plain_manager_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_CLASS));
 
@@ -149,19 +149,19 @@ _efl_ui_spotlight_manager_plain_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd, Eina_Bool animation)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Plain_Manager_Data *pd, Eina_Bool animation)
 {
    pd->animation = animation;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Plain_Manager_Data *pd)
 {
    return pd->animation;
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_plain_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
+_efl_ui_spotlight_plain_manager_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd)
 {
    efl_del(pd->clipper);
 
@@ -173,4 +173,4 @@ _efl_ui_spotlight_manager_plain_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
-#include "efl_ui_spotlight_manager_plain.eo.c"
+#include "efl_ui_spotlight_plain_manager.eo.c"

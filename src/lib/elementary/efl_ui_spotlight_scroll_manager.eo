@@ -1,5 +1,6 @@
-class @beta Efl.Ui.Spotlight.Manager_Scroll extends Efl.Ui.Spotlight.Manager
+class @beta Efl.Ui.Spotlight.Scroll_Manager extends Efl.Ui.Spotlight.Manager
 {
+   c_prefix: efl_ui_spotlight_manager_scroll;
    methods {
       @property scroll_block {
          [[User scrolling forbidden.

@@ -24,9 +24,9 @@ typedef struct {
    } mouse_move;
    Eina_Bool animation;
    Eina_Bool scroll_block;
-} Efl_Ui_Spotlight_Manager_Scroll_Data;
+} Efl_Ui_Spotlight_Scroll_Manager_Data;
 
-#define MY_CLASS EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS
+#define MY_CLASS EFL_UI_SPOTLIGHT_SCROLL_MANAGER_CLASS
 
 static void _page_set_animation(void *data, const Efl_Event *event);
 
@@ -37,7 +37,7 @@ _propagate_progress(Eo *obj, double pos)
 }
 
 static void
-_apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
+_apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd)
 {
    Eina_Rect geometry = EINA_RECT_EMPTY();
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->container);
@@ -84,7 +84,7 @@ _mouse_down_cb(void *data,
 {
    Efl_Input_Pointer *ev = event->info;
    Eo *obj = data;
-   Efl_Ui_Spotlight_Manager_Scroll_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Spotlight_Scroll_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
    if (efl_input_pointer_button_get(ev) != 1) return;
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
@@ -110,7 +110,7 @@ _mouse_move_cb(void *data,
 {
    Efl_Input_Pointer *ev = event->info;
    Eo *obj = data;
-   Efl_Ui_Spotlight_Manager_Scroll_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Spotlight_Scroll_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
    Eina_Position2D pos;
    int pos_y_diff;
 
@@ -139,7 +139,7 @@ _mouse_up_cb(void *data,
 {
    Efl_Input_Pointer *ev = event->info;
    Eo *obj = data;
-   Efl_Ui_Spotlight_Manager_Scroll_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Spotlight_Scroll_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
    if (!pd->mouse_move.active) return;
@@ -159,7 +159,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(mouse_listeners,
 );
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
    if (spotlight)
      {
@@ -196,7 +196,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_S
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_add(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_content_add(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_key_data_set(subobj, "_elm_leaveme", pd->container);
    efl_gfx_entity_visible_set(subobj, EINA_TRUE);
@@ -209,7 +209,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_add(Eo *obj EI
 
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_content_del(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, Efl_Gfx_Entity *subobj, int index EINA_UNUSED)
 {
    efl_key_data_set(subobj, "_elm_leaveme", NULL);
    efl_canvas_object_clipper_set(subobj, NULL);
@@ -222,7 +222,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_content_del(Eo *obj EI
 static void
 _page_set_animation(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_Ui_Spotlight_Manager_Scroll_Data *pd = efl_data_scope_get(data, MY_CLASS);
+   Efl_Ui_Spotlight_Scroll_Manager_Data *pd = efl_data_scope_get(data, MY_CLASS);
    double p = (ecore_loop_time_get() - pd->transition.start_time) / pd->transition.max_time;
 
    if (p >= 1.0) p = 1.0;
@@ -241,7 +241,7 @@ _page_set_animation(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_animation_request_switch(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, int from, int to)
+_animation_request_switch(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, int from, int to)
 {
    //if there is already a transition ongoing, which is no mouse transition, but goes to the same position, then do nothing
    if (pd->transition.active && !pd->mouse_move.active && pd->transition.to == to)
@@ -276,7 +276,7 @@ _animation_request_switch(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, int
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, int from, int to)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, int from, int to)
 {
    if (pd->animation)
      {
@@ -292,7 +292,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Eina_Size2D size)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, Eina_Size2D size)
 {
    pd->page_size = size;
    if (!pd->transition.active)
@@ -300,7 +300,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_size_set(Eo *obj EINA_
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Eina_Bool animation)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_animated_transition_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, Eina_Bool animation)
 {
    pd->animation = animation;
    if (pd->transition.active && !animation)
@@ -312,14 +312,14 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_se
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_animated_transition_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd)
 {
    return pd->animation;
 }
 
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd EINA_UNUSED)
+_efl_ui_spotlight_scroll_manager_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd EINA_UNUSED)
 {
    efl_del(pd->event);
    efl_del(pd->backclip);
@@ -334,7 +334,7 @@ _efl_ui_spotlight_manager_scroll_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight
 }
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_scroll_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Eina_Bool scroll_block)
+_efl_ui_spotlight_scroll_manager_scroll_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, Eina_Bool scroll_block)
 {
    if (pd->scroll_block == scroll_block) return;
 
@@ -349,9 +349,9 @@ _efl_ui_spotlight_manager_scroll_scroll_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Sp
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spotlight_manager_scroll_scroll_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
+_efl_ui_spotlight_scroll_manager_scroll_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Scroll_Manager_Data *pd)
 {
    return pd->scroll_block;
 }
 
-#include "efl_ui_spotlight_manager_scroll.eo.c"
+#include "efl_ui_spotlight_scroll_manager.eo.c"
