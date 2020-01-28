@@ -8,6 +8,8 @@
 #include <Evas_Legacy.h>
 #include <evas_canvas_eo.h>
 
+#include "custom_recognizer.eo.h"
+
 /*
 typedef enum
 {
@@ -28,6 +30,7 @@ enum
    MOMENTUM,
    FLICK,
    ZOOM,
+   CUSTOM,
    LAST
 };
 
@@ -506,10 +509,37 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
 }
 EFL_END_TEST
 
+static void
+custom_cb(void *data EINA_UNUSED , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+
+   ck_assert_str_eq(efl_gesture_custom_gesture_name_get(g), "custom_gesture");
+   int *count = data;
+   /* increment counter for event state which has been processed */
+   count[efl_gesture_state_get(g) - 1]++;
+}
+
+EFL_START_TEST(test_efl_ui_gesture_custom)
+{
+   Eo *rect = setup();
+   Eo *manager = efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS);
+   Eo *recognizer = efl_add(CUSTOM_RECOGNIZER_CLASS, manager);
+   efl_gesture_manager_recognizer_register(manager, recognizer);
+
+   efl_event_callback_add(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb, &count[CUSTOM]);
+   click_object(rect);
+   CHECK_ALL(CUSTOM, 1, 0, 1, 0);
+   efl_event_callback_del(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb, &count[CUSTOM]);
+   efl_gesture_manager_recognizer_unregister(manager, recognizer);
+}
+EFL_END_TEST
+
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
    tcase_add_test(tc, test_efl_ui_gesture_long_tap);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
    tcase_add_test(tc, test_efl_ui_gesture_zoom);
+   tcase_add_test(tc, test_efl_ui_gesture_custom);
 }

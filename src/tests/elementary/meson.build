@@ -1,4 +1,5 @@
 priv_eo_files = [
+   'custom_recognizer.eo',
    'focus_test.eo',
    'focus_test_sub_main.eo',
    'focus_manager_test.eo'
@@ -162,6 +163,7 @@ efl_ui_suite_src = [
   'efl_ui_test_group_item.c',
   'efl_ui_test_text.c',
   'efl_ui_test_vg_animation.c',
+  'custom_recognizer.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',
