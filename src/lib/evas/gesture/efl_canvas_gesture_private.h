@@ -12,7 +12,7 @@
 #define TAP_TOUCH_TIME_THRESHOLD (0.1 * 1000)
 
 const Efl_Event_Description * _efl_gesture_type_get(const Eo *obj);
-void efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Description *type);
+void efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Description *type, Efl_Canvas_Gesture_Recognizer *recognizer);
 int _direction_get(Evas_Coord xx1, Evas_Coord xx2);
 Eina_Value *_recognizer_config_get(const Eo *obj, const char *name);
 
@@ -25,10 +25,12 @@ typedef struct _Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data  Efl_Canvas_Gestur
 typedef struct _Efl_Canvas_Gesture_Recognizer_Momentum_Data    Efl_Canvas_Gesture_Recognizer_Momentum_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Flick_Data       Efl_Canvas_Gesture_Recognizer_Flick_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data        Efl_Canvas_Gesture_Recognizer_Zoom_Data;
+typedef struct _Efl_Canvas_Gesture_Recognizer_Custom_Data        Efl_Canvas_Gesture_Recognizer_Custom_Data;
 typedef struct _Efl_Canvas_Gesture_Data                        Efl_Canvas_Gesture_Data;
 typedef struct _Efl_Canvas_Gesture_Momentum_Data               Efl_Canvas_Gesture_Momentum_Data;
 typedef struct _Efl_Canvas_Gesture_Flick_Data                  Efl_Canvas_Gesture_Flick_Data;
 typedef struct _Efl_Canvas_Gesture_Zoom_Data                   Efl_Canvas_Gesture_Zoom_Data;
+typedef struct _Efl_Canvas_Gesture_Custom_Data                 Efl_Canvas_Gesture_Custom_Data;
 
 typedef struct _Efl_Canvas_Gesture_Touch_Data
 {
@@ -130,6 +132,11 @@ struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data
    Eina_Bool                       calc_temp;
 };
 
+struct _Efl_Canvas_Gesture_Recognizer_Custom_Data
+{
+   Eina_Stringshare *name;
+};
+
 struct _Efl_Canvas_Gesture_Data
 {
    Efl_Canvas_Gesture_State        state;
@@ -156,6 +163,11 @@ struct _Efl_Canvas_Gesture_Zoom_Data
 {
    double                          radius;
    double                          zoom;
+};
+
+struct _Efl_Canvas_Gesture_Custom_Data
+{
+   Eina_Stringshare *gesture_name;
 };
 
 #endif

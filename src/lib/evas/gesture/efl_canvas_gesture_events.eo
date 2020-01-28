@@ -43,5 +43,9 @@ interface @beta Efl.Canvas.Gesture_Events
         getting closer ("zoom out" or "pinch").
         This gesture cannot be performed with a mouse as it requires more than one pointer.
       ]]
+      gesture,custom: Efl.Canvas.Gesture_Custom; [[Emitted when a Custom gesture has been detected.
+        A Custom gesture is one which is custom-written for use in an application or toolkit and
+        is not shipped with EFL.
+      ]]
    }
 }

@@ -205,6 +205,7 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "gesture/efl_canvas_gesture_momentum.eo.h"
 #include "gesture/efl_canvas_gesture_flick.eo.h"
 #include "gesture/efl_canvas_gesture_zoom.eo.h"
+#include "gesture/efl_canvas_gesture_custom.eo.h"
 #include "gesture/efl_canvas_gesture_recognizer.eo.h"
 #include "gesture/efl_canvas_gesture_recognizer_tap.eo.h"
 #include "gesture/efl_canvas_gesture_recognizer_long_tap.eo.h"
@@ -213,6 +214,7 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "gesture/efl_canvas_gesture_recognizer_momentum.eo.h"
 #include "gesture/efl_canvas_gesture_recognizer_flick.eo.h"
 #include "gesture/efl_canvas_gesture_recognizer_zoom.eo.h"
+#include "gesture/efl_canvas_gesture_recognizer_custom.eo.h"
 #include "gesture/efl_canvas_gesture_manager.eo.h"
 #include "gesture/efl_canvas_gesture_events.eo.h"
 

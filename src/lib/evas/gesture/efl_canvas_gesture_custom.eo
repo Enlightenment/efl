@@ -1,0 +1,28 @@
+import eina_types;
+
+class @beta Efl.Canvas.Gesture_Custom extends Efl.Canvas.Gesture
+{
+   [[Custom gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Canvas.Gesture_Events.gesture,custom] for a description of the Custom gesture.
+
+     Application developers receive these objects inside a gesture event and do not typically need to create their own.
+   ]]
+   c_prefix: efl_gesture_custom;
+   methods {
+      @property gesture_name {
+         [[This is the name of the custom gesture.]]
+         get {
+         }
+         set @protected {
+         }
+         values {
+            gesture_name: string; [[The name of the custom gesture.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

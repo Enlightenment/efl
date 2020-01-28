@@ -31,7 +31,7 @@ _tap_timeout_cb(void *data)
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_DOUBLE_TAP, pd->gesture);
 
    efl_gesture_manager_gesture_clean_up(efl_provider_find(data, EFL_CANVAS_GESTURE_MANAGER_CLASS),
-     pd->target, EFL_EVENT_GESTURE_DOUBLE_TAP);
+     pd->target, EFL_EVENT_GESTURE_DOUBLE_TAP, data);
 
    pd->timeout = NULL;
    pd->tap_count = 0;
