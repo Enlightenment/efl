@@ -43,7 +43,7 @@ struct _Efl_Ui_Textbox_Data
    Eo                                   *cursor_bidi;
    Evas_Object                          *start_handler;
    Evas_Object                          *end_handler;
-   Ecore_Job                            *deferred_decoration_job;
+   Eina_Future                          *deferred_decoration_job;
    /* for deferred appending */
    int                                   append_text_position;
    int                                   append_text_len;
@@ -1735,7 +1735,6 @@ _efl_ui_textbox_efl_object_destructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    entries = eina_list_remove(entries, obj);
    eina_stringshare_del(sd->text);
-   ecore_job_del(sd->deferred_decoration_job);
    eina_stringshare_del(sd->anchor_hover.hover_style);
 
    efl_event_thaw(obj);
@@ -1748,9 +1747,6 @@ _efl_ui_textbox_efl_object_destructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    _anchors_free(sd);
    _clear_text_selection(sd);
-
-   ecore_job_del(sd->deferred_decoration_job);
-   sd->deferred_decoration_job = NULL;
 
    if (sd->item_factory) efl_unref(sd->item_factory);
 
@@ -3136,23 +3132,24 @@ _update_decorations(Eo *obj)
    efl_event_thaw(sd->text_obj);
 }
 
-static void
-_deferred_decoration_job(void *data)
+static Eina_Value
+_deferred_decoration_job(Eo *o, void *data EINA_UNUSED, const Eina_Value value EINA_UNUSED)
 {
-   EFL_UI_TEXT_DATA_GET(data, sd);
-   _update_decorations(data);
+   EFL_UI_TEXT_DATA_GET(o, sd);
+   _update_decorations(o);
    sd->deferred_decoration_job = NULL;
+
+   return EINA_VALUE_EMPTY;
 }
 
 static void
 _decoration_defer(Eo *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
-   if (!sd->deferred_decoration_job)
-     {
-        sd->deferred_decoration_job = 
-           ecore_job_add(_deferred_decoration_job, obj);
-     }
+   if (sd->deferred_decoration_job) return;
+
+   Eina_Future *f = efl_loop_job(efl_main_loop_get());
+   sd->deferred_decoration_job = efl_future_then(obj, f, _deferred_decoration_job);
 }
 
 static void
