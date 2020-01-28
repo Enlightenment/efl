@@ -65,13 +65,6 @@ gesture_cb(void *data , const Efl_Event *ev)
    count[efl_gesture_state_get(g) - 1]++;
 }
 
-static void
-test_cb(void *data EINA_UNUSED , const Efl_Event *ev EINA_UNUSED)
-{
-}
-
-
-
 static Eo *
 setup(void)
 {
@@ -85,8 +78,6 @@ setup(void)
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_content_set(win, rect);
 
-   /* add extra random cb to verify that we aren't getting double events */
-   efl_event_callback_add(rect, EFL_EVENT_GESTURE_MOMENTUM, test_cb, NULL);
 #define WATCH(type) \
    efl_event_callback_add(rect, EFL_EVENT_GESTURE_##type, gesture_cb, &count[(type)])
    WATCH(TAP);
@@ -268,8 +259,11 @@ EFL_END_TEST
 
 EFL_START_TEST(test_efl_ui_gesture_flick)
 {
-   int moves, i;
+   int moves, i, single = 0;
    Eo *rect = setup();
+
+   /* add extra random cb to verify that we get exactly 1 event */
+   efl_event_callback_add(rect, EFL_EVENT_GESTURE_MOMENTUM, (void*)event_callback_that_increments_an_int_when_called, &single);
 
    /* basic flick */
    drag_object(rect, 0, 0, 75, 0, EINA_FALSE);
@@ -288,6 +282,9 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ZERO(ZOOM);
 
    RESET;
+
+   efl_event_callback_del(rect, EFL_EVENT_GESTURE_MOMENTUM, (void*)event_callback_that_increments_an_int_when_called, &single);
+   ck_assert_int_ge(single, 0);
 
    /* reverse flick */
    drag_object(rect, 75, 0, -75, 0, EINA_FALSE);
