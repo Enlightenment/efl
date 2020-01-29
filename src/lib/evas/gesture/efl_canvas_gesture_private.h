@@ -12,7 +12,6 @@
 #define TAP_TOUCH_TIME_THRESHOLD (0.1 * 1000)
 
 const Efl_Event_Description * _efl_gesture_type_get(const Eo *obj);
-void efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Description *type, Efl_Canvas_Gesture_Recognizer *recognizer);
 int _direction_get(Evas_Coord xx1, Evas_Coord xx2);
 Eina_Value *_recognizer_config_get(const Eo *obj, const char *name);
 

@@ -212,7 +212,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    //This is to handle a case with a mouse click on the target object.
    if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END && !pd->touched)
      {
-        efl_gesture_manager_gesture_clean_up(efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS), watched, EFL_EVENT_GESTURE_FLICK, obj);
+        efl_gesture_manager_recognizer_cleanup(efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS), obj, watched);
         dead = EINA_TRUE;
      }
 
