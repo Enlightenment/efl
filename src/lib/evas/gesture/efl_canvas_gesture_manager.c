@@ -25,7 +25,7 @@ typedef struct _Efl_Canvas_Gesture_Manager_Data
    //Keeps track of all current object gestures.
    Eina_List *m_object_gestures;    //(List of *object_gesture)
    //Lazy deletion of gestures
-   Eina_List *m_gestures_to_delete;
+   Eina_Array *m_gestures_to_delete;
    //Kepps config values for gesture recognize
    Eina_Hash *m_config;
    Eina_Bool processing : 1;
@@ -38,17 +38,14 @@ static Efl_Canvas_Gesture *
            Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
 
 static void
-_cleanup_object(Eina_List *list)
+_cleanup_object(Eina_Array *arr)
 {
-   Eina_List *l;
    Eo *obj;
 
-   if (!list) return;
+   if (!eina_array_count(arr)) return;
 
-   EINA_LIST_FOREACH(list, l, obj)
+   while ((obj = eina_array_pop(arr)))
      efl_del(obj);
-
-   eina_list_free(list);
 }
 
 static void
@@ -110,7 +107,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    pd->m_gesture_contex = eina_hash_pointer_new(EINA_FREE_CB(eina_hash_free));
    pd->m_object_events = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
    pd->m_object_gestures = NULL;
-   pd->m_gestures_to_delete = NULL;
+   pd->m_gestures_to_delete = eina_array_new(1);;
 
    pd->m_config = eina_hash_string_superfast_new(EINA_FREE_CB(eina_value_free));
    /* this needs to always be present */
@@ -163,6 +160,7 @@ _efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Ma
    eina_hash_free(pd->m_gesture_contex);
    eina_hash_free(pd->m_object_events);
    _cleanup_object(pd->m_gestures_to_delete);
+   eina_array_free(pd->m_gestures_to_delete);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -312,7 +310,6 @@ post_event:
         eina_hash_del(pd->m_object_events, &recognizer, NULL);
         //FIXME: delete it by object not list.
         _cleanup_object(pd->m_gestures_to_delete);
-        pd->m_gestures_to_delete = NULL;
      }
 }
 
@@ -411,14 +408,13 @@ _efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canva
      {
         if ((object_gesture->type == type) && (object_gesture->recognizer == recognizer))
           {
-             pd->m_gestures_to_delete = eina_list_append(pd->m_gestures_to_delete, object_gesture->gesture);
+             eina_array_push(pd->m_gestures_to_delete, object_gesture->gesture);
              free(object_gesture);
              pd->m_object_gestures = eina_list_remove_list(pd->m_object_gestures, l);
           }
      }
    if (pd->processing) return;
    _cleanup_object(pd->m_gestures_to_delete);
-   pd->m_gestures_to_delete = NULL;
 }
 
 // EOLIAN static void
@@ -470,7 +466,6 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
                   _cleanup_cached_gestures(pd, target, type, recognizer);
                   eina_hash_del(pd->m_object_events, &recognizer, NULL);
                   _cleanup_object(pd->m_gestures_to_delete);
-                  pd->m_gestures_to_delete = NULL;
                   return NULL;
                }
              return object_gesture->gesture;
@@ -506,7 +501,7 @@ _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
         if ((object_gesture->type == type) && (target == object_gesture->object) &&
             ((!recognizer) || (object_gesture->recognizer == recognizer)))
           {
-             pd->m_gestures_to_delete = eina_list_append(pd->m_gestures_to_delete, object_gesture->gesture);
+             eina_array_push(pd->m_gestures_to_delete, object_gesture->gesture);
              free(object_gesture);
              pd->m_object_gestures = eina_list_remove_list(pd->m_object_gestures, l);
           }
@@ -522,7 +517,6 @@ efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Descri
    _cleanup_cached_gestures(pd, target, type, recognizer);
    eina_hash_del(pd->m_object_events, &recognizer, NULL);
    _cleanup_object(pd->m_gestures_to_delete);
-   pd->m_gestures_to_delete = NULL;
 }
 
 #include "efl_canvas_gesture_manager.eo.c"
