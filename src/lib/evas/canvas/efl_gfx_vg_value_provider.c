@@ -35,17 +35,17 @@ _efl_gfx_vg_value_provider_keypath_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Val
 }
 
 EOLIAN void
-_efl_gfx_vg_value_provider_transform_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, Eina_Matrix3 *m)
+_efl_gfx_vg_value_provider_transform_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, Eina_Matrix4 *m)
 {
    if (m)
      {
         if (!pd->m)
           {
-             pd->m = malloc(sizeof (Eina_Matrix3));
+             pd->m = malloc(sizeof (Eina_Matrix4));
              if (!pd->m) return;
           }
         pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX;
-        memcpy(pd->m, m, sizeof (Eina_Matrix3));
+        memcpy(pd->m, m, sizeof (Eina_Matrix4));
      }
    else
      {
@@ -54,7 +54,7 @@ _efl_gfx_vg_value_provider_transform_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_P
      }
 }
 
-EOLIAN Eina_Matrix3*
+EOLIAN Eina_Matrix4*
 _efl_gfx_vg_value_provider_transform_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd)
 {
    return pd->m;

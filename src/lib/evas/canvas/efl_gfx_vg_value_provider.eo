@@ -25,7 +25,7 @@ class @beta Efl.Gfx.Vg.Value_Provider extends Efl.Object
          get {
          }
          values {
-            m: ptr(Eina.Matrix3); [[ Matrix Value. ]]
+            m: ptr(Eina.Matrix4); [[ Matrix Value. ]]
          }
       }
       @property fill_color {
