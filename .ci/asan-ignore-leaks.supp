@@ -7,6 +7,7 @@ leak:handle_directive
 leak:edje_cc
 leak:_efl_loop_message_handler_message_send
 leak:ecore_ipc_client_add
+leak:_evas_pointer_data_add
 # Elm_prefs_cc
 leak:st_collection_page_items_item_label
 leak:st_collection_page_items_item_name
