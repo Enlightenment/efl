@@ -170,7 +170,7 @@ struct pack_event_info_and_call_visitor
         {
            return as_generator(
                 indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
-                << indent.inc() << "IntPtr info = Marshal.AllocHGlobal(Marshal.SizeOf(e.arg));\n"
+                << indent.inc() << "IntPtr info = Marshal.AllocHGlobal(Marshal.SizeOf(e.Arg));\n"
                 << indent.inc() << "CallNativeEventCallback(" + library_name + ", \"_" + evt_c_name + "\", info, " << "(p) => Marshal.FreeHGlobal(p));\n"
               ).generate(sink, attributes::unused, *context);
         }
@@ -190,8 +190,8 @@ struct pack_event_info_and_call_visitor
 
       match const str_table[] =
         {
-           {"string", [] { return "e.arg"; }}
-           , {"stringshare", [] { return "e.arg"; }}
+           {"string", [] { return "e.Arg"; }}
+           , {"stringshare", [] { return "e.Arg"; }}
         };
 
       auto str_accept_func = [&](std::string const& conversion)
@@ -208,9 +208,9 @@ struct pack_event_info_and_call_visitor
 
       match const value_table [] =
         {
-           {"bool", [] { return "e.arg ? (byte) 1 : (byte) 0"; }}
-           , {"Eina.Error", [] { return "(int)e.arg"; }}
-           , {nullptr, [] { return "e.arg"; }}
+           {"bool", [] { return "e.Arg ? (byte) 1 : (byte) 0"; }}
+           , {"Eina.Error", [] { return "(int)e.Arg"; }}
+           , {nullptr, [] { return "e.Arg"; }}
         };
 
       auto value_accept_func = [&](std::string const& conversion)
@@ -225,14 +225,14 @@ struct pack_event_info_and_call_visitor
       if (eina::optional<bool> b = type_match::get_match(value_table, filter_func, value_accept_func))
         return *b;
 
-      return value_accept_func("e.args");
+      return value_accept_func("e.Args");
    }
    bool operator()(grammar::attributes::klass_name const&) const
    {
       auto const& indent = current_indentation(*context);
       return as_generator(
                           indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
-                          << indent.inc() << "IntPtr info = e.arg.NativeHandle;\n"
+                          << indent.inc() << "IntPtr info = e.Arg.NativeHandle;\n"
                           << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", info, null);\n"
                           ).generate(sink, attributes::unused, *context);
    }
@@ -243,15 +243,15 @@ struct pack_event_info_and_call_visitor
       std::string info_variable;
 
       if (type.outer.base_type == "iterator")
-        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IEnumerableToIterator(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IEnumerableToIterator(e.Arg, ") + (is_own ? "true" : "false") + ");\n";
       else if (type.outer.base_type == "accessor")
-        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IEnumerableToAccessor(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IEnumerableToAccessor(e.Arg, ") + (is_own ? "true" : "false") + ");\n";
       else if (type.outer.base_type == "array")
-        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IListToNativeArray(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IListToNativeArray(e.Arg, ") + (is_own ? "true" : "false") + ");\n";
       else if (type.outer.base_type == "list")
-        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IListToNativeList(e.arg, ") + (is_own ? "true" : "false") + ");\n";
+        info_variable = std::string("IntPtr info = Efl.Eo.Globals.IListToNativeList(e.Arg, ") + (is_own ? "true" : "false") + ");\n";
       else
-        info_variable = "IntPtr info = e.arg.Handle;\n";
+        info_variable = "IntPtr info = e.Arg.Handle;\n";
       return as_generator(indent.inc() << "Contract.Requires(e != null, nameof(e));\n"
                           << indent.inc() << info_variable
                           << indent.inc() << "CallNativeEventCallback(" << library_name << ", \"_" << evt_c_name << "\", info, null);\n"
@@ -326,7 +326,7 @@ struct event_argument_wrapper_generator
 
       if (!as_generator(scope_tab(2) << "/// </summary>\n"
                         << scope_tab(2) << "/// <value>" << documentation_string << "</value>\n"
-                        << scope_tab(2) << "public " << type << " arg { get; set; }\n"
+                        << scope_tab(2) << "public " << type << " Arg { get; set; }\n"
                         << scope_tab << "}\n\n"
                  ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context))
         return false;
@@ -427,7 +427,7 @@ struct event_definition_generator
            auto sub_context = change_indentation(indent.inc().inc(), context);
 
            if (!as_generator(", info => new " << wrapper_args_type << "{ "
-                             << "arg = ").generate(arg_initializer_sink, attributes::unused, context))
+                             << "Arg = ").generate(arg_initializer_sink, attributes::unused, context))
              return false;
            if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_initializer_sink), decltype(sub_context)>{arg_initializer_sink, &sub_context, *etype}))
              return false;
