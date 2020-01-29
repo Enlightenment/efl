@@ -574,14 +574,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Eina List */
 
       /* Integer */
-      eina_list_int_in {
+      eina_list_int_in @beta {
          params {
             @in lst: list<int>;
          }
          return: bool;
       }
 
-      eina_list_int_in_own {
+      eina_list_int_in_own @beta {
          params {
             @in lst: list<int> @move; // <int @move>
          }
@@ -591,7 +591,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_int_out {
+      eina_list_int_out @beta {
          params {
             @out lst: list<int>;
          }
@@ -601,33 +601,33 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_int_out_own {
+      eina_list_int_out_own @beta {
          params {
             @out lst: list<int> @move; // <int @move>
          }
          return: bool;
       }
 
-      eina_list_int_return {
+      eina_list_int_return @beta {
          return: list<int>;
       }
       check_eina_list_int_return {
          return: bool;
       }
 
-      eina_list_int_return_own {
+      eina_list_int_return_own @beta {
          return: list<int> @move; // <int @move>
       }
 
       /* String */
-      eina_list_str_in {
+      eina_list_str_in @beta {
          params {
             @in lst: list<string>;
          }
          return: bool;
       }
 
-      eina_list_str_in_own {
+      eina_list_str_in_own @beta {
          params {
             @in lst: list<mstring @move> @move;
          }
@@ -637,7 +637,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_str_out {
+      eina_list_str_out @beta {
          params {
             @out lst: list<string>;
          }
@@ -647,33 +647,33 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_str_out_own {
+      eina_list_str_out_own @beta {
          params {
             @out lst: list<mstring @move> @move;
          }
          return: bool;
       }
 
-      eina_list_str_return {
+      eina_list_str_return @beta {
          return: list<string>;
       }
       check_eina_list_str_return {
          return: bool;
       }
 
-      eina_list_str_return_own {
+      eina_list_str_return_own @beta {
          return: list<mstring @move> @move;
       }
 
       /* Eina_Stringshare */
-      eina_list_strshare_in {
+      eina_list_strshare_in @beta {
          params {
             @in lst: list<stringshare>;
          }
          return: bool;
       }
 
-      eina_list_strshare_in_own {
+      eina_list_strshare_in_own @beta {
          params {
             @in lst: list<stringshare @move> @move;
          }
@@ -683,7 +683,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_strshare_out {
+      eina_list_strshare_out @beta {
          params {
             @out lst: list<stringshare>;
          }
@@ -693,33 +693,33 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_strshare_out_own {
+      eina_list_strshare_out_own @beta {
          params {
             @out lst: list<stringshare @move> @move;
          }
          return: bool;
       }
 
-      eina_list_strshare_return {
+      eina_list_strshare_return @beta {
          return: list<stringshare>;
       }
       check_eina_list_strshare_return {
          return: bool;
       }
 
-      eina_list_strshare_return_own {
+      eina_list_strshare_return_own @beta {
          return: list<stringshare @move> @move;
       }
 
       /* Object */
-      eina_list_obj_in {
+      eina_list_obj_in @beta {
          params {
             @in lst: list<Dummy.Numberwrapper>;
          }
          return: bool;
       }
 
-      eina_list_obj_in_own {
+      eina_list_obj_in_own @beta {
          params {
             @in lst: list<Dummy.Numberwrapper @move> @move;
          }
@@ -729,7 +729,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_obj_out {
+      eina_list_obj_out @beta {
          params {
             @out lst: list<Dummy.Numberwrapper>;
          }
@@ -739,25 +739,25 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_list_obj_out_own {
+      eina_list_obj_out_own @beta {
          params {
             @out lst: list<Dummy.Numberwrapper @move> @move;
          }
          return: bool;
       }
 
-      eina_list_obj_return {
+      eina_list_obj_return @beta {
          return: list<Dummy.Numberwrapper>;
       }
       check_eina_list_obj_return {
          return: bool;
       }
 
-      eina_list_obj_return_own {
+      eina_list_obj_return_own @beta {
          return: list<Dummy.Numberwrapper @move> @move;
       }
 
-      eina_list_obj_return_in {
+      eina_list_obj_return_in @beta {
          params {
             @in lst: list<Dummy.Numberwrapper>;
          }

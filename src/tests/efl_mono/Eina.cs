@@ -2050,7 +2050,7 @@ class TestEinaList
     //
 
     // Integer //
-
+#if EFL_BETA
     public static void test_eina_list_int_in()
     {
         var t = new Dummy.TestObject();
@@ -2330,6 +2330,7 @@ class TestEinaList
         a.Dispose();
         t.Dispose();
     }
+#endif
 }
 
 class TestEinaInlist
