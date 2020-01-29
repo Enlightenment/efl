@@ -934,6 +934,25 @@ EFL_START_TEST(wl2_window_resizing_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_output_find)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   //FIXME: Need some discussion about how to validate this API in TC.
+   output = ecore_wl2_window_output_find(win);
+   output = ecore_wl2_window_output_find(NULL);
+   fail_if (output != NULL);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -976,5 +995,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_move);
         tcase_add_test(tc, wl2_window_resize);
         tcase_add_test(tc, wl2_window_resizing_get);
+        tcase_add_test(tc, wl2_window_output_find);
      }
 }

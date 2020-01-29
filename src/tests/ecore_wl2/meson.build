@@ -5,7 +5,8 @@ ecore_wl2_suite_src = [
   'ecore_wl2_test_ecore_wl2.c',
   'ecore_wl2_test_display.c',
   'ecore_wl2_test_window.c',
-  'ecore_wl2_test_input.c'
+  'ecore_wl2_test_input.c',
+  'ecore_wl2_test_output.c'
 ]
 
 wl2_test_gl_deps = []
