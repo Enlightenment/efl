@@ -9,6 +9,7 @@
 #include <evas_canvas_eo.h>
 
 #include "custom_recognizer.eo.h"
+#include "custom_recognizer2.eo.h"
 
 /*
 typedef enum
@@ -31,6 +32,7 @@ enum
    FLICK,
    ZOOM,
    CUSTOM,
+   CUSTOM2,
    LAST
 };
 
@@ -514,8 +516,19 @@ custom_cb(void *data EINA_UNUSED , const Efl_Event *ev)
 {
    Efl_Canvas_Gesture *g = ev->info;
 
-   ck_assert_str_eq(efl_gesture_custom_gesture_name_get(g), "custom_gesture");
    int *count = data;
+   if (!eina_streq(efl_gesture_custom_gesture_name_get(g), "custom_gesture")) return;
+   /* increment counter for event state which has been processed */
+   count[efl_gesture_state_get(g) - 1]++;
+}
+
+static void
+custom_cb2(void *data EINA_UNUSED , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+
+   int *count = data;
+   if (!eina_streq(efl_gesture_custom_gesture_name_get(g), "custom_gesture2")) return;
    /* increment counter for event state which has been processed */
    count[efl_gesture_state_get(g) - 1]++;
 }
@@ -525,13 +538,48 @@ EFL_START_TEST(test_efl_ui_gesture_custom)
    Eo *rect = setup();
    Eo *manager = efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS);
    Eo *recognizer = efl_add(CUSTOM_RECOGNIZER_CLASS, manager);
-   efl_gesture_manager_recognizer_register(manager, recognizer);
+   Eo *recognizer2 = efl_add(CUSTOM_RECOGNIZER2_CLASS, manager);
 
+   efl_gesture_manager_recognizer_register(manager, recognizer);
+   efl_gesture_manager_recognizer_register(manager, recognizer2);
    efl_event_callback_add(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb, &count[CUSTOM]);
+   efl_event_callback_add(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb2, &count[CUSTOM2]);
+
+   /* verify that we're processing */
    click_object(rect);
    CHECK_ALL(CUSTOM, 1, 0, 1, 0);
-   efl_event_callback_del(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb, &count[CUSTOM]);
+   CHECK_ALL(CUSTOM2, 1, 0, 0, 1);
+
+   RESET;
+
+   /* verify that we aren't still processing */
    efl_gesture_manager_recognizer_unregister(manager, recognizer);
+   efl_gesture_manager_recognizer_unregister(manager, recognizer2);
+   click_object(rect);
+   CHECK_ZERO(CUSTOM);
+   CHECK_ZERO(CUSTOM2);
+
+   RESET;
+
+   /* verify re-register + early finish from custom2 */
+   efl_gesture_manager_recognizer_register(manager, recognizer);
+   efl_gesture_manager_recognizer_register(manager, recognizer2);
+   drag_object(rect, 500, 500, 1, 0, EINA_FALSE);
+   CHECK_ALL(CUSTOM, 1, 1, 1, 0);
+   CHECK_ALL(CUSTOM2, 1, 0, 1, 0);
+
+   efl_event_callback_del(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb, &count[CUSTOM]);
+   efl_event_callback_del(rect, EFL_EVENT_GESTURE_CUSTOM, custom_cb2, &count[CUSTOM2]);
+
+   RESET;
+
+   /* verify we don't have anything totally weird going on */
+   click_object(rect);
+   CHECK_ZERO(CUSTOM);
+   CHECK_ZERO(CUSTOM2);
+
+   efl_gesture_manager_recognizer_unregister(manager, recognizer);
+   efl_gesture_manager_recognizer_unregister(manager, recognizer2);
 }
 EFL_END_TEST
 
