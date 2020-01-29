@@ -598,6 +598,7 @@ event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, vo
 {
    int *called = data;
 
+   if (*called) fprintf(stderr, "TEST FAILURE IN %s\n", __func__);
    ck_assert_int_eq(*called, 0);
    *called = 1;
 }
