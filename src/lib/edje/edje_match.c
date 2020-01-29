@@ -877,7 +877,7 @@ edje_match_signal_source_hash_get(const char *sig,
 }
 
 void
-edje_match_signal_source_free(Edje_Signal_Source_Char *key, EINA_UNUSED void *data)
+edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data EINA_UNUSED)
 {
    eina_inarray_flush(&key->list);
    free(key);
