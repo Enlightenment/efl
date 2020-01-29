@@ -3275,7 +3275,7 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
            }
-		}
-	 }
+      }
+    }
   }
 }
