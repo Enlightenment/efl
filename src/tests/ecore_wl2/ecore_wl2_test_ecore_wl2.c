@@ -16,7 +16,7 @@ void
 ecore_wl2_test_init(TCase *tc)
 {
    tcase_add_test(tc, ecore_wl2_simple);
-   if (getenv("E_START"))
+   if (getenv("WAYLAND_DISPLAY") && (getenv("E_START")))
      {
         tcase_add_test(tc, wl2_session_recovery_disable);
      }
