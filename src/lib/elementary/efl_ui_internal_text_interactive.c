@@ -349,6 +349,9 @@ _text_filter_text_prepend(Efl_Canvas_Textblock *obj, Efl_Ui_Internal_Text_Intera
                           const char *fmtpre, const char *fmtpost,
                           Eina_Bool clearsel, Eina_Bool changeinfo)
 {
+   char *markup_text;
+   Efl_Text_Change_Info *info = NULL;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
 
    if ((clearsel) && (en->have_selection))
@@ -356,19 +359,12 @@ _text_filter_text_prepend(Efl_Canvas_Textblock *obj, Efl_Ui_Internal_Text_Intera
         _sel_range_del_emit(obj, en);
      }
 
-   if (text)
-     {
-        char *markup_text;
-        Efl_Text_Change_Info *info = NULL;
-
-        markup_text = evas_textblock_text_utf8_to_markup(NULL, text);
-        if (markup_text)
-          info = _text_filter_markup_prepend_internal(obj, en, c, markup_text,
-                                                      fmtpre, fmtpost,
-                                                      clearsel, changeinfo);
-        return info;
-     }
-   return NULL;
+   markup_text = evas_textblock_text_utf8_to_markup(NULL, text);
+   if (markup_text)
+     info = _text_filter_markup_prepend_internal(obj, en, c, markup_text,
+                                                 fmtpre, fmtpost,
+                                                 clearsel, changeinfo);
+   return info;
 }
 
 static void
