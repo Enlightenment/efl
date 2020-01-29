@@ -32,7 +32,7 @@ typedef struct _Efl_Canvas_Gesture_Manager_Data
 } Efl_Canvas_Gesture_Manager_Data;
 
 static void _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
-                                      Eo *target, const Efl_Event_Description *type, Efl_Canvas_Gesture_Recognizer *recognizer);
+                                      const Eo *target, const Efl_Event_Description *type, const Efl_Canvas_Gesture_Recognizer *recognizer);
 static Efl_Canvas_Gesture *
             _get_state(Efl_Canvas_Gesture_Manager_Data *pd, Eo *target,
            Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
@@ -486,7 +486,7 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
 
 static void
 _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
-                         Eo *target, const Efl_Event_Description *type, Efl_Canvas_Gesture_Recognizer *recognizer)
+                         const Eo *target, const Efl_Event_Description *type, const Efl_Canvas_Gesture_Recognizer *recognizer)
 {
    Eina_List *l, *l_next;
    Object_Gesture *object_gesture;
@@ -503,12 +503,20 @@ _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
      }
 }
 
-void
-efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Description *type, Efl_Canvas_Gesture_Recognizer *recognizer)
+EOLIAN static void
+_efl_canvas_gesture_manager_recognizer_cleanup(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const Efl_Canvas_Gesture_Recognizer *recognizer, const Eo *target)
 {
-   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   const Efl_Event_Description *type;
+   Efl_Canvas_Gesture *dummy;
 
    EINA_SAFETY_ON_NULL_RETURN(recognizer);
+
+   //Find the type of the recognizer
+   dummy = efl_gesture_recognizer_add((void*)recognizer, 0);
+   EINA_SAFETY_ON_NULL_RETURN(dummy);
+
+   type = _efl_gesture_type_get(dummy);
+   efl_del(dummy);
    _cleanup_cached_gestures(pd, target, type, recognizer);
    eina_hash_del(pd->m_object_events, &recognizer, NULL);
    _cleanup_object(pd->m_gestures_to_delete);

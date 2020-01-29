@@ -35,6 +35,13 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
             value: any_value_ref; [[Value of the property.]]
          }
       }
+      recognizer_cleanup {
+         [[Perform cleanup for a gesture which ends after a delay.]]
+         params {
+            @in recognizer: const(Efl.Canvas.Gesture_Recognizer); [[The gesture recognizer object.]]
+            @in target: const(Efl.Canvas.Object); [[The target object being processed by the recognizer.]]
+         }
+      }
    }
    events {
       config,changed: string; [[Called when a config value has been changed for the manager object. Passed string is the name of the value.]]
