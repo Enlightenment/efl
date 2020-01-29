@@ -69,6 +69,8 @@ inline bool is_function_blacklisted(std::string const& c_name)
     || c_name == "efl_access_object_event_handler_add"
     || c_name == "efl_access_object_event_handler_del"
     || c_name == "efl_access_object_event_emit"
+    || c_name == "efl_access_widget_action_elm_actions_get"
+    || c_name == "efl_access_action_actions_get"
     ;
 }
 
