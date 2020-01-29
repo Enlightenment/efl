@@ -12,7 +12,7 @@ struct _Efl_Gfx_Vg_Value_Provider_Data
 
    Eina_Stringshare *keypath;
 
-   Eina_Matrix3 *m;
+   Eina_Matrix4 *m;
    struct {
       int r;
       int g;

@@ -531,8 +531,44 @@ _value_provider_override(Vg_File_Data *vfd)
           }
         if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX)
           {
-             //TODO: When the lottie animation's transform property is implemented,
-             //      the transform property override function have to added.
+             Eina_Matrix4 m, *orig_m;
+             double tx, ty, sx, sy, radian_z, si, cs;
+
+             orig_m = efl_gfx_vg_value_provider_transform_get(vp);
+             if (!orig_m) continue;
+
+             /*
+              * NOTE: We need to impelements 3-axis transform.
+              * now lottie animation provide z projection transform.
+              * In this cace, we calcuate to T * R * S order.
+              */
+             eina_matrix4_copy(&m, orig_m);
+             keypath = efl_gfx_vg_value_provider_keypath_get(vp);
+
+             // Calc Translate
+             eina_matrix4_values_get(&m, NULL, NULL, NULL, &tx,
+                                         NULL, NULL, NULL, &ty,
+                                         NULL, NULL, NULL, NULL,
+                                         NULL, NULL, NULL, NULL);
+             eina_matrix4_translate(&m, -1 * tx, -1 * ty, 0);
+
+             // Calc Rotate
+             eina_matrix4_values_get(&m,  &cs, NULL, NULL, NULL,
+                                          &si, NULL, NULL, NULL,
+                                         NULL, NULL, NULL, NULL,
+                                         NULL, NULL, NULL, NULL);
+             radian_z = atan2(si, cs);
+             eina_matrix4_rotate(&m, -1 * radian_z, EINA_MATRIX_AXIS_Z);
+
+             // Calc Scale
+             eina_matrix4_values_get(&m,  &sx, NULL, NULL, NULL,
+                                         NULL,  &sy, NULL, NULL,
+                                         NULL, NULL, NULL, NULL,
+                                         NULL, NULL, NULL, NULL);
+
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_TR_SCALE, (char*)keypath, 100.0 * sx, 100.0 * sy);
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_TR_ROTATION, (char*)keypath, radian_z * (180.0 / M_PI));
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_TR_POSITION, (char*)keypath, tx, ty);
           }
      }
 }

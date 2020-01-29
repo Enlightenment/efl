@@ -55,8 +55,6 @@ add_value_provider(char* new_path, char* new_type, char* new_values)
              efl_gfx_vg_value_provider_stroke_color_set(vp, color[0], color[1], color[2], color[3]);
              sprintf(new_type, "StrokeColor");
           }
-
-
         efl_ui_vg_animation_value_provider_override(anim_view, vp);
      }
    if (!strcmp(type, "StrokeWidth"))
@@ -68,10 +66,52 @@ add_value_provider(char* new_path, char* new_type, char* new_values)
         if (v) width = strtod(v, NULL);
         efl_gfx_vg_value_provider_stroke_width_set(vp, width);
         efl_ui_vg_animation_value_provider_override(anim_view, vp);
-        evas_object_show(anim_view);
         sprintf(new_path, "%s", path);
         sprintf(new_type, "StrokeWidth");
         sprintf(new_values, "%f", width);
+     }
+   if  (strstr(type, "Tr"))
+     {
+        double value[2], value_cnt;
+        Eina_Matrix4 m;
+        Eo *vp = efl_add(EFL_GFX_VG_VALUE_PROVIDER_CLASS, anim_view);
+
+        efl_gfx_vg_value_provider_keypath_set(vp, (char*)path);
+
+        value_cnt = strstr(type, "Rotation") ? 1 : 2;
+        for( int i = 0; i < value_cnt; i++)
+          {
+             char* v = (char*)efl_text_get(values[i]);
+             if (v) value[i] = atof(v);
+          }
+
+        eina_matrix4_identity(&m);
+        if (!strcmp(type, "TrPosition"))
+          {
+             // Z projection
+             eina_matrix4_translate(&m, value[0], value[1], 0);
+             sprintf(new_type, "TrPosition");
+             sprintf(new_values, "%f %f",value[0], value[1]);
+
+          }
+        else if (!strcmp(type, "TrScale"))
+          {
+             // Z projection
+             eina_matrix4_scale(&m, value[0], value[1], 1);
+             sprintf(new_type, "TrScale");
+             sprintf(new_values, "%f %f",value[0], value[1]);
+          }
+        else if (!strcmp(type, "TrRotation"))
+          {
+             // Z projection
+             eina_matrix4_rotate(&m, value[0] * (M_PI / 180), EINA_MATRIX_AXIS_Z); //degree to radian
+             sprintf(new_values, "%f",value[0]);
+             sprintf(new_type, "TrRotation");
+          }
+
+        sprintf(new_path, "%s", path);
+        efl_gfx_vg_value_provider_transform_set(vp, &m);
+        efl_ui_vg_animation_value_provider_override(anim_view, vp);
      }
    return EINA_TRUE;
 }
@@ -234,6 +274,37 @@ void values_input(Eo* box, const char* type)
                              efl_pack(box, efl_added));
         efl_gfx_hint_size_min_set(values[0], EINA_SIZE2D(50, 10));
         efl_text_set(efl_part(values[0], "efl.text_guide"), "Width(double type)");
+     }
+   else if (strstr(type, "Tr"))
+     {
+        char text[2][2];
+        if (!strcmp(type, "TrPosition"))
+          {
+             sprintf(text[0], "X");
+             sprintf(text[1], "Y");
+          }
+        else if (!strcmp(type, "TrScale"))
+          {
+             sprintf(text[0], "W");
+             sprintf(text[1], "H");
+          }
+        else if (!strcmp(type, "TrRotation"))
+          {
+             sprintf(text[0], "R");
+          }
+
+        int value_cnt = strstr(type, "Rotation") ? 1 : 2;
+        for( int i = 0; i < value_cnt; i++)
+          {
+             values[i] =  efl_add(EFL_UI_TEXTBOX_CLASS, box,
+                                  efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0),
+                                  efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_FALSE),
+                                  efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
+                                  efl_text_interactive_editable_set(efl_added, EINA_TRUE),
+                                  efl_pack(box, efl_added));
+             efl_gfx_hint_size_min_set(values[i], EINA_SIZE2D(50, 10));
+             efl_text_set(efl_part(values[i], "efl.text_guide"), text[i]);
+          }
      }
 }
 
@@ -434,6 +505,9 @@ test_efl_gfx_vg_value_provider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    elm_hoversel_item_add(type_hoversel, "FillColor", NULL, ELM_ICON_NONE, _hover_item_selected_cb, box_sub);
    elm_hoversel_item_add(type_hoversel, "StrokeColor", NULL, ELM_ICON_NONE, _hover_item_selected_cb, box_sub);
    elm_hoversel_item_add(type_hoversel, "StrokeWidth", NULL, ELM_ICON_NONE, _hover_item_selected_cb, box_sub);
+   elm_hoversel_item_add(type_hoversel, "TrPosition", NULL, ELM_ICON_NONE, _hover_item_selected_cb, box_sub);
+   elm_hoversel_item_add(type_hoversel, "TrScale", NULL, ELM_ICON_NONE, _hover_item_selected_cb, box_sub);
+   elm_hoversel_item_add(type_hoversel, "TrRotation", NULL, ELM_ICON_NONE, _hover_item_selected_cb, box_sub);
    evas_object_show(type_hoversel);
    elm_object_focus_set(type_hoversel, EINA_TRUE);
    efl_pack(box_sub, type_hoversel);
