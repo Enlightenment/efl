@@ -152,6 +152,7 @@ EOLIAN static void
 _efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd EINA_UNUSED)
 {
    Efl_Canvas_Gesture_Recognizer *recognizer;
+   void *ptr;
 
    eina_hash_free(pd->m_config);
    eina_hash_free(pd->m_recognizers);
@@ -161,6 +162,8 @@ _efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Ma
    eina_hash_free(pd->m_object_events);
    _cleanup_object(pd->m_gestures_to_delete);
    eina_array_free(pd->m_gestures_to_delete);
+   EINA_LIST_FREE(pd->m_object_gestures, ptr)
+     free(ptr);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
