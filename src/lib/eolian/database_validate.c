@@ -400,9 +400,9 @@ _validate_type(Validate_State *vals, Eolian_Type *tp, Eina_Bool by_ref,
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
                 if (kwid > KW_void)
                   tp->ownable = EINA_TRUE;
-                if ((kwid == KW_hash || kwid == KW_list) && vals->stable)
+                if (kwid == KW_hash && vals->stable)
                   {
-                     _eo_parser_log(&tp->base, "hashes and lists not allowed in stable context");
+                     _eo_parser_log(&tp->base, "hashes not allowed in stable context");
                      return EINA_FALSE;
                   }
                 Eolian_Type *itp = tp->base_type;
