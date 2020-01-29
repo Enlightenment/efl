@@ -57,6 +57,17 @@ typedef enum _Eina_Matrix_Type
   } Eina_Matrix_Type;
 
 /**
+ * @typedef Eina_Matrix_Axis
+ * Matrix Axes
+ */
+typedef enum _Eina_Matrix_Axis
+  {
+    EINA_MATRIX_AXIS_X, /**< X-Axis */
+    EINA_MATRIX_AXIS_Y, /**< Y-Axis */
+    EINA_MATRIX_AXIS_Z, /**< Z-Axis */
+  } Eina_Matrix_Axis;
+
+/**
  * @defgroup Eina_Matrix3_Group 3x3 floating point matrices
  *
  * @brief Definition and operations for 3x3 matrices.
@@ -931,6 +942,59 @@ EAPI void eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
 EAPI void eina_matrix4_ortho_set(Eina_Matrix4 *m,
                                  double left, double right, double bottom, double top,
                                  double dnear, double dfar);
+
+
+/**
+ * @brief Sets out as the matrix multiplication (composition) of two matrices.
+ *
+ * @param[in] mat_a The first matrix.  Must be non-NULL.
+ * @param[in] mat_b The second matrix.  Must be non-NULL.
+ * @param[out] out The results matrix.
+ *
+ * In matrix multiplication, AB, the resultant matrix is created from
+ * the rows of A multiplied against the columns of B and summed.  This
+ * is not commutative; i.e.  AB != BA, so the ordering of arguments
+ * @p m1 and @p m2 matters.
+ *
+ * @since 1.24
+ */
+EAPI void eina_matrix4_compose(const Eina_Matrix4 *mat_a,
+                               const Eina_Matrix4 *mat_b,
+                               Eina_Matrix4 *out);
+
+/**
+ * @brief Sets the matrix values for a translation operation.
+ *
+ * @param[out] t Where to store the resulting matrix.
+ * @param[in] tx The X coordinate translation.
+ * @param[in] ty The Y coordinate translation.
+ * @param[in] tz The Z coordinate translation.
+ *
+ * @since 1.24
+ */
+EAPI void eina_matrix4_translate(Eina_Matrix4 *t, double tx, double ty, double tz);
+
+/**
+ * @brief Sets the matrix values for a scaling operation.
+ *
+ * @param[out] t Where to store the resulting matrix.
+ * @param[in] sx The X coordinate scaling factor.
+ * @param[in] sy The Y coordinate scaling factor.
+ * @param[in] sz The Z coordinate scaling factor.
+ *
+ * @since 1.24
+ */
+EAPI void eina_matrix4_scale(Eina_Matrix4 *t, double sx, double sy, double sz);
+
+/**
+ * @brief Sets the matrix values for a rotation operation.
+ * @param[out] t Where to store the resulting matrix.
+ * @param[in] rad The number of radians to rotate.
+ * @param[in] axis The Axis of rotation.
+ *
+ * @since 1.24
+ */
+EAPI void eina_matrix4_rotate(Eina_Matrix4 *t, double rad, Eina_Matrix_Axis axis);
 
 /**
  * @}

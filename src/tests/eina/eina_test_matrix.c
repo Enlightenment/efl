@@ -192,6 +192,24 @@ EFL_START_TEST(eina_matrix4)
 }
 EFL_END_TEST
 
+#define MATRIX4_CMP(XX, XY, XZ, XW, YX, YY, YZ, YW, ZX, ZY, ZZ, ZW, WX, WY, WZ, WW, AXX, AXY, AXZ, AXW, AYX, AYY, AYZ, AYW, AZX, AZY, AZZ, AZW, AWX, AWY, AWZ, AWW) \
+  (EINA_DBL_EQ(XX, AXX) && \
+   EINA_DBL_EQ(XY, AXY) && \
+   EINA_DBL_EQ(XZ, AXZ) && \
+   EINA_DBL_EQ(XW, AXW) && \
+   EINA_DBL_EQ(YX, AYX) && \
+   EINA_DBL_EQ(YY, AYY) && \
+   EINA_DBL_EQ(YZ, AYZ) && \
+   EINA_DBL_EQ(YW, AYW) && \
+   EINA_DBL_EQ(ZX, AZX) && \
+   EINA_DBL_EQ(ZY, AZY) && \
+   EINA_DBL_EQ(ZZ, AZZ) && \
+   EINA_DBL_EQ(ZW, AZW) && \
+   EINA_DBL_EQ(WX, AWX) && \
+   EINA_DBL_EQ(WY, AWY) && \
+   EINA_DBL_EQ(WZ, AWZ) && \
+   EINA_DBL_EQ(WW, AWW))
+
 EFL_START_TEST(eina_matrix4_operation)
 {
    double det;
@@ -202,6 +220,7 @@ EFL_START_TEST(eina_matrix4_operation)
           zx, zy, zz, zw,
           wx, wy, wz, ww;
    const double arr[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+   double rotate_radian = 45.0 * M_PI / 180.0;
 
    eina_matrix4_values_set(&m,
                            0, 0, 2, 0,
@@ -311,6 +330,110 @@ EFL_START_TEST(eina_matrix4_operation)
             !EINA_DBL_EQ(wy, 7) ||
             !EINA_DBL_EQ(wz, 5) ||
             !EINA_DBL_EQ(ww, 1));
+
+
+   eina_matrix4_identity(&m);
+
+   eina_matrix4_scale(&m, 5, 5, 5);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+
+   fail_if(!MATRIX4_CMP(xx, xy, xz, xw,
+                        yx, yy, yz, yw,
+                        zx, zy, zz, zw,
+                        wx, wy, wz, ww,
+                        5, 0, 0, 0,
+                        0, 5, 0, 0,
+                        0, 0, 5, 0,
+                        0, 0, 0, 1));
+
+   eina_matrix4_translate(&m, 5, 5, 5);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if(!MATRIX4_CMP(xx, xy, xz, xw,
+                        yx, yy, yz, yw,
+                        zx, zy, zz, zw,
+                        wx, wy, wz, ww,
+                        5, 0, 0, 5,
+                        0, 5, 0, 5,
+                        0, 0, 5, 5,
+                        0, 0, 0, 1));
+
+   eina_matrix4_identity(&m);
+   eina_matrix4_rotate(&m, rotate_radian, EINA_MATRIX_AXIS_X);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if(!MATRIX4_CMP(xx, xy, xz, xw,
+                        yx, yy, yz, yw,
+                        zx, zy, zz, zw,
+                        wx, wy, wz, ww,
+                        1, 0, 0, 0,
+                        0, cos(rotate_radian), -sin(rotate_radian), 0,
+                        0, sin(rotate_radian), cos(rotate_radian), 0,
+                        0, 0, 0, 1));
+
+   eina_matrix4_identity(&m);
+   eina_matrix4_rotate(&m, rotate_radian, EINA_MATRIX_AXIS_Y);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if(!MATRIX4_CMP(xx, xy, xz, xw,
+                        yx, yy, yz, yw,
+                        zx, zy, zz, zw,
+                        wx, wy, wz, ww,
+                        cos(rotate_radian), 0, sin(rotate_radian), 0,
+                        0, 1, 0, 0,
+                        -sin(rotate_radian), 0, cos(rotate_radian), 0,
+                        0, 0, 0, 1));
+
+   eina_matrix4_identity(&m);
+   eina_matrix4_rotate(&m, rotate_radian, EINA_MATRIX_AXIS_Z);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if(!MATRIX4_CMP(xx, xy, xz, xw,
+                        yx, yy, yz, yw,
+                        zx, zy, zz, zw,
+                        wx, wy, wz, ww,
+                        cos(rotate_radian), -sin(rotate_radian), 0, 0,
+                        sin(rotate_radian), cos(rotate_radian), 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1));
+
+
+   eina_matrix4_identity(&m1);
+   eina_matrix4_values_set(&m2,
+                            1,  2,  3,  4,
+                            5,  6,  7,  8,
+                            9, 10, 11, 12,
+                           13, 14, 15, 16);
+   eina_matrix4_compose(&m1, &m2, &m);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if(!MATRIX4_CMP(xx, xy, xz, xw,
+                        yx, yy, yz, yw,
+                        zx, zy, zz, zw,
+                        wx, wy, wz, ww,
+                         1,  2,  3,  4,
+                         5,  6,  7,  8,
+                         9, 10, 11, 12,
+                        13, 14, 15, 16));
 }
 EFL_END_TEST
 
