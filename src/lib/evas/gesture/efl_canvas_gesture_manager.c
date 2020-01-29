@@ -28,6 +28,7 @@ typedef struct _Efl_Canvas_Gesture_Manager_Data
    Eina_List *m_gestures_to_delete;
    //Kepps config values for gesture recognize
    Eina_Hash *m_config;
+   Eina_Bool processing : 1;
 } Efl_Canvas_Gesture_Manager_Data;
 
 static void _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
@@ -326,6 +327,7 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
 
    thisisreallystupid = eina_hash_find(pd->m_gesture_contex, &target);
    if (!thisisreallystupid) return;
+   pd->processing = EINA_TRUE;
    it = eina_hash_iterator_tuple_new(thisisreallystupid);
    EINA_ITERATOR_FOREACH(it, tup)
      {
@@ -344,6 +346,7 @@ _efl_canvas_gesture_manager_filter_event(void *data, Eo *target, void *event)
           }
      }
    eina_iterator_free(it);
+   pd->processing = EINA_FALSE;
 }
 
 EOLIAN static void
@@ -413,6 +416,9 @@ _efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canva
              pd->m_object_gestures = eina_list_remove_list(pd->m_object_gestures, l);
           }
      }
+   if (pd->processing) return;
+   _cleanup_object(pd->m_gestures_to_delete);
+   pd->m_gestures_to_delete = NULL;
 }
 
 // EOLIAN static void
