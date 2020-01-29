@@ -1,6 +1,6 @@
 import eina_types;
 
-class @beta Dummy.Part_Holder extends Dummy.Test_Object implements Efl.Part {
+class Dummy.Part_Holder extends Dummy.Test_Object implements Efl.Part {
 
    parts {
       one: Dummy.Test_Object; [[ Part number one. ]]

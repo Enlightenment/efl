@@ -100,7 +100,7 @@ function Dummy.FormatCb {
    }
 };
 
-class @beta Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
+class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
    [[ Simple test class
 
       @since 1.23 ]]

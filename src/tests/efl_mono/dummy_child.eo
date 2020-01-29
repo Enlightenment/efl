@@ -1,6 +1,6 @@
 import eina_types;
 
-class @beta Dummy.Child extends Dummy.Test_Object {
+class Dummy.Child extends Dummy.Test_Object {
 
    methods {
       double_params {
