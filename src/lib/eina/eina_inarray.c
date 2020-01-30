@@ -532,7 +532,7 @@ EAPI void *
 eina_inarray_pop(Eina_Inarray *array)
 {
    EINA_MAGIC_CHECK_INARRAY(array, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(array->len == 0, NULL);
+   if (array->len == 0) return NULL;
    if (!_eina_inarray_resize(array, array->len - 1))
      return NULL;
    array->len--;
