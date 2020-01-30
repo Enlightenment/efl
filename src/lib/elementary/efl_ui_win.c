@@ -5157,11 +5157,8 @@ _gesture_manager_config_load(Eo *obj)
    eina_value_set(&val, _elm_config->glayer_double_tap_timeout);
    efl_gesture_manager_config_set(gm, "glayer_double_tap_timeout", &val);
 
-   eina_value_set(&val, _elm_config->thumbscroll_friction);
-   efl_gesture_manager_config_set(gm, "thumbscroll_friction", &val);
-
-   eina_value_set(&val, _elm_config->thumbscroll_momentum_threshold);
-   efl_gesture_manager_config_set(gm, "thumbscroll_momentum_threshold", &val);
+   elm_config_scroll_thumbscroll_friction_set(_elm_config->thumbscroll_friction);
+   elm_config_scroll_thumbscroll_momentum_threshold_set(_elm_config->thumbscroll_momentum_threshold);
 
    eina_value_set(&val, _elm_config->glayer_line_min_length);
    efl_gesture_manager_config_set(gm, "glayer_line_min_length", &val);
