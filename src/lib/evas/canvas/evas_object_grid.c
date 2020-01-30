@@ -187,6 +187,8 @@ _evas_object_grid_smart_del(Evas_Object *o)
 	free(opt);
 	l = eina_list_remove_list(l, l);
      }
+
+   _evas_object_grid_parent_sc->del(o);
 }
 
 static void
