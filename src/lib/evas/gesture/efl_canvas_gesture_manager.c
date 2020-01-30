@@ -27,7 +27,6 @@ typedef struct _Efl_Canvas_Gesture_Manager_Data
    //Lazy deletion of gestures
    Eina_Array *m_gestures_to_delete;
    //Kepps config values for gesture recognize
-   Eina_Hash *m_config;
    Eina_Bool processing : 1;
 } Efl_Canvas_Gesture_Manager_Data;
 
@@ -101,6 +100,7 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
 EOLIAN static Efl_Object *
 _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd)
 {
+   Eo *config;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->m_recognizers = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
@@ -109,9 +109,9 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    pd->m_object_gestures = NULL;
    pd->m_gestures_to_delete = eina_array_new(1);;
 
-   pd->m_config = eina_hash_string_superfast_new(EINA_FREE_CB(eina_value_free));
    /* this needs to always be present */
-   eina_hash_add(pd->m_config, "glayer_tap_finger_size", eina_value_int_new(EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE));
+   config = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
+   efl_config_int_set(config, "glayer_tap_finger_size", EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE);
 
    //Register all types of recognizers at very first time.
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS, obj));
@@ -126,35 +126,12 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    return obj;
 }
 
-EOLIAN static Eina_Value *
-_efl_canvas_gesture_manager_config_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const char *name)
-{
-   return eina_hash_find(pd->m_config, name);
-}
-
-EOLIAN static void
-_efl_canvas_gesture_manager_config_set(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd, const char *name, Eina_Value *value)
-{
-   Eina_Value *v;
-   int finger_size;
-
-   EINA_SAFETY_ON_NULL_RETURN(name);
-   v = eina_value_new(eina_value_type_get(value));
-   eina_value_copy(value, v);
-   eina_hash_add(pd->m_config, name, v);
-   efl_event_callback_call(obj, EFL_GESTURE_MANAGER_EVENT_CONFIG_CHANGED, (void*)name);
-   if (!eina_streq(name, "glayer_tap_finger_size")) return;
-   eina_value_get(value, &finger_size);
-   _update_finger_sizes(pd, finger_size);
-}
-
 EOLIAN static void
 _efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd EINA_UNUSED)
 {
    Efl_Canvas_Gesture_Recognizer *recognizer;
    void *ptr;
 
-   eina_hash_free(pd->m_config);
    eina_hash_free(pd->m_recognizers);
    EINA_LIST_FREE(pd->custom_recognizers, recognizer)
      efl_unref(recognizer);

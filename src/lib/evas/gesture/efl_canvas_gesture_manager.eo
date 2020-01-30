@@ -22,19 +22,6 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
             @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object.]]
          }
       }
-      @property config {
-         [[This property holds configuration values for the recognizer.]]
-         set {
-         }
-         get {
-         }
-         keys {
-            name: string; [[Property name.]]
-         }
-         values {
-            value: any_value_ref; [[Value of the property.]]
-         }
-      }
       recognizer_cleanup {
          [[Perform cleanup for a gesture which ends after a delay.]]
          params {
