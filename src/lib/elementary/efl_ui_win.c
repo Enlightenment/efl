@@ -5148,43 +5148,43 @@ static void
 _gesture_manager_config_load(Eo *obj)
 {
    Eina_Value val;
-   Efl_Canvas_Gesture_Manager *gm = efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS);
+   Eo *gm = efl_provider_find(obj, EFL_CONFIG_INTERFACE);
 
    eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
    eina_value_set(&val, _elm_config->glayer_long_tap_start_timeout);
-   efl_gesture_manager_config_set(gm, "glayer_long_tap_start_timeout", &val);
+   efl_config_set(gm, "glayer_long_tap_start_timeout", &val);
 
    eina_value_set(&val, _elm_config->glayer_double_tap_timeout);
-   efl_gesture_manager_config_set(gm, "glayer_double_tap_timeout", &val);
+   efl_config_set(gm, "glayer_double_tap_timeout", &val);
 
    elm_config_scroll_thumbscroll_friction_set(_elm_config->thumbscroll_friction);
    elm_config_scroll_thumbscroll_momentum_threshold_set(_elm_config->thumbscroll_momentum_threshold);
 
    eina_value_set(&val, _elm_config->glayer_line_min_length);
-   efl_gesture_manager_config_set(gm, "glayer_line_min_length", &val);
+   efl_config_set(gm, "glayer_line_min_length", &val);
 
    eina_value_set(&val, _elm_config->glayer_line_distance_tolerance);
-   efl_gesture_manager_config_set(gm, "glayer_line_distance_tolerance", &val);
+   efl_config_set(gm, "glayer_line_distance_tolerance", &val);
 
    eina_value_set(&val, _elm_config->glayer_line_angular_tolerance);
-   efl_gesture_manager_config_set(gm, "glayer_line_angular_tolerance", &val);
+   efl_config_set(gm, "glayer_line_angular_tolerance", &val);
 
    eina_value_set(&val, _elm_config->glayer_zoom_finger_factor);
-   efl_gesture_manager_config_set(gm, "glayer_zoom_finger_factor", &val);
+   efl_config_set(gm, "glayer_zoom_finger_factor", &val);
 
    eina_value_set(&val, _elm_config->glayer_zoom_distance_tolerance);
-   efl_gesture_manager_config_set(gm, "glayer_zoom_distance_tolerance", &val);
+   efl_config_set(gm, "glayer_zoom_distance_tolerance", &val);
 
    eina_value_setup(&val, EINA_VALUE_TYPE_UINT);
    eina_value_set(&val, _elm_config->glayer_flick_time_limit_ms);
-   efl_gesture_manager_config_set(gm, "glayer_flick_time_limit_ms", &val);
+   efl_config_set(gm, "glayer_flick_time_limit_ms", &val);
 
    eina_value_setup(&val, EINA_VALUE_TYPE_UCHAR);
    eina_value_set(&val, _elm_config->glayer_continues_enable);
-   efl_gesture_manager_config_set(gm, "glayer_continues_enable", &val);
+   efl_config_set(gm, "glayer_continues_enable", &val);
 
    eina_value_set(&val, _elm_config->glayer_zoom_finger_enable);
-   efl_gesture_manager_config_set(gm, "glayer_zoom_finger_enable", &val);
+   efl_config_set(gm, "glayer_zoom_finger_enable", &val);
 }
 
 static Eo *

@@ -30,9 +30,6 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
          }
       }
    }
-   events {
-      config,changed: string; [[Called when a config value has been changed for the manager object. Passed string is the name of the value.]]
-   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

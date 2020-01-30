@@ -7,7 +7,7 @@
 Eina_Value *
 _recognizer_config_get(const Eo *obj, const char *name)
 {
-   Eo *config = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *config = efl_provider_find(obj, EFL_CONFIG_INTERFACE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(config, NULL);
    return efl_config_get(config, name);
 }

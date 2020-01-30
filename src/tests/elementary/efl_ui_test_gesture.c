@@ -202,7 +202,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
    Eina_Value *val;
    Eo *e = efl_provider_find(rect, EVAS_CANVAS_CLASS);
 
-   val = efl_gesture_manager_config_get(efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS), "glayer_long_tap_start_timeout");
+   val = efl_config_get(efl_provider_find(rect, EFL_CONFIG_INTERFACE), "glayer_long_tap_start_timeout");
    eina_value_get(val, &timeout);
 
    /* press */

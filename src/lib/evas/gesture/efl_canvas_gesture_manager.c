@@ -97,6 +97,15 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    zd->finger_size = finger_size;
 }
 
+static void
+_gesture_manager_config_changed(void *data, const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture_Manager_Data *pd = data;
+
+   if ((!ev->info) || eina_streq(ev->info, "glayer_tap_finger_size"))
+     _update_finger_sizes(pd, efl_config_int_get(ev->object, "glayer_tap_finger_size"));
+}
+
 EOLIAN static Efl_Object *
 _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd)
 {
@@ -112,6 +121,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    /* this needs to always be present */
    config = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    efl_config_int_set(config, "glayer_tap_finger_size", EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE);
+   efl_event_callback_add(config, EFL_CONFIG_EVENT_CONFIG_CHANGED, _gesture_manager_config_changed, pd);
 
    //Register all types of recognizers at very first time.
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS, obj));
@@ -127,10 +137,13 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
 }
 
 EOLIAN static void
-_efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd EINA_UNUSED)
+_efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd)
 {
    Efl_Canvas_Gesture_Recognizer *recognizer;
    void *ptr;
+   Eo *config = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
+   if (config)
+     efl_event_callback_del(config, EFL_CONFIG_EVENT_CONFIG_CHANGED, _gesture_manager_config_changed, pd);
 
    eina_hash_free(pd->m_recognizers);
    EINA_LIST_FREE(pd->custom_recognizers, recognizer)
