@@ -27,6 +27,9 @@ interface @beta Efl.Config
          }
       }
    }
+   events {
+      config,changed: string; [[Called when a config value has been changed for the manager object. Passed string is the name of the value or NULL if all values were changed.]]
+   }
 }
 
 /* NOTES:

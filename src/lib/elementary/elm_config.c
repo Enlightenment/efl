@@ -2053,6 +2053,7 @@ _config_flush_get(void)
    _elm_config_key_binding_hash();
    _elm_win_access(_elm_config->access_mode);
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
+   efl_event_callback_call(_efl_config_obj, EFL_CONFIG_EVENT_CONFIG_CHANGED, NULL);
 }
 
 static const char *
@@ -4509,6 +4510,7 @@ _elm_config_reload(void)
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
+   efl_event_callback_call(_efl_config_obj, EFL_CONFIG_EVENT_CONFIG_CHANGED, NULL);
    if (ptheme) eina_stringshare_del(ptheme);
    if (pmodules) eina_stringshare_del(pmodules);
    if (picon_theme) eina_stringshare_del(picon_theme);
@@ -4936,6 +4938,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
              return EINA_FALSE; \
           } \
         elm_config_ ## opt ## _set(v); \
+        efl_event_callback_call(_efl_config_obj, EFL_CONFIG_EVENT_CONFIG_CHANGED, (void*)name); \
         return EINA_TRUE; \
      } \
    } while (0)
@@ -4973,6 +4976,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
              return EINA_FALSE; \
           } \
         elm_config_ ## opt ## _set(v); \
+        efl_event_callback_call(_efl_config_obj, EFL_CONFIG_EVENT_CONFIG_CHANGED, (void*)name); \
         return EINA_TRUE; \
      } \
    } while (0)
@@ -5119,6 +5123,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
           }
         elm_config_audio_mute_set(chan, !!v);
 #ifdef ENABLE_MULTISENSE
+        efl_event_callback_call(_efl_config_obj, EFL_CONFIG_EVENT_CONFIG_CHANGED, (void*)name);
         return EINA_TRUE;
 #else
         return EINA_FALSE;
