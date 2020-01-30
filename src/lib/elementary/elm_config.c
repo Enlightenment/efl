@@ -4942,6 +4942,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
 
 #define CONFIG_SETB(opt) CONFIG_SET(opt, Eina_Bool, UCHAR, int)
 #define CONFIG_SETI(opt) CONFIG_SET(opt, int, INT, int)
+#define CONFIG_SETU(opt) CONFIG_SET(opt, unsigned int, UINT, int)
 #define CONFIG_SETD(opt) CONFIG_SET(opt, double, DOUBLE, int)
 #define CONFIG_SETS(opt) CONFIG_SET(opt, const char *, STRING, cstring)
 
@@ -5039,8 +5040,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETB(first_item_focus_on_first_focusin);
    CONFIG_SETB(mirrored);
    CONFIG_SETB(clouseau_enabled);
-   CONFIG_SETD(glayer_long_tap_start_timeout);
-   CONFIG_SETD(glayer_double_tap_timeout);
+
    //color_overlay const char *color_class,
    //elm_config.h:EAPI void      elm_config_color_overlay_unset(const char *color_class);
    CONFIG_SETB(magnifier_enable);
@@ -5053,6 +5053,52 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETS(web_backend);
    CONFIG_SETB(offline);
    CONFIG_SETI(powersave);
+
+   CONFIG_SETD(glayer_long_tap_start_timeout);
+   CONFIG_SETD(glayer_double_tap_timeout);
+
+#undef CONFIG_SET
+#define CONFIG_SET(opt, primityp, valtyp, alttyp) do { \
+   if (!strcmp(name, #opt)) \
+     { \
+        primityp v = 0; \
+        alttyp alt = 0; \
+        const Eina_Value_Type *typ = EINA_VALUE_TYPE_ ## valtyp; \
+        if (eina_value_type_get(val) == typ)  \
+          { \
+             if (!eina_value_get(val, &v)) return EINA_FALSE; \
+          } \
+        else if (_eina_value_to_ ## alttyp(val, &alt)) \
+          { \
+             v = alt; \
+          } \
+        else \
+          { \
+             ERR("Invalid value type for config '%s' (got %s wanted %s)", \
+                 name, eina_value_type_name_get(eina_value_type_get(val)), \
+                 eina_value_type_name_get(EINA_VALUE_TYPE_ ## valtyp)); \
+             return EINA_FALSE; \
+          } \
+        efl_event_callback_call(_efl_config_obj, EFL_CONFIG_EVENT_CONFIG_CHANGED, (void*)name); \
+        return EINA_TRUE; \
+     } \
+   } while (0)
+
+
+   CONFIG_SETB(glayer_zoom_finger_enable);
+   CONFIG_SETD(glayer_zoom_finger_factor);
+   CONFIG_SETD(glayer_zoom_wheel_factor);
+   CONFIG_SETD(glayer_zoom_distance_tolerance);
+   CONFIG_SETD(glayer_rotate_finger_enable);
+   CONFIG_SETD(glayer_rotate_angular_tolerance);
+   CONFIG_SETD(glayer_line_min_length);
+   CONFIG_SETD(glayer_line_distance_tolerance);
+   CONFIG_SETD(glayer_line_angular_tolerance);
+   CONFIG_SETU(glayer_flick_time_limit_ms);
+   CONFIG_SETD(glayer_long_tap_start_timeout);
+   CONFIG_SETD(glayer_double_tap_timeout);
+   CONFIG_SETI(glayer_tap_finger_size);
+   CONFIG_SETB(glayer_continues_enable);
 
    const size_t len = sizeof("audio_mute") - 1;
    if (!strncmp(name, "audio_mute", len))
@@ -5104,6 +5150,7 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
 
 #define CONFIG_GETB(opt) CONFIG_GET(opt, Eina_Bool, UCHAR)
 #define CONFIG_GETI(opt) CONFIG_GET(opt, int, INT)
+#define CONFIG_GETU(opt) CONFIG_GET(opt, unsigned int, UINT)
 #define CONFIG_GETD(opt) CONFIG_GET(opt, double, DOUBLE)
 #define CONFIG_GETS(opt) CONFIG_GET(opt, const char *, STRING)
 
@@ -5182,8 +5229,7 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETB(first_item_focus_on_first_focusin);
    CONFIG_GETB(mirrored);
    CONFIG_GETB(clouseau_enabled);
-   CONFIG_GETD(glayer_long_tap_start_timeout);
-   CONFIG_GETD(glayer_double_tap_timeout);
+
    //color_overlay
    //color_overlay_unset
    CONFIG_GETB(magnifier_enable);
@@ -5197,6 +5243,32 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETB(offline);
    CONFIG_GETI(powersave);
    CONFIG_GETD(drag_anim_duration);
+
+   CONFIG_GETD(glayer_long_tap_start_timeout);
+   CONFIG_GETD(glayer_double_tap_timeout);
+#undef CONFIG_GET
+#define CONFIG_GET(opt, primityp, valtyp) do { \
+   if (!strcmp(name, #opt)) \
+     { \
+        val = eina_value_new(EINA_VALUE_TYPE_ ## valtyp); \
+        eina_value_set(val, _elm_config->opt); \
+        return val; \
+     } \
+   } while (0)
+   CONFIG_GETB(glayer_zoom_finger_enable);
+   CONFIG_GETD(glayer_zoom_finger_factor);
+   CONFIG_GETD(glayer_zoom_wheel_factor);
+   CONFIG_GETD(glayer_zoom_distance_tolerance);
+   CONFIG_GETD(glayer_rotate_finger_enable);
+   CONFIG_GETD(glayer_rotate_angular_tolerance);
+   CONFIG_GETD(glayer_line_min_length);
+   CONFIG_GETD(glayer_line_distance_tolerance);
+   CONFIG_GETD(glayer_line_angular_tolerance);
+   CONFIG_GETU(glayer_flick_time_limit_ms);
+   CONFIG_GETD(glayer_long_tap_start_timeout);
+   CONFIG_GETD(glayer_double_tap_timeout);
+   CONFIG_GETI(glayer_tap_finger_size);
+   CONFIG_GETB(glayer_continues_enable);
 
    const size_t len = sizeof("audio_mute") - 1;
    if (!strncmp(name, "audio_mute", len))
@@ -5217,7 +5289,6 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
         return val;
      }
 
-   ERR("Config '%s' does not exist", name);
    return NULL;
 }
 
