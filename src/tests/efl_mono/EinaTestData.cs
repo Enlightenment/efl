@@ -49,7 +49,7 @@ public static class BaseData
     public static Dummy.Numberwrapper NW(int n)
     {
         var nw = new Dummy.Numberwrapper();
-        nw.SetNumber(n);
+        nw.Number = n;
         return nw;
     }
 
@@ -58,9 +58,9 @@ public static class BaseData
         var a = new Dummy.Numberwrapper();
         var b = new Dummy.Numberwrapper();
         var c = new Dummy.Numberwrapper();
-        a.SetNumber(0x0);
-        b.SetNumber(0x2A);
-        c.SetNumber(0x42);
+        a.Number = 0x0;
+        b.Number = 0x2A;
+        c.Number = 0x42;
         return new Dummy.Numberwrapper[]{a, b, c};
     }
 
@@ -69,9 +69,9 @@ public static class BaseData
         var a = new Dummy.Numberwrapper();
         var b = new Dummy.Numberwrapper();
         var c = new Dummy.Numberwrapper();
-        a.SetNumber(42);
-        b.SetNumber(43);
-        c.SetNumber(33);
+        a.Number = 42;
+        b.Number = 43;
+        c.Number = 33;
         return new Dummy.Numberwrapper[]{a, b, c};
     }
 
@@ -83,12 +83,12 @@ public static class BaseData
         var d = new Dummy.Numberwrapper();
         var e = new Dummy.Numberwrapper();
         var f = new Dummy.Numberwrapper();
-        a.SetNumber(0x0);
-        b.SetNumber(0x2A);
-        c.SetNumber(0x42);
-        d.SetNumber(42);
-        e.SetNumber(43);
-        f.SetNumber(33);
+        a.Number = 0x0;
+        b.Number = 0x2A;
+        c.Number = 0x42;
+        d.Number = 42;
+        e.Number = 43;
+        f.Number = 33;
         return new Dummy.Numberwrapper[]{a, b, c, d, e, f};
     }
 
@@ -102,8 +102,8 @@ public static class BaseData
         Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
         for (int i = 0; i < a.Length; ++i)
         {
-            int av = a[i].GetNumber();
-            int bv = b[i].GetNumber();
+            int av = a[i].Number;
+            int bv = b[i].Number;
             Test.Assert(av == bv, $"Different values for element [{i}]: {av} == {bv}", line, file, member);
         }
     }

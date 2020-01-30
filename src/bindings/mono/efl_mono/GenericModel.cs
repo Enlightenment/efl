@@ -33,20 +33,13 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <summary>The list of properties available in the wrapped model.</summary>
    public IEnumerable<System.String> Properties
    {
-      get { return GetProperties(); }
+      get { return model.Properties; }
    }
 
    /// <summary>The number of children in the wrapped model.</summary>
    public  uint ChildrenCount
    {
-      get { return GetChildrenCount(); }
-   }
-
-   /// <summary>The list of properties available in the wrapped model.</summary>
-   /// <returns>The list of properties in the model.</returns>
-   public IEnumerable<System.String> GetProperties()
-   {
-       return model.GetProperties();
+      get { return model.ChildrenCount; }
    }
 
    /// <summary>Gets the value of the given property in the wrapped model.</summary>
@@ -65,13 +58,6 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    public Eina.Future SetProperty(  System.String property,   Eina.Value value)
    {
        return model.SetProperty(property, value);
-   }
-
-   /// <summary>Returns the number of children in the wrapped model.</summary>
-   /// <returns>The number of children.</returns>
-   public uint GetChildrenCount()
-   {
-       return model.GetChildrenCount();
    }
 
    /// <summary>Returns an <see cref="Eina.Future" /> that will resolve when the property is ready to be read.</summary>
@@ -169,10 +155,10 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
 
    /// <summary>Get children as specified by iterator.
    /// 
-   /// Provided index have to be between 0 and <see cref="Efl.IModel.GetChildrenCount"/>.
+   /// Provided index have to be between 0 and <see cref="Efl.IModel.ChildrenCount"/>.
    /// 
-   /// This function might rely on <see cref="Efl.IModel.GetChildrenSlice"/> as a fallback.</summary>
-   /// <param name="indices">Indices of the requested children.</param>
+   /// This function might rely on <see cref="Efl.IModel.GetChildrenSlice"/> as a fallback.<br/>Since EFL 1.23.</summary>
+   /// <param  name="indices">Indices of the requested children.</param>
    /// <returns>Array of children</returns>
    public Eina.Future GetChildrenIndex(IEnumerable<uint> indices)
    {

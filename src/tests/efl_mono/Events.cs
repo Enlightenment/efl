@@ -30,7 +30,7 @@ class TestEoEvents
         Efl.Object obj = sender as Efl.Object;
         if (obj != null)
         {
-            obj.SetName("loop_called");
+            obj.Name = "loop_called";
             correct_sender = true;
         }
 
@@ -44,18 +44,18 @@ class TestEoEvents
     public static void idle_event()
     {
         Efl.Loop loop = Efl.App.AppMain;
-        loop.SetName("loop");
+        loop.Name = "loop";
         TestEoEvents listener = new TestEoEvents();
         listener.loop = loop;
         loop.IdleEvent += listener.callback;
 
         Test.Assert(!listener.called);
         Test.Assert(!listener.correct_sender);
-        Test.AssertEquals("loop", loop.GetName());
+        Test.AssertEquals("loop", loop.Name);
         loop.Begin();
         Test.Assert(listener.called);
         Test.Assert(listener.correct_sender);
-        Test.AssertEquals("loop_called", loop.GetName());
+        Test.AssertEquals("loop_called", loop.Name);
 
         loop.IdleEvent -= listener.callback;
     }

@@ -165,7 +165,7 @@ internal class StructHelpers
         Marshal.WriteByte(Fslice.Mem, 125);
 
         var Fobj = new Dummy.Numberwrapper();
-        Fobj.SetNumber(42);
+        Fobj.Number = 42;
 
         return new Dummy.StructComplex(farray: Farray, flist: Flist, fhash: Fhash,
             fiterator: Fiterator, fanyValue:Fany_value, fanyValueRef: Fany_value_ref,
@@ -205,7 +205,7 @@ internal class StructHelpers
         Test.Assert(complex.Fslice.GetBytes()[0] == 125);
 
         Test.Assert(complex.Fobj != null);
-        Test.Assert(complex.Fobj.GetNumber() == 42);
+        Test.Assert(complex.Fobj.Number == 42);
     }
 
 

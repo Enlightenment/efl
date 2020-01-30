@@ -36,6 +36,7 @@
 #include "using_decl.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
+#include "documentation.hh"
 
 namespace eolian_mono {
 
@@ -71,8 +72,10 @@ struct async_function_declaration_generator
     if(f.scope != attributes::member_scope::scope_public)
       return true;
 
+    auto ref = documentation_generator::function_conversion (f, context);
+
     if (!as_generator(
-            scope_tab(2) << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
+            scope_tab(2) << "/// <summary>Async wrapper for <see cref=\"" << ref << "\" />.\n"
         ).generate(sink, attributes::unused, context))
       return false;
 

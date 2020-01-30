@@ -29,6 +29,7 @@
 #include "name_helpers.hh"
 #include "async_function_definition.hh"
 #include "function_definition.hh"
+#include "property_definition.hh"
 #include "function_registration.hh"
 #include "function_declaration.hh"
 #include "documentation.hh"
@@ -142,7 +143,27 @@ struct klass
        if(!as_generator("\n" << scope_tab << "{\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
-       if(!as_generator(*(function_declaration)).generate(sink, cls.functions, iface_cxt))
+       auto properties = cls.properties;
+       auto functions = cls.functions;
+       functions.erase (std::remove_if (functions.begin(), functions.end()
+                                        , [&] (attributes::function_def const& f)
+                                        {
+                                          auto it = std::find_if (properties.begin(), properties.end()
+                                                                  , [&f] (attributes::property_def const& prop)
+                                                                    {
+                                                                      return (prop.getter && *prop.getter == f)
+                                                                        || (prop.setter && *prop.setter == f);
+                                                                    });
+                                          if (it != properties.end())
+                                          {
+                                            if (it->getter && *it->getter == f)
+                                              return property_generate_wrapper_getter (*it, iface_cxt);
+                                            else if (it->setter && *it->setter == f)
+                                              return property_generate_wrapper_setter (*it, iface_cxt);
+                                          }
+                                          return false;
+                                        }), functions.end());
+       if(!as_generator(*(function_declaration)).generate(sink, functions, iface_cxt))
          return false;
 
        if(!as_generator(*(async_function_declaration)).generate(sink, cls.functions, iface_cxt))
@@ -158,7 +179,10 @@ struct klass
             ).generate(sink, p, iface_cxt))
            return false;
 
-       if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, iface_cxt))
+       properties.erase(std::remove_if (properties.begin(), properties.end()
+                                        , [&] (attributes::property_def const& prop)
+                                          { return !property_generate_wrapper_getter (prop, iface_cxt); }), properties.end());
+       if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, properties, iface_cxt))
          return false;
 
        // End of interface declaration
@@ -246,7 +270,7 @@ struct klass
 
          // Inherit function definitions
          auto implemented_methods = helpers::get_all_implementable_methods(cls, inherit_cxt);
-         if(!as_generator(*(function_definition(true)))
+         if(!as_generator(*(function_definition(true, helpers::get_all_implementable_properties(cls, inherit_cxt))))
             .generate(sink, implemented_methods, inherit_cxt)) return false;
 
          // Async wrappers
@@ -337,6 +361,7 @@ struct klass
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
          auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
+         auto implementable_properties = helpers::get_all_implementable_properties(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
          bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
          auto const& indent = current_indentation(inative_cxt).inc();
@@ -376,11 +401,12 @@ struct klass
                 return false;
            }
 
-         if(implementable_methods.size() >= 1)
+         if(!implementable_methods.empty())
            {
               if(!as_generator(
                     indent << scope_tab << "private static Efl.Eo.NativeModule Module = new Efl.Eo.NativeModule("
-                    <<  context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n\n"
+                    <<  context_find_tag<library_context>(context).actual_library_name(cls.filename) << "); // " << implementable_methods.size()
+                    << " " << implementable_properties.size() << "\n\n"
                  ).generate(sink, attributes::unused, inative_cxt))
                 return false;
            }
@@ -455,9 +481,16 @@ struct klass
          // Native method definitions
          if(!as_generator(
                 indent << scope_tab << "#pragma warning disable CA1707, CS1591, SA1300, SA1600\n\n"
-                <<  *(native_function_definition(cls))
+                <<  *(native_function_definition(cls, implementable_properties))
                 << indent << scope_tab << "#pragma warning restore CA1707, CS1591, SA1300, SA1600\n\n")
             .generate(sink, implementable_methods, change_indentation(indent.inc(), inative_cxt))) return false;
+
+         if(!as_generator(
+                indent << scope_tab << "#pragma warning disable CA1707, CS1591, SA1300, SA1600\n\n"
+                <<  *(native_property_function_definition(cls, cls))
+                << indent << scope_tab << "#pragma warning restore CA1707, CS1591, SA1300, SA1600\n\n")
+            .generate(sink, implementable_properties
+                      , change_indentation(indent.inc(), inative_cxt))) return false;
 
          if(!as_generator(indent << "}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }

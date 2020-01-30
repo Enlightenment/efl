@@ -149,8 +149,8 @@ class TestEoNames
         var obj = new Dummy.TestObject();
 
         string name = "Dummy";
-        obj.SetName(name);
-        Test.AssertEquals(name, obj.GetName());
+        obj.Name = name;
+        Test.AssertEquals(name, obj.Name);
         obj.Dispose();
     }
 }
@@ -162,9 +162,9 @@ class TestEoParent
         var parent = new Dummy.TestObject(null);
         var child = new Dummy.TestObject(parent);
 
-        Test.AssertEquals(parent, child.GetParent());
+        Test.AssertEquals(parent, child.Parent);
 
-        var parent_retrieved = child.GetParent() as Dummy.TestObject;
+        var parent_retrieved = child.Parent as Dummy.TestObject;
         Test.AssertEquals(parent, parent_retrieved);
         child.Dispose();
         parent.Dispose();
@@ -175,9 +175,9 @@ class TestEoParent
         Dummy.Numberwrapper parent = new Dummy.Numberwrapper(null);
         var child = new Dummy.TestObject(parent);
 
-        Test.AssertEquals(parent, child.GetParent());
+        Test.AssertEquals(parent, child.Parent);
 
-        Dummy.Numberwrapper parent_retrieved = child.GetParent() as Dummy.Numberwrapper;
+        Dummy.Numberwrapper parent_retrieved = child.Parent as Dummy.Numberwrapper;
         Test.AssertEquals(parent, parent_retrieved);
         child.Dispose();
         parent.Dispose();
@@ -195,9 +195,9 @@ class TestEoParent
         var parent = new Derived(null);
         var child = new Derived(parent);
 
-        Test.AssertEquals(parent, child.GetParent());
+        Test.AssertEquals(parent, child.Parent);
 
-        var parent_from_cast = child.GetParent() as Derived;
+        var parent_from_cast = child.Parent as Derived;
         Test.AssertEquals(parent, parent_from_cast);
         child.Dispose();
         parent.Dispose();
@@ -209,15 +209,15 @@ class TestKlassMethods
     public static void basic_class_method()
     {
         int reference = 0xbeef;
-        Dummy.TestObject.SetKlassProp(reference);
-        Test.AssertEquals(reference, Dummy.TestObject.GetKlassProp());
+        Dummy.TestObject.KlassProp = reference;
+        Test.AssertEquals(reference, Dummy.TestObject.KlassProp);
     }
 
     public static void inherited_class_method()
     {
         int reference = 0xdead;
-        Dummy.Child.SetKlassProp(reference);
-        Test.AssertEquals(reference, Dummy.Child.GetKlassProp());
+        Dummy.Child.KlassProp = reference;
+        Test.AssertEquals(reference, Dummy.Child.KlassProp);
     }
 }
 
@@ -559,7 +559,7 @@ class TestConstructors
 #else
         var obj = new Dummy.Child(null, a, b);
 #endif
-        Test.Assert(!obj.GetIfaceWasSet());
+        Test.Assert(!obj.IfaceWasSet);
         obj.Dispose();
     }
 }
@@ -586,7 +586,7 @@ class TestProvider
         var obj = new Dummy.TestObject();
         Dummy.Numberwrapper provider = obj.FindProvider(typeof(Dummy.Numberwrapper)) as Dummy.Numberwrapper;
         Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
-        Test.AssertEquals(provider.GetNumber(), 1999);
+        Test.AssertEquals(provider.Number, 1999);
         obj.Dispose();
     }
 
@@ -685,16 +685,16 @@ class TestProtectedInterfaceMembers
     {
         var type = typeof(Dummy.ITestIface);
         var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         // Fully protected property
         Test.AssertNull(methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
         Test.AssertNull(methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
 
         // Partially protected property
-        Test.AssertNotNull(methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(properties.SingleOrDefault(m => m.Name == "PublicGetterPrivateSetter"));
         Test.AssertNull(methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
 
-        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
         Test.AssertNull(properties.SingleOrDefault(m => m.Name == "ProtectedProp"));
         Test.AssertNotNull(properties.SingleOrDefault(m => m.Name == "PublicGetterPrivateSetter"));
     }
@@ -703,15 +703,16 @@ class TestProtectedInterfaceMembers
     {
         var type = typeof(Dummy.TestObject);
 
-        // Fully protected property
-        var protected_methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(m => m.IsFamily);
-        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
-        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
+        // Fully internal property
+        var internal_methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(m => m.IsAssembly);
+        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
+        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
 
         // Partially protected property
         var public_methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-        Test.AssertNotNull(public_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
-        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
+        Test.AssertNull(public_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
 
         var protected_properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
         var prop = protected_properties.SingleOrDefault(m => m.Name == "ProtectedProp");
