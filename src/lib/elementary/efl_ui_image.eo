@@ -52,8 +52,6 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.
            @Efl.File.load is called.
 
            Note: This function does not accept relative icon paths.
-
-           See also @.icon.get.
          ]]
          set {
             return: bool; [[$true on success, $false on error]]
