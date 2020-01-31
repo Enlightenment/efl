@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Display, Efl.Ui.Format,
+class  Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Display, Efl.Ui.Format,
                           Efl.Ui.Layout_Orientable, Efl.Access.Value,
                           Efl.Text, Efl.Content, Efl.Text_Markup
 {
@@ -13,6 +13,8 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
 
      @.infinite_mode can be set when the progress state is unknown.
      An optional textual label can be shown to indicate the exact numerical value of the progress.
+
+     @since 1.24
    ]]
    methods {
       @property infinite_mode {

@@ -1,6 +1,6 @@
 import efl_text_types;
 
-class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
+class Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font_Properties,
                        Efl.Text_Style, Efl.Text_Format,
                        Efl.Text_Markup, Efl.Ui.I18n
@@ -12,6 +12,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
      This can be accomplished using @Efl.Text_Font_Properties.font_family, @Efl.Text_Font_Properties.font_size and
      @Efl.Text_Style.text_color.
      Alternatively, @.style_apply can be used providing the attributes $font, $font_size and $color.
+
+     @since 1.24
    ]]
    methods {
       @property is_empty {

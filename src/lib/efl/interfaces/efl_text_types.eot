@@ -10,16 +10,19 @@ enum Efl.Text_Bidirectional_Type {
    inherit [[Inherit text type]]
 }
 
-enum @beta Efl.Text_Change_Type {
-   [[Text change type.]]
+enum Efl.Text_Change_Type {
+   [[Text change type. 
+     @since 1.24
+   ]]
    insert = 0, [[the content was inserted.]]
    remove [[the content was removed.]]
 }
 
-struct @beta Efl.Text_Change_Info {
+struct Efl.Text_Change_Info {
    [[This structure includes all the information about content changes.
 
      It's meant to be used to implement undo/redo.
+     @since 1.24
    ]]
    content: string; [[The content added/removed]]
    position: size; [[The position where it was added/removed]]

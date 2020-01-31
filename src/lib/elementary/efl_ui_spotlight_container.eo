@@ -25,6 +25,8 @@ class Efl.Ui.Spotlight.Container extends Efl.Ui.Widget implements Efl.Pack_Linea
      This class can be used to create other widgets like Pagers, Tabbed pagers or Stacks, where each sub-widget
      represents a "page" full of other widgets. All these cases can be implemented with a different
      @.spotlight_manager and use the same @Efl.Ui.Spotlight.Container.
+
+     @since 1.24
    ]]
    c_prefix: efl_ui_spotlight;
    methods {

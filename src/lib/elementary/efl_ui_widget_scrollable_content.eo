@@ -1,7 +1,7 @@
 import eina_types;
 parse efl_text_format;
 
-mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
+mixin Efl.Ui.Widget_Scrollable_Content requires Efl.Object
 {
    [[Mixin helper to add scrollable content to widgets.
 

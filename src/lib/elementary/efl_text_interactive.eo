@@ -1,11 +1,12 @@
 import efl_text_types;
 
-interface @beta Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
+interface Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
    Efl.Text_Format, Efl.Text_Style
 {
    [[Interface for interactive (editable) text inputs (text entries).
 
      It handles cursors, edition and selection.
+     @since 1.24
    ]]
    methods {
       @property main_cursor {

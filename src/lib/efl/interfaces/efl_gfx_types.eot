@@ -219,7 +219,7 @@ enum @beta Efl.Gfx.Color_Class_Layer {
    shadow [[Shadow color]]
 }
 
-type @beta Efl.Font.Size: int; [[Efl font size type]]
+type Efl.Font.Size: int; [[Efl font size type @since 1.24]]
 
 error @extern @beta Efl.Gfx.Image.Load_Error.NONE = "XXX"; [[No error on load]]
 error @extern @beta Efl.Gfx.Image.Load_Error.GENERIC = "XXX"; [[A non-specific error occurred]]

@@ -1,15 +1,19 @@
-enum @beta Efl.Text.Cursor_Type
+enum Efl.Text.Cursor_Type
 {
    [[Shape of the text cursor.
      This is normally used in @Efl.Text.Cursor methods to retrieve the cursor's geometry.
+     @since 1.24
    ]]
    before, [[Cursor is a vertical bar (I-beam) placed before the selected character.]]
    under   [[Cursor is an horizontal line (underscore) placed under the selected character.]]
 }
 
-enum @beta Efl.Text.Cursor_Move_Type
+enum Efl.Text.Cursor_Move_Type
 {
-   [[Text cursor movement types.]]
+   [[Text cursor movement types.
+
+     @since 1.24
+   ]]
    character_next,      [[Advances to the next character.]]
    character_previous,  [[Advances to the previous character.]]
    cluster_next,        [[Advances to the next grapheme cluster
@@ -28,8 +32,11 @@ enum @beta Efl.Text.Cursor_Move_Type
    paragraph_previous   [[Advances to the end of the previous paragraph.]]
 }
 
-abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
-   [[Cursor API.]]
+abstract Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
+   [[Cursor API.
+
+     @since 1.24
+   ]]
    c_prefix: efl_text_cursor;
    methods {
 
@@ -69,8 +76,8 @@ abstract @beta Efl.Text.Cursor extends Efl.Object implements Efl.Duplicate{
       }
 
       @property cursor_geometry {
-         [[Returns the geometry of cursor, if cursor is shown for the text 
-           of the same direction as paragraph,else  ("split cursor") will return 
+         [[Returns the geometry of cursor, if cursor is shown for the text
+           of the same direction as paragraph,else  ("split cursor") will return
            and you need to consider the lower ("split cursor") @.lower_cursor_geometry
 
            Split cursor geometry is valid only  in @Efl.Text.Cursor_Type.before cursor mode.]]
