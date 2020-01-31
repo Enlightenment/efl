@@ -1126,9 +1126,7 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE
    };
 
-   eina_init();
-   eet_init();
-   ecore_init();
+   ecore_evas_init();
 
    opt_args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (opt_args < 0)
@@ -1280,8 +1278,6 @@ int main(int argc, char **argv)
              setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
           }
      }
-   efl_object_init();
-   evas_init();
 
    if (argv[opt_args])
      {
@@ -1358,7 +1354,6 @@ int main(int argc, char **argv)
      }
 
 end:
-   eet_shutdown();
-   eina_shutdown();
+   ecore_evas_shutdown();
    return pret;
 }
