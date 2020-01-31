@@ -2297,6 +2297,23 @@ _elm_key_bindings_update(Elm_Config *cfg, Elm_Config *syscfg EINA_UNUSED)
 }
 
 static void
+_elm_key_bindings_copy_missing_bindings_of_widget(Elm_Config *cfg, Elm_Config *syscfg, const char *widget_name)
+{
+   Elm_Config_Bindings_Widget *wd;
+   Eina_List *n, *nnext;
+
+   EINA_LIST_FOREACH_SAFE(syscfg->bindings, n, nnext, wd)
+     {
+         if (eina_streq(widget_name, wd->name))
+           {
+              syscfg->bindings = eina_list_remove_list(syscfg->bindings, n);
+              cfg->bindings = eina_list_append(cfg->bindings, wd);
+              printf("Upgraded keybindings for %s!\n", wd->name);
+           }
+     }
+}
+
+static void
 _elm_key_bindings_copy_missing_bindings(Elm_Config *cfg, Elm_Config *syscfg)
 {
    Eina_Hash *safed_bindings = eina_hash_string_superfast_new(NULL);
