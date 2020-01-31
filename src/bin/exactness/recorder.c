@@ -12,9 +12,6 @@
 # include <sys/sysinfo.h>
 #endif
 
-#ifndef EFL_EO_API_SUPPORT
-#define EFL_EO_API_SUPPORT
-#endif
 #include <Eina.h>
 #include <Eo.h>
 #include <Evas.h>
