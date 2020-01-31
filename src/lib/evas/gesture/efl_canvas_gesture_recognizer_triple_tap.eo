@@ -19,7 +19,7 @@ class @beta Efl.Canvas.Gesture_Recognizer_Triple_Tap extends Efl.Canvas.Gesture_
    }
    implements {
       Efl.Object.destructor;
-      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.type { get; }
       Efl.Canvas.Gesture_Recognizer.recognize;
    }
 }

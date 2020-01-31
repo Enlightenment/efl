@@ -13,12 +13,12 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
    ]]
    c_prefix: efl_gesture_recognizer;
    methods {
-      add @pure_virtual {
-         [[This function is called to create a new @Efl.Canvas.Gesture object for the given target.]]
-         params {
-            @in target: Efl.Object; [[The target canvas object.]]
+      @property type @pure_virtual {
+         [[This property returns the type of gesture recognized by this recognizer.]]
+         get {}
+         values {
+            type: Efl.Canvas.Gesture_Recognizer_Type; [[The gesture type to recognize.]]
          }
-         return: Efl.Canvas.Gesture; [[Returns the gesture object that will be used to track this gesture.]]
       }
       recognize @pure_virtual {
          [[Analyzes the given $event and the current state of the $gesture object to see if the state

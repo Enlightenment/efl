@@ -36,6 +36,63 @@ static Efl_Canvas_Gesture *
             _get_state(Efl_Canvas_Gesture_Manager_Data *pd, Eo *target,
            Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
 
+static const Efl_Event_Description *
+_gesture_recognizer_event_type_get(const Efl_Canvas_Gesture_Recognizer *recognizer)
+{
+   Efl_Canvas_Gesture_Recognizer_Type type = efl_gesture_recognizer_type_get(recognizer);
+
+   switch (type)
+     {
+      case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
+        return EFL_EVENT_GESTURE_TAP;
+      case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLETAP:
+        return EFL_EVENT_GESTURE_DOUBLE_TAP;
+      case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLETAP:
+        return EFL_EVENT_GESTURE_TRIPLE_TAP;
+      case EFL_GESTURE_RECOGNIZER_TYPE_LONGTAP:
+        return EFL_EVENT_GESTURE_LONG_TAP;
+      case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
+        return EFL_EVENT_GESTURE_MOMENTUM;
+      case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
+        return EFL_EVENT_GESTURE_FLICK;
+      case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
+        return EFL_EVENT_GESTURE_ZOOM;
+      case EFL_GESTURE_RECOGNIZER_TYPE_CUSTOM:
+        return EFL_EVENT_GESTURE_CUSTOM;
+      default: break;
+     }
+   return NULL;
+}
+
+static const Efl_Class *
+_gesture_recognizer_class_type_get(const Efl_Canvas_Gesture_Recognizer *recognizer)
+{
+   Efl_Canvas_Gesture_Recognizer_Type type = efl_gesture_recognizer_type_get(recognizer);
+
+   switch (type)
+     {
+      case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
+        return EFL_CANVAS_GESTURE_TAP_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLETAP:
+        return EFL_CANVAS_GESTURE_DOUBLE_TAP_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLETAP:
+        return EFL_CANVAS_GESTURE_TRIPLE_TAP_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_LONGTAP:
+        return EFL_CANVAS_GESTURE_LONG_TAP_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
+        return EFL_CANVAS_GESTURE_MOMENTUM_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
+        return EFL_CANVAS_GESTURE_FLICK_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
+        return EFL_CANVAS_GESTURE_ZOOM_CLASS;
+      case EFL_GESTURE_RECOGNIZER_TYPE_CUSTOM:
+        return EFL_CANVAS_GESTURE_CUSTOM_CLASS;
+      default: break;
+     }
+   return NULL;
+}
+
+
 static void
 _cleanup_object(Eina_Array *arr)
 {
@@ -335,13 +392,7 @@ EOLIAN static void
 _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
                                                 Efl_Canvas_Gesture_Recognizer *recognizer)
 {
-   Efl_Canvas_Gesture *dummy = efl_gesture_recognizer_add(recognizer, NULL);
-
-   if (!dummy)
-     return;
-
-   const Efl_Event_Description *type = _efl_gesture_type_get(dummy);
-   efl_del(dummy);
+   const Efl_Event_Description *type = _gesture_recognizer_event_type_get(recognizer);
    //Add the recognizer to the m_recognizers
    if (type == EFL_EVENT_GESTURE_CUSTOM)
      {
@@ -363,16 +414,11 @@ _efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canva
    Eina_List *l, *l_next;
    Object_Gesture *object_gesture;
    const Efl_Event_Description *type;
-   Efl_Canvas_Gesture *dummy;
 
    if (!recognizer) return;
 
    //Find the type of the recognizer
-   dummy = efl_gesture_recognizer_add(recognizer, 0);
-   if (!dummy) return;
-
-   type = _efl_gesture_type_get(dummy);
-   efl_del(dummy);
+   type = _gesture_recognizer_event_type_get(recognizer);
    //Check if its already registered
    if (type == EFL_EVENT_GESTURE_CUSTOM)
      {
@@ -457,7 +503,7 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
           }
      }
 
-   gesture = efl_gesture_recognizer_add(recognizer, target);
+   gesture = efl_add(_gesture_recognizer_class_type_get(recognizer), recognizer);
    if (!gesture)
      return 0;
 
@@ -497,16 +543,11 @@ EOLIAN static void
 _efl_canvas_gesture_manager_recognizer_cleanup(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const Efl_Canvas_Gesture_Recognizer *recognizer, const Eo *target)
 {
    const Efl_Event_Description *type;
-   Efl_Canvas_Gesture *dummy;
 
    EINA_SAFETY_ON_NULL_RETURN(recognizer);
 
    //Find the type of the recognizer
-   dummy = efl_gesture_recognizer_add((void*)recognizer, 0);
-   EINA_SAFETY_ON_NULL_RETURN(dummy);
-
-   type = _efl_gesture_type_get(dummy);
-   efl_del(dummy);
+   type = _gesture_recognizer_event_type_get(recognizer);
    _cleanup_cached_gestures(pd, target, type, recognizer);
    eina_hash_del(pd->m_object_events, &recognizer, NULL);
    _cleanup_object(pd->m_gestures_to_delete);

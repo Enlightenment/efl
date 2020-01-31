@@ -19,7 +19,7 @@ class @beta Efl.Canvas.Gesture_Recognizer_Long_Tap extends Efl.Canvas.Gesture_Re
    }
    implements {
       Efl.Object.destructor;
-      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.type { get; }
       Efl.Canvas.Gesture_Recognizer.recognize;
       Efl.Canvas.Gesture_Recognizer.reset;
    }

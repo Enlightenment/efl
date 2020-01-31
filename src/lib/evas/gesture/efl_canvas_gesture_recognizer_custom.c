@@ -2,6 +2,11 @@
 
 #define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_CUSTOM_CLASS
 
+EOLIAN static Efl_Canvas_Gesture_Recognizer_Type
+_efl_canvas_gesture_recognizer_custom_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Custom_Data *pd EINA_UNUSED)
+{
+   return EFL_GESTURE_RECOGNIZER_TYPE_CUSTOM;
+}
 
 EOLIAN static Eo *
 _efl_canvas_gesture_recognizer_custom_efl_object_finalize(Eo *obj, Efl_Canvas_Gesture_Recognizer_Custom_Data *pd)

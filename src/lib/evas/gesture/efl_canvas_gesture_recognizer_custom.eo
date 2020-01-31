@@ -19,5 +19,6 @@ abstract @beta Efl.Canvas.Gesture_Recognizer_Custom extends Efl.Canvas.Gesture_R
    implements {
       Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Canvas.Gesture_Recognizer.type { get; }
    }
 }
