@@ -873,4 +873,3 @@ legacy_rec_file_read(const char *filename)
 
    return unit;
 }
-

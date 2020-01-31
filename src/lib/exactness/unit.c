@@ -10,20 +10,6 @@
 typedef struct _Dummy
 {
 } _Dummy;
-/*
-static Eet_Data_Descriptor *
-_mouse_in_out_desc_make(void)
-{
-   Eet_Data_Descriptor_Class eddc;
-   Eet_Data_Descriptor *_d;
-   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Exactness_Action_Mouse_In_Out);
-   _d = eet_data_descriptor_stream_new(&eddc);
-
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_d, Exactness_Action_Mouse_In_Out, "n_evas", n_evas, EET_T_INT);
-
-   return _d;
-}
-*/
 
 static Eet_Data_Descriptor *
 _mouse_wheel_desc_make(void)
@@ -421,4 +407,3 @@ EAPI void exactness_image_free(Exactness_Image *img)
    free(img->pixels);
    free(img);
 }
-
