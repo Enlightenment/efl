@@ -50,8 +50,8 @@ _gl_filter_mask(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
           gc->dc->clip.mask_x = x;
           gc->dc->clip.mask_y = y;
 
-          evas_gl_common_filter_blend_push(gc, image->tex, x, y, sw, sh, x, y, sw, sh,
-                                           cmd->draw.alphaonly);
+          evas_gl_common_image_draw(gc, image, x, y, sw, sh,
+                                    x, y, sw, sh, EINA_TRUE);
        }
 
    evas_gl_common_image_free(use_mask);
