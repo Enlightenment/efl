@@ -498,32 +498,6 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
                         d.name = t->event_name;
                         d.legacy_is = EINA_TRUE;
                         efl_event_callback_legacy_call(o, &d, NULL);
-#if 0
-                        /* Remove when events stuff work well */
-                        Eina_Size2D sz = efl_gfx_size_get(o);
-                        Eina_Position2D pos = efl_gfx_position_get(o);
-                        if (!strcmp(t->event_name, "clicked") ||
-                              !strcmp(t->event_name, "clicked,double"))
-                          {
-                             int x = pos.x + (sz.w / 2);
-                             int y = pos.y + (sz.h / 2);
-                             evas_event_feed_mouse_move(e, x, y, time(NULL), NULL);
-                             evas_event_feed_mouse_down(e, 0, EVAS_BUTTON_NONE, time(NULL), NULL);
-                             evas_event_feed_mouse_up(e, 0, EVAS_BUTTON_NONE, time(NULL), NULL);
-                             if (rect)
-                               {
-                                  evas_object_move(rect, x, y);
-                                  evas_object_color_set(rect, 255, 0, 0, 255);
-                               }
-                              if (!strcmp(t->event_name, "clicked,double"))
-                                {
-                                   evas_event_feed_mouse_down(e, 0, EVAS_BUTTON_DOUBLE_CLICK,
-                                         time(NULL), NULL);
-                                   evas_event_feed_mouse_up(e, 0, EVAS_BUTTON_DOUBLE_CLICK,
-                                         time(NULL), NULL);
-                                }
-                          }
-#endif
                      }
                 }
               if (!found) fprintf(stderr, "Failed finding %s.\n", t->wdg_name);

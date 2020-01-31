@@ -491,8 +491,6 @@ main(int argc, char *argv[])
    ecore_init();
    ecore_evas_init();
    evas_init();
-   mode_play = mode_init = mode_simulation = EINA_FALSE;
-   want_quit = EINA_FALSE;
    _dest_dir = "./";
    _scan_objs = scan_objs;
 
