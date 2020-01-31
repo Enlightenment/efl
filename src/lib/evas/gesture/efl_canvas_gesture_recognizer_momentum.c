@@ -26,7 +26,7 @@ _momentum_set(Eo *obj,
    Evas_Coord dy = v2.y - v1.y;
    int dt = t2 - t1;
    Eina_Value *tf, *tmt;
-   double thumbscroll_friction, thumbscroll_momentum_threshold;
+   double thumbscroll_momentum_friction, thumbscroll_momentum_threshold;
 
    if (dt > 0)
      {
@@ -36,15 +36,15 @@ _momentum_set(Eo *obj,
 
    vel = sqrt((velx * velx) + (vely * vely));
 
-   tf = _recognizer_config_get(obj, "thumbscroll_friction");
-   if (tf) eina_value_get(tf, &thumbscroll_friction);
-   else thumbscroll_friction = THUMBSCROLL_FRICTION;
+   tf = _recognizer_config_get(obj, "thumbscroll_momentum_friction");
+   if (tf) eina_value_get(tf, &thumbscroll_momentum_friction);
+   else thumbscroll_momentum_friction = THUMBSCROLL_FRICTION;
 
    tmt = _recognizer_config_get(obj, "thumbscroll_momentum_threshold");
    if (tmt) eina_value_get(tmt, &thumbscroll_momentum_threshold);
    else thumbscroll_momentum_threshold = THUMBSCROLL_MOMENTUM_THRESHOLD;
 
-   if ((thumbscroll_friction > 0.0) &&
+   if ((thumbscroll_momentum_friction > 0.0) &&
        (vel > thumbscroll_momentum_threshold)) /* report
                                                 * momentum */
      {
