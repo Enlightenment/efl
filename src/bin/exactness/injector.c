@@ -15,8 +15,6 @@
 
 #include <Exactness.h>
 
-#include "exactness_private.h"
-
 typedef struct
 {
    Eina_Debug_Session *session;
@@ -390,15 +388,8 @@ WRAPPER_TO_XFER_MAIN_LOOP(_all_apps_get_cb)
 static void
 _ops_ready_cb(void *data EINA_UNUSED, Eina_Bool status)
 {
-   static Eina_Bool on = EINA_FALSE;
    if (status)
-     {
-        if (!on)
-          {
-             eina_debug_session_send(_session, 0, _all_apps_get_op, NULL, 0);
-          }
-        on = EINA_TRUE;
-     }
+      eina_debug_session_send(_session, 0, _all_apps_get_op, NULL, 0);
 }
 
 static const Ecore_Getopt optdesc = {
