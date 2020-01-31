@@ -7,9 +7,6 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#ifndef EFL_EO_API_SUPPORT
-#define EFL_EO_API_SUPPORT
-#endif
 #include <Eina.h>
 #include <Eet.h>
 #include <Ecore.h>
