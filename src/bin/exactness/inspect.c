@@ -104,7 +104,8 @@ _action_specific_info_get(const Exactness_Action *act, char output[1024])
               sprintf(output, "Direction %d Z %d", t->direction, t->z);
               break;
            }
-      case EXACTNESS_ACTION_MULTI_UP: case EXACTNESS_ACTION_MULTI_DOWN:
+      case EXACTNESS_ACTION_MULTI_UP:
+      case EXACTNESS_ACTION_MULTI_DOWN:
            {
               Exactness_Action_Multi_Event *t = act->data;
               if (!t->d)
@@ -124,7 +125,8 @@ _action_specific_info_get(const Exactness_Action *act, char output[1024])
                        t->d, t->x, t->y, t->rad, t->radx, t->rady, t->pres, t->ang, t->fx, t->fy);
               break;
            }
-      case EXACTNESS_ACTION_KEY_UP: case EXACTNESS_ACTION_KEY_DOWN:
+      case EXACTNESS_ACTION_KEY_UP:
+      case EXACTNESS_ACTION_KEY_DOWN:
            {
               Exactness_Action_Key_Down_Up *t = act->data;
               sprintf(output, "Keyname %s Key %s String %s Compose %s Keycode %d",
@@ -172,11 +174,13 @@ _are_scenario_entries_different(Exactness_Action *act1, Exactness_Action *act2)
      {
       case EXACTNESS_ACTION_MOUSE_WHEEL:
          return !!memcmp(act1->data, act2->data, sizeof(Exactness_Action_Mouse_Wheel));
-      case EXACTNESS_ACTION_MULTI_DOWN: case EXACTNESS_ACTION_MULTI_UP:
+      case EXACTNESS_ACTION_MULTI_DOWN:
+      case EXACTNESS_ACTION_MULTI_UP:
          return !!memcmp(act1->data, act2->data, sizeof(Exactness_Action_Multi_Event));
       case EXACTNESS_ACTION_MULTI_MOVE:
          return !!memcmp(act1->data, act2->data, sizeof(Exactness_Action_Multi_Move));
-      case EXACTNESS_ACTION_KEY_UP: case EXACTNESS_ACTION_KEY_DOWN:
+      case EXACTNESS_ACTION_KEY_UP:
+      case EXACTNESS_ACTION_KEY_DOWN:
          return !!memcmp(act1->data, act2->data, sizeof(Exactness_Action_Key_Down_Up));
       case EXACTNESS_ACTION_EFL_EVENT:
            {
@@ -313,7 +317,7 @@ _grp_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
               if (!compare)
                 {
                    Exactness_Unit *unit = efl_key_data_get(gl, "unit");
-                   sprintf(buf2, "Fonts directory: %s", unit->fonts_path?unit->fonts_path:"None");
+                   sprintf(buf2, "Fonts directory: %s", unit->fonts_path ? unit->fonts_path : "None");
                 }
               else
                 {
