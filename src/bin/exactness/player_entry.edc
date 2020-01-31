@@ -101,7 +101,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/selection/default";
       parts {
          part { name: "base"; type: RECT;
@@ -111,7 +111,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/anchor/default";
       images.image: "horizontal_separated_bar_small_glow.png" COMP;
       parts {
@@ -128,7 +128,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base/default";
       sounds {
          sample { name: "key-tap1" LOSSY 64;
@@ -147,7 +147,7 @@ collections {
             source: "kbd-tap5.wav";
          }
       }
-      
+
       styles {
          style { name: "entry_style";
             base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
@@ -275,7 +275,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-mixedwrap/default";
       inherit: "elm/entry/base/default";
       styles {
@@ -325,7 +325,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-charwrap/default";
       inherit: "elm/entry/base/default";
       styles {
@@ -375,7 +375,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-nowrap/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -411,7 +411,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-single/default";
       inherit: "elm/entry/base/default";
       styles {
@@ -462,7 +462,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-single/spinner/default";
       alias: "elm/entry/base-single/spinner/vertical";
       inherit: "elm/entry/base-single/default";
@@ -480,7 +480,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-single-noedit/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -506,7 +506,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-noedit/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -530,7 +530,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-noedit-mixedwrap/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -554,7 +554,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-noedit-charwrap/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -578,7 +578,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-nowrap-noedit/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -602,7 +602,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/base-password/default";
       inherit: "elm/entry/base/default";
       parts {
@@ -644,7 +644,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/magnifier/default";
       images.image: "frame_rounded.png" COMP;
       parts {
@@ -706,7 +706,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/handler/start/default";
       images.image: "handle_pick_up_left.png" COMP;
       parts {
@@ -754,7 +754,7 @@ collections {
          }
       }
    }
-   
+
    group { name: "elm/entry/handler/end/default";
       images.image: "handle_pick_up_right.png" COMP;
       parts {
@@ -802,7 +802,7 @@ collections {
          }
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    // emoticon images from:
    // Tanya - Latvia
