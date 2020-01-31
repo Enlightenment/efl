@@ -135,7 +135,8 @@ _event_pointer_cb(void *data, const Efl_Event *event)
              if (n_evas >= 0) _add_to_list(evt, n_evas, timestamp, &t, sizeof(t));
              break;
           }
-      case EFL_POINTER_ACTION_DOWN: case EFL_POINTER_ACTION_UP:
+      case EFL_POINTER_ACTION_DOWN:
+      case EFL_POINTER_ACTION_UP:
           {
              double rad = 0, radx = 0, rady = 0, pres = 0, ang = 0, fx = 0, fy = 0;
              int b = efl_input_pointer_button_get(evp);
@@ -147,7 +148,8 @@ _event_pointer_cb(void *data, const Efl_Event *event)
              if (n_evas >= 0) _add_to_list(evt, n_evas, timestamp, &t, sizeof(t));
              break;
           }
-      case EFL_POINTER_ACTION_IN: case EFL_POINTER_ACTION_OUT:
+      case EFL_POINTER_ACTION_IN:
+      case EFL_POINTER_ACTION_OUT:
           {
              if (n_evas >= 0) _add_to_list(evt, n_evas, timestamp, NULL, 0);
              break;
