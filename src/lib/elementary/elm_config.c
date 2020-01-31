@@ -2449,13 +2449,14 @@ _config_update(void)
    _elm_config->win_no_border = EINA_FALSE;
    IFCFGEND
 
-   IFCFG(0x0022)
+   IFCFG(0x0016)
 
    _elm_key_bindings_copy_missing_bindings(_elm_config, tcfg);
    /* after this function call, the tcfg is partly invalidated, reload! */
    _config_free(tcfg);
    tcfg = _config_system_load();
    IFCFGEND
+
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
