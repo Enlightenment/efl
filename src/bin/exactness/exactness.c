@@ -488,9 +488,7 @@ main(int argc, char *argv[])
      ECORE_GETOPT_VALUE_NONE
    };
 
-   ecore_init();
    ecore_evas_init();
-   evas_init();
    _dest_dir = "./";
    _scan_objs = scan_objs;
 
@@ -667,9 +665,7 @@ main(int argc, char *argv[])
 
    _list_file_free(test_list);
 end:
-   evas_shutdown();
    ecore_evas_shutdown();
-   ecore_shutdown();
 
    return ret;
 }
