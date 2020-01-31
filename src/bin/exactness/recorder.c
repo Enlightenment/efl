@@ -467,7 +467,7 @@ int main(int argc, char **argv)
         if (!ecore_file_exists(fonts_dir))
           {
              fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
-             goto end;
+             goto cleanup;
           }
         Eina_List *dated_fonts = ecore_file_ls(fonts_dir);
         char *date_dir;
@@ -516,7 +516,12 @@ int main(int argc, char **argv)
    //_events_list = NULL;
 
    pret = 0;
+
+cleanup:
+   efl_object_shutdown();
+   evas_shutdown();
 end:
+   ecore_shutdown();
    eina_shutdown();
    return pret;
 }

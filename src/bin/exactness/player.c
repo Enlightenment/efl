@@ -1333,7 +1333,7 @@ int main(int argc, char **argv)
         if (!f_output)
           {
              fprintf(stderr, "no program specified\nUse -h for more information\n");
-             goto end;
+             goto cleanup;
           }
         argv[0] = strdup(f_output);
      }
@@ -1357,7 +1357,12 @@ int main(int argc, char **argv)
         exactness_unit_file_write(_dest_unit, _dest);
      }
 
+cleanup:
+   evas_shutdown();
+   efl_object_shutdown();
+
 end:
+   ecore_shutdown();
    eet_shutdown();
    eina_shutdown();
    return pret;
