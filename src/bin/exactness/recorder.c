@@ -447,12 +447,6 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   if (strcmp(_out_filename + strlen(_out_filename) - 4,".exu"))
-     {
-        fprintf(stderr, "A file with a exu extension is required - %s invalid\n", _out_filename);
-        goto end;
-     }
-
    if (!argv[opt_args])
      {
         fprintf(stderr, "no program specified\nUse -h for more information\n");
