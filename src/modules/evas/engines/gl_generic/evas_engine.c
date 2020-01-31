@@ -2564,11 +2564,14 @@ static Ector_Buffer *
 eng_ector_buffer_wrap(void *engine EINA_UNUSED, Evas *evas, void *engine_image)
 {
    Evas_GL_Image *im = engine_image;
+   Render_Output_GL_Generic *output;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(engine_image, NULL);
+   output = _evgl_output_find(engine);
+   if (!output) return NULL;
 
    return efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas,
-                  evas_ector_buffer_engine_image_set(efl_added, evas, im));
+                  evas_ector_buffer_engine_image_set(efl_added, output, im));
 }
 
 //FIXME: Currently Ector GL doens't work properly. Use software instead.

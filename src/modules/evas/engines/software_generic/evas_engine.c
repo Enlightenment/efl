@@ -4275,8 +4275,10 @@ eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 {
    Image_Entry *ie = engine_image;
    Ector_Buffer *buf = NULL;
+   RGBA_Image *im = (RGBA_Image *)ie;
 
    if (!ie) return NULL;
+   if (!im->image.data) return NULL;
 
    if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
      return NULL;

@@ -608,6 +608,8 @@ evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid,
    if (fb->is_render) goto end;
 
    buffer = ENFN->ector_buffer_wrap(ENC, ctx->evas->evas, engine_buffer);
+   if (!buffer) return EINA_FALSE;
+
    ret = EINA_TRUE;
 
 end:
