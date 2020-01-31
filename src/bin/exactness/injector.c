@@ -464,8 +464,8 @@ int main(int argc, char **argv)
    real__ = efl_loop_exit_code_process(ret__);
    elm_shutdown();
 end:
+   ecore_shutdown();
    eet_shutdown();
    eina_shutdown();
    return real__;
 }
-
