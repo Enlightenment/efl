@@ -9,8 +9,6 @@
 #include <Exactness.h>
 #include <Efl_Ui.h>
 
-#include "exactness_private.h"
-
 #define LDIFF(x) "<b><color=#F0F>"#x"</color></b>"
 #define RDIFF(x) "<b><color=#0FF>"#x"</color></b>"
 
