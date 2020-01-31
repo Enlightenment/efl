@@ -15,7 +15,6 @@ typedef struct _Validate_State
    Eina_Bool stable;
    Eina_Bool in_tree;
    Eina_Bool unimplemented_beta;
-   Eina_Bool verify_since;
    const char *since_ver;
 } Validate_State;
 
@@ -94,7 +93,7 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
 static Eina_Bool
 _validate_doc_since(Validate_State *vals, Eolian_Documentation *doc)
 {
-   if (!doc || !vals->stable || !vals->verify_since)
+   if (!doc || !vals->stable)
      return EINA_TRUE;
 
    if (doc->since)
@@ -1680,7 +1679,6 @@ database_validate(const Eolian_Unit *src)
       EINA_TRUE,
       !!getenv("EFL_RUN_IN_TREE"),
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN"),
-      !!getenv("EOLIAN_ENFORCE_SINCE")
    };
 
    /* do an initial pass to refill inherits */
