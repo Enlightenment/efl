@@ -1,57 +1,34 @@
 group { name: "elm/diskselector/base/default";
-   images {
-      image: "bar_shine.png" COMP;
-   }
-
    parts {
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          mouse_events: 0;
          description { state: "default" 0.0;
-            color: 25 25 25 255;
+            color: 48 48 48 255;
          }
       }
-      part { name: "shine_center";
-         mouse_events:  0;
+      part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            image.normal: "bar_shine.png";
-            color: 255 255 255 127;
+            rel.to: "bg";
          }
       }
-      part { name: "clipper";
-         type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
-         }
-      }
-      part { name: "elm.swallow.content";
+      part { name: "elm.swallow.content"; type: SWALLOW;
          clip_to: "clipper";
-         type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
    }
 }
 
 group { name: "elm/diskselector/item/default";
-
    data {
       item: "len_threshold" "14";
       item: "display_item_num" "3";
       item: "min_height" "-1";
       item: "min_width" "-1";
    }
-
    parts {
-      part { name: "elm.swallow.icon";
-         type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -102,16 +79,16 @@ group { name: "elm/diskselector/item/default";
             aspect: 1.0 1.0;
          }
       }
-      part { name: "elm.text";
-         type: TEXT;
+      part { name: "elm.text"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
+            color: 160 160 160 255;
             rel1.relative: 1 0.0;
             rel1.to_x: "elm.swallow.icon";
             rel2.relative: 1.0 1.0;
             visible: 0;
             text {
-               font: "Sans,Edje-Vera";
+               font: "Sans";
                size: 10;
                align: 0.5 0.5;
                min: 0 1;
@@ -128,14 +105,14 @@ group { name: "elm/diskselector/item/default";
          }
          description { state: "left_side" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_GREY_152;
+            color: 80 80 80 255;
             text.size: 8;
             visible: 1;
             text.align: 0.2 0.5;
          }
          description { state: "right_side" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_GREY_152;
+            color: 80 80 80 255;
             visible: 1;
             text.size: 8;
             text.align: 0.8 0.5;
@@ -158,13 +135,11 @@ group { name: "elm/diskselector/item/default";
             rel2.relative: 1 1;
          }
       }
-      part { name: "over1";
-         type: RECT;
+      part { name: "over1"; type: RECT;
          mouse_events: 1;
          repeat_events: 1;
          ignore_flags: ON_HOLD;
-         description {
-            state: "default" 0.0;
+         description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
@@ -299,8 +274,7 @@ group { name: "elm/diskselector/item/datetime/default";
            text.align: 0.8 0.5;
         }
      }
-     part { name: "over1";
-        type: RECT;
+     part { name: "over1"; type: RECT;
         mouse_events: 1;
         repeat_events: 1;
         ignore_flags: ON_HOLD;
@@ -319,70 +293,60 @@ group { name: "elm/diskselector/item/datetime/default";
             new pos, is_sel;
             pos = get_int(field_pos)
             is_sel = get_int(field_selected);
-            if (is_sel == 1)
-              {
-                 if (pos == 0)
-                   set_state(PART:"elm.text", "center_sel", 0.0);
-                 else if (pos == 1)
-                   set_state(PART:"elm.text", "left_side_sel", 0.0);
-                 else if (pos == 2)
-                   set_state(PART:"elm.text", "right_side_sel", 0.0);
-              }
-            else if (is_sel == 0)
-              {
-                 if (pos == 0)
-                   set_state(PART:"elm.text", "default", 0.0);
-                 else if (pos == 1)
-                   set_state(PART:"elm.text", "left_side", 0.0);
-                 else if (pos == 2)
-                   set_state(PART:"elm.text", "right_side", 0.0);
-              }
+            if (is_sel == 1) {
+               if (pos == 0)
+                 set_state(PART:"elm.text", "center_sel", 0.0);
+               else if (pos == 1)
+                 set_state(PART:"elm.text", "left_side_sel", 0.0);
+               else if (pos == 2)
+                 set_state(PART:"elm.text", "right_side_sel", 0.0);
+            } else if (is_sel == 0) {
+               if (pos == 0)
+                 set_state(PART:"elm.text", "default", 0.0);
+               else if (pos == 1)
+                 set_state(PART:"elm.text", "left_side", 0.0);
+               else if (pos == 2)
+                 set_state(PART:"elm.text", "right_side", 0.0);
+            }
          }
       }
-      program { name: "selected_text";
-         signal: "elm,state,selected"; source: "elm";
+      program { signal: "elm,state,selected"; source: "elm";
          script {
             set_int(field_selected, 1);
             update_state();
          }
       }
-      program { name: "default_text";
-         signal: "elm,state,default"; source: "elm";
+      program { signal: "elm,state,default"; source: "elm";
          script {
             set_int(field_selected, 0);
             update_state();
          }
       }
-      program { name: "center_text";
-         signal: "elm,state,center"; source: "elm";
+      program { signal: "elm,state,center"; source: "elm";
          script {
             set_int(field_pos, 0);
             update_state();
          }
       }
-      program { name: "center_small_text";
-         signal: "elm,state,center_small"; source: "elm";
+      program { signal: "elm,state,center_small"; source: "elm";
          script {
             set_int(field_pos, 0);
             update_state();
          }
       }
-      program { name: "l_side_text";
-         signal: "elm,state,left_side"; source: "elm";
+      program { signal: "elm,state,left_side"; source: "elm";
          script {
             set_int(field_pos, 1);
             update_state();
          }
       }
-      program { name: "r_side_text";
-         signal: "elm,state,right_side"; source: "elm";
+      program { signal: "elm,state,right_side"; source: "elm";
          script {
             set_int(field_pos, 2);
             update_state();
          }
       }
-      program { name: "field_click";
-         signal: "mouse,clicked,1"; source: "over1";
+      program { signal: "mouse,clicked,1"; source: "over1";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
    }

@@ -1,27 +1,5 @@
-group { name: "elm/ews/background/default";
-   images.image: "bg_radgrad.png" COMP;
-   images.image: "dot_pattern.png" COMP;
-   parts {
-      part { name: "bg";
-         description { state: "default" 0.0;
-            image.normal: "bg_radgrad.png";
-            image.scale_hint: STATIC;
-            fill.smooth: 0;
-            ASPECT_FILL((1024/653))
-         }
-      }
-      part { name: "pat";
-         description { state: "default" 0.0;
-            image.normal: "dot_pattern.png";
-            TILED_PATTERN(256, 256)
-         }
-      }
-   }
-}
-
 group { name: "elm/ews/decoration/default";
    images.image: "win_shadow.png" COMP;
-   images.image: "win_glow.png" COMP;
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -51,25 +29,6 @@ group { name: "elm/ews/decoration/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -5  -5;
-            rel1.to: "top";
-            rel2.offset: 4 4;
-            rel2.to: "bottom";
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
          }
       }
       part { name: "top";
@@ -558,21 +517,13 @@ group { name: "elm/ews/decoration/default";
          signal: "elm,state,focus,on"; source: "elm";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.1;
-         target: "glow";
          target: "focus";
-         after: "focus2";
-      }
-      program { name: "focus2";
-         action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.4;
-         target: "glow";
       }
       program {
          signal: "elm,state,focus,off"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "focus";
-         target: "glow";
       }
       program {
          signal: "elm,state,focus,on"; source: "elm";
@@ -656,7 +607,6 @@ group { name: "elm/ews/decoration/default";
 
 group { name: "elm/ews/decoration/borderless";
    images.image: "win_shadow.png" COMP;
-   images.image: "win_glow.png" COMP;
    parts {
       part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -665,23 +615,6 @@ group { name: "elm/ews/decoration/borderless";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -5  -5;
-            rel2.offset: 4 4;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
          }
       }
       part { name: "focus"; type: RECT; repeat_events: 1;
@@ -701,21 +634,13 @@ group { name: "elm/ews/decoration/borderless";
          signal: "elm,state,focus,on"; source: "elm";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.1;
-         target: "glow";
          target: "focus";
-         after: "focus2";
-      }
-      program { name: "focus2";
-         action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.4;
-         target: "glow";
       }
       program {
          signal: "elm,state,focus,off"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "focus";
-         target: "glow";
       }
    }
 }

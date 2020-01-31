@@ -358,7 +358,6 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
         for (int i = 0; i < depth; i++) printf("    ");
         printf("%s (%p), mask:%d => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mask->mMode, mtarget);
 #endif
-
         _construct_mask_nodes(msource, mask, depth + 1);
 
         Efl_Gfx_Vg_Composite_Method mask_mode;
@@ -531,8 +530,19 @@ _value_provider_override(Vg_File_Data *vfd)
           }
         if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX)
           {
-             //TODO: When the lottie animation's transform property is implemented,
-             //      the transform property override function have to added.
+             Eina_Matrix3 *m;
+             double m11, m13, m21, m22, m23;
+
+             m = efl_gfx_vg_value_provider_transform_get(vp);
+             if (!m) continue;
+
+             keypath = efl_gfx_vg_value_provider_keypath_get(vp);
+             eina_matrix3_values_get(m, &m11, NULL, &m13,
+                                        &m21, &m22, &m23,
+                                        NULL, NULL, NULL);
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_TR_SCALE, (char*)keypath, 100.0 * m11, 100.0 * m22);
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_TR_ROTATION, (char*)keypath, atan2(m21, m11) * (180.0 / M_PI)); // radian to degree
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_TR_POSITION, (char*)keypath, m13, m23);
           }
      }
 }

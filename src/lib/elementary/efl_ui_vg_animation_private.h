@@ -19,6 +19,7 @@ struct _Efl_Ui_Vg_Animation_Data
    double frame_duration;
    double min_progress;
    double max_progress;
+   Eina_List *subs;
    Eina_List *vp_list;
 
    Eina_Bool playing_reverse : 1;

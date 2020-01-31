@@ -2,24 +2,15 @@ group { name: "e/deskmirror/frame/default";
    alias: "e/deskmirror/frame/dialog";
    alias: "e/deskmirror/frame/urgent";
    alias: "e/deskmirror/frame/sparkle";
-   images.image: "mini_box_bevel_shadow.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "vgrad_med_lighter.png" COMP;
-   images.image: "vgrad_med_dark.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "bevel_dark_out.png" COMP;
+   images.image: "pager_mini_win_shadow.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_FLOAT) && (id == 0)) {
             new Float:sc = getfarg(2);
-            
+
             custom_state(PART:"top_spacer", "default", 0.0);
             set_state_val(PART:"top_spacer", STATE_REL2, 1.0, sc);
             set_state(PART:"top_spacer", "custom", 0.0);
-            
-            custom_state(PART:"bottom_spacer", "default", 0.0);
-            set_state_val(PART:"bottom_spacer", STATE_REL1, 0.0, 1.0 - sc);
-            set_state(PART:"bottom_spacer", "custom", 0.0);
          }
       }
    }
@@ -28,6 +19,7 @@ group { name: "e/deskmirror/frame/default";
          description { state: "default";
          }
          description { state: "iconic";
+            inherit: "default" 0.0;
             rel1.relative: 0.0 1.0;
             rel2.relative: 0.0 1.0;
          }
@@ -36,32 +28,30 @@ group { name: "e/deskmirror/frame/default";
          description { state: "default" 0.0;
             rel1.to: "spacer";
             rel2.to_x: "spacer";
-            rel2.to_y: "title2";
+            rel2.to_y: "e.text.title";
             rel2.offset: -1 -4;
             align: 0.5 0.0;
-         }
-      }
-      part { name: "bottom_spacer"; type: SPACER;
-         description { state: "default" 0.0;
-            rel1.to: "bottom_size";
-            rel2.to: "bottom_size";
-            align: 0.5 1.0;
          }
       }
       part { name: "bottom_size"; type: SPACER;
          description { state: "default" 0.0;
             rel1.to_x: "spacer";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -3;
+            rel1.offset: 0 -1;
             rel2.to: "spacer";
             min: 0 1;
             fixed: 0 1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
          }
       }
       part { name: "shadow";
          mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "mini_box_bevel_shadow.png";
+            image.normal: "pager_mini_win_shadow.png";
             image.border: 7 7 7 7;
             image.middle: 0;
             rel1.to: "top";
@@ -69,14 +59,14 @@ group { name: "e/deskmirror/frame/default";
             rel2.to: "bottom";
             rel2.offset: 4 4;
             fill.smooth: 0;
+            color: 255 255 255 128;
          }
          description { state: "off";
             inherit: "default" 0.0;
             visible: 0;
          }
       }
-      
-      
+
       part { name: "client_clip"; type: RECT;
          description { state: "default" 0.0;
             rel1.to_y: "top";
@@ -94,19 +84,30 @@ group { name: "e/deskmirror/frame/default";
             rel2.relative: 1.0 0.0;
          }
       }
-      
+
+      part { name: "top"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "top_spacer";
+            rel2.to: "top_spacer";
+            color: 64 64 64 255;
+            min: 0 1;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 32 32 32 255;
+         }
+      }
+
       part { name: "e.text.title"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "border_title";
             rel1.offset: 1 3;
             rel1.to: "spacer";
             rel2.relative: 1.0 0.0;
             rel2.offset: -2 3;
             rel2.to: "spacer";
             align: 0.5 0.0;
-            color: FN_COL_DISABLE;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                text_class: "title_bar";
                align: 0.5 0.0;
@@ -115,71 +116,25 @@ group { name: "e/deskmirror/frame/default";
             visible: 0;
             fixed: 0 1;
          }
-      }
-      part { name: "title2"; type: TEXT; mouse_events: 0;
-         scale: 1;
-         effect: SOFT_SHADOW BOTTOM;
-         description { state: "default" 0.0;
-            color_class: "border_title_active";
-            rel1.offset: 1 2;
-            rel1.to: "spacer";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "spacer";
-            align: 0.5 0.0;
-            color: FN_COL_DEFAULT_SOFT_SHADOW;
-            text { font: FNBD; size: 10;
-               text_source: "e.text.title";
-               text_class: "title_bar";
-               align: 0.5 0.0;
-               min: 0 1;
-            }
-            visible: 0;
-            fixed: 0 1;
-         }
-      }
-      
-      part { name: "top";
-         description { state: "default" 0.0;
-            color_class: "border_top";
-            image.normal: "vgrad_med_lighter.png";
-            fill.smooth: 0;
-            TILED_HORIZ(120)
-            rel1.to: "top_spacer";
-            rel2.to: "top_spacer";
-            min: 0 1;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "top";
-            rel2.to: "top";
-            fill.smooth: 0;
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
       }
 
       part { name: "bottom"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color_class: "border_bottom";
-            rel1.to: "bottom_spacer";
-            rel2.to: "bottom_spacer";
+            rel1.to: "bottom_size";
+            rel2.to: "bottom_size";
             color: 64 64 64 255;
          }
-      }
-      part { name: "bevel2"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_dark_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "bottom";
-            rel2.to: "bottom";
-            fill.smooth: 0;
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            max: 0 0;
+            visible: 0;
          }
       }
-      
+
       part { name: "clone"; type: PROXY; mouse_events: 0;
          description { state: "default";
             source: "e.swallow.client";
@@ -202,18 +157,6 @@ group { name: "e/deskmirror/frame/default";
             rel2.relative: 3.0  3.0;
             color: 255 255 255 0;
             proxy.source_clip: 0;
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 0 1;
-            image.normal: "shine.png";
-            rel1.offset: 0 -1;
-            rel1.to: "top";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 1;
-            rel2.to: "top";
-            max: 69 3;
          }
       }
    }
@@ -261,44 +204,27 @@ group { name: "e/deskmirror/frame/default";
       program {
          name: "focus";
          signal: "e,state,focused"; source: "e";
-         script {
-            custom_state(PART:"top", "default", 0.0);
-            set_state_val(PART:"top", STATE_IMAGE, get_image_id("vgrad_med_dark.png"));
-            set_state(PART:"top", "custom", 0.0);
-         }
+         action: STATE_SET "focused" 0.0;
+         target: "e.text.title";
+         target: "top";
       }
       program {
          name: "unfocus";
          signal: "e,state,unfocused"; source: "e";
-         script {
-            custom_state(PART:"top", "default", 0.0);
-            set_state_val(PART:"top", STATE_IMAGE, get_image_id("vgrad_med_lighter.png"));
-            set_state(PART:"top", "custom", 0.0);
-         }
+         action: STATE_SET "default" 0.0;
+         target: "e.text.title";
+         target: "top";
       }
       program {
          name: "shade";
          signal: "e,state,shaded"; source: "e";
-         script {
-            custom_state(PART:"bottom", "default", 0.0);
-            set_state_val(PART:"bottom", STATE_VISIBLE, 0);
-            set_state(PART:"bottom", "custom", 0.0);
-            custom_state(PART:"bevel2", "default", 0.0);
-            set_state_val(PART:"bevel2", STATE_VISIBLE, 0);
-            set_state(PART:"bevel2", "custom", 0.0);
-         }
+         action: STATE_SET "hidden" 0.0;
+         target: "bottom";
       }
       program {
          signal: "e,state,maximize*"; source: "e";
-         script {
-            custom_state(PART:"bottom", "default", 0.0);
-            set_state_val(PART:"bottom", STATE_VISIBLE, 0);
-            set_state_val(PART:"bottom", STATE_MAX, 0, 0);
-            set_state(PART:"bottom", "custom", 0.0);
-            custom_state(PART:"bevel2", "default", 0.0);
-            set_state_val(PART:"bevel2", STATE_VISIBLE, 0);
-            set_state(PART:"bevel2", "custom", 0.0);
-         }
+         action: STATE_SET "hidden" 0.0;
+         target: "bottom";
       }
       program {
          signal: "e,state,unmaximize*"; source: "e";
@@ -311,15 +237,8 @@ group { name: "e/deskmirror/frame/default";
       program {
          name: "unshade";
          signal: "e,state,unshading"; source: "e";
-         script {
-            custom_state(PART:"bottom", "default", 0.0);
-            set_state_val(PART:"bottom", STATE_VISIBLE, 1);
-            set_state_val(PART:"bottom", STATE_MAX, 99999, 99999);
-            set_state(PART:"bottom", "custom", 0.0);
-            custom_state(PART:"bevel2", "default", 0.0);
-            set_state_val(PART:"bevel2", STATE_VISIBLE, 1);
-            set_state(PART:"bevel2", "custom", 0.0);
-         }
+         action: STATE_SET "default" 0.0;
+         target: "bottom";
       }
       program { name: "iconify";
          action: STATE_SET "iconic" 0.0;
@@ -366,11 +285,6 @@ group { name: "e/deskmirror/frame/noresize";
             visible: 0;
          }
       }
-      part { name: "bevel2";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
    }
 }
 
@@ -394,11 +308,6 @@ group { name: "e/deskmirror/frame/noresize_dialog";
             visible: 0;
          }
       }
-      part { name: "bevel2";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
    }
 }
 
@@ -413,7 +322,6 @@ group { name: "e/deskmirror/frame/pixel";
       part { name: "frame"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 255;
-            rel2.offset: 0 0;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -424,6 +332,48 @@ group { name: "e/deskmirror/frame/pixel";
          clip_to: "client_clip";
          description { state: "default" 0.0;
             rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+         }
+      }
+   }
+   programs {
+      program {
+         name: "focus";
+         signal: "e,state,focused"; source: "e";
+         action: STATE_SET "focused" 0.0;
+         target: "frame";
+      }
+      program {
+         name: "unfocus";
+         signal: "e,state,unfocused"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "frame";
+      }
+   }
+}
+
+group { name: "e/deskmirror/frame/tiling";
+   parts {
+      part { name: "client_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "e.swallow.client";
+            rel2.to: "e.swallow.client";
+         }
+      }
+      part { name: "frame"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: -1 -1;
+            rel2.offset: 0 0;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 255;
+         }
+      }
+      part { name: "e.swallow.client"; type: SWALLOW;
+         clip_to: "client_clip";
+         description { state: "default" 0.0;
          }
       }
    }

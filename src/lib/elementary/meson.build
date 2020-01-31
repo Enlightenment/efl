@@ -40,6 +40,7 @@ pub_eo_files = [
   'efl_ui_widget.eo',
   'efl_ui_widget_scrollable_content.eo',
   'efl_ui_vg_animation.eo',
+  'efl_ui_vg_animation_part.eo',
   'efl_ui_bg.eo',
   'efl_ui_button.eo',
   'efl_ui_calendar.eo',

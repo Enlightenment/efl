@@ -109,7 +109,7 @@ option('crypto',
 
 option('glib',
   type : 'boolean',
-  value : false,
+  value : true,
   description : 'Main loop integration for glib in efl'
 )
 
@@ -188,16 +188,14 @@ option('unmount-path',
 
 option('evas-loaders-disabler',
   type : 'array',
-  description : 'List of modular image/vector loaders to disable in efl',
+  description : 'List of modular image loaders to disable in efl',
   choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'rsvg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm', 'json'],
-  value : ['json']
 )
 
 option('ecore-imf-loaders-disabler',
   type : 'array',
   description : 'List of input methods to disable in efl',
-  choices : ['xim', 'ibus', 'scim'],
-  value : ['ibus']
+  choices : ['xim', 'ibus', 'scim']
 )
 
 option('emotion-loaders-disabler',
@@ -301,7 +299,7 @@ option('nls',
 option('bindings',
   type : 'array',
   choices : ['luajit', 'cxx', 'mono'],
-  value : ['luajit', 'cxx'],
+  value: ['luajit'],
   description : 'Which auto-generated language bindings for efl to enable',
 )
 

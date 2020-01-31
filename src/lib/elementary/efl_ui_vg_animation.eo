@@ -10,7 +10,7 @@ enum @beta Efl.Ui.Vg_Animation_State
           Otherwise after finished animation or stopped forcibly by request.]]
 }
 
-class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player, Efl.Playable
+class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player, Efl.Playable, Efl.Part
 {
    [[Elementary Vector Graphcis Animation class.
      Vg Animation is designed to show and play animation of
@@ -157,6 +157,9 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { set; get; }
+      Efl.Part.part_get;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Player.playing { set; get; }
       Efl.Player.paused { set; get; }
       Efl.Player.playback_position { set; get; }
