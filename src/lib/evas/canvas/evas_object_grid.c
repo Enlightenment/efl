@@ -176,16 +176,14 @@ static void
 _evas_object_grid_smart_del(Evas_Object *o)
 {
    EVAS_OBJECT_GRID_DATA_GET(o, priv);
-   Eina_List *l;
 
-   l = priv->children;
-   while (l)
+   while (priv->children)
      {
-	Evas_Object_Grid_Option *opt = l->data;
-	_evas_object_grid_child_disconnect(o, opt->obj);
-	_evas_object_grid_option_del(opt->obj);
-	free(opt);
-	l = eina_list_remove_list(l, l);
+        Evas_Object_Grid_Option *opt = priv->children->data;
+        _evas_object_grid_child_disconnect(o, opt->obj);
+        _evas_object_grid_option_del(opt->obj);
+        free(opt);
+        priv->children = eina_list_remove_list(priv->children, priv->children);
      }
 
    _evas_object_grid_parent_sc->del(o);
@@ -352,7 +350,7 @@ _evas_grid_pack(Eo *o, Evas_Grid_Data *priv, Evas_Object *child, int x, int y, i
      }
    // FIXME: we could keep a changed list
    evas_object_smart_changed(o);
-  
+
    return EINA_TRUE;
 }
 
@@ -385,7 +383,7 @@ _evas_grid_unpack(Eo *o, Evas_Grid_Data *priv, Evas_Object *child)
    _evas_object_grid_remove_opt(priv, opt);
    evas_object_smart_member_del(child);
    free(opt);
-  
+
    return EINA_TRUE;
 }
 
