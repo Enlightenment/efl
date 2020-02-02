@@ -210,6 +210,19 @@ static Eina_Position2D _decoration_calc_offset(Efl_Ui_Textbox_Data *sd);
 static void _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static void _efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Selection_Type type);
 
+static Eina_Bool _key_action_copy(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_paste(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_cut(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_menu(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"copy", _key_action_copy},
+   {"paste", _key_action_paste},
+   {"cut", _key_action_cut},
+   {"menu", _key_action_menu},
+   {NULL, NULL}
+};
+
 static void
 _efl_ui_textbox_guide_update(Evas_Object *obj,
                         Eina_Bool has_text)
@@ -1050,49 +1063,38 @@ _long_press_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    sd->long_pressed = EINA_TRUE;
 }
 
-static void
-_key_down_cb(void *data, const Efl_Event *event)
+
+static Eina_Bool
+_key_action_copy(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Efl_Input_Key_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_KEY_CLASS);
-   Eina_Bool on_hold = EINA_FALSE;
+   efl_ui_textbox_selection_copy(obj);
+   return EINA_TRUE;
+}
 
-   /* First check if context menu disabled is false or not, and
-    * then check for key id */
-   if ((!_elm_config->context_menu_disabled) && !strcmp(ev->key, "Menu"))
+static Eina_Bool
+_key_action_cut(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   efl_ui_textbox_selection_cut(obj);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_paste(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   efl_ui_textbox_selection_paste(obj);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_menu(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   Eina_Bool b_ret = EINA_FALSE;
+   if (!_elm_config->context_menu_disabled)
      {
-        _menu_call(data);
-        on_hold = EINA_TRUE;
+        _menu_call(obj);
+        b_ret = EINA_TRUE;
      }
-   else
-     {
-#if defined(__APPLE__) && defined(__MACH__)
-        Eina_Bool control = evas_key_modifier_is_set(ev->modifiers, "Super");
-#else
-        Eina_Bool control = evas_key_modifier_is_set(ev->modifiers, "Control");
-#endif
-
-        /* Ctrl operations */
-        if (control)
-          {
-             if (!strncmp(ev->key, "c", 1))
-               {
-                  efl_ui_textbox_selection_copy(data);
-                  on_hold = EINA_TRUE;
-               }
-             else if (!strncmp(ev->key, "x", 1))
-               {
-                  efl_ui_textbox_selection_cut(data);
-                  on_hold = EINA_TRUE;
-               }
-             else if (!strncmp(ev->key, "v", 1))
-               {
-                  efl_ui_textbox_selection_paste(data);
-                  on_hold = EINA_TRUE;
-               }
-          }
-     }
-
-   if (on_hold) ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return b_ret;
 }
 
 static void
@@ -1698,8 +1700,6 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
    efl_event_callback_add(sd->entry_edje, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
          _efl_ui_textbox_move_cb, obj);
 
-   efl_event_callback_add
-     (sd->entry_edje, EFL_EVENT_KEY_DOWN, _key_down_cb, obj);
    efl_event_callback_add
      (sd->entry_edje, EFL_EVENT_POINTER_DOWN, _mouse_down_cb, obj);
    efl_event_callback_add
@@ -3329,6 +3329,10 @@ _part_is_efl_ui_textbox_part(const Eo *obj EINA_UNUSED, const char *part)
 
    return EINA_FALSE;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_textbox, Efl_Ui_Textbox_Data)
 
 ELM_PART_OVERRIDE_PARTIAL(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data, _part_is_efl_ui_textbox_part)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_textbox, EFL_UI_TEXTBOX, Efl_Ui_Textbox_Data)

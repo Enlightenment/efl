@@ -2474,6 +2474,12 @@ _config_update(void)
    tcfg = _config_system_load();
    IFCFGEND
 
+   IFCFG(0x0017)
+   _elm_key_bindings_copy_missing_bindings_of_widget(_elm_config, tcfg, "Efl.Ui.Textbox");
+   /* after this function call, the tcfg is partly invalidated, reload! */
+   _config_free(tcfg);
+   tcfg = _config_system_load();
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
