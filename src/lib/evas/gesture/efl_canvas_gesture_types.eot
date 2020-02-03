@@ -40,9 +40,9 @@ enum @beta Efl.Canvas.Gesture_Recognizer_Type
    [[ This enum type describes the state of a touch event. ]]
    legacy: efl_gesture_recognizer_type;
    tap = 0,
-   doubleTap,
-   tripleTap,
-   longTap,
+   double_tap,
+   triple_tap,
+   long_tap,
    momentum,
    flick,
    zoom,

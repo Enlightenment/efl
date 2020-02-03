@@ -7,7 +7,7 @@
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Type
 _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Double_Tap_Data *pd EINA_UNUSED)
 {
-   return EFL_GESTURE_RECOGNIZER_TYPE_DOUBLETAP;
+   return EFL_GESTURE_RECOGNIZER_TYPE_DOUBLE_TAP;
 }
 
 EOLIAN static void
