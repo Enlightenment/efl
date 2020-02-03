@@ -113,8 +113,8 @@ _hs_screen_new(Icon *icons)
 static Efl_Ui_Widget*
 _build_homescreen(Efl_Ui_Win *win)
 {
-   Efl_Ui_Spotlight_Indicator *indicator = efl_new(EFL_UI_SPOTLIGHT_INDICATOR_ICON_CLASS);
-   Efl_Ui_Spotlight_Manager *scroll = efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS);
+   Efl_Ui_Spotlight_Indicator *indicator = efl_new(EFL_UI_SPOTLIGHT_ICON_INDICATOR_CLASS);
+   Efl_Ui_Spotlight_Manager *scroll = efl_new(EFL_UI_SPOTLIGHT_SCROLL_MANAGER_CLASS);
 
    over_container = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
       efl_ui_spotlight_manager_set(efl_added, scroll),
@@ -160,7 +160,7 @@ _build_compositor(Efl_Ui_Win *win)
    Efl_Ui_Widget *comp;
    Efl_Ui_Spotlight_Manager *stack;
 
-   stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   stack = efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS);
    comp = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
                   efl_ui_spotlight_manager_set(efl_added, stack));
 
@@ -186,7 +186,7 @@ _fake_app_cb(void *data, const Efl_Event *ev)
     Efl_Canvas_Rectangle *rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, compositor);
     efl_gfx_color_set(rect, 50, 50, 50, 255);
     efl_pack_table(table, rect, 0, 0, 1, 1);
-    Efl_Ui_Text *text = efl_add(EFL_UI_TEXT_CLASS , table);
+    Efl_Ui_Textbox *text = efl_add(EFL_UI_TEXTBOX_CLASS , table);
     efl_text_interactive_editable_set(text, EINA_FALSE);
     efl_text_multiline_set(text, EINA_FALSE);
     efl_text_set(text, "This is a testing application");
