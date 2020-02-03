@@ -289,7 +289,7 @@ _text_filter_markup_prepend_internal(Efl_Canvas_Textblock *obj, Efl_Ui_Internal_
         if (changeinfo)
           {
              info = calloc(1, sizeof(*info));
-             info->insertion = EINA_TRUE;
+             info->type = EFL_TEXT_CHANGE_TYPE_INSERT;
              info->content = eina_stringshare_add(text);
              info->length =
              eina_unicode_utf8_get_len(info->content);
@@ -611,7 +611,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
 
    tmp = efl_text_cursor_range_text_get(del_start, del_end);
 
-   info.insertion = EINA_FALSE;
+   info.type = EFL_TEXT_CHANGE_TYPE_REMOVE;
    info.position = start;
    info.length = end - start;
    info.content = tmp;
@@ -955,7 +955,7 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor *cur1, Efl_Text_Cursor *cur2)
    if (start == end)
       return;
 
-   info.insertion = EINA_FALSE;
+   info.type = EFL_TEXT_CHANGE_TYPE_REMOVE;
    info.position = start;
    info.length = end - start;
 
@@ -1001,7 +1001,7 @@ _delete_emit(Eo *obj, Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data 
 
    Efl_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
    char *tmp = NULL;
-   info.insertion = EINA_FALSE;
+   info.type = EFL_TEXT_CHANGE_TYPE_REMOVE;
    if (backspace)
      {
 
@@ -1047,7 +1047,7 @@ _delete_emit(Eo *obj, Efl_Text_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data 
         evas_textblock_cursor_free(cc);
      }
 
-   info.insertion = EINA_FALSE;
+   info.type = EFL_TEXT_CHANGE_TYPE_REMOVE;
    info.position = pos;
    info.length = 1;
    info.content = tmp;
@@ -1531,7 +1531,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                   _sel_range_del_emit(obj, en);
                   info.mergeable = EINA_TRUE;
                }
-             info.insertion = EINA_TRUE;
+             info.type = EFL_TEXT_CHANGE_TYPE_INSERT;
              info.content = string;
              info.position = efl_text_cursor_position_get(cur);
              info.length = eina_unicode_utf8_get_len(string);

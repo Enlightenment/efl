@@ -10,6 +10,12 @@ enum Efl.Text_Bidirectional_Type {
    inherit [[Inherit text type]]
 }
 
+enum @beta Efl.Text_Change_Type {
+   [[Text change type.]]
+   insert = 0, [[the content was inserted.]]
+   remove [[the content was removed.]]
+}
+
 struct @beta Efl.Text_Change_Info {
    [[This structure includes all the information about content changes.
 
@@ -18,6 +24,6 @@ struct @beta Efl.Text_Change_Info {
    content: string; [[The content added/removed]]
    position: size; [[The position where it was added/removed]]
    length: size; [[The length of content in characters (not bytes, actual unicode characters)]]
-   insertion: bool; [[$true if the content was inserted, $false if removed]]
+   type: Efl.Text_Change_Type; [[Text change type]]
    mergeable: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
