@@ -201,7 +201,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
          if (!pd->zoom_st.cur.timestamp)   /* Now scan touched-devices list
                                             * and find other finger */
            {
-              if (!efl_gesture_touch_multi_touch_get(event))
+              if (!_event_multi_touch_get(event))
                 return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
               const Efl_Gesture_Touch_Point_Data *p1 = efl_gesture_touch_data_get(event, 0);

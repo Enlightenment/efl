@@ -58,16 +58,12 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
      {
         if ((!point) || (!point->cur.pressed))
           pd->touch_down++;
-        if (pd->touch_down >= 2)
-          pd->multi_touch = EINA_TRUE;
      }
    else if ((action == EFL_POINTER_ACTION_UP) ||
             (action == EFL_POINTER_ACTION_CANCEL))
      {
         if (point && point->cur.pressed)
           pd->touch_down--;
-        if (pd->multi_touch && pd->touch_down == 1)
-          pd->multi_touch = EINA_FALSE;
      }
 
    if (pd->touch_down < 0) goto finished_touch;
@@ -120,12 +116,6 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
 
 finished_touch:
    _touch_points_reset(pd);
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_gesture_touch_multi_touch_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
-{
-   return pd->multi_touch;
 }
 
 EOLIAN static unsigned int

@@ -89,7 +89,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
          dist = efl_gesture_touch_distance(event, 0);
          length = fabs(dist.x) + fabs(dist.y);
 
-         if ((efl_gesture_touch_multi_touch_get(event)) || (length > pd->finger_size))
+         if ((_event_multi_touch_get(event)) || (length > pd->finger_size))
            {
               if (pd->timeout)
                 {
@@ -116,7 +116,7 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
            }
 
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-             !efl_gesture_touch_multi_touch_get(event))
+             !_event_multi_touch_get(event))
            {
               dist = efl_gesture_touch_distance(event, 0);
               length = fabs(dist.x) + fabs(dist.y);

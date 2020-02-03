@@ -54,12 +54,6 @@ class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
             time: uint; [[The timestamp.]]
          }
       }
-      @property multi_touch {
-         [[This property tells if the event is multi touch.]]
-         get {
-            return: bool; [[returns $true if its a multi touch]]
-         }
-      }
       @property touch_points_count {
          [[This provides the number of touch points active.]]
          get {

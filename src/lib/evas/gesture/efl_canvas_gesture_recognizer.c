@@ -40,4 +40,10 @@ _direction_get(Evas_Coord xx1, Evas_Coord xx2)
    return 0;
 }
 
+Eina_Bool
+_event_multi_touch_get(const Efl_Canvas_Gesture_Touch *event)
+{
+   return efl_gesture_touch_points_count_get(event) > 1;
+}
+
 #include "efl_canvas_gesture_recognizer.eo.c"

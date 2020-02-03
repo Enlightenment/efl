@@ -99,7 +99,7 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_canvas_gesture_recognizer_recogniz
          result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-             !efl_gesture_touch_multi_touch_get(event))
+             !_event_multi_touch_get(event))
            {
               dist = efl_gesture_touch_distance(event, 0);
               length = fabs(dist.x) + fabs(dist.y);
@@ -124,7 +124,7 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_canvas_gesture_recognizer_recogniz
       case EFL_GESTURE_TOUCH_STATE_END:
       {
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-             !efl_gesture_touch_multi_touch_get(event))
+             !_event_multi_touch_get(event))
            {
               if (efl_gesture_touch_prev_data_get(event))
                 {
