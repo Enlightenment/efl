@@ -16711,7 +16711,7 @@ _efl_canvas_textblock_efl_text_style_text_underline_dashed_gap_set(Eo *obj EINA_
 static int
 _efl_canvas_textblock_efl_text_style_text_underline_dashed_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
-   return _FMT(underline_dash_width);
+   return _FMT(underline_dash_gap);
 }
 
 static void
