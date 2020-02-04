@@ -12,13 +12,6 @@ _recognizer_config_get(const Eo *obj, const char *name)
    return efl_config_get(config, name);
 }
 
-EOLIAN static void
-_efl_canvas_gesture_recognizer_reset(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Data *pd EINA_UNUSED,
-                                     Efl_Canvas_Gesture *gesture EINA_UNUSED)
-{
-}
-
-
 EOLIAN static Eina_Bool
 _efl_canvas_gesture_recognizer_continues_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Data *pd)
 {

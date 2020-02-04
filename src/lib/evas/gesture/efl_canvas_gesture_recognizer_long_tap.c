@@ -141,20 +141,6 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
    return result;
 }
 
-EOLIAN static void
-_efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_reset(Eo *obj,
-                                                                            Efl_Canvas_Gesture_Recognizer_Long_Tap_Data *pd,
-                                                                            Efl_Canvas_Gesture *gesture)
-{
-   if (pd->timeout)
-     {
-        ecore_timer_del(pd->timeout);
-        pd->timeout = NULL;
-     }
-   pd->is_timeout = EINA_FALSE;
-   efl_gesture_recognizer_reset(efl_super(obj, MY_CLASS), gesture);
-}
-
 EOLIAN static double
 _efl_canvas_gesture_recognizer_long_tap_timeout_get(const Eo *obj EINA_UNUSED,
                                                     Efl_Canvas_Gesture_Recognizer_Long_Tap_Data *pd)
