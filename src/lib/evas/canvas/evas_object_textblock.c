@@ -531,6 +531,7 @@ struct _Evas_Object_Textblock
    Eina_Bool                           wrap_changed : 1;
    Eina_Bool                           auto_styles : 1;
    Eina_Bool                           fit_in_progress : 1;
+   Eina_Bool                           is_legacy : 1;
 };
 
 struct _Evas_Textblock_Selection_Iterator
@@ -1400,12 +1401,14 @@ static const char *underline_colorstr = NULL;
 static const char *underline2_colorstr = NULL;
 static const char *secondary_underline_colorstr = NULL;
 static const char *underline_dash_colorstr = NULL;
+static const char *underline_dashed_colorstr = NULL;
 static const char *outline_colorstr = NULL;
 static const char *shadow_colorstr = NULL;
 static const char *glow_colorstr = NULL;
 static const char *glow2_colorstr = NULL;
 static const char *secondary_glow_colorstr = NULL;
 static const char *backing_colorstr = NULL;
+static const char *background_colorstr = NULL;
 static const char *strikethrough_colorstr = NULL;
 static const char *alignstr = NULL;
 static const char *valignstr = NULL;
@@ -1414,9 +1417,14 @@ static const char *wrapstr = NULL;
 static const char *left_marginstr = NULL;
 static const char *right_marginstr = NULL;
 static const char *underlinestr = NULL;
+static const char *underline_typestr = NULL;
 static const char *strikethroughstr = NULL;
+static const char *strikethrough_typestr = NULL;
 static const char *backingstr = NULL;
+static const char *background_typestr = NULL;
 static const char *stylestr = NULL;
+static const char *effect_typestr = NULL;
+static const char *shadow_directionstr = NULL;
 static const char *tabstopsstr = NULL;
 static const char *tab_stopsstr = NULL;
 static const char *linesizestr = NULL;
@@ -1434,7 +1442,9 @@ static const char *ellipsisstr = NULL;
 static const char *passwordstr = NULL;
 static const char *replacement_charstr = NULL;
 static const char *underline_dash_widthstr = NULL;
+static const char *underline_dashed_widthstr = NULL;
 static const char *underline_dash_gapstr = NULL;
+static const char *underline_dashed_gapstr = NULL;
 static const char *underline_heightstr = NULL;
 static const char *gfx_filterstr = NULL;
 
@@ -1595,12 +1605,14 @@ _format_command_init(void)
         underline2_colorstr = eina_stringshare_add("underline2_color");
         secondary_underline_colorstr = eina_stringshare_add("secondary_underline_color");
         underline_dash_colorstr = eina_stringshare_add("underline_dash_color");
+        underline_dashed_colorstr = eina_stringshare_add("underline_dashed_color");
         outline_colorstr = eina_stringshare_add("outline_color");
         shadow_colorstr = eina_stringshare_add("shadow_color");
         glow_colorstr = eina_stringshare_add("glow_color");
         glow2_colorstr = eina_stringshare_add("glow2_color");
         secondary_glow_colorstr = eina_stringshare_add("secondary_glow_color");
         backing_colorstr = eina_stringshare_add("backing_color");
+        background_colorstr = eina_stringshare_add("background_color");
         strikethrough_colorstr = eina_stringshare_add("strikethrough_color");
         alignstr = eina_stringshare_add("align");
         valignstr = eina_stringshare_add("valign");
@@ -1609,9 +1621,14 @@ _format_command_init(void)
         left_marginstr = eina_stringshare_add("left_margin");
         right_marginstr = eina_stringshare_add("right_margin");
         underlinestr = eina_stringshare_add("underline");
+        underline_typestr = eina_stringshare_add("underline_type");
         strikethroughstr = eina_stringshare_add("strikethrough");
+        strikethrough_typestr = eina_stringshare_add("strikethrough_type");
         backingstr = eina_stringshare_add("backing");
+        background_typestr = eina_stringshare_add("background_type");
         stylestr = eina_stringshare_add("style");
+        effect_typestr = eina_stringshare_add("effect_type");
+        shadow_directionstr = eina_stringshare_add("shadow_direction");
         tabstopsstr = eina_stringshare_add("tabstops");
         tab_stopsstr = eina_stringshare_add("tab_stops");
         linesizestr = eina_stringshare_add("linesize");
@@ -1629,7 +1646,9 @@ _format_command_init(void)
         passwordstr = eina_stringshare_add("password");
         replacement_charstr = eina_stringshare_add("replacement_char");
         underline_dash_widthstr = eina_stringshare_add("underline_dash_width");
+        underline_dashed_widthstr = eina_stringshare_add("underline_dashed_width");
         underline_dash_gapstr = eina_stringshare_add("underline_dash_gap");
+        underline_dashed_gapstr = eina_stringshare_add("underline_dashed_gap");
         underline_heightstr = eina_stringshare_add("underline_height");
         gfx_filterstr = eina_stringshare_add("gfx_filter"); // FIXME: bg, fg filters
      }
@@ -1658,12 +1677,14 @@ _format_command_shutdown(void)
    eina_stringshare_del(underline2_colorstr);
    eina_stringshare_del(secondary_underline_colorstr);
    eina_stringshare_del(underline_dash_colorstr);
+   eina_stringshare_del(underline_dashed_colorstr);
    eina_stringshare_del(outline_colorstr);
    eina_stringshare_del(shadow_colorstr);
    eina_stringshare_del(glow_colorstr);
    eina_stringshare_del(glow2_colorstr);
    eina_stringshare_del(secondary_glow_colorstr);
    eina_stringshare_del(backing_colorstr);
+   eina_stringshare_del(background_colorstr);
    eina_stringshare_del(strikethrough_colorstr);
    eina_stringshare_del(alignstr);
    eina_stringshare_del(valignstr);
@@ -1672,9 +1693,14 @@ _format_command_shutdown(void)
    eina_stringshare_del(left_marginstr);
    eina_stringshare_del(right_marginstr);
    eina_stringshare_del(underlinestr);
+   eina_stringshare_del(underline_typestr);
    eina_stringshare_del(strikethroughstr);
+   eina_stringshare_del(strikethrough_typestr);
    eina_stringshare_del(backingstr);
+   eina_stringshare_del(background_typestr);
    eina_stringshare_del(stylestr);
+   eina_stringshare_del(effect_typestr);
+   eina_stringshare_del(shadow_directionstr);
    eina_stringshare_del(tabstopsstr);
    eina_stringshare_del(tab_stopsstr);
    eina_stringshare_del(linesizestr);
@@ -1692,7 +1718,9 @@ _format_command_shutdown(void)
    eina_stringshare_del(passwordstr);
    eina_stringshare_del(replacement_charstr);
    eina_stringshare_del(underline_dash_widthstr);
+   eina_stringshare_del(underline_dashed_widthstr);
    eina_stringshare_del(underline_dash_gapstr);
+   eina_stringshare_del(underline_dashed_gapstr);
    eina_stringshare_del(underline_heightstr);
    eina_stringshare_del(gfx_filterstr);
 }
@@ -1722,6 +1750,543 @@ _format_clean_param(char *s)
    return len;
 }
 
+static void
+_format_command_legacy_only(Evas_Object_Textblock_Format *fmt, const char *cmd, char *param, int len)
+{
+   if (cmd == backing_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_backing_color Backing Color
+      *
+      * Sets a background color for text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
+      * @li "color_name"  like "red"
+      * @code
+      * backing_color=<color>
+      * @endcode
+      */
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.backing.r), &(fmt->color.backing.g),
+           &(fmt->color.backing.b), &(fmt->color.backing.a));
+   else if (cmd == backingstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_backing Backing
+         *
+         * Sets if the text will have backing. The value must be one of
+         * the following:
+         * @li "off" - No backing
+         * @li "on" - Backing
+         * @code
+         * backing=on/off
+         * @endcode
+         */
+        if (len == 3 && !strcmp(param, "off"))
+          fmt->backing = 0;
+        else if (len == 2 && !strcmp(param, "on"))
+          fmt->backing = 1;
+     }
+   else if (cmd == underline2_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_underline2_color Second Underline Color
+      *
+      * Sets the color of the second line of underline(when using underline
+      * mode "double"). The following formats are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
+      * @li "color_name"  like "red"
+      * @code
+      * underline2_color=<color>
+      * @endcode
+      */
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.underline2.r), &(fmt->color.underline2.g),
+           &(fmt->color.underline2.b), &(fmt->color.underline2.a));
+   else if (cmd == glow2_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_glow2_color Second Glow Color
+      *
+      * Sets the second color of the glow of text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
+      * @li "color_name"  like "red"
+      * @code
+      * glow2_color=<color>
+      * @endcode
+      */
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.glow2.r), &(fmt->color.glow2.g),
+           &(fmt->color.glow2.b), &(fmt->color.glow2.a));
+   else if (cmd == tabstopsstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_tabstops Tabstops
+         *
+         * Sets the size of the tab character. The value must be a number
+         * greater than one.
+         * @code
+         * tabstops=<number>
+         * @endcode
+         */
+        fmt->tabstops = atoi(param);
+        if (fmt->tabstops < 1) fmt->tabstops = 1;
+     }
+   else if (cmd == linesizestr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linesize Line size
+         *
+         * Sets the size of line of text. The value should be a number.
+         * @warning Setting this value sets linerelsize to 0%!
+         * @code
+         * linesize=<number>
+         * @endcode
+         */
+        fmt->linesize = atoi(param);
+        fmt->linerelsize = 0.0;
+     }
+   else if (cmd == linerelsizestr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linerelsize Relative line size
+         *
+         * Sets the relative size of line of text. The value must be a
+         * percentage.
+         * @warning Setting this value sets linesize to 0!
+         * @code
+         * linerelsize=<number>%
+         * @endcode
+         */
+        char *endptr = NULL;
+        double val = strtod(param, &endptr);
+        if (endptr)
+          {
+             while (*endptr && _is_white(*endptr))
+               endptr++;
+             if (*endptr == '%')
+               {
+                  fmt->linerelsize = val / 100.0;
+                  fmt->linesize = 0;
+                  if (fmt->linerelsize < 0.0) fmt->linerelsize = 0.0;
+               }
+          }
+     }
+   else if (cmd == linegapstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linegap Line gap
+         *
+         * Sets the size of the line gap in text. The value should be a
+         * number.
+         * @warning Setting this value sets linerelgap to 0%!
+         * @code
+         * linegap=<number>
+         * @endcode
+         */
+        fmt->linegap = atoi(param);
+        fmt->linerelgap = 0.0;
+     }
+   else if (cmd == linerelgapstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linerelgap Relative line gap
+         *
+         * Sets the relative size of the line gap in text. The value must be
+         * a percentage.
+         * @warning Setting this value sets linegap to 0!
+         * @code
+         * linerelgap=<number>%
+         * @endcode
+         */
+        char *endptr = NULL;
+        double val = strtod(param, &endptr);
+        if (endptr)
+          {
+             while (*endptr && _is_white(*endptr))
+               endptr++;
+             if (*endptr == '%')
+               {
+                  fmt->linerelgap = val / 100.0;
+                  fmt->linegap = 0;
+                  if (fmt->linerelgap < 0.0) fmt->linerelgap = 0.0;
+               }
+          }
+     }
+   else if (cmd == linefillstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linefill Line fill
+         *
+         * Sets the size of the line fill in text. The value must be a
+         * percentage.
+         * @code
+         * linefill=<number>%
+         * @endcode
+         */
+        char *endptr = NULL;
+        double val = strtod(param, &endptr);
+        if (endptr)
+          {
+             while (*endptr && _is_white(*endptr))
+               endptr++;
+             if (*endptr == '%')
+               {
+                  fmt->linefill = val / 100.0;
+                  if (fmt->linefill < 0.0) fmt->linefill = 0.0;
+               }
+          }
+     }
+   else if (cmd == underline_dash_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_underline_dash_color Underline Dash Color
+      *
+      * Sets the color of dashed underline. The following formats are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
+      * @li "color_name"  like "red"
+      * @code
+      * underline_dash_color=<color>
+      * @endcode
+      */
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.underline_dash.r), &(fmt->color.underline_dash.g),
+           &(fmt->color.underline_dash.b), &(fmt->color.underline_dash.a));
+   else if (cmd == underlinestr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline Underline
+         *
+         * Sets if and how a text will be underlined. The value must be one of
+         * the following:
+         * @li "off" - No underlining
+         * @li "single" - A single line under the text
+         * @li "on" - Alias for "single"
+         * @li "double" - Two lines under the text
+         * @li "dashed" - A dashed line under the text
+         * @code
+         * underline=off/single/on/double/dashed
+         * @endcode
+         */
+        static const struct {
+           const char *param;
+           int len;
+           Eina_Bool underline;
+           Eina_Bool underline2;
+           Eina_Bool underline_dash;
+        } underlines_named[] = {
+          { "off", 3, 0, 0, 0 },
+          { "on", 2, 1, 0, 0 },
+          { "single", 6, 1, 0, 0 },
+          { "double", 6, 1, 1, 0 },
+          { "dashed", 6, 0, 0, 1 },
+          { NULL, 0, 0, 0, 0 }
+        };
+        unsigned int i;
+
+        fmt->underline = fmt->underline2 = fmt->underline_dash = 0;
+        for (i = 0; underlines_named[i].param; ++i)
+          if (underlines_named[i].len == len &&
+              !strcmp(underlines_named[i].param, param))
+            {
+               fmt->underline = underlines_named[i].underline;
+               fmt->underline2 = underlines_named[i].underline2;
+               fmt->underline_dash = underlines_named[i].underline_dash;
+               break;
+            }
+     }
+   else if (cmd == strikethroughstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_strikethrough Strikethrough
+         *
+         * Sets if the text will be striked through. The value must be one of
+         * the following:
+         * @li "off" - No strikethrough
+         * @li "on" - Strikethrough
+         * @code
+         * strikethrough=on/off
+         * @endcode
+         */
+        if (len == 3 && !strcmp(param, "off"))
+          fmt->strikethrough = 0;
+        else if (len == 2 && !strcmp(param, "on"))
+          fmt->strikethrough = 1;
+     }
+   else if (cmd == stylestr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_style Style
+         *
+         * Sets the style of the text. The value must be a string composed of
+         * two comma separated parts. The first part of the value sets the
+         * appearance of the text, the second the position.
+         *
+         * The first part may be any of the following values:
+         * @li "plain"
+         * @li "off" - Alias for "plain"
+         * @li "none" - Alias for "plain"
+         * @li "shadow"
+         * @li "outline"
+         * @li "soft_outline"
+         * @li "outline_shadow"
+         * @li "outline_soft_shadow"
+         * @li "glow"
+         * @li "far_shadow"
+         * @li "soft_shadow"
+         * @li "far_soft_shadow"
+         * The second part may be any of the following values:
+         * @li "bottom_right"
+         * @li "bottom"
+         * @li "bottom_left"
+         * @li "left"
+         * @li "top_left"
+         * @li "top"
+         * @li "top_right"
+         * @li "right"
+         * @code
+         * style=<appearance>,<position>
+         * @endcode
+         */
+        char *part1, *part2;
+
+        part1 = alloca(len + 1);
+        *part1 = 0;
+
+        part2 = alloca(len + 1);
+        *part2 = 0;
+
+        _style_string_split(param, part1, part2);
+
+        _format_shadow_set(fmt, part1, EINA_FALSE, NULL);
+
+        if (*part2)
+          _format_shadow_direction_set(fmt, part2, EINA_FALSE, NULL);
+     }
+   else if (cmd == underline_dash_widthstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline_dash_width Underline dash width
+         *
+         * Sets the width of the underline dash. The value should be a number.
+         * @code
+         * underline_dash_width=<number>
+         * @endcode
+         */
+        fmt->underline_dash_width = atoi(param);
+        if (fmt->underline_dash_width <= 0) fmt->underline_dash_width = 1;
+     }
+   else if (cmd == underline_dash_gapstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline_dash_gap Underline dash gap
+         *
+         * Sets the gap of the underline dash. The value should be a number.
+         * @code
+         * underline_dash_gap=<number>
+         * @endcode
+         */
+        fmt->underline_dash_gap = atoi(param);
+        if (fmt->underline_dash_gap <= 0) fmt->underline_dash_gap = 1;
+     }
+}
+
+static void
+_format_command_unified_only( Efl_Canvas_Textblock_Data *o, Evas_Object_Textblock_Format *fmt, const char *cmd, char *param, int len)
+{
+   if (cmd == background_colorstr)
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.backing.r), &(fmt->color.backing.g),
+           &(fmt->color.backing.b), &(fmt->color.backing.a));
+   else if (cmd == background_typestr)
+     {
+        if (len == 4 && !strcmp(param, "none"))
+          fmt->backing = 0;
+        else if (len == 5 && !strcmp(param, "solid"))
+          fmt->backing = 1;
+     }
+   else if (cmd == secondary_underline_colorstr)
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.underline2.r), &(fmt->color.underline2.g),
+           &(fmt->color.underline2.b), &(fmt->color.underline2.a));
+   else if (cmd == secondary_glow_colorstr)
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.glow2.r), &(fmt->color.glow2.g),
+           &(fmt->color.glow2.b), &(fmt->color.glow2.a));
+   else if (cmd == tab_stopsstr)
+     {
+        fmt->tabstops = atoi(param);
+        if (fmt->tabstops < 1) fmt->tabstops = 1;
+     }
+   else if (cmd == line_sizestr)
+     {
+        fmt->linesize = atoi(param);
+        fmt->linerelsize = 0.0;
+     }
+   else if (cmd == line_rel_sizestr)
+     {
+        char *endptr = NULL;
+        double val = strtod(param, &endptr);
+        if (endptr)
+          {
+             while (*endptr && _is_white(*endptr))
+               endptr++;
+             if (*endptr == '%')
+               {
+                  fmt->linerelsize = val / 100.0;
+                  fmt->linesize = 0;
+                  if (fmt->linerelsize < 0.0) fmt->linerelsize = 0.0;
+               }
+          }
+     }
+   else if (cmd == line_gapstr)
+     {
+        fmt->linegap = atoi(param);
+        fmt->linerelgap = 0.0;
+     }
+   else if (cmd == line_rel_gapstr)
+     {
+        char *endptr = NULL;
+        double val = strtod(param, &endptr);
+        if (endptr)
+          {
+             while (*endptr && _is_white(*endptr))
+               endptr++;
+             if (*endptr == '%')
+               {
+                  fmt->linerelgap = val / 100.0;
+                  fmt->linegap = 0;
+                  if (fmt->linerelgap < 0.0) fmt->linerelgap = 0.0;
+               }
+          }
+     }
+   else if (cmd == line_fillstr)
+     {
+        char *endptr = NULL;
+        double val = strtod(param, &endptr);
+        if (endptr)
+          {
+             while (*endptr && _is_white(*endptr))
+               endptr++;
+             if (*endptr == '%')
+               {
+                  fmt->linefill = val / 100.0;
+                  if (fmt->linefill < 0.0) fmt->linefill = 0.0;
+               }
+          }
+     }
+   else if (cmd == underline_dashed_colorstr)
+     evas_common_format_color_parse(param, len,
+           &(fmt->color.underline_dash.r), &(fmt->color.underline_dash.g),
+           &(fmt->color.underline_dash.b), &(fmt->color.underline_dash.a));
+   else if (cmd == underline_typestr)
+     {
+        typedef struct {
+             const char *param;
+             int len;
+             Eina_Bool underline;
+             Eina_Bool underline2;
+             Eina_Bool underline_dash;
+        } Underline_Info;
+
+        fmt->underline = fmt->underline2 = fmt->underline_dash = 0;
+        unsigned int i;
+        #define SET_UNDERLINE_VALUES() \
+        for (i = 0; underlines_named[i].param; ++i) { \
+          if (underlines_named[i].len == len && \
+              !strcmp(underlines_named[i].param, param)) \
+            { \
+               fmt->underline = underlines_named[i].underline; \
+               fmt->underline2 = underlines_named[i].underline2; \
+               fmt->underline_dash = underlines_named[i].underline_dash; \
+               break;\
+            } \
+        }
+        static Underline_Info underlines_named[] = {
+                    { "none", 4, 0, 0, 0 },
+                    { "single", 6, 1, 0, 0 },
+                    { "double", 6, 1, 1, 0 },
+                    { "dashed", 6, 0, 0, 1 },
+                    { NULL, 0, 0, 0, 0 }
+             };
+        SET_UNDERLINE_VALUES();
+     }
+   else if (cmd == strikethrough_typestr)
+     {
+        if (len == 4 && !strcmp(param, "none"))
+          fmt->strikethrough = 0;
+        else if (len == 6 && !strcmp(param, "single"))
+          fmt->strikethrough = 1;
+     }
+   else if (cmd == effect_typestr)
+     {
+        _format_shadow_set(fmt, param, EINA_TRUE, o);
+     }
+   else if (cmd == shadow_directionstr)
+     {
+        _format_shadow_direction_set(fmt, param, EINA_TRUE, o);
+     }
+   else if (cmd == underline_dashed_widthstr)
+     {
+        fmt->underline_dash_width = atoi(param);
+        if (fmt->underline_dash_width <= 0) fmt->underline_dash_width = 1;
+     }
+   else if (cmd == underline_dashed_gapstr)
+     {
+        fmt->underline_dash_gap = atoi(param);
+        if (fmt->underline_dash_gap <= 0) fmt->underline_dash_gap = 1;
+     }
+}
+
 /**
  * @internal
  * Parses the cmd and parameter and adds the parsed format to fmt.
@@ -1735,6 +2300,8 @@ static void
 _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char *cmd, char *param)
 {
    int len;
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Eina_Bool is_legacy = o->is_legacy;
 
    len = _format_clean_param(param);
 
@@ -1960,49 +2527,6 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      evas_common_format_color_parse(param, len,
            &(fmt->color.underline.r), &(fmt->color.underline.g),
            &(fmt->color.underline.b), &(fmt->color.underline.a));
-   else if (cmd == underline2_colorstr || cmd == secondary_underline_colorstr)
-     /**
-      * @page evas_textblock_style_page Evas Textblock Style Options
-      *
-      * @subsection evas_textblock_style_underline2_color Second Underline Color
-      *
-      * Sets the color of the second line of underline(when using underline
-      * mode "double"). The following formats are accepted:
-      * @li "#RRGGBB"
-      * @li "#RRGGBBAA"
-      * @li "#RGB"
-      * @li "#RGBA"
-      * @li "rgb(r,g,b)"
-      * @li "rgba(r,g,b,a)"
-      * @li "color_name"  like "red"
-      * @code
-      * underline2_color=<color>
-      * @endcode
-      */
-     evas_common_format_color_parse(param, len,
-           &(fmt->color.underline2.r), &(fmt->color.underline2.g),
-           &(fmt->color.underline2.b), &(fmt->color.underline2.a));
-   else if (cmd == underline_dash_colorstr)
-     /**
-      * @page evas_textblock_style_page Evas Textblock Style Options
-      *
-      * @subsection evas_textblock_style_underline_dash_color Underline Dash Color
-      *
-      * Sets the color of dashed underline. The following formats are accepted:
-      * @li "#RRGGBB"
-      * @li "#RRGGBBAA"
-      * @li "#RGB"
-      * @li "#RGBA"
-      * @li "rgb(r,g,b)"
-      * @li "rgba(r,g,b,a)"
-      * @li "color_name"  like "red"
-      * @code
-      * underline_dash_color=<color>
-      * @endcode
-      */
-     evas_common_format_color_parse(param, len,
-           &(fmt->color.underline_dash.r), &(fmt->color.underline_dash.g),
-           &(fmt->color.underline_dash.b), &(fmt->color.underline_dash.a));
    else if (cmd == outline_colorstr)
      /**
       * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2069,50 +2593,6 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      evas_common_format_color_parse(param, len,
            &(fmt->color.glow.r), &(fmt->color.glow.g),
            &(fmt->color.glow.b), &(fmt->color.glow.a));
-   else if (cmd == glow2_colorstr || cmd == secondary_glow_colorstr)
-     /**
-      * @page evas_textblock_style_page Evas Textblock Style Options
-      *
-      * @subsection evas_textblock_style_glow2_color Second Glow Color
-      *
-      * Sets the second color of the glow of text. The following formats are
-      * accepted:
-      * @li "#RRGGBB"
-      * @li "#RRGGBBAA"
-      * @li "#RGB"
-      * @li "#RGBA"
-      * @li "rgb(r,g,b)"
-      * @li "rgba(r,g,b,a)"
-      * @li "color_name"  like "red"
-      * @code
-      * glow2_color=<color>
-      * @endcode
-      */
-     evas_common_format_color_parse(param, len,
-           &(fmt->color.glow2.r), &(fmt->color.glow2.g),
-           &(fmt->color.glow2.b), &(fmt->color.glow2.a));
-   else if (cmd == backing_colorstr)
-     /**
-      * @page evas_textblock_style_page Evas Textblock Style Options
-      *
-      * @subsection evas_textblock_style_backing_color Backing Color
-      *
-      * Sets a background color for text. The following formats are
-      * accepted:
-      * @li "#RRGGBB"
-      * @li "#RRGGBBAA"
-      * @li "#RGB"
-      * @li "#RGBA"
-      * @li "rgb(r,g,b)"
-      * @li "rgba(r,g,b,a)"
-      * @li "color_name"  like "red"
-      * @code
-      * backing_color=<color>
-      * @endcode
-      */
-     evas_common_format_color_parse(param, len,
-           &(fmt->color.backing.r), &(fmt->color.backing.g),
-           &(fmt->color.backing.b), &(fmt->color.backing.a));
    else if (cmd == strikethrough_colorstr)
      /**
       * @page evas_textblock_style_page Evas Textblock Style Options
@@ -2405,248 +2885,6 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
              if (fmt->margin.r < 0) fmt->margin.r = 0;
           }
      }
-   else if (cmd == underlinestr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_underline Underline
-         *
-         * Sets if and how a text will be underlined. The value must be one of
-         * the following:
-         * @li "off" - No underlining
-         * @li "single" - A single line under the text
-         * @li "on" - Alias for "single"
-         * @li "double" - Two lines under the text
-         * @li "dashed" - A dashed line under the text
-         * @code
-         * underline=off/single/on/double/dashed
-         * @endcode
-         */
-        static const struct {
-           const char *param;
-           int len;
-           Eina_Bool underline;
-           Eina_Bool underline2;
-           Eina_Bool underline_dash;
-        } underlines_named[] = {
-          { "off", 3, 0, 0, 0 },
-          { "on", 2, 1, 0, 0 },
-          { "single", 6, 1, 0, 0 },
-          { "double", 6, 1, 1, 0 },
-          { "dashed", 6, 0, 0, 1 },
-          { NULL, 0, 0, 0, 0 }
-        };
-        unsigned int i;
-
-        fmt->underline = fmt->underline2 = fmt->underline_dash = 0;
-        for (i = 0; underlines_named[i].param; ++i)
-          if (underlines_named[i].len == len &&
-              !strcmp(underlines_named[i].param, param))
-            {
-               fmt->underline = underlines_named[i].underline;
-               fmt->underline2 = underlines_named[i].underline2;
-               fmt->underline_dash = underlines_named[i].underline_dash;
-               break;
-            }
-     }
-   else if (cmd == strikethroughstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_strikethrough Strikethrough
-         *
-         * Sets if the text will be striked through. The value must be one of
-         * the following:
-         * @li "off" - No strikethrough
-         * @li "on" - Strikethrough
-         * @code
-         * strikethrough=on/off
-         * @endcode
-         */
-        if (len == 3 && !strcmp(param, "off"))
-          fmt->strikethrough = 0;
-        else if (len == 2 && !strcmp(param, "on"))
-          fmt->strikethrough = 1;
-     }
-   else if (cmd == backingstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_backing Backing
-         *
-         * Sets if the text will have backing. The value must be one of
-         * the following:
-         * @li "off" - No backing
-         * @li "on" - Backing
-         * @code
-         * backing=on/off
-         * @endcode
-         */
-        if (len == 3 && !strcmp(param, "off"))
-          fmt->backing = 0;
-        else if (len == 2 && !strcmp(param, "on"))
-          fmt->backing = 1;
-     }
-   else if (cmd == stylestr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_style Style
-         *
-         * Sets the style of the text. The value must be a string composed of
-         * two comma separated parts. The first part of the value sets the
-         * appearance of the text, the second the position.
-         *
-         * The first part may be any of the following values:
-         * @li "plain"
-         * @li "off" - Alias for "plain"
-         * @li "none" - Alias for "plain"
-         * @li "shadow"
-         * @li "outline"
-         * @li "soft_outline"
-         * @li "outline_shadow"
-         * @li "outline_soft_shadow"
-         * @li "glow"
-         * @li "far_shadow"
-         * @li "soft_shadow"
-         * @li "far_soft_shadow"
-         * The second part may be any of the following values:
-         * @li "bottom_right"
-         * @li "bottom"
-         * @li "bottom_left"
-         * @li "left"
-         * @li "top_left"
-         * @li "top"
-         * @li "top_right"
-         * @li "right"
-         * @code
-         * style=<appearance>,<position>
-         * @endcode
-         */
-        char *part1, *part2;
-
-        part1 = alloca(len + 1);
-        *part1 = 0;
-
-        part2 = alloca(len + 1);
-        *part2 = 0;
-
-        _style_string_split(param, part1, part2);
-
-        _format_shadow_set(fmt, part1, EINA_FALSE, NULL);
-
-        if (*part2)
-          _format_shadow_direction_set(fmt, part2, EINA_FALSE, NULL);
-     }
-   else if (cmd == tabstopsstr || cmd == tab_stopsstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_tabstops Tabstops
-         *
-         * Sets the size of the tab character. The value must be a number
-         * greater than one.
-         * @code
-         * tabstops=<number>
-         * @endcode
-         */
-        fmt->tabstops = atoi(param);
-        if (fmt->tabstops < 1) fmt->tabstops = 1;
-     }
-   else if (cmd == linesizestr || cmd == line_sizestr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_linesize Line size
-         *
-         * Sets the size of line of text. The value should be a number.
-         * @warning Setting this value sets linerelsize to 0%!
-         * @code
-         * linesize=<number>
-         * @endcode
-         */
-        fmt->linesize = atoi(param);
-        fmt->linerelsize = 0.0;
-     }
-   else if (cmd == linerelsizestr || cmd == line_rel_sizestr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_linerelsize Relative line size
-         *
-         * Sets the relative size of line of text. The value must be a
-         * percentage.
-         * @warning Setting this value sets linesize to 0!
-         * @code
-         * linerelsize=<number>%
-         * @endcode
-         */
-        char *endptr = NULL;
-        double val = strtod(param, &endptr);
-        if (endptr)
-          {
-             while (*endptr && _is_white(*endptr))
-               endptr++;
-             if (*endptr == '%')
-               {
-                  fmt->linerelsize = val / 100.0;
-                  fmt->linesize = 0;
-                  if (fmt->linerelsize < 0.0) fmt->linerelsize = 0.0;
-               }
-          }
-     }
-   else if (cmd == linegapstr || cmd == line_gapstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_linegap Line gap
-         *
-         * Sets the size of the line gap in text. The value should be a
-         * number.
-         * @warning Setting this value sets linerelgap to 0%!
-         * @code
-         * linegap=<number>
-         * @endcode
-         */
-        fmt->linegap = atoi(param);
-        fmt->linerelgap = 0.0;
-     }
-   else if (cmd == linerelgapstr || cmd == line_rel_gapstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_linerelgap Relative line gap
-         *
-         * Sets the relative size of the line gap in text. The value must be
-         * a percentage.
-         * @warning Setting this value sets linegap to 0!
-         * @code
-         * linerelgap=<number>%
-         * @endcode
-         */
-        char *endptr = NULL;
-        double val = strtod(param, &endptr);
-        if (endptr)
-          {
-             while (*endptr && _is_white(*endptr))
-               endptr++;
-             if (*endptr == '%')
-               {
-                  fmt->linerelgap = val / 100.0;
-                  fmt->linegap = 0;
-                  if (fmt->linerelgap < 0.0) fmt->linerelgap = 0.0;
-               }
-          }
-     }
    else if (cmd == itemstr)
      {
         /**
@@ -2661,32 +2899,6 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          */
         // itemstr == replacement object items in textblock - inline imges
         // for example
-     }
-   else if (cmd == linefillstr || cmd == line_fillstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_linefill Line fill
-         *
-         * Sets the size of the line fill in text. The value must be a
-         * percentage.
-         * @code
-         * linefill=<number>%
-         * @endcode
-         */
-        char *endptr = NULL;
-        double val = strtod(param, &endptr);
-        if (endptr)
-          {
-             while (*endptr && _is_white(*endptr))
-               endptr++;
-             if (*endptr == '%')
-               {
-                  fmt->linefill = val / 100.0;
-                  if (fmt->linefill < 0.0) fmt->linefill = 0.0;
-               }
-          }
      }
    else if (cmd == ellipsisstr)
      {
@@ -2739,36 +2951,6 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
         eina_stringshare_replace(&o->repch, param);
      }
-   else if (cmd == underline_dash_widthstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_underline_dash_width Underline dash width
-         *
-         * Sets the width of the underline dash. The value should be a number.
-         * @code
-         * underline_dash_width=<number>
-         * @endcode
-         */
-        fmt->underline_dash_width = atoi(param);
-        if (fmt->underline_dash_width <= 0) fmt->underline_dash_width = 1;
-     }
-   else if (cmd == underline_dash_gapstr)
-     {
-        /**
-         * @page evas_textblock_style_page Evas Textblock Style Options
-         *
-         * @subsection evas_textblock_style_underline_dash_gap Underline dash gap
-         *
-         * Sets the gap of the underline dash. The value should be a number.
-         * @code
-         * underline_dash_gap=<number>
-         * @endcode
-         */
-        fmt->underline_dash_gap = atoi(param);
-        if (fmt->underline_dash_gap <= 0) fmt->underline_dash_gap = 1;
-     }
    else if (cmd == underline_heightstr)
      {
         /**
@@ -2799,6 +2981,18 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         if (!fmt->gfx_filter)
           fmt->gfx_filter = calloc(1, sizeof(Efl_Canvas_Textblock_Filter));
         eina_stringshare_replace(&fmt->gfx_filter->name, param);
+     }
+   else
+     {
+        if (is_legacy)
+          {
+             _format_command_legacy_only(fmt, cmd, param, len);
+          }
+        else
+          {
+             _format_command_unified_only(o, fmt, cmd, param, len);
+          }
+        
      }
 }
 
@@ -3350,7 +3544,7 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    PRINTF_APPEND_COLOR(secondary_underline_colorstr, fmt->color.underline2.r, fmt->color.underline2.g,
                              fmt->color.underline2.b, fmt->color.underline2.a);
 
-   PRINTF_APPEND_COLOR(underline_dash_colorstr, fmt->color.underline_dash.r, fmt->color.underline_dash.g,
+   PRINTF_APPEND_COLOR(underline_dashed_colorstr, fmt->color.underline_dash.r, fmt->color.underline_dash.g,
                              fmt->color.underline_dash.b, fmt->color.underline_dash.a);
 
    PRINTF_APPEND_COLOR(outline_colorstr, fmt->color.outline.r, fmt->color.outline.g,
@@ -3365,7 +3559,7 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    PRINTF_APPEND_COLOR(secondary_glow_colorstr, fmt->color.glow2.r, fmt->color.glow2.g,
                              fmt->color.glow2.b, fmt->color.glow2.a);
 
-   PRINTF_APPEND_COLOR(backing_colorstr, fmt->color.backing.r, fmt->color.backing.g,
+   PRINTF_APPEND_COLOR(background_colorstr, fmt->color.backing.r, fmt->color.backing.g,
                              fmt->color.backing.b, fmt->color.backing.a);
 
    PRINTF_APPEND_COLOR(strikethrough_colorstr, fmt->color.strikethrough.r, fmt->color.strikethrough.g,
@@ -3423,7 +3617,7 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    PRINTF_APPEND_INT(right_marginstr, fmt->margin.r);
 
 
-   char *underline_value_str = "off";
+   char *underline_value_str = "none";
 
    if (fmt->underline == EINA_TRUE && fmt->underline2 == EINA_TRUE)
      underline_value_str = "double";
@@ -3432,87 +3626,79 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    else if (fmt->underline_dash == EINA_TRUE)
      underline_value_str = "dashed";
 
-   PRINTF_APPEND_STR(underlinestr, underline_value_str);
-   PRINTF_APPEND_STR(strikethroughstr, (fmt->strikethrough == 0 ? "off" : "on"));
-   PRINTF_APPEND_STR(backingstr, (fmt->backing == 0 ? "off" : "on"));
+   PRINTF_APPEND_STR(underline_typestr, underline_value_str);
+   PRINTF_APPEND_STR(strikethrough_typestr, (fmt->strikethrough == 0 ? "none" : "single"));
+   PRINTF_APPEND_STR(background_typestr, (fmt->backing == 0 ? "none" : "solid"));
 
-   char *style_value_str_1 = "off";
-   char *style_value_str_2 = NULL;
-   Efl_Text_Style_Effect_Type style1 = _FMT_INFO(effect);
-   Efl_Text_Style_Effect_Type style2 = _FMT_INFO(shadow_direction);
+   Efl_Text_Style_Effect_Type effect = _FMT_INFO(effect);
 
-   switch (style1)
+   switch (effect)
      {
         case EFL_TEXT_STYLE_EFFECT_TYPE_NONE:
-          style_value_str_1 = "plain";
+          PRINTF_APPEND_STR(effect_typestr, "none");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW:
-          style_value_str_1 = "shadow";
+          PRINTF_APPEND_STR(effect_typestr, "shadow");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE:
-          style_value_str_1 = "outline";
+          PRINTF_APPEND_STR(effect_typestr, "outline");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE:
-          style_value_str_1 = "soft_outline";
+          PRINTF_APPEND_STR(effect_typestr, "soft_outline");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW:
-          style_value_str_1 = "outline_shadow";
+          PRINTF_APPEND_STR(effect_typestr, "outline_shadow");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW:
-          style_value_str_1 = "outline_soft_shadow";
+          PRINTF_APPEND_STR(effect_typestr, "outline_soft_shadow");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_GLOW:
-          style_value_str_1 = "glow";
+          PRINTF_APPEND_STR(effect_typestr, "glow");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW:
-          style_value_str_1 = "far_shadow";
+          PRINTF_APPEND_STR(effect_typestr, "far_shadow");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW:
-          style_value_str_1 = "soft_shadow";
+          PRINTF_APPEND_STR(effect_typestr, "soft_shadow");
           break;
         case EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW:
-          style_value_str_1 = "far_soft_shadow";
+          PRINTF_APPEND_STR(effect_typestr, "far_soft_shadow");
           break;
         default:
-          style_value_str_1 = "off";
           break;
      }
 
-   switch (style2)
+   Efl_Text_Style_Shadow_Direction shadow_direction = _FMT_INFO(shadow_direction);
+
+   switch (shadow_direction)
      {
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
-          style_value_str_2 = "bottom_right";
+          PRINTF_APPEND_STR(shadow_directionstr, "bottom_right");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
-          style_value_str_2 = "bottom";
+          PRINTF_APPEND_STR(shadow_directionstr, "bottom");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
-          style_value_str_2 = "bottom_left";
+          PRINTF_APPEND_STR(shadow_directionstr, "bottom_left");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
-          style_value_str_2 = "left";
+          PRINTF_APPEND_STR(shadow_directionstr, "left");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
-          style_value_str_2 = "top_left";
+          PRINTF_APPEND_STR(shadow_directionstr, "top_left");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP:
-          style_value_str_2 = "top";
+          PRINTF_APPEND_STR(shadow_directionstr, "top");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
-          style_value_str_2 = "top_right";
+          PRINTF_APPEND_STR(shadow_directionstr, "top_right");
           break;
         case EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
-          style_value_str_2 = "right";
+          PRINTF_APPEND_STR(shadow_directionstr, "right");
           break;
         default:
-          style_value_str_2 = NULL;
           break;
      }
-
-   if (style_value_str_2 != NULL)
-     eina_strbuf_append_printf(format_buffer, "%s=%s,%s ", stylestr, style_value_str_1, style_value_str_2);
-   else
-     PRINTF_APPEND_STR(stylestr, style_value_str_1);
 
    PRINTF_APPEND_INT(tab_stopsstr, fmt->tabstops);
    PRINTF_APPEND_INT(line_sizestr, fmt->linesize);
@@ -3526,8 +3712,8 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
    if (o->repch)
      PRINTF_APPEND_STR(replacement_charstr, o->repch);
 
-   PRINTF_APPEND_INT(underline_dash_widthstr, fmt->underline_dash_width);
-   PRINTF_APPEND_INT(underline_dash_gapstr, fmt->underline_dash_gap);
+   PRINTF_APPEND_INT(underline_dashed_widthstr, fmt->underline_dash_width);
+   PRINTF_APPEND_INT(underline_dashed_gapstr, fmt->underline_dash_gap);
    PRINTF_APPEND_FLOAT(underline_heightstr, fmt->underline_height);
 
    const char *temp = eina_strbuf_string_get(format_buffer);
@@ -7656,6 +7842,7 @@ evas_object_textblock_add(Evas *e)
          efl_text_multiline_set(efl_added, EINA_TRUE),
          efl_canvas_object_legacy_ctor(efl_added));
    o = efl_data_scope_get(eo_obj, MY_CLASS);
+   o->is_legacy = EINA_TRUE;
    o->legacy_newline = EINA_TRUE;
    o->auto_styles = EINA_FALSE;
    _FMT(password) = EINA_TRUE;

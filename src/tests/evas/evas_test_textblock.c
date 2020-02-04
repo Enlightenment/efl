@@ -4909,23 +4909,33 @@ EFL_START_TEST(efl_canvas_textblock_style)
    efl_canvas_textblock_style_apply(txt, "wrap=none");
    ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);
 
-   efl_canvas_textblock_style_apply(txt, "backing=on");
+   efl_canvas_textblock_style_apply(txt, "background_type=solid");
    ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_SOLID_COLOR);
 
-   efl_canvas_textblock_style_apply(txt, "style=far_soft_shadow");
+   efl_canvas_textblock_style_apply(txt, "background_color=red");
+   efl_text_background_color_get(txt, &r, &g, &b, &a);
+   ck_assert_int_eq(r, 0xFF);
+   ck_assert_int_eq(g, 0x00);
+   ck_assert_int_eq(b, 0x00);
+   ck_assert_int_eq(a, 0xFF);
+
+   efl_canvas_textblock_style_apply(txt, "effect_type=far_soft_shadow");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
 
-   efl_canvas_textblock_style_apply(txt, "style=glow,top_right");
-   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_GLOW);
+   efl_canvas_textblock_style_apply(txt, "shadow_direction=top_right");
    ck_assert_int_eq(efl_text_shadow_direction_get(txt), EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
 
-   efl_canvas_textblock_style_apply(txt, "style=far_shadow,top");
-   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW);
+   efl_canvas_textblock_style_apply(txt, "shadow_direction=top");
    ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP);
 
-   efl_canvas_textblock_style_apply(txt, "style=soft_outline,top,bottom");
+   efl_canvas_textblock_style_apply(txt, "effect_type=soft_outline");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE);
-   ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
+
+   efl_canvas_textblock_style_apply(txt, "underline_type=none");
+   ck_assert_int_eq(efl_text_underline_type_get(txt),  EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE);
+
+   efl_canvas_textblock_style_apply(txt, "strikethrough_type=single");
+   ck_assert_int_eq(efl_text_strikethrough_type_get(txt),  EFL_TEXT_STYLE_STRIKETHROUGH_TYPE_SINGLE);
 
    efl_canvas_textblock_style_apply(txt, "color=#EF596C");
    efl_text_color_get(txt, &r, &g, &b, &a);
