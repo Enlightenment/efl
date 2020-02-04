@@ -19,7 +19,10 @@ struct Foo {
 }
 
 enum Bar {
-    [[Docs for enum Bar.]]
+    [[Docs for enum Bar.
+
+      @since 1.66
+    ]]
     blah = 0,
     foo = 1, [[Docs for foo.]]
     bar = 2 [[Docs for bar.]]
@@ -31,9 +34,9 @@ type Alias: Bar; [[Docs for typedef.
                    See @Bar. @since 2.0
                  ]]
 
-const pants: int = 150; [[Docs for var.]]
+const pants: int = 150; [[Docs for var. @since 1.66]]
 
-struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
+struct Opaque; [[Opaque struct docs. See @Foo for another struct. @since 1.66]]
 
 class Docs {
     [[Docs for class.
