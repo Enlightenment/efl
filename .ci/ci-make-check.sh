@@ -17,7 +17,7 @@ if [ "$1" = "codecov" ] ; then
 #      false
 #  done
   git clone --depth=1 --branch=devs/stefan/ci-integration https://git.enlightenment.org/tools/exactness-elm-data.git
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
   EINA_LOG_LEVELS_GLOB=eina_*:0,ecore*:0,efreet*:0,eldbus:0,elementary:0 exactness -j 20 -b exactness-elm-data/default-profile -p exactness-elm-data/default-profile/ci-integration-tests.txt
   curl -s https://codecov.io/bash | bash -s -
   exit 0
