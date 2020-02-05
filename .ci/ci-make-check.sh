@@ -10,12 +10,15 @@ fi
 NUM_TRIES=5
 
 if [ "$1" = "codecov" ] ; then
-  for tries in $(seq 1 ${NUM_TRIES}); do
-    meson test -t 120 -C build --wrapper dbus-launch && break
-    cat build/meson-logs/testlog-dbus-launch.txt
-    if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
-      false
-  done
+#  for tries in $(seq 1 ${NUM_TRIES}); do
+#    meson test -t 120 -C build --wrapper dbus-launch && break
+#    cat build/meson-logs/testlog-dbus-launch.txt
+#    if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
+#      false
+#  done
+  git clone --depth=1 --branch=devs/stefan/ci-integration https://git.enlightenment.org/tools/exactness-elm-data.git
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
+  EINA_LOG_LEVELS_GLOB=eina_*:0,ecore*:0,efreet*:0,eldbus:0,elementary:0 exactness -j 20 -b exactness-elm-data/default-profile -p exactness-elm-data/default-profile/ci-integration-tests.txt
   curl -s https://codecov.io/bash | bash -s -
   exit 0
 fi
@@ -35,7 +38,7 @@ if [ "$DISTRO" != "" ] ; then
   if [ "$1" = "exactness" ] ; then
     docker exec  --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c 'cd /; git clone --depth=1 --branch=devs/stefan/ci-integration https://git.enlightenment.org/tools/exactness-elm-data.git' # How should we cache this?
 #docker exec  --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c 'cd /exactness-elm-data; git checkout origin/devs/stefan/init-shots-docker-travis-ci -b docker'
-    docker exec  --env EIO_MONITOR_POLL=1 --env LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64 --env EINA_LOG_LEVELS_GLOB=eina_*:0,ecore*:0,efreet*:0,eldbus:0,elementary:0 $(cat $HOME/cid) exactness -j 20 -b /exactness-elm-data/default-profile -p /exactness-elm-data/default-profile/tests.txt
+    docker exec  --env EIO_MONITOR_POLL=1 --env LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64 --env EINA_LOG_LEVELS_GLOB=eina_*:0,ecore*:0,efreet*:0,eldbus:0,elementary:0 $(cat $HOME/cid) exactness -j 20 -b /exactness-elm-data/default-profile -p /exactness-elm-data/default-profile/ci-integration-tests.txt
   fi
 fi
 ret=$?

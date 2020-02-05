@@ -77,7 +77,6 @@ jobs:
       if: type = cron
       env: DISTRO=Fedora31 CI_BUILD_TYPE=asan
     - os: linux
-      if: type = cron
       env: CI_BUILD_TYPE=codecov
     - os: linux
       if: type = cron
