@@ -46,7 +46,7 @@ enum Efl.Gfx.Render_Op {
 
 enum Efl.Gfx.Path_Command_Type {
   [[These values determine how the points are interpreted in a stream of points.
-    @since 1.14
+     @since 1.22
   ]]
   end = 0,   [[The end of stream , no more points to process.]]
   move_to,   [[The next point is the start point of a sub path.]]
@@ -60,7 +60,7 @@ enum Efl.Gfx.Cap {
   [[These values determine how the end of opened sub-paths are rendered in a
     stroke.
     @Efl.Gfx.Shape.stroke_cap.set
-    @since 1.14
+     @since 1.22
   ]]
   butt = 0,  [[The end of lines is rendered as a full stop on the last point itself.]]
   round,     [[The end of lines is rendered as a half-circle around the last point.]]
@@ -72,7 +72,7 @@ enum Efl.Gfx.Join
 {
   [[These values determine how two joining lines are rendered in a stroker.
     @Efl.Gfx.Shape.stroke_join.set
-    @since 1.14
+     @since 1.22
   ]]
   miter = 0, [[Used to render rounded line joins. Circular arcs are used to join two lines smoothly.]]
   round, [[Used to render beveled line joins. The outer corner of the joined lines is filled by enclosing the triangular region of the corner with a straight line between the outer corners of each stroke.]]
@@ -84,7 +84,8 @@ enum Efl.Gfx.Gradient_Spread
 {
   [[Specifies how the area outside the gradient area should be filled.
     @Efl.Gfx.Gradient.spread.set
-    @since 1.14
+
+     @since 1.22
   ]]
   pad, [[The area is filled with the closest stop color. This is the default.]]
   reflect, [[The gradient is reflected outside the gradient area.]]
@@ -95,7 +96,6 @@ enum Efl.Gfx.Gradient_Spread
 enum @beta Efl.Gfx.Fill_Rule
 {
   [[Type defining how an image content get filled.
-    @since 1.14
   ]]
   winding = 0, [[Draw a horizontal line from the point to a location outside the shape. Determine whether the direction of the line at each intersection point is up or down. The winding number is determined by summing the direction of each intersection. If the number is non zero, the point is inside the shape. This mode is the default]]
   odd_even = 1,  [[Draw a horizontal line from the point to a location outside the shape, and count the number of intersections. If the number of intersections is an odd number, the point is inside the shape.]]
@@ -104,7 +104,8 @@ enum @beta Efl.Gfx.Fill_Rule
 struct Efl.Gfx.Dash {
   [[Type describing dash.
     @Efl.Gfx.Shape.stroke_dash.set
-    @since 1.14
+
+    @since 1.22
   ]]
   length: double;  [[Dash drawing length.]]
   gap: double;     [[Distance between two dashes.]]
@@ -114,7 +115,8 @@ struct Efl.Gfx.Gradient_Stop
 {
   [[Type defining gradient stops.
     Describes the location and color of a transition point in a gradient.
-    @since 1.14
+
+    @since 1.22
   ]]
   offset: double; [[The location of the gradient stop within the gradient vector]]
   r: int; [[The component R color of the gradient stop]]
@@ -176,7 +178,7 @@ enum Efl.Gfx.Center_Fill_Mode
 
 enum Efl.Gfx.Change_Flag
 {
-   [[What property got changed for this object @since 1.18]]
+   [[What property got changed for this object @since 1.22]]
    none    = 0x0, [[Nothing changed.]]
    matrix  = 0x1, [[Matrix got changed.]]
    path    = 0x2, [[Path got changed.]]

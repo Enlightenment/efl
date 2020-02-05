@@ -2,7 +2,7 @@ enum Efl.Pointer.Action
 {
    [[Pointer event type. Represents which kind of event this is.
 
-     @since 1.19
+     @since 1.24
    ]]
    none,   [[Not a valid event, or nothing new happened (eg. when querying
              current state of touch points).]]
@@ -22,7 +22,7 @@ enum Efl.Pointer.Flags
 {
    [[Pointer flags indicating whether a double or triple click is under way.
 
-     @since 1.19
+     @since 1.22
    ]]
    none = 0,                [[No extra mouse button data]]
    double_click = (1 << 0), [[This mouse button press was the 2nd press of a double click]]
@@ -33,7 +33,7 @@ enum Efl.Input.Flags
 {
    [[Special flags set during an input event propagation.
 
-     @since 1.19
+     @since 1.22
    ]]
    none = 0,             [[No fancy flags set]]
    processed = (1 << 0), [[This event is being delivered and has been processed,
@@ -60,8 +60,7 @@ enum @beta Efl.Input.Object_Pointer_Mode {
 
      In the mode $nograb, the pointer will always be bound to the object
      right below it.
-
-     @since 1.19
+     @since 1.22
    ]]
    auto_grab, [[Default, X11-like.]]
    no_grab,   [[Pointer always bound to the object right below it.]]
@@ -69,15 +68,13 @@ enum @beta Efl.Input.Object_Pointer_Mode {
                               where mouse/touch up and down events WON'T be
                               repeated to objects and these objects wont be
                               auto-grabbed.
-
-                              @since 1.2
                             ]]
 }
 
 enum @beta Efl.Input.Value  {
    [[Keys for the generic values of all events.
 
-     @since 1.19
+     @since 1.22
    ]]
    none,       [[Not a valid value type.]]
    timestamp,  [[Timestamp of this event in seconds.]]
@@ -147,7 +144,7 @@ enum Efl.Input.Modifier {
      The available keys may vary depending on the physical keyboard layout, or
      language and keyboard settings, or depending on the platform.
 
-     @since 1.20
+     @since 1.22
    ]]
    none    = 0,      [[No key modifier]]
    alt     = 1 << 0, [[Alt key modifier]]
@@ -168,7 +165,7 @@ enum Efl.Input.Lock {
      The available keys may vary depending on the physical keyboard layout, or
      language and keyboard settings, or depending on the platform.
 
-     @since 1.20
+     @since 1.22
    ]]
    none    = 0,      [[No key modifier]]
    num     = 1 << 0, [[Num Lock for numeric key pad use]]

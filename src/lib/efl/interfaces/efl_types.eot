@@ -5,7 +5,7 @@ struct @extern Efl.Time
      It is intended to be a standard way to reference
      it in .eo files.
 
-     @since 1.18
+     @since 1.22
    ]]
 
    tm_sec: int;	  [[Seconds.	[0-60] (1 leap second)]]
@@ -27,7 +27,7 @@ struct Efl.Version
      be passed by applications at startup time to inform EFL of the version
      a certain application was built for.
 
-     @since 1.18
+     @since 1.22
    ]]
 
    major: int; [[Major component of the version (>= 1).]]
