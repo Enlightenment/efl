@@ -414,7 +414,6 @@ struct _Evas_Thread_Command_Ector_Surface
    Ector_Surface *ector;
    void *pixels;
    int x, y;
-   Eina_Bool clear;
 };
 
 // declare here as it is re-used
@@ -4455,7 +4454,7 @@ _draw_thread_ector_surface_set(void *data)
              x = ector_surface->x;
              y = ector_surface->y;
              // clear the surface before giving to ector
-             if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+             memset(pixels, 0, (w * h * 4));
           }
      }
 
