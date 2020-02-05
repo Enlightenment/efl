@@ -68,6 +68,8 @@ _efl_canvas_gesture_recognizer_double_tap_efl_canvas_gesture_recognizer_recogniz
    else
      timeout = start_timeout;
 
+   printf("RECOG %d %d %d\n",efl_gesture_touch_state_get(event), efl_gesture_touch_cur_data_get(event)->action, pd->finger_size);
+
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:

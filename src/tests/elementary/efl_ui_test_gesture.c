@@ -100,7 +100,7 @@ setup(void)
 EFL_START_TEST(test_efl_ui_gesture_taps)
 {
    Eo *rect = setup();
-
+#if 0
    /* basic tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
@@ -191,7 +191,17 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
    RESET;
-
+#endif
+   printf("NOW\n");
+   printf("NOW\n");
+   printf("NOW\n");
+   click_object_at(rect, 10, 10);
+   click_object_at(rect, 12, 12);
+   CHECK_ALL(DOUBLE_TAP, 1, 2, 1, 0);
+   RESET;
+   printf("NOW\n");
+   printf("NOW\n");
+   printf("NOW\n");
 }
 EFL_END_TEST
 
@@ -586,8 +596,8 @@ EFL_END_TEST
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
-   tcase_add_test(tc, test_efl_ui_gesture_long_tap);
+   /*tcase_add_test(tc, test_efl_ui_gesture_long_tap);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
    tcase_add_test(tc, test_efl_ui_gesture_zoom);
-   tcase_add_test(tc, test_efl_ui_gesture_custom);
+   tcase_add_test(tc, test_efl_ui_gesture_custom);*/
 }
