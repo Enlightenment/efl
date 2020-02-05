@@ -146,7 +146,6 @@ class Generic extends Efl.Object implements Generic_Interface {
       }
    }
    constructors {
-      [[Docs for constructors. @since 1.66]]
       .required_ctor_a;
       .required_ctor_b;
       .optional_ctor_a @optional;
