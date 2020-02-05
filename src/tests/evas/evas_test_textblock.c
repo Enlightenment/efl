@@ -4777,6 +4777,13 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    ck_assert_int_eq(rect2.y, rect.y);
 #endif
 
+   //Efl able to deal with br tab without closing tag "/"
+   efl_text_markup_set(txt, "a<br>a<tab>a");
+   efl_text_cursor_move(nCur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+   efl_text_cursor_range_delete(nCur, cur_obj);
+   ck_assert_str_eq(efl_text_markup_get(txt), "");
+
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
 EFL_END_TEST

@@ -11809,12 +11809,15 @@ _evas_textblock_node_format_new(Efl_Canvas_Textblock_Data *o, const char *_forma
                        format_len--; /* We don't care about '/' */
                        n->own_closer = EINA_TRUE;
                     }
-                  else if (format_len == 2)
+                  else if (format_len < 4)
                     {
+                       /* br,ps,tab are already own_closer without '/' */
                        char tmp[format_len + 1];
                        strncpy(tmp, format, format_len);
                        tmp[format_len] = '\0';
-                       if (_IS_PARAGRAPH_SEPARATOR(o, tmp))
+                       if (_IS_PARAGRAPH_SEPARATOR(o, tmp) ||
+                           _IS_LINE_SEPARATOR(tmp) ||
+                           _IS_TAB(tmp))
                          {
                              n->own_closer = EINA_TRUE;
                          }
