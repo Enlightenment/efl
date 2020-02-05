@@ -1,4 +1,5 @@
 interface Dummy.Inherit_Iface {
+   [[Docs for interface Dummy.Inherit_Iface. @since 1.66]]
    methods {
       stringshare_test {
          params {

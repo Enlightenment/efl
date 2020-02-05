@@ -1,5 +1,5 @@
-class Property_Holder extends Efl.Object
-{
+class Property_Holder extends Efl.Object {
+   [[Docs for class Property_Holder. @since 1.66]]
    methods {
       some_method {
          return: int;

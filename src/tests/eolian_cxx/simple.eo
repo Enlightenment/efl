@@ -1,5 +1,5 @@
-class Simple extends Efl.Object
-{
+class Simple extends Efl.Object {
+   [[Docs for class Simple. @since 1.66]]
    data: null;
    methods {
       simple_get {

@@ -1,4 +1,5 @@
 enum Test.Enum_Ex {
+     [[Docs for enum Test.Enum_Ex. @since 1.66]]
      first = 0,
      second,
      third,
@@ -6,11 +7,13 @@ enum Test.Enum_Ex {
 }
 
 struct Test.Struct_Ex {
+    [[Docs for struct Test.Struct_Ex. @since 1.66]]
     value_int: int;
     value_enum: Test.Enum_Ex;
 }
 
 class Test.Object extends Efl.Object {
+   [[Docs for class Test.Object. @since 1.66]]
    methods {
        method_integral_in_a_check {
            [[ tests integral in ]]

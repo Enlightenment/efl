@@ -1,4 +1,5 @@
 class Aux_A extends Aux_C  {
+    [[Docs for class Aux_A. @since 1.66]]
     methods {
         baz {}
     }

@@ -1,5 +1,5 @@
-class Cyclic1
-{
+class Cyclic1 {
+   [[Docs for class Cyclic1. @since 1.66]]
    methods {
       foo {
          return: Cyclic2;

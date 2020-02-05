@@ -1,6 +1,7 @@
 import import_types;
 
 class Import {
+   [[Docs for class Import. @since 1.66]]
    methods {
       foo {
       }

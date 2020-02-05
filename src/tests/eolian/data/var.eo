@@ -1,7 +1,8 @@
 // regular constant
-const Foo: int = 5;
+const Foo: int = 5; [[Docs for var Foo. @since 1.66]]
 
 class Var {
+   [[Docs for class Var. @since 1.66]]
    methods {
       foo {
          params {

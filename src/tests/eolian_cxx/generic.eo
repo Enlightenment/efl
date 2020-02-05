@@ -5,17 +5,17 @@ struct @beta Generic.Beta_Event
   field2: list<string>;
 }
 
-struct Generic.Event
-{
+struct Generic.Event {
+  [[Docs for struct Generic.Event. @since 1.66]]
   field1: int;
   field2: array<string>;
 }
 
-class Generic extends Efl.Object implements Generic_Interface
-{
+class Generic extends Efl.Object implements Generic_Interface {
    data: Generic_Data;
    methods {
       @property req_ctor_a_value {
+         [[Docs for property req_actor_a_value. @since 1.66]]
          get {
          }
          values {
@@ -23,6 +23,7 @@ class Generic extends Efl.Object implements Generic_Interface
          }
       }
       @property opt_ctor_a_value {
+         [[Docs for property property opt_ctor_a_value. @since 1.66]]
          get {
          }
          values {
@@ -30,100 +31,122 @@ class Generic extends Efl.Object implements Generic_Interface
          }
       }
       required_ctor_a {
+         [[Docs for method required_ctor_a. @since 1.66]]
          params {
             @in value: int;
          }
       }
       required_ctor_b {
+         [[Docs for method required_ctor_b. @since 1.66]]
          params {
             @in value: int;
          }
       }
       optional_ctor_a {
+         [[Docs for method optional_ctor_a. @since 1.66]]
          params {
             @in value: int;
          }
       }
       optional_ctor_b {
+         [[Docs for method optional_ctor_b. @since 1.66]]
          params {
             @in value: int;
          }
       }
 
       @property req_ctor_b_value {
+         [[Docs for property rec_ctor_b_value. @since 1.66]]
          get {}
          values {
             value: int;
          }
       }
       @property opt_ctor_b_value {
+         [[Docs for property opt_ctor_b_value. @since 1.66]]
          get {}
          values {
             value: int;
          }
       }
       out_required_ctor_a {
+         [[Docs for method out_required_ctor_a. @since 1.66]]
          params {
             @out value: int;
          }
       }
       out_required_ctor_b {
+         [[Docs for method out_required_ctor_b. @since 1.66]]
          params {
             @out value: int;
          }
       }
       out_optional_ctor_a {
+         [[Docs for method out_optional_ctor_a. @since 1.66]]
          params {
             @out value: int;
          }
       }
       out_optional_ctor_b {
+         [[Docs for method out_optional_ctor_b. @since 1.66]]
          params {
             @out value: int;
          }
       }
 
       call_event1 {
+         [[Docs for method call_event1. @since 1.66]]
       }
       call_event2 {
+         [[Docs for method call_event2. @since 1.66]]
       }
       call_event3 {
+         [[Docs for method call_event3. @since 1.66]]
       }
       call_event4 {
+         [[Docs for method call_event4. @since 1.66]]
       }
       call_event5 {
+         [[Docs for method call_event5. @since 1.66]]
       }
       call_event6 {
+         [[Docs for method call_event6. @since 1.66]]
       }
 
       protected_method1 @protected {
+         [[Docs for protected method protected_method1. @since 1.66]]
       }
       beta_method1 @beta {
       }
       protected_beta_method1 @protected @beta {
       }
       event_param {
+         [[Docs for method event_param. @since 1.66]]
          params {
            value: event;
          }
       }
       const_event_param {
+         [[Docs for method const_event_param. @since 1.66]]
          params {
            value: const(event);
          }
       }
       binbuf_param {
+         [[Docs for method binbuf_param. @since 1.66]]
          params {
            value: binbuf;
          }
       }
       const_binbuf_param {
+         [[Docs for method const_binbuf_param. @since 1.66]]
          params {
            value: const(binbuf);
          }
       }
    }
    constructors {
+      [[Docs for constructors. @since 1.66]]
       .required_ctor_a;
       .required_ctor_b;
       .optional_ctor_a @optional;

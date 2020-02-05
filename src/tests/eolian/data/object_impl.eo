@@ -1,5 +1,7 @@
 abstract Object_Impl extends Base {
-   [[Object Impl  @since 1.66]]
+   [[This Object Impl
+     @since 1.66
+   ]]
    methods {
       @property a @beta {
          set {
@@ -18,6 +20,7 @@ abstract Object_Impl extends Base {
          }
       }
       @property b {
+         [[Docs for property b. @since 1.66]]
          set {
          }
          get @pure_virtual {
@@ -28,15 +31,17 @@ abstract Object_Impl extends Base {
          }
       }
       constructor_1 {
+         [[Docs for method constructor_1. @since 1.66]]
          params {
             @in a: int;
             @in b: char;
          }
       }
       constructor_2 {
+         [[Docs for method constructor_2. @since 1.66]]
       }
       foo1 {
-         [[comment foo]]
+         [[comment foo. @since 1.66]]
          params {
             @in a: int; [[a]]
             @inout b: char;
@@ -45,13 +50,14 @@ abstract Object_Impl extends Base {
          return: mstring (null); [[comment for method return]]
       }
       foo2 @const {
-         [[comment foo]]
+         [[comment foo. @since 1.66]]
          params {
             @in a: int;
             @in b: string;
          }
       }
       pure_foo3 @pure_virtual {
+         [[Docs for method pure_foo3. @since 1.66]]
          /* set as virtual pure - no implementation expected */
       }
    }

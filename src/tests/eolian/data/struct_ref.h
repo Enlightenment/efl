@@ -11,22 +11,40 @@ typedef Eo Struct;
 #ifndef _STRUCT_EO_TYPES
 #define _STRUCT_EO_TYPES
 
+/** Docs for struct Named.
+ *
+ * @since 1.66
+ *
+ * @ingroup Named
+ */
 typedef struct _Named
 {
   int *field;
   const char *something;
 } Named;
 
+/** Docs for struct Another.
+ *
+ * @since 1.66
+ *
+ * @ingroup Another
+ */
 typedef struct _Another
 {
   Named field;
 } Another;
 
+/** Docs for struct Opaque.
+ *
+ * @since 1.66
+ *
+ * @ingroup Opaque
+ */
 typedef struct _Opaque Opaque;
 
 
 #endif
-/** Struct
+/** Docs for class Struct.
  *
  * @since 1.66
  *

@@ -1,5 +1,5 @@
 class Consts {
-   [[Consts @since 1.66]]
+   [[Docs for class Consts. @since 1.66]]
    methods {
       foo @const {
          [[comment foo]]

@@ -1,16 +1,19 @@
 /* regular struct */
 struct Named1 {
+    [[Docs for struct Named1. @since 1.66]]
     field: int;
 }
 struct @free(test_free) Named2 {
+    [[Docs for struct Named2. @since 1.66]]
     field: int;
 }
 
 /* opaque */
-struct Opaque1;
-struct @free(opaque_free) Opaque2;
+struct Opaque1; [[Docs for Opaque1. @since 1.66]]
+struct @free(opaque_free) Opaque2; [[Docs for struct Opaque2. @since 1.66]]
 
 class Free_Func {
+   [[Docs for class Free_Func. @since 1.66]]
    methods {
       foo {
          params {

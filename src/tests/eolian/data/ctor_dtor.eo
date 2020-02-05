@@ -1,4 +1,5 @@
 class Ctor_Dtor extends Base {
+   [[Docs for class Ctor_Dtor. @since 1.66]]
    methods {
       custom_constructor_1 {
          params {

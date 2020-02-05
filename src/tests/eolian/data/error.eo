@@ -1,4 +1,4 @@
-error Foo = "something bad happened"; [[Error doc]]
+error Foo = "something bad happened"; [[Error doc. @since 1.66]]
 error @beta Bar = "another bad thing happened"; [[Another error doc]]
 
 class @beta Error {

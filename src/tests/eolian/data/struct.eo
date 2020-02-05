@@ -1,21 +1,24 @@
 struct Named {
+    [[Docs for struct Named. @since 1.66]]
     field: int @by_ref;
     something: string;
 }
 
 struct Another {
+    [[Docs for struct Another. @since 1.66]]
     field: Named;
 }
 
 /* opaque struct */
-struct Opaque;
+struct Opaque; [[Docs for struct Opaque. @since 1.66]]
 
 struct @extern Not.Generated {
+    [[Docs for struct Not.Generated. @since 1.66]]
     field: int;
 }
 
 class Struct {
-   [[Struct @since 1.66]]
+   [[Docs for class Struct. @since 1.66]]
    methods {
       foo {
          [[Foo docs. This is $monospace. This is alone-standing $.]]
