@@ -31,7 +31,7 @@ enum Bar {
 type Alias: Bar; [[Docs for typedef.
 
                    More docs for typedef.
-                   See @Bar. @since 2.0
+                   See @Bar. @since 1.66
                  ]]
 
 const pants: int = 150; [[Docs for var. @since 1.66]]
@@ -54,7 +54,7 @@ class Docs {
       @Bar.foo
       @Docs
 
-      @since 1.17
+      @since 1.66
     ]]
     methods {
         meth {
@@ -69,7 +69,7 @@ class Docs {
         @property prop {
             [[Property common documentation.
 
-              @since 1.18
+              @since 1.66
             ]]
             get {
                 [[Get documentation.]]
