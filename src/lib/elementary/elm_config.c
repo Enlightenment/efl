@@ -2481,6 +2481,13 @@ _config_update(void)
    _config_free(tcfg);
    tcfg = _config_system_load();
    IFCFGEND
+
+   IFCFG(0x0018)
+   if (!_elm_config->priv.thumbscroll_momentum_distance_max)
+     COPYVAL(thumbscroll_momentum_distance_max);
+   if (!_elm_config->priv.thumbscroll_momentum_friction)
+     COPYVAL(thumbscroll_momentum_friction);
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
