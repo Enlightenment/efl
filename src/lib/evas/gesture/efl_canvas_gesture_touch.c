@@ -97,10 +97,13 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
    pd->cur_touch = point;
    point->action = action;
 
-   if (!id && (action == EFL_POINTER_ACTION_DOWN))
+   if (action == EFL_POINTER_ACTION_DOWN)
      {
         point->cur.pressed = EINA_TRUE;
-        pd->state = EFL_GESTURE_TOUCH_STATE_BEGIN;
+        if (!id)
+          pd->state = EFL_GESTURE_TOUCH_STATE_BEGIN;
+        else
+          pd->state = EFL_GESTURE_TOUCH_STATE_UPDATE;
      }
    else if (action == EFL_POINTER_ACTION_UP)
      {
@@ -111,7 +114,6 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
      {
         pd->state = EFL_GESTURE_TOUCH_STATE_UPDATE;
      }
-   point->cur.pressed |= action == EFL_POINTER_ACTION_DOWN || action == EFL_POINTER_ACTION_MOVE;
    return;
 
 finished_touch:
