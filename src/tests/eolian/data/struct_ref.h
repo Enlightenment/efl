@@ -26,6 +26,12 @@ typedef struct _Opaque Opaque;
 
 
 #endif
+/** Struct
+ *
+ * @since 1.66
+ *
+ * @ingroup Struct
+ */
 #define STRUCT_CLASS struct_class_get()
 
 EWAPI const Efl_Class *struct_class_get(void);
@@ -35,6 +41,8 @@ EWAPI const Efl_Class *struct_class_get(void);
  *
  * @param[in] obj The object.
  * @param[in] idx
+ *
+ * @since 1.66
  *
  * @ingroup Struct
  */

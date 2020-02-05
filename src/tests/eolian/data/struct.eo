@@ -15,6 +15,7 @@ struct @extern Not.Generated {
 }
 
 class Struct {
+   [[Struct @since 1.66]]
    methods {
       foo {
          [[Foo docs. This is $monospace. This is alone-standing $.]]

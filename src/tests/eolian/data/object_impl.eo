@@ -1,4 +1,5 @@
 abstract Object_Impl extends Base {
+   [[Object Impl  @since 1.66]]
    methods {
       @property a @beta {
          set {

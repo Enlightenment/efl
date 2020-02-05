@@ -60,7 +60,7 @@ typedef enum
  *
  * More docs for typedef. See @ref Bar.
  *
- * @since 2.0
+ * @since 1.1337
  *
  * @ingroup Alias
  */
@@ -69,12 +69,16 @@ typedef Bar Alias;
 #ifndef PANTS
 /** Docs for var.
  *
+ * @since 1.66
+ *
  * @ingroup pants
  */
 #define PANTS 150
 #endif
 
 /** Opaque struct docs. See @ref Foo for another struct.
+ *
+ * @since 1.66
  *
  * @ingroup Opaque
  */
@@ -89,7 +93,7 @@ typedef struct _Opaque Opaque;
  * @ref PANTS @ref eo_docs_meth @ref eo_docs_prop_get @ref eo_docs_prop_get
  * @ref eo_docs_prop_set @ref Foo.field1 @ref BAR_FOO @ref Eo_Docs
  *
- * @since 1.18
+ * @since 1.66
  *
  * @ingroup Eo_Docs
  */
@@ -107,7 +111,7 @@ EWAPI const Efl_Class *eo_docs_class_get(void);
  *
  * @return Return documentation.
  *
- * @since 1.18
+ * @since 1.66
  *
  * @ingroup Eo_Docs
  */
@@ -121,7 +125,7 @@ EOAPI int eo_docs_meth(Eo *obj, int a, float *b, long *c);
  * @param[in] obj The object.
  * @param[in] val Value documentation.
  *
- * @since 1.18
+ * @since 1.66
  *
  * @ingroup Eo_Docs
  */
@@ -136,7 +140,7 @@ EOAPI void eo_docs_prop_set(Eo *obj, int val);
  *
  * @return Value documentation.
  *
- * @since 1.18
+ * @since 1.66
  *
  * @ingroup Eo_Docs
  */
@@ -146,7 +150,7 @@ EOAPI void eo_docs_no_doc_meth(Eo *obj);
 
 /** No description supplied.
  *
- * @since 1.18
+ * @since 1.66
  *
  * @ingroup Eo_Docs
  */
@@ -156,7 +160,7 @@ EWAPI extern const Efl_Event_Description _EO_DOCS_EVENT_CLICKED;
 
 /** Event docs.
  *
- * @since 1.18
+ * @since 1.66
  *
  * @ingroup Eo_Docs
  */

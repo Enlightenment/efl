@@ -14,6 +14,8 @@ typedef Eo Class_Simple;
 #ifndef FOO
 /** doc for constant
  *
+ * @since 1.66
+ *
  * @ingroup Foo
  */
 #define FOO 5
@@ -22,6 +24,8 @@ typedef Eo Class_Simple;
 
 #endif
 /** Class Desc Simple
+ *
+ * @since 1.66
  *
  * @ingroup Class_Simple
  */
@@ -40,6 +44,8 @@ EWAPI const Efl_Class *class_simple_class_get(void);
  *
  * @return comment for property set return
  *
+ * @since 1.66
+ *
  * @ingroup Class_Simple
  */
 EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
@@ -52,6 +58,8 @@ EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
  * @param[in] obj The object.
  *
  * @return Value description
+ *
+ * @since 1.66
  *
  * @ingroup Class_Simple
  */
@@ -69,6 +77,8 @@ EOAPI int efl_canvas_object_simple_a_get(const Eo *obj);
  * @param[in] d
  *
  * @return comment for method return
+ *
+ * @since 1.66
  *
  * @ingroup Class_Simple
  */

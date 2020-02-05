@@ -30,12 +30,12 @@ enum Bar {
 type Alias: Bar; [[Docs for typedef.
 
                    More docs for typedef.
-                   See @Bar. @since 2.0
+                   See @Bar. @since 1.1337
                  ]]
 
-const pants: int = 150; [[Docs for var.]]
+const pants: int = 150; [[Docs for var. @since 1.66]]
 
-struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
+struct Opaque; [[Opaque struct docs. See @Foo for another struct. @since 1.66]]
 
 class Eo_Docs {
     [[Docs for class.
@@ -53,7 +53,7 @@ class Eo_Docs {
       @Bar.foo
       @Eo_Docs
 
-      @since 1.18
+      @since 1.66
     ]]
     methods {
         meth {
@@ -67,8 +67,6 @@ class Eo_Docs {
         }
         @property prop {
             [[Property common documentation.
-
-              @since 1.18
             ]]
             get {
                 [[Get documentation.]]
