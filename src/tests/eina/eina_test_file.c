@@ -297,7 +297,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eina_file_map_new_test)
 {
-   const char *eina_map_test_string = "Hello. I'm the eina map test string."; 
+   const char *eina_map_test_string = "Hello. I'm the eina map test string.";
    const char *test_file_name_part = "/example.txt";
    const char *test_file2_name_part = "/example_big.txt";
    char *test_file_path, *test_file2_path;
@@ -311,7 +311,7 @@ EFL_START_TEST(eina_file_map_new_test)
    int test_full_filename_size;
    int test_full_filename2_size;
    Eina_File *e_file, *e_file2;
-   void *file_map, *file2_map;  
+   void *file_map, *file2_map;
    int fd, correct_file_open_check, correct_map_check, map_offset, map_length, file_length, file2_length;
    int test_file_name_part_size = strlen(test_file_name_part);
    int test_file2_name_part_size = strlen(test_file2_name_part);
@@ -322,7 +322,7 @@ EFL_START_TEST(eina_file_map_new_test)
    Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
    fail_if(test_dirname == NULL);
    test_dirname_size = strlen((char *)test_dirname);
-   
+
    // memory allocation
    test_full_filename_size = test_file_name_part_size + test_dirname_size + 1;
    test_file_path = (char *)malloc(test_full_filename_size);
@@ -355,9 +355,9 @@ EFL_START_TEST(eina_file_map_new_test)
    // generating file 2 full name
    strcpy(test_file2_path, (char *)test_dirname);
    strcat(test_file2_path, test_file2_name_part);
-   
+
    fd = open(test_file_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
-   fail_if(fd == 0);   
+   fail_if(fd == 0);
    fail_if(write(fd, eina_map_test_string, strlen(eina_map_test_string)) != (ssize_t) strlen(eina_map_test_string));
    close(fd);
 
@@ -369,7 +369,7 @@ EFL_START_TEST(eina_file_map_new_test)
    e_file = eina_file_open(test_file_path, EINA_FALSE);
    fail_if(!e_file);
    file_length = eina_file_size_get(e_file);
-   correct_file_open_check = file_length - test_string_length; 
+   correct_file_open_check = file_length - test_string_length;
    // check size of eina_map_test_string == size of file
    fail_if(correct_file_open_check != 0);
 
@@ -378,38 +378,38 @@ EFL_START_TEST(eina_file_map_new_test)
    e_file2 = eina_file_open(test_file2_path, EINA_FALSE);
    fail_if(!e_file);
    file2_length = eina_file_size_get(e_file2);
-   correct_file_open_check = file2_length - (big_buffer_size - file_min_offset); 
+   correct_file_open_check = file2_length - (big_buffer_size - file_min_offset);
    // check size of big_buffer == size of file
-   fail_if(correct_file_open_check != 0); 
+   fail_if(correct_file_open_check != 0);
 
    // test : offset > file -> length  => return NULL
    map_offset = test_string_length + file_min_offset;
    map_length = file_min_offset;
-   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
+   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length);
    fail_if(file_map);
 
    // test : offset + length > file -> length => return NULL
    map_offset = file_min_offset;
    map_length = test_string_length;
-   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
+   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length);
    fail_if(file_map);
    fail_if(eina_file_map_faulted(e_file, file_map));
 
    // test : offset = 0 AND length = file->length - use eina_file_map_all
    map_offset = 0;
    map_length = test_string_length;
-   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
+   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length);
    fail_if(!file_map);
-   correct_map_check= strcmp((char*) file_map, eina_map_test_string); 
+   correct_map_check= strcmp((char*) file_map, eina_map_test_string);
    fail_if(correct_map_check != 0);
 
    // test : offset = memory_page_size AND length = file->length - memory_page_size => correct partly map
    map_offset = memory_page_size;
    map_length = big_buffer_size - memory_page_size - file_min_offset;
-   file2_map = eina_file_map_new(e_file2, EINA_FILE_WILLNEED, map_offset, map_length); 
+   file2_map = eina_file_map_new(e_file2, EINA_FILE_WILLNEED, map_offset, map_length);
    fail_if(!file2_map);
-   correct_map_check = strcmp((char*)file2_map, big_buffer + memory_page_size); 
-   fail_if(correct_map_check != 0);  
+   correct_map_check = strcmp((char*)file2_map, big_buffer + memory_page_size);
+   fail_if(correct_map_check != 0);
 
    // test no crash with eina_file_map_populate()
    eina_file_map_populate(e_file, EINA_FILE_POPULATE, file_map, 0, 0);
@@ -744,9 +744,10 @@ EFL_START_TEST(eina_test_file_mktemp)
    errno = 0;
 
    /* test NULL */
+   EXPECT_ERROR_START;
    fd = eina_file_mkstemp(NULL, NULL);
    fail_if(fd >= 0);
-
+   EXPECT_ERROR_END;
    fd = eina_file_mkstemp(patterns[0], NULL);
    fail_if((fd < 0) || errno);
 

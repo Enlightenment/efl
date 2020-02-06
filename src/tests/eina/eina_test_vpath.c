@@ -30,18 +30,42 @@ EFL_END_TEST
 
 EFL_START_TEST(eina_test_vpath_invalid)
 {
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("(:asdfasdfafasdf"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("(:missing_slash:)"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("(:"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("(:home:)"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("(:wrong_meta_key:)/"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${asdfasdfafasdf"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${missing_slash}"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${home}"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${wrong_meta_key}/"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${home:)"), NULL);
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert_ptr_eq(eina_vpath_resolve("${wrong_meta_key:)/"), NULL);
+   EXPECT_ERROR_END;
 }
 EFL_END_TEST
 

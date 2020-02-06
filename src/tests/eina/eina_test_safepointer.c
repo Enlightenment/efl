@@ -167,7 +167,9 @@ EFL_START_TEST(eina_test_safepointer_lowestbit)
 
         eina_safepointer_unregister(ptr);
 
+        EXPECT_ERROR_START;
         ck_assert_ptr_eq(eina_safepointer_get(ptr), NULL);
+        EXPECT_ERROR_END;
      }
 }
 EFL_END_TEST

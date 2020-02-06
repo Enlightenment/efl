@@ -439,8 +439,10 @@ EFL_START_TEST(eina_inarray_test_search)
    ret = eina_inarray_search(iarr, &temp, cmp);
    fail_if(ret != 3);
 
+   EXPECT_ERROR_START;
    rval = eina_inarray_replace_at(iarr, arr_size+1, &temp);
    fail_if(rval != EINA_FALSE);
+   EXPECT_ERROR_END;
 
    ret = eina_inarray_remove(iarr, &temp);
    fail_if(ret != 3);
