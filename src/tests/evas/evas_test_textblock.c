@@ -4094,6 +4094,8 @@ EFL_START_TEST(evas_textblock_obstacle)
    evas_object_resize(rect, 50, 50);
    evas_object_resize(rect2, 50, 50);
    evas_object_resize(rect3, 50, 50);
+   evas_object_resize(tb, 300, 400);
+
    evas_object_textblock_text_markup_set(tb, buf);
    evas_textblock_cursor_format_prepend(cur, "<wrap=word>");
    evas_object_textblock_size_formatted_get(tb, &fw, &fh);
@@ -4109,6 +4111,11 @@ EFL_START_TEST(evas_textblock_obstacle)
    evas_object_show(rect);
    evas_object_show(rect2);
    evas_object_show(rect3);
+
+   /*check if first character after the obstacle*/
+   Evas_Coord cx;
+   evas_textblock_cursor_char_geometry_get(cur, &cx, NULL, NULL, NULL);
+   ck_assert_int_eq(cx, 50);
 
    /* Compare formatted size with and without obstacle */
    _obstacle_run(tb, rect, 0, fw, fh / 2, fh / 2, fh);
