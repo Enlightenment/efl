@@ -391,8 +391,7 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE
    };
 
-   eina_init();
-   ecore_init();
+   ecore_evas_init();
 
    opt_args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (opt_args < 0)
@@ -455,9 +454,6 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   efl_object_init();
-   evas_init();
-
    if (!_unit)
      {
         _unit = calloc(1, sizeof(*_unit));
@@ -469,7 +465,7 @@ int main(int argc, char **argv)
         if (!ecore_file_exists(fonts_dir))
           {
              fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
-             goto cleanup;
+             goto end;
           }
         Eina_List *dated_fonts = ecore_file_ls(fonts_dir);
         char *date_dir;
@@ -519,11 +515,7 @@ int main(int argc, char **argv)
 
    pret = 0;
 
-cleanup:
-   efl_object_shutdown();
-   evas_shutdown();
 end:
-   ecore_shutdown();
-   eina_shutdown();
+   ecore_evas_shutdown();
    return pret;
 }

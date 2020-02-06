@@ -1126,9 +1126,7 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE
    };
 
-   eina_init();
-   eet_init();
-   ecore_init();
+   ecore_evas_init();
 
    opt_args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (opt_args < 0)
@@ -1280,8 +1278,6 @@ int main(int argc, char **argv)
              setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
           }
      }
-   efl_object_init();
-   evas_init();
 
    if (argv[opt_args])
      {
@@ -1333,7 +1329,7 @@ int main(int argc, char **argv)
         if (!f_output)
           {
              fprintf(stderr, "no program specified\nUse -h for more information\n");
-             goto cleanup;
+             goto end;
           }
         argv[0] = strdup(f_output);
      }
@@ -1357,13 +1353,7 @@ int main(int argc, char **argv)
         exactness_unit_file_write(_dest_unit, _dest);
      }
 
-cleanup:
-   evas_shutdown();
-   efl_object_shutdown();
-
 end:
-   ecore_shutdown();
-   eet_shutdown();
-   eina_shutdown();
+   ecore_evas_shutdown();
    return pret;
 }

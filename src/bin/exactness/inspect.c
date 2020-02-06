@@ -1289,8 +1289,6 @@ main(int argc, char *argv[])
    };
 
    ecore_evas_init();
-   ecore_init();
-   eet_init();
    elm_init(0, NULL);
    want_quit = EINA_FALSE;
 
@@ -1641,8 +1639,6 @@ main(int argc, char *argv[])
 
 end:
    elm_shutdown();
-   eet_shutdown();
-   ecore_shutdown();
    ecore_evas_shutdown();
 
    return ret;
