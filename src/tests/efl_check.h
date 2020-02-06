@@ -45,6 +45,11 @@
 # endif
 #endif
 
+/* Uncomment this line to print a warning line to stdout for every expected error received.
+   Otherwise, expected errors are just silently ignored, greatly reducing the log size.
+*/
+//#define PRINT_EXPECTED_ERROR
+
 #define DISABLE_ABORT_ON_CRITICAL_START \
    do { \
       int ___val = eina_log_abort_on_critical_get(); \
@@ -84,8 +89,11 @@ _efl_test_expect_error(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level leve
 {
    Eina_Bool *error = (Eina_Bool*) data;
    if (level == EINA_LOG_LEVEL_ERR) *error = EINA_TRUE;
-
+#ifdef PRINT_EXPECTED_ERROR
    printf("EXPECTED ERROR %s\n", fnc);
+#else
+   (void)fnc;
+#endif
 }
 
 static void
