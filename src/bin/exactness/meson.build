@@ -25,7 +25,7 @@ edjs = custom_target('player_entry',
     '-id', join_paths(meson.source_root(), 'data', 'elementary', 'themes', 'img'),
     '-sd', join_paths(meson.source_root(), 'data', 'elementary', 'themes', 'snd'),
     '@INPUT@', '@OUTPUT@'],
-  depends : edje_cc)
+  depends : edje_depends)
 
 exactness_play_bin = executable('exactness_play',
   [ 'player.c', edjs ],
