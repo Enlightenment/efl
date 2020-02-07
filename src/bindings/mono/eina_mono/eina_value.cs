@@ -260,6 +260,58 @@ static internal class UnsafeNativeMethods
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_string(IntPtr handle, uint p, string data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_ptr(IntPtr handle, uint p, IntPtr data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_char(IntPtr handle, uint p, sbyte data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_uchar(IntPtr handle, uint p, byte data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_short(IntPtr handle, uint p, short data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_ushort(IntPtr handle, uint p, ushort data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_int(IntPtr handle, uint p, int data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_uint(IntPtr handle, uint p, uint data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_long(IntPtr handle, uint p, long data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_ulong(IntPtr handle, uint p, ulong data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_float(IntPtr handle, uint p, float data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_insert_wrapper_double(IntPtr handle, uint p, double data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_list_insert_wrapper(IntPtr handle, uint p, IntPtr data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out IntPtr output);
 
     [DllImport(efl.Libs.CustomExports)]
@@ -3424,6 +3476,98 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         return false;
     }
+
+    /// <summary>Insert new values to this container at a given position.
+    ///
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="o">The new value to be inserted.</param>
+    /// <param name="p">The position to insert the new value.</param>
+    /// <returns><c>true</c> if the value was successfully insert.</returns>
+    public bool Insert(object o, uint p)
+    {
+        Contract.Requires(o != null, nameof(o));
+        ContainerSanityChecks();
+
+        switch (GetValueSubType())
+        {
+            case ValueType.SByte:
+                {
+                    sbyte b = Convert.ToSByte(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_char(this.Handle, p, b);
+                }
+
+            case ValueType.Byte:
+                {
+                    byte b = Convert.ToByte(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_uchar(this.Handle, p, b);
+                }
+
+            case ValueType.Short:
+                {
+                    short b = Convert.ToInt16(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_short(this.Handle, p, b);
+                }
+
+            case ValueType.UShort:
+                {
+                    ushort b = Convert.ToUInt16(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_ushort(this.Handle, p, b);
+                }
+
+            case ValueType.Int32:
+                {
+                    int x = Convert.ToInt32(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_int(this.Handle, p, x);
+                }
+
+            case ValueType.UInt32:
+                {
+                    uint x = Convert.ToUInt32(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_uint(this.Handle, p, x);
+                }
+
+            case ValueType.Long:
+            case ValueType.Int64:
+                {
+                    long x = Convert.ToInt64(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_long(this.Handle, p, x);
+                }
+
+            case ValueType.ULong:
+            case ValueType.UInt64:
+                {
+                    ulong x = Convert.ToUInt64(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_ulong(this.Handle, p, x);
+                }
+
+            case ValueType.Float:
+                {
+                    float x = Convert.ToSingle(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_float(this.Handle, p, x);
+                }
+
+            case ValueType.Double:
+                {
+                    double x = Convert.ToDouble(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_double(this.Handle, p, x);
+                }
+
+            case ValueType.String:
+                {
+                    string x = Convert.ToString(o, CultureInfo.CurrentCulture);
+                    return eina_value_container_insert_wrapper_string(this.Handle, p, x);
+                }
+            case ValueType.Object:
+                {
+                    var x = (Efl.Object) o;
+                    return eina_value_container_insert_wrapper_ptr(this.Handle, p, x.NativeHandle);
+                }
+        }
+
+        return false;
+    }
+
 
     /// <summary>Indexer for this container.
     ///
