@@ -1049,10 +1049,30 @@ _menu_call(Evas_Object *obj)
      }
 }
 
+static Eina_Bool
+_is_pointer_inside_viewport(Eo *textbox,Efl_Ui_Textbox_Data *sd)
+{
+   if (sd->scroller)
+     {
+        Eo *top = efl_provider_find(textbox, EFL_UI_WIN_CLASS);
+        Eina_Position2D pos = {0};
+        if (efl_canvas_scene_pointer_position_get(top, NULL, &pos))
+          {
+             Eina_Rect rc = efl_ui_scrollable_viewport_geometry_get(sd->scroller);
+             if (!eina_rectangle_coords_inside(&rc.rect, pos.x, pos.y))
+               return EINA_FALSE;
+          }
+     }
+   return EINA_TRUE;
+}
+
 static void
 _long_press_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
+
+   if (!_is_pointer_inside_viewport(data, sd))
+     return;
 
    /* Context menu will not appear if context menu disabled is set
     * as false on a long press callback */
@@ -1122,6 +1142,8 @@ _mouse_down_cb(void *data, const Efl_Event *event)
      {
         if (_elm_config->desktop_entry)
           {
+             if (!_is_pointer_inside_viewport(data, sd))
+               return;
              sd->use_down = 1;
              _menu_call(data);
           }
