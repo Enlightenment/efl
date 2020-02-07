@@ -127,13 +127,13 @@ _efl_canvas_gesture_touch_touch_points_count_get(const Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN static const Efl_Gesture_Touch_Point_Data *
-_efl_canvas_gesture_touch_cur_data_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_current_data_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
     return pd->cur_touch;
 }
 
 EOLIAN static const Efl_Gesture_Touch_Point_Data *
-_efl_canvas_gesture_touch_prev_data_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_previous_data_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
     return pd->prev_touch;
 }
@@ -157,7 +157,7 @@ _efl_canvas_gesture_touch_start_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_
 }
 
 EOLIAN static Eina_Position2D
-_efl_canvas_gesture_touch_cur_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_current_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    const Efl_Gesture_Touch_Point_Data *point = pd->cur_touch;
    Eina_Position2D vec = { 0, 0 };
@@ -169,7 +169,7 @@ _efl_canvas_gesture_touch_cur_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Ge
 }
 
 EOLIAN static unsigned int
-_efl_canvas_gesture_touch_cur_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_current_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    const Efl_Gesture_Touch_Point_Data *point = pd->cur_touch;
 

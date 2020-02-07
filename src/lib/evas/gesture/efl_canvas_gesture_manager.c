@@ -341,7 +341,7 @@ _gesture_recognizer_process_internal(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Ca
         return;
      }
 
-   efl_gesture_timestamp_set(gesture, efl_gesture_touch_cur_timestamp_get(touch_event));
+   efl_gesture_timestamp_set(gesture, efl_gesture_touch_current_timestamp_get(touch_event));
    efl_event_callback_call(target, gesture_type, gesture);
 post_event:
    //If the current event recognizes the gesture continuously, dont delete gesture.

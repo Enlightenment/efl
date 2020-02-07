@@ -58,10 +58,10 @@ new_tap:
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
         /* multi-touch */
-        if (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN)
+        if (efl_gesture_touch_current_data_get(event)->action == EFL_POINTER_ACTION_DOWN)
           {
              /* a second finger was pressed at the same time-ish as the first: combine into same event */
-             if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+             if (efl_gesture_touch_current_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
                {
                   result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
                   break;

@@ -89,21 +89,21 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
 
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
-   if (pd->touched && (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
+   if (pd->touched && (efl_gesture_touch_current_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
      {
         /* a second finger was pressed at the same time-ish as the first: combine into same event */
         if (efl_gesture_touch_points_count_get(event) > 1)
           {
-             if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_touch_prev_data_get(event)->cur.timestamp < TAP_TOUCH_TIME_THRESHOLD)
+             if (efl_gesture_touch_current_timestamp_get(event) - efl_gesture_touch_previous_data_get(event)->cur.timestamp < TAP_TOUCH_TIME_THRESHOLD)
                return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
           }
-        else if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+        else if (efl_gesture_touch_current_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
           return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
-   if (pd->t_st && (md->id != -1) && (md->id != efl_gesture_touch_cur_data_get(event)->id))
+   if (pd->t_st && (md->id != -1) && (md->id != efl_gesture_touch_current_data_get(event)->id))
      {
         int xdir, ydir;
-        const Efl_Gesture_Touch_Point_Data *data = efl_gesture_touch_cur_data_get(event);
+        const Efl_Gesture_Touch_Point_Data *data = efl_gesture_touch_current_data_get(event);
         xdir = _direction_get(data->prev.pos.x, data->cur.pos.x);
         ydir = _direction_get(data->prev.pos.y, data->cur.pos.y);
         if ((xdir != pd->xdir) || (ydir != pd->ydir))
@@ -124,35 +124,35 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
               if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_BEGIN ||
                   glayer_continues_enable)
                 {
-                   if (efl_gesture_touch_prev_data_get(event))
+                   if (efl_gesture_touch_previous_data_get(event))
                      {
-                        if (efl_gesture_touch_prev_data_get(event)->action == efl_gesture_touch_cur_data_get(event)->action)
+                        if (efl_gesture_touch_previous_data_get(event)->action == efl_gesture_touch_current_data_get(event)->action)
                           return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
                      }
-                   pd->t_st = pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
+                   pd->t_st = pd->t_end = efl_gesture_touch_current_timestamp_get(event);
 
                    pd->st_line = pd->end_line =
                        efl_gesture_touch_start_point_get(event);
 
                    efl_gesture_hotspot_set(gesture, pd->st_line);
                    if (!glayer_continues_enable)
-                     md->id = efl_gesture_touch_cur_data_get(event)->id;
+                     md->id = efl_gesture_touch_current_data_get(event)->id;
 
                    return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
                 }
            }
 
-         if ((efl_gesture_touch_cur_timestamp_get(event) - MOMENTUM_TIMEOUT) >
+         if ((efl_gesture_touch_current_timestamp_get(event) - MOMENTUM_TIMEOUT) >
              pd->t_end)
            {
-              pd->st_line = efl_gesture_touch_cur_point_get(event);
-              pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
+              pd->st_line = efl_gesture_touch_current_point_get(event);
+              pd->t_st = efl_gesture_touch_current_timestamp_get(event);
               pd->xdir = pd->ydir = 0;
            }
          else
            {
               int xdir, ydir;
-              Eina_Position2D cur_p = efl_gesture_touch_cur_point_get(event);
+              Eina_Position2D cur_p = efl_gesture_touch_current_point_get(event);
 
               xdir = _direction_get(pd->end_line.x, cur_p.x);
               ydir = _direction_get(pd->end_line.y, cur_p.y);
@@ -172,12 +172,12 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
                 }
            }
 
-         pd->end_line = efl_gesture_touch_cur_point_get(event);
-         pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
+         pd->end_line = efl_gesture_touch_current_point_get(event);
+         pd->t_end = efl_gesture_touch_current_timestamp_get(event);
          efl_gesture_hotspot_set(gesture, pd->end_line);
 
-         _momentum_set(obj, md, pd->st_line, efl_gesture_touch_cur_point_get(event),
-                       pd->t_st, efl_gesture_touch_cur_timestamp_get(event));
+         _momentum_set(obj, md, pd->st_line, efl_gesture_touch_current_point_get(event),
+                       pd->t_st, efl_gesture_touch_current_timestamp_get(event));
 
          result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
@@ -193,15 +193,15 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
               return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
            }
 
-         if ((efl_gesture_touch_cur_timestamp_get(event) - MOMENTUM_TIMEOUT) > pd->t_end)
+         if ((efl_gesture_touch_current_timestamp_get(event) - MOMENTUM_TIMEOUT) > pd->t_end)
            {
-              pd->st_line = efl_gesture_touch_cur_point_get(event);
-              pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
+              pd->st_line = efl_gesture_touch_current_point_get(event);
+              pd->t_st = efl_gesture_touch_current_timestamp_get(event);
               pd->xdir = pd->ydir = 0;
            }
 
-         pd->end_line = efl_gesture_touch_cur_point_get(event);
-         pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
+         pd->end_line = efl_gesture_touch_current_point_get(event);
+         pd->t_end = efl_gesture_touch_current_timestamp_get(event);
          efl_gesture_hotspot_set(gesture, pd->end_line);
 
          if ((fabs(md->momentum.x) > EFL_GESTURE_MINIMUM_MOMENTUM) ||
