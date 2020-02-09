@@ -311,6 +311,7 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 static void
 _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
+   Evas_Coord oy, oh;
    Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
 
    elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
@@ -324,8 +325,15 @@ _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd
         elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
      }
 
-   evas_object_geometry_set(pd->cursor_rect, cx, cy, cw/8, ch);
-   evas_object_show(pd->cursor_rect);
+   evas_object_geometry_get(widget, NULL, &oy, NULL, &oh);
+
+   if ((cy < oy) || (cy > (oy + oh - ch)))
+     evas_object_hide(pd->cursor_rect);
+   else
+     {
+        evas_object_geometry_set(pd->cursor_rect, cx, cy, cw/8, ch);
+        evas_object_show(pd->cursor_rect);
+     }
 }
 
 static void
@@ -1110,7 +1118,7 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
              _popup_menu_show(widget, event->canvas.x, event->canvas.y);
              return;
           }
-	else if (event->button == 2)
+        else if (event->button == 2)
           {
              _mouse_selection_paste_at_position(widget, row, col);
              return;
