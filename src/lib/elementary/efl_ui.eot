@@ -33,7 +33,7 @@ enum Efl.Ui.Focus.Direction
 enum Efl.Ui.Focus.Move_Policy
 {
    [[Focus Movement Policy.
-     @since 1.10]]
+     @since 1.22]]
    click, [[Move focus by mouse click or touch. Elementary focus is set on mouse
             click and this is checked at mouse up time. (default)]]
    move_in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
@@ -45,6 +45,8 @@ enum Efl.Ui.Focus.Move_Policy
 enum @beta Efl.Ui.Focus.Autoscroll_Mode
 {
    [[Focus Autoscroll Mode
+
+     @since 1.22
    ]]
    show,    [[Directly show the focused region or item automatically.]]
    none,    [[Do not show the focused region or item automatically.]]
@@ -53,10 +55,7 @@ enum @beta Efl.Ui.Focus.Autoscroll_Mode
 
 enum @beta Efl.Ui.Softcursor_Mode
 {
-   [[Software cursor mode.
-
-     @since 1.7
-   ]]
+   [[Software cursor mode.]]
    auto, [[Auto-detect if a software cursor should be used (default).]]
    on,   [[Always use a softcursor.]]
    off   [[Never use a softcursor.]]

@@ -4,6 +4,7 @@ class Dummy.Child extends Dummy.Test_Object {
 
    methods {
       double_params {
+         [[Docs for method double_params. @since 1.66]]
          params {
             @in a: string;
             @in b: double;
@@ -11,6 +12,7 @@ class Dummy.Child extends Dummy.Test_Object {
       }
 
       @property iface_was_set {
+        [[Docs for property iface_was_set. @since 1.66]]
         get {}
         values {
           data: bool;
@@ -30,6 +32,7 @@ class Dummy.Child extends Dummy.Test_Object {
       }
 
       @property obligatory_beta_ctor_was_called {
+        [[Docs for property obligatory_beta_ctor_was_called. @since 1.66]]
         get{}
         values {
           data: bool;
@@ -37,6 +40,7 @@ class Dummy.Child extends Dummy.Test_Object {
       }
 
       @property optional_beta_ctor_was_called {
+        [[Docs for property optional_beta_ctor_was_called. @since 1.66]]
         get{}
         values {
           data: bool;

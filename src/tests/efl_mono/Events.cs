@@ -66,7 +66,7 @@ class TestEoEvents
         string received_string = null;
 
         obj.EvtWithStringEvent += (object sender, Dummy.TestObjectEvtWithStringEventArgs e) => {
-            received_string = e.arg;
+            received_string = e.Arg;
         };
 
         obj.EmitEventWithString("Some args");
@@ -81,7 +81,7 @@ class TestEoEvents
         int received_int= 0;
 
         obj.EvtWithIntEvent += (object sender, Dummy.TestObjectEvtWithIntEventArgs e) => {
-            received_int = e.arg;
+            received_int = e.Arg;
         };
 
         obj.EmitEventWithInt(-1984);
@@ -96,7 +96,7 @@ class TestEoEvents
         bool received_bool = false;
 
         obj.EvtWithBoolEvent += (object sender, Dummy.TestObjectEvtWithBoolEventArgs e) => {
-            received_bool = e.arg;
+            received_bool = e.Arg;
         };
 
         obj.EmitEventWithBool(true);
@@ -114,7 +114,7 @@ class TestEoEvents
         var obj = new Dummy.TestObject();
         uint received_uint = 0;
         obj.EvtWithUintEvent += (object sender, Dummy.TestObjectEvtWithUintEventArgs e) => {
-            received_uint = e.arg;
+            received_uint = e.Arg;
         };
 
         obj.EmitEventWithUint(0xbeef);
@@ -128,7 +128,7 @@ class TestEoEvents
         var obj = new Dummy.TestObject();
         float received_float = 0;
         obj.EvtWithFloatEvent += (object sender, Dummy.TestObjectEvtWithFloatEventArgs e) => {
-            received_float = e.arg;
+            received_float = e.Arg;
         };
 
         obj.EmitEventWithFloat(3.14f);
@@ -143,7 +143,7 @@ class TestEoEvents
         double received_double = 0;
         double reference = float.MaxValue + 42;
         obj.EvtWithDoubleEvent += (object sender, Dummy.TestObjectEvtWithDoubleEventArgs e) => {
-            received_double = e.arg;
+            received_double = e.Arg;
         };
 
         obj.EmitEventWithDouble(reference);
@@ -158,7 +158,7 @@ class TestEoEvents
         Dummy.TestObject received_obj = null;
 
         obj.EvtWithObjEvent += (object sender, Dummy.TestObjectEvtWithObjEventArgs e) => {
-            received_obj = e.arg;
+            received_obj = e.Arg;
         };
 
         var sent_obj = new Dummy.TestObject();
@@ -176,7 +176,7 @@ class TestEoEvents
         Eina.Error received_error = 0;
 
         obj.EvtWithErrorEvent += (object sender, Dummy.TestObjectEvtWithErrorEventArgs e) => {
-            received_error = e.arg;
+            received_error = e.Arg;
         };
 
         Eina.Error sent_error = -2001;
@@ -193,7 +193,7 @@ class TestEoEvents
         Dummy.StructSimple received_struct = default(Dummy.StructSimple);
 
         obj.EvtWithStructEvent += (object sender, Dummy.TestObjectEvtWithStructEventArgs e) => {
-            received_struct = e.arg;
+            received_struct = e.Arg;
         };
 
         Dummy.StructSimple sent_struct = new Dummy.StructSimple(fstring: "Struct Event");
@@ -211,7 +211,7 @@ class TestEoEvents
         Dummy.StructComplex received_struct = default(Dummy.StructComplex);
 
         obj.EvtWithStructComplexEvent += (object sender, Dummy.TestObjectEvtWithStructComplexEventArgs e) => {
-            received_struct = e.arg;
+            received_struct = e.Arg;
         };
 
         Dummy.StructComplex sent_struct = StructHelpers.structComplexWithValues();
@@ -234,7 +234,7 @@ class TestEoEvents
         sent.Append("Ghi");
 
         obj.EvtWithArrayEvent += (object sender, Dummy.TestObjectEvtWithArrayEventArgs e) => {
-            received = e.arg as List<string>;
+            received = e.Arg as List<string>;
         };
 
         obj.EmitEventWithArray(sent);
@@ -337,7 +337,7 @@ class TestEventWithDeadWrappers
         // attach to evt with int
         EventHandler<Dummy.TestObjectEvtWithIntEventArgs> cb = (object sender, Dummy.TestObjectEvtWithIntEventArgs args) => {
             callbackCalled = true;
-            received = args.arg;
+            received = args.Arg;
             Test.Assert(Object.ReferenceEquals(sender, wref.Target));
         };
 

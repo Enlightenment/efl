@@ -302,7 +302,12 @@ typedef enum _Evas_Engine_Render_Mode
    EVAS_RENDER_MODE_NONBLOCKING = 1, /**< The rendering is non blocking mode*/
 } Evas_Engine_Render_Mode; /**< behaviour of the renderer*/
 
-typedef Efl_Gfx_Event_Render_Post          Evas_Event_Render_Post; /**< Event info sent after a frame was rendered. @since 1.18 */
+typedef struct _Evas_Event_Render_Post Evas_Event_Render_Post; /**< Event info sent after a frame was rendered. @since 1.18 */
+struct _Evas_Event_Render_Post
+{
+   Eina_List *updated_area; /**< A list of rectangles that were updated in the
+                             * canvas. */
+};
 
 typedef enum _Evas_Device_Class
 {

@@ -1175,7 +1175,7 @@ EFL_START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_description_get(doc),
                   "More docs for typedef. See @Bar."));
    fail_if(strcmp(eolian_documentation_since_get(doc),
-                  "2.0"));
+                  "1.1337"));
 
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "pants")));
    fail_if(!(doc = eolian_constant_documentation_get(var)));
@@ -1237,7 +1237,7 @@ EFL_START_TEST(eolian_docs)
                   "Property common documentation."));
    fail_if(eolian_documentation_description_get(doc));
    fail_if(strcmp(eolian_documentation_since_get(doc),
-                  "1.18"));
+                  "1.66"));
    fail_if(!(doc = eolian_implement_documentation_get(fimp, EOLIAN_PROP_GET)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Get documentation."));

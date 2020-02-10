@@ -139,7 +139,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
       page = tab_page_add(tp);
       efl_pack_end(tp, page);
       if (i == 0)
-        efl_ui_spotlight_active_element_set(tp, page);
+        efl_ui_selectable_selected_set(efl_ui_tab_page_tab_bar_item_get(page), EINA_TRUE);
    }
 
    ad = (App_Data*)calloc(1, sizeof(App_Data));
@@ -174,7 +174,9 @@ static void
 _tab_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Tab_Set_Data *tsd = data;
-   efl_ui_spotlight_active_element_set(tsd->tab_pager, efl_pack_content_get(tsd->tab_pager, elm_spinner_value_get(tsd->spinner)));
+   Efl_Ui_Tab_Page *page = efl_pack_content_get(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
+
+   efl_ui_selectable_selected_set(efl_ui_tab_page_tab_bar_item_get(page), EINA_TRUE);
 }
 
 static void
@@ -246,7 +248,7 @@ _pack_before_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *tab_pager = data;
    Eo *tab_page, *cur_tab_page;
 
-   cur_tab_page = efl_ui_spotlight_active_element_get(tab_pager);
+   cur_tab_page = efl_ui_selectable_last_selected_get(tab_pager);
 
    tab_page = tab_page_add(tab_pager);
 
@@ -259,7 +261,7 @@ _pack_after_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *tab_pager = data;
    Eo *tab_page, *cur_tab_page;
 
-   cur_tab_page = efl_ui_spotlight_active_element_get(tab_pager);
+   cur_tab_page = efl_ui_selectable_last_selected_get(tab_pager);
 
    tab_page = tab_page_add(tab_pager);
 
@@ -361,7 +363,7 @@ _unpack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *tab_pager = data;
 
-   Eo *tab_page = efl_ui_spotlight_active_element_get(tab_pager);
+   Eo *tab_page = efl_ui_selectable_last_selected_get(tab_pager);
 
    efl_pack_unpack(tab_pager, tab_page);
    efl_del(tab_page);
@@ -460,7 +462,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    char *label = NULL;
    char *icon = NULL;
 
-   tab_page = efl_ui_spotlight_active_element_get(tcd->tab_pager);
+   tab_page = efl_ui_selectable_last_selected_get(tcd->tab_pager);
 
    if (efl_ui_selectable_selected_get(tcd->label_check))
    {
@@ -528,20 +530,20 @@ static void
 _tran_set_btn_scroll_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Scroll_Manager *scroll = efl_new(EFL_UI_SPOTLIGHT_SCROLL_MANAGER_CLASS);
-   efl_ui_spotlight_manager_set(data, scroll);
+   efl_ui_tab_pager_spotlight_manager_set(data, scroll);
 }
 
 static void
 _tran_set_btn_stack_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Scroll_Manager *stack = efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS);
-   efl_ui_spotlight_manager_set(data, stack);
+   efl_ui_tab_pager_spotlight_manager_set(data, stack);
 }
 
 static void
 _tran_unset_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_spotlight_manager_set(data, NULL);
+   efl_ui_tab_pager_spotlight_manager_set(data, NULL);
 }
 
 static void

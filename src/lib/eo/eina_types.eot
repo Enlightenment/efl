@@ -86,8 +86,10 @@ struct @extern Eina.Matrix4 {
    ww: double; [[WW value.]]
 }
 
-struct @extern @beta Eina.Range {
-   [[A range sequence of values.]]
+struct @extern Eina.Range {
+   [[A range sequence of values.
+     @since 1.24
+   ]]
    start: size; [[Start of the range.]]
    length: size; [[Length of the range.]]
 }

@@ -20,5 +20,6 @@ abstract Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
       Efl.Object.invalidate;
       Efl.Model.property_ready_get;
       Efl.Model.property { get; set; }
+      Efl.Model.children_index_get;
    }
 }

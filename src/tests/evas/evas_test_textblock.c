@@ -4094,6 +4094,8 @@ EFL_START_TEST(evas_textblock_obstacle)
    evas_object_resize(rect, 50, 50);
    evas_object_resize(rect2, 50, 50);
    evas_object_resize(rect3, 50, 50);
+   evas_object_resize(tb, 300, 400);
+
    evas_object_textblock_text_markup_set(tb, buf);
    evas_textblock_cursor_format_prepend(cur, "<wrap=word>");
    evas_object_textblock_size_formatted_get(tb, &fw, &fh);
@@ -4109,6 +4111,11 @@ EFL_START_TEST(evas_textblock_obstacle)
    evas_object_show(rect);
    evas_object_show(rect2);
    evas_object_show(rect3);
+
+   /*check if first character after the obstacle*/
+   Evas_Coord cx;
+   evas_textblock_cursor_char_geometry_get(cur, &cx, NULL, NULL, NULL);
+   ck_assert_int_eq(cx, 50);
 
    /* Compare formatted size with and without obstacle */
    _obstacle_run(tb, rect, 0, fw, fh / 2, fh / 2, fh);
@@ -4777,6 +4784,13 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    ck_assert_int_eq(rect2.y, rect.y);
 #endif
 
+   //Efl able to deal with br tab without closing tag "/"
+   efl_text_markup_set(txt, "a<br>a<tab>a");
+   efl_text_cursor_move(nCur, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   efl_text_cursor_move(cur_obj, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+   efl_text_cursor_range_delete(nCur, cur_obj);
+   ck_assert_str_eq(efl_text_markup_get(txt), "");
+
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
 EFL_END_TEST
@@ -4909,23 +4923,33 @@ EFL_START_TEST(efl_canvas_textblock_style)
    efl_canvas_textblock_style_apply(txt, "wrap=none");
    ck_assert_int_eq(efl_text_wrap_get(txt), EFL_TEXT_FORMAT_WRAP_NONE);
 
-   efl_canvas_textblock_style_apply(txt, "backing=on");
+   efl_canvas_textblock_style_apply(txt, "background_type=solid");
    ck_assert_int_eq(efl_text_background_type_get(txt), EFL_TEXT_STYLE_BACKGROUND_TYPE_SOLID_COLOR);
 
-   efl_canvas_textblock_style_apply(txt, "style=far_soft_shadow");
+   efl_canvas_textblock_style_apply(txt, "background_color=red");
+   efl_text_background_color_get(txt, &r, &g, &b, &a);
+   ck_assert_int_eq(r, 0xFF);
+   ck_assert_int_eq(g, 0x00);
+   ck_assert_int_eq(b, 0x00);
+   ck_assert_int_eq(a, 0xFF);
+
+   efl_canvas_textblock_style_apply(txt, "effect_type=far_soft_shadow");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW);
 
-   efl_canvas_textblock_style_apply(txt, "style=glow,top_right");
-   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_GLOW);
+   efl_canvas_textblock_style_apply(txt, "shadow_direction=top_right");
    ck_assert_int_eq(efl_text_shadow_direction_get(txt), EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
 
-   efl_canvas_textblock_style_apply(txt, "style=far_shadow,top");
-   ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW);
+   efl_canvas_textblock_style_apply(txt, "shadow_direction=top");
    ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP);
 
-   efl_canvas_textblock_style_apply(txt, "style=soft_outline,top,bottom");
+   efl_canvas_textblock_style_apply(txt, "effect_type=soft_outline");
    ck_assert_int_eq(efl_text_effect_type_get(txt), EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE);
-   ck_assert_int_eq(efl_text_shadow_direction_get(txt),  EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
+
+   efl_canvas_textblock_style_apply(txt, "underline_type=none");
+   ck_assert_int_eq(efl_text_underline_type_get(txt),  EFL_TEXT_STYLE_UNDERLINE_TYPE_NONE);
+
+   efl_canvas_textblock_style_apply(txt, "strikethrough_type=single");
+   ck_assert_int_eq(efl_text_strikethrough_type_get(txt),  EFL_TEXT_STYLE_STRIKETHROUGH_TYPE_SINGLE);
 
    efl_canvas_textblock_style_apply(txt, "color=#EF596C");
    efl_text_color_get(txt, &r, &g, &b, &a);

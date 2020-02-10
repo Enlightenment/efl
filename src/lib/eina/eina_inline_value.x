@@ -979,13 +979,14 @@ eina_value_list_vinsert(Eina_Value *value, unsigned int position, va_list args)
    if (!desc)
      return EINA_FALSE;
 
-   if (!desc->list)
+   if (!desc->list && position == 0)
      node = desc->list = eina_list_append(NULL, (void*)1L);
    else if (position == 0)
      node = desc->list = eina_list_prepend(desc->list, (void*)1L);
    else
      {
         Eina_List *rel = eina_list_nth_list(desc->list, position - 1);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(rel, EINA_FALSE);
         desc->list = eina_list_append_relative_list(desc->list, (void*)1L, rel);
         node = rel->next;
      }
@@ -1734,7 +1735,7 @@ eina_value_optional_type_get(Eina_Value *value)
    mem = eina_value_memory_get(value);
    if (!mem)
      return NULL;
-   
+
    if(2*sizeof(void*) <= sizeof(Eina_Value_Union))
      {
        Eina_Value_Optional_Outer* opt = (Eina_Value_Optional_Outer*)mem;

@@ -19,6 +19,7 @@ static Eina_Bool buffer = EINA_FALSE;
 static Eina_Bool legacy_mode = EINA_FALSE;
 static int log_abort;
 static int log_abort_level;
+static unsigned int ts = 1;
 
 Eina_Bool abort_on_warnings = EINA_FALSE;
 
@@ -50,6 +51,7 @@ _elm2_suite_init(void)
    ck_assert_int_eq(elm_init(1, args), 1);
    if (abort_on_warnings)
      fail_on_errors_setup();
+   ts = 1;
 }
 
 void
@@ -140,6 +142,20 @@ void *
 real_timer_add(double in, Ecore_Task_Cb cb, void *data)
 {
    return ecore_timer_add(in, cb, data);
+}
+
+static Eina_Bool
+_timer_quit()
+{
+   ecore_main_loop_quit();
+   return EINA_FALSE;
+}
+
+void
+wait_timer(double in)
+{
+   ecore_timer_add(in, _timer_quit, NULL);
+   ecore_main_loop_begin();
 }
 
 static void
@@ -450,29 +466,42 @@ attempt_to_find_the_right_point_for_mouse_positioning(Eo *obj, int dir)
 }
 
 static void
-click_object_internal(Eo *obj, int dir, int flags)
+click_object_internal(Eo *obj, int dir, int flags, Eina_Bool up)
 {
    Evas *e = evas_object_evas_get(obj);
    Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
-   evas_event_feed_mouse_move(e, pos.x, pos.y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, pos.x, pos.y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
+   if (up)
+     evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
 }
 
 void
 click_object(Eo *obj)
 {
-   click_object_internal(obj, NONE, 0);
+   click_object_internal(obj, NONE, 0, EINA_TRUE);
+}
+
+void
+press_object(Eo *obj)
+{
+   click_object_internal(obj, NONE, 0, EINA_FALSE);
 }
 
 void
 click_object_flags(Eo *obj, int flags)
 {
-   click_object_internal(obj, NONE, flags);
+   click_object_internal(obj, NONE, flags, EINA_TRUE);
 }
 
 void
-click_part_flags(Eo *obj, const char *part, int flags)
+press_object_flags(Eo *obj, int flags)
+{
+   click_object_internal(obj, NONE, flags, EINA_FALSE);
+}
+
+static void
+click_part_flags_internal(Eo *obj, const char *part, int flags, Eina_Bool up)
 {
    Efl_Part *part_obj = efl_ref(efl_part(obj, part));
    Eo *content;
@@ -492,7 +521,7 @@ click_part_flags(Eo *obj, const char *part, int flags)
         else if (strstr(part, "bottom"))
           dir |= BOTTOM;
      }
-   click_object_internal(content, dir, flags);
+   click_object_internal(content, dir, flags, up);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
    edje_object_message_signal_process(obj);
@@ -500,9 +529,27 @@ click_part_flags(Eo *obj, const char *part, int flags)
 }
 
 void
+click_part_flags(Eo *obj, const char *part, int flags)
+{
+   click_part_flags_internal(obj, part, flags, EINA_TRUE);
+}
+
+void
+press_part_flags(Eo *obj, const char *part, int flags)
+{
+   click_part_flags_internal(obj, part, flags, EINA_FALSE);
+}
+
+void
 click_part(Eo *obj, const char *part)
 {
    click_part_flags(obj, part, 0);
+}
+
+void
+press_part(Eo *obj, const char *part)
+{
+   press_part_flags(obj, part, 0);
 }
 
 static void
@@ -551,6 +598,7 @@ event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, vo
 {
    int *called = data;
 
+   if (*called) fprintf(stderr, "TEST FAILURE IN %s\n", __func__);
    ck_assert_int_eq(*called, 0);
    *called = 1;
 }
@@ -573,18 +621,77 @@ void
 click_object_at(Eo *obj, int x, int y)
 {
    Evas *e = evas_object_evas_get(obj);
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+}
+
+void
+multi_click_object(Eo *obj, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, NONE);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, pos.x + i, pos.y + i, 1, 1, 1, 1, 0, pos.x + i, pos.y + i, 0, ts, NULL);
+   ts++;
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_up(e, i, pos.x + i, pos.y + i, 1, 1, 1, 1, 0, pos.x + i, pos.y + i, 0, ts, NULL);
+}
+
+void
+multi_press_object(Eo *obj, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, NONE);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, pos.x + i, pos.y + i, 1, 1, 1, 1, 0, pos.x + i, pos.y + i, 0, ts, NULL);
+   ts++;
+}
+
+void
+multi_click_object_at(Eo *obj, int x, int y, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, x + i, y + i, 1, 1, 1, 1, 0, x + i, y + i, 0, ts, NULL);
+   ts++;
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_up(e, i, x + i, y + i, 1, 1, 1, 1, 0, x + i, y + i, 0, ts, NULL);
+   ts++;
+}
+
+void
+press_object_at(Eo *obj, int x, int y)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+}
+
+void
+multi_press_object_at(Eo *obj, int x, int y, int ids)
+{
+   Evas *e = evas_object_evas_get(obj);
+   for (int i = 0; i < ids; i++)
+     evas_event_feed_multi_down(e, i, x + i, y + i, 1, 1, 1, 1, 0, x + i, y + i, 0, ts, NULL);
+   ts++;
 }
 
 void
 click_object_at_flags(Eo *obj, int x, int y, int flags)
 {
    Evas *e = evas_object_evas_get(obj);
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+}
+
+void
+press_object_at_flags(Eo *obj, int x, int y, int flags)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, ts++, NULL);
 }
 
 void
@@ -600,8 +707,8 @@ drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
 {
    Evas *e = evas_object_evas_get(obj);
    int i;
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x, y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
    if (iterate)
      {
         /* iterate twice to trigger timers */
@@ -611,10 +718,64 @@ drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
    /* create DRAG_OBJECT_NUM_MOVES move events distinct from up/down */
    for (i = 0; i < DRAG_OBJECT_NUM_MOVES; i++)
      {
-        evas_event_feed_mouse_move(e, x + (i * dx / DRAG_OBJECT_NUM_MOVES), y + (i * dy / DRAG_OBJECT_NUM_MOVES), 0, NULL);
+        evas_event_feed_mouse_move(e, x + (i * dx / DRAG_OBJECT_NUM_MOVES), y + (i * dy / DRAG_OBJECT_NUM_MOVES), ts++, NULL);
         /* also trigger smart calc if we're iterating just in case that's important */
         evas_smart_objects_calculate(e);
      }
-   evas_event_feed_mouse_move(e, x + dx, y + dy, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, x + dx, y + dy, ts++, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+}
+
+int
+drag_object_around(Eo *obj, int cx, int cy, int radius, int degrees)
+{
+   Evas *e = evas_object_evas_get(obj);
+   /* clamp num mouse moves to a vaguely sane value */
+   int i, num = MIN(degrees, DRAG_OBJECT_AROUND_NUM_MOVES);
+   int last_x = round(cx + radius);
+   int last_y = round(cy);
+   /* start at 0 degrees */
+   evas_event_feed_mouse_move(e, last_x, last_y, ts++, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, ts++, NULL);
+   for (i = 1; i < num; i++)
+     {
+        /* x = cx + r * cos(a), y = cy + r * sin(a) */
+        int ax, ay;
+        /* each iteration is 1 degree */
+        double angle = (i * (degrees / DRAG_OBJECT_AROUND_NUM_MOVES)) * M_PI / 180.0;
+        ax = round(cx + radius * cos(angle));
+        ay = round(cy + radius * sin(angle));
+        if ((ax == last_x) && (ay == last_y)) continue;
+        evas_event_feed_mouse_move(e, ax, ay, ts++, NULL);
+        last_x = ax, last_y = ay;
+     }
+   evas_event_feed_mouse_up(e, 1, 0, ts++, NULL);
+   /* only count arc motion: subtract initial move, mouse down, mouse up */
+   return num;
+}
+
+
+int
+pinch_object(Eo *obj, int x, int y, int x2, int y2, int dx, int dy, int dx2, int dy2)
+{
+   Evas *e = evas_object_evas_get(obj);
+   int i, idx, idy, idx2, idy2;
+   evas_event_feed_multi_down(e, 0, x, y, 1, 1, 1, 1, 0, x, y, 0, ts, NULL);
+   evas_event_feed_multi_down(e, 1, x2, y2, 1, 1, 1, 1, 0, x2, y2, 0, ts++, NULL);
+   for (i = 1; i < abs(dx); i++)
+     {
+        idx = (i * dx / abs(dx));
+        idy = (i * dy / abs(dx));
+        idx2 = (i * dx2 / abs(dx));
+        idy2 = (i * dy2 / abs(dx));
+        /* move first point along positive vector */
+        evas_event_feed_multi_move(e, 0, x + idx, y + idy, 1, 1, 1, 1, 0, x + idx, y + idy, ts, NULL);
+        /* move second point along negative vector */
+        evas_event_feed_multi_move(e, 1, x2 + idx2, y2 + idy2, 1, 1, 1, 1, 0, x2 + idx2, y2 + idy2, ts++, NULL);
+        /* also trigger smart calc if we're iterating just in case that's important */
+        evas_smart_objects_calculate(e);
+     }
+   evas_event_feed_multi_up(e, 0, x + idx, y + idy, 1, 1, 1, 1, 0, x + idx, y + idy, 0, ts, NULL);
+   evas_event_feed_multi_up(e, 1, x2 + idx2, y2 + idy2, 1, 1, 1, 1, 0, x2 + idx2, y2 + idy2, 0, ts++, NULL);
+   return i - 2;
 }

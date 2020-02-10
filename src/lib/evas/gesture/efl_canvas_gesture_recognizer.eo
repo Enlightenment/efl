@@ -7,7 +7,8 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
      Gesture recognizers listen to events that occur on a target object
      to see if a particular gesture has occurred.
 
-     Recognizer-specific configuration values can be modified through @.config.
+     Recognizer-specific configuration values can be modified through @Efl.Canvas.Gesture_Manager.config,
+     and the recognizer's manager can be found using @Efl.Object.provider_find.
      Default configuration values are taken from the system's configuration.
    ]]
    c_prefix: efl_gesture_recognizer;
@@ -40,19 +41,17 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
             @in gesture: Efl.Canvas.Gesture; [[The gesture object.]]
          }
       }
-      @property config {
-         [[This property holds configuration values for the recognizer.]]
-         get {
+      @property continues {
+         [[This property determines whether a gesture recognizer should continue
+           to try processing events after returning @Efl.Canvas.Gesture_Recognizer_Result.finish
+           or @Efl.Canvas.Gesture_Recognizer_Result.cancel.]]
+         get @protected {
          }
-         keys {
-            name: string; [[Property name.]]
+         set @protected {
          }
          values {
-            value: any_value_ref; [[Value of the property.]]
+            value: bool; [[Value of the property.]]
          }
       }
-   }
-   implements {
-      Efl.Object.constructor;
    }
 }

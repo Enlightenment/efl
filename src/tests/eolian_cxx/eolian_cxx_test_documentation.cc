@@ -70,7 +70,7 @@ EFL_START_TEST(eolian_cxx_test_class_docs)
            "@Foo.field1 "
            "@Bar.foo "
            "@Docs");
-   ck_assert_str_eq(doc.since.c_str(), "1.17");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 }
 EFL_END_TEST
 
@@ -89,12 +89,12 @@ EFL_START_TEST(eolian_cxx_test_function_docs)
    documentation_def doc = func.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Method documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17"); // Since is inherited from parent if not present, except when no doc is present ofr this member.
+   ck_assert_str_eq(doc.since.c_str(), "1.66"); // Since is inherited from parent if not present, except when no doc is present ofr this member.
 
    doc = func.return_documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Return documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 
    auto param_iter = func.parameters.begin();
 
@@ -102,7 +102,7 @@ EFL_START_TEST(eolian_cxx_test_function_docs)
    doc = param_iter->documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Param documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 
    param_iter++;
 
@@ -118,7 +118,7 @@ EFL_START_TEST(eolian_cxx_test_function_docs)
    doc = param_iter->documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Another param documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 }
 EFL_END_TEST
 
@@ -140,12 +140,12 @@ EFL_START_TEST(eolian_cxx_test_property_docs)
    documentation_def doc = func.property_documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Property common documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.18");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 
    doc = func.documentation; // Actual getdocumentation.
    ck_assert_str_eq(doc.summary.c_str(), "Get documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
+   ck_assert_str_eq(doc.since.c_str(), "1.66"); // Members inherit from parent *class*
 
    func_iter = std::find_if(klass.functions.begin(), klass.functions.end(),
            [](const function_def& f) {
@@ -158,13 +158,13 @@ EFL_START_TEST(eolian_cxx_test_property_docs)
    doc = func.documentation; // Actual getdocumentation.
    ck_assert_str_eq(doc.summary.c_str(), "Set documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
+   ck_assert_str_eq(doc.since.c_str(), "1.66"); // Members inherit from parent *class*
 
    auto property_iter = klass.properties.begin();
    auto property = *property_iter;
    doc = property.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Property common documentation.");
-   ck_assert_str_eq(doc.since.c_str(), "1.18");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 }
 EFL_END_TEST
 
@@ -180,7 +180,7 @@ EFL_START_TEST(eolian_cxx_test_event_docs)
    documentation_def doc = event.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Event docs.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
+   ck_assert_str_eq(doc.since.c_str(), "1.66"); // Members inherit from parent *class*
 }
 EFL_END_TEST
 
@@ -198,7 +198,7 @@ EFL_START_TEST(eolian_cxx_test_enum_docs)
    documentation_def doc = _enum.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Docs for enum Bar.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 
    // fields
    auto field_iter = _enum.fields.begin();
@@ -215,7 +215,7 @@ EFL_START_TEST(eolian_cxx_test_enum_docs)
    doc = field_iter->documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Docs for foo.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 
    field_iter++;
 
@@ -223,7 +223,7 @@ EFL_START_TEST(eolian_cxx_test_enum_docs)
    doc = field_iter->documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Docs for bar.");
    ck_assert_str_eq(doc.description.c_str(), "");
-   ck_assert_str_eq(doc.since.c_str(), "");
+   ck_assert_str_eq(doc.since.c_str(), "1.66");
 }
 EFL_END_TEST
 

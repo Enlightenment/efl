@@ -271,7 +271,7 @@ struct _Efl_Ui_Theme_Data
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x0016
+# define ELM_CONFIG_FILE_GENERATION 0x0017
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -851,6 +851,10 @@ void                 _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor
 
 void _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj);
 void _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj);
+
+EOAPI Eina_Bool efl_ui_focus_manager_calc_update_children(Eo *obj, Efl_Ui_Focus_Object *parent, Eina_List *children EFL_TRANSFER_OWNERSHIP);
+EOAPI void efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Object *parent, Eina_List *children EFL_TRANSFER_OWNERSHIP);
+
 
 void _efl_access_shutdown(void);
 

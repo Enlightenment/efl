@@ -931,7 +931,7 @@ _efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Ei
    if (o->clipped && !is_overridden)
      _evas_object_smart_clipped_smart_move_internal(eo_obj, pos.x, pos.y);
    efl_gfx_entity_position_set(efl_super(eo_obj, MY_CLASS), pos);
-   efl_gfx_entity_position_set(o->filter_img, pos);
+   if (o->filter_img) efl_gfx_entity_position_set(o->filter_img, pos);
 }
 
 EOLIAN static void
@@ -941,7 +941,7 @@ _efl_canvas_group_efl_gfx_entity_size_set(Eo *obj, Evas_Smart_Data *o, Eina_Size
      return;
 
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
-   efl_gfx_entity_size_set(o->filter_img, size);
+   if (o->filter_img) efl_gfx_entity_size_set(o->filter_img, size);
 }
 
 EOLIAN static void

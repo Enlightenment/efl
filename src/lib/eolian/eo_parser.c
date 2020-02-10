@@ -564,7 +564,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->base.name = name;
    if (cname)
      {
-        def->base.c_name = cname;
+        def->base.c_name = eina_stringshare_ref(cname);
         eo_lexer_dtor_pop(ls);
      }
    else

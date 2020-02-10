@@ -83,9 +83,15 @@ EFL_START_TEST(pos_check)
 EFL_END_TEST
 
 static Eina_Bool
-_equal_set(Eina_List *elems, Efl_Ui_Focus_Object *lst[])
+_equal_set(Eina_Iterator *elems, Efl_Ui_Focus_Object *lst[])
 {
    unsigned int i = 0;
+   Eina_List *tmp = NULL;
+   Efl_Gfx_Entity *object;
+   Eina_Bool r = EINA_FALSE;
+
+   EINA_ITERATOR_FOREACH(elems, object)
+     tmp = eina_list_append(tmp, object);
 
    for (i = 0; lst[i]; ++i)
      {
@@ -93,7 +99,7 @@ _equal_set(Eina_List *elems, Efl_Ui_Focus_Object *lst[])
         Eina_List *n;
         Efl_Ui_Focus_Object *elem;
 
-        EINA_LIST_FOREACH(elems, n, elem)
+        EINA_LIST_FOREACH(tmp, n, elem)
           {
             if (lst[i] != elem) continue;
 
@@ -101,11 +107,13 @@ _equal_set(Eina_List *elems, Efl_Ui_Focus_Object *lst[])
             break;
           }
 
-        if (!found) return EINA_FALSE;
+        if (!found) goto end;
      }
 
-   if (eina_list_count(elems) != i) return EINA_FALSE;
-   return EINA_TRUE;
+   if (eina_list_count(tmp) == i) r = EINA_TRUE;
+ end:
+   eina_list_free(tmp);
+   return r;
 }
 
 EFL_START_TEST(pos_check2)

@@ -1,5 +1,4 @@
-class Complex extends Efl.Object
-{
+class Complex extends Efl.Object {
    data: Complex_Data;
    methods {
       // container test
@@ -49,11 +48,13 @@ class Complex extends Efl.Object
          }
       }
       inarray {
+         [[Docs for method inarray. @since 1.66]]
          params {
            l: array<string>;
          }
       }
       inarrayown {
+         [[Docs for method inarrayown. @since 1.66]]
          params {
            l: array<string> @move;
          }
@@ -69,21 +70,25 @@ class Complex extends Efl.Object
          }
       }
       initerator {
+         [[Docs for method initerator. @since 1.66]]
          params {
            l: iterator<int>;
          }
       }
       initeratorown {
+         [[Docs for method initeratorown. @since 1.66]]
          params {
            l: iterator<int> @move;
          }
       }
       inaccessor {
+         [[Docs for method inacessor. @since 1.66]]
          params {
            l: accessor<int>;
          }
       }
       inaccessorown {
+         [[Docs for method inaccessorown. @since 1.66]]
          params {
            l: accessor<int> @move;
          }
@@ -130,11 +135,13 @@ class Complex extends Efl.Object
          }
       }
       outarray {
+         [[Docs for method outarray. @since 1.66]]
          params {
            @out l: array<string>;
          }
       }
       outarrayown {
+         [[Docs for method outarryown. @since 1.66]]
          params {
            @out l: array<string> @move;
          }
@@ -150,21 +157,25 @@ class Complex extends Efl.Object
          }
       }
       outiterator {
+         [[Docs for method outiterator. @since 1.66]]
          params {
            @out l: iterator<int>;
          }
       }
       outiteratorown {
+         [[Docs for method outiteratorown. @since 1.66]]
          params {
            @out l: iterator<int> @move;
          }
       }
       outaccessor {
+         [[Docs for method outaccessor. @since 1.66]]
          params {
            @out l: accessor<int>;
          }
       }
       outaccessorown {
+         [[Docs for method outaccessorown. @since 1.66]]
          params {
            @out l: accessor<int> @move;
          }
@@ -175,22 +186,27 @@ class Complex extends Efl.Object
          }
       }
       bar {
+         [[Docs for method bar. @since 1.66]]
          return: array<string>;
       }
       wrapper_r {
+         [[Docs for method wrapper_r. @since 1.66]]
          return: Complex;
       }
       wrapper_in {
+         [[Docs for method wrapper_in. @since 1.66]]
          params {
             @in a1: Complex;
          }
       }
       wrapper_inout {
+         [[Docs for method wrapper_inout. @since 1.66]]
          params {
             @inout a1: Complex;
          }
       }
       wrapper_out {
+         [[Docs for method wrapper_out. @since 1.66]]
          params {
             @out a1: Complex;
          }

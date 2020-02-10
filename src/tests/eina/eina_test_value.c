@@ -2158,6 +2158,48 @@ EFL_START_TEST(eina_value_test_array)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_value_test_list_insert)
+{
+   Eina_Value *value;
+   char c;
+   char *str;
+   char buf[1024];
+
+   value = eina_value_list_new(EINA_VALUE_TYPE_CHAR);
+   fail_unless(value != NULL);
+
+   fail_unless(eina_value_list_count(value) == 0);
+   fail_unless(!eina_value_list_insert(value, 1, '-'));
+   fail_unless(!eina_value_list_insert(value, 10, 'j'));
+   fail_unless(eina_value_list_count(value) == 0);
+
+   fail_unless(eina_value_list_insert(value, 0, 'k'));
+   fail_unless(eina_value_list_insert(value, 1, '-'));
+   fail_unless(eina_value_list_insert(value, 0, 's'));
+   fail_unless(eina_value_list_insert(value, 1, 'j'));
+   fail_unless(eina_value_list_count(value) == 4);
+
+   fail_unless(eina_value_list_get(value, 0, &c));
+   fail_unless(c == 's');
+   fail_unless(eina_value_list_get(value, 1, &c));
+   fail_unless(c == 'j');
+   fail_unless(eina_value_list_get(value, 2, &c));
+   fail_unless(c == 'k');
+   fail_unless(eina_value_list_get(value, 3, &c));
+   fail_unless(c == '-');
+
+   snprintf(buf, sizeof(buf), "[%d, %d, %d, %d]",
+            (int) 's', (int) 'j', (int) 'k', (int) '-');
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   ck_assert_str_eq(str, buf);
+
+   free(str);
+   eina_value_free(value);
+}
+EFL_END_TEST
+
 EFL_START_TEST(eina_value_test_list)
 {
    Eina_Value *value, other;
@@ -3031,6 +3073,7 @@ eina_test_value(TCase *tc)
    // TODO: other converters...
    tcase_add_test(tc, eina_value_test_array);
    tcase_add_test(tc, eina_value_test_list);
+   tcase_add_test(tc, eina_value_test_list_insert);
    tcase_add_test(tc, eina_value_test_hash);
    tcase_add_test(tc, eina_value_test_timeval);
    tcase_add_test(tc, eina_value_test_blob);

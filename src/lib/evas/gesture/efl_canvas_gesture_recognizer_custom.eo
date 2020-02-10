@@ -1,0 +1,23 @@
+abstract @beta Efl.Canvas.Gesture_Recognizer_Custom extends Efl.Canvas.Gesture_Recognizer
+{
+   [[This is the recognizer for Custom gestures.
+     See @Efl.Canvas.Gesture_Recognizer.
+   ]]
+   c_prefix: efl_gesture_recognizer_custom;
+   methods {
+      @property gesture_name {
+         [[This is the name of the gesture recognizer.]]
+         get {
+         }
+         set {
+         }
+         values {
+            gesture_name: string; [[The name of the gesture recognizer.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Object.finalize;
+   }
+}

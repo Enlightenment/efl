@@ -1,4 +1,5 @@
 abstract Override extends Base {
+   [[Docs for abstract class Override. @since 1.66]]
    methods {
       @property a {
          set @pure_virtual {

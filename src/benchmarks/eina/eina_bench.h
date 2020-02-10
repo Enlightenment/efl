@@ -21,7 +21,7 @@
 
 #include "eina_benchmark.h"
 
-int key_size;
+extern int key_size;
 
 void eina_bench_hash(Eina_Benchmark *bench);
 void eina_bench_crc_hash_short(Eina_Benchmark *bench);

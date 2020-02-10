@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131094;
+  value "config_version" int: 131095;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -3261,7 +3261,54 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
            }
-		}
-	 }
+       }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Efl.Ui.Textbox";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "c";
+              value "action" string: "copy";
+              value "params" string: "";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 1;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "x";
+              value "action" string: "cut";
+              value "params" string: "";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 1;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "v";
+              value "action" string: "paste";
+              value "params" string: "";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 1;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "menu";
+              value "action" string: "menu";
+              value "params" string: "";
+           }
+        }
+     }
   }
 }

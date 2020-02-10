@@ -1,4 +1,5 @@
 class Dummy.Numberwrapper extends Efl.Object {
+   [[Docs for class Dummy.Numberwrapper. @since 1.66]]
    methods {
       @property number {
          get {

@@ -1,5 +1,6 @@
-class Benchmark_Object extends Efl.Object
-{
+class Benchmark_Object extends Efl.Object {
+   [[Docs for class Benchmark_Object. @since 1.66]]
+
    data: null;
    methods {
       emptyarg {

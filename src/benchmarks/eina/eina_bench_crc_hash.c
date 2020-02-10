@@ -26,6 +26,7 @@
 uint64_t CityHash64(const char *buf, size_t len);
 #endif
 
+int key_size;
 char *key_str=NULL;
 
 void repchar(int n)

@@ -1,9 +1,12 @@
-class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
+class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Layout_Base
+  implements Efl.Pack_Linear, Efl.Ui.Single_Selectable
 {
    [[Container for @Efl.Ui.Tab_Page
 
      This container consists out of a Efl.Ui.Tab_Bar and a place to display the content of the pages.
      The items that are generated out of the pages will be displayed in the tab bar of this pager.
+
+     The object has an internal @Efl.Ui.Spotlight.Container which displays the content of a item.
    ]]
    methods {
       @property tab_bar {
@@ -15,20 +18,37 @@ class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
             tab_bar: Efl.Ui.Tab_Bar; [[Tab bar for the items of the @Efl.Ui.Tab_Page]]
          }
       }
+      @property spotlight_manager {
+         [[Spotlight manager of the internal spotlight container]]
+         set {
+
+         }
+         values {
+            manager : Efl.Ui.Spotlight.Manager @move; [[The @Efl.Ui.Spotlight.Manager to pass to the internal @Efl.Ui.Spotlight.Container]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Container.content_count;
+      Efl.Container.content_iterate;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
+      Efl.Pack.pack;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;
       Efl.Pack_Linear.pack_after;
       Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Linear.pack_unpack_at;
-      Efl.Ui.Spotlight.Container.active_element { set; }
+      Efl.Ui.Single_Selectable.last_selected {get;}
+      Efl.Ui.Single_Selectable.fallback_selection {set; get;}
+      Efl.Ui.Single_Selectable.allow_manual_deselection {set; get;}
+      Efl.Ui.Widget.theme_apply;
    }
 }

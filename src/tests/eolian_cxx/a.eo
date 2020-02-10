@@ -1,5 +1,5 @@
-class A extends Efl.Object
-{
+class A extends Efl.Object {
+   [[Docs for class A. @since 1.66]]
    data: A_Data;
    implements {
       Efl.Object.constructor;

@@ -714,15 +714,15 @@ EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Displa
  * Gets the connected display object
  *
  * @brief This function is typically used by clients to get an
- * ​existing Wayland display.
+ *        existing Wayland display.
  *
- * ​@param name The display target name. If @c NULL, the default
- *             display is assumed.
+ * @param name The display target name. If @c NULL, the default
+ *        display is assumed.
  *
- * ​@return The Ecore_Wl2_Display which was connected to
+ * @return The Ecore_Wl2_Display which was connected to
  *
- * ​@ingroup Ecore_Wl2_Display_Group
- * ​@since 1.24
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.24
  */
 EAPI Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
 

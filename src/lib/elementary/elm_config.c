@@ -2297,6 +2297,23 @@ _elm_key_bindings_update(Elm_Config *cfg, Elm_Config *syscfg EINA_UNUSED)
 }
 
 static void
+_elm_key_bindings_copy_missing_bindings_of_widget(Elm_Config *cfg, Elm_Config *syscfg, const char *widget_name)
+{
+   Elm_Config_Bindings_Widget *wd;
+   Eina_List *n, *nnext;
+
+   EINA_LIST_FOREACH_SAFE(syscfg->bindings, n, nnext, wd)
+     {
+         if (eina_streq(widget_name, wd->name))
+           {
+              syscfg->bindings = eina_list_remove_list(syscfg->bindings, n);
+              cfg->bindings = eina_list_append(cfg->bindings, wd);
+              printf("Upgraded keybindings for %s!\n", wd->name);
+           }
+     }
+}
+
+static void
 _elm_key_bindings_copy_missing_bindings(Elm_Config *cfg, Elm_Config *syscfg)
 {
    Eina_Hash *safed_bindings = eina_hash_string_superfast_new(NULL);
@@ -2449,9 +2466,16 @@ _config_update(void)
    _elm_config->win_no_border = EINA_FALSE;
    IFCFGEND
 
-   IFCFG(0x0022)
+   IFCFG(0x0016)
 
    _elm_key_bindings_copy_missing_bindings(_elm_config, tcfg);
+   /* after this function call, the tcfg is partly invalidated, reload! */
+   _config_free(tcfg);
+   tcfg = _config_system_load();
+   IFCFGEND
+
+   IFCFG(0x0017)
+   _elm_key_bindings_copy_missing_bindings_of_widget(_elm_config, tcfg, "Efl.Ui.Textbox");
    /* after this function call, the tcfg is partly invalidated, reload! */
    _config_free(tcfg);
    tcfg = _config_system_load();

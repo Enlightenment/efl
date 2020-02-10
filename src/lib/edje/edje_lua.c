@@ -118,7 +118,7 @@ struct _Edje_Lua_Edje_Part_Description
 jmp_buf _edje_lua_panic_jmp;
 
 static int
-_edje_lua_custom_panic(EINA_UNUSED lua_State *L)
+_edje_lua_custom_panic(lua_State *L EINA_UNUSED)
 {
    CRI("PANIC");
    longjmp(_edje_lua_panic_jmp, 1);
@@ -1237,7 +1237,7 @@ const Edje_Lua_Reg mObject = {
 };
 
 static void
-_edje_lua_object_del_cb(void *data, EINA_UNUSED Evas *e, Evas_Object *obj, EINA_UNUSED void *event_info)
+_edje_lua_object_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    //printf("_edje_lua_object_delete_cb\n");
    lua_State *L = data;
@@ -1939,7 +1939,7 @@ _edje_lua_object_set_precise_is_inside(lua_State *L)
   lua_insert(L, -2);
 
 static void
-_edje_lua_object_cb_mouse_in(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
+_edje_lua_object_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                              void *event_info)
 {
    OBJECT_CB_MACRO("mouse_in");
@@ -1956,7 +1956,7 @@ _edje_lua_object_cb_mouse_in(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
 }
 
 static void
-_edje_lua_object_cb_mouse_out(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
+_edje_lua_object_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                               void *event_info)
 {
    OBJECT_CB_MACRO("mouse_out");
@@ -1973,7 +1973,7 @@ _edje_lua_object_cb_mouse_out(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
 }
 
 static void
-_edje_lua_object_cb_mouse_down(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
+_edje_lua_object_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                                void *event_info)
 {
    OBJECT_CB_MACRO("mouse_down");
@@ -1991,7 +1991,7 @@ _edje_lua_object_cb_mouse_down(void *data, EINA_UNUSED Evas *e, Evas_Object *obj
 }
 
 static void
-_edje_lua_object_cb_mouse_up(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
+_edje_lua_object_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                              void *event_info)
 {
    OBJECT_CB_MACRO("mouse_up");
@@ -2009,7 +2009,7 @@ _edje_lua_object_cb_mouse_up(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
 }
 
 static void
-_edje_lua_object_cb_mouse_move(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
+_edje_lua_object_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                                void *event_info)
 {
    OBJECT_CB_MACRO("mouse_move");
@@ -2027,7 +2027,7 @@ _edje_lua_object_cb_mouse_move(void *data, EINA_UNUSED Evas *e, Evas_Object *obj
 }
 
 static void
-_edje_lua_object_cb_mouse_wheel(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
+_edje_lua_object_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                                 void *event_info)
 {
    OBJECT_CB_MACRO("mouse_wheel");
@@ -3476,8 +3476,8 @@ const Edje_Lua_Reg mPart = {
 };
 
 static void
-_edje_lua_edje_part_del_cb(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
-                           EINA_UNUSED void *event_info)
+_edje_lua_edje_part_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+                           void *event_info EINA_UNUSED)
 {
    //printf("_edje_lua_object_delete_cb\n");
    lua_State *L = data;

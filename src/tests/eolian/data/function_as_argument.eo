@@ -1,6 +1,7 @@
 import function_types;
 
 class Function_As_Argument {
+  [[Docs for class Function_As_Argument. @since 1.66]]
   methods {
     set_cb {
       params {

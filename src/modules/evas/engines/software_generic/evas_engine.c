@@ -414,7 +414,6 @@ struct _Evas_Thread_Command_Ector_Surface
    Ector_Surface *ector;
    void *pixels;
    int x, y;
-   Eina_Bool clear;
 };
 
 // declare here as it is re-used
@@ -4275,8 +4274,10 @@ eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 {
    Image_Entry *ie = engine_image;
    Ector_Buffer *buf = NULL;
+   RGBA_Image *im = (RGBA_Image *)ie;
 
    if (!ie) return NULL;
+   if (!im->image.data) return NULL;
 
    if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
      return NULL;
@@ -4453,7 +4454,7 @@ _draw_thread_ector_surface_set(void *data)
              x = ector_surface->x;
              y = ector_surface->y;
              // clear the surface before giving to ector
-             if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+             memset(pixels, 0, (w * h * 4));
           }
      }
 

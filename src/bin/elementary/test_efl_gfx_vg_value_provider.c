@@ -73,7 +73,7 @@ add_value_provider(char* new_path, char* new_type, char* new_values)
    if  (strstr(type, "Tr"))
      {
         double value[2], value_cnt;
-        Eina_Matrix3 m;
+        Eina_Matrix4 m;
         Eo *vp = efl_add(EFL_GFX_VG_VALUE_PROVIDER_CLASS, anim_view);
 
         efl_gfx_vg_value_provider_keypath_set(vp, (char*)path);
@@ -85,23 +85,26 @@ add_value_provider(char* new_path, char* new_type, char* new_values)
              if (v) value[i] = atof(v);
           }
 
-        eina_matrix3_identity(&m);
+        eina_matrix4_identity(&m);
         if (!strcmp(type, "TrPosition"))
           {
-             eina_matrix3_translate(&m, value[0], value[1]);
+             // Z projection
+             eina_matrix4_translate(&m, value[0], value[1], 0);
              sprintf(new_type, "TrPosition");
              sprintf(new_values, "%f %f",value[0], value[1]);
 
           }
         else if (!strcmp(type, "TrScale"))
           {
-             eina_matrix3_scale(&m, value[0], value[1]);
+             // Z projection
+             eina_matrix4_scale(&m, value[0], value[1], 1);
              sprintf(new_type, "TrScale");
              sprintf(new_values, "%f %f",value[0], value[1]);
           }
         else if (!strcmp(type, "TrRotation"))
           {
-             eina_matrix3_rotate(&m, value[0]);
+             // Z projection
+             eina_matrix4_rotate(&m, value[0] * (M_PI / 180), EINA_MATRIX_AXIS_Z); //degree to radian
              sprintf(new_values, "%f",value[0]);
              sprintf(new_type, "TrRotation");
           }

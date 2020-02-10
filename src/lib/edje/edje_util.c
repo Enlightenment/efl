@@ -3334,7 +3334,7 @@ _edje_box_layout_builtin_find(const char *name)
 }
 
 static Eina_Rbtree_Direction
-_edje_box_layout_part_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, EINA_UNUSED void *data)
+_edje_box_layout_part_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, void *data EINA_UNUSED)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)left;
    Edje_Box_Layout *r = (Edje_Box_Layout *)right;
@@ -3346,7 +3346,7 @@ _edje_box_layout_part_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtr
 }
 
 static int
-_edje_box_layout_part_external_find_cmp(const Eina_Rbtree *node, const void *key, EINA_UNUSED int length, EINA_UNUSED void *data)
+_edje_box_layout_part_external_find_cmp(const Eina_Rbtree *node, const void *key, int length EINA_UNUSED, void *data EINA_UNUSED)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)node;
    return strcmp(key, l->name);
@@ -3427,7 +3427,7 @@ _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data,
 }
 
 static void
-_edje_box_layout_part_external_free(Eina_Rbtree *node, EINA_UNUSED void *data)
+_edje_box_layout_part_external_free(Eina_Rbtree *node, void *data EINA_UNUSED)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)node;
 
@@ -5235,7 +5235,7 @@ _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear)
 }
 
 static void
-_edje_perspective_obj_del(void *data, EINA_UNUSED Evas *e, EINA_UNUSED Evas_Object *obj, EINA_UNUSED void *event_info)
+_edje_perspective_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Edje_Perspective *ps = data;
    Evas_Object *o;
@@ -6231,7 +6231,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 }
 
 void
-_edje_object_part_swallow_changed_hints_cb(void *data, EINA_UNUSED Evas *e, Evas_Object *obj, EINA_UNUSED void *event_info)
+_edje_object_part_swallow_changed_hints_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Edje_Real_Part *rp;
    Edje *ed;
@@ -6397,7 +6397,7 @@ _edje_object_preload_helper(Edje *ed)
 }
 
 static void
-_edje_object_image_preload_cb(void *data, EINA_UNUSED Evas *e, Evas_Object *obj, EINA_UNUSED void *event_info)
+_edje_object_image_preload_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Edje *ed = data;
 
@@ -6406,7 +6406,7 @@ _edje_object_image_preload_cb(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
 }
 
 static void
-_edje_object_signal_preload_cb(void *data, Evas_Object *obj, EINA_UNUSED const char *emission, EINA_UNUSED const char *source)
+_edje_object_signal_preload_cb(void *data, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Edje *ed = data;
 
@@ -6533,7 +6533,7 @@ edje_string_id_get(const Edje_String *es)
 }
 
 static void
-_cb_subobj_del(void *data, EINA_UNUSED Evas *e, Evas_Object *obj, EINA_UNUSED void *event_info)
+_cb_subobj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Edje *ed = data;
    _edje_subobj_unregister(ed, obj);

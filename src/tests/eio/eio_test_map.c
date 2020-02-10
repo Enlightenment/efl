@@ -14,7 +14,7 @@
 
 #include "eio_suite.h"
 
-Eina_File *ee;
+Eina_File *eie;
 
 static void
 _done_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED)
@@ -25,7 +25,7 @@ _done_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED)
 static void
 _open_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, Eina_File *ef)
 {
-   ee = ef;
+   eie = ef;
    ecore_main_loop_quit();
 }
 
@@ -70,17 +70,17 @@ EFL_START_TEST(eio_test_map_simple)
    ecore_main_loop_begin();
    fail_if(!ef);
 
-   ef = eio_file_map_all(ee, EINA_FILE_POPULATE, _filter_cb, _map_cb,
+   ef = eio_file_map_all(eie, EINA_FILE_POPULATE, _filter_cb, _map_cb,
                     _error_cb, data);
    ecore_main_loop_begin();
    fail_if(!ef);
 
-   ef = eio_file_map_new(ee, EINA_FILE_WILLNEED, 0, strlen(data), _filter_cb,
+   ef = eio_file_map_new(eie, EINA_FILE_WILLNEED, 0, strlen(data), _filter_cb,
                          _map_cb, _error_cb, data);
    ecore_main_loop_begin();
    fail_if(!ef);
 
-   ef = eio_file_close(ee, _done_cb, _error_cb, NULL);
+   ef = eio_file_close(eie, _done_cb, _error_cb, NULL);
    ecore_main_loop_begin();
    fail_if(!ef);
 

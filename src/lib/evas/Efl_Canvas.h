@@ -58,11 +58,11 @@ extern "C" {
 #include "canvas/efl_input_focus.eo.h"
 #include "canvas/efl_input_clickable.eo.h"
 
+#include <canvas/efl_canvas_object.eo.h>
 #include <gesture/efl_canvas_gesture.eo.h>
 #include <gesture/efl_canvas_gesture_touch.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer.eo.h>
 #include <gesture/efl_canvas_gesture_manager.eo.h>
-#include <canvas/efl_canvas_object.eo.h>
 
 #include <canvas/efl_canvas_alpha_animation.eo.h>
 #include <canvas/efl_canvas_animation.eo.h>
@@ -118,9 +118,11 @@ extern "C" {
 #include <gesture/efl_canvas_gesture_recognizer_tap.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_triple_tap.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_zoom.eo.h>
+#include <gesture/efl_canvas_gesture_recognizer_custom.eo.h>
 #include <gesture/efl_canvas_gesture_tap.eo.h>
 #include <gesture/efl_canvas_gesture_triple_tap.eo.h>
 #include <gesture/efl_canvas_gesture_zoom.eo.h>
+#include <gesture/efl_canvas_gesture_custom.eo.h>
 #include <gesture/efl_canvas_gesture_events.eo.h>
 
 

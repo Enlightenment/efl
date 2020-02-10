@@ -13,6 +13,12 @@ typedef Eo Function_As_Argument;
 
 
 #endif
+/** Docs for class Function_As_Argument.
+ *
+ * @since 1.66
+ *
+ * @ingroup Function_As_Argument
+ */
 #define FUNCTION_AS_ARGUMENT_CLASS function_as_argument_class_get()
 
 EWAPI const Efl_Class *function_as_argument_class_get(void);

@@ -2323,6 +2323,7 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
    int level = 1;
    void *ctx;
    int w, h, off_x = 0, off_y = 0;
+   Eina_Rectangle lr;
 
 #ifdef REND_DBG
    level = __RD_level;
@@ -2333,7 +2334,16 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
    source = efl_data_scope_get(eo_source, EFL_CANVAS_OBJECT_CLASS);
    proxy = efl_data_scope_get(eo_proxy, EFL_CANVAS_OBJECT_CLASS);
 
-   if (proxy->proxy->proxies || (!proxy->cur->clipper) || (!proxy->cur->has_fixed_size))
+   evas_object_image_load_region_get(eo_proxy, &lr.x, &lr.y, &lr.w, &lr.h);
+
+   if (lr.w > 0 && lr.h > 0)
+     {
+        w = lr.w;
+        h = lr.h;
+        off_x = -lr.x;
+        off_y = -lr.y;
+     }
+   else if (proxy->proxy->proxies || (!proxy->cur->clipper) || (!proxy->cur->has_fixed_size))
      {
         /* make full surface available if this proxy is being sampled from */
         w = source->cur->geometry.w;

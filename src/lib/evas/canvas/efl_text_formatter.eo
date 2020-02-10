@@ -1,6 +1,6 @@
 import efl_text_types;
 
-abstract @beta Efl.Text.Formatter extends Efl.Object {
+abstract Efl.Text.Formatter extends Efl.Object {
     [[Text Formatter API to manage text formatting(attributes).
      Use it to insert and remove style attributes (font, size, color, ...) using @Efl.Text.Cursor on EFL Widgets.
 
@@ -8,7 +8,10 @@ abstract @beta Efl.Text.Formatter extends Efl.Object {
      Cursor instances are already bound to a text object so there's no need to provide it to this class.
      Style is specified using format strings as described in @Efl.Canvas.Textblock.style_apply.
 
-     There is no need to instantiate this class. Use directly the @.attribute_insert and @.attribute_clear static methods.]]
+     There is no need to instantiate this class. Use directly the @.attribute_insert and @.attribute_clear static methods.
+
+     @since 1.24
+     ]]
    methods {
       attribute_insert @static {
          [[Inserts an attribute format in a specified range [$start, $end - 1].

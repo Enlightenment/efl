@@ -1,5 +1,5 @@
-abstract nmsp1.nmsp11.class2
-{
+abstract nmsp1.nmsp11.class2 {
+   [[Docs for abstract nmsp1.nmsp11.class2. @since 1.66]]
    methods {
       @property a {
          set @pure_virtual {

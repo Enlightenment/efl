@@ -1,6 +1,6 @@
 import efl_text_types;
 
-class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
+class Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font_Properties,
                        Efl.Text_Style, Efl.Text_Format,
                        Efl.Text_Markup, Efl.Ui.I18n
@@ -12,6 +12,8 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
      This can be accomplished using @Efl.Text_Font_Properties.font_family, @Efl.Text_Font_Properties.font_size and
      @Efl.Text_Style.text_color.
      Alternatively, @.style_apply can be used providing the attributes $font, $font_size and $color.
+
+     @since 1.24
    ]]
    methods {
       @property is_empty {
@@ -137,47 +139,47 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
 
            - $underline_color: Color code for the text underline (See bottom for the complete list of supported codes).
              Default value is $[rgba(0,0,0,0)] meaning that no underline will be rendered.
-             Requires $underline.
+             Requires $underline_type.
              See @Efl.Text_Style.text_underline_color.
 
            - $secondary_underline_color: Color code for the secondary text underline (See bottom for the complete list
-             of supported codes). Only valid when $[underline=double].
+             of supported codes). Only valid when $[underline_type=double].
              Default value is $[rgba(0,0,0,0)] meaning that secondary underline will not be rendered.
              See @Efl.Text_Style.text_secondary_underline_color.
 
-           - $underline_dash_color: Color code for the dashed underline (See bottom for the complete list of supported
-             codes). Only valid when $[underline=dashed].
+           - $underline_dashed_color: Color code for the dashed underline (See bottom for the complete list of supported
+             codes). Only valid when $[underline_type=dashed].
              Default value is $[rgba(0,0,0,0)] meaning that dashed underline will not be rendered.
              See @Efl.Text_Style.text_underline_dashed_color.
 
            - $outline_color: Color code for the text outline (See bottom for the complete list of supported codes).
-             Only valid when the $style attribute includes an outline.
+             Only valid when the $effect_type attribute includes an outline.
              Default value is $[rgba(0,0,0,0)] meaning that no outline will be rendered.
              See @Efl.Text_Style.text_outline_color.
 
            - $shadow_color: Color code for the text shadow (See bottom for the complete list of supported codes).
-             Only valid when the $style attribute includes a shadow.
+             Only valid when the $effect_type attribute includes a shadow.
              Default value is $[rgba(0,0,0,0)] meaning that no shadow will be rendered.
              See @Efl.Text_Style.text_shadow_color.
 
            - $glow_color: Color code for the glow component of the text (See bottom for the complete list of supported
-             codes). Only valid when the $style attribute includes a glow.
+             codes). Only valid when the $effect_type attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that no glow will be rendered.
              See @Efl.Text_Style.text_glow_color.
 
            - $secondary_glow_color: Color code for the secondary (inner) glow component of the text (See bottom for
-             the complete list of supported codes). Only valid when the $style attribute includes a glow.
+             the complete list of supported codes). Only valid when the $effect_type attribute includes a glow.
              Default value is $[rgba(0,0,0,0)] meaning that only the primary $glow_color will be used.
              See @Efl.Text_Style.text_secondary_glow_color.
 
-           - $backing_color: Color code for the background of the text (See bottom for the complete list of supported
+           - $background_color: Color code for the background of the text (See bottom for the complete list of supported
              codes). Use a fully transparent color to disable the background.
-             Default value is $[rgba(0,0,0,0)] meaning that no backing will be rendered.
-             Requires $backing.
+             Default value is $[rgba(0,0,0,0)] meaning that no background will be rendered.
+             Requires $background_type.
              See @Efl.Text_Style.text_background_color.
 
            - $strikethrough_color: Color code for the line striking through the text (See bottom for the complete list
-             of supported codes). Only valid when $[strikethrough=on]
+             of supported codes). Only valid when $[strikethrough_type=single]
              Default value is $[rgba(0,0,0,0)] meaning that no strike-through line will be rendered.
              See @Efl.Text_Style.text_strikethrough_color.
 
@@ -219,34 +221,35 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Default value is $[0].
              Examples: $[right_margin=10], $[right_margin=+10], $[right_margin=reset].
 
-           - $underline: Style of the underline. The value must be one of $off (No underlining),
-             $single (A single line under the text), $on (Alias for $single), $double (Two lines under the text),
+           - $underline_type: Style of the underline. The value must be one of $none (No underlining),
+             $single (A single line under the text) , $double (Two lines under the text),
              $dashed (A dashed line under the text).
-             Default value is $off.
-             Requires either $underline_color, $secondary_underline_color or $underline_dash_color.
+             Default value is $none.
+             Requires either $underline_color, $secondary_underline_color or $underline_dashed_color.
              See @Efl.Text_Style.text_underline_type.
 
-           - $strikethrough: Enables crossed-out text. Possible values are $on and $off.
-             Default value is $off.
+           - $strikethrough_type: Enables crossed-out text. Possible values are $single and $none.
+             Default value is $none.
              Requires $strikethrough_color.
              See @Efl.Text_Style.text_strikethrough_type.
 
-           - $backing: Enables background color for the text. Possible values are $on and $off.
-             Default value is $off.
-             Requires $backing_color.
+           - $background_type: Enables background color for the text. Possible values are $solid and $none.
+             Default value is $none.
+             Requires $background_color.
              See @Efl.Text_Style.text_background_type.
 
-           - $style: Controls a number of decorations around the text, like shadow, outline and glow, including
-             combinations of them. Possible values are $plain (No decoration, alias for $off and $none),
+           - $effect_type: Controls a number of decorations around the text, like shadow, outline and glow, including
+             combinations of them. Possible values are $none (No decoration),
              $shadow, $outline, $soft_outline, $outline_shadow, $outline_soft_shadow, $glow (alias for $soft_outline),
              $far_shadow, $soft_shadow and $far_soft_shadow.
-             All values involving a shadow accept a second parameter, separated by a comma, to indicate the shadow
-             direction. Valid positions are $bottom_right, $bottom, $bottom_left, $left, $top_left, $top, $top_right
-             and $right.
-             Default value is $plain.
+             Default value is $none.
              Requires either $shadow_color, $glow_color or $outline_color.
-             Examples: $[style=outline], $[style=shadow,bottom_right], $[style=outline_shadow,bottom].
-             See @Efl.Text_Style.text_effect_type and @Efl.Text_Style.text_shadow_direction.
+             See @Efl.Text_Style.text_effect_type 
+
+           - $shadow_direction: Indicate the shadow direction. Valid positions are $bottom_right, $bottom, $bottom_left, $left, $top_left, $top, $top_right
+             and $right.
+             Requires either $effect_type.
+             See @Efl.Text_Style.text_shadow_direction.
 
            - $tab_stops: Size (in pixels) of the tab character. The value must be a number greater than one.
              Default value is $[32].
@@ -303,15 +306,15 @@ class @beta Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
              Examples: $[replacement_char=*].
              See @Efl.Text_Format.replacement_char.
 
-           - $underline_dash_width: Length (in pixels) of the dashes when $underline is $dashed.
+           - $underline_dashed_width: Length (in pixels) of the dashes when $underline_type is $dashed.
              Default value is $[6].
              See @Efl.Text_Style.text_underline_dashed_width.
 
-           - $underline_dash_gap: Length (in pixels) of the gaps between the dashes when $underline is $dashed.
+           - $underline_dashed_gap: Length (in pixels) of the gaps between the dashes when $underline_type is $dashed.
              Default value is $[2].
              See @Efl.Text_Style.text_underline_dashed_gap.
 
-           - $underline_height: Width (in pixels) of the single underline when $underline is $single.
+           - $underline_height: Width (in pixels) of the single underline when $underline_type is $single.
              Default value is $[1].
              See @Efl.Text_Style.text_underline_height.
 

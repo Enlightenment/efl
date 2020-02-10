@@ -7,6 +7,7 @@ static const Efl_Test_Case etc[] =
    { "Display", ecore_wl2_test_display },
    { "Window", ecore_wl2_test_window },
    { "Input", ecore_wl2_test_input },
+   { "Output", ecore_wl2_test_output },
 #endif
    { NULL, NULL }
 };

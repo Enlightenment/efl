@@ -1789,18 +1789,6 @@ _efl_ui_focus_manager_calc_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manager_Cal
    return result;
 }
 
-static Eina_List*
-_convert(Border b)
-{
-   Eina_List *n, *par = NULL;
-   Node *node;
-
-   EINA_LIST_FOREACH(b.one_direction, n, node)
-     par = eina_list_append(par, node->focusable);
-
-   return par;
-}
-
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
@@ -1813,6 +1801,63 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(const Eo *obj 
    if (!upper)
      return NULL;
    return upper->focusable;
+}
+
+typedef struct _Eina_Iterator_Focusable Eina_Iterator_Focusable;
+struct _Eina_Iterator_Focusable
+{
+   Eina_Iterator iterator;
+
+   Eina_Iterator *redirect;
+};
+
+static Eina_Bool
+_node_focusable_iterator_next(Eina_Iterator_Focusable *it, void **data)
+{
+   Node *node = NULL;
+   Eina_Bool r;
+
+   if (!it->redirect) return EINA_FALSE;
+
+   r = eina_iterator_next(it->redirect, (void **) &node);
+   if (r && data) *data = node->focusable;
+
+   return r;
+}
+
+static Eina_List *
+_node_focusable_iterator_get_container(Eina_Iterator_Focusable *it)
+{
+   if (!it->redirect) return NULL;
+
+   return eina_iterator_container_get(it->redirect);
+}
+
+static void
+_node_focusable_iterator_free(Eina_Iterator_Focusable *it)
+{
+   eina_iterator_free(it->redirect);
+   EINA_MAGIC_SET(&it->iterator, 0);
+   free(it);
+}
+
+static Eina_Iterator *
+_node_focusable_iterator_new(Eina_List *nodes)
+{
+   Eina_Iterator_Focusable *it;
+
+   it = calloc(1, sizeof (Eina_Iterator_Focusable));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->redirect = eina_list_iterator_new(nodes);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_node_focusable_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_node_focusable_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_node_focusable_iterator_free);
+
+   return &it->iterator;
 }
 
 EOLIAN static Efl_Ui_Focus_Relations*
@@ -1834,12 +1879,14 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
      efl_ui_focus_object_setup_order(n->tree.parent->focusable);
    efl_ui_focus_object_setup_order(n->focusable);
 
-#define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir));
+   // FIXME: the iterator must actually return the (Node*)->focusable object in it
+   // Just redirect to default eina list iterator but offset the returned pointer?
+#define DIR_ITERATOR(dir) _node_focusable_iterator_new(DIRECTION_ACCESS(n,dir).one_direction);
 
-   res->right = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_RIGHT);
-   res->left = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_LEFT);
-   res->top = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_UP);
-   res->down = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_DOWN);
+   res->right = DIR_ITERATOR(EFL_UI_FOCUS_DIRECTION_RIGHT);
+   res->left = DIR_ITERATOR(EFL_UI_FOCUS_DIRECTION_LEFT);
+   res->top = DIR_ITERATOR(EFL_UI_FOCUS_DIRECTION_UP);
+   res->down = DIR_ITERATOR(EFL_UI_FOCUS_DIRECTION_DOWN);
    res->next = (tmp = _next(n)) ? tmp->focusable : NULL;
    res->prev = (tmp = _prev(n)) ? tmp->focusable : NULL;
    res->position_in_history = eina_list_data_idx(pd->focus_stack, n);
@@ -1850,7 +1897,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
    if (T(n).parent)
      res->parent = T(n).parent->focusable;
    res->redirect = n->redirect_manager;
-#undef DIR_CLONE
+#undef DIR_ITERATOR
 
    return res;
 }
@@ -2014,7 +2061,27 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_unfreeze(Eo *obj, Ef
     }
 }
 
+static void
+_efl_ui_focus_manager_calc_update_children_ownership_fallback(Efl_Ui_Focus_Object *parent, Eina_List *children)
+{
+   (void)parent;
+   eina_list_free(children);
+}
+
+EOAPI EFL_FUNC_BODYV_FALLBACK(efl_ui_focus_manager_calc_update_children, Eina_Bool, 0, _efl_ui_focus_manager_calc_update_children_ownership_fallback(parent, children);, EFL_FUNC_CALL(parent, children), Efl_Ui_Focus_Object *parent, Eina_List *children);
+
+static void
+_efl_ui_focus_manager_calc_update_order_ownership_fallback(Efl_Ui_Focus_Object *parent, Eina_List *children)
+{
+   (void)parent;
+   eina_list_free(children);
+}
+
+EOAPI EFL_VOID_FUNC_BODYV_FALLBACK(efl_ui_focus_manager_calc_update_order, _efl_ui_focus_manager_calc_update_order_ownership_fallback(parent, children);, EFL_FUNC_CALL(parent, children), Efl_Ui_Focus_Object *parent, Eina_List *children);
+
 #define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
-   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)
+  EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get), \
+  EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_update_children, _efl_ui_focus_manager_calc_update_children), \
+  EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_update_order, _efl_ui_focus_manager_calc_update_order)
 
 #include "efl_ui_focus_manager_calc.eo.c"

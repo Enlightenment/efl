@@ -466,7 +466,6 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
    char buf[100];
    Eo *ctl = event->object;
    Efl_Net_Control_Agent_Request_Input *ri = event->info;
-   Eina_List *n;
    Efl_Net_Control_Agent_Request_Input_Information *info;
    char *name = NULL;
    char *username = NULL;
@@ -475,10 +474,11 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
    char *wps = NULL;
    Eina_Slice ssid_slice = { };
    size_t len;
+   unsigned int n;
 
    printf("INFO: Needs agent input!\n");
 
-   EINA_LIST_FOREACH(ri->informational, n, info)
+   EINA_ACCESSOR_FOREACH(ri->informational, n, info)
      printf("INFO:  - %s: %s\n", info->name, info->value);
 
 

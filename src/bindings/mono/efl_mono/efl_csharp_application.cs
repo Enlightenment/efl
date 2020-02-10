@@ -206,9 +206,9 @@ public abstract class Application
 #endif
         app.ArgumentsEvent += (object sender, LoopArgumentsEventArgs evt) =>
         {
-            if (evt.arg.Initialization)
+            if (evt.Arg.Initialization)
             {
-                var evtArgv = evt.arg.Argv;
+                var evtArgv = evt.Arg.Argv;
                 int n = evtArgv.Count;
                 var argv = new string[n];
                 for (int i = 0; i < n; ++i)
@@ -219,7 +219,7 @@ public abstract class Application
                 OnInitialize(argv);
             }
 
-            OnArguments(evt.arg);
+            OnArguments(evt.Arg);
         };
         app.PauseEvent += (object sender, EventArgs e) =>
         {

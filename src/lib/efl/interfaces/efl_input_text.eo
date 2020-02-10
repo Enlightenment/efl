@@ -7,10 +7,10 @@ enum @beta Efl.Input_Text.Panel_Layout_Type
    number,      [[Number layout.]]
    email,       [[Email layout.]]
    url,         [[URL layout.]]
-   phonenumber, [[Phone Number layout.]]
+   phone_number, [[Phone Number layout.]]
    ip,          [[IP layout.]]
    month,       [[Month layout.]]
-   numberonly,  [[Number Only layout.]]
+   number_only,  [[Number Only layout.]]
    invalid,     [[Never use this.]]
    hex,         [[Hexadecimal layout.]]
    terminal,    [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization).]]
@@ -36,7 +36,7 @@ enum @beta Efl.Input_Text.Capitalize_Type
    none,         [[No auto-capitalization when typing.]]
    word,         [[Autocapitalize each word typed.]]
    sentence,     [[Autocapitalize the start of each sentence.]]
-   allcharacter  [[Autocapitalize all letters.]]
+   all           [[Autocapitalize all letters.]]
 }
 
 enum @beta Efl.Input_Text.Panel_Return_Key_Type
@@ -88,7 +88,7 @@ enum @beta Efl.Input_Text.Panel_Layout_Normal_Variation_Type
 {
    [[Enumeration for defining the types of @Efl.Input_Text.Panel_Layout_Type for normal variation.]]
    normal          , [[The plain normal layout.]]
-   filename        , [[Filename layout. Symbols such as '/' should be disabled.]]
+   file_name       , [[Filename layout. Symbols such as '/' should be disabled.]]
    person_name     , [[The name of a person, @Efl.Input_Text.autocapitalization will be set to @Efl.Input_Text.Capitalize_Type.word.]]
 }
 
@@ -105,7 +105,7 @@ enum @beta Efl.Input_Text.Panel_Layout_Password_Variation_Type
 {
    [[Enumeration for defining the types of @Efl.Input_Text.Panel_Layout_Type for normal variation.]]
    normal          , [[The normal password layout.]]
-   numberonly      , [[The password layout to allow only number.]]
+   number_only     , [[The password layout to allow only number.]]
 }
 
 

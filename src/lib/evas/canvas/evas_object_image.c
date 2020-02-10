@@ -2301,6 +2301,8 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (filtered && o->has_filter)
      pixels = evas_filter_output_buffer_get(eo_obj);
+   else
+     needs_post_render = EINA_FALSE;
 
    if (!pixels && o->cur->source)
      {
@@ -2353,7 +2355,8 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         *uvw = *imagew;
         *uvh = *imageh;
      }
-   else if (oi && oi->engine_data)
+   else if (oi && oi->engine_data &&
+            (!o->cur->source || o->load_opts->region.w == 0 || o->load_opts->region.h == 0))
      {
         if (oi->has_filter)
           pixels = evas_filter_output_buffer_get(source->object);

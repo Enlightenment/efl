@@ -1372,6 +1372,22 @@ EAPI Eina_Future_Desc eina_future_cb_easy_from_desc(const Eina_Future_Cb_Easy_De
 EAPI Eina_Promise *eina_promise_all_array(Eina_Future *array[]) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * Creates an all promise from an iterator.
+ *
+ * Creates a promise that is resolved once all the futures
+ * from the @p iterator are resolved.
+ * The promise is resolved with an Eina_Value type array which
+ * contains EINA_VALUE_TYPE_VALUE elements. The result array is
+ * ordered according to the @p iterator order.
+ *
+ * @param[in] iterator An iterator of futures. Will be destroyed after the call.
+ * @return A promise or @c NULL on error.
+ * @note On error all the futures will be CANCELED.
+ * @see eina_future_all_iterator()
+ */
+EAPI Eina_Promise *eina_promise_all_iterator(Eina_Iterator *iterator) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
  * Creates a race promise.
  *
  * Creates a promise that resolves when a future from the @p array
@@ -1553,6 +1569,22 @@ static inline Eina_Future *
 eina_future_all_array(Eina_Future *array[])
 {
    Eina_Promise *p = eina_promise_all_array(array);
+   if (!p) return NULL;
+   return eina_future_new(p);
+}
+
+/**
+ * Creates a future that will be resolved once all futures from @p iterator are resolved.
+ * This is a helper over eina_promise_all_iterator()
+ *
+ * @param[in] iterator An iterator containing futures. Will be destroyed on exit of the function.
+ * @return A future.
+ * @see eina_promise_all_iterator()
+ */
+static inline Eina_Future *
+eina_future_all_iterator(Eina_Iterator *iterator)
+{
+   Eina_Promise *p = eina_promise_all_iterator(iterator);
    if (!p) return NULL;
    return eina_future_new(p);
 }

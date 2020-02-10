@@ -1,14 +1,26 @@
 #include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS
+#define MY_CLASS                       EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS
 
-#define MOMENTUM_TIMEOUT 50
-#define THUMBSCROLL_FRICTION 0.95
+#define MOMENTUM_TIMEOUT               50
+#define THUMBSCROLL_FRICTION           0.95
 #define THUMBSCROLL_MOMENTUM_THRESHOLD 100.0
-#define EFL_GESTURE_MINIMUM_MOMENTUM 0.001
+#define EFL_GESTURE_MINIMUM_MOMENTUM   0.001
 
 #define RAD2DEG(x) ((x) * 57.295779513)
 #define DEG2RAD(x) ((x) / 57.295779513)
+
+#define memset do not use memset to reset flick data, use _reset_recognizer
+
+static void
+_reset_recognizer(Efl_Canvas_Gesture_Recognizer_Flick_Data *pd)
+{
+   pd->st_line = EINA_POSITION2D(0, 0);
+   pd->t_st = pd->t_end = 0;
+   pd->line_length = 0;
+   pd->line_angle = -1;
+   pd->touched = EINA_FALSE;
+}
 
 EOLIAN static Efl_Canvas_Gesture *
 _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_add(Eo *obj, Efl_Canvas_Gesture_Recognizer_Flick_Data *pd EINA_UNUSED, Efl_Object *target EINA_UNUSED)
@@ -39,11 +51,11 @@ _momentum_set(Eo *obj,
 
    vel = sqrt((velx * velx) + (vely * vely));
 
-   tf = efl_gesture_recognizer_config_get(obj, "thumbscroll_friction");
+   tf = _recognizer_config_get(obj, "thumbscroll_friction");
    if (tf) eina_value_get(tf, &thumbscroll_friction);
    else thumbscroll_friction = THUMBSCROLL_FRICTION;
 
-   tmt = efl_gesture_recognizer_config_get(obj, "thumbscroll_momentum_threshold");
+   tmt = _recognizer_config_get(obj, "thumbscroll_momentum_threshold");
    if (tmt) eina_value_get(tmt, &thumbscroll_momentum_threshold);
    else thumbscroll_momentum_threshold = THUMBSCROLL_MOMENTUM_THRESHOLD;
 
@@ -70,32 +82,32 @@ _single_line_process(Eo *obj,
 {
    switch (efl_gesture_touch_state_get(event))
      {
-       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-         if (!pd->t_st)
-           {
-              pd->st_line = efl_gesture_touch_cur_point_get(event);
-              pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
+      case EFL_GESTURE_TOUCH_STATE_BEGIN:
+      case EFL_GESTURE_TOUCH_STATE_UPDATE:
+        if (!pd->t_st)
+          {
+             pd->st_line = efl_gesture_touch_cur_point_get(event);
+             pd->t_st = efl_gesture_touch_cur_timestamp_get(event);
 
-              efl_gesture_hotspot_set(gesture, pd->st_line);
+             efl_gesture_hotspot_set(gesture, pd->st_line);
 
-              return;
-           }
+             return;
+          }
+
+        break;
+
+      case EFL_GESTURE_TOUCH_STATE_END:
+      {
+         if (!pd->t_st) return;
+
+         pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
 
          break;
+      }
 
-       case EFL_GESTURE_TOUCH_STATE_END:
-         {
-            if (!pd->t_st) return;
+      default:
 
-            pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
-
-            break;
-         }
-
-       default:
-
-         return;
+        return;
      }
 
    _momentum_set(obj, fd, pd->st_line, efl_gesture_touch_cur_point_get(event),
@@ -135,8 +147,8 @@ _angle_get(Evas_Coord xx1,
              if (xx2 < xx1) rt = 180;
              else rt = 0.0;
           }
-        else
-          {  /* Vertical line */
+        else /* Vertical line */
+          {
              if (yy2 < yy1) rt = 90;
              else rt = 270;
           }
@@ -152,7 +164,6 @@ _angle_get(Evas_Coord xx1,
 
    return rt;
 }
-
 
 static void
 _vector_get(Eina_Position2D v1,
@@ -174,15 +185,17 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
                                                                              Efl_Canvas_Gesture *gesture, Efl_Object *watched,
                                                                              Efl_Canvas_Gesture_Touch *event)
 {
-   double angle;
+   double angle, line_angle;
    Eina_Value *val;
    unsigned char glayer_continues_enable;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
    Eina_Bool touch_up = EINA_FALSE;
+   int points = efl_gesture_touch_points_count_get(event);
    Efl_Canvas_Gesture_Flick_Data *fd = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_FLICK_CLASS);
    Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
+   Eina_Bool dead = EINA_FALSE;
 
-   val = efl_gesture_recognizer_config_get(obj, "glayer_continues_enable");
+   val = _recognizer_config_get(obj, "glayer_continues_enable");
    if (val) eina_value_get(val, &glayer_continues_enable);
    else glayer_continues_enable = 1;
 
@@ -198,43 +211,76 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
 
    //This is to handle a case with a mouse click on the target object.
    if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_END && !pd->touched)
-     efl_gesture_manager_gesture_clean_up(rd->manager, watched, EFL_EVENT_GESTURE_FLICK);
+     {
+        efl_gesture_manager_gesture_clean_up(efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS), watched, EFL_EVENT_GESTURE_FLICK, obj);
+        dead = EINA_TRUE;
+     }
 
    if (glayer_continues_enable && !pd->touched)
      {
-       pd->touched = EINA_TRUE;
-       pd->line_angle = -1.0;
-       rd->continues = EINA_TRUE;
+        pd->touched = EINA_TRUE;
+        pd->line_angle = -1.0;
+        rd->continues = EINA_TRUE;
+        /* this has been deleted */
+        if (!dead)
+          fd->id = -1;
 
-       return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+        return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
+   if (pd->touched && (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN))
+     {
+        /* a second finger was pressed at the same time-ish as the first: combine into same event */
+        if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+     }
+   if (pd->t_st && (points > 1) && (fd->id != efl_gesture_touch_cur_data_get(event)->id))
+     {
+        int xdir[2], ydir[2];
+        const Efl_Gesture_Touch_Point_Data *data = efl_gesture_touch_cur_data_get(event);
+        const Efl_Gesture_Touch_Point_Data *data2;
+
+        if (fd->id == -1) return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+        data2 = efl_gesture_touch_data_get(event, fd->id);
+        xdir[0] = _direction_get(data->prev.pos.x, data->cur.pos.x);
+        ydir[0] = _direction_get(data->prev.pos.y, data->cur.pos.y);
+        xdir[1] = _direction_get(data2->prev.pos.x, data2->cur.pos.x);
+        ydir[1] = _direction_get(data2->prev.pos.y, data2->cur.pos.y);
+        if ((xdir[0] != xdir[1]) || (ydir[0] != ydir[1]))
+          {
+             rd->continues = EINA_FALSE;
+             _reset_recognizer(pd);
+             return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+          }
+        return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
      }
 
    _single_line_process(obj, pd, gesture, fd, event);
    _vector_get(pd->st_line, efl_gesture_touch_cur_point_get(event),
                &pd->line_length, &angle);
 
+   line_angle = pd->line_angle;
    if (pd->t_st)
      {
-        if (pd->line_angle >= 0.0)
+        if ((line_angle > 0.0) || EINA_DBL_EQ(line_angle, 0.0))
           {
              double line_distance_tolerance, line_angular_tolerance;
-             double a = fabs(angle - pd->line_angle);
+             double a = fabs(angle - line_angle);
              double d = (tan(DEG2RAD(a))) * pd->line_length;
 
-             val = efl_gesture_recognizer_config_get(obj, "glayer_line_distance_tolerance");
+             val = _recognizer_config_get(obj, "glayer_line_distance_tolerance");
              if (val) eina_value_get(val, &line_distance_tolerance);
              else line_distance_tolerance = 3.0;
 
-             line_distance_tolerance *= rd->finger_size;
+             line_distance_tolerance *= pd->finger_size;
 
-             val = efl_gesture_recognizer_config_get(obj, "glayer_line_angular_tolerance");
+             val = _recognizer_config_get(obj, "glayer_line_angular_tolerance");
              if (val) eina_value_get(val, &line_angular_tolerance);
              else line_angular_tolerance = 20.0;
 
              if ((d > line_distance_tolerance) ||
                  (a > line_angular_tolerance))
                {
-                  memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+                  _reset_recognizer(pd);
 
                   if (touch_up) rd->continues = EINA_FALSE;
 
@@ -254,22 +300,21 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
           {
              double line_min_length;
 
-             val = efl_gesture_recognizer_config_get(obj, "glayer_line_min_length");
+             val = _recognizer_config_get(obj, "glayer_line_min_length");
              if (val) eina_value_get(val, &line_min_length);
              else line_min_length = 1.0;
 
-             line_min_length *= rd->finger_size;
+             line_min_length *= pd->finger_size;
 
              if (pd->line_length >= line_min_length)
-               fd->angle = pd->line_angle = angle;
-
+               line_angle = fd->angle = pd->line_angle = angle;
           }
 
         if (pd->t_end)
           {
-             if (pd->line_angle < 0.0)
+             if (line_angle < 0.0)
                {
-                  memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+                  _reset_recognizer(pd);
 
                   if (touch_up) rd->continues = EINA_FALSE;
 
@@ -286,62 +331,65 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
      }
 
    unsigned int time_limit_ms;
-   val = efl_gesture_recognizer_config_get(obj, "glayer_flick_time_limit_ms");
+   val = _recognizer_config_get(obj, "glayer_flick_time_limit_ms");
    if (val) eina_value_get(val, &time_limit_ms);
    else time_limit_ms = 120;
 
    if ((tm_end - pd->t_st) > time_limit_ms)
-   {
-     memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+     {
+        _reset_recognizer(pd);
 
-     if (touch_up) rd->continues = EINA_FALSE;
+        if (touch_up) rd->continues = EINA_FALSE;
 
-     return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-   }
+        return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+     }
 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
+        if (!glayer_continues_enable)
+          fd->id = efl_gesture_touch_cur_data_get(event)->id;
+        EINA_FALLTHROUGH;
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-        {
-           if (pd->t_st)
-             {
-                if (glayer_continues_enable && pd->t_end)
-                  {
-                     result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-                  }
-                else
-                  {
-                     result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
-                  }
-             }
-           break;
-        }
+      {
+         if (pd->t_st)
+           {
+              if (glayer_continues_enable && pd->t_end)
+                {
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+                }
+              else
+                {
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+                }
+           }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_END:
-        {
-           if (!pd->t_st)
-             {
-                pd->touched = EINA_FALSE;
-                rd->continues = EINA_FALSE;
+      {
+         if (!pd->t_st)
+           {
+              pd->touched = EINA_FALSE;
+              rd->continues = EINA_FALSE;
 
-                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
-           if (pd->t_st && pd->t_end)
-             {
-                rd->continues = EINA_FALSE;
+              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
+         if (pd->t_st && pd->t_end)
+           {
+              rd->continues = EINA_FALSE;
 
-                result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-             }
+              result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+           }
 
-           efl_gesture_hotspot_set(gesture, efl_gesture_touch_cur_point_get(event));
+         efl_gesture_hotspot_set(gesture, efl_gesture_touch_cur_point_get(event));
 
-           memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Flick_Data));
+         _reset_recognizer(pd);
 
-		   rd->continues = EINA_FALSE;
+         rd->continues = EINA_FALSE;
 
-           break;
-        }
+         break;
+      }
 
       default:
 

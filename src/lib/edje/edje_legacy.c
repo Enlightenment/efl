@@ -5,8 +5,9 @@
 
 #define GET_REAL_PART_ON_FAIL_RETURN(x) Edje_Real_Part *rp;\
                                         Edje *ed;\
+                                        if (!part) return x;\
                                         ed = _edje_fetch(obj);\
-                                        if ((!ed) || (!part)) return x;\
+                                        if (!ed) return x;\
                                         rp = _edje_real_part_recursive_get(&ed, part);\
                                         if (!rp) return x;\
 
@@ -25,12 +26,13 @@ edje_object_part_geometry_get(const Edje_Object *obj, const char *part, int *x, 
 {
    Edje_Real_Part *rp;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, EINA_FALSE);
 
    // Similar to geometry_get(efl_part(obj, part), x, y, w, h) but the bool
    // return value matters here.
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part))
+   if (!ed)
      {
         if (x) *x = 0;
         if (y) *y = 0;
@@ -486,10 +488,11 @@ edje_object_part_text_style_user_peek(const Eo *obj EINA_UNUSED, const char *par
    Edje_Real_Part *rp;
    const Evas_Textblock_Style *ts;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return NULL;
+   if (!ed) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
    if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return NULL;
@@ -528,10 +531,11 @@ edje_object_text_insert_filter_callback_add(Eo *obj EINA_UNUSED, const char *par
 {
    Edje_Text_Insert_Filter_Callback *cb;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN(part);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return;
+   if (!ed) return;
    cb = calloc(1, sizeof(Edje_Text_Insert_Filter_Callback));
    cb->part = eina_stringshare_add(part);
    cb->func = func;
@@ -546,10 +550,11 @@ edje_object_text_insert_filter_callback_del(Eo *obj EINA_UNUSED, const char *par
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return NULL;
+   if (!ed) return NULL;
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func))
@@ -572,10 +577,11 @@ edje_object_text_insert_filter_callback_del_full(Eo *obj EINA_UNUSED, const char
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return NULL;
+   if (!ed) return NULL;
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func) &&
@@ -598,10 +604,11 @@ edje_object_text_markup_filter_callback_add(Eo *obj EINA_UNUSED, const char *par
 {
    Edje_Markup_Filter_Callback *cb;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN(part);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return;
+   if (!ed) return;
    cb = calloc(1, sizeof(Edje_Markup_Filter_Callback));
    cb->part = eina_stringshare_add(part);
    cb->func = func;
@@ -616,10 +623,11 @@ edje_object_text_markup_filter_callback_del(Eo *obj EINA_UNUSED, const char *par
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return NULL;
+   if (!ed) return NULL;
    EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func))
@@ -642,10 +650,11 @@ edje_object_text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, const char
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return NULL;
+   if (!ed) return NULL;
    EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func) &&
@@ -668,10 +677,11 @@ edje_object_part_text_user_insert(const Eo *obj, const char *part, const char *t
 {
    Edje_Real_Part *rp;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN(part);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return;
+   if (!ed) return;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
@@ -719,11 +729,12 @@ EAPI void
 edje_object_part_text_append(Eo *obj, const char *part, const char *text)
 {
    Edje_Real_Part *rp;
-
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN(part);
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+
+   if (!ed) return;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
@@ -745,10 +756,11 @@ edje_object_part_text_escaped_set(Eo *obj, const char *part, const char *text)
    Edje_Real_Part *rp;
    Eina_Bool int_ret;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, EINA_FALSE);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if (!ed) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -931,10 +943,11 @@ edje_object_part_text_unescaped_set(Eo *obj, const char *part, const char *text_
    Edje_Real_Part *rp;
    Eina_Bool int_ret = EINA_FALSE;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, EINA_FALSE);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if (!ed) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -958,10 +971,11 @@ edje_object_part_text_unescaped_get(const Eo *obj EINA_UNUSED, const char *part)
 {
    Edje_Real_Part *rp;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return NULL;
+   if (!ed) return NULL;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
@@ -1012,10 +1026,11 @@ edje_object_part_text_insert(Eo *obj, const char *part, const char *text)
 {
    Edje_Real_Part *rp;
    Edje *ed;
+   EINA_SAFETY_ON_NULL_RETURN(part);
 
    ed = _edje_fetch(obj);
 
-   if ((!ed) || (!part)) return;
+   if (!ed) return;
    rp = _edje_real_part_recursive_get(&ed, part);
    _edje_object_part_text_insert(ed, rp, text);
    if (ed->text_change.func)

@@ -1,22 +1,29 @@
-enum @beta Efl.Text_Style_Background_Type
+enum Efl.Text_Style_Background_Type
 {
-   [[Type of background to use behind each line of text.]]
+   [[Type of background to use behind each line of text.
+
+     @since 1.24
+   ]]
    none = 0,    [[Do not use background.]]
    solid_color, [[Use a solid-color rectangle as background.
                   Requires @Efl.Text_Style.text_background_color.]]
 }
 
-enum @beta Efl.Text_Style_Strikethrough_Type
+enum Efl.Text_Style_Strikethrough_Type
 {
-   [[Whether to add a strike-through decoration to the displayed text or not.]]
+   [[Whether to add a strike-through decoration to the displayed text or not.
+     @since 1.24
+   ]]
    none = 0, [[Do not use strike-through.]]
    single,   [[Strike-through with a single line.
                Requires @Efl.Text_Style.text_strikethrough_color.]]
 }
 
-enum @beta Efl.Text_Style_Effect_Type
+enum Efl.Text_Style_Effect_Type
 {
-   [[Effect to apply to the displayed text.]]
+   [[Effect to apply to the displayed text.
+     @since 1.24
+   ]]
    none = 0,            [[No effect.]]
    shadow,              [[Shadow effect.
                           Uses @Efl.Text_Style.text_shadow_color and @Efl.Text_Style.text_shadow_direction.]]
@@ -40,9 +47,11 @@ enum @beta Efl.Text_Style_Effect_Type
                           @Efl.Text_Style.text_outline_color.]]
 }
 
-enum @beta Efl.Text_Style_Shadow_Direction
+enum Efl.Text_Style_Shadow_Direction
 {
-   [[Direction of the shadow effect.]]
+   [[Direction of the shadow effect.
+     @since 1.24
+   ]]
    bottom_right = 0, [[Shadow towards bottom right.]]
    bottom,           [[Shadow towards bottom.]]
    bottom_left,      [[Shadow towards bottom left.]]
@@ -53,9 +62,11 @@ enum @beta Efl.Text_Style_Shadow_Direction
    right,            [[Shadow towards right.]]
 }
 
-enum @beta Efl.Text_Style_Underline_Type
+enum Efl.Text_Style_Underline_Type
 {
-   [[Type of underline for the displayed text.]]
+   [[Type of underline for the displayed text.
+     @since 1.24
+   ]]
    none = 0, [[Text without underline.]]
    single,   [[Underlined with a single line.
                Requires @Efl.Text_Style.text_underline_color.]]
@@ -66,10 +77,11 @@ enum @beta Efl.Text_Style_Underline_Type
                @Efl.Text_Style.text_underline_dashed_gap.]]
 }
 
-interface @beta Efl.Text_Style {
+interface Efl.Text_Style {
    [[Decorations to add to the text.
 
      Decorations include text color, glow, outline, underline, strike-through and shadows.
+     @since 1.24
    ]]
    c_prefix: efl_text;
    methods {

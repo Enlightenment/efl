@@ -1,23 +1,27 @@
 // regular named enum
 enum Foo {
+    [[Docs for enum Foo. @since 1.66]]
     first,
     bar,
     baz = 5 * 3
 }
 
 enum Baz {
+    [[Docs for enum Baz. @since 1.66]]
     flag1 = 1 << 0,
     flag2 = 1 << 1,
     flag3 = 1 << 2, // testing trailing comma on last item
 }
 
 enum Name.Spaced {
+    [[Docs for enum Name.Space. @since 1.66]]
     pants
 }
 
-const Bah: Baz = Baz.flag1;
+const Bah: Baz = Baz.flag1; [[Docs for var Bah. @since 1.66]]
 
 enum Value {
+    [[Docs for enum Value. @since 1.66]]
     foo,
     bar,
     baz = 2,
@@ -26,9 +30,10 @@ enum Value {
     pants
 }
 
-const Pants: Value = Value.pants;
+const Pants: Value = Value.pants; [[Docs for var Pants. @since 1.66]]
 
 class Enum {
+    [[Docs for class Enum. @since 1.66]]
     methods {
         foo {
             params {

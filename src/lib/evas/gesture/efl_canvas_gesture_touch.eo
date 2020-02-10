@@ -60,11 +60,42 @@ class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
             return: bool; [[returns $true if its a multi touch]]
          }
       }
+      @property touch_points_count {
+         [[This provides the number of touch points active.]]
+         get {
+         }
+         values {
+            touch_count: uint; [[The number of active touch points.]]
+         }
+      }
       @property state {
          [[This property holds the state of the touch event.]]
          get {
             return : Efl.Canvas.Gesture_Touch_State; [[touch event state]]
          }
+      }
+      @property cur_data {
+         [[This property holds the data struct of the most recent touch point.]]
+         get {}
+         values {
+            data: const(Efl.Canvas.Gesture_Touch_Point_Data) @by_ref; [[The current data.]]
+         }
+      }
+      @property prev_data {
+         [[This property holds the data struct of the second-most recent touch point.
+           If there is only one touch point active, it will return NULL.
+         ]]
+         get {}
+         values {
+            data: const(Efl.Canvas.Gesture_Touch_Point_Data) @by_ref; [[The previous touch point's data.]]
+         }
+      }
+      data_get @const {
+         [[This fetches the data for a specified touch point.]]
+         params {
+            @in id: uint; [[The id of the touch point to return.]]
+         }
+         return: const(Efl.Canvas.Gesture_Touch_Point_Data) @by_ref; [[The specified data if it exists.]]
       }
       /* FIXME: finger_list was broken by design - TODO */
    }

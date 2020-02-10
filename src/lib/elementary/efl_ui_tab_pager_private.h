@@ -6,6 +6,7 @@ typedef struct _Efl_Ui_Tab_Pager_Data                   Efl_Ui_Tab_Pager_Data;
 struct _Efl_Ui_Tab_Pager_Data
 {
    Eo                                      *tab_bar;
+   Eo                                      *spotlight;
 };
 
 

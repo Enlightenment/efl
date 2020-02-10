@@ -1,4 +1,5 @@
 class Scope {
+   [[Docs for class Scope. @since 1.66]]
    methods {
       @property a @protected {
          get {

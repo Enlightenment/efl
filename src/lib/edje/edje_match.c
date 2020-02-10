@@ -112,8 +112,8 @@ _edje_match_states_insert(Edje_States *list,
 
 static void
 _edje_match_states_clear(Edje_States *list,
-                         EINA_UNUSED unsigned int patterns_size,
-                         EINA_UNUSED unsigned int patterns_max_length)
+                         unsigned int patterns_size EINA_UNUSED,
+                         unsigned int patterns_max_length EINA_UNUSED)
 {
    list->size = 0;
 }
@@ -753,7 +753,7 @@ _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp)
 static Eina_Rbtree_Direction
 _edje_signal_source_node_cmp(const Edje_Signal_Source_Char *n1,
                              const Edje_Signal_Source_Char *n2,
-                             EINA_UNUSED void *data)
+                             void *data EINA_UNUSED)
 {
    int cmp;
 
@@ -766,7 +766,7 @@ _edje_signal_source_node_cmp(const Edje_Signal_Source_Char *n1,
 static int
 _edje_signal_source_key_cmp(const Edje_Signal_Source_Char *node,
                             const char *sig,
-                            EINA_UNUSED int length,
+                            int length EINA_UNUSED,
                             const char *source)
 {
    int cmp;
@@ -877,7 +877,7 @@ edje_match_signal_source_hash_get(const char *sig,
 }
 
 void
-edje_match_signal_source_free(Edje_Signal_Source_Char *key, EINA_UNUSED void *data)
+edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data EINA_UNUSED)
 {
    eina_inarray_flush(&key->list);
    free(key);

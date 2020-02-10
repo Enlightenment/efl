@@ -1,4 +1,5 @@
 class Class_Funcs {
+   [[Docs for class Class_Funcs. @since 1.66]]
    methods {
       @property a @static {
          get {

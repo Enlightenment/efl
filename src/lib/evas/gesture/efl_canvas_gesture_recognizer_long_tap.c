@@ -1,6 +1,6 @@
 #include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS
+#define MY_CLASS                      EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS
 
 #define EFL_GESTURE_LONG_TAP_TIME_OUT 1.2
 
@@ -29,6 +29,7 @@ _long_tap_timeout_cb(void *data)
 
    /* FIXME: Needs to propagate this event back to evas! */
    pd->is_timeout = EINA_TRUE;
+   pd->timeout = NULL;
 
    efl_gesture_state_set(pd->gesture, EFL_GESTURE_STATE_UPDATED);
    efl_event_callback_call(pd->target, EFL_EVENT_GESTURE_LONG_TAP, pd->gesture);
@@ -43,20 +44,19 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
                                                                                 Efl_Object *watched,
                                                                                 Efl_Canvas_Gesture_Touch *event)
 {
-   double length; // Manhattan distance
+   double length, start_timeout = pd->start_timeout; // Manhattan distance
    double timeout = EFL_GESTURE_LONG_TAP_TIME_OUT;
    Eina_Position2D pos;
    Eina_Vector2 dist;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-   Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    pd->target = watched;
    pd->gesture = gesture;
 
-   if (!pd->start_timeout)
+   if (!EINA_DBL_NONZERO(start_timeout))
      {
         double time;
-        Eina_Value *val =  efl_gesture_recognizer_config_get(obj, "glayer_long_tap_start_timeout");
+        Eina_Value *val = _recognizer_config_get(obj, "glayer_long_tap_start_timeout");
 
         if (val)
           {
@@ -65,76 +65,75 @@ _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(
           }
      }
    else
-     timeout = pd->start_timeout;
-
+     timeout = start_timeout;
 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-        {
-           pos = efl_gesture_touch_start_point_get(event);
-           efl_gesture_hotspot_set(gesture, pos);
+      {
+         pos = efl_gesture_touch_start_point_get(event);
+         efl_gesture_hotspot_set(gesture, pos);
 
-           if (pd->timeout)
-             {
-                ecore_timer_del(pd->timeout);
-             }
-           pd->timeout = ecore_timer_add(timeout,
-                                         _long_tap_timeout_cb, pd);
+         if (pd->timeout)
+           {
+              ecore_timer_del(pd->timeout);
+           }
+         pd->timeout = ecore_timer_add(timeout,
+                                       _long_tap_timeout_cb, pd);
 
-           result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
+         result = EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
 
-           break;
-        }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
-        {
-           dist = efl_gesture_touch_distance(event, 0);
-           length = fabs(dist.x) + fabs(dist.y);
+      {
+         dist = efl_gesture_touch_distance(event, 0);
+         length = fabs(dist.x) + fabs(dist.y);
 
-           if ((efl_gesture_touch_multi_touch_get(event)) || (length > rd->finger_size))
-             {
-                if (pd->timeout)
-                  {
-                     ecore_timer_del(pd->timeout);
-                     pd->timeout = NULL;
-                  }
+         if ((efl_gesture_touch_multi_touch_get(event)) || (length > pd->finger_size))
+           {
+              if (pd->timeout)
+                {
+                   ecore_timer_del(pd->timeout);
+                   pd->timeout = NULL;
+                }
 
-                result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-             }
-           else
-             {
-                result = EFL_GESTURE_RECOGNIZER_RESULT_MAYBE;
-             }
+              result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+           }
+         else
+           {
+              result = EFL_GESTURE_RECOGNIZER_RESULT_MAYBE;
+           }
 
-           break;
-        }
+         break;
+      }
 
       case EFL_GESTURE_TOUCH_STATE_END:
-        {
-           if (pd->timeout)
-             {
-                ecore_timer_del(pd->timeout);
-                pd->timeout = NULL;
-             }
+      {
+         if (pd->timeout)
+           {
+              ecore_timer_del(pd->timeout);
+              pd->timeout = NULL;
+           }
 
-           if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
-               !efl_gesture_touch_multi_touch_get(event))
-             {
-                dist = efl_gesture_touch_distance(event, 0);
-                length = fabs(dist.x) + fabs(dist.y);
-                if (length <= rd->finger_size && pd->is_timeout)
-                  {
-                     result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
-                  }
-                else
-                  {
-                     result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
-                  }
-             }
+         if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE &&
+             !efl_gesture_touch_multi_touch_get(event))
+           {
+              dist = efl_gesture_touch_distance(event, 0);
+              length = fabs(dist.x) + fabs(dist.y);
+              if (length <= pd->finger_size && pd->is_timeout)
+                {
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
+                }
+              else
+                {
+                   result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+                }
+           }
 
-           break;
-        }
+         break;
+      }
 
       default:
 

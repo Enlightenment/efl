@@ -517,6 +517,17 @@ _elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
 }
 
 EOLIAN static void
+_elm_index_efl_canvas_group_group_calculate(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
+{
+   Evas_Coord minw = -1, minh = -1;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+EOLIAN static void
 _elm_index_item_efl_object_destructor(Eo *eo_item EINA_UNUSED, Elm_Index_Item_Data *it)
 {
    ELM_INDEX_DATA_GET(WIDGET(it), sd);
@@ -1693,6 +1704,7 @@ _elm_index_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UN
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_INDEX_EXTRA_OPS \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_index), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_index)
 
 #include "elm_index_item_eo.c"

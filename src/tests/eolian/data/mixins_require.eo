@@ -2,6 +2,7 @@ import base;
 import class_simple;
 
 mixin Mixins.Require requires Base {
+  [[Docs for mixin Mixins.Require. @since 1.66]]
   methods {
     test {
 

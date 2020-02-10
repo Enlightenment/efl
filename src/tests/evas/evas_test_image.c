@@ -1117,6 +1117,50 @@ EFL_START_TEST(evas_object_image_9patch)
 }
 EFL_END_TEST
 
+EFL_START_TEST(evas_object_image_save_from_proxy)
+{
+   Evas *e;
+   Evas_Object *obj, *proxy, *ref;
+   int w, h, r_w, r_h;
+   const uint32_t *d, *r_d;
+   const char *img_path, *img_path2;
+   Eina_Bool ret;
+
+   e = _setup_evas();
+   img_path = TESTS_IMG_DIR "/Pic1.png";
+   img_path2 = TESTS_IMG_DIR "/Pic1_saved.png";
+
+   obj = evas_object_image_add(e);
+   proxy = evas_object_image_add(e);
+   ref = evas_object_image_add(e);
+
+   evas_object_image_file_set(obj, img_path, NULL);
+   fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
+   evas_object_image_size_get(obj, &w, &h);
+   d = evas_object_image_data_get(obj, EINA_FALSE);
+
+   evas_object_image_source_set(proxy, obj);
+   ret = evas_object_image_save(proxy, img_path2, NULL, NULL);
+   fail_if(!ret);
+
+   evas_object_image_file_set(ref, img_path2, NULL);
+   fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
+   evas_object_image_size_get(ref, &r_w, &r_h);
+   r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+   fail_if(w != r_w || h != r_h);
+   fail_if(memcmp(d, r_d, w * h * 4));
+
+   evas_object_del(proxy);
+   evas_object_del(obj);
+   evas_object_del(ref);
+
+   remove(img_path2);
+
+   evas_free(e);
+}
+EFL_END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_api);
@@ -1143,6 +1187,7 @@ void evas_test_image_object(TCase *tc)
    tcase_add_test(tc, evas_object_image_partially_load_orientation);
    tcase_add_test(tc, evas_object_image_cached_data_comparision);
    tcase_add_test(tc, evas_object_image_9patch);
+   tcase_add_test(tc, evas_object_image_save_from_proxy);
 }
 
 

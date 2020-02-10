@@ -8,6 +8,7 @@ pub_eo_files = [
   'efl_canvas_gesture_momentum.eo',
   'efl_canvas_gesture_flick.eo',
   'efl_canvas_gesture_zoom.eo',
+  'efl_canvas_gesture_custom.eo',
   'efl_canvas_gesture_recognizer.eo',
   'efl_canvas_gesture_recognizer_tap.eo',
   'efl_canvas_gesture_recognizer_double_tap.eo',
@@ -16,6 +17,7 @@ pub_eo_files = [
   'efl_canvas_gesture_recognizer_momentum.eo',
   'efl_canvas_gesture_recognizer_flick.eo',
   'efl_canvas_gesture_recognizer_zoom.eo',
+  'efl_canvas_gesture_recognizer_custom.eo',
   'efl_canvas_gesture_manager.eo',
   'efl_canvas_gesture_events.eo'
 ]
@@ -70,6 +72,7 @@ evas_src += files([
   'efl_canvas_gesture_momentum.c',
   'efl_canvas_gesture_flick.c',
   'efl_canvas_gesture_zoom.c',
+  'efl_canvas_gesture_custom.c',
   'efl_canvas_gesture_recognizer.c',
   'efl_canvas_gesture_recognizer_tap.c',
   'efl_canvas_gesture_recognizer_double_tap.c',
@@ -78,6 +81,7 @@ evas_src += files([
   'efl_canvas_gesture_recognizer_momentum.c',
   'efl_canvas_gesture_recognizer_flick.c',
   'efl_canvas_gesture_recognizer_zoom.c',
+  'efl_canvas_gesture_recognizer_custom.c',
   'efl_canvas_gesture_manager.c',
 ])
 

@@ -1033,41 +1033,7 @@ eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
         return;
      }
 
-   MATRIX_XX(out) = MATRIX_XX(mat_a) * MATRIX_XX(mat_b) + MATRIX_YX(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_XW(mat_b);
-   MATRIX_YX(out) = MATRIX_XX(mat_a) * MATRIX_YX(mat_b) + MATRIX_YX(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_YW(mat_b);
-   MATRIX_ZX(out) = MATRIX_XX(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YX(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_ZW(mat_b);
-   MATRIX_WX(out) = MATRIX_XX(mat_a) * MATRIX_WX(mat_b) + MATRIX_YX(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_WW(mat_b);
-
-   MATRIX_XY(out) = MATRIX_XY(mat_a) * MATRIX_XX(mat_b) + MATRIX_YY(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_XW(mat_b);
-   MATRIX_YY(out) = MATRIX_XY(mat_a) * MATRIX_YX(mat_b) + MATRIX_YY(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_YW(mat_b);
-   MATRIX_ZY(out) = MATRIX_XY(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YY(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_ZW(mat_b);
-   MATRIX_WY(out) = MATRIX_XY(mat_a) * MATRIX_WX(mat_b) + MATRIX_YY(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_WW(mat_b);
-
-   MATRIX_XZ(out) = MATRIX_XZ(mat_a) * MATRIX_XX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_XW(mat_b);
-   MATRIX_YZ(out) = MATRIX_XZ(mat_a) * MATRIX_YX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_YW(mat_b);
-   MATRIX_ZZ(out) = MATRIX_XZ(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_ZW(mat_b);
-   MATRIX_WZ(out) = MATRIX_XZ(mat_a) * MATRIX_WX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_WW(mat_b);
-
-   MATRIX_XW(out) = MATRIX_XW(mat_a) * MATRIX_XX(mat_b) + MATRIX_YW(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_XW(mat_b);
-   MATRIX_YW(out) = MATRIX_XW(mat_a) * MATRIX_YX(mat_b) + MATRIX_YW(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_YW(mat_b);
-   MATRIX_ZW(out) = MATRIX_XW(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YW(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_ZW(mat_b);
-   MATRIX_WW(out) = MATRIX_XW(mat_a) * MATRIX_WX(mat_b) + MATRIX_YW(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_WW(mat_b);
+   eina_matrix4_compose(mat_a, mat_b, out);
 }
 
 EAPI void
@@ -1098,6 +1064,176 @@ eina_matrix4_ortho_set(Eina_Matrix4 *m,
    MATRIX_WY(m) = -(top + bottom) / h;
    MATRIX_WZ(m) = (dfar + dnear) / depth;
    MATRIX_WW(m) = 1.0f;
+}
+
+EAPI void
+eina_matrix4_compose(const Eina_Matrix4 *mat_a,
+                     const Eina_Matrix4 *mat_b,
+                     Eina_Matrix4 *out)
+{
+   double xx, xy, xz, xw,
+          yx, yy, yz, yw,
+          zx, zy, zz, zw,
+          wx, wy, wz, ww;
+
+   xx = MATRIX_XX(mat_a) * MATRIX_XX(mat_b) + MATRIX_XY(mat_a) * MATRIX_YX(mat_b) +
+        MATRIX_XZ(mat_a) * MATRIX_ZX(mat_b) + MATRIX_XW(mat_a) * MATRIX_WX(mat_b);
+   xy = MATRIX_XX(mat_a) * MATRIX_XY(mat_b) + MATRIX_XY(mat_a) * MATRIX_YY(mat_b) +
+        MATRIX_XZ(mat_a) * MATRIX_ZY(mat_b) + MATRIX_XW(mat_a) * MATRIX_WY(mat_b);
+   xz = MATRIX_XX(mat_a) * MATRIX_XZ(mat_b) + MATRIX_XY(mat_a) * MATRIX_YZ(mat_b) +
+        MATRIX_XZ(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_XW(mat_a) * MATRIX_WZ(mat_b);
+   xw = MATRIX_XX(mat_a) * MATRIX_XW(mat_b) + MATRIX_XY(mat_a) * MATRIX_YW(mat_b) +
+        MATRIX_XZ(mat_a) * MATRIX_ZW(mat_b) + MATRIX_XW(mat_a) * MATRIX_WW(mat_b);
+
+   yx = MATRIX_YX(mat_a) * MATRIX_XX(mat_b) + MATRIX_YY(mat_a) * MATRIX_YX(mat_b) +
+        MATRIX_YZ(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YW(mat_a) * MATRIX_WX(mat_b);
+   yy = MATRIX_YX(mat_a) * MATRIX_XY(mat_b) + MATRIX_YY(mat_a) * MATRIX_YY(mat_b) +
+        MATRIX_YZ(mat_a) * MATRIX_ZY(mat_b) + MATRIX_YW(mat_a) * MATRIX_WY(mat_b);
+   yz = MATRIX_YX(mat_a) * MATRIX_XZ(mat_b) + MATRIX_YY(mat_a) * MATRIX_YZ(mat_b) +
+        MATRIX_YZ(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_YW(mat_a) * MATRIX_WZ(mat_b);
+   yw = MATRIX_YX(mat_a) * MATRIX_XW(mat_b) + MATRIX_YY(mat_a) * MATRIX_YW(mat_b) +
+        MATRIX_YZ(mat_a) * MATRIX_ZW(mat_b) + MATRIX_YW(mat_a) * MATRIX_WW(mat_b);
+
+   zx = MATRIX_ZX(mat_a) * MATRIX_XX(mat_b) + MATRIX_ZY(mat_a) * MATRIX_YX(mat_b) +
+        MATRIX_ZZ(mat_a) * MATRIX_ZX(mat_b) + MATRIX_ZW(mat_a) * MATRIX_WX(mat_b);
+   zy = MATRIX_ZX(mat_a) * MATRIX_XY(mat_b) + MATRIX_ZY(mat_a) * MATRIX_YY(mat_b) +
+        MATRIX_ZZ(mat_a) * MATRIX_ZY(mat_b) + MATRIX_ZW(mat_a) * MATRIX_WY(mat_b);
+   zz = MATRIX_ZX(mat_a) * MATRIX_XZ(mat_b) + MATRIX_ZY(mat_a) * MATRIX_YZ(mat_b) +
+        MATRIX_ZZ(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_ZW(mat_a) * MATRIX_WZ(mat_b);
+   zw = MATRIX_ZX(mat_a) * MATRIX_XW(mat_b) + MATRIX_ZY(mat_a) * MATRIX_YW(mat_b) +
+        MATRIX_ZZ(mat_a) * MATRIX_ZW(mat_b) + MATRIX_ZW(mat_a) * MATRIX_WW(mat_b);
+
+   wx = MATRIX_WX(mat_a) * MATRIX_XX(mat_b) + MATRIX_WY(mat_a) * MATRIX_YX(mat_b) +
+        MATRIX_WZ(mat_a) * MATRIX_ZX(mat_b) + MATRIX_WW(mat_a) * MATRIX_WX(mat_b);
+   wy = MATRIX_WX(mat_a) * MATRIX_XY(mat_b) + MATRIX_WY(mat_a) * MATRIX_YY(mat_b) +
+        MATRIX_WZ(mat_a) * MATRIX_ZY(mat_b) + MATRIX_WW(mat_a) * MATRIX_WY(mat_b);
+   wz = MATRIX_WX(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_YZ(mat_b) +
+        MATRIX_WZ(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_WZ(mat_b);
+   ww = MATRIX_WX(mat_a) * MATRIX_XW(mat_b) + MATRIX_WY(mat_a) * MATRIX_YW(mat_b) +
+        MATRIX_WZ(mat_a) * MATRIX_ZW(mat_b) + MATRIX_WW(mat_a) * MATRIX_WW(mat_b);
+
+   MATRIX_XX(out) = xx;
+   MATRIX_XY(out) = xy;
+   MATRIX_XZ(out) = xz;
+   MATRIX_XW(out) = xw;
+
+   MATRIX_YX(out) = yx;
+   MATRIX_YY(out) = yy;
+   MATRIX_YZ(out) = yz;
+   MATRIX_YW(out) = yw;
+
+   MATRIX_ZX(out) = zx;
+   MATRIX_ZY(out) = zy;
+   MATRIX_ZZ(out) = zz;
+   MATRIX_ZW(out) = zw;
+
+   MATRIX_WX(out) = wx;
+   MATRIX_WY(out) = wy;
+   MATRIX_WZ(out) = wz;
+   MATRIX_WW(out) = ww;
+}
+
+EAPI void
+eina_matrix4_translate(Eina_Matrix4 *t, double tx, double ty, double tz)
+{
+   Eina_Matrix4 tmp;
+   MATRIX_XX(&tmp) = 1;
+   MATRIX_XY(&tmp) = 0;
+   MATRIX_XZ(&tmp) = 0;
+   MATRIX_XW(&tmp) = tx;
+
+   MATRIX_YX(&tmp) = 0;
+   MATRIX_YY(&tmp) = 1;
+   MATRIX_YZ(&tmp) = 0;
+   MATRIX_YW(&tmp) = ty;
+
+   MATRIX_ZX(&tmp) = 0;
+   MATRIX_ZY(&tmp) = 0;
+   MATRIX_ZZ(&tmp) = 1;
+   MATRIX_ZW(&tmp) = tz;
+
+   MATRIX_WX(&tmp) = 0;
+   MATRIX_WY(&tmp) = 0;
+   MATRIX_WZ(&tmp) = 0;
+   MATRIX_WW(&tmp) = 1;
+
+   eina_matrix4_compose(&tmp, t, t);
+}
+
+EAPI void
+eina_matrix4_scale(Eina_Matrix4 *t, double sx, double sy, double sz)
+{
+   Eina_Matrix4 tmp;
+   MATRIX_XX(&tmp) = sx;
+   MATRIX_XY(&tmp) = 0;
+   MATRIX_XZ(&tmp) = 0;
+   MATRIX_XW(&tmp) = 0;
+
+   MATRIX_YX(&tmp) = 0;
+   MATRIX_YY(&tmp) = sy;
+   MATRIX_YZ(&tmp) = 0;
+   MATRIX_YW(&tmp) = 0;
+
+   MATRIX_ZX(&tmp) = 0;
+   MATRIX_ZY(&tmp) = 0;
+   MATRIX_ZZ(&tmp) = sz;
+   MATRIX_ZW(&tmp) = 0;
+
+   MATRIX_WX(&tmp) = 0;
+   MATRIX_WY(&tmp) = 0;
+   MATRIX_WZ(&tmp) = 0;
+   MATRIX_WW(&tmp) = 1;
+
+   eina_matrix4_compose(&tmp, t, t);
+}
+
+EAPI void
+eina_matrix4_rotate(Eina_Matrix4 *t, double rad, Eina_Matrix_Axis axis)
+{
+   double c, s;
+
+   /* Note: Local functions do not guarantee accuracy.
+    *       Errors occur in the calculation of very small or very large numbers.
+    *       Local cos and sin functions differ from the math header cosf and sinf functions
+    *       by result values. The 4th decimal place is different.
+    *       But local functions are certainly faster than functions in math library.
+    *       Later we would want someone to look at this and improve accuracy.
+    */
+#if 1
+   c = cos(rad);
+   s = sin(rad);
+#else
+   /* normalize the angle between -pi,pi */
+   rad = fmod(rad + M_PI, 2 * M_PI) - M_PI;
+   c = _cos(rad);
+   s = _sin(rad);
+#endif
+
+   Eina_Matrix4 tmp;
+   eina_matrix4_identity(&tmp);
+
+   switch (axis)
+     {
+        case EINA_MATRIX_AXIS_X:
+          MATRIX_YY(&tmp) = c;
+          MATRIX_YZ(&tmp) = -s;
+          MATRIX_ZY(&tmp) = s;
+          MATRIX_ZZ(&tmp) = c;
+          break;
+        case EINA_MATRIX_AXIS_Y:
+          MATRIX_XX(&tmp) = c;
+          MATRIX_XZ(&tmp) = s;
+          MATRIX_ZX(&tmp) = -s;
+          MATRIX_ZZ(&tmp) = c;
+          break;
+        case EINA_MATRIX_AXIS_Z:
+          MATRIX_XX(&tmp) = c;
+          MATRIX_XY(&tmp) = -s;
+          MATRIX_YX(&tmp) = s;
+          MATRIX_YY(&tmp) = c;
+          break;
+     }
+   eina_matrix4_compose(&tmp, t, t);
 }
 
 EAPI void

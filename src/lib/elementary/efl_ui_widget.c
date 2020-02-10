@@ -2779,7 +2779,7 @@ _efl_ui_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EI
 
 #define ADD_PTR_LIST(name) \
         Efl_Dbg_Info* name = EFL_DBG_INFO_LIST_APPEND(focus, ""#name""); \
-        _convert(name, eina_list_iterator_new(rel->name));
+        _convert(name, rel->name);
 
         ADD_PTR_LIST(top)
         ADD_PTR_LIST(down)

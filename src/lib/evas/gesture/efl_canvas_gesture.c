@@ -1,3 +1,4 @@
+#define EFL_CANVAS_GESTURE_PROTECTED
 #include "efl_canvas_gesture_private.h"
 
 #define MY_CLASS EFL_CANVAS_GESTURE_CLASS
@@ -28,7 +29,6 @@ _efl_canvas_gesture_hotspot_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd
    pd->hotspot = hotspot;
 }
 
-
 EOLIAN static Eina_Position2D
 _efl_canvas_gesture_hotspot_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
 {
@@ -41,11 +41,22 @@ _efl_canvas_gesture_timestamp_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *
    pd->timestamp = timestamp;
 }
 
-
 EOLIAN static unsigned int
 _efl_canvas_gesture_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
 {
    return pd->timestamp;
+}
+
+EOLIAN static void
+_efl_canvas_gesture_touch_count_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd, unsigned int touch_count)
+{
+   pd->touch_count = touch_count;
+}
+
+EOLIAN static unsigned int
+_efl_canvas_gesture_touch_count_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
+{
+   return pd->touch_count;
 }
 
 #include "efl_canvas_gesture.eo.c"

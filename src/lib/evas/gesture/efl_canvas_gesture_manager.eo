@@ -22,13 +22,6 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
             @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object.]]
          }
       }
-      recognizer_get {
-         [[Returns the event recognizer object associated with the given $gesture_type.]]
-         params {
-            @in gesture_type: Efl.Canvas.Gesture_Recognizer_Type; [[The gesture event type.]]
-         }
-         return: const(Efl.Canvas.Gesture_Recognizer); [[The gesture recognizer.]]
-      }
       @property config {
          [[This property holds configuration values for the recognizer.]]
          set {
@@ -42,6 +35,9 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
             value: any_value_ref; [[Value of the property.]]
          }
       }
+   }
+   events {
+      config,changed: string; [[Called when a config value has been changed for the manager object. Passed string is the name of the value.]]
    }
    implements {
       Efl.Object.constructor;

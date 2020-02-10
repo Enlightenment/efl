@@ -1,0 +1,11 @@
+class @beta Custom_Recognizer2 extends Efl.Canvas.Gesture_Recognizer_Custom
+{
+   [[Custom gesture recognizer test class.
+   ]]
+   c_prefix: custom_recognizer2;
+   implements {
+      Efl.Object.finalize;
+      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.recognize;
+   }
+}

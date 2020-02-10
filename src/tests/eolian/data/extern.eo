@@ -1,22 +1,23 @@
 /* regular type */
-type Foo: int;
+type Foo: int; [[Docs for typedef Foo. @since 1.66]]
 
 /* extern type */
-type @extern Evas.Coord: int;
+type @extern Evas.Coord: int; [[Docs for typedef Evas.Coord. @since 1.66]]
 
 /* regular struct */
-struct X
-{
+struct X {
+   [[Docs for struct X. @since 1.66]]
    field: int;
 }
 
 /* extern struct */
-struct @extern Y
-{
+struct @extern Y {
+   [[Docs for struct Y. @since 1.66]]
    field: int;
 }
 
 class Extern {
+   [[Docs for class Extern. @since 1.66]]
    methods {
       foo {
          params {

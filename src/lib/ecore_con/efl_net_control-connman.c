@@ -212,6 +212,7 @@ _efl_net_control_agent_request_input(const Eldbus_Service_Interface *service, co
    Efl_Net_Control_Agent_Request_Input event = { };
    Efl_Net_Control_Agent_Request_Input_Information *info;
    Eldbus_Message_Iter *array, *entry;
+   Eina_Array infos;
    const char *path;
 
    DBG("Agent %p requested input %s", o, eldbus_message_path_get(msg));
@@ -231,6 +232,8 @@ _efl_net_control_agent_request_input(const Eldbus_Service_Interface *service, co
    if (!eldbus_message_arguments_get(msg, "oa{sv}", &path, &array))
      goto err;
 
+   eina_array_step_set(&infos, sizeof (Eina_Array), 4);
+   event.informational = eina_array_accessor_new(&infos);
    event.access_point = _efl_net_control_access_point_find(pd, path);
 
    while (eldbus_message_iter_get_and_next(array, 'e', &entry))
@@ -261,7 +264,7 @@ _efl_net_control_agent_request_input(const Eldbus_Service_Interface *service, co
           {
              info = _efl_net_control_agent_informational_get(name, var);
              if (info)
-               event.informational = eina_list_append(event.informational, info);
+               eina_array_push(&infos, info);
              else
                WRN("Unknown field name '%s'", name);
           }
@@ -270,7 +273,9 @@ _efl_net_control_agent_request_input(const Eldbus_Service_Interface *service, co
    pd->agent_request_input.msg = eldbus_message_ref((Eldbus_Message *)msg);
    efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_AGENT_REQUEST_INPUT, &event);
 
-   EINA_LIST_FREE(event.informational, info) free(info);
+   eina_accessor_free(event.informational);
+   while ((info = eina_array_pop(&infos))) free(info);
+   eina_array_flush(&infos);
 
    return NULL; /* reply later */
 

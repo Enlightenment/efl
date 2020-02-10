@@ -1,7 +1,10 @@
 
-enum @beta Efl.Ui.Vg_Animation_State
+enum Efl.Ui.Vg_Animation_State
 {
-   [[State of vg_animation]]
+   [[State of vg_animation
+
+     @since 1.24
+   ]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
    playing, [[Animation is playing.]]
    playing_backwards, [[Animation is playing backwards (rewinding).]]
@@ -10,7 +13,7 @@ enum @beta Efl.Ui.Vg_Animation_State
           Otherwise after finished animation or stopped forcibly by request.]]
 }
 
-class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player, Efl.Playable, Efl.Part
+class Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Player, Efl.Playable, Efl.Part
 {
    [[Elementary Vector Graphcis Animation class.
      Vg Animation is designed to show and play animation of
@@ -22,6 +25,8 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
      animation information. Available vector data file formats are SVG, JSON and EET.
      @Efl.Ui.Vg_Animation currently only supports the animation information contained in
      JSON (known as Lottie file as well) and EET files.
+
+     @since 1.24
    ]]
    event_c_prefix: efl_ui_vg_animation;
    methods {
@@ -37,25 +42,6 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
          values {
             frame_num: int; [[Current frame number.]]
          }
-      }
-      playing_sector {
-         [[Play animation of sector one time instantly when it's available.
-
-           If end sector is NULL, only start sector is referenced.
-           If both the start and end sectors are valid,
-           Play is played and stoped at starting point of each sector.
-
-           If start is null and end is valid, playback starts from 0 frame to the start frame of the end sector.
-           If both sectors start and end are invalid. Play from 0 frame to the last frame of vg animation object.
-
-           Note: This method use to @.min_frame, @.max_frame (@.min_progress, @.max_progress) internally.
-                 So if you have changed the min or max frame(progress) it can be changed to the sector frame.
-         ]]
-         params {
-            @in start: string; [[ The name of start sector ]]
-            @in end: string; [[ The name of end sector ]]
-         }
-         return: bool; [[$true when it's successful. $false otherwise.]]
       }
       @property default_view_size {
          [[The default view size that specified from vector resource.
@@ -132,7 +118,26 @@ class @beta Efl.Ui.Vg_Animation extends Efl.Ui.Widget implements Efl.Gfx.View, E
                             ]]
          }
       }
-      value_provider_override{
+      playing_sector @beta {
+         [[Play animation of sector one time instantly when it's available.
+
+           If end sector is NULL, only start sector is referenced.
+           If both the start and end sectors are valid,
+           Play is played and stoped at starting point of each sector.
+
+           If start is null and end is valid, playback starts from 0 frame to the start frame of the end sector.
+           If both sectors start and end are invalid. Play from 0 frame to the last frame of vg animation object.
+
+           Note: This method use to @.min_frame, @.max_frame (@.min_progress, @.max_progress) internally.
+                 So if you have changed the min or max frame(progress) it can be changed to the sector frame.
+         ]]
+         params {
+            @in start: string; [[ The name of start sector ]]
+            @in end: string; [[ The name of end sector ]]
+         }
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      value_provider_override @beta {
          [[Override each value of the animation object.
            Values can be properties of Efl.Gfx.Vg.Value_provider such as color and matrix information.
 

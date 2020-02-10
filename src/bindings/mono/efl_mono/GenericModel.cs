@@ -167,6 +167,28 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
        return model.GetChildrenSliceAsync(start, count, token);
    }
 
+   /// <summary>Get children as specified by iterator.
+   /// 
+   /// Provided index have to be between 0 and <see cref="Efl.IModel.GetChildrenCount"/>.
+   /// 
+   /// This function might rely on <see cref="Efl.IModel.GetChildrenSlice"/> as a fallback.</summary>
+   /// <param name="indices">Indices of the requested children.</param>
+   /// <returns>Array of children</returns>
+   public Eina.Future GetChildrenIndex(IEnumerable<uint> indices)
+   {
+       return model.GetChildrenIndex(indices);
+   }
+
+   /// <summary>Async wrapper for <see cref="GetChildrenIndex" />.
+   /// </summary>
+   /// <param name="indices">Indices of the requested children.</param>
+   /// <param name="token">Token to notify the async operation of external request to cancel.</param>
+   /// <returns>An async task wrapping the result of the operation.</returns>
+   public System.Threading.Tasks.Task<Eina.Value> GetChildrenIndexAsync(IEnumerable<uint> indices, System.Threading.CancellationToken token = default(System.Threading.CancellationToken))
+   {
+       return model.GetChildrenIndexAsync(indices, token);
+   }
+
    /// <summary>Event triggered when properties on the wrapped model changes.</summary>
    public event EventHandler<Efl.ModelPropertiesChangedEventArgs> PropertiesChangedEvent
    {

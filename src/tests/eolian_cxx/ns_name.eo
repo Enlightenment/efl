@@ -1,3 +1,4 @@
 class Ns.Name {
+   [[Docs for NS.Name. @since 1.66]]
 }
 

@@ -73,7 +73,7 @@ public static class TestModel {
         parent.Visible = false;
         var factory = new Efl.Ui.ItemFactory<Efl.Ui.Button>(parent);
         factory.PropertyBoundEvent += (object sender, Efl.Ui.PropertyBindPropertyBoundEventArgs args) => {
-            propertyBound = args.arg;
+            propertyBound = args.Arg;
             callbackCalled = true;
         };
 

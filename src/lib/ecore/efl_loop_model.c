@@ -108,6 +108,42 @@ _efl_loop_model_efl_model_property_ready_get(Eo *obj, void *pd EINA_UNUSED, cons
    return efl_future_then(obj, f);
 }
 
+static Eina_Value
+_unpack_from_array(void *data EINA_UNUSED, Eina_Value v, const Eina_Future *f EINA_UNUSED)
+{
+   Eo *object = NULL;
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR) return v;
+   if (eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY) return eina_value_error_init(EINVAL);
+   if (eina_value_array_count(&v) != 1) return eina_value_error_init(EINVAL);
+
+   eina_value_array_get(&v, 0, &object);
+
+   return eina_value_object_init(object);
+}
+
+static Eina_Future *
+_efl_loop_model_efl_model_children_index_get(Eo *obj, void *pd EINA_UNUSED, Eina_Iterator *indexes)
+{
+   Eina_Future *r;
+   Eina_Array futures;
+   unsigned int idx;
+
+   eina_array_step_set(&futures, sizeof (Eina_Array), 8);
+
+   EINA_ITERATOR_FOREACH(indexes, idx)
+     eina_array_push(&futures, eina_future_then(efl_model_children_slice_get(obj, idx, 1), _unpack_from_array, NULL));
+   eina_iterator_free(indexes);
+
+   r = efl_future_then(obj, eina_future_all_iterator(eina_array_iterator_new(&futures)),
+                       .success = _efl_future_all_repack,
+                       .success_type = EINA_VALUE_TYPE_ARRAY);
+
+   eina_array_flush(&futures);
+
+   return r;
+}
+
 static void
 _noref_death(void *data EINA_UNUSED, const Efl_Event *event)
 {
