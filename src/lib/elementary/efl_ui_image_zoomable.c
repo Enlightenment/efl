@@ -3004,7 +3004,11 @@ _efl_ui_image_zoomable_animate_cb(void *data)
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
    _grid_clear_all(data);
 
-   if (!sd->anim) return ECORE_CALLBACK_CANCEL;
+   if (!sd->anim)
+     {
+        sd->anim_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    sd->cur_frame++;
    if ((sd->frame_count > 0) && (sd->cur_frame > sd->frame_count))
