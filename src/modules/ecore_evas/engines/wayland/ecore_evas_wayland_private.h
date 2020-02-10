@@ -34,12 +34,23 @@
 
 typedef struct _Ecore_Evas_Engine_Wl_Data Ecore_Evas_Engine_Wl_Data;
 
+typedef struct _Ecore_Evas_Wl_Selection_Data Ecore_Evas_Wl_Selection_Data;
+
+struct _Ecore_Evas_Wl_Selection_Data
+{
+   Ecore_Evas_Selection_Callbacks callbacks;
+   Eina_Promise *delivery;
+   Ecore_Wl2_Offer *offer;
+   const char *later_convert;
+   uint32_t sent_serial; //The serial of the last sent selection op
+};
+
 struct _Ecore_Evas_Engine_Wl_Data
 {
    Ecore_Wl2_Display *display;
    Eina_List *regen_objs;
    Ecore_Wl2_Window *parent, *win;
-   Ecore_Event_Handler *sync_handler;
+   Ecore_Event_Handler *sync_handler, *changed_handler, *end_handler, *send_handler, *offer_handler, *dnd_leave_handler, *dnd_motion_handler, *dnd_enter_handler, *dnd_drop_handler, *dnd_end_handler;
    int fx, fy, fw, fh;
    Ecore_Wl2_Frame_Cb_Handle *frame;
    int x_rel;
@@ -47,7 +58,8 @@ struct _Ecore_Evas_Engine_Wl_Data
    uint32_t timestamp;
    Eina_List *devices_list;
    int cw, ch;
-
+   Ecore_Evas_Wl_Selection_Data selection_data[ECORE_EVAS_SELECTION_BUFFER_LAST];
+   Ecore_Wl2_Offer *external_offer;
    struct
      {
         Eina_Bool supported : 1;
