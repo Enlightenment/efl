@@ -6,7 +6,10 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
                          Efl.Player, Efl.Playable, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                          Efl.Gfx.Size_Class
 {
-   [[Edje object class]]
+   [[Edje object class
+
+     The @Efl.Player.autoplay and @Efl.Player.playback_loop properties both default to $true in this class.
+   ]]
    event_c_prefix: efl_layout;
    data: Edje;
    methods {
