@@ -112,7 +112,7 @@ interface Efl.Player
            get {
            }
            values {
-              autoplay: bool; [[Auto play mode, Default is $false.]]
+              autoplay: bool; [[Auto play mode, Default is $false unless specified by the implementing class.]]
            }
         }
         @property playback_loop {
@@ -129,7 +129,7 @@ interface Efl.Player
            get {
            }
            values {
-              looping: bool; [[Loop mode, Default is $false.]]
+              looping: bool; [[Loop mode, Default is $false unless specified by the implementing class.]]
            }
         }
    }
