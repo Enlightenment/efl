@@ -143,6 +143,7 @@ struct _Efl_Ui_Image_Zoomable_Data
    Eina_Bool    orientation_changed : 1;
    Eina_Bool    anim : 1;
    Eina_Bool    autoplay : 1;
+   Eina_Bool    playback_loop : 1;
    Eina_Bool    freeze_want : 1;
    Eina_Bool    show_item: 1;
 };

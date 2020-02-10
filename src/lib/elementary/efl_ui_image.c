@@ -137,7 +137,16 @@ _efl_ui_image_animate_cb(void *data)
 
    sd->cur_frame++;
    if ((sd->frame_count > 0) && (sd->cur_frame > sd->frame_count))
-     sd->cur_frame = sd->cur_frame % sd->frame_count;
+     {
+        if (sd->playback_loop)
+          sd->cur_frame = sd->cur_frame % sd->frame_count;
+        else
+          {
+             sd->anim_timer = NULL;
+             sd->cur_frame = 0;
+             return EINA_FALSE;
+          }
+     }
 
    evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
 
@@ -593,6 +602,7 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
      {
         evas_object_event_callback_add
           (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
+        priv->playback_loop = EINA_TRUE;
      }
    else
      {
@@ -1753,6 +1763,7 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
      {
         edje_object_animation_set(sd->img, anim);
         sd->anim = anim;
+        efl_player_playback_loop_set(sd->img, sd->playback_loop);
         return EINA_TRUE;
      }
    sd->img = elm_image_object_get(obj);
@@ -1818,6 +1829,19 @@ EOLIAN static Eina_Bool
 _efl_ui_image_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 {
    return _efl_ui_image_animated_get_internal(obj, sd);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_player_playback_loop_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool playback_loop)
+{
+   playback_loop = !!playback_loop;
+   sd->playback_loop = playback_loop;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_player_playback_loop_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->playback_loop;
 }
 
 EOLIAN static void

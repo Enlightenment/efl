@@ -104,7 +104,7 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.
       Efl.Player.playback_progress { get; set; }
       Efl.Player.playback_speed { get; set; }
       Efl.Player.autoplay { set; get; }
-      @empty Efl.Player.playback_loop { set; get; }
+      Efl.Player.playback_loop { set; get; }
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Signal.message_send;
       Efl.Layout.Signal.signal_callback_add;

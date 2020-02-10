@@ -98,6 +98,7 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             edje : 1;
    Eina_Bool             anim : 1;
    Eina_Bool             autoplay : 1;
+   Eina_Bool             playback_loop : 1;
    Eina_Bool             paused : 1;
    Eina_Bool             async_enable : 1;
    Eina_Bool             scale_up : 1;
