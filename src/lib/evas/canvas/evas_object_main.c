@@ -171,6 +171,8 @@ _evas_object_pointer_data_get(Evas_Pointer_Data *evas_pdata,
 {
    Evas_Object_Pointer_Data *pdata;
 
+   if (!obj) return NULL;
+
    pdata = evas_object_pointer_data_find(obj, evas_pdata->pointer);
 
    //The pointer does not exist yet - create one.
