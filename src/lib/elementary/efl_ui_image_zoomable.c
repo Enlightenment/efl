@@ -728,6 +728,7 @@ _main_img_preloaded_cb(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    evas_object_show(sd->img);
    sd->main_load_pending = 0;
+   if (sd->autoplay) efl_player_playing_set(obj, EINA_TRUE);
    g = _grid_create(obj);
    if (g)
      {
@@ -3096,6 +3097,28 @@ EOLIAN static Eina_Bool
 _efl_ui_image_zoomable_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return _efl_ui_image_zoomable_animated_get_internal(obj, sd);
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_player_autoplay_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool autoplay)
+{
+   autoplay = !!autoplay;
+   if (sd->autoplay == autoplay) return;
+   sd->autoplay = autoplay;
+   if (!sd->edje)
+     {
+        /* filter cases where we aren't going to immediately start playing */
+        if (!autoplay) return;
+        if (sd->preload_num)
+          return;
+     }
+   efl_player_playing_set(obj, EINA_TRUE);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_player_autoplay_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   return sd->autoplay;
 }
 
 EOLIAN static Eina_Bool

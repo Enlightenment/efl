@@ -52,7 +52,7 @@ class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
       Efl.Player.playback_position { get; set; }
       Efl.Player.playback_progress { get; set; }
       Efl.Player.playback_speed { get; set; }
-      @empty Efl.Player.autoplay { set; get; }
+      Efl.Player.autoplay { set; get; }
       @empty Efl.Player.playback_loop { set; get; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
       Efl.Ui.Zoom.zoom_level { set; get; }
