@@ -545,6 +545,14 @@ ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input)
    return input->selection.offer;
 }
 
+EAPI Ecore_Wl2_Offer*
+ecore_wl2_dnd_offer_get(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+
+   return input->drag.offer;
+}
+
 EAPI uint32_t
 ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
 {

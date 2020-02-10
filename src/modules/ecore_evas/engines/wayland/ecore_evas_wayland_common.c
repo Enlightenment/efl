@@ -4,6 +4,7 @@
 
 #include "ecore_evas_wayland_private.h"
 #include <Evas_Engine_Wayland.h>
+#include "ecore_wl2_internal.h"
 
 extern EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
 extern EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
@@ -32,6 +33,7 @@ static Eina_Array *_ecore_evas_wl_event_hdls;
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 static void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize);
+static void _ecore_evas_wl_selection_init(Ecore_Evas *ee);
 
 /* local functions */
 static void
@@ -1440,6 +1442,15 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    if (wdata->frame) ecore_wl2_window_frame_callback_del(wdata->frame);
    wdata->frame = NULL;
    ecore_event_handler_del(wdata->sync_handler);
+   ecore_event_handler_del(wdata->changed_handler);
+   ecore_event_handler_del(wdata->send_handler);
+   ecore_event_handler_del(wdata->offer_handler);
+   ecore_event_handler_del(wdata->dnd_leave_handler);
+   ecore_event_handler_del(wdata->dnd_enter_handler);
+   ecore_event_handler_del(wdata->dnd_motion_handler);
+   ecore_event_handler_del(wdata->dnd_drop_handler);
+   ecore_event_handler_del(wdata->dnd_end_handler);
+
    if (wdata->win)
      {
         ecore_wl2_window_close_callback_set(wdata->win, NULL, NULL);
@@ -2389,6 +2400,425 @@ _ecore_wl2_devices_setup(Ecore_Evas *ee, Ecore_Wl2_Display *display)
    return r;
 }
 
+static void
+_reeval_seat(unsigned int *seat, Ecore_Evas *ee)
+{
+   if (*seat == 0)
+     *seat = evas_device_seat_id_get(evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT));
+}
+
+static inline void
+_clear_selection(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer selection)
+{
+   Ecore_Evas_Engine_Wl_Data *edata = ee->engine.data;
+   Ecore_Evas_Selection_Callbacks *cbs = &edata->selection_data[selection].callbacks;
+
+   EINA_SAFETY_ON_FALSE_RETURN(cbs->cancel);
+
+   cbs->cancel(ee, selection);
+   eina_array_free(cbs->available_types);
+   memset(cbs, 0, sizeof(Ecore_Evas_Selection_Callbacks));
+}
+
+static void
+_store_selection_cbs(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Eina_Bool (*delivery)(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice), void (*cancel)(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer buffer))
+{
+   Ecore_Evas_Wl_Selection_Data *sdata;
+   Ecore_Evas_Engine_Wl_Data *edata;
+   Ecore_Evas_Selection_Callbacks *cbs;
+
+   edata = ee->engine.data;
+   sdata = &edata->selection_data[selection];
+   cbs = &sdata->callbacks;
+
+   if (cbs->cancel)
+     {
+        _clear_selection(ee, selection);
+     }
+
+   cbs->delivery = delivery;
+   cbs->cancel = cancel;
+   cbs->available_types = available_types;
+}
+
+static inline Ecore_Wl2_Input*
+_fetch_input(Ecore_Evas *ee, unsigned int seat)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   return ecore_wl2_display_input_find(ecore_wl2_window_display_get(wdata->win), seat);
+}
+
+static Eina_Bool
+_ecore_evas_wl_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Eina_Bool (*delivery)(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice), void (*cancel)(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer buffer))
+{
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Evas_Wl_Selection_Data *data = &wdata->selection_data[selection];
+   char *tmp_array[eina_array_count(available_types) + 1];
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER)
+     {
+        _store_selection_cbs(ee, selection, available_types, delivery, cancel);
+        return EINA_TRUE;
+     }
+
+   _reeval_seat(&seat, ee);
+   _store_selection_cbs(ee, selection, available_types, delivery, cancel);
+
+   for (unsigned int i = 0; i < eina_array_count(available_types); ++i)
+     {
+        tmp_array[i] = eina_array_data_get(available_types, i);
+     }
+   tmp_array[eina_array_count(available_types)] = NULL;
+
+   data->sent_serial = ecore_wl2_dnd_selection_set(_fetch_input(ee, seat), (const char**)tmp_array);
+   return EINA_TRUE;
+}
+
+
+static Eina_Future*
+_ecore_evas_wl_selection_request(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_types)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Evas_Wl_Selection_Data *data = &wdata->selection_data[selection];
+   Ecore_Wl2_Input *input;
+   Ecore_Wl2_Offer *offer = NULL;
+   Eina_Future *future;
+
+   _reeval_seat(&seat, ee);
+   input = _fetch_input(ee, seat);
+
+   if (data->delivery)
+     {
+        eina_promise_reject(data->delivery, ecore_evas_request_replaced);
+        data->delivery = NULL;
+     }
+   data->delivery = efl_loop_promise_new(efl_main_loop_get());
+   future = eina_future_new(data->delivery);
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     {
+        offer = data->offer = wdata->external_offer;
+     }
+   else if (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     {
+        offer = data->offer = ecore_wl2_dnd_selection_get(input);
+     }
+
+   if (!offer)
+     {
+        eina_promise_reject(data->delivery, ecore_evas_no_selection);
+        data->delivery = NULL;
+     }
+   else
+     {
+        Eina_Array *available_types = ecore_wl2_offer_mimes_get(offer);
+        char *selected_type = NULL;
+
+        for (unsigned int i = 0; i < eina_array_count(available_types) && !selected_type; ++i)
+          {
+             char *available_type = eina_array_data_get(available_types, i);
+             for (unsigned int j = 0; j < eina_array_count(acceptable_types) && !selected_type; ++j)
+               {
+                  char *acceptable_type = eina_array_data_get(acceptable_types, j);
+                  if (eina_streq(acceptable_type, available_type))
+                    {
+                       selected_type = available_type;
+                       data->later_convert = NULL;
+                       break;
+                    }
+
+                  const char *convert_available_type;
+                  Eina_Iterator *convertions = eina_content_converter_possible_conversions(available_type);
+                  EINA_ITERATOR_FOREACH(convertions, convert_available_type)
+                    {
+                       if (eina_streq(convert_available_type, acceptable_type))
+                         {
+                            selected_type = available_type;
+                            data->later_convert = acceptable_type;
+                         }
+                    }
+               }
+
+          }
+        if (selected_type)
+          {
+             ecore_wl2_offer_receive(offer, selected_type);
+             ecore_wl2_display_flush(ecore_wl2_input_display_get(input));
+          }
+        else
+          {
+             eina_promise_reject(data->delivery, ecore_evas_no_matching_type);
+             data->delivery = NULL;
+          }
+      }
+
+   return future;
+}
+
+static Eina_Bool
+_ecore_evas_wl_selection_has_owner(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection EINA_UNUSED)
+{
+   Ecore_Wl2_Input *input;
+
+   _reeval_seat(&seat, ee);
+   input = _fetch_input(ee, seat);
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER )
+     return !!ecore_wl2_dnd_selection_get(input);
+   else if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     return !!ecore_wl2_dnd_offer_get(input);
+   return EINA_FALSE; //the selection buffer is not supportet in wayland
+}
+
+static Eina_Bool
+_wl_selection_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Wl2_Event_Seat_Selection *sel = event;
+   Ecore_Evas *ee = data;
+   Ecore_Wl2_Input *input;
+   unsigned int seat = sel->seat;
+
+   _reeval_seat(&seat, ee);
+   input = _fetch_input(ee, seat);
+   if (!ecore_wl2_dnd_selection_get(input))
+     return ECORE_CALLBACK_PASS_ON;
+
+   if (ee->func.fn_selection_changed)
+     ee->func.fn_selection_changed(ee, 0, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+/*
+static Eina_Bool
+_wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Data_Source_End *ev = event;
+   Ecore_Evas *ee = data;
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+*/
+
+static Eina_Bool
+_wl_interaction_send(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Data_Source_Send *ev = event;
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Evas_Wl_Selection_Data *selection = NULL;
+   Eina_Rw_Slice data_to_write;
+   Ecore_Evas_Selection_Buffer buffer = ECORE_EVAS_SELECTION_BUFFER_LAST;
+
+   if (ev->serial == wdata->selection_data[ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER].sent_serial)
+     buffer = ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER;
+   else if (ev->serial == wdata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].sent_serial)
+     {
+        buffer = ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER;
+        ee->drag.accepted = EINA_TRUE;
+     }
+
+   if (buffer == ECORE_EVAS_SELECTION_BUFFER_LAST)
+     {
+        //silent return, this send request was *not* for this window
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+   selection = &wdata->selection_data[buffer];
+   EINA_SAFETY_ON_NULL_GOTO(selection, end);
+   EINA_SAFETY_ON_NULL_GOTO(selection->callbacks.delivery, end);
+   EINA_SAFETY_ON_FALSE_GOTO(selection->callbacks.delivery(ee, buffer, ev->type, &data_to_write), end);
+   EINA_SAFETY_ON_FALSE_GOTO(write(ev->fd, data_to_write.mem, data_to_write.len) == (ssize_t)data_to_write.len, end);
+   close(ev->fd);
+end:
+   ecore_wl2_display_flush(ev->display);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Wl2_Event_Offer_Data_Ready *ready = event;
+   Ecore_Evas_Selection_Buffer selection = ECORE_EVAS_SELECTION_BUFFER_LAST;
+
+   for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
+     {
+        if (wdata->selection_data[i].offer == ready->offer)
+          {
+             selection = i;
+             break;
+          }
+     }
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_LAST)
+     return ECORE_CALLBACK_PASS_ON;
+
+   //Now deliver the content
+   Eina_Slice slice;
+   slice.mem = ready->data;
+   slice.len = ready->len;
+
+   Eina_Content *content = eina_content_new(slice, ready->mimetype);
+
+   if (wdata->selection_data[selection].later_convert)
+     {
+        Eina_Content *tmp = eina_content_convert(content, wdata->selection_data[selection].later_convert);
+        wdata->selection_data[selection].later_convert = NULL;
+        eina_content_free(content);
+        content = tmp;
+     }
+
+   eina_promise_resolve(wdata->selection_data[selection].delivery, eina_value_content_init(content));
+   wdata->selection_data[selection].delivery = NULL;
+   eina_content_free(content);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_wl_selection_dnd_leave(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee = data;
+   Eina_Position2D cpos;
+   Eina_Position2D fpos = EINA_POSITION2D(0, 0);
+   Ecore_Wl2_Event_Dnd_Leave *ev = event;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+   if (ee->prop.window != (Ecore_Window)ev->win) return ECORE_CALLBACK_PASS_ON;
+
+   //evas_output_framespace_get(ee->evas, &fpos.x, &fpos.y, NULL, NULL);
+   ecore_wl2_input_pointer_xy_get(ecore_wl2_display_input_find(ev->display, ev->seat), &cpos.x, &cpos.y);
+   ecore_evas_dnd_leave(data, ev->seat, EINA_POSITION2D(cpos.x - fpos.x, cpos.y - fpos.y));
+   wdata->external_offer = NULL;
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_wl_selection_dnd_motion(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Wl2_Event_Dnd_Motion *ev = event;
+   Eina_Position2D fpos = EINA_POSITION2D(0, 0);
+
+   if (ee->prop.window != (Ecore_Window)ev->win) return ECORE_CALLBACK_PASS_ON;
+
+   evas_output_framespace_get(ee->evas, &fpos.x, &fpos.y, NULL, NULL);
+   ecore_evas_dnd_position_set(data, ev->seat, EINA_POSITION2D(ev->x - fpos.x, ev->y - fpos.y));
+   return ECORE_CALLBACK_PASS_ON;
+}
+static Eina_Bool
+_wl_selection_dnd_enter(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Wl2_Event_Dnd_Enter *ev = event;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Eina_Position2D fpos = EINA_POSITION2D(0, 0);
+
+   if (ee->prop.window != (Ecore_Window)ev->win) return ECORE_CALLBACK_PASS_ON;
+
+   evas_output_framespace_get(ee->evas, &fpos.x, &fpos.y, NULL, NULL);
+   ecore_evas_dnd_enter(data, ev->seat, eina_array_iterator_new(ecore_wl2_offer_mimes_get(ev->offer)), EINA_POSITION2D(ev->x - fpos.x, ev->y - fpos.y));
+   ecore_wl2_offer_mimes_set(ev->offer, ecore_wl2_offer_mimes_get(ev->offer));
+   wdata->external_offer = ev->offer;
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_wl_selection_dnd_drop(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Wl2_Event_Dnd_Drop *ev = event;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   if (ee->prop.window != (Ecore_Window)ev->win) return ECORE_CALLBACK_PASS_ON;
+   wdata = ee->engine.data;
+
+   if (ee->func.fn_dnd_drop)
+     ee->func.fn_dnd_drop(ee, ev->seat, ecore_evas_dnd_pos_get(ee, ev->seat), "move");
+
+   ecore_wl2_dnd_drag_end(_fetch_input(ee, ev->seat));
+   wdata->external_offer = NULL;
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+static Eina_Bool
+_wl_selection_dnd_end(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Wl2_Event_Dnd_End *ev = event;
+
+   if (ee->prop.window != (Ecore_Window)ev->win) return ECORE_CALLBACK_PASS_ON;
+
+
+   if (ee->drag.free)
+     ee->drag.free(ee, ee->drag.data, ee->drag.accepted);
+   ee->drag.free = NULL;
+   //we got dropped, we should call
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_ecore_evas_wl_selection_init(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+   wdata->changed_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
+                           _wl_selection_changed, ee);
+   wdata->send_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
+                           _wl_interaction_send, ee);
+   wdata->offer_handler = ecore_event_handler_add(ECORE_WL2_EVENT_OFFER_DATA_READY,
+                           _wl_selection_receive, ee);
+   wdata->dnd_leave_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DND_LEAVE,
+                           _wl_selection_dnd_leave, ee);
+   wdata->dnd_motion_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DND_MOTION,
+                           _wl_selection_dnd_motion, ee);
+   wdata->dnd_enter_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DND_ENTER,
+                           _wl_selection_dnd_enter, ee);
+   wdata->dnd_drop_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DND_DROP,
+                           _wl_selection_dnd_drop, ee);
+   wdata->dnd_end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_DROP,
+                           _wl_selection_dnd_end, ee);
+   for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
+     {
+        wdata->selection_data[i].callbacks.available_types = NULL;
+        wdata->selection_data[i].callbacks.delivery = NULL;
+        wdata->selection_data[i].callbacks.cancel = NULL;
+     }
+}
+
+static Eina_Bool
+_ecore_evas_wl_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Eina_Bool (*delivery)(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice), void (*cancel)(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer buffer), const char *action EINA_UNUSED)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   const char *tmp_array[eina_array_count(available_types) + 1];
+
+   _reeval_seat(&seat, ee);
+   _store_selection_cbs(ee, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER, available_types, delivery, cancel);
+
+   for (unsigned int i = 0; i < eina_array_count(available_types); ++i)
+     {
+        tmp_array[i] = eina_array_data_get(available_types, i);
+     }
+   tmp_array[eina_array_count(available_types)] = NULL;
+
+   ecore_wl2_dnd_drag_types_set(_fetch_input(ee, seat), (const char**)tmp_array);
+   wdata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].sent_serial =
+            ecore_wl2_dnd_drag_start(_fetch_input(ee, seat), (Ecore_Wl2_Window*)ee->prop.window, (Ecore_Wl2_Window*)drag_rep->prop.window);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_ecore_evas_wl_dnd_stop(Ecore_Evas *ee, unsigned int seat)
+{
+   _clear_selection(ee, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER);
+   _reeval_seat(&seat, ee);
+   ecore_wl2_dnd_drag_end(_fetch_input(ee, seat));
+   return EINA_TRUE;
+}
+
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 {
    _ecore_evas_wl_common_free,
@@ -2474,9 +2904,11 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_pointer_device_xy_get,
    _ecore_evas_wl_common_prepare,
    NULL, //fn_last_tick_get
-   NULL, //fn_selection_claim
-   NULL, //fn_selection_has_owner
-   NULL, //fn_selection_request
+   _ecore_evas_wl_selection_claim, //fn_selection_claim
+   _ecore_evas_wl_selection_has_owner, //fn_selection_has_owner
+   _ecore_evas_wl_selection_request, //fn_selection_request
+   _ecore_evas_wl_dnd_start, //fn_dnd_start
+   _ecore_evas_wl_dnd_stop, //fn_dnd_stop
 };
 
 static void
@@ -2653,6 +3085,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
      }
 
    _ecore_evas_wl_common_wm_rotation_protocol_set(ee);
+   _ecore_evas_wl_selection_init(ee);
 
    ecore_evas_done(ee, EINA_FALSE);
 

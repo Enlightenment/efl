@@ -60,7 +60,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    ecore_evas_init();
 
-   Ecore_Evas *ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 0, 0);
+   Ecore_Evas *ee = ecore_evas_software_x11_new(NULL, 0, 0, 200, 200, EINA_TRUE);
+   //Ecore_Evas *ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 0, 0, EINA_FALSE);
 
    if (eina_streq(goal, "--monitor"))
      {

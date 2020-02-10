@@ -190,6 +190,15 @@ EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
  * @since 1.19
  */
 EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
+/**
+ * Get the offer which is currently resposible for the drag and drop buffer
+ *
+ * @param input the input object to use
+ *
+ * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.24
+ */
+EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_offer_get(Ecore_Wl2_Input *input);
 
 /**
  * Set the types which are available from this client
