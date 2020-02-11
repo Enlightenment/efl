@@ -2798,7 +2798,7 @@ typedef enum
  * @warning Too small a value may cause performance issues and too high a
  * value may cause your animation to seem "jerky".
  *
- * @note The default @p frametime value is 1/30th of a second.
+ * @note The default @p frametime value is 1/60th of a second.
  */
 EAPI void ecore_animator_frametime_set(double frametime);
 
@@ -2950,7 +2950,7 @@ EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, 
  * on the animator source. The default source is the system clock timer
  * source - ECORE_ANIMATOR_SOURCE_TIMER. This source uses the system clock
  * to tick over every N seconds (specified by ecore_animator_frametime_set(),
- * with the default being 1/30th of a second unless set otherwise). You can
+ * with the default being 1/60th of a second unless set otherwise). You can
  * set a custom tick source by setting the source to
  * ECORE_ANIMATOR_SOURCE_CUSTOM and then drive it yourself based on some input
  * tick source (like another application via ipc, some vertical blanking
