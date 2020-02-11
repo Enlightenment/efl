@@ -2323,7 +2323,7 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
    int level = 1;
    void *ctx;
    int w, h, off_x = 0, off_y = 0;
-   Eina_Rectangle lr;
+   Eina_Rectangle lr = {0, 0, 0, 0};
 
 #ifdef REND_DBG
    level = __RD_level;
