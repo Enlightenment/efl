@@ -115,11 +115,14 @@ bool property_generate_wrapper_getter(attributes::property_def const& property, 
   if (!property.getter->keys.empty())
     return false;
 
-  if (property.getter->explicit_return_type != attributes::void_)
+  if (property.getter->explicit_return_type != attributes::void_
+      && property.getter->explicit_return_type.c_type != "Eina_Success_Flag")
+  {
     return false;
+  }
 
   assert (!!property.getter.is_engaged());
-  
+
   bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
   if (is_interface)
   {

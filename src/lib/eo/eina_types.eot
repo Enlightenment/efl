@@ -163,3 +163,7 @@ struct @extern @free(eina_promise_free) Eina.Promise; [[Eina promise type
 /* FIXME: This definitely shouldn't be here. */
 type @beta Efl.Event_Cb: __undefined_type; [[Efl event callback type]]
 
+type @extern Eina.Success_Flag: char; [[Eina error type
+
+  @since 1.24
+]]

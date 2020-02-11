@@ -468,6 +468,27 @@ class TestCsharpProperties
         Test.AssertEquals(ret, (1, 2));
         obj.Dispose();
     }
+
+    public static void test_csharp_return_type_get_prop ()
+    {
+        var obj = new Dummy.TestObject();
+        obj.ReturnTypeGetProp = 5;
+        var i = obj.ReturnTypeGetProp;
+    }
+
+    public static void test_csharp_return_type_set_prop ()
+    {
+        var obj = new Dummy.TestObject();
+        obj.ReturnTypeSetProp = 5;
+        var i = obj.ReturnTypeSetProp;
+    }
+
+    public static void test_csharp_return_type_prop ()
+    {
+        var obj = new Dummy.TestObject();
+        obj.ReturnTypeProp = 5;
+        var i = obj.ReturnTypeProp;
+    }
 }
 
 class TestEoGrandChildrenFinalize

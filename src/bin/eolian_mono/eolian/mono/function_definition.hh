@@ -39,6 +39,7 @@
 #include "using_decl.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
+#include "grammar/eps.hpp"
 
 namespace eolian_mono {
 
@@ -369,6 +370,7 @@ struct property_wrapper_definition_generator
    {
       using efl::eolian::grammar::attribute_reorder;
       using efl::eolian::grammar::counter;
+      using efl::eolian::grammar::eps;
       using efl::eolian::grammar::attributes::parameter_direction;
       using efl::eolian::grammar::attributes::parameter_def;
 
@@ -457,6 +459,7 @@ struct property_wrapper_definition_generator
       bool is_get_public = get_scope == "public ";
       std::string set_scope = property.setter.is_engaged() ? eolian_mono::function_scope_get(*property.setter) : "";
       bool is_set_public = set_scope == "public ";
+      bool get_has_return_error = false, set_has_return_error = false;
 
       // No need to generate this wrapper as no accessor is public.
       if (is_interface && (!is_get_public && !is_set_public))
@@ -490,6 +493,12 @@ struct property_wrapper_definition_generator
            set_scope = "";
         }
 
+      if (property.getter && property.getter->explicit_return_type.c_type == "Eina_Success_Flag")
+          get_has_return_error = true;
+
+      if (property.setter && property.setter->explicit_return_type.c_type == "Eina_Success_Flag")
+          set_has_return_error = true;
+      
       if (parameters.size() == 1)
       {
         if (!as_generator(
@@ -510,73 +519,95 @@ struct property_wrapper_definition_generator
           return false;
       }
 
-      if (property.getter.is_engaged() && is_interface)
+      if (property.getter)
       {
-        if (is_get_public)
+        auto managed_getter_name = name_helpers::managed_method_name(*property.getter);
+        if (is_interface)
         {
-          if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "get;\n"
-                            ).generate(sink, attributes::unused, context))
+          if (is_get_public)
+          {
+            if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "get;\n"
+                              ).generate(sink, attributes::unused, context))
+              return false;
+          }
+        }
+        else if (get_params == 0)
+        {
+          if (!as_generator
+              (scope_tab(2) << scope_tab << get_scope
+               << "get " << "{ return " + managed_getter_name + "(); }\n"
+              ).generate(sink, attributes::unused, context))
+            return false;
+        }
+        else if (parameters.size() >= 1)
+        {
+          if (!as_generator
+                   (scope_tab(2) << scope_tab << get_scope << "get "
+                    << "{\n"
+                    << *attribute_reorder<1, -1, 1>
+                      (scope_tab(4) << type(true) << " _out_"
+                       << argument(false) << " = default(" << type(true) << ");\n"
+                      )
+                    << scope_tab(4) << (get_has_return_error ? "var s = " : "")
+                    << name_helpers::managed_method_name(*property.getter)
+                    << "(" << (("out _out_" << argument(false)) % ", ") << ");\n"
+                    << ((eps(get_has_return_error) << scope_tab(4)
+                         << "if (s == '\\0') throw new Efl.EflException("
+                         << "\"Call of native function for " << managed_getter_name << " returned an error.\""
+                         << ");\n")
+                        | eps)
+                    << scope_tab(4) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
+                    << scope_tab(3) << "}" << "\n"
+                   ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
             return false;
         }
       }
-      else if (property.getter.is_engaged() && get_params == 0/*parameters.size() == 1 && property.getter.is_engaged()*/)
-      {
-        if (!as_generator
-            (scope_tab(2) << scope_tab << get_scope
-             << "get " << "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }\n"
-            ).generate(sink, attributes::unused, context))
-          return false;
-      }
-      else if (parameters.size() >= 1 && property.getter)
-      {
-        if (!as_generator
-                 (scope_tab(2) << scope_tab << get_scope << "get "
-                  << "{\n"
-                  << *attribute_reorder<1, -1, 1>
-                    (scope_tab(4) << type(true) << " _out_"
-                     << argument(false) << " = default(" << type(true) << ");\n"
-                    )
-                  << scope_tab(4) << name_helpers::managed_method_name(*property.getter)
-                  << "(" << (("out _out_" << argument(false)) % ", ") << ");\n"
-                  << scope_tab(4) << "return (" << (("_out_"<< argument(false)) % ", ") << ");\n"
-                  << scope_tab(3) << "}" << "\n"
-                 ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
-          return false;
-      }
-      // else if (parameters.size() == 1)
-      // {
-      //   if (!as_generator
-      //            (scope_tab << scope_tab << get_scope << "get "
-      //             << "{\n"
-      //             << *attribute_reorder<1, -1, 1>(scope_tab(3) << type(true) << " _out_" << argument(false) << " = default(" << type(true) << ");\n")
-      //             << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
-      //             << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
-      //             << scope_tab(3) << "return " << (("_out_"<< argument(false)) % ",") << ";\n"
-      //             << scope_tab(2) << "}" << "\n"
-      //            ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
-      //     return false;
-      // }
 
-      if (property.setter.is_engaged() && is_interface)
+      if (property.setter)
       {
-        if (is_set_public)
+        auto managed_setter_name = name_helpers::managed_method_name(*property.setter);
+        if (is_interface)
         {
-          if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set;\n"
-                            ).generate(sink, attributes::unused, context))
+          if (is_set_public)
+          {
+            if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set;\n"
+                              ).generate(sink, attributes::unused, context))
+              return false;
+          }
+        }
+        else if (parameters.size() == 1)
+        {
+          if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set "
+                            << "{ "
+                            << ((eps (set_has_return_error) << "\n" << scope_tab(4) << "var s = ") | eps)
+                            << managed_setter_name
+                            << "(" << dir_mod << "value);"
+                            << ((eps(set_has_return_error) << "\n" << scope_tab(4)
+                                 << "if (s == '\\0') throw new Efl.EflException("
+                                 << "\"Call of native function for " << managed_setter_name << " returned an error.\""
+                                 << ");\n" << scope_tab(3))
+                                | eps)
+                            << " }\n"
+              ).generate(sink, attributes::unused, context))
             return false;
         }
-      }
-      else if (parameters.size() == 1 && property.setter.is_engaged())
-      {
-        if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set " << "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }\n"
-            ).generate(sink, attributes::unused, context))
-          return false;
-      }
-      else if (parameters.size() > 1 && property.setter.is_engaged())
-      {
-        if (!as_generator(scope_tab(2) << scope_tab << set_scope <<  "set " << ("{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod) << ((" value.Item" << counter(1)) % ", ") << "); }" << "\n"
-           ).generate(sink, parameters, context))
-          return false;
+        else if (parameters.size() > 1)
+        {
+          if (!as_generator(scope_tab(2) << scope_tab
+                            << set_scope <<  "set "
+                            << "{ "
+                            << ((eps (set_has_return_error) << "\n" << scope_tab(4) << "var s = ") | eps)
+                            << name_helpers::managed_method_name(*property.setter)
+                            << "(" << dir_mod << ((" value.Item" << counter(1)) % ", ") << ");"
+                            << ((eps(set_has_return_error) << "\n" << scope_tab(4)
+                                 << "if (s == '\\0') throw new Efl.EflException("
+                                 << "\"Call of native function for " << managed_setter_name << " returned an error.\""
+                                 << ");\n" << scope_tab(3))
+                                | eps)
+                            << " }" << "\n"
+             ).generate(sink, parameters, context))
+            return false;
+        }
       }
 
       if (!as_generator(scope_tab(2) << "}\n\n").generate(sink, attributes::unused, context))

@@ -4819,5 +4819,63 @@ const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Te
   return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
 }
 
+Eina_Success_Flag _dummy_test_object_return_type_get_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int* i EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+void _dummy_test_object_return_type_get_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int i EINA_UNUSED)
+{
+}
+
+int _dummy_test_object_return_type_set_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
+{
+  return 0;
+}
+
+Eina_Success_Flag _dummy_test_object_return_type_set_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int i EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+Eina_Success_Flag _dummy_test_object_return_type_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int* i EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+Eina_Success_Flag _dummy_test_object_return_type_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int i EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+Eina_Success_Flag _dummy_test_object_multi_value_return_type_get_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int* i EINA_UNUSED, int* j EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+void _dummy_test_object_multi_value_return_type_get_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int i EINA_UNUSED, int j EINA_UNUSED)
+{
+}
+
+void _dummy_test_object_multi_value_return_type_set_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int* i EINA_UNUSED, int* j EINA_UNUSED)
+{
+}
+
+Eina_Success_Flag _dummy_test_object_multi_value_return_type_set_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int i EINA_UNUSED, int j EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+Eina_Success_Flag _dummy_test_object_multi_value_return_type_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int* i EINA_UNUSED, int* j EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+Eina_Success_Flag _dummy_test_object_multi_value_return_type_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED, int i EINA_UNUSED, int j EINA_UNUSED)
+{
+  return EINA_TRUE;
+}
+
+
 #include "dummy_test_object.eo.c"
 

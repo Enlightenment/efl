@@ -89,6 +89,15 @@
 typedef int Eina_Error;
 
 /**
+ * @typedef Eina_Success_Flag
+ * @brief A flag indicating a function completed succesfully.
+ *
+ * Errors are reported with a EINA_FALSE value for Eina_Success_Flag
+ * return and success with a EINA_TRUE.
+ */
+typedef Eina_Bool Eina_Success_Flag;
+
+/**
  * @def EINA_ERROR_NO_ERROR
  * @brief No error reported.
  *
