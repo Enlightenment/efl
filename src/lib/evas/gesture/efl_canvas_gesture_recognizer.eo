@@ -38,9 +38,9 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
          [[This property determines whether a gesture recognizer should continue
            to try processing events after returning @Efl.Canvas.Gesture_Recognizer_Result.finish
            or @Efl.Canvas.Gesture_Recognizer_Result.cancel.]]
-         get @protected {
+         get {
          }
-         set @protected {
+         set {
          }
          values {
             value: bool; [[Value of the property.]]
