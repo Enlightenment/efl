@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#define _POSIX_
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -1284,7 +1282,7 @@ int main(int argc, char **argv)
         /* Replace the current command line to hide the Exactness part */
         int len = argv[argc - 1] + strlen(argv[argc - 1]) - argv[opt_args];
         memcpy(argv[0], argv[opt_args], len);
-        memset(argv[0] + len, 0, _POSIX_PATH_MAX - len);
+        memset(argv[0] + len, 0, PATH_MAX - len);
 
         int i;
         for (i = opt_args; i < argc; i++)
