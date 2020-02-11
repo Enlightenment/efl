@@ -5,8 +5,8 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
    [[This class keeps track of active @Efl.Canvas.Gesture_Recognizer objects.
      For internal use only.
    
-     This gesture class defines methods that register and unregister a recognizer and
-     get a recognizer according to gesture event type.
+     This class defines methods to manage gesture recognizers and handles passing input events
+     to the recognizers that it manages.
    ]]
    c_prefix: efl_gesture_manager;
    methods {

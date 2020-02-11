@@ -7,6 +7,9 @@ class @beta Efl.Canvas.Gesture_Custom extends Efl.Canvas.Gesture
      @[Efl.Canvas.Gesture_Events.gesture,custom] for a description of the Custom gesture.
 
      Application developers receive these objects inside a gesture event and do not typically need to create their own.
+
+     Custom gesture recognizers which implement their own gesture properties (e.g., gesture momentum or angle) must
+     inherit this class.
    ]]
    c_prefix: efl_gesture_custom;
    methods {

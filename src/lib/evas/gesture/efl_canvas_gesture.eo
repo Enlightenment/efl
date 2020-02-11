@@ -27,7 +27,8 @@ abstract @beta Efl.Canvas.Gesture extends Efl.Object
       }
       @property hotspot {
          [[Hotspot of the gesture currently being analyzed.
-           The exact meaning depends on the gesture type.]]
+           The exact meaning depends on the gesture type, but by default it
+           reflects the current position of the last touch event.]]
          get {
          }
          set {
@@ -43,7 +44,7 @@ abstract @beta Efl.Canvas.Gesture extends Efl.Object
          set {
          }
          values {
-            timestamp: uint;[[The time-stamp.]]
+            timestamp: uint;[[The time-stamp, valued in milliseconds.]]
          }
       }
       @property touch_count {
