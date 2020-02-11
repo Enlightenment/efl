@@ -1,4 +1,5 @@
 import eina_types;
+parse efl_canvas_gesture_recognizer;
 
 class @beta Efl.Canvas.Gesture_Custom extends Efl.Canvas.Gesture
 {
@@ -9,7 +10,8 @@ class @beta Efl.Canvas.Gesture_Custom extends Efl.Canvas.Gesture
      Application developers receive these objects inside a gesture event and do not typically need to create their own.
 
      Custom gesture recognizers which implement their own gesture properties (e.g., gesture momentum or angle) must
-     inherit this class.
+     inherit this class, and their recognizers must implement the @Efl.Canvas.Gesture_Recognizer.type property to return
+     this class.
    ]]
    c_prefix: efl_gesture_custom;
    methods {

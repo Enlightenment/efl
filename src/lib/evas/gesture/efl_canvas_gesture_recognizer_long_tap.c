@@ -4,10 +4,10 @@
 
 #define EFL_GESTURE_LONG_TAP_TIME_OUT 1.2
 
-EOLIAN static Efl_Canvas_Gesture_Recognizer_Type
+EOLIAN static const Efl_Class *
 _efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Long_Tap_Data *pd EINA_UNUSED)
 {
-   return EFL_GESTURE_RECOGNIZER_TYPE_LONG_TAP;
+   return EFL_CANVAS_GESTURE_LONG_TAP_CLASS;
 }
 
 EOLIAN static void

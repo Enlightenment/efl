@@ -22,10 +22,10 @@ _reset_recognizer(Efl_Canvas_Gesture_Recognizer_Flick_Data *pd)
    pd->touched = EINA_FALSE;
 }
 
-EOLIAN static Efl_Canvas_Gesture_Recognizer_Type
+EOLIAN static const Efl_Class *
 _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Flick_Data *pd EINA_UNUSED)
 {
-   return EFL_GESTURE_RECOGNIZER_TYPE_FLICK;
+   return EFL_CANVAS_GESTURE_FLICK_CLASS;
 }
 
 static void

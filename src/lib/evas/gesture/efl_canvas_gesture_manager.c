@@ -39,59 +39,24 @@ static Efl_Canvas_Gesture *
 static const Efl_Event_Description *
 _gesture_recognizer_event_type_get(const Efl_Canvas_Gesture_Recognizer *recognizer)
 {
-   Efl_Canvas_Gesture_Recognizer_Type type = efl_gesture_recognizer_type_get(recognizer);
+   const Efl_Class *type = efl_gesture_recognizer_type_get(recognizer);
 
-   switch (type)
-     {
-      case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
-        return EFL_EVENT_GESTURE_TAP;
-      case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLE_TAP:
-        return EFL_EVENT_GESTURE_DOUBLE_TAP;
-      case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLE_TAP:
-        return EFL_EVENT_GESTURE_TRIPLE_TAP;
-      case EFL_GESTURE_RECOGNIZER_TYPE_LONG_TAP:
-        return EFL_EVENT_GESTURE_LONG_TAP;
-      case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
-        return EFL_EVENT_GESTURE_MOMENTUM;
-      case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
-        return EFL_EVENT_GESTURE_FLICK;
-      case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
-        return EFL_EVENT_GESTURE_ZOOM;
-      case EFL_GESTURE_RECOGNIZER_TYPE_CUSTOM:
-        return EFL_EVENT_GESTURE_CUSTOM;
-      default: break;
-     }
-   return NULL;
+   if (type == EFL_CANVAS_GESTURE_TAP_CLASS)
+     return EFL_EVENT_GESTURE_TAP;
+   if (type == EFL_CANVAS_GESTURE_DOUBLE_TAP_CLASS)
+     return EFL_EVENT_GESTURE_DOUBLE_TAP;
+   if (type == EFL_CANVAS_GESTURE_TRIPLE_TAP_CLASS)
+     return EFL_EVENT_GESTURE_TRIPLE_TAP;
+   if (type == EFL_CANVAS_GESTURE_LONG_TAP_CLASS)
+     return EFL_EVENT_GESTURE_LONG_TAP;
+   if (type == EFL_CANVAS_GESTURE_MOMENTUM_CLASS)
+     return EFL_EVENT_GESTURE_MOMENTUM;
+   if (type == EFL_CANVAS_GESTURE_FLICK_CLASS)
+     return EFL_EVENT_GESTURE_FLICK;
+   if (type == EFL_CANVAS_GESTURE_ZOOM_CLASS)
+     return EFL_EVENT_GESTURE_ZOOM;
+   return EFL_EVENT_GESTURE_CUSTOM;
 }
-
-static const Efl_Class *
-_gesture_recognizer_class_type_get(const Efl_Canvas_Gesture_Recognizer *recognizer)
-{
-   Efl_Canvas_Gesture_Recognizer_Type type = efl_gesture_recognizer_type_get(recognizer);
-
-   switch (type)
-     {
-      case EFL_GESTURE_RECOGNIZER_TYPE_TAP:
-        return EFL_CANVAS_GESTURE_TAP_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_DOUBLE_TAP:
-        return EFL_CANVAS_GESTURE_DOUBLE_TAP_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_TRIPLE_TAP:
-        return EFL_CANVAS_GESTURE_TRIPLE_TAP_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_LONG_TAP:
-        return EFL_CANVAS_GESTURE_LONG_TAP_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_MOMENTUM:
-        return EFL_CANVAS_GESTURE_MOMENTUM_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_FLICK:
-        return EFL_CANVAS_GESTURE_FLICK_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_ZOOM:
-        return EFL_CANVAS_GESTURE_ZOOM_CLASS;
-      case EFL_GESTURE_RECOGNIZER_TYPE_CUSTOM:
-        return EFL_CANVAS_GESTURE_CUSTOM_CLASS;
-      default: break;
-     }
-   return NULL;
-}
-
 
 static void
 _cleanup_object(Eina_Array *arr)
@@ -503,7 +468,7 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
           }
      }
 
-   gesture = efl_add(_gesture_recognizer_class_type_get(recognizer), recognizer);
+   gesture = efl_add(efl_gesture_recognizer_type_get(recognizer), recognizer);
    if (!gesture)
      return 0;
 

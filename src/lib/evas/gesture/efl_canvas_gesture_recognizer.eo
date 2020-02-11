@@ -14,11 +14,11 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
    c_prefix: efl_gesture_recognizer;
    methods {
       @property type @pure_virtual {
-         [[This property returns the type of gesture recognized by this recognizer.
+         [[This property returns the class type of gesture recognized by this recognizer.
            It must be implemented for the recognizer to function.]]
          get {}
          values {
-            type: Efl.Canvas.Gesture_Recognizer_Type; [[The gesture type to recognize.]]
+            type: const(Efl.Class); [[The gesture type to recognize.]]
          }
       }
       recognize @pure_virtual {

@@ -125,10 +125,10 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
    return rt;
 }
 
-EOLIAN static Efl_Canvas_Gesture_Recognizer_Type
+EOLIAN static const Efl_Class *
 _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd EINA_UNUSED)
 {
-   return EFL_GESTURE_RECOGNIZER_TYPE_ZOOM;
+   return EFL_CANVAS_GESTURE_ZOOM_CLASS;
 }
 
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
