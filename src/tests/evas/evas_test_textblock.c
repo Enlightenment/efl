@@ -4965,6 +4965,7 @@ EFL_END_TEST
 EFL_START_TEST(efl_text_style)
 {
    START_EFL_CANVAS_TEXTBLOCK_TEST();
+   Eina_Size2D size1, size2;
 
    int changed_emit = 0;
    efl_event_callback_add(txt, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, _increment_int_changed, &changed_emit);
@@ -4982,6 +4983,15 @@ EFL_START_TEST(efl_text_style)
    ck_assert_int_eq(changed_emit, 2);
    efl_text_markup_set(txt, "");
    ck_assert_int_eq(changed_emit, 2);
+
+   // Style Applying
+   efl_text_set(txt,"A");
+   efl_canvas_textblock_style_apply(txt,"\tfont_size=2\t");
+   size1 = efl_canvas_textblock_size_native_get(txt);
+   efl_canvas_textblock_style_apply(txt,"\nfont_size=20\n");
+   size2 = efl_canvas_textblock_size_native_get(txt);
+   ck_assert(size1.w < size2.w);
+   ck_assert(size1.h < size2.h);
 
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
