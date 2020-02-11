@@ -36,20 +36,6 @@ enum @beta Efl.Canvas.Gesture_Recognizer_Result
    result_mask = 0x00ff, [[The gesture result mask]]
 }
 
-enum @beta Efl.Canvas.Gesture_Recognizer_Type
-{
-   [[ This enum type describes the type of gesture recognized by a given recognizer. ]]
-   legacy: efl_gesture_recognizer_type;
-   tap = 0, [[See @[Efl.Canvas.Gesture_Events.gesture,tap] ]]
-   double_tap, [[See @[Efl.Canvas.Gesture_Events.gesture,double_tap] ]]
-   triple_tap, [[See @[Efl.Canvas.Gesture_Events.gesture,triple_tap] ]]
-   long_tap, [[See @[Efl.Canvas.Gesture_Events.gesture,long_tap] ]]
-   momentum, [[See @[Efl.Canvas.Gesture_Events.gesture,momentum] ]]
-   flick, [[See @[Efl.Canvas.Gesture_Events.gesture,flick] ]]
-   zoom, [[See @[Efl.Canvas.Gesture_Events.gesture,zoom] ]]
-   custom, [[See @[Efl.Canvas.Gesture_Events.gesture,custom] ]]
-}
-
 struct @beta @c_name(Efl_Gesture_Touch_Point_Info) Efl.Canvas.Gesture_Touch_Point_Info {
    [[This struct represents the underlying data of a touch point.]]
    pos: Eina.Position2D; [[The canvas position of the touch point data.]]
