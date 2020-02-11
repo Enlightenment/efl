@@ -36,9 +36,9 @@ TST(02, tick) (Evas *e EINA_UNUSED, double f, Evas_Coord win_w, Evas_Coord win_h
         w = 5 + ((1.0 + cos((double)((f * 30.0) + (i * 10)))) * w0 * 2);
         h = 5 + ((1.0 + sin((double)((f * 40.0) + (i * 19)))) * h0 * 2);
         x = (win_w / 2) - (w / 2);
-        x += (Evas_Coord)(sin((double)((f * 50.0) + (i * 13))) * (w0 / 2));
+        x += (Evas_Coord)(sin((double)((f * 50.0) + (i * 13))) * (w0 / 2.0));
         y = (win_h / 2) - (h / 2);
-        y += (Evas_Coord)(cos((double)((f * 45.0) + (i * 28))) * (h0 / 2));
+        y += (Evas_Coord)(cos((double)((f * 45.0) + (i * 28))) * (h0 / 2.0));
         evas_object_geometry_set(o, x, y, w, h);
      }
 }
