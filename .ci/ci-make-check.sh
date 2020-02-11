@@ -17,6 +17,10 @@ if [ "$1" = "codecov" ] ; then
     if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
       false
   done
+  git clone --depth=1 --branch=devs/stefan/ci-integration https://git.enlightenment.org/tools/exactness-elm-data.git
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+  sudo ldconfig
+  EINA_LOG_LEVELS_GLOB=eina_*:0,ecore*:0,efreet*:0,eldbus:0,elementary:0 exactness -j 20 -b exactness-elm-data/default-profile -p exactness-elm-data/default-profile/tests.txt
   curl -s https://codecov.io/bash | bash -s -
   exit 0
 fi
