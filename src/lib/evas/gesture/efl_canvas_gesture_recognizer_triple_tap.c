@@ -194,19 +194,4 @@ _efl_canvas_gesture_recognizer_triple_tap_efl_canvas_gesture_recognizer_recogniz
    return result;
 }
 
-EOLIAN static double
-_efl_canvas_gesture_recognizer_triple_tap_timeout_get(const Eo *obj EINA_UNUSED,
-                                                      Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *pd)
-{
-   return pd->start_timeout;
-}
-
-EOLIAN static void
-_efl_canvas_gesture_recognizer_triple_tap_timeout_set(Eo *obj EINA_UNUSED,
-                                                      Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *pd,
-                                                      double time)
-{
-   pd->start_timeout = time;
-}
-
 #include "efl_canvas_gesture_recognizer_triple_tap.eo.c"

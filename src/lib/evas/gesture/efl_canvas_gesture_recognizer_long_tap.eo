@@ -5,18 +5,6 @@ class @beta Efl.Canvas.Gesture_Recognizer_Long_Tap extends Efl.Canvas.Gesture_Re
      For internal use only.
    ]]
    c_prefix: efl_gesture_recognizer_long_tap;
-   methods {
-      @property timeout {
-         [[Minimum holding time to be recognized as a long tap.]]
-         set {
-         }
-         get {
-         }
-         values {
-            time: double; [[Time in seconds.]]
-         }
-      }
-   }
    implements {
       Efl.Object.destructor;
       Efl.Canvas.Gesture_Recognizer.type { get; }
