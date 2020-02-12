@@ -42,7 +42,7 @@ class @beta Efl.Io.Manager extends Efl.Loop_Consumer
       params {
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
-	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File_Direct_Info]]
+        info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File_Direct_Info]]
       }
       return: future<uint64> @move; [[Amount of files found during the listing of the directory]]
     }
@@ -52,7 +52,7 @@ class @beta Efl.Io.Manager extends Efl.Loop_Consumer
       params {
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
-	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File_Direct_Info]]
+        info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File_Direct_Info]]
       }
       return: future<uint64> @move; [[Amount of files found during the listing of the directory]]
     }
