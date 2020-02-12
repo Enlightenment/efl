@@ -76,6 +76,9 @@ jobs:
       env: DISTRO=Fedora31 CI_BUILD_TYPE=asan
     - os: linux
       if: type = cron
+      env: DISTRO=Fedora31-exactness CI_BUILD_TYPE=exactness
+    - os: linux
+      if: type = cron
       env: CI_BUILD_TYPE=codecov
     - os: linux
       if: type = cron
@@ -114,6 +117,7 @@ script:
   - .ci/ci-make-install.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
+  - .ci/ci-exactness.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
   - .ci/ci-build-test.sh "$CI_BUILD_TYPE"
 
