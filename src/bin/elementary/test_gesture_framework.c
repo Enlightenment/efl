@@ -224,6 +224,33 @@ finger_flick_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 }
 
 static void
+finger_zoom_start(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, ZOOM_NAME, 1, MAX_TAP, START_COLOR);
+   printf("Zoom Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_zoom_end(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+   double zoom = efl_gesture_zoom_get(tap);
+   double radius = efl_gesture_zoom_radius_get(tap);
+
+   _color_and_icon_set(data, ZOOM_NAME, 1, MAX_TAP, END_COLOR);
+   printf("Zoom Gesture ended x,y=<%d,%d> zoom=<%g> radius=<%f>\n", pos.x, pos.y, zoom, radius);
+}
+
+static void
+finger_zoom_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, ZOOM_NAME, 1, MAX_TAP, ABORT_COLOR);
+   printf("Zoom Aborted\n");
+}
+
+static void
 finger_momentum_start(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Position2D pos = efl_gesture_hotspot_get(tap);
@@ -398,6 +425,26 @@ flick_gesture_cb(void *data , const Efl_Event *ev)
          break;
       case EFL_GESTURE_STATE_FINISHED:
          finger_flick_end(data, g);
+         break;
+      default:
+         break;
+   }
+}
+
+static void
+zoom_gesture_cb(void *data , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+   switch(efl_gesture_state_get(g))
+   {
+      case EFL_GESTURE_STATE_STARTED:
+         finger_zoom_start(data, g);
+         break;
+      case EFL_GESTURE_STATE_CANCELED:
+         finger_zoom_abort(data, g);
+         break;
+      case EFL_GESTURE_STATE_FINISHED:
+         finger_zoom_end(data, g);
          break;
       default:
          break;
@@ -694,6 +741,7 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_event_callback_add(target, EFL_EVENT_GESTURE_TRIPLE_TAP, triple_tap_gesture_cb, infra);
    efl_event_callback_add(target, EFL_EVENT_GESTURE_MOMENTUM, momentum_gesture_cb, infra);
    efl_event_callback_add(target, EFL_EVENT_GESTURE_FLICK, flick_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_ZOOM, zoom_gesture_cb, infra);
 
    /* Update color state 20 times a second */
    infra->colortimer = ecore_timer_add(0.05, _icon_color_set_cb, infra->icons);
