@@ -2156,7 +2156,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     _evas_render_mapped_mask(evas, obj, obj->cur->clipper, proxy_render_data, output, ctx, off_x, off_y, level, do_async);
                   else if (!proxy_src_clip && proxy_render_data)
                     {
-                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, proxy_render_data->proxy_obj, off_x, off_y))
+                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
                          goto on_empty_clip;
                     }
 
@@ -2216,7 +2216,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                               }
                             else if (proxy_render_data)
                               {
-                                 if (!_proxy_context_clip(evas, ctx, proxy_render_data, proxy_render_data->proxy_obj, off_x, off_y))
+                                 if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
                                    goto on_empty_clip;
                               }
                          }
@@ -2274,7 +2274,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     }
                   else if (proxy_render_data)
                     {
-                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, proxy_render_data->proxy_obj, off_x, off_y))
+                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
                          goto on_empty_clip;
                     }
                }
@@ -2323,7 +2323,7 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
    int level = 1;
    void *ctx;
    int w, h, off_x = 0, off_y = 0;
-   Eina_Rectangle lr;
+   Eina_Rectangle lr = {0, 0, 0, 0};
 
 #ifdef REND_DBG
    level = __RD_level;

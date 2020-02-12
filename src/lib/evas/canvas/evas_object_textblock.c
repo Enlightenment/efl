@@ -1317,8 +1317,6 @@ static const Escape_Value escape_values_v_common_sorted[] = {
    ESCAPE_VALUE("&gt;", "\x3e"),
 };
 
-
-
 /**
  * @internal
  * Checks if a char is a whitespace.
@@ -3285,6 +3283,22 @@ _format_is_param(const char *item)
 
 /**
  * @internal
+ * Returns first occurrence of whitespace character
+ * otherwise return NULL.
+ *
+ * @param[in] string to search.
+ */
+static const char*
+_strchr_whitespace(const char* str)
+{
+   if (!str) return NULL;
+   while (*str && !isspace(*str)) str++;
+   if(*str) return str;
+   return NULL;
+}
+
+/**
+ * @internal
  * Parse the format item and populate key and val with the stringshares that
  * correspond to the formats parsed.
  * It expects item to be of the structure:
@@ -3307,7 +3321,7 @@ _format_param_parse(const char *item, const char **key, char **val, Allocator *a
    start++; /* Advance after the '=' */
    /* If we can find a quote as the first non-space char,
     * our new delimiter is a quote, not a space. */
-   while (*start == ' ')
+   while (isspace(*start))
       start++;
 
    if (*start == '\'')
@@ -3319,9 +3333,9 @@ _format_param_parse(const char *item, const char **key, char **val, Allocator *a
      }
    else
      {
-        end = strchr(start, ' ');
+        end = _strchr_whitespace(start);
         while ((end) && (end > start) && (end[-1] == '\\'))
-          end = strchr(end + 1, ' ');
+          end = _strchr_whitespace(end + 1);
      }
 
    /* Null terminate before the spaces */
@@ -3355,7 +3369,7 @@ end:
  * @return the current item parsed from the string.
  */
 static const char *
-_format_parse(const char **s)
+_format_parse(const char **s, Eina_Bool all_whitespaces)
 {
    const char *p;
    const char *s1 = NULL, *s2 = NULL;
@@ -3367,7 +3381,13 @@ _format_parse(const char **s)
      {
         if (!s1)
           {
-             if (*p != ' ') s1 = p;
+             if (all_whitespaces)
+               {
+                  if (!isspace(*p))
+                    s1 = p;
+               }
+             else if(*p != ' ')
+               s1 = p;
              if (*p == 0) break;
           }
         else if (!s2)
@@ -3379,7 +3399,13 @@ _format_parse(const char **s)
 
              if ((p > *s) && (p[-1] != '\\') && (!quote))
                {
-                  if (*p == ' ') s2 = p;
+                  if (all_whitespaces)
+                  {
+                     if (isspace(*p))
+                       s2 = p;
+                  }
+                  else if(*p == ' ')
+                    s2 = p;
                }
              if (*p == 0) s2 = p;
           }
@@ -3415,12 +3441,12 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
    s = str;
 
    /* get rid of any spaces at the start of the string */
-   while (*s == ' ') s++;
+   while (isspace(*s)) s++;
 
    Allocator allocator;
    _allocator_init(&allocator);
 
-   while ((item = _format_parse(&s)))
+   while ((item = _format_parse(&s, EINA_TRUE)))
      {
         const char *key = NULL;
         char *val = NULL;
@@ -5719,7 +5745,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
           {
              fmt = _layout_format_pop(c, n->orig_format);
           }
-        while ((item = _format_parse(&s)))
+        while ((item = _format_parse(&s, EINA_FALSE)))
           {
              if (_format_is_param(item))
                {
@@ -10731,7 +10757,7 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
         fnode->format_change = EINA_TRUE;
      }
 
-   while ((item = _format_parse(&s)))
+   while ((item = _format_parse(&s, EINA_FALSE)))
      {
         int itlen = s - item;
         /* We care about all of the formats even after a - except for
@@ -16300,7 +16326,7 @@ _evas_textblock_annotations_insert(Eo *eo_obj, Efl_Text_Cursor_Handle *start, Ef
 
    /* Sanitize the string and reject format items, closing '/' marks. */
    buf = eina_strbuf_new();
-   while ((item = _format_parse(&format)))
+   while ((item = _format_parse(&format, EINA_FALSE)))
      {
         int itlen = format - item;
         /* We care about all of the formats even after a - except for
