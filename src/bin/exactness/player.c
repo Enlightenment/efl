@@ -32,6 +32,7 @@
 #include "exactness_private.h"
 
 #define PATH_ 1024
+#define CMD_LINE_MAX 256
 #define IMAGE_FILENAME_EXT ".png"
 #define PAUSE_KEY_STR "F2"
 
@@ -1282,7 +1283,7 @@ int main(int argc, char **argv)
         /* Replace the current command line to hide the Exactness part */
         int len = argv[argc - 1] + strlen(argv[argc - 1]) - argv[opt_args];
         memcpy(argv[0], argv[opt_args], len);
-        memset(argv[0] + len, 0, PATH_MAX - len);
+        memset(argv[0] + len, 0, CMD_LINE_MAX - len);
 
         int i;
         for (i = opt_args; i < argc; i++)
