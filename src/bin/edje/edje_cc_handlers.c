@@ -11730,7 +11730,7 @@ st_collections_group_parts_part_description_text_fit_size_array(void)
    for (n = 0, argc = get_arg_count(); n < argc; n++)
      {
         unsigned int *value = malloc(sizeof(unsigned int));
-        *value = (unsigned int) parse_int(n);
+        if (value) *value = (unsigned int) parse_int(n);
         ed->text.fit_size_array = eina_list_append(ed->text.fit_size_array, value);
      }
 }
