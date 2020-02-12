@@ -425,6 +425,7 @@ _eina_future_dispatch(Eina_Future_Scheduler *scheduler, Eina_Future *f, Eina_Val
 static void
 _scheduled_entry_cb(Eina_Future *f, Eina_Value value)
 {
+   EINA_SAFETY_ON_NULL_RETURN(f->scheduled_entry);
    // This function is called by the scheduler, so it has to be defined
    Eina_Future_Scheduler *scheduler = f->scheduled_entry->scheduler;
 
