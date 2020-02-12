@@ -1,7 +1,8 @@
-enum @beta Efl.Input_Text.Panel_Layout_Type
+enum Efl.Input_Text.Panel_Layout_Type
 {
    [[Input panel (virtual keyboard) layout types.
      Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
+     @since 1.24
    ]]
    normal,      [[Default layout.]]
    number,      [[Number layout.]]
@@ -20,18 +21,20 @@ enum @beta Efl.Input_Text.Panel_Layout_Type
    voice        [[Voice layout, but if the IME does not support voice layout, then normal layout will be shown.]]
 }
 
-enum @beta Efl.Input_Text.Panel_Language_Type
+enum Efl.Input_Text.Panel_Language_Type
 {
    [[Input panel (virtual keyboard) language modes.
+     @since 1.24
    ]]
    automatic,    [[Automatic]]
    alphabet      [[Alphabet]]
 }
 
-enum @beta Efl.Input_Text.Capitalize_Type
+enum Efl.Input_Text.Capitalize_Type
 {
    [[Autocapitalization Types.
      Choose method of auto-capitalization.
+     @since 1.24
    ]]
    none,         [[No auto-capitalization when typing.]]
    word,         [[Autocapitalize each word typed.]]
@@ -39,9 +42,10 @@ enum @beta Efl.Input_Text.Capitalize_Type
    all           [[Autocapitalize all letters.]]
 }
 
-enum @beta Efl.Input_Text.Panel_Return_Key_Type
+enum Efl.Input_Text.Panel_Return_Key_Type
 {
    [["Return" Key types on the input panel (virtual keyboard).
+     @since 1.24
    ]]
    default, [[Default.]]
    done,    [[Done.]]
@@ -54,9 +58,10 @@ enum @beta Efl.Input_Text.Panel_Return_Key_Type
    signin   [[Sign-in.]]
 }
 
-enum @beta Efl.Input_Text.Panel_Return_Key_State
+enum Efl.Input_Text.Panel_Return_Key_State
 {
    [["Return" Key state on the input panel (virtual keyboard).
+     @since 1.24
    ]]
    auto,     [[The return key on input panel is disabled when the entry has no text,
                if entry has text, return key is enabled.
@@ -65,9 +70,10 @@ enum @beta Efl.Input_Text.Panel_Return_Key_State
    disabled, [[The return key on input panel is disabled.]]
 }
 
-enum @beta Efl.Input_Text.Content_Type
+enum Efl.Input_Text.Content_Type
 {
-   [[Enumeration that defines the types of Input Hints.]]
+   [[Enumeration that defines the types of Input Hints.
+     @since 1.24]]
    none                = 0,        [[No active hints.]]
    auto_complete       = 1 << 0,   [[Suggest word auto completion.]]
    sensitive_data      = 1 << 1,   [[Typed text should not be stored.]]
@@ -110,8 +116,9 @@ enum @beta Efl.Input_Text.Panel_Layout_Password_Variation_Type
 
 
 
-interface @beta Efl.Input_Text {
-   [[All the functionality relating to input hints
+interface Efl.Input_Text {
+   [[All the functionality relating to input hints/
+     @since 1.24
    ]]
    methods {
       @property input_panel_show_on_demand {
@@ -128,7 +135,7 @@ interface @beta Efl.Input_Text {
          }
       }
 
-      // FIXME: I don't understand why this is needed in addition to Layout
+
       @property input_panel_language {
          [[The language mode of the input panel.
            This API can be used if you want to show the alphabet keyboard mode.]]
@@ -154,7 +161,6 @@ interface @beta Efl.Input_Text {
          }
       }
 
-      // FIXME: input_capitalize/capitalization ?
       @property autocapitalization {
          [[The autocapitalization type on the immodule.]]
          set {
@@ -166,7 +172,6 @@ interface @beta Efl.Input_Text {
          }
       }
 
-      // FIXME: rename
       @property predictable {
          [[Whether the entry should allow predictive text.]]
          set {
@@ -177,7 +182,7 @@ interface @beta Efl.Input_Text {
             prediction: bool; [[Whether the entry should allow predictive text.]]
          }
       }
-      // FIXME: I agree with Mike, looks bad
+
       @property input_content_type @beta {
          [[The input hint which allows input methods to fine-tune their behavior.]]
          set {
@@ -188,6 +193,7 @@ interface @beta Efl.Input_Text {
             hints: Efl.Input_Text.Content_Type; [[Input hint.]]
          }
       }
+
       @property input_panel_layout {
          [[The input panel layout of the entry.]]
          set {
@@ -198,6 +204,7 @@ interface @beta Efl.Input_Text {
             layout: Efl.Input_Text.Panel_Layout_Type(Efl.Input_Text.Panel_Layout_Type.invalid); [[Layout type.]]
          }
       }
+
       @property input_panel_return_key_type {
          [[The "return" key type. This type is used to set string or icon on the "return" key of the input panel.
            An input panel displays the string or icon associated with this type.]]
@@ -209,7 +216,7 @@ interface @beta Efl.Input_Text {
             return_key_type: Efl.Input_Text.Panel_Return_Key_Type; [[The type of "return" key on the input panel.]]
          }
       }
-      // FIXME: shouldn't this be "autoshow" or something?
+
       @property input_panel_autoshow {
          [[The attribute to show the input panel automatically.]]
          set {

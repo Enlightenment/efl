@@ -10,7 +10,7 @@ enum @beta Efl.Ui.Textbox_Cnp_Content {
    Image = 4,   [[Images can be pasted or dropped into this widget.]]
 }
 
-class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
+class Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.Ui.Scrollable
    composites
                  Efl.Text_Interactive, Efl.Text_Markup, Efl.Input_Text
@@ -18,7 +18,8 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
      like automatic scrollbars, virtual keyboard, clipboard, configurable
-     context menus or auto-capitalization, for example.]]
+     context menus or auto-capitalization, for example.
+     @since 1.24]]
    methods {
       @property scrollable {
          [[Enable or disable scrolling in the widget.
