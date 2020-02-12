@@ -229,6 +229,12 @@ inline std::string managed_namespace(std::string const& ns)
   return escape_keyword(utils::remove_all(ns, '_'));
 }
 
+inline std::string managed_name(std::string const& name, char separator='_')
+{
+  auto tokens = utils::split(name, separator);
+  return utils::to_pascal_case(tokens);
+}
+
 inline std::string managed_method_name(attributes::function_def const& f)
 {
   std::vector<std::string> names = utils::split(f.name, '_');
@@ -244,16 +250,10 @@ inline std::string managed_method_name(attributes::function_def const& f)
   // Avoid clashing with System.Object.GetType
   if (candidate == "GetType" || candidate == "SetType")
     {
-       candidate.insert(3, f.klass.eolian_name);
+       candidate.insert(3, managed_name(f.klass.eolian_name));
     }
 
   return candidate;
-}
-
-inline std::string managed_name(std::string const& name, char separator='_')
-{
-  auto tokens = utils::split(name, separator);
-  return utils::to_pascal_case(tokens);
 }
 
 inline std::string full_managed_name(std::string const& name)
