@@ -15653,6 +15653,7 @@ _efl_canvas_textblock_efl_gfx_filter_filter_source_set(Eo *eo_obj, Efl_Canvas_Te
    else
      {
         pb = calloc(1, sizeof(*pb));
+        if (!pb) return;
         pb->eo_proxy = eo_obj;
         pb->eo_source = eo_source;
         pb->name = eina_stringshare_add(name);
