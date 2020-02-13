@@ -195,14 +195,19 @@ EFL_END_TEST
 EFL_START_TEST(efl_ui_layout_test_api_ordering)
 {
    Evas_Object *win, *box;
+   int count = 0;
    const char text_text[] = "test text";
 
    win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    box = efl_add(EFL_UI_BOX_CLASS, win);
    Eo *layout = efl_add(EFL_UI_BUTTON_CLASS, win,
+     efl_layout_signal_callback_add(efl_added, "efl,content,set", "efl", &count, (void*)event_callback_single_call_int_data, NULL),
+     efl_ui_widget_style_set(efl_added, "anchor"),
      efl_content_set(efl_added, box),
      efl_text_set(efl_added, text_text)
    );
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 1);
    ck_assert_ptr_eq(efl_content_get(layout), box);
    ck_assert_str_eq(efl_text_get(layout), text_text);
 }

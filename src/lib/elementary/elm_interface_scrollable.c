@@ -4032,6 +4032,9 @@ _elm_interface_scrollable_reset_signals(Eo *obj EINA_UNUSED, Elm_Scrollable_Smar
 {
    sid->go_up = sid->go_down = sid->go_right = sid->go_left = EINA_FALSE;
 
+   if (!sid->edje_obj)
+     return;
+
    edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
    edje_object_signal_emit(sid->edje_obj, "elm,action,hide,down", "elm");
    edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");

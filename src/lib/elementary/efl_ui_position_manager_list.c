@@ -69,6 +69,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
      }
 
    pd->size_cache = calloc(pd->size + 1, sizeof(int));
+   if (!pd->size_cache) return;
    pd->size_cache[0] = 0;
    pd->maximum_min_size = 0;
 

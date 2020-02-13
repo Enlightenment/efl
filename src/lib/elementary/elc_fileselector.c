@@ -2406,6 +2406,11 @@ _properties_ready(void *data, const Efl_Event *ev)
           Eina_Bool is_dir = EINA_FALSE;
 
           value = efl_model_property_get(ev->object, "is_dir");
+          if (!eina_value_type_get(value))
+            {
+               ERR("Empty type for 'is_dir'");
+               return;
+            }
           if (eina_value_type_get(value) != EINA_VALUE_TYPE_BOOL)
             {
                ERR("Unexpected type for 'is_dir': '%s' with value '%s'.", eina_value_type_get(value)->name, eina_value_to_string(value));
@@ -2471,6 +2476,11 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *path)
 
    efl_event_callback_add(pd->target, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
    value = efl_model_property_get(pd->target, "is_dir");
+   if (!eina_value_type_get(value))
+     {
+        ERR("Empty type for 'is_dir'");
+        goto clean_up;
+     }
    if (eina_value_type_get(value) == EINA_VALUE_TYPE_ERROR)
      {
         Eina_Error err = 0;
@@ -2507,6 +2517,11 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
 
    efl_event_callback_add(pd->target, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
    value = efl_model_property_get(pd->target, "is_dir");
+   if (!eina_value_type_get(value))
+     {
+        ERR("Empty type for 'is_dir'");
+        goto clean_up;
+     }
    if (eina_value_type_get(value) == EINA_VALUE_TYPE_ERROR)
        {
           Eina_Error err = 0;

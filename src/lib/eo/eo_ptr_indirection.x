@@ -247,7 +247,12 @@ _eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
 # define UNPROTECT(_ptr_)
 #endif
 
-#define EO_ALIGN_SIZE(size) eina_mempool_alignof(size)
+#if __WORDSIZE == 32
+# define EO_ALIGN 16
+#else // __WORDSIZE == 64
+# define EO_ALIGN 8
+#endif
+#define EO_ALIGN_SIZE(size) (((size + EO_ALIGN - 1) / EO_ALIGN) * EO_ALIGN)
 
 /* Entry */
 typedef struct

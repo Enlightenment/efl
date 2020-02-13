@@ -1939,6 +1939,7 @@ _efl_object_event_future_scheduler_get(const Eo *obj, Efl_Object_Data *pd, Efl_C
    if (!array) return NULL;
 
    ext = _efl_object_extension_need(pd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ext, NULL);
 
    // First lookup for an existing scheduler that match the provided array
    if (!ext->schedulers) ext->schedulers = eina_hash_pointer_new(_futures_cancel_cb);

@@ -1734,7 +1734,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    if (o->cur->scene)
      {
-        if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
+        _evas_image_3d_unset(eo_obj, obj, o);
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         state_write->scene = NULL;
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
