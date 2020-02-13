@@ -15590,6 +15590,7 @@ _efl_canvas_textblock_efl_gfx_filter_filter_data_set(Eo *obj, Efl_Canvas_Textblo
    else
      {
         db = calloc(1, sizeof(*db));
+        if (!db) return;
         pd->gfx_filter.data_bindings = (Evas_Filter_Data_Binding *)
               eina_inlist_append(EINA_INLIST_GET(pd->gfx_filter.data_bindings), EINA_INLIST_GET(db));
         db->name = eina_stringshare_add(name);
