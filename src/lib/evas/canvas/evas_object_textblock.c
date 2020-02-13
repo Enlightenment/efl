@@ -10458,7 +10458,7 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                            Eina_Unicode content = 0;
                            if (!inc && cur->pos > 0)
                               content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos - 1];
-                           else if (inc && cur->pos >= 0 && eina_ustrbuf_length_get(cur->node->unicode) > (cur->pos + 1))
+                           else if (inc && eina_ustrbuf_length_get(cur->node->unicode) > (cur->pos + 1))
                               content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos + 1];
                            if (VAR_SEQ(content)) *is_single_glyph = EINA_TRUE;
                          }
