@@ -550,7 +550,7 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
 
              ptr = dst + (x + x1) + ((y + row) * dst_pitch);
              buf_ptr = buf + (row * w) + x1;
-             func(buf_ptr, mask, 0, ptr, w);
+             func(buf_ptr, mask, 0, ptr, x2 - x1);
           }
      }
    else
