@@ -23,4 +23,5 @@
   <dllmap dll="evas" target="@EVAS@"/>
   <dllmap dll="eldbus" target="@ELDBUS@"/>
   <dllmap dll="elementary" target="@ELEMENTARY@"/>
+  <dllmap dll="eflcustomexportsmono" target="@EFLCUSTOMEXPORTSMONO@"/>
 </configuration>
