@@ -10,7 +10,6 @@ _efl_canvas_gesture_momentum_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    gd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_CLASS);
-   gd->type = EFL_EVENT_GESTURE_MOMENTUM;
 
    return obj;
 }

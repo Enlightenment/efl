@@ -11,7 +11,6 @@
 /* milliseconds */
 #define TAP_TOUCH_TIME_THRESHOLD (0.1 * 1000)
 
-const Efl_Event_Description * _efl_gesture_type_get(const Eo *obj);
 int _direction_get(Evas_Coord xx1, Evas_Coord xx2);
 Eina_Value *_recognizer_config_get(const Eo *obj, const char *name);
 Eina_Bool _event_multi_touch_get(const Efl_Canvas_Gesture_Touch *event);
@@ -139,7 +138,6 @@ struct _Efl_Canvas_Gesture_Recognizer_Custom_Data
 struct _Efl_Canvas_Gesture_Data
 {
    Efl_Canvas_Gesture_State        state;
-   const Efl_Event_Description    *type;
    Eina_Position2D                 hotspot;
    unsigned int                    timestamp;
    unsigned int                    touch_count;

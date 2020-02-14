@@ -9,7 +9,6 @@ _efl_canvas_gesture_long_tap_efl_object_constructor(Eo *obj, void *pd EINA_UNUSE
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    gd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_CLASS);
-   gd->type = EFL_EVENT_GESTURE_LONG_TAP;
 
    return obj;
 }
