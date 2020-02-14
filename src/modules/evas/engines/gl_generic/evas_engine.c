@@ -932,6 +932,7 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
         eng_gl_surface_unlock(engine, im);
         if (!ok)
           {
+             evas_gl_common_image_free(im_new);
              if (err) *err = EVAS_LOAD_ERROR_GENERIC;
              ERR("ReadPixels failed.");
              return NULL;
