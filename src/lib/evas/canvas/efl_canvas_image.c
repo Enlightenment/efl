@@ -20,18 +20,18 @@ _evas_image_file_unload(Eo *eo_obj)
    o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 }
 Eina_Bool
-_evas_image_file_load(Eo *eo_obj)
+_evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj;
-   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Image_Load_Opts lo;
    const Eina_File *f = efl_file_mmap_get(eo_obj);
    const char *key = efl_file_key_get(eo_obj);
    int load_error;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(f, EINA_FALSE);
+   if (!o->skip_head)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(f, EINA_FALSE);
 
-   if (o->cur->f == f)
+   if (f && (o->cur->f == f))
      {
         if ((!o->cur->key) && (!key))
           return EINA_TRUE;
@@ -42,7 +42,10 @@ _evas_image_file_load(Eo *eo_obj)
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    _evas_image_init_set(f, key, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &load_error, &lo);
+   if (f)
+     o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &load_error, &lo);
+   else
+     o->engine_data = ENFN->image_load(ENC, efl_file_get(eo_obj), o->cur->key, &load_error, &lo);
    o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
@@ -56,9 +59,13 @@ EOLIAN static Eina_Error
 _efl_canvas_image_efl_file_load(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    if (efl_file_loaded_get(eo_obj)) return 0;
-   Eina_Error err = efl_file_load(efl_super(eo_obj, MY_CLASS));
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   Eina_Error err = 0;
+
+   if (!o->skip_head)
+     err = efl_file_load(efl_super(eo_obj, MY_CLASS));
    if (err) return err;
-   if (_evas_image_file_load(eo_obj))
+   if (_evas_image_file_load(eo_obj, o))
      return 0;
    return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 }
