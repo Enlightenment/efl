@@ -4240,7 +4240,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
      }
 
    /* Recalc if needed the map center && light source */
-   if (ep->param1.description->map.on)
+   if (ep->param1.description && ep->param1.description->map.on)
      {
         center[0] = _edje_real_part_state_get(ed, ep, flags, ep->param1.description->map.rot.id_center, &statec1);
         zoom_center[0] = _edje_real_part_state_get(ed, ep, flags, ep->param1.description->map.zoom.id_center, &statec1);
@@ -4398,10 +4398,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                {
                   _edje_calc_params_need_ext(p3);
                   p3->ext->clip_to = p1->ext->clip_to;
-               }
-             else
-               {
-                  if (p3->ext) p3->ext->clip_to = NULL;
                }
           }
 
