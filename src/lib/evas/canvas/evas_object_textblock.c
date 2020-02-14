@@ -10458,7 +10458,7 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                            Eina_Unicode content = 0;
                            if (!inc && cur->pos > 0)
                               content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos - 1];
-                           else if (inc && cur->pos >= 0 && eina_ustrbuf_length_get(cur->node->unicode) > (cur->pos + 1))
+                           else if (inc && eina_ustrbuf_length_get(cur->node->unicode) > (cur->pos + 1))
                               content = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos + 1];
                            if (VAR_SEQ(content)) *is_single_glyph = EINA_TRUE;
                          }
@@ -15590,6 +15590,7 @@ _efl_canvas_textblock_efl_gfx_filter_filter_data_set(Eo *obj, Efl_Canvas_Textblo
    else
      {
         db = calloc(1, sizeof(*db));
+        if (!db) return;
         pd->gfx_filter.data_bindings = (Evas_Filter_Data_Binding *)
               eina_inlist_append(EINA_INLIST_GET(pd->gfx_filter.data_bindings), EINA_INLIST_GET(db));
         db->name = eina_stringshare_add(name);
@@ -15652,6 +15653,7 @@ _efl_canvas_textblock_efl_gfx_filter_filter_source_set(Eo *eo_obj, Efl_Canvas_Te
    else
      {
         pb = calloc(1, sizeof(*pb));
+        if (!pb) return;
         pb->eo_proxy = eo_obj;
         pb->eo_source = eo_source;
         pb->name = eina_stringshare_add(name);

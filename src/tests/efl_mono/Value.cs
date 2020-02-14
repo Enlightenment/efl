@@ -877,6 +877,510 @@ public static class TestEinaValue {
         }
     }
 
+    public static void TestInsertValueArrayOfSByte()
+    {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.SByte)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert(0, 3));
+            Test.Assert(!array.Insert(0, 1));
+            Test.Assert(!array.Insert(-123, 12));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert(0, 0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Insert(6, 1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Insert(-122, 0));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Insert(30, 1));
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((sbyte)array[0], (sbyte)-122);
+            Test.AssertEquals((sbyte)array[1], (sbyte)30);
+            Test.AssertEquals((sbyte)array[2], (sbyte)0);
+            Test.AssertEquals((sbyte)array[3], (sbyte)6);
+
+            array[0] = 120;
+            array[1] = -42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((sbyte)array[0], (sbyte)120);
+            Test.AssertEquals((sbyte)array[1], (sbyte)-42);
+            Test.AssertEquals((sbyte)array[2], (sbyte)0);
+            Test.AssertEquals((sbyte)array[3], (sbyte)6);
+
+            Test.AssertEquals("[120, -42, 0, 6]", array.ToString());
+        }
+    }
+
+    public static void TestInsertValueArrayOfByte()
+    {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Byte)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert(0, 3));
+            Test.Assert(!array.Insert(0, 1));
+            Test.Assert(!array.Insert(123, 12));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert(0, 0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Insert(6, 1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Insert(122, 0));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Insert(30, 1));
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((byte)array[0], (byte)122);
+            Test.AssertEquals((byte)array[1], (byte)30);
+            Test.AssertEquals((byte)array[2], (byte)0);
+            Test.AssertEquals((byte)array[3], (byte)6);
+
+            array[0] = 120;
+            array[1] = 42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((byte)array[0], (byte)120);
+            Test.AssertEquals((byte)array[1], (byte)42);
+            Test.AssertEquals((byte)array[2], (byte)0);
+            Test.AssertEquals((byte)array[3], (byte)6);
+
+            Test.AssertEquals("[120, 42, 0, 6]", array.ToString());
+        }
+    }
+
+    public static void TestInsertValueArrayOfInts()
+    {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert(0, 3));
+            Test.Assert(!array.Insert(0, 1));
+            Test.Assert(!array.Insert(123, 12));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert(0, 0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Insert(1, 1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Insert(5, 0));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Insert(42, 1));
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((int)array[0], (int)5);
+            Test.AssertEquals((int)array[1], (int)42);
+            Test.AssertEquals((int)array[2], (int)0);
+            Test.AssertEquals((int)array[3], (int)1);
+
+            array[0] = 1984;
+            array[1] = -42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((int)array[0], (int)1984);
+            Test.AssertEquals((int)array[1], (int)-42);
+            Test.AssertEquals((int)array[2], (int)0);
+            Test.AssertEquals((int)array[3], (int)1);
+
+            Test.AssertEquals("[1984, -42, 0, 1]", array.ToString());
+        }
+    }
+
+    public static void TestInsertValueArrayOfInt64s()
+    {
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int64)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert(0, 3));
+            Test.Assert(!array.Insert(0, 1));
+            Test.Assert(!array.Insert(123, 12));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert(0,0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Insert(10000000000,1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Insert(5,0));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Insert(42,1));
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((long)array[0], (long)5);
+            Test.AssertEquals((long)array[1], (long)42);
+            Test.AssertEquals((long)array[2], (long)0);
+            Test.AssertEquals((long)array[3], (long)10000000000);
+
+            array[0] = 1984;
+            array[1] = -42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((long)array[0], (long)1984);
+            Test.AssertEquals((long)array[1], (long)-42);
+            Test.AssertEquals((long)array[2], (long)0);
+            Test.AssertEquals((long)array[3], (long)10000000000);
+
+            Test.AssertEquals("[1984, -42, 0, 10000000000]", array.ToString());
+        }
+    }
+
+    public static void TestInsertValueArrayOfUInts()
+    {
+
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.UInt32)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert(0, 3));
+            Test.Assert(!array.Insert(0, 1));
+            Test.Assert(!array.Insert(123, 12));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert(0,0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Insert(7,1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Insert(5,0));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Insert(42,1));
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((uint)array[0], (uint)5);
+            Test.AssertEquals((uint)array[1], (uint)42);
+            Test.AssertEquals((uint)array[2], (uint)0);
+            Test.AssertEquals((uint)array[3], (uint)7);
+
+            array[0] = 1984;
+            array[1] = 100;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((uint)array[0], (uint)1984);
+            Test.AssertEquals((uint)array[1], (uint)100);
+            Test.AssertEquals((uint)array[2], (uint)0);
+            Test.AssertEquals((uint)array[3], (uint)7);
+
+            Test.AssertEquals("[1984, 100, 0, 7]", array.ToString());
+        }
+    }
+
+    public static void TestInsertValueArrayOfStrings()
+    {
+
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.String)) {
+
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert("hello",3));
+            Test.Assert(!array.Insert("world",12));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert("hello",0));
+            Test.Assert(array.Insert("world",1));
+            Test.Assert(array.Insert("first",0));
+            Test.Assert(array.Insert("sec",1));
+
+            Test.AssertEquals((string)array[0], (string)"first");
+            Test.AssertEquals((string)array[1], (string)"sec");
+            Test.AssertEquals((string)array[2], (string)"hello");
+            Test.AssertEquals((string)array[3], (string)"world");
+
+            array[0] = "efl";
+            array[1] = "rocks";
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((string)array[0], (string)"efl");
+            Test.AssertEquals((string)array[1], (string)"rocks");
+            Test.AssertEquals((string)array[2], (string)"hello");
+            Test.AssertEquals((string)array[3], (string)"world");
+        }
+    }
+
+    public static void TestInsertValueArrayOfObjects()
+    {
+
+        using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Object)) {
+
+            var a = new Dummy.TestObject();
+            var b = new Dummy.TestObject();
+            var c = new Dummy.TestObject();
+            var d = new Dummy.TestObject();
+
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(!array.Insert(a,12));
+            Test.Assert(!array.Insert(b,3));
+            Test.AssertEquals(0, array.Count());
+
+            Test.Assert(array.Insert(a,0));
+            Test.Assert(array.Insert(b,1));
+            Test.Assert(array.Insert(c,0));
+            Test.Assert(array.Insert(d,1));
+
+            Test.AssertEquals((Efl.Object)array[0], c);
+            Test.AssertEquals((Efl.Object)array[1], d);
+            Test.AssertEquals((Efl.Object)array[2], a);
+            Test.AssertEquals((Efl.Object)array[3], b);
+
+            array[0] = a;
+            array[1] = b;
+
+            Test.AssertEquals((Efl.Object)array[0], a);
+            Test.AssertEquals((Efl.Object)array[1], b);
+            Test.AssertEquals((Efl.Object)array[2], a);
+            Test.AssertEquals((Efl.Object)array[3], b);
+
+            d.Dispose();
+            c.Dispose();
+            b.Dispose();
+            a.Dispose();
+        }
+    }
+
+    public static void TestInsertValueListOfSByte()
+    {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.SByte)) {
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert(0, 3));
+            Test.Assert(!list.Insert(0, 1));
+            Test.Assert(!list.Insert(-123, 12));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert(0, 0));
+            Test.AssertEquals(1, list.Count());
+            Test.Assert(list.Insert(6, 1));
+            Test.AssertEquals(2, list.Count());
+            Test.Assert(list.Insert(-122, 0));
+            Test.AssertEquals(3, list.Count());
+            Test.Assert(list.Insert(30, 1));
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((sbyte)list[0], (sbyte)-122);
+            Test.AssertEquals((sbyte)list[1], (sbyte)30);
+            Test.AssertEquals((sbyte)list[2], (sbyte)0);
+            Test.AssertEquals((sbyte)list[3], (sbyte)6);
+
+            list[0] = 120;
+            list[1] = -42;
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((sbyte)list[0], (sbyte)120);
+            Test.AssertEquals((sbyte)list[1], (sbyte)-42);
+            Test.AssertEquals((sbyte)list[2], (sbyte)0);
+            Test.AssertEquals((sbyte)list[3], (sbyte)6);
+
+            Test.AssertEquals("[120, -42, 0, 6]", list.ToString());
+        }
+    }
+
+    public static void TestInsertValueListOfByte()
+    {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Byte)) {
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert(0, 3));
+            Test.Assert(!list.Insert(0, 1));
+            Test.Assert(!list.Insert(123, 12));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert(0, 0));
+            Test.AssertEquals(1, list.Count());
+            Test.Assert(list.Insert(6, 1));
+            Test.AssertEquals(2, list.Count());
+            Test.Assert(list.Insert(122, 0));
+            Test.AssertEquals(3, list.Count());
+            Test.Assert(list.Insert(30, 1));
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((byte)list[0], (byte)122);
+            Test.AssertEquals((byte)list[1], (byte)30);
+            Test.AssertEquals((byte)list[2], (byte)0);
+            Test.AssertEquals((byte)list[3], (byte)6);
+
+            list[0] = 120;
+            list[1] = 42;
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((byte)list[0], (byte)120);
+            Test.AssertEquals((byte)list[1], (byte)42);
+            Test.AssertEquals((byte)list[2], (byte)0);
+            Test.AssertEquals((byte)list[3], (byte)6);
+
+            Test.AssertEquals("[120, 42, 0, 6]", list.ToString());
+        }
+    }
+
+    public static void TestInsertValueListOfInts()
+    {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int32)) {
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert(0, 3));
+            Test.Assert(!list.Insert(0, 1));
+            Test.Assert(!list.Insert(123, 12));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert(0, 0));
+            Test.AssertEquals(1, list.Count());
+            Test.Assert(list.Insert(1, 1));
+            Test.AssertEquals(2, list.Count());
+            Test.Assert(list.Insert(5, 0));
+            Test.AssertEquals(3, list.Count());
+            Test.Assert(list.Insert(42, 1));
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((int)list[0], (int)5);
+            Test.AssertEquals((int)list[1], (int)42);
+            Test.AssertEquals((int)list[2], (int)0);
+            Test.AssertEquals((int)list[3], (int)1);
+
+            list[0] = 1984;
+            list[1] = -42;
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((int)list[0], (int)1984);
+            Test.AssertEquals((int)list[1], (int)-42);
+            Test.AssertEquals((int)list[2], (int)0);
+            Test.AssertEquals((int)list[3], (int)1);
+
+            Test.AssertEquals("[1984, -42, 0, 1]", list.ToString());
+        }
+    }
+
+    public static void TestInsertValueListOfInt64s()
+    {
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Int64)) {
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert(0, 3));
+            Test.Assert(!list.Insert(0, 1));
+            Test.Assert(!list.Insert(123, 12));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert(0,0));
+            Test.AssertEquals(1, list.Count());
+            Test.Assert(list.Insert(10000000000,1));
+            Test.AssertEquals(2, list.Count());
+            Test.Assert(list.Insert(5,0));
+            Test.AssertEquals(3, list.Count());
+            Test.Assert(list.Insert(42,1));
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((long)list[0], (long)5);
+            Test.AssertEquals((long)list[1], (long)42);
+            Test.AssertEquals((long)list[2], (long)0);
+            Test.AssertEquals((long)list[3], (long)10000000000);
+
+            list[0] = 1984;
+            list[1] = -42;
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((long)list[0], (long)1984);
+            Test.AssertEquals((long)list[1], (long)-42);
+            Test.AssertEquals((long)list[2], (long)0);
+            Test.AssertEquals((long)list[3], (long)10000000000);
+
+            Test.AssertEquals("[1984, -42, 0, 10000000000]", list.ToString());
+        }
+    }
+
+    public static void TestInsertValueListOfUInts()
+    {
+
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.UInt32)) {
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert(0, 3));
+            Test.Assert(!list.Insert(0, 1));
+            Test.Assert(!list.Insert(123, 12));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert(0,0));
+            Test.AssertEquals(1, list.Count());
+            Test.Assert(list.Insert(7,1));
+            Test.AssertEquals(2, list.Count());
+            Test.Assert(list.Insert(5,0));
+            Test.AssertEquals(3, list.Count());
+            Test.Assert(list.Insert(42,1));
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((uint)list[0], (uint)5);
+            Test.AssertEquals((uint)list[1], (uint)42);
+            Test.AssertEquals((uint)list[2], (uint)0);
+            Test.AssertEquals((uint)list[3], (uint)7);
+
+            list[0] = 1984;
+            list[1] = 100;
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((uint)list[0], (uint)1984);
+            Test.AssertEquals((uint)list[1], (uint)100);
+            Test.AssertEquals((uint)list[2], (uint)0);
+            Test.AssertEquals((uint)list[3], (uint)7);
+
+            Test.AssertEquals("[1984, 100, 0, 7]", list.ToString());
+        }
+    }
+
+    public static void TestInsertValueListOfStrings()
+    {
+
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.String)) {
+
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert("Nice",2));
+            Test.Assert(!list.Insert("efl",5));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert("hello",0));
+            Test.Assert(list.Insert("world",1));
+            Test.Assert(list.Insert("first",0));
+            Test.Assert(list.Insert("sec",1));
+
+            Test.AssertEquals((string)list[0], (string)"first");
+            Test.AssertEquals((string)list[1], (string)"sec");
+            Test.AssertEquals((string)list[2], (string)"hello");
+            Test.AssertEquals((string)list[3], (string)"world");
+
+            list[0] = "efl";
+            list[1] = "rocks";
+            Test.AssertEquals(4, list.Count());
+
+            Test.AssertEquals((string)list[0], (string)"efl");
+            Test.AssertEquals((string)list[1], (string)"rocks");
+            Test.AssertEquals((string)list[2], (string)"hello");
+            Test.AssertEquals((string)list[3], (string)"world");
+        }
+    }
+
+    public static void TestInsertValueListOfObjects()
+    {
+
+        using (Eina.Value list = new Eina.Value(Eina.ValueType.List, Eina.ValueType.Object)) {
+
+            var a = new Dummy.TestObject();
+            var b = new Dummy.TestObject();
+            var c = new Dummy.TestObject();
+            var d = new Dummy.TestObject();
+
+            Test.AssertEquals(0, list.Count());
+            Test.Assert(!list.Insert(a,6));
+            Test.Assert(!list.Insert(b,1));
+            Test.Assert(!list.Insert(c,7));
+            Test.AssertEquals(0, list.Count());
+
+            Test.Assert(list.Insert(a,0));
+            Test.Assert(list.Insert(b,1));
+            Test.Assert(list.Insert(c,0));
+            Test.Assert(list.Insert(d,1));
+
+            Test.AssertEquals((Efl.Object)list[0], c);
+            Test.AssertEquals((Efl.Object)list[1], d);
+            Test.AssertEquals((Efl.Object)list[2], a);
+            Test.AssertEquals((Efl.Object)list[3], b);
+
+            list[0] = a;
+            list[1] = b;
+
+            Test.AssertEquals((Efl.Object)list[0], a);
+            Test.AssertEquals((Efl.Object)list[1], b);
+            Test.AssertEquals((Efl.Object)list[2], a);
+            Test.AssertEquals((Efl.Object)list[3], b);
+
+            d.Dispose();
+            c.Dispose();
+            b.Dispose();
+            a.Dispose();
+        }
+    }
 
     public static void TestArrayOutOfBounds() {
         using (Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {

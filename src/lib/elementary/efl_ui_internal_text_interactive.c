@@ -2018,10 +2018,9 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_language_set(Eo *ob
 
 
 EOLIAN static Efl_Input_Text_Panel_Language_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_language_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_input_panel_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    return en->input_panel_lang;
-   (void)obj;
 }
 
 
@@ -2250,10 +2249,9 @@ _efl_ui_internal_text_interactive_efl_input_text_predictable_set(Eo *obj EINA_UN
 
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_input_text_predictable_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_predictable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    return en->prediction_allow;
-   (void)obj;
 }
 
 
@@ -2297,8 +2295,6 @@ _efl_ui_internal_text_interactive_efl_input_text_autocapitalization_set(Eo *obj,
 
    if (en->imf_context)
      ecore_imf_context_autocapital_type_set(en->imf_context, (Ecore_IMF_Autocapital_Type)autocapital_type);
-
-   (void)obj;
 #else
    (void)obj;
    (void)en;
@@ -2308,17 +2304,15 @@ _efl_ui_internal_text_interactive_efl_input_text_autocapitalization_set(Eo *obj,
 
 
 EOLIAN static Efl_Input_Text_Capitalize_Type
-_efl_ui_internal_text_interactive_efl_input_text_autocapitalization_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_autocapitalization_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      return (Efl_Input_Text_Capitalize_Type)ecore_imf_context_autocapital_type_get(en->imf_context);
    return EFL_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
-   (void)obj;
 #else
-   return EFL_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
-   (void)obj;
    (void)en;
+   return EFL_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
 #endif
 }
 

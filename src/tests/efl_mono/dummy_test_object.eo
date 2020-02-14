@@ -1576,11 +1576,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       @property multi_valued_prop {
+         [[ A multi valued property. ]]
          get {}
          set {}
          values {
-           prop1: int;
-           prop2: int;
+           prop1: int; [[ Dummy property's first element. ]]
+           prop2: int; [[ Dummy property's second element. ]]
          }
       }
 

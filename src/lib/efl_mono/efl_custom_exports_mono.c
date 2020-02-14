@@ -543,6 +543,31 @@ EINA_CONTAINER_APPEND_WRAPPER(double, double)
 EINA_CONTAINER_APPEND_WRAPPER(string, const char *)
 EINA_CONTAINER_APPEND_WRAPPER(ptr, void *)
 
+#define EINA_CONTAINER_INSERT_WRAPPER(N, T) EAPI Eina_Bool eina_value_container_insert_wrapper_##N(Eina_Value *value, unsigned int position, T new_value) \
+{ \
+    const Eina_Value_Type *tp = eina_value_type_get(value); \
+    if (tp == EINA_VALUE_TYPE_ARRAY) \
+        return eina_value_array_insert(value, position, new_value); \
+    else if (tp == EINA_VALUE_TYPE_LIST) \
+        return eina_value_list_insert(value, position, new_value); \
+    else \
+        return EINA_FALSE; \
+}
+
+EINA_CONTAINER_INSERT_WRAPPER(char, char)
+EINA_CONTAINER_INSERT_WRAPPER(uchar, unsigned char)
+EINA_CONTAINER_INSERT_WRAPPER(short, short)
+EINA_CONTAINER_INSERT_WRAPPER(ushort, unsigned short)
+EINA_CONTAINER_INSERT_WRAPPER(int, int)
+EINA_CONTAINER_INSERT_WRAPPER(uint, unsigned int)
+EINA_CONTAINER_INSERT_WRAPPER(long, long)
+EINA_CONTAINER_INSERT_WRAPPER(ulong, unsigned long)
+EINA_CONTAINER_INSERT_WRAPPER(float, float)
+EINA_CONTAINER_INSERT_WRAPPER(double, double)
+EINA_CONTAINER_INSERT_WRAPPER(string, const char *)
+EINA_CONTAINER_INSERT_WRAPPER(ptr, void *)
+
+
 EAPI void eina_value_container_get_wrapper(const Eina_Value *value, int i, void *output)
 {
     const Eina_Value_Type *tp = eina_value_type_get(value);

@@ -13,7 +13,7 @@ static char*
 _get_key_val(void *key)
 {
    static char buf[30];
-   snprintf(buf, sizeof(buf), "%ld", (size_t) key);
+   snprintf(buf, sizeof(buf), "%zu", (size_t) key);
    return buf;
 }
 

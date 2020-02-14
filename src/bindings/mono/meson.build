@@ -122,6 +122,7 @@ efl_mono_conf_data.set('EO', eo_lib.full_path())
 efl_mono_conf_data.set('EVAS', evas_lib.full_path())
 efl_mono_conf_data.set('ELDBUS', eldbus_lib.full_path())
 efl_mono_conf_data.set('ELEMENTARY', elementary_lib.full_path())
+efl_mono_conf_data.set('EFLCUSTOMEXPORTSMONO', efl_mono_lib.full_path())
 
 efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
                                      output : 'efl_mono.dll.config',
