@@ -288,6 +288,75 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
    free(cache);
 }
 
+EAPI Engine_Image_Entry *
+evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
+                                const char *file, const char *key,
+                                Evas_Image_Load_Opts *lo, void *data,
+                                int *error)
+{
+   Engine_Image_Entry *eim;
+   Image_Entry *im;
+   const char *ekey;
+
+   assert(cache != NULL);
+
+   *error = EVAS_LOAD_ERROR_NONE;
+
+   ekey = NULL;
+   eim = NULL;
+
+   im = evas_cache_image_request(cache->parent, file, key, lo, error);
+   if (!im) goto on_error;
+
+   if (cache->func.key) ekey = cache->func.key(im, file, key, lo, data);
+   else ekey = eina_stringshare_add(im->cache_key);
+   if (!ekey)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto on_error;
+     }
+
+   eim = eina_hash_find(cache->activ, ekey);
+   if (eim)
+     {
+        evas_cache_image_drop(im);
+        goto on_ok;
+     }
+
+   eim = eina_hash_find(cache->inactiv, ekey);
+   if (eim)
+     {
+        _evas_cache_engine_image_remove_activ(cache, eim);
+        _evas_cache_engine_image_make_active(cache, eim, ekey);
+        evas_cache_image_drop(im);
+        goto on_ok;
+     }
+
+   eim = _evas_cache_engine_image_alloc(cache, im, ekey);
+   if (!eim)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   *error = cache->func.constructor(eim, data);
+   if (*error != EVAS_LOAD_ERROR_NONE) goto on_error;
+   if (cache->func.debug) cache->func.debug("constructor-engine", eim);
+
+on_ok:
+   eim->references++;
+   return eim;
+
+on_error:
+   if (!eim)
+     {
+        if (im) evas_cache_image_drop(im);
+     }
+   else _evas_cache_engine_image_dealloc(cache, eim);
+
+   return NULL;
+}
+
 EAPI void
 evas_cache_engine_image_drop(Engine_Image_Entry *eim)
 {
