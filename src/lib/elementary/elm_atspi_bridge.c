@@ -3748,7 +3748,7 @@ _set_broadcast_flag(const char *event, Eo *bridge)
 
    if (!strcmp(tokens[0], "Object"))
      {
-        if (!tokens[1] || *tokens[1] == '\0') return; // do not handle "Object:*"
+        if (!tokens[1] || *tokens[1] == '\0') goto end; // do not handle "Object:*"
         else if (!strcmp(tokens[1], "StateChanged"))
           {
              if (!tokens[2] || *tokens[2] == '\0')
@@ -3823,6 +3823,7 @@ _set_broadcast_flag(const char *event, Eo *bridge)
           STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESTORE);
      }
 
+end:
    free(tokens[0]);
    free(tokens);
 }
