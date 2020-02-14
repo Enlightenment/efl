@@ -1513,6 +1513,7 @@ _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
         if (pd->path_data)
           free(pd->path_data);
         pd->path_data = malloc(strlen(svg_path_data) + 1);
+        if (!pd->path_data) goto error;
         strcpy(pd->path_data, svg_path_data);
      }
 
