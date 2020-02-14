@@ -188,7 +188,8 @@ pub_eo_files = [
   'efl_ui_grid_view.eo',
   'efl_ui_pager.eo',
   'efl_ui_stack.eo',
-  'efl_ui_separator.eo'
+  'efl_ui_separator.eo',
+  'efl_ui_spotlight_animation_manager.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -945,6 +946,7 @@ elementary_src = [
   'efl_ui_pager.c',
   'efl_ui_stack.c',
   'efl_ui_separator.c',
+  'efl_ui_spotlight_animation_manager.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
