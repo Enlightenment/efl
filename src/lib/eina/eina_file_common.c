@@ -1150,7 +1150,9 @@ eina_file_shutdown(void)
 EAPI Eina_Bool
 eina_file_close_on_exec(int fd, Eina_Bool on)
 {
-#ifdef HAVE_FCNTL
+#ifdef _WIN32
+   return EINA_TRUE;
+#elif HAVE_FCNTL
    int flags;
 
    flags = fcntl(fd, F_GETFD);
