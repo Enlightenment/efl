@@ -736,6 +736,7 @@ void              evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
 Evas_Colorspace   evas_gl_common_gl_format_to_colorspace(GLuint f);
 
 void              evas_gl_common_image_alloc_ensure(Evas_GL_Image *im);
+Evas_GL_Image    *evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
 Evas_GL_Image    *evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
 Evas_GL_Image    *evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_Colorspace cspace);
