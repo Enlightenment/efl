@@ -246,4 +246,5 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
      }
 
    evas_model_load_save_data_free(header, &data);
+   free(current);
 }
