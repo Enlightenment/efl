@@ -1129,3 +1129,118 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
 }
 
+
+void
+test_ui_spotlight_animation(void *data EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
+{
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view, *custom_animation_manager;
+   Efl_Canvas_Animation *jump_animation, *push_animation, *pop_animation;
+   Params *params = NULL;
+   char buf[PATH_MAX];
+   int i;
+
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                                  efl_text_set(efl_added, "Efl.Ui.Spotlight Scroll"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+
+   panes = efl_add(EFL_UI_PANES_CLASS, win,
+                   efl_gfx_hint_weight_set(efl_added, 1, 1),
+                   efl_ui_panes_split_ratio_set(efl_added, 0.3),
+                   efl_content_set(win, efl_added));
+
+   navi = elm_naviframe_add(panes);
+   evas_object_show(navi);
+   efl_content_set(efl_part(panes, "first"), navi);
+
+   list = elm_list_add(navi);
+   elm_list_horizontal_set(list, EINA_FALSE);
+   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_naviframe_item_push(navi, "Properties", NULL, NULL, list, NULL);
+   evas_object_show(list);
+
+   snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
+            elm_app_data_dir_get());
+   layout = efl_add(EFL_UI_LAYOUT_CLASS, panes,
+                    efl_file_set(efl_added, buf),
+                    efl_file_key_set(efl_added, "pager"),
+                    efl_file_load(efl_added),
+                    efl_content_set(efl_part(panes, "second"), efl_added));
+
+
+   jump_animation = efl_new(EFL_CANVAS_ALPHA_ANIMATION_CLASS);
+   efl_animation_alpha_set(jump_animation, 0.0, 1.0);
+   efl_animation_duration_set(jump_animation, 0.5);
+
+   push_animation = efl_new(EFL_CANVAS_TRANSLATE_ANIMATION_CLASS);
+   efl_animation_translate_set(push_animation, EINA_POSITION2D(0, 100), EINA_POSITION2D(0, 0));
+   efl_animation_duration_set(push_animation, 0.5);
+
+   pop_animation = efl_new(EFL_CANVAS_TRANSLATE_ANIMATION_CLASS);
+   efl_animation_translate_set(pop_animation, EINA_POSITION2D(0, -100), EINA_POSITION2D(0, 0));
+   efl_animation_duration_set(pop_animation, 0.5);
+
+   custom_animation_manager = efl_new(EFL_UI_SPOTLIGHT_ANIMATION_MANAGER_CLASS,
+                                      efl_ui_spotlight_manager_animation_push_setup_set(efl_added, push_animation),
+                                      efl_ui_spotlight_manager_animation_pop_setup_set(efl_added, pop_animation),
+                                      efl_ui_spotlight_manager_animation_jump_setup_set(efl_added, jump_animation, jump_animation));
+
+   spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
+                         efl_ui_spotlight_manager_set(efl_added, custom_animation_manager),
+                         efl_content_set(efl_part(layout, "pager"), efl_added),
+                         efl_ui_spotlight_size_set(efl_added, EINA_SIZE2D(200, 300)));
+
+   efl_add(EFL_UI_BUTTON_CLASS, layout,
+           efl_text_set(efl_added, "Pop"),
+           efl_event_callback_add(efl_added,
+                                  EFL_INPUT_EVENT_CLICKED, pop_btn_cb, spotlight),
+           efl_content_set(efl_part(layout, "prev_btn"), efl_added));
+
+   efl_add(EFL_UI_BUTTON_CLASS, layout,
+           efl_text_set(efl_added, "Push"),
+           efl_event_callback_add(efl_added,
+                                  EFL_INPUT_EVENT_CLICKED, push_btn_cb, spotlight),
+           efl_content_set(efl_part(layout, "next_btn"), efl_added));
+
+   params = calloc(1, sizeof(Params));
+   if (!params) return;
+
+   params->navi = navi;
+   params->spotlight = spotlight;
+   params->indicator = NULL;
+   params->w = 200;
+   params->h = 300;
+   params->wfill = EINA_FALSE;
+   params->hfill = EINA_FALSE;
+
+   elm_list_item_append(list, "View Size", NULL, NULL, spotlight_size, params);
+   elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
+   elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
+   elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
+   elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
+   elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
+   elm_list_go(list);
+
+   efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
+
+   for (i = 0; i < PAGE_NUM; i++) {
+        switch (i % 3)
+          {
+           case 0:
+             view = view_add(LAYOUT, spotlight);
+             break;
+
+           case 1:
+             view = view_add(LIST, spotlight);
+             break;
+
+           case 2:
+             view = view_add(BUTTON, spotlight);
+             break;
+          }
+        efl_pack_end(spotlight, view);
+     }
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
+}

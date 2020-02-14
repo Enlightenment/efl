@@ -1,0 +1,66 @@
+class @beta Efl.Ui.Spotlight.Animation_Manager extends Efl.Ui.Spotlight.Manager
+{
+   [[A spotlight manager that uses animation objects to react to different @Efl.Ui.Spotlight.Manager.switch_to situations.
+
+     Animations are played forward when they are on the $to argument, they are played backward when they are on the $from argument.
+
+     Pop animations are always played backwards, Push animations are always played forward.
+     Reason for this is, the reusability. You should be able to pass in 1 animation to all sitatuations, which should cover the turn arround effect that "moving in" and "moving out" has. This means, when you have a alpha channel animation, the pop animation can be the same as the jump-in and out animation, and both will look like fading out.
+
+
+   ]]
+   c_prefix: efl_ui_spotlight_manager_animation;
+   methods {
+      @property push_setup{
+         [[Animation that is used to animate the $to argument of a switch_to request when the passed $reason is push.
+
+
+           If this animation is $null, the in animation of @.jump_setup will be taken instead.
+         ]]
+         values {
+            animation : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+         }
+         set { }
+      }
+      @property pop_setup{
+         [[Animation that is used to animate the $from argument of a switch_to request when the passed $reason is pop.
+
+           Note: this animations is always played backwards, see the class documentation for the reasoning.
+
+           If this animation is $null, the out animation of @.jump_setup will be taken instead.
+         ]]
+         values {
+            animation : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+         }
+         set { }
+      }
+      @property jump_setup{
+         [[Set the animation objects you want to play on a jump in or jump out.
+
+           When a switch to request is issued, two arguments are getting animated. The $from object, and the $to objects. The $from object will be playing the out animation. The $pop object will be playing the in animation.
+
+           The out animation will always be played backwards, this is to support passing the same animation object to both parameters. (A fade animation will fade in the new object, and fade out the old object).
+         ]]
+         values {
+            jump_in : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+            jump_out : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference. Can be the same as $in.]]
+         }
+         set {
+
+         }
+      }
+   }
+   constructors {
+      .jump_setup;
+   }
+   implements {
+      Efl.Ui.Spotlight.Manager.bind;
+      Efl.Ui.Spotlight.Manager.content_add;
+      Efl.Ui.Spotlight.Manager.content_del;
+      Efl.Ui.Spotlight.Manager.switch_to;
+      Efl.Ui.Spotlight.Manager.size {set;}
+      Efl.Ui.Spotlight.Manager.animated_transition {set; get;}
+      Efl.Object.finalize;
+      Efl.Object.invalidate;
+   }
+}
