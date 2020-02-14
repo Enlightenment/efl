@@ -1349,6 +1349,7 @@ struct _Evas_Func
    void *(*polygon_points_clear)           (void *engine, void *polygon);
    void (*polygon_draw)                    (void *engine, void *data, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async);
 
+   void *(*image_load)                     (void *engine, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_mmap)                     (void *engine, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_new_from_data)            (void *engine, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
    void *(*image_new_from_copied_data)     (void *engine, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);

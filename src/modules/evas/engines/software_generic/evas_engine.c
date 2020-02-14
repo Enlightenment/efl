@@ -1205,6 +1205,33 @@ eng_image_native_get(void *data EINA_UNUSED, void *image)
 }
 
 static void *
+eng_image_load(void *data EINA_UNUSED, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
+{
+   *error = EVAS_LOAD_ERROR_NONE;
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     {
+        Image_Entry *ie;
+        ie = evas_cache2_image_open(evas_common_image_cache2_get(),
+                                    file, key, lo, error);
+        if (ie)
+          {
+             *error = evas_cache2_image_open_wait(ie);
+             if ((*error != EVAS_LOAD_ERROR_NONE) && ie->animated.animated)
+               {
+                  evas_cache2_image_close(ie);
+                  goto use_local_cache;
+               }
+          }
+        return ie;
+     }
+use_local_cache:
+#endif
+
+   return evas_common_load_image_from_file(file, key, lo, error);
+}
+
+static void *
 eng_image_mmap(void *data EINA_UNUSED, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    *error = EVAS_LOAD_ERROR_NONE;
@@ -4637,6 +4664,7 @@ static Evas_Func func =
      eng_polygon_points_clear,
      eng_polygon_draw,
      /* image draw funcs */
+     eng_image_load,
      eng_image_mmap,
      eng_image_new_from_data,
      eng_image_new_from_copied_data,
