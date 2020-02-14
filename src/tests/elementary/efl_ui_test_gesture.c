@@ -8,6 +8,7 @@
 #include <Evas_Legacy.h>
 #include <evas_canvas_eo.h>
 
+#include "custom_gesture.eo.h"
 #include "custom_recognizer.eo.h"
 #include "custom_recognizer2.eo.h"
 
@@ -549,12 +550,24 @@ custom_cb2(void *data EINA_UNUSED , const Efl_Event *ev)
    count[efl_gesture_state_get(g) - 1]++;
 }
 
+static void
+custom_gesture_cb(void *data EINA_UNUSED , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+
+   Eina_Position2D *delta = data;
+   if (!eina_streq(efl_gesture_custom_gesture_name_get(g), "custom_gesture")) return;
+   delta->x = custom_gesture_x_delta_get(g);
+   delta->y = custom_gesture_y_delta_get(g);
+}
+
 EFL_START_TEST(test_efl_ui_gesture_custom)
 {
    Eo *rect = setup();
    Eo *manager = efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS);
    Eo *recognizer = efl_add(CUSTOM_RECOGNIZER_CLASS, manager);
    Eo *recognizer2 = efl_add(CUSTOM_RECOGNIZER2_CLASS, manager);
+   Eina_Position2D delta = {0};
 
    efl_gesture_manager_recognizer_register(manager, recognizer);
    efl_gesture_manager_recognizer_register(manager, recognizer2);
@@ -565,6 +578,15 @@ EFL_START_TEST(test_efl_ui_gesture_custom)
    click_object(rect);
    CHECK_ALL(CUSTOM, 1, 0, 1, 0);
    CHECK_ALL(CUSTOM2, 1, 0, 0, 1);
+
+   RESET;
+
+   /* verify gesture properties */
+   efl_event_callback_add(rect, EFL_EVENT_GESTURE_CUSTOM, custom_gesture_cb, &delta);
+   drag_object(rect, 0, 0, 75, 30, EINA_FALSE);
+   ck_assert_int_eq(delta.x, 75);
+   ck_assert_int_eq(delta.y, 30);
+   efl_event_callback_del(rect, EFL_EVENT_GESTURE_CUSTOM, custom_gesture_cb, &delta);
 
    RESET;
 
