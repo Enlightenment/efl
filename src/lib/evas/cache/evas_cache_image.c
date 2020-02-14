@@ -194,7 +194,6 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    if ((cache) && (cache->func.dealloc)) cache->func.dealloc(ie);
 }
 
-#if 0
 static Eina_Bool
 _timestamp_compare(Image_Timestamp *tstamp, struct stat *st)
 {
@@ -227,7 +226,6 @@ _timestamp_build(Image_Timestamp *tstamp, struct stat *st)
 #endif
 #endif
 }
-#endif
 
 static Image_Entry *
 _evas_cache_image_entry_new(Evas_Cache_Image *cache,
