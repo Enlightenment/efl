@@ -285,7 +285,7 @@ group { name: "e/comp/frame/default";
          name: "visible_on";
          signal: "e,state,visible"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.15;
+         transition: DECELERATE 0.15 USE_DURATION_FACTOR 1;
          targets: "clipper" "shower";
          sequence {
              action: SIGNAL_EMIT "e,action,show,done" "e";
@@ -305,7 +305,7 @@ group { name: "e/comp/frame/default";
          name: "visible_off";
          signal: "e,state,hidden"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.30;
+         transition: DECELERATE 0.30 USE_DURATION_FACTOR 1;
          targets: "clipper" "shower";
          sequence {
              action: SIGNAL_EMIT "e,action,hide,done" "e";
@@ -396,13 +396,13 @@ group { name: "e/comp/frame/rotate";
          signal: "e,state,focused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.content";
-         transition: LINEAR 0.3;
+         transition: LINEAR 0.3 USE_DURATION_FACTOR 1;
       }
       program { name: "focus_off3";
          signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "focus-out" 0.0;
          target: "e.swallow.content";
-         transition: LINEAR 0.3;
+         transition: LINEAR 0.3 USE_DURATION_FACTOR 1;
       }
    }
 }
@@ -622,18 +622,18 @@ group { name: "e/comp/frame/fullscreen";
          name: "visible_on";
          signal: "e,state,visible"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.25;
+         transition: DECELERATE 0.25 USE_DURATION_FACTOR 1;
          targets: "scr_shadow" "scr_shade";
       }
       program {
          name: "visible_on2";
          signal: "e,state,visible"; source: "e";
          action: STATE_SET "visible1" 0.0;
-         transition: DECELERATE 0.05;
+         transition: DECELERATE 0.05 USE_DURATION_FACTOR 1;
          targets: "clipper" "shower" "fader";
          sequence {
              action: STATE_SET "visible2" 0.0;
-             transition: DECELERATE 0.20;
+             transition: DECELERATE 0.20 USE_DURATION_FACTOR 1;
              targets: "clipper" "shower" "fader";
              action: SIGNAL_EMIT "e,action,show,done" "e";
          }
@@ -652,18 +652,18 @@ group { name: "e/comp/frame/fullscreen";
          name: "visible_off";
          signal: "e,state,hidden"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.25;
+         transition: DECELERATE 0.25 USE_DURATION_FACTOR 1;
          targets: "scr_shadow" "scr_shade";
       }
       program {
          name: "visible_off2";
          signal: "e,state,hidden"; source: "e";
          action: STATE_SET "visible1" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          targets: "clipper" "shower" "fader";
          sequence {
              action: STATE_SET "default" 0.0;
-             transition: DECELERATE 0.05;
+             transition: DECELERATE 0.05 USE_DURATION_FACTOR 1;
              targets: "clipper" "shower" "fader";
              action: SIGNAL_EMIT "e,action,hide,done" "e";
          }
