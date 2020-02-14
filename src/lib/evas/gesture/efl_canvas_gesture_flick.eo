@@ -29,7 +29,4 @@ class @beta Efl.Canvas.Gesture_Flick extends Efl.Canvas.Gesture
          }
       }
    }
-   implements {
-      Efl.Object.constructor;
-   }
 }

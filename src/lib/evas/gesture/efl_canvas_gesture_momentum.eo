@@ -19,7 +19,4 @@ class @beta Efl.Canvas.Gesture_Momentum extends Efl.Canvas.Gesture
          }
       }
    }
-   implements {
-      Efl.Object.constructor;
-   }
 }

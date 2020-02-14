@@ -2,21 +2,4 @@
 
 #define MY_CLASS EFL_CANVAS_GESTURE_LONG_TAP_CLASS
 
-EOLIAN static Efl_Object *
-_efl_canvas_gesture_long_tap_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
-{
-   Efl_Canvas_Gesture_Data *gd;
-
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   gd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_CLASS);
-
-   return obj;
-}
-
-EOLIAN static void
-_efl_canvas_gesture_long_tap_efl_object_destructor(Eo *obj, void *pd EINA_UNUSED)
-{
-   efl_destructor(efl_super(obj, MY_CLASS));
-}
-
 #include "efl_canvas_gesture_long_tap.eo.c"

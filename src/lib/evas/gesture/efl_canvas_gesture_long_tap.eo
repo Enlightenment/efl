@@ -8,8 +8,4 @@ class @beta Efl.Canvas.Gesture_Long_Tap extends Efl.Canvas.Gesture
    ]]
    data: null;
    c_prefix: efl_gesture_long_tap;
-   implements {
-      Efl.Object.constructor;
-      Efl.Object.destructor;
-   }
 }
