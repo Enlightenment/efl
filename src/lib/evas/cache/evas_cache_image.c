@@ -848,6 +848,170 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
    return im;
 }
 
+
+EAPI Image_Entry *
+evas_cache_image_request(Evas_Cache_Image *cache, const char *file, 
+                         const char *key, Evas_Image_Load_Opts *lo, int *error)
+{
+   const char           *ckey = "(null)";
+   char                 *hkey;
+   Image_Entry          *im;
+   size_t                size;
+   int                   stat_done = 0, stat_failed = 0;
+   size_t                file_length;
+   size_t                key_length;
+   struct stat           st;
+   Image_Timestamp       tstamp;
+   Eina_Bool             skip = lo->skip_head;
+   Evas_Image_Load_Opts  tlo;
+
+   if (!file)
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        return NULL;
+     }
+
+   /* generate hkey from file+key+load opts */
+   file_length = strlen(file);
+   key_length = key ? strlen(key) : 6;
+   size = file_length + key_length + 132;
+   hkey = alloca(sizeof (char) * size);
+   memcpy(hkey, file, file_length);
+   size = file_length;
+   memcpy(hkey + size, "//://", 5);
+   size += 5;
+   if (key) ckey = key;
+   memcpy(hkey + size, ckey, key_length);
+   size += key_length;
+   size += _evas_cache_image_loadopts_append(hkey + size, &lo);
+   tlo = *lo;
+   tlo.skip_head = skip;
+
+   /* find image by key in active hash */
+   SLKL(engine_lock);
+   im = eina_hash_find(cache->activ, hkey);
+   if ((im) && (!im->load_failed))
+     {
+        int ok = 1;
+
+        stat_done = 1;
+        if (!skip)
+          {
+             if (stat(file, &st) < 0)
+               {
+                  stat_failed = 1;
+                  ok = 0;
+               }
+             else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+          }
+        if (ok) goto on_ok;
+        /* image we found doesn't match what's on disk (stat info wise)
+         * so dirty the active cache entry so we never find it again. this
+         * also implicitly guarantees that we only have 1 active copy
+         * of an image at a given key. we wither find it and keep re-reffing
+         * it or we dirty it and get it out */
+        _evas_cache_image_dirty_add(im);
+        im = NULL;
+     }
+   else if ((im) && (im->load_failed))
+     {
+        _evas_cache_image_dirty_add(im);
+        im = NULL;
+     }
+
+   /* find image by key in inactive/lru hash */
+   im = eina_hash_find(cache->inactiv, hkey);
+   if ((im) && (!im->load_failed))
+     {
+        int ok = 1;
+
+        if (!skip)
+          {
+             if (!stat_done)
+               {
+                  stat_done = 1;
+                  if (stat(file, &st) < 0)
+                    {
+                       stat_failed = 1;
+                       ok = 0;
+                    }
+                  else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+               }
+             else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+          }
+
+        if (ok)
+          {
+             /* remove from lru and make it active again */
+             _evas_cache_image_lru_del(im);
+             _evas_cache_image_activ_add(im);
+             goto on_ok;
+          }
+        /* as active cache find - if we match in lru and its invalid, dirty */
+        _evas_cache_image_dirty_add(im);
+        /* this image never used, so it have to be deleted */
+        _evas_cache_image_entry_delete(cache, im);
+        im = NULL;
+     }
+   else if ((im) && (im->load_failed))
+     {
+        /* as active cache find - if we match in lru and its invalid, dirty */
+        _evas_cache_image_dirty_add(im);
+        /* this image never used, so it have to be deleted */
+        _evas_cache_image_entry_delete(cache, im);
+        im = NULL;
+     }
+   if (stat_failed) goto on_stat_error;
+
+   if (!skip)
+     {
+        if (!stat_done)
+          {
+             if (stat(file, &st) < 0) goto on_stat_error;
+          }
+        _timestamp_build(&tstamp, &st);
+        im = _evas_cache_image_entry_new(cache, hkey, &tstamp, NULL,
+                                         file, key, &tlo, error);
+     }
+   else
+     {
+        im = _evas_cache_image_entry_new(cache, hkey, NULL, NULL,
+                                         file, key, &tlo, error);
+     }
+   if (!im) goto on_stat_error;
+   if (cache->func.debug) cache->func.debug("request", im);
+
+on_ok:
+   *error = EVAS_LOAD_ERROR_NONE;
+////   SLKL(im->lock);
+   im->references++;
+////   SLKU(im->lock);
+   SLKU(engine_lock);
+   return im;
+
+on_stat_error:
+#ifndef _WIN32
+   if ((errno == ENOENT) || (errno == ENOTDIR) ||
+       (errno == ENAMETOOLONG) || (errno == ELOOP))
+#else
+     if (errno == ENOENT)
+#endif
+       *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+#ifndef _WIN32
+     else if ((errno == ENOMEM) || (errno == EOVERFLOW))
+#else
+     else if (errno == ENOMEM)
+#endif
+       *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+     else if (errno == EACCES)
+       *error = EVAS_LOAD_ERROR_PERMISSION_DENIED;
+     else
+       *error = EVAS_LOAD_ERROR_GENERIC;
+
+   SLKU(engine_lock);
+   return NULL;
+}
+
 EAPI void
 evas_cache_image_ref(Image_Entry *im)
 {

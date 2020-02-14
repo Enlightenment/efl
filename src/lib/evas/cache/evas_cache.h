@@ -115,6 +115,7 @@ extern "C" {
 
 EAPI Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
 EAPI void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
+EAPI Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
 EAPI Image_Entry*             evas_cache_image_mmap_request(Evas_Cache_Image *cache, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
 EAPI void                     evas_cache_image_ref(Image_Entry *im);
 EAPI void                     evas_cache_image_drop(Image_Entry *im);
