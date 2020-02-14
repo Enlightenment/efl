@@ -5487,7 +5487,9 @@ evgl_glShaderSource(GLuint shader, GLsizei count, const char* const* string, con
    int i = 0, len = 0;
 
    char **s = malloc(count * sizeof(char*));
+   if (!s) goto err;
    GLint *l = malloc(count * sizeof(GLint));
+   if (!l) goto err;
 
    memset(s, 0, count * sizeof(char*));
    memset(l, 0, count * sizeof(GLint));
@@ -5512,9 +5514,7 @@ evgl_glShaderSource(GLuint shader, GLsizei count, const char* const* string, con
                      free(s[--i]);
                   free(l);
                   free(s);
-
-                  DBG("Patching Shader Failed.");
-                  return;
+                  goto err;
                }
           }
         else
@@ -5530,6 +5530,9 @@ evgl_glShaderSource(GLuint shader, GLsizei count, const char* const* string, con
       free(s[--i]);
    free(l);
    free(s);
+
+err:
+   ERR("Patching Shader Failed.");
 }
 
 
