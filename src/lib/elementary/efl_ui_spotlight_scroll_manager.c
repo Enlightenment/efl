@@ -276,7 +276,7 @@ _animation_request_switch(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, int
 }
 
 EOLIAN static void
-_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, int from, int to)
+_efl_ui_spotlight_scroll_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Scroll_Manager_Data *pd, int from, int to, Efl_Ui_Spotlight_Manager_Switch_Reason reason EINA_UNUSED)
 {
    if (pd->animation)
      {

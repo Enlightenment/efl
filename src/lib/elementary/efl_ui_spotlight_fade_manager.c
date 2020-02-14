@@ -135,7 +135,7 @@ is_valid(Eo *obj, int index)
 }
 
 EOLIAN static void
-_efl_ui_spotlight_fade_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Fade_Manager_Data *pd, int from, int to)
+_efl_ui_spotlight_fade_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Fade_Manager_Data *pd, int from, int to, Efl_Ui_Spotlight_Manager_Switch_Reason reason EINA_UNUSED)
 {
    if (efl_pack_content_get(pd->container, to) == pd->content[1])
      return;

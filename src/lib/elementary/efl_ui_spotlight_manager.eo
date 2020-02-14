@@ -1,3 +1,10 @@
+enum @beta Efl.Ui.Spotlight.Manager_Switch_Reason {
+  [[Indicator for the reason of a @Efl.Ui.Spotlight.Manager.switch_to call]]
+  jump, [[The Reason for this switch is a casual jump caused by @Efl.Ui.Spotlight.Container.active_element]]
+  push, [[The Reason for this switch is a casual jump caused by @Efl.Ui.Spotlight.Container.push]]
+  pop [[The Reason for this switch is a casual jump caused by @Efl.Ui.Spotlight.Container.pop]]
+}
+
 abstract @beta Efl.Ui.Spotlight.Manager extends Efl.Object {
   [[Manager object used by @Efl.Ui.Spotlight.Container to handle rendering and animation of its sub-widgets,
     and user interaction.
@@ -41,6 +48,7 @@ abstract @beta Efl.Ui.Spotlight.Manager extends Efl.Object {
       params {
         from : int; [[Index of the starting sub-widget in the container's list. Might be -1 if unknown.]]
         to : int; [[Index of the target sub-widget in the container's list.]]
+        reason : Efl.Ui.Spotlight.Manager_Switch_Reason; [[The reason for this switch to call]]
       }
     }
     @property size @pure_virtual  {
