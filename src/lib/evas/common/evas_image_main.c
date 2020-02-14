@@ -1016,6 +1016,18 @@ evas_common_image_get_cache(void)
 }
 
 EAPI RGBA_Image *
+evas_common_load_image_from_file(const char *file, const char *key,
+                                 Evas_Image_Load_Opts *lo, int *error)
+{
+   if (!file)
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        return NULL;
+     }
+   return (RGBA_Image *) evas_cache_image_request(eci, file, key, lo, error);
+}
+
+EAPI RGBA_Image *
 evas_common_load_image_from_mmap(Eina_File *f, const char *key,
                                  Evas_Image_Load_Opts *lo, int *error)
 {
