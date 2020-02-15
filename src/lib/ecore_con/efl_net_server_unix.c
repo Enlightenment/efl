@@ -196,6 +196,7 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
              err = EADDRINUSE;
              goto error;
           }
+        unlink(addr.sun_path);
         pd->have_lock_fd = EINA_TRUE;
 #endif
         r = bind(fd, (struct sockaddr *)&addr, addrlen);
