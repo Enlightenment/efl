@@ -61,8 +61,6 @@ _efl_net_server_unix_bind_hang_lock_workaround(const char *address, Eina_Bool lo
    char *lockfile;
    int ret;
 
-   if (strncmp(address, "abstract:", strlen("abstract:")) == 0) return -1;
-
    addrlen = strlen(address);
    lockfile = malloc(addrlen + 1 + 5);
    if (!lockfile) return -1;
@@ -189,15 +187,18 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
           }
 
 #ifdef BIND_HANG_WORKAROUND
-        pd->lock_fd = _efl_net_server_unix_bind_hang_lock_workaround
-                        (address, EINA_TRUE, -1);
-        if (pd->lock_fd < 0)
+        if (addr.sun_path[0] != '\0')
           {
-             err = EADDRINUSE;
-             goto error;
+             pd->lock_fd = _efl_net_server_unix_bind_hang_lock_workaround
+               (addr.sun_path, EINA_TRUE, -1);
+             if (pd->lock_fd < 0)
+               {
+                  err = EADDRINUSE;
+                  goto error;
+               }
+             pd->have_lock_fd = EINA_TRUE;
+             unlink(addr.sun_path);
           }
-        unlink(addr.sun_path);
-        pd->have_lock_fd = EINA_TRUE;
 #endif
         r = bind(fd, (struct sockaddr *)&addr, addrlen);
         if (r != 0)
