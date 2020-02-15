@@ -223,6 +223,7 @@ group { name: "e/comp/frame/default";
       }
       part { name: "shadow"; mouse_events: 0;
          clip_to: "clipper";
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
             WIN_SHADOW;
@@ -484,6 +485,7 @@ group { name: "e/comp/frame/menu";
    images.image: "win_menu_shadow.png" COMP;
    parts {
       part { name: "shadow";
+         scale: 1;
          description { state: "default" 0.0;
             WIN_MENU_SHADOW;
          }

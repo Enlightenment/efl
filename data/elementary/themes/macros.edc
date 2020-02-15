@@ -28,41 +28,43 @@
 
 #define WIN_SHADOW \
    image.normal: "win_shadow.png"; \
-   image.border: 44 44 44 44; \
+   image.border: 32 32 32 32; \
+   image.border_scale: 1; \
+   image.border_scale_by: 1.0; \
    image.middle: 0; \
    rel1.offset: -21 -14; \
    rel2.offset: 20 27; \
-   fill.smooth: 0
+   offscale
 #define WIN_SHADOW_SMALL \
    image.normal: "win_shadow.png"; \
-   image.border: 44 44 44 44; \
+   image.border: 32 32 32 32; \
    image.border_scale: 1; \
    image.border_scale_by: 0.5; \
    image.middle: 0; \
    rel1.offset: -10 -7; \
    rel2.offset: 9 10; \
-   fill.smooth: 0; \
    offscale
 #define WIN_SHADOW_SPACER \
    rel1.offset: 21 14; \
-   rel2.offset: -21 -28
+   rel2.offset: -21 -28; \
+   offscale
 #define WIN_MENU_SHADOW \
    image.normal: "win_menu_shadow.png"; \
-   image.border: 44 44 16 29; \
+   image.border: 32 32 32 32; \
+   image.border_scale: 1; \
+   image.border_scale_by: 1.0; \
    image.middle: 0; \
    rel1.offset: -21 -14; \
    rel2.offset: 20 27; \
-   fill.smooth: 0
-
+   offscale
 #define WIN_SHADOW_ANGLE_SMALL(_img) \
    image.normal: _img; \
-   image.border: 22 22 16 30; \
+   image.border: 32 32 32 32; \
    image.border_scale: 1; \
    image.border_scale_by: 0.5; \
    image.middle: 0; \
    rel1.offset: -10 -7; \
    rel2.offset: 9 13; \
-   fill.smooth: 0; \
    offscale
 
 #define IMAGE_RING(x, sz) \

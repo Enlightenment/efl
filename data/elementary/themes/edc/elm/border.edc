@@ -39,6 +39,7 @@ group { name: "elm/border/base/default";
       }
       /* shadow spacer and clipper */
       spacer { "shadow_spacer";
+         scale: 1;
          desc { "default";
             WIN_SHADOW_SPACER;
          }
@@ -48,6 +49,7 @@ group { name: "elm/border/base/default";
          }
       }
       image { "shadow"; nomouse;
+         scale: 1;
          desc { "default";
             rel.to: "shadow_spacer";
             WIN_SHADOW;
