@@ -90,7 +90,7 @@ group { name: "e/comp/screen/overlay/default";
             name: "screensaver_on";
             signal: "e,state,screensaver,on"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 3.0 CURRENT;
+            transition: ACCELERATE 3.0 USE_DURATION_FACTOR 1 CURRENT;
             target: "blanker";
             sequence {
                action: SIGNAL_EMIT "e,state,screensaver,active" "e";
@@ -100,28 +100,28 @@ group { name: "e/comp/screen/overlay/default";
             name: "screensaver_on2";
             signal: "e,state,screensaver,on"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: DECELERATE 3.0 CURRENT;
+            transition: DECELERATE 3.0 USE_DURATION_FACTOR 1 CURRENT;
             target: "shadow";
          }
          program {
             name: "screensaver_off";
             signal: "e,state,screensaver,off"; source: "e";
             action: STATE_SET "default" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "blanker";
          }
          program {
             name: "screensaver_off2";
             signal: "e,state,screensaver,off"; source: "e";
             action: STATE_SET "default" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "shadow";
          }
          program {
             name: "suspend";
             signal: "e,state,sys,suspend"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "suspender";
             sequence {
                action: SIGNAL_EMIT "e,state,sys,suspend,done" "e";
@@ -131,7 +131,7 @@ group { name: "e/comp/screen/overlay/default";
             name: "hibernate";
             signal: "e,state,sys,hibernate"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "suspender";
             sequence {
                action: SIGNAL_EMIT "e,state,sys,hibernate,done" "e";
@@ -141,14 +141,14 @@ group { name: "e/comp/screen/overlay/default";
             name: "resume";
             signal: "e,state,sys,resume"; source: "e";
             action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5 CURRENT;
+            transition: DECELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "suspender";
          }
          program {
             name: "reboot";
             signal: "e,state,sys,reboot"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "suspender";
             sequence {
                 action: SIGNAL_EMIT "e,state,sys,reboot,done" "e";
@@ -158,7 +158,7 @@ group { name: "e/comp/screen/overlay/default";
             name: "halt";
             signal: "e,state,sys,halt"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "suspender";
             sequence {
                 action: SIGNAL_EMIT "e,state,sys,halt,done" "e";
@@ -168,7 +168,7 @@ group { name: "e/comp/screen/overlay/default";
             name: "logout";
             signal: "e,state,sys,logout"; source: "e";
             action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
+            transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
             target: "suspender";
             sequence {
                 action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
