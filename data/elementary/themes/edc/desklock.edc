@@ -19,12 +19,12 @@ group { name: "e/desklock/background";
       }
       program { signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
-         transition: SINUSOIDAL 0.5;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
          target: "clip";
       }
       program { signal: "e,action,hide"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.5;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
          target: "clip";
          sequence {
             action: SIGNAL_EMIT "e,action,hide,done" "e";
@@ -319,7 +319,7 @@ group { name: "e/desklock/pin_box";
       program { name: "cursor_hide";
          action: STATE_SET "default" 0.0;
          target: "cursor";
-         transition: SINUSOIDAL 0.2;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
          after: "cursor_hide_timer";
       }
       program { name: "cursor_show_timer";
