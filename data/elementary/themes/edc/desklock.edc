@@ -195,26 +195,24 @@ group { name: "e/desklock/login_box";
          target: "cursor";
          after: "cursor_show_timer";
       }
+      program { name: "cursor_show_timer";
+         in: 0.4 0.0;
+         after: "cursor_hide";
+      }
       program { name: "cursor_hide";
          action: STATE_SET "default" 0.0;
          target: "cursor";
          after: "cursor_hide_timer";
       }
-      program { name: "cursor_show_timer";
-         in: 0.4 0.0;
-         after: "cursor_hide";
-      }
       program { name: "cursor_hide_timer";
          in: 0.4 0.0;
          after: "cursor_show";
       }
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "selection";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "selection";
       }
@@ -316,27 +314,25 @@ group { name: "e/desklock/pin_box";
          target: "cursor";
          after: "cursor_show_timer";
       }
+      program { name: "cursor_show_timer";
+         in: 0.5 0.0;
+         after: "cursor_hide";
+      }
       program { name: "cursor_hide";
          action: STATE_SET "default" 0.0;
          target: "cursor";
          transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
          after: "cursor_hide_timer";
       }
-      program { name: "cursor_show_timer";
-         in: 0.5 0.0;
-         after: "cursor_hide";
-      }
       program { name: "cursor_hide_timer";
          in: 0.2 0.0;
          after: "cursor_show";
       }
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "selection";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "selection";
       }
