@@ -3279,6 +3279,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
 }
 
+#ifdef BUILD_VG_LOADER_JSON
 static void
 _edje_vector_animation_running_cb(void *data, const Efl_Event *event)
 {
@@ -3363,6 +3364,7 @@ _edje_vector_load_json(Edje *ed, Edje_Real_Part *ep, const char *key)
         efl_gfx_frame_controller_frame_set(ep->object, (int)(frame_count * desc->vg.frame));
      }
 }
+#endif
 
 static void
 _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_UNUSED, Edje_Part_Description_Vector *chosen_desc, FLOAT_T pos)
@@ -3381,8 +3383,11 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
 
    if (type == EDJE_VECTOR_FILE_TYPE_JSON)
      {
+#ifdef BUILD_VG_LOADER_JSON
         _edje_vector_load_json(ed, ep, src_key);
-
+#else
+        ERR("Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
+#endif
         return;
      }
 
@@ -3402,7 +3407,12 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
 
    if ((new_id < 0) || (new_type == EDJE_VECTOR_FILE_TYPE_JSON))
      {
-        efl_file_simple_load(ep->object, ed->file->path, src_key);
+#ifndef BUILD_VG_LOADER_JSON
+        if (new_type == EDJE_VECTOR_FILE_TYPE_JSON)
+          ERR("Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
+        else
+#endif
+          efl_file_simple_load(ep->object, ed->file->path, src_key);
      }
    else
      {
@@ -3428,6 +3438,7 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
      }
 }
 
+#ifdef BUILD_VG_LOADER_JSON
 void
 _edje_part_vector_anim_stop(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
@@ -3464,6 +3475,7 @@ _edje_part_vector_anim_play(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool 
    rp->typedata.vector->is_playing = EINA_TRUE;
    efl_canvas_object_animation_start(rp->object, rp->typedata.vector->anim, 1.0, 0.0);
 }
+#endif
 
 static Edje_Real_Part *
 _edje_real_part_state_get(Edje *ed, Edje_Real_Part *ep, int flags, int id, int *state)

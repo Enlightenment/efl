@@ -15789,7 +15789,7 @@ st_collections_group_programs_program_action(void)
                            "VG_ANIM_PAUSE", EDJE_ACTION_TYPE_VG_ANIM_PAUSE,
                            "VG_ANIM_RESUME", EDJE_ACTION_TYPE_VG_ANIM_RESUME,
                            "VG_ANIM_PLAY", EDJE_ACTION_TYPE_VG_ANIM_PLAY,
-                           "VG_ANIM_PLAY_BACK", EDJE_ACTION_TYPE_VG_ANIM_REWIND,
+                           "VG_ANIM_REWIND", EDJE_ACTION_TYPE_VG_ANIM_REWIND,
                            "VG_ANIM_LOOP", EDJE_ACTION_TYPE_VG_ANIM_LOOP,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
