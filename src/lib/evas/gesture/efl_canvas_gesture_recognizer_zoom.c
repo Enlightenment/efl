@@ -125,12 +125,10 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
    return rt;
 }
 
-EOLIAN static Efl_Canvas_Gesture *
-_efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_add(Eo *obj,
-                                                                      Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd EINA_UNUSED,
-                                                                      Efl_Object *target EINA_UNUSED)
+EOLIAN static const Efl_Class *
+_efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd EINA_UNUSED)
 {
-   return efl_add(EFL_CANVAS_GESTURE_ZOOM_CLASS, obj);
+   return EFL_CANVAS_GESTURE_ZOOM_CLASS;
 }
 
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
@@ -203,7 +201,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
          if (!pd->zoom_st.cur.timestamp)   /* Now scan touched-devices list
                                             * and find other finger */
            {
-              if (!efl_gesture_touch_multi_touch_get(event))
+              if (!_event_multi_touch_get(event))
                 return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
 
               const Efl_Gesture_Touch_Point_Data *p1 = efl_gesture_touch_data_get(event, 0);
@@ -267,7 +265,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
               rd->continues = EINA_FALSE;
 
               _reset_recognizer(pd);
-              efl_gesture_manager_gesture_clean_up(efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS), watched, EFL_EVENT_GESTURE_ZOOM, obj);
+              efl_gesture_manager_recognizer_cleanup(efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS), obj, watched);
 
               return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
            }

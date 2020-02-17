@@ -1860,7 +1860,7 @@ _efl_ui_image_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui
    if (sd->edje)
      efl_player_playback_progress_get(sd->img);
    else if (sd->frame_count > 1)
-     return sd->cur_frame / (sd->frame_count - 1);
+     return (double)sd->cur_frame / ((double)sd->frame_count - 1.0);
    return 0.0;
 }
 

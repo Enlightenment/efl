@@ -31,12 +31,16 @@ struct opts
    Eina_Bool      print;
    Eina_Bool      slave_mode;
    double         scale;
+   int            pad;
    char          *title;
 };
 
 static Eina_Bool _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group);
 
 static Ecore_Evas *win;
+static Evas *evas;
+static Evas_Object *bg, *bg2 = NULL, *edje;
+static struct opts opts;
 
 static void
 _win_title_set(const char *group, const char *file)
@@ -754,71 +758,37 @@ _print_message(void *data EINA_UNUSED, Evas_Object *edje EINA_UNUSED, Edje_Messa
 }
 
 static void
-_reset_size_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *stack, void *event_info EINA_UNUSED)
-{
-   Evas_Coord minw, minh;
-   Evas_Object *edje = data;
-
-   edje_object_size_min_get(edje, &minw, &minh);
-   if ((minw <= 0) && (minh <= 0))
-     edje_object_size_min_calc(edje, &minw, &minh);
-
-   evas_object_size_hint_min_set(stack, minw, minh);
-}
-
-static void
-_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *stack EINA_UNUSED, void *event_info)
+_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
-   struct opts *opts = data;
 
    if ((!strcmp(ev->keyname, "equal")) ||
        (!strcmp(ev->keyname, "plus")))
-     opts->scale += 0.1;
+     opts.scale += 0.1;
    else if ((!strcmp(ev->keyname, "minus")) ||
             (!strcmp(ev->keyname, "underscore")))
-     opts->scale -= 0.1;
+     opts.scale -= 0.1;
    else if ((!strcmp(ev->keyname, "0")))
-     opts->scale = 1.0;
-   if (opts->scale < 0.1) opts->scale = 0.1;
-   else if (opts->scale > 10.0)
-     opts->scale = 1.0;
-   edje_scale_set(opts->scale);
+     opts.scale = 1.0;
+   if (opts.scale < 0.1) opts.scale = 0.1;
+   else if (opts.scale > 10.0)
+     opts.scale = 10.0;
+   edje_scale_set(opts.scale);
 }
 
 static Evas_Object *
-_create_stack(Evas *evas, const struct opts *opts)
+_create_bg(void)
 {
-   Evas_Object *stack = evas_object_box_add(evas);
-   if (!stack)
-     {
-        fputs("ERROR: could not create object stack (box).\n", stderr);
-        return NULL;
-     }
-   evas_object_box_layout_set(stack, evas_object_box_layout_stack, NULL, NULL);
-   evas_object_resize(stack, opts->size.w, opts->size.h);
-   evas_object_size_hint_weight_set(stack, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(stack, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(stack);
-   return stack;
-}
-
-static Evas_Object *
-_create_bg(Evas *evas, const struct opts *opts)
-{
-   const unsigned char *color = opts->color;
-   Evas_Object *bg = evas_object_rectangle_add(evas);
-   if (!bg)
+   const unsigned char *color = opts.color;
+   Evas_Object *o = evas_object_rectangle_add(evas);
+   if (!o)
      {
         fputs("ERROR: could not create background.\n", stderr);
         return NULL;
      }
-   evas_object_resize(bg, opts->size.w, opts->size.h);
-   evas_object_color_set(bg, color[0], color[1], color[2], 255);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(bg);
-   return bg;
+   evas_object_color_set(o, color[0], color[1], color[2], 255);
+   evas_object_show(o);
+   return o;
 }
 
 static void
@@ -827,7 +797,6 @@ _edje_reload(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA
    const char *file;
    const char *group;
    edje_object_signal_callback_del(obj, "edje,change,file", "edje", _edje_reload);
-
    edje_object_file_get(obj, &file, &group);
    _edje_load_or_show_error(obj, file, group);
 }
@@ -899,73 +868,73 @@ _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
 }
 
 static Evas_Object *
-_create_edje(Evas *evas, const struct opts *opts)
+_create_edje(void)
 {
    Evas_Coord minw, minh, maxw, maxh;
-   Evas_Object *edje = edje_object_add(evas);
-   if (!edje)
+   Evas_Object *o = edje_object_add(evas);
+   if (!o)
      {
         fputs("ERROR: could not create edje.\n", stderr);
         return NULL;
      }
 
-   if (opts->group)
+   if (opts.group)
      {
-        if (!_edje_load_or_show_error(edje, opts->file, opts->group))
+        if (!_edje_load_or_show_error(o, opts.file, opts.group))
           {
              evas_object_del(edje);
              return NULL;
           }
-        if (!opts->title) _win_title_set(opts->group, opts->file);
+        if (!opts.title) _win_title_set(opts.group, opts.file);
      }
    else
      {
-        if (edje_file_group_exists(opts->file, "main"))
+        if (edje_file_group_exists(opts.file, "main"))
           {
-             if (!_edje_load_or_show_error(edje, opts->file, "main"))
+             if (!_edje_load_or_show_error(o, opts.file, "main"))
                {
                   evas_object_del(edje);
                   return NULL;
                }
-             if (!opts->title) _win_title_set("main", opts->file);
+             if (!opts.title) _win_title_set("main", opts.file);
           }
         else
           {
-             Eina_List *groups = edje_file_collection_list(opts->file);
+             Eina_List *groups = edje_file_collection_list(opts.file);
              const char *group;
              if (!groups)
                {
                   fprintf(stderr, "ERROR: file '%s' has no groups!\n",
-                          opts->file);
+                          opts.file);
                   evas_object_del(edje);
                   return NULL;
                }
              group = groups->data;
-             if (!_edje_load_or_show_error(edje, opts->file, group))
+             if (!_edje_load_or_show_error(o, opts.file, group))
                {
                   edje_file_collection_list_free(groups);
                   evas_object_del(edje);
                   return NULL;
                }
-             if (!opts->title) _win_title_set(group, opts->file);
+             if (!opts.title) _win_title_set(group, opts.file);
              edje_file_collection_list_free(groups);
           }
      }
-   evas_object_smart_callback_add(edje, "circular,dependency", _edje_circul, opts->group);
+   evas_object_smart_callback_add(o, "circular,dependency", _edje_circul, opts.group);
 
-   edje_object_size_max_get(edje, &maxw, &maxh);
-   edje_object_size_min_get(edje, &minw, &minh);
+   edje_object_size_max_get(o, &maxw, &maxh);
+   edje_object_size_min_get(o, &minw, &minh);
    if ((minw <= 0) && (minh <= 0))
-     edje_object_size_min_calc(edje, &minw, &minh);
+     edje_object_size_min_calc(o, &minw, &minh);
 
-   evas_object_size_hint_max_set(edje, maxw, maxh);
-   evas_object_size_hint_min_set(edje, minw, minh);
+   ecore_evas_size_max_set(win,
+                           maxw > 0 ? (maxw + opts.pad * 2) : 0,
+                           maxh > 0 ? (maxh + opts.pad * 2) : 0);
+   ecore_evas_size_min_set(win, (minw + opts.pad * 2), (minh + opts.pad * 2));
 
-   evas_object_size_hint_weight_set(edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(edje);
+   evas_object_show(o);
 
-   return edje;
+   return o;
 }
 
 static unsigned char
@@ -986,6 +955,18 @@ static void
 _cb_delete(EINA_UNUSED Ecore_Evas *ee)
 {
    ecore_main_loop_quit();
+}
+
+static void
+_cb_resize(Ecore_Evas *ee)
+{
+   int w, h;
+   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+   evas_object_move(edje, opts.pad, opts.pad);
+   evas_object_resize(edje, w - (opts.pad * 2), h - (opts.pad * 2));
+   evas_object_move(bg, opts.pad, opts.pad);
+   evas_object_resize(bg, w - (opts.pad * 2), h - (opts.pad * 2));
+   if (bg2) evas_object_resize(bg2, w, h);
 }
 
 const Ecore_Getopt optdesc = {
@@ -1010,8 +991,8 @@ const Ecore_Getopt optdesc = {
         ('Z', "size", "size to use in wxh form.", "WxH",
         ecore_getopt_callback_size_parse, NULL),
       ECORE_GETOPT_CALLBACK_ARGS
-        ('c', "bg-color", "Color of the background (if not shaped or alpha)",
-        "RRGGBB", _parse_color, NULL),
+        ('c', "bg-color", "Color of the background (if not shaped or alpha) e.g. 255,150,50",
+        "R,G,B", _parse_color, NULL),
       ECORE_GETOPT_STORE_TRUE
         ('b', "borderless", "Display window without border."),
       ECORE_GETOPT_STORE_TRUE
@@ -1029,6 +1010,8 @@ const Ecore_Getopt optdesc = {
         ('S', "slave-mode", "Listen for commands on stdin"),
       ECORE_GETOPT_STORE_DOUBLE
         ('z', "scale", "Set scale factor"),
+      ECORE_GETOPT_STORE_INT
+        ('P', "pad", "Set pixel padding around object"),
       ECORE_GETOPT_LICENSE('L', "license"),
       ECORE_GETOPT_COPYRIGHT('C', "copyright"),
       ECORE_GETOPT_VERSION('V', "version"),
@@ -1040,9 +1023,6 @@ const Ecore_Getopt optdesc = {
 int
 main(int argc, char **argv)
 {
-   Evas *evas;
-   Evas_Object *stack, *edje;
-   struct opts opts;
    Eina_Bool quit_option = EINA_FALSE;
    int args;
    Eina_List *groups;
@@ -1063,6 +1043,7 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_BOOL(opts.print),
       ECORE_GETOPT_VALUE_BOOL(opts.slave_mode),
       ECORE_GETOPT_VALUE_DOUBLE(opts.scale),
+      ECORE_GETOPT_VALUE_INT(opts.pad),
       ECORE_GETOPT_VALUE_BOOL(quit_option),
       ECORE_GETOPT_VALUE_BOOL(quit_option),
       ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -1160,37 +1141,32 @@ main(int argc, char **argv)
 
    ecore_evas_callback_delete_request_set(win, _cb_delete);
    evas = ecore_evas_get(win);
-   stack = _create_stack(evas, &opts);
-   if (!stack)
-     {
-        goto free_ecore_evas;
-     }
-
-   ecore_evas_object_associate(win, stack, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    if (opts.alpha)
      ecore_evas_alpha_set(win, EINA_TRUE);
    else if (opts.shaped)
      ecore_evas_shaped_set(win, EINA_TRUE);
-   else
-     {
-        Evas_Object *bg = _create_bg(evas, &opts);
-        if (bg) evas_object_box_append(stack, bg);
-     }
 
-   edje = _create_edje(evas, &opts);
-   if (edje)
-     evas_object_box_append(stack, edje);
-   else
+   if (opts.pad > 0)
      {
-        goto free_ecore_evas;
+        bg2 = evas_object_rectangle_add(evas);
+        evas_object_resize(bg2, opts.size.w, opts.size.h);
+        if (opts.alpha)
+          evas_object_color_set(bg2, 0, 0, 0, 64);
+        else
+          evas_object_color_set(bg2, 64, 64, 64, 255);
+        evas_object_show(bg2);
      }
+   bg = _create_bg();
 
-   evas_object_focus_set(stack, EINA_TRUE);
-   evas_object_event_callback_add(stack, EVAS_CALLBACK_KEY_DOWN,
+   edje = _create_edje();
+   if (!edje) goto free_ecore_evas;
+
+   ecore_evas_callback_resize_set(win, _cb_resize);
+   _cb_resize(win);
+   evas_object_focus_set(bg, EINA_TRUE);
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN,
                                   _key_down, &opts);
-   evas_object_event_callback_add(stack, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _reset_size_hints, edje);
 
    if (opts.print)
      {

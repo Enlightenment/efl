@@ -1347,7 +1347,6 @@ elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
                }
              else
                {
-                  if (!*p) break;
                   p++;
                }
           }

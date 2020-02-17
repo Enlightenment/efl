@@ -1381,7 +1381,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                      default:
                        /* This list should only be filled by group, box or table, nothing else. */
                        abort();
-                       continue;
                     }
 
                   while (source)

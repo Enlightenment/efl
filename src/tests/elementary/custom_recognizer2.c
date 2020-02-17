@@ -13,19 +13,13 @@ _custom_recognizer2_efl_object_finalize(Eo *obj, Custom_Recognizer2_Data *pd EIN
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Canvas_Gesture *
-_custom_recognizer2_efl_canvas_gesture_recognizer_add(Eo *obj, Custom_Recognizer2_Data *pd EINA_UNUSED, Efl_Object *target EINA_UNUSED)
-{
-   return efl_add(EFL_CANVAS_GESTURE_CUSTOM_CLASS, obj);
-}
-
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
 _custom_recognizer2_efl_canvas_gesture_recognizer_recognize(Eo *obj EINA_UNUSED, Custom_Recognizer2_Data *pd EINA_UNUSED,
                                                            Efl_Canvas_Gesture *gesture EINA_UNUSED, Efl_Object *watched EINA_UNUSED,
                                                            Efl_Canvas_Gesture_Touch *event)
 {
    Eina_Position2D start = efl_gesture_touch_start_point_get(event);
-   Eina_Position2D cur = efl_gesture_touch_cur_point_get(event);
+   Eina_Position2D cur = efl_gesture_touch_current_point_get(event);
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:

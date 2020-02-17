@@ -6,7 +6,7 @@ class @beta Efl.Canvas.Gesture_Recognizer_Momentum extends Efl.Canvas.Gesture_Re
    ]]
    c_prefix: efl_gesture_recognizer_momentum;
    implements {
-      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.type { get; }
       Efl.Canvas.Gesture_Recognizer.recognize;
    }
 }

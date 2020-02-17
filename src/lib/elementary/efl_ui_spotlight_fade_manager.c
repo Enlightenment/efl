@@ -8,7 +8,7 @@
 
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
-   Efl_Canvas_Animation_Player *alpha_anim;
+   Efl_Canvas_Animation *alpha_anim;
    Efl_Gfx_Entity *content[2];
    Efl_Gfx_Entity *clipper;
    int ids[2]; //only used when in animation

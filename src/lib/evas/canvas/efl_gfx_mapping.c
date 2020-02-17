@@ -305,6 +305,7 @@ _map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Mapping_Dat
         if (!m)
           {
              m = evas_map_new(count);
+             if (!m) return NULL;
              map_alloc = EINA_TRUE;
           }
         else _evas_map_reset(m);

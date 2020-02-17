@@ -9,119 +9,6 @@ typedef Eo Efl_Canvas_Vg_Node;
 
 #endif
 
-
-#ifndef _EFL_CANVAS_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_ALPHA_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_ALPHA_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Alpha_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_ROTATE_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_ROTATE_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Rotate_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_SCALE_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_SCALE_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Scale_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_TRANSLATE_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_TRANSLATE_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Translate_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_GROUP_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_GROUP_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Group_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Parallel_Group_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Sequential_Group_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_PLAYER_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_PLAYER_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Player;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_PLAYER_ALPHA_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_PLAYER_ALPHA_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Player_Alpha;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_PLAYER_ROTATE_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_PLAYER_ROTATE_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Player_Rotate;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_PLAYER_SCALE_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_PLAYER_SCALE_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Player_Scale;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_PLAYER_TRANSLATE_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_PLAYER_TRANSLATE_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Player_Translate;
-
-#endif
-
-#ifndef _EFL_CANVAS_ANIMATION_PLAYER_GROUP_EO_CLASS_TYPE
-#define _EFL_CANVAS_ANIMATION_PLAYER_GROUP_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Animation_Player_Group;
-
-#endif
-
-#ifndef _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_PARALLEL_GROUP_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Parallel_Group_Animation;
-
-#endif
-
-#ifndef _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
-#define _EFL_CANVAS_SEQUENTIAL_GROUP_ANIMATION_EO_CLASS_TYPE
-
-typedef Eo Efl_Canvas_Sequential_Group_Animation;
-
-#endif
-
 struct _Efl_Canvas_Animation_Player_Event_Running
 {
    double progress;
@@ -219,7 +106,6 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "gesture/efl_canvas_gesture_events.eo.h"
 
 #include "canvas/efl_canvas_object.eo.h"
-#include "canvas/efl_canvas_object_animation.eo.h"
 #include "canvas/efl_canvas_animation.eo.h"
 #include "canvas/efl_canvas_alpha_animation.eo.h"
 #include "canvas/efl_canvas_rotate_animation.eo.h"
@@ -228,6 +114,7 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "canvas/efl_canvas_group_animation.eo.h"
 #include "canvas/efl_canvas_parallel_group_animation.eo.h"
 #include "canvas/efl_canvas_sequential_group_animation.eo.h"
+#include "canvas/efl_canvas_object_animation.eo.h"
 #include "canvas/efl_canvas_event_grabber.eo.h"
 
  /**

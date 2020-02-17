@@ -12,9 +12,9 @@
 #define TAP_TOUCH_TIME_THRESHOLD (0.1 * 1000)
 
 const Efl_Event_Description * _efl_gesture_type_get(const Eo *obj);
-void efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Description *type, Efl_Canvas_Gesture_Recognizer *recognizer);
 int _direction_get(Evas_Coord xx1, Evas_Coord xx2);
 Eina_Value *_recognizer_config_get(const Eo *obj, const char *name);
+Eina_Bool _event_multi_touch_get(const Efl_Canvas_Gesture_Touch *event);
 
 typedef struct _Efl_Canvas_Gesture_Manager_Data                Efl_Canvas_Gesture_Manager_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Data             Efl_Canvas_Gesture_Recognizer_Data;
@@ -38,7 +38,6 @@ typedef struct _Efl_Canvas_Gesture_Touch_Data
    Eina_Array             *touch_points;
    Efl_Gesture_Touch_Point_Data *cur_touch;
    Efl_Gesture_Touch_Point_Data *prev_touch;
-   Eina_Bool               multi_touch;
    Eo                     *target;
    int                     touch_down;
 } Efl_Canvas_Gesture_Touch_Data;

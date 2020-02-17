@@ -210,7 +210,7 @@ _read_ply_indices_data(Evas_Model_Load_Save_Header header,
 void
 evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 {
-   char *current = NULL, *map = NULL;
+   char *current = NULL, *map = NULL, **split_of_map = NULL;
    Evas_Model_Load_Save_Header header = { 0, 0, 0, 0, 0, 0 };
    Evas_Model_Load_Save_Data data = { NULL, NULL, NULL, NULL, NULL };
    Evas_Model_Load_Save_Stride stride = { 0, 0, 0, 0 };
@@ -231,7 +231,8 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
         return;
      }
 
-   current = eina_str_split(map, "end_header\n", 0)[1];
+   split_of_map = eina_str_split(map, "end_header\n", 0);
+   current = split_of_map[1];
    _read_ply_vertex_data(header, &current, data);
    _read_ply_indices_data(header, &current, data);
    evas_model_load_vertex_data_to_mesh(mesh, header, data, &stride);
@@ -239,6 +240,7 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    evas_model_load_vertex_data_unmap(mesh, 0, header);
    evas_model_load_aabb_add_to_frame(mesh, 0, stride);
 
+   free(split_of_map);
    if (map)
      {
         eina_file_map_free(file, map);

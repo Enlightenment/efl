@@ -6,12 +6,10 @@
 //       may using dobule tap timeout value?
 #define EFL_GESTURE_RECOGNIZER_TYPE_TAP_TIME_OUT 0.33
 
-EOLIAN static Efl_Canvas_Gesture *
-_efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_add(Eo *obj,
-                                                                     Efl_Canvas_Gesture_Recognizer_Tap_Data *pd EINA_UNUSED,
-                                                                     Efl_Object *target EINA_UNUSED)
+EOLIAN static const Efl_Class *
+_efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Recognizer_Tap_Data *pd EINA_UNUSED)
 {
-   return efl_add(EFL_CANVAS_GESTURE_TAP_CLASS, obj);
+   return EFL_CANVAS_GESTURE_TAP_CLASS;
 }
 
 static Eina_Bool
@@ -60,10 +58,10 @@ new_tap:
 
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
         /* multi-touch */
-        if (efl_gesture_touch_cur_data_get(event)->action == EFL_POINTER_ACTION_DOWN)
+        if (efl_gesture_touch_current_data_get(event)->action == EFL_POINTER_ACTION_DOWN)
           {
              /* a second finger was pressed at the same time-ish as the first: combine into same event */
-             if (efl_gesture_touch_cur_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
+             if (efl_gesture_touch_current_timestamp_get(event) - efl_gesture_timestamp_get(gesture) < TAP_TOUCH_TIME_THRESHOLD)
                {
                   result = EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
                   break;
@@ -79,7 +77,7 @@ new_tap:
               ecore_timer_del(pd->timeout);
               pd->timeout = NULL;
            }
-         if (efl_gesture_touch_multi_touch_get(event)) return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+         if (_event_multi_touch_get(event)) return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
            {
               dist = efl_gesture_touch_distance(event, 0);

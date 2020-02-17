@@ -151,7 +151,7 @@ evas_image_load_file_data_pmaps(void *loader_data,
      }
 
    /* if there are some pix missing, give them a proper default */
-   memset(ptr, 0xff, 4 * size);
+   memset(ptr, 0xff, sizeof(DATA32) * size);
    *error = EVAS_LOAD_ERROR_NONE;
    r = EINA_TRUE;
 

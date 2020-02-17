@@ -280,17 +280,17 @@ void values_input(Eo* box, const char* type)
         char text[2][2];
         if (!strcmp(type, "TrPosition"))
           {
-             sprintf(text[0], "X");
-             sprintf(text[1], "Y");
+             snprintf(text[0], sizeof(text[0]), "X");
+             snprintf(text[1], sizeof(text[1]), "Y");
           }
         else if (!strcmp(type, "TrScale"))
           {
-             sprintf(text[0], "W");
-             sprintf(text[1], "H");
+             snprintf(text[0], sizeof(text[0]), "W");
+             snprintf(text[1], sizeof(text[1]), "H");
           }
         else if (!strcmp(type, "TrRotation"))
           {
-             sprintf(text[0], "R");
+             snprintf(text[0], sizeof(text[0]), "R");
           }
 
         int value_cnt = strstr(type, "Rotation") ? 1 : 2;

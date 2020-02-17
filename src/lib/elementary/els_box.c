@@ -246,7 +246,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
         EINA_LIST_FOREACH(priv->children, l, opt)
           {
              Evas_Aspect_Control aspect = EVAS_ASPECT_CONTROL_NONE;
-             int asx, asy, ow = 0, oh = 0, fw, fh, ww, hh;
+             int asx, asy, ow = 0, oh = 0, fw = 0, fh = 0, ww, hh;
              double ax, ay;
 
              evas_object_size_hint_align_get(opt->obj, &ax, &ay);

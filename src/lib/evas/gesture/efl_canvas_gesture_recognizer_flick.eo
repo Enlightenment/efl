@@ -6,7 +6,7 @@ class @beta Efl.Canvas.Gesture_Recognizer_Flick extends Efl.Canvas.Gesture_Recog
    ]]
    c_prefix: efl_gesture_recognizer_flick;
    implements {
-      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.type { get; }
       Efl.Canvas.Gesture_Recognizer.recognize;
    }
 }

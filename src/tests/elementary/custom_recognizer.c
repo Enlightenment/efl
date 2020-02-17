@@ -14,12 +14,6 @@ _custom_recognizer_efl_object_finalize(Eo *obj, Custom_Recognizer_Data *pd EINA_
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Canvas_Gesture *
-_custom_recognizer_efl_canvas_gesture_recognizer_add(Eo *obj, Custom_Recognizer_Data *pd EINA_UNUSED, Efl_Object *target EINA_UNUSED)
-{
-   return efl_add(EFL_CANVAS_GESTURE_CUSTOM_CLASS, obj);
-}
-
 EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
 _custom_recognizer_efl_canvas_gesture_recognizer_recognize(Eo *obj EINA_UNUSED, Custom_Recognizer_Data *pd EINA_UNUSED,
                                                            Efl_Canvas_Gesture *gesture EINA_UNUSED, Efl_Object *watched EINA_UNUSED,

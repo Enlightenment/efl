@@ -132,12 +132,10 @@ _efl_gfx_path_current_search(const Efl_Gfx_Path_Command *cmd,
 
    if (!cmd || !points) return EINA_FALSE;
 
-   for (i = 0; cmd[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
+   for (i = 0; cmd[i] < EFL_GFX_PATH_COMMAND_TYPE_END; i++)
      {
         switch (cmd[i])
           {
-           case EFL_GFX_PATH_COMMAND_TYPE_END:
-              break;
            case EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO:
            case EFL_GFX_PATH_COMMAND_TYPE_LINE_TO:
               if (current_x) *current_x = points[0];
@@ -1513,6 +1511,7 @@ _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
         if (pd->path_data)
           free(pd->path_data);
         pd->path_data = malloc(strlen(svg_path_data) + 1);
+        if (!pd->path_data) goto error;
         strcpy(pd->path_data, svg_path_data);
      }
 

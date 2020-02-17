@@ -213,7 +213,6 @@ _property_exists(Elm_Menu_Item_Data *item,
         return EINA_FALSE;
      }
 
-   ERR("Invalid code path");
    return EINA_FALSE;
 }
 

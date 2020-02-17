@@ -1727,7 +1727,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    if (o->cur->source)
      {
-        if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
+        _evas_image_proxy_unset(eo_obj, obj, o);
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         state_write->source = NULL;
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);

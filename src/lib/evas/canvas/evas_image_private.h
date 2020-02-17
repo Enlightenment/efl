@@ -168,7 +168,7 @@ void *_evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *
 void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h);
 
 /* Efl.File */
-Eina_Bool _evas_image_file_load(Eo *eo_obj);
+Eina_Bool _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o);
 void _evas_image_file_unload(Eo *eo_obj);
 const Eina_File *_evas_image_mmap_get(const Eo *eo_obj);
 const char *_evas_image_key_get(const Eo *eo_obj);

@@ -115,6 +115,7 @@ extern "C" {
 
 EAPI Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
 EAPI void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
+EAPI Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
 EAPI Image_Entry*             evas_cache_image_mmap_request(Evas_Cache_Image *cache, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
 EAPI void                     evas_cache_image_ref(Image_Entry *im);
 EAPI void                     evas_cache_image_drop(Image_Entry *im);
@@ -149,6 +150,7 @@ EAPI int                      evas_cache_engine_image_usage_get(Evas_Cache_Engin
 EAPI int                      evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache);
 EAPI void                     evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit);
 
+EAPI Engine_Image_Entry*      evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, void *engine_data, int *error);
 EAPI void                     evas_cache_engine_parent_not_needed(Engine_Image_Entry *eim);
 EAPI Engine_Image_Entry*      evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data);
 EAPI void                     evas_cache_engine_image_drop(Engine_Image_Entry *eim);

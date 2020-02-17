@@ -2052,10 +2052,11 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
 
    Evas_Coord x = 0, y = 0, vw = 0, vh = 0, cw = 0, ch = 0;
    int pagenumber_h = 0, pagenumber_v = 0;
-   int mx = 0, my = 0, minx = 0, miny = 0;
+   int mx = 0, my = 0, minx = 0, miny = 0, panw = 0, panh = 0;
    Eina_Bool hold = EINA_FALSE;
    Evas_Coord pwx, pwy;
    double t;
+   long long lx, ly;
    int direction;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ev, EINA_TRUE);
@@ -2075,6 +2076,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    if (sid->scrollto.y.animator) y = sid->scrollto.y.end;
    elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
    elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+   elm_pan_content_size_get(sid->pan_obj, &panw, &panh);
    if (x < minx) x = minx;
    if (x > mx) x = mx;
    if (y < miny) y = miny;
@@ -2109,7 +2111,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
      elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
    if (!_paging_is_enabled(sid))
      {
-        int d = ev->z;
+        long long d = ev->z;
         double delta_t = (double)(ev->timestamp - sid->last_wheel) / 1000.0;
         double mul;
 
@@ -2117,31 +2119,40 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         if (delta_t > 0.2) delta_t = 0.2;
         mul = 1.0 + (_elm_config->scroll_accel_factor * ((0.2 - delta_t) / 0.2));
         mul = mul * (1.0 + (0.15 * sid->last_wheel_mul));
+        if (d > 1000) d = 1000;
+        else if (d < -1000) d = -1000;
+        if (mul > 100000.0) mul = 100000.0;
         d *= mul;
         sid->last_wheel = ev->timestamp;
         sid->last_wheel_mul = mul;
+        lx = x;
+        ly = y;
 
         if (!direction)
           {
              if ((ch > vh) || (cw <= vw))
-               y += d * sid->step.y;
+               ly += d * (long long)sid->step.y;
              else
                {
-                  x += d * sid->step.x;
+                  lx += d * (long long)sid->step.x;
                   direction = 1;
                }
           }
         else
           {
              if ((cw > vw) || (ch <= vh))
-               x += d * sid->step.x;
+               lx += d * (long long)sid->step.x;
              else
                {
-                  y += d * sid->step.y;
+                  ly += d * (long long)sid->step.y;
                   direction = 0;
                }
           }
-        _scroll_wheel_post_event_go(sid, x, y);
+        if      (ly < (0 - panh))  ly =  0 - panh;
+        else if (ly > (my + panh)) ly = my + panh;
+        if      (lx < (0 - panw))  lx =  0 - panw;
+        else if (lx > (mx + panw)) lx = mx + panw;
+        _scroll_wheel_post_event_go(sid, lx, ly);
      }
    else
      {

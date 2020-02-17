@@ -49,7 +49,6 @@ _efl_canvas_vg_image_render_pre(Evas_Object_Protected_Data *vg_pd,
    if (!pd->buffer && pd->image)
      {
         Evas_Object_Protected_Data *obj = vg_pd;
-        if (pd->buffer) efl_unref(pd->buffer);
         pd->buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
                                             pd->w, pd->h,
                                             EFL_GFX_COLORSPACE_ARGB8888,

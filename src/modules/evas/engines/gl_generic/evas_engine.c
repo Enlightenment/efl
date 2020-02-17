@@ -614,6 +614,16 @@ eng_image_native_get(void *engine EINA_UNUSED, void *image)
 }
 
 static void *
+eng_image_load(void *engine, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
+{
+   Evas_Engine_GL_Context *gl_context;
+
+   *error = EVAS_LOAD_ERROR_NONE;
+   gl_context = gl_generic_context_find(engine, 1);
+   return evas_gl_common_image_load(gl_context, file, key, lo, error);
+}
+
+static void *
 eng_image_mmap(void *engine, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Evas_Engine_GL_Context *gl_context;
@@ -932,6 +942,7 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
         eng_gl_surface_unlock(engine, im);
         if (!ok)
           {
+             evas_gl_common_image_free(im_new);
              if (err) *err = EVAS_LOAD_ERROR_GENERIC;
              ERR("ReadPixels failed.");
              return NULL;
@@ -3203,6 +3214,7 @@ module_open(Evas_Module *em)
    ORD(polygon_points_clear);
    ORD(polygon_draw);
 
+   ORD(image_load);
    ORD(image_mmap);
    ORD(image_new_from_data);
    ORD(image_new_from_copied_data);

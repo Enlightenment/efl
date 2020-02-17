@@ -300,7 +300,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
         if (!drm_event_is_busy)
           {
              DBG("wait...");
-             D("    @1.5f wait...\n", ecore_time_get());
+             D("    @%1.5f wait...\n", ecore_time_get());
              msg = eina_thread_queue_wait(thq, &ref);
              if (msg)
                {

@@ -228,10 +228,14 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
         it = calloc(1, sizeof (Eina_Iterator_Rbtree));
         if (!it) return NULL;
 
-	eina_trash_init(&it->trash);
+        eina_trash_init(&it->trash);
 
-	it->stack = eina_array_new(8);
-	if (!it->stack) goto on_error;
+        it->stack = eina_array_new(8);
+        if (!it->stack)
+          {
+             free(it);
+             return NULL;
+          }
      }
 
    first = _eina_rbtree_iterator_list_new(it, root);

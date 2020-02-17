@@ -5,8 +5,8 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
    [[This class keeps track of active @Efl.Canvas.Gesture_Recognizer objects.
      For internal use only.
    
-     This gesture class defines methods that register and unregister a recognizer and
-     get a recognizer according to gesture event type.
+     This class defines methods to manage gesture recognizers and handles passing input events
+     to the recognizers that it manages.
    ]]
    c_prefix: efl_gesture_manager;
    methods {
@@ -22,22 +22,13 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
             @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object.]]
          }
       }
-      @property config {
-         [[This property holds configuration values for the recognizer.]]
-         set {
-         }
-         get {
-         }
-         keys {
-            name: string; [[Property name.]]
-         }
-         values {
-            value: any_value_ref; [[Value of the property.]]
+      recognizer_cleanup {
+         [[Perform cleanup for a gesture which ends after a delay.]]
+         params {
+            @in recognizer: const(Efl.Canvas.Gesture_Recognizer); [[The gesture recognizer object.]]
+            @in target: const(Efl.Canvas.Object); [[The target object being processed by the recognizer.]]
          }
       }
-   }
-   events {
-      config,changed: string; [[Called when a config value has been changed for the manager object. Passed string is the name of the value.]]
    }
    implements {
       Efl.Object.constructor;

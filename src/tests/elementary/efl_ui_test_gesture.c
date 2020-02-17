@@ -141,6 +141,22 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    wait_timer(0.4);
    RESET;
 
+   /* verify finger size */
+   click_object_at(rect, 500, 500);
+   click_object_at(rect, 505, 505);
+   CHECK_ALL(TAP, 2, 0, 2, 0);
+   CHECK_ALL(LONG_TAP, 2, 0, 0, 2);
+   /* UPDATE -> FINISH */
+   CHECK_ALL(DOUBLE_TAP, 1, 2, 1, 0);
+   CHECK_ALL(TRIPLE_TAP, 1, 3, 0, 0);
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   CHECK_ZERO(ZOOM);
+
+   /* clear states */
+   wait_timer(0.4);
+   RESET;
+
    /* verify multiple simultaneous presses treated as same press */
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
@@ -202,7 +218,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
    Eina_Value *val;
    Eo *e = efl_provider_find(rect, EVAS_CANVAS_CLASS);
 
-   val = efl_gesture_manager_config_get(efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS), "glayer_long_tap_start_timeout");
+   val = efl_config_get(efl_provider_find(rect, EFL_CONFIG_INTERFACE), "glayer_long_tap_start_timeout");
    eina_value_get(val, &timeout);
 
    /* press */

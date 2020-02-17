@@ -1286,7 +1286,11 @@ _evas_image_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    if (efl_file_loaded_get(obj)) return 0;
-   Eina_Error err = efl_file_load(efl_super(obj, EVAS_IMAGE_CLASS));
+   Evas_Image_Data *o = efl_data_scope_get(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   Eina_Error err = 0;
+
+   if (!o->skip_head)
+     err = efl_file_load(efl_super(obj, EVAS_IMAGE_CLASS));
    if (err)
      {
         if (err == ENOENT)
@@ -1299,7 +1303,7 @@ _evas_image_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
           _efl_canvas_image_load_error_set(obj, EFL_GFX_IMAGE_LOAD_ERROR_GENERIC);
         return err;
      }
-   if (_evas_image_file_load(obj))
+   if (_evas_image_file_load(obj, o))
      return 0;
    return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 }

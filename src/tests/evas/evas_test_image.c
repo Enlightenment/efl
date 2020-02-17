@@ -9,6 +9,7 @@
 
 #include <Evas.h>
 #include <Ecore_Evas.h>
+#include <Ecore.h>
 
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
@@ -1161,6 +1162,45 @@ EFL_START_TEST(evas_object_image_save_from_proxy)
 }
 EFL_END_TEST
 
+static void
+_preload(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int *called = data;
+   int w, h;
+
+   *called = 1;
+   evas_object_image_size_get(obj, &w, &h);
+   ck_assert_int_ge(w, 1);
+   ck_assert_int_ge(h, 1);
+   ecore_main_loop_quit();
+}
+
+EFL_START_TEST(evas_object_image_load_head_skip)
+{
+   Evas *e;
+   Evas_Object *obj;
+   const char *img_path;
+   int called = 0;
+
+   e = _setup_evas();
+   img_path = TESTS_IMG_DIR "/Pic1.png";
+
+   obj = evas_object_image_filled_add(e);
+   evas_object_resize(obj, 100, 100);
+
+   evas_object_image_load_head_skip_set(obj, EINA_TRUE);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_IMAGE_PRELOADED, _preload, &called);
+   evas_object_image_file_set(obj, img_path, NULL);
+   evas_object_image_preload(obj, EINA_FALSE);
+
+   ck_assert(!efl_file_mmap_get(obj));
+   ecore_main_loop_begin();
+   ck_assert_int_eq(called, 1);
+
+   evas_free(e);
+}
+EFL_END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_api);
@@ -1188,6 +1228,7 @@ void evas_test_image_object(TCase *tc)
    tcase_add_test(tc, evas_object_image_cached_data_comparision);
    tcase_add_test(tc, evas_object_image_9patch);
    tcase_add_test(tc, evas_object_image_save_from_proxy);
+   tcase_add_test(tc, evas_object_image_load_head_skip);
 }
 
 

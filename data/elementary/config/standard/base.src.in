@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131095;
+  value "config_version" int: 131096;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -9,6 +9,9 @@ group "Elm_Config" struct {
   value "thumbscroll_momentum_threshold" double: 100.0;
   value "thumbscroll_flick_distance_tolerance" int: 1000;
   value "thumbscroll_friction" double: 1.0;
+  value "thumbscroll_momentum_distance_max" int: 3000;
+  value "thumbscroll_momentum_friction" double: 0.95;
+
   value "thumbscroll_momentum_animation_duration_min_limit" double: 0.3;
   value "thumbscroll_momentum_animation_duration_max_limit" double: 1.3;
   // will not be used

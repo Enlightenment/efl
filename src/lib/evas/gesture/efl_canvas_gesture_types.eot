@@ -1,25 +1,26 @@
 import eina_types;
 import efl_input_types;
+import efl_canvas_gesture_events;
 
 enum @beta Efl.Canvas.Gesture_Touch_State
 {
    [[ This enum type describes the state of a touch event. ]]
    legacy: efl_gesture_touch_state;
-   unknown = 0, [[Gesture Touch State unknown]]
-   begin ,      [[First fingure touch down]]
-   update,      [[fingure touch update]]
-   end,         [[Last fingure touch up]]
+   unknown = 0, [[Touch state is unset.]]
+   begin,       [[First touch point has just been added.]]
+   update,      [[A touch point position has updated or other touch points were added.]]
+   end,         [[A touch point has been released.]]
 }
 
 enum @beta Efl.Canvas.Gesture_State
 {
    [[ This enum type describes the state of a gesture. ]]
    legacy: efl_gesture_state;
-   none    = 0, [[No gesture state]]
-   started = 1, [[A continuous gesture has started.]]
-   updated,     [[A gesture continues.]]
-   finished,    [[A gesture has finished.]]
-   canceled,    [[A gesture was canceled.]]
+   none    = 0, [[No gesture state.]]
+   started = 1, [[A gesture has started.]]
+   updated,     [[A gesture has triggered.]]
+   finished,    [[A gesture has ended and has triggered.]]
+   canceled,    [[A gesture has ended without triggering.]]
 }
 
 enum @beta Efl.Canvas.Gesture_Recognizer_Result
@@ -28,37 +29,23 @@ enum @beta Efl.Canvas.Gesture_Recognizer_Result
    legacy: efl_gesture_recognizer_result;
 
    ignore    = 0x0001, [[The event does not change the state of the recognizer.]]
-   maybe     = 0x0002, [[The event changed the internal state of the recognizer, but it isn't clear yet if it is a  gesture or not. The recognizer needs to filter more events to decide.]]
+   maybe     = 0x0002, [[The event changed the internal state of the recognizer, but it isn't clear yet if it is a gesture or not. The recognizer needs to filter more events to decide.]]
    trigger   = 0x0004, [[The gesture has been triggered]]
-   finish    = 0x0008, [[The gesture has been finished successfully.]]
+   finish    = 0x0008, [[The gesture has been finished successfully and the gesture triggered.]]
    cancel    = 0x0010, [[The event made it clear that it is not a gesture. If the gesture recognizer was in Triggered state before, then the gesture is canceled.]]
    result_mask = 0x00ff, [[The gesture result mask]]
-}
-
-enum @beta Efl.Canvas.Gesture_Recognizer_Type
-{
-   [[ This enum type describes the state of a touch event. ]]
-   legacy: efl_gesture_recognizer_type;
-   tap = 0,
-   doubleTap,
-   tripleTap,
-   longTap,
-   momentum,
-   flick,
-   zoom,
-   custom,
 }
 
 struct @beta @c_name(Efl_Gesture_Touch_Point_Info) Efl.Canvas.Gesture_Touch_Point_Info {
    [[This struct represents the underlying data of a touch point.]]
    pos: Eina.Position2D; [[The canvas position of the touch point data.]]
-   pressed: bool; [[Whether this touch point is being pressed down.]]
-   timestamp: uint; [[The timestamp of the touch point data.]]
+   pressed: bool; [[Whether this touch point is currently being pressed down.]]
+   timestamp: uint; [[The timestamp of the touch point data in milliseconds.]]
 }
 
 struct @beta @c_name(Efl_Gesture_Touch_Point_Data) Efl.Canvas.Gesture_Touch_Point_Data {
     [[This struct represents the state of a touch point.]]
-    id: int; [[Touch id of the point.]]
+    id: int; [[Touch id of the point, where the first point is $0.]]
     action: Efl.Pointer.Action; [[The last event with this point.]]
     start: Efl.Canvas.Gesture_Touch_Point_Info; [[The start data for the touch point.]]
     prev: Efl.Canvas.Gesture_Touch_Point_Info; [[The previous data for the touch point.]]

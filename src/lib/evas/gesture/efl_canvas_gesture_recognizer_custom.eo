@@ -2,6 +2,10 @@ abstract @beta Efl.Canvas.Gesture_Recognizer_Custom extends Efl.Canvas.Gesture_R
 {
    [[This is the recognizer for Custom gestures.
      See @Efl.Canvas.Gesture_Recognizer.
+
+     Custom-written recognizers must inherit this class.
+     They are responsible for managing and updating the state of the recognized @Efl.Canvas.Gesture object inside
+     their implementation of the @Efl.Canvas.Gesture_Recognizer.recognize method, which is required.
    ]]
    c_prefix: efl_gesture_recognizer_custom;
    methods {
@@ -19,5 +23,6 @@ abstract @beta Efl.Canvas.Gesture_Recognizer_Custom extends Efl.Canvas.Gesture_R
    implements {
       Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Canvas.Gesture_Recognizer.type { get; }
    }
 }

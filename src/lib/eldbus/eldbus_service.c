@@ -365,7 +365,7 @@ cb_introspect(const Eldbus_Service_Interface *_iface, const Eldbus_Message *mess
           eina_strbuf_reset(obj->introspection_data);
         else
           obj->introspection_data = eina_strbuf_new();
-        EINA_SAFETY_ON_NULL_RETURN_VAL(obj->introspection_data, NULL);
+        EINA_SAFETY_ON_NULL_GOTO(obj->introspection_data, fail);
 
         eina_strbuf_append(obj->introspection_data, "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">");
         eina_strbuf_append_printf(obj->introspection_data,
@@ -392,6 +392,9 @@ cb_introspect(const Eldbus_Service_Interface *_iface, const Eldbus_Message *mess
 
    eldbus_message_arguments_append(reply, "s", eina_strbuf_string_get(obj->introspection_data));
    return reply;
+fail:
+   if (reply) eldbus_message_unref(reply);
+   return NULL;
 }
 
 static const Eldbus_Method introspect = {
