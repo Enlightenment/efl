@@ -13,6 +13,7 @@ _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
    efl_unref(event->object);
 }
 
+#if defined(_WIN32) || defined(HAVE_PULSE)
 static void
 _out_fail(void *data EINA_UNUSED, const Efl_Event *event)
 {
@@ -20,6 +21,7 @@ _out_fail(void *data EINA_UNUSED, const Efl_Event *event)
    efl_unref(event->object);
    out = NULL;
 }
+#endif
 
 struct _edje_multisense_eet_data
 {
