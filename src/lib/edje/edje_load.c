@@ -951,6 +951,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        if (!rp->typedata.container) memerr = EINA_TRUE;
                        break;
 
+                     case EDJE_PART_TYPE_VECTOR:
+                       rp->type = EDJE_RP_TYPE_VECTOR;
+                       rp->typedata.vector = calloc(1, sizeof(Edje_Real_Part_Vector));
+                       if (!rp->typedata.vector) memerr = EINA_TRUE;
+                       rp->typedata.vector->current_id = -1;
+                       break;
+
                      default:
                        break;
                     }
@@ -2021,6 +2028,19 @@ _edje_file_del(Edje *ed)
                     }
                   free(rp->typedata.swallow);
                   rp->typedata.swallow = NULL;
+               }
+             else if ((rp->type == EDJE_RP_TYPE_VECTOR) &&
+                      (rp->typedata.vector))
+               {
+                  if (rp->typedata.vector->anim)
+                    efl_del(rp->typedata.vector->anim);
+                  if (rp->typedata.vector->json_virtual_file)
+                    eina_file_close(rp->typedata.vector->json_virtual_file);
+                  if (rp->typedata.vector->json_data)
+                    free(rp->typedata.vector->json_data);
+
+                  free(rp->typedata.vector);
+                  rp->typedata.vector = NULL;
                }
 
              /* Cleanup optional part. */
