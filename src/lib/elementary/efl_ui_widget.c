@@ -734,6 +734,14 @@ _efl_ui_widget_efl_canvas_group_group_add(Eo *obj, Elm_Widget_Smart_Data *priv)
                                   _obj_mouse_in, obj);
 }
 
+static Eina_Bool
+_keep(void *data, void *gdata)
+{
+   if (data == gdata)
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 EOLIAN static void
 _efl_ui_widget_efl_canvas_group_group_del(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
@@ -747,20 +755,18 @@ _efl_ui_widget_efl_canvas_group_group_del(Eo *obj, Elm_Widget_Smart_Data *sd)
         _callbacks_del(sd->hover_obj, obj);
         sd->hover_obj = NULL;
      }
-
-   while (sd->subobjs)
+   while(eina_array_count(sd->children))
      {
-        sobj = eina_list_data_get(sd->subobjs);
+        sobj = eina_array_data_get(sd->children, 0);
 
-        /* let the objects clean-up themselves and get rid of this list */
         if (!elm_widget_sub_object_del(obj, sobj))
           {
              ERR("failed to remove sub object %p from %p\n", sobj, obj);
-             sd->subobjs = eina_list_remove_list
-                 (sd->subobjs, sd->subobjs);
+             eina_array_remove(sd->children, _keep, sobj);
           }
         // FIXME: is that a legacy or a new object ?
         evas_object_del(sobj);
+        EINA_SAFETY_ON_TRUE_RETURN(eina_array_count(sd->children) && sobj == eina_array_data_get(sd->children, 0));
      }
    sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
    sd->cursors = eina_list_free(sd->cursors); /* should be empty anyway */
@@ -851,14 +857,14 @@ _efl_ui_widget_efl_gfx_entity_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Dat
 void
 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
-   Eina_List *l;
    Eo *child;
 
    _full_eval(obj, sd);
 
-   EINA_LIST_FOREACH(sd->subobjs , l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
         Elm_Widget_Smart_Data *sd_child;
+        child = eina_array_data_get(sd->children, i);
 
         if (!efl_isa(child, EFL_UI_WIDGET_CLASS)) continue;
 
@@ -954,12 +960,13 @@ EOLIAN static void
 _efl_ui_widget_efl_canvas_object_is_frame_object_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool frame)
 {
    Evas_Object *o;
-   Eina_List *li;
 
    frame = !!frame;
    efl_canvas_object_is_frame_object_set(efl_super(obj, MY_CLASS), frame);
-   EINA_LIST_FOREACH(pd->subobjs, li, o)
+   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
      {
+        o = eina_array_data_get(pd->children, i);
+
        if (evas_object_data_get(o, "_elm_leaveme")) continue;
        efl_canvas_object_is_frame_object_set(o, frame);
      }
@@ -1185,13 +1192,14 @@ EAPI Eina_Bool
 elm_widget_access(Evas_Object *obj,
                   Eina_Bool is_access)
 {
-   const Eina_List *l;
    Evas_Object *child;
    Eina_Bool ret = EINA_TRUE;
 
    API_ENTRY return EINA_FALSE;
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
+
         if (elm_widget_is(child))
           ret &= elm_widget_access(child, is_access);
      }
@@ -1227,10 +1235,12 @@ elm_widget_theme(Evas_Object *obj)
    Eina_Bool err_generic = EINA_FALSE;
 
    API_ENTRY return EFL_UI_THEME_APPLY_ERROR_GENERIC;
-
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
-     if (_elm_widget_is(child))
-       _elm_widget_theme_helper(elm_widget_theme(child), &err_default, &err_generic);
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
+     {
+        child = eina_array_data_get(sd->children, i);
+        if (_elm_widget_is(child))
+          _elm_widget_theme_helper(elm_widget_theme(child), &err_default, &err_generic);
+     }
 
    if (sd->hover_obj)
      _elm_widget_theme_helper(elm_widget_theme(sd->hover_obj), &err_default, &err_generic);
@@ -1278,8 +1288,9 @@ elm_widget_theme_specific(Evas_Object *obj,
           }
      }
    if (!force) return;
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
         if (elm_widget_is(child))
           elm_widget_theme_specific(child, th, force);
      }
@@ -1437,7 +1448,7 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
    if (parent)
      {
         ELM_WIDGET_DATA_GET_OR_RETURN(parent, ppd);
-        EINA_SAFETY_ON_FALSE_RETURN(eina_list_data_find(ppd->subobjs, obj));
+        EINA_SAFETY_ON_FALSE_RETURN(eina_array_find(ppd->children, obj, NULL));
         if (ppd->parent_obj == parent)
           {
              CRI("ATTEMPTING TO SET CHILD OF PARENT AS PARENT OF ITS OWN PARENT. THIS IS A BUG.");
@@ -1503,7 +1514,8 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
 static void
 _widget_add_sub(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
-   sd->subobjs = eina_list_append(sd->subobjs, sobj);
+   if (!sd->children) sd->children = eina_array_new(1);
+   eina_array_push(sd->children, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
    _callbacks_add(sobj, obj);
 }
@@ -1511,7 +1523,7 @@ _widget_add_sub(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 static void
 _widget_del_sub(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
-   sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+   eina_array_remove(sd->children, _keep, sobj);
    evas_object_data_del(sobj, "elm-parent");
    _callbacks_del(sobj, obj);
 }
@@ -1734,7 +1746,6 @@ EAPI void
 elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
 {
    Efl_Ui_Widget *subs;
-   Eina_List *n;
    Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(pd);
    int distance, parent_counter = (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0);
@@ -1751,9 +1762,9 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
         distance = MAX(MIN(tree_unfocusable, 1), 0);
         pd->tree_unfocusable = parent_counter + distance;
      }
-
-   EINA_LIST_FOREACH(pd->subobjs, n, subs)
+   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
      {
+        subs = eina_array_data_get(pd->children, i);
         if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
           elm_widget_tree_unfocusable_set(subs, elm_widget_tree_unfocusable_get(obj));
      }
@@ -1797,13 +1808,13 @@ EAPI Eina_List*
 elm_widget_can_focus_child_list_get(const Eo *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   const Eina_List *l;
    Eina_List *child_list = NULL;
    Evas_Object *child;
 
    if (!sd) return NULL;
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
         if (!_elm_widget_is(child)) continue;
         if ((elm_widget_can_focus_get(child)) &&
             (evas_object_visible_get(child)) &&
@@ -2068,13 +2079,13 @@ void
 _elm_widget_top_win_focused_set(Evas_Object *obj,
                                 Eina_Bool top_win_focused)
 {
-   const Eina_List *l;
    Evas_Object *child;
    API_ENTRY return;
 
    if (sd->top_win_focused == top_win_focused) return;
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
         if (elm_widget_is(child))
           _elm_widget_top_win_focused_set(child, top_win_focused);
      }
@@ -2095,7 +2106,6 @@ EOLIAN static void
 _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool disabled)
 {
    Efl_Ui_Widget *subs;
-   Eina_List *n;
    int distance, parent_counter = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
 
    if (disabled)
@@ -2110,9 +2120,9 @@ _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina
         distance = MAX(MIN(disabled, 1), 0);
         pd->disabled = parent_counter + distance;
      }
-
-   EINA_LIST_FOREACH(pd->subobjs, n, subs)
+   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
      {
+        subs = eina_array_data_get(pd->children, i);
         if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
           efl_ui_widget_disabled_set(subs, efl_ui_widget_disabled_get(obj));
      }
@@ -2169,10 +2179,10 @@ _efl_ui_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
         else
           {
              Evas_Object *child;
-             Eina_List *l;
 
-             EINA_LIST_FOREACH(sd->subobjs, l, child)
+             for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
                {
+                  child = eina_array_data_get(sd->children, i);
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
                     {
                        if (elm_widget_is_legacy(child))
@@ -2203,10 +2213,10 @@ _efl_ui_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
         else
           {
              Evas_Object *child;
-             Eina_List *l;
 
-             EINA_LIST_FOREACH(sd->subobjs, l, child)
+             for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
                {
+                  child = eina_array_data_get(sd->children, i);
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
                     {
                        if (elm_widget_is_legacy(child))
@@ -2246,10 +2256,10 @@ _efl_ui_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
         else
           {
              Evas_Object *child;
-             Eina_List *l;
 
-             EINA_LIST_FOREACH(sd->subobjs, l, child)
+             for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
                {
+                  child = eina_array_data_get(sd->children, i);
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
                     {
                        if (elm_widget_is_legacy(child))
@@ -2280,10 +2290,11 @@ _efl_ui_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
         else
           {
              Evas_Object *child;
-             Eina_List *l;
 
-             EINA_LIST_FOREACH(sd->subobjs, l, child)
+             for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
                {
+                  child = eina_array_data_get(sd->children, i);
+
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
                     {
                        if (elm_widget_is_legacy(child))
@@ -2517,13 +2528,14 @@ elm_widget_part_translatable_text_get(const Eo *obj, const char *part, const cha
 EOLIAN static void
 _efl_ui_widget_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   const Eina_List *l;
    Evas_Object *child;
 
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
         if (elm_widget_is(child))
           efl_ui_l10n_translation_update(child);
+
      }
 
    if (sd->hover_obj) efl_ui_l10n_translation_update(sd->hover_obj);
@@ -2883,15 +2895,16 @@ elm_widget_type_check(const Evas_Object *obj,
 EAPI Evas_Object *
 elm_widget_name_find(const Eo *obj, const char *name, int recurse)
 {
-   Eina_List *l;
    Evas_Object *child;
    const char *s;
    INTERNAL_ENTRY NULL;
 
    if (!name) return NULL;
    if (!_elm_widget_is(obj)) return NULL;
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
         s = evas_object_name_get(child);
         if ((s) && (!strcmp(s, name))) return child;
         if ((recurse != 0) &&
@@ -3116,7 +3129,6 @@ elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 {
    Evas_Display_Mode prev_dispmode;
    Evas_Object *child;
-   Eina_List *l;
 
    API_ENTRY return;
    prev_dispmode = evas_object_size_hint_display_mode_get(obj);
@@ -3126,8 +3138,9 @@ elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 
    evas_object_size_hint_display_mode_set(obj, dispmode);
 
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        child = eina_array_data_get(sd->children, i);
         if (elm_widget_is(child))
           elm_widget_display_mode_set(child, dispmode);
      }
@@ -4701,8 +4714,11 @@ _sub_obj_tree_dump(const Evas_Object *obj,
         DBG("+ %s(%p)\n",
             elm_widget_type_get(obj),
             obj);
-        EINA_LIST_FOREACH(sd->subobjs, l, obj)
+       for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
+         {
+            obj = eina_array_data_get(sd->children, i);
           _sub_obj_tree_dump(obj, lvl + 1);
+         }
      }
    else
      DBG("+ %s(%p)\n", evas_object_type_get(obj), obj);
@@ -4753,8 +4769,12 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj,
 
    Eina_List *l;
    Evas_Object *o;
-   EINA_LIST_FOREACH(sd->subobjs, l, o)
-     _sub_obj_tree_dot_dump(o, output);
+
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
+     {
+        o = eina_array_data_get(sd->children, i);
+        _sub_obj_tree_dot_dump(o, output);
+     }
 }
 
 #endif
@@ -4950,12 +4970,14 @@ _efl_ui_widget_efl_access_object_i18n_name_get(const Eo *obj, Elm_Widget_Smart_D
 EOLIAN static Eina_List*
 _efl_ui_widget_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
-   Eina_List *l, *accs = NULL;
+   Eina_List *accs = NULL;
    Evas_Object *widget;
    Efl_Access_Type type;
 
-   EINA_LIST_FOREACH(pd->subobjs, l, widget)
+   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
      {
+        widget = eina_array_data_get(pd->children, i);
+
         if (!elm_object_widget_check(widget)) continue;
         if (!efl_isa(widget, EFL_ACCESS_OBJECT_MIXIN)) continue;
         type = efl_access_object_access_type_get(widget);

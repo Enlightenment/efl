@@ -51,12 +51,18 @@ _flush_manager(Efl_Ui_Widget *obj, Elm_Widget_Smart_Data *pd)
    manager = efl_ui_focus_object_focus_manager_get(obj);
    if (manager)
      {
-        Eina_List *order;
+        Eina_List *order = NULL;
 
         if (pd->legacy_focus.custom_chain)
           order = eina_list_clone(pd->legacy_focus.custom_chain);
         else
-          order = eina_list_clone(pd->subobjs);
+          {
+             for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+               {
+                  Eo *sobj = eina_array_data_get(pd->children, i);
+                  order = eina_list_append(order, sobj);
+               }
+          }
 
         efl_ui_focus_manager_calc_update_order(manager, obj, order);
      }

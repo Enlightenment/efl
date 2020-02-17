@@ -73,22 +73,19 @@ _elm_grid_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_grid_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Eina_List *l;
-   Evas_Object *child;
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* let's make our grid object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH(wd->subobjs, l, child)
-     {
-        if (child == wd->resize_obj)
-          {
-             wd->subobjs =
-               eina_list_demote_list(wd->subobjs, l);
-             break;
-          }
-     }
+   {
+      unsigned int resize_id = 0;
+      if (eina_array_find(wd->children, wd->resize_obj, &resize_id))
+        {
+           //exchange with last
+           eina_array_data_set(wd->children, resize_id, eina_array_data_get(wd->children, eina_array_count(wd->children) - 1));
+           eina_array_data_set(wd->children, eina_array_count(wd->children) - 1, wd->resize_obj);
+        }
+   }
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }

@@ -372,7 +372,6 @@ static void
 _widget_calculate_recursive(Eo *obj)
 {
    Elm_Widget_Smart_Data *pd = NULL;
-   Eina_List *l;
    Evas_Object *child;
 
    if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return;
@@ -388,8 +387,11 @@ _widget_calculate_recursive(Eo *obj)
           return;
      }
 
-   EINA_LIST_FOREACH(pd->subobjs, l, child)
-     _widget_calculate_recursive(child);
+   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+     {
+        child = eina_array_data_get(pd->children, i);
+        _widget_calculate_recursive(child);
+     }
 
    efl_canvas_group_calculate(obj);
 }

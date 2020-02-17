@@ -3521,7 +3521,6 @@ _efl_ui_widget_config_reload(Efl_Ui_Widget *obj)
    Elm_Focus_Move_Policy focus_move_policy = elm_config_focus_move_policy_get();
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd);
    Efl_Ui_Widget *w;
-   Eina_List *n;
 
    //reload focus move policy
    if (efl_ui_widget_focus_move_policy_automatic_get(obj) &&
@@ -3530,8 +3529,9 @@ _efl_ui_widget_config_reload(Efl_Ui_Widget *obj)
         sd->focus_move_policy = focus_move_policy;
      }
 
-   EINA_LIST_FOREACH(sd->subobjs, n, w)
+   for (unsigned int i = 0; i < eina_array_count(sd->children); ++i)
      {
+        w = eina_array_data_get(sd->children, i);
         if (efl_isa(w, EFL_UI_WIDGET_CLASS))
           _efl_ui_widget_config_reload(w);
      }
