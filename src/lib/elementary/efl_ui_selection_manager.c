@@ -50,6 +50,7 @@ static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Sea
 
 EAPI int ELM_CNP_EVENT_SELECTION_CHANGED = -1;
 
+#ifdef HAVE_ELEMENTARY_X
 static Sel_Manager_Seat_Selection *
 _sel_manager_seat_selection_get(Efl_Ui_Selection_Manager_Data *pd, unsigned int seat)
 {
@@ -66,6 +67,7 @@ _sel_manager_seat_selection_get(Efl_Ui_Selection_Manager_Data *pd, unsigned int 
 
    return seat_sel;
 }
+#endif
 
 static inline void
 _owner_change_check(Efl_Ui_Selection_Manager *manager, Efl_Object *owner,
