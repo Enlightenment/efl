@@ -1222,6 +1222,7 @@ low_mem_current:
 
 #endif
 
+#ifdef BUILD_VG_LOADER_JSON
       case EDJE_ACTION_TYPE_VG_ANIM_STOP:
         if (_edje_block_break(ed))
           goto break_prog;
@@ -1265,7 +1266,7 @@ low_mem_current:
         break;
 
       case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
-      case EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK:
+      case EDJE_ACTION_TYPE_VG_ANIM_REWIND:
       case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
         if (_edje_block_break(ed))
           goto break_prog;
@@ -1279,7 +1280,7 @@ low_mem_current:
                        Eina_Bool vector_anim_backward = EINA_FALSE;
                        Eina_Bool vector_anim_loop = EINA_FALSE;
 
-                       if (pr->action == EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK)
+                       if (pr->action == EDJE_ACTION_TYPE_VG_ANIM_REWIND)
                          vector_anim_backward = EINA_TRUE;
 
                        if (pr->action == EDJE_ACTION_TYPE_VG_ANIM_LOOP)
@@ -1292,6 +1293,16 @@ low_mem_current:
                }
           }
         break;
+#else
+      case EDJE_ACTION_TYPE_VG_ANIM_STOP:
+      case EDJE_ACTION_TYPE_VG_ANIM_PAUSE:
+      case EDJE_ACTION_TYPE_VG_ANIM_RESUME:
+      case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
+      case EDJE_ACTION_TYPE_VG_ANIM_REWIND:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
+        ERR("Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
+        break;
+#endif
 
       default:
         // _edje_emit(ed, "program,start", pr->name);

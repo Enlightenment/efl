@@ -2034,8 +2034,6 @@ _edje_file_del(Edje *ed)
                {
                   if (rp->typedata.vector->anim)
                     efl_del(rp->typedata.vector->anim);
-                  if (rp->typedata.vector->player)
-                    efl_del(rp->typedata.vector->player);
                   if (rp->typedata.vector->json_virtual_file)
                     eina_file_close(rp->typedata.vector->json_virtual_file);
                   if (rp->typedata.vector->json_data)

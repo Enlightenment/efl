@@ -15789,7 +15789,7 @@ st_collections_group_programs_program_action(void)
                            "VG_ANIM_PAUSE", EDJE_ACTION_TYPE_VG_ANIM_PAUSE,
                            "VG_ANIM_RESUME", EDJE_ACTION_TYPE_VG_ANIM_RESUME,
                            "VG_ANIM_PLAY", EDJE_ACTION_TYPE_VG_ANIM_PLAY,
-                           "VG_ANIM_PLAY_BACK", EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK,
+                           "VG_ANIM_REWIND", EDJE_ACTION_TYPE_VG_ANIM_REWIND,
                            "VG_ANIM_LOOP", EDJE_ACTION_TYPE_VG_ANIM_LOOP,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
@@ -15956,7 +15956,7 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_VG_ANIM_PAUSE:
       case EDJE_ACTION_TYPE_VG_ANIM_RESUME:
       case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
-      case EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK:
+      case EDJE_ACTION_TYPE_VG_ANIM_REWIND:
       case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
         check_arg_count(1);
         break;
@@ -16241,7 +16241,7 @@ _program_target_add(char *name)
       case EDJE_ACTION_TYPE_VG_ANIM_PAUSE:
       case EDJE_ACTION_TYPE_VG_ANIM_RESUME:
       case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
-      case EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK:
+      case EDJE_ACTION_TYPE_VG_ANIM_REWIND:
       case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
         data_queue_part_lookup(pc, name, &(et->id));
         break;

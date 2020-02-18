@@ -2621,8 +2621,8 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
              const char *file = eina_list_nth(image_animation->images,
                                               idx);
 
-             elm_image_file_set(obj, file, NULL);
              elm_image_preload_disabled_set(obj, EINA_TRUE);
+             elm_image_file_set(obj, file, NULL);
           }
      }
 

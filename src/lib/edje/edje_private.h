@@ -2046,7 +2046,6 @@ struct _Edje_Real_Part_Swallow
 struct _Edje_Real_Part_Vector
 {
    Eo        *anim;
-   Eo        *player;
    Eina_File *json_virtual_file;
    char      *json_data;
    int        start_frame;
@@ -3351,10 +3350,12 @@ char * _edje_text_cursor_content_get(Edje_Real_Part *rp, Efl_Text_Cursor_Handle 
 void _edje_object_part_text_insert(Edje *ed, Edje_Real_Part *rp, const char *text);
 
 void _edje_internal_proxy_shutdown(void);
+#ifdef BUILD_VG_LOADER_JSON
 void _edje_part_vector_anim_stop(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_vector_anim_pause(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_vector_anim_resume(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_vector_anim_play(Edje *ed, Edje_Real_Part *rp, Eina_Bool backward, Eina_Bool loop);
+#endif
 
 #ifdef HAVE_EPHYSICS
 Eina_Bool _edje_ephysics_load(void);

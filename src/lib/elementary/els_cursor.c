@@ -42,6 +42,7 @@ struct _Cursor_Id
 #  define CURSOR(_name, _id, _cid) { _name }
 #endif
 
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_COCOA) || defined(HAVE_ELEMENTARY_WIN32)
 /* Please keep order in sync with Ecore_X_Cursor.h values! */
 static struct _Cursor_Id _cursors[] =
 {
@@ -124,7 +125,6 @@ static struct _Cursor_Id _cursors[] =
    CURSOR(ELM_CURSOR_XTERM              , XTERM              , ECORE_COCOA_CURSOR_IBEAM)
 };
 
-#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_COCOA) || defined(HAVE_ELEMENTARY_WIN32)
 static const int _cursors_count = sizeof(_cursors)/sizeof(struct _Cursor_Id);
 #endif
 

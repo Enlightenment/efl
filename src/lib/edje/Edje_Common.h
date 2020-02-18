@@ -1952,13 +1952,13 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_PHYSICS_ROT_SET          = 23, /**< @since 1.8 @brief Physics rotation set action value */
    EDJE_ACTION_TYPE_VIBRATION_SAMPLE         = 24, /**< @since 1.10 @brief vibration sample action value */
    EDJE_ACTION_TYPE_MO                       = 25, /**< @since 1.15 @brief Mo action value */
-   EDJE_ACTION_TYPE_VG_ANIM_STOP,
-   EDJE_ACTION_TYPE_VG_ANIM_PAUSE,
-   EDJE_ACTION_TYPE_VG_ANIM_RESUME,
-   EDJE_ACTION_TYPE_VG_ANIM_PLAY,
-   EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK,
-   EDJE_ACTION_TYPE_VG_ANIM_LOOP,
-   EDJE_ACTION_TYPE_LAST                     = 26  /**< Last action value */
+   EDJE_ACTION_TYPE_VG_ANIM_STOP             = 26, /** @since 1.24 @brief Vector animation stop action value */
+   EDJE_ACTION_TYPE_VG_ANIM_PAUSE            = 27, /** @since 1.24 @brief Vector animation pause action value */
+   EDJE_ACTION_TYPE_VG_ANIM_RESUME           = 28, /** @since 1.24 @brief Vector animation resume action value */
+   EDJE_ACTION_TYPE_VG_ANIM_PLAY             = 29, /** @since 1.24 @brief Vector animation play action value */
+   EDJE_ACTION_TYPE_VG_ANIM_REWIND           = 30, /** @since 1.24 @brief Vector animation rewind action value */
+   EDJE_ACTION_TYPE_VG_ANIM_LOOP             = 31, /** @since 1.24 @brief Vector animation loop value */
+   EDJE_ACTION_TYPE_LAST                     = 32  /**< Last action value */
 } Edje_Action_Type;
 
 /**

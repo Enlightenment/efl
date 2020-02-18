@@ -50,6 +50,7 @@ static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Sea
 
 EAPI int ELM_CNP_EVENT_SELECTION_CHANGED = -1;
 
+#ifdef HAVE_ELEMENTARY_X
 static Sel_Manager_Seat_Selection *
 _sel_manager_seat_selection_get(Efl_Ui_Selection_Manager_Data *pd, unsigned int seat)
 {
@@ -66,6 +67,7 @@ _sel_manager_seat_selection_get(Efl_Ui_Selection_Manager_Data *pd, unsigned int 
 
    return seat_sel;
 }
+#endif
 
 static inline void
 _owner_change_check(Efl_Ui_Selection_Manager *manager, Efl_Object *owner,
@@ -4753,7 +4755,6 @@ EOLIAN static void
 _efl_ui_selection_manager_selection_clear(Eo *obj, Efl_Ui_Selection_Manager_Data *pd,
                                        Efl_Object *owner, Efl_Ui_Selection_Type type, unsigned int seat)
 {
-   Eina_Bool local = EINA_FALSE;
    Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel = NULL;
 
@@ -4801,8 +4802,7 @@ _efl_ui_selection_manager_selection_clear(Eo *obj, Efl_Ui_Selection_Manager_Data
              free(seat_sel->sel_list[type].data.mem);
              seat_sel->sel_list[type].data.mem = NULL;
           }
-        if (sel->xwin != 0) local = EINA_TRUE;
-        if (!local) seat_sel->sel_list[type].clear();
+        if (!sel->xwin) seat_sel->sel_list[type].clear();
         else
           {
              Eina_List *l, *l_next;
