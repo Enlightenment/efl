@@ -74,6 +74,13 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
             size: Eina.Size2D;
          }
       }
+      list_by_keypath_get {
+         [[  ]]
+         params {
+            keypath: string;
+         }
+         return: list<Efl.Object>;
+      }
    }
    implements {
       Efl.Object.constructor;

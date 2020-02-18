@@ -396,6 +396,7 @@ _efl_canvas_vg_object_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Object_Data *pd
    return obj;
 }
 
+
 static void
 _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                 void *engine, void *output, void *context, Efl_VG *node,
@@ -1015,6 +1016,18 @@ _efl_canvas_vg_object_default_size_get(const Eo *eo_obj EINA_UNUSED,
                                        Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
 {
    return evas_cache_vg_entry_default_size_get(pd->vg_entry);
+}
+
+EOLIAN Eina_List *
+_efl_canvas_vg_object_list_by_keypath_get(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *keypath)
+{
+
+   // *
+   
+
+
+   // *path.path
+   return NULL;
 }
 
 /* the actual api call to add a vector graphic object */

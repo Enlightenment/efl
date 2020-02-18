@@ -1,0 +1,40 @@
+
+class @beta Efl.Ui.Mi_State extends Efl.Object
+{
+   [[ Micro Interaction State class
+      @since 1.24
+   ]]
+   event_c_prefix: efl_ui_mi_state;
+   methods {
+      @property sector {
+         [[ sector info
+         ]]
+         set {}
+         get {}
+         values {
+            start: string; [[ The name of start sector ]]
+            end: string; [[ The name of end sector ]]
+         }
+      }
+      @property rule {
+         [[ rule get/set ]]
+         set {}
+         get {}
+         keys {
+            keypath: string; [[ rule_name (keypath) ]]
+         }
+         values {
+            rule: Efl.Ui.Mi_Rule;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+   events {
+      trigger : bool;
+      feedback : float;
+      feedback,done : bool;
+   }
+}

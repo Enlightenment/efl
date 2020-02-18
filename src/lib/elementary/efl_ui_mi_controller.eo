@@ -1,0 +1,77 @@
+enum Efl.Ui.Mi_Controller.Repeat_Mode {
+   none,
+   loop,
+   once,
+   play_rewind
+}
+
+
+class @beta Efl.Ui.Mi_Controller extends Efl.Ui.Widget implements Efl.File, Efl.Gfx.View
+{
+   [[ Micro controller Widget class
+      @since 1.24
+   ]]
+   event_c_prefix: efl_ui_mi_controller;
+   methods {
+      @property repeat_mode {
+         [[ repeat mode , normal/ play_rewind /loop
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            mode: Efl.Ui.Mi_Controller.Repeat_Mode; [[mode]]
+         }
+      }
+      @property state {
+         [[ ]]
+         get {
+         }
+         keys {
+            state_name: string;
+         }
+         values {
+            state: Efl.Object;
+         }
+
+      }
+      //temporary
+      state_add {
+         [[   ]]
+         params {
+            @in state: Efl.Ui.Mi_State;
+         }
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      //
+      trigger {
+         [[    ]]
+         params {
+            @in state: string; [[  ]]
+            @in animation: bool; [[  ]]
+         }
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      trigger_next {
+         [[    ]]
+         params {
+            @in animation: bool; [[  ]]
+         }
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      trigger_prev {
+         [[    ]]
+         params {
+            @in animation: bool; [[  ]]
+         }
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.File.load;
+      Efl.Gfx.View.view_size { set; get; }
+   }
+}

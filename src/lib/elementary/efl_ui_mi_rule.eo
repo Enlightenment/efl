@@ -1,0 +1,27 @@
+
+class @beta Efl.Ui.Mi_Rule extends Efl.Object implements Efl.Canvas.Gesture_Events
+{
+   [[ Micro Interaction Rule class
+      @since 1.24
+   ]]
+   event_c_prefix: efl_ui_mi_rule;
+   methods {
+      @property keypath {
+         [[ 
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            keypath: string; [[  ]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+   events {
+   }
+}
