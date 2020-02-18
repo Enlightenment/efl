@@ -586,12 +586,12 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    Eina_Position2D offset = {0, 0};  //Offset after keeping aspect ratio.
    void *buffer = NULL;
    void *key = NULL;
-
-   evas_cache_vg_entry_value_provider_update(pd->vg_entry, efl_key_data_get(obj->object, "_vg_value_providers"));
+Eina_List *vp_list = efl_key_data_get(obj->object, "_vg_value_providers");
+   Eina_Bool vp_updated = evas_cache_vg_entry_value_provider_update(pd->vg_entry, vp_list);
 
    // if the size changed in between path set and the draw call;
    if ((vg_entry->w != w) ||
-       (vg_entry->h != h))
+       (vg_entry->h != h) || vp_updated)
      {
         Eina_Size2D size = evas_cache_vg_entry_default_size_get(pd->vg_entry);
 
@@ -619,7 +619,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
           }
 
         //Size is changed, cached data is invalid.
-        if ((size.w != vg_entry->w) || (size.h != vg_entry->h))
+        if ((size.w != vg_entry->w) || (size.h != vg_entry->h) || vp_updated)
           {
 //Not necessary, but this might be helpful for precise caching.
 #if 0
