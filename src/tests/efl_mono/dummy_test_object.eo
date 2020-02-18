@@ -79,6 +79,7 @@ struct @beta @free(free) Dummy.StructComplex {
    flist: list<string>;
    fhash: hash<string, string>;
    fiterator: iterator<string>;
+   faccessor: accessor<string>;
    fany_value: any_value;
    fany_value_ref: any_value_ref;
    fbinbuf: binbuf;

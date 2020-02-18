@@ -103,6 +103,13 @@ struct field_argument_assignment_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
+      else if ((complex && (complex->outer.base_type == "accessor")))
+        {
+           if (!as_generator(
+                 "this." << string << " = Efl.Eo.Globals.IEnumerableToAccessor(" << string << ", " << (field.type.has_own ? "true" : "false")  << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
       else if ((complex && (complex->outer.base_type == "hash"))
             || field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
         {

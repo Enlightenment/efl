@@ -151,6 +151,7 @@ internal class StructHelpers
         Fhash["cc"] = "ccc";
 
         var Fiterator = ((Eina.Array<string>)Farray).GetIterator();
+        var Faccessor = ((Eina.Array<string>)Farray).GetAccessor();
 
         var Fany_value = new Eina.Value(Eina.ValueType.Double);
         Fany_value.Set(-9007199254740992.0);
@@ -167,9 +168,18 @@ internal class StructHelpers
         var Fobj = new Dummy.Numberwrapper();
         Fobj.Number = 42;
 
-        return new Dummy.StructComplex(farray: Farray, flist: Flist, fhash: Fhash,
-            fiterator: Fiterator, fanyValue:Fany_value, fanyValueRef: Fany_value_ref,
-            fbinbuf: Fbinbuf, fslice:Fslice, fobj: Fobj);
+        return new Dummy.StructComplex(
+            farray: Farray,
+            flist: Flist,
+            fhash: Fhash,
+            fiterator: Fiterator,
+            faccessor: Faccessor,
+            fanyValue:Fany_value,
+            fanyValueRef: Fany_value_ref,
+            fbinbuf: Fbinbuf,
+            fslice:Fslice,
+            fobj: Fobj
+        );
     }
 
     internal static void checkStructComplex(Dummy.StructComplex complex)
