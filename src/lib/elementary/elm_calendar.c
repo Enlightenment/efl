@@ -22,6 +22,8 @@
 #define ELM_CALENDAR_BUTTON_RIGHT "elm,calendar,button,right"
 #define ELM_CALENDAR_BUTTON_YEAR_LEFT "elm,calendar,button_year,left"
 #define ELM_CALENDAR_BUTTON_YEAR_RIGHT "elm,calendar,button_year,right"
+#define ELM_CALENDAR_CH_WEEKEND "elm,calendar,ch_%d,weekend"
+#define ELM_CALENDAR_CH_WEEKDAY "elm,calendar,ch_%d,weekday"
 
 #define ELM_CALENDAR_CH_TEXT_PART_STR "elm.ch_%d.text"
 #define ELM_CALENDAR_CIT_TEXT_PART_STR "elm.cit_%d.text"
@@ -674,6 +676,7 @@ static void
 _set_headers(Evas_Object *obj)
 {
    static char part[64];
+   static char emission[64];
    int i;
    struct tm *t;
    time_t temp = 259200; // the first sunday since epoch
@@ -710,7 +713,15 @@ _set_headers(Evas_Object *obj)
    for (i = 0; i < ELM_DAY_LAST; i++)
      {
         _part_name_snprintf(part, sizeof(part), obj, ELM_CALENDAR_CH_TEXT_PART_STR, i);
-        elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
+        int weekday_index = (i + sd->first_week_day) % ELM_DAY_LAST;
+        elm_layout_text_set(obj, part, sd->weekdays[weekday_index]);
+        // Signaling the theme about which days are weekdays and which weekend
+        if (weekday_index == ELM_DAY_SATURDAY || weekday_index == ELM_DAY_SUNDAY)
+           _part_name_snprintf(emission, sizeof(emission), obj, ELM_CALENDAR_CH_WEEKEND, i);
+        else
+           _part_name_snprintf(emission, sizeof(emission), obj, ELM_CALENDAR_CH_WEEKDAY, i);
+
+        elm_layout_signal_emit(obj, emission, "elm");
      }
 
    sd->filling = EINA_FALSE;
