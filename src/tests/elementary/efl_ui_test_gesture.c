@@ -26,7 +26,7 @@ typedef enum
 enum
 {
    TAP,
-   LONG_TAP,
+   LONG_PRESS,
    DOUBLE_TAP,
    TRIPLE_TAP,
    MOMENTUM,
@@ -87,7 +87,7 @@ setup(void)
 #define WATCH(type) \
    efl_event_callback_add(rect, EFL_EVENT_GESTURE_##type, gesture_cb, &count[(type)])
    WATCH(TAP);
-   WATCH(LONG_TAP);
+   WATCH(LONG_PRESS);
    WATCH(DOUBLE_TAP);
    WATCH(TRIPLE_TAP);
    WATCH(MOMENTUM);
@@ -105,7 +105,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* basic tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
    CHECK_ZERO(MOMENTUM);
@@ -117,7 +117,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* add a second tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 0, 1, 1, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
@@ -130,7 +130,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* add a third tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
@@ -146,7 +146,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    click_object_at(rect, 500, 500);
    click_object_at(rect, 505, 505);
    CHECK_ALL(TAP, 2, 0, 2, 0);
-   CHECK_ALL(LONG_TAP, 2, 0, 0, 2);
+   CHECK_ALL(LONG_PRESS, 2, 0, 0, 2);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 1, 2, 1, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 3, 0, 0);
@@ -161,7 +161,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* verify multiple simultaneous presses treated as same press */
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
    CHECK_ZERO(MOMENTUM);
@@ -173,7 +173,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 0, 1, 1, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
@@ -186,7 +186,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
@@ -200,7 +200,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 
    multi_click_object(rect, 10);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
    CHECK_ZERO(MOMENTUM);
@@ -212,7 +212,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 }
 EFL_END_TEST
 
-EFL_START_TEST(test_efl_ui_gesture_long_tap)
+EFL_START_TEST(test_efl_ui_gesture_long_press)
 {
    Eo *rect = setup();
    double timeout = 1.2;
@@ -225,7 +225,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
    /* press */
    press_object(rect);
    CHECK_ALL(TAP, 1, 0, 0, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 0);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 0);
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 0);
    CHECK_ZERO(MOMENTUM);
@@ -238,7 +238,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
 
    /* verify longpress */
    CHECK_ALL(TAP, 0, 0, 0, 1);
-   CHECK_ALL(LONG_TAP, 0, 1, 0, 0);
+   CHECK_ALL(LONG_PRESS, 0, 1, 0, 0);
    CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
    CHECK_ZERO(MOMENTUM);
@@ -249,7 +249,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
    evas_event_feed_mouse_up(e, 1, 0, 2, NULL);
 
    CHECK_ZERO(TAP);
-   CHECK_ALL(LONG_TAP, 0, 0, 1, 0);
+   CHECK_ALL(LONG_PRESS, 0, 0, 1, 0);
    CHECK_ZERO(DOUBLE_TAP);
    CHECK_ZERO(TRIPLE_TAP);
    CHECK_ZERO(MOMENTUM);
@@ -267,7 +267,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
 
    /* verify longpress */
    CHECK_ALL(TAP, 0, 1, 0, 0);
-   CHECK_ALL(LONG_TAP, 0, 1, 0, 0);
+   CHECK_ALL(LONG_PRESS, 0, 1, 0, 0);
    CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(MOMENTUM, 1, 0, 0, 0);
@@ -292,7 +292,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -313,7 +313,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -331,7 +331,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -349,7 +349,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -368,7 +368,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -386,7 +386,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -474,7 +474,7 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -502,7 +502,7 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -624,7 +624,7 @@ EFL_END_TEST
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
-   tcase_add_test(tc, test_efl_ui_gesture_long_tap);
+   tcase_add_test(tc, test_efl_ui_gesture_long_press);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
    tcase_add_test(tc, test_efl_ui_gesture_zoom);
    tcase_add_test(tc, test_efl_ui_gesture_custom);

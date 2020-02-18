@@ -6,7 +6,7 @@
 #define TAP_NAME "tap"
 #define DOUBLE_TAP_NAME "double_tap"
 #define TRIPLE_TAP_NAME "triple_tap"
-#define LONG_TAP_NAME "long_tap"
+#define LONG_PRESS_NAME "long_press"
 #define FLICK_NAME "flick"
 #define LINE_NAME "line"
 #define MOMENTUM_NAME "momentum"
@@ -17,7 +17,7 @@
 #define MAX_DOUBLE_TAP 5
 #define MAX_FLICK 5
 #define MAX_LINE 5
-#define MAX_LONG_TAP 5
+#define MAX_LONG_PRESS 5
 #define MAX_MOMENTUM 5
 #define MAX_ROTATE 1
 #define MAX_TAP 5
@@ -59,7 +59,7 @@ struct _infra_data
    icon_properties *icons;
    Ecore_Timer *colortimer;
    char buf[1024];
-   int long_tap_count;
+   int long_press_count;
 };
 typedef struct _infra_data infra_data;
 
@@ -360,34 +360,34 @@ finger_double_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 }
 
 static void
-finger_long_tap_start(void *data , Efl_Canvas_Gesture *tap)
+finger_long_press_start(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Position2D pos = efl_gesture_hotspot_get(tap);
 
-   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, START_COLOR);
+   _color_and_icon_set(data, LONG_PRESS_NAME, 1, MAX_TAP, START_COLOR);
    printf("Long Tap Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
 }
 
 static void
-finger_long_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+finger_long_press_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 {
-   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
+   _color_and_icon_set(data, LONG_PRESS_NAME, 1, MAX_TAP, UPDATE_COLOR);
    printf("Long Tap Gesture updated\n");
 }
 
 static void
-finger_long_tap_end(void *data , Efl_Canvas_Gesture *tap)
+finger_long_press_end(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Position2D pos = efl_gesture_hotspot_get(tap);
 
-   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, END_COLOR);
+   _color_and_icon_set(data, LONG_PRESS_NAME, 1, MAX_TAP, END_COLOR);
    printf("Long Tap Gesture ended x,y=<%d,%d> \n",pos.x, pos.y);
 }
 
 static void
-finger_long_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+finger_long_press_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 {
-   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, ABORT_COLOR);
+   _color_and_icon_set(data, LONG_PRESS_NAME, 1, MAX_TAP, ABORT_COLOR);
    printf("Long Tap Aborted\n");
 }
 
@@ -521,22 +521,22 @@ double_tap_gesture_cb(void *data , const Efl_Event *ev)
 }
 
 static void
-long_tap_gesture_cb(void *data , const Efl_Event *ev)
+long_press_gesture_cb(void *data , const Efl_Event *ev)
 {
    Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
       case EFL_GESTURE_STATE_STARTED:
-         finger_long_tap_start(data, g);
+         finger_long_press_start(data, g);
          break;
       case EFL_GESTURE_STATE_UPDATED:
-         finger_long_tap_update(data, g);
+         finger_long_press_update(data, g);
          break;
       case EFL_GESTURE_STATE_CANCELED:
-         finger_long_tap_abort(data, g);
+         finger_long_press_abort(data, g);
          break;
       case EFL_GESTURE_STATE_FINISHED:
-         finger_long_tap_end(data, g);
+         finger_long_press_end(data, g);
          break;
       default:
          break;
@@ -625,7 +625,7 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_table_pack(tb, bx, 2, 0, 1, 1);
 
    /* Box of Long Tap icon and label */
-   bx = create_gesture_box(win, infra->icons, 3, LONG_TAP_NAME, "Long Tap");
+   bx = create_gesture_box(win, infra->icons, 3, LONG_PRESS_NAME, "Long Tap");
    elm_table_pack(tb, bx, 3, 0, 1, 1);
 
    /* Box of Momentum icon and label */
@@ -736,7 +736,7 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    // LISTEN FOR GESTURES
    efl_event_callback_add(target, EFL_EVENT_GESTURE_TAP, tap_gesture_cb, infra);
-   efl_event_callback_add(target, EFL_EVENT_GESTURE_LONG_TAP, long_tap_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_LONG_PRESS, long_press_gesture_cb, infra);
    efl_event_callback_add(target, EFL_EVENT_GESTURE_DOUBLE_TAP, double_tap_gesture_cb, infra);
    efl_event_callback_add(target, EFL_EVENT_GESTURE_TRIPLE_TAP, triple_tap_gesture_cb, infra);
    efl_event_callback_add(target, EFL_EVENT_GESTURE_MOMENTUM, momentum_gesture_cb, infra);

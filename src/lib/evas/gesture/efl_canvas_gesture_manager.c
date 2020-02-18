@@ -47,8 +47,8 @@ _gesture_recognizer_event_type_get(const Efl_Canvas_Gesture_Recognizer *recogniz
      return EFL_EVENT_GESTURE_DOUBLE_TAP;
    if (type == EFL_CANVAS_GESTURE_TRIPLE_TAP_CLASS)
      return EFL_EVENT_GESTURE_TRIPLE_TAP;
-   if (type == EFL_CANVAS_GESTURE_LONG_TAP_CLASS)
-     return EFL_EVENT_GESTURE_LONG_TAP;
+   if (type == EFL_CANVAS_GESTURE_LONG_PRESS_CLASS)
+     return EFL_EVENT_GESTURE_LONG_PRESS;
    if (type == EFL_CANVAS_GESTURE_MOMENTUM_CLASS)
      return EFL_EVENT_GESTURE_MOMENTUM;
    if (type == EFL_CANVAS_GESTURE_FLICK_CLASS)
@@ -83,7 +83,7 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    Efl_Canvas_Gesture_Recognizer_Tap_Data *td;
    Efl_Canvas_Gesture_Recognizer_Double_Tap_Data *dtd;
    Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *ttd;
-   Efl_Canvas_Gesture_Recognizer_Long_Tap_Data *ltd;
+   Efl_Canvas_Gesture_Recognizer_Long_Press_Data *ltd;
    Efl_Canvas_Gesture_Recognizer_Flick_Data *fd;
    Efl_Canvas_Gesture_Recognizer_Zoom_Data *zd;
    const Efl_Event_Description *type;
@@ -103,9 +103,9 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    ttd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS);
    ttd->finger_size = finger_size;
 
-   type = EFL_EVENT_GESTURE_LONG_TAP;
+   type = EFL_EVENT_GESTURE_LONG_PRESS;
    r = eina_hash_find(pd->m_recognizers, &type);
-   ltd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS);
+   ltd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_LONG_PRESS_CLASS);
    ltd->finger_size = finger_size;
 
    type = EFL_EVENT_GESTURE_FLICK;
@@ -147,7 +147,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
 
    //Register all types of recognizers at very first time.
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS, obj));
-   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_LONG_PRESS_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_DOUBLE_TAP_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_MOMENTUM_CLASS, obj));

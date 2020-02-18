@@ -18,7 +18,7 @@ Eina_Bool _event_multi_touch_get(const Efl_Canvas_Gesture_Touch *event);
 typedef struct _Efl_Canvas_Gesture_Manager_Data                Efl_Canvas_Gesture_Manager_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Data             Efl_Canvas_Gesture_Recognizer_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Tap_Data         Efl_Canvas_Gesture_Recognizer_Tap_Data;
-typedef struct _Efl_Canvas_Gesture_Recognizer_Long_Tap_Data    Efl_Canvas_Gesture_Recognizer_Long_Tap_Data;
+typedef struct _Efl_Canvas_Gesture_Recognizer_Long_Press_Data    Efl_Canvas_Gesture_Recognizer_Long_Press_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Double_Tap_Data  Efl_Canvas_Gesture_Recognizer_Double_Tap_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data  Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Momentum_Data    Efl_Canvas_Gesture_Recognizer_Momentum_Data;
@@ -54,7 +54,7 @@ struct _Efl_Canvas_Gesture_Recognizer_Tap_Data
    int                            finger_size;
 };
 
-struct _Efl_Canvas_Gesture_Recognizer_Long_Tap_Data
+struct _Efl_Canvas_Gesture_Recognizer_Long_Press_Data
 {
    double                          start_timeout;
    Eina_List                      *target_timeout;
