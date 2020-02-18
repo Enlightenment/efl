@@ -152,12 +152,18 @@ __efl_net_socket_bio_get(void)
    if (efl_net_socket_bio) return efl_net_socket_bio;
    efl_net_socket_bio = BIO_meth_new(0x400 /* 0x400 means source & sink */,
                                      "efl_net_socket wrapper");
-   BIO_meth_set_write(efl_net_socket_bio, efl_net_socket_bio_write);
-   BIO_meth_set_read(efl_net_socket_bio, efl_net_socket_bio_read);
-   BIO_meth_set_puts(efl_net_socket_bio, efl_net_socket_bio_puts);
-   BIO_meth_set_ctrl(efl_net_socket_bio, efl_net_socket_bio_ctrl);
-   BIO_meth_set_create(efl_net_socket_bio, efl_net_socket_bio_create);
-   BIO_meth_set_destroy(efl_net_socket_bio, efl_net_socket_bio_destroy);
+   if (!efl_net_socket_bio) return NULL;
+   if (!BIO_meth_set_write(efl_net_socket_bio, efl_net_socket_bio_write)
+       || !BIO_meth_set_read(efl_net_socket_bio, efl_net_socket_bio_read)
+       || !BIO_meth_set_puts(efl_net_socket_bio, efl_net_socket_bio_puts)
+       || !BIO_meth_set_ctrl(efl_net_socket_bio, efl_net_socket_bio_ctrl)
+       || !BIO_meth_set_create(efl_net_socket_bio, efl_net_socket_bio_create)
+       || !BIO_meth_set_destroy(efl_net_socket_bio, efl_net_socket_bio_destroy))
+     {
+        BIO_meth_free(efl_net_socket_bio);
+        efl_net_socket_bio = NULL;
+        return NULL;
+     }
    // FIXME: some day we need to clean up, but for now a singleton alloc is ok
    // BIO_meth_free(efl_net_socket_bio);
    return efl_net_socket_bio;
