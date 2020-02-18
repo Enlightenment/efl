@@ -2622,7 +2622,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                // Unreachable code until we implement support for smart masks
                evas_render_mapped(evas, mask->object, mask, ctx,
                                   output, mdata->surface,
-                                  -x, -y, 2, 0, 0, w, h,
+                                  -x, -y, 2, 0, 0, evas->output.w, evas->output.h,
                                   NULL, level, do_async);
             }
           ENFN->context_free(ENC, ctx);
