@@ -349,6 +349,50 @@ internal class TestStructs
         t.Dispose();
     }
 
+    public static void complex_iterator_retrieves_list_correctly()
+    {
+        var complex = structComplexWithValues();
+
+        var i = 0;
+        foreach (var elm in complex.Fiterator) {
+            Test.AssertEquals(elm, complex.Flist[i]);
+            i++;
+        }
+    }
+
+    public static void complex_iterator_retrieves_array_correctly()
+    {
+        var complex = structComplexWithValues();
+
+        var i = 0;
+        foreach (var elm in complex.Fiterator) {
+            Test.AssertEquals(elm, complex.Farray[i]);
+            i++;
+        }
+    }
+
+    public static void complex_accessor_retrieves_list_correctly()
+    {
+        var complex = structComplexWithValues();
+
+        var i = 0;
+        foreach (var elm in complex.Faccessor) {
+            Test.AssertEquals(elm, complex.Flist[i]);
+            i++;
+        }
+    }
+
+    public static void complex_accessor_retrieves_array_correctly()
+    {
+        var complex = structComplexWithValues();
+
+        var i = 0;
+        foreach (var elm in complex.Faccessor) {
+            Test.AssertEquals(elm, complex.Farray[i]);
+            i++;
+        }
+    }
+
     // public static void complex_ptr_out()
     // {
     // }

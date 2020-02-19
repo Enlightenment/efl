@@ -90,6 +90,13 @@ struct to_internal_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
+      else if ((complex && (complex->outer.base_type == "accessor")))
+        {
+           if (!as_generator(
+                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = Efl.Eo.Globals.IEnumerableToAccessor(_external_struct." << string << ", " << (field.type.has_own ? "true" : "false")  << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
       else if ((complex && (complex->outer.base_type == "hash"))
             || field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
         {
@@ -172,6 +179,7 @@ struct to_internal_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
+
       return true;
    }
 } const to_internal_field_convert {};
@@ -228,6 +236,13 @@ struct to_external_field_convert_generator
         {
            if (!as_generator(
                  "Efl.Eo.Globals.IteratorTo" << type << "(" << string << ");")
+               .generate(sink, std::make_tuple(field.type, field_name), context))
+             return false;
+        }
+      else if (complex && complex->outer.base_type == "accessor")
+        {
+           if (!as_generator(
+                 "Efl.Eo.Globals.AccessorTo" << type << "(" << string << ");")
                .generate(sink, std::make_tuple(field.type, field_name), context))
              return false;
         }

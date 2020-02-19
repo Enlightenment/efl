@@ -42,7 +42,7 @@ public static class TestModel {
         var veggies = CreateModel(loop);
 
         var model = new Efl.GenericModel<VeggieViewModel>(veggies, loop);
-        Test.AssertEquals(3, (int)model.GetChildrenCount());
+        Test.AssertEquals(3, (int)model.ChildrenCount);
 
         VeggieViewModel r2 = await model.GetAtAsync(1).ConfigureAwait(false);
         Test.AssertEquals(r2.Name, "Romaine Lettuce");

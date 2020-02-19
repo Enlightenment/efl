@@ -79,6 +79,7 @@ struct @beta @free(free) Dummy.StructComplex {
    flist: list<string>;
    fhash: hash<string, string>;
    fiterator: iterator<string>;
+   faccessor: accessor<string>;
    fany_value: any_value;
    fany_value_ref: any_value_ref;
    fbinbuf: binbuf;
@@ -1685,7 +1686,63 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
             prop: Dummy.Test_Iface;
          }
       }
-   }
+
+      @property return_type_get_prop {
+         get { return: Eina.Success_Flag; }
+         set {}
+         values { i: int; }
+      }
+
+      @property return_type_set_prop {
+         set { return: Eina.Success_Flag; }
+         get {}
+         values { i: int; }
+      }
+
+      @property return_type_prop {
+         get {
+           return: Eina.Success_Flag;
+         }
+         set {
+           return: Eina.Success_Flag;
+         }
+         values { i: int; }
+      }
+
+      @property multi_value_return_type_get_prop {
+         get { return: Eina.Success_Flag; }
+         set {}
+         values
+         {
+           i: int;
+           j: int;
+         }
+      }
+
+      @property multi_value_return_type_set_prop {
+         set { return: Eina.Success_Flag; }
+         get {}
+         values
+         {
+           i: int;
+           j: int;
+         }
+      }
+
+      @property multi_value_return_type_prop {
+         get {
+           return: Eina.Success_Flag;
+         }
+         set {
+           return: Eina.Success_Flag;
+         }
+         values
+         {
+           i: int;
+           j: int;
+         }
+      }
+}
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

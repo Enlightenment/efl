@@ -40,28 +40,25 @@ context_add_tag(NewTag const& tag, context_null context)
   return context_cons<NewTag, context_null>{tag, context};
 }
 
-template <typename Tag, typename SameTag, typename Tail>
-constexpr context_cons<SameTag, Tail>
-context_replace_tag(Tag const& tag, context_cons<SameTag, Tail> const& context
-                    , typename std::enable_if<std::is_same<Tag, SameTag>::value>::type* = nullptr)
+template <typename Tag, typename Tail>
+constexpr context_cons<Tag, Tail>
+context_replace_tag(Tag const& tag, context_cons<Tag, Tail> const& context)
 {
   return {tag, context.tail};
 }
 
-template <typename Tag, typename OtherTag, typename Tail>
-constexpr context_cons<OtherTag, Tail>
-context_replace_tag(Tag const& tag, context_cons<OtherTag, Tail> const& context
-                    , typename std::enable_if<!std::is_same<Tag, OtherTag>::value>::type* = nullptr)
-{
-  return {context.tag, context_replace_tag(tag, context.tail)};
-}
-
 template <typename Tag>
-constexpr context_null
+constexpr context_cons<Tag, context_null>
 context_replace_tag(Tag const& tag, context_null const&)
 {
-  static_assert(std::is_same<Tag, context_null>::value, "Tag type not available in this generation context");
-  return tag;
+  return context_cons<Tag, context_null>{tag, context_null{}};
+}
+
+template <typename Tag, typename OtherTag, typename Tail>
+constexpr context_cons<OtherTag, decltype(context_replace_tag(std::declval<Tag>(), std::declval<Tail>()))>
+context_replace_tag(Tag const& tag, context_cons<OtherTag, Tail> const& context)
+{
+  return {context.tag, context_replace_tag(tag, context.tail)};
 }
 
 template <typename Tag, typename Context>

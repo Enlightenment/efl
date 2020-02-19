@@ -248,6 +248,67 @@ std::vector<attributes::function_def> get_all_implementable_methods(attributes::
   return ret;
 }
 
+/*
+ * Gets all properties that this class should implement (i.e. that come from an unimplemented interface/mixin and the class itself)
+ */
+template<typename Context>
+std::vector<attributes::property_def> get_all_implementable_properties(attributes::klass_def const& cls, Context const& context)
+{
+   bool want_beta = efl::eolian::grammar::context_find_tag<options_context>(context).want_beta;
+   std::vector<attributes::property_def> ret;
+   auto filter_beta = [&want_beta](attributes::property_def const& prop) {
+       if (!want_beta)
+         return prop.getter && !prop.setter ? !prop.getter->is_beta
+           : prop.getter && prop.setter ? !prop.getter->is_beta || !prop.setter->is_beta
+           : true
+           ;
+       else
+         return true;
+   };
+
+   std::copy_if(cls.properties.begin(), cls.properties.end(), std::back_inserter(ret), filter_beta);
+
+   // Non implemented interfaces
+   std::set<attributes::klass_name, attributes::compare_klass_name_by_name> implemented_interfaces;
+   std::set<attributes::klass_name, attributes::compare_klass_name_by_name> interfaces;
+   std::function<void(attributes::klass_name const&, bool)> inherit_algo =
+       [&] (attributes::klass_name const &klass, bool is_implemented)
+       {
+           attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
+           for (auto&& inherit: c.immediate_inherits)
+             {
+                switch(inherit.type)
+                  {
+                  case attributes::class_type::mixin:
+                  case attributes::class_type::interface_:
+                    interfaces.insert(inherit);
+                    if (is_implemented)
+                      implemented_interfaces.insert(inherit);
+                    inherit_algo(inherit, is_implemented);
+                    break;
+                  case attributes::class_type::abstract_:
+                  case attributes::class_type::regular:
+                    inherit_algo(inherit, true);
+                  default:
+                    break;
+                  }
+             }
+       };
+
+   inherit_algo(attributes::get_klass_name(cls), false);
+
+   for (auto&& inherit : implemented_interfaces)
+     interfaces.erase(inherit);
+
+    for (auto&& inherit : interfaces)
+    {
+        attributes::klass_def klass(get_klass(inherit, cls.unit), cls.unit);
+        std::copy_if(klass.properties.cbegin(), klass.properties.cend(), std::back_inserter(ret), filter_beta);
+    }
+
+  return ret;
+}
+
 template<typename Klass>
 inline bool is_managed_interface(Klass const& klass)
 {
@@ -283,6 +344,51 @@ std::vector<attributes::function_def> get_all_registerable_methods(attributes::k
 
    return ret;
 }
+
+bool is_function_registerable (attributes::function_def func, attributes::klass_def const& cls)
+{
+  if (cls == func.klass)
+    return true;
+
+  if (is_managed_interface(func.klass) && func.is_static)
+    return true;
+
+  if (!is_managed_interface(func.klass) || func.scope != attributes::member_scope::scope_public)
+    return true;
+  return false;
+}
+
+// /*
+//  * Gets all methods that this class should register (i.e. that comes from it and non-public interface methods
+//  * that this class is the first one implementing)
+//  */
+// template<typename Context>
+// std::vector<attributes::property_def> get_all_registerable_properties(attributes::klass_def const& cls, Context const& context)
+// {
+//    std::vector<attributes::property_def> ret;
+
+//    auto implementable_properties = get_all_implementable_properties(cls, context);
+
+//    std::copy_if(implementable_properties.cbegin(), implementable_properties.cend(), std::back_inserter(ret)
+//                 , [&cls](attributes::property_def const & property) {
+//                   auto klass = property.getter ? property.getter->klass
+//                     : property.setter->klass;
+                  
+//                     if (cls == klass)
+//                       return true;
+
+//                     if (is_managed_interface(klass) && ((property.getter && property.getter->is_static)
+//                                                         || (property.setter && property.setter->is_static)))
+//                       return true;
+
+//                     if (!is_managed_interface(klass) || ((property.getter && property.getter->scope != attributes::member_scope::scope_public)
+//                                                          || (property.setter && property.setter->scope != attributes::member_scope::scope_public)))
+//                       return true;
+//                     return false;
+//                });
+
+//    return ret;
+// }
 
 /*
  * Checks whether the given is unique going up the inheritance tree from leaf_klass

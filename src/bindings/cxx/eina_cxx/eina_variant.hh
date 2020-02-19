@@ -24,9 +24,21 @@
 #include <iosfwd>
 
 #include <eina_aligned_union.hh>
+#include <eina_tuple.hh>
 
 namespace efl { namespace eina {
 
+template <typename... Args>
+struct variant;
+
+template <typename...Args>
+struct variant_size : std::tuple_size<std::tuple<Args...>>::type
+{
+};
+
+template <typename V>
+struct variant_as_tuple;
+    
 namespace _impl {
 
 template <typename T, typename U, typename...Others>
@@ -51,7 +63,57 @@ template <typename T, typename U, typename...Args>
 struct find : find_impl<0u, T, U, Args...>
 {};
 
+template <std::size_t NT, std::size_t NV, typename TupleVariant, typename TypesFound>
+struct visit_impl_meta_args
+{
+  typedef std::integral_constant<std::size_t, NT> current_type_index;
+  typedef std::integral_constant<std::size_t, NV> current_variant_index;
+  typedef TupleVariant variants;
+  // typedef typename std::tuple_element<NV, variants>::type current_variant;
+  // typedef typename variant_as_tuple<current_variant>::type current_variant_types;
+  // typedef typename std::tuple_element<NT, current_variant_types>::type current_type;
+  typedef TypesFound types_found;
+};
+
+template <typename T> struct current_variant_types
+{
+  typedef typename std::tuple_element<T::current_variant_index::value, typename T::variants>::type current_variant;
+  typedef typename variant_as_tuple<current_variant>::type type;
+};
 }
+
+// template <typename FoundTypes, std::size_t N, typename...Tuples>
+// struct call_n_visitor;
+
+// template <typename FoundTypes, std::size_t N, typename Tuple, typename...Tuples>
+// struct call_n_visitor<FoundTypes, N, Tuple, Tuples...>
+// {
+
+      /*
+   template <typename F>
+   static typename F::result_type call(int type, void* buffer, F f)
+   {
+      if(type == N)
+        {
+          using std::tuple_element;
+          typedef typename tuple_element<N, Tuple>::type type;
+          type* o = static_cast<type*>(buffer);
+          return f(*o);
+        }
+      else
+        return call_visitor<N+1, L, Tuple>::call(type, buffer, f);
+   }
+      */
+  
+// template <typename FoundTypes, std::size_t L, typename Tuple>
+// struct call_n_visitor<FoundTypes, L, L, Tuple>
+// {
+//   template <typename F, typename...Variants>
+//   static typename F::result_type call(int, void const*, F, Variants&&... variants)
+//     {
+//        std::abort();
+//     }
+// };
     
 template <std::size_t N, std::size_t L, typename Tuple>
 struct call_visitor
@@ -306,6 +368,11 @@ struct variant
    {
      return call_visitor<0u, sizeof...(Args), std::tuple<Args...>>::call(type, static_cast<void*>(&buffer), f);
    }
+
+   constexpr std::size_t index() const
+   {
+     return type;
+   }
   
 private:
    template <typename T>
@@ -332,6 +399,103 @@ private:
     * Member variable for holding the contained value.
     */
    buffer_type buffer;
+
+  template <typename V>
+  friend struct variant_as_tuple;
+
+  // template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant, std::size_t...I>
+  // friend typename F::result_type visit_impl2
+  //   (std::false_type, std::false_type
+  //    , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&& f, TupleVariant&& variants, index_sequence<I...>);
+
+  // template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant, std::size_t...I>
+  // friend typename F::result_type visit_impl2
+  // (std::true_type, std::false_type
+  //  , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&& f, TupleVariant&& variants, index_sequence<I...>);
+  // template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant, std::size_t...I>
+  // friend typename F::result_type visit_impl2
+  // (std::false_type, std::true_type
+  //  , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&& f, TupleVariant&& variants, index_sequence<I...>);
+  
+  // // template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant>
+  // // friend typename F::result_type visit_impl2
+  // // (std::true_type, std::false_type
+  // //    , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&& f, TupleVariant&& variants)
+  // // {
+  // // }
+  
+  // // template <typename F, typename...AllVariants, typename...Variants>
+  // // friend typename F::result_type call
+  // //   (std::true_type, int, F &&, Variants&&... variants)
+  // // {
+  // //   std::abort();
+  // // }
+
+  // // template <typename F, typename Variant, typename...Variants>
+  // // friend typename F::result_type call (F&&f, Variant&& variant, Variants&&... variants)
+  // // {
+  // //   return call (std::integral_constant<bool, (N == variant_size<Variant>::value)>{}
+  // //                , variant.type, std::forward<F>(f), std::forward<Variant>(variant), std::forward<Variants>(variants)...);
+  // // }
+
+  // // template <typename F, typename Variant, typename...Variants>
+  // // friend typename F::result_type call (F&&f, Variant&& variant, Variants&&... variants)
+  // // {
+  // //   return call (std::integral_constant<bool, (N == variant_size<Variant>::value)>{}
+  // //                , variant.type, std::forward<F>(f), std::forward<Variant>(variant), std::forward<Variants>(variants)...);
+  // // }
+
+  // template <typename F, typename...Variants>
+  // friend typename F::result_type visit_impl (F&& f, Variants&&... variants);
+};
+
+
+template <typename...VArgs>
+struct variant_as_tuple<variant<VArgs...>>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<const variant<VArgs...>>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<volatile variant<VArgs...>>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<const volatile variant<VArgs...>>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<variant<VArgs...>&>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<const variant<VArgs...>&>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<volatile variant<VArgs...>&>
+{
+  typedef std::tuple<VArgs...> type;
+};
+
+template <typename...VArgs>
+struct variant_as_tuple<const volatile variant<VArgs...>&>
+{
+  typedef std::tuple<VArgs...> type;
 };
 
 template <typename...Args>
@@ -372,7 +536,80 @@ T const& get(variant<Args...>const& variant, typename std::enable_if<_impl::is_o
    else
      throw std::logic_error("");
 }
-        
+
+template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant, std::size_t...I>
+  typename F::result_type visit_impl2
+  (std::false_type, std::true_type
+     , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&& f, TupleVariant&& variants
+   , eina::index_sequence<I...>)
+  {
+    return f (eina::get<typename std::tuple_element<I, Types>::type>(std::get<I>(variants))...);
+  }
+
+  template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant, std::size_t...I>
+  typename F::result_type visit_impl2
+  (std::true_type, std::false_type
+     , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&&, TupleVariant&&, eina::index_sequence<I...>)
+  {
+    std::abort();
+  }
+
+
+  template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant
+            , std::size_t...I>
+  typename F::result_type visit_impl2 (std::false_type, std::false_type
+                                       , _impl::visit_impl_meta_args<NT, NV, Tuple, Types>, F&& f, TupleVariant&& variants
+                                       , index_sequence<I...>)
+  {
+    using std::tuple_element;
+    typedef _impl::visit_impl_meta_args<NT, NV, Tuple, Types> meta_args;
+    if(std::get<NV>(variants).index() == NT)
+    {
+      typedef typename _impl::current_variant_types<meta_args>::type variant_types;
+      typedef typename tuple_element<NT, variant_types>::type type;
+      std::integral_constant<bool, (std::tuple_size<Tuple>::value == NV+1)> is_true {};
+      return visit_impl2( std::false_type{}
+                          ,  is_true
+                          , _impl::visit_impl_meta_args<0u, NV+1, Tuple, typename _mpl::push_back<Types, type>::type>{}
+                          , std::forward<F>(f), std::forward<TupleVariant>(variants)
+                          , make_index_sequence<std::tuple_size<TupleVariant>::value>{});
+    }
+    else
+    {
+      typedef typename _impl::current_variant_types<meta_args>::type variant_types;
+      return visit_impl2 (std::integral_constant<bool, (std::tuple_size<variant_types>::value == NT+1)>{}
+                         , std::false_type{}
+                         , _impl::visit_impl_meta_args<NT+1, NV, Tuple, Types>{}, std::forward<F>(f), std::forward<TupleVariant>(variants)
+                         , make_index_sequence<std::tuple_size<TupleVariant>::value>{});
+    }
+  }
+
+  template <std::size_t NT, std::size_t NV, typename F, typename Tuple, typename Types, typename TupleVariant>
+  typename F::result_type visit_impl_aux (std::false_type fals, std::false_type
+                                       , _impl::visit_impl_meta_args<NT, NV, Tuple, Types> args, F&& f, TupleVariant&& variants)
+  {
+    return visit_impl2 (fals, fals, args, std::forward<F>(f), std::forward<TupleVariant>(variants)
+                        , make_index_sequence<std::tuple_size<TupleVariant>::value>{});
+  }
+
+  template <typename F, typename...Variants>
+  typename F::result_type visit_impl (F&& f, Variants&&... variants)
+  {
+    return visit_impl_aux
+      (std::false_type{}
+      , std::false_type{}
+       , _impl::visit_impl_meta_args
+       <0u, 0u
+       , std::tuple<typename std::remove_cv<Variants>::type...>, std::tuple<>>{}, std::forward<F>(f), std::forward_as_tuple(std::forward<Variants>(variants)...));
+  }
+
+template <typename F, typename...Variants>
+auto visit (F&& function, Variants&& ... variants) -> typename F::result_type
+{
+  return visit_impl (std::forward<F>(function), std::forward<Variants>(variants)...);
+}
+    
 } }
 
 #endif
+

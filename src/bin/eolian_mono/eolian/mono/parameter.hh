@@ -34,6 +34,7 @@ namespace eolian_mono {
     struct argument_generator;
     struct argument_invocation_generator;
     struct native_argument_invocation_generator;
+    struct native_tuple_argument_invocation_generator;
     struct native_convert_in_variable_generator;
     struct convert_in_variable_generator;
     struct native_convert_out_variable_generator;
@@ -108,6 +109,16 @@ template <>
 struct attributes_needed< ::eolian_mono::native_argument_invocation_generator> : std::integral_constant<int, 1> {};
 }
 
+template <>
+struct is_eager_generator< ::eolian_mono::native_tuple_argument_invocation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_tuple_argument_invocation_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_tuple_argument_invocation_generator> : std::integral_constant<int, 1> {};
+}
+      
 template <>
 struct is_eager_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
 template <>
@@ -551,6 +562,28 @@ struct native_argument_invocation_generator
      return as_generator(arg).generate(sink, attributes::unused, context);
    }
 } const native_argument_invocation {};
+
+struct native_tuple_argument_invocation_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+     std::string arg;// = direction_modifier(param);
+
+     if (param_should_use_out_var(param, true))
+       arg += out_variable_name(param.param_name);
+     else if (param_should_use_in_var(param, true))
+       arg += in_variable_name(param.param_name);
+     else if (param.type.original_type.visit(is_fp_visitor{}))
+       {
+          arg += escape_keyword(param.param_name) + "_wrapper.ManagedCb";
+       }
+     else // FIXME Wrap data and C function pointers into some kind of structure.
+       arg += escape_keyword(param.param_name);
+
+     return as_generator(arg).generate(sink, attributes::unused, context);
+   }
+} const native_tuple_argument_invocation {};
 
 // Generates the correct parameter name when invoking a function
 struct argument_invocation_generator

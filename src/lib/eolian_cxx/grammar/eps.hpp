@@ -22,11 +22,17 @@ namespace efl { namespace eolian { namespace grammar {
 
 struct eps_generator
 {
+   eps_generator () : r(true) {}
+   eps_generator (bool r) : r(r) {}
+   bool r;
+  
    template <typename OutputIterator, typename Attribute, typename Context>
    bool generate(OutputIterator, Attribute const&, Context const&) const
    {
-      return true;
+      return r;
    }
+
+   eps_generator operator()(bool r) const { return {r}; }
 };
 
 template <>

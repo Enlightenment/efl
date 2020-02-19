@@ -51,9 +51,9 @@ public static class TestParts
         var p1 = t.OnePart;
         var p2 = t.TwoPart;
         Test.Assert(p1 is Dummy.TestObject);
-        Test.AssertEquals("part_one", p1.GetName());
+        Test.AssertEquals("part_one", p1.Name);
         Test.Assert(p2 is Dummy.TestObject);
-        Test.AssertEquals("part_two", p2.GetName());
+        Test.AssertEquals("part_two", p2.Name);
     }
 }
 
@@ -97,9 +97,9 @@ public static class TestNamedParts
         var p1 = obj.GetPart("one");
         var p2 = obj.GetPart("two");
         Test.Assert(p1 is Dummy.TestObject);
-        Test.AssertEquals("part_one", p1.GetName());
+        Test.AssertEquals("part_one", p1.Name);
         Test.Assert(p2 is Dummy.TestObject);
-        Test.AssertEquals("part_two", p2.GetName());
+        Test.AssertEquals("part_two", p2.Name);
         obj.Dispose();
     }
 }

@@ -576,10 +576,10 @@ class TestEinaArray
         var a = new Eina.Array<Dummy.Numberwrapper>();
         Test.Assert(a.Handle != IntPtr.Zero);
         var o = new Dummy.Numberwrapper();
-        o.SetNumber(88);
+        o.Number = 88;
         Test.Assert(a.Push(o));
         Test.Assert(a[0].NativeHandle == o.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 88);
+        Test.Assert(a[0].Number == 88);
         o.Dispose();
         a.Dispose();
     }
@@ -619,11 +619,11 @@ class TestEinaArray
         var a = new Eina.Array<Dummy.Numberwrapper>();
         Test.Assert(a.Handle != IntPtr.Zero);
         var o = new Dummy.Numberwrapper();
-        o.SetNumber(88);
+        o.Number = 88;
         Test.Assert(a.Push(o));
         var p = a.Pop();
         Test.Assert(p.NativeHandle == o.NativeHandle);
-        Test.Assert(p.GetNumber() == 88);
+        Test.Assert(p.Number == 88);
         Test.Assert(a.Count() == 0);
         o.Dispose();
         a.Dispose();
@@ -674,25 +674,25 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
 
         Test.Assert(a.Push(o1));
         Test.Assert(a[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 88);
+        Test.Assert(a[0].Number == 88);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
 
         a.DataSet(0, o2);
         Test.Assert(a[0].NativeHandle == o2.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 44);
+        Test.Assert(a[0].Number == 44);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
 
         a[0] = o3;
         Test.Assert(a[0].NativeHandle == o3.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 22);
+        Test.Assert(a[0].Number == 22);
         o3.Dispose();
         o2.Dispose();
         o1.Dispose();
@@ -758,24 +758,24 @@ class TestEinaArray
         Test.Assert(a.Count() == 0);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
         Test.Assert(a.Push(o1));
         Test.Assert(a[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 88);
+        Test.Assert(a[0].Number == 88);
         Test.Assert(a.Count() == 1);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
         Test.Assert(a.Push(o2));
         Test.Assert(a[1].NativeHandle == o2.NativeHandle);
-        Test.Assert(a[1].GetNumber() == 44);
+        Test.Assert(a[1].Number == 44);
         Test.Assert(a.Count() == 2);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
         Test.Assert(a.Push(o3));
         Test.Assert(a[2].NativeHandle == o3.NativeHandle);
-        Test.Assert(a[2].GetNumber() == 22);
+        Test.Assert(a[2].Number == 22);
         Test.Assert(a.Count() == 3);
 
         o3.Dispose();
@@ -891,9 +891,9 @@ class TestEinaArray
         var a = new Dummy.Numberwrapper();
         var b = new Dummy.Numberwrapper();
         var c = new Dummy.Numberwrapper();
-        a.SetNumber(88);
-        b.SetNumber(44);
-        c.SetNumber(22);
+        a.Number = 88;
+        b.Number = 44;
+        c.Number = 22;
         var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var arr = new Eina.Array<Dummy.Numberwrapper>();
@@ -905,7 +905,7 @@ class TestEinaArray
         int i = 0;
         foreach (Dummy.Numberwrapper e in arr)
         {
-            Test.AssertEquals(cmp[i].GetNumber(), e.GetNumber());
+            Test.AssertEquals(cmp[i].Number, e.Number);
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
@@ -1247,10 +1247,10 @@ class TestEinaInarray
         var a = new Eina.Inarray<Dummy.Numberwrapper>();
         Test.Assert(a.Handle != IntPtr.Zero);
         var o = new Dummy.Numberwrapper();
-        o.SetNumber(88);
+        o.Number = 88;
         Test.Assert(a.Push(o) == 0);
         Test.Assert(a[0].NativeHandle == o.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 88);
+        Test.Assert(a[0].Number == 88);
         o.Dispose();
         a.Dispose();
     }
@@ -1280,11 +1280,11 @@ class TestEinaInarray
         var a = new Eina.Inarray<Dummy.Numberwrapper>();
         Test.Assert(a.Handle != IntPtr.Zero);
         var o = new Dummy.Numberwrapper();
-        o.SetNumber(88);
+        o.Number = 88;
         Test.Assert(a.Push(o) >= 0);
         var p = a.Pop();
         Test.Assert(p.NativeHandle == o.NativeHandle);
-        Test.Assert(p.GetNumber() == 88);
+        Test.Assert(p.Number == 88);
         Test.Assert(a.Count() == 0);
         o.Dispose();
         a.Dispose();
@@ -1326,26 +1326,26 @@ class TestEinaInarray
         Test.Assert(a.Handle != IntPtr.Zero);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
 
         Test.Assert(a.Push(o1) >= 0);
         Test.Assert(a[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 88);
+        Test.Assert(a[0].Number == 88);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
 
         a.ReplaceAt(0, o2);
         Test.Assert(a[0].NativeHandle == o2.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 44);
+        Test.Assert(a[0].Number == 44);
         Test.Assert(a.Count() == 1);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
 
         a[0] = o3;
         Test.Assert(a[0].NativeHandle == o3.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 22);
+        Test.Assert(a[0].Number == 22);
         Test.Assert(a.Count() == 1);
 
         o3.Dispose();
@@ -1396,24 +1396,24 @@ class TestEinaInarray
         Test.Assert(a.Count() == 0);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
         Test.Assert(a.Push(o1) == 0);
         Test.Assert(a[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(a[0].GetNumber() == 88);
+        Test.Assert(a[0].Number == 88);
         Test.Assert(a.Count() == 1);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
         Test.Assert(a.Push(o2) == 1);
         Test.Assert(a[1].NativeHandle == o2.NativeHandle);
-        Test.Assert(a[1].GetNumber() == 44);
+        Test.Assert(a[1].Number == 44);
         Test.Assert(a.Count() == 2);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
         Test.Assert(a.Push(o3) == 2);
         Test.Assert(a[2].NativeHandle == o3.NativeHandle);
-        Test.Assert(a[2].GetNumber() == 22);
+        Test.Assert(a[2].Number == 22);
         Test.Assert(a.Count() == 3);
 
         o3.Dispose();
@@ -1495,9 +1495,9 @@ class TestEinaInarray
         var a = new Dummy.Numberwrapper();
         var b = new Dummy.Numberwrapper();
         var c = new Dummy.Numberwrapper();
-        a.SetNumber(88);
-        b.SetNumber(44);
-        c.SetNumber(22);
+        a.Number = 88;
+        b.Number = 44;
+        c.Number = 22;
         var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var arr = new Eina.Inarray<Dummy.Numberwrapper>();
@@ -1509,7 +1509,7 @@ class TestEinaInarray
         int i = 0;
         foreach (Dummy.Numberwrapper e in arr)
         {
-            Test.AssertEquals(cmp[i].GetNumber(), e.GetNumber());
+            Test.AssertEquals(cmp[i].Number, e.Number);
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
@@ -1571,25 +1571,25 @@ class TestEinaList
         var lst = new Eina.List<Dummy.Numberwrapper>();
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
 
         lst.Append(o1);
         Test.Assert(lst[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 88);
+        Test.Assert(lst[0].Number == 88);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
 
         lst.DataSet(0, o2);
         Test.Assert(lst[0].NativeHandle == o2.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 44);
+        Test.Assert(lst[0].Number == 44);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
 
         lst[0] = o3;
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 22);
+        Test.Assert(lst[0].Number == 22);
         o3.Dispose();
         o2.Dispose();
         o1.Dispose();
@@ -1651,24 +1651,24 @@ class TestEinaList
         Test.Assert(lst.Count() == 0);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
         lst.Append(o1);
         Test.Assert(lst[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 88);
+        Test.Assert(lst[0].Number == 88);
         Test.Assert(lst.Count() == 1);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
         lst.Append(o2);
         Test.Assert(lst[1].NativeHandle == o2.NativeHandle);
-        Test.Assert(lst[1].GetNumber() == 44);
+        Test.Assert(lst[1].Number == 44);
         Test.Assert(lst.Count() == 2);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
         lst.Append(o3);
         Test.Assert(lst[2].NativeHandle == o3.NativeHandle);
-        Test.Assert(lst[2].GetNumber() == 22);
+        Test.Assert(lst[2].Number == 22);
         Test.Assert(lst.Count() == 3);
         o3.Dispose();
         o2.Dispose();
@@ -1779,24 +1779,24 @@ class TestEinaList
         Test.Assert(lst.Count() == 0);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
         lst.Prepend(o1);
         Test.Assert(lst[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 88);
+        Test.Assert(lst[0].Number == 88);
         Test.Assert(lst.Count() == 1);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
         lst.Prepend(o2);
         Test.Assert(lst[0].NativeHandle == o2.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 44);
+        Test.Assert(lst[0].Number == 44);
         Test.Assert(lst.Count() == 2);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
         lst.Prepend(o3);
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 22);
+        Test.Assert(lst[0].Number == 22);
         Test.Assert(lst.Count() == 3);
 
         o3.Dispose();
@@ -2025,9 +2025,9 @@ class TestEinaList
         var a = new Dummy.Numberwrapper();
         var b = new Dummy.Numberwrapper();
         var c = new Dummy.Numberwrapper();
-        a.SetNumber(88);
-        b.SetNumber(44);
-        c.SetNumber(22);
+        a.Number = 88;
+        b.Number = 44;
+        c.Number = 22;
         var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var lst = new Eina.List<Dummy.Numberwrapper>();
@@ -2038,7 +2038,7 @@ class TestEinaList
         int i = 0;
         foreach (Dummy.Numberwrapper e in lst)
         {
-            Test.AssertEquals(cmp[i].GetNumber(), e.GetNumber());
+            Test.AssertEquals(cmp[i].Number, e.Number);
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
@@ -2366,25 +2366,25 @@ class TestEinaInlist
         var lst = new Eina.Inlist<Dummy.Numberwrapper>();
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
 
         lst.Append(o1);
         Test.Assert(lst[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 88);
+        Test.Assert(lst[0].Number == 88);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
 
         lst.DataSet(0, o2);
         Test.Assert(lst[0].NativeHandle == o2.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 44);
+        Test.Assert(lst[0].Number == 44);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
 
         lst[0] = o3;
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 22);
+        Test.Assert(lst[0].Number == 22);
 
         Test.Assert(lst.Count() == 1);
         o3.Dispose();
@@ -2432,24 +2432,24 @@ class TestEinaInlist
         Test.Assert(lst.Count() == 0);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
         lst.Append(o1);
         Test.Assert(lst[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 88);
+        Test.Assert(lst[0].Number == 88);
         Test.Assert(lst.Count() == 1);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
         lst.Append(o2);
         Test.Assert(lst[1].NativeHandle == o2.NativeHandle);
-        Test.Assert(lst[1].GetNumber() == 44);
+        Test.Assert(lst[1].Number == 44);
         Test.Assert(lst.Count() == 2);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
         lst.Append(o3);
         Test.Assert(lst[2].NativeHandle == o3.NativeHandle);
-        Test.Assert(lst[2].GetNumber() == 22);
+        Test.Assert(lst[2].Number == 22);
         Test.Assert(lst.Count() == 3);
         o3.Dispose();
         o2.Dispose();
@@ -2528,24 +2528,24 @@ class TestEinaInlist
         Test.Assert(lst.Count() == 0);
 
         var o1 = new Dummy.Numberwrapper();
-        o1.SetNumber(88);
+        o1.Number = 88;
         lst.Prepend(o1);
         Test.Assert(lst[0].NativeHandle == o1.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 88);
+        Test.Assert(lst[0].Number == 88);
         Test.Assert(lst.Count() == 1);
 
         var o2 = new Dummy.Numberwrapper();
-        o2.SetNumber(44);
+        o2.Number = 44;
         lst.Prepend(o2);
         Test.Assert(lst[0].NativeHandle == o2.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 44);
+        Test.Assert(lst[0].Number == 44);
         Test.Assert(lst.Count() == 2);
 
         var o3 = new Dummy.Numberwrapper();
-        o3.SetNumber(22);
+        o3.Number = 22;
         lst.Prepend(o3);
         Test.Assert(lst[0].NativeHandle == o3.NativeHandle);
-        Test.Assert(lst[0].GetNumber() == 22);
+        Test.Assert(lst[0].Number == 22);
         Test.Assert(lst.Count() == 3);
         o3.Dispose();
         o2.Dispose();
@@ -2590,9 +2590,9 @@ class TestEinaInlist
         var a = new Dummy.Numberwrapper();
         var b = new Dummy.Numberwrapper();
         var c = new Dummy.Numberwrapper();
-        a.SetNumber(88);
-        b.SetNumber(44);
-        c.SetNumber(22);
+        a.Number = 88;
+        b.Number = 44;
+        c.Number = 22;
         var cmp = new Dummy.Numberwrapper[]{a, b, c};
 
         var lst = new Eina.Inlist<Dummy.Numberwrapper>();
@@ -2603,7 +2603,7 @@ class TestEinaInlist
         int i = 0;
         foreach (Dummy.Numberwrapper e in lst)
         {
-            Test.AssertEquals(cmp[i].GetNumber(), e.GetNumber());
+            Test.AssertEquals(cmp[i].Number, e.Number);
             Test.Assert(cmp[i].NativeHandle == e.NativeHandle);
             ++i;
         }
@@ -2690,17 +2690,17 @@ class TestEinaHash
 
         hsh[a] = aa;
         Test.Assert(hsh[a].NativeHandle == aa.NativeHandle);
-        Test.Assert(hsh[a].GetNumber() == aa.GetNumber());
+        Test.Assert(hsh[a].Number == aa.Number);
         Test.Assert(hsh.Count == 1);
 
         hsh[b] = bb;
         Test.Assert(hsh[b].NativeHandle == bb.NativeHandle);
-        Test.Assert(hsh[b].GetNumber() == bb.GetNumber());
+        Test.Assert(hsh[b].Number == bb.Number);
         Test.Assert(hsh.Count == 2);
 
         hsh[c] = cc;
         Test.Assert(hsh[c].NativeHandle == cc.NativeHandle);
-        Test.Assert(hsh[c].GetNumber() == cc.GetNumber());
+        Test.Assert(hsh[c].Number == cc.Number);
 
         Test.Assert(hsh.Count == 3);
 
@@ -2810,17 +2810,17 @@ class TestEinaHash
         hsh[b] = bb;
         hsh[c] = cc;
 
-        dct[a.GetNumber()] = aa;
-        dct[b.GetNumber()] = bb;
-        dct[c.GetNumber()] = cc;
+        dct[a.Number] = aa;
+        dct[b.Number] = bb;
+        dct[c.Number] = cc;
 
         int count = 0;
 
         foreach (KeyValuePair<Dummy.Numberwrapper, Dummy.Numberwrapper> kvp in hsh)
         {
-            Test.Assert(dct[kvp.Key.GetNumber()].NativeHandle == kvp.Value.NativeHandle);
-            Test.Assert(dct[kvp.Key.GetNumber()].GetNumber() == kvp.Value.GetNumber());
-            dct.Remove(kvp.Key.GetNumber());
+            Test.Assert(dct[kvp.Key.Number].NativeHandle == kvp.Value.NativeHandle);
+            Test.Assert(dct[kvp.Key.Number].Number == kvp.Value.Number);
+            dct.Remove(kvp.Key.Number);
             ++count;
         }
 
@@ -3121,11 +3121,11 @@ class TestEinaHash
         Test.Assert(t.EinaHashObjIn(hsh, nwk1, nwv1, out nwk2, out nwv2));
         Test.Assert(hsh.Own);
         Test.Assert(hsh[nwk1].NativeHandle == nwv1.NativeHandle);
-        Test.Assert(hsh[nwk1].GetNumber() == nwv1.GetNumber());
-        Test.Assert(hsh[nwk1].GetNumber() == 222);
+        Test.Assert(hsh[nwk1].Number == nwv1.Number);
+        Test.Assert(hsh[nwk1].Number == 222);
         Test.Assert(hsh[nwk2].NativeHandle == nwv2.NativeHandle);
-        Test.Assert(hsh[nwk2].GetNumber() == nwv2.GetNumber());
-        Test.Assert(hsh[nwk2].GetNumber() == 444);
+        Test.Assert(hsh[nwk2].Number == nwv2.Number);
+        Test.Assert(hsh[nwk2].Number == 444);
         nwk1.Dispose();
         nwk2.Dispose();
         nwv1.Dispose();
@@ -3147,11 +3147,11 @@ class TestEinaHash
         Test.Assert(t.EinaHashObjInOwn(hsh, nwk1, nwv1, out nwk2, out nwv2));
         Test.Assert(!hsh.Own);
         Test.Assert(hsh[nwk1].NativeHandle == nwv1.NativeHandle);
-        Test.Assert(hsh[nwk1].GetNumber() == nwv1.GetNumber());
-        Test.Assert(hsh[nwk1].GetNumber() == 222);
+        Test.Assert(hsh[nwk1].Number == nwv1.Number);
+        Test.Assert(hsh[nwk1].Number == 222);
         Test.Assert(hsh[nwk2].NativeHandle == nwv2.NativeHandle);
-        Test.Assert(hsh[nwk2].GetNumber() == nwv2.GetNumber());
-        Test.Assert(hsh[nwk2].GetNumber() == 444);
+        Test.Assert(hsh[nwk2].Number == nwv2.Number);
+        Test.Assert(hsh[nwk2].Number == 444);
         hsh.Dispose();
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashObjInOwn(nwk1, nwv1, nwk2, nwv2));
@@ -3171,8 +3171,8 @@ class TestEinaHash
         Test.Assert(t.EinaHashObjOut(out hsh, out nwk1, out nwv1));
         Test.Assert(!hsh.Own);
         Test.Assert(hsh[nwk1].NativeHandle == nwv1.NativeHandle);
-        Test.Assert(hsh[nwk1].GetNumber() == nwv1.GetNumber());
-        Test.Assert(hsh[nwk1].GetNumber() == 222);
+        Test.Assert(hsh[nwk1].Number == nwv1.Number);
+        Test.Assert(hsh[nwk1].Number == 222);
         Dummy.Numberwrapper nwk2 = NW(44);
         Dummy.Numberwrapper nwv2 = NW(444);
         hsh[nwk2] = nwv2;
@@ -3195,8 +3195,8 @@ class TestEinaHash
         Test.Assert(t.EinaHashObjOutOwn(out hsh, out nwk1, out nwv1));
         Test.Assert(hsh.Own);
         Test.Assert(hsh[nwk1].NativeHandle == nwv1.NativeHandle);
-        Test.Assert(hsh[nwk1].GetNumber() == nwv1.GetNumber());
-        Test.Assert(hsh[nwk1].GetNumber() == 222);
+        Test.Assert(hsh[nwk1].Number == nwv1.Number);
+        Test.Assert(hsh[nwk1].Number == 222);
         Dummy.Numberwrapper nwk2 = NW(44);
         Dummy.Numberwrapper nwv2 = NW(444);
         hsh[nwk2] = nwv2;
@@ -3218,8 +3218,8 @@ class TestEinaHash
         var hsh = t.EinaHashObjReturn(out nwk1, out nwv1);
         Test.Assert(!hsh.Own);
         Test.Assert(hsh[nwk1].NativeHandle == nwv1.NativeHandle);
-        Test.Assert(hsh[nwk1].GetNumber() == nwv1.GetNumber());
-        Test.Assert(hsh[nwk1].GetNumber() == 222);
+        Test.Assert(hsh[nwk1].Number == nwv1.Number);
+        Test.Assert(hsh[nwk1].Number == 222);
         Dummy.Numberwrapper nwk2 = NW(44);
         Dummy.Numberwrapper nwv2 = NW(444);
         hsh[nwk2] = nwv2;
@@ -3241,8 +3241,8 @@ class TestEinaHash
         var hsh = t.EinaHashObjReturnOwn(out nwk1, out nwv1);
         Test.Assert(hsh.Own);
         Test.Assert(hsh[nwk1].NativeHandle == nwv1.NativeHandle);
-        Test.Assert(hsh[nwk1].GetNumber() == nwv1.GetNumber());
-        Test.Assert(hsh[nwk1].GetNumber() == 222);
+        Test.Assert(hsh[nwk1].Number == nwv1.Number);
+        Test.Assert(hsh[nwk1].Number == 222);
         Dummy.Numberwrapper nwk2 = NW(44);
         Dummy.Numberwrapper nwv2 = NW(444);
         hsh[nwk2] = nwv2;
@@ -3395,7 +3395,7 @@ class TestEinaIterator
         foreach (Dummy.Numberwrapper e in itr)
         {
             Test.Assert(e.NativeHandle == base_objs[idx].NativeHandle);
-            Test.Assert(e.GetNumber() == base_objs[idx].GetNumber());
+            Test.Assert(e.Number == base_objs[idx].Number);
             ++idx;
         }
         Test.AssertEquals(idx, base_objs.Length);
@@ -3561,7 +3561,7 @@ class TestEinaIterator
         foreach (Dummy.Numberwrapper e in itr)
         {
             Test.Assert(e.NativeHandle == base_objs[idx].NativeHandle);
-            Test.Assert(e.GetNumber() == base_objs[idx].GetNumber());
+            Test.Assert(e.Number == base_objs[idx].Number);
             ++idx;
         }
         Test.AssertEquals(idx, base_objs.Length);
@@ -3903,19 +3903,19 @@ class TestEinaIterator
         hsh[a] = aa;
         hsh[b] = bb;
         hsh[c] = cc;
-        dct[a.GetNumber()] = a;
-        dct[b.GetNumber()] = b;
-        dct[c.GetNumber()] = c;
+        dct[a.Number] = a;
+        dct[b.Number] = b;
+        dct[c.Number] = c;
 
         var itr = hsh.Keys();
 
         int idx = 0;
         foreach (Dummy.Numberwrapper e in itr)
         {
-            Test.Assert(dct[e.GetNumber()] != null);
-            Test.Assert(dct[e.GetNumber()].NativeHandle == e.NativeHandle);
-            Test.Assert(dct[e.GetNumber()].GetNumber() == e.GetNumber());
-            dct.Remove(e.GetNumber());
+            Test.Assert(dct[e.Number] != null);
+            Test.Assert(dct[e.Number].NativeHandle == e.NativeHandle);
+            Test.Assert(dct[e.Number].Number == e.Number);
+            dct.Remove(e.Number);
             ++idx;
         }
         Test.AssertEquals(dct.Count, 0);
@@ -3939,19 +3939,19 @@ class TestEinaIterator
         hsh[a] = aa;
         hsh[b] = bb;
         hsh[c] = cc;
-        dct[aa.GetNumber()] = aa;
-        dct[bb.GetNumber()] = bb;
-        dct[cc.GetNumber()] = cc;
+        dct[aa.Number] = aa;
+        dct[bb.Number] = bb;
+        dct[cc.Number] = cc;
 
         var itr = hsh.Values();
 
         int idx = 0;
         foreach (Dummy.Numberwrapper e in itr)
         {
-            Test.Assert(dct[e.GetNumber()] != null);
-            Test.Assert(dct[e.GetNumber()].NativeHandle == e.NativeHandle);
-            Test.Assert(dct[e.GetNumber()].GetNumber() == e.GetNumber());
-            dct.Remove(e.GetNumber());
+            Test.Assert(dct[e.Number] != null);
+            Test.Assert(dct[e.Number].NativeHandle == e.NativeHandle);
+            Test.Assert(dct[e.Number].Number == e.Number);
+            dct.Remove(e.Number);
             ++idx;
         }
         Test.AssertEquals(dct.Count, 0);
@@ -4392,7 +4392,7 @@ class TestEinaIterator
         int idx = 0;
         foreach (Dummy.Numberwrapper e in itr)
         {
-            Test.AssertEquals(e.GetNumber(), base_seq_obj[idx].GetNumber());
+            Test.AssertEquals(e.Number, base_seq_obj[idx].Number);
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
@@ -4413,7 +4413,7 @@ class TestEinaIterator
         int idx = 0;
         foreach (Dummy.Numberwrapper e in itr)
         {
-            Test.AssertEquals(e.GetNumber(), base_seq_obj[idx].GetNumber());
+            Test.AssertEquals(e.Number, base_seq_obj[idx].Number);
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
@@ -4432,7 +4432,7 @@ class TestEinaIterator
         int idx = 0;
         foreach (Dummy.Numberwrapper e in itr)
         {
-            Test.AssertEquals(e.GetNumber(), base_seq_obj[idx].GetNumber());
+            Test.AssertEquals(e.Number, base_seq_obj[idx].Number);
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
@@ -4452,7 +4452,7 @@ class TestEinaIterator
         int idx = 0;
         foreach (Dummy.Numberwrapper e in itr)
         {
-            Test.AssertEquals(e.GetNumber(), base_seq_obj[idx].GetNumber());
+            Test.AssertEquals(e.Number, base_seq_obj[idx].Number);
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_obj.Length);
