@@ -2993,14 +2993,14 @@ _edje_part_recalc_single(Edje *ed,
    /* check whether this part has fixed value or not*/
    if ((rel1_to_x == rel2_to_x) &&
        (EQ(desc->rel1.relative_x, desc->rel2.relative_x)) &&
-       (!chosen_desc->fixed.w))
+       (!chosen_desc->fixed.w) && (!chosen_desc->user_set.fixed))
      {
         chosen_desc->fixed.w = 1;
         fixedw = EINA_TRUE;
      }
    if ((rel1_to_y == rel2_to_y) &&
        (EQ(desc->rel1.relative_y, desc->rel2.relative_y)) &&
-       (!chosen_desc->fixed.h))
+       (!chosen_desc->fixed.h) && (!chosen_desc->user_set.fixed))
      {
         chosen_desc->fixed.h = 1;
         fixedh = EINA_TRUE;

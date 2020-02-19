@@ -9312,6 +9312,8 @@ st_collections_group_parts_part_description_fixed(void)
 
    current_desc->fixed.w = parse_bool(0);
    current_desc->fixed.h = parse_bool(1);
+
+   current_desc->user_set.fixed = EINA_TRUE;
 }
 
 /**

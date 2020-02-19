@@ -760,6 +760,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", align_3d, _edje_edd_edje_part_description_3d_vec); \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", fixed.w, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", fixed.h, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "user_set.fixed", user_set.fixed, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.have", minmul.have, EET_T_UCHAR);                           \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.w", minmul.w, EDJE_T_FLOAT);                                \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.h", minmul.h, EDJE_T_FLOAT);                                \
@@ -859,6 +860,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", Dec.align_3d, _edje_edd_edje_part_description_3d_vec); \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", Dec.fixed.w, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", Dec.fixed.h, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "user_set.fixed", Dec.user_set.fixed, EET_T_UCHAR);                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.w", Dec.min.w, EET_T_INT);                                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.h", Dec.min.h, EET_T_INT);                                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.w", Dec.max.w, EET_T_INT);                                         \
