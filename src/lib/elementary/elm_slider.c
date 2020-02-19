@@ -1349,16 +1349,44 @@ _elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *_pd EINA_U
 }
 
 static Eina_Bool
+_do_format_string(Elm_Slider_Data *sd, Eina_Strbuf *str, const Eina_Value value)
+{
+   switch (sd->indi_format_int)
+     {
+      case 0:
+        {
+           double v = 0.0;
+           if (!eina_value_double_convert(&value, &v))
+             ERR("Format conversion failed");
+           eina_strbuf_append_printf(str, sd->indi_template, v);
+           break;
+        }
+      case 1:
+        {
+           int v = 0;
+           if (!eina_value_int_convert(&value, &v))
+             ERR("Format conversion failed");
+           eina_strbuf_append_printf(str, sd->indi_template, v);
+           break;
+        }
+      default:
+         return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _indi_default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
-   const Eina_Value_Type *type = eina_value_type_get(&value);
    Elm_Slider_Data *sd = efl_data_scope_get(data, ELM_SLIDER_CLASS);
-   double v;
 
-   if (type != EINA_VALUE_TYPE_DOUBLE) return EINA_FALSE;
-
-   eina_value_get(&value, &v);
-   eina_strbuf_append_printf(str, sd->indi_template, v);
+   if (!_do_format_string(sd, str, value))
+     {
+        /* Fallback to just printing the value if format string fails (legacy behavior) */
+        char *v = eina_value_to_string(&value);
+        eina_strbuf_append(str, v);
+        free(v);
+     }
 
    return EINA_TRUE;
 }
@@ -1375,6 +1403,67 @@ _indi_default_format_free_cb(void *data)
      }
 }
 
+static Eina_Bool
+_is_valid_digit(char x)
+{
+   return ((x >= '0' && x <= '9') || (x == '.')) ? EINA_TRUE : EINA_FALSE;
+}
+
+static Eina_Bool
+_format_string_check(const char *fmt)
+{
+   const char *itr;
+   Eina_Bool found = EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+
+   for (itr = fmt; *itr; itr++)
+     {
+        if (itr[0] != '%') continue;
+        if (itr[1] == '%')
+          {
+             itr++;
+             continue;
+          }
+
+        if (!found)
+          {
+             found = EINA_TRUE;
+             for (itr++; *itr; itr++)
+               {
+                  // FIXME: This does not properly support int64 or unsigned.
+                  if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
+                      (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
+                    {
+                       ret = EINA_TRUE;
+                       break;
+                    }
+                  else if ((*itr == 'f') || (*itr == 'F'))
+                    {
+                       ret = EINA_FALSE;
+                       break;
+                    }
+                  else if (_is_valid_digit(*itr))
+                    {
+                       continue;
+                    }
+                  else
+                    {
+                       ERR("Format string '%s' has unknown format element '%c' in format. It must have one format element of type 's', 'f', 'F', 'd', 'u', 'i', 'o', 'x' or 'X'", fmt, *itr);
+                       found = EINA_FALSE;
+                       break;
+                    }
+               }
+             if (!(*itr)) break;
+          }
+        else
+          {
+             break;
+          }
+     }
+
+   return ret;
+}
+
 EOLIAN static void
 _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EINA_UNUSED, const char *template, Efl_Ui_Format_String_Type type EINA_UNUSED)
 {
@@ -1383,6 +1472,7 @@ _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EI
 
    if (!template) return;
    eina_stringshare_replace(&sd->indi_template, template);
+   sd->indi_format_int = _format_string_check(sd->indi_template);
 
    efl_ui_format_func_set(efl_part(pd->obj, "indicator"), pd->obj, _indi_default_format_cb, _indi_default_format_free_cb);
 }
