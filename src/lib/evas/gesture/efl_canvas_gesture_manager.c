@@ -53,6 +53,8 @@ _gesture_recognizer_event_type_get(const Efl_Canvas_Gesture_Recognizer *recogniz
      return EFL_EVENT_GESTURE_MOMENTUM;
    if (type == EFL_CANVAS_GESTURE_FLICK_CLASS)
      return EFL_EVENT_GESTURE_FLICK;
+   if (type == EFL_CANVAS_GESTURE_ROTATE_CLASS)
+     return EFL_EVENT_GESTURE_ROTATE;
    if (type == EFL_CANVAS_GESTURE_ZOOM_CLASS)
      return EFL_EVENT_GESTURE_ZOOM;
    return EFL_EVENT_GESTURE_CUSTOM;
@@ -85,6 +87,7 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *ttd;
    Efl_Canvas_Gesture_Recognizer_Long_Press_Data *ltd;
    Efl_Canvas_Gesture_Recognizer_Flick_Data *fd;
+   Efl_Canvas_Gesture_Recognizer_Rotate_Data *rd;
    Efl_Canvas_Gesture_Recognizer_Zoom_Data *zd;
    const Efl_Event_Description *type;
 
@@ -112,6 +115,11 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    r = eina_hash_find(pd->m_recognizers, &type);
    fd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS);
    fd->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_ROTATE;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   rd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_ROTATE_CLASS);
+   rd->finger_size = finger_size;
 
    type = EFL_EVENT_GESTURE_ZOOM;
    r = eina_hash_find(pd->m_recognizers, &type);
@@ -152,6 +160,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_MOMENTUM_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ROTATE_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ZOOM_CLASS, obj));
    _update_finger_sizes(pd, EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE);
 

@@ -38,6 +38,11 @@ interface @beta Efl.Canvas.Gesture_Events
         holding down a mouse button) with the release occurring before slowing down.
       ]]
 
+      gesture,rotate: Efl.Canvas.Gesture_Rotate; [[Emitted when a Rotate gesture has been detected.
+        A Rotate gesture consists of two fingers touching the screen and performing a motion such that
+        one finger rotates around the other.
+        This gesture cannot be performed with a mouse as it requires more than one pointer.
+      ]]
       gesture,zoom: Efl.Canvas.Gesture_Zoom; [[Emitted when a Zoom gesture has been detected.
         A Zoom gesture consists of two fingers touching the screen and separating ("zoom in") or
         getting closer ("zoom out" or "pinch").

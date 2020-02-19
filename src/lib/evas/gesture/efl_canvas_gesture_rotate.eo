@@ -1,0 +1,28 @@
+class @beta Efl.Canvas.Gesture_Rotate extends Efl.Canvas.Gesture
+{
+   [[Rotate gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Canvas.Gesture_Events.gesture,rotate] for a description of the Rotate gesture.
+
+     Application developers receive these objects inside a gesture event and do not typically need to create their own.
+   ]]
+   c_prefix: efl_gesture_rotate;
+   methods {
+      @property radius {
+         [[The current radius (i.e. the distance between the two fingers) of the gesture.]]
+         get {
+         }
+         values {
+            radius: uint; [[The radius value in pixels.]]
+         }
+      }
+      @property angle {
+         [[The current angle of rotation for this gesture.]]
+         get {
+         }
+         values {
+            rotate: double; [[The angle of the rotation. $[0.0] means no rotation has occurred.]]
+         }
+      }
+   }
+}

@@ -26,12 +26,14 @@ typedef struct _Efl_Canvas_Gesture_Recognizer_Double_Tap_Data  Efl_Canvas_Gestur
 typedef struct _Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data  Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Momentum_Data    Efl_Canvas_Gesture_Recognizer_Momentum_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Flick_Data       Efl_Canvas_Gesture_Recognizer_Flick_Data;
+typedef struct _Efl_Canvas_Gesture_Recognizer_Rotate_Data        Efl_Canvas_Gesture_Recognizer_Rotate_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data        Efl_Canvas_Gesture_Recognizer_Zoom_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Custom_Data        Efl_Canvas_Gesture_Recognizer_Custom_Data;
 typedef struct _Efl_Canvas_Gesture_Data                        Efl_Canvas_Gesture_Data;
 typedef struct _Efl_Canvas_Gesture_Momentum_Data               Efl_Canvas_Gesture_Momentum_Data;
 typedef struct _Efl_Canvas_Gesture_Flick_Data                  Efl_Canvas_Gesture_Flick_Data;
 typedef struct _Efl_Canvas_Gesture_Zoom_Data                   Efl_Canvas_Gesture_Zoom_Data;
+typedef struct _Efl_Canvas_Gesture_Rotate_Data                   Efl_Canvas_Gesture_Rotate_Data;
 typedef struct _Efl_Canvas_Gesture_Custom_Data                 Efl_Canvas_Gesture_Custom_Data;
 
 typedef struct _Efl_Canvas_Gesture_Touch_Data
@@ -114,6 +116,24 @@ struct _Efl_Canvas_Gesture_Recognizer_Flick_Data
    Eina_Bool                       touched;
 };
 
+struct _Efl_Canvas_Gesture_Recognizer_Rotate_Data
+{
+   Efl_Gesture_Touch_Point_Data                    rotate_st;
+   Efl_Gesture_Touch_Point_Data                    rotate_st1;
+
+   Efl_Gesture_Touch_Point_Data                    rotate_mv;
+   Efl_Gesture_Touch_Point_Data                    rotate_mv1;
+   double                  rotate_step;
+   double     base_angle; /**< Holds start-angle */
+   double                  prev_momentum; /* Snapshot of momentum 0.01
+                                           * sec ago */
+   double                  accum_momentum;
+   double                  rotate_angular_tolerance;
+   double                  next_step;
+   unsigned int            prev_momentum_tm; /* timestamp of prev_momentum */
+   int                            finger_size;
+};
+
 struct _Efl_Canvas_Gesture_Recognizer_Zoom_Data
 {
    Efl_Gesture_Touch_Point_Data                    zoom_st;
@@ -157,6 +177,14 @@ struct _Efl_Canvas_Gesture_Flick_Data
    Eina_Vector2                    momentum;
    double                          angle;
    int id;
+};
+
+struct _Efl_Canvas_Gesture_Rotate_Data
+{
+   //Evas_Coord x, y; /**< Holds rotate center point reported to user      */
+   double     angle; /**< Rotation value: 0.0 means no rotation         */
+   double     momentum; /**< Rotation momentum: rotation done per second (NOT YET SUPPORTED) */
+   Evas_Coord radius; /**< Holds radius between fingers reported to user */
 };
 
 struct _Efl_Canvas_Gesture_Zoom_Data
