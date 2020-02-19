@@ -31,6 +31,7 @@ enum
    TRIPLE_TAP,
    MOMENTUM,
    FLICK,
+   ROTATE,
    ZOOM,
    CUSTOM,
    CUSTOM2,
@@ -92,6 +93,7 @@ setup(void)
    WATCH(TRIPLE_TAP);
    WATCH(MOMENTUM);
    WATCH(FLICK);
+   WATCH(ROTATE);
    WATCH(ZOOM);
 
    get_me_to_those_events(win);
@@ -110,6 +112,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -123,6 +126,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -136,6 +140,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    /* clear states */
@@ -152,6 +157,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 1, 3, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    /* clear states */
@@ -166,6 +172,8 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
 
@@ -179,6 +187,8 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
 
@@ -192,6 +202,8 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
    /* clear states */
@@ -205,6 +217,8 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
    RESET;
@@ -230,6 +244,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_press)
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -243,6 +258,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_press)
    CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -254,6 +270,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_press)
    CHECK_ZERO(TRIPLE_TAP);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -272,6 +289,7 @@ EFL_START_TEST(test_efl_ui_gesture_long_press)
    CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(MOMENTUM, 1, 0, 0, 0);
    CHECK_ALL(FLICK, 1, 0, 0, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -301,6 +319,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -322,6 +341,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -340,6 +360,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -358,6 +379,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -377,6 +399,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -397,6 +420,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_START(FLICK, 1);
    CHECK_FINISH(FLICK, 1);
    CHECK_CANCEL(FLICK, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -413,6 +437,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, moves - 2, 1, 0);
    /* NOT triggered; this is going to have some crazy number of update events since it ignores a bunch */
    CHECK_FINISH(FLICK, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -436,6 +461,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_FINISH(FLICK, 0);
    /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
    ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_CANCELED - 1], 1);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -459,6 +485,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_FINISH(FLICK, 0);
    /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
    ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_CANCELED - 1], 1);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -487,6 +514,8 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
 
    /* only finish is verifiable */
    CHECK_FINISH(FLICK, 0);
+   /* started then canceled */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* started 1x */
    CHECK_START(ZOOM, 1);
    /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
@@ -515,6 +544,8 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
 
    /* only finish is verifiable */
    CHECK_FINISH(FLICK, 0);
+      /* started then canceled */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* started 1x */
    CHECK_START(ZOOM, 1);
    /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
