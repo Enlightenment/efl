@@ -7,7 +7,6 @@
 #define THUMBSCROLL_MOMENTUM_THRESHOLD 100.0
 #define EFL_GESTURE_MINIMUM_MOMENTUM   0.001
 
-#define RAD2DEG(x) ((x) * 57.295779513)
 #define DEG2RAD(x) ((x) / 57.295779513)
 
 #define memset do not use memset to reset flick data, use _reset_recognizer
@@ -112,57 +111,6 @@ _single_line_process(Eo *obj,
 
    _momentum_set(obj, fd, pd->st_line, efl_gesture_touch_current_point_get(event),
                  pd->t_st, efl_gesture_touch_current_timestamp_get(event));
-}
-
-static double
-_angle_get(Evas_Coord xx1,
-           Evas_Coord yy1,
-           Evas_Coord xx2,
-           Evas_Coord yy2)
-{
-   double a, xx, yy, rt = (-1);
-
-   xx = abs(xx2 - xx1);
-   yy = abs(yy2 - yy1);
-
-   if (((int)xx) && ((int)yy))
-     {
-        rt = a = RAD2DEG(atan(yy / xx));
-        if (xx1 < xx2)
-          {
-             if (yy1 < yy2) rt = 360 - a;
-             else rt = a;
-          }
-        else
-          {
-             if (yy1 < yy2) rt = 180 + a;
-             else rt = 180 - a;
-          }
-     }
-
-   if (rt < 0) /* Do this only if rt is not set */
-     {
-        if (((int)xx)) /* Horizontal line */
-          {
-             if (xx2 < xx1) rt = 180;
-             else rt = 0.0;
-          }
-        else /* Vertical line */
-          {
-             if (yy2 < yy1) rt = 90;
-             else rt = 270;
-          }
-     }
-
-   /* Now we want to change from:
-    *                      90                   0
-    * original circle   180   0   We want:  270   90
-    *                     270                 180
-    */
-   rt = 450 - rt;
-   if (rt >= 360) rt -= 360;
-
-   return rt;
 }
 
 static void

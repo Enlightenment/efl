@@ -16,57 +16,6 @@ _reset_recognizer(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd)
 
 #define memset do not use memset to reset zoom data, use _reset_recognizer
 
-static Evas_Coord
-_finger_gap_length_get(Evas_Coord xx1,
-                       Evas_Coord yy1,
-                       Evas_Coord xx2,
-                       Evas_Coord yy2,
-                       Evas_Coord *x,
-                       Evas_Coord *y)
-{
-   double a, b, xx, yy, gap;
-   xx = abs(xx2 - xx1);
-   yy = abs(yy2 - yy1);
-   gap = sqrt((xx * xx) + (yy * yy));
-
-   /* START - Compute zoom center point */
-   /* The triangle defined as follows:
-    *             B
-    *           / |
-    *          /  |
-    *     gap /   | a
-    *        /    |
-    *       A-----C
-    *          b
-    * http://en.wikipedia.org/wiki/Trigonometric_functions
-    *************************************/
-   if (((int)xx) && ((int)yy))
-     {
-        double A = atan((yy / xx));
-        a = (Evas_Coord)((gap / 2) * sin(A));
-        b = (Evas_Coord)((gap / 2) * cos(A));
-        *x = (Evas_Coord)((xx2 > xx1) ? (xx1 + b) : (xx2 + b));
-        *y = (Evas_Coord)((yy2 > yy1) ? (yy1 + a) : (yy2 + a));
-     }
-   else
-     {
-        if ((int)xx) /* horiz line, take half width */
-          {
-             *x = (Evas_Coord)((xx1 + xx2) / 2);
-             *y = (Evas_Coord)(yy1);
-          }
-
-        if ((int)yy) /* vert line, take half width */
-          {
-             *x = (Evas_Coord)(xx1);
-             *y = (Evas_Coord)((yy1 + yy2) / 2);
-          }
-     }
-   /* END   - Compute zoom center point */
-
-   return (Evas_Coord)gap;
-}
-
 static double
 _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
               Efl_Canvas_Gesture_Zoom_Data *zd,

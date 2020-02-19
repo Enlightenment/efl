@@ -15,6 +15,9 @@ int _direction_get(Evas_Coord xx1, Evas_Coord xx2);
 Eina_Value *_recognizer_config_get(const Eo *obj, const char *name);
 Eina_Bool _event_multi_touch_get(const Efl_Canvas_Gesture_Touch *event);
 
+double _angle_get(Evas_Coord xx1, Evas_Coord yy1, Evas_Coord xx2, Evas_Coord yy2);
+Evas_Coord _finger_gap_length_get(Evas_Coord xx1, Evas_Coord yy1, Evas_Coord xx2, Evas_Coord yy2, Evas_Coord *x, Evas_Coord *y);
+
 typedef struct _Efl_Canvas_Gesture_Manager_Data                Efl_Canvas_Gesture_Manager_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Data             Efl_Canvas_Gesture_Recognizer_Data;
 typedef struct _Efl_Canvas_Gesture_Recognizer_Tap_Data         Efl_Canvas_Gesture_Recognizer_Tap_Data;
