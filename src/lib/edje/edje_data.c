@@ -106,6 +106,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_vector_pointer = NULL;
      memset(data, 0, size);                         \
      data->clip_to_id = -1;                         \
      data->map.zoom.x = data->map.zoom.y = 1.0;     \
+     data->map.zoom.id_center = -1;                 \
      return data;                                   \
   }                                                 \
                                                     \
