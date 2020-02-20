@@ -247,6 +247,15 @@ _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_
 }
 
 static void
+_recognizer_cleanup_internal(Efl_Canvas_Gesture_Manager_Data *pd, const Efl_Canvas_Gesture_Recognizer *recognizer, const Eo *target, const Efl_Event_Description *type)
+{
+   _cleanup_cached_gestures(pd, target, type, recognizer);
+   eina_hash_del(pd->m_object_events, &recognizer, NULL);
+   //FIXME: delete it by object not list.
+   _cleanup_object(pd->m_gestures_to_delete);
+}
+
+static void
 _gesture_recognizer_process_internal(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Canvas_Gesture_Recognizer *recognizer,
                                      Eo *target, const Efl_Event_Description *gesture_type, void *event)
 {
@@ -325,12 +334,7 @@ post_event:
    //If the current event recognizes the gesture continuously, dont delete gesture.
    if (((recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH) || (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)) &&
        !rd->continues)
-     {
-        _cleanup_cached_gestures(pd, target, gesture_type, recognizer);
-        eina_hash_del(pd->m_object_events, &recognizer, NULL);
-        //FIXME: delete it by object not list.
-        _cleanup_object(pd->m_gestures_to_delete);
-     }
+     _recognizer_cleanup_internal(pd, recognizer, target, gesture_type);
 }
 
 void
@@ -514,9 +518,7 @@ _efl_canvas_gesture_manager_recognizer_cleanup(Eo *obj EINA_UNUSED, Efl_Canvas_G
 
    //Find the type of the recognizer
    type = _gesture_recognizer_event_type_get(recognizer);
-   _cleanup_cached_gestures(pd, target, type, recognizer);
-   eina_hash_del(pd->m_object_events, &recognizer, NULL);
-   _cleanup_object(pd->m_gestures_to_delete);
+   _recognizer_cleanup_internal(pd, recognizer, target, type);
 }
 
 #include "efl_canvas_gesture_manager.eo.c"
