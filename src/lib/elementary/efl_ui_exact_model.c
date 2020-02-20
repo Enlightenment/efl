@@ -54,20 +54,6 @@ _efl_ui_exact_model_efl_object_constructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
    return efl_constructor(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS));
 }
 
-static unsigned int
-_efl_ui_exact_model_list_find(unsigned int list_index, Eina_List *start, Eina_List **l)
-{
-   Eina_Binbuf *tbuf;
-
-   EINA_LIST_FOREACH(start, *l, tbuf)
-     {
-        if (list_index == 0) break;
-        list_index--;
-     }
-
-   return list_index;
-}
-
 static Eina_List *
 _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, unsigned int *buffer)
 {
@@ -78,7 +64,7 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
    Eina_List *l = NULL;
    unsigned int i;
 
-   _efl_ui_exact_model_list_find(list_index, compressed, &l);
+   l = eina_list_nth_list(compressed, list_index);
 
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
    if (!tbuf) return compressed;
@@ -136,16 +122,15 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
 static unsigned int *
 _efl_ui_exact_model_buffer_expand(unsigned int list_index, unsigned int *buffer, Eina_List *list)
 {
-   unsigned int found;
    Eina_Binbuf *tmp;
    Eina_List *l = NULL;
 
    if (!buffer) buffer = malloc(EFL_UI_EXACT_MODEL_CONTENT_LENGTH);
 
-   found = _efl_ui_exact_model_list_find(list_index, list, &l);
+   l = eina_list_nth_list(list, list_index);
 
    // Check if the data is in the list
-   if (!found)
+   if (!l)
      {
         // Not found -> everything is assumed to be zero
         memset(buffer, 0, EFL_UI_EXACT_MODEL_CONTENT_LENGTH);
