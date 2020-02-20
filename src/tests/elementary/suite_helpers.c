@@ -731,7 +731,7 @@ drag_object_around(Eo *obj, int cx, int cy, int radius, int degrees)
 {
    Evas *e = evas_object_evas_get(obj);
    /* clamp num mouse moves to a vaguely sane value */
-   int i, num = MIN(degrees, DRAG_OBJECT_AROUND_NUM_MOVES);
+   int i, num = MIN(abs(degrees), DRAG_OBJECT_AROUND_NUM_MOVES);
    int last_x = round(cx + radius);
    int last_y = round(cy);
    /* start at 0 degrees */
