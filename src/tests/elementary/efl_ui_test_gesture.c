@@ -559,6 +559,71 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
 }
 EFL_END_TEST
 
+EFL_START_TEST(test_efl_ui_gesture_rotate)
+{
+   Eo *rect = setup();
+   int moves, momentum_moves;
+
+   multi_press_object(rect, 1);
+   CHECK_ALL(TAP, 1, 0, 0, 0);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 0);
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 0);
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 0);
+
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+
+   moves = multi_drag_object_around(rect, 1, 500, 500, 250, 180);
+   CHECK_ALL(TAP, 0, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 0, 0, 0, 1);
+   CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
+   CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
+
+   CHECK_START(MOMENTUM, 1);
+   momentum_moves = count[MOMENTUM][EFL_GESTURE_STATE_UPDATED - 1];
+   ck_assert_int_ge(count[MOMENTUM][EFL_GESTURE_STATE_UPDATED - 1], moves - 5);
+   CHECK_FINISH(MOMENTUM, 1);
+   CHECK_CANCEL(MOMENTUM, 0);
+
+   /* flick is just going to do flick stuff here, so don't even bother checking much */
+   CHECK_FINISH(FLICK, 0);
+
+   CHECK_ALL(ROTATE, 1, moves - 1, 1, 0);
+   CHECK_ALL(ZOOM, 1, 0, 0, 1);
+
+   RESET;
+
+   /* verify identical motion in reverse */
+   moves = multi_drag_object_around(rect, 1, 500, 500, 250, -180);
+   /* already occurred, first finger still down */
+   CHECK_ZERO(TAP);
+   /* already canceled, first finger still down */
+   CHECK_ZERO(LONG_PRESS);
+   CHECK_ZERO(DOUBLE_TAP);
+   CHECK_ZERO(TRIPLE_TAP);
+
+   /* continuing gesture, counts as already started */
+   CHECK_START(MOMENTUM, 0);
+   /* should be exactly 1 more than previous time */
+   CHECK_UPDATE(MOMENTUM, momentum_moves + 1);
+   CHECK_FINISH(MOMENTUM, 1);
+   CHECK_CANCEL(MOMENTUM, 0);
+
+   /* flick is just going to do flick stuff here, so don't even bother checking much */
+   CHECK_FINISH(FLICK, 0);
+
+   /* continuing gesture, counts as already started, increment update counter */
+   CHECK_ALL(ROTATE, 0, (moves - 1) + 1, 1, 0);
+   CHECK_ALL(ZOOM, 0, 1, 0, 1);
+
+}
+EFL_END_TEST
+
 static void
 custom_cb(void *data EINA_UNUSED , const Efl_Event *ev)
 {
@@ -658,5 +723,6 @@ void efl_ui_test_gesture(TCase *tc)
    tcase_add_test(tc, test_efl_ui_gesture_long_press);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
    tcase_add_test(tc, test_efl_ui_gesture_zoom);
+   tcase_add_test(tc, test_efl_ui_gesture_rotate);
    tcase_add_test(tc, test_efl_ui_gesture_custom);
 }
