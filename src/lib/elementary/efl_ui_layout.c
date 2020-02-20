@@ -179,11 +179,13 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
 
    if (sd->calc_subobjs && !evas_smart_objects_calculating_get(evas_object_evas_get(obj)))
      {
-        Eina_List *l;
         Eo *subobj;
         /* user has manually triggered a smart calc and wants subobjs to also calc */
-        EINA_LIST_FOREACH(wd->subobjs, l, subobj)
-          efl_canvas_group_calculate(subobj);
+        for (unsigned int i = 0; i < eina_array_count(wd->children); ++i)
+          {
+             subobj = eina_array_data_get(wd->children, i);
+             efl_canvas_group_calculate(subobj);
+          }
      }
    elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
                                  sd->finger_size_multiplier_y, &rest_h);
@@ -926,8 +928,6 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
    Efl_Ui_Layout_Sub_Object_Cursor *pc;
    Edje_Signal_Data *esd;
-   Evas_Object *child;
-   Eina_List *l;
    Efl_Model *model;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -982,15 +982,15 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
 
    /* let's make our Edje object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH(wd->subobjs, l, child)
-     {
-        if (child == wd->resize_obj)
-          {
-             wd->subobjs =
-               eina_list_demote_list(wd->subobjs, l);
-             break;
-          }
-     }
+   {
+      unsigned int resize_id = 0;
+      if (eina_array_find(wd->children, wd->resize_obj, &resize_id))
+        {
+           //exchange with last
+           eina_array_data_set(wd->children, resize_id, eina_array_data_get(wd->children, eina_array_count(wd->children) - 1));
+           eina_array_data_set(wd->children, eina_array_count(wd->children) - 1, wd->resize_obj);
+        }
+   }
 
    sd->destructed_is = EINA_TRUE;
 

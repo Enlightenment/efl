@@ -61,13 +61,14 @@ static Efl_Ui_Widget*
 _next_widget(Efl_Gfx_Entity* o)
 {
    Efl_Ui_Widget *parent;
-   Eina_List *rel;
 
    parent = _fetch_parent_widget(o);
    ELM_WIDGET_DATA_GET_OR_RETURN(parent, pd, NULL);
-   rel = eina_list_data_find_list(pd->subobjs, o);
-
-   return eina_list_data_get(eina_list_next(rel));
+   unsigned int id;
+   if (eina_array_find(pd->children, o, &id) && id + 1 < eina_array_count(pd->children))
+     return eina_array_data_get(pd->children, id + 1);
+   else
+     return NULL;
 }
 
 static Eina_Bool
@@ -90,9 +91,9 @@ _widget_next(Widget_Iterator *it, void **data)
      }
 
    //If there is a child, go there
-   if (pd && pd->subobjs)
+   if (pd && eina_array_count(pd->children))
      {
-        it->current = eina_list_data_get(pd->subobjs);
+        it->current = eina_array_data_get(pd->children, 0);
         goto deliver;
      }
 

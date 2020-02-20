@@ -332,7 +332,7 @@ typedef void (*Elm_Widget_On_Show_Region_Cb)(void *data, Evas_Object *obj, Eina_
 typedef struct _Elm_Widget_Smart_Data
 {
    Evas_Object                  *parent_obj; /**< parent object of a widget in the elementary tree */
-   Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
+   Eina_Array                   *children;
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
    Evas_Object                  *bg;

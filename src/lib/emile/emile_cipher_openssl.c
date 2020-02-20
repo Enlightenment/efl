@@ -588,7 +588,6 @@ _emile_cipher_session_print(SSL *ssl)
              eina_strbuf_append_length(str, bptr->data, bptr->length);
              DBG("%s", eina_strbuf_string_get(str));
              eina_strbuf_reset(str);
-             BIO_free(b);
           }
      }
 

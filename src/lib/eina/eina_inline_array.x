@@ -89,6 +89,7 @@ eina_array_count_get(const Eina_Array *array)
 static inline unsigned int
 eina_array_count(const Eina_Array *array)
 {
+   if (!array) return 0;
    return array->count;
 }
 

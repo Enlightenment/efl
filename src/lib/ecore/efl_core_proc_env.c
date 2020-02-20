@@ -68,6 +68,12 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
                        break;
                     }
                }
+
+             if (values)
+               {
+                  free(values[0]);
+                  free(values);
+               }
           }
      }
    EINA_LIST_FOREACH(existing_keys, n, key)

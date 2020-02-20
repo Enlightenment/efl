@@ -53,6 +53,7 @@ struct _Elm_Slider_Data
    void                  *indi_format_cb_data;
    Eina_Strbuf           *indi_format_strbuf;
    const char            *indi_template;
+   Eina_Bool             indi_format_int;
 
 
    Eina_Bool             indicator_show : 1;

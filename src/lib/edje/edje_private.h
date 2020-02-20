@@ -1380,6 +1380,10 @@ struct _Edje_Part_Description_Common
    unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
    unsigned char     no_render; /* no_render override @since 1.19 */
    unsigned char     offset_is_scaled;
+
+   struct {
+      Eina_Bool fixed;
+   } user_set;
 };
 
 struct _Edje_Part_Description_Spec_Fill

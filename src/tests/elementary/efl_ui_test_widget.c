@@ -93,7 +93,7 @@ resize_object(Efl_Canvas_Object *o)
 {
    Efl_Ui_Widget_Data *pd = efl_data_scope_safe_get(o, EFL_UI_WIDGET_CLASS);
 
-   return eina_list_data_get(pd->subobjs);
+   return eina_array_data_get(pd->children, 0);
 }
 
 EFL_START_TEST(efl_ui_test_widget_widget_sub_iterator)
@@ -182,16 +182,16 @@ EFL_START_TEST(efl_ui_test_widget_sub_object_add_del)
    State s;
 
    _small_ui(&s);
-   DISABLE_ABORT_ON_CRITICAL_START;
+   EXPECT_ERROR_START;
    ck_assert(!efl_ui_widget_sub_object_add(s.btn1, s.btn1));
-   DISABLE_ABORT_ON_CRITICAL_END;
+   EXPECT_ERROR_END;
    ck_assert(efl_ui_widget_sub_object_add(s.box, s.btn1));
-   DISABLE_ABORT_ON_CRITICAL_START;
+   EXPECT_ERROR_START;
    ck_assert(!efl_ui_widget_sub_object_add(s.box, NULL));
    ck_assert(!efl_ui_widget_sub_object_del(s.btn1, s.btn1));
    ck_assert(!efl_ui_widget_sub_object_del(s.box, NULL));
    ck_assert(!efl_ui_widget_sub_object_del(s.btn1, s.box));
-   DISABLE_ABORT_ON_CRITICAL_END;
+   EXPECT_ERROR_END;
    ck_assert(efl_ui_widget_sub_object_del(s.box, s.btn1));
 }
 EFL_END_TEST

@@ -540,6 +540,22 @@ typedef int (*Eina_Random_Cb)(const int min, const int max);
 #define EINA_RANDOM_CB(function) ((Eina_Random_Cb)function)
 
 /**
+ * @typedef Eina_Process_Cb
+ * Method that processes some data and returns new data.
+ * It's meant to be used as a callback to process all nodes inside a container
+ * (See eina_iterator_processed_new, for example.)
+ * @param data The data to process.
+ * @param fdata Context data.
+ * @return The processed data.
+ */
+typedef void* (*Eina_Process_Cb)(const void *container, void *data, void *fdata);
+
+/**
+ * @def EINA_PROCESS_CB
+ * Macro to cast to Eina_Process.
+ */
+#define EINA_PROCESS_CB(Function) ((Eina_Process_Cb)Function)
+/**
  * @typedef Eina_Each_Cb
  * A callback type used when iterating over a container.
  */
