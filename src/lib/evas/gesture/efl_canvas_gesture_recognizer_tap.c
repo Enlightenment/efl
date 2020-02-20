@@ -80,7 +80,7 @@ new_tap:
          if (_event_multi_touch_get(event)) return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
          if (efl_gesture_state_get(gesture) != EFL_GESTURE_STATE_NONE)
            {
-              dist = efl_gesture_touch_distance(event, 0);
+              dist = efl_gesture_touch_distance(event, efl_gesture_touch_current_data_get(event)->id);
               length = fabs(dist.x) + fabs(dist.y);
               if (length <= pd->finger_size)
                 {
