@@ -2209,10 +2209,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                  if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
                                      _evas_render_object_is_mask(obj->cur->clipper))
                                    evas_object_clip_recalc(obj);
-                                 if (!proxy_render_data)
-                                   _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
-                                                                        proxy_render_data,
-                                                                        off_x, off_y);
+                                 _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
+                                                                      proxy_render_data,
+                                                                      off_x, off_y);
                               }
                             else if (proxy_render_data)
                               {
