@@ -295,11 +295,12 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
    switch (efl_gesture_touch_state_get(event))
      {
       case EFL_GESTURE_TOUCH_STATE_BEGIN:
-        if (!glayer_continues_enable)
-          fd->id = efl_gesture_touch_current_data_get(event)->id;
+        fd->id = efl_gesture_touch_current_data_get(event)->id;
         EINA_FALLTHROUGH;
       case EFL_GESTURE_TOUCH_STATE_UPDATE:
       {
+         if (fd->id == -1)
+           fd->id = efl_gesture_touch_current_data_get(event)->id;
          if (pd->t_st)
            {
               if (glayer_continues_enable && pd->t_end)
