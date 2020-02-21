@@ -7,7 +7,7 @@ cache:
     - $HOME/.ccache
 dist: bionic
 
-osx_image: xcode10.2
+osx_image: xcode11.3
 
 addons:
   homebrew:
@@ -36,6 +36,7 @@ addons:
       - ninja
       - python3
       - libffi
+    update: true
 
 env:
   global:
