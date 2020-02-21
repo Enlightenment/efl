@@ -96,8 +96,8 @@ _efl_ui_spotlight_icon_indicator_efl_ui_spotlight_indicator_bind(Eo *obj, Efl_Ui
    if (spotlight)
      {
         pd->container = spotlight;
-        efl_event_callback_array_add(pd->container, spotlight_resized(), pd->layout);
         pd->layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, pd->container);
+        efl_event_callback_array_add(pd->container, spotlight_resized(), pd->layout);
 
         if (elm_widget_theme_object_set(pd->container, pd->layout,
                                        "spotlight",
