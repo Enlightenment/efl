@@ -21,6 +21,7 @@ typedef struct {
       Eina_Bool active;
       int from;
       Eina_Position2D mouse_start;
+      double start_time;
    } mouse_move;
    Eina_Bool animation;
    Eina_Bool scroll_block;
@@ -98,6 +99,7 @@ _mouse_down_cb(void *data,
    pd->mouse_move.active = EINA_TRUE;
    pd->mouse_move.from = efl_pack_index_get(pd->container, efl_ui_spotlight_active_element_get(pd->container));
    pd->mouse_move.mouse_start = efl_input_pointer_position_get(ev);
+   pd->mouse_move.start_time = ecore_time_get();
 
    pd->transition.from = pd->mouse_move.from;
    pd->transition.to = pd->transition.from + 1;
@@ -125,12 +127,15 @@ _mouse_move_cb(void *data,
    if (!efl_input_processed_get(ev))
      efl_input_processed_set(ev, EINA_TRUE);
 
-   pd->transition.active = EINA_TRUE;
-   pd->transition.progress = (double)pos_y_diff / (double)pd->page_size.w;
-
-   _propagate_progress(data, pd->transition.from + pd->transition.progress);
-
-   _apply_box_properties(obj, pd);
+   if (pd->transition.active ||
+       EINA_POSITION2D_DISTANCE(pd->mouse_move.mouse_start, efl_input_pointer_position_get(ev)) > elm_config_finger_size_get() ||
+       ecore_time_get() - pd->mouse_move.start_time > 0.1)
+     {
+        pd->transition.active = EINA_TRUE;
+        pd->transition.progress = (double)pos_y_diff / (double)pd->page_size.w;
+        _propagate_progress(data, pd->transition.from + pd->transition.progress);
+        _apply_box_properties(obj, pd);
+     }
 }
 
 static void
@@ -150,6 +155,10 @@ _mouse_up_cb(void *data,
 
    Efl_Ui_Widget *new_content = efl_pack_content_get(pd->container, MIN(MAX(result, 0), efl_content_count(pd->container) - 1));
    efl_ui_spotlight_active_element_set(pd->container, new_content);
+
+   //Set input processed not to cause clicked event to content button.
+   if (EINA_POSITION2D_DISTANCE(pd->mouse_move.mouse_start, efl_input_pointer_position_get(ev)) > elm_config_finger_size_get())
+     efl_input_processed_set(ev, EINA_TRUE);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(mouse_listeners,
