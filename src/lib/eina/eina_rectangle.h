@@ -82,6 +82,15 @@ typedef struct _Eina_Size2D
  */
 #define EINA_POSITION2D_EQ(a, b) \
   (((a).x == (b).x) && ((a).y == (b).y))
+/**
+ * @brief Convenience macro for getting the distance from one point to another
+ * @param[in] a An Eina_Position2D
+ * @param[in] b An Eina_Position2D
+ * @return The distance between the two points.
+ * @since 1.24
+ */
+#define EINA_POSITION2D_DISTANCE(a, b) \
+  sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y))
 
 /**
  * @typedef Eina_Rectangle
