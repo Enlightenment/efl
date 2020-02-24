@@ -2151,6 +2151,11 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
      {
         ret = _icon_standard_set(obj, name);
         if (ret && fdo) *fdo = EINA_FALSE;
+        if (!ret)
+          {
+             ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
+             if (ret && fdo) *fdo = EINA_TRUE;
+          }
      }
    else
      {
