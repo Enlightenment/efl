@@ -166,6 +166,10 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
                             char buffer[120];
                             snprintf(buffer, sizeof(buffer), "edje/fonts/%s", val);
                             tag_ret->font = eina_stringshare_add(buffer);
+                            if (eina_strbuf_length_get(result)) eina_strbuf_append(result, " ");
+                            eina_strbuf_append(result, "font=");
+                            eina_strbuf_append(result, buffer);
+                            continue;
                          }
                        else
                          {
