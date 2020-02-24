@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_FORMAT_PROTECTED
@@ -757,44 +756,6 @@ _efl_ui_spin_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_
 }
 
 // A11Y Accessibility
-
-EOLIAN static void
-_efl_ui_spin_button_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double *value, const char **text)
-{
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-
-   if (value) *value = pd->val;
-   if (text) *text = NULL;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_spin_button_efl_access_value_value_and_text_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double value, const char *text EINA_UNUSED)
-{
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-
-   if (pd->val_min > value) return EINA_FALSE;
-   if (pd->val_max < value) return EINA_FALSE;
-
-   efl_ui_range_value_set(obj, value);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_ui_spin_button_efl_access_value_range_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double *lower, double *upper, const char **descr)
-{
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-
-   if (lower) *lower = pd->val_min;
-   if (upper) *upper = pd->val_max;
-   if (descr) *descr = NULL;
-}
-
-EOLIAN static double
-_efl_ui_spin_button_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *pd)
-{
-   return pd->step;
-}
 
 EOLIAN static const char*
 _efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)

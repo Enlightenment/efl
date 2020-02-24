@@ -280,6 +280,7 @@ _value_set(Evas_Object *obj,
 
    efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
    efl_access_value_changed_signal_emit(obj);
+   efl_access_object_event_emit(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
                                             _delay_change_timer_cb, obj);

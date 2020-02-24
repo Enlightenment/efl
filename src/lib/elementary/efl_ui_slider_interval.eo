@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive,
-                              Efl.Ui.Layout_Orientable, Efl.Access.Value, Efl.Access.Widget.Action
+                              Efl.Ui.Layout_Orientable, Efl.Access.Widget.Action
 {
     [[An interval slider.
 
@@ -29,9 +29,6 @@ class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Layout_Base implements Efl.Ui.
        Efl.Ui.Range_Display.range_limits {get; set; }
        Efl.Ui.Range_Interactive.range_step { get; set; }
        Efl.Ui.Layout_Orientable.orientation { get; set; }
-       Efl.Access.Value.value_and_text { get; set; }
-       Efl.Access.Value.range { get; }
-       Efl.Access.Value.increment { get; }
        Efl.Access.Widget.Action.elm_actions { get; }
     }
     events {

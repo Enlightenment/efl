@@ -118,6 +118,7 @@ static int _init_count = 0;
 static void _state_changed_signal_send(void *data, const Efl_Event *event);
 static void _bounds_changed_signal_send(void *data, const Efl_Event *event);
 static void _property_changed_signal_send(void *data, const Efl_Event *event);
+static void _value_property_changed_signal_send(void *data, const Efl_Event *event);
 static void _children_changed_signal_send(void *data, const Efl_Event *event);
 static void _window_signal_send(void *data, const Efl_Event *event);
 static void _visible_data_changed_signal_send(void *data, const Efl_Event *event);
@@ -168,7 +169,8 @@ static const Elm_Atspi_Bridge_Event_Handler event_handlers[] = {
    { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, _text_caret_moved_send },
    { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, _text_text_inserted_send },
    { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, _text_text_removed_send },
-   { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, _text_selection_changed_send }
+   { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, _text_selection_changed_send },
+   { EFL_UI_RANGE_EVENT_CHANGED, _value_property_changed_signal_send }
 };
 
 enum _Atspi_Object_Child_Event_Type
@@ -2162,7 +2164,12 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_VALUE_INTERFACE, request_msg);
+   if (elm_widget_is_legacy(obj)) {
+      ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_VALUE_INTERFACE, request_msg);
+   }
+   else if(efl_isa(obj, EFL_UI_RANGE_DISPLAY_INTERFACE)) {
+      ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_UI_RANGE_DISPLAY_INTERFACE, request_msg);
+   }
 
    if (!eldbus_message_iter_arguments_get(iter, "d", &value))
      {
@@ -2171,7 +2178,13 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
 
    if (!strcmp(property, "CurrentValue"))
      {
-        ret = efl_access_value_and_text_set(obj, value, NULL);
+        if (elm_widget_is_legacy(obj))
+            ret = efl_access_value_and_text_set(obj, value, NULL);
+        else if(efl_isa(obj, EFL_UI_RANGE_DISPLAY_INTERFACE)) {
+            efl_ui_range_value_set(obj, value);
+            ret = (efl_ui_range_value_get(obj) == value);
+        }
+        else ret = EINA_FALSE;
         Eldbus_Message *answer = eldbus_message_method_return_new(request_msg);
         eldbus_message_arguments_append(answer, "b", ret);
         return answer;
@@ -2190,29 +2203,32 @@ _value_properties_get(const Eldbus_Service_Interface *interface, const char *pro
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_VALUE_INTERFACE, request_msg, error);
+   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_UI_RANGE_DISPLAY_INTERFACE, request_msg, error);
 
    if (!strcmp(property, "CurrentValue"))
      {
-        efl_access_value_and_text_get(obj, &value, NULL);
+        value = efl_ui_range_value_get(obj);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "MinimumValue"))
      {
-        efl_access_value_range_get(obj, &value, NULL, NULL);
+        efl_ui_range_limits_get(obj, &value, NULL);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "MaximumValue"))
      {
-        efl_access_value_range_get(obj, NULL, &value, NULL);
+        efl_ui_range_limits_get(obj, NULL, &value);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "MinimumIncrement"))
      {
-        value = efl_access_value_increment_get(obj);
+     if(efl_isa(obj, EFL_UI_RANGE_INTERACTIVE_INTERFACE)) {
+        value = efl_ui_range_step_get(obj);
+        }
+     else { value = 0; }
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
@@ -2508,7 +2524,10 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         else if (!strcmp(ifc_name, "image"))
           class = EFL_ACCESS_SELECTION_INTERFACE;
         else if (!strcmp(ifc_name, "value"))
-          class = EFL_ACCESS_VALUE_INTERFACE;
+        {
+           class = EFL_ACCESS_VALUE_INTERFACE;
+           rule->ifaces = eina_list_append(rule->ifaces, EFL_UI_RANGE_DISPLAY_INTERFACE); //alternative interface 
+        }
 
         if (class)
           rule->ifaces = eina_list_append(rule->ifaces, class);
@@ -3184,6 +3203,8 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
   if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
   if (efl_isa(obj, EFL_ACCESS_VALUE_INTERFACE))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
+  if (efl_isa(obj, EFL_UI_RANGE_DISPLAY_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
 
   eldbus_message_iter_container_close(iter, iter_array);
@@ -3952,7 +3973,7 @@ _property_changed_signal_send(void *data, const Efl_Event *event)
      {
         prop = ATSPI_OBJECT_PROPERTY_VALUE;
         atspi_desc = "accessible-value";
-     }
+     } 
    if (prop == ATSPI_OBJECT_PROPERTY_LAST)
      {
         ERR("Unrecognized property name!");
@@ -3968,6 +3989,15 @@ _property_changed_signal_send(void *data, const Efl_Event *event)
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_PROPERTY_CHANGED], atspi_desc, 0, 0, NULL);
+}
+
+static void
+_value_property_changed_signal_send(void *data, const Efl_Event *event)
+{
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
+
+   _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
+                       &_event_obj_signals[ATSPI_OBJECT_EVENT_PROPERTY_CHANGED], "accessible-value", 0, 0, NULL);
 }
 
 static void

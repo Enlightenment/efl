@@ -148,7 +148,6 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_access_component.eo.h>
 # include <efl_access_editable_text.eo.h>
 # include <efl_access_selection.eo.h>
-# include <efl_access_value.eo.h>
 
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
