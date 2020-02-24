@@ -529,7 +529,10 @@ eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
 
                 /* assert int here, as we're clearly dealing with enum */
                 if (!(mask & EOLIAN_MASK_INT))
-                  return expr_type_error(expr, EOLIAN_MASK_INT, mask);
+                  {
+                     free(fulln);
+                     return expr_type_error(expr, EOLIAN_MASK_INT, mask);
+                  }
 
                 etpd = eolian_unit_alias_by_name_get(unit, fulln);
                 if (etpd && cb) cb((const Eolian_Object *)etpd, data);
