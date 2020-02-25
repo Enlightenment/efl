@@ -305,8 +305,10 @@ _prg_full_path_guess(const char *prg)
 {
    char full_path[MAX_PATH];
    if (strchr(prg, '/')) return eina_stringshare_add(prg);
-   char *paths = strdup(getenv("PATH"));
+   char *env_path = strdup(getenv("PATH"));
    Eina_Stringshare *ret = NULL;
+   char *paths = env_path;
+
    while (paths && *paths && !ret)
      {
         char *real_path;
@@ -325,6 +327,7 @@ _prg_full_path_guess(const char *prg)
         paths += strlen(paths);
         if (colon) paths++;
      }
+   free(env_path);
    return ret;
 }
 
