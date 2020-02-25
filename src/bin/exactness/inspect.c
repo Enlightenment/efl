@@ -505,6 +505,7 @@ _scn_content_get(void *data, Evas_Object *gl, const char *part)
                      evas_object_image_data_set(evas_img, ex_imgO->pixels);
                      evas_object_show(ic);
                      elm_object_part_content_set(bt, "icon", ic);
+                     exactness_image_free(ex_imgO);
                      return bt;
                   }
              }
