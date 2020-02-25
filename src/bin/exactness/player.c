@@ -1004,8 +1004,9 @@ _old_shots_rm_cb(const char *name, const char *path, void *data)
    unsigned int len = strlen(prefix);
    if (!strncmp(name, prefix, len) && (strlen(name) > len) && (name[len] == SHOT_DELIMITER))
      {
-        char *buf = alloca(strlen(path) + strlen(name));
-        sprintf(buf, "%s/%s", path, name);
+        unsigned int length = strlen(path) + strlen(name) + 2;
+        char *buf = alloca(length);
+        snprintf(buf, length, "%s/%s", path, name);
         if (unlink(buf))
           {
              printf("Failed deleting '%s/%s': ", path, name);
