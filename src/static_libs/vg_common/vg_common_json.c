@@ -311,7 +311,7 @@ _construct_mask_nodes(Efl_Canvas_Vg_Container *parent, LOTMask *mask, int depth 
    efl_gfx_color_set(shape, r, g, b, a);
 }
 
-static void
+static Efl_Canvas_Vg_Container*
 _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int mask_cnt, int depth)
 {
    char *key = NULL;
@@ -329,7 +329,7 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
 
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
-        printf("%s (%p), mask => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mtarget);
+        printf("%s (%p), base mask => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mtarget);
         depth++;
 #endif
 
@@ -356,7 +356,7 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
 
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
-        printf("%s (%p), mask:%d => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mask->mMode, mtarget);
+        printf("%s (%p), real mask:%d => %p\n", efl_class_name_get(efl_class_get(msource)), msource, mask->mMode, mtarget);
 #endif
 
         _construct_mask_nodes(msource, mask, depth + 1);
@@ -381,6 +381,7 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
         efl_canvas_vg_node_comp_method_set(mtarget, msource, mask_mode);
         mtarget = msource;
      }
+   return mtarget;
 }
 
 static void
@@ -432,7 +433,7 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
           }
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
-        printf("%s (%p) matte:%d => %p\n", efl_class_name_get(efl_class_get(ctree)), ctree, matte_mode, ptree);
+        printf("%s (%p) matte:%d => %p %s\n", efl_class_name_get(efl_class_get(ctree)), ctree, matte_mode, ptree, clayer->keypath);
 #endif
         _update_vg_tree(ctree, clayer, depth+1);
 
@@ -448,6 +449,8 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
              mlayer = clayer;
              if (!mtarget) mtarget = ctree;
           }
+        else
+           mtarget = NULL;
 
         ptree = ctree;
 
@@ -475,15 +478,16 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
               matte_mode = 0;
               break;
           }
+
+        //Construct node that have mask.
+        if (mlayer && mtarget)
+          ptree = _construct_masks(mtarget, mlayer->mMaskList.ptr, mlayer->mMaskList.size, depth + 1);
      }
 
    //Construct drawable nodes.
    if (layer->mNodeList.size > 0)
      _construct_drawable_nodes(root, layer, depth);
 
-   //Construct node that have mask.
-   if (mlayer)
-     _construct_masks(mtarget, mlayer->mMaskList.ptr, mlayer->mMaskList.size, depth);
 }
 #endif
 
