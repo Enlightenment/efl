@@ -858,6 +858,7 @@ _prg_invoke(const char *full_path, int argc, char **argv)
         real__ = 1;
      }
 
+   if (h) eina_module_free(h);
    return real__;
 }
 
