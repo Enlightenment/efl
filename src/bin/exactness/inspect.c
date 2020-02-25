@@ -563,6 +563,7 @@ _img_content_get(void *data, Evas_Object *gl, const char *part)
         evas_object_image_size_set(evas_img, ex_imgO->w, ex_imgO->h);
         evas_object_image_data_set(evas_img, ex_imgO->pixels);
         evas_object_size_hint_min_set(img, ELM_SCALE_SIZE(300), ELM_SCALE_SIZE(300));
+        exactness_image_free(ex_imgO);
      }
    else
      {
