@@ -4,7 +4,6 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
-#define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_PART_PROTECTED
 #define EFL_UI_FORMAT_PROTECTED
 
@@ -648,12 +647,6 @@ _efl_ui_progressbar_part_efl_ui_range_display_range_value_get(const Eo *obj, voi
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
    return _progressbar_part_value_get(sd, pd->part);
-}
-
-EOLIAN static void
-_efl_ui_progressbar_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd, double *value, const char **text EINA_UNUSED)
-{
-   if (value) *value = _pd->val;
 }
 
 EOLIAN static void

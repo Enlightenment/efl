@@ -1,5 +1,5 @@
 class Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Display,
-Efl.Ui.Format, Efl.Access.Value, Efl.Access.Widget.Action
+Efl.Ui.Format, Efl.Access.Widget.Action
 {
    [[A Spin.
 

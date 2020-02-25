@@ -1261,12 +1261,13 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
    elm_wdg_item_track_cancel(EO_OBJ(it));
 
+   if (!calc)
+     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
+
    it->unrealize_cb(it);
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
-   if (!calc)
-     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
 
    {
       ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);

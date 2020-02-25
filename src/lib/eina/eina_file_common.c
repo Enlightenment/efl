@@ -1152,6 +1152,8 @@ eina_file_close_on_exec(int fd, Eina_Bool on)
 {
 #ifdef _WIN32
    return EINA_TRUE;
+   (void)fd;
+   (void)on;
 #elif HAVE_FCNTL
    int flags;
 

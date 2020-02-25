@@ -715,9 +715,10 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
 
    elm_wdg_item_track_cancel(EO_OBJ(it));
 
-   _item_unrealize(it);
    if (!calc)
      efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_UNREALIZED, EO_OBJ(it));
+
+   _item_unrealize(it);
 
    evas_event_thaw(e);
    evas_event_thaw_eval(e);

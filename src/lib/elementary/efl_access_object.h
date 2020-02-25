@@ -78,7 +78,7 @@ efl_access_attribute_free(Efl_Access_Attribute *attr);
  * Emits Accessible 'PropertyChanged' signal for 'Value' property.
  */
 #define efl_access_value_changed_signal_emit(obj) \
-   efl_access_object_event_emit(obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "value");
+   efl_access_object_event_emit(obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "value"); 
 
 /**
  * Emits Accessible 'ChildrenChanged' signal with added child as argument.

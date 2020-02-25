@@ -2151,6 +2151,11 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
      {
         ret = _icon_standard_set(obj, name);
         if (ret && fdo) *fdo = EINA_FALSE;
+        if (!ret)
+          {
+             ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
+             if (ret && fdo) *fdo = EINA_TRUE;
+          }
      }
    else
      {
@@ -2415,7 +2420,7 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
-   _efl_ui_image_file_set_do(obj);
+   efl_file_unload(obj);
 
    evas_object_image_memfile_set
      (sd->img, (void *)img, size, (char *)format, (char *)key);

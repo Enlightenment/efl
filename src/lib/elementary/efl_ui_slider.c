@@ -4,7 +4,6 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -37,7 +36,7 @@ _delay_change(void *data)
    efl_event_callback_call(data, EFL_UI_RANGE_EVENT_STEADY, NULL);
 
    if (_elm_config->atspi_mode)
-     efl_access_value_changed_signal_emit(data);
+     efl_access_object_event_emit(data, EFL_UI_RANGE_EVENT_CHANGED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -76,7 +75,7 @@ _emit_events(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    // emit accessibility event also if value was changed by API
    if (_elm_config->atspi_mode)
-     efl_access_value_changed_signal_emit(obj);
+     efl_access_object_event_emit(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -794,45 +793,6 @@ _efl_ui_slider_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *
 }
 
 // A11Y Accessibility
-
-EOLIAN static void
-_efl_ui_slider_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *value, const char **text)
-{
-   if (value) *value = sd->val;
-   if (text) *text = NULL;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_slider_efl_access_value_value_and_text_set(Eo *obj, Efl_Ui_Slider_Data *sd, double value, const char *text EINA_UNUSED)
-{
-   if (value < sd->val_min) value = sd->val_min;
-   if (value > sd->val_max) value = sd->val_max;
-
-   efl_event_callback_call(obj, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
-
-   if (fabs(value - sd->val) > DBL_EPSILON)
-     {
-        _user_value_update(obj, value);
-     }
-
-   efl_event_callback_call(obj, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_ui_slider_efl_access_value_range_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *lower, double *upper, const char **descr)
-{
-   if (lower) *lower = sd->val_min;
-   if (upper) *upper = sd->val_max;
-   if (descr) *descr = NULL;
-}
-
-EOLIAN static double
-_efl_ui_slider_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return sd->step;
-}
 
 EOLIAN const Efl_Access_Action_Data *
 _efl_ui_slider_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)

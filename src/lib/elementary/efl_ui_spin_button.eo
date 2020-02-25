@@ -71,9 +71,6 @@ class Efl.Ui.Spin_Button extends Efl.Ui.Spin
       Efl.Ui.Range_Display.range_value { set; }
       Efl.Ui.Layout_Orientable.orientation { get; set; }
       Efl.Access.Object.i18n_name { get; }
-      Efl.Access.Value.value_and_text { get; set; }
-      Efl.Access.Value.range { get; }
-      Efl.Access.Value.increment { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Format.apply_formatted_value;
       Efl.Ui.Range_Interactive.range_step { get; set; }
