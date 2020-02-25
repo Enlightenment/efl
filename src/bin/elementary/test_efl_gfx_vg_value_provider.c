@@ -148,7 +148,7 @@ btn_clicked_cb(void *data , const Efl_Event *ev )
         char new_path[255], new_type[255], new_values[255];
         if (add_value_provider(new_path, new_type, new_values))
           {
-             char buf[255];
+             char buf[765];
              //TODO: Even if there is the same path as the existing item, it is added without updating.
              //      In efl_ui_vg_animation, duplicate paths are managed.
              //      However, animator (lottie) does not have an implementation that manages overridden values.
@@ -169,7 +169,7 @@ btn_clicked_cb(void *data , const Efl_Event *ev )
                           }
                     }
                }*/
-             sprintf(buf, "%s/%s/%s", new_path, new_type, new_values);
+             snprintf(buf, sizeof(buf), "%s/%s/%s", new_path, new_type, new_values);
              list_it = elm_list_item_append(list, buf, NULL, NULL, NULL, NULL);
              elm_list_item_bring_in(list_it);
              elm_list_go(list);
