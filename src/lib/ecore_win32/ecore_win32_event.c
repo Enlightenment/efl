@@ -9,6 +9,7 @@
 #undef WIN32_LEAN_AND_MEAN
 #include <windowsx.h>
 
+#include <evil_private.h> /* evil_utf16_to_utf8() */
 #include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Input.h>
@@ -41,32 +42,6 @@ static int                  _ecore_win32_mouse_up_count = 0;
 static Ecore_Win32_Key_Mask _ecore_win32_key_mask = 0;
 static Eina_Bool            _ecore_win32_ctrl_fake = EINA_FALSE;
 static Eina_Bool            _ecore_win32_clipboard_has_data = EINA_FALSE;
-
-static char *
-_ecore_win32_utf16_to_utf8(const wchar_t *text)
-{
-   char *res;
-   int size;
-
-   /* text is used as an array, hence never NULL */
-
-   size = WideCharToMultiByte(CP_UTF8, 0, text, -1, NULL, 0, NULL, NULL);
-   if (size == 0)
-     return NULL;
-
-   res = (char *)malloc(size * sizeof(char));
-   if (!res)
-     return NULL;
-
-   size = WideCharToMultiByte(CP_UTF8, 0, text, -1, res, size, NULL, NULL);
-   if (size == 0)
-     {
-        free(res);
-        return NULL;
-     }
-
-   return res;
-}
 
 static unsigned int
 _ecore_win32_modifiers_get(void)
@@ -1202,13 +1177,13 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
            if (res == -1)
              {
                 /* dead key, but managed like normal key */
-                compose = _ecore_win32_utf16_to_utf8(buf);
+                compose = evil_utf16_to_utf8(buf);
              }
            else if (res == 0)
              {
                 INF("No translatable character found, skipping");
                 if (msg->window_param >= 0x30 && msg->window_param <= 0x39)
-                  compose = _ecore_win32_utf16_to_utf8(buf);
+                  compose = evil_utf16_to_utf8(buf);
                 /* otherwise, compose is NULL */
              }
            else if (res >= 2)
@@ -1222,11 +1197,11 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                                 MapVirtualKey(msg->window_param, MAPVK_VK_TO_CHAR),
                                 kbd_state, buf, 4, 0);
                 if (!((res != 1) && (res != -1)))
-                  compose = _ecore_win32_utf16_to_utf8(buf);
+                  compose = evil_utf16_to_utf8(buf);
                 /* otherwise, compose is NULL */
              }
            else /* res == 1 : 1 char written to buf */
-             compose = _ecore_win32_utf16_to_utf8(buf);
+             compose = evil_utf16_to_utf8(buf);
 
            /*** key field ***/
 

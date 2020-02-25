@@ -107,6 +107,34 @@ evil_utf16_to_utf8(const wchar_t *text16)
    return text8;
 }
 
+wchar_t *
+evil_utf8_to_utf16(const char *text)
+{
+   wchar_t *text16;
+   DWORD flag = MB_ERR_INVALID_CHARS;
+   int size16;
+
+   if (!text)
+     return NULL;
+
+   size16 = MultiByteToWideChar(CP_UTF8, flag, text, -1, NULL, 0);
+   if (size16 == 0)
+     {
+        _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
+
+   text16 = malloc(size16 * sizeof(wchar_t));
+   if (text16)
+     if (!MultiByteToWideChar(CP_UTF8, flag, text, -1, text16, size16))
+     {
+        _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
+
+   return text16;
+}
+
 const char *
 evil_format_message(long err)
 {
