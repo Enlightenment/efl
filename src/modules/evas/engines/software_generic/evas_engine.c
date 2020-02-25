@@ -5517,7 +5517,11 @@ evgl_glShaderSource(GLuint shader, GLsizei count, const char* const* string, con
    char **s = malloc(count * sizeof(char*));
    if (!s) goto err;
    GLint *l = malloc(count * sizeof(GLint));
-   if (!l) goto err;
+   if (!l)
+     {
+        free(s);
+        goto err;
+     }
 
    memset(s, 0, count * sizeof(char*));
    memset(l, 0, count * sizeof(GLint));
