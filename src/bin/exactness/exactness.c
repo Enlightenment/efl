@@ -401,6 +401,7 @@ _list_file_load(const char *filename)
               List_Entry);
      }
 
+   fclose(file);
    return ret;
 }
 
