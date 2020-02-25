@@ -273,7 +273,8 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
    char string[2] = { 0, 0 };
    const char *keyname = NULL;
    const char *key = NULL;
-   const char *compose = NULL;
+   char *compose = NULL;
+   unsigned char free_compose = 0;
 
    switch (msg->window_param)
      {
@@ -1178,12 +1179,16 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
              {
                 /* dead key, but managed like normal key */
                 compose = evil_utf16_to_utf8(buf);
+                free_compose = 1;
              }
            else if (res == 0)
              {
                 INF("No translatable character found, skipping");
                 if (msg->window_param >= 0x30 && msg->window_param <= 0x39)
-                  compose = evil_utf16_to_utf8(buf);
+                  {
+                     compose = evil_utf16_to_utf8(buf);
+                     free_compose = 1;
+                  }
                 /* otherwise, compose is NULL */
              }
            else if (res >= 2)
@@ -1197,11 +1202,17 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                                 MapVirtualKey(msg->window_param, MAPVK_VK_TO_CHAR),
                                 kbd_state, buf, 4, 0);
                 if (!((res != 1) && (res != -1)))
-                  compose = evil_utf16_to_utf8(buf);
+                  {
+                     compose = evil_utf16_to_utf8(buf);
+                     free_compose = 1;
+                  }
                 /* otherwise, compose is NULL */
              }
            else /* res == 1 : 1 char written to buf */
-             compose = evil_utf16_to_utf8(buf);
+             {
+                compose = evil_utf16_to_utf8(buf);
+                free_compose = 1;
+             }
 
            /*** key field ***/
 
@@ -1214,7 +1225,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                 _ecore_win32_modifiers_ctrl_save(kbd_state, &modifiers_save);
 
                 if (!SetKeyboardState(kbd_state))
-                  return NULL;
+                  goto _free_compose;
              }
 
            is_dead_key = EINA_FALSE;
@@ -1246,7 +1257,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                 if (res == -1)
                   is_dead_key = EINA_TRUE;
                 if ((res != 1) && (res != -1))
-                  return NULL;
+                  goto _free_compose;
              }
 
            if (is_dead_key)
@@ -1264,13 +1275,13 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                 _ecore_win32_modifiers_ctrl_restore(kbd_state, modifiers_save);
 
                 if (!SetKeyboardState(kbd_state))
-                  return NULL;
+                  goto _free_compose;
              }
 
            if (!key)
              {
                 WRN("no keysym found for keycode %d\n", string[0]);
-                return NULL;
+                goto _free_compose;
              }
 
            /*** keyname field ***/
@@ -1284,7 +1295,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
            _ecore_win32_modifiers_win_save(kbd_state, &modifiers_save);
 
            if (!SetKeyboardState(kbd_state))
-             return NULL;
+             goto _free_compose;
 
            is_dead_key = EINA_FALSE;
            res = ToUnicode(msg->window_param,
@@ -1317,7 +1328,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                 if (res == -1)
                   is_dead_key = EINA_TRUE;
                 if ((res != 1) && (res != -1))
-                  return NULL;
+                  goto _free_compose;
              }
 
            if (is_dead_key)
@@ -1336,25 +1347,25 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
            _ecore_win32_modifiers_win_restore(kbd_state, modifiers_save);
 
            if (!SetKeyboardState(kbd_state))
-             return NULL;
+             goto _free_compose;
 
            if (!keyname)
              {
                 WRN("no keysym found for keycode %d\n", string[0]);
-                return NULL;
+                goto _free_compose;
              }
         }
      }
 
    if (!keyname || !key)
-     return NULL;
+     goto _free_compose;
 
    e = (Ecore_Event_Key *)calloc(1, sizeof(Ecore_Event_Key) +
                                  strlen(keyname) + 1 +
                                  strlen(key) + 1 +
                                  (compose ? strlen(compose) : 0) + 1);
    if (!e)
-     return NULL;
+     goto _free_compose;
 
    e->keyname = (char *)(e + 1);
    e->key = e->keyname + strlen(keyname) + 1;
@@ -1368,11 +1379,17 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
    if (compose)
      {
         memcpy((char *)e->compose, compose, strlen(compose));
-        free(compose);
+        if (free_compose)
+          free(compose);
      }
 
 
    return e;
+
+ _free_compose:
+   if (free_compose)
+     free(compose);
+   return NULL;
 }
 
 /***** Global functions definitions *****/
