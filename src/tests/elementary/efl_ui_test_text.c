@@ -264,6 +264,26 @@ EFL_START_TEST(text_keys_handler)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_editable)
+{
+   Eo *txt, *win;
+   win = win_add();
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_text_font_size_set(txt, 100);
+   efl_text_font_family_set(txt, "Arial");
+   efl_text_interactive_editable_set(txt, !efl_text_interactive_editable_get(txt));
+   ck_assert_int_eq(efl_text_font_size_get(txt), 100);
+   ck_assert_str_eq(efl_text_font_family_get(txt), "Arial");
+
+   efl_ui_widget_disabled_set(txt, EINA_TRUE);
+   ck_assert_int_eq(efl_text_font_size_get(txt), 100);
+   ck_assert_str_eq(efl_text_font_family_get(txt), "Arial");
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
@@ -273,4 +293,5 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_scroll_mode);
    tcase_add_test(tc, text_change_event);
    tcase_add_test(tc, text_keys_handler);
+   tcase_add_test(tc, text_editable);
 }

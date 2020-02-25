@@ -631,7 +631,8 @@ _efl_ui_textbox_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textbox_Data *sd)
         efl_content_set(efl_part(sd->entry_edje, "efl.text"), sd->text_table);
      }
 
-   _create_text_cursors(obj, sd);
+   if (!sd->cursor && !sd->cursor_bidi)
+     _create_text_cursors(obj, sd);
 
    return theme_apply;
 }
@@ -1593,11 +1594,17 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    // Main Text
    // font_set
-   font_name = efl_layout_group_data_get(wd->resize_obj, "font.name");
-   font_size = efl_layout_group_data_get(wd->resize_obj, "font.size");
-   font_size_n = font_size ? atoi(font_size) : 0;
-   efl_text_font_family_set(sd->text_obj, font_name);
-   efl_text_font_size_set(sd->text_obj, font_size_n);
+   if (!efl_text_font_family_get(sd->text_obj))
+     {
+        font_name = efl_layout_group_data_get(wd->resize_obj, "font.name");
+        efl_text_font_family_set(sd->text_obj, font_name);
+     }
+   if (!efl_text_font_size_get(sd->text_obj))
+     {
+        font_size = efl_layout_group_data_get(wd->resize_obj, "font.size");
+        font_size_n = font_size ? atoi(font_size) : 0;
+        efl_text_font_size_set(sd->text_obj, font_size_n);
+     }
 
    // color
    if (disabled)
@@ -1610,11 +1617,17 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
      }
 
    // Guide Text
-   font_name = efl_layout_group_data_get(wd->resize_obj, "guide.font.name");
-   font_size = efl_layout_group_data_get(wd->resize_obj, "guide.font.size");
-   font_size_n = font_size ? atoi(font_size) : 0;
-   efl_text_font_family_set(sd->text_guide_obj, font_name);
-   efl_text_font_size_set(sd->text_guide_obj, font_size_n);
+   if (!efl_text_font_family_get(sd->text_guide_obj))
+     {
+        font_name = efl_layout_group_data_get(wd->resize_obj, "guide.font.name");
+        efl_text_font_family_set(sd->text_guide_obj, font_name);
+     }
+   if (!efl_text_font_size_get(sd->text_guide_obj))
+     {
+        font_size = efl_layout_group_data_get(wd->resize_obj, "guide.font.size");
+        font_size_n = font_size ? atoi(font_size) : 0;
+        efl_text_font_size_set(sd->text_guide_obj, font_size_n);
+     }
 
    colorcode = NULL;
    // color
@@ -1796,8 +1809,6 @@ _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, E
         efl_input_text_input_content_type_set(obj, ((efl_input_text_input_content_type_get(obj) | EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE) & ~EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA));
         efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
-
-   efl_ui_widget_theme_apply(obj);
 }
 
 static void
@@ -1856,7 +1867,6 @@ _efl_ui_textbox_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Textbox_Data *
 
    efl_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
 
-   efl_ui_widget_theme_apply(obj);
    efl_ui_widget_focus_allow_set(obj, editable);
 
    if (editable)
