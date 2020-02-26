@@ -394,7 +394,8 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE
    };
 
-   ecore_evas_init();
+   if (!ecore_evas_init())
+      return EXIT_FAILURE;
 
    opt_args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (opt_args < 0)
