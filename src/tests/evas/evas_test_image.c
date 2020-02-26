@@ -1194,8 +1194,11 @@ EFL_START_TEST(evas_object_image_load_head_skip)
    evas_object_image_preload(obj, EINA_FALSE);
 
    ck_assert(!efl_file_mmap_get(obj));
+   ck_assert(!efl_file_loaded_get(obj));
    ecore_main_loop_begin();
    ck_assert_int_eq(called, 1);
+   ck_assert(efl_file_loaded_get(obj));
+   ck_assert(efl_file_mmap_get(obj));
 
    evas_free(e);
 }
