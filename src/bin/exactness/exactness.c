@@ -184,7 +184,11 @@ _run_test_compare(const List_Entry *ent)
           {
              char *currentdir;
              sprintf(origdir, "%s/%s/%s", _dest_dir, CURRENT_SUBDIR, ORIG_SUBDIR);
-             mkdir(origdir, 0744);
+             if (mkdir(origdir, 0744) < 0)
+               {
+                  fprintf(stderr, "Failed to create dir %s\n", origdir);
+                  return;
+               }
              _exu_imgs_unpack(path, origdir, ent->name);
              sprintf(path, "%s/%s/%s.exu", _dest_dir, CURRENT_SUBDIR, ent->name);
              currentdir = alloca(strlen(_dest_dir) + 20);
@@ -561,7 +565,12 @@ main(int argc, char *argv[])
              ret = 1;
              goto end;
           }
-        mkdir(tmp, 0744);
+        if (mkdir(tmp, 0744) < 0)
+          {
+             fprintf(stderr, "Failed to create dir %s", tmp);
+             ret = 1;
+             goto end;
+          }
      }
    else if (mode_init)
      {
@@ -573,7 +582,12 @@ main(int argc, char *argv[])
              ret = 1;
              goto end;
           }
-        mkdir(tmp, 0744);
+        if (mkdir(tmp, 0744) < 0)
+          {
+             fprintf(stderr, "Failed to create dir %s", tmp);
+             ret = 1;
+             goto end;
+          }
      }
    else if (mode_simulation)
      {
