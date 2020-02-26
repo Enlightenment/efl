@@ -168,7 +168,7 @@ _is_hook_duplicate(const Exactness_Action *cur_act, const Exactness_Action *prev
 static Eina_Bool
 _are_scenario_entries_different(Exactness_Action *act1, Exactness_Action *act2)
 {
-   if (!act1 ^ !act2) return EINA_TRUE;
+   if (!act1 || !act2) return EINA_TRUE;
    if (act1->type != act2->type) return EINA_TRUE;
    switch(act1->type)
      {
@@ -207,7 +207,7 @@ _are_images_different(Exactness_Image *e_img1, Exactness_Image *e_img2)
    unsigned int w, h;
    int *pxs1 = NULL;
    int *pxs2 = NULL;
-   if (!e_img1 ^ !e_img2) return EINA_TRUE;
+   if (!e_img1 || !e_img2) return EINA_TRUE;
    if (e_img1->w != e_img2->w) return EINA_TRUE;
    if (e_img1->h != e_img2->h) return EINA_TRUE;
    pxs1 = e_img1->pixels;
@@ -226,7 +226,7 @@ _are_images_different(Exactness_Image *e_img1, Exactness_Image *e_img2)
 static Eina_Bool
 _are_objs_different(Exactness_Object *e_obj1, Exactness_Object *e_obj2, Eina_Bool check_objs)
 {
-   if (!e_obj1 ^ !e_obj2) return EINA_TRUE;
+   if (!e_obj1 || !e_obj2) return EINA_TRUE;
    Eina_List *itr1 = e_obj1->children;
    Eina_List *itr2 = e_obj2->children;
    if (check_objs &&
@@ -250,7 +250,7 @@ _are_objs_different(Exactness_Object *e_obj1, Exactness_Object *e_obj2, Eina_Boo
 static Eina_Bool
 _are_objs_trees_different(Exactness_Objects *e_objs1, Exactness_Objects *e_objs2)
 {
-   if (!e_objs1 ^ !e_objs2) return EINA_TRUE;
+   if (!e_objs1 || !e_objs2) return EINA_TRUE;
    Eina_List *itr1 = e_objs1->objs;
    Eina_List *itr2 = e_objs2->objs;
    Exactness_Object *e_obj1, *e_obj2;
@@ -325,7 +325,7 @@ _grp_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
                    Eo *gl2 = eina_list_nth(_gls, 1);
                    Exactness_Unit *unit1 = efl_key_data_get(gl1, "unit");
                    Exactness_Unit *unit2 = efl_key_data_get(gl2, "unit");
-                   if (!!unit1->fonts_path ^ !!unit2->fonts_path)
+                   if (!!unit1->fonts_path || !!unit2->fonts_path)
                       sprintf(buf2, "Fonts directory comparison: XXXXX");
                    else if (!strcmp(unit1->fonts_path, unit2->fonts_path))
                       sprintf(buf2, "Fonts directory comparison: %s", unit1->fonts_path);
@@ -356,7 +356,7 @@ _scn_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
         Exactness_Action *a1 = vv->p1;
         Exactness_Action *a2 = vv->p2;
 
-        if (!a1 ^ !a2)
+        if (!a1 || !a2)
 	  {
              eina_strbuf_free(buf);
              return strdup("XXXXX");
