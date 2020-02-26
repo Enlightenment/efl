@@ -760,6 +760,7 @@ pinch_object(Eo *obj, int x, int y, int x2, int y2, int dx, int dy, int dx2, int
 {
    Evas *e = evas_object_evas_get(obj);
    int i, idx, idy, idx2, idy2;
+   idx = idy = idx2 = idy2 = 0;
    evas_event_feed_multi_down(e, 0, x, y, 1, 1, 1, 1, 0, x, y, 0, ts, NULL);
    evas_event_feed_multi_down(e, 1, x2, y2, 1, 1, 1, 1, 0, x2, y2, 0, ts++, NULL);
    for (i = 1; i < abs(dx); i++)
