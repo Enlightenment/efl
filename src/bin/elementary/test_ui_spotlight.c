@@ -849,7 +849,7 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
                           Evas_Object *obj EINA_UNUSED,
                           void *event_info EINA_UNUSED)
 {
-   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view;
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view = NULL;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
@@ -945,7 +945,7 @@ test_ui_spotlight_plain(void *data EINA_UNUSED,
                           Evas_Object *obj EINA_UNUSED,
                           void *event_info EINA_UNUSED)
 {
-   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view;
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view = NULL;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
@@ -1039,7 +1039,7 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
                            Evas_Object *obj EINA_UNUSED,
                            void *event_info EINA_UNUSED)
 {
-   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view;
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view = NULL;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
