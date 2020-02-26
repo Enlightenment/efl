@@ -1357,7 +1357,7 @@ _indi_default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 
    if (type != EINA_VALUE_TYPE_DOUBLE) return EINA_FALSE;
 
-   eina_value_get(&value, &v);
+   if (!eina_value_get(&value, &v)) return EINA_FALSE;
    eina_strbuf_append_printf(str, sd->indi_template, v);
 
    return EINA_TRUE;
