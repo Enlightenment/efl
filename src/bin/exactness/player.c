@@ -953,7 +953,7 @@ _prg_full_path_guess(const char *prg)
 {
    char full_path[PATH_];
    if (strchr(prg, '/')) return eina_stringshare_add(prg);
-   char *env_path = strdup(getenv("PATH"));
+   char *env_path = eina_strdup(getenv("PATH"));
    Eina_Stringshare *ret = NULL;
    char *paths = env_path;
 
