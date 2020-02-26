@@ -94,18 +94,21 @@ _image_load(const char *filename)
    return ex_img;
 }
 
-static void
+static Eina_Bool
 _image_save(Exactness_Image *ex_img, const char *output)
 {
    Ecore_Evas *ee;
    Eo *e, *img;
+   Eina_Bool ret = EINA_TRUE;
    ee = ecore_evas_new(NULL, 0, 0, 100, 100, NULL);
    e = ecore_evas_get(ee);
    img = evas_object_image_add(e);
    evas_object_image_size_set(img, ex_img->w, ex_img->h);
    evas_object_image_data_set(img, ex_img->pixels);
-   evas_object_image_save(img, output, NULL, NULL);
+   if (!evas_object_image_save(img, output, NULL, NULL))
+      ret = EINA_FALSE;
    ecore_evas_free(ee);
+   return ret;
 }
 
 static Eina_Bool
@@ -125,10 +128,12 @@ _file_compare(const char *orig_dir, const char *ent_name)
      {
         char *buf = alloca(strlen(_dest_dir) + strlen(ent_name));
         sprintf(buf, "%s/%s/comp_%s", _dest_dir, CURRENT_SUBDIR, ent_name);
-        _image_save(imgO, buf);
+        if (!_image_save(imgO, buf))
+          goto cleanup;
         _compare_errors = eina_list_append(_compare_errors, strdup(ent_name));
         result = EINA_TRUE;
      }
+cleanup:
    exactness_image_free(img1);
    exactness_image_free(img2);
    exactness_image_free(imgO);
