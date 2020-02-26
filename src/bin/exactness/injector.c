@@ -175,6 +175,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               STORE_INT(tmp, t->direction);
               STORE_INT(tmp, t->z);
               eina_debug_session_send(_session, _cid, _mouse_wheel_op, buf, len);
+              free(buf);
               break;
            }
       case EXACTNESS_ACTION_MULTI_DOWN:
@@ -202,6 +203,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               eina_debug_session_send(_session, _cid,
                     type == EXACTNESS_ACTION_MULTI_DOWN ? _multi_down_op : _multi_up_op,
                     buf, len);
+              free(buf);
               break;
            }
       case EXACTNESS_ACTION_MULTI_MOVE:
@@ -222,6 +224,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               STORE_DOUBLE(tmp, t->fx);
               STORE_DOUBLE(tmp, t->fy);
               eina_debug_session_send(_session, _cid, _multi_move_op, buf, len);
+              free(buf);
               break;
            }
       case EXACTNESS_ACTION_KEY_DOWN:
@@ -246,6 +249,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               eina_debug_session_send(_session, _cid,
                     type == EXACTNESS_ACTION_KEY_DOWN ? _key_down_op : _key_up_op,
                     buf, len);
+              free(buf);
               break;
            }
       case EXACTNESS_ACTION_TAKE_SHOT:
@@ -265,6 +269,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               STORE_STRING(tmp, t->wdg_name);
               STORE_STRING(tmp, t->event_name);
               eina_debug_session_send(_session, _cid, _efl_event_op, buf, len);
+              free(buf);
               break;
            }
       case EXACTNESS_ACTION_CLICK_ON:
@@ -276,6 +281,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               _printf(2, "%s %s\n", __func__, "Click On");
               STORE_STRING(tmp, t->wdg_name);
               eina_debug_session_send(_session, _cid, _click_on_op, buf, len);
+              free(buf);
               break;
            }
       case EXACTNESS_ACTION_STABILIZE:

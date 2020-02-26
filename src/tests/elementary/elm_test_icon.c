@@ -41,8 +41,34 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_test_icon_set)
+{
+   Evas_Object *win, *image;
+   Eina_Bool ok;
+   const char *icon_name;
+
+   win = win_add(NULL, "icon", ELM_WIN_BASIC);
+
+   image = elm_icon_add(win);
+   evas_object_show(image);
+
+   ok = elm_icon_standard_set(image, "folder");
+   ck_assert(ok);
+   icon_name = elm_icon_standard_get(image);
+   ck_assert_str_eq(icon_name, "folder");
+
+   ok = elm_icon_standard_set(image, "None");
+   ck_assert(ok == 0);
+   icon_name = elm_icon_standard_get(image);
+   /* elm_icon only changes internal name on success */
+   ck_assert_str_eq(icon_name, "folder");
+
+}
+EFL_END_TEST
+
 void elm_test_icon(TCase *tc)
 {
    tcase_add_test(tc, elm_icon_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_test_icon_set);
 }

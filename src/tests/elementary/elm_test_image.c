@@ -18,6 +18,34 @@ struct _Test_Data
    int success;
 };
 
+static int
+_file_to_memory(const char *filename, char **result)
+{
+   int size;
+   FILE *f;
+
+   f = fopen(filename, "rb");
+   if (f == NULL)
+     {
+        *result = NULL;
+        return -1;
+     }
+
+   fseek(f, 0, SEEK_END);
+   size = ftell(f);
+   fseek(f, 0, SEEK_SET);
+   *result = (char *)malloc(size + 1);
+   if ((size_t)size != fread(*result, sizeof(char), size, f))
+     {
+        free(*result);
+        fclose(f);
+        return -1;
+     }
+   fclose(f);
+   (*result)[size] = 0;
+   return size;
+}
+
 EFL_START_TEST(elm_image_legacy_type_check)
 {
    Evas_Object *win, *image;
@@ -227,27 +255,25 @@ EFL_START_TEST(elm_image_evas_image_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_ui_image_icon)
+EFL_START_TEST(elm_image_test_memfile_set)
 {
    Evas_Object *win, *image;
-   Eina_Bool ok;
-   const char *icon_name;
+   char *mem;
+   int size;
+   const char *file = NULL;
 
    win = win_add(NULL, "image", ELM_WIN_BASIC);
 
-   image = efl_add(EFL_UI_IMAGE_CLASS, win);
-   evas_object_show(image);
-
-   ok = efl_ui_image_icon_set(image, "folder");
-   ck_assert(ok);
-   icon_name = efl_ui_image_icon_get(image);
-   ck_assert_str_eq(icon_name, "folder");
-
-   ok = efl_ui_image_icon_set(image, "None");
-   ck_assert(ok == 0);
-   icon_name = efl_ui_image_icon_get(image);
-   ck_assert(icon_name == NULL);
-
+   image = elm_image_add(win);
+   ck_assert(elm_image_file_set(image, ELM_IMAGE_DATA_DIR"/images/icon_01.png", NULL));
+   size = _file_to_memory(ELM_IMAGE_DATA_DIR"/images/icon_02.png", &mem);
+   ck_assert_int_ge(size, 0);
+   ck_assert(elm_image_memfile_set(image, mem, size, "png", NULL));
+   elm_image_file_get(image, &file, NULL);
+   ck_assert_str_ne(file, ELM_IMAGE_DATA_DIR"/images/icon_01.png");
+   ck_assert(elm_image_file_set(image, ELM_IMAGE_DATA_DIR"/images/icon_01.png", NULL));
+   elm_image_file_get(image, &file, NULL);
+   ck_assert_str_eq(file, ELM_IMAGE_DATA_DIR"/images/icon_01.png");
 }
 EFL_END_TEST
 
@@ -259,5 +285,5 @@ void elm_test_image(TCase *tc)
    tcase_add_test(tc, elm_image_async_mmap);
    tcase_add_test(tc, elm_image_evas_object_color_set);
    tcase_add_test(tc, elm_image_evas_image_get);
-   tcase_add_test(tc, efl_ui_image_icon);
+   tcase_add_test(tc, elm_image_test_memfile_set);
 }

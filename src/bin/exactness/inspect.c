@@ -357,7 +357,11 @@ _scn_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
         Exactness_Action *a1 = vv->p1;
         Exactness_Action *a2 = vv->p2;
 
-        if (!a1 ^ !a2) return strdup("XXXXX");
+        if (!a1 ^ !a2)
+	  {
+             eina_strbuf_free(buf);
+             return strdup("XXXXX");
+	  }
 
         if (a1->delay_ms != a2->delay_ms) eina_strbuf_append_printf(buf, "[+"LDIFF(%.3f)"/+"RDIFF(%.3f)"]: ", a1->delay_ms/1000.0, a2->delay_ms/1000.0);
         else eina_strbuf_append_printf(buf, "+%.3f: ", a1->delay_ms / 1000.0);
@@ -501,6 +505,7 @@ _scn_content_get(void *data, Evas_Object *gl, const char *part)
                      evas_object_image_data_set(evas_img, ex_imgO->pixels);
                      evas_object_show(ic);
                      elm_object_part_content_set(bt, "icon", ic);
+                     exactness_image_free(ex_imgO);
                      return bt;
                   }
              }
@@ -559,6 +564,7 @@ _img_content_get(void *data, Evas_Object *gl, const char *part)
         evas_object_image_size_set(evas_img, ex_imgO->w, ex_imgO->h);
         evas_object_image_data_set(evas_img, ex_imgO->pixels);
         evas_object_size_hint_min_set(img, ELM_SCALE_SIZE(300), ELM_SCALE_SIZE(300));
+        exactness_image_free(ex_imgO);
      }
    else
      {

@@ -2400,7 +2400,8 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 EAPI void
 elm_image_file_get(const Eo *obj, const char **file, const char **group)
 {
-   efl_file_simple_get((Eo *) obj, file, group);
+   EFL_UI_IMAGE_DATA_GET(obj, sd);
+   efl_file_simple_get(sd->img, file, group);
 }
 
 EAPI Eina_Bool
