@@ -341,7 +341,6 @@ _grp_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
       default: { str = "Unknown"; break; }
      }
    sprintf(buf, "%s%s", str, compare ? " comparison" : "");
-   if (dt == EX_FONTS_DIR) eina_stringshare_del(str);
    return strdup(buf);
 }
 
