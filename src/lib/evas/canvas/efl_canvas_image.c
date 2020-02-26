@@ -68,6 +68,24 @@ _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
    return EINA_TRUE;
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_image_efl_file_loaded_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->skip_head)
+     return efl_file_loaded_get(efl_super(eo_obj, MY_CLASS));
+   return !!o->cur->f;
+}
+
+EOLIAN static const Eina_File *
+_efl_canvas_image_efl_file_mmap_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->skip_head)
+     return efl_file_mmap_get(efl_super(eo_obj, MY_CLASS));
+   return o->cur->f;
+}
+
 EOLIAN static Eina_Error
 _efl_canvas_image_efl_file_load(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
