@@ -386,6 +386,8 @@ _evas_cache_image_preloaded_notify(Image_Entry *ie)
         ie->targets = (Evas_Cache_Target *)
           eina_inlist_remove(EINA_INLIST_GET(ie->targets),
                              EINA_INLIST_GET(ie->targets));
+        if (ie->load_opts.skip_head && !tmp->delete_me && !tmp->preload_cancel)
+          _evas_image_preload_update((void*)tmp->target, ie->f);
         if (!tmp->delete_me && tmp->preloaded_cb)
           tmp->preloaded_cb(tmp->preloaded_data);
         if (!tmp->preload_cancel)

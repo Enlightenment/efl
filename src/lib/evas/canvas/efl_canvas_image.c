@@ -19,6 +19,19 @@ _evas_image_file_unload(Eo *eo_obj)
    _evas_image_done_set(eo_obj, obj, o);
    o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 }
+
+void
+_evas_image_preload_update(Eo *eo_obj, Eina_File *f)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (o->cur->f) return;
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, cur)
+   {
+      cur->f = eina_file_dup(f);
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, cur)
+}
+
 Eina_Bool
 _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
 {

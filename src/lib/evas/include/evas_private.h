@@ -1891,7 +1891,7 @@ EAPI const char *_evas_module_libdir_get(void);
 const char *_evas_module_datadir_get(void);
 EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
 EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
-
+void _evas_image_preload_update(Eo *eo_obj, Eina_File *f);
 Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
                              void *context, void *output, void *surface,
