@@ -4739,7 +4739,11 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
                        char *itr = NULL;
                        size_t len = eina_unicode_utf8_get_len(plain_text);
                        char *u_text = (char *)malloc(len * sizeof(char) + 1);
-                       if (!u_text) return EINA_FALSE;
+                       if (!u_text)
+                         {
+                            free(plain_text);
+                            return EINA_FALSE;
+                         }
 
                        itr = u_text;
                        while (eina_unicode_utf8_next_get(plain_text, &idx))
