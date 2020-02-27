@@ -240,6 +240,7 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    evas_model_load_vertex_data_unmap(mesh, 0, header);
    evas_model_load_aabb_add_to_frame(mesh, 0, stride);
 
+   free(split_of_map[0]);
    free(split_of_map);
    if (map)
      {
