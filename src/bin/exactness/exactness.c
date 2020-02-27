@@ -489,7 +489,9 @@ main(int argc, char *argv[])
      ECORE_GETOPT_VALUE_NONE
    };
 
-   ecore_evas_init();
+   if (!ecore_evas_init())
+      return EXIT_FAILURE;
+
    _dest_dir = "./";
    _scan_objs = scan_objs;
 

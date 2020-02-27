@@ -954,8 +954,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                      case EDJE_PART_TYPE_VECTOR:
                        rp->type = EDJE_RP_TYPE_VECTOR;
                        rp->typedata.vector = calloc(1, sizeof(Edje_Real_Part_Vector));
-                       if (!rp->typedata.vector) memerr = EINA_TRUE;
-                       rp->typedata.vector->current_id = -1;
+                       if (!rp->typedata.vector)
+                         memerr = EINA_TRUE;
+                       else
+                         rp->typedata.vector->current_id = -1;
                        break;
 
                      default:
