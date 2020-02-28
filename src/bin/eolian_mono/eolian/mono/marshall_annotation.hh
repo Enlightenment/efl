@@ -28,8 +28,9 @@ namespace eolian_mono {
 namespace eina = efl::eina;
 
 namespace detail {
-  
+
 template <typename OutputIterator, typename Context>
+
 struct marshall_annotation_visitor_generate
 {
    mutable OutputIterator sink;
@@ -41,7 +42,7 @@ struct marshall_annotation_visitor_generate
 
    typedef marshall_type_visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
-  
+
    bool operator()(attributes::regular_type_def const& regular) const
    {
       using attributes::regular_type_def;
@@ -60,7 +61,13 @@ struct marshall_annotation_visitor_generate
           {"string", true, [] {
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))";
           }},
-          {"string", false, [] {
+          {"string", false, [this] {
+                auto is_native_to_managed = false;
+                if constexpr (efl::eolian::grammar::tag_check<direction_context, Context>::value)
+                    is_native_to_managed = context_find_tag<direction_context>(*context).current_direction == direction_context::native_to_managed;
+
+                if((is_out || is_return) && is_native_to_managed)
+                    return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutMarshaler))";
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringKeepOwnershipMarshaler))";
           }},
           {"mstring", true, [] {
@@ -98,7 +105,13 @@ struct marshall_annotation_visitor_generate
           {"string", true, [] {
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))";
           }},
-          {"string", false, [] {
+          {"string", false, [this] {
+                auto is_native_to_managed = false;
+                if constexpr (efl::eolian::grammar::tag_check<direction_context, Context>::value)
+                    is_native_to_managed = context_find_tag<direction_context>(*context).current_direction == direction_context::native_to_managed;
+
+                if((is_out || is_return) && is_native_to_managed)
+                    return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringOutMarshaler))";
                 return "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringKeepOwnershipMarshaler))";
           }},
           {"mstring", true, [] {

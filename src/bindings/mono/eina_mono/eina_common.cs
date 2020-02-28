@@ -55,6 +55,9 @@ internal static partial class NativeCustomExportFunctions
         efl_mono_native_free_addr_get();
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_efl_unref_addr_get();
+
+    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+        eina_slstr_copy_new(string str);
 }
 
 /// <summary>Wrapper around native memory DllImport'd functions.
@@ -92,6 +95,11 @@ public static class MemoryNative
     public static IntPtr StrDup(string str)
     {
         return NativeCustomExportFunctions.efl_mono_native_strdup(str);
+    }
+
+    public static IntPtr SlstrCopyNew(string str)
+    {
+        return NativeCustomExportFunctions.eina_slstr_copy_new(str);
     }
 
     /// <summary>

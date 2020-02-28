@@ -37,7 +37,7 @@ struct compare_get_and_set_value_type
   inline bool operator () (attributes::parameter_def const& get, attributes::parameter_def const& set) const;
   inline bool operator () (attributes::type_def const& get, attributes::type_def const& set) const;
 };
-  
+
 struct compare_get_and_set_value_type_overload
 {
   template <typename T, typename U>
@@ -64,7 +64,7 @@ struct compare_get_and_set_value_type_overload
 
   typedef bool result_type;
 };
-  
+
 inline bool compare_get_and_set_value_type::operator () (attributes::parameter_def const& get, attributes::parameter_def const& set) const
 {
   return efl::eina::visit(compare_get_and_set_value_type_overload{}, get.type.original_type, set.type.original_type);
@@ -73,7 +73,7 @@ inline bool compare_get_and_set_value_type::operator () (attributes::type_def co
 {
   return efl::eina::visit(compare_get_and_set_value_type_overload{}, get.original_type, set.original_type);
 }
-  
+
 template <typename Context>
 bool property_generate_wrapper_both_check(attributes::property_def const& property, Context const& context)
 {
@@ -87,7 +87,7 @@ bool property_generate_wrapper_both_check(attributes::property_def const& proper
 
   if ((is_concrete || is_interface) && is_static)
     return false;
-  
+
   if (!property.getter)
     return false;
 
@@ -102,7 +102,7 @@ bool property_generate_wrapper_both_check(attributes::property_def const& proper
     else
       return false;
   }
-  
+
   return true;
 }
 
@@ -144,7 +144,7 @@ bool property_generate_wrapper_setter (attributes::property_def const& property,
 
   if (property.setter->explicit_return_type != attributes::void_)
     return false;
-  
+
   if (!property.setter->keys.empty())
     return false;
 
@@ -192,7 +192,9 @@ struct native_property_function_definition_generator
          (marshall_annotation << " " << marshall_parameter)
         ) % ", ")
         << ");\n\n")
-         .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), context))
+         .generate(sink,
+                   std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters),
+                   context_add_tag(direction_context{direction_context::native_to_managed}, context)))
         return false;
 
       // API delegate is the wrapper for the Eo methods exported from C that we will use from C#.
@@ -279,7 +281,7 @@ struct native_property_function_definition_generator
 
         if(!f.keys.empty() && !as_generator(lit("[(") << (native_argument_invocation % ", ") << ")]").generate (sink, f.keys, context))
           return false;
-           
+
         if(!as_generator
            (" = ("
             << (native_tuple_argument_invocation % ", ") << ");\n"
@@ -340,7 +342,9 @@ struct native_property_function_definition_generator
       // This is the delegate that will be passed to Eo to be called from C.
       if(!as_generator(
             indent << "private static " << f.c_name << "_delegate " << f.c_name << "_static_delegate;\n\n"
-        ).generate(sink, attributes::unused, context))
+        ).generate(sink,
+                   attributes::unused,
+                   context_add_tag(direction_context{direction_context::native_to_managed}, context)))
         return false;
     return true;
     };
@@ -377,10 +381,10 @@ template <>
 struct is_generator< ::eolian_mono::native_property_function_definition_generator> : std::true_type {};
 
 namespace type_traits {
-      
+
 template <>
 struct attributes_needed< ::eolian_mono::native_property_function_definition_generator> : std::integral_constant<int, 1> {};
-        
+
 } } } }
 
 #endif

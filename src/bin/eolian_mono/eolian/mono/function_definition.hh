@@ -47,7 +47,7 @@ struct native_function_definition_generator
 {
   attributes::klass_def const* klass;
   std::vector<attributes::property_def> properties;
-  
+
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
@@ -72,7 +72,7 @@ struct native_function_definition_generator
         if (property_generate_wrapper_setter (*it, context))
           return true;
     }
-    
+
     auto const& indent = current_indentation(context);
 
     // Delegate for the C# method we will export to EO as a method implementation.
@@ -90,7 +90,9 @@ struct native_function_definition_generator
          (marshall_annotation << " " << marshall_parameter)
         ) % ", ")
         << ");\n\n")
-       .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), context))
+       .generate(sink,
+                 std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters),
+                 context_add_tag(direction_context{direction_context::native_to_managed}, context)))
       return false;
 
     // API delegate is the wrapper for the Eo methods exported from C that we will use from C#.
@@ -186,7 +188,7 @@ struct native_function_definition_generator
                                        , f.c_name
                                        , f.parameters
                                       )
-                 , context))
+                 , context_add_tag(direction_context{direction_context::native_to_managed}, context)))
       return false;
 
     // Static functions do not need to be called from C
@@ -196,13 +198,15 @@ struct native_function_definition_generator
     // This is the delegate that will be passed to Eo to be called from C.
     if(!as_generator(
             indent << "private static " << f.c_name << "_delegate " << f.c_name << "_static_delegate;\n\n"
-        ).generate(sink, attributes::unused, context))
+        ).generate(sink,
+                   attributes::unused,
+                   context_add_tag(direction_context{direction_context::native_to_managed}, context)))
       return false;
 
     return true;
   }
 };
-  
+
 struct function_definition_generator
 {
   template <typename OutputIterator, typename Context>
@@ -232,7 +236,7 @@ struct function_definition_generator
         if (property_generate_wrapper_setter (*it, context))
           function_scope = "internal ";
     }
-    
+
     // Do not generate static function for concrete class
     if (is_concrete && f.is_static)
       return true;
@@ -402,7 +406,7 @@ struct property_wrapper_definition_generator
         return true;
       if (property.setter && !property.setter->keys.empty())
         return true;
-      
+
       if (property.getter && property.setter)
       {
         if (property.setter->values.size() != property.getter->values.size())
@@ -498,7 +502,7 @@ struct property_wrapper_definition_generator
 
       if (property.setter && property.setter->explicit_return_type.c_type == "Eina_Success_Flag")
           set_has_return_error = true;
-      
+
       if (parameters.size() == 1)
       {
         if (!as_generator(
@@ -674,7 +678,7 @@ struct attributes_needed< ::eolian_mono::property_wrapper_definition_generator> 
 template <>
 struct attributes_needed< ::eolian_mono::property_wrapper_definition_parameterized> : std::integral_constant<int, 1> {};
 }
-      
+
 } } }
 
 #endif

@@ -1508,6 +1508,45 @@ class StringPassOwnershipMarshaler : ICustomMarshaler
     static private StringPassOwnershipMarshaler marshaler;
 }
 
+
+class StringOutMarshaler: ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        return Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
+        return Eina.MemoryNative.SlstrCopyNew((string)managedObj);
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
+
+    public void CleanUpManagedData(object managedObj)
+    {
+    }
+
+    public int GetNativeDataSize()
+    {
+        return -1;
+    }
+
+    internal static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
+            marshaler = new StringOutMarshaler();
+        }
+
+        return marshaler;
+    }
+
+    static private StringOutMarshaler marshaler;
+}
+
 class StringKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
