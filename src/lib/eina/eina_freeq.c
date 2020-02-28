@@ -17,9 +17,23 @@
 // ========================================================================= //
 
 #define ITEM_FILLPAT_MAX 0
-#define ITEM_TOTAL_MAX   (  16 * 1024)
-#define ITEM_MEM_MAX     (1024 * 1024)
-#define ITEM_BLOCK_COUNT 42
+#define ITEM_TOTAL_MAX   ( 256 * 1024)
+#define ITEM_MEM_MAX     (  32 * 1024 * 1024)
+#if __WORDSIZE == 32
+// 4kb blocks
+//# define ITEM_BLOCK_COUNT 340
+// 64k blocks
+# define ITEM_BLOCK_COUNT 5459
+// 256k blocks
+//# define ITEM_BLOCK_COUNT 21844
+#else // __WORDSIZE == 64
+// 4kb blocks
+//# define ITEM_BLOCK_COUNT 170
+// 64k blocks
+# define ITEM_BLOCK_COUNT 2730
+// 256k blocks
+//# define ITEM_BLOCK_COUNT 10922
+#endif
 
 // ========================================================================= //
 
@@ -28,6 +42,186 @@ typedef struct _Eina_FreeQ_Block Eina_FreeQ_Block;
 
 // ========================================================================= //
 
+// these items are highly compressable. here is a dump of F: ptr freefunc size
+// ...
+// F: 0xaaab0454dd00 0xffff8b83b628 0x10
+// F: 0xaaab0454bd00 0xffff8b83b648 0x20
+// F: 0xaaab0454dd10 0xffff8b83b628 0x10
+// F: 0xaaab0454bd20 0xffff8b83b648 0x20
+// F: 0xaaab0454dd20 0xffff8b83b628 0x10
+// F: 0xaaab0454bd40 0xffff8b83b648 0x20
+// F: 0xaaab0454dd30 0xffff8b83b628 0x10
+// F: 0xaaab0454bd60 0xffff8b83b648 0x20
+// F: 0xaaab0454bda0 0xffff8b83b648 0x20
+// F: 0xaaab0454bdc0 0xffff8b83b648 0x20
+// ...
+// F: 0xaaab049176d0 0xffff8b83b648 0x20
+// F: 0xaaab04917750 0xffff8b83b648 0x20
+// F: 0xaaab04917770 0xffff8b83b648 0x20
+// F: 0xaaab04917330 0xffff8b83b648 0x20
+// F: 0xaaab0481b3c0 0xffff8b83b628 0x10
+// F: 0xaaab049177f0 0xffff8b83b648 0x20
+// F: 0xaaab049259a0 0xffff8af1c638 0x38
+// F: 0xaaab049172d0 0xffff8b83b648 0x20
+// F: 0xaaab049172f0 0xffff8b83b648 0x20
+// F: 0xaaab04925c00 0xffff8af1c638 0x38
+// F: 0xaaab04925c40 0xffff8af1c638 0x38
+// F: 0xaaab0481b3b0 0xffff8b83b628 0x10
+// F: 0xaaab04917310 0xffff8b83b648 0x20
+// F: 0xaaab04925bc0 0xffff8af1c638 0x38
+// F: 0xaaab0491d240 0xffff8af1c638 0x40
+// F: 0xaaab0492b3a0 0xffff8af1c638 0x38
+// F: 0xaaab049225c0 0xffff8af1c638 (nil)
+// F: 0xaaab04917730 0xffff8b83b648 0x20
+// F: 0xaaab04917790 0xffff8b83b648 0x20
+// F: 0xaaab049177b0 0xffff8b83b648 0x20
+// F: 0xaaab0492b710 0xffff8af1c638 0x38
+// F: 0xaaab0492b750 0xffff8af1c638 0x38
+// F: 0xaaab0481b420 0xffff8b83b628 0x10
+// F: 0xaaab049177d0 0xffff8b83b648 0x20
+// F: 0xaaab0492b2d0 0xffff8af1c638 0x38
+// F: 0xaaab0481b410 0xffff8b83b628 0x10
+// F: 0xaaab04917710 0xffff8b83b648 0x20
+// F: 0xaaab0492b280 0xffff8af1c638 0x40
+// F: 0xaaab0481b430 0xffff8b83b628 0x10
+// F: 0xaaab04917810 0xffff8b83b648 0x20
+// F: 0xaaab0492b6d0 0xffff8af1c638 0x38
+// F: 0xaaab0491ca80 0xffff8af1c638 (nil)
+// F: 0xaaab0492b350 0xffff8af1c638 0x40
+// F: 0xaaab0490fef0 0xffff8af1c638 0x38
+// F: 0xaaab0481b320 0xffff8b83b628 0x10
+// F: 0xaaab04916ff0 0xffff8b83b648 0x20
+// F: 0xaaab0481b330 0xffff8b83b628 0x10
+// F: 0xaaab04917030 0xffff8b83b648 0x20
+// F: 0xaaab04920560 0xffff8af1c638 0x38
+// F: 0xaaab0481b350 0xffff8b83b628 0x10
+// F: 0xaaab049170f0 0xffff8b83b648 0x20
+// F: 0xaaab04917050 0xffff8b83b648 0x20
+// F: 0xaaab04920510 0xffff8af1c638 0x40
+// F: 0xaaab04920850 0xffff8af1c638 0x38
+// F: 0xaaab04917070 0xffff8b83b648 0x20
+// F: 0xaaab04920800 0xffff8af1c638 0x40
+// F: 0xaaab04920c30 0xffff8af1c638 0x38
+// F: 0xaaab04917090 0xffff8b83b648 0x20
+// F: 0xaaab04920be0 0xffff8af1c638 0x40
+// F: 0xaaab04920e60 0xffff8af1c638 0x38
+// F: 0xaaab04920e10 0xffff8af1c638 0x40
+// F: 0xaaab049212b0 0xffff8af1c638 0x38
+// F: 0xaaab0481b340 0xffff8b83b628 0x10
+// F: 0xaaab049170d0 0xffff8b83b648 0x20
+// F: 0xaaab04921260 0xffff8af1c638 0x40
+// F: 0xaaab0481b1f0 0xffff8b83b628 0x10
+// F: 0xaaab04875d50 0xffff8b83b648 0x20
+// F: 0xaaab0490fea0 0xffff8af1c638 0x40
+// F: 0xaaab049102e0 0xffff8af1c638 0x38
+// F: 0xaaab04917010 0xffff8b83b648 0x20
+// F: 0xaaab0490b4f0 0xffff8af1c638 (nil)
+// F: 0xaaab04910290 0xffff8af1c638 0x40
+// F: 0xaaab0481b460 0xffff8b83b628 0x10
+// F: 0xaaab049178b0 0xffff8b83b648 0x20
+// F: 0xaaab0481b450 0xffff8b83b628 0x10
+// F: 0xaaab04917870 0xffff8b83b648 0x20
+// F: 0xaaab0481b490 0xffff8b83b628 0x10
+// F: 0xaaab049e56f0 0xffff8b83b648 0x20
+// F: 0xaaab0481b4a0 0xffff8b83b628 0x10
+// F: 0xaaab049e5710 0xffff8b83b648 0x20
+// F: 0xaaab0481b4b0 0xffff8b83b628 0x10
+// F: 0xaaab049e5730 0xffff8b83b648 0x20
+// F: 0xaaab0481b4c0 0xffff8b83b628 0x10
+// F: 0xaaab049e5750 0xffff8b83b648 0x20
+// F: 0xaaab0481b4f0 0xffff8b83b628 0x10
+// F: 0xaaab049e57d0 0xffff8b83b648 0x20
+// F: 0xaaab049e5990 0xffff8b83b648 0x20
+// F: 0xaaab049e5770 0xffff8b83b648 0x20
+// F: 0xaaab0481b4d0 0xffff8b83b628 0x10
+// F: 0xaaab049e5790 0xffff8b83b648 0x20
+// F: 0xaaab049e5a50 0xffff8b83b648 0x20
+// F: 0xaaab049e57b0 0xffff8b83b648 0x20
+// ...
+// F: 0xaaab04d9f330 0xffff8b83b648 0x20
+// F: 0xaaab04b18920 0xffff8b83b628 0x10
+// F: 0xaaab04d9f350 0xffff8b83b648 0x20
+// F: 0xaaab04d4d000 0xffff8b83b648 0x20
+// F: 0xaaab04d9f370 0xffff8b83b648 0x20
+// F: 0xaaab04d9f390 0xffff8b83b648 0x20
+// F: 0xaaab04d9f3b0 0xffff8b83b648 0x20
+// F: 0xaaab04b18930 0xffff8b83b628 0x10
+// F: 0xaaab04d9f3d0 0xffff8b83b648 0x20
+// F: 0xaaab04d9f3f0 0xffff8b83b648 0x20
+// F: 0xaaab04d9f410 0xffff8b83b648 0x20
+// F: 0xaaab04d9f430 0xffff8b83b648 0x20
+// F: 0xaaab04b18940 0xffff8b83b628 0x10
+// F: 0xaaab04d9f450 0xffff8b83b648 0x20
+// F: 0xaaab04d4d020 0xffff8b83b648 0x20
+// F: 0xaaab04d9f470 0xffff8b83b648 0x20
+// F: 0xaaab04d9f490 0xffff8b83b648 0x20
+// F: 0xaaab04d9f4b0 0xffff8b83b648 0x20
+// F: 0xaaab04b18950 0xffff8b83b628 0x10
+// F: 0xaaab04d9f4d0 0xffff8b83b648 0x20
+// F: 0xaaab04d9f4f0 0xffff8b83b648 0x20
+// F: 0xaaab04d9f510 0xffff8b83b648 0x20
+// F: 0xaaab04d9f530 0xffff8b83b648 0x20
+// F: 0xaaab04b18960 0xffff8b83b628 0x10
+// F: 0xaaab04d9f550 0xffff8b83b648 0x20
+// F: 0xaaab04640ce0 0xffff8b83b628 0x10
+// F: 0xaaab04d9ee10 0xffff8b83b648 0x20
+// F: 0xaaab04577e50 0xffff8af1c638 (nil)
+// F: 0xaaab04571570 0xffff8af1c638 (nil)
+// F: 0xaaab04577ee0 0xffff8af1c638 0x40
+// F: 0xaaab0457af50 0xffff8af1c638 (nil)
+// F: 0xaaab04571590 0xffff8af1c638 (nil)
+// F: 0xaaab0457afe0 0xffff8af1c638 0x40
+// F: 0xaaab0457e0c0 0xffff8af1c638 (nil)
+// F: 0xaaab0457b360 0xffff8af1c638 (nil)
+// F: 0xaaab0457e150 0xffff8af1c638 0x40
+// F: 0xaaab04581860 0xffff8af1c638 (nil)
+// F: 0xaaab04581330 0xffff8af1c638 (nil)
+// F: 0xaaab045818f0 0xffff8af1c638 0x40
+// F: 0xaaab0490ed00 0xffff8af1c638 0xc0
+// F: 0xaaab0490f090 0xffff8af1c638 0xc0
+// F: 0xaaab04922760 0xffff8af1c638 0xc0
+// F: 0xaaab04922880 0xffff8af1c638 0xc0
+// F: 0xaaab04922a20 0xffff8af1c638 0xc0
+// F: 0xaaab0491cb80 0xffff8af1c638 0xc0
+// F: 0xaaab0492b8e0 0xffff8af1c638 0xc0
+// F: 0xaaab0492c4b0 0xffff8af1c638 0xc0
+// F: 0xaaab0492c5c0 0xffff8af1c638 0xc0
+// F: 0xaaab0492c750 0xffff8af1c638 0xc0
+// F: 0xaaab04926230 0xffff8af1c638 0xc0
+// F: 0xaaab04920d00 0xffff8af1c638 0xc0
+// F: 0xaaab04920aa0 0xffff8af1c638 0xc0
+// F: 0xaaab04a05280 0xffff8af1c638 0xc0
+// F: 0xaaab04a053d0 0xffff8af1c638 0xc0
+// F: 0xaaab04a05520 0xffff8af1c638 0xc0
+// F: 0xaaab049f3860 0xffff8af1c638 0xc0
+// F: 0xaaab049f3a30 0xffff8af1c638 0xc0
+// F: 0xaaab04a06e60 0xffff8af1c638 0xc0
+// F: 0xaaab04a25490 0xffff8af1c638 0xc0
+// F: 0xaaab04a55170 0xffff8af1c638 0xc0
+// F: 0xaaab04a55ca0 0xffff8af1c638 0xc0
+// ...
+// so in future maybe create delta compression. keep a "start value" in the 
+// Eina_FreeQ_Block block for each to begin from (and update these as we
+// march blcok->start forward (or at least update them when we finish a run
+// of processing items at the end of the processing.
+// 
+// we can store things as DELTAS from the preview value. ptr, func, size all
+// are ptr sized values so we can compress them with deltas and thus encode
+// them in variable runs of bytes depending on the size of the delta. e.g.
+// use LEB128 maybe or PrefixVariant.
+// 
+// after some playng leb128 seems to be the best from simplicity (so fast
+// encode which matters and decode needs to be good too) and size. i saw
+// a reduction to 24% of the original data size this way based on the sample
+// data i collected like above. is it worth the extra cycles? don't know.
+// 
+// when looking at the deltas i noticed that func and sie delats are very
+// often 0 for long runs. this means we can probably use RLE effectively
+// if we split this into 3 streams wahc delta compressed then RLE compressed
+// per stream. walking is more complex and filling the block means taking
+// a guess at pre-allocating offsets per stream so it may not fill the blocks
+// as affectively then. again - is it worth it? need to measure if RLE helps
+// a lot or not in keeping size down in addition to delta + leb128.
 struct _Eina_FreeQ_Item
 {
    void    *ptr;
@@ -66,6 +260,20 @@ static unsigned char  _eina_freeq_fillpat_val       = 0x55;
 static unsigned char  _eina_freeq_fillpat_freed_val = 0x77;
 static int            _eina_freeq_total_max         = ITEM_TOTAL_MAX;
 static size_t         _eina_freeq_mem_max           = ITEM_MEM_MAX;
+
+// debgging/tuning info to enable in future when gathering stats
+#if 0
+static int            _max_seen = 0;
+# define FQMAX(fq) \
+   if (fq == _eina_freeq_main) { \
+      if (fq->count > _max_seen) { \
+         _max_seen = fq->count; \
+         printf("FQ max: %i\n", _max_seen); \
+      } \
+   }
+#else
+# define FQMAX(fq)
+#endif
 
 // ========================================================================= //
 
@@ -108,9 +316,9 @@ err:
 static void
 _eina_freeq_free_do(void *ptr,
                     void (*free_func) (void *ptr),
-                    size_t size EINA_UNUSED)
+                    size_t size)
 {
-   if ((size < _eina_freeq_fillpat_max) && (size > 0))
+   if (EINA_LIKELY((size > 0) && (size < _eina_freeq_fillpat_max)))
      {
         _eina_freeq_fill_check(ptr, free_func, size);
         _eina_freeq_freed_fill_do(ptr, size);
@@ -157,6 +365,7 @@ _eina_freeq_flush_nolock(Eina_FreeQ *fq)
 {
    if (fq->postponed) return;
 
+   FQMAX(fq);
    while ((fq->count > fq->count_max) || (fq->mem_total > fq->mem_max))
      _eina_freeq_process(fq);
 }
@@ -323,6 +532,7 @@ eina_freeq_clear(Eina_FreeQ *fq)
 {
    if (!fq) return;
    LOCK_FQ(fq);
+   FQMAX(fq);
    while (fq->count > 0) _eina_freeq_process(fq);
    UNLOCK_FQ(fq);
 }
@@ -332,6 +542,7 @@ eina_freeq_reduce(Eina_FreeQ *fq, int count)
 {
    if (!fq) return;
    LOCK_FQ(fq);
+   FQMAX(fq);
    while ((fq->count > 0) && (count > 0))
      {
         _eina_freeq_process(fq);
