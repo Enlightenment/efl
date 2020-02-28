@@ -38,7 +38,7 @@ extern "C" {
  *
  * @date 2018 (created)
  *
- * @section toc Table of Contents
+ * @section eolian_aux_toc Table of Contents
  *
  * @li @ref eolian_aux_main_intro
  *

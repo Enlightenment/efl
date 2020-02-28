@@ -48,7 +48,7 @@
  *
  * @date 2008 (created)
  *
- * @section toc Table of Contents
+ * @section eina_toc Table of Contents
  *
  * @li @ref eina_main_intro
  * @li @ref eina_main_compiling

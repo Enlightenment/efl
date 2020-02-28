@@ -14,7 +14,7 @@
  *
  * @date 2003 (created)
  *
- * @section toc Table of Contents
+ * @section emotion_toc Table of Contents
  *
  * @li @ref emotion_main_intro
  * @li @ref emotion_main_work

@@ -6,7 +6,7 @@
 
    @date 2010 (created)
 
-   @section toc Table of Contents
+   @section eeze_toc Table of Contents
 
    @li @ref eeze_main_intro
    @li @ref eeze_main_compiling

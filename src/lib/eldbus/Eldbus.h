@@ -3,7 +3,7 @@
  *
  * @date 2012 (created)
  *
- * @section toc Table of Contents
+ * @section eldbus_toc Table of Contents
  *
  * @li @ref eldbus_main_intro
  * @li @ref eldbus_main_compiling

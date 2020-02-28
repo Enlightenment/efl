@@ -8,7 +8,7 @@ These routines are used for Embryo.
 @date 2004 (created)
 @note based on Compuphase (http://www.compuphase.com) PAWN language.
 
-@section toc Table of Contents
+@section embryo_toc Table of Contents
 
 @li @ref embryo_main_intro
 @li @ref embryo_main_compiling
