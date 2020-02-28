@@ -12,17 +12,6 @@
  */
 
 /**
- * @addtogroup Widget
- * @{
- *
- * @section elm-panel-class The Elementary Panel Class
- *
- * Elementary, besides having the @ref Panel widget, exposes its
- * foundation -- the Elementary Panel Class -- in order to create other
- * widgets which are a panel with some more logic on top.
- */
-
-/**
  * Base layout smart data extended with panel instance data.
  */
 typedef struct _Efl_Ui_Panel_Data Efl_Ui_Panel_Data;
@@ -49,10 +38,6 @@ struct _Efl_Ui_Panel_Data
    Eina_Bool                             freeze: 1;
    Eina_Bool                             callback_added: 1;
 };
-
-/**
- * @}
- */
 
 #define EFL_UI_PANEL_DATA_GET(o, sd) \
   Efl_Ui_Panel_Data * sd = efl_data_scope_get(o, EFL_UI_PANEL_CLASS)

@@ -10,17 +10,6 @@
  */
 
 /**
- * @addtogroup Widget
- * @{
- *
- * @section elm-calendar-class The Elementary Calendar Class
- *
- * Elementary, besides having the @ref Calendar widget, exposes its
- * foundation -- the Elementary Calendar Class -- in order to create other
- * widgets which are a calendar with some more logic on top.
- */
-
-/**
  * Base layout smart data extended with calendar instance data.
  */
 typedef struct _Efl_Ui_Calendar_Data Efl_Ui_Calendar_Data;
@@ -46,10 +35,6 @@ struct _Efl_Ui_Calendar_Data
    Eina_Bool                filling : 1;
    Eina_Bool                weekdays_set : 1;
 };
-
-/**
- * @}
- */
 
 #define EFL_UI_CALENDAR_DATA_GET(o, sd) \
   Efl_Ui_Calendar_Data * sd = efl_data_scope_get(o, EFL_UI_CALENDAR_CLASS)
