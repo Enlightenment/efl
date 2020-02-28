@@ -39,6 +39,7 @@ group { name: "elm/border/base/default";
       }
       /* shadow spacer and clipper */
       spacer { "shadow_spacer";
+         scale: 1;
          desc { "default";
             WIN_SHADOW_SPACER;
          }
@@ -48,6 +49,7 @@ group { name: "elm/border/base/default";
          }
       }
       image { "shadow"; nomouse;
+         scale: 1;
          desc { "default";
             rel.to: "shadow_spacer";
             WIN_SHADOW;
@@ -160,12 +162,14 @@ group { name: "elm/border/base/default";
 
       /* top title bar - spacer and clipper */
       rect { "top_clip"; //nomouse;
+//         scale: 1;
          desc { "default";
             rel1.to: "shadow_spacer";
             rel2.to_y: "elm.text.title";
             rel2.to_x: "shadow_spacer";
             rel2.offset: -1 3;
             vis;
+//            offscale;
          }
          desc { "hidden";
             inherit: "default";
@@ -214,6 +218,7 @@ group { name: "elm/border/base/default";
                min: 0 1;
             }
             fixed: 0 1;
+//            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -222,8 +227,7 @@ group { name: "elm/border/base/default";
       }
       spacer {  "icon";
          desc { "default";
-            rel1.to: "elm.event.icon";
-            rel2.to: "elm.event.icon";
+            rel.to: "elm.event.icon";
          }
          desc { "bounce1";
             inherit: "default";
@@ -278,8 +282,7 @@ group { name: "elm/border/base/default";
          clip: "busy_clip";
          desc { "default";
             fixed: 1 1;
-            rel1.to: "knob";
-            rel2.to: "knob";
+            rel.to: "knob";
             image.normal: "glow_round_corners_small.png";
             map.on: 1;
             map.smooth: 1;
@@ -292,8 +295,7 @@ group { name: "elm/border/base/default";
       }
       rect {  "clip1"; nomouse;
          desc { "default";
-            rel1.to: "top_clip";
-            rel2.to: "top_clip";
+            rel.to: "top_clip";
          }
          desc { "focused";
             inherit: "default";
@@ -302,8 +304,7 @@ group { name: "elm/border/base/default";
       }
       rect {  "clip2"; nomouse;
          desc { "default";
-            rel1.to: "top_clip";
-            rel2.to: "top_clip";
+            rel.to: "top_clip";
             visible: 0;
          }
          desc { "focused";
@@ -315,10 +316,8 @@ group { name: "elm/border/base/default";
          clip: "clip1";
          desc { "default";
             image.normal: "border_close.png";
-            rel1.to: "elm.event.close";
-            rel2.to: "elm.event.close";
-            min: 15 15;
-            max: 15 15;
+            rel.to: "elm.event.close";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
             color: 160 160 160 255;
          }
@@ -331,10 +330,8 @@ group { name: "elm/border/base/default";
          clip: "clip1";
          desc { "default";
             image.normal: "border_maximize.png";
-            rel1.to: "elm.event.maximize";
-            rel2.to: "elm.event.maximize";
-            min: 15 15;
-            max: 15 15;
+            rel.to: "elm.event.maximize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
             color: 160 160 160 255;
          }
@@ -347,10 +344,8 @@ group { name: "elm/border/base/default";
          clip: "clip1";
          desc { "default";
             image.normal: "border_minimize.png";
-            rel1.to: "elm.event.minimize";
-            rel2.to: "elm.event.minimize";
-            min: 15 15;
-            max: 15 15;
+            rel.to: "elm.event.minimize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
             color: 160 160 160 255;
          }
@@ -363,10 +358,8 @@ group { name: "elm/border/base/default";
          clip: "clip2";
          desc { "default";
             image.normal: "border_close.png";
-            rel1.to: "elm.event.close";
-            rel2.to: "elm.event.close";
-            min: 15 15;
-            max: 15 15;
+            rel.to: "elm.event.close";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
             color: 160 160 160 255;
          }
@@ -379,10 +372,8 @@ group { name: "elm/border/base/default";
          clip: "clip2";
          desc { "default";
             image.normal: "border_maximize.png";
-            rel1.to: "elm.event.maximize";
-            rel2.to: "elm.event.maximize";
-            min: 15 15;
-            max: 15 15;
+            rel.to: "elm.event.maximize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
             color: 160 160 160 255;
          }
@@ -395,10 +386,8 @@ group { name: "elm/border/base/default";
          clip: "clip2";
          desc { "default";
             image.normal: "border_minimize.png";
-            rel1.to: "elm.event.minimize";
-            rel2.to: "elm.event.minimize";
-            min: 15 15;
-            max: 15 15;
+            rel.to: "elm.event.minimize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
             color: 160 160 160 255;
          }
@@ -480,11 +469,13 @@ group { name: "elm/border/base/default";
       }
       rect {  "elm.event.resize.tl";
          clip: "top_resize_clip";
+         scale: 1;
          desc { "default";
             rel.to: "top_clip";
             rel2.relative: 0.0 0.0;
-            min: 32 4;
-            align: 0.0 0.0;
+            rel2.offset: 31 3;
+            min: 40 6;
+            align: 1.0 1.0;
             color: 0 0 0 0;
             fixed: 1 1;
          }
@@ -492,15 +483,14 @@ group { name: "elm/border/base/default";
       }
       rect {  "elm.event.resize.t";
          clip: "top_resize_clip";
+         scale: 1;
          desc { "default";
+            rel1.to: "elm.event.resize.tl";
             rel1.relative: 1.0 0.0;
-            rel1.to_y: "top_clip";
-            rel1.to_x: "elm.event.resize.tl";
-            rel2.relative: 0.0 0.0;
-            rel2.to_x: "elm.event.resize.tr";
-            rel2.to_y: "top_clip";
-            min: 0 4;
-            align: 0.5 0.0;
+            rel2.to: "elm.event.resize.tr";
+            rel2.relative: 0.0 1.0;
+            min: 0 6;
+            align: 0.5 1.0;
             color: 0 0 0 0;
             fixed: 1 1;
          }
@@ -508,12 +498,15 @@ group { name: "elm/border/base/default";
       }
       rect {  "elm.event.resize.tr";
          clip: "top_resize_clip";
+         scale: 1;
          desc { "default";
             rel.to: "top_clip";
             rel1.relative: 1.0 0.0;
+            rel1.offset: -32 0;
             rel2.relative: 1.0 0.0;
-            min: 32 4;
-            align: 1.0 0.0;
+            rel2.offset: -1 3;
+            min: 40 6;
+            align: 0.0 1.0;
             color: 0 0 0 0;
             fixed: 1 1;
          }
@@ -529,6 +522,7 @@ group { name: "elm/border/base/default";
          }
       }
       rect { "bottom_clip";
+         scale: 1;
          desc { "default";
             rel.to: "shadow_spacer";
             rel1 { relative: 0.0 1.0; offset: 0 -5; }
@@ -549,48 +543,50 @@ group { name: "elm/border/base/default";
             rel.to: "bottom_clip";
          }
       }
+
       rect {  "elm.event.resize.bl";
          clip: "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel1.relative: 0.0 1.0;
-            rel1.to: "bottom_clip";
+            rel.to: "bottom_clip";
             rel2.relative: 0.0 1.0;
-            rel2.to: "bottom_clip";
-            min: 32 5;
-            align: 0.0 1.0;
+            rel2.offset: 31 -1;
+            min: 40 10;
+            align: 0.0 0.5;
             color: 0 0 0 0;
             fixed: 1 1;
+            offscale;
          }
          desc { "hidden"; inherit: "default"; hid; }
       }
       rect {  "elm.event.resize.b";
          clip: "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel1.relative: 1.0 1.0;
-            rel1.to_x: "elm.event.resize.tl";
-            rel1.to_y: "bottom_clip";
-            rel1.offset: 0 -1;
+            rel1.to: "elm.event.resize.bl";
+            rel1.relative: 1.0 0.0;
+            rel2.to: "elm.event.resize.br";
             rel2.relative: 0.0 1.0;
-            rel2.to_x: "elm.event.resize.tr";
-            rel2.to_y: "bottom_clip";
-            min: 0 5;
-            align: 0.5 1.0;
+            min: 0 10;
+            align: 0.5 0.5;
             color: 0 0 0 0;
-            fixed: 0 1;
+            fixed: 1 1;
+            offscale;
          }
          desc { "hidden"; inherit: "default"; hid; }
       }
       rect {  "elm.event.resize.br";
          clip: "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel1.relative: 1.0 1.0;
-            rel1.to: "bottom_clip";
-            rel2.relative: 1.0 1.0;
-            rel2.to: "bottom_clip";
-            min: 32 5;
-            align: 1.0 1.0;
+            rel.to: "bottom_clip";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -32 0;
+            min: 40 10;
+            align: 0.0 0.5;
             color: 0 0 0 0;
             fixed: 1 1;
+            offscale;
          }
          desc { "hidden"; inherit: "default"; hid; }
       }
