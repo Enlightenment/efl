@@ -7,7 +7,7 @@
 
 /**
  *
- * @section intro Elua library
+ * @section elua_intro Elua library
  *
  * The Elua library was created to ease integration of EFL Lua into other EFL
  * libraries or applications. Using the Elua library you can easily create a
@@ -53,7 +53,7 @@ extern "C" {
  *
  * @date 2015 (created)
  *
- * @section toc Table of Contents
+ * @section elua_toc Table of Contents
  *
  * @li @ref elua_main_intro
  * @li @ref elua_main_compiling

@@ -47,7 +47,7 @@ extern "C" {
  * @defgroup Ecore_IMF_Context_Group Ecore Input Method Context Functions
  * @ingroup Ecore_IMF_Lib_Group
  *
- * @section intro Introduction
+ * @section ecore_imf_intro Introduction
  *
  * Functions that operate on Ecore Input Method Context objects.
 
