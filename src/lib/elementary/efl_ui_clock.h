@@ -1,5 +1,5 @@
 /**
- * @defgroup efl_ui_clock
+ * @defgroup efl_ui_clock EFL Ui Clock Widget
  * @ingroup Elementary
  *
  * @image html clock_inheritance_tree.png

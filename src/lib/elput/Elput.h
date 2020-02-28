@@ -183,7 +183,7 @@ EAPI int elput_init(void);
 EAPI int elput_shutdown(void);
 
 /**
- * @defgroup Elput_Manager_Group
+ * @defgroup Elput_Manager_Group Elput Manager
  *
  * Functions that deal with connecting, disconnecting, opening, closing
  * of input devices.
