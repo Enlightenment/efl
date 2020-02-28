@@ -42,7 +42,7 @@ extern "C" {
  *
  * @li @ref eolian_aux_main_intro
  *
- * @section eolian_main_intro Introduction
+ * @section eolian_aux_main_intro Introduction
  *
  * This is the Eolian auxiliary library, providing API to support generators
  * and other utilities which do not fit into the primary Eolian library. All
