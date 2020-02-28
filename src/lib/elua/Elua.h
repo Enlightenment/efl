@@ -456,6 +456,10 @@ EAPI Eina_Bool elua_util_script_run(Elua_State *es, int argc, char **argv,
  */
 EAPI int elua_util_error_report(const Elua_State *es, int status);
 
+/**
+ * @}
+ */
+
 #endif
 
 #ifdef __cplusplus

@@ -1419,3 +1419,8 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
      }
    _c->curl_easy_setopt(curl_easy, CURLOPT_VERBOSE, (long)url_con->verbose);
 }
+
+/**
+ * @}
+ */
+

@@ -2162,6 +2162,10 @@ typedef void (*efl_key_data_free_func)(void *);
 #define efl_wref_del_safe(wref) efl_weak_unref(wref)
 
 /**
+ * @}
+ */
+
+/**
  * @addtogroup Efl_Events Eo's Event Handling
  * @{
  */
