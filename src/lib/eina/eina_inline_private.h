@@ -19,6 +19,8 @@
 #ifndef EINA_INLINE_PRIVATE_H_
 # define EINA_INLINE_PRIVATE_H_
 
+#ifdef HAVE_CYGWIN
+
 # include <time.h>
 # include <sys/time.h>
 
@@ -74,4 +76,5 @@ _eina_time_delta(Eina_Nano_Time *start, Eina_Nano_Time *end)
   return r;
 }
 
+#endif
 #endif

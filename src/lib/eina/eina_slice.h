@@ -214,7 +214,7 @@ static inline Eina_Rw_Slice eina_rw_slice_copy(const Eina_Rw_Slice dest, const E
  *
  * @since 1.19
  */
-static inline Eina_Slice eina_slice_seek(const Eina_Slice slice, ssize_t offset, int whence);
+static inline Eina_Slice eina_slice_seek(const Eina_Slice slice, ptrdiff_t offset, int whence);
 
 /**
  * @brief Seek within a read-write slice, similar to fseek().
@@ -232,7 +232,7 @@ static inline Eina_Slice eina_slice_seek(const Eina_Slice slice, ssize_t offset,
  *
  * @since 1.19
  */
-static inline Eina_Rw_Slice eina_rw_slice_seek(const Eina_Rw_Slice rw_slice, ssize_t offset, int whence);
+static inline Eina_Rw_Slice eina_rw_slice_seek(const Eina_Rw_Slice rw_slice, ptrdiff_t offset, int whence);
 
 
 /**

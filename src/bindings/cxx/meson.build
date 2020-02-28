@@ -10,7 +10,7 @@ cxx_sublibs = [
   ['Eio',        false, false,  true, []],
   ['Evas',       false,  true,  true, []],
   ['Edje',       false, false,  true, []],
-  ['Eldbus',      true,  true,  true, []],
+#  ['Eldbus',      true,  true,  true, []],
   ['Elementary',  true,  true,  true, []]
 ]
 
@@ -116,7 +116,7 @@ foreach lib : cxx_sublibs
   install_headers(cxx_header_src,
     subdir: package_version_name,
   )
-
+if sys_windows == false
   pkgconfig.generate(
     name : '-'.join(package_name.split('_')) + '-cxx',
     description : lib[0]+' cxx bindings',
@@ -126,4 +126,5 @@ foreach lib : cxx_sublibs
     requires : growing_deps + [package_name],
   )
   growing_deps += package_name + '-cxx'
+endif
 endforeach

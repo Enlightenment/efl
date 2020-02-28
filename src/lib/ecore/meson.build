@@ -198,7 +198,7 @@ endif
 
 ecore_lib = library('ecore',
     ecore_src, pub_eo_file_target,
-    dependencies: ecore_pub_deps + [m, buildsystem, ecore_deps],
+    dependencies: ecore_pub_deps + [buildsystem, ecore_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,

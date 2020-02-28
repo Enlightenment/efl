@@ -8,7 +8,9 @@ if host_machine.system() == 'darwin'
   add_languages('objc')
 endif
 
+if host_machine.system() != 'windows'
 pkgconfig = import('pkgconfig')
+endif
 
 test_env = environment()
 test_env.set('EFL_RUN_IN_TREE', '1')
@@ -88,6 +90,15 @@ endforeach
 add_global_arguments(dev_cflags, language: 'c')
 add_global_arguments(dev_cflags, language: 'cpp')
 
+if not get_option('dbus')
+  dbus = declare_dependency()
+  eldbus = declare_dependency()
+endif
+
+if sys_windows == true
+  dl = declare_dependency()
+  m = declare_dependency()
+endif
 
 foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
@@ -221,7 +232,11 @@ elif (get_option('crypto') == 'gnutls')
   crypto = [dependency('gnutls'), cc.find_library('gcrypt')]
   config_h.set('HAVE_GNUTLS', '1')
 elif (get_option('crypto') == 'openssl')
-  crypto = dependency('openssl')
+  if (get_option('openssl_dir') != '')
+    crypto = cc.find_library('crypto', dirs : [get_option('openssl_dir')])
+  else
+    crypto = dependency('openssl')
+  endif
   config_h.set('HAVE_OPENSSL', '1')
 endif
 
@@ -276,7 +291,8 @@ if get_option('lua-interpreter') == 'lua'
   endforeach
 else
   lua = dependency(get_option('lua-interpreter'))
-  lua_pc_name = 'luajit'
+  #lua_pc_name = 'luajit'
+  lua_pc_name = 'lua'
 endif
 
 if sys_osx == true and get_option('lua-interpreter') == 'luajit'
@@ -297,7 +313,7 @@ subprojects = [
 ['emile'            ,[]                    , false,  true, false, false,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
 ['eet'              ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'emile', 'efl'], []],
 ['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']],
-['eldbus'           ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'eo', 'efl'], []],
+# ['eldbus'           ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'eo', 'efl'], []],
 ['ecore'            ,[]                    ,  true, false, false, false,  true,  true, ['eina', 'eo', 'efl'], []], #ecores modules depend on eldbus
 ['ecore_audio'      ,['audio']             , false,  true, false, false, false, false, ['eina', 'eo'], []],
 ['ecore_avahi'      ,['avahi']             , false,  true, false, false, false,  true, ['eina', 'ecore'], []],
@@ -313,7 +329,7 @@ subprojects = [
 ['ecore_ipc'        ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_buffer'     ,['buffer']            ,  true,  true,  true, false, false, false, ['eina'], []],
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
-['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
+# ['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
 ['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
 ['evas'             ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
@@ -360,7 +376,7 @@ foreach package : subprojects
     '-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"',
     '-DNEED_RUN_IN_TREE=1',
   ]
-  automatic_pkgfile = true
+  automatic_pkgfile = (sys_windows == false)
   if package[1].length() == 0 or get_option(package[1][0])
     config_h.set('HAVE_'+package_name.to_upper().underscorify(), '1')
 
@@ -405,13 +421,13 @@ foreach package : subprojects
     if (package[4])
        subdir(join_paths(local_bin, package_name))
     endif
-    if (package[5])
+    if (package[5] and not sys_windows)
        subdir(join_paths(local_benchmark, package_name))
     endif
-    if (package[6])
+    if (package[6] and not sys_windows)
        test_dirs += [package_name]
     endif
-    if (package[7])
+    if (package[7] and not sys_windows)
        example_dirs += [package_name]
     endif
 
@@ -525,8 +541,11 @@ configure_file(
 )
 
 subdir(join_paths('systemd-services'))
+if get_option('dbus')
 subdir(join_paths('dbus-services'))
+endif
 
+if sys_windows == false
 #output the three new efl-* .pc files
 efl_20_pc_files = [
   ['efl-ui', ['elementary']],
@@ -543,3 +562,4 @@ foreach pc_file : efl_20_pc_files
     requires : libraries,
   )
 endforeach
+endif

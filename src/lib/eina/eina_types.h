@@ -278,7 +278,7 @@
 # define EINA_UNUSED
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(...)
-# if _MSC_VER >= 1300
+# if defined (_MSC_VER) && !defined (__clang__) && _MSC_VER >= 1300
 #  define EINA_DEPRECATED __declspec(deprecated)
 # else
 #  define EINA_DEPRECATED

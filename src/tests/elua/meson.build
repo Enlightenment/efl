@@ -6,7 +6,7 @@ elua_suite_src = [
    'elua_lib.c'
 ]
 
-elua_bindings_dir = join_paths(meson.source_root(), 'src', 'bindings', 'luajit')
+elua_bindings_dir = join_paths(meson.source_root(), 'src', 'bindings')
 elua_core_dir = join_paths(meson.source_root(), 'src', 'scripts', 'elua', 'core')
 elua_modules_dir = join_paths(meson.source_root(), 'src', 'scripts', 'elua', 'modules')
 elua_apps_dir = join_paths(meson.source_root(), 'src', 'tests', 'elua', 'data', 'apps')

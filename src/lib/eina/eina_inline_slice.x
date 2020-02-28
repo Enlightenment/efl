@@ -86,7 +86,7 @@ eina_rw_slice_copy(const Eina_Rw_Slice dst, const Eina_Slice src)
 }
 
 static inline Eina_Slice
-eina_slice_seek(const Eina_Slice slice, ssize_t offset, int whence)
+eina_slice_seek(const Eina_Slice slice, ptrdiff_t offset, int whence)
 {
    Eina_Slice ret;
 
@@ -110,7 +110,7 @@ eina_slice_seek(const Eina_Slice slice, ssize_t offset, int whence)
 }
 
 static inline Eina_Rw_Slice
-eina_rw_slice_seek(const Eina_Rw_Slice rw_slice, ssize_t offset, int whence)
+eina_rw_slice_seek(const Eina_Rw_Slice rw_slice, ptrdiff_t offset, int whence)
 {
    Eina_Rw_Slice ret;
 

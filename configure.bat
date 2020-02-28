@@ -1,0 +1,32 @@
+set CC=clang-cl
+set CXX=clang-cl
+set CFLAGS=-Wno-language-extension-token
+
+meson build ^
+ -Dopenssl_dir="C:/Users/Tiz/source/repos/openssl/"^
+ -Dregex_include_dir="C:/Users/Tiz/source/repos/efl/src/lib/evil/pcre/"^
+ -Dregex_dir="C:/Users/Tiz/source/repos/pcre-win-build/build-VS2019/x64/Debug"^
+        -Dnls=false^
+        -Dsystemd=false^
+        -Dglib=false^
+        -Dgstreamer=false^
+        -Ddbus=false^
+        -Daudio=false^
+        -Davahi=false^
+        -Dv4l2=false^
+        -Delua=false^
+        -Dx11=false^
+        -Dphysics=false^
+        -Deeze=false^
+        -Dpulseaudio=false^
+        -Dharfbuzz=false^
+        -Dfribidi=false^
+        -Dfontconfig=false^
+        -Dedje-sound-and-video=false^
+        -Dlibmount=false^
+        "-Devas-loaders-disabler=gst,pdf,ps,raw,svg,rsvg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,jpeg,pmaps,png,psd,tga,tgv,tiff,wbmp,webp,xpm,json"^
+        -Dopengl=none^
+        "-Demotion-loaders-disabler=gstreamer1,libvlc,xine"^
+        -Dbuild-tests=false^
+        -Dbuild-examples=false^
+        -Dbindings= --native-file native-file-windows.txt

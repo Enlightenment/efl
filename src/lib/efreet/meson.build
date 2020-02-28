@@ -81,6 +81,7 @@ install_headers(efreet_header_src,
   install_dir : dir_package_include,
 )
 
+if sys_windows == false
 pkgconfig.generate(efreet_mime_lib,
         name : 'efreet-mime',
         subdirs : package_version_name,
@@ -94,3 +95,4 @@ pkgconfig.generate(efreet_trash_lib,
         version : version_major + '.' + version_minor + '.' + version_micro,
         libraries : [tmp_deps] + tmp_pub_deps,
 )
+endif

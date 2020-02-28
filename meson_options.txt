@@ -64,6 +64,11 @@ option('eeze',
   description : 'Device abstraction (udev wrapper) in efl'
 )
 
+option('dbus',
+  type : 'boolean',
+  value : true
+)
+
 option('opengl',
   type : 'combo',
   choices : ['full', 'es-egl', 'none'],
@@ -104,6 +109,24 @@ option('crypto',
   type : 'combo',
   choices : ['gnutls', 'openssl'],
   value : 'openssl',
+  description : 'Which SSL Crypto library used in efl'
+)
+
+option('openssl_dir',
+  type : 'string',
+  value : '',
+  description : 'Which directory is SSL library installed. Used only if crypto is set to openssl'
+)
+
+option('regex_include_dir',
+  type : 'string',
+  value : '',
+  description : 'Which directory contains the regex.h file for PCRE'
+)
+
+option('regex_dir',
+  type : 'string',
+  value : '',
   description : 'Which SSL Crypto library used in efl'
 )
 
@@ -286,8 +309,8 @@ option('nls',
 
 option('bindings',
   type : 'array',
-  choices : ['luajit', 'cxx', 'mono'],
-  value : ['luajit', 'cxx'],
+  choices : ['cxx', 'mono'],
+  value : ['cxx'],
   description : 'Which auto-generated language bindings for efl to enable',
 )
 
@@ -323,8 +346,8 @@ option('dotnet',
 
 option('lua-interpreter',
   type: 'combo',
-  choices: ['luajit', 'lua'],
-  value: 'luajit',
+  choices: ['lua'],
+  value: 'lua',
   description: 'Which Lua back-end library to use in efl'
 )
 
