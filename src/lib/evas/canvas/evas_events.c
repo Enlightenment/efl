@@ -87,7 +87,7 @@ _evas_event_havemap_adjust_f(Evas_Object_Protected_Data *obj, Eina_Vector2 *cur_
    if (!_evas_event_havemap_adjust_f_inline(obj, &tmp_pt, mouse_grabbed)) return;
 
    prev_pt->x += (tmp_pt.x - cur_pt->x);
-   prev_pt->y += (tmp_pt.x - cur_pt->y);
+   prev_pt->y += (tmp_pt.y - cur_pt->y);
    *cur_pt = tmp_pt;
 }
 
