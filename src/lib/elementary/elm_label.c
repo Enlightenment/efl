@@ -247,8 +247,8 @@ _on_label_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 {
    ELM_LABEL_DATA_GET(data, sd);
 
-   elm_layout_sizing_eval(data);
    if (sd->slide_mode != ELM_LABEL_SLIDE_MODE_NONE) _label_slide_change(data);
+   if (sd->linewrap) elm_layout_sizing_eval(data);
 }
 
 static int
