@@ -67,7 +67,12 @@ EFL_START_TEST(no_leaking_canvas_object)
    Eina_Iterator *iter = eo_objects_iterator_new();
    Eo *obj;
 
-   if (efl_isa(widget, EFL_UI_FLIP_CLASS)) return; //FIXME Flip needs more work for this. However, flip should be redone as a spotlight manager, When this is done, we can add these classes to the check here.
+   if (efl_isa(widget, EFL_UI_FLIP_CLASS))
+     {
+        //FIXME Flip needs more work for this. However, flip should be redone as a spotlight manager, When this is done, we can add these classes to the check here.
+        eina_iterator_free(iter);
+        return;
+     }
 
    EINA_ITERATOR_FOREACH(iter, obj)
      {
