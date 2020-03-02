@@ -878,7 +878,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    hkey = alloca(sizeof (char) * size);
    memcpy(hkey, file, file_length);
    size = file_length;
-   memcpy(hkey + size, "//://", 5);
+   memcpy(hkey + size, "//://", 6);
    size += 5;
    if (key) ckey = key;
    memcpy(hkey + size, ckey, key_length);
