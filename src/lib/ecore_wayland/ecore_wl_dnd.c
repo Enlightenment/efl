@@ -410,7 +410,6 @@ ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered)
    /* add these types to the data source */
    for (type = types_offered; *type; type++)
      {
-        if (!*type) continue;
         t = wl_array_add(&input->data_types, sizeof(*t));
         if (t)
           {
