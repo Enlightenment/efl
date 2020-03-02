@@ -6,7 +6,7 @@
  *
  * @date 2012 (created)
  *
- * @section toc Table of Contents
+ * @section ephysics_toc Table of Contents
  *
  * @li @ref ephysics_main_intro
  * @li @ref ephysics_main_compiling

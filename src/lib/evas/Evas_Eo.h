@@ -132,7 +132,7 @@ struct _Efl_Canvas_Object_Animation_Event
  *
  * @since 1.10
  *
- * @section toc Table of Contents
+ * @section evas_canvas3d_toc Table of Contents
  *
  * @li @ref evas_canvas3d_intro
  * @li @ref evas_canvas3d_example

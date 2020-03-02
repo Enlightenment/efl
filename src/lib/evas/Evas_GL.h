@@ -5990,7 +5990,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     void         (*glWaitSync) (GLsync sync, GLbitfield flags, uint64_t timeout);
    /** @} */
    /**
-    * @anchor gles3.1
+    * @anchor gles3_1
     * @name OpenGL-ES 3.1.
     *
     * Evas_GL_API version 5.
@@ -6070,7 +6070,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /** @} */
 
    /**
-    * @anchor gles3.2
+    * @anchor gles3_2
     * @name OpenGL-ES 3.2.
     *
     * Evas_GL_API version 6.

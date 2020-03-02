@@ -7,7 +7,7 @@
 
    @date 2000 (created)
 
-   @section toc Table of Contents
+   @section eet_toc Table of Contents
 
    @li @ref eet_main_intro
    @li @ref eet_main_compiling

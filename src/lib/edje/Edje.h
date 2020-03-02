@@ -7,7 +7,7 @@ These routines are used for Edje.
 
 @date 2003 (created)
 
-@section toc Table of Contents
+@section edje_toc Table of Contents
 
 @li @ref edje_main_intro
 @li @ref edje_main_work

@@ -3531,34 +3531,32 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  */
 
 /**
- * @defgroup Evas_Object_Vg
+ * @defgroup Evas_Object_Vg Vector Graphics Object
  * @ingroup Evas
  *
- * Evas_Object_Vg is the scene graph for managing vector graphics  objects.
- * User can create shape objects as well as fill objects and give it to the
+ * Evas_Object_Vg is the scene graph for managing vector graphics objects.
+ * User can create shape objects as well as fill objects and give them to the
  * Evas_Object_Vg for drawing on the screen as well as managing the lifecycle
- * of the objects. enabling reuse of shape objects.
+ * of the objects, enabling reuse of shape objects.
  *
- * As Evas_Object_Vg is a Evas_Object all the operation that applicable to
- * a Evas_Object can be performed on it(clipping , map, etc).
+ * Since Evas_Object_Vg is an Evas_Object all operations applicable to
+ * an Evas_Object can be performed on it (clipping, mapping, etc).
  *
- * To create any complex vector graphics you can create a hirarchy of shape
- * and fill objects and give the hirarchy to Evas_Object which  will be
+ * To create complex vector graphics you can create a hierarchy of shape
+ * and fill objects and give the hierarchy to Evas_Object which will be
  * responsible for drawing and showing on the screen.
  *
- * As the shape object and fill object (linear and radial gradient) have
+ * As the shape object and fill object (linear and radial gradients) have
  * retain mode API, you only have to create it once and set the properties
- * and give it to evas_object_vg.
+ * and give it to Evas_Object_Vg.
  *
- * Any change in the property of shape/fill object will automaticaly notified
- * to the evas_object_vg which will trigger a redrawing to reflect the change.
+ * Any change in the properties of a shape or fill object are automatically
+ * notified to Evas_Object_Vg triggering a redraw to reflect the changes.
  *
- * To create a vector path, you can give list of path commands to the shape
+ * To create a vector path, you can give a list of path commands to the shape
  * object using efl_gfx_shape_path_set() API.
  *
- * Enabling graphical shapes to be constructed and reused.
- *
- * Below are the list of feature currently supported by Vector object.
+ * Below are the list of features currently supported by Vector object.
  *
  * @li Drawing SVG Path.
  *     You can construct a path by using api in efl_gfx_utils.h
@@ -3568,11 +3566,11 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  *     @see Evas_Vg_Gradient_Linear and Evas_Vg_Gradient_Radial
  *
  * @li Transformation support for path and gradient fill. You can apply
-       affin transformation on path object.
+       affine transforms to path objects.
  *     @see Eina_Matrix.
  *
- * @note Below are the list of interface, classes can be used to draw vector
- *       graphics using vector object.
+ * @note Below are the list of interfaces and classes that can be used
+ *       to draw vector graphics using vector objects.
  *
  * @li Efl.Gfx.Shape
  * @li Evas.VG_Shape

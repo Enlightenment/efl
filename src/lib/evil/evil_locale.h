@@ -39,7 +39,7 @@
  * setlocale() function. If @p category is #LC_MESSAGES, then if @p locale
  * is not @c NULL, errno is set to EINVAL and @c NULL is returned, otherwise
  * the string <language>_<country> is returned. This string is a static buffer
- * and must not be freed. It will also be rewritten each time @category is
+ * and must not be freed. It will also be rewritten each time @p category is
  * #LC_MESSAGES and @p locale is @c NULL.
  *
  * Conformity: Non applicable.

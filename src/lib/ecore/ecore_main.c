@@ -316,6 +316,16 @@ _gfd_events_from_fdh(Ecore_Fd_Handler *fdh)
 }
 #endif
 
+
+static void
+_ecore_main_pre_idle_exit(void)
+{
+   // even if we never go idle, keep up flushing some of our freeq away
+   // on every idle exit which may happen if we even never called idlers
+   // for now an idea but dont enforce
+//   eina_freeq_reduce(eina_freeq_main_get(), 128);
+}
+
 #ifdef HAVE_LIBUV
 static void
 _ecore_main_uv_poll_cb(uv_poll_t *handle, int status, int events)
@@ -332,6 +342,7 @@ _ecore_main_uv_poll_cb(uv_poll_t *handle, int status, int events)
         DBG("not IDLE anymore");
         _ecore_main_uv_idling = EINA_FALSE;
         eina_file_statgen_next();
+        _ecore_main_pre_idle_exit();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
@@ -532,11 +543,7 @@ _ecore_main_idler_all_call(Eo *loop, Efl_Loop_Data *pd)
 {
    if (pd->idlers)
      efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
-   // just spin in an idler until the free queue is empty freeing 84 items
-   // from the free queue each time.for now this seems like an ok balance
-   // between going in and out of a reduce func with mutexes around it
-   // vs blocking mainloop for too long. this number is up for discussion
-   eina_freeq_reduce(eina_freeq_main_get(), 84);
+   eina_freeq_reduce(eina_freeq_main_get(), 256);
 }
 
 #ifdef HAVE_SYS_EPOLL_H
@@ -797,6 +804,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
      {
         _ecore_animator_run_reset();
         eina_file_statgen_next();
+        _ecore_main_pre_idle_exit();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         ecore_idling = 0;
      }
@@ -812,6 +820,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
           {
              _ecore_animator_run_reset();
              eina_file_statgen_next();
+             _ecore_main_pre_idle_exit();
              efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              ecore_idling = 0;
           }
@@ -872,6 +881,7 @@ _ecore_main_loop_timer_run(uv_timer_t *timer EINA_UNUSED)
      {
         _ecore_main_uv_idling = EINA_FALSE;
         eina_file_statgen_next();
+        _ecore_main_pre_idle_exit();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
@@ -2250,6 +2260,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
         if (_ecore_main_uv_idling)
           {
              eina_file_statgen_next();
+             _ecore_main_pre_idle_exit();
              efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              _ecore_animator_run_reset();
              _ecore_main_uv_idling = EINA_FALSE;
@@ -2481,6 +2492,7 @@ process_all: //-*********************************************************
      {
         _ecore_animator_run_reset(); // XXX:
         eina_file_statgen_next();
+        _ecore_main_pre_idle_exit();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
      }
    // call the fd handler per fd that became alive...

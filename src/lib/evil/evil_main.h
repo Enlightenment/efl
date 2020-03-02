@@ -6,7 +6,7 @@
  * @author Vincent Torri
  * @date 2008 (created)
  *
- * @section toc Table of Contents
+ * @section evil_toc Table of Contents
  *
  * @li @ref evil_main_intro
  * @li @ref evil_main_ack

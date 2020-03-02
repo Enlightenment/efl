@@ -28,7 +28,7 @@ extern "C" {
  *
  * @date 2012 (created)
  *
- * @section toc Table of Contents
+ * @section eio_toc Table of Contents
  *
  * @li @ref eio_main_intro
  * @li @ref eio_main_compiling

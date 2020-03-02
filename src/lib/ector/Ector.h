@@ -41,7 +41,7 @@ extern "C" {
  *
  * @date 2014 (created)
  *
- * @section toc Table of Contents
+ * @section ector_toc Table of Contents
  *
  * @li @ref ector_main_intro
  * @li @ref ector_main_compiling

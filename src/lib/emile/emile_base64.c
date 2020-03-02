@@ -170,6 +170,10 @@ emile_base64_decode_common(const Eina_Strbuf *in, Eina_Bool is_base64url_decode)
    return eina_binbuf_manage_new(dest, l, EINA_FALSE);
 }
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
 *                                 Global                                     *
 *============================================================================*/

@@ -6,7 +6,7 @@
 /**
  * @page ecore_main Ecore
  * @date 2000 (created)
- * @section toc Table of Contents
+ * @section ecore_toc Table of Contents
  * @li @ref ecore_main_intro
  * @li @ref ecore_main_compiling
  * @li @ref ecore_main_next_steps

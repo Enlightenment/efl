@@ -3,7 +3,7 @@
 
    @date 2000 (created)
 
-   @section toc Table of Contents
+   @section evas_toc Table of Contents
 
    @li @ref evas_main_intro
    @li @ref evas_main_work

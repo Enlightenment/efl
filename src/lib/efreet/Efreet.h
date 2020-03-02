@@ -11,7 +11,7 @@
 /**
  * @page efreet_main Efreet
  *
- * @section toc Table of Contents
+ * @section efreet_toc Table of Contents
  *
  * @li @ref efreet_main_intro
  * @li @ref efreet_main_compiling

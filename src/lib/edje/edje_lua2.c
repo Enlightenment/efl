@@ -18,7 +18,7 @@
 /**
    @page luaref Edje Lua scripting
 
-   @section intro Introduction
+   @section edje_lua_intro Introduction
 
    Lua is intended for script-only objects at this point (with embryo left
    for augmenting standard programs). Since script-only objects effectively

@@ -55,7 +55,7 @@ extern "C" {
  *
  * @date 2009 (created)
  *
- * @section toc Table of Contents
+ * @section ethumb_toc Table of Contents
  *
  * @li @ref ethumb_main_intro
  * @li @ref ethumb_main_compiling

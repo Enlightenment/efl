@@ -4,7 +4,7 @@
  * @version @VMAJ@.@VMIN@.@VMIC@
  * @date 2008-2014
  *
- * @section intro What is Elementary?
+ * @section elm_intro What is Elementary?
  *
  * This is a VERY SIMPLE toolkit. It is not meant for writing extensive desktop
  * applications (yet). Small simple ones with simple needs.

@@ -48,7 +48,7 @@ extern "C" {
  *
  * @date 2012 (created)
  *
- * @section toc Table of Contents
+ * @section eo_toc Table of Contents
  *
  * @li @ref eo_main_intro
  * @li @ref eo_main_compiling
@@ -2160,6 +2160,10 @@ typedef void (*efl_key_data_free_func)(void *);
  * @see #efl_wref_del
  */
 #define efl_wref_del_safe(wref) efl_weak_unref(wref)
+
+/**
+ * @}
+ */
 
 /**
  * @addtogroup Efl_Events Eo's Event Handling
