@@ -717,6 +717,46 @@ EFL_START_TEST(test_efl_ui_gesture_custom)
 }
 EFL_END_TEST
 
+
+EFL_START_TEST(test_efl_ui_gesture_sequence)
+{
+   Eo *rect = setup();
+   int moves;
+
+   multi_click_object(rect, 1);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+
+   wait_timer(0.4);
+   RESET;
+
+   moves = pinch_object(rect, 500, 500, 501, 501, -250, 0, 250, 0);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+
+
+   CHECK_START(ZOOM, 1);
+   /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
+   ck_assert_int_ge(count[ZOOM][EFL_GESTURE_STATE_UPDATED - 1], moves);
+   /* finished 1x */
+   CHECK_FINISH(ZOOM, 1);
+   CHECK_CANCEL(ZOOM, 0);
+
+   wait_timer(0.4);
+   RESET;
+
+   multi_click_object(rect, 1);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+
+   RESET;
+}
+EFL_END_TEST
+
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
@@ -725,4 +765,5 @@ void efl_ui_test_gesture(TCase *tc)
    tcase_add_test(tc, test_efl_ui_gesture_zoom);
    tcase_add_test(tc, test_efl_ui_gesture_rotate);
    tcase_add_test(tc, test_efl_ui_gesture_custom);
+   tcase_add_test(tc, test_efl_ui_gesture_sequence);
 }
