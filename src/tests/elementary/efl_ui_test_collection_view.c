@@ -45,11 +45,7 @@ static Eina_Value
 _children_get(Eo *obj EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Model *child;
-   Eina_Future **all;
    unsigned int i, len;
-
-   all = calloc(1 + 1, sizeof(Eina_Future*));
-   if (!all) return eina_value_error_init(ENOMEM);
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
