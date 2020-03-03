@@ -336,7 +336,7 @@ EAPI extern Emotion_Version *emotion_version;
  * @li "position_update" - Emitted when emotion_object_position_set is called
  * @li "decode_stop" - Emitted after the last frame is decoded
  *
- * @section Examples
+ * @section Emotion_Examples
  *
  * The following examples exemplify the emotion usage. There's also the
  * emotion_test binary that is distributed with this library and cover the

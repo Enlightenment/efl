@@ -2561,7 +2561,7 @@ _handle_vector_image(void)
    free(name);
 }
 
-/** @edcsubsection{toplevel_images,
+/** @edcsubsection{toplevel_images2,
  *                 Images} */
 
 /**
@@ -3848,7 +3848,7 @@ st_size_class_max(void)
 
 /** @edcsection{collections,Collections Blocks} */
 
-/** @edcsubsection{collections,
+/** @edcsubsection{sub_collections,
  *                 Collections} */
 
 /**
