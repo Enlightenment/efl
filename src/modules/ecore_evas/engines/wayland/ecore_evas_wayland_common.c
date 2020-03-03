@@ -2421,7 +2421,7 @@ _clear_selection(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer 
 }
 
 static void
-_store_selection_cbs(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel)
+_store_selection_cbs(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
 {
    Ecore_Evas_Wl_Selection_Data *sdata;
    Ecore_Evas_Engine_Wl_Data *edata;
@@ -2449,7 +2449,7 @@ _fetch_input(Ecore_Evas *ee, unsigned int seat)
 }
 
 static Eina_Bool
-_ecore_evas_wl_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel)
+_ecore_evas_wl_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
 {
    Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
    Ecore_Evas_Wl_Selection_Data *data = &wdata->selection_data[selection];
@@ -2822,7 +2822,7 @@ _ecore_evas_wl_selection_init(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_ecore_evas_wl_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel, const char *action EINA_UNUSED)
+_ecore_evas_wl_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel, const char *action EINA_UNUSED)
 {
    Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
    const char *tmp_array[eina_array_count(available_types) + 1];

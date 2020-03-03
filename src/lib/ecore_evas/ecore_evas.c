@@ -5641,7 +5641,7 @@ ecore_evas_selection_get(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection
 }
 
 EAPI Eina_Bool
-ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep, const char* action, Ecore_Evas_Drag_Finished terminate_cb, void *data)
+ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep, const char* action, Ecore_Evas_Drag_Finished_Cb terminate_cb, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(content, EINA_FALSE);
@@ -5676,14 +5676,14 @@ ecore_evas_drag_cancel(Ecore_Evas *ee, unsigned int seat)
 }
 
 EAPI void
-ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Motion_Cb cb)
+ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Drag_Motion_Cb cb)
 {
    ECORE_EVAS_CHECK(ee);
    ee->func.fn_dnd_motion = cb;
 }
 
 EAPI void
-ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_State_Changed cb)
+ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_Drag_State_Changed_Cb cb)
 {
    ECORE_EVAS_CHECK(ee);
    ee->func.fn_dnd_state_change = cb;

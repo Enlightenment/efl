@@ -4281,7 +4281,7 @@ _store_selection_cbs(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer selection, Eina
 }
 
 static Eina_Bool
-_ecore_evas_x_selection_claim(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel)
+_ecore_evas_x_selection_claim(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
 {
    Ecore_Evas_X11_Selection_Data *sdata;
    Ecore_Evas_Engine_Data_X11 *edata;

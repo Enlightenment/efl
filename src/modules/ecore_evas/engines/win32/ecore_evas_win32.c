@@ -1232,7 +1232,7 @@ end:
 }
 
 static Eina_Bool
-_ecore_evas_win32_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel)
+_ecore_evas_win32_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
 {
    if (selection != ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
      return EINA_FALSE;

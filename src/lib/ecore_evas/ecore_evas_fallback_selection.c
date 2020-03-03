@@ -26,7 +26,7 @@ fallback_selection_shutdown(Ecore_Evas *ee)
 }
 
 Eina_Bool
-fallback_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel)
+fallback_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
 {
    Ecore_Evas_Selection_Callbacks *callbacks = &data->callbacks[selection];
 
@@ -103,7 +103,7 @@ fallback_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int seat, Ecore_
    return eina_future_resolved(efl_loop_future_scheduler_get(efl_main_loop_get()), value);
 }
 Eina_Bool
-fallback_dnd_start(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Eina_Array *available_types EINA_UNUSED, Ecore_Evas *drag_rep EINA_UNUSED, Ecore_Evas_Internal_Delivery delivery EINA_UNUSED, Ecore_Evas_Internal_Cancel cancel EINA_UNUSED, const char* action EINA_UNUSED)
+fallback_dnd_start(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Eina_Array *available_types EINA_UNUSED, Ecore_Evas *drag_rep EINA_UNUSED, Ecore_Evas_Selection_Internal_Delivery delivery EINA_UNUSED, Ecore_Evas_Selection_Internal_Cancel cancel EINA_UNUSED, const char* action EINA_UNUSED)
 {
    return EINA_FALSE;
 }

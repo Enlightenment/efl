@@ -82,11 +82,11 @@ typedef struct _Ecore_Evas_Interface Ecore_Evas_Interface;
 typedef struct _Ecore_Evas_Aux_Hint Ecore_Evas_Aux_Hint;
 typedef struct _Ecore_Evas_Cursor Ecore_Evas_Cursor;
 
-typedef Eina_Bool (*Ecore_Evas_Internal_Delivery)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice);
-typedef void (*Ecore_Evas_Internal_Cancel)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer);
+typedef Eina_Bool (*Ecore_Evas_Selection_Internal_Delivery)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice);
+typedef void (*Ecore_Evas_Selection_Internal_Cancel)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer);
 typedef struct {
-   Ecore_Evas_Internal_Delivery delivery;
-   Ecore_Evas_Internal_Cancel cancel;
+   Ecore_Evas_Selection_Internal_Delivery delivery;
+   Ecore_Evas_Selection_Internal_Cancel cancel;
    Eina_Array *available_types;
 } Ecore_Evas_Selection_Callbacks;
 /* Engines interfaces */
@@ -183,10 +183,10 @@ struct _Ecore_Evas_Engine_Func
 
    double (*fn_last_tick_get)(Ecore_Evas *ee);
 
-   Eina_Bool (*fn_selection_claim)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel);
+   Eina_Bool (*fn_selection_claim)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel);
    Eina_Bool (*fn_selection_has_owner)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
    Eina_Future* (*fn_selection_request)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_types); // a future containing a Eina_Content, type must be in acceptable_types
-   Eina_Bool (*fn_dnd_start)(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel, const char *action);
+   Eina_Bool (*fn_dnd_start)(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel, const char *action);
    Eina_Bool (*fn_dnd_stop)(Ecore_Evas *ee, unsigned int seat);
 };
 
@@ -385,7 +385,7 @@ struct _Ecore_Evas
    struct {
       Ecore_Evas *rep;
       void *data;
-      Ecore_Evas_Drag_Finished free;
+      Ecore_Evas_Drag_Finished_Cb free;
       Eina_Bool accepted;
    } drag;
 
@@ -531,10 +531,10 @@ EAPI Eina_Position2D ecore_evas_dnd_pos_get(Ecore_Evas *ee, unsigned int seat);
 
 void fallback_selection_init(Ecore_Evas *ee);
 void fallback_selection_shutdown(Ecore_Evas *ee);
-Eina_Bool fallback_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel);
+Eina_Bool fallback_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel);
 Eina_Bool fallback_selection_has_owner(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
 Eina_Future* fallback_selection_request(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_type);
-Eina_Bool fallback_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel, const char* action);
+Eina_Bool fallback_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel, const char* action);
 Eina_Bool fallback_dnd_stop(Ecore_Evas *ee, unsigned int seat);
 
 #ifdef IPA_YLNO_ESU_LANRETNI_MLE

@@ -3756,7 +3756,7 @@ EAPI Eina_Future* ecore_evas_selection_get(Ecore_Evas *ee, unsigned int seat, Ec
  *
  * Set this callback using ecore_evas_callback_drop_state_changed_set.
  */
-typedef void (*Ecore_Evas_Drag_Finished)(Ecore_Evas *ee, unsigned int seat, void *data, Eina_Bool accepted);
+typedef void (*Ecore_Evas_Drag_Finished_Cb)(Ecore_Evas *ee, unsigned int seat, void *data, Eina_Bool accepted);
 
 /**
  * @brief Starts a new drag operation.
@@ -3776,7 +3776,8 @@ typedef void (*Ecore_Evas_Drag_Finished)(Ecore_Evas *ee, unsigned int seat, void
  *
  * This method must be called when a drag operation is initiated in order to provide the necessary information.
  */
-EAPI Eina_Bool ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep, const char* action, Ecore_Evas_Drag_Finished terminate_cb, void *data);
+EAPI Eina_Bool ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep,
+                                     const char* action, Ecore_Evas_Drag_Finished_Cb terminate_cb, void *data);
 
 /**
  * @brief Cancels an ongoing drag operation.
@@ -3798,7 +3799,7 @@ EAPI Eina_Bool ecore_evas_drag_cancel(Ecore_Evas *ee, unsigned int seat);
  *
  * Set this callback using ecore_evas_callback_drop_state_changed_set.
  */
-typedef void (*Ecore_Evas_State_Changed)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
+typedef void (*Ecore_Evas_Drag_State_Changed_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
 
 /**
  * @brief Sets the method (callback) to call when the mouse pointer enters or exits the specified window while
@@ -3810,7 +3811,7 @@ typedef void (*Ecore_Evas_State_Changed)(Ecore_Evas *ee, unsigned int seat, Eina
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
  * times overwrites previous functions. Use a NULL @cb func to stop being notified.
  */
-EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_State_Changed cb);
+EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_Drag_State_Changed_Cb cb);
 
 /**
  * @brief This method is called when the mouse pointer moves over the specified window while
@@ -3822,7 +3823,7 @@ EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_
  * Set this callback using ecore_evas_callback_drop_motion_set.
  */
 
-typedef void (*Ecore_Evas_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
+typedef void (*Ecore_Evas_Drag_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
 /**
  * @brief Sets the method (callback) to call when the mouse pointer moves over the specified window while
  * performing a drag operation.
@@ -3833,7 +3834,7 @@ typedef void (*Ecore_Evas_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Pos
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
  * times overwrites previous functions. Use a NULL @cb func to stop being notified.
  */
-EAPI void ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Motion_Cb cb);
+EAPI void ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Drag_Motion_Cb cb);
 
 /**
  * @brief This method is called when the mouse pointer is released over the specified window while
@@ -3861,16 +3862,14 @@ typedef void (*Ecore_Evas_Drop_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Posit
  */
 EAPI void ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb cb);
 
-// app calls this (from one of the motion cb's, for example) to know the type (and auto conversion) of the thing being dragged.
-// This is the same as calling selection_get and retrieving the types from there (but faster).
 /**
  * @brief Retrieves the list of types the data currently being dragged can be automatically converted to.
  *
  * @param[in] ee The Ecore Evas the drag operation started on.
  * @return
  *
- * This can be used in any of the drag and drop callbacks (Ecore_Evas_State_Changed, Ecore_Evas_Motion_Cb and
- * Ecore_Evas_Drop_Cb) to check if the data being dragged is acceptable and give the user some early feedback
+ * This can be used in any of the drag and drop callbacks (Ecore_Evas_Drag_State_Changed_Cb, Ecore_Evas_Drag_Motion_Cb
+ * and Ecore_Evas_Drop_Cb) to check if the data being dragged is acceptable and give the user some early feedback
  * before the data is actually dropped on the window.
  *
  * This is functionally equivalent to calling ecore_evas_selection_get and examining the available types in the
