@@ -3239,7 +3239,8 @@ shell_surface_toplevel_set_parent(struct wl_client *client EINA_UNUSED, struct w
    if (parent_resource) pcs = wl_resource_get_user_data(parent_resource);
 
    comp_surface_reparent(cs, pcs);
-   evas_object_smart_callback_call(cs->c->obj, "child_added", cs->obj);
+   if (parent_resource)
+     evas_object_smart_callback_call(cs->c->obj, "child_added", cs->obj);
 }
 
 static void
