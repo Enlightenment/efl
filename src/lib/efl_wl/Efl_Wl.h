@@ -178,6 +178,17 @@ EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t v
 EAPI Eina_Bool efl_wl_surface_extract(Evas_Object *surface);
 
 /**
+ * Return the pid for the surface's client
+ *
+ * Get the pid of the underlying client that created the surface.
+ *
+ * @param surface The surface to extract
+ * @return The pid of the surface, or -1 on failure
+ * @since 1.24
+ */
+EAPI int32_t efl_wl_surface_pid_get(Evas_Object *surface);
+
+/**
  * Get the Evas_Object for an extracted wl_surface resource created by an efl_wl object
  *
  * @note Passing anything other than a valid wl_surface resource from an efl_wl object will guarantee a crash.

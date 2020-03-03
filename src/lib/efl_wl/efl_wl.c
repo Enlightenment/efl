@@ -5909,6 +5909,18 @@ extracted_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    shell_surface_send_configure(data);
 }
 
+int32_t
+efl_wl_surface_pid_get(Evas_Object *surface)
+{
+   Comp_Surface *cs;
+   int32_t pid;
+   if (!eina_streq(evas_object_type_get(surface), "comp_surface")) abort();
+   cs = evas_object_smart_data_get(surface);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, -1);
+   wl_client_get_credentials(wl_resource_get_client(cs->res), &pid, NULL, NULL);
+   return pid;
+}
+
 Eina_Bool
 efl_wl_surface_extract(Evas_Object *surface)
 {
