@@ -32,7 +32,6 @@
 #include "exactness_private.h"
 #include "common.h"
 
-#define PATH_ 1024
 #define CMD_LINE_MAX 256
 #define IMAGE_FILENAME_EXT ".png"
 #define PAUSE_KEY_STR "F2"
@@ -941,7 +940,7 @@ _prg_invoke(const char *full_path, int argc, char **argv)
 static Eina_Stringshare *
 _prg_full_path_guess(const char *prg)
 {
-   char full_path[PATH_];
+   char full_path[PATH_MAX];
    if (strchr(prg, '/')) return eina_stringshare_add(prg);
    char *env_path = eina_strdup(getenv("PATH"));
    Eina_Stringshare *ret = NULL;
@@ -1232,7 +1231,7 @@ int main(int argc, char **argv)
    if (!show_on_screen) setenv("ELM_ENGINE", "buffer", 1);
    if (_src_unit && _src_unit->fonts_path)
      {
-        char buf[PATH_];
+        char buf[PATH_MAX];
         if (!fonts_dir) fonts_dir = "./fonts";
         sprintf(buf, "%s/%s", fonts_dir, _src_unit->fonts_path);
         if (!ecore_file_exists(buf))

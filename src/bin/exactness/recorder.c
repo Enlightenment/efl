@@ -25,7 +25,6 @@
 #include <exactness_private.h>
 #include "common.h"
 
-#define MAX_PATH 1024
 #define STABILIZE_KEY_STR "F1"
 #define SHOT_KEY_STR "F2"
 #define SAVE_KEY_STR "F3"
@@ -293,7 +292,7 @@ _prg_invoke(const char *full_path, int argc, char **argv)
 static Eina_Stringshare *
 _prg_full_path_guess(const char *prg)
 {
-   char full_path[MAX_PATH];
+   char full_path[PATH_MAX];
    if (strchr(prg, '/')) return eina_stringshare_add(prg);
    char *env_path = eina_strdup(getenv("PATH"));
    Eina_Stringshare *ret = NULL;
@@ -483,7 +482,7 @@ int main(int argc, char **argv)
    /* Replace the current command line to hide the Exactness part */
    int len = argv[argc - 1] + strlen(argv[argc - 1]) - argv[opt_args];
    memcpy(argv[0], argv[opt_args], len);
-   memset(argv[0] + len, 0, MAX_PATH - len);
+   memset(argv[0] + len, 0, PATH_MAX - len);
 
    int i;
    for (i = opt_args; i < argc; i++)
