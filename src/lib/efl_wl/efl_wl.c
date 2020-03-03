@@ -3334,6 +3334,7 @@ shell_surface_toplevel_create(struct wl_client *client EINA_UNUSED, struct wl_re
    cs->role = wl_resource_create(client, &xdg_toplevel_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_toplevel_interface, cs, shell_surface_toplevel_impl_destroy);
    cs->shell.new = 1;
+   evas_object_smart_callback_call(cs->c->obj, "toplevel_added", cs->obj);
 }
 
 static void

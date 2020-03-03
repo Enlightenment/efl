@@ -44,6 +44,7 @@ typedef enum
  * Add a compositor widget to the given canvas.
  *
  * The following smart callbacks will trigger on the compositor object:
+ * "toplevel_added" - A toplevel surface has been added; event info is Evas_Object *surface @since 1.24
  * "child_added" - A toplevel surface with a parent has been added; event info is Evas_Object *surface
  * "popup_added" - A popup surface has been added; event info is Evas_Object *surface
  * "seat_added" - A compositor seat has been added; event info is Eo *dev
