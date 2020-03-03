@@ -385,7 +385,7 @@ struct _Ecore_Evas
    struct {
       Ecore_Evas *rep;
       void *data;
-      Ecore_Evas_Drag_Finished free;
+      Ecore_Evas_Drag_Finished_Cb free;
       Eina_Bool accepted;
    } drag;
 
