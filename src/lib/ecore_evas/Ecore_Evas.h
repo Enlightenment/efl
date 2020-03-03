@@ -3695,8 +3695,6 @@ typedef void (*Ecore_Evas_Selection_Changed_Cb)(Ecore_Evas *ee, unsigned int sea
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
  * times overwrites previous functions. Use a NULL @p func to stop being notified.
  *
- * You will not be notified about selection changes caused by yourself. (TODO: bu5hm4n?)
- *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */

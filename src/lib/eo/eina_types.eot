@@ -60,7 +60,16 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ value.]]
 }
 
-struct @extern Eina.Content;
+struct @extern Eina.Content; [[
+  Container for any type of content.
+
+  Each @Eina.Content is made of an @Eina.Slice of memory and an IANA MIME type:
+  https://www.iana.org/assignments/media-types/media-types.xhtml
+
+  If the type is a text-style type, the last byte of the slice must be \0.
+
+  @since 1.24
+]]
 
 struct @extern Eina.Matrix4 {
    [[A bidimensional array of floating point values with 4 rows and 4 columns.
