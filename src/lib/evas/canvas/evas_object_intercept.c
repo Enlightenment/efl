@@ -16,7 +16,7 @@ static void
 evas_object_intercept_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   if (!obj->interceptors)
+   if (!obj || !obj->interceptors)
      obj->interceptors = calloc(1, sizeof(Evas_Intercept_Func));
 }
 
@@ -24,7 +24,7 @@ static void
 evas_object_intercept_deinit(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   if (!obj->interceptors) return;
+   if (!obj || !obj->interceptors) return;
    if ((obj->interceptors->show.func) ||
        (obj->interceptors->hide.func) ||
        (obj->interceptors->move.func) ||
