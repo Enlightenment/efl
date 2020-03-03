@@ -453,7 +453,6 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
 
    for (type = types; *type; type++)
      {
-        if (!*type) continue;
         t = wl_array_add(&input->data.drag.types, sizeof(*t));
         if (t)
           {
@@ -579,7 +578,6 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
 
    for (type = types; *type; type++)
      {
-        if (!*type) continue;
         t = wl_array_add(&input->data.selection.types, sizeof(*t));
         if (t)
           {
