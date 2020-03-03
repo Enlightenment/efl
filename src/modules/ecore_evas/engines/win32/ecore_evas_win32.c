@@ -62,11 +62,15 @@ static const int   interface_win32_version = 1;
 
 typedef struct _Ecore_Evas_Engine_Data_Win32 Ecore_Evas_Engine_Data_Win32;
 
-struct _Ecore_Evas_Engine_Data_Win32 {
+struct _Ecore_Evas_Engine_Data_Win32
+{
    Ecore_Win32_Window *parent;
-   struct {
-     unsigned char region     : 1;
-     unsigned char fullscreen : 1;
+   Ecore_Evas_Selection_Callbacks clipboard;
+   Eina_Future *delivery;
+   struct
+   {
+      unsigned char region     : 1;
+      unsigned char fullscreen : 1;
    } state;
 };
 
@@ -1197,96 +1201,215 @@ _ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
      *ydpi = y_dpi;
 }
 
+static Eina_Value
+_delivery(void *data, const Eina_Value value EINA_UNUSED, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Data_Win32 *edata = ee->engine.data;
+   Eina_Rw_Slice slice;
+   const char *mime_type = NULL;
+
+   EINA_SAFETY_ON_NULL_GOTO(edata->delivery, end);
+
+   for (unsigned int i = 0; i < eina_array_count(edata->clipboard.available_types); ++i)
+     {
+        mime_type = eina_array_data_get(edata->clipboard.available_types, i);
+        if (eina_str_has_prefix(mime_type, "text/"))
+          break;
+     }
+   if (mime_type)
+     {
+        edata->clipboard.delivery(ee, 0, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER, mime_type, &slice);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_win32_clipboard_set((Ecore_Win32_Window *)ee->prop.window, slice.mem, slice.len, mime_type), end);
+     }
+   else
+     {
+        ERR("No compatible mime type found");
+     }
+
+end:
+   return EINA_VALUE_EMPTY;
+}
+
+static Eina_Bool
+_ecore_evas_win32_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Internal_Delivery delivery, Ecore_Evas_Internal_Cancel cancel)
+{
+   if (selection != ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     return EINA_FALSE;
+
+   if (!delivery && !cancel)
+     {
+        ecore_win32_clipboard_clear((Ecore_Win32_Window *)ee->prop.window);
+        return EINA_TRUE;
+     }
+   else
+     {
+        Ecore_Evas_Engine_Data_Win32 *edata = ee->engine.data;
+
+        if (edata->clipboard.cancel)
+          {
+             edata->clipboard.cancel(ee, seat, selection);
+             eina_array_free(edata->clipboard.available_types);
+          }
+
+        edata->delivery = efl_loop_job(efl_main_loop_get());
+        eina_future_then(edata->delivery, _delivery, ee);
+        edata->clipboard.delivery = delivery;
+        edata->clipboard.cancel = cancel;
+        edata->clipboard.available_types = available_types;
+        return EINA_TRUE;
+     }
+}
+
+Eina_Future*
+_ecore_evas_win32_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_type)
+{
+   Eina_Future *future;
+   Eina_Promise *promise;
+   const char *mime_type = NULL;
+
+   if (selection != ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     return eina_future_rejected(efl_loop_future_scheduler_get(efl_main_loop_get()), ecore_evas_no_selection);
+
+   promise = efl_loop_promise_new(efl_main_loop_get());
+   future = eina_future_new(promise);
+
+   for (unsigned int i = 0; i < eina_array_count(acceptable_type); ++i)
+     {
+        mime_type = eina_array_data_get(acceptable_type, i);
+        if (eina_str_has_prefix(mime_type, "text/"))
+          break;
+     }
+   if (!mime_type)
+     {
+        eina_promise_reject(promise, ecore_evas_no_matching_type);
+     }
+   else
+     {
+        size_t size;
+        void *data;
+        Eina_Content *content;
+        Eina_Rw_Slice slice;
+
+        data = ecore_win32_clipboard_get((Ecore_Win32_Window *)ee->prop.window, &size, mime_type);
+        if (eina_str_has_prefix(mime_type, "text/"))
+          {
+             //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
+             slice.len = size + 1;
+             slice.mem = eina_memdup(data, size, EINA_TRUE);
+          }
+        else
+          {
+             slice.len = size;
+             slice.mem = data;
+          }
+        content = eina_content_new(eina_rw_slice_slice_get(slice), mime_type);
+        if (!content) // construction can fail because of some validation reasons
+          eina_promise_reject(promise, ecore_evas_no_matching_type);
+        else
+          eina_promise_resolve(promise, eina_value_content_init(content));
+     }
+   return future;
+}
+
+static Eina_Bool
+_ecore_evas_win32_selection_has_owner(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection)
+{
+   return (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER);
+}
+
 static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
 {
    _ecore_evas_win32_free,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     _ecore_evas_win32_callback_delete_request_set,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     _ecore_evas_win32_move,
-     NULL,
-     _ecore_evas_win32_resize,
-     _ecore_evas_win32_move_resize,
-     _ecore_evas_win32_rotation_set,
-     _ecore_evas_win32_shaped_set,
-     _ecore_evas_win32_show,
-     _ecore_evas_win32_hide,
-     _ecore_evas_win32_raise,
-     _ecore_evas_win32_lower,
-     _ecore_evas_win32_activate,
-     _ecore_evas_win32_title_set,
-     NULL, /* _ecore_evas_x_name_class_set */
-     _ecore_evas_win32_size_min_set,
-     _ecore_evas_win32_size_max_set,
-     _ecore_evas_win32_size_base_set,
-     _ecore_evas_win32_size_step_set,
-     _ecore_evas_win32_object_cursor_set,
-     _ecore_evas_win32_object_cursor_unset,
-     NULL, /* _ecore_evas_x_layer_set */
-     _ecore_evas_win32_focus_set,
-     _ecore_evas_win32_iconified_set,
-     _ecore_evas_win32_borderless_set,
-     _ecore_evas_win32_override_set,
-     NULL,
-     _ecore_evas_win32_fullscreen_set,
-     NULL, /* _ecore_evas_x_avoid_damage_set */
-     NULL, /* _ecore_evas_x_withdrawn_set */
-     NULL, /* _ecore_evas_x_sticky_set */
-     NULL, /* _ecore_evas_x_ignore_events_set */
-     _ecore_evas_win32_alpha_set,
-     NULL, //transparent
-     NULL, // profiles_set
-     NULL, // profile_set
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   _ecore_evas_win32_callback_delete_request_set,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   _ecore_evas_win32_move,
+   NULL,
+   _ecore_evas_win32_resize,
+   _ecore_evas_win32_move_resize,
+   _ecore_evas_win32_rotation_set,
+   _ecore_evas_win32_shaped_set,
+   _ecore_evas_win32_show,
+   _ecore_evas_win32_hide,
+   _ecore_evas_win32_raise,
+   _ecore_evas_win32_lower,
+   _ecore_evas_win32_activate,
+   _ecore_evas_win32_title_set,
+   NULL, /* _ecore_evas_x_name_class_set */
+   _ecore_evas_win32_size_min_set,
+   _ecore_evas_win32_size_max_set,
+   _ecore_evas_win32_size_base_set,
+   _ecore_evas_win32_size_step_set,
+   _ecore_evas_win32_object_cursor_set,
+   _ecore_evas_win32_object_cursor_unset,
+   NULL, /* _ecore_evas_x_layer_set */
+   _ecore_evas_win32_focus_set,
+   _ecore_evas_win32_iconified_set,
+   _ecore_evas_win32_borderless_set,
+   _ecore_evas_win32_override_set,
+   NULL,
+   _ecore_evas_win32_fullscreen_set,
+   NULL, /* _ecore_evas_x_avoid_damage_set */
+   NULL, /* _ecore_evas_x_withdrawn_set */
+   NULL, /* _ecore_evas_x_sticky_set */
+   NULL, /* _ecore_evas_x_ignore_events_set */
+   _ecore_evas_win32_alpha_set,
+   NULL, //transparent
+   NULL, // profiles_set
+   NULL, // profile_set
 
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
 
-     NULL, // render
-     _ecore_evas_win32_screen_geometry_get,
-     _ecore_evas_win32_screen_dpi_get,
-     NULL,
-     NULL,  // msg_send
+   NULL, // render
+   _ecore_evas_win32_screen_geometry_get,
+   _ecore_evas_win32_screen_dpi_get,
+   NULL,
+   NULL,  // msg_send
 
-     NULL, // pointer_xy_get
-     NULL, // pointer_warp
+   NULL, // pointer_xy_get
+   NULL, // pointer_warp
 
-     NULL, // wm_rot_preferred_rotation_set
-     NULL, // wm_rot_available_rotations_set
-     NULL, // wm_rot_manual_rotation_done_set
-     NULL, // wm_rot_manual_rotation_done
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL, // wm_rot_manual_rotation_done
 
-     NULL, // aux_hints_set
+   NULL, // aux_hints_set
 
-     NULL, // fn_animator_register
-     NULL, // fn_animator_unregister
+   NULL, // fn_animator_register
+   NULL, // fn_animator_unregister
 
-     NULL, // fn_evas_changed
-     NULL, //fn_focus_device_set
-     NULL, //fn_callback_focus_device_in_set
-     NULL, //fn_callback_focus_device_out_set
-     NULL, //fn_callback_device_mouse_in_set
-     NULL, //fn_callback_device_mouse_out_set
-     NULL, //fn_pointer_device_xy_get
-     NULL, //fn_prepare
-     NULL, //fn_last_tick_get
-     NULL, //fn_selection_claim
-     NULL, //fn_selection_has_owner
-     NULL, //fn_selection_request
+   NULL, // fn_evas_changed
+   NULL, //fn_focus_device_set
+   NULL, //fn_callback_focus_device_in_set
+   NULL, //fn_callback_focus_device_out_set
+   NULL, //fn_callback_device_mouse_in_set
+   NULL, //fn_callback_device_mouse_out_set
+   NULL, //fn_pointer_device_xy_get
+   NULL, //fn_prepare
+   NULL, //fn_last_tick_get
+   _ecore_evas_win32_selection_claim, //fn_selection_claim
+   _ecore_evas_win32_selection_has_owner, //fn_selection_has_owner
+   _ecore_evas_win32_selection_request, //fn_selection_request
+   NULL, //fn_dnd_start
+   NULL, //fn_dnd_stop
 };
 
 #endif /* BUILD_ECORE_EVAS_WIN32 */
