@@ -4,22 +4,22 @@
 
 /**
  * @typedef Eina_Content
- * Defines a abstract content segment
+ * Container for any type of content.
  *
- * Each Abstract content contains out of a Eina_Slice of memory. And a type.
- * The type are IANA meme types.
+ * Each Eina_Content is made of an Eina_Slice of memory and an IANA MIME type:
+ * https://www.iana.org/assignments/media-types/media-types.xhtml
  *
- * @note if the type is a text-style type, the last byte of the slice must be \0
+ * @note if the type is a text-style type, the last byte of the slice must be \0.
  *
  * @since 1.24
  */
 typedef struct _Eina_Content Eina_Content;
 
 /**
- * @typedef Eina_Content_Convertion_Callback
+ * @typedef Eina_Content_Conversion_Callback
  *
- * Callback called when convertion from one type to another type is requested.
- * The from and to type is specified when the callback is registered.
+ * Method called when conversion from one type to another is requested.
+ * The from and to types are specified when the callback is registered.
  * The to type is also passed in the callback here.
  * The type of the from pointer does not need to be checked.
  */
@@ -38,7 +38,7 @@ EAPI const char* eina_content_as_file(Eina_Content *content);
 /**
  * Convert the content of the object to another type.
  *
- * In case the convertion cannot be performaned, NULL is returned.
+ * In case the conversion cannot be performed, NULL is returned.
  *
  * @param[in] content The content to convert.
  * @param[in] new_type The new type the returned content will have.
@@ -57,19 +57,19 @@ EAPI Eina_Content* eina_content_convert(Eina_Content *content, const char *new_t
 EAPI const char* eina_content_type_get(Eina_Content *content);
 
 /**
- * Get the type of the passed content.
+ * Get the Eina_Slice of the passed content.
  *
- * @param[in] content The content to fetch the type from.
+ * @param[in] content The content to fetch the data from.
  *
- * @return The path to the file. Do not free this.
+ * @return An Eina_Slice containing the data. Do not free.
  */
 EAPI const Eina_Slice eina_content_data_get(Eina_Content *content);
 
 /**
- * Create a new content object, with the slice of data with a specific type.
+ * Create a new content object, with the provided data and type.
  *
- * @param[in] data A slice of memory, the memory is duplicated.
- * @param[in] type The type of memory.
+ * @param[in] data A slice of memory. The memory is copied.
+ * @param[in] type The type this data represents.
  *
  * @return The new content object. The caller owns this object.
  */
@@ -85,62 +85,62 @@ EAPI void eina_content_free(Eina_Content *content);
 /**
  * Register a new conversion callback.
  *
- * @param[in] from The tyoe you convert from.
- * @param[in] in The type you convert to.
+ * @param[in] from The type to convert from.
+ * @param[in] to The type to convert to.
  *
- * @return True on success false otherwise.
+ * @return True if the callback was successfully registered.
  */
 EAPI Eina_Bool eina_content_converter_conversion_register(const char *from, const char *to, Eina_Content_Conversion_Callback convertion);
 
 /**
- * Check if a specific convertion can be performanced.
+ * Check if a specific conversion can be performed.
  *
- * A convertion can only be performed if a callback is registered.
+ * A conversion can only be performed if a callback is registered.
  *
- * @param[in] from The type you convert from.
- * @param[in] in The type you convert to.
+ * @param[in] from The type to convert from.
+ * @param[in] to The type to convert to.
  *
- * @return True if it can be performed, false if not.
+ * @return True if the conversion can be performed.
  */
 EAPI Eina_Bool eina_content_converter_convert_can(const char *from, const char *to);
 
 /**
- * Returns a iterator that can be used to find all the possible types that can be converted to.
+ * Returns an iterator containing all the target types that the provided source type can be converted to.
  *
- * @param[in] form The type you convert from
+ * @param[in] from The type to convert from.
  *
- * @return A Iterator, containing strings, free this via eina_iterator_free.
+ * @return An Iterator containing MIME type strings. Free this via eina_iterator_free.
  */
 EAPI Eina_Iterator* eina_content_converter_possible_conversions(const char *from);
 
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_CONTENT;
 
 /**
- * Convert the Eina_Content object to a Eina_Value.
+ * Convert the Eina_Content object to an Eina_Value.
  *
- * @param[in] content The Eina_Content struct that will be converted to a Eina_Value
+ * @param[in] content The Eina_Content struct that will be converted to an Eina_Value.
  *
- * @return A Eina_Value that is allocated, you need to free it.
+ * @return An newly-allocated Eina_Value. Caller owns it.
  */
 EAPI Eina_Value* eina_value_content_new(Eina_Content *content);
 
 /**
- * Convert the Eina_Content object to a Eina_Value.
+ * Creates an Eina_Value from an Eina_Content.
  *
- * @param[in] content The Eina_Content struct that will be converted to a Eina_Value
+ * @param[in] content The Eina_Content struct that will be converted to an Eina_Value.
  *
- * @return A Eina_Value with type EINA_VALUE_TYPE_CONTENT
+ * @return An Eina_Value with type EINA_VALUE_TYPE_CONTENT.
  */
 EAPI Eina_Value eina_value_content_init(Eina_Content *content);
 
 /**
- * Get the content from the Eina_Value
+ * Gets the content from the Eina_Value.
  *
- * If the value is not of the type EINA_VALUE_TYPE_CONTENT, NULL will be returned and a error will be printed.
+ * If the value is not of the type EINA_VALUE_TYPE_CONTENT, NULL will be returned and an error will be printed.
  *
  * @param[in] value The value to get the content from
  *
- * @return A allocated Eina_Content, you need to free it.
+ * @return A newly-allocated Eina_Content. Caller owns it.
  */
 EAPI Eina_Content* eina_value_to_content(const Eina_Value *value);
 

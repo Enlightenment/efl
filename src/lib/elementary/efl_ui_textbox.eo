@@ -1,8 +1,13 @@
-enum Efl.Ui.Textbox_Cnp_Content {
-   Nothing = 0, [[You can paste or drop nothing]]
-   Text = 1, [[You can paste normal Text]]
-   Markup = 3, [[You can paste Markup (Normal text is also just markup)]]
-   Image = 4, [[You can paste Images]]
+enum @beta Efl.Ui.Textbox_Cnp_Content {
+   [[What kind of content can be pasted into this widget using Copy & Paste or Drag & Drop functionality.
+
+     Multiple options can be OR-ed together.
+   ]]
+   Nothing = 0, [[Nothing can be pasted or dropped into this widget.]]
+   Text = 1,    [[Plain text can be pasted or dropped into this widget.]]
+   Markup = 3,  [[Markup text can be pasted or dropped into this widget
+                  (This includes Plain text).]]
+   Image = 4,   [[Images can be pasted or dropped into this widget.]]
 }
 
 class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
@@ -39,18 +44,16 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          }
       }
       @property cnp_dnd_mode @beta {
-         [[Control pasting of text and images for the widget.
+         [[Controls the type of content which can be pasted into the widget.
 
-           Normally the entry allows both text and images to be pasted.
-
-           Note: This only changes the behaviour of text.
+           By default, both text and images are allowed..
          ]]
          set {
          }
          get {
          }
          values {
-            allowed_formats : Efl.Ui.Textbox_Cnp_Content; [[Format for cnp]]
+            allowed_formats : Efl.Ui.Textbox_Cnp_Content; [[Allowed content types.]]
          }
       }
       @property selection_handles_enabled {

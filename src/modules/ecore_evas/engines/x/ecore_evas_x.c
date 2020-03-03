@@ -3794,7 +3794,7 @@ _search_fitting_type(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Ev
              if (mime_type == acceptable_type)
                HANDLE_TYPE()
 
-             //if there is no available type yet, check if we can convert to the desiared type via this type
+             //if there is no available type yet, check if we can convert to the desired type via this type
              if (!found_conversion)
                {
                   const char *convertion_type = NULL;
