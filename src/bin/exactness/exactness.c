@@ -8,6 +8,7 @@
 #include <Ecore_File.h>
 
 #include "exactness_private.h"
+#include "common.h"
 
 #ifdef _WIN32
 # include <evil_private.h> /* mkdir */
@@ -51,17 +52,6 @@ static Eina_List *_errors;
 static Eina_List *_compare_errors;
 
 static Eina_Bool _job_consume();
-
-static void
-_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
 
 static Exactness_Image *
 _image_load(const char *filename)
@@ -283,7 +273,7 @@ ok:
      }
    strncpy(buf, eina_strbuf_string_get(sbuf), SCHEDULER_CMD_SIZE-1);
    eina_strbuf_free(sbuf);
-   _printf(1, "Command: %s\n", buf);
+   ex_printf(1, "Command: %s\n", buf);
    return EINA_TRUE;
 }
 

@@ -30,6 +30,7 @@
 #include <Exactness.h>
 
 #include "exactness_private.h"
+#include "common.h"
 
 #define PATH_ 1024
 #define CMD_LINE_MAX 256
@@ -152,17 +153,6 @@ static Eina_Bool _exit_required = EINA_FALSE;
 static Eina_Bool _pause_request = EINA_FALSE;
 static Eina_Bool _playing_status = EINA_FALSE;
 
-static void
-_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
-
 static Exactness_Image *
 _snapshot_shot_get(Evas *e)
 {
@@ -226,7 +216,7 @@ _evas_render_post_cb(void *data EINA_UNUSED, const Efl_Event *event)
                   Eo *o = evas_object_image_add(event->object);
                   evas_object_image_size_set(o, ex_shot->w, ex_shot->h);
                   evas_object_image_data_set(o, ex_shot->pixels);
-                  _printf(1, "Shot taken (%s).\n", filename);
+                  ex_printf(1, "Shot taken (%s).\n", filename);
                   if (!evas_object_image_save(o, filename, NULL, NULL))
                     {
                        printf("Cannot save widget to <%s>\n", filename);
@@ -238,7 +228,7 @@ _evas_render_post_cb(void *data EINA_UNUSED, const Efl_Event *event)
                   Exactness_Image *ex_img = e_data;
                   memcpy(ex_img, ex_shot, sizeof(Exactness_Image));
                   ex_shot->pixels = NULL;
-                  _printf(1, "Shot taken (in %s).\n", _dest);
+                  ex_printf(1, "Shot taken (in %s).\n", _dest);
                }
              else if (_dest_type == FTYPE_REMOTE)
                {
@@ -369,23 +359,23 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
      {
       case EXACTNESS_ACTION_MOUSE_IN:
            {
-              _printf(1, "Mouse in\n");
-              _printf(2, "%s evas_event_feed_mouse_in n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse in\n");
+              ex_printf(2, "%s evas_event_feed_mouse_in n_evas=<%d>\n", __func__, n_evas);
               if (e) evas_event_feed_mouse_in(e, time(NULL), NULL);
               break;
            }
       case EXACTNESS_ACTION_MOUSE_OUT:
            {
-              _printf(1, "Mouse out\n");
-              _printf(2, "%s evas_event_feed_mouse_out n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse out\n");
+              ex_printf(2, "%s evas_event_feed_mouse_out n_evas=<%d>\n", __func__, n_evas);
               if (e) evas_event_feed_mouse_out(e, time(NULL), NULL);
               break;
            }
       case EXACTNESS_ACTION_MOUSE_WHEEL:
            {
               Exactness_Action_Mouse_Wheel *t = data;
-              _printf(1, "Mouse wheel\n");
-              _printf(2, "%s evas_event_feed_mouse_wheel n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse wheel\n");
+              ex_printf(2, "%s evas_event_feed_mouse_wheel n_evas=<%d>\n", __func__, n_evas);
               if (e) evas_event_feed_mouse_wheel(e, t->direction, t->z, time(NULL), NULL);
 
               break;
@@ -393,7 +383,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_MULTI_DOWN:
            {
               Exactness_Action_Multi_Event *t = data;
-              _printf(2, "%s evas_event_feed_multi_down n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_multi_down n_evas=<%d>\n", __func__, n_evas);
               if (!t->d)
                 {
                    if (e) evas_event_feed_mouse_down(e, t->b, t->flags, time(NULL), NULL);
@@ -412,7 +402,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_MULTI_UP:
            {
               Exactness_Action_Multi_Event *t = data;
-              _printf(2, "%s evas_event_feed_multi_up n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_multi_up n_evas=<%d>\n", __func__, n_evas);
               if (!t->d)
                 {
                    if (e) evas_event_feed_mouse_up(e, t->b, t->flags, time(NULL), NULL);
@@ -431,7 +421,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_MULTI_MOVE:
            {
               Exactness_Action_Multi_Move *t = data;
-              _printf(2, "%s evas_event_feed_multi_move n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_multi_move n_evas=<%d>\n", __func__, n_evas);
               if (!t->d)
                 {
                    if (e) evas_event_feed_mouse_move(e, t->x, t->y, time(NULL), NULL);
@@ -454,7 +444,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_KEY_DOWN:
            {
               Exactness_Action_Key_Down_Up *t = data;
-              _printf(2, "%s evas_event_feed_key_down n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_key_down n_evas=<%d>\n", __func__, n_evas);
               if (e)
                  evas_event_feed_key_down_with_keycode(e,
                        t->keyname, t->key, t->string,
@@ -464,7 +454,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_KEY_UP:
            {
               Exactness_Action_Key_Down_Up *t = data;
-              _printf(2, "%s evas_event_feed_key_up n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_key_up n_evas=<%d>\n", __func__, n_evas);
               if (e) evas_event_feed_key_up_with_keycode(e,
                     t->keyname, t->key, t->string,
                     t->compose, time(NULL), NULL, t->keycode);
@@ -473,7 +463,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
            }
       case EXACTNESS_ACTION_TAKE_SHOT:
            {
-              _printf(2, "%s take shot n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s take shot n_evas=<%d>\n", __func__, n_evas);
               if (rect) evas_object_color_set(rect, 0, 0, 255, 255);
               _cur_shot_id++;
               if (_dest_type != FTYPE_UNKNOWN && e) _shot_do(e);
@@ -489,7 +479,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
                    Eo *o = efl_name_find(e, t->wdg_name);
                    if (o)
                      {
-                        _printf(2, "%s EFL event invoke %s on %s\n",
+                        ex_printf(2, "%s EFL event invoke %s on %s\n",
                               __func__, t->event_name, t->wdg_name);
                         Efl_Event_Description d;
                         found = EINA_TRUE;
@@ -526,7 +516,7 @@ wdg_found:
                    Exactness_Action_Multi_Event *d_event = calloc(1, sizeof(*d_event));
                    Exactness_Action *act, *prev_act = eina_list_data_get(_cur_event_list);
 
-                   _printf(2, "%s click on %s\n", __func__, t->wdg_name);
+                   ex_printf(2, "%s click on %s\n", __func__, t->wdg_name);
                    act = calloc(1, sizeof(*act));
                    act->type = EXACTNESS_ACTION_MULTI_MOVE;
                    act->delay_ms = 100;
@@ -563,7 +553,7 @@ wdg_found:
            }
       case EXACTNESS_ACTION_STABILIZE:
            {
-              _printf(2, "%s stabilize\n", __func__);
+              ex_printf(2, "%s stabilize\n", __func__);
               if (rect) evas_object_color_set(rect, 255, 165, 0, 255);
               ecore_timer_add(0.1, _stabilization_timer_cb, NULL);
               break;
@@ -591,7 +581,7 @@ _feed_event_timer_cb(void *data EINA_UNUSED)
         if (act->type != EXACTNESS_ACTION_STABILIZE)
           {
              act = eina_list_data_get(_cur_event_list);
-             _printf(2, "  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
+             ex_printf(2, "  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
              ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
           }
      }
@@ -605,7 +595,7 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
    Evas *e;
 #define STAB_MAX 5
    static int need_more = STAB_MAX;
-   _printf(2, "Not stable yet!\n");
+   ex_printf(2, "Not stable yet!\n");
    EINA_LIST_FOREACH(_evas_list, itr, e)
      {
         if (!e) continue;
@@ -629,7 +619,7 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
         if (_src_type != FTYPE_REMOTE && !_pause_request)
           {
              Exactness_Action *act = eina_list_data_get(_cur_event_list);
-             _printf(2, "  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
+             ex_printf(2, "  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
              ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
           }
         need_more = STAB_MAX;
@@ -836,7 +826,7 @@ _src_feed(void *data EINA_UNUSED)
 
    if (act && act->delay_ms)
      {
-        _printf(2, "  Waiting <%f>\n", act->delay_ms / 1000.0);
+        ex_printf(2, "  Waiting <%f>\n", act->delay_ms / 1000.0);
         ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
      }
    else
@@ -853,7 +843,7 @@ _src_open()
      {
         Eina_List *itr, *itr2;
         Exactness_Action *act;
-        _printf(2, "<%s> Source file is <%s>\n", __func__, _src_filename);
+        ex_printf(2, "<%s> Source file is <%s>\n", __func__, _src_filename);
         if (_src_type == FTYPE_EXU)
           {
              _src_unit = exactness_unit_file_read(_src_filename);
@@ -1035,10 +1025,10 @@ _event_key_cb(void *data EINA_UNUSED, const Efl_Event *event)
    if (!strcmp(key, PAUSE_KEY_STR) && efl_input_key_pressed_get(evk))
      {
         _pause_request = !_pause_request;
-        if (_pause_request) _printf(1, "Pausing scenario\n");
+        if (_pause_request) ex_printf(1, "Pausing scenario\n");
         else
           {
-             _printf(1, "Playing scenario\n");
+             ex_printf(1, "Playing scenario\n");
              if (!_playing_status)
                 _feed_event_timer_cb(NULL);
           }
@@ -1060,7 +1050,7 @@ _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
    e = _evas_new();
    if (e)
      {
-        _printf(1, "New Evas\n");
+        ex_printf(1, "New Evas\n");
         _evas_list = eina_list_append(_evas_list, e);
         efl_event_callback_array_add(e, _evas_callbacks(), NULL);
      }
@@ -1297,9 +1287,9 @@ int main(int argc, char **argv)
                {
                   argv[i - opt_args] = argv[0] + (argv[i] - argv[opt_args]);
                }
-             _printf(1, "%s ", argv[i - opt_args]);
+             ex_printf(1, "%s ", argv[i - opt_args]);
           }
-        _printf(1, "\n");
+        ex_printf(1, "\n");
      }
    else
      {

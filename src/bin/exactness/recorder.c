@@ -23,6 +23,7 @@
 #include <Exactness.h>
 
 #include <exactness_private.h>
+#include "common.h"
 
 #define MAX_PATH 1024
 #define STABILIZE_KEY_STR "F1"
@@ -41,17 +42,6 @@ static Exactness_Unit *_unit = NULL;
 
 static char *_shot_key = NULL;
 static unsigned int _last_timestamp = 0.0;
-
-static void
-_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
 
 static Exactness_Action_Type
 _event_pointer_type_get(Efl_Pointer_Action t)
@@ -87,7 +77,7 @@ _add_to_list(Exactness_Action_Type type, unsigned int n_evas, unsigned int times
                    prev_v->n_evas == n_evas &&
                    (!len || !memcmp(prev_v->data, data, len))) return;
           }
-        _printf(1, "Recording %s\n", _exactness_action_type_to_string_get(type));
+        ex_printf(1, "Recording %s\n", _exactness_action_type_to_string_get(type));
         Exactness_Action *act =  malloc(sizeof(*act));
         act->type = type;
         act->n_evas = n_evas;
@@ -122,7 +112,7 @@ _event_pointer_cb(void *data, const Efl_Event *event)
 
    if (!timestamp) return;
 
-   _printf(2, "Calling \"%s\" timestamp=<%u>\n", _exactness_action_type_to_string_get(evt), timestamp);
+   ex_printf(2, "Calling \"%s\" timestamp=<%u>\n", _exactness_action_type_to_string_get(evt), timestamp);
 
    switch (action)
      {
@@ -182,20 +172,20 @@ _event_key_cb(void *data, const Efl_Event *event)
      {
         if (!strcmp(key, _shot_key))
           {
-             _printf(2, "Take Screenshot: %s timestamp=<%u>\n", __func__, timestamp);
+             ex_printf(2, "Take Screenshot: %s timestamp=<%u>\n", __func__, timestamp);
              _add_to_list(EXACTNESS_ACTION_TAKE_SHOT, n_evas, timestamp, NULL, 0);
              return;
           }
         if (!strcmp(key, STABILIZE_KEY_STR))
           {
-             _printf(2, "Stabilize: %s timestamp=<%u>\n", __func__, timestamp);
+             ex_printf(2, "Stabilize: %s timestamp=<%u>\n", __func__, timestamp);
              _add_to_list(EXACTNESS_ACTION_STABILIZE, n_evas, timestamp, NULL, 0);
              return;
           }
         if (!strcmp(key, SAVE_KEY_STR))
           {
              _output_write();
-             _printf(2, "Save events: %s timestamp=<%u>\n", __func__, timestamp);
+             ex_printf(2, "Save events: %s timestamp=<%u>\n", __func__, timestamp);
              return;
           }
         evt = EXACTNESS_ACTION_KEY_DOWN;
@@ -239,7 +229,7 @@ _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
    e = _evas_new();
    if (e)
      {
-        _printf(1, "New Evas\n");
+        ex_printf(1, "New Evas\n");
         _evas_list = eina_list_append(_evas_list, e);
         efl_key_data_set(e, "__evas_id", (void *)(intptr_t)_last_evas_id++);
         efl_event_callback_array_add(e, _event_pointer_callbacks(), e);
@@ -502,9 +492,9 @@ int main(int argc, char **argv)
           {
              argv[i - opt_args] = argv[0] + (argv[i] - argv[opt_args]);
           }
-        _printf(1, "%s ", argv[i - opt_args]);
+        ex_printf(1, "%s ", argv[i - opt_args]);
      }
-   _printf(1, "\n");
+   ex_printf(1, "\n");
 
    if (!_shot_key) _shot_key = getenv("SHOT_KEY");
    if (!_shot_key) _shot_key = SHOT_KEY_STR;

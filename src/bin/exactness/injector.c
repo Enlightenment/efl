@@ -14,6 +14,7 @@
 #include <Elementary.h>
 
 #include <Exactness.h>
+#include "common.h"
 
 typedef struct
 {
@@ -135,32 +136,21 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(_debug_ops,
       );
 
 static void
-_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
-
-static void
 _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
 {
    switch (type)
      {
       case EXACTNESS_ACTION_MOUSE_IN:
            {
-              _printf(1, "Mouse in\n");
-              _printf(2, "%s evas_event_feed_mouse_in n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse in\n");
+              ex_printf(2, "%s evas_event_feed_mouse_in n_evas=<%d>\n", __func__, n_evas);
               eina_debug_session_send(_session, _cid, _mouse_in_op, &n_evas, sizeof(int));
               break;
            }
       case EXACTNESS_ACTION_MOUSE_OUT:
            {
-              _printf(1, "Mouse out\n");
-              _printf(2, "%s evas_event_feed_mouse_out n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse out\n");
+              ex_printf(2, "%s evas_event_feed_mouse_out n_evas=<%d>\n", __func__, n_evas);
               eina_debug_session_send(_session, _cid, _mouse_out_op, &n_evas, sizeof(int));
               break;
            }
@@ -169,8 +159,8 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               Exactness_Action_Mouse_Wheel *t = data;
               int len = 3*sizeof(int);
               char *buf = malloc(len), *tmp = buf;
-              _printf(1, "Mouse wheel\n");
-              _printf(2, "%s evas_event_feed_mouse_wheel n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse wheel\n");
+              ex_printf(2, "%s evas_event_feed_mouse_wheel n_evas=<%d>\n", __func__, n_evas);
               STORE_INT(tmp, n_evas);
               STORE_INT(tmp, t->direction);
               STORE_INT(tmp, t->z);
@@ -184,7 +174,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               Exactness_Action_Multi_Event *t = data;
               int len = 5*sizeof(int)+7*sizeof(double)+sizeof(int);
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s n_evas=<%d>\n", __func__,
+              ex_printf(2, "%s %s n_evas=<%d>\n", __func__,
                     type == EXACTNESS_ACTION_MULTI_DOWN ? "evas_event_feed_multi_down" :
                     "evas_event_feed_multi_up", n_evas);
               STORE_INT(tmp, n_evas);
@@ -211,7 +201,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               Exactness_Action_Multi_Move *t = data;
               int len = 4*sizeof(int)+7*sizeof(double);
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s evas_event_feed_multi_move n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_multi_move n_evas=<%d>\n", __func__, n_evas);
               STORE_INT(tmp, n_evas);
               STORE_INT(tmp, t->d);
               STORE_INT(tmp, t->x);
@@ -237,7 +227,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               len += t->string ? strlen(t->string) : 0;
               len += t->compose ? strlen(t->compose) : 0;
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s n_evas=<%d>\n", __func__,
+              ex_printf(2, "%s %s n_evas=<%d>\n", __func__,
                     type == EXACTNESS_ACTION_KEY_DOWN ? "evas_event_feed_key_down " :
                     "evas_event_feed_key_up", n_evas);
               STORE_INT(tmp, n_evas);
@@ -254,7 +244,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
            }
       case EXACTNESS_ACTION_TAKE_SHOT:
            {
-              _printf(2, "%s take shot n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s take shot n_evas=<%d>\n", __func__, n_evas);
               eina_debug_session_send(_session, _cid, _take_shot_op, &n_evas, sizeof(int));
               break;
            }
@@ -265,7 +255,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               len += t->wdg_name ? strlen(t->wdg_name) : 0;
               len += t->event_name ? strlen(t->event_name) : 0;
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s\n", __func__, "EFL event");
+              ex_printf(2, "%s %s\n", __func__, "EFL event");
               STORE_STRING(tmp, t->wdg_name);
               STORE_STRING(tmp, t->event_name);
               eina_debug_session_send(_session, _cid, _efl_event_op, buf, len);
@@ -278,7 +268,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               int len = 0;
               len += t->wdg_name ? strlen(t->wdg_name) : 0;
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s\n", __func__, "Click On");
+              ex_printf(2, "%s %s\n", __func__, "Click On");
               STORE_STRING(tmp, t->wdg_name);
               eina_debug_session_send(_session, _cid, _click_on_op, buf, len);
               free(buf);
@@ -286,7 +276,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
            }
       case EXACTNESS_ACTION_STABILIZE:
            {
-              _printf(2, "%s stabilize\n", __func__);
+              ex_printf(2, "%s stabilize\n", __func__);
               eina_debug_session_send(_session, _cid, _stabilize_op, NULL, 0);
               break;
            }
@@ -321,7 +311,7 @@ _src_open()
 {
    double diff_time = 0; /* Time to wait before feeding the first event */
 
-   _printf(2, "<%s> Source file is <%s>\n", __func__, _src_filename);
+   ex_printf(2, "<%s> Source file is <%s>\n", __func__, _src_filename);
    if (!strcmp(_src_filename + strlen(_src_filename) - 4,".exu"))
      {
         _src_unit = exactness_unit_file_read(_src_filename);
@@ -336,7 +326,7 @@ _src_open()
 
    if (act->delay_ms)
      {
-        _printf(2, "  Waiting <%f>\n", diff_time);
+        ex_printf(2, "  Waiting <%f>\n", diff_time);
         ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
      }
    else
