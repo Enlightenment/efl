@@ -3,7 +3,6 @@
 
 /**
  * @defgroup Elm_Color_Class_Group Color Class Editor
- * @ingroup Elm_Color_Class_Group
  * @brief This group provides a UI for editing color classes in applications.
  *
  * @{
