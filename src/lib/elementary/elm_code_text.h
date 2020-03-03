@@ -14,7 +14,7 @@ extern "C" {
 
 /**
  * @brief Line text handling functions.
- * @defgroup Text access and manipulation within lines
+ * @defgroup Elm_Code_Text access and manipulation within lines
  *
  * @{
  *

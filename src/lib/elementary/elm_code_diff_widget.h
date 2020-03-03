@@ -12,7 +12,7 @@ extern "C" {
 
 /**
  * @brief UI Loading functions.
- * @defgroup Init  Creating a diff widget to render an Elm Code backend
+ * @defgroup Elm_Code_Diff_Init  Creating a diff widget to render an Elm Code backend
  *  when it's referencing a diff file
  *
  * @{
