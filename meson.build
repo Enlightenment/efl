@@ -456,9 +456,6 @@ endforeach
 subdir(join_paths('src', 'bin', 'efl'))
 
 subdir(join_paths('src', 'generic', 'evas'))
-if sys_windows == false
-  subdir(join_paths('src', 'generic', 'emotion'))
-endif
 subdir('cmakeconfig')
 subdir(join_paths('src', 'bindings'))
 subdir(join_paths('src', 'edje_external'))

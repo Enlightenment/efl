@@ -13,12 +13,11 @@ if [ "$DISTRO" != "" ] ; then
 
   # TODO:
   # - No libelogind package in fedora 30 repo
-  # - RPM fusion repo for xine and libvlc
   # - Ibus
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
-  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
-  -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
+  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= \
+  -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
   # Enabled png, jpeg evas loader for in tree edje file builds
@@ -27,8 +26,8 @@ if [ "$DISTRO" != "" ] ; then
   -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
   -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false \
   -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
-  -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer1,libvlc,xine \
-  -Demotion-generic-loaders-disabler=vlc -Dfribidi=false -Dfontconfig=false \
+  -Decore-imf-loaders-disabler=xim,ibus,scim \
+  -Dfribidi=false -Dfontconfig=false \
   -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
   -Delua=true -Dnls=false -Dbindings= -Dlua-interpreter=luajit -Dnative-arch-optimization=false"
   #evas_filter_parser.c:(.text+0xc59): undefined reference to `lua_getglobal' with interpreter lua
@@ -98,7 +97,7 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
   export CC="ccache gcc"
   travis_fold meson meson
-  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer1,libvlc,xine
+  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Dgstreamer=false
   travis_endfold meson
 else
   travis_fold meson meson
