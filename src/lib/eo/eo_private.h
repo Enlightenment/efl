@@ -71,12 +71,19 @@ static inline void _eo_id_release(const Eo_Id obj_id);
 void _eo_condtor_done(Eo *obj);
 
 typedef struct _Dich_Chain1 Dich_Chain1;
+typedef struct _Eo_Vtable_Node Eo_Vtable_Node;
 
 typedef struct _Eo_Vtable
 {
    Dich_Chain1 *chain;
    unsigned int size;
 } Eo_Vtable;
+
+typedef struct _Eo_Vtable2
+{
+   Eo_Vtable_Node *chain;
+   unsigned short size;
+} Eo_Vtable2;
 
 /* Clean the vtable. */
 void _vtable_func_clean_all(Eo_Vtable *vtable);
@@ -155,6 +162,11 @@ typedef struct
    const _Efl_Class *src;
 } op_type_funcs;
 
+struct _Eo_Vtable_Node{
+   op_type_funcs *funcs;
+   unsigned short count;
+};
+
 typedef struct _Dich_Chain2
 {
    op_type_funcs funcs[DICH_CHAIN_LAST_SIZE];
@@ -179,6 +191,7 @@ struct _Efl_Class
    const _Efl_Class *parent;
    const Efl_Class_Description *desc;
    Eo_Vtable vtable;
+   Eo_Vtable2 vtable2;
 
    const _Efl_Class **extensions;
 
@@ -204,6 +217,7 @@ struct _Efl_Class
 
    unsigned int obj_size; /**< size of an object of this class */
    unsigned int base_id;
+   unsigned int base_id2;
    unsigned int data_offset; /* < Offset of the data within object data. */
    unsigned int ops_count; /* < Offset of the data within object data. */
 
