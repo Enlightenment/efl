@@ -24,6 +24,7 @@ typedef struct
    Eina_List *grids;
    unsigned int col_count;
    Evas_Object *scroller, *gridbox, *background;
+   Evas_Object *expander;
 
    const char *font_name;
    Evas_Font_Size font_size;
