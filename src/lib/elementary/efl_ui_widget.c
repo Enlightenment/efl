@@ -5673,8 +5673,7 @@ _efl_ui_widget_part_efl_ui_property_bind_property_bind(Eo *obj, Elm_Part_Data *p
 }
 
 #define EFL_UI_WIDGET_PART_EXTRA_OPS \
-   EFL_OBJECT_OP_FUNC(efl_canvas_layout_part_type_get, _efl_ui_widget_part_efl_canvas_layout_part_type_get), \
-   EFL_OBJECT_OP_FUNC(efl_gfx_entity_geometry_get, _efl_ui_widget_part_efl_gfx_entity_geometry_get)
+   EFL_OBJECT_OP_FUNC(efl_canvas_layout_part_type_get, _efl_ui_widget_part_efl_canvas_layout_part_type_get)
 
 #include "efl_ui_widget_part.eo.c"
 
