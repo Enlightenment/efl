@@ -3239,7 +3239,8 @@ shell_surface_toplevel_set_parent(struct wl_client *client EINA_UNUSED, struct w
    if (parent_resource) pcs = wl_resource_get_user_data(parent_resource);
 
    comp_surface_reparent(cs, pcs);
-   evas_object_smart_callback_call(cs->c->obj, "child_added", cs->obj);
+   if (parent_resource)
+     evas_object_smart_callback_call(cs->c->obj, "child_added", cs->obj);
 }
 
 static void
@@ -3333,6 +3334,7 @@ shell_surface_toplevel_create(struct wl_client *client EINA_UNUSED, struct wl_re
    cs->role = wl_resource_create(client, &xdg_toplevel_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_toplevel_interface, cs, shell_surface_toplevel_impl_destroy);
    cs->shell.new = 1;
+   evas_object_smart_callback_call(cs->c->obj, "toplevel_added", cs->obj);
 }
 
 static void
@@ -5907,6 +5909,18 @@ extracted_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
 
    if (cs->dead) return;
    shell_surface_send_configure(data);
+}
+
+int32_t
+efl_wl_surface_pid_get(Evas_Object *surface)
+{
+   Comp_Surface *cs;
+   int32_t pid;
+   if (!eina_streq(evas_object_type_get(surface), "comp_surface")) abort();
+   cs = evas_object_smart_data_get(surface);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, -1);
+   wl_client_get_credentials(wl_resource_get_client(cs->res), &pid, NULL, NULL);
+   return pid;
 }
 
 Eina_Bool

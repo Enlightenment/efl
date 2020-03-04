@@ -8,6 +8,7 @@
 #include <Evas_Legacy.h>
 #include <evas_canvas_eo.h>
 
+#include "custom_gesture.eo.h"
 #include "custom_recognizer.eo.h"
 #include "custom_recognizer2.eo.h"
 
@@ -25,11 +26,12 @@ typedef enum
 enum
 {
    TAP,
-   LONG_TAP,
+   LONG_PRESS,
    DOUBLE_TAP,
    TRIPLE_TAP,
    MOMENTUM,
    FLICK,
+   ROTATE,
    ZOOM,
    CUSTOM,
    CUSTOM2,
@@ -86,11 +88,12 @@ setup(void)
 #define WATCH(type) \
    efl_event_callback_add(rect, EFL_EVENT_GESTURE_##type, gesture_cb, &count[(type)])
    WATCH(TAP);
-   WATCH(LONG_TAP);
+   WATCH(LONG_PRESS);
    WATCH(DOUBLE_TAP);
    WATCH(TRIPLE_TAP);
    WATCH(MOMENTUM);
    WATCH(FLICK);
+   WATCH(ROTATE);
    WATCH(ZOOM);
 
    get_me_to_those_events(win);
@@ -104,11 +107,12 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* basic tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -116,12 +120,13 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* add a second tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 0, 1, 1, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -129,12 +134,13 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* add a third tap */
    click_object(rect);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    /* clear states */
@@ -145,12 +151,13 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    click_object_at(rect, 500, 500);
    click_object_at(rect, 505, 505);
    CHECK_ALL(TAP, 2, 0, 2, 0);
-   CHECK_ALL(LONG_TAP, 2, 0, 0, 2);
+   CHECK_ALL(LONG_PRESS, 2, 0, 0, 2);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 1, 2, 1, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 3, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    /* clear states */
@@ -160,11 +167,13 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
    /* verify multiple simultaneous presses treated as same press */
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 1, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
 
@@ -172,12 +181,14 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 0, 1, 1, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 2, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
 
@@ -185,12 +196,14 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 
    multi_click_object(rect, 2);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* UPDATE -> FINISH */
    CHECK_ALL(DOUBLE_TAP, 1, 1, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 0, 1, 1, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
    /* clear states */
@@ -199,11 +212,13 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 
    multi_click_object(rect, 10);
    CHECK_ALL(TAP, 1, 0, 1, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   /* this is two fingers, so we have a rotate start */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* this is two fingers, so we have a zoom start */
    CHECK_ALL(ZOOM, 1, 0, 0, 1);
    RESET;
@@ -211,7 +226,7 @@ EFL_START_TEST(test_efl_ui_gesture_taps)
 }
 EFL_END_TEST
 
-EFL_START_TEST(test_efl_ui_gesture_long_tap)
+EFL_START_TEST(test_efl_ui_gesture_long_press)
 {
    Eo *rect = setup();
    double timeout = 1.2;
@@ -224,11 +239,12 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
    /* press */
    press_object(rect);
    CHECK_ALL(TAP, 1, 0, 0, 0);
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 0);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 0);
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 0);
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 0);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -237,22 +253,24 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
 
    /* verify longpress */
    CHECK_ALL(TAP, 0, 0, 0, 1);
-   CHECK_ALL(LONG_TAP, 0, 1, 0, 0);
+   CHECK_ALL(LONG_PRESS, 0, 1, 0, 0);
    CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
    evas_event_feed_mouse_up(e, 1, 0, 2, NULL);
 
    CHECK_ZERO(TAP);
-   CHECK_ALL(LONG_TAP, 0, 0, 1, 0);
+   CHECK_ALL(LONG_PRESS, 0, 0, 1, 0);
    CHECK_ZERO(DOUBLE_TAP);
    CHECK_ZERO(TRIPLE_TAP);
    CHECK_ZERO(MOMENTUM);
    CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -266,11 +284,12 @@ EFL_START_TEST(test_efl_ui_gesture_long_tap)
 
    /* verify longpress */
    CHECK_ALL(TAP, 0, 1, 0, 0);
-   CHECK_ALL(LONG_TAP, 0, 1, 0, 0);
+   CHECK_ALL(LONG_PRESS, 0, 1, 0, 0);
    CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
    CHECK_ALL(MOMENTUM, 1, 0, 0, 0);
    CHECK_ALL(FLICK, 1, 0, 0, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -291,7 +310,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -300,6 +319,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -312,7 +332,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -321,6 +341,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -330,7 +351,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -339,6 +360,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -348,7 +370,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -357,6 +379,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -367,7 +390,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -376,6 +399,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, DRAG_OBJECT_NUM_MOVES - 1, 0, 1);
    /* triggered */
    CHECK_ALL(FLICK, 1, DRAG_OBJECT_NUM_MOVES - 1, 1, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -385,7 +409,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
@@ -396,6 +420,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_START(FLICK, 1);
    CHECK_FINISH(FLICK, 1);
    CHECK_CANCEL(FLICK, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -412,6 +437,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_ALL(MOMENTUM, 1, moves - 2, 1, 0);
    /* NOT triggered; this is going to have some crazy number of update events since it ignores a bunch */
    CHECK_FINISH(FLICK, 0);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -435,6 +461,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_FINISH(FLICK, 0);
    /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
    ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_CANCELED - 1], 1);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -458,6 +485,7 @@ EFL_START_TEST(test_efl_ui_gesture_flick)
    CHECK_FINISH(FLICK, 0);
    /* flick checks a tolerance value for straight lines, so "start" will be >= 1 */
    ck_assert_int_ge(count[FLICK][EFL_GESTURE_STATE_CANCELED - 1], 1);
+   CHECK_ZERO(ROTATE);
    CHECK_ZERO(ZOOM);
 
    RESET;
@@ -473,19 +501,21 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
 
    CHECK_START(MOMENTUM, 1);
-   CHECK_UPDATE(MOMENTUM, moves * 2 + 1);
+   CHECK_UPDATE(MOMENTUM, 0);
    CHECK_FINISH(MOMENTUM, 0);
    CHECK_CANCEL(MOMENTUM, 1);
 
    /* only finish is verifiable */
    CHECK_FINISH(FLICK, 0);
+   /* started then canceled */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* started 1x */
    CHECK_START(ZOOM, 1);
    /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
@@ -501,19 +531,21 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
    /* canceled */
    CHECK_ALL(TAP, 1, 0, 0, 1);
    /* canceled */
-   CHECK_ALL(LONG_TAP, 1, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
    /* canceled */
    CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
 
    CHECK_START(MOMENTUM, 1);
-   CHECK_UPDATE(MOMENTUM, moves * 2 + 1);
+   CHECK_UPDATE(MOMENTUM, 0);
    CHECK_FINISH(MOMENTUM, 0);
    CHECK_CANCEL(MOMENTUM, 1);
 
    /* only finish is verifiable */
    CHECK_FINISH(FLICK, 0);
+      /* started then canceled */
+   CHECK_ALL(ROTATE, 1, 0, 0, 1);
    /* started 1x */
    CHECK_START(ZOOM, 1);
    /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
@@ -523,6 +555,71 @@ EFL_START_TEST(test_efl_ui_gesture_zoom)
    CHECK_CANCEL(ZOOM, 0);
 
    RESET;
+
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_ui_gesture_rotate)
+{
+   Eo *rect = setup();
+   int moves, momentum_moves;
+
+   multi_press_object(rect, 1);
+   CHECK_ALL(TAP, 1, 0, 0, 0);
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 0);
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 0);
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 0);
+
+   CHECK_ZERO(MOMENTUM);
+   CHECK_ZERO(FLICK);
+   CHECK_ZERO(ROTATE);
+   CHECK_ZERO(ZOOM);
+
+   RESET;
+
+
+   moves = multi_drag_object_around(rect, 1, 500, 500, 250, 180);
+   CHECK_ALL(TAP, 0, 0, 0, 1);
+   CHECK_ALL(LONG_PRESS, 0, 0, 0, 1);
+   CHECK_ALL(DOUBLE_TAP, 0, 0, 0, 1);
+   CHECK_ALL(TRIPLE_TAP, 0, 0, 0, 1);
+
+   CHECK_START(MOMENTUM, 1);
+   momentum_moves = count[MOMENTUM][EFL_GESTURE_STATE_UPDATED - 1];
+   ck_assert_int_ge(count[MOMENTUM][EFL_GESTURE_STATE_UPDATED - 1], moves - 5);
+   CHECK_FINISH(MOMENTUM, 1);
+   CHECK_CANCEL(MOMENTUM, 0);
+
+   /* flick is just going to do flick stuff here, so don't even bother checking much */
+   CHECK_FINISH(FLICK, 0);
+
+   CHECK_ALL(ROTATE, 1, moves - 1, 1, 0);
+   CHECK_ALL(ZOOM, 1, 0, 0, 1);
+
+   RESET;
+
+   /* verify identical motion in reverse */
+   moves = multi_drag_object_around(rect, 1, 500, 500, 250, -180);
+   /* already occurred, first finger still down */
+   CHECK_ZERO(TAP);
+   /* already canceled, first finger still down */
+   CHECK_ZERO(LONG_PRESS);
+   CHECK_ZERO(DOUBLE_TAP);
+   CHECK_ZERO(TRIPLE_TAP);
+
+   /* continuing gesture, counts as already started */
+   CHECK_START(MOMENTUM, 0);
+   /* should be exactly 1 more than previous time */
+   CHECK_UPDATE(MOMENTUM, momentum_moves + 1);
+   CHECK_FINISH(MOMENTUM, 1);
+   CHECK_CANCEL(MOMENTUM, 0);
+
+   /* flick is just going to do flick stuff here, so don't even bother checking much */
+   CHECK_FINISH(FLICK, 0);
+
+   /* continuing gesture, counts as already started, increment update counter */
+   CHECK_ALL(ROTATE, 0, (moves - 1) + 1, 1, 0);
+   CHECK_ALL(ZOOM, 0, 1, 0, 1);
 
 }
 EFL_END_TEST
@@ -549,12 +646,24 @@ custom_cb2(void *data EINA_UNUSED , const Efl_Event *ev)
    count[efl_gesture_state_get(g) - 1]++;
 }
 
+static void
+custom_gesture_cb(void *data EINA_UNUSED , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+
+   Eina_Position2D *delta = data;
+   if (!eina_streq(efl_gesture_custom_gesture_name_get(g), "custom_gesture")) return;
+   delta->x = custom_gesture_x_delta_get(g);
+   delta->y = custom_gesture_y_delta_get(g);
+}
+
 EFL_START_TEST(test_efl_ui_gesture_custom)
 {
    Eo *rect = setup();
    Eo *manager = efl_provider_find(rect, EFL_CANVAS_GESTURE_MANAGER_CLASS);
    Eo *recognizer = efl_add(CUSTOM_RECOGNIZER_CLASS, manager);
    Eo *recognizer2 = efl_add(CUSTOM_RECOGNIZER2_CLASS, manager);
+   Eina_Position2D delta = {0};
 
    efl_gesture_manager_recognizer_register(manager, recognizer);
    efl_gesture_manager_recognizer_register(manager, recognizer2);
@@ -565,6 +674,15 @@ EFL_START_TEST(test_efl_ui_gesture_custom)
    click_object(rect);
    CHECK_ALL(CUSTOM, 1, 0, 1, 0);
    CHECK_ALL(CUSTOM2, 1, 0, 0, 1);
+
+   RESET;
+
+   /* verify gesture properties */
+   efl_event_callback_add(rect, EFL_EVENT_GESTURE_CUSTOM, custom_gesture_cb, &delta);
+   drag_object(rect, 0, 0, 75, 30, EINA_FALSE);
+   ck_assert_int_eq(delta.x, 75);
+   ck_assert_int_eq(delta.y, 30);
+   efl_event_callback_del(rect, EFL_EVENT_GESTURE_CUSTOM, custom_gesture_cb, &delta);
 
    RESET;
 
@@ -599,11 +717,53 @@ EFL_START_TEST(test_efl_ui_gesture_custom)
 }
 EFL_END_TEST
 
+
+EFL_START_TEST(test_efl_ui_gesture_sequence)
+{
+   Eo *rect = setup();
+   int moves;
+
+   multi_click_object(rect, 1);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+
+   wait_timer(0.4);
+   RESET;
+
+   moves = pinch_object(rect, 500, 500, 501, 501, -250, 0, 250, 0);
+   /* canceled */
+   CHECK_ALL(TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(LONG_PRESS, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(DOUBLE_TAP, 1, 0, 0, 1);
+   /* canceled */
+   CHECK_ALL(TRIPLE_TAP, 1, 0, 0, 1);
+
+
+   CHECK_START(ZOOM, 1);
+   /* 2 touch points tracked, so this will be roughly (2 * moves) but probably less */
+   ck_assert_int_ge(count[ZOOM][EFL_GESTURE_STATE_UPDATED - 1], moves);
+   /* finished 1x */
+   CHECK_FINISH(ZOOM, 1);
+   CHECK_CANCEL(ZOOM, 0);
+
+   wait_timer(0.4);
+   RESET;
+
+   multi_click_object(rect, 1);
+   CHECK_ALL(TAP, 1, 0, 1, 0);
+
+   RESET;
+}
+EFL_END_TEST
+
 void efl_ui_test_gesture(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_gesture_taps);
-   tcase_add_test(tc, test_efl_ui_gesture_long_tap);
+   tcase_add_test(tc, test_efl_ui_gesture_long_press);
    tcase_add_test(tc, test_efl_ui_gesture_flick);
    tcase_add_test(tc, test_efl_ui_gesture_zoom);
+   tcase_add_test(tc, test_efl_ui_gesture_rotate);
    tcase_add_test(tc, test_efl_ui_gesture_custom);
+   tcase_add_test(tc, test_efl_ui_gesture_sequence);
 }

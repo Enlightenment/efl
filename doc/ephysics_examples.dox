@@ -196,7 +196,7 @@
 /**
  * @page test_bouncing_ball_c test_bouncing_ball.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-bouncing-ball-c test_bouncing_ball.c
@@ -271,7 +271,7 @@
  /**
  * @page test_bouncing_text_c test_bouncing_text.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-bouncing_text-c test_bouncing_text.c
@@ -323,7 +323,7 @@
  * @skip struct _Camera_Data {
  * @until };
  *
- * @section add-camera Adding a Camera
+ * # Adding a Camera
  *
  * To move the camera in this example, we'll use an animator.
  *
@@ -355,7 +355,7 @@
  * @until ephysics_camera_position_set(camera, x, y
  * @skipline }
  *
- * @section add-uptfloor Updating the floor
+ * # Updating the floor
  *
  * Here we'll use 2 floor images to give the impression of an infinite ground.
  *
@@ -402,7 +402,7 @@
  /**
  * @page test_camera_c test_camera.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-camera-c test_camera.c
@@ -454,7 +454,7 @@
  * @skip struct _Track_Data {
  * @until };
  *
- * @section add-camera Adding a Camera
+ * # Adding a Camera
  *
  * In this example we'll use 3 kinds of tracking, to change this values we'll
  * have an Elementary spinner widget and handle it on this function.
@@ -480,7 +480,7 @@
  * @skip ephysics_camera_body_track(camera, body
  * @until }
  *
- * @section add-uptfloor Updating the floor
+ * # Updating the floor
  *
  * Here we'll use 2 floor images to give the impression of an infinite ground.
  *
@@ -536,7 +536,7 @@
  /**
  * @page test_camera_track_c test_camera_track.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-camera-track-c test_camera_track.c
@@ -583,7 +583,7 @@
  * @skip struct _Collision_Data {
  * @until };
  *
- * @section add-callbacks Adding the Callback
+ * # Adding the Callback
  *
  * Calling ephysics_body_event_callback_add()
  * will register a callback to a type of physics body event.
@@ -632,7 +632,7 @@
  /**
  * @page test_collision_detection_c test_collision_detection.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-collision_detection-c test_collision_detection.c
@@ -671,7 +671,7 @@
  * already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
- * @section add-callbacks Adding the balls
+ * # Adding the balls
  * @dontinclude test_collision_filter.c
  *
  * We'll use two arrays (color and size) to distinguish the groups.
@@ -711,7 +711,7 @@
  /**
  * @page test_collision_filter_c test_collision_filter.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-collision_filter-c test_collision_filter.c
@@ -748,7 +748,7 @@
  * covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
- * @section add-callbacks Adding Callbacks
+ * # Adding Callbacks
  * @dontinclude test_delete.c
  *
  * Calling ephysics_body_event_callback_add()
@@ -800,7 +800,7 @@
  /**
  * @page test_delete_c test_delete.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-delete-c test_delete.c
@@ -858,7 +858,7 @@
  /**
  * @page test_constraint_c test_constraint.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-constraint-c test_constraint.c
@@ -932,7 +932,7 @@
  /**
  * @page test_forces_c test_forces.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-forces-c test_forces.c
@@ -998,7 +998,7 @@
  /**
  * @page test_growing_balls_c test_growing_balls.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-growing-balls-c test_growing_balls.c
@@ -1069,7 +1069,7 @@
  /**
  * @page test_no_gravity_c test_no_gravity.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-no-gravity-c test_no_gravity.c
@@ -1372,7 +1372,7 @@
  /**
  * @page test_rotating_forever_c test_rotating_forever.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-rotating-forever-c test_rotating_forever.c
@@ -1417,7 +1417,7 @@
  * @skip struct _Velocity_Data {
  * @until };
  *
- * @section add-callbacks Adding the Callbacks
+ * # Adding the Callbacks
  *
  * Calling ephysics_body_event_callback_add()
  * will register a callback to a type of physics body event.
@@ -1491,7 +1491,7 @@
  /**
  * @page test_velocity_c test_velocity.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-velocity-c test_velocity.c
@@ -1588,7 +1588,7 @@
  /**
  * @page test_shapes_c test_shapes.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-shapes-c test_shapes.c
@@ -1673,7 +1673,7 @@
  /**
  * @page test_sleeping_threshold_c test_sleeping_threshold.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-sleeping-threshold-c test_sleeping_threshold.c
@@ -1769,7 +1769,7 @@
  /**
  * @page test_slider_c test_slider.c
  *
- * @section ephysics-test-h ephysics_test.h
+ * # ephysics_test.h
  * @include ephysics_test.h
  *
  * @section test-slider-c test_slider.c

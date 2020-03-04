@@ -27,7 +27,6 @@ class @beta Efl.Canvas.Gesture_Custom extends Efl.Canvas.Gesture
       }
    }
    implements {
-      Efl.Object.constructor;
       Efl.Object.destructor;
    }
 }

@@ -6,7 +6,7 @@ option('audio',
 
 option('avahi',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Avahi (zeroconf) support in efl'
 )
 

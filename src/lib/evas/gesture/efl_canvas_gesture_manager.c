@@ -47,12 +47,14 @@ _gesture_recognizer_event_type_get(const Efl_Canvas_Gesture_Recognizer *recogniz
      return EFL_EVENT_GESTURE_DOUBLE_TAP;
    if (type == EFL_CANVAS_GESTURE_TRIPLE_TAP_CLASS)
      return EFL_EVENT_GESTURE_TRIPLE_TAP;
-   if (type == EFL_CANVAS_GESTURE_LONG_TAP_CLASS)
-     return EFL_EVENT_GESTURE_LONG_TAP;
+   if (type == EFL_CANVAS_GESTURE_LONG_PRESS_CLASS)
+     return EFL_EVENT_GESTURE_LONG_PRESS;
    if (type == EFL_CANVAS_GESTURE_MOMENTUM_CLASS)
      return EFL_EVENT_GESTURE_MOMENTUM;
    if (type == EFL_CANVAS_GESTURE_FLICK_CLASS)
      return EFL_EVENT_GESTURE_FLICK;
+   if (type == EFL_CANVAS_GESTURE_ROTATE_CLASS)
+     return EFL_EVENT_GESTURE_ROTATE;
    if (type == EFL_CANVAS_GESTURE_ZOOM_CLASS)
      return EFL_EVENT_GESTURE_ZOOM;
    return EFL_EVENT_GESTURE_CUSTOM;
@@ -83,8 +85,9 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    Efl_Canvas_Gesture_Recognizer_Tap_Data *td;
    Efl_Canvas_Gesture_Recognizer_Double_Tap_Data *dtd;
    Efl_Canvas_Gesture_Recognizer_Triple_Tap_Data *ttd;
-   Efl_Canvas_Gesture_Recognizer_Long_Tap_Data *ltd;
+   Efl_Canvas_Gesture_Recognizer_Long_Press_Data *ltd;
    Efl_Canvas_Gesture_Recognizer_Flick_Data *fd;
+   Efl_Canvas_Gesture_Recognizer_Rotate_Data *rd;
    Efl_Canvas_Gesture_Recognizer_Zoom_Data *zd;
    const Efl_Event_Description *type;
 
@@ -103,15 +106,20 @@ _update_finger_sizes(Efl_Canvas_Gesture_Manager_Data *pd, int finger_size)
    ttd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS);
    ttd->finger_size = finger_size;
 
-   type = EFL_EVENT_GESTURE_LONG_TAP;
+   type = EFL_EVENT_GESTURE_LONG_PRESS;
    r = eina_hash_find(pd->m_recognizers, &type);
-   ltd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS);
+   ltd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_LONG_PRESS_CLASS);
    ltd->finger_size = finger_size;
 
    type = EFL_EVENT_GESTURE_FLICK;
    r = eina_hash_find(pd->m_recognizers, &type);
    fd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS);
    fd->finger_size = finger_size;
+
+   type = EFL_EVENT_GESTURE_ROTATE;
+   r = eina_hash_find(pd->m_recognizers, &type);
+   rd = efl_data_scope_get(r, EFL_CANVAS_GESTURE_RECOGNIZER_ROTATE_CLASS);
+   rd->finger_size = finger_size;
 
    type = EFL_EVENT_GESTURE_ZOOM;
    r = eina_hash_find(pd->m_recognizers, &type);
@@ -147,11 +155,12 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
 
    //Register all types of recognizers at very first time.
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS, obj));
-   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_LONG_PRESS_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_DOUBLE_TAP_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TRIPLE_TAP_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_MOMENTUM_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ROTATE_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ZOOM_CLASS, obj));
    _update_finger_sizes(pd, EFL_GESTURE_RECOGNIZER_TYPE_TAP_FINGER_SIZE);
 
@@ -238,12 +247,22 @@ _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_
 }
 
 static void
+_recognizer_cleanup_internal(Efl_Canvas_Gesture_Manager_Data *pd, const Efl_Canvas_Gesture_Recognizer *recognizer, const Eo *target, const Efl_Event_Description *type)
+{
+   _cleanup_cached_gestures(pd, target, type, recognizer);
+   eina_hash_del(pd->m_object_events, &recognizer, NULL);
+   //FIXME: delete it by object not list.
+   _cleanup_object(pd->m_gestures_to_delete);
+}
+
+static void
 _gesture_recognizer_process_internal(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Canvas_Gesture_Recognizer *recognizer,
                                      Eo *target, const Efl_Event_Description *gesture_type, void *event)
 {
    Efl_Canvas_Gesture_Recognizer_Result recog_result;
-   Efl_Canvas_Gesture_Recognizer_Result recog_state;
+   Efl_Canvas_Gesture_Recognizer_Result recog_state = EFL_GESTURE_RECOGNIZER_RESULT_FINISH;
    Efl_Canvas_Gesture_Touch *touch_event;
+   Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
    //If the gesture canceled or already finished by recognizer.
    Efl_Canvas_Gesture *gesture = _get_state(pd, target, recognizer, gesture_type);
    if (!gesture) return;
@@ -263,7 +282,9 @@ _gesture_recognizer_process_internal(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Ca
    //Such as the case of canceling gesture recognition after a mouse down.
    if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_STATE_UNKNOWN)
      return;
-
+   if ((!rd->continues) && ((efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_CANCELED) ||
+       (efl_gesture_state_get(gesture) == EFL_GESTURE_STATE_FINISHED)))
+     goto post_event;
 
    /* this is the "default" value for the event, recognizers may modify it if necessary */
    efl_gesture_touch_count_set(gesture, efl_gesture_touch_points_count_get(touch_event));
@@ -271,9 +292,6 @@ _gesture_recognizer_process_internal(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Ca
    //Gesture detecting.
    recog_result = efl_gesture_recognizer_recognize(recognizer, gesture, target, touch_event);
    recog_state = recog_result & EFL_GESTURE_RECOGNIZER_RESULT_RESULT_MASK;
-
-   Efl_Canvas_Gesture_Recognizer_Data *rd =
-     efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    if (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER)
      {
@@ -309,15 +327,14 @@ _gesture_recognizer_process_internal(Efl_Canvas_Gesture_Manager_Data *pd, Efl_Ca
    efl_gesture_timestamp_set(gesture, efl_gesture_touch_current_timestamp_get(touch_event));
    efl_event_callback_call(target, gesture_type, gesture);
 post_event:
+   /* avoid destroying touch tracking before gesture has ended */
+   if ((!rd->continues) &&
+        ((efl_gesture_touch_state_get(touch_event) != EFL_GESTURE_TOUCH_STATE_END) || efl_gesture_touch_points_count_get(touch_event)))
+     return;
    //If the current event recognizes the gesture continuously, dont delete gesture.
    if (((recog_state == EFL_GESTURE_RECOGNIZER_RESULT_FINISH) || (recog_state == EFL_GESTURE_RECOGNIZER_RESULT_CANCEL)) &&
        !rd->continues)
-     {
-        _cleanup_cached_gestures(pd, target, gesture_type, recognizer);
-        eina_hash_del(pd->m_object_events, &recognizer, NULL);
-        //FIXME: delete it by object not list.
-        _cleanup_object(pd->m_gestures_to_delete);
-     }
+     _recognizer_cleanup_internal(pd, recognizer, target, gesture_type);
 }
 
 void
@@ -439,8 +456,6 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
    Eina_List *l;
    Object_Gesture *object_gesture;
    Efl_Canvas_Gesture *gesture;
-   Efl_Canvas_Gesture_Recognizer_Data *rd =
-     efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
 
    //If the widget is being deleted we should be careful not to
    //Create a new state.
@@ -454,16 +469,6 @@ _get_state(Efl_Canvas_Gesture_Manager_Data *pd,
             object_gesture->recognizer == recognizer &&
             object_gesture->type == type)
           {
-             //The gesture is already processed waiting for cleanup
-             if (((efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_FINISHED) ||
-                  (efl_gesture_state_get(object_gesture->gesture) == EFL_GESTURE_STATE_CANCELED)) &&
-                 (!rd->continues))
-               {
-                  _cleanup_cached_gestures(pd, target, type, recognizer);
-                  eina_hash_del(pd->m_object_events, &recognizer, NULL);
-                  _cleanup_object(pd->m_gestures_to_delete);
-                  return NULL;
-               }
              return object_gesture->gesture;
           }
      }
@@ -513,9 +518,7 @@ _efl_canvas_gesture_manager_recognizer_cleanup(Eo *obj EINA_UNUSED, Efl_Canvas_G
 
    //Find the type of the recognizer
    type = _gesture_recognizer_event_type_get(recognizer);
-   _cleanup_cached_gestures(pd, target, type, recognizer);
-   eina_hash_del(pd->m_object_events, &recognizer, NULL);
-   _cleanup_object(pd->m_gestures_to_delete);
+   _recognizer_cleanup_internal(pd, recognizer, target, type);
 }
 
 #include "efl_canvas_gesture_manager.eo.c"

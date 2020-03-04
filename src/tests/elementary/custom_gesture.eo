@@ -1,0 +1,26 @@
+import eina_types;
+parse efl_canvas_gesture_recognizer;
+
+class @beta Custom_Gesture extends Efl.Canvas.Gesture_Custom
+{
+   [[This is a test class for custom gesture implementations.
+   ]]
+   methods {
+      @property x_delta {
+         [[This is the total change in the X coordinate.]]
+         get {
+         }
+         values {
+            val: int; [[The change since the start of the gesture.]]
+         }
+      }
+      @property y_delta {
+         [[This is the total change in the Y coordinate.]]
+         get {
+         }
+         values {
+            val: int; [[The change since the start of the gesture.]]
+         }
+      }
+   }
+}

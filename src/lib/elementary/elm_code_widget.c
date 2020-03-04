@@ -325,6 +325,8 @@ _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd
         elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
      }
 
+   evas_object_smart_calculate(pd->scroller);
+   evas_object_smart_calculate(pd->gridbox);
    evas_object_geometry_get(widget, NULL, &oy, NULL, &oh);
 
    if ((cy < oy) || (cy > (oy + oh - ch)))
@@ -412,7 +414,6 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, El
    w = elm_code_widget_columns_get(widget);
    grid = eina_list_nth(pd->grids, line->number - 1);
    cells = evas_object_textgrid_cellrow_get(grid, 0);
-
    length = elm_code_widget_line_text_column_width_get(widget, line);
    chrpos = 0;
    chr = (char *)elm_code_line_text_get(line, NULL);
@@ -701,12 +702,23 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
 {
    Elm_Code *code;
    Elm_Code_Line *line_obj;
-   unsigned int oldrow, position, length;
+   unsigned int oldrow, position, length, first_row, last_row;
+   int cw, ch;
    const char *text;
 
    oldrow = pd->cursor_line;
+
    pd->cursor_col = col;
    pd->cursor_line = line;
+
+   if (line > eina_list_count(pd->grids) && !pd->selection && !pd->selection->in_progress)
+     {
+        if (_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
+          {
+              _elm_code_widget_cell_size_get(widget, &cw, &ch);
+              _elm_code_widget_scroll_by(widget, 0, ch * (line - last_row));
+          }
+     }
 
    code = pd->code;
    line_obj = elm_code_file_line_get(code->file, line);
@@ -726,7 +738,6 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    if (pd->editable && pd->cursor_rect)
      elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
 }
-
 
 EOLIAN static Eina_Bool
 _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
@@ -808,8 +819,6 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
 
    grid = eina_list_nth(pd->grids, row - 1);
-   evas_object_smart_calculate(pd->scroller);
-   evas_object_smart_calculate(pd->gridbox);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
 
    if (x)
@@ -2017,20 +2026,19 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 
         evas_object_textgrid_font_set(grid, pd->font_name, pd->font_size * elm_config_scale_get());
      }
-
-   elm_box_recalculate(pd->gridbox);
 }
 
 static void
 _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
 {
+   Eina_List *item, *lines;
+   Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
-   Eina_List *item;
    Evas_Object *grid;
    Evas_Coord ww, wh, old_width, old_height;
-   int w, h, cw = 0, ch = 0, gutter;
-   unsigned int line_width;
-   Elm_Code_Widget_Data *pd;
+   int w = 0, h, cw = 0, ch = 0, gutter;
+   unsigned int i, n, line_width, first_row = 1, last_row = 256;
+   Eina_Bool viewport = EINA_FALSE;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
@@ -2045,18 +2053,34 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
 
    old_width = ww;
    old_height = wh;
-   w = 0;
-   h = elm_code_file_lines_get(pd->code->file);
 
-   EINA_LIST_FOREACH(pd->code->file->lines, item, line)
+   n = h = elm_code_file_lines_get(pd->code->file);
+
+   if (_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
+     viewport = EINA_TRUE;
+
+   /* Grow by one page at a time where possible. */
+   n = (last_row + (last_row - first_row)) < n ?
+        last_row + (last_row - first_row) : n;
+
+   /* Calculate the maximum width of our lines. */
+
+   lines = eina_list_nth_list(pd->code->file->lines, first_row - 1);
+   for (i = 0; i < n; i++)
      {
+        line = eina_list_data_get(lines);
+        if (!line) break;
         line_width = elm_code_widget_line_text_column_width_get(widget, line);
+
         if ((int) line_width + gutter + 1 > w)
           w = (int) line_width + gutter + 1;
+
+        lines = eina_list_next(lines);
      }
 
-   _elm_code_widget_ensure_n_grid_rows(widget, h);
+   _elm_code_widget_ensure_n_grid_rows(widget, n);
    _elm_code_widget_cell_size_get(widget, &cw, &ch);
+
    if (w*cw > ww)
      ww = w*cw;
    if (h*ch > wh)
@@ -2073,15 +2097,15 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         evas_object_size_hint_min_set(grid, ww, ch);
      }
 
-   if (!newline)
+   /* Here we expand our scroller when there are less grids than lines of text. */
+   elm_box_unpack(pd->gridbox, pd->expander);
+   evas_object_size_hint_min_set(pd->expander, ww, (h * ch) - (eina_list_count(pd->grids) * ch));
+   elm_box_pack_end(pd->gridbox, pd->expander);
+
+   if (!newline && viewport)
      {
-        unsigned int first_row, last_row;
-
-        if (!_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
-          return ;
-
-        _elm_code_widget_fill_range(widget, pd, first_row, last_row, NULL);
-
+        /* Where possible render additional lines to the viewport. */
+        _elm_code_widget_fill_range(widget, pd, first_row, last_row + 64 < (unsigned int) h ? last_row + 64 : last_row, NULL);
         return;
      }
 
@@ -2089,7 +2113,6 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
      _elm_code_widget_scroll_by(widget,
         (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
         (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
-   elm_box_recalculate(pd->gridbox);
 }
 
 EOAPI void
@@ -2429,6 +2452,9 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_box_align_set(gridrows, 0.0, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
+
+   pd->expander = evas_object_rectangle_add(evas_object_evas_get(scroller));
+   elm_box_pack_end(pd->gridbox, pd->expander);
 
    _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 

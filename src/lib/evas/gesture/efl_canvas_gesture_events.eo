@@ -6,7 +6,7 @@ interface @beta Efl.Canvas.Gesture_Events
    events {
       gesture,tap: Efl.Canvas.Gesture_Tap; [[Emitted when a Tap gesture has been detected.
         A Tap gesture consists of a touch of the screen (or click of the mouse) quickly followed by
-        a release. If the release happens too late a @[Efl.Canvas.Gesture_Events.gesture,long_tap] event will be
+        a release. If the release happens too late a @[Efl.Canvas.Gesture_Events.gesture,long_press] event will be
         emitted instead.
       ]]
 
@@ -22,7 +22,7 @@ interface @beta Efl.Canvas.Gesture_Events
         @[Efl.Canvas.Gesture_Events.gesture,tap] or @[Efl.Canvas.Gesture_Events.gesture,double_tap] events.
       ]]
 
-      gesture,long_tap: Efl.Canvas.Gesture_Long_Tap; [[Emitted when a Long-tap gesture has been detected.
+      gesture,long_press: Efl.Canvas.Gesture_Long_Press; [[Emitted when a Long-tap gesture has been detected.
         A Long-tap gesture consists of a touch of the screen (or click of the mouse) followed by a release
         after some time. If the release happens too quickly a @[Efl.Canvas.Gesture_Events.gesture,tap] event will be
         emitted instead.
@@ -38,6 +38,11 @@ interface @beta Efl.Canvas.Gesture_Events
         holding down a mouse button) with the release occurring before slowing down.
       ]]
 
+      gesture,rotate: Efl.Canvas.Gesture_Rotate; [[Emitted when a Rotate gesture has been detected.
+        A Rotate gesture consists of two fingers touching the screen and performing a motion such that
+        one finger rotates around the other.
+        This gesture cannot be performed with a mouse as it requires more than one pointer.
+      ]]
       gesture,zoom: Efl.Canvas.Gesture_Zoom; [[Emitted when a Zoom gesture has been detected.
         A Zoom gesture consists of two fingers touching the screen and separating ("zoom in") or
         getting closer ("zoom out" or "pinch").

@@ -67,6 +67,7 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
    Eina_Value *val;
    unsigned char glayer_continues_enable;
    Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+   Efl_Canvas_Gesture_Recognizer_Data *rd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
    Efl_Canvas_Gesture_Momentum_Data *md = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_MOMENTUM_CLASS);
 
    val = _recognizer_config_get(obj, "glayer_continues_enable");
@@ -83,6 +84,7 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
              if (efl_gesture_touch_points_count_get(event) == 1)
                {
                   pd->touched = EINA_TRUE;
+                  rd->continues = EINA_TRUE;
                   md->id = -1;
                }
           }
@@ -109,6 +111,7 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
         if ((xdir != pd->xdir) || (ydir != pd->ydir))
           {
              memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Momentum_Data));
+             rd->continues = EINA_FALSE;
              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
           }
         return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
@@ -124,20 +127,20 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
               if (efl_gesture_touch_state_get(event) == EFL_GESTURE_TOUCH_STATE_BEGIN ||
                   glayer_continues_enable)
                 {
-                   if (efl_gesture_touch_previous_data_get(event))
-                     {
-                        if (efl_gesture_touch_previous_data_get(event)->action == efl_gesture_touch_current_data_get(event)->action)
-                          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
-                     }
+
                    pd->t_st = pd->t_end = efl_gesture_touch_current_timestamp_get(event);
 
                    pd->st_line = pd->end_line =
                        efl_gesture_touch_start_point_get(event);
 
                    efl_gesture_hotspot_set(gesture, pd->st_line);
-                   if (!glayer_continues_enable)
-                     md->id = efl_gesture_touch_current_data_get(event)->id;
-
+                   md->id = efl_gesture_touch_current_data_get(event)->id;
+                   if (efl_gesture_touch_previous_data_get(event))
+                     {
+                        /* if multiple fingers are pressed simultaneously, start tracking the latest finger for gesture */
+                        if (efl_gesture_touch_previous_data_get(event)->action == efl_gesture_touch_current_data_get(event)->action)
+                          return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
+                     }
                    return EFL_GESTURE_RECOGNIZER_RESULT_TRIGGER;
                 }
            }
@@ -186,11 +189,16 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
 
       case EFL_GESTURE_TOUCH_STATE_END:
       {
+         Eina_Bool touched = !!efl_gesture_touch_points_count_get(event);
          if (!pd->t_st)
            {
-              pd->touched = EINA_FALSE;
+              Eina_Bool prev_touched = pd->touched;
 
-              return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+              rd->continues = pd->touched = touched;
+
+              if (prev_touched)
+                return EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
+              return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
            }
 
          if ((efl_gesture_touch_current_timestamp_get(event) - MOMENTUM_TIMEOUT) > pd->t_end)
@@ -202,6 +210,7 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
 
          pd->end_line = efl_gesture_touch_current_point_get(event);
          pd->t_end = efl_gesture_touch_current_timestamp_get(event);
+         rd->continues = touched;
          efl_gesture_hotspot_set(gesture, pd->end_line);
 
          if ((fabs(md->momentum.x) > EFL_GESTURE_MINIMUM_MOMENTUM) ||
@@ -211,6 +220,7 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
            result = EFL_GESTURE_RECOGNIZER_RESULT_CANCEL;
 
          memset(pd, 0, sizeof(Efl_Canvas_Gesture_Recognizer_Momentum_Data));
+         pd->touched = touched;
 
          break;
       }

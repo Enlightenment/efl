@@ -109,18 +109,20 @@ extern "C" {
 
 #include <gesture/efl_canvas_gesture_double_tap.eo.h>
 #include <gesture/efl_canvas_gesture_flick.eo.h>
-#include <gesture/efl_canvas_gesture_long_tap.eo.h>
+#include <gesture/efl_canvas_gesture_long_press.eo.h>
 #include <gesture/efl_canvas_gesture_momentum.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_double_tap.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_flick.eo.h>
-#include <gesture/efl_canvas_gesture_recognizer_long_tap.eo.h>
+#include <gesture/efl_canvas_gesture_recognizer_long_press.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_momentum.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_tap.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_triple_tap.eo.h>
+#include <gesture/efl_canvas_gesture_recognizer_rotate.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_zoom.eo.h>
 #include <gesture/efl_canvas_gesture_recognizer_custom.eo.h>
 #include <gesture/efl_canvas_gesture_tap.eo.h>
 #include <gesture/efl_canvas_gesture_triple_tap.eo.h>
+#include <gesture/efl_canvas_gesture_rotate.eo.h>
 #include <gesture/efl_canvas_gesture_zoom.eo.h>
 #include <gesture/efl_canvas_gesture_custom.eo.h>
 #include <gesture/efl_canvas_gesture_events.eo.h>

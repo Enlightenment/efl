@@ -40,7 +40,7 @@ EAPI void elm_code_line_free(Elm_Code_Line *line);
 
 /**
  * @brief Line manipulation functions.
- * @defgroup Content Elementary Code Line
+ * @defgroup Elm_Code_Line_Content Elementary Code Line
  * @{
  *
  * Functions for changing the content of lines in an Elm_Code_File

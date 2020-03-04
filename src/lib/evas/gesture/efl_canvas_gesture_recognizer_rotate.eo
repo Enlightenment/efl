@@ -1,0 +1,12 @@
+class @beta Efl.Canvas.Gesture_Recognizer_Rotate extends Efl.Canvas.Gesture_Recognizer
+{
+   [[This is the recognizer for Rotate gestures.
+     See @Efl.Canvas.Gesture_Rotate and @Efl.Canvas.Gesture_Recognizer.
+     For internal use only.
+   ]]
+   c_prefix: efl_gesture_recognizer_rotate;
+   implements {
+      Efl.Canvas.Gesture_Recognizer.type { get; }
+      Efl.Canvas.Gesture_Recognizer.recognize;
+   }
+}
