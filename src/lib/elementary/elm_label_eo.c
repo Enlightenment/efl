@@ -216,6 +216,6 @@ static const Efl_Class_Description _elm_label_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_label_class_get, &_elm_label_class_desc, EFL_UI_LAYOUT_BASE_CLASS, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_label_class_get, &_elm_label_class_desc, EFL_UI_LAYOUT_BASE_CLASS, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, NULL);
 
 #include "elm_label_eo.legacy.c"
