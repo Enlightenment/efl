@@ -1,11 +1,22 @@
+@Rem ---------------------------------
+@Rem Windows terminal specific options
+
 set CC=clang-cl
 set CXX=clang-cl
-set CFLAGS=-Wno-language-extension-token
+
+@Rem ---------------------------------
+@Rem Windows terminal specific options
+set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
+
+@Rem ---------------------------------
+@Rem Default flags
+set CFLAGS=-Wno-language-extension-token %CFLAGS%
 
 meson build ^
- -Dopenssl_dir="C:/Users/Tiz/source/repos/openssl/"^
- -Dregex_include_dir="C:/Users/Tiz/source/repos/efl/src/lib/evil/pcre/"^
- -Dregex_dir="C:/Users/Tiz/source/repos/pcre-win-build/build-VS2019/x64/Debug"^
+ -Dopenssl_dir="C:/Users/Tiz/source/pkg/openssl/"^
+ -Dregex_include_dir="C:/Users/Tiz/source/pkg/pcre-7.0/include/"^
+ -Dregex_dir="C:/Users/Tiz/source/pkg/pcre-7.0/lib/"^
+        -Dcrypto=openssl^
         -Dnls=false^
         -Dsystemd=false^
         -Dglib=false^
@@ -29,4 +40,6 @@ meson build ^
         "-Demotion-loaders-disabler=gstreamer1,libvlc,xine"^
         -Dbuild-tests=false^
         -Dbuild-examples=false^
-        -Dbindings= --native-file native-file-windows.txt
+        -Dbindings=^
+        --wipe^
+        --native-file native-file-windows.txt

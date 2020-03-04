@@ -214,29 +214,29 @@ endif
 
 regexp = []
 if sys_windows == true
-   if sys_windows == true
-     inc_arg = '-I' + get_option('regex_include_dir')
-     if cc.has_header('regex.h', args: inc_arg) == false
-       error('regex can not be found')
-     endif
-      regexp = cc.find_library('pcre',
-				dirs : [get_option('regex_dir')],
-                            	required: true)
-   else
-      regexp = cc.find_library('regex',
-                                has_headers: ['regex.h', 'fnmatch.h'],
-                            	required: true)
-   endif
-   if regexp.found() == false
+  if sys_windows == true
+    inc_arg = '-I' + get_option('regex_include_dir')
+    if cc.has_header('regex.h', args: inc_arg) == false
       error('regex can not be found')
-   endif
+    endif
+    regexp = cc.find_library('pcre',
+                             dirs : [get_option('regex_dir')],
+                             required: true)
+  else
+    regexp = cc.find_library('regex',
+                             has_headers: ['regex.h', 'fnmatch.h'],
+                             required: true)
+  endif
+  if regexp.found() == false
+    error('regex can not be found')
+  endif
 else
-   if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
-      error('fnmatch can not be found')
-   endif
-   if cc.has_header_symbol('regex.h', 'regcomp') == false
-      error('regcomp can not be found')
-   endif
+  if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
+    error('fnmatch can not be found')
+  endif
+  if cc.has_header_symbol('regex.h', 'regcomp') == false
+    error('regcomp can not be found')
+  endif
 endif
 
 config_h.set('VMAJ', version_major)
