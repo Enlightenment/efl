@@ -59,7 +59,7 @@
 
 
 /**
- * @file mman.h
+ * @file evil_mman.h
  * @brief The file that provides the memory map functions
  * @defgroup Evil_Mman Functions that manage memory mappping.
  * @ingroup Evil

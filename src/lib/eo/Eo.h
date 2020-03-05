@@ -2283,7 +2283,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
 EOAPI unsigned int efl_event_callback_count(const Eo *obj, const Efl_Event_Description *desc);
 
 /**
- * @def Replace the previous Eo pointer with new content.
+ * @brief Replace the previous Eo pointer with new content.
  *
  * @param storage Pointer to the space holding the object to be replaced.
  * It can not be @c NULL.
