@@ -263,7 +263,7 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
      MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);                       \
      return;                                                            \
      MAGIC_CHECK_END();                                                 \
-     Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
+     Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
      if (!func) return;                                                 \
      evas_object_intercept_init(obj);                                   \
      if (!obj->interceptors) return;                                    \
@@ -280,7 +280,7 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
      MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);                       \
      return NULL;                                                       \
      MAGIC_CHECK_END();                                                 \
-     Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
+     Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
      if (!func) return NULL;                                            \
      if (!obj->interceptors) return NULL;                               \
      obj->interceptors->Lower_Type.func = NULL;                         \
