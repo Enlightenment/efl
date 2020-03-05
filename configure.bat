@@ -1,18 +1,26 @@
-@Rem ---------------------------------
-@Rem Windows terminal specific options
-
-set CC=clang-cl
-set CXX=clang-cl
+@echo off
+@set vcvars64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
 
 @Rem ---------------------------------
 @Rem Windows terminal specific options
-set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
+
+@set CC=clang-cl
+@echo C Compiler: %CC%
+@set CXX=clang-cl
+@echo C++ Compiler: %CXX%
+
+@Rem ---------------------------------
+@Rem Windows terminal specific options
+@set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
 
 @Rem ---------------------------------
 @Rem Default flags
-set CFLAGS=-Wno-language-extension-token %CFLAGS%
+@set CFLAGS=-Wno-language-extension-token %CFLAGS%
 
-meson build ^
+@echo Using CFLAGS=%CFLAGS%
+
+@Rem ------------------------------------------------------
+@set MESONFLAGS=^
  -Dopenssl_dir="C:/Users/Tiz/source/pkg/openssl/"^
  -Dregex_include_dir="C:/Users/Tiz/source/pkg/pcre-7.0/include/"^
  -Dregex_dir="C:/Users/Tiz/source/pkg/pcre-7.0/lib/"^
@@ -41,5 +49,14 @@ meson build ^
         -Dbuild-tests=false^
         -Dbuild-examples=false^
         -Dbindings=^
-        --wipe^
         --native-file native-file-windows.txt
+
+@if exist build (
+    @echo "Build directory ("build") already exists. Old config will be wiped with `--wipe`."
+    @set MESONFLAGS=%MESONFLAGS% --wipe
+) else (
+    @echo No Creating new build directory.
+)
+
+@echo on
+%vcvars64% && meson build %MESONFLAGS%
