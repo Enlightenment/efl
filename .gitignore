@@ -95,3 +95,6 @@ Session.vim
 efl_libs.csv
 .vscode/
 .uuid
+
+#native windows files
+env.bat

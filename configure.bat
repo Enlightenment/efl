@@ -1,39 +1,69 @@
 @echo off
-@setlocal
+setlocal
 
-call :main
+call :main || (echo Build configure failed.)
+exit /B %errorlevel%
 
 :check_env_vars
-    echo Running the function!
+    echo Checking if necessarry environment variables were set...
+
+    set envfile=env.bat
+    if exist %envfile% (
+        echo Found %envfile% file.
+        call %envfile%
+    ) else (
+        echo File %envfile% doesn't exists. Relying on previously set environment variables...
+    )
+
+    set all_set=1
+    if not defined OPENSSL_DIR set all_set=0
+    if not defined REGEX_INCLUDE_DIR set all_set=0
+    if not defined REGEX_DIR set all_set=0
+
+    if %all_set%==1 (
+        echo Using OpenSSL: %OPENSSL_DIR%
+        echo Using Regex Include Directory: %REGEX_INCLUDE_DIR%
+        echo Using Regex Lib Directory: %REGEX_DIR%
+    ) else (
+        echo At least one of the following variables were not set:
+        echo     - OPENSSL_DIR: %OPENSSL_DIR%
+        echo     - REGEX_INCLUDE_DIR: %REGEX_INCLUDE_DIR%
+        echo     - REGEX_DIR: %REGEX_DIR%
+        echo Please define them using by creating a "env.bat" file containing:
+        echo     @set OPENSSL_DIR=^<your OpenSSL directory^>
+        echo     @set REGEX_INCLUDE_DIR=^<your pcre/include directory^>
+        echo     @set REGEX_DIR=^<your pcre/lib directory^>
+        exit /B 1
+    )
 exit /B 0
 
 
 :setup_flags
-    @echo ------------------------------
-    @echo Setting up build flags...
+    echo ------------------------------
+    echo Setting up build flags...
 
     :: ---------------------------------
     :: Compilers
-    @set CC=clang-cl
-    @echo C Compiler: %CC%
-    @set CXX=clang-cl
-    @echo C++ Compiler: %CXX%
+    set CC=clang-cl
+    echo C Compiler: %CC%
+    set CXX=clang-cl
+    echo C++ Compiler: %CXX%
 
     :: ---------------------------------
     :: Windows terminal specific options
-    @set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
+    set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
 
     :: ------------------------------------
     :: Default flags for native compilation
-    @set CFLAGS=-Wno-language-extension-token %CFLAGS%
+    set CFLAGS=-Wno-language-extension-token %CFLAGS%
 
-    @echo Using CFLAGS=%CFLAGS%
+    echo Using CFLAGS=%CFLAGS%
 
     :: ------------------------------------------------------
-    @set MESONFLAGS=^
-     -Dopenssl_dir="C:/Users/Tiz/source/pkg/openssl/"^
-     -Dregex_include_dir="C:/Users/Tiz/source/pkg/pcre-7.0/include/"^
-     -Dregex_dir="C:/Users/Tiz/source/pkg/pcre-7.0/lib/"^
+    set MESONFLAGS=^
+     -Dopenssl_dir=%OPENSSL_DIR%^
+     -Dregex_include_dir=%REGEX_INCLUDE_DIR%^
+     -Dregex_dir=%REGEX_DIR%^
             -Dcrypto=openssl^
             -Dnls=false^
             -Dsystemd=false^
@@ -61,19 +91,21 @@ exit /B 0
             -Dbindings=^
             --native-file native-file-windows.txt
 
-    @if exist build (
-        @echo "Build directory ("build") already exists. Old config will be wiped with `--wipe`."
-        @set MESONFLAGS=%MESONFLAGS% --wipe
+    if exist build (
+        echo "Build directory ("build") already exists. Old config will be wiped with `--wipe`."
+        set MESONFLAGS=%MESONFLAGS% --wipe
     ) else (
-        @echo No Creating new build directory.
+        echo No Creating new build directory.
     )
 exit /B 0
 
 :main
-    @set vcvars64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
+    set vcvars64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
+    call :check_env_vars || (echo Environment Variables check failed) && exit /B 1
+
     call :setup_flags
 
-    @echo on
-    @echo Running meson with flags: %MESONFLAGS%
-    @echo
-    @%vcvars64% && meson build %MESONFLAGS%
+    echo on
+    echo Running meson with flags: %MESONFLAGS%
+    echo
+    %vcvars64% && meson build %MESONFLAGS%
