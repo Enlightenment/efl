@@ -545,7 +545,7 @@ EAPI void ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
  * Sets the clipboard of Cocoa (NSPasteboard)
  * @param data The contents to be set in the clipboard
  * @param size The size in bytes of @c data
- * @param mine_type 
+ * @param mime_type The type of object to set the data
  * @return EINA_TRUE on success, EINA_FALSE on failure
  */
 EAPI Eina_Bool ecore_cocoa_clipboard_set(const void *data,
@@ -555,7 +555,7 @@ EAPI Eina_Bool ecore_cocoa_clipboard_set(const void *data,
 /*
  * Gets the contents of the Cocoa clipboard
  * @param size Pointer used to retrieve the size of the received contents
- * @param mine_type The type of object to retrieve from the clipboard
+ * @param mime_type The type of object to retrieve from the clipboard
  * @return The data retrieved from the clipboard. NULL on failure
  *
  */
