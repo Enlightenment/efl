@@ -211,6 +211,14 @@ _edje_invalid_part_efl_content_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_D
    return EINA_FALSE;
 }
 
+EOLIAN static void
+_efl_canvas_layout_part_efl_object_debug_name_override(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, Eina_Strbuf *sb)
+{
+   efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   eina_strbuf_append_printf(sb, "%s : %s : %s", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
+}
+
+
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_CANVAS_LAYOUT_PART_EXTRA_OPS \
