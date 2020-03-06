@@ -30,19 +30,8 @@ extern "C" {
 #include <sys/stat.h> /* for mkdir in evil_macro_wrapper */
 
 
-#ifdef EAPI
-# undef EAPI
-#endif
+#include "evil_eapi.h"
 
-#ifdef EFL_BUILD
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI __declspec(dllimport)
-#endif
 
 #ifndef PATH_MAX
 # define PATH_MAX MAX_PATH

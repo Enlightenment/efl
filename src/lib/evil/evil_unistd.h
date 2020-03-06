@@ -1,6 +1,7 @@
 #ifndef __EVIL_UNISTD_H__
 #define __EVIL_UNISTD_H__
 
+#include "evil_eapi.h"
 
 /**
  * @file evil_unistd.h
