@@ -1733,9 +1733,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         if (!it->pop_cb(it->pop_data, eo_item))
           {
              efl_unref(eo_item);
-             if (it->delete_me)
-               efl_del(eo_item);
-             else
+             if (!it->delete_me)
                {
                   /* To avoid multiple item pops, the auto pushed button deletes
                      its clicked callback once it is called.

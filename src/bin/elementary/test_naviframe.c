@@ -65,6 +65,43 @@ _promote(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    elm_naviframe_item_promote(data);
 }
 
+Eina_Bool
+_pop_cb(void *data EINA_UNUSED, Elm_Object_Item *it)
+{
+   elm_object_item_del(it);
+
+   /* If EINA_TRUE is returned, pop transition effect happens and then the item
+    * is automatically deleted.
+    * If EINA_FALSE is returned, pop transition effect does not happen and the
+    * item is not automatically deleted.
+    */
+   return EINA_FALSE;
+}
+
+void
+_page9(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *bt, *bt2, *nf = data;
+   Elm_Object_Item *it;
+
+   bt = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt, "Page 8");
+
+   bt2 = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt2, "Page 1");
+   evas_object_smart_callback_add(bt2, "clicked", _promote,
+                                  evas_object_data_get(nf, "page1"));
+
+   it = elm_naviframe_item_push(nf, "Page 9", bt, bt2, NULL, NULL);
+   elm_object_item_part_text_set(it, "subtitle", "Callback for naviframe item pop is set");
+
+   elm_naviframe_item_pop_cb_set(it, _pop_cb, NULL);
+
+   evas_object_smart_callback_add(bt, "clicked", _navi_pop, nf);
+}
+
 void
 _page8(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -78,9 +115,9 @@ _page8(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   BUTTON_TEXT_SET(bt2, "Page 1");
-   evas_object_smart_callback_add(bt2, "clicked", _promote,
-                                  evas_object_data_get(nf, "page1"));
+   BUTTON_TEXT_SET(bt2, "Page 9");
+   evas_object_smart_callback_add(bt2, "clicked", _page9, nf);
+
    content = _content_new(nf, img6);
    it = elm_naviframe_item_push(nf, "Page 8", bt, bt2, content, NULL);
    elm_object_item_part_text_set(it, "subtitle", "Overlap style!");
