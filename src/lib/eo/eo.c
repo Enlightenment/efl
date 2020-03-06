@@ -567,16 +567,16 @@ composite_continue:
    // If it's a do_super call.
    if (cur_klass)
      {
-        ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
-            file, line, func_name, op, main_klass->desc->name,
+        ERR("in %s:%d: func '%s' (%d) could not be resolved on %s for class '%s' for super of '%s'.",
+            file, line, func_name, op, efl_debug_name_get(eo_id), main_klass->desc->name,
             cur_klass->desc->name);
         goto err;
      }
    else
      {
         /* we should not be able to take this branch */
-        ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
-            file, line, func_name, op, main_klass->desc->name);
+        ERR("in %s:%d: func '%s' (%d) could not be resolved on %s for class '%s'.",
+            file, line, func_name, op, efl_debug_name_get(eo_id), main_klass->desc->name);
         goto err;
      }
 

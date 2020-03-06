@@ -51,7 +51,7 @@ EFL_START_TEST(eo_op_not_found_in_super)
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("_efl_object_call_resolve", "in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.");
+   TEST_EO_ERROR("_efl_object_call_resolve", "in %s:%d: func '%s' (%d) could not be resolved on %s for class '%s' for super of '%s'.");
    simple_a_set(efl_super(obj, SIMPLE_CLASS), 10);
    fail_unless(ctx.did);
 
