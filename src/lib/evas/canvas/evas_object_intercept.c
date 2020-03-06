@@ -264,7 +264,7 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
      return;                                                            \
      MAGIC_CHECK_END();                                                 \
      Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
-     if ((!obj) || (!func) return;                                      \
+     if ((!obj) || (!func)) return;                                     \
      evas_object_intercept_init(obj);                                   \
      if (!obj->interceptors) return;                                    \
      obj->interceptors->Lower_Type.func = func;                         \
