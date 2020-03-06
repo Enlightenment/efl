@@ -5522,7 +5522,7 @@ comp_smart_show(Evas_Object *obj)
 
    evas_object_show(c->clip);
    EINA_INLIST_FOREACH(c->surfaces, cs)
-     comp_surface_output_leave(cs);
+     comp_surface_output_enter(cs);
 }
 
 static void
