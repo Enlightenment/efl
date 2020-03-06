@@ -711,7 +711,10 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    pd->cursor_col = col;
    pd->cursor_line = line;
 
-   if (line > eina_list_count(pd->grids) && !pd->selection && !pd->selection->in_progress)
+   if (line > elm_code_file_lines_get(pd->code->file))
+     return;
+
+   if ((line > eina_list_count(pd->grids)) && (!pd->selection))
      {
         if (_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
           {
