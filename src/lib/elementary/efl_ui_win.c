@@ -59,7 +59,7 @@ static int _paused_windows = 0;
   while (0)
 
 #define ELM_WIN_DATA_GET(o, sd) \
-  Efl_Ui_Win_Data * sd = efl_data_scope_get(o, MY_CLASS)
+  Efl_Ui_Win_Data *sd = efl_data_scope_get(o, MY_CLASS)
 
 #define ELM_WIN_DATA_GET_OR_RETURN(o, ptr, ...)      \
   ELM_WIN_DATA_GET(o, ptr);                          \
@@ -3517,8 +3517,11 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
         if (sd->parent)
           {
              ELM_WIN_DATA_GET(sd->parent, sdp);
-             _internal_elm_win_xwindow_get(sdp);
-             if (sdp) ecore_x_icccm_transient_for_set(sd->x.xwin, sdp->x.xwin);
+             if (sdp)
+               {
+                  _internal_elm_win_xwindow_get(sdp);
+                  ecore_x_icccm_transient_for_set(sd->x.xwin, sdp->x.xwin);
+               }
           }
      }
 
