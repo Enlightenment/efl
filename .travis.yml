@@ -34,7 +34,7 @@ addons:
       - pulseaudio
       - ccache
       - ninja
-      - python3
+      - python
       - libffi
     update: true
 
