@@ -185,8 +185,11 @@ _evas_object_grid_smart_del(Evas_Object *o)
         free(opt);
         priv->children = eina_list_remove_list(priv->children, priv->children);
      }
-
-   _evas_object_grid_parent_sc->del(o);
+   //Free the clipper resource properly,
+   Eo *clipper = evas_object_smart_clipped_clipper_get(o);
+   if (clipper) evas_object_del(clipper);
+   /*  below deletion occurs the recursive member remove hell. */
+   //   _evas_object_grid_parent_sc->del(o);
 }
 
 static void
