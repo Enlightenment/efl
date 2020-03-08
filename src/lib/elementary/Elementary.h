@@ -83,6 +83,9 @@
 #ifdef EWAPI
 # undef EWAPI
 #endif
+#ifdef EAPI_WEAK
+# undef EAPI_WEAK
+#endif
 
 #ifdef _WIN32
 # ifdef EFL_BUILD

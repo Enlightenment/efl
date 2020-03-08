@@ -19,6 +19,19 @@ _evas_image_file_unload(Eo *eo_obj)
    _evas_image_done_set(eo_obj, obj, o);
    o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 }
+
+void
+_evas_image_preload_update(Eo *eo_obj, Eina_File *f)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (o->cur->f) return;
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, cur)
+   {
+      cur->f = eina_file_dup(f);
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, cur)
+}
+
 Eina_Bool
 _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
 {
@@ -53,6 +66,24 @@ _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
    o->file_size.h = o->cur->image.h;
 
    return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_image_efl_file_loaded_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->skip_head)
+     return efl_file_loaded_get(efl_super(eo_obj, MY_CLASS));
+   return !!o->cur->f;
+}
+
+EOLIAN static const Eina_File *
+_efl_canvas_image_efl_file_mmap_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->skip_head)
+     return efl_file_mmap_get(efl_super(eo_obj, MY_CLASS));
+   return o->cur->f;
 }
 
 EOLIAN static Eina_Error

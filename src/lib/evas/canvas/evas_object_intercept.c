@@ -9,25 +9,20 @@
 
 /* local calls */
 
-static void evas_object_intercept_init(Evas_Object *eo_obj);
-static void evas_object_intercept_deinit(Evas_Object *eo_obj);
+static void evas_object_intercept_init(Evas_Object_Protected_Data *obj);
+static void evas_object_intercept_deinit(Evas_Object_Protected_Data *obj);
 
 static void
-evas_object_intercept_init(Evas_Object *eo_obj)
+evas_object_intercept_init(Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj;
-
-   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
-
    if (!obj->interceptors)
      obj->interceptors = calloc(1, sizeof(Evas_Intercept_Func));
 }
 
 static void
-evas_object_intercept_deinit(Evas_Object *eo_obj)
+evas_object_intercept_deinit(Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj || !obj->interceptors) return;
    if ((obj->interceptors->show.func) ||
        (obj->interceptors->hide.func) ||
@@ -268,9 +263,9 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
      MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);                       \
      return;                                                            \
      MAGIC_CHECK_END();                                                 \
-     Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
-     if (!func) return;                                                 \
-     evas_object_intercept_init(eo_obj);                                \
+     Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
+     if ((!obj) || (!func)) return;                                     \
+     evas_object_intercept_init(obj);                                   \
      if (!obj->interceptors) return;                                    \
      obj->interceptors->Lower_Type.func = func;                         \
      obj->interceptors->Lower_Type.data = (void *)data;                 \
@@ -285,13 +280,13 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
      MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);                       \
      return NULL;                                                       \
      MAGIC_CHECK_END();                                                 \
-     Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
-     if (!func) return NULL;                                            \
+     Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS); \
+     if ((!obj) || (!func)) return NULL;                                \
      if (!obj->interceptors) return NULL;                               \
      obj->interceptors->Lower_Type.func = NULL;                         \
      data = obj->interceptors->Lower_Type.data;                         \
      obj->interceptors->Lower_Type.data = NULL;                         \
-     evas_object_intercept_deinit(eo_obj);                              \
+     evas_object_intercept_deinit(obj);                                 \
      return data;                                                       \
   }
 

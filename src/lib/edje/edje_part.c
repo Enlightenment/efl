@@ -197,24 +197,11 @@ _efl_canvas_layout_part_efl_ui_drag_drag_page_move(Eo *obj EINA_UNUSED, Efl_Canv
    return _edje_object_part_drag_page(pd->ed, pd->part, dx, dy);
 }
 
-static Eo *
-_edje_invalid_part_efl_content_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
+EOLIAN static void
+_efl_canvas_layout_part_efl_object_debug_name_override(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, Eina_Strbuf *sb)
 {
-   ERR("Part '%s' (type: %s) of group '%s' is not a SWALLOW part!", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
-   return NULL;
+   efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   eina_strbuf_append_printf(sb, "%s : %s : %s", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
 }
-
-static Eina_Bool
-_edje_invalid_part_efl_content_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, Eo *subobj EINA_UNUSED)
-{
-   ERR("Part '%s' (type: %s) of group '%s' is not a SWALLOW part!", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
-   return EINA_FALSE;
-}
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_CANVAS_LAYOUT_PART_EXTRA_OPS \
-   EFL_OBJECT_OP_FUNC(efl_content_get, _edje_invalid_part_efl_content_get), \
-   EFL_OBJECT_OP_FUNC(efl_content_set, _edje_invalid_part_efl_content_set), \
 
 #include "efl_canvas_layout_part.eo.c"

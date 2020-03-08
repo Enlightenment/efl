@@ -1,4 +1,4 @@
-class Efl.Ui.Widget_Part extends Efl.Object implements Efl.Ui.Property_Bind
+class Efl.Ui.Widget_Part extends Efl.Object implements Efl.Ui.Property_Bind, Efl.Gfx.Entity
 {
    [[This is the base class for all "Part" handles in Efl.Ui widgets.
 
@@ -12,5 +12,10 @@ class Efl.Ui.Widget_Part extends Efl.Object implements Efl.Ui.Property_Bind
    implements {
       Efl.Object.destructor;
       Efl.Ui.Property_Bind.property_bind;
+      @empty Efl.Gfx.Entity.visible { get; set; }
+      Efl.Gfx.Entity.geometry { get; set @empty ; }
+      @empty Efl.Gfx.Entity.position { get; set; }
+      @empty Efl.Gfx.Entity.size { get; set; }
+      @empty Efl.Gfx.Entity.scale { set; get; }
    }
 }

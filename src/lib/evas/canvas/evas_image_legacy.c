@@ -1281,6 +1281,24 @@ evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool isma
    EVAS_IMAGE_LEGACY_API(eo_obj);
 }
 
+EOLIAN static Eina_Bool
+_evas_image_efl_file_loaded_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->skip_head)
+     return efl_file_loaded_get(efl_super(eo_obj, EVAS_IMAGE_CLASS));
+   return !!o->cur->f;
+}
+
+EOLIAN static const Eina_File *
+_evas_image_efl_file_mmap_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->skip_head)
+     return efl_file_mmap_get(efl_super(eo_obj, EVAS_IMAGE_CLASS));
+   return o->cur->f;
+}
+
 EOLIAN static Eina_Error
 _evas_image_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
 {

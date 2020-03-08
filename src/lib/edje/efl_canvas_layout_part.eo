@@ -36,6 +36,7 @@ class @beta Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity,
    }
    implements {
       Efl.Object.finalize;
+      Efl.Object.debug_name_override;
       Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }
