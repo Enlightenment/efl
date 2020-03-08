@@ -1958,66 +1958,103 @@ _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Selection_Notify *e;
    HGLOBAL global;
-   char *str;
 
    INF("selection_notify");
 
+   e = calloc(1, sizeof(Ecore_Win32_Event_Selection_Notify));
+   if (!e) return;
+
+   e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
+   e->timestamp = _ecore_win32_event_last_time;
+
    /*
-    * we have text data in clipboard but no data before,
-    * so text data has just been added
+    * we have data in clipboard but no data before,
+    * so data has just been added
     */
-   if (IsClipboardFormatAvailable(CF_TEXT) && !_ecore_win32_clipboard_has_data)
+   if (!_ecore_win32_clipboard_has_data)
      {
-        e = calloc(1, sizeof(Ecore_Win32_Event_Selection_Notify));
-        if (!e) return;
-
-        e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
-        e->timestamp = _ecore_win32_event_last_time;
-        e->selection = ECORE_WIN32_SELECTION_CLIPBOARD;
-
+        /* if case someone else is owning the clipboard, we can't do anything */
         if (!OpenClipboard(msg->window))
-          goto free_e;
-
-        global = GetClipboardData(CF_TEXT);
-        if (!global)
-          goto close_clipboard;
-
-        str = GlobalLock(global);
-        if (str)
           {
-             e->data = strdup(str);
-             GlobalUnlock(global);
+             free(e);
+             return;
           }
 
+        if (IsClipboardFormatAvailable(CF_UNICODETEXT))
+          {
+             global = GetClipboardData(CF_UNICODETEXT);
+             if (global)
+               {
+                  e->selection = strdup("text/plain;charset=utf-8");
+                  if (e->selection)
+                    {
+                       wchar_t *d;
+
+                       d = (wchar_t *)GlobalLock(global);
+                       if (d)
+                         e->data = evil_utf16_to_utf8(d);
+
+                       GlobalUnlock(global);
+                       if (e->data)
+                         {
+                            ecore_event_add(ECORE_WIN32_EVENT_SELECTION_NOTIFY, e, NULL, NULL);
+                            _ecore_win32_clipboard_has_data = EINA_TRUE;
+                            CloseClipboard();
+                            return;
+                         }
+                    }
+               }
+          }
+
+        if (IsClipboardFormatAvailable(CF_TEXT))
+          {
+             global = GetClipboardData(CF_TEXT);
+             if (global)
+               {
+                  e->selection = strdup("text/plain;charset=utf-8");
+                  if (e->selection)
+                    {
+                       char *d;
+
+                       d = (char *)GlobalLock(global);
+                       if (d)
+                         e->data = strdup(d);
+
+                       GlobalUnlock(global);
+                       if (e->data)
+                         {
+                            ecore_event_add(ECORE_WIN32_EVENT_SELECTION_NOTIFY, e, NULL, NULL);
+
+                            _ecore_win32_clipboard_has_data = EINA_TRUE;
+                            CloseClipboard();
+                            return;
+                         }
+                    }
+               }
+          }
+        free(e->data);
+        free(e->selection);
+        free(e);
         CloseClipboard();
-
-        ecore_event_add(ECORE_WIN32_EVENT_SELECTION_NOTIFY, e, NULL, NULL);
-
-        _ecore_win32_clipboard_has_data = EINA_TRUE;
      }
-
    /*
-    * we have no more text data in clipboard and data before,
+    * otherwise, we have no more text data in clipboard and data before,
     * so text data has just been removed
     */
-   if (!IsClipboardFormatAvailable(CF_TEXT) && _ecore_win32_clipboard_has_data)
+   else
      {
-        e = calloc(1, sizeof(Ecore_Win32_Event_Selection_Clear));
-        if (!e) return;
-
-        e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
-        e->timestamp = _ecore_win32_event_last_time;
-        e->selection = ECORE_WIN32_SELECTION_CLIPBOARD;
-
-        ecore_event_add(ECORE_WIN32_EVENT_SELECTION_CLEAR, e, NULL, NULL);
-
-        _ecore_win32_clipboard_has_data = EINA_FALSE;
+       if (!IsClipboardFormatAvailable(CF_UNICODETEXT) &&
+           !IsClipboardFormatAvailable(CF_TEXT))
+         {
+            e->selection = strdup("text/plain;charset=utf-8");
+            if (e->selection)
+              {
+                ecore_event_add(ECORE_WIN32_EVENT_SELECTION_CLEAR, e, NULL, NULL);
+                _ecore_win32_clipboard_has_data = EINA_FALSE;
+                return;
+              }
+         }
      }
 
-   return;
-
- close_clipboard:
-   CloseClipboard();
- free_e:
    free(e);
 }
