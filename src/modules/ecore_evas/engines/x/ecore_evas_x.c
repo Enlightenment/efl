@@ -4133,8 +4133,10 @@ _ecore_evas_x_dnd_drop(void *udata EINA_UNUSED, int type EINA_UNUSED, void *even
    edata = ee->engine.data;
    if (ee->func.fn_dnd_drop)
      ee->func.fn_dnd_drop(ee, 1, ecore_evas_dnd_pos_get(ee, 1), _x11_dnd_action_map(drop->action));
-   if (!edata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].requested_type)
+   if (edata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].delivery &&
+      !edata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].requested_type)
      {
+        //only abort dnd if we have something to deliver here, otherwise some other dnd implementation in our own window is handling that
         ecore_x_dnd_send_finished();
      }
    ecore_evas_dnd_leave(ee, 1, EINA_POSITION2D(drop->position.x ,drop->position.y));
