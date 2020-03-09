@@ -9428,14 +9428,20 @@ _drop_event_unregister(Eo *obj)
 void
 _selection_changed_event_register(Eo *obj)
 {
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd;
+
+   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   if (!pd) return;
 
    eina_array_push(pd->selection_changed, obj);
 }
 void
 _selection_changed_event_unregister(Eo *obj)
 {
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd;
+
+   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   if (!pd) return;
 
    eina_array_remove(pd->selection_changed, _remove, obj);
 }
