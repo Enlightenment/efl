@@ -3037,7 +3037,7 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
    if (anim)
      {
         sd->frame_count = evas_object_image_animated_frame_count_get(sd->img);
-        sd->cur_frame = 0;
+        sd->cur_frame = 1;
         sd->frame_duration =
           evas_object_image_animated_frame_duration_get
             (sd->img, sd->cur_frame, 0);
@@ -3158,7 +3158,7 @@ _efl_ui_image_zoomable_efl_player_playback_progress_get(const Eo *obj EINA_UNUSE
    if (sd->edje)
      efl_player_playback_progress_get(sd->edje);
    else if (sd->frame_count > 1)
-     return (double)sd->cur_frame / ((double)sd->frame_count - 1.0);
+     return ((double)sd->cur_frame - 1.0) / ((double)sd->frame_count - 1.0);
    return 0.0;
 }
 
@@ -3170,10 +3170,10 @@ _efl_ui_image_zoomable_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl
      {
         efl_player_playback_progress_set(sd->img, progress);
      }
-   else if (sd->frame_count > 1)
-     sd->cur_frame = lround(progress * (sd->frame_count - 1));
+   else if (sd->frame_count > 0)
+     sd->cur_frame = (lround(progress * (sd->frame_count - 1)) + 1);
    else
-     sd->cur_frame = 0;
+     sd->cur_frame = 1;
 }
 
 EOLIAN static void

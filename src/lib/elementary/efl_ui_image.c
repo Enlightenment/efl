@@ -1753,7 +1753,7 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
    if (anim)
      {
         sd->frame_count = evas_object_image_animated_frame_count_get(sd->img);
-        sd->cur_frame = 0;
+        sd->cur_frame = 1;
         sd->frame_duration =
           evas_object_image_animated_frame_duration_get
             (sd->img, sd->cur_frame, 0);
@@ -1860,7 +1860,7 @@ _efl_ui_image_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui
    if (sd->edje)
      efl_player_playback_progress_get(sd->img);
    else if (sd->frame_count > 1)
-     return (double)sd->cur_frame / ((double)sd->frame_count - 1.0);
+     return ((double)sd->cur_frame - 1.0) / ((double)sd->frame_count - 1.0);
    return 0.0;
 }
 
@@ -1870,10 +1870,10 @@ _efl_ui_image_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Image
    EINA_SAFETY_ON_TRUE_RETURN(progress > 1 || progress < 0);
    if (sd->edje)
      efl_player_playback_progress_set(sd->img, progress);
-   else if (sd->frame_count > 1)
-     sd->cur_frame = lround(progress * (sd->frame_count - 1));
+   else if (sd->frame_count > 0)
+     sd->cur_frame = (lround(progress * (sd->frame_count - 1)) + 1);
    else
-     sd->cur_frame = 0;
+     sd->cur_frame = 1;
 }
 
 static Eina_Bool
