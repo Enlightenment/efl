@@ -708,7 +708,7 @@ _selection_data_cb(void *data EINA_UNUSED,
         char *entry_tag;
         int len;
         static const char *tag_string =
-           "<item absize=240x180 href=%s></item>";
+           "<item absize=240x180 href=file://%s></item>";
 
         len = strlen(tag_string) + strlen(buf);
         entry_tag = alloca(len + 1);

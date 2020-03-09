@@ -3840,27 +3840,44 @@ _search_fitting_type_from_event(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edat
    eina_array_free(tmp);
 }
 
+static Eina_Content*
+_create_deliveriy_content(unsigned long int size, const void *mem, const char *mime_type)
+{
+   Eina_Content *content;
+
+   content = eina_content_new((Eina_Slice){.len = size, .mem = mem}, mime_type);
+
+   return content;
+}
+
 static void
 _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_Selection_Buffer selection, Ecore_X_Event_Selection_Notify *ev)
 {
    Ecore_X_Selection_Data *x11_data = ev->data;
-   Eina_Rw_Slice data;
-   Eina_Content *result;
+   Eina_Content *result = NULL;
    Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
 
    if (!strncmp(mime_type, "text", strlen("text")))
      {
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
-        data.len = x11_data->length + 1;
-        data.mem = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
+        void *null_terminated = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
+
+        result = _create_deliveriy_content(x11_data->length + 1, null_terminated, mime_type);
+        free(null_terminated);
+     }
+   else if (!strncmp(mime_type, "image", strlen("image")))
+     {
+        Eina_Content *tmp_container = eina_content_new((Eina_Slice){.len = x11_data->length, .mem = x11_data->data}, mime_type);
+        const char *file = eina_content_as_file(tmp_container);
+
+        result = _create_deliveriy_content(strlen(file), file, mime_type);
+        eina_content_free(tmp_container);
      }
    else
      {
-        data.len = x11_data->length;
-        data.mem = x11_data->data;
+        result = _create_deliveriy_content(x11_data->length, x11_data->data, mime_type);
      }
-
-   result = eina_content_new(eina_rw_slice_slice_get(data), mime_type);
+   EINA_SAFETY_ON_NULL_RETURN(result);
 
    //ensure that we deliver the correct type, we might have choosen a convertion before
    if (edata->selection_data[selection].later_conversion != mime_type)
