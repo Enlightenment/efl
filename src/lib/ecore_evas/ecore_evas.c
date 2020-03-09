@@ -5588,7 +5588,7 @@ ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection
         //keep this after the claim, the claim might call cancel, which would overwrite this.
         buffers->selection_buffer[buffer] = content;
      }
-   else
+   else if (content)
      {
         eina_content_free(content);
      }
