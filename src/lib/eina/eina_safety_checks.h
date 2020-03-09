@@ -29,16 +29,16 @@
  * @defgroup Eina_Safety_Checks_Group Safety Checks
  *
  * @warning @c eina_safety_checks.h should only be included by source
- *          files, after all other includes and before the source file
+ *          files after all other includes and before the source file
  *          specific includes. By source file specific includes we
  *          mean those that define the functions that are being
  *          checked. The reason for such complexity is the trick to
  *          avoid compiler optimizations. If compilers are told that
  *          some given function will never receive @c NULL
- *          (EINA_ARG_NONNULL(), then compiler will emit a warning if
- *          it detects so (good!) but will remove any checks for that
+ *          (EINA_ARG_NONNULL()), then the compiler will emit a warning if
+ *          it detects so (good!) and also will remove any checks for that
  *          condition as it believes it will never happen, removing
- *          all safety checks! By including @c eina_safety_checks.h it
+ *          all safety checks! By including @c eina_safety_checks.h last it
  *          will redefine EINA_ARG_NONNULL() to void and compiler
  *          warning will not be emitted, but checks will be there. The
  *          files already processed with the old macro
@@ -69,7 +69,7 @@
  * will log and return instead of abort() your program.
  *
  * Since these cases should never happen, one may want to keep safety
- * checks enabled during tests but disable then during deploy, not
+ * checks enabled during tests but disable them during deploy, not
  * doing any checks at all. This is a common requirement for embedded
  * systems. When to check or not should be set during compile time
  * by using @c --disable-safety-checks or @c --enable-safety-checks
