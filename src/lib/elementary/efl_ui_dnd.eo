@@ -1,63 +1,93 @@
-import efl_ui_dnd_types;
+import eina_types;
 
-mixin @beta Efl.Ui.Dnd {
-   data: null;
+struct @beta Efl.Ui.Drop_Event {
+   [[Information sent along with Drag & Drop events.]]
+   position : Eina.Position2D; [[The position where the drop event occurred, in window coordinates.]]
+   seat : uint; [[Which seat triggered the event.]]
+   available_types : accessor<string>; [[Types with automatic conversion available. Use one of them in the call to
+                                         @Efl.Ui.Dnd.drop_data_get.
+
+                                         Types are IANA MIME types:
+                                         https://www.iana.org/assignments/media-types/media-types.xhtml
+                                       ]]
+}
+
+struct @beta Efl.Ui.Drop_Dropped_Event {
+   [[Information sent along with Drop events.]]
+   dnd : Efl.Ui.Drop_Event; [[Common information.]]
+   action : string; [[Requested action to perform upon reception of this data.]]
+}
+
+struct @beta Efl.Ui.Drag_Started_Event {
+   [[Information sent along with @Efl.Ui.Drag_Started_Event events.]]
+   seat : uint; [[Which seat triggered the event.]]
+}
+
+struct @beta Efl.Ui.Drag_Finished_Event {
+   [[Information sent along with @Efl.Ui.Drag_Finished_Event events.]]
+   seat : uint; [[Which seat triggered the event.]]
+   accepted : bool; [[$true if the operation completed with a Drop, or $false if it was cancelled.]]
+}
+
+mixin @beta Efl.Ui.Dnd requires Efl.Object {
+   [[This mixin provides the ability to interact with the system's Drag & Drop facilities.
+
+     Applications starting a Drag & Drop operation operation are said to perform a "Drag" and use
+     the methods prefixed "drag_".
+     On the other hand, applications receiving dragged content are said to perform a "Drop" operation and use
+     the methods prefixed "drop_".
+   ]]
    methods {
       drag_start {
-         [[Start a drag and drop process at the drag side.
-           During dragging, there are three events emitted as belows:
-              - EFL_UI_DND_EVENT_DRAG_POS
-              - EFL_UI_DND_EVENT_DRAG_ACCEPT
-              - EFL_UI_DND_EVENT_DRAG_DONE
+         [[Starts a drag from this client.
+
+           @[Efl.Ui.Dnd.drag,started] is emitted each time a successful drag is started.
+           @[Efl.Ui.Dnd.drag,finished] is emitted every time a drag is finished.
          ]]
          params {
-            @in format: Efl.Ui.Selection_Format; [[The data format]]
-            @in data: Eina.Slice; [[The drag data]]
-            @in action: Efl.Ui.Selection_Action; [[Action when data is transferred]]
-            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
+            content : Eina.Content @by_ref; [[The content being dragged.]]
+            @in action: string; [[Requested action to perform by the receiver once content is transferred.]]
+            @in seat: uint; [[Seat starting the drag operation. When in doubt use 0.]]
          }
-      }
-      drag_action_set {
-         [[Set the action for the drag]]
-         params {
-            @in action: Efl.Ui.Selection_Action; [[Drag action]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
+         return : Efl.Content; [[An Efl.Ui element which you can use to render a visual representation
+                                 of the content being dragged (like a thumbnail, for example).
+                                 Use @Efl.Content.content.set on it to do so.]]
       }
       drag_cancel {
-         [[Cancel the on-going drag]]
+         [[Cancels an on-going drag operation.]]
          params {
-            @in seat: uint; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Seat that started the drag operation. When in doubt use 0.]]
          }
       }
-      drop_target_add {
-         [[Make the current object as drop target.
-           There are four events emitted:
-            - EFL_UI_DND_EVENT_DRAG_ENTER
-            - EFL_UI_DND_EVENT_DRAG_LEAVE
-            - EFL_UI_DND_EVENT_DRAG_POS
-            - EFL_UI_DND_EVENT_DRAG_DROP.]]
+      drop_data_get {
+         [[Retrieves the dropped data.]]
          params {
-            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Seat that started the drag operation. When in doubt use 0.]]
+            @in acceptable_types : iterator<string>; [[List of strings describing the type of content the application
+                                                       can accept. Types are IANA MIME types:
+                                                       https://www.iana.org/assignments/media-types/media-types.xhtml.]]
          }
-      }
-      drop_target_del {
-         [[Delete the dropable status from object]]
-         params {
-            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
+         return : future<Eina.Content> @move; [[This future is fulfilled when the content is received (asynchronously)
+                                                and ready to use.
+                                                The Eina.Content specifies the type of the data.
+                                                If no matching type was found it returns an error.
+                                              ]]
       }
    }
    events {
-      /* FIXME: This is not very future-proof. Better return a struct. */
-      drag,accept: ptr(bool); [[accept drag data]]
-      drag,done: void; [[drag is done (mouse up)]]
-      drag,enter: void; [[called when the drag object enters this object]]
-      drag,leave: void; [[called when the drag object leaves this object]]
-      drag,pos: Efl.Dnd.Drag_Pos; [[called when the drag object changes drag position]]
-      drag,drop: Efl.Ui.Selection_Data; [[called when the drag object dropped on this object]]
+      drop,entered : Efl.Ui.Drop_Event; [[Dragged content entered the window. Its type can already be checked with
+                                          @.drop_data_get to react before it is dropped, for example.]]
+      drop,left : Efl.Ui.Drop_Event;    [[Dragged content left the window.]]
+      drop,position,changed : Efl.Ui.Drop_Event; [[Dragged content moved over the window. Its type can already be
+                                                   checked with @.drop_data_get to react before it is dropped,
+                                                   for example.]]
+      drop,dropped : Efl.Ui.Drop_Dropped_Event;  [[Dragged content was dropped over the window.]]
+      drag,started : Efl.Ui.Drag_Started_Event;  [[A Drag operation started.]]
+      drag,finished : Efl.Ui.Drag_Finished_Event;[[A Drag operation finished.]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Object.finalize;
    }
 }

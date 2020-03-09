@@ -143,7 +143,6 @@ pub_eo_files = [
   'elm_code_widget.eo',
   'efl_ui_selection.eo',
   'efl_ui_dnd.eo',
-  'efl_ui_dnd_container.eo',
   'efl_ui_focus_manager_window_root.eo',
   'efl_ui_spotlight_container.eo',
   'efl_ui_spotlight_manager.eo',
@@ -211,8 +210,6 @@ endforeach
 pub_eo_types_files = [
   'elm_general.eot',
   'efl_ui.eot',
-  'efl_ui_selection_types.eot',
-  'efl_ui_dnd_types.eot'
 ]
 
 foreach eo_file : pub_eo_types_files
@@ -236,7 +233,6 @@ priv_eo_files = [
   'efl_ui_focus_parent_provider.eo',
   'efl_ui_focus_parent_provider_standard.eo',
   'efl_ui_state_model.eo',
-  'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
   'efl_ui_size_model.eo',
   'efl_ui_homogeneous_model.eo',
@@ -786,6 +782,8 @@ elementary_src = [
   'elm_icon.c',
   'efl_ui_image.c',
   'elm_index.c',
+  'elm_cnp.c',
+  'elm_dnd.c',
   'efl_access_object.c',
   'efl_access_action.c',
   'efl_access_component.c',
@@ -908,7 +906,6 @@ elementary_src = [
   'efl_ui_scroller.c',
   'efl_ui_scroll_manager.c',
   'efl_ui_pan.c',
-  'efl_ui_selection_manager.c',
   'efl_ui_selection_manager_private.h',
   'efl_ui_selection.c',
   'efl_datetime_manager.c',
@@ -948,7 +945,7 @@ elementary_src = [
   'efl_ui_collection_view.c',
   'efl_ui_pager.c',
   'efl_ui_stack.c',
-  'efl_ui_separator.c'
+  'efl_ui_separator.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

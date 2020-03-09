@@ -499,15 +499,14 @@ internal class TestStructTuples
 #if EFL_BETA
     public static void test_complex_fields_assign_conversion() {
         var pos = new Eina.Position2D(1, 2);
-        var action = Efl.Ui.SelectionAction.Unknown;
-        var format = Efl.Ui.SelectionFormat.None;
-        var item = null as Efl.Canvas.Vg.Object;
+        uint seat = 3;
+        var types = new System.String[] {"text", "markup"};
 
-        Efl.Dnd.DragPos attr = (pos, action, format, item);
-        Test.AssertEquals(attr.Pos, pos);
-        Test.AssertEquals(attr.Action, action);
-        Test.AssertEquals(attr.Format, format);
-        Test.AssertEquals(attr.Item, item);
+        Efl.Ui.DropEvent attr = (pos, seat, types);
+        Test.AssertEquals(attr.Position, pos);
+        Test.AssertEquals(attr.Seat, seat);
+        Test.AssertEquals(attr.AvailableTypes.ElementAt(0), types[0]);
+        Test.AssertEquals(attr.AvailableTypes.ElementAt(1), types[1]);
     }
 #endif
 }

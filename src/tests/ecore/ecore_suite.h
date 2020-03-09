@@ -23,5 +23,6 @@ void ecore_test_ecore_file(TCase *tc);
 void ecore_test_ecore_job(TCase *tc);
 void ecore_test_ecore_args(TCase *tc);
 void ecore_test_ecore_pipe(TCase *tc);
+void ecore_test_ecore_evas_selection(TCase *tc);
 
 #endif /* _ECORE_SUITE_H */

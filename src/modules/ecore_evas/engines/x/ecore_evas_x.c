@@ -73,6 +73,16 @@ static Eina_Bool wm_exists;
 
 typedef struct _Ecore_Evas_Engine_Data_X11 Ecore_Evas_Engine_Data_X11;
 
+typedef struct {
+   Ecore_Evas_Selection_Callbacks callbacks;
+   Ecore_Evas_Selection_Buffer buffer;
+   Ecore_Evas *ee;
+   Eina_Promise *delivery;
+   Eina_Array *acceptable_type;
+   Eina_Stringshare *requested_type;
+   Eina_Stringshare *later_conversion;
+} Ecore_Evas_X11_Selection_Data;
+
 struct _Ecore_Evas_Engine_Data_X11 {
    Ecore_X_Window win_root;
    Eina_List     *win_extra;
@@ -128,6 +138,11 @@ struct _Ecore_Evas_Engine_Data_X11 {
         void *visual; // store visual used to create pixmap
         unsigned long colormap; // store colormap used to create pixmap
      } pixmap;
+   Ecore_Evas_X11_Selection_Data selection_data[ECORE_EVAS_SELECTION_BUFFER_LAST];
+   Eina_Array *xserver_atom_name_during_dnd;
+   Ecore_Event_Handler *mouse_up_handler;
+   Ecore_Job *init_job;
+   int skip_clean_event;
    Eina_Bool destroyed : 1; // X window has been deleted and cannot be used
    Eina_Bool fully_obscured : 1; // X window is fully obscured
    Eina_Bool configured : 1; // X window has been configured
@@ -151,6 +166,8 @@ static void _alpha_do(Ecore_Evas *, int);
 static void _transparent_do(Ecore_Evas *, int);
 static void _avoid_damage_do(Ecore_Evas *, int);
 static void _rotation_do(Ecore_Evas *, int, int);
+static void _ecore_evas_x_selection_init(void);
+static void _ecore_evas_x_selection_window_init(Ecore_Evas *ee);
 
 #define SWAP_INT(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
 
@@ -361,7 +378,7 @@ _ecore_evas_x_aux_hints_supported_update(Ecore_Evas *ee)
         for (i = 0; i < num; i++)
           {
              hint = eina_stringshare_add(str[i]);
-             ee->prop.aux_hint.supported_list = 
+             ee->prop.aux_hint.supported_list =
                eina_list_append(ee->prop.aux_hint.supported_list, hint);
           }
 
@@ -414,7 +431,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                        op++;
                        einfo->vsync = opt[op];
                     }
-#ifdef EVAS_ENGINE_GL_X11_SWAP_MODE_EXISTS                  
+#ifdef EVAS_ENGINE_GL_X11_SWAP_MODE_EXISTS
                   else if (opt[op] == ECORE_EVAS_GL_X11_OPT_SWAP_MODE)
                     {
                        op++;
@@ -845,7 +862,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
               Eina_Bool focus_skip : 1;
            } prop;
         } prev;
-        
+
         prev.x.modal = edata->state.modal;
         prev.x.sticky = edata->state.sticky;
         prev.x.maximized_v = edata->state.maximized_v;
@@ -856,7 +873,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
         prev.x.fullscreen = edata->state.fullscreen;
         prev.x.above = edata->state.above;
         prev.x.below = edata->state.below;
-        
+
         prev.prop.modal = ee->prop.modal;
         prev.prop.maximized = ee->prop.maximized;
         prev.prop.sticky = ee->prop.sticky;
@@ -879,7 +896,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
         ee->prop.sticky     = EINA_FALSE;
         ee->prop.fullscreen = EINA_FALSE;
 //        ee->prop.focus_skip = EINA_FALSE;
-        
+
         ecore_x_netwm_window_state_get(e->win, &state, &num);
         if (state)
           {
@@ -1253,7 +1270,7 @@ _ecore_evas_x_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    edata = ee->engine.data;
-/*   
+/*
     {
        time_t t;
        char *ct;
@@ -1304,7 +1321,7 @@ _ecore_evas_x_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void 
         edata->outdelay = NULL;
         _fake_out(ee);
      }
-   
+
    /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (!_ecore_evas_mouse_in_check(ee, NULL))
      {
@@ -1388,7 +1405,7 @@ _ecore_evas_x_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void
         ecore_timer_del(edata->outdelay);
         edata->outdelay = NULL;
      }
-   
+
 //   if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0;
 //   printf("OUT: ee->in=%i, e->mode=%i, e->detail=%i, dount_count=%i\n",
 //          ee->in, e->mode, e->detail, evas_event_down_count_get(ee->evas));
@@ -1417,7 +1434,7 @@ _ecore_evas_x_event_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-//xx// filtering with these doesnt help   
+//xx// filtering with these doesnt help
 //xx//   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
@@ -1433,7 +1450,7 @@ _ecore_evas_x_event_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSE
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-//xx// filtering with these doesnt help   
+//xx// filtering with these doesnt help
 //xx//   if (e->mode == ECORE_X_EVENT_MODE_GRAB) return ECORE_CALLBACK_PASS_ON;
 
 //   if (ee->prop.fullscreen)
@@ -1970,6 +1987,7 @@ _ecore_evas_x_init(void)
      ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CREATE,
                              _ecore_evas_x_event_window_create, NULL);
    ecore_event_evas_init();
+   _ecore_evas_x_selection_init();
    return _ecore_evas_init_count;
 }
 
@@ -1997,6 +2015,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
+   ecore_job_del(edata->init_job);
    if (edata->pixmap.back)
      ecore_x_pixmap_free(edata->pixmap.back);
    if (edata->pixmap.front)
@@ -2145,7 +2164,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
      }
 
    /* check for valid property window
-    * 
+    *
     * NB: If we do not have one, check for valid pixmap rendering */
    if (!ee->prop.window)
      {
@@ -2153,7 +2172,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
         if ((edata->pixmap.w != vw) || (edata->pixmap.h != vh))
           {
              /* free the backing pixmap */
-             if (edata->pixmap.back) 
+             if (edata->pixmap.back)
                ecore_x_pixmap_free(edata->pixmap.back);
           }
      }
@@ -2696,6 +2715,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_size_pos_hints_update(ee);
+   _ecore_evas_x_selection_window_init(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
    if ((id = getenv("DESKTOP_STARTUP_ID")))
      {
@@ -2850,6 +2870,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_aux_hints_supported_update(ee);
         _ecore_evas_x_aux_hints_update(ee);
         _ecore_evas_x_size_pos_hints_update(ee);
+        _ecore_evas_x_selection_window_init(ee);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
         if ((id = getenv("DESKTOP_STARTUP_ID")))
           {
@@ -2918,7 +2939,7 @@ _ecore_evas_x_aspect_set(Ecore_Evas *ee, double aspect)
 
    ee->prop.aspect = aspect;
    _ecore_evas_x_size_pos_hints_update(ee);
-// netwm state  
+// netwm state
 //   if (ee->should_be_visible)
 //     ecore_x_netwm_state_request_send(ee->prop.window, ee->engine.x.win_root,
 //                                      ECORE_X_WINDOW_STATE_STICKY, -1, sticky);
@@ -3545,14 +3566,14 @@ norandr:
    if (!found) goto norandr;
 }
 
-static void 
+static void
 _ecore_evas_x_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
    if (ee->prop.window)
      ecore_x_pointer_xy_get(ee->prop.window, x, y);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_evas_x_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 {
    return ecore_x_pointer_warp(ee->prop.window, x, y);
@@ -3667,6 +3688,733 @@ _ecore_evas_x_aux_hints_set(Ecore_Evas *ee, const char *hints)
        (ee->prop.window, ECORE_X_ATOM_E_WINDOW_AUX_HINT);
 }
 
+static Ecore_X_Atom ecore_evas_selection_to_atom[] = {0, 0, 0, 0};
+static Ecore_Event_Handler *ecore_evas_selection_handlers[8];
+
+static inline Ecore_Evas_Selection_Buffer
+_atom_to_selection(Ecore_X_Atom atom)
+{
+   for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
+     {
+        if (ecore_evas_selection_to_atom[i] == atom)
+          return i;
+     }
+   return ECORE_EVAS_SELECTION_BUFFER_LAST;
+}
+
+static Eina_Stringshare*
+_decrypt_type(const char *target)
+{
+   // reference https://tronche.com/gui/x/icccm/sec-2.html
+   if (eina_streq(target, "TEXT")) return eina_stringshare_add("text/plain");
+    //FIXME no support in eina_content for that so far
+   if (eina_streq(target, "COMPOUND_TEXT")) return eina_stringshare_add("text/plain");
+    // reference https://tronche.com/gui/x/icccm/sec-2.html
+   if (eina_streq(target, "STRING")) return eina_stringshare_add("text/plain;charset=iso-8859-1");
+   if (eina_streq(target, "UTF8_STRING")) return eina_stringshare_add("text/plain;charset=utf-8");
+
+   return eina_stringshare_add(target);
+}
+
+static Eina_Stringshare*
+_mime_to_xserver_type(const char *target)
+{
+   // FIXME // reference https://tronche.com/gui/x/icccm/sec-2.html says it is in the owners choice of encoding, not sure what this means directly here
+   if (eina_streq(target, "text/plain")) return eina_stringshare_add("TEXT");
+    // reference https://tronche.com/gui/x/icccm/sec-2.html
+   if (eina_streq(target, "text/plain;charset=iso-8859-1")) return eina_stringshare_add("STRING");
+   if (eina_streq(target, "text/plain;charset=utf-8")) return eina_stringshare_add("UTF8_STRING");
+
+   return eina_stringshare_add(target);
+}
+
+static inline void
+_clear_selection(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer selection)
+{
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   Ecore_Evas_Selection_Callbacks *cbs = &edata->selection_data[selection].callbacks;
+
+   EINA_SAFETY_ON_FALSE_RETURN(cbs->cancel);
+
+   cbs->cancel(ee, 1, selection);
+   eina_array_free(cbs->available_types);
+
+   cbs->delivery = NULL;
+   cbs->cancel = NULL;
+   cbs->available_types = NULL;
+}
+
+static void
+_clear_selection_delivery(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer selection)
+{
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   eina_stringshare_replace(&edata->selection_data[selection].requested_type, NULL);
+   eina_stringshare_replace(&edata->selection_data[selection].later_conversion, NULL);
+   edata->selection_data[selection].delivery = NULL;
+   eina_array_free(edata->selection_data[selection].acceptable_type);
+   edata->selection_data[selection].acceptable_type = NULL;
+}
+
+static void
+_ecore_x_selection_request(Ecore_X_Window win, Ecore_Evas_Selection_Buffer selection, const char *type)
+{
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER)
+     ecore_x_selection_primary_request(win, type);
+   else if (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     ecore_x_selection_clipboard_request(win, type);
+   else
+     ecore_x_selection_xdnd_request(win, type);
+}
+
+static void
+_search_fitting_type(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_Selection_Buffer selection, Eina_Array *arr)
+{
+   Eina_Stringshare *mime_type;
+   Eina_Bool found_conversion = EINA_FALSE;
+
+#define HANDLE_TYPE() \
+   { \
+      edata->selection_data[selection].requested_type = eina_stringshare_add(x11_name); \
+      edata->selection_data[selection].later_conversion = eina_stringshare_add(acceptable_type);\
+      found_conversion = EINA_TRUE; \
+      break; \
+   }
+
+   EINA_SAFETY_ON_NULL_RETURN(edata->selection_data[selection].acceptable_type);
+
+   for (unsigned int i = 0; i < eina_array_count(arr) && !found_conversion; ++i)
+     {
+        const char *x11_name = eina_array_data_get(arr, i);
+        mime_type = _decrypt_type(x11_name);
+
+        for (unsigned int j = 0; j < eina_array_count(edata->selection_data[selection].acceptable_type) && !found_conversion; ++j)
+          {
+             const char *acceptable_type = (const char*) eina_array_data_get(edata->selection_data[selection].acceptable_type, j);
+
+             if (mime_type == acceptable_type)
+               HANDLE_TYPE()
+
+             //if there is no available type yet, check if we can convert to the desired type via this type
+             if (!found_conversion)
+               {
+                  const char *convertion_type = NULL;
+                  Eina_Iterator *iter = eina_content_converter_possible_conversions(mime_type);
+                  EINA_ITERATOR_FOREACH(iter, convertion_type)
+                    {
+                       if (convertion_type == acceptable_type)
+                         HANDLE_TYPE()
+                    }
+                  eina_iterator_free(iter);
+               }
+          }
+        eina_stringshare_del(mime_type);
+     }
+   if (found_conversion)
+     {
+        _ecore_x_selection_request(ee->prop.window, selection, edata->selection_data[selection].requested_type);
+     }
+   else
+     {
+        eina_promise_resolve(edata->selection_data[selection].delivery, eina_value_error_init(ecore_evas_no_matching_type));
+        _clear_selection_delivery(ee, selection);
+     }
+
+#undef HANDLE_TYPE
+}
+
+static void
+_search_fitting_type_from_event(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_Selection_Buffer selection, Ecore_X_Event_Selection_Notify *ev)
+{
+   Ecore_X_Atom *available_atoms;
+   Ecore_X_Selection_Data_Targets *targets;
+   Eina_Array *tmp = eina_array_new(10);
+
+   targets = ev->data;
+   available_atoms = (Ecore_X_Atom *)targets->data.data;
+   for (int i = 0; i < targets->data.length; ++i)
+     {
+        Ecore_X_Atom atom = available_atoms[i];
+        eina_array_push(tmp, ecore_x_atom_name_get(atom));
+     }
+   _search_fitting_type(ee, edata, selection, tmp);
+   eina_array_free(tmp);
+}
+
+static void
+_deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_Selection_Buffer selection, Ecore_X_Event_Selection_Notify *ev)
+{
+   Ecore_X_Selection_Data *x11_data = ev->data;
+   Eina_Rw_Slice data;
+   Eina_Content *result;
+   Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
+
+   if (!strncmp(mime_type, "text", strlen("text")))
+     {
+        //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
+        data.len = x11_data->length + 1;
+        data.mem = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
+     }
+   else
+     {
+        data.len = x11_data->length;
+        data.mem = x11_data->data;
+     }
+
+   result = eina_content_new(eina_rw_slice_slice_get(data), mime_type);
+
+   //ensure that we deliver the correct type, we might have choosen a convertion before
+   if (edata->selection_data[selection].later_conversion != mime_type)
+     {
+        Eina_Content *tmp = eina_content_convert(result, edata->selection_data[selection].later_conversion);
+        eina_content_free(result);
+        result = tmp;
+     }
+
+   eina_promise_resolve(edata->selection_data[selection].delivery, eina_value_content_init(result));
+   eina_content_free(result);
+   _clear_selection_delivery(ee, selection);
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     ecore_x_dnd_send_finished();
+}
+
+static Eina_Bool
+_ecore_evas_x_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Selection_Notify *ev = event;
+   Ecore_Evas_Selection_Buffer selection;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(ev->win);
+   selection = _atom_to_selection(ev->atom);
+   EINA_SAFETY_ON_FALSE_GOTO(!!ee, end);
+   EINA_SAFETY_ON_FALSE_GOTO(selection != ECORE_EVAS_SELECTION_BUFFER_LAST, end);
+   edata = ee->engine.data;
+
+   //if dnd drops above us, and even if we did not request anything, we are getting notified, refuse to do anything
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER &&
+       !edata->selection_data[selection].later_conversion)
+     {
+        ecore_x_dnd_send_finished();
+     }
+   else
+     {
+        if (eina_streq(ev->target, "TARGETS") || eina_streq(ev->target, "ATOMS"))
+          {
+             //This will decide for a type, and will sent that via _ecore_x_selection_request
+             EINA_SAFETY_ON_FALSE_RETURN_VAL(!edata->selection_data[selection].later_conversion, EINA_FALSE);
+             EINA_SAFETY_ON_FALSE_RETURN_VAL(!edata->selection_data[selection].requested_type, EINA_FALSE);
+             _search_fitting_type_from_event(ee, edata, selection, ev);
+          }
+        else
+          {
+             //This will read the data, fill it into a Eina_Content apply all conversions required.
+             EINA_SAFETY_ON_FALSE_RETURN_VAL(edata->selection_data[selection].later_conversion, EINA_FALSE);
+             EINA_SAFETY_ON_FALSE_RETURN_VAL(edata->selection_data[selection].requested_type, EINA_FALSE);
+             _deliver_content(ee, edata, selection, ev);
+          }
+     }
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_x_selection_clear(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Selection_Clear *ev = event;
+   Ecore_Evas_Selection_Callbacks *cbs;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas_Selection_Buffer selection;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(ev->win);
+   selection = _atom_to_selection(ev->atom);
+   EINA_SAFETY_ON_FALSE_GOTO(ee, end);
+   EINA_SAFETY_ON_FALSE_GOTO(selection != ECORE_EVAS_SELECTION_BUFFER_LAST, end);
+   edata = ee->engine.data;
+   cbs = &edata->selection_data[selection].callbacks;
+
+   //skip clean event
+   if (edata->skip_clean_event)
+     {
+        edata->skip_clean_event --;
+        goto end;
+     }
+
+   if (cbs->cancel)
+     _clear_selection(ee, selection);
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_force_stop_self_dnd(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Data_X11 *edata;
+
+   EINA_SAFETY_ON_NULL_RETURN(ee);
+   edata = ee->engine.data;
+   EINA_SAFETY_ON_NULL_RETURN(edata);
+
+   //Never clear the buffer for selection here.
+   //Selection buffer is freed as a response to the FINISHED event.
+   ecore_x_pointer_ungrab();
+   ecore_x_dnd_self_drop();
+   ecore_x_dnd_aware_set(ee->prop.window, EINA_FALSE);
+   ecore_event_handler_del(edata->mouse_up_handler);
+   edata->mouse_up_handler = NULL;
+
+   if (ee->drag.free)
+     ee->drag.free(ee, 1, ee->drag.data, ee->drag.accepted);
+   ee->drag.free = NULL;
+}
+
+static Eina_Bool
+_ecore_evas_x_selection_fixes_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Fixes_Selection_Notify *ev = event;
+   Ecore_Evas *ee;
+   Ecore_Evas_Selection_Buffer selection;
+
+   ee = ecore_event_window_match(ev->win);
+   selection = _atom_to_selection(ev->atom);
+   EINA_SAFETY_ON_FALSE_GOTO(!!ee, end);
+   EINA_SAFETY_ON_FALSE_GOTO(selection != ECORE_EVAS_SELECTION_BUFFER_LAST, end);
+
+   //notify that the selection has changed on this ecore evas
+   if (ee->func.fn_selection_changed)
+     ee->func.fn_selection_changed(ee, 0, selection);
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_eina_content_converter(char *target, void *data, int size EINA_UNUSED, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize)
+{
+   Ecore_Evas_X11_Selection_Data *sdata = data;
+   Eina_Bool ret = EINA_FALSE;;
+   if (eina_streq(target, "TARGETS") || eina_streq(target, "ATOM"))
+     {
+        //list all available types that we have currently
+        Ecore_X_Atom *result = calloc(eina_array_count(sdata->callbacks.available_types), sizeof(Ecore_X_Atom));
+        for (unsigned int i = 0; i < eina_array_count(sdata->callbacks.available_types); ++i)
+          {
+             result[i] = ecore_x_atom_get(eina_array_data_get(sdata->callbacks.available_types, i));
+          }
+        *size_ret = eina_array_count(sdata->callbacks.available_types);
+        *data_ret = result;
+        *ttype = ECORE_X_ATOM_ATOM;
+        *typesize = 32; /* urk */
+        ret = EINA_TRUE;
+     }
+   else
+     {
+        const char *mime_type = _decrypt_type(target);
+        for (unsigned int i = 0; i < eina_array_count(sdata->callbacks.available_types); ++i)
+          {
+             if (mime_type == eina_array_data_get(sdata->callbacks.available_types, i))
+               {
+                  Eina_Rw_Slice slice;
+                  sdata->callbacks.delivery(sdata->ee, 1, sdata->buffer, mime_type, &slice);
+                  *size_ret = slice.len;
+                  *data_ret = slice.mem;
+                  *ttype = ecore_x_atom_get(target); //use here target in order to get the correct atom
+                  //FIXME in selection manager we never set here the typesize, isn't that weird ?
+                  ret = EINA_TRUE;
+                  break;
+               }
+          }
+        eina_stringshare_del(mime_type);
+     }
+
+   return ret;
+}
+
+static Eina_Bool
+_ecore_evas_x_dnd_enter(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xdnd_Enter *enter = event;
+   Eina_Array *mime_tmp;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas *ee;
+
+   mime_tmp = eina_array_new(10);
+   ee = ecore_event_window_match(enter->win);
+   EINA_SAFETY_ON_NULL_GOTO(ee, end);
+   edata = ee->engine.data;
+   edata->xserver_atom_name_during_dnd = eina_array_new(10);
+   for (int i = 0; i < enter->num_types; ++i)
+     {
+        const char *mime_type = _decrypt_type(enter->types[i]);
+        eina_array_push(mime_tmp, mime_type);
+        eina_array_push(edata->xserver_atom_name_during_dnd, eina_stringshare_add(enter->types[i]));
+     }
+   ecore_evas_dnd_enter(ee, 1, eina_array_iterator_new(mime_tmp), EINA_POSITION2D(0,0)); //FIXME
+   eina_array_free(mime_tmp);
+
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_x_dnd_leave(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xdnd_Leave *leave = event;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(leave->win);
+   EINA_SAFETY_ON_NULL_GOTO(ee, end);
+   edata = ee->engine.data;
+   ecore_evas_dnd_leave(ee, 1, EINA_POSITION2D(0,0));
+   for (unsigned int i = 0; i < eina_array_count(edata->xserver_atom_name_during_dnd); ++i)
+     {
+        eina_stringshare_del(eina_array_data_get(edata->xserver_atom_name_during_dnd, i));
+     }
+   eina_array_free(edata->xserver_atom_name_during_dnd);
+   edata->xserver_atom_name_during_dnd = NULL;
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Ecore_X_Atom
+_x11_dnd_action_rev_map(const char* action)
+{
+   if (eina_streq(action, "copy")) return ECORE_X_ATOM_XDND_ACTION_COPY;
+   if (eina_streq(action, "move")) return ECORE_X_ATOM_XDND_ACTION_MOVE;
+   else if (eina_streq(action, "privat")) return ECORE_X_ATOM_XDND_ACTION_PRIVATE;
+   else if (eina_streq(action, "ask")) return ECORE_X_ATOM_XDND_ACTION_ASK;
+   else if (eina_streq(action, "list")) return ECORE_X_ATOM_XDND_ACTION_LIST;
+   else if (eina_streq(action, "link")) return ECORE_X_ATOM_XDND_ACTION_LINK;
+   else if (eina_streq(action, "description")) return ECORE_X_ATOM_XDND_ACTION_DESCRIPTION;
+   return 0;
+}
+
+static const char*
+_x11_dnd_action_map(Ecore_X_Atom action)
+{
+   if (action == ECORE_X_DND_ACTION_COPY) return "copy";
+   if (action == ECORE_X_ATOM_XDND_ACTION_MOVE) return "move";
+   if (action == ECORE_X_ATOM_XDND_ACTION_PRIVATE) return "privat";
+   if (action == ECORE_X_ATOM_XDND_ACTION_ASK) return "ask";
+   if (action == ECORE_X_ATOM_XDND_ACTION_LIST) return "list";
+   if (action == ECORE_X_ATOM_XDND_ACTION_LINK) return "link";
+   if (action == ECORE_X_ATOM_XDND_ACTION_DESCRIPTION) return "description";
+
+   return "unknown";
+}
+
+static Eina_Bool
+_ecore_evas_x_dnd_position(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xdnd_Position *pos = event;
+   int x, y, w, h;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(pos->win);
+   EINA_SAFETY_ON_NULL_GOTO(ee, end);
+   ecore_evas_geometry_get(ee, &x, &y, &w, &h);
+   ecore_evas_dnd_position_set(ee, 1, EINA_POSITION2D(pos->position.x - x, pos->position.y - y));
+   ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, (Ecore_X_Rectangle){x,y,w,h}, pos->action);
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_x_dnd_drop(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xdnd_Drop *drop = event;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(drop->win);
+   EINA_SAFETY_ON_NULL_GOTO(ee, end);
+   edata = ee->engine.data;
+   if (ee->func.fn_dnd_drop)
+     ee->func.fn_dnd_drop(ee, 1, ecore_evas_dnd_pos_get(ee, 1), _x11_dnd_action_map(drop->action));
+   if (edata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].delivery &&
+      !edata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER].requested_type)
+     {
+        //only abort dnd if we have something to deliver here, otherwise some other dnd implementation in our own window is handling that
+        ecore_x_dnd_send_finished();
+     }
+   ecore_evas_dnd_leave(ee, 1, EINA_POSITION2D(drop->position.x ,drop->position.y));
+   eina_array_free(edata->xserver_atom_name_during_dnd);
+   edata->xserver_atom_name_during_dnd = NULL;
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_x_finished(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xdnd_Finished *finished = event;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(finished->win);
+   EINA_SAFETY_ON_NULL_GOTO(ee, end);
+
+   _clear_selection(ee, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER);
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_ecore_evas_x_selection_init(void)
+{
+   Ecore_X_Atom _ecore_evas_selection_to_atom[] = {ECORE_X_ATOM_SELECTION_PRIMARY, ECORE_X_ATOM_SELECTION_CLIPBOARD, ECORE_X_ATOM_SELECTION_XDND};
+
+   for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
+     {
+        ecore_evas_selection_to_atom[i] = _ecore_evas_selection_to_atom[i];
+     }
+
+   ecore_evas_selection_handlers[0] =
+     ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
+                                                     _ecore_evas_x_selection_notify, NULL);
+   ecore_evas_selection_handlers[1] =
+     ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
+                                                    _ecore_evas_x_selection_clear, NULL);
+   if (ECORE_X_EVENT_FIXES_SELECTION_NOTIFY)
+     ecore_evas_selection_handlers[2] =
+       ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
+                                                    _ecore_evas_x_selection_fixes_notify, NULL);
+
+   ecore_evas_selection_handlers[3] = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
+                                                              _ecore_evas_x_dnd_enter, NULL);
+   ecore_evas_selection_handlers[4] = ecore_event_handler_add(ECORE_X_EVENT_XDND_LEAVE,
+                                                              _ecore_evas_x_dnd_leave, NULL);
+   ecore_evas_selection_handlers[5] = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION,
+                                                              _ecore_evas_x_dnd_position, NULL);
+   ecore_evas_selection_handlers[6] = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP,
+                                                              _ecore_evas_x_dnd_drop, NULL);
+   ecore_evas_selection_handlers[7] = ecore_event_handler_add(ECORE_X_EVENT_XDND_FINISHED,
+                                                              _ecore_evas_x_finished, NULL);
+   /* for us known type */
+   char *supported_types[] = {
+     "text/plain",
+     "text/plain;charset=utf-8",
+     "image/png",
+     "image/jpeg",
+     "image/x-ms-bmp",
+     "image/gif",
+     "image/tiff",
+     "image/svg+xml",
+     "image/x-xpixmap",
+     "image/x-tga",
+     "image/x-portable-pixmap",
+     "TEXT",
+     "COMPOUND_TEXT",
+     "STRING",
+     "UTF8_STRING",
+     "text/x-vcard",
+     "text/uri-list",
+     "application/x-elementary-markup",
+     "ATOM",
+     "TARGETS",
+     NULL
+   };
+   for (int i = 0; supported_types[i]; ++i)
+     {
+       ecore_x_selection_converter_add(supported_types[i], _eina_content_converter);
+     }
+}
+
+static Eina_Bool
+_ecore_evas_x_selection_has_owner(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection)
+{
+   return !!ecore_x_selection_owner_get(ecore_evas_selection_to_atom[selection]);
+}
+
+static void
+_deliver_selection_changed(void *data)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+
+   if (!ee->func.fn_selection_changed)
+     goto end;
+
+   if (_ecore_evas_x_selection_has_owner(ee, 1, ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER))
+     ee->func.fn_selection_changed(ee, 1, ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER);
+   if (_ecore_evas_x_selection_has_owner(ee, 1, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER))
+     ee->func.fn_selection_changed(ee, 1, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER);
+   if (_ecore_evas_x_selection_has_owner(ee, 1, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER))
+     ee->func.fn_selection_changed(ee, 1, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER);
+end:
+    edata->init_job = NULL;
+}
+
+static void
+_ecore_evas_x_selection_window_init(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
+     {
+        ecore_x_fixes_window_selection_notification_request(ee->prop.window, ecore_evas_selection_to_atom[i]);
+        edata->selection_data[i].ee = ee;
+        edata->selection_data[i].buffer = i;
+     }
+   ecore_x_dnd_aware_set(ee->prop.window, EINA_TRUE);
+   edata->init_job = ecore_job_add(_deliver_selection_changed, ee);
+}
+
+static void
+_store_selection_cbs(Ecore_Evas *ee, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Eina_Bool (*delivery)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice), void (*cancel)(Ecore_Evas *ee, unsigned int seat,  Ecore_Evas_Selection_Buffer buffer))
+{
+   Ecore_Evas_X11_Selection_Data *sdata;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_Evas_Selection_Callbacks *cbs;
+
+   edata = ee->engine.data;
+   sdata = &edata->selection_data[selection];
+   cbs = &sdata->callbacks;
+
+   if (cbs->cancel)
+     {
+        _clear_selection(ee, selection);
+        edata->skip_clean_event ++; //we are going to overwrite our own selection, this will emit a clean event, but we already freed it.
+     }
+
+   cbs->delivery = delivery;
+   cbs->cancel = cancel;
+   cbs->available_types = available_types;
+}
+
+static Eina_Bool
+_ecore_evas_x_selection_claim(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
+{
+   Ecore_Evas_X11_Selection_Data *sdata;
+   Ecore_Evas_Engine_Data_X11 *edata;
+
+   edata = ee->engine.data;
+   sdata = &edata->selection_data[selection];
+
+   _store_selection_cbs(ee, selection, available_types, delivery, cancel);
+
+   if (eina_array_count(available_types) > 0)
+     {
+        //the commands below will *copy* the content of sdata, this you have to ensure that clear is called when sdata is changed.
+        if (selection == ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER)
+          ecore_x_selection_primary_set(ee->prop.window, sdata, sizeof(Ecore_Evas_X11_Selection_Data));
+        else if (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+          ecore_x_selection_clipboard_set(ee->prop.window, sdata, sizeof(Ecore_Evas_X11_Selection_Data));
+     }
+   else
+     {
+        if (selection == ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER)
+          ecore_x_selection_primary_clear();
+        else if (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+          ecore_x_selection_clipboard_clear();
+     }
+
+   //for drag and drop, we are not calling anything in here
+
+   return EINA_TRUE;
+}
+
+Eina_Future*
+_ecore_evas_x_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_type)
+{
+   Ecore_Evas_X11_Selection_Data *sdata;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Eina_Future *future;
+
+   edata = ee->engine.data;
+   sdata = &edata->selection_data[selection];
+
+   if (sdata->delivery)
+     {
+        eina_promise_reject(sdata->delivery, ecore_evas_request_replaced);
+        _clear_selection_delivery(ee, selection);
+     }
+   sdata->delivery = efl_loop_promise_new(efl_main_loop_get());
+   sdata->acceptable_type = acceptable_type;
+   future = eina_future_new(sdata->delivery);
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     {
+        //when in dnd - we are requesting out of the set that we know from the enter event
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!edata->selection_data[selection].later_conversion, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!edata->selection_data[selection].requested_type, NULL);
+        _search_fitting_type(ee, edata, selection, edata->xserver_atom_name_during_dnd);
+     }
+   else
+     {
+        //when not dnd - we are first wanting to know what is available
+        _ecore_x_selection_request(ee->prop.window, selection, ECORE_X_SELECTION_TARGET_TARGETS);
+     }
+
+   return future;
+}
+
+static void
+_x11_drag_move(void *data, Ecore_X_Xdnd_Position *pos)
+{
+   Ecore_Evas *ee = data;
+   Eina_Rect rect;
+
+   ecore_evas_geometry_get(ee->drag.rep, &rect.x, &rect.y, &rect.w, &rect.h);
+
+   ecore_evas_move(ee->drag.rep, pos->position.x - rect.w / 2, pos->position.y - rect.h/2);
+}
+
+static Eina_Bool
+_x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+
+   _force_stop_self_dnd(ee);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_ecore_evas_x_dnd_start(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Eina_Array *available_types, Ecore_Evas *drag_rep, Eina_Bool (*delivery)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice), void (*cancel)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer), const char* action)
+{
+   Ecore_Evas_X11_Selection_Data *sdata;
+   Ecore_Evas_Engine_Data_X11 *edata;
+   Ecore_X_Atom actx;
+
+   edata = ee->engine.data;
+   sdata = &edata->selection_data[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER];
+   _store_selection_cbs(ee, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER, available_types, delivery, cancel);
+
+   //first set all types we have
+   ecore_x_dnd_types_set(ee->prop.window, NULL, 0);
+   for (unsigned int i = 0; i < eina_array_count(available_types); ++i)
+     {
+        const char *xserver_mime_type = _mime_to_xserver_type(eina_array_data_get(available_types, i));
+        ecore_x_dnd_type_set(ee->prop.window, xserver_mime_type, EINA_TRUE);
+        eina_stringshare_del(xserver_mime_type);
+     }
+   ecore_x_dnd_aware_set(ee->prop.window, EINA_TRUE);
+   ecore_x_dnd_callback_pos_update_set(_x11_drag_move, ee);
+   ecore_x_dnd_self_begin(ee->prop.window, (unsigned char*)sdata, sizeof(Ecore_Evas_X11_Selection_Data));
+   actx = _x11_dnd_action_rev_map(action);
+   ecore_x_dnd_source_action_set(actx);
+   ecore_x_pointer_grab(ee->prop.window);
+
+   ecore_x_window_ignore_set(drag_rep->prop.window, EINA_TRUE);
+
+   if (edata->mouse_up_handler)
+      ecore_event_handler_del(edata->mouse_up_handler);
+   edata->mouse_up_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
+                                                    _x11_drag_mouse_up, ee);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_ecore_evas_x_dnd_stop(Ecore_Evas *ee, unsigned int seat EINA_UNUSED)
+{
+   _force_stop_self_dnd(ee);
+   _clear_selection(ee, ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER);
+   ecore_x_selection_xdnd_clear(); //This is needed otherwise a outdated sdata struct will be accessed
+   return EINA_TRUE;
+}
+
 static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 {
    _ecore_evas_x_free,
@@ -3754,6 +4502,11 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
    NULL, //fn_pointer_device_xy_get
    NULL, //fn_prepare
    NULL, //fn_last_tick_get
+   _ecore_evas_x_selection_claim, //fn_selection_claim
+   _ecore_evas_x_selection_has_owner, //fn_selection_has_owner
+   _ecore_evas_x_selection_request, //fn_selection_request
+   _ecore_evas_x_dnd_start, //fn_dnd_start
+   _ecore_evas_x_dnd_stop, //fn_dnd_stop
 };
 
 /*
@@ -3772,19 +4525,19 @@ _ecore_evas_x_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
    /* printf("\tPixman Size: %d %d\n", edata->pixmap.w, edata->pixmap.h); */
    /* printf("\tEE Size: %d %d\n", ee->w, ee->h); */
 
-   /* before rendering to the back buffer pixmap, we should check the 
-    * size. If the back buffer is not the proper size, destroy it and 
+   /* before rendering to the back buffer pixmap, we should check the
+    * size. If the back buffer is not the proper size, destroy it and
     * create a new one at the proper size */
    if ((edata->pixmap.w != ee->w) || (edata->pixmap.h != ee->h))
      {
         int fw = 0, fh = 0;
 
         /* free the backing pixmap */
-        if (edata->pixmap.back) 
+        if (edata->pixmap.back)
           ecore_x_pixmap_free(edata->pixmap.back);
 
-        edata->pixmap.back = 
-          ecore_x_pixmap_new(edata->win_root, ee->w, ee->h, 
+        edata->pixmap.back =
+          ecore_x_pixmap_new(edata->win_root, ee->w, ee->h,
                              edata->pixmap.depth);
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
@@ -3803,7 +4556,7 @@ _ecore_evas_x_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 
                   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                     {
-                       ERR("evas_engine_info_set() init engine '%s' failed.", 
+                       ERR("evas_engine_info_set() init engine '%s' failed.",
                            ee->driver);
                     }
                }
@@ -3821,7 +4574,7 @@ _ecore_evas_x_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 
                   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                     {
-                       ERR("evas_engine_info_set() init engine '%s' failed.", 
+                       ERR("evas_engine_info_set() init engine '%s' failed.",
                            ee->driver);
                     }
                }
@@ -3844,8 +4597,8 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
         /* printf("\tBack Pixmap: %d\n", edata->pixmap.back); */
         /* printf("\tFront Pixmap: %d\n", edata->pixmap.front); */
 
-        /* done drawing to the back buffer. flip it to the front so that 
-         * any calls to "fetch pixmap" will return the front buffer already 
+        /* done drawing to the back buffer. flip it to the front so that
+         * any calls to "fetch pixmap" will return the front buffer already
          * pre-rendered */
 
         /* record the current front buffer */
@@ -3870,7 +4623,7 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 
                   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                     {
-                       ERR("evas_engine_info_set() init engine '%s' failed.", 
+                       ERR("evas_engine_info_set() init engine '%s' failed.",
                            ee->driver);
                     }
                }
@@ -3888,7 +4641,7 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 
                   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                     {
-                       ERR("evas_engine_info_set() init engine '%s' failed.", 
+                       ERR("evas_engine_info_set() init engine '%s' failed.",
                            ee->driver);
                     }
                }
@@ -4117,6 +4870,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_wm_rotation_protocol_set(ee);
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
+   _ecore_evas_x_selection_window_init(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    ee->draw_block = EINA_TRUE;
@@ -4307,9 +5061,9 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
         edata->pixmap.colormap = einfo->info.colormap;
 
         /* create front and back pixmaps for double-buffer rendering */
-        edata->pixmap.front = 
+        edata->pixmap.front =
           ecore_x_pixmap_new(parent, w, h, edata->pixmap.depth);
-        edata->pixmap.back = 
+        edata->pixmap.back =
           ecore_x_pixmap_new(parent, w, h, edata->pixmap.depth);
 
         einfo->info.drawable = edata->pixmap.back;
@@ -4322,7 +5076,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
           }
      }
 
-   /* FIXME: Allow of these set properties or do something with the 
+   /* FIXME: Allow of these set properties or do something with the
     * ee->prop.window (x window), which we do not have in pixmap case */
 
    /* _ecore_evas_x_hints_update(ee); */
@@ -4370,7 +5124,7 @@ _ecore_evas_software_x11_pixmap_visual_get(const Ecore_Evas *ee)
    return edata->pixmap.visual;
 }
 
-static unsigned long 
+static unsigned long
 _ecore_evas_software_x11_pixmap_colormap_get(const Ecore_Evas *ee)
 {
    if (!(!strcmp(ee->driver, "software_x11"))) return 0;
@@ -4378,7 +5132,7 @@ _ecore_evas_software_x11_pixmap_colormap_get(const Ecore_Evas *ee)
    return edata->pixmap.colormap;
 }
 
-static int 
+static int
 _ecore_evas_software_x11_pixmap_depth_get(const Ecore_Evas *ee)
 {
    if (!(!strcmp(ee->driver, "software_x11"))) return 0;
@@ -4553,6 +5307,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_wm_rotation_protocol_set(ee);
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
+   _ecore_evas_x_selection_window_init(ee);
 
    ee->draw_block = 1;
    if (!wm_exists) edata->configured = 1;
@@ -4719,9 +5474,9 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
         edata->pixmap.colormap = einfo->info.colormap;
 
         /* create front and back pixmaps for double-buffer rendering */
-        edata->pixmap.front = 
+        edata->pixmap.front =
           ecore_x_pixmap_new(parent, w, h, edata->pixmap.depth);
-        edata->pixmap.back = 
+        edata->pixmap.back =
           ecore_x_pixmap_new(parent, w, h, edata->pixmap.depth);
 
         einfo->info.drawable = edata->pixmap.back;
@@ -4779,7 +5534,7 @@ _ecore_evas_gl_x11_pixmap_visual_get(const Ecore_Evas *ee)
    return edata->pixmap.visual;
 }
 
-static unsigned long 
+static unsigned long
 _ecore_evas_gl_x11_pixmap_colormap_get(const Ecore_Evas *ee)
 {
    if (!(!strcmp(ee->driver, "opengl_x11"))) return 0;
@@ -4787,7 +5542,7 @@ _ecore_evas_gl_x11_pixmap_colormap_get(const Ecore_Evas *ee)
    return edata->pixmap.colormap;
 }
 
-static int 
+static int
 _ecore_evas_gl_x11_pixmap_depth_get(const Ecore_Evas *ee)
 {
    if (!(!strcmp(ee->driver, "opengl_x11"))) return 0;

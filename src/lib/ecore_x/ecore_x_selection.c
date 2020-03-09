@@ -990,15 +990,15 @@ _ecore_x_selection_parser_targets(const char *target EINA_UNUSED,
    if (!sel) return NULL;
    targets = data;
 
-   sel->num_targets = size - 2;
-   sel->targets = malloc((size - 2) * sizeof(char *));
+   sel->num_targets = size;
+   sel->targets = malloc((sel->num_targets) * sizeof(char *));
    if (!sel->targets)
      {
         free(sel);
         return NULL;
      }
-   for (i = 2; i < size; i++)
-     sel->targets[i - 2] = XGetAtomName(_ecore_x_disp, targets[i]);
+   for (i = 0; i < size; i++)
+     sel->targets[i] = XGetAtomName(_ecore_x_disp, targets[i]);
 
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_targets_free;
    ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_TARGETS;

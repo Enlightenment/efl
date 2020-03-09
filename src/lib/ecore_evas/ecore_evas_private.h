@@ -33,6 +33,10 @@
 
 EAPI extern int _ecore_evas_log_dom;
 
+EAPI Eina_Error ecore_evas_no_matching_type;
+EAPI Eina_Error ecore_evas_no_selection;
+EAPI Eina_Error ecore_evas_request_replaced;
+
 #ifdef ECORE_EVAS_DEFAULT_LOG_COLOR
 # undef ECORE_EVAS_DEFAULT_LOG_COLOR
 #endif
@@ -78,6 +82,13 @@ typedef struct _Ecore_Evas_Interface Ecore_Evas_Interface;
 typedef struct _Ecore_Evas_Aux_Hint Ecore_Evas_Aux_Hint;
 typedef struct _Ecore_Evas_Cursor Ecore_Evas_Cursor;
 
+typedef Eina_Bool (*Ecore_Evas_Selection_Internal_Delivery)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice);
+typedef void (*Ecore_Evas_Selection_Internal_Cancel)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer);
+typedef struct {
+   Ecore_Evas_Selection_Internal_Delivery delivery;
+   Ecore_Evas_Selection_Internal_Cancel cancel;
+   Eina_Array *available_types;
+} Ecore_Evas_Selection_Callbacks;
 /* Engines interfaces */
 struct _Ecore_Evas_Engine_Func
 {
@@ -171,6 +182,12 @@ struct _Ecore_Evas_Engine_Func
    Eina_Bool (*fn_prepare)(Ecore_Evas *ee);
 
    double (*fn_last_tick_get)(Ecore_Evas *ee);
+
+   Eina_Bool (*fn_selection_claim)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel);
+   Eina_Bool (*fn_selection_has_owner)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
+   Eina_Future* (*fn_selection_request)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_types); // a future containing a Eina_Content, type must be in acceptable_types
+   Eina_Bool (*fn_dnd_start)(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel, const char *action);
+   Eina_Bool (*fn_dnd_stop)(Ecore_Evas *ee, unsigned int seat);
 };
 
 struct _Ecore_Evas_Interface
@@ -202,6 +219,11 @@ struct _Ecore_Evas_Cursor {
    int pos_y;
 };
 
+typedef struct {
+   unsigned int seat;
+   Eina_Content *selection_buffer[ECORE_EVAS_SELECTION_BUFFER_LAST];
+} Ecore_Evas_Selection_Seat_Buffers;
+
 struct _Ecore_Evas
 {
    EINA_INLIST;
@@ -223,6 +245,8 @@ struct _Ecore_Evas
    Eina_List  *mice_in;
 
    Eina_List  *vnc_server; /* @since 1.19 */
+
+   Eina_Hash  *selection_buffers;
 
    struct {
       int      x, y, w, h;
@@ -259,7 +283,7 @@ struct _Ecore_Evas
          Eina_Bool       supported;      // indicate that the underlying window system supports window manager rotation protocol
          Eina_Bool       app_set;        // indicate that the ee supports window manager rotation protocol
          Eina_Bool       win_resize;     // indicate that the ee will be resized by the WM
-         int             angle;          // rotation value which is decided by the WM 
+         int             angle;          // rotation value which is decided by the WM
          int             w, h;           // window size to rotate
          int             preferred_rot;  // preferred rotation hint
          int            *available_rots; // array of avaialable rotation values
@@ -323,6 +347,10 @@ struct _Ecore_Evas
       void          (*fn_focus_device_out) (Ecore_Evas *ee, Efl_Input_Device *seat);
       void          (*fn_device_mouse_in) (Ecore_Evas *ee, Efl_Input_Device *mouse);
       void          (*fn_device_mouse_out) (Ecore_Evas *ee, Efl_Input_Device *mouse);
+      void          (*fn_selection_changed) (Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
+      void          (*fn_dnd_motion) (Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
+      void          (*fn_dnd_state_change) (Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
+      void          (*fn_dnd_drop)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, const char *action);
    } func;
 
    Ecore_Evas_Engine engine;
@@ -353,6 +381,14 @@ struct _Ecore_Evas
       unsigned char rotation_changed : 1;
    } delayed;
 
+   Eina_Hash *active_drags;
+   struct {
+      Ecore_Evas *rep;
+      void *data;
+      Ecore_Evas_Drag_Finished_Cb free;
+      Eina_Bool accepted;
+   } drag;
+
    int refcount;
 //#define ECORE_EVAS_ASYNC_RENDER_DEBUG 1 /* TODO: remove me */
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
@@ -374,6 +410,7 @@ struct _Ecore_Evas
    unsigned char first_frame : 1;
    unsigned char self_del : 1;
    unsigned char evas_dying : 1;
+   unsigned char fallback_interface : 1;
 };
 
 struct _Ecore_Evas_Aux_Hint
@@ -485,6 +522,20 @@ EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
 
 EAPI Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
 EAPI void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
+
+EAPI void ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
+EAPI void ecore_evas_dnd_leave(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
+EAPI void ecore_evas_dnd_enter(Ecore_Evas *ee, unsigned int seat, Eina_Iterator *available_types, Eina_Position2D pos);
+EAPI Eina_Position2D ecore_evas_dnd_pos_get(Ecore_Evas *ee, unsigned int seat);
+
+
+void fallback_selection_init(Ecore_Evas *ee);
+void fallback_selection_shutdown(Ecore_Evas *ee);
+Eina_Bool fallback_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel);
+Eina_Bool fallback_selection_has_owner(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
+Eina_Future* fallback_selection_request(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_type);
+Eina_Bool fallback_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *available_types, Ecore_Evas *drag_rep, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel, const char* action);
+Eina_Bool fallback_dnd_stop(Ecore_Evas *ee, unsigned int seat);
 
 #ifdef IPA_YLNO_ESU_LANRETNI_MLE
 EAPI Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);

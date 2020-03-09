@@ -187,6 +187,11 @@ efl_ui_compile_test = executable('efl_ui_compile_test',
   dependencies: [elementary, eio],
 )
 
+executable('efl_ui_window_cnp_dnd_slave',
+  'efl_ui_window_cnp_dnd_slave.c',
+  dependencies: [elementary],
+)
+
 test('elementary-suite', elementary_suite,
   env : test_env
 )

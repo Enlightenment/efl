@@ -1,45 +1,85 @@
-import efl_ui_selection_types;
+import eina_types;
 
-mixin @beta Efl.Ui.Selection {
-   [[Efl Ui Selection class]]
-   data: null;
-   methods {
-      selection_set {
-         [[Set the selection data to the object]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
-            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
-            @in data: Eina.Slice; [[Selection data]]
-            @in seat: uint;[[Specified seat for multiple seats case.]]
-         }
-         return: future<void>; [[Future for tracking when the selection is lost]]
+enum @beta Efl.Ui.Cnp_Buffer {
+   [[System buffer to use in Copy & Paste operations.]]
+   selection = 0,      [[Buffer typically used when the user selects (highlights) some text without explicitly
+                         requesting to copy it.]]
+   copy_and_paste = 1, [[Buffer used when the user requests that the current selection is copied (using
+                         Ctrl+C, for example).]]
+}
+
+struct @beta Efl.Ui.Wm_Selection_Changed {
+   [[Information sent along the @[Efl.Ui.Selection.wm_selection,changed] event.]]
+   buffer : Efl.Ui.Cnp_Buffer; [[The system buffer that has changed.]]
+   caused_by : Efl.Ui.Selection; [[The EFL widget that triggered the change. $NULL if it is not an EFL widget.]]
+   seat : uint; [[The seat that triggered the change.]]
+}
+
+mixin @beta Efl.Ui.Selection requires Efl.Object {
+  [[This mixin provides the ability to interact with the system's Copy & Paste facilities.
+  ]]
+  methods {
+    selection_set {
+      [[Sets the current selection.
+
+        This sends the selected data to the system's specified buffer, making it available to other
+        applications for "pasting" it.
+
+        This is typically used when the user requests a "copy" operation.
+      ]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer; [[System buffer to use.]]
+        content : Eina.Content @by_ref; [[Data to copy.]]
+        seat : uint; [[Seat the data comes from. Use 0 when in doubt.]]
       }
-      selection_get {
-         [[Get the data from the object that has selection]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
-            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
-            @in data_func: Efl.Ui.Selection_Data_Ready; [[Data ready function pointer]]
-            @in seat: uint;[[Specified seat for multiple seats case.]]
-         }
+    }
+    selection_clear {
+      [[Clears the current selection.
+
+        No data will be available to other applications to paste (until something else is selected).
+      ]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer; [[System buffer to clear.]]
+        seat : uint; [[Seat to clear. Use 0 when in doubt.]]
       }
-      selection_clear {
-         [[Clear the selection data from the object]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
+    }
+    selection_get {
+      [[Retrieves the data currently held in the specified buffer.
+
+        This is typically used when the user requests a "paste" operation.
+
+        This method is time consuming (since data can potentially be provided by another application), therefore,
+        it is recommended to verify the existence of a selection using @.has_selection before calling it.
+      ]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer; [[System buffer to use.]]
+        seat : uint; [[Seat where the data should be pasted. Use 0 when in doubt.]]
+        acceptable_types : iterator<string>; [[List of accepted IANA MIME types:
+                                               https://www.iana.org/assignments/media-types/media-types.xhtml
+                                               If automatic conversion cannot be provided to any of the accepted
+                                               types, an error will be returned.
+                                             ]]
       }
-      has_owner {
-         [[Determine whether the selection data has owner]]
-         params {
-            @in type: Efl.Ui.Selection_Type; [[Selection type]]
-            @in seat: uint; [[Specified seat for multiple seats case.]]
-         }
-         return: bool; [[EINA_TRUE if there is object owns selection, otherwise EINA_FALSE]]
+      return : future<Eina.Content> @move; [[A future that will be resolved to the requested content, or to an
+                                             error if type conversion is not available or the requested buffer
+                                             is empty.]]
+    }
+    has_selection {
+      [[Checks if the specified system buffer has content.]]
+      params {
+        buffer : Efl.Ui.Cnp_Buffer; [[System buffer to query.]]
+        seat : uint; [[Seat to query. Use 0 when in doubt.]]
       }
-   }
-   events {
-      wm_selection,changed: Efl.Ui.Selection_Changed; [[Called when display server's selection has changed]]
-   }
+      return : bool; [[$true if there is data available in the requested buffer.]]
+    }
+  }
+  implements {
+    Efl.Object.constructor;
+    Efl.Object.invalidate;
+    Efl.Object.finalize;
+  }
+  events {
+    wm_selection,changed : Efl.Ui.Wm_Selection_Changed; [[Event emitted when the content of one of the system's
+                                                          buffers changes.]]
+  }
 }

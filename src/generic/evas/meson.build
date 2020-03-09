@@ -1,8 +1,8 @@
-generic_loaders = ['gst', 'pdf',
-'ps',
-'raw',
-'rsvg',
-'xcf']
+generic_loaders = [ 'pdf', 'ps', 'raw', 'rsvg', 'xcf' ]
+
+if get_option('gstreamer') == true
+  generic_loaders += [ 'gst' ]
+endif
 
 generic_src = []
 generic_deps = []

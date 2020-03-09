@@ -9,16 +9,17 @@
 #import "ecore_cocoa_app.h"
 
 EAPI Eina_Bool
-ecore_cocoa_clipboard_set(const void           *data,
-                          int                   size,
-                          Ecore_Cocoa_Cnp_Type  type)
+ecore_cocoa_clipboard_set(const void *data,
+                          int size,
+                          const char *raw_mime_type)
 {
    NSMutableArray *objects;
    NSString *str = nil;
    BOOL ok = YES;
+   NSString *mime_type = [NSString stringWithUTF8String:raw_mime_type];
 
    objects = [[NSMutableArray alloc] init];
-   if (type & ECORE_COCOA_CNP_TYPE_STRING)
+   if ([mime_type hasPrefix:@"text/"])
      {
         str = [[NSString alloc] initWithBytes: data
                                        length: size
@@ -26,18 +27,9 @@ ecore_cocoa_clipboard_set(const void           *data,
         if (str)
           [objects addObject: str];
      }
-   if (type & ECORE_COCOA_CNP_TYPE_MARKUP)
+   else
      {
-         WRN("Markup CNP: NOT IMPLEMENTED");
-     }
-
-   if (type & ECORE_COCOA_CNP_TYPE_IMAGE)
-     {
-         WRN("Image CNP: NOT IMPLEMENTED");
-     }
-   if (type & ECORE_COCOA_CNP_TYPE_HTML)
-     {
-         WRN("HTML CNP: NOT IMPLEMENTED");
+        ERR("Mimetype %s is not handled yet", raw_mime_type);
      }
 
    /* Write to pasteboard */
@@ -54,35 +46,45 @@ ecore_cocoa_clipboard_set(const void           *data,
    return (ok) ? EINA_TRUE : EINA_FALSE;
 }
 
+EAPI Eina_Bool
+ecore_cocoa_clipboard_exists(void)
+{
+   NSDictionary *options;
+   NSPasteboard *pb;
+   NSArray *items;
+   NSMutableArray *classes;
+
+   classes = [[NSMutableArray alloc] init];
+   [classes addObject: [NSString class]]; // we only support strings for now
+   pb = [NSPasteboard generalPasteboard];
+   options = [NSDictionary dictionary];
+   return [pb canReadItemWithDataConformingToTypes: classes];
+}
 
 EAPI void *
-ecore_cocoa_clipboard_get(int                  *size,
-                          Ecore_Cocoa_Cnp_Type  type,
-                          Ecore_Cocoa_Cnp_Type *retrieved_types)
+ecore_cocoa_clipboard_get(int *size,
+                          const char *raw_mime_type)
 {
    NSMutableArray *classes;
-   void *data;
+   void *data = NULL;
    NSDictionary *options;
    NSPasteboard *pb;
    NSArray *items;
    unsigned int len;
    BOOL string_class = NO;
-   Ecore_Cocoa_Cnp_Type types = 0;
+   NSString *mime_type = [NSString stringWithUTF8String:raw_mime_type];
 
    classes = [[NSMutableArray alloc] init];
 
-   if (type & ECORE_COCOA_CNP_TYPE_STRING)
+   if ([mime_type hasPrefix:@"text/"])
      {
         string_class = YES;
         [classes addObject: [NSString class]];
      }
-   if (type & ECORE_COCOA_CNP_TYPE_IMAGE)
+   else
      {
-         WRN("Image CNP: NOT IMPLEMENTED");
-     }
-   if (type & ECORE_COCOA_CNP_TYPE_HTML)
-     {
-         WRN("HTML CNP: NOT IMPLEMENTED");
+        ERR("Mimetype %s is not handled yet", raw_mime_type);
+        goto fail;
      }
 
    if ([classes count] <= 0)
@@ -120,7 +122,6 @@ ecore_cocoa_clipboard_get(int                  *size,
                  (const char *)data, len);
              goto remove_fail;
           }
-        types |= ECORE_COCOA_CNP_TYPE_STRING;
 
 #if 0
         if (type & ECORE_COCOA_CNP_TYPE_MARKUP)
@@ -139,7 +140,7 @@ ecore_cocoa_clipboard_get(int                  *size,
 #endif
      }
 
-   if (!types)
+   if (!data)
      {
         ERR("No types retrieved!");
         goto remove_fail;
@@ -148,14 +149,12 @@ ecore_cocoa_clipboard_get(int                  *size,
    [classes removeAllObjects];
 
    if (size) *size = len;
-   if (retrieved_types) *retrieved_types = types;
    return data;
 
 remove_fail:
    [classes removeAllObjects];
 fail:
    if (size) *size = 0;
-   if (retrieved_types) *retrieved_types = 0;
    return NULL;
 }
 

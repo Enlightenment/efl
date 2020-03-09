@@ -122,7 +122,7 @@ option('g-mainloop',
 option('gstreamer',
   type : 'boolean',
   value : true,
-  description : 'GStreamer 1.0+ support in efl'
+  description : 'GStreamer support in efl'
 )
 
 option('systemd',
@@ -198,20 +198,6 @@ option('ecore-imf-loaders-disabler',
   description : 'List of input methods to disable in efl',
   choices : ['xim', 'ibus', 'scim'],
   value : ['scim']
-)
-
-option('emotion-loaders-disabler',
-  type : 'array',
-  description : 'List of video back-ends to disable in efl',
-  choices : ['gstreamer1', 'libvlc', 'xine'],
-  value : ['libvlc', 'xine']
-)
-
-option('emotion-generic-loaders-disabler',
-  type : 'array',
-  description : 'List of out-of-process generic binary video loaders to disable in efl',
-  choices : ['vlc'],
-  value : ['vlc']
 )
 
 option('harfbuzz',

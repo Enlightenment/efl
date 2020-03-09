@@ -328,15 +328,11 @@ runtime library being refactored to be extremely small.
 
 //BSD 2-Clause license//
 
-This is a wrapper around Gstreamer and/or Xine and/or external
-pluggable decoder binaries (generic binaries provided by Emotion
-Generic Players or any suitable drop-in replacement). This glues in
-the decoder library, and its output into a smart Evas object that will
-display the playback for you as the video plays, as well as providing
-higher level controls to seek, play, pause and query the stream
-regardless of the back-end used. Note that using the Xine module may
-effectively make this library GPL v2, so be aware of that before
-turning that on.
+This is a wrapper around Gstreamer 1.x pluggable decoder libraries
+This glues in the decoder library, and its output into a smart Evas object
+that will display the playback for you as the video plays, as well as
+providing higher level controls to seek, play, pause and query the stream
+regardless of the back-end used.
 
 
 

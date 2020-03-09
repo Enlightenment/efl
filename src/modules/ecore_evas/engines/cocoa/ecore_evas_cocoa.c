@@ -34,6 +34,11 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4];
 static const char *_iface_name = "opengl_cocoa";
 static const int _iface_version = 1;
 
+typedef struct {
+   Ecore_Evas_Selection_Callbacks clipboard;
+   Eina_Future *delivery;
+} Ecore_Evas_Cocoa_Engine_Data;
+
 static inline Ecore_Evas *
 _ecore_evas_cocoa_match(Ecore_Cocoa_Object *cocoa_win)
 {
@@ -422,6 +427,125 @@ _ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func
    ee->func.fn_delete_request = func;
 }
 
+static Eina_Value
+_delivery(void *data, const Eina_Value value EINA_UNUSED, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Cocoa_Engine_Data *edata = ee->engine.data;
+   Eina_Rw_Slice slice;
+   const char *mime_type = NULL;
+
+   EINA_SAFETY_ON_NULL_GOTO(edata->delivery, end);
+
+   for (unsigned int i = 0; i < eina_array_count(edata->clipboard.available_types); ++i)
+     {
+        mime_type = eina_array_data_get(edata->clipboard.available_types, i);
+        if (!strncmp("text/", mime_type, strlen("text/")))
+          break;
+     }
+   if (mime_type)
+     {
+        edata->clipboard.delivery(ee, 1, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER, mime_type, &slice);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_cocoa_clipboard_set(slice.mem, slice.len, mime_type), end);
+     }
+   else
+     {
+        ERR("No compatible mime type found");
+     }
+
+end:
+   return EINA_VALUE_EMPTY;
+}
+
+static Eina_Bool
+_ecore_evas_cocoa_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
+{
+   if (selection != ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     return EINA_FALSE;
+
+   if (!delivery && !cancel)
+     {
+        ecore_cocoa_clipboard_clear();
+        return EINA_TRUE;
+     }
+   else
+     {
+        Ecore_Evas_Cocoa_Engine_Data *edata = ee->engine.data;
+
+        if (edata->clipboard.cancel)
+          {
+             edata->clipboard.cancel(ee, seat, selection);
+             eina_array_free(edata->clipboard.available_types);
+          }
+
+        edata->delivery = efl_loop_job(efl_main_loop_get());
+        eina_future_then(edata->delivery, _delivery, ee);
+        edata->clipboard.delivery = delivery;
+        edata->clipboard.cancel = cancel;
+        edata->clipboard.available_types = available_types;
+        return EINA_TRUE;
+     }
+}
+
+Eina_Future*
+_ecore_evas_cocoa_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection, Eina_Array *acceptable_type)
+{
+   Eina_Future *future;
+   Eina_Promise *promise;
+   const char *mime_type;
+
+   if (selection != ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     return eina_future_rejected(efl_loop_future_scheduler_get(efl_main_loop_get()), ecore_evas_no_selection);
+
+   promise = efl_loop_promise_new(efl_main_loop_get());
+   future = eina_future_new(promise);
+
+   for (unsigned int i = 0; i < eina_array_count(acceptable_type); ++i)
+     {
+        mime_type = eina_array_data_get(acceptable_type, i);
+        if (!strncmp("text/", mime_type, strlen("text/")))
+          break;
+     }
+   if (!mime_type)
+     {
+        eina_promise_reject(promise, ecore_evas_no_matching_type);
+     }
+   else
+     {
+        int size;
+        void *data;
+        Eina_Content *content;
+        Eina_Rw_Slice slice;
+
+        data = ecore_cocoa_clipboard_get(&size, mime_type);
+        if (!strncmp(mime_type, "text", strlen("text")))
+          {
+             //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
+             slice.len = size + 1;
+             slice.mem = eina_memdup(data, size, EINA_TRUE);
+          }
+        else
+          {
+             slice.len = size;
+             slice.mem = data;
+          }
+        content = eina_content_new(eina_rw_slice_slice_get(slice), mime_type);
+        if (!content) // construction can fail because of some validation reasons
+          eina_promise_reject(promise, ecore_evas_no_matching_type);
+        else
+          eina_promise_resolve(promise, eina_value_content_init(content));
+     }
+   return future;
+}
+
+static Eina_Bool
+_ecore_evas_cocoa_selection_has_owner(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_UNUSED, Ecore_Evas_Selection_Buffer selection EINA_UNUSED)
+{
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
+     return ecore_cocoa_clipboard_exists();
+   return EINA_FALSE;
+}
+
 static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
   {
     _ecore_evas_cocoa_free,
@@ -508,6 +632,11 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL, //fn_pointer_device_xy_get
     NULL, //fn_prepare
     NULL, //fn_last_tick_get
+   _ecore_evas_cocoa_selection_claim, //fn_selection_claim
+   _ecore_evas_cocoa_selection_has_owner, //fn_selection_has_owner
+   _ecore_evas_cocoa_selection_request, //fn_selection_request
+   NULL, //fn_dnd_start
+   NULL, //fn_dnd_stop
   };
 
 static Ecore_Cocoa_Window *
@@ -517,11 +646,11 @@ _ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
    return (Ecore_Cocoa_Window *)(ee->prop.window);
 }
 
-
 EAPI Ecore_Evas *
 ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int y, int w, int h)
 {
    Ecore_Evas *ee;
+   Ecore_Evas_Cocoa_Engine_Data *edata;
    Ecore_Evas_Interface_Cocoa *iface;
 
    if (!ecore_cocoa_init())
@@ -532,6 +661,10 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee)
      goto shutdown_ecore_cocoa;
+   edata = calloc(1, sizeof(Ecore_Evas_Cocoa_Engine_Data));
+   if (!edata)
+     goto shutdown_ecore_cocoa_engine_data;
+   ee->engine.data = edata;
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
@@ -606,6 +739,8 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    free(ee->name);
    //free_ee:
    _ecore_evas_cocoa_shutdown();
+   free(edata);
+ shutdown_ecore_cocoa_engine_data:
    free(ee);
  shutdown_ecore_cocoa:
    ecore_cocoa_shutdown();

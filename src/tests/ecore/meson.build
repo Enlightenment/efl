@@ -13,6 +13,7 @@ ecore_suite_src = [
   'ecore_test_job.c',
   'ecore_test_args.c',
   'ecore_test_pipe.c',
+  'ecore_test_ecore_evas_selection.c',
   'ecore_suite.h'
 ]
 
