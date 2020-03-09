@@ -22,9 +22,6 @@
 
 /**
  * @file
- * @ender_group{Eina_Matrix_Type}
- * @ender_group{Eina_Matrix3_F16p16}
- * @ender_group{Eina_Matrix3}
  */
 
 /**
