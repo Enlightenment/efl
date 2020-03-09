@@ -9409,7 +9409,10 @@ void
 _drop_event_unregister(Eo *obj)
 {
    int idx = -1;
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd;
+
+   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   if (!pd) return;
 
    for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
      {
