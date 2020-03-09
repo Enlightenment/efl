@@ -156,8 +156,8 @@ _selection_changed_cb(void *data, const Efl_Event *ev)
      return;
 
    ldata->loss_cb(ldata->udata, ldata->type);
-   free(data);
    efl_event_callback_del(ev->object, ev->desc, _selection_changed_cb, data);
+   free(data);
 }
 
 EAPI void
