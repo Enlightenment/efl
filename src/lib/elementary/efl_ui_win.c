@@ -9510,9 +9510,14 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    switch ((int) type)
      {
-      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_LEGACY_CLASS; break;
-      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_LEGACY_CLASS; break;
-      default: break;
+      case ELM_WIN_INLINED_IMAGE:
+        klass = EFL_UI_WIN_INLINED_LEGACY_CLASS;
+        break;
+      case ELM_WIN_SOCKET_IMAGE:
+        klass = EFL_UI_WIN_SOCKET_LEGACY_CLASS;
+        break;
+      default:
+        break;
      }
 
    return elm_legacy_add(klass, parent,
