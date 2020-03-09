@@ -6331,8 +6331,6 @@ EAPI void evas_object_polygon_points_clear(Evas_Object *obj);
 /** Call user-provided @c calculate smart functions and unset the flag
  * signalling that the object needs to get recalculated to all smart objects in
  * the canvas.
- *
- * @ingroup Evas_Canvas
  */
 EAPI void evas_smart_objects_calculate(Eo *obj);
 
@@ -6342,8 +6340,6 @@ EAPI void evas_smart_objects_calculate(Eo *obj);
  * @param[in] obj The object.
  *
  * @return @c true if currently calculating smart objects.
- *
- * @ingroup Evas_Canvas
  */
 EAPI Eina_Bool evas_smart_objects_calculating_get(const Eo *obj);
 
@@ -6359,8 +6355,6 @@ EAPI Eina_Bool evas_smart_objects_calculating_get(const Eo *obj);
  * canvas. It will take care of setting all of its internals to work
  * as they should, if the user set things properly, as seem on the
  * #EVAS_SMART_SUBCLASS_NEW, for example.
- *
- * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object *evas_object_smart_add(Evas *e, Evas_Smart *s) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
 
@@ -6381,8 +6375,6 @@ EAPI Evas_Object *evas_object_smart_add(Evas *e, Evas_Smart *s) EINA_WARN_UNUSED
  *
  * @see evas_object_smart_member_del()
  * @see evas_object_smart_members_get()
- *
- * @ingroup Evas_Smart_Object_Group
  */
 EAPI void         evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj) EINA_ARG_NONNULL(1, 2);
 
@@ -6390,7 +6382,6 @@ EAPI void         evas_object_smart_member_add(Evas_Object *obj, Evas_Object *sm
  * Removes a member object from a given smart object.
  *
  * @param obj the member object
- * @ingroup Evas_Smart_Object_Group
  *
  * This removes a member object from a smart object, if it was added
  * to any. The object will still be on the canvas, but no longer
@@ -6437,7 +6428,6 @@ EAPI void         evas_object_smart_member_del(Evas_Object *obj) EINA_ARG_NONNUL
  * @see @ref Evas_Smart_Object_Group_Callbacks for more details.
  *
  * @see evas_object_smart_callback_del()
- * @ingroup Evas_Smart_Object_Group
  */
 EAPI void         evas_object_smart_callback_add(Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -6454,7 +6444,6 @@ EAPI void         evas_object_smart_callback_add(Evas_Object *obj, const char *e
  *
  * @see evas_object_smart_callback_add
  * @since 1.1
- * @ingroup Evas_Smart_Object_Group
  */
 EAPI void         evas_object_smart_callback_priority_add(Evas_Object *obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data);
 
@@ -6476,8 +6465,6 @@ EAPI void         evas_object_smart_callback_priority_add(Evas_Object *obj, cons
  * not successful @c NULL will be returned.
  *
  * @see evas_object_smart_callback_add() for more details.
- *
- * @ingroup Evas_Smart_Object_Group
  */
 EAPI void        *evas_object_smart_callback_del(Evas_Object *obj, const char *event, Evas_Smart_Cb func) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -6502,7 +6489,6 @@ EAPI void        *evas_object_smart_callback_del(Evas_Object *obj, const char *e
  *
  * @see evas_object_smart_callback_add() for more details.
  * @since 1.2
- * @ingroup Evas_Smart_Object_Group
  *
  * @note To delete all smart event callbacks which match @p type and @p func,
  * use evas_object_smart_callback_del().
@@ -6527,8 +6513,6 @@ EAPI void        *evas_object_smart_callback_del_full(Evas_Object *obj, const ch
  * encouraged to properly set the Evas_Smart_Class::callbacks
  * callbacks description array, so that the users of the smart object
  * can have introspection on its events API <b>at run time</b>.
- *
- * @ingroup Evas_Smart_Object_Group
  */
 EAPI void         evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info) EINA_ARG_NONNULL(1, 2);
 
@@ -6577,8 +6561,6 @@ EAPI void             *evas_object_smart_interface_data_get(const Evas_Object *o
  * See also @ref evas_object_smart_type_check_ptr.
  *
  * @param[in] type The name (type) of the smart class to check for.
- *
- * @ingroup Evas_Object
  */
 EAPI Eina_Bool evas_object_smart_type_check(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
 
@@ -6590,8 +6572,6 @@ EAPI Eina_Bool evas_object_smart_type_check(const Evas_Object *obj, const char *
  *
  * @return @c true if @c obj or any of its parents is of type @c type, @c false
  * otherwise.
- *
- * @ingroup Evas_Object
  */
 EAPI Eina_Bool evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
 
@@ -6622,8 +6602,6 @@ EAPI Eina_Bool evas_object_smart_type_check_ptr(const Evas_Object *obj, const ch
  * made, so this array should be kept alive during the whole object's lifetime.
  *
  * @return @c true on success, @c false on failure.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI Eina_Bool evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions);
 
@@ -6654,8 +6632,6 @@ EAPI Eina_Bool evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, co
  * is returned.
  * @param[out] instance_count Returns how many instance callbacks descriptions
  * are known.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count);
 
@@ -6673,8 +6649,6 @@ EAPI void evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, c
  * if not found. If parameter is @c null, no search will be done on class
  * descriptions.
  * @param[out] instance_description pointer to return instance description.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(2);
 
@@ -6694,8 +6668,6 @@ EAPI Evas_Smart *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_U
  * See also @ref evas_object_smart_data_get.
  *
  * @param[in] data A pointer to user data.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
 EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
@@ -6705,8 +6677,6 @@ EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
  *
  * Use this function if you want to change any of this clipper's properties,
  * like colors.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -6725,8 +6695,6 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  * @return Returns the list of the member objects of @c obj.
  *
  * @since 1.7
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI Eina_List *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -6751,8 +6719,6 @@ EAPI Eina_List *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_
  *
  * @param[in] value whether one wants to set ($true) or to unset ($false) the
  * flag.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value);
 
@@ -6767,8 +6733,6 @@ EAPI void evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool val
  * See also @ref evas_object_smart_need_recalculate_set, for more details.
  *
  * @return whether one wants to set ($true) or to unset ($false) the flag.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
 
@@ -6782,8 +6746,6 @@ EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
  * @return Returns the iterator of the member objects of @c obj.
  *
  * @since 1.8
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI Eina_Iterator *evas_object_smart_iterator_new(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -6796,8 +6758,6 @@ EAPI Eina_Iterator *evas_object_smart_iterator_new(const Evas_Object *obj) EINA_
  * needs recalculation for the next rendering phase.
  *
  * See also @ref evas_object_smart_need_recalculate_set
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_calculate(Evas_Object *obj);
 
@@ -6810,8 +6770,6 @@ EAPI void evas_object_smart_calculate(Evas_Object *obj);
  *
  * See also @ref evas_object_smart_need_recalculate_set and
  * @ref evas_object_smart_calculate.
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_changed(Evas_Object *obj);
 
@@ -6829,8 +6787,6 @@ EAPI void evas_object_smart_changed(Evas_Object *obj);
  *
  * @param[in] dx Horizontal offset (delta).
  * @param[in] dy Vertical offset (delta).
- *
- * @ingroup Evas_Object_Smart
  */
 EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
 
