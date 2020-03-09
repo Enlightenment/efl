@@ -184,7 +184,7 @@ eina_content_type_get(Eina_Content *content)
    return content->type;
 }
 
-EAPI const Eina_Slice
+EAPI Eina_Slice
 eina_content_data_get(Eina_Content *content)
 {
    return eina_rw_slice_slice_get(content->data);
