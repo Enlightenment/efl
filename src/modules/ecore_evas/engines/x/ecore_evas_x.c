@@ -4068,9 +4068,9 @@ _ecore_evas_x_dnd_enter(void *udata EINA_UNUSED, int type EINA_UNUSED, void *eve
         eina_array_push(edata->xserver_atom_name_during_dnd, eina_stringshare_add(enter->types[i]));
      }
    ecore_evas_dnd_enter(ee, 1, eina_array_iterator_new(mime_tmp), EINA_POSITION2D(0,0)); //FIXME
-   eina_array_free(mime_tmp);
 
 end:
+   eina_array_free(mime_tmp);
    return ECORE_CALLBACK_PASS_ON;
 }
 
