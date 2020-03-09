@@ -529,19 +529,21 @@ static void
 _dnd_drop_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Efl_Ui_Drop_Event *drop = ev->info;
-   Eina_Future *future;
+
    Eina_Array *types;
 
    EFL_UI_TEXT_DATA_GET(ev->object, sd);
    types = _figure_out_types(ev->object, sd);
 
-   if (!_accepting_drops(ev->object, sd, drop->available_types))
-     return;
+   if (_accepting_drops(ev->object, sd, drop->available_types))
+     {
+        Eina_Future *future;
 
-   future = efl_ui_dnd_drop_data_get(ev->object, 0, eina_array_iterator_new(types));
+        future = efl_ui_dnd_drop_data_get(ev->object, evas_device_seat_id_get(evas_default_device_get(evas_object_evas_get(ev->object), EFL_INPUT_DEVICE_TYPE_SEAT)), eina_array_iterator_new(types));
+        efl_future_then(ev->object, future, _selection_data_cb);
+     }
+
    eina_array_free(types);
-
-   efl_future_then(ev->object, future, _selection_data_cb);
 }
 
 /* we can't reuse layout's here, because it's on entry_edje only */
