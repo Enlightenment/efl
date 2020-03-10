@@ -2603,8 +2603,11 @@ typedef struct {
 static Eina_Bool
 _write_to_fd(void *data, Ecore_Fd_Handler *fd_handler)
 {
-   int fd = ecore_main_fd_handler_fd_get(fd_handler);
+   int fd;
    Delayed_Writing *slice = data;
+
+   fd = ecore_main_fd_handler_fd_get(fd_handler);
+   if (fd < 0) goto end;
 
    size_t len = write(fd, slice->slice.mem + slice->written_bytes, slice->slice.len - slice->written_bytes);
 
@@ -2615,13 +2618,13 @@ _write_to_fd(void *data, Ecore_Fd_Handler *fd_handler)
      }
    else
      {
+end:
         ecore_main_fd_handler_del(fd_handler);
         free(slice->slice.mem);
         free(slice);
         close(fd);
         return EINA_FALSE;
      }
-
 }
 
 static Eina_Bool
