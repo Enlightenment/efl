@@ -2645,7 +2645,7 @@ _wl_interaction_send(void *data, int type EINA_UNUSED, void *event)
    if (buffer == ECORE_EVAS_SELECTION_BUFFER_LAST)
      {
         //silent return, this send request was *not* for this window
-        return ECORE_CALLBACK_PASS_ON;
+        goto end;
      }
 
    selection = &wdata->selection_data[buffer];
@@ -2653,7 +2653,11 @@ _wl_interaction_send(void *data, int type EINA_UNUSED, void *event)
    EINA_SAFETY_ON_NULL_GOTO(selection->callbacks.delivery, end);
    EINA_SAFETY_ON_FALSE_GOTO(selection->callbacks.delivery(ee, ev->seat, buffer, ev->type, &forign_slice->slice), end);
    ecore_main_fd_handler_add(ev->fd, ECORE_FD_WRITE, _write_to_fd, forign_slice, NULL, NULL);
+
+   return ECORE_CALLBACK_PASS_ON;
+
 end:
+   free(forign_slice);
    return ECORE_CALLBACK_PASS_ON;
 }
 
