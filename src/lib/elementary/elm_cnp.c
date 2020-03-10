@@ -104,6 +104,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
         ERR("You cannot specify more than one format when setting selection");
      }
    mime_type = eina_array_data_get(tmp, 0);
+   eina_array_free(tmp);
    content = eina_content_new(data, mime_type);
    _register_selection_changed(obj);
 
@@ -155,8 +156,8 @@ _selection_changed_cb(void *data, const Efl_Event *ev)
      return;
 
    ldata->loss_cb(ldata->udata, ldata->type);
-   free(data);
    efl_event_callback_del(ev->object, ev->desc, _selection_changed_cb, data);
+   free(data);
 }
 
 EAPI void

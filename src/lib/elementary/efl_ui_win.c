@@ -9409,7 +9409,10 @@ void
 _drop_event_unregister(Eo *obj)
 {
    int idx = -1;
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd;
+
+   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   if (!pd) return;
 
    for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
      {
@@ -9428,14 +9431,20 @@ _drop_event_unregister(Eo *obj)
 void
 _selection_changed_event_register(Eo *obj)
 {
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd;
+
+   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   if (!pd) return;
 
    eina_array_push(pd->selection_changed, obj);
 }
 void
 _selection_changed_event_unregister(Eo *obj)
 {
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd;
+
+   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   if (!pd) return;
 
    eina_array_remove(pd->selection_changed, _remove, obj);
 }
@@ -9510,9 +9519,14 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    switch ((int) type)
      {
-      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_LEGACY_CLASS; break;
-      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_LEGACY_CLASS; break;
-      default: break;
+      case ELM_WIN_INLINED_IMAGE:
+        klass = EFL_UI_WIN_INLINED_LEGACY_CLASS;
+        break;
+      case ELM_WIN_SOCKET_IMAGE:
+        klass = EFL_UI_WIN_SOCKET_LEGACY_CLASS;
+        break;
+      default:
+        break;
      }
 
    return elm_legacy_add(klass, parent,

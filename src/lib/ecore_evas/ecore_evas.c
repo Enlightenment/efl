@@ -5570,16 +5570,16 @@ ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection
 
    INF("Selection set on seat %d in buffer %d", seat, buffer);
 
-   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_TRUE);
-
-   if (content)
-     available_type = eina_content_possible_conversions(content);
-
    if (buffer == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
      {
         ERR("You cannot set a selection with this API, please use the API to start a drag operation");
         return EINA_FALSE;
      }
+
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_TRUE);
+
+   if (content)
+     available_type = eina_content_possible_conversions(content);
 
    success = CALL(selection_claim)(ee, seat, buffer, _iterator_to_array(available_type, content ? eina_content_type_get(content) : NULL), content ? _deliver_cb : NULL, content ? _cancel_cb : NULL);
    if (success)
@@ -5588,7 +5588,7 @@ ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection
         //keep this after the claim, the claim might call cancel, which would overwrite this.
         buffers->selection_buffer[buffer] = content;
      }
-   else
+   else if (content)
      {
         eina_content_free(content);
      }

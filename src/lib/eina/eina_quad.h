@@ -22,7 +22,6 @@
 
 /**
  * @file
- * @ender_group{Eina_Quad}
  */
 
 /**

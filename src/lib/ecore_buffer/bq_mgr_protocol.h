@@ -75,25 +75,10 @@ bq_mgr_create_provider(struct bq_mgr *bq_mgr, const char *name)
 }
 
 struct bq_consumer_listener {
-	/**
-	 * connected - (none)
-	 */
 	void (*connected)(void *data,
 			  struct bq_consumer *bq_consumer);
-	/**
-	 * disconnected - (none)
-	 */
 	void (*disconnected)(void *data,
 			     struct bq_consumer *bq_consumer);
-	/**
-	 * buffer_attached - (none)
-	 * @buffer: (none)
-	 * @engine: (none)
-	 * @width: (none)
-	 * @height: (none)
-	 * @format: (none)
-	 * @flags: (none)
-	 */
 	void (*buffer_attached)(void *data,
 				struct bq_consumer *bq_consumer,
 				struct bq_buffer *buffer,
@@ -102,17 +87,6 @@ struct bq_consumer_listener {
 				int32_t height,
 				int32_t format,
 				uint32_t flags);
-	/**
-	 * set_buffer_id - (none)
-	 * @buffer: (none)
-	 * @id: (none)
-	 * @offset0: (none)
-	 * @stride0: (none)
-	 * @offset1: (none)
-	 * @stride1: (none)
-	 * @offset2: (none)
-	 * @stride2: (none)
-	 */
 	void (*set_buffer_id)(void *data,
 			      struct bq_consumer *bq_consumer,
 			      struct bq_buffer *buffer,
@@ -123,17 +97,6 @@ struct bq_consumer_listener {
 			      int32_t stride1,
 			      int32_t offset2,
 			      int32_t stride2);
-	/**
-	 * set_buffer_fd - (none)
-	 * @buffer: (none)
-	 * @fd: (none)
-	 * @offset0: (none)
-	 * @stride0: (none)
-	 * @offset1: (none)
-	 * @stride1: (none)
-	 * @offset2: (none)
-	 * @stride2: (none)
-	 */
 	void (*set_buffer_fd)(void *data,
 			      struct bq_consumer *bq_consumer,
 			      struct bq_buffer *buffer,
@@ -144,18 +107,9 @@ struct bq_consumer_listener {
 			      int32_t stride1,
 			      int32_t offset2,
 			      int32_t stride2);
-	/**
-	 * buffer_detached - (none)
-	 * @buffer: (none)
-	 */
 	void (*buffer_detached)(void *data,
 				struct bq_consumer *bq_consumer,
 				struct bq_buffer *buffer);
-	/**
-	 * add_buffer - (none)
-	 * @buffer: (none)
-	 * @serial: (none)
-	 */
 	void (*add_buffer)(void *data,
 			   struct bq_consumer *bq_consumer,
 			   struct bq_buffer *buffer,
@@ -206,27 +160,13 @@ enum bq_provider_error {
 #endif /* BQ_PROVIDER_ERROR_ENUM */
 
 struct bq_provider_listener {
-	/**
-	 * connected - (none)
-	 * @queue_size: (none)
-	 * @width: (none)
-	 * @height: (none)
-	 */
 	void (*connected)(void *data,
 			  struct bq_provider *bq_provider,
 			  int32_t queue_size,
 			  int32_t width,
 			  int32_t height);
-	/**
-	 * disconnected - (none)
-	 */
 	void (*disconnected)(void *data,
 			     struct bq_provider *bq_provider);
-	/**
-	 * add_buffer - (none)
-	 * @buffer: (none)
-	 * @serial: (none)
-	 */
 	void (*add_buffer)(void *data,
 			   struct bq_provider *bq_provider,
 			   struct bq_buffer *buffer,

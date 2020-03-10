@@ -49,6 +49,8 @@ eina_content_converter_conversion_register(const char *from, const char *to, Ein
    if (eina_content_converter_convert_can(from, to))
      {
         ERR("Convertion from %s to %s is already possible", from, to);
+        eina_stringshare_del(shared_from);
+        free(node);
         return EINA_FALSE;
      }
 
@@ -132,10 +134,17 @@ eina_content_new(Eina_Slice data, const char *type)
    EINA_SAFETY_ON_NULL_RETURN_VAL(content, NULL);
    content->data = eina_slice_dup(data);
    content->type = eina_stringshare_add(type);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(content->data.mem, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(content->data.mem, err);
 
    _eina_content_ref(content);
    return content;
+err:
+   if (content)
+     {
+        free(content->data.mem);
+        content->data.mem = NULL;
+     }
+   return NULL;
 }
 
 EAPI void
@@ -184,7 +193,7 @@ eina_content_type_get(Eina_Content *content)
    return content->type;
 }
 
-EAPI const Eina_Slice
+EAPI Eina_Slice
 eina_content_data_get(Eina_Content *content)
 {
    return eina_rw_slice_slice_get(content->data);
@@ -416,7 +425,8 @@ eina_value_content_new(Eina_Content *content)
 {
    Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_CONTENT);
 
-   eina_value_pset(v, &content);
+   if (!eina_value_pset(v, &content))
+     return NULL;
    return v;
 }
 
@@ -426,18 +436,21 @@ eina_value_content_init(Eina_Content *content)
 {
    Eina_Value v;
 
-   eina_value_setup(&v, EINA_VALUE_TYPE_CONTENT);
-   eina_value_pset(&v, &content);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_setup(&v, EINA_VALUE_TYPE_CONTENT), EINA_VALUE_EMPTY);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_pset(&v, &content), EINA_VALUE_EMPTY);
 
    return v;
 }
-
 
 Eina_Content*
 eina_value_to_content(const Eina_Value *value)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_get(value) == EINA_VALUE_TYPE_CONTENT, NULL);
    Eina_Content *result = calloc(1, sizeof(Eina_Content));
-   eina_value_pget(value, &result);
+   if (!eina_value_pget(value, &result))
+     {
+        free(result);
+        return NULL;
+     }
    return result;
 }

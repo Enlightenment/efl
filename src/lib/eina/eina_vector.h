@@ -24,9 +24,12 @@
 
 /**
  * @file
- * @ender_group{Eina_Vector_Type}
- * @ender_group{Eina_Vector2}
- * @ender_group{Eina_Vector3}
+ */
+
+/**
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
  */
 
 typedef struct _Eina_Vector2 Eina_Vector2;
@@ -34,10 +37,8 @@ typedef struct _Eina_Vector3 Eina_Vector3;
 
 #define EINA_VECTOR2(x, y) ((Eina_Vector2) {(x), (y)})
 /**
- * @}
- * @defgroup Eina_Vector2 Vectors in floating point
- * @ingroup Eina_Basic
- * @brief Vector definition and operations
+ * @defgroup Eina_Vector2 Floating point vectors in 2D
+ * @brief 2D vector definition and operations
  * @{
  */
 
@@ -45,21 +46,6 @@ struct _Eina_Vector2
 {
    double x;
    double y;
-};
-
-/**
- * @}
- * @defgroup Eina_Vector3 Vectors in floating point
- * @ingroup Eina_Basic
- * @brief Vector definition and operations
- * @{
- */
-
-struct _Eina_Vector3
-{
-   double x;
-   double y;
-   double z;
 };
 
 /**
@@ -233,6 +219,20 @@ static inline void eina_vector2_homogeneous_position_transform(Eina_Vector2 *out
  * @since 1.17
  */
 static inline void eina_vector2_homogeneous_direction_transform(Eina_Vector2 *out, const Eina_Matrix3 *m, const Eina_Vector2 *v);
+
+/** @} */
+
+/**
+ * @defgroup Eina_Vector3 Floating point vectors in 3D
+ * @brief 3D vector definition and operations
+ * @{
+ */
+struct _Eina_Vector3
+{
+   double x;
+   double y;
+   double z;
+};
 
 /**
  * @brief Set parameters to vector.
@@ -533,6 +533,8 @@ static inline Eina_Bool eina_vector3_equivalent(Eina_Vector3 *a, const Eina_Vect
 static inline Eina_Bool eina_vector3_triangle_equivalent(Eina_Vector3 *v0, Eina_Vector3 *v1,
                                                          Eina_Vector3 *v2, Eina_Vector3 *w0,
                                                          Eina_Vector3 *w1, Eina_Vector3 *w2);
+
+/** @} */
 
 /** @} */
 

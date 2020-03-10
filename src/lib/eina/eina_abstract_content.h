@@ -63,7 +63,7 @@ EAPI const char* eina_content_type_get(Eina_Content *content);
  *
  * @return An Eina_Slice containing the data. Do not free.
  */
-EAPI const Eina_Slice eina_content_data_get(Eina_Content *content);
+EAPI Eina_Slice eina_content_data_get(Eina_Content *content);
 
 /**
  * Create a new content object, with the provided data and type.

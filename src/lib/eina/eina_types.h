@@ -468,7 +468,7 @@
 # define EINA_PREFETCH_NOCACHE(arg)
 
 /**
- * @def EINA_PREFETCH_WRITE_NOCACHE
+ * @def EINA_PREFETCH_NOCACHE_WRITE
  *
  * @brief Hints that the pointer @parg needs to be pre-fetched into cache
  *

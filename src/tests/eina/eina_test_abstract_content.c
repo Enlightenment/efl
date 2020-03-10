@@ -33,10 +33,10 @@ EFL_START_TEST(eina_test_content_as_file)
    ck_assert_str_eq(file_content, text_str);
    eina_file_close(f);
 
-   eina_content_free(content);
-
    const char *file_path2 = eina_content_as_file(content);
    ck_assert_str_eq(file_path, file_path2);
+
+   eina_content_free(content);
 }
 EFL_END_TEST
 
