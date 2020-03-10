@@ -17,10 +17,6 @@ struct zwp_e_session_recovery;
 extern const struct wl_interface zwp_e_session_recovery_interface;
 
 struct zwp_e_session_recovery_listener {
-	/**
-	 * uuid - (none)
-	 * @uuid: (none)
-	 */
 	void (*uuid)(void *data,
 		     struct zwp_e_session_recovery *zwp_e_session_recovery,
 		     const char *uuid);

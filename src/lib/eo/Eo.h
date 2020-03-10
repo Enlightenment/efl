@@ -1233,7 +1233,7 @@ EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
 EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
 
 /**
- * @prief Check if 2 objects are compatible
+ * @brief Check if 2 objects are compatible
  * @param obj The basic object
  * @param obj_target The alternate object that may be referenced by @p obj
  * @return EINA_TRUE if compatible, EINA_FALSE if not

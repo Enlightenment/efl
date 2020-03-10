@@ -7900,7 +7900,7 @@ EAPI int             evas_map_count_get(const Evas_Map *m) EINA_CONST;
  * @param mx point x after transformation by m
  * @param my point y after transformation by m
  * @param grab
- * @return #EINA_TRUE on success interpolation, @EINA_FALSE otherwise
+ * @return #EINA_TRUE on success interpolation, #EINA_FALSE otherwise
  * @since 1.20
  */
 EAPI Eina_Bool       evas_map_coords_get(const Evas_Map *m, double x, double y,

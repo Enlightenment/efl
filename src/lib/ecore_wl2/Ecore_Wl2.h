@@ -1103,7 +1103,7 @@ EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, 
  * Set the type of a given window
  *
  * @param window The window to set the type of
- * @type The Ecore_Wl2_Window_Type to set on the window
+ * @param type The Ecore_Wl2_Window_Type to set on the window
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17

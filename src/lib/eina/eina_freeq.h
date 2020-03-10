@@ -258,7 +258,7 @@ eina_freeq_reduce(Eina_FreeQ *fq, int count);
  * @brief Return if there are any items pending a free in the free queue
  *
  * @param[in] fq The free queue to query
- * @raturn EINA_TRUE if there are items to free, EINA_FALSE otherwise
+ * @return EINA_TRUE if there are items to free, EINA_FALSE otherwise
  * 
  * @since 1.19
  */

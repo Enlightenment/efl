@@ -423,7 +423,7 @@
 
 /**
  * @def EINA_PREFETCH
- * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * @brief Hints that the pointer @p arg needs to be pre-fetched into cache
  *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into all levels of cache. For
@@ -438,7 +438,7 @@
 
 /**
  * @def EINA_PREFETCH_WRITE
- * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * @brief Hints that the pointer @p arg needs to be pre-fetched into cache
  *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into all levels of cache. This
@@ -454,7 +454,7 @@
 
 /**
  * @def EINA_PREFETCH_NOCACHE
- * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * @brief Hints that the pointer @p arg needs to be pre-fetched into cache
  *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into just the closest(l1) cache.
@@ -470,7 +470,7 @@
 /**
  * @def EINA_PREFETCH_NOCACHE_WRITE
  *
- * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ * @brief Hints that the pointer @p arg needs to be pre-fetched into cache
  *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into just the closest(l1) cache.

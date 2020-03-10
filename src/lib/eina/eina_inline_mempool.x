@@ -58,12 +58,12 @@ struct _Eina_Mempool_Backend
    Eina_Bool (*from)(void *data, void *element);
    /** Function to get an Eina_Iterator that will walk every allocated element
     * in the pool.
-    * @use eina_mempool_iterator_new
+    * @see eina_mempool_iterator_new
     */
    Eina_Iterator *(*iterator)(void *data);
    /** Function to allocate memory near already allocated memory.
     * @since 1.24
-    * @use eina_mempool_malloc_near
+    * @see eina_mempool_malloc_near
     */
    void *(*alloc_near)(void *data, void *after, void *before, unsigned int size);
 };

@@ -3186,7 +3186,7 @@ typedef void (*Ecore_Evas_Vnc_Client_Disconnected_Cb)(void *data, Ecore_Evas *ee
  * @param port The port number to start the VNC server. Use @c -1 to set the default VNC port (5900)
  * @param accept_cb A callback used to accept a new client. If @c NULL all clients will be accepted.
  * @param disc_cb A callback used to inform that a client has disconnected. It may be @c NULL.
- * @param data Data to pass to @a accept_cb and @disc_cb
+ * @param data Data to pass to @p accept_cb and @p disc_cb
  * @return an Evas_Object that take everything under it to represent the view of the client.
  *
  * @see ecore_evas_vnc_stop()
@@ -3809,7 +3809,7 @@ typedef void (*Ecore_Evas_Drag_State_Changed_Cb)(Ecore_Evas *ee, unsigned int se
  * @param[in] cb Method to call when the events are received.
  *
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
- * times overwrites previous functions. Use a NULL @cb func to stop being notified.
+ * times overwrites previous functions. Use a NULL @p cb func to stop being notified.
  */
 EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_Drag_State_Changed_Cb cb);
 
@@ -3832,7 +3832,7 @@ typedef void (*Ecore_Evas_Drag_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Ein
  * @param[in] cb Method to call when the events are received.
  *
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
- * times overwrites previous functions. Use a NULL @cb func to stop being notified.
+ * times overwrites previous functions. Use a NULL @p cb func to stop being notified.
  */
 EAPI void ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Drag_Motion_Cb cb);
 
@@ -3858,7 +3858,7 @@ typedef void (*Ecore_Evas_Drop_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Posit
  * @param[in] cb Method to call when the events are received.
  *
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
- * times overwrites previous functions. Use a NULL @cb func to stop being notified.
+ * times overwrites previous functions. Use a NULL @p cb func to stop being notified.
  */
 EAPI void ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb cb);
 
