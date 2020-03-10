@@ -2036,10 +2036,10 @@ _edje_file_del(Edje *ed)
                {
                   if (rp->typedata.vector->anim)
                     efl_del(rp->typedata.vector->anim);
-                  if (rp->typedata.vector->json_virtual_file)
-                    eina_file_close(rp->typedata.vector->json_virtual_file);
-                  if (rp->typedata.vector->json_data)
-                    free(rp->typedata.vector->json_data);
+                  if (rp->typedata.vector->lottie_virtual_file)
+                    eina_file_close(rp->typedata.vector->lottie_virtual_file);
+                  if (rp->typedata.vector->lottie_data)
+                    free(rp->typedata.vector->lottie_data);
 
                   free(rp->typedata.vector);
                   rp->typedata.vector = NULL;

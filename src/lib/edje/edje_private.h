@@ -690,7 +690,7 @@ struct _Edje_Image_Directory
 typedef enum _Edje_Vector_File_Type
 {
    EDJE_VECTOR_FILE_TYPE_SVG = 0,
-   EDJE_VECTOR_FILE_TYPE_JSON
+   EDJE_VECTOR_FILE_TYPE_LOTTIE
 } Edje_Vector_File_Type;
 
 struct _Edje_Vector_Directory_Entry
@@ -2050,8 +2050,8 @@ struct _Edje_Real_Part_Swallow
 struct _Edje_Real_Part_Vector
 {
    Eo        *anim;
-   Eina_File *json_virtual_file;
-   char      *json_data;
+   Eina_File *lottie_virtual_file;
+   char      *lottie_data;
    int        start_frame;
    int        current_id;
    Eina_Bool  backward : 1;

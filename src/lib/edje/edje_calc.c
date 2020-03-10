@@ -3319,13 +3319,13 @@ _edje_vector_animation_running_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_edje_vector_load_json(Edje *ed, Edje_Real_Part *ep, const char *key)
+_edje_vector_load_lottie(Edje *ed, Edje_Real_Part *ep, const char *key)
 {
    Edje_Part_Description_Vector *desc = (Edje_Part_Description_Vector *)ep->chosen_description;
    Eina_File *file;
-   char *json_data;
+   char *lottie_data;
    double frame_duration;
-   int json_data_len = 0;
+   int lottie_data_len = 0;
    int frame_count;
 
    if (ep->typedata.vector->anim == NULL)
@@ -3339,18 +3339,18 @@ _edje_vector_load_json(Edje *ed, Edje_Real_Part *ep, const char *key)
 
    if (ep->typedata.vector->current_id != desc->vg.id)
      {
-        json_data = (char *)eet_read(ed->file->ef, key, &json_data_len);
-        json_data[json_data_len] = '\0';
-        file = eina_file_virtualize(NULL, json_data, json_data_len + 1, EINA_FALSE);
+        lottie_data = (char *)eet_read(ed->file->ef, key, &lottie_data_len);
+        lottie_data[lottie_data_len] = '\0';
+        file = eina_file_virtualize(NULL, lottie_data, lottie_data_len + 1, EINA_FALSE);
         efl_file_simple_mmap_load(ep->object, file, NULL);
 
-        if (ep->typedata.vector->json_virtual_file)
-          eina_file_close(ep->typedata.vector->json_virtual_file);
-        ep->typedata.vector->json_virtual_file = file;
+        if (ep->typedata.vector->lottie_virtual_file)
+          eina_file_close(ep->typedata.vector->lottie_virtual_file);
+        ep->typedata.vector->lottie_virtual_file = file;
 
-        if (ep->typedata.vector->json_data)
-          free(ep->typedata.vector->json_data);
-        ep->typedata.vector->json_data = json_data;
+        if (ep->typedata.vector->lottie_data)
+          free(ep->typedata.vector->lottie_data);
+        ep->typedata.vector->lottie_data = lottie_data;
 
         ep->typedata.vector->current_id = desc->vg.id;
      }
@@ -3381,12 +3381,12 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
 
    snprintf(src_key, sizeof(src_key), "edje/vectors/%i", chosen_desc->vg.id);
 
-   if (type == EDJE_VECTOR_FILE_TYPE_JSON)
+   if (type == EDJE_VECTOR_FILE_TYPE_LOTTIE)
      {
 #ifdef BUILD_VG_LOADER_JSON
-        _edje_vector_load_json(ed, ep, src_key);
+        _edje_vector_load_lottie(ed, ep, src_key);
 #else
-        ERR("Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
+        ERR("Evas Vg Lottie (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
 #endif
         return;
      }
@@ -3405,11 +3405,11 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
           }
      }
 
-   if ((new_id < 0) || (new_type == EDJE_VECTOR_FILE_TYPE_JSON))
+   if ((new_id < 0) || (new_type == EDJE_VECTOR_FILE_TYPE_LOTTIE))
      {
 #ifndef BUILD_VG_LOADER_JSON
-        if (new_type == EDJE_VECTOR_FILE_TYPE_JSON)
-          ERR("Evas Vg Json (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
+        if (new_type == EDJE_VECTOR_FILE_TYPE_LOTTIE)
+          ERR("Evas Vg Lottie (Lottie) Loader is not supported, Only Static Vector Image(SVG) is available!");
         else
 #endif
           efl_file_simple_load(ep->object, ed->file->path, src_key);
