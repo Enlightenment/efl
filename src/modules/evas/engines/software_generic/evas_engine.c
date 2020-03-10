@@ -2915,6 +2915,18 @@ eng_image_animated_frame_set(void *data EINA_UNUSED, void *image, int frame_inde
    return EINA_TRUE;
 }
 
+static int 
+eng_image_animated_frame_get(void *data EINA_UNUSED, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return EINA_FALSE;
+   im = image;
+   if (!im->animated.animated) return EINA_FALSE;
+
+   return im->animated.cur_frame;
+}
+
 static void
 _draw_thread_multi_font_draw(void *data)
 {
@@ -4777,6 +4789,7 @@ static Evas_Func func =
      eng_image_animated_loop_count_get,
      eng_image_animated_frame_duration_get,
      eng_image_animated_frame_set,
+     eng_image_animated_frame_get,
      NULL, // image_max_size_get
      eng_multi_font_draw,
      eng_pixel_alpha_get,
