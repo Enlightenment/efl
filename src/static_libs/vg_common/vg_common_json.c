@@ -86,10 +86,11 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
         const float *data = node->mPath.ptPtr;
         if (!data) continue;
 
+        if (node->keypath) efl_key_data_set(shape, "_lot_node_name", node->keypath);
         efl_gfx_entity_visible_set(shape, EINA_TRUE);
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
-        printf("%s (%p)\n", efl_class_name_get(efl_class_get(shape)), shape);
+        printf("%s (%p) keypath : %s\n", efl_class_name_get(efl_class_get(shape)), shape, node->keypath);
 #endif
         //0: Path
         efl_gfx_path_reserve(shape, node->mPath.elmCount, node->mPath.ptCount);
