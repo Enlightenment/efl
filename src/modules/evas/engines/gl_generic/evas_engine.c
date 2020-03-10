@@ -2158,6 +2158,21 @@ eng_image_animated_frame_set(void *engine EINA_UNUSED, void *image, int frame_in
    return EINA_TRUE;
 }
 
+static int 
+eng_image_animated_frame_get(void *engine EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *gim = image;
+   Image_Entry *im;
+
+   if (!gim) return EINA_FALSE;
+   im = (Image_Entry *)gim->im;
+   if (!im) return EINA_FALSE;
+
+   if (!im->animated.animated) return EINA_FALSE;
+
+   return im->animated.cur_frame;
+}
+
 static Eina_Bool
 eng_image_can_region_get(void *engine EINA_UNUSED, void *image)
 {
@@ -3308,6 +3323,7 @@ module_open(Evas_Module *em)
    ORD(image_animated_loop_count_get);
    ORD(image_animated_frame_duration_get);
    ORD(image_animated_frame_set);
+   ORD(image_animated_frame_get);
 
    ORD(image_max_size_get);
 
