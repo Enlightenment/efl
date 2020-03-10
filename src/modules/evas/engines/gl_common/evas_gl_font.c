@@ -4,7 +4,7 @@ void *
 evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 {
    Evas_Engine_GL_Context *gc = context;
-   Evas_GL_Texture *tex;
+   Evas_GL_Texture *tex = NULL;
    int w, h, nw, fh, y;
    DATA8 *ndata, *data, *p1, *p2;
 
@@ -25,7 +25,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
       ndata = data;
    } else {
       ndata = alloca(nw *h);
-      if (!ndata) return NULL;
+      if (!ndata) goto done;
       // else copy row by row
       for (y = 0; y < h; y++)
       {
