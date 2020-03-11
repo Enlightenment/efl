@@ -65,4 +65,214 @@ UNIMPLEMENTED inline int pthread_mutex_unlock(void* m)
     return 0;
 }
 
+UNIMPLEMENTED inline int pthread_cond_wait(void* c, void* m)
+{
+    #warning pthread_cond_wait is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_timedwait(void* c, void* m, int t)
+{
+    #warning pthread_cond_timedwait is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_broadcast(void* c)
+{
+    #warning pthread_cond_broadcast is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_signal(void* c)
+{
+    #warning pthread_cond_signal is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_rwlock_rdlock(void* c)
+{
+    #warning pthread_rwlock_rdlock is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_rwlock_wrlock(void* c)
+{
+    #warning pthread_rwlock_wrlock is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_rwlock_unlock(void* c)
+{
+    #warning pthread_rwlock_unlock is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_key_create(void* c, void * d)
+{
+    #warning pthread_key_create is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_key_delete(void* c)
+{
+    #warning pthread_key_delete is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_getspecific(void* c)
+{
+    #warning pthread_getspecific is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_setspecific(void* c, const void* d)
+{
+    #warning pthread_setspecific is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutexattr_init(void* c, ...)
+{
+    #warning pthread_mutexattr_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_getschedparam(void* a, ...)
+{
+    #warning pthread_getschedparam is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_self()
+{
+    #warning pthread_self is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_setschedparam(void* c, void* d, void* e)
+{
+    #warning pthread_ is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_rwlock_init(void* a, ...)
+{
+    #warning pthread_rwlock_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutexattr_settype(void* a, ...)
+{
+    #warning pthread_mutexattr_settype is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutex_init(void* a, ...)
+{
+    #warning pthread_mutex_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutex_destroy(void* a, ...)
+{
+    #warning pthread_mutex_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_condattr_init(void* a, ...)
+{
+    #warning pthread_condattr_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_init(void* a, ...)
+{
+    #warning pthread_cond_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_condattr_destroy(void* a, ...)
+{
+    #warning pthread_condattr_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_destroy(void* a, ...)
+{
+    #warning pthread_cond_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_rwlock_destroy(void* a, ...)
+{
+    #warning pthread_rwlock_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cancel(void* a, ...)
+{
+    #warning pthread_cancel is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_setcancelstate(void* a, ...)
+{
+    #warning pthread_setcancelstate is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_testcancel()
+{
+    #warning pthread_testcancel is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cleanup_pop(void* a, ...)
+{
+    #warning pthread_cleanup_pop is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cleanup_push(void* a, ...)
+{
+    #warning pthread_cleanup_push is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_attr_init(void* a, ...)
+{
+    #warning pthread_attr_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_join(void* a, ...)
+{
+    #warning pthread_join is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_create(void* a, ...)
+{
+    #warning pthread_create is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_equal(void* a, ...)
+{
+    #warning pthread_equal is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_setcanceltype(void* a, ...)
+{
+    #warning pthread_setcanceltype is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutexattr_destroy(void* a, ...)
+{
+    #warning pthread_mutexattr_destroy is not implemented.
+    return 0;
+}
+
 #endif

@@ -80,8 +80,9 @@ exit /B 0
         set CFLAGS=-Wno-deprecated-declarations %CFLAGS%
         set CFLAGS=-Wno-gnu-zero-variadic-macro-arguments %CFLAGS%
         set CFLAGS=-Wno-nonportable-system-include-path %CFLAGS%
+        set CFLAGS=-Wno-microsoft-enum-forward-reference %CFLAGS%
     :: Syntax/Parsing
-        set CFLAGS=-Wno-implicit-function-declaration %CFLAGS%
+        :: set CFLAGS=-Wno-implicit-function-declaration %CFLAGS%
         set CFLAGS=-Wno-missing-prototypes %CFLAGS%
         set CFLAGS=-Wno-unreachable-code %CFLAGS%
         set CFLAGS=-Wno-unreachable-code-return %CFLAGS%
@@ -92,6 +93,10 @@ exit /B 0
         :: A global variable declared in a .c file is not static and hasn't
         :: been declarated with `extern` anywhere.
         set CFLAGS=-Wno-missing-variable-declarations %CFLAGS%
+        set CFLAGS=-Wno-missing-noreturn %CFLAGS%
+        :: Possible misuse of comma operator
+        set CFLAGS=-Wno-comma %CFLAGS%
+        set CFLAGS=-Wno-unreachable-code-break %CFLAGS%
     :: Architectural
         set CFLAGS=-Wno-cast-align %CFLAGS%
         set CFLAGS=-Wno-shorten-64-to-32 %CFLAGS%
@@ -116,15 +121,27 @@ exit /B 0
         :: Comparing float with == is unsafe (since floats not necessarily will
         :: have that specific value)
         set CFLAGS=-Wno-float-equal %CFLAGS%
+        :: Implicit conversion turns string literal into bool
+        set CFLAGS=-Wno-string-conversion %CFLAGS%
+        set CFLAGS=-Wno-sign-compare %CFLAGS%
+        set CFLAGS=-Wno-shadow %CFLAGS%
     :: Pointer-related
         set CFLAGS=-Wno-pointer-integer-compare %CFLAGS%
+    :: Safety (important!)
+        set CFLAGS=-Wno-uninitialized %CFLAGS%
     :: Others
-        :: Using an undefined macro (which will be evaluated to 0)
-        set CFLAGS=-Wno-undef %CFLAGS%
+        set CFLAGS=-Wno-covered-switch-default %CFLAGS%
         set CFLAGS=-Wno-documentation %CFLAGS%
         set CFLAGS=-Wno-documentation-unknown-command %CFLAGS%
+        set CFLAGS=-Wno-format-nonliteral %CFLAGS%
+        :: Using an undefined macro (which will be evaluated to 0)
+        set CFLAGS=-Wno-undef %CFLAGS%
+        set CFLAGS=-Wno-unused-function %CFLAGS%
         set CFLAGS=-Wno-unused-macros %CFLAGS%
         set CFLAGS=-Wno-unused-parameter %CFLAGS%
+        set CFLAGS=-Wno-class-varargs %CFLAGS%
+        :: Leave until functions are going to be implemented
+        set CFLAGS=-Wno-#warnings %CFLAGS%
 
     :: ------------------------------------
     :: Default flags for native compilation
