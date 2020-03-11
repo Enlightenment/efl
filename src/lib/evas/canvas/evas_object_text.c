@@ -1154,6 +1154,8 @@ _evas_text_direction_get(const Eo *eo_obj, Evas_Text_Data *o)
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             (Evas_Object *)eo_obj, obj);
      }
+#else
+   (void)eo_obj;
 #endif
 
    return (Efl_Text_Bidirectional_Type)o->bidi_dir;

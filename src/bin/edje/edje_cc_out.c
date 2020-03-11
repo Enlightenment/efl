@@ -1425,22 +1425,22 @@ data_write_vectors(Eet_File *ef, int *vector_num)
              eina_strbuf_reset(buf);
              eina_strbuf_append_printf(buf, "%s" EINA_PATH_SEP_S "%s", s, vector->entry);
 
-             if (vector->type == EDJE_VECTOR_FILE_TYPE_JSON)
+             if (vector->type == EDJE_VECTOR_FILE_TYPE_LOTTIE)
                {
-                  char *json_data = NULL;
-                  int json_data_len = 0;
+                  char *lottie_data = NULL;
+                  int lottie_data_len = 0;
 
                   f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
                   if (!f) continue;
 
-                  json_data_len = (int) eina_file_size_get(f);
-                  json_data = eina_file_map_all(f, EINA_FILE_POPULATE);
+                  lottie_data_len = (int) eina_file_size_get(f);
+                  lottie_data = eina_file_map_all(f, EINA_FILE_POPULATE);
 
                   eina_strbuf_reset(buf);
                   eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
-                  eet_write(ef, eina_strbuf_string_get(buf), json_data, json_data_len, EET_COMPRESSION_NONE);
+                  eet_write(ef, eina_strbuf_string_get(buf), lottie_data, lottie_data_len, EET_COMPRESSION_NONE);
 
-                  eina_file_map_free(f, json_data);
+                  eina_file_map_free(f, lottie_data);
                   eina_file_close(f);
 
                   *vector_num += 1;

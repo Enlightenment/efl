@@ -1254,7 +1254,6 @@ EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
  * to check whether a monitor is a fallback monitor before relying on these events.
  *
  * @since 1.21
- * @beta
  */
 EAPI Eina_Bool eio_monitor_fallback_check(const Eio_Monitor *monitor);
 
@@ -1272,7 +1271,6 @@ EAPI Eina_Bool eio_monitor_fallback_check(const Eio_Monitor *monitor);
  * In case the monitor does not yet have context, you can be sure that the monitor will bring up an FILE_ADD event about that file.
  *
  * @since 1.23
- * @beta
  */
 EAPI Eina_Bool eio_monitor_has_context(const Eio_Monitor *monitor, const char *path);
 #endif

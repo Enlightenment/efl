@@ -1669,7 +1669,7 @@ _grow_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *ins
   @param dst      Destination buffer for blending. This must be of same size and colorspace as @a src.
   @param color    A color to use for alpha to RGBA conversion for the blend operations. White means no change.
                   See @ref evasfilters_color "colors". This will have no effect on RGBA sources.
-  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src.
+  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @p src.
                   Should be set when masking with external textures. Default is repeat. See @ref evasfilter_fillmode "fillmodes".
 
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.

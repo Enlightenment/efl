@@ -325,7 +325,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
  * @param[in,out] buf The string buffer.
  * @param[in] str The string to prepend.
  * @param[in] maxlen The maximum number of Eina_Unicode *s to prepend.
- * @return #EINA_TRUE on success, #EINA_FALSE if @str could not be prepended.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be prepended.
  *
  * This macro simply calls eina_ustrbuf_insert_n() with position 0.
  */

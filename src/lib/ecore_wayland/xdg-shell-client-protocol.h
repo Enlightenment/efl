@@ -77,8 +77,7 @@ enum xdg_shell_error {
 #endif /* XDG_SHELL_ERROR_ENUM */
 
 /**
- * xdg_shell - create desktop-style surfaces
- * @ping: check if the client is alive
+ * @brief Create desktop-style surfaces
  *
  * xdg_shell allows clients to turn a wl_surface into a "real window"
  * which can be dragged, resized, stacked, and moved around by the user.
@@ -87,8 +86,7 @@ enum xdg_shell_error {
  */
 struct xdg_shell_listener {
 	/**
-	 * ping - check if the client is alive
-	 * @serial: pass this to the pong request
+	 * @brief Check if the client is alive
 	 *
 	 * The ping event asks the client if it's still alive. Pass the
 	 * serial specified in the event back to the compositor by sending
@@ -101,6 +99,8 @@ struct xdg_shell_listener {
 	 *
 	 * A compositor is free to ping in any way it wants, but a client
 	 * must always respond to any xdg_shell object it created.
+   *
+	 * @param serial Pass this to the pong request
 	 */
 	void (*ping)(void *data,
 		     struct xdg_shell *xdg_shell,
@@ -181,16 +181,7 @@ xdg_shell_pong(struct xdg_shell *xdg_shell, uint32_t serial)
 #ifndef XDG_SURFACE_RESIZE_EDGE_ENUM
 #define XDG_SURFACE_RESIZE_EDGE_ENUM
 /**
- * xdg_surface_resize_edge - edge values for resizing
- * @XDG_SURFACE_RESIZE_EDGE_NONE: (none)
- * @XDG_SURFACE_RESIZE_EDGE_TOP: (none)
- * @XDG_SURFACE_RESIZE_EDGE_BOTTOM: (none)
- * @XDG_SURFACE_RESIZE_EDGE_LEFT: (none)
- * @XDG_SURFACE_RESIZE_EDGE_TOP_LEFT: (none)
- * @XDG_SURFACE_RESIZE_EDGE_BOTTOM_LEFT: (none)
- * @XDG_SURFACE_RESIZE_EDGE_RIGHT: (none)
- * @XDG_SURFACE_RESIZE_EDGE_TOP_RIGHT: (none)
- * @XDG_SURFACE_RESIZE_EDGE_BOTTOM_RIGHT: (none)
+ * @brief Edge values for resizing
  *
  * These values are used to indicate which edge of a surface is being
  * dragged in a resize operation. The server may use this information to
@@ -212,11 +203,7 @@ enum xdg_surface_resize_edge {
 #ifndef XDG_SURFACE_STATE_ENUM
 #define XDG_SURFACE_STATE_ENUM
 /**
- * xdg_surface_state - types of state on the surface
- * @XDG_SURFACE_STATE_MAXIMIZED: the surface is maximized
- * @XDG_SURFACE_STATE_FULLSCREEN: the surface is fullscreen
- * @XDG_SURFACE_STATE_RESIZING: (none)
- * @XDG_SURFACE_STATE_ACTIVATED: (none)
+ * @brief Types of state on the surface
  *
  * The different state values used on the surface. This is designed for
  * state values like maximized, fullscreen. It is paired with the configure
@@ -246,9 +233,7 @@ enum xdg_surface_state {
 #endif /* XDG_SURFACE_STATE_ENUM */
 
 /**
- * xdg_surface - A desktop window
- * @configure: suggest a surface change
- * @close: surface wants to be closed
+ * @brief A desktop window
  *
  * An interface that may be implemented by a wl_surface, for
  * implementations that provide a desktop-style user interface.
@@ -272,11 +257,7 @@ enum xdg_surface_state {
  */
 struct xdg_surface_listener {
 	/**
-	 * configure - suggest a surface change
-	 * @width: (none)
-	 * @height: (none)
-	 * @states: (none)
-	 * @serial: (none)
+	 * @brief Suggest a surface change
 	 *
 	 * The configure event asks the client to resize its surface or
 	 * to change its state.
@@ -311,7 +292,7 @@ struct xdg_surface_listener {
 			  struct wl_array *states,
 			  uint32_t serial);
 	/**
-	 * close - surface wants to be closed
+	 * @brief Surface wants to be closed
 	 *
 	 * The close event is sent by the compositor when the user wants
 	 * the surface to be closed. This should be equivalent to the user
@@ -462,8 +443,7 @@ xdg_surface_set_minimized(struct xdg_surface *xdg_surface)
 }
 
 /**
- * xdg_popup - short-lived, popup surfaces for menus
- * @popup_done: popup interaction is done
+ * @brief Short-lived popup surfaces for menus
  *
  * A popup surface is a short-lived, temporary surface that can be used
  * to implement menus. It takes an explicit grab on the surface that will
@@ -513,7 +493,7 @@ xdg_surface_set_minimized(struct xdg_surface *xdg_surface)
  */
 struct xdg_popup_listener {
 	/**
-	 * popup_done - popup interaction is done
+	 * @brief Popup interaction is done
 	 *
 	 * The popup_done event is sent out when a popup is dismissed by
 	 * the compositor. The client should destroy the xdg_popup object

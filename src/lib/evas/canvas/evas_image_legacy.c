@@ -271,6 +271,13 @@ evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index)
 }
 
 EAPI int
+evas_object_image_animated_frame_get(Evas_Object *obj)
+{
+   EVAS_IMAGE_API(obj, 0);
+   return _evas_image_animated_frame_get(obj);
+}
+
+EAPI int
 evas_object_image_animated_frame_count_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);

@@ -44,59 +44,45 @@ extern const struct wl_interface ivi_application_interface;
 #ifndef IVI_SURFACE_WARNING_CODE_ENUM
 #define IVI_SURFACE_WARNING_CODE_ENUM
 /**
- * ivi_surface_warning_code - possible warning codes returned by ivi
- *      compositor
- * @IVI_SURFACE_WARNING_CODE_INVALID_WL_SURFACE: wl_surface is invalid
- * @IVI_SURFACE_WARNING_CODE_IVI_ID_IN_USE: ivi_id is in use and can not
- *      be shared
+ * @brief Possible warning codes returned by ivi compositor
  *
  * These define all possible warning codes returned by ivi compositor on
- * server-side warnings. invalid_wl_surface: - wl_surface already has a
- * another role. - wl_surface is destroyed before the ivi_surface is
- * destroyed. ivi_id_in_use: ivi_id is already assigned by another
- * application.
+ * server-side warnings.
  */
 enum ivi_surface_warning_code {
-        IVI_SURFACE_WARNING_CODE_INVALID_WL_SURFACE = 1,
-        IVI_SURFACE_WARNING_CODE_IVI_ID_IN_USE = 2,
+        IVI_SURFACE_WARNING_CODE_INVALID_WL_SURFACE = 1, /**< Surface is invalid. */
+        IVI_SURFACE_WARNING_CODE_IVI_ID_IN_USE = 2, /**< ivi_id is in use and cannot be shared. */
 };
 #endif /* IVI_SURFACE_WARNING_CODE_ENUM */
 
 /**
- * ivi_surface - application interface to surface in ivi compositor
- * @visibility: visibility of surface in ivi compositor has changed
- * @warning: server-side warning detected
- *
- *
+ * @brief Application interface to surface in ivi compositor
  */
 struct ivi_surface_listener {
         /**
-         * visibility - visibility of surface in ivi compositor has
+         * @brief Visibility of surface in ivi compositor has
          *      changed
-         * @visibility: (none)
          *
-         * The new visibility state is provided in argument visibility.
-         * If visibility is 0, the surface has become invisible. If
-         * visibility is not 0, the surface has become visible.
+         * The new visibility state is provided in argument @p visibility.
+         * If @p visibility is 0, the surface has become invisible. If
+         * @p visibility is not 0, the surface has become visible.
          */
         void (*visibility)(void *data,
                            struct ivi_surface *ivi_surface,
                            int32_t visibility);
         /**
-         * warning - server-side warning detected
-         * @warning_code: (none)
-         * @warning_text: (none)
+         * @brief Server-side warning detected
          *
          * The ivi compositor encountered warning while processing a
          * request by this application. The warning is defined by argument
-         * warning_code and optional warning_text. If the warning is
-         * detected, client shall destroy the ivi_surface object.
+         * @p warning_code and optional @p warning_text. If the warning is
+         * detected, client shall destroy the @p ivi_surface object.
          *
          * When a warning event is sent, the compositor turns the
-         * ivi_surface object inert. The ivi_surface will not deliver
+         * @p ivi_surface object inert. The @p ivi_surface will not deliver
          * further events, all requests on it are ignored except 'destroy',
          * and the association to the ivi_id is removed. The client should
-         * destroy the ivi_surface object. If an inert ivi_surface object
+         * destroy the @p ivi_surface object. If an inert @p ivi_surface object
          * is used as an argument to any other object's request, that
          * request will [produce a fatal error / produce a warning / be
          * ignored].

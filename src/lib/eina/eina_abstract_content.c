@@ -138,12 +138,11 @@ eina_content_new(Eina_Slice data, const char *type)
 
    _eina_content_ref(content);
    return content;
+
 err:
-   if (content)
-     {
-        free(content->data.mem);
-        content->data.mem = NULL;
-     }
+   free(content->data.mem);
+   content->data.mem = NULL;
+   free(content);
    return NULL;
 }
 

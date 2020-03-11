@@ -40,6 +40,7 @@ _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
    const Eina_File *f = efl_file_mmap_get(eo_obj);
    const char *key = efl_file_key_get(eo_obj);
    int load_error;
+   int frame_index;
 
    if (!o->skip_head)
      EINA_SAFETY_ON_NULL_RETURN_VAL(f, EINA_FALSE);
@@ -59,6 +60,13 @@ _evas_image_file_load(Eo *eo_obj, Evas_Image_Data *o)
      o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &load_error, &lo);
    else
      o->engine_data = ENFN->image_load(ENC, efl_file_get(eo_obj), o->cur->key, &load_error, &lo);
+
+   if (_evas_image_animated_get(eo_obj))
+     {
+        frame_index = ENFN->image_animated_frame_get(ENC, o->engine_data);
+        _evas_image_animated_frame_set(eo_obj, frame_index);
+     }
+
    o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);

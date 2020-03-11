@@ -9,8 +9,8 @@
  * The focused item can be unfocused with function
  * elm_object_item_focus_set().
  *
- * see @elm_object_item_focus_set()
- * see @elm_object_item_focus_get()
+ * @see elm_object_item_focus_set()
+ * @see elm_object_item_focus_get()
  *
  * @ingroup Elm_Focus
  * @since 1.10

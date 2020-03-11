@@ -2629,7 +2629,7 @@ st_images_vector(void)
    entry_len = strlen(vector->entry);
    if ((entry_len > 5) && !strncmp(vector->entry + entry_len - 5, ".json", 5))
      {
-        vector->type = EDJE_VECTOR_FILE_TYPE_JSON;
+        vector->type = EDJE_VECTOR_FILE_TYPE_LOTTIE;
      }
    else
      {

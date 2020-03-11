@@ -4930,12 +4930,31 @@ EAPI Eina_Bool evas_object_image_animated_get(const Eo *obj);
  * @ref evas_object_image_animated_loop_type_get,
  * @ref evas_object_image_animated_loop_count_get,
  * @ref evas_object_image_animated_frame_duration_get.
+ * @ref evas_object_image_animated_frame_get.
  *
  * @param[in] frame_index The index of current frame.
  *
  * @since 1.1
  */
 EAPI void evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index);
+
+/**
+ * @brief Get the frame to current frame of an image object.
+ *
+ * This returns image object's current frame.
+ *
+ * See also @ref evas_object_image_animated_get,
+ * @ref evas_object_image_animated_frame_count_get,
+ * @ref evas_object_image_animated_loop_type_get,
+ * @ref evas_object_image_animated_loop_count_get,
+ * @ref evas_object_image_animated_frame_duration_get.
+ * @ref evas_object_image_animated_frame_set.
+ *
+ * @param[in] frame_index The index of current frame.
+ *
+ * @since 1.24
+ */
+EAPI int evas_object_image_animated_frame_get(Evas_Object *obj);
 
 /**
  * @brief Get the total number of frames of the image object.
@@ -7881,7 +7900,7 @@ EAPI int             evas_map_count_get(const Evas_Map *m) EINA_CONST;
  * @param mx point x after transformation by m
  * @param my point y after transformation by m
  * @param grab
- * @return #EINA_TRUE on success interpolation, @EINA_FALSE otherwise
+ * @return #EINA_TRUE on success interpolation, #EINA_FALSE otherwise
  * @since 1.20
  */
 EAPI Eina_Bool       evas_map_coords_get(const Evas_Map *m, double x, double y,
