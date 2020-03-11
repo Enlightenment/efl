@@ -11,7 +11,7 @@ subdir('common')
 
 common = static_library('evas_loader_common',
     generic_src,
-    include_directories : config_dir,
+    include_directories : [config_dir, zlib_include_dir],
     dependencies: [generic_deps, rt],
 )
 

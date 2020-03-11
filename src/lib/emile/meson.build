@@ -1,4 +1,4 @@
-emile_deps = [jpeg, crypto, dependency('zlib', required: false)]
+emile_deps = [jpeg, crypto, zlib]
 emile_pub_deps = [eina, efl]
 
 emile_headers = [

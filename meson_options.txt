@@ -127,7 +127,13 @@ option('regex_include_dir',
 option('regex_dir',
   type : 'string',
   value : '',
-  description : 'Which SSL Crypto library used in efl'
+  description : 'Which is the /lib directory for PCRE'
+)
+
+option('zlib_dir',
+  type : 'string',
+  value : '',
+  description : 'Which is the /lib directory for zlib'
 )
 
 option('glib',

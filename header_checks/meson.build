@@ -213,19 +213,34 @@ if sys_linux and config_h.has('HAVE_LISTXATTR') and config_h.has('HAVE_SETXATTR'
 endif
 
 regexp = []
+zlib = []
 if sys_windows == true
   # PCRE
   inc_arg = '-I' + get_option('regex_include_dir')
   if cc.has_header('regex.h', args: inc_arg) == false
-    error('regex can not be found')
+    error('regex.h cannot be found')
   endif
   regexp = cc.find_library('pcre',
                            dirs : [get_option('regex_dir')],
                            required: true)
   if regexp.found() == false
-    error('regex can not be found')
+    error('regex library cannot be found')
+  endif
+
+  # zlib
+  zlib_dir = get_option('zlib_dir')
+  zlib_include_dir = zlib_dir + '/include'
+  if cc.has_header('zlib.h', args: '-I' + zlib_include_dir) == false
+    error('zlib.h cannot be found')
+  endif
+  zlib = cc.find_library('zlib',
+                         dirs: [zlib_dir + '/lib'],
+                         required: true)
+  if not zlib.found()
+    error('zlib library can not be found')
   endif
 else
+  zlib = dependency('zlib')
   if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
     error('fnmatch can not be found')
   endif
