@@ -45,8 +45,7 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
 
 - (void)internalUpdate
 {
-   [_mainMenu update];
-   // FIXME Will not compile with GNUStep (member is named "_main_menu")
+   [[self mainMenu] update];
 }
 
 - (id)init
@@ -72,11 +71,16 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
    return _expiration;
 }
 
+- (BOOL)isRunning
+{
+   return _is_running;
+}
+
 - (void)run
 {
    [self finishLaunching];
 
-   _running = 1;
+   _is_running = YES;
    _expiration = [NSDate distantPast];
 
    _timer = ecore_timer_add(ECORE_COCOA_MAINLOOP_PERIOD,
