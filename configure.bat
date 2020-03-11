@@ -156,10 +156,10 @@ exit /B 0
 
     :: ------------------------------------------------------
     set MESONFLAGS=^
-            -Dopenssl_dir=%OPENSSL_DIR%^
-            -Dregex_include_dir=%REGEX_INCLUDE_DIR%^
-            -Dregex_dir=%REGEX_DIR%^
-            -Dzlib_dir=%ZLIB_DIR%^
+            -Dopenssl_dir="%OPENSSL_DIR:"=%"^
+            -Dregex_include_dir="%REGEX_INCLUDE_DIR:"=%"^
+            -Dregex_dir="%REGEX_DIR:"=%"^
+            -Dzlib_dir="%ZLIB_DIR:"=%"^
             -Dcrypto=openssl^
             -Dnls=false^
             -Dsystemd=false^
