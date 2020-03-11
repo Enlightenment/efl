@@ -67,6 +67,11 @@ exit /B 0
     set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
 
     :: ---------------------------------
+    :: Reimplementing libraries
+    set CFLAGS=-I%cd:\=/%/src/lib/evil %CFLAGS%
+    set CFLAGS=-I%cd:\=/%/src/lib/evil/unposix/ %CFLAGS%
+
+    :: ---------------------------------
     :: Ignored warnings
     :: TODO: Re-enable warnings one by one and solve them.
 
