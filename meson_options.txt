@@ -133,7 +133,7 @@ option('regex_dir',
 option('zlib_dir',
   type : 'string',
   value : '',
-  description : 'Which is the /lib directory for zlib'
+  description : 'Which directory is zlib installed'
 )
 
 option('glib',
