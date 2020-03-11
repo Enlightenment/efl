@@ -2144,10 +2144,11 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
 
-        if (EINA_UNLIKELY(obj->klass->vtable2.size <= klass->base_id2))
+        const Eo_Vtable2 vtable = obj->klass->vtable2;
+        if (EINA_UNLIKELY(vtable.size <= klass->base_id2))
           return EINA_FALSE;
 
-        isa = !!obj->klass->vtable2.chain[klass->base_id2].funcs;
+        isa = !!vtable.chain[klass->base_id2].funcs;
 
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
         tdata->cache.isa_id = eo_id;
