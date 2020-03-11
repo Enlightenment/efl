@@ -576,6 +576,7 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    Eina_Error theme_apply_ret, theme_apply_internal_ret;
    Elm_Widget_Smart_Data *wd = NULL;
    char buf[64];
+   Eina_Bool legacy;
    static unsigned int version = 0;
 
    sd->needs_theme_apply = EINA_FALSE;
@@ -591,9 +592,10 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
        (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT))
      return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
 
+   legacy = elm_widget_is_legacy(obj);
    /* unset existing size hints to force accurate recalc */
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(0, 0));
-   if (elm_widget_is_legacy(obj))
+   if (legacy)
      efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
    else
      {
@@ -623,6 +625,7 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
      }
    if (sd->deferred_signals)
      _deferred_signals_emit(sd);
+   if (legacy) return EFL_UI_THEME_APPLY_ERROR_NONE;
 
    if (!version)
      {
