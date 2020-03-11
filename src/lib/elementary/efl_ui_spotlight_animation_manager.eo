@@ -11,35 +11,19 @@ class @beta Efl.Ui.Spotlight.Animation_Manager extends Efl.Ui.Spotlight.Manager
    ]]
    c_prefix: efl_ui_spotlight_manager_animation;
    methods {
-      @property push_setup{
-         [[Animation that is used to animate the $to argument of a switch_to request when the passed $reason is push.
-
-
-           If this animation is $null, the in animation of @.jump_setup will be taken instead.
+      @property forward_animation {
+         [[Set the animation objects you want to play on going forward. (going from lower index page to higher index page)
          ]]
          values {
-            animation : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+            in : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+            out : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference. Can be the same as $in.]]
          }
-         set { }
-      }
-      @property pop_setup{
-         [[Animation that is used to animate the $from argument of a switch_to request when the passed $reason is pop.
+         set {
 
-           Note: this animations is always played backwards, see the class documentation for the reasoning.
-
-           If this animation is $null, the out animation of @.jump_setup will be taken instead.
-         ]]
-         values {
-            animation : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
          }
-         set { }
       }
-      @property jump_setup{
-         [[Set the animation objects you want to play on a jump in or jump out.
-
-           When a switch to request is issued, two arguments are getting animated. The $from object, and the $to objects. The $from object will be playing the out animation. The $pop object will be playing the in animation.
-
-           The out animation will always be played backwards, this is to support passing the same animation object to both parameters. (A fade animation will fade in the new object, and fade out the old object).
+      @property backward_animation {
+         [[Set the animation objects you want to play on going backward. (going from higher index page to lower index page)
          ]]
          values {
             in : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
@@ -51,7 +35,8 @@ class @beta Efl.Ui.Spotlight.Animation_Manager extends Efl.Ui.Spotlight.Manager
       }
    }
    constructors {
-      .jump_setup;
+      .forward_animation;
+      .backward_animation;
    }
    implements {
       Efl.Ui.Spotlight.Manager.bind;

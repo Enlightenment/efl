@@ -1136,7 +1136,8 @@ test_ui_spotlight_animation(void *data EINA_UNUSED,
                            void *event_info EINA_UNUSED)
 {
    Eo *win, *panes, *navi, *list, *layout, *spotlight, *view, *custom_animation_manager;
-   Efl_Canvas_Animation *jump_animation, *push_animation, *pop_animation;
+   Efl_Canvas_Animation *forward_in_animation, *forward_out_animation;
+   Efl_Canvas_Animation *backward_in_animation, *backward_out_animation;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
@@ -1168,23 +1169,25 @@ test_ui_spotlight_animation(void *data EINA_UNUSED,
                     efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
+   forward_in_animation = efl_new(EFL_CANVAS_TRANSLATE_ANIMATION_CLASS);
+   efl_animation_translate_set(forward_in_animation, EINA_POSITION2D(0, 100), EINA_POSITION2D(0, 0));
+   efl_animation_duration_set(forward_in_animation, 0.5);
 
-   jump_animation = efl_new(EFL_CANVAS_ALPHA_ANIMATION_CLASS);
-   efl_animation_alpha_set(jump_animation, 0.0, 1.0);
-   efl_animation_duration_set(jump_animation, 0.5);
+   forward_out_animation = efl_new(EFL_CANVAS_ALPHA_ANIMATION_CLASS);
+   efl_animation_alpha_set(forward_out_animation, 1.0, 0.0);
+   efl_animation_duration_set(forward_out_animation, 0.5);
 
-   push_animation = efl_new(EFL_CANVAS_TRANSLATE_ANIMATION_CLASS);
-   efl_animation_translate_set(push_animation, EINA_POSITION2D(0, 100), EINA_POSITION2D(0, 0));
-   efl_animation_duration_set(push_animation, 0.5);
+   backward_in_animation = efl_new(EFL_CANVAS_ALPHA_ANIMATION_CLASS);
+   efl_animation_alpha_set(backward_in_animation, 0.0, 1.0);
+   efl_animation_duration_set(backward_in_animation, 0.5);
 
-   pop_animation = efl_new(EFL_CANVAS_TRANSLATE_ANIMATION_CLASS);
-   efl_animation_translate_set(pop_animation, EINA_POSITION2D(0, -100), EINA_POSITION2D(0, 0));
-   efl_animation_duration_set(pop_animation, 0.5);
+   backward_out_animation = efl_new(EFL_CANVAS_TRANSLATE_ANIMATION_CLASS);
+   efl_animation_translate_set(backward_out_animation, EINA_POSITION2D(0, 0), EINA_POSITION2D(0, 100));
+   efl_animation_duration_set(backward_out_animation, 0.5);
 
    custom_animation_manager = efl_new(EFL_UI_SPOTLIGHT_ANIMATION_MANAGER_CLASS,
-                                      efl_ui_spotlight_manager_animation_push_setup_set(efl_added, push_animation),
-                                      efl_ui_spotlight_manager_animation_pop_setup_set(efl_added, pop_animation),
-                                      efl_ui_spotlight_manager_animation_jump_setup_set(efl_added, jump_animation, jump_animation));
+                                      efl_ui_spotlight_manager_animation_forward_animation_set(efl_added, forward_in_animation, forward_out_animation),
+                                      efl_ui_spotlight_manager_animation_backward_animation_set(efl_added, backward_in_animation, backward_out_animation));
 
    spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
                          efl_ui_spotlight_manager_set(efl_added, custom_animation_manager),

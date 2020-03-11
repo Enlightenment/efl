@@ -8,7 +8,7 @@
 
 typedef struct {
    Efl_Ui_Spotlight_Container * container;
-   Efl_Canvas_Animation *jump_anim[2], *push_anim, *pop_anim;
+   Efl_Canvas_Animation *forward_anim[2], *backward_anim[2];
    Efl_Gfx_Entity *content[2];
    Efl_Gfx_Entity *clipper;
    int ids[2]; //only used when in animation
@@ -149,23 +149,28 @@ _efl_ui_spotlight_animation_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, 
              Efl_Canvas_Animation *animation = NULL;
              pd->ids[i] = tmp[i];
              pd->content[i] = efl_pack_content_get(pd->container, pd->ids[i]);
-             //when pushing, animate the *pushed in* content with the push animation
-             if (reason == EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_PUSH && i == 1)
-               animation = pd->push_anim;
-             //when popping, animate the *popped in* content with the pop animation
-             else if (reason == EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_POP && i == 0)
-               animation = pd->pop_anim;
+             //when pushing, animate the *pushed* content with the forward animation
+             if (reason == EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_PUSH)
+               animation = pd->forward_anim[i];
+             //when popping, animate the *popped* content with the backward animation
+             else if (reason == EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_POP)
+               animation = pd->backward_anim[i];
              if (!animation)
-               animation = pd->jump_anim[i];
+               {
+                  if (to > from)
+                    animation = pd->forward_anim[i];
+                  else
+                    animation = pd->backward_anim[i];
+               }
              if (pd->animation)
-               efl_canvas_object_animation_start(pd->content[i], animation, -1.0+2.0*i, 0.0);
+               efl_canvas_object_animation_start(pd->content[i], animation, 1.0, 0.0);
              efl_gfx_entity_visible_set(pd->content[i], EINA_TRUE);
           }
         if (pd->animation)
           {
              efl_event_callback_add(pd->content[0], EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_CHANGED, _hide_object_cb, obj);
              efl_event_callback_add(pd->content[0], EFL_CANVAS_OBJECT_ANIMATION_EVENT_ANIMATION_PROGRESS_UPDATED, _running_cb, obj);
-             efl_gfx_stack_above(pd->content[1], pd->content[0]); //Stack the "to content" above the "from content"
+             //efl_gfx_stack_above(pd->content[1], pd->content[0]); //Stack the "to content" above the "from content"
           }
      }
    else
@@ -227,32 +232,32 @@ _efl_ui_spotlight_animation_manager_efl_ui_spotlight_manager_animated_transition
 }
 
 EOLIAN static void
-_efl_ui_spotlight_animation_manager_push_setup_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Animation_Manager_Data *pd, Efl_Canvas_Animation *animation)
-{
-   efl_replace(&pd->push_anim, animation);
-}
-
-EOLIAN static void
-_efl_ui_spotlight_animation_manager_pop_setup_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Animation_Manager_Data *pd, Efl_Canvas_Animation *animation)
-{
-   efl_replace(&pd->pop_anim, animation);
-}
-
-EOLIAN static void
-_efl_ui_spotlight_animation_manager_jump_setup_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Animation_Manager_Data *pd, Efl_Canvas_Animation *in, Efl_Canvas_Animation *out)
+_efl_ui_spotlight_animation_manager_forward_animation_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Animation_Manager_Data *pd, Efl_Canvas_Animation *in, Efl_Canvas_Animation *out)
 {
    EINA_SAFETY_ON_NULL_RETURN(out);
    EINA_SAFETY_ON_NULL_RETURN(in);
 
-   efl_replace(&pd->jump_anim[0], out);
-   efl_replace(&pd->jump_anim[1], in);
+   efl_replace(&pd->forward_anim[0], out);
+   efl_replace(&pd->forward_anim[1], in);
+}
+
+EOLIAN static void
+_efl_ui_spotlight_animation_manager_backward_animation_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Animation_Manager_Data *pd, Efl_Canvas_Animation *in, Efl_Canvas_Animation *out)
+{
+   EINA_SAFETY_ON_NULL_RETURN(out);
+   EINA_SAFETY_ON_NULL_RETURN(in);
+
+   efl_replace(&pd->backward_anim[0], out);
+   efl_replace(&pd->backward_anim[1], in);
 }
 
 EOLIAN static Efl_Object*
 _efl_ui_spotlight_animation_manager_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Animation_Manager_Data *pd)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->jump_anim[0], NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->jump_anim[1], NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->forward_anim[0], NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->forward_anim[1], NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->backward_anim[0], NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->backward_anim[1], NULL);
 
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
