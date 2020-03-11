@@ -557,24 +557,24 @@ static void evas_object_textblock_render(Evas_Object *eo_obj,
                                          int x, int y, Eina_Bool do_async);
 static void evas_object_textblock_free(Evas_Object *eo_obj);
 static void evas_object_textblock_render_pre(Evas_Object *eo_obj,
-					     Evas_Object_Protected_Data *obj,
-					     void *type_private_data);
+                                             Evas_Object_Protected_Data *obj,
+                                             void *type_private_data);
 static void evas_object_textblock_render_post(Evas_Object *eo_obj,
-					      Evas_Object_Protected_Data *obj,
-					      void *type_private_data);
+                                              Evas_Object_Protected_Data *obj,
+                                              void *type_private_data);
 static Evas_Object_Textblock_Node_Text *_evas_textblock_node_text_new(void);
 
 static void *evas_object_textblock_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_textblock_is_opaque(Evas_Object *eo_obj,
-					   Evas_Object_Protected_Data *obj,
-					   void *type_private_data);
+                                           Evas_Object_Protected_Data *obj,
+                                           void *type_private_data);
 static int evas_object_textblock_was_opaque(Evas_Object *eo_obj,
-					    Evas_Object_Protected_Data *obj,
-					    void *type_private_data);
+                                            Evas_Object_Protected_Data *obj,
+                                            void *type_private_data);
 static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
-						Evas_Object_Protected_Data *obj,
-						void *type_private_data);
+                                                Evas_Object_Protected_Data *obj,
+                                                void *type_private_data);
 static void _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Textblock_Data *o);
 
 static const Evas_Object_Func object_func =
@@ -6350,7 +6350,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 /* Don't do much for the meanwhile. */
 static inline void
 _layout_paragraph_render(Efl_Canvas_Textblock_Data *o,
-			 Evas_Object_Textblock_Paragraph *par)
+                         Evas_Object_Textblock_Paragraph *par)
 {
    if (par->rendered)
       return;
@@ -14504,7 +14504,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
         linebreak_init = EINA_TRUE;
         init_linebreak();
         init_wordbreak();
-		init_graphemebreak();
+        init_graphemebreak();
      }
 
    o = obj->private_data;
@@ -15762,8 +15762,8 @@ evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
 
 static void
 evas_object_textblock_render_pre(Evas_Object *eo_obj,
-				 Evas_Object_Protected_Data *obj,
-				 void *type_private_data)
+                                 Evas_Object_Protected_Data *obj,
+                                 void *type_private_data)
 {
    Efl_Canvas_Textblock_Data *o = type_private_data;
    ASYNC_BLOCK;
