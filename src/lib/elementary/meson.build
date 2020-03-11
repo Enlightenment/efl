@@ -258,7 +258,11 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-embed_script = find_program('config_embed')
+if sys_windows == true
+  embed_script = find_program('config_embed.bat')
+else
+  embed_script = find_program('config_embed')
+endif
 
 embed_config = custom_target('create_embedded_default_config',
   input: join_paths(meson.source_root(), 'data', 'elementary', 'config', 'standard', 'base.src.in'),

@@ -444,7 +444,7 @@ extern "C" {
 	Embryo_Cell c;
      } Embryo_Float_Cell;
 
-#if defined _MSC_VER || defined __SUNPRO_C
+#ifdef __SUNPRO_C
 /** Float to Embryo_Cell */
 # define EMBRYO_FLOAT_TO_CELL(f) (((Embryo_Float_Cell *)&(f))->c)
 /** Embryo_Cell to float */

@@ -22,7 +22,9 @@
 
 #ifdef EFL_HAVE_THREADS
 # ifdef _WIN32
+#  ifndef WIN32_LEAN_AND_MEAN
 #  define WIN32_LEAN_AND_MEAN
+#  endif
 #  include <windows.h>
 # elif defined (__sun) || defined(__GNU__) || defined(__CYGWIN__)
 #  include <unistd.h>

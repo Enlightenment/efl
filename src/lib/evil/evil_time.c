@@ -3,11 +3,19 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <string.h>
+#include <strings.h>
 #include <inttypes.h>
 #include <ctype.h>
 #include <time.h>
 
+#include <Windows.h>
+
 #include "evil_private.h"
+
+inline struct tm *localtime_r(const time_t * time, struct tm * result)
+{
+    return NULL;
+}
 
 /*
  * strptime
@@ -68,6 +76,10 @@ static const char * const nadt[5] = {
    "EDT",    "CDT",    "MDT",    "PDT",    "\0\0\0"
 };
 
+/**
+ * Finds string in string table starting from table entry `n1` until entry
+ * `n2`.
+ */
 static const unsigned char *
 find_string(const unsigned char *bp, int *tgt,
             const char *const *n1, const char *const *n2,
@@ -416,8 +428,15 @@ strptime(const char *buf, const char *fmt, struct tm *tm)
               }
               else
                 {
+                   TIME_ZONE_INFORMATION zone_info;
+                   GetTimeZoneInformation(&zone_info);
+                   const char timezone_table[3] = {
+                       zone_info.StandardName,
+                       zone_info.DaylightName,
+                       NULL,
+                   };
                    ep = find_string(bp, &i,
-                                    (const char * const *)tzname,
+                                    (const char * const *)timezone_table,
                                     NULL, 2);
                    if (ep != NULL)
                      {

@@ -124,6 +124,7 @@ exit /B 0
     :: ------------------------------------
     :: Default flags for native compilation
     set CFLAGS=-Wno-language-extension-token %CFLAGS%
+    set CFLAGS=-DWIN32_LEAN_AND_MEAN %CFLAGS%
 
     if defined VERBOSE (
         set CFLAGS=-v %CFLAGS%
