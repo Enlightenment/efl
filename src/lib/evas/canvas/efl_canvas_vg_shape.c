@@ -402,7 +402,7 @@ evas_vg_shape_append_squadratic_to(Eo *obj, double x, double y)
 EAPI void
 evas_vg_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1)
 {
-   efl_gfx_path_append_cubic_to(obj, x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
+   efl_gfx_path_append_cubic_to(obj, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, x, y);
    efl_canvas_vg_node_change(obj);
 }
 
