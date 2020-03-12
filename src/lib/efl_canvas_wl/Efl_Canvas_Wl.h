@@ -22,15 +22,26 @@
 
 #define EWAPI EAPI EAPI_WEAK
 
-
+#ifdef WAYLAND_UTIL_H
+typedef struct wl_surface Efl_Canvas_Wl_Wl_Surface;
+typedef struct wl_global Efl_Canvas_Wl_Wl_Global;
+typedef struct wl_interface Efl_Canvas_Wl_Wl_Interface;
+typedef struct wl_array Efl_Canvas_Wl_Wl_Array;
+typedef void Efl_Canvas_Wl_Wl_Interface_Data;
+typedef void Efl_Canvas_Wl_Wl_Interface_Bind_Cb;
+#else
 typedef struct Efl_Canvas_Wl_Wl_Surface Efl_Canvas_Wl_Wl_Surface;
 typedef struct Efl_Canvas_Wl_Wl_Global Efl_Canvas_Wl_Wl_Global;
 typedef struct Efl_Canvas_Wl_Wl_Interface Efl_Canvas_Wl_Wl_Interface;
 typedef struct Efl_Canvas_Wl_Wl_Array Efl_Canvas_Wl_Wl_Array;
 typedef void * Efl_Canvas_Wl_Wl_Interface_Data;
 typedef void * Efl_Canvas_Wl_Wl_Interface_Bind_Cb;
+#endif
+#ifdef _XKBCOMMON_H_
+typedef struct xkb_state Efl_Canvas_Wl_Xkb_State;
+#else
 typedef struct Efl_Canvas_Wl_Xkb_State Efl_Canvas_Wl_Xkb_State;
-
+#endif
 #include <efl_canvas_wl_surface.eo.h>
 #include <efl_canvas_wl.eo.h>
 /**
