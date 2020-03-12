@@ -379,6 +379,9 @@ _evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
 
         if (render)
           {
+             /* Not good... but make it sure if the proxies have missed at update
+                if its sources are remained changed as pending objects in the prev frame. */
+             evas_object_change(eo_proxy, proxy);
              proxy->func->render_pre(eo_proxy, proxy, proxy->private_data);
              _evas_render_prev_cur_clip_cache_add(e, proxy);
           }
