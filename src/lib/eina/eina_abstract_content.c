@@ -140,8 +140,11 @@ eina_content_new(Eina_Slice data, const char *type)
    return content;
 
 err:
-   free(content->data.mem);
-   content->data.mem = NULL;
+   if (content->data.mem)
+     {
+        free(content->data.mem);
+        content->data.mem = NULL;
+     }
    free(content);
    return NULL;
 }
