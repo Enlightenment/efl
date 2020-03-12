@@ -326,6 +326,7 @@ edje_language_set(const char *locale)
    char *loc;
    int length;
 
+   if (!locale) return;
    lookup = strstr(locale, ".");
    length = lookup ? lookup - locale : (int)strlen(locale);
    loc = alloca(length + 1);
