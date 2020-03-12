@@ -69,6 +69,7 @@ struct _Efl_Exe_Data
    } fd;
 #endif
    Eina_Bool exit_called : 1;
+   Eina_Bool exit_signalled : 1;
    Eina_Bool run : 1;
 };
 
@@ -269,10 +270,10 @@ _efl_exe_signal(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Exe_Signal sig)
 
    switch (sig)
      {
-      case EFL_EXE_SIGNAL_INT:  s = SIGINT;  break;
-      case EFL_EXE_SIGNAL_QUIT: s = SIGQUIT; break;
-      case EFL_EXE_SIGNAL_TERM: s = SIGTERM; break;
-      case EFL_EXE_SIGNAL_KILL: s = SIGKILL; break;
+      case EFL_EXE_SIGNAL_INT:  s = SIGINT;  pd->exit_signalled = EINA_TRUE; break;
+      case EFL_EXE_SIGNAL_QUIT: s = SIGQUIT; pd->exit_signalled = EINA_TRUE; break;
+      case EFL_EXE_SIGNAL_TERM: s = SIGTERM; pd->exit_signalled = EINA_TRUE; break;
+      case EFL_EXE_SIGNAL_KILL: s = SIGKILL; pd->exit_signalled = EINA_TRUE; break;
       case EFL_EXE_SIGNAL_CONT: s = SIGCONT; break;
       case EFL_EXE_SIGNAL_STOP: s = SIGSTOP; break;
       case EFL_EXE_SIGNAL_HUP:  s = SIGHUP;  break;
@@ -581,6 +582,7 @@ _efl_exe_efl_task_end(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 #ifdef _WIN32
 #else
    if (pd->pid == -1) return;
+   pd->exit_signalled = EINA_TRUE;
    kill(pd->pid, SIGINT);
 #endif
 }
@@ -623,7 +625,7 @@ _efl_exe_efl_object_destructor(Eo *obj, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
 #else
-   if (!pd->exit_called)
+   if ((!pd->exit_called) && (!pd->exit_signalled))
      ERR("Exe being destroyed while child has not exited yet.");
    if (pd->fd.exited_read >= 0)
      {
