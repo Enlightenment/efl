@@ -580,6 +580,16 @@ _efl_exe_exit_signal_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    return pd->exit_signal;
 }
 
+EOLIAN static int
+_efl_exe_pid_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+{
+#ifndef _WIN32
+   if (pd->pid != -1)
+     return pd->pid;
+#endif
+   return 0;
+}
+
 EOLIAN static Efl_Object *
 _efl_exe_efl_object_constructor(Eo *obj, Efl_Exe_Data *pd)
 {

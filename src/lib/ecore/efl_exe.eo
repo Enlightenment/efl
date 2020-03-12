@@ -51,6 +51,15 @@ class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Ef
             sig: int; [[The exit signal, or -1 if no exit signal happened.]]
          }
       }
+      @property pid {
+         [[The pid of the process, which is only accessible after the object has been finalized.
+           @since 1.24
+         ]]
+         get { }
+         values {
+            pid: int; [[The pid, or 0 on failure.]]
+         }
+      }
       @property env {
          [[If $env is $NULL then the process created by this object is
            going to inherit the environment of this process.
