@@ -19,7 +19,7 @@
  *
  * Items can have multiple states, or show menus when selected by the user.
  *
- * This widget implements the @b @ref elm-scrollable-interface
+ * This widget implements the @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base
  * @ref Scroller widget also work for toolbars (since 1.8)
  *

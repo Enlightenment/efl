@@ -42,7 +42,7 @@
  * @li @c "focused" - When the photocam has received focus. (since 1.8)
  * @li @c "unfocused" - When the photocam has lost focus. (since 1.8)
  *
- * This widget implements the @b @ref elm-scrollable-interface
+ * This widget implements the @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref
  * Scroller widget also work for photocam objects.
  *

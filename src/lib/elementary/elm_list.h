@@ -75,7 +75,7 @@
  * @li @ref elm_object_item_del
  * @li @ref elm_object_item_signal_emit
  *
- * This widget implements the @b @ref elm-scrollable-interface
+ * This widget implements the @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref
  * Scroller widget also work for lists.
  *

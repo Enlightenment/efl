@@ -22,7 +22,7 @@
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for genlist objects.
  *
- * This widget implements the @b @ref elm-scrollable-interface
+ * This widget implements the @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref
  * Scroller widget also work for genlists.
  *
