@@ -24,7 +24,11 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          [[Enable or disable scrolling in the widget.
 
            When scrolling is enabled scrollbars will appear if the text does
-           not fit the widget size.]]
+           not fit the widget size.
+
+           Direct control of the scroll through the @Efl.Ui.Scrollable interface
+           is only possible when this property is enabled.
+         ]]
          set {}
          get {}
          values {
