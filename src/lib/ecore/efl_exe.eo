@@ -18,7 +18,8 @@ enum @beta Efl.Exe_Flags {
    [[Flags to customize process behavior.]]
    none             = 0, [[No special flags.]]
    group_leader     = 1, [[Process will be executed in its own session.]]
-   hide_io          = 4  [[All console IO will be hidden.]]
+   hide_io          = 4,  [[All console IO will be hidden.]]
+   term_with_parent = 8,  [[Makes child receive SIGTERM when parent dies.]]
 }
 
 class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line

@@ -552,7 +552,18 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
    int except[2] = { 0, -1 };
    except[0] = pd->fd.exited_write;
    eina_file_close_from(3, except);
-
+#ifdef HAVE_PRCTL
+   if ((pd->flags & EFL_EXE_FLAGS_TERM_WITH_PARENT))
+     {
+        prctl(PR_SET_PDEATHSIG, SIGTERM);
+     }
+#elif defined(HAVE_PROCCTL)
+   if ((pd->flags & EFL_EXE_FLAGS_TERM_WITH_PARENT))
+     {
+        int sig = SIGTERM;
+        procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
+     }
+#endif
    // actually execute!
    _exec(cmd, pd->flags, td->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
