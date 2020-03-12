@@ -12,6 +12,12 @@ class @beta Efl.Wl.Surface extends Efl.Canvas.Group
             pid: int;
          }
       }
+      @property parent_surface {
+         get {}
+         values {
+            parent: Efl.Wl.Surface;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

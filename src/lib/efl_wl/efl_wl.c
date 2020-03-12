@@ -5773,22 +5773,12 @@ efl_wl_extracted_surface_object_find(void *surface_resource)
    return cs->obj;
 }
 
-Eo *
-efl_wl_extracted_surface_extracted_parent_get(Eo *surface)
+static EOLIAN Eo *
+_efl_wl_surface_parent_surface_get(const Eo *surface, Comp_Surface *cs)
 {
-   Comp_Surface *cs;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
-   cs = efl_data_scope_get(surface, EFL_WL_SURFACE_CLASS);
-   if (!cs) abort();
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!cs->extracted, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, NULL);
 
-   if (cs->parent)
-     {
-        if (!cs->parent->extracted) return NULL;
-        return cs->parent->obj;
-     }
+   if (cs->parent && cs->role) return cs->parent->obj;
    return NULL;
 }
 

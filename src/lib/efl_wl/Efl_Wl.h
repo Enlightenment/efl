@@ -199,7 +199,7 @@ EAPI int32_t efl_wl_surface_pid_get(Evas_Object *surface);
  * @since 1.21
  */
 EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
-
+#if 0
 /**
  * Get the Evas_Object for an extracted surface's parent, or NULL if the parent is not extracted
  *
@@ -210,7 +210,7 @@ EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
  * @since 1.21
  */
 EAPI Evas_Object *efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface);
-
+#endif
 /**
  * Set external xkbcommon resources to be used read-only by the compositor object
  *
