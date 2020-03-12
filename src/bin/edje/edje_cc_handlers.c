@@ -4562,7 +4562,7 @@ st_collections_group_name(void)
         This property can be inherited.
         Defaults: 0
 
-    @warning Your edc file should always wrap this keyword with #ifdef HAVE_SKIP_NAMESPACE_VALIDATION
+    @warning Your edc file should always wrap this keyword with <tt>\#ifdef HAVE_SKIP_NAMESPACE_VALIDATION</tt>
     @since 1.21
     @endproperty
  */

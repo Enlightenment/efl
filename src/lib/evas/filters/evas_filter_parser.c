@@ -1173,7 +1173,7 @@ _blur_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *ins
   @param src        Source buffer. This should be an alpha buffer.
   @param dst        Destination buffer. This should be an RGBA buffer (although alpha is supported). Must be of the same size as @a src.
   @param black      The shadows' color. Usually this will be black (@c #000).
-  @param white      The specular light's color. Usually this will be white (@c #FFF).
+  @param white      The specular light's color. Usually this will be white (@c \#FFF).
   @param fillmode   This specifies how to handle @a map when its dimensions don't match those of @a src and @a dst. Default is to @c repeat. See @ref evasfilter_fillmode "fillmodes".
 
   @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
