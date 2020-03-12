@@ -18,6 +18,12 @@ class @beta Efl.Canvas.Wl.Surface extends Efl.Canvas.Group
             parent: Efl.Canvas.Wl.Surface;
          }
       }
+      @property extracted {
+         get {}
+         values {
+            extracted: bool;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

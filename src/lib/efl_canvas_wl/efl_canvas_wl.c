@@ -5813,6 +5813,14 @@ _efl_canvas_wl_surface_parent_surface_get(const Eo *surface, Comp_Surface *cs)
    return NULL;
 }
 
+static EOLIAN Eina_Bool
+_efl_canvas_wl_surface_extracted_get(const Eo *surface EINA_UNUSED, Comp_Surface *cs)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, EINA_FALSE);
+
+   return cs->extracted;
+}
+
 static EOLIAN void
 _efl_canvas_wl_seat_keymap_set(Eo *obj, Comp *c, Eo *seat, Efl_Canvas_Wl_Xkb_State *state, const char *str, Efl_Canvas_Wl_Wl_Array *key_array)
 {
