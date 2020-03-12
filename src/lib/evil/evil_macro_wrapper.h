@@ -33,6 +33,18 @@
 #endif
 #define rename(src, dst) evil_rename(src, dst)
 
+/**
+ * @def mkdir(dirname, mode)
+ *
+ * Wrapper around evil_mkdir().
+ *
+ * @since 1.15
+ */
+#ifdef mkdir
+# undef mkdir
+#endif
+#define mkdir(dirname, ...) _mkdir(dirname)
+
 /*
  * evil_unistd.h
  */

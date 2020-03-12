@@ -82,7 +82,7 @@ exit /B 0
         set CFLAGS=-Wno-nonportable-system-include-path %CFLAGS%
         set CFLAGS=-Wno-microsoft-enum-forward-reference %CFLAGS%
     :: Syntax/Parsing
-        :: set CFLAGS=-Wno-implicit-function-declaration %CFLAGS%
+        set CFLAGS=-Wno-implicit-function-declaration %CFLAGS%
         set CFLAGS=-Wno-missing-prototypes %CFLAGS%
         set CFLAGS=-Wno-unreachable-code %CFLAGS%
         set CFLAGS=-Wno-unreachable-code-return %CFLAGS%
