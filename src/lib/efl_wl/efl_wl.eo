@@ -54,10 +54,10 @@ class @beta Efl.Wl extends Efl.Canvas.Group
          }
       }
       surface_next {
-         return: bool;
+         return: Efl.Wl.Surface;
       }
       surface_prev {
-         return: bool;
+         return: Efl.Wl.Surface;
       }
       @property aspect {
          values {

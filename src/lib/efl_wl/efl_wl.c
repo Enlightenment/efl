@@ -5584,40 +5584,40 @@ _efl_wl_allowed_pid_del(Eo *obj, Comp *c, int32_t pid)
    eina_hash_del_by_key(c->exes, &pid);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eo *
 _efl_wl_surface_next(Eo *obj, Comp *c)
 {
    Comp_Surface *cs;
 
-   if (c->surfaces_count < 2) return EINA_FALSE;
+   if (c->surfaces_count < 2) return NULL;
    EINA_INLIST_REVERSE_FOREACH(c->surfaces, cs)
      {
         if (cs->shell.activated) continue;
         if ((!cs->role) || (!cs->shell.surface) || cs->dead) continue;
         cs->shell.activated = 1;
         shell_surface_send_configure(cs);
-        return EINA_TRUE;
+        return cs->obj;
      }
 
-   return EINA_FALSE;
+   return NULL;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eo *
 _efl_wl_surface_prev(Eo *obj, Comp *c)
 {
    Comp_Surface *cs;
 
-   if (c->surfaces_count < 2) return EINA_FALSE;
+   if (c->surfaces_count < 2) return NULL;
    EINA_INLIST_FOREACH(c->surfaces, cs)
      {
         if (cs->shell.activated) continue;
         if ((!cs->role) || (!cs->shell.surface) || cs->dead) continue;
         cs->shell.activated = 1;
         shell_surface_send_configure(cs);
-        return EINA_TRUE;
+        return cs->obj;
      }
 
-   return EINA_FALSE;
+   return NULL;
 }
 
 EOLIAN static void

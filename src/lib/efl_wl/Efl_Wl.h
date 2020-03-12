@@ -31,8 +31,8 @@ typedef void * Efl_Wl_Wl_Interface_Data;
 typedef void * Efl_Wl_Wl_Interface_Bind_Cb;
 typedef struct Efl_Wl_Xkb_State Efl_Wl_Xkb_State;
 
-#include <efl_wl.eo.h>
 #include <efl_wl_surface.eo.h>
+#include <efl_wl.eo.h>
 /**
  * @defgroup Efl_Wl_Group EFL Wayland
  *
