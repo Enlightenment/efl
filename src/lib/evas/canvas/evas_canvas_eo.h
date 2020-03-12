@@ -808,7 +808,7 @@ EOAPI int evas_canvas_coord_world_x_to_screen(const Eo *obj, int x) EINA_WARN_UN
  * @param[in] obj The object.
  *
  * @return A newly allocated list of updated rectangles of the canvas
- * (@Eina.Rect structs). Free this list with @ref evas_render_updates_free.
+ * (@ref Eina_Rect structs). Free this list with @ref evas_render_updates_free.
  *
  * @ingroup Evas_Canvas
  */

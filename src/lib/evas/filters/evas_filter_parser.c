@@ -60,7 +60,7 @@
   as possible.
 
   Note: Lua has been used since 1.10. The previous filters syntax is not
-        garanteed to be compatible with 1.10 and newer versions.
+        guaranteed to be compatible with 1.10 and newer versions.
 
   Here are the available commands:
   <ul>
@@ -136,28 +136,28 @@
           will be opaque (alpha = @c 0xFF), unless R=G=B=0 (invisible).
           These colors are <b>not</b> premultiplied.
       </li>
-      <li>Hexademical values: @c '#RRGGBB', @c '#RRGGBBAA', @c '#RGB', @c '#RGBA'</li>
+      <li>Hexadecimal values: @c '\#RRGGBB', @c '\#RRGGBBAA', @c '\#RGB', @c '\#RGBA'</li>
       <li>The following string values are also accepted:</li>
       <tt><ul>
-        <li>'white' == '#FFFFFF'</li>
-        <li>'black' == '#000000'</li>
-        <li>'red' == '#FF0000'</li>
-        <li>'green' == '#008000'</li>
-        <li>'blue' == '#0000FF'</li>
-        <li>'darkblue' == '#0000A0'</li>
-        <li>'yellow' == '#FFFF00'</li>
-        <li>'magenta' == '#FF00FF'</li>
-        <li>'cyan' == '#00FFFF'</li>
-        <li>'orange' == '#FFA500'</li>
-        <li>'purple' == '#800080'</li>
-        <li>'brown' == '#A52A2A'</li>
-        <li>'maroon' == '#800000'</li>
-        <li>'lime' == '#00FF00'</li>
-        <li>'gray' == '#808080'</li>
-        <li>'grey' == '#808080'</li>
-        <li>'silver' == '#C0C0C0'</li>
-        <li>'olive' == '#808000'</li>
-        <li>'invisible', 'transparent' == '#0000' -- (alpha is zero)</li>
+        <li>'white' == '\#FFFFFF'</li>
+        <li>'black' == '\#000000'</li>
+        <li>'red' == '\#FF0000'</li>
+        <li>'green' == '\#008000'</li>
+        <li>'blue' == '\#0000FF'</li>
+        <li>'darkblue' == '\#0000A0'</li>
+        <li>'yellow' == '\#FFFF00'</li>
+        <li>'magenta' == '\#FF00FF'</li>
+        <li>'cyan' == '\#00FFFF'</li>
+        <li>'orange' == '\#FFA500'</li>
+        <li>'purple' == '\#800080'</li>
+        <li>'brown' == '\#A52A2A'</li>
+        <li>'maroon' == '\#800000'</li>
+        <li>'lime' == '\#00FF00'</li>
+        <li>'gray' == '\#808080'</li>
+        <li>'grey' == '\#808080'</li>
+        <li>'silver' == '\#C0C0C0'</li>
+        <li>'olive' == '\#808000'</li>
+        <li>'invisible', 'transparent' == '\#0000' -- (alpha is zero)</li>
       </ul></tt>
     </ul>
     <li>@c fillmode</li>
