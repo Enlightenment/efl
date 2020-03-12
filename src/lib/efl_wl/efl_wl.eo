@@ -91,9 +91,9 @@ class @beta Efl.Wl extends Efl.Canvas.Group
       Efl.Gfx.Entity.scale { get; set; }
    }
    events {
-      toplevel,added: Efl.Gfx.Entity; [[]]
-      child,added: Efl.Gfx.Entity; [[]]
-      popup,added: Efl.Gfx.Entity; [[]]
+      toplevel,added: Efl.Wl.Surface; [[]]
+      child,added: Efl.Wl.Surface; [[]]
+      popup,added: Efl.Wl.Surface; [[]]
       seat,added: Efl.Input.Device; [[The seat object added.]]
    }
 }

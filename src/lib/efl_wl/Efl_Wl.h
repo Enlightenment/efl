@@ -30,6 +30,7 @@ typedef void * Efl_Wl_Wl_Interface_Data;
 typedef void * Efl_Wl_Wl_Interface_Bind_Cb;
 
 #include <efl_wl.eo.h>
+#include <efl_wl_surface.eo.h>
 /**
  * @defgroup Efl_Wl_Group EFL Wayland
  *
@@ -164,7 +165,7 @@ EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
  * @since 1.21
  */
 EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb);
-#endif
+
 /**
  * Extract a child surface from the compositor
  *
@@ -187,7 +188,7 @@ EAPI Eina_Bool efl_wl_surface_extract(Evas_Object *surface);
  * @since 1.24
  */
 EAPI int32_t efl_wl_surface_pid_get(Evas_Object *surface);
-
+#endif
 /**
  * Get the Evas_Object for an extracted wl_surface resource created by an efl_wl object
  *

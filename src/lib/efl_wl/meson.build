@@ -8,6 +8,7 @@ endif
 
 pub_eo_files = [
  'efl_wl.eo',
+ 'efl_wl_surface.eo',
 ]
 
 foreach eo_file : pub_eo_files
