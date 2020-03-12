@@ -59,6 +59,15 @@ class @beta Efl.Wl extends Efl.Canvas.Group
       surface_prev {
          return: Efl.Wl.Surface;
       }
+      @property active_surface {
+         get {}
+         set {
+            return: bool;
+         }
+         values {
+            surface: Efl.Wl.Surface;
+         }
+      }
       @property aspect {
          values {
             set: bool;

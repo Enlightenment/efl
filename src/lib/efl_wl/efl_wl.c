@@ -5620,6 +5620,28 @@ _efl_wl_surface_prev(Eo *obj, Comp *c)
    return NULL;
 }
 
+EOLIAN static Eo *
+_efl_wl_active_surface_get(const Eo *obj, Comp *c)
+{
+   if (c->active_surface && (!c->active_surface->dead))
+     return c->active_surface->obj;
+   return NULL;
+}
+
+EOLIAN static Eina_Bool
+_efl_wl_active_surface_set(Eo *obj, Comp *c, Eo *surface)
+{
+   Comp_Surface *cs = efl_data_scope_get(surface, EFL_WL_SURFACE_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cs, EINA_FALSE);
+   if (cs->dead) return EINA_FALSE;
+   if (c->active_surface == cs) return EINA_TRUE;
+   /* can't activate a popup */
+   if (cs->shell.popup) return EINA_FALSE;
+   cs->shell.activated = 1;
+   shell_surface_send_configure(cs);
+   return EINA_TRUE;
+}
+
 EOLIAN static void
 _efl_wl_rotation_get(const Eo *obj EINA_UNUSED, Comp *c, Efl_Wl_Rotation *rotation, Eina_Bool *rtl)
 {
