@@ -139,6 +139,7 @@ EOLIAN static Efl_Object *
 _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd)
 {
    Eo *config;
+   int finger_size = 0;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->m_recognizers = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
@@ -160,7 +161,12 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_FLICK_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ROTATE_CLASS, obj));
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_ZOOM_CLASS, obj));
-   _update_finger_sizes(pd, efl_config_int_get(config, "glayer_tap_finger_size"));
+   /* realistically this will never fail, but the whole gesture layer breaks if this is 0 */
+   finger_size = efl_config_int_get(config, "glayer_tap_finger_size");
+   if (!getenv("EFL_RUN_IN_TREE"))
+     finger_size = efl_config_int_get(config, "glayer_tap_finger_size");
+   if (finger_size < 1) finger_size = 10;
+   _update_finger_sizes(pd, finger_size);
 
    return obj;
 }
