@@ -336,7 +336,20 @@ typedef void *(*Eina_Thread_Cancellable_Run_Cb)(void *data);
  *
  * @since 1.19
  */
+
 EAPI void *eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb cleanup_cb, void *data);
+
+
+typedef struct _Eina_Thread_Call Eina_Thread_Call;
+struct _Eina_Thread_Call
+{
+   Eina_Thread_Cb func;
+   const void *data;
+
+   Eina_Thread_Priority prio;
+   int affinity;
+};
+
 
 /**
  * @}
