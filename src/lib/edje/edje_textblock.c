@@ -493,6 +493,20 @@ _edje_part_textblock_style_text_set(Edje *ed,
    return EINA_FALSE;
 }
 
+static char*
+strrstr(const char* haystack, const char* violate)
+{
+   char *s_ret = NULL;
+   char *tmp = NULL;
+   const char *_haystack = haystack;
+   size_t len = strlen(violate);
+   while((tmp = strstr(_haystack, violate))){
+     s_ret = tmp;
+     _haystack = tmp + len;
+   }
+   return s_ret;
+}
+
 void
 _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    Edje *ed,
@@ -522,11 +536,21 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   size_t size_array_len = 0;
                   Eina_List *l;
                   unsigned int *value;
+                  Evas_Textblock_Style *st = _edje_textblock_style_get(ed, chosen_desc->text.style.str);
+                  const char *text_style = evas_textblock_style_get(st);
+                  char *s_font_size = (text_style) ? strrstr(text_style,"font_size=") : NULL;
+                  if (s_font_size)
+                    {
+                      int font_size = strtol(&s_font_size[10], NULL, 10);
+                      chosen_desc->text.size_range_max = font_size;
+                      if (chosen_desc->text.size_range_min > chosen_desc->text.size_range_max)
+                        chosen_desc->text.size_range_min = chosen_desc->text.size_range_max;
+                    }
                   EINA_LIST_FOREACH(chosen_desc->text.fit_size_array, l, value)
                     {
                        size_array[size_array_len++] = *value;
                     }
-                 unsigned int mode = TEXTBLOCK_FIT_MODE_NONE;
+                  unsigned int mode = TEXTBLOCK_FIT_MODE_NONE;
 
                   if (chosen_desc->text.fit_x)
                     mode |= TEXTBLOCK_FIT_MODE_WIDTH;
