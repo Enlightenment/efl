@@ -1,0 +1,99 @@
+import efl_exe;
+import efl_input_device;
+import efl_wl_surface;
+
+struct @beta @extern Efl.Wl_Wl_Surface; [[ struct wl_surface. @since 1.24 ]]
+struct @beta @extern Efl.Wl_Wl_Global; [[ struct wl_global. @since 1.24 ]]
+struct @beta @extern Efl.Wl_Wl_Interface; [[ A libwayland callback interface struct. @since 1.24 ]]
+struct @beta @extern Efl.Wl_Wl_Interface_Data; [[ A data pointer to send with the bind callback. @since 1.24 ]]
+struct @beta @extern Efl.Wl_Wl_Interface_Bind_Cb; [[ A callback with the type (*void)(struct wl_client *client, void *data, uint32_t version, uint32_t id). @since 1.24 ]]
+
+
+enum @beta Efl.Wl.Rotation
+{
+   [[Orientation of the internal compositor object in degrees. These values are COUNTER-CLOCKWISE.
+   ]]
+   rotate_0 = 0,
+   rotate_90 = 1,
+   rotate_180 = 2,
+   rotate_270 = 3
+}
+
+class @beta Efl.Wl extends Efl.Canvas.Group
+{
+   [[
+     @since 1.24
+   ]]
+   data: Comp;
+   methods {
+      run {
+         [[This runs a command in the compositor using the @Efl.Exe_Flags.term_with_parent flag.
+         ]]
+         params {
+            cmd: string;
+         }
+         return: Efl.Exe;
+      }
+      flags_run {
+         params {
+            cmd: string;
+            flags: Efl.Exe_Flags;
+         }
+         return: Efl.Exe;
+      }
+      allowed_pid_add {
+         params {
+            pid: int;
+         }
+      }
+      allowed_pid_del {
+         params {
+            pid: int;
+         }
+      }
+      surface_next {
+         return: bool;
+      }
+      surface_prev {
+         return: bool;
+      }
+      @property aspect {
+         values {
+            set: bool;
+         }
+      }
+      @property minmax {
+         values {
+            set: bool;
+         }
+      }
+      @property rotation {
+         values {
+            rotation: Efl.Wl.Rotation;
+            rtl: bool;
+         }
+      }
+      global_add {
+         params {
+            interface: const(Efl.Wl_Wl_Interface) @by_ref;
+            version: uint;
+            data: Efl.Wl_Wl_Interface_Data @by_ref;
+            bind_cb: Efl.Wl_Wl_Interface_Bind_Cb @by_ref;
+         }
+         return: Efl.Wl_Wl_Global @by_ref;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.scale { get; set; }
+   }
+   events {
+      toplevel,added: Efl.Gfx.Entity; [[]]
+      child,added: Efl.Gfx.Entity; [[]]
+      popup,added: Efl.Gfx.Entity; [[]]
+      seat,added: Efl.Input.Device; [[The seat object added.]]
+   }
+}

@@ -1,24 +1,35 @@
-#ifdef EFL_BETA_API_SUPPORT
-
 #ifndef EFL_WL_H
 # define EFL_WL_H
 #include <Evas.h>
-#include <Ecore.h>
+#include <Efl_Core.h>
 
 #ifdef EAPI
 # undef EAPI
 #endif
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  define EAPI __attribute__ ((visibility("default")))
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI
+#ifdef EAPI_WEAK
+# undef EAPI_WEAK
 #endif
 
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK
+#  else
+#   define EAPI
+#   define EAPI_WEAK
+#  endif
+# endif
+
+#define EWAPI EAPI EAPI_WEAK
+
+
+typedef struct Efl_Wl_Wl_Surface Efl_Wl_Wl_Surface;
+typedef struct Efl_Wl_Wl_Global Efl_Wl_Wl_Global;
+typedef struct Efl_Wl_Wl_Interface Efl_Wl_Wl_Interface;
+typedef void * Efl_Wl_Wl_Interface_Data;
+typedef void * Efl_Wl_Wl_Interface_Bind_Cb;
+
+#include <efl_wl.eo.h>
 /**
  * @defgroup Efl_Wl_Group EFL Wayland
  *
@@ -27,19 +38,7 @@
  * @since 1.20
  * @{
  */
-
-/**
- * @typedef Efl_Wl_Rotation
- * The rotation to apply to the compositor's internal wl_output
- */
-typedef enum
-{
-   EFL_WL_ROTATION_0,
-   EFL_WL_ROTATION_90,
-   EFL_WL_ROTATION_180,
-   EFL_WL_ROTATION_270
-} Efl_Wl_Rotation;
-
+#if 0
 /**
  * Add a compositor widget to the given canvas.
  *
@@ -103,7 +102,7 @@ EAPI void efl_wl_pid_del(Evas_Object *obj, int32_t pid);
  * @param obj The compositor widget
  * @return EINA_TRUE if the window stacking was changed
  */
-EAPI Eina_Bool efl_wl_next(Evas_Object *obj);
+EAPI Eina_Bool efl_wl_surface_next(Evas_Object *obj);
 
 /**
  * Put the second top-most toplevel window on top and apply focus to it
@@ -111,7 +110,7 @@ EAPI Eina_Bool efl_wl_next(Evas_Object *obj);
  * @param obj The compositor widget
  * @return EINA_TRUE if the window stacking was changed
  */
-EAPI Eina_Bool efl_wl_prev(Evas_Object *obj);
+EAPI Eina_Bool efl_wl_surface_prev(Evas_Object *obj);
 
 /**
  * Set rotation and flip for the compositor's output
@@ -165,7 +164,7 @@ EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
  * @since 1.21
  */
 EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb);
-
+#endif
 /**
  * Extract a child surface from the compositor
  *
@@ -236,6 +235,9 @@ EAPI void efl_wl_seat_keymap_set(Evas_Object *obj, Eo *seat, void *state, char *
  * @since 1.21
  */
 EAPI void efl_wl_seat_key_repeat_set(Evas_Object *obj, Eo *seat, int repeat_rate, int repeat_delay);
-#endif
 
+#undef EAPI
+#define EAPI
+#undef EAPI_WEAK
+#define EAPI_WEAK
 #endif
