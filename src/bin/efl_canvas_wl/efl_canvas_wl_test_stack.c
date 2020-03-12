@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "Efl_Wl.h"
+#include "Efl_Canvas_Wl.h"
 #include "Elementary.h"
 
 static Evas_Object *win;
@@ -18,7 +18,7 @@ static unsigned int n;
 static Eina_Bool
 dostuff(void *data)
 {
-   efl_wl_run(data, cmds[n++]);
+   efl_canvas_wl_run(data, cmds[n++]);
    evas_object_focus_set(data, 1);
    return n != num_cmds;
 }
@@ -26,13 +26,13 @@ dostuff(void *data)
 static void
 prev_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   efl_wl_surface_prev(data);
+   efl_canvas_wl_surface_prev(data);
 }
 
 static void
 next_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   efl_wl_surface_next(data);
+   efl_canvas_wl_surface_next(data);
 }
 
 int
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
    evas_object_show(next);
    elm_table_pack(o, next, 1, 0, 1, 1);
 
-   comp = efl_add(EFL_WL_CLASS, win);
+   comp = efl_add(EFL_CANVAS_WL_CLASS, win);
    evas_object_size_hint_min_set(comp, 640, 480);
    elm_table_pack(o, comp, 0, 1, 2, 1);
    evas_object_size_hint_align_set(comp, EVAS_HINT_FILL, EVAS_HINT_FILL);

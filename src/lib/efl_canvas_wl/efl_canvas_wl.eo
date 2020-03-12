@@ -1,17 +1,17 @@
 import efl_exe;
 import efl_input_device;
-import efl_wl_surface;
+import efl_canvas_wl_surface;
 
-struct @beta @extern Efl.Wl_Wl_Surface; [[ struct wl_surface. @since 1.24 ]]
-struct @beta @extern Efl.Wl_Wl_Global; [[ struct wl_global. @since 1.24 ]]
-struct @beta @extern Efl.Wl_Wl_Interface; [[ A libwayland callback interface struct. @since 1.24 ]]
-struct @beta @extern Efl.Wl_Wl_Interface_Data; [[ A data pointer to send with the bind callback. @since 1.24 ]]
-struct @beta @extern Efl.Wl_Wl_Interface_Bind_Cb; [[ A callback with the type (*void)(struct wl_client *client, void *data, uint32_t version, uint32_t id). @since 1.24 ]]
-struct @beta @extern Efl.Wl_Xkb_State; [[ struct xkb_state. @since 1.24 ]]
-struct @beta @extern Efl.Wl_Wl_Array; [[ struct wl_array. @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Wl_Surface; [[ struct wl_surface. @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Wl_Global; [[ struct wl_global. @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Wl_Interface; [[ A libwayland callback interface struct. @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Wl_Interface_Data; [[ A data pointer to send with the bind callback. @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Wl_Interface_Bind_Cb; [[ A callback with the type (*void)(struct wl_client *client, void *data, uint32_t version, uint32_t id). @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Xkb_State; [[ struct xkb_state. @since 1.24 ]]
+struct @beta @extern Efl.Canvas.Wl_Wl_Array; [[ struct wl_array. @since 1.24 ]]
 
 
-enum @beta Efl.Wl.Rotation
+enum @beta Efl.Canvas.Wl.Rotation
 {
    [[Orientation of the internal compositor object in degrees. These values are COUNTER-CLOCKWISE.
    ]]
@@ -21,7 +21,7 @@ enum @beta Efl.Wl.Rotation
    rotate_270 = 3
 }
 
-class @beta Efl.Wl extends Efl.Canvas.Group
+class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
 {
    [[
      @since 1.24
@@ -52,10 +52,10 @@ class @beta Efl.Wl extends Efl.Canvas.Group
          }
       }
       surface_next {
-         return: Efl.Wl.Surface;
+         return: Efl.Canvas.Wl.Surface;
       }
       surface_prev {
-         return: Efl.Wl.Surface;
+         return: Efl.Canvas.Wl.Surface;
       }
       @property active_surface {
          get {}
@@ -63,7 +63,7 @@ class @beta Efl.Wl extends Efl.Canvas.Group
             return: bool;
          }
          values {
-            surface: Efl.Wl.Surface;
+            surface: Efl.Canvas.Wl.Surface;
          }
       }
       @property aspect {
@@ -78,25 +78,25 @@ class @beta Efl.Wl extends Efl.Canvas.Group
       }
       @property rotation {
          values {
-            rotation: Efl.Wl.Rotation;
+            rotation: Efl.Canvas.Wl.Rotation;
             rtl: bool;
          }
       }
       global_add {
          params {
-            interface: const(Efl.Wl_Wl_Interface) @by_ref;
+            interface: const(Efl.Canvas.Wl_Wl_Interface) @by_ref;
             version: uint;
-            data: Efl.Wl_Wl_Interface_Data @by_ref;
-            bind_cb: Efl.Wl_Wl_Interface_Bind_Cb @by_ref;
+            data: Efl.Canvas.Wl_Wl_Interface_Data @by_ref;
+            bind_cb: Efl.Canvas.Wl_Wl_Interface_Bind_Cb @by_ref;
          }
-         return: Efl.Wl_Wl_Global @by_ref;
+         return: Efl.Canvas.Wl_Wl_Global @by_ref;
       }
       seat_keymap_set {
          params {
             seat: Efl.Input.Device;
-            state: Efl.Wl_Xkb_State @by_ref;
+            state: Efl.Canvas.Wl_Xkb_State @by_ref;
             keymap_str: string;
-            key_array: Efl.Wl_Wl_Array @by_ref;
+            key_array: Efl.Canvas.Wl_Wl_Array @by_ref;
          }
       }
       seat_key_repeat_set {
@@ -115,9 +115,9 @@ class @beta Efl.Wl extends Efl.Canvas.Group
       Efl.Gfx.Entity.scale { get; set; }
    }
    events {
-      toplevel,added: Efl.Wl.Surface; [[]]
-      child,added: Efl.Wl.Surface; [[]]
-      popup,added: Efl.Wl.Surface; [[]]
+      toplevel,added: Efl.Canvas.Wl.Surface; [[]]
+      child,added: Efl.Canvas.Wl.Surface; [[]]
+      popup,added: Efl.Canvas.Wl.Surface; [[]]
       seat,added: Efl.Input.Device; [[The seat object added.]]
    }
 }

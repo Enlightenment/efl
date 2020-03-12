@@ -1,4 +1,4 @@
-class @beta Efl.Wl.Surface extends Efl.Canvas.Group
+class @beta Efl.Canvas.Wl.Surface extends Efl.Canvas.Group
 {
    [[@since 1.24]]
    data: Comp_Surface;
@@ -15,7 +15,7 @@ class @beta Efl.Wl.Surface extends Efl.Canvas.Group
       @property parent_surface {
          get {}
          values {
-            parent: Efl.Wl.Surface;
+            parent: Efl.Canvas.Wl.Surface;
          }
       }
    }

@@ -1,14 +1,14 @@
-efl_wl_deps = [ecore_wl2, ecore_input, ecore, ecore_evas, evas, emile, eina]
-efl_wl_pub_deps = [eo, efl, evas, dependency('wayland-server', version : '>= 1.11.0'), dependency('xkbcommon', version : '>= 0.6.0')]
+efl_canvas_wl_deps = [ecore_wl2, ecore_input, ecore, ecore_evas, evas, emile, eina]
+efl_canvas_wl_pub_deps = [eo, efl, evas, dependency('wayland-server', version : '>= 1.11.0'), dependency('xkbcommon', version : '>= 0.6.0')]
 
 if (get_option('x11'))
-  efl_wl_deps += [ecore_x]
-  efl_wl_pub_deps += [dependency('xkbcommon-x11')]
+  efl_canvas_wl_deps += [ecore_x]
+  efl_canvas_wl_pub_deps += [dependency('xkbcommon-x11')]
 endif
 
 pub_eo_files = [
- 'efl_wl.eo',
- 'efl_wl_surface.eo',
+ 'efl_canvas_wl.eo',
+ 'efl_canvas_wl_surface.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -25,36 +25,36 @@ foreach eo_file : pub_eo_files
                            '-gchd', '@INPUT@'])
 endforeach
 
-efl_wl_src = [
+efl_canvas_wl_src = [
  'dmabuf.c',
- 'efl_wl.c',
+ 'efl_canvas_wl.c',
 ]
-efl_wl_header_src = ['Efl_Wl.h']
+efl_canvas_wl_header_src = ['Efl_Canvas_Wl.h']
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-efl_wl_lib = library('efl_wl',
-    efl_wl_src, pub_eo_file_target,
-    dependencies: [m, dl] + efl_wl_deps + efl_wl_pub_deps,
+efl_canvas_wl_lib = library('efl_canvas_wl',
+    efl_canvas_wl_src, pub_eo_file_target,
+    dependencies: [m, dl] + efl_canvas_wl_deps + efl_canvas_wl_pub_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,
     version : meson.project_version()
 )
 
-efl_wl = declare_dependency(
+efl_canvas_wl = declare_dependency(
   include_directories: [include_directories('.')],
-  link_with: efl_wl_lib,
+  link_with: efl_canvas_wl_lib,
   sources: pub_eo_file_target,
-  dependencies: efl_wl_pub_deps,
+  dependencies: efl_canvas_wl_pub_deps,
 )
 
-install_headers(efl_wl_header_src,
+install_headers(efl_canvas_wl_header_src,
   install_dir : dir_package_include,
 )
 
-eolian_efl_wl_dir = join_paths(eolian_include_dir, package_version_name)
+eolian_efl_canvas_wl_dir = join_paths(eolian_include_dir, package_version_name)
 if get_option('install-eo-files')
   install_data(pub_eo_files,
-    install_dir: eolian_efl_wl_dir
+    install_dir: eolian_efl_canvas_wl_dir
   )
 endif

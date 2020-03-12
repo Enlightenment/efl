@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#include "Efl_Wl.h"
+#include "Efl_Canvas_Wl.h"
 #include "Elementary.h"
 
 static Evas_Object *win;
@@ -23,7 +23,7 @@ focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 static Eina_Bool
 dostuff(void *data)
 {
-   exe = efl_wl_run(data, eina_strbuf_string_get(buf));
+   exe = efl_canvas_wl_run(data, eina_strbuf_string_get(buf));
    efl_event_callback_add(exe, EFL_TASK_EVENT_EXIT, del_handler, NULL);
    evas_object_focus_set(data, 1);
    return EINA_FALSE;
@@ -62,9 +62,9 @@ main(int argc, char *argv[])
    elm_win_autodel_set(win, 1);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   o = efl_add(EFL_WL_CLASS, win);
-   efl_wl_aspect_set(o, 1);
-   efl_wl_minmax_set(o, 1);
+   o = efl_add(EFL_CANVAS_WL_CLASS, win);
+   efl_canvas_wl_aspect_set(o, 1);
+   efl_canvas_wl_minmax_set(o, 1);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, hints_changed, win);

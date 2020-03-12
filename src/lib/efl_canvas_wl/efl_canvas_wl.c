@@ -39,7 +39,7 @@
 #endif
 #include "Evas_Internal.h"
 #include "canvas/evas_canvas_eo.h"
-#include "Efl_Wl.h"
+#include "Efl_Canvas_Wl.h"
 
 #undef COORDS_INSIDE
 #define COORDS_INSIDE(x, y, xx, yy, ww, hh) \
@@ -88,7 +88,7 @@
 		     WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE | \
 		     WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK)
 
-#define MY_CLASS EFL_WL_CLASS
+#define MY_CLASS EFL_CANVAS_WL_CLASS
 
 typedef struct Input_Sequence
 {
@@ -120,7 +120,7 @@ typedef struct Comp_Buffer
 
 typedef struct Comp
 {
-   Efl_Wl_Rotation rotation;
+   Efl_Canvas_Wl_Rotation rotation;
    double scale;
    char *env;
    Efl_Exe_Flags flags;
@@ -2379,18 +2379,18 @@ comp_surface_multi_move(void *data, Evas *e EINA_UNUSED, Eo *obj EINA_UNUSED, vo
 }
 
 EOLIAN static Eo *
-_efl_wl_surface_efl_object_constructor(Eo *obj, Comp_Surface *cs EINA_UNUSED)
+_efl_canvas_wl_surface_efl_object_constructor(Eo *obj, Comp_Surface *cs EINA_UNUSED)
 {
    efl_canvas_group_clipped_set(obj, EINA_TRUE);
-   return efl_constructor(efl_super(obj, EFL_WL_SURFACE_CLASS));
+   return efl_constructor(efl_super(obj, EFL_CANVAS_WL_SURFACE_CLASS));
 }
 
 static void
-_efl_wl_surface_efl_canvas_group_group_add(Eo *obj, Comp_Surface *cs)
+_efl_canvas_wl_surface_efl_canvas_group_group_add(Eo *obj, Comp_Surface *cs)
 {
    Evas *e;
 
-   efl_canvas_group_add(efl_super(obj, EFL_WL_SURFACE_CLASS));
+   efl_canvas_group_add(efl_super(obj, EFL_CANVAS_WL_SURFACE_CLASS));
    cs->obj = obj;
    evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_MOUSE_DOWN, comp_surface_mouse_down, cs);
    evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_MOUSE_UP, comp_surface_mouse_up, cs);
@@ -2413,7 +2413,7 @@ _efl_wl_surface_efl_canvas_group_group_add(Eo *obj, Comp_Surface *cs)
 }
 
 static void
-_efl_wl_surface_efl_canvas_group_group_del(Eo *obj, Comp_Surface *cs)
+_efl_canvas_wl_surface_efl_canvas_group_group_del(Eo *obj, Comp_Surface *cs)
 {
    array_clear(&cs->input_rects);
    array_clear(&cs->opaque_rects);
@@ -2436,12 +2436,13 @@ _efl_wl_surface_efl_canvas_group_group_del(Eo *obj, Comp_Surface *cs)
      }
    cs->c->surfaces = eina_inlist_remove(cs->c->surfaces, EINA_INLIST_GET(cs));
    cs->c->surfaces_count--;
+   efl_canvas_group_del(efl_super(obj, EFL_CANVAS_WL_SURFACE_CLASS));
 }
 
 static void
-_efl_wl_surface_efl_gfx_entity_position_set(Eo *obj, Comp_Surface *cs, Eina_Position2D pos)
+_efl_canvas_wl_surface_efl_gfx_entity_position_set(Eo *obj, Comp_Surface *cs, Eina_Position2D pos)
 {
-   efl_gfx_entity_position_set(efl_super(obj, EFL_WL_SURFACE_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, EFL_CANVAS_WL_SURFACE_CLASS), pos);
    efl_gfx_entity_position_set(cs->clip, pos);
 
    //{
@@ -2451,9 +2452,9 @@ _efl_wl_surface_efl_gfx_entity_position_set(Eo *obj, Comp_Surface *cs, Eina_Posi
 }
 
 static void
-_efl_wl_surface_efl_gfx_entity_size_set(Eo *obj, Comp_Surface *cs, Eina_Size2D sz)
+_efl_canvas_wl_surface_efl_gfx_entity_size_set(Eo *obj, Comp_Surface *cs, Eina_Size2D sz)
 {
-   efl_gfx_entity_size_set(efl_super(obj, EFL_WL_SURFACE_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, EFL_CANVAS_WL_SURFACE_CLASS), sz);
    evas_object_resize(cs->clip, sz.w, sz.h);
    //if (cs->cursor) fprintf(stderr, "COMP %sSURFACE(%p) %dx%d\n", cs->subsurface ? "SUB" : "", cs, w, h);
    if (cs->drag)
@@ -2461,10 +2462,10 @@ _efl_wl_surface_efl_gfx_entity_size_set(Eo *obj, Comp_Surface *cs, Eina_Size2D s
 }
 
 static void
-_efl_wl_surface_efl_gfx_entity_visible_set(Eo *obj, Comp_Surface *cs, Eina_Bool vis)
+_efl_canvas_wl_surface_efl_gfx_entity_visible_set(Eo *obj, Comp_Surface *cs, Eina_Bool vis)
 {
    Comp_Surface *pcs = NULL, *lcs;
-   efl_gfx_entity_visible_set(efl_super(obj, EFL_WL_SURFACE_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, EFL_CANVAS_WL_SURFACE_CLASS), vis);
    if (vis)
      {
         evas_object_show(cs->clip);
@@ -2517,9 +2518,9 @@ comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint
    int x, y;
 
    res = wl_resource_create(client, &wl_surface_interface, wl_resource_get_version(resource), id);
-   obj = efl_add(EFL_WL_SURFACE_CLASS, c->obj);
+   obj = efl_add(EFL_CANVAS_WL_SURFACE_CLASS, c->obj);
    efl_gfx_entity_visible_set(obj, EINA_FALSE);
-   cs = efl_data_scope_get(obj, EFL_WL_SURFACE_CLASS);
+   cs = efl_data_scope_get(obj, EFL_CANVAS_WL_SURFACE_CLASS);
    cs->res = res;
    evas_object_smart_member_add(cs->obj, c->obj);
    cs->c = c;
@@ -3097,16 +3098,16 @@ output_resize(Comp *c, struct wl_resource *res)
    int rot[][4] =
    {
     {
-     [EFL_WL_ROTATION_ROTATE_0] = WL_OUTPUT_TRANSFORM_NORMAL,
-     [EFL_WL_ROTATION_ROTATE_90] = WL_OUTPUT_TRANSFORM_90,
-     [EFL_WL_ROTATION_ROTATE_180] = WL_OUTPUT_TRANSFORM_180,
-     [EFL_WL_ROTATION_ROTATE_270] = WL_OUTPUT_TRANSFORM_270,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_0] = WL_OUTPUT_TRANSFORM_NORMAL,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_90] = WL_OUTPUT_TRANSFORM_90,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_180] = WL_OUTPUT_TRANSFORM_180,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_270] = WL_OUTPUT_TRANSFORM_270,
     },
     {
-     [EFL_WL_ROTATION_ROTATE_0] = WL_OUTPUT_TRANSFORM_FLIPPED,
-     [EFL_WL_ROTATION_ROTATE_90] = WL_OUTPUT_TRANSFORM_FLIPPED_90,
-     [EFL_WL_ROTATION_ROTATE_180] = WL_OUTPUT_TRANSFORM_FLIPPED_180,
-     [EFL_WL_ROTATION_ROTATE_270] = WL_OUTPUT_TRANSFORM_FLIPPED_270,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_0] = WL_OUTPUT_TRANSFORM_FLIPPED,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_90] = WL_OUTPUT_TRANSFORM_FLIPPED_90,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_180] = WL_OUTPUT_TRANSFORM_FLIPPED_180,
+     [EFL_CANVAS_WL_ROTATION_ROTATE_270] = WL_OUTPUT_TRANSFORM_FLIPPED_270,
     },
    };
 
@@ -3173,7 +3174,7 @@ shell_surface_toplevel_set_parent(struct wl_client *client EINA_UNUSED, struct w
 
    comp_surface_reparent(cs, pcs);
    if (parent_resource)
-     efl_event_callback_call(cs->c->obj, EFL_WL_EVENT_CHILD_ADDED, cs->obj);
+     efl_event_callback_call(cs->c->obj, EFL_CANVAS_WL_EVENT_CHILD_ADDED, cs->obj);
 }
 
 static void
@@ -3267,7 +3268,7 @@ shell_surface_toplevel_create(struct wl_client *client EINA_UNUSED, struct wl_re
    cs->role = wl_resource_create(client, &xdg_toplevel_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_toplevel_interface, cs, shell_surface_toplevel_impl_destroy);
    cs->shell.new = 1;
-   efl_event_callback_call(cs->c->obj, EFL_WL_EVENT_TOPLEVEL_ADDED, cs->obj);
+   efl_event_callback_call(cs->c->obj, EFL_CANVAS_WL_EVENT_TOPLEVEL_ADDED, cs->obj);
 }
 
 static void
@@ -3356,7 +3357,7 @@ shell_surface_popup_create(struct wl_client *client, struct wl_resource *resourc
      comp_surface_reparent(cs, wl_resource_get_user_data(parent_resource));
    cs->shell.positioner = wl_resource_get_user_data(positioner_resource);
    _apply_positioner(cs, cs->shell.positioner);
-   efl_event_callback_call(cs->c->obj, EFL_WL_EVENT_POPUP_ADDED, cs->obj);
+   efl_event_callback_call(cs->c->obj, EFL_CANVAS_WL_EVENT_POPUP_ADDED, cs->obj);
 }
 
 static void
@@ -4472,7 +4473,7 @@ comp_seats_proxy(Comp *c)
         else if (!c->parent_disp)
           comp_device_caps_update(s);
         s->global = wl_global_create(c->display, &wl_seat_interface, 4, s, seat_bind);
-        efl_event_callback_call(s->c->obj, EFL_WL_EVENT_SEAT_ADDED, dev);
+        efl_event_callback_call(s->c->obj, EFL_CANVAS_WL_EVENT_SEAT_ADDED, dev);
         if (ecore_wl2_display_sync_is_done(c->client_disp))
           seat_proxy_update(s);
      }
@@ -5269,7 +5270,7 @@ efl_hints_bind(struct wl_client *client, void *data, uint32_t version, uint32_t 
 }
 
 EOLIAN static Eo *
-_efl_wl_efl_object_constructor(Eo *obj, Comp *c)
+_efl_canvas_wl_efl_object_constructor(Eo *obj, Comp *c)
 {
    efl_canvas_group_clipped_set(obj, EINA_TRUE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!ecore_wl2_init(), NULL);
@@ -5277,7 +5278,7 @@ _efl_wl_efl_object_constructor(Eo *obj, Comp *c)
 }
 
 EOLIAN static void
-_efl_wl_efl_canvas_group_group_add(Eo *obj, Comp *c)
+_efl_canvas_wl_efl_canvas_group_group_add(Eo *obj, Comp *c)
 {
    char *env, *dbg = NULL;
 
@@ -5288,13 +5289,13 @@ _efl_wl_efl_canvas_group_group_add(Eo *obj, Comp *c)
    env = getenv("WAYLAND_DISPLAY");
    if (env) env = strdup(env);
 
-   if (getenv("EFL_WL_DEBUG"))
+   if (getenv("EFL_CANVAS_WL_DEBUG"))
      {
         dbg = eina_strdup(getenv("WAYLAND_DEBUG"));
         setenv("WAYLAND_DEBUG", "1", 1);
      }
    c->disp = ecore_wl2_display_create(NULL);
-   if (getenv("EFL_WL_DEBUG"))
+   if (getenv("EFL_CANVAS_WL_DEBUG"))
      {
         if (dbg) setenv("WAYLAND_DEBUG", dbg, 1);
         else unsetenv("WAYLAND_DEBUG");
@@ -5366,7 +5367,7 @@ _efl_wl_efl_canvas_group_group_add(Eo *obj, Comp *c)
 }
 
 EOLIAN static void
-_efl_wl_efl_canvas_group_group_del(Eo *obj, Comp *c)
+_efl_canvas_wl_efl_canvas_group_group_del(Eo *obj, Comp *c)
 {
    evas_object_del(c->clip);
    evas_object_del(c->events);
@@ -5411,14 +5412,14 @@ _efl_wl_efl_canvas_group_group_del(Eo *obj, Comp *c)
 }
 
 static void
-_efl_wl_efl_gfx_entity_position_set(Eo *obj, Comp *c, Eina_Position2D pos)
+_efl_canvas_wl_efl_gfx_entity_position_set(Eo *obj, Comp *c, Eina_Position2D pos)
 {
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    efl_gfx_entity_position_set(c->clip, pos);
 }
 
 static void
-_efl_wl_efl_gfx_entity_size_set(Eo *obj, Comp *c, Eina_Size2D sz)
+_efl_canvas_wl_efl_gfx_entity_size_set(Eo *obj, Comp *c, Eina_Size2D sz)
 {
    Eina_List *l;
    Comp_Surface *cs;
@@ -5437,7 +5438,7 @@ _efl_wl_efl_gfx_entity_size_set(Eo *obj, Comp *c, Eina_Size2D sz)
 }
 
 static void
-_efl_wl_efl_gfx_entity_visible_set(Eo *obj, Comp *c, Eina_Bool vis)
+_efl_canvas_wl_efl_gfx_entity_visible_set(Eo *obj, Comp *c, Eina_Bool vis)
 {
    Comp_Surface *cs;
 
@@ -5560,25 +5561,25 @@ comp_run(Eo *obj, Comp *c, const char *cmd, Efl_Exe_Flags flags)
 }
 
 EOLIAN static Efl_Exe *
-_efl_wl_run(Eo *obj, Comp *c, const char *cmd)
+_efl_canvas_wl_run(Eo *obj, Comp *c, const char *cmd)
 {
    return comp_run(obj, c, cmd, EFL_EXE_FLAGS_TERM_WITH_PARENT);
 }
 
 EOLIAN static Efl_Exe_Flags
-_efl_wl_exec_flags_get(const Eo *obj, Comp *c)
+_efl_canvas_wl_exec_flags_get(const Eo *obj, Comp *c)
 {
    return c->flags;
 }
 
 EOLIAN static void
-_efl_wl_exec_flags_set(Eo *obj, Comp *c, Efl_Exe_Flags flags)
+_efl_canvas_wl_exec_flags_set(Eo *obj, Comp *c, Efl_Exe_Flags flags)
 {
    c->flags = flags;
 }
 
 EOLIAN static void
-_efl_wl_allowed_pid_add(Eo *obj, Comp *c, int32_t pid)
+_efl_canvas_wl_allowed_pid_add(Eo *obj, Comp *c, int32_t pid)
 {
    if (!c->exes)
      c->exes = eina_hash_int32_new(NULL);
@@ -5586,14 +5587,14 @@ _efl_wl_allowed_pid_add(Eo *obj, Comp *c, int32_t pid)
 }
 
 EOLIAN static void
-_efl_wl_allowed_pid_del(Eo *obj, Comp *c, int32_t pid)
+_efl_canvas_wl_allowed_pid_del(Eo *obj, Comp *c, int32_t pid)
 {
    if (!c->exes) return;
    eina_hash_del_by_key(c->exes, &pid);
 }
 
 EOLIAN static Eo *
-_efl_wl_surface_next(Eo *obj, Comp *c)
+_efl_canvas_wl_surface_next(Eo *obj, Comp *c)
 {
    Comp_Surface *cs;
 
@@ -5611,7 +5612,7 @@ _efl_wl_surface_next(Eo *obj, Comp *c)
 }
 
 EOLIAN static Eo *
-_efl_wl_surface_prev(Eo *obj, Comp *c)
+_efl_canvas_wl_surface_prev(Eo *obj, Comp *c)
 {
    Comp_Surface *cs;
 
@@ -5629,7 +5630,7 @@ _efl_wl_surface_prev(Eo *obj, Comp *c)
 }
 
 EOLIAN static Eo *
-_efl_wl_active_surface_get(const Eo *obj, Comp *c)
+_efl_canvas_wl_active_surface_get(const Eo *obj, Comp *c)
 {
    if (c->active_surface && (!c->active_surface->dead))
      return c->active_surface->obj;
@@ -5637,9 +5638,9 @@ _efl_wl_active_surface_get(const Eo *obj, Comp *c)
 }
 
 EOLIAN static Eina_Bool
-_efl_wl_active_surface_set(Eo *obj, Comp *c, Eo *surface)
+_efl_canvas_wl_active_surface_set(Eo *obj, Comp *c, Eo *surface)
 {
-   Comp_Surface *cs = efl_data_scope_get(surface, EFL_WL_SURFACE_CLASS);
+   Comp_Surface *cs = efl_data_scope_get(surface, EFL_CANVAS_WL_SURFACE_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cs, EINA_FALSE);
    if (cs->dead) return EINA_FALSE;
    if (c->active_surface == cs) return EINA_TRUE;
@@ -5651,14 +5652,14 @@ _efl_wl_active_surface_set(Eo *obj, Comp *c, Eo *surface)
 }
 
 EOLIAN static void
-_efl_wl_rotation_get(const Eo *obj EINA_UNUSED, Comp *c, Efl_Wl_Rotation *rotation, Eina_Bool *rtl)
+_efl_canvas_wl_rotation_get(const Eo *obj EINA_UNUSED, Comp *c, Efl_Canvas_Wl_Rotation *rotation, Eina_Bool *rtl)
 {
    if (rotation) *rotation = c->rotation;
    if (rtl) *rtl = c->rtl;
 }
 
 EOLIAN static void
-_efl_wl_rotation_set(Eo *obj EINA_UNUSED, Comp *c, Efl_Wl_Rotation rot, Eina_Bool rtl)
+_efl_canvas_wl_rotation_set(Eo *obj EINA_UNUSED, Comp *c, Efl_Canvas_Wl_Rotation rot, Eina_Bool rtl)
 {
    Eina_List *l;
    struct wl_resource *res;
@@ -5670,13 +5671,13 @@ _efl_wl_rotation_set(Eo *obj EINA_UNUSED, Comp *c, Efl_Wl_Rotation rot, Eina_Boo
 }
 
 EOLIAN static double
-_efl_wl_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Comp *c)
+_efl_canvas_wl_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Comp *c)
 {
    return c->scale;
 }
 
 EOLIAN static void
-_efl_wl_efl_gfx_entity_scale_set(Eo *obj EINA_UNUSED, Comp *c, double scale)
+_efl_canvas_wl_efl_gfx_entity_scale_set(Eo *obj EINA_UNUSED, Comp *c, double scale)
 {
    Eina_List *l;
    struct wl_resource *res;
@@ -5689,13 +5690,13 @@ _efl_wl_efl_gfx_entity_scale_set(Eo *obj EINA_UNUSED, Comp *c, double scale)
 }
 
 EOLIAN static Eina_Bool
-_efl_wl_aspect_get(const Eo *obj EINA_UNUSED, Comp *c)
+_efl_canvas_wl_aspect_get(const Eo *obj EINA_UNUSED, Comp *c)
 {
    return c->aspect;
 }
 
 EOLIAN static void
-_efl_wl_aspect_set(Eo *obj, Comp *c, Eina_Bool set)
+_efl_canvas_wl_aspect_set(Eo *obj, Comp *c, Eina_Bool set)
 {
    if (c->aspect == (!!set)) return;
    c->aspect = !!set;
@@ -5706,13 +5707,13 @@ _efl_wl_aspect_set(Eo *obj, Comp *c, Eina_Bool set)
 }
 
 EOLIAN static Eina_Bool
-_efl_wl_minmax_get(const Eo *obj EINA_UNUSED, Comp *c)
+_efl_canvas_wl_minmax_get(const Eo *obj EINA_UNUSED, Comp *c)
 {
    return c->minmax;
 }
 
 EOLIAN static void
-_efl_wl_minmax_set(Eo *obj, Comp *c, Eina_Bool set)
+_efl_canvas_wl_minmax_set(Eo *obj, Comp *c, Eina_Bool set)
 {
    if (c->minmax == (!!set)) return;
    c->minmax = !!set;
@@ -5725,8 +5726,8 @@ _efl_wl_minmax_set(Eo *obj, Comp *c, Eina_Bool set)
      }
 }
 
-EOLIAN static Efl_Wl_Wl_Global *
-_efl_wl_global_add(Eo *obj, Comp *c, const Efl_Wl_Wl_Interface *interface, uint32_t version, Efl_Wl_Wl_Interface_Data *data, Efl_Wl_Wl_Interface_Bind_Cb *bind_cb)
+EOLIAN static Efl_Canvas_Wl_Wl_Global *
+_efl_canvas_wl_global_add(Eo *obj, Comp *c, const Efl_Canvas_Wl_Wl_Interface *interface, uint32_t version, Efl_Canvas_Wl_Wl_Interface_Data *data, Efl_Canvas_Wl_Wl_Interface_Bind_Cb *bind_cb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(interface, NULL);
    return (void*)wl_global_create(c->display, (void*)interface, version, (void*)data, (void*)bind_cb);
@@ -5769,7 +5770,7 @@ extracted_changed(void *data, Evas *e EINA_UNUSED, Eo *obj, void *event_info EIN
 }
 
 static EOLIAN int32_t
-_efl_wl_surface_pid_get(const Eo *surface, Comp_Surface *cs)
+_efl_canvas_wl_surface_pid_get(const Eo *surface, Comp_Surface *cs)
 {
    int32_t pid;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, -1);
@@ -5778,7 +5779,7 @@ _efl_wl_surface_pid_get(const Eo *surface, Comp_Surface *cs)
 }
 
 static EOLIAN Eina_Bool
-_efl_wl_surface_extract(Eo *surface, Comp_Surface *cs)
+_efl_canvas_wl_surface_extract(Eo *surface, Comp_Surface *cs)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->extracted, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, EINA_FALSE);
@@ -5792,7 +5793,7 @@ _efl_wl_surface_extract(Eo *surface, Comp_Surface *cs)
 }
 
 Eo *
-efl_wl_extracted_surface_object_find(void *surface_resource)
+efl_canvas_wl_extracted_surface_object_find(void *surface_resource)
 {
    Comp_Surface *cs = wl_resource_get_user_data(surface_resource);
 
@@ -5804,7 +5805,7 @@ efl_wl_extracted_surface_object_find(void *surface_resource)
 }
 
 static EOLIAN Eo *
-_efl_wl_surface_parent_surface_get(const Eo *surface, Comp_Surface *cs)
+_efl_canvas_wl_surface_parent_surface_get(const Eo *surface, Comp_Surface *cs)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, NULL);
 
@@ -5813,13 +5814,13 @@ _efl_wl_surface_parent_surface_get(const Eo *surface, Comp_Surface *cs)
 }
 
 static EOLIAN void
-_efl_wl_seat_keymap_set(Eo *obj, Comp *c, Eo *seat, Efl_Wl_Xkb_State *state, const char *str, Efl_Wl_Wl_Array *key_array)
+_efl_canvas_wl_seat_keymap_set(Eo *obj, Comp *c, Eo *seat, Efl_Canvas_Wl_Xkb_State *state, const char *str, Efl_Canvas_Wl_Wl_Array *key_array)
 {
    Comp_Seat *s;
 
    EINA_INLIST_FOREACH(c->seats, s)
      {
-        if (!seat) efl_wl_seat_keymap_set(obj, s->dev, state, str, key_array);
+        if (!seat) efl_canvas_wl_seat_keymap_set(obj, s->dev, state, str, key_array);
         else if (s->dev == seat) break;
      }
    if (!seat) return;
@@ -5840,13 +5841,13 @@ _efl_wl_seat_keymap_set(Eo *obj, Comp *c, Eo *seat, Efl_Wl_Xkb_State *state, con
 }
 
 static EOLIAN void
-_efl_wl_seat_key_repeat_set(Eo *obj, Comp *c, Eo *seat, int repeat_rate, int repeat_delay)
+_efl_canvas_wl_seat_key_repeat_set(Eo *obj, Comp *c, Eo *seat, int repeat_rate, int repeat_delay)
 {
    Comp_Seat *s;
 
    EINA_INLIST_FOREACH(c->seats, s)
      {
-        if (!seat) efl_wl_seat_key_repeat_set(obj, s->dev, repeat_rate, repeat_delay);
+        if (!seat) efl_canvas_wl_seat_key_repeat_set(obj, s->dev, repeat_rate, repeat_delay);
         else if (s->dev == seat) break;
      }
    if (!seat) return;
@@ -5856,11 +5857,11 @@ _efl_wl_seat_key_repeat_set(Eo *obj, Comp *c, Eo *seat, int repeat_rate, int rep
    seat_kbd_repeat_rate_send(s);
 }
 
-#define EFL_WL_EXTRA_OPS \
-  EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_wl), \
+#define EFL_CANVAS_WL_EXTRA_OPS \
+  EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_wl), \
 
-#define EFL_WL_SURFACE_EXTRA_OPS \
-  EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_wl_surface), \
+#define EFL_CANVAS_WL_SURFACE_EXTRA_OPS \
+  EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_wl_surface), \
 
-#include "efl_wl.eo.c"
-#include "efl_wl_surface.eo.c"
+#include "efl_canvas_wl.eo.c"
+#include "efl_canvas_wl_surface.eo.c"
