@@ -123,6 +123,7 @@ typedef struct Comp
    Efl_Wl_Rotation rotation;
    double scale;
    char *env;
+   Efl_Exe_Flags flags;
    Ecore_Wl2_Display *disp;
    Ecore_Wl2_Display *parent_disp;
    Ecore_Wl2_Display *client_disp;
@@ -5283,6 +5284,7 @@ _efl_wl_efl_canvas_group_group_add(Eo *obj, Comp *c)
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    c->wayland_time_base = ecore_loop_time_get();
    c->obj = obj;
+   c->flags = EFL_EXE_FLAGS_TERM_WITH_PARENT;
    env = getenv("WAYLAND_DISPLAY");
    if (env) env = strdup(env);
 
@@ -5563,10 +5565,16 @@ _efl_wl_run(Eo *obj, Comp *c, const char *cmd)
    return comp_run(obj, c, cmd, EFL_EXE_FLAGS_TERM_WITH_PARENT);
 }
 
-EOLIAN static Eo *
-_efl_wl_flags_run(Eo *obj, Comp *c, const char *cmd, Efl_Exe_Flags flags)
+EOLIAN static Efl_Exe_Flags
+_efl_wl_exec_flags_get(const Eo *obj, Comp *c)
 {
-   return comp_run(obj, c, cmd, flags);
+   return c->flags;
+}
+
+EOLIAN static void
+_efl_wl_exec_flags_set(Eo *obj, Comp *c, Efl_Exe_Flags flags)
+{
+   c->flags = flags;
 }
 
 EOLIAN static void

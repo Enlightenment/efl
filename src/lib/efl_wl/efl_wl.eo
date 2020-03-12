@@ -36,12 +36,10 @@ class @beta Efl.Wl extends Efl.Canvas.Group
          }
          return: Efl.Exe;
       }
-      flags_run {
-         params {
-            cmd: string;
+      @property exec_flags {
+         values {
             flags: Efl.Exe_Flags;
          }
-         return: Efl.Exe;
       }
       allowed_pid_add {
          params {
