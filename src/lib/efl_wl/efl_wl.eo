@@ -7,6 +7,8 @@ struct @beta @extern Efl.Wl_Wl_Global; [[ struct wl_global. @since 1.24 ]]
 struct @beta @extern Efl.Wl_Wl_Interface; [[ A libwayland callback interface struct. @since 1.24 ]]
 struct @beta @extern Efl.Wl_Wl_Interface_Data; [[ A data pointer to send with the bind callback. @since 1.24 ]]
 struct @beta @extern Efl.Wl_Wl_Interface_Bind_Cb; [[ A callback with the type (*void)(struct wl_client *client, void *data, uint32_t version, uint32_t id). @since 1.24 ]]
+struct @beta @extern Efl.Wl_Xkb_State; [[ struct xkb_state. @since 1.24 ]]
+struct @beta @extern Efl.Wl_Wl_Array; [[ struct wl_array. @since 1.24 ]]
 
 
 enum @beta Efl.Wl.Rotation
@@ -81,6 +83,21 @@ class @beta Efl.Wl extends Efl.Canvas.Group
             bind_cb: Efl.Wl_Wl_Interface_Bind_Cb @by_ref;
          }
          return: Efl.Wl_Wl_Global @by_ref;
+      }
+      seat_keymap_set {
+         params {
+            seat: Efl.Input.Device;
+            state: Efl.Wl_Xkb_State @by_ref;
+            keymap_str: string;
+            key_array: Efl.Wl_Wl_Array @by_ref;
+         }
+      }
+      seat_key_repeat_set {
+         params {
+            seat: Efl.Input.Device;
+            repeat_rate: int;
+            repeat_delay: int;
+         }
       }
    }
    implements {

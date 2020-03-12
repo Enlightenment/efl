@@ -210,7 +210,7 @@ typedef struct Comp_Seat
       struct xkb_context *context;
       struct xkb_keymap *keymap;
       struct xkb_state *state;
-      char *keymap_str;
+      const char *keymap_str;
       int keymap_str_size;
       int repeat_rate;
       int repeat_delay;
@@ -5782,14 +5782,11 @@ _efl_wl_surface_parent_surface_get(const Eo *surface, Comp_Surface *cs)
    return NULL;
 }
 
-void
-efl_wl_seat_keymap_set(Eo *obj, Eo *seat, void *state, char *str, void *key_array)
+static EOLIAN void
+_efl_wl_seat_keymap_set(Eo *obj, Comp *c, Eo *seat, Efl_Wl_Xkb_State *state, const char *str, Efl_Wl_Wl_Array *key_array)
 {
-   Comp *c;
    Comp_Seat *s;
 
-   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
-   c = efl_data_scope_get(obj, MY_CLASS);
    EINA_INLIST_FOREACH(c->seats, s)
      {
         if (!seat) efl_wl_seat_keymap_set(obj, s->dev, state, str, key_array);
@@ -5799,8 +5796,8 @@ efl_wl_seat_keymap_set(Eo *obj, Eo *seat, void *state, char *str, void *key_arra
    EINA_SAFETY_ON_NULL_RETURN(s);
    seat_kbd_destroy(s);
    s->kbd.external = 1;
-   s->kbd.keys_external = key_array;
-   s->kbd.state = state;
+   s->kbd.keys_external = (void*)key_array;
+   s->kbd.state = (void*)state;
    s->kbd.keymap_str = str;
    if (str)
      s->kbd.keymap_str_size = strlen(str) + 1;
@@ -5812,14 +5809,11 @@ efl_wl_seat_keymap_set(Eo *obj, Eo *seat, void *state, char *str, void *key_arra
      seat_kbd_external_init(s);
 }
 
-void
-efl_wl_seat_key_repeat_set(Eo *obj, Eo *seat, int repeat_rate, int repeat_delay)
+static EOLIAN void
+_efl_wl_seat_key_repeat_set(Eo *obj, Comp *c, Eo *seat, int repeat_rate, int repeat_delay)
 {
-   Comp *c;
    Comp_Seat *s;
 
-   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
-   c = efl_data_scope_get(obj, MY_CLASS);
    EINA_INLIST_FOREACH(c->seats, s)
      {
         if (!seat) efl_wl_seat_key_repeat_set(obj, s->dev, repeat_rate, repeat_delay);

@@ -26,8 +26,10 @@
 typedef struct Efl_Wl_Wl_Surface Efl_Wl_Wl_Surface;
 typedef struct Efl_Wl_Wl_Global Efl_Wl_Wl_Global;
 typedef struct Efl_Wl_Wl_Interface Efl_Wl_Wl_Interface;
+typedef struct Efl_Wl_Wl_Array Efl_Wl_Wl_Array;
 typedef void * Efl_Wl_Wl_Interface_Data;
 typedef void * Efl_Wl_Wl_Interface_Bind_Cb;
+typedef struct Efl_Wl_Xkb_State Efl_Wl_Xkb_State;
 
 #include <efl_wl.eo.h>
 #include <efl_wl_surface.eo.h>
@@ -210,7 +212,7 @@ EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
  * @since 1.21
  */
 EAPI Evas_Object *efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface);
-#endif
+
 /**
  * Set external xkbcommon resources to be used read-only by the compositor object
  *
@@ -236,7 +238,7 @@ EAPI void efl_wl_seat_keymap_set(Evas_Object *obj, Eo *seat, void *state, char *
  * @since 1.21
  */
 EAPI void efl_wl_seat_key_repeat_set(Evas_Object *obj, Eo *seat, int repeat_rate, int repeat_delay);
-
+#endif
 #undef EAPI
 #define EAPI
 #undef EAPI_WEAK
