@@ -140,16 +140,17 @@ eina_thread_cancel(Eina_Thread t)
 EAPI Eina_Bool
 eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
 {
-   int state = cancellable ? PTHREAD_CANCEL_ENABLE : PTHREAD_CANCEL_DISABLE;
+   int state = cancellable ? EINA_THREAD_CANCEL_ENABLE : EINA_THREAD_CANCEL_DISABLE;
    int old = 0;
    int r;
    #ifndef _WIN32
    /* enforce deferred in case users changed to asynchronous themselves */
-   pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &old);
+   
+   pthread_setcanceltype(EINA_THREAD_CANCEL_DEFERRED, &old);
 
    r = pthread_setcancelstate(state, &old);
    if (was_cancellable && r == 0)
-     *was_cancellable = (old == PTHREAD_CANCEL_ENABLE);
+     *was_cancellable = (old == EINA_THREAD_CANCEL_ENABLE);
    return r == 0;
    #else
       if(!state){
@@ -185,7 +186,9 @@ eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb clea
    return ret;
 }
 
-EAPI const void *EINA_THREAD_JOIN_CANCELED = PTHREAD_CANCELED;
+
+EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
+
 
 Eina_Bool
 eina_thread_init(void)

@@ -65,6 +65,7 @@
 #include "eina_freeq.h"
 #include "eina_slstr.h"
 #include "eina_vpath.h"
+#include "eina_thread.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -98,7 +99,7 @@ EAPI Eina_Error EINA_ERROR_NOT_IMPLEMENTED = 0;
 EAPI unsigned int eina_seed = 0;
 
 #ifdef EFL_HAVE_THREADS
-EAPI pthread_t _eina_main_loop;
+EAPI Eina_Thread _eina_main_loop; //EAPI pthread_t _eina_main_loop;
 #endif
 
 #ifdef MT

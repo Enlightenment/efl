@@ -142,79 +142,25 @@ UNIMPLEMENTED inline int pthread_getschedparam(void* a, ...)
     #warning pthread_getschedparam is not implemented.
     return 0;
 }
-
+/*
 UNIMPLEMENTED inline int pthread_self()
 {
     #warning pthread_self is not implemented.
     return 0;
-}
+}*/
 
 UNIMPLEMENTED inline int pthread_setschedparam(void* c, void* d, void* e)
 {
     #warning pthread_ is not implemented.
     return 0;
 }
-
-UNIMPLEMENTED inline int pthread_rwlock_init(void* a, ...)
-{
-    #warning pthread_rwlock_init is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_mutexattr_settype(void* a, ...)
-{
-    #warning pthread_mutexattr_settype is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_mutex_init(void* a, ...)
-{
-    #warning pthread_mutex_init is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_mutex_destroy(void* a, ...)
-{
-    #warning pthread_mutex_destroy is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_condattr_init(void* a, ...)
-{
-    #warning pthread_condattr_init is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_cond_init(void* a, ...)
-{
-    #warning pthread_cond_init is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_condattr_destroy(void* a, ...)
-{
-    #warning pthread_condattr_destroy is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_cond_destroy(void* a, ...)
-{
-    #warning pthread_cond_destroy is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_rwlock_destroy(void* a, ...)
-{
-    #warning pthread_rwlock_destroy is not implemented.
-    return 0;
-}
-
+/*
 UNIMPLEMENTED inline int pthread_cancel(void* a, ...)
 {
     #warning pthread_cancel is not implemented.
     return 0;
 }
-
+*/
 UNIMPLEMENTED inline int pthread_setcancelstate(void* a, ...)
 {
     #warning pthread_setcancelstate is not implemented.
@@ -244,7 +190,7 @@ UNIMPLEMENTED inline int pthread_attr_init(void* a, ...)
     #warning pthread_attr_init is not implemented.
     return 0;
 }
-
+/*
 UNIMPLEMENTED inline int pthread_join(void* a, ...)
 {
     #warning pthread_join is not implemented.
@@ -262,7 +208,7 @@ UNIMPLEMENTED inline int pthread_equal(void* a, ...)
     #warning pthread_equal is not implemented.
     return 0;
 }
-
+*/
 UNIMPLEMENTED inline int pthread_setcanceltype(void* a, ...)
 {
     #warning pthread_setcanceltype is not implemented.

@@ -56,7 +56,8 @@ struct _Eina_Debug_Timer
 static Eina_List *_timers = NULL;
 
 static Eina_Bool _thread_runs = EINA_FALSE;
-static pthread_t _thread;
+//static pthread_t _thread;
+static Eina_Thread _thread;
 
 static int pipeToThread[2];
 
@@ -95,17 +96,22 @@ _monitor(void *_data EINA_UNUSED)
    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, event.data.fd, &event);
    if (ret) perror("epoll_ctl/add");
 #ifdef EINA_HAVE_PTHREAD_SETNAME
+/*
 # ifndef __linux__
    pthread_set_name_np
 # else
    pthread_setname_np
 # endif
      (pthread_self(), "Edbg-tim");
+*/
 #endif
+   eina_thread_name_set(eina_thread_self(), "Edbg-tim");
    while (1)
      {
         int timeout = -1; //in milliseconds
-        pthread_testcancel();
+        #ifndef _WIN32
+         pthread_testcancel();
+        #endif
         eina_spinlock_take(&_lock);
         if (_timers)
           {
@@ -115,7 +121,9 @@ _monitor(void *_data EINA_UNUSED)
         eina_spinlock_release(&_lock);
 
         ret = epoll_wait(epfd, events, MAX_EVENTS, timeout);
-        pthread_testcancel();
+        #ifndef _WIN32
+         pthread_testcancel();
+        #endif
 
         /* Some timer has been add/removed or we need to exit */
         if (ret)
@@ -228,7 +236,8 @@ _eina_debug_timer_shutdown(void)
    close(pipeToThread[0]);
    close(pipeToThread[1]);
    if (_thread_runs)
-     pthread_cancel(_thread);
+     eina_thread_cancel(_thread);//pthread_cancel(_thread);
+     
    _thread_runs = 0;
    eina_spinlock_release(&_lock);
    eina_spinlock_free(&_lock);

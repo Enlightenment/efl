@@ -556,14 +556,17 @@ _monitor(void *_data)
 
    // set a name for this thread for system debugging
 #ifdef EINA_HAVE_PTHREAD_SETNAME
+/*
 # ifndef __linux__
    pthread_set_name_np
 # else
    pthread_setname_np
 # endif
      (pthread_self(), "Edbg-mon");
-#endif
 
+*/
+#endif
+   eina_thread_name_set(eina_thread_self(), "Edbg-mon");
    // sit forever processing commands or timeouts in the debug monitor
    // thread - this is separate to the rest of the app so it shouldn't
    // impact the application specifically
@@ -704,14 +707,16 @@ eina_debug_session_data_get(Eina_Debug_Session *session)
 Eina_Bool
 eina_debug_init(void)
 {
-   pthread_t self;
+   
+   Eina_Thread self;//pthread_t self;
 
    eina_threads_init();
    // For Windows support GetModuleFileName can be used
    // set up thread things
    eina_spinlock_new(&_eina_debug_lock);
    eina_spinlock_new(&_eina_debug_thread_lock);
-   self = pthread_self();
+   
+   self = eina_thread_self(); //self = pthread_self();
    _eina_debug_thread_mainloop_set(&self);
    _eina_debug_thread_add(&self);
    _eina_debug_cpu_init();
@@ -735,7 +740,7 @@ Eina_Bool
 eina_debug_shutdown(void)
 {
    Eina_Debug_Session *session;
-   pthread_t self = pthread_self();
+   Eina_Thread self = eina_thread_self(); //pthread_t self = pthread_self();
 
    EINA_LIST_FREE(sessions, session)
      eina_debug_session_terminate(session);

@@ -80,7 +80,10 @@ _sysmon(void *data EINA_UNUSED, Eina_Thread thr EINA_UNUSED)
              for (i = 0; i < _eina_debug_thread_active_num; i++)
                {
                   // get the correct clock id to use for the target thread
-                  pthread_getcpuclockid
+                  #ifndef _WIN32
+                     pthread_getcpuclockid(self, &cid);
+                  #endif
+               //   pthread_getcpuclockid
                      (_eina_debug_thread_active[i].thread, &cid);
                   // get the clock cpu time accumulation for that threas
                   clock_gettime(cid, &t);
@@ -126,7 +129,10 @@ _sysmon(void *data EINA_UNUSED, Eina_Thread thr EINA_UNUSED)
                {
                   Eina_Thread thread = _eina_debug_thread_active[i].thread;
                   // get the clock for the thread and its cpu time usage
-                  pthread_getcpuclockid(thread, &cid);
+                  #ifndef _WIN32
+                     pthread_getcpuclockid(thread, &cid);
+                  #endif
+                  //pthread_getcpuclockid(thread, &cid);
                   clock_gettime(cid, &t);
                   // calculate a long timestamp (64bits)
                   tim1 = (_eina_debug_thread_active[i].clok.tv_sec * 1000000000LL) +

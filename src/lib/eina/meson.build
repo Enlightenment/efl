@@ -200,9 +200,11 @@ sources = [
 if sys_windows == true
   sources += 'eina_file_win32.c'
   sources += 'eina_thread_win32.c'
+  sources += 'eina_lock_win32.c'
 else
   sources += 'eina_file.c'
   sources += 'eina_thread_posix.c'
+  sources += 'eina_lock_posix.c'
 endif
 
 eina_config = configuration_data()

@@ -49,10 +49,16 @@
 #endif
 #endif
 
-typedef struct _Eina_win32_thread_attr{
+typedef struct _Eina_win32_thread_func{
    void *data;
    void *(*func)(void *data);
    
+}Eina_win32_thread_func;
+
+typedef struct _Eina_win32_thread_attr{
+   LPSECURITY_ATTRIBUTES   lpThreadAttributes;
+   SIZE_T                  dwStackSize;
+   DWORD                   dwCreationFlags;
 }Eina_win32_thread_attr;
 
 
@@ -69,18 +75,9 @@ _eina_thread_join(Eina_Thread t)
 
 
 
-
-
 DWORD WINAPI _eina_thread_func(void *params)
 {
-   // // Code
-   //Eina_Thread_Call *c = params;
-   //void *r;
-   //r = c->func((void*) c->data, eina_thread_self());
-   //return (DWORD) r;
-   //return (DWORD) _eina_internal_call(params);
-   
-   return (DWORD)  ((Eina_win32_thread_attr *)params)->func( (void*)  ((Eina_win32_thread_attr *)params)->data);
+   return (DWORD)  ((Eina_win32_thread_func *)params)->func( (void*)  ((Eina_win32_thread_func *)params)->data);
 }
 
 
@@ -102,19 +99,35 @@ inline Eina_Bool
 _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), void *data)
 {
    Eina_Bool ret;
+   Eina_win32_thread_attr thread_attr;
+
+   SECURITY_ATTRIBUTES sec_attributes;
+
+   sec_attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+   sec_attributes.lpSecurityDescriptor = NULL;
+   sec_attributes.bInheritHandle = EINA_TRUE;
+
+   thread_attr.lpThreadAttributes = &sec_attributes;
+	    
+   thread_attr.dwStackSize = 4000;
+   thread_attr.dwCreationFlags = 0;
 
    LPDWORD threadID;
 
-   Eina_win32_thread_attr *thread_attr = (Eina_win32_thread_attr*) malloc(sizeof(Eina_win32_thread_attr));
+   //Eina_win32_thread_func *thread_func = (Eina_win32_thread_func*) malloc(sizeof(Eina_win32_thread_func));
+   Eina_win32_thread_func thread_func;
    Eina_Thread_Call *c = (Eina_Thread_Call*)(data);
 
-   thread_attr->func = func;
-   thread_attr->data = data;
+   thread_func.func = func;
+   thread_func.data = data;
 
-   *t =(HANDLE) CreateThread(NULL, 0, &_eina_thread_func,thread_attr,0,threadID);
+	
+	
+   *t =(HANDLE) CreateThread(thread_attr.lpThreadAttributes,thread_attr.dwStackSize, &_eina_thread_func,&thread_func,thread_attr.dwCreationFlags,threadID);
 
-   free(thread_attr);
-
+   //free(thread_func);
+   
+   
 
 
    _eina_thread_set_priority(c->prio,t);  //SetThreadPriority(*t, c->prio);
