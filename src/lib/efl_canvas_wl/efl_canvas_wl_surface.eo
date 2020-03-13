@@ -1,27 +1,61 @@
-class @beta Efl.Canvas.Wl.Surface extends Efl.Canvas.Group
+class @beta Efl.Canvas.Wl_Surface extends Efl.Canvas.Group
 {
-   [[@since 1.24]]
+   [[A canvas object representing a Wayland toplevel or popup surface.
+
+     This object's geometry properties reflect the properties of the underlying surface. If
+     the client is using a protocol to export its size hints, those hints will be directly
+     applied to this object any time they change in the application.
+
+     Changes to geometry and visibility of this object must not be made while @.extracted
+     is $false.
+
+     Changes to size of this object will be immediately propagated to the underlying application.
+
+     Hiding this object will have differing effects based on the surface's xdg-shell role.
+     If the surface is a popup, it will be sent the 'done' protocol event which will close it.
+     If the surface is a toplevel, it will be deactivated if it was active.
+
+     This object's lifetime is bound to the lifetime of the underlying surface or the compositor widget.
+
+     This object must not be manually deleted.
+     @since 1.24
+   ]]
    data: Comp_Surface;
    methods {
       extract {
-         return: bool;
+         [[Extract a surface from the compositor widget.
+
+           Call this prior to making any calls which directly modify the geometry of
+           the surface. Once extracted, the compositor will no longer attempt to automatically
+           apply geometry or stacking changes to the surface.
+
+           Once extracted, a surface cannot be un-extracted.
+         ]]
+         return: bool; [[Returns $true if the surface was successfully extracted.]]
       }
       @property pid {
+         [[The process id of the surface's application.]]
          get {}
          values {
-            pid: int;
+            pid: int; [[The process id, or -1 if the surface has been asynchronously destroyed.]]
          }
       }
       @property parent_surface {
+         [[The parent surface of the given surface. This value is $NULL for toplevel surfaces without a parent.
+
+           For popup surfaces, this may be another popup or a toplevel.
+           For toplevel surfaces, this will always be another toplevel or $NULL.
+         ]]
          get {}
          values {
-            parent: Efl.Canvas.Wl.Surface;
+            parent: Efl.Canvas.Wl_Surface; [[The parent surface. $NULL if no parent exists or the surface was asynchronously destroyed.]]
          }
       }
       @property extracted {
+         [[The extracted state of the surface.]]
          get {}
          values {
-            extracted: bool;
+            extracted: bool; [[$true if @.extract was successfully called previously.]]
          }
       }
    }

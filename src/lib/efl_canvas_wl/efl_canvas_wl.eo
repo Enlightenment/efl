@@ -26,7 +26,7 @@ class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
    [[A multiseat xdg-shell compliant Wayland compositor which runs in a canvas object.
 
      All toplevel windows will be sized to the size of the compositor object unless extracted with
-     @Efl.Canvas.Wl.Surface.extract.
+     @Efl.Canvas.Wl_Surface.extract.
 
      Only clients executed with @Efl.Canvas.Wl.run or added with @.allowed_pid_add will
      be permitted to connect to this compositor.
@@ -82,11 +82,11 @@ class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
       }
       surface_next {
          [[Activate and raise the bottom-most toplevel surface.]]
-         return: Efl.Canvas.Wl.Surface; [[The surface that was activated, or $NULL if no change was made.]]
+         return: Efl.Canvas.Wl_Surface; [[The surface that was activated, or $NULL if no change was made.]]
       }
       surface_prev {
          [[Activate and raise the second top-most toplevel surface.]]
-         return: Efl.Canvas.Wl.Surface; [[The surface that was activated, or $NULL if no change was made.]]
+         return: Efl.Canvas.Wl_Surface; [[The surface that was activated, or $NULL if no change was made.]]
       }
       @property active_surface {
          [[This is the currently activated surface in the compositor widget.
@@ -97,7 +97,7 @@ class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
             return: bool; [[Returns $true if a change was successfully made.]]
          }
          values {
-            surface: Efl.Canvas.Wl.Surface; [[The activated surface.]]
+            surface: Efl.Canvas.Wl_Surface; [[The activated surface.]]
          }
       }
       @property aspect_propagate {
@@ -175,9 +175,9 @@ class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
       Efl.Gfx.Entity.scale { get; set; }
    }
    events {
-      toplevel,added: Efl.Canvas.Wl.Surface; [[Contains the toplevel surface which was added.]]
-      child,added: Efl.Canvas.Wl.Surface; [[Contains the toplevel child surface which was added.]]
-      popup,added: Efl.Canvas.Wl.Surface; [[Contains the popup surface which was added.]]
+      toplevel,added: Efl.Canvas.Wl_Surface; [[Contains the toplevel surface which was added.]]
+      child,added: Efl.Canvas.Wl_Surface; [[Contains the toplevel child surface which was added.]]
+      popup,added: Efl.Canvas.Wl_Surface; [[Contains the popup surface which was added.]]
       seat,added: Efl.Input.Device; [[Contains the seat object that was added.]]
    }
 }
