@@ -32,16 +32,16 @@
  * @{
  */
 
-typedef struct _Eina_Vector2 Eina_Vector2;
-typedef struct _Eina_Vector3 Eina_Vector3;
-
-#define EINA_VECTOR2(x, y) ((Eina_Vector2) {(x), (y)})
 /**
  * @defgroup Eina_Vector2 Floating point vectors in 2D
  * @brief 2D vector definition and operations
  * @{
  */
 
+typedef struct _Eina_Vector2 Eina_Vector2;
+typedef struct _Eina_Vector3 Eina_Vector3;
+
+#define EINA_VECTOR2(x, y) ((Eina_Vector2) {(x), (y)})
 struct _Eina_Vector2
 {
    double x;
