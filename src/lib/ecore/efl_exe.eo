@@ -18,7 +18,8 @@ enum @beta Efl.Exe_Flags {
    [[Flags to customize process behavior.]]
    none             = 0, [[No special flags.]]
    group_leader     = 1, [[Process will be executed in its own session.]]
-   hide_io          = 4  [[All console IO will be hidden.]]
+   hide_io          = 4,  [[All console IO will be hidden.]]
+   term_with_parent = 8,  [[Makes child receive SIGTERM when parent dies.]]
 }
 
 class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
@@ -49,6 +50,15 @@ class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Ef
          get { }
          values {
             sig: int; [[The exit signal, or -1 if no exit signal happened.]]
+         }
+      }
+      @property pid {
+         [[The pid of the process, which is only accessible after the object has been finalized.
+           @since 1.24
+         ]]
+         get { }
+         values {
+            pid: int; [[The pid, or 0 on failure.]]
          }
       }
       @property env {

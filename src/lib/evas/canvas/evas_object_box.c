@@ -445,7 +445,9 @@ _evas_box_efl_gfx_entity_position_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUS
    if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_MOVE , 0, pos.x, pos.y))
      return;
 
-   efl_gfx_entity_position_set(cso->clipper, pos);
+   if (!evas_object_static_clip_get(cso->clipper))
+     efl_gfx_entity_position_set(cso->clipper, pos);
+
    /* this skips the call to _evas_object_smart_clipped_smart_move_internal
     * since box internals will automatically recalc all the child positions
     * at a later point

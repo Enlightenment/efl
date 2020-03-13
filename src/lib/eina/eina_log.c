@@ -127,7 +127,7 @@ static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 # ifndef EINA_LOG_BACKTRACE_ENABLE
 static int _backtrace_level = -1;
 # else
-static int _backtrace_level = 1;
+static int _backtrace_level = EINA_LOG_LEVEL_ERR;
 # endif
 #endif
 

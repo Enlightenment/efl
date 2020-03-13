@@ -3256,7 +3256,7 @@ static inline Eina_Bool eina_value_struct_setup(Eina_Value *value,
  *
  * @param[in] value Value object
  * @return structure description, with all members and size.
- * on failure, #NULL is returned.
+ * on failure, @c NULL is returned.
  *
  * @since 1.21
  */
@@ -3706,7 +3706,7 @@ EAPI const char *eina_value_type_name_get(const Eina_Value_Type *type) EINA_PURE
  * @param[in] type Type reference.
  * @return #EINA_TRUE if valid, #EINA_FALSE otherwise.
  *
- * A type is invalid if it's NULL or if version field is not the same
+ * A type is invalid if it's @c NULL or if version field is not the same
  * as runtime #EINA_VALUE_TYPE_VERSION.
  *
  * @since 1.2

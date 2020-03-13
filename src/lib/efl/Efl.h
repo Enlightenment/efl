@@ -52,6 +52,7 @@ extern "C" {
 #define EFL_VERSION_1_21 1
 #define EFL_VERSION_1_22 1
 #define EFL_VERSION_1_23 1
+#define EFL_VERSION_1_24 1
 
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_BUILD
@@ -252,7 +253,7 @@ efl_config_bool_get(const Efl_Config *obj, const char * name)
 {
    Eina_Value *v = efl_config_get(obj, name);
    Eina_Bool b = 0;
-   if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
+   if (v && eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
      eina_value_get(v, &b);
    eina_value_free(v);
    return b;
@@ -274,7 +275,7 @@ efl_config_int_get(const Efl_Config *obj, const char * name)
 {
    Eina_Value *v = efl_config_get(obj, name);
    int b = 0;
-   if (eina_value_type_get(v) == EINA_VALUE_TYPE_INT)
+   if (v && eina_value_type_get(v) == EINA_VALUE_TYPE_INT)
      eina_value_get(v, &b);
    eina_value_free(v);
    return b;
@@ -296,7 +297,7 @@ efl_config_double_get(const Efl_Config *obj, const char * name)
 {
    Eina_Value *v = efl_config_get(obj, name);
    double b = 0;
-   if (eina_value_type_get(v) == EINA_VALUE_TYPE_DOUBLE)
+   if (v && eina_value_type_get(v) == EINA_VALUE_TYPE_DOUBLE)
      eina_value_get(v, &b);
    eina_value_free(v);
    return b;
@@ -318,7 +319,7 @@ efl_config_string_get(const Efl_Config *obj, const char *name)
 {
    Eina_Value *v = efl_config_get(obj, name);
    Eina_Stringshare *s = 0;
-   if (eina_value_type_get(v) == EINA_VALUE_TYPE_STRING)
+   if (v && eina_value_type_get(v) == EINA_VALUE_TYPE_STRING)
      {
         const char *b = 0;
         eina_value_get(v, &b);

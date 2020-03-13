@@ -3233,6 +3233,148 @@ _efl_ui_textbox_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data 
    return pd->item_factory;
 }
 
+/*Efl.Ui.Scrollable*/
+EOLIAN static Eina_Size2D
+_efl_ui_textbox_efl_ui_scrollable_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EINA_SIZE2D(0, 0));
+   return efl_ui_scrollable_content_size_get(sd->scroller);
+}
+
+EOLIAN static Eina_Rect
+_efl_ui_textbox_efl_ui_scrollable_viewport_geometry_get(const Eo *obj EINA_UNUSED,
+                                                                       Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EINA_RECT_EMPTY());
+   return efl_ui_scrollable_viewport_geometry_get(sd->scroller);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool w, Eina_Bool h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   return efl_ui_scrollable_match_content_set(sd->scroller, !!w, !!h);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_step_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Position2D step)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_step_size_set(sd->scroller, step);
+}
+
+EOLIAN static Eina_Position2D
+_efl_ui_textbox_efl_ui_scrollable_step_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EINA_POSITION2D(0, 0));
+   return efl_ui_scrollable_step_size_get(sd->scroller);
+}
+
+EOLIAN static Eina_Position2D
+_efl_ui_textbox_efl_ui_scrollable_content_pos_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EINA_POSITION2D(0, 0));
+   return efl_ui_scrollable_content_pos_get(sd->scroller);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_content_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Position2D pos)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_content_pos_set(sd->scroller, pos);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_textbox_efl_ui_scrollable_scroll_hold_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EINA_FALSE);
+   return efl_ui_scrollable_scroll_hold_get(sd->scroller);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_scroll_hold_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool hold)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_scroll_hold_set(sd->scroller, !!hold);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_textbox_efl_ui_scrollable_scroll_freeze_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EINA_FALSE);
+   return efl_ui_scrollable_scroll_freeze_get(sd->scroller);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_scroll_freeze_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool freeze)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_scroll_freeze_set(sd->scroller, !!freeze);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_bounce_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool horiz, Eina_Bool vert)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_bounce_enabled_set(sd->scroller, !!horiz, !!vert);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_bounce_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool *horiz, Eina_Bool *vert)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_bounce_enabled_get(sd->scroller, horiz, vert);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_scroll(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Rect rect, Eina_Bool animation)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_scroll(sd->scroller, rect, animation);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_gravity_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, double *x, double *y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_gravity_get(sd->scroller, x, y);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_gravity_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, double x, double y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_gravity_set(sd->scroller, x, y);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_movement_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Efl_Ui_Layout_Orientation block)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_movement_block_set(sd->scroller, block);
+}
+
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_textbox_efl_ui_scrollable_movement_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->scroller, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
+   return efl_ui_scrollable_movement_block_get(sd->scroller);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_looping_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool loop_h, Eina_Bool loop_v)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_looping_set(sd->scroller, !!loop_h, !!loop_v);
+}
+
+EOLIAN static void
+_efl_ui_textbox_efl_ui_scrollable_looping_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+   efl_ui_scrollable_looping_get(sd->scroller, loop_h, loop_v);
+}
+
 /* Efl.Part begin */
 
 static Eina_Bool

@@ -331,7 +331,7 @@ subprojects = [
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
 ['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
-['efl_wl'           ,['wl']                , false,  true,  true, false, false, false, ['evas', 'ecore'], []],
+['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false, false, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
 ['elua'             ,['elua']              , false,  true,  true, false,  true, false, ['eina', 'luajit'], []],
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, ['eina'], []],

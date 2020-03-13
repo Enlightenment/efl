@@ -744,7 +744,8 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 
         if (et->id >= (int) pc->parts_count)
           {
-             ERR("Target id '%d' greater than possible index '%d'.", et->id, (int) pc->parts_count - 1);
+             ERR("In group '%s' program '%s', target id '%d' greater than possible index '%d'.", 
+                 pc->part ? pc->part : "", ep->name ? ep->name : "", et->id, (int) pc->parts_count - 1);
              exit(-1);
           }
 

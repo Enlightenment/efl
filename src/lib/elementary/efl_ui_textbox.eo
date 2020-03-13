@@ -11,7 +11,7 @@ enum @beta Efl.Ui.Textbox_Cnp_Content {
 }
 
 class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
-                 Efl.Access.Text, Efl.Access.Editable.Text
+                 Efl.Access.Text, Efl.Access.Editable.Text, Efl.Ui.Scrollable
    composites
                  Efl.Text_Interactive, Efl.Text_Markup, Efl.Input_Text
 {
@@ -24,7 +24,11 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
          [[Enable or disable scrolling in the widget.
 
            When scrolling is enabled scrollbars will appear if the text does
-           not fit the widget size.]]
+           not fit the widget size.
+
+           Direct control of the scroll through the @Efl.Ui.Scrollable interface
+           is only possible when this property is enabled.
+         ]]
          set {}
          get {}
          values {
@@ -133,6 +137,18 @@ class @beta Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Click
       Efl.Access.Editable.Text.paste;
       Efl.Text_Interactive.editable { set; }
       Efl.Part.part_get;
+      Efl.Ui.Scrollable.content_pos { set; get; }
+      Efl.Ui.Scrollable.content_size{ get; }
+      Efl.Ui.Scrollable.viewport_geometry{ get; }
+      Efl.Ui.Scrollable.bounce_enabled { set; get; }
+      Efl.Ui.Scrollable.scroll_freeze { get; set; }
+      Efl.Ui.Scrollable.scroll_hold { get; set; }
+      Efl.Ui.Scrollable.looping { get; set; }
+      Efl.Ui.Scrollable.movement_block { get; set; }
+      Efl.Ui.Scrollable.gravity { get; set; }
+      Efl.Ui.Scrollable.match_content { set; }
+      Efl.Ui.Scrollable.step_size { set; get; }
+      Efl.Ui.Scrollable.scroll;
    }
    events {
       selection,paste: void; [[Called when selection is pasted.]]

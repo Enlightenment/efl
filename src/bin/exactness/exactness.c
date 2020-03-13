@@ -8,6 +8,7 @@
 #include <Ecore_File.h>
 
 #include "exactness_private.h"
+#include "common.h"
 
 #ifdef _WIN32
 # include <evil_private.h> /* mkdir */
@@ -17,8 +18,6 @@
 
 #define ORIG_SUBDIR "orig"
 #define CURRENT_SUBDIR "current"
-
-#define EXACTNESS_PATH_MAX 1024
 
 #define BUF_SIZE 1024
 
@@ -51,17 +50,6 @@ static Eina_List *_errors;
 static Eina_List *_compare_errors;
 
 static Eina_Bool _job_consume();
-
-static void
-_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
 
 static Exactness_Image *
 _image_load(const char *filename)
@@ -154,7 +142,7 @@ _exu_imgs_unpack(const char *exu_path, const char *dir, const char *ent_name)
      {
         Eo *o = evas_object_image_add(e);
         char *filename = alloca(strlen(dir) + strlen(ent_name) + 20);
-        snprintf(filename, EXACTNESS_PATH_MAX, "%s/%s%c%.3d.png",
+        snprintf(filename, PATH_MAX, "%s/%s%c%.3d.png",
               dir, ent_name, SHOT_DELIMITER, n++);
         evas_object_image_size_set(o, img->w, img->h);
         evas_object_image_data_set(o, img->pixels);
@@ -171,7 +159,7 @@ _exu_imgs_unpack(const char *exu_path, const char *dir, const char *ent_name)
 static void
 _run_test_compare(const List_Entry *ent)
 {
-   char *path = alloca(EXACTNESS_PATH_MAX);
+   char *path = alloca(PATH_MAX);
    char *origdir = alloca(strlen(_dest_dir) + 20);
    const char *base_dir;
    Eina_List *itr;
@@ -228,7 +216,7 @@ found:
 static Eina_Bool
 _run_command_prepare(const List_Entry *ent, char *buf)
 {
-   char scn_path[EXACTNESS_PATH_MAX];
+   char scn_path[PATH_MAX];
    Eina_Strbuf *sbuf;
    const char *base_dir;
    Eina_List *itr;
@@ -283,7 +271,7 @@ ok:
      }
    strncpy(buf, eina_strbuf_string_get(sbuf), SCHEDULER_CMD_SIZE-1);
    eina_strbuf_free(sbuf);
-   _printf(1, "Command: %s\n", buf);
+   ex_printf(1, "Command: %s\n", buf);
    return EINA_TRUE;
 }
 
@@ -474,7 +462,7 @@ main(int argc, char *argv[])
    const char *list_file;
    Eina_List *itr;
    const char *base_dir;
-   char tmp[EXACTNESS_PATH_MAX];
+   char tmp[PATH_MAX];
    Eina_Bool mode_play = EINA_FALSE, mode_init = EINA_FALSE, mode_simulation = EINA_FALSE;
    Eina_Bool want_quit = EINA_FALSE, scan_objs = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
@@ -558,8 +546,8 @@ main(int argc, char *argv[])
    if (mode_play)
      {
         _mode = RUN_PLAY;
-        if (snprintf(tmp, EXACTNESS_PATH_MAX, "%s/%s", _dest_dir, CURRENT_SUBDIR)
-            >= EXACTNESS_PATH_MAX)
+        if (snprintf(tmp, PATH_MAX, "%s/%s", _dest_dir, CURRENT_SUBDIR)
+            >= PATH_MAX)
           {
              fprintf(stderr, "Path too long: %s", tmp);
              ret = 1;
@@ -575,8 +563,8 @@ main(int argc, char *argv[])
    else if (mode_init)
      {
         _mode = RUN_INIT;
-        if (snprintf(tmp, EXACTNESS_PATH_MAX, "%s/%s", _dest_dir, ORIG_SUBDIR)
-            >= EXACTNESS_PATH_MAX)
+        if (snprintf(tmp, PATH_MAX, "%s/%s", _dest_dir, ORIG_SUBDIR)
+            >= PATH_MAX)
           {
              fprintf(stderr, "Path too long: %s", tmp);
              ret = 1;
@@ -624,9 +612,9 @@ main(int argc, char *argv[])
    if (_errors || _compare_errors)
      {
         FILE *report_file;
-        char report_filename[EXACTNESS_PATH_MAX] = "";
+        char report_filename[PATH_MAX] = "";
         /* Generate the filename. */
-        snprintf(report_filename, EXACTNESS_PATH_MAX,
+        snprintf(report_filename, PATH_MAX,
               "%s/%s/errors.html",
               _dest_dir, mode_init ? ORIG_SUBDIR : CURRENT_SUBDIR);
         report_file = fopen(report_filename, "w+");
@@ -660,8 +648,8 @@ main(int argc, char *argv[])
                   EINA_LIST_FREE(_compare_errors, test_name)
                     {
                        Eina_Bool is_from_exu;
-                       char origpath[EXACTNESS_PATH_MAX];
-                       snprintf(origpath, EXACTNESS_PATH_MAX, "%s/%s/orig/%s",
+                       char origpath[PATH_MAX];
+                       snprintf(origpath, PATH_MAX, "%s/%s/orig/%s",
                              _dest_dir, CURRENT_SUBDIR, test_name);
                        is_from_exu = ecore_file_exists(origpath);
                        printf("\t* %s\n", test_name);

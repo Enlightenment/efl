@@ -14,81 +14,7 @@
 #include <Elementary.h>
 
 #include <Exactness.h>
-
-typedef struct
-{
-   Eina_Debug_Session *session;
-   int srcid;
-   void *buffer;
-   unsigned int size;
-} _Main_Loop_Info;
-
-#define WRAPPER_TO_XFER_MAIN_LOOP(foo) \
-static void \
-_intern_main_loop ## foo(void *data) \
-{ \
-   _Main_Loop_Info *info = data; \
-   _main_loop ## foo(info->session, info->srcid, info->buffer, info->size); \
-   free(info->buffer); \
-   free(info); \
-} \
-static Eina_Bool \
-foo(Eina_Debug_Session *session, int srcid, void *buffer, int size) \
-{ \
-   _Main_Loop_Info *info = calloc(1, sizeof(*info)); \
-   info->session = session; \
-   info->srcid = srcid; \
-   info->size = size; \
-   if (info->size) \
-     { \
-        info->buffer = malloc(info->size); \
-        memcpy(info->buffer, buffer, info->size); \
-     } \
-   ecore_main_loop_thread_safe_call_async(_intern_main_loop ## foo, info); \
-   return EINA_TRUE; \
-}
-
-#ifndef WORDS_BIGENDIAN
-#define SWAP_64(x) x
-#define SWAP_32(x) x
-#define SWAP_16(x) x
-#define SWAP_DBL(x) x
-#else
-#define SWAP_64(x) eina_swap64(x)
-#define SWAP_32(x) eina_swap32(x)
-#define SWAP_16(x) eina_swap16(x)
-#define SWAP_DBL(x) SWAP_64(x)
-#endif
-
-#define EXTRACT_INT(_buf) \
-({ \
-   int __i; \
-   memcpy(&__i, _buf, sizeof(int)); \
-   _buf += sizeof(int); \
-   SWAP_32(__i); \
-})
-
-#define STORE_INT(_buf, __i) \
-{ \
-   int __i2 = SWAP_32(__i); \
-   memcpy(_buf, &__i2, sizeof(int)); \
-   _buf += sizeof(int); \
-}
-
-#define STORE_DOUBLE(_buf, __d) \
-{ \
-   double __d2 = SWAP_DBL(__d); \
-   memcpy(_buf, &__d2, sizeof(double)); \
-   _buf += sizeof(double); \
-}
-
-#define STORE_STRING(_buf, __s) \
-{ \
-   int __len = (__s ? strlen(__s) : 0) + 1; \
-   if (__s) memcpy(_buf, __s, __len); \
-   else *_buf = '\0'; \
-   _buf += __len; \
-}
+#include "common.h"
 
 static Eina_Stringshare *_src_filename = NULL;
 static Exactness_Unit *_src_unit = NULL;
@@ -135,32 +61,21 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(_debug_ops,
       );
 
 static void
-_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
-
-static void
 _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
 {
    switch (type)
      {
       case EXACTNESS_ACTION_MOUSE_IN:
            {
-              _printf(1, "Mouse in\n");
-              _printf(2, "%s evas_event_feed_mouse_in n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse in\n");
+              ex_printf(2, "%s evas_event_feed_mouse_in n_evas=<%d>\n", __func__, n_evas);
               eina_debug_session_send(_session, _cid, _mouse_in_op, &n_evas, sizeof(int));
               break;
            }
       case EXACTNESS_ACTION_MOUSE_OUT:
            {
-              _printf(1, "Mouse out\n");
-              _printf(2, "%s evas_event_feed_mouse_out n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse out\n");
+              ex_printf(2, "%s evas_event_feed_mouse_out n_evas=<%d>\n", __func__, n_evas);
               eina_debug_session_send(_session, _cid, _mouse_out_op, &n_evas, sizeof(int));
               break;
            }
@@ -169,8 +84,8 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               Exactness_Action_Mouse_Wheel *t = data;
               int len = 3*sizeof(int);
               char *buf = malloc(len), *tmp = buf;
-              _printf(1, "Mouse wheel\n");
-              _printf(2, "%s evas_event_feed_mouse_wheel n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(1, "Mouse wheel\n");
+              ex_printf(2, "%s evas_event_feed_mouse_wheel n_evas=<%d>\n", __func__, n_evas);
               STORE_INT(tmp, n_evas);
               STORE_INT(tmp, t->direction);
               STORE_INT(tmp, t->z);
@@ -184,7 +99,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               Exactness_Action_Multi_Event *t = data;
               int len = 5*sizeof(int)+7*sizeof(double)+sizeof(int);
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s n_evas=<%d>\n", __func__,
+              ex_printf(2, "%s %s n_evas=<%d>\n", __func__,
                     type == EXACTNESS_ACTION_MULTI_DOWN ? "evas_event_feed_multi_down" :
                     "evas_event_feed_multi_up", n_evas);
               STORE_INT(tmp, n_evas);
@@ -211,7 +126,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               Exactness_Action_Multi_Move *t = data;
               int len = 4*sizeof(int)+7*sizeof(double);
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s evas_event_feed_multi_move n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s evas_event_feed_multi_move n_evas=<%d>\n", __func__, n_evas);
               STORE_INT(tmp, n_evas);
               STORE_INT(tmp, t->d);
               STORE_INT(tmp, t->x);
@@ -237,7 +152,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               len += t->string ? strlen(t->string) : 0;
               len += t->compose ? strlen(t->compose) : 0;
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s n_evas=<%d>\n", __func__,
+              ex_printf(2, "%s %s n_evas=<%d>\n", __func__,
                     type == EXACTNESS_ACTION_KEY_DOWN ? "evas_event_feed_key_down " :
                     "evas_event_feed_key_up", n_evas);
               STORE_INT(tmp, n_evas);
@@ -254,7 +169,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
            }
       case EXACTNESS_ACTION_TAKE_SHOT:
            {
-              _printf(2, "%s take shot n_evas=<%d>\n", __func__, n_evas);
+              ex_printf(2, "%s take shot n_evas=<%d>\n", __func__, n_evas);
               eina_debug_session_send(_session, _cid, _take_shot_op, &n_evas, sizeof(int));
               break;
            }
@@ -265,7 +180,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               len += t->wdg_name ? strlen(t->wdg_name) : 0;
               len += t->event_name ? strlen(t->event_name) : 0;
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s\n", __func__, "EFL event");
+              ex_printf(2, "%s %s\n", __func__, "EFL event");
               STORE_STRING(tmp, t->wdg_name);
               STORE_STRING(tmp, t->event_name);
               eina_debug_session_send(_session, _cid, _efl_event_op, buf, len);
@@ -278,7 +193,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               int len = 0;
               len += t->wdg_name ? strlen(t->wdg_name) : 0;
               char *buf = malloc(len), *tmp = buf;
-              _printf(2, "%s %s\n", __func__, "Click On");
+              ex_printf(2, "%s %s\n", __func__, "Click On");
               STORE_STRING(tmp, t->wdg_name);
               eina_debug_session_send(_session, _cid, _click_on_op, buf, len);
               free(buf);
@@ -286,7 +201,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
            }
       case EXACTNESS_ACTION_STABILIZE:
            {
-              _printf(2, "%s stabilize\n", __func__);
+              ex_printf(2, "%s stabilize\n", __func__);
               eina_debug_session_send(_session, _cid, _stabilize_op, NULL, 0);
               break;
            }
@@ -321,7 +236,7 @@ _src_open()
 {
    double diff_time = 0; /* Time to wait before feeding the first event */
 
-   _printf(2, "<%s> Source file is <%s>\n", __func__, _src_filename);
+   ex_printf(2, "<%s> Source file is <%s>\n", __func__, _src_filename);
    if (!strcmp(_src_filename + strlen(_src_filename) - 4,".exu"))
      {
         _src_unit = exactness_unit_file_read(_src_filename);
@@ -336,7 +251,7 @@ _src_open()
 
    if (act->delay_ms)
      {
-        _printf(2, "  Waiting <%f>\n", diff_time);
+        ex_printf(2, "  Waiting <%f>\n", diff_time);
         ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
      }
    else

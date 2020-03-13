@@ -1,0 +1,34 @@
+class @beta Efl.Canvas.Wl.Surface extends Efl.Canvas.Group
+{
+   [[@since 1.24]]
+   data: Comp_Surface;
+   methods {
+      extract {
+         return: bool;
+      }
+      @property pid {
+         get {}
+         values {
+            pid: int;
+         }
+      }
+      @property parent_surface {
+         get {}
+         values {
+            parent: Efl.Canvas.Wl.Surface;
+         }
+      }
+      @property extracted {
+         get {}
+         values {
+            extracted: bool;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.position { set; }
+   }
+}
