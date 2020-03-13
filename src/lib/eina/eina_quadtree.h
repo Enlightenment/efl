@@ -30,6 +30,14 @@
  */
 
 /**
+ * @defgroup Eina_Quadtree_Group Quadtrees
+ *
+ * @brief Quadtree operations.
+ *
+ * @{
+ */
+
+/**
  * @typedef Eina_QuadTree
  *
  * A quadtree is a data structure where each node contains four child
@@ -193,6 +201,10 @@ EAPI Eina_Inlist *eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, i
  *         NULL if none could be found.
  */
 EAPI void *eina_quadtree_object(Eina_Inlist *list);
+
+/**
+ * @}
+ */
 
 /**
  * @}
