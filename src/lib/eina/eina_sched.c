@@ -31,7 +31,7 @@
 #include "eina_sched.h"
 #include "eina_log.h"
 
-#define RTNICENESS 1
+#define RTNICENESS 1s
 #define NICENESS 5
 
 EAPI void
