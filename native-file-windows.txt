@@ -1,15 +1,3 @@
 [binaries]
 c = 'clang-cl'
 cpp = 'clang-cl'
-
-[properties]
-c_args = [
-	'-fcolor-diagnostics',
-	'-Wno-language-extension-token',
-	'-I ./src/lib/evil/pcre/',
-	'-Wfatal-errors',
-	'-W-doesnt-exists-no-language-extension-token-kakaka'
-	]
-cpp_args = [
-	'-fcolor-diagnostics',
-	]

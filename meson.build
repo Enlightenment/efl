@@ -98,6 +98,85 @@ endif
 if sys_windows == true
   dl = declare_dependency()
   m = declare_dependency()
+
+  # ---------------------------------
+  # Ignored warnings
+  # TODO: Re-enable warnings one by one and solve them.
+  add_global_arguments([
+      # Compiler-specific
+        '-Wno-reserved-id-macro',
+        '-Wno-deprecated-declarations',
+        '-Wno-gnu-zero-variadic-macro-arguments',
+        '-Wno-nonportable-system-include-path',
+        '-Wno-microsoft-enum-forward-reference',
+      # Syntax/Parsing
+        # '-Wno-implicit-function-declaration',
+        '-Wno-missing-prototypes',
+        '-Wno-unreachable-code',
+        '-Wno-unreachable-code-return',
+        '-Wno-extra-semi',
+        '-Wno-extra-semi-stmt',
+        # Declaration not visible outside function:
+        '-Wno-visibility',
+        # A global variable declared in a .c file is not static and hasn't
+        # been declarated with `extern` anywhere.
+        '-Wno-missing-variable-declarations',
+        '-Wno-missing-noreturn',
+        # Possible misuse of comma operator
+        '-Wno-comma',
+        '-Wno-unreachable-code-break',
+      # Architectural
+        '-Wno-cast-align',
+        '-Wno-shorten-64-to-32',
+      # Type system
+        # When a switch-case misses one possible enum vlaue
+        '-Wno-switch-enum',
+        # Discarding `const` qualifier in cast (`(T)const_value`
+        '-Wno-cast-qual',
+        '-Wno-pedantic',
+        '-Wno-double-promotion',
+        '-Wno-float-conversion',
+        '-Wno-implicit-float-conversion',
+        '-Wno-int-conversion',
+        # Implicit conversion like int -> short, short -> char or long -> char
+        '-Wno-implicit-int-conversion',
+        '-Wno-sign-conversion',
+        '-Wno-bad-function-cast',
+        # Assign enum to a value not in range defined by the enum type
+        '-Wno-assign-enum',
+        # uchar_value > 255 is always false
+        '-Wno-tautological-type-limit-compare',
+        # Comparing float with == is unsafe (since floats not necessarily will
+        # have that specific value)
+        '-Wno-float-equal',
+        # Implicit conversion turns string literal into bool
+        '-Wno-string-conversion',
+        '-Wno-sign-compare',
+        '-Wno-shadow',
+      # Pointer-related
+        '-Wno-pointer-integer-compare',
+      # Safety (important!)
+        '-Wno-uninitialized',
+      # Others
+        '-Wno-covered-switch-default',
+        '-Wno-documentation',
+        '-Wno-documentation-unknown-command',
+        '-Wno-format-nonliteral',
+        # Using an undefined macro (which will be evaluated to 0)
+        '-Wno-undef',
+        '-Wno-unused-variable',
+        '-Wno-unused-function',
+        '-Wno-unused-macros',
+        '-Wno-unused-parameter',
+        '-Wno-class-varargs',
+        # Leave until functions are going to be implemented
+        '-Wno-#warnings',
+
+      # ------------------------------------
+      # Default flags for native compilation
+      '-Wno-language-extension-token',
+      '-DWIN32_LEAN_AND_MEAN'
+    ], language : 'c')
 endif
 
 foreach lang : ['c', 'objc', 'cpp']

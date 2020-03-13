@@ -231,7 +231,7 @@ if sys_windows == true
   zlib_dir = get_option('zlib_dir')
   zlib_include_dir = zlib_dir + '/include'
   if cc.has_header('zlib.h', args: '-I' + zlib_include_dir) == false
-    error('zlib.h cannot be found')
+    error('zlib.h cannot be found (tried "' + zlib_include_dir + '")')
   endif
   zlib = cc.find_library('zlib',
                          dirs: [zlib_dir + '/lib'],
