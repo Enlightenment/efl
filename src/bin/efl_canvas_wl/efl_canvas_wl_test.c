@@ -63,8 +63,8 @@ main(int argc, char *argv[])
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    o = efl_add(EFL_CANVAS_WL_CLASS, win);
-   efl_canvas_wl_aspect_set(o, 1);
-   efl_canvas_wl_minmax_set(o, 1);
+   efl_canvas_wl_aspect_propagate_set(o, 1);
+   efl_canvas_wl_minmax_propagate_set(o, 1);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, hints_changed, win);

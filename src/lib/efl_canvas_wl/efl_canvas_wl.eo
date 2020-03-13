@@ -23,87 +23,147 @@ enum @beta Efl.Canvas.Wl.Rotation
 
 class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
 {
-   [[
+   [[A multiseat xdg-shell compliant Wayland compositor which runs in a canvas object.
+
+     All toplevel windows will be sized to the size of the compositor object unless extracted with
+     @Efl.Canvas.Wl.Surface.extract.
+
+     Only clients executed with @Efl.Canvas.Wl.run or added with @.allowed_pid_add will
+     be permitted to connect to this compositor.
+
+     If no surface is activated at the time of the first toplevel surface's first buffer commit, this
+     first surface will automatically be activated so long as its geometry is not externally modified
+     during this time. If regularly modifying geometry is necessary, surfaces should be manually activated
+     with the @.active_surface property.
+
      @since 1.24
    ]]
    data: Comp;
    methods {
       run {
-         [[This runs a command in the compositor using the @Efl.Exe_Flags.term_with_parent flag.
+         [[
+           Run a specified command in the compositor widget.
+           If GL is available, the ELM_ACCEL environment variable will be set to "gl" while executing the command.
          ]]
          params {
-            cmd: string;
+            cmd: string; [[The command to execute.]]
          }
-         return: Efl.Exe;
+         return: Efl.Exe; [[The exe object for the executed process. $NULL on failure.]]
       }
       @property exec_flags {
+         [[The flags to be used when running commands with @Efl.Canvas.Wl.run.
+         Changing this value will only affect commands run after this call.
+
+         The default is @Efl.Exe_Flags.term_with_parent.
+         ]]
          values {
-            flags: Efl.Exe_Flags;
+            flags: Efl.Exe_Flags; [[A bitmask of flags.]]
          }
       }
       allowed_pid_add {
+         [[Add a process to the list of allowed clients for the compositor widget.
+
+           Once called, this client will be capable of connecting to the internal compositor
+           even if it was not executed by the widget.
+         ]]
          params {
-            pid: int;
+            pid: int; [[The pid to add.]]
          }
       }
       allowed_pid_del {
+         [[Remove a process from the list of allowed clients for the compositor widget.
+
+           Once called, this client will be incapable of connecting to the internal compositor
+           even if it was executed by the widget.
+         ]]
          params {
-            pid: int;
+            pid: int; [[The pid to remove.]]
          }
       }
       surface_next {
-         return: Efl.Canvas.Wl.Surface;
+         [[Activate and raise the bottom-most toplevel surface.]]
+         return: Efl.Canvas.Wl.Surface; [[The surface that was activated, or $NULL if no change was made.]]
       }
       surface_prev {
-         return: Efl.Canvas.Wl.Surface;
+         [[Activate and raise the second top-most toplevel surface.]]
+         return: Efl.Canvas.Wl.Surface; [[The surface that was activated, or $NULL if no change was made.]]
       }
       @property active_surface {
+         [[This is the currently activated surface in the compositor widget.
+           Only one surface can be activated at a time.
+         ]]
          get {}
          set {
-            return: bool;
+            return: bool; [[Returns $true if a change was successfully made.]]
          }
          values {
-            surface: Efl.Canvas.Wl.Surface;
-         }
-      }
-      @property aspect {
-         values {
-            set: bool;
+            surface: Efl.Canvas.Wl.Surface; [[The activated surface.]]
          }
       }
-      @property minmax {
+      @property aspect_propagate {
+         [[When set to $true, the compositor will propagate the aspect ratio of the top-most
+           surface to the @Efl.Gfx.Hint.hint_aspect of the compositor widget.
+         ]]
          values {
-            set: bool;
+            set: bool; [[Whether to propagate the hint.]]
+         }
+      }
+      @property minmax_propagate {
+         [[When set to $true, the compositor will propagate the min and max hints of the top-most
+           surface to the @Efl.Gfx.Hint.hint_size_min and @Efl.Gfx.Hint.hint_size_max of the compositor widget.
+         ]]
+         values {
+            set: bool; [[Whether to propagate the hints.]]
          }
       }
       @property rotation {
+         [[Set the rotation and flip for the compositor's internal output, which is passed to clients.
+
+           Note that the rotation provided here is counter-clockwise.
+         ]]
          values {
-            rotation: Efl.Canvas.Wl.Rotation;
-            rtl: bool;
+            rotation: Efl.Canvas.Wl.Rotation; [[The rotation to apply to the internal output.]]
+            rtl: bool; [[The horizontal flip to apply to the internal output.]]
          }
       }
       global_add {
+         [[Add a new wl_global to the internal compositor.
+
+           Use this to add implementations of custom extensions for use in the compositor.
+           Globals are removed with wl_global_destroy in libwayland.
+
+           Read Wayland documentation for more info.
+         ]]
          params {
-            interface: const(Efl.Canvas.Wl_Wl_Interface) @by_ref;
-            version: uint;
-            data: Efl.Canvas.Wl_Wl_Interface_Data @by_ref;
-            bind_cb: Efl.Canvas.Wl_Wl_Interface_Bind_Cb @by_ref;
+            interface: const(Efl.Canvas.Wl_Wl_Interface) @by_ref; [[The wl_interface of callbacks for the protocol.]]
+            version: uint; [[The version of the protocol.]]
+            data: Efl.Canvas.Wl_Wl_Interface_Data @by_ref; [[The data to be passed to the callback functions.]]
+            bind_cb: Efl.Canvas.Wl_Wl_Interface_Bind_Cb @by_ref; [[The callback to trigger when a client has bound this global.]]
          }
-         return: Efl.Canvas.Wl_Wl_Global @by_ref;
+         return: Efl.Canvas.Wl_Wl_Global @by_ref; [[The $wl_global or $NULL on failure.]]
       }
       seat_keymap_set {
+         [[Sets the keymap for the internal compositor's seat.
+
+           This is useful when nesting the compositor widget inside another compositor in order to reuse the existing keymap and state.
+         ]]
          params {
-            seat: Efl.Input.Device;
-            state: Efl.Canvas.Wl_Xkb_State @by_ref;
-            keymap_str: string;
-            key_array: Efl.Canvas.Wl_Wl_Array @by_ref;
+            seat: Efl.Input.Device; [[The seat to set the keymap of, or $NULL for all seats.]]
+            state: Efl.Canvas.Wl_Xkb_State @by_ref; [[The $xkb_state to apply.]]
+            keymap_str: string; [[The keymap type as a string, as reported by libxkbcommon.
+                                  The lifetime of the passed string must exceed the lifetime of the compositor widget.
+                                ]]
+            key_array: Efl.Canvas.Wl_Wl_Array @by_ref; [[The current $wl_array of keys.]]
          }
       }
       seat_key_repeat_set {
+         [[Modify the key repeat rate and delay of the internal compositor for a given seat.
+           This is the value sent to clients.
+         ]]
          params {
-            seat: Efl.Input.Device;
-            repeat_rate: int;
-            repeat_delay: int;
+            seat: Efl.Input.Device; [[The seat to set the repeat rate and delay of, or $NULL for all seats.]]
+            repeat_rate: int; [[The repeat rate to set in number of times per second keys should repeat.]]
+            repeat_delay: int; [[The delay before repeating should begin in milliseconds.]]
          }
       }
    }
@@ -115,9 +175,9 @@ class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
       Efl.Gfx.Entity.scale { get; set; }
    }
    events {
-      toplevel,added: Efl.Canvas.Wl.Surface; [[]]
-      child,added: Efl.Canvas.Wl.Surface; [[]]
-      popup,added: Efl.Canvas.Wl.Surface; [[]]
-      seat,added: Efl.Input.Device; [[The seat object added.]]
+      toplevel,added: Efl.Canvas.Wl.Surface; [[Contains the toplevel surface which was added.]]
+      child,added: Efl.Canvas.Wl.Surface; [[Contains the toplevel child surface which was added.]]
+      popup,added: Efl.Canvas.Wl.Surface; [[Contains the popup surface which was added.]]
+      seat,added: Efl.Input.Device; [[Contains the seat object that was added.]]
    }
 }
