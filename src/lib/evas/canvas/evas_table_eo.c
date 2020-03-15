@@ -137,6 +137,6 @@ static const Efl_Class_Description _evas_table_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(evas_table_class_get, &_evas_table_class_desc, EFL_CANVAS_GROUP_CLASS, NULL);
+EFL_DEFINE_CLASS(evas_table_class_get, &_evas_table_class_desc, EFL_CANVAS_GROUP_CLASS, EFL_UI_I18N_INTERFACE, NULL);
 
 #include "evas_table_eo.legacy.c"
