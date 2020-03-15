@@ -420,6 +420,26 @@ _vtable_merge_in_no_reg2(unsigned int no_reg_self_id, Eo_Vtable2 *dest, const Eo
      }
 }
 
+static void
+_vtable_merge_empty2(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
+{
+   for (unsigned int i = 0; i < src->size; ++i)
+     {
+        if (src->chain[i].funcs && !dest->chain[i].funcs)
+          {
+             if (!src->chain[i].count)
+               {
+                  dest->chain[i].funcs = src->chain[i].funcs;
+                  dest->chain[i].count = src->chain[i].count;
+               }
+             else
+               {
+                  _vtable_prepare_empty_node2(dest, src->chain[i].count, i);
+                  hitmap[i] = EINA_TRUE;
+               }
+          }
+     }
+}
 static inline const op_type_funcs *
 _vtable_func_get2(const Eo_Vtable2 *vtable2, Efl_Object_Op op)
 {
@@ -1143,9 +1163,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                }
              else if (ext->desc->type == EFL_CLASS_TYPE_REGULAR || ext->desc->type == EFL_CLASS_TYPE_REGULAR_NO_INSTANT)
                {
-                  //_vtable_merge_empty(&klass->vtable2, &klass->extensions[i]->vtable2);
-                  ERR("THIS IS NOT IMPLEMENTED YET");
-                  //abort();
+                  _vtable_merge_empty2(&klass->vtable2, &klass->extensions[i]->vtable2, hitmap);
                }
           }
      }
@@ -1162,7 +1180,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                   const _Efl_Class *required_klass = _eo_classes[class_id];
                   if (klass->desc->type != EFL_CLASS_TYPE_MIXIN)
                     {
-                       ERR("There is an API implemented, whoms type is not part of this class.");
+                       ERR("There is an API implemented, whoms type is not part of this class. %s vs. %s", klass->desc->name, required_klass->desc->name);
                        _vtable_merge_in2(&klass->vtable2, &required_klass->vtable2);
                     }
                   else
