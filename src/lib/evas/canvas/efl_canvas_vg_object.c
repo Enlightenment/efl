@@ -988,6 +988,37 @@ Eina_Bool _efl_canvas_vg_object_efl_gfx_frame_controller_sector_get(const Eo *ob
    return EINA_TRUE;
 }
 
+void _efl_canvas_vg_object_efl_gfx_frame_controller_sector_list_set(Eo *obj EINA_UNUSED,
+                                                                    Efl_Canvas_Vg_Object_Data *pd,
+                                                                    Eina_List *sector_list)
+{
+   /* ... ? */
+}
+
+Eina_List* _efl_canvas_vg_object_efl_gfx_frame_controller_sector_list_get(const Eo *obj EINA_UNUSED,
+                                                                    Efl_Canvas_Vg_Object_Data *pd)
+{
+   if (!pd->vg_entry) return EINA_FALSE;
+
+   Eina_Inarray* markers = evas_cache_vg_anim_sector_list_get(pd->vg_entry);
+   if (!markers) return NULL;
+
+   Eina_List *list = NULL;
+   Vg_File_Anim_Data_Marker *marker;
+   EINA_INARRAY_FOREACH(markers, marker)
+     {
+        if (marker->name)
+          {
+             Efl_Gfx_Frame_Sector_Data *sector = malloc(sizeof(Efl_Gfx_Frame_Sector_Data));
+             sector->name = strdup(marker->name);
+             sector->start_frame = marker->startframe;
+             sector->end_frame = marker->endframe;
+             list = eina_list_append(list, sector);
+          }
+     }
+   return list;
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_gfx_frame_controller_frame_set(Eo *eo_obj,
                                                          Efl_Canvas_Vg_Object_Data *pd,

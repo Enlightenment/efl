@@ -461,6 +461,17 @@ evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, 
    return EINA_FALSE;
 }
 
+//Temporary
+Eina_Inarray*
+evas_cache_vg_anim_sector_list_get(const Vg_Cache_Entry* vg_entry)
+{
+   if (!vg_entry) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
+   return vg_entry->vfd->anim_data->markers;
+}
+//
+
 Efl_VG*
 evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 {

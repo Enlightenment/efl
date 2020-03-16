@@ -153,6 +153,9 @@ Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_ent
 double                      evas_cache_vg_anim_duration_get(const Vg_Cache_Entry *vg_entry);
 Eina_Bool                   evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, int startframe, int endframe);
 Eina_Bool                   evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, int* startframe, int* endframe);
+//Temporary
+Eina_Inarray*               evas_cache_vg_anim_sector_list_get(const Vg_Cache_Entry* vg_entry);
+//
 unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
 Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);
 void *                      evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx);

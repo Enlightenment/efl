@@ -97,5 +97,7 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
       Efl.Gfx.Frame_Controller.loop_count { get; }
       Efl.Gfx.Frame_Controller.frame_duration { get; }
       Efl.Gfx.Frame_Controller.sector { set; get; }
+      //temporary
+      Efl.Gfx.Frame_Controller.sector_list { set; get; }
    }
 }

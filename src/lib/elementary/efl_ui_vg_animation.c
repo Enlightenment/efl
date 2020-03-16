@@ -706,6 +706,10 @@ _efl_ui_vg_animation_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Vg_Animation_Dat
    elm_widget_resize_object_set(obj, vg);
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_hint_event_cb, priv);
 
+   //temporary
+   efl_key_data_set(obj, "vg_obj", vg);
+   //
+
    priv->vg = vg;
    priv->playback_speed = 1;
    priv->frame_duration = 0;

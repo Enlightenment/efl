@@ -177,6 +177,37 @@ _efl_ui_mi_controller_efl_file_load(Eo *obj, Efl_Ui_Mi_Controller_Data *pd)
      }
    _sizing_eval(obj, pd);
 
+   //temporary
+   Eo *vg = efl_key_data_get(pd->anim, "vg_obj");
+   Eina_List *sector_list = efl_gfx_frame_controller_sector_list_get(vg);
+
+   if (sector_list)
+     {
+        Eina_List *l;
+        Efl_Gfx_Frame_Sector_Data      *sector;
+
+        const char *start_sector = NULL, *end_sector = NULL;
+        EINA_LIST_FOREACH(sector_list, l, sector)
+          {
+             start_sector = end_sector;
+             end_sector = sector->name;
+             if (start_sector && end_sector)
+               {
+                  Eo* state = efl_add(EFL_UI_MI_STATE_CLASS, obj);
+                  //efl_ui_mi_state_controller_set(state, controller);
+                  efl_key_data_set(state, "controller", obj);
+                  efl_ui_mi_state_sector_set(state, start_sector, end_sector);
+                  efl_ui_mi_controller_state_add(obj, state);
+               }
+          }
+
+        EINA_LIST_FOREACH(sector_list, l, sector)
+          {
+             free((char*)sector->name);
+             free(sector);
+          }
+        eina_list_free(sector_list);
+     }
    return 0;
 }
 
