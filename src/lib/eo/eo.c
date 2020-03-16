@@ -1156,7 +1156,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
         for (int i = 0; klass->extensions[i]; i++)
           {
              const _Efl_Class *ext = klass->extensions[i];
-             /* In case of a none regular APIs, merge in APIs or take over the owned table  */
+             /* In case of a none regular APIs, merge in the APIs specified on them, *or* simply copy the used vtables from these types */
              if (ext->desc->type == EFL_CLASS_TYPE_MIXIN || ext->desc->type == EFL_CLASS_TYPE_INTERFACE)
                {
                   _vtable_merge_in_no_reg2(ext->base_id2, &klass->vtable2, &ext->vtable2, hitmap);
@@ -1178,6 +1178,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
              if (klass->vtable2.chain[class_id].count == 0)
                {
                   const _Efl_Class *required_klass = _eo_classes[class_id];
+                  //in case this type is not already inherited, error on everything that is not a mixin
                   if (klass->desc->type != EFL_CLASS_TYPE_MIXIN)
                     {
                        ERR("There is an API implemented, whoms type is not part of this class. %s vs. %s", klass->desc->name, required_klass->desc->name);
@@ -1189,6 +1190,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                        _vtable_prepare_empty_node2(&klass->vtable2, required_klass->vtable2.chain[class_id].count, class_id);
                     }
                }
+             //in case we are having a function overwrite for a specific type, copy the relevant vtable
              if (!hitmap[class_id])
                {
                   const Eo_Vtable_Node node = klass->vtable2.chain[class_id];
