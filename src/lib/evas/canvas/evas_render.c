@@ -2241,7 +2241,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 #endif
 
                   obj->func->render(eo_obj, obj, obj->private_data,
-                                    ENC, output, ctx, surface, off_x, off_y, EINA_FALSE);
+                                    ENC, output, ctx, surface, off_x, off_y, do_async);
                }
           }
         else if (!obj->is_smart)
