@@ -59,7 +59,10 @@ _efl_ui_mi_controller_trigger(Eo *obj, Efl_Ui_Mi_Controller_Data *pd, const char
    pd->cur_state_idx = i;
    efl_ui_mi_state_sector_get(state, &_start, &_end);
    if (_start)
-     efl_ui_vg_animation_playing_sector(pd->anim, _start, _end);
+     {
+        efl_event_callback_call(state, EFL_UI_MI_STATE_EVENT_TRIGGER, NULL);
+        efl_ui_vg_animation_playing_sector(pd->anim, _start, _end);
+     }
    else
      ERR("No start point");
 
@@ -87,7 +90,10 @@ _efl_ui_mi_controller_trigger_next(Eo *obj, Efl_Ui_Mi_Controller_Data *pd, Eina_
    efl_ui_mi_state_sector_get(cur_state, &_start, &_end);
 
    if (_start)
-     efl_ui_vg_animation_playing_sector(pd->anim, _start, _end);
+     {
+        efl_event_callback_call(cur_state, EFL_UI_MI_STATE_EVENT_TRIGGER, NULL);
+        efl_ui_vg_animation_playing_sector(pd->anim, _start, _end);
+     }
    else
      ERR("No start point");
 
@@ -184,22 +190,26 @@ _efl_ui_mi_controller_efl_file_load(Eo *obj, Efl_Ui_Mi_Controller_Data *pd)
    if (sector_list)
      {
         Eina_List *l;
-        Efl_Gfx_Frame_Sector_Data      *sector;
-
+        Efl_Gfx_Frame_Sector_Data *sector;
+        Eo *state = NULL;
         const char *start_sector = NULL, *end_sector = NULL;
+
         EINA_LIST_FOREACH(sector_list, l, sector)
           {
              start_sector = end_sector;
              end_sector = sector->name;
              if (start_sector && end_sector)
                {
-                  Eo* state = efl_add(EFL_UI_MI_STATE_CLASS, obj);
-                  //efl_ui_mi_state_controller_set(state, controller);
+                  state = efl_add(EFL_UI_MI_STATE_CLASS, obj);
                   efl_key_data_set(state, "controller", obj);
                   efl_ui_mi_state_sector_set(state, start_sector, end_sector);
                   efl_ui_mi_controller_state_add(obj, state);
                }
           }
+        state = efl_add(EFL_UI_MI_STATE_CLASS, obj);
+        efl_key_data_set(state, "controller", obj);
+        efl_ui_mi_state_sector_set(state, "*", NULL);
+        efl_ui_mi_controller_state_add(obj, state);
 
         EINA_LIST_FOREACH(sector_list, l, sector)
           {
@@ -233,6 +243,17 @@ _size_hint_event_cb(void *data, const Efl_Event *event)
    _sizing_eval(event->object, data);
 }
 
+static void
+_animation_playback_progress_changed_cb(void *data, const Efl_Event *event)
+{
+   Eo* obj = data;
+   Efl_Ui_Mi_Controller_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return NULL;
+
+   Efl_Ui_Mi_State *cur_state = eina_array_data_get (pd->states, pd->cur_state_idx);
+   efl_event_callback_call(cur_state, EFL_UI_MI_STATE_EVENT_FEEDBACK, (double*)event->info);
+}
+
 EOLIAN static void
 _efl_ui_mi_controller_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Mi_Controller_Data *pd)
 {
@@ -242,6 +263,7 @@ _efl_ui_mi_controller_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Mi_Controller_D
    pd->anim = efl_add(EFL_UI_VG_ANIMATION_CLASS, obj);
    elm_widget_resize_object_set(obj, pd->anim);
 
+   efl_event_callback_add(pd->anim, EFL_PLAYER_EVENT_PLAYBACK_PROGRESS_CHANGED, _animation_playback_progress_changed_cb, obj);
    efl_key_data_set(obj, "anim", pd->anim);
 
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_hint_event_cb, pd);
