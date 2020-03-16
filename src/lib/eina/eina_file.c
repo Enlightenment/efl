@@ -1261,7 +1261,7 @@ eina_file_close_from(int fd, int *except_fd)
 #ifdef HAVE_DIRENT_H
    DIR *dir;
 
-   dir = opendir("/proc/sefl/fd");
+   dir = opendir("/proc/self/fd");
    if (!dir) dir = opendir("/dev/fd");
    if (dir)
      {
