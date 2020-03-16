@@ -66,8 +66,8 @@ inline void *
 _eina_thread_join(Eina_Thread t)
 {
    //void *ret = NULL;
-   int timeout_millis = 10000;
-   int ret = WaitForSingleObject(t,timeout_millis);//int ret = pthread_join((pthread_t)t, &ret);
+   //int timeout_millis = 10000;
+   int ret = (int)WaitForSingleObject(t,INFINITE);//int ret = pthread_join((pthread_t)t, &ret);
 
    if (ret != 0) return ret;//if (ret == 0) return ret;
    return NULL;

@@ -19,8 +19,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <pthread.h>
+#include "eina_thread.h"
+//#include <pthread.h>
 #ifdef __linux__
 # include <sched.h>
 # include <sys/time.h>
@@ -31,17 +31,18 @@
 #include "eina_sched.h"
 #include "eina_log.h"
 
-#define RTNICENESS 1s
+#define RTNICENESS 1
 #define NICENESS 5
 
+#ifndef _WIN32
 EAPI void
 eina_sched_prio_drop(void)
 {
    struct sched_param param;
    int pol, ret;
-   pthread_t pthread_id;
+   Eina_Thread pthread_id;
 
-   pthread_id = pthread_self();
+   pthread_id = eina_thread_self(); //pthread_id = pthread_self();
    ret = pthread_getschedparam(pthread_id, &pol, &param);
    if (ret)
      {
@@ -82,3 +83,48 @@ eina_sched_prio_drop(void)
      }
 # endif
 }
+#else
+EAPI void
+eina_sched_prio_drop(void)
+{
+   Eina_Thread pthread_id;
+   struct sched_param param;
+
+   pthread_id = eina_thread_self(); //pthread_id = pthread_self();
+
+   param.sched_priority = GetThreadPriority((HANDLE)pthread_id);
+
+   if(EINA_UNLIKELY(param.sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
+      {
+         param.sched_priority -= RTNICENESS;
+
+         /* We don't change the policy */
+         if (param.sched_priority < 1)
+            {
+               EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
+               param.sched_priority = 1;
+            }
+         if(!SetThreadPriority((HANDLE)pthread_id, param.sched_priority))
+            {
+                EINA_LOG_ERR("Unable to query sched parameters");
+            } 
+     }
+     else
+      {
+         param.sched_priority += NICENESS;
+
+         /* We don't change the policy */
+         if (param.sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
+            {
+               EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
+               param.sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
+            }
+         if(!SetThreadPriority((HANDLE)pthread_id, param.sched_priority))
+            {
+                EINA_LOG_ERR("Unable to query sched parameters");
+            } 
+      }
+
+
+}
+#endif
