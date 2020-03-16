@@ -5690,13 +5690,13 @@ _efl_canvas_wl_efl_gfx_entity_scale_set(Eo *obj EINA_UNUSED, Comp *c, double sca
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_wl_aspect_get(const Eo *obj EINA_UNUSED, Comp *c)
+_efl_canvas_wl_aspect_propagate_get(const Eo *obj EINA_UNUSED, Comp *c)
 {
    return c->aspect;
 }
 
 EOLIAN static void
-_efl_canvas_wl_aspect_set(Eo *obj, Comp *c, Eina_Bool set)
+_efl_canvas_wl_aspect_propagate_set(Eo *obj, Comp *c, Eina_Bool set)
 {
    if (c->aspect == (!!set)) return;
    c->aspect = !!set;
@@ -5707,13 +5707,13 @@ _efl_canvas_wl_aspect_set(Eo *obj, Comp *c, Eina_Bool set)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_wl_minmax_get(const Eo *obj EINA_UNUSED, Comp *c)
+_efl_canvas_wl_minmax_propagate_get(const Eo *obj EINA_UNUSED, Comp *c)
 {
    return c->minmax;
 }
 
 EOLIAN static void
-_efl_canvas_wl_minmax_set(Eo *obj, Comp *c, Eina_Bool set)
+_efl_canvas_wl_minmax_propagate_set(Eo *obj, Comp *c, Eina_Bool set)
 {
    if (c->minmax == (!!set)) return;
    c->minmax = !!set;

@@ -25,7 +25,7 @@ void evas_common_convert_rgba_to_8bpp_gry_256_dith     (DATA32 *src, DATA8 *dst,
    b = (B_VAL(src_ptr));
 
    // Y = 0.299 * R + 0.587 * G + 0.114 * B;
-   gry8 = ((r * 19595) + (g * 38469) + (b * 7471)) >> 16;
+   gry8 = ((r * 19596) + (g * 38470) + (b * 7472)) >> 16;
 
    *dst_ptr = gry8;
 
@@ -54,7 +54,7 @@ void evas_common_convert_rgba_to_8bpp_gry_16_dith      (DATA32 *src, DATA8 *dst,
    b = (B_VAL(src_ptr));
 
    // Y = 0.299 * R + 0.587 * G + 0.114 * B;
-   gry8 = ((r * 19595) + (g * 38469) + (b * 7471)) >> 16;
+   gry8 = ((r * 19596) + (g * 38470) + (b * 7472)) >> 16;
 
    if (((gry8 - gry8 * 255 / 4) >= dith) && (gry8 < 0x07)) gry8++;
 
