@@ -785,7 +785,12 @@ _resize_shape_do(Ecore_Evas *ee)
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-        if (edata->mask) ecore_x_pixmap_free(edata->mask);
+        if (edata->mask)
+          {
+             ecore_x_pixmap_free(edata->mask);
+             edata->mask = 0;
+          }
+        if (!ee->shaped) return;
         edata->mask = ecore_x_pixmap_new(ee->prop.window, ee->w + fw, ee->h + fh, 1);
         foreground = 0;
         gc = ecore_x_gc_new(edata->mask,
