@@ -295,7 +295,8 @@ _vtable_dump(_Efl_Class *klass)
         //printf("-> %s\n", _eo_classes[i]->desc->name);
         for (int j = 0; j < node->count; ++j)
           {
-             printf("NEW;%s;%p;%s\n", klass->desc->name, node->funcs[j].func, node->funcs[j].src ? node->funcs[j].src->desc->name : NULL);
+             if (node->funcs[j].func)
+               printf("NEW;%s;%p;%s\n", klass->desc->name, node->funcs[j].func, node->funcs[j].src ? node->funcs[j].src->desc->name : NULL);
           }
      }
    for (unsigned int i = 0; i < klass->vtable.size; ++i)
@@ -306,13 +307,16 @@ _vtable_dump(_Efl_Class *klass)
              for (int k = 0; k < 32; ++k)
                {
                   op_type_funcs f = chain1.chain2->funcs[k];
-                  if (f.src && f.func != _eo_class_isa_func)
+                  if (f.src && f.func && f.func != _eo_class_isa_func)
                     printf("OLD;%s;%p;%s\n", klass->desc->name, f.func, f.src->desc->name);
                }
           }
      }
 #endif
 }
+
+
+EAPI void _dump_all_classes(void);
 
 EAPI void
 _dump_all_classes(void)
@@ -384,6 +388,37 @@ _vtable_prepare_empty_node2(Eo_Vtable2 *dest, unsigned int length, unsigned int 
    dest->chain[class_id].count = length;
    dest->chain[class_id].funcs = calloc(sizeof(op_type_funcs), dest->chain[class_id].count);
    asdf_allocated_memory += sizeof(op_type_funcs) * dest->chain[class_id].count;
+}
+
+static void
+_vtable_merge_defined_api(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
+{
+   for (unsigned int i = 0; i < src->size; ++i)
+     {
+        //if there is a source node evalulate if we need to copy it
+        if (src->chain[i].funcs)
+          {
+             if (!dest->chain[i].funcs)
+               {
+                  dest->chain[i] = src->chain[i];
+                  EINA_SAFETY_ON_FALSE_RETURN(hitmap[i] == EINA_FALSE);
+               }
+             else
+               {
+                  if (!hitmap[i])
+                    {
+                       const Eo_Vtable_Node node = dest->chain[i];
+                       _vtable_copy_node2(&dest->chain[i], &node); //we copy what we have, and overwrite in the later for loop
+                       hitmap[i] = EINA_TRUE;
+                    }
+                  for (int j = 0; j < src->chain[i].count; ++j)
+                    {
+                       if (src->chain[i].funcs[j].func)
+                         dest->chain[i].funcs[j] = src->chain[i].funcs[j];
+                    }
+              }
+          }
+     }
 }
 
 static void
@@ -1148,6 +1183,29 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
           _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
      }
      {
+        const _Efl_Class **mro_itr = klass->mro;
+        for (  ; *mro_itr ; mro_itr++) ;
+
+        /* Skip ourselves. */
+        for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
+          {
+             //printf("-> %s\n", (*mro_itr)->desc->name);
+             _vtable_merge_defined_api(&klass->vtable2, &(*mro_itr)->vtable2, hitmap);
+          }
+        //add slots for the interfaces we are inheriting from
+        for (int i = 0; klass->extensions[i]; i++)
+          {
+             const _Efl_Class *ext = klass->extensions[i];
+             /* In case of a none regular APIs, merge in the APIs specified on them, *or* simply copy the used vtables from these types */
+             if (ext->desc->type == EFL_CLASS_TYPE_INTERFACE)
+               {
+                  _vtable_merge_empty2(&klass->vtable2, &klass->extensions[i]->vtable2, hitmap);
+               }
+          }
+
+     }
+     #if 0
+     {
         /* Merge in the vtable information from the parent */
         if (klass->parent)
           {
@@ -1167,6 +1225,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                }
           }
      }
+     #endif
      {
         unsigned int i;
 
@@ -1179,16 +1238,20 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                {
                   const _Efl_Class *required_klass = _eo_classes[class_id];
                   //in case this type is not already inherited, error on everything that is not a mixin
-                  if (klass->desc->type != EFL_CLASS_TYPE_MIXIN)
-                    {
-                       ERR("There is an API implemented, whoms type is not part of this class. %s vs. %s", klass->desc->name, required_klass->desc->name);
-                       _vtable_merge_in2(&klass->vtable2, &required_klass->vtable2);
-                    }
-                  else
+                  if (klass->desc->type == EFL_CLASS_TYPE_MIXIN ||
+                      required_klass->desc->type == EFL_CLASS_TYPE_INTERFACE ||
+                      required_klass->desc->type == EFL_CLASS_TYPE_REGULAR ||
+                      required_klass->desc->type == EFL_CLASS_TYPE_REGULAR_NO_INSTANT)
                     {
                        //this is when a mixin implemets a regular api, we just prepare a empty node, the rest will be implemented later
                        _vtable_prepare_empty_node2(&klass->vtable2, required_klass->vtable2.chain[class_id].count, class_id);
                     }
+                  else
+                    {
+                       ERR("There is an API implemented, whoms type is not part of this class. %s vs. %s", klass->desc->name, required_klass->desc->name);
+                       _vtable_merge_in2(&klass->vtable2, &required_klass->vtable2);
+                    }
+
                }
              //in case we are having a function overwrite for a specific type, copy the relevant vtable
              if (!hitmap[class_id])
@@ -1199,7 +1262,11 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                }
           }
      }
-   return _eo_class_funcs_set(&klass->vtable, &klass->vtable2, object_ops, klass, klass, 0, EINA_FALSE, klass->base_id2);
+   Eina_Bool b = _eo_class_funcs_set(&klass->vtable, &klass->vtable2, object_ops, klass, klass, 0, EINA_FALSE, klass->base_id2);
+
+   //_dump_all_classes();
+
+   return b;
 
 err_funcs:
    ERR("Class %s already had its functions set..", klass->desc->name);
