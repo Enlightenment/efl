@@ -8,6 +8,7 @@
 
 #include <efl_canvas_layout_types.eot.h>
 
+#include "efl_canvas_layout_part_type_provider.eo.h"
 #include "efl_canvas_layout_part.eo.h"
 #include "efl_canvas_layout_part_box.eo.h"
 #include "efl_canvas_layout_part_table.eo.h"

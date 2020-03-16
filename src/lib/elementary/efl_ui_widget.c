@@ -5644,7 +5644,7 @@ _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
 }
 
 static Efl_Canvas_Layout_Part_Type
-_efl_ui_widget_part_efl_canvas_layout_part_type_get(const Eo *obj EINA_UNUSED, Elm_Part_Data *pd)
+_efl_ui_widget_part_efl_canvas_layout_part_type_provider_part_type_get(const Eo *obj EINA_UNUSED, Elm_Part_Data *pd)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(pd->obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EFL_CANVAS_LAYOUT_PART_TYPE_NONE);
@@ -5671,9 +5671,6 @@ _efl_ui_widget_part_efl_ui_property_bind_property_bind(Eo *obj, Elm_Part_Data *p
 
    return _efl_ui_property_bind(widget, obj, pd, ppd->part, key, property);
 }
-
-#define EFL_UI_WIDGET_PART_EXTRA_OPS \
-   EFL_OBJECT_OP_FUNC(efl_canvas_layout_part_type_get, _efl_ui_widget_part_efl_canvas_layout_part_type_get)
 
 #include "efl_ui_widget_part.eo.c"
 

@@ -38,7 +38,7 @@ _efl_canvas_layout_part_invalid_efl_canvas_layout_part_state_get(const Eo *proxy
 }
 
 EOLIAN static Efl_Canvas_Layout_Part_Type
-_efl_canvas_layout_part_invalid_efl_canvas_layout_part_part_type_get(const Eo *proxy EINA_UNUSED, void *_pd EINA_UNUSED)
+_efl_canvas_layout_part_invalid_efl_canvas_layout_part_type_provider_part_type_get(const Eo *proxy EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    return EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
 }

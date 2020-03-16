@@ -1,0 +1,20 @@
+import efl_canvas_layout_types;
+
+interface @beta Efl.Canvas.Layout_Part_Type_Provider
+{
+   [[Common Interface for the Part Type
+
+     The getter for the part type is usefull for different types of part hirachies. This interface can be used to support all the different kinds of part types that are available in EFL.
+   ]]
+   c_prefix: efl_canvas_layout;
+   methods {
+      @property part_type {
+         [[Type of this part in the layout.]]
+         get {
+         }
+         values {
+            type: Efl.Canvas.Layout_Part_Type(Efl.Canvas.Layout_Part_Type.none); [[One of the types or $none if not an existing part.]]
+         }
+      }
+   }
+}

@@ -14,7 +14,7 @@ class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implem
    implements {
       // Efl.Canvas.Layout.Part
       Efl.Canvas.Layout_Part.state { get; }
-      Efl.Canvas.Layout_Part.part_type { get; }
+      Efl.Canvas.Layout_Part_Type_Provider.part_type { get; }
       Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }

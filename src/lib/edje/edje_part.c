@@ -121,7 +121,7 @@ _efl_canvas_layout_part_state_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Layout_P
 }
 
 EOLIAN static Efl_Canvas_Layout_Part_Type
-_efl_canvas_layout_part_part_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
+_efl_canvas_layout_part_efl_canvas_layout_part_type_provider_part_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    Edje_Real_Part *rp;
 
@@ -204,4 +204,5 @@ _efl_canvas_layout_part_efl_object_debug_name_override(Eo *obj, Efl_Canvas_Layou
    eina_strbuf_append_printf(sb, "%s : %s : %s", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
 }
 
+#include "efl_canvas_layout_part_type_provider.eo.c"
 #include "efl_canvas_layout_part.eo.c"
