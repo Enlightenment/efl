@@ -9,26 +9,64 @@ extern "C" {
 #include "eina_types.h"
 #include "eina_value.h"
 
-/**
+/** @file */
+
+/** @struct Eina_Promise
  * @ingroup Eina_Promise
- *
+ * An opaque structure representing a piece of data that will be available at a later point.
+ * @typedef struct _Eina_Promise Eina_Promise
+ * Convenience wrapper.
+ */
+typedef struct _Eina_Promise Eina_Promise;
+
+/** @struct Eina_Future
+ * @ingroup Eina_Future
+ * An opaque structure representing a callback to be called when a promise is fulfilled.
+ * @typedef struct _Eina_Future Eina_Future
+ * Convenience wrapper.
+ */
+typedef struct _Eina_Future Eina_Future;
+
+/** @typedef struct _Eina_Future_Desc Eina_Future_Desc
+ * @ingroup Eina_Future
+ * Convenience wrapper over #_Eina_Future_Desc. */
+typedef struct _Eina_Future_Desc Eina_Future_Desc;
+
+/** @typedef struct _Eina_Future_Race_Result Eina_Future_Race_Result
+ * @ingroup Eina_Future
+ * Convenience wrapper over #_Eina_Future_Race_Result. */
+typedef struct _Eina_Future_Race_Result Eina_Future_Race_Result;
+
+/**
+ * @defgroup Eina_Future_Callbacks Eina Future Callbacks
+ * @ingroup Eina_Future
+ * @brief Methods and structures dealing with #Eina_Future callbacks
  * @{
  */
-typedef struct _Eina_Future_Desc Eina_Future_Desc;
-typedef struct _Eina_Promise Eina_Promise;
-typedef struct _Eina_Future Eina_Future;
+
+/** @typedef struct _Eina_Future_Cb_Easy_Desc Eina_Future_Cb_Easy_Desc
+ * Convenience wrapper over #_Eina_Future_Cb_Easy_Desc. */
 typedef struct _Eina_Future_Cb_Easy_Desc Eina_Future_Cb_Easy_Desc;
+
+/** @typedef struct _Eina_Future_Cb_Console_Desc Eina_Future_Cb_Console_Desc
+ * Convenience wrapper over _Eina_Future_Cb_Console_Desc. */
 typedef struct _Eina_Future_Cb_Console_Desc Eina_Future_Cb_Console_Desc;
+
+/** @typedef struct _Eina_Future_Scheduler Eina_Future_Scheduler
+ * Convenience wrapper over _Eina_Future_Scheduler. */
 typedef struct _Eina_Future_Scheduler Eina_Future_Scheduler;
+
+/** @typedef struct _Eina_Future_Schedule_Entry Eina_Future_Schedule_Entry
+ * Convenience wrapper over _Eina_Future_Schedule_Entry. */
 typedef struct _Eina_Future_Schedule_Entry Eina_Future_Schedule_Entry;
-typedef struct _Eina_Future_Race_Result Eina_Future_Race_Result;
+
+/** @typedef struct _Eina_Future_Cb_Log_Desc Eina_Future_Cb_Log_Desc
+ * Convenience wrapper over _Eina_Future_Cb_Log_Desc. */
 typedef struct _Eina_Future_Cb_Log_Desc Eina_Future_Cb_Log_Desc;
 
 /**
- * @defgroup Eina_Future_Callbacks Efl Future Callbacks
- * @ingroup eina_future
- * @typedef Eina_Future_Cb Eina_Future_Cb
- *
+ * @typedef Eina_Future_Cb
+ 
  * A callback used to inform that a future was resolved.
  * Usually this callback is called from a clean context, that is, from the
  * main loop or some platform defined safe context. However there are
@@ -43,18 +81,18 @@ typedef struct _Eina_Future_Cb_Log_Desc Eina_Future_Cb_Log_Desc;
  *
  * @param[in] data The data provided by the user
  *
- * @param[in] value An Eina_Value which contains the operation result. Before using
+ * @param[in] value An #Eina_Value which contains the operation result. Before using
  * the @p value, its type must be checked in order to avoid errors. This is needed because
- * if an operation fails the Eina_Value type will be EINA_VALUE_TYPE_ERROR
+ * if an operation fails the #Eina_Value type will be #EINA_VALUE_TYPE_ERROR
  * which is a different type than the expected operation result.
  *
  * @param[in] dead_future A pointer to the future that was completed.
  *
- * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
+ * @return An #Eina_Value to pass to the next #Eina_Future in the chain (if any).
  * If there is no need to convert the received value, it's @b recommended
- * to passthrough @p value argument. If you need to convert to a different type
- * or generate a new value, use @c eina_value_setup() on @b another Eina_Value
- * and return it. By returning a promise Eina_Value (eina_promise_as_value()) the
+ * to passthrough the @p value argument. If you need to convert to a different type
+ * or generate a new value, use @c eina_value_setup() on @b another #Eina_Value
+ * and return it. By returning a promise #Eina_Value (eina_promise_as_value()) the
  * whole chain will wait until the promise is resolved in
  * order to continue its execution.
  * Note that the value contents must survive this function scope,
@@ -63,7 +101,7 @@ typedef struct _Eina_Future_Cb_Log_Desc Eina_Future_Cb_Log_Desc;
  * using @c eina_value_flush() once they are unused (no more future or futures
  * returned a new value).
  *
- * @note The returned value @b can be an EFL_VALUE_TYPE_PROMISE! (see eina_promise_as_value() and
+ * @note The returned value @b can be an #EINA_VALUE_TYPE_PROMISE! (see eina_promise_as_value() and
  * eina_future_as_value()) In this case the future chain will wait until the promise is resolved.
  *
  * @see eina_future_cancel()
@@ -74,13 +112,11 @@ typedef struct _Eina_Future_Cb_Log_Desc Eina_Future_Cb_Log_Desc;
  * @see eina_future_chain_array()
  * @see eina_future_as_value()
  * @see eina_promise_as_value()
- * @{
  */
 typedef Eina_Value (*Eina_Future_Cb)(void *data, const Eina_Value value, const Eina_Future *dead_future);
 
 /**
- * @struct _Eina_Future_Scheduler
- * @ingroup eina_promise
+ * @struct _Eina_Future_Schedule_Entry
  *
  * A struct that represents an scheduled event.
  * This struct may be used by Eina to cancel
@@ -88,8 +124,8 @@ typedef Eina_Value (*Eina_Future_Cb)(void *data, const Eina_Value value, const E
  *
  * @see eina_promise_new()
  *
- * @see #Eina_Future_Scheduler
- * @see #Eina_Future_Scheduler_Cb
+ * @see Eina_Future_Scheduler
+ * @see Eina_Future_Scheduler_Cb
  */
 struct _Eina_Future_Schedule_Entry {
    /**
@@ -102,8 +138,7 @@ struct _Eina_Future_Schedule_Entry {
 
 /**
  * @typedef Eina_Future_Scheduler_Cb
- * @ingroup eina_promise
- * A callback used by the Eina_Future_Scheduler to deliver
+ * A callback used by the #Eina_Future_Scheduler to deliver
  * the future operation result.
  *
  * @param[out] f The delivered future.
@@ -112,21 +147,20 @@ struct _Eina_Future_Schedule_Entry {
  *
  * @see eina_promise_new()
  *
- * @see #Eina_Future_Schedule_Entry
- * @see #Eina_Future_Scheduler
+ * @see Eina_Future_Schedule_Entry
+ * @see Eina_Future_Scheduler
  */
 typedef void (*Eina_Future_Scheduler_Cb)(Eina_Future *f, Eina_Value value);
 
 /**
  * @struct _Eina_Future_Scheduler
- * @ingroup eina_promise
  * This struct is used as a bridge between Eina and the future scheduler.
- * By using the functions provided by #_Eina_Future_Scheduler Eina can
+ * By using the functions provided by _Eina_Future_Scheduler Eina can
  * schedule futures resolutions, rejections and cancellations to a safe context.
  *
  * @see eina_promise_new()
- * @see #Eina_Future_Schedule_Entry
- * @see #Eina_Future_Scheduler_Cb
+ * @see Eina_Future_Schedule_Entry
+ * @see Eina_Future_Scheduler_Cb
  */
 struct _Eina_Future_Scheduler {
    /**
@@ -137,7 +171,7 @@ struct _Eina_Future_Scheduler {
     *
     * Must call back from a safe context using @p cb(f,value)
     * @param[in,out] scheduler The scheduler to use.
-    * @param[in] cb The #Eina_Future_Scheduler_Cb to be called and deliver the @p f and @p value.
+    * @param[in] cb The Eina_Future_Scheduler_Cb to be called and deliver the @p f and @p value.
     * @param[in] f The future to be delivered to @p cb
     * @param[in] value The value to be delivered to @p cb
     * @return A scheduled entry or @c NULL on error
@@ -155,26 +189,25 @@ struct _Eina_Future_Scheduler {
 };
 
 /**
- * @typedef Eina_Promise_Cancel_Cb Eina_Promise_Cancel_Cb.
- * @ingroup eina_promise
+ * @typedef void (*Eina_Promise_Cancel_Cb) (void *data, const Eina_Promise *dead_promise)
  *
  * A callback used to inform that a promise was canceled.
  *
  * A promise may be canceled by the user calling `eina_future_cancel()`
- * on any Eina_Future that is part of the chain that uses an Eina_Promise,
+ * on any #Eina_Future that is part of the chain that uses an #Eina_Promise,
  * that will cancel the whole chain and then the promise.
  *
  * It should stop all asynchronous operations or at least mark them to be
  * discarded instead of resolved. Actually it can't be resolved once
  * canceled since the given pointer @c dead_promise is now invalid.
  *
- * @note This callback is @b mandatory for a reason, do not provide an empty
+ * @note @li This callback is @b mandatory for a reason, do not provide an empty
  *       callback as it'll likely result in memory corruption and invalid access.
  *       If impossible to cancel an asynchronous task, then create an
- *       intermediate memory to hold Eina_Promise and make it @c NULL,
+ *       intermediate memory to hold #Eina_Promise and make it @c NULL,
  *       in this callback. Then prior to resolution check if the pointer is set.
  *
- * @note This callback is @b not called if eina_promise_resolve() or
+ * @note @li This callback is @b not called if eina_promise_resolve() or
  *       eina_promise_reject() are used. If any cleanup is needed, then
  *       call yourself. It's only meant as cancellation, not a general
  *       "free callback".
@@ -188,15 +221,14 @@ struct _Eina_Future_Scheduler {
 typedef void (*Eina_Promise_Cancel_Cb) (void *data, const Eina_Promise *dead_promise);
 
 /**
- * @typedef Eina_Future_Success_Cb Eina_Future_Success_Cb.
- * @ingroup eina_future
+ * @typedef Eina_Future_Success_Cb
  *
  * A callback used to inform that the future completed with success.
  *
- * Unlike #Eina_Future_Cb this callback only called if the future operation was successful, this is,
- * no errors occurred (@p value type differs from EINA_VALUE_TYPE_ERROR)
- * and the @p value matches #_Eina_Future_Cb_Easy_Desc::success_type (if given).
- * In case #_Eina_Future_Cb_Easy_Desc::success_type was not supplied (it's @c NULL) the @p value type
+ * Unlike #Eina_Future_Cb this callback is only called if the future operation was successful, this is,
+ * no errors occurred (@p value type differs from #EINA_VALUE_TYPE_ERROR)
+ * and the @p value matches _Eina_Future_Cb_Easy_Desc::success_type (if given).
+ * In case _Eina_Future_Cb_Easy_Desc::success_type was not supplied (it's @c NULL) the @p value type
  * must be checked before using it.
  *
  * @note This function is always called from a safe context (main loop or some platform defined safe context).
@@ -221,36 +253,35 @@ typedef void (*Eina_Promise_Cancel_Cb) (void *data, const Eina_Promise *dead_pro
 typedef Eina_Value (*Eina_Future_Success_Cb)(void *data, const Eina_Value value);
 
 /**
- * @typedef Eina_Future_Error_Cb Eina_Future_Error_Cb.
- * @ingroup eina_future
+ * @typedef Eina_Future_Error_Cb
  *
  * A callback used to inform that the future completed with failure.
  *
  * Unlike #Eina_Future_Success_Cb this function is only called when an error
- * occurs during the future process or when #_Eina_Future_Cb_Easy_Desc::success_type
+ * occurs during the future process or when _Eina_Future_Cb_Easy_Desc::success_type
  * differs from the future result.
  * On future creation errors and future cancellation this function will be called
- * from the current context with the following errors respectfully: `EINVAL`, `ENOMEM` and  `ECANCELED`.
+ * from the current context with the following errors: `EINVAL`, `ENOMEM` and  `ECANCELED`.
  * Otherwise this function is called from a safe context.
  *
  * If it was possible to recover from an error this function should return an empty value
- * `return EINA_VALUE_EMPTY;` or any other Eina_Value type that differs from EINA_VALUE_TYPE_ERROR.
+ * #EINA_VALUE_EMPTY or any other #Eina_Value type that differs from #EINA_VALUE_TYPE_ERROR.
  * In this case the error will not be reported by the other futures in the chain (if any), otherwise
- * if an Eina_Value type EINA_VALUE_TYPE_ERROR is returned the error will continue to be reported
+ * if an #Eina_Value type #EINA_VALUE_TYPE_ERROR is returned the error will continue to be reported
  * to the other futures in the chain.
  *
  * @param[in] data The data provided by the user.
  * @param[in] error The operation error
- * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
+ * @return An #Eina_Value to pass to the next #Eina_Future in the chain (if any).
  * If you need to convert to a different type or generate a new value,
- * use @c eina_value_setup() on @b another Eina_Value
+ * use eina_value_setup() on @b another Eina_Value
  * and return it. By returning a promise Eina_Value (eina_promise_as_value()) the
  * whole chain will wait until the promise is resolved in
  * order to continue its execution.
  * Note that the value contents must survive this function scope,
  * that is, do @b not use stack allocated blobs, arrays, structures or types that
  * keep references to memory you give. Values will be automatically cleaned up
- * using @c eina_value_flush() once they are unused (no more future or futures
+ * using eina_value_flush() once they are unused (no more future or futures
  * returned a new value).
  * @see eina_future_cb_easy_from_desc()
  * @see eina_future_cb_easy()
@@ -258,8 +289,7 @@ typedef Eina_Value (*Eina_Future_Success_Cb)(void *data, const Eina_Value value)
 typedef Eina_Value (*Eina_Future_Error_Cb)(void *data, const Eina_Error error);
 
 /**
- * @typedef Eina_Future_Free_Cb Eina_Future_Free_Cb.
- * @ingroup eina_future
+ * @typedef Eina_Future_Free_Cb
  *
  * A callback used to inform that the future was freed and the user should also @c free the @p data.
  * This callback may be called from an unsafe context if the future was canceled or an error
@@ -278,7 +308,6 @@ typedef void (*Eina_Future_Free_Cb)(void *data, const Eina_Future *dead_future);
 
 /**
  * @struct _Eina_Future_Cb_Easy_Desc
- * @ingroup eina_future
  *
  * A struct with callbacks to be used by eina_future_cb_easy_from_desc() and eina_future_cb_easy()
  *
@@ -339,7 +368,6 @@ struct _Eina_Future_Cb_Easy_Desc {
 
 /**
  * @struct _Eina_Future_Cb_Console_Desc
- * @ingroup eina_future
  *
  * A struct used to define the prefix and suffix to be printed
  * along side the a future value. This struct is used by
@@ -360,7 +388,6 @@ struct _Eina_Future_Cb_Console_Desc {
 
 /**
  * @struct _Eina_Future_Cb_Log_Desc
- * @ingroup eina_future
  *
  * This struct is used by eina_future_cb_log_from_desc() and
  * its contents will be routed to eina_log_print() along side
@@ -400,18 +427,22 @@ struct _Eina_Future_Cb_Log_Desc {
 };
 
 /**
+ * @}
+ */
+
+/**
  * @struct _Eina_Future_Desc
- * @ingroup eina_future
+ * @ingroup Eina_Future
  * A struct used to define a callback and data for a future.
  *
  * This struct contains a future completion callback and a data to the future
  * completion callback which is used by eina_future_then(), eina_future_chain()
- * and friends to inform the user about the future result. The #_Eina_Future_Desc::data
- * variable should be freed when #_Eina_Future_Desc::cb is called, otherwise it will leak.
+ * and friends to inform the user about the future result. The _Eina_Future_Desc::data
+ * variable should be freed when _Eina_Future_Desc::cb is called, otherwise it will leak.
  *
  * @note If eina_future_then(), eina_future_chain() and friends fails to return a valid future
- * (in other words: @c NULL is returned) the #_Eina_Future_Desc::cb will be called
- * report an error like `EINVAL` or `ENOMEM` so #_Eina_Future_Desc::data can be freed.
+ * (in other words: @c NULL is returned) the _Eina_Future_Desc::cb will be called
+ * report an error like `EINVAL` or `ENOMEM` so _Eina_Future_Desc::data can be freed.
  *
  * @see eina_future_then()
  * @see eina_future_chain_array()
@@ -452,36 +483,26 @@ struct _Eina_Future_Desc {
 };
 
 /**
- * @}
- */
-
-/**
- * @defgroup Eina_Promise Eina_Promise
- * Creates a new promise.
+ * @defgroup Eina_Promise Eina Promises
+ * @ingroup Eina
  *
- * This function creates a new promise which can be used to create a future
- * using eina_future_new(). Every time a promise is created a #Eina_Promise_Cancel_Cb
- * must be provided which is used to free resources that were created.
+ * @brief Promises are a programming paradigm that simplifies synchronization when concurrent execution is present.
  *
- * A promise may be canceled directly by calling
- * @c eina_future_cancel(eina_future_new(eina_promise_new(...)))
- * that is, canceling any future that is chained to receive the results.
+ * Since C does not natively support Promises the Eina library provides the Eina_Promise and Eina_Future objects.
  *
- * However promises can be canceled indirectly by other entities.
- * These other entities will call `eina_future_cancel()` themselves,
- * however you may not be aware of that. Some common sources
- * of indirect cancellations:
+ * In procedural languages like C if you need a value which is not yet available, for instance because
+ * it takes a long time to calculate or has to be fetched from a remote server, you typically have to wait.
  *
- * @li A subsystem was shutdown, canceling all pending futures (i.e.: ecore_shutdown())
+ * Other languages however can return a Promise and continue execution immediately. A promise acts as a placeholder
+ * for the requested value: the value is not available yet but will be at some point in the future.
  *
- * @li An EO object was linked to the promise or future, then if the object dies (last reference
- * is gone), then the pending promises and futures will be canceled.
+ * With a promise in hand you can attach callbacks to be triggered when the value becomes available (i.e. when
+ * the promise is fulfilled) and then continue your calculations. You can even pass the promise to other methods
+ * which will then be executed as values become available, forming complex chains.
  *
- * @li Some other entity (library provider or library user) chained and canceled his future,
- * which will result in your future being canceled.
- *
- * Since a promise may be canceled indirectly (by code sections that goes beyond your scope)
- * you should always provide a cancel callback, even if you think you'll not need it.
+ * An Eina_Promise can be considered as an object with the sole purpose of emitting the "Promise Resolved" event.
+ * Eina_Future are callbacks attached to this object to be called when the event is emitted. The promised value is
+ * passed to the callbacks whenever it's available.
  *
  * Here's a typical example:
  *
@@ -521,6 +542,43 @@ struct _Eina_Future_Desc {
  * }
  * @endcode
  *
+ * @{
+ */
+
+/**
+ * Value type for #Eina_Value's containing an #Eina_Promise
+ */
+EAPI extern const Eina_Value_Type EINA_VALUE_TYPE_PROMISE;
+
+/**
+ * Creates a new promise.
+ *
+ * This function creates a new promise which can be used to create a future
+ * using eina_future_new(). Every time a promise is created an #Eina_Promise_Cancel_Cb
+ * must be provided which is used to free resources that were created.
+ *
+ * A promise may be canceled directly by calling:
+ * @code
+ * eina_future_cancel(eina_future_new(eina_promise_new(...)))
+ * @endcode
+ * That is, canceling any future that is chained to receive the results.
+ *
+ * However promises can be canceled indirectly by other entities.
+ * These other entities will call eina_future_cancel() themselves,
+ * however you may not be aware of that. Some common sources
+ * of indirect cancellations:
+ *
+ * @li A subsystem was shutdown, canceling all pending futures (i.e.: ecore_shutdown())
+ *
+ * @li An EO object was linked to the promise or future, then if the object dies (last reference
+ * is gone), then the pending promises and futures will be canceled.
+ *
+ * @li Some other entity (library provider or library user) chained and canceled his future,
+ * which will result in your future being canceled.
+ *
+ * Since a promise may be canceled indirectly (by code sections that goes beyond your scope)
+ * you should always provide a cancel callback, even if you think you'll not need it.
+ *
  * If you already have a value and want to create a future that will
  * resolve to it directly use the eina_future_resolved(), it has the
  * same effect as creating a promise and immediately resolving it.
@@ -536,10 +594,9 @@ struct _Eina_Future_Desc {
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
  * @see eina_promise_as_value()
- * @see #Eina_Future_Scheduler
- * @see #Eina_Future_Scheduler_Entry
- * @see #Eina_Future_Scheduler_Cb
- * @{
+ * @see Eina_Future_Scheduler
+ * @see Eina_Future_Schedule_Entry
+ * @see Eina_Future_Scheduler_Cb
  */
 EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promise_Cancel_Cb cancel_cb, const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
@@ -548,15 +605,17 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  *
  * This function creates a new promise from a future currently being resolved which can be
  * used to create a #Eina_Value with eina_promise_as_value(). Every time a promise is
- * created a #Eina_Promise_Cancel_Cb must be provided which is used to free resources
+ * created an #Eina_Promise_Cancel_Cb must be provided which is used to free resources
  * that were created.
  *
- * A promise may be canceled directly by calling
- * @c eina_future_cancel(eina_future_new(eina_promise_new(...)))
- * that is, canceling any future that is chained to receive the results.
+ * A promise may be canceled directly by calling:
+ * @code
+ * eina_future_cancel(eina_future_new(eina_promise_new(...)))
+ * @endcode
+ * That is, canceling any future that is chained to receive the results.
  *
  * However promises can be canceled indirectly by other entities.
- * These other entities will call `eina_future_cancel()` themselves,
+ * These other entities will call eina_future_cancel() themselves,
  * however you may not be aware of that. Some common sources
  * of indirect cancellations:
  *
@@ -574,7 +633,6 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  * Here's a typical example:
  *
  * @code
- *
  * Eina_Value
  * _future_resolve(void *data, const Eina_Value v, const Eina_Future *dead_future)
  * {
@@ -589,11 +647,11 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  * same effect as creating a promise and immediately resolving it.
  *
  * @note This function is to be used solely inside of a future resolve callback with
- * the Eina_Value being returned from it.
+ * the #Eina_Value being returned from it.
  *
  * @param[in] dead_future The future being resolved to get a scheduler from.
  * @param[in] cancel_cb A callback used to inform that the promise was canceled. Use
- * this callback to @c free @p data. @p cancel_cb must not be @c NULL !
+ * this callback to @c free @p data. @p cancel_cb must not be @c NULL.
  * @param[in] data Data to @p cancel_cb.
  * @return A promise or @c NULL on error.
  * @see eina_future_cancel()
@@ -602,9 +660,9 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
  * @see eina_promise_as_value()
- * @see #Eina_Future_Scheduler
- * @see #Eina_Future_Scheduler_Entry
- * @see #Eina_Future_Scheduler_Cb
+ * @see Eina_Future_Scheduler
+ * @see Eina_Future_Schedule_Entry
+ * @see Eina_Future_Scheduler_Cb
  */
 EAPI Eina_Promise *eina_promise_continue_new(const Eina_Future *dead_future, Eina_Promise_Cancel_Cb cancel_cb, const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
@@ -639,7 +697,7 @@ EAPI void eina_promise_resolve(Eina_Promise *p, Eina_Value value) EINA_ARG_NONNU
  *
  * @param[in,out] p A promise to reject.
  * @param[in] err An Eina_Error value
- * @note Internally this function will create an Eina_Value with type #EINA_VALUE_TYPE_ERROR.
+ * @note Internally this function will create an #Eina_Value with type #EINA_VALUE_TYPE_ERROR.
  *
  * @see eina_promise_new()
  * @see eina_promise_resolve()
@@ -653,23 +711,27 @@ EAPI void eina_promise_reject(Eina_Promise *p, Eina_Error err) EINA_ARG_NONNULL(
  */
 
 /**
- * @defgroup Eina_Future Eina_Future
+ * @defgroup Eina_Future Eina Futures
+ * @ingroup Eina_Promise
+ * @brief Methods and structures dealing with #Eina_Future
+ * @{
+ */
+
+/**
  * Cancels a future.
  *
  * This function will cancel the whole future chain immediately (it will not be schedule to the next mainloop pass)
- * and it will also cancel the promise linked against it. The Eina_Future_Cb will be called
- * with an Eina_Value typed as #EINA_VALUE_TYPE_ERROR, which its value will be
- * ECANCELED
+ * and it will also cancel the promise linked against it. The #Eina_Future_Cb will be called
+ * with an #Eina_Value typed as #EINA_VALUE_TYPE_ERROR, with its value set to @c ECANCELED
  * @param[in,out] f The future to cancel.
- * @{
  */
 EAPI void eina_future_cancel(Eina_Future *f) EINA_ARG_NONNULL(1);
 
 /**
  * Flushes an #Eina_Future_Desc
  *
- * This function is mainly used by bindings to flush a #Eina_Future_Desc.
- * It will call the #Eina_Future_Cb with `ENOMEM` and zero the @p desc contents.
+ * This function is mainly used by bindings to flush an #Eina_Future_Desc.
+ * It will call the #Eina_Future_Cb with @c ENOMEM and zero the @p desc contents.
  *
  * @param[in,out] desc The #Eina_Future_Desc to flush, if @c NULL this is a noop.
  */
@@ -678,8 +740,8 @@ EAPI void eina_future_desc_flush(Eina_Future_Desc *desc);
 /**
  * Flushes an #Eina_Future_Cb_Easy_Desc
  *
- * This function is mainly used by bindings to flush a #Eina_Future_Cb_Easy_Desc.
- * It will call the #Eina_Future_Error_Cb with `ENOMEM`, the #Eina_Future_Free_Cb and
+ * This function is mainly used by bindings to flush an #Eina_Future_Cb_Easy_Desc.
+ * It will call the #Eina_Future_Error_Cb with @c ENOMEM, the #Eina_Future_Free_Cb and
  * zero the @p desc contents.
  *
  * @param[in,out] desc The #Eina_Future_Cb_Easy_Desc to flush, if @c NULL this is a noop.
@@ -687,11 +749,11 @@ EAPI void eina_future_desc_flush(Eina_Future_Desc *desc);
 EAPI void eina_future_cb_easy_desc_flush(Eina_Future_Cb_Easy_Desc *desc);
 
 /**
- * Creates a new Eina_Value from a promise.
+ * Creates a new #Eina_Value from a promise.
  *
- * This function creates a new Eina_Value that will store a promise
+ * This function creates a new #Eina_Value that will store an #Eina_Promise
  * in it. This function is useful for dealing with promises inside
- * a #Eina_Future_Cb. By returning a Promise Eina_Value the
+ * an #Eina_Future_Cb. By returning a promise inside the #Eina_Value the
  * whole chain will wait until the promise is resolved in
  * order to continue its execution. Example:
  *
@@ -756,8 +818,8 @@ EAPI void eina_future_cb_easy_desc_flush(Eina_Future_Cb_Easy_Desc *desc);
  * }
  * @endcode
  *
- * @param[in,out] p The promise obect to create the value from.
- * @return An Eina_Value. On error the value's type will be @c NULL.
+ * @param[in,out] p The promise object to wrap in a value.
+ * @return An #Eina_Value. On error the value's type will be @c NULL.
  *
  * @note If an error happens the promise will be CANCELED.
  * @see eina_future_as_value()
@@ -767,10 +829,10 @@ EAPI void eina_future_cb_easy_desc_flush(Eina_Future_Cb_Easy_Desc *desc);
 EAPI Eina_Value eina_promise_as_value(Eina_Promise *p) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Creates an Eina_Value from a future.
+ * Creates an #Eina_Value from a future.
  *
  * This function is used for the same purposes as eina_promise_as_value(),
- * but receives an Eina_Future instead.
+ * but receives an #Eina_Future instead.
  *
  * @param[in,out] f A future to create a Eina_Value from.
  * @return An Eina_Value. On error the value's type will be @c NULL.
@@ -808,7 +870,7 @@ EAPI Eina_Future *eina_future_new(Eina_Promise *p) EINA_ARG_NONNULL(1) EINA_WARN
  * Creates a new future that is already resolved to a value.
  *
  * This function creates a new future with an already known value,
- * that will be resolved and dispatched by the given @a scheduler as
+ * that will be resolved and dispatched by the given @p scheduler as
  * usual.
  *
  * This is a helper that behaves the same as eina_promise_new()
@@ -840,18 +902,18 @@ EAPI Eina_Future *eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Va
  * Creates a new future that is already rejected to a specified error.
  *
  * This function creates a new future with an already known error,
- * that will be resolved and dispatched by the given @a scheduler as
+ * that will be resolved and dispatched by the given @p scheduler as
  * usual.
  *
  * This is a helper that behaves the same as eina_promise_new()
- * followed by eina_future_new() and then eina_promise_rejected().
+ * followed by eina_future_new() and then eina_promise_reject().
  *
  * Futures can also be canceled using eina_future_cancel(), which will
  * cause the whole chain to be canceled alongside with any pending
  * promise.
  *
  * @param[in,out] scheduler The scheduler to use.
- * @param[in] err An Eina_Error value
+ * @param[in] err An #Eina_Error value
  *
  * @return The future or @c NULL on error.
  *
@@ -864,17 +926,17 @@ EAPI Eina_Future *eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Va
 EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Error err);
 
 /**
- * Register an Eina_Future_Desc to be used when the future is resolve/rejected.
+ * Register an #Eina_Future_Desc to be used when the future is resolved/rejected.
  *
  * With this function a callback and data is attached to the future and then
  * once it's resolved or rejected the callback will be informed.
  *
  * If during the future creation an error happens this function will return @c NULL,
- * and the #Eina_Future_Desc::cb will be called reporting an error (`EINVAL` or `ENOMEM`),
- * so the user has a chance to free #Eina_Future_Desc::data.
+ * and the Eina_Future_Desc::cb will be called reporting an error (@c EINVAL or @c ENOMEM),
+ * so the user has a chance to free Eina_Future_Desc::data.
  *
  * In case a future in the chain is canceled, the whole chain will be canceled immediately
- * and the error `ECANCELED` will be reported.
+ * and the error @c ECANCELED will be reported.
  *
  * Here's a simple usage of this function.
  *
@@ -915,17 +977,18 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  * @endcode
  *
  * Although the code presented at `_size_ready()` is very simple, most of it
- * is just used to check the Eina_Value type. In order
+ * is just used to check the #Eina_Value type. In order
  * to avoid this type of code the function eina_future_cb_easy_from_desc()
  * was created. Please, check its documentation for more information.
  *
  * This function can also be used to create a future chain, making
  * it possible to execute the future result in a cascade order. When
- * using a future chain the Eina_Value returned by a #Eina_Future_Desc::cb
- * will be delivered to the next #Eina_Future_Desc::cb in the chain.
+ * using a future chain the #Eina_Value returned by a Eina_Future_Desc::cb
+ * will be delivered to the next Eina_Future_Desc::cb in the chain.
  *
  * Here's an example:
  *
+ * @code
  * static Eina_Value
  * _future_cb1(const *data EINA_UNUSED, const Eina_Value v)
  * {
@@ -978,7 +1041,6 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  *    return new_v;
  * }
  *
- * @code
  * void chain(void)
  * {
  *   Eina_Future *f = get_file_size_async("/MyFile.txt");
@@ -992,11 +1054,11 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  * }
  * @endcode
  *
- * Although it's possible to create a future chain using eina_future_then()/eina_future_then_from_desc()
+ * Although it's possible to create a future chain using eina_future_then() and eina_future_then_from_desc()
  * there's a function that makes this task much easier, please check eina_future_chain_array() for more
  * information.
- * @note This example does manual conversion and print, however we offer
- * eina_future_cb_convert_to() and eina_future_cb_console_from_desc() and to make those common case easier.
+ * @note This example does manual conversion and print, however Eina offers
+ * eina_future_cb_convert_to() and eina_future_cb_console_from_desc() to make those common case easier.
  *
  * @param[in,out] prev A future to link against
  * @param[in] desc A description struct containing the callback and data.
@@ -1005,7 +1067,7 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  * desc.cb will be called in order to free desc.data.
  * @see eina_future_new()
  * @see eina_future_then()
- * @see #Eina_Future_Desc
+ * @see Eina_Future_Desc
  * @see eina_future_chain_array()
  * @see eina_future_chain()
  * @see eina_future_cb_console_from_desc()
@@ -1018,30 +1080,28 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  */
 EAPI Eina_Future *eina_future_then_from_desc(Eina_Future *prev, const Eina_Future_Desc desc) EINA_ARG_NONNULL(1);
 
-
 /**
  * Creates an Eina_Future_Desc that will log the previous future resolved value.
  *
- * This function can be used to quickly log the value that an #Eina_Future_Desc::cb
+ * This function can be used to quickly log the value that an Eina_Future_Desc::cb
  * is returning. The returned value will be passed to the next future in the chain without
  * modifications.
  *
  * There are some helper macros like eina_future_cb_log_dbg() which will automatically
  * fill the following fields:
  *
- * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li #Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
- * @li #Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_DBG will be used.
- * @li #Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
- * @li #Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
- *
+ * @li Eina_Future_Cb_Log_Desc::file: The `__FILE__` function will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The `__FUNCTION__` macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::level: `EINA_LOG_LEVEL_DBG` will be used.
+ * @li Eina_Future_Cb_Log_Desc::domain: `EINA_LOG_DOMAIN_DEFAULT` will be used.
+ * @li Eina_Future_Cb_Log_Desc::line: The `__LINE__` macro will be used.
  *
  * @param[in] desc The description data to be used.
  * @return An #Eina_Future_Desc
  *
- * @see #Eina_Future_Cb_Log_Desc
- * @see efl_future_then()
- * @see efl_future_chain()
+ * @see Eina_Future_Cb_Log_Desc
+ * @see eina_future_then()
+ * @see eina_future_chain()
  * @see eina_future_cb_log_dbg()
  * @see eina_future_cb_log_crit()
  * @see eina_future_cb_log_err()
@@ -1057,11 +1117,11 @@ EAPI Eina_Future_Desc eina_future_cb_log_from_desc(const Eina_Future_Cb_Log_Desc
  * This behaves exactly like eina_future_then_from_desc(), but makes it easier to create future chains.
  *
  * If during the future chain creation an error happens this function will return @c NULL,
- * and the #Eina_Future_Desc::cb from the @p descs array will be called reporting an error (`EINVAL` or `ENOMEM`),
- * so the user has a chance to free #Eina_Future_Desc::data.
+ * and the Eina_Future_Desc::cb from the @p descs array will be called reporting an error (`EINVAL` or `ENOMEM`),
+ * so the user has a chance to free Eina_Future_Desc::data.
  *
- * Just like eina_future_then_from_desc(), the value returned by a #Eina_Future_Desc::cb callback will
- * be delivered to the next #Eina_Future_Desc::cb in the chain.
+ * Just like eina_future_then_from_desc(), the value returned by a Eina_Future_Desc::cb callback will
+ * be delivered to the next Eina_Future_Desc::cb in the chain.
  *
  * In case a future in the chain is canceled, the whole chain will be canceled immediately
  * and the error `ECANCELED` will be reported.
@@ -1069,7 +1129,6 @@ EAPI Eina_Future_Desc eina_future_cb_log_from_desc(const Eina_Future_Cb_Log_Desc
  * Here's an example:
  *
  * @code
- *
  * // callbacks code....
  *
  * Eina_Future* chain(void)
@@ -1083,13 +1142,14 @@ EAPI Eina_Future_Desc eina_future_cb_log_from_desc(const Eina_Future_Cb_Log_Desc
  * @endcode
  *
  * @param[in,out] prev The previous future
- * @param[in] descs An array of descriptions. The last element of the array must have the #Eina_Future_Desc::cb set to @c NULL
+ * @param[in] descs An array of descriptions.
+                    The last element of the array must have the Eina_Future_Desc::cb set to @c NULL
  * @return A future or @c NULL on error.
  * @note If an error happens the whole future chain will CANCELED and
  * desc.cb will be called in order to free desc.data.
  * @see eina_future_new()
  * @see eina_future_then()
- * @see #Eina_Future_Desc
+ * @see Eina_Future_Desc
  * @see eina_future_chain()
  * @see eina_future_cb_ignore_error()
  * @see eina_future_cb_console_from_desc()
@@ -1111,7 +1171,7 @@ EAPI Eina_Future *eina_future_chain_array(Eina_Future *prev, const Eina_Future_D
  *
  *
  * @param[in,out] prev The previous future
- * @param[in] descs An array of descriptions. The last element of the array must have the #Eina_Future_Desc::cb set to @c NULL
+ * @param[in] descs An array of descriptions. The last element of the array must have the Eina_Future_Desc::cb set to @c NULL
  * @return A future or @c NULL on error.
  * @note If an error happens the whole future chain will CANCELED and
  * desc.cb will be called in order to free desc.data.
@@ -1124,9 +1184,9 @@ EAPI Eina_Future *eina_future_chain_array(Eina_Future *prev, const Eina_Future_D
 EAPI Eina_Future *eina_future_chain_easy_array(Eina_Future *prev, const Eina_Future_Cb_Easy_Desc descs[]) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Creates an Eina_Future_Desc that will print the previous future resolved value.
+ * Creates an #Eina_Future_Desc that will print the previous future's resolved value.
  *
- * This function can be used to quickly inspect the value that an #Eina_Future_Desc::cb
+ * This function can be used to quickly inspect the value that an Eina_Future_Desc::cb
  * is returning. The returned value will be passed to the next future in the chain without
  * modifications.
  *
@@ -1149,12 +1209,12 @@ EAPI Eina_Future *eina_future_chain_easy_array(Eina_Future *prev, const Eina_Fut
  * @return An #Eina_Future_Desc
  *
  * The description object, @p desc, can (optionally) include a prefix, suffix,
- * filename and function name.  If these are @c NULL, empty strings ("") are used
- * instead.  If @p desc->suffix is provided, the '\n' should be provided to ensure
+ * filename and function name. If these are @c NULL, empty strings ("") are used
+ * instead.  If @p desc->suffix is provided, the '\\n' should be provided to ensure
  * the printed string ends with a line feed.
  *
  * @see eina_future_then()
- * @see #Eina_Future_Desc
+ * @see Eina_Future_Desc
  * @see eina_future_chain()
  * @see eina_future_cb_easy_from_desc()
  * @see eina_future_cb_easy()
@@ -1167,10 +1227,10 @@ EAPI Eina_Future *eina_future_chain_easy_array(Eina_Future *prev, const Eina_Fut
 EAPI Eina_Future_Desc eina_future_cb_console_from_desc(const Eina_Future_Cb_Console_Desc desc) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Returns a #Eina_Future_Desc that ignores an error.
+ * Returns an #Eina_Future_Desc that ignores an error.
  *
  * This function may be used if one wants to ignore an error. If the
- * specified error happens an EINA_VALUE_EMPTY will be delivered to the
+ * specified error happens an #EINA_VALUE_EMPTY will be delivered to the
  * next future in the chain.
  *
  * @param[in] err The error to be ignored.
@@ -1179,12 +1239,12 @@ EAPI Eina_Future_Desc eina_future_cb_console_from_desc(const Eina_Future_Cb_Cons
 EAPI Eina_Future_Desc eina_future_cb_ignore_error(Eina_Error err);
 
 /**
- * Creates an #Eina_Future_Desc which will convert the the received eina value to a given type.
+ * Creates an #Eina_Future_Desc which will convert the received eina value to a given type.
  *
- * @param[in] type The Eina_Value_Type to convert to.
+ * @param[in] type The #Eina_Value_Type to convert to.
  * @return An #Eina_Future_Desc
  * @see eina_future_then()
- * @see #Eina_Future_Desc
+ * @see Eina_Future_Desc
  * @see eina_future_chain()
  * @see eina_future_cb_easy_from_desc()
  * @see eina_future_cb_easy()
@@ -1194,27 +1254,27 @@ EAPI Eina_Future_Desc eina_future_cb_ignore_error(Eina_Error err);
 EAPI Eina_Future_Desc eina_future_cb_convert_to(const Eina_Value_Type *type);
 
 /**
- * Creates an #Eina_Future_Desc based on a #Eina_Future_Cb_Easy_Desc
+ * Creates an #Eina_Future_Desc based on an #Eina_Future_Cb_Easy_Desc.
  *
  * This function aims to be used in conjunction with eina_future_chain(),
  * eina_future_then_from_desc() and friends and its main objective is to simplify
- * error handling and Eina_Value type checks.
+ * error handling and #Eina_Value type checks.
  * It uses three callbacks to inform the user about the future's
  * result and life cycle. They are:
  *
- * @li #Eina_Future_Cb_Easy_Desc::success: This callback is called when
+ * @li Eina_Future_Cb_Easy_Desc::success: This callback is called when
  * the future execution was successful, that is, no errors occurred and
- * the result type matches #Eina_Future_Cb_Easy_Desc::success_type. In case
- * #Eina_Future_Cb_Easy_Desc::success_type is @c NULL, this function will
+ * the result type matches Eina_Future_Cb_Easy_Desc::success_type. In case
+ * Eina_Future_Cb_Easy_Desc::success_type is @c NULL, this function will
  * only be called if the future did not report an error. The value returned
  * by this function will be propagated to the next future in the chain (if any).
  *
- * @li #Eina_Future_Cb_Easy_Desc::error: This callback is called when
- * the future result is an error or #Eina_Future_Cb_Easy_Desc::success_type
+ * @li Eina_Future_Cb_Easy_Desc::error: This callback is called when
+ * the future result is an error or Eina_Future_Cb_Easy_Desc::success_type
  * does not match the future result type. The value returned
  * by this function will be propagated to the next future in the chain (if any).
  *
- * @li #Eina_Future_Cb_Easy_Desc::free: Called after the future was freed and any resources
+ * @li Eina_Future_Cb_Easy_Desc::free: Called after the future was freed and any resources
  * allocated must be freed at this point. This callback is always called.
  *
  * Check the example below for a sample usage:
@@ -1249,7 +1309,6 @@ EAPI Eina_Future_Desc eina_future_cb_convert_to(const Eina_Value_Type *type);
  *   free(ctx);
  * }
  *
- * @code
  * void do_work(File_Size_Handler_Cb cb)
  * {
  *   Ctx *ctx = malloc(sizeof(Ctx));
@@ -1274,12 +1333,11 @@ EAPI Eina_Future_Desc eina_future_cb_easy_from_desc(const Eina_Future_Cb_Easy_De
  *
  * Creates a promise that is resolved once all the futures
  * from the @p array are resolved.
- * The promise is resolved with an Eina_Value type array which
- * contains EINA_VALUE_TYPE_VALUE elements. The result array is
+ * The promise is resolved with an #Eina_Value type array which
+ * contains #EINA_VALUE_TYPE_VALUE elements. The result array is
  * ordered according to the @p array argument. Example:
  *
  * @code
- *
  * static const char *
  * _get_operation_name_by_index(int idx)
  * {
@@ -1364,7 +1422,7 @@ EAPI Eina_Future_Desc eina_future_cb_easy_from_desc(const Eina_Future_Cb_Easy_De
  * }
  * @endcode
  *
- * @param[in,out] array An array of futures, @c #EINA_FUTURE_SENTINEL terminated.
+ * @param[in,out] array An array of futures, terminated with #EINA_FUTURE_SENTINEL.
  * @return A promise or @c NULL on error.
  * @note On error all the futures will be CANCELED.
  * @see eina_future_all_array()
@@ -1376,8 +1434,8 @@ EAPI Eina_Promise *eina_promise_all_array(Eina_Future *array[]) EINA_ARG_NONNULL
  *
  * Creates a promise that is resolved once all the futures
  * from the @p iterator are resolved.
- * The promise is resolved with an Eina_Value type array which
- * contains EINA_VALUE_TYPE_VALUE elements. The result array is
+ * The promise is resolved with an #Eina_Value type array which
+ * contains #EINA_VALUE_TYPE_VALUE elements. The result array is
  * ordered according to the @p iterator order.
  *
  * @param[in] iterator An iterator of futures. Will be destroyed after the call.
@@ -1394,16 +1452,15 @@ EAPI Eina_Promise *eina_promise_all_iterator(Eina_Iterator *iterator) EINA_ARG_N
  * is completed. The remaining futures will be canceled with the
  * error code `ECANCELED`
  *
- * The resulting value is an EINA_VALUE_TYPE_STRUCT with two fields:
+ * The resulting value is an #EINA_VALUE_TYPE_STRUCT with two fields:
  *
- * @li A field named "value" which contains an Eina_Value with the result itself.
- * @li A field named "index" which is an int that contains the index of the completed
- * function relative to the @p array;
+ * @li A field named @c value containing an #Eina_Value with the result itself.
+ * @li A field named @c index containing the index of the completed
+ * function relative to the @p array.
  *
- * Example.
+ * Example:
  *
  * @code
- *
  * static const char *
  * _get_operation_name_by_index(int idx)
  * {
@@ -1492,11 +1549,11 @@ EAPI Eina_Promise *eina_promise_all_iterator(Eina_Iterator *iterator) EINA_ARG_N
  * }
  * @endcode
  *
- * @param[in,out] array An array of futures, @c #EINA_FUTURE_SENTINEL terminated.
+ * @param[in,out] array An array of futures, terminated by #EINA_FUTURE_SENTINEL.
  * @return A promise or @c NULL on error.
  * @note On error all the futures will be CANCELED.
  * @see eina_future_race_array()
- * @see #_Eina_Future_Race_Result
+ * @see _Eina_Future_Race_Result
  */
 EAPI Eina_Promise *eina_promise_race_array(Eina_Future *array[]) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -1528,7 +1585,7 @@ EAPI Eina_Promise *eina_promise_race_array(Eina_Future *array[]) EINA_ARG_NONNUL
  * @see eina_future_race_array()
  * @see eina_promise_race()
  * @see eina_future_race()
- * @see #EINA_PROMISE_RACE_STRUCT_DESC
+ * @see EINA_PROMISE_RACE_STRUCT_DESC
  */
 struct _Eina_Future_Race_Result {
    /**
@@ -1542,17 +1599,17 @@ struct _Eina_Future_Race_Result {
 };
 
 /**
- * @var EINA_PROMISE_RACE_STRUCT_DESC
+ * @var const Eina_Value_Struct_Desc *EINA_PROMISE_RACE_STRUCT_DESC
  *
  * A pointer to the race struct description, which
- * is used by eina_promise_race_array();
+ * is used by eina_promise_race_array().
  *
  * This struct contains two members:
- * @li value An EINA_VALUE_TYPE_VALUE that contains the future result that wont the race.
- * @li index An EINA_VALUE_TYPE_UINT that contains the future index that won the race.
+ * @li @c value: An #EINA_VALUE_TYPE_VALUE that contains the future result that won the race.
+ * @li @c index: An #EINA_VALUE_TYPE_UINT that contains the future index that won the race.
  *
  * @see eina_promise_race_array()
- * @see #_Eina_Future_Race_Result
+ * @see _Eina_Future_Race_Result
  */
 EAPI extern const Eina_Value_Struct_Desc *EINA_PROMISE_RACE_STRUCT_DESC;
 
@@ -1560,10 +1617,10 @@ EAPI extern const Eina_Value_Struct_Desc *EINA_PROMISE_RACE_STRUCT_DESC;
  * Creates a future that will be resolved once all futures from @p array is resolved.
  * This is a helper over eina_promise_all_array()
  *
- * @param[in,out] array A future array, must be terminated with #EINA_FUTURE_SENTINEL
+ * @param[in,out] array A future array, must be terminated with #EINA_FUTURE_SENTINEL.
  * @return A future.
  * @see eina_promise_all_array()
- * @see #EINA_FUTURE_SENTINEL
+ * @see EINA_FUTURE_SENTINEL
  */
 static inline Eina_Future *
 eina_future_all_array(Eina_Future *array[])
@@ -1596,7 +1653,7 @@ eina_future_all_iterator(Eina_Iterator *iterator)
  * @param[in,out] array A future array, must be terminated with #EINA_FUTURE_SENTINEL
  * @return A future.
  * @see eina_promise_race_array()
- * @see #EINA_FUTURE_SENTINEL
+ * @see EINA_FUTURE_SENTINEL
  */
 static inline Eina_Future *
 eina_future_race_array(Eina_Future *array[])
@@ -1694,11 +1751,11 @@ eina_future_race_array(Eina_Future *array[])
  *
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
- * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li #Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
- * @li #Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_DBG will be used.
- * @li #Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
- * @li #Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::file: The `__FILE__` function will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The `__FUNCTION__` macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::level: `EINA_LOG_LEVEL_DBG` will be used.
+ * @li Eina_Future_Cb_Log_Desc::domain: `EINA_LOG_DOMAIN_DEFAULT` will be used.
+ * @li Eina_Future_Cb_Log_Desc::line: The `__LINE__` macro will be used.
  *
  * Usage:
  * @code
@@ -1713,13 +1770,13 @@ eina_future_race_array(Eina_Future *array[])
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
  *
- * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
+ * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
- * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li #Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
- * @li #Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_CRITICAL will be used.
- * @li #Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
- * @li #Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_CRITICAL will be used.
+ * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
+ * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
  *
  * Usage:
  * @code
@@ -1734,13 +1791,13 @@ eina_future_race_array(Eina_Future *array[])
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
  *
- * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
+ * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
- * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li #Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
- * @li #Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_ERR will be used.
- * @li #Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
- * @li #Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_ERR will be used.
+ * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
+ * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
  *
  * Usage:
  * @code
@@ -1755,13 +1812,13 @@ eina_future_race_array(Eina_Future *array[])
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
  *
- * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
+ * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
- * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li #Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
- * @li #Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_INFO will be used.
- * @li #Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
- * @li #Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_INFO will be used.
+ * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
+ * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
  *
  * Usage:
  * @code
@@ -1776,18 +1833,21 @@ eina_future_race_array(Eina_Future *array[])
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
  *
- * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
+ * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
- * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li #Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
- * @li #Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_WARN will be used.
- * @li #Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
- * @li #Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_WARN will be used.
+ * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
+ * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
  *
  * Usage:
  * @code
  * desc = eina_future_cb_log_warn(.prefix = "prefix", .suffix = "suffix");
  * @endcode
+ * @param _prefix PREFIX
+ * @param _suffix SUFFIX
+ * @returns SOMETHING
  * @see eina_future_cb_log_from_desc()
  */
 #define eina_future_cb_log_warn(_prefix, _suffix)                       \

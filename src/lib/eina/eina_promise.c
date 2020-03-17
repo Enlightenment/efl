@@ -139,7 +139,9 @@ static const Eina_Value_Struct_Desc RACE_STRUCT_DESC = {
   .size = sizeof(Eina_Future_Race_Result)
 };
 
+/** @cond local */
 EAPI const Eina_Value_Struct_Desc *EINA_PROMISE_RACE_STRUCT_DESC = &RACE_STRUCT_DESC;
+/** @endcond */
 
 static inline void
 __eina_promise_value_dbg(const char *msg,
@@ -245,7 +247,7 @@ _promise_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Ty
    return EINA_FALSE;
 }
 
-static const Eina_Value_Type EINA_VALUE_TYPE_PROMISE = {
+const Eina_Value_Type EINA_VALUE_TYPE_PROMISE = {
   .version = EINA_VALUE_TYPE_VERSION,
   .value_size = sizeof(Eina_Promise *),
   .name = "Eina_Promise",
