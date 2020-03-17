@@ -269,9 +269,9 @@ _eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED)
 }
 
 static void
-_vtable_dump2(_Efl_Class *klass)
+_vtable_dump2(Eo_Vtable2 *vtable)
 {
-   const Eo_Vtable2 *vtable = &klass->vtable2;
+   //const Eo_Vtable2 *vtable = &klass->vtable2;
    for (int i = 0; i < vtable->size; ++i)
      {
         Eo_Vtable_Node *node = &vtable->chain[i];
@@ -279,7 +279,7 @@ _vtable_dump2(_Efl_Class *klass)
         printf("-> %s %p\n", _eo_classes[i]->desc->name, node->funcs);
         for (int j = 0; j < node->count; ++j)
           {
-             printf("  %s;%p;%s\n", klass->desc->name, node->funcs[j].func, node->funcs[j].src ? node->funcs[j].src->desc->name : NULL);
+             printf("  %p;%s\n", node->funcs[j].func, node->funcs[j].src ? node->funcs[j].src->desc->name : NULL);
           }
      }
 }
@@ -338,6 +338,18 @@ _vtable_init2(Eo_Vtable2 *vtable)
    vtable->size = _eo_classes_last_id;
    vtable->chain = calloc(vtable->size, sizeof(Eo_Vtable_Node));
    asdf_allocated_memory += vtable->size * sizeof(Eo_Vtable_Node);
+}
+
+static void
+_vtable_copy_all2(Eo_Vtable2 *dest, const Eo_Vtable2 *src)
+{
+   for (int i = 0; i < dest->size; ++i)
+     {
+        if (src->chain[i].funcs)
+          {
+             dest->chain[i] = src->chain[i];
+          }
+     }
 }
 
 /**
@@ -508,7 +520,8 @@ _vtable_func_set2(Eo_Vtable2 *vtable, const _Efl_Class *klass,
 
    if (klass->parent && klass->parent->vtable2.size > class_id)
      hirachy_node = &klass->parent->vtable2.chain[class_id];
-
+   if (hierarchy_klass)
+     hirachy_node = &hierarchy_klass->vtable2.chain[class_id];
    node = &vtable->chain[class_id];
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(node->funcs, EINA_FALSE);
@@ -769,7 +782,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
 
         obj = _obj;
         klass = _obj->klass;
-        vtable = &klass->vtable2;
+        vtable = EO_VTABLE2(obj);
         if (EINA_UNLIKELY(_obj->cur_klass != NULL))
           {
              // YES this is a goto with a label to return. this is a
@@ -1049,7 +1062,8 @@ _eo_class_funcs_set(Eo_Vtable *vtable, Eo_Vtable2 *vtable2, const Efl_Object_Ops
 
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
 
-   _vtable_insert_empty_funcs(vtable2, class_id);
+   if (!override_only)
+     _vtable_insert_empty_funcs(vtable2, class_id);
    if (!op_descs || !ops->count)
      return EINA_TRUE;
 
@@ -1090,8 +1104,11 @@ _eo_class_funcs_set(Eo_Vtable *vtable, Eo_Vtable2 *vtable2, const Efl_Object_Ops
           }
      }
 
-   //Before setting any real functions, allocate the node that will contain all the functions
-   _vtable_prepare_empty_node2(vtable2, number_of_new_functions, class_id);
+   if (!override_only)
+     {
+        //Before setting any real functions, allocate the node that will contain all the functions
+        _vtable_prepare_empty_node2(vtable2, number_of_new_functions, class_id);
+     }
 
    for (i = 0, j = 0, op_desc = op_descs; i < ops->count; i++, op_desc++)
      {
@@ -1143,7 +1160,6 @@ _eo_class_funcs_set(Eo_Vtable *vtable, Eo_Vtable2 *vtable2, const Efl_Object_Ops
         if (!_vtable_func_set2(vtable2, klass, override_class, op2, op_desc->func, EINA_TRUE))
           return EINA_FALSE;
      }
-
    return EINA_TRUE;
 }
 
@@ -2148,6 +2164,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
    if (ops)
      {
         Eo_Vtable *vtable = obj->opt->vtable;
+        Eo_Vtable2 *vtable2 = obj->opt->vtable2;
 
         if (!vtable)
           {
@@ -2155,20 +2172,44 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
              _vtable_init(vtable, obj->klass->vtable.size);
              _vtable_copy_all(vtable, &obj->klass->vtable);
           }
+        if (!vtable2)
+          {
+             vtable2 = calloc(1, sizeof(*vtable2));
+             _vtable_init2(vtable2);
+             _vtable_copy_all2(vtable2, &obj->klass->vtable2);
+          }
 
-        /* FIXME */
-        if (!_eo_class_funcs_set(vtable, NULL, ops, obj->klass, klass, 0, EINA_TRUE, obj->klass->base_id2))
+        //copy all the vtable nodes that we are going to change later on
+        Eina_Bool hitmap[vtable2->size];
+        memset(hitmap, 0, sizeof(hitmap));
+        for (unsigned int i = 0; i < ops->count; i++)
+          {
+             Efl_Object_Op op = _efl_object_api_op_id_get_internal2(ops->descs[i].api_func);
+             EINA_SAFETY_ON_FALSE_RETURN_VAL(op != EFL_NOOP, EINA_FALSE);
+             short class_id = EFL_OBJECT_OP_CLASS_PART(op);
+             if (!hitmap[class_id])
+               {
+                  //copy all the nodes that we need
+                  const Eo_Vtable_Node node = vtable2->chain[class_id];
+                  _vtable_copy_node2(&vtable2->chain[class_id], &node);
+                  hitmap[class_id] = EINA_TRUE;
+               }
+          }
+        if (!_eo_class_funcs_set(vtable, vtable2, ops, obj->klass, klass, 0, EINA_TRUE, obj->klass->base_id2))
           {
              ERR("Failed to override functions for %s@%p. All previous "
                  "overrides have been reset.", obj->klass->desc->name, eo_id);
              if (obj->opt->vtable == vtable)
-               EO_OPTIONAL_COW_SET(obj, vtable, NULL);
+               {
+                  EO_OPTIONAL_COW_SET(obj, vtable, NULL);
+                  EO_OPTIONAL_COW_SET(obj, vtable2, NULL);
+               }
              else
                _vtable_free(vtable);
              goto err;
           }
-
         EO_OPTIONAL_COW_SET(obj, vtable, vtable);
+        EO_OPTIONAL_COW_SET(obj, vtable2, vtable2);
      }
    else
      {
@@ -2176,6 +2217,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
           {
              _vtable_free(obj->opt->vtable);
              EO_OPTIONAL_COW_SET(obj, vtable, NULL);
+             EO_OPTIONAL_COW_SET(obj, vtable2, NULL);
           }
      }
 

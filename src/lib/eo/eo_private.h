@@ -96,6 +96,7 @@ struct _Eo_Header
 struct _Efl_Object_Optional
 {
    Eo_Vtable          *vtable;
+   Eo_Vtable2         *vtable2;
    Eina_List          *composite_objects;
    Efl_Del_Intercept   del_intercept;
 };
@@ -153,6 +154,7 @@ extern Eina_Cow *efl_object_optional_cow;
       EO_OPTIONAL_COW_END(_obj##_cow, _obj); \
    }} while (0)
 #define EO_VTABLE(_obj) ((_obj)->opt->vtable ?: &((_obj)->klass->vtable))
+#define EO_VTABLE2(_obj) ((_obj)->opt->vtable2 ?: &((_obj)->klass->vtable2))
 
 typedef void (*Eo_Op_Func_Type)(Eo *, void *class_data);
 
