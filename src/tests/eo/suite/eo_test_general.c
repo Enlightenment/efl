@@ -1849,10 +1849,10 @@ EFL_END_TEST
 
 void eo_test_general(TCase *tc)
 {
-   /*tcase_add_test(tc, eo_simple);
-   tcase_add_test(tc, eo_singleton);*/
+   tcase_add_test(tc, eo_simple);
+   tcase_add_test(tc, eo_singleton);
    tcase_add_test(tc, efl_object_override_tests);
-   /*tcase_add_test(tc, eo_test_class_replacement);
+   tcase_add_test(tc, eo_test_class_replacement);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, efl_data_fetch);
    tcase_add_test(tc, efl_data_safe_fetch);
@@ -1876,5 +1876,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_object_destruct_test);
    tcase_add_test(tc, efl_object_auto_unref_test);
    tcase_add_test(tc, efl_object_size);
-   tcase_add_test(tc, eo_test_class_type);*/
+   tcase_add_test(tc, eo_test_class_type);
 }

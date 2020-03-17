@@ -343,7 +343,7 @@ _vtable_init2(Eo_Vtable2 *vtable)
 static void
 _vtable_copy_all2(Eo_Vtable2 *dest, const Eo_Vtable2 *src)
 {
-   for (int i = 0; i < dest->size; ++i)
+   for (int i = 0; i < src->size; ++i)
      {
         if (src->chain[i].funcs)
           {
@@ -453,6 +453,7 @@ _vtable_merge_empty2(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
           }
      }
 }
+
 static inline const op_type_funcs *
 _vtable_func_get2(const Eo_Vtable2 *vtable2, Efl_Object_Op op)
 {
@@ -1167,43 +1168,16 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
         /* Skip ourselves. */
         for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
           {
-             //printf("-> %s\n", (*mro_itr)->desc->name);
              _vtable_merge_defined_api(&klass->vtable2, &(*mro_itr)->vtable2, hitmap);
           }
         //add slots for the interfaces we are inheriting from
         for (int i = 0; klass->extensions[i]; i++)
           {
              const _Efl_Class *ext = klass->extensions[i];
-             /* In case of a none regular APIs, merge in the APIs specified on them, *or* simply copy the used vtables from these types */
-             if (ext->desc->type == EFL_CLASS_TYPE_INTERFACE)
-               {
-                  _vtable_merge_empty2(&klass->vtable2, &klass->extensions[i]->vtable2, hitmap);
-               }
-          }
-
-     }
-     #if 0
-     {
-        /* Merge in the vtable information from the parent */
-        if (klass->parent)
-          {
-             _vtable_merge_in2(&klass->vtable2, &klass->parent->vtable2);
-          }
-        for (int i = 0; klass->extensions[i]; i++)
-          {
-             const _Efl_Class *ext = klass->extensions[i];
-             /* In case of a none regular APIs, merge in the APIs specified on them, *or* simply copy the used vtables from these types */
-             if (ext->desc->type == EFL_CLASS_TYPE_MIXIN || ext->desc->type == EFL_CLASS_TYPE_INTERFACE)
-               {
-                  _vtable_merge_in_no_reg2(ext->base_id2, &klass->vtable2, &ext->vtable2, hitmap);
-               }
-             else if (ext->desc->type == EFL_CLASS_TYPE_REGULAR || ext->desc->type == EFL_CLASS_TYPE_REGULAR_NO_INSTANT)
-               {
-                  _vtable_merge_empty2(&klass->vtable2, &klass->extensions[i]->vtable2, hitmap);
-               }
+             //for all extensions of the class, ensure that *at least* empty vtables are available, so the efl_isa calls do succeed
+             _vtable_merge_empty2(&klass->vtable2, &ext->vtable2, hitmap);
           }
      }
-     #endif
      {
         unsigned int i;
 
