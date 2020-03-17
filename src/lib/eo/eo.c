@@ -434,40 +434,6 @@ _vtable_merge_defined_api(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hi
 }
 
 static void
-_vtable_merge_in_no_reg2(unsigned int no_reg_self_id, Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
-{
-   for (unsigned int i = 0; i < src->size; ++i)
-     {
-        //we assume that we *never* have allocated a chain when we call that here.
-        //if we are currently looking at the mixin API, just copy the node, thats
-        if (i == no_reg_self_id && !dest->chain[i].funcs)
-          {
-             dest->chain[i] = src->chain[i];
-          }
-        //if there is a source node evalulate if we need to copy it
-        else if (src->chain[i].funcs)
-          {
-             if (!dest->chain[i].funcs)
-               {
-                  _vtable_prepare_empty_node2(dest, src->chain[i].count, i);
-                  hitmap[i] = EINA_TRUE;
-               }
-             else if (!hitmap[i])
-               {
-                  const Eo_Vtable_Node node = dest->chain[i];
-                  _vtable_copy_node2(&dest->chain[i], &node); //we copy what we have, and overwrite in the later for loop
-                  hitmap[i] = EINA_TRUE;
-               }
-             for (int j = 0; j < src->chain[i].count; ++j)
-               {
-                  if (src->chain[i].funcs[j].func)
-                    dest->chain[i].funcs[j] = src->chain[i].funcs[j];
-               }
-          }
-     }
-}
-
-static void
 _vtable_merge_empty2(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
 {
    for (unsigned int i = 0; i < src->size; ++i)
