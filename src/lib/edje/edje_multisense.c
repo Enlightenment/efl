@@ -5,11 +5,13 @@
 
 static Eo *out = NULL;
 static int outs = 0;
+static Eina_List *ins = NULL;
 static Eina_Bool outfail = EINA_FALSE;
 
 static void
 _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
+   ins = eina_list_remove(ins, event->object);
    efl_unref(event->object);
 }
 
@@ -245,6 +247,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
                   efl_unref(in);
                   return EINA_FALSE;
                }
+             ins = eina_list_append(ins, in);
           }
      }
    return EINA_TRUE;
@@ -348,6 +351,7 @@ void
 _edje_multisense_shutdown(void)
 {
 #ifdef ENABLE_MULTISENSE
+   Eo *in;
    if (outs > 0)
      {
         WRN("Shutting down audio while samples still playing");
@@ -358,6 +362,8 @@ _edje_multisense_shutdown(void)
         out = NULL;
         outs = 0;
      }
+   EINA_LIST_FREE(ins, in)
+     efl_unref(in);
    ecore_audio_shutdown();
 #endif
 }
