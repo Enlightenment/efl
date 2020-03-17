@@ -70,23 +70,13 @@ static inline void _eo_id_release(const Eo_Id obj_id);
 
 void _eo_condtor_done(Eo *obj);
 
-typedef struct _Dich_Chain1 Dich_Chain1;
 typedef struct _Eo_Vtable_Node Eo_Vtable_Node;
-
-typedef struct _Eo_Vtable
-{
-   Dich_Chain1 *chain;
-   unsigned int size;
-} Eo_Vtable;
 
 typedef struct _Eo_Vtable2
 {
    Eo_Vtable_Node *chain;
    unsigned short size;
 } Eo_Vtable2;
-
-/* Clean the vtable. */
-void _vtable_func_clean_all(Eo_Vtable *vtable);
 
 struct _Eo_Header
 {
@@ -95,7 +85,6 @@ struct _Eo_Header
 
 struct _Efl_Object_Optional
 {
-   Eo_Vtable          *vtable;
    Eo_Vtable2         *vtable2;
    Eina_List          *composite_objects;
    Efl_Del_Intercept   del_intercept;
@@ -192,7 +181,6 @@ struct _Efl_Class
 
    const _Efl_Class *parent;
    const Efl_Class_Description *desc;
-   Eo_Vtable vtable;
    Eo_Vtable2 vtable2;
 
    const _Efl_Class **extensions;
@@ -341,7 +329,7 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
 static inline Eina_Bool
 _obj_is_override(_Eo_Object *obj)
 {
-   return obj->opt->vtable != NULL;
+   return obj->opt->vtable2 != NULL;
 }
 
 void _eo_free(_Eo_Object *obj, Eina_Bool manual_free);

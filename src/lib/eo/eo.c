@@ -105,7 +105,6 @@ static void _eo_condtor_reset(_Eo_Object *obj);
 static inline void *_efl_data_scope_get(const _Eo_Object *obj, const _Efl_Class *klass);
 static inline void *_efl_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_Class *klass, const _Eo_Object *ref_obj);
 static inline void _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
-static void _vtable_init(Eo_Vtable *vtable, size_t size);
 
 static inline Efl_Object_Op _efl_object_api_op_id_get_internal(const void *api_func);
 
@@ -120,115 +119,6 @@ static inline Efl_Object_Op _efl_object_api_op_id_get_internal(const void *api_f
       (_Efl_Class *) (((_UNMASK_ID(id) <= _eo_classes_last_id) && (_UNMASK_ID(id) > 0)) ? \
       (_eo_classes[_UNMASK_ID(id) - 1]) : NULL); \
       })
-
-static inline void
-_vtable_chain2_unref(Dich_Chain2 *chain)
-{
-   if (--(chain->refcount) == 0)
-     {
-        free(chain);
-     }
-}
-
-static long long vtable_chain_allocated = 0;
-
-static inline void
-_vtable_chain_alloc(Dich_Chain1 *chain1)
-{
-   chain1->chain2 = calloc(1, sizeof(*(chain1->chain2)));
-   chain1->chain2->refcount = 1;
-   vtable_chain_allocated += sizeof(*(chain1->chain2));
-}
-
-static inline void _vtable_chain_write_prepare(Dich_Chain1 *dst);
-
-static inline void
-_vtable_chain_merge(Dich_Chain1 *dst, const Dich_Chain1 *src)
-{
-   size_t j;
-   const op_type_funcs *sf = src->chain2->funcs;
-   op_type_funcs *df = dst->chain2->funcs;
-
-   if (df == sf)
-     {
-        /* Skip if the chain is the same. */
-        return;
-     }
-
-   for (j = 0 ; j < DICH_CHAIN_LAST_SIZE ; j++, df++, sf++)
-     {
-        if (sf->func && memcmp(df, sf, sizeof(*df)))
-          {
-             _vtable_chain_write_prepare(dst);
-             df = dst->chain2->funcs + j;
-             memcpy(df, sf, sizeof(*df));
-          }
-     }
-}
-
-static inline void
-_vtable_chain_write_prepare(Dich_Chain1 *dst)
-{
-   if (!dst->chain2)
-     {
-        _vtable_chain_alloc(dst);
-        return;
-     }
-   else if (dst->chain2->refcount == 1)
-     {
-        /* We own it, no need to duplicate */
-        return;
-     }
-
-   Dich_Chain1 old;
-   old.chain2 = dst->chain2;
-
-   _vtable_chain_alloc(dst);
-   _vtable_chain_merge(dst, &old);
-
-   _vtable_chain2_unref(old.chain2);
-}
-
-static inline void
-_vtable_chain_copy_ref(Dich_Chain1 *dst, const Dich_Chain1 *src)
-{
-   if (dst->chain2)
-     {
-        _vtable_chain_merge(dst, src);
-     }
-   else
-     {
-        dst->chain2 = src->chain2;
-        dst->chain2->refcount++;
-     }
-}
-
-static inline void
-_vtable_copy_all(Eo_Vtable *dst, const Eo_Vtable *src)
-{
-   Efl_Object_Op i;
-   const Dich_Chain1 *sc1 = src->chain;
-   Dich_Chain1 *dc1 = dst->chain;
-   for (i = 0 ; i < src->size ; i++, sc1++, dc1++)
-     {
-        if (sc1->chain2)
-          {
-             _vtable_chain_copy_ref(dc1, sc1);
-          }
-     }
-}
-
-static inline const op_type_funcs *
-_vtable_func_get(const Eo_Vtable *vtable, Efl_Object_Op op)
-{
-   size_t idx1 = DICH_CHAIN1(op);
-   if (EINA_UNLIKELY(idx1 >= vtable->size))
-      return NULL;
-   Dich_Chain1 *chain1 = &vtable->chain[idx1];
-   if (EINA_UNLIKELY(!chain1->chain2))
-      return NULL;
-   return &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
-}
 
 /* XXX: Only used for a debug message below. Doesn't matter that it's slow. */
 static const _Efl_Class *
@@ -260,74 +150,6 @@ _eo_op_class_get(Efl_Object_Op op)
 #define EFL_OBJECT_OP_FUNC_PART(op) op & 0xffff
 #define EFL_OBJECT_OP_CREATE_OP_ID(class_id, func_id) ((unsigned short)class_id)<<16|((unsigned short)func_id&0xffff)
 
-static long long asdf_allocated_memory = 0;
-
-static void
-_eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED)
-{
-   /* Do nonthing. */
-}
-
-static void
-_vtable_dump2(Eo_Vtable2 *vtable)
-{
-   //const Eo_Vtable2 *vtable = &klass->vtable2;
-   for (int i = 0; i < vtable->size; ++i)
-     {
-        Eo_Vtable_Node *node = &vtable->chain[i];
-        if (!node->funcs) continue;
-        printf("-> %s %p\n", _eo_classes[i]->desc->name, node->funcs);
-        for (int j = 0; j < node->count; ++j)
-          {
-             printf("  %p;%s\n", node->funcs[j].func, node->funcs[j].src ? node->funcs[j].src->desc->name : NULL);
-          }
-     }
-}
-static void
-_vtable_dump(_Efl_Class *klass)
-{
-   Eo_Vtable2 *vtable = &klass->vtable2;
-#if 1
-   for (int i = 0; i < vtable->size; ++i)
-     {
-        Eo_Vtable_Node *node = &vtable->chain[i];
-        if (!node->funcs) continue;
-        //printf("-> %s\n", _eo_classes[i]->desc->name);
-        for (int j = 0; j < node->count; ++j)
-          {
-             if (node->funcs[j].func)
-               printf("NEW;%s;%p;%s\n", klass->desc->name, node->funcs[j].func, node->funcs[j].src ? node->funcs[j].src->desc->name : NULL);
-          }
-     }
-   for (unsigned int i = 0; i < klass->vtable.size; ++i)
-     {
-        Dich_Chain1 chain1 = klass->vtable.chain[i];
-        if (chain1.chain2)
-          {
-             for (int k = 0; k < 32; ++k)
-               {
-                  op_type_funcs f = chain1.chain2->funcs[k];
-                  if (f.src && f.func && f.func != _eo_class_isa_func)
-                    printf("OLD;%s;%p;%s\n", klass->desc->name, f.func, f.src->desc->name);
-               }
-          }
-     }
-#endif
-}
-
-
-EAPI void _dump_all_classes(void);
-
-EAPI void
-_dump_all_classes(void)
-{
-   for (int i = 0; _eo_classes[i]; ++i)
-     {
-        //if (i > 10) break;
-        _vtable_dump(_eo_classes[i]);
-     }
-}
-
 /**
  * This inits the vtable wit hthe current size of allocated tables
  */
@@ -337,7 +159,6 @@ _vtable_init2(Eo_Vtable2 *vtable)
    //we assume here that _eo_classes_last_id was called before
    vtable->size = _eo_classes_last_id;
    vtable->chain = calloc(vtable->size, sizeof(Eo_Vtable_Node));
-   asdf_allocated_memory += vtable->size * sizeof(Eo_Vtable_Node);
 }
 
 static void
@@ -372,7 +193,6 @@ _vtable_copy_node2(Eo_Vtable_Node *dest, const Eo_Vtable_Node *src)
    dest->count = src->count;
    dest->funcs = calloc(sizeof(op_type_funcs), src->count);
    memcpy(dest->funcs, src->funcs, sizeof(op_type_funcs) * src->count);
-   asdf_allocated_memory += sizeof(op_type_funcs)* src->count;
 }
 
 /**
@@ -399,7 +219,6 @@ _vtable_prepare_empty_node2(Eo_Vtable2 *dest, unsigned int length, unsigned int 
 {
    dest->chain[class_id].count = length;
    dest->chain[class_id].funcs = calloc(sizeof(op_type_funcs), dest->chain[class_id].count);
-   asdf_allocated_memory += sizeof(op_type_funcs) * dest->chain[class_id].count;
 }
 
 static void
@@ -515,64 +334,6 @@ _vtable_func_set2(Eo_Vtable2 *vtable, const _Efl_Class *klass,
    func_storage->func = func;
 
    return EINA_TRUE;
-}
-
-static inline Eina_Bool
-_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass,
-                 const _Efl_Class *hierarchy_klass, Efl_Object_Op op,
-                 Eo_Op_Func_Type func, Eina_Bool allow_same_override)
-{
-   op_type_funcs *fsrc;
-   size_t idx1 = DICH_CHAIN1(op);
-   Dich_Chain1 *chain1;
-
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(idx1 < vtable->size, EINA_FALSE);
-   chain1 = &vtable->chain[idx1];
-   _vtable_chain_write_prepare(chain1);
-   fsrc = &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
-   if (hierarchy_klass)
-     {
-        if (!func)
-          {
-             op_type_funcs *fsrc_orig;
-             Dich_Chain1 *chain1_orig;
-
-             chain1_orig = &hierarchy_klass->vtable.chain[idx1];
-             fsrc_orig = &chain1_orig->chain2->funcs[DICH_CHAIN_LAST(op)];
-             func = fsrc_orig->func;
-             klass = fsrc_orig->src;
-          }
-     }
-   else
-     {
-        if (!allow_same_override && (fsrc->src == klass))
-          {
-             const _Efl_Class *op_kls = _eo_op_class_get(op);
-             ERR("Class '%s': Overriding already set func %p for op %d (%s) with %p.",
-                 klass->desc->name, fsrc->func, op, op_kls->desc->name, func);
-             return EINA_FALSE;
-          }
-     }
-
-   fsrc->func = func;
-   fsrc->src = klass;
-
-   return EINA_TRUE;
-}
-
-void
-_vtable_func_clean_all(Eo_Vtable *vtable)
-{
-   size_t i;
-   Dich_Chain1 *chain1 = vtable->chain;
-
-   for (i = 0 ; i < vtable->size ; i++, chain1++)
-     {
-        if (chain1->chain2)
-           _vtable_chain2_unref(chain1->chain2);
-     }
-   free(vtable->chain);
-   vtable->chain = NULL;
 }
 
 /* END OF DICH */
@@ -1008,7 +769,7 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
 /* klass is the klass we are working on. hierarchy_klass is the class whe should
  * use when validating. */
 static Eina_Bool
-_eo_class_funcs_set(Eo_Vtable *vtable, Eo_Vtable2 *vtable2, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Efl_Object_Op id_offset, Eina_Bool override_only, unsigned int class_id)
+_eo_class_funcs_set(Eo_Vtable2 *vtable2, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Efl_Object_Op id_offset, Eina_Bool override_only, unsigned int class_id)
 {
    unsigned int i, j;
    unsigned int number_of_new_functions = 0;
@@ -1118,8 +879,6 @@ _eo_class_funcs_set(Eo_Vtable *vtable, Eo_Vtable2 *vtable2, const Efl_Object_Ops
 #ifdef EO_DEBUG
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 #endif
-        if (!_vtable_func_set(vtable, klass, override_class, op, op_desc->func, EINA_TRUE))
-          return EINA_FALSE;
         if (!_vtable_func_set2(vtable2, klass, override_class, op2, op_desc->func, EINA_TRUE))
           return EINA_FALSE;
      }
@@ -1149,18 +908,9 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
    memset(hitmap, 0, sizeof(Eina_Bool) * klass->base_id2);
    _eo_ops_last_id += klass->ops_count + 1;
 
-   _vtable_init(&klass->vtable, DICH_CHAIN1(_eo_ops_last_id) + 1);
    _vtable_init2(&klass->vtable2);
 
    /* Flatten the function array */
-     {
-        const _Efl_Class **mro_itr = klass->mro;
-        for (  ; *mro_itr ; mro_itr++) ;
-
-        /* Skip ourselves. */
-        for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
-          _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
-     }
      {
         const _Efl_Class **mro_itr = klass->mro;
         for (  ; *mro_itr ; mro_itr++) ;
@@ -1214,7 +964,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                }
           }
      }
-   return _eo_class_funcs_set(&klass->vtable, &klass->vtable2, object_ops, klass, klass, 0, EINA_FALSE, klass->base_id2);
+   return _eo_class_funcs_set(&klass->vtable2, object_ops, klass, klass, 0, EINA_FALSE, klass->base_id2);
 err_funcs:
    ERR("Class %s already had its functions set..", klass->desc->name);
    return EINA_FALSE;
@@ -1464,9 +1214,9 @@ _eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
 #endif
    if (_obj_is_override(obj))
      {
-        _vtable_func_clean_all(obj->opt->vtable);
-        eina_freeq_ptr_main_add(obj->opt->vtable, free, 0);
-        EO_OPTIONAL_COW_SET(obj, vtable, NULL);
+        //eina_freeq_ptr_main_add(obj->opt->vtable, free, 0);
+        //FIXME free vtable
+        EO_OPTIONAL_COW_SET(obj, vtable2, NULL);
      }
 
    _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
@@ -1554,23 +1304,6 @@ err_klass:
    _EO_POINTER_ERR(eo_id, "Class (%p) is an invalid ref.", eo_id);
 err_obj:
    return 0;
-}
-
-
-static void
-_vtable_init(Eo_Vtable *vtable, size_t size)
-{
-   vtable->size = size;
-   vtable_chain_allocated += vtable->size * sizeof(*vtable->chain);
-   vtable->chain = calloc(vtable->size, sizeof(*vtable->chain));
-}
-
-static void
-_vtable_free(Eo_Vtable *vtable)
-{
-   if (!vtable) return;
-   _vtable_func_clean_all(vtable);
-   eina_freeq_ptr_main_add(vtable, free, sizeof(*vtable));
 }
 
 static Eina_Bool
@@ -1728,7 +1461,7 @@ eo_class_free(_Efl_Class *klass)
         if (klass->desc->class_destructor)
            klass->desc->class_destructor(_eo_class_id_get(klass));
 
-        _vtable_func_clean_all(&klass->vtable);
+        //FIXME free all vtable2 classes
      }
 
    EINA_TRASH_CLEAN(&klass->objects.trash, data)
@@ -1741,26 +1474,6 @@ eo_class_free(_Efl_Class *klass)
    eina_spinlock_free(&klass->iterators.trash_lock);
 
    eina_freeq_ptr_main_add(klass, free, 0);
-}
-
-/* Not really called, just used for the ptr... */
-static void
-_eo_class_isa_recursive_set(_Efl_Class *klass, const _Efl_Class *cur)
-{
-   const _Efl_Class **extn_itr;
-
-   _vtable_func_set(&klass->vtable, klass, NULL, cur->base_id + cur->ops_count,
-                    _eo_class_isa_func, EINA_TRUE);
-
-   for (extn_itr = cur->extensions ; *extn_itr ; extn_itr++)
-     {
-        _eo_class_isa_recursive_set(klass, *extn_itr);
-     }
-
-   if (cur->parent)
-     {
-        _eo_class_isa_recursive_set(klass, cur->parent);
-     }
 }
 
 static inline void
@@ -2071,12 +1784,6 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
         efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL);
      }
 
-   /* Mark which classes we implement */
-   if (klass->vtable.size)
-     {
-        _eo_class_isa_recursive_set(klass, klass);
-     }
-
    _eo_class_constructor(klass);
 
    DBG("Finished building class '%s'", klass->desc->name);
@@ -2094,15 +1801,8 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 
    if (ops)
      {
-        Eo_Vtable *vtable = obj->opt->vtable;
         Eo_Vtable2 *vtable2 = obj->opt->vtable2;
 
-        if (!vtable)
-          {
-             vtable = calloc(1, sizeof(*vtable));
-             _vtable_init(vtable, obj->klass->vtable.size);
-             _vtable_copy_all(vtable, &obj->klass->vtable);
-          }
         if (!vtable2)
           {
              vtable2 = calloc(1, sizeof(*vtable2));
@@ -2126,28 +1826,28 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
                   hitmap[class_id] = EINA_TRUE;
                }
           }
-        if (!_eo_class_funcs_set(vtable, vtable2, ops, obj->klass, klass, 0, EINA_TRUE, obj->klass->base_id2))
+        if (!_eo_class_funcs_set(vtable2, ops, obj->klass, klass, 0, EINA_TRUE, obj->klass->base_id2))
           {
              ERR("Failed to override functions for %s@%p. All previous "
                  "overrides have been reset.", obj->klass->desc->name, eo_id);
-             if (obj->opt->vtable == vtable)
+             if (obj->opt->vtable2 == vtable2)
                {
-                  EO_OPTIONAL_COW_SET(obj, vtable, NULL);
                   EO_OPTIONAL_COW_SET(obj, vtable2, NULL);
                }
              else
-               _vtable_free(vtable);
+               {
+                  //FIXME free this
+               }
+
              goto err;
           }
-        EO_OPTIONAL_COW_SET(obj, vtable, vtable);
         EO_OPTIONAL_COW_SET(obj, vtable2, vtable2);
      }
    else
      {
-        if (obj->opt->vtable)
+        if (obj->opt->vtable2)
           {
-             _vtable_free(obj->opt->vtable);
-             EO_OPTIONAL_COW_SET(obj, vtable, NULL);
+             //FIXME free this
              EO_OPTIONAL_COW_SET(obj, vtable2, NULL);
           }
      }
@@ -2213,8 +1913,6 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
         tdata->cache.isa_id = eo_id;
         tdata->cache.klass = klass_id;
-        // Currently implemented by reusing the LAST op id. Just marking it with
-        // _eo_class_isa_func.
         tdata->cache.isa = isa;
      }
    else
@@ -2243,9 +1941,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
         tdata->cache.isa_id = eo_id;
         tdata->cache.klass = klass_id;
-        // Currently implemented by reusing the LAST op id. Just marking it with
-        // _eo_class_isa_func.
-       tdata->cache.isa = isa;
+        tdata->cache.isa = isa;
         EO_OBJ_DONE(eo_id);
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
@@ -2784,12 +2480,6 @@ efl_object_init(void)
      }
    eina_tls_set(_eo_table_data, data);
    _efl_object_main_thread = eina_thread_self();
-
-#ifdef EO_DEBUG
-   /* Call it just for coverage purposes. Ugly I know, but I like it better than
-    * casting everywhere else. */
-   _eo_class_isa_func(NULL, NULL);
-#endif
 
    efl_object_optional_cow =
          eina_cow_add("Efl Object Optional Data", sizeof(Efl_Object_Optional),
