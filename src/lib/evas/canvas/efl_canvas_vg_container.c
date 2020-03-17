@@ -481,8 +481,8 @@ efl_canvas_vg_container_blend_buffer_clear(Efl_VG *obj EINA_UNUSED, Efl_Canvas_V
    cd->blend.buffer = NULL;
 }
 
-EAPI Efl_VG*
-evas_vg_container_add(Efl_VG *parent)
+EAPI Evas_Vg_Container *
+evas_vg_container_add(Evas_Object *parent)
 {
    /* Warn it because the usage has been changed.
       We can remove this message after v1.21. */

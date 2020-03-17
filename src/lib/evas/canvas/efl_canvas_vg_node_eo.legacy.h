@@ -1,15 +1,15 @@
-#ifndef _EFL_CANVAS_VG_NODE_EO_LEGACY_H_
-#define _EFL_CANVAS_VG_NODE_EO_LEGACY_H_
+#ifndef _EVAS_VG_NODE_EO_LEGACY_H_
+#define _EVAS_VG_NODE_EO_LEGACY_H_
 
-#ifndef _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
-#define _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
+#ifndef _EVAS_VG_NODE_EO_CLASS_TYPE
+#define _EVAS_VG_NODE_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Vg_Node;
+typedef Eo Evas_Vg_Node;
 
 #endif
 
-#ifndef _EFL_CANVAS_VG_NODE_EO_TYPES
-#define _EFL_CANVAS_VG_NODE_EO_TYPES
+#ifndef _EVAS_VG_NODE_EO_TYPES
+#define _EVAS_VG_NODE_EO_TYPES
 
 
 #endif
@@ -26,7 +26,7 @@ typedef Eo Efl_Canvas_Vg_Node;
  *
  * @ingroup Evas_Vg_Node_Group
  */
-EAPI void evas_vg_node_transformation_set(Efl_Canvas_Vg_Node *obj, const Eina_Matrix3 *m);
+EAPI void evas_vg_node_transformation_set(Evas_Vg_Node *obj, const Eina_Matrix3 *m);
 
 /**
  * @brief Gets the transformation matrix used for this node object.
@@ -39,7 +39,7 @@ EAPI void evas_vg_node_transformation_set(Efl_Canvas_Vg_Node *obj, const Eina_Ma
  *
  * @ingroup Evas_Vg_Node_Group
  */
-EAPI const Eina_Matrix3 *evas_vg_node_transformation_get(const Efl_Canvas_Vg_Node *obj);
+EAPI const Eina_Matrix3 *evas_vg_node_transformation_get(const Evas_Vg_Node *obj);
 
 /**
  * @brief Sets the origin position of the node object.
@@ -54,7 +54,7 @@ EAPI const Eina_Matrix3 *evas_vg_node_transformation_get(const Efl_Canvas_Vg_Nod
  *
  * @ingroup Evas_Vg_Node_Group
  */
-EAPI void evas_vg_node_origin_set(Efl_Canvas_Vg_Node *obj, double x, double y);
+EAPI void evas_vg_node_origin_set(Evas_Vg_Node *obj, double x, double y);
 
 /**
  * @brief Gets the origin position of the node object.
@@ -67,7 +67,7 @@ EAPI void evas_vg_node_origin_set(Efl_Canvas_Vg_Node *obj, double x, double y);
  *
  * @ingroup Evas_Vg_Node_Group
  */
-EAPI void evas_vg_node_origin_get(const Efl_Canvas_Vg_Node *obj, double *x, double *y);
+EAPI void evas_vg_node_origin_get(const Evas_Vg_Node *obj, double *x, double *y);
 
 /**
  * @brief Set Mask Node to this renderer
@@ -78,6 +78,6 @@ EAPI void evas_vg_node_origin_get(const Efl_Canvas_Vg_Node *obj, double *x, doub
  *
  * @ingroup Evas_Vg_Node_Group
  */
-EAPI void evas_vg_node_mask_set(Efl_Canvas_Vg_Node *obj, Efl_Canvas_Vg_Node *mask, int op);
+EAPI void evas_vg_node_mask_set(Evas_Vg_Node *obj, Evas_Vg_Node *mask, int op);
 
 #endif

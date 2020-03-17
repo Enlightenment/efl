@@ -3690,6 +3690,130 @@ EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONN
 #include "canvas/efl_canvas_vg_node_eo.legacy.h"
 #include "canvas/efl_canvas_vg_object_eo.legacy.h"
 #include "canvas/efl_canvas_vg_container_eo.legacy.h"
+#include "canvas/efl_canvas_vg_shape_eo.legacy.h"
+#include "canvas/efl_canvas_vg_gradient_eo.legacy.h"
+
+/**
+ * @brief These values determine how the end of opened sub-paths are rendered in a
+ * stroke. @ref evas_vg_shape_stroke_cap_set
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Vg_Cap
+ */
+typedef enum Evas_Vg_Cap_Type
+{
+  EVAS_VG_CAP_BUTT = 0, /**< The end of lines is rendered as a full stop on the
+                         * last point itself */
+  EVAS_VG_CAP_ROUND,    /**< The end of lines is rendered as a half-circle
+                         * around */
+  EVAS_VG_CAP_SQUARE,   /**< The end of lines is rendered as a square around
+                         * the last point */
+  EVAS_VG_CAP_LAST      /**< Sentinel value to indicate last enum field during
+                         * iteration */
+} Evas_Vg_Cap;
+
+
+/**
+ * @brief These values determine how two joining lines are rendered in a stroker.
+ * @ref evas_vg_shape_stroke_join_set
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Vg_Join
+ */
+typedef enum Evas_Vg_Join_Type
+{
+  EVAS_VG_JOIN_MITER = 0, /**< Used to render rounded line joins. Circular arcs
+                           * are used to join two lines smoothly */
+  EVAS_VG_JOIN_ROUND,     /**< Used to render beveled line joins. The outer corner
+                           * of the joined lines is filled by enclosing the
+                           * triangular region of the corner with a straight line
+                           * between the outer corners of each stroke */
+  EVAS_VG_JOIN_BEVEL,     /**< Used to render mitered line joins. The intersection
+                           * of the strokes is clipped at a line perpendicular to
+                           * the bisector of the angle between the strokes, at the
+                           * distance from the intersection of the segments equal
+                           * to the product of the miter limit value and the border
+                           * radius.  This prevents long spikes being created */
+  EVAS_VG_JOIN_LAST       /**< Sentinel value to indicate last enum field during
+                           * teration */
+} Evas_Vg_Join;
+
+/**
+ * @brief These values determine how the points are interpreted in a stream of points.
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Vg_Path_Command
+ */
+typedef enum Evas_Vg_Path_Command_Type
+{
+  EVAS_VG_PATH_COMMAND_END = 0,  /**< The end of stream , no more points to process */
+  EVAS_VG_PATH_COMMAND_MOVE_TO,  /**< The next point is the start point of a sub path */
+  EVAS_VG_PATH_COMMAND_LINE_TO,  /**< The next point is used to draw a line from
+                                  * current point */
+  EVAS_VG_PATH_COMMAND_CUBIC_TO, /**< The next three point is used to draw
+                                  * a cubic bezier curve from current point */
+  EVAS_VG_PATH_COMMAND_CLOSE,    /**< Close the current subpath by drawing a line
+                                  * between current point and the first point of
+                                  * current subpath */
+  EVAS_VG_PATH_COMMAND_LAST      /**< Sentinel value to indicate last enum field
+                                  * during iteration */
+} Evas_Vg_Path_Command;
+
+/**
+ * @brief Type defining gradient stops. Describes the location and color of a
+ * transition point in a gradient.
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Vg_Gradient_Stop
+ */
+typedef struct _Evas_Vg_Gradient_Stop
+{
+  double offset; /**< The location of the gradient stop within the gradient
+                  * vector */
+  int r; /**< The component R color of the gradient stop */
+  int g; /**< The component G color of the gradient stop */
+  int b; /**< The component B color of the gradient stop */
+  int a; /**< The component A color of the gradient stop */
+} Evas_Vg_Gradient_Stop;
+
+/**
+ * @brief Specifies how the area outside the gradient area should be filled.
+ * @ref evas_vg_gradient_spread_set
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Vg_Gradient_Spread
+ */
+typedef enum Evas_Vg_Gradient_Spread_Type
+{
+  EVAS_VG_GRADIENT_SPREAD_PAD = 0, /**< The area is filled with the closest stop
+                                    * color. This is the default */
+  EVAS_VG_GRADIENT_SPREAD_REFLECT, /**< The gradient is reflected outside the
+                                    * gradient area */
+  EVAS_VG_GRADIENT_SPREAD_REPEAT, /**< The gradient is repeated outside the
+                                   * gradient area */
+  EVAS_VG_GRADIENT_SPREAD_LAST /**< Sentinel value to indicate last enum field
+                                * during iteration */
+} Evas_Vg_Gradient_Spread;
+
+/**
+ * @brief Type describing dash.
+ * @ref evas_vg_shape_stroke_dash_set
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Vg_Dash
+ */
+typedef struct _Evas_Vg_Dash
+{
+  double length; /**< Dash drawing length */
+  double gap;    /**< Distance between two dashes */
+} Evas_Vg_Dash;
+
 /**
  * Creates a new vector shape object.
  *
@@ -3698,7 +3822,7 @@ EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONN
  *
  * @since 1.14
  */
-EAPI Efl_VG* evas_vg_shape_add(Efl_VG *parent);
+EAPI Evas_Vg_Shape* evas_vg_shape_add(Evas_Vg_Container *parent);
 
 /**
  * Creates a new vector container object.
@@ -3709,7 +3833,7 @@ EAPI Efl_VG* evas_vg_shape_add(Efl_VG *parent);
  * @since 1.14
  */
 
-EAPI Efl_VG* evas_vg_container_add(Efl_VG *parent);
+EAPI Evas_Vg_Container* evas_vg_container_add(Evas_Object *parent);
 
 /**
  *
@@ -3717,7 +3841,7 @@ EAPI Efl_VG* evas_vg_container_add(Efl_VG *parent);
  *
  *
  */
-EAPI Eina_Bool evas_vg_node_visible_get(Eo *obj);
+EAPI Eina_Bool evas_vg_node_visible_get(Evas_Vg_Node *obj);
 
 /**
  *
@@ -3726,7 +3850,7 @@ EAPI Eina_Bool evas_vg_node_visible_get(Eo *obj);
  * @param[in] v @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise
  *
  */
-EAPI void evas_vg_node_visible_set(Eo *obj, Eina_Bool v);
+EAPI void evas_vg_node_visible_set(Evas_Vg_Node *obj, Eina_Bool v);
 
 /**
  *
@@ -3748,7 +3872,7 @@ EAPI void evas_vg_node_visible_set(Eo *obj, Eina_Bool v);
  * @param[out] a The alpha component of the given color.
  *
  */
-EAPI void evas_vg_node_color_get(Eo *obj, int *r, int *g, int *b, int *a);
+EAPI void evas_vg_node_color_get(Evas_Vg_Node *obj, int *r, int *g, int *b, int *a);
 
 /**
  *
@@ -3766,7 +3890,7 @@ EAPI void evas_vg_node_color_get(Eo *obj, int *r, int *g, int *b, int *a);
  * @param[in] a The alpha component of the given color.
  *
  */
-EAPI void evas_vg_node_color_set(Eo *obj, int r, int g, int b, int a);
+EAPI void evas_vg_node_color_set(Evas_Vg_Node *obj, int r, int g, int b, int a);
 
 /**
  *
@@ -3778,7 +3902,7 @@ EAPI void evas_vg_node_color_set(Eo *obj, int r, int g, int b, int a);
  * @param[out] h in
  *
  */
-EAPI void evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h);
+EAPI void evas_vg_node_geometry_get(Evas_Vg_Node *obj, int *x, int *y, int *w, int *h);
 
 /**
  *
@@ -3790,7 +3914,7 @@ EAPI void evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h);
  * @param[in] h in
  *
  */
-EAPI void evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h);
+EAPI void evas_vg_node_geometry_set(Evas_Vg_Node *obj, int x, int y, int w, int h);
 
 /**
  *
@@ -3820,7 +3944,7 @@ EAPI void evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h);
  * @param[in] below the object below which to stack
  *
  */
-EAPI void evas_vg_node_stack_below(Eo *obj, Eo *below);
+EAPI void evas_vg_node_stack_below(Evas_Vg_Node *obj, Evas_Vg_Node *below);
 
 /**
  *
@@ -3850,7 +3974,7 @@ EAPI void evas_vg_node_stack_below(Eo *obj, Eo *below);
  * @param[in] above the object above which to stack
  *
  */
-EAPI void evas_vg_node_stack_above(Eo *obj, Eo *above);
+EAPI void evas_vg_node_stack_above(Evas_Vg_Node *obj, Evas_Vg_Node *above);
 
 /**
  *
@@ -3864,7 +3988,7 @@ EAPI void evas_vg_node_stack_above(Eo *obj, Eo *above);
  * @see evas_object_lower()
  * 
  */
-EAPI void evas_vg_node_raise(Eo *obj);
+EAPI void evas_vg_node_raise(Evas_Vg_Node *obj);
 
 /**
  *
@@ -3880,7 +4004,7 @@ EAPI void evas_vg_node_raise(Eo *obj);
  *
  *
  */
-EAPI void evas_vg_node_lower(Eo *obj);
+EAPI void evas_vg_node_lower(Evas_Vg_Node *obj);
 
 #include "canvas/efl_canvas_vg_node_eo.legacy.h"
 
@@ -3891,7 +4015,7 @@ EAPI void evas_vg_node_lower(Eo *obj);
  *
  *
  */
-EAPI double evas_vg_shape_stroke_scale_get(Eo *obj);
+EAPI double evas_vg_shape_stroke_scale_get(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -3902,7 +4026,7 @@ EAPI double evas_vg_shape_stroke_scale_get(Eo *obj);
  * @param[in] s stroke scale value
  *
  */
-EAPI void evas_vg_shape_stroke_scale_set(Eo *obj, double s);
+EAPI void evas_vg_shape_stroke_scale_set(Evas_Vg_Shape *obj, double s);
 
 /**
  *
@@ -3915,7 +4039,7 @@ EAPI void evas_vg_shape_stroke_scale_set(Eo *obj, double s);
  * @param[out] a The alpha component of the given color.
  *
  */
-EAPI void evas_vg_shape_stroke_color_get(Eo *obj, int *r, int *g, int *b, int *a);
+EAPI void evas_vg_shape_stroke_color_get(Evas_Vg_Shape *obj, int *r, int *g, int *b, int *a);
 
 /**
  *
@@ -3928,7 +4052,7 @@ EAPI void evas_vg_shape_stroke_color_get(Eo *obj, int *r, int *g, int *b, int *a
  * @param[in] a The alpha component of the given color.
  *
  */
-EAPI void evas_vg_shape_stroke_color_set(Eo *obj, int r, int g, int b, int a);
+EAPI void evas_vg_shape_stroke_color_set(Evas_Vg_Shape *obj, int r, int g, int b, int a);
 
 /**
  *
@@ -3937,7 +4061,7 @@ EAPI void evas_vg_shape_stroke_color_set(Eo *obj, int r, int g, int b, int a);
  *
  *
  */
-EAPI double evas_vg_shape_stroke_width_get(Eo *obj);
+EAPI double evas_vg_shape_stroke_width_get(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -3947,7 +4071,7 @@ EAPI double evas_vg_shape_stroke_width_get(Eo *obj);
  * @param[in] w stroke width to be used
  *
  */
-EAPI void evas_vg_shape_stroke_width_set(Eo *obj, double w);
+EAPI void evas_vg_shape_stroke_width_set(Evas_Vg_Shape *obj, double w);
 
 /**
  *
@@ -3955,7 +4079,7 @@ EAPI void evas_vg_shape_stroke_width_set(Eo *obj, double w);
  *
  *
  */
-EAPI double evas_vg_shape_stroke_location_get(Eo *obj);
+EAPI double evas_vg_shape_stroke_location_get(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -3964,7 +4088,7 @@ EAPI double evas_vg_shape_stroke_location_get(Eo *obj);
  * @param[in] centered
  *
  */
-EAPI void evas_vg_shape_stroke_location_set(Eo *obj, double centered);
+EAPI void evas_vg_shape_stroke_location_set(Evas_Vg_Shape *obj, double centered);
 
 /**
  *
@@ -3974,7 +4098,7 @@ EAPI void evas_vg_shape_stroke_location_set(Eo *obj, double centered);
  * @param[out] length
  *
  */
-EAPI void evas_vg_shape_stroke_dash_get(Eo *obj, const Efl_Gfx_Dash **dash, unsigned int *length);
+EAPI void evas_vg_shape_stroke_dash_get(Evas_Vg_Shape *obj, const Evas_Vg_Dash **dash, unsigned int *length);
 
 /**
  *
@@ -3984,7 +4108,7 @@ EAPI void evas_vg_shape_stroke_dash_get(Eo *obj, const Efl_Gfx_Dash **dash, unsi
  * @param[in] length
  *
  */
-EAPI void evas_vg_shape_stroke_dash_set(Eo *obj, const Efl_Gfx_Dash *dash, unsigned int length);
+EAPI void evas_vg_shape_stroke_dash_set(Evas_Vg_Shape *obj, const Evas_Vg_Dash *dash, unsigned int length);
 
 /**
  *
@@ -3993,7 +4117,7 @@ EAPI void evas_vg_shape_stroke_dash_set(Eo *obj, const Efl_Gfx_Dash *dash, unsig
  *
  *
  */
-EAPI Efl_Gfx_Cap evas_vg_shape_stroke_cap_get(Eo *obj);
+EAPI Evas_Vg_Cap evas_vg_shape_stroke_cap_get(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -4007,7 +4131,7 @@ EAPI Efl_Gfx_Cap evas_vg_shape_stroke_cap_get(Eo *obj);
  * @param[in] c cap style to use , default is EFL_GFX_CAP_BUTT
  *
  */
-EAPI void evas_vg_shape_stroke_cap_set(Eo *obj, Efl_Gfx_Cap c);
+EAPI void evas_vg_shape_stroke_cap_set(Evas_Vg_Shape *obj, Evas_Vg_Cap c);
 
 /**
  *
@@ -4016,7 +4140,7 @@ EAPI void evas_vg_shape_stroke_cap_set(Eo *obj, Efl_Gfx_Cap c);
  *
  *
  */
-EAPI Efl_Gfx_Join evas_vg_shape_stroke_join_get(Eo *obj);
+EAPI Evas_Vg_Join evas_vg_shape_stroke_join_get(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -4031,7 +4155,7 @@ EAPI Efl_Gfx_Join evas_vg_shape_stroke_join_get(Eo *obj);
 EFL_GFX_JOIN_MITER
  *
  */
-EAPI void evas_vg_shape_stroke_join_set(Eo *obj, Efl_Gfx_Join j);
+EAPI void evas_vg_shape_stroke_join_set(Evas_Vg_Shape *obj, Evas_Vg_Join j);
 
 /**
  *
@@ -4046,7 +4170,7 @@ EAPI void evas_vg_shape_stroke_join_set(Eo *obj, Efl_Gfx_Join j);
  * @param[in] points point list
  *
  */
-EAPI void evas_vg_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points);
+EAPI void evas_vg_shape_path_set(Evas_Vg_Shape *obj, const Evas_Vg_Path_Command *op, const double *points);
 
 /**
  *
@@ -4058,10 +4182,10 @@ EAPI void evas_vg_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const 
  *
  */
 
-EAPI void evas_vg_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points);
-EAPI void evas_vg_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points);
-EAPI void evas_vg_shape_current_get(Eo *obj, double *x, double *y);
-EAPI void evas_vg_shape_current_ctrl_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_shape_path_get(Evas_Vg_Shape *obj, const Evas_Vg_Path_Command **op, const double **points);
+EAPI void evas_vg_shape_path_length_get(Evas_Vg_Shape *obj, unsigned int *commands, unsigned int *points);
+EAPI void evas_vg_shape_current_get(Evas_Vg_Shape *obj, double *x, double *y);
+EAPI void evas_vg_shape_current_ctrl_get(Evas_Vg_Shape *obj, double *x, double *y);
 
 /**
  *
@@ -4073,7 +4197,7 @@ EAPI void evas_vg_shape_current_ctrl_get(Eo *obj, double *x, double *y);
  * @param[in] dup_from Shape object from where data will be copied.
  *
  */
-EAPI void evas_vg_shape_dup(Eo *obj, Eo *dup_from);
+EAPI void evas_vg_shape_dup(Evas_Vg_Shape *obj, Evas_Vg_Shape *dup_from);
 
 /**
  *
@@ -4084,7 +4208,7 @@ EAPI void evas_vg_shape_dup(Eo *obj, Eo *dup_from);
  *
  *
  */
-EAPI void evas_vg_shape_reset(Eo *obj);
+EAPI void evas_vg_shape_reset(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -4099,7 +4223,7 @@ EAPI void evas_vg_shape_reset(Eo *obj);
  * @param[in] y Y co-ordinate of the current point.
  *
  */
-EAPI void evas_vg_shape_append_move_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_append_move_to(Evas_Vg_Shape *obj, double x, double y);
 
 /**
  *
@@ -4118,7 +4242,7 @@ EAPI void evas_vg_shape_append_move_to(Eo *obj, double x, double y);
  * @param[in] y Y co-ordinate of end point of the line.
  *
  */
-EAPI void evas_vg_shape_append_line_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_append_line_to(Evas_Vg_Shape *obj, double x, double y);
 
 /**
  *
@@ -4136,7 +4260,7 @@ EAPI void evas_vg_shape_append_line_to(Eo *obj, double x, double y);
  * @param[in] ctrl_y Y co-ordinate of control point.
  *
  */
-EAPI void evas_vg_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+EAPI void evas_vg_shape_append_quadratic_to(Evas_Vg_Shape *obj, double x, double y, double ctrl_x, double ctrl_y);
 
 /**
  *
@@ -4151,7 +4275,7 @@ EAPI void evas_vg_shape_append_quadratic_to(Eo *obj, double x, double y, double 
  * @param[in] y Y co-ordinate of end point of the line.
  *
  */
-EAPI void evas_vg_shape_append_squadratic_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_append_squadratic_to(Evas_Vg_Shape *obj, double x, double y);
 
 /**
  *
@@ -4171,7 +4295,7 @@ EAPI void evas_vg_shape_append_squadratic_to(Eo *obj, double x, double y);
  * @param[in] ctrl_y1 Y co-ordinate of 2nd control point.
  *
  */
-EAPI void evas_vg_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1);
+EAPI void evas_vg_shape_append_cubic_to(Evas_Vg_Shape *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1);
 
 /**
  *
@@ -4189,7 +4313,7 @@ EAPI void evas_vg_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl
  * @param[in] ctrl_y Y co-ordinate of 2nd control point.
  *
  */
-EAPI void evas_vg_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+EAPI void evas_vg_shape_append_scubic_to(Evas_Vg_Shape *obj, double x, double y, double ctrl_x, double ctrl_y);
 
 /**
  *
@@ -4213,7 +4337,7 @@ EAPI void evas_vg_shape_append_scubic_to(Eo *obj, double x, double y, double ctr
  * @param[in] sweep Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.
  *
  */
-EAPI void evas_vg_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
+EAPI void evas_vg_shape_append_arc_to(Evas_Vg_Shape *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
 
 /**
  * @brief Append an arc that enclosed in the given rectangle (x, y, w, h). The
@@ -4229,7 +4353,7 @@ EAPI void evas_vg_shape_append_arc_to(Eo *obj, double x, double y, double rx, do
  *
  * @ingroup Efl_Gfx_Shape
  */
-EAPI void evas_vg_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length);
+EAPI void evas_vg_shape_append_arc(Evas_Vg_Shape *obj, double x, double y, double w, double h, double start_angle, double sweep_length);
 
 /**
  *
@@ -4244,7 +4368,7 @@ EAPI void evas_vg_shape_append_arc(Eo *obj, double x, double y, double w, double
  *
  *
  */
-EAPI void evas_vg_shape_append_close(Eo *obj);
+EAPI void evas_vg_shape_append_close(Evas_Vg_Shape *obj);
 
 /**
  *
@@ -4259,7 +4383,7 @@ EAPI void evas_vg_shape_append_close(Eo *obj);
  * @param[in] radius radius of the circle.
  *
  */
-EAPI void evas_vg_shape_append_circle(Eo *obj, double x, double y, double radius);
+EAPI void evas_vg_shape_append_circle(Evas_Vg_Shape *obj, double x, double y, double radius);
 
 /**
  *
@@ -4283,11 +4407,11 @@ EAPI void evas_vg_shape_append_circle(Eo *obj, double x, double y, double radius
  * @param[in] ry The y radius of the rounded corner and should be in range [ 0 to h/2 ]
  *
  */
-EAPI void evas_vg_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry);
+EAPI void evas_vg_shape_append_rect(Evas_Vg_Shape *obj, double x, double y, double w, double h, double rx, double ry);
 
-EAPI void evas_vg_shape_append_svg_path(Eo *obj, const char *svg_path_data);
-EAPI Eina_Bool evas_vg_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
-EAPI Eina_Bool evas_vg_shape_equal_commands(Eo *obj, const Eo *with);
+EAPI void evas_vg_shape_append_svg_path(Evas_Vg_Shape *obj, const char *svg_path_data);
+EAPI Eina_Bool evas_vg_shape_interpolate(Evas_Vg_Shape *obj, const Evas_Vg_Shape *from, const Evas_Vg_Shape *to, double pos_map);
+EAPI Eina_Bool evas_vg_shape_equal_commands(Evas_Vg_Shape *obj, const Evas_Vg_Shape *with);
 
 /**
  * set a vg object as the fill property
@@ -4296,7 +4420,7 @@ EAPI Eina_Bool evas_vg_shape_equal_commands(Eo *obj, const Eo *with);
  * @param f The object content will be used for filling.
  *
  */
-EAPI void evas_vg_shape_fill_set(Eo *obj, Efl_VG *f);
+EAPI void evas_vg_shape_fill_set(Evas_Vg_Shape *obj, Evas_Vg_Node *f);
 
 /**
  * returns the object that is set for the fill property
@@ -4305,7 +4429,7 @@ EAPI void evas_vg_shape_fill_set(Eo *obj, Efl_VG *f);
  * @return The object that is set as fill property.
  *
  */
-EAPI Efl_VG* evas_vg_shape_fill_get(const Eo *obj);
+EAPI Evas_Vg_Node* evas_vg_shape_fill_get(const Evas_Vg_Shape *obj);
 
 /**
  * set a vg object as the stroke fill property
@@ -4314,7 +4438,7 @@ EAPI Efl_VG* evas_vg_shape_fill_get(const Eo *obj);
  * @param f The object content will be used for stroke filling.
  *
  */
-EAPI void evas_vg_shape_stroke_fill_set(Eo *obj, Efl_VG *f);
+EAPI void evas_vg_shape_stroke_fill_set(Evas_Vg_Shape *obj, Evas_Vg_Node *f);
 
 /**
  * returns the object that is set for the stroke fill property
@@ -4323,7 +4447,7 @@ EAPI void evas_vg_shape_stroke_fill_set(Eo *obj, Efl_VG *f);
  * @return The object that is set as stroke fill property.
  *
  */
-EAPI Efl_VG* evas_vg_shape_stroke_fill_get(const Eo *obj);
+EAPI Evas_Vg_Node* evas_vg_shape_stroke_fill_get(const Evas_Vg_Shape *obj);
 
 #include "canvas/efl_canvas_vg_shape_eo.legacy.h"
 
@@ -4336,7 +4460,7 @@ EAPI Efl_VG* evas_vg_shape_stroke_fill_get(const Eo *obj);
  * @param[in] length length of the list
  *
  */
-EAPI void evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors, unsigned int length);
+EAPI void evas_vg_gradient_stop_set(Evas_Vg_Gradient *obj, const Evas_Vg_Gradient_Stop *colors, unsigned int length);
 
 /**
  *
@@ -4347,7 +4471,7 @@ EAPI void evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors
  * @param[out] length length of the list
  *
  */
-EAPI void evas_vg_gradient_stop_get(Eo *obj, const Efl_Gfx_Gradient_Stop **colors, unsigned int *length);
+EAPI void evas_vg_gradient_stop_get(Evas_Vg_Gradient *obj, const Evas_Vg_Gradient_Stop **colors, unsigned int *length);
 
 /**
  *
@@ -4357,7 +4481,7 @@ EAPI void evas_vg_gradient_stop_get(Eo *obj, const Efl_Gfx_Gradient_Stop **color
  * @param[in] s spread type to be used
  *
  */
-EAPI void evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s);
+EAPI void evas_vg_gradient_spread_set(Evas_Vg_Gradient *obj, Evas_Vg_Gradient_Spread s);
 
 /**
  *
@@ -4367,7 +4491,7 @@ EAPI void evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s);
  *
  *
  */
-EAPI Efl_Gfx_Gradient_Spread evas_vg_gradient_spread_get(Eo *obj);
+EAPI Evas_Vg_Gradient_Spread evas_vg_gradient_spread_get(Evas_Vg_Gradient *obj);
 
 /**
  * Creates a new linear gradient object \.
@@ -4376,7 +4500,7 @@ EAPI Efl_Gfx_Gradient_Spread evas_vg_gradient_spread_get(Eo *obj);
  * @return The created linear gradient object handle.
  *
  */
-EAPI Efl_VG* evas_vg_gradient_linear_add(Efl_VG *parent);
+EAPI Evas_Vg_Gradient_Linear* evas_vg_gradient_linear_add(Evas_Vg_Container *parent);
 
 /**
  *
@@ -4386,7 +4510,7 @@ EAPI Efl_VG* evas_vg_gradient_linear_add(Efl_VG *parent);
  * @param[in] y y co-ordinate of start point
  *
  */
-EAPI void evas_vg_gradient_linear_start_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_linear_start_set(Evas_Vg_Gradient_Linear *obj, double x, double y);
 
 /**
  *
@@ -4396,7 +4520,7 @@ EAPI void evas_vg_gradient_linear_start_set(Eo *obj, double x, double y);
  * @param[out] y y co-ordinate of start point
  *
  */
-EAPI void evas_vg_gradient_linear_start_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_gradient_linear_start_get(Evas_Vg_Gradient_Linear *obj, double *x, double *y);
 
 /**
  *
@@ -4406,7 +4530,7 @@ EAPI void evas_vg_gradient_linear_start_get(Eo *obj, double *x, double *y);
  * @param[in] y y co-ordinate of end point
  *
  */
-EAPI void evas_vg_gradient_linear_end_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_linear_end_set(Evas_Vg_Gradient_Linear *obj, double x, double y);
 
 /**
  *
@@ -4416,7 +4540,7 @@ EAPI void evas_vg_gradient_linear_end_set(Eo *obj, double x, double y);
  * @param[out] y y co-ordinate of end point
  *
  */
-EAPI void evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_gradient_linear_end_get(Evas_Vg_Gradient_Linear *obj, double *x, double *y);
 
 /**
  * Creates a new radial gradient object \.
@@ -4425,7 +4549,7 @@ EAPI void evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y);
  * @return The created radial gradient object handle.
  *
  */
-EAPI Efl_VG* evas_vg_gradient_radial_add(Efl_VG *parent);
+EAPI Evas_Vg_Gradient_Radial* evas_vg_gradient_radial_add(Evas_Vg_Container *parent);
 
 /**
  *
@@ -4435,7 +4559,7 @@ EAPI Efl_VG* evas_vg_gradient_radial_add(Efl_VG *parent);
  * @param[in] y y co-ordinate of center point
  *
  */
-EAPI void evas_vg_gradient_radial_center_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_radial_center_set(Evas_Vg_Gradient_Radial *obj, double x, double y);
 
 /**
  *
@@ -4445,7 +4569,7 @@ EAPI void evas_vg_gradient_radial_center_set(Eo *obj, double x, double y);
  * @param[out] y y co-ordinate of center point
  *
  */
-EAPI void evas_vg_gradient_radial_center_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_gradient_radial_center_get(Evas_Vg_Gradient_Radial *obj, double *x, double *y);
 
 /**
  *
@@ -4454,7 +4578,7 @@ EAPI void evas_vg_gradient_radial_center_get(Eo *obj, double *x, double *y);
  * @param[in] r center radius
  *
  */
-EAPI void evas_vg_gradient_radial_radius_set(Eo *obj, double r);
+EAPI void evas_vg_gradient_radial_radius_set(Evas_Vg_Gradient_Radial *obj, double r);
 
 /**
  *
@@ -4462,7 +4586,7 @@ EAPI void evas_vg_gradient_radial_radius_set(Eo *obj, double r);
  *
  *
  */
-EAPI double evas_vg_gradient_radial_radius_get(Eo *obj);
+EAPI double evas_vg_gradient_radial_radius_get(Evas_Vg_Gradient_Radial *obj);
 
 /**
  *
@@ -4472,7 +4596,7 @@ EAPI double evas_vg_gradient_radial_radius_get(Eo *obj);
  * @param[in] y y co-ordinate of focal point
  *
  */
-EAPI void evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_radial_focal_set(Evas_Vg_Gradient_Radial *obj, double x, double y);
 
 /**
  *
@@ -4482,7 +4606,7 @@ EAPI void evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y);
  * @param[out] y y co-ordinate of focal point
  *
  */
-EAPI void evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_gradient_radial_focal_get(Evas_Vg_Gradient_Radial *obj, double *x, double *y);
 
 /**
  * @}

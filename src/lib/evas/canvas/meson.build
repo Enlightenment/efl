@@ -111,6 +111,7 @@ evas_legacy_h = files([
   'efl_canvas_vg_node_eo.legacy.h',
   'efl_canvas_vg_object_eo.legacy.h',
   'efl_canvas_vg_shape_eo.legacy.h',
+  'efl_canvas_vg_gradient_eo.legacy.h',
   'evas_box_eo.legacy.h',
   'evas_canvas_eo.legacy.h',
   'evas_grid_eo.legacy.h',
