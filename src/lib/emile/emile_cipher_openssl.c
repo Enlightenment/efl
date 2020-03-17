@@ -193,7 +193,13 @@ on_error:
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
    if (ctx)
      EVP_CIPHER_CTX_cleanup(ctx);
+#else
+   if (ctx) {
+     EVP_CIPHER_CTX_cleanup(ctx);
+     EVP_CIPHER_CTX_free(ctx);
+   }
 #endif /* if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER) */
+
 
    free(buffer);
 
