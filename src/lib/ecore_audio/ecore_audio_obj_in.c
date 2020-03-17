@@ -187,9 +187,15 @@ _ecore_audio_in_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Input *obj)
 EOLIAN static void
 _ecore_audio_in_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Input *obj)
 {
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   if(obj->output)
-    ecore_audio_obj_out_input_detach(obj->output, eo_obj);
+    {
+       if (!ecore_audio_obj_out_input_detach(obj->output, eo_obj))
+         ERR("Failed to detach output %p!", obj->output);
+    }
 
+  if (ea_obj->vio)
+    _free_vio(ea_obj);
   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 

@@ -147,11 +147,13 @@ _ecore_audio_out_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Output *obj)
 {
   Eina_List *cur, *tmp;
   Eo *in;
+  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   EINA_LIST_FOREACH_SAFE(obj->inputs, cur, tmp, in) {
       ecore_audio_obj_out_input_detach(eo_obj, in);
   }
-
+  if (ea_obj->vio)
+    _free_vio(ea_obj);
   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
