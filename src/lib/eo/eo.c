@@ -495,8 +495,6 @@ _vtable_func_get2(const Eo_Vtable2 *vtable2, Efl_Object_Op op)
 
    if (EINA_UNLIKELY(vtable2->size <= class_id))
      return NULL;
-   if (EINA_UNLIKELY(vtable2->chain[class_id].count == 0))
-     return NULL;
    if (EINA_UNLIKELY(vtable2->chain[class_id].count <= func_id))
      return NULL;
 
