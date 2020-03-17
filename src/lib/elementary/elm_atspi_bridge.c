@@ -57,6 +57,10 @@
    if (!(obj) || !efl_isa(obj, class)) \
      return _dbus_invalid_ref_error_new(msg);
 
+#define ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg) \
+   if (!obj) \
+     return _dbus_invalid_ref_error_new(msg);
+
 typedef struct Key_Event_Info {
      Ecore_Event_Key event;
      int type;
@@ -1304,16 +1308,64 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "iu", &start, &gran))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and granularity expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_position_set(sel1, start);
+        efl_text_cursor_position_set(sel2, start);
+
+        switch(gran)
+          {
+           case EFL_ACCESS_TEXT_GRANULARITY_CHAR:
+             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
+             break;
+
+           case EFL_ACCESS_TEXT_GRANULARITY_WORD:
+             efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
+             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
+             break;
+
+           case EFL_ACCESS_TEXT_GRANULARITY_LINE:
+             efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
+             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
+             break;
+
+           case EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH:
+             efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_START);
+             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_END);
+             break;
+
+           case EFL_ACCESS_TEXT_GRANULARITY_SENTENCE: /* this one is not supported by efl */
+           default:
+             efl_del(sel1);
+             efl_del(sel2);
+             return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Granularity not suported.");
+          }
+
+        str = efl_text_cursor_range_text_get(sel1, sel2);
+
+        efl_del(sel1);
+        efl_del(sel2);
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        str = efl_access_text_string_get(obj, gran, &start, &end);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
+   str = str ? str : strdup("");
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   str = efl_access_text_string_get(obj, gran, &start, &end);
-   str = str ? str : strdup("");
 
    eldbus_message_arguments_append(ret, "sii", str, start, end);
    free(str);
@@ -1330,18 +1382,36 @@ _text_text_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int start, end;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
-     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and granularity expected.");
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end offset expected.");
+
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_position_set(sel1, start);
+        efl_text_cursor_position_set(sel2, end);
+        str = efl_text_cursor_range_text_get(sel1, sel2);
+        efl_del(sel1);
+        efl_del(sel2);
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        str = efl_access_text_get(obj, start, end);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
+   str = str ? str : strdup("");
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   str = efl_access_text_get(obj, start, end);
-   str = str ? str : strdup("");
-
    eldbus_message_arguments_append(ret, "s", str);
+
    free(str);
 
    return ret;
@@ -1357,15 +1427,28 @@ _text_caret_offset_set(const Eldbus_Service_Interface *iface, const Eldbus_Messa
    Eldbus_Message *ret;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &offset))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *cur = efl_text_interactive_main_cursor_get(obj);
+        efl_text_cursor_position_set(cur, offset);
+        res = EINA_TRUE;
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_caret_offset_set(obj, offset);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   res = efl_access_text_caret_offset_set(obj, offset);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -1382,17 +1465,49 @@ _text_character_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbu
    Eldbus_Message *ret;
    Eina_Unicode res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &offset))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_position_set(cur, offset);
+        res = efl_text_cursor_content_get(cur);
+        efl_del(cur);
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_character_get(obj, offset);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   res = efl_access_text_character_get(obj, offset);
-
    eldbus_message_arguments_append(ret, "i", res);
+
+   return ret;
+}
+
+static Efl_Access_Text_Attribute*
+_text_attribute_value_get_text_attribute(Efl_Text_Attribute_Handle *annotation)
+{
+   Efl_Access_Text_Attribute *ret;
+   const char *txt;
+
+   txt = efl_text_formatter_attribute_get(annotation);
+   if (!txt) return NULL;
+
+   ret = calloc(1, sizeof(Efl_Access_Text_Attribute));
+   if (!ret) return NULL;
+
+   ret->value = eina_stringshare_add(txt);
+   int size = strlen(txt);
+   ret->name = eina_stringshare_add_length(txt, size);
 
    return ret;
 }
@@ -1406,20 +1521,59 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int start, end;
    Eldbus_Message *ret;
-   Eina_Bool res;
+   Eina_Bool res = EINA_FALSE;
+   Eina_Iterator *annotations;
+   Efl_Access_Text_Attribute *attr;
+   Efl_Text_Attribute_Handle *an;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "is", &start, &name))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and attribute name expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_position_set(sel1, start);
+        efl_text_cursor_position_set(sel2, start+1);
+        annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
+
+        if (annotations)
+          {
+             EINA_ITERATOR_FOREACH(annotations, an)
+               {
+                  attr = _text_attribute_value_get_text_attribute(an);
+                  if (!attr) continue;
+                  if (!strcmp(attr->name, name))
+                     {
+                       value = attr->value ? eina_strdup(attr->value) : NULL;
+                       res = EINA_TRUE;
+                     }
+                  elm_atspi_text_text_attribute_free(attr);
+                  if (res)
+                      break;
+               }
+             eina_iterator_free(annotations);
+          }
+
+        efl_del(sel1);
+        efl_del(sel2);
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_attribute_get(obj, name, &start, &end, &value);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   res = efl_access_text_attribute_get(obj, name, &start, &end, &value);
    eldbus_message_arguments_append(ret, "siib", value ? value : "", start, end, res);
 
-   if (value) free(value);
+   free(value);
    return ret;
 }
 
@@ -1432,10 +1586,9 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
    int start, end;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
-   Eina_List *attrs;
    Efl_Access_Text_Attribute *attr;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &start))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset expected.");
@@ -1447,13 +1600,45 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
    iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   attrs = efl_access_text_attributes_get(obj, &start, &end);
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Eina_Iterator *annotations;
+        Efl_Text_Attribute_Handle *an;
+        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
 
-   EINA_LIST_FREE(attrs, attr)
-    {
-       eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
-       elm_atspi_text_text_attribute_free(attr);
-    }
+        efl_text_cursor_position_set(sel1, start);
+        efl_text_cursor_position_set(sel2, start+1);
+        annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
+
+        efl_del(sel1);
+        efl_del(sel2);
+
+        if (annotations)
+          {
+             EINA_ITERATOR_FOREACH(annotations, an)
+               {
+                  attr = _text_attribute_value_get_text_attribute(an);
+                  if (!attr) continue;
+                  eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
+                  elm_atspi_text_text_attribute_free(attr);
+               }
+             eina_iterator_free(annotations);
+          }
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        Eina_List *attrs = efl_access_text_attributes_get(obj, &start, &end);
+        EINA_LIST_FREE(attrs, attr)
+          {
+             eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
+             elm_atspi_text_text_attribute_free(attr);
+          }
+     }
+   else
+     {
+        goto fail;
+     }
 
    eldbus_message_iter_container_close(iter, iter_array);
    eldbus_message_iter_arguments_append(iter, "ii", start, end);
@@ -1473,10 +1658,10 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
-   Eina_List *attrs;
+   Eina_List *attrs = NULL;
    Efl_Access_Text_Attribute *attr;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -1485,7 +1670,37 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
    iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   attrs = efl_access_text_default_attributes_get(obj);
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Eina_Iterator *annotations;
+        Efl_Text_Attribute_Handle *an;
+        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+
+        efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+        efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+        annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
+
+        EINA_ITERATOR_FOREACH(annotations, an)
+          {
+             Efl_Access_Text_Attribute *attr = _text_attribute_value_get_text_attribute(an);
+             if (!attr) continue;
+             attrs = eina_list_append(attrs, attr);
+          }
+        eina_iterator_free(annotations);
+
+        efl_del(sel1);
+        efl_del(sel2);
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        attrs = efl_access_text_default_attributes_get(obj);
+     }
+   else
+     {
+        eldbus_message_unref(ret);
+        return _dbus_invalid_ref_error_new(msg);
+     }
 
    EINA_LIST_FREE(attrs, attr)
     {
@@ -1502,6 +1717,59 @@ fail:
    return NULL;
 }
 
+static Eina_Rect
+_text_interactive_get_pos(Eo *obj, Eina_Rect rect, Eina_Bool screen_coords)
+{
+   Eina_Position2D scroller_shift = efl_ui_scrollable_content_pos_get(obj);
+   Eina_Rect viewport = efl_ui_scrollable_viewport_geometry_get(obj);
+   Eina_Rect r_obj = efl_access_component_extents_get(obj, EINA_TRUE);
+
+   /* In widget coords */
+   rect.x -= scroller_shift.x;
+   rect.y -= scroller_shift.y;
+   rect.x += viewport.x;
+   rect.y += viewport.y;
+
+
+   /* Is it still visible? */
+   if (rect.x < viewport.x)
+     {
+        rect.w += rect.x - viewport.x;
+        rect.x = viewport.x;
+     }
+
+   if (rect.y < viewport.y)
+     {
+        rect.h += rect.y - viewport.y;
+        rect.y = viewport.y;
+     }
+
+   rect.w = viewport.w < (rect.x + rect.w) ? viewport.w - rect.x : rect.w;
+   rect.h = viewport.h < (rect.y + rect.h) ? viewport.h - rect.y : rect.h;
+
+   /* If not visible set to 0 both sides */
+   if (rect.w <= 0 || rect.h <= 0)
+     {
+        rect.w = 0;
+        rect.h = 0;
+     }
+
+   /* Transform to screen coords */
+   rect.x += r_obj.x;
+   rect.y += r_obj.y;
+
+   /* Transform to window coords */
+   if (!screen_coords)
+     {
+        Eo *win = elm_object_top_widget_get(obj);
+        Eina_Rect r_win = efl_access_component_extents_get(win, EINA_TRUE);
+        rect.x -= r_win.x;
+        rect.y -= r_win.y;
+     }
+
+   return rect;
+}
+
 static Eldbus_Message *
 _text_character_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
@@ -1514,23 +1782,36 @@ _text_character_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_
    Eina_Bool screen_coords, res;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "iu", &offset, &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and coordinates type expected.");
 
-   ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
 
-   res = efl_access_text_character_extents_get(obj, offset, screen_coords, &rect);
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_position_set(cur, offset);
+        rect = efl_text_cursor_geometry_get(cur, EFL_TEXT_CURSOR_TYPE_UNDER);
+        efl_del(cur);
+        rect = _text_interactive_get_pos(obj, rect, screen_coords);
+        res = rect.w != 0 ? EINA_TRUE : EINA_FALSE;
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_character_extents_get(obj, offset, screen_coords, &rect);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
 
    if (!res)
-     {
-        eldbus_message_unref(ret);
-        return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get character extents.");
-     }
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get character extents.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    eldbus_message_arguments_append(ret, "iiii", rect.x, rect.y, rect.w, rect.h);
 
    return ret;
@@ -1547,19 +1828,45 @@ _text_offset_at_point_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
    Eina_Bool screen_coords;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and coordinates type expected.");
 
-   ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   x = y = -1;
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
 
-   offset = efl_access_text_offset_at_point_get(obj, screen_coords, x, y);
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        if (screen_coords)
+          {
+             Eina_Rect rect = efl_access_component_extents_get(obj, screen_coords);
+             x -= rect.x;
+             y -= rect.y;
+          }
+        else
+          {
+             Eo *win = elm_object_top_widget_get(obj);
+             Eina_Rect r_win = efl_access_component_extents_get(win, EINA_TRUE);
+             Eina_Rect r_obj = efl_access_component_extents_get(obj, EINA_TRUE);
+             x -= r_obj.x - r_win.x;
+             y -= r_obj.y - r_win.y;
+          }
+        Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_char_coord_set(cur, EINA_POSITION2D(x,y));
+        offset = efl_text_cursor_position_get(cur);
+        efl_del(cur);
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        offset = efl_access_text_offset_at_point_get(obj, screen_coords, x, y);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
 
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    eldbus_message_arguments_append(ret, "i", offset);
 
    return ret;
@@ -1592,19 +1899,35 @@ _text_selection_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int sel_num, start, end;
+   int sel_num, start = 0, end = 0;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &sel_num))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        if (sel_num == 0)
+          {
+             Efl_Text_Cursor *sel1, *sel2;
+             efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
+             start = efl_text_cursor_position_get(sel1);
+             end = efl_text_cursor_position_get(sel2);
+          }
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        efl_access_text_access_selection_get(obj, sel_num, &start, &end);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   efl_access_text_access_selection_get(obj, sel_num, &start, &end);
-
    eldbus_message_arguments_append(ret, "ii", start, end);
 
    return ret;
@@ -1620,16 +1943,30 @@ _text_selection_add(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    Eina_Bool res;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end text offset expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Efl_Text_Cursor *sel1, *sel2;
+        efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
+        efl_text_cursor_position_set(sel1, start);
+        efl_text_cursor_position_set(sel2, end);
+        res = EINA_TRUE;
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_selection_add(obj, start, end);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   res = efl_access_text_selection_add(obj, start, end);
-
    eldbus_message_arguments_append(ret, "b", res);
 
    return ret;
@@ -1642,19 +1979,35 @@ _text_selection_remove(const Eldbus_Service_Interface *iface, const Eldbus_Messa
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int sel_num;
-   Eina_Bool res;
+   Eina_Bool res = EINA_FALSE;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &sel_num))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        if (sel_num == 0)
+          {
+             Efl_Text_Cursor *sel1, *sel2;
+             efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
+             efl_text_cursor_range_delete(sel1, sel2);
+             res = EINA_TRUE;
+          }
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_selection_remove(obj, sel_num);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   res = efl_access_text_selection_remove(obj, sel_num);
-
    eldbus_message_arguments_append(ret, "b", res);
 
    return ret;
@@ -1667,19 +2020,36 @@ _text_selection_set(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int sel_num, start, end;
-   Eina_Bool res;
+   Eina_Bool res = EINA_FALSE;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "iii", &sel_num, &start, &end))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        if (sel_num == 0)
+          {
+             Efl_Text_Cursor *sel1, *sel2;
+             efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
+             efl_text_cursor_position_set(sel1, start);
+             efl_text_cursor_position_set(sel2, end);
+             res = EINA_TRUE;
+          }
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_access_selection_set(obj, sel_num, start, end);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   res = efl_access_text_access_selection_set(obj, sel_num, start, end);
-
    eldbus_message_arguments_append(ret, "b", res);
 
    return ret;
@@ -1697,22 +2067,63 @@ _text_range_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    AtspiCoordType type;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, msg);
+   ELM_ATSPI_ON_NULL_RETURN_DBUS_ERROR(obj, msg);
 
    if (!eldbus_message_arguments_get(msg, "iiu", &start, &end, &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
-   ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   res = efl_access_text_range_extents_get(obj, screen_coords, start, end, &rect);
+
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
+     {
+        Eina_Rectangle *r;
+        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_position_set(sel1, start);
+        efl_text_cursor_position_set(sel2, end);
+        Eina_Iterator *range = efl_text_cursor_range_precise_geometry_get(sel1, sel2);
+
+        /* This rect represent coordinates x1, y1, x2, y2 (not x,y,w,h).
+         * In this way we bypass corner cases
+         * (like range is empty or first rectangle is empty). */
+        rect = EINA_RECT(1000000, 1000000, 0, 0);
+
+        EINA_ITERATOR_FOREACH(range, r)
+          {
+             rect.x = r->x < rect.x ? r->x : rect.x;
+             rect.y = r->y < rect.y ? r->y : rect.y;
+             rect.w = r->x+r->w > rect.w ? r->x+r->w : rect.w;
+             rect.h = r->y+r->h > rect.h ? r->y+r->h : rect.h;
+          }
+        eina_iterator_free(range);
+
+        efl_del(sel1);
+        efl_del(sel2);
+
+        /* Let's change coordinates to x,y,w,h */
+        rect.w -= rect.x;
+        rect.h -= rect.y;
+
+        rect = _text_interactive_get_pos(obj, rect, screen_coords);
+
+        res = rect.w != 0 ? EINA_TRUE : EINA_FALSE;
+     }
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
+     {
+        res = efl_access_text_range_extents_get(obj, screen_coords, start, end, &rect);
+     }
+   else
+     {
+        return _dbus_invalid_ref_error_new(msg);
+     }
+
    if (!res)
      {
-        eldbus_message_unref(ret);
         return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Can't get range extents.");
      }
 
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    eldbus_message_arguments_append(ret, "iiii", rect.x, rect.y, rect.w, rect.h);
 
    return ret;
@@ -2272,23 +2683,55 @@ _text_properties_get(const Eldbus_Service_Interface *interface, const char *prop
    const char *obj_path = eldbus_message_path_get(request_msg);
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int val;
+   int result;
+   Eina_Bool checkCarretOffset = EINA_FALSE;
+   Eina_Bool checkCharacterCount = EINA_FALSE;
 
-   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_TEXT_INTERFACE, request_msg, error);
+   if (!obj)
+     {
+        *(error) = _dbus_invalid_ref_error_new(request_msg);
+        return EINA_FALSE;
+     }
 
    if (!strcmp(property, "CharacterCount"))
+     checkCharacterCount = EINA_TRUE;
+   else if (!strcmp(property, "CaretOffset"))
+     checkCarretOffset = EINA_TRUE;
+   else
+     return EINA_FALSE;
+
+   if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        val = efl_access_text_character_count_get(obj);
-        eldbus_message_iter_basic_append(iter, 'i', val);
-        return EINA_TRUE;
+        if (checkCharacterCount)
+          {
+             Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
+             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+             result = efl_text_cursor_position_get(cur);
+             efl_del(cur);
+          }
+
+        if (checkCarretOffset)
+          {
+             Efl_Text_Cursor *main_cur = efl_text_interactive_main_cursor_get(obj);
+             result = efl_text_cursor_position_get(main_cur);
+          }
      }
-   if (!strcmp(property, "CaretOffset"))
+   else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
      {
-        val = efl_access_text_caret_offset_get(obj);
-        eldbus_message_iter_basic_append(iter, 'i', val);
-        return EINA_TRUE;
+        if (checkCharacterCount)
+          result = efl_access_text_character_count_get(obj);
+
+        if (checkCarretOffset)
+          result = efl_access_text_caret_offset_get(obj);
      }
-   return EINA_FALSE;
+   else
+     {
+        *(error) = _dbus_invalid_ref_error_new(request_msg);
+        return EINA_FALSE;
+     }
+
+   eldbus_message_iter_basic_append(iter, 'i', result);
+   return EINA_TRUE;
 }
 
 static Eldbus_Message*
@@ -2526,7 +2969,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         else if (!strcmp(ifc_name, "value"))
         {
            class = EFL_ACCESS_VALUE_INTERFACE;
-           rule->ifaces = eina_list_append(rule->ifaces, EFL_UI_RANGE_DISPLAY_INTERFACE); //alternative interface 
+           rule->ifaces = eina_list_append(rule->ifaces, EFL_UI_RANGE_DISPLAY_INTERFACE); //alternative interface
         }
 
         if (class)
@@ -3973,7 +4416,7 @@ _property_changed_signal_send(void *data, const Efl_Event *event)
      {
         prop = ATSPI_OBJECT_PROPERTY_VALUE;
         atspi_desc = "accessible-value";
-     } 
+     }
    if (prop == ATSPI_OBJECT_PROPERTY_LAST)
      {
         ERR("Unrecognized property name!");
