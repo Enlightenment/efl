@@ -118,7 +118,10 @@ _ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UN
   Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio)
-    _free_vio(ea_obj);
+    {
+       ERR("VIO already set!");
+       _free_vio(ea_obj);
+    }
 
   if (!vio)
     return;

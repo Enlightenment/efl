@@ -155,7 +155,10 @@ _ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Au
   Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio)
-    _free_vio(ea_obj);
+    {
+       ERR("VIO already set!");
+       _free_vio(ea_obj);
+    }
 
   obj->seekable = obj->seekable_prev;
 
