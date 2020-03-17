@@ -59,12 +59,8 @@ class @beta Efl.Ui.Spotlight.Animation_Manager extends Efl.Ui.Spotlight.Manager
                                           Can be the same as $in.]]
          }
          set {
-
          }
       }
-   }
-   constructors {
-      .jump_setup;
    }
    implements {
       Efl.Ui.Spotlight.Manager.bind;
