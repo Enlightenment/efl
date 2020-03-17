@@ -803,27 +803,6 @@ _src_open()
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_mkdir(const char *path, Eina_Bool skip_last)
-{
-   if (!ecore_file_exists(path))
-     {
-        const char *cur = path + 1;
-        do
-          {
-             char *slash = strchr(cur, '/');
-             if (slash) *slash = '\0';
-             else if (skip_last) return EINA_TRUE;
-             if (!ecore_file_exists(path) && !ecore_file_mkdir(path)) return EINA_FALSE;
-             if (slash) *slash = '/';
-             if (slash) cur = slash + 1;
-             else cur = NULL;
-          }
-        while (cur);
-     }
-   return EINA_TRUE;
-}
-
 static void
 _old_shots_rm_cb(const char *name, const char *path, void *data)
 {
@@ -988,16 +967,20 @@ int main(int argc, char **argv)
         if (!strcmp(_dest + strlen(_dest) - 4,".exu"))
           {
              _dest_type = FTYPE_EXU;
-             if (!_mkdir(_dest, EINA_TRUE))
+             /* Cut path at the beginning of the file name */
+             char *file_start = strrchr(dest, '/');
+             *file_start = '\0';
+
+             if (!ecore_file_mkpath(dest))
                {
-                  fprintf(stderr, "Path for %s cannot be created\n", _dest);
+                  fprintf(stderr, "Path for %s cannot be created\n", dest);
                   goto end;
                }
           }
         else
           {
              _dest_type = FTYPE_DIR;
-             if (!_mkdir(_dest, EINA_FALSE))
+             if (!ecore_file_mkpath(_dest))
                {
                   fprintf(stderr, "Directory %s cannot be created\n", _dest);
                   goto end;
