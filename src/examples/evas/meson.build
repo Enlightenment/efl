@@ -1,23 +1,4 @@
 examples = [
-  'evas-3d-aabb',
-  'evas-3d-blending',
-  'evas-3d-colorpick',
-  'evas-3d-cube2',
-  'evas-3d-cube',
-  'evas-3d-cube-rotate',
-  'evas-3d-eet',
-  'evas-3d-fog',
-  'evas-3d-frustum',
-  'evas-3d-hull',
-  'evas-3d-md2',
-  'evas-3d-mmap-set',
-  'evas-3d-obj',
-  'evas-3d-parallax-occlusion',
-  'evas-3d-pick',
-  'evas-3d-ply',
-  'evas-3d-proxy',
-  'evas-3d-shadows',
-  'evas-3d-static-lod',
   #'evas-aspect-hints',
   'evas-box',
   'evas-buffer-simple',
@@ -59,5 +40,3 @@ foreach example : examples
     dependencies: [eina, ecore_evas, ecore_file, m],
     c_args : ['-DPACKAGE_EXAMPLES_DIR="'+meson.current_source_dir()+'"'])
 endforeach
-
-subdir('shooter')

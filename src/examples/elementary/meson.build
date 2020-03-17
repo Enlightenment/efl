@@ -100,9 +100,6 @@ examples = [
   'web_example_02',
   'win_example',
   'track_example_01',
-  'evas3d_object_on_button_example',
-  'evas3d_scene_on_button_example',
-  'evas3d_map_example',
   'efl_thread_1',
   'efl_thread_2',
   'efl_thread_3',
@@ -194,6 +191,3 @@ executable('codegen_example',
   dependencies: [elementary],
   include_directories : include_directories('..')
 )
-
-subdir('sphere_hunter')
-subdir('performance')
