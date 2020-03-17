@@ -845,9 +845,13 @@ EAPI int
 ecore_event_evas_shutdown(void)
 {
    size_t i;
+   Ecore_Event_Last *eel;
 
    if (--_ecore_event_evas_init_count != 0)
      return _ecore_event_evas_init_count;
+
+   EINA_LIST_FREE(_last_events, eel)
+      free(eel);
 
    eina_hash_free(_window_hash);
    _window_hash = NULL;
