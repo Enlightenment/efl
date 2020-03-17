@@ -4882,6 +4882,11 @@ _efl_ui_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
         efl_weak_unref(&sd->logical.parent);
         sd->logical.parent = NULL;
      }
+   if (sd->children)
+     {
+        eina_array_free(sd->children);
+        sd->children = NULL;
+     }
 
    sd->on_destroy = EINA_TRUE;
    efl_destructor(efl_super(obj, EFL_UI_WIDGET_CLASS));
