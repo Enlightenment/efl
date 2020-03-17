@@ -492,7 +492,6 @@ group { name: "elm/toolbar/item/default";
             rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
-            fixed: 1 1;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -532,7 +531,6 @@ group { name: "elm/toolbar/item/default";
             rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 0;
-            fixed: 1 1;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -583,7 +581,7 @@ group { name: "elm/toolbar/item/default";
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
             rel1.offset: 4 -5;
-            rel1.relative: 0.0 0.0;
+            rel1.relative: 0.0 1.0;
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
@@ -636,7 +634,7 @@ group { name: "elm/toolbar/item/default";
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
             rel1.offset: 4 -5;
-            rel1.relative: 0.0 0.0;
+            rel1.relative: 0.0 1.0;
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
