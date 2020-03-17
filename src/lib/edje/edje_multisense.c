@@ -354,8 +354,7 @@ _edje_multisense_shutdown(void)
      }
    if (out)
      {
-        // XXX: this causes an abort inside of pa!!!!!
-        //efl_unref(out);
+        efl_unref(out);
         out = NULL;
         outs = 0;
      }
