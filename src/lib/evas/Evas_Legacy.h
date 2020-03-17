@@ -3725,18 +3725,18 @@ typedef enum Evas_Vg_Cap_Type
  */
 typedef enum Evas_Vg_Join_Type
 {
-  EVAS_VG_JOIN_MITER = 0, /**< Used to render rounded line joins. Circular arcs
-                           * are used to join two lines smoothly */
-  EVAS_VG_JOIN_ROUND,     /**< Used to render beveled line joins. The outer corner
-                           * of the joined lines is filled by enclosing the
-                           * triangular region of the corner with a straight line
-                           * between the outer corners of each stroke */
-  EVAS_VG_JOIN_BEVEL,     /**< Used to render mitered line joins. The intersection
+  EVAS_VG_JOIN_MITER = 0, /**< Used to render mitered line joins. The intersectioni
                            * of the strokes is clipped at a line perpendicular to
                            * the bisector of the angle between the strokes, at the
                            * distance from the intersection of the segments equal
                            * to the product of the miter limit value and the border
                            * radius.  This prevents long spikes being created */
+  EVAS_VG_JOIN_ROUND,     /**< Used to render rounded line joins. Circular arcs
+                           * are used to join two lines smoothly */
+  EVAS_VG_JOIN_BEVEL,     /**< Used to render beveled line joins. The outer corner
+                           * of the joined lines is filled by enclosing the
+                           * triangular region of the corner with a straight line
+                           * between the outer corners of each stroke */
   EVAS_VG_JOIN_LAST       /**< Sentinel value to indicate last enum field during
                            * teration */
 } Evas_Vg_Join;
