@@ -168,6 +168,7 @@ struct _Ecore_Audio_Lib_Pulse
    Eina_Module  *mod;
 
    pa_context         *(*pa_context_new)                   (pa_mainloop_api *mainloop, const char *name);
+   pa_context         *(*pa_context_unref)                 (pa_context *c);
    int                 (*pa_context_connect)               (pa_context *c, const char *server, pa_context_flags_t flags, const pa_spawn_api *api);
    pa_operation       *(*pa_context_set_sink_input_volume) (pa_context *c, uint32_t idx, const pa_cvolume *volume, pa_context_success_cb_t cb, void *userdata);
    pa_context_state_t  (*pa_context_get_state)             (pa_context *c);
@@ -179,6 +180,7 @@ struct _Ecore_Audio_Lib_Pulse
    int                 (*pa_stream_connect_playback)       (pa_stream *s, const char *dev, const pa_buffer_attr *attr, pa_stream_flags_t flags, const pa_cvolume *volume, pa_stream *sync_stream);
    int                 (*pa_stream_disconnect)             (pa_stream *s);
    pa_operation       *(*pa_stream_drain)                  (pa_stream *s, pa_stream_success_cb_t cb, void *userdata);
+   pa_operation       *(*pa_stream_flush)                  (pa_stream *s, pa_stream_success_cb_t cb, void *userdata);
    pa_operation       *(*pa_stream_cork)                   (pa_stream *s, int b, pa_stream_success_cb_t cb, void *userdata);
    int                 (*pa_stream_write)                  (pa_stream *p, const void *data, size_t nbytes, pa_free_cb_t free_cb, int64_t offset, pa_seek_mode_t seek);
    int                 (*pa_stream_begin_write)            (pa_stream *p, void **data, size_t *nbytes);
