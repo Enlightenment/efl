@@ -14,42 +14,40 @@ typedef Eo Evas_Vg_Shape;
 #endif
 
 /**
- * @brief Fill of the shape object
+ * @brief Fill of the shape object.
  *
  * @param[in] obj The object.
- * @param[in] f Fill object
+ * @param[in] f The fill object.
  *
  * @ingroup Evas_Vg_Shape_Group
  */
 EAPI void evas_vg_shape_fill_set(Evas_Vg_Shape *obj, Evas_Vg_Node *f);
 
 /**
- * @brief Fill of the shape object
+ * @brief Fill of the shape object.
  *
  * @param[in] obj The object.
- *
- * @return Fill object
+ * @return The fill object.
  *
  * @ingroup Evas_Vg_Shape_Group
  */
 EAPI Evas_Vg_Node *evas_vg_shape_fill_get(const Evas_Vg_Shape *obj);
 
 /**
- * @brief Stroke fill of the shape object
+ * @brief Stroke fill of the shape object.
  *
  * @param[in] obj The object.
- * @param[in] f Stroke fill object
+ * @param[in] f The stroke fill object.
  *
  * @ingroup Evas_Vg_Shape_Group
  */
 EAPI void evas_vg_shape_stroke_fill_set(Evas_Vg_Shape *obj, Evas_Vg_Node *f);
 
 /**
- * @brief Stroke fill of the shape object
+ * @brief Stroke fill of the shape object.
  *
  * @param[in] obj The object.
- *
- * @return Stroke fill object
+ * @return The stroke fill object.
  *
  * @ingroup Evas_Vg_Shape_Group
  */
@@ -69,7 +67,6 @@ EAPI void evas_vg_shape_stroke_marker_set(Evas_Vg_Shape *obj, Evas_Vg_Node *m);
  * @brief Stroke marker of the shape object
  *
  * @param[in] obj The object.
- *
  * @return Stroke marker object
  *
  * @ingroup Evas_Vg_Shape_Group

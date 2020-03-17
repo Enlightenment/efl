@@ -4,7 +4,8 @@
 #ifndef _EVAS_OBJECT_VG_EO_LEGACY_TYPES
 #define _EVAS_OBJECT_VG_EO_LEGACY_TYPES
 
-/** Enumeration that defines how viewbox will be filled int the vg canvs's
+/**
+ * @brief Enumeration that defines how viewbox will be filled int the vg canvs's
  * viewport. default Fill_Mode is @c none
  *
  * @ingroup Evas_Object_Vg_Group
@@ -106,7 +107,7 @@ EAPI void evas_object_vg_viewbox_align_get(const Evas_Object *obj, double *align
  * It takes the ownership of the root node.
  *
  * @param[in] obj The object.
- * @param[in] root Root node(Efl_Canvas_Vg_Container) of the VG canvas.
+ * @param[in] root Root node(Evas_Vg_Container) of the VG canvas.
  *
  * @ingroup Evas_Object_Vg_Group
  */

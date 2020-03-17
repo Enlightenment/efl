@@ -15,23 +15,23 @@ typedef Eo Evas_Vg_Container;
 #endif
 
 /**
- * @brief Get child of container
+ * @brief Get child of container.
  *
  * @param[in] obj The object.
- * @param[in] name Child node name
+ * @param[in] name The Child node name.
  *
- * @return Child object
+ * @return The child object.
  *
  * @ingroup Evas_Vg_Container_Group
  */
 EAPI Evas_Vg_Node *evas_vg_container_child_get(Evas_Vg_Container *obj, const char *name);
 
 /**
- * @brief Get all children of container
+ * @brief Get all children of container.
  *
  * @param[in] obj The object.
  *
- * @return Iterator to children
+ * @return The iterator to children.
  *
  * @ingroup Evas_Vg_Container_Group
  */

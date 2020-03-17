@@ -20,7 +20,7 @@ typedef Eo Evas_Vg_Node;
  * @note Pass @c null to cancel the applied transformation.
  *
  * @param[in] obj The object.
- * @param[in] m Transformation matrix.
+ * @param[in] m The transformation matrix.
  *
  * @since 1.14
  *
@@ -32,8 +32,7 @@ EAPI void evas_vg_node_transformation_set(Evas_Vg_Node *obj, const Eina_Matrix3 
  * @brief Gets the transformation matrix used for this node object.
  *
  * @param[in] obj The object.
- *
- * @return Transformation matrix.
+ * @return The transformation matrix.
  *
  * @since 1.14
  *
