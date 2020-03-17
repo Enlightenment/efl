@@ -8,6 +8,7 @@
  * @brief Enumeration that defines how viewbox will be filled int the vg canvs's
  * viewport. default Fill_Mode is @c none
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 typedef enum
@@ -39,6 +40,7 @@ typedef enum
  * @param[in] obj The object.
  * @param[in] fill_mode Fill mode type
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI void evas_object_vg_fill_mode_set(Evas_Object *obj, Evas_Object_Vg_Fill_Mode fill_mode);
@@ -50,6 +52,7 @@ EAPI void evas_object_vg_fill_mode_set(Evas_Object *obj, Evas_Object_Vg_Fill_Mod
  *
  * @return Fill mode type
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI Evas_Object_Vg_Fill_Mode evas_object_vg_fill_mode_get(const Evas_Object *obj);
@@ -61,6 +64,7 @@ EAPI Evas_Object_Vg_Fill_Mode evas_object_vg_fill_mode_get(const Evas_Object *ob
  * @param[in] obj The object.
  * @param[in] viewbox viewbox for the vg canvas
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI void evas_object_vg_viewbox_set(Evas_Object *obj, Eina_Rect viewbox);
@@ -72,6 +76,7 @@ EAPI void evas_object_vg_viewbox_set(Evas_Object *obj, Eina_Rect viewbox);
  *
  * @return viewbox for the vg canvas
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI Eina_Rect evas_object_vg_viewbox_get(const Evas_Object *obj);
@@ -83,6 +88,7 @@ EAPI Eina_Rect evas_object_vg_viewbox_get(const Evas_Object *obj);
  * @param[in] align_x Alignment in the horizontal axis (0 <= align_x <= 1).
  * @param[in] align_y Alignment in the vertical axis (0 <= align_y <= 1).
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI void evas_object_vg_viewbox_align_set(Evas_Object *obj, double align_x, double align_y);
@@ -94,6 +100,7 @@ EAPI void evas_object_vg_viewbox_align_set(Evas_Object *obj, double align_x, dou
  * @param[out] align_x Alignment in the horizontal axis (0 <= align_x <= 1).
  * @param[out] align_y Alignment in the vertical axis (0 <= align_y <= 1).
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI void evas_object_vg_viewbox_align_get(const Evas_Object *obj, double *align_x, double *align_y);
@@ -109,6 +116,7 @@ EAPI void evas_object_vg_viewbox_align_get(const Evas_Object *obj, double *align
  * @param[in] obj The object.
  * @param[in] root Root node(Evas_Vg_Container) of the VG canvas.
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 EAPI void evas_object_vg_root_node_set(Evas_Object *obj, Evas_Vg_Node *root);

@@ -75,6 +75,8 @@ EAPI void evas_vg_node_origin_get(const Evas_Vg_Node *obj, double *x, double *y)
  * @param[in] mask Mask object
  * @param[in] op Masking Option. Reserved
  *
+ * @since 1.24
+ *
  * @ingroup Evas_Vg_Node_Group
  */
 EAPI void evas_vg_node_mask_set(Evas_Vg_Node *obj, Evas_Vg_Node *mask, int op);

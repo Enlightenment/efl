@@ -22,6 +22,8 @@ typedef Eo Evas_Vg_Container;
  *
  * @return The child object.
  *
+ * @since 1.24
+ *
  * @ingroup Evas_Vg_Container_Group
  */
 EAPI Evas_Vg_Node *evas_vg_container_child_get(Evas_Vg_Container *obj, const char *name);
@@ -32,6 +34,8 @@ EAPI Evas_Vg_Node *evas_vg_container_child_get(Evas_Vg_Container *obj, const cha
  * @param[in] obj The object.
  *
  * @return The iterator to children.
+ *
+ * @since 1.24
  *
  * @ingroup Evas_Vg_Container_Group
  */
