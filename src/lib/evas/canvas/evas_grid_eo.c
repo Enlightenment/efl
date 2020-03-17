@@ -90,6 +90,6 @@ static const Efl_Class_Description _evas_grid_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(evas_grid_class_get, &_evas_grid_class_desc, EFL_CANVAS_GROUP_CLASS, NULL);
+EFL_DEFINE_CLASS(evas_grid_class_get, &_evas_grid_class_desc, EFL_CANVAS_GROUP_CLASS, EFL_UI_I18N_INTERFACE, NULL);
 
 #include "evas_grid_eo.legacy.c"
