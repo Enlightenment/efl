@@ -1214,12 +1214,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                }
           }
      }
-   Eina_Bool b = _eo_class_funcs_set(&klass->vtable, &klass->vtable2, object_ops, klass, klass, 0, EINA_FALSE, klass->base_id2);
-
-   //_dump_all_classes();
-
-   return b;
-
+   return _eo_class_funcs_set(&klass->vtable, &klass->vtable2, object_ops, klass, klass, 0, EINA_FALSE, klass->base_id2);
 err_funcs:
    ERR("Class %s already had its functions set..", klass->desc->name);
    return EINA_FALSE;
