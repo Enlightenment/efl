@@ -162,6 +162,10 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
   obj->handle = ESF_CALL(sf_open_virtual)(&vio_wrapper, SFM_READ, &obj->sfinfo, eo_obj);
 
   if (!obj->handle) {
+    if (ea_obj->vio->free_func)
+      ea_obj->vio->free_func(ea_obj->vio->data);
+    free(ea_obj->vio);
+    ea_obj->vio = NULL;
     eina_stringshare_del(ea_obj->source);
     ea_obj->source = NULL;
     return;
