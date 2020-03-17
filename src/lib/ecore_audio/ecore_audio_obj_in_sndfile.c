@@ -135,15 +135,6 @@ _ecore_audio_in_sndfile_ecore_audio_format_get(const Eo *eo_obj, Ecore_Audio_In_
   return obj->format;;
 }
 
-static void _free_vio(Ecore_Audio_Object *ea_obj)
-{
-  if (ea_obj->vio->free_func)
-    ea_obj->vio->free_func(ea_obj->vio->data);
-
-  free(ea_obj->vio);
-  ea_obj->vio = NULL;
-}
-
 EOLIAN static void
 _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj, Ecore_Audio_Vio *vio, void *data, efl_key_data_free_func free_func)
 {
@@ -156,22 +147,16 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
     obj->handle = NULL;
   }
 
-  eina_stringshare_replace(&ea_obj->source, "VIO");
-
-  if (!ea_obj->source)
-    return;
-  if (ea_obj->vio)
-    _free_vio(ea_obj);
+  if (vio)
+    eina_stringshare_replace(&ea_obj->source, "VIO");
+  else
+    eina_stringshare_replace(&ea_obj->source, NULL);
 
   in_obj->seekable = EINA_FALSE;
+  ecore_audio_obj_vio_set(efl_super(eo_obj, MY_CLASS), vio, data, free_func);
 
   if (!vio)
     return;
-
-  ea_obj->vio = calloc(1, sizeof(Ecore_Audio_Vio_Internal));
-  ea_obj->vio->vio = vio;
-  ea_obj->vio->data = data;
-  ea_obj->vio->free_func = free_func;
   in_obj->seekable = (vio->seek != NULL);
 
   obj->handle = ESF_CALL(sf_open_virtual)(&vio_wrapper, SFM_READ, &obj->sfinfo, eo_obj);
@@ -201,13 +186,8 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
 EOLIAN static void
 _ecore_audio_in_sndfile_efl_object_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj)
 {
-  Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
-
   if (obj->handle)
     ESF_CALL(sf_close)(obj->handle);
-
-  if (ea_obj->vio)
-    _free_vio(ea_obj);
 
   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
