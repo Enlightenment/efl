@@ -90,7 +90,6 @@ static _Efl_Class **_eo_classes = NULL;
 static Eo_Id _eo_classes_last_id = 0;
 static Eo_Id _eo_classes_alloc = 0;
 static int _efl_object_init_count = 0;
-static Efl_Object_Op _eo_ops_last_id = 0;
 static Eina_Hash *_ops_storage2 = NULL;
 static Eina_Spinlock _ops_storage_lock;
 
@@ -119,35 +118,16 @@ static inline Efl_Object_Op _efl_object_api_op_id_get_internal2(const void *api_
       (_eo_classes[_UNMASK_ID(id) - 1]) : NULL); \
       })
 
-/* XXX: Only used for a debug message below. Doesn't matter that it's slow. */
-static const _Efl_Class *
-_eo_op_class_get(Efl_Object_Op op)
-{
-   _Efl_Class **itr = _eo_classes;
-   int mid, max, min;
-
-   min = 0;
-   max = _eo_classes_last_id - 1;
-   while (min <= max)
-     {
-        mid = (min + max) / 2;
-
-        if (itr[mid]->base_id + itr[mid]->ops_count < op)
-           min = mid + 1;
-        else if (itr[mid]->base_id  > op)
-           max = mid - 1;
-        else
-           return itr[mid];
-     }
-
-   return NULL;
-}
-
-//
-
 #define EFL_OBJECT_OP_CLASS_PART(op) op >> 16
 #define EFL_OBJECT_OP_FUNC_PART(op) op & 0xffff
 #define EFL_OBJECT_OP_CREATE_OP_ID(class_id, func_id) ((unsigned short)class_id)<<16|((unsigned short)func_id&0xffff)
+
+static const _Efl_Class *
+_eo_op_class_get(Efl_Object_Op op)
+{
+   short class_id = EFL_OBJECT_OP_CLASS_PART(op);
+   return _eo_classes[class_id];
+}
 
 /**
  * This inits the vtable wit hthe current size of allocated tables
@@ -880,11 +860,9 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
 
    klass->ops_count = object_ops->count;
 
-   klass->base_id = _eo_ops_last_id;
    klass->base_id2 = _UNMASK_ID(klass->header.id) - 1;
    hitmap = alloca(sizeof(Eina_Bool) * klass->base_id2);
    memset(hitmap, 0, sizeof(Eina_Bool) * klass->base_id2);
-   _eo_ops_last_id += klass->ops_count + 1;
 
    _vtable_init(&klass->vtable2);
 
@@ -2373,7 +2351,6 @@ efl_object_init(void)
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;
-   _eo_ops_last_id = EFL_OBJECT_OP_IDS_FIRST;
    _eo_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eo_log_dom < 0)
      {
