@@ -72,11 +72,11 @@ void _eo_condtor_done(Eo *obj);
 
 typedef struct _Eo_Vtable_Node Eo_Vtable_Node;
 
-typedef struct _Eo_Vtable2
+typedef struct _Eo_Vtable
 {
    Eo_Vtable_Node *chain;
    unsigned short size;
-} Eo_Vtable2;
+} Eo_Vtable;
 
 struct _Eo_Header
 {
@@ -85,7 +85,7 @@ struct _Eo_Header
 
 struct _Efl_Object_Optional
 {
-   Eo_Vtable2         *vtable2;
+   Eo_Vtable         *vtable2;
    Eina_List          *composite_objects;
    Efl_Del_Intercept   del_intercept;
 };
@@ -126,12 +126,6 @@ struct _Eo_Object
      Eina_Bool ownership_track:1;
 };
 
-/* How we search and store the implementations in classes. */
-#define DICH_CHAIN_LAST_BITS 5
-#define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
-#define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
-#define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
-
 extern Eina_Cow *efl_object_optional_cow;
 #define EO_OPTIONAL_COW_WRITE(_obj) ({ Efl_Object_Optional *_cow = eina_cow_write(efl_object_optional_cow, (const Eina_Cow_Data**)&(_obj->opt)); _cow; })
 #define EO_OPTIONAL_COW_END(_cow, _obj) eina_cow_done(efl_object_optional_cow, (const Eina_Cow_Data**)&(_obj->opt), _cow, EINA_TRUE)
@@ -158,17 +152,6 @@ struct _Eo_Vtable_Node{
    unsigned short count;
 };
 
-typedef struct _Dich_Chain2
-{
-   op_type_funcs funcs[DICH_CHAIN_LAST_SIZE];
-   unsigned short refcount;
-} Dich_Chain2;
-
-struct _Dich_Chain1
-{
-   Dich_Chain2 *chain2;
-};
-
 typedef struct
 {
    const _Efl_Class *klass;
@@ -181,7 +164,7 @@ struct _Efl_Class
 
    const _Efl_Class *parent;
    const Efl_Class_Description *desc;
-   Eo_Vtable2 vtable2;
+   Eo_Vtable vtable2;
 
    const _Efl_Class **extensions;
 

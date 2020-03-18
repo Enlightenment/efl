@@ -154,7 +154,7 @@ _eo_op_class_get(Efl_Object_Op op)
  * This inits the vtable wit hthe current size of allocated tables
  */
 static void
-_vtable_init2(Eo_Vtable2 *vtable)
+_vtable_init(Eo_Vtable *vtable)
 {
    //we assume here that _eo_classes_last_id was called before
    vtable->size = _eo_classes_last_id;
@@ -162,7 +162,7 @@ _vtable_init2(Eo_Vtable2 *vtable)
 }
 
 static void
-_vtable_copy_all2(Eo_Vtable2 *dest, const Eo_Vtable2 *src)
+_vtable_copy_all(Eo_Vtable *dest, const Eo_Vtable *src)
 {
    for (int i = 0; i < src->size; ++i)
      {
@@ -178,7 +178,7 @@ _vtable_copy_all2(Eo_Vtable2 *dest, const Eo_Vtable2 *src)
  * This is used to indicate that a specific node has a normal 0 size, but is set.
  */
 static void
-_vtable_insert_empty_funcs(Eo_Vtable2 *vtable, unsigned short class_id)
+_vtable_insert_empty_funcs(Eo_Vtable *vtable, unsigned short class_id)
 {
    vtable->chain[class_id].funcs = (void*)0x1010101;
 }
@@ -188,7 +188,7 @@ _vtable_insert_empty_funcs(Eo_Vtable2 *vtable, unsigned short class_id)
  * No logical changes are applied to src
  */
 static void
-_vtable_copy_node2(Eo_Vtable_Node *dest, const Eo_Vtable_Node *src)
+_vtable_copy_node(Eo_Vtable_Node *dest, const Eo_Vtable_Node *src)
 {
    dest->count = src->count;
    dest->funcs = calloc(sizeof(op_type_funcs), src->count);
@@ -201,7 +201,7 @@ _vtable_copy_node2(Eo_Vtable_Node *dest, const Eo_Vtable_Node *src)
  * Previous setted values are going to be overwritten.
  */
 static void
-_vtable_merge_in2(Eo_Vtable2 *dest, const Eo_Vtable2 *src)
+_vtable_merge_in(Eo_Vtable *dest, const Eo_Vtable *src)
 {
    for (unsigned int i = 0; i < src->size; ++i)
      {
@@ -215,14 +215,14 @@ _vtable_merge_in2(Eo_Vtable2 *dest, const Eo_Vtable2 *src)
  * Initialize a node with a empty funcs array of the passed length
  */
 static void
-_vtable_prepare_empty_node2(Eo_Vtable2 *dest, unsigned int length, unsigned int class_id)
+_vtable_prepare_empty_node(Eo_Vtable *dest, unsigned int length, unsigned int class_id)
 {
    dest->chain[class_id].count = length;
    dest->chain[class_id].funcs = calloc(sizeof(op_type_funcs), dest->chain[class_id].count);
 }
 
 static void
-_vtable_merge_defined_api(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
+_vtable_merge_defined_api(Eo_Vtable *dest, const Eo_Vtable *src, Eina_Bool *hitmap)
 {
    for (unsigned int i = 0; i < src->size; ++i)
      {
@@ -239,7 +239,7 @@ _vtable_merge_defined_api(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hi
                   if (!hitmap[i])
                     {
                        const Eo_Vtable_Node node = dest->chain[i];
-                       _vtable_copy_node2(&dest->chain[i], &node); //we copy what we have, and overwrite in the later for loop
+                       _vtable_copy_node(&dest->chain[i], &node); //we copy what we have, and overwrite in the later for loop
                        hitmap[i] = EINA_TRUE;
                     }
                   for (int j = 0; j < src->chain[i].count; ++j)
@@ -253,7 +253,7 @@ _vtable_merge_defined_api(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hi
 }
 
 static void
-_vtable_merge_empty2(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
+_vtable_merge_empty(Eo_Vtable *dest, const Eo_Vtable *src, Eina_Bool *hitmap)
 {
    for (unsigned int i = 0; i < src->size; ++i)
      {
@@ -266,7 +266,7 @@ _vtable_merge_empty2(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
                }
              else
                {
-                  _vtable_prepare_empty_node2(dest, src->chain[i].count, i);
+                  _vtable_prepare_empty_node(dest, src->chain[i].count, i);
                   hitmap[i] = EINA_TRUE;
                }
           }
@@ -274,7 +274,7 @@ _vtable_merge_empty2(Eo_Vtable2 *dest, const Eo_Vtable2 *src, Eina_Bool *hitmap)
 }
 
 static inline const op_type_funcs *
-_vtable_func_get2(const Eo_Vtable2 *vtable2, Efl_Object_Op op)
+_vtable_func_get(const Eo_Vtable *vtable2, Efl_Object_Op op)
 {
    unsigned short class_id = EFL_OBJECT_OP_CLASS_PART(op);
    unsigned short func_id = EFL_OBJECT_OP_FUNC_PART(op);
@@ -288,7 +288,7 @@ _vtable_func_get2(const Eo_Vtable2 *vtable2, Efl_Object_Op op)
 }
 
 static inline Eina_Bool
-_vtable_func_set2(Eo_Vtable2 *vtable, const _Efl_Class *klass,
+_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass,
                  const _Efl_Class *hierarchy_klass, Efl_Object_Op op,
                  Eo_Op_Func_Type func, Eina_Bool allow_same_override)
 {
@@ -399,7 +399,7 @@ _eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass,
         if (super) kls_itr++;
         while (*kls_itr)
           {
-             const op_type_funcs *fsrc = _vtable_func_get2(&(*kls_itr)->vtable2, op);
+             const op_type_funcs *fsrc = _vtable_func_get(&(*kls_itr)->vtable2, op);
              if (!fsrc || !fsrc->func)
                {
                   kls_itr++;
@@ -489,7 +489,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    const _Efl_Class *klass, *main_klass;
    const _Efl_Class *cur_klass = NULL;
    _Eo_Object *obj = NULL;
-   const Eo_Vtable2 *vtable = NULL;
+   const Eo_Vtable *vtable = NULL;
    const op_type_funcs *func;
    Eina_Bool is_obj;
    Eina_Bool super = EINA_TRUE;
@@ -540,7 +540,7 @@ ok_klass_back:
      }
    else
      {
-        func = _vtable_func_get2(vtable, op);
+        func = _vtable_func_get(vtable, op);
         // this is not very likely to happen - but may if its an invalid
         // call or a composite object, but either way, it's not very likely
         // so make it a goto to save on instruction cache
@@ -572,7 +572,7 @@ end:
              EO_OBJ_POINTER_PROXY(emb_obj_id, emb_obj);
              if (EINA_UNLIKELY(!emb_obj)) continue;
 
-             func = _vtable_func_get2(&emb_obj->klass->vtable2, op);
+             func = _vtable_func_get(&emb_obj->klass->vtable2, op);
              if (func == NULL) goto composite_continue;
 
              if (EINA_LIKELY(func->func && func->src))
@@ -769,7 +769,7 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
 /* klass is the klass we are working on. hierarchy_klass is the class whe should
  * use when validating. */
 static Eina_Bool
-_eo_class_funcs_set(Eo_Vtable2 *vtable2, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Efl_Object_Op id_offset, Eina_Bool override_only, unsigned int class_id)
+_eo_class_funcs_set(Eo_Vtable *vtable2, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Efl_Object_Op id_offset, Eina_Bool override_only, unsigned int class_id)
 {
    unsigned int i, j;
    unsigned int number_of_new_functions = 0;
@@ -831,7 +831,7 @@ _eo_class_funcs_set(Eo_Vtable2 *vtable2, const Efl_Object_Ops *ops, const _Efl_C
    if (!override_only)
      {
         //Before setting any real functions, allocate the node that will contain all the functions
-        _vtable_prepare_empty_node2(vtable2, number_of_new_functions, class_id);
+        _vtable_prepare_empty_node(vtable2, number_of_new_functions, class_id);
      }
 
    for (i = 0, j = 0, op_desc = op_descs; i < ops->count; i++, op_desc++)
@@ -879,7 +879,7 @@ _eo_class_funcs_set(Eo_Vtable2 *vtable2, const Efl_Object_Ops *ops, const _Efl_C
 #ifdef EO_DEBUG
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 #endif
-        if (!_vtable_func_set2(vtable2, klass, override_class, op2, op_desc->func, EINA_TRUE))
+        if (!_vtable_func_set(vtable2, klass, override_class, op2, op_desc->func, EINA_TRUE))
           return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -908,7 +908,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
    memset(hitmap, 0, sizeof(Eina_Bool) * klass->base_id2);
    _eo_ops_last_id += klass->ops_count + 1;
 
-   _vtable_init2(&klass->vtable2);
+   _vtable_init(&klass->vtable2);
 
    /* Flatten the function array */
      {
@@ -925,7 +925,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
           {
              const _Efl_Class *ext = klass->extensions[i];
              //for all extensions of the class, ensure that *at least* empty vtables are available, so the efl_isa calls do succeed
-             _vtable_merge_empty2(&klass->vtable2, &ext->vtable2, hitmap);
+             _vtable_merge_empty(&klass->vtable2, &ext->vtable2, hitmap);
           }
      }
      {
@@ -946,12 +946,12 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                       required_klass->desc->type == EFL_CLASS_TYPE_REGULAR_NO_INSTANT)
                     {
                        //this is when a mixin implemets a regular api, we just prepare a empty node, the rest will be implemented later
-                       _vtable_prepare_empty_node2(&klass->vtable2, required_klass->vtable2.chain[class_id].count, class_id);
+                       _vtable_prepare_empty_node(&klass->vtable2, required_klass->vtable2.chain[class_id].count, class_id);
                     }
                   else
                     {
                        ERR("There is an API implemented, whoms type is not part of this class. %s vs. %s", klass->desc->name, required_klass->desc->name);
-                       _vtable_merge_in2(&klass->vtable2, &required_klass->vtable2);
+                       _vtable_merge_in(&klass->vtable2, &required_klass->vtable2);
                     }
 
                }
@@ -959,7 +959,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
              if (!hitmap[class_id])
                {
                   const Eo_Vtable_Node node = klass->vtable2.chain[class_id];
-                  _vtable_copy_node2(&klass->vtable2.chain[class_id], &node);
+                  _vtable_copy_node(&klass->vtable2.chain[class_id], &node);
                   hitmap[class_id] = EINA_TRUE;
                }
           }
@@ -1801,13 +1801,13 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 
    if (ops)
      {
-        Eo_Vtable2 *vtable2 = obj->opt->vtable2;
+        Eo_Vtable *vtable2 = obj->opt->vtable2;
 
         if (!vtable2)
           {
              vtable2 = calloc(1, sizeof(*vtable2));
-             _vtable_init2(vtable2);
-             _vtable_copy_all2(vtable2, &obj->klass->vtable2);
+             _vtable_init(vtable2);
+             _vtable_copy_all(vtable2, &obj->klass->vtable2);
           }
 
         //copy all the vtable nodes that we are going to change later on
@@ -1822,7 +1822,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
                {
                   //copy all the nodes that we need
                   const Eo_Vtable_Node node = vtable2->chain[class_id];
-                  _vtable_copy_node2(&vtable2->chain[class_id], &node);
+                  _vtable_copy_node(&vtable2->chain[class_id], &node);
                   hitmap[class_id] = EINA_TRUE;
                }
           }
@@ -1904,7 +1904,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
 
-        const Eo_Vtable2 vtable = obj->klass->vtable2;
+        const Eo_Vtable vtable = obj->klass->vtable2;
         if (EINA_UNLIKELY(vtable.size <= klass->base_id2))
           return EINA_FALSE;
 
