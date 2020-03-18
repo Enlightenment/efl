@@ -1756,8 +1756,6 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
 
    DBG("Finished building class '%s'", klass->desc->name);
 
-   //_dump_all_classes();
-
    return _eo_class_id_get(klass);
 }
 
