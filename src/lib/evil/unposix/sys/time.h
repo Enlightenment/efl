@@ -1,7 +1,9 @@
 #ifndef SYS_TIME_H
 #define SYS_TIME_H
 
-#define WIN32_LEAN_AND_MEAN
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN 1
+#endif
 // Windows Kit for Windows 10 already defines `struct timeval` and `time_t`
 #include <winsock2.h>
 #include <time.h>
