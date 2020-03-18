@@ -253,15 +253,6 @@ EAPI Eina_Bool exactness_image_compare(Exactness_Image *img1, Exactness_Image *i
 EAPI void exactness_image_free(Exactness_Image *img);
 
 /**
- * @brief Read a legacy file and convert it to an unit
- *
- * @param filename Name of the legacy file
- *
- * @return the unit
- */
-EAPI Exactness_Unit *legacy_rec_file_read(const char *filename);
-
-/**
  * @}
  */
 

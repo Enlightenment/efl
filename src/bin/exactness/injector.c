@@ -241,10 +241,6 @@ _src_open()
      {
         _src_unit = exactness_unit_file_read(_src_filename);
      }
-   else if (!strcmp(_src_filename + strlen(_src_filename) - 4,".rec"))
-     {
-        _src_unit = legacy_rec_file_read(_src_filename);
-     }
    if (!_src_unit) return EINA_FALSE;
    _cur_event_list = _src_unit->actions;
    Exactness_Action *act = eina_list_data_get(_cur_event_list);
