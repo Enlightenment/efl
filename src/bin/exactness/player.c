@@ -770,10 +770,6 @@ _src_open()
           {
              _src_unit = exactness_unit_file_read(_src_filename);
           }
-        else if (_src_type == FTYPE_REC)
-          {
-             _src_unit = legacy_rec_file_read(_src_filename);
-          }
         if (!_src_unit) return EINA_FALSE;
         if (_stabilize_shots)
           {
@@ -885,7 +881,7 @@ static const Ecore_Getopt optdesc = {
           " Otherwise the given path is considered as a directory\n"
           " where shots will be stored.\n"
           " If omitted, the output type (exu or dir) is determined\n"
-          " by the given test extension (resp. exu or rec)."),
+          " by the given test extension"),
     ECORE_GETOPT_STORE_STR('t', "test", "Test to run on the given application"),
     ECORE_GETOPT_STORE_TRUE('s', "show-on-screen", "Show on screen."),
     ECORE_GETOPT_STORE_TRUE(0, "scan-objects", "Extract information of all the objects at every shot."),
@@ -1012,15 +1008,6 @@ int main(int argc, char **argv)
                {
                   _dest_type = FTYPE_EXU;
                   _dest = "./output.exu";
-               }
-          }
-        else if (!strcmp(_src_filename + strlen(_src_filename) - 4,".rec"))
-          {
-             _src_type = FTYPE_REC;
-             if (_dest_type == FTYPE_UNKNOWN)
-               {
-                  _dest_type = FTYPE_DIR;
-                  _dest = ".";
                }
           }
         char *slash = strrchr(_src_filename, '/');
@@ -1158,7 +1145,6 @@ int main(int argc, char **argv)
           {
              Exactness_Unit *tmp = NULL;
              if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
-             if (_src_type == FTYPE_REC) tmp = legacy_rec_file_read(_src_filename);
              _dest_unit->actions = tmp->actions;
              _dest_unit->codes = tmp->codes;
           }

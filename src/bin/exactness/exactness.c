@@ -184,15 +184,6 @@ _run_test_compare(const List_Entry *ent)
              _exu_imgs_unpack(path, currentdir, ent->name);
              goto found;
           }
-        else
-          {
-             sprintf(path, "%s/%s.rec", base_dir, ent->name);
-             if (ecore_file_exists(path))
-               {
-                  sprintf(origdir, "%s/%s", _dest_dir, ORIG_SUBDIR);
-                  goto found;
-               }
-          }
      }
 found:
    do
@@ -226,12 +217,6 @@ _run_command_prepare(const List_Entry *ent, char *buf)
         is_exu = EINA_TRUE;
         sprintf(scn_path, "%s/%s.exu", base_dir, ent->name);
         if (ecore_file_exists(scn_path)) goto ok;
-        else
-          {
-             is_exu = EINA_FALSE;
-             sprintf(scn_path, "%s/%s.rec", base_dir, ent->name);
-             if (ecore_file_exists(scn_path)) goto ok;
-          }
      }
    fprintf(stderr, "Test %s not found in the provided base directories\n", ent->name);
    return EINA_FALSE;
@@ -432,7 +417,7 @@ static const Ecore_Getopt optdesc = {
   "A pixel perfect test suite for EFL based applications.",
   0,
   {
-    ECORE_GETOPT_APPEND('b', "base-dir", "The location of the exu/rec files.", ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_APPEND('b', "base-dir", "The location of the exu files.", ECORE_GETOPT_TYPE_STR),
     ECORE_GETOPT_STORE_STR('o', "output", "The location of the images."),
     ECORE_GETOPT_STORE_STR('w', "wrap", "Use a custom command to launch the tests (e.g valgrind)."),
     ECORE_GETOPT_STORE_USHORT('j', "jobs", "The number of jobs to run in parallel."),
