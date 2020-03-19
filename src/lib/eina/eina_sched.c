@@ -88,38 +88,38 @@ EAPI void
 eina_sched_prio_drop(void)
 {
    Eina_Thread pthread_id;
-   struct sched_param param;
+   int sched_priority;
 
    pthread_id = eina_thread_self(); //pthread_id = pthread_self();
 
-   param.sched_priority = GetThreadPriority((HANDLE)pthread_id);
+   sched_priority = GetThreadPriority((HANDLE)pthread_id);
 
-   if(EINA_UNLIKELY(param.sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
+   if(EINA_UNLIKELY(sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
       {
-         param.sched_priority -= RTNICENESS;
+         sched_priority -= RTNICENESS;
 
          /* We don't change the policy */
-         if (param.sched_priority < 1)
+         if (sched_priority < 1)
             {
                EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
-               param.sched_priority = 1;
+               sched_priority = 1;
             }
-         if(!SetThreadPriority((HANDLE)pthread_id, param.sched_priority))
+         if(!SetThreadPriority((HANDLE)pthread_id, sched_priority))
             {
                 EINA_LOG_ERR("Unable to query sched parameters");
             } 
      }
      else
       {
-         param.sched_priority += NICENESS;
+         sched_priority += NICENESS;
 
          /* We don't change the policy */
-         if (param.sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
+         if (sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
             {
                EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
-               param.sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
+               sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
             }
-         if(!SetThreadPriority((HANDLE)pthread_id, param.sched_priority))
+         if(!SetThreadPriority((HANDLE)pthread_id, sched_priority))
             {
                 EINA_LOG_ERR("Unable to query sched parameters");
             } 
