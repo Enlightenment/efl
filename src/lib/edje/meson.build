@@ -32,6 +32,7 @@ pub_legacy_eo_files = [
   'efl_canvas_layout_part_swallow.eo',
   'efl_canvas_layout_part_table.eo',
   'efl_canvas_layout_part_text.eo',
+  'efl_canvas_layout_part_type_provider.eo',
 ]
 
 pub_eo_files = pub_legacy_eo_files

@@ -1,40 +1,44 @@
-#ifndef _EFL_CANVAS_VG_CONTAINER_EO_LEGACY_H_
-#define _EFL_CANVAS_VG_CONTAINER_EO_LEGACY_H_
+#ifndef _EVAS_VG_CONTAINER_EO_LEGACY_H_
+#define _EVAS_VG_CONTAINER_EO_LEGACY_H_
 
-#ifndef _EFL_CANVAS_VG_CONTAINER_EO_CLASS_TYPE
-#define _EFL_CANVAS_VG_CONTAINER_EO_CLASS_TYPE
+#ifndef _EVAS_VG_CONTAINER_EO_CLASS_TYPE
+#define _EVAS_VG_CONTAINER_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_Vg_Container;
+typedef Eo Evas_Vg_Container;
 
 #endif
 
-#ifndef _EFL_CANVAS_VG_CONTAINER_EO_TYPES
-#define _EFL_CANVAS_VG_CONTAINER_EO_TYPES
+#ifndef _EVAS_VG_CONTAINER_EO_TYPES
+#define _EVAS_VG_CONTAINER_EO_TYPES
 
 
 #endif
 
 /**
- * @brief Get child of container
+ * @brief Get child of container.
  *
  * @param[in] obj The object.
- * @param[in] name Child node name
+ * @param[in] name The Child node name.
  *
- * @return Child object
+ * @return The child object.
+ *
+ * @since 1.24
  *
  * @ingroup Evas_Vg_Container_Group
  */
-EAPI Efl_Canvas_Vg_Node *evas_vg_container_child_get(Efl_Canvas_Vg_Container *obj, const char *name);
+EAPI Evas_Vg_Node *evas_vg_container_child_get(Evas_Vg_Container *obj, const char *name);
 
 /**
- * @brief Get all children of container
+ * @brief Get all children of container.
  *
  * @param[in] obj The object.
  *
- * @return Iterator to children
+ * @return The iterator to children.
+ *
+ * @since 1.24
  *
  * @ingroup Evas_Vg_Container_Group
  */
-EAPI Eina_Iterator *evas_vg_container_children_get(Efl_Canvas_Vg_Container *obj) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *evas_vg_container_children_get(Evas_Vg_Container *obj) EINA_WARN_UNUSED_RESULT;
 
 #endif

@@ -1,0 +1,75 @@
+class @beta Efl.Ui.Spotlight.Animation_Manager extends Efl.Ui.Spotlight.Manager
+{
+   [[A spotlight manager that uses animation objects to react to different @Efl.Ui.Spotlight.Manager.switch_to
+     situations.
+
+     Animations are played forward when they are on the $to argument and they are played backward when they are on the
+     $from argument.
+
+     Pop animations are always played backwards, Push animations are always played forward.
+     The reason for this is reusability: you can use the same animation in all situations and this covers the
+     inverted effect that "moving in" and "moving out" has.
+     For example, when you have an alpha channel animation, the Pop animation can be the same as the Jump-In and Out
+     animation, and both will look like fading out.
+   ]]
+   c_prefix: efl_ui_spotlight_manager_animation;
+   methods {
+      @property push_setup {
+         [[Animation that is used to animate the $to argument of a @Efl.Ui.Spotlight.Manager.switch_to request when
+           the passed $reason is @Efl.Ui.Spotlight.Manager_Switch_Reason.push.
+
+           If these animations are $null, then the $in and $out animation of @.jump_setup will be used instead.
+         ]]
+         values {
+            in : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+            out : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference.
+                                          Can be the same as $in.]]
+         }
+         set {}
+      }
+
+      @property pop_setup {
+         [[Animation that is used to animate the $from argument of a @Efl.Ui.Spotlight.Manager.switch_to request when
+           the passed $reason is @Efl.Ui.Spotlight.Manager_Switch_Reason.pop.
+
+           Note: These animations are always played backwards, see the class documentation for the reasoning.
+
+           If these animations are $null, then the $in and $out animation of @.jump_setup will be used instead.
+         ]]
+         values {
+            in : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+            out : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference.
+                                          Can be the same as $in.]]
+         }
+         set {}
+      }
+
+      @property jump_setup {
+         [[Sets the animation objects you want to play on a jump in or jump out.
+
+           When a @Efl.Ui.Spotlight.Manager.switch_to request is issued, two arguments are getting animated.
+           The $from object, and the $to object. The $from object will play the $out animation whereas the $to object
+           will play the $in animation.
+
+           The $out animation will always be played backwards. See the class documentation for the reasoning.
+         ]]
+         values {
+            in : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference]]
+            out : Efl.Canvas.Animation; [[The animation to play, the implementation will take an additional reference.
+                                          Can be the same as $in.]]
+         }
+         set {
+         }
+      }
+   }
+   implements {
+      Efl.Ui.Spotlight.Manager.bind;
+      Efl.Ui.Spotlight.Manager.content_add;
+      Efl.Ui.Spotlight.Manager.content_del;
+      Efl.Ui.Spotlight.Manager.switch_to;
+      Efl.Ui.Spotlight.Manager.size {set;}
+      Efl.Ui.Spotlight.Manager.animated_transition {set; get;}
+      Efl.Object.finalize;
+      Efl.Object.invalidate;
+   }
+}

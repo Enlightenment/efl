@@ -753,31 +753,31 @@ _efl_canvas_vg_node_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Node_Da
 }
 
 EAPI Eina_Bool
-evas_vg_node_visible_get(Eo *obj)
+evas_vg_node_visible_get(Evas_Vg_Node *obj)
 {
    return efl_gfx_entity_visible_get(obj);
 }
 
 EAPI void
-evas_vg_node_visible_set(Eo *obj, Eina_Bool v)
+evas_vg_node_visible_set(Evas_Vg_Node *obj, Eina_Bool v)
 {
    efl_gfx_entity_visible_set(obj, v);
 }
 
 EAPI void
-evas_vg_node_color_get(Eo *obj, int *r, int *g, int *b, int *a)
+evas_vg_node_color_get(Evas_Vg_Node *obj, int *r, int *g, int *b, int *a)
 {
    efl_gfx_color_get(obj, r, g, b, a);
 }
 
 EAPI void
-evas_vg_node_color_set(Eo *obj, int r, int g, int b, int a)
+evas_vg_node_color_set(Evas_Vg_Node *obj, int r, int g, int b, int a)
 {
    efl_gfx_color_set(obj, r, g, b, a);
 }
 
 EAPI void
-evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h)
+evas_vg_node_geometry_get(Evas_Vg_Node *obj, int *x, int *y, int *w, int *h)
 {
    Eina_Rect r;
    r.pos = efl_gfx_entity_position_get(obj);
@@ -789,32 +789,32 @@ evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h)
 }
 
 EAPI void
-evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h)
+evas_vg_node_geometry_set(Evas_Vg_Node *obj, int x, int y, int w, int h)
 {
    efl_gfx_entity_position_set(obj, EINA_POSITION2D(x, y));
    efl_gfx_entity_size_set(obj, EINA_SIZE2D(w,  h));
 }
 
 EAPI void
-evas_vg_node_stack_below(Eo *obj, Eo *below)
+evas_vg_node_stack_below(Evas_Vg_Node *obj, Eo *below)
 {
    efl_gfx_stack_below(obj, below);
 }
 
 EAPI void
-evas_vg_node_stack_above(Eo *obj, Eo *above)
+evas_vg_node_stack_above(Evas_Vg_Node *obj, Eo *above)
 {
    efl_gfx_stack_above(obj, above);
 }
 
 EAPI void
-evas_vg_node_raise(Eo *obj)
+evas_vg_node_raise(Evas_Vg_Node *obj)
 {
    efl_gfx_stack_raise_to_top(obj);
 }
 
 EAPI void
-evas_vg_node_lower(Eo *obj)
+evas_vg_node_lower(Evas_Vg_Node *obj)
 {
    efl_gfx_stack_lower_to_bottom(obj);
 }

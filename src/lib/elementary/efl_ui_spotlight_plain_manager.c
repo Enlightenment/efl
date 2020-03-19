@@ -108,7 +108,7 @@ _efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_content_del(Eo *obj, Ef
    _content_changed(obj, pd);
 }
 EOLIAN static void
-_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, int from EINA_UNUSED, int to)
+_efl_ui_spotlight_plain_manager_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_Ui_Spotlight_Plain_Manager_Data *pd, int from EINA_UNUSED, int to, Efl_Ui_Spotlight_Manager_Switch_Reason reason EINA_UNUSED)
 {
    Efl_Gfx_Entity *to_obj, *from_obj;
    to_obj = efl_pack_content_get(pd->container, to);

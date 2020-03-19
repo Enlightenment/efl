@@ -3182,6 +3182,9 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    eina_array_free(sd->profile.available);
    sd->profile.available = NULL;
 
+   eina_array_free(sd->planned_changes);
+   sd->planned_changes = NULL;
+
    free(sd->wm_rot.rots);
    sd->wm_rot.rots = NULL;
 

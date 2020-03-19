@@ -398,7 +398,7 @@ void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spotlight_stack(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spotlight_plain(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spotlight_scroll(void *data, Evas_Object *obj, void *event_info);
-
+void test_ui_spotlight_animation(void *data, Evas_Object *obj, void *event_info);
 void test_ui_relative_container(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info);
@@ -1173,6 +1173,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Plain", test_ui_spotlight_plain);
    ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Scroll", test_ui_spotlight_scroll);
    ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Stack", test_ui_spotlight_stack);
+   ADD_TEST_EO(NULL, "Spotlight", "Efl.Ui.Spotlight Custom animation", test_ui_spotlight_animation);
    ADD_TEST_EO(NULL, "Spotlight", "Navigation stack", test_ui_stack);
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);

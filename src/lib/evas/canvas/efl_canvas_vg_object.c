@@ -1018,7 +1018,7 @@ _efl_canvas_vg_object_default_size_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 /* the actual api call to add a vector graphic object */
-EAPI Evas_Object *
+EAPI Eo *
 evas_object_vg_add(Evas *e)
 {
    e = evas_find(e);
@@ -1090,13 +1090,13 @@ _efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(Efl_Canvas_Vg_Fil
 }
 
 EAPI void
-evas_object_vg_fill_mode_set(Efl_VG *obj, Evas_Object_Vg_Fill_Mode fill_mode)
+evas_object_vg_fill_mode_set(Evas_Object *obj, Evas_Object_Vg_Fill_Mode fill_mode)
 {
    efl_canvas_vg_object_fill_mode_set(obj, _evas_object_vg_fill_mode_to_efl_ui_canvas_object_vg_fill_mode(fill_mode));
 }
 
 EAPI Evas_Object_Vg_Fill_Mode
-evas_object_vg_fill_mode_get(const Efl_VG *obj)
+evas_object_vg_fill_mode_get(const Evas_Object *obj)
 {
    return _efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(efl_canvas_vg_object_fill_mode_get(obj));
 }

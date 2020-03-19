@@ -71,35 +71,3 @@ evas-map-aa-eo.c                - Eo API
 evas-vg-simple.c                - Introduction to vector graphics
 evas-vg-batman.c                - Animated vector graphics
 evas-vg-json.c                  - Play Lottie files
-
-
-== 3D Graphics - Basics ==
-
- evas-gl.c                      - Introduction to GL in Evas
- evas-3d-cube.c                 - Introduction to meshes for 3D objects
- evas-3d-cube-rotate.c          - Introduction to events for 3D objects
- evas-3d-proxy.c                - Introduction to textures for 3D objects
- evas-3d-shadows.c              - Introduction to lighting and anti-aliasing
-
-
-== 3D Graphics - File formats ==
-
- evas-3d-eet.c                  - eet file format
- evas-3d-md2.c                  - md2 file format
- evas-3d-obj.c                  - obj file format
- evas-3d-ply.c                  - ply file format
- evas-3d-mmap-set.c             - Import meshes from various file formats
-
-
-== 3D Graphics - Advanced Topics ==
-
- evas-3d-aabb.c                 - Axis aligned bounding boxes
- evas-3d-blending.c             - Blending modes
- evas-3d-pick.c                 - Picking nodes and meshes by screen coordinates
- evas-3d-colorpick.c            - Picking nodes and meshes by color
- evas-3d-cube2.c                - Animation
- evas-3d-fog.c                  - Fog effect
- evas-3d-static-lod.c           - Static LOD techniques
- evas-3d-frustum.c              - Frustrum culling
- evas-3d-hull.c                 - Convex hull models and comparison with Blender
- evas-3d-parallax-occlusion.c   - Parallax occlusion shading and texture animation

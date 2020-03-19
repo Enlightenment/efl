@@ -74,9 +74,9 @@ enum Efl.Gfx.Join
     @Efl.Gfx.Shape.stroke_join.set
      @since 1.22
   ]]
-  miter = 0, [[Used to render rounded line joins. Circular arcs are used to join two lines smoothly.]]
-  round, [[Used to render beveled line joins. The outer corner of the joined lines is filled by enclosing the triangular region of the corner with a straight line between the outer corners of each stroke.]]
-  bevel, [[Used to render mitered line joins. The intersection of the strokes is clipped at a line perpendicular to the bisector of the angle between the strokes, at the distance from the intersection of the segments equal to the product of the miter limit value and the border radius.  This prevents long spikes being created.]]
+  miter = 0, [[Used to render mitered line joins. The intersection of the strokes is clipped at a line perpendicular to the bisector of the angle between the strokes, at the distance from the intersection of the segments equal to the product of the miter limit value and the border radius.  This prevents long spikes being created.]]
+  round, [[Used to render rounded line joins. Circular arcs are used to join two lines smoothly.]]
+  bevel, [[Used to render beveled line joins. The outer corner of the joined lines is filled by enclosing the triangular region of the corner with a straight line between the outer corners of each stroke.]]
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 

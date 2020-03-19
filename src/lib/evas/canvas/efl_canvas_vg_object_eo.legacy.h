@@ -4,9 +4,11 @@
 #ifndef _EVAS_OBJECT_VG_EO_LEGACY_TYPES
 #define _EVAS_OBJECT_VG_EO_LEGACY_TYPES
 
-/** Enumeration that defines how viewbox will be filled int the vg canvs's
+/**
+ * @brief Enumeration that defines how viewbox will be filled int the vg canvs's
  * viewport. default Fill_Mode is @c none
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
 typedef enum
@@ -38,9 +40,10 @@ typedef enum
  * @param[in] obj The object.
  * @param[in] fill_mode Fill mode type
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI void evas_object_vg_fill_mode_set(Efl_VG *obj, Evas_Object_Vg_Fill_Mode fill_mode);
+EAPI void evas_object_vg_fill_mode_set(Evas_Object *obj, Evas_Object_Vg_Fill_Mode fill_mode);
 
 /**
  * @brief Control how the viewbox is mapped to the vg canvas's viewport.
@@ -49,9 +52,10 @@ EAPI void evas_object_vg_fill_mode_set(Efl_VG *obj, Evas_Object_Vg_Fill_Mode fil
  *
  * @return Fill mode type
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI Evas_Object_Vg_Fill_Mode evas_object_vg_fill_mode_get(const Efl_VG *obj);
+EAPI Evas_Object_Vg_Fill_Mode evas_object_vg_fill_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Sets the viewbox for the evas vg canvas. viewbox if set should be
@@ -60,9 +64,10 @@ EAPI Evas_Object_Vg_Fill_Mode evas_object_vg_fill_mode_get(const Efl_VG *obj);
  * @param[in] obj The object.
  * @param[in] viewbox viewbox for the vg canvas
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI void evas_object_vg_viewbox_set(Efl_VG *obj, Eina_Rect viewbox);
+EAPI void evas_object_vg_viewbox_set(Evas_Object *obj, Eina_Rect viewbox);
 
 /**
  * @brief Get the current viewbox from the  evas_object_vg
@@ -71,9 +76,10 @@ EAPI void evas_object_vg_viewbox_set(Efl_VG *obj, Eina_Rect viewbox);
  *
  * @return viewbox for the vg canvas
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI Eina_Rect evas_object_vg_viewbox_get(const Efl_VG *obj);
+EAPI Eina_Rect evas_object_vg_viewbox_get(const Evas_Object *obj);
 
 /**
  * @brief Control how the viewbox is positioned inside the viewport.
@@ -82,9 +88,10 @@ EAPI Eina_Rect evas_object_vg_viewbox_get(const Efl_VG *obj);
  * @param[in] align_x Alignment in the horizontal axis (0 <= align_x <= 1).
  * @param[in] align_y Alignment in the vertical axis (0 <= align_y <= 1).
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI void evas_object_vg_viewbox_align_set(Efl_VG *obj, double align_x, double align_y);
+EAPI void evas_object_vg_viewbox_align_set(Evas_Object *obj, double align_x, double align_y);
 
 /**
  * @brief Control how the viewbox is positioned inside the viewport.
@@ -93,9 +100,10 @@ EAPI void evas_object_vg_viewbox_align_set(Efl_VG *obj, double align_x, double a
  * @param[out] align_x Alignment in the horizontal axis (0 <= align_x <= 1).
  * @param[out] align_y Alignment in the vertical axis (0 <= align_y <= 1).
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI void evas_object_vg_viewbox_align_get(const Efl_VG *obj, double *align_x, double *align_y);
+EAPI void evas_object_vg_viewbox_align_get(const Evas_Object *obj, double *align_x, double *align_y);
 
 /**
  * @brief Set the root node of the evas_object_vg.
@@ -106,11 +114,12 @@ EAPI void evas_object_vg_viewbox_align_get(const Efl_VG *obj, double *align_x, d
  * It takes the ownership of the root node.
  *
  * @param[in] obj The object.
- * @param[in] root Root node(Efl_Canvas_Vg_Container) of the VG canvas.
+ * @param[in] root Root node(Evas_Vg_Container) of the VG canvas.
  *
+ * @since 1.24
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI void evas_object_vg_root_node_set(Efl_VG *obj, Efl_Canvas_Vg_Node *root);
+EAPI void evas_object_vg_root_node_set(Evas_Object *obj, Evas_Vg_Node *root);
 
 /**
  * @brief Get the root node of the evas_object_vg.
@@ -123,6 +132,6 @@ EAPI void evas_object_vg_root_node_set(Efl_VG *obj, Efl_Canvas_Vg_Node *root);
  *
  * @ingroup Evas_Object_Vg_Group
  */
-EAPI Efl_Canvas_Vg_Node *evas_object_vg_root_node_get(const Efl_VG *obj);
+EAPI Evas_Vg_Node *evas_object_vg_root_node_get(const Evas_Object *obj);
 
 #endif

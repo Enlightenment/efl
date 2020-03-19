@@ -223,6 +223,7 @@ again:
         if (!lookup_ed) continue;
         tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
         lookup_ed->messages = eina_inlist_remove(lookup_ed->messages, &(em->inlist_edje));
+        lookup_ed->message.num--;
         if (!lookup_ed->delete_me)
           {
              lookup_ed->processing_messages++;

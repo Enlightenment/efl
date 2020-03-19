@@ -437,10 +437,8 @@ _efl_ui_spotlight_container_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
    return eina_list_data_idx(pd->content_list, (void *)subobj);
 }
 
-EOLIAN static void
-_efl_ui_spotlight_container_active_element_set(Eo *obj EINA_UNUSED,
-                               Efl_Ui_Spotlight_Container_Data *pd,
-                               Efl_Ui_Widget *new_page)
+static void
+_active_element_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Widget *new_page, Efl_Ui_Spotlight_Manager_Switch_Reason reason)
 {
    int before = -1;
    int index;
@@ -463,7 +461,16 @@ _efl_ui_spotlight_container_active_element_set(Eo *obj EINA_UNUSED,
      }
 
    pd->curr.page = new_page;
-   efl_ui_spotlight_manager_switch_to(pd->transition, before, index);
+   efl_ui_spotlight_manager_switch_to(pd->transition, before, index, reason);
+
+}
+
+EOLIAN static void
+_efl_ui_spotlight_container_active_element_set(Eo *obj EINA_UNUSED,
+                               Efl_Ui_Spotlight_Container_Data *pd,
+                               Efl_Ui_Widget *new_page)
+{
+   _active_element_set(obj, pd, new_page, EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_JUMP);
 }
 
 EOLIAN static Efl_Ui_Widget*
@@ -724,8 +731,7 @@ _efl_ui_spotlight_container_push(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EI
         if (!efl_pack_end(obj, view))
           return;
      }
-
-   efl_ui_spotlight_active_element_set(obj, view);
+   _active_element_set(obj, pd, view, EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_PUSH);
 }
 
 static Eina_Value
@@ -780,7 +786,7 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
    if (del)
      transition_done = eina_future_then(transition_done, _delete_obj, NULL);
 
-   efl_ui_spotlight_active_element_set(obj, efl_pack_content_get(obj, new_index));
+   _active_element_set(obj, pd, efl_pack_content_get(obj, new_index), EFL_UI_SPOTLIGHT_MANAGER_SWITCH_REASON_POP);
 
    return transition_done;
 }

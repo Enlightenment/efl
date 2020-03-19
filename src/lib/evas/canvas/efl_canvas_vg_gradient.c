@@ -118,25 +118,25 @@ _efl_canvas_vg_gradient_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Gra
 }
 
 EAPI void
-evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
+evas_vg_gradient_stop_set(Evas_Vg_Gradient *obj, const Evas_Vg_Gradient_Stop *colors, unsigned int length)
 {
-   efl_gfx_gradient_stop_set(obj, colors, length);
+   efl_gfx_gradient_stop_set(obj, (const Efl_Gfx_Gradient_Stop *)colors, length);
 }
 
 EAPI void
-evas_vg_gradient_stop_get(Eo *obj, const Efl_Gfx_Gradient_Stop **colors, unsigned int *length)
+evas_vg_gradient_stop_get(Evas_Vg_Gradient *obj, const Evas_Vg_Gradient_Stop **colors, unsigned int *length)
 {
-   efl_gfx_gradient_stop_get(obj, colors, length);
+   efl_gfx_gradient_stop_get(obj, (const Efl_Gfx_Gradient_Stop **)colors, length);
 }
 
 EAPI void
-evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s)
+evas_vg_gradient_spread_set(Evas_Vg_Gradient *obj, Evas_Vg_Gradient_Spread s)
 {
    efl_gfx_gradient_spread_set(obj, s);
 }
 
-EAPI Efl_Gfx_Gradient_Spread
-evas_vg_gradient_spread_get(Eo *obj)
+EAPI Evas_Vg_Gradient_Spread
+evas_vg_gradient_spread_get(Evas_Vg_Gradient *obj)
 {
    return efl_gfx_gradient_spread_get(obj);
 }
