@@ -40,7 +40,7 @@ tap_gesture_cb(void *data , const Efl_Event *ev)
       case EFL_GESTURE_STATE_CANCELED:
          break;*/
       case EFL_GESTURE_STATE_FINISHED:
-         efl_event_callback_call(obj, EFL_EVENT_GESTURE_TAP, &ev);
+         efl_event_callback_call(obj, EFL_EVENT_GESTURE_TAP, g);
          break;
       default:
          break;
@@ -48,8 +48,9 @@ tap_gesture_cb(void *data , const Efl_Event *ev)
 }
 
 EOLIAN static void
-_efl_ui_mi_rule_keypath_set(Eo *obj EINA_UNUSED, Efl_Ui_Mi_Rule_Data *pd, const char* keypath)
+_efl_ui_mi_rule_keypath_set(Eo *obj EINA_UNUSED, Efl_Ui_Mi_Rule_Data *pd, Eina_Stringshare *keypath)
 {
+   if (!keypath) return;
    Eo *parent;
    Eo *object = obj;
    Evas *e = NULL;
@@ -73,6 +74,8 @@ _efl_ui_mi_rule_keypath_set(Eo *obj EINA_UNUSED, Efl_Ui_Mi_Rule_Data *pd, const 
    printf("%s (%p)\n", efl_class_name_get(efl_class_get(parent)), parent);
 #endif
 
+   eina_stringshare_replace(&pd->keypath, keypath);
+
    evas_object_event_callback_add(parent, EVAS_CALLBACK_RESIZE, _tb_resize, pd->event_rect);
    if (!strcmp(keypath, "*"))
      {
@@ -86,12 +89,32 @@ _efl_ui_mi_rule_keypath_set(Eo *obj EINA_UNUSED, Efl_Ui_Mi_Rule_Data *pd, const 
 
 }
 
-EOLIAN const char*
+EOLIAN const Eina_Stringshare*
 _efl_ui_mi_rule_keypath_get(const Eo *obj EINA_UNUSED, Efl_Ui_Mi_Rule_Data *pd)
 {
    return NULL;
 }
 
+EOLIAN static void
+_efl_ui_mi_rule_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Mi_Rule_Data *pd, Efl_Gfx_Vg_Value_Provider *value_provider)
+{
+   if (!value_provider) return;
+   Eo *parent;
+   Eo *object = obj;
+   Evas *e = NULL;
+   do
+     {
+        parent = efl_parent_get(object);
+        if (!parent) continue;
+
+        if (efl_class_get(parent) == EFL_UI_MI_CONTROLLER_CLASS) break;
+        object = parent;
+     } while(!e);
+
+   if (!efl_gfx_vg_value_provider_keypath_get(value_provider))
+      efl_gfx_vg_value_provider_keypath_set(value_provider, pd->keypath);
+   efl_ui_mi_controller_value_provider_override(parent, value_provider);
+}
 
 EOLIAN static void
 _efl_ui_mi_rule_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Mi_Rule_Data *priv)
@@ -112,6 +135,7 @@ EOLIAN static void
 _efl_ui_mi_rule_efl_object_destructor(Eo *obj,
                                           Efl_Ui_Mi_Rule_Data *pd EINA_UNUSED)
 {
+   if (pd->keypath) eina_stringshare_del(pd->keypath);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

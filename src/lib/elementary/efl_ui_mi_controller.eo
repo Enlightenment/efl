@@ -67,6 +67,12 @@ class @beta Efl.Ui.Mi_Controller extends Efl.Ui.Widget implements Efl.File, Efl.
          }
          return: bool; [[$true when it's successful. $false otherwise.]]
       }
+      value_provider_override @beta {
+         [[ ]]
+         params {
+            value_provider: Efl.Gfx.Vg.Value_Provider;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

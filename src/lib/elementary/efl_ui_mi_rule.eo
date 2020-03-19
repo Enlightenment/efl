@@ -14,7 +14,13 @@ class @beta Efl.Ui.Mi_Rule extends Efl.Object implements Efl.Canvas.Gesture_Even
          get {
          }
          values {
-            keypath: string; [[  ]]
+            keypath: stringshare; [[  ]]
+         }
+      }
+      value_provider_override @beta {
+         [[ ]]
+         params {
+            value_provider: Efl.Gfx.Vg.Value_Provider;
          }
       }
    }

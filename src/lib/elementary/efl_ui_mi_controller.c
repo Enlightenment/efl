@@ -255,6 +255,13 @@ _animation_playback_progress_changed_cb(void *data, const Efl_Event *event)
 }
 
 EOLIAN static void
+_efl_ui_mi_controller_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Mi_Controller_Data *pd, Efl_Gfx_Vg_Value_Provider *value_provider)
+{
+   if (!value_provider) return;
+   efl_ui_vg_animation_value_provider_override(pd->anim, value_provider);
+}
+
+EOLIAN static void
 _efl_ui_mi_controller_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Mi_Controller_Data *pd)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
