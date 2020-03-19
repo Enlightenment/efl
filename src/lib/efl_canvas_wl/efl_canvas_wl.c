@@ -5369,7 +5369,6 @@ _efl_canvas_wl_efl_canvas_group_group_add(Eo *obj, Comp *c)
 EOLIAN static void
 _efl_canvas_wl_efl_canvas_group_group_del(Eo *obj, Comp *c)
 {
-   evas_object_del(c->clip);
    evas_object_del(c->events);
    free(c->env);
    if (c->gl) comp_gl_shutdown(c);
