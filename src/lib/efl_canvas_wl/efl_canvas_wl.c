@@ -983,7 +983,12 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
         h = zy + zh - y;
      }
    evas_object_move(cs->obj, zx + x, zy + y);
-   if (w > 0) evas_object_resize(cs->obj, w, h);
+   if (w > 0)
+     {
+        if (!cs->hint_set_weight)
+          evas_object_size_hint_weight_set(cs->obj, 0, 0);
+        evas_object_resize(cs->obj, w, h);
+     }
 }
 
 static const struct wl_data_offer_interface data_device_offer_interface =
