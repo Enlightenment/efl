@@ -20,9 +20,7 @@
 #include <Ecore_Getopt.h>
 #include <Ecore_Con.h>
 #include <Elementary.h>
-#include <Exactness.h>
 
-#include <exactness_private.h>
 #include "common.h"
 
 #define STABILIZE_KEY_STR "F1"

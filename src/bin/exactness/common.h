@@ -2,9 +2,9 @@
 # include <config.h>
 #endif
 
+#include <Eet.h>
+#include <Evas.h>
 #include <Elementary.h>
-#include <Exactness.h>
-#include <exactness_private.h>
 
 typedef struct
 {
@@ -97,7 +97,184 @@ foo(Eina_Debug_Session *session, int srcid, void *buffer, int size) \
    _buf += __len; \
 }
 
+#define SHOT_DELIMITER '+'
+
+/**
+ * The type values for an Exactness action.
+ */
+typedef enum
+{
+   EXACTNESS_ACTION_UNKNOWN = 0,
+   EXACTNESS_ACTION_MOUSE_IN,
+   EXACTNESS_ACTION_MOUSE_OUT,
+   EXACTNESS_ACTION_MOUSE_WHEEL,
+   EXACTNESS_ACTION_MULTI_DOWN,
+   EXACTNESS_ACTION_MULTI_UP,
+   EXACTNESS_ACTION_MULTI_MOVE,
+   EXACTNESS_ACTION_KEY_DOWN,
+   EXACTNESS_ACTION_KEY_UP,
+   EXACTNESS_ACTION_TAKE_SHOT,
+   EXACTNESS_ACTION_EFL_EVENT,
+   EXACTNESS_ACTION_CLICK_ON,
+   EXACTNESS_ACTION_STABILIZE,
+   EXACTNESS_ACTION_LAST = EXACTNESS_ACTION_STABILIZE
+   /* Add any supported actions here and update _LAST */
+} Exactness_Action_Type;
+
+/**
+ * The type for the Exactness Mouse Wheel action.
+ */
+typedef struct
+{
+   int direction;
+   int z;
+} Exactness_Action_Mouse_Wheel;
+
+/**
+ * The type for the Exactness Key Down Up action.
+ */
+typedef struct
+{
+   const char *keyname;
+   const char *key;
+   const char *string;
+   const char *compose;
+   unsigned int keycode;
+} Exactness_Action_Key_Down_Up;
+
+/**
+ * The type for the Exactness Multi Event action.
+ */
+typedef struct
+{
+   int d;
+   int b; /* In case of simple mouse down/up, corresponds to the button */
+   int x;
+   int y;
+   double rad;
+   double radx;
+   double rady;
+   double pres;
+   double ang;
+   double fx;
+   double fy;
+   Evas_Button_Flags flags;
+} Exactness_Action_Multi_Event;
+
+/**
+ * The type for the Exactness Multi Move action.
+ */
+typedef struct
+{
+   int d;
+   int x;
+   int y;
+   double rad;
+   double radx;
+   double rady;
+   double pres;
+   double ang;
+   double fx;
+   double fy;
+} Exactness_Action_Multi_Move;
+
+/**
+ * The type for the Exactness EFL Event action.
+ */
+typedef struct
+{
+   char *wdg_name; /**< Name of the widget */
+   char *event_name; /**< Name of the event */
+} Exactness_Action_Efl_Event;
+
+/**
+ * The type for the Exactness Click on (widget) action.
+ */
+typedef struct
+{
+   char *wdg_name;	/**< Name of the widget */
+} Exactness_Action_Click_On;
+
+/**
+ * The type for the Exactness action.
+ */
+typedef struct
+{
+   Exactness_Action_Type type;   /**< The action type */
+   unsigned int n_evas;          /**< The evas number on which the action has to be applied */
+   unsigned int delay_ms;        /**< The delay (in ms) to wait for this action */
+   void *data;                   /**< The specific action data */
+} Exactness_Action;
+
+/**
+ * The type for the Exactness object.
+ */
+typedef struct
+{
+   long long id;                 /**< The Eo pointer */
+   long long parent_id;          /**< The Eo parent pointer */
+   const char *kl_name;          /**< The class name */
+
+   Eina_List *children; /* NOT EET */
+
+   /* Evas stuff */
+   int x;   /**< The X coordinate */
+   int y;   /**< The Y coordinate */
+   int w;   /**< The object width */
+   int h;   /**< The object height */
+} Exactness_Object;
+
+/**
+ * The type for the Exactness objects list.
+ */
+typedef struct
+{
+   Eina_List *objs;        /**< List of all the objects */
+   /* main_objs not in EET */
+   Eina_List *main_objs;   /**< List of the main objects */
+} Exactness_Objects;
+
+/**
+ * The type for the Exactness Image.
+ */
+typedef struct
+{
+   unsigned int w;   /**< Width of the image */
+   unsigned int h;   /**< Height of the image */
+   void *pixels;     /**< Pixels of the image */
+} Exactness_Image;
+
+/**
+ * Description of the source code used to generate the tested application.
+ */
+typedef struct
+{
+   char *language; /**< String describing the language of the content e.g "C"...*/
+   char *content; /**< Content used as source */
+   char *command; /**< Command needed to generate the application from the content */
+} Exactness_Source_Code;
+
+/**
+ * An Exactness test unit, including the list of tested actions and produced images.
+ */
+typedef struct
+{
+   Eina_List *actions;  /**< List of Exactness_Action */
+   /* imgs not in EET */
+   Eina_List *imgs;     /**< List of Exactness_Image */
+   Eina_List *objs;     /**< List of Exactness_Objects */
+   Eina_List *codes;    /**< List of Exactness_Source_Code */
+   const char *fonts_path; /**< Path to the fonts to use, relative to the fonts dir given in parameter to the player/recorder */
+   int nb_shots;        /**< The number of shots present in the unit */
+} Exactness_Unit;
+
 Evas *(*_evas_new)(void);
+const char *_exactness_action_type_to_string_get(Exactness_Action_Type type);
+
+Eina_Bool exactness_image_compare(Exactness_Image *img1, Exactness_Image *img2, Exactness_Image **diff_img);
+Exactness_Unit *exactness_unit_file_read(const char *filename);
+Eina_Bool exactness_unit_file_write(Exactness_Unit *unit, const char *filename);
+void exactness_image_free(Exactness_Image *img);
 
 void ex_printf(int verbose, const char *fmt, ...);
 int ex_prg_invoke(const char *full_path, int argc, char **argv, Eina_Bool player);

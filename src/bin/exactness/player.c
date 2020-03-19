@@ -27,9 +27,7 @@
 #include <Ecore_File.h>
 #include <Ecore_Con.h>
 #include <Elementary.h>
-#include <Exactness.h>
 
-#include "exactness_private.h"
 #include "common.h"
 
 #define CMD_LINE_MAX 256

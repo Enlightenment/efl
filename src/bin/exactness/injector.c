@@ -13,7 +13,6 @@
 #include <Ecore_Getopt.h>
 #include <Elementary.h>
 
-#include <Exactness.h>
 #include "common.h"
 
 static Eina_Stringshare *_src_filename = NULL;

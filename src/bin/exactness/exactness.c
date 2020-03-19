@@ -7,7 +7,6 @@
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
 
-#include "exactness_private.h"
 #include "common.h"
 
 #ifdef _WIN32

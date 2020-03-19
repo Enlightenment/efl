@@ -1,20 +1,20 @@
 exactness_bin = executable('exactness',
   [ 'exactness.c', 'common.c', 'common.h' ],
-  dependencies: [ ecore, ecore_evas, ecore_file, elementary, exactness ],
+  dependencies: [ ecore, ecore_evas, ecore_file, elementary],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   )
 
 exactness_inject_bin = executable('exactness_inject',
   [ 'injector.c', 'common.c', 'common.h' ],
-  dependencies: [ elementary, exactness ],
+  dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   )
 
 exactness_inspect_bin = executable('exactness_inspect',
   [ 'inspect.c', 'common.c', 'common.h' ],
-  dependencies: [ elementary, exactness ],
+  dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   )
@@ -32,14 +32,14 @@ edjs = custom_target('player_entry',
 
 exactness_play_bin = executable('exactness_play',
   [ 'player.c', 'common.c', 'common.h', edjs ],
-  dependencies: [ elementary, exactness ],
+  dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   )
 
 exactness_record_bin = executable('exactness_record',
   [ 'recorder.c', 'common.c', 'common.h' ],
-  dependencies: [ elementary, exactness ],
+  dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   )
