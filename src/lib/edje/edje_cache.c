@@ -40,9 +40,6 @@ edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
   INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
   INIT_EMP_BOTH(SPACER, Edje_Part_Description_Common, ce);
   INIT_EMP_BOTH(SNAPSHOT, Edje_Part_Description_Snapshot, ce);
-  INIT_EMP_BOTH(MESH_NODE, Edje_Part_Description_Mesh_Node, ce);
-  INIT_EMP_BOTH(LIGHT, Edje_Part_Description_Light, ce);
-  INIT_EMP_BOTH(CAMERA, Edje_Part_Description_Camera, ce);
   INIT_EMP_BOTH(VECTOR, Edje_Part_Description_Vector, ce);
   INIT_EMP(part, Edje_Part, ce);
 }
@@ -66,9 +63,6 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
    eina_mempool_del(ce->mp->mp.EXTERNAL);
    eina_mempool_del(ce->mp->mp.SPACER);
    eina_mempool_del(ce->mp->mp.SNAPSHOT);
-   eina_mempool_del(ce->mp->mp.MESH_NODE);
-   eina_mempool_del(ce->mp->mp.LIGHT);
-   eina_mempool_del(ce->mp->mp.CAMERA);
    eina_mempool_del(ce->mp->mp.VECTOR);
    eina_mempool_del(ce->mp->mp.part);
    memset(&ce->mp->mp, 0, sizeof(ce->mp->mp));
@@ -85,9 +79,6 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
    eina_mempool_del(ce->mp->mp_rtl.EXTERNAL);
    eina_mempool_del(ce->mp->mp_rtl.SPACER);
    eina_mempool_del(ce->mp->mp_rtl.SNAPSHOT);
-   eina_mempool_del(ce->mp->mp_rtl.MESH_NODE);
-   eina_mempool_del(ce->mp->mp_rtl.LIGHT);
-   eina_mempool_del(ce->mp->mp_rtl.CAMERA);
    eina_mempool_del(ce->mp->mp_rtl.VECTOR);
    memset(&ce->mp->mp_rtl, 0, sizeof(ce->mp->mp_rtl));
 

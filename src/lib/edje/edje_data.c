@@ -54,12 +54,6 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_box = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_table = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_external = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_3d_color = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_3d_offset = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_3d_vec = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_mesh_node = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_light = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_camera = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_variant_list = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_snapshot_pointer = NULL;
@@ -73,9 +67,6 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_box_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_table_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_external_pointer = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_mesh_node_pointer = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_light_pointer = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description_camera_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_filter_data = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id_pointer = NULL;
@@ -127,9 +118,6 @@ EMP(BOX, box)
 EMP(TABLE, table)
 EMP(EXTERNAL, external)
 EMP(SPACER, spacer)
-EMP(MESH_NODE, mesh_node)
-EMP(LIGHT, light)
-EMP(CAMERA, camera)
 EMP(SNAPSHOT, snapshot)
 EMP(VECTOR, vector)
 #undef EMP
@@ -178,9 +166,6 @@ struct
    { EDJE_PART_TYPE_EXTERNAL, "external" },
    { EDJE_PART_TYPE_PROXY, "proxy" },
    { EDJE_PART_TYPE_SPACER, "spacer" },
-   { EDJE_PART_TYPE_MESH_NODE, "mesh_node" },
-   { EDJE_PART_TYPE_LIGHT, "light" },
-   { EDJE_PART_TYPE_CAMERA, "camera" },
    { EDJE_PART_TYPE_SNAPSHOT, "snapshot" },
    { EDJE_PART_TYPE_VECTOR, "vector" }
 };
@@ -298,14 +283,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_box);
    FREED(_edje_edd_edje_part_description_table);
    FREED(_edje_edd_edje_part_description_external);
-   FREED(_edje_edd_edje_part_description_mesh_node);
-   FREED(_edje_edd_edje_part_description_light);
    FREED(_edje_edd_edje_part_description_vector);
    FREED(_edje_edd_edje_part_description_vector_pointer);
-   FREED(_edje_edd_edje_part_description_camera);
-   FREED(_edje_edd_edje_part_description_3d_color);
-   FREED(_edje_edd_edje_part_description_3d_offset);
-   FREED(_edje_edd_edje_part_description_3d_vec);
    FREED(_edje_edd_edje_part_description_variant_list);
    FREED(_edje_edd_edje_part_description_rectangle_pointer);
    FREED(_edje_edd_edje_part_description_snapshot_pointer);
@@ -319,9 +298,6 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_box_pointer);
    FREED(_edje_edd_edje_part_description_table_pointer);
    FREED(_edje_edd_edje_part_description_external_pointer);
-   FREED(_edje_edd_edje_part_description_mesh_node_pointer);
-   FREED(_edje_edd_edje_part_description_light_pointer);
-   FREED(_edje_edd_edje_part_description_camera_pointer);
    FREED(_edje_edd_edje_part_description_filter_data);
    FREED(_edje_edd_edje_part_image_id);
    FREED(_edje_edd_edje_part_image_id_pointer);
@@ -494,31 +470,6 @@ _edje_edd_init(void)
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_vibration_directory, Edje_Vibration_Directory, "samples", samples, _edje_edd_edje_vibration_sample);
 
-   /* color structure for ambient, diffuse and specular colors */
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Color);
-   _edje_edd_edje_part_description_3d_color =
-     eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_color, Edje_Color, "r", r, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_color, Edje_Color, "g", g, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_color, Edje_Color, "b", b, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_color, Edje_Color, "a", a, EET_T_UCHAR);
-
-   /* offset (vector of integer values) */
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_3D_Int_Vec);
-   _edje_edd_edje_part_description_3d_offset =
-     eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_offset, Edje_3D_Int_Vec, "x", x, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_offset, Edje_3D_Int_Vec, "y", y, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_offset, Edje_3D_Int_Vec, "z", z, EET_T_INT);
-
-   /* vector of float values */
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_3D_Vec);
-   _edje_edd_edje_part_description_3d_vec =
-     eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "x", x, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "y", y, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "z", z, EDJE_T_FLOAT);
-
    /* Efl.Gfx.Filter */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Gfx_Filter);
    _edje_edd_edje_filter = eet_data_descriptor_file_new(&eddc);
@@ -547,9 +498,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.EXTERNAL", count.EXTERNAL, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.SPACER", count.SPACER, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.SNAPSHOT", count.SNAPSHOT, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.MESH_NODE", count.MESH_NODE, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.LIGHT", count.LIGHT, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.CAMERA", count.CAMERA, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.VECTOR", count.VECTOR, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.part", count.part, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "group_alias", group_alias, EET_T_UCHAR);
@@ -672,7 +620,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "name", name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "signal", signal, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "source", source, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "source_3d_id", source_3d_id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "filter_part", filter.part, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "filter_state", filter.state, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "in.from", in.from, EET_T_DOUBLE);
@@ -758,7 +705,6 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "limit", limit, EET_T_CHAR);                                        \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.x", align.x, EDJE_T_FLOAT);                                  \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.y", align.y, EDJE_T_FLOAT);                                  \
-  EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", align_3d, _edje_edd_edje_part_description_3d_vec); \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", fixed.w, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", fixed.h, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "user_set.fixed", user_set.fixed, EET_T_UCHAR);                                   \
@@ -858,7 +804,6 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "visible", Dec.visible, EET_T_CHAR);                                    \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.x", Dec.align.x, EDJE_T_FLOAT);                                  \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.y", Dec.align.y, EDJE_T_FLOAT);                                  \
-  EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", Dec.align_3d, _edje_edd_edje_part_description_3d_vec); \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", Dec.fixed.w, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", Dec.fixed.h, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "user_set.fixed", Dec.user_set.fixed, EET_T_UCHAR);                         \
@@ -1017,77 +962,6 @@ _edje_edd_init(void)
    _edje_edd_edje_part_description_image =
      eet_data_descriptor_file_new(&eddc);
    EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, common);
-
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Mesh_Node);
-   eddc.func.mem_free = mem_free_mesh_node;
-   eddc.func.mem_alloc = mem_alloc_mesh_node;
-   _edje_edd_edje_part_description_mesh_node =
-     eet_data_descriptor_file_new(&eddc);
-   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, common);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.position.point", mesh_node.position.point, _edje_edd_edje_part_description_3d_vec);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.position.space", mesh_node.position.space, EET_T_CHAR);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.ambient", mesh_node.properties.ambient, _edje_edd_edje_part_description_3d_color);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.diffuse", mesh_node.properties.diffuse, _edje_edd_edje_part_description_3d_color);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.specular", mesh_node.properties.specular, _edje_edd_edje_part_description_3d_color);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.material_attrib", mesh_node.properties.material_attrib, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.normal", mesh_node.properties.normal, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.shininess", mesh_node.properties.shininess, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.properties.shade", mesh_node.properties.shade, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb1.relative", mesh_node.aabb1.relative, _edje_edd_edje_part_description_3d_vec);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb1.offset", mesh_node.aabb1.offset, _edje_edd_edje_part_description_3d_offset);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb1.rel_to", mesh_node.aabb1.rel_to, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb2.relative", mesh_node.aabb2.relative, _edje_edd_edje_part_description_3d_vec);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb2.offset", mesh_node.aabb2.offset, _edje_edd_edje_part_description_3d_offset);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb2.rel_to", mesh_node.aabb2.rel_to, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.orientation.type", mesh_node.orientation.type, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, mesh_node);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.scale_3d", mesh_node.scale_3d, _edje_edd_edje_part_description_3d_vec);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.id", mesh_node.texture.id, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.set", mesh_node.texture.set, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.wrap1", mesh_node.texture.wrap1, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.wrap2", mesh_node.texture.wrap2, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.filter1", mesh_node.texture.filter1, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.filter2", mesh_node.texture.filter2, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.need_texture", mesh_node.texture.need_texture, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.textured", mesh_node.texture.textured, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.mesh.primitive", mesh_node.mesh.primitive, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.mesh.assembly", mesh_node.mesh.assembly, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.mesh.id", mesh_node.mesh.id, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.mesh.set", mesh_node.mesh.set, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.mesh.frame", mesh_node.mesh.frame, EET_T_INT);
-
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Light);
-   eddc.func.mem_free = mem_free_light;
-   eddc.func.mem_alloc = mem_alloc_light;
-   _edje_edd_edje_part_description_light =
-     eet_data_descriptor_file_new(&eddc);
-   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, common);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.position.point", light.position.point, _edje_edd_edje_part_description_3d_vec);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.position.space", light.position.space, EET_T_CHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.orientation.type", light.orientation.type, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, light);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.ambient", light.properties.ambient, _edje_edd_edje_part_description_3d_color);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.diffuse", light.properties.diffuse, _edje_edd_edje_part_description_3d_color);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.specular", light.properties.specular, _edje_edd_edje_part_description_3d_color);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.fovy", light.light.fovy, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.aspect", light.light.aspect, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.near", light.light.frustum_near, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.far", light.light.frustum_far, EDJE_T_FLOAT);
-
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Camera);
-   eddc.func.mem_free = mem_free_camera;
-   eddc.func.mem_alloc = mem_alloc_camera;
-   _edje_edd_edje_part_description_camera =
-     eet_data_descriptor_file_new(&eddc);
-   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, common);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.position.point", camera.position.point, _edje_edd_edje_part_description_3d_vec);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.position.space", camera.position.space, EET_T_CHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.orientation.type", camera.orientation.type, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, camera);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.fovy", camera.camera.fovy, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.aspect", camera.camera.aspect, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.near", camera.camera.frustum_near, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.far", camera.camera.frustum_far, EDJE_T_FLOAT);
 
    EDJE_DEFINE_POINTER_TYPE(Part_Image_Id, part_image_id);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.tweens", image.tweens, _edje_edd_edje_part_image_id_pointer);
@@ -1259,9 +1133,6 @@ _edje_edd_init(void)
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Box, part_description_box);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Table, part_description_table);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_External, part_description_external);
-   EDJE_DEFINE_POINTER_TYPE(Part_Description_Mesh_Node, part_description_mesh_node);
-   EDJE_DEFINE_POINTER_TYPE(Part_Description_Camera, part_description_camera);
-   EDJE_DEFINE_POINTER_TYPE(Part_Description_Light, part_description_light);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Vector, part_description_vector);
 
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
@@ -1281,9 +1152,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "box", _edje_edd_edje_part_description_box);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "table", _edje_edd_edje_part_description_table);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "external", _edje_edd_edje_part_description_external);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "mesh_node", _edje_edd_edje_part_description_mesh_node);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "light", _edje_edd_edje_part_description_light);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "camera", _edje_edd_edje_part_description_camera);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "vector", _edje_edd_edje_part_description_vector);
 
 #define EDJE_ADD_ARRAY_MAPPING(Variant, Type, Minus)                                     \
@@ -1311,9 +1179,6 @@ _edje_edd_init(void)
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "box", box);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "table", table);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "external", external);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "mesh_node", mesh_node);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "light", light);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "camera", camera);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "vector", vector);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Pack_Element);
