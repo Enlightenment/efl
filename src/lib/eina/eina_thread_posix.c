@@ -35,10 +35,9 @@
 
 #include <pthread.h>
 #include <errno.h>
-#ifndef _WIN32
+
 # include <signal.h>
-#endif
-# include <string.h>
+
 
 #if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
 #ifndef __linux__
@@ -63,9 +62,9 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 {
    int err;
    pthread_attr_t attr;
-#ifndef _WIN32
+
    sigset_t oldset, newset;
-#endif
+
    
    pthread_attr_init(&attr);
    if (affinity >= 0)
@@ -80,7 +79,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
      }
 
    /* setup initial locks */
-#ifndef _WIN32
+
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
    sigaddset(&newset, SIGALRM);
@@ -95,11 +94,13 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    sigaddset(&newset, SIGPWR);
 # endif
    pthread_sigmask(SIG_BLOCK, &newset, &oldset);
-#endif
+
    err = pthread_create((pthread_t *)t, &attr, func, data);
-#ifndef _WIN32
+
+
    pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-#endif
+
+
    pthread_attr_destroy(&attr);
 
    if (err == 0) return EINA_TRUE;
@@ -118,33 +119,3 @@ _eina_thread_self(void)
 {
    return (Eina_Thread)pthread_self();
 }
-
-
-
-/*
-void *
-_eina_internal_call(void *context)
-{
-   Eina_Thread_Call *c = context;
-   void *r;
-   pthread_t self;
-
-   // Default this thread to not cancellable as per Eina documentation
-   eina_thread_cancellable_set(EINA_FALSE, NULL);
-
-   EINA_THREAD_CLEANUP_PUSH(free, c);
-
-   if (c->prio == EINA_THREAD_BACKGROUND ||
-       c->prio == EINA_THREAD_IDLE)
-     eina_sched_prio_drop();
-
-   self = pthread_self();
-   _eina_debug_thread_add(&self);
-   EINA_THREAD_CLEANUP_PUSH(_eina_debug_thread_del, &self);
-   r = c->func((void*) c->data, eina_thread_self());
-   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
-   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
-
-   return r;
-}
-*/

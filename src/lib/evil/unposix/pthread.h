@@ -142,25 +142,13 @@ UNIMPLEMENTED inline int pthread_getschedparam(void* a, ...)
     #warning pthread_getschedparam is not implemented.
     return 0;
 }
-/*
-UNIMPLEMENTED inline int pthread_self()
-{
-    #warning pthread_self is not implemented.
-    return 0;
-}*/
 
 UNIMPLEMENTED inline int pthread_setschedparam(void* c, void* d, void* e)
 {
     #warning pthread_ is not implemented.
     return 0;
 }
-/*
-UNIMPLEMENTED inline int pthread_cancel(void* a, ...)
-{
-    #warning pthread_cancel is not implemented.
-    return 0;
-}
-*/
+
 UNIMPLEMENTED inline int pthread_setcancelstate(void* a, ...)
 {
     #warning pthread_setcancelstate is not implemented.
@@ -190,25 +178,7 @@ UNIMPLEMENTED inline int pthread_attr_init(void* a, ...)
     #warning pthread_attr_init is not implemented.
     return 0;
 }
-/*
-UNIMPLEMENTED inline int pthread_join(void* a, ...)
-{
-    #warning pthread_join is not implemented.
-    return 0;
-}
 
-UNIMPLEMENTED inline int pthread_create(void* a, ...)
-{
-    #warning pthread_create is not implemented.
-    return 0;
-}
-
-UNIMPLEMENTED inline int pthread_equal(void* a, ...)
-{
-    #warning pthread_equal is not implemented.
-    return 0;
-}
-*/
 UNIMPLEMENTED inline int pthread_setcanceltype(void* a, ...)
 {
     #warning pthread_setcanceltype is not implemented.

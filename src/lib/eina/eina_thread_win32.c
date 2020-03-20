@@ -41,10 +41,7 @@
 
 
 #include <errno.h>
-#ifndef _WIN32
-# include <signal.h>
-#endif
-# include <string.h>
+#include <string.h>
 
 #if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
 #ifndef __linux__
@@ -68,11 +65,10 @@ typedef struct _Eina_win32_thread_attr{
 inline void *
 _eina_thread_join(Eina_Thread t)
 {
-   //void *ret = NULL;
-   //int timeout_millis = 10000;
-   int ret = (int)WaitForSingleObject(t,INFINITE);//int ret = pthread_join((pthread_t)t, &ret);
+   
+   int ret = (int)WaitForSingleObject(t,INFINITE);
 
-   if (ret != 0) return ret;//if (ret == 0) return ret;
+   if (ret != 0) return ret;
    return NULL;
 }
 
@@ -85,7 +81,7 @@ DWORD WINAPI _eina_thread_func(void *params)
 
 
 void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t){
-   //HANDLE hThread;
+
    int nPriority;
 
    switch(prio){
@@ -117,7 +113,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    LPDWORD threadID;
 
-   //Eina_win32_thread_func *thread_func = (Eina_win32_thread_func*) malloc(sizeof(Eina_win32_thread_func));
+   
    Eina_win32_thread_func thread_func;
    Eina_Thread_Call *c = (Eina_Thread_Call*)(data);
 
@@ -128,12 +124,11 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 	
    *t =(HANDLE) CreateThread(thread_attr.lpThreadAttributes,thread_attr.dwStackSize, &_eina_thread_func,&thread_func,thread_attr.dwCreationFlags,threadID);
 
-   //free(thread_func);
-   
+  
    
 
 
-   _eina_thread_set_priority(c->prio,t);  //SetThreadPriority(*t, c->prio);
+   _eina_thread_set_priority(c->prio,t);  
 
    ret = (*t != NULL) ? EINA_TRUE : EINA_FALSE;
 
@@ -162,15 +157,15 @@ _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 	DWORD t2_thread_id = GetThreadId((HANDLE)t2);
 
 	return (t1_thread_id == t2_thread_id) ? EINA_TRUE : EINA_FALSE;
-   //return pthread_equal((pthread_t)t1, (pthread_t)t2);
+
 }
 
 inline Eina_Thread
 _eina_thread_self(void)
 {
-	//return (Eina_Thread)GetCurrentThreadId();
+
    return (Eina_Thread)GetCurrentThread();
-   //return (Eina_Thread)pthread_self();
+
 }
 
 HRESULT _eina_thread_set_name_win32(Eina_Thread thread, char *buf){
@@ -183,7 +178,7 @@ Eina_Bool _eina_thread_cancel(Eina_Thread thread){
 
    ExitThread(*lpExitCode);
    return success;
-   //return SetThreadDescription((HANDLE)thread, (PCWSTR)buf);
+
 }
 
 
