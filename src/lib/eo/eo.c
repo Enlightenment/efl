@@ -128,7 +128,22 @@ _eo_op_class_get(Efl_Object_Op op)
    short class_id = EFL_OBJECT_OP_CLASS_PART(op);
    return _eo_classes[class_id];
 }
+#if defined(DEBUG_VTABLE_ALLOCATION)
+static int _allocated_memory = 0;
 
+static inline void*
+_vtable_alloc(unsigned long n, size_t elem)
+{
+   _allocated_memory += n*elem;
+   return calloc(n, elem);
+}
+#else
+static inline void*
+_vtable_alloc(unsigned long n, size_t elem)
+{
+   return calloc(n, elem);
+}
+#endif
 /**
  * This inits the vtable wit hthe current size of allocated tables
  */
@@ -137,7 +152,7 @@ _vtable_init(Eo_Vtable *vtable)
 {
    //we assume here that _eo_classes_last_id was called before
    vtable->size = _eo_classes_last_id;
-   vtable->chain = calloc(vtable->size, sizeof(Eo_Vtable_Node));
+   vtable->chain = _vtable_alloc(vtable->size, sizeof(Eo_Vtable_Node));
 }
 
 /**
@@ -217,7 +232,7 @@ static void
 _vtable_copy_node(Eo_Vtable_Node *dest, const Eo_Vtable_Node *src)
 {
    dest->count = src->count;
-   dest->funcs = calloc(sizeof(op_type_funcs), src->count);
+   dest->funcs = _vtable_alloc(sizeof(op_type_funcs), src->count);
    memcpy(dest->funcs, src->funcs, sizeof(op_type_funcs) * src->count);
 }
 
@@ -228,7 +243,7 @@ static void
 _vtable_prepare_empty_node(Eo_Vtable *dest, unsigned int length, unsigned int class_id)
 {
    dest->chain[class_id].count = length;
-   dest->chain[class_id].funcs = calloc(sizeof(op_type_funcs), dest->chain[class_id].count);
+   dest->chain[class_id].funcs = _vtable_alloc(sizeof(op_type_funcs), dest->chain[class_id].count);
 }
 
 /**
