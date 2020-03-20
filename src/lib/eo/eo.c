@@ -920,17 +920,35 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
 
    hitmap = alloca(klass->vtable.size);
    memset(hitmap, 0, klass->vtable.size);
-   /* Flatten the function array */
+   /* Merge in all required vtable entries */
      {
         const _Efl_Class **mro_itr = klass->mro;
-        for (  ; *mro_itr ; mro_itr++) ;
-
-        /* Skip ourselves. */
+        /* take over everything from the parent */
+        if (klass->parent)
+          {
+             _vtable_take_over(&klass->vtable, &klass->parent->vtable);
+          }
+        /*
+         * - jump to the mro entry containing the parent
+         * - everything further from the parent to the next elements is already
+         *   represented in the vtable of the parent.
+         */
+        for (  ; *mro_itr ; mro_itr++)
+          {
+             if (*mro_itr == klass->parent)
+               break;
+          }
+        /**
+         * merge in all the APIs that are extended in the current klass for this first time.
+         * That means, they are not extended anywhere from the parent further up.
+         */
         for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
           {
              _vtable_merge_defined_api(&klass->vtable, &(*mro_itr)->vtable, hitmap);
           }
-        /*add slots for the interfaces we are inheriting from*/
+        /*
+         * add slots for the interfaces and mixins we are inheriting from
+         */
         for (int i = 0; klass->extensions[i]; i++)
           {
              const _Efl_Class *ext = klass->extensions[i];
