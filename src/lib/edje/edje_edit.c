@@ -1693,9 +1693,6 @@ _mempools_add(Edje_Part_Collection_Directory_Entry *de)
    EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
    EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
    EDIT_EMN(SNAPSHOT, Edje_Part_Description_Snapshot, de);
-   EDIT_EMN(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
-   EDIT_EMN(LIGHT, Edje_Part_Description_Light, de);
-   EDIT_EMN(CAMERA, Edje_Part_Description_Camera, de);
    EDIT_EMN(part, Edje_Part, de);
 
    EDIT_EMNP(RECTANGLE, Edje_Part_Description_Common, de);
@@ -1710,9 +1707,6 @@ _mempools_add(Edje_Part_Collection_Directory_Entry *de)
    EDIT_EMNP(EXTERNAL, Edje_Part_Description_External, de);
    EDIT_EMNP(SPACER, Edje_Part_Description_Common, de);
    EDIT_EMNP(SNAPSHOT, Edje_Part_Description_Snapshot, de);
-   EDIT_EMNP(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
-   EDIT_EMNP(LIGHT, Edje_Part_Description_Light, de);
-   EDIT_EMNP(CAMERA, Edje_Part_Description_Camera, de);
 }
 
 EAPI Eina_Bool
@@ -6435,9 +6429,6 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->persp.zplane = EINA_FALSE;
    pd->map.zoom.x = FROM_DOUBLE(1.0);
    pd->map.zoom.y = FROM_DOUBLE(1.0);
-   pd->align_3d.x = FROM_DOUBLE(0.5);
-   pd->align_3d.y = FROM_DOUBLE(0.5);
-   pd->align_3d.z = FROM_DOUBLE(0.5);
    pd->persp.focal = 1000;
 
    if (rp->part->type == EDJE_PART_TYPE_TEXT

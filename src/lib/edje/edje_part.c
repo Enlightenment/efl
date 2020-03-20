@@ -24,9 +24,6 @@ _part_type_to_string(unsigned char type)
       case EDJE_PART_TYPE_EXTERNAL: typestr = "EXTERNAL"; break;
       case EDJE_PART_TYPE_PROXY: typestr = "PROXY"; break;
       case EDJE_PART_TYPE_SPACER: typestr = "SPACER"; break;
-      case EDJE_PART_TYPE_MESH_NODE: typestr = "MESH_NODE"; break;
-      case EDJE_PART_TYPE_LIGHT: typestr = "LIGHT"; break;
-      case EDJE_PART_TYPE_CAMERA: typestr = "CAMERA"; break;
       case EDJE_PART_TYPE_SNAPSHOT: typestr = "SNAPSHOT"; break;
       case EDJE_PART_TYPE_VECTOR: typestr = "VECTOR"; break;
       default: break;

@@ -269,23 +269,9 @@ edje_mmap_group_exists(Eina_File *f, const char *glob)
 }
 
 EAPI Eina_Bool
-edje_mmap_3d_has(Eina_File *f, const char *group)
+edje_mmap_3d_has(Eina_File *f EINA_UNUSED, const char *group EINA_UNUSED)
 {
-   Edje_Part_Collection *edc = NULL;
-   Edje_File *edf;
-   int err_ret = 0;
-   Eina_Bool r = EINA_FALSE;
-
-   edf = _edje_cache_file_coll_open(f, group, &err_ret, &edc, NULL);
-   if (!edf || !edc) return EINA_FALSE;
-
-   if (edc->scene_size.width >0 && edc->scene_size.height > 0)
-     r = EINA_TRUE;
-
-   _edje_cache_coll_unref(edf, edc);
-   _edje_cache_file_unref(edf);
-
-   return r;
+   return EINA_FALSE;
 }
 
 typedef struct _Edje_File_Iterator Edje_File_Iterator;
@@ -1052,71 +1038,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                      case EDJE_PART_TYPE_SPACER:
                        rp->object = NULL;
                        break;
-
-                     case EDJE_PART_TYPE_MESH_NODE:
-                       {
-                          Evas_Canvas3D_Mesh *mesh = NULL;
-                          Evas_Canvas3D_Material *material = NULL;
-                          Edje_Part_Description_Mesh_Node *pd_mesh_node;
-
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
-
-                          mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, ed->base.evas);
-                          evas_canvas3d_node_mesh_add(rp->node, mesh);
-
-                          pd_mesh_node = (Edje_Part_Description_Mesh_Node*) rp->chosen_description;
-
-                          if (pd_mesh_node->mesh_node.mesh.primitive == EVAS_CANVAS3D_MESH_PRIMITIVE_NONE)
-                            {
-                               efl_file_simple_load(mesh, ed->file->model_dir->entries[pd_mesh_node->mesh_node.mesh.id].entry, NULL);
-                            }
-                          else
-                            {
-                               evas_canvas3d_mesh_frame_add(mesh, 0);
-                            }
-
-                          material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, ed->base.evas);
-                          evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
-                          if (pd_mesh_node->mesh_node.texture.need_texture && pd_mesh_node->mesh_node.texture.textured)
-                            {
-                               Evas_Canvas3D_Texture *texture = NULL;
-
-                               texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, ed->base.evas);
-                               evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);
-                            }
-                          rp->object = NULL;
-                       }
-                       break;
-
-                     case EDJE_PART_TYPE_LIGHT:
-                       {
-                          Evas_Canvas3D_Light *light = NULL;
-
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
-                          light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base.evas);
-                          evas_canvas3d_node_light_set(rp->node, light);
-
-                          rp->object = NULL;
-                          break;
-                       }
-
-                     case EDJE_PART_TYPE_CAMERA:
-                       {
-                          Evas_Canvas3D_Camera *camera = NULL;
-
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
-                          camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base.evas);
-                          evas_canvas3d_node_camera_set(rp->node, camera);
-
-                          rp->object = evas_object_image_filled_add(ed->base.evas);
-
-                          Eo* viewport = efl_add(EFL_CANVAS_SCENE3D_CLASS, ed->base.evas);
-                          evas_object_image_source_set(rp->object, viewport);
-                          evas_object_show(viewport);
-                          evas_object_event_callback_add(rp->object, EVAS_CALLBACK_DEL, _evas_object_viewport_del, viewport);
-
-                          break;
-                       }
 
                      default:
                        ERR("wrong part type %i!", ep->type);
@@ -2726,59 +2647,3 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
      _edje_util_message_send(ed_parent, EDJE_QUEUE_SCRIPT,
                              EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }
-
-EAPI Eina_Bool
-edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
-{
-   /* Use default value for state. */
-   unsigned int i;
-   Edje *ed;
-   Edje_Real_Part *rp;
-
-   ed = _edje_fetch(obj);
-
-   if (!ed)
-     {
-        ERR("Cannot get edje from object");
-        return EINA_FALSE;
-     }
-
-   if (*root_node == NULL)
-     *root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas,
-                                 evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
-
-   if (scene == NULL)
-     scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, ed->base.evas);
-
-   if ((*root_node == NULL) || (scene == NULL))
-     {
-        ERR("Cannot create scene and root node");
-        return EINA_FALSE;
-     }
-
-   for (i = 0; i < ed->table_parts_size; i++)
-     {
-        rp = ed->table_parts[i];
-
-        if (rp->node)
-          {
-             evas_canvas3d_node_member_add(*root_node, rp->node);
-          }
-
-        if (rp->part->type == EDJE_PART_TYPE_CAMERA)
-          {
-             Evas_Object *viewport;
-
-             evas_canvas3d_scene_camera_node_set(scene, rp->node);
-             evas_canvas3d_scene_root_node_set(scene, *root_node);
-             evas_canvas3d_scene_size_set(scene, ed->collection->scene_size.width, ed->collection->scene_size.height);
-             evas_canvas3d_scene_background_color_set(scene, 0, 0 ,0 ,0);
-
-             viewport = evas_object_image_source_get(rp->object);
-             efl_canvas_scene3d_set(viewport, scene);
-           }
-     }
-
-   return EINA_TRUE;
-}
-

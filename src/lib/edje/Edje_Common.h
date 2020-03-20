@@ -1207,22 +1207,6 @@ typedef enum _Edje_Aspect_Control
  */
 EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
 
-#ifdef EFL_BETA_API_SUPPORT
-
-/**
- * @brief Creates scene and root node which contains all 3D parts of edje object.
- * @param obj An edje part object
- * @param root node to collect all 3D parts
- * @param scene
- * @return scene and root node which contains all 3D parts of edje object
- * @note If this function returns @c EINA_FALSE, @p the scene or the root
- * node wasn't made
- * @since 1.18
- */
-EAPI Eina_Bool edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene);
-
-#endif
-
 /**
  * @}
  */
@@ -1837,7 +1821,7 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
  *
  * @since 1.18
  */
-EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
+EINA_DEPRECATED EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
 
 /**
  * @brief Iterates over all the opened Edje files.
