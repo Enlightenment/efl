@@ -75,6 +75,50 @@ abstract Efl.Object
    c_prefix: efl;
 
    methods {
+      constructor {
+         [[Implement this method to provide optional initialization code for your object.
+
+           See the Life Cycle section in this class' description.]]
+         return: Efl.Object; [[The new object, can be $NULL if aborted.]]
+      }
+      destructor {
+         [[Implement this method to provide deinitialization code for your object if you need it.
+
+           Will be called once @.invalidate has returned.
+           See the Life Cycle section in this class' description.]]
+      }
+      finalize {
+         [[Implement this method to finish the initialization of your object
+           after all (if any) user-provided configuration methods have been
+           executed.
+
+           Use this method to delay expensive operations until user configuration
+           has finished, to avoid building the object in a "default" state in the
+           constructor, just to have to throw it all away because a user
+           configuration (a property being set, for example) requires a different
+           state.
+           This is the last call inside efl_add() and will set @.finalized to $true
+           once it returns.
+           This is an optimization and implementing this method is optional if you
+           already perform all your initialization in the @.constructor method.
+           See the Life Cycle section in this class' description.]]
+         return: Efl.Object; [[The new object. Return $NULL to abort object creation.]]
+      }
+      invalidate {
+         [[Implement this method to perform special actions when your object loses
+           its parent, if you need to.
+
+           It is called when the parent reference is lost or set to $NULL. After this
+           call returns, @.invalidated is set to $true.
+           This allows a simpler tear down of complex hierarchies, by performing
+           object destruction in two steps, first all object relationships are
+           broken and then the isolated objects are destroyed. Performing everything
+           in the @.destructor can sometimes lead to deadlocks, but implementing
+           this method is optional if this is not your case.
+           When an object with a parent is destroyed, it first receives a call to
+           @.invalidate and then to @.destructor.
+           See the Life Cycle section in this class' description.]]
+      }
       @property parent {
          [[The parent of an object.
 
@@ -101,55 +145,6 @@ abstract Efl.Object
          }
          values {
             parent: Efl.Object; [[The new parent.]]
-         }
-      }
-      @property name {
-         [[The name of the object.
-
-           Every EFL object can have a name. Names may not contain the
-           following characters: / ? * [ ] ! \ :
-           Using any of these in a name will result in undefined behavior
-           later on. An empty string is considered the same as a $NULL string
-           or no string for the name.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-           name: string; [[The name.]]
-         }
-      }
-      @property comment {
-         [[A human readable comment for the object.
-
-           Every EFL object can have a comment. This is intended for developers
-           and debugging. An empty string is considered the same as a $NULL
-           string or no string for the comment.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-           comment: string; [[The comment.]]
-         }
-      }
-      debug_name_override {
-         [[Build a read-only name for this object used for debugging.
-
-            Multiple calls using efl_super() can be chained in order to build
-            the entire debug name, from parent to child classes. In C the usual
-            way to build the string is as follows:
-
-            efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
-            eina_strbuf_append_printf(sb, "new_information");
-
-            Usually more debug information should be added to $sb after
-            calling the super function.
-         ]]
-         params {
-            @in sb: strbuf; [[A string buffer, must not be $null.]]
          }
       }
       @property event_global_freeze_count @static {
@@ -224,64 +219,6 @@ abstract Efl.Object
         }
         return : Efl.Object; [[Object from the provider list.]]
       }
-      constructor {
-         [[Implement this method to provide optional initialization code for your object.
-
-           See the Life Cycle section in this class' description.]]
-         return: Efl.Object; [[The new object, can be $NULL if aborted.]]
-      }
-      destructor {
-         [[Implement this method to provide deinitialization code for your object if you need it.
-
-           Will be called once @.invalidate has returned.
-           See the Life Cycle section in this class' description.]]
-      }
-      finalize {
-         [[Implement this method to finish the initialization of your object
-           after all (if any) user-provided configuration methods have been
-           executed.
-
-           Use this method to delay expensive operations until user configuration
-           has finished, to avoid building the object in a "default" state in the
-           constructor, just to have to throw it all away because a user
-           configuration (a property being set, for example) requires a different
-           state.
-           This is the last call inside efl_add() and will set @.finalized to $true
-           once it returns.
-           This is an optimization and implementing this method is optional if you
-           already perform all your initialization in the @.constructor method.
-           See the Life Cycle section in this class' description.]]
-         return: Efl.Object; [[The new object. Return $NULL to abort object creation.]]
-      }
-      invalidate {
-         [[Implement this method to perform special actions when your object loses
-           its parent, if you need to.
-
-           It is called when the parent reference is lost or set to $NULL. After this
-           call returns, @.invalidated is set to $true.
-           This allows a simpler tear down of complex hierarchies, by performing
-           object destruction in two steps, first all object relationships are
-           broken and then the isolated objects are destroyed. Performing everything
-           in the @.destructor can sometimes lead to deadlocks, but implementing
-           this method is optional if this is not your case.
-           When an object with a parent is destroyed, it first receives a call to
-           @.invalidate and then to @.destructor.
-           See the Life Cycle section in this class' description.]]
-      }
-      name_find @const @beta {
-         [[Find a child object with the given name and return it.
-
-           The search string can be a glob (shell style, using *). It can also
-           specify class name in the format of "class:name" where ":"
-           separates class and name. Both class and name can be globs.
-           If the class is specified but the name is empty like "class:" then
-           the search will match any object of that class.
-         ]]
-         params {
-            @in search: string; [[The name search string.]]
-         }
-         return: Efl.Object; [[The first object found.]]
-      }
       event_thaw {
          [[Thaw events of object.
 
@@ -354,6 +291,20 @@ abstract Efl.Object
             @in desc: const(Efl.Event_Description) @by_ref; [[The description of the event to listen to]]
             @in new_obj: Efl.Object; [[The object to emit events from]]
          }
+      }
+      name_find @const @beta {
+         [[Find a child object with the given name and return it.
+
+           The search string can be a glob (shell style, using *). It can also
+           specify class name in the format of "class:name" where ":"
+           separates class and name. Both class and name can be globs.
+           If the class is specified but the name is empty like "class:" then
+           the search will match any object of that class.
+         ]]
+         params {
+            @in search: string; [[The name search string.]]
+         }
+         return: Efl.Object; [[The first object found.]]
       }
       children_iterator_new {
          [[Get an iterator on all children.]]
@@ -428,6 +379,55 @@ abstract Efl.Object
             @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
          }
          return: bool; [[$true if successfully unregistered, $false otherwise.]]
+      }
+      @property name {
+         [[The name of the object.
+
+           Every EFL object can have a name. Names may not contain the
+           following characters: / ? * [ ] ! \ :
+           Using any of these in a name will result in undefined behavior
+           later on. An empty string is considered the same as a $NULL string
+           or no string for the name.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+           name: string; [[The name.]]
+         }
+      }
+      @property comment {
+         [[A human readable comment for the object.
+
+           Every EFL object can have a comment. This is intended for developers
+           and debugging. An empty string is considered the same as a $NULL
+           string or no string for the comment.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+           comment: string; [[The comment.]]
+         }
+      }
+      debug_name_override {
+         [[Build a read-only name for this object used for debugging.
+
+            Multiple calls using efl_super() can be chained in order to build
+            the entire debug name, from parent to child classes. In C the usual
+            way to build the string is as follows:
+
+            efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+            eina_strbuf_append_printf(sb, "new_information");
+
+            Usually more debug information should be added to $sb after
+            calling the super function.
+         ]]
+         params {
+            @in sb: strbuf; [[A string buffer, must not be $null.]]
+         }
       }
    }
    implements {

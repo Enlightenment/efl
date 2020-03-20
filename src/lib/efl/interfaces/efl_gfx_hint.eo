@@ -23,6 +23,97 @@ interface Efl.Gfx.Hint
    ]]
    event_c_prefix: efl_gfx_entity;
    methods {
+      @property hint_size_max {
+         [[Hints on the object's maximum size.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           The object container is in charge of fetching this property and
+           placing the object accordingly.
+
+           Values -1 will be treated as unset hint components, when
+           queried by managers.
+
+           Note: Smart objects (such as elementary) can have their own
+           hint policy. So calling this API may or may not affect
+           the size of smart objects.
+
+           Note: It is an error for the @.hint_size_max to be smaller in either axis
+           than @.hint_size_min. In this scenario, the max size hint will be
+           prioritized over the user min size hint.
+         ]]
+         values {
+            sz: Eina.Size2D; [[Maximum size (hint) in pixels, (-1, -1) by
+               default for canvas objects).]]
+         }
+      }
+      @property hint_margin {
+         [[Hints for an object's margin or padding space.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           The object container is in charge of fetching this property and
+           placing the object accordingly.
+
+           Note: Smart objects (such as elementary) can have their own
+           hint policy. So calling this API may or may not affect
+           the size of smart objects.
+         ]]
+         /*
+         @image html padding-hints.png
+         */
+         values {
+            l: int; [[Integer to specify left padding.]]
+            r: int; [[Integer to specify right padding.]]
+            t: int; [[Integer to specify top padding.]]
+            b: int; [[Integer to specify bottom padding.]]
+         }
+      }
+      @property hint_align {
+         [[Hints for an object's alignment.
+
+           These are hints on how to align this object inside the
+           boundaries of its container/manager.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+         ]]
+         /*
+         @image html alignment-hints.png
+         */
+         values {
+            x: Efl.Gfx.Align(0.5); [[Controls the horizontal alignment.]]
+            y: Efl.Gfx.Align(0.5); [[Controls the vertical alignment.]]
+         }
+      }
+      @property hint_weight {
+         [[Hints for an object's weight.
+
+           This is a hint on how a container object should resize a given
+           child within its area. Containers may adhere to the simpler
+           logic of just expanding the child object's dimensions to fit
+           its own (see the @Efl.Gfx.Hint_Expand helper weight macro) or
+           the complete one of taking each child's weight hint as real
+           weights to how much of its size to allocate for them in each
+           axis. A container is supposed to, after normalizing the
+           weights of its children (with weight  hints), distribut
+           the space it has to layout them by those factors -- most
+           weighted children get larger in this process than the least
+           ones.
+
+           Accepted values are zero or positive values. Some containers might
+           use this hint as a boolean, but some others might consider it as a
+           proportion, see documentation of each container.
+
+           Note: Default weight hint values are 0.0, for both axis.
+         ]]
+         values {
+            x: double; [[Non-negative double value to use as horizontal weight hint.]]
+            y: double; [[Non-negative double value to use as vertical weight hint.]]
+         }
+      }
       @property hint_aspect {
          [[Defines the aspect ratio to respect when scaling this object.
 
@@ -48,31 +139,6 @@ interface Efl.Gfx.Hint
             min: double; [[Default: 0.0 (no preference).]]
             max: double @optional; [[Default: 0.0, may be ignored.]]
             */
-         }
-      }
-      @property hint_size_max {
-         [[Hints on the object's maximum size.
-
-           This is not a size enforcement in any way, it's just a hint
-           that should be used whenever appropriate.
-
-           The object container is in charge of fetching this property and
-           placing the object accordingly.
-
-           Values -1 will be treated as unset hint components, when
-           queried by managers.
-
-           Note: Smart objects (such as elementary) can have their own
-           hint policy. So calling this API may or may not affect
-           the size of smart objects.
-
-           Note: It is an error for the @.hint_size_max to be smaller in either axis
-           than @.hint_size_min. In this scenario, the max size hint will be
-           prioritized over the user min size hint.
-         ]]
-         values {
-            sz: Eina.Size2D; [[Maximum size (hint) in pixels, (-1, -1) by
-               default for canvas objects).]]
          }
       }
       @property hint_size_restricted_max {
@@ -185,72 +251,6 @@ interface Efl.Gfx.Hint
          get {}
          values {
             sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
-         }
-      }
-      @property hint_margin {
-         [[Hints for an object's margin or padding space.
-
-           This is not a size enforcement in any way, it's just a hint
-           that should be used whenever appropriate.
-
-           The object container is in charge of fetching this property and
-           placing the object accordingly.
-
-           Note: Smart objects (such as elementary) can have their own
-           hint policy. So calling this API may or may not affect
-           the size of smart objects.
-         ]]
-         /*
-         @image html padding-hints.png
-         */
-         values {
-            l: int; [[Integer to specify left padding.]]
-            r: int; [[Integer to specify right padding.]]
-            t: int; [[Integer to specify top padding.]]
-            b: int; [[Integer to specify bottom padding.]]
-         }
-      }
-      @property hint_weight {
-         [[Hints for an object's weight.
-
-           This is a hint on how a container object should resize a given
-           child within its area. Containers may adhere to the simpler
-           logic of just expanding the child object's dimensions to fit
-           its own (see the @Efl.Gfx.Hint_Expand helper weight macro) or
-           the complete one of taking each child's weight hint as real
-           weights to how much of its size to allocate for them in each
-           axis. A container is supposed to, after normalizing the
-           weights of its children (with weight  hints), distribut
-           the space it has to layout them by those factors -- most
-           weighted children get larger in this process than the least
-           ones.
-
-           Accepted values are zero or positive values. Some containers might
-           use this hint as a boolean, but some others might consider it as a
-           proportion, see documentation of each container.
-
-           Note: Default weight hint values are 1.0, for both axis.
-         ]]
-         values {
-            x: double; [[Non-negative double value to use as horizontal weight hint.]]
-            y: double; [[Non-negative double value to use as vertical weight hint.]]
-         }
-      }
-      @property hint_align {
-         [[Hints for an object's alignment.
-
-           These are hints on how to align this object inside the
-           boundaries of its container/manager.
-
-           This is not a size enforcement in any way, it's just a hint
-           that should be used whenever appropriate.
-         ]]
-         /*
-         @image html alignment-hints.png
-         */
-         values {
-            x: Efl.Gfx.Align(0.5); [[Controls the horizontal alignment.]]
-            y: Efl.Gfx.Align(0.5); [[Controls the vertical alignment.]]
          }
       }
       @property hint_fill {
