@@ -16,6 +16,7 @@ if target_machine.system() == 'windows'
   'evil_util.c',
   'evil_private.h',
   'pcre/regex.h',
+  'unposix/sys/time.c',
   ]
 
   psapi = cc.find_library('psapi')
