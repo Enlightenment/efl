@@ -7,6 +7,7 @@
 // Windows Kit for Windows 10 already defines `struct timeval` and `time_t`
 #include <winsock2.h>
 #include <time.h>
+#include <stdint.h>
 
 typedef unsigned short u_short;
 

@@ -1,4 +1,4 @@
-#include<sys/time.h>
+#include<time.h>
 
 int gettimeofday(struct timeval * tp, struct timezone * tzp)
 {
@@ -19,6 +19,8 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
     tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
     return 0;
 }
+
+int localtime_s(struct tm * result, const time_t * time){ return 0; }
 
 struct tm *localtime_r(const time_t * time, struct tm * result)
 {
