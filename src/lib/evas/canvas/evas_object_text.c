@@ -2067,22 +2067,6 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
                         obj->cur->clipper->private_data);
      }
 
-#ifdef BIDI_SUPPORT
-   if (o->inherit_paragraph_direction)
-     {
-        Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
-
-        if (obj->smart.parent)
-          parent_dir = evas_object_paragraph_direction_get(obj->smart.parent);
-
-        if (parent_dir != o->paragraph_direction)
-          {
-             o->paragraph_direction = parent_dir;
-             o->changed_paragraph_direction = EINA_TRUE;
-          }
-     }
-#endif
-
    /* If object size changed and ellipsis is set */
    if (((o->cur.ellipsis >= 0.0) &&
        ((obj->cur->geometry.w != o->last_computed.w) ||
