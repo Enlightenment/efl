@@ -3006,15 +3006,6 @@ EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj,
  *
  * @brief Functions that deal with 3D projection of an 2D object.
  *
- * Perspective is a graphical tool that makes objects represented in 2D
- * look like they have a 3D appearance.
- *
- * Edje allows us to use perspective on any edje object. This group of
- * functions deal with the use of perspective, by creating and configuring
- * a perspective object that must set to a edje object or a canvas,
- * affecting all the objects inside that have no particular perspective
- * set already.
- *
  * @{
  */
 
