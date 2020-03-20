@@ -108,6 +108,7 @@ group { name: "elm/button/base/default";
             }
          }
          desc { "icononly"; inherit;
+            fixed: 0 0;
             rel.to: "elm.swallow.content";
             text {
                min: 1 1;
