@@ -2325,7 +2325,7 @@ _efl_object_event_callback_forwarder_del(Eo *obj, Efl_Object_Data *pd EINA_UNUSE
    dpd = efl_data_scope_safe_get(new_obj, EFL_OBJECT_CLASS);
    if (!dpd) return ;
 
-   ext = _efl_object_extension_need(dpd);
+   ext = dpd->ext;
    if (!ext) return ;
 
    EINA_LIST_FOREACH(eina_hash_find(ext->forwarders, desc), l, forwarder)
