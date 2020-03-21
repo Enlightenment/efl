@@ -2111,7 +2111,9 @@ EOLIAN static void
 _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool disabled)
 {
    Efl_Ui_Widget *subs;
-   int distance, parent_counter = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
+   int old_state, distance, parent_counter = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
+
+   old_state = pd->disabled;
 
    if (disabled)
      pd->disabled ++;
@@ -2125,15 +2127,17 @@ _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina
         distance = MAX(MIN(disabled, 1), 0);
         pd->disabled = parent_counter + distance;
      }
-   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+   if (old_state != pd->disabled)
      {
-        subs = eina_array_data_get(pd->children, i);
-        if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
-          efl_ui_widget_disabled_set(subs, efl_ui_widget_disabled_get(obj));
+        for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+          {
+             subs = eina_array_data_get(pd->children, i);
+             if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
+               efl_ui_widget_disabled_set(subs, efl_ui_widget_disabled_get(obj));
+          }
+        if (efl_finalized_get(obj))
+          _elm_widget_full_eval_children(obj, pd);
      }
-
-   if (efl_finalized_get(obj))
-     _elm_widget_full_eval_children(obj, pd);
 }
 
 EOLIAN static Eina_Bool
