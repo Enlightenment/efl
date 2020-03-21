@@ -1748,7 +1748,9 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
    Efl_Ui_Widget *subs;
    Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(pd);
-   int distance, parent_counter = (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0);
+   int old_tree_unfocusable, distance, parent_counter = (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0);
+
+   old_tree_unfocusable = pd->tree_unfocusable;
 
    if (tree_unfocusable)
      pd->tree_unfocusable ++;
@@ -1762,15 +1764,18 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
         distance = MAX(MIN(tree_unfocusable, 1), 0);
         pd->tree_unfocusable = parent_counter + distance;
      }
-   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+   if (old_tree_unfocusable != pd->tree_unfocusable)
      {
-        subs = eina_array_data_get(pd->children, i);
-        if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
-          elm_widget_tree_unfocusable_set(subs, elm_widget_tree_unfocusable_get(obj));
-     }
+        for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+          {
+             subs = eina_array_data_get(pd->children, i);
+             if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
+               elm_widget_tree_unfocusable_set(subs, elm_widget_tree_unfocusable_get(obj));
+          }
 
-   //focus state eval on all children
-   _elm_widget_full_eval_children(obj, pd);
+        //focus state eval on all children
+        _elm_widget_full_eval_children(obj, pd);
+     }
 }
 
 /**
