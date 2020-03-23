@@ -1766,15 +1766,13 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
      }
    if (old_tree_unfocusable != pd->tree_unfocusable)
      {
+        _full_eval(obj, pd);
         for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
           {
              subs = eina_array_data_get(pd->children, i);
              if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
                elm_widget_tree_unfocusable_set(subs, elm_widget_tree_unfocusable_get(obj));
           }
-
-        //focus state eval on all children
-        _elm_widget_full_eval_children(obj, pd);
      }
 }
 
@@ -2129,14 +2127,14 @@ _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina
      }
    if (old_state != pd->disabled)
      {
+        if (efl_finalized_get(obj))
+          _full_eval(obj, pd);
         for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
           {
              subs = eina_array_data_get(pd->children, i);
              if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
                efl_ui_widget_disabled_set(subs, efl_ui_widget_disabled_get(obj));
           }
-        if (efl_finalized_get(obj))
-          _elm_widget_full_eval_children(obj, pd);
      }
 }
 
