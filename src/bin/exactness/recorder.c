@@ -27,6 +27,11 @@
 #define SHOT_KEY_STR "F2"
 #define SAVE_KEY_STR "F3"
 
+#define DBG(...) EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
+
+static int _log_domain = -1;
+
 static const char *_out_filename = NULL;
 static const char *_test_name = NULL;
 static int _verbose = 0;
@@ -73,7 +78,7 @@ _add_to_list(Exactness_Action_Type type, unsigned int n_evas, unsigned int times
                    prev_v->n_evas == n_evas &&
                    (!len || !memcmp(prev_v->data, data, len))) return;
           }
-        ex_printf(1, "Recording %s\n", _exactness_action_type_to_string_get(type));
+        INF("Recording %s\n", _exactness_action_type_to_string_get(type));
         Exactness_Action *act =  malloc(sizeof(*act));
         act->type = type;
         act->n_evas = n_evas;
@@ -108,7 +113,7 @@ _event_pointer_cb(void *data, const Efl_Event *event)
 
    if (!timestamp) return;
 
-   ex_printf(2, "Calling \"%s\" timestamp=<%u>\n", _exactness_action_type_to_string_get(evt), timestamp);
+  DBG("Calling \"%s\" timestamp=<%u>\n", _exactness_action_type_to_string_get(evt), timestamp);
 
    switch (action)
      {
@@ -168,20 +173,20 @@ _event_key_cb(void *data, const Efl_Event *event)
      {
         if (!strcmp(key, _shot_key))
           {
-             ex_printf(2, "Take Screenshot: %s timestamp=<%u>\n", __func__, timestamp);
+             DBG("Take Screenshot: %s timestamp=<%u>\n", __func__, timestamp);
              _add_to_list(EXACTNESS_ACTION_TAKE_SHOT, n_evas, timestamp, NULL, 0);
              return;
           }
         if (!strcmp(key, STABILIZE_KEY_STR))
           {
-             ex_printf(2, "Stabilize: %s timestamp=<%u>\n", __func__, timestamp);
+             DBG("Stabilize: %s timestamp=<%u>\n", __func__, timestamp);
              _add_to_list(EXACTNESS_ACTION_STABILIZE, n_evas, timestamp, NULL, 0);
              return;
           }
         if (!strcmp(key, SAVE_KEY_STR))
           {
              _output_write();
-             ex_printf(2, "Save events: %s timestamp=<%u>\n", __func__, timestamp);
+             DBG("Save events: %s timestamp=<%u>\n", __func__, timestamp);
              return;
           }
         evt = EXACTNESS_ACTION_KEY_DOWN;
@@ -225,7 +230,7 @@ _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
    e = _evas_new();
    if (e)
      {
-        ex_printf(1, "New Evas\n");
+        INF("New Evas\n");
         _evas_list = eina_list_append(_evas_list, e);
         efl_key_data_set(e, "__evas_id", (void *)(intptr_t)_last_evas_id++);
         efl_event_callback_array_add(e, _event_pointer_callbacks(), e);
@@ -276,6 +281,8 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(want_quit),
      ECORE_GETOPT_VALUE_NONE
    };
+
+   _log_domain = eina_log_domain_register("exactness_recorder", NULL);
 
    if (!ecore_evas_init())
       return EXIT_FAILURE;
@@ -385,9 +392,9 @@ int main(int argc, char **argv)
           {
              argv[i - opt_args] = argv[0] + (argv[i] - argv[opt_args]);
           }
-        ex_printf(1, "%s ", argv[i - opt_args]);
+        INF("%s ", argv[i - opt_args]);
      }
-   ex_printf(1, "\n");
+   INF("\n");
 
    if (!_shot_key) _shot_key = getenv("SHOT_KEY");
    if (!_shot_key) _shot_key = SHOT_KEY_STR;
@@ -404,5 +411,7 @@ int main(int argc, char **argv)
 
 end:
    ecore_evas_shutdown();
+   eina_log_domain_unregister(_log_domain);
+   _log_domain = -1;
    return pret;
 }

@@ -255,7 +255,7 @@ ok:
      }
    strncpy(buf, eina_strbuf_string_get(sbuf), SCHEDULER_CMD_SIZE-1);
    eina_strbuf_free(sbuf);
-   ex_printf(1, "Command: %s\n", buf);
+   printf("Command: %s\n", buf);
    return EINA_TRUE;
 }
 

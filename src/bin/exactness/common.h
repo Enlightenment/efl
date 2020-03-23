@@ -276,6 +276,5 @@ Exactness_Unit *exactness_unit_file_read(const char *filename);
 Eina_Bool exactness_unit_file_write(Exactness_Unit *unit, const char *filename);
 void exactness_image_free(Exactness_Image *img);
 
-void ex_printf(int verbose, const char *fmt, ...);
 int ex_prg_invoke(const char *full_path, int argc, char **argv, Eina_Bool player);
 Eina_Stringshare *ex_prg_full_path_guess(const char *prg);

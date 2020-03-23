@@ -4,19 +4,6 @@
 
 #include "common.h"
 
-static int _verbose = 0;
-
-void
-ex_printf(int verbose, const char *fmt, ...)
-{
-   va_list ap;
-   if (!_verbose || verbose > _verbose) return;
-
-   va_start(ap, fmt);
-   vprintf(fmt, ap);
-   va_end(ap);
-}
-
 int
 ex_prg_invoke(const char *full_path, int argc, char **argv, Eina_Bool player)
 {
