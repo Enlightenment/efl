@@ -1728,6 +1728,51 @@ _tree_unfocusable_counter_get(Eo *widget)
 }
 
 /**
+ * Evalulate tree number.
+ *
+ * This is here to support properties which are propagating through the widget tree. If this property is set to true,
+ * every widget in the subtree, will also be automatically true.
+ * When one of the widgets in the subtree then seperatly will be set to true, the unsetting on the original widget will not unset the flag automatically in this tree.
+ *
+ * The basic idea here is:
+ * - The numeric number beeing bigger than 0, means that the property is true
+ * - The differnce between the number of the parent, and the number of the object, represents the boolean flag
+ *   (0 means that the flag is equal to the one of the parent, 1 means that if the parent is false, this child is true).
+ */
+static int
+_calculate_tree_number(int self_counter, int parent_counter, Eina_Bool flag)
+{
+   int distance = self_counter - parent_counter;
+
+   if (flag)
+     self_counter ++;
+   else
+     self_counter --;
+
+   distance = self_counter - parent_counter;
+
+   if ((distance < 0) || (distance > 1))
+     {
+        distance = MAX(MIN(flag, 1), 0);
+        self_counter = parent_counter + distance;
+     }
+
+   return self_counter;
+}
+
+static void
+_propagate_bool_property(Elm_Widget_Smart_Data *pd, Eina_Bool flag, void (*property_setting)(Eo *obj, Eina_Bool flag))
+{
+   Efl_Ui_Widget *subs;
+   for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
+     {
+        subs = eina_array_data_get(pd->children, i);
+        if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
+          property_setting(subs, flag);
+     }
+}
+
+/**
  * @internal
  *
  * This API makes the widget object and its children to be unfocusable.
@@ -1745,34 +1790,20 @@ _tree_unfocusable_counter_get(Eo *widget)
 EAPI void
 elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
 {
-   Efl_Ui_Widget *subs;
    Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(pd);
-   int old_tree_unfocusable, distance, parent_counter = (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0);
+   int old_tree_unfocusable;
 
    old_tree_unfocusable = pd->tree_unfocusable;
 
-   if (tree_unfocusable)
-     pd->tree_unfocusable ++;
-   else
-     pd->tree_unfocusable --;
+   pd->tree_unfocusable = _calculate_tree_number(pd->tree_unfocusable,
+                                                (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0),
+                                                tree_unfocusable);
 
-   distance = pd->tree_unfocusable - parent_counter;
-
-   if ((distance < 0) || (distance > 1))
-     {
-        distance = MAX(MIN(tree_unfocusable, 1), 0);
-        pd->tree_unfocusable = parent_counter + distance;
-     }
    if (old_tree_unfocusable != pd->tree_unfocusable)
      {
         _full_eval(obj, pd);
-        for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
-          {
-             subs = eina_array_data_get(pd->children, i);
-             if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
-               elm_widget_tree_unfocusable_set(subs, elm_widget_tree_unfocusable_get(obj));
-          }
+        _propagate_bool_property(pd, elm_widget_tree_unfocusable_get(obj), elm_widget_tree_unfocusable_set);
      }
 }
 
@@ -2108,33 +2139,16 @@ _elm_widget_top_win_focused_get(const Evas_Object *obj)
 EOLIAN static void
 _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool disabled)
 {
-   Efl_Ui_Widget *subs;
-   int old_state, distance, parent_counter = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
+   int old_state;
 
    old_state = pd->disabled;
 
-   if (disabled)
-     pd->disabled ++;
-   else
-     pd->disabled --;
-
-   distance = pd->disabled - parent_counter;
-
-   if ((distance < 0) || (distance > 1))
-     {
-        distance = MAX(MIN(disabled, 1), 0);
-        pd->disabled = parent_counter + distance;
-     }
+   pd->disabled = _calculate_tree_number(pd->disabled, (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0), disabled);
    if (old_state != pd->disabled)
      {
         if (efl_finalized_get(obj))
           _full_eval(obj, pd);
-        for (unsigned int i = 0; i < eina_array_count(pd->children); ++i)
-          {
-             subs = eina_array_data_get(pd->children, i);
-             if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
-               efl_ui_widget_disabled_set(subs, efl_ui_widget_disabled_get(obj));
-          }
+        _propagate_bool_property(pd, efl_ui_widget_disabled_get(obj), efl_ui_widget_disabled_set);
      }
 }
 
