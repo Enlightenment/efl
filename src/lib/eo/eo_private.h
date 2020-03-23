@@ -70,13 +70,16 @@ static inline void _eo_id_release(const Eo_Id obj_id);
 
 void _eo_condtor_done(Eo *obj);
 
-typedef struct _Eo_Vtable_Node Eo_Vtable_Node;
+typedef struct _Dich_Chain1 Dich_Chain1;
 
 typedef struct _Eo_Vtable
 {
-   Eo_Vtable_Node *chain;
-   unsigned short size;
+   Dich_Chain1 *chain;
+   unsigned int size;
 } Eo_Vtable;
+
+/* Clean the vtable. */
+void _vtable_func_clean_all(Eo_Vtable *vtable);
 
 struct _Eo_Header
 {
@@ -85,7 +88,7 @@ struct _Eo_Header
 
 struct _Efl_Object_Optional
 {
-   Eo_Vtable         *vtable;
+   Eo_Vtable          *vtable;
    Eina_List          *composite_objects;
    Efl_Del_Intercept   del_intercept;
 };
@@ -126,6 +129,12 @@ struct _Eo_Object
      Eina_Bool ownership_track:1;
 };
 
+/* How we search and store the implementations in classes. */
+#define DICH_CHAIN_LAST_BITS 5
+#define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
+#define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
+#define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
+
 extern Eina_Cow *efl_object_optional_cow;
 #define EO_OPTIONAL_COW_WRITE(_obj) ({ Efl_Object_Optional *_cow = eina_cow_write(efl_object_optional_cow, (const Eina_Cow_Data**)&(_obj->opt)); _cow; })
 #define EO_OPTIONAL_COW_END(_cow, _obj) eina_cow_done(efl_object_optional_cow, (const Eina_Cow_Data**)&(_obj->opt), _cow, EINA_TRUE)
@@ -137,7 +146,6 @@ extern Eina_Cow *efl_object_optional_cow;
       EO_OPTIONAL_COW_END(_obj##_cow, _obj); \
    }} while (0)
 #define EO_VTABLE(_obj) ((_obj)->opt->vtable ?: &((_obj)->klass->vtable))
-#define EO_VTABLE2(_obj) ((_obj)->opt->vtable ?: &((_obj)->klass->vtable))
 
 typedef void (*Eo_Op_Func_Type)(Eo *, void *class_data);
 
@@ -147,9 +155,15 @@ typedef struct
    const _Efl_Class *src;
 } op_type_funcs;
 
-struct _Eo_Vtable_Node{
-   op_type_funcs *funcs;
-   unsigned short count;
+typedef struct _Dich_Chain2
+{
+   op_type_funcs funcs[DICH_CHAIN_LAST_SIZE];
+   unsigned short refcount;
+} Dich_Chain2;
+
+struct _Dich_Chain1
+{
+   Dich_Chain2 *chain2;
 };
 
 typedef struct
@@ -189,7 +203,7 @@ struct _Efl_Class
    } iterators;
 
    unsigned int obj_size; /**< size of an object of this class */
-   unsigned int class_id; /**< the id which can be used to find the slot in _eo_classes and vtables chains */
+   unsigned int base_id;
    unsigned int data_offset; /* < Offset of the data within object data. */
    unsigned int ops_count; /* < Offset of the data within object data. */
 
