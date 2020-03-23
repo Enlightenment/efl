@@ -240,6 +240,8 @@ evas_shutdown(void)
 
    evas_focus_shutdown();
 
+   evas_fonts_zero_free();
+
    evas_cache_vg_shutdown();
 
    evas_font_path_global_clear();
