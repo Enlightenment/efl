@@ -41,7 +41,7 @@
  */
 
 /**
- * @typedef Exactness_Action_Type
+ * @enum Exactness_Action_Type
  * The type values for an Exactness action.
  */
 typedef enum
@@ -64,7 +64,7 @@ typedef enum
 } Exactness_Action_Type;
 
 /**
- * @typedef Exactness_Action_Mouse_Wheel
+ * @struct Exactness_Action_Mouse_Wheel
  * The type for the Exactness Mouse Wheel action.
  */
 typedef struct
@@ -74,7 +74,7 @@ typedef struct
 } Exactness_Action_Mouse_Wheel;
 
 /**
- * @typedef Exactness_Action_Key_Down_Up
+ * @struct Exactness_Action_Key_Down_Up
  * The type for the Exactness Key Down Up action.
  */
 typedef struct
@@ -87,7 +87,7 @@ typedef struct
 } Exactness_Action_Key_Down_Up;
 
 /**
- * @typedef Exactness_Action_Multi_Event
+ * @struct Exactness_Action_Multi_Event
  * The type for the Exactness Multi Event action.
  */
 typedef struct
@@ -107,7 +107,7 @@ typedef struct
 } Exactness_Action_Multi_Event;
 
 /**
- * @typedef Exactness_Action_Multi_Move
+ * @struct Exactness_Action_Multi_Move
  * The type for the Exactness Multi Move action.
  */
 typedef struct
@@ -125,7 +125,7 @@ typedef struct
 } Exactness_Action_Multi_Move;
 
 /**
- * @typedef Exactness_Action_Efl_Event
+ * @struct Exactness_Action_Efl_Event
  * The type for the Exactness EFL Event action.
  */
 typedef struct
@@ -135,7 +135,7 @@ typedef struct
 } Exactness_Action_Efl_Event;
 
 /**
- * @typedef Exactness_Action_Click_On
+ * @struct Exactness_Action_Click_On
  * The type for the Exactness Click on (widget) action.
  */
 typedef struct
@@ -144,7 +144,7 @@ typedef struct
 } Exactness_Action_Click_On;
 
 /**
- * @typedef Exactness_Action
+ * @struct Exactness_Action
  * The type for the Exactness action.
  */
 typedef struct
@@ -156,7 +156,7 @@ typedef struct
 } Exactness_Action;
 
 /**
- * @typedef Exactness_Object
+ * @struct Exactness_Object
  * The type for the Exactness object.
  */
 typedef struct
@@ -175,7 +175,7 @@ typedef struct
 } Exactness_Object;
 
 /**
- * @typedef Exactness_Objects
+ * @struct Exactness_Objects
  * The type for the Exactness objects list.
  */
 typedef struct
@@ -186,7 +186,7 @@ typedef struct
 } Exactness_Objects;
 
 /**
- * @typedef Exactness_Image
+ * @struct Exactness_Image
  * The type for the Exactness Image.
  */
 typedef struct
@@ -196,6 +196,10 @@ typedef struct
    void *pixels;     /**< Pixels of the image */
 } Exactness_Image;
 
+/**
+ * @struct Exactness_Source_Code
+ * Description of the source code used to generate the tested application.
+ */
 typedef struct
 {
    char *language; /**< String describing the language of the content e.g "C"...*/
@@ -203,6 +207,10 @@ typedef struct
    char *command; /**< Command needed to generate the application from the content */
 } Exactness_Source_Code;
 
+/**
+ * @struct Exactness_Unit
+ * An Exactness test unit, including the list of tested actions and produced images.
+ */
 typedef struct
 {
    Eina_List *actions;  /**< List of Exactness_Action */
