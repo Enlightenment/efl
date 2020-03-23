@@ -2630,9 +2630,9 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * @li "right" - Puts the text at the right of the line
          * @li "start" - Respects LTR/RTL settings. It is same with "auto"
          * @li "end" - Puts the text at the opposite side of LTR/RTL settings
-         * @li <number> - A number between 0.0 and 1.0 where 0.0 represents
+         * @li \<number\> - A number between 0.0 and 1.0 where 0.0 represents
          * "left" and 1.0 represents "right"
-         * @li <number>% - A percentage between 0% and 100% where 0%
+         * @li \<number\>% - A percentage between 0% and 100% where 0%
          * represents "left" and 100% represents "right"
          * @code
          * align=<value or preset>
@@ -2707,9 +2707,9 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * @li "bottom" - Puts the text at the bottom of the line
          * @li "baseline" - Baseline
          * @li "base" - Alias for "baseline"
-         * @li <number> - A number between 0.0 and 1.0 where 0.0 represents
+         * @li \<number\> - A number between 0.0 and 1.0 where 0.0 represents
          * "top" and 1.0 represents "bottom"
-         * @li <number>% - A percentage between 0% and 100% where 0%
+         * @li \<number\>% - A percentage between 0% and 100% where 0%
          * represents "top" and 100% represents "bottom"
          * @code
          * valign=<value or preset>
@@ -2832,9 +2832,9 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          *
          * Sets the left margin of the text. The value can be a number, an
          * increment, decrement or "reset":
-         * @li +<number> - Increments existing left margin by <number>
-         * @li -<number> - Decrements existing left margin by <number>
-         * @li <number> - Sets left margin to <number>
+         * @li +\<number\> - Increments existing left margin by \<number\>
+         * @li -\<number\> - Decrements existing left margin by \<number\>
+         * @li \<number\> - Sets left margin to \<number\>
          * @li "reset" - Sets left margin to 0
          * @code
          * left_margin=<value or reset>
@@ -2862,9 +2862,9 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          *
          * Sets the right margin of the text. The value can be a number, an
          * increment, decrement or "reset":
-         * @li +<number> - Increments existing right margin by <number>
-         * @li -<number> - Decrements existing right margin by <number>
-         * @li <number> - Sets left margin to <number>
+         * @li +\<number\> - Increments existing right margin by \<number\>
+         * @li -\<number\> - Decrements existing right margin by \<number\>
+         * @li \<number\> - Sets left margin to \<number\>
          * @li "reset" - Sets left margin to 0
          * @code
          * right_margin=<value or reset>

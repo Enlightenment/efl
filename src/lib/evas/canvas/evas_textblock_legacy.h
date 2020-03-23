@@ -562,7 +562,7 @@ EAPI Eina_List                               *evas_textblock_cursor_range_geomet
 
 /**
  * Get the simple geometry of a range.
- * The simple geometry is the geomtry in which rectangles in middle
+ * The simple geometry is the geometry in which rectangles in middle
  * lines of range are merged into one big rectangle.
  * @since 1.13
  *
@@ -573,10 +573,6 @@ EAPI Eina_List                               *evas_textblock_cursor_range_geomet
 EAPI Eina_Iterator                               *evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 /**
- * Get the geometry of ?
- *
- * @param cur one side of the range.
- * @param cur2 other side of the range.
  */
 EAPI Eina_Bool                                evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
 
