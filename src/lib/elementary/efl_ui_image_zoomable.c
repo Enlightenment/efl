@@ -728,6 +728,7 @@ _main_img_preloaded_cb(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    evas_object_show(sd->img);
    sd->main_load_pending = 0;
+   if (sd->autoplay) efl_player_playing_set(obj, EINA_TRUE);
    g = _grid_create(obj);
    if (g)
      {
@@ -1834,7 +1835,10 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
 
    efl_ui_scroll_manager_pan_set(priv->smanager, priv->pan_obj);
    if (elm_widget_is_legacy(obj))
-     edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
+     {
+        edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
+        priv->playback_loop = EINA_TRUE;
+     }
    else
      edje_object_part_swallow(edje, "efl.content", priv->pan_obj);
 
@@ -3003,11 +3007,24 @@ _efl_ui_image_zoomable_animate_cb(void *data)
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
    _grid_clear_all(data);
 
-   if (!sd->anim) return ECORE_CALLBACK_CANCEL;
+   if (!sd->anim)
+     {
+        sd->anim_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    sd->cur_frame++;
    if ((sd->frame_count > 0) && (sd->cur_frame > sd->frame_count))
-     sd->cur_frame = sd->cur_frame % sd->frame_count;
+     {
+        if (sd->playback_loop)
+          sd->cur_frame = sd->cur_frame % sd->frame_count;
+        else
+          {
+             sd->anim_timer = NULL;
+             sd->cur_frame = 0;
+             return EINA_FALSE;
+          }
+     }
 
    evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
    sd->frame_duration = evas_object_image_animated_frame_duration_get
@@ -3029,6 +3046,7 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
      {
         sd->anim = anim;
         edje_object_animation_set(sd->edje, anim);
+        efl_player_playback_loop_set(sd->edje, sd->playback_loop);
         return EINA_TRUE;
      }
 
@@ -3096,6 +3114,41 @@ EOLIAN static Eina_Bool
 _efl_ui_image_zoomable_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return _efl_ui_image_zoomable_animated_get_internal(obj, sd);
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_player_playback_loop_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool playback_loop)
+{
+   playback_loop = !!playback_loop;
+   sd->playback_loop = playback_loop;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_player_playback_loop_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   return sd->playback_loop;
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_player_autoplay_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool autoplay)
+{
+   autoplay = !!autoplay;
+   if (sd->autoplay == autoplay) return;
+   sd->autoplay = autoplay;
+   if (!sd->edje)
+     {
+        /* filter cases where we aren't going to immediately start playing */
+        if (!autoplay) return;
+        if (sd->preload_num)
+          return;
+     }
+   efl_player_playing_set(obj, EINA_TRUE);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_player_autoplay_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   return sd->autoplay;
 }
 
 EOLIAN static Eina_Bool

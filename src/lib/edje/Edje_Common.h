@@ -317,15 +317,6 @@ EAPI void *edje_object_signal_callback_seat_data_get(void);
  *
  * @brief Functions to manipulate audio abilities in edje.
  *
- * Perspective is a graphical tool that makes objects represented in 2D
- * look like they have a 3D appearance.
- *
- * Edje allows us to use perspective on any edje object. This group of
- * functions deal with the use of perspective, by creating and configuring
- * a perspective object that must set to a edje object or a canvas,
- * affecting all the objects inside that have no particular perspective
- * set already.
- *
  * @{
  */
 
@@ -1819,6 +1810,7 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
  *
  * @return @c 1 if a Scene is found is found, @c 0 otherwise
  *
+ * @deprecated
  * @since 1.18
  */
 EINA_DEPRECATED EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);

@@ -2044,7 +2044,8 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
    H = obj->cur->geometry.h;
 
    // FIXME: In GL we could use the image even if scaled
-   if (!_image_has_border(obj, o) && _image_is_filled(obj, o) && !_image_is_scaled(obj, o))
+   if (!(ENFN->image_native_get && ENFN->image_native_get(engine, o->engine_data)) &&
+       !_image_has_border(obj, o) && _image_is_filled(obj, o) && !_image_is_scaled(obj, o))
      {
         int imagew, imageh, uvw, uvh;
 

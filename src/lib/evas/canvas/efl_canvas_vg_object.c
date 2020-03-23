@@ -352,6 +352,15 @@ _efl_canvas_vg_object_efl_object_invalidate(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
         free(pd->user_entry);
      }
    pd->user_entry = NULL;
+
+   //Drop cache buffers
+   if (pd->vg_entry)
+     {
+        if (pd->ckeys[0])
+          ENFN->ector_surface_cache_drop(_evas_engine_context(obj->layer->evas), pd->ckeys[0]);
+        if (pd->ckeys[1])
+          ENFN->ector_surface_cache_drop(_evas_engine_context(obj->layer->evas), pd->ckeys[1]);
+     }
    evas_cache_vg_entry_del(pd->vg_entry);
 
    efl_invalidate(efl_super(eo_obj, MY_CLASS));
@@ -541,7 +550,23 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_free(context);
 
    if (buffer_created && ckey)
-     ENFN->ector_surface_cache_set(engine, ckey, buffer);
+     {
+        //Drop ex invalid cache buffers.
+        if (pd->frame_idx == 0 && ckey != pd->ckeys[0])
+          {
+             if (pd->ckeys[0])
+               ENFN->ector_surface_cache_drop(engine, ckey);
+             pd->ckeys[0] = ckey;
+          }
+        else if (pd->frame_idx == (int) (evas_cache_vg_anim_frame_count_get(pd->vg_entry) - 1)
+                 && ckey != pd->ckeys[1])
+          {
+             if (pd->ckeys[1])
+               ENFN->ector_surface_cache_drop(engine, ckey);
+             pd->ckeys[1] = ckey;
+          }
+        ENFN->ector_surface_cache_set(engine, ckey, buffer);
+     }
 
    return buffer;
 }

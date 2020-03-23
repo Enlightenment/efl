@@ -3943,9 +3943,11 @@ evas_render_pipe_wakeup(void *data)
    Render_Updates *ru;
    Evas_Public_Data *evas = data;
    Efl_Canvas_Output *out;
+   Evas *e;
 
    eina_evlog("+render_pipe_wakeup", evas->evas, 0.0, NULL);
    eina_spinlock_take(&(evas->render.lock));
+   e = evas->evas;
    EINA_LIST_FOREACH(evas->outputs, ll, out)
      {
         if (!out->output) continue ;
@@ -3967,7 +3969,8 @@ evas_render_pipe_wakeup(void *data)
      }
    eina_spinlock_release(&(evas->render.lock));
    evas_async_events_put(data, 0, NULL, evas_render_async_wakeup);
-   eina_evlog("-render_pipe_wakeup", evas->evas, 0.0, NULL);
+   /* use local pointer to avoid data race with 'evas' deref after releasing lock */
+   eina_evlog("-render_pipe_wakeup", e, 0.0, NULL);
 }
 
 EAPI void

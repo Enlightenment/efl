@@ -229,7 +229,7 @@ interface Efl.Gfx.Hint
            use this hint as a boolean, but some others might consider it as a
            proportion, see documentation of each container.
 
-           Note: Default weight hint values are 0.0, for both axis.
+           Note: Default weight hint values are 1.0, for both axis.
          ]]
          values {
             x: double; [[Non-negative double value to use as horizontal weight hint.]]

@@ -25,7 +25,6 @@ Eina_List *snd_dirs = NULL;
 Eina_List *mo_dirs = NULL;
 Eina_List *vibration_dirs = NULL;
 Eina_List *img_dirs = NULL;
-Eina_List *model_dirs = NULL;
 Eina_List *fnt_dirs = NULL;
 Eina_List *data_dirs = NULL;
 Eina_List *defines = NULL;
@@ -174,8 +173,6 @@ main(int argc, char **argv)
 
    img_dirs = eina_list_append(img_dirs, ".");
 
-   model_dirs = eina_list_append(model_dirs, ".");
-
    /* add defines to epp so edc files can detect edje_cc version */
    defines = eina_list_append(defines, mem_strdup("-DEDJE_VERSION_12=12"));
 
@@ -223,11 +220,6 @@ main(int argc, char **argv)
           {
              i++;
              img_dirs = eina_list_append(img_dirs, argv[i]);
-          }
-        else if ((!strcmp(argv[i], "-mod") || !strcmp(argv[i], "--model_dir")) && (i < (argc - 1)))
-          {
-             i++;
-             model_dirs = eina_list_append(model_dirs, argv[i]);
           }
         else if ((!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--font_dir")) && (i < (argc - 1)))
           {

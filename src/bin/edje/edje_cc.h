@@ -230,13 +230,8 @@ void    copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *de
 void    data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest);
 void    data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest);
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
-void    data_queue_model_lookup(char *name, int *dest, Eina_Bool *set);
 void    data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set);
 void    data_queue_image_remove(int *dest, Eina_Bool *set);
-void    data_queue_copied_model_lookup(int *src, int *dest, Eina_Bool *set);
-void    data_queue_model_remove(int *dest, Eina_Bool *set);
-void    data_queue_spectrum_lookup(char *name, int *dest);
-void    data_queue_spectrum_slave_lookup(int *master, int *slave);
 void    data_process_lookups(void);
 void    data_process_scripts(void);
 void    data_process_script_lookups(void);
@@ -308,7 +303,6 @@ void script_rewrite(Code *code);
 /* global vars */
 extern Eina_List             *ext_dirs;
 extern Eina_List             *img_dirs;
-extern Eina_List             *model_dirs;
 extern Eina_List             *fnt_dirs;
 extern Eina_List             *snd_dirs;
 extern Eina_List             *mo_dirs;

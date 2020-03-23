@@ -292,17 +292,6 @@ struct _Edje_String
    unsigned int id;
 };
 
-struct _Edje_3D_Vec {
-   FLOAT_T   x;
-   FLOAT_T   y;
-   FLOAT_T   z;
-};
-
-struct _Edje_3D_Int_Vec {
-   int   x;
-   int   y;
-   int   z;
-};
 
 typedef struct _Edje_Position_Scale                  Edje_Alignment;
 typedef struct _Edje_Position_Scale                  Edje_Position_Scale;
@@ -314,9 +303,6 @@ typedef struct _Edje_Map_Color                       Edje_Map_Color;
 typedef struct _Edje_Aspect_Prefer                   Edje_Aspect_Prefer;
 typedef struct _Edje_Aspect                          Edje_Aspect;
 typedef struct _Edje_String                          Edje_String;
-typedef struct _Edje_3D_Vec                          Edje_3D_Vec;
-typedef struct _Edje_3D_Int_Vec                      Edje_3D_Int_Vec;
-typedef struct _AABB                                 AABB;
 
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Style                           Edje_Style;
@@ -361,9 +347,6 @@ typedef struct _Edje_Part_Description_Text           Edje_Part_Description_Text;
 typedef struct _Edje_Part_Description_Box            Edje_Part_Description_Box;
 typedef struct _Edje_Part_Description_Table          Edje_Part_Description_Table;
 typedef struct _Edje_Part_Description_External       Edje_Part_Description_External;
-typedef struct _Edje_Part_Description_Mesh_Node      Edje_Part_Description_Mesh_Node;
-typedef struct _Edje_Part_Description_Light          Edje_Part_Description_Light;
-typedef struct _Edje_Part_Description_Camera         Edje_Part_Description_Camera;
 typedef struct _Edje_Part_Description_Snapshot       Edje_Part_Description_Snapshot;
 typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
 typedef struct _Edje_Part_Description_Spec_Fill      Edje_Part_Description_Spec_Fill;
@@ -373,9 +356,6 @@ typedef struct _Edje_Part_Description_Spec_Proxy     Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_Text;
 typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
-typedef struct _Edje_Part_Description_Spec_Mesh_Node Edje_Part_Description_Spec_Mesh_Node;
-typedef struct _Edje_Part_Description_Spec_Light     Edje_Part_Description_Spec_Light;
-typedef struct _Edje_Part_Description_Spec_Camera    Edje_Part_Description_Spec_Camera;
 typedef struct _Edje_Part_Description_Spec_Filter    Edje_Part_Description_Spec_Filter;
 typedef struct _Edje_Part_Description_Spec_Filter_Data Edje_Part_Description_Spec_Filter_Data;
 typedef struct _Edje_Physics_Face                    Edje_Physics_Face;
@@ -545,12 +525,6 @@ typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 #define EDJE_DESC_NO_RENDER_VALUE(d) (((d)->no_render & 0x1) != 0)
 
 /*----------*/
-
-struct _AABB {
-   Edje_3D_Vec       relative;
-   Edje_3D_Int_Vec   offset;
-   int               rel_to;
-};
 
 typedef struct Edje_Image_Hash
 {
@@ -825,7 +799,6 @@ struct _Edje_Color_Tree_Node
 struct _Edje_Program /* a conditional program to be run */
 {
    int         id; /* id of program */
-   int         source_3d_id; /* id of real 3D part */
 
    const char *name; /* name of the action */
 
@@ -1238,7 +1211,6 @@ struct _Edje_Part
    Evas_Event_Flags       ignore_flags;
    Evas_Event_Flags       mask_flags;
    unsigned int           items_count;
-   Edje_3D_Vec            scale_3d;
    Edje_Part_Api          api;
    Edje_Part_Allowed_Seat **allowed_seats;
    unsigned int           allowed_seats_count;
@@ -1374,8 +1346,6 @@ struct _Edje_Part_Description_Common
    } physics;
 #endif
 
-   Edje_3D_Vec       align_3d;
-
    unsigned char     visible; /* is it shown */
    unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
    unsigned char     no_render; /* no_render override @since 1.19 */
@@ -1508,108 +1478,6 @@ struct _Edje_Part_Description_Spec_Table
    } min;
 };
 
-struct _Edje_Part_Description_Spec_Mesh_Node
-{
-   struct {
-      Edje_Part_Image_Id          **tweens;
-      unsigned int                  tweens_count;
-      int                           id;
-      Evas_Canvas3D_Mesh_Primitive  primitive;
-      Evas_Canvas3D_Vertex_Assembly assembly;
-      int                           frame;
-      Eina_Bool                     set;
-   } mesh;
-
-   struct {
-      Edje_Part_Image_Id   **tweens;
-      unsigned int           tweens_count;
-      int                    id;
-      Evas_Canvas3D_Wrap_Mode wrap1;
-      Evas_Canvas3D_Wrap_Mode wrap2;
-      Evas_Canvas3D_Texture_Filter filter1;
-      Evas_Canvas3D_Texture_Filter filter2;
-      Eina_Bool              need_texture;
-      Eina_Bool              textured;
-      Eina_Bool              set;
-   } texture;
-
-   struct {
-      Edje_Color            ambient;
-      Edje_Color            diffuse;
-      Edje_Color            specular;
-      Eina_Bool             normal;
-      FLOAT_T               shininess;
-      Evas_Canvas3D_Shader_Mode    shade;
-      Evas_Canvas3D_Material_Attrib material_attrib;
-   } properties;
-
-   AABB     aabb1;
-   AABB     aabb2;
-
-   struct {
-      Evas_Canvas3D_Node_Orientation_Type      type;
-      FLOAT_T                            data[6];
-      int                                look_to; /* -1 = whole part collection, or part ID */
-   } orientation;
-
-   Edje_3D_Vec            scale_3d;
-
-   struct {
-      Edje_3D_Vec   point;
-
-      unsigned char space;
-   } position;
-};
-
-struct _Edje_Part_Description_Spec_Light
-{
-   struct {
-      Edje_Color            ambient;
-      Edje_Color            diffuse;
-      Edje_Color            specular;
-   } properties;
-
-   struct {
-      Edje_3D_Vec   point;
-
-      unsigned char space;
-   } position;
-
-   struct {
-      Evas_Canvas3D_Node_Orientation_Type      type;
-      FLOAT_T                            data[6];
-      int                                look_to; /* -1 = whole part collection, or part ID */
-   } orientation;
-
-   struct {
-      Evas_Real       fovy;
-      Evas_Real       aspect;
-      Evas_Real       frustum_near;
-      Evas_Real       frustum_far;
-   } light;
-};
-
-struct _Edje_Part_Description_Spec_Camera
-{
-   struct {
-      Evas_Real       fovy;
-      Evas_Real       aspect;
-      Evas_Real       frustum_near;
-      Evas_Real       frustum_far;
-   } camera;
-
-   struct {
-      Edje_3D_Vec   point;
-      unsigned char space;
-   } position;
-
-   struct {
-      Evas_Canvas3D_Node_Orientation_Type      type;
-      FLOAT_T                            data[6];
-      int                                look_to; /* -1 = whole part collection, or part ID */
-   } orientation;
-};
-
 struct _Edje_Part_Description_Spec_Svg
 {
    int                   id; /* the svg id to use */
@@ -1661,24 +1529,6 @@ struct _Edje_Part_Description_External
 {
    Edje_Part_Description_Common common;
    Eina_List *external_params; /* parameters for external objects */
-};
-
-struct _Edje_Part_Description_Mesh_Node
-{
-   Edje_Part_Description_Common common;
-   Edje_Part_Description_Spec_Mesh_Node mesh_node;
-};
-
-struct _Edje_Part_Description_Light
-{
-   Edje_Part_Description_Common common;
-   Edje_Part_Description_Spec_Light light;
-};
-
-struct _Edje_Part_Description_Camera
-{
-   Edje_Part_Description_Common common;
-   Edje_Part_Description_Spec_Camera camera;
 };
 
 struct _Edje_Part_Description_Vector
@@ -1892,7 +1742,6 @@ struct _Edje_Calc_Params_Physics
 
 typedef struct _Edje_Calc_Params_Type_Common Edje_Calc_Params_Type_Common;
 typedef struct _Edje_Calc_Params_Type_Text Edje_Calc_Params_Type_Text;
-typedef struct _Edje_Calc_Params_Type_Node Edje_Calc_Params_Type_Node;
 
 struct _Edje_Calc_Params_Type_Common
 {
@@ -1913,14 +1762,6 @@ struct _Edje_Calc_Params_Type_Text
    Edje_Color     color2, color3; // 8
 }; // 36
 
-struct _Edje_Calc_Params_Type_Node
-{
-   FLOAT_T        data[6]; // 48
-   Edje_3D_Vec    point; // 24
-   Edje_3D_Vec    scale_3d; // 24
-   int            frame; // 4
-}; // 100
-
 typedef struct _Edje_Calc_Params_Ext Edje_Calc_Params_Ext;
 
 struct _Edje_Calc_Params_Ext
@@ -1938,7 +1779,6 @@ struct _Edje_Calc_Params
    union {
       Edje_Calc_Params_Type_Common *common;
       Edje_Calc_Params_Type_Text *text;
-      Edje_Calc_Params_Type_Node *node;
    } type; // 4/8
    Edje_Calc_Params_Ext *ext; // 4/8
    struct {
@@ -2066,7 +1906,6 @@ struct _Edje_Real_Part
    Edje_Part                *part; // 4
    Evas_Object              *object; // 4
    Evas_Object              *nested_smart; // 4
-   Eo                       *node; // 4
    Edje_Real_Part_Drag      *drag; // 4
    Edje_Part_Description_Common *chosen_description; // 4
    // WITH EDJE_CALC_CACHE: 307
@@ -2559,13 +2398,6 @@ _edje_calc_params_need_type_text(Edje_Calc_Params *p)
 {
    if (p->type.text) return;
    p->type.text = calloc(1, sizeof(Edje_Calc_Params_Type_Text));
-}
-
-static inline void
-_edje_calc_params_need_type_node(Edje_Calc_Params *p)
-{
-   if (p->type.node) return;
-   p->type.node = calloc(1, sizeof(Edje_Calc_Params_Type_Node));
 }
 
 static inline void

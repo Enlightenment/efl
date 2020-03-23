@@ -53,6 +53,7 @@ struct _Efl_Canvas_Vg_Object_Data
    double                     align_x, align_y;
    Efl_Canvas_Vg_Fill_Mode    fill_mode;
    int                        frame_idx;
+   void                      *ckeys[2];  //cache keys for first, last frames if animation
 
    Eina_Bool                  changed : 1;
 };

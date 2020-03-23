@@ -1238,7 +1238,7 @@ _image_read(const char *filename)
 
 static const Ecore_Getopt optdesc = {
   "exactness_inspect",
-  "%prog [options] [<rec file> | <file1 file2>]",
+  "%prog [options] [<exu file> | <file1 file2>]",
   NULL,
   "(C) 2016 Enlightenment",
   "BSD",
@@ -1310,7 +1310,7 @@ main(int argc, char *argv[])
      }
    if ((clean || delay || shot || list_get || stabilize || pack) && args == argc)
      {
-        fprintf(stderr, "Expected scenario (.rec/.exu) as the last argument.\n");
+        fprintf(stderr, "Expected scenario (.exu) as the last argument.\n");
         ecore_getopt_help(stderr, &optdesc);
         goto end;
      }
@@ -1370,15 +1370,6 @@ main(int argc, char *argv[])
                        goto end;
                     }
                }
-             else if (!strcmp(ext, ".rec"))
-               {
-                  if (!unit) unit = legacy_rec_file_read(src_file);
-                  else
-                    {
-                       fprintf(stderr, "%s - scenario already provided\n", src_file);
-                       goto end;
-                    }
-               }
              else if (!strcmp(ext, ".png"))
                {
                   Exactness_Image *ex_img = _image_read(src_file);
@@ -1391,7 +1382,7 @@ main(int argc, char *argv[])
                }
              else
                {
-                  fprintf(stderr, "Correct extension (.exu/.rec/.png) required\n");
+                  fprintf(stderr, "Correct extension (.exu/.png) required\n");
                   goto end;
                }
           }
@@ -1421,16 +1412,6 @@ main(int argc, char *argv[])
                {
                   Exactness_Unit *ex_unit = exactness_unit_file_read(argv[arg]);
                   units_filenames = eina_list_append(units_filenames, argv[arg]);
-                  _units = eina_list_append(_units, ex_unit);
-               }
-             else if (!strcmp(ext, ".rec"))
-               {
-                  Exactness_Unit *ex_unit = legacy_rec_file_read(argv[arg]);
-                  if (!ex_unit)
-                    {
-                       fprintf(stderr, "Issue while reading %s\n", argv[arg]);
-                       goto end;
-                    }
                   _units = eina_list_append(_units, ex_unit);
                }
              else if (!strcmp(ext, ".png"))

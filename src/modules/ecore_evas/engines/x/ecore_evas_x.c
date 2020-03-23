@@ -4044,6 +4044,18 @@ _eina_content_converter(char *target, void *data, int size EINA_UNUSED, void **d
                   *ttype = ecore_x_atom_get(target); //use here target in order to get the correct atom
                   //FIXME in selection manager we never set here the typesize, isn't that weird ?
                   ret = EINA_TRUE;
+                  // XXX: fixup for strings to not include nul byte if last
+                  // byte is nul byte
+                  if (((!strncmp(target, "text/", 5)) ||
+                       (!strcmp(target, "tex")) ||
+                       (!strcmp(target, "TEXT")) ||
+                       (!strcmp(target, "COMPOUND_TEXT")) ||
+                       (!strcmp(target, "STRING")) ||
+                       (!strcmp(target, "UTF8_STRING"))) &&
+                      (slice.len > 0) && (slice.bytes[slice.len - 1] == '\0'))
+                    {
+                        *size_ret = *size_ret - 1;
+                    }
                   break;
                }
           }

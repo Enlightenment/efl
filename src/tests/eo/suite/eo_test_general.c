@@ -329,7 +329,6 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_data_safe_fetch)
 {
-
    Eo *obj = efl_add_ref(SIMPLE2_CLASS, NULL);
    fail_if(!obj || !efl_data_scope_safe_get(obj, SIMPLE2_CLASS));
    efl_unref(obj);

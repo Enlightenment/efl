@@ -103,7 +103,11 @@ _on_image_preloaded(void *data,
    if (sd->show) evas_object_show(obj);
    _prev_img_del(sd);
    err = evas_object_image_load_error_get(obj);
-   if (!err) evas_object_smart_callback_call(sd->self, SIG_LOAD_READY, NULL);
+   if (!err)
+     {
+        evas_object_smart_callback_call(sd->self, SIG_LOAD_READY, NULL);
+        if (sd->autoplay) efl_player_playing_set(sd->self, EINA_TRUE);
+     }
    else evas_object_smart_callback_call(sd->self, SIG_LOAD_ERROR, NULL);
 }
 
@@ -133,7 +137,16 @@ _efl_ui_image_animate_cb(void *data)
 
    sd->cur_frame++;
    if ((sd->frame_count > 0) && (sd->cur_frame > sd->frame_count))
-     sd->cur_frame = sd->cur_frame % sd->frame_count;
+     {
+        if (sd->playback_loop)
+          sd->cur_frame = sd->cur_frame % sd->frame_count;
+        else
+          {
+             sd->anim_timer = NULL;
+             sd->cur_frame = 0;
+             return EINA_FALSE;
+          }
+     }
 
    evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
 
@@ -436,7 +449,11 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
                               ok = !_efl_ui_image_smart_internal_file_set(sd->self, sd);
                          }
                     }
-                  if (ok) evas_object_smart_callback_call(sd->self, SIG_LOAD_OPEN, NULL);
+                  if (ok)
+                    {
+                       evas_object_smart_callback_call(sd->self, SIG_LOAD_OPEN, NULL);
+                       if (sd->autoplay) efl_player_playing_set(sd->self, EINA_TRUE);
+                    }
                   else evas_object_smart_callback_call(sd->self, SIG_LOAD_ERROR, NULL);
                }
           }
@@ -528,6 +545,7 @@ _efl_ui_image_edje_file_set(Evas_Object *obj)
      }
    else
      return _efl_ui_image_async_file_set(obj, sd);
+   if (sd->autoplay) efl_player_playing_set(sd->self, EINA_TRUE);
 
    /* FIXME: do i want to update icon on file change ? */
    efl_canvas_group_change(obj);
@@ -584,6 +602,7 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
      {
         evas_object_event_callback_add
           (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
+        priv->playback_loop = EINA_TRUE;
      }
    else
      {
@@ -1036,7 +1055,10 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd)
      }
 
    if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
-     _prev_img_del(sd);
+     {
+        _prev_img_del(sd);
+        if (sd->autoplay) efl_player_playing_set(sd->self, EINA_TRUE);
+     }
    else
      {
         evas_object_hide(sd->img);
@@ -1741,6 +1763,7 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
      {
         edje_object_animation_set(sd->img, anim);
         sd->anim = anim;
+        efl_player_playback_loop_set(sd->img, sd->playback_loop);
         return EINA_TRUE;
      }
    sd->img = elm_image_object_get(obj);
@@ -1806,6 +1829,42 @@ EOLIAN static Eina_Bool
 _efl_ui_image_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 {
    return _efl_ui_image_animated_get_internal(obj, sd);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_player_playback_loop_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool playback_loop)
+{
+   playback_loop = !!playback_loop;
+   sd->playback_loop = playback_loop;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_player_playback_loop_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->playback_loop;
+}
+
+EOLIAN static void
+_efl_ui_image_efl_player_autoplay_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool autoplay)
+{
+   autoplay = !!autoplay;
+   if (sd->autoplay == autoplay) return;
+   sd->autoplay = autoplay;
+   if (sd->img && (!sd->edje))
+     {
+        /* filter cases where we aren't going to immediately start playing */
+        if (!autoplay) return;
+        if ((sd->preload_status != EFL_UI_IMAGE_PRELOADED) &&
+            (sd->preload_status != EFL_UI_IMAGE_PRELOAD_DISABLED))
+          return;
+     }
+   efl_player_playing_set(obj, EINA_TRUE);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_player_autoplay_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->autoplay;
 }
 
 EOLIAN static void
@@ -2427,7 +2486,10 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
    if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
-     _prev_img_del(sd);
+     {
+        _prev_img_del(sd);
+        if (sd->autoplay) efl_player_playing_set(sd->self, EINA_TRUE);
+     }
    else
      {
         sd->preload_status = EFL_UI_IMAGE_PRELOADING;

@@ -97,4 +97,8 @@ foo(Eina_Debug_Session *session, int srcid, void *buffer, int size) \
    _buf += __len; \
 }
 
+Evas *(*_evas_new)(void);
+
 void ex_printf(int verbose, const char *fmt, ...);
+int ex_prg_invoke(const char *full_path, int argc, char **argv, Eina_Bool player);
+Eina_Stringshare *ex_prg_full_path_guess(const char *prg);

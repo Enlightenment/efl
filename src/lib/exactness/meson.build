@@ -4,7 +4,6 @@ exactness_deps = []
 exactness_src = [
   'Exactness.h',
   'exactness_private.h',
-  'legacy_file.c',
   'unit.c'
 ]
 
