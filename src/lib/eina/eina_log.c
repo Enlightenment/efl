@@ -42,7 +42,7 @@
 #endif
 
 #include "eina_debug_private.h"
-#define EINA_LOG_BACKTRACE
+//#define EINA_LOG_BACKTRACE
 
 #include "eina_config.h"
 #include "eina_private.h"
