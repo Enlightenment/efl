@@ -555,14 +555,14 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
         if (pd->frame_idx == 0 && ckey != pd->ckeys[0])
           {
              if (pd->ckeys[0])
-               ENFN->ector_surface_cache_drop(engine, ckey);
+               ENFN->ector_surface_cache_drop(engine, pd->ckeys[0]);
              pd->ckeys[0] = ckey;
           }
         else if (pd->frame_idx == (int) (evas_cache_vg_anim_frame_count_get(pd->vg_entry) - 1)
                  && ckey != pd->ckeys[1])
           {
              if (pd->ckeys[1])
-               ENFN->ector_surface_cache_drop(engine, ckey);
+               ENFN->ector_surface_cache_drop(engine, pd->ckeys[1]);
              pd->ckeys[1] = ckey;
           }
         ENFN->ector_surface_cache_set(engine, ckey, buffer);
