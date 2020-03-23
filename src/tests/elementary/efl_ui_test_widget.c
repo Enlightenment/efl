@@ -364,6 +364,38 @@ EFL_START_TEST(efl_ui_test_widget_tree_unfocusable)
 }
 EFL_END_TEST
 
+#define CHECK_DISABLED_STATE(x) \
+   ck_assert_int_eq(efl_ui_widget_disabled_get(s.box), x); \
+   ck_assert_int_eq(efl_ui_widget_disabled_get(s.win), x); \
+   ck_assert_int_eq(efl_ui_widget_disabled_get(s.ic), x); \
+   ck_assert_int_eq(efl_ui_widget_disabled_get(s.btn1), x); \
+   ck_assert_int_eq(efl_ui_widget_disabled_get(s.btn2), x)
+
+
+EFL_START_TEST(efl_ui_test_widget_disabled_repeat_call)
+{
+   State s;
+
+   _small_ui(&s);
+   CHECK_DISABLED_STATE(0);
+
+   efl_ui_widget_disabled_set(s.win, EINA_TRUE);
+   CHECK_DISABLED_STATE(1);
+
+   efl_ui_widget_disabled_set(s.win, EINA_FALSE);
+   CHECK_DISABLED_STATE(0);
+
+   efl_ui_widget_disabled_set(s.win, EINA_TRUE);
+   CHECK_DISABLED_STATE(1);
+
+   efl_ui_widget_disabled_set(s.win, EINA_TRUE);
+   CHECK_DISABLED_STATE(1);
+
+   efl_ui_widget_disabled_set(s.win, EINA_FALSE);
+   CHECK_DISABLED_STATE(0);
+}
+EFL_END_TEST
+
 void efl_ui_test_widget(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
@@ -379,4 +411,5 @@ void efl_ui_test_widget(TCase *tc)
    tcase_add_test(tc, efl_ui_test_widget_disabled_behaviour);
    tcase_add_test(tc, efl_ui_test_widget_win_provider_find);
    tcase_add_test(tc, efl_ui_test_widget_tree_unfocusable);
+   tcase_add_test(tc, efl_ui_test_widget_disabled_repeat_call);
 }
