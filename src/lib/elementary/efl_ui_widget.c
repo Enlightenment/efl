@@ -1803,7 +1803,7 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
    if (old_tree_unfocusable != pd->tree_unfocusable)
      {
         _full_eval(obj, pd);
-        _propagate_bool_property(pd, elm_widget_tree_unfocusable_get(obj), elm_widget_tree_unfocusable_set);
+        _propagate_bool_property(pd, tree_unfocusable, elm_widget_tree_unfocusable_set);
      }
 }
 
@@ -2148,7 +2148,7 @@ _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina
      {
         if (efl_finalized_get(obj))
           _full_eval(obj, pd);
-        _propagate_bool_property(pd, efl_ui_widget_disabled_get(obj), efl_ui_widget_disabled_set);
+        _propagate_bool_property(pd, disabled, efl_ui_widget_disabled_set);
      }
 }
 
