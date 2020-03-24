@@ -652,6 +652,13 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
+   // Prevent adding duplicates
+   if (eina_list_data_find_list(transit->objs, obj))
+     {
+        WRN("Object(%p) is already added", obj);
+        return;
+     }
+
    if (transit->animator)
      {
         if (!evas_object_data_get(obj, _transit_key))
