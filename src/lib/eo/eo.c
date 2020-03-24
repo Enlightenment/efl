@@ -1939,7 +1939,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_shared_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_shared_class);
         if (EINA_UNLIKELY(obj->klass->vtable.size <= klass->class_id))
-          return EINA_FALSE;
+          goto err_vtable;
 
         isa = !!obj->klass->vtable.chain[klass->class_id].funcs;
 
@@ -1947,6 +1947,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         tdata->cache.isa_id = eo_id;
         tdata->cache.klass = klass_id;
         tdata->cache.isa = isa;
+err_vtable:
         EO_OBJ_DONE(eo_id);
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
