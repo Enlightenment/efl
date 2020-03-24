@@ -1255,10 +1255,9 @@ _eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
           }
      }
 #endif
-   if (_obj_is_override(obj))
+   if (obj->opt && _obj_is_override(obj))
      {
-        if (obj->opt)
-          _vtable_free(obj->opt->vtable, &obj->klass->vtable);
+        _vtable_free(obj->opt->vtable, &obj->klass->vtable);
         EO_OPTIONAL_COW_SET(obj, vtable, NULL);
      }
 
