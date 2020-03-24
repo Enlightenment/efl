@@ -890,7 +890,7 @@ EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 /**
  * Set the opaque region of the Ecore_Wl2_Window
  *
- * @param win The window
+ * @param window The window
  * @param x The left point of the region.
  * @param y The top point of the region.
  * @param w The width of the region.
@@ -904,7 +904,7 @@ EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, in
 /**
  * Get the opaque region of the Ecore_Wl2_Window
  *
- * @param win The window
+ * @param window The window
  * @param x The left point of the region.
  * @param y The top point of the region.
  * @param w The width of the region.
@@ -986,7 +986,7 @@ EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
  * Set the fullscreen state of a given window
  *
  * @param window The window to set the fullscreen state of
- * @param maximized EINA_TRUE to set fullscreen, EINA_FALSE to unset
+ * @param fullscreen EINA_TRUE to set fullscreen, EINA_FALSE to unset
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
@@ -1268,7 +1268,7 @@ EAPI Ecore_Wl2_Input *ecore_wl2_window_popup_input_get(Ecore_Wl2_Window *window)
 /**
  * Check if a window has a shell surface - without one it can't be visible.
  *
- * @param The window to check
+ * @param win The window to check
  *
  * @return Returns true if the window has an associated shell surface.
  *
@@ -1515,7 +1515,7 @@ EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const cha
 /**
  * Gets default input of a given display
  *
- * @param display The display
+ * @param ewd The display
  *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.24
@@ -1608,10 +1608,9 @@ EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data);
 
 /**
- * delete a callback that fires when the window's surface_frame callback fires
+ * Delete a callback that fires when the window's surface_frame callback fires
  *
- * @param window The window to add a callback on
- * @param cb The callback handle
+ * @param handle The callback handle obtained through ecore_wl2_window_frame_callback_add().
  *
  * @since 1.21
  */
