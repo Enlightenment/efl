@@ -45,15 +45,16 @@
  * this is very simple. You simply have to compile your application
  * with the appropriate compiler flags that the @p pkg-config script
  * outputs. Note that each module is separate in pkg-config. For
- * example using @ref Ecore_Evas_Group:
+ * example using @c Ecore_Evas:
+ *
  * Compiling C or C++ files into object files:
- * @verbatim
+ * @code
  * gcc -c -o main.o main.c `pkg-config --cflags ecore ecore-evas`
- * @endverbatim
+ * @endcode
  * Linking object files into a binary executable:
- * @verbatim
+ * @code
  * gcc -o my_application main.o `pkg-config --libs ecore ecore-evas`
- * @endverbatim
+ * @endcode
  * See @ref pkgconfig
  *
  * @section ecore_main_next_steps Next Steps
