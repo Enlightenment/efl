@@ -1866,6 +1866,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
              else
                {
                   _vtable_free(vtable, &obj->klass->vtable);
+                  free(vtable);
                }
 
              goto err;
