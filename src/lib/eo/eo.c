@@ -1503,7 +1503,7 @@ eo_class_free(_Efl_Class *klass)
      {
         if (klass->desc->class_destructor)
            klass->desc->class_destructor(_eo_class_id_get(klass));
-         _vtable_mro_free(klass);
+        _vtable_mro_free(klass);
         _vtable_free(&klass->vtable, NULL);
      }
 
