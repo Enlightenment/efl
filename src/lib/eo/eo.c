@@ -285,7 +285,10 @@ _vtable_merge_defined_api(Eo_Vtable *dest, const Eo_Vtable *src, Eina_Bool *hitm
                   if (!hitmap[i])
                     {
                        const Eo_Vtable_Node node = dest->chain[i];
-                       _vtable_copy_node(&dest->chain[i], &node); //we copy what we have, and overwrite in the later for loop
+                       if (!node.count)
+                         _vtable_insert_empty_funcs(dest, i);
+                       else
+                         _vtable_copy_node(&dest->chain[i], &node); //we copy what we have, and overwrite in the later for loop
                        hitmap[i] = EINA_TRUE;
                     }
                   for (int j = 0; j < src->chain[i].count; ++j)
