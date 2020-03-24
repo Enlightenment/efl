@@ -3618,6 +3618,33 @@ evas_render_updates_internal(Evas *eo_e,
 
              eina_evlog("-render_surface", eo_e, 0.0, NULL);
           }
+        else if (make_updates)
+          {
+             Render_Updates *ru;
+             void *surface;
+             int ux, uy, uw, uh;
+             int cx, cy, cw, ch;
+             while ((surface =
+                     ENFN->output_redraws_next_update_get
+                     (ENC, out->output,
+                      &ux, &uy, &uw, &uh,
+                      &cx, &cy, &cw, &ch)))
+               {
+                  haveup = EINA_TRUE;
+
+                  /* adjust the rendering rectangle to the output offset */
+                  ux += out->geometry.x;
+                  uy += out->geometry.y;
+                  ru = malloc(sizeof(*ru));
+                  ru->surface = surface;
+                  //XXX: need a way of reffing output surfaces
+                  NEW_RECT(ru->area, ux, uy, uw, uh);
+                  eina_spinlock_take(&(e->render.lock));
+                  out->updates = eina_list_append(out->updates, ru);
+                  eina_spinlock_release(&(e->render.lock));
+               }
+
+          }
      }
 
    /* First process all output, then flush */
@@ -3789,14 +3816,17 @@ evas_render_updates_internal(Evas *eo_e,
         Render_Updates *ru;
 
         post.updated_area = NULL;
-        EINA_LIST_FOREACH(e->outputs, l1, out)
+        if (haveup)
           {
-             if (!out->output) continue ;
-             EINA_LIST_FOREACH(out->updates, l2, ru)
+             EINA_LIST_FOREACH(e->outputs, l1, out)
                {
-                  post.updated_area = eina_list_append(post.updated_area, ru->area);
-                  //XXX: need a way of unreffing output surfaces
-                  ru->surface = NULL;
+                  if (!out->output) continue ;
+                  EINA_LIST_FOREACH(out->updates, l2, ru)
+                    {
+                       post.updated_area = eina_list_append(post.updated_area, ru->area);
+                       //XXX: need a way of unreffing output surfaces
+                       ru->surface = NULL;
+                    }
                }
           }
         eina_spinlock_take(&(e->render.lock));
