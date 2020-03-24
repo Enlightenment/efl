@@ -326,11 +326,12 @@ _ready_play(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
      {
         double speed = pd->playback_speed < 0 ? pd->playback_speed * -1 : pd->playback_speed;
         Elm_Transit *transit = elm_transit_add();
-        elm_transit_object_add(transit, pd->vg);
+        elm_transit_object_add(transit, obj);
         if (pd->loop) elm_transit_repeat_times_set(transit, -1);
         elm_transit_effect_add(transit, _transit_cb, obj, _transit_del_cb);
         elm_transit_progress_value_set(transit, pd->progress);
         elm_transit_objects_final_state_keep_set(transit, EINA_TRUE);
+        elm_transit_event_enabled_set(transit, EINA_TRUE);
         pd->transit = transit;
         if (pd->min_progress != 0.0 || pd->max_progress != 1.0)
           _update_frame_duration(pd);
