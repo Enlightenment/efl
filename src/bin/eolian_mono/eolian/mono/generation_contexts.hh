@@ -50,6 +50,19 @@ struct class_context
     {}
 };
 
+struct direction_context
+{
+    enum direction {
+        native_to_managed,
+        managed_to_native,
+    };
+    direction current_direction;
+
+    direction_context(direction current_direction)
+      :  current_direction(current_direction)
+    {}
+};
+
 struct indentation_context
 {
   constexpr indentation_context(indentation_context const& other) = default;

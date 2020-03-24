@@ -1192,18 +1192,18 @@ shell_surface_activate_recurse(Comp_Surface *cs)
 static void
 shell_surface_minmax_update(Comp_Surface *cs)
 {
-   int w, h;
+   Eina_Size2D sz;
 
    if (!cs) return;
    if (!cs->c->minmax) return;
    if (cs->extracted) return;
    if (cs->parent) return;
-   evas_object_size_hint_min_get(cs->obj, &w, &h);
-   evas_object_size_hint_min_set(cs->c->obj, w, h);
-   evas_object_size_hint_max_get(cs->obj, &w, &h);
-   if (!w) w = -1;
-   if (!h) h = -1;
-   evas_object_size_hint_max_set(cs->c->obj, w, h);
+   sz = efl_gfx_hint_size_restricted_min_get(cs->obj);
+   efl_gfx_hint_size_restricted_min_set(cs->c->obj, sz);
+   sz = efl_gfx_hint_size_restricted_max_get(cs->obj);
+   if (!sz.w) sz.w = -1;
+   if (!sz.h) sz.h = -1;
+   efl_gfx_hint_size_restricted_max_set(cs->c->obj, sz);
 }
 
 static void
@@ -3209,7 +3209,7 @@ static void
 shell_surface_toplevel_set_max_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
 {
    Comp_Surface *cs = wl_resource_get_user_data(resource);
-   evas_object_size_hint_max_set(cs->obj, w, h);
+   efl_gfx_hint_size_restricted_max_set(cs->obj, EINA_SIZE2D(w, h));
    if (cs == cs->c->active_surface)
      shell_surface_minmax_update(cs);
 }
@@ -3218,7 +3218,7 @@ static void
 shell_surface_toplevel_set_min_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
 {
    Comp_Surface *cs = wl_resource_get_user_data(resource);
-   evas_object_size_hint_min_set(cs->obj, w, h);
+   efl_gfx_hint_size_restricted_min_set(cs->obj, EINA_SIZE2D(w, h));
    if (cs == cs->c->active_surface)
      shell_surface_minmax_update(cs);
 }
@@ -5725,8 +5725,8 @@ _efl_canvas_wl_minmax_propagate_set(Eo *obj, Comp *c, Eina_Bool set)
      shell_surface_minmax_update(c->active_surface);
    else
      {
-        evas_object_size_hint_min_set(obj, 0, 0);
-        evas_object_size_hint_max_set(obj, -1, -1);
+        efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(0, 0));
+        efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
      }
 }
 

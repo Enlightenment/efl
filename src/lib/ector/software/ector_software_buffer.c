@@ -67,10 +67,10 @@ EOLIAN static Eina_Bool
 _ector_software_buffer_base_ector_buffer_pixels_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
                                                     void **pixels, int* width, int* height, int* stride)
 {
-   if (*pixels) *pixels = pd->pixels.u8;
-   if (*width) *width = pd->generic->w;
-   if (*height) *height = pd->generic->h;
-   if (*stride) *stride = pd->stride;
+   if (pixels) *pixels = pd->pixels.u8;
+   if (width) *width = pd->generic->w;
+   if (height) *height = pd->generic->h;
+   if (stride) *stride = pd->stride;
    return pd->writable;
 }
 
