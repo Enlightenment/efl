@@ -864,8 +864,11 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 
    if (!override_only)
      {
-        //Before setting any real functions, allocate the node that will contain all the functions
-        _vtable_prepare_empty_node(vtable, number_of_new_functions, class_id);
+        if (number_of_new_functions)
+          {
+             //Before setting any real functions, allocate the node that will contain all the functions
+             _vtable_prepare_empty_node(vtable, number_of_new_functions, class_id);
+          }
         hitmap[class_id] = EINA_TRUE;
      }
 
