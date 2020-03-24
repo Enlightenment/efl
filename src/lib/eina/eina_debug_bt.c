@@ -197,8 +197,6 @@ _signal_handler(int sig EINA_UNUSED,
       siginfo_t *si EINA_UNUSED, void *foo EINA_UNUSED)
 {
    int i, slot = 0;
-   
-   //pthread_t self = pthread_self();
    Eina_Thread self = eina_thread_self();
 #if defined(HAVE_CLOCK_GETTIME) && defined(HAVE_SCHED_GETCPU) && defined(__clockid_t_defined)
    clockid_t cid;
@@ -296,7 +294,7 @@ _signal_shutdown(void)
 }
 
 static void
-_collect_bt(Eina_Thread pth)// _collect_bt(pthread_t pth)
+_collect_bt(Eina_Thread pth)
 {
    // this async signals the thread to switch to the deebug signal handler
    // and collect a backtrace and other info from inside the thread

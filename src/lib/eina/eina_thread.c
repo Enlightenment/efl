@@ -33,14 +33,7 @@
 
 #include "eina_debug_private.h"
 
-/*
-#ifndef _WIN32
 
-# include "eina_thread_posix.h"
-#else
-# include "eina_thread_win32.h"
-#endif
-*/
 #include <errno.h>
 #ifndef _WIN32
 # include <signal.h>
@@ -113,8 +106,7 @@ eina_thread_name_set(Eina_Thread t, const char *name)
      }
    else buf[0] = 0;
 #ifndef __linux__
-   //pthread_set_name_np((pthread_t)t, buf);
-   //return EINA_TRUE;
+   
    return _eina_thread_set_name_win32(t, buf);
 #else
    if (pthread_setname_np((pthread_t)t, buf) == 0) return EINA_TRUE;
@@ -130,11 +122,7 @@ EAPI Eina_Bool
 eina_thread_cancel(Eina_Thread t)
 {
    if (!t) return EINA_FALSE;
-   #ifndef _WIN32
-   return pthread_cancel((pthread_t)t) == 0;
-   #else
    return _eina_thread_cancel(t);
-   #endif
 }
 
 EAPI Eina_Bool
@@ -226,9 +214,6 @@ static void *_eina_internal_call(void *context)
    #else
     self = pthread_self();
    #endif
-
-   //self = GetCurrentThreadId();
-   //self = GetCurrentThread();
 
    _eina_debug_thread_add(&self);
    EINA_THREAD_CLEANUP_PUSH(_eina_debug_thread_del, &self);

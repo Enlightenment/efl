@@ -114,6 +114,10 @@ _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
    return pthread_equal((pthread_t)t1, (pthread_t)t2);
 }
 
+Eina_Bool _eina_thread_cancel(Eina_Thread thread){
+   return pthread_cancel((pthread_t)thread) == 0;
+}
+
 inline Eina_Thread
 _eina_thread_self(void)
 {

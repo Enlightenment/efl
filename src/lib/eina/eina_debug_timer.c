@@ -96,16 +96,10 @@ _monitor(void *_data EINA_UNUSED)
    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, event.data.fd, &event);
    if (ret) perror("epoll_ctl/add");
 #ifdef EINA_HAVE_PTHREAD_SETNAME
-/*
-# ifndef __linux__
-   pthread_set_name_np
-# else
-   pthread_setname_np
-# endif
-     (pthread_self(), "Edbg-tim");
-*/
+
+ eina_thread_name_set(eina_thread_self(), "Edbg-tim");
 #endif
-   eina_thread_name_set(eina_thread_self(), "Edbg-tim");
+  
    while (1)
      {
         int timeout = -1; //in milliseconds
@@ -236,7 +230,7 @@ _eina_debug_timer_shutdown(void)
    close(pipeToThread[0]);
    close(pipeToThread[1]);
    if (_thread_runs)
-     eina_thread_cancel(_thread);//pthread_cancel(_thread);
+     eina_thread_cancel(_thread);
      
    _thread_runs = 0;
    eina_spinlock_release(&_lock);
