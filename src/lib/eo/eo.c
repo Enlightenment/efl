@@ -548,7 +548,6 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
 
    if (EINA_UNLIKELY(!eo_id)) goto on_null;
 
-   call->eo_id = eo_id;
 
    EO_OBJ_POINTER_RETURN_VAL_PROXY(eo_id, _obj, EINA_FALSE);
 
@@ -562,9 +561,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         // hot path of the function
         goto obj_super;
      }
-
 obj_super_back:
-   call->obj = obj;
    _efl_ref(_obj);
 
    main_klass =  klass;
@@ -589,6 +586,8 @@ ok_cur_klass_back:
 
    if (EINA_LIKELY(func->func && func->src))
      {
+        call->eo_id = eo_id;
+        call->obj = obj;
         call->func = func->func;
         call->data = _efl_data_scope_get(obj, func->src);
 
