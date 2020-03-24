@@ -992,11 +992,13 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
                     {
                        /* this is when a mixin implemets a regular api, we just prepare a empty node, the rest will be implemented later */
                        _vtable_prepare_empty_node(&klass->vtable, required_klass->vtable.chain[class_id].count, class_id);
+                       hitmap[class_id] = EINA_TRUE;
                     }
                   else
                     {
                        ERR("There is an API implemented, whoms type is not part of this class. %s vs. %s", klass->desc->name, required_klass->desc->name);
                        _vtable_take_over(&klass->vtable, &required_klass->vtable);
+                       hitmap[class_id] = EINA_TRUE;
                     }
 
                }
