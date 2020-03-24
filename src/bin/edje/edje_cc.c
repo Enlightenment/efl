@@ -450,6 +450,7 @@ main(int argc, char **argv)
    eina_prefix_free(pfx);
    pfx = NULL;
 
+   ecore_evas_shutdown();
    edje_shutdown();
    eina_log_domain_unregister(_edje_cc_log_dom);
    eina_shutdown();
