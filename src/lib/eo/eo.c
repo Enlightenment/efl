@@ -175,16 +175,19 @@ _vtable_mro_free(const _Efl_Class *klass)
 {
    const _Efl_Class **mro_itr = klass->mro;
    const Eo_Vtable *vtable = &klass->vtable;
-
    for (  ; *mro_itr ; mro_itr++)
      {
         const Eo_Vtable *mro_vtable = &(*mro_itr)->vtable;
         if ((*mro_itr) == klass)
           continue;
-        for (int i = 0; i < mro_vtable->size; ++i)
+        for (unsigned int i = 0; i < mro_vtable->size; ++i)
           {
-             if (mro_vtable->chain[i].funcs == vtable->chain[i].funcs)
-               vtable->chain[i].funcs = NULL;
+             if (i == klass->class_id)
+               continue;
+             if (vtable->chain[i].funcs && mro_vtable->chain[i].funcs == vtable->chain[i].funcs)
+               {
+                  vtable->chain[i].funcs = NULL;
+               }
           }
      }
 }
