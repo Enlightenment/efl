@@ -577,6 +577,7 @@ obj_super_back:
    else
      {
         func = _vtable_func_get(vtable, op);
+        EINA_PREFETCH_NOCACHE(func);
         // this is not very likely to happen - but may if its an invalid
         // call or a composite object, but either way, it's not very likely
         // so make it a goto to save on instruction cache
