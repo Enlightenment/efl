@@ -534,6 +534,21 @@ EAPI void evas_focus_out(Evas_Canvas *obj);
 EAPI void evas_norender(Evas_Canvas *obj);
 
 /**
+ * @brief Update the canvas internal objects but not triggering immediate
+ * renderization and producing update regions in post-render event.
+ *
+ * This function updates the canvas internal objects not triggering
+ * renderization. To force renderization function @ref evas_render should be
+ * used.
+ * @param[in] obj The object.
+ *
+ * @since 1.24
+ *
+ * @ingroup Evas_Group
+ */
+EAPI void evas_norender_with_updates(Eo *eo_e);
+
+/**
  * @brief Pop the nochange flag down 1.
  *
  * This tells evas, that while the nochange flag is greater than 0, do not mark
