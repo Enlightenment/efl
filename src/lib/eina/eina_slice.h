@@ -362,7 +362,7 @@ static inline char *eina_slice_strdup(const Eina_Slice slice);
 /**
  * @brief A null-terminated string for this slice.
  *
- * @param[in] slice the reference memory.
+ * @param[in] rw_slice the reference memory.
  * @return newly allocated memory or @c NULL on error
  *
  * @since 1.19

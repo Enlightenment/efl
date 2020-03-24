@@ -108,7 +108,7 @@ typedef Eina_Bool (*Eina_Debug_Timer_Cb)(void *);
 typedef struct _Eina_Debug_Timer Eina_Debug_Timer;
 
 /**
- * @typedef Eina_Debug_Packet_Header
+ * @struct Eina_Debug_Packet_Header
  *
  * Header of Eina Debug packet
  */
@@ -143,7 +143,7 @@ typedef struct
   }
 
 /**
- * @typedef Eina_Debug_Opcode
+ * @struct Eina_Debug_Opcode
  *
  * Structure to describe information for an opcode. It is used to register new
  * opcodes.

@@ -388,7 +388,7 @@ EAPI Eina_Accessor* eina_carray_length_ptr_accessor_new(void** array, unsigned i
  * @def EINA_C_ARRAY_ACCESSOR_NEW
  * @brief Creates an Eina_Accessor that wraps a plain fixed size C array
  *
- * @param[in] array The array
+ * @param[in] Array The array
  * @return The accessor that will give access to the passed array
  *
  * You can create it like this:
@@ -403,7 +403,7 @@ EAPI Eina_Accessor* eina_carray_length_ptr_accessor_new(void** array, unsigned i
  * @def EINA_C_ARRAY_ACCESSOR_NEW
  * @brief Creates an Eina_Accessor that wraps a plain fixed size C array
  *
- * @param[in] array The array
+ * @param[in] Array The array
  * @return The accessor that will give access to the passed array
  *
  * You can create it like this:

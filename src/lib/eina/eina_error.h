@@ -107,7 +107,7 @@ typedef Eina_Bool Eina_Success_Flag;
 #define EINA_ERROR_NO_ERROR ((Eina_Error)0)
 
 /**
- * @var EINA_ERROR_OUT_OF_MEMORY
+ * @var Eina_Error EINA_ERROR_OUT_OF_MEMORY
  * @brief The error identifier corresponding to lack of memory.
  *
  * @deprecated since 1.19, same as @c ENOMEM from @c errno.h

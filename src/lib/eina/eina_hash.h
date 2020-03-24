@@ -320,7 +320,7 @@ typedef unsigned int (*Eina_Key_Length)(const void *key);
 typedef int          (*Eina_Key_Cmp)(const void *key1, int key1_length, const void *key2, int key2_length);
 /**
  * @def EINA_KEY_CMP
- * @param[in]Function The function used to compare hash key.
+ * @param[in] Function The function used to compare hash key.
  */
 #define EINA_KEY_CMP(Function)    ((Eina_Key_Cmp)Function)
 

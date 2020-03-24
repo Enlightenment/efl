@@ -1371,7 +1371,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * @param[in] list The list to iterate over.
  * @param[out] l A list that is used as an iterator and points to the current node.
- * @param[out] data Current item's data.
+ * @param[out] _data Current item's data.
  *
  * This macro iterates over @p list from the first element to
  * the last. @p data is the data related to the current element.
@@ -1429,7 +1429,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  *
  * @param[in] list The list to iterate over.
  * @param[out] l A list that is used as an iterator and points to the current node.
- * @param[out] data Current item's data.
+ * @param[out] _data Current item's data.
  *
  * This macro works like EINA_LIST_FOREACH, but iterates from the
  * last element of a list to the first.
