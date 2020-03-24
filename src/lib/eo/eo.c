@@ -144,6 +144,19 @@ _vtable_alloc(unsigned long n, size_t elem)
    return calloc(n, elem);
 }
 #endif
+
+
+/**
+ * This inits the vtable with a given size
+ */
+static void
+_vtable_init_size(Eo_Vtable *vtable, unsigned int size)
+{
+   //we assume here that _eo_classes_last_id was called before
+   vtable->size = size;
+   vtable->chain = _vtable_alloc(vtable->size, sizeof(Eo_Vtable_Node));
+}
+
 /**
  * This inits the vtable wit hthe current size of allocated tables
  */
@@ -151,8 +164,7 @@ static void
 _vtable_init(Eo_Vtable *vtable)
 {
    //we assume here that _eo_classes_last_id was called before
-   vtable->size = _eo_classes_last_id;
-   vtable->chain = _vtable_alloc(vtable->size, sizeof(Eo_Vtable_Node));
+   _vtable_init_size(vtable, _eo_classes_last_id);
 }
 
 /**
@@ -1824,7 +1836,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
         if (!vtable)
           {
              vtable = calloc(1, sizeof(*vtable));
-             _vtable_init(vtable);
+             _vtable_init_size(vtable, obj->klass->vtable.size);
              _vtable_take_over(vtable, &obj->klass->vtable);
           }
 
