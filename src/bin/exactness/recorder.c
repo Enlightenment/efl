@@ -381,27 +381,24 @@ int main(int argc, char **argv)
      }
 
    /* Replace the current command line to hide the Exactness part */
-   int len = argv[argc - 1] + strlen(argv[argc - 1]) - argv[opt_args];
-   memcpy(argv[0], argv[opt_args], len);
-   memset(argv[0] + len, 0, PATH_MAX - len);
+   char **new_argv;
 
-   int i;
-   for (i = opt_args; i < argc; i++)
+   new_argv = calloc(argc - opt_args + 1, sizeof(char*));
+
+   for (int i = 0; i < argc - opt_args + 1; ++i)
      {
-        if (i != opt_args)
-          {
-             argv[i - opt_args] = argv[0] + (argv[i] - argv[opt_args]);
-          }
-        INF("%s ", argv[i - opt_args]);
+        if (i < argc - opt_args)
+          new_argv[i] = argv[opt_args + i];
+        else
+          new_argv[i] = NULL;
      }
-   INF("\n");
 
    if (!_shot_key) _shot_key = getenv("SHOT_KEY");
    if (!_shot_key) _shot_key = SHOT_KEY_STR;
 
    ecore_evas_callback_new_set(_my_evas_new);
    _last_timestamp = ecore_time_get() * 1000;
-   pret = ex_prg_invoke(ex_prg_full_path_guess(argv[0]), argc - opt_args, argv, EINA_FALSE);
+   pret = ex_prg_invoke(ex_prg_full_path_guess(argv[opt_args]), argc - opt_args, new_argv, EINA_FALSE);
 
    _output_write();
    //free_events(_events_list, EINA_TRUE);
