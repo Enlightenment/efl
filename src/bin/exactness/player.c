@@ -1082,24 +1082,23 @@ int main(int argc, char **argv)
              setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
           }
      }
+   char **new_argv = argv;
+   int new_argc = argc;
 
    if (argv[opt_args])
      {
         /* Replace the current command line to hide the Exactness part */
-        int len = argv[argc - 1] + strlen(argv[argc - 1]) - argv[opt_args];
-        memcpy(argv[0], argv[opt_args], len);
-        memset(argv[0] + len, 0, CMD_LINE_MAX - len);
 
-        int i;
-        for (i = opt_args; i < argc; i++)
+        new_argv = calloc(argc - opt_args + 1, sizeof(char*));
+        new_argc = argc - opt_args;
+
+        for (int i = 0; i < argc - opt_args + 1; ++i)
           {
-             if (i != opt_args)
-               {
-                  argv[i - opt_args] = argv[0] + (argv[i] - argv[opt_args]);
-               }
-             INF("%s ", argv[i - opt_args]);
+             if (i < argc - opt_args)
+               new_argv[i] = argv[opt_args + i];
+             else
+               new_argv[i] = NULL;
           }
-        INF("\n");
      }
    else
      {
@@ -1142,7 +1141,7 @@ int main(int argc, char **argv)
    ecore_evas_callback_new_set(_my_evas_new);
    if (_src_type != FTYPE_REMOTE)
       ecore_idler_add(_src_feed, NULL);
-   pret = ex_prg_invoke(ex_prg_full_path_guess(argv[0]), argc - opt_args, argv, EINA_TRUE);
+   pret = ex_prg_invoke(ex_prg_full_path_guess(new_argv[0]), new_argc, new_argv, EINA_TRUE);
 
    if (_dest && _dest_unit)
      {
