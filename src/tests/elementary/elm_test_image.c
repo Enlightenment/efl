@@ -277,6 +277,52 @@ EFL_START_TEST(elm_image_test_memfile_set)
 }
 EFL_END_TEST
 
+#ifdef BUILD_LOADER_GIF
+static void
+_test_render(void *data, Evas *e EINA_UNUSED, void *event_info)
+{
+   int *pass = data;
+   Evas_Event_Render_Post *ev = event_info;
+   *pass = eina_list_count(ev->updated_area);
+   ecore_main_loop_quit();
+}
+
+static void
+_test_preload(void *data, Evas *e, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (evas_object_image_load_error_get(obj) == EVAS_LOAD_ERROR_NONE)
+     evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, _test_render, data);
+   else
+     ecore_main_loop_quit();
+}
+
+EFL_START_TEST(elm_image_test_gif)
+{
+   Evas_Object *win, *image;
+   int pass = 0;
+
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = elm_image_add(win);
+   evas_object_resize(win, 100, 100);
+   evas_object_resize(image, 100, 100);
+   evas_object_show(win);
+   evas_object_show(image);
+
+   get_me_to_those_events(win);
+   ck_assert(elm_image_file_set(image, ELM_IMAGE_DATA_DIR"/images/fire.gif", NULL));
+   elm_image_animated_set(image, EINA_TRUE);
+   elm_image_animated_play_set(image, EINA_TRUE);
+   evas_object_event_callback_add(elm_image_object_get(image), EVAS_CALLBACK_IMAGE_PRELOADED, _test_preload, &pass);
+   /* verify that we haven't tried to set a frame with index 0, as this is an error */
+   ck_assert_int_gt(evas_object_image_animated_frame_get(elm_image_object_get(image)), 0);
+   ecore_main_loop_begin();
+   ck_assert_int_gt(pass, 0);
+}
+EFL_END_TEST
+
+#endif
+
 void elm_test_image(TCase *tc)
 {
    tcase_add_test(tc, elm_image_legacy_type_check);
@@ -286,4 +332,7 @@ void elm_test_image(TCase *tc)
    tcase_add_test(tc, elm_image_evas_object_color_set);
    tcase_add_test(tc, elm_image_evas_image_get);
    tcase_add_test(tc, elm_image_test_memfile_set);
+#ifdef BUILD_LOADER_GIF
+   tcase_add_test(tc, elm_image_test_gif);
+#endif
 }

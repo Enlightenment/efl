@@ -103,7 +103,7 @@ EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int tr
 /**
  * Iconify a window
  *
- * @param win The window to iconifiy
+ * @param window The window to iconifiy
  * @param iconified The new iconified state to set
  *
  * @ingroup Ecore_Wl2_Window_Group
@@ -366,9 +366,9 @@ EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
  * Create and return a new subsurface.
  *
  * Create a new surface (and subsurface interface), with the parent surface
- * being the one associated with the given @param win.
+ * being the one associated with the given window.
  *
- * The @param win must be visible, otherwise there will be no surface created
+ * @param window The window. It must be visible, otherwise there will be no surface created
  * for it yet.
  *
  * @return the allocated and initialized Ecore_Wl2_Subsurface object, or
@@ -431,8 +431,8 @@ EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, in
 /**
  * Place subsurface on layer above a reference surface
  *
- * Moves the @param subsurface to just above the reference @param
- * surface, changing the z-order.  The reference @param surface must
+ * Moves the subsurface to just above the reference surface,
+ * changing the z-order.  The reference surface must
  * be either a sibling or parent surface, else a protocol error will
  * be generated.
  *

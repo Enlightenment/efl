@@ -20,7 +20,7 @@
 #include <Ecore_Evas.h>
 #include <unistd.h>
 
-// procotol version - change this as needed
+// protocol version - change this as needed
 #define MSG_DOMAIN_CONTROL_OBJECT 0x1004
 #define MSG_ID_BG_COLOR 0x1005
 #define MSG_ID_TEXT 0x1006

@@ -1003,8 +1003,8 @@ EAPI int              ecore_evas_aux_hint_id_get(const Ecore_Evas *ee, const cha
  * @see eecore_evas_callback_msg_handle_set()
  *
  * This is a list of examples of these functions:
- * @li @ref ecore_evas_extn_socket_example
- * @li @ref ecore_evas_extn_plug_example
+ * @li ecore_evas_extn_socket_example
+ * @li ecore_evas_extn_plug_example
  */
 EAPI void ecore_evas_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size);
 
@@ -1637,7 +1637,7 @@ EAPI Ecore_Cocoa_Window *ecore_evas_cocoa_window_get(const Ecore_Evas *ee);
 /**
  * @brief Create an Ecore_Evas window using the drm engine.
  *
- * @param disp_name Name of the Wayland display to connect to.
+ * @param device Name of the Wayland display to connect to.
  * @param parent (Unused)
  * @param x Horizontal position of the Ecore_Evas window.
  * @param y Vertical position of the Ecore_Evas window.
@@ -1657,7 +1657,7 @@ EAPI Ecore_Evas     *ecore_evas_drm_new(const char *device, unsigned int parent,
 /**
  * @brief Create an Ecore_Evas window using the drm engine with GL support.
  *
- * @param disp_name Name of the Wayland display to connect to.
+ * @param device Name of the Wayland display to connect to.
  * @param parent (Unused)
  * @param x Horizontal position of the Ecore_Evas window.
  * @param y Vertical position of the Ecore_Evas window.
@@ -2033,10 +2033,7 @@ EAPI Ecore_Evas *ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent,
  * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
  * @b psl1ght engine.
  *
- * @param parent ID of the parent window this Ecore_Evas window belongs
- *        to, or 0 if this is a top-level window.
- * @param x Horizontal position of window, in pixels
- * @param y Vertical position of window, in pixels
+ * @param name Deprecated.
  * @param w Width of the canvas, in pixels.
  * @param h Height of the canvas, in pixels.
  *
@@ -3203,7 +3200,6 @@ EAPI Evas_Object *ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int por
 /**
  * @brief Sets a callback for building new Evas.
  *
- * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
  *
  * A call to this function will set a callback on an Ecore_Evas, causing

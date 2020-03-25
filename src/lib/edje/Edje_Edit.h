@@ -1165,7 +1165,7 @@ EAPI Eina_Bool edje_edit_color_class_name_set(Evas_Object *obj, const char *name
  * @brief Gets the description of a color class.
  *
  * @param obj Object being edited.
- * @param name Color class to get the description of.
+ * @param class_name Color class to get the description of.
  *
  * @return The description of the color class or @c NULL if not found
  * @since 1.14
@@ -1176,7 +1176,7 @@ EAPI Eina_Stringshare *edje_edit_color_class_description_get(Evas_Object *obj, c
  * @brief Changes the description of a color class.
  *
  * @param obj Object being edited.
- * @param name Color class to edit.
+ * @param class_name Color class to edit.
  * @param desc New description for the color class
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -1904,7 +1904,7 @@ EAPI Eina_Bool edje_edit_part_anti_alias_get(Evas_Object *obj, const char *part)
  *
  * @param obj Object being edited.
  * @param part The part to set if the anti-aliasing is accepted.
- * @param mouse_events @c EINA_TRUE if part should to draw anti-aliased, @c EINA_FALSE otherwise.
+ * @param anti_alias @c EINA_TRUE if part should be drawn anti-aliased, @c EINA_FALSE otherwise.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  */
@@ -2074,7 +2074,7 @@ EAPI Eina_Bool edje_edit_part_mask_flags_set(Evas_Object *obj, const char *part,
  * @param obj Object being edited.
  * @param part Part name to get it's pointer_mode.
  *
- * @return Ponter Mode of the part.
+ * @return Pointer Mode of the part.
  * @since 1.11
  */
 EAPI Evas_Object_Pointer_Mode edje_edit_part_pointer_mode_get(Evas_Object *obj, const char *part);
@@ -2082,7 +2082,7 @@ EAPI Evas_Object_Pointer_Mode edje_edit_part_pointer_mode_get(Evas_Object *obj, 
 /**
  * @brief Gets pointer_mode of a part.
  *
- * Note that Ponter Mode can be:
+ * Note that Pointer Mode can be:
  * - EVAS_OBJECT_POINTER_MODE_AUTOGRAB - default, X11-like
  * - EVAS_OBJECT_POINTER_MODE_NOGRAB - pointer always bound to the object right below it
  * - EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN - useful on object with "repeat events" enabled, @since 1.2
@@ -2108,7 +2108,7 @@ EAPI Eina_Bool edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *par
  * @param obj Object being edited.
  * @param part Part name to get it's cursor_mode.
  *
- * @return Ponter Mode of the part.
+ * @return Pointer Mode of the part.
  * @since 1.11
  */
 EAPI unsigned char edje_edit_part_cursor_mode_get(Evas_Object *obj, const char *part);
@@ -2156,7 +2156,7 @@ EAPI Eina_Bool edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina
 EAPI Eina_Bool edje_edit_part_scale_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Gets horizontal dragable state for part.
+ * @brief Gets horizontal draggable state for part.
  *
  * @param obj Object being edited.
  * @param part Part to get if can be dragged horizontally.
@@ -2166,7 +2166,7 @@ EAPI Eina_Bool edje_edit_part_scale_get(Evas_Object *obj, const char *part);
 EAPI int edje_edit_part_drag_x_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets horizontal dragable state for part.
+ * @brief Sets horizontal draggable state for part.
  *
  * @param obj Object being edited.
  * @param part Part to set if should be dragged horizontally.
@@ -2177,7 +2177,7 @@ EAPI int edje_edit_part_drag_x_get(Evas_Object *obj, const char *part);
 EAPI Eina_Bool edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag);
 
 /**
- * @brief Gets vertical dragable state for part.
+ * @brief Gets vertical draggable state for part.
  *
  * @param obj Object being edited.
  * @param part Part to get if can be dragged vertically.
@@ -2187,7 +2187,7 @@ EAPI Eina_Bool edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int
 EAPI int edje_edit_part_drag_y_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets vertical dragable state for part.
+ * @brief Sets vertical draggable state for part.
  *
  * @param obj Object being edited.
  * @param part Part to set if should be dragged vertically.
@@ -2198,7 +2198,7 @@ EAPI int edje_edit_part_drag_y_get(Evas_Object *obj, const char *part);
 EAPI Eina_Bool edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag);
 
 /**
- * @brief Gets horizontal dragable step for part.
+ * @brief Gets horizontal draggable step for part.
  *
  * @param obj Object being edited.
  * @param part Part to get the drag horizontal step value.
@@ -2208,7 +2208,7 @@ EAPI Eina_Bool edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int
 EAPI int edje_edit_part_drag_step_x_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets horizontal dragable state for part.
+ * @brief Sets horizontal draggable state for part.
  *
  * @param obj Object being edited.
  * @param part Part to set the drag horizontal step value.
@@ -2219,7 +2219,7 @@ EAPI int edje_edit_part_drag_step_x_get(Evas_Object *obj, const char *part);
 EAPI Eina_Bool edje_edit_part_drag_step_x_set(Evas_Object *obj, const char *part, int step);
 
 /**
- * @brief Gets vertical dragable step for part.
+ * @brief Gets vertical draggable step for part.
  *
  * @param obj Object being edited.
  * @param part Part to get the drag vertical step value.
@@ -2229,7 +2229,7 @@ EAPI Eina_Bool edje_edit_part_drag_step_x_set(Evas_Object *obj, const char *part
 EAPI int edje_edit_part_drag_step_y_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets vertical dragable state for part.
+ * @brief Sets vertical draggable state for part.
  *
  * @param obj Object being edited.
  * @param part Part to set the drag vertical step value.
@@ -2240,17 +2240,17 @@ EAPI int edje_edit_part_drag_step_y_get(Evas_Object *obj, const char *part);
 EAPI Eina_Bool edje_edit_part_drag_step_y_set(Evas_Object *obj, const char *part, int step);
 
 /**
- * @brief Gets horizontal dragable count for part.
+ * @brief Gets horizontal draggable count for part.
  *
  * @param obj Object being edited.
  * @param part Part to get the drag horizontal count value.
  *
- * @return Horizontal dragable count value
+ * @return Horizontal draggable count value
  */
 EAPI int edje_edit_part_drag_count_x_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets horizontal dragable count for part.
+ * @brief Sets horizontal draggable count for part.
  *
  * @param obj Object being edited.
  * @param part Part to set the drag horizontal count value.
@@ -2261,17 +2261,17 @@ EAPI int edje_edit_part_drag_count_x_get(Evas_Object *obj, const char *part);
 EAPI Eina_Bool edje_edit_part_drag_count_x_set(Evas_Object *obj, const char *part, int count);
 
 /**
- * @brief Gets vertical dragable count for part.
+ * @brief Gets vertical draggable count for part.
  *
  * @param obj Object being edited.
  * @param part Part to get the drag vertical count value.
  *
- * @return Vertical dragable count value
+ * @return Vertical draggable count value
  */
 EAPI int edje_edit_part_drag_count_y_get(Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets vertical dragable count for part.
+ * @brief Sets vertical draggable count for part.
  *
  * @param obj Object being edited.
  * @param part Part to set the drag vertical count value.
@@ -2824,7 +2824,7 @@ EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, co
  * @param obj Object being edited.
  * @param part Part to add a new item. This part should have BOX or TABLE type.
  * @param item_name Name of new item that is not exist in BOX or TABLE yet.
- * @param item_before Name of repated item that is exist in BOX or TABLE.
+ * @param item_before Name of repeated item that is exist in BOX or TABLE.
  * @param source_group Source (means group name) of the new item.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -2840,7 +2840,7 @@ edje_edit_part_item_insert_before(Evas_Object *obj, const char *part, const char
  * @param obj Object being edited.
  * @param part Part to add a new item. This part should have BOX or TABLE type.
  * @param item_name Name of new item that is not exist in BOX or TABLE yet.
- * @param index Index of repated item that is exist in BOX or TABLE.
+ * @param index Index of repeated item that is exist in BOX or TABLE.
  * @param source_group Source (means group name) of the new item.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -2855,7 +2855,7 @@ edje_edit_part_item_insert_before_index(Evas_Object *obj, const char *part, cons
  * @param obj Object being edited.
  * @param part Part to add a new item. This part should have BOX or TABLE type.
  * @param item_name Name of new item that is not exist in BOX or TABLE yet.
- * @param item_after Name of repated item that is exist in BOX or TABLE.
+ * @param item_after Name of repeated item that is exist in BOX or TABLE.
  * @param source_group Source (means group name) of the new item.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -2871,7 +2871,7 @@ edje_edit_part_item_insert_after(Evas_Object *obj, const char *part, const char 
  * @param obj Object being edited.
  * @param part Part to add a new item. This part should have BOX or TABLE type.
  * @param item_name Name of new item that is not exist in BOX or TABLE yet.
- * @param index Index of repated item that is exist in BOX or TABLE.
+ * @param index Index of repeated item that is exist in BOX or TABLE.
  * @param source_group Source (means group name) of the new item.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -3033,7 +3033,7 @@ edje_edit_part_item_index_name_get(Evas_Object *obj, const char *part, unsigned 
  * @param obj Object being edited.
  * @param part Part to change item's source. This part should have BOX or TABLE type.
  * @param item_name Name of item.
- * @param source_group New gorup name.
+ * @param source_group New group name.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.11
@@ -3047,7 +3047,7 @@ EAPI Eina_Bool edje_edit_part_item_source_set(Evas_Object *obj, const char *part
  * @param obj Object being edited.
  * @param part Part to change item's source. This part should have BOX or TABLE type.
  * @param index Index of item
- * @param source_group New gorup name.
+ * @param source_group New group name.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.18
@@ -3363,7 +3363,7 @@ EAPI int edje_edit_part_item_spread_w_get(Evas_Object *obj, const char *part, co
 /**
  * @brief Sets the spread width value of a part's item.
  *
- * @attention be careful, if you set up huge number (like 10 or 100). width and height of
+ * @attention be careful, if you set up huge number (like 10 or 100) width and height of
  * spread is being multiplied and you will get huge number of objects that may "eat"
  * all of your processor performance at once... Or if you want, you may
  * get some coffee and wait until it will recalculate all of those objects :)
@@ -3382,7 +3382,7 @@ EAPI Eina_Bool edje_edit_part_item_spread_w_set(Evas_Object *obj, const char *pa
 /**
  * @brief Gets the spread height value of a part's item.
  *
- * @attention be careful, if you set up huge number (like 10 or 100). width and height of
+ * @attention be careful, if you set up huge number (like 10 or 100) width and height of
  * spread is being multiplied and you will get huge number of objects that may "eat"
  * all of your processor performance at once... Or if you want, you may
  * get some coffee and wait until it will recalculate all of those objects :)
@@ -3692,7 +3692,7 @@ edje_edit_part_item_index_spread_w_get(Evas_Object *obj, const char *part, unsig
 /**
  * @brief Sets the spread width value of a part's item.
  *
- * @attention be careful, if you set up huge number (like 10 or 100). width and height of
+ * @attention be careful, if you set up huge number (like 10 or 100) width and height of
  * spread is being multiplied and you will get huge number of objects that may "eat"
  * all of your processor performance at once... Or if you want, you may
  * get some coffee and wait until it will recalculate all of those objects :)
@@ -3711,7 +3711,7 @@ edje_edit_part_item_index_spread_w_set(Evas_Object *obj, const char *part, unsig
 /**
  * @brief Gets the spread height value of a part's item.
  *
- * @attention be careful, if you set up huge number (like 10 or 100). width and height of
+ * @attention be careful, if you set up huge number (like 10 or 100) width and height of
  * spread is being multiplied and you will get huge number of objects that may "eat"
  * all of your processor performance at once... Or if you want, you may
  * get some coffee and wait until it will recalculate all of those objects :)
@@ -3838,7 +3838,7 @@ edje_edit_part_item_index_align_x_get(Evas_Object *obj, const char *part, unsign
  * @brief Sets the horizontal align value of a part state.
  *
  * @param obj Object being edited.
- * @param part Part that contain itemf
+ * @param part Part that contains item
  * @param item The name of the item to set horizontal align value.
  * @param align_x New value of the horizontal align.
  *
@@ -3852,7 +3852,7 @@ EAPI Eina_Bool edje_edit_part_item_align_x_set(Evas_Object *obj, const char *par
  * @brief Sets the horizontal align value of a part state.
  *
  * @param obj Object being edited.
- * @param part Part that contain itemf
+ * @param part Part that contains item
  * @param index Index of the item to set horizontal align value.
  * @param align_x New value of the horizontal align.
  *
@@ -3946,7 +3946,7 @@ edje_edit_part_item_index_weight_x_get(Evas_Object *obj, const char *part, unsig
  * @brief Sets the horizontal we value of a part item.
  *
  * @param obj Object being edited.
- * @param part Part that contain itemf
+ * @param part Part that contains item
  * @param item The name of the item to set horizontal weight value.
  * @param weight_x New value of the horizontal weight.
  *
@@ -3960,7 +3960,7 @@ EAPI Eina_Bool edje_edit_part_item_weight_x_set(Evas_Object *obj, const char *pa
  * @brief Sets the horizontal we value of a part item.
  *
  * @param obj Object being edited.
- * @param part Part that contain itemf
+ * @param part Part that contains item
  * @param index Index of the item to set horizontal weight value.
  * @param weight_x New value of the horizontal weight.
  *
@@ -4113,7 +4113,7 @@ edje_edit_part_item_item_weight_x_get(Evas_Object *obj, const char *part, unsign
  * @brief Sets the horizontal we value of a part item.
  *
  * @param obj Object being edited.
- * @param part Part that contain itemf
+ * @param part Part that contains item
  * @param index Index of the item to set horizontal weight value.
  * @param weight_x New value of the horizontal weight.
  *
@@ -4952,22 +4952,6 @@ EAPI Eina_Bool edje_edit_state_align_x_set(Evas_Object *obj, const char *part, c
 EAPI Eina_Bool edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
 
 /**
- * @brief Sets the size class of the given part state.
- *
- * @param obj Object being edited.
- * @param part Part that contain state.
- * @param state The name of the state to set size class (not including the state value).
- * @param value The state value.
- * @param text_class The size class to assign.
- *
- * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
- *
- * @since 1.18
- */
-EAPI Eina_Bool
-edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *size_class);
-
-/**
  * @brief Gets the minimum width value of a part state.
  *
  * @param obj Object being edited.
@@ -5792,7 +5776,7 @@ EAPI Eina_Bool edje_edit_state_external_param_choice_set(Evas_Object *obj, const
 /**
  * @brief Sets the states step parameter values.
  *
- * Step parameter restricts resizing of each dimension to values divisibles by
+ * Step parameter restricts resizing of each dimension to values divisible by
  * its value. This causes the part to jump from value to value while resizing.
  * The default value is "0 0" disabling stepping.
  *
@@ -5830,7 +5814,7 @@ EAPI Eina_Bool edje_edit_state_step_get(Evas_Object *obj, const char *part, cons
 /**
  * @brief Sets the states limit parameter value.
  *
- * Set limit causes the emission of signals when the the size of part changes
+ * Set limit causes the emission of signals when the size of part changes
  * from zero or to a zero size in corresponding to the limit value.
  * For example, the signals emitted on width changing are <i>'limit,width,over'</i>
  * and <i>'limit,width,zero'</i>
@@ -5870,7 +5854,7 @@ EAPI Eina_Bool edje_edit_state_limit_set(Evas_Object *obj, const char *part, con
  * @param state The name of the state.
  * @param value The state value.
  *
- * @return The value that represents the states limit value in case of success, othervise returns 4.
+ * @return The value that represents the states limit value in case of success, otherwise returns 4.
  * @see edje_edit_state_limit_set()
  * @since 1.11
  */
@@ -6606,7 +6590,7 @@ EAPI Eina_Bool edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get the the minimum horizontal size of the container to be equal (not including the state value).
+ * @param state The name of the state to get the minimum horizontal size of the container to be equal (not including the state value).
  * @param value The state value.
  *
  * @return @c EINA_TRUE If the part forces container's minimum horizontal size, @c EINA_FALSE otherwise.
@@ -6618,7 +6602,7 @@ EAPI Eina_Bool edje_edit_state_text_min_x_get(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get the the minimum horizontal size of the container to be equal (not including the state value).
+ * @param state The name of the state to get the minimum horizontal size of the container to be equal (not including the state value).
  * @param value The state value.
  *
  * @return @c EINA_TRUE If the part forces container's maximum horizontal size, @c EINA_FALSE otherwise.
@@ -6630,7 +6614,7 @@ EAPI Eina_Bool edje_edit_state_text_max_x_get(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get the the minimum vertical size of the container to be equal (not including the state value).
+ * @param state The name of the state to get the minimum vertical size of the container to be equal (not including the state value).
  * @param value The state value.
  *
  * @return @c EINA_TRUE If the part forces container's minimum vertical size, @c EINA_FALSE otherwise.
@@ -6642,7 +6626,7 @@ EAPI Eina_Bool edje_edit_state_text_min_y_get(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to get the the maximum vertical size of the container to be equal (not including the state value).
+ * @param state The name of the state to get the maximum vertical size of the container to be equal (not including the state value).
  * @param value The state value.
  *
  * @return @c EINA_TRUE If the part forces container's maximum vertical size, @c EINA_FALSE otherwise.
@@ -6654,7 +6638,7 @@ EAPI Eina_Bool edje_edit_state_text_max_y_get(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the minimum horizontal size of the container to be equal (not including the state value).
+ * @param state The name of the state to set the minimum horizontal size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v @c EINA_TRUE to make the text force it's forces container's minimum horizontal size, @c EINA_FALSE otherwise.
  *
@@ -6667,7 +6651,7 @@ EAPI Eina_Bool edje_edit_state_text_min_x_set(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the maximum horizontal size of the container to be equal (not including the state value).
+ * @param state The name of the state to set the maximum horizontal size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v @c EINA_TRUE to make the text force it's forces container's maximum horizontal size, @c EINA_FALSE otherwise.
  *
@@ -6680,7 +6664,7 @@ EAPI Eina_Bool edje_edit_state_text_max_x_set(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the minimum vertical size of the container to be equal (not including the state value).
+ * @param state The name of the state to set the minimum vertical size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v @c EINA_TRUE to make the text force it's forces container's minimum vertical size, @c EINA_FALSE otherwise.
  *
@@ -6693,7 +6677,7 @@ EAPI Eina_Bool edje_edit_state_text_min_y_set(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the maximum vertical size of the container to be equal (not including the state value).
+ * @param state The name of the state to set the maximum vertical size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v @c EINA_TRUE to make the text force it's forces container's maximum vertical size, @c EINA_FALSE otherwise.
  *
@@ -6734,7 +6718,7 @@ EAPI Eina_Bool edje_edit_state_text_style_set(Evas_Object *obj, const char *part
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the maximum vertical size of
+ * @param state The name of the state to set the maximum vertical size of
  * the container to be equal (not including the state value).
  * @param value Value of the state.
  *
@@ -6749,7 +6733,7 @@ EAPI const char * edje_edit_state_text_text_source_get(Evas_Object *obj, const c
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the maximum vertical size of
+ * @param state The name of the state to set the maximum vertical size of
  * the container to be equal (not including the state value).
  * @param value Value of the state.
  * @param source The text source part name.
@@ -6763,7 +6747,7 @@ EAPI Eina_Bool edje_edit_state_text_text_source_set(Evas_Object *obj, const char
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the maximum vertical size of
+ * @param state The name of the state to set the maximum vertical size of
  * @param value Value of the state.
  * The container to be equal (not including the state value).
  *
@@ -6778,7 +6762,7 @@ EAPI const char * edje_edit_state_text_source_get(Evas_Object *obj, const char *
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
- * @param state The name of the state to set the the maximum vertical size of
+ * @param state The name of the state to set the maximum vertical size of
  * the container to be equal (not including the state value).
  * @param value Value of the state.
  * @param source The text source part name.
@@ -6986,7 +6970,7 @@ edje_edit_image_set_list_get(Evas_Object *obj);
  *
  * @param obj Object being edited.
  * @param name The name of the image.
- * @param first_only If @c EINA_TRUE, return only one triplete.
+ * @param first_only If @c EINA_TRUE, return only one triplet.
  *
  * @return Eina_List containing Edje_Part_Image_Use if successful, NULL otherwise
  */
@@ -7415,7 +7399,7 @@ EAPI Eina_Bool edje_edit_image_compression_type_set(Evas_Object *obj, const char
  * @param obj Object being edited.
  * @param image The name of the image.
  *
- * @return The compression rate (if the imnage is @c
+ * @return The compression rate (if the image is @c
  *         EDJE_EDIT_IMAGE_COMP_LOSSY[_ETC1]) or < 0, on errors.
  */
 EAPI int edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image);
@@ -7681,7 +7665,7 @@ EAPI Eina_Bool edje_edit_vector_del(Evas_Object *obj, const char *name);
  *
  * @param obj Object being edited.
  * @param name The name of the vector.
- * @param first_only If EINA_TRUE, return only one triplete.
+ * @param first_only If EINA_TRUE, return only one triplet.
  *
  * @return Eina_List containing Edje_Part_Image_Use if successful, NULL otherwise
  * @since 1.19
