@@ -1,4 +1,6 @@
-project('evil_unposix', 'c')
+project('evil_unposix', 'c',
+  version: '1.23.99',
+)
 dir_package_include = '.'
 
 if target_machine.system() == 'windows'
@@ -26,8 +28,8 @@ if target_machine.system() == 'windows'
     evil_unposix_src,
     include_directories: [include_directories('.')],
     dependencies: [],
-    #install: true,
-    #version: meson.project_version(),
+    install: true,
+    version: meson.project_version(),
   )
 
   evil_unposix = declare_dependency(
@@ -45,6 +47,4 @@ else
 
 endif
 
-automatic_pkgfile = false
-
-
+automatic_pkgfile = (target_machine.system() == 'windows')

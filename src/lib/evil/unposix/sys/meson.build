@@ -12,7 +12,7 @@ if target_machine.system() == 'windows'
 
   evil_unposix_sys_lib = library('evil_unposix_sys',
     evil_unposix_sys_src,
-    #version: 'meson.project_version(),
+    version: meson.project_version(),
     install: true,
   )
   
@@ -28,4 +28,4 @@ if target_machine.system() == 'windows'
 
 endif
 
-automatic_pkgfile = false
+automatic_pkgfile = (target_machine.system() == 'windows')
