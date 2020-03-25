@@ -4081,17 +4081,8 @@ _evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 EOLIAN void
 _evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
 {
-   Eina_List *ret;
-   Render_Updates *ru;
-
    evas_canvas_async_block(e);
-   //   if (!e->changed) return;
-   ret = evas_render_updates_internal_wait(eo_e, 0, 0);
-   EINA_LIST_FREE(ret, ru)
-     {
-        eina_rectangle_free(ru->area);
-        free(ru);
-     }
+   evas_render_updates_internal_wait(eo_e, 0, 0);
 }
 
 EAPI void
@@ -4102,7 +4093,6 @@ evas_norender_with_updates(Eo *eo_e)
    Render_Updates *ru;
 
    evas_canvas_async_block(e);
-   //   if (!e->changed) return;
    ret = evas_render_updates_internal_wait(eo_e, 1, 0);
    EINA_LIST_FREE(ret, ru)
      {
