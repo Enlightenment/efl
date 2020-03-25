@@ -17,7 +17,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <stdlib.h>
@@ -34,11 +34,9 @@
 #include "eina_debug_private.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN 
+#define WIN32_LEAN_AND_MEAN
 #endif
-# include <Windows.h>
-
-
+#include <Windows.h>
 
 #include <errno.h>
 #include <string.h>
@@ -49,49 +47,53 @@
 #endif
 #endif
 
-typedef struct _Eina_win32_thread_func{
+typedef struct _Eina_win32_thread_func
+{
    void *data;
    void *(*func)(void *data);
-   
-}Eina_win32_thread_func;
 
-typedef struct _Eina_win32_thread_attr{
-   LPSECURITY_ATTRIBUTES   lpThreadAttributes;
-   SIZE_T                  dwStackSize;
-   DWORD                   dwCreationFlags;
-}Eina_win32_thread_attr;
+} Eina_win32_thread_func;
 
+typedef struct _Eina_win32_thread_attr
+{
+   LPSECURITY_ATTRIBUTES lpThreadAttributes;
+   SIZE_T dwStackSize;
+   DWORD dwCreationFlags;
+} Eina_win32_thread_attr;
 
 inline void *
 _eina_thread_join(Eina_Thread t)
 {
-   
-   int ret = (int)WaitForSingleObject(t,INFINITE);
+
+   int ret = (int)WaitForSingleObject(t, INFINITE);
 
    if (ret != 0) return ret;
    return NULL;
 }
 
-
-
 DWORD WINAPI _eina_thread_func(void *params)
 {
-   return (DWORD)  ((Eina_win32_thread_func *)params)->func( (void*)  ((Eina_win32_thread_func *)params)->data);
+   return (DWORD)((Eina_win32_thread_func *)params)->func((void *)((Eina_win32_thread_func *)params)->data);
 }
 
-
-void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t){
+void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
+{
 
    int nPriority;
 
-   switch(prio){
-      case EINA_THREAD_URGENT: nPriority =THREAD_PRIORITY_HIGHEST;
-      case EINA_THREAD_NORMAL: nPriority = THREAD_PRIORITY_NORMAL;
-      case EINA_THREAD_BACKGROUND: nPriority = THREAD_PRIORITY_BELOW_NORMAL;
-      case EINA_THREAD_IDLE: nPriority =  THREAD_PRIORITY_IDLE;
-   }
+   switch (prio)
+    {
+   case EINA_THREAD_URGENT:
+      nPriority = THREAD_PRIORITY_HIGHEST;
+   case EINA_THREAD_NORMAL:
+      nPriority = THREAD_PRIORITY_NORMAL;
+   case EINA_THREAD_BACKGROUND:
+      nPriority = THREAD_PRIORITY_BELOW_NORMAL;
+   case EINA_THREAD_IDLE:
+      nPriority = THREAD_PRIORITY_IDLE;
+    }
 
-   SetThreadPriority((HANDLE)*t,nPriority);
+   SetThreadPriority((HANDLE)*t, nPriority);
 }
 
 inline Eina_Bool
@@ -107,79 +109,105 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    sec_attributes.bInheritHandle = EINA_TRUE;
 
    thread_attr.lpThreadAttributes = &sec_attributes;
-	    
+
    thread_attr.dwStackSize = 4000;
    thread_attr.dwCreationFlags = 0;
 
    LPDWORD threadID;
 
-   
    Eina_win32_thread_func thread_func;
-   Eina_Thread_Call *c = (Eina_Thread_Call*)(data);
+   Eina_Thread_Call *c = (Eina_Thread_Call *)(data);
 
    thread_func.func = func;
    thread_func.data = data;
 
-	
-	
-   *t =(HANDLE) CreateThread(thread_attr.lpThreadAttributes,thread_attr.dwStackSize, &_eina_thread_func,&thread_func,thread_attr.dwCreationFlags,threadID);
+   *t = (HANDLE)CreateThread(thread_attr.lpThreadAttributes, thread_attr.dwStackSize, &_eina_thread_func, &thread_func, thread_attr.dwCreationFlags, threadID);
 
-  
-   
-
-
-   _eina_thread_set_priority(c->prio,t);  
+   _eina_thread_set_priority(c->prio, t);
 
    ret = (*t != NULL) ? EINA_TRUE : EINA_FALSE;
 
-   if(affinity >= 0 && ret){
-      #ifdef EINA_HAVE_PTHREAD_AFFINITY
+   if (affinity >= 0 && ret)
+    {
+#ifdef EINA_HAVE_PTHREAD_AFFINITY
       cpu_set_t cpu;
       CPU_ZERO(&cpu);
       CPU_SET(affinity, &cpu);
-      SetThreadAffinityMask(*t,(DWORD_PTR*)&cpu);
-      #else
-      SetThreadAffinityMask(*t,(DWORD_PTR*)&affinity);
-	  #endif
-   }
+      SetThreadAffinityMask(*t, (DWORD_PTR *)&cpu);
+#else
+      SetThreadAffinityMask(*t, (DWORD_PTR *)&affinity);
+#endif
+    }
 
-   
    return ret;
 }
-
-
-
 
 inline Eina_Bool
 _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
-	DWORD t1_thread_id = GetThreadId((HANDLE)t1);
-	DWORD t2_thread_id = GetThreadId((HANDLE)t2);
+   DWORD t1_thread_id = GetThreadId((HANDLE)t1);
+   DWORD t2_thread_id = GetThreadId((HANDLE)t2);
 
-	return (t1_thread_id == t2_thread_id) ? EINA_TRUE : EINA_FALSE;
-
+   return (t1_thread_id == t2_thread_id) ? EINA_TRUE : EINA_FALSE;
 }
 
 inline Eina_Thread
 _eina_thread_self(void)
 {
-
    return (Eina_Thread)GetCurrentThread();
-
 }
 
-HRESULT _eina_thread_set_name_win32(Eina_Thread thread, char *buf){
+HRESULT _eina_thread_set_name_win32(Eina_Thread thread, char *buf)
+{
    return SetThreadDescription((HANDLE)thread, (PCWSTR)buf);
 }
 
-Eina_Bool _eina_thread_cancel(Eina_Thread thread){
+Eina_Bool _eina_thread_cancel(Eina_Thread thread)
+{
    LPDWORD lpExitCode;
    Eina_Bool success = GetExitCodeThread((HANDLE)thread, lpExitCode);
 
    ExitThread(*lpExitCode);
    return success;
-
 }
 
+inline void _eina_sched_prio_drop(void)
+{
+   Eina_Thread pthread_id;
+   int sched_priority;
 
+   pthread_id = eina_thread_self();
 
+   sched_priority = GetThreadPriority((HANDLE)pthread_id);
+
+   if (EINA_UNLIKELY(sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
+    {
+      sched_priority -= RTNICENESS;
+
+      /* We don't change the policy */
+      if (sched_priority < 1)
+       {
+         EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
+         sched_priority = 1;
+       }
+      if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
+       {
+         EINA_LOG_ERR("Unable to query sched parameters");
+       }
+   }
+   else
+   {
+      sched_priority += NICENESS;
+
+      /* We don't change the policy */
+      if (sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
+       {
+         EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
+         sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
+       }
+      if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
+       {
+         EINA_LOG_ERR("Unable to query sched parameters");
+       }
+   }
+}

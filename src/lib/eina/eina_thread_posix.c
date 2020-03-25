@@ -17,7 +17,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <stdlib.h>
@@ -36,8 +36,7 @@
 #include <pthread.h>
 #include <errno.h>
 
-# include <signal.h>
-
+#include <signal.h>
 
 #if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
 #ifndef __linux__
@@ -45,7 +44,6 @@
 #define cpu_set_t cpuset_t
 #endif
 #endif
-
 
 inline void *
 _eina_thread_join(Eina_Thread t)
@@ -65,16 +63,15 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    sigset_t oldset, newset;
 
-   
    pthread_attr_init(&attr);
    if (affinity >= 0)
      {
 #ifdef EINA_HAVE_PTHREAD_AFFINITY
-        cpu_set_t cpu;
+      cpu_set_t cpu;
 
-        CPU_ZERO(&cpu);
-        CPU_SET(affinity, &cpu);
-        pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+      CPU_ZERO(&cpu);
+      CPU_SET(affinity, &cpu);
+      pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
 #endif
      }
 
@@ -90,16 +87,14 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    sigaddset(&newset, SIGQUIT);
    sigaddset(&newset, SIGINT);
    sigaddset(&newset, SIGTERM);
-# ifdef SIGPWR
+#ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
-# endif
+#endif
    pthread_sigmask(SIG_BLOCK, &newset, &oldset);
 
    err = pthread_create((pthread_t *)t, &attr, func, data);
 
-
    pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-
 
    pthread_attr_destroy(&attr);
 
@@ -114,7 +109,8 @@ _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
    return pthread_equal((pthread_t)t1, (pthread_t)t2);
 }
 
-Eina_Bool _eina_thread_cancel(Eina_Thread thread){
+Eina_Bool _eina_thread_cancel(Eina_Thread thread)
+{
    return pthread_cancel((pthread_t)thread) == 0;
 }
 
@@ -122,4 +118,49 @@ inline Eina_Thread
 _eina_thread_self(void)
 {
    return (Eina_Thread)pthread_self();
+}
+inline void _eina_sched_prio_drop(void)
+{
+   struct sched_param param;
+   int pol, ret;
+   Eina_Thread pthread_id;
+
+   pthread_id = eina_thread_self();
+   ret = pthread_getschedparam(pthread_id, &pol, &param);
+   if (ret)
+    {
+      EINA_LOG_ERR("Unable to query sched parameters");
+      return;
+    }
+
+   if (EINA_UNLIKELY(pol == SCHED_RR || pol == SCHED_FIFO))
+    {
+      param.sched_priority -= RTNICENESS;
+
+      /* We don't change the policy */
+      if (param.sched_priority < 1)
+       {
+         EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
+         param.sched_priority = 1;
+       }
+
+      pthread_setschedparam(pthread_id, pol, &param);
+   }
+   else
+    {
+      int prio;
+      errno = 0;
+      prio = getpriority(PRIO_PROCESS, 0);
+      if (errno == 0)
+       {
+         prio += NICENESS;
+         if (prio > 19)
+          {
+            EINA_LOG_INFO("Max niceness reached; keeping max (19)");
+            prio = 19;
+          }
+
+         setpriority(PRIO_PROCESS, 0, prio);
+       }
+    }
 }

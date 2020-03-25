@@ -349,8 +349,12 @@ struct _Eina_Thread_Call
    Eina_Thread_Priority prio;
    int affinity;
 };
+/*
+ * These defines are used by eina_sched to drop the thread priority
+ */
 
-
+#define RTNICENESS 1
+#define NICENESS 5
 
 #ifdef _WIN32  
 # define EINA_THREAD_CANCEL_ENABLE 0
