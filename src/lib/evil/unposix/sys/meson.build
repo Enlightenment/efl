@@ -28,4 +28,4 @@ if target_machine.system() == 'windows'
 
 endif
 
-automatic_pkgfile = (target_machine.system() == 'windows')
+automatic_pkgfile = (sys_windows == false)
