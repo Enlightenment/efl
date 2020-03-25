@@ -336,7 +336,7 @@ suite_setup(Eina_Bool legacy)
      failed_count = _efl_suite_build_and_run(0, NULL,
                                              "Efl_Ui_Init", ui_init, NULL, NULL);
 
-   failed_count += !elm_init(1, (char*[]){"exe"});
+   failed_count += !elm_init(1, args);
    if (buffer)
      {
         global_win = _elm_suite_win_create();
