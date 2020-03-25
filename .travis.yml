@@ -89,6 +89,9 @@ jobs:
       if: type = cron
       arch: ppc64le
       env: CI_BUILD_TYPE=no-bindings
+    - os: linux
+      arch: s390x
+      env: CI_BUILD_TYPE=no-bindings
 
 services:
   - docker

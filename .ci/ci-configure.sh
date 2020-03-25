@@ -106,6 +106,10 @@ else # Native Ubuntu Linux Travis builds (non-docker)
     travis_fold meson meson
       OPTS="$OPTS -Dbindings="
     travis_endfold meson
+  elif [ "$TRAVIS_CPU_ARCH" = "s390x" ] ; then
+    travis_fold meson meson
+      OPTS="$OPTS -Dbindings= -Delua=false -Dlua-interpreter=lua"
+    travis_endfold meson
   fi
   if [ "$1" = "codecov" ]; then
     travis_fold meson meson
