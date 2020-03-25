@@ -1,22 +1,23 @@
 evil_deps = []
 evil_pub_deps = []
 if target_machine.system() == 'windows'
+  subdir('unposix')
+
   evil_src = [
-  'evil_dlfcn.c',
-  'evil_fcntl.c',
-  'evil_langinfo.c',
-  'evil_locale.c',
-  'evil_main.c',
-  'evil_mman.c',
-  'evil_stdio.c',
-  'evil_stdlib.c',
-  'evil_string.c',
-  'evil_time.c',
-  'evil_unistd.c',
-  'evil_util.c',
-  'evil_private.h',
-  'pcre/regex.h',
-  'unposix/sys/time.c',
+    'evil_dlfcn.c',
+    'evil_fcntl.c',
+    'evil_langinfo.c',
+    'evil_locale.c',
+    'evil_main.c',
+    'evil_mman.c',
+    'evil_stdio.c',
+    'evil_stdlib.c',
+    'evil_string.c',
+    'evil_time.c',
+    'evil_unistd.c',
+    'evil_util.c',
+    'evil_private.h',
+    'pcre/regex.h',
   ]
 
   psapi = cc.find_library('psapi')

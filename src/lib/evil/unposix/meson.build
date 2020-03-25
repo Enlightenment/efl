@@ -1,6 +1,3 @@
-project('evil_unposix', 'c',
-  version: '1.23.99',
-)
 dir_package_include = '.'
 
 if target_machine.system() == 'windows'
