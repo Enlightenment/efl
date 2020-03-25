@@ -270,7 +270,6 @@ static void       st_collections_group_script_recursion(void);
 static void       st_collections_group_alias(void);
 static void       st_collections_group_min(void);
 static void       st_collections_group_max(void);
-static void       st_collections_group_scene_size(void);
 static void       st_collections_group_broadcast_signal(void);
 static void       st_collections_group_data_item(void);
 static void       st_collections_group_orientation(void);
@@ -680,7 +679,6 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.alias", st_collections_group_alias},
    {"collections.group.min", st_collections_group_min},
    {"collections.group.max", st_collections_group_max},
-   {"collections.group.scene_size", st_collections_group_scene_size},
    {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
    {"collections.group.orientation", st_collections_group_orientation},
    {"collections.group.mouse_events", st_collections_group_mouse_events},
@@ -4126,9 +4124,6 @@ ob_collections_group(void)
    pcp->default_mouse_events = 1;
    pcp->inherit_script = EINA_FALSE;
 
-   pc->scene_size.width = 0;
-   pc->scene_size.height = 0;
-
 #ifdef HAVE_EPHYSICS
    pc->physics.world.gravity.x = 0;
    pc->physics.world.gravity.y = 294;
@@ -4315,18 +4310,6 @@ _parts_count_update(unsigned int type, int inc)
 
       case EDJE_PART_TYPE_PROXY:
         current_de->count.PROXY += inc;
-        break;
-
-      case EDJE_PART_TYPE_MESH_NODE:
-        current_de->count.MESH_NODE += inc;
-        break;
-
-      case EDJE_PART_TYPE_LIGHT:
-        current_de->count.LIGHT += inc;
-        break;
-
-      case EDJE_PART_TYPE_CAMERA:
-        current_de->count.CAMERA += inc;
         break;
 
       case EDJE_PART_TYPE_SPACER:
@@ -5180,30 +5163,6 @@ st_collections_group_max(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->prop.max.w = parse_int_range(0, 0, 0x7fffffff);
    pc->prop.max.h = parse_int_range(1, 0, 0x7fffffff);
-}
-
-/**
-    @page edcref
-    @property
-        scene_size
-    @parameters
-        [width] [height]
-    @effect
-        Size of scene.
-
-        Defaults: 0.0 0.0
-    @endproperty
- */
-static void
-st_collections_group_scene_size(void)
-{
-   Edje_Part_Collection *pc;
-
-   check_arg_count(2);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   pc->scene_size.width = parse_float(0);
-   pc->scene_size.height = parse_float(1);
 }
 
 /**
@@ -6524,9 +6483,6 @@ st_collections_group_parts_part_name(void)
             @li BOX
             @li TABLE
             @li EXTERNAL
-            @li MESH_NODE
-            @li CAMERA
-            @li LIGHT
             @li PROXY
             @li SPACER
             @li SNAPSHOT
@@ -6538,9 +6494,6 @@ static void
 st_collections_group_parts_part_type(void)
 {
    unsigned int type;
-   unsigned int i = 0;
-
-   Edje_Part_Collection *pc;
 
    check_arg_count(1);
 
@@ -6556,28 +6509,10 @@ st_collections_group_parts_part_type(void)
                      "TABLE", EDJE_PART_TYPE_TABLE,
                      "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
                      "PROXY", EDJE_PART_TYPE_PROXY,
-                     "MESH_NODE", EDJE_PART_TYPE_MESH_NODE,
-                     "LIGHT", EDJE_PART_TYPE_LIGHT,
-                     "CAMERA", EDJE_PART_TYPE_CAMERA,
                      "SPACER", EDJE_PART_TYPE_SPACER,
                      "SNAPSHOT", EDJE_PART_TYPE_SNAPSHOT,
                      "VECTOR", EDJE_PART_TYPE_VECTOR,
                      NULL);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-
-   if (type == EDJE_PART_TYPE_CAMERA)
-     {
-        for (i = 0; i < (pc->parts_count - 1); i++)
-          {
-             if (pc->parts[i]->type == EDJE_PART_TYPE_CAMERA)
-               {
-                  WRN("parse error %s:%i. more then one part of type CAMERA in scene.",
-                      file_in, line - 1);
-                  exit(-1);
-               }
-          }
-     }
 
    _part_type_set(type);
 }

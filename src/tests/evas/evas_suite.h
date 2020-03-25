@@ -14,14 +14,9 @@ void evas_test_render_engines(TCase *tc);
 void evas_test_filters(TCase *tc);
 void evas_test_image_object(TCase *tc);
 void evas_test_image_object2(TCase *tc);
-void evas_test_mesh(TCase *tc);
-void evas_test_mesh1(TCase *tc);
-void evas_test_mesh2(TCase *tc);
-void evas_test_mesh3(TCase *tc);
 void evas_test_mask(TCase *tc);
 void evas_test_evasgl(TCase *tc);
 void evas_test_object_smart(TCase *tc);
-void evas_test_matrix(TCase *tc);
 void evas_test_events(TCase *tc);
 void efl_test_canvas_animation(TCase *tc);
 

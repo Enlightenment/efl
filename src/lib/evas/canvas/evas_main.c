@@ -1077,9 +1077,6 @@ _image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
         data->engine_data =
           obj->layer->evas->engine.func->polygon_points_clear(ENC,
                                                               data->engine_data))
-   else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
-        if (obj->layer->evas->engine.func->texture_free)
-          obj->layer->evas->engine.func->texture_free(ENC, data->engine_data))
    else return;
 #undef CHECK
    evas_object_ref(obj->object);
@@ -1136,10 +1133,8 @@ _image_data_regenerate(Evas_Object *eo_obj)
      }
    CHECK(EFL_CANVAS_IMAGE_INTERNAL_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
-   else CHECK(EFL_CANVAS_SCENE3D_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    //else CHECK(EFL_CANVAS_VG_OBJECT_CLASS, Efl_Canvas_Vg_Object_Data,)
    //else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,)
-   //else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
 }
 
 EAPI void

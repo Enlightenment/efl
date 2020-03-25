@@ -15,8 +15,6 @@
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"
 
-#include "evas_3d_utils.h"
-
 
 #ifdef EAPI
 # undef EAPI
@@ -84,7 +82,6 @@ typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
 typedef struct _Evas_Object_Events_Data     Evas_Object_Events_Data;
 typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
-typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
 typedef struct _Evas_Object_Mask_Data       Evas_Object_Mask_Data;
 typedef struct _Evas_Object_Pointer_Data            Evas_Object_Pointer_Data;
 
@@ -104,404 +101,9 @@ typedef struct _Evas_Pointer_Data           Evas_Pointer_Data;
 typedef struct _Evas_Filter_Command         Evas_Filter_Command;
 typedef enum _Evas_Filter_Support           Evas_Filter_Support;
 
-// 3D stuff
-
-#define EVAS_CANVAS3D_VERTEX_ATTRIB_COUNT    5
-#define EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT  5
-
-typedef struct _Evas_Canvas3D_Object                Evas_Canvas3D_Object_Data;
-typedef struct _Evas_Canvas3D_Scene_Public_Data     Evas_Canvas3D_Scene_Public_Data;
-typedef struct _Evas_Canvas3D_Vertex_Buffer         Evas_Canvas3D_Vertex_Buffer;
-typedef struct _Evas_Canvas3D_Mesh_Frame            Evas_Canvas3D_Mesh_Frame;
-typedef struct _Evas_Canvas3D_Node_Mesh             Evas_Canvas3D_Node_Mesh;
-typedef struct _Evas_Canvas3D_Object_Func           Evas_Canvas3D_Object_Func;
-typedef struct _Evas_Canvas3D_Pick_Data             Evas_Canvas3D_Pick_Data;
-typedef struct _Evas_Canvas3D_Interpolate_Vertex_Buffer Evas_Canvas3D_Interpolate_Vertex_Buffer;
-
-typedef struct _Evas_Canvas3D_Scene            Evas_Canvas3D_Scene_Data;
-typedef struct _Evas_Canvas3D_Node             Evas_Canvas3D_Node_Data;
-typedef struct _Evas_Canvas3D_Mesh             Evas_Canvas3D_Mesh_Data;
-typedef struct _Evas_Canvas3D_Camera           Evas_Canvas3D_Camera_Data;
-typedef struct _Evas_Canvas3D_Light            Evas_Canvas3D_Light_Data;
-typedef struct _Evas_Canvas3D_Material         Evas_Canvas3D_Material_Data;
-typedef struct _Evas_Canvas3D_Texture          Evas_Canvas3D_Texture_Data;
-typedef struct _Evas_Canvas3D_Primitive        Evas_Canvas3D_Primitive_Data;
-
-/* Structs for mesh eet saver/loader */
-typedef struct _Evas_Canvas3D_Vec2_Eet         Evas_Canvas3D_Vec2_Eet;
-typedef struct _Evas_Canvas3D_Vec3_Eet         Evas_Canvas3D_Vec3_Eet;
-typedef struct _Evas_Canvas3D_Vertex_Eet       Evas_Canvas3D_Vertex_Eet;
-typedef struct _Evas_Canvas3D_Geometry_Eet     Evas_Canvas3D_Geometry_Eet;
-typedef struct _Evas_Canvas3D_Color_Eet        Evas_Canvas3D_Color_Eet;
-typedef struct _Evas_Canvas3D_Material_Eet     Evas_Canvas3D_Material_Eet;
-typedef struct _Evas_Canvas3D_Frame_Eet        Evas_Canvas3D_Frame_Eet;
-typedef struct _Evas_Canvas3D_Mesh_Eet         Evas_Canvas3D_Mesh_Eet;
-typedef struct _Evas_Canvas3D_Header_Eet       Evas_Canvas3D_Header_Eet;
-typedef struct _Evas_Canvas3D_File_Eet         Evas_Canvas3D_File_Eet;
-
 typedef struct _Vg_File_Data                   Vg_File_Data;
 typedef struct _Vg_File_Anim_Data              Vg_File_Anim_Data;
 typedef struct _Vg_File_Anim_Data_Marker       Vg_File_Anim_Data_Marker;
-
-struct _Evas_Canvas3D_Vec2_Eet
-{
-   float x;
-   float y;
-};
-
-struct _Evas_Canvas3D_Vec3_Eet
-{
-   float x;
-   float y;
-   float z;
-};
-
-struct _Evas_Canvas3D_Vertex_Eet
-{
-   Evas_Canvas3D_Vec3_Eet position;
-   Evas_Canvas3D_Vec3_Eet normal;
-   Evas_Canvas3D_Vec2_Eet texcoord;
-};//one point of mesh
-
-struct _Evas_Canvas3D_Geometry_Eet
-{
-   unsigned int id;
-   int vertices_count;
-   Evas_Canvas3D_Vertex_Eet *vertices;
-};//contain array of vertices and id for using in Evas_Canvas3D_Frame_Eet in future
-
-struct _Evas_Canvas3D_Color_Eet
-{
-   float r;
-   float g;
-   float b;
-   float a;
-};
-
-struct _Evas_Canvas3D_Material_Eet
-{
-   int id;
-   float shininess;
-   int colors_count;
-   Evas_Canvas3D_Color_Eet *colors;//Color per attribute (ambient, diffuse, specular etc.)
-};
-
-struct _Evas_Canvas3D_Frame_Eet
-{
-   int id;
-   int geometry_id;
-   int material_id;
-};//only ids to prevent of spending of memory when animation will change only geometry or only material
-
-struct _Evas_Canvas3D_Mesh_Eet
-{
-   int materials_count;
-   int frames_count;
-   int geometries_count;
-   Evas_Canvas3D_Material_Eet *materials;
-   Evas_Canvas3D_Frame_Eet *frames;
-   Evas_Canvas3D_Geometry_Eet *geometries;
-};//contain materials, geometries and bounding between it (frames)
-
-struct _Evas_Canvas3D_Header_Eet
-{
-   int version;
-   int *materials;//colors_count
-   int materials_count;
-   int *geometries;//vertices_count
-   int geometries_count;
-   int frames;
-};//can be use for fast allocating of memory
-
-struct _Evas_Canvas3D_File_Eet
-{
-   Evas_Canvas3D_Mesh_Eet *mesh;
-   Evas_Canvas3D_Header_Eet *header;
-};//contain mesh data and information about mesh size
-
-typedef Eina_Bool (*Evas_Canvas3D_Node_Func)(Evas_Canvas3D_Node *, void *data);
-
-
-typedef enum _Evas_Canvas3D_Node_Traverse_Type
-{
-   EVAS_CANVAS3D_NODE_TRAVERSE_DOWNWARD,
-   EVAS_CANVAS3D_NODE_TRAVERSE_UPWARD,
-} Evas_Canvas3D_Node_Traverse_Type;
-
-typedef enum _Evas_Canvas3D_Tree_Traverse_Type
-{
-   EVAS_CANVAS3D_TREE_TRAVERSE_PRE_ORDER,
-   EVAS_CANVAS3D_TREE_TRAVERSE_ANY_ORDER = EVAS_CANVAS3D_TREE_TRAVERSE_PRE_ORDER,
-   EVAS_CANVAS3D_TREE_TRAVERSE_POST_ORDER,
-   EVAS_CANVAS3D_TREE_TRAVERSE_LEVEL_ORDER,
-} Evas_Canvas3D_Tree_Traverse_Type;
-
-
-struct _Evas_Canvas3D_Object
-{
-   Evas                *evas;
-   Evas_Canvas3D_Object_Type  type;
-
-   Eina_Bool            dirty[EVAS_CANVAS3D_STATE_MAX];
-};
-
-struct _Evas_Canvas3D_Scene
-{
-   Evas_Canvas3D_Node     *root_node;
-   Evas_Canvas3D_Node     *camera_node;
-   Evas_Color       bg_color;
-   Eina_Bool        shadows_enabled :1;
-   Eina_Bool        color_pick_enabled :1;
-
-   void             *surface;
-   int               w, h;
-   Eina_List        *images;
-
-   Eina_Hash        *node_mesh_colors;
-   Eina_Hash        *colors_node_mesh;
-   /*sets constant for shadow rendering*/
-   Evas_Real depth_offset;
-   Evas_Real depth_constant;
-};
-
-struct _Evas_Canvas3D_Node_Mesh
-{
-   Evas_Canvas3D_Node           *node;
-   Evas_Canvas3D_Mesh           *mesh;
-   int                     frame;
-};
-
-struct _Evas_Canvas3D_Node
-{
-   Eina_List        *members;
-   Evas_Canvas3D_Node     *parent;
-   Evas_Canvas3D_Node     *billboard_target;
-
-   Eina_Vector3         position;
-   Eina_Quaternion         orientation;
-   Eina_Vector3         scale;
-
-   Eina_Vector3         position_world;
-   Eina_Quaternion   orientation_world;
-   Eina_Vector3         scale_world;
-
-   Evas_Box3         aabb;
-   Evas_Box3         obb;
-   Evas_Sphere       bsphere;
-
-   Evas_Canvas3D_Node_Type type;
-
-   /* Camera node. */
-   union {
-        struct {
-             Evas_Canvas3D_Camera  *camera;
-             Eina_Matrix4        matrix_world_to_eye;
-        } camera;
-
-        struct {
-             Evas_Canvas3D_Light   *light;
-             Eina_Matrix4        matrix_local_to_world;
-        } light;
-
-        struct {
-             Eina_List       *meshes;
-             Eina_Hash       *node_meshes;
-             Eina_Matrix4        matrix_local_to_world;
-        } mesh;
-   } data;
-
-   /* Scene using this node as root. */
-   Eina_Hash        *scenes_root;
-
-   /* Scene using this node as camera. */
-   Eina_Hash        *scenes_camera;
-
-   Eina_Bool         position_inherit : 1;
-   Eina_Bool         orientation_inherit : 1;
-   Eina_Bool         scale_inherit : 1;
-   Eina_Bool         lod : 1;
-};
-
-struct _Evas_Canvas3D_Camera
-{
-   Eina_Matrix4      projection;
-   Eina_Hash     *nodes;
-};
-
-struct _Evas_Canvas3D_Light
-{
-   Evas_Color     ambient;
-   Evas_Color     diffuse;
-   Evas_Color     specular;
-
-   Eina_Bool      directional;
-   Evas_Real      spot_exp;
-   Evas_Real      spot_cutoff;
-   Evas_Real      spot_cutoff_cos;
-
-   Eina_Bool      enable_attenuation;
-   Evas_Real      atten_const;
-   Evas_Real      atten_linear;
-   Evas_Real      atten_quad;
-   Eina_Matrix4      projection;
-
-   Eina_Hash     *nodes;
-};
-
-struct _Evas_Canvas3D_Vertex_Buffer
-{
-   int         element_count;
-   int         stride;
-   void       *data;
-   int         size;
-   Eina_Bool   owns_data;
-   Eina_Bool   mapped;
-};
-
-struct _Evas_Canvas3D_Interpolate_Vertex_Buffer
-{
-   void       *data0;
-   int         stride0;
-   int         size0;
-
-   void       *data1;
-   int         stride1;
-   int         size1;
-
-   Evas_Real   weight;
-};
-
-struct _Evas_Canvas3D_Mesh_Frame
-{
-   Evas_Canvas3D_Mesh           *mesh;
-
-   int                     frame;
-   Evas_Canvas3D_Material       *material;
-   Evas_Box3               aabb;
-
-   Evas_Canvas3D_Vertex_Buffer   vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_COUNT];
-};
-
-struct _Evas_Canvas3D_Mesh
-{
-   Evas_Canvas3D_Shader_Mode      shader_mode;
-
-   int                     vertex_count;
-   int                     frame_count;
-   Eina_List              *frames;
-
-   Evas_Canvas3D_Index_Format    index_format;
-   int                     index_count;
-   void                   *indices;
-   int                     index_size;
-   Eina_Bool               owns_indices;
-   Eina_Bool               index_mapped;
-
-   Evas_Canvas3D_Vertex_Assembly assembly;
-
-   Eina_Hash               *nodes;
-   Eina_Bool               shadowed;
-
-   Eina_Bool               blending :1;
-   Evas_Canvas3D_Blend_Func      blend_sfactor;
-   Evas_Canvas3D_Blend_Func      blend_dfactor;
-
-   Evas_Canvas3D_Comparison      alpha_comparison;
-   Evas_Real               alpha_ref_value;
-   Eina_Bool               alpha_test_enabled :1;
-
-   Evas_Color              fog_color;
-   Eina_Bool               fog_enabled :1;
-   Evas_Color              color_pick_key;
-   Eina_Bool               color_pick_enabled :1;
-   /*sets of the quality and offsets for shadow rendering*/
-   int                     shadows_edges_filtering_level;
-   Evas_Real               shadows_edges_size;
-   Evas_Real               shadows_constant_bias;
-   Evas_Real               near_lod_boundary;
-   Evas_Real               far_lod_boundary;
-};
-
-struct _Evas_Canvas3D_Texture
-{
-   /* List of materials using this texture. */
-   Eina_Hash        *materials;
-
-   /* Proxy data. */
-   Evas_Object      *source;
-   Eina_Bool         proxy_rendering;
-   void             *proxy_surface;
-   /* Engine-side object. */
-   void             *engine_data;
-
-   Eina_File        *f;
-   const char       *key;
-
-   /*Use atlases, @EINA_TRUE by default*/
-   Eina_Bool        atlas_enable :1;
-};
-
-struct _Evas_Canvas3D_Material
-{
-   struct {
-        Eina_Bool         enable;
-        Evas_Color        color;
-        Evas_Canvas3D_Texture  *texture;
-   } attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT];
-
-   Evas_Real         shininess;
-
-   Eina_Hash        *meshes;
-};
-
-struct _Evas_Canvas3D_Primitive
-{
-   Evas_Canvas3D_Mesh_Primitive  form;
-   Evas_Canvas3D_Primitive_Mode  mode;
-   Evas_Real               ratio;
-   int                     precision;
-   Evas_Canvas3D_Surface_Func   *surface;
-
-   Eina_Vector2 tex_scale;
-};
-
-struct _Evas_Canvas3D_Scene_Public_Data
-{
-   Evas_Color       bg_color;
-   Evas_Canvas3D_Node     *camera_node;
-   Eina_List        *light_nodes;
-   Eina_List        *mesh_nodes;
-   Eina_Bool        shadows_enabled :1;
-   Eina_Bool        color_pick_enabled :1;
-   Eina_Hash        *node_mesh_colors;
-   Eina_Hash        *colors_node_mesh;
-
-   /*sets constant for shadow rendering*/
-   Evas_Real depth_offset;
-   Evas_Real depth_constant;
-   Eina_Bool render_to_texture;
-
-   unsigned int     lod_distance;
-
-   Eina_Bool post_processing :1;
-   Evas_Canvas3D_Shader_Mode post_processing_type;
-};
-
-struct _Evas_Canvas3D_Pick_Data
-{
-   /* Input */
-   Evas_Real         x, y;
-   Eina_Matrix4         matrix_vp;
-   Evas_Ray3         ray_world;
-
-   /* Output */
-   Eina_Bool         picked;
-   Evas_Real         z;
-   Evas_Canvas3D_Node     *node;
-   Evas_Canvas3D_Mesh     *mesh;
-   Evas_Real         u, v;
-   Evas_Real         s, t;
-};
 
 /* General types - used for script type chceking */
 #define OPAQUE_TYPE(type) struct __##type { int a; }; \
@@ -1005,7 +607,6 @@ struct _Evas_Map
 struct _Evas_Object_Proxy_Data
 {
    Eina_List               *proxies;
-   Eina_List               *proxy_textures;
    void                    *surface;
    int                      w,h;
    Eina_List               *src_event_in;
@@ -1031,12 +632,6 @@ struct _Evas_Object_Map_Data
 
    Evas_Map             *cache_map;
    RGBA_Map             *spans;
-};
-
-struct _Evas_Object_3D_Data
-{
-   void          *surface;
-   int            w, h;
 };
 
 // Mask clipper information
@@ -1142,7 +737,6 @@ struct _Evas_Object_Protected_Data
    // Eina_Cow pointer be careful when writing to it
    const Evas_Object_Proxy_Data *proxy;
    const Evas_Object_Map_Data *map;
-   const Evas_Object_3D_Data  *data_3d;
    const Evas_Object_Mask_Data *mask;
    const Evas_Object_Events_Data *events;
 
@@ -1490,29 +1084,6 @@ struct _Evas_Func
 
    void (*context_flush)                 (void *engine);
 
-   /* 3D features */
-   void *(*drawable_new)                 (void *engine, int w, int h, int alpha);
-   void  (*drawable_free)                (void *engine, void *drawable);
-   void  (*drawable_size_get)            (void *engine, void *drawable, int *w, int *h);
-   void *(*image_drawable_set)           (void *engine, void *image, void *drawable);
-   void (*drawable_texture_rendered_pixels_get) (unsigned int tex, int x, int y, int w, int h, void *drawable EINA_UNUSED, void *data);
-   void  (*drawable_scene_render)        (void *engine, void *data, void *drawable, void *scene_data);
-   Eina_Bool (*drawable_scene_render_to_texture) (void *engine, void *drawable, void *scene_data);
-
-   int (*drawable_texture_color_pick_id_get) (void *drawable);
-   int (*drawable_texture_target_id_get) (void *drawable);
-   void (*drawable_texture_pixel_color_get) (unsigned int tex EINA_UNUSED, int x, int y, Evas_Color *color, void *drawable);
-
-   void *(*texture_new)                  (void *engine, Eina_Bool use_atlas);
-   void  (*texture_free)                 (void *engine, void *texture);
-   void  (*texture_size_get)             (void *engine, void *texture, int *w, int *h);
-   void  (*texture_wrap_set)             (void *engine, void *texture, Evas_Canvas3D_Wrap_Mode s, Evas_Canvas3D_Wrap_Mode t);
-   void  (*texture_wrap_get)             (void *engine, void *texture, Evas_Canvas3D_Wrap_Mode *s, Evas_Canvas3D_Wrap_Mode *t);
-   void  (*texture_filter_set)           (void *engine, void *texture, Evas_Canvas3D_Texture_Filter min, Evas_Canvas3D_Texture_Filter mag);
-   void  (*texture_filter_get)           (void *engine, void *texture, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag);
-   void  (*texture_image_set)            (void *engine, void *texture, void *image);
-   void *(*texture_image_get)            (void *engine, void *texture);
-
    Ector_Surface *(*ector_create)        (void *engine);
    void  (*ector_destroy)                (void *engine, Ector_Surface *surface);
    Ector_Buffer *(*ector_buffer_wrap)    (void *engine, Evas *e, void *engine_image);
@@ -1730,61 +1301,6 @@ Eina_Bool _efl_canvas_object_efl_gfx_entity_size_set_block(Eo *eo_obj, Evas_Obje
 
 void _evas_focus_device_invalidate_cb(void *data, const Efl_Event *ev);
 
-/* Node functions. */
-void evas_canvas3d_node_traverse(Evas_Canvas3D_Node *from, Evas_Canvas3D_Node *to, Evas_Canvas3D_Node_Traverse_Type type, Eina_Bool skip, Evas_Canvas3D_Node_Func func, void *data);
-void evas_canvas3d_node_tree_traverse(Evas_Canvas3D_Node *root, Evas_Canvas3D_Tree_Traverse_Type type, Eina_Bool skip, Evas_Canvas3D_Node_Func func, void *data);
-Eina_Bool evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data);
-Eina_Bool evas_canvas3d_node_color_node_mesh_collect(Evas_Canvas3D_Node *node, void *data);
-Eina_Bool evas_canvas3d_node_light_collect(Evas_Canvas3D_Node *node, void *data);
-void evas_canvas3d_node_scene_root_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
-void evas_canvas3d_node_scene_root_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
-void evas_canvas3d_node_scene_camera_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
-void evas_canvas3d_node_scene_camera_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
-Eina_Bool node_aabb_update(Evas_Canvas3D_Node *node, void *data  EINA_UNUSED);
-
-/* Camera functions. */
-void evas_canvas3d_camera_node_add(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *node);
-void evas_canvas3d_camera_node_del(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *node);
-
-/* Light functions. */
-void evas_canvas3d_light_node_add(Evas_Canvas3D_Light *light, Evas_Canvas3D_Node *node);
-void evas_canvas3d_light_node_del(Evas_Canvas3D_Light *light, Evas_Canvas3D_Node *node);
-
-/* Mesh functions. */
-void evas_canvas3d_mesh_node_add(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node);
-void evas_canvas3d_mesh_node_del(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node);
-void evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas3D_Vertex_Buffer *pos0, const Evas_Canvas3D_Vertex_Buffer *pos1, Evas_Real weight, int index);
-void evas_canvas3d_mesh_interpolate_vertex_buffer_get(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Vertex_Attrib attrib, Evas_Canvas3D_Vertex_Buffer *buffer0, Evas_Canvas3D_Vertex_Buffer *buffer1, Evas_Real *weight);
-void evas_canvas3d_mesh_file_md2_set(Evas_Canvas3D_Mesh *mesh, const char *file);
-void evas_canvas3d_mesh_save_obj(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_canvas3d_mesh_file_obj_set(Evas_Canvas3D_Mesh *mesh, const char *file);
-Eina_Bool evas_canvas3d_mesh_aabb_add_to_frame(Evas_Canvas3D_Mesh_Data *pd, int frame, int stride);
-void evas_canvas3d_mesh_file_eet_set(Evas_Canvas3D_Mesh *mesh, const char *file);
-void evas_canvas3d_mesh_save_eet(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_canvas3d_mesh_file_ply_set(Evas_Canvas3D_Mesh *mesh, const char *file);
-void evas_canvas3d_mesh_save_ply(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-
-/* Texture functions. */
-void evas_canvas3d_texture_material_add(Evas_Canvas3D_Texture *texture, Evas_Canvas3D_Material *material);
-void evas_canvas3d_texture_material_del(Evas_Canvas3D_Texture *texture, Evas_Canvas3D_Material *material);
-
-
-/* Material functions. */
-void evas_canvas3d_material_mesh_add(Evas_Canvas3D_Material *material, Evas_Canvas3D_Mesh *mesh);
-void evas_canvas3d_material_mesh_del(Evas_Canvas3D_Material *material, Evas_Canvas3D_Mesh *mesh);
-
-/* Scene functions. */
-void evas_canvas3d_scene_data_init(Evas_Canvas3D_Scene_Public_Data *data);
-void evas_canvas3d_scene_data_fini(Evas_Canvas3D_Scene_Public_Data *data);
-
-/* Eet saver/loader functions */
-Evas_Canvas3D_File_Eet *_evas_canvas3d_eet_file_new(void);
-Eet_Data_Descriptor* _evas_canvas3d_eet_file_get();
-void _evas_canvas3d_eet_file_init();
-void _evas_canvas3d_eet_descriptor_shutdown();
-void _evas_canvas3d_eet_file_free(Evas_Canvas3D_File_Eet* eet_file);
-
-
 /* Filters */
 void evas_filter_init(void);
 void evas_filter_shutdown(void);
@@ -1796,29 +1312,6 @@ void _efl_gfx_mapping_update(Eo *eo_obj);
 
 /* Ector */
 Ector_Surface *evas_ector_get(Evas_Public_Data *evas);
-
-/* Temporary save/load functions */
-void evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file);
-void evas_common_load_model_from_eina_file(Evas_Canvas3D_Mesh *model, const Eina_File *file);
-void evas_common_save_model_to_file(const Evas_Canvas3D_Mesh *model, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
-void evas_model_load_file_md2(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
-void evas_model_load_file_obj(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
-void evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
-void evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_model_save_file_obj(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-
-/* Primitives functions */
-void evas_common_set_model_from_primitive(Evas_Canvas3D_Mesh *model, int frame, Evas_Canvas3D_Primitive_Data *primitive);
-void evas_model_set_from_square_primitive(Evas_Canvas3D_Mesh *mesh, int frame);
-void evas_model_set_from_cube_primitive(Evas_Canvas3D_Mesh *mesh, int frame);
-void evas_model_set_from_cylinder_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Eina_Vector2 tex_scale);
-void evas_model_set_from_cone_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Eina_Vector2 tex_scale);
-void evas_model_set_from_sphere_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Eina_Vector2 tex_scale);
-void evas_model_set_from_torus_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Real ratio, int precision, Eina_Vector2 tex_scale);
-void evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Surface_Func func, int precision, Eina_Vector2 tex_scale);
-void evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh, int frame, int precision, Eina_Vector2 tex_scale);
 
 /* Filter functions */
 Eina_Bool evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async, Eina_Bool alpha);
@@ -1962,8 +1455,6 @@ void _deferred_callbacks_process(Evas *eo_e, Evas_Public_Data *e);
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
 extern Eina_Cow *evas_object_state_cow;
-
-extern Eina_Cow *evas_object_3d_cow;
 
 extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;

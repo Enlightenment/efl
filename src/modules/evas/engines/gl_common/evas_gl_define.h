@@ -285,7 +285,6 @@ Much of it is from Mesa, so their copyright is included as well.
 #ifndef EGL_PLATFORM_X11_KHR
 # define EGL_PLATFORM_X11_KHR 0x31D5
 #endif
-// Evas_3d require GL_BGR, but that's an extention and will not be necessary once we move to Evas_GL_Image
 #ifndef GL_BGR
 #define GL_BGR 0x80E0
 #endif

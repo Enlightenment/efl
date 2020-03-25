@@ -39,11 +39,6 @@ common_engine_src = [
   'evas_gl_api_gles1.c',
   'evas_gl_api_gles3_def.h',
   'evas_gl_api_ext.c',
-  'evas_gl_3d_common.h',
-  'evas_gl_3d_private.h',
-  'evas_gl_3d.c',
-  'evas_gl_3d_renderer.c',
-  'evas_gl_3d_shader.c',
 ]
 
 foreach src : common_engine_src

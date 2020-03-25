@@ -715,13 +715,6 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
    Edje_Program_Target *et;
    Eina_List *l;
    unsigned int i = 0;
-   int camera_id = -1;
-
-   for (i = 0; (i < pc->parts_count) && (camera_id < 0); i++)
-     {
-        if (pc->parts[i]->type == EDJE_PART_TYPE_CAMERA)
-          camera_id = i;
-     }
 
     if ((!ep->targets) && (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT))
       {

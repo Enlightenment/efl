@@ -389,15 +389,6 @@ _evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
         //Update the proxies recursively.
         _evas_proxy_redraw_set(e, proxy, render);
      }
-
-   if (obj->proxy->proxy_textures)
-     {
-        /* Flag need redraw on proxy texture source */
-        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
-                             Evas_Object_Proxy_Data, source)
-           source->redraw = EINA_TRUE;
-        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, source);
-     }
 }
 
 /* sets the mask redraw flag for all the objects clipped by this mask */
@@ -466,7 +457,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
         EINA_PREFETCH(&(obj->cur->clipper));
         if (obj->changed) evas_object_clip_recalc(obj);
 
-        if (obj->proxy->proxies || obj->proxy->proxy_textures)
+        if (obj->proxy->proxies)
           {
              /* is proxy source */
              if (_evas_render_object_changed_get(obj))
@@ -498,7 +489,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
              if (!obj->smart.smart || evas_object_smart_changed_get(obj))
                {
                   /* proxy sources */
-                  if (obj->proxy->proxies || obj->proxy->proxy_textures)
+                  if (obj->proxy->proxies)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
                                             Evas_Object_Proxy_Data, proxy_write)
@@ -2313,7 +2304,6 @@ end:
  * Render the source object when a proxy is set.
  * Used to force a draw if necessary, else just makes sure it's available.
  * Called from: image objects and text with filters.
- * TODO: 3d objects subrender should probably be merged here as well.
  */
 void
 evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Evas_Object *eo_proxy,

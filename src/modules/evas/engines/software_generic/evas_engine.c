@@ -4794,25 +4794,6 @@ static Evas_Func func =
      eng_multi_font_draw,
      eng_pixel_alpha_get,
      NULL, // eng_context_flush - software doesn't use it
-     NULL, // eng_drawable_new
-     NULL, // eng_drawable_free
-     NULL, // eng_drawable_size_get
-     NULL, // eng_image_drawable_set
-     NULL, // eng_drawable_scene_render
-     NULL, // eng_drawable_scene_render_to_texture
-     NULL, // eng_drawable_texture_color_pick_id_get
-     NULL, // eng_drawable_texture_target_id_get
-     NULL, // eng_drawable_texture_pixel_color_get
-     NULL, // eng_drawable_texture_rendered_pixels_get
-     NULL, // eng_texture_new
-     NULL, // eng_texture_free
-     NULL, // eng_texture_size_get
-     NULL, // eng_texture_wrap_set
-     NULL, // eng_texture_wrap_get
-     NULL, // eng_texture_filter_set
-     NULL, // eng_texture_filter_get
-     NULL, // eng_texture_image_set
-     NULL, // eng_texture_image_get
      eng_ector_create,
      eng_ector_destroy,
      eng_ector_buffer_wrap,

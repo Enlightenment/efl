@@ -2,19 +2,9 @@
 pub_eo_files = [
   'efl_canvas_polygon.eo',
   'efl_canvas_image_internal.eo',
-  'evas_canvas3d_camera.eo',
-  'evas_canvas3d_texture.eo',
-  'evas_canvas3d_material.eo',
-  'evas_canvas3d_light.eo',
-  'evas_canvas3d_mesh.eo',
-  'evas_canvas3d_primitive.eo',
-  'evas_canvas3d_node.eo',
-  'evas_canvas3d_scene.eo',
-  'evas_canvas3d_object.eo',
   'efl_canvas_image.eo',
   'efl_canvas_snapshot.eo',
   'efl_canvas_proxy.eo',
-  'efl_canvas_scene3d.eo',
   'efl_canvas_surface.eo',
   'efl_canvas_surface_tbm.eo',
   'efl_canvas_surface_x11.eo',
@@ -80,7 +70,6 @@ endforeach
 
 
 pub_eo_types_files = [
-    'evas_canvas3d_types.eot',
     'efl_canvas_animation_types.eot',
     'efl_input_types.eot',
 ]
@@ -166,7 +155,6 @@ evas_src += files([
   'efl_canvas_event_grabber.c',
   'efl_canvas_proxy.c',
   'efl_canvas_snapshot.c',
-  'efl_canvas_scene3d.c',
   'efl_canvas_surface.c',
   'efl_canvas_surface_tbm.c',
   'efl_canvas_surface_x11.c',
@@ -198,17 +186,6 @@ evas_src += files([
   'efl_canvas_vg_shape.c',
   'efl_canvas_vg_image.c',
   'evas_filter_mixin.c',
-  'evas_canvas3d_object.c',
-  'evas_canvas3d_scene.c',
-  'evas_canvas3d_node.c',
-  'evas_canvas3d_camera.c',
-  'evas_canvas3d_light.c',
-  'evas_canvas3d_mesh.c',
-  'evas_canvas3d_texture.c',
-  'evas_canvas3d_material.c',
-  'evas_canvas3d_primitive.c',
-  'evas_canvas3d_node_callback.h',
-  'evas_canvas3d_eet.c',
   'efl_canvas_object_animation.c',
   'efl_text_cursor.c',
   'efl_text_formatter.c'

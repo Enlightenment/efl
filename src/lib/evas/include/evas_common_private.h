@@ -85,9 +85,6 @@
 #define lround(x) (((x) < 0) ? (long int)ceil((x) - 0.5) : (long int)floor((x) + 0.5))
 #endif
 
-/*macro to be used in eet loader/saver*/
-#define EVAS_CANVAS3D_FILE_CACHE_FILE_ENTRY "evas_3d file"
-
 /* macros needed to log message through eina_log */
 extern EAPI int _evas_log_dom_global;
 #ifdef  _EVAS_DEFAULT_LOG_DOM
