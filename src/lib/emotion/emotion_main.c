@@ -173,7 +173,6 @@ emotion_init(void)
    _emotion_config_file = eet_open(buffer, EET_FILE_MODE_READ);
 
    if (!emotion_webcam_init()) goto error_webcam;
-   emotion_webcam_config_load(_emotion_config_file);
 
    if (!emotion_modules_init()) goto error_modules;
 
