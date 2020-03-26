@@ -4,6 +4,12 @@
 
 #include "common.h"
 
+void
+ex_prepare_elm_overloay(void)
+{
+   elm_theme_overlay_add(NULL, DATA_DIR"/exactness_play.edj");
+}
+
 int
 ex_prg_invoke(const char *full_path, int argc, char **argv, Eina_Bool player)
 {

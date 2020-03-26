@@ -236,6 +236,61 @@ _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
    return e;
 }
 
+static void
+_setup_unit(void)
+{
+   if (_unit) return;
+
+   _unit = calloc(1, sizeof(*_unit));
+}
+
+static Eina_Bool
+_setup_fonts_dir(const char *fonts_dir)
+{
+   if (fonts_dir)
+     {
+        Eina_Tmpstr *fonts_conf_name = NULL;
+        if (!ecore_file_exists(fonts_dir))
+          {
+             fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
+             return EINA_FALSE;
+          }
+        Eina_List *dated_fonts = ecore_file_ls(fonts_dir);
+        char *date_dir;
+        _unit->fonts_path = strdup(eina_list_last_data_get(dated_fonts));
+        EINA_LIST_FREE(dated_fonts, date_dir) free(date_dir);
+        if (_unit->fonts_path)
+          {
+             int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
+             FILE *tmp_f = fdopen(tmp_fd, "wb");
+             fprintf(tmp_f,
+                   "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
+                   "<dir prefix=\"default\">%s/%s</dir>\n</fontconfig>\n",
+                   fonts_dir, _unit->fonts_path);
+             fclose(tmp_f);
+             close(tmp_fd);
+
+             setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
+          }
+     }
+   return EINA_TRUE;
+}
+
+static void
+_setup_shot_key(void)
+{
+   if (!_shot_key) _shot_key = getenv("SHOT_KEY");
+   if (!_shot_key) _shot_key = SHOT_KEY_STR;
+}
+
+static void
+_setup_ee_creation(void)
+{
+   ecore_evas_callback_new_set(_my_evas_new);
+   _last_timestamp = ecore_time_get() * 1000;
+}
+
+
 static const Ecore_Getopt optdesc = {
   "exactness_record",
   "%prog [options] <-v|-t|-h> command",
@@ -345,37 +400,9 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   if (!_unit)
-     {
-        _unit = calloc(1, sizeof(*_unit));
-     }
-
-   if (fonts_dir)
-     {
-        Eina_Tmpstr *fonts_conf_name = NULL;
-        if (!ecore_file_exists(fonts_dir))
-          {
-             fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
-             goto end;
-          }
-        Eina_List *dated_fonts = ecore_file_ls(fonts_dir);
-        char *date_dir;
-        _unit->fonts_path = strdup(eina_list_last_data_get(dated_fonts));
-        EINA_LIST_FREE(dated_fonts, date_dir) free(date_dir);
-        if (_unit->fonts_path)
-          {
-             int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
-             FILE *tmp_f = fdopen(tmp_fd, "wb");
-             fprintf(tmp_f,
-                   "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
-                   "<dir prefix=\"default\">%s/%s</dir>\n</fontconfig>\n",
-                   fonts_dir, _unit->fonts_path);
-             fclose(tmp_f);
-             close(tmp_fd);
-
-             setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
-          }
-     }
+   _setup_unit();
+   if (!_setup_fonts_dir(fonts_dir))
+     goto end;
 
    /* Replace the current command line to hide the Exactness part */
    char **new_argv;
@@ -390,11 +417,9 @@ int main(int argc, char **argv)
           new_argv[i] = NULL;
      }
 
-   if (!_shot_key) _shot_key = getenv("SHOT_KEY");
-   if (!_shot_key) _shot_key = SHOT_KEY_STR;
+   _setup_shot_key();
+   _setup_ee_creation();
 
-   ecore_evas_callback_new_set(_my_evas_new);
-   _last_timestamp = ecore_time_get() * 1000;
    pret = ex_prg_invoke(ex_prg_full_path_guess(argv[opt_args]), argc - opt_args, new_argv, EINA_FALSE);
 
    _output_write();
