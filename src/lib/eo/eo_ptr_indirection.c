@@ -104,8 +104,9 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
           return tdata->cache.object;
 
         mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
+        EINA_PREFETCH_NOCACHE(&(tdata->eo_ids_tables[mid_table_id])); //prefetch for line 119
         table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
+        EINA_PREFETCH_NOCACHE((tdata->eo_ids_tables[mid_table_id] + table_id)); //prefetch for line 121
         entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
         generation = obj_id & MASK_GENERATIONS;
 
@@ -118,7 +119,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
         if (tdata->eo_ids_tables[mid_table_id])
           {
              _Eo_Ids_Table *tab = TABLE_FROM_IDS;
-
+             EINA_PREFETCH_NOCACHE(tab); //prefetch for line 125
              if (tab)
                {
                   entry = &(tab->entries[entry_id]);
@@ -143,8 +144,9 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
           return tdata->cache.object;
 
         mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
+        EINA_PREFETCH_NOCACHE(&(tdata->eo_ids_tables[mid_table_id]));
         table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
+        EINA_PREFETCH_NOCACHE((tdata->eo_ids_tables[mid_table_id] + table_id));
         entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
         generation = obj_id & MASK_GENERATIONS;
 
@@ -157,6 +159,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
         if (tdata->eo_ids_tables[mid_table_id])
           {
              _Eo_Ids_Table *tab = TABLE_FROM_IDS;
+             EINA_PREFETCH_NOCACHE(tab);
 
              if (tab)
                {
