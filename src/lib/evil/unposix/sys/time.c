@@ -25,4 +25,3 @@ struct tm *localtime_r(const time_t * time, struct tm * result)
     localtime_s(result, time);
     return result;
 }
-
