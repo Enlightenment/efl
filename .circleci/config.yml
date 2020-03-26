@@ -1,0 +1,34 @@
+version: 2.0
+
+jobs:
+  "Fedora31-default":
+    docker:
+      - image: stefanschmidt1/ci-support-files:Fedora31
+    working_directory: /
+    steps:
+      - checkout
+      - run: meson build -Decore-imf-loaders-disabler=scim,ibus -Dbindings=luajit,cxx,mono -Dmono-beta=true
+      - run: ninja -C build
+      - run: ninja -C build install
+      - run:
+          name: Run tests
+          command: ninja -C build test
+
+  "Fedora31-release-ready":
+    docker:
+      - image: stefanschmidt1/ci-support-files:Fedora31
+    working_directory: /
+    steps:
+      - checkout
+      - run: meson build -Decore-imf-loaders-disabler=scim,ibus --buildtype=release
+      - run: ninja -C build
+      - run:
+          name: Run tests
+          command: ninja -C build dist
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - "Fedora31-default"
+      - "Fedora31-release-ready"
