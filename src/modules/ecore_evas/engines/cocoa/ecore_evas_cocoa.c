@@ -523,6 +523,7 @@ _ecore_evas_cocoa_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int sea
              //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
              slice.len = size + 1;
              slice.mem = eina_memdup(data, size, EINA_TRUE);
+             free(data);
           }
         else
           {
