@@ -96,7 +96,7 @@ static const Evas_Object_Image_State default_state = {
    { 0, 0, 0 }, // image
    { 1.0, 0, 0, 0, 0, 1 }, // border
    { { NULL, 0, 0 }, { NULL, 0, 0 } },
-   NULL, NULL, NULL, //source, defmap, scene
+   NULL, NULL, //source, defmap
    NULL, //f
    NULL, //key
    0, //frame
@@ -171,7 +171,6 @@ _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_I
         ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_FALSE);
      }
    if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
-   if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
 }
 
 static Eina_Bool
@@ -252,7 +251,6 @@ _evas_image_init_set(const Eina_File *f, const char *key,
                      Evas_Image_Load_Opts *lo)
 {
    if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
-   if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    {
@@ -1033,22 +1031,15 @@ _efl_canvas_image_internal_efl_gfx_image_image_size_get(const Eo *eo_obj EINA_UN
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_image_internal_efl_gfx_view_view_size_get(const Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_view_view_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    int uvw, uvh;
    Evas_Object_Protected_Data *source = NULL;
-   Evas_Object_Protected_Data *obj;
 
-   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (o->cur->source)
      source = efl_data_scope_get(o->cur->source, EFL_CANVAS_OBJECT_CLASS);
 
-   if (o->cur->scene)
-     {
-        uvw = obj->data_3d->w;
-        uvh = obj->data_3d->h;
-     }
-   else if (!o->cur->source)
+   if (!o->cur->source)
      {
         uvw = o->cur->image.w;
         uvh = o->cur->image.h;
@@ -1732,13 +1723,6 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         state_write->source = NULL;
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
-   if (o->cur->scene)
-     {
-        _evas_image_3d_unset(eo_obj, obj, o);
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-        state_write->scene = NULL;
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-     }
    if (o->cur->f)
      {
         eina_file_close(o->cur->f); // close matching open (dup in _evas_image_init_set) OK
@@ -2318,15 +2302,6 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         *uvw = *imagew;
         *uvh = *imageh;
      }
-   else if (o->cur->scene)
-     {
-        _evas_image_3d_render(obj->layer->evas->evas, eo_obj, obj, o, o->cur->scene, engine, output);
-        pixels = obj->data_3d->surface;
-        *imagew = obj->data_3d->w;
-        *imageh = obj->data_3d->h;
-        *uvw = *imagew;
-        *uvh = *imageh;
-     }
    else if (obj->cur->snapshot)
      {
         pixels = o->engine_data;
@@ -2864,18 +2839,6 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
         if (source->proxy->redraw || source->changed)
           {
              /* XXX: Do I need to sort out the map here? */
-             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             goto done;
-          }
-     }
-   else if (o->cur->scene)
-     {
-        Evas_Canvas3D_Scene *scene = o->cur->scene;
-        Eina_Bool dirty;
-
-        dirty = evas_canvas3d_object_dirty_get(scene, EVAS_CANVAS3D_STATE_ANY);
-        if (dirty)
-          {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
           }

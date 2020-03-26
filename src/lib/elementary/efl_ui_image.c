@@ -294,12 +294,12 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
 
         evas_object_image_fill_set(img, offset_x, offset_y, w, h);
 
-        if (offset_x < 0)
+        if (ow - w < 0)
           {
              x = ox;
              w = ow;
           }
-        if (offset_y < 0)
+        if (oh - h < 0)
           {
              y = oy;
              h = oh;

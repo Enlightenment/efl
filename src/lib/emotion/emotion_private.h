@@ -7,7 +7,6 @@
 
 Eina_Bool emotion_webcam_init(void);
 void emotion_webcam_shutdown(void);
-Eina_Bool emotion_webcam_config_load(Eet_File *ef);
 
 Eina_Bool emotion_modules_init(void);
 void emotion_modules_shutdown(void);

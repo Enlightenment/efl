@@ -47,10 +47,6 @@ evas_vg_loaders_file = [
 
 evas_vg_savers_file = ['eet', 'svg']
 
-evas_model_savers_file = ['eet', 'obj', 'ply']
-
-evas_model_loaders_file = ['eet', 'md2', 'obj', 'ply']
-
 rel_evas_modules = join_paths('..', '..', '..', 'modules', 'evas', 'engines', 'software_generic')
 evas_deps = [eo, eet, eina, efl, emile, ector, ecore, buildsystem, intl]
 pub_eo_file_target = []
@@ -130,8 +126,6 @@ evas_header_src = [
 evas_include_directories += [
   include_directories('.'),
   include_directories('common'),
-  include_directories('common3d'),
-  include_directories(join_paths('common3d', 'save_load')),
   include_directories('include'),
   include_directories('filters'),
   vg_common_inc_dir
@@ -181,7 +175,6 @@ subdir('canvas')
 subdir('gesture')
 subdir('filters')
 subdir('cache')
-subdir('common3d')
 subdir('file')
 subdir('vg')
 
@@ -284,22 +277,6 @@ foreach loader : evas_vg_savers_file
     )]
     config_h.set('EVAS_STATIC_BUILD_VG_'+loader.to_upper(), '1')
   endif
-endforeach
-
-foreach loader : evas_model_loaders_file
-  file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'model_loaders', loader, 'evas_model_load_'+loader+'.c')
-
-  evas_static_list += [declare_dependency(
-    sources: file,
-  )]
-endforeach
-
-foreach loader : evas_model_savers_file
- file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'model_savers', loader, 'evas_model_save_'+loader+'.c')
-
-  evas_static_list += [declare_dependency(
-    sources: file,
-  )]
 endforeach
 
 evas_lib = library('evas',

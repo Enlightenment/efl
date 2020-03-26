@@ -44,7 +44,6 @@ struct _Render_Output_GL_Generic
    Window_GL_Context_Use window_gl_context_use;
 
    Context_3D           *context_3d;
-   E3D_Renderer         *renderer_3d;
    const EVGL_Interface *evgl_funcs;
 };
 
@@ -95,7 +94,6 @@ evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
    re->window_gl_context_use = window_gl_context_use;
 
    re->context_3d = NULL;
-   re->renderer_3d = NULL;
    re->evgl_funcs = evgl_funcs;
 
    evas_render_engine_software_generic_tile_strict_set(&re->software, EINA_TRUE);

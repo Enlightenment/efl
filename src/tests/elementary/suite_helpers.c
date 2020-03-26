@@ -336,7 +336,7 @@ suite_setup(Eina_Bool legacy)
      failed_count = _efl_suite_build_and_run(0, NULL,
                                              "Efl_Ui_Init", ui_init, NULL, NULL);
 
-   failed_count += !elm_init(1, (char*[]){"exe"});
+   failed_count += !elm_init(1, args);
    if (buffer)
      {
         global_win = _elm_suite_win_create();
@@ -805,4 +805,19 @@ pinch_object(Eo *obj, int x, int y, int x2, int y2, int dx, int dy, int dx2, int
    evas_event_feed_multi_up(e, 0, x + idx, y + idy, 1, 1, 1, 1, 0, x + idx, y + idy, 0, ts, NULL);
    evas_event_feed_multi_up(e, 1, x2 + idx2, y2 + idy2, 1, 1, 1, 1, 0, x2 + idx2, y2 + idy2, 0, ts++, NULL);
    return i - 2;
+}
+
+void
+write_key_sequence(Eo *obj, const char *seqence)
+{
+  Evas *e = evas_object_evas_get(obj);
+  for (unsigned int i = 0; i < strlen(seqence); ++i)
+    {
+       const char part_seq[] = {seqence[i], '\0'};
+
+       evas_event_feed_key_down(e, part_seq, part_seq, part_seq, part_seq, 0, NULL);
+       ecore_main_loop_iterate();
+       evas_event_feed_key_up(e, part_seq, part_seq, part_seq, part_seq, 0, NULL);
+       ecore_main_loop_iterate();
+    }
 }

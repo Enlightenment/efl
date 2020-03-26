@@ -897,9 +897,6 @@ struct _Edje_Limit
       TYPE      TABLE;            \
       TYPE      SPACER;           \
       TYPE      EXTERNAL;         \
-      TYPE      MESH_NODE;        \
-      TYPE      LIGHT;            \
-      TYPE      CAMERA;           \
       TYPE      SNAPSHOT;         \
       TYPE      VECTOR;
 
@@ -1148,11 +1145,6 @@ struct _Edje_Part_Collection
       int            table_programs_size;
    } patterns;
    /* *** *** */
-
-   struct {
-      Evas_Real        height;
-      Evas_Real        width;
-   } scene_size;
 
    unsigned char    lua_script_only;
    unsigned char    broadcast_signal;
@@ -2368,9 +2360,6 @@ EAPI extern Eina_Mempool *_emp_BOX;
 EAPI extern Eina_Mempool *_emp_TABLE;
 EAPI extern Eina_Mempool *_emp_EXTERNAL;
 EAPI extern Eina_Mempool *_emp_SPACER;
-EAPI extern Eina_Mempool *_emp_MESH_NODE;
-EAPI extern Eina_Mempool *_emp_LIGHT;
-EAPI extern Eina_Mempool *_emp_CAMERA;
 EAPI extern Eina_Mempool *_emp_SNAPSHOT;
 EAPI extern Eina_Mempool *_emp_part;
 EAPI extern Eina_Mempool *_emp_VECTOR;

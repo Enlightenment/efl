@@ -144,6 +144,7 @@ ecore_audio_pulse_lib_load(void)
       goto err; \
    }
    SYM(pa_context_new);
+   SYM(pa_context_unref);
    SYM(pa_context_connect);
    SYM(pa_context_set_sink_input_volume);
    SYM(pa_context_get_state);
@@ -155,6 +156,7 @@ ecore_audio_pulse_lib_load(void)
    SYM(pa_stream_connect_playback);
    SYM(pa_stream_disconnect);
    SYM(pa_stream_drain);
+   SYM(pa_stream_flush);
    SYM(pa_stream_cork);
    SYM(pa_stream_write);
    SYM(pa_stream_begin_write);

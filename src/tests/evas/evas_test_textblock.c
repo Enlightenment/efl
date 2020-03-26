@@ -62,8 +62,8 @@ while (0)
 do \
 { \
    evas_textblock_cursor_free(cur); \
-   evas_object_del(tb); \
    efl_del(cur_obj); \
+   evas_object_del(tb); \
    evas_textblock_style_free(st); \
    evas_free(evas); \
 } \

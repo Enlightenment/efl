@@ -21,8 +21,6 @@ evas_include_directories = [
   include_directories(join_paths('..', 'evas')),
   include_directories(join_paths('..', 'evas','canvas')),
   include_directories(join_paths('..', 'evas','common')),
-  include_directories(join_paths('..', 'evas','common3d')),
-  include_directories(join_paths('..', 'evas','common3d', 'save_load')),
   include_directories(join_paths('..', 'evas','include')),
   include_directories(join_paths('..', 'evas','filters'))
 ]

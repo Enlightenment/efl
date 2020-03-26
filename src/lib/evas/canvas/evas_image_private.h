@@ -82,7 +82,6 @@ struct _Evas_Object_Image_State
 
    Evas_Object   *source;
    Evas_Map      *defmap;
-   Evas_Canvas3D_Scene *scene;
 
    Eina_File     *f;
    const char    *key;
@@ -212,11 +211,6 @@ void _evas_image_proxy_source_clip_set(Eo *eo_obj, Eina_Bool source_clip);
 Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 void _evas_image_proxy_source_events_set(Eo *eo_obj, Eina_Bool source_events);
 Eina_Bool _evas_image_proxy_source_events_get(const Eo *eo_obj);
-
-/* Efl.Canvas.Scene3d */
-void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene, void *engine, void *output);
-void _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
-void _evas_image_3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
 
 /* Efl.Canvas.Surface */
 Eina_Bool _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf);

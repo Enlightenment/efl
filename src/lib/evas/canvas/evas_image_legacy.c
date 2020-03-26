@@ -853,8 +853,6 @@ evas_object_image_size_set(Evas_Object *eo_obj, int w, int h)
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int stride = 0;
 
-   if (o->cur->scene) return;
-
    evas_object_async_block(obj);
    _evas_image_cleanup(eo_obj, obj, o);
    if (w < 1) w = 1;

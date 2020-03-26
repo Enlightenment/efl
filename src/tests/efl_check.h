@@ -69,6 +69,7 @@
 
 
 #define EXPECT_ERROR_END \
+    eina_log_print_cb_set(NULL, NULL); \
     ck_assert_int_eq(expect_error_start, EINA_TRUE); \
     DISABLE_ABORT_ON_CRITICAL_END; \
   } while(0)
