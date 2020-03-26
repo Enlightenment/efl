@@ -100,6 +100,10 @@ EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *obj);
  * @{
  */
 
+/**
+ * @struct Ecore_Animator
+ * Opaque handle to manage Ecore Animator objects.
+ */
 typedef struct _Ecore_Animator Ecore_Animator;
 
 /**

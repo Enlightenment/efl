@@ -2732,16 +2732,12 @@ EAPI double ecore_throttle_get(void);
  * @{
  */
 
-/**
- * @enum _Ecore_Animator_Source
- * Defines the timing sources for animators.
- */
-enum _Ecore_Animator_Source    /* Timing sources for animators */
+/** Defines the timing sources for animators. */
+typedef enum
 {
    ECORE_ANIMATOR_SOURCE_TIMER, /**< The default system clock/timer based animator that ticks every "frametime" seconds */
    ECORE_ANIMATOR_SOURCE_CUSTOM /**< A custom animator trigger that you need to call ecore_animator_custom_tick() to make it tick */
-};
-typedef enum _Ecore_Animator_Source Ecore_Animator_Source;
+} Ecore_Animator_Source;
 
 /**
  * @typedef Ecore_Timeline_Cb Ecore_Timeline_Cb
