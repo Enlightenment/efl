@@ -4,7 +4,7 @@ jobs:
   "Fedora31-default":
     docker:
       - image: stefanschmidt1/ci-support-files:Fedora31
-    working_directory: /
+    working_directory: /src
     steps:
       - checkout
       - run: meson build -Decore-imf-loaders-disabler=scim,ibus -Dbindings=luajit,cxx,mono -Dmono-beta=true
@@ -17,7 +17,7 @@ jobs:
   "Fedora31-release-ready":
     docker:
       - image: stefanschmidt1/ci-support-files:Fedora31
-    working_directory: /
+    working_directory: /src
     steps:
       - checkout
       - run: meson build -Decore-imf-loaders-disabler=scim,ibus --buildtype=release
