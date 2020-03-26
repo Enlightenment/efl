@@ -278,3 +278,4 @@ void exactness_image_free(Exactness_Image *img);
 
 int ex_prg_invoke(const char *full_path, int argc, char **argv, Eina_Bool player);
 Eina_Stringshare *ex_prg_full_path_guess(const char *prg);
+void ex_prepare_elm_overloay(void);
