@@ -28,6 +28,8 @@
 /**
  * @defgroup Eina_Types_Group Types
  *
+ * @brief Definition for eina types and core functions.
+ *
  * @{
  */
 
