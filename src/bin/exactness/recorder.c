@@ -7,6 +7,10 @@
 #include <getopt.h>
 #include <unistd.h>
 
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>
+#endif
+
 #include <sys/types.h>
 #ifdef HAVE_SYS_SYSINFO_H
 # include <sys/sysinfo.h>
@@ -224,8 +228,7 @@ static Evas *
 _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
 {
    Evas *e;
-   if (!_evas_new) return NULL;
-   e = _evas_new();
+   e = evas_new();
    if (e)
      {
         INF("New Evas\n");
@@ -290,147 +293,100 @@ _setup_ee_creation(void)
    _last_timestamp = ecore_time_get() * 1000;
 }
 
+#ifdef HAVE_DLSYM
+# define ORIGINAL_CALL_T(t, name, ...) \
+   t (*_original_init_cb)(); \
+   _original_init_cb = dlsym(RTLD_NEXT, name); \
+   original_return = _original_init_cb(__VA_ARGS__);
+#else
+# define ORIGINAL_CALL_T(t, name, ...) \
+   printf("THIS IS NOT SUPPORTED ON WINDOWS\n"); \
+   abort();
+#endif
 
-static const Ecore_Getopt optdesc = {
-  "exactness_record",
-  "%prog [options] <-v|-t|-h> command",
-  PACKAGE_VERSION,
-  "(C) 2017 Enlightenment",
-  "BSD",
-  "A scenario recorder for EFL based applications.\n"
-  "\tF1 - Request stabilization\n"
-  "\tF2 - Request shot\n"
-  "\tF3 - Request to save the scenario\n",
-  1,
-  {
-    ECORE_GETOPT_STORE_STR('t', "test", "Name of the filename where to store the test."),
-    ECORE_GETOPT_STORE_STR('f', "fonts-dir", "Specify a directory of the fonts that should be used."),
+#define ORIGINAL_CALL(name, ...) \
+   ORIGINAL_CALL_T(int, name, __VA_ARGS__)
 
-    ECORE_GETOPT_LICENSE('L', "license"),
-    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-    ECORE_GETOPT_VERSION('V', "version"),
-    ECORE_GETOPT_HELP('h', "help"),
-    ECORE_GETOPT_SENTINEL
-  }
-};
-
-int main(int argc, char **argv)
+EAPI int
+eina_init(void)
 {
-   char *dest = NULL, *eq;
-   char *fonts_dir = NULL;
-   int pret = 1, opt_args = 0;
-   Eina_Bool want_quit = EINA_FALSE;
-   _evas_new = NULL;
+   int original_return;
 
-   Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_STR(dest),
-     ECORE_GETOPT_VALUE_STR(fonts_dir),
+   ORIGINAL_CALL("eina_init");
 
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_NONE
-   };
-
-   _log_domain = eina_log_domain_register("exactness_recorder", NULL);
-
-   if (!ecore_evas_init())
-      return EXIT_FAILURE;
-
-   opt_args = ecore_getopt_parse(&optdesc, values, argc, argv);
-   if (opt_args < 0)
+   if (original_return == 1)
      {
-        fprintf(stderr, "Failed parsing arguments.\n");
-        goto end;
-     }
-   if (want_quit) goto end;
+        _log_domain = eina_log_domain_register("exactness_recorder", NULL);
 
-   /* Check for a sentinel */
-   if (argv[opt_args] && !strcmp(argv[opt_args], "--")) opt_args++;
+        _out_filename = getenv("EXACTNESS_DEST");
+        _setup_unit();
+        if (!_setup_fonts_dir(getenv("EXACTNESS_FONTS_DIR")))
+          return -1;
 
-   /* Check for env variables */
-   do
-     {
-        eq = argv[opt_args] ? strchr(argv[opt_args], '=') : NULL;
-        if (eq)
-          {
-             char *var = malloc(eq - argv[opt_args] + 1);
-             memcpy(var, argv[opt_args], eq - argv[opt_args]);
-             var[eq - argv[opt_args]] = '\0';
-             setenv(var, eq + 1, 1);
-             opt_args++;
-          }
-     } while (eq);
-   _out_filename = eina_stringshare_add(dest);
-
-   if (!_out_filename)
-     {
-        fprintf(stderr, "no test file specified\n");
-        goto end;
-     }
-   else
-     {
-        const char *_test_name;
-        char *slash = strrchr(_out_filename, '/');
-        if (slash) _test_name = strdup(slash + 1);
-        else _test_name = strdup(_out_filename);
-        char *dot = strrchr(_test_name, '.');
-        if (dot) *dot = '\0';
-        if (slash)
-          {
-             *slash = '\0';
-             if (!ecore_file_mkpath(_out_filename))
-               {
-                  fprintf(stderr, "Can't create %s\n", _out_filename);
-                  goto end;
-               }
-             *slash = '/';
-          }
-     }
-   if (strcmp(_out_filename + strlen(_out_filename) - 4,".exu"))
-     {
-        fprintf(stderr, "A file with a exu extension is required - %s invalid\n", _out_filename);
-        goto end;
+        _setup_shot_key();
      }
 
-   if (!argv[opt_args])
+   return original_return;
+}
+
+EAPI int
+ecore_evas_init(void)
+{
+   int original_return;
+
+   ORIGINAL_CALL("ecore_evas_init")
+
+   if (original_return == 1)
      {
-        fprintf(stderr, "no program specified\nUse -h for more information\n");
-        goto end;
+        _setup_ee_creation();
+
      }
 
-   _setup_unit();
-   if (!_setup_fonts_dir(fonts_dir))
-     goto end;
+   return original_return;
+}
 
-   /* Replace the current command line to hide the Exactness part */
-   char **new_argv;
+//hook, to hook in our theme
+EAPI int
+elm_init(int argc, char **argv)
+{
+   int original_return;
+   ORIGINAL_CALL("elm_init", argc, argv)
 
-   new_argv = calloc(argc - opt_args + 1, sizeof(char*));
+   if (original_return == 1)
+     ex_prepare_elm_overloay();
 
-   for (int i = 0; i < argc - opt_args + 1; ++i)
-     {
-        if (i < argc - opt_args)
-          new_argv[i] = argv[opt_args + i];
-        else
-          new_argv[i] = NULL;
-     }
+   return original_return;
+}
 
-   _setup_shot_key();
-   _setup_ee_creation();
-
-   pret = ex_prg_invoke(ex_prg_full_path_guess(argv[opt_args]), argc - opt_args, new_argv, EINA_FALSE);
-
+EAPI void
+ecore_main_loop_begin(void)
+{
+   int original_return;
+   ORIGINAL_CALL("ecore_main_loop_begin")
    _output_write();
-   //free_events(_events_list, EINA_TRUE);
-   //_events_list = NULL;
+   (void)original_return;
+}
 
-   pret = 0;
+EAPI Eina_Value*
+efl_loop_begin(Eo *obj)
+{
+   Eina_Value *original_return;
+   ORIGINAL_CALL_T(Eina_Value*, "efl_loop_begin", obj);
+        _output_write();
+   return original_return;
+}
 
-end:
-   ecore_evas_shutdown();
-   eina_log_domain_unregister(_log_domain);
-   _log_domain = -1;
-   return pret;
+EAPI int
+eina_shutdown(void)
+{
+   int original_return;
+   static Eina_Bool output_written = EINA_FALSE;
+   ORIGINAL_CALL("eina_shutdown")
+   if (original_return == 1 && !output_written)
+     {
+        output_written = EINA_TRUE;
+        _output_write();
+     }
+
+   return original_return;
 }

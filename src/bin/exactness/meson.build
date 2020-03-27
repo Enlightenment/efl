@@ -37,7 +37,7 @@ exactness_play_bin = executable('exactness_play',
   install: true,
   )
 
-exactness_record_bin = executable('exactness_record',
+exactness_record_bin = library('exactness_record',
   [ 'recorder.c', 'common.c', 'common.h' ],
   dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
