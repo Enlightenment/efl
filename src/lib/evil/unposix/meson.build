@@ -21,10 +21,11 @@ if target_machine.system() == 'windows'
     'unistd.h',
   ]
 
-  evil_unposix_lib = library('evil_unposix', 
+
+  evil_unposix_lib = static_library('evil_unposix',
     evil_unposix_src,
-    include_directories: [include_directories('.')],
-    dependencies: [],
+    include_directories: [include_directories('.'), config_dir],
+    dependencies : [],
     install: true,
     version: meson.project_version(),
   )
@@ -37,7 +38,7 @@ if target_machine.system() == 'windows'
 
   install_headers(evil_unposix_header_src,
     install_dir : dir_package_include,
-  ) 
+  )
 
 else
   evil_unposix = declare_dependency()

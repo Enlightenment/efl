@@ -110,7 +110,7 @@ if sys_windows == true
         '-Wno-nonportable-system-include-path',
         '-Wno-microsoft-enum-forward-reference',
       # Syntax/Parsing
-        # '-Wno-implicit-function-declaration',
+        '-Wno-implicit-function-declaration',
         '-Wno-missing-prototypes',
         '-Wno-unreachable-code',
         '-Wno-unreachable-code-return',
