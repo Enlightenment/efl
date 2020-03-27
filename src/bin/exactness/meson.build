@@ -30,7 +30,7 @@ edjs = custom_target('player_entry',
     '@INPUT@', '@OUTPUT@'],
   depends : edje_depends)
 
-exactness_play_bin = executable('exactness_play',
+exactness_play_bin = library('exactness_play',
   [ 'player.c', 'common.c', 'common.h', edjs ],
   dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
