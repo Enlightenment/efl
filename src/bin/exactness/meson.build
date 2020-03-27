@@ -42,5 +42,15 @@ exactness_record_bin = library('exactness_record',
   dependencies: [ elementary ],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
-  )
+)
 
+exactness_env = configuration_data()
+exactness_env.set_quoted('EXACTNESS_RECORD_PRELOAD_PATH', exactness_record_bin.full_path())
+exactness_env.set_quoted('VERSION', meson.project_version())
+
+configure_file(
+  input: 'exactness_record.in',
+  output: 'exactness_record',
+  configuration: exactness_env,
+  install_dir: get_option('bindir'),
+  install_mode: 'rwxr-xr-x')
