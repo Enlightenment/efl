@@ -1349,6 +1349,8 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
           }
 
         str = efl_text_cursor_range_text_get(sel1, sel2);
+        start = efl_text_cursor_position_get(sel1);
+        end = efl_text_cursor_position_get(sel2);
 
         efl_del(sel1);
         efl_del(sel2);
@@ -1537,8 +1539,9 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
      {
         Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
         Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        end = start+1;
         efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, start+1);
+        efl_text_cursor_position_set(sel2, end);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         if (annotations)
@@ -1610,8 +1613,9 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
         Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
         Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
 
+        end = start+1;
         efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, start+1);
+        efl_text_cursor_position_set(sel2, end);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         efl_del(sel1);
