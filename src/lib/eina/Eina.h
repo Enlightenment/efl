@@ -138,7 +138,7 @@
  *
  *
  * @defgroup Eina_Core_Group Core
- * @brief Initialization and shut down and types Etc.
+ * @brief Initialization, shut down and core types.
  * @ingroup Eina
  *
  * @defgroup Eina_Data_Types_Group Data Types
