@@ -1102,41 +1102,9 @@ int main(int argc, char **argv)
      }
    else
      {
-        Eina_List *itr;
-        Exactness_Source_Code *code;
-        Eina_Tmpstr *f_output = NULL;
-        EINA_LIST_FOREACH(_src_unit->codes, itr, code)
-          {
-             if (!strcmp(code->language, "C") && code->command)
-               {
-                  int status;
-                  Ecore_Exe *exe;
-                  Eina_Tmpstr *f_code;
-                  Eina_Strbuf *sbuf;
-                  int fd_code = eina_file_mkstemp("exactness_XXXXXX.c", &f_code);
-                  int fd_output = eina_file_mkstemp("exactness_XXXXXX.output", &f_output);
-                  close(fd_output);
-                  write(fd_code, code->content, strlen(code->content));
-                  close(fd_code);
-
-                  sbuf = eina_strbuf_new();
-                  eina_strbuf_append(sbuf, code->command);
-                  eina_strbuf_replace_all(sbuf, "$SRC", f_code);
-                  eina_strbuf_replace_all(sbuf, "$DEST", f_output);
-                  exe = ecore_exe_pipe_run(eina_strbuf_string_get(sbuf), ECORE_EXE_NONE, NULL);
-#ifdef HAVE_FORK
-                  waitpid(ecore_exe_pid_get(exe), &status, 0);
-#endif
-               }
-          }
-        if (!f_output)
-          {
-             fprintf(stderr, "no program specified\nUse -h for more information\n");
-             goto end;
-          }
-        argv[0] = strdup(f_output);
+        fprintf(stderr, "no program specified\nUse -h for more information\n");
+        goto end;
      }
-
 
    ecore_evas_callback_new_set(_my_evas_new);
    if (_src_type != FTYPE_REMOTE)
@@ -1150,7 +1118,6 @@ int main(int argc, char **argv)
              Exactness_Unit *tmp = NULL;
              if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
              _dest_unit->actions = tmp->actions;
-             _dest_unit->codes = tmp->codes;
           }
         exactness_unit_file_write(_dest_unit, _dest);
      }

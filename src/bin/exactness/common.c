@@ -292,13 +292,6 @@ _unit_desc_make(void)
      }
    if (!unit_d)
      {
-        Eet_Data_Descriptor *code_d = NULL;
-        EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Exactness_Source_Code);
-        code_d = eet_data_descriptor_stream_new(&eddc);
-        EET_DATA_DESCRIPTOR_ADD_BASIC(code_d, Exactness_Source_Code, "language", language, EET_T_STRING);
-        EET_DATA_DESCRIPTOR_ADD_BASIC(code_d, Exactness_Source_Code, "content", content, EET_T_STRING);
-        EET_DATA_DESCRIPTOR_ADD_BASIC(code_d, Exactness_Source_Code, "command", command, EET_T_STRING);
-
         EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Exactness_Action);
         action_d = eet_data_descriptor_stream_new(&eddc);
 
@@ -341,7 +334,6 @@ _unit_desc_make(void)
         unit_d = eet_data_descriptor_stream_new(&eddc);
         EET_DATA_DESCRIPTOR_ADD_LIST(unit_d, Exactness_Unit, "actions", actions, action_d);
         EET_DATA_DESCRIPTOR_ADD_LIST(unit_d, Exactness_Unit, "objs", objs, objs_d);
-        EET_DATA_DESCRIPTOR_ADD_LIST(unit_d, Exactness_Unit, "codes", codes, code_d);
         EET_DATA_DESCRIPTOR_ADD_BASIC(unit_d, Exactness_Unit, "fonts_path", fonts_path, EET_T_STRING);
         EET_DATA_DESCRIPTOR_ADD_BASIC(unit_d, Exactness_Unit, "nb_shots", nb_shots, EET_T_UINT);
      }
