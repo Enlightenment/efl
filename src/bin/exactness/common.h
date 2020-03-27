@@ -245,16 +245,6 @@ typedef struct
 } Exactness_Image;
 
 /**
- * Description of the source code used to generate the tested application.
- */
-typedef struct
-{
-   char *language; /**< String describing the language of the content e.g "C"...*/
-   char *content; /**< Content used as source */
-   char *command; /**< Command needed to generate the application from the content */
-} Exactness_Source_Code;
-
-/**
  * An Exactness test unit, including the list of tested actions and produced images.
  */
 typedef struct
@@ -263,7 +253,6 @@ typedef struct
    /* imgs not in EET */
    Eina_List *imgs;     /**< List of Exactness_Image */
    Eina_List *objs;     /**< List of Exactness_Objects */
-   Eina_List *codes;    /**< List of Exactness_Source_Code */
    const char *fonts_path; /**< Path to the fonts to use, relative to the fonts dir given in parameter to the player/recorder */
    int nb_shots;        /**< The number of shots present in the unit */
 } Exactness_Unit;
