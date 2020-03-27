@@ -1365,11 +1365,12 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    str = str ? str : strdup("");
 
    ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ret, cleanup);
 
    eldbus_message_arguments_append(ret, "sii", str, start, end);
-   free(str);
 
+cleanup:
+   free(str);
    return ret;
 }
 
@@ -1409,11 +1410,12 @@ _text_text_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
    str = str ? str : strdup("");
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ret, cleanup);
+
    eldbus_message_arguments_append(ret, "s", str);
 
+cleanup:
    free(str);
-
    return ret;
 }
 
@@ -1570,9 +1572,10 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
      }
 
    ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ret, cleanup);
    eldbus_message_arguments_append(ret, "siib", value ? value : "", start, end, res);
 
+cleanup:
    free(value);
    return ret;
 }
