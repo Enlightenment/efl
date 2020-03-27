@@ -151,7 +151,6 @@ _exu_imgs_unpack(const char *exu_path, const char *dir, const char *ent_name)
           }
         efl_del(o);
      }
-   efl_del(e);
    ecore_evas_free(ee);
 }
 
