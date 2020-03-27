@@ -538,8 +538,6 @@ typedef unsigned char Eina_Bool;
  */
 #define EINA_TRUE  ((Eina_Bool)1)
 
-EAPI extern const unsigned int eina_prime_table[];
-
 /**
  * @typedef Eina_Compare_Cb
  * Function used in functions using sorting. It compares @p data1 and
