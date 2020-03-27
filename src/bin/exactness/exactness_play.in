@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
+import os
+
+parser = argparse.ArgumentParser(description='A scenario recorder for EFL based applications.'
+                                              '\tF1 - Request stabilization\n'
+                                              '\tF2 - Request shot\n'
+                                              '\tF3 - Request to save the scenario\n')
+parser.add_argument('app', metavar='app', help='The app to run. You can also pass environment variables here.', type=str, nargs='*')
+parser.add_argument('-o', '--output', metavar='output', help=" Set the destination for the shots.\n"
+          " If a .exu is given, the shots are stored in the file.\n"
+          " Otherwise the given path is considered as a directory\n"
+          " where shots will be stored.\n"
+          " If omitted, the output type (exu or dir) is determined\n"
+          " by the given test extension (resp. exu or rec).", type=str)
+parser.add_argument('-t', '--tests', metavar='tests', help='Name of the filename where to store the test.', type=str)
+parser.add_argument('-s', '--show-on-screen', help='Show on screen', action='store_true', default=False)
+parser.add_argument('--scan-objects', help='Extract information of all the objects at every shot.', action='store_true')
+parser.add_argument('--external-injection', help='Expect events injection via Eina debug channel.', action='store_true')
+parser.add_argument('--disable-screenshots', help='Disable screenshots.', action='store_true')
+parser.add_argument('-f', '--fontsdir', metavar='fontsdir', help='Specify a directory of the fonts that should be used.', type=str)
+parser.add_argument('--stabilize-shots', help='Wait for the frames to be stable before taking the shots.', action='store_true')
+parser.add_argument('--speed', metavar='speed', help='Set the speed used to play the given test (default 1.0).', type=float, default=1.0)
+parser.add_argument('-v', '--verbose', help='Turn verbose messages on', action='store_true')
+parser.add_argument('-L', '--license', help='the path where to find the meson build directory', action='store_true')
+parser.add_argument('-C', '--copyright', help='the path where to find the meson build directory', action='store_true')
+parser.add_argument('-V', '--version', help='the path where to find the meson build directory', action='store_true')
+
+G = parser.parse_args()
+
+if G.license:
+  print("BSD.")
+  exit(0)
+
+if G.copyright:
+  print("(C) 2017 Enlightenment.")
+  exit(0)
+
+if G.version:
+  print(@VERSION@)
+  exit(0)
+
+spawn_env = os.environ.copy()
+spawn_env["LD_PRELOAD"] = @EXACTNESS_PLAY_PRELOAD_PATH@
+
+if G.tests == None and G.external_injection == True:
+  print("no test file specified")
+  exit(-1)
+if G.tests != None and G.external_injection == True:
+  print("Cannot inject events from a source file and from outside simultaneously")
+  exit(-1)
+if G.scan_objects == True and G.tests.endswith(".exu"):
+  printf("Scan objects options is available only if the destination is a EXU file")
+  exit(-1)
+
+if G.output != None:
+  spawn_env["EXACTNESS_DEST"] = G.output;
+if G.external_injection:
+  spawn_env["EXACTNESS_EXTERNAL_INJECTION"] = "Yes"
+if G.tests != None:
+  spawn_env["EXACTNESS_SRC"] = G.tests
+if G.fontsdir != None:
+  spawn_env["EXACTNESS_FONTS_DIR"] = G.fontsdir
+if G.speed != 1.0:
+  spawn_env["EXACTNESS_SPEED"] = G.speed
+if G.scan_objects:
+  spawn_env["EXACTNESS_SCAN_OBJECTS"] = "Yes"
+if G.disable_screenshots:
+  spawn_env["EXACTNESS_DISABLE_SHOTS"] = "Yes"
+if G.stabilize_shots:
+  spawn_env["EXACTNESS_STABILIZE_SHOTS"] = "Yes"
+if G.verbose:
+  spawn_env["EXACTNESS_VERBOSE"] = "Yes"
+if G.show_on_screen == False:
+  spawn_env["ELM_DISPLAY"] = "buffer"
+
+passed_all_the_env_vars = False
+app = []
+
+for argument in G.app:
+  if '=' not in argument:
+    passed_all_the_env_vars = True
+  else:
+    if passed_all_the_env_vars:
+      print("Error, env vars can only be specified at the beginning of the app call line")
+      exit(-1)
+    split_env_var = argument.split('=')
+    spawn_env[split_env_var[0]] = split_env_var[1]
+
+  if passed_all_the_env_vars:
+    app.append(argument)
+
+recorder = subprocess.Popen(app, env=spawn_env)
+recorder.wait()
