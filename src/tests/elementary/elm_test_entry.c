@@ -590,6 +590,28 @@ EFL_START_TEST(elm_entry_test_text_class)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_keycode)
+{
+   Evas_Object *win, *entry;
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   entry = elm_entry_add(win);
+   evas_object_show(entry);
+
+   elm_entry_entry_set(entry, "Hello World");
+   Evas *e = evas_object_evas_get(entry);
+   elm_object_focus_set(entry, EINA_TRUE);
+   evas_key_modifier_on(e, "Control");
+   evas_event_feed_key_down_with_keycode(e, "", "", "", "", time(NULL), NULL, 65);
+   ecore_main_loop_iterate();
+   evas_event_feed_key_down(e, "BackSpace", "BackSpace", "\b", "\b", time(NULL), NULL);
+   ck_assert_str_eq(elm_object_text_get(entry), "");
+
+   evas_object_del(entry);
+   evas_object_del(win);
+}
+EFL_END_TEST
+
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_legacy_type_check);
@@ -608,4 +630,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_magnifier);
    tcase_add_test(tc, elm_entry_file_get_set);
    tcase_add_test(tc, elm_entry_test_text_class);
+   tcase_add_test(tc, elm_entry_keycode);
 }
