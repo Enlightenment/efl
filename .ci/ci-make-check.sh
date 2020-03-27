@@ -11,6 +11,7 @@ NUM_TRIES=5
 
 if [ "$1" = "codecov" ] ; then
   for tries in $(seq 1 ${NUM_TRIES}); do
+    export EFL_TEST_ECORE_CON_IPV6=1
     meson test -t 120 -C build --wrapper dbus-launch && break
     cat build/meson-logs/testlog-dbus-launch.txt
     if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
