@@ -3,7 +3,7 @@
  * @ingroup Elementary
  *
  * Elementary configuration is formed by a set options bounded to a
- * given @ref Profile profile, like @ref Theme theme, @ref Fingers
+ * given @ref Elm_Profile, like @ref Elm_Theme, @ref Elm_Fingers
  * "finger size", etc. These are functions with which one synchronizes
  * changes made to those values to the configuration storing files, de
  * facto. You most probably don't want to use the functions in this
@@ -596,7 +596,7 @@ EAPI Eina_Bool    elm_config_scroll_animation_disabled_get(void);
  * This option disables timed animations during scrolling and forces scroll actions
  * to be performed immediately.
  * 
- * @param disable The state of this option
+ * @param enable The state of this option
  * 
  * @see elm_config_scroll_animation_disabled_get()
  *
@@ -763,7 +763,7 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_min_
 /**
  * Set the min limit for the momentum animation duration(unit:second)
  *
- * @param the thumb scroll momentum animation duration min limit
+ * @param min the thumb scroll momentum animation duration min limit
  *
  * @see elm_config_scroll_thumbscroll_acceleration_weight_set()
  * @ingroup Elm_Scrolling
@@ -782,7 +782,7 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_max_
 /**
  * Set the max limit for the momentum animation duration(unit:second)
  *
- * @param the thumb scroll momentum animation duration max limit
+ * @param max the thumb scroll momentum animation duration max limit
  *
  * @see elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get()
  * @ingroup Elm_Scrolling
@@ -931,7 +931,6 @@ EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode
 /**
  * Sets the slider's indicator visible mode.
  *
- * @param obj The slider object.
  * @param mode Elm_Slider_Indicator_Visible_Mode.
  * viewport.
  *
@@ -943,7 +942,6 @@ EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visi
 /**
  * Get the slider's indicator visible mode.
  *
- * @param obj The slider object.
  * @return @c ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT if not set anything by the user.
  * @c ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS,
  *    ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE if any of the above is set by user.
@@ -1097,7 +1095,7 @@ EAPI void   elm_config_scale_set(double scale);
  * Get the icon theme the user has set.
  *
  * This gets the global icon theme currently set or the default value
- * ELM_CONFIG_ICON_THEME_ELEMENTARY.
+ * #ELM_CONFIG_ICON_THEME_ELEMENTARY.
  *
  * @return the icon theme to use
  * @ingroup Elm_Icon
@@ -1110,9 +1108,9 @@ EAPI const char *elm_config_icon_theme_get(void);
  *
  * This method will set the icon theme for all elm_icon_standard_set calls.
  * Valid parameters are the name of an installed freedesktop.org icon theme
- * or ELM_CONFIG_ICON_THEME_ELEMENTARY for the built in theme.
+ * or #ELM_CONFIG_ICON_THEME_ELEMENTARY for the built in theme.
  *
- * @param the name of a freedesktop.org icon theme or ELM_CONFIG_ICON_THEME_ELEMENTARY
+ * @param theme the name of a freedesktop.org icon theme or #ELM_CONFIG_ICON_THEME_ELEMENTARY
  * @ingroup Elm_Icon
  * @since 1.18
  */

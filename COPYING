@@ -12,7 +12,6 @@ the licensing of such libraries is compatible with the libraries that
 use them and is not more restrictive).
 
 evil:            licenses/COPYING.BSD
-escape:          licenses/COPYING.GPL (used in PlayStation native)
 eina:            licenses/COPYING.LGPL
 emile:           licenses/COPYING.LGPL
 eet:             licenses/COPYING.BSD
@@ -35,7 +34,6 @@ eolian:          licenses/COPYING.BSD
 elua:            licenses/COPYING.BSD
 elementary:      licenses/COPYING.LGPL
 generic/evas:    licenses/COPYING.GPL (separate binary/executable)
-generic/emotion: licenses/COPYING.GPL (separate binary/executable)
 efl:             licenses/COPYING.LGPL
 csharp bindings: licenses/COPYING.ASL
 cxx bindings:    licenses/COPYING.ASL

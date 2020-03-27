@@ -7,6 +7,10 @@
  * @brief Definition of special values for user configuration.
  */
 
+/**
+ * @def ELM_CONFIG_ICON_THEME_ELEMENTARY
+ * Name to use in elm_config_icon_theme_set() to use Elementary's own icon set.
+ */
 #define ELM_CONFIG_ICON_THEME_ELEMENTARY "_Elementary_Icon_Theme"
 
 #if defined(EFL_BUILD) || defined(ELM_INTERNAL_API_ARGESFSDFEFC)

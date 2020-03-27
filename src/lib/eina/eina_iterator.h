@@ -322,7 +322,7 @@ EAPI Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int s
  * @brief Creates an Eina_Iterator that iterates through a
  * NUL-terminated C array.
  *
- * @param[in] array The NUL-terminated array
+ * @param[in] Array The NUL-terminated array
  * @return The iterator that will walk over the array.
  *
  * You can create it like this:
@@ -370,10 +370,10 @@ EAPI Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EIN
  * @brief Calls the process method on each node of iterator, producing new "processed"
  * nodes and returning a new iterator which contains them.
  *
- * @param[in] original Iterator containing the nodes to process.
+ * @param[in] iterator Iterator containing the nodes to process.
  * @param[in] process Method to call on each node.
  * @param[in] free_cb Method called when all nodes have been processed. It receives "data" as a parameter.
- * @param[in] data Additional data passed to the process method.
+ * @param[in] fdata Additional data passed to the process method.
  *
  * Processes every node in the input iterator and returns a new iterator containing
  * the processed nodes. This is akin to a Map function:
@@ -388,7 +388,7 @@ EAPI Eina_Iterator* eina_iterator_processed_new(Eina_Iterator *iterator, Eina_Pr
  * @brief Creates an Eina_Iterator that iterates through a series
  * of Eina_Iterator.
  *
- * @param[in] it The first Eina_Iterator to iterate over
+ * @param[in] It The first Eina_Iterator to iterate over
  * @return The iterator that will walk all the other iterator
  *
  * Eina_Iterator* iterator = eina_multi_iterator_new(it1, it2, it3);

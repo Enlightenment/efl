@@ -577,6 +577,8 @@ static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
                                                 void *type_private_data);
 static void _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Textblock_Data *o);
 
+static void _evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur,
+                                                   Eina_Bool emit_change);
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -8735,10 +8737,14 @@ _evas_object_textblock_text_markup_set(Eo *eo_obj, Efl_Canvas_Textblock_Data *o,
         Eina_List *l;
         Efl_Text_Cursor_Handle *cur;
 
-        evas_textblock_cursor_paragraph_first(o->cursor);
+        /*update all cursors positions first, without emitting change*/
         EINA_LIST_FOREACH(o->cursors, l, cur)
           {
-             evas_textblock_cursor_paragraph_first(cur);
+             _evas_textblock_cursor_paragraph_first(cur, EINA_FALSE);
+          }
+        /*emitting change event for all cursors, after all of them are ready*/
+        EINA_LIST_FOREACH(o->cursors, l, cur)
+          {
              _evas_textblock_cursor_object_changed(cur);
           }
 
@@ -9992,8 +9998,8 @@ found:
    _evas_textblock_changed(o, eo_obj);
 }
 
-EAPI void
-evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur)
+static void
+_evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur, Eina_Bool emit_change)
 {
    if (!cur) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
@@ -10001,7 +10007,14 @@ evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur)
    Efl_Canvas_Textblock_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    cur->node = o->text_nodes;
    cur->pos = 0;
-   _evas_textblock_cursor_object_changed(cur);
+   if (emit_change)
+     _evas_textblock_cursor_object_changed(cur);
+}
+
+EAPI void
+evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur)
+{
+   _evas_textblock_cursor_paragraph_first(cur, EINA_TRUE);
 }
 
 EAPI void

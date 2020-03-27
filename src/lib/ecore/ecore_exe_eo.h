@@ -4,6 +4,10 @@
 #ifndef _ECORE_EXE_EO_CLASS_TYPE
 #define _ECORE_EXE_EO_CLASS_TYPE
 
+/**
+ * @struct Ecore_Exe
+ * Opaque handle to manage Ecore Exe objects.
+ */
 typedef Eo Ecore_Exe;
 
 #endif

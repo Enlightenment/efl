@@ -392,7 +392,7 @@ EAPI void eina_matrix3_compose(const Eina_Matrix3 *m1,
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_translate(Eina_Matrix3 *t, double tx, double ty);
+EAPI void eina_matrix3_translate(Eina_Matrix3 *m, double tx, double ty);
 
 /**
  * @brief Sets the matrix values for a scaling operation.
@@ -403,16 +403,16 @@ EAPI void eina_matrix3_translate(Eina_Matrix3 *t, double tx, double ty);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_scale(Eina_Matrix3 *t, double sx, double sy);
+EAPI void eina_matrix3_scale(Eina_Matrix3 *m, double sx, double sy);
 
 /**
  * @brief Sets the matrix values for a rotation operation.
- * @param[out] t The matrix.
+ * @param[out] m The matrix.
  * @param[in] rad The number of radians to rotate.
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_rotate(Eina_Matrix3 *t, double rad);
+EAPI void eina_matrix3_rotate(Eina_Matrix3 *m, double rad);
 
 /**
  * @brief Sets the given floating point matrix to the identity matrix.
@@ -424,7 +424,7 @@ EAPI void eina_matrix3_rotate(Eina_Matrix3 *t, double rad);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_identity(Eina_Matrix3 *t);
+EAPI void eina_matrix3_identity(Eina_Matrix3 *m);
 
 /**
  * @brief Calculates the determinant of the given matrix.

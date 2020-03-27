@@ -544,42 +544,25 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    _Eo_Object *obj = NULL;
    const Eo_Vtable *vtable = NULL;
    const op_type_funcs *func;
-   Eina_Bool is_obj;
    Eina_Bool super = EINA_TRUE;
 
    if (EINA_UNLIKELY(!eo_id)) goto on_null;
 
-   call->eo_id = eo_id;
 
-   is_obj = _eo_is_a_obj(eo_id);
+   EO_OBJ_POINTER_RETURN_VAL_PROXY(eo_id, _obj, EINA_FALSE);
 
-   if (EINA_LIKELY(is_obj == EINA_TRUE))
-     {
-        EO_OBJ_POINTER_RETURN_VAL_PROXY(eo_id, _obj, EINA_FALSE);
-
-        obj = _obj;
-        klass = _obj->klass;
-        vtable = EO_VTABLE2(obj);
-        if (EINA_UNLIKELY(_obj->cur_klass != NULL))
-          {
-             // YES this is a goto with a label to return. this is a
-             // micro-optimization to move infrequent code out of the
-             // hot path of the function
-             goto obj_super;
-          }
-
-obj_super_back:
-        call->obj = obj;
-        _efl_ref(_obj);
-     }
-   else
+   obj = _obj;
+   klass = _obj->klass;
+   vtable = EO_VTABLE2(obj);
+   if (EINA_UNLIKELY(_obj->cur_klass != NULL))
      {
         // YES this is a goto with a label to return. this is a
         // micro-optimization to move infrequent code out of the
         // hot path of the function
-        goto ok_klass;
+        goto obj_super;
      }
-ok_klass_back:
+obj_super_back:
+   _efl_ref(_obj);
 
    main_klass =  klass;
 
@@ -603,9 +586,10 @@ ok_cur_klass_back:
 
    if (EINA_LIKELY(func->func && func->src))
      {
+        call->eo_id = eo_id;
+        call->obj = obj;
         call->func = func->func;
-
-        if (is_obj) call->data = _efl_data_scope_get(obj, func->src);
+        call->data = _efl_data_scope_get(obj, func->src);
 
         return EINA_TRUE;
      }
@@ -616,7 +600,6 @@ ok_cur_klass_back:
 
 end:
    /* Try composite objects */
-   if (is_obj)
      {
         Eina_List *itr;
         Eo *emb_obj_id;
@@ -665,12 +648,10 @@ err_func_src:
    ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
        file, line, func_name, op, klass->desc->name);
 err:
-   if (is_obj)
-     {
-        _apply_auto_unref(obj, eo_id);
-        _efl_unref(obj);
-        _eo_obj_pointer_done((Eo_Id)eo_id);
-     }
+   _apply_auto_unref(obj, eo_id);
+   _efl_unref(obj);
+   _eo_obj_pointer_done((Eo_Id)eo_id);
+
    return EINA_FALSE;
 
    // yes - special "move out of hot path" code blobs with goto's for
@@ -680,18 +661,6 @@ ok_cur_klass:
    if (!func) goto end;
    klass = func->src;
    goto ok_cur_klass_back;
-
-ok_klass:
-     {
-        EO_CLASS_POINTER_GOTO_PROXY(eo_id, _klass, err_klass);
-        klass = _klass;
-        vtable = &klass->vtable;
-        cur_klass = _super_klass;
-        if (cur_klass) _super_klass = NULL;
-        call->obj = NULL;
-        call->data = NULL;
-     }
-   goto ok_klass_back;
 
 obj_super:
    {
@@ -710,10 +679,6 @@ obj_super:
 
    }
    goto obj_super_back;
-
-err_klass:
-   _EO_POINTER_ERR(eo_id, "in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
-   return EINA_FALSE;
 
 on_null:
    if (EINA_UNLIKELY(efl_del_api_generation != _efl_object_init_generation))

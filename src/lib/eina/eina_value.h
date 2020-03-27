@@ -1847,10 +1847,10 @@ static inline Eina_Bool eina_value_array_value_get(const Eina_Value *src,
  * @brief Definition for the macro to iterate over an array contained in an Eina_Value.
  * @since 1.21
  *
- * @param[in] array The list to iterate over.
- * @param[in] length Contain the length of the array
- * @param[out] it Contain the current position walked over
- * @param[out] value Contain the value at the current position.
+ * @param[in] Array The list to iterate over.
+ * @param[in] Length Contain the length of the array
+ * @param[out] It Contain the current position walked over
+ * @param[out] Value Contain the value at the current position.
  *
  * This macro iterates over @p array from the first element to
  * the last. @p value is the data related to the current element.
@@ -1966,7 +1966,7 @@ static inline Eina_Bool eina_value_list_setup(Eina_Value *value,
 /**
  * @brief Queries number of elements in value of list type.
  *
- * @param[in]value value object.
+ * @param[in] value value object.
  * @return number of child elements.
  *
  * @since 1.2

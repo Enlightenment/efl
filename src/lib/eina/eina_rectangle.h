@@ -550,7 +550,7 @@ EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h) EINA_MALLOC 
 /**
  * @brief Frees the given rectangle.
  *
- * @param[iin] rect The rectangle to free.
+ * @param[in] rect The rectangle to free.
  *
  * This function removes @p rect from the rectangles pool.
  */

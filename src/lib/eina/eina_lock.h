@@ -261,7 +261,7 @@ static inline Eina_Bool eina_condition_wait(Eina_Condition *cond);
  * @param[in] t The maximum amount of time to wait, in seconds.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise. If the operation
- *         timed out, eina error will be set to #ETIMEDOUT.
+ *         timed out, eina error will be set to @c ETIMEDOUT.
  *
  * @see eina_condition_wait()
  */
@@ -545,7 +545,7 @@ static inline Eina_Bool eina_barrier_wait(Eina_Barrier *barrier);
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @note Spinlocks are only implemented on the POSIX platform and are only available
- *      if #EINA_HAVE_POSIX_SPINLOCK is defined. you get a new #Eina_Lock on All other platforms.
+ *      if @c EINA_HAVE_POSIX_SPINLOCK is defined. You get a new #Eina_Lock on All other platforms.
  *
  * @see eina_spinlock_free()
  */

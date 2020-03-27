@@ -52,7 +52,7 @@ _stop_event_soon(void *data EINA_UNUSED, const Efl_Event *ev)
 
 EFL_START_TEST(text_all_select_all_unselect)
 {
-   Eo *txt;
+   Eo *txt, *txt2;
    Eo *win = win_add();
 
    int i_have_selection = 0, i_selection = 0;
@@ -116,8 +116,12 @@ EFL_START_TEST(text_all_select_all_unselect)
    efl_text_interactive_all_unselect(txt);
    ck_assert_int_eq(i_have_selection, 2);
 
+   //cursor selection change on efl_markup_set
+   txt2 = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_text_markup_set(txt2, "<ps>");
 
    efl_del(txt);
+   efl_del(txt2);
    efl_del(win);
 }
 EFL_END_TEST

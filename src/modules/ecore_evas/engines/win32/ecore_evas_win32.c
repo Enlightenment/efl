@@ -1292,22 +1292,28 @@ _ecore_evas_win32_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int sea
         Eina_Rw_Slice slice;
 
         data = ecore_win32_clipboard_get((Ecore_Win32_Window *)ee->prop.window, &size, mime_type);
-        if (eina_str_has_prefix(mime_type, "text/"))
+        if (size != 0)
           {
-             //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
-             slice.len = size + 1;
-             slice.mem = eina_memdup(data, size, EINA_TRUE);
+             if (eina_str_has_prefix(mime_type, "text/"))
+               {
+                  //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
+                 slice.len = size + 1;
+                 slice.mem = eina_memdup(data, size, EINA_TRUE);
+                 free(data);
+               }
+             else
+               {
+                  slice.len = size;
+                  slice.mem = data;
+               }
+             content = eina_content_new(eina_rw_slice_slice_get(slice), mime_type);
+             if (!content) // construction can fail because of some validation reasons
+               eina_promise_reject(promise, ecore_evas_no_matching_type);
+             else
+               eina_promise_resolve(promise, eina_value_content_init(content));
           }
         else
-          {
-             slice.len = size;
-             slice.mem = data;
-          }
-        content = eina_content_new(eina_rw_slice_slice_get(slice), mime_type);
-        if (!content) // construction can fail because of some validation reasons
           eina_promise_reject(promise, ecore_evas_no_matching_type);
-        else
-          eina_promise_resolve(promise, eina_value_content_init(content));
      }
    return future;
 }
