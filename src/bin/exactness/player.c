@@ -903,12 +903,157 @@ static const Ecore_Getopt optdesc = {
   }
 };
 
+static Eina_Bool
+_setup_dest_type(const char *dest, Eina_Bool external_injection)
+{
+   if (dest)
+     {
+        _dest = eina_stringshare_add(dest);
+        if (!strcmp(_dest + strlen(_dest) - 4,".exu"))
+          {
+             _dest_type = FTYPE_EXU;
+             /* Cut path at the beginning of the file name */
+             char *file_start = strrchr(dest, '/');
+             *file_start = '\0';
+
+             if (!ecore_file_mkpath(dest))
+               {
+                  fprintf(stderr, "Path for %s cannot be created\n", dest);
+                  return EINA_FALSE;
+               }
+          }
+        else
+          {
+             _dest_type = FTYPE_DIR;
+             if (!ecore_file_mkpath(_dest))
+               {
+                  fprintf(stderr, "Directory %s cannot be created\n", _dest);
+                  return EINA_FALSE;
+               }
+          }
+     }
+   if (external_injection)
+     {
+        _src_type = FTYPE_REMOTE;
+        if (_dest_type == FTYPE_UNKNOWN) _dest_type = FTYPE_REMOTE;
+     }
+   return EINA_TRUE;
+}
+
+static void
+_setup_names(const char *src)
+{
+   if (src)
+     {
+        _src_filename = eina_stringshare_add(src);
+        if (!strcmp(_src_filename + strlen(_src_filename) - 4,".exu"))
+          {
+             _src_type = FTYPE_EXU;
+             if (_dest_type == FTYPE_UNKNOWN)
+               {
+                  _dest_type = FTYPE_EXU;
+                  _dest = "./output.exu";
+               }
+          }
+        char *slash = strrchr(_src_filename, '/');
+        if (slash) _test_name = strdup(slash + 1);
+        else _test_name = strdup(_src_filename);
+        char *dot = strrchr(_test_name, '.');
+        if (dot) *dot = '\0';
+     }
+}
+
+static void
+_setup_dest_unit(void)
+{
+   if (_dest_type == FTYPE_EXU) _dest_unit = calloc(1, sizeof(*_dest_unit));
+
+}
+
+static void
+_remove_old_shots(void)
+{
+   if (_dest_type == FTYPE_DIR && _test_name)
+      eina_file_dir_list(_dest, 0, _old_shots_rm_cb, (void *)_test_name);
+}
+
+static Eina_Bool
+_setup_font_settings(const char *fonts_dir)
+{
+   const char *chosen_fonts = NULL;
+   if (_src_unit && _src_unit->fonts_path)
+     {
+        char buf[PATH_MAX];
+        if (!fonts_dir) fonts_dir = "./fonts";
+        sprintf(buf, "%s/%s", fonts_dir, _src_unit->fonts_path);
+        if (!ecore_file_exists(buf))
+          {
+             fprintf(stderr, "Unable to use the fonts path '%s' provided in %s\n",
+                   _src_unit->fonts_path, _src_filename);
+             return EINA_FALSE;
+          }
+        chosen_fonts = _src_unit->fonts_path;
+     }
+   if (fonts_dir)
+     {
+        Eina_Tmpstr *fonts_conf_name = NULL;
+        if (!ecore_file_exists(fonts_dir))
+          {
+             fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
+             return EINA_FALSE;
+          }
+        if (!chosen_fonts)
+          {
+             Eina_List *dated_fonts = ecore_file_ls(fonts_dir);
+             char *date_dir;
+             chosen_fonts = eina_stringshare_add(eina_list_last_data_get(dated_fonts));
+             EINA_LIST_FREE(dated_fonts, date_dir) free(date_dir);
+          }
+        if (chosen_fonts)
+          {
+             int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
+             FILE *tmp_f = fdopen(tmp_fd, "wb");
+             fprintf(tmp_f,
+                   "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
+                   "<dir prefix=\"default\">%s/%s</dir>\n</fontconfig>\n",
+                   fonts_dir, chosen_fonts);
+             fclose(tmp_f);
+             close(tmp_fd);
+
+             setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
+          }
+     }
+   return EINA_TRUE;
+}
+
+static void
+_setup_ee_creation(void)
+{
+   ecore_evas_callback_new_set(_my_evas_new);
+   if (_src_type != FTYPE_REMOTE)
+      ecore_idler_add(_src_feed, NULL);
+}
+
+static void
+_write_unit_file(void)
+{
+   if (_dest && _dest_unit)
+     {
+        if (_src_unit)
+          {
+             Exactness_Unit *tmp = NULL;
+             if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
+             _dest_unit->actions = tmp->actions;
+          }
+        exactness_unit_file_write(_dest_unit, _dest);
+     }
+}
+
 int main(int argc, char **argv)
 {
    int pret = 1, opt_args = 0;
    char *src = NULL, *dest = NULL, *eq;
    char *fonts_dir = NULL;
-   const char *chosen_fonts = NULL;
    Eina_Bool show_on_screen = EINA_FALSE;
    Eina_Bool want_quit = EINA_FALSE, external_injection = EINA_FALSE;
    _evas_new = NULL;
@@ -962,32 +1107,6 @@ int main(int argc, char **argv)
           }
      } while (eq);
 
-   if (dest)
-     {
-        _dest = eina_stringshare_add(dest);
-        if (!strcmp(_dest + strlen(_dest) - 4,".exu"))
-          {
-             _dest_type = FTYPE_EXU;
-             /* Cut path at the beginning of the file name */
-             char *file_start = strrchr(dest, '/');
-             *file_start = '\0';
-
-             if (!ecore_file_mkpath(dest))
-               {
-                  fprintf(stderr, "Path for %s cannot be created\n", dest);
-                  goto end;
-               }
-          }
-        else
-          {
-             _dest_type = FTYPE_DIR;
-             if (!ecore_file_mkpath(_dest))
-               {
-                  fprintf(stderr, "Directory %s cannot be created\n", _dest);
-                  goto end;
-               }
-          }
-     }
    if (!src && !external_injection)
      {
         fprintf(stderr, "no test file specified\n");
@@ -998,29 +1117,10 @@ int main(int argc, char **argv)
         fprintf(stderr, "Cannot inject events from a source file and from outside simultaneously\n");
         goto end;
      }
-   if (external_injection)
-     {
-        _src_type = FTYPE_REMOTE;
-        if (_dest_type == FTYPE_UNKNOWN) _dest_type = FTYPE_REMOTE;
-     }
-   if (src)
-     {
-        _src_filename = eina_stringshare_add(src);
-        if (!strcmp(_src_filename + strlen(_src_filename) - 4,".exu"))
-          {
-             _src_type = FTYPE_EXU;
-             if (_dest_type == FTYPE_UNKNOWN)
-               {
-                  _dest_type = FTYPE_EXU;
-                  _dest = "./output.exu";
-               }
-          }
-        char *slash = strrchr(_src_filename, '/');
-        if (slash) _test_name = strdup(slash + 1);
-        else _test_name = strdup(_src_filename);
-        char *dot = strrchr(_test_name, '.');
-        if (dot) *dot = '\0';
-     }
+   if (!_setup_dest_type(dest, external_injection))
+     goto end;
+
+   _setup_names(src);
 
    if (_scan_objects && _dest_type != FTYPE_EXU)
      {
@@ -1028,10 +1128,8 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   if (_dest_type == FTYPE_EXU) _dest_unit = calloc(1, sizeof(*_dest_unit));
-
-   if (_dest_type == FTYPE_DIR && _test_name)
-      eina_file_dir_list(_dest, 0, _old_shots_rm_cb, (void *)_test_name);
+   _setup_dest_unit();
+   _remove_old_shots();
 
    if (!_src_open())
      {
@@ -1040,48 +1138,8 @@ int main(int argc, char **argv)
      }
 
    if (!show_on_screen) setenv("ELM_ENGINE", "buffer", 1);
-   if (_src_unit && _src_unit->fonts_path)
-     {
-        char buf[PATH_MAX];
-        if (!fonts_dir) fonts_dir = "./fonts";
-        sprintf(buf, "%s/%s", fonts_dir, _src_unit->fonts_path);
-        if (!ecore_file_exists(buf))
-          {
-             fprintf(stderr, "Unable to use the fonts path '%s' provided in %s\n",
-                   _src_unit->fonts_path, _src_filename);
-             goto end;
-          }
-        chosen_fonts = _src_unit->fonts_path;
-     }
-   if (fonts_dir)
-     {
-        Eina_Tmpstr *fonts_conf_name = NULL;
-        if (!ecore_file_exists(fonts_dir))
-          {
-             fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
-             goto end;
-          }
-        if (!chosen_fonts)
-          {
-             Eina_List *dated_fonts = ecore_file_ls(fonts_dir);
-             char *date_dir;
-             chosen_fonts = eina_stringshare_add(eina_list_last_data_get(dated_fonts));
-             EINA_LIST_FREE(dated_fonts, date_dir) free(date_dir);
-          }
-        if (chosen_fonts)
-          {
-             int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
-             FILE *tmp_f = fdopen(tmp_fd, "wb");
-             fprintf(tmp_f,
-                   "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
-                   "<dir prefix=\"default\">%s/%s</dir>\n</fontconfig>\n",
-                   fonts_dir, chosen_fonts);
-             fclose(tmp_f);
-             close(tmp_fd);
-
-             setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
-          }
-     }
+   if (!_setup_font_settings(fonts_dir))
+     goto end;
    char **new_argv = argv;
    int new_argc = argc;
 
@@ -1105,22 +1163,11 @@ int main(int argc, char **argv)
         fprintf(stderr, "no program specified\nUse -h for more information\n");
         goto end;
      }
+   _setup_ee_creation();
 
-   ecore_evas_callback_new_set(_my_evas_new);
-   if (_src_type != FTYPE_REMOTE)
-      ecore_idler_add(_src_feed, NULL);
    pret = ex_prg_invoke(ex_prg_full_path_guess(new_argv[0]), new_argc, new_argv, EINA_TRUE);
 
-   if (_dest && _dest_unit)
-     {
-        if (_src_unit)
-          {
-             Exactness_Unit *tmp = NULL;
-             if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
-             _dest_unit->actions = tmp->actions;
-          }
-        exactness_unit_file_write(_dest_unit, _dest);
-     }
+   _write_unit_file();
 
 end:
    ecore_evas_shutdown();
