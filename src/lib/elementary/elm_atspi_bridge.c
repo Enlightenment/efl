@@ -1303,7 +1303,7 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    const char *obj_path = eldbus_message_path_get(msg);
    char *str;
    Efl_Access_Text_Granularity gran;
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
@@ -1523,7 +1523,7 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
    char *value = NULL;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eina_Bool res = EINA_FALSE;
    Eina_Iterator *annotations;
@@ -1589,7 +1589,7 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
    Efl_Access_Text_Attribute *attr;
@@ -2203,7 +2203,7 @@ _text_run_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
    Eina_List *attrs, *defaults;
