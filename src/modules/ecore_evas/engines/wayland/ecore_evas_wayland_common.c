@@ -2624,7 +2624,7 @@ end:
         ecore_main_fd_handler_del(fd_handler);
         free(slice->slice.mem);
         free(slice);
-        close(fd);
+        if (fd > -1) close(fd);
         return EINA_FALSE;
      }
 }
