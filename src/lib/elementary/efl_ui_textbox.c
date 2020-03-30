@@ -859,7 +859,7 @@ _selection_store(Efl_Ui_Cnp_Buffer buffer,
 
    content = eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(sel), "application/x-elementary-markup");
 
-   efl_ui_selection_set(obj, buffer, content, 0);
+   efl_ui_selection_set(obj, buffer, content, evas_device_seat_id_get(evas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT)));
 
    free(sel);
 }
@@ -1969,7 +1969,7 @@ _efl_ui_textbox_selection_paste_type(Eo *obj, Efl_Ui_Textbox_Data *sd, Efl_Ui_Cn
    Eina_Future *future;
    Eina_Array *types = _figure_out_types(obj, sd);
 
-   future = efl_ui_selection_get(obj, type, 0, eina_array_iterator_new(types));
+   future = efl_ui_selection_get(obj, type, evas_device_seat_id_get(evas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT)), eina_array_iterator_new(types));
 
    efl_future_then(obj, future, _selection_data_cb);
 
