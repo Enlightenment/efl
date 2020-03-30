@@ -518,7 +518,7 @@ _ecore_evas_cocoa_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int sea
         Eina_Rw_Slice slice;
 
         data = ecore_cocoa_clipboard_get(&size, mime_type);
-        if (!strncmp(mime_type, "text", strlen("text")))
+        if (eina_str_has_prefix(mime_type,"text"))
           {
              //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
              slice.len = size + 1;

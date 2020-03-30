@@ -681,7 +681,7 @@ _elm_ctxpopup_efl_ui_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 
    if (sd->list)
      {
-        if (!strncmp(elm_object_style_get(obj), "default", strlen("default")))
+        if (eina_str_has_prefix(elm_object_style_get(obj),"default"))
           elm_object_style_set(sd->list, "ctxpopup");
         else
           elm_object_style_set(sd->list, elm_object_style_get(obj));
@@ -1480,7 +1480,7 @@ _elm_ctxpopup_item_init(Eo *eo_item,
    if (!sd->list)
      {
         sd->list = elm_list_add(obj);
-        if (!strncmp(elm_object_style_get(obj), "default", strlen("default")))
+        if (eina_str_has_prefix(elm_object_style_get(obj),"default"))
           elm_object_style_set(sd->list, "ctxpopup");
         else elm_object_style_set(sd->list, elm_object_style_get(obj));
         elm_list_mode_set(sd->list, ELM_LIST_EXPAND);

@@ -2689,7 +2689,7 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
    //Now deliver the content
    Eina_Slice slice;
 
-   if (!strncmp(ready->mimetype, "text", strlen("text")))
+   if (eina_str_has_prefix(ready->mimetype,"text"))
      {
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
         slice.len = ready->len + 1;
