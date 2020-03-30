@@ -20,6 +20,13 @@
 
 #define BUF_SIZE 1024
 
+#define DBG(...) EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
+
+static int _log_domain = -1;
+
 typedef struct
 {
    EINA_INLIST;
@@ -63,8 +70,7 @@ _image_load(const char *filename)
    err = evas_object_image_load_error_get(img);
    if (err != EVAS_LOAD_ERROR_NONE)
      {
-        fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
-              filename, evas_load_error_str(err));
+        CRI("Failed to load image");
         return NULL;
      }
 
@@ -174,7 +180,7 @@ _run_test_compare(const List_Entry *ent)
                {
                   if (mkdir(origdir, 0744) < 0)
                     {
-                       fprintf(stderr, "Failed to create dir %s\n", origdir);
+                       CRI("Failed to create dir %s\n", origdir);
                        return;
                     }
                }
@@ -219,7 +225,7 @@ _run_command_prepare(const List_Entry *ent, char *buf)
         sprintf(scn_path, "%s/%s.exu", base_dir, ent->name);
         if (ecore_file_exists(scn_path)) goto ok;
      }
-   fprintf(stderr, "Test %s not found in the provided base directories\n", ent->name);
+   CRI("Test %s not found in the provided base directories\n", ent->name);
    return EINA_FALSE;
 ok:
    sbuf = eina_strbuf_new();
@@ -320,7 +326,7 @@ _job_consume()
 
         if (!ecore_exe_pipe_run(buf, ECORE_EXE_TERM_WITH_PARENT, ent))
           {
-             fprintf(stderr, "Failed executing test '%s'\n", ent->name);
+             CRI("Failed executing test '%s'\n", ent->name);
           }
      }
    _next_test_to_run = EINA_INLIST_CONTAINER_GET(
@@ -475,8 +481,12 @@ main(int argc, char *argv[])
    if (!ecore_evas_init())
       return EXIT_FAILURE;
 
+   _log_domain = eina_log_domain_register("exactness", "red");
    _dest_dir = "./";
    _scan_objs = scan_objs;
+
+   eina_log_abort_on_critical_set(EINA_TRUE);
+   eina_log_abort_on_critical_level_set(EINA_LOG_LEVEL_ERR);
 
    args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (args < 0)
