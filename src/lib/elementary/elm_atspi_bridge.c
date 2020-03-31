@@ -1303,7 +1303,7 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    const char *obj_path = eldbus_message_path_get(msg);
    char *str;
    Efl_Access_Text_Granularity gran;
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
@@ -1349,6 +1349,8 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
           }
 
         str = efl_text_cursor_range_text_get(sel1, sel2);
+        start = efl_text_cursor_position_get(sel1);
+        end = efl_text_cursor_position_get(sel2);
 
         efl_del(sel1);
         efl_del(sel2);
@@ -1365,11 +1367,12 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    str = str ? str : strdup("");
 
    ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ret, cleanup);
 
    eldbus_message_arguments_append(ret, "sii", str, start, end);
-   free(str);
 
+cleanup:
+   free(str);
    return ret;
 }
 
@@ -1409,11 +1412,12 @@ _text_text_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
    str = str ? str : strdup("");
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ret, cleanup);
+
    eldbus_message_arguments_append(ret, "s", str);
 
+cleanup:
    free(str);
-
    return ret;
 }
 
@@ -1519,7 +1523,7 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
    char *value = NULL;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eina_Bool res = EINA_FALSE;
    Eina_Iterator *annotations;
@@ -1535,8 +1539,9 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
      {
         Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
         Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        end = start+1;
         efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, start+1);
+        efl_text_cursor_position_set(sel2, end);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         if (annotations)
@@ -1570,9 +1575,10 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
      }
 
    ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(ret, cleanup);
    eldbus_message_arguments_append(ret, "siib", value ? value : "", start, end, res);
 
+cleanup:
    free(value);
    return ret;
 }
@@ -1583,7 +1589,7 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
    Efl_Access_Text_Attribute *attr;
@@ -1607,8 +1613,9 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
         Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
         Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
 
+        end = start+1;
         efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, start+1);
+        efl_text_cursor_position_set(sel2, end);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         efl_del(sel1);
@@ -2196,7 +2203,7 @@ _text_run_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start, end;
+   int start = 0, end = 0;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
    Eina_List *attrs, *defaults;

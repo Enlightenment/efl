@@ -24,12 +24,6 @@
 #include "eina_types.h"
 #include "eina_error.h"
 
-/**
- * @addtogroup Eina_Main_Group Main
- *
- * @brief These functions provide general initialization and shut down
- * functions.
- */
 
 /**
  * @addtogroup Eina_Core_Group Core
@@ -39,6 +33,9 @@
 
 /**
  * @defgroup Eina_Main_Group Main
+ *
+ * @brief These functions provide general initialization and shut down
+ * functions.
  *
  * @{
  */

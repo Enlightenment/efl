@@ -137,6 +137,10 @@
  * More examples can be found at @ref eina_examples.
  *
  *
+ * @defgroup Eina_Core_Group Core
+ * @brief Initialization, shut down and core types.
+ * @ingroup Eina
+ *
  * @defgroup Eina_Data_Types_Group Data Types
  * @brief Eina provides an easy to use and optimized data types and structures.
  * @ingroup Eina

@@ -85,6 +85,14 @@ jobs:
       if: type = cron
       arch: arm64
       env: CI_BUILD_TYPE=default
+    - os: linux
+      if: type = cron
+      arch: ppc64le
+      env: CI_BUILD_TYPE=no-bindings
+    - os: linux
+      if: type = cron
+      arch: s390x
+      env: CI_BUILD_TYPE=no-bindings
 
 services:
   - docker

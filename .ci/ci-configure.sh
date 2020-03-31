@@ -99,8 +99,22 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   travis_fold meson meson
   mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Dgstreamer=false
   travis_endfold meson
-else
-  travis_fold meson meson
-  mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Db_coverage=true
-  travis_endfold meson
+else # Native Ubuntu Linux Travis builds (non-docker)
+  OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
+
+  if [ "$TRAVIS_CPU_ARCH" = "ppc64le" ]; then
+    travis_fold meson meson
+      OPTS="$OPTS -Dbindings="
+    travis_endfold meson
+  elif [ "$TRAVIS_CPU_ARCH" = "s390x" ] ; then
+    travis_fold meson meson
+      OPTS="$OPTS -Dbindings= -Delua=false -Dlua-interpreter=lua"
+    travis_endfold meson
+  fi
+  if [ "$1" = "codecov" ]; then
+    travis_fold meson meson
+      OPTS="$OPTS -Db_coverage=true"
+    travis_endfold meson
+  fi
+  mkdir build && meson build $OPTS
 fi

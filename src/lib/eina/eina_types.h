@@ -28,6 +28,8 @@
 /**
  * @defgroup Eina_Types_Group Types
  *
+ * @brief Definition for eina types and core functions.
+ *
  * @{
  */
 
@@ -61,11 +63,21 @@
  * @brief Used to export functions (by changing visibility).
  */
 #  define EAPI
+/**
+ * @def EAPI_WEAK
+ * @brief Weak symbol, primarily useful in defining library functions which
+ * can be overridden in user code.
+ * Note: Not supported on all platforms.
+ */
 #  define EAPI_WEAK
 #  endif
 #endif
 
-/* Weak symbols part of EFL API - Note: not weak on all platforms */
+/**
+ * @def EWAPI
+ * @brief Weak symbols part of the EFL API.
+ * Note: Not supported on all platforms.
+ */
 #define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
@@ -83,8 +95,8 @@
 #  endif
 # else
 /**
- * @def EAPI
- * @brief Used to export functions (by changing visibility).
+ * @def EXPORTAPI
+ * @brief An alias for #EAPI.
  */
 #  define EXPORTAPI
 # endif
@@ -96,6 +108,11 @@
 # if defined(__OPENBSD__) && (INTPTR_MAX == INT32_MAX)
 #  define __WORDSIZE 32
 # else
+/**
+ * @def __WORDSIZE
+ * @brief Architecture's word size (32 or 64 bits). Defined by Eina if
+ * its definition cannot be found in the system's headers.
+ */
 #  define __WORDSIZE 64
 # endif
 #endif
@@ -316,7 +333,8 @@
 
 /**
  * @def EINA_UNUSED
- * Used to warn when an argument of the function is not used.
+ * Used to indicate that a function parameter is purposely unused.
+ * This silences some compiler's warning about unused parameters.
  */
 # define EINA_UNUSED
 
@@ -361,21 +379,30 @@
 
 /**
  * @def EINA_PRINTF
- * @param[in] fmt The format to be used.
- * @param[in] arg The argument to be used.
+ * @brief Indicates that this function accepts a printf-style format string.
+ * This allows some compilers to perform additional checks on the parameters
+ * passed to the function.
+ * @param[in] fmt The 1-based index of the parameter specifying the format string.
+ * @param[in] arg The 1-based index of the first data parameter.
  */
 # define EINA_PRINTF(fmt, arg)
 
 /**
  * @def EINA_SCANF
- * @param[in] fmt The format to be used.
- * @param[in] arg The argument to be used.
+ * @brief Indicates that this function accepts a scanf-style format string.
+ * This allows some compilers to perform additional checks on the parameters
+ * passed to the function.
+ * @param[in] fmt The 1-based index of the parameter specifying the format string.
+ * @param[in] arg The 1-based index of the first data parameter.
  */
 # define EINA_SCANF(fmt, arg)
 
 /**
  * @def EINA_FORMAT
- * @param[in] fmt The format to be used.
+ * @brief Indicates that the output of this function can be used as a format string
+ * in printf-style functions. Some compilers will check that the return value of
+ * this function is consistent with the @p fmt parameter.
+ * @param[in] fmt The 1-based index of the parameter specifying the format string.
  */
 # define EINA_FORMAT(fmt)
 
@@ -393,12 +420,16 @@
 
 /**
  * @def EINA_UNLIKELY
+ * @brief Indicates that the expression is likely to be @c FALSE. Some compilers and
+ * processor architectures can then optimize the more likely path.
  * @param[in] exp The expression to be used.
  */
 # define EINA_UNLIKELY(exp) exp
 
 /**
  * @def EINA_LIKELY
+ * @brief Indicates that the expression is likely to be @c TRUE. Some compilers and
+ * processor architectures can then optimize the more likely path.
  * @param[in] exp The expression to be used.
  */
 # define EINA_LIKELY(exp)   exp
@@ -506,8 +537,6 @@ typedef unsigned char Eina_Bool;
  * boolean value TRUE (numerical value 1)
  */
 #define EINA_TRUE  ((Eina_Bool)1)
-
-EAPI extern const unsigned int eina_prime_table[];
 
 /**
  * @typedef Eina_Compare_Cb

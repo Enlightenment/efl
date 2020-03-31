@@ -33,8 +33,6 @@
 static int _log_domain = -1;
 
 static const char *_out_filename = NULL;
-static const char *_test_name = NULL;
-static int _verbose = 0;
 
 static Eina_List *_evas_list = NULL;
 static unsigned int _last_evas_id = 0;
@@ -252,7 +250,6 @@ static const Ecore_Getopt optdesc = {
   {
     ECORE_GETOPT_STORE_STR('t', "test", "Name of the filename where to store the test."),
     ECORE_GETOPT_STORE_STR('f', "fonts-dir", "Specify a directory of the fonts that should be used."),
-    ECORE_GETOPT_COUNT('v', "verbose", "Turn verbose messages on."),
 
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
@@ -273,7 +270,6 @@ int main(int argc, char **argv)
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(dest),
      ECORE_GETOPT_VALUE_STR(fonts_dir),
-     ECORE_GETOPT_VALUE_INT(_verbose),
 
      ECORE_GETOPT_VALUE_BOOL(want_quit),
      ECORE_GETOPT_VALUE_BOOL(want_quit),
@@ -320,6 +316,7 @@ int main(int argc, char **argv)
      }
    else
      {
+        const char *_test_name;
         char *slash = strrchr(_out_filename, '/');
         if (slash) _test_name = strdup(slash + 1);
         else _test_name = strdup(_out_filename);

@@ -5620,13 +5620,6 @@ EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = NULL;
 EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = NULL;
 
-EAPI const unsigned int eina_prime_table[] =
-{
-   17, 31, 61, 127, 257, 509, 1021,
-   2053, 4093, 8191, 16381, 32771, 65537, 131071, 262147, 524287, 1048573,
-   2097143, 4194301, 8388617, 16777213
-};
-
 EAPI Eina_Value *
 eina_value_new(const Eina_Value_Type *type)
 {

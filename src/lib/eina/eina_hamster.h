@@ -20,6 +20,12 @@
 #define EINA_HAMSTER_H_
 
 /**
+ * @addtogroup Eina_Core_Group Core
+ *
+ * @{
+ */
+
+/**
  * @defgroup Eina_Hamster_Group Hamster
  *
  * @brief These functions provide hamster calls.
@@ -35,6 +41,10 @@
  * This function returns how many hamsters you have.
  */
 EAPI int eina_hamster_count(void);
+
+/**
+ * @}
+ */
 
 /**
  * @}
