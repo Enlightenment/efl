@@ -45,4 +45,22 @@ void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);
 void event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 void event_callback_that_quits_the_main_loop_when_called();
 void event_callback_that_increments_an_int_when_called(void *data, Evas_Object *obj, void *event_info);
+
+
+
+#define assert_object_size_eq(obj, width, height) \
+do \
+{ \
+   Eina_Size2D _sz = efl_gfx_entity_size_get((obj)); \
+   ck_assert_int_eq(_sz.w, (width)); \
+   ck_assert_int_eq(_sz.h, (height)); \
+} while (0)
+
+#define assert_object_pos_eq(obj, _x, _y) \
+do \
+{ \
+   Eina_Position2D _pos = efl_gfx_entity_position_get((obj)); \
+   ck_assert_int_eq(_pos.x, (_x)); \
+   ck_assert_int_eq(_pos.y, (_y)); \
+} while (0)
 #endif
