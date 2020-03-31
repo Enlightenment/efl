@@ -1926,6 +1926,16 @@ _efl_ui_layout_base_efl_layout_group_part_exist_get(const Eo *obj, Efl_Ui_Layout
 }
 
 EOLIAN static void
+_efl_ui_layout_base_efl_canvas_group_group_change(Eo *obj, Efl_Ui_Layout_Data *sd)
+{
+   if (sd->frozen)
+     /* cleared in thaw */
+     sd->frozen_changed = EINA_TRUE;
+   else
+     efl_canvas_group_change(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
 _elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
 {
    Efl_Ui_Layout_Data *sd;
@@ -1991,7 +2001,9 @@ _efl_ui_layout_base_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
    if (!ret)
      {
         sd->frozen = EINA_FALSE;
-        efl_canvas_group_change(obj);
+        if (sd->frozen_changed)
+          efl_canvas_group_change(obj);
+        sd->frozen_changed = EINA_FALSE;
      }
 
    return ret;
@@ -2026,10 +2038,13 @@ _efl_ui_layout_base_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN void
-_efl_ui_layout_base_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+_efl_ui_layout_base_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd)
 {
+   Eina_Bool prev_frozen = sd->frozen;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   sd->frozen = EINA_FALSE;
    efl_layout_calc_force(wd->resize_obj);
+   sd->frozen = prev_frozen;
 }
 
 static Eina_Bool

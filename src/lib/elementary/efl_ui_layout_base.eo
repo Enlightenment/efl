@@ -110,6 +110,7 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
       Efl.Object.finalize;
       Efl.Object.invalidate;
       Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Group.group_change;
       Efl.Layout.Calc.calc_freeze;
       Efl.Layout.Calc.calc_thaw;
       Efl.Layout.Calc.calc_auto_update_hints { get; set; }
