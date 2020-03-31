@@ -5,14 +5,7 @@ set __OLD_vcvars64=%vcvars64%
 set vcvars64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
 set CLICOLOR_FORCE=1
 
-set NINJAFLAGS=
-
-if "%~1"=="--verbose" (
-    echo Verbose ON.
-    set NINJAFLAGS=--verbose %NINJAFLAGS%
-) else (
-    echo Verbose OFF.
-)
+set NINJAFLAGS=%*
 
 set vcvars64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
 set CLICOLOR_FORCE=1
