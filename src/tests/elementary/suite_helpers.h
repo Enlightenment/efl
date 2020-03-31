@@ -46,7 +46,7 @@ void event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSE
 void event_callback_that_quits_the_main_loop_when_called();
 void event_callback_that_increments_an_int_when_called(void *data, Evas_Object *obj, void *event_info);
 
-
+void force_render(Eo *win);
 
 #define assert_object_size_eq(obj, width, height) \
 do \
