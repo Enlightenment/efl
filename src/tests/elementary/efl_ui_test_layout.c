@@ -223,6 +223,26 @@ EFL_START_TEST(efl_ui_layout_test_versioning)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_layout_test_freeze)
+{
+   Evas_Object *win;
+   int count = 0;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+   Eo *layout = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_gfx_entity_size_set(layout, EINA_SIZE2D(100, 100));
+   efl_text_set(layout, "button");
+   get_me_to_those_events(layout);
+
+   efl_event_callback_add(win, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, (void*)event_callback_single_call_int_data, &count);
+   efl_layout_calc_freeze(layout);
+   efl_layout_calc_thaw(layout);
+   force_render(win);
+   ck_assert_int_eq(count, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_test_property_bind);
@@ -234,4 +254,5 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_callback);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_provider);
    tcase_add_test(tc, efl_ui_layout_test_versioning);
+   tcase_add_test(tc, efl_ui_layout_test_freeze);
 }
