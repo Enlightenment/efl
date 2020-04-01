@@ -7,6 +7,10 @@
 #include <getopt.h>
 #include <unistd.h>
 
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>
+#endif
+
 #ifdef HAVE_FORK
 # ifdef HAVE_SYS_WAIT_H
 #  include <sys/wait.h>
@@ -77,6 +81,7 @@ static double _speed = 1.0;
 static Eina_Bool _exit_required = EINA_FALSE;
 static Eina_Bool _pause_request = EINA_FALSE;
 static Eina_Bool _playing_status = EINA_FALSE;
+static Eina_Bool _ready_to_write = EINA_FALSE;
 
 static Exactness_Image *
 _snapshot_shot_get(Evas *e)
@@ -772,6 +777,7 @@ _src_open()
         if (_src_type == FTYPE_EXU)
           {
              _src_unit = exactness_unit_file_read(_src_filename);
+             _ready_to_write = EINA_TRUE;
           }
         if (!_src_unit) return EINA_FALSE;
         if (_stabilize_shots)
@@ -858,8 +864,7 @@ static Evas *
 _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
 {
    Evas *e;
-   if (!_evas_new) return NULL;
-   e = _evas_new();
+   e = evas_new();
    if (e)
      {
         INF("New Evas\n");
@@ -869,99 +874,9 @@ _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
    return e;
 }
 
-static const Ecore_Getopt optdesc = {
-  "exactness_play",
-  "%prog [options] <-s|-o|-v|-t|-h> command",
-  PACKAGE_VERSION,
-  "(C) 2017 Enlightenment",
-  "BSD",
-  "A scenario player for EFL based applications.",
-  1,
-  {
-    ECORE_GETOPT_STORE_STR('o', "output",
-          " Set the destination for the shots.\n"
-          " If a .exu is given, the shots are stored in the file.\n"
-          " Otherwise the given path is considered as a directory\n"
-          " where shots will be stored.\n"
-          " If omitted, the output type (exu or dir) is determined\n"
-          " by the given test extension"),
-    ECORE_GETOPT_STORE_STR('t', "test", "Test to run on the given application"),
-    ECORE_GETOPT_STORE_TRUE('s', "show-on-screen", "Show on screen."),
-    ECORE_GETOPT_STORE_TRUE(0, "scan-objects", "Extract information of all the objects at every shot."),
-    ECORE_GETOPT_STORE_TRUE(0, "external-injection", "Expect events injection via Eina debug channel."),
-    ECORE_GETOPT_STORE_TRUE(0, "disable-screenshots", "Disable screenshots."),
-    ECORE_GETOPT_STORE_STR('f', "fonts-dir", "Specify a directory of the fonts that should be used."),
-    ECORE_GETOPT_STORE_TRUE(0, "stabilize-shots", "Wait for the frames to be stable before taking the shots."),
-    ECORE_GETOPT_STORE_DOUBLE(0, "speed", "Set the speed used to play the given test (default 1.0)."),
-    ECORE_GETOPT_COUNT('v', "verbose", "Turn verbose messages on."),
-
-    ECORE_GETOPT_LICENSE('L', "license"),
-    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-    ECORE_GETOPT_VERSION('V', "version"),
-    ECORE_GETOPT_HELP('h', "help"),
-    ECORE_GETOPT_SENTINEL
-  }
-};
-
-int main(int argc, char **argv)
+static Eina_Bool
+_setup_dest_type(const char *dest, Eina_Bool external_injection)
 {
-   int pret = 1, opt_args = 0;
-   char *src = NULL, *dest = NULL, *eq;
-   char *fonts_dir = NULL;
-   const char *chosen_fonts = NULL;
-   Eina_Bool show_on_screen = EINA_FALSE;
-   Eina_Bool want_quit = EINA_FALSE, external_injection = EINA_FALSE;
-   _evas_new = NULL;
-
-   Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_STR(dest),
-     ECORE_GETOPT_VALUE_STR(src),
-     ECORE_GETOPT_VALUE_BOOL(show_on_screen),
-     ECORE_GETOPT_VALUE_BOOL(_scan_objects),
-     ECORE_GETOPT_VALUE_BOOL(external_injection),
-     ECORE_GETOPT_VALUE_BOOL(_disable_shots),
-     ECORE_GETOPT_VALUE_STR(fonts_dir),
-     ECORE_GETOPT_VALUE_BOOL(_stabilize_shots),
-     ECORE_GETOPT_VALUE_DOUBLE(_speed),
-     ECORE_GETOPT_VALUE_INT(_verbose),
-
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_BOOL(want_quit),
-     ECORE_GETOPT_VALUE_NONE
-   };
-
-   _log_domain = eina_log_domain_register("exactness_player", NULL);
-
-   if (!ecore_evas_init())
-      return EXIT_FAILURE;
-
-   opt_args = ecore_getopt_parse(&optdesc, values, argc, argv);
-   if (opt_args < 0)
-     {
-        fprintf(stderr, "Failed parsing arguments.\n");
-        goto end;
-     }
-   if (want_quit) goto end;
-
-   /* Check for a sentinel */
-   if (argv[opt_args] && !strcmp(argv[opt_args], "--")) opt_args++;
-
-   /* Check for env variables */
-   do
-     {
-        eq = argv[opt_args] ? strchr(argv[opt_args], '=') : NULL;
-        if (eq)
-          {
-             char *var = malloc(eq - argv[opt_args] + 1);
-             memcpy(var, argv[opt_args], eq - argv[opt_args]);
-             var[eq - argv[opt_args]] = '\0';
-             setenv(var, eq + 1, 1);
-             opt_args++;
-          }
-     } while (eq);
-
    if (dest)
      {
         _dest = eina_stringshare_add(dest);
@@ -975,7 +890,7 @@ int main(int argc, char **argv)
              if (!ecore_file_mkpath(dest))
                {
                   fprintf(stderr, "Path for %s cannot be created\n", dest);
-                  goto end;
+                  return EINA_FALSE;
                }
           }
         else
@@ -984,25 +899,21 @@ int main(int argc, char **argv)
              if (!ecore_file_mkpath(_dest))
                {
                   fprintf(stderr, "Directory %s cannot be created\n", _dest);
-                  goto end;
+                  return EINA_FALSE;
                }
           }
-     }
-   if (!src && !external_injection)
-     {
-        fprintf(stderr, "no test file specified\n");
-        goto end;
-     }
-   if (src && external_injection)
-     {
-        fprintf(stderr, "Cannot inject events from a source file and from outside simultaneously\n");
-        goto end;
      }
    if (external_injection)
      {
         _src_type = FTYPE_REMOTE;
         if (_dest_type == FTYPE_UNKNOWN) _dest_type = FTYPE_REMOTE;
      }
+   return EINA_TRUE;
+}
+
+static void
+_setup_names(const char *src)
+{
    if (src)
      {
         _src_filename = eina_stringshare_add(src);
@@ -1021,25 +932,26 @@ int main(int argc, char **argv)
         char *dot = strrchr(_test_name, '.');
         if (dot) *dot = '\0';
      }
+}
 
-   if (_scan_objects && _dest_type != FTYPE_EXU)
-     {
-        fprintf(stderr, "Scan objects options is available only if the destination is a EXU file\n");
-        goto end;
-     }
-
+static void
+_setup_dest_unit(void)
+{
    if (_dest_type == FTYPE_EXU) _dest_unit = calloc(1, sizeof(*_dest_unit));
 
+}
+
+static void
+_remove_old_shots(void)
+{
    if (_dest_type == FTYPE_DIR && _test_name)
       eina_file_dir_list(_dest, 0, _old_shots_rm_cb, (void *)_test_name);
+}
 
-   if (!_src_open())
-     {
-        fprintf(stderr, "Unable to read source file\n");
-        goto end;
-     }
-
-   if (!show_on_screen) setenv("ELM_ENGINE", "buffer", 1);
+static Eina_Bool
+_setup_font_settings(const char *fonts_dir)
+{
+   const char *chosen_fonts = NULL;
    if (_src_unit && _src_unit->fonts_path)
      {
         char buf[PATH_MAX];
@@ -1049,7 +961,7 @@ int main(int argc, char **argv)
           {
              fprintf(stderr, "Unable to use the fonts path '%s' provided in %s\n",
                    _src_unit->fonts_path, _src_filename);
-             goto end;
+             return EINA_FALSE;
           }
         chosen_fonts = _src_unit->fonts_path;
      }
@@ -1059,7 +971,7 @@ int main(int argc, char **argv)
         if (!ecore_file_exists(fonts_dir))
           {
              fprintf(stderr, "Unable to find fonts directory %s\n", fonts_dir);
-             goto end;
+             return EINA_FALSE;
           }
         if (!chosen_fonts)
           {
@@ -1082,82 +994,142 @@ int main(int argc, char **argv)
              setenv("FONTCONFIG_FILE", fonts_conf_name, 1);
           }
      }
-   char **new_argv = argv;
-   int new_argc = argc;
+   return EINA_TRUE;
+}
 
-   if (argv[opt_args])
-     {
-        /* Replace the current command line to hide the Exactness part */
-
-        new_argv = calloc(argc - opt_args + 1, sizeof(char*));
-        new_argc = argc - opt_args;
-
-        for (int i = 0; i < argc - opt_args + 1; ++i)
-          {
-             if (i < argc - opt_args)
-               new_argv[i] = argv[opt_args + i];
-             else
-               new_argv[i] = NULL;
-          }
-     }
-   else
-     {
-        Eina_List *itr;
-        Exactness_Source_Code *code;
-        Eina_Tmpstr *f_output = NULL;
-        EINA_LIST_FOREACH(_src_unit->codes, itr, code)
-          {
-             if (!strcmp(code->language, "C") && code->command)
-               {
-                  int status;
-                  Ecore_Exe *exe;
-                  Eina_Tmpstr *f_code;
-                  Eina_Strbuf *sbuf;
-                  int fd_code = eina_file_mkstemp("exactness_XXXXXX.c", &f_code);
-                  int fd_output = eina_file_mkstemp("exactness_XXXXXX.output", &f_output);
-                  close(fd_output);
-                  write(fd_code, code->content, strlen(code->content));
-                  close(fd_code);
-
-                  sbuf = eina_strbuf_new();
-                  eina_strbuf_append(sbuf, code->command);
-                  eina_strbuf_replace_all(sbuf, "$SRC", f_code);
-                  eina_strbuf_replace_all(sbuf, "$DEST", f_output);
-                  exe = ecore_exe_pipe_run(eina_strbuf_string_get(sbuf), ECORE_EXE_NONE, NULL);
-#ifdef HAVE_FORK
-                  waitpid(ecore_exe_pid_get(exe), &status, 0);
-#endif
-               }
-          }
-        if (!f_output)
-          {
-             fprintf(stderr, "no program specified\nUse -h for more information\n");
-             goto end;
-          }
-        argv[0] = strdup(f_output);
-     }
-
-
+static void
+_setup_ee_creation(void)
+{
    ecore_evas_callback_new_set(_my_evas_new);
    if (_src_type != FTYPE_REMOTE)
       ecore_idler_add(_src_feed, NULL);
-   pret = ex_prg_invoke(ex_prg_full_path_guess(new_argv[0]), new_argc, new_argv, EINA_TRUE);
+}
 
-   if (_dest && _dest_unit)
+static void
+_write_unit_file(void)
+{
+   if (_dest && _dest_unit && _ready_to_write)
      {
-        if (_src_unit)
-          {
-             Exactness_Unit *tmp = NULL;
-             if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
-             _dest_unit->actions = tmp->actions;
-             _dest_unit->codes = tmp->codes;
-          }
+        Exactness_Unit *tmp = NULL;
+
+        EINA_SAFETY_ON_NULL_RETURN(_src_unit);
+        if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
+          _dest_unit->actions = tmp->actions;
         exactness_unit_file_write(_dest_unit, _dest);
      }
+}
+#ifdef HAVE_DLSYM
+# define ORIGINAL_CALL_T(t, name, ...) \
+   t (*_original_init_cb)(); \
+   _original_init_cb = dlsym(RTLD_NEXT, name); \
+   original_return = _original_init_cb(__VA_ARGS__);
+#else
+# define ORIGINAL_CALL_T(t, name, ...) \
+   printf("THIS IS NOT SUPPORTED ON WINDOWS\n"); \
+   abort();
+#endif
 
-end:
-   ecore_evas_shutdown();
-   eina_log_domain_unregister(_log_domain);
-   _log_domain = -1;
-   return pret;
+#define ORIGINAL_CALL(name, ...) \
+   ORIGINAL_CALL_T(int, name, __VA_ARGS__)
+
+EAPI int
+eina_init(void)
+{
+   int original_return;
+
+   ORIGINAL_CALL("eina_init");
+
+   if (original_return == 1)
+     {
+        const char *dest = getenv("EXACTNESS_DEST");
+        const char *external_injection = getenv("EXACTNESS_EXTERNAL_INJECTION");
+        const char *src = getenv("EXACTNESS_SRC");
+        const char *fonts_dir = getenv("EXACTNESS_FONTS_DIR");
+        const char *speed = getenv("EXACTNESS_SPEED");
+
+        _scan_objects = !!getenv("EXACTNESS_SCAN_OBJECTS");
+        _disable_shots = !!getenv("EXACTNESS_DISABLE_SHOTS");
+        _stabilize_shots = !!getenv("EXACTNESS_STABILIZE_SHOTS");
+        _verbose = !!getenv("EXACTNESS_VERBOSE");
+        if (speed)
+          _speed = atof(speed);
+
+        _log_domain = eina_log_domain_register("exactness_player", NULL);
+        if (!_setup_dest_type(dest, !!external_injection))
+          return 0;
+        _setup_names(src);
+        _setup_dest_unit();
+        _remove_old_shots();
+
+        if (!_src_open())
+          {
+             fprintf(stderr, "Unable to read source file\n");
+             return 0;
+          }
+        if (!_setup_font_settings(fonts_dir))
+          return 0;
+     }
+
+   return original_return;
+}
+
+EAPI int
+ecore_evas_init(void)
+{
+   int original_return;
+
+   ORIGINAL_CALL("ecore_evas_init")
+
+   if (original_return == 1)
+     {
+        _setup_ee_creation();
+     }
+
+   return original_return;
+}
+
+//hook, to hook in our theme
+EAPI int
+elm_init(int argc, char **argv)
+{
+   int original_return;
+   ORIGINAL_CALL("elm_init", argc, argv)
+
+   if (original_return == 1)
+     ex_prepare_elm_overloay();
+
+   return original_return;
+}
+
+EAPI void
+ecore_main_loop_begin(void)
+{
+   int original_return;
+   ORIGINAL_CALL("ecore_main_loop_begin")
+   _write_unit_file();
+   (void)original_return;
+}
+
+EAPI Eina_Value*
+efl_loop_begin(Eo *obj)
+{
+   Eina_Value *original_return;
+   ORIGINAL_CALL_T(Eina_Value*, "efl_loop_begin", obj);
+   _write_unit_file();
+   return original_return;
+}
+
+EAPI int
+eina_shutdown(void)
+{
+   int original_return;
+   static Eina_Bool output_written = EINA_FALSE;
+   ORIGINAL_CALL("eina_shutdown")
+   if (original_return == 1 && !output_written)
+     {
+        output_written = EINA_TRUE;
+        _write_unit_file();
+     }
+
+   return original_return;
 }
