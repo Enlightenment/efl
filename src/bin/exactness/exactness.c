@@ -417,22 +417,51 @@ _errors_sort_cb(List_Entry *a, List_Entry *b)
 
 static const Ecore_Getopt optdesc = {
   "exactness",
-  "%prog [options] <-r|-p|-i|-s> <list file>",
+  "%prog [options] <-p|-i|-s> <test list file>",
   PACKAGE_VERSION,
-  "(C) 2013 Enlightenment",
+  "(C) 2013-2020 Enlightenment",
   "BSD",
-  "A pixel perfect test suite for EFL based applications.",
+  "A pixel-perfect test suite for EFL-based applications.\n"
+  "\n"
+  "This binary allows running the individual tools `exactness_record` and\n"
+  "`exactness_play` in batch for a set of tests specified in a test list file.\n"
+  "\n"
+  "To obtain the reference templates (the \"golden\" files):\n"
+  "1.For each tested application, run `exactness_record` to launch the\n"
+  "   application and record actions like keystrokes and mouse clicks.\n"
+  "   This produces a test file with `.exu` extension.\n"
+  "2.Run `exactness` in init mode (-i) to execute the stored actions in all\n"
+  "   the tests in the test list file and obtain screenshots.\n"
+  "   The screenshots are embedded into the test `.exu` file.\n"
+  "\n"
+  "To check if the application currently matches the reference templates:\n"
+  "1.Run `exactness` in play mode (-p) to execute the stored actions in all\n"
+  "   the tests in the test list file and compare the obtained screenshots\n"
+  "   with the stored versions (the reference templates).\n"
+  "   If mismatches are detected an error report is produced, including\n"
+  "   a graphical diff of the screenshots.\n"
+  "\n"
+  "The test list file contains one line per test. Each line starts with the\n"
+  "test file name (without the `.exu` extension), a space and then the command\n"
+  "to execute, including parameters if any. # indicates a comment.\n"
+  "Example:\n"
+  "separator elementary_test -to Separator",
   0,
   {
-    ECORE_GETOPT_APPEND('b', "base-dir", "The location of the exu files.", ECORE_GETOPT_TYPE_STR),
-    ECORE_GETOPT_STORE_STR('o', "output", "The location of the images."),
+    ECORE_GETOPT_APPEND('b', "base-dir", "The location of the exu files. Defaults to `./recordings/`.",
+      ECORE_GETOPT_TYPE_STR),
+    ECORE_GETOPT_STORE_STR('o', "output", "The location of the images. Defaults to `./`."),
     ECORE_GETOPT_STORE_STR('w', "wrap", "Use a custom command to launch the tests (e.g valgrind)."),
-    ECORE_GETOPT_STORE_USHORT('j', "jobs", "The number of jobs to run in parallel."),
-    ECORE_GETOPT_STORE_TRUE('p', "play", "Run in play mode."),
-    ECORE_GETOPT_STORE_TRUE('i', "init", "Run in init mode."),
-    ECORE_GETOPT_STORE_TRUE('s', "simulation", "Run in simulation mode."),
-    ECORE_GETOPT_STORE_TRUE(0, "scan-objects", "Extract information of all the objects at every shot."),
-    ECORE_GETOPT_STORE_TRUE(0, "disable-screenshots", "Disable screenshots."),
+    ECORE_GETOPT_STORE_USHORT('j', "jobs", "The number of jobs to run in parallel. Defaults to 1."),
+    ECORE_GETOPT_STORE_TRUE('p', "play", "Run in play mode. Actions are executed and obtained "
+      "screenshots are compared to the stored version (golden templates)."),
+    ECORE_GETOPT_STORE_TRUE('i', "init", "Run in init mode. Actions are executed and obtained "
+      "screenshots are stored to be used as golden templates in the future."),
+    ECORE_GETOPT_STORE_TRUE('s', "simulation", "Run in simulation mode. Actions are executed and "
+      "displayed but no screenshot is obtained. Useful for debugging."),
+    ECORE_GETOPT_STORE_TRUE(0, "scan-objects", "Extract information of all the objects at every shot (UNUSED)."),
+    ECORE_GETOPT_STORE_TRUE(0, "disable-screenshots", "Disable screenshots. Only checks that actions "
+      "can be performed and the application does not crash."),
     ECORE_GETOPT_STORE_STR('f', "fonts-dir", "Specify a directory of the fonts that should be used."),
     ECORE_GETOPT_STORE_TRUE(0, "stabilize-shots", "Wait for the frames to be stable before taking the shots."),
     ECORE_GETOPT_COUNT('v', "verbose", "Turn verbose messages on."),
@@ -502,14 +531,14 @@ main(int argc, char *argv[])
      }
    else if (args == argc)
      {
-        fprintf(stderr, "Expected test list as the last argument..\n");
+        fprintf(stderr, "Expected test list file as the last argument..\n");
         ecore_getopt_help(stderr, &optdesc);
         ret = 1;
         goto end;
      }
    else if (mode_play + mode_init + mode_simulation != 1)
      {
-        fprintf(stderr, "At least and only one of the running modes can be set.\n");
+        fprintf(stderr, "Exactly one running mode must be set.\n");
         ecore_getopt_help(stderr, &optdesc);
         ret = 1;
         goto end;
@@ -525,7 +554,7 @@ main(int argc, char *argv[])
 
    if (!test_list)
      {
-        fprintf(stderr, "No matching tests found in '%s'\n", list_file);
+        fprintf(stderr, "No matching tests found in list file '%s'\n", list_file);
         ret = 1;
         goto end;
      }
@@ -533,7 +562,7 @@ main(int argc, char *argv[])
    /* Pre-run summary */
    fprintf(stderr, "Running with settings:\n");
    fprintf(stderr, "\tConcurrent jobs: %d\n", _max_jobs);
-   fprintf(stderr, "\tTest list: %s\n", list_file);
+   fprintf(stderr, "\tTest list file: %s\n", list_file);
    fprintf(stderr, "\tBase dirs:\n");
    EINA_LIST_FOREACH(_base_dirs, itr, base_dir)
       fprintf(stderr, "\t\t%s\n", base_dir);
