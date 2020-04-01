@@ -12,7 +12,7 @@
 #include <timezoneapi.h>
 
 #include <stdint.h>
-#include <time.h>
+#include <../ucrt/time.h>
 #include <sys/types.h>
 
 typedef unsigned short u_short;
