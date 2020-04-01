@@ -1039,6 +1039,8 @@ eina_init(void)
 
    ORIGINAL_CALL("eina_init");
 
+   ex_set_original_envvar();
+
    if (original_return == 1)
      {
         const char *dest = getenv("EXACTNESS_DEST");
@@ -1080,7 +1082,7 @@ ecore_evas_init(void)
 
    ORIGINAL_CALL("ecore_evas_init")
 
-   if (original_return == 1)
+   if (ex_is_original_app() && original_return == 1)
      {
         _setup_ee_creation();
      }
@@ -1095,7 +1097,7 @@ elm_init(int argc, char **argv)
    int original_return;
    ORIGINAL_CALL("elm_init", argc, argv)
 
-   if (original_return == 1)
+   if (ex_is_original_app() && original_return == 1)
      ex_prepare_elm_overloay();
 
    return original_return;
@@ -1106,7 +1108,8 @@ ecore_main_loop_begin(void)
 {
    int original_return;
    ORIGINAL_CALL("ecore_main_loop_begin")
-   _write_unit_file();
+   if (ex_is_original_app())
+     _write_unit_file();
    (void)original_return;
 }
 
@@ -1115,7 +1118,8 @@ efl_loop_begin(Eo *obj)
 {
    Eina_Value *original_return;
    ORIGINAL_CALL_T(Eina_Value*, "efl_loop_begin", obj);
-   _write_unit_file();
+   if (ex_is_original_app())
+     _write_unit_file();
    return original_return;
 }
 
@@ -1125,7 +1129,7 @@ eina_shutdown(void)
    int original_return;
    static Eina_Bool output_written = EINA_FALSE;
    ORIGINAL_CALL("eina_shutdown")
-   if (original_return == 1 && !output_written)
+   if (ex_is_original_app() &&original_return == 1 && !output_written)
      {
         output_written = EINA_TRUE;
         _write_unit_file();

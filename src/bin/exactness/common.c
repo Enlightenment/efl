@@ -4,6 +4,31 @@
 
 #include "common.h"
 
+Eina_Bool
+ex_is_original_app(void)
+{
+   const char *original_pid_env = getenv("EXACTNESS_ORIGINAL_PID");
+   if (original_pid_env)
+     {
+        pid_t original_pid = atoi(original_pid_env);
+        if (original_pid == getpid())
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+void
+ex_set_original_envvar(void)
+{
+   const char *original_pid_env = getenv("EXACTNESS_ORIGINAL_PID");
+   if (!original_pid_env)
+     {
+        char pid[30];
+        snprintf(pid, sizeof(pid), "%d", getpid());
+        setenv("EXACTNESS_ORIGINAL_PID", pid, 0);
+     }
+}
+
 void
 ex_prepare_elm_overloay(void)
 {

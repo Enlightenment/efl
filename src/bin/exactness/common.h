@@ -260,6 +260,9 @@ typedef struct
 Evas *(*_evas_new)(void);
 const char *_exactness_action_type_to_string_get(Exactness_Action_Type type);
 
+
+Eina_Bool ex_is_original_app(void);
+void ex_set_original_envvar(void);
 Eina_Bool exactness_image_compare(Exactness_Image *img1, Exactness_Image *img2, Exactness_Image **diff_img);
 Exactness_Unit *exactness_unit_file_read(const char *filename);
 Eina_Bool exactness_unit_file_write(Exactness_Unit *unit, const char *filename);
