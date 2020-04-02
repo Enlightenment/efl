@@ -667,7 +667,6 @@ _elm_hoversel_efl_canvas_group_group_del(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *eo_item;
 
-   evas_object_event_callback_del(sd->hover, EVAS_CALLBACK_DEL, _auto_update);
    EINA_LIST_FREE(sd->items, eo_item)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
@@ -820,7 +819,6 @@ _elm_hoversel_clear(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *it;
 
-   evas_object_event_callback_del(sd->hover, EVAS_CALLBACK_DEL, _auto_update);
    EINA_LIST_FREE(sd->items, it)
      {
         efl_del(it);
