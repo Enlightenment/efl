@@ -478,7 +478,7 @@ _activate(Evas_Object *obj)
 
    sd->expanded = EINA_TRUE;
 
-   sd->hover = elm_hover_add(sd->hover_parent);
+   efl_wref_add(elm_hover_add(sd->hover_parent), &sd->hover);
    efl_event_callback_add(sd->hover, EFL_EVENT_KEY_DOWN, _hover_key_down, obj);
 
    elm_widget_sub_object_add(obj, sd->hover);
