@@ -67,7 +67,8 @@ _eina_thread_join(Eina_Thread t)
 
    int ret = (int)WaitForSingleObject(t, INFINITE);
 
-   if (ret != 0) return ret;
+   if (ret != 0)
+      return ret;
    return NULL;
 }
 
@@ -82,7 +83,7 @@ void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
    int nPriority;
 
    switch (prio)
-    {
+   {
    case EINA_THREAD_URGENT:
       nPriority = THREAD_PRIORITY_HIGHEST;
    case EINA_THREAD_NORMAL:
@@ -91,7 +92,7 @@ void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
       nPriority = THREAD_PRIORITY_BELOW_NORMAL;
    case EINA_THREAD_IDLE:
       nPriority = THREAD_PRIORITY_IDLE;
-    }
+   }
 
    SetThreadPriority((HANDLE)*t, nPriority);
 }
@@ -128,7 +129,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    ret = (*t != NULL) ? EINA_TRUE : EINA_FALSE;
 
    if (affinity >= 0 && ret)
-    {
+   {
 #ifdef EINA_HAVE_PTHREAD_AFFINITY
       cpu_set_t cpu;
       CPU_ZERO(&cpu);
@@ -137,7 +138,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 #else
       SetThreadAffinityMask(*t, (DWORD_PTR *)&affinity);
 #endif
-    }
+   }
 
    return ret;
 }
@@ -157,18 +158,18 @@ _eina_thread_self(void)
    return (Eina_Thread)GetCurrentThread();
 }
 
-HRESULT _eina_thread_set_name_win32(Eina_Thread thread, char *buf)
+Eina_Bool _eina_thread_set_name(Eina_Thread thread, char *buf)
 {
-   return SetThreadDescription((HANDLE)thread, (PCWSTR)buf);
+   HRESULT res = SetThreadDescription((HANDLE)thread, (PCWSTR)buf);
+   return HRESULT_CODE(res);
 }
 
 Eina_Bool _eina_thread_cancel(Eina_Thread thread)
 {
    LPDWORD lpExitCode;
    Eina_Bool success = GetExitCodeThread((HANDLE)thread, lpExitCode);
-
    ExitThread(*lpExitCode);
-   return success;
+   return !success;
 }
 
 inline void _eina_sched_prio_drop(void)
@@ -181,19 +182,19 @@ inline void _eina_sched_prio_drop(void)
    sched_priority = GetThreadPriority((HANDLE)pthread_id);
 
    if (EINA_UNLIKELY(sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
-    {
+   {
       sched_priority -= RTNICENESS;
 
       /* We don't change the policy */
       if (sched_priority < 1)
-       {
+      {
          EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
          sched_priority = 1;
-       }
+      }
       if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
-       {
+      {
          EINA_LOG_ERR("Unable to query sched parameters");
-       }
+      }
    }
    else
    {
@@ -201,13 +202,13 @@ inline void _eina_sched_prio_drop(void)
 
       /* We don't change the policy */
       if (sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
-       {
+      {
          EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
          sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
-       }
+      }
       if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
-       {
+      {
          EINA_LOG_ERR("Unable to query sched parameters");
-       }
+      }
    }
 }

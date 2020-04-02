@@ -55,6 +55,16 @@ _eina_thread_join(Eina_Thread t)
    return NULL;
 }
 
+Eina_Bool _eina_thread_set_name(Eina_Thread thread, char *buf)
+{
+   #ifndef __linux__
+      pthread_set_name_np((pthread_t)t, buf)
+      return EINA_TRUE;
+   #else
+      return pthread_setname_np((pthread_t)thread, buf);
+   #endif
+}
+
 inline Eina_Bool
 _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), void *data)
 {
@@ -111,7 +121,7 @@ _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 
 Eina_Bool _eina_thread_cancel(Eina_Thread thread)
 {
-   return pthread_cancel((pthread_t)thread) == 0;
+   return pthread_cancel((pthread_t)thread);
 }
 
 inline Eina_Thread
