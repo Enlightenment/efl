@@ -1,9 +1,73 @@
 ==========
-EFL 1.23.0
+EFL 1.24.0
 ==========
 
 Changes since 1.23.0:
 ---------------------
+
+Features:
+
+   * eina: add comparison macros for Eina_Size2D and Eina_Position2D
+   * ecore-wl2: Add API to find a window by surface
+   * ecore-wl2: Add API to find a connected display given a name
+   * ecore-wl2: Add API to return the compositor object from a given display
+   * ecore-wl2: Add API to return window type
+   * ecore-wl2: Add API to find a window by given surface
+   * edje: Add text change signal
+   * edje: add json file support feature
+
+Fixes:
+
+   * efl_ui/bg: unset finger_size multiplier during construction (T8304)
+   * elementary: always use a font that matches our expectation for our test instead of the system one. (T8277)
+   * doc: improve colorselector preview (T8304)
+   * eldbus: properly call parent finalize during creation of Eldbus.Model_Method.
+   * efl_ui/win: fix max size hint eval (T8304)
+   * eet - fix loading eet files that do not have dicts (T8368)
+   * evas/callbacks: emit hardcoded legacy smart callbacks always
+   * elm/layout: add some workarounds to try handling legacy min sizes
+   * ecore_evas/wl2 0 fux xdg close cb for window when it's closed remotely
+   * wl egl - use platform get display
+   * ecore-evas-wayland: Add handler to array
+   * ecore_evas_wayland: Fix array step size
+   * efl/timer: correctly handle recursion for timer processing
+   * elm/genlist: trigger filter,done callback immediately if no filter queue exists
+   * elm/genlist: fix "drag" smart callback
+   * elm/genlist: set pan need recalc during item move on item position change
+   * elm/genlist: fix item focus unregister on item move
+   * ecore/timer: correctly handle recursive deletion of legacy timers
+   * ecore-drm2: Fix issue of shifting 1 by more than 32bits
+   * efreet - consider ctime changes as changes too
+   * edje - box - calc min size correctly at start ...
+   * vector svg: apply fill-opacity to graidents fill objects.
+   * evas vector: initialize data member properly.
+   * fix jpeg loading which freed the wrong ptr (T8497)
+   * fix the wrong method signature for evas_textgrid
+   * efl_ui/layout: fix multiple emissions of theme,changed during construction
+   * ui image: fix scale_method expand behavior.
+   * ecore-x - fix fallbacks to use capital X in lib name (T8543)
+   * elm - widget - actually check object smart data return for no data
+   * canvas vector: fix to refresh svg file of vector object.
+   * evas - fix access-after-free where during destroy hash item not cleared
+   * elm - fix filesel deferred unref to not crash
+   * ecore_con - freebsd bind blocking workaround
+   * elm win + ecore evas - fix csd stuff like base size and min sizing
+   * evas - fix access-after-free number 2 (T8534)
+   * elm win - fix client side move/resize req handling csd in x
+   * edje - store original size in edje struct and dont exceed max size
+   * evas - loaders - jp2k - re-enable in the build after it was lost
+   * edje_entry: Add matching tag.
+   * evas/events: fix multi-touch object targeting on touch down events
+   * eo - fix - fix alignment of eo object class structs - it was wrong
+   * canvas font: correct wrong masking length.
+   * Efl.Gfx.Path: Fix condition of for loop in current search
+   * canvas mask: fix incorrect render surface size.
+   * canvas proxy: fix broken proxy source clipping function.
+   * evas gl: clip rect with proper size.
+   * canvas proxy: fix a missing case that proxy not updated properly.
+   * evas_object_box: respect static clipper.
+   * ecore evas x - on argb dont create unused 1 bit pixmap masks
+   * emotion - webcam - fix segv on webcam plug/unplug and clean
 
 Removals:
 
@@ -12,6 +76,7 @@ Removals:
    * ecore_x: remove support XGesture extension
    * elocation: remove beta library
    * eeze: remove tizen module support from eeze sensor
+   * evas3d: remove support for evas 3D which was a beta all along
 
 Changes since 1.22.0:
 ---------------------
