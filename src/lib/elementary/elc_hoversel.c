@@ -238,8 +238,6 @@ static void
 _sizing_eval(void *data)
 {
    Evas_Object *obj = data;
-   Elm_Object_Item *eo_item;
-   const Eina_List *l;
    const char *max_size_str;
    int max_size = 0;
    char buf[128];
@@ -254,16 +252,6 @@ _sizing_eval(void *data)
 
    if ((!sd->expanded) || (!sd->bx)) return;
 
-   elm_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
-   edje_object_message_signal_process(elm_layout_edje_get(sd->hover));
-
-   EINA_LIST_FOREACH(sd->items, l, eo_item)
-     {
-        ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
-        efl_canvas_group_calculate(VIEW(item));
-     }
-
-   elm_box_recalculate(sd->bx);
    evas_object_size_hint_combined_min_get(sd->bx, &box_w, &box_h);
 
    max_size_str = elm_layout_data_get(sd->hover, "max_size");
@@ -283,8 +271,6 @@ _sizing_eval(void *data)
         adjusted.w = box_w;
         adjusted.h = (max_size > 0) ? MIN(box_h, max_size) : box_h ;
      }
-
-   evas_object_size_hint_min_set(sd->spacer, adjusted.w, adjusted.h);
    if (!sd->last_location)
      sd->last_location = elm_hover_best_content_location_get(sd->hover, !sd->horizontal + 1);
 
@@ -510,7 +496,10 @@ _activate(Evas_Object *obj)
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
         evas_object_show(VIEW(item));
         elm_box_pack_end(sd->bx, VIEW(item));
+        if (efl_canvas_group_need_recalculate_get(VIEW(item)))
+          efl_canvas_group_calculate(VIEW(item));
      }
+   elm_box_recalculate(sd->bx);
 
    _create_scroller(obj, sd);
    elm_object_content_set(sd->scr, sd->bx);
