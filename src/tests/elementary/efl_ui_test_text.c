@@ -30,6 +30,18 @@ EFL_START_TEST(text_cnp)
    efl_text_set(txt, "Hello");
    efl_text_interactive_all_select(txt);
    efl_ui_textbox_selection_copy(txt);
+   efl_text_interactive_all_unselect(txt);
+   efl_text_cursor_text_insert(efl_text_interactive_main_cursor_get(txt), "X");
+   efl_ui_textbox_selection_paste(txt);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(i_copy, 1);
+   ck_assert_int_eq(i_paste, 1);
+   ck_assert_str_eq(efl_text_get(txt), "HelloXHello");
+
+   i_copy = i_cut = i_paste= 0;
+   efl_text_set(txt, "Hello");
+   efl_text_interactive_all_select(txt);
+   efl_ui_textbox_selection_copy(txt);
    efl_text_interactive_all_select(txt);
    efl_ui_textbox_selection_cut(txt);
    efl_ui_textbox_selection_paste(txt);
