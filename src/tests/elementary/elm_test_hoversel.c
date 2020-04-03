@@ -108,9 +108,49 @@ EFL_START_TEST(elm_test_hoversel_behavior)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_test_hoversel_position)
+{
+   Eo *hoversel, *win = win_add();
+
+   evas_object_resize(win, 500, 500);
+   hoversel = elm_hoversel_add(win);
+   evas_object_geometry_set(hoversel, 450, 450, 50, 50);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Vertical");
+   elm_hoversel_item_add(hoversel, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 4 - Long Label Here", "close", ELM_ICON_STANDARD, NULL, NULL);
+
+   evas_object_show(win);
+   evas_object_show(hoversel);
+   elm_object_focus_set(hoversel, EINA_TRUE);
+
+   get_me_to_those_events(win);
+   assert_object_size_eq(hoversel, 50, 50);
+   click_object(hoversel);
+   get_me_to_those_events(win);
+
+   wait_timer(0.6); // from default theme
+   ecore_main_loop_iterate();
+
+   ELM_HOVERSEL_DATA_GET(hoversel, sd);
+   {
+      int x, y, w, h;
+      Eo *item = eina_list_data_get(elm_box_children_get(sd->bx));
+      evas_object_geometry_get(item, &x, &y, &w, &h);
+
+      /* verify that all buttons are in-canvas */
+      ck_assert_int_le(x + w, 500);
+      ck_assert_int_le(y + h, 500);
+   }
+}
+EFL_END_TEST
+
 void elm_test_hoversel(TCase *tc)
 {
    tcase_add_test(tc, elm_hoversel_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_test_hoversel_behavior);
+   tcase_add_test(tc, elm_test_hoversel_position);
 }
