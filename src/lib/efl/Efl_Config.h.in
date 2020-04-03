@@ -1,8 +1,8 @@
 #ifndef EFL_CONFIG_H
 #define EFL_CONFIG_H
 
-/* Add -DEFL_API_OVERRIDE ot your CFLAGS to override the default
- * installed api set and then fter that -DEFL_NOLEGACY_API_SUPPORT
+/* Add -DEFL_API_OVERRIDE to your CFLAGS to override the default
+ * installed api set and after that -DEFL_NOLEGACY_API_SUPPORT
  * as desired
  */
 #ifndef EFL_API_OVERRIDE 

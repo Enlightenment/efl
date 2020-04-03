@@ -4,16 +4,31 @@ import argparse
 import subprocess
 import os
 
-parser = argparse.ArgumentParser(description='A scenario recorder for EFL based applications.'
-                                              '\tF1 - Request stabilization\n'
-                                              '\tF2 - Request shot\n'
-                                              '\tF3 - Request to save the scenario\n')
-parser.add_argument('app', metavar='app', help='The app to run. You can also pass environment variables here.', type=str, nargs='*')
-parser.add_argument('-t', '--tests', metavar='tests', help='Name of the filename where to store the test.', type=str)
-parser.add_argument('-f', '--fontsdir', metavar='fontsdir', help='Specify a directory of the fonts that should be used.', type=str)
-parser.add_argument('-L', '--license', help='the path where to find the meson build directory', action='store_true')
-parser.add_argument('-C', '--copyright', help='the path where to find the meson build directory', action='store_true')
-parser.add_argument('-V', '--version', help='the path where to find the meson build directory', action='store_true')
+parser = argparse.ArgumentParser(description='A scenario recorder for EFL-based applications.\n\n'
+  'This records all actions the user performs on an EFL application (like keystrokes\n'
+  'and mouse clicks) and stores them on a file.\n'
+  'Later on, the `exactness` or `exactness_play` commands can be used to play\n'
+  'back these actions and obtain screenshots.\n'
+  '\n'
+  'While running this application, use the following keys to control the process:\n'
+  '\tF1 - Request stabilization.\n'
+  '\tF2 - Request screenshot.\n'
+  '\tF3 - Request to save the scenario.\n'
+  '\n'
+  'Note: If you don\'t press F3 at least once, no output file will be generated.',
+  formatter_class=argparse.RawDescriptionHelpFormatter,
+  epilog='Example:\n'
+  'exactness_record -t my_app.exu -- my_app --app --arguments')
+parser.add_argument('app', metavar='app', help='The app to run. You can also pass environment variables here. '
+  'Use a -- if you need to provide arguments to the app.',
+  type=str, nargs='*')
+parser.add_argument('-t', '--tests', metavar='tests', help='Name of the file where to store the test. '
+  'It is recommended to use the `.exu` extension.', type=str)
+parser.add_argument('-f', '--fontsdir', metavar='fontsdir', help='Directory of the fonts that should be used.',
+  type=str)
+parser.add_argument('-L', '--license', help='Print license information and exit.', action='store_true')
+parser.add_argument('-C', '--copyright', help='Print copyright information and exit.', action='store_true')
+parser.add_argument('-V', '--version', help='Print version information and exit.', action='store_true')
 
 G = parser.parse_args()
 
@@ -22,7 +37,7 @@ if G.license:
   exit(0)
 
 if G.copyright:
-  print("(C) 2017 Enlightenment.")
+  print("(C) 2017-2020 Enlightenment.")
   exit(0)
 
 if G.version:

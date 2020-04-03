@@ -53,6 +53,8 @@
 #define EINA_VERSION_MINOR EFL_VERSION_MINOR
 
 /**
+ * @struct _Eina_Version
+ * The version of Eina.
  * @typedef Eina_Version
  * The version of Eina.
  */

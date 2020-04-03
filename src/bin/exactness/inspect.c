@@ -1239,9 +1239,12 @@ static const Ecore_Getopt optdesc = {
   "exactness_inspect",
   "%prog [options] [<exu file> | <file1 file2>]",
   NULL,
-  "(C) 2016 Enlightenment",
+  "(C) 2016-2020 Enlightenment",
   "BSD",
-  "Inspector for Exactness",
+  "Inspector for Exactness\n"
+  "\n"
+  "Dumps the contents of `.exu` files obtained with `exactness_record` or"
+  "`exactness -i` in an easy-to-examine way.",
   0,
   {
     ECORE_GETOPT_STORE_USHORT('d', "delay", "Delay the given recording by a given time (in milliseconds)."),
