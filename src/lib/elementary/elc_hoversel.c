@@ -512,6 +512,8 @@ _activate(Evas_Object *obj)
    if (_elm_config->access_mode) _access_widget_item_register(sd);
 
    efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
+   efl_canvas_group_calculate(sd->hover);
+   _sizing_eval(obj);
    evas_object_show(sd->hover);
 }
 
