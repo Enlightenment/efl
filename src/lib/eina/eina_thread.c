@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include "eina_config.h"
-#include "eina_lock.h" /* it will include pthread.h with proper flags */
+#include "eina_lock.h" 
 #include "eina_thread.h"
 #include "eina_sched.h"
 #include "eina_cpu.h"
@@ -40,13 +40,10 @@
 # include <string.h>
 
 #if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
-#ifndef __linux__
-#include <pthread_np.h>
-#define cpu_set_t cpuset_t
-#endif
+# define cpu_set_t cpuset_t
 #endif
 
-static void *_eina_internal_call(void *context);
+
 
 EAPI Eina_Thread
 eina_thread_self(void)
@@ -59,7 +56,32 @@ eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
    return !!_eina_thread_equal(t1, t2);
 }
+static void *_eina_internal_call(void *context)
+{
+   Eina_Thread_Call *c = context;
+   void *r;
+   Eina_Thread self;
+   
 
+   // Default this thread to not cancellable as per Eina documentation
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+
+   EINA_THREAD_CLEANUP_PUSH(free, c);
+
+   if (c->prio == EINA_THREAD_BACKGROUND || c->prio == EINA_THREAD_IDLE)
+     eina_sched_prio_drop();
+
+
+   self = eina_thread_self();
+
+   _eina_debug_thread_add(&self);
+   EINA_THREAD_CLEANUP_PUSH(_eina_debug_thread_del, &self);
+   r = c->func((void*) c->data, eina_thread_self());
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
+
+   return r;
+}
 EAPI Eina_Bool
 eina_thread_create(Eina_Thread *t,
                    Eina_Thread_Priority prio, int affinity,
@@ -104,7 +126,7 @@ eina_thread_name_set(Eina_Thread t, const char *name)
         buf[15] = 0;
      }
    else buf[0] = 0;
-   if (_eina_thread_set_name(t, buf) == 0) return EINA_TRUE;
+   if (_eina_thread_name_set(t, buf) == 0) return EINA_TRUE;
 #else
    (void)t;
    (void)name;
@@ -122,36 +144,13 @@ eina_thread_cancel(Eina_Thread t)
 EAPI Eina_Bool
 eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
 {
-   int state = cancellable ? EINA_THREAD_CANCEL_ENABLE : EINA_THREAD_CANCEL_DISABLE;
-   int old = 0;
-   int r;
-   #ifndef _WIN32
-   /* enforce deferred in case users changed to asynchronous themselves */
-   
-   pthread_setcanceltype(EINA_THREAD_CANCEL_DEFERRED, &old);
-
-   r = pthread_setcancelstate(state, &old);
-   if (was_cancellable && r == 0)
-     *was_cancellable = (old == EINA_THREAD_CANCEL_ENABLE);
-   return r == 0;
-   #else
-      if(!state){
-         *was_cancellable = EINA_TRUE;
-         return EINA_FALSE;
-      }else{
-         *was_cancellable = EINA_TRUE;
-         return EINA_TRUE;
-      }
-   #endif
+   return _eina_thread_cancellable_set(cancellable,was_cancellable);
 }
 
 EAPI void
 eina_thread_cancel_checkpoint(void)
 {
-   #ifndef _WIN32
-   pthread_testcancel();
-   #endif
-
+   _eina_thread_cancel_checkpoint();
 }
 
 EAPI void *
@@ -182,29 +181,3 @@ eina_thread_shutdown(void)
    return EINA_TRUE;
 }
 
-static void *_eina_internal_call(void *context)
-{
-   Eina_Thread_Call *c = context;
-   void *r;
-   Eina_Thread self;
-   
-
-   // Default this thread to not cancellable as per Eina documentation
-   eina_thread_cancellable_set(EINA_FALSE, NULL);
-
-   EINA_THREAD_CLEANUP_PUSH(free, c);
-
-   if (c->prio == EINA_THREAD_BACKGROUND || c->prio == EINA_THREAD_IDLE)
-     eina_sched_prio_drop();
-
-
-   self = eina_thread_self();
-
-   _eina_debug_thread_add(&self);
-   EINA_THREAD_CLEANUP_PUSH(_eina_debug_thread_del, &self);
-   r = c->func((void*) c->data, eina_thread_self());
-   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
-   EINA_THREAD_CLEANUP_POP(EINA_TRUE);
-
-   return r;
-}

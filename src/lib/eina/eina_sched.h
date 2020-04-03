@@ -30,7 +30,9 @@
 #define EINA_SCHED_H_
 
 #include "eina_types.h"
-
+#include "eina_thread.h"
+#define RTNICENESS 1
+#define NICENESS 5
 
 /**
  * @brief Lowers the priority of the current thread.
@@ -44,6 +46,7 @@
  *          only one that is implemented as of now. In this case, the nice level is
  *          incremented on this thread by @c NICENESS.
  */
+inline void _eina_sched_prio_drop(void);
 EAPI void eina_sched_prio_drop(void);
 
 /**

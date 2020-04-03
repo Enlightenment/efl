@@ -21,13 +21,6 @@
 #endif
 #include "eina_thread.h"
 
-#ifdef __linux__
-#include <sched.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <errno.h>
-#endif
-
 #include "eina_sched.h"
 #include "eina_log.h"
 

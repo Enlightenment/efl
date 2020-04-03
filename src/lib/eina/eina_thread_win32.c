@@ -21,10 +21,8 @@
 #endif
 
 #include <stdlib.h>
-
 #include "eina_config.h"
-#include "eina_lock.h" /* it will include pthread.h with proper flags */
-
+#include "eina_lock.h"
 #include "eina_sched.h"
 #include "eina_cpu.h"
 #include "eina_thread.h"
@@ -37,15 +35,8 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
-
 #include <errno.h>
 #include <string.h>
-
-#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
-#ifndef __linux__
-#define cpu_set_t cpuset_t
-#endif
-#endif
 
 typedef struct _Eina_win32_thread_func
 {
@@ -86,12 +77,16 @@ void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
    {
    case EINA_THREAD_URGENT:
       nPriority = THREAD_PRIORITY_HIGHEST;
+      break;
    case EINA_THREAD_NORMAL:
       nPriority = THREAD_PRIORITY_NORMAL;
+      break;
    case EINA_THREAD_BACKGROUND:
       nPriority = THREAD_PRIORITY_BELOW_NORMAL;
+      break;
    case EINA_THREAD_IDLE:
       nPriority = THREAD_PRIORITY_IDLE;
+      break;
    }
 
    SetThreadPriority((HANDLE)*t, nPriority);
@@ -130,14 +125,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    if (affinity >= 0 && ret)
    {
-#ifdef EINA_HAVE_PTHREAD_AFFINITY
-      cpu_set_t cpu;
-      CPU_ZERO(&cpu);
-      CPU_SET(affinity, &cpu);
-      SetThreadAffinityMask(*t, (DWORD_PTR *)&cpu);
-#else
       SetThreadAffinityMask(*t, (DWORD_PTR *)&affinity);
-#endif
    }
 
    return ret;
@@ -158,7 +146,7 @@ _eina_thread_self(void)
    return (Eina_Thread)GetCurrentThread();
 }
 
-Eina_Bool _eina_thread_set_name(Eina_Thread thread, char *buf)
+Eina_Bool _eina_thread_name_set(Eina_Thread thread, char *buf)
 {
    HRESULT res = SetThreadDescription((HANDLE)thread, (PCWSTR)buf);
    return HRESULT_CODE(res);
@@ -171,44 +159,30 @@ Eina_Bool _eina_thread_cancel(Eina_Thread thread)
    ExitThread(*lpExitCode);
    return !success;
 }
-
-inline void _eina_sched_prio_drop(void)
+void _eina_thread_setcanceltype(int type, int *oldtype)
 {
-   Eina_Thread pthread_id;
-   int sched_priority;
-
-   pthread_id = eina_thread_self();
-
-   sched_priority = GetThreadPriority((HANDLE)pthread_id);
-
-   if (EINA_UNLIKELY(sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
+   pthread_setcanceltype(EINA_THREAD_CANCEL_DEFERRED, &oldtype);
+}
+int _eina_thread_setcancelstate(int type, int *oldtype)
+{
+   return pthread_setcancelstate(type, &oldtype);
+}
+EAPI Eina_Bool
+_eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
+{
+   int state = cancellable ? EINA_THREAD_CANCEL_ENABLE : EINA_THREAD_CANCEL_DISABLE;
+   if (!state)
    {
-      sched_priority -= RTNICENESS;
-
-      /* We don't change the policy */
-      if (sched_priority < 1)
-      {
-         EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
-         sched_priority = 1;
-      }
-      if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
-      {
-         EINA_LOG_ERR("Unable to query sched parameters");
-      }
+      *was_cancellable = EINA_TRUE;
+      return EINA_FALSE;
    }
    else
    {
-      sched_priority += NICENESS;
-
-      /* We don't change the policy */
-      if (sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
-      {
-         EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
-         sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
-      }
-      if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
-      {
-         EINA_LOG_ERR("Unable to query sched parameters");
-      }
+      *was_cancellable = EINA_TRUE;
+      return EINA_TRUE;
    }
+}
+void _eina_thread_cancel_checkpoint(void)
+{
+   pthread_testcancel();
 }

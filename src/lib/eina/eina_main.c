@@ -297,7 +297,6 @@ eina_init(void)
 #endif
 
 #ifdef EFL_HAVE_THREADS
-   
    _eina_main_loop = eina_thread_self();
 #endif
 
@@ -389,11 +388,9 @@ eina_threads_init(void)
 {
 #ifdef EFL_HAVE_THREADS
    int ret;
-
-#ifdef EINA_HAVE_DEBUG_THREADS
-   
+# ifdef EINA_HAVE_DEBUG_THREADS   
    assert(eina_thread_equal(_eina_main_loop, eina_thread_self()));
-#endif
+# endif
 
    ++_eina_main_thread_count;
    ret = _eina_main_thread_count;
@@ -417,11 +414,10 @@ eina_threads_shutdown(void)
 #ifdef EFL_HAVE_THREADS
    int ret;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   
+# ifdef EINA_HAVE_DEBUG_THREADS
    assert(eina_thread_equal(_eina_main_loop, eina_thread_self()));
    assert(_eina_main_thread_count > 0);
-#endif
+# endif
 
    ret = --_eina_main_thread_count;
    if(_eina_main_thread_count > 0)
@@ -443,11 +439,9 @@ eina_main_loop_is(void)
 # ifdef __GNUC__
    /* pthread_self() can't be optimized, it's a single asm "movl" */
    if (__builtin_types_compatible_p(pthread_t, unsigned long int))
-     
      return (eina_thread_self() == _eina_main_loop);
    else
 # endif
-   
    if (eina_thread_equal(_eina_main_loop, eina_thread_self()))
      return EINA_TRUE;
 #endif
@@ -458,12 +452,8 @@ eina_main_loop_is(void)
 EAPI void
 eina_main_loop_define(void)
 {
-#ifdef EFL_HAVE_THREADS
-   
+#ifdef EFL_HAVE_THREADS   
    _eina_main_loop = eina_thread_self();
 #endif
 }
 
-/**
- * @}
- */

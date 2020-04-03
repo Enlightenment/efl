@@ -176,7 +176,6 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail)
    item                = (Eina_Evlog_Item *)strings;
    item->tim           = SWAP_DBL(now);
    item->srctim        = SWAP_DBL(srctime);
-   //item->thread        = SWAP_64((unsigned long long)(uintptr_t)pthread_self());
    item->thread        = SWAP_64((unsigned long long)(uintptr_t)eina_thread_self());
    item->obj           = SWAP_64((unsigned long long)(uintptr_t)obj);
    item->event_offset  = SWAP_16(sizeof(Eina_Evlog_Item));

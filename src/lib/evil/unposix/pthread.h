@@ -89,6 +89,60 @@ UNIMPLEMENTED inline int pthread_cond_signal(void* c)
     return 0;
 }
 
+UNIMPLEMENTED inline int pthread_rwlock_init(void* a, ...)
+{
+    #warning pthread_rwlock_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutexattr_settype(void* a, ...)
+{
+    #warning pthread_mutexattr_settype is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutex_init(void* a, ...)
+{
+    #warning pthread_mutex_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_mutex_destroy(void* a, ...)
+{
+    #warning pthread_mutex_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_condattr_init(void* a, ...)
+{
+    #warning pthread_condattr_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_init(void* a, ...)
+{
+    #warning pthread_cond_init is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_condattr_destroy(void* a, ...)
+{
+    #warning pthread_condattr_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_cond_destroy(void* a, ...)
+{
+    #warning pthread_cond_destroy is not implemented.
+    return 0;
+}
+
+UNIMPLEMENTED inline int pthread_rwlock_destroy(void* a, ...)
+{
+    #warning pthread_rwlock_destroy is not implemented.
+    return 0;
+}
+
 UNIMPLEMENTED inline int pthread_rwlock_rdlock(void* c)
 {
     #warning pthread_rwlock_rdlock is not implemented.

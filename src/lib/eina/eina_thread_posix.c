@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2012 Cedric Bail
+ * Copyright (C) 2020 Carlos Signor
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include "eina_config.h"
-#include "eina_lock.h" /* it will include pthread.h with proper flags */
+#include "eina_lock.h"
 #include "eina_thread.h"
 #include "eina_sched.h"
 #include "eina_cpu.h"
@@ -55,14 +55,14 @@ _eina_thread_join(Eina_Thread t)
    return NULL;
 }
 
-Eina_Bool _eina_thread_set_name(Eina_Thread thread, char *buf)
+Eina_Bool _eina_thread_name_set(Eina_Thread thread, char *buf)
 {
-   #ifndef __linux__
-      pthread_set_name_np((pthread_t)t, buf)
-      return EINA_TRUE;
-   #else
-      return pthread_setname_np((pthread_t)thread, buf);
-   #endif
+#ifndef __linux__
+   pthread_set_name_np((pthread_t)t, buf);
+   return EINA_TRUE;
+#else
+   return pthread_setname_np((pthread_t)thread, buf);
+#endif
 }
 
 inline Eina_Bool
@@ -75,7 +75,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    pthread_attr_init(&attr);
    if (affinity >= 0)
-     {
+   {
 #ifdef EINA_HAVE_PTHREAD_AFFINITY
       cpu_set_t cpu;
 
@@ -83,7 +83,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
       CPU_SET(affinity, &cpu);
       pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
 #endif
-     }
+   }
 
    /* setup initial locks */
 
@@ -129,48 +129,31 @@ _eina_thread_self(void)
 {
    return (Eina_Thread)pthread_self();
 }
-inline void _eina_sched_prio_drop(void)
+
+void _eina_thread_setcanceltype(int type, int *oldtype)
 {
-   struct sched_param param;
-   int pol, ret;
-   Eina_Thread pthread_id;
+   pthread_setcanceltype(EINA_THREAD_CANCEL_DEFERRED, &oldtype);
+}
+int _eina_thread_setcancelstate(int type, int *oldtype)
+{
+   return pthread_setcancelstate(type, &oldtype);
+}
+EAPI Eina_Bool
+_eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
+{
+   int state = cancellable ? EINA_THREAD_CANCEL_ENABLE : EINA_THREAD_CANCEL_DISABLE;
+   int old = 0;
+   int r;
 
-   pthread_id = eina_thread_self();
-   ret = pthread_getschedparam(pthread_id, &pol, &param);
-   if (ret)
-    {
-      EINA_LOG_ERR("Unable to query sched parameters");
-      return;
-    }
+   /* enforce deferred in case users changed to asynchronous themselves */
 
-   if (EINA_UNLIKELY(pol == SCHED_RR || pol == SCHED_FIFO))
-    {
-      param.sched_priority -= RTNICENESS;
+   _eina_thread_setcanceltype(EINA_THREAD_CANCEL_DEFERRED, &old);
 
-      /* We don't change the policy */
-      if (param.sched_priority < 1)
-       {
-         EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
-         param.sched_priority = 1;
-       }
-
-      pthread_setschedparam(pthread_id, pol, &param);
-   }
-   else
-    {
-      int prio;
-      errno = 0;
-      prio = getpriority(PRIO_PROCESS, 0);
-      if (errno == 0)
-       {
-         prio += NICENESS;
-         if (prio > 19)
-          {
-            EINA_LOG_INFO("Max niceness reached; keeping max (19)");
-            prio = 19;
-          }
-
-         setpriority(PRIO_PROCESS, 0, prio);
-       }
-    }
+   r = _eina_thread_setcancelstate(state, &old);
+   if (was_cancellable && r == 0)
+      *was_cancellable = (old == EINA_THREAD_CANCEL_ENABLE);
+   return r == 0;
+}
+void _eina_thread_cancel_checkpoint(){
+   pthread_testcancel();
 }
