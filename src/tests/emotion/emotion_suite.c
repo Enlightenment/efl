@@ -40,9 +40,10 @@ EFL_START_TEST(emotion_simple)
    double pos, len;
    double ratio;
    int iw, ih;
+   int l, r, t, b;
    const char *file;
-   const Eina_List *wl, *l;
    Emotion_Webcam *webcam;
+   Emotion_Aspect *aspect;
 
    ecore_evas_init();
    ecore_evas = ecore_evas_new(NULL, 0, 0, 800, 600, NULL);
@@ -50,6 +51,7 @@ EFL_START_TEST(emotion_simple)
 
    obj = emotion_object_add(evas);
    emotion_object_init(obj, "gst1");
+   emotion_object_module_option_set(obj, "foo", "bar");
    emotion_object_vis_set(obj, EMOTION_VIS_NONE);
    emotion_object_last_position_load(obj);
    emotion_object_play_set(obj, 0);
@@ -84,12 +86,45 @@ EFL_START_TEST(emotion_simple)
    emotion_object_file_set(obj, file);
    emotion_object_last_position_save(obj);
 
-   wl = emotion_webcams_get();
-   EINA_LIST_FOREACH(wl, l, webcam)
-     {
-        emotion_webcam_name_get(webcam);
-        emotion_webcam_device_get(webcam);
-     }
+   emotion_webcams_get();
+   emotion_webcam_name_get(webcam);
+   emotion_webcam_device_get(webcam);
+   emotion_webcam_custom_get(webcam);
+
+   emotion_object_extension_may_play_fast_get("file");
+   emotion_object_extension_may_play_get("file");
+
+   _emotion_pending_ecore_begin();
+   _emotion_pending_ecore_end();
+
+   _emotion_pending_object_ref();
+   _emotion_pending_object_unref();
+
+   emotion_object_image_get(obj);
+
+   emotion_object_border_set(obj, 1, 1, 1, 1);
+   emotion_object_border_get(obj, &l, &r, &t, &b);
+
+   emotion_object_bg_color_set(obj, 1, 1, 1, 1);
+   emotion_object_bg_color_get(obj, &l, &r, &t, &b);
+
+   //emotion_object_keep_aspect_set(obj, aspect);
+   emotion_object_keep_aspect_get(obj);
+
+   emotion_object_play_get(obj);
+   emotion_object_buffer_size_get(obj);
+   emotion_object_video_handled_get(obj);
+   emotion_object_audio_handled_get(obj);
+
+   emotion_object_smooth_scale_set(obj, EINA_TRUE);
+   emotion_object_smooth_scale_get(obj);
+
+   emotion_object_audio_volume_get(obj);
+   emotion_object_audio_channel_name_get(obj, 1);
+   emotion_object_audio_channel_set(obj, 1);
+   emotion_object_audio_channel_get(obj);
+
+
 
    ecore_evas_free(ecore_evas);
    ecore_evas_shutdown();
