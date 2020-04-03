@@ -702,9 +702,9 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
 {
    Elm_Code *code;
    Elm_Code_Line *line_obj;
-   unsigned int oldrow, position, length, first_row, last_row;
-   int cw, ch;
    const char *text;
+   unsigned int oldrow, position, length, first_row, last_row;
+   int cw = 0, ch = 0;
 
    oldrow = pd->cursor_line;
 
