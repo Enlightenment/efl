@@ -330,14 +330,10 @@ EAPI extern Emotion_Version *emotion_version;
  *
  * @section Emotion_Examples
  *
- * The following examples exemplify the emotion usage. There's also the
- * emotion_test binary that is distributed with this library and cover the
- * entire API, but since it is too long and repetitive to be explained, its code
- * is just displayed as another example.
+ * The following examples exemplify the emotion usage.
  *
  * @li @ref emotion_basic_example_c
  * @li @ref emotion_signals_example.c "Emotion signals"
- * @li @ref emotion_test_main.c "emotion_test - full API usage"
  *
  */
 
