@@ -70,6 +70,7 @@ struct _Efl_Ui_Textpath_Data
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Eina_List *lines;
 #endif
+   Eina_Bool need_redraw : 1;
    Eina_Bool circular : 1;   //TODO: Remove this flag when elm_textpath_circle_set() is removed.
 };
 
@@ -329,9 +330,8 @@ _map_point_calc(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_text_draw(void *data)
+_text_draw(Efl_Ui_Textpath_Data *pd)
 {
-   Efl_Ui_Textpath_Data *pd = data;
    Efl_Ui_Textpath_Segment *seg;
    Evas_Map *map;
    int w1, w2;
@@ -399,7 +399,13 @@ _text_draw(void *data)
    evas_object_map_set(pd->text_obj, map);
    evas_map_free(map);
 
-   pd->draw_text_job = NULL;
+   pd->need_redraw = EINA_FALSE;
+}
+
+static void
+_render_pre_cb(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   _text_draw(data);
 }
 
 static void
@@ -523,8 +529,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
 static void
 _sizing_eval(Efl_Ui_Textpath_Data *pd)
 {
-   ecore_job_del(pd->draw_text_job);
-   pd->draw_text_job = ecore_job_add(_text_draw, pd);
+   pd->need_redraw = EINA_TRUE;
 }
 
 static void
@@ -698,12 +703,16 @@ _efl_ui_textpath_efl_object_constructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
    pd->slice_no = SLICE_DEFAULT_NO;
    pd->direction = EFL_UI_TEXTPATH_DIRECTION_CW;
 
+   evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_PRE, _render_pre_cb, pd);
+
    return obj;
 }
 
 EOLIAN static void
 _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
+   evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_RENDER_PRE, _render_pre_cb, pd);
+
    Efl_Ui_Textpath_Segment *seg;
 
    if (pd->text) free(pd->text);
@@ -713,7 +722,6 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
         pd->segments = eina_inlist_remove(pd->segments, EINA_INLIST_GET(seg));
         free(seg);
      }
-   ecore_job_del(pd->draw_text_job);
 
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Evas_Object *line;
