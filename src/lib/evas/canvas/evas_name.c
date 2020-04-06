@@ -74,7 +74,11 @@ _efl_canvas_object_efl_object_debug_name_override(Eo *eo_obj, Evas_Object_Protec
    const char *clip = obj->clip.clipees ? ":clipper" : "";
 
    efl_debug_name_override(efl_super(eo_obj, EFL_CANVAS_OBJECT_CLASS), sb);
-   if (obj->cur->visible)
+   if (!obj->cur)
+     {
+        eina_strbuf_append_printf(sb, ":nostate");
+     }
+   else if (obj->cur->visible)
      {
         eina_strbuf_append_printf(sb, "%s%s:(%d,%d %dx%d)", norend, clip,
                                   obj->cur->geometry.x, obj->cur->geometry.y,
