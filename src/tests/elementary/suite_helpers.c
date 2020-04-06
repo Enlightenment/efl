@@ -821,3 +821,9 @@ write_key_sequence(Eo *obj, const char *seqence)
        ecore_main_loop_iterate();
     }
 }
+
+void
+force_render(Eo *win)
+{
+   _win_manual_render(win, NULL);
+}

@@ -1953,6 +1953,18 @@ _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
 }
 
+static void
+_ecore_win32_event_free_selection_notify(void *data EINA_UNUSED, void *ev)
+{
+   Ecore_Win32_Event_Selection_Notify *e;
+
+   e = (Ecore_Win32_Event_Selection_Notify *)ev;
+   if (e->data) free(e->data);
+   if (e->selection) free(e->selection);
+   free(e);
+}
+
+
 void
 _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
 {
@@ -1973,12 +1985,9 @@ _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
     */
    if (!_ecore_win32_clipboard_has_data)
      {
-        /* if case someone else is owning the clipboard, we can't do anything */
+        /* in case someone else is owning the clipboard, we can't do anything */
         if (!OpenClipboard(msg->window))
-          {
-             free(e);
-             return;
-          }
+          goto free_e;
 
         if (IsClipboardFormatAvailable(CF_UNICODETEXT))
           {
@@ -1997,7 +2006,10 @@ _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
                        GlobalUnlock(global);
                        if (e->data)
                          {
-                            ecore_event_add(ECORE_WIN32_EVENT_SELECTION_NOTIFY, e, NULL, NULL);
+                            ecore_event_add(ECORE_WIN32_EVENT_SELECTION_NOTIFY,
+                                            e,
+                                            _ecore_win32_event_free_selection_notify,
+                                            NULL);
                             _ecore_win32_clipboard_has_data = EINA_TRUE;
                             CloseClipboard();
                             return;
@@ -2032,9 +2044,6 @@ _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
                     }
                }
           }
-        free(e->data);
-        free(e->selection);
-        free(e);
         CloseClipboard();
      }
    /*
@@ -2046,15 +2055,14 @@ _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
        if (!IsClipboardFormatAvailable(CF_UNICODETEXT) &&
            !IsClipboardFormatAvailable(CF_TEXT))
          {
-            e->selection = strdup("text/plain;charset=utf-8");
-            if (e->selection)
-              {
-                ecore_event_add(ECORE_WIN32_EVENT_SELECTION_CLEAR, e, NULL, NULL);
-                _ecore_win32_clipboard_has_data = EINA_FALSE;
-                return;
-              }
+            ecore_event_add(ECORE_WIN32_EVENT_SELECTION_CLEAR, e, NULL, NULL);
+            _ecore_win32_clipboard_has_data = EINA_FALSE;
+            return;
          }
      }
 
+ free_e:
+   if (e->data) free(e->data);
+   if (e->selection) free(e->selection);
    free(e);
 }

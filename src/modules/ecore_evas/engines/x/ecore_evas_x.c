@@ -3862,7 +3862,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
    Eina_Content *result = NULL;
    Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
 
-   if (!strncmp(mime_type, "text", strlen("text")))
+   if (eina_str_has_prefix(mime_type,"text"))
      {
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
         void *null_terminated = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
@@ -3870,7 +3870,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
         result = _create_deliveriy_content(x11_data->length + 1, null_terminated, mime_type);
         free(null_terminated);
      }
-   else if (!strncmp(mime_type, "image", strlen("image")))
+   else if (eina_str_has_prefix(mime_type,"image"))
      {
         Eina_Content *tmp_container = eina_content_new((Eina_Slice){.len = x11_data->length, .mem = x11_data->data}, mime_type);
         const char *file = eina_content_as_file(tmp_container);

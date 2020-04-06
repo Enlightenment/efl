@@ -120,7 +120,7 @@ eina_content_new(Eina_Slice data, const char *type)
 {
    Eina_Content *content;
 
-   if (!strncmp(type, "text", strlen("text")))
+   if (eina_str_has_prefix(type,"text"))
      {
         //last char in the mem must be \0
         if (((char*)data.mem)[data.len - 1] != '\0')

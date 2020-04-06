@@ -450,7 +450,7 @@ edje_object_part_text_anchor_geometry_get(const Eo *obj, const char *part, const
 }
 
 EAPI void
-edje_object_part_text_style_user_push(Eo *obj EINA_UNUSED, const char *part, const char *style)
+edje_object_part_text_style_user_push(Eo *obj, const char *part, const char *style)
 {
    Evas_Textblock_Style *ts;
    GET_REAL_PART_ON_FAIL_RETURN()
@@ -483,7 +483,7 @@ edje_object_part_text_style_user_pop(Eo *obj, const char *part)
 }
 
 EAPI const char *
-edje_object_part_text_style_user_peek(const Eo *obj EINA_UNUSED, const char *part)
+edje_object_part_text_style_user_peek(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
    const Evas_Textblock_Style *ts;
@@ -505,7 +505,7 @@ edje_object_part_text_style_user_peek(const Eo *obj EINA_UNUSED, const char *par
 }
 
 EAPI const Eina_List *
-edje_object_part_text_item_list_get(const Eo *obj EINA_UNUSED, const char *part)
+edje_object_part_text_item_list_get(const Eo *obj, const char *part)
 {
    GET_REAL_PART_ON_FAIL_RETURN(NULL)
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
@@ -515,7 +515,7 @@ edje_object_part_text_item_list_get(const Eo *obj EINA_UNUSED, const char *part)
 }
 
 EAPI Eina_Bool
-edje_object_part_text_item_geometry_get(const Eo *obj EINA_UNUSED, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+edje_object_part_text_item_geometry_get(const Eo *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    GET_REAL_PART_ON_FAIL_RETURN(EINA_FALSE)
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
@@ -527,7 +527,7 @@ edje_object_part_text_item_geometry_get(const Eo *obj EINA_UNUSED, const char *p
 }
 
 EAPI void
-edje_object_text_insert_filter_callback_add(Eo *obj EINA_UNUSED, const char *part, Edje_Text_Filter_Cb func, void *data)
+edje_object_text_insert_filter_callback_add(Eo *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
    Edje_Text_Insert_Filter_Callback *cb;
    Edje *ed;
@@ -545,7 +545,7 @@ edje_object_text_insert_filter_callback_add(Eo *obj EINA_UNUSED, const char *par
 }
 
 EAPI void *
-edje_object_text_insert_filter_callback_del(Eo *obj EINA_UNUSED, const char *part, Edje_Text_Filter_Cb func)
+edje_object_text_insert_filter_callback_del(Eo *obj, const char *part, Edje_Text_Filter_Cb func)
 {
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
@@ -572,7 +572,7 @@ edje_object_text_insert_filter_callback_del(Eo *obj EINA_UNUSED, const char *par
 }
 
 EAPI void *
-edje_object_text_insert_filter_callback_del_full(Eo *obj EINA_UNUSED, const char *part, Edje_Text_Filter_Cb func, void *data)
+edje_object_text_insert_filter_callback_del_full(Eo *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
@@ -600,7 +600,7 @@ edje_object_text_insert_filter_callback_del_full(Eo *obj EINA_UNUSED, const char
 }
 
 EAPI void
-edje_object_text_markup_filter_callback_add(Eo *obj EINA_UNUSED, const char *part, Edje_Markup_Filter_Cb func, void *data)
+edje_object_text_markup_filter_callback_add(Eo *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
 {
    Edje_Markup_Filter_Callback *cb;
    Edje *ed;
@@ -618,7 +618,7 @@ edje_object_text_markup_filter_callback_add(Eo *obj EINA_UNUSED, const char *par
 }
 
 EAPI void *
-edje_object_text_markup_filter_callback_del(Eo *obj EINA_UNUSED, const char *part, Edje_Markup_Filter_Cb func)
+edje_object_text_markup_filter_callback_del(Eo *obj, const char *part, Edje_Markup_Filter_Cb func)
 {
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
@@ -645,7 +645,7 @@ edje_object_text_markup_filter_callback_del(Eo *obj EINA_UNUSED, const char *par
 }
 
 EAPI void *
-edje_object_text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, const char *part, Edje_Markup_Filter_Cb func, void *data)
+edje_object_text_markup_filter_callback_del_full(Eo *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
 {
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
@@ -967,7 +967,7 @@ edje_object_part_text_unescaped_set(Eo *obj, const char *part, const char *text_
 }
 
 EAPI char *
-edje_object_part_text_unescaped_get(const Eo *obj EINA_UNUSED, const char *part)
+edje_object_part_text_unescaped_get(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
    Edje *ed;

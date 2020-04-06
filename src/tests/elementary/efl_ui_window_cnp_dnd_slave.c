@@ -22,7 +22,7 @@ _deliverty_cb(void *data, const Eina_Value value, const Eina_Future *dead_future
 
    content = eina_value_to_content(&value);
    printf("Got Content of selection %d with type %s\n", buffer, eina_content_type_get(content));
-   if (!strncmp(eina_content_type_get(content), "text", strlen("text")))
+   if (eina_str_has_prefix(eina_content_type_get(content),"text"))
      {
         printf("Content: %s\n", (char*)eina_content_data_get(content).mem);
      }
