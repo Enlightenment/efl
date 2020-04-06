@@ -49,11 +49,17 @@ _efl_ui_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Data *pd, Eina_Content *content, cons
    elm_win_borderless_set(drag_win, EINA_TRUE);
    drag_ee = ecore_evas_ecore_evas_get(evas_object_evas_get(drag_win));
 
-   ecore_evas_drag_start(pd->ee, seat, content, drag_ee, action, _ecore_evas_drag_terminated, start);
-
-   evas_object_show(drag_win);
-
-   efl_event_callback_call(obj, EFL_UI_DND_EVENT_DRAG_STARTED, &ev);
+   if (!ecore_evas_drag_start(pd->ee, seat, content, drag_ee, action, _ecore_evas_drag_terminated, start))
+     {
+        efl_del(drag_win);
+        free(start);
+        drag_win = NULL;
+     }
+   else
+     {
+        evas_object_show(drag_win);
+        efl_event_callback_call(obj, EFL_UI_DND_EVENT_DRAG_STARTED, &ev);
+     }
 
    return drag_win;
 }
