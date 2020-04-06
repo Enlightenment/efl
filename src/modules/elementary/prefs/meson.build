@@ -20,5 +20,6 @@ shared_module(mod,
     src,
     dependencies: [elementary],
     install: true,
-    install_dir : mod_install_dir
+    install_dir : mod_install_dir,
+    name_suffix : sys_mod_extension
 )

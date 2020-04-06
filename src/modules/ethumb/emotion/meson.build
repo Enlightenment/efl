@@ -29,4 +29,5 @@ shared_module(emotion_loader+'_el',
   install: true,
   install_dir : mod_install_dir,
   c_args : package_c_args,
+  name_suffix : sys_mod_extension
 )
