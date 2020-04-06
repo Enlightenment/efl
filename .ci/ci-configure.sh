@@ -94,8 +94,11 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
   export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
   LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
-  export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
   export CC="ccache gcc"
+  #force using system zlib, which doesn't have a pc file provided because that's the smartest thing possible
+  zlib_vers=$(grep ZLIB_VERSION /usr/include/zlib.h|head -n1|awk '{print $3}'|cut -d'"' -f2)
+  sed -iE "s/REPLACE_THIS/$zlib_vers/" .ci/zlib.pc
+  export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig:$(pwd)/.ci"
   travis_fold meson meson
   mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Dgstreamer=false
   travis_endfold meson
