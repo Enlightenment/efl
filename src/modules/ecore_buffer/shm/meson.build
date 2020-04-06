@@ -3,5 +3,6 @@ ecore_buffer_shm_mod = shared_module('module',
     name_prefix: '',
     dependencies: [ecore, ecore_buffer],
     install: true,
-    install_dir: join_paths(dir_lib, 'ecore_buffer', 'modules', 'shm', version_name)
+    install_dir: join_paths(dir_lib, 'ecore_buffer', 'modules', 'shm', version_name),
+    name_suffix : sys_mod_extension
 )

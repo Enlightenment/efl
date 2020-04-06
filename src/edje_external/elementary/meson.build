@@ -46,5 +46,6 @@ ecore_systemd_mod = shared_module('elementary',
     install: true,
     install_dir: mod_install_dir,
     c_args : elm_package_c_args,
+    name_suffix : sys_mod_extension
 )
 module_files += join_paths(mod_install_dir, 'libelementary.' + sys_mod_extension)

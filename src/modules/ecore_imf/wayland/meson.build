@@ -12,5 +12,6 @@ shared_module(mod_name,
     mod_src,
     dependencies: mod_deps,
     install: true,
-    install_dir : mod_install_dir
+    install_dir : mod_install_dir,
+    name_suffix : sys_mod_extension
 )
