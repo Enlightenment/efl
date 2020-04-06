@@ -764,11 +764,8 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 static void
 _efl_ui_image_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1, asp_w = 0, asp_h = 0;
-   Evas_Coord w, h;
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Eina_Size2D sz;
-   Eina_Rect geom;
-   Evas_Aspect_Control asp = EVAS_ASPECT_CONTROL_NONE;
    double ts;
 
    sd->in_calc = EINA_TRUE;
@@ -781,12 +778,9 @@ _efl_ui_image_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Image_Data *sd)
    ts = sd->scale;
    sd->scale = 1.0;
    sz = efl_gfx_view_size_get(obj);
-   geom = efl_gfx_entity_geometry_get(obj);
 
    sd->scale = ts;
    evas_object_size_hint_combined_min_get(obj, &minw, &minh);
-
-   evas_object_size_hint_aspect_get(obj, &asp, &asp_w, &asp_h);
 
    if (sd->no_scale)
      {
@@ -815,27 +809,6 @@ _efl_ui_image_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Image_Data *sd)
              maxw = sz.w * sd->scale;
              maxh = sz.h * sd->scale;
           }
-     }
-   switch (asp)
-     {
-      case EVAS_ASPECT_CONTROL_HORIZONTAL:
-        if (asp_w > 0) h = (geom.w * asp_h) / asp_w;
-        if (h > minh) minh = h;
-        break;
-      case EVAS_ASPECT_CONTROL_VERTICAL:
-        if (asp_h > 0) w = (geom.h * asp_w) / asp_h;
-        if (w > minw) minw = w;
-        break;
-      case EVAS_ASPECT_CONTROL_BOTH:
-        if (asp_w > 0) h = (geom.w * asp_h) / asp_w;
-        if (h > minh) minh = h;
-        if (asp_h > 0) w = (geom.h * asp_w) / asp_h;
-        if (w > minw) minw = w;
-        break;
-      case EVAS_ASPECT_CONTROL_NEITHER:
-      case EVAS_ASPECT_CONTROL_NONE:
-      default:
-        break;
      }
 
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));

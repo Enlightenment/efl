@@ -329,17 +329,22 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
    else
      {
         /* returns true if at least one item has aspect hint */
-        if (_smart_extents_non_homogeneous_calc(priv, w, h, &minw, &minh, &maxw, &maxh, expand, horizontal, 0))
+        if (_smart_extents_non_homogeneous_calc(priv, w, h, &minw, &minh,
+                                                &maxw, &maxh, expand,
+                                                horizontal, EINA_FALSE))
           {
              /* aspect can only be accurately calculated after the full (non-aspected) min size of the box has
               * been calculated due to the use of this min size during aspect calculations
               */
              int aminw = minw;
              int aminh = minh;
-             _smart_extents_padding_calc(priv, &minw, &minh, &maxw, &maxh, horizontal);
-             _smart_extents_non_homogeneous_calc(priv, w, h, &aminw, &aminh, &maxw, &maxh, expand, horizontal, 1);
-             if (horizontal) minh = aminh;
-             else minw = aminw;
+             _smart_extents_padding_calc(priv, &minw, &minh, &maxw, &maxh,
+                                         horizontal);
+             _smart_extents_non_homogeneous_calc(priv, w, h, &aminw, &aminh,
+                                                 &maxw, &maxh, expand,
+                                                 horizontal, EINA_TRUE);
+             if (horizontal) minw = aminw;
+             else minh = aminh;
           }
      }
    _smart_extents_padding_calc(priv, &minw, &minh, &maxw, &maxh, horizontal);
@@ -454,11 +459,13 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
                }
              hh = h;
 
-             _box_object_aspect_calc(&ow, &oh, mnw, mnh, mxw, mxh, fw, fh, ww, hh, aspect, asx / (double)asy);
-             /* non-homogeneous, aspected, expending items are calculated based on object size
-              * during extents calc, so use this for positioning during layout as well
+             _box_object_aspect_calc(&ow, &oh, mnw, mnh, mxw, mxh, fw, fh,
+                                     ww, hh, aspect, asx / (double)asy);
+             /* non-homogeneous, aspected, expending items are calculated
+              * based on object size during extents calc, so use this for
+              * positioning during layout as well
               */
-             if (xw && aspect && (!homogeneous))
+             if (aspect && (!homogeneous))
                ww = ow;
              evas_object_move(obj,
                               ((!rtl) ? (xx + pad_l) : (x + (w - (xx - x) - ww) + pad_r))
@@ -489,8 +496,9 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
                }
              ww = w;
 
-             _box_object_aspect_calc(&ow, &oh, mnw, mnh, mxw, mxh, fw, fh, ww, hh, aspect, asx / (double)asy);
-             if (xh && aspect && (!homogeneous))
+             _box_object_aspect_calc(&ow, &oh, mnw, mnh, mxw, mxh, fw, fh,
+                                     ww, hh, aspect, asx / (double)asy);
+             if (aspect && (!homogeneous))
                hh = oh;
              evas_object_move(obj,
                               xx + (Evas_Coord)(((double)(ww - ow)) * ax) + pad_l,
