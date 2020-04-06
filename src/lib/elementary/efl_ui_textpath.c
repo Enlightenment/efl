@@ -66,7 +66,6 @@ struct _Efl_Ui_Textpath_Data
 
    Eina_Inlist *segments;
    int total_length;
-   Ecore_Job *draw_text_job;
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Eina_List *lines;
 #endif
