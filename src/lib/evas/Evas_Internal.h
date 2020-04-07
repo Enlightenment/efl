@@ -323,8 +323,8 @@ EAPI Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_C
 
 /*Attribute Factory Internal function*/
 EAPI const char * efl_text_formatter_attribute_get(Efl_Text_Attribute_Handle *annotation);
-EAPI Eina_Iterator * efl_text_formatter_range_attributes_get(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end);
-EAPI void efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor *start, Efl_Text_Cursor *end);
+EAPI Eina_Iterator * efl_text_formatter_range_attributes_get(const Efl_Text_Cursor_Object *start, const Efl_Text_Cursor_Object *end);
+EAPI void efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor_Object *start, Efl_Text_Cursor_Object *end);
 EAPI void efl_text_formatter_remove(Efl_Text_Attribute_Handle *annotation);
 EAPI Eina_Bool efl_text_formatter_attribute_is_item(Efl_Text_Attribute_Handle *annotation);
 EAPI Eina_Bool efl_text_formatter_item_geometry_get(const Efl_Text_Attribute_Handle *annotation, int *x, int *y, int *w, int *h);

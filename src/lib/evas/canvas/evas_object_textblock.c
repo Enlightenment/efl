@@ -66,7 +66,7 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "efl_text_cursor.eo.h"
+#include "efl_text_cursor_object.eo.h"
 #include "Efl.h"
 #include "efl_canvas_textblock_internal.h"
 
@@ -8296,11 +8296,11 @@ _efl_canvas_textblock_all_styles_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Te
    return o->default_format.default_style_str;
 }
 
-EOLIAN static Efl_Text_Cursor *
+EOLIAN static Efl_Text_Cursor_Object *
 _efl_canvas_textblock_cursor_create(Eo *obj, Efl_Canvas_Textblock_Data *pd EINA_UNUSED)
 {
-   Eo* cursor = efl_text_cursor_create(obj);
-   efl_text_cursor_text_object_set(cursor, obj, obj);
+   Eo* cursor = efl_text_cursor_object_create(obj);
+   efl_text_cursor_object_text_object_set(cursor, obj, obj);
    return cursor;
 }
 
@@ -8654,7 +8654,7 @@ static void _evas_textblock_cursor_object_changed(Efl_Text_Cursor_Handle *cur)
    Eo *cur_obj;
 
    EINA_LIST_FOREACH(cur->cur_objs, l, cur_obj)
-     efl_event_callback_call(cur_obj, EFL_TEXT_CURSOR_EVENT_CHANGED, NULL);
+     efl_event_callback_call(cur_obj, EFL_TEXT_CURSOR_OBJECT_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -13210,11 +13210,11 @@ evas_textblock_cursor_visible_range_get(Efl_Text_Cursor_Handle *start, Evas_Text
 EOLIAN static Eina_Bool
 _efl_canvas_textblock_visible_range_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Textblock_Data *pd EINA_UNUSED,
-      Efl_Text_Cursor *start, Efl_Text_Cursor *end)
+      Efl_Text_Cursor_Object *start, Efl_Text_Cursor_Object *end)
 {
    return evas_textblock_cursor_visible_range_get(
-                        efl_text_cursor_handle_get(start),
-                        efl_text_cursor_handle_get(end)
+                        efl_text_cursor_object_handle_get(start),
+                        efl_text_cursor_object_handle_get(end)
                         );
 }
 
