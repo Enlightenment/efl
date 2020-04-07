@@ -2263,17 +2263,19 @@ _entry_changed_user_signal_cb(void *data,
         Efl_Access_Text_Change_Info atspi_info;
         if (edje_info && edje_info->insert)
           {
-             atspi_info.content = edje_info->change.insert.content;
+             atspi_info.content = elm_entry_markup_to_utf8(edje_info->change.insert.content);
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             efl_access_object_event_emit(data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             free((void *)atspi_info.content);
           }
         else if (edje_info && !edje_info->insert)
           {
-             atspi_info.content = edje_info->change.del.content;
+             atspi_info.content = elm_entry_markup_to_utf8(edje_info->change.del.content);
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
              atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             efl_access_object_event_emit(data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             free((void *)atspi_info.content);
           }
      }
 }
