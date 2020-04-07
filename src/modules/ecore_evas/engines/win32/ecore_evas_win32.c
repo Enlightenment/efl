@@ -1307,6 +1307,7 @@ _ecore_evas_win32_selection_request(Ecore_Evas *ee EINA_UNUSED, unsigned int sea
                   slice.mem = data;
                }
              content = eina_content_new(eina_rw_slice_slice_get(slice), mime_type);
+             free(slice.mem); //memory got duplicated in eina_content_new
              if (!content) // construction can fail because of some validation reasons
                eina_promise_reject(promise, ecore_evas_no_matching_type);
              else
