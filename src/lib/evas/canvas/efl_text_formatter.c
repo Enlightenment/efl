@@ -2,7 +2,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include "efl_canvas_textblock_internal.h"
-#include "efl_text_cursor.eo.h"
+#include "efl_text_cursor_object.eo.h"
 
 #define MY_CLASS EFL_TEXT_FORMATTER_CLASS
 
@@ -12,22 +12,22 @@ typedef struct
 } Efl_Text_Formatter_Data;
 
 EOLIAN static void
-_efl_text_formatter_attribute_insert(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end, const char *format)
+_efl_text_formatter_attribute_insert(const Efl_Text_Cursor_Object *start, const Efl_Text_Cursor_Object *end, const char *format)
 {
-   EINA_SAFETY_ON_TRUE_RETURN(!efl_text_cursor_handle_get(start) ||
-                              !efl_text_cursor_handle_get(end) ||
-                               efl_text_cursor_handle_get(start)->obj != efl_text_cursor_handle_get(end)->obj);
+   EINA_SAFETY_ON_TRUE_RETURN(!efl_text_cursor_object_handle_get(start) ||
+                              !efl_text_cursor_object_handle_get(end) ||
+                               efl_text_cursor_object_handle_get(start)->obj != efl_text_cursor_object_handle_get(end)->obj);
 
-   Eo *eo_obj= efl_text_cursor_handle_get(start)->obj;
+   Eo *eo_obj= efl_text_cursor_object_handle_get(start)->obj;
    evas_textblock_async_block(eo_obj);
 
-   _evas_textblock_annotations_insert(eo_obj, efl_text_cursor_handle_get(start), efl_text_cursor_handle_get(end), format,
+   _evas_textblock_annotations_insert(eo_obj, efl_text_cursor_object_handle_get(start), efl_text_cursor_object_handle_get(end), format,
          EINA_FALSE);
    efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static unsigned int
-_efl_text_formatter_attribute_clear(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end)
+_efl_text_formatter_attribute_clear(const Efl_Text_Cursor_Object *start, const Efl_Text_Cursor_Object *end)
 {
    unsigned int ret = 0;
    Eina_Iterator *annotations;
@@ -55,29 +55,29 @@ efl_text_formatter_attribute_get(Efl_Text_Attribute_Handle *annotation)
 }
 
 Eina_Iterator *
-efl_text_formatter_range_attributes_get(const Efl_Text_Cursor *start, const Efl_Text_Cursor *end)
+efl_text_formatter_range_attributes_get(const Efl_Text_Cursor_Object *start, const Efl_Text_Cursor_Object *end)
 {
    Eina_List *lst = NULL;
    Efl_Text_Attribute_Handle *it;
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!efl_text_cursor_handle_get(start) ||
-                              !efl_text_cursor_handle_get(end) ||
-                              efl_text_cursor_handle_get(start)->obj != efl_text_cursor_handle_get(end)->obj, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!efl_text_cursor_object_handle_get(start) ||
+                              !efl_text_cursor_object_handle_get(end) ||
+                              efl_text_cursor_object_handle_get(start)->obj != efl_text_cursor_object_handle_get(end)->obj, NULL);
 
-   Eina_Inlist *annotations = _evas_textblock_annotations_get(efl_text_cursor_handle_get(start)->obj);
+   Eina_Inlist *annotations = _evas_textblock_annotations_get(efl_text_cursor_object_handle_get(start)->obj);
 
    EINA_INLIST_FOREACH(annotations, it)
      {
         Efl_Text_Cursor_Handle start2, end2;
-        _evas_textblock_cursor_init(&start2, efl_text_cursor_handle_get(start)->obj);
-        _evas_textblock_cursor_init(&end2, efl_text_cursor_handle_get(start)->obj);
+        _evas_textblock_cursor_init(&start2, efl_text_cursor_object_handle_get(start)->obj);
+        _evas_textblock_cursor_init(&end2, efl_text_cursor_object_handle_get(start)->obj);
 
         if (!it->start_node || !it->end_node) continue;
         _textblock_cursor_pos_at_fnode_set(&start2, it->start_node);
         _textblock_cursor_pos_at_fnode_set(&end2, it->end_node);
         evas_textblock_cursor_char_prev(&end2);
-        if (!((evas_textblock_cursor_compare(&start2, efl_text_cursor_handle_get(end)) > 0) ||
-                 (evas_textblock_cursor_compare(&end2, efl_text_cursor_handle_get(start)) < 0)))
+        if (!((evas_textblock_cursor_compare(&start2, efl_text_cursor_object_handle_get(end)) > 0) ||
+                 (evas_textblock_cursor_compare(&end2, efl_text_cursor_object_handle_get(start)) < 0)))
           {
              lst = eina_list_append(lst, it);
           }
@@ -86,14 +86,14 @@ efl_text_formatter_range_attributes_get(const Efl_Text_Cursor *start, const Efl_
 }
 
 void
-efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor *start, Efl_Text_Cursor *end)
+efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor_Object *start, Efl_Text_Cursor_Object *end)
 {
    EINA_SAFETY_ON_TRUE_RETURN (!handle || !(handle->obj));
 
-   efl_text_cursor_text_object_set(start, handle->obj, handle->obj);
-   efl_text_cursor_text_object_set(end, handle->obj, handle->obj);
-   _textblock_cursor_pos_at_fnode_set(efl_text_cursor_handle_get(start), handle->start_node);
-   _textblock_cursor_pos_at_fnode_set(efl_text_cursor_handle_get(end), handle->end_node);
+   efl_text_cursor_object_text_object_set(start, handle->obj, handle->obj);
+   efl_text_cursor_object_text_object_set(end, handle->obj, handle->obj);
+   _textblock_cursor_pos_at_fnode_set(efl_text_cursor_object_handle_get(start), handle->start_node);
+   _textblock_cursor_pos_at_fnode_set(efl_text_cursor_object_handle_get(end), handle->end_node);
 }
 
 void

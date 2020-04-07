@@ -44,7 +44,7 @@ pub_eo_files = [
   'efl_canvas_group.eo',
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
-  'efl_text_cursor.eo',
+  'efl_text_cursor_object.eo',
   'efl_canvas_textblock.eo',
   'efl_text_formatter.eo',
   'efl_canvas_object_animation.eo',
@@ -187,7 +187,7 @@ evas_src += files([
   'efl_canvas_vg_image.c',
   'evas_filter_mixin.c',
   'efl_canvas_object_animation.c',
-  'efl_text_cursor.c',
+  'efl_text_cursor_object.c',
   'efl_text_formatter.c'
   ])
 
