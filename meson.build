@@ -110,7 +110,7 @@ if sys_windows == true
         '-Wno-nonportable-system-include-path',
         '-Wno-microsoft-enum-forward-reference',
       # Syntax/Parsing
-        '-Wno-implicit-function-declaration',
+      #'-Wno-implicit-function-declaration',
         '-Wno-missing-prototypes',
         '-Wno-unreachable-code',
         '-Wno-unreachable-code-return',
@@ -175,7 +175,7 @@ if sys_windows == true
       # ------------------------------------
       # Default flags for native compilation
       '-Wno-language-extension-token',
-      '-DWIN32_LEAN_AND_MEAN'
+      '-DWIN32_LEAN_AND_MEAN',
     ], language : 'c')
 endif
 
