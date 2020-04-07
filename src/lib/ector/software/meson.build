@@ -48,8 +48,11 @@ if cpu_sse3 == true
 endif
 
 
-if get_option('install-eo-files')
-  install_data(pub_eo_files,
-    install_dir: join_paths(eolian_include_dir, package_version_name)
-  )
-endif
+#
+# Only enable that again when the namespace problems are fixed. ref T8648
+#
+#if get_option('install-eo-files')
+#  install_data(pub_eo_files,
+#    install_dir: join_paths(eolian_include_dir, package_version_name)
+#  )
+#endif
