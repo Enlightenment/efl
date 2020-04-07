@@ -1992,7 +1992,7 @@ _efl_ui_internal_text_interactive_efl_text_interactive_editable_get(const Eo *ob
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_hide(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_hide(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2004,7 +2004,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_hide(Eo *obj EINA_U
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Language_Type lang)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Language_Type lang)
 {
    en->input_panel_lang = lang;
 #ifdef HAVE_ECORE_IMF
@@ -2018,14 +2018,14 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_language_set(Eo *ob
 
 
 EOLIAN static Efl_Input_Text_Panel_Language_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    return en->input_panel_lang;
 }
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Slice slice)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_imdata_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Slice slice)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2039,7 +2039,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_imdata_set(Eo *obj 
 
 
 EOLIAN static Eina_Slice
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_imdata_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_imdata_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    Eina_Slice slice = {0};
 
@@ -2060,7 +2060,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_imdata_get(const Eo
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Return_Key_Type return_key_type)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Return_Key_Type return_key_type)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2073,7 +2073,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_type_set
 
 
 EOLIAN static Efl_Input_Text_Panel_Return_Key_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2086,7 +2086,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_type_get
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_state_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Return_Key_State state)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_return_key_state_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Panel_Return_Key_State state)
 {
    if (en->input_panel_return_key_state == state)
      return;
@@ -2120,14 +2120,14 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_state_se
 
 
 EOLIAN static Efl_Input_Text_Panel_Return_Key_State
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_return_key_state_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_return_key_state_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    return en->input_panel_return_key_state;
 }
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool ondemand)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool ondemand)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2139,7 +2139,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_show_on_demand_set(
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, Efl_Input_Text_Panel_Layout_Type layout)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, Efl_Input_Text_Panel_Layout_Type layout)
 {
    sd->input_panel_layout = layout;
 
@@ -2155,13 +2155,13 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_set(Eo *obj 
 }
 
 EOLIAN static Efl_Input_Text_Panel_Layout_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_layout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
 {
    return sd->input_panel_layout;
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, int variation)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, int variation)
 {
    sd->input_panel_layout_variation = variation;
 
@@ -2178,13 +2178,13 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_variation_se
 }
 
 EOLIAN static int
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
 {
    return sd->input_panel_layout_variation;
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_show(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_show(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2195,7 +2195,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_show(Eo *obj EINA_U
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_autoshow_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool enabled)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_autoshow_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool enabled)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2207,7 +2207,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_autoshow_set(Eo *ob
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_autoshow_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_autoshow_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2219,7 +2219,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_autoshow_get(const 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_input_text_input_panel_show_on_demand_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_show_on_demand_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2235,7 +2235,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_panel_show_on_demand_get(
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_predictable_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool prediction)
+_efl_ui_internal_text_interactive_efl_input_text_entity_predictable_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool prediction)
 {
    en->prediction_allow = prediction;
 #ifdef HAVE_ECORE_IMF
@@ -2249,14 +2249,14 @@ _efl_ui_internal_text_interactive_efl_input_text_predictable_set(Eo *obj EINA_UN
 
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_input_text_predictable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_predictable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    return en->prediction_allow;
 }
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_input_content_type_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Content_Type input_hints)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_content_type_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Content_Type input_hints)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2271,7 +2271,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_content_type_set(Eo *obj,
 
 
 EOLIAN static Efl_Input_Text_Content_Type
-_efl_ui_internal_text_interactive_efl_input_text_input_content_type_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_content_type_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2287,7 +2287,7 @@ _efl_ui_internal_text_interactive_efl_input_text_input_content_type_get(const Eo
 
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_input_text_autocapitalization_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Capitalize_Type autocapital_type)
+_efl_ui_internal_text_interactive_efl_input_text_entity_autocapitalization_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Capitalize_Type autocapital_type)
 {
 #ifdef HAVE_ECORE_IMF
    if (efl_text_password_get(obj) == EINA_TRUE)
@@ -2304,7 +2304,7 @@ _efl_ui_internal_text_interactive_efl_input_text_autocapitalization_set(Eo *obj,
 
 
 EOLIAN static Efl_Input_Text_Capitalize_Type
-_efl_ui_internal_text_interactive_efl_input_text_autocapitalization_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_autocapitalization_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)

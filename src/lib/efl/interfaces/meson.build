@@ -93,7 +93,7 @@ pub_eo_files = [
   'efl_gfx_text_class.eo',
   'efl_gfx_size_class.eo',
   'efl_cached_item.eo',
-  'efl_input_text.eo',
+  'efl_input_text_entity.eo',
 ]
 
 foreach eo_file : pub_eo_files

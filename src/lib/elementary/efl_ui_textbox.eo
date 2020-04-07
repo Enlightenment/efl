@@ -13,7 +13,7 @@ enum @beta Efl.Ui.Textbox_Cnp_Content {
 class Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.Ui.Scrollable
    composites
-                 Efl.Text_Interactive, Efl.Text_Markup, Efl.Input_Text
+                 Efl.Text_Interactive, Efl.Text_Markup, Efl.Input_Text.Entity
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
