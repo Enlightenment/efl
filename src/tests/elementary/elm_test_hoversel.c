@@ -144,6 +144,8 @@ EFL_START_TEST(elm_test_hoversel_position)
       ck_assert_int_le(x + w, 500);
       ck_assert_int_le(y + h, 500);
    }
+
+   evas_object_del(hoversel);
 }
 EFL_END_TEST
 
