@@ -788,7 +788,7 @@ _request_subchild_except(Node *n, Eo *except)
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
+_efl_ui_focus_manager_calc_unregister(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
 {
    Node *node;
 
@@ -800,7 +800,7 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
-        if (!efl_invalidated_get(pd->root->focusable))
+        if (!efl_invalidated_get(pd->root->focusable) && _focus_manager_active_get(obj))
           {
              Node *n = NULL;
 
