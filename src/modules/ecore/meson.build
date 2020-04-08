@@ -1,5 +1,5 @@
 
-if sys_windows == false
+if sys_windows == false and sys_osx == false
 
   system_modules = [
     'systemd',

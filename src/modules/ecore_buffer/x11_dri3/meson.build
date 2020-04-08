@@ -4,6 +4,7 @@ if dependency('libtbm', required: false).found() == true and dependency('libdrm'
     name_prefix: '',
     dependencies: [ecore, ecore_buffer, ecore_x],
     install: true,
-    install_dir: join_paths(dir_lib, 'ecore_buffer', 'modules', 'x11_dri3', version_name)
+    install_dir: join_paths(dir_lib, 'ecore_buffer', 'modules', 'x11_dri3', version_name),
+    name_suffix : sys_mod_extension
   )
 endif

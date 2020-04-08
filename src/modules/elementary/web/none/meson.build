@@ -6,7 +6,8 @@ shared_module('none',
     src,
     dependencies: [elementary, elementary_deps],
     install: true,
-    install_dir : mod_install_dir
+    install_dir : mod_install_dir,
+    name_suffix : sys_mod_extension
 )
 
 mod = 'none'
