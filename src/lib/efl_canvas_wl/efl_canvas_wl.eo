@@ -11,7 +11,7 @@ struct @beta @extern Efl.Canvas.Wl_Xkb_State; [[ struct xkb_state. @since 1.24 ]
 struct @beta @extern Efl.Canvas.Wl_Wl_Array; [[ struct wl_array. @since 1.24 ]]
 
 
-enum @beta Efl.Canvas.Wl.Rotation
+enum @beta Efl.Canvas.Wl_Rotation
 {
    [[Orientation of the internal compositor object in degrees. These values are COUNTER-CLOCKWISE.
    ]]
@@ -122,7 +122,7 @@ class @beta Efl.Canvas.Wl extends Efl.Canvas.Group
            Note that the rotation provided here is counter-clockwise.
          ]]
          values {
-            rotation: Efl.Canvas.Wl.Rotation; [[The rotation to apply to the internal output.]]
+            rotation: Efl.Canvas.Wl_Rotation; [[The rotation to apply to the internal output.]]
             rtl: bool; [[The horizontal flip to apply to the internal output.]]
          }
       }
