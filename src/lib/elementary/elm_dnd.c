@@ -163,6 +163,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_Pos pos_cb, void *pos_data,
                     Elm_Drop_Cb drop_cb, void *drop_data)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
    Elm_Drop_Target *target = calloc(1, sizeof(Elm_Drop_Target));
    target->enter_cb = enter_cb;
@@ -194,6 +195,8 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
 {
    Elm_Drop_Target *target;
    Eina_List *n, *found = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
    if (!target_register)
      return EINA_TRUE;
@@ -768,6 +771,12 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
    Efl_Ui_Widget *widget;
    Elm_Drag_Data *dd;
    const char *str_action;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   //it should return EINA_TRUE to keep backward compatibility
+   if (!data)
+     return EINA_TRUE;
 
    str_action = _action_to_string(action);
    dd = calloc(1, sizeof(Elm_Drag_Data));
