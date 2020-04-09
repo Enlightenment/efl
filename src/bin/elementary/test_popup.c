@@ -850,7 +850,7 @@ _popup_scrollable_scroller_content_list_cb(void *data EINA_UNUSED, Evas_Object *
 {
    Evas_Object *win, *popup, *box, *btn, *scroller, *table, *list, *ic;
    Evas_Object *box2, *label;
-   Elm_Object_Item *ex1, *ex2;
+   Elm_Object_Item *ex1;
 
    win = data;
 
@@ -903,7 +903,7 @@ _popup_scrollable_scroller_content_list_cb(void *data EINA_UNUSED, Evas_Object *
    evas_object_show(ic);
 
    ex1 = elm_list_item_append(list, "Jambalaya", ic, NULL, NULL, NULL);
-   ex2 = elm_list_item_append(list, "Mississippi", ic, NULL, NULL, NULL);
+   elm_list_item_append(list, "Mississippi", ic, NULL, NULL, NULL);
 
    elm_list_go(list);
    elm_list_item_selected_set(ex1, EINA_TRUE);
