@@ -34,8 +34,6 @@ typedef struct _Eina_Win32_Thread_Attr
   DWORD dwCreationFlags;
 } Eina_Win32_Thread_Attr;
 
-EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
-
 inline void *
 _eina_thread_join(Eina_Thread t)
 {
