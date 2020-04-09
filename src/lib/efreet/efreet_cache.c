@@ -101,6 +101,7 @@ static void *hash_array_string_add(void *hash, const char *key, void *data);
 
 static Eina_Bool disable_cache;
 static Eina_Bool run_in_tree;
+static int relaunch_try = 0;
 
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
@@ -120,8 +121,16 @@ _ipc_launch(void)
    int tries = 1000; // 1000 * 10ms == 10sec
    const char *s;
 
-   ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
-   if (ipc) return;
+   if (relaunch_try == 0)
+     {
+        ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+        if (ipc)
+          {
+             relaunch_try++;
+             return;
+          }
+     }
+   relaunch_try--;
    s = getenv("EFREETD_CONNECT_TRIES");
    if (s)
      {
@@ -153,6 +162,7 @@ static Eina_Bool
 _cb_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    IPC_HEAD(Add);
+   relaunch_try--;
    return ECORE_CALLBACK_DONE;
 }
 
