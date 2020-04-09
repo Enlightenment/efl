@@ -120,6 +120,8 @@ _ipc_launch(void)
    int tries = 1000; // 1000 * 10ms == 10sec
    const char *s;
 
+   ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+   if (ipc) return;
    s = getenv("EFREETD_CONNECT_TRIES");
    if (s)
      {
@@ -180,7 +182,6 @@ _cb_server_reconnect(void *data EINA_UNUSED)
 static Eina_Bool
 _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   static double last_del = 0.0;
    double t;
    IPC_HEAD(Del);
    ipc = NULL;
@@ -194,15 +195,10 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         free(address);
         return EINA_FALSE;
      }
-   t = ecore_time_get();
-   if ((t - last_del) < 0.5)
-     {
-        if (reconnect_timer) ecore_timer_del(reconnect_timer);
-        reconnect_timer = ecore_timer_add(0.5, _cb_server_reconnect, NULL);
-     }
-   else
-     _cb_server_reconnect(NULL);
-   last_del = t;
+   // random 0.5 -> 1.0 sec from now
+   t = (((double)((rand() + (int)getpid()) & 0xff) / 255.0) * 0.5) + 0.5;
+   if (reconnect_timer) ecore_timer_del(reconnect_timer);
+   reconnect_timer = ecore_timer_add(t, _cb_server_reconnect, NULL);
    return ECORE_CALLBACK_DONE;
 }
 
