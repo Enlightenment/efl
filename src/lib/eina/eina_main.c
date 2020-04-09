@@ -452,7 +452,7 @@ eina_main_loop_is(void)
 EAPI void
 eina_main_loop_define(void)
 {
-#ifdef EFL_HAVE_THREADS   
+#ifdef EFL_HAVE_THREADS
    _eina_main_loop = eina_thread_self();
 #endif
 }

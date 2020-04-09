@@ -18,11 +18,11 @@
 
 #include "eina_sched.h"
 #ifndef WIN32_LEAN_AND_MEAN
-   #define WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
 
-inline void _eina_sched_prio_drop(void)
+EAPI void eina_sched_prio_drop(void)
 {
    Eina_Thread pthread_id;
    int sched_priority;

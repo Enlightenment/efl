@@ -68,10 +68,10 @@ _timer_append(Eina_Debug_Timer *t)
    unsigned int prev_time = 0;
    char c = '\0';
    EINA_LIST_FOREACH(_timers, itr, t2)
-    {
-      if (t2->timeout > t->timeout) goto end;
-      prev_time = t2->timeout;
-    }
+     {
+        if (t2->timeout > t->timeout) goto end;
+        prev_time = t2->timeout;
+     }
    t2 = NULL;
 end:
    t->rel_time = t->timeout - prev_time;

@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2010 ProFUSION embedded systems
+ * Copyright (C) 2020 Carlos Signor
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,16 +16,34 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef EINA_THREAD_WIN32_H
+#define EINA_THREAD_WIN32_H
+
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
+
+#include <stdlib.h>
+#include "eina_config.h"
+#include "eina_cpu.h"
 #include "eina_thread.h"
+#include "unimplemented.h"
+#include <errno.h>
+#include <string.h>
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
+#include <Windows.h>
 
-#include "eina_sched.h"
-#include "eina_log.h"
+#define EINA_THREAD_CANCEL_ENABLE 0
+#define EINA_THREAD_CANCEL_DISABLE 1
+#define EINA_THREAD_CANCEL_DEFERRED 0
+#define EINA_THREAD_CANCEL_ASYNCHRONOUS 1
+#define EINA_THREAD_CANCELED   ((void *) -1)
+/**
+ * @typedef Eina_Thread
+ * Type for a generic thread.
+ */
+typedef HANDLE Eina_Thread;
 
-EAPI void
-eina_sched_prio_drop(void)
-{
-   _eina_sched_prio_drop();
-}
+#endif 

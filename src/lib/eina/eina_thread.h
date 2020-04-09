@@ -25,6 +25,12 @@
 
 #include <stdint.h>
 
+#ifdef _WIN32
+# include "eina_thread_win32.h"
+#else
+# include "eina_thread_posix.h"
+#endif
+
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
@@ -43,12 +49,6 @@
  * @since 1.8
  * @{
  */
-
-/**
- * @typedef Eina_Thread
- * Type for a generic thread.
- */
-typedef uintptr_t Eina_Thread;
 
 /**
  * @typedef Eina_Thread_Cb
@@ -347,38 +347,6 @@ struct _Eina_Thread_Call
    Eina_Thread_Priority prio;
    int affinity;
 };
-/*
- * Those are the functions definitions of wrappers that will implements the functions 
- * above with win32 and posix api
- */
-inline Eina_Thread _eina_thread_self(void);
-inline Eina_Bool _eina_thread_equal(Eina_Thread t1, Eina_Thread t2);
-inline Eina_Bool _eina_thread_create(Eina_Thread *t, 
-                                     int affinity, 
-                                     void *(*func)(void *data), 
-                                     void *data);
-inline void *_eina_thread_join(Eina_Thread t); 
-Eina_Bool _eina_thread_name_set(Eina_Thread thread, char *buf); 
-Eina_Bool _eina_thread_cancel(Eina_Thread thread);                                   
-void _eina_thread_setcanceltype(int type, int *oldtype);
-void _eina_thread_cancel_checkpoint();
-EAPI Eina_Bool _eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable);
-int _eina_thread_setcancelstate(int type, int *oldtype);
-void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t);
-
-#ifdef _WIN32  
-# define EINA_THREAD_CANCEL_ENABLE 0
-# define EINA_THREAD_CANCEL_DISABLE 1
-# define EINA_THREAD_CANCEL_DEFERRED 0
-# define EINA_THREAD_CANCEL_ASYNCHRONOUS 1
-# define EINA_THREAD_CANCELED   ((void *) -1)
-#else
-# define EINA_THREAD_CANCEL_ENABLE PTHREAD_CANCEL_ENABLE
-# define EINA_THREAD_CANCEL_DISABLE PTHREAD_CANCEL_DISABLE
-# define EINA_THREAD_CANCEL_DEFERRED PTHREAD_CANCEL_DEFERRED
-# define EINA_THREAD_CANCEL_ASYNCHRONOUS PTHREAD_CANCEL_ASYNCHRONOUS
-# define EINA_THREAD_CANCELED   PTHREAD_CANCELED
-#endif
 
 /**
  * @}

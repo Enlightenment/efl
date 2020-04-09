@@ -16,34 +16,7 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <stdlib.h>
-
-#include "eina_config.h"
-#include "eina_lock.h"
-#include "eina_thread.h"
-#include "eina_sched.h"
-#include "eina_cpu.h"
-
-/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
-#include "eina_safety_checks.h"
-
-#include "eina_debug_private.h"
-
-#include <pthread.h>
-#include <errno.h>
-
-#include <signal.h>
-
-#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
-#ifndef __linux__
-#include <pthread_np.h>
-#define cpu_set_t cpuset_t
-#endif
-#endif
+#include "eina_thread_posix.h"
 
 inline void *
 _eina_thread_join(Eina_Thread t)
@@ -116,7 +89,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 inline Eina_Bool
 _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
-   return pthread_equal((pthread_t)t1, (pthread_t)t2);
+   return !!pthread_equal((pthread_t)t1, (pthread_t)t2);
 }
 
 Eina_Bool _eina_thread_cancel(Eina_Thread thread)

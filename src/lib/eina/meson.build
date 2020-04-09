@@ -114,6 +114,14 @@ public_sub_headers = [
 'eina_abstract_content.h'
 ]
 
+if sys_windows == true
+  public_sub_headers += 'eina_thread_win32.h'  
+  public_sub_headers += 'eina_inline_thread_win32.x'  
+else
+  public_sub_headers += 'eina_thread_posix.h'  
+  public_sub_headers += 'eina_inline_thread_posix.x'
+endif
+
 public_headers = [
   'Eina.h'
 ]
@@ -166,7 +174,6 @@ sources = [
 'eina_rbtree.c',
 'eina_rectangle.c',
 'eina_safety_checks.c',
-'eina_sched.c',
 'eina_share_common.c',
 'eina_simple_xml_parser.c',
 'eina_str.c',
@@ -199,11 +206,9 @@ sources = [
 
 if sys_windows == true
   sources += 'eina_file_win32.c'
-  sources += 'eina_thread_win32.c'
-  sources += 'eina_sched_win32.c'
+  sources += 'eina_sched_win32.c'  
 else
   sources += 'eina_file.c'
-  sources += 'eina_thread_posix.c'
   sources += 'eina_sched_posix.c'
 endif
 
