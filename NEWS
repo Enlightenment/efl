@@ -68,6 +68,9 @@ Fixes:
    * evas_object_box: respect static clipper.
    * ecore evas x - on argb dont create unused 1 bit pixmap masks
    * emotion - webcam - fix segv on webcam plug/unplug and clean
+   * ui textpath: update map before rendering begins.
+   * elm icon/image efl ui image - respect aspect hints at all if set
+   * elm icon/image efl ui image - respect aspect hints at all if set
 
 Removals:
 
