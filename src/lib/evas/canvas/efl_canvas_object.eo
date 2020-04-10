@@ -1,6 +1,5 @@
 import efl_text_types;
 
-struct @beta Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
 struct Efl.Event_Animator_Tick {
    [[EFL event animator tick data structure
 
