@@ -97,13 +97,30 @@ _deliver_content(Eo *obj, void *data, const Eina_Value value)
    return EINA_VALUE_EMPTY;
 }
 
+
+static Efl_Ui_Win*
+_fetch_win(Efl_Canvas_Object *obj)
+{
+   Efl_Ui_Win *win = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+   if (!win)
+     {
+        Evas *e = evas_object_evas_get(obj);
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
+
+        win = ecore_evas_data_get(ee, "elm_win");
+     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+   return win;
+}
+
+
 static void
 _drop_cb(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Drop_Dropped_Event *event = ev->info;
    Elm_Drop_Target *target = data;
    target->action = _string_to_action(event->action);
-   efl_future_then(ev->object, efl_ui_dnd_drop_data_get(ev->object, _default_seat(ev->object), eina_array_iterator_new(target->mime_types)),
+   efl_future_then(ev->object, efl_ui_dnd_drop_data_get(elm_widget_is(ev->object) ? ev->object : _fetch_win(ev->object), _default_seat(ev->object), eina_array_iterator_new(target->mime_types)),
     .success = _deliver_content,
     .data = target
    );
@@ -182,7 +199,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    target->format = format;
 
    efl_event_callback_array_add(obj, drop_target_cb(), target);
-
+   _drop_event_register(obj); //this is ensuring that we are also supporting none widgets
    if (!target_register)
      target_register = eina_hash_pointer_new(NULL);
    eina_hash_list_append(target_register, &obj, target);
@@ -227,6 +244,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         efl_event_callback_array_del(obj, drop_target_cb(), eina_list_data_get(found));
         eina_hash_list_remove(target_register, &obj, target);
         eina_array_free(target->mime_types);
+        _drop_event_unregister(obj); //this is ensuring that we are also supporting none widgets
         free(target);
      }
 
