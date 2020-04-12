@@ -107,16 +107,16 @@ EOLIAN static void
 _efl_net_server_unix_efl_object_destructor(Eo *o, Efl_Net_Server_Unix_Data *pd EINA_UNUSED)
 {
    SOCKET fd = efl_loop_fd_get(o);
+   const char *address = efl_net_server_address_get(o);
 
    if (fd != INVALID_SOCKET)
      {
-        const char *address = efl_net_server_address_get(o);
         if ((address) &&
             (strncmp(address, "abstract:", strlen("abstract:")) != 0))
           unlink(address);
      }
 #ifdef BIND_HANG_WORKAROUND
-   if ((pd->have_lock_fd) && (pd->lock_fd >= 0))
+   if ((address) && (pd->have_lock_fd) && (pd->lock_fd >= 0))
      {
         _efl_net_server_unix_bind_hang_lock_workaround
           (address, EINA_FALSE, pd->lock_fd);
