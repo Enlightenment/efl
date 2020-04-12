@@ -3862,6 +3862,11 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
    Eina_Content *result = NULL;
    Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
 
+   if (!x11_data->data)
+     {
+        ERR("delivering NULL content");
+        return;
+     }
    if (eina_str_has_prefix(mime_type,"text"))
      {
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
