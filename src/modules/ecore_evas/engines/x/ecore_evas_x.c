@@ -13,6 +13,7 @@
 
 #include <Ecore_X.h>
 #include <Ecore_X_Atoms.h>
+#include <Efreet.h>
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 # include <Evas_Engine_Software_X11.h>
@@ -3858,12 +3859,39 @@ _create_deliveriy_content(unsigned long int size, const void *mem, const char *m
 static void
 _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_Selection_Buffer selection, Ecore_X_Event_Selection_Notify *ev)
 {
-   Ecore_X_Selection_Data *x11_data = ev->data;
    Eina_Content *result = NULL;
    Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
 
-   if (eina_str_has_prefix(mime_type,"text"))
+   if (eina_streq(mime_type, "text/uri-list"))
      {
+        Ecore_X_Selection_Data_Files *files = ev->data;
+        Efreet_Uri *uri;
+        Eina_Strbuf *strbuf;
+        int i;
+
+        strbuf = eina_strbuf_new();
+
+        for (i = 0; i < files->num_files ; i++)
+          {
+             uri = efreet_uri_decode(files->files[i]);
+             if (uri)
+               {
+                  eina_strbuf_append(strbuf, uri->path);
+                  efreet_uri_free(uri);
+               }
+             else
+               {
+                  eina_strbuf_append(strbuf, files->files[i]);
+               }
+             if (i < (files->num_files - 1))
+               eina_strbuf_append(strbuf, "\n");
+          }
+        result = _create_deliveriy_content(eina_strbuf_length_get(strbuf) + 1, eina_strbuf_string_get(strbuf), mime_type);
+        eina_strbuf_free(strbuf);
+     }
+   else if (eina_str_has_prefix(mime_type,"text"))
+     {
+        Ecore_X_Selection_Data *x11_data = ev->data;
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
         void *null_terminated = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
 
@@ -3872,6 +3900,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
      }
    else if (eina_str_has_prefix(mime_type,"image"))
      {
+        Ecore_X_Selection_Data *x11_data = ev->data;
         Eina_Content *tmp_container = eina_content_new((Eina_Slice){.len = x11_data->length, .mem = x11_data->data}, mime_type);
         const char *file = eina_content_as_file(tmp_container);
 
@@ -3880,6 +3909,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
      }
    else
      {
+        Ecore_X_Selection_Data *x11_data = ev->data;
         result = _create_deliveriy_content(x11_data->length, x11_data->data, mime_type);
      }
    EINA_SAFETY_ON_NULL_RETURN(result);
