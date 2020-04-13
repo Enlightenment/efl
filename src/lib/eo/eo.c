@@ -906,6 +906,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
    klass->class_id = _UNMASK_ID(klass->header.id) - 1;
 
    _vtable_init(&klass->vtable);
+   if (!klass->vtable.chain) goto err_vtable;
 
    hitmap = alloca(klass->vtable.size);
    memset(hitmap, 0, klass->vtable.size);
@@ -979,6 +980,9 @@ err_funcs:
    return EINA_FALSE;
 err_klass:
    _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
+   return EINA_FALSE;
+err_vtable:
+   ERR("failed to allocate vtable for class '%s'", klass->desc->name);
    return EINA_FALSE;
 }
 
