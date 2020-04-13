@@ -34,7 +34,7 @@
 # define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
-
+#undef _WIN32_LEAN_AND_MEAN
 #define EINA_THREAD_CANCEL_ENABLE 0
 #define EINA_THREAD_CANCEL_DISABLE 1
 #define EINA_THREAD_CANCEL_DEFERRED 0
