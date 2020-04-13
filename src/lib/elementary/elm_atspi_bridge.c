@@ -1644,6 +1644,7 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
      }
    else
      {
+        eldbus_message_iter_container_close(iter, iter_array);
         goto fail;
      }
 
@@ -1706,6 +1707,7 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
    else
      {
         eldbus_message_unref(ret);
+        eldbus_message_iter_container_close(iter, iter_array);
         return _dbus_invalid_ref_error_new(msg);
      }
 
