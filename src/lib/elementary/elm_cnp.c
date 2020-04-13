@@ -84,10 +84,12 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
    const char *mime_type;
    Eina_Slice data;
    Eina_Array *tmp;
+   unsigned char *mem_buf = NULL;
 
    if (format == ELM_SEL_FORMAT_TEXT && ((char*)buf)[buflen - 1] != '\0')
      {
-        data.mem = eina_memdup((unsigned char *)buf, buflen, EINA_TRUE);
+        mem_buf = eina_memdup((unsigned char *)buf, buflen, EINA_TRUE);
+        data.mem = mem_buf;
         data.len = buflen + 1;
      }
    else
@@ -107,6 +109,9 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
    eina_array_free(tmp);
    content = eina_content_new(data, mime_type);
    _register_selection_changed(obj);
+
+   if (mem_buf != NULL)
+     free(mem_buf);
 
    return ecore_evas_selection_set(ee, _default_seat(obj), _elm_sel_type_to_ee_type(selection), content);
 }
@@ -199,10 +204,12 @@ _callback_storage_deliver(Eo *obj, void *data, const Eina_Value value)
      }
    else
      {
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(format == ELM_SEL_FORMAT_TEXT || format == ELM_SEL_FORMAT_MARKUP || format == ELM_SEL_FORMAT_HTML, EINA_VALUE_EMPTY);
+        EINA_SAFETY_ON_FALSE_GOTO(format == ELM_SEL_FORMAT_TEXT || format == ELM_SEL_FORMAT_MARKUP || format == ELM_SEL_FORMAT_HTML, end);
 
         _elm_entry_entry_paste(obj, (const char *) d.data);
      }
+
+end:
    free(d.data);
 
    return EINA_VALUE_EMPTY;
