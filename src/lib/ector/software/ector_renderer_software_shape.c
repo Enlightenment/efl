@@ -535,8 +535,8 @@ _need_update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
    if (pd->task) return pd->task;
 
-   if (!_generate_stroke_data(pd) &&
-       !_generate_shape_data(pd))
+   if (!pd->base->visibility || (!_generate_stroke_data(pd) &&
+       !_generate_shape_data(pd)))
      return NULL;
 
    const Efl_Gfx_Path_Command *cmds;
