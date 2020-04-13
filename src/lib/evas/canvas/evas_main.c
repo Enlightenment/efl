@@ -125,7 +125,9 @@ _markup_to_utf8(Eina_Content *from, const char *to_type)
 {
    Eina_Slice slice = eina_content_data_get(from);
    char *utf8 = evas_textblock_text_markup_to_utf8(NULL, slice.mem);
-   return eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(utf8), to_type);
+   Eina_Content *ret = eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(utf8), to_type);
+   free(utf8);
+   return ret;
 }
 
 static Eina_Content*
@@ -133,7 +135,9 @@ _utf8_to_markup(Eina_Content *from, const char *to_type)
 {
    Eina_Slice slice = eina_content_data_get(from);
    char *markup = evas_textblock_text_utf8_to_markup(NULL, slice.mem);
-   return eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(markup), to_type);
+   Eina_Content *ret = eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(markup), to_type);
+   free(markup);
+   return ret;
 }
 
 EAPI int
