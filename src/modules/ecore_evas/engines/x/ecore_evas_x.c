@@ -3862,12 +3862,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
    Eina_Content *result = NULL;
    Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
 
-   if (!ev->data)
-     {
-        ERR("delivering NULL content");
-        return;
-     }
-
+   EINA_SAFETY_ON_NULL_GOTO(ev->data, err);
    if (eina_streq(mime_type, "text/uri-list"))
      {
         Ecore_X_Selection_Data_Files *files = ev->data;
@@ -3918,7 +3913,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
         Ecore_X_Selection_Data *x11_data = ev->data;
         result = _create_deliveriy_content(x11_data->length, x11_data->data, mime_type);
      }
-   EINA_SAFETY_ON_NULL_RETURN(result);
+   EINA_SAFETY_ON_NULL_GOTO(result, err);
 
    //ensure that we deliver the correct type, we might have choosen a convertion before
    if (edata->selection_data[selection].later_conversion != mime_type)
@@ -3931,6 +3926,12 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
    eina_promise_resolve(edata->selection_data[selection].delivery, eina_value_content_init(result));
    eina_content_free(result);
    _clear_selection_delivery(ee, selection);
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     ecore_x_dnd_send_finished();
+   return;
+err:
+   eina_promise_reject(edata->selection_data[selection].delivery, ecore_evas_no_selection);
 
    if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
      ecore_x_dnd_send_finished();
