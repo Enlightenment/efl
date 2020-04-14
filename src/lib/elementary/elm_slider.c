@@ -630,15 +630,19 @@ _elm_slider_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Slider_Data *s
         else
           _drag_down(obj, NULL, NULL, NULL);
         efl_input_processed_set(ev, EINA_TRUE);
-        ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
-        sd->wheel_indicator_timer =
-           ecore_timer_add(0.5, _wheel_indicator_timer_cb, obj);
      }
    else return EINA_FALSE;
 
    _popup_show(obj, NULL, NULL, NULL);
    _val_fetch(obj, EINA_TRUE);
    evas_object_smart_changed(obj);
+
+   if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
+     {
+        ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
+        sd->wheel_indicator_timer =
+           ecore_timer_add(0.5, _wheel_indicator_timer_cb, obj);
+     }
 
    return EINA_TRUE;
 }
