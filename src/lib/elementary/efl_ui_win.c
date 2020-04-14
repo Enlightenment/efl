@@ -9268,15 +9268,18 @@ _motion_cb(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p)
           {
              target->currently_inside = EINA_FALSE;
              efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_LEFT, &ev);
+             ecore_evas_dnd_mark_motion_used(ee, seat);
           }
         else if (!target->currently_inside && inside)
           {
              target->currently_inside = EINA_TRUE;
              efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_ENTERED, &ev);
+             ecore_evas_dnd_mark_motion_used(ee, seat);
           }
         else if (target->currently_inside && inside)
           {
              efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_POSITION_CHANGED, &ev);
+             ecore_evas_dnd_mark_motion_used(ee, seat);
           }
         eina_accessor_free(ev.available_types);
      }

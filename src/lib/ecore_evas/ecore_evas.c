@@ -5699,6 +5699,7 @@ ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb cb)
 typedef struct {
    Eina_Array *available_mime_types;
    Eina_Position2D pos;
+   Eina_Bool last_motion_was_used;
 } Ecore_Evas_Active_Dnd;
 
 static void
@@ -5734,8 +5735,26 @@ ecore_evas_dnd_enter(Ecore_Evas *ee, unsigned int seat, Eina_Iterator *available
      ee->func.fn_dnd_state_change(ee, seat, pos, EINA_TRUE);
 }
 
-EAPI void
+EAPI Eina_Bool
 ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos)
+{
+   Ecore_Evas_Active_Dnd *dnd;
+
+   ECORE_EVAS_CHECK_GOTO(ee, err);
+   EINA_SAFETY_ON_NULL_GOTO(ee->active_drags, err);
+   dnd = eina_hash_find(ee->active_drags, &seat);
+   EINA_SAFETY_ON_NULL_GOTO(dnd, err);
+   dnd->pos = pos;
+   dnd->last_motion_was_used = EINA_FALSE;
+   if (ee->func.fn_dnd_motion)
+     ee->func.fn_dnd_motion(ee, seat, pos);
+   return dnd->last_motion_was_used;
+err:
+   return EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_dnd_mark_motion_used(Ecore_Evas *ee, unsigned int seat)
 {
    Ecore_Evas_Active_Dnd *dnd;
 
@@ -5743,9 +5762,7 @@ ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p
    EINA_SAFETY_ON_NULL_RETURN(ee->active_drags);
    dnd = eina_hash_find(ee->active_drags, &seat);
    EINA_SAFETY_ON_NULL_RETURN(dnd);
-   dnd->pos = pos;
-   if (ee->func.fn_dnd_motion)
-     ee->func.fn_dnd_motion(ee, seat, pos);
+   dnd->last_motion_was_used = EINA_TRUE;
 }
 
 EAPI void
