@@ -85,12 +85,12 @@ pkgconfig.generate(efreet_mime_lib,
         name : 'efreet-mime',
         subdirs : package_version_name,
         version : version_major + '.' + version_minor + '.' + version_micro,
-        libraries : [tmp_deps] + tmp_pub_deps,
+        libraries : efreet_pub_deps,
 )
 
 pkgconfig.generate(efreet_trash_lib,
         name : 'efreet-trash',
         subdirs : package_version_name,
         version : version_major + '.' + version_minor + '.' + version_micro,
-        libraries : [tmp_deps] + tmp_pub_deps,
+        libraries : efreet_pub_deps,
 )
