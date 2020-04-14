@@ -808,6 +808,7 @@ struct _Edje_External_Param_Info
 
 #define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, 0, {.s = {NULL, NULL, NULL}}}
 
+/** Version of the EDJE External ABI used by this library .*/
 #define EDJE_EXTERNAL_TYPE_ABI_VERSION (3)
 
 /**
@@ -860,6 +861,7 @@ struct _Edje_External_Type
   Edje_External_Param_Info *parameters_info; /**< An array of #Edje_External_Param_Info describing the different parameters this EXTERNAL may have. The last element in the array must be #EDJE_EXTERNAL_PARAM_INFO_SENTINEL. */
   void                     *data; /**< Private user data that will be passed to all of the class functions. */
 };
+/** Alias for _Edje_External_Type */
 typedef struct _Edje_External_Type Edje_External_Type;
 
 /**
@@ -873,6 +875,7 @@ struct _Edje_External_Type_Info
    const Edje_External_Type *info; /**< The type definition. */
 };
 
+/** Alias for _Edje_External_Type_Info */
 typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 
 /**

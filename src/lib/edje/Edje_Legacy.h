@@ -1533,12 +1533,13 @@ EAPI double edje_object_base_scale_get(const Evas_Object *obj);
  * @{
  */
 
+/** Directions in which a part can be dragged .*/
 typedef enum _Edje_Drag_Dir
 {
-   EDJE_DRAG_DIR_NONE = 0,
-   EDJE_DRAG_DIR_X = 1,
-   EDJE_DRAG_DIR_Y = 2,
-   EDJE_DRAG_DIR_XY = 3
+   EDJE_DRAG_DIR_NONE = 0, /**< Part cannot be dragged. */
+   EDJE_DRAG_DIR_X = 1, /**< Part can be dragged in the horizontal direction. */
+   EDJE_DRAG_DIR_Y = 2, /**< Part can be dragged in the vertical direction. */
+   EDJE_DRAG_DIR_XY = 3 /**< Part can be dragged in every direction. */
 } Edje_Drag_Dir;
 
 /**
@@ -1628,8 +1629,8 @@ EAPI Eina_Bool edje_object_part_drag_size_get(const Evas_Object *obj, const char
 /**
  * @brief Determines dragable directions.
  *
- * The dragable directions are defined in the EDC file, inside the @ref
- * dragable section, by the attributes @c x and @c y. See the @ref edcref for
+ * The dragable directions are defined in the EDC file, inside the
+ * "dragable" section, by the attributes @c x and @c y. See the @ref edcref for
  * more information.
  *
  * @param[in] part The part name
