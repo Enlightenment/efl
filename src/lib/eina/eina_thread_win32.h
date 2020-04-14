@@ -23,13 +23,11 @@
 # include "config.h"
 #endif
 
-#include <stdlib.h>
-#include "eina_config.h"
-#include "eina_cpu.h"
+
 #include "eina_thread.h"
 #include "unimplemented.h"
 #include <errno.h>
-#include <string.h>
+// #include <string.h>
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif

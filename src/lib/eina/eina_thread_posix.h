@@ -23,16 +23,11 @@
 # include "config.h"
 #endif
 
-#include <stdlib.h>
-
-#include "eina_config.h"
 #include "eina_thread.h"
-#include "eina_cpu.h"
 #include <pthread.h>
 #include "eina_safety_checks.h"
-#include <errno.h>
-
 #include <signal.h>
+
 #define EINA_THREAD_CANCEL_ENABLE PTHREAD_CANCEL_ENABLE
 #define EINA_THREAD_CANCEL_DISABLE PTHREAD_CANCEL_DISABLE
 #define EINA_THREAD_CANCEL_DEFERRED PTHREAD_CANCEL_DEFERRED

@@ -19,11 +19,14 @@
 #ifndef EINA_THREAD_H_
 #define EINA_THREAD_H_
 
+#include <stdlib.h>
+#include "eina_config.h"
+#include "eina_cpu.h"
 #include "eina_config.h"
 #include "eina_types.h"
 #include "eina_error.h"
-
 #include <stdint.h>
+#include <errno.h>
 
 #ifdef _WIN32
 # include "eina_thread_win32.h"
