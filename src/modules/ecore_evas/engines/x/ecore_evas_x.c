@@ -49,6 +49,8 @@
 # endif
 #endif /* ! _WIN32 */
 
+#define ECORE_EVAS_X11_SELECTION 0x7F
+
 #define EDBG(...)                                                       \
   EINA_LOG(_ecore_evas_log_dom, EINA_LOG_LEVEL_DBG + 1, __VA_ARGS__);
 
@@ -75,6 +77,7 @@ static Eina_Bool wm_exists;
 typedef struct _Ecore_Evas_Engine_Data_X11 Ecore_Evas_Engine_Data_X11;
 
 typedef struct {
+   EINA_MAGIC;
    Ecore_Evas_Selection_Callbacks callbacks;
    Ecore_Evas_Selection_Buffer buffer;
    Ecore_Evas *ee;
@@ -4053,6 +4056,11 @@ _eina_content_converter(char *target, void *data, int size EINA_UNUSED, void **d
 {
    Ecore_Evas_X11_Selection_Data *sdata = data;
    Eina_Bool ret = EINA_FALSE;;
+
+   if (size != sizeof(Ecore_Evas_X11_Selection_Data)) return EINA_FALSE;
+
+   if (!EINA_MAGIC_CHECK(sdata, ECORE_EVAS_X11_SELECTION)) return EINA_FALSE;
+
    if (eina_streq(target, "TARGETS") || eina_streq(target, "ATOM"))
      {
         //list all available types that we have currently
@@ -4327,6 +4335,7 @@ _ecore_evas_x_selection_window_init(Ecore_Evas *ee)
         ecore_x_fixes_window_selection_notification_request(ee->prop.window, ecore_evas_selection_to_atom[i]);
         edata->selection_data[i].ee = ee;
         edata->selection_data[i].buffer = i;
+        EINA_MAGIC_SET(&edata->selection_data[i], ECORE_EVAS_X11_SELECTION);
      }
    ecore_x_dnd_aware_set(ee->prop.window, EINA_TRUE);
    edata->init_job = ecore_job_add(_deliver_selection_changed, ee);
