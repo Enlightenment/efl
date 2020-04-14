@@ -522,8 +522,8 @@ EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
 
 EAPI Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
 EAPI void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
-
-EAPI void ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
+EAPI void ecore_evas_dnd_mark_motion_used(Ecore_Evas *ee, unsigned int seat);
+EAPI Eina_Bool ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
 EAPI void ecore_evas_dnd_leave(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
 EAPI void ecore_evas_dnd_enter(Ecore_Evas *ee, unsigned int seat, Eina_Iterator *available_types, Eina_Position2D pos);
 EAPI Eina_Position2D ecore_evas_dnd_pos_get(Ecore_Evas *ee, unsigned int seat);

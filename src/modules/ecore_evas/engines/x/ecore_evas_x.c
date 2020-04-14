@@ -4185,8 +4185,9 @@ _ecore_evas_x_dnd_position(void *udata EINA_UNUSED, int type EINA_UNUSED, void *
    ee = ecore_event_window_match(pos->win);
    EINA_SAFETY_ON_NULL_GOTO(ee, end);
    ecore_evas_geometry_get(ee, &x, &y, &w, &h);
-   ecore_evas_dnd_position_set(ee, 1, EINA_POSITION2D(pos->position.x - x, pos->position.y - y));
-   ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, (Ecore_X_Rectangle){x,y,w,h}, pos->action);
+   Eina_Bool used = ecore_evas_dnd_position_set(ee, 1, EINA_POSITION2D(pos->position.x - x, pos->position.y - y));
+   if (used)
+     ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, (Ecore_X_Rectangle){x,y,w,h}, pos->action);
 end:
    return ECORE_CALLBACK_PASS_ON;
 }
