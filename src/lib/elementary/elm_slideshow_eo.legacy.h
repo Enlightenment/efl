@@ -192,7 +192,7 @@ EAPI double elm_slideshow_timeout_get(const Elm_Slideshow *obj);
  *
  * @param[in] obj The object.
  *
- * @return The list of items (#Elm.Widget.Item as data) or @c null on errors.
+ * @return The list of items (#Elm_Widget_Item as data) or @c null on errors.
  *
  * @ingroup Elm_Slideshow_Group
  */

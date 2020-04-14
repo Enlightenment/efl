@@ -133,7 +133,7 @@ EAPI void elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
 /**
   * @brief Gets the mode of display of a given background widget's image
   *
-  * @return  The background option Elm.Bg.Option Default is #Elm_Bg_SCALE.
+  * @return  The background option Elm.Bg.Option Default is #ELM_BG_OPTION_SCALE.
   *
   * @see elm_bg_option_set()
   *
