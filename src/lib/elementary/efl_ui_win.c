@@ -9398,12 +9398,37 @@ _remove(void *data, void *gdata)
    return EINA_TRUE;
 }
 
+Efl_Ui_Win*
+efl_ui_win_get(Evas_Object *obj)
+{
+   Efl_Ui_Win *win = efl_provider_find(obj, MY_CLASS);
+   if (!win)
+     {
+        Evas *e = evas_object_evas_get(obj);
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
+
+        win = ecore_evas_data_get(ee, "elm_win");
+     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+   return win;
+}
+
+static Efl_Ui_Win_Data*
+_fetch_win_data_from_arbitary_obj(Efl_Canvas_Object *obj)
+{
+   Efl_Ui_Win *win = efl_ui_win_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(win, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
+   return pd;
+}
+
 void
 _drop_event_register(Eo *obj)
 {
    Ui_Dnd_Target target = {obj, EINA_FALSE};
-   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN(pd);
+   Efl_Ui_Win_Data *pd = _fetch_win_data_from_arbitary_obj(obj);
+   if (!pd) return;
 
    eina_inarray_push(pd->drop_target, &target);
 }
@@ -9412,9 +9437,8 @@ void
 _drop_event_unregister(Eo *obj)
 {
    int idx = -1;
-   Efl_Ui_Win_Data *pd;
 
-   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd = _fetch_win_data_from_arbitary_obj(obj);
    if (!pd) return;
 
    for (unsigned int i = 0; i < eina_inarray_count(pd->drop_target); ++i)
@@ -9434,9 +9458,7 @@ _drop_event_unregister(Eo *obj)
 void
 _selection_changed_event_register(Eo *obj)
 {
-   Efl_Ui_Win_Data *pd;
-
-   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd = _fetch_win_data_from_arbitary_obj(obj);
    if (!pd) return;
 
    eina_array_push(pd->selection_changed, obj);
@@ -9444,9 +9466,7 @@ _selection_changed_event_register(Eo *obj)
 void
 _selection_changed_event_unregister(Eo *obj)
 {
-   Efl_Ui_Win_Data *pd;
-
-   pd = efl_data_scope_safe_get(efl_provider_find(obj, MY_CLASS), MY_CLASS);
+   Efl_Ui_Win_Data *pd = _fetch_win_data_from_arbitary_obj(obj);
    if (!pd) return;
 
    eina_array_remove(pd->selection_changed, _remove, obj);
