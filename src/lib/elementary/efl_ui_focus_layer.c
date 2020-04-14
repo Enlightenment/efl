@@ -147,7 +147,17 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
         pd->old_focus = NULL;
 
         if (fallback && efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
-          efl_ui_focus_manager_redirect_set(pd->registered_manager, NULL);
+          {
+             Efl_Ui_Focus_Manager *m = pd->registered_manager;
+
+             while (efl_ui_focus_manager_redirect_get(m))
+               {
+                  Efl_Ui_Focus_Manager *old = m;
+
+                  m = efl_ui_focus_manager_redirect_get(m);
+                  efl_ui_focus_manager_redirect_set(old, NULL);
+               }
+          }
 
         efl_ui_focus_manager_calc_unregister(pd->registered_manager, obj);
         pd->registered_manager = NULL;
