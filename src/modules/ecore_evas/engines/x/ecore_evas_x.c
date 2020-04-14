@@ -3850,7 +3850,7 @@ _search_fitting_type_from_event(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edat
 }
 
 static Eina_Content*
-_create_deliveriy_content(unsigned long int size, const void *mem, const char *mime_type)
+_create_delivery_content(unsigned long int size, const void *mem, const char *mime_type)
 {
    Eina_Content *content;
 
@@ -3890,7 +3890,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
              if (i < (files->num_files - 1))
                eina_strbuf_append(strbuf, "\n");
           }
-        result = _create_deliveriy_content(eina_strbuf_length_get(strbuf) + 1, eina_strbuf_string_get(strbuf), mime_type);
+        result = _create_delivery_content(eina_strbuf_length_get(strbuf) + 1, eina_strbuf_string_get(strbuf), mime_type);
         eina_strbuf_free(strbuf);
      }
    else if (eina_str_has_prefix(mime_type,"text"))
@@ -3899,7 +3899,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
         void *null_terminated = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
 
-        result = _create_deliveriy_content(x11_data->length + 1, null_terminated, mime_type);
+        result = _create_delivery_content(x11_data->length + 1, null_terminated, mime_type);
         free(null_terminated);
      }
    else if (eina_str_has_prefix(mime_type,"image"))
@@ -3908,13 +3908,13 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
         Eina_Content *tmp_container = eina_content_new((Eina_Slice){.len = x11_data->length, .mem = x11_data->data}, mime_type);
         const char *file = eina_content_as_file(tmp_container);
 
-        result = _create_deliveriy_content(strlen(file), file, mime_type);
+        result = _create_delivery_content(strlen(file), file, mime_type);
         eina_content_free(tmp_container);
      }
    else
      {
         Ecore_X_Selection_Data *x11_data = ev->data;
-        result = _create_deliveriy_content(x11_data->length, x11_data->data, mime_type);
+        result = _create_delivery_content(x11_data->length, x11_data->data, mime_type);
      }
    EINA_SAFETY_ON_NULL_GOTO(result, err);
 
