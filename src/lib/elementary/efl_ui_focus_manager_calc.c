@@ -111,11 +111,11 @@ _focus_manager_active_get(Eo *obj)
 {
    Eo *root, *manager, *comp_parent, *redirect;
 
-   if (efl_isa(obj, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE) ||
-       (efl_composite_part_is(obj) && efl_isa(efl_parent_get(obj), EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE)))
+   root = efl_ui_focus_manager_root_get(obj);
+
+   if (efl_isa(root, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE))
      return EINA_TRUE;
 
-   root = efl_ui_focus_manager_root_get(obj);
    manager = efl_ui_focus_object_focus_manager_get(root);
 
    if (!manager) return EINA_FALSE;
