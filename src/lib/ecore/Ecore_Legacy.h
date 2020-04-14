@@ -2,7 +2,7 @@
 #define _ECORE_LEGACY_H
 
 /**
- * @ingroup Ecore_Poller_Group
+ * @addtogroup Ecore_Poller_Group
  *
  * @{
  */
@@ -76,8 +76,6 @@ EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
  * @param[in] interval The tick interval; must be a power of 2 and <= 32768.
  *
  * @return @c true on success, @c false on failure.
- *
- * @ingroup Ecore_Poller
  */
 EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *obj, int interval);
 
@@ -85,8 +83,6 @@ EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *obj, int interval)
  * @brief Polling interval rate of the poller.
  *
  * @return The tick interval; must be a power of 2 and <= 32768.
- *
- * @ingroup Ecore_Poller
  */
 EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *obj);
 
@@ -95,7 +91,7 @@ EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *obj);
  */
 
 /**
- * @ingroup Ecore_Animator_Group
+ * @addtogroup Ecore_Animator_Group
  *
  * @{
  */
@@ -209,7 +205,7 @@ EAPI void ecore_animator_thaw(Ecore_Animator *animator);
  */
 
 /**
- * @ingroup Ecore_Timer_Group
+ * @addtogroup Ecore_Timer_Group
  *
  * @{
  */
@@ -306,7 +302,7 @@ EAPI void ecore_timer_thaw(Ecore_Timer *timer);
  */
 
 /**
- * @ingroup Ecore_Idle_Group
+ * @addtogroup Ecore_Idle_Group
  *
  * @{
  */
@@ -391,7 +387,7 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  */
 
 /**
- * @ingroup Ecore_Exe_Group
+ * @addtogroup Ecore_Exe_Group
  *
  * @{
  */
@@ -403,7 +399,7 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  */
 
 /**
- * @ingroup Ecore_Job_Group
+ * @addtogroup Ecore_Job_Group
  *
  * @{
  */

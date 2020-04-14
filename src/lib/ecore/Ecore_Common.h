@@ -4,8 +4,8 @@
 #include <Efl_Config.h>
 
 /**
- * @ingroup Ecore
  * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
+ * @ingroup Ecore
  * @{
  */
 
@@ -2660,8 +2660,8 @@ EAPI double ecore_throttle_get(void);
  */
 
 /**
- * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Poller_Group Ecore Poll functions
+ * @ingroup Ecore_Main_Loop_Group
  *
  * Ecore poller provides infrastructure for the creation of pollers. Pollers
  * are, in essence, callbacks that share a single timer per type. Because not

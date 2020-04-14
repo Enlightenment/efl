@@ -3311,7 +3311,7 @@ EAPI void                    evas_language_reinit(void);
  */
 
 /**
- * @ingroup Evas_Font_Group
+ * @addtogroup Evas_Font_Group
  *
  * @{
  */
@@ -3320,8 +3320,6 @@ EAPI void                    evas_language_reinit(void);
  * @defgroup Evas_Font_Path_Group Font Path Functions
  *
  * Functions that edit the paths being used to load fonts.
- *
- * @ingroup Evas_Font_Group
  */
 
 /**

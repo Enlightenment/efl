@@ -464,21 +464,21 @@ EAPI void edje_object_text_change_cb_set(Evas_Object *obj, Edje_Text_Change_Cb f
 
 
 /**
- * @ingroup Edje_Object_Communication_Interface_Message
+ * @addtogroup Edje_Object_Communication_Interface_Message
  *
  * @{
  */
 
-typedef struct _Edje_Message_String           Edje_Message_String;
-typedef struct _Edje_Message_Int              Edje_Message_Int;
-typedef struct _Edje_Message_Float            Edje_Message_Float;
-typedef struct _Edje_Message_String_Set       Edje_Message_String_Set;
-typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set;
-typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set;
-typedef struct _Edje_Message_String_Int       Edje_Message_String_Int;
-typedef struct _Edje_Message_String_Float     Edje_Message_String_Float;
-typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set;
-typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
+typedef struct _Edje_Message_String           Edje_Message_String; /**< Alias for _Edje_Message_String. */
+typedef struct _Edje_Message_Int              Edje_Message_Int; /**< Alias for _Edje_Message_Int */
+typedef struct _Edje_Message_Float            Edje_Message_Float; /**< Alias for _Edje_Message_Float */
+typedef struct _Edje_Message_String_Set       Edje_Message_String_Set; /**< Alias for _Edje_Message_String_Set */
+typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set; /**< Alias for _Edje_Message_Int_Set */
+typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set; /**< Alias for _Edje_Message_Float_Set */
+typedef struct _Edje_Message_String_Int       Edje_Message_String_Int; /**< Alias for _Edje_Message_String_Int */
+typedef struct _Edje_Message_String_Float     Edje_Message_String_Float; /**< Alias for _Edje_Message_String_Float */
+typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set; /**< Alias for _Edje_Message_String_Int_Set */
+typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set; /**< Alias for _Edje_Message_String_Float_Set */
 
 struct _Edje_Message_String
 {
@@ -657,7 +657,7 @@ EAPI void edje_object_message_signal_recursive_process(Evas_Object *obj);
  */
 
 /**
- * @ingroup Edje_Object
+ * @addgroup Edje_Object
  *
  * @{
  */
