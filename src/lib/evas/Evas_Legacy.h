@@ -4701,7 +4701,7 @@ EAPI void evas_vg_gradient_radial_focal_get(Evas_Vg_Gradient_Radial *obj, double
  */
 
 /**
- * @defgroup Evas_Object_Image
+ * @addtogroup Evas_Object_Image
  *
  * @{
  */
