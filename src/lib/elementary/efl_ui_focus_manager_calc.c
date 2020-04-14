@@ -869,7 +869,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
                }
              else
                {
-                  n = _request_subchild(pd->root);
+                  n = _request_subchild_except(pd->root, pd->redirect_entry);
                   if (n)
                     efl_ui_focus_manager_focus_set(obj, n->focusable);
                }
