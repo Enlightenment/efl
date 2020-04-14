@@ -1,4 +1,5 @@
 import eina_types;
+import efl_gfx_types;
 
 abstract @beta Efl.Canvas.Vg.Node extends Efl.Object
                                   implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path

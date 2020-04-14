@@ -163,6 +163,31 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_stack.eo.h"
 #include "interfaces/efl_gfx_fill.eo.h"
 #include "interfaces/efl_gfx_view.eo.h"
+
+/**
+ * @brief Set the list of commands and points to be used to create the content
+ * of path.
+ *
+ * @param[in] obj The object.
+ * @param[in] op Command list
+ * @param[in] points Point list
+ *
+ * @ingroup Efl_Gfx_Path
+ */
+EOAPI void efl_gfx_path_set(Eo *obj, const Efl_Gfx_Path_Command_Type *op, const double *points);
+
+/**
+ * @brief Set the list of commands and points to be used to create the content
+ * of path.
+ *
+ * @param[in] obj The object.
+ * @param[out] op Command list
+ * @param[out] points Point list
+ *
+ * @ingroup Efl_Gfx_Path
+ */
+EOAPI void efl_gfx_path_get(const Eo *obj, const Efl_Gfx_Path_Command_Type **op, const double **points);
+
 #include "interfaces/efl_gfx_path.eo.h"
 #include "interfaces/efl_gfx_shape.eo.h"
 #include "interfaces/efl_gfx_gradient.eo.h"

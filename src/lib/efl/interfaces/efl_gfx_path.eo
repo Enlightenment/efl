@@ -1,23 +1,9 @@
 import eina_types;
-import efl_gfx_types;
 
 mixin @beta Efl.Gfx.Path requires Efl.Object
 {
    [[EFL graphics path object interface]]
    methods {
-      @property path {
-         [[Set the list of commands and points to be used to create the
-           content of path.
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-            op: ptr(const(Efl.Gfx.Path_Command_Type)); [[Command list]]
-            points: ptr(const(double)); [[Point list]]
-         }
-      }
       @property length {
         [[Path length property]]
         get {
@@ -65,7 +51,7 @@ mixin @beta Efl.Gfx.Path requires Efl.Object
         ]]
       }
       append_move_to {
-        [[Moves the current point to the given point, 
+        [[Moves the current point to the given point,
           implicitly starting a new subpath and closing the previous one.
 
           See also @.append_close.
@@ -140,7 +126,7 @@ mixin @beta Efl.Gfx.Path requires Efl.Object
       }
       append_arc_to {
         [[Append an arc that connects from the current point int the point list
-          to the given point (x,y). The arc is defined by the given radius in 
+          to the given point (x,y). The arc is defined by the given radius in
           x-direction (rx) and radius in y direction (ry).
 
           Use this api if you know the end point's of the arc otherwise use

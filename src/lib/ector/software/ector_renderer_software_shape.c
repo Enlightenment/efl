@@ -271,7 +271,7 @@ typedef struct _Line
    double y2;
 }Line;
 
-static void 
+static void
 _line_value_set(Line *l, double x1, double y1, double x2, double y2)
 {
    l->x1 = x1;
@@ -281,7 +281,7 @@ _line_value_set(Line *l, double x1, double y1, double x2, double y2)
 }
 
 // approximate sqrt(x*x + y*y) using alpha max plus beta min algorithm.
-// With alpha = 1, beta = 3/8, giving results with the largest error less 
+// With alpha = 1, beta = 3/8, giving results with the largest error less
 // than 7% compared to the exact value.
 static double
 _line_length(Line *l)
@@ -339,7 +339,7 @@ _dasher_line_to(Dash_Stroker *dasher, double x, double y)
              _outline_line_to(dasher->outline, x, y);
           }
      }
-   else 
+   else
      {
         while (line_len > dasher->cur_dash_length)
           {
@@ -404,7 +404,7 @@ _dasher_cubic_to(Dash_Stroker *dasher, double cx1 , double cy1, double cx2, doub
              _outline_cubic_to(dasher->outline, cx1, cy1, cx2, cy2, x, y);
           }
      }
-   else 
+   else
      {
         while (bez_len > dasher->cur_dash_length)
           {

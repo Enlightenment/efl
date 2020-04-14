@@ -1375,7 +1375,7 @@ _next_command(char *path, char *cmd, double *arr, int *count)
         path++;
         *count = _number_count(*cmd);
      }
-   else 
+   else
      {
         if (*cmd == 'm')
           *cmd = 'l';
@@ -1541,5 +1541,13 @@ _efl_gfx_path_efl_object_destructor(Eo *obj, Efl_Gfx_Path_Data *pd)
    _efl_gfx_path_reset(obj, pd);
    efl_destructor(efl_super(obj, EFL_GFX_PATH_MIXIN));
 }
+
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_gfx_path_set, EFL_FUNC_CALL(op, points), const Efl_Gfx_Path_Command_Type *op, const double *points);
+EOAPI EFL_VOID_FUNC_BODYV_CONST(efl_gfx_path_get, EFL_FUNC_CALL(op, points), const Efl_Gfx_Path_Command_Type **op, const double **points);
+
+#define EFL_GFX_PATH_EXTRA_OPS \
+      EFL_OBJECT_OP_FUNC(efl_gfx_path_set, _efl_gfx_path_path_set), \
+      EFL_OBJECT_OP_FUNC(efl_gfx_path_get, _efl_gfx_path_path_get),
 
 #include "interfaces/efl_gfx_path.eo.c"
