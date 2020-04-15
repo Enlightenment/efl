@@ -3,7 +3,6 @@
 #endif
 
 #include <Eina.h>
-#include <fnmatch.h>
 
 #include <Eo.h>
 
@@ -544,7 +543,7 @@ _name_match(const char *match, Eina_Bool is_glob, const char *str)
              // if match string is "*" special case it and match
              if ((match[0] == '*') && (match[1] == 0)) return EINA_TRUE;
              // actual compare
-             if (!fnmatch(match, str, 0)) return EINA_TRUE;
+             if (!eina_fnmatch(match, str, 0)) return EINA_TRUE;
           }
         else
           {

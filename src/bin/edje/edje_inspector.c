@@ -3,7 +3,7 @@
 #endif
 
 #include <locale.h>
-#include <fnmatch.h>
+#include <Eina.h>
 #include <unistd.h>
 #include <errno.h>
 
@@ -101,7 +101,7 @@ static inline Eina_Bool
 matches(const char *name, const char *pattern)
 {
    if (!pattern) return EINA_TRUE;
-   return fnmatch(pattern, name, 0) == 0;
+   return eina_fnmatch(pattern, name, 0) == 0;
 }
 
 static void

@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <fnmatch.h>
+#include <Eina.h>
 
 #include "Embryo.h"
 #include "embryo_private.h"
@@ -59,7 +59,7 @@ _embryo_str_fnmatch(Embryo_Program *ep, Embryo_Cell *params)
    STRGET(ep, s1, params[1]);
    STRGET(ep, s2, params[2]);
    if ((!s1) || (!s2)) return -1;
-   return (Embryo_Cell)fnmatch(s1, s2, 0);
+   return (Embryo_Cell)eina_fnmatch(s1, s2, 0);
 }
 
 static Embryo_Cell

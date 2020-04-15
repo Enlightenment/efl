@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#include <fnmatch.h>
+#include <Eina.h>
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
@@ -347,7 +347,7 @@ _item_text_realize(Elm_Gen_Item *it,
         (edje_object_data_get(target, "texts"));
    EINA_LIST_FOREACH(*source, l, key)
      {
-        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
+        if (parts && eina_fnmatch(parts, key, FNM_PERIOD)) continue;
 
         s = it->itc->func.text_get
            ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
@@ -423,7 +423,7 @@ _item_content_realize(Elm_Gen_Item *it,
 
    EINA_LIST_FREE(source, key)
      {
-        if (parts && fnmatch(parts, key, FNM_PERIOD))
+        if (parts && eina_fnmatch(parts, key, FNM_PERIOD))
           continue;
 
         Evas_Object *old = NULL;
@@ -505,7 +505,7 @@ _item_state_realize(Elm_Gen_Item *it, Evas_Object *target, const char *parts)
    src = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
    EINA_LIST_FREE(src, key)
      {
-        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
+        if (parts && eina_fnmatch(parts, key, FNM_PERIOD)) continue;
 
         Eina_Bool on = it->itc->func.state_get
            ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
@@ -8746,7 +8746,7 @@ _elm_genlist_search_by_text_item_get(Eo *obj EINA_UNUSED,
         if (!it->itc->func.text_get) continue;
         str = it->itc->func.text_get((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), part_name);
         if (!str) continue;
-        if (!fnmatch(pattern, str, fnflags))
+        if (!eina_fnmatch(pattern, str, fnflags))
           {
              free(str);
              return EO_OBJ(it);

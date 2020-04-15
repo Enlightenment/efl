@@ -67,6 +67,7 @@
 #include "eina_slstr.h"
 #include "eina_vpath.h"
 #include "eina_thread.h"
+#include "eina_fnmatch.h"
 
 /*============================================================================*
 *                                  Local                                     *

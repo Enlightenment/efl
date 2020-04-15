@@ -25,7 +25,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fnmatch.h>
 #include <assert.h>
 #include <errno.h>
 
@@ -51,6 +50,7 @@
 #include "eina_thread.h"
 #include "eina_convert.h"
 #include "eina_strbuf.h"
+#include "eina_fnmatch.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -1280,7 +1280,7 @@ finish_register:
      {
         EINA_INLIST_FOREACH(_glob_list, pending)
         {
-           if (!fnmatch(pending->name, name, 0))
+           if (!eina_fnmatch(pending->name, name, 0))
              {
                 _log_domains[i].level = pending->level;
                 break;
@@ -1996,7 +1996,7 @@ eina_log_domain_level_get(const char *domain_name)
 
    EINA_INLIST_FOREACH(_glob_list, pending)
    {
-      if (!fnmatch(pending->name, domain_name, 0))
+      if (!eina_fnmatch(pending->name, domain_name, 0))
          return pending->level;
    }
 

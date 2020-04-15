@@ -4,7 +4,6 @@ if sys_windows
   evil_unposix_src = []
 
   evil_unposix_header_src = [
-    'fnmatch.h',
     'libgen.h',
     'limits.h',
     'locale.h',
@@ -22,14 +21,14 @@ if sys_windows
   evil_unposix_lib = static_library('evil_unposix',
     evil_unposix_src,
     include_directories: [include_directories('.'), config_dir],
-    dependencies : [pcre_dep, getopt_dep],
+    dependencies : [getopt_dep],
     install: true,
     version: meson.project_version(),
   )
 
   evil_unposix = declare_dependency(
     include_directories: [include_directories('.')],
-    dependencies: [pcre_dep, getopt_dep],
+    dependencies: [getopt_dep],
     link_with: evil_unposix_lib,
   )
 
