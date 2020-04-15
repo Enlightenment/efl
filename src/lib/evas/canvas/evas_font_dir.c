@@ -751,6 +751,13 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
      {
         if (l == fonts || !font) /* First iteration OR no font */
           {
+             /*This will suppress warnings for resource leak*/
+             if (font)
+               {
+                  evas_common_font_free((RGBA_Font*)font);
+                  font = NULL;
+               }
+
              if (source) /* Load Font from "eet" source */
                {
                   Eet_File *ef;
