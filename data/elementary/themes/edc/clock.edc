@@ -394,8 +394,8 @@ group { name: "e/modules/clock/digital";
              inherit: "default" 0.0;
              visible: 1;
              fixed: 1 1;
-             text.min: 1 1;
-             text.ellipsis: -1;
+             text.min: 0 1;
+             text.ellipsis: 0;
           }
        }
        part { name: "event"; type: RECT;
