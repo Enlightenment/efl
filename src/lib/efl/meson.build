@@ -11,9 +11,15 @@ efl_src = []
 subdir('interfaces')
 package_header_subdirs += 'interfaces'
 
+efl_lib_deps = [eina, eo]
+
+if not sys_windows
+  efl_lib_deps += m
+endif
+
 efl_lib = library('efl',
     efl_src, pub_eo_file_target,
-    dependencies: [eina, eo],
+    dependencies: efl_lib_deps,
     install: true,
     version : meson.project_version()
 )

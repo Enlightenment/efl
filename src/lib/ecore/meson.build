@@ -196,10 +196,17 @@ if get_option('systemd') == true
   ecore_deps += systemd
 endif
 
+if (not sys_windows)
+  ecore_lib_deps = [m, buildsystem, ecore_deps]
+else
+  ecore_lib_deps = [buildsystem, ecore_deps]
+endif
+
 ecore_lib = library('ecore',
     ecore_src, pub_eo_file_target,
-    dependencies: ecore_pub_deps + [buildsystem, ecore_deps],
-    include_directories : config_dir + [include_directories(join_paths('..','..'))],
+    dependencies: ecore_pub_deps + ecore_lib_deps,
+    include_directories : config_dir +
+                          [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,
     version : meson.project_version()

@@ -297,8 +297,8 @@ option('nls',
 
 option('bindings',
   type : 'array',
-  choices : ['cxx', 'mono'],
-  value : ['cxx'],
+  choices : ['luajit','cxx', 'mono'],
+  value : ['luajit', 'cxx'],
   description : 'Which auto-generated language bindings for efl to enable',
 )
 
@@ -334,8 +334,8 @@ option('dotnet',
 
 option('lua-interpreter',
   type: 'combo',
-  choices: ['lua'],
-  value: 'lua',
+  choices: ['luajit', 'lua'],
+  value: 'luajit',
   description: 'Which Lua back-end library to use in efl'
 )
 

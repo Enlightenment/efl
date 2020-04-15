@@ -258,7 +258,7 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-if sys_windows == true
+if sys_windows
   embed_script = find_program('config_embed.bat')
 else
   embed_script = find_program('config_embed')

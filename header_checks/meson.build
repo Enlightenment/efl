@@ -212,7 +212,7 @@ if sys_linux and config_h.has('HAVE_LISTXATTR') and config_h.has('HAVE_SETXATTR'
   config_h.set10('HAVE_XATTR', true)
 endif
 
-if sys_windows == true
+if sys_windows
   # pcre
   pcre_project = subproject('pcre')
 
@@ -245,7 +245,9 @@ config_h.set('VREV', '0')
 
 jpeg = dependency('libjpeg', required: false)
 if jpeg.found() == false
-#  jpeg = cc.find_library('jpeg')
+  if not sys_windows
+    jpeg = cc.find_library('jpeg')
+  endif
 endif
 
 if sys_bsd == true

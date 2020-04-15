@@ -9,10 +9,22 @@ generic_deps = []
 
 subdir('common')
 
+inc_dir = config_dir
+common_deps = generic_deps
+if (sys_windows)
+  inc_dir = [inc_dir, zlib_include_dir]
+  assert(inc_dir[0] == config_dir)
+  assert(inc_dir[1] == zlib_include_dir)
+else
+  common_deps = [generic_deps, rt]
+  assert(common_deps[0] == generic_deps)
+  assert(common_deps[1] == rt)
+endif
+
 common = static_library('evas_loader_common',
     generic_src,
-    include_directories : [config_dir, zlib_include_dir],
-    dependencies: [generic_deps, rt, evil_unposix],
+    include_directories : inc_dir,
+    dependencies: common_deps,
 )
 
 bin_ext=''

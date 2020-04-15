@@ -43,16 +43,28 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
+if (sys_windows)
+  eo_lib_deps = [eina, valgrind, execinfo]
+else
+  eo_lib_deps = [eina, valgrind, dl, execinfo]
+endif
+
 eo_lib = library('eo',
     eo_src, pub_eo_file_target,
-    dependencies: [eina, valgrind, execinfo],
+    dependencies: eo_lib_deps,
     install: true,
     version : meson.project_version(),
 )
 
+if sys_windows
+  eo_lib_dbg_deps = [eina, valgrind, execinfo]
+else
+  eo_lib_dbg_deps = [eina, valgrind, dl, execinfo]
+endif
+
 eo_lib_dbg = library('eo_dbg',
     eo_src, pub_eo_file_target,
-    dependencies: [eina, valgrind, execinfo],
+    dependencies: eo_lib_dbg_deps,
     install: true,
     c_args : '-DEO_DEBUG',
     version : meson.project_version(),

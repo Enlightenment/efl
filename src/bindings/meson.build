@@ -1,6 +1,10 @@
 
 bindings = get_option('bindings')
-bindings_order = ['cxx', 'mono']
+if (not sys_windows)
+  bindings_order = ['luajit', 'cxx', 'mono']
+else
+  bindings_order = ['lua', 'cxx', 'mono']
+endif
 
 if (get_option('dotnet') and not bindings.contains('mono'))
   message('dotnet support requires the C# bindings')

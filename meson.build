@@ -91,12 +91,12 @@ endforeach
 add_global_arguments(dev_cflags, language: 'c')
 add_global_arguments(dev_cflags, language: 'cpp')
 
-if not get_option('dbus')
-  dbus = declare_dependency()
-  eldbus = declare_dependency()
-endif
+if sys_windows
+  if not get_option('dbus')
+    dbus = declare_dependency()
+    eldbus = declare_dependency()
+  endif
 
-if sys_windows == true
   dl = declare_dependency()
   m = declare_dependency()
 
@@ -361,7 +361,11 @@ luaold_interpreters = [
 
 lua_pc_name = ''
 
-if get_option('lua-interpreter') == 'lua'
+if sys_windows or get_option('lua-interpreter') == 'lua'
+  if sys_windows and get_option('lua-interpreter') != 'lua'
+    warning('There is no "' + get_option('lua-interpreter')
+            + '" binding option for Windows, backing up to "lua"')
+  endif
   foreach l : luaold_interpreters
     lua = dependency(l[0], version: l[1], required:false)
     lua_pc_name = l[0]
@@ -371,8 +375,7 @@ if get_option('lua-interpreter') == 'lua'
   endforeach
 else
   lua = dependency(get_option('lua-interpreter'))
-  #lua_pc_name = 'luajit'
-  lua_pc_name = 'lua'
+  lua_pc_name = 'luajit'
 endif
 
 if sys_osx == true and get_option('lua-interpreter') == 'luajit'
@@ -392,8 +395,17 @@ subprojects = [
 ['efl'              ,[]                    , false,  true, false, false,  true, false, ['eo'], []],
 ['emile'            ,[]                    , false,  true, false, false,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
 ['eet'              ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'emile', 'efl'], []],
-['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']],
-# ['eldbus'           ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'eo', 'efl'], []],
+['ecore'            ,[]                    , false,  true, false, false, false,
+  false, ['eina', 'eo', 'efl'], ['buildsystem']]]
+
+if not sys_windows
+  subprojects += [['eldbus'           ,[]                    , false,  true,
+    true, false,  true,  true, ['eina', 'eo', 'efl'], []]]
+  assert(subprojects[-1] == ['eldbus'           ,[]                    , false,
+    true, true, false,  true,  true, ['eina', 'eo', 'efl'], []])
+endif
+
+subprojects += [
 ['ecore'            ,[]                    ,  true, false, false, false,  true,  true, ['eina', 'eo', 'efl'], []], #ecores modules depend on eldbus
 ['ecore_audio'      ,['audio']             , false,  true, false, false, false, false, ['eina', 'eo'], []],
 ['ecore_avahi'      ,['avahi']             , false,  true, false, false, false,  true, ['eina', 'ecore'], []],
@@ -408,8 +420,17 @@ subprojects = [
 ['ecore_win32'      ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_ipc'        ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_buffer'     ,['buffer']            ,  true,  true,  true, false, false, false, ['eina'], []],
-['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
-# ['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
+['ector'            ,[]                    , false,  true, false, false,  true,
+  false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],]
+
+if not sys_windows
+  subprojects +=  [['elput'            ,['drm']               , false,  true,
+    false, false,  true, false, ['eina', 'eldbus'], []]]
+  assert(subprojects[-1] == ['elput'            ,['drm']               , false,
+    true, false, false,  true, false, ['eina', 'eldbus'], []])
+endif
+
+subprojects += [
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
 ['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
 ['evas'             ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
@@ -427,12 +448,29 @@ subprojects = [
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
 ['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
-['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false, false, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
-['elua'             ,['elua']              , false,  true,  true, false,  true, false, ['eina', 'luajit'], []],
+['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false,
+  false, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],]
+
+if not sys_windows
+  subprojects +=  [['elua'             ,['elua']              , false,  true,
+    true, false,  true, false, ['eina', 'luajit'], []]]
+  assert(subprojects[-1] == ['elua'             ,['elua']              , false,
+    true, true, false,  true, false, ['eina', 'luajit'], []])
+else
+  subprojects +=  [['elua'             ,['elua']              , false,  true,
+    true, false,  true, false, ['eina', 'lua'], []]]
+  assert(subprojects[-1] == ['elua'             ,['elua']              , false,
+    true, true, false,  true, false, ['eina', 'lua'], []])
+endif
+
+subprojects += [
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, ['eina'], []],
 ['exactness'        ,[]                    , false,  false,  true, false, false, false, ['eina, evas, eet'], []],
 ]
+
+assert(subprojects[-1] == ['exactness'        ,[]                    , false,
+  false,  true, false, false, false, ['eina, evas, eet'], []])
 
 # We generate Efl_Config.h and config.h later, they will be available here
 config_dir += include_directories('.')
@@ -621,8 +659,9 @@ configure_file(
 )
 
 subdir(join_paths('systemd-services'))
-if get_option('dbus')
-subdir(join_paths('dbus-services'))
+
+if not sys_windows and get_option('dbus')
+  subdir(join_paths('dbus-services'))
 endif
 
 if sys_windows == false

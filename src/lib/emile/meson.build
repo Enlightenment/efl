@@ -23,10 +23,16 @@ elif (get_option('crypto') == 'openssl')
   emile_src += 'emile_cipher_openssl.c'
 endif
 
+if not sys_windows
+  emili_lib_deps = [lz4, rg_etc, m]
+else
+  emili_lib_deps = [lz4, rg_etc]
+endif
+
 emile_lib = library('emile',
     emile_src,
     include_directories: config_dir,
-    dependencies: emile_pub_deps + emile_deps + [lz4, rg_etc],
+    dependencies: emile_pub_deps + emile_deps + emili_lib_deps,
     install: true,
     version : meson.project_version()
 )

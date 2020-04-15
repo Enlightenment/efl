@@ -9,8 +9,14 @@ cxx_sublibs = [
   ['Eet',         true,  true, false, []],
   ['Eio',        false, false,  true, []],
   ['Evas',       false,  true,  true, []],
-  ['Edje',       false, false,  true, []],
-#  ['Eldbus',      true,  true,  true, []],
+  ['Edje',       false, false,  true, []],]
+
+if (not sys_windows)
+  cxx_sublibs += [['Eldbus',      true,  true,  true, []]]
+  assert(cxx_sublibs[-1] == ['Eldbus',      true,  true,  true, []])
+endif
+
+cxx_sublibs += [
   ['Elementary',  true,  true,  true, []]
 ]
 

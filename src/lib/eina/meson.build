@@ -1,4 +1,4 @@
-if sys_windows == false
+if not sys_windows
   eina_deps = [dl]
 else
   eina_deps = []
@@ -372,9 +372,16 @@ endif
 
 execinfo = cc.find_library('execinfo', required: false)
 
+if sys_windows
+  eina_lib_deps = [execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil]
+else
+  eina_lib_deps = [m, rt, dl, execinfo, iconv, eina_deps, thread_dep
+                  , eina_mem_pools, evil]
+endif
+
 eina_lib = library('eina', sources,
   include_directories : config_dir,
-  dependencies: [execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil, evil_unposix],
+  dependencies: eina_lib_deps,
   install: true,
   version : meson.project_version()
 )
@@ -396,7 +403,7 @@ install_headers(public_sub_headers,
 
 automatic_pkgfile = false
 
-if sys_windows == false
+if not sys_windows
 pkgconfig.generate(eina_lib,
   name : 'eina',
   subdirs : ['eina-'+version_major, 'efl-'+version_major, join_paths('eina-'+version_major, 'eina')],

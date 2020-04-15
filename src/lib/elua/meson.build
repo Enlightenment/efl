@@ -4,9 +4,14 @@ elua_pub_deps = [lua]
 elua_src = ['elua.c', 'io.c', 'cache.c']
 elua_header_src = ['Elua.h']
 
+elua_lib_deps = []
+if not sys_windows
+  elua_lib_deps = [m, dl]
+endif
+
 elua_lib = library('elua',
     elua_src,
-    dependencies: [m, dl] + elua_deps + elua_pub_deps,
+    dependencies: elua_lib_deps + elua_deps + elua_pub_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,
