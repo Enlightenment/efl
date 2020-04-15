@@ -71,6 +71,7 @@ Fixes:
    * ui textpath: update map before rendering begins.
    * elm icon/image efl ui image - respect aspect hints at all if set
    * elm icon/image efl ui image - respect aspect hints at all if set
+   * elm_cnp: fix memory leaks
 
 Removals:
 
