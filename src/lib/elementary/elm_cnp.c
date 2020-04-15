@@ -127,6 +127,12 @@ elm_object_cnp_selection_clear(Evas_Object *obj,
 }
 
 EAPI Eina_Bool
+elm_selection_selection_has_owner(Evas_Object *obj)
+{
+  return elm_cnp_clipboard_selection_has_owner(obj);
+}
+
+EAPI Eina_Bool
 elm_cnp_clipboard_selection_has_owner(Evas_Object *obj)
 {
    Ecore_Evas *ee;
