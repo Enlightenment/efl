@@ -187,6 +187,9 @@ evas_font_set_get(const char *name)
    Eina_List *fonts = NULL;
    char *p;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+   if (!*name) return NULL;
+
    p = strchr(name, ',');
    if (!p)
      {

@@ -3772,6 +3772,22 @@ EFL_START_TEST(evas_textblock_style)
 }
 EFL_END_TEST
 
+/* Textblock functionality without style. */
+EFL_START_TEST(evas_textblock_style_empty)
+{
+   Evas *evas;
+   Evas_Object *txt;
+   Evas_Coord w, h;
+   evas = EVAS_TEST_INIT_EVAS();
+   txt = evas_object_textblock_add(evas);
+   evas_object_textblock_text_markup_set(txt, "<b></b>");
+   evas_object_textblock_size_formatted_get(txt, &w, &h);
+   ck_assert_int_eq(w, 0);
+   ck_assert_int_eq(h, 0);
+   evas_free(evas);
+}
+EFL_END_TEST
+
 /* Basic test for style user push/peek/pop. */
 EFL_START_TEST(evas_textblock_style_user)
 {
@@ -5045,6 +5061,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);
+   tcase_add_test(tc, evas_textblock_style_empty);
    tcase_add_test(tc, evas_textblock_style_user);
    tcase_add_test(tc, evas_textblock_evas);
    tcase_add_test(tc, evas_textblock_text_getters);
