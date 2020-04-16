@@ -1023,11 +1023,6 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: 4 -5;
-            rel2.offset: -5 -5;
-            rel1.relative: 0.0 0.0;
-            align: 0.0 0.5;
-            text.align: 0.0 0.5;
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
