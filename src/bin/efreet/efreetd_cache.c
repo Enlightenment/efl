@@ -698,6 +698,7 @@ icon_changes_listen(void)
      }
 #endif
    eina_inarray_flush(stack);
+   icon_changes_listen_recursive(stack, "/usr/local/share/pixmaps", EINA_TRUE);
    icon_changes_listen_recursive(stack, "/usr/share/pixmaps", EINA_TRUE);
    eina_inarray_free(stack);
    eina_strbuf_free(buf);

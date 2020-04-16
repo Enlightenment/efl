@@ -164,6 +164,7 @@ cache_fallback_scan(Eina_Hash *icons, Eina_Hash *dirs)
     }
 #endif
 
+    cache_fallback_scan_dir(icons, dirs, "/usr/local/share/pixmaps");
     cache_fallback_scan_dir(icons, dirs, "/usr/share/pixmaps");
 
     return EINA_TRUE;
@@ -217,6 +218,7 @@ check_fallback_changed(Efreet_Cache_Icon_Theme *theme)
     }
 #endif
 
+    if (cache_directory_modified(theme->dirs, "/usr/local/share/pixmaps")) return EINA_TRUE;
     if (cache_directory_modified(theme->dirs, "/usr/share/pixmaps")) return EINA_TRUE;
     return EINA_FALSE;
 }
@@ -912,6 +914,7 @@ main(int argc, char **argv)
     }
 #endif
 
+    cache_theme_scan("/usr/local/share/pixmaps");
     cache_theme_scan("/usr/share/pixmaps");
 
     /* scan icons */
