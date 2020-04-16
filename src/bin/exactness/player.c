@@ -1098,7 +1098,7 @@ elm_init(int argc, char **argv)
    ORIGINAL_CALL("elm_init", argc, argv)
 
    if (ex_is_original_app() && original_return == 1)
-     ex_prepare_elm_overloay();
+     ex_prepare_elm_overlay();
 
    return original_return;
 }

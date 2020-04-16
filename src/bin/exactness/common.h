@@ -268,4 +268,4 @@ Exactness_Unit *exactness_unit_file_read(const char *filename);
 Eina_Bool exactness_unit_file_write(Exactness_Unit *unit, const char *filename);
 void exactness_image_free(Exactness_Image *img);
 
-void ex_prepare_elm_overloay(void);
+void ex_prepare_elm_overlay(void);

@@ -30,7 +30,7 @@ ex_set_original_envvar(void)
 }
 
 void
-ex_prepare_elm_overloay(void)
+ex_prepare_elm_overlay(void)
 {
    elm_theme_overlay_add(NULL, DATA_DIR"/exactness_play.edj");
 }
