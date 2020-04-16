@@ -3567,11 +3567,14 @@ _eina_value_type_tm_compare(const Eina_Value_Type *type, const void *a, const vo
    struct tm tma = *(struct tm*)a;
    struct tm tmb = *(struct tm*)b;
    time_t ta, tb;
+   struct timeval tva = {0}, tvb = {0};
 
    ta = mktime(&tma);
    tb = mktime(&tmb);
+   tva.tv_sec = ta;
+   tvb.tv_sec = tb;
 
-   return _eina_value_type_timeval_compare(type, &ta, &tb);
+   return _eina_value_type_timeval_compare(type, &tva, &tvb);
 }
 
 static Eina_Bool
