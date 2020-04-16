@@ -2436,22 +2436,18 @@ _item_new(Evas_Object *obj,
    evas_object_data_set(VIEW(it), "item", it);
    efl_access_object_access_type_set(VIEW(it), EFL_ACCESS_TYPE_DISABLED);
 
-   icon_obj = elm_icon_add(VIEW(it));
-   efl_parent_set(icon_obj, eo_it);
-
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);
 
-   if (_item_icon_set(icon_obj, "toolbar/", icon))
+   if (icon)
      {
+        icon_obj = elm_icon_add(VIEW(it));
+        efl_parent_set(icon_obj, eo_it);
+        evas_object_size_hint_min_set(icon_obj, sd->icon_size, sd->icon_size);
+        evas_object_size_hint_max_set(icon_obj, sd->icon_size, sd->icon_size);
+        _item_icon_set(icon_obj, "toolbar/", icon);
         it->icon = icon_obj;
         it->icon_str = eina_stringshare_add(icon);
-     }
-   else
-     {
-        it->icon = NULL;
-        it->icon_str = NULL;
-        evas_object_del(icon_obj);
      }
 
    if (!elm_layout_theme_set
@@ -2473,8 +2469,6 @@ _item_new(Evas_Object *obj,
 
    if (it->icon)
      {
-        evas_object_size_hint_min_set(it->icon, sd->icon_size, sd->icon_size);
-        evas_object_size_hint_max_set(it->icon, sd->icon_size, sd->icon_size);
         elm_layout_content_set(VIEW(it), "elm.swallow.icon", it->icon);
         elm_layout_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
         elm_layout_signal_emit(VIEW(it), "elm,icon,visible", "elm");
