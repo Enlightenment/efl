@@ -7,7 +7,8 @@ efreetd_src = [
   'efreetd_cache.c'
 ]
 
-config_h.set('STRICT_SPEC', '1')
+# disable strict as this causes efreet to be less functional for people
+#config_h.set('STRICT_SPEC', '1')
 
 efreetd = executable('efreetd',
         efreetd_src,
