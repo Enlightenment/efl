@@ -1061,5 +1061,6 @@ void _selection_changed_event_unregister(Eo *obj);
 void _drop_event_register(Eo *obj);
 void _drop_event_unregister(Eo *obj);
 void _register_selection_changed(Efl_Ui_Selection *selection);
+Efl_Ui_Win* efl_ui_win_get(Evas_Object *obj);
 
 #endif

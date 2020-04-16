@@ -123,17 +123,29 @@ _efl_gfx_image_load_error_to_evas_load_error(Eina_Error err)
 static Eina_Content*
 _markup_to_utf8(Eina_Content *from, const char *to_type)
 {
+   Eina_Content *ret = NULL;
    Eina_Slice slice = eina_content_data_get(from);
    char *utf8 = evas_textblock_text_markup_to_utf8(NULL, slice.mem);
-   return eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(utf8), to_type);
+   if (utf8)
+     {
+        ret = eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(utf8), to_type);
+        free(utf8);
+     }
+   return ret;
 }
 
 static Eina_Content*
 _utf8_to_markup(Eina_Content *from, const char *to_type)
 {
+   Eina_Content *ret = NULL;
    Eina_Slice slice = eina_content_data_get(from);
    char *markup = evas_textblock_text_utf8_to_markup(NULL, slice.mem);
-   return eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(markup), to_type);
+   if (markup)
+     {
+        ret = eina_content_new((Eina_Slice)EINA_SLICE_STR_FULL(markup), to_type);
+        free(markup);
+     }
+   return ret;
 }
 
 EAPI int

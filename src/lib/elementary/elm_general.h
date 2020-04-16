@@ -23,7 +23,7 @@
 // Legacy types
 #include "elm_general.eot.h"
 
-/** Possible values for the #ELM_OBJECT_SELECT_MODE policy.
+/** Possible values for the selection policy of some widgets.
  *
  * @since 1.7
  *
@@ -282,7 +282,7 @@ typedef enum
                              * regardless of config settings */
 } Elm_Policy_Throttle;
 
-/** Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
+/** Possible values for the multi-selection policy of some widgets.
  *
  * @since 1.8
  *

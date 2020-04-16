@@ -13,6 +13,7 @@
 
 #include <Ecore_X.h>
 #include <Ecore_X_Atoms.h>
+#include <Efreet.h>
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 # include <Evas_Engine_Software_X11.h>
@@ -48,6 +49,8 @@
 # endif
 #endif /* ! _WIN32 */
 
+#define ECORE_EVAS_X11_SELECTION 0x7F
+
 #define EDBG(...)                                                       \
   EINA_LOG(_ecore_evas_log_dom, EINA_LOG_LEVEL_DBG + 1, __VA_ARGS__);
 
@@ -74,6 +77,7 @@ static Eina_Bool wm_exists;
 typedef struct _Ecore_Evas_Engine_Data_X11 Ecore_Evas_Engine_Data_X11;
 
 typedef struct {
+   EINA_MAGIC;
    Ecore_Evas_Selection_Callbacks callbacks;
    Ecore_Evas_Selection_Buffer buffer;
    Ecore_Evas *ee;
@@ -3846,7 +3850,7 @@ _search_fitting_type_from_event(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edat
 }
 
 static Eina_Content*
-_create_deliveriy_content(unsigned long int size, const void *mem, const char *mime_type)
+_create_delivery_content(unsigned long int size, const void *mem, const char *mime_type)
 {
    Eina_Content *content;
 
@@ -3858,31 +3862,61 @@ _create_deliveriy_content(unsigned long int size, const void *mem, const char *m
 static void
 _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_Selection_Buffer selection, Ecore_X_Event_Selection_Notify *ev)
 {
-   Ecore_X_Selection_Data *x11_data = ev->data;
    Eina_Content *result = NULL;
    Eina_Stringshare *mime_type = _decrypt_type(edata->selection_data[selection].requested_type);
 
-   if (eina_str_has_prefix(mime_type,"text"))
+   EINA_SAFETY_ON_NULL_GOTO(ev->data, err);
+   if (eina_streq(mime_type, "text/uri-list"))
      {
+        Ecore_X_Selection_Data_Files *files = ev->data;
+        Efreet_Uri *uri;
+        Eina_Strbuf *strbuf;
+        int i;
+
+        strbuf = eina_strbuf_new();
+
+        for (i = 0; i < files->num_files ; i++)
+          {
+             uri = efreet_uri_decode(files->files[i]);
+             if (uri)
+               {
+                  eina_strbuf_append(strbuf, uri->path);
+                  efreet_uri_free(uri);
+               }
+             else
+               {
+                  eina_strbuf_append(strbuf, files->files[i]);
+               }
+             if (i < (files->num_files - 1))
+               eina_strbuf_append(strbuf, "\n");
+          }
+        result = _create_delivery_content(eina_strbuf_length_get(strbuf) + 1, eina_strbuf_string_get(strbuf), mime_type);
+        eina_strbuf_free(strbuf);
+     }
+   else if (eina_str_has_prefix(mime_type,"text"))
+     {
+        Ecore_X_Selection_Data *x11_data = ev->data;
         //ensure that we always have a \0 at the end, there is no assertion that \0 is included here.
         void *null_terminated = eina_memdup(x11_data->data, x11_data->length, EINA_TRUE);
 
-        result = _create_deliveriy_content(x11_data->length + 1, null_terminated, mime_type);
+        result = _create_delivery_content(x11_data->length + 1, null_terminated, mime_type);
         free(null_terminated);
      }
    else if (eina_str_has_prefix(mime_type,"image"))
      {
+        Ecore_X_Selection_Data *x11_data = ev->data;
         Eina_Content *tmp_container = eina_content_new((Eina_Slice){.len = x11_data->length, .mem = x11_data->data}, mime_type);
         const char *file = eina_content_as_file(tmp_container);
 
-        result = _create_deliveriy_content(strlen(file), file, mime_type);
+        result = _create_delivery_content(strlen(file), file, mime_type);
         eina_content_free(tmp_container);
      }
    else
      {
-        result = _create_deliveriy_content(x11_data->length, x11_data->data, mime_type);
+        Ecore_X_Selection_Data *x11_data = ev->data;
+        result = _create_delivery_content(x11_data->length, x11_data->data, mime_type);
      }
-   EINA_SAFETY_ON_NULL_RETURN(result);
+   EINA_SAFETY_ON_NULL_GOTO(result, err);
 
    //ensure that we deliver the correct type, we might have choosen a convertion before
    if (edata->selection_data[selection].later_conversion != mime_type)
@@ -3895,6 +3929,12 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
    eina_promise_resolve(edata->selection_data[selection].delivery, eina_value_content_init(result));
    eina_content_free(result);
    _clear_selection_delivery(ee, selection);
+
+   if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
+     ecore_x_dnd_send_finished();
+   return;
+err:
+   eina_promise_reject(edata->selection_data[selection].delivery, ecore_evas_no_selection);
 
    if (selection == ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER)
      ecore_x_dnd_send_finished();
@@ -4016,6 +4056,11 @@ _eina_content_converter(char *target, void *data, int size EINA_UNUSED, void **d
 {
    Ecore_Evas_X11_Selection_Data *sdata = data;
    Eina_Bool ret = EINA_FALSE;;
+
+   if (size != sizeof(Ecore_Evas_X11_Selection_Data)) return EINA_FALSE;
+
+   if (!EINA_MAGIC_CHECK(sdata, ECORE_EVAS_X11_SELECTION)) return EINA_FALSE;
+
    if (eina_streq(target, "TARGETS") || eina_streq(target, "ATOM"))
      {
         //list all available types that we have currently
@@ -4149,8 +4194,9 @@ _ecore_evas_x_dnd_position(void *udata EINA_UNUSED, int type EINA_UNUSED, void *
    ee = ecore_event_window_match(pos->win);
    EINA_SAFETY_ON_NULL_GOTO(ee, end);
    ecore_evas_geometry_get(ee, &x, &y, &w, &h);
-   ecore_evas_dnd_position_set(ee, 1, EINA_POSITION2D(pos->position.x - x, pos->position.y - y));
-   ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, (Ecore_X_Rectangle){x,y,w,h}, pos->action);
+   Eina_Bool used = ecore_evas_dnd_position_set(ee, 1, EINA_POSITION2D(pos->position.x - x, pos->position.y - y));
+   if (used)
+     ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, (Ecore_X_Rectangle){x,y,w,h}, pos->action);
 end:
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -4289,6 +4335,7 @@ _ecore_evas_x_selection_window_init(Ecore_Evas *ee)
         ecore_x_fixes_window_selection_notification_request(ee->prop.window, ecore_evas_selection_to_atom[i]);
         edata->selection_data[i].ee = ee;
         edata->selection_data[i].buffer = i;
+        EINA_MAGIC_SET(&edata->selection_data[i], ECORE_EVAS_X11_SELECTION);
      }
    ecore_x_dnd_aware_set(ee->prop.window, EINA_TRUE);
    edata->init_job = ecore_job_add(_deliver_selection_changed, ee);

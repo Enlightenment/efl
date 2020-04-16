@@ -137,7 +137,7 @@ typedef unsigned long long Evas_Modifier_Mask;
 
 
 /**
- * @ingroup Evas_Canvas_Events
+ * @addtogroup Evas_Canvas_Events
  *
  * @{
  */
@@ -1168,7 +1168,7 @@ EAPI void evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n, Evas_Coor
  */
 
 /**
- * @ingroup Evas_Font_Group
+ * @addtogroup Evas_Font_Group
  *
  * @{
  */
@@ -1178,14 +1178,10 @@ EAPI void evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n, Evas_Coor
  *
  * @param e The evas instance that returned such list.
  * @param available the list returned by evas_font_dir_available_list().
- *
- * @ingroup Evas_Font_Group
  */
 EAPI void                    evas_font_available_list_free(Evas *e, Eina_List *available) EINA_ARG_NONNULL(1);
 
 /** Flags for Font Hinting
- *
- * @ingroup Evas_Font
  */
 typedef enum
 {
@@ -1201,8 +1197,6 @@ typedef enum
  *
  * @param[in] hinting The used hinting, one of #EVAS_FONT_HINTING_NONE,
  * #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
- *
- * @ingroup Evas_Font_Group
  */
 EAPI void evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting);
 
@@ -1211,8 +1205,6 @@ EAPI void evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting);
  *
  * @return The used hinting, one of #EVAS_FONT_HINTING_NONE,
  * #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
- *
- * @ingroup Evas_Font_Group
  */
 EAPI Evas_Font_Hinting_Flags evas_font_hinting_get(const Evas *e);
 
@@ -4701,7 +4693,7 @@ EAPI void evas_vg_gradient_radial_focal_get(Evas_Vg_Gradient_Radial *obj, double
  */
 
 /**
- * @defgroup Evas_Object_Image
+ * @addtogroup Evas_Object_Image
  *
  * @{
  */
@@ -6315,7 +6307,7 @@ EAPI void evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) E
  */
 
 /**
- * @ingroup Evas_Object_Text
+ * @addtogroup Evas_Object_Text
  *
  * @{
  */
@@ -6589,7 +6581,7 @@ EAPI Evas_Object *evas_object_line_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG
  */
 
 /**
- * @ingroup Evas_Object_Polygon
+ * @addtogroup Evas_Object_Polygon
  *
  * @{
  */
@@ -6603,15 +6595,13 @@ EAPI Evas_Object *evas_object_polygon_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_
 /**
  * @brief Adds the given point to the given evas polygon object.
  *
+ * @param[in] obj The object
  * @param[in] y The Y coordinate of the given point.
- *
- * @ingroup Evas_Polygon
  */
 EAPI void evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
 /** Removes all of the points from the given evas polygon object.
- *
- * @ingroup Evas_Polygon
+ * @param[in] obj The object
  */
 EAPI void evas_object_polygon_points_clear(Evas_Object *obj);
 
@@ -6626,7 +6616,7 @@ EAPI void evas_object_polygon_points_clear(Evas_Object *obj);
 
 
 /**
- * @ingroup Evas_Smart_Object_Group
+ * @addtogroup Evas_Smart_Object_Group
  *
  * @{
  */
@@ -7101,7 +7091,7 @@ EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord 
  */
 
 /**
- * @ingroup Evas_Object_Box
+ * @addtogroup Evas_Object_Box
  *
  * @{
  */
@@ -7237,7 +7227,7 @@ EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *
  */
 
 /**
- * @ingroup Evas_Object_Table
+ * @addtogroup Evas_Object_Table
  *
  * @{
  */
@@ -7284,7 +7274,7 @@ EAPI Eina_Bool evas_object_table_mirrored_get(const Eo *obj);
  */
 
 /**
- * @ingroup Evas_Object_Grid
+ * @addtogroup Evas_Object_Grid
  *
  * @{
  */

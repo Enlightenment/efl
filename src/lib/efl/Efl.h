@@ -213,7 +213,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_format.eo.h"
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
-#include "interfaces/efl_input_text.eo.h"
+#include "interfaces/efl_input_text_entity.eo.h"
 
 /**
  * @brief Get a proxy object referring to a part of an object.

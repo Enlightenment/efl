@@ -270,7 +270,7 @@ EOAPI Elm_Widget_Item *elm_obj_list_selected_item_get(const Eo *obj);
  *
  * @param[in] obj The object.
  *
- * @return A @c list of list items, #Elm.Widget.Item, or @c NULL on failure.
+ * @return A @c list of list items, #Elm_Widget_Item, or @c NULL on failure.
  *
  * @ingroup Elm_List
  */
@@ -297,7 +297,7 @@ EOAPI Elm_Widget_Item *elm_obj_list_first_item_get(const Eo *obj);
  *
  * @param[in] obj The object.
  *
- * @return An @c list of list items, #Elm.Widget.Item, or @c NULL on failure.
+ * @return An @c list of list items, #Elm_Widget_Item, or @c NULL on failure.
  *
  * @ingroup Elm_List
  */
@@ -541,7 +541,7 @@ EOAPI void elm_obj_list_clear(Eo *obj);
  * @param[in] func The function to call when the item is clicked.
  * @param[in] data The data to associate with the item for related callbacks.
  * @param[in] cmp_func The comparing function to be used to sort list items by
- * #Elm.Widget.Item item handles. This function will receive two items and
+ * #Elm_Widget_Item item handles. This function will receive two items and
  * compare them, returning a non-negative integer if the second item should be
  * place after the first, or negative value if should be placed before.
  *

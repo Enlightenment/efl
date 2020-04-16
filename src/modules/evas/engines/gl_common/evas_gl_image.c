@@ -716,7 +716,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      {
         if (!im->cs.no_free) free(im->cs.data);
      }
-   if (im->cached)
+   if (im->cached && im->gc)
      {
         if (_evas_gl_image_cache_add(im)) return;
      }

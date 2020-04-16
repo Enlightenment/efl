@@ -21,7 +21,7 @@ typedef Eo Elm_Toolbar;
  *
  * See also @ref elm_toolbar_shrink_mode_set, @ref elm_toolbar_shrink_mode_get.
  *
- * @ingroup Elm
+ * @ingroup Elm_Toolbar
  */
 typedef enum
 {
@@ -48,7 +48,7 @@ typedef enum
  *
  * @return The selected item or @c null.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_selected_item_get(const Elm_Toolbar *obj);
 
@@ -59,7 +59,7 @@ EAPI Elm_Widget_Item *elm_toolbar_selected_item_get(const Elm_Toolbar *obj);
  *
  * @return The first item or @c null.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_first_item_get(const Elm_Toolbar *obj);
 
@@ -70,7 +70,7 @@ EAPI Elm_Widget_Item *elm_toolbar_first_item_get(const Elm_Toolbar *obj);
  *
  * @return The last item or @c null.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_last_item_get(const Elm_Toolbar *obj);
 
@@ -81,7 +81,7 @@ EAPI Elm_Widget_Item *elm_toolbar_last_item_get(const Elm_Toolbar *obj);
  *
  * @return iterator to widget items
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Eina_Iterator *elm_toolbar_items_get(const Elm_Toolbar *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -94,7 +94,7 @@ EAPI Eina_Iterator *elm_toolbar_items_get(const Elm_Toolbar *obj) EINA_WARN_UNUS
  * @param[in] homogeneous Assume the items within the toolbar are of the same
  * size (true = on, false = off). Default is @c false.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_homogeneous_set(Elm_Toolbar *obj, Eina_Bool homogeneous);
 
@@ -108,7 +108,7 @@ EAPI void elm_toolbar_homogeneous_set(Elm_Toolbar *obj, Eina_Bool homogeneous);
  * @return Assume the items within the toolbar are of the same size (true = on,
  * false = off). Default is @c false.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Eina_Bool elm_toolbar_homogeneous_get(const Elm_Toolbar *obj);
 
@@ -123,7 +123,7 @@ EAPI Eina_Bool elm_toolbar_homogeneous_get(const Elm_Toolbar *obj);
  * @param[in] obj The object.
  * @param[in] align The new alignment, a float between 0.0 and 1.0.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_align_set(Elm_Toolbar *obj, double align);
 
@@ -139,7 +139,7 @@ EAPI void elm_toolbar_align_set(Elm_Toolbar *obj, double align);
  *
  * @return The new alignment, a float between 0.0 and 1.0.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI double elm_toolbar_align_get(const Elm_Toolbar *obj);
 
@@ -160,7 +160,7 @@ EAPI double elm_toolbar_align_get(const Elm_Toolbar *obj);
  * @param[in] mode The select mode If getting mode fails, it returns
  * #ELM_OBJECT_SELECT_MODE_MAX
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_select_mode_set(Elm_Toolbar *obj, Elm_Object_Select_Mode mode);
 
@@ -182,7 +182,7 @@ EAPI void elm_toolbar_select_mode_set(Elm_Toolbar *obj, Elm_Object_Select_Mode m
  * @return The select mode If getting mode fails, it returns
  * #ELM_OBJECT_SELECT_MODE_MAX
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Object_Select_Mode elm_toolbar_select_mode_get(const Elm_Toolbar *obj);
 
@@ -194,7 +194,7 @@ EAPI Elm_Object_Select_Mode elm_toolbar_select_mode_get(const Elm_Toolbar *obj);
  * @param[in] obj The object.
  * @param[in] icon_size The icon size in pixels
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_icon_size_set(Elm_Toolbar *obj, int icon_size);
 
@@ -207,7 +207,7 @@ EAPI void elm_toolbar_icon_size_set(Elm_Toolbar *obj, int icon_size);
  *
  * @return The icon size in pixels
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI int elm_toolbar_icon_size_get(const Elm_Toolbar *obj);
 
@@ -232,7 +232,7 @@ EAPI int elm_toolbar_icon_size_get(const Elm_Toolbar *obj);
  * @param[in] obj The object.
  * @param[in] shrink_mode Toolbar's items display behavior
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_shrink_mode_set(Elm_Toolbar *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
 
@@ -258,7 +258,7 @@ EAPI void elm_toolbar_shrink_mode_set(Elm_Toolbar *obj, Elm_Toolbar_Shrink_Mode 
  *
  * @return Toolbar's items display behavior
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_shrink_mode_get(const Elm_Toolbar *obj);
 
@@ -276,7 +276,7 @@ EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_shrink_mode_get(const Elm_Toolbar *obj)
  * @param[in] obj The object.
  * @param[in] parent The parent of the menu objects.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_menu_parent_set(Elm_Toolbar *obj, Efl_Canvas_Object *parent);
 
@@ -295,7 +295,7 @@ EAPI void elm_toolbar_menu_parent_set(Elm_Toolbar *obj, Efl_Canvas_Object *paren
  *
  * @return The parent of the menu objects.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Efl_Canvas_Object *elm_toolbar_menu_parent_get(const Elm_Toolbar *obj);
 
@@ -311,7 +311,7 @@ EAPI Efl_Canvas_Object *elm_toolbar_menu_parent_get(const Elm_Toolbar *obj);
  *
  * @since 1.7
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI void elm_toolbar_standard_priority_set(Elm_Toolbar *obj, int priority);
 
@@ -328,7 +328,7 @@ EAPI void elm_toolbar_standard_priority_set(Elm_Toolbar *obj, int priority);
  *
  * @since 1.7
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI int elm_toolbar_standard_priority_get(const Elm_Toolbar *obj);
 
@@ -344,7 +344,7 @@ EAPI int elm_toolbar_standard_priority_get(const Elm_Toolbar *obj);
  *
  * @return The toolbar more item.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_more_item_get(const Elm_Toolbar *obj);
 
@@ -382,7 +382,7 @@ EAPI Elm_Widget_Item *elm_toolbar_more_item_get(const Elm_Toolbar *obj);
  *
  * @return The created item or @c NULL upon failure.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_item_insert_before(Elm_Toolbar *obj, Elm_Widget_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
@@ -420,7 +420,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_insert_before(Elm_Toolbar *obj, Elm_Widge
  *
  * @return The created item or @c NULL upon failure.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_item_insert_after(Elm_Toolbar *obj, Elm_Widget_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
@@ -457,7 +457,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_insert_after(Elm_Toolbar *obj, Elm_Widget
  *
  * @return The created item or @c NULL upon failure.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_item_append(Elm_Toolbar *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
@@ -468,7 +468,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_append(Elm_Toolbar *obj, const char *icon
  *
  * @return The number of items in @c obj toolbar
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI unsigned int elm_toolbar_items_count(const Elm_Toolbar *obj);
 
@@ -505,7 +505,7 @@ EAPI unsigned int elm_toolbar_items_count(const Elm_Toolbar *obj);
  *
  * @return The created item or @c NULL upon failure.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_item_prepend(Elm_Toolbar *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
@@ -518,7 +518,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_prepend(Elm_Toolbar *obj, const char *ico
  * @return The pointer to the toolbar item matching @c label or @c NULL on
  * failure.
  *
- * @ingroup Elm_Toolbar_Group
+ * @ingroup Elm_Toolbar
  */
 EAPI Elm_Widget_Item *elm_toolbar_item_find_by_label(const Elm_Toolbar *obj, const char *label);
 

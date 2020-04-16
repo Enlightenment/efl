@@ -290,7 +290,7 @@ _evas_textblock_relayout_if_needed(Evas_Object *o);
  * @param canvas_text_obj  the canvas text object, where cursor methods will take effect.
  * @param text_obj         the text_object that user can get using cursor text_object property.
  */
-EAPI void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_obj);
+EAPI void efl_text_cursor_object_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *text_obj);
 
 
 /**
@@ -298,7 +298,7 @@ EAPI void efl_text_cursor_text_object_set(Eo *cursor, Eo *canvas_text_obj, Eo *t
  *
  * @param parent  the parent of the cursor object.
  */
-EAPI Eo* efl_text_cursor_create(Eo *parent);
+EAPI Eo* efl_text_cursor_object_create(Eo *parent);
 
 
 /**
@@ -307,7 +307,7 @@ EAPI Eo* efl_text_cursor_create(Eo *parent);
  * @param obj     the cursor object.
  * @param handle  the text cursor handle.
  */
-EAPI void efl_text_cursor_handle_set(Eo *obj, Efl_Text_Cursor_Handle *handle);
+EAPI void efl_text_cursor_object_handle_set(Eo *obj, Efl_Text_Cursor_Handle *handle);
 
 /**
  * Internally gets cursor handle(legacy textblock cursor) from cursor object.
@@ -315,7 +315,7 @@ EAPI void efl_text_cursor_handle_set(Eo *obj, Efl_Text_Cursor_Handle *handle);
  * @param obj     the cursor object.
  * @return        the internal text cursor handle.
  */
-EAPI Efl_Text_Cursor_Handle *efl_text_cursor_handle_get(const Eo *obj);
+EAPI Efl_Text_Cursor_Handle *efl_text_cursor_object_handle_get(const Eo *obj);
 
 #undef EAPI
 #define EAPI

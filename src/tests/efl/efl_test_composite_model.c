@@ -43,8 +43,7 @@ _children_slice_get_then(Eo *o EINA_UNUSED,
    Efl_Model *child;
    Eina_Future **all;
 
-   all = calloc(1, sizeof (Eina_Future *) * (eina_value_array_count(&v) + 1));
-   if (!all) return eina_value_error_init(ENOMEM);
+   all = alloca(sizeof (Eina_Future *) * (eina_value_array_count(&v) + 1));
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {

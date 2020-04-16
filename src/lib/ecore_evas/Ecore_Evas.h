@@ -1740,7 +1740,7 @@ EAPI Ecore_Evas     *ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc
  * @return A pointer to the internal pixels array of @p ee
  *
  * Besides returning a pointer to the actual pixel array of the given
- * canvas, this call will force a <b>rendering update on @p ee</b>,
+ * canvas, this call will force a <b>rendering update</b> on @p ee
  * first.
  *
  * A common use case for this call is to create an image object, from

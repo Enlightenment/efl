@@ -1,10 +1,10 @@
 import efl_text_types;
 
-abstract Efl.Text.Formatter extends Efl.Object {
+abstract Efl.Text_Formatter extends Efl.Object {
     [[Text Formatter API to manage text formatting(attributes).
-     Use it to insert and remove style attributes (font, size, color, ...) using @Efl.Text.Cursor on EFL Widgets.
+     Use it to insert and remove style attributes (font, size, color, ...) using @Efl.Text_Cursor.Object on EFL Widgets.
 
-     Attributes can be assigned to character ranges, selected using two @Efl.Text.Cursor instances.
+     Attributes can be assigned to character ranges, selected using two @Efl.Text_Cursor.Object instances.
      Cursor instances are already bound to a text object so there's no need to provide it to this class.
      Style is specified using format strings as described in @Efl.Canvas.Textblock.style_apply.
 
@@ -20,8 +20,8 @@ abstract Efl.Text.Formatter extends Efl.Object {
            The passed cursors must belong to same text object, otherwise insertion will be ignored.
          ]]
          params {
-              start: const(Efl.Text.Cursor); [[Start of range.]]
-              end: const(Efl.Text.Cursor); [[End of range.]]
+              start: const(Efl.Text_Cursor.Object); [[Start of range.]]
+              end: const(Efl.Text_Cursor.Object); [[End of range.]]
               format: string; [[Format string. Uses same format as $style in @Efl.Canvas.Textblock.style_apply.]]
          }
       }
@@ -30,8 +30,8 @@ abstract Efl.Text.Formatter extends Efl.Object {
          [[Clear (remove) attributes in the specified range [$start, $end - 1].
          ]]
          params {
-              start: const(Efl.Text.Cursor); [[Start of range.]]
-              end: const(Efl.Text.Cursor); [[End of range.]]
+              start: const(Efl.Text_Cursor.Object); [[Start of range.]]
+              end: const(Efl.Text_Cursor.Object); [[End of range.]]
          }
          return: uint; [[Number of removed attributes.]]
       }

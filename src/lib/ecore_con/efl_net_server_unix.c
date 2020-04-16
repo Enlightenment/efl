@@ -107,24 +107,23 @@ EOLIAN static void
 _efl_net_server_unix_efl_object_destructor(Eo *o, Efl_Net_Server_Unix_Data *pd EINA_UNUSED)
 {
    SOCKET fd = efl_loop_fd_get(o);
+   const char *address = efl_net_server_address_get(o);
 
    if (fd != INVALID_SOCKET)
      {
-        const char *address = efl_net_server_address_get(o);
-        if ((address) && (strncmp(address, "abstract:", strlen("abstract:")) != 0))
-          {
-             unlink(address);
-#ifdef BIND_HANG_WORKAROUND
-             if ((pd->have_lock_fd) && (pd->lock_fd >= 0))
-               {
-                  _efl_net_server_unix_bind_hang_lock_workaround
-                    (address, EINA_FALSE, pd->lock_fd);
-                  pd->lock_fd = -1;
-                  pd->have_lock_fd = EINA_FALSE;
-               }
-#endif
-          }
+        if ((address) &&
+            (strncmp(address, "abstract:", strlen("abstract:")) != 0))
+          unlink(address);
      }
+#ifdef BIND_HANG_WORKAROUND
+   if ((address) && (pd->have_lock_fd) && (pd->lock_fd >= 0))
+     {
+        _efl_net_server_unix_bind_hang_lock_workaround
+          (address, EINA_FALSE, pd->lock_fd);
+        pd->lock_fd = -1;
+        pd->have_lock_fd = EINA_FALSE;
+     }
+#endif
 
    efl_destructor(efl_super(o, MY_CLASS));
 }
@@ -264,6 +263,14 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
  error:
    if (err)
      {
+#ifdef BIND_HANG_WORKAROUND
+        if ((pd->have_lock_fd) && (pd->lock_fd >= 0))
+          {
+             pd->lock_fd = _efl_net_server_unix_bind_hang_lock_workaround
+               (addr.sun_path, EINA_FALSE, -1);
+             pd->have_lock_fd = EINA_TRUE;
+          }
+#endif
         efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
         if (fd != INVALID_SOCKET) closesocket(fd);
         efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));

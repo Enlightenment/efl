@@ -92,13 +92,13 @@ typedef enum
                      * usually used in the EFL. */
 
 /**
-* Used to indicate the window is a representation of an object being
-* dragged across different windows, or even applications. Typically
-* used with elm_win_override_set().
-*/
+ * Used to indicate the window is a representation of an object being
+ * dragged across different windows, or even applications. Typically
+ * used with elm_win_override_set().
+ */
   ELM_WIN_DND,
-  ELM_WIN_INLINED_IMAGE,
-  ELM_WIN_SOCKET_IMAGE,
+  ELM_WIN_INLINED_IMAGE, /**< The window is an image. */
+  ELM_WIN_SOCKET_IMAGE, /**< The window is an image received through a socket. */
   ELM_WIN_FAKE, /**< See elm_win_fake_add(). @since 1.13 */
 
   ELM_WIN_NAVIFRAME_BASIC, /**< Used for naviframe style replacement with

@@ -464,21 +464,21 @@ EAPI void edje_object_text_change_cb_set(Evas_Object *obj, Edje_Text_Change_Cb f
 
 
 /**
- * @ingroup Edje_Object_Communication_Interface_Message
+ * @addtogroup Edje_Object_Communication_Interface_Message
  *
  * @{
  */
 
-typedef struct _Edje_Message_String           Edje_Message_String;
-typedef struct _Edje_Message_Int              Edje_Message_Int;
-typedef struct _Edje_Message_Float            Edje_Message_Float;
-typedef struct _Edje_Message_String_Set       Edje_Message_String_Set;
-typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set;
-typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set;
-typedef struct _Edje_Message_String_Int       Edje_Message_String_Int;
-typedef struct _Edje_Message_String_Float     Edje_Message_String_Float;
-typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set;
-typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
+typedef struct _Edje_Message_String           Edje_Message_String; /**< Alias for _Edje_Message_String. */
+typedef struct _Edje_Message_Int              Edje_Message_Int; /**< Alias for _Edje_Message_Int */
+typedef struct _Edje_Message_Float            Edje_Message_Float; /**< Alias for _Edje_Message_Float */
+typedef struct _Edje_Message_String_Set       Edje_Message_String_Set; /**< Alias for _Edje_Message_String_Set */
+typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set; /**< Alias for _Edje_Message_Int_Set */
+typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set; /**< Alias for _Edje_Message_Float_Set */
+typedef struct _Edje_Message_String_Int       Edje_Message_String_Int; /**< Alias for _Edje_Message_String_Int */
+typedef struct _Edje_Message_String_Float     Edje_Message_String_Float; /**< Alias for _Edje_Message_String_Float */
+typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set; /**< Alias for _Edje_Message_String_Int_Set */
+typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set; /**< Alias for _Edje_Message_String_Float_Set */
 
 struct _Edje_Message_String
 {
@@ -657,7 +657,7 @@ EAPI void edje_object_message_signal_recursive_process(Evas_Object *obj);
  */
 
 /**
- * @ingroup Edje_Object
+ * @addgroup Edje_Object
  *
  * @{
  */
@@ -1533,12 +1533,13 @@ EAPI double edje_object_base_scale_get(const Evas_Object *obj);
  * @{
  */
 
+/** Directions in which a part can be dragged .*/
 typedef enum _Edje_Drag_Dir
 {
-   EDJE_DRAG_DIR_NONE = 0,
-   EDJE_DRAG_DIR_X = 1,
-   EDJE_DRAG_DIR_Y = 2,
-   EDJE_DRAG_DIR_XY = 3
+   EDJE_DRAG_DIR_NONE = 0, /**< Part cannot be dragged. */
+   EDJE_DRAG_DIR_X = 1, /**< Part can be dragged in the horizontal direction. */
+   EDJE_DRAG_DIR_Y = 2, /**< Part can be dragged in the vertical direction. */
+   EDJE_DRAG_DIR_XY = 3 /**< Part can be dragged in every direction. */
 } Edje_Drag_Dir;
 
 /**
@@ -1628,8 +1629,8 @@ EAPI Eina_Bool edje_object_part_drag_size_get(const Evas_Object *obj, const char
 /**
  * @brief Determines dragable directions.
  *
- * The dragable directions are defined in the EDC file, inside the @ref
- * dragable section, by the attributes @c x and @c y. See the @ref edcref for
+ * The dragable directions are defined in the EDC file, inside the
+ * "dragable" section, by the attributes @c x and @c y. See the @ref edcref for
  * more information.
  *
  * @param[in] part The part name

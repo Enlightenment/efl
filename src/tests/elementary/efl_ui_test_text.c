@@ -31,7 +31,7 @@ EFL_START_TEST(text_cnp)
    efl_text_interactive_all_select(txt);
    efl_ui_textbox_selection_copy(txt);
    efl_text_interactive_all_unselect(txt);
-   efl_text_cursor_text_insert(efl_text_interactive_main_cursor_get(txt), "X");
+   efl_text_cursor_object_text_insert(efl_text_interactive_main_cursor_get(txt), "X");
    efl_ui_textbox_selection_paste(txt);
    ecore_main_loop_iterate();
    ck_assert_int_eq(i_copy, 1);
@@ -78,13 +78,13 @@ EFL_START_TEST(text_all_select_all_unselect)
    efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    efl_text_set(txt, "Hello");
    efl_text_interactive_all_select(txt);
-   Efl_Text_Cursor *c1=NULL, *c2 =NULL;
+   Efl_Text_Cursor_Object *c1=NULL, *c2 =NULL;
    efl_text_interactive_selection_cursors_get(txt, &c1, &c2);
    ck_assert_ptr_ne(c1, NULL);
    ck_assert_ptr_ne(c2, NULL);
    fail_if(!efl_text_interactive_have_selection_get(txt));
-   ck_assert_int_eq(efl_text_cursor_position_get(c1), 0);
-   ck_assert_int_eq(efl_text_cursor_position_get(c2), 5);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(c1), 0);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(c2), 5);
    efl_text_interactive_all_unselect(txt);
    fail_if(efl_text_interactive_have_selection_get(txt));
    ecore_main_loop_iterate();
@@ -95,30 +95,30 @@ EFL_START_TEST(text_all_select_all_unselect)
    Eo *sel1, *sel2;
    i_selection = 0;
    efl_text_interactive_selection_cursors_get(txt, &sel1, &sel2);
-   efl_text_cursor_position_set(sel1, 1);
-   efl_text_cursor_position_set(sel2, 2);
+   efl_text_cursor_object_position_set(sel1, 1);
+   efl_text_cursor_object_position_set(sel2, 2);
    ck_assert_int_eq(i_selection, 2);
    efl_text_interactive_all_select(txt);
    ck_assert_int_eq(i_selection, 3);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel1), 0);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel2), 5);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(sel1), 0);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(sel2), 5);
 
    Eo *cur1 = efl_ui_textbox_cursor_create(txt);
    Eo *cur2 = efl_ui_textbox_cursor_create(txt);
-   efl_text_cursor_position_set(cur1, 1);
-   efl_text_cursor_position_set(cur2, 2);
+   efl_text_cursor_object_position_set(cur1, 1);
+   efl_text_cursor_object_position_set(cur2, 2);
    efl_text_interactive_selection_cursors_set(txt, cur1, cur2);
    ck_assert_int_eq(i_selection, 4);
    efl_text_interactive_selection_cursors_get(txt, &sel1, &sel2);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel1),1);
-   ck_assert_int_eq(efl_text_cursor_position_get(sel2),2);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(sel1),1);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(sel2),2);
 
 
    /*Select part then select all*/
    efl_text_interactive_all_unselect(txt);
    i_have_selection = 0, i_selection = 0;
-   efl_text_cursor_position_set(cur1, 1);
-   efl_text_cursor_position_set(cur2, 2);
+   efl_text_cursor_object_position_set(cur1, 1);
+   efl_text_cursor_object_position_set(cur2, 2);
    efl_text_interactive_selection_cursors_set(txt, cur1, cur2);
    ck_assert_int_eq(i_selection, 1);
    ck_assert_int_eq(i_have_selection, 1);
@@ -150,13 +150,13 @@ EFL_START_TEST(text_selection)
    get_me_to_those_events(txt);
    drag_object(txt, 2, 2, 295, 295, EINA_TRUE);
    ecore_main_loop_iterate();
-   Efl_Text_Cursor *c1=NULL, *c2 =NULL;
+   Efl_Text_Cursor_Object *c1=NULL, *c2 =NULL;
    efl_text_interactive_selection_cursors_get(txt, &c1, &c2);
    ck_assert_ptr_ne(c1, NULL);
    ck_assert_ptr_ne(c2, NULL);
    fail_if(!efl_text_interactive_have_selection_get(txt));
-   ck_assert_int_eq(efl_text_cursor_position_get(c1), 0);
-   ck_assert_int_eq(efl_text_cursor_position_get(c2), 5);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(c1), 0);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(c2), 5);
    efl_text_interactive_all_unselect(txt);
    fail_if(efl_text_interactive_have_selection_get(txt));
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
@@ -206,10 +206,10 @@ EFL_START_TEST(text_scroll_mode)
    /*scroll mode is false by default*/
    fail_if(efl_ui_textbox_scrollable_get(txt));
    efl_ui_textbox_scrollable_set(txt, !efl_ui_textbox_scrollable_get(txt));
-   efl_text_cursor_text_insert(cur, "World");
+   efl_text_cursor_object_text_insert(cur, "World");
    fail_if(!efl_ui_textbox_scrollable_get(txt));
    efl_ui_textbox_scrollable_set(txt, !efl_ui_textbox_scrollable_get(txt));
-   efl_text_cursor_text_insert(cur, "!!!");
+   efl_text_cursor_object_text_insert(cur, "!!!");
 
    ck_assert_str_eq(efl_text_get(txt),"HelloWorld!!!");
    efl_del(txt);
@@ -256,22 +256,22 @@ EFL_START_TEST(text_keys_handler)
    Evas *e = evas_object_evas_get(txt);
    efl_ui_focus_util_focus(txt);
 
-   efl_text_cursor_move(efl_text_interactive_main_cursor_get(txt), EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+   efl_text_cursor_object_move(efl_text_interactive_main_cursor_get(txt), EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
    evas_key_modifier_on(e, "Control");
    evas_event_feed_key_down(e, "BackSpace", "BackSpace", "\b", "\b", time(NULL), NULL);
    ecore_main_loop_iterate();
    ck_assert_str_eq(efl_text_get(txt),"");
-   ck_assert_int_eq(efl_text_cursor_position_get(efl_text_interactive_main_cursor_get(txt)), 0);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(efl_text_interactive_main_cursor_get(txt)), 0);
    evas_event_feed_key_up(e, "BackSpace", "BackSpace", "\b", "\b", time(NULL), NULL);
    ecore_main_loop_iterate();
 
    efl_text_set(txt, "Hello");
-   efl_text_cursor_position_set(efl_text_interactive_main_cursor_get(txt), 0);
+   efl_text_cursor_object_position_set(efl_text_interactive_main_cursor_get(txt), 0);
    evas_key_modifier_on(e, "Control");
    evas_event_feed_key_down(e, "Delete", "Delete", "\177", "\177", time(NULL), NULL);
    ecore_main_loop_iterate();
    ck_assert_str_eq(efl_text_get(txt),"");
-   ck_assert_int_eq(efl_text_cursor_position_get(efl_text_interactive_main_cursor_get(txt)), 0);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(efl_text_interactive_main_cursor_get(txt)), 0);
    evas_event_feed_key_up(e, "Delete", "Delete", "\177", "\177", time(NULL), NULL);
    ecore_main_loop_iterate();
 

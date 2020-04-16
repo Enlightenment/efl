@@ -8,13 +8,13 @@
 static void
 _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {
-   Efl_Text_Cursor *start, *end;
+   Efl_Text_Cursor_Object *start, *end;
 
    start = efl_ui_textbox_cursor_create(obj);
    end = efl_ui_textbox_cursor_create(obj);
 
-   efl_text_cursor_position_set(start, start_pos);
-   efl_text_cursor_position_set(end, end_pos);
+   efl_text_cursor_object_position_set(start, start_pos);
+   efl_text_cursor_object_position_set(end, end_pos);
 
    efl_text_formatter_attribute_insert(start, end, style);
 
@@ -101,15 +101,15 @@ typedef struct
 static void
 _on_bt3_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_Text_Cursor *sel_start, *sel_end;
+   Efl_Text_Cursor_Object *sel_start, *sel_end;
    Eo *en = data;
 
    efl_text_interactive_selection_cursors_get(en, &sel_start, &sel_end);
-   const char *s = efl_text_cursor_range_text_get(sel_start, sel_end);
+   const char *s = efl_text_cursor_object_range_text_get(sel_start, sel_end);
 
    printf("SELECTION REGION: %d - %d\n",
-         efl_text_cursor_position_get( sel_start),
-         efl_text_cursor_position_get(sel_end));
+         efl_text_cursor_object_position_get( sel_start),
+         efl_text_cursor_object_position_get(sel_end));
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
 }

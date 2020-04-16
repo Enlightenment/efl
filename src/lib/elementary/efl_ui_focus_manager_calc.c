@@ -111,11 +111,11 @@ _focus_manager_active_get(Eo *obj)
 {
    Eo *root, *manager, *comp_parent, *redirect;
 
-   if (efl_isa(obj, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE) ||
-       (efl_composite_part_is(obj) && efl_isa(efl_parent_get(obj), EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE)))
+   root = efl_ui_focus_manager_root_get(obj);
+
+   if (efl_isa(root, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE))
      return EINA_TRUE;
 
-   root = efl_ui_focus_manager_root_get(obj);
    manager = efl_ui_focus_object_focus_manager_get(root);
 
    if (!manager) return EINA_FALSE;
@@ -776,10 +776,10 @@ _efl_ui_focus_manager_calc_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Man
 }
 
 static inline Node*
-_request_subchild_except(Node *n, Node *except)
+_request_subchild_except(Node *n, Eo *except)
 {
    n = _request_subchild(n);
-   while (n == except)
+   while (n && n->focusable == except)
      {
         n = _next(n);
      }
@@ -788,7 +788,7 @@ _request_subchild_except(Node *n, Node *except)
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
+_efl_ui_focus_manager_calc_unregister(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
 {
    Node *node;
 
@@ -800,7 +800,7 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
-        if (!efl_invalidated_get(pd->root->focusable))
+        if (!efl_invalidated_get(pd->root->focusable) && _focus_manager_active_get(obj))
           {
              Node *n = NULL;
 
@@ -810,7 +810,7 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
                {
                   n = eina_list_nth(pd->focus_stack, eina_list_count(pd->focus_stack) - 2);
                   if (!n)
-                    n = _request_subchild_except(pd->root, node);
+                    n = _request_subchild_except(pd->root, node->focusable);
 
                   if (n)
                     efl_ui_focus_manager_focus_set(obj, n->focusable);
@@ -869,7 +869,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
                }
              else
                {
-                  n = _request_subchild(pd->root);
+                  n = _request_subchild_except(pd->root, pd->redirect_entry);
                   if (n)
                     efl_ui_focus_manager_focus_set(obj, n->focusable);
                }
@@ -1998,7 +1998,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_U
     }
   else
     {
-       last = _request_subchild_except(pd->root, node_get(obj, pd, last_focusable));
+       last = _request_subchild_except(pd->root, last_focusable);
        if (last)
          efl_ui_focus_manager_focus_set(obj, last->focusable);
     }

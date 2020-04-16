@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implements Efl.Text_Interactive, Efl.Input_Text, Efl.File
+class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implements Efl.Text_Interactive, Efl.Input_Text.Entity, Efl.File
 {
    [[An internal object in charge of the interactive aspect of the text widget.
 
@@ -17,19 +17,19 @@ class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Textblock implem
       Efl.Text_Interactive.have_selection {get; }
       Efl.Text.text { set; }
       Efl.Text_Markup.markup { set; }
-      Efl.Input_Text.input_panel_show_on_demand { get; set; }
-      Efl.Input_Text.input_panel_language { get; set; }
-      Efl.Input_Text.input_panel_layout_variation { get; set; }
-      Efl.Input_Text.autocapitalization { get; set; }
-      Efl.Input_Text.input_panel_return_key_state { get; set; }
-      Efl.Input_Text.predictable { get; set; }
-      Efl.Input_Text.input_content_type { get; set; }
-      Efl.Input_Text.input_panel_layout { get; set; }
-      Efl.Input_Text.input_panel_return_key_type { get; set; }
-      Efl.Input_Text.input_panel_autoshow { get; set; }
-      Efl.Input_Text.input_panel_show;
-      Efl.Input_Text.input_panel_hide;
-      Efl.Input_Text.input_panel_imdata { get; set; }
+      Efl.Input_Text.Entity.input_panel_show_on_demand { get; set; }
+      Efl.Input_Text.Entity.input_panel_language { get; set; }
+      Efl.Input_Text.Entity.input_panel_layout_variation { get; set; }
+      Efl.Input_Text.Entity.autocapitalization { get; set; }
+      Efl.Input_Text.Entity.input_panel_return_key_state { get; set; }
+      Efl.Input_Text.Entity.predictable { get; set; }
+      Efl.Input_Text.Entity.input_content_type { get; set; }
+      Efl.Input_Text.Entity.input_panel_layout { get; set; }
+      Efl.Input_Text.Entity.input_panel_return_key_type { get; set; }
+      Efl.Input_Text.Entity.input_panel_autoshow { get; set; }
+      Efl.Input_Text.Entity.input_panel_show;
+      Efl.Input_Text.Entity.input_panel_hide;
+      Efl.Input_Text.Entity.input_panel_imdata { get; set; }
       //FIXME Efl.File should be implemented later at Efl.Ui.TextBox level
       Efl.File.file { set; }
       Efl.File.load;

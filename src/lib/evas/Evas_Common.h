@@ -3311,7 +3311,7 @@ EAPI void                    evas_language_reinit(void);
  */
 
 /**
- * @ingroup Evas_Font_Group
+ * @addtogroup Evas_Font_Group
  *
  * @{
  */
@@ -3321,13 +3321,12 @@ EAPI void                    evas_language_reinit(void);
  *
  * Functions that edit the paths being used to load fonts.
  *
- * @ingroup Evas_Font_Group
+ * @{
  */
 
 /**
  * Removes all font paths loaded into memory by evas_font_path_app_* APIs
  * for the application.
- * @ingroup Evas_Font_Path_Group
  * @since 1.9
  */
 EAPI void                    evas_font_path_global_clear(void);
@@ -3335,7 +3334,6 @@ EAPI void                    evas_font_path_global_clear(void);
 /**
  * Appends a font path to the list of font paths used by the application.
  * @param   path The new font path.
- * @ingroup Evas_Font_Path_Group
  * @since 1.9
  */
 EAPI void                    evas_font_path_global_append(const char *path) EINA_ARG_NONNULL(1);
@@ -3343,7 +3341,6 @@ EAPI void                    evas_font_path_global_append(const char *path) EINA
 /**
  * Prepends a font path to the list of font paths used by the application.
  * @param   path The new font path.
- * @ingroup Evas_Font_Path_Group
  * @since 1.9
  */
 EAPI void                    evas_font_path_global_prepend(const char *path) EINA_ARG_NONNULL(1);
@@ -3351,19 +3348,25 @@ EAPI void                    evas_font_path_global_prepend(const char *path) EIN
 /**
  * Retrieves the list of font paths used by the application.
  * @return  The list of font paths used.
- * @ingroup Evas_Font_Path_Group
  * @since 1.9
  */
 EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @}
+ */
+
+/**
  * Reinitialize FontConfig. If FontConfig has to be reinitialized
  * according to changes of system environments (e.g. Changing font config files), it will be useful.
  *
- * @ingroup Evas_Font_Path_Group
  * @since 1.14
  */
 EAPI void                    evas_font_reinit(void);
+
+/**
+ * @}
+ */
 
 // The below type are necessary for legacy API and need to be manually kept in sync with .eo file.
 #ifndef _EFL_INPUT_DEVICE_EO_CLASS_TYPE
@@ -3397,7 +3400,3 @@ typedef Eo Efl_Gfx_Entity;
 
 #endif
 #endif
-
-/**
- * @}
- */

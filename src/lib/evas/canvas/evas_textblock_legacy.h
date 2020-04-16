@@ -118,8 +118,7 @@
  * @li password - "on" or "off". This is used to specifically turn replacing chars with the replacement char (i.e password mode) on and off.
  *
  * @warning We don't guarantee any proper results if you create a Textblock
- * object
- * without setting the evas engine.
+ * object without setting the evas engine.
  *
  * @todo put here some usage examples
  *
@@ -657,7 +656,7 @@ EAPI Eina_Bool evas_textblock_cursor_word_end(Evas_Textblock_Cursor *obj);
  */
 
 /**
- * @ingroup Evas_Object_Textblock
+ * @addtogroup Evas_Object_Textblock
  *
  * @{
  */

@@ -43,17 +43,31 @@ _elm_menu_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
      elm_wdg_item_translate(EO_OBJ(it));
 }
 
+static void _item_del(Elm_Object_Item *eo_item);
+
+static void
+_elm_menu_subitems_clear(Elm_Menu_Item_Data *it)
+{
+   Elm_Object_Item *sub_it;
+
+   EINA_LIST_FREE(it->submenu.items, sub_it)
+     {
+        ELM_MENU_ITEM_DATA_GET(sub_it, item);
+
+        if (item)
+          {
+             item->parent = NULL;
+             _item_del(sub_it);
+          }
+     }
+}
+
 static void
 _item_del(Elm_Object_Item *eo_item)
 {
-   Elm_Object_Item *child;
    ELM_MENU_ITEM_DATA_GET(eo_item, item);
 
-   Eina_List *itr, *itr2;
-   EINA_LIST_FOREACH_SAFE(item->submenu.items, itr, itr2, child)
-     _item_del(child);
-   eina_list_free(item->submenu.items);
-
+   _elm_menu_subitems_clear(item);
    efl_del(eo_item);
 }
 
@@ -391,12 +405,10 @@ _parent_del_cb(void *data,
                Evas_Object *obj,
                void *event_info EINA_UNUSED)
 {
-   ELM_MENU_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _parent_resize_cb, data);
-   sd->parent = NULL;
 }
 
 static void
@@ -1013,7 +1025,7 @@ _elm_menu_item_efl_object_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    ELM_MENU_DATA_GET(WIDGET(item), sd);
 
-   elm_menu_item_subitems_clear(eo_item);
+   _elm_menu_subitems_clear(item);
    eina_stringshare_del(item->label);
    eina_stringshare_del(item->icon_str);
    evas_object_del(item->content);
@@ -1147,19 +1159,10 @@ _elm_menu_item_separator_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *eo_p_i
    subitem = efl_data_scope_get(eo_subitem, ELM_MENU_ITEM_CLASS);
 
    subitem->separator = EINA_TRUE;
+   subitem->parent = efl_data_scope_get(eo_p_item, ELM_MENU_ITEM_CLASS);
+
    _item_separator_obj_create(subitem);
-   if (!eo_p_item)
-     {
-        elm_box_pack_end(sd->bx, VIEW(subitem));
-        sd->items = eina_list_append(sd->items, eo_subitem);
-     }
-   else
-     {
-        if (!p_item->submenu.bx) _item_submenu_obj_create(p_item);
-        elm_box_pack_end(p_item->submenu.bx, VIEW(subitem));
-        p_item->submenu.items = eina_list_append
-            (p_item->submenu.items, eo_subitem);
-     }
+   _elm_menu_item_add_helper(obj, subitem->parent, subitem, sd);
 
    _sizing_eval(obj);
 
@@ -1190,12 +1193,7 @@ _elm_menu_item_subitems_get(const Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *i
 EOLIAN static void
 _elm_menu_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *it)
 {
-   Elm_Object_Item *sub_it;
-   Eina_List *l, *l_next;
-
-   EINA_LIST_FOREACH_SAFE(it->submenu.items,
-                          l, l_next, sub_it)
-     efl_del(sub_it);
+   _elm_menu_subitems_clear(it);
 }
 
 EOLIAN static const Eina_List *

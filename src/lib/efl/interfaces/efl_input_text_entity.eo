@@ -95,7 +95,7 @@ enum @beta Efl.Input_Text.Panel_Layout_Normal_Variation_Type
    [[Enumeration for defining the types of @Efl.Input_Text.Panel_Layout_Type for normal variation.]]
    normal          , [[The plain normal layout.]]
    file_name       , [[Filename layout. Symbols such as '/' should be disabled.]]
-   person_name     , [[The name of a person, @Efl.Input_Text.autocapitalization will be set to @Efl.Input_Text.Capitalize_Type.word.]]
+   person_name     , [[The name of a person, @Efl.Input_Text.Entity.autocapitalization will be set to @Efl.Input_Text.Capitalize_Type.word.]]
 }
 
 enum @beta Efl.Input_Text.Panel_Layout_Numberonly_Variation_Type
@@ -116,10 +116,11 @@ enum @beta Efl.Input_Text.Panel_Layout_Password_Variation_Type
 
 
 
-interface Efl.Input_Text {
+interface Efl.Input_Text.Entity {
    [[All the functionality relating to input hints/
      @since 1.24
    ]]
+   c_prefix: efl_input_text;
    methods {
       @property input_panel_show_on_demand {
          [[Set/Get the attribute to show the input panel in case of only a user's explicit Mouse Up event.

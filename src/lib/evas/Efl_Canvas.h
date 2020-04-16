@@ -83,7 +83,7 @@ extern "C" {
 #include <canvas/efl_canvas_scene3d.eo.h>
 */
 #include <canvas/efl_canvas_snapshot.eo.h>
-#include <canvas/efl_text_cursor.eo.h>
+#include <canvas/efl_text_cursor_object.eo.h>
 #include <canvas/efl_text_formatter.eo.h>
 #include <canvas/efl_canvas_textblock.eo.h>
 #include <canvas/efl_canvas_textblock_factory.eo.h>

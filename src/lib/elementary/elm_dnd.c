@@ -103,7 +103,7 @@ _drop_cb(void *data, const Efl_Event *ev)
    Efl_Ui_Drop_Dropped_Event *event = ev->info;
    Elm_Drop_Target *target = data;
    target->action = _string_to_action(event->action);
-   efl_future_then(ev->object, efl_ui_dnd_drop_data_get(ev->object, _default_seat(ev->object), eina_array_iterator_new(target->mime_types)),
+   efl_future_then(ev->object, efl_ui_dnd_drop_data_get(elm_widget_is(ev->object) ? ev->object : efl_ui_win_get(ev->object), _default_seat(ev->object), eina_array_iterator_new(target->mime_types)),
     .success = _deliver_content,
     .data = target
    );
@@ -133,7 +133,11 @@ _format_to_mime_array(Elm_Sel_Format format)
    Eina_Array *ret = eina_array_new(10);
 
    if (format & ELM_SEL_FORMAT_TEXT)
-     eina_array_push(ret, "text/plain;charset=utf-8");
+     {
+        eina_array_push(ret, "text/plain");
+        eina_array_push(ret, "text/plain;charset=utf-8");
+        eina_array_push(ret, "text/uri-list");
+     }
    if (format & ELM_SEL_FORMAT_MARKUP)
      eina_array_push(ret, "application/x-elementary-markup");
    if (format & ELM_SEL_FORMAT_IMAGE)
@@ -178,7 +182,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    target->format = format;
 
    efl_event_callback_array_add(obj, drop_target_cb(), target);
-
+   _drop_event_register(obj); //this is ensuring that we are also supporting none widgets
    if (!target_register)
      target_register = eina_hash_pointer_new(NULL);
    eina_hash_list_append(target_register, &obj, target);
@@ -223,6 +227,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         efl_event_callback_array_del(obj, drop_target_cb(), eina_list_data_get(found));
         eina_hash_list_remove(target_register, &obj, target);
         eina_array_free(target->mime_types);
+        _drop_event_unregister(obj); //this is ensuring that we are also supporting none widgets
         free(target);
      }
 

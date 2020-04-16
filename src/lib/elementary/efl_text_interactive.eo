@@ -13,7 +13,7 @@ interface Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
          [[The cursor used to insert new text, the one that's visible to the user.]]
          get {}
          values {
-            cursor: Efl.Text.Cursor; [[The cursor visible to the user.]]
+            cursor: Efl.Text_Cursor.Object; [[The cursor visible to the user.]]
          }
       }
       @property selection_allowed {
@@ -34,12 +34,12 @@ interface Efl.Text_Interactive extends Efl.Text, Efl.Text_Font_Properties,
          }
          set {
            [[The positions of passed cursors will be used to set selection cursors positions.
-             Further modification for passed @Efl.Text.Cursor objects, will not affect selection.
+             Further modification for passed @Efl.Text_Cursor.Object objects, will not affect selection.
              Setter is recommended to set new range for selection.]]
          }
          values {
-            start: Efl.Text.Cursor; [[The start of the selection.]]
-            end: Efl.Text.Cursor; [[The end of the selection.]]
+            start: Efl.Text_Cursor.Object; [[The start of the selection.]]
+            end: Efl.Text_Cursor.Object; [[The end of the selection.]]
          }
       }
       @property editable {

@@ -1315,30 +1315,30 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
-        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
-        efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, start);
+        Efl_Text_Cursor_Object *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_object_position_set(sel1, start);
+        efl_text_cursor_object_position_set(sel2, start);
 
         switch(gran)
           {
            case EFL_ACCESS_TEXT_GRANULARITY_CHAR:
-             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
+             efl_text_cursor_object_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
              break;
 
            case EFL_ACCESS_TEXT_GRANULARITY_WORD:
-             efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
-             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
+             efl_text_cursor_object_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_START);
+             efl_text_cursor_object_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_WORD_END);
              break;
 
            case EFL_ACCESS_TEXT_GRANULARITY_LINE:
-             efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
-             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
+             efl_text_cursor_object_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
+             efl_text_cursor_object_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
              break;
 
            case EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH:
-             efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_START);
-             efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_END);
+             efl_text_cursor_object_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_START);
+             efl_text_cursor_object_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_END);
              break;
 
            case EFL_ACCESS_TEXT_GRANULARITY_SENTENCE: /* this one is not supported by efl */
@@ -1348,9 +1348,9 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
              return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Granularity not suported.");
           }
 
-        str = efl_text_cursor_range_text_get(sel1, sel2);
-        start = efl_text_cursor_position_get(sel1);
-        end = efl_text_cursor_position_get(sel2);
+        str = efl_text_cursor_object_range_text_get(sel1, sel2);
+        start = efl_text_cursor_object_position_get(sel1);
+        end = efl_text_cursor_object_position_get(sel2);
 
         efl_del(sel1);
         efl_del(sel2);
@@ -1392,11 +1392,11 @@ _text_text_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
-        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
-        efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, end);
-        str = efl_text_cursor_range_text_get(sel1, sel2);
+        Efl_Text_Cursor_Object *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_object_position_set(sel1, start);
+        efl_text_cursor_object_position_set(sel2, end);
+        str = efl_text_cursor_object_range_text_get(sel1, sel2);
         efl_del(sel1);
         efl_del(sel2);
      }
@@ -1438,8 +1438,8 @@ _text_caret_offset_set(const Eldbus_Service_Interface *iface, const Eldbus_Messa
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *cur = efl_text_interactive_main_cursor_get(obj);
-        efl_text_cursor_position_set(cur, offset);
+        Efl_Text_Cursor_Object *cur = efl_text_interactive_main_cursor_get(obj);
+        efl_text_cursor_object_position_set(cur, offset);
         res = EINA_TRUE;
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
@@ -1476,9 +1476,9 @@ _text_character_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbu
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
-        efl_text_cursor_position_set(cur, offset);
-        res = efl_text_cursor_content_get(cur);
+        Efl_Text_Cursor_Object *cur = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_object_position_set(cur, offset);
+        res = efl_text_cursor_object_content_get(cur);
         efl_del(cur);
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
@@ -1537,11 +1537,11 @@ _text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
-        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel2 = efl_ui_textbox_cursor_create(obj);
         end = start+1;
-        efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, end);
+        efl_text_cursor_object_position_set(sel1, start);
+        efl_text_cursor_object_position_set(sel2, end);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         if (annotations)
@@ -1610,12 +1610,12 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
      {
         Eina_Iterator *annotations;
         Efl_Text_Attribute_Handle *an;
-        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
-        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel2 = efl_ui_textbox_cursor_create(obj);
 
         end = start+1;
-        efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, end);
+        efl_text_cursor_object_position_set(sel1, start);
+        efl_text_cursor_object_position_set(sel2, end);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         efl_del(sel1);
@@ -1644,6 +1644,7 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
      }
    else
      {
+        eldbus_message_iter_container_close(iter, iter_array);
         goto fail;
      }
 
@@ -1681,11 +1682,11 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
      {
         Eina_Iterator *annotations;
         Efl_Text_Attribute_Handle *an;
-        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
-        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel2 = efl_ui_textbox_cursor_create(obj);
 
-        efl_text_cursor_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
-        efl_text_cursor_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+        efl_text_cursor_object_move(sel1, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+        efl_text_cursor_object_move(sel2, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
         annotations = efl_text_formatter_range_attributes_get(sel1, sel2);
 
         EINA_ITERATOR_FOREACH(annotations, an)
@@ -1706,6 +1707,7 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
    else
      {
         eldbus_message_unref(ret);
+        eldbus_message_iter_container_close(iter, iter_array);
         return _dbus_invalid_ref_error_new(msg);
      }
 
@@ -1798,9 +1800,9 @@ _text_character_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
-        efl_text_cursor_position_set(cur, offset);
-        rect = efl_text_cursor_geometry_get(cur, EFL_TEXT_CURSOR_TYPE_UNDER);
+        Efl_Text_Cursor_Object *cur = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_object_position_set(cur, offset);
+        rect = efl_text_cursor_object_cursor_geometry_get(cur, EFL_TEXT_CURSOR_TYPE_UNDER);
         efl_del(cur);
         rect = _text_interactive_get_pos(obj, rect, screen_coords);
         res = rect.w != 0 ? EINA_TRUE : EINA_FALSE;
@@ -1858,9 +1860,9 @@ _text_offset_at_point_get(const Eldbus_Service_Interface *iface, const Eldbus_Me
              x -= r_obj.x - r_win.x;
              y -= r_obj.y - r_win.y;
           }
-        Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
-        efl_text_cursor_char_coord_set(cur, EINA_POSITION2D(x,y));
-        offset = efl_text_cursor_position_get(cur);
+        Efl_Text_Cursor_Object *cur = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_object_char_coord_set(cur, EINA_POSITION2D(x,y));
+        offset = efl_text_cursor_object_position_get(cur);
         efl_del(cur);
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
@@ -1918,10 +1920,10 @@ _text_selection_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
      {
         if (sel_num == 0)
           {
-             Efl_Text_Cursor *sel1, *sel2;
+             Efl_Text_Cursor_Object *sel1, *sel2;
              efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
-             start = efl_text_cursor_position_get(sel1);
-             end = efl_text_cursor_position_get(sel2);
+             start = efl_text_cursor_object_position_get(sel1);
+             end = efl_text_cursor_object_position_get(sel2);
           }
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
@@ -1957,10 +1959,10 @@ _text_selection_add(const Eldbus_Service_Interface *iface, const Eldbus_Message 
 
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
-        Efl_Text_Cursor *sel1, *sel2;
+        Efl_Text_Cursor_Object *sel1, *sel2;
         efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
-        efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, end);
+        efl_text_cursor_object_position_set(sel1, start);
+        efl_text_cursor_object_position_set(sel2, end);
         res = EINA_TRUE;
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
@@ -1998,9 +2000,9 @@ _text_selection_remove(const Eldbus_Service_Interface *iface, const Eldbus_Messa
      {
         if (sel_num == 0)
           {
-             Efl_Text_Cursor *sel1, *sel2;
+             Efl_Text_Cursor_Object *sel1, *sel2;
              efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
-             efl_text_cursor_range_delete(sel1, sel2);
+             efl_text_cursor_object_range_delete(sel1, sel2);
              res = EINA_TRUE;
           }
      }
@@ -2039,10 +2041,10 @@ _text_selection_set(const Eldbus_Service_Interface *iface, const Eldbus_Message 
      {
         if (sel_num == 0)
           {
-             Efl_Text_Cursor *sel1, *sel2;
+             Efl_Text_Cursor_Object *sel1, *sel2;
              efl_text_interactive_selection_cursors_get(obj, &sel1, &sel2);
-             efl_text_cursor_position_set(sel1, start);
-             efl_text_cursor_position_set(sel2, end);
+             efl_text_cursor_object_position_set(sel1, start);
+             efl_text_cursor_object_position_set(sel2, end);
              res = EINA_TRUE;
           }
      }
@@ -2084,11 +2086,11 @@ _text_range_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    if (efl_isa(obj, EFL_TEXT_INTERACTIVE_INTERFACE))
      {
         Eina_Rectangle *r;
-        Efl_Text_Cursor *sel1 = efl_ui_textbox_cursor_create(obj);
-        Efl_Text_Cursor *sel2 = efl_ui_textbox_cursor_create(obj);
-        efl_text_cursor_position_set(sel1, start);
-        efl_text_cursor_position_set(sel2, end);
-        Eina_Iterator *range = efl_text_cursor_range_precise_geometry_get(sel1, sel2);
+        Efl_Text_Cursor_Object *sel1 = efl_ui_textbox_cursor_create(obj);
+        Efl_Text_Cursor_Object *sel2 = efl_ui_textbox_cursor_create(obj);
+        efl_text_cursor_object_position_set(sel1, start);
+        efl_text_cursor_object_position_set(sel2, end);
+        Eina_Iterator *range = efl_text_cursor_object_range_precise_geometry_get(sel1, sel2);
 
         /* This rect represent coordinates x1, y1, x2, y2 (not x,y,w,h).
          * In this way we bypass corner cases
@@ -2711,16 +2713,16 @@ _text_properties_get(const Eldbus_Service_Interface *interface, const char *prop
      {
         if (checkCharacterCount)
           {
-             Efl_Text_Cursor *cur = efl_ui_textbox_cursor_create(obj);
-             efl_text_cursor_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
-             result = efl_text_cursor_position_get(cur);
+             Efl_Text_Cursor_Object *cur = efl_ui_textbox_cursor_create(obj);
+             efl_text_cursor_object_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+             result = efl_text_cursor_object_position_get(cur);
              efl_del(cur);
           }
 
         if (checkCarretOffset)
           {
-             Efl_Text_Cursor *main_cur = efl_text_interactive_main_cursor_get(obj);
-             result = efl_text_cursor_position_get(main_cur);
+             Efl_Text_Cursor_Object *main_cur = efl_text_interactive_main_cursor_get(obj);
+             result = efl_text_cursor_object_position_get(main_cur);
           }
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))

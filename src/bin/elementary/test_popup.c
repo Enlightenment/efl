@@ -845,6 +845,80 @@ _popup_scroll_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA
    is_popup_scroll = elm_check_state_get(obj);
 }
 
+static void
+_popup_scrollable_scroller_content_list_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *popup, *box, *btn, *scroller, *table, *list, *ic;
+   Evas_Object *box2, *label;
+   Elm_Object_Item *ex1;
+
+   win = data;
+
+   popup = elm_popup_add(win);
+   elm_popup_scrollable_set(popup, EINA_TRUE);
+   elm_object_part_text_set(popup, "title,text", "Title");
+   elm_popup_orient_set(popup, ELM_POPUP_ORIENT_CENTER);
+   evas_object_show(popup);
+
+   box = elm_box_add(popup);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(box, 200 * elm_config_scale_get(), 200 * elm_config_scale_get());
+   evas_object_show(box);
+
+   scroller = elm_scroller_add(box);
+   evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, scroller);
+   evas_object_show(scroller);
+
+   table = elm_table_add(scroller);
+   elm_table_homogeneous_set(table, EINA_FALSE);
+   evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(table);
+
+   list = elm_list_add(table);
+   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_scroller_content_min_limit(list, 1, 1);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_table_pack(table, list, 0, 0, 1, 1);
+   evas_object_show(list);
+
+   box2 = elm_box_add(table);
+   evas_object_size_hint_weight_set(box2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(table, box2, 1, 0, 2, 1);
+   evas_object_show(box2);
+
+   label = elm_label_add(popup);
+   elm_object_text_set(label, "Wash the soap<br>rub it on your<br>hands.");
+   evas_object_show(label);
+   elm_box_pack_end(box2, label);
+
+   ic = elm_icon_add(list);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   elm_icon_standard_set(ic, "input-keyboard");
+   evas_object_show(ic);
+
+   ex1 = elm_list_item_append(list, "Jambalaya", ic, NULL, NULL, NULL);
+   elm_list_item_append(list, "Mississippi", ic, NULL, NULL, NULL);
+
+   elm_list_go(list);
+   elm_list_item_selected_set(ex1, EINA_TRUE);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Close");
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+   elm_object_part_content_set(popup, "button1", btn);
+
+   elm_object_content_set(scroller, table);
+   elm_object_content_set(popup, box);
+
+   evas_object_show(popup);
+}
+
 void
 test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
@@ -911,6 +985,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         win);
    elm_list_item_append(list, "popup-center-title + text + 1 button + hide effect", NULL,
                         NULL, _popup_center_title_text_1button_hide_effect_cb, win);
+   elm_list_item_append(list, "popup-scrollable-with-scroller-as-content-and-list",
+                        NULL, NULL, _popup_scrollable_scroller_content_list_cb, win);
    elm_list_go(list);
    evas_object_show(list);
 

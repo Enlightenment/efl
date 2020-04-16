@@ -3239,19 +3239,22 @@ _edje_vector_load_lottie(Edje *ed, Edje_Real_Part *ep, const char *key)
    if (ep->typedata.vector->current_id != desc->vg.id)
      {
         lottie_data = (char *)eet_read(ed->file->ef, key, &lottie_data_len);
-        lottie_data[lottie_data_len] = '\0';
-        file = eina_file_virtualize(NULL, lottie_data, lottie_data_len + 1, EINA_FALSE);
-        efl_file_simple_mmap_load(ep->object, file, NULL);
+        if (lottie_data)
+          {
+             lottie_data[lottie_data_len] = '\0';
+             file = eina_file_virtualize(NULL, lottie_data, lottie_data_len + 1, EINA_FALSE);
+             efl_file_simple_mmap_load(ep->object, file, NULL);
 
-        if (ep->typedata.vector->lottie_virtual_file)
-          eina_file_close(ep->typedata.vector->lottie_virtual_file);
-        ep->typedata.vector->lottie_virtual_file = file;
+             if (ep->typedata.vector->lottie_virtual_file)
+               eina_file_close(ep->typedata.vector->lottie_virtual_file);
+             ep->typedata.vector->lottie_virtual_file = file;
 
-        if (ep->typedata.vector->lottie_data)
-          free(ep->typedata.vector->lottie_data);
-        ep->typedata.vector->lottie_data = lottie_data;
+             if (ep->typedata.vector->lottie_data)
+               free(ep->typedata.vector->lottie_data);
+             ep->typedata.vector->lottie_data = lottie_data;
 
-        ep->typedata.vector->current_id = desc->vg.id;
+             ep->typedata.vector->current_id = desc->vg.id;
+          }
      }
 
    frame_duration = efl_gfx_frame_controller_frame_duration_get(ep->object, 0, 0);
