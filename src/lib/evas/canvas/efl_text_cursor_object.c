@@ -75,10 +75,8 @@ EOLIAN static Eina_Rect
 _efl_text_cursor_object_cursor_geometry_get(const Eo *obj EINA_UNUSED, Efl_Text_Cursor_Object_Data *pd, Efl_Text_Cursor_Type ctype)
 {
    Eina_Rect rc = {0};
-   Eina_Bool b_ret;
    Evas_Textblock_Cursor_Type cursor_type = (ctype == EFL_TEXT_CURSOR_TYPE_BEFORE) ? EVAS_TEXTBLOCK_CURSOR_BEFORE : EVAS_TEXTBLOCK_CURSOR_UNDER;
-   b_ret = evas_textblock_cursor_geometry_bidi_get(pd->handle, &rc.x, &rc.y, &rc.w, &rc.h, NULL, NULL, NULL, NULL, cursor_type);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(b_ret, EINA_RECT_EMPTY());
+   evas_textblock_cursor_geometry_bidi_get(pd->handle, &rc.x, &rc.y, &rc.w, &rc.h, NULL, NULL, NULL, NULL, cursor_type);
    return rc;
 }
 
