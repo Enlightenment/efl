@@ -56,22 +56,18 @@ fallback_selection_has_owner(Ecore_Evas *ee EINA_UNUSED, unsigned int seat EINA_
 Eina_Stringshare*
 available_types(Eina_Array *acceptable_types, Eina_Array *available_types)
 {
-   unsigned int found_type_id = INT_MAX;
    Eina_Stringshare *found_type = NULL;
    Eina_Stringshare *type;
 
-   for (unsigned int i = 0; i < eina_array_count_get(acceptable_types); ++i)
+   for (unsigned int i = 0; i < eina_array_count_get(available_types); ++i)
      {
         unsigned int out = -1;
+        type = eina_array_data_get(available_types, i);
 
-        type = eina_array_data_get(acceptable_types, i);
-
-        if (!eina_array_find(available_types, type, &out))
-          continue;
-        if (out >= found_type_id)
-          continue;
-        found_type_id = out;
-        found_type = type;
+        if (!found_type && eina_array_find(acceptable_types, type, &out))
+          {
+             found_type = eina_stringshare_ref(type);
+          }
         eina_stringshare_del(type);
      }
   eina_array_free(acceptable_types);
