@@ -3773,7 +3773,7 @@ EFL_START_TEST(evas_textblock_style)
 EFL_END_TEST
 
 /* Basic test for style user push/peek/pop. */
-START_TEST(evas_textblock_style_user)
+EFL_START_TEST(evas_textblock_style_user)
 {
    Evas_Textblock_Style *user_st;
 
@@ -3794,7 +3794,7 @@ START_TEST(evas_textblock_style_user)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Various setters and getters */
 EFL_START_TEST(evas_textblock_set_get)
