@@ -5528,20 +5528,21 @@ test_genlist_show_item(void *data,
    api->itc1->func.state_get = NULL;
    api->itc1->func.del = NULL;
 
-   g_data->gl = gl;
-   g_data->itc1 = api->itc1;
-
-   max = g_data->max_items;
-   for (i = 0; i <= max; i++)
-       elm_genlist_item_append(gl, api->itc1, (void*)(uintptr_t)i, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-
    if (g_data)
-     gli = elm_genlist_nth_item_get(gl, g_data->show_item);
-   if (!gli) gli = elm_genlist_last_item_get(gl);
-   elm_genlist_item_show(gli, g_data->type);
+     {
+        g_data->gl = gl;
+        g_data->itc1 = api->itc1;
 
-   //prepends item while queue processing is happening
-   ecore_timer_add(0.1, _late_item_prepender, g_data);
+        max = g_data->max_items;
+        for (i = 0; i <= max; i++)
+          elm_genlist_item_append(gl, api->itc1, (void*)(uintptr_t)i, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+        gli = elm_genlist_nth_item_get(gl, g_data->show_item);
+        if (!gli) gli = elm_genlist_last_item_get(gl);
+        elm_genlist_item_show(gli, g_data->type);
+        //prepends item while queue processing is happening
+        ecore_timer_add(0.1, _late_item_prepender, g_data);
+     }
 
    evas_object_resize(win, 480, 400);
    explode_win_enable(win);
