@@ -94,7 +94,7 @@ _monitor(void *_data EINA_UNUSED)
    event.events = EPOLLIN;
    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, event.data.fd, &event);
    if (ret) perror("epoll_ctl/add");
-# ifdef EINA_HAVE_PTHREAD_SETNAME
+# ifdef EINA_HAVE_THREAD_SETNAME
    eina_thread_name_set(eina_thread_self(), "Edbg-tim");
 # endif
 

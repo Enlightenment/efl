@@ -304,7 +304,7 @@ else
 endif
 
 if cc.has_header_symbol(pthread_np_header_file, pthread_setname_np_api, args : pthread_args)
-   eina_config.set('EINA_HAVE_PTHREAD_SETNAME', '1')
+   eina_config.set('EINA_HAVE_THREAD_SETNAME', '1')
 endif
 
 if cc.has_header_symbol(pthread_np_header_file, 'pthread_attr_setaffinity_np', args : pthread_args)

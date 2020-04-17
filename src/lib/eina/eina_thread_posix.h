@@ -34,7 +34,7 @@
 #define EINA_THREAD_CANCEL_ASYNCHRONOUS PTHREAD_CANCEL_ASYNCHRONOUS
 #define EINA_THREAD_CANCELED   PTHREAD_CANCELED
 
-#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
+#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_THREAD_SETNAME)
 # ifndef __linux__
 #  include <pthread_np.h>
 #  define cpu_set_t cpuset_t
