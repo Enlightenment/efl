@@ -114,14 +114,6 @@ public_sub_headers = [
 'eina_abstract_content.h'
 ]
 
-if sys_windows == true
-  public_sub_headers += 'eina_thread_win32.h'  
-  public_sub_headers += 'eina_inline_thread_win32.x'  
-else
-  public_sub_headers += 'eina_thread_posix.h'  
-  public_sub_headers += 'eina_inline_thread_posix.x'
-endif
-
 public_headers = [
   'Eina.h'
 ]
@@ -205,11 +197,15 @@ sources = [
 ]
 
 if sys_windows == true
+  public_sub_headers += 'eina_thread_win32.h'  
+  public_sub_headers += 'eina_inline_thread_win32.x'  
   sources += 'eina_file_win32.c'
   sources += 'eina_sched_win32.c'  
 else
+  public_sub_headers += 'eina_thread_posix.h'  
+  public_sub_headers += 'eina_inline_thread_posix.x'
   sources += 'eina_file.c'
-  sources += 'eina_sched_posix.c'
+  sources += 'eina_sched_posix.c'  
 endif
 
 eina_config = configuration_data()
