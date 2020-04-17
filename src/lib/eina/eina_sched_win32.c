@@ -21,6 +21,7 @@
 # define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 EAPI void eina_sched_prio_drop(void)
 {
@@ -32,33 +33,33 @@ EAPI void eina_sched_prio_drop(void)
    sched_priority = GetThreadPriority((HANDLE)pthread_id);
 
    if (EINA_UNLIKELY(sched_priority == THREAD_PRIORITY_TIME_CRITICAL))
-    {
-      sched_priority -= RTNICENESS;
+     {
+        sched_priority -= RTNICENESS;
 
-      /* We don't change the policy */
-      if (sched_priority < 1)
-       {
-         EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
-         sched_priority = 1;
-       }
-      if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
-       {
-         EINA_LOG_ERR("Unable to query sched parameters");
-       }
-    }
+        /* We don't change the policy */
+        if (sched_priority < 1)
+          {
+             EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
+             sched_priority = 1;
+          }
+        if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
+          {
+             EINA_LOG_ERR("Unable to query sched parameters");
+          }
+     }
    else
-    {
-      sched_priority += NICENESS;
+     {
+        sched_priority += NICENESS;
 
-      /* We don't change the policy */
-      if (sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
-       {
-         EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
-         sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
-       }
-      if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
-       {
-         EINA_LOG_ERR("Unable to query sched parameters");
-       }
-    }
+        /* We don't change the policy */
+        if (sched_priority > THREAD_PRIORITY_TIME_CRITICAL)
+          {
+             EINA_LOG_INFO("Max niceness reached; keeping max (THREAD_PRIORITY_TIME_CRITICAL)");
+             sched_priority = THREAD_PRIORITY_TIME_CRITICAL;
+          }
+        if (!SetThreadPriority((HANDLE)pthread_id, sched_priority))
+          {
+             EINA_LOG_ERR("Unable to query sched parameters");
+          }
+     }
 }
