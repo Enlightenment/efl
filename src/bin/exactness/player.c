@@ -1014,8 +1014,11 @@ _write_unit_file(void)
         Exactness_Unit *tmp = NULL;
 
         EINA_SAFETY_ON_NULL_RETURN(_src_unit);
-        if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
-          _dest_unit->actions = tmp->actions;
+        if (_src_type == FTYPE_EXU)
+          {
+             tmp = exactness_unit_file_read(_src_filename);
+             _dest_unit->actions = tmp->actions;
+          }
         exactness_unit_file_write(_dest_unit, _dest);
      }
 }
