@@ -883,15 +883,15 @@ _setup_dest_type(const char *dest, Eina_Bool external_injection)
         if (!strcmp(_dest + strlen(_dest) - 4,".exu"))
           {
              _dest_type = FTYPE_EXU;
-             /* Cut path at the beginning of the file name */
-             char *file_start = strrchr(dest, '/');
-             *file_start = '\0';
+             char *path = ecore_file_dir_get(dest);
 
-             if (!ecore_file_mkpath(dest))
+             if (!ecore_file_mkpath(path))
                {
-                  fprintf(stderr, "Path for %s cannot be created\n", dest);
+                  fprintf(stderr, "Path for %s cannot be created\n", _dest);
+                  free(path);
                   return EINA_FALSE;
                }
+             free(path);
           }
         else
           {
