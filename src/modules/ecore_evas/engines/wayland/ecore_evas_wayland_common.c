@@ -364,38 +364,16 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         int maxw = 0, maxh = 0;
         int minw = 0, minh = 0;
 
-        if (ECORE_EVAS_PORTRAIT(ee))
-          {
-             if (ee->prop.min.w > 0)
-               minw = (ee->prop.min.w);
-             if (ee->prop.min.h > 0)
-               minh = (ee->prop.min.h);
-             if (ee->prop.max.w > 0)
-               maxw = (ee->prop.max.w);
-             if (ee->prop.max.h > 0)
-               maxh = (ee->prop.max.h);
-          }
-        else
-          {
-             if (ee->prop.min.w > 0)
-               minw = (ee->prop.min.w);
-             if (ee->prop.min.h > 0)
-               minh = (ee->prop.min.h);
-             if (ee->prop.max.w > 0)
-               maxw = (ee->prop.max.w);
-             if (ee->prop.max.h > 0)
-               maxh = (ee->prop.max.h);
-          }
+        if (ee->prop.min.w > 0) minw = (ee->prop.min.w);
+        if (ee->prop.min.h > 0) minh = (ee->prop.min.h);
+        if (ee->prop.max.w > 0) maxw = (ee->prop.max.w);
+        if (ee->prop.max.h > 0) maxh = (ee->prop.max.h);
 
-        if ((maxw > 0) && (w > maxw))
-          w = maxw;
-        else if (w < minw)
-          w = minw;
+        if ((maxw > 0) && (w > maxw)) w = maxw;
+        else if (w < minw) w = minw;
 
-        if ((maxh > 0) && (h > maxh))
-          h = maxh;
-        else if (h < minh)
-          h = minh;
+        if ((maxh > 0) && (h > maxh)) h = maxh;
+        else if (h < minh) h = minh;
 
         if (!ee->prop.maximized)
           {
