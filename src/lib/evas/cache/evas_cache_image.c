@@ -777,7 +777,7 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
    /* generate hkey from file+key+load opts */
    file_length = sizeof (Eina_File*) * 2;
    key_length = key ? strlen(key) : 6;
-   size = file_length + key_length + 132;
+   size = file_length + key_length + 400; // enough padding for loadopts_append
    hkey = alloca(sizeof (char) * size);
    pf = (char*) &f;
    for (size = 0, i = 0; i < sizeof (Eina_File*); i++)
