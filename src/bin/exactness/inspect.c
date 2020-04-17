@@ -878,15 +878,19 @@ _comp_gl_selected_cb(void *data EINA_UNUSED, Evas_Object *gl EINA_UNUSED, void *
    if (vv->p1)
      {
         _Item_Info *ii = eina_hash_find(_item_infos_hash, &(vv->p1));
-        if (!ii || !ii->gl_item) _obj_item_realize(vv->p1);
-        elm_genlist_item_selected_set(ii->gl_item, EINA_TRUE);
+        if (!ii || !ii->gl_item)
+          _obj_item_realize(vv->p1);
+        else
+          elm_genlist_item_selected_set(ii->gl_item, EINA_TRUE);
      }
 
    if (vv->p2)
      {
         _Item_Info *ii = eina_hash_find(_item_infos_hash, &(vv->p2));
-        if (!ii || !ii->gl_item) _obj_item_realize(vv->p2);
-        elm_genlist_item_selected_set(ii->gl_item, EINA_TRUE);
+        if (!ii || !ii->gl_item)
+          _obj_item_realize(vv->p2);
+        else
+          elm_genlist_item_selected_set(ii->gl_item, EINA_TRUE);
      }
 }
 
