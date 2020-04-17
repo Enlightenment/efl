@@ -185,6 +185,7 @@ EFL_START_TEST(eina_test_content_value_set)
 
    ck_assert_str_eq(eina_content_type_get(content), "text/plain");
    eina_content_free(content);
+   eina_content_free(a);
 }
 EFL_END_TEST
 
