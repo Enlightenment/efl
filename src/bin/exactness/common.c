@@ -339,6 +339,9 @@ exactness_unit_file_write(Exactness_Unit *unit, const char *filename)
    Exactness_Image *ex_img;
    Eet_File *file;
    int i = 1;
+   int bytes;
+   Eina_Bool ret = EINA_TRUE;
+
    eet_init();
    file = eet_open(filename, EET_FILE_MODE_WRITE);
    eet_data_write(file, _unit_desc_make(), "cache", unit, EINA_TRUE);
@@ -346,13 +349,17 @@ exactness_unit_file_write(Exactness_Unit *unit, const char *filename)
      {
         char entry[32];
         sprintf(entry, "images/%d", i++);
-        eet_data_image_write(file, entry,
-              ex_img->pixels, ex_img->w, ex_img->h, 0xFF,
-              0, 100, EET_IMAGE_LOSSLESS);
+        bytes = eet_data_image_write(file, entry, ex_img->pixels, ex_img->w, ex_img->h, 0xFF,
+                                     0, 100, EET_IMAGE_LOSSLESS);
+        if (bytes == 0)
+          {
+             ret = EINA_FALSE;
+             break;
+	  }
      }
    eet_close(file);
    eet_shutdown();
-   return EINA_TRUE;
+   return ret;
 }
 
 Eina_Bool
