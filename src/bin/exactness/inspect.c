@@ -1002,9 +1002,9 @@ _gui_unit_display(Exactness_Unit *unit1, Exactness_Unit *unit2)
      }
    _itc_init();
 
-   if (unit1->fonts_path || (unit2 && unit2->fonts_path))
+   if ((unit1->fonts_path) || (unit2 && unit2->fonts_path))
      {
-        if (!_show_only_diffs || !unit1 || !unit2 ||
+        if (!_show_only_diffs || !unit2 ||
               !unit1->fonts_path || !unit2->fonts_path ||
               strcmp(unit1->fonts_path, unit2->fonts_path))
           {
@@ -1013,7 +1013,7 @@ _gui_unit_display(Exactness_Unit *unit1, Exactness_Unit *unit2)
              elm_genlist_item_append(glc, _grp_itc, (void *)EX_FONTS_DIR, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
           }
      }
-   itr1 = unit1 ? unit1->actions : NULL;
+   itr1 = unit1->actions;
    itr2 = unit2 ? unit2->actions : NULL;
 
    if (itr1 || itr2)
@@ -1047,7 +1047,7 @@ _gui_unit_display(Exactness_Unit *unit1, Exactness_Unit *unit2)
         if (itr2) itr2 = eina_list_next(itr2);
      }
 
-   itr1 = unit1 ? unit1->imgs : NULL;
+   itr1 = unit1->imgs;
    itr2 = unit2 ? unit2->imgs : NULL;
 
    if (itr1 || itr2)
@@ -1085,7 +1085,7 @@ _gui_unit_display(Exactness_Unit *unit1, Exactness_Unit *unit2)
         if (itr2) itr2 = eina_list_next(itr2);
      }
 
-   itr1 = unit1 ? unit1->objs : NULL;
+   itr1 = unit1->objs;
    itr2 = unit2 ? unit2->objs : NULL;
 
    if (itr1 || itr2)
