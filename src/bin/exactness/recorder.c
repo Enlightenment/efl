@@ -265,6 +265,7 @@ _setup_fonts_dir(const char *fonts_dir)
         if (_unit->fonts_path)
           {
              int tmp_fd = eina_file_mkstemp("/tmp/fonts_XXXXXX.conf", &fonts_conf_name);
+             if (tmp_fd < 0) return EINA_FALSE;
              FILE *tmp_f = fdopen(tmp_fd, "wb");
              fprintf(tmp_f,
                    "<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n"
