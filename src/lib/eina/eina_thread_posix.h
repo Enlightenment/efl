@@ -45,6 +45,5 @@ typedef uintptr_t Eina_Thread;
  * @typedef Eina_Thread
  * Type for a generic thread.
  */
-EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
 
 #endif

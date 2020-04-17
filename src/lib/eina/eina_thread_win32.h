@@ -44,6 +44,4 @@
  */
 typedef HANDLE Eina_Thread;
 
-EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
-
 #endif 

@@ -351,6 +351,7 @@ struct _Eina_Thread_Call
    int affinity;
 };
 
+EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
 /**
  * @}
  */
