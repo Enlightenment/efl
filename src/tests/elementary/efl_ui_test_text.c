@@ -300,6 +300,166 @@ EFL_START_TEST(text_editable)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_multiline_selection)
+{
+   Eo *txt, *win;
+   Eo *cursor1, *cursor2;
+   Eina_Rect rc1, rc2;
+   win = win_add();
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_text_markup_set(txt, "p1<ps/>p2<ps/>p3");
+   efl_text_multiline_set(txt, EINA_FALSE);
+   ecore_main_loop_iterate();
+   efl_text_interactive_all_select(txt);
+   efl_text_interactive_selection_cursors_get(txt, &cursor1, &cursor2);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor1, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor2, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
+EFL_START_TEST(text_singleline_cursor_movement)
+{
+   Eo *txt, *win;
+   Eo *cursor;
+   Eina_Rect rc1, rc2;
+   win = win_add();
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_text_markup_set(txt, "p1<ps>p<b>2</b>2<ps>p3");
+   efl_text_multiline_set(txt, EINA_FALSE);
+   ecore_main_loop_iterate();
+
+   cursor = efl_text_interactive_main_cursor_get(txt);
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_FIRST);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 0);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_LAST);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 9);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_START);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 0);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_LINE_END);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 9);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_NEXT);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 9); //do not move
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_PREVIOUS);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 9); //do not move
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_START);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 0);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_PARAGRAPH_END);
+   ck_assert_int_eq(efl_text_cursor_object_position_get(cursor), 9);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
+EFL_START_TEST(text_multiline_singleline_cursor_pos)
+{
+   Eo *txt, *win;
+   Eo *cursor, *cursor1, *cursor2;
+   Eina_Rect rc1, rc2;
+   win = win_add();
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_text_markup_set(txt, "p1<ps>p<b>2</b>2<ps>p3<ps>");
+   cursor = efl_text_interactive_main_cursor_get(txt);
+   cursor1 = efl_ui_textbox_cursor_create(txt);
+   efl_text_cursor_object_position_set(cursor1, 4);
+   cursor2 = efl_ui_textbox_cursor_create(txt);
+   efl_text_cursor_object_position_set(cursor2, 8);
+
+   efl_text_multiline_set(txt, EINA_FALSE);
+   ck_assert_uint_eq(efl_text_cursor_object_content_get(cursor1), '2');
+   ck_assert_uint_eq(efl_text_cursor_object_content_get(cursor2), '3');
+
+   efl_text_cursor_object_position_set(cursor, 0);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   efl_text_multiline_set(txt, EINA_TRUE);
+   ck_assert_uint_eq(efl_text_cursor_object_content_get(cursor1), '2');
+   ck_assert_uint_eq(efl_text_cursor_object_content_get(cursor2), '3');
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+
+   efl_text_multiline_set(txt, EINA_FALSE);
+   efl_text_cursor_object_position_set(cursor, 2);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   efl_text_multiline_set(txt, EINA_TRUE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+   efl_text_multiline_set(txt, EINA_FALSE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+
+   efl_text_multiline_set(txt, EINA_FALSE);
+   efl_text_cursor_object_position_set(cursor, 3);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   efl_text_multiline_set(txt, EINA_TRUE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_ne(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+   efl_text_multiline_set(txt, EINA_FALSE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+
+   efl_text_multiline_set(txt, EINA_FALSE);
+   efl_text_cursor_object_position_set(cursor, 4);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   efl_text_multiline_set(txt, EINA_TRUE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_ne(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+   efl_text_multiline_set(txt, EINA_FALSE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+
+   efl_text_multiline_set(txt, EINA_FALSE);
+   efl_text_cursor_object_position_set(cursor, 10);
+   rc1 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   efl_text_multiline_set(txt, EINA_TRUE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_ne(rc1.y, rc2.y);
+   ck_assert_int_ne(rc1.x, rc2.x);
+   efl_text_multiline_set(txt, EINA_FALSE);
+   rc2 = efl_text_cursor_object_cursor_geometry_get(cursor, EFL_TEXT_CURSOR_TYPE_BEFORE);
+   ck_assert_int_eq(rc1.y, rc2.y);
+   ck_assert_int_eq(rc1.x, rc2.x);
+
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
@@ -310,4 +470,7 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_change_event);
    tcase_add_test(tc, text_keys_handler);
    tcase_add_test(tc, text_editable);
+   tcase_add_test(tc, text_multiline_selection);
+   tcase_add_test(tc, text_singleline_cursor_movement);
+   tcase_add_test(tc, text_multiline_singleline_cursor_pos);
 }

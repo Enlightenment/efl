@@ -790,6 +790,8 @@ efreet_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
     }
 #endif
 
+    path = efreet_icon_fallback_lookup_path_path(icon, "/usr/local/share/pixmaps");
+    if (path) return path;
     path = efreet_icon_fallback_lookup_path_path(icon, "/usr/share/pixmaps");
     if (path) return path;
 

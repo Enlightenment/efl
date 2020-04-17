@@ -11101,7 +11101,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl_Canvas_Textblock_Data *o,
              if (_IS_PARAGRAPH_SEPARATOR(o, last_node->format))
                {
                   _evas_textblock_node_format_remove(o, last_node, 0);
-                  return EINA_TRUE;
+                  return o->multiline;//if single nothing to merge
                }
 
           }
@@ -12074,7 +12074,8 @@ _evas_textblock_cursor_format_append(Efl_Text_Cursor_Handle *cur,
         _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
         if (_IS_PARAGRAPH_SEPARATOR(o, format))
           {
-             _evas_textblock_cursor_break_paragraph(cur, n, EINA_TRUE);
+             if (o->multiline)
+                _evas_textblock_cursor_break_paragraph(cur, n, EINA_TRUE);
           }
         else
           {
@@ -17006,12 +17007,206 @@ _efl_canvas_textblock_efl_text_format_wrap_get(const Eo *obj EINA_UNUSED, Efl_Ca
    return _FMT_INFO(wrap);
 }
 
+void
+clean_cursors_at_node(Eina_List **all_cursors,
+                      Evas_Object_Textblock_Node_Text *tn,
+                      Evas_Object_Textblock_Node_Text *main_node,
+                      unsigned int len)
+{
+   Eina_List *l, *ll;
+   Efl_Text_Cursor_Handle *itr_cursor;
+   EINA_LIST_FOREACH_SAFE (*all_cursors, l, ll, itr_cursor)
+     {
+        if (tn == itr_cursor->node)
+          {
+             itr_cursor->pos += len;
+             itr_cursor->node = main_node;
+             itr_cursor->changed = EINA_TRUE;
+             *all_cursors = eina_list_remove(*all_cursors, itr_cursor);
+          }
+     }
+}
+
+/**
+ * @internal
+ * Combine all text nodes in a single node, for convert from multi-line to single-line.
+ * @param obj The evas object, must not be NULL.
+ * @return EINA_TRUE if text nodes merged, else return EINA_FALSE
+ */
+static void
+_merge_to_first_text_nodes(const Evas_Object *eo_obj)
+{
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock_Node_Text *main_node, *tn;
+   Evas_Object_Textblock_Node_Format  *fn;
+   int len, temp_len;
+
+   if (!o->text_nodes || !(EINA_INLIST_GET(o->text_nodes)->next))
+     return;
+
+   main_node = o->text_nodes;
+   main_node->dirty = EINA_TRUE;
+   len = (int) eina_ustrbuf_length_get(main_node->unicode);
+
+   Eina_List *all_cursors;
+   all_cursors = eina_list_clone(o->cursors);
+   all_cursors = eina_list_append(all_cursors, o->cursor);
+
+   while ((tn = _NODE_TEXT(EINA_INLIST_GET(o->text_nodes)->next)))
+     {
+        fn = tn->format_node;
+
+        if (fn && (fn->text_node == tn))
+          {
+             fn->offset++; //add prev ps
+          }
+
+        while (fn && (fn->text_node == tn))
+          {
+             fn->text_node = main_node;
+             fn->format_change = EINA_TRUE;
+
+             fn = _NODE_FORMAT(EINA_INLIST_GET(fn)->next);
+          }
+
+        temp_len = (int) eina_ustrbuf_length_get(tn->unicode);
+        eina_ustrbuf_append_length(main_node->unicode, eina_ustrbuf_string_get(tn->unicode), temp_len);
+
+        clean_cursors_at_node(&all_cursors, tn, main_node, len);
+
+        len += temp_len;
+
+        o->text_nodes = _NODE_TEXT(eina_inlist_remove(
+                 EINA_INLIST_GET(o->text_nodes), EINA_INLIST_GET(tn)));
+        _evas_textblock_node_text_free(tn);
+     }
+
+   eina_list_free(all_cursors);
+}
+
+void
+clean_cursors_in_range(Eina_List **all_cursors, Evas_Object_Textblock_Node_Text *tn, unsigned int start, unsigned int end)
+{
+   Eina_List *l, *ll;
+   Efl_Text_Cursor_Handle *itr_cursor;
+   EINA_LIST_FOREACH_SAFE (*all_cursors, l, ll, itr_cursor)
+     {
+        if (itr_cursor->pos >= start && itr_cursor->pos <= end)
+          {
+              itr_cursor->pos -= start;
+              itr_cursor->node = tn;
+              itr_cursor->changed = EINA_TRUE;
+              *all_cursors = eina_list_remove(*all_cursors, itr_cursor);
+          }
+     }
+}
+
+/**
+ * @internal
+ * split text node into multiple text nodes based on ps, called for convert from singleline to multiline.
+ * @param obj The evas object, must not be NULL.
+ * @return EINA_TRUE if text nodes splitted, else return EINA_FALSE
+ */
+static void
+_split_text_nodes(const Evas_Object *eo_obj)
+{
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock_Node_Text *tn;
+   Evas_Object_Textblock_Node_Format  *fn;
+   Eina_Unicode *all_unicode;
+   Eina_List *all_cursors;
+   unsigned int len = 0, str_start = 0;
+
+   if (!o->text_nodes || !o->format_nodes)
+     return;
+
+   tn = o->text_nodes;
+   fn = tn->format_node;
+
+   while (fn && !_IS_PARAGRAPH_SEPARATOR_SIMPLE(fn->format))
+     {
+        len += fn->offset;
+        fn = _NODE_FORMAT(EINA_INLIST_GET(fn)->next);
+     }
+
+   if(!fn) return;
+
+   tn->dirty = EINA_TRUE;
+   len += fn->offset + 1;
+   all_unicode = eina_ustrbuf_string_steal(tn->unicode);
+
+   eina_ustrbuf_append_n(tn->unicode, all_unicode, len);
+
+   str_start += len;
+
+   tn = _evas_textblock_node_text_new();
+   o->text_nodes = _NODE_TEXT(eina_inlist_append(
+                     EINA_INLIST_GET(o->text_nodes),
+                     EINA_INLIST_GET(tn)));
+
+   fn = _NODE_FORMAT(EINA_INLIST_GET(fn)->next);
+
+   all_cursors = eina_list_clone(o->cursors);
+   all_cursors = eina_list_append(all_cursors, o->cursor);
+
+   while (fn)
+     {
+        len = 0;
+        tn->format_node = fn;
+        tn->format_node->offset--;
+
+        while (fn && !_IS_PARAGRAPH_SEPARATOR_SIMPLE(fn->format))
+          {
+             len += fn->offset;
+             fn->text_node = tn;
+             fn->format_change = EINA_TRUE;
+             fn = _NODE_FORMAT(EINA_INLIST_GET(fn)->next);
+          }
+
+        if (!fn) break;
+
+        fn->text_node = tn;
+        fn->format_change = EINA_TRUE;
+        len += fn->offset + 1;
+        eina_ustrbuf_append_n(tn->unicode, all_unicode + str_start, len);
+
+        clean_cursors_in_range(&all_cursors, tn, str_start, str_start + len);
+
+        str_start += len;
+
+        tn = _evas_textblock_node_text_new();
+        o->text_nodes = _NODE_TEXT(eina_inlist_append(
+                          EINA_INLIST_GET(o->text_nodes),
+                          EINA_INLIST_GET(tn)));
+
+        fn = _NODE_FORMAT(EINA_INLIST_GET(fn)->next);
+     }
+
+   if (!tn->format_node)
+     tn->format_node = _NODE_FORMAT(EINA_INLIST_GET(o->format_nodes)->last);
+
+   len = eina_unicode_strlen(all_unicode + str_start);
+   eina_ustrbuf_append_n(tn->unicode, all_unicode + str_start, len);
+
+   clean_cursors_in_range(&all_cursors, tn, str_start, str_start + len);
+   eina_list_free(all_cursors);
+
+   free(all_unicode);
+}
+
 static void
 _efl_canvas_textblock_efl_text_format_multiline_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, Eina_Bool enabled EINA_UNUSED)
 {
    ASYNC_BLOCK;
+
    if (o->multiline == enabled) return;
    o->multiline = enabled;
+
+   if (!o->multiline)
+     _merge_to_first_text_nodes(obj);
+   else
+     _split_text_nodes(obj);
+
    _canvas_text_format_changed(obj, o);
 }
 

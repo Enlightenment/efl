@@ -478,7 +478,7 @@ _activate(Evas_Object *obj)
 
    sd->expanded = EINA_TRUE;
 
-   sd->hover = elm_hover_add(sd->hover_parent);
+   efl_wref_add(elm_hover_add(sd->hover_parent), &sd->hover);
    efl_event_callback_add(sd->hover, EFL_EVENT_KEY_DOWN, _hover_key_down, obj);
 
    elm_widget_sub_object_add(obj, sd->hover);
@@ -523,6 +523,8 @@ _activate(Evas_Object *obj)
    if (_elm_config->access_mode) _access_widget_item_register(sd);
 
    efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
+   efl_canvas_group_calculate(sd->hover);
+   _sizing_eval(obj);
    evas_object_show(sd->hover);
 }
 
@@ -667,7 +669,6 @@ _elm_hoversel_efl_canvas_group_group_del(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *eo_item;
 
-   evas_object_event_callback_del(sd->hover, EVAS_CALLBACK_DEL, _auto_update);
    EINA_LIST_FREE(sd->items, eo_item)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
@@ -820,7 +821,6 @@ _elm_hoversel_clear(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *it;
 
-   evas_object_event_callback_del(sd->hover, EVAS_CALLBACK_DEL, _auto_update);
    EINA_LIST_FREE(sd->items, it)
      {
         efl_del(it);

@@ -9,6 +9,7 @@
    Ecore_Timer  *_timer;
    NSDate       *_expiration;
    Ecore_Cocoa_Terminate_Cb _terminate_cb;
+   BOOL          _is_running;
 }
 
 - (NSDate *)eventExpirationDate;
