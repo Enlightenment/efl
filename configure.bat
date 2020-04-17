@@ -25,26 +25,14 @@ exit /B %errorlevel%
 
     set all_set=1
     if not defined OPENSSL_DIR set all_set=0
-    if not defined REGEX_INCLUDE_DIR set all_set=0
-    if not defined REGEX_DIR set all_set=0
-    if not defined ZLIB_DIR set all_set=0
 
     if %all_set%==1 (
         @echo - Using OpenSSL: %OPENSSL_DIR%
-        @echo - Using Regex Include Directory: %REGEX_INCLUDE_DIR%
-        @echo - Using Regex Lib Directory: %REGEX_DIR%
-        @echo - Using zlib: %ZLIB_DIR%
     ) else (
         @echo At least one of the following variables were not set:
         @echo     - OPENSSL_DIR: %OPENSSL_DIR%
-        @echo     - REGEX_INCLUDE_DIR: %REGEX_INCLUDE_DIR%
-        @echo     - REGEX_DIR: %REGEX_DIR%
-        @echo     - ZLIB_DIR: %ZLIB_DIR%
         @echo Please define them using by creating a "env.bat" file containing:
         @echo     @set OPENSSL_DIR=^<your OpenSSL directory^>
-        @echo     @set REGEX_INCLUDE_DIR=^<your pcre/include directory^>
-        @echo     @set REGEX_DIR=^<your pcre/lib directory^>
-        @echo     @set ZLIB_DIR=^<your zlib directory^>
         exit /B 1
     )
     set all_set=
@@ -81,9 +69,6 @@ exit /B 0
     :: ------------------------------------------------------
     set MESONFLAGS=^
             -Dopenssl_dir="%OPENSSL_DIR:"=%"^
-            -Dregex_include_dir="%REGEX_INCLUDE_DIR:"=%"^
-            -Dregex_dir="%REGEX_DIR:"=%"^
-            -Dzlib_dir="%ZLIB_DIR:"=%"^
             -Dcrypto=openssl^
             -Dnls=false^
             -Dsystemd=false^

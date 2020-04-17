@@ -98,3 +98,8 @@ efl_libs.csv
 
 #native windows files
 env.bat
+
+# Subprojects
+subprojects/pcre-*
+subprojects/zlib-*
+subprojects/packagecache

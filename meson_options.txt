@@ -118,24 +118,6 @@ option('openssl_dir',
   description : 'Which directory is SSL library installed. Used only if crypto is set to openssl'
 )
 
-option('regex_include_dir',
-  type : 'string',
-  value : '',
-  description : 'Which directory contains the regex.h file for PCRE'
-)
-
-option('regex_dir',
-  type : 'string',
-  value : '',
-  description : 'Which is the /lib directory for PCRE'
-)
-
-option('zlib_dir',
-  type : 'string',
-  value : '',
-  description : 'Which directory is zlib installed'
-)
-
 option('glib',
   type : 'boolean',
   value : false,

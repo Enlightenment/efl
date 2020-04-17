@@ -212,41 +212,28 @@ if sys_linux and config_h.has('HAVE_LISTXATTR') and config_h.has('HAVE_SETXATTR'
   config_h.set10('HAVE_XATTR', true)
 endif
 
-regexp = []
-zlib = []
 if sys_windows == true
-  # PCRE
-  inc_arg = '-I' + get_option('regex_include_dir')
-  if cc.has_header('regex.h', args: inc_arg) == false
-    error('regex.h cannot be found')
-  endif
-  regexp = cc.find_library('pcre',
-                           dirs : [get_option('regex_dir')],
-                           required: true)
-  if regexp.found() == false
-    error('regex library cannot be found')
-  endif
+  # pcre
+  pcre_project = subproject('pcre')
+
+  pcre = pcre_project.get_variable('pcre8')
+  pcre_dep = pcre_project.get_variable('pcre_dep')
 
   # zlib
-  zlib_dir = get_option('zlib_dir')
-  zlib_include_dir = zlib_dir + '/include'
-  if cc.has_header('zlib.h', args: '-I' + zlib_include_dir) == false
-    error('zlib.h cannot be found (tried "' + zlib_include_dir + '")')
-  endif
-  zlib = cc.find_library('zlib',
-                         dirs: [zlib_dir + '/lib'],
-                         required: true)
-  if not zlib.found()
-    error('zlib library can not be found')
-  endif
+  zlib_project = subproject('zlib')
+
+  zlib = zlib_project.get_variable('zlib')
+  zlib_dep = zlib_project.get_variable('zlib_dep')
+  zlib_include_dir = zlib_project.get_variable('incdir')
 else
   zlib = dependency('zlib')
-  if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
-    error('fnmatch can not be found')
-  endif
   if cc.has_header_symbol('regex.h', 'regcomp') == false
     error('regcomp can not be found')
   endif
+endif
+
+if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
+  error('fnmatch can not be found')
 endif
 
 config_h.set('VMAJ', version_major)

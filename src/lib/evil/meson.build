@@ -27,7 +27,7 @@ if target_machine.system() == 'windows'
   uuid = cc.find_library('uuid')
 
   evil_lib = library('evil', evil_src,
-    dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
+    dependencies : [psapi, ole32, ws2_32, secur32, uuid, pcre_dep],
     include_directories : [config_dir],
     install: true,
     version: meson.project_version(),
@@ -35,7 +35,7 @@ if target_machine.system() == 'windows'
 
   evil = declare_dependency(
     include_directories: [include_directories('.')],
-    dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
+    dependencies : [psapi, ole32, ws2_32, secur32, uuid, pcre_dep],
     link_with: evil_lib,
   )
 else
