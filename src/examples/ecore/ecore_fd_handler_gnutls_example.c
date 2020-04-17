@@ -18,6 +18,7 @@
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
+#include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
 #include <gnutls/gnutls.h>
@@ -100,16 +101,17 @@ tcp_connect(void)
 
    /* sets some fd options such as nonblock */
    sd = socket(AF_INET, SOCK_STREAM, 0);
-   fcntl(sd, F_SETFL, O_NONBLOCK);
+   if (sd < 0) abort();
+   if (fcntl(sd, F_SETFL, O_NONBLOCK) < 0) perror("fcntl");
    eina_file_close_on_exec(sd, EINA_TRUE);
-   setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate));
+   if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate)) < 0) perror("setsockopt");
 
-   setsockopt(sd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+   if (setsockopt(sd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0) perror("setsockopt");
 
    memset(&sa, '\0', sizeof (sa));
    sa.sin_family = AF_INET;
    sa.sin_port = eina_htons(atoi(PORT));
-   inet_pton(AF_INET, SERVER, &sa.sin_addr);
+   if (inet_pton(AF_INET, SERVER, &sa.sin_addr)) perror("inet_pton");
 
    /* connects to server
     */
