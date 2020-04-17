@@ -78,7 +78,7 @@ end:
    if (!t2) _timers = eina_list_append(_timers, t);
    else _timers = eina_list_prepend_relative(_timers, t, t2);
    if (write(pipeToThread[1], &c, 1) != 1)
-      e_debug("EINA DEBUG ERROR: Can't wake up thread for debug timer");
+     e_debug("EINA DEBUG ERROR: Can't wake up thread for debug timer");
 }
 
 static void *
@@ -159,35 +159,34 @@ eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data
    eina_spinlock_take(&_lock);
    _timer_append(t);
    if (!_thread_runs)
-   {
-#ifndef _WIN32
-      sigset_t oldset, newset;
-
-      sigemptyset(&newset);
-      sigaddset(&newset, SIGPIPE);
-      sigaddset(&newset, SIGALRM);
-      sigaddset(&newset, SIGCHLD);
-      sigaddset(&newset, SIGUSR1);
-      sigaddset(&newset, SIGUSR2);
-      sigaddset(&newset, SIGHUP);
-      sigaddset(&newset, SIGQUIT);
-      sigaddset(&newset, SIGINT);
-      sigaddset(&newset, SIGTERM);
-# ifdef SIGPWR
-      sigaddset(&newset, SIGPWR);
-# endif
-      pthread_sigmask(SIG_BLOCK, &newset, &oldset);
-#endif
-      int err = pthread_create(&_thread, NULL, _monitor, NULL);
-#ifndef _WIN32
-      pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-#endif
-      if (err != 0)
-      {
-         e_debug("EINA DEBUG ERROR: Can't create debug timer thread!");
-         abort();
-      }
-      _thread_runs = EINA_TRUE;
+     {
+   #ifndef _WIN32
+        sigset_t oldset, newset;
+        sigemptyset(&newset);
+        sigaddset(&newset, SIGPIPE);
+        sigaddset(&newset, SIGALRM);
+        sigaddset(&newset, SIGCHLD);
+        sigaddset(&newset, SIGUSR1);
+        sigaddset(&newset, SIGUSR2);
+        sigaddset(&newset, SIGHUP);
+        sigaddset(&newset, SIGQUIT);
+        sigaddset(&newset, SIGINT);
+        sigaddset(&newset, SIGTERM);
+   # ifdef SIGPWR
+        sigaddset(&newset, SIGPWR);
+   # endif
+        pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+   #endif
+        int err = eina_thread_create(&_thread, NULL, _monitor, NULL);
+   #ifndef _WIN32
+        pthread_sigmask(SIG_SETMASK, &oldset, NULL);
+   #endif
+        if (!err)
+          {
+             e_debug("EINA DEBUG ERROR: Can't create debug timer thread!");
+             abort();
+          }
+        _thread_runs = EINA_TRUE;
    }
    eina_spinlock_release(&_lock);
    return t;
@@ -199,10 +198,10 @@ eina_debug_timer_del(Eina_Debug_Timer *t)
    eina_spinlock_take(&_lock);
    Eina_List *itr = eina_list_data_find_list(_timers, t);
    if (itr)
-   {
-      _timers = eina_list_remove_list(_timers, itr);
-      free(t);
-   }
+     {
+        _timers = eina_list_remove_list(_timers, itr);
+        free(t);
+     }
    eina_spinlock_release(&_lock);
 }
 
@@ -211,8 +210,7 @@ _eina_debug_timer_init(void)
 {
    eina_spinlock_new(&_lock);
 #ifndef _WIN32
-   if (pipe(pipeToThread) == -1)
-      return  EINA_FALSE;
+   if (pipe(pipeToThread) == -1) return EINA_FALSE;
 #endif
    return EINA_TRUE;
 }
@@ -227,8 +225,7 @@ _eina_debug_timer_shutdown(void)
    free(t);
    close(pipeToThread[0]);
    close(pipeToThread[1]);
-   if (_thread_runs) 
-      eina_thread_cancel(_thread);
+   if (_thread_runs) eina_thread_cancel(_thread);
    _thread_runs = 0;
    eina_spinlock_release(&_lock);
    eina_spinlock_free(&_lock);
