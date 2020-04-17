@@ -55,17 +55,7 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
              if (evas_common_language_char_script_get(*itr) == EVAS_SCRIPT_INHERITED)
                 continue;
 
-             if (!variation_sequence)
-               {
-                  variation_sequence =  VAR_SEQ_SAFE(itr+1);
-               }
-             else
-               {
-                  /* Variation sequence treated as single run, if we found one, we keep looking adding to same
-                   * run, but if it is not, then we need to start a new one */
-                  if (variation_sequence != VAR_SEQ_SAFE(itr+1))
-                    break;
-               }
+             variation_sequence =  VAR_SEQ_SAFE(itr+1);
 
              /* Break if either it's not in the font, or if it is in the
               * script's font. */
