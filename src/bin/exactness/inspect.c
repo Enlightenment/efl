@@ -326,13 +326,8 @@ _grp_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
                    Eo *gl2 = eina_list_nth(_gls, 1);
                    Exactness_Unit *unit1 = efl_key_data_get(gl1, "unit");
                    Exactness_Unit *unit2 = efl_key_data_get(gl2, "unit");
-                   if (!!unit1->fonts_path || !!unit2->fonts_path)
-                      sprintf(buf2, "Fonts directory comparison: XXXXX");
-                   else if (!strcmp(unit1->fonts_path, unit2->fonts_path))
-                      sprintf(buf2, "Fonts directory comparison: %s", unit1->fonts_path);
-                   else
                       sprintf(buf2, "Fonts directory comparison: "LDIFF(%s)"/"RDIFF(%s),
-                            unit1->fonts_path, unit2->fonts_path);
+                            unit1 ? unit1->fonts_path : "(NULL)", unit2 ? unit2->fonts_path : "(NULL)");
                 }
               return strdup(buf2);
            }
