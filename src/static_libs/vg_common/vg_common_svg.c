@@ -540,7 +540,9 @@ vg_common_svg_node_free(Svg_Node *node)
         default:
            break;
      }
-  free(node);
+   if (node->node.command.commands_count > 0) free(node->node.command.commands);
+   if (node->node.command.points_count > 0) free(node->node.command.points);
+   free(node);
 }
 
 static Efl_VG *
