@@ -28,7 +28,8 @@ _eina_thread_join(Eina_Thread t)
    return NULL;
 }
 
-static inline Eina_Bool _eina_thread_name_set(Eina_Thread thread, char *buf)
+static inline Eina_Bool 
+_eina_thread_name_set(Eina_Thread thread, char *buf)
 {
 #ifndef __linux__
    pthread_set_name_np((pthread_t)t, buf);
@@ -48,15 +49,14 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    pthread_attr_init(&attr);
    if (affinity >= 0)
-   {
-#ifdef EINA_HAVE_PTHREAD_AFFINITY
-      cpu_set_t cpu;
-
-      CPU_ZERO(&cpu);
-      CPU_SET(affinity, &cpu);
-      pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-#endif
-   }
+     {
+   #ifdef EINA_HAVE_PTHREAD_AFFINITY
+        cpu_set_t cpu;
+        CPU_ZERO(&cpu);
+        CPU_SET(affinity, &cpu);
+        pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+   #endif
+     }
 
    /* setup initial locks */
 
@@ -92,7 +92,8 @@ _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
    return !!pthread_equal((pthread_t)t1, (pthread_t)t2);
 }
 
-static inline Eina_Bool _eina_thread_cancel(Eina_Thread thread)
+static inline Eina_Bool
+_eina_thread_cancel(Eina_Thread thread)
 {
    return pthread_cancel((pthread_t)thread);
 }
@@ -103,14 +104,18 @@ _eina_thread_self(void)
    return (Eina_Thread)pthread_self();
 }
 
-static inline void _eina_thread_setcanceltype(int type, int *oldtype)
+static inline void
+_eina_thread_setcanceltype(int type, int *oldtype)
 {
    pthread_setcanceltype(EINA_THREAD_CANCEL_DEFERRED, &oldtype);
 }
-static inline int _eina_thread_setcancelstate(int type, int *oldtype)
+
+static inline int
+_eina_thread_setcancelstate(int type, int *oldtype)
 {
    return pthread_setcancelstate(type, &oldtype);
 }
+
 static inline Eina_Bool
 _eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
 {
@@ -124,9 +129,10 @@ _eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
 
    r = _eina_thread_setcancelstate(state, &old);
    if (was_cancellable && r == 0)
-      *was_cancellable = (old == EINA_THREAD_CANCEL_ENABLE);
+     *was_cancellable = (old == EINA_THREAD_CANCEL_ENABLE);
    return r == 0;
 }
+
 static inline void _eina_thread_cancel_checkpoint(){
    pthread_testcancel();
 }
