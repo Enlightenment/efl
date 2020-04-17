@@ -587,6 +587,12 @@ _objs_text_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char 
    return strdup("Shot");
 }
 
+#define SAFE_PRINT(field, format, fallback) \
+   eina_strbuf_append_printf(buf, LDIFF(format)"/"RDIFF(format), \
+                 e_obj1 ? e_obj1->field : fallback, \
+                 e_obj2 ? e_obj2->field : fallback); \
+
+
 static char *
 _obj_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
 {
@@ -598,44 +604,21 @@ _obj_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
         _Compare_Item_Data *vv = data;
         Exactness_Object *e_obj1 = vv->p1;
         Exactness_Object *e_obj2 = vv->p2;
-        if ((!e_obj1 ^ !e_obj2) || strcmp(e_obj1->kl_name, e_obj2->kl_name))
-           eina_strbuf_append_printf(buf, "("LDIFF(%s)"/"RDIFF(%s)")",
-                 e_obj1 ? e_obj1->kl_name : "XXXXX",
-                 e_obj2 ? e_obj2->kl_name : "XXXXX");
-        else
-           eina_strbuf_append_printf(buf, "%s", e_obj1->kl_name);
+        eina_strbuf_append(buf, "(");
+        SAFE_PRINT(kl_name, %s, "(NULL)")
+        eina_strbuf_append(buf, ")");
 
         eina_strbuf_append(buf, " x = ");
-        if ((!e_obj1 ^ !e_obj2) || e_obj1->x != e_obj2->x)
-           eina_strbuf_append_printf(buf, LDIFF(%d)"/"RDIFF(%d),
-                 e_obj1 ? e_obj1->x : -1,
-                 e_obj2 ? e_obj2->x : -1);
-        else
-           eina_strbuf_append_printf(buf, "%d", e_obj1->x);
+        SAFE_PRINT(x, %d, -1)
 
         eina_strbuf_append(buf, " y = ");
-        if ((!e_obj1 ^ !e_obj2) || e_obj1->y != e_obj2->y)
-           eina_strbuf_append_printf(buf, LDIFF(%d)"/"RDIFF(%d),
-                 e_obj1 ? e_obj1->y : -1,
-                 e_obj2 ? e_obj2->y : -1);
-        else
-           eina_strbuf_append_printf(buf, "%d", e_obj1->y);
+        SAFE_PRINT(y, %d, -1)
 
         eina_strbuf_append(buf, " w = ");
-        if ((!e_obj1 ^ !e_obj2) || e_obj1->w != e_obj2->w)
-           eina_strbuf_append_printf(buf, LDIFF(%d)"/"RDIFF(%d),
-                 e_obj1 ? e_obj1->w : -1,
-                 e_obj2 ? e_obj2->w : -1);
-        else
-           eina_strbuf_append_printf(buf, "%d", e_obj1->w);
+        SAFE_PRINT(w, %d, -1)
 
         eina_strbuf_append(buf, " h = ");
-        if ((!e_obj1 ^ !e_obj2) || e_obj1->h != e_obj2->h)
-           eina_strbuf_append_printf(buf, LDIFF(%d)"/"RDIFF(%d),
-                 e_obj1 ? e_obj1->h : -1,
-                 e_obj2 ? e_obj2->h : -1);
-        else
-           eina_strbuf_append_printf(buf, "%d", e_obj1->h);
+        SAFE_PRINT(h, %d, -1)
 
         if (e_obj1 && e_obj2 && _are_objs_different(e_obj1, e_obj2, EINA_FALSE))
            eina_strbuf_append(buf, " - DIFF INSIDE");
