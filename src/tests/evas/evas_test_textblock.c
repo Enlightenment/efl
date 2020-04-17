@@ -4184,27 +4184,6 @@ EFL_START_TEST(evas_textblock_fit)
 }
 EFL_END_TEST;
 
-EFL_START_TEST(evas_textblock_textrun_font)
-{
-   START_TB_TEST();
-   int w1, h1, w2, h2;
-
-   evas_object_resize(tb, 300, 300);
-   evas_object_textblock_text_markup_set(tb, "가123A321");
-   evas_object_textblock_size_native_get(tb, &w1, &h1);
-   evas_object_textblock_text_markup_set(tb, "A321가123");
-   evas_object_textblock_size_native_get(tb, &w2, &h2);
-   ck_assert(w1==w2 && h1==h2);
-   evas_object_textblock_text_markup_set(tb, "123가A321");
-   evas_object_textblock_size_native_get(tb, &w2, &h2);
-   ck_assert(w1==w2 && h1==h2);
-   evas_object_textblock_text_markup_set(tb, "A가123321");
-   evas_object_textblock_size_native_get(tb, &w2, &h2);
-   ck_assert(w1==w2 && h1==h2);
-   END_TB_TEST();
-}
-EFL_END_TEST;
-
 #ifdef HAVE_HYPHEN
 static void
 _hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
@@ -5076,7 +5055,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_delete);
    tcase_add_test(tc, evas_textblock_obstacle);
    tcase_add_test(tc, evas_textblock_fit);
-   tcase_add_test(tc, evas_textblock_textrun_font);
 #ifdef HAVE_HYPHEN
    tcase_add_test(tc, evas_textblock_hyphenation);
 #endif
