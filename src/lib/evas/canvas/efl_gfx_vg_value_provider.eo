@@ -1,3 +1,5 @@
+import eina_types;
+
 class @beta Efl.Gfx.Vg.Value_Provider extends Efl.Object
 {
    [[Efl Vector Value Provider class.

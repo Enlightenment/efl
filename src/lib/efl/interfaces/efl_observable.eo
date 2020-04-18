@@ -1,5 +1,3 @@
-import efl_types;
-
 struct @beta @free(efl_observable_tuple_free) Efl.Observable_Tuple
 {
    [[This type describes an observable touple]]

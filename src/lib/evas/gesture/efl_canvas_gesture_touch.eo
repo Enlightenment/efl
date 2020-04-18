@@ -1,5 +1,4 @@
 import efl_canvas_gesture_types;
-import efl_input_types;
 
 /* FIXME: This class lacks a lot of useful helpers. */
 

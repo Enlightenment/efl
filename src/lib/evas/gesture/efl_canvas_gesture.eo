@@ -1,5 +1,5 @@
 import efl_canvas_gesture_types;
-import efl_canvas_gesture_events;
+parse efl_canvas_gesture_events;
 
 abstract @beta Efl.Canvas.Gesture extends Efl.Object
 {

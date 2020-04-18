@@ -1,5 +1,3 @@
-import efl_canvas_gesture_types;
-
 class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
 {
    [[This class keeps track of active @Efl.Canvas.Gesture_Recognizer objects.

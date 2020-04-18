@@ -1,5 +1,3 @@
-import ector_renderer;
-
 mixin @beta Ector.Renderer.Image
 {
    [[Ector image renderer mixin]]

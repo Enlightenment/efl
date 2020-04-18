@@ -1,4 +1,3 @@
-import eina_types;
 parse efl_canvas_gesture_recognizer;
 
 class @beta Efl.Canvas.Gesture_Custom extends Efl.Canvas.Gesture

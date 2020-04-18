@@ -1,5 +1,3 @@
-import efl_canvas_layout_types;
-
 class @beta Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity, Efl.Ui.Drag, Efl.Canvas.Layout_Part_Type_Provider
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.

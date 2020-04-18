@@ -1,5 +1,4 @@
 /* Efl.Ui enum and struct types */
-import eina_types;
 
 /* FIXME: find a better way to express this */
 error @extern Efl.Ui.Theme.Apply_Error.NONE = "Succcess"; [[Successfully applied the requested style from the current theme.]]

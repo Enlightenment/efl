@@ -1,6 +1,3 @@
-import eina_types;
-
-
 struct Efl.File_Save_Info
 {
    [[Info used to determine various attributes when saving a file.

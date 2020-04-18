@@ -1,3 +1,5 @@
+import eina_types;
+
 class Efl.Cubic_Bezier_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Cubic Bezier interpolator. It starts slow, then moves quickly and then slows down

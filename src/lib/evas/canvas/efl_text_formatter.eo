@@ -1,5 +1,3 @@
-import efl_text_types;
-
 abstract Efl.Text_Formatter extends Efl.Object {
     [[Text Formatter API to manage text formatting(attributes).
      Use it to insert and remove style attributes (font, size, color, ...) using @Efl.Text_Cursor.Object on EFL Widgets.

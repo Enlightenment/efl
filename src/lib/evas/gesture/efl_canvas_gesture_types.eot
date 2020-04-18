@@ -1,6 +1,5 @@
 import eina_types;
 import efl_input_types;
-import efl_canvas_gesture_events;
 
 enum @beta Efl.Canvas.Gesture_Touch_State
 {

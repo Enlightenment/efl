@@ -1,5 +1,3 @@
-import efl_object;
-
 function @beta EflThreadIOCall {
    [[A Function to be called asynchronously on a different thread.]]
    params {

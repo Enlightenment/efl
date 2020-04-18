@@ -1,5 +1,3 @@
-import efl_ui;
-
 interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
 {
    [[Interface for getting access to a range of selected items through their indices.

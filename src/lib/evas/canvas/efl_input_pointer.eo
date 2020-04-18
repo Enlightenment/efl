@@ -1,4 +1,5 @@
 import efl_input_types;
+import eina_types;
 
 class Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl.Input.State
 {

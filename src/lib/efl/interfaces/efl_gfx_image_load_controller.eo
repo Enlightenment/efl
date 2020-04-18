@@ -1,5 +1,4 @@
 import eina_types;
-import efl_gfx_types;
 
 /*
 enum @beta Efl.Gfx.Image_Load_Controller_State
