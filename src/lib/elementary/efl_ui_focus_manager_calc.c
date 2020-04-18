@@ -402,6 +402,8 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
      {
         Efl_Ui_Focus_Direction direction = -1;
         Efl_Ui_Focus_Graph_Calc_Direction_Result *res = NULL;
+        Node *partner;
+        Eina_List *n;
 
         if (i == 0)
           {
@@ -423,6 +425,9 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
              direction = EFL_UI_FOCUS_DIRECTION_DOWN;
              res = &result.bottom;
           }
+
+       EINA_LIST_FOREACH(res->relation, n, partner)
+         partner->unused = EINA_FALSE;
 
        border_onedirection_set(node, direction, res->relation);
      }
