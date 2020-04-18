@@ -41,6 +41,7 @@
 #include "eina_safety_checks.h"
 #include "eina_stringshare.h"
 
+#include <evil_vasprintf.h>
 
 #ifdef CRI
 #undef CRI

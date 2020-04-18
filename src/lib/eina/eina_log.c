@@ -21,7 +21,6 @@
 # include "config.h"
 #endif
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -57,6 +56,8 @@
 #include "eina_log.h"
 
 #include "eina_inline_private.h"
+
+#include <evil_vasprintf.h>
 
 /* TODO
  * + printing logs to stdout or stderr can be implemented

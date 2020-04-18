@@ -4,12 +4,13 @@
 
 #define EINA_SLSTR_INTERNAL
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "Eina.h"
 #include "eina_private.h"
+
+#include <evil_vasprintf.h>
 
 // ========================================================================= //
 
