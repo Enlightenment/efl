@@ -1,0 +1,11 @@
+./data/elementary/desktop
+./data/elementary/desktop/elementary_test.desktop
+./data/elementary/desktop/elementary_perf.desktop
+./data/elementary/desktop/elementary_config.desktop
+./data/elementary/config/mobile/profile.desktop
+./data/elementary/config/standard/profile.desktop
+./data/elementary/config/default/profile.desktop
+./src/tests/efreet/data/test_type.desktop
+./src/tests/efreet/data/sub/test.desktop
+./src/tests/efreet/data/test.desktop
+./src/bin/efl_js/efljslaunch.desktop
