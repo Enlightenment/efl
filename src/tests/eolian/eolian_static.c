@@ -12,10 +12,8 @@ EFL_START_TEST(eolian_static_check)
    fail_if(!eolian_state_directory_add(eos, EO_SRC_DIR));
    fail_if(!eolian_state_all_eot_files_parse(eos));
    fail_if(!eolian_state_all_eo_files_parse(eos));
-#if 0
    /* too many failures to enable this yet */
    fail_if(!eolian_state_check(eos));
-#endif
    eolian_state_free(eos);
 }
 EFL_END_TEST
