@@ -128,9 +128,6 @@ type @extern Eina.Error: int; [[Eina error type
   @since 1.22
 ]]
 
-struct @extern @beta @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
-struct @extern @beta @free(eina_strbuf_free) Eina.Strbuf; [[Eina strbuf data structure]]
-
 struct @extern @beta Eina.Slice {
     [[A linear, read-only, memory segment]]
     len: size; [[Length of the memory segment]]
