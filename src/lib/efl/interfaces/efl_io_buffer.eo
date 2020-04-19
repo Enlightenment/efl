@@ -133,7 +133,7 @@ class @beta Efl.Io.Buffer extends Efl.Object
               On failure, for example a read-only backing store was
               adopted with @.adopt_readonly, $NULL is returned.
             ]]
-            return: ptr(Eina.Binbuf) @move @no_unused; [[Binbuf]]
+            return: binbuf @move @no_unused; [[Binbuf]]
         }
     }
 

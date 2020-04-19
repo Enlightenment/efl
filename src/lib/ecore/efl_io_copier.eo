@@ -148,7 +148,7 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
              destination then the "done" event is emitted.
 
              If the destination is not set (ie: $NULL) then data is kept
-             in a internal @Eina.Binbuf, which can be stolen with
+             in a internal binbuf, which can be stolen with
              @.binbuf_steal once "data" or "line" events are
              emitted. It exists as a useful shortcut to easily drain
              readers and store all data in memory with no need to use an
@@ -313,7 +313,7 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
              which case you should wait for "done", "data" or "line"
              events and then call it to retrieve and own the data.
            ]]
-           return: ptr(Eina.Binbuf) @move @no_unused; [[Binbuf]]
+           return: binbuf @move @no_unused; [[Binbuf]]
         }
 
         @property pending_size {
