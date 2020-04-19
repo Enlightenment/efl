@@ -38,6 +38,7 @@ group { name: "e/comp/screen/base/default";
 
 group { name: "e/comp/screen/overlay/default";
    images.image: "screen_circular_shadow.png" COMP;
+   data.item: "restarted" "on";
    parts {
       part { name: "clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
@@ -173,6 +174,26 @@ group { name: "e/comp/screen/overlay/default";
                 action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
             }
          }
+      program { signal: "e,state,sys,restart"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
+         target: "suspender";
+         sequence {
+            action: SIGNAL_EMIT "e,state,sys,restart,done" "e";
+         }
+      }
+      program { signal: "e,state,sys,restarted"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         target: "suspender";
+      }
+      program { signal: "e,state,sys,restarted,show"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: ACCELERATE 0.5 USE_DURATION_FACTOR 1 CURRENT;
+         target: "suspender";
+         sequence {
+            action: SIGNAL_EMIT "e,state,sys,restarted,show,done" "e";
+         }
+      }
    }
 }
 
