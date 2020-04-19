@@ -432,6 +432,9 @@ abstract Efl.Object
         class.constructor;
         class.destructor;
    }
+   constructors {
+        .parent @optional;
+   }
    events {
       del @hot: void; [[Object is being deleted. See @.destructor.]]
       invalidate @hot: void; [[Object is being invalidated and losing its parent. See @.invalidate.]]
