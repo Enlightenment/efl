@@ -258,3 +258,38 @@ group { name: "elm/frame/base/outdent_bottom";
       }
    }
 }
+
+group { name: "elm/frame/base/outline";
+   images.image: "win_shadow.png" COMP;
+   parts {
+      part { name: "shadow"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            WIN_SHADOW_SMALL;
+         }
+         description { state: "hidden" 0.0;
+            inherit;
+            visible: 0;
+         }
+      }
+      part { name: "base"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 6 6;
+            rel2.offset: -7 -7;
+            color: 64 64 64 255;
+            offscale;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+      }
+   }
+}
