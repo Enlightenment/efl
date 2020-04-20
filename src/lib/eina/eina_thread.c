@@ -45,6 +45,8 @@
 # define cpu_set_t cpuset_t
 #endif
 
+EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
+
 EAPI Eina_Thread
 eina_thread_self(void)
 {

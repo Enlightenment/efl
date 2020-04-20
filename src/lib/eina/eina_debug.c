@@ -35,7 +35,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <pthread.h>
 #include <signal.h>
 #include <time.h>
 #include <sys/types.h>
@@ -72,7 +71,7 @@
 #include "eina_debug_private.h"
 #include "eina_vpath.h"
 #include "eina_internal.h"
-
+// #include "eina_thread.h"
 #ifdef EINA_HAVE_THREAD_SETNAME
 # ifndef __linux__
 # include <pthread_np.h>
