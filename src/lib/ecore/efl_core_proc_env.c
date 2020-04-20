@@ -58,6 +58,8 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
              char **values;
 
              values = eina_str_split(*p, "=", 2);
+             if (!values) break;
+
              efl_core_env_set(obj, values[0], values[1]);
 
              EINA_LIST_FOREACH(existing_keys, n, key)
@@ -68,12 +70,8 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
                        break;
                     }
                }
-
-             if (values)
-               {
-                  free(values[0]);
-                  free(values);
-               }
+             free(values[0]);
+             free(values);
           }
      }
    EINA_LIST_FOREACH(existing_keys, n, key)

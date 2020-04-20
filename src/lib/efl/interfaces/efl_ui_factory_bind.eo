@@ -1,3 +1,5 @@
+import eina_types;
+
 interface Efl.Ui.Factory_Bind
 {
    [[Efl UI Property interface.

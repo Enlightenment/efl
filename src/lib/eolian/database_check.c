@@ -130,6 +130,11 @@ _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
      _add_dep(depset, icl->base.unit);
    eina_iterator_free(itr);
 
+   itr = eina_list_iterator_new(cl->composite);
+   EINA_ITERATOR_FOREACH(itr, icl)
+     _add_dep(depset, icl->base.unit);
+   eina_iterator_free(itr);
+
    const Eolian_Function *fid;
    itr = eina_list_iterator_new(cl->properties);
    EINA_ITERATOR_FOREACH(itr, fid)
@@ -263,6 +268,9 @@ _check_namespaces(const Eolian_Unit *src)
    Eina_Bool ret = EINA_TRUE;
    Eina_Iterator *itr = eina_hash_iterator_data_new(src->objects);
    const Eolian_Object *obj;
+
+   Eina_Bool check_beta = !!getenv("EOLIAN_CHECK_NAMESPACES_BETA");
+
    EINA_ITERATOR_FOREACH(itr, obj)
      {
         char const *dot = strrchr(obj->name, '.');
@@ -272,7 +280,7 @@ _check_namespaces(const Eolian_Unit *src)
           dot - obj->name);
         const Eolian_Object *cobj = eina_hash_find(src->objects, ssr);
         eina_stringshare_del(ssr);
-        if (cobj)
+        if (cobj && (check_beta || !eolian_object_is_beta(cobj)))
           {
              eolian_state_log_obj(src->state, obj,
                "the namespace of object '%s' conflicts with %s:%d:%d",

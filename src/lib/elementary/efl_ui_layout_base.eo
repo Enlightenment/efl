@@ -1,5 +1,3 @@
-import efl_ui;
-
 abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
                      Efl.Ui.Factory_Bind,
                      Efl.Layout.Calc, Efl.Layout.Signal,

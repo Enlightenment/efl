@@ -3772,6 +3772,22 @@ EFL_START_TEST(evas_textblock_style)
 }
 EFL_END_TEST
 
+/* Textblock functionality without style. */
+EFL_START_TEST(evas_textblock_style_empty)
+{
+   Evas *evas;
+   Evas_Object *txt;
+   Evas_Coord w, h;
+   evas = EVAS_TEST_INIT_EVAS();
+   txt = evas_object_textblock_add(evas);
+   evas_object_textblock_text_markup_set(txt, "<b></b>");
+   evas_object_textblock_size_formatted_get(txt, &w, &h);
+   ck_assert_int_eq(w, 0);
+   ck_assert_int_eq(h, 0);
+   evas_free(evas);
+}
+EFL_END_TEST
+
 /* Basic test for style user push/peek/pop. */
 EFL_START_TEST(evas_textblock_style_user)
 {
@@ -4164,6 +4180,27 @@ EFL_START_TEST(evas_textblock_fit)
    fail_if(n_ret != EVAS_ERROR_SUCCESS);
    evas_object_textblock_size_formatted_get(tb, &fw, &fh);
    fail_if(fw_new == fw && fh_new == fh);
+   END_TB_TEST();
+}
+EFL_END_TEST;
+
+EFL_START_TEST(evas_textblock_textrun_font)
+{
+   START_TB_TEST();
+   int w1, h1, w2, h2;
+
+   evas_object_resize(tb, 300, 300);
+   evas_object_textblock_text_markup_set(tb, "가123A321");
+   evas_object_textblock_size_native_get(tb, &w1, &h1);
+   evas_object_textblock_text_markup_set(tb, "A321가123");
+   evas_object_textblock_size_native_get(tb, &w2, &h2);
+   ck_assert(w1==w2 && h1==h2);
+   evas_object_textblock_text_markup_set(tb, "123가A321");
+   evas_object_textblock_size_native_get(tb, &w2, &h2);
+   ck_assert(w1==w2 && h1==h2);
+   evas_object_textblock_text_markup_set(tb, "A가123321");
+   evas_object_textblock_size_native_get(tb, &w2, &h2);
+   ck_assert(w1==w2 && h1==h2);
    END_TB_TEST();
 }
 EFL_END_TEST;
@@ -5024,6 +5061,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);
+   tcase_add_test(tc, evas_textblock_style_empty);
    tcase_add_test(tc, evas_textblock_style_user);
    tcase_add_test(tc, evas_textblock_evas);
    tcase_add_test(tc, evas_textblock_text_getters);
@@ -5038,6 +5076,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_delete);
    tcase_add_test(tc, evas_textblock_obstacle);
    tcase_add_test(tc, evas_textblock_fit);
+   tcase_add_test(tc, evas_textblock_textrun_font);
 #ifdef HAVE_HYPHEN
    tcase_add_test(tc, evas_textblock_hyphenation);
 #endif

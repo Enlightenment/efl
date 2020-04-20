@@ -1,5 +1,3 @@
-import efl_ui;
-
 class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
 {
    [[EFL layout widget class.

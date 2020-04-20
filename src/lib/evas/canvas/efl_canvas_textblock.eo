@@ -1,5 +1,3 @@
-import efl_text_types;
-
 class Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font_Properties,
                        Efl.Text_Style, Efl.Text_Format,

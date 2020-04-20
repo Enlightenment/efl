@@ -384,8 +384,12 @@ EAPI void
 edje_object_part_text_cursor_geometry_get(const Edje_Object *obj, const char * part EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    GET_REAL_PART_ON_FAIL_RETURN()
-   evas_textblock_cursor_geometry_bidi_get(_edje_text_cursor_get(rp, EDJE_CURSOR_MAIN),
-          x, y, w, h, NULL, NULL, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_geometry_get(rp, x, y, w, h, NULL);
+        if (x) *x -= ed->x;
+        if (y) *y -= ed->y;
+     }
 }
 
 EAPI Eina_Bool

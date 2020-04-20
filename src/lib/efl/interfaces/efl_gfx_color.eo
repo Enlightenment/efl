@@ -1,5 +1,3 @@
-import efl_gfx_types;
-
 mixin Efl.Gfx.Color
 {
    [[Efl Gfx Color mixin class

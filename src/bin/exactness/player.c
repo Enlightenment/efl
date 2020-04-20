@@ -956,7 +956,7 @@ _setup_font_settings(const char *fonts_dir)
      {
         char buf[PATH_MAX];
         if (!fonts_dir) fonts_dir = "./fonts";
-        sprintf(buf, "%s/%s", fonts_dir, _src_unit->fonts_path);
+        snprintf(buf, PATH_MAX, "%s/%s", fonts_dir, _src_unit->fonts_path);
         if (!ecore_file_exists(buf))
           {
              fprintf(stderr, "Unable to use the fonts path '%s' provided in %s\n",
@@ -1098,7 +1098,7 @@ elm_init(int argc, char **argv)
    ORIGINAL_CALL("elm_init", argc, argv)
 
    if (ex_is_original_app() && original_return == 1)
-     ex_prepare_elm_overloay();
+     ex_prepare_elm_overlay();
 
    return original_return;
 }

@@ -40,6 +40,8 @@
 
 #define FRAME_OBJ_THEME_MIN_VERSION 119
 
+extern void ecore_evas_dnd_mark_motion_used(Ecore_Evas *ee, unsigned int seat);
+
 Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
 Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt);
 

@@ -4,12 +4,12 @@
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 # Igor Murzov <garik@efl.so>, 2015.
 #
-#: src/lib/elementary/elm_config.c:4135
+#: src/lib/elementary/elm_config.c:4267
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2019-04-15 12:03+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-19 16:13+0200\n"
 "PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -20,274 +20,231 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/lib/ecore/ecore_getopt.c:89
+#: src/lib/ecore/ecore_getopt.c:85
 msgid "Version:"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:98
+#: src/lib/ecore/ecore_getopt.c:94
 msgid "Usage:"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:105
+#: src/lib/ecore/ecore_getopt.c:101
 #, c-format
 msgid "%s [options]"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:305
+#: src/lib/ecore/ecore_getopt.c:301
 msgid "Copyright:"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:317
+#: src/lib/ecore/ecore_getopt.c:313
 msgid "License:"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:503
+#: src/lib/ecore/ecore_getopt.c:499
 msgid "Type: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:579
+#: src/lib/ecore/ecore_getopt.c:575
 msgid "Default: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:606
+#: src/lib/ecore/ecore_getopt.c:602
 msgid "Choices: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:644 src/lib/ecore/ecore_getopt.c:645
+#: src/lib/ecore/ecore_getopt.c:640 src/lib/ecore/ecore_getopt.c:641
 msgid "No categories available."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:649
+#: src/lib/ecore/ecore_getopt.c:645
 msgid "Categories: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:771
+#: src/lib/ecore/ecore_getopt.c:767
 msgid "Options:\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:780
+#: src/lib/ecore/ecore_getopt.c:776
 msgid "Positional arguments:\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:847
+#: src/lib/ecore/ecore_getopt.c:843
 #, c-format
 msgid "ERROR: unknown category '%s'.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:951
+#: src/lib/ecore/ecore_getopt.c:947
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:953
+#: src/lib/ecore/ecore_getopt.c:949
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1016
+#: src/lib/ecore/ecore_getopt.c:1012
 msgid "ERROR: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1112 src/lib/ecore/ecore_getopt.c:1249
-#: src/lib/ecore/ecore_getopt.c:1265 src/lib/ecore/ecore_getopt.c:1280
-#: src/lib/ecore/ecore_getopt.c:1300 src/lib/ecore/ecore_getopt.c:1347
-#: src/lib/ecore/ecore_getopt.c:1467 src/lib/ecore/ecore_getopt.c:1508
+#: src/lib/ecore/ecore_getopt.c:1108 src/lib/ecore/ecore_getopt.c:1245
+#: src/lib/ecore/ecore_getopt.c:1261 src/lib/ecore/ecore_getopt.c:1276
+#: src/lib/ecore/ecore_getopt.c:1296 src/lib/ecore/ecore_getopt.c:1343
+#: src/lib/ecore/ecore_getopt.c:1463 src/lib/ecore/ecore_getopt.c:1504
 msgid "value has no pointer set.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1144 src/lib/ecore/ecore_getopt.c:1367
+#: src/lib/ecore/ecore_getopt.c:1140 src/lib/ecore/ecore_getopt.c:1363
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1195 src/lib/ecore/ecore_getopt.c:1455
+#: src/lib/ecore/ecore_getopt.c:1191 src/lib/ecore/ecore_getopt.c:1451
 #, c-format
 msgid "invalid number format %s\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1313
+#: src/lib/ecore/ecore_getopt.c:1309
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1341
+#: src/lib/ecore/ecore_getopt.c:1337
 msgid "missing parameter to append.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1445
+#: src/lib/ecore/ecore_getopt.c:1441
 msgid "could not parse value.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1502
+#: src/lib/ecore/ecore_getopt.c:1498
 msgid "missing parameter.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1515
+#: src/lib/ecore/ecore_getopt.c:1511
 msgid "missing callback function!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1546
+#: src/lib/ecore/ecore_getopt.c:1542
 msgid "no version was defined.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1563
+#: src/lib/ecore/ecore_getopt.c:1559
 msgid "no copyright was defined.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1580
+#: src/lib/ecore/ecore_getopt.c:1576
 msgid "no license was defined.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1670
+#: src/lib/ecore/ecore_getopt.c:1666
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1710
+#: src/lib/ecore/ecore_getopt.c:1706
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1752
+#: src/lib/ecore/ecore_getopt.c:1748
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1797
+#: src/lib/ecore/ecore_getopt.c:1793
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1892
+#: src/lib/ecore/ecore_getopt.c:1888
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1924
+#: src/lib/ecore/ecore_getopt.c:1920
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
+#: src/lib/ecore/ecore_getopt.c:2041 src/lib/ecore/ecore_getopt.c:2107
 msgid "ERROR: no parser provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2050 src/lib/ecore/ecore_getopt.c:2116
+#: src/lib/ecore/ecore_getopt.c:2046 src/lib/ecore/ecore_getopt.c:2112
 msgid "ERROR: no values provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2059 src/lib/ecore/ecore_getopt.c:2125
+#: src/lib/ecore/ecore_getopt.c:2055 src/lib/ecore/ecore_getopt.c:2121
 msgid "ERROR: no arguments provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2085
+#: src/lib/ecore/ecore_getopt.c:2081
 msgid "ERROR: invalid options found."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2091 src/lib/ecore/ecore_getopt.c:2157
+#: src/lib/ecore/ecore_getopt.c:2087 src/lib/ecore/ecore_getopt.c:2154
 #, c-format
 msgid " See --%s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2093 src/lib/ecore/ecore_getopt.c:2159
+#: src/lib/ecore/ecore_getopt.c:2089 src/lib/ecore/ecore_getopt.c:2156
 #, c-format
 msgid " See -%c.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2151
+#: src/lib/ecore/ecore_getopt.c:2148
 msgid "ERROR: invalid positional arguments found."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2186
+#: src/lib/ecore/ecore_getopt.c:2183
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2204
+#: src/lib/ecore/ecore_getopt.c:2201
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:126
+#: src/lib/efreet/efreet_base.c:127
 msgid "Desktop"
 msgstr "Рабочий стол"
 
-#: src/lib/efreet/efreet_base.c:134
+#: src/lib/efreet/efreet_base.c:135
 msgid "Downloads"
 msgstr "Загрузки"
 
-#: src/lib/efreet/efreet_base.c:143
+#: src/lib/efreet/efreet_base.c:144
 msgid "Templates"
 msgstr "Шаблоны"
 
-#: src/lib/efreet/efreet_base.c:152
+#: src/lib/efreet/efreet_base.c:153
 msgid "Public"
 msgstr "Общий каталог"
 
-#: src/lib/efreet/efreet_base.c:161
+#: src/lib/efreet/efreet_base.c:162
 msgid "Documents"
 msgstr "Документы"
 
-#: src/lib/efreet/efreet_base.c:169
+#: src/lib/efreet/efreet_base.c:170
 msgid "Music"
 msgstr "Музыка"
 
-#: src/lib/efreet/efreet_base.c:177
+#: src/lib/efreet/efreet_base.c:178
 msgid "Pictures"
 msgstr "Изображения"
 
-#: src/lib/efreet/efreet_base.c:185
+#: src/lib/efreet/efreet_base.c:186
 msgid "Videos"
 msgstr "Видео"
 
-#: src/lib/elementary/elc_fileselector.c:1705
-msgid "Up"
-msgstr "Вверх"
-
-#: src/lib/elementary/elc_fileselector.c:1719
-msgid "Home"
-msgstr "Дом"
-
-#: src/lib/elementary/elc_fileselector.c:1738
-msgid "Search"
-msgstr "Поиск"
-
-#: src/lib/elementary/elc_fileselector.c:2012
-msgid "OK"
-msgstr "ОК"
-
-#: src/lib/elementary/elc_fileselector.c:2022
-#: src/lib/elementary/elm_entry.c:1759 src/lib/elementary/elm_entry.c:1784
-msgid "Cancel"
-msgstr "Отмена"
-
-#: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/efl_ui_button.c:208
-#: src/lib/elementary/efl_ui_check.c:187 src/lib/elementary/elm_gengrid.c:1532
-#: src/lib/elementary/elm_genlist.c:1769 src/lib/elementary/elm_list.c:2185
-#: src/lib/elementary/efl_ui_radio.c:201
-#: src/lib/elementary/elm_segment_control.c:525
-#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2294
-msgid "State: Disabled"
-msgstr "Состояние: Отключено"
-
-#: src/lib/elementary/elc_hoversel.c:652
-msgid "Hoversel"
-msgstr ""
-
-#: src/lib/elementary/elc_multibuttonentry.c:682
-msgid "multi button entry label"
-msgstr "метка многокопочного элемента"
-
-#: src/lib/elementary/elc_multibuttonentry.c:704
-msgid "multi button entry item"
-msgstr "кнопка многокопочного элемента"
-
-#: src/lib/elementary/elc_multibuttonentry.c:1586
-msgid "multi button entry"
-msgstr "многокнопочный элемент"
+#: src/lib/evas/common/language/evas_language_utils.c:205
+msgid "default:LTR"
+msgstr "default:LTR"
 
 #: src/lib/elementary/elc_naviframe.c:408
-#: src/lib/elementary/elc_naviframe.c:436
 msgid "Title"
 msgstr "Заголовок"
 
@@ -296,281 +253,207 @@ msgstr "Заголовок"
 msgid "Subtitle"
 msgstr "Заголовок"
 
-#: src/lib/elementary/elc_naviframe.c:968
-#: src/lib/elementary/elc_naviframe.c:1186
+#: src/lib/elementary/elc_naviframe.c:966
 msgid "Back"
 msgstr "Назад"
 
-#: src/lib/elementary/elc_naviframe.c:1358
-msgid "Next"
-msgstr "Вперёд"
+#: src/lib/elementary/elc_fileselector.c:1755
+msgid "Up"
+msgstr "Вверх"
 
-#: src/lib/elementary/elc_popup.c:320 src/lib/elementary/elc_popup.c:984
-msgid "Popup Title"
-msgstr "Заголовок всплывающего окна"
+#: src/lib/elementary/elc_fileselector.c:1769
+msgid "Home"
+msgstr "Дом"
 
-#: src/lib/elementary/elc_popup.c:330 src/lib/elementary/elc_popup.c:1060
-msgid "Popup Body Text"
-msgstr "Текст всплывающего окна"
+#: src/lib/elementary/elc_fileselector.c:1787
+msgid "Search"
+msgstr "Поиск"
 
-#: src/lib/elementary/elc_popup.c:1836
-msgid "Alert"
-msgstr ""
+#: src/lib/elementary/elc_fileselector.c:2061
+msgid "OK"
+msgstr "ОК"
 
-#: src/lib/elementary/elm_bubble.c:163
-msgid "Bubble"
-msgstr "Облачко"
+#: src/lib/elementary/elc_fileselector.c:2070
+msgid "Cancel"
+msgstr "Отмена"
 
-#: src/lib/elementary/efl_ui_button.c:71
-msgid "Clicked"
-msgstr "Нажато"
+#~ msgid "State: Disabled"
+#~ msgstr "Состояние: Отключено"
 
-#: src/lib/elementary/efl_ui_button.c:250
-msgid "Button"
-msgstr "Кнопка"
+#~ msgid "multi button entry label"
+#~ msgstr "метка многокопочного элемента"
 
-#: src/lib/elementary/elm_calendar.c:225
-#: src/lib/elementary/efl_ui_calendar.c:193
-msgid "%B %Y"
-msgstr "%B %Y"
+#~ msgid "multi button entry item"
+#~ msgstr "кнопка многокопочного элемента"
 
-#: src/lib/elementary/elm_calendar.c:231
-msgid "%B"
-msgstr "%B"
+#~ msgid "multi button entry"
+#~ msgstr "многокнопочный элемент"
 
-#: src/lib/elementary/elm_calendar.c:237
-msgid "%Y"
-msgstr "%Y"
+#~ msgid "Next"
+#~ msgstr "Вперёд"
 
-#: src/lib/elementary/elm_calendar.c:363
-#: src/lib/elementary/efl_ui_calendar.c:240
-msgid "calendar item"
-msgstr "элемент календаря"
+#~ msgid "Popup Title"
+#~ msgstr "Заголовок всплывающего окна"
 
-#: src/lib/elementary/elm_calendar.c:391
-#: src/lib/elementary/efl_ui_calendar.c:267
-msgid "calendar decrement month button"
-msgstr "кнопка календаря для уменьшения месяца"
+#~ msgid "Popup Body Text"
+#~ msgstr "Текст всплывающего окна"
 
-#: src/lib/elementary/elm_calendar.c:397
-msgid "calendar decrement year button"
-msgstr "кнопка календаря для уменьшения года"
+#~ msgid "Bubble"
+#~ msgstr "Облачко"
 
-#: src/lib/elementary/elm_calendar.c:403
-#: src/lib/elementary/efl_ui_calendar.c:273
-msgid "calendar increment month button"
-msgstr "кнопка календаря для увеличения месяца"
+#~ msgid "Clicked"
+#~ msgstr "Нажато"
 
-#: src/lib/elementary/elm_calendar.c:409
-msgid "calendar increment year button"
-msgstr "кнопка календаря для увеличения года"
+#~ msgid "Button"
+#~ msgstr "Кнопка"
 
-#: src/lib/elementary/elm_calendar.c:414
-#: src/lib/elementary/efl_ui_calendar.c:278
-msgid "calendar month"
-msgstr "месяц календаря"
+#~ msgid "%B %Y"
+#~ msgstr "%B %Y"
 
-#: src/lib/elementary/elm_calendar.c:419
-msgid "calendar year"
-msgstr "год календаря"
+#~ msgid "%B"
+#~ msgstr "%B"
 
-#: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:200
-#: src/lib/elementary/efl_ui_radio.c:136 src/lib/elementary/efl_ui_radio.c:202
-msgid "State: On"
-msgstr "Состояния: Включено"
+#~ msgid "%Y"
+#~ msgstr "%Y"
 
-#: src/lib/elementary/efl_ui_check.c:96 src/lib/elementary/efl_ui_check.c:212
-#: src/lib/elementary/efl_ui_radio.c:204
-msgid "State: Off"
-msgstr "Состояние: Выключено"
+#~ msgid "calendar item"
+#~ msgstr "элемент календаря"
 
-#: src/lib/elementary/efl_ui_check.c:196 src/lib/elementary/efl_ui_check.c:209
-msgid "State"
-msgstr "Состояние"
+#~ msgid "calendar decrement month button"
+#~ msgstr "кнопка календаря для уменьшения месяца"
 
-#: src/lib/elementary/efl_ui_check.c:348
-msgid "Check"
-msgstr "Флажок"
+#~ msgid "calendar decrement year button"
+#~ msgstr "кнопка календаря для уменьшения года"
 
-#: src/lib/elementary/elm_clock.c:309
-msgid "clock increment button for am,pm"
-msgstr "кнопка часов для увеличения am,pm"
+#~ msgid "calendar increment month button"
+#~ msgstr "кнопка календаря для увеличения месяца"
 
-#: src/lib/elementary/elm_clock.c:317
-msgid "clock decrement button for am,pm"
-msgstr "кнопка часов для уменьшения am,pm"
+#~ msgid "calendar increment year button"
+#~ msgstr "кнопка календаря для увеличения года"
 
-#: src/lib/elementary/elm_clock.c:714
-msgid "State: Editable"
-msgstr "Состояние: Редактируемо"
+#~ msgid "calendar month"
+#~ msgstr "месяц календаря"
 
-#: src/lib/elementary/elm_clock.c:749
-msgid "Clock"
-msgstr "Часы"
+#~ msgid "calendar year"
+#~ msgstr "год календаря"
 
-#: src/lib/elementary/elm_colorselector.c:939
-msgid "Pick a color"
-msgstr ""
+#~ msgid "State: On"
+#~ msgstr "Состояния: Включено"
 
-#: src/lib/elementary/elm_colorselector.c:977
-msgid "R:"
-msgstr ""
+#~ msgid "State: Off"
+#~ msgstr "Состояние: Выключено"
 
-#: src/lib/elementary/elm_colorselector.c:979
-msgid "G:"
-msgstr ""
+#~ msgid "State"
+#~ msgstr "Состояние"
 
-#: src/lib/elementary/elm_colorselector.c:981
-msgid "B:"
-msgstr ""
+#~ msgid "Check"
+#~ msgstr "Флажок"
 
-#: src/lib/elementary/elm_colorselector.c:983
-msgid "A:"
-msgstr ""
+#~ msgid "clock increment button for am,pm"
+#~ msgstr "кнопка часов для увеличения am,pm"
 
-#: src/lib/elementary/elm_colorselector.c:1707
-msgid "color selector palette item"
-msgstr "элемент выбора цвета палитры"
+#~ msgid "clock decrement button for am,pm"
+#~ msgstr "кнопка часов для уменьшения am,pm"
 
-#. TRANSLATORS: This string is special and defines if the language
-#. by default is a Left To Right or Right To Left language. Most
-#. languages are LTR and thus the default string is "default:LTR"
-#. but if this is a right-to-left language like arabic, Farsi,
-#. Hebrew, etc. then change this string to be "default:RTL"
-#.
-#: src/lib/elementary/elm_config.c:4158
-msgid "default:LTR"
-msgstr "default:LTR"
+#~ msgid "State: Editable"
+#~ msgstr "Состояние: Редактируемо"
 
-#: src/lib/elementary/elm_dayselector.c:437
-msgid "day selector item"
-msgstr "элемент выбора дня"
+#~ msgid "Clock"
+#~ msgstr "Часы"
 
-#: src/lib/elementary/elm_diskselector.c:701
-msgid "diskselector item"
-msgstr "элемент диска выбора"
+#~ msgid "color selector palette item"
+#~ msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elementary/elm_entry.c:1749
-msgid "Cut"
-msgstr "Вырезать"
+#~ msgid "day selector item"
+#~ msgstr "элемент выбора дня"
 
-#: src/lib/elementary/elm_entry.c:1752
-msgid "Copy"
-msgstr "Копировать"
+#~ msgid "diskselector item"
+#~ msgstr "элемент диска выбора"
 
-#: src/lib/elementary/elm_entry.c:1756 src/lib/elementary/elm_entry.c:1778
-msgid "Paste"
-msgstr "Вставить"
+#~ msgid "Cut"
+#~ msgstr "Вырезать"
 
-#: src/lib/elementary/elm_entry.c:1771
-msgid "Select"
-msgstr "Выбрать"
+#~ msgid "Copy"
+#~ msgstr "Копировать"
 
-#: src/lib/elementary/elm_entry.c:3937
-msgid "Entry"
-msgstr "Запись"
+#~ msgid "Paste"
+#~ msgstr "Вставить"
 
-#: src/lib/elementary/elm_index.c:95
-msgid "Index"
-msgstr "Алфавитный указатель"
+#~ msgid "Select"
+#~ msgstr "Выбрать"
 
-#: src/lib/elementary/elm_index.c:123
-msgid "Index Item"
-msgstr "Элемент алфавитного указателя"
+#~ msgid "Entry"
+#~ msgstr "Запись"
 
-#: src/lib/elementary/elm_label.c:403
-msgid "Label"
-msgstr "Метка"
+#~ msgid "Index"
+#~ msgstr "Алфавитный указатель"
 
-#: src/lib/elementary/elm_panel.c:84
-msgid "state: opened"
-msgstr "состояние: открыто"
+#~ msgid "Index Item"
+#~ msgstr "Элемент алфавитного указателя"
 
-#: src/lib/elementary/elm_panel.c:85
-msgid "state: closed"
-msgstr "состояние: закрыто"
+#~ msgid "Label"
+#~ msgstr "Метка"
 
-#: src/lib/elementary/elm_panel.c:127
-msgid "A panel is open"
-msgstr "Панель открыта"
+#~ msgid "state: opened"
+#~ msgstr "состояние: открыто"
 
-#: src/lib/elementary/elm_panel.c:129
-msgid "Double tap to close panel menu"
-msgstr "Двойной щелчок, чтобы закрыть меню панели"
+#~ msgid "state: closed"
+#~ msgstr "состояние: закрыто"
 
-#: src/lib/elementary/elm_panel.c:181
-msgid "panel button"
-msgstr "кнопка панели"
+#~ msgid "A panel is open"
+#~ msgstr "Панель открыта"
 
-#: src/lib/elementary/efl_ui_progressbar.c:397
-msgid "progressbar"
-msgstr "индикатор выполнения"
+#~ msgid "Double tap to close panel menu"
+#~ msgstr "Двойной щелчок, чтобы закрыть меню панели"
 
-#: src/lib/elementary/efl_ui_radio.c:231
-msgid "Radio"
-msgstr "Радио флажок"
+#~ msgid "panel button"
+#~ msgstr "кнопка панели"
 
-#: src/lib/elementary/elm_segment_control.c:528
-#: src/lib/elementary/elm_toolbar.c:2296
-msgid "State: Selected"
-msgstr "Состояние: Выбрано"
+#~ msgid "progressbar"
+#~ msgstr "индикатор выполнения"
 
-#: src/lib/elementary/elm_segment_control.c:530
-msgid "State: Unselected"
-msgstr "Состояние: Невыбрано"
+#~ msgid "Radio"
+#~ msgstr "Радио флажок"
 
-#: src/lib/elementary/elm_segment_control.c:544
-msgid "Segment Control Item"
-msgstr "Элемент сегментного элемента управления"
+#~ msgid "State: Selected"
+#~ msgstr "Состояние: Выбрано"
 
-#: src/lib/elementary/efl_ui_slider.c:704
-msgid "slider"
-msgstr "бегунок"
+#~ msgid "State: Unselected"
+#~ msgstr "Состояние: Невыбрано"
 
-#: src/lib/elementary/elm_spinner.c:1071
-msgid "incremented"
-msgstr ""
+#~ msgid "Segment Control Item"
+#~ msgstr "Элемент сегментного элемента управления"
 
-#: src/lib/elementary/elm_spinner.c:1077
-msgid "decremented"
-msgstr ""
+#~ msgid "slider"
+#~ msgstr "бегунок"
 
-#: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1177
-msgid "spinner"
-msgstr "счётчик"
+#~ msgid "spinner"
+#~ msgstr "счётчик"
 
-#: src/lib/elementary/elm_spinner.c:1119 src/lib/elementary/elm_spinner.c:1160
-msgid "spinner increment button"
-msgstr "кнопка увеличения счётчика"
+#~ msgid "spinner increment button"
+#~ msgstr "кнопка увеличения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1122 src/lib/elementary/elm_spinner.c:1169
-msgid "spinner decrement button"
-msgstr "кнопка уменьшения счётчика"
+#~ msgid "spinner decrement button"
+#~ msgstr "кнопка уменьшения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1124
 #, fuzzy
-msgid "spinner text"
-msgstr "счётчик"
+#~ msgid "spinner text"
+#~ msgstr "счётчик"
 
-#: src/lib/elementary/elm_toolbar.c:1753 src/lib/elementary/elm_toolbar.c:2355
-msgid "Selected"
-msgstr "Выбрано"
+#~ msgid "Selected"
+#~ msgstr "Выбрано"
 
-#: src/lib/elementary/elm_toolbar.c:2292
-msgid "Separator"
-msgstr "Разделитель"
+#~ msgid "Separator"
+#~ msgstr "Разделитель"
 
-#: src/lib/elementary/elm_toolbar.c:2298
-msgid "Has menu"
-msgstr "С меню"
+#~ msgid "Has menu"
+#~ msgstr "С меню"
 
-#: src/lib/elementary/elm_toolbar.c:2350
-msgid "Unselected"
-msgstr "Невыбрано"
+#~ msgid "Unselected"
+#~ msgstr "Невыбрано"
 
-#: src/lib/elementary/elm_toolbar.c:2367
-msgid "Toolbar Item"
-msgstr "Элемент панели инструментов"
+#~ msgid "Toolbar Item"
+#~ msgstr "Элемент панели инструментов"
 
 #~ msgid "Gengrid Item"
 #~ msgstr "Элемент сетки"

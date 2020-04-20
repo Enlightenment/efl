@@ -17,7 +17,7 @@
  * @return length of the run found.
  */
 EAPI int
-evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len)
+evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script EINA_UNUSED, const Eina_Unicode *text, int run_len)
 {
    RGBA_Font_Int *fi = NULL;
    const Eina_Unicode *run_end = text + run_len;
@@ -26,38 +26,7 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
    /* If there's no current script_fi, find it first */
    if (!*script_fi)
      {
-        const Eina_Unicode *base_char = NULL;
-        /* Skip common chars */
-        for (base_char = text ;
-             (base_char < run_end) &&
-             (evas_common_language_char_script_get(*base_char) != script) ;
-             base_char++)
-           ;
-        /* If counter reach variation sequence it is safe to pick default font */
-        if(VAR_SEQ_SAFE(base_char) || (base_char != run_end && VAR_SEQ_SAFE((base_char+1)))) goto get_top_font;
-
-        if (base_char == run_end) base_char = text;
-
-        /* Find the first renderable char */
-        while (base_char < run_end)
-          {
-             /* 0x1F is the last ASCII contral char, just a hack in
-              * the meanwhile. */
-             if ((*base_char > 0x1F) &&
-                   evas_common_font_glyph_search(fn, &fi, *base_char, 0, EVAS_FONT_SEARCH_OPTION_NONE))
-                break;
-             base_char++;
-          }
-
-
-        /* If everything else fails, at least try to find a font for the
-         * replacement char */
-        if (base_char == run_end)
-           evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR, 0, EVAS_FONT_SEARCH_OPTION_NONE);
-get_top_font:
-
-        if (!fi)
-           fi = fn->fonts->data;
+        fi = fn->fonts->data;
 
         *script_fi = fi;
      }
@@ -86,17 +55,7 @@ get_top_font:
              if (evas_common_language_char_script_get(*itr) == EVAS_SCRIPT_INHERITED)
                 continue;
 
-             if (!variation_sequence)
-               {
-                  variation_sequence =  VAR_SEQ_SAFE(itr+1);
-               }
-             else
-               {
-                  /* Variation sequence treated as single run, if we found one, we keep looking adding to same
-                   * run, but if it is not, then we need to start a new one */
-                  if (variation_sequence != VAR_SEQ_SAFE(itr+1))
-                    break;
-               }
+             variation_sequence =  VAR_SEQ_SAFE(itr+1);
 
              /* Break if either it's not in the font, or if it is in the
               * script's font. */

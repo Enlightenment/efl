@@ -1,3 +1,5 @@
+import eina_types;
+
 abstract Efl.Loop_Consumer extends Efl.Object
 {
    [[An @Efl.Loop_Consumer is a class which requires one of the parents to provide

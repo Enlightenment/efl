@@ -3902,17 +3902,17 @@ evas_render_wakeup(Evas *eo_e)
 
    /* unref queues */
    eina_array_foreach(&evas->scie_unref_queue, _drop_scie_ref, NULL);
-   eina_array_clean(&evas->scie_unref_queue);
+   eina_array_flush(&evas->scie_unref_queue);
    evas_common_rgba_image_scalecache_prune();
 
    eina_array_foreach(&evas->image_unref_queue, _drop_image_cache_ref, NULL);
-   eina_array_clean(&evas->image_unref_queue);
+   eina_array_flush(&evas->image_unref_queue);
 
    eina_array_foreach(&evas->glyph_unref_queue, _drop_glyph_ref, NULL);
-   eina_array_clean(&evas->glyph_unref_queue);
+   eina_array_flush(&evas->glyph_unref_queue);
 
    eina_array_foreach(&evas->texts_unref_queue, _drop_texts_ref, NULL);
-   eina_array_clean(&evas->texts_unref_queue);
+   eina_array_flush(&evas->texts_unref_queue);
 
    SLKL(evas->post_render.lock);
    jobs_il = EINA_INLIST_GET(evas->post_render.jobs);
