@@ -212,10 +212,9 @@ _check_constant(const Eolian_Constant *v, Eina_Hash *depset, Eina_Hash *chash)
      _check_expr(v->value, depset);
 }
 
-static Eina_Bool
+static void
 _check_unit(const Eolian_Unit *unit)
 {
-   Eina_Bool ret = EINA_TRUE;
    Eina_Hash *depset = eina_hash_pointer_new(NULL);
 
    /* collect all real dependencies of the unit */
@@ -253,13 +252,11 @@ _check_unit(const Eolian_Unit *unit)
           {
              eolian_state_log(unit->state, "%s: unused dependency %s",
                               unit->file, cunit->file);
-             ret = EINA_FALSE;
           }
      }
    eina_iterator_free(citr);
 
    eina_hash_free(depset);
-   return ret;
 }
 
 static Eina_Bool
@@ -301,10 +298,7 @@ database_check(const Eolian_State *state)
    Eina_Iterator *itr = eolian_state_units_get(state);
    const Eolian_Unit *unit;
    EINA_ITERATOR_FOREACH(itr, unit)
-     {
-        if (!_check_unit(unit))
-          ret = EINA_FALSE;
-     }
+     _check_unit(unit);
    eina_iterator_free(itr);
 
    /* namespace checks */
