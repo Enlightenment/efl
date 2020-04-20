@@ -71,8 +71,8 @@
 #include "eina_debug_private.h"
 #include "eina_vpath.h"
 #include "eina_internal.h"
-// #include "eina_thread.h"
-#ifdef EINA_HAVE_THREAD_SETNAME
+#include "eina_thread.h"
+#ifdef EINA_HAVE_PTHREAD_SETNAME
 # ifndef __linux__
 # include <pthread_np.h>
 # endif
@@ -554,7 +554,7 @@ _monitor(void *_data)
    _opcodes_register_all(session);
 
    // set a name for this thread for system debugging
-#ifdef EINA_HAVE_THREAD_SETNAME
+#ifdef EINA_HAVE_PTHREAD_SETNAME || EINA_HAVE_WIN32_THREAD_SETNAME
    eina_thread_name_set(eina_thread_self(), "Edbg-mon");
 #endif
    

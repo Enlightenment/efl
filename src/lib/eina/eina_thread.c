@@ -41,7 +41,7 @@
 #endif
 # include <string.h>
 
-#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_THREAD_SETNAME)
+#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
 # define cpu_set_t cpuset_t
 #endif
 
@@ -117,7 +117,7 @@ eina_thread_join(Eina_Thread t)
 EAPI Eina_Bool
 eina_thread_name_set(Eina_Thread t, const char *name)
 {
-#ifdef EINA_HAVE_THREAD_SETNAME
+#if defined(EINA_HAVE_PTHREAD_SETNAME) || defined(EINA_HAVE_WIN32_THREAD_SETNAME)
    char buf[16];
    if (name)
      {

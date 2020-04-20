@@ -102,8 +102,13 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    ret = (*t != NULL) ? EINA_TRUE : EINA_FALSE;
 
-   if (affinity >= 0 && ret) SetThreadAffinityMask(*t, (DWORD_PTR *)&affinity);
-
+   if (affinity >= 0 && ret)
+     {
+   #ifdef EINA_HAVE_WIN32_THREAD_AFFINITY
+        SetThreadAffinityMask(*t, (DWORD_PTR *)&affinity);
+   #endif
+     }
+   
    return ret;
 }
 
