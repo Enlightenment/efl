@@ -68,7 +68,7 @@ EAPI int efl_loop_exit_code_process(Eina_Value *value);
 /**
  * @brief Get the future scheduler for the current loop.
  *
- * @param[in] An object which is either a loop or a loop consumer
+ * @param[in] obj An object which is either a loop or a loop consumer
  * @return The current loop's future scheduler.
  */
 EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(const Eo *obj);

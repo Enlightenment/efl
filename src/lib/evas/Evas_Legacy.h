@@ -5162,7 +5162,7 @@ EAPI void evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index
  * @ref evas_object_image_animated_frame_set.
  *
  * @param[in] obj The object
- * @param[in] frame_index The index of current frame.
+ * @return The index of current frame.
  *
  * @since 1.24
  */
@@ -6080,7 +6080,7 @@ EAPI Eina_Bool evas_object_image_source_clip_get(const Evas_Object *obj);
  * on it.
  *
  * @param[in] obj The object
- * @param[in] source Whether @c obj is to pass events ($true) or not ($false).
+ * @param[in] repeat Whether @c obj is to pass events ($true) or not ($false).
  *
  * @since 1.8
  */

@@ -953,7 +953,7 @@ EAPI Evas_Device *evas_device_add_full(Evas *e, const char *name,
                                        Evas_Device *parent_dev,
                                        Evas_Device *emulation_dev,
                                        Evas_Device_Class clas,
-                                       Evas_Device_Subclass sub_clas);
+                                       Evas_Device_Subclass sub_class);
 
 /**
  * Delete a new device type
@@ -1055,7 +1055,7 @@ EAPI Evas_Device *evas_device_get(Evas *e, const char *name);
 /**
  * Get a device by its seat id
  *
- * @param e The canvas to find the device on
+ * @param eo_e The canvas to find the device on
  * @param id The seat id of the device.
  *
  * Gets the device with id @p id on Evas @p e list of devices.

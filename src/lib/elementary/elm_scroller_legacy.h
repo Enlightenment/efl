@@ -508,7 +508,7 @@ EAPI void                         elm_scroller_movement_block_set(Evas_Object *o
 /**
  * @brief Get a scroller's scroll blocking state
  *
- * @param parent The scroller object
+ * @param obj The scroller object
  * @return The blocking state
  *
  * @since 1.8

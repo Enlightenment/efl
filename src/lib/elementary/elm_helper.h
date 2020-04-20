@@ -68,7 +68,7 @@ elm_validator_regexp_free(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the validation status.
  *
- * @param The given validator
+ * @param validator The given validator
  *
  * @note All return value see here: http://www.gnu.org/software/libc/manual/html_node/Regular-Expressions.html
  *

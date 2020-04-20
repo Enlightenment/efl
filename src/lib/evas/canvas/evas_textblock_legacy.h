@@ -1018,7 +1018,7 @@ EAPI void evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur);
  * Set the cursor pos.
  *
  * @param cur the cursor to be set.
- * @param pos the pos to set.
+ * @param _pos the pos to set.
  */
 EAPI void evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos);
 
@@ -1071,7 +1071,7 @@ EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *
 /** Get the object's content it options.
  *
  * @param obj The textblock object.
- * @param[out] options content fitting options.
+ * @param[out] p_options content fitting options.
  * @return Returns error code.
  */
 EAPI int evas_textblock_fit_options_get(const Evas_Object *obj,  unsigned int * p_options);

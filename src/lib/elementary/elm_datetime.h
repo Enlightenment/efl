@@ -274,7 +274,7 @@ EAPI const char *elm_datetime_format_get(const Evas_Object *obj);
  *
  * There is no provision to set the limits of AM/PM field.
  *
- * @param[in] fieldtype Type of the field. #ELM_DATETIME_YEAR etc.
+ * @param[in] type Type of the field. #ELM_DATETIME_YEAR etc.
  * @param[in] min Reference to field's minimum value.
  * @param[in] max Reference to field's maximum value.
  *

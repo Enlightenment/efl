@@ -998,8 +998,8 @@ EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsi
  *
  * @param output The Ecore_Drm_Output to set the mode on
  * @param mode A valid Ecore_Drm_Output_Mode to set or NULL to disable the output
- * @param X The X position to set this output to
- * @param Y The Y position to set this output to
+ * @param x The X position to set this output to
+ * @param y The Y position to set this output to
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *

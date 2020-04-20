@@ -836,10 +836,11 @@ EAPI void ecore_wl_server_mode_set(Eina_Bool on);
  * @brief Creates and returns a new subsurface.
  *
  * Create a new surface (and subsurface interface), with the parent surface
- * being the one associated with the given @param win.
+ * being the one associated with the given @p win.
  *
- * The @param win must be visible, otherwise there will be no surface created
+ * @p win must be visible, otherwise there will be no surface created
  * for it yet.
+ * @param win The window
  *
  * @return the allocated and initialized Ecore_Wl_Subsurf object, or
  * NULL on failure
@@ -900,8 +901,8 @@ EAPI void ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y);
  * @ingroup Ecore_Wl_Subsurf
  * @brief Places subsurface on layer above a reference surface.
  *
- * Moves the @param ess subsurface to just above the reference @param
- * surface, changing the z-order.  The reference @param surface must
+ * Moves the @p ess subsurface to just above the reference
+ * @p surface, changing the z-order.  The reference @p surface must
  * be either a sibling or parent surface, else a protocol error will
  * be generated.
  *
