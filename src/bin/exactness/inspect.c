@@ -318,7 +318,7 @@ _grp_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
               if (!compare)
                 {
                    Exactness_Unit *unit = efl_key_data_get(gl, "unit");
-                   sprintf(buf2, "Fonts directory: %s", unit->fonts_path ? unit->fonts_path : "None");
+                   snprintf(buf2, sizeof(buf2), "Fonts directory: %s", unit->fonts_path ? unit->fonts_path : "None");
                 }
               else
                 {
@@ -326,7 +326,7 @@ _grp_text_get(void *data, Evas_Object *gl, const char *part EINA_UNUSED)
                    Eo *gl2 = eina_list_nth(_gls, 1);
                    Exactness_Unit *unit1 = efl_key_data_get(gl1, "unit");
                    Exactness_Unit *unit2 = efl_key_data_get(gl2, "unit");
-                   sprintf(buf2, "Fonts directory comparison: "LDIFF(%s)"/"RDIFF(%s),
+                   snprintf(buf2, sizeof(buf2), "Fonts directory comparison: "LDIFF(%s)"/"RDIFF(%s),
                            unit1 ? unit1->fonts_path : "(NULL)", unit2 ? unit2->fonts_path : "(NULL)");
                 }
               return strdup(buf2);
