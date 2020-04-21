@@ -2855,10 +2855,10 @@ EAPI const Eolian_Error *eolian_type_error_get(const Eolian_Type *tp);
 /*
  * @brief Get whether the given type is moved with its parent type.
  *
- * This is only used for inner types of complex types, i.e. the types
- * inside the brackets of lists, arrays, hashes and so on. You can use
- * this to tell whether they belong to their parent type (i.e. whether
- * they are marked @move).
+ * This is only used for inner types of owning containers, i.e. arrays,
+ * lists, hashes and futures. View containers (accessors and iterators)
+ * are not allowed to own their contents (the Eolian syntax will not let
+ * you use the <tt>@move</tt> tag there).
  *
  * @param[in] tp the type.
  * @return EINA_TRUE when the type is marked move, EINA_FALSE otherwise.
