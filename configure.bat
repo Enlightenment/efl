@@ -54,11 +54,6 @@ exit /B 0
     :: Windows terminal specific options
     set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
 
-    :: ---------------------------------
-    :: Reimplementing libraries
-    set CFLAGS=-I%cd:\=/%/src/lib/evil %CFLAGS%
-    set CFLAGS=-I%cd:\=/%/src/lib/evil/unposix/ %CFLAGS%
-
 
     if defined VERBOSE (
         set CFLAGS=-v %CFLAGS%

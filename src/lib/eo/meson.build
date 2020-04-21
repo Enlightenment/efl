@@ -47,7 +47,7 @@ eo_lib = library('eo',
     eo_src, pub_eo_file_target,
     dependencies: [eina, valgrind, execinfo],
     install: true,
-    version : meson.project_version()
+    version : meson.project_version(),
 )
 
 eo_lib_dbg = library('eo_dbg',
@@ -55,7 +55,7 @@ eo_lib_dbg = library('eo_dbg',
     dependencies: [eina, valgrind, execinfo],
     install: true,
     c_args : '-DEO_DEBUG',
-    version : meson.project_version()
+    version : meson.project_version(),
 )
 
 eo = declare_dependency(

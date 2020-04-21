@@ -227,13 +227,13 @@ if sys_windows == true
   zlib_include_dir = zlib_project.get_variable('incdir')
 else
   zlib = dependency('zlib')
-  if cc.has_header_symbol('regex.h', 'regcomp') == false
+  if not cc.has_header_symbol('regex.h', 'regcomp')
     error('regcomp can not be found')
   endif
-endif
 
-if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
-  error('fnmatch can not be found')
+  if not cc.has_header_symbol('fnmatch.h', 'fnmatch')
+    error('fnmatch can not be found')
+  endif
 endif
 
 config_h.set('VMAJ', version_major)

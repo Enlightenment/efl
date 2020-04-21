@@ -374,7 +374,7 @@ execinfo = cc.find_library('execinfo', required: false)
 
 eina_lib = library('eina', sources,
   include_directories : config_dir,
-  dependencies: [execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil],
+  dependencies: [execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil, evil_unposix],
   install: true,
   version : meson.project_version()
 )

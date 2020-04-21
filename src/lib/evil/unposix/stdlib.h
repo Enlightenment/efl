@@ -3,7 +3,7 @@
 
 #include "unimplemented.h"
 
-#include <evil_stdlib.h>
+#include_next <stdlib.h>
 
 UNIMPLEMENTED inline int mkstemp(char* template)
 {
