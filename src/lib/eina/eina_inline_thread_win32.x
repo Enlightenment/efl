@@ -60,15 +60,13 @@ _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
       case EINA_THREAD_URGENT:
         nPriority = THREAD_PRIORITY_HIGHEST;
         break;
-      case EINA_THREAD_NORMAL:
-        nPriority = THREAD_PRIORITY_NORMAL;
-        break;
       case EINA_THREAD_BACKGROUND:
         nPriority = THREAD_PRIORITY_BELOW_NORMAL;
         break;
       case EINA_THREAD_IDLE:
         nPriority = THREAD_PRIORITY_IDLE;
         break;
+      case EINA_THREAD_NORMAL:
       default:
         nPriority = THREAD_PRIORITY_NORMAL;
         break;       
@@ -91,7 +89,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 
    thread_attr.lpThreadAttributes = &sec_attributes;
 
-   thread_attr.dwStackSize = 4000;
+   thread_attr.dwStackSize = 2*1024*1024;
    thread_attr.dwCreationFlags = 0;
 
    LPDWORD threadID;
