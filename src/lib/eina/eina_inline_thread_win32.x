@@ -18,6 +18,8 @@
 #ifndef EINA_INLINE_THREAD_WIN32_H_
 #define EINA_INLINE_THREAD_WIN32_H_
 
+#include "eina_thread_win32.h"
+
 typedef struct _Eina_Win32_Thread_Func
 {
    void *data;
@@ -31,7 +33,7 @@ typedef struct _Eina_Win32_Thread_Attr
    DWORD dwCreationFlags;
 } Eina_Win32_Thread_Attr;
 
-static inline void *
+static inline int *
 _eina_thread_join(Eina_Thread t)
 {
    int ret = (int)WaitForSingleObject(t, INFINITE);
