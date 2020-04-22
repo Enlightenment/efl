@@ -620,6 +620,14 @@ event_callback_that_quits_the_main_loop_when_called()
 }
 
 void
+smart_callback_that_stores_event_info_to_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   void **real_data = data;
+
+   *real_data = event_info;
+}
+
+void
 click_object_at(Eo *obj, int x, int y)
 {
    Evas *e = evas_object_evas_get(obj);
