@@ -524,7 +524,9 @@ click_part_flags_internal(Eo *obj, const char *part, int flags, Eina_Bool up)
    click_object_internal(content, dir, flags, up);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
-   edje_object_message_signal_process(obj);
+   /* can be false if obj is an elm_widget_item */
+   if (efl_isa(obj, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(obj);
    efl_unref(part_obj);
 }
 
