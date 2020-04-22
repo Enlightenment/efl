@@ -508,11 +508,14 @@ _feed_event_timer_cb(void *data EINA_UNUSED)
      }
    else
      {
-        if (act->type != EXACTNESS_ACTION_STABILIZE)
+        if (act && act->type != EXACTNESS_ACTION_STABILIZE)
           {
              act = eina_list_data_get(_cur_event_list);
-             DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
-             ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+             if (act && act->delay_ms)
+               {
+                  DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
+                  ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+               }
           }
      }
    return ECORE_CALLBACK_CANCEL;
@@ -549,8 +552,11 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
         if (_src_type != FTYPE_REMOTE && !_pause_request)
           {
              Exactness_Action *act = eina_list_data_get(_cur_event_list);
-             DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
-             ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+             if (act && act->delay_ms)
+               {
+                  DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
+                  ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+               }
           }
         need_more = STAB_MAX;
         return ECORE_CALLBACK_CANCEL;
