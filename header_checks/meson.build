@@ -226,7 +226,7 @@ if sys_windows == true
   zlib_dep = zlib_project.get_variable('zlib_dep')
   zlib_include_dir = zlib_project.get_variable('incdir')
 else
-  zlib = dependency('zlib')
+  zlib_dep = dependency('zlib')
   if not cc.has_header_symbol('regex.h', 'regcomp')
     error('regcomp can not be found')
   endif

@@ -24,14 +24,14 @@ if sys_windows
   evil_unposix_lib = static_library('evil_unposix',
     evil_unposix_src,
     include_directories: [include_directories('.'), config_dir],
-    dependencies : [],
+    dependencies : [pcre_dep],
     install: true,
     version: meson.project_version(),
   )
 
   evil_unposix = declare_dependency(
     include_directories: [include_directories('.')],
-    dependencies: [],
+    dependencies: [pcre_dep],
     link_with: evil_unposix_lib,
   )
 

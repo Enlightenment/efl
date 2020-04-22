@@ -1,7 +1,6 @@
-evil_deps = []
-evil_pub_deps = []
-
 if target_machine.system() == 'windows'
+  subdir('unposix')
+
   evil_src = [
     'evil_dlfcn.c',
     'evil_fcntl.c',
@@ -25,8 +24,11 @@ if target_machine.system() == 'windows'
   secur32 = cc.find_library('secur32')
   uuid = cc.find_library('uuid')
 
+  evil_deps = [psapi, ole32, ws2_32, secur32, uuid, pcre_dep, evil_unposix]
+  evil_pub_deps = [psapi, ole32, ws2_32, secur32, uuid, pcre_dep, evil_unposix]
+
   evil_lib = library('evil', evil_src,
-    dependencies : [psapi, ole32, ws2_32, secur32, uuid, pcre_dep, evil_unposix],
+    dependencies : evil_deps,
     include_directories : [config_dir],
     install: true,
     version: meson.project_version(),
@@ -34,7 +36,7 @@ if target_machine.system() == 'windows'
 
   evil = declare_dependency(
     include_directories: [include_directories('.')],
-    dependencies : [psapi, ole32, ws2_32, secur32, uuid, pcre_dep, evil_unposix],
+    dependencies : evil_pub_deps,
     link_with: evil_lib,
   )
 else

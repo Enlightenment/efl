@@ -1,6 +1,6 @@
-#ifndef __EVIL_PCRE_REGEX_H__
-#define __EVIL_PCRE_REGEX_H__
+#ifndef EVIL_PCRE_REGEX_H
+#define EVIL_PCRE_REGEX_H
 
-#include <pcreposix.h>
+#include <pcre.h>
 
 #endif
