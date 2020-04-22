@@ -95,7 +95,10 @@ ecore_file_app_installed(const char *exe)
    char  buf[PATH_MAX];
 
    if (!exe) return EINA_FALSE;
-   if (ecore_file_can_exec(exe)) return EINA_TRUE;
+   if (((!strncmp(exe, "/", 1)) ||
+        (!strncmp(exe, "./", 2)) ||
+        (!strncmp(exe, "../", 3))) &&
+       ecore_file_can_exec(exe)) return EINA_TRUE;
 
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
