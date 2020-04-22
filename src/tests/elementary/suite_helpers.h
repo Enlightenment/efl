@@ -56,6 +56,20 @@ do \
    ck_assert_int_eq(_sz.h, (height)); \
 } while (0)
 
+#define assert_object_width_eq(obj, width) \
+do \
+{ \
+   Eina_Size2D _sz = efl_gfx_entity_size_get((obj)); \
+   ck_assert_int_eq(_sz.w, (width)); \
+} while (0)
+
+#define assert_object_height_eq(obj, height) \
+do \
+{ \
+   Eina_Size2D _sz = efl_gfx_entity_size_get((obj)); \
+   ck_assert_int_eq(_sz.h, (height)); \
+} while (0)
+
 #define assert_object_pos_eq(obj, _x, _y) \
 do \
 { \
