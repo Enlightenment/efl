@@ -45,11 +45,12 @@ _eina_thread_join(Eina_Thread t)
 DWORD WINAPI 
 _eina_thread_func(void *params)
 {
-   return (DWORD)((Eina_Win32_Thread_Func *)params)->func((void *)
-((Eina_Win32_Thread_Func *)params)->data);
+   return (DWORD)((Eina_Win32_Thread_Func *)params)->
+      func((void *)((Eina_Win32_Thread_Func *)params)->data);
 }
 
-static inline void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
+static inline void
+_eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thread *t)
 {
 
    int nPriority = THREAD_PRIORITY_NORMAL;
@@ -68,6 +69,9 @@ static inline void _eina_thread_set_priority(Eina_Thread_Priority prio, Eina_Thr
       case EINA_THREAD_IDLE:
         nPriority = THREAD_PRIORITY_IDLE;
         break;
+      default:
+        nPriority = THREAD_PRIORITY_NORMAL;
+        break;       
      }
 
    SetThreadPriority((HANDLE)*t, nPriority);

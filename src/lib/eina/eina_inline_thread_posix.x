@@ -133,6 +133,7 @@ _eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
    return r == 0;
 }
 
-static inline void _eina_thread_cancel_checkpoint(){
+static inline void
+_eina_thread_cancel_checkpoint(){
    pthread_testcancel();
 }

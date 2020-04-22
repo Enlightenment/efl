@@ -119,27 +119,27 @@ _monitor(void *_data EINA_UNUSED)
 
       /* Some timer has been add/removed or we need to exit */
       if (ret)
-      {
-         char c;
-         if (read(pipeToThread[0], &c, 1) != 1) break;
-      }
+        {
+           char c;
+           if (read(pipeToThread[0], &c, 1) != 1) break;
+        }
       else
-      {
-         Eina_List *itr, *itr2, *renew = NULL;
-         Eina_Debug_Timer *t;
-         eina_spinlock_take(&_lock);
-         EINA_LIST_FOREACH_SAFE(_timers, itr, itr2, t)
-         {
-            if (itr == _timers || t->rel_time == 0)
-            {
-               _timers = eina_list_remove(_timers, t);
-               if (t->cb(t->data)) renew = eina_list_append(renew, t);
-               else free(t);
-            }
-         }
-         EINA_LIST_FREE(renew, t) _timer_append(t);
-         eina_spinlock_release(&_lock);
-      }
+        {
+           Eina_List *itr, *itr2, *renew = NULL;
+           Eina_Debug_Timer *t;
+           eina_spinlock_take(&_lock);
+           EINA_LIST_FOREACH_SAFE(_timers, itr, itr2, t)
+             {
+                if (itr == _timers || t->rel_time == 0)
+                  {
+                     _timers = eina_list_remove(_timers, t);
+                     if (t->cb(t->data)) renew = eina_list_append(renew, t);
+                     else free(t);
+                  }
+             }
+           EINA_LIST_FREE(renew, t) _timer_append(t);
+           eina_spinlock_release(&_lock);
+        }
    }
 #endif
    _thread_runs = EINA_FALSE;
