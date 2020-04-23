@@ -2077,7 +2077,7 @@ EAPI void                         ecore_imf_context_input_panel_position_set(Eco
  *
  * @param[in] ctx An #Ecore_IMF_Context
  * @param key The key of the prediction hint
- * @param data The data to replace
+ * @param value The data to replace
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * This function modifies the data of @p key with @p data in the hash associated @p

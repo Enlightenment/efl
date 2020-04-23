@@ -18,7 +18,7 @@ EAPI elm_atspi_text_text_attribute_free(Efl_Access_Text_Attribute *attr)
 EAPI void
 elm_atspi_text_text_range_free(Efl_Access_Text_Range *range)
 {
-   free(range->content);
+   free((char*)range->content);
    free(range);
 }
 

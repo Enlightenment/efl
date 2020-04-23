@@ -50,12 +50,10 @@ static char *
 _fallback_runtime_dir(const char *home)
 {
    char buf[PATH_MAX];
-#if defined(HAVE_GETUID)
-   uid_t uid = getuid();
-#endif
    struct stat st;
-
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   uid_t uid = getuid();
+
    if (setuid(geteuid()) != 0)
       {
          fprintf(stderr,

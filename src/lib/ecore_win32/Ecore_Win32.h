@@ -702,15 +702,12 @@ EAPI Eina_Bool ecore_win32_clipboard_set(const Ecore_Win32_Window *window,
  * @brief Get data from the clipboard.
  *
  * @param[in] window The window that owns the clipboard.
- * @param[out] data The retrieved data.
  * @param[out] size The size of the data.
  * @param[in] mime_type The mime type describing the data in the clipboard.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return The retrieved data.
  *
- * This function gets @p data of size @p size from the clipboard owned by
- * @p window. This function returns #EINA_TRUE on success, and
- * #EINA_FALSE otherwise. If @p window is @c NULL, this function returns
- * #EINA_FALSE. @p data and @p size must be valid buffers.
+ * This function gets data of size @p size from the clipboard owned by
+ * @p window. @p size must be a valid buffer.
  *
  * @since 1.24
  */

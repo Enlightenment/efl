@@ -2396,7 +2396,7 @@ EAPI int ecore_con_url_status_code_get(Ecore_Con_Url *url_con);
 /**
  * @brief Sets a maximum upload speed.
  *
- * @param url_con Connection object
+ * @param url_obj Connection object
  * @param max_speed Maximum upload speed, in bytes per second
  */
 EAPI void ecore_con_url_limit_upload_speed(Ecore_Con_Url *url_obj, off_t max_speed);
@@ -2404,7 +2404,7 @@ EAPI void ecore_con_url_limit_upload_speed(Ecore_Con_Url *url_obj, off_t max_spe
 /**
  * @brief Sets a maximum download speed.
  *
- * @param url_con Connection object
+ * @param url_obj Connection object
  * @param max_speed Maximum download speed, in bytes per second
  */
 EAPI void ecore_con_url_limit_download_speed(Ecore_Con_Url *url_obj, off_t max_speed);

@@ -17052,7 +17052,7 @@ _merge_to_first_text_nodes(const Evas_Object *eo_obj)
    all_cursors = eina_list_clone(o->cursors);
    all_cursors = eina_list_append(all_cursors, o->cursor);
 
-   while ((tn = _NODE_TEXT(EINA_INLIST_GET(o->text_nodes)->next)))
+   while (o->text_nodes && (tn = _NODE_TEXT(EINA_INLIST_GET(o->text_nodes)->next)))
      {
         fn = tn->format_node;
 

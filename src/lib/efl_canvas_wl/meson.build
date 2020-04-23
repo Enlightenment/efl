@@ -16,7 +16,7 @@ foreach eo_file : pub_eo_files
     input : eo_file,
     output : [eo_file + '.h'],
     depfile : eo_file + '.d',
-    install : true,
+    install : false,
     install_dir : dir_package_include,
     command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
@@ -53,8 +53,8 @@ install_headers(efl_canvas_wl_header_src,
 )
 
 eolian_efl_canvas_wl_dir = join_paths(eolian_include_dir, package_version_name)
-if get_option('install-eo-files')
-  install_data(pub_eo_files,
-    install_dir: eolian_efl_canvas_wl_dir
-  )
-endif
+#if get_option('install-eo-files')
+#  install_data(pub_eo_files,
+#    install_dir: eolian_efl_canvas_wl_dir
+#  )
+#endif

@@ -5,6 +5,7 @@
 #define _EFL_CANVAS_TEXTBLOCK_EO_CLASS_TYPE
 
 typedef Eo Efl_Canvas_Textblock;
+typedef Efl_Canvas_Textblock Efl_Canvas_Text;
 
 #endif
 

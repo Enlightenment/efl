@@ -17,6 +17,9 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
+  'elm_multibuttonentry_part.eo',
+  'elm_interface_scrollable.eo',
+  'elm_code_widget.eo',
 ]
 
 pub_eo_file_target = []
@@ -140,7 +143,6 @@ pub_eo_files = [
   'efl_access_window.eo',
   'efl_ui_theme.eo',
   'efl_config_global.eo',
-  'elm_code_widget.eo',
   'efl_ui_selection.eo',
   'efl_ui_dnd.eo',
   'efl_ui_focus_manager_window_root.eo',
@@ -160,8 +162,6 @@ pub_eo_files = [
   'efl_ui_radio_legacy_part.eo',
   'efl_ui_check_legacy_part.eo',
   'efl_ui_progressbar_legacy_part.eo',
-  'elm_multibuttonentry_part.eo',
-  'elm_interface_scrollable.eo',
   'efl_ui_image_zoomable_pan.eo',
   'efl_ui_textbox_part.eo',
   'efl_ui_caching_factory.eo',

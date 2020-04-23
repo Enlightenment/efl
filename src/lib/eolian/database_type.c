@@ -121,6 +121,8 @@ database_type_to_str(const Eolian_Type *tp,
         else
           eina_strbuf_append(buf, tp->base.c_name);
      }
+   else if (tp->type == EOLIAN_TYPE_ERROR)
+     eina_strbuf_append(buf, "Eina_Error");
    else if (tp->type == EOLIAN_TYPE_VOID)
      eina_strbuf_append(buf, "void");
    else if (tp->type == EOLIAN_TYPE_UNDEFINED)

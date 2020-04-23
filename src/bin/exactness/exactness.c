@@ -218,10 +218,8 @@ _run_command_prepare(const List_Entry *ent, char *buf)
    Eina_Strbuf *sbuf;
    const char *base_dir;
    Eina_List *itr;
-   Eina_Bool is_exu;
    EINA_LIST_FOREACH(_base_dirs, itr, base_dir)
      {
-        is_exu = EINA_TRUE;
         sprintf(scn_path, "%s/%s.exu", base_dir, ent->name);
         if (ecore_file_exists(scn_path)) goto ok;
      }
@@ -241,20 +239,12 @@ ok:
          _stabilize_shots ? "--stabilize-shots " : "",
          scn_path
          );
-   if (is_exu)
-     {
-        if (_mode == RUN_PLAY)
-           eina_strbuf_append_printf(sbuf, "-o '%s/%s/%s.exu' ", _dest_dir, CURRENT_SUBDIR, ent->name);
-        if (_mode == RUN_INIT)
-           eina_strbuf_append_printf(sbuf, "-o '%s' ", scn_path);
-     }
-   else
-     {
-        if (_mode == RUN_PLAY)
-           eina_strbuf_append_printf(sbuf, "-o '%s/%s' ", _dest_dir, CURRENT_SUBDIR);
-        if (_mode == RUN_INIT)
-           eina_strbuf_append_printf(sbuf, "-o '%s/%s' ", _dest_dir, ORIG_SUBDIR);
-     }
+
+   if (_mode == RUN_PLAY)
+      eina_strbuf_append_printf(sbuf, "-o '%s/%s/%s.exu' ", _dest_dir, CURRENT_SUBDIR, ent->name);
+   if (_mode == RUN_INIT)
+      eina_strbuf_append_printf(sbuf, "-o '%s' ", scn_path);
+
    if (ent->command)
      {
         eina_strbuf_append(sbuf, "-- ");

@@ -23,7 +23,7 @@ EAPI Eina_Strbuf *emile_base64_encode(const Eina_Binbuf *in);
 
 /**
  * @brief base64 url and filename safe encoding function.
- * @param src The buffer to be encoded.
+ * @param in The buffer to be encoded.
  * @return the base64 url encoded string.
  *
  * This will create a string which is base64 encoded with url and
@@ -37,7 +37,7 @@ EAPI Eina_Strbuf *emile_base64url_encode(const Eina_Binbuf *in);
 
 /**
  * @brief base64 decoding function.
- * @param src The string to be decoded.
+ * @param in The string to be decoded.
  * @return the base64 decoded buffer.
  *
  * This will create a buffer which is base64 decode of the src.
@@ -49,7 +49,7 @@ EAPI Eina_Binbuf* emile_base64_decode(const Eina_Strbuf *in);
 
 /**
  * @brief decoding function for base64 url and filename safe encoding.
- * @param src The string to be decoded.
+ * @param in The string to be decoded.
  * @return the base64 url decoded buffer.
  *
  * This will create a buffer which is base64 url decode of the src.

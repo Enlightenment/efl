@@ -696,7 +696,7 @@ EAPI Elm_Win_Indicator_Opacity_Mode elm_win_indicator_opacity_get(const Evas_Obj
 /**
  * @brief Sets whether the window is a keyboard.
  *
- * @param[in] mode If true, the window is a virtual keyboard..
+ * @param[in] is_keyboard If true, the window is a virtual keyboard..
  *
  * @ingroup Elm_Win
  */

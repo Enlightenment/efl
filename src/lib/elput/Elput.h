@@ -194,7 +194,6 @@ EAPI int elput_shutdown(void);
  *
  * @param seat
  * @param tty
- * @param sync
  *
  * @return A Elput_Manager on success, NULL on failure
  *

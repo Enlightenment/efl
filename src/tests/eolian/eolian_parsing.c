@@ -805,6 +805,7 @@ EFL_START_TEST(eolian_error)
    const Eolian_Function *f1, *f2;
    const Eolian_Type *rtp1, *rtp2;
    const Eolian_Error *err1, *err2;
+   Eina_Stringshare *str;
 
    Eolian_State *eos = eolian_state_new();
 
@@ -822,6 +823,9 @@ EFL_START_TEST(eolian_error)
    fail_if(eolian_type_type_get(rtp1) != EOLIAN_TYPE_ERROR);
    fail_if(eolian_type_next_type_get(rtp1) != NULL);
    fail_if(strcmp(eolian_type_name_get(rtp1), "Foo"));
+   fail_if(!(str = eolian_type_c_type_get(rtp1)));
+   fail_if(strcmp(str, "Eina_Error"));
+   eina_stringshare_del(str);
    fail_if(!(err1 = eolian_type_error_get(rtp1)));
    fail_if(strcmp(eolian_error_message_get(err1), "something bad happened"));
 

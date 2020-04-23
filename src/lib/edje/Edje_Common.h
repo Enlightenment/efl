@@ -1809,7 +1809,7 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
 /**
  * @brief Determines whether a group have 3D Scene.
  * @param f The mapped file
- * @param glob The group name
+ * @param group The group name
  *
  * @return @c 1 if a Scene is found is found, @c 0 otherwise
  *

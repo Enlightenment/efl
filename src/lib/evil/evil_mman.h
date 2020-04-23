@@ -146,7 +146,7 @@ EAPI int   munmap(void  *addr,
  *
  * @param addr Pointer to the base address.
  * @param len  Length of the memory.
- * @param New protection.
+ * @param prot New protection.
  * @return 0 on success, -1 otherwise.
  *
  * Changes protection for the calling process' memory page.

@@ -963,7 +963,7 @@ _ecore_drm_evdev_event_process(struct libinput_event *event)
 /**
  * @brief Set the axis size of the given device.
  *
- * @param dev The device to set the axis size to.
+ * @param edev The device to set the axis size to.
  * @param w The width of the axis.
  * @param h The height of the axis.
  *

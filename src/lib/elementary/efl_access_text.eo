@@ -31,7 +31,7 @@ struct @beta @free(elm_atspi_text_text_range_free) Efl.Access.Text_Range
    [[Text range]]
    start_offset: int; [[Range start offset]]
    end_offset : int; [[Range end offset]]
-   content: ptr(char); [[Range content]]
+   content: string; [[Range content]]
 }
 
 struct @beta Efl.Access.Text_Change_Info
