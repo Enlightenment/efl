@@ -21,9 +21,8 @@
 #endif
 
 #include <stdlib.h>
-
 #include "eina_config.h"
-#include "eina_lock.h" 
+#include "eina_lock.h"  //in case of a POSIX build, it will include pthread.h with proper flags
 #include "eina_thread.h"
 #include "eina_sched.h"
 #include "eina_cpu.h"
@@ -41,10 +40,6 @@
 #endif
 # include <string.h>
 
-#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
-# define cpu_set_t cpuset_t
-#endif
-
 EAPI const void *EINA_THREAD_JOIN_CANCELED = EINA_THREAD_CANCELED;
 
 EAPI Eina_Thread
@@ -58,7 +53,8 @@ eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
    return _eina_thread_equal(t1, t2);
 }
-static void *_eina_internal_call(void *context)
+static void *
+_eina_internal_call(void *context)
 {
    Eina_Thread_Call *c = context;
    void *r;

@@ -147,20 +147,21 @@ _eina_thread_cancel(Eina_Thread thread)
    return !success;
 }
 
-static inline UNIMPLEMENTED
-void _eina_thread_setcanceltype(int type, int *oldtype)
+UNIMPLEMENTED static inline void
+_eina_thread_setcanceltype(int type, int *oldtype)
 {
    #warning _eina_thread_setcanceltype is not implemented.
 }
 
-static inline UNIMPLEMENTED
-int _eina_thread_setcancelstate(int type, int *oldtype)
+UNIMPLEMENTED static inline int
+_eina_thread_setcancelstate(int type, int *oldtype)
 {
    #warning _eina_thread_setcancelstate is not implemented.
    return 0;
 }
-static inline UNIMPLEMENTED
-void _eina_thread_cancel_checkpoint(void)
+
+UNIMPLEMENTED static inline void
+_eina_thread_cancel_checkpoint(void)
 {
    #warning _eina_thread_cancel_checkpoint is not implemented.
 }
