@@ -196,7 +196,7 @@ if get_option('systemd') == true
   ecore_deps += systemd
 endif
 
-if (not sys_windows)
+if not sys_windows
   ecore_lib_deps = [m, buildsystem, ecore_deps]
 else
   ecore_lib_deps = [buildsystem, ecore_deps]

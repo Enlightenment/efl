@@ -11,14 +11,10 @@ subdir('common')
 
 inc_dir = config_dir
 common_deps = generic_deps
-if (sys_windows)
+if sys_windows
   inc_dir = [inc_dir, zlib_include_dir]
-  assert(inc_dir[0] == config_dir)
-  assert(inc_dir[1] == zlib_include_dir)
 else
   common_deps = [generic_deps, rt]
-  assert(common_deps[0] == generic_deps)
-  assert(common_deps[1] == rt)
 endif
 
 common = static_library('evas_loader_common',

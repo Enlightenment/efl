@@ -1,6 +1,6 @@
 
 bindings = get_option('bindings')
-if (not sys_windows)
+if not sys_windows
   bindings_order = ['luajit', 'cxx', 'mono']
 else
   bindings_order = ['lua', 'cxx', 'mono']

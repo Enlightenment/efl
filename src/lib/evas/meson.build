@@ -21,7 +21,7 @@ endif
 webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
 libopenjp2 = dependency('libopenjp2', required: get_option('evas-loaders-disabler').contains('jp2k') == false)
 
-if (sys_windows and get_option('evas-loaders-disabler').contains('generic'))
+if sys_windows and get_option('evas-loaders-disabler').contains('generic')
   rt = declare_dependency()
 endif
 

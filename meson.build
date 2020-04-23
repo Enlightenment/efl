@@ -395,14 +395,11 @@ subprojects = [
 ['efl'              ,[]                    , false,  true, false, false,  true, false, ['eo'], []],
 ['emile'            ,[]                    , false,  true, false, false,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
 ['eet'              ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'emile', 'efl'], []],
-['ecore'            ,[]                    , false,  true, false, false, false,
-  false, ['eina', 'eo', 'efl'], ['buildsystem']]]
+['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']]]
 
 if not sys_windows
   subprojects += [['eldbus'           ,[]                    , false,  true,
     true, false,  true,  true, ['eina', 'eo', 'efl'], []]]
-  assert(subprojects[-1] == ['eldbus'           ,[]                    , false,
-    true, true, false,  true,  true, ['eina', 'eo', 'efl'], []])
 endif
 
 subprojects += [
@@ -426,8 +423,6 @@ subprojects += [
 if not sys_windows
   subprojects +=  [['elput'            ,['drm']               , false,  true,
     false, false,  true, false, ['eina', 'eldbus'], []]]
-  assert(subprojects[-1] == ['elput'            ,['drm']               , false,
-    true, false, false,  true, false, ['eina', 'eldbus'], []])
 endif
 
 subprojects += [
@@ -454,13 +449,9 @@ subprojects += [
 if not sys_windows
   subprojects +=  [['elua'             ,['elua']              , false,  true,
     true, false,  true, false, ['eina', 'luajit'], []]]
-  assert(subprojects[-1] == ['elua'             ,['elua']              , false,
-    true, true, false,  true, false, ['eina', 'luajit'], []])
 else
   subprojects +=  [['elua'             ,['elua']              , false,  true,
     true, false,  true, false, ['eina', 'lua'], []]]
-  assert(subprojects[-1] == ['elua'             ,['elua']              , false,
-    true, true, false,  true, false, ['eina', 'lua'], []])
 endif
 
 subprojects += [
@@ -468,9 +459,6 @@ subprojects += [
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, ['eina'], []],
 ['exactness'        ,[]                    , false,  false,  true, false, false, false, ['eina, evas, eet'], []],
 ]
-
-assert(subprojects[-1] == ['exactness'        ,[]                    , false,
-  false,  true, false, false, false, ['eina, evas, eet'], []])
 
 # We generate Efl_Config.h and config.h later, they will be available here
 config_dir += include_directories('.')

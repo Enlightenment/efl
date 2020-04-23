@@ -1,7 +1,6 @@
 eet_deps = [crypto, jpeg, rg_etc]
 if not sys_windows
   eet_deps += m
-  assert(eet_deps[-1] == m)
 endif
 
 eet_pub_deps = [eina, emile, efl]
