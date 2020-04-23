@@ -13,10 +13,11 @@ group { name: "e/modules/cpufreq/main";
       public available_frequencies;
       public available_governors;
 
+//      public cur_freq_anim;
+
       public cur_freq_old;
       public cur_freq_new;
       public cur_freq_now;
-      public cur_freq_anim;
 
       public min_freq_old;
       public min_freq_new;
@@ -26,11 +27,9 @@ group { name: "e/modules/cpufreq/main";
       public max_freq_new;
       public max_freq_now;
 
-      public slide_cur_freq(val, Float:v) {
+      public show_freq(Float:v) {
          new Float:freq, Float:min_freq, Float:max_freq, Float:tf;
          new f, f0, f1;
-
-         v = (1.0 - cos(v * 3.141592654)) / 2.0;
 
          min_freq = fetch_int(available_frequencies, 0);
          max_freq = fetch_int(available_frequencies,
@@ -78,12 +77,16 @@ group { name: "e/modules/cpufreq/main";
          set_state_val(PART:"meter_max", STATE_MAP_ROT_Z, tf);
          set_state(PART:"meter_max", "custom", 0.0);
 
-         if (v >= 1.0) {
-            set_int(cur_freq_anim, 0);
-            return 0;
-         }
-         return 1;
       }
+//      public slide_cur_freq(val, Float:v) {
+//         v = (1.0 - cos(v * 3.141592654)) / 2.0;
+//         show_freq(v);
+//         if (v >= 1.0) {
+//            set_int(cur_freq_anim, 0);
+//            return 0;
+//         }
+//         return 1;
+//      }
 
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) { // add an available freq
@@ -104,8 +107,8 @@ group { name: "e/modules/cpufreq/main";
                append_str(available_governors, text);
             }
          } else if ((type == MSG_INT_SET) && (id == 3)) { // avg freq
-            new f;
-            new ani, curf, minf, maxf;
+//            new ani;
+            new f, curf, minf, maxf;
             new text[100];
 
             f = getarg(2);
@@ -118,11 +121,6 @@ group { name: "e/modules/cpufreq/main";
                         (f % 1000000) / 100000);
             }
             set_text(PART:"readout", text);
-
-            ani = get_int(cur_freq_anim);
-            if (ani > 0) cancel_anim(ani);
-            ani = anim(0.25, "slide_cur_freq", 0);
-            set_int(cur_freq_anim, ani);
 
             f = getarg(2);
             curf = get_int(cur_freq_now);
@@ -138,6 +136,13 @@ group { name: "e/modules/cpufreq/main";
             maxf = get_int(max_freq_now);
             set_int(max_freq_old, maxf);
             set_int(max_freq_new, f);
+
+//            ani = get_int(cur_freq_anim);
+//            if (ani > 0) cancel_anim(ani);
+//            ani = anim(0.2, "slide_cur_freq", 0);
+//            set_int(cur_freq_anim, ani);
+            show_freq(1.0);
+
          } else if ((type == MSG_STRING) && (id == 4)) {
             new text[100];
             snprintf(text, 100, "%s", getarg(2));
