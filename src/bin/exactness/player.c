@@ -508,11 +508,14 @@ _feed_event_timer_cb(void *data EINA_UNUSED)
      }
    else
      {
-        if (act->type != EXACTNESS_ACTION_STABILIZE)
+        if (act && act->type != EXACTNESS_ACTION_STABILIZE)
           {
              act = eina_list_data_get(_cur_event_list);
-             DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
-             ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+             if (act && act->delay_ms)
+               {
+                  DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
+                  ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+               }
           }
      }
    return ECORE_CALLBACK_CANCEL;
@@ -549,8 +552,11 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
         if (_src_type != FTYPE_REMOTE && !_pause_request)
           {
              Exactness_Action *act = eina_list_data_get(_cur_event_list);
-             DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
-             ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+             if (act && act->delay_ms)
+               {
+                  DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
+                  ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
+               }
           }
         need_more = STAB_MAX;
         return ECORE_CALLBACK_CANCEL;
@@ -883,15 +889,15 @@ _setup_dest_type(const char *dest, Eina_Bool external_injection)
         if (!strcmp(_dest + strlen(_dest) - 4,".exu"))
           {
              _dest_type = FTYPE_EXU;
-             /* Cut path at the beginning of the file name */
-             char *file_start = strrchr(dest, '/');
-             *file_start = '\0';
+             char *path = ecore_file_dir_get(dest);
 
-             if (!ecore_file_mkpath(dest))
+             if (!ecore_file_mkpath(path))
                {
-                  fprintf(stderr, "Path for %s cannot be created\n", dest);
+                  fprintf(stderr, "Path for %s cannot be created\n", _dest);
+                  free(path);
                   return EINA_FALSE;
                }
+             free(path);
           }
         else
           {
@@ -1014,8 +1020,11 @@ _write_unit_file(void)
         Exactness_Unit *tmp = NULL;
 
         EINA_SAFETY_ON_NULL_RETURN(_src_unit);
-        if (_src_type == FTYPE_EXU) tmp = exactness_unit_file_read(_src_filename);
-          _dest_unit->actions = tmp->actions;
+        if (_src_type == FTYPE_EXU)
+          {
+             tmp = exactness_unit_file_read(_src_filename);
+             _dest_unit->actions = tmp->actions;
+          }
         exactness_unit_file_write(_dest_unit, _dest);
      }
 }
