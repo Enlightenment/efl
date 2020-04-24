@@ -380,10 +380,8 @@ save:
                   int len = 0;
                   void *data = eet_read(ef0, keys[i], &len);
                   if ((data) && (len > 0))
-                    {
-                       eet_write(ef, keys[i], data, len, SHADER_BINARY_EET_COMPRESS);
-                       free(data);
-                    }
+                    eet_write(ef, keys[i], data, len, SHADER_BINARY_EET_COMPRESS);
+                  free(data);
                }
              free(keys);
           }
