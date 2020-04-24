@@ -2292,14 +2292,14 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         sy = tex->im->h - sh - sy;
      }
 
-   if (tex->im &&
+   else if (tex->im &&
        (tex->im->orient == EVAS_IMAGE_ORIENT_180))
      {
         sx = tex->im->w - sw - sx;
         sy = tex->im->h - sh - sy;
      }
 
-   if (tex->im &&
+   else if (tex->im &&
        (tex->im->orient == EVAS_IMAGE_ORIENT_270))
      {
         double tmp;
@@ -2310,19 +2310,19 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         sx = tex->im->w - sw - sx;
      }
 
-   if (tex->im &&
+   else if (tex->im &&
        (tex->im->orient == EVAS_IMAGE_FLIP_HORIZONTAL))
      {
         sx = tex->im->w - sw - sx;
      }
 
-   if (tex->im &&
+   else if (tex->im &&
        (tex->im->orient == EVAS_IMAGE_FLIP_VERTICAL))
      {
         sy = tex->im->h - sh - sy;
      }
 
-   if (tex->im &&
+   else if (tex->im &&
        (tex->im->orient == EVAS_IMAGE_FLIP_TRANSVERSE))
      {
         double tmp;
@@ -2334,7 +2334,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         sy = tex->im->h - sh - sy;
      }
 
-   if (tex->im &&
+   else if (tex->im &&
        (tex->im->orient == EVAS_IMAGE_FLIP_TRANSPOSE))
      {
         double tmp;
