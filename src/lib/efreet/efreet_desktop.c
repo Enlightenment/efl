@@ -777,7 +777,22 @@ efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini
     if (val) desktop->path = strdup(val);
 
     val = efreet_ini_string_get(ini, "StartupWMClass");
-    if (val) desktop->startup_wm_class = strdup(val);
+    if ((val) && (val[0]) && (val[1]))
+    {
+        size_t len = strlen(val);
+        if (((val[0] == '"')  && (val[len - 1] == '"') ) ||
+            ((val[0] == '\'') && (val[len - 1] == '\'')))
+        {
+            // fixup for some spec-violating apps that put startupwmclass
+            // in quotes... spec doesnt allow for this. just escapes.
+            char *tmpval = alloca(len - 1);
+            strncpy(tmpval, val + 1, len - 2);
+            tmpval[len - 2] = '\0';
+            desktop->startup_wm_class = strdup(tmpval);
+        }
+        else
+            desktop->startup_wm_class = strdup(val);
+    }
 
     val = efreet_ini_string_get(ini, "Categories");
     if (val)
