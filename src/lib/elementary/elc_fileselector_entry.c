@@ -444,7 +444,7 @@ _elm_fileselector_entry_efl_ui_view_model_get(const Eo *obj, Elm_Fileselector_En
    free(sd->path);
    sd->path = elm_entry_markup_to_utf8(elm_object_text_get(sd->entry));
 
-   if (!strcmp(sd->path, efl_io_model_path_get(bmodel)))
+   if (eina_streq(sd->path, efl_io_model_path_get(bmodel)))
      return bmodel;
 
    ret = efl_add_ref(efl_class_get(bmodel), (Eo*) obj,
