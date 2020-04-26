@@ -111,7 +111,7 @@ void
 test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
               void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *combobox;
+   Evas_Object *win, *bx, *combobox, *fr;
    Elm_Genlist_Item_Class *itc;
    win = elm_win_util_standard_add("combobox", "Combobox");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -128,6 +128,26 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    itc->func.state_get = gl_state_get;
    itc->func.filter_get = gl_filter_get;
    itc->func.del = NULL;
+
+   fr = elm_frame_add(win);
+   elm_object_style_set(fr, "pad_huge");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   combobox = elm_combobox_add(win);
+   evas_object_size_hint_weight_set(combobox, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(combobox, EVAS_HINT_FILL, 0);
+   elm_object_part_text_set(combobox, "guide", "Short List");
+   evas_object_smart_callback_add(combobox, "expanded",
+                                  _combobox_expanded_cb, NULL);
+   for (int i = 0; i < 5; i++)
+     elm_genlist_item_append(combobox, itc, (void *)(uintptr_t)i,
+                                   NULL, ELM_GENLIST_ITEM_NONE, NULL,
+                                   (void*)(uintptr_t)(i * 10));
+   elm_object_content_set(fr, combobox);
+   evas_object_show(combobox);
 
    combobox = elm_combobox_add(win);
    evas_object_size_hint_weight_set(combobox, EVAS_HINT_EXPAND, 0);
@@ -176,6 +196,24 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                   _gl_filter_finished_cb, NULL);
    elm_object_disabled_set(combobox, EINA_TRUE);
    elm_box_pack_end(bx, combobox);
+   evas_object_show(combobox);
+
+   fr = elm_frame_add(win);
+   elm_object_style_set(fr, "pad_huge");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   combobox = elm_combobox_add(win);
+   evas_object_size_hint_weight_set(combobox, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(combobox, EVAS_HINT_FILL, 0);
+   elm_object_part_text_set(combobox, "guide", "Short List");
+   for (int i = 0; i < 5; i++)
+     elm_genlist_item_append(combobox, itc, (void *)(uintptr_t)i,
+                                   NULL, ELM_GENLIST_ITEM_NONE, NULL,
+                                   (void*)(uintptr_t)(i * 10));
+   elm_object_content_set(fr, combobox);
    evas_object_show(combobox);
 
    evas_object_resize(win, 320, 500);
