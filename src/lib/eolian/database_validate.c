@@ -285,7 +285,8 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
 }
 
 static Eina_Bool
-_validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
+_validate_by_ref(Validate_State *vals, Eolian_Type *tp, Eina_Bool by_ref,
+                 Eina_Bool move)
 {
    Eina_Bool maybe_ownable =
      database_type_is_ownable(tp->base.unit, tp, EINA_FALSE, NULL);
@@ -300,6 +301,15 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
    /* futures can be whatever... */
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
      return EINA_TRUE;
+
+   if (tp->tdecl && (tp->tdecl->type == EOLIAN_TYPEDECL_STRUCT_OPAQUE))
+     {
+        if (vals->stable && !maybe_ownable && !by_ref)
+          {
+             _eo_parser_log(&tp->base, "opaque structs must be by reference");
+             return EINA_FALSE;
+          }
+     }
 
    /* not marked @move, or marked @by_ref; just validate */
    if (!move || by_ref)
@@ -322,7 +332,7 @@ _validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
    if (!_validate_type(vals, tp, by_ref, is_ret))
      return EINA_FALSE;
 
-   return _validate_by_ref(tp, by_ref, move);
+   return _validate_by_ref(vals, tp, by_ref, move);
 }
 
 static Eina_Bool
