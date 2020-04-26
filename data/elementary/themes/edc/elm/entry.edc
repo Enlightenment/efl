@@ -149,7 +149,7 @@ group { name: "elm/scroller/entry/default";
 }
 
 group { name: "elm/scroller/entry_single/default";
-   images.image: "shadow_circle_horiz.png" COMP;
+   alias: "elm/scroller/entry_single/combobox_vertical/default";
    images.image: "shadow_circle_vert.png" COMP;
 
    data.item: "focus_highlight" "on";
@@ -813,6 +813,8 @@ group { name: "elm/entry/base-nowrap/default";
 
 group { name: "elm/entry/base-single/default";
    inherit: "elm/entry/base/default";
+   alias: "elm/entry/base-single/combobox_vertical/default";
+   alias: "elm/entry/base-single/combobox_vertical/entry";
    styles {
       style { name: "entry_single_style";
          base: "font="FN" font_size=10 color=#a0a0a0 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";

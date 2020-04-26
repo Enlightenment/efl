@@ -573,15 +573,17 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          }
       }
       part { name: "button_image"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "limit0";
             rel2.to_x: "limit1";
             rel1.to_y: "elm.swallow.slot.top";
             rel2.to_y: "elm.swallow.slot.middle";
             rel2.relative: 1.0 0.0;
-            rel1.offset: 1 0;
-            rel2.offset: -2 1;
-            color: 80 80 80 255;
+            color: 96 96 96 255;
+            offscale;
+            rel1.offset: -5 -4;
+            rel2.offset: 9 1;
          }
          description { state: "bottom" 0.0;
             inherit: "default"  0.0;
@@ -589,11 +591,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             rel1.relative: 0.0 1.0;
             rel2.to_y: "elm.swallow.slot.bottom";
             rel2.relative: 1.0 1.0;
-            rel1.offset: 1 -2;
-            rel2.offset: -2 -1;
+            rel1.offset: -5 -2;
+            rel2.offset: 9 3;
          }
       }
       part { name: "limit0"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.slot.top";
             rel1.offset: 1 0;
@@ -603,6 +606,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             align: 0.0 0.5;
             min: 1 1;
             max: 1 99999;
+            offscale;
          }
          description { state: "bottom" 0.0;
             inherit: "default" 0.0;
@@ -610,6 +614,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          }
       }
       part { name: "limit1"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.slot.middle";
             rel1.offset: -1 0;
@@ -619,6 +624,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             align: 1.0 0.5;
             min: 1 1;
             max: 1 99999;
+            offscale;
          }
          description { state: "bottom" 0.0;
             inherit: "default" 0.0;
@@ -626,6 +632,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          }
       }
       part { name: "select_line"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             align: 1.0 0.5;
@@ -638,23 +645,24 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       part { name: "topclip"; type: RECT;
          description { state: "default" 0.0;
             rel2.to_y: "button_image";
-            rel2.offset: -1 -6;
          }
       }
       part { name: "elm.swallow.slot.top"; type: SWALLOW;
          clip_to: "topclip";
+         scale: 1;
          description { state: "default" 0.0;
             visible: 1;
             align: 0.0 0.0;
             fixed: 0 1;
             rel1.to: "elm.swallow.slot.middle";
             rel1.relative: 0.0 0.0;
-            rel1.offset: 0 -1;
+            rel1.offset: 6 -4;
             rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 1.0 0.0;
             /* set negative offset along x axis not to make
                "select_line" part exceed parent's width */
-            rel2.offset: -9 -1;
+            rel2.offset: -12 3;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -663,33 +671,32 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             align: 1.0 0.0;
-            rel2.offset: -9 -1;
          }
          description { state: "right_visible" 0.0;
             inherit: "default" 0.0;
             align: 1.0 1.0;
-            rel2.offset: -9 -1;
          }
       }
       part { name: "bottomclip"; type: RECT;
          description { state: "default" 0.0;
             rel1.to_y: "button_image";
-            rel1.offset: 0 3;
          }
       }
       part { name: "elm.swallow.slot.bottom"; type: SWALLOW;
          clip_to: "bottomclip";
+         scale: 1;
          description { state: "default" 0.0;
             align: 0.0 1.0;
             fixed: 0 1;
             rel1.to: "elm.swallow.slot.middle";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 1 0;
+            rel1.offset: 6 -2;
             rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 1.0 1.0;
             /* set negative offset along x axis not to make
                "select_line" part exceed parent's width */
-            rel2.offset: -9 -1;
+            rel2.offset: -12 -5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -698,12 +705,10 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             align: 1.0 1.0;
-            rel2.offset: -9 -1;
          }
          description { state: "right_visible" 0.0;
             inherit: "default" 0.0;
             align: 1.0 0.0;
-            rel2.offset: -9 -1;
          }
       }
       part { name: "elm.swallow.slot.middle"; type: SWALLOW;
