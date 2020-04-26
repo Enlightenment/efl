@@ -344,9 +344,6 @@ group { name: "e/fileman/default/icon/fixed";
               font: FN; size: 10;
               min: 0 1;
             }
-//            text.text: "XXXX";
-//            visible: 1;
-//            color: 255 0 0 255;
             offscale;
          }
       }
