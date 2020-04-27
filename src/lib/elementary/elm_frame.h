@@ -22,11 +22,11 @@
  *
  * Of all this styles only default shows the title.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for frame objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "clicked" - The user has clicked the frame's label
  * - @c "language,changed" - the program's language changed (since 1.9)
  *

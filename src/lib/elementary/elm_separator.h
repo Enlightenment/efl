@@ -9,10 +9,10 @@
  *
  * A separator can be vertical or horizontal.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for separator objects.
  *
- * This widget emits the signals coming from @ref Layout.
+ * This widget emits the signals coming from @ref Elm_Layout.
  *
  * @ref tutorial_separator is a good example of how to use a separator.
  * @{

@@ -16,11 +16,11 @@
  * so that it helps the user to reach an item which is distant from
  * the current selection.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for flip selector objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "selected" - when the widget's selected text item is changed. The @c
  *   event_info parameter is the item that was selected.
  * - @c "overflowed" - when the widget's current selection is changed

@@ -174,11 +174,11 @@
  *
  * <b>export ELM_MODULES="datetime_input_ctxpopup>datetime/api"</b>
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for datetime objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @b "changed" - whenever Datetime field value is changed, this
  * signal is sent.
  * @li @b "language,changed" - whenever system locale changes, this

@@ -31,9 +31,9 @@
  * possible, but it's sized vertically the most it needs to fit its\
  * contents.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for inner windown objects. It also
- * emits the signals inherited from @ref Layout.
+ * emits the signals inherited from @ref Elm_Layout.
  *
  * Default content parts of the inwin that you can use for are:
  * @li "default" A content of the inwin

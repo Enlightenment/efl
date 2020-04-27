@@ -12,7 +12,7 @@
  * always have a small minimum size by default as it won't be limited
  * by the contents of the scroller.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for scroller objects.
  *
  * This widget emits the following signals, besides the ones sent from

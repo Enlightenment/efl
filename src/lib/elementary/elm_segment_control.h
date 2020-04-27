@@ -21,11 +21,11 @@
  * Only one segment item can be at selected state. A segment item can display
  * combination of Text and any Evas_Object like Images or other widget.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for segment control objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - When the user clicks on a segment item which is not
  *   previously selected and get selected. The event_info parameter is the
  *   segment item pointer.

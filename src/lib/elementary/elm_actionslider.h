@@ -25,11 +25,11 @@
  *
  * @note By default all positions are set as enabled.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for actionslider objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "selected" - when user selects an enabled position (the
  *              label is passed as event info).
  * @li @c "pos_changed" - when the indicator reaches any of the

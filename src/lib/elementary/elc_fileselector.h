@@ -38,7 +38,7 @@
  * functions acting on it also work for file selector objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "activated" - the user activated a file. This can happen by
  *      double-clicking or pressing Enter key. (@p event_info is a
  *      pointer to the activated file path)

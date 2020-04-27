@@ -28,11 +28,11 @@
  * Custom themes can of course invent new markup tags and style them any way
  * they like.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for label objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "language,changed": The program's language changed.
  * @li @c "slide,end": The slide is end.
  *

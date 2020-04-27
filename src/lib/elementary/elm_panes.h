@@ -17,11 +17,11 @@
  * Panes can be split vertically or horizontally, and contents
  * size proportion can be customized (homogeneous by default).
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for panes objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "press" - The panes has been pressed (button wasn't released yet).
  * - @c "unpress" - The panes was released after being pressed.
  * - @c "clicked" - The panes has been clicked>
