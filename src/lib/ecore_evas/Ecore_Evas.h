@@ -202,7 +202,7 @@ EAPI int         ecore_evas_shutdown(void);
  * Turns on client+server synchronized rendering in X11.  App comp sync
  * is disabled by default, but can be turned on optionally.
  *
- * @note This is an experimental functionality and is likely to be removed.
+ * @warning This is a deprecated API. DO NOT USE.
  *
  * @param do_sync True to enable comp syncing, False to disable
  */
@@ -213,7 +213,7 @@ EAPI void        ecore_evas_app_comp_sync_set(Eina_Bool do_sync);
  *
  * @return True if app comp sync is enabled.
  *
- * @note This is an experimental functionality and is likely to be removed.
+ * @warning This is a deprecated API. DO NOT USE.
  *
  */
 EAPI Eina_Bool   ecore_evas_app_comp_sync_get(void);
@@ -2891,8 +2891,7 @@ EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
  * set via the ECORE_EVAS_COMP_NOSYNC / ECORE_EVAS_COMP_SYNC
  * environmental variables.
  *
- * @note This is an experimental functionality and is likely to be
- * removed in future versions of EFL.
+ * @warning This is a deprecated API. DO NOT USE.
  */
 EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync);
 
@@ -2902,8 +2901,7 @@ EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync);
  * @param ee An @c Ecore_Evas handle
  * @return True if composition synchronization is enabled, False otherwise
  *
- * @note This is an experimental functionality and is likely to be
- * removed in future versions of EFL.
+ * @warning This is a deprecated API. DO NOT USE.
  */
 EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
 
