@@ -2480,7 +2480,10 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
-   efl_file_unload(obj);
+   if (efl_file_loaded_get(obj))
+     efl_file_unload(obj);
+   else
+     _efl_ui_image_file_set_do(obj);
 
    evas_object_image_memfile_set
      (sd->img, (void *)img, size, (char *)format, (char *)key);
