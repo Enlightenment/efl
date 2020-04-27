@@ -1596,7 +1596,7 @@ EAPI Eina_Bool evas_object_visible_get(const Evas_Object *obj);
  * @param[in] w Integer to use as the maximum width hint.
  * @param[in] h Integer to use as the maximum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1613,7 +1613,7 @@ EAPI void evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coo
  * @param[out] w Integer to use as the maximum width hint.
  * @param[out] h Integer to use as the maximum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -1631,7 +1631,7 @@ EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, E
  * @param[in] w Integer to use as the preferred width hint.
  * @param[in] h Integer to use as the preferred height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1648,7 +1648,7 @@ EAPI void evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas
  * @param[out] w Integer to use as the preferred width hint.
  * @param[out] h Integer to use as the preferred height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -1666,7 +1666,7 @@ EAPI void evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *
  * @param[in] w Integer to use as the minimum width hint.
  * @param[in] h Integer to use as the minimum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1681,7 +1681,7 @@ EAPI void evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coo
  * See also @ref evas_object_clip_set, @ref evas_object_clipees_get and
  * @ref evas_object_clip_get.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_clip_unset(Evas_Object *obj);
 
@@ -1698,7 +1698,7 @@ EAPI void evas_object_clip_unset(Evas_Object *obj);
  * @param[out] w Integer to use as the minimum width hint.
  * @param[out] h Integer to use as the minimum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -1716,7 +1716,7 @@ EAPI void evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, E
  * @param[in] t Integer to specify top padding.
  * @param[in] b Integer to specify bottom padding.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b);
 
@@ -1737,7 +1737,7 @@ EAPI void evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas
  * @param[out] t Integer to specify top padding.
  * @param[out] b Integer to specify bottom padding.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
 
@@ -1762,7 +1762,7 @@ EAPI void evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *
  * @param[in] x Non-negative double value to use as horizontal weight hint.
  * @param[in] y Non-negative double value to use as vertical weight hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y);
 
@@ -1785,7 +1785,7 @@ EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
  * @param[out] x Non-negative double value to use as horizontal weight hint.
  * @param[out] y Non-negative double value to use as vertical weight hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y);
 
@@ -1816,7 +1816,7 @@ EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, do
  * @param[in] y Double, ranging from 0.0 to 1.0 or with the special value
  * #EVAS_HINT_FILL, to use as vertical alignment hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_align_set(Evas_Object *obj, double x, double y);
 
@@ -1836,7 +1836,7 @@ EAPI void evas_object_size_hint_align_set(Evas_Object *obj, double x, double y);
  * @param[out] y Double, ranging from 0.0 to 1.0 or with the special value
  * #EVAS_HINT_FILL, to use as vertical alignment hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y);
 
@@ -1857,7 +1857,7 @@ EAPI void evas_object_size_hint_align_get(const Evas_Object *obj, double *x, dou
  * @param[in] w Integer to use as aspect width ratio term.
  * @param[in] h Integer to use as aspect height ratio term.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h);
 
@@ -1880,7 +1880,7 @@ EAPI void evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control
  * @param[out] w Integer to use as aspect width ratio term.
  * @param[out] h Integer to use as aspect height ratio term.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h);
 
@@ -1911,7 +1911,7 @@ typedef Efl_Gfx_Hint_Mode             Evas_Display_Mode;
  *
  * @param[in] dispmode Display mode hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 
@@ -2096,7 +2096,7 @@ EAPI void evas_object_lower(Evas_Object *obj);
  * @param[in] is_static_clip @c true if it's to be used as a static clipper,
  * @c false otherwise.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip);
 
@@ -2118,7 +2118,7 @@ EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip
  *
  * @return A list of objects being clipped by @c obj.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -2131,7 +2131,7 @@ EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_
  *
  * @since 1.8
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -2179,7 +2179,7 @@ typedef enum
  * @param[in] render_op One of the Evas_Render_Op values. Only blend (default)
  * and copy modes are supported.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op);
 
@@ -2190,7 +2190,7 @@ EAPI void evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op);
  * @return One of the Evas_Render_Op values. Only blend (default) and copy
  * modes are supported.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
 
@@ -2199,7 +2199,7 @@ EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
  *
  * @return @c true if it's to be used as a static clipper, @c false otherwise.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
 
@@ -2217,7 +2217,7 @@ EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
  * @param[in] obj The object.
  * @param[in] scale The scaling factor. 1.0 means no scaling, default size.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_scale_set(Evas_Object *obj, double scale);
 
@@ -2228,7 +2228,7 @@ EAPI void evas_object_scale_set(Evas_Object *obj, double scale);
  *
  * @return The scaling factor. 1.0 means no scaling, default size.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI double evas_object_scale_get(const Evas_Object *obj);
 
@@ -2241,7 +2241,7 @@ EAPI double evas_object_scale_get(const Evas_Object *obj);
  *
  * @since 1.20
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_pointer_inside_by_device_get(const Evas_Object *obj, Efl_Input_Device * dev);
 
@@ -2261,7 +2261,7 @@ EAPI Eina_Bool evas_object_pointer_inside_by_device_get(const Evas_Object *obj, 
  * @return @c true if the mouse pointer is inside the object, @c false
  * otherwise
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -2282,7 +2282,7 @@ EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_
  *
  * @return @c true if the coords are inside the object, @c false otherwise
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 
 EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y) EINA_WARN_UNUSED_RESULT;
@@ -8351,7 +8351,7 @@ EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
  *
  * @param[in] enabled Enabled state.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
 
