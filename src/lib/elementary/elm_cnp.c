@@ -51,7 +51,7 @@ _elm_sel_format_to_mime_type(Elm_Sel_Format format)
    return ret;
 }
 
-static inline const Elm_Sel_Format
+static inline Elm_Sel_Format
 _mime_type_to_elm_sel_format(const char *mime_type)
 {
    if (eina_streq(mime_type, "text/vcard"))
