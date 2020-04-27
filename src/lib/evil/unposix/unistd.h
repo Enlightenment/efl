@@ -8,7 +8,8 @@
 #define R_OK 4
 #define X_OK 0
 
-UNIMPLEMENTED extern char *optarg;
-UNIMPLEMENTED extern int optind, opterr, optopt;
+#include <getopt.h>
+
+#include <evil_private.h>
 
 #endif

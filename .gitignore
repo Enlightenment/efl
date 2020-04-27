@@ -102,4 +102,5 @@ env.bat
 # Subprojects
 subprojects/pcre-*
 subprojects/zlib-*
+subprojects/getopt
 subprojects/packagecache
