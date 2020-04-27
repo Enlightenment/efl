@@ -209,10 +209,8 @@ _table_resize(void *data)
         else win_y_offset = obj_y;
 
         if (current_height < win_y_offset)
-          evas_object_size_hint_min_set(sd->spacer, obj_w * elm_config_scale_get(),
-                                        current_height + (2 * elm_config_scale_get()));
-        else evas_object_size_hint_min_set(sd->spacer, obj_w * elm_config_scale_get(),
-                                           win_y_offset * elm_config_scale_get());
+          evas_object_size_hint_min_set(sd->spacer, obj_w, current_height);
+        else evas_object_size_hint_min_set(sd->spacer, obj_w, win_y_offset);
      }
 }
 

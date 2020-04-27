@@ -325,10 +325,9 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
    char tmp_file_name[PATH_MAX + PATH_MAX + 128];
    int tmpfd = -1, copy;
    Eina_Tmpstr *tmp_file_path = NULL;
-   Eet_File *ef = NULL;
+   Eet_File *ef = NULL, *ef0 = NULL;
    Evas_GL_Program *p;
    Eina_Iterator *it;
-   char pname[32];
 
    /* use eet */
    if (!eet_init()) return 0;
@@ -360,24 +359,40 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
      }
 
 save:
-   ef = eet_open(tmp_file_path, copy ? EET_FILE_MODE_READ_WRITE : EET_FILE_MODE_WRITE);
+   ef = eet_open(tmp_file_path, EET_FILE_MODE_WRITE);
    if (!ef) goto error;
+
+   if (copy) ef0 = shared->shaders_cache;
 
    if (!_evas_gl_common_shader_binary_checksum_write(shared, ef))
      goto error;
 
+   if (ef0)
+     {
+        char **keys;
+        int keys_num = 0, i;
+
+        keys = eet_list(ef0, "/shader/*", &keys_num);
+        if (keys)
+          {
+             for (i = 0; i < keys_num; i++)
+               {
+                  int len = 0;
+                  void *data = eet_read(ef0, keys[i], &len);
+                  if ((data) && (len > 0))
+                    eet_write(ef, keys[i], data, len, SHADER_BINARY_EET_COMPRESS);
+                  free(data);
+               }
+             free(keys);
+          }
+     }
    it = eina_hash_iterator_data_new(shared->shaders_hash);
    EINA_ITERATOR_FOREACH(it, p)
      {
         if (!p->bin_saved)
           {
-             int len = 0;
-             sprintf(pname, SHADER_PROG_NAME_FMT, p->flags);
-             eet_read_direct(ef, pname, &len);
-             if (len > 0)
-               p->bin_saved = 1; // assume bin data is correct
-             else
-               _evas_gl_common_shader_program_binary_save(p, ef);
+             if (_evas_gl_common_shader_program_binary_save(p, ef))
+               p->bin_saved = 1;
           }
      }
    eina_iterator_free(it);
