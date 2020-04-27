@@ -261,3 +261,9 @@
  *
  * @brief Physics simulation integration and visual effects.
  */
+
+/**
+ * @defgroup Elementary Elementary
+ *
+ * @brief Widget library (See the @ref elementary_main main page).
+ */
