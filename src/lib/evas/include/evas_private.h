@@ -453,6 +453,7 @@ struct _Evas_Public_Data
    Eina_Array     image_unref_queue;
    Eina_Array     glyph_unref_queue;
    Eina_Array     texts_unref_queue;
+   Eina_Array     map_clip_objects;
    Eina_List     *finalize_objects;
 
    struct {

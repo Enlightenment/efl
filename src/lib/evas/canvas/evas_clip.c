@@ -74,30 +74,30 @@ evas_object_recalc_clippees(Evas_Object_Protected_Data *obj)
 
 #define MAP_ACROSS 1
 static void
-evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *map_obj, Eina_Bool force, Eina_Hash *visited)
+evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *map_obj, Eina_Bool force, Eina_Array* visited)
 {
 #ifdef MAP_ACROSS
    Eina_Bool clear_visited = EINA_FALSE;
-
    if (!visited)
      {
-        visited = eina_hash_pointer_new(NULL);
+        visited = &obj->layer->evas->map_clip_objects;
         clear_visited = EINA_TRUE;
      }
-   if (eina_hash_find(visited, &eo_obj) == (void *)1) goto end;
-   else eina_hash_add(visited, &eo_obj, (void *)1);
-   
+
+   if (eina_array_find(visited, (void*) eo_obj, NULL)) goto end;
+   else eina_array_push(visited, (void*) eo_obj);
+
    if ((obj->map->cur.map_parent != map_obj) || force)
      {
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->cur.map_parent = map_obj;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
 
-	EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-	  {
-	    state_write->cache.clip.dirty = 1;
-	  }
-	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->cache.clip.dirty = 1;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
         evas_object_clip_recalc(obj);
         if (obj->is_smart)
@@ -125,8 +125,9 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
                }
           }
      }
-end:   
-   if (clear_visited) eina_hash_free(visited);
+
+end:
+   if (clear_visited) eina_array_clean(visited);
 #endif
 }
 
