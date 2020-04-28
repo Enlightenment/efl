@@ -1038,11 +1038,13 @@ group { name: "elm/button/base/hoversel_vertical/default";
 
    parts {
       text { "elm.text";
+         scale: 1;
          desc { "default";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
+            offscale;
          }
          desc { "visible"; inherit;
             fixed: 0 0;
