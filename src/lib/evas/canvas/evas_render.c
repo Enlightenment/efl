@@ -4127,6 +4127,7 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *evas)
    OBJS_ARRAY_FLUSH(&evas->delete_objects);
    OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
    OBJS_ARRAY_FLUSH(&evas->temporary_objects);
+   OBJS_ARRAY_FLUSH(&evas->map_clip_objects);
    eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
    eina_array_clean(&evas->clip_changes);
 
@@ -4243,6 +4244,7 @@ if (Cow) while (eina_cow_gc(Cow))
    OBJS_ARRAY_FLUSH(&evas->delete_objects);
    OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
    OBJS_ARRAY_FLUSH(&evas->temporary_objects);
+   OBJS_ARRAY_FLUSH(&evas->map_clip_objects);
    eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
    eina_array_clean(&evas->clip_changes);
 
@@ -4268,6 +4270,7 @@ evas_render_invalidate(Evas *eo_e)
    OBJS_ARRAY_FLUSH(&e->delete_objects);
 
    OBJS_ARRAY_FLUSH(&e->snapshot_objects);
+   OBJS_ARRAY_FLUSH(&e->map_clip_objects);
 
    e->invalidate = EINA_TRUE;
 }
