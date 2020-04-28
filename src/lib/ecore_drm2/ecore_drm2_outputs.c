@@ -250,7 +250,7 @@ _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 }
 
 static int
-_output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm2_Device *dev)
+_output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, int fd)
 {
    drmModeEncoder *enc;
    uint32_t crtc;
@@ -267,7 +267,7 @@ _output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm
 
    for (j = 0; j < conn->count_encoders; j++)
      {
-        enc = sym_drmModeGetEncoder(dev->fd, conn->encoders[j]);
+        enc = sym_drmModeGetEncoder(fd, conn->encoders[j]);
         if (!enc) continue;
 
         crtc = enc->crtc_id;
@@ -678,7 +678,7 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    if (w) *w = 0;
 
-   i = _output_crtc_find(res, conn, dev);
+   i = _output_crtc_find(res, conn, dev->fd);
    if (i < 0) return EINA_FALSE;
 
    output = calloc(1, sizeof(Ecore_Drm2_Output));
