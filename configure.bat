@@ -116,7 +116,7 @@ exit /B 0
         call %vcvars64%
     )
     meson build %MESONFLAGS:            = %
-exit /B 0
+exit /B %ERRORLEVEL%
 
 :save_old_vars
     @echo ------------------------------
@@ -146,5 +146,5 @@ exit /B 0
     call :save_old_vars
     call :check_env_vars || (echo Environment Variables check failed) && exit /B 1
     call :setup_flags
-    call :generate_build
+    call :generate_build || (echo Meson failed) && exit /B 1
     call :restore_old_vars

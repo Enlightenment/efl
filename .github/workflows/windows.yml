@@ -1,0 +1,88 @@
+name: EFL on Windows
+
+on:
+  push:
+  pull_request:
+    branches: [ devs/expertise/native-windows ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Nasm install
+      uses: actions/cache@v1
+      id: cache-nasm
+      env:
+        cache-name: cache-nasm
+      with:
+        path: "C:\\Program Files\\Nasm"
+        key: cache-nasm-v1
+        restore-keys: cache-nasm-v1
+    - name: Cache LLVM install
+      uses: actions/cache@v1
+      id: cache-llvm
+      env:
+        cache-name: cache-llvm
+      with:
+        path: "C:\\Program Files\\LLVM"
+        key: cache-llvm-v10.0.0.0-1
+        restore-keys: cache-llvm-v10.0.0.0-1
+    - name: Install LLVM
+      if: steps.cache-llvm.outputs.cache-hit != 'true'
+      run: choco install llvm
+    - name: Add clang-cl to PATH
+      run: echo "::add-path::C:\Program Files\LLVM\bin"
+    - name: Search clang-cl
+      run: clang-cl -v
+    - name: install nasm
+      if: steps.cache-nasm.outputs.cache-hit != 'true'
+      run: choco install nasm
+    - name: Add Nasm to PATH
+      run: echo "::add-path::C:\Program Files\Nasm"
+#    - name: test nasm
+#      run: nasm.exe -v
+    - name: install ninja
+      # unexplicably, installation returns error code 1 if a cache location is used
+      run: choco install ninja
+    - name: test ninja
+      run: ninja --version
+    - name: install meson
+      run: py -3 -m pip install meson
+    - name: add meson to path
+      run: echo "::add-path::C:\hostedtoolcache\windows\Python\3.8.2\x64\Scripts"
+    - name: test meson
+      run: meson -v
+    - name: Cache OpenSSL compilation
+      id: cache-openssl
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-openssl-compilation
+      with:
+        path: openssl
+        key: openssl-1_1_1g
+        restore-keys: openssl-1_1_1g
+    - name: Download openssl source
+      if: steps.cache-openssl.outputs.cache-hit != 'true'
+      run: git clone -b OpenSSL_1_1_1g https://github.com/openssl/openssl
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+    - name: Show from where clang-cl
+      run: where clang-cl
+    - name: Configure OpenSSL
+      if: steps.cache-openssl.outputs.cache-hit != 'true'
+      run: perl Configure VC-WIN64A
+      working-directory: .\openssl
+    - name: Compile OpenSSL
+      if: steps.cache-openssl.outputs.cache-hit != 'true'
+      run: nmake
+      working-directory: .\openssl
+    - name: configure
+      run: .\configure.bat
+      env:
+        OPENSSL_DIR: ${{ github.workspace }}\openssl
+    - name: Build
+      run: .\build.bat

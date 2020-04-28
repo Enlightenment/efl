@@ -18,3 +18,4 @@ ninja %NINJAFLAGS% -C build
 
 set vcvars64=%__OLD_vcvars64%
 set __OLD_vcvars64=
+exit /B %ERRORLEVEL%
