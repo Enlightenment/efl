@@ -15,8 +15,6 @@
  */
 #include <Efl_Ui.hh>
 
-#warning This example can not be implemented with EO APIs... FIXME
-
 EAPI_MAIN int
 elm_main (int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
