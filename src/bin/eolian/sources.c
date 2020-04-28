@@ -682,7 +682,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                eina_strbuf_append_char(params_full_imp, ' ');
              eina_strbuf_append(params_full_imp, add_star);
              eina_strbuf_append(params_full_imp, prn);
-             if (!dfv && is_empty)
+             if ((!dfv || ftype == EOLIAN_PROP_SET) && is_empty)
                eina_strbuf_append(params_full_imp, " EINA_UNUSED");
              eina_strbuf_append(params, prn);
 
