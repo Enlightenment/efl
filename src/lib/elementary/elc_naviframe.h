@@ -55,7 +55,7 @@
  *
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "transition,finished" - When the transition is finished in
  *                                changing the item
  * @li @c "title,transition,finished" - When the title area's transition

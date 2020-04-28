@@ -33,11 +33,11 @@
  * am/pm indicator may be optionally shown, too, when it will
  * switch to 12h.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for clock objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - the clock's user changed the time
  * - @c "focused" - When the clock ehas received focus. (since 1.8)
  * - @c "unfocused" - When the clock has lost focus. (since 1.8)

@@ -30,11 +30,11 @@
  * Applications can query the progress bar for its value with
  * elm_progressbar_value_get().
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for progress bar objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "changed" - when the value is changed (since 1.7)
  * @li @c "focused" - When the progressbar has received focus. (since 1.8)
  * @li @c "unfocused" - When the progressbar has lost focus. (since 1.8)

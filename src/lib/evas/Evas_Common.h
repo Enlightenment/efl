@@ -1261,9 +1261,10 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  */
 
 /**
- * @defgroup Evas_Image_Group Image Functions
+ * @defgroup Evas_Image Image Functions
  *
- * Functions that deal with images at canvas level.
+ * Functions that deal with images at canvas level. Compare with
+ * @ref Evas_Object_Image functions which deal with images at the object level.
  *
  * @ingroup Evas_Canvas
  */

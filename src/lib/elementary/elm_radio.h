@@ -33,11 +33,11 @@
  * The radio objects will modify this directly. That implies the pointer must
  * point to valid memory for as long as the radio objects exist.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for radio objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "changed" - This is called when the radio object is selected. If you
  * want to trace the state change of a radio group, you should add this callback
  * to all the radio objects in that group.

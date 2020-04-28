@@ -68,11 +68,11 @@
  * evas_object_show on popup should be called after setting all the contents
  * and buttons of popup.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for popup objects (since 1.8).
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "timeout" - whenever popup is closed as a result of timeout.
  * @li @c "block,clicked" - whenever user taps on Blocked Event area.
  * @li @c "focused" - When the popup has received focus. (since 1.8)

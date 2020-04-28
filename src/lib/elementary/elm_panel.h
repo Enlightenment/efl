@@ -18,11 +18,11 @@
  * @li #ELM_PANEL_ORIENT_RIGHT
  * @li #ELM_PANEL_ORIENT_BOTTOM
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for panel objects (since 1.8).
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "toggled" : When the panel has been toggled. (since 1.18)
  * @li @c "scroll" : When the content has been scrolled (moved). (since 1.10)
  *        This signal is emitted only when the panel is scrollable.

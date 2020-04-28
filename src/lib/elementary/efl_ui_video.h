@@ -26,16 +26,16 @@
  * linked Efl_Ui_Video so it will use the video decoder, if available. It also
  * activates the "remember" function on the linked Efl_Ui_Video object.
  *
- * Both widgets inherit from the @ref Layout one, so that all the
+ * Both widgets inherit from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for video objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li @c "focused" : When the video has received focus. (since 1.8)
  * @li @c "unfocused" : When the video has lost focus. (since 1.8)
  *
  * The player widget emits the following signals, besides the ones
- * sent from @ref Layout:
+ * sent from @ref Elm_Layout :
  *  - @c "forward,clicked" - the user clicked the forward button.
  *  - @c "info,clicked" - the user clicked the info button.
  *  - @c "next,clicked" - the user clicked the next button.

@@ -119,6 +119,11 @@ struct _Evas_Module
    unsigned char	loaded : 1;
 };
 
+/**
+ * @addtogroup Evas_Image
+ * @{
+ */
+
 typedef struct _Evas_Image_Load_Opts  Evas_Image_Load_Opts;
 
 struct _Evas_Image_Load_Opts
@@ -152,16 +157,19 @@ struct _Evas_Image_Property
 
 typedef struct _Evas_Image_Load_Func Evas_Image_Load_Func;
 
+/**
+ * @brief Possible outcomes of a load operation
+ */
 typedef enum
 {
-   EVAS_LOAD_ERROR_NONE = 0,
-   EVAS_LOAD_ERROR_GENERIC,
-   EVAS_LOAD_ERROR_DOES_NOT_EXIST,
-   EVAS_LOAD_ERROR_PERMISSION_DENIED,
-   EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED,
-   EVAS_LOAD_ERROR_CORRUPT_FILE,
-   EVAS_LOAD_ERROR_UNKNOWN_FORMAT,
-   EVAS_LOAD_ERROR_CANCELLED,
+   EVAS_LOAD_ERROR_NONE = 0,  /**< No error on load */
+   EVAS_LOAD_ERROR_GENERIC,  /**< A non-specific error occurred */
+   EVAS_LOAD_ERROR_DOES_NOT_EXIST,  /**< File (or file path) does not exist */
+   EVAS_LOAD_ERROR_PERMISSION_DENIED,	 /**< Permission denied to an existing file (or path) */
+   EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED,  /**< Allocation of resources failure prevented load */
+   EVAS_LOAD_ERROR_CORRUPT_FILE,  /**< File corrupt (but was detected as a known format) */
+   EVAS_LOAD_ERROR_UNKNOWN_FORMAT,  /**< File is not a known format */
+   EVAS_LOAD_ERROR_CANCELLED, /**< File loading has been cancelled */
 } Evas_Load_Error;
 
 typedef Emile_Image_Animated_Loop_Hint Evas_Image_Animated_Loop_Hint;
@@ -289,6 +297,10 @@ evas_loader_helper_stretch_region_push(uint8_t **region,
 
    return EINA_TRUE;
 }
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }

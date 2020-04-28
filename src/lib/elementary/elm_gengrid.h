@@ -16,7 +16,7 @@
  * view) or via the keyboard, navigating through item with the
  * arrow keys.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for gengrid objects.
  *
  * This widget implements the @ref elm-scrollable-interface
@@ -162,7 +162,7 @@
  * @section Gengrid_Smart_Events Gengrid smart events
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @p event_info parameter
  *   is the gengrid item that was activated.

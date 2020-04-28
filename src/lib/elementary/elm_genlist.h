@@ -19,7 +19,7 @@
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview on the theory behind genlist.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for genlist objects.
  *
  * This widget implements the @ref elm-scrollable-interface
@@ -250,7 +250,7 @@
  * @section Genlist_Smart_Events Genlist smart events
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @p event_info parameter is the
  *   item that was activated.

@@ -17,11 +17,11 @@
  * emails/messages to a group of addresses, each of which is an item
  * that can be clicked for further actions.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for multi-button entry objects (since 1.8).
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "item,selected" - this is called when an item is selected by
  *       api, user interaction, and etc. this is also called when a
  *       user press back space while cursor is on the first field of

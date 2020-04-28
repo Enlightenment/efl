@@ -1562,6 +1562,7 @@ EAPI void evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, 
  *
  * @param[in] x in
  * @param[in] y in
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
@@ -1571,6 +1572,7 @@ EAPI void evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
  *
  * @param[in] w in
  * @param[in] h in
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1578,6 +1580,7 @@ EAPI void evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
  *
  * Retrieves whether or not the given Evas object is visible.
  *
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_visible_get(const Evas_Object *obj);
 
@@ -1596,7 +1599,7 @@ EAPI Eina_Bool evas_object_visible_get(const Evas_Object *obj);
  * @param[in] w Integer to use as the maximum width hint.
  * @param[in] h Integer to use as the maximum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1613,7 +1616,7 @@ EAPI void evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coo
  * @param[out] w Integer to use as the maximum width hint.
  * @param[out] h Integer to use as the maximum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -1631,7 +1634,7 @@ EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, E
  * @param[in] w Integer to use as the preferred width hint.
  * @param[in] h Integer to use as the preferred height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1648,7 +1651,7 @@ EAPI void evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas
  * @param[out] w Integer to use as the preferred width hint.
  * @param[out] h Integer to use as the preferred height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -1666,7 +1669,7 @@ EAPI void evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *
  * @param[in] w Integer to use as the minimum width hint.
  * @param[in] h Integer to use as the minimum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -1681,7 +1684,7 @@ EAPI void evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coo
  * See also @ref evas_object_clip_set, @ref evas_object_clipees_get and
  * @ref evas_object_clip_get.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_clip_unset(Evas_Object *obj);
 
@@ -1698,7 +1701,7 @@ EAPI void evas_object_clip_unset(Evas_Object *obj);
  * @param[out] w Integer to use as the minimum width hint.
  * @param[out] h Integer to use as the minimum height hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -1716,7 +1719,7 @@ EAPI void evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, E
  * @param[in] t Integer to specify top padding.
  * @param[in] b Integer to specify bottom padding.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b);
 
@@ -1737,7 +1740,7 @@ EAPI void evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas
  * @param[out] t Integer to specify top padding.
  * @param[out] b Integer to specify bottom padding.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
 
@@ -1753,7 +1756,7 @@ EAPI void evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *
  * weight macro) or the complete one of taking each child's weight hint as real
  * weights to how much of its size to allocate for them in each axis. A
  * container is supposed to, after normalizing the weights of its children
- * (with weight  hints), distribut the space it has to layout them by those
+ * (with weight  hints), distribute the space it has to layout them by those
  * factors -- most weighted children get larger in this process than the least
  * ones.
  *
@@ -1762,7 +1765,7 @@ EAPI void evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *
  * @param[in] x Non-negative double value to use as horizontal weight hint.
  * @param[in] y Non-negative double value to use as vertical weight hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y);
 
@@ -1785,7 +1788,7 @@ EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
  * @param[out] x Non-negative double value to use as horizontal weight hint.
  * @param[out] y Non-negative double value to use as vertical weight hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y);
 
@@ -1816,7 +1819,7 @@ EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, do
  * @param[in] y Double, ranging from 0.0 to 1.0 or with the special value
  * #EVAS_HINT_FILL, to use as vertical alignment hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_align_set(Evas_Object *obj, double x, double y);
 
@@ -1836,7 +1839,7 @@ EAPI void evas_object_size_hint_align_set(Evas_Object *obj, double x, double y);
  * @param[out] y Double, ranging from 0.0 to 1.0 or with the special value
  * #EVAS_HINT_FILL, to use as vertical alignment hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y);
 
@@ -1857,7 +1860,7 @@ EAPI void evas_object_size_hint_align_get(const Evas_Object *obj, double *x, dou
  * @param[in] w Integer to use as aspect width ratio term.
  * @param[in] h Integer to use as aspect height ratio term.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h);
 
@@ -1880,7 +1883,7 @@ EAPI void evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control
  * @param[out] w Integer to use as aspect width ratio term.
  * @param[out] h Integer to use as aspect height ratio term.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h);
 
@@ -1911,7 +1914,7 @@ typedef Efl_Gfx_Hint_Mode             Evas_Display_Mode;
  *
  * @param[in] dispmode Display mode hint.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 
@@ -2096,7 +2099,7 @@ EAPI void evas_object_lower(Evas_Object *obj);
  * @param[in] is_static_clip @c true if it's to be used as a static clipper,
  * @c false otherwise.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip);
 
@@ -2118,7 +2121,7 @@ EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip
  *
  * @return A list of objects being clipped by @c obj.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -2131,34 +2134,34 @@ EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_
  *
  * @since 1.8
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
 /** How the object should be rendered to output.
  *
- * @ingroup Evas
+ * @ingroup Evas_Object_Group
  */
 typedef enum
 {
-  EVAS_RENDER_BLEND = 0, /** Default render operation: d = d*(1-sa) + s. The
+  EVAS_RENDER_BLEND = 0, /**< Default render operation: d = d*(1-sa) + s. The
                           * object will be merged onto the bottom objects using
                           * simple alpha compositing (a over b). */
-  EVAS_RENDER_BLEND_REL = 1, /** DEPRECATED. d = d*(1 - sa) + s*da */
-  EVAS_RENDER_COPY = 2, /** Copy mode, d = s. The object's pixels will replace
+  EVAS_RENDER_BLEND_REL = 1, /**< DEPRECATED. d = d*(1 - sa) + s*da */
+  EVAS_RENDER_COPY = 2, /**< Copy mode, d = s. The object's pixels will replace
                          * everything that was below, effectively hiding them.
                          */
-  EVAS_RENDER_COPY_REL = 3, /** DEPRECATED. d = s*da */
-  EVAS_RENDER_ADD = 4, /** DEPRECATED. d = d + s */
-  EVAS_RENDER_ADD_REL = 5, /** DEPRECATED. d = d + s*da */
-  EVAS_RENDER_SUB = 6, /** DEPRECATED. d = d - s */
-  EVAS_RENDER_SUB_REL = 7, /** DEPRECATED. d = d - s*da */
-  EVAS_RENDER_TINT = 8, /** DEPRECATED. d = d*s + d*(1 - sa) + s*(1 - da) */
-  EVAS_RENDER_TINT_REL = 9, /** DEPRECATED. d = d*(1 - sa + s) */
-  EVAS_RENDER_MASK = 10, /** DEPRECATED. d = d*sa. For masking support, please
+  EVAS_RENDER_COPY_REL = 3, /**< DEPRECATED. d = s*da */
+  EVAS_RENDER_ADD = 4, /**< DEPRECATED. d = d + s */
+  EVAS_RENDER_ADD_REL = 5, /**< DEPRECATED. d = d + s*da */
+  EVAS_RENDER_SUB = 6, /**< DEPRECATED. d = d - s */
+  EVAS_RENDER_SUB_REL = 7, /**< DEPRECATED. d = d - s*da */
+  EVAS_RENDER_TINT = 8, /**< DEPRECATED. d = d*s + d*(1 - sa) + s*(1 - da) */
+  EVAS_RENDER_TINT_REL = 9, /**< DEPRECATED. d = d*(1 - sa + s) */
+  EVAS_RENDER_MASK = 10, /**< DEPRECATED. d = d*sa. For masking support, please
                           * use Efl.Canvas.Object.clip_set or EDC "clip_to" instead.
                           */
-  EVAS_RENDER_MUL = 11 /** DEPRECATED. d = d*s */
+  EVAS_RENDER_MUL = 11 /**< DEPRECATED. d = d*s */
 } Evas_Render_Op;
 
 /**
@@ -2179,7 +2182,7 @@ typedef enum
  * @param[in] render_op One of the Evas_Render_Op values. Only blend (default)
  * and copy modes are supported.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op);
 
@@ -2190,7 +2193,7 @@ EAPI void evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op);
  * @return One of the Evas_Render_Op values. Only blend (default) and copy
  * modes are supported.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
 
@@ -2199,7 +2202,7 @@ EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
  *
  * @return @c true if it's to be used as a static clipper, @c false otherwise.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
 
@@ -2217,7 +2220,7 @@ EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
  * @param[in] obj The object.
  * @param[in] scale The scaling factor. 1.0 means no scaling, default size.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_scale_set(Evas_Object *obj, double scale);
 
@@ -2228,7 +2231,7 @@ EAPI void evas_object_scale_set(Evas_Object *obj, double scale);
  *
  * @return The scaling factor. 1.0 means no scaling, default size.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI double evas_object_scale_get(const Evas_Object *obj);
 
@@ -2241,7 +2244,7 @@ EAPI double evas_object_scale_get(const Evas_Object *obj);
  *
  * @since 1.20
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_pointer_inside_by_device_get(const Evas_Object *obj, Efl_Input_Device * dev);
 
@@ -2261,7 +2264,7 @@ EAPI Eina_Bool evas_object_pointer_inside_by_device_get(const Evas_Object *obj, 
  * @return @c true if the mouse pointer is inside the object, @c false
  * otherwise
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -2282,7 +2285,7 @@ EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_
  *
  * @return @c true if the coords are inside the object, @c false otherwise
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 
 EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y) EINA_WARN_UNUSED_RESULT;
@@ -3526,7 +3529,7 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  * @defgroup Evas_Object_Vg Vector Graphics Object
  * @ingroup Evas
  *
- * Evas_Object_Vg is the scene graph for managing vector graphics objects.
+ * @ref Evas_Object_Vg is the scene graph for managing vector graphics objects.
  * User can create shape objects as well as fill objects and give them to the
  * Evas_Object_Vg for drawing on the screen as well as managing the lifecycle
  * of the objects, enabling reuse of shape objects.
@@ -3586,6 +3589,8 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  * @endcode
  *
  * @since 1.14
+ *
+ * @{
  */
 
 /**
@@ -3691,8 +3696,6 @@ EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONN
  * stroke. @ref evas_vg_shape_stroke_cap_set
  *
  * @since 1.24
- *
- * @ingroup Evas_Vg_Cap
  */
 typedef enum Evas_Vg_Cap_Type
 {
@@ -3712,12 +3715,10 @@ typedef enum Evas_Vg_Cap_Type
  * @ref evas_vg_shape_stroke_join_set
  *
  * @since 1.24
- *
- * @ingroup Evas_Vg_Join
  */
 typedef enum Evas_Vg_Join_Type
 {
-  EVAS_VG_JOIN_MITER = 0, /**< Used to render mitered line joins. The intersectioni
+  EVAS_VG_JOIN_MITER = 0, /**< Used to render mitered line joins. The intersection
                            * of the strokes is clipped at a line perpendicular to
                            * the bisector of the angle between the strokes, at the
                            * distance from the intersection of the segments equal
@@ -3730,15 +3731,13 @@ typedef enum Evas_Vg_Join_Type
                            * triangular region of the corner with a straight line
                            * between the outer corners of each stroke */
   EVAS_VG_JOIN_LAST       /**< Sentinel value to indicate last enum field during
-                           * teration */
+                           * iteration */
 } Evas_Vg_Join;
 
 /**
  * @brief These values determine how the points are interpreted in a stream of points.
  *
  * @since 1.24
- *
- * @ingroup Evas_Vg_Path_Command
  */
 typedef enum Evas_Vg_Path_Command_Type
 {
@@ -3760,8 +3759,6 @@ typedef enum Evas_Vg_Path_Command_Type
  * transition point in a gradient.
  *
  * @since 1.24
- *
- * @ingroup Evas_Vg_Gradient_Stop
  */
 typedef struct _Evas_Vg_Gradient_Stop
 {
@@ -3778,8 +3775,6 @@ typedef struct _Evas_Vg_Gradient_Stop
  * @ref evas_vg_gradient_spread_set
  *
  * @since 1.24
- *
- * @ingroup Evas_Vg_Gradient_Spread
  */
 typedef enum Evas_Vg_Gradient_Spread_Type
 {
@@ -3798,8 +3793,6 @@ typedef enum Evas_Vg_Gradient_Spread_Type
  * @ref evas_vg_shape_stroke_dash_set
  *
  * @since 1.24
- *
- * @ingroup Evas_Vg_Dash
  */
 typedef struct _Evas_Vg_Dash
 {
@@ -3832,7 +3825,7 @@ EAPI Evas_Vg_Container* evas_vg_container_add(Evas_Object *parent);
  * @brief Retrieves whether or not the given Evas_Vg_Node object is visible.
  *
  * @param[in] obj The object.
- * @return @c EINA_TRUE if the object is visible, @EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the object is visible, @c EINA_FALSE otherwise.
  *
  * @since 1.24
  */
@@ -3877,8 +3870,6 @@ EAPI void evas_vg_node_color_get(Evas_Vg_Node *obj, int *r, int *g, int *b, int 
  *
  * @see evas_vg_node_color_get() (for an example)
  * @note These color values are expected to be premultiplied by @p a.
- *
- * @ingroup Evas_Object_Group_Basic
  *
  * @param[in] obj The object.
  * @param[in] r The red component of the given color.
@@ -4379,8 +4370,6 @@ EAPI void evas_vg_shape_append_arc_to(Evas_Vg_Shape *obj, double x, double y, do
  * @param[in] sweep_length The length of the arc.
  *
  * @since 1.18
- *
- * @ingroup Evas_Vg_Shape
  */
 EAPI void evas_vg_shape_append_arc(Evas_Vg_Shape *obj, double x, double y, double w, double h, double start_angle, double sweep_length);
 
@@ -4479,7 +4468,7 @@ EAPI Eina_Bool evas_vg_shape_equal_commands(Evas_Vg_Shape *obj, const Eo *with);
  * @brief Set a vg object as the fill property.
  *
  * @param[in] obj The object whose fill property gets modified.
- * @param[in] The object content will be used for filling.
+ * @param[in] f The object content to be used for filling.
  *
  * @since 1.24
  */
@@ -4582,7 +4571,7 @@ EAPI Evas_Vg_Gradient_Linear* evas_vg_gradient_linear_add(Evas_Vg_Container *par
 EAPI void evas_vg_gradient_linear_start_set(Evas_Vg_Gradient_Linear *obj, double x, double y);
 
 /**
- * @biref Gets the start point of this linear gradient.
+ * @brief Gets the start point of this linear gradient.
  *
  * @param[in] obj The object.
  * @param[out] x The x co-ordinate of start point.
@@ -5593,7 +5582,7 @@ EAPI void evas_object_image_filled_set(Evas_Object *obj, Eina_Bool filled);
  * object's size.
  *
  * Returns @c true if it is tracking, @c false if not (and @ref
- * evas_object_fill_set must be called manually).
+ * evas_object_image_fill_set must be called manually).
  *
  * @param[in] obj The object
  * @return @c true to make the fill property follow object size or @c false
@@ -5733,8 +5722,7 @@ typedef enum
  * to be drawn, which must be one of the values in @ref Evas_Border_Fill_Mode.
  * By center we mean the complementary part of that defined by
  * @ref evas_object_image_border_set. This one is very useful for making frames
- * and decorations. You would most probably also be using a filled image (as in
- * @ref Efl.Gfx.Fill.fill_auto) to use as a frame.
+ * and decorations.
  *
  * @param[in] obj The object
  * @param[in] fill Fill mode of the center region of @c obj (a value in
@@ -5750,8 +5738,7 @@ EAPI void evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border
  * to be drawn, which must be one of the values in @ref Evas_Border_Fill_Mode.
  * By center we mean the complementary part of that defined by
  * @ref evas_object_image_border_set. This one is very useful for making frames
- * and decorations. You would most probably also be using a filled image (as in
- * @ref Efl.Gfx.Fill.fill_auto) to use as a frame.
+ * and decorations.
  *
  * The default value is
  *
@@ -5936,7 +5923,7 @@ EAPI void evas_object_image_data_copy_set(Evas_Object *obj, void *data);
  *
  * Note that the raw data must be of the same size (see @ref
  * evas_object_image_size_set, which has to be called before this one) and
- * colorspace (see @Evas.Image.colorspace.set) of the image. If data is
+ * colorspace (see @ref evas_object_image_colorspace_set) of the image. If data is
  * @c null, the current image data will be freed. Naturally, if one does not
  * set an image object's data manually, it will still have one, allocated by
  * Evas.
@@ -5965,7 +5952,7 @@ EAPI void evas_object_image_data_set(Evas_Object *obj, void *data);
  * @note The contents' format returned by it depend on the color space of the
  * given image object.
  *
- * @note You may want to use @Evas.Image.data_update_add to inform data
+ * @note You may want to use @ref evas_object_image_data_update_add to inform data
  * changes, if you did any.
  *
  * @param[in] obj The object
@@ -6844,10 +6831,6 @@ EAPI void             *evas_object_smart_interface_data_get(const Evas_Object *o
  *
  * If @c obj is not a smart object, this call will fail immediately.
  *
- * This function supports Eo and legacy inheritance mechanisms. However, it is
- * recommended to use @ref efl_isa instead if your object is using Eo from top
- * to bottom.
- *
  * The checks use smart classes names and string comparison. There is a version
  * of this same check using pointer comparison, since a smart class' name is a
  * single string in Evas.
@@ -6961,9 +6944,22 @@ EAPI Evas_Smart *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_U
  *
  * See also @ref evas_object_smart_data_get.
  *
+ * @param[in] obj The object
  * @param[in] data A pointer to user data.
  */
 EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
+
+/**
+ * @brief Retrieves the pointer to user data for a given smart object.
+ *
+ * This data is stored independently of the one set by evas_object_data_set(),
+ * naturally.
+ *
+ * See also @ref evas_object_smart_data_set.
+ *
+ * @param[in] obj The object
+ * @return A pointer to user data.
+ */
 EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
 
 /**
@@ -6983,8 +6979,8 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  *
  * This function will return @c null when a non-smart object is passed.
  *
- * See also @ref Efl.Canvas.Group.group_member_add,
- * @ref Efl.Canvas.Group.group_member_remove and @ref evas_object_smart_iterator_new.
+ * See also @ref evas_object_smart_member_add,
+ * @ref evas_object_smart_member_del and @ref evas_object_smart_iterator_new.
  *
  * @return Returns the list of the member objects of @c obj.
  *
@@ -7034,8 +7030,8 @@ EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
  * @brief Retrieves an iterator of the member objects of a given Evas smart
  * object.
  *
- * See also @ref Efl.Canvas.Group.group_member_add and
- * @ref Efl.Canvas.Group.group_member_remove
+ * See also @ref evas_object_smart_member_add and
+ * @ref evas_object_smart_member_del
  *
  * @return Returns the iterator of the member objects of @c obj.
  *
@@ -8321,7 +8317,7 @@ EAPI void            evas_map_point_color_get(const Evas_Map *m, int idx, int *r
  *
  * @param[in] map The map.
  *
- * @ingroup Efl_Canvas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_map_set(Evas_Object *obj, const Evas_Map *map);
 
@@ -8334,7 +8330,7 @@ EAPI void evas_object_map_set(Evas_Object *obj, const Evas_Map *map);
  *
  * @return The map.
  *
- * @ingroup Efl_Canvas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
 
@@ -8351,7 +8347,7 @@ EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
  *
  * @param[in] enabled Enabled state.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
 

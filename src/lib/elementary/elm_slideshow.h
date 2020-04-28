@@ -48,11 +48,11 @@
  * cached @b before and @b after the current item, in the widget's
  * item list.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for slideshow objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - when the slideshow switches its view to a new
  *   item. event_info parameter in callback contains the current visible item
  * - @c "transition,end" - when a slide transition ends. event_info parameter

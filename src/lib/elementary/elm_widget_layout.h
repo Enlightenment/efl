@@ -15,7 +15,7 @@
  *
  * @section elm-layout-class The Elementary Layout Class
  *
- * Elementary, besides having the @ref Layout widget, exposes its
+ * Elementary, besides having the @ref Elm_Layout widget, exposes its
  * foundation -- the Elementary Layout Class -- in order to create
  * other widgets which are, basically, a certain layout with some more
  * logic on top.

@@ -29,11 +29,11 @@
  * the object or applications scaling factor. At any point code can query the
  * slider for its value with elm_slider_value_get().
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for slider objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - Whenever the slider value is changed by the user.
  * - @c "slider,drag,start" - dragging the slider indicator around has started.
  * - @c "slider,drag,stop" - dragging the slider indicator around has stopped.

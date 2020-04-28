@@ -22,7 +22,7 @@
  * functions acting on it also work for context popup objects (since 1.8).
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "dismissed" - This is called when 1. the outside of ctxpopup was clicked
  * or 2. its parent area is changed or 3. the language is changed and also when
  * 4. the parent object is resized due to the window rotation. Then ctxpopup is

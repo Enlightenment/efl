@@ -19,11 +19,11 @@
  * A list is a very simple type of list widget. For more robust lists,
  * @ref Genlist should probably be used.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for list objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @p event_info parameter
  *   is the item that was activated.
