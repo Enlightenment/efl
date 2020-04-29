@@ -33,7 +33,7 @@
    requirements.
 
    Evas can serve as a base for widget sets or toolkits
-   (e.g. Elementary, http://docs.enlightenment.org/auto/elementary/) by
+   (e.g. @ref elementary_main) by
    handling pixel drawing and regional change reporting, but does not
    manage windows itself, nor deal with input or window update event
    propagation.  In other words, it is intended for use in drawing
