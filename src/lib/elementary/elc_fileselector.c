@@ -880,7 +880,7 @@ _listing_request_cleanup(Listing_Request *lreq)
 }
 
 static void
-_process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
+_process_model(Elm_Fileselector_Data *sd, Efl_Model *child, Elm_Object_Item *fallback_parent_item)
 {
    Elm_Fileselector_Item_Data *it_data;
    Elm_Object_Item *item, *it_parent;
@@ -927,6 +927,8 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
    it_data->is_dir = dir;
 
    it_parent = efl_key_data_get(parent, ".item.data");
+   if (!it_parent)
+     it_parent = fallback_parent_item;
 
    if (dir)
      {
@@ -981,7 +983,9 @@ _process_children_cb(Eo *model EINA_UNUSED, void *data, const Eina_Value v)
    if (!lreq->valid) goto end;
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
-     _process_model(lreq->sd, child);
+     {
+        _process_model(lreq->sd, child, lreq->parent_it);
+     }
 
    lreq->item_total = len;
 
@@ -1001,6 +1005,29 @@ _process_children_error(Eo *model EINA_UNUSED, void *data, Eina_Error error)
    _process_last(lreq);
 
    return eina_value_error_init(error);
+}
+
+static void
+_count_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Listing_Request *lreq = data;
+   Eina_Future *future;
+
+   efl_event_callback_del(lreq->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed_cb, lreq);
+
+   if (efl_model_children_count_get(lreq->model))
+     {
+        future = efl_model_children_slice_get(lreq->model, 0, efl_model_children_count_get(lreq->model));
+        future = efl_future_then(lreq->obj, future);
+        efl_future_then(lreq->model, future,
+                        .success = _process_children_cb,
+                        .error = _process_children_error,
+                        .data = lreq);
+     }
+   else
+     {
+        _process_last(lreq);
+     }
 }
 
 static void
@@ -1087,7 +1114,10 @@ _populate(Evas_Object *obj,
      }
    else
      {
-        _process_last(lreq);
+        if (parent_it)
+          efl_event_callback_add(lreq->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed_cb, lreq);
+        else
+          _process_last(lreq);
      }
 }
 
@@ -1624,7 +1654,7 @@ _resource_created_then(Eo *model EINA_UNUSED, void *data, const Eina_Value v)
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
-     _process_model(sd, child);
+     _process_model(sd, child, NULL); //this function will always just work for the root model of the fileselector
 
    return v;
 }
