@@ -3586,6 +3586,10 @@ EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
 EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
+ * @}
+ */
+
+/**
  * @brief Retrieves the coordinates of the default mouse pointer.
  *
  * @param ee The Ecore_Evas containing the pointer
@@ -3871,11 +3875,6 @@ EAPI void ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb c
  * initiator application.
  */
 EAPI Eina_Accessor* ecore_evas_drop_available_types_get(Ecore_Evas *ee, unsigned int seat);
-
-
-/**
- * @}
- */
 
 /**
  * @}
