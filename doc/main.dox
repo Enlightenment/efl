@@ -23,7 +23,7 @@
  * @li @ref eio_main asynchronous input/output
  * @li @ref eldbus_main D-Bus integration.
  * @li @ref embryo_main embedded script language.
- * @li @ref eo_main generic object system.
+ * @li @ref eolian_main an EO file parser and code generator.
  *
  * <h3>Graphics libraries</h3>
  *
@@ -34,15 +34,6 @@
  * @li @ref ephysics_main physics simulation integration and visual effects.
  * @li @ref ethumb_main to generate thumbnail images of files.
  * @li @ref evas_main drawing canvas.
- *
- * <h3>Operating System specific libraries</h3>
- *
- * @li @ref escape_main playstation3 portability layer.
- * @li @ref evil_main microsoft windows portability layer.
- *
- * <h3>Early stage libraries (BETA testing)</h3>
- *
- * @li @ref eolian_main an EO file parser and code generator.
  *
  * If you are looking for methods that do not fit into the above list you can
  * see the full <a href="modules.html" />module listing</a>.
