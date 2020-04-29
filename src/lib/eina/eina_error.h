@@ -46,6 +46,7 @@
  * Here is an example for use:
  *
  * @include eina_error_01.c
+ * @example eina_error_01.c
  *
  * Of course, instead of printf(), eina_log_print() can be used to
  * have beautiful error messages.
