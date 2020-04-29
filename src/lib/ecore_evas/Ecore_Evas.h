@@ -45,7 +45,7 @@
 
 /* FIXME:
  * to do soon:
- * - iconfication api needs to work
+ * - iconification api needs to work
  * - maximization api needs to work
  *
  * later:
@@ -3667,11 +3667,24 @@ EAPI unsigned long ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee);
  */
 EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
 
+/** @defgroup Ecore_Evas_Selection_Group Ecore_Evas methods to handle selection
+ *
+ * These methods perform Copy&Paste and Drag&Drop operations.
+ *
+ * @since 1.24
+ *
+ * @{
+ */
+
+/** @brief Data buffer to use in Copy&Paste (and Drag&Drop) operations
+ *
+ * @since 1.24
+ */
 typedef enum {
    ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER = 0,      /**< Stores selected / highlighted selection */
    ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER = 1, /**< Stores copied things (Ctrl + C) */
    ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER = 2,  /**< Stores dragged things while drag and drop is happening. */
-   ECORE_EVAS_SELECTION_BUFFER_LAST = 3,
+   ECORE_EVAS_SELECTION_BUFFER_LAST = 3,                  /**< Sentinel value. Do not use. */
 } Ecore_Evas_Selection_Buffer;
 
 /**
@@ -3679,6 +3692,8 @@ typedef enum {
  *
  * @param[in] ee The Ecore_Evas that handles this selection.
  * @param[in] selection The selection buffer that has changed.
+ *
+ * @since 1.24
  */
 typedef void (*Ecore_Evas_Selection_Changed_Cb)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
 
@@ -3695,6 +3710,8 @@ typedef void (*Ecore_Evas_Selection_Changed_Cb)(Ecore_Evas *ee, unsigned int sea
  *
  * @warning If and when this function is called depends on the underlying
  * windowing system.
+ *
+ * @since 1.24
  */
 EAPI void ecore_evas_callback_selection_changed_set(Ecore_Evas *ee, Ecore_Evas_Selection_Changed_Cb cb);
 
@@ -3708,6 +3725,8 @@ EAPI void ecore_evas_callback_selection_changed_set(Ecore_Evas *ee, Ecore_Evas_S
  *
  * @note Only ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER and ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER
  * buffers can be set. Drag and drop operations use a different set of methods.
+ *
+ * @since 1.24
  */
 EAPI Eina_Bool ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, Eina_Content *content);
 
@@ -3723,6 +3742,8 @@ EAPI Eina_Bool ecore_evas_selection_set(Ecore_Evas *ee, unsigned int seat, Ecore
  *
  * @note Due to the asynchronous nature of selection buffers, this method might not return
  * the right result when invoked from the selection callback set with ecore_evas_callback_selection_changed_set.
+ *
+ * @since 1.24
  */
 EAPI Eina_Bool ecore_evas_selection_exists(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer);
 
@@ -3741,6 +3762,8 @@ EAPI Eina_Bool ecore_evas_selection_exists(Ecore_Evas *ee, unsigned int seat, Ec
  *
  * This method is time consuming, therefore, it is recommended to verify the existence of a selection
  * using ecore_evas_selection_exists before calling it.
+ *
+ * @since 1.24
  */
 EAPI Eina_Future* ecore_evas_selection_get(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, Eina_Iterator *acceptable_types);
 
@@ -3753,6 +3776,8 @@ EAPI Eina_Future* ecore_evas_selection_get(Ecore_Evas *ee, unsigned int seat, Ec
  * @param[in] inside @c EINA_TRUE if the pointer just entered this window. @c EINA_FALSE if it has just exited.
  *
  * Set this callback using ecore_evas_callback_drop_state_changed_set.
+ *
+ * @since 1.24
  */
 typedef void (*Ecore_Evas_Drag_Finished_Cb)(Ecore_Evas *ee, unsigned int seat, void *data, Eina_Bool accepted);
 
@@ -3773,6 +3798,8 @@ typedef void (*Ecore_Evas_Drag_Finished_Cb)(Ecore_Evas *ee, unsigned int seat, v
  * @return @c EINA_TRUE if the drag operation has been successfully started.
  *
  * This method must be called when a drag operation is initiated in order to provide the necessary information.
+ *
+ * @since 1.24
  */
 EAPI Eina_Bool ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep,
                                      const char* action, Ecore_Evas_Drag_Finished_Cb terminate_cb, void *data);
@@ -3784,6 +3811,8 @@ EAPI Eina_Bool ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Con
  * @return @c EINA_TRUE if the drag operation has been successfully cancelled.
  *
  * The initiator of a drag operation can call this method to abort it.
+ *
+ * @since 1.24
  */
 EAPI Eina_Bool ecore_evas_drag_cancel(Ecore_Evas *ee, unsigned int seat);
 
@@ -3796,6 +3825,8 @@ EAPI Eina_Bool ecore_evas_drag_cancel(Ecore_Evas *ee, unsigned int seat);
  * @param[in] inside @c EINA_TRUE if the pointer just entered this window. @c EINA_FALSE if it has just exited.
  *
  * Set this callback using ecore_evas_callback_drop_state_changed_set.
+ *
+ * @since 1.24
  */
 typedef void (*Ecore_Evas_Drag_State_Changed_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
 
@@ -3808,6 +3839,8 @@ typedef void (*Ecore_Evas_Drag_State_Changed_Cb)(Ecore_Evas *ee, unsigned int se
  *
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
  * times overwrites previous functions. Use a NULL @p cb func to stop being notified.
+ *
+ * @since 1.24
  */
 EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_Drag_State_Changed_Cb cb);
 
@@ -3819,6 +3852,8 @@ EAPI void ecore_evas_callback_drop_state_changed_set(Ecore_Evas *ee, Ecore_Evas_
  * @param[in] p Position (in window coordinates) where the event occurred.
  *
  * Set this callback using ecore_evas_callback_drop_motion_set.
+ *
+ * @since 1.24
  */
 
 typedef void (*Ecore_Evas_Drag_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
@@ -3831,6 +3866,8 @@ typedef void (*Ecore_Evas_Drag_Motion_Cb)(Ecore_Evas *ee, unsigned int seat, Ein
  *
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
  * times overwrites previous functions. Use a NULL @p cb func to stop being notified.
+ *
+ * @since 1.24
  */
 EAPI void ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Drag_Motion_Cb cb);
 
@@ -3845,6 +3882,8 @@ EAPI void ecore_evas_callback_drop_motion_set(Ecore_Evas *ee, Ecore_Evas_Drag_Mo
  * ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER buffer.
  *
  * Set this callback using ecore_evas_callback_drop_drop_set.
+ *
+ * @since 1.24
  */
 typedef void (*Ecore_Evas_Drop_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, const char *action);
 
@@ -3857,6 +3896,8 @@ typedef void (*Ecore_Evas_Drop_Cb)(Ecore_Evas *ee, unsigned int seat, Eina_Posit
  *
  * Only one such callback can exist for each Ecore_Evas. Calling this method multiple
  * times overwrites previous functions. Use a NULL @p cb func to stop being notified.
+ *
+ * @since 1.24
  */
 EAPI void ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb cb);
 
@@ -3873,8 +3914,14 @@ EAPI void ecore_evas_callback_drop_drop_set(Ecore_Evas *ee, Ecore_Evas_Drop_Cb c
  * This is functionally equivalent to calling ecore_evas_selection_get and examining the available types in the
  * returned Eina_Content, but much faster since the actual data does not have to be asynchronously requested to the
  * initiator application.
+ *
+ * @since 1.24
  */
 EAPI Eina_Accessor* ecore_evas_drop_available_types_get(Ecore_Evas *ee, unsigned int seat);
+
+/**
+ * @}
+ */
 
 /**
  * @}
