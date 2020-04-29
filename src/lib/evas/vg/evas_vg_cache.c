@@ -315,8 +315,8 @@ evas_cache_vg_shutdown(void)
      free(key);
    eina_list_free(vg_cache->vg_surface_keys);
 
-   eina_hash_free(vg_cache->vfd_hash);
    eina_hash_free(vg_cache->vg_entry_hash);
+   eina_hash_free(vg_cache->vfd_hash);
    free(vg_cache);
    vg_cache = NULL;
 }
