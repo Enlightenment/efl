@@ -33,9 +33,9 @@
 
 EAPI extern int _ecore_evas_log_dom;
 
-EAPI Eina_Error ecore_evas_no_matching_type;
-EAPI Eina_Error ecore_evas_no_selection;
-EAPI Eina_Error ecore_evas_request_replaced;
+EAPI extern Eina_Error ecore_evas_no_matching_type;
+EAPI extern Eina_Error ecore_evas_no_selection;
+EAPI extern Eina_Error ecore_evas_request_replaced;
 
 #ifdef ECORE_EVAS_DEFAULT_LOG_COLOR
 # undef ECORE_EVAS_DEFAULT_LOG_COLOR
