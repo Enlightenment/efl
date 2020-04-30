@@ -257,9 +257,7 @@ typedef struct
    int nb_shots;        /**< The number of shots present in the unit */
 } Exactness_Unit;
 
-Evas *(*_evas_new)(void);
 const char *_exactness_action_type_to_string_get(Exactness_Action_Type type);
-
 
 Eina_Bool ex_is_original_app(void);
 void ex_set_original_envvar(void);
