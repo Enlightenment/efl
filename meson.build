@@ -361,7 +361,7 @@ luaold_interpreters = [
 
 lua_pc_name = ''
 
-if sys_windows or get_option('lua-interpreter') == 'lua'
+if false # sys_windows or get_option('lua-interpreter') == 'lua'
   if sys_windows and get_option('lua-interpreter') != 'lua'
     warning('There is no "' + get_option('lua-interpreter')
             + '" binding option for Windows, backing up to "lua"')
@@ -374,8 +374,8 @@ if sys_windows or get_option('lua-interpreter') == 'lua'
     endif
   endforeach
 else
-  lua = dependency(get_option('lua-interpreter'))
-  lua_pc_name = 'luajit'
+  #  lua = dependency(get_option('lua-interpreter'))
+#  lua_pc_name = 'luajit'
 endif
 
 if sys_osx == true and get_option('lua-interpreter') == 'luajit'
@@ -390,18 +390,20 @@ subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
 ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
 ['eina'             ,[]                    , false,  true,  true,  true,  true,  true, [], []],
-['eolian'           ,[]                    , false,  true,  true, false,  true, false, ['eina'], []],
-['eo'               ,[]                    , false,  true, false,  true,  true, false, ['eina'], []],
-['efl'              ,[]                    , false,  true, false, false,  true, false, ['eo'], []],
-['emile'            ,[]                    , false,  true, false, false,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
-['eet'              ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'emile', 'efl'], []],
-['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']]]
+#['eolian'           ,[]                    , false,  true,  true, false,  true, false, ['eina'], []],
+#['eo'               ,[]                    , false,  true, false,  true,  true, false, ['eina'], []],
+#['efl'              ,[]                    , false,  true, false, false,  true, false, ['eo'], []],
+#['emile'            ,[]                    , false,  true, false, false,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
+#['eet'              ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'emile', 'efl'], []],
+#['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']]
+]
 
-if not sys_windows
+if false# not sys_windows
   subprojects += [['eldbus'           ,[]                    , false,  true,
     true, false,  true,  true, ['eina', 'eo', 'efl'], []]]
 endif
 
+if false
 subprojects += [
 ['ecore'            ,[]                    ,  true, false, false, false,  true,  true, ['eina', 'eo', 'efl'], []], #ecores modules depend on eldbus
 ['ecore_audio'      ,['audio']             , false,  true, false, false, false, false, ['eina', 'eo'], []],
@@ -419,12 +421,13 @@ subprojects += [
 ['ecore_buffer'     ,['buffer']            ,  true,  true,  true, false, false, false, ['eina'], []],
 ['ector'            ,[]                    , false,  true, false, false,  true,
   false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],]
-
-if not sys_windows
+endif
+if false # not sys_windows
   subprojects +=  [['elput'            ,['drm']               , false,  true,
     false, false,  true, false, ['eina', 'eldbus'], []]]
 endif
 
+if false
 subprojects += [
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
 ['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
@@ -442,10 +445,12 @@ subprojects += [
 ['emotion'          ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], []],
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
-['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
+['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-fle', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
 ['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false,
-  false, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],]
-
+  false, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
+]
+endif
+if false
 if not sys_windows
   subprojects +=  [['elua'             ,['elua']              , false,  true,
     true, false,  true, false, ['eina', 'luajit'], []]]
@@ -453,23 +458,25 @@ else
   subprojects +=  [['elua'             ,['elua']              , false,  true,
     true, false,  true, false, ['eina', 'lua'], []]]
 endif
+endif
 
+if false
 subprojects += [
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, ['eina'], []],
 ['exactness'        ,[]                    , false,  false,  true, false, false, false, ['eina, evas, eet'], []],
 ]
-
+endif
 # We generate Efl_Config.h and config.h later, they will be available here
 config_dir += include_directories('.')
 
 #we have to do that first, eina modules are required by eina
 #the other modules require theire package
-subdir(join_paths(local_module, 'eina'))
+#subdir(join_paths(local_module, 'eina'))
 
 #List of dependency objects that might be disabled due to configurations
 #If they are enabled, the object gets overwritten by the library file.
-ecore_audio = declare_dependency()
+#ecore_audio = declare_dependency()
 
 test_dirs = []
 example_dirs = []
@@ -575,13 +582,13 @@ foreach package : subprojects
 endforeach
 
 #build this later, as the debug services are depending on ecore
-subdir(join_paths('src', 'bin', 'efl'))
+#subdir(join_paths('src', 'bin', 'efl'))
 
-subdir(join_paths('src', 'generic', 'evas'))
-subdir('cmakeconfig')
-subdir(join_paths('src', 'bindings'))
-subdir(join_paths('src', 'edje_external'))
-subdir(join_paths('data'))
+#subdir(join_paths('src', 'generic', 'evas'))
+#subdir('cmakeconfig')
+#subdir(join_paths('src', 'bindings'))
+#subdir(join_paths('src', 'edje_external'))
+#subdir(join_paths('data'))
 
 if get_option('build-tests')
   check = dependency('check')
@@ -591,28 +598,28 @@ if get_option('build-tests')
   endforeach
 endif
 
-if get_option('build-examples')
-  foreach example : example_dirs
-      subdir(join_paths(local_examples, example))
-  endforeach
-endif
+# if get_option('build-examples')
+#   foreach example : example_dirs
+#       subdir(join_paths(local_examples, example))
+#   endforeach
+# endif
 
-subdir(join_paths(local_scripts))
+# subdir(join_paths(local_scripts))
 
-meson.add_install_script('meson/meson_modules.sh', module_files)
+# meson.add_install_script('meson/meson_modules.sh', module_files)
 
-foreach evas_loader_map_inst : evas_loader_map
-  evas_loader_original = evas_loader_map_inst[0]
-  evas_loader_link_types = evas_loader_map_inst[1]
+# foreach evas_loader_map_inst : evas_loader_map
+#   evas_loader_original = evas_loader_map_inst[0]
+#   evas_loader_link_types = evas_loader_map_inst[1]
 
-  meson.add_install_script('meson/evas_loader_conf.sh', evas_loader_original, evas_loader_link_types)
-endforeach
+#   meson.add_install_script('meson/evas_loader_conf.sh', evas_loader_original, evas_loader_link_types)
+# endforeach
 
-doxygen = find_program('doxygen', required : false)
+# doxygen = find_program('doxygen', required : false)
 
-if doxygen.found()
-  subdir('doc')
-endif
+# if doxygen.found()
+#   subdir('doc')
+# endif
 
 #
 # Configure files
@@ -639,34 +646,34 @@ configure_file(
   configuration: efl_config_h
 )
 
-configure_file(
-  input: 'elm_intro.h.in',
-  output: 'elm_intro.h',
-  configuration: config_h,
-  install_dir : join_paths(dir_include,'elementary-'+version_major)
-)
+# configure_file(
+#   input: 'elm_intro.h.in',
+#   output: 'elm_intro.h',
+#   configuration: config_h,
+#   install_dir : join_paths(dir_include,'elementary-'+version_major)
+# )
 
-subdir(join_paths('systemd-services'))
+# subdir(join_paths('systemd-services'))
 
-if not sys_windows and get_option('dbus')
-  subdir(join_paths('dbus-services'))
-endif
+# if not sys_windows and get_option('dbus')
+#   subdir(join_paths('dbus-services'))
+# endif
 
-if sys_windows == false
-#output the three new efl-* .pc files
-efl_20_pc_files = [
-  ['efl-ui', ['elementary']],
-  ['efl-core', ['ecore', 'efl', 'emile']],
-  ['efl-net', ['ecore', 'ecore-con', 'emile']],
-]
+# if sys_windows == false
+# #output the three new efl-* .pc files
+# efl_20_pc_files = [
+#   ['efl-ui', ['elementary']],
+#   ['efl-core', ['ecore', 'efl', 'emile']],
+#   ['efl-net', ['ecore', 'ecore-con', 'emile']],
+# ]
 
-foreach pc_file : efl_20_pc_files
-  name = pc_file[0]
-  libraries = pc_file[1]
-  pkgconfig.generate(
-    name : '-'.join(name.split('_')),
-    description: name+' configutation file',
-    requires : libraries,
-  )
-endforeach
-endif
+# foreach pc_file : efl_20_pc_files
+#   name = pc_file[0]
+#   libraries = pc_file[1]
+#   pkgconfig.generate(
+#     name : '-'.join(name.split('_')),
+#     description: name+' configutation file',
+#     requires : libraries,
+#   )
+# endforeach
+# endif
