@@ -55,6 +55,10 @@
        goto _label; \
     }
 
+EAPI Eina_Error ecore_evas_no_matching_type;
+EAPI Eina_Error ecore_evas_no_selection;
+EAPI Eina_Error ecore_evas_request_replaced;
+
 EAPI Eina_Bool _ecore_evas_app_comp_sync = EINA_FALSE;
 EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
