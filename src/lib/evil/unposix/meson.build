@@ -10,7 +10,6 @@ if sys_windows
     'locale.h',
     'math.h',
     'pthread.h',
-    'semaphore.h',
     'stdlib.h',
     'string.h',
     'strings.h',

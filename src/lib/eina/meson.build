@@ -85,8 +85,6 @@ public_sub_headers = [
 'eina_inline_value.x',
 'eina_value_util.h',
 'eina_inline_value_util.x',
-'eina_inline_lock_barrier.x',
-'eina_inline_lock_posix.x',
 'eina_tmpstr.h',
 'eina_alloca.h',
 'eina_cow.h',
@@ -197,15 +195,17 @@ sources = [
 ]
 
 if sys_windows == true
-  public_sub_headers += 'eina_thread_win32.h'  
-  public_sub_headers += 'eina_inline_thread_win32.x'  
+  public_sub_headers += 'eina_thread_win32.h'
+  public_sub_headers += 'eina_inline_thread_win32.x'
   sources += 'eina_file_win32.c'
-  sources += 'eina_sched_win32.c'  
+  sources += 'eina_sched_win32.c'
+  public_sub_headers += 'eina_inline_lock_win32.x'
 else
-  public_sub_headers += 'eina_thread_posix.h'  
+  public_sub_headers += 'eina_thread_posix.h'
   public_sub_headers += 'eina_inline_thread_posix.x'
   sources += 'eina_file.c'
-  sources += 'eina_sched_posix.c'  
+  sources += 'eina_sched_posix.c'
+  public_sub_headers += 'eina_inline_lock_posix.x'
 endif
 
 eina_config = configuration_data()
@@ -347,7 +347,7 @@ if cc.has_header('byteswap.h')
 endif
 
 if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
-   eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
+   eina_config.set('EINA_HAVE_PTHREAD_SPINLOCK', '1')
 endif
 
 if sys_osx == true
@@ -356,6 +356,15 @@ if sys_osx == true
    endif
    if cc.has_header_symbol('mach/task.h', 'semaphore_create')
      eina_config.set('EINA_HAVE_OSX_SEMAPHORE', 1)
+   endif
+endif
+
+if sys_windows == true
+   if cc.has_header_symbol('synchapi.h', 'SetCriticalSectionSpinCount')
+      eina_config.set('EINA_HAVE_WIN32_SPINLOCK', '1')
+   endif
+   if cc.has_header_symbol('synchapi.h', 'InitializeSynchronizationBarrier')
+      eina_config.set('EINA_HAVE_WIN32_BARRIER', '1')
    endif
 endif
 

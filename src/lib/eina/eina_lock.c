@@ -7,51 +7,6 @@
 #include "eina_config.h"
 #include "Eina.h"
 
-#ifdef EINA_HAVE_OSX_SPINLOCK
-
-/*
- * macOS 10.12 introduced the os_unfair_lock API which
- * deprecates OSSpinLock, while keeping compatible.
- *
- * The Spinlock API is not inlined because it would imply including
- * stdbool.h, which is not wanted: it would introduce new macros,
- * and break compilation of existing programs.
- */
-# if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-#  include <os/lock.h>
-#  define SPINLOCK_GET(LCK) ((os_unfair_lock_t)(LCK))
-# else
-#  include <libkern/OSAtomic.h>
-#  define SPINLOCK_GET(LCK) ((OSSpinLock *)(LCK))
-#  define os_unfair_lock_lock(LCK) OSSpinLockLock(LCK)
-#  define os_unfair_lock_unlock(LCK) OSSpinLockUnlock(LCK)
-#  define os_unfair_lock_trylock(LCK) OSSpinLockTry(LCK)
-# endif
-
-EAPI Eina_Lock_Result
-_eina_spinlock_macos_take(Eina_Spinlock *spinlock)
-{
-   os_unfair_lock_lock(SPINLOCK_GET(spinlock));
-   return EINA_LOCK_SUCCEED;
-}
-
-EAPI Eina_Lock_Result
-_eina_spinlock_macos_take_try(Eina_Spinlock *spinlock)
-{
-   return (os_unfair_lock_trylock(SPINLOCK_GET(spinlock)) == true)
-      ? EINA_LOCK_SUCCEED
-      : EINA_LOCK_FAIL;
-}
-
-EAPI Eina_Lock_Result
-_eina_spinlock_macos_release(Eina_Spinlock *spinlock)
-{
-   os_unfair_lock_unlock(SPINLOCK_GET(spinlock));
-   return EINA_LOCK_SUCCEED;
-}
-#endif /* EINA_HAVE_OSX_SPINLOCK */
-
-
 Eina_Bool fork_resetting;
 
 EAPI void
@@ -85,198 +40,220 @@ eina_lock_debug(const Eina_Lock *mutex)
 #endif
 }
 
-EAPI Eina_Bool
-_eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
+EAPI Eina_Bool eina_lock_new(Eina_Lock *mutex)
 {
-   pthread_mutexattr_t attr;
-   Eina_Bool ok = EINA_FALSE;
-
-   if (pthread_mutexattr_init(&attr) != 0) return EINA_FALSE;
-   if (recursive)
-     {
-        if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) goto fail_release;
-     }
+   Eina_Bool ret = _eina_lock_new(mutex, EINA_FALSE);
 #ifdef EINA_HAVE_DEBUG_THREADS
-   else if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0) goto fail_release;
+   mutex->recursive = EINA_FALSE;
+   mutex->lock_thread_id = 0;
+   mutex->lock_bt_num = 0;
+   mutex->locked = 0;
 #endif
-   if (pthread_mutex_init(&(mutex->mutex), &attr) != 0) goto fail_release;
-   ok = EINA_TRUE;
-fail_release:
-   pthread_mutexattr_destroy(&attr);
-   return ok;
-}
-
-EAPI void
-_eina_lock_free(Eina_Lock *mutex)
-{
-   int ok;
-
-   ok = pthread_mutex_destroy(&(mutex->mutex));
-   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, mutex_destroy, mutex);
+   return ret;
 }
 
 EAPI Eina_Bool
-_eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
+eina_lock_recursive_new(Eina_Lock *mutex)
 {
-   pthread_condattr_t attr;
-   int ok;
-
+   Eina_Bool ret = _eina_lock_new(mutex, EINA_TRUE);
 #ifdef EINA_HAVE_DEBUG_THREADS
-   assert(mutex != NULL);
+   mutex->recursive = EINA_TRUE;
+   mutex->lock_thread_id = 0;
+   mutex->lock_bt_num = 0;
+   mutex->locked = 0;
 #endif
-
-   cond->lock = mutex;
-   pthread_condattr_init(&attr);
-
-   /* OSX doesn't provide clockid_t or clock_gettime. */
-#if defined(__clockid_t_defined)
-   cond->clkid = (clockid_t) 0;
-   /* We try here to chose the best clock for cond_timedwait */
-# if defined(CLOCK_MONOTONIC_RAW)
-   if (!pthread_condattr_setclock(&attr, CLOCK_MONOTONIC_RAW))
-     cond->clkid = CLOCK_MONOTONIC_RAW;
-# endif
-# if defined(CLOCK_MONOTONIC)
-   if (!cond->clkid && !pthread_condattr_setclock(&attr, CLOCK_MONOTONIC))
-     cond->clkid = CLOCK_MONOTONIC;
-# endif
-# if defined(CLOCK_REALTIME)
-   if (!cond->clkid && !pthread_condattr_setclock(&attr, CLOCK_REALTIME))
-     cond->clkid = CLOCK_REALTIME;
-# endif
-#endif
-
-   ok = pthread_cond_init(&cond->condition, &attr);
-   if (ok != 0)
-     {
-        pthread_condattr_destroy(&attr);
-#ifdef EINA_HAVE_DEBUG_THREADS
-        if (ok == EBUSY)
-          fprintf(stderr, "EINA ERROR: eina_condition_new on already initialized Eina_Condition\n");
-#endif
-        return EINA_FALSE;
-     }
-
-   pthread_condattr_destroy(&attr);
-   return EINA_TRUE;
+   return ret;
 }
 
 EAPI void
-_eina_condition_free(Eina_Condition *cond)
+eina_lock_free(Eina_Lock *mutex)
 {
-   pthread_cond_destroy(&(cond->condition));
+   _eina_lock_free(mutex);
+}
+
+EAPI Eina_Lock_Result
+eina_lock_take_try(Eina_Lock *mutex)
+{
+   return _eina_lock_take_try(mutex);
+}
+
+EAPI Eina_Lock_Result
+eina_lock_take(Eina_Lock *mutex)
+{
+   return _eina_lock_take(mutex);
+}
+
+EAPI Eina_Lock_Result
+eina_lock_release(Eina_Lock *mutex)
+{
+   return _eina_lock_release(mutex);
 }
 
 EAPI Eina_Bool
-_eina_rwlock_new(Eina_RWLock *mutex)
+eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
-   int ok;
-
-   ok = pthread_rwlock_init(&(mutex->mutex), NULL);
-   if (ok == 0) return EINA_TRUE;
-   else if ((ok == EAGAIN) || (ok == ENOMEM)) return EINA_FALSE;
-   else EINA_LOCK_ABORT_DEBUG(ok, rwlock_init, mutex);
-   return EINA_FALSE;
+   return _eina_condition_new(cond, mutex);
 }
 
 EAPI void
-_eina_rwlock_free(Eina_RWLock *mutex)
+eina_condition_free(Eina_Condition *cond)
 {
-   pthread_rwlock_destroy(&(mutex->mutex));
+   _eina_condition_free(cond);
 }
 
 EAPI Eina_Bool
-_eina_barrier_new(Eina_Barrier *barrier, int needed)
+eina_condition_wait(Eina_Condition *cond)
 {
-#ifdef EINA_HAVE_PTHREAD_BARRIER
-   int ok = pthread_barrier_init(&(barrier->barrier), NULL, needed);
-   if (ok == 0) return EINA_TRUE;
-   else if ((ok == EAGAIN) || (ok == ENOMEM)) return EINA_FALSE;
-   else EINA_LOCK_ABORT_DEBUG(ok, barrier_init, barrier);
-   return EINA_FALSE;
-#else
-   barrier->needed = needed;
-   barrier->called = 0;
-   if (eina_lock_new(&(barrier->cond_lock)))
-     {
-        if (eina_condition_new(&(barrier->cond), &(barrier->cond_lock)))
-          return EINA_TRUE;
-     }
-   return EINA_FALSE;
-#endif
+   return _eina_condition_wait(cond);
+}
+
+EAPI Eina_Bool
+eina_condition_timedwait(Eina_Condition *cond, double t)
+{
+   return _eina_condition_timedwait(cond, t);
+}
+
+EAPI Eina_Bool
+eina_condition_broadcast(Eina_Condition *cond)
+{
+   return _eina_condition_broadcast(cond);
+}
+
+EAPI Eina_Bool
+eina_condition_signal(Eina_Condition *cond)
+{
+   return _eina_condition_signal(cond);
+}
+
+EAPI Eina_Bool
+eina_rwlock_new(Eina_RWLock *mutex)
+{
+   return _eina_rwlock_new(mutex);
 }
 
 EAPI void
-_eina_barrier_free(Eina_Barrier *barrier)
+eina_rwlock_free(Eina_RWLock *mutex)
 {
-#ifdef EINA_HAVE_PTHREAD_BARRIER
-   int ok = pthread_barrier_destroy(&(barrier->barrier));
-   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, barrier_destroy, barrier);
-#else
-   eina_condition_free(&(barrier->cond));
-   eina_lock_free(&(barrier->cond_lock));
-   barrier->needed = 0;
-   barrier->called = 0;
-#endif
+   _eina_rwlock_free(mutex);
+}
+
+EAPI Eina_Lock_Result
+eina_rwlock_take_read(Eina_RWLock *mutex)
+{
+   return _eina_rwlock_take_read(mutex);
+}
+
+EAPI Eina_Lock_Result
+eina_rwlock_take_write(Eina_RWLock *mutex)
+{
+   return _eina_rwlock_take_write(mutex);
+}
+
+EAPI Eina_Lock_Result
+eina_rwlock_release(Eina_RWLock *mutex)
+{
+   return _eina_rwlock_release(mutex);
 }
 
 EAPI Eina_Bool
-_eina_spinlock_new(Eina_Spinlock *spinlock)
+eina_tls_cb_new(Eina_TLS *key, Eina_TLS_Delete_Cb delete_cb)
 {
-#if defined(EINA_HAVE_POSIX_SPINLOCK)
-   int ok = pthread_spin_init(spinlock, PTHREAD_PROCESS_PRIVATE);
-   if (ok == 0) return EINA_TRUE;
-   else if ((ok == EAGAIN) || (ok == ENOMEM)) return EINA_FALSE;
-   else EINA_LOCK_ABORT_DEBUG(ok, spin_init, spinlock);
-   return EINA_FALSE;
-#elif defined(EINA_HAVE_OSX_SPINLOCK)
-   *spinlock = 0;
-   return EINA_TRUE;
-#else
-   return eina_lock_new(spinlock);
-#endif
+   return _eina_tls_cb_new(key, delete_cb);
+}
+
+EAPI Eina_Bool
+eina_tls_new(Eina_TLS *key)
+{
+   return _eina_tls_cb_new(key, NULL);
 }
 
 EAPI void
-_eina_spinlock_free(Eina_Spinlock *spinlock)
+eina_tls_free(Eina_TLS key)
 {
-#if defined(EINA_HAVE_POSIX_SPINLOCK)
-   int ok = pthread_spin_destroy(spinlock);
-   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, spin_destroy, spinlock);
-#elif defined(EINA_HAVE_OSX_SPINLOCK)
-   /* Not applicable */
-   (void) spinlock;
-#else
-   eina_lock_free(spinlock);
-#endif
+   _eina_tls_free(key);
+}
+
+EAPI void *
+eina_tls_get(Eina_TLS key)
+{
+   return _eina_tls_get(key);
 }
 
 EAPI Eina_Bool
-_eina_semaphore_new(Eina_Semaphore *sem, int count_init)
+eina_tls_set(Eina_TLS key, const void *data)
 {
-   if (sem && (count_init >= 0))
-     {
-#if defined(EINA_HAVE_OSX_SEMAPHORE)
-        kern_return_t kr = semaphore_create(mach_task_self(), sem, SYNC_POLICY_FIFO, count_init);
-        return (kr == KERN_SUCCESS) ? EINA_TRUE : EINA_FALSE;
-#else
-        return (sem_init(sem, 0, count_init) == 0) ? EINA_TRUE : EINA_FALSE;
-#endif
-     }
-   return EINA_FALSE;
+   return _eina_tls_set(key, data);
 }
 
 EAPI Eina_Bool
-_eina_semaphore_free(Eina_Semaphore *sem)
+eina_barrier_new(Eina_Barrier *barrier, int needed)
 {
-   if (sem)
-     {
-#if defined(EINA_HAVE_OSX_SEMAPHORE)
-        return (semaphore_destroy(mach_task_self(), *sem) == KERN_SUCCESS)
-        ? EINA_TRUE : EINA_FALSE;
-#else
-        return (sem_destroy(sem) == 0) ? EINA_TRUE : EINA_FALSE;
-#endif
-     }
-   return EINA_FALSE;
+   return _eina_barrier_new(barrier, needed);
 }
+
+EAPI void
+eina_barrier_free(Eina_Barrier *barrier)
+{
+   _eina_barrier_free(barrier);
+}
+
+EAPI Eina_Bool
+eina_barrier_wait(Eina_Barrier *barrier)
+{
+   return _eina_barrier_wait(barrier);
+}
+
+EAPI Eina_Bool
+eina_spinlock_new(Eina_Spinlock *spinlock)
+{
+   return _eina_spinlock_new(spinlock);
+}
+
+EAPI void
+eina_spinlock_free(Eina_Spinlock *spinlock)
+{
+   _eina_spinlock_free(spinlock);
+}
+
+EAPI Eina_Lock_Result
+eina_spinlock_take_try(Eina_Spinlock *spinlock)
+{
+   return _eina_spinlock_take_try(spinlock);
+}
+
+EAPI Eina_Lock_Result
+eina_spinlock_take(Eina_Spinlock *spinlock)
+{
+   return _eina_spinlock_take(spinlock);
+}
+
+EAPI Eina_Lock_Result
+eina_spinlock_release(Eina_Spinlock *spinlock)
+{
+   return _eina_spinlock_release(spinlock);
+}
+
+EAPI Eina_Bool
+eina_semaphore_new(Eina_Semaphore *sem, int count_init)
+{
+   return _eina_semaphore_new(sem, count_init);
+}
+
+EAPI Eina_Bool
+eina_semaphore_free(Eina_Semaphore *sem)
+{
+   return _eina_semaphore_free(sem);
+}
+
+EAPI Eina_Bool
+eina_semaphore_lock(Eina_Semaphore *sem)
+{
+   return _eina_semaphore_lock(sem);
+}
+
+EAPI Eina_Bool
+eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
+{
+   return _eina_semaphore_release(sem, count_release);
+}
+

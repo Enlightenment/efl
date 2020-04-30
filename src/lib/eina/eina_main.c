@@ -41,6 +41,7 @@
 #endif
 
 #include "eina_lock.h"
+#include "eina_thread.h"
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_types.h"
@@ -99,7 +100,7 @@ EAPI Eina_Error EINA_ERROR_NOT_IMPLEMENTED = 0;
 EAPI unsigned int eina_seed = 0;
 
 #ifdef EFL_HAVE_THREADS
-EAPI Eina_Thread _eina_main_loop; 
+EAPI Eina_Thread _eina_main_loop;
 #endif
 
 #ifdef MT
@@ -108,7 +109,7 @@ static int _mt_enabled = 0;
 
 #ifdef EFL_HAVE_THREADS
 EAPI int _eina_threads_debug = 0;
-EAPI pthread_mutex_t _eina_tracking_lock;
+EAPI Eina_Lock _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
 extern Eina_Lock       _sysmon_lock;
 #endif
@@ -230,7 +231,7 @@ _eina_threads_do_shutdown(void)
 #ifdef EINA_HAVE_DEBUG_THREADS
    const Eina_Lock *lk;
 
-   pthread_mutex_lock(&_eina_tracking_lock);
+   eina_lock_take(&_eina_tracking_lock);
    if (_eina_tracking)
      {
        if (((Eina_Lock*)_eina_tracking != (&_sysmon_lock)) || (_eina_tracking->next))
@@ -248,7 +249,7 @@ _eina_threads_do_shutdown(void)
             abort();
          }
      }
-   pthread_mutex_unlock(&_eina_tracking_lock);
+   eina_lock_release(&_eina_tracking_lock);
 #endif
 
    eina_share_common_threads_shutdown();
@@ -317,7 +318,7 @@ eina_init(void)
      }
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_mutex_init(&_eina_tracking_lock, NULL);
+   eina_lock_take(&_eina_tracking_lock, NULL);
 
    if (getenv("EINA_DEBUG_THREADS"))
      _eina_threads_debug = atoi(getenv("EINA_DEBUG_THREADS"));
@@ -367,7 +368,7 @@ eina_shutdown(void)
         if (_eina_threads_activated && (!_eina_main_thread_count))
           _eina_threads_do_shutdown();
 #ifdef EINA_HAVE_DEBUG_THREADS
-	pthread_mutex_destroy(&_eina_tracking_lock);
+	eina_lock_free(&_eina_tracking_lock);
 #endif
         eina_freeq_free(eina_freeq_main_get());
 #ifdef MT
@@ -388,7 +389,7 @@ eina_threads_init(void)
 {
 #ifdef EFL_HAVE_THREADS
    int ret;
-# ifdef EINA_HAVE_DEBUG_THREADS   
+# ifdef EINA_HAVE_DEBUG_THREADS
    assert(eina_thread_equal(_eina_main_loop, eina_thread_self()));
 # endif
 
@@ -438,7 +439,7 @@ eina_main_loop_is(void)
 #ifdef EFL_HAVE_THREADS
 # ifdef __GNUC__
    /* pthread_self() can't be optimized, it's a single asm "movl" */
-   if (__builtin_types_compatible_p(pthread_t, unsigned long int))
+   if (__builtin_types_compatible_p(Eina_Thread, unsigned long int))
      return (eina_thread_self() == _eina_main_loop);
    else
 # endif

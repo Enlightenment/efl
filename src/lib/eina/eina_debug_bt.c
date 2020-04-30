@@ -49,7 +49,7 @@
 // broken on OSX in that a HUP signal will maybe cause a crash... but compiling
 // with -pg would have guaranteed always caused a crash before anyway.
 // given OSX only supports "old-style" signals like:
-// 
+//
 // #define  SIGHUP     1 /* hangup */
 // #define  SIGINT     2 /* interrupt */
 // #define  SIGQUIT    3 /* quit */
@@ -90,7 +90,7 @@
 // #endif
 // #define  SIGUSR1   30 /* user defined signal 1 */
 // #define  SIGUSR2   31 /* user defined signal 2 */
-// 
+//
 // (excerpt from OSX's signal.h - found at:
 // http://github.com/st3fan/osx-10.9/blob/master/xnu-2422.1.72/bsd/sys/signal.h
 // pasting here due to how difficult it was to find a signal list for OSX)
