@@ -49,12 +49,10 @@ header_checks = [
   'sys/times.h',
   'longinfo.h',
   'ieeefp.h',
-  'node/uv.h',
   'sys/timerfd.h',
   'features.h',
   'langinfo.h',
   'locale.h',
-  'uv.h',
   'crt_externs.h'
 ]
 
