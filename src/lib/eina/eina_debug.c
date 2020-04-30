@@ -597,37 +597,15 @@ _monitor(void *_data)
 static void
 _thread_start(Eina_Debug_Session *session)
 {
-#ifndef _WIN32
-   pthread_t monitor_thread;
-   int err;
-   sigset_t oldset, newset;
+   Eina_Thread monitor_thread;
 
-   sigemptyset(&newset);
-   sigaddset(&newset, SIGPIPE);
-   sigaddset(&newset, SIGALRM);
-   sigaddset(&newset, SIGCHLD);
-   sigaddset(&newset, SIGUSR1);
-   sigaddset(&newset, SIGUSR2);
-   sigaddset(&newset, SIGHUP);
-   sigaddset(&newset, SIGQUIT);
-   sigaddset(&newset, SIGINT);
-   sigaddset(&newset, SIGTERM);
-#ifdef SIGPWR
-   sigaddset(&newset, SIGPWR);
-#endif
-   pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+   Eina_Bool err = eina_thread_create(&monitor_thread,EINA_THREAD_BACKGROUND,-1,(Eina_Thread_Cb)_monitor,session);
 
-   err = pthread_create(&monitor_thread, NULL, _monitor, session);
-
-   pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-   if (err != 0)
+   if (!err)
      {
         e_debug("EINA DEBUG ERROR: Can't create monitor debug thread!");
         abort();
      }
-#else
-   (void)session;
-#endif
 }
 
 /*
