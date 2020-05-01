@@ -367,14 +367,15 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
          */
         if (!chosen_desc->text.fit_x) size = sh;
 
-           if (inlined_font) efl_text_font_source_set(ep->object, ed->path);
-           else efl_text_font_source_set(ep->object, NULL);
+        if (size < 1) size = 1;
+        if (inlined_font) efl_text_font_source_set(ep->object, ed->path);
+        else efl_text_font_source_set(ep->object, NULL);
 
-           if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
+        if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
 
-           efl_text_font_family_set(ep->object, font);
-           efl_text_font_size_set(ep->object, size);
-           efl_text_set(ep->object, text);
+        efl_text_font_family_set(ep->object, font);
+        efl_text_font_size_set(ep->object, size);
+        efl_text_set(ep->object, text);
         part_get_geometry(ep, &tw, &th);
 
         /* only grow the font size if we didn't already reach the max size
