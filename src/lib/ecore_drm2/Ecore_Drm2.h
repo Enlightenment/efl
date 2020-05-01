@@ -92,6 +92,8 @@ typedef struct _Ecore_Drm2_Context
                           unsigned int tv_usec, void *user_data);
    void (*page_flip_handler)(int fd, unsigned int sequence, unsigned int tv_sec,
                              unsigned int tv_usec, void *user_data);
+   void (*page_flip_handler2)(int fd, unsigned int sequence, unsigned int tv_sec,
+                              unsigned int tv_usec, unsigned int crtc_id, void *user_data);
 } Ecore_Drm2_Context;
 
 EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
