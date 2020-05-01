@@ -320,6 +320,13 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         if (!eolian_parameter_is_move(pr) || eolian_parameter_direction_get(pr) == EOLIAN_PARAMETER_OUT)
           {
              eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s;\n", eolian_parameter_name_get(pr));
+             /* FIXME: quick hack to avoid warnings, but should be rewritten properly */
+             if (eolian_type_typedecl_get(type) &&
+                 eolian_typedecl_type_get(eolian_type_typedecl_get(type)) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+               {
+                   eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s_data;\n", eolian_parameter_name_get(pr));
+                   eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s_free_cb;\n", eolian_parameter_name_get(pr));
+               }
              continue;
           }
 
@@ -675,7 +682,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                eina_strbuf_append_char(params_full_imp, ' ');
              eina_strbuf_append(params_full_imp, add_star);
              eina_strbuf_append(params_full_imp, prn);
-             if (!dfv && is_empty)
+             if ((!dfv || ftype == EOLIAN_PROP_SET) && is_empty)
                eina_strbuf_append(params_full_imp, " EINA_UNUSED");
              eina_strbuf_append(params, prn);
 

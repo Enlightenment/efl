@@ -108,6 +108,7 @@
  *
  * @skip while
  * @until }
+ * @example eina_inlist_01.c
  */
 
 /**
@@ -179,6 +180,7 @@
  * @until }
  *
  * Here is the full source code for this example: @ref eina_inlist_02_c
+ * @example eina_inlist_02.c
  */
 
 /**
@@ -266,7 +268,7 @@
  *
  * To see the full source code for this example, click here: @ref
  * eina_inlist_03_c
- *
+ * @example eina_inlist_03.c
  */
 
 /**

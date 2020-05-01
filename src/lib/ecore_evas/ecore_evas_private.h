@@ -33,9 +33,9 @@
 
 EAPI extern int _ecore_evas_log_dom;
 
-EAPI Eina_Error ecore_evas_no_matching_type;
-EAPI Eina_Error ecore_evas_no_selection;
-EAPI Eina_Error ecore_evas_request_replaced;
+EAPI extern Eina_Error ecore_evas_no_matching_type;
+EAPI extern Eina_Error ecore_evas_no_selection;
+EAPI extern Eina_Error ecore_evas_request_replaced;
 
 #ifdef ECORE_EVAS_DEFAULT_LOG_COLOR
 # undef ECORE_EVAS_DEFAULT_LOG_COLOR
@@ -84,11 +84,13 @@ typedef struct _Ecore_Evas_Cursor Ecore_Evas_Cursor;
 
 typedef Eina_Bool (*Ecore_Evas_Selection_Internal_Delivery)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice);
 typedef void (*Ecore_Evas_Selection_Internal_Cancel)(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer);
-typedef struct {
+typedef struct
+{
    Ecore_Evas_Selection_Internal_Delivery delivery;
    Ecore_Evas_Selection_Internal_Cancel cancel;
    Eina_Array *available_types;
 } Ecore_Evas_Selection_Callbacks;
+
 /* Engines interfaces */
 struct _Ecore_Evas_Engine_Func
 {
@@ -203,23 +205,27 @@ struct _Ecore_Evas_Engine
    Eina_List *ifaces;
    Ecore_Timer *idle_flush_timer;
 #ifdef BUILD_ECORE_EVAS_EWS
-   struct {
-      Evas_Object *image;
-   } ews;
+   struct
+     {
+        Evas_Object *image;
+     } ews;
 #endif
 };
 
-struct _Ecore_Evas_Cursor {
+struct _Ecore_Evas_Cursor
+{
    Evas_Object *object;
-   int          layer;
-   struct {
-      int       x, y;
-   } hot;
+   int layer;
+   struct
+     {
+        int x, y;
+     } hot;
    int pos_x;
    int pos_y;
 };
 
-typedef struct {
+typedef struct
+{
    unsigned int seat;
    Eina_Content *selection_buffer[ECORE_EVAS_SELECTION_BUFFER_LAST];
 } Ecore_Evas_Selection_Seat_Buffers;
@@ -248,110 +254,121 @@ struct _Ecore_Evas
 
    Eina_Hash  *selection_buffers;
 
-   struct {
-      int      x, y, w, h;
-   } req;
+   struct
+     {
+        int      x, y, w, h;
+     } req;
 
-   struct {
-      int      l, r, t, b;
-      int      changed : 1;
-   } shadow;
+   struct
+     {
+        int      l, r, t, b;
+        int      changed : 1;
+     } shadow;
 
-   struct {
-      int      w, h;
-   } expecting_resize;
+   struct
+     {
+        int      w, h;
+     } expecting_resize;
 
-   struct {
-      int      w, h;
-   } framespace;
+   struct
+     {
+        int      w, h;
+     } framespace;
 
-   struct {
-      Eina_Hash      *cursors;
-      char           *title;
-      char           *name;
-      char           *clas;
-      struct {
-         char        *name;
-         char       **available_list;
-         int          count;
-      } profile;
-      struct {
-         int          w, h;
-      } min, max, base, step;
-      Ecore_Evas_Cursor cursor_cache;
-      struct {
-         Eina_Bool       supported;      // indicate that the underlying window system supports window manager rotation protocol
-         Eina_Bool       app_set;        // indicate that the ee supports window manager rotation protocol
-         Eina_Bool       win_resize;     // indicate that the ee will be resized by the WM
-         int             angle;          // rotation value which is decided by the WM
-         int             w, h;           // window size to rotate
-         int             preferred_rot;  // preferred rotation hint
-         int            *available_rots; // array of avaialable rotation values
-         unsigned int    count;          // number of elements of available_rots
-         struct {
-            Eina_Bool    set;
-            Eina_Bool    wait_for_done;
-            Ecore_Timer *timer;
-         } manual_mode;
-      } wm_rot;
-      struct {
-         Eina_List      *supported_list;
-         Eina_List      *hints;
-         int             id;
-      } aux_hint;
-      Eina_List       *focused_by;
-      int             layer;
-      Ecore_Window    window;
-      unsigned char   avoid_damage;
-      Ecore_Evas     *group_ee;
-      Ecore_Window    group_ee_win;
-      double          aspect;
-      Eina_Bool       iconified    : 1;
-      Eina_Bool       borderless   : 1;
-      Eina_Bool       override     : 1;
-      Eina_Bool       maximized    : 1;
-      Eina_Bool       fullscreen   : 1;
-      Eina_Bool       withdrawn    : 1;
-      Eina_Bool       sticky       : 1;
-      Eina_Bool       request_pos  : 1;
-      Eina_Bool       hwsurface    : 1;
-      Eina_Bool       urgent           : 1;
-      Eina_Bool       modal            : 1;
-      Eina_Bool       demand_attention : 1;
-      Eina_Bool       focus_skip       : 1;
-      Eina_Bool       focused       : 1;
-  } prop;
+   struct
+     {
+        Eina_Hash      *cursors;
+        char           *title;
+        char           *name;
+        char           *clas;
+        struct
+          {
+             char        *name;
+             char       **available_list;
+             int          count;
+          } profile;
+        struct
+          {
+             int          w, h;
+          } min, max, base, step;
+        Ecore_Evas_Cursor cursor_cache;
+        struct
+          {
+             Eina_Bool       supported;      // indicate that the underlying window system supports window manager rotation protocol
+             Eina_Bool       app_set;        // indicate that the ee supports window manager rotation protocol
+             Eina_Bool       win_resize;     // indicate that the ee will be resized by the WM
+             int             angle;          // rotation value which is decided by the WM
+             int             w, h;           // window size to rotate
+             int             preferred_rot;  // preferred rotation hint
+             int            *available_rots; // array of avaialable rotation values
+             unsigned int    count;          // number of elements of available_rots
+             struct
+               {
+                  Eina_Bool    set;
+                  Eina_Bool    wait_for_done;
+                  Ecore_Timer *timer;
+               } manual_mode;
+          } wm_rot;
+        struct
+          {
+             Eina_List      *supported_list;
+             Eina_List      *hints;
+             int             id;
+          } aux_hint;
+        Eina_List       *focused_by;
+        int             layer;
+        Ecore_Window    window;
+        unsigned char   avoid_damage;
+        Ecore_Evas     *group_ee;
+        Ecore_Window    group_ee_win;
+        double          aspect;
+        Eina_Bool       iconified    : 1;
+        Eina_Bool       borderless   : 1;
+        Eina_Bool       override     : 1;
+        Eina_Bool       maximized    : 1;
+        Eina_Bool       fullscreen   : 1;
+        Eina_Bool       withdrawn    : 1;
+        Eina_Bool       sticky       : 1;
+        Eina_Bool       request_pos  : 1;
+        Eina_Bool       hwsurface    : 1;
+        Eina_Bool       urgent           : 1;
+        Eina_Bool       modal            : 1;
+        Eina_Bool       demand_attention : 1;
+        Eina_Bool       focus_skip       : 1;
+        Eina_Bool       focused       : 1;
+     } prop;
 
-   struct {
-      void          (*fn_resize) (Ecore_Evas *ee);
-      void          (*fn_move) (Ecore_Evas *ee);
-      void          (*fn_show) (Ecore_Evas *ee);
-      void          (*fn_hide) (Ecore_Evas *ee);
-      void          (*fn_delete_request) (Ecore_Evas *ee);
-      void          (*fn_destroy) (Ecore_Evas *ee);
-      void          (*fn_focus_in) (Ecore_Evas *ee);
-      void          (*fn_focus_out) (Ecore_Evas *ee);
-      void          (*fn_sticky) (Ecore_Evas *ee);
-      void          (*fn_unsticky) (Ecore_Evas *ee);
-      void          (*fn_mouse_in) (Ecore_Evas *ee);
-      void          (*fn_mouse_out) (Ecore_Evas *ee);
-      void          (*fn_pre_render) (Ecore_Evas *ee);
-      void          (*fn_post_render) (Ecore_Evas *ee);
-      void          (*fn_pre_free) (Ecore_Evas *ee);
-      void          (*fn_state_change) (Ecore_Evas *ee);
-      void          (*fn_msg_parent_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
-      void          (*fn_msg_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
-      void          (*fn_pointer_xy_get) (const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
-      Eina_Bool     (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
-      void          (*fn_focus_device_in) (Ecore_Evas *ee, Efl_Input_Device *seat);
-      void          (*fn_focus_device_out) (Ecore_Evas *ee, Efl_Input_Device *seat);
-      void          (*fn_device_mouse_in) (Ecore_Evas *ee, Efl_Input_Device *mouse);
-      void          (*fn_device_mouse_out) (Ecore_Evas *ee, Efl_Input_Device *mouse);
-      void          (*fn_selection_changed) (Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
-      void          (*fn_dnd_motion) (Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
-      void          (*fn_dnd_state_change) (Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
-      void          (*fn_dnd_drop)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, const char *action);
-   } func;
+   struct
+     {
+        void          (*fn_resize) (Ecore_Evas *ee);
+        void          (*fn_move) (Ecore_Evas *ee);
+        void          (*fn_show) (Ecore_Evas *ee);
+        void          (*fn_hide) (Ecore_Evas *ee);
+        void          (*fn_delete_request) (Ecore_Evas *ee);
+        void          (*fn_destroy) (Ecore_Evas *ee);
+        void          (*fn_focus_in) (Ecore_Evas *ee);
+        void          (*fn_focus_out) (Ecore_Evas *ee);
+        void          (*fn_sticky) (Ecore_Evas *ee);
+        void          (*fn_unsticky) (Ecore_Evas *ee);
+        void          (*fn_mouse_in) (Ecore_Evas *ee);
+        void          (*fn_mouse_out) (Ecore_Evas *ee);
+        void          (*fn_pre_render) (Ecore_Evas *ee);
+        void          (*fn_post_render) (Ecore_Evas *ee);
+        void          (*fn_pre_free) (Ecore_Evas *ee);
+        void          (*fn_state_change) (Ecore_Evas *ee);
+        void          (*fn_msg_parent_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+        void          (*fn_msg_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+        void          (*fn_pointer_xy_get) (const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
+        Eina_Bool     (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
+        void          (*fn_focus_device_in) (Ecore_Evas *ee, Efl_Input_Device *seat);
+        void          (*fn_focus_device_out) (Ecore_Evas *ee, Efl_Input_Device *seat);
+        void          (*fn_device_mouse_in) (Ecore_Evas *ee, Efl_Input_Device *mouse);
+        void          (*fn_device_mouse_out) (Ecore_Evas *ee, Efl_Input_Device *mouse);
+        void          (*fn_selection_changed) (Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection);
+        void          (*fn_dnd_motion) (Ecore_Evas *ee, unsigned int seat, Eina_Position2D p);
+        void          (*fn_dnd_state_change) (Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, Eina_Bool inside);
+        void          (*fn_dnd_drop)(Ecore_Evas *ee, unsigned int seat, Eina_Position2D p, const char *action);
+     } func;
 
    Ecore_Evas_Engine engine;
    Eina_List *sub_ecore_evas;
@@ -360,34 +377,37 @@ struct _Ecore_Evas
    Ecore_Animator *anim;
    unsigned int animator_count;
 
-   struct {
-      Eina_Inlist *active;
-      Eina_Inlist *deleted;
-      Eina_Inlist *suspended;
-      Eina_Inlist *run_list;
-   } ee_anim;
+   struct
+     {
+        Eina_Inlist *active;
+        Eina_Inlist *deleted;
+        Eina_Inlist *suspended;
+        Eina_Inlist *run_list;
+     } ee_anim;
 
-   struct {
-      unsigned char avoid_damage;
-      unsigned char resize_shape : 1;
-      unsigned char shaped : 1;
-      unsigned char shaped_changed : 1;
-      unsigned char alpha : 1;
-      unsigned char alpha_changed : 1;
-      unsigned char transparent : 1;
-      unsigned char transparent_changed : 1;
-      int           rotation;
-      int           rotation_resize;
-      unsigned char rotation_changed : 1;
-   } delayed;
+   struct
+     {
+        unsigned char avoid_damage;
+        unsigned char resize_shape : 1;
+        unsigned char shaped : 1;
+        unsigned char shaped_changed : 1;
+        unsigned char alpha : 1;
+        unsigned char alpha_changed : 1;
+        unsigned char transparent : 1;
+        unsigned char transparent_changed : 1;
+        int           rotation;
+        int           rotation_resize;
+        unsigned char rotation_changed : 1;
+     } delayed;
 
    Eina_Hash *active_drags;
-   struct {
-      Ecore_Evas *rep;
-      void *data;
-      Ecore_Evas_Drag_Finished_Cb free;
-      Eina_Bool accepted;
-   } drag;
+   struct
+     {
+        Ecore_Evas *rep;
+        void *data;
+        Ecore_Evas_Drag_Finished_Cb free;
+        Eina_Bool accepted;
+     } drag;
 
    int refcount;
 //#define ECORE_EVAS_ASYNC_RENDER_DEBUG 1 /* TODO: remove me */
@@ -438,31 +458,31 @@ EAPI void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned 
 EAPI void _ecore_evas_mouse_device_move_process(Ecore_Evas *ee, Efl_Input_Device *pointer,
                                                 int x, int y, unsigned int timestamp);
 EAPI void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
-                                          int x, int y,
-                                          double radius,
-                                          double radius_x, double radius_y,
-                                          double pressure,
-                                          double angle,
-                                          double mx, double my,
-                                          unsigned int timestamp);
+                                               int x, int y,
+                                               double radius,
+                                               double radius_x, double radius_y,
+                                               double pressure,
+                                               double angle,
+                                               double mx, double my,
+                                               unsigned int timestamp);
 EAPI void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
-                                          int x, int y,
-                                          double radius,
-                                          double radius_x, double radius_y,
-                                          double pressure,
-                                          double angle,
-                                          double mx, double my,
-                                          Evas_Button_Flags flags,
-                                          unsigned int timestamp);
+                                               int x, int y,
+                                               double radius,
+                                               double radius_x, double radius_y,
+                                               double pressure,
+                                               double angle,
+                                               double mx, double my,
+                                               Evas_Button_Flags flags,
+                                               unsigned int timestamp);
 EAPI void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
-                                        int x, int y,
-                                        double radius,
-                                        double radius_x, double radius_y,
-                                        double pressure,
-                                        double angle,
-                                        double mx, double my,
-                                        Evas_Button_Flags flags,
-                                        unsigned int timestamp);
+                                             int x, int y,
+                                             double radius,
+                                             double radius_x, double radius_y,
+                                             double pressure,
+                                             double angle,
+                                             double mx, double my,
+                                             Evas_Button_Flags flags,
+                                             unsigned int timestamp);
 EAPI Eina_Bool _ecore_evas_input_direct_cb(void *window, int type, const void *info);
 
 EAPI extern Eina_Bool _ecore_evas_app_comp_sync;

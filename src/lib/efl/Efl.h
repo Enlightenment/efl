@@ -53,6 +53,7 @@ extern "C" {
 #define EFL_VERSION_1_22 1
 #define EFL_VERSION_1_23 1
 #define EFL_VERSION_1_24 1
+#define EFL_VERSION_1_25 1
 
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_BUILD

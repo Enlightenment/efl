@@ -524,7 +524,9 @@ click_part_flags_internal(Eo *obj, const char *part, int flags, Eina_Bool up)
    click_object_internal(content, dir, flags, up);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
-   edje_object_message_signal_process(obj);
+   /* can be false if obj is an elm_widget_item */
+   if (efl_isa(obj, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(obj);
    efl_unref(part_obj);
 }
 
@@ -615,6 +617,14 @@ void
 event_callback_that_quits_the_main_loop_when_called()
 {
    ecore_main_loop_quit();
+}
+
+void
+smart_callback_that_stores_event_info_to_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   void **real_data = data;
+
+   *real_data = event_info;
 }
 
 void

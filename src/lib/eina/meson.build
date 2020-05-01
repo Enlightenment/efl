@@ -302,7 +302,7 @@ if cc.has_header_symbol(pthread_np_header_file, 'pthread_attr_setaffinity_np', a
    eina_config.set('EINA_HAVE_PTHREAD_AFFINITY', '1')
 endif
 
-if debug_threads or get_option('debug-threads')
+if debug_threads and get_option('debug-threads')
    if cc.has_header_symbol('execinfo.h', 'backtrace')
       eina_config.set('EINA_HAVE_DEBUG_THREADS', '1')
    endif

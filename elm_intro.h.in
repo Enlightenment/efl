@@ -9,10 +9,10 @@
  * This is a VERY SIMPLE toolkit. It is not meant for writing extensive desktop
  * applications (yet). Small simple ones with simple needs.
  *
- * It is meant to make the programmers work almost brainless but give them lots
+ * It is meant to make the programmers work almost brainlessly but give them lots
  * of flexibility.
  *
- * @li @ref Start - Go here to quickly get started with writing Apps
+ * @li @ref Elm_Start - Go here to quickly get started with writing Apps
  *
  * @section organization Organization
  *

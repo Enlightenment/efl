@@ -74,10 +74,16 @@ Fixes:
    * elm_cnp: fix memory leaks
    * elm menu - fix segv on deletion/shutdown where parent was not done ok
    * canvas svg: fix memory leak.
+   * ecore_wl2: EFL Wayland Build on FreeBSD (T8659)
+   * ecore_file - address issue about false positive of finding a file in ./ (T8678)
+   * evas gl - shader cache was needless losing and overwriting
+   * efreet - work around conconforming apps putting startupwmclass in quotes
+   * ecore-evas-drm: Fix broken init count
 
 Removals:
 
    * emotion & evas: remove gstreamer 0.10 support
+   * emotion: remove xine and vlc support
    * escape: remove library from tree
    * ecore_x: remove support XGesture extension
    * elocation: remove beta library
