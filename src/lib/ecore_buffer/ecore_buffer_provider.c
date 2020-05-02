@@ -17,20 +17,20 @@ struct _Ecore_Buffer_Provider
    Ecore_Buffer_Queue *ebq;
    int free_slot;
    struct
-   {
-      void  (*consumer_add) (Ecore_Buffer_Provider *provider, int queue_size, int w, int h, void *data);
-      void  (*consumer_del) (Ecore_Buffer_Provider *provider, void *data);
-      void  (*enqueue)      (Ecore_Buffer_Provider *provider, void *data);
-      void *data;
-   } cb;
+     {
+        void  (*consumer_add) (Ecore_Buffer_Provider *provider, int queue_size, int w, int h, void *data);
+        void  (*consumer_del) (Ecore_Buffer_Provider *provider, void *data);
+        void  (*enqueue)      (Ecore_Buffer_Provider *provider, void *data);
+        void *data;
+     } cb;
 };
 
-static void           _ecore_buffer_provider_cb_consumer_connected(void *data, struct bq_provider *bq_provider, int32_t queue_size, int32_t width, int32_t height);
-static void           _ecore_buffer_provider_cb_consumer_disconnected(void *data, struct bq_provider *bq_provider);
-static void           _ecore_buffer_provider_cb_add_buffer(void *data, struct bq_provider *bq_provider, struct bq_buffer *buffer, uint32_t serial);
+static void _ecore_buffer_provider_cb_consumer_connected(void *data, struct bq_provider *bq_provider, int32_t queue_size, int32_t width, int32_t height);
+static void _ecore_buffer_provider_cb_consumer_disconnected(void *data, struct bq_provider *bq_provider);
+static void _ecore_buffer_provider_cb_add_buffer(void *data, struct bq_provider *bq_provider, struct bq_buffer *buffer, uint32_t serial);
 static Shared_Buffer *_ecore_buffer_provider_shared_buffer_new(Ecore_Buffer_Provider *provider, Ecore_Buffer *buffer);
-static void           _ecore_buffer_provider_shared_buffer_free(Ecore_Buffer_Provider *provider, Shared_Buffer *sb);
-static void           _ecore_buffer_provider_cb_buffer_free(Ecore_Buffer *buf, void *data);
+static void _ecore_buffer_provider_shared_buffer_free(Ecore_Buffer_Provider *provider, Shared_Buffer *sb);
+static void _ecore_buffer_provider_cb_buffer_free(Ecore_Buffer *buf, void *data);
 
 struct bq_provider_listener _ecore_buffer_provider_listener =
 {
@@ -83,7 +83,9 @@ ecore_buffer_provider_free(Ecore_Buffer_Provider *provider)
 
    if (provider->ebq)
      {
-        shared_buffers = _ecore_buffer_queue_shared_buffer_list_get(provider->ebq);
+        shared_buffers =
+          _ecore_buffer_queue_shared_buffer_list_get(provider->ebq);
+
         EINA_LIST_FOREACH(shared_buffers, l, sb)
            _ecore_buffer_provider_shared_buffer_free(provider, sb);
 
@@ -183,7 +185,8 @@ ecore_buffer_provider_buffer_enqueue(Ecore_Buffer_Provider *provider, Ecore_Buff
      }
 
    _shared_buffer_state_set(sb, SHARED_BUFFER_STATE_ENQUEUE);
-   bq_provider_enqueue_buffer(provider->resource, _shared_buffer_resource_get(sb), 0);
+   bq_provider_enqueue_buffer(provider->resource,
+                              _shared_buffer_resource_get(sb), 0);
 
    return EINA_TRUE;
 }
@@ -255,7 +258,8 @@ _ecore_buffer_provider_cb_consumer_connected(void *data, struct bq_provider *bq_
 
    // CALLBACK_CALL
    if (provider->cb.consumer_add)
-     provider->cb.consumer_add(provider, queue_size, width, height, provider->cb.data);
+     provider->cb.consumer_add(provider, queue_size, width, height,
+                               provider->cb.data);
 }
 
 static void
@@ -298,7 +302,9 @@ static void
 _ecore_buffer_provider_cb_buffer_free(Ecore_Buffer *buffer, void *data)
 {
    Ecore_Buffer_Provider *provider = data;
-   Shared_Buffer *sb = _ecore_buffer_queue_shared_buffer_find(provider->ebq, buffer);
+   Shared_Buffer *sb;
+
+   sb = _ecore_buffer_queue_shared_buffer_find(provider->ebq, buffer);
 
    EINA_SAFETY_ON_NULL_RETURN(provider);
 
@@ -334,7 +340,8 @@ _ecore_buffer_provider_shared_buffer_new(Ecore_Buffer_Provider *provider, Ecore_
    engine = _ecore_buffer_engine_name_get(buffer);
    flags = ecore_buffer_flags_get(buffer);
 
-   buf_resource = bq_provider_attach_buffer(provider->resource, engine, w, h, format, flags);
+   buf_resource =
+     bq_provider_attach_buffer(provider->resource, engine, w, h, format, flags);
    if (!buf_resource)
      {
         ERR("Fail to attach buffer - engine %s, size (%dx%d), format %d, flags %d",
@@ -362,7 +369,9 @@ _ecore_buffer_provider_shared_buffer_new(Ecore_Buffer_Provider *provider, Ecore_
    _ecore_buffer_queue_shared_buffer_add(provider->ebq, sb);
    bq_buffer_set_user_data(buf_resource, sb);
 
-   ecore_buffer_free_callback_add(buffer, _ecore_buffer_provider_cb_buffer_free, provider);
+   ecore_buffer_free_callback_add(buffer,
+                                  _ecore_buffer_provider_cb_buffer_free,
+                                  provider);
 
    return sb;
 }
