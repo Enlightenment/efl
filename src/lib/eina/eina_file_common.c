@@ -73,7 +73,7 @@ Eina_Lock _eina_file_lock_cache;
 static Eina_Spinlock _eina_statgen_lock;
 static Eina_Statgen _eina_statgen = 0;
 
-EAPI void
+EINA_API void
 eina_file_statgen_next(void)
 {
    eina_spinlock_take(&_eina_statgen_lock);
@@ -85,7 +85,7 @@ eina_file_statgen_next(void)
    eina_spinlock_release(&_eina_statgen_lock);
 }
 
-EAPI Eina_Statgen
+EINA_API Eina_Statgen
 eina_file_statgen_get(void)
 {
    Eina_Statgen s;
@@ -95,7 +95,7 @@ eina_file_statgen_get(void)
    return s;
 }
 
-EAPI void
+EINA_API void
 eina_file_statgen_enable(void)
 {
    eina_spinlock_take(&_eina_statgen_lock);
@@ -103,7 +103,7 @@ eina_file_statgen_enable(void)
    eina_spinlock_release(&_eina_statgen_lock);
 }
 
-EAPI void
+EINA_API void
 eina_file_statgen_disable(void)
 {
    eina_spinlock_take(&_eina_statgen_lock);
@@ -405,7 +405,7 @@ _eina_file_map_close(Eina_File_Map *map)
 
 // Global API
 
-EAPI char *
+EINA_API char *
 eina_file_path_sanitize(const char *path)
 {
    Eina_Tmpstr *result = NULL;
@@ -430,7 +430,7 @@ eina_file_path_sanitize(const char *path)
    return r;
 }
 
-EAPI Eina_File *
+EINA_API Eina_File *
 eina_file_virtualize(const char *virtual_name, const void *data, unsigned long long length, Eina_Bool copy)
 {
    Eina_File *file;
@@ -494,7 +494,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    return file;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_virtual(Eina_File *file)
 {
    if (!file) return EINA_FALSE;
@@ -502,7 +502,7 @@ eina_file_virtual(Eina_File *file)
    return file->virtual;
 }
 
-EAPI Eina_File *
+EINA_API Eina_File *
 eina_file_dup(const Eina_File *f)
 {
    Eina_File *file = (Eina_File*) f;
@@ -544,7 +544,7 @@ eina_file_clean_close(Eina_File *file)
    free(file);
 }
 
-EAPI void
+EINA_API void
 eina_file_close(Eina_File *file)
 {
    Eina_Bool leave = EINA_TRUE;
@@ -574,21 +574,21 @@ eina_file_close(Eina_File *file)
    eina_lock_release(&_eina_file_lock_cache);
 }
 
-EAPI size_t
+EINA_API size_t
 eina_file_size_get(const Eina_File *file)
 {
    EINA_FILE_MAGIC_CHECK(file, 0);
    return file->length;
 }
 
-EAPI time_t
+EINA_API time_t
 eina_file_mtime_get(const Eina_File *file)
 {
    EINA_FILE_MAGIC_CHECK(file, 0);
    return file->mtime;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_file_filename_get(const Eina_File *file)
 {
    EINA_FILE_MAGIC_CHECK(file, NULL);
@@ -695,7 +695,7 @@ _eina_file_map_lines_iterator_free(Eina_Lines_Iterator *it)
    free(it);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_file_map_lines(Eina_File *file)
 {
    Eina_Lines_Iterator *it;
@@ -952,7 +952,7 @@ _eina_file_copy_internal(int s, int d, off_t total, Eina_File_Copy_Progress cb, 
    return ret;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data)
 {
    struct stat st;
@@ -993,7 +993,7 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
    return success;
 }
 
-EAPI int
+EINA_API int
 eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
@@ -1052,7 +1052,7 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
    return fd;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
@@ -1147,7 +1147,7 @@ eina_file_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_close_on_exec(int fd, Eina_Bool on)
 {
 #ifdef _WIN32

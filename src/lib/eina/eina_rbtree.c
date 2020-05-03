@@ -303,7 +303,7 @@ _eina_rbtree_inline_double_rotation(Eina_Rbtree *node,
 *                                   API                                      *
 *============================================================================*/
 
-EAPI Eina_Rbtree *
+EINA_API Eina_Rbtree *
 eina_rbtree_inline_insert(Eina_Rbtree *root,
                           Eina_Rbtree *node,
                           Eina_Rbtree_Cmp_Node_Cb cmp,
@@ -370,7 +370,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root,
    return root;
 }
 
-EAPI Eina_Rbtree *
+EINA_API Eina_Rbtree *
 eina_rbtree_inline_remove(Eina_Rbtree *root,
                           Eina_Rbtree *node,
                           Eina_Rbtree_Cmp_Node_Cb cmp,
@@ -517,25 +517,25 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
    return root;
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_rbtree_iterator_prefix(const Eina_Rbtree *root)
 {
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_PREFIX_MASK);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_rbtree_iterator_infix(const Eina_Rbtree *root)
 {
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_INFIX_MASK);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_rbtree_iterator_postfix(const Eina_Rbtree *root)
 {
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_POSTFIX_MASK);
 }
 
-EAPI void
+EINA_API void
 eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data)
 {
    if (!root)

@@ -49,7 +49,7 @@
  *          only one that is implemented as of now. In this case, the nice level is
  *          incremented on this thread by @c NICENESS.
  */
-EAPI void eina_sched_prio_drop(void);
+EINA_API void eina_sched_prio_drop(void);
 
 /**
  * @}

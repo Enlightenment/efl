@@ -113,7 +113,7 @@ struct _Eina_Evlog_Buf
  *
  * @since 1.15
  */
-EAPI void
+EINA_API void
 eina_evlog(const char *event, void *obj, double srctime, const char *detail);
 
 /**
@@ -126,7 +126,7 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail);
  *
  * @since 1.15
  */
-EAPI Eina_Evlog_Buf *
+EINA_API Eina_Evlog_Buf *
 eina_evlog_steal(void);
 
 /**
@@ -134,7 +134,7 @@ eina_evlog_steal(void);
  *
  * @since 1.15
  */
-EAPI void
+EINA_API void
 eina_evlog_start(void);
 
 /**
@@ -145,7 +145,7 @@ eina_evlog_start(void);
  *
  * @since 1.15
  */
-EAPI void
+EINA_API void
 eina_evlog_stop(void);
 
 /**

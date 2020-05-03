@@ -39,7 +39,7 @@
 #include "eina_safety_checks.h"
 #include "eina_value.h"
 
-EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
+EINA_API Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 
 /*============================================================================*
 *                                  Local                                     *
@@ -4087,7 +4087,7 @@ _eina_value_type_struct_ops_get(const Eina_Value_Struct *st)
    return st->desc->ops;
 }
 
-EAPI const Eina_Value_Struct_Member *
+EINA_API const Eina_Value_Struct_Member *
 eina_value_struct_member_find(const Eina_Value_Struct *st, const char *name)
 {
    const Eina_Value_Struct_Operations *ops;
@@ -4572,7 +4572,7 @@ _eina_value_type_optional_flush(const Eina_Value_Type *type EINA_UNUSED, void *m
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_value_optional_reset(Eina_Value *value)
 {
    void *mem = eina_value_memory_get(value);
@@ -4581,7 +4581,7 @@ eina_value_optional_reset(Eina_Value *value)
    return _eina_value_type_optional_flush(EINA_VALUE_TYPE_OPTIONAL, mem);
 }
 
-EAPI Eina_Value*
+EINA_API Eina_Value*
 eina_value_optional_new(Eina_Value_Type const *subtype,
                         const void* initial_value) EINA_ARG_NONNULL(1, 2)
 {
@@ -4604,7 +4604,7 @@ eina_value_optional_new(Eina_Value_Type const *subtype,
    return value;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_value_optional_pset(Eina_Value *value,
                          Eina_Value_Type const* subtype,
                          const void *subvalue) EINA_ARG_NONNULL(1, 2, 3)
@@ -4637,7 +4637,7 @@ eina_value_optional_pset(Eina_Value *value,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_value_optional_pget(Eina_Value *value, void *subvalue) EINA_ARG_NONNULL(1, 2, 3)
 {
    if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
@@ -4759,7 +4759,7 @@ _eina_value_type_eina_error_convert_to(const Eina_Value_Type *type, const Eina_V
    return _eina_value_type_int_convert_to(type, convert, type_mem, convert_mem);
 }
 
-EAPI const Eina_Value_Type _EINA_VALUE_TYPE_OPTIONAL = {
+EINA_API const Eina_Value_Type _EINA_VALUE_TYPE_OPTIONAL = {
   EINA_VALUE_TYPE_VERSION,
   sizeof(Eina_Value_Union),
   "optional",
@@ -4890,7 +4890,7 @@ _eina_value_type_file_pget(const Eina_Value_Type *type EINA_UNUSED, const void *
    return EINA_TRUE;
 }
 
-EAPI const Eina_Value_Type _EINA_VALUE_TYPE_FILE = {
+EINA_API const Eina_Value_Type _EINA_VALUE_TYPE_FILE = {
   EINA_VALUE_TYPE_VERSION,
   sizeof (Eina_File *),
   "Eina_File",
@@ -5004,7 +5004,7 @@ _eina_value_type_rectangle_pget(const Eina_Value_Type *type EINA_UNUSED, const v
    return EINA_TRUE;
 }
 
-EAPI const Eina_Value_Type _EINA_VALUE_TYPE_RECTANGLE = {
+EINA_API const Eina_Value_Type _EINA_VALUE_TYPE_RECTANGLE = {
   EINA_VALUE_TYPE_VERSION,
   sizeof (Eina_Rectangle),
   "Eina_Rectangle",
@@ -5364,7 +5364,7 @@ _eina_value_inner_free_internal(int size, void *mem)
    _eina_value_inner_mp_dispose(size, imp);
 }
 
-EAPI void *
+EINA_API void *
 eina_value_inner_alloc(size_t size)
 {
    void *mem;
@@ -5378,7 +5378,7 @@ eina_value_inner_alloc(size_t size)
    return mem;
 }
 
-EAPI void
+EINA_API void
 eina_value_inner_free(size_t size, void *mem)
 {
    if (size > 256)
@@ -5582,45 +5582,45 @@ eina_value_shutdown(void)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START = NULL;
-EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
+EINA_API const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START = NULL;
+EINA_API const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
 
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_VALUE = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ERROR = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BOOL = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ULONG = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMESTAMP = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT64 = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_CHAR = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_SHORT = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_INT = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LONG = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_INT64 = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_FLOAT = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_DOUBLE = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRINGSHARE = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRING = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_FILE = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_RECTANGLE = NULL;
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TM = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_VALUE = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_ERROR = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_BOOL = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_UINT = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_ULONG = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_TIMESTAMP = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_UINT64 = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_CHAR = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_SHORT = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_INT = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_LONG = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_INT64 = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_FLOAT = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_DOUBLE = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_STRINGSHARE = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_STRING = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_FILE = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_RECTANGLE = NULL;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_TM = NULL;
 
 
-EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
+EINA_API const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 
-EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = NULL;
-EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = NULL;
+EINA_API const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = NULL;
+EINA_API const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = NULL;
 
-EAPI Eina_Value *
+EINA_API Eina_Value *
 eina_value_new(const Eina_Value_Type *type)
 {
    Eina_Value *value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
@@ -5638,7 +5638,7 @@ eina_value_new(const Eina_Value_Type *type)
    return value;
 }
 
-EAPI void
+EINA_API void
 eina_value_free(Eina_Value *value)
 {
    if (!value) return;
@@ -5647,7 +5647,7 @@ eina_value_free(Eina_Value *value)
 }
 
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_value_copy(const Eina_Value *value, Eina_Value *copy)
 {
    const Eina_Value_Type *type;
@@ -5681,7 +5681,7 @@ eina_value_copy(const Eina_Value *value, Eina_Value *copy)
    return ret;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_value_convert(const Eina_Value *value, Eina_Value *convert)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -5712,7 +5712,7 @@ eina_value_convert(const Eina_Value *value, Eina_Value *convert)
    return ret;
 }
 
-EAPI char *
+EINA_API char *
 eina_value_to_string(const Eina_Value *value)
 {
    Eina_Value tmp;
@@ -5728,7 +5728,7 @@ eina_value_to_string(const Eina_Value *value)
    return tmp.value.ptr; /* steal value */
 }
 
-EAPI Eina_Binbuf *
+EINA_API Eina_Binbuf *
 eina_value_to_binbuf(Eina_Value *value)
 {
    Eina_Value tmp = EINA_VALUE_EMPTY;
@@ -5756,7 +5756,7 @@ eina_value_to_binbuf(Eina_Value *value)
    return buf;
 }
 
-EAPI Eina_Value *
+EINA_API Eina_Value *
 eina_value_array_new(const Eina_Value_Type *subtype, unsigned int step)
 {
    Eina_Value *value;
@@ -5776,7 +5776,7 @@ eina_value_array_new(const Eina_Value_Type *subtype, unsigned int step)
    return value;
 }
 
-EAPI Eina_Value *
+EINA_API Eina_Value *
 eina_value_list_new(const Eina_Value_Type *subtype)
 {
    Eina_Value *value;
@@ -5796,7 +5796,7 @@ eina_value_list_new(const Eina_Value_Type *subtype)
    return value;
 }
 
-EAPI Eina_Value *
+EINA_API Eina_Value *
 eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_size)
 {
    Eina_Value *value;
@@ -5816,7 +5816,7 @@ eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_s
    return value;
 }
 
-EAPI Eina_Value *
+EINA_API Eina_Value *
 eina_value_struct_new(const Eina_Value_Struct_Desc *desc)
 {
    Eina_Value *value;
@@ -5834,14 +5834,14 @@ eina_value_struct_new(const Eina_Value_Struct_Desc *desc)
    return value;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_value_type_check(const Eina_Value_Type *type)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(type, EINA_FALSE);
    return type->version == EINA_VALUE_TYPE_VERSION;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_value_type_name_get(const Eina_Value_Type *type)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), NULL);

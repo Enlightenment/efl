@@ -188,7 +188,7 @@ struct _Eina_Matrix3_F16p16
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_f16p16_identity(Eina_Matrix3_F16p16 *m);
+EINA_API void eina_matrix3_f16p16_identity(Eina_Matrix3_F16p16 *m);
 
 /**
  * @brief Sets dst as the matrix multiplication (composition) of two
@@ -205,7 +205,7 @@ EAPI void eina_matrix3_f16p16_identity(Eina_Matrix3_F16p16 *m);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_f16p16_compose(const Eina_Matrix3_F16p16 *m1,
+EINA_API void eina_matrix3_f16p16_compose(const Eina_Matrix3_F16p16 *m1,
                                       const Eina_Matrix3_F16p16 *m2,
                                       Eina_Matrix3_F16p16 *dst);
 
@@ -220,7 +220,7 @@ EAPI void eina_matrix3_f16p16_compose(const Eina_Matrix3_F16p16 *m1,
  *
  * @since 1.14
  */
-EAPI Eina_Matrix_Type eina_matrix3_f16p16_type_get(const Eina_Matrix3_F16p16 *m);
+EINA_API Eina_Matrix_Type eina_matrix3_f16p16_type_get(const Eina_Matrix3_F16p16 *m);
 
 /**
  * @}
@@ -252,7 +252,7 @@ EAPI Eina_Matrix_Type eina_matrix3_f16p16_type_get(const Eina_Matrix3_F16p16 *m)
  *
  * @since 1.14
  */
-EAPI Eina_Matrix_Type eina_matrix3_type_get(const Eina_Matrix3 *m);
+EINA_API Eina_Matrix_Type eina_matrix3_type_get(const Eina_Matrix3 *m);
 
 /**
  * @brief Sets the values of the coefficients of the given floating
@@ -276,7 +276,7 @@ EAPI Eina_Matrix_Type eina_matrix3_type_get(const Eina_Matrix3 *m);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_values_set(Eina_Matrix3 *m,
+EINA_API void eina_matrix3_values_set(Eina_Matrix3 *m,
                                   double xx, double xy, double xz,
                                   double yx, double yy, double yz,
                                   double zx, double zy, double zz);
@@ -303,7 +303,7 @@ EAPI void eina_matrix3_values_set(Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_values_get(const Eina_Matrix3 *m,
+EINA_API void eina_matrix3_values_get(const Eina_Matrix3 *m,
                                   double *xx, double *xy, double *xz,
                                   double *yx, double *yy, double *yz,
                                   double *zx, double *zy, double *zz);
@@ -330,7 +330,7 @@ EAPI void eina_matrix3_values_get(const Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_fixed_values_get(const Eina_Matrix3 *m,
+EINA_API void eina_matrix3_fixed_values_get(const Eina_Matrix3 *m,
                                         Eina_F16p16 *xx, Eina_F16p16 *xy, Eina_F16p16 *xz,
                                         Eina_F16p16 *yx, Eina_F16p16 *yy, Eina_F16p16 *yz,
                                         Eina_F16p16 *zx, Eina_F16p16 *zy, Eina_F16p16 *zz);
@@ -348,7 +348,7 @@ EAPI void eina_matrix3_fixed_values_get(const Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_matrix3_f16p16_to(const Eina_Matrix3 *m,
+EINA_API void eina_matrix3_matrix3_f16p16_to(const Eina_Matrix3 *m,
                                          Eina_Matrix3_F16p16 *fm);
 
 /**
@@ -363,7 +363,7 @@ EAPI void eina_matrix3_matrix3_f16p16_to(const Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI Eina_Bool eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2);
+EINA_API Eina_Bool eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2);
 
 /**
  * @brief Sets dst as the matrix multiplication (composition) of two matrices.
@@ -379,7 +379,7 @@ EAPI Eina_Bool eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_compose(const Eina_Matrix3 *m1,
+EINA_API void eina_matrix3_compose(const Eina_Matrix3 *m1,
                                const Eina_Matrix3 *m2,
                                Eina_Matrix3 *dst);
 
@@ -392,7 +392,7 @@ EAPI void eina_matrix3_compose(const Eina_Matrix3 *m1,
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_translate(Eina_Matrix3 *m, double tx, double ty);
+EINA_API void eina_matrix3_translate(Eina_Matrix3 *m, double tx, double ty);
 
 /**
  * @brief Sets the matrix values for a scaling operation.
@@ -403,7 +403,7 @@ EAPI void eina_matrix3_translate(Eina_Matrix3 *m, double tx, double ty);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_scale(Eina_Matrix3 *m, double sx, double sy);
+EINA_API void eina_matrix3_scale(Eina_Matrix3 *m, double sx, double sy);
 
 /**
  * @brief Sets the matrix values for a rotation operation.
@@ -412,7 +412,7 @@ EAPI void eina_matrix3_scale(Eina_Matrix3 *m, double sx, double sy);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_rotate(Eina_Matrix3 *m, double rad);
+EINA_API void eina_matrix3_rotate(Eina_Matrix3 *m, double rad);
 
 /**
  * @brief Sets the given floating point matrix to the identity matrix.
@@ -424,7 +424,7 @@ EAPI void eina_matrix3_rotate(Eina_Matrix3 *m, double rad);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_identity(Eina_Matrix3 *m);
+EINA_API void eina_matrix3_identity(Eina_Matrix3 *m);
 
 /**
  * @brief Calculates the determinant of the given matrix.
@@ -437,7 +437,7 @@ EAPI void eina_matrix3_identity(Eina_Matrix3 *m);
  *
  * @since 1.14
  */
-EAPI double eina_matrix3_determinant(const Eina_Matrix3 *m);
+EINA_API double eina_matrix3_determinant(const Eina_Matrix3 *m);
 
 /**
  * @brief Divides the given matrix by a scalar number.
@@ -450,7 +450,7 @@ EAPI double eina_matrix3_determinant(const Eina_Matrix3 *m);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_divide(Eina_Matrix3 *m, double scalar);
+EINA_API void eina_matrix3_divide(Eina_Matrix3 *m, double scalar);
 
 /**
  * @brief Computes the inverse of the given matrix.
@@ -464,7 +464,7 @@ EAPI void eina_matrix3_divide(Eina_Matrix3 *m, double scalar);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_inverse(const Eina_Matrix3 *m, Eina_Matrix3 *m2);
+EINA_API void eina_matrix3_inverse(const Eina_Matrix3 *m, Eina_Matrix3 *m2);
 
 /**
  * @brief Computes the transpose of the given matrix.
@@ -478,7 +478,7 @@ EAPI void eina_matrix3_inverse(const Eina_Matrix3 *m, Eina_Matrix3 *m2);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_transpose(const Eina_Matrix3 *m, Eina_Matrix3 *a);
+EINA_API void eina_matrix3_transpose(const Eina_Matrix3 *m, Eina_Matrix3 *a);
 
 /**
  * @brief Computes the cofactor of the given matrix.
@@ -494,7 +494,7 @@ EAPI void eina_matrix3_transpose(const Eina_Matrix3 *m, Eina_Matrix3 *a);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_cofactor(const Eina_Matrix3 *m, Eina_Matrix3 *a);
+EINA_API void eina_matrix3_cofactor(const Eina_Matrix3 *m, Eina_Matrix3 *a);
 
 /**
  * @brief Computes the adjoint of the given matrix.
@@ -508,7 +508,7 @@ EAPI void eina_matrix3_cofactor(const Eina_Matrix3 *m, Eina_Matrix3 *a);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_adjoint(const Eina_Matrix3 *m, Eina_Matrix3 *a);
+EINA_API void eina_matrix3_adjoint(const Eina_Matrix3 *m, Eina_Matrix3 *a);
 
 /**
  * @brief Computes the transform of a 2D point using the given matrix.
@@ -526,7 +526,7 @@ EAPI void eina_matrix3_adjoint(const Eina_Matrix3 *m, Eina_Matrix3 *a);
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_point_transform(const Eina_Matrix3 *m,
+EINA_API void eina_matrix3_point_transform(const Eina_Matrix3 *m,
                                        double x, double y,
                                        double *xr, double *yr);
 /**
@@ -542,7 +542,7 @@ EAPI void eina_matrix3_point_transform(const Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI void eina_matrix3_rectangle_transform(const Eina_Matrix3 *m,
+EINA_API void eina_matrix3_rectangle_transform(const Eina_Matrix3 *m,
                                            const Eina_Rectangle *r,
                                            const Eina_Quad *q);
 
@@ -557,7 +557,7 @@ EAPI void eina_matrix3_rectangle_transform(const Eina_Matrix3 *m,
  * Calculates a matrix @p m that can be used to transform from an arbitrary
  * source quadrangle @p src to another arbitrary quadrangle @p dst.
  */
-EAPI Eina_Bool eina_matrix3_quad_quad_map(Eina_Matrix3 *m,
+EINA_API Eina_Bool eina_matrix3_quad_quad_map(Eina_Matrix3 *m,
                                           const Eina_Quad *src,
                                           const Eina_Quad *dst);
 
@@ -576,7 +576,7 @@ EAPI Eina_Bool eina_matrix3_quad_quad_map(Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI Eina_Bool eina_matrix3_square_quad_map(Eina_Matrix3 *m,
+EINA_API Eina_Bool eina_matrix3_square_quad_map(Eina_Matrix3 *m,
                                             const Eina_Quad *q);
 
 /**
@@ -593,7 +593,7 @@ EAPI Eina_Bool eina_matrix3_square_quad_map(Eina_Matrix3 *m,
  *
  * @since 1.14
  */
-EAPI Eina_Bool eina_matrix3_quad_square_map(Eina_Matrix3 *m,
+EINA_API Eina_Bool eina_matrix3_quad_square_map(Eina_Matrix3 *m,
                                             const Eina_Quad *q);
 
 /**
@@ -608,7 +608,7 @@ EAPI Eina_Bool eina_matrix3_quad_square_map(Eina_Matrix3 *m,
  *
  * @since 1.17
  */
-EAPI void eina_matrix3_array_set(Eina_Matrix3 *m, const double *v);
+EINA_API void eina_matrix3_array_set(Eina_Matrix3 *m, const double *v);
 
 /**
  * @brief Copies a matrix.
@@ -618,7 +618,7 @@ EAPI void eina_matrix3_array_set(Eina_Matrix3 *m, const double *v);
  *
  * @since 1.16
  */
-EAPI void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
+EINA_API void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
 
 /**
  * @brief Multiplies two matrices.
@@ -633,7 +633,7 @@ EAPI void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
  *
  * @since 1.17
  */
-EAPI void eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
+EINA_API void eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
                                 const Eina_Matrix3 *mat_b);
 
 /**
@@ -649,7 +649,7 @@ EAPI void eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
  *
  * @since 1.17
  */
-EAPI void eina_matrix3_multiply_copy(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
+EINA_API void eina_matrix3_multiply_copy(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
                                      const Eina_Matrix3 *mat_b);
 
 /**
@@ -664,7 +664,7 @@ EAPI void eina_matrix3_multiply_copy(Eina_Matrix3 *out, const Eina_Matrix3 *mat_
  *
  * @since 1.17
  */
-EAPI void eina_matrix3_scale_transform_set(Eina_Matrix3 *out, double s_x, double s_y);
+EINA_API void eina_matrix3_scale_transform_set(Eina_Matrix3 *out, double s_x, double s_y);
 
 /**
  * @brief Sets the positional parameters (XZ, YZ) of a matrix.
@@ -678,7 +678,7 @@ EAPI void eina_matrix3_scale_transform_set(Eina_Matrix3 *out, double s_x, double
 
  * @since 1.17
  */
-EAPI void eina_matrix3_position_transform_set(Eina_Matrix3 *out, const double p_x,
+EINA_API void eina_matrix3_position_transform_set(Eina_Matrix3 *out, const double p_x,
                                               const double p_y);
 
 /**
@@ -689,7 +689,7 @@ EAPI void eina_matrix3_position_transform_set(Eina_Matrix3 *out, const double p_
  *
  * @since 1.17
  */
-EAPI void eina_normal3_matrix_get(Eina_Matrix3 *out, const Eina_Matrix4 *m);
+EINA_API void eina_normal3_matrix_get(Eina_Matrix3 *out, const Eina_Matrix4 *m);
 
 /**
  * @brief Converts an Eina_Matrix3 into an Eina_Matrix4.
@@ -699,7 +699,7 @@ EAPI void eina_normal3_matrix_get(Eina_Matrix3 *out, const Eina_Matrix4 *m);
  *
  * @since 1.15
  */
-EAPI void eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3);
+EINA_API void eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3);
 
 /**
  * @}
@@ -722,7 +722,7 @@ EAPI void eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3);
  *
  * @since 1.15
  */
-EAPI Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
+EINA_API Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
 
 /**
  * @brief Sets the values of the coefficients of the given floating
@@ -753,7 +753,7 @@ EAPI Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
  *
  * @since 1.15
  */
-EAPI void eina_matrix4_values_set(Eina_Matrix4 *m,
+EINA_API void eina_matrix4_values_set(Eina_Matrix4 *m,
                                   double xx, double xy, double xz, double xw,
                                   double yx, double yy, double yz, double yw,
                                   double zx, double zy, double zz, double zw,
@@ -788,7 +788,7 @@ EAPI void eina_matrix4_values_set(Eina_Matrix4 *m,
  *
  * @since 1.15
  */
-EAPI void eina_matrix4_values_get(const Eina_Matrix4 *m,
+EINA_API void eina_matrix4_values_get(const Eina_Matrix4 *m,
                                   double *xx, double *xy, double *xz, double *xw,
                                   double *yx, double *yy, double *yz, double *yw,
                                   double *zx, double *zy, double *zz, double *zw,
@@ -805,7 +805,7 @@ EAPI void eina_matrix4_values_get(const Eina_Matrix4 *m,
  *
  * @since 1.16
  */
-EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
+EINA_API double eina_matrix4_determinant(const Eina_Matrix4 *m);
 
 /**
  * @brief Normalizes the given matrix.
@@ -820,7 +820,7 @@ EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
  *
  * @since 1.16
  */
-EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
+EINA_API Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
                                        const Eina_Matrix4 *in);
 
 /**
@@ -836,7 +836,7 @@ EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
  *
  * @since 1.16
  */
-EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
+EINA_API Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 
 /**
  * @brief Computes the transpose of the given matrix.
@@ -850,7 +850,7 @@ EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
  *
  * @since 1.16
  */
-EAPI void eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in);
+EINA_API void eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 
 /**
  * @brief Converts an Eina_Matrix4 into an Eina_Matrix3.
@@ -860,7 +860,7 @@ EAPI void eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in);
  *
  * @since 1.15
  */
-EAPI void eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4);
+EINA_API void eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4);
 
 /**
  * @brief Sets the given matrix to identity.
@@ -869,7 +869,7 @@ EAPI void eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4);
  *
  * @since 1.16
  */
-EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
+EINA_API void eina_matrix4_identity(Eina_Matrix4 *out);
 
 /**
  * @brief Multiplies two matrix.
@@ -884,7 +884,7 @@ EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
  *
  * @since 1.17
  */
-EAPI void eina_matrix4_multiply_copy(Eina_Matrix4 *out,
+EINA_API void eina_matrix4_multiply_copy(Eina_Matrix4 *out,
                                      const Eina_Matrix4 *mat_a, const Eina_Matrix4 *mat_b);
 
 /**
@@ -899,7 +899,7 @@ EAPI void eina_matrix4_multiply_copy(Eina_Matrix4 *out,
  *
  * @since 1.17
  */
-EAPI void eina_matrix4_array_set(Eina_Matrix4 *m, const double *v);
+EINA_API void eina_matrix4_array_set(Eina_Matrix4 *m, const double *v);
 
 /**
  * @brief Copies matrix.
@@ -909,7 +909,7 @@ EAPI void eina_matrix4_array_set(Eina_Matrix4 *m, const double *v);
  *
  * @since 1.17
  */
-EAPI void eina_matrix4_copy(Eina_Matrix4 *dst, const Eina_Matrix4 *src);
+EINA_API void eina_matrix4_copy(Eina_Matrix4 *dst, const Eina_Matrix4 *src);
 
 /**
  * @brief Multiplies two matrices with check.
@@ -920,7 +920,7 @@ EAPI void eina_matrix4_copy(Eina_Matrix4 *dst, const Eina_Matrix4 *src);
  *
  * @since 1.17
  */
-EAPI void eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
+EINA_API void eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
                                 const Eina_Matrix4 *mat_b);
 
 /**
@@ -936,7 +936,7 @@ EAPI void eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
  *
  * @since 1.17
  */
-EAPI void eina_matrix4_ortho_set(Eina_Matrix4 *m,
+EINA_API void eina_matrix4_ortho_set(Eina_Matrix4 *m,
                                  double left, double right, double bottom, double top,
                                  double dnear, double dfar);
 
@@ -955,7 +955,7 @@ EAPI void eina_matrix4_ortho_set(Eina_Matrix4 *m,
  *
  * @since 1.24
  */
-EAPI void eina_matrix4_compose(const Eina_Matrix4 *mat_a,
+EINA_API void eina_matrix4_compose(const Eina_Matrix4 *mat_a,
                                const Eina_Matrix4 *mat_b,
                                Eina_Matrix4 *out);
 
@@ -969,7 +969,7 @@ EAPI void eina_matrix4_compose(const Eina_Matrix4 *mat_a,
  *
  * @since 1.24
  */
-EAPI void eina_matrix4_translate(Eina_Matrix4 *t, double tx, double ty, double tz);
+EINA_API void eina_matrix4_translate(Eina_Matrix4 *t, double tx, double ty, double tz);
 
 /**
  * @brief Sets the matrix values for a scaling operation.
@@ -981,7 +981,7 @@ EAPI void eina_matrix4_translate(Eina_Matrix4 *t, double tx, double ty, double t
  *
  * @since 1.24
  */
-EAPI void eina_matrix4_scale(Eina_Matrix4 *t, double sx, double sy, double sz);
+EINA_API void eina_matrix4_scale(Eina_Matrix4 *t, double sx, double sy, double sz);
 
 /**
  * @brief Sets the matrix values for a rotation operation.
@@ -991,7 +991,7 @@ EAPI void eina_matrix4_scale(Eina_Matrix4 *t, double sx, double sy, double sz);
  *
  * @since 1.24
  */
-EAPI void eina_matrix4_rotate(Eina_Matrix4 *t, double rad, Eina_Matrix_Axis axis);
+EINA_API void eina_matrix4_rotate(Eina_Matrix4 *t, double rad, Eina_Matrix_Axis axis);
 
 /**
  * @}
@@ -1041,7 +1041,7 @@ struct _Eina_Matrix2
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_values_set(Eina_Matrix2 *m, double xx, double xy,
+EINA_API void eina_matrix2_values_set(Eina_Matrix2 *m, double xx, double xy,
                     double yx, double yy);
 
 /**
@@ -1061,7 +1061,7 @@ EAPI void eina_matrix2_values_set(Eina_Matrix2 *m, double xx, double xy,
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_values_get(const Eina_Matrix2 *m, double *xx, double *xy,
+EINA_API void eina_matrix2_values_get(const Eina_Matrix2 *m, double *xx, double *xy,
                     double *yx, double *yy);
 
 /**
@@ -1076,7 +1076,7 @@ EAPI void eina_matrix2_values_get(const Eina_Matrix2 *m, double *xx, double *xy,
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_inverse(Eina_Matrix2 *out, const Eina_Matrix2 *mat);
+EINA_API void eina_matrix2_inverse(Eina_Matrix2 *out, const Eina_Matrix2 *mat);
 
 /**
  * @brief Sets the given floating point matrix to the identity matrix.
@@ -1088,7 +1088,7 @@ EAPI void eina_matrix2_inverse(Eina_Matrix2 *out, const Eina_Matrix2 *mat);
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_identity(Eina_Matrix2 *m);
+EINA_API void eina_matrix2_identity(Eina_Matrix2 *m);
 
 /**
  * @brief Sets array to matrix.
@@ -1100,7 +1100,7 @@ EAPI void eina_matrix2_identity(Eina_Matrix2 *m);
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_array_set(Eina_Matrix2 *m, const double *v);
+EINA_API void eina_matrix2_array_set(Eina_Matrix2 *m, const double *v);
 
 /**
  * @brief Copies matrix.
@@ -1110,7 +1110,7 @@ EAPI void eina_matrix2_array_set(Eina_Matrix2 *m, const double *v);
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src);
+EINA_API void eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src);
 
 /**
  * @brief Multiplies two matrices.
@@ -1121,7 +1121,7 @@ EAPI void eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src);
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
+EINA_API void eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
                                 const Eina_Matrix2 *mat_b);
 
 /**
@@ -1133,7 +1133,7 @@ EAPI void eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
  *
  * @since 1.17
  */
-EAPI void eina_matrix2_multiply_copy(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
+EINA_API void eina_matrix2_multiply_copy(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
                     const Eina_Matrix2 *mat_b);
 
 /**
@@ -1147,7 +1147,7 @@ EAPI void eina_matrix2_multiply_copy(Eina_Matrix2 *out, const Eina_Matrix2 *mat_
  *
  * @since 1.17
  */
-EAPI Eina_Matrix_Type eina_matrix2_type_get(const Eina_Matrix2 *m);
+EINA_API Eina_Matrix_Type eina_matrix2_type_get(const Eina_Matrix2 *m);
 
 /**
  * @}

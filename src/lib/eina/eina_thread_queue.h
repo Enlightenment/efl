@@ -73,7 +73,7 @@ struct _Eina_Thread_Queue_Msg_Sub
  *
  * @since 1.11
  */
-EAPI Eina_Thread_Queue *
+EINA_API Eina_Thread_Queue *
 eina_thread_queue_new(void);
 
 /**
@@ -87,7 +87,7 @@ eina_thread_queue_new(void);
  *
  * @since 1.11
  */
-EAPI void
+EINA_API void
 eina_thread_queue_free(Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**
@@ -106,7 +106,7 @@ eina_thread_queue_free(Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
  *
  * @since 1.11
  */
-EAPI void *
+EINA_API void *
 eina_thread_queue_send(Eina_Thread_Queue *thq, int size, void **allocref) EINA_ARG_NONNULL(1, 3);
 
 /**
@@ -120,7 +120,7 @@ eina_thread_queue_send(Eina_Thread_Queue *thq, int size, void **allocref) EINA_A
  *
  * @since 1.11
  */
-EAPI void
+EINA_API void
 eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -140,7 +140,7 @@ eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NON
  *
  * @since 1.11
  */
-EAPI void *
+EINA_API void *
 eina_thread_queue_wait(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -154,7 +154,7 @@ eina_thread_queue_wait(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL
  *
  * @since 1.11
  */
-EAPI void
+EINA_API void
 eina_thread_queue_wait_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -172,7 +172,7 @@ eina_thread_queue_wait_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NON
  *
  * @since 1.11
  */
-EAPI void *
+EINA_API void *
 eina_thread_queue_poll(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -186,7 +186,7 @@ eina_thread_queue_poll(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL
  *
  * @since 1.11
  */
-EAPI int
+EINA_API int
 eina_thread_queue_pending_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**
@@ -203,7 +203,7 @@ eina_thread_queue_pending_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
  *
  * @since 1.11
  */
-EAPI void
+EINA_API void
 eina_thread_queue_parent_set(Eina_Thread_Queue *thq, Eina_Thread_Queue *thq_parent) EINA_ARG_NONNULL(1);
 
 /**
@@ -219,7 +219,7 @@ eina_thread_queue_parent_set(Eina_Thread_Queue *thq, Eina_Thread_Queue *thq_pare
  *
  * @since 1.11
  */
-EAPI Eina_Thread_Queue *
+EINA_API Eina_Thread_Queue *
 eina_thread_queue_parent_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**
@@ -239,7 +239,7 @@ eina_thread_queue_parent_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
  *
  * @since 1.11
  */
-EAPI void
+EINA_API void
 eina_thread_queue_fd_set(Eina_Thread_Queue *thq, int fd) EINA_ARG_NONNULL(1);
 
 /**
@@ -255,7 +255,7 @@ eina_thread_queue_fd_set(Eina_Thread_Queue *thq, int fd) EINA_ARG_NONNULL(1);
  *
  * @since 1.11
  */
-EAPI int
+EINA_API int
 eina_thread_queue_fd_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**

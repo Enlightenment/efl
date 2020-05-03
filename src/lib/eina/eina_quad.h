@@ -61,7 +61,7 @@ typedef struct _Eina_Quad
  *
  * @since 1.14
  * */
-EAPI void eina_quad_rectangle_to(const Eina_Quad *q,
+EINA_API void eina_quad_rectangle_to(const Eina_Quad *q,
                                  Eina_Rectangle *r);
 /**
  * @brief Transform the given rectangle to the given quadrangle.
@@ -71,7 +71,7 @@ EAPI void eina_quad_rectangle_to(const Eina_Quad *q,
  *
  * @since 1.14
  * */
-EAPI void eina_quad_rectangle_from(Eina_Quad *q,
+EINA_API void eina_quad_rectangle_from(Eina_Quad *q,
                                    const Eina_Rectangle *r);
 /**
  * @brief Sets the values of the coordinates of the given quadrangle.
@@ -88,7 +88,7 @@ EAPI void eina_quad_rectangle_from(Eina_Quad *q,
  *
  * @since 1.14
  * */
-EAPI void eina_quad_coords_set(Eina_Quad *q,
+EINA_API void eina_quad_coords_set(Eina_Quad *q,
                                double x0, double y0,
                                double x1, double y1,
                                double x2, double y2,
@@ -109,7 +109,7 @@ EAPI void eina_quad_coords_set(Eina_Quad *q,
  *
  * @since 1.14
  * */
-EAPI void eina_quad_coords_get(const Eina_Quad *q,
+EINA_API void eina_quad_coords_get(const Eina_Quad *q,
                                double *x0, double *y0,
                                double *x1, double *y1,
                                double *x2, double *y2,

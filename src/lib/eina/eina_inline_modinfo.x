@@ -24,7 +24,7 @@
 #define __EINA_MODULE_UNIQUE_ID(id) _EINA_MODINFO_CONCAT(__EINA_MODULE_UNIQUE_ID_, id)
 
 #define _EINA_MODINFO(name, info) \
-  EAPI const char __EINA_MODULE_UNIQUE_ID(name)[] \
+  EINA_API const char __EINA_MODULE_UNIQUE_ID(name)[] \
 __attribute__((__used__)) __attribute__((unused, aligned(1))) = info;
 #define EINA_MODINFO(tag, info) _EINA_MODINFO(tag, info)
 

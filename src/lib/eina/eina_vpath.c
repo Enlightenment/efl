@@ -323,7 +323,7 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
    return 0;
 }
 
-EAPI char *
+EINA_API char *
 eina_vpath_resolve(const char* path)
 {
    char buf[PATH_MAX];
@@ -334,7 +334,7 @@ eina_vpath_resolve(const char* path)
    return NULL;
 }
 
-EAPI int
+EINA_API int
 eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
 {
    va_list args;
@@ -364,7 +364,7 @@ eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
    return 0;
 }
 
-EAPI void
+EINA_API void
 eina_vpath_interface_app_set(const char *app_domain, Eina_Prefix *app_pfx)
 {
    char buf[PATH_MAX];
@@ -391,7 +391,7 @@ eina_vpath_interface_app_set(const char *app_domain, Eina_Prefix *app_pfx)
    _eina_vpath_data_add("app.tmp", buf);
 }
 
-EAPI void
+EINA_API void
 eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user)
 {
    Eina_Bool free_run = EINA_FALSE;

@@ -95,7 +95,7 @@ typedef struct _Eina_Matrixsparse_Cell      Eina_Matrixsparse_Cell;
  *
  * @return Newly allocated matrix, or @c NULL if allocation failed.
  */
-EAPI Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
+EINA_API Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
                                               unsigned long cols,
                                               void (*free_func)(void *user_data,
                                                                 void *cell_data),
@@ -106,7 +106,7 @@ EAPI Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
  *
  * @param[in] m The Sparse Matrix instance to free; must @b not be @c NULL.
  */
-EAPI void eina_matrixsparse_free(Eina_Matrixsparse *m);
+EINA_API void eina_matrixsparse_free(Eina_Matrixsparse *m);
 
 /* size manipulation */
 
@@ -123,7 +123,7 @@ EAPI void eina_matrixsparse_free(Eina_Matrixsparse *m);
  * @param[out] cols Returns the number of columns; may be @c NULL. If @a m is
  *        invalid, returned value is zero, otherwise it's a positive integer.
  */
-EAPI void eina_matrixsparse_size_get(const Eina_Matrixsparse *m,
+EINA_API void eina_matrixsparse_size_get(const Eina_Matrixsparse *m,
                                      unsigned long           *rows,
                                      unsigned long           *cols);
 
@@ -141,7 +141,7 @@ EAPI void eina_matrixsparse_size_get(const Eina_Matrixsparse *m,
  * @warning Cells, rows or columns are not reference counted and thus
  *     references to freed instances may become invalid.
  */
-EAPI Eina_Bool eina_matrixsparse_size_set(Eina_Matrixsparse *m,
+EINA_API Eina_Bool eina_matrixsparse_size_set(Eina_Matrixsparse *m,
                                           unsigned long      rows,
                                           unsigned long      cols);
 
@@ -161,7 +161,7 @@ EAPI Eina_Bool eina_matrixsparse_size_set(Eina_Matrixsparse *m,
  * @see eina_matrixsparse_cell_data_get()
  * @see eina_matrixsparse_data_idx_get()
  */
-EAPI Eina_Bool eina_matrixsparse_cell_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col, Eina_Matrixsparse_Cell **cell);
+EINA_API Eina_Bool eina_matrixsparse_cell_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col, Eina_Matrixsparse_Cell **cell);
 
 /**
  * @brief Gets data associated with given cell reference.
@@ -173,7 +173,7 @@ EAPI Eina_Bool eina_matrixsparse_cell_idx_get(const Eina_Matrixsparse *m, unsign
  * @see eina_matrixsparse_cell_idx_get()
  * @see eina_matrixsparse_data_idx_get()
  */
-EAPI void     *eina_matrixsparse_cell_data_get(const Eina_Matrixsparse_Cell *cell);
+EINA_API void     *eina_matrixsparse_cell_data_get(const Eina_Matrixsparse_Cell *cell);
 
 /**
  * @brief Gets data associated with given cell given its indexes.
@@ -187,7 +187,7 @@ EAPI void     *eina_matrixsparse_cell_data_get(const Eina_Matrixsparse_Cell *cel
  * @see eina_matrixsparse_cell_idx_get()
  * @see eina_matrixsparse_cell_data_get()
  */
-EAPI void     *eina_matrixsparse_data_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col);
+EINA_API void     *eina_matrixsparse_data_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col);
 
 /**
  * @brief Gets the row and column position of the given cell.
@@ -198,7 +198,7 @@ EAPI void     *eina_matrixsparse_data_idx_get(const Eina_Matrixsparse *m, unsign
  *
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise (@c cell is @c NULL).
  */
-EAPI Eina_Bool eina_matrixsparse_cell_position_get(const Eina_Matrixsparse_Cell *cell, unsigned long *row, unsigned long *col);
+EINA_API Eina_Bool eina_matrixsparse_cell_position_get(const Eina_Matrixsparse_Cell *cell, unsigned long *row, unsigned long *col);
 
 
 /* Data setting */
@@ -215,7 +215,7 @@ EAPI Eina_Bool eina_matrixsparse_cell_position_get(const Eina_Matrixsparse_Cell 
  * @see eina_matrixsparse_cell_data_set()
  * @see eina_matrixsparse_data_idx_replace()
  */
-EAPI Eina_Bool eina_matrixsparse_cell_data_replace(Eina_Matrixsparse_Cell *cell, const void *data, void **p_old);
+EINA_API Eina_Bool eina_matrixsparse_cell_data_replace(Eina_Matrixsparse_Cell *cell, const void *data, void **p_old);
 
 /**
  * @brief Changes cell value, freeing any previously existing value.
@@ -231,7 +231,7 @@ EAPI Eina_Bool eina_matrixsparse_cell_data_replace(Eina_Matrixsparse_Cell *cell,
  * @see eina_matrixsparse_cell_data_replace()
  * @see eina_matrixsparse_data_idx_set()
  */
-EAPI Eina_Bool eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, const void *data);
+EINA_API Eina_Bool eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, const void *data);
 
 /**
  * @brief Changes cell value at a given row and column position, without
@@ -249,7 +249,7 @@ EAPI Eina_Bool eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, con
  * @see eina_matrixsparse_cell_data_replace()
  * @see eina_matrixsparse_data_idx_set()
  */
-EAPI Eina_Bool eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data, void **p_old);
+EINA_API Eina_Bool eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data, void **p_old);
 
 /**
  * @brief Changes cell value at a given row and column position, freeing
@@ -267,7 +267,7 @@ EAPI Eina_Bool eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m, unsigned
  *
  * @see eina_matrixsparse_cell_data_replace()
  */
-EAPI Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data);
+EINA_API Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data);
 
 /* data deleting */
 
@@ -287,7 +287,7 @@ EAPI Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m, unsigned lon
  * @warning Cells, rows or columns are not reference counted and thus
  *     references to freed instances may become invalid.
  */
-EAPI Eina_Bool eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m, unsigned long row);
+EINA_API Eina_Bool eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m, unsigned long row);
 
 /**
  * @brief Clears (erases all cells) of column given its index.
@@ -305,7 +305,7 @@ EAPI Eina_Bool eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m, unsigned lo
  * @warning Cells, rows or columns are not reference counted and thus
  *     references to freed instances may become invalid.
  */
-EAPI Eina_Bool eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned long col);
+EINA_API Eina_Bool eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned long col);
 
 /**
  * @brief Clears (erases) cell at a given row, column position.
@@ -328,7 +328,7 @@ EAPI Eina_Bool eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned
  * @note This call might also free the column and/or row if this was the
  * last remaining cell contained.
  */
-EAPI Eina_Bool eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned long row, unsigned long col);
+EINA_API Eina_Bool eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned long row, unsigned long col);
 
 /**
  * @brief Clears (erases) cell given its reference.
@@ -343,7 +343,7 @@ EAPI Eina_Bool eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned l
  * @note This call might also free the column and/or row if this was the
  * last remaining cell contained.
  */
-EAPI Eina_Bool eina_matrixsparse_cell_clear(Eina_Matrixsparse_Cell *cell);
+EINA_API Eina_Bool eina_matrixsparse_cell_clear(Eina_Matrixsparse_Cell *cell);
 
 /* Iterators */
 
@@ -366,7 +366,7 @@ EAPI Eina_Bool eina_matrixsparse_cell_clear(Eina_Matrixsparse_Cell *cell);
  *    invalid! That is, if you add or remove cells this iterator
  *    behavior is undefined and your program may crash!
  */
-EAPI Eina_Iterator *eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m);
+EINA_API Eina_Iterator *eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m);
 
 /**
  * @brief Creates a new iterator over all matrix cells.
@@ -394,7 +394,7 @@ EAPI Eina_Iterator *eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m);
  *    invalid! That is, if you add or remove cells this iterator
  *    behavior is undefined and your program may crash!
  */
-EAPI Eina_Iterator *eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m);
+EINA_API Eina_Iterator *eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m);
 
 /**
  * @}

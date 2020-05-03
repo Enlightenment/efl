@@ -48,7 +48,7 @@ typedef const char Eina_Slstr;
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_copy_new(const char *string);
 
 /**
@@ -67,7 +67,7 @@ eina_slstr_copy_new(const char *string);
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_copy_new_length(const char *string, size_t len);
 
 /**
@@ -84,7 +84,7 @@ eina_slstr_copy_new_length(const char *string, size_t len);
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_steal_new(char *string);
 
 /**
@@ -101,7 +101,7 @@ eina_slstr_steal_new(char *string);
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_stringshare_new(Eina_Stringshare *string);
 
 /**
@@ -118,7 +118,7 @@ eina_slstr_stringshare_new(Eina_Stringshare *string);
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_tmpstr_new(Eina_Tmpstr *string);
 
 /**
@@ -139,7 +139,7 @@ eina_slstr_tmpstr_new(Eina_Tmpstr *string);
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_strbuf_new(Eina_Strbuf *string);
 
 /**
@@ -151,7 +151,7 @@ eina_slstr_strbuf_new(Eina_Strbuf *string);
  *
  * @since 1.19
  */
-EAPI Eina_Slstr *
+EINA_API Eina_Slstr *
 eina_slstr_vasprintf_new(const char *fmt, va_list args);
 
 /**
@@ -191,7 +191,7 @@ eina_slstr_printf(const char *fmt, ...)
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_slstr_local_clear(void);
 #endif
 

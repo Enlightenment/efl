@@ -92,7 +92,7 @@ eina_accessor_shutdown(void)
 *============================================================================*/
 
 
-EAPI void
+EINA_API void
 eina_accessor_free(Eina_Accessor *accessor)
 {
    if (!accessor)
@@ -103,7 +103,7 @@ eina_accessor_free(Eina_Accessor *accessor)
    accessor->free(accessor);
 }
 
-EAPI void *
+EINA_API void *
 eina_accessor_container_get(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
@@ -112,7 +112,7 @@ eina_accessor_container_get(Eina_Accessor *accessor)
    return accessor->get_container(accessor);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_accessor_data_get(Eina_Accessor *accessor,
                        unsigned int position,
                        void **data)
@@ -124,7 +124,7 @@ eina_accessor_data_get(Eina_Accessor *accessor,
    return accessor->get_at(accessor, position, data);
 }
 
-EAPI void
+EINA_API void
 eina_accessor_over(Eina_Accessor *accessor,
                    Eina_Each_Cb cb,
                    unsigned int start,
@@ -156,7 +156,7 @@ eina_accessor_over(Eina_Accessor *accessor,
    (void) eina_accessor_unlock(accessor);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_accessor_lock(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
@@ -167,7 +167,7 @@ eina_accessor_lock(Eina_Accessor *accessor)
    return EINA_TRUE;
 }
 
-EAPI Eina_Accessor*
+EINA_API Eina_Accessor*
 eina_accessor_clone(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
@@ -179,7 +179,7 @@ eina_accessor_clone(Eina_Accessor *accessor)
    return NULL;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_accessor_unlock(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
@@ -235,7 +235,7 @@ eina_carray_length_accessor_free(Eina_Accessor_CArray_Length *accessor)
    free(accessor);
 }
 
-EAPI Eina_Accessor *
+EINA_API Eina_Accessor *
 eina_carray_length_accessor_new(void** array, unsigned int step, unsigned int length)
 {
    Eina_Accessor_CArray_Length *accessor;
@@ -258,7 +258,7 @@ eina_carray_length_accessor_new(void** array, unsigned int step, unsigned int le
    return &accessor->accessor;
 }
 
-EAPI Eina_Accessor *
+EINA_API Eina_Accessor *
 eina_carray_length_ptr_accessor_new(void** array, unsigned int step, unsigned int length)
 {
    Eina_Accessor_CArray_Length *accessor;

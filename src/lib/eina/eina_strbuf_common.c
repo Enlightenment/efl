@@ -922,7 +922,7 @@ eina_strbuf_common_rw_slice_get(const Eina_Strbuf *buf)
  */
 
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_strbuf_replace(Eina_Strbuf *buf,
                     const char *str,
                     const char *with,
@@ -976,7 +976,7 @@ eina_strbuf_replace(Eina_Strbuf *buf,
    return EINA_TRUE;
 }
 
-EAPI int
+EINA_API int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 {
    size_t len1, len2, len;

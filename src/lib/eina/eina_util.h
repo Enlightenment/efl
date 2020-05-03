@@ -37,7 +37,7 @@
  *
  * @since 1.15
  */
-EAPI const char *eina_environment_home_get(void);
+EINA_API const char *eina_environment_home_get(void);
 
 /**
  * @brief Returns the content of the environment referred as TMPDIR on this system.
@@ -48,7 +48,7 @@ EAPI const char *eina_environment_home_get(void);
  *
  * @since 1.15
  */
-EAPI const char *eina_environment_tmp_get(void);
+EINA_API const char *eina_environment_tmp_get(void);
 
 /**
  * @brief Warningless comparison of doubles using ==

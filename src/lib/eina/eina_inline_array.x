@@ -27,7 +27,7 @@
  * @cond LOCAL
  */
 
-EAPI Eina_Bool eina_array_grow(Eina_Array *array);
+EINA_API Eina_Bool eina_array_grow(Eina_Array *array);
 
 /**
  * @endcond

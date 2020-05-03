@@ -23,7 +23,7 @@
 #include <Windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-EAPI void
+EINA_API void
 eina_sched_prio_drop(void)
 {
    Eina_Thread thread_id;

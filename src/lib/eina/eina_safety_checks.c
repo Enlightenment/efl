@@ -25,7 +25,7 @@
 #include "eina_log.h"
 #include "eina_safety_checks.h"
 
-EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
+EINA_API Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 
 static int EINA_SAFETY_LOG_DOMAIN = 0;
 static int initcnt = 0;
@@ -74,7 +74,7 @@ eina_safety_checks_init(void)
    return EINA_TRUE;
 }
 
-EAPI void
+EINA_API void
 _eina_safety_error(const char *file, const char *func, int line, const char *str)
 {
    eina_error_set(EINA_ERROR_SAFETY_FAILED);
