@@ -1,6 +1,7 @@
 #ifndef __EVIL_STDIO_H__
 #define __EVIL_STDIO_H__
 
+#include <sys/types.h>
 
 /**
  * @file evil_stdio.h
@@ -41,7 +42,7 @@
  *
  * @since 1.8
  */
-EAPI int evil_rename(const char *src, const char *dst);
+EVIL_API int evil_rename(const char *src, const char *dst);
 
 #ifndef HAVE_CYGWIN
 typedef int mode_t;
@@ -58,7 +59,7 @@ typedef int mode_t;
  *
  * @since 1.15
  */
-EAPI int evil_mkdir(const char *dirname, mode_t mode);
+EVIL_API int evil_mkdir(const char *dirname, mode_t mode);
 
 
 #endif /* __EVIL_STDIO_H__ */

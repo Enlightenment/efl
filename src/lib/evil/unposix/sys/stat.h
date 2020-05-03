@@ -1,12 +1,7 @@
 #ifndef UNPOSIX_SYS_STAT_H
 #define UNPOSIX_SYS_STAT_H
 
-#ifdef _WIN32
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-# endif
-# include <windows.h>
-#endif
+#include <evil_windows.h>
 #include <../ucrt/sys/types.h>
 #include_next <sys/stat.h>
 #include <corecrt.h>

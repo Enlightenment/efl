@@ -119,7 +119,7 @@ _mkstemp(char *suffix, int val)
    return val;
 }
 
-EAPI char *
+EVIL_API char *
 mkdtemp(char *__template)
 {
    char      *suffix;

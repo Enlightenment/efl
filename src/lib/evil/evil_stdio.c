@@ -2,7 +2,6 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <sys/types.h>
 #include <direct.h>
 
 #include "evil_private.h"
