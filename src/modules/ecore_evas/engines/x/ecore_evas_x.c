@@ -3303,20 +3303,21 @@ _ecore_evas_x_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
-   if (ee->prop.maximized == on) return;
-   ee->prop.maximized = 1;
-   edata->state.maximized_h = 1;
-   edata->state.maximized_v = 1;
-//   ee->prop.maximized = on;
    if (ee->should_be_visible)
      {
         ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                         ECORE_X_WINDOW_STATE_MAXIMIZED_VERT, -1, on);
-        ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                         ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ, -1, on);
+                                         ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,
+                                         ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,
+                                         on);
      }
    else
-     _ecore_evas_x_state_update(ee);
+     {
+        if (ee->prop.maximized == on) return;
+        ee->prop.maximized = on;
+        edata->state.maximized_h = on;
+        edata->state.maximized_v = on;
+        _ecore_evas_x_state_update(ee);
+     }
 }
 
 static void
