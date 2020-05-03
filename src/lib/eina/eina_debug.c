@@ -54,8 +54,8 @@
 #include <fcntl.h>
 
 #ifdef _WIN32
+# include <evil_windows.h> /* fcntl */
 # include <ws2tcpip.h>
-# include <evil_private.h> /* fcntl */
 #endif
 
 #include "eina_alloca.h"
