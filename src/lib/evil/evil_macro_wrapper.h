@@ -1,6 +1,7 @@
 #ifndef __EVIL_MACRO_WRAPPER_H__
 #define __EVIL_MACRO_WRAPPER_H__
 
+#include <direct.h>
 
 /*
  * evil_locale.h
