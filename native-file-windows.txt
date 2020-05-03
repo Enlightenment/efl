@@ -1,3 +1,14 @@
 [binaries]
 c = 'clang-cl'
 cpp = 'clang-cl'
+
+[host_machine]
+system = 'windows'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
+[properties]
+c_args = ['-D_WIN32_WINNT=0x0601', '-march=x86-64']
+cpp_args = ['-D_WIN32_WINNT=0x0601', '-march=x86-64']
+
