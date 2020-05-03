@@ -227,6 +227,22 @@ _bt_win_center_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_bt_win_maximize(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   printf("Maximize\n");
+   elm_win_maximized_set(data, EINA_TRUE);
+}
+
+static void
+_bt_win_unmaximize(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   printf("Unmaximize\n");
+   elm_win_maximized_set(data, EINA_FALSE);
+}
+
+static void
 _win_state_print_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("WIN: %s\n", (char *)data);
@@ -414,7 +430,7 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Iconify and Activate");
+   elm_object_text_set(bt, "Iconify + Act");
    evas_object_smart_callback_add(bt, "clicked",
                                   _bt_win_iconify_and_activate, win);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -423,9 +439,27 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(bt);
 
    bt = elm_button_add(bx2);
-   elm_object_text_set(bt, "Iconify and Deiconify");
+   elm_object_text_set(bt, "Iconify + De");
    evas_object_smart_callback_add(bt, "clicked",
                                   _bt_win_iconify_and_deiconify, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Maximize");
+   evas_object_smart_callback_add(bt, "clicked",
+                                  _bt_win_maximize, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Unmaximize");
+   evas_object_smart_callback_add(bt, "clicked",
+                                  _bt_win_unmaximize, win);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
