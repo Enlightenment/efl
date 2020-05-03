@@ -100,6 +100,7 @@ group { name:"e/modules/tasks/item";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             color: 160 160 160 255;
+            offscale;
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.0 0.5;
@@ -134,6 +135,7 @@ group { name:"e/modules/tasks/item";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             color: 255 255 255 255;
+            offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
                align: 0.0 0.5;
@@ -169,6 +171,7 @@ group { name:"e/modules/tasks/item";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             color: 128 128 128 255;
+            offscale;
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.0 0.5;
@@ -182,12 +185,14 @@ group { name:"e/modules/tasks/item";
          }
       }
       part { name: "icon"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             align: 0.0 0.5;
             rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
             rel2.offset: 4 -5;
+            offscale;
          }
          description { state: "icon_only" 0.0;
             inherit: "default" 0.0;
@@ -208,8 +213,7 @@ group { name:"e/modules/tasks/item";
       }
       part { name: "icon2"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "icon";
-            rel2.to: "icon";
+            rel.to: "icon";
             fixed: 1 1;
          }
          description { state: "focused" 0.0;
@@ -222,6 +226,7 @@ group { name:"e/modules/tasks/item";
          }
       }
       part { name: "bar"; type: RECT; mouse_events: 0;
+         scale: 1;
          clip_to: "clip";
          description { state: "default" 0.0;
             color: 51 153 255 255;
@@ -232,6 +237,7 @@ group { name:"e/modules/tasks/item";
             fixed: 0 1;
             visible: 0;
             min: 0 0;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -243,8 +249,7 @@ group { name:"e/modules/tasks/item";
          clip_to: "icon_clip";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.to: "icon2";
-            rel2.to: "icon2";
+            rel.to: "icon2";
          }
       }
       part { name: "event"; type: RECT;
@@ -424,16 +429,32 @@ group { name:"e/modules/tasks/item";
 
 group { name:"e/modules/tasks/item_vert";
    inherit: "e/modules/tasks/item";
+   script {
+      public focused;
+      public iconic;
+      public eval_mode() {
+         new is_focused = get_int(focused);
+         new is_iconic  = get_int(iconic);
+         if      (is_iconic)  { emit("state,iconic",  "int"); }
+         else if (is_focused) { emit("state,focused", "int"); }
+         else                 { emit("state,default", "int"); }
+      }
+      public set_focused(m) {
+         set_int(focused, m);
+         eval_mode();
+      }
+      public set_iconic(m) {
+         set_int(iconic, m);
+         eval_mode();
+      }
+   }
    parts {
       part { name: "e.text.label";
          description { state: "default" 0.0;
-            rel1.to_y: "icon";
-            rel1.to_x: "";
-            rel1.relative: 0.0 1.0;
-            text {
-               min: 0 1;
-               align: 0.5 0.5;
-            }
+            rel.to: "icon";
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            visible: 0;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -442,13 +463,10 @@ group { name:"e/modules/tasks/item_vert";
       }
       part { name: "label_focused";
          description { state: "default" 0.0;
-            rel1.to_y: "icon";
-            rel1.to_x: "";
-            rel1.relative: 0.0 1.0;
-            text {
-               min: 0 1;
-               align: 0.5 0.5;
-            }
+            rel.to: "icon";
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            visible: 0;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -457,13 +475,10 @@ group { name:"e/modules/tasks/item_vert";
       }
       part { name: "label_iconic";
          description { state: "default" 0.0;
-            rel1.to_y: "icon";
-            rel1.to_x: "";
-            rel1.relative: 0.0 1.0;
-            text {
-               min: 0 1;
-               align: 0.5 0.5;
-            }
+            rel.to: "icon";
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            visible: 0;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -472,27 +487,39 @@ group { name:"e/modules/tasks/item_vert";
       }
       part { name: "icon";
          description { state: "default" 0.0;
-            aspect_preference: HORIZONTAL;
-            align: 0.5 0.0;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -5 4;
+            aspect_preference: BOTH;
+            align: 0.5 0.5;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -5 -5;
+         }
+         description { state: "icon_only" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 0.5;
+            rel1.offset: 4 4;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -5 -5;
          }
          description { state: "text_only" 0.0;
             rel2.relative: 1.0 0.0;
             max: 0 0;
          }
       }
-      part { name: "bar";
+      part { name: "bar"; type: RECT;
          description { state: "default" 0.0;
             align: 1.0 0.5;
-            rel1.offset: -1 0;
             rel1.relative: 1.0 0.0;
             rel2.offset: -1 -1;
             fixed: 1 0;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
+            align: 1.0 0.5;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 0;
+            rel2.offset: -1 -1;
+            fixed: 1 0;
             min: 5 0;
+            visible: 1;
          }
       }
    }
