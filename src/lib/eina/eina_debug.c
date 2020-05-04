@@ -136,9 +136,7 @@ struct _Eina_Debug_Session
    Eina_Bool deleted : 1; /* set if session is dead */
 };
 
-#ifndef _WIN32
 static void _opcodes_register_all(Eina_Debug_Session *session);
-#endif
 static void _thread_start(Eina_Debug_Session *session);
 
 EINA_API int
@@ -176,7 +174,6 @@ err:
 #endif
 }
 
-#ifndef _WIN32
 static void
 _daemon_greet(Eina_Debug_Session *session)
 {
@@ -190,6 +187,7 @@ _daemon_greet(Eina_Debug_Session *session)
 #endif
    int size = 8 + (app_name ? strlen(app_name) : 0) + 1;
    unsigned char *buf = alloca(size);
+   
    int version = SWAP_32(1); // version of protocol we speak
    int pid = getpid();
    pid = SWAP_32(pid);
@@ -259,7 +257,6 @@ end:
    if (rret <= 0 && packet_buf) free(packet_buf);
    return rret;
 }
-#endif
 
 EINA_API void
 eina_debug_disable()
@@ -301,7 +298,6 @@ eina_debug_session_dispatch_get(Eina_Debug_Session *session)
    else return NULL;
 }
 
-#ifndef _WIN32
 static void
 _static_opcode_register(Eina_Debug_Session *session,
       int op_id, Eina_Debug_Cb cb)
@@ -359,7 +355,6 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
 
    return EINA_FALSE;
 }
-#endif
 
 static void
 _opcodes_registration_send(Eina_Debug_Session *session,
@@ -404,7 +399,6 @@ _opcodes_registration_send(Eina_Debug_Session *session,
    free(buf);
 }
 
-#ifndef _WIN32
 static void
 _opcodes_register_all(Eina_Debug_Session *session)
 {
@@ -445,7 +439,6 @@ _opcodes_unregister_all(Eina_Debug_Session *session)
 
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
-#endif
 
 static Eina_Debug_Session *
 _session_create(int fd)
@@ -544,7 +537,6 @@ err:
 // way. this is an alternative to using external debuggers so we can get
 // users or developers to get useful information about an app at all times
 
-#ifndef _WIN32
 static void *
 _monitor(void *_data)
 {
@@ -554,7 +546,7 @@ _monitor(void *_data)
    _opcodes_register_all(session);
 
    // set a name for this thread for system debugging
-#ifdef EINA_HAVE_PTHREAD_SETNAME || EINA_HAVE_WIN32_THREAD_SETNAME
+#if defined(EINA_HAVE_PTHREAD_SETNAME) || defined(EINA_HAVE_WIN32_THREAD_SETNAME)
    eina_thread_name_set(eina_thread_self(), "Edbg-mon");
 #endif
    
@@ -591,7 +583,6 @@ _monitor(void *_data)
      }
    return NULL;
 }
-#endif
 
 // start up the debug monitor if we haven't already
 static void

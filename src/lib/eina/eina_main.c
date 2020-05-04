@@ -109,7 +109,7 @@ static int _mt_enabled = 0;
 
 #ifdef EFL_HAVE_THREADS
 EINA_API int _eina_threads_debug = 0;
-EINA_API pthread_mutex_t _eina_tracking_lock;
+EINA_API Eina_Lock _eina_tracking_lock;
 EINA_API Eina_Inlist *_eina_tracking = NULL;
 extern Eina_Lock       _sysmon_lock;
 #endif

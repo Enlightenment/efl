@@ -302,4 +302,3 @@ eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
 {
    return _eina_semaphore_release(sem, count_release);
 }
-
