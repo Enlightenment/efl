@@ -22,22 +22,21 @@
 
 #ifdef EFL_HAVE_THREADS
 # ifdef _WIN32
-#  ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-#  endif
-#  include <windows.h>
+#  include <evil_windows.h>
 # elif defined (__sun) || defined(__GNU__) || defined(__CYGWIN__)
 #  include <unistd.h>
+#  include <pthread.h>
 # elif defined (__FreeBSD__) || defined (__OpenBSD__) || \
    defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || \
    (defined (__MACH__) && defined (__APPLE__))
 #  include <unistd.h>
 #  include <sys/param.h>
 #  include <sys/sysctl.h>
+#  include <pthread.h>
 # elif defined (__linux__) || defined(__GLIBC__)
 #  include <sched.h>
+#  include <pthread.h>
 # endif
-# include <pthread.h>
 
 # define TH_MAX 32
 #endif
