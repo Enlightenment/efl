@@ -189,7 +189,7 @@ ecore_x_image_new(int w,
    if (!im)
      return NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    im->w = w;
    im->h = h;
    im->vis = vis;
@@ -206,7 +206,7 @@ ecore_x_image_new(int w,
 EAPI void
 ecore_x_image_free(Ecore_X_Image *im)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (im->shm)
      {
         if (im->xim)
@@ -306,7 +306,7 @@ ecore_x_image_get(Ecore_X_Image *im,
    Eina_Bool ret = EINA_TRUE;
    XErrorHandler ph;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (im->shm)
      {
         if (!im->xim) _ecore_x_image_shm_create(im);
@@ -400,7 +400,7 @@ ecore_x_image_put(Ecore_X_Image *im,
 {
    Ecore_X_GC tgc = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!gc)
      {
         XGCValues gcv;
@@ -434,7 +434,7 @@ ecore_x_image_data_get(Ecore_X_Image *im,
                        int *rows,
                        int *bpp)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!im->xim)
      {
         if (im->shm) _ecore_x_image_shm_create(im);

@@ -388,9 +388,9 @@ int _ecore_x_shutdown(void);
 
 #ifdef LOGFNS
 #include <stdio.h>
-#define LOGFN(fl, ln, fn) printf("-ECORE-X: %25s: %5i - %s\n", fl, ln, fn);
+#define LOGFN printf("-ECORE-X: %25s: %5i - %s\n", __FILE__, __LINE__, __func__)
 #else /* ifdef LOGFNS */
-#define LOGFN(fl, ln, fn)
+#define LOGFN
 #endif /* ifdef LOGFNS */
 
 

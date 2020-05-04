@@ -783,7 +783,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
    if (!_ecore_x_xi2_devs)
      return EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    for (i = 0; i < _ecore_x_xi2_num; i++)
      {
         XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
@@ -847,7 +847,7 @@ ecore_x_input_raw_select(Ecore_X_Window win)
    if (!_ecore_x_xi2_devs)
      return EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    emask.deviceid = XIAllMasterDevices;
    emask.mask_len = sizeof(mask);
    emask.mask = mask;
@@ -881,7 +881,7 @@ _ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
 
    Eina_Bool status = EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    for (i = 0; i < _ecore_x_xi2_num; i++)
      {
         XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);

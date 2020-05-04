@@ -196,7 +196,7 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
    Ecore_Wl_Window *win;
    static int _win_id = 1;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(win = calloc(1, sizeof(Ecore_Wl_Window))))
      {
@@ -236,7 +236,7 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -285,7 +285,7 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -314,7 +314,7 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w EINA_UNUSED, int h EINA_UNUSE
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -341,7 +341,7 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w EINA_UNUSED, int h EINA_UNUSE
 EAPI void
 ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -351,7 +351,7 @@ ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h)
 EAPI void
 ecore_wl_window_commit(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -362,7 +362,7 @@ ecore_wl_window_commit(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, int x, int y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -391,7 +391,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
 EAPI struct wl_surface *
 ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
 
@@ -418,7 +418,7 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_show(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!win) return;
 
@@ -430,7 +430,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_hide(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -450,7 +450,7 @@ ecore_wl_window_hide(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_raise(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -464,7 +464,7 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
 {
    Eina_Bool prev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -494,7 +494,7 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
 EAPI Eina_Bool
 ecore_wl_window_maximized_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
 
@@ -506,7 +506,7 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
 {
    Eina_Bool prev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -541,7 +541,7 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
 EAPI Eina_Bool
 ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
 
@@ -551,7 +551,7 @@ ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -566,7 +566,7 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 EAPI Eina_Bool
 ecore_wl_window_alpha_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
 
@@ -576,7 +576,7 @@ ecore_wl_window_alpha_get(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -591,7 +591,7 @@ ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
 EAPI Eina_Bool
 ecore_wl_window_transparent_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
 
@@ -601,7 +601,7 @@ ecore_wl_window_transparent_get(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -622,7 +622,7 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
 EAPI void
 ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -638,7 +638,7 @@ ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y)
 EAPI struct wl_surface *
 ecore_wl_window_surface_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
 
@@ -649,7 +649,7 @@ ecore_wl_window_surface_get(Ecore_Wl_Window *win)
 EAPI struct wl_shell_surface *
 ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
 
@@ -660,7 +660,7 @@ ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win)
 EAPI struct xdg_surface *
 ecore_wl_window_xdg_surface_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
 
@@ -680,7 +680,7 @@ ecore_wl_window_find(unsigned int id)
 EAPI void
 ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -692,7 +692,7 @@ ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, in
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -710,7 +710,7 @@ ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_na
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -730,7 +730,7 @@ ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win)
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -744,7 +744,7 @@ ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -759,7 +759,7 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
    struct wl_array states;
    uint32_t *s;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -798,7 +798,7 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
 EAPI Eina_Bool
 ecore_wl_window_iconified_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
 
@@ -833,7 +833,7 @@ ecore_wl_window_surface_find(struct wl_surface *surface)
 EAPI void
 ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -876,7 +876,7 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
 {
    struct wl_region *region;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -914,7 +914,7 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
 EAPI void
 ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -925,7 +925,7 @@ ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation)
 EAPI int
 ecore_wl_window_rotation_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, 0);
 
@@ -936,7 +936,7 @@ ecore_wl_window_rotation_get(Ecore_Wl_Window *win)
 EAPI int
 ecore_wl_window_id_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, 0);
 
@@ -947,7 +947,7 @@ ecore_wl_window_id_get(Ecore_Wl_Window *win)
 EAPI int
 ecore_wl_window_surface_id_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, 0);
 
@@ -958,7 +958,7 @@ ecore_wl_window_surface_id_get(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -974,7 +974,7 @@ ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title)
 EAPI void
 ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
@@ -991,7 +991,7 @@ ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name)
 EAPI Ecore_Wl_Input *
 ecore_wl_window_keyboard_get(Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, 0);
 
@@ -1012,7 +1012,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 {
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(win = data)) return;
 
@@ -1028,7 +1028,7 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface 
    Ecore_Wl_Window *win;
    uint32_t *p;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(win = data)) return;
 
@@ -1071,7 +1071,7 @@ _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface EIN
 {
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(win = data)) return;
    ecore_wl_window_free(win);
@@ -1082,7 +1082,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
 {
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!shell_surface) return;
    if (!(win = data)) return;
@@ -1094,7 +1094,7 @@ _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup)
 {
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!xdg_popup) return;
    if (!(win = data)) return;
@@ -1107,7 +1107,7 @@ _ecore_session_recovery_uuid(void *data EINA_UNUSED, struct zwp_e_session_recove
    Ecore_Wl_Window *win;
    char uuid_string[37];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(win = data)) return;
    if (!session_recovery) return;
@@ -1122,7 +1122,7 @@ _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges)
 {
    Ecore_Wl_Event_Window_Configure *ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Window_Configure)))) return;
    ev->win = win->id;

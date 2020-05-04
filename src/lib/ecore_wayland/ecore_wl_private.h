@@ -17,9 +17,9 @@
 
 # ifdef LOGFNS
 #  include <stdio.h>
-#  define LOGFN(fl, ln, fn) printf("-ECORE-WL: %25s: %5i - %s\n", fl, ln, fn);
+#  define LOGFN printf("-ECORE-WL: %25s: %5i - %s\n", __FILE__, __LINE__, __func__)
 # else
-#  define LOGFN(fl, ln, fn)
+#  define LOGFN
 # endif
 
 extern int _ecore_wl_log_dom;

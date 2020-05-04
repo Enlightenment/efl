@@ -147,7 +147,7 @@ ecore_x_dnd_aware_set(Ecore_X_Window win,
 {
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (on)
      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE,
                                       XA_ATOM, 32, &prop_data, 1);
@@ -162,7 +162,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
    int num;
    Version_Cache_Item *t;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    // this looks hacky - and it is, but we need a way of caching info about
    // a window while dragging, because we literally query this every mouse
    // move and going to and from x multiple times per move is EXPENSIVE
@@ -234,7 +234,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win,
    unsigned char *data;
    Ecore_X_Atom *atoms, atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          XA_ATOM, 32, &data, &num))
      return ret;
@@ -266,10 +266,10 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
    unsigned char *data = NULL;
    unsigned char *old_data = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = ecore_x_atom_get(type);
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (on)
      {
         if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
@@ -341,7 +341,7 @@ ecore_x_dnd_types_set(Ecore_X_Window win,
    unsigned int i;
    unsigned char *data = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!num_types)
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
    else
@@ -371,7 +371,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
    unsigned int i;
    unsigned char *data = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!num_actions)
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
    else
@@ -431,7 +431,7 @@ _ecore_x_dnd_begin(Ecore_X_Window source,
                    unsigned char *data,
                    int size)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_dnd_version_get(source))
      return EINA_FALSE;
 
@@ -469,7 +469,7 @@ _ecore_x_dnd_drop(Eina_Bool self)
    XEvent xev = { 0 };
    int status = EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (_source->dest)
      {
         xev.xany.type = ClientMessage;
@@ -553,7 +553,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept,
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    memset(&xev, 0, sizeof(XEvent));
 
    _target->will_accept = will_accept;
@@ -605,7 +605,7 @@ ecore_x_dnd_send_finished(void)
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xev.xany.type = ClientMessage;
    xev.xany.display = _ecore_x_disp;
    xev.xclient.message_type = ECORE_X_ATOM_XDND_FINISHED;

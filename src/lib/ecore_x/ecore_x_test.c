@@ -23,7 +23,7 @@ ecore_x_test_fake_key_down(const char *key EINA_UNUSED)
    KeyCode keycode = 0;
    KeySym keysym;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!strncmp(key, "Keycode-", 8))
      keycode = atoi(key + 8);
    else
@@ -55,7 +55,7 @@ ecore_x_test_fake_key_up(const char *key EINA_UNUSED)
    KeyCode keycode = 0;
    KeySym keysym;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!strncmp(key, "Keycode-", 8))
      keycode = atoi(key + 8);
    else
@@ -88,7 +88,7 @@ ecore_x_test_fake_key_press(const char *key EINA_UNUSED)
    KeySym keysym = 0;
    int shift = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!strncmp(key, "Keycode-", 8))
      keycode = atoi(key + 8);
    else
