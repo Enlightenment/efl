@@ -6,9 +6,7 @@
 #endif
 
 #ifdef _MSC_VER
-# ifndef EVIL_DLL
-#  define EVIL_API
-# elif defined(EVIL_BUILD)
+# ifdef EVIL_BUILD
 #  define EVIL_API __declspec(dllexport)
 # else
 #  define EVIL_API __declspec(dllimport)
