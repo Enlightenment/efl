@@ -1036,7 +1036,7 @@ eina_file_statat(void *container EINA_UNUSED, Eina_File_Direct_Info *info, Eina_
    EINA_SAFETY_ON_NULL_RETURN_VAL(info, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(st, -1);
 
-   if (stat64(info->path, &buf))
+   if (_stat64(info->path, &buf))
      {
         info->type = EINA_FILE_UNKNOWN;
         return -1;
@@ -1044,9 +1044,12 @@ eina_file_statat(void *container EINA_UNUSED, Eina_File_Direct_Info *info, Eina_
 
    if (info->type == EINA_FILE_UNKNOWN)
      {
-        if (S_ISREG(buf.st_mode))
+#define EINA_S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#define EINA_S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+
+       if (EINA_S_ISREG(buf.st_mode))
           info->type = EINA_FILE_REG;
-        else if (S_ISDIR(buf.st_mode))
+        else if (EINA_S_ISDIR(buf.st_mode))
           info->type = EINA_FILE_DIR;
         else
           info->type = EINA_FILE_UNKNOWN;
