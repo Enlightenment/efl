@@ -52,7 +52,7 @@ exit /B 0
 
     :: ---------------------------------
     :: Windows terminal specific options
-    set CFLAGS=-fansi-escape-codes -fcolor-diagnostics %CFLAGS%
+    set CFLAGS=-fansi-escape-codes -Wno-implicit-fallthrough %CFLAGS%
 
 
     if defined VERBOSE (

@@ -289,7 +289,7 @@
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
-# define EINA_FALLTHROUGH
+# define EINA_FALLTHROUGH __attribute__ ((fallthrough));
 # define EINA_PREFETCH(arg) ((void) (arg))
 # define EINA_PREFETCH_WRITE(arg) ((void) (arg))
 # define EINA_PREFETCH_NOCACHE(arg) ((void) (arg))

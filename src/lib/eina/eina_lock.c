@@ -86,7 +86,7 @@ eina_lock_debug(const Eina_Lock *mutex)
 }
 
 EINA_API Eina_Bool
-_eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
+eina_lock_new(Eina_Lock *mutex)
 {
    Eina_Bool ret = _eina_lock_new(mutex, EINA_FALSE);
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -98,7 +98,7 @@ _eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
    return ret;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_lock_recursive_new(Eina_Lock *mutex)
 {
    Eina_Bool ret = _eina_lock_new(mutex, EINA_TRUE);
@@ -112,150 +112,129 @@ eina_lock_recursive_new(Eina_Lock *mutex)
 }
 
 EINA_API void
-_eina_lock_free(Eina_Lock *mutex)
+eina_lock_free(Eina_Lock *mutex)
 {
    _eina_lock_free(mutex);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_lock_take_try(Eina_Lock *mutex)
 {
    return _eina_lock_take_try(mutex);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex)
 {
    return _eina_lock_take(mutex);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
    return _eina_lock_release(mutex);
 }
 
 EINA_API Eina_Bool
-_eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
+eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
    return _eina_condition_new(cond, mutex);
 }
 
-EAPI void
+EINA_API void
 eina_condition_free(Eina_Condition *cond)
 {
    _eina_condition_free(cond);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_condition_wait(Eina_Condition *cond)
 {
    return _eina_condition_wait(cond);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_condition_timedwait(Eina_Condition *cond, double t)
 {
    return _eina_condition_timedwait(cond, t);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_condition_broadcast(Eina_Condition *cond)
 {
    return _eina_condition_broadcast(cond);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_condition_signal(Eina_Condition *cond)
 {
    return _eina_condition_signal(cond);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_rwlock_new(Eina_RWLock *mutex)
 {
    return _eina_rwlock_new(mutex);
 }
 
-EAPI void
+EINA_API void
 eina_rwlock_free(Eina_RWLock *mutex)
 {
    _eina_rwlock_free(mutex);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_rwlock_take_read(Eina_RWLock *mutex)
 {
    return _eina_rwlock_take_read(mutex);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_rwlock_take_write(Eina_RWLock *mutex)
 {
    return _eina_rwlock_take_write(mutex);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_rwlock_release(Eina_RWLock *mutex)
 {
    return _eina_rwlock_release(mutex);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tls_cb_new(Eina_TLS *key, Eina_TLS_Delete_Cb delete_cb)
 {
    return _eina_tls_cb_new(key, delete_cb);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tls_new(Eina_TLS *key)
 {
    return _eina_tls_cb_new(key, NULL);
 }
 
-EAPI void
+EINA_API void
 eina_tls_free(Eina_TLS key)
 {
    _eina_tls_free(key);
 }
 
-EAPI void *
+EINA_API void *
 eina_tls_get(Eina_TLS key)
 {
    return _eina_tls_get(key);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tls_set(Eina_TLS key, const void *data)
 {
    return _eina_tls_set(key, data);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_barrier_new(Eina_Barrier *barrier, int needed)
 {
    return _eina_barrier_new(barrier, needed);
-}
-
-EINA_API Eina_Bool
-_eina_barrier_new(Eina_Barrier *barrier, int needed)
-{
-#ifdef EINA_HAVE_PTHREAD_BARRIER
-   int ok = pthread_barrier_init(&(barrier->barrier), NULL, needed);
-   if (ok == 0) return EINA_TRUE;
-   else if ((ok == EAGAIN) || (ok == ENOMEM)) return EINA_FALSE;
-   else EINA_LOCK_ABORT_DEBUG(ok, barrier_init, barrier);
-   return EINA_FALSE;
-#else
-   barrier->needed = needed;
-   barrier->called = 0;
-   if (eina_lock_new(&(barrier->cond_lock)))
-     {
-        if (eina_condition_new(&(barrier->cond), &(barrier->cond_lock)))
-          return EINA_TRUE;
-     }
-   return EINA_FALSE;
-#endif
 }
 
 EINA_API void
@@ -264,71 +243,40 @@ eina_barrier_free(Eina_Barrier *barrier)
    _eina_barrier_free(barrier);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_barrier_wait(Eina_Barrier *barrier)
 {
    return _eina_barrier_wait(barrier);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_spinlock_new(Eina_Spinlock *spinlock)
 {
    return _eina_spinlock_new(spinlock);
 }
 
-EAPI void
+EINA_API void
 eina_spinlock_free(Eina_Spinlock *spinlock)
 {
    _eina_spinlock_free(spinlock);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_spinlock_take_try(Eina_Spinlock *spinlock)
 {
    return _eina_spinlock_take_try(spinlock);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_spinlock_take(Eina_Spinlock *spinlock)
 {
    return _eina_spinlock_take(spinlock);
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 eina_spinlock_release(Eina_Spinlock *spinlock)
 {
    return _eina_spinlock_release(spinlock);
-}
-
-EINA_API Eina_Bool
-_eina_spinlock_new(Eina_Spinlock *spinlock)
-{
-#if defined(EINA_HAVE_POSIX_SPINLOCK)
-   int ok = pthread_spin_init(spinlock, PTHREAD_PROCESS_PRIVATE);
-   if (ok == 0) return EINA_TRUE;
-   else if ((ok == EAGAIN) || (ok == ENOMEM)) return EINA_FALSE;
-   else EINA_LOCK_ABORT_DEBUG(ok, spin_init, spinlock);
-   return EINA_FALSE;
-#elif defined(EINA_HAVE_OSX_SPINLOCK)
-   *spinlock = 0;
-   return EINA_TRUE;
-#else
-   return eina_lock_new(spinlock);
-#endif
-}
-
-EINA_API void
-_eina_spinlock_free(Eina_Spinlock *spinlock)
-{
-#if defined(EINA_HAVE_POSIX_SPINLOCK)
-   int ok = pthread_spin_destroy(spinlock);
-   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, spin_destroy, spinlock);
-#elif defined(EINA_HAVE_OSX_SPINLOCK)
-   /* Not applicable */
-   (void) spinlock;
-#else
-   eina_lock_free(spinlock);
-#endif
 }
 
 EINA_API Eina_Bool
@@ -337,19 +285,19 @@ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
    return _eina_semaphore_new(sem, count_init);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_semaphore_free(Eina_Semaphore *sem)
 {
    return _eina_semaphore_free(sem);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_semaphore_lock(Eina_Semaphore *sem)
 {
    return _eina_semaphore_lock(sem);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
 {
    return _eina_semaphore_release(sem, count_release);
