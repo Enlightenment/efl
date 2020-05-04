@@ -48,8 +48,8 @@ typedef void (*Eina_Lock_Bt_Func) ();
 #include "eina_inlist.h"
 #endif
 
-EAPI void _eina_lock_debug_abort(int err, const char *fn, const volatile void *ptr);
-EAPI void _eina_lock_debug_deadlock(const char *fn, const volatile void *ptr);
+EINA_API void _eina_lock_debug_abort(int err, const char *fn, const volatile void *ptr);
+EINA_API void _eina_lock_debug_deadlock(const char *fn, const volatile void *ptr);
 
 #define EINA_LOCK_ABORT_DEBUG(err, fn, ptr) \
    _eina_lock_debug_abort(err, #fn, ptr)
@@ -75,7 +75,7 @@ typedef PCRITICAL_SECTION Eina_Spinlock;
 typedef Eina_Lock Eina_Spinlock;
 #endif
 
-EAPI void eina_lock_debug(const Eina_Lock *mutex);
+EINA_API void eina_lock_debug(const Eina_Lock *mutex);
 
 /** @privatesection  @{ */
 typedef HANDLE _Eina_Thread;
@@ -121,24 +121,24 @@ struct _Eina_RWLock
 };
 /** @} privatesection */
 
-EAPI extern Eina_Bool _eina_threads_activated;
+EINA_API extern Eina_Bool _eina_threads_activated;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-EAPI extern int _eina_threads_debug;
-EAPI extern _Eina_Thread _eina_main_loop;
-EAPI extern Eina_Lock _eina_tracking_lock;
-EAPI extern Eina_Inlist *_eina_tracking;
+EINA_API extern int _eina_threads_debug;
+EINA_API extern _Eina_Thread _eina_main_loop;
+EINA_API extern Eina_Lock _eina_tracking_lock;
+EINA_API extern Eina_Inlist *_eina_tracking;
 #endif
 
-EAPI Eina_Bool eina_lock_new(Eina_Lock *mutex);
-EAPI void eina_lock_free(Eina_Lock *mutex);
-EAPI Eina_Lock_Result eina_lock_take(Eina_Lock *mutex);
-EAPI Eina_Lock_Result eina_lock_take_try(Eina_Lock *mutex);
-EAPI Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
-EAPI Eina_Bool eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex);
-EAPI void eina_condition_free(Eina_Condition *cond);
-EAPI Eina_Bool eina_condition_wait(Eina_Condition *cond);
-EAPI Eina_Bool eina_condition_broadcast(Eina_Condition *cond);
+EINA_API Eina_Bool eina_lock_new(Eina_Lock *mutex);
+EINA_API void eina_lock_free(Eina_Lock *mutex);
+EINA_API Eina_Lock_Result eina_lock_take(Eina_Lock *mutex);
+EINA_API Eina_Lock_Result eina_lock_take_try(Eina_Lock *mutex);
+EINA_API Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
+EINA_API Eina_Bool eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex);
+EINA_API void eina_condition_free(Eina_Condition *cond);
+EINA_API Eina_Bool eina_condition_wait(Eina_Condition *cond);
+EINA_API Eina_Bool eina_condition_broadcast(Eina_Condition *cond);
 
 static inline Eina_Bool
 _eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)

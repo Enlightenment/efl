@@ -2,17 +2,14 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <define_lean_and_mean.h>
+#include <evil_windows.h>
 
 #include <stdio.h>
 #include <sys/locking.h>
 
-#include <winsock2.h> /* for ioctlsocket */
 #include <io.h>
 
 #include "evil_private.h"
-
-#include <undefine_lean_and_mean.h>
 
 /* SOCKET is defined as a uintptr_t, so passing a fd (int) is not a problem */
 static int
