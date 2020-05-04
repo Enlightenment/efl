@@ -39,7 +39,12 @@ _eina_time_get(Eina_Nano_Time *tp)
    if (!clock_gettime(CLOCK_REALTIME, tp))
      return 0;
 # endif
-
+#ifdef _MSC_VER
+   if (timespec_get(tp , TIME_UTC))
+     return 0;
+   else
+     return -1;
+#else   
 /* FIXME: Have a look if and how we can support CLOCK_MONOTONIC */
 
    struct timeval tv;
@@ -51,6 +56,7 @@ _eina_time_get(Eina_Nano_Time *tp)
    tp->tv_nsec = tv.tv_usec * 1000L;
 
    return 0;
+#endif
 }
 
 static inline long int

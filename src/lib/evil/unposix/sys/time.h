@@ -15,15 +15,15 @@
 #include <../ucrt/time.h>
 #include <sys/types.h>
 
-typedef unsigned short u_short;
+// typedef unsigned short u_short;
 
-struct timezone {
-  int tz_minuteswest;     /* minutes west of Greenwich */
-  int tz_dsttime;         /* type of DST correction */
-};
+// struct timezone {
+//   int tz_minuteswest;     /* minutes west of Greenwich */
+//   int tz_dsttime;         /* type of DST correction */
+// };
 
-int gettimeofday(struct timeval * tp, struct timezone * tzp);
+// int gettimeofday(struct timeval * tp, struct timezone * tzp);
 
-struct tm *localtime_r(const time_t * time, struct tm * result);
+// struct tm *localtime_r(const time_t * time, struct tm * result);
 
 #endif

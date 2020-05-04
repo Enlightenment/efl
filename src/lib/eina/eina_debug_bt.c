@@ -184,6 +184,10 @@ get_time(void)
    struct timespec t;
    clock_gettime(CLOCK_MONOTONIC, &t);
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+#elif defined (_MSC_VER)
+   struct timespec t;
+   timespec_get (&t, TIME_UTC);
+   return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
 #else
    struct timeval timev;
    gettimeofday(&timev, NULL);
