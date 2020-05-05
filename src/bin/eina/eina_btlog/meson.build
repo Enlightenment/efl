@@ -1,5 +1,10 @@
+
+if not sys_windows
+
 executable('eina_btlog',
   'eina_btlog.c',
   dependencies: eina,
   install: true,
 )
+
+endif
