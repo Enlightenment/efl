@@ -96,8 +96,8 @@
 # endif
 
 extern int _ecore_drm_log_dom;
-struct xkb_keymap *cached_keymap;
-struct xkb_context *cached_context;
+extern struct xkb_keymap *cached_keymap;
+extern struct xkb_context *cached_context;
 
 # define EVDEV_MAX_SLOTS 32
 

@@ -36,6 +36,9 @@
 static Eina_List *drm_devices;
 static int ticking = 0;
 
+struct xkb_keymap *cached_keymap;
+struct xkb_context *cached_context;
+
 static void _ecore_drm_tick_source_set(Ecore_Drm_Device *dev);
 
 static void
