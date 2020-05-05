@@ -20,6 +20,9 @@
 
 #include "eina_thread_win32.h"
 
+#define EINA_THREAD_CLEANUP_PUSH(cleanup, data)
+#define EINA_THREAD_CLEANUP_POP(exec_cleanup)
+
 typedef struct _Eina_Win32_Thread_Func
 {
    void *data;
