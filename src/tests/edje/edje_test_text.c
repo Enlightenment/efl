@@ -123,7 +123,7 @@ EFL_START_TEST(edje_test_textblock)
    ck_assert_int_ne(w, 0);
    ck_assert_int_ne(h, 0);
 
-   edje_object_text_class_set(obj2, "tc1", "Sans", 15);
+   edje_object_text_class_set(obj2, "tc1", "Sans", 8);
    edje_object_calc_force(obj2);
    int w2 = 0, h2 = 0;
    evas_object_textblock_size_formatted_get(tb, &w2, &h2);
