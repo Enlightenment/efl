@@ -511,7 +511,7 @@ _feed_event_timer_cb(void *data EINA_UNUSED)
         if (act && act->type != EXACTNESS_ACTION_STABILIZE)
           {
              act = eina_list_data_get(_cur_event_list);
-             if (act && act->delay_ms)
+             if (act)
                {
                   DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
                   ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
@@ -552,7 +552,7 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
         if (_src_type != FTYPE_REMOTE && !_pause_request)
           {
              Exactness_Action *act = eina_list_data_get(_cur_event_list);
-             if (act && act->delay_ms)
+             if (act)
                {
                   DBG("  %s timer_time=<%f>\n", __func__, act->delay_ms / 1000.0);
                   ecore_timer_add(act->delay_ms / 1000.0, _feed_event_timer_cb, NULL);
