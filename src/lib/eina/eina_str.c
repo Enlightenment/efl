@@ -28,6 +28,8 @@
 #include <limits.h>
 #include <ctype.h>
 
+#include <strings.h>
+
 #ifdef HAVE_BSD_STRING_H
 # include <bsd/string.h>
 #endif

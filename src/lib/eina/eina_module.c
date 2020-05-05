@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
-#include <libgen.h>
 #include <unistd.h>
 
 #if defined HAVE_DLOPEN && ! defined _WIN32
@@ -44,6 +43,12 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_module.h"
+
+#ifndef _MSC_VER
+#include <libgen.h>
+#else
+#include <evil_basename.h>
+#endif
 
 /*============================================================================*
 *                                  Local                                     *

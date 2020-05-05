@@ -15,6 +15,7 @@ if target_machine.system() == 'windows'
     'evil_unistd.c',
     'evil_util.c',
     'evil_private.h',
+    'evil_basename.c',
     'pcre/regex.h',
   ]
 
