@@ -255,7 +255,12 @@ EINA_API Eina_Module *eina_module_new(const char *file)
        (file[0] != '\0' && file[1] == ':' && file[2] == '\\'))
      {
         if (stat(file, &st) == -1) return NULL;
+#ifdef _MSC_VER
+#define EINA_S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+        if (!EINA_S_ISREG(st.st_mode)) return NULL;
+#else
         if (!S_ISREG(st.st_mode)) return NULL;
+#endif
      }
 
    len = strlen(file);
