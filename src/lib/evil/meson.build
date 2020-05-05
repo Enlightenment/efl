@@ -28,7 +28,7 @@ if target_machine.system() == 'windows'
   evil_pub_deps = [psapi, ole32, ws2_32, secur32, uuid, pcre_dep, getopt_dep]
 
   evil_lib = library('evil', evil_src,
-    c_args : ['-DEVIL_BUILD', '-DEVIL_DLL'],
+    c_args : ['-DEVIL_BUILD', '-DEVIL_DLL', '-DPCRE_STATIC'],
     dependencies : evil_deps,
     include_directories : [config_dir, 'unposix'],
     install: true,

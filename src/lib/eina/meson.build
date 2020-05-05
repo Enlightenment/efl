@@ -407,7 +407,7 @@ else
 endif
 
 eina_lib = library('eina', sources,
-  c_args : ['-DEINA_BUILD'],
+  c_args : ['-DEINA_BUILD', '-DPCRE_STATIC'],
   include_directories : config_dir,
   dependencies: eina_lib_deps,
   install: true,
