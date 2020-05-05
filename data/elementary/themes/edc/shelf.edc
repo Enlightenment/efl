@@ -24,13 +24,16 @@ group { name: "e/shelf/default/base"; nomouse;
          }
       }
       spacer { "sizer";
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 4 0;
             rel2.offset: -5 -1;
+            offscale;
          }
          description { state: "vert" 0.0;
             rel1.offset: 0 4;
             rel2.offset: -1 -5;
+            offscale;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW; mouse;
@@ -86,25 +89,31 @@ group { name: "e/shelf/default/inset"; nomouse;
          }
       }
       part { name: "clip"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 3 0;
             rel2.offset: -4 -1;
             color: 255 255 255 255;
+            offscale;
          }
          description { state: "vert" 0.0;
             rel1.offset: 0 3;
             rel2.offset: -1 -4;
             color: 255 255 255 255;
+            offscale;
          }
       }
       spacer { "sizer";
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 3 0;
             rel2.offset: -4 -1;
+            offscale;
          }
          description { state: "vert" 0.0;
             rel1.offset: 0 3;
             rel2.offset: -1 -4;
+            offscale;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW; mouse;
@@ -120,8 +129,7 @@ group { name: "e/shelf/default/inset"; nomouse;
       }
       part { name: "sh_horiz_clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "clip";
-            rel2.to: "clip";
+            rel.to: "clip";
             visible: 1;
          }
          description { state: "vert" 0.0;
@@ -131,9 +139,9 @@ group { name: "e/shelf/default/inset"; nomouse;
       }
       part { name: "sh_l"; nomouse;
          clip_to: "sh_horiz_clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "clip";
-            rel2.to: "clip";
+            rel.to: "clip";
             rel2.relative: 0.0 1.0;
             image.normal: "shadow_circle_vert.png";
             min: 0 0;
@@ -147,9 +155,9 @@ group { name: "e/shelf/default/inset"; nomouse;
       }
       part { name: "sh_r"; nomouse;
          clip_to: "sh_horiz_clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "clip";
-            rel2.to: "clip";
+            rel.to: "clip";
             rel1.relative: 1.0 0.0;
             image.normal: "shadow_circle_vert.png";
             min: 0 0;
@@ -163,8 +171,7 @@ group { name: "e/shelf/default/inset"; nomouse;
       }
       part { name: "sh_vert_clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "clip";
-            rel2.to: "clip";
+            rel.to: "clip";
             visible: 0;
          }
          description { state: "vert" 0.0;
@@ -174,9 +181,9 @@ group { name: "e/shelf/default/inset"; nomouse;
       }
       part { name: "sh_t"; nomouse;
          clip_to: "sh_vert_clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "clip";
-            rel2.to: "clip";
+            rel.to: "clip";
             rel2.relative: 1.0 0.0;
             image.normal: "shadow_circle_horiz.png";
             min: 0 0;
@@ -190,9 +197,9 @@ group { name: "e/shelf/default/inset"; nomouse;
       }
       part { name: "sh_b"; nomouse;
          clip_to: "sh_vert_clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "clip";
-            rel2.to: "clip";
+            rel.to: "clip";
             rel1.relative: 0.0 1.0;
             image.normal: "shadow_circle_horiz.png";
             min: 0 0;
@@ -321,38 +328,6 @@ group { name: "e/shelf/invisible/base"; nomouse;
       }
       part { name: "shine";
          description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "dots_start";
-         description { state: "default" 0.0;
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-            min: 0 0;
-            max: 0 0;
-            visible: 0;
-         }
-         description { state: "vert" 0.0;
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-            min: 0 0;
-            max: 0 0;
-            visible: 0;
-         }
-      }
-      part { name: "dots_end";
-         description { state: "default" 0.0;
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-            min: 0 0;
-            max: 0 0;
-            visible: 0;
-         }
-         description { state: "vert" 0.0;
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-            min: 0 0;
-            max: 0 0;
             visible: 0;
          }
       }
