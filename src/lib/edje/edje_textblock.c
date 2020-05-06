@@ -558,11 +558,13 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                     mode |= TEXTBLOCK_FIT_MODE_HEIGHT;
                   evas_textblock_fit_options_set(ep->object, mode);
                   evas_textblock_fit_step_size_set(ep->object, chosen_desc->text.fit_step);
-                  if ( chosen_desc->text.size_range_min || chosen_desc->text.size_range_max)
-                     evas_textblock_fit_size_range_set(ep->object, chosen_desc->text.size_range_min,  chosen_desc->text.size_range_max);
-                  if (size_array_len>0)
+                  if (size_array_len > 0)
                     {
                        evas_textblock_fit_size_array_set(ep->object,size_array,size_array_len);
+                    }
+                  else if ( chosen_desc->text.size_range_min || chosen_desc->text.size_range_max)
+                    {
+                       evas_textblock_fit_size_range_set(ep->object, chosen_desc->text.size_range_min,  chosen_desc->text.size_range_max);
                     }
                }
 
