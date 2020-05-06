@@ -54,7 +54,7 @@ EAPI Eina_Bool
 ecore_x_dpms_capable_get(void)
 {
 #ifdef ECORE_XDPMS
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    return DPMSCapable(_ecore_x_disp) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XDPMS */
@@ -74,7 +74,7 @@ ecore_x_dpms_enabled_get(void)
    unsigned char state;
    unsigned short power_lvl;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    DPMSInfo(_ecore_x_disp, &power_lvl, &state);
    return state ? EINA_TRUE : EINA_FALSE;
@@ -99,7 +99,7 @@ ecore_x_dpms_power_level_get(void)
    unsigned char state;
    unsigned short power_lvl;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, -1);
    DPMSInfo(_ecore_x_disp, &power_lvl, &state);
    return (int)power_lvl;
@@ -117,7 +117,7 @@ EAPI void
 ecore_x_dpms_enabled_set(int enabled)
 {
 #ifdef ECORE_XDPMS
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    if (enabled)
      DPMSEnable(_ecore_x_disp);
@@ -140,7 +140,7 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
                           unsigned int *off)
 {
 #ifdef ECORE_XDPMS
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    DPMSGetTimeouts(_ecore_x_disp, (unsigned short *)standby,
                    (unsigned short *)suspend, (unsigned short *)off);
@@ -160,7 +160,7 @@ ecore_x_dpms_timeouts_set(unsigned int standby,
                           unsigned int off)
 {
 #ifdef ECORE_XDPMS
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    return DPMSSetTimeouts(_ecore_x_disp, standby, suspend, off) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XDPMS */
@@ -179,7 +179,7 @@ ecore_x_dpms_timeout_standby_get(void)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return standby;
@@ -200,7 +200,7 @@ ecore_x_dpms_timeout_suspend_get(void)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return suspend;
@@ -221,7 +221,7 @@ ecore_x_dpms_timeout_off_get(void)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return off;
@@ -241,7 +241,7 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, new_timeout, suspend, off);
@@ -259,7 +259,7 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, standby, new_timeout, off);
@@ -277,7 +277,7 @@ ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, standby, suspend, new_timeout);
@@ -293,7 +293,7 @@ EAPI void
 ecore_x_dpms_force(Eina_Bool on)
 {
 #ifdef ECORE_XDPMS
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    if (on) DPMSForceLevel(_ecore_x_disp, DPMSModeOn);
    else DPMSForceLevel(_ecore_x_disp, DPMSModeOff);

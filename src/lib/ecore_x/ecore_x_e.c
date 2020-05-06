@@ -34,7 +34,7 @@ ecore_x_e_frame_size_set(Ecore_X_Window win,
 {
    unsigned int frames[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    frames[0] = fl;
    frames[1] = fr;
    frames[2] = ft;
@@ -46,7 +46,7 @@ EAPI void
 ecore_x_e_virtual_keyboard_set(Ecore_X_Window win,
                                unsigned int is_keyboard)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
                                   &is_keyboard, 1);
 }
@@ -57,7 +57,7 @@ ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
                                         &val, 1);
    if ((ret == 0) || (ret == -1))
@@ -178,7 +178,7 @@ ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_vkbd_atom_get(state);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
                                 &atom, 1);
@@ -189,7 +189,7 @@ ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
                                      &atom, 1))
      return ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN;
@@ -201,7 +201,7 @@ EAPI void
 ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win,
                                       Ecore_X_Virtual_Keyboard_State state)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  _ecore_x_e_vkbd_atom_get(state),
@@ -247,7 +247,7 @@ EAPI void
 ecore_x_e_illume_zone_set(Ecore_X_Window win,
                           Ecore_X_Window zone)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_ZONE,
                                   &zone, 1);
 }
@@ -258,7 +258,7 @@ ecore_x_e_illume_zone_get(Ecore_X_Window win)
    Ecore_X_Window zone = 0;
    int ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_window_get(win, ECORE_X_ATOM_E_ILLUME_ZONE,
                                         &zone, 1);
    if ((ret == 0) || (ret == -1))
@@ -272,7 +272,7 @@ ecore_x_e_illume_zone_list_set(Ecore_X_Window win,
                                Ecore_X_Window *zones,
                                unsigned int n_zones)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_ZONE_LIST,
                                   zones, n_zones);
 }
@@ -281,7 +281,7 @@ EAPI void
 ecore_x_e_illume_conformant_set(Ecore_X_Window win,
                                 unsigned int is_conformant)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
                                   &is_conformant, 1);
 }
@@ -292,7 +292,7 @@ ecore_x_e_illume_conformant_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
                                         &val, 1);
    if ((ret == 0) || (ret == -1))
@@ -307,7 +307,7 @@ ecore_x_e_illume_mode_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_illume_atom_get(mode);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_MODE,
                                 &atom, 1);
@@ -318,7 +318,7 @@ ecore_x_e_illume_mode_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_ILLUME_MODE, &atom, 1))
      return ECORE_X_ILLUME_MODE_UNKNOWN;
 
@@ -329,7 +329,7 @@ EAPI void
 ecore_x_e_illume_mode_send(Ecore_X_Window win,
                            Ecore_X_Illume_Mode mode)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_MODE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  _ecore_x_e_illume_atom_get(mode),
@@ -339,7 +339,7 @@ ecore_x_e_illume_mode_send(Ecore_X_Window win,
 EAPI void
 ecore_x_e_illume_focus_back_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_FOCUS_BACK,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -348,7 +348,7 @@ ecore_x_e_illume_focus_back_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_focus_forward_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_FOCUS_FORWARD,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -357,7 +357,7 @@ ecore_x_e_illume_focus_forward_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_focus_home_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_FOCUS_HOME,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -366,7 +366,7 @@ ecore_x_e_illume_focus_home_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_close_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_CLOSE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -375,7 +375,7 @@ ecore_x_e_illume_close_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_home_new_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_HOME_NEW,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -384,7 +384,7 @@ ecore_x_e_illume_home_new_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_home_del_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_HOME_DEL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -393,7 +393,7 @@ ecore_x_e_illume_home_del_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_next_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -404,7 +404,7 @@ ecore_x_e_illume_access_action_next_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_prev_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -415,7 +415,7 @@ ecore_x_e_illume_access_action_prev_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -426,7 +426,7 @@ ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_over_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -437,7 +437,7 @@ ecore_x_e_illume_access_action_over_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_read_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -448,7 +448,7 @@ ecore_x_e_illume_access_action_read_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -459,7 +459,7 @@ ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -470,7 +470,7 @@ ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_up_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -481,7 +481,7 @@ ecore_x_e_illume_access_action_up_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_access_action_down_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
@@ -493,7 +493,7 @@ EAPI void
 ecore_x_e_illume_drag_set(Ecore_X_Window win,
                           unsigned int drag)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG, &drag, 1);
 }
 
@@ -503,7 +503,7 @@ ecore_x_e_illume_drag_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG,
                                         &val, 1);
    if ((ret == 0) || (ret == -1))
@@ -516,7 +516,7 @@ EAPI void
 ecore_x_e_illume_drag_locked_set(Ecore_X_Window win,
                                  unsigned int is_locked)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED,
                                   &is_locked, 1);
 }
@@ -527,7 +527,7 @@ ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED,
                                         &val, 1);
    if ((ret == 0) || (ret == -1))
@@ -539,7 +539,7 @@ ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_drag_start_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_DRAG_START,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -548,7 +548,7 @@ ecore_x_e_illume_drag_start_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_DRAG_END,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
@@ -563,7 +563,7 @@ ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win,
 {
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    geom[0] = x;
    geom[1] = y;
    geom[2] = w;
@@ -582,7 +582,7 @@ ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret =
      ecore_x_window_prop_card32_get(win,
                                     ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY,
@@ -614,7 +614,7 @@ ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win,
 {
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    geom[0] = x;
    geom[1] = y;
    geom[2] = w;
@@ -633,7 +633,7 @@ ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret =
      ecore_x_window_prop_card32_get(win,
                                     ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY,
@@ -665,7 +665,7 @@ ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win,
 {
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    geom[0] = x;
    geom[1] = y;
    geom[2] = w;
@@ -684,7 +684,7 @@ ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret =
      ecore_x_window_prop_card32_get(win,
                                     ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY,
@@ -740,7 +740,7 @@ EAPI void
 ecore_x_e_illume_quickpanel_set(Ecore_X_Window win,
                                 unsigned int is_quickpanel)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
                                   &is_quickpanel, 1);
 }
@@ -751,7 +751,7 @@ ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
                                         &val, 1);
    if ((ret == 0) || (ret == -1))
@@ -766,7 +766,7 @@ ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_quickpanel_atom_get(state);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE,
                                 &atom, 1);
@@ -777,7 +777,7 @@ ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win,
                                      ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE,
                                      &atom, 1))
@@ -790,7 +790,7 @@ EAPI void
 ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win,
                                        Ecore_X_Illume_Quickpanel_State state)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  _ecore_x_e_quickpanel_atom_get(state),
@@ -800,7 +800,7 @@ ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win,
 EAPI void
 ecore_x_e_illume_quickpanel_state_toggle(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win,
                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE_TOGGLE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
@@ -811,7 +811,7 @@ EAPI void
 ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
                                                unsigned int priority)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win,
                                   ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
                                   &priority, 1);
@@ -823,7 +823,7 @@ ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
                                        &val, 1);
    if ((ret == 0) || (ret == -1))
@@ -836,7 +836,7 @@ EAPI void
 ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
                                                unsigned int priority)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win,
                                   ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
                                   &priority, 1);
@@ -848,7 +848,7 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
                                         &val, 1);
@@ -862,7 +862,7 @@ EAPI void
 ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win,
                                      unsigned int zone)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win,
                                   ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE,
                                   &zone, 1);
@@ -874,7 +874,7 @@ ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win)
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE,
                                         &val, 1);
@@ -887,7 +887,7 @@ ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win)
 EAPI void
 ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win,
                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
@@ -927,7 +927,7 @@ ecore_x_e_illume_clipboard_state_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_clipboard_atom_get(state);
 
    ecore_x_window_prop_atom_set(win,
@@ -940,7 +940,7 @@ ecore_x_e_illume_clipboard_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ecore_x_window_prop_atom_get(win,
                                      ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE,
@@ -955,7 +955,7 @@ ecore_x_e_illume_clipboard_geometry_set(Ecore_X_Window win,
 {
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    geom[0] = x;
    geom[1] = y;
    geom[2] = w;
@@ -972,7 +972,7 @@ ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret =
       ecore_x_window_prop_card32_get(win,
                                      ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY,
@@ -992,7 +992,7 @@ EAPI void
 ecore_x_e_illume_sliding_win_state_set(Ecore_X_Window win,
                                        unsigned int   is_visible)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, 
                                   ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
                                   &is_visible, 1);
@@ -1004,7 +1004,7 @@ ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
    unsigned int is_visible = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
                                         &is_visible, 1);
@@ -1023,7 +1023,7 @@ ecore_x_e_illume_sliding_win_geometry_set(Ecore_X_Window win,
 {
    unsigned int geom[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    geom[0] = x;
    geom[1] = y;
    geom[2] = w;
@@ -1043,7 +1043,7 @@ ecore_x_e_illume_sliding_win_geometry_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int geom[4];
    
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = 
      ecore_x_window_prop_card32_get(win, 
                                     ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY, 
@@ -1070,7 +1070,7 @@ EAPI void
 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win,
                                 Ecore_X_Sync_Counter counter)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (counter)
      ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_COMP_SYNC_COUNTER,
                                  ECORE_X_ATOM_CARDINAL, &counter, 1);
@@ -1084,7 +1084,7 @@ ecore_x_e_comp_sync_counter_get(Ecore_X_Window win)
    int ret = 0;
    Ecore_X_Sync_Counter counter = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret =
      ecore_x_window_prop_xid_get(win,
                                  ECORE_X_ATOM_E_COMP_SYNC_COUNTER,
@@ -1102,7 +1102,7 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1134,7 +1134,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1169,7 +1169,7 @@ ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
 {
    Ecore_X_Atom *atoms;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!win)
      return;
 
@@ -1199,7 +1199,7 @@ ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
    Ecore_X_Atom *atoms;
    int num, i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (ret_num)
      *ret_num = 0;
@@ -1254,7 +1254,7 @@ ecore_x_e_window_profile_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!win)
      return;
 
@@ -1279,7 +1279,7 @@ ecore_x_e_window_profile_get(Ecore_X_Window win)
    char *profile = NULL;
    int num;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_E_WINDOW_PROFILE,
                                          XA_ATOM, 32, &data, &num))
      {
@@ -1304,7 +1304,7 @@ ecore_x_e_window_profile_supported_set(Ecore_X_Window root,
 {
    Ecore_X_Window win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1344,7 +1344,7 @@ ecore_x_e_window_profile_supported_get(Ecore_X_Window root)
    Ecore_X_Window win, win2;
    int ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
 
@@ -1377,7 +1377,7 @@ ecore_x_e_window_available_profiles_set(Ecore_X_Window  win,
 {
    Ecore_X_Atom *atoms;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!win)
      return;
@@ -1404,7 +1404,7 @@ ecore_x_e_window_available_profiles_get(Ecore_X_Window   win,
    Ecore_X_Atom *atoms;
    int num, i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (count)
      *count = 0;
@@ -1460,7 +1460,7 @@ ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
    XEvent xev = { 0 };
    Ecore_X_Atom atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1496,7 +1496,7 @@ ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
    XEvent xev = { 0 };
    Ecore_X_Atom atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1529,7 +1529,7 @@ ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
    XEvent xev = { 0 };
    Ecore_X_Atom atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1566,7 +1566,7 @@ ecore_x_e_comp_sync_supported_set(Ecore_X_Window root,
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (enabled)
      {
         win = ecore_x_window_new(root, 1, 2, 3, 4);
@@ -1600,7 +1600,7 @@ ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
    Ecore_X_Window win, win2;
    int ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
 
@@ -1631,7 +1631,7 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1657,7 +1657,7 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1683,7 +1683,7 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1709,7 +1709,7 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1735,7 +1735,7 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1760,7 +1760,7 @@ EAPI void
 ecore_x_e_comp_pixmap_set(Ecore_X_Window win,
                           Ecore_X_Pixmap pixmap)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (pixmap)
      ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_COMP_PIXMAP,
                                  ECORE_X_ATOM_PIXMAP, &pixmap, 1);
@@ -1774,7 +1774,7 @@ ecore_x_e_comp_pixmap_get(Ecore_X_Window win)
    int ret = 0;
    Ecore_X_Pixmap pixmap = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret =
      ecore_x_window_prop_xid_get(win,
                                  ECORE_X_ATOM_E_COMP_PIXMAP,
@@ -1821,7 +1821,7 @@ ecore_x_e_illume_indicator_state_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_indicator_atom_get(state);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE,
                                 &atom, 1);
@@ -1832,7 +1832,7 @@ ecore_x_e_illume_indicator_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win,
                                      ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE,
                                      &atom, 1))
@@ -1845,7 +1845,7 @@ EAPI void
 ecore_x_e_illume_indicator_state_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_State state)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  _ecore_x_e_indicator_atom_get(state),
@@ -1893,7 +1893,7 @@ ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_indicator_opacity_atom_get(mode);
    ecore_x_window_prop_atom_set(win,
                                 ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE,
@@ -1905,7 +1905,7 @@ ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win,
                                      ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE,
                                      &atom, 1))
@@ -1918,7 +1918,7 @@ EAPI void
 ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_Opacity_Mode mode)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win,
                                  ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
@@ -1967,7 +1967,7 @@ ecore_x_e_illume_indicator_type_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_indicator_type_atom_get(mode);
    ecore_x_window_prop_atom_set(win,
                                 ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE,
@@ -1979,7 +1979,7 @@ ecore_x_e_illume_indicator_type_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win,
                                      ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE,
                                      &atom, 1))
@@ -1992,7 +1992,7 @@ EAPI void
 ecore_x_e_illume_indicator_type_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_Type_Mode mode)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win,
                                  ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
@@ -2035,7 +2035,7 @@ ecore_x_e_illume_window_state_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_e_illume_window_state_atom_get(state);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_WINDOW_STATE,
                                 &atom, 1);
@@ -2046,7 +2046,7 @@ ecore_x_e_illume_window_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_atom_get(win,
                                      ECORE_X_ATOM_E_ILLUME_WINDOW_STATE,
                                      &atom, 1))
@@ -2059,7 +2059,7 @@ EAPI void
 ecore_x_e_illume_window_state_send(Ecore_X_Window win,
                                    Ecore_X_Illume_Window_State state)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win,
                                  ECORE_X_ATOM_E_ILLUME_WINDOW_STATE,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
@@ -2073,7 +2073,7 @@ ecore_x_e_window_rotation_supported_set(Ecore_X_Window root,
 {
    Ecore_X_Window win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -2112,7 +2112,7 @@ ecore_x_e_window_rotation_supported_get(Ecore_X_Window root)
    Ecore_X_Window win, win2;
    int ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
 
@@ -2144,7 +2144,7 @@ ecore_x_e_window_rotation_app_set(Ecore_X_Window win,
 {
    unsigned int val = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (set) val = 1;
 
@@ -2158,7 +2158,7 @@ ecore_x_e_window_rotation_app_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_card32_get(win,
                                        ECORE_X_ATOM_E_WINDOW_ROTATION_APP_SUPPORTED,
                                        &val, 1))
@@ -2173,7 +2173,7 @@ ecore_x_e_window_rotation_preferred_rotation_set(Ecore_X_Window win,
 {
    unsigned int val = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (rot != -1)
      {
@@ -2196,7 +2196,7 @@ ecore_x_e_window_rotation_preferred_rotation_get(Ecore_X_Window win,
    unsigned int val = 0;
    int ret = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_E_WINDOW_ROTATION_PREFERRED_ROTATION,
@@ -2214,7 +2214,7 @@ ecore_x_e_window_rotation_available_rotations_set(Ecore_X_Window win,
                                                   const int     *rots,
                                                   unsigned int   count)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!win) return;
 
@@ -2236,7 +2236,7 @@ ecore_x_e_window_rotation_available_rotations_get(Ecore_X_Window  win,
    int num, i;
    int *val = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if ((!win) || (!rots) || (!count))
      return EINA_FALSE;
@@ -2276,7 +2276,7 @@ ecore_x_e_window_rotation_change_prepare_send(Ecore_X_Window win,
                                               int            w,
                                               int            h)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send
      (win, ECORE_X_ATOM_E_WINDOW_ROTATION_CHANGE_PREPARE,
      ECORE_X_EVENT_MASK_NONE,
@@ -2290,7 +2290,7 @@ ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root,
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -2317,7 +2317,7 @@ EAPI void
 ecore_x_e_window_rotation_change_request_send(Ecore_X_Window win,
                                               int            rot)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send
      (win, ECORE_X_ATOM_E_WINDOW_ROTATION_CHANGE_REQUEST,
      ECORE_X_EVENT_MASK_NONE,
@@ -2333,7 +2333,7 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -2367,7 +2367,7 @@ ecore_x_e_keyrouter_set(Ecore_X_Window win EINA_UNUSED,
    unsigned int val;
    Ecore_X_Window root;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -2386,7 +2386,7 @@ ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
    unsigned int val;
    Ecore_X_Window root;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
 
@@ -2404,7 +2404,7 @@ ecore_x_e_stack_type_set(Ecore_X_Window win,
                          Ecore_X_Stack_Type stack_type)
 {
    unsigned int val = stack_type;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -2420,7 +2420,7 @@ ecore_x_e_stack_type_get(Ecore_X_Window win)
 {
    int ret;
    unsigned int val;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, ECORE_X_STACK_NONE);
 
@@ -2436,7 +2436,7 @@ ecore_x_e_stack_position_set(Ecore_X_Window win,
                              Ecore_X_Stack_Position stack_position)
 {
    unsigned int val = stack_position;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -2452,7 +2452,7 @@ ecore_x_e_stack_position_get(Ecore_X_Window win)
 {
    int ret;
    unsigned int val;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, ECORE_X_STACK_POSITION_NONE);
 

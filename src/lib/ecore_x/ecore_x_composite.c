@@ -38,7 +38,7 @@ _ecore_x_composite_init(void)
 EAPI Eina_Bool
 ecore_x_composite_query(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _composite_available;
 }
 
@@ -49,7 +49,7 @@ ecore_x_composite_redirect_window(Ecore_X_Window win,
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -72,7 +72,7 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -95,7 +95,7 @@ ecore_x_composite_unredirect_window(Ecore_X_Window win,
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -118,7 +118,7 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -139,7 +139,7 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 {
    Ecore_X_Pixmap pixmap = None;
 #ifdef ECORE_XCOMPOSITE
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    pixmap = XCompositeNameWindowPixmap(_ecore_x_disp, win);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
@@ -180,7 +180,7 @@ EAPI void
 ecore_x_composite_render_window_disable(Ecore_X_Window root)
 {
 #ifdef ECORE_XCOMPOSITE
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    XCompositeReleaseOverlayWindow(_ecore_x_disp, root);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */

@@ -500,6 +500,7 @@ struct _Evas_Object_Textblock
    } default_format;
    double                              valign;
    Eina_Stringshare                   *markup_text;
+   Evas_Object_Textblock_Format       *main_fmt;
    char                               *utf8;
    void                               *engine_data;
    const char                         *repch;
@@ -7631,6 +7632,7 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
 
    /* Start of logical layout creation */
    /* setup default base style */
+   if (!o->main_fmt)  /* no main format */
      {
         Eina_List *itr;
         User_Style_Entry *use;
@@ -7662,6 +7664,11 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
 
         if (finalize)
            _format_finalize(c->obj, c->fmt);
+        o->main_fmt = _format_dup(c->obj, c->fmt);
+     }
+   else
+     {
+        c->fmt = _layout_format_push(c, o->main_fmt, NULL);
      }
    if (!c->fmt)
      {
@@ -7948,13 +7955,25 @@ evas_textblock_style_free(Evas_Textblock_Style *ts)
 }
 
 static void
-_evas_textblock_update_format_nodes_from_style_tag(Efl_Canvas_Textblock_Data *o)
+_evas_clear_main_format(Evas_Object *eo_obj, Efl_Canvas_Textblock_Data *o)
+{
+    if (o->main_fmt)
+      {
+         _format_unref_free(efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS), o->main_fmt);
+         o->main_fmt = NULL;
+      }
+}
+
+static void
+_evas_textblock_update_format_nodes_from_style_tag(Evas_Object *eo_obj, Efl_Canvas_Textblock_Data *o)
 {
    if (!o)
      {
         ERR("The given address Efl_Canvas_Textblock_Data is NULL");
         return;
      }
+
+   _evas_clear_main_format(eo_obj, o);
 
    Evas_Object_Textblock_Node_Format *fnode = o->format_nodes;
 
@@ -8110,7 +8129,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
    EINA_LIST_FOREACH(ts->objects, l, eo_obj)
      {
         Efl_Canvas_Textblock_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-        _evas_textblock_update_format_nodes_from_style_tag(o);
+        _evas_textblock_update_format_nodes_from_style_tag(eo_obj, o);
         _evas_textblock_invalidate_all(o);
         _evas_textblock_changed(o, eo_obj);
      }
@@ -8166,6 +8185,8 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
    TB_HEAD();
    Eina_List *itr;
    Evas_Textblock_Style *old_ts = NULL;
+
+   _evas_clear_main_format(eo_obj, o);
 
    if (!key)
      {
@@ -8234,7 +8255,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
         ts->objects = eina_list_append(ts->objects, eo_obj);
      }
 
-   _evas_textblock_update_format_nodes_from_style_tag(o);
+   _evas_textblock_update_format_nodes_from_style_tag(eo_obj, o);
 
    o->format_changed = EINA_TRUE;
    _evas_textblock_invalidate_all(o);
@@ -8273,6 +8294,7 @@ _efl_canvas_textblock_style_apply(Eo *eo_obj, Efl_Canvas_Textblock_Data *o, cons
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
+   _evas_clear_main_format(eo_obj, o);
    _format_fill(eo_obj, &(o->default_format.format), style, EINA_TRUE);
 }
 
@@ -11645,6 +11667,10 @@ _evas_textblock_changed(Efl_Canvas_Textblock_Data *o, Evas_Object *eo_obj)
              o->markup_text = NULL;
           }
      }
+   else
+     {
+        _evas_clear_main_format(eo_obj, o);
+     }
 
    // FIXME: emit ONCE after this following checks
    _cursor_emit_if_changed(o->cursor);
@@ -14616,6 +14642,8 @@ evas_object_textblock_free(Evas_Object *eo_obj)
         o->fit_content_config.p_size_array = NULL;
      }
 
+   _evas_clear_main_format(eo_obj, o);
+
 #ifdef HAVE_HYPHEN
   /* Hyphenation */
   if (o->hyphenating)
@@ -16393,6 +16421,7 @@ static void
 _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Textblock_Data *o)
 {
    o->format_changed = EINA_TRUE;
+   _evas_clear_main_format(eo_obj, o);
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);
    efl_event_callback_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);

@@ -121,7 +121,7 @@ ecore_x_event_mask_set(Ecore_X_Window w,
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -143,7 +143,7 @@ ecore_x_event_mask_unset(Ecore_X_Window w,
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -1404,7 +1404,7 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    Ecore_X_Event_Selection_Clear *e;
    Ecore_X_Atom sel;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_last_event_mouse_move = EINA_FALSE;
    d = _ecore_x_selection_get(xevent->xselectionclear.selection);
    if (d && (xevent->xselectionclear.time <= d->time)) return;
@@ -1443,7 +1443,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    int len;
    int typesize;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_last_event_mouse_move = EINA_FALSE;
    /*
     * Generate a selection request event.
@@ -1510,7 +1510,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    Ecore_X_Atom selection;
    int num_ret, format;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_last_event_mouse_move = EINA_FALSE;
    selection = xevent->xselection.selection;
 
@@ -1643,7 +1643,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
         if (!e) return;
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
 
         target = _ecore_x_dnd_target_get();
         target->state = ECORE_X_DND_TARGET_ENTERED;
@@ -1665,7 +1665,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
              Ecore_X_Atom *types;
              int i, num_ret;
 
-             LOGFN(__FILE__, __LINE__, __FUNCTION__);
+             LOGFN;
              if (!(ecore_x_window_prop_property_get(target->source,
                                                     ECORE_X_ATOM_XDND_TYPE_LIST,
                                                     XA_ATOM,
@@ -1682,7 +1682,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
              e->types = calloc(num_ret, sizeof(char *));
              if (e->types)
                {
-                  LOGFN(__FILE__, __LINE__, __FUNCTION__);
+                  LOGFN;
                   for (i = 0; i < num_ret; i++)
                     e->types[i] = XGetAtomName(_ecore_x_disp, types[i]);
                }
@@ -1697,7 +1697,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
              e->types = calloc(3, sizeof(char *));
              if (e->types)
                {
-                  LOGFN(__FILE__, __LINE__, __FUNCTION__);
+                  LOGFN;
                   while ((i < 3) && (xevent->xclient.data.l[i + 2]))
                     {
                        e->types[i] = XGetAtomName(_ecore_x_disp,
@@ -1720,7 +1720,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_Event_Xdnd_Position *e;
         Ecore_X_DND_Target *target;
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
 
         target = _ecore_x_dnd_target_get();
         if ((target->source != (Ecore_X_Window)xevent->xclient.data.l[0]) ||
@@ -1750,7 +1750,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_Event_Xdnd_Status *e;
         Ecore_X_DND_Source *source;
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
 
         source = _ecore_x_dnd_source_get();
         /* Make sure source/target match */
@@ -1791,7 +1791,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_Event_Xdnd_Leave *e;
         Ecore_X_DND_Target *target;
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
 
         target = _ecore_x_dnd_target_get();
         if ((target->source != (Ecore_X_Window)xevent->xclient.data.l[0]) ||
@@ -1813,7 +1813,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_Event_Xdnd_Drop *e;
         Ecore_X_DND_Target *target;
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
 
         target = _ecore_x_dnd_target_get();
         /* Match source/target */
@@ -1841,7 +1841,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_DND_Source *source;
         Eina_Bool completed = EINA_TRUE;
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
 
         source = _ecore_x_dnd_source_get();
         /* Match source/target */
@@ -1851,7 +1851,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         if ((source->version < 5) || (xevent->xclient.data.l[1] & 0x1UL))
           {
-             LOGFN(__FILE__, __LINE__, __FUNCTION__);
+             LOGFN;
              /* Target successfully performed drop action */
              ecore_x_selection_xdnd_clear();
              source->state = ECORE_X_DND_SOURCE_IDLE;
@@ -1904,12 +1904,12 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
              return;
           }
 
-        LOGFN(__FILE__, __LINE__, __FUNCTION__);
+        LOGFN;
         e->state[0] = _ecore_x_netwm_state_get(xevent->xclient.data.l[1]);
         if (e->state[0] == ECORE_X_WINDOW_STATE_UNKNOWN)
           {
 //	     char *name;
-             LOGFN(__FILE__, __LINE__, __FUNCTION__);
+             LOGFN;
 
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
 //	     if (name) ERR("Unknown state: %s", name);
@@ -1919,7 +1919,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         if (e->state[1] == ECORE_X_WINDOW_STATE_UNKNOWN)
           {
 //	     char *name;
-             LOGFN(__FILE__, __LINE__, __FUNCTION__);
+             LOGFN;
 
 //	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
 //	     if (name) ERR("Unknown state: %s", name);
@@ -1994,7 +1994,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
         if (ScreenCount(_ecore_x_disp) > 1)
           {
-             LOGFN(__FILE__, __LINE__, __FUNCTION__);
+             LOGFN;
              root = ecore_x_window_root_get(e->win);
           }
         else
@@ -2309,7 +2309,7 @@ _ecore_x_event_handle_randr_notify(XEvent *xevent)
 
    _ecore_x_last_event_mouse_move = EINA_FALSE;
    randr_event = (const XRRNotifyEvent *)xevent;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    switch (randr_event->subtype)
      {
       case RRNotify_CrtcChange:
@@ -2426,7 +2426,7 @@ _ecore_x_event_handle_generic_event(XEvent *event)
    Ecore_X_Event_Generic *e;
    XGenericEventCookie *data;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    generic_event = (XGenericEvent *)event;
 
 #ifdef ECORE_XPRESENT

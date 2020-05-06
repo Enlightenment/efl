@@ -128,7 +128,7 @@ EAPI int
 ecore_wl_init(const char *name)
 {
    struct wl_callback *callback;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (++_ecore_wl_init_count != 1) return _ecore_wl_init_count;
 
@@ -240,7 +240,7 @@ exit_eina:
 EAPI int
 ecore_wl_shutdown(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    return _ecore_wl_shutdown(EINA_TRUE);
 }
@@ -337,7 +337,7 @@ ecore_wl_screen_size_get(int *w, int *h)
    Eina_Inlist *tmp;
    int ow = 0, oh = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (w) *w = 0;
    if (h) *h = 0;
@@ -380,7 +380,7 @@ ecore_wl_screen_size_get(int *w, int *h)
 EAPI void
 ecore_wl_pointer_xy_get(int *x, int *y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    _ecore_wl_input_pointer_xy_get(x, y);
 }
@@ -390,7 +390,7 @@ ecore_wl_dpi_get(void)
 {
    int w, mw;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!_ecore_wl_disp) return 0;
 
@@ -428,7 +428,7 @@ ecore_wl_display_iterate(void)
 EAPI Eina_Bool
 ecore_wl_animator_source_set(Ecore_Animator_Source source)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (_ecore_wl_server_mode) return EINA_FALSE;
 
@@ -477,7 +477,7 @@ ecore_wl_server_mode_set(Eina_Bool on)
 static int
 _ecore_wl_shutdown(Eina_Bool close)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (_ecore_wl_init_count < 1)
      {
@@ -619,7 +619,7 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
    Ecore_Wl_Display *ewd;
    int ret = 0;
 
-   /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
+   /* LOGFN; */
 
    if (_ecore_wl_fatal_error) return ECORE_CALLBACK_CANCEL;
 
@@ -664,7 +664,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
    Ecore_Wl_Display *ewd;
    Ecore_Wl_Global *global;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    ewd = data;
 
@@ -769,7 +769,7 @@ _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_
    Ecore_Wl_Global *global;
    Eina_Inlist *tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    ewd = data;
 
@@ -786,7 +786,7 @@ _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_
 static Eina_Bool
 _ecore_wl_xkb_init(Ecore_Wl_Display *ewd)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ewd->xkb.context = xkb_context_new(0)))
      return EINA_FALSE;
@@ -797,7 +797,7 @@ _ecore_wl_xkb_init(Ecore_Wl_Display *ewd)
 static Eina_Bool
 _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    xkb_context_unref(ewd->xkb.context);
 

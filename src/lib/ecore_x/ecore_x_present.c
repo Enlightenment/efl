@@ -17,7 +17,7 @@ _ecore_x_present_init(void)
    ECORE_X_EVENT_PRESENT_COMPLETE = ecore_event_type_new();
    ECORE_X_EVENT_PRESENT_IDLE = ecore_event_type_new();
 #ifdef ECORE_XPRESENT
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_present_exists = XPresentQueryExtension(_ecore_x_disp, &_ecore_x_present_major, NULL, NULL);
 #endif
 }

@@ -10,7 +10,7 @@ _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED
 {
    Ecore_Wl_Output *output;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    output = data;
    output->allocation.x = x;
@@ -27,7 +27,7 @@ _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, un
    Ecore_Wl_Output *output;
    Ecore_Wl_Display *ewd;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    output = data;
    ewd = output->display;
@@ -77,7 +77,7 @@ _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
    Ecore_Wl_Output *output;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(output = calloc(1, sizeof(Ecore_Wl_Output)))) return;
 

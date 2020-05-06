@@ -150,7 +150,7 @@ static int _pointer_x, _pointer_y;
 EAPI void
 ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
    input->grab = win;
@@ -160,7 +160,7 @@ ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int bu
 EAPI void
 ecore_wl_input_ungrab(Ecore_Wl_Input *input)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
 
@@ -184,7 +184,7 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
 void
 _ecore_wl_input_grab_release(Ecore_Wl_Input *input, Ecore_Wl_Window *win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
    if (input->grab != win) return;
@@ -204,7 +204,7 @@ _pointer_update_stop(Ecore_Wl_Input *input)
 EAPI void
 ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
 
@@ -217,7 +217,7 @@ ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, in
 EAPI void
 ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
 
@@ -234,7 +234,7 @@ ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
 EAPI void
 ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_theme_name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
 
@@ -252,7 +252,7 @@ ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_t
 EAPI struct xkb_keymap *
 ecore_wl_input_keymap_get(Ecore_Wl_Input *input)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
 
@@ -308,7 +308,7 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
 {
    struct wl_cursor *cursor;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
    /* No pointer device. Don't need to set cursor and update it */
@@ -346,7 +346,7 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
 EAPI void
 ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return;
 
@@ -369,7 +369,7 @@ ecore_wl_input_get(void)
 EAPI struct wl_seat *
 ecore_wl_input_seat_get(Ecore_Wl_Input *input)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!input) return NULL;
 
@@ -400,7 +400,7 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = calloc(1, sizeof(Ecore_Wl_Input)))) return;
 
@@ -525,7 +525,7 @@ _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum 
 
    if (!(input = data)) return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if ((caps & WL_SEAT_CAPABILITY_POINTER) && (!input->pointer))
      {
@@ -577,7 +577,7 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer EINA_UN
 {
    Ecore_Wl_Input *input;
 
-   /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
+   /* LOGFN; */
 
    if (!(input = data)) return;
 
@@ -595,7 +595,7 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
 
@@ -637,7 +637,7 @@ _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer EINA_UNUS
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
    _ecore_wl_input_mouse_wheel_send(input, axis, wl_fixed_to_int(value),
@@ -649,7 +649,7 @@ _ecore_wl_input_cb_pointer_frame(void *data, struct wl_callback *callback, unsig
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
 
@@ -680,7 +680,7 @@ _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard EINA
    Ecore_Wl_Input *input;
    char *map = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data))
      {
@@ -789,7 +789,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    char key[256], keyname[256], compose[256];
    Ecore_Event_Key *e;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
 
@@ -891,7 +891,7 @@ _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard E
    Ecore_Wl_Input *input;
    xkb_mod_mask_t mask;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
 
@@ -927,7 +927,7 @@ _ecore_wl_input_cb_keyboard_repeat_setup(void *data, struct wl_keyboard *keyboar
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
 
@@ -949,7 +949,7 @@ _ecore_wl_input_cb_keyboard_repeat(void *data)
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return ECORE_CALLBACK_RENEW;
 
@@ -974,7 +974,7 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!surface) return;
    if (!(input = data)) return;
@@ -1022,7 +1022,7 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer EINA_UNU
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!surface) return;
    if (!(input = data)) return;
@@ -1055,7 +1055,7 @@ _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard EINA_
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!surface) return;
    if (!(input = data)) return;
@@ -1084,7 +1084,7 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!surface) return;
    if (!(input = data)) return;
@@ -1119,7 +1119,7 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!surface) return;
    if (!(input = data)) return;
@@ -1158,7 +1158,7 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
    if (!input->touch_focus) return;
@@ -1178,7 +1178,7 @@ _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, 
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(input = data)) return;
    if (!input->touch_focus) return;
@@ -1193,19 +1193,19 @@ _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, 
 static void
 _ecore_wl_input_cb_touch_frame(void *data EINA_UNUSED, struct wl_touch *touch EINA_UNUSED)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 }
 
 static void
 _ecore_wl_input_cb_touch_cancel(void *data EINA_UNUSED, struct wl_touch *touch EINA_UNUSED)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 }
 
 static void
 _ecore_wl_input_cb_data_offer(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    _ecore_wl_dnd_add(data, data_device, offer);
 }
@@ -1213,7 +1213,7 @@ _ecore_wl_input_cb_data_offer(void *data, struct wl_data_device *data_device, st
 static void
 _ecore_wl_input_cb_data_enter(void *data, struct wl_data_device *data_device, unsigned int timestamp, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!surface) return;
 
@@ -1223,7 +1223,7 @@ _ecore_wl_input_cb_data_enter(void *data, struct wl_data_device *data_device, un
 static void
 _ecore_wl_input_cb_data_leave(void *data, struct wl_data_device *data_device)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    _ecore_wl_dnd_leave(data, data_device);
 }
@@ -1231,7 +1231,7 @@ _ecore_wl_input_cb_data_leave(void *data, struct wl_data_device *data_device)
 static void
 _ecore_wl_input_cb_data_motion(void *data, struct wl_data_device *data_device, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    _ecore_wl_dnd_motion(data, data_device, timestamp, x, y);
 }
@@ -1239,7 +1239,7 @@ _ecore_wl_input_cb_data_motion(void *data, struct wl_data_device *data_device, u
 static void
 _ecore_wl_input_cb_data_drop(void *data, struct wl_data_device *data_device)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    _ecore_wl_dnd_drop(data, data_device);
 }
@@ -1247,7 +1247,7 @@ _ecore_wl_input_cb_data_drop(void *data, struct wl_data_device *data_device)
 static void
 _ecore_wl_input_cb_data_selection(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    _ecore_wl_dnd_selection(data, data_device, offer);
 }
@@ -1258,7 +1258,7 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    Ecore_Event_Mouse_Move *ev;
    Ecore_Wl_Mouse_Down_Info *down_info;
 
-   /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
+   /* LOGFN; */
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
@@ -1299,7 +1299,7 @@ _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
 {
    Ecore_Wl_Event_Mouse_In *ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Mouse_In)))) return;
 
@@ -1324,7 +1324,7 @@ _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsi
 {
    Ecore_Wl_Event_Mouse_Out *ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Mouse_Out)))) return;
 
@@ -1349,7 +1349,7 @@ _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Window
 {
    Ecore_Wl_Event_Focus_In *ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Focus_In)))) return;
    ev->timestamp = timestamp;
@@ -1362,7 +1362,7 @@ _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Windo
 {
    Ecore_Wl_Event_Focus_Out *ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Focus_Out)))) return;
    ev->timestamp = timestamp;
@@ -1376,7 +1376,7 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int
    Ecore_Event_Mouse_Button *ev;
    Ecore_Wl_Mouse_Down_Info *down_info;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
 
@@ -1485,7 +1485,7 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int d
    Ecore_Event_Mouse_Button *ev;
    Ecore_Wl_Mouse_Down_Info *down_info;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
 
@@ -1548,7 +1548,7 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
 {
    Ecore_Event_Mouse_Wheel *ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
 

@@ -31,7 +31,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win,
    long *v2;
    unsigned int i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    v2 = malloc(num * sizeof(long));
    if (!v2)
      return;
@@ -65,7 +65,7 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win,
    unsigned int i;
    int num;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    prop_ret = NULL;
    if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                           XA_CARDINAL, &type_ret, &format_ret, &num_ret,
@@ -112,7 +112,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
    unsigned int i, *val;
    int num;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (plst) *plst = NULL;
    prop_ret = NULL;
    if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
@@ -163,7 +163,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win,
    unsigned long *pl;
    unsigned int i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    pl = malloc(num * sizeof(unsigned long));
    if (!pl)
      return;
@@ -200,7 +200,7 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win,
    unsigned i;
    Eina_Bool success;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    prop_ret = NULL;
    success = (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                           type, &type_ret, &format_ret, &num_ret,
@@ -252,7 +252,7 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
    unsigned i;
    Eina_Bool success;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (val) *val = NULL;
    prop_ret = NULL;
    success = (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
@@ -294,7 +294,7 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win,
    Ecore_X_ID *lst, *temp;
    int i, num;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    num = ecore_x_window_prop_xid_list_get(win, atom, type, &lst);
    if (num < 0)
      {
@@ -355,7 +355,7 @@ ecore_x_window_prop_atom_set(Ecore_X_Window win,
                              Ecore_X_Atom *lst,
                              unsigned int num)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_xid_set(win, atom, XA_ATOM, lst, num);
 }
 
@@ -374,7 +374,7 @@ ecore_x_window_prop_atom_get(Ecore_X_Window win,
                              unsigned int len)
 {
    int ret;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_xid_get(win, atom, XA_ATOM, lst, len);
    return ret;
 }
@@ -393,7 +393,7 @@ ecore_x_window_prop_atom_list_get(Ecore_X_Window win,
                                   Ecore_X_Atom **plst)
 {
    int ret;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_xid_list_get(win, atom, XA_ATOM, plst);
    return ret;
 }
@@ -407,7 +407,7 @@ ecore_x_window_prop_atom_list_change(Ecore_X_Window win,
                                      Ecore_X_Atom item,
                                      int op)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_xid_list_change(win, atom, XA_ATOM, item, op);
 }
 
@@ -420,7 +420,7 @@ ecore_x_window_prop_window_set(Ecore_X_Window win,
                                Ecore_X_Window *lst,
                                unsigned int num)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_xid_set(win, atom, XA_WINDOW, lst, num);
 }
 
@@ -439,7 +439,7 @@ ecore_x_window_prop_window_get(Ecore_X_Window win,
                                unsigned int len)
 {
    int ret;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_xid_get(win, atom, XA_WINDOW, lst, len);
    return ret;
 }
@@ -458,7 +458,7 @@ ecore_x_window_prop_window_list_get(Ecore_X_Window win,
                                     Ecore_X_Window **plst)
 {
    int ret;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_xid_list_get(win, atom, XA_WINDOW, plst);
    return ret;
 }
@@ -486,7 +486,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win,
                                  void *data,
                                  int number)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (win == 0)
      win = DefaultRootWindow(_ecore_x_disp);
 
@@ -551,7 +551,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window win,
    else /* we can't store the retrieved data, so just return */
      return 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!win)
      win = DefaultRootWindow(_ecore_x_disp);
 
@@ -602,7 +602,7 @@ EAPI void
 ecore_x_window_prop_property_del(Ecore_X_Window win,
                                  Ecore_X_Atom property)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    XDeleteProperty(_ecore_x_disp, win, property);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -615,7 +615,7 @@ ecore_x_window_prop_list(Ecore_X_Window win,
    Atom *atom_ret;
    int num = 0, i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (num_ret)
      *num_ret = 0;
 
@@ -652,7 +652,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win,
 {
    XTextProperty xtp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (win == 0)
      win = DefaultRootWindow(_ecore_x_disp);
 
@@ -677,7 +677,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win,
    XTextProperty xtp;
    char *str = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (win == 0)
      win = DefaultRootWindow(_ecore_x_disp);
 
@@ -727,7 +727,7 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
      return EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
    ret = XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count);
@@ -763,7 +763,7 @@ ecore_x_window_prop_protocol_list_get(Ecore_X_Window win,
    Ecore_X_WM_Protocol *prot_ret = NULL;
    Eina_Bool success;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    success = XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count);
    if (_ecore_xlib_sync) ecore_x_sync();
    if (!success)

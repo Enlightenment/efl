@@ -74,7 +74,7 @@ static Eina_Hash *startup_info = NULL;
 EAPI void
 ecore_x_netwm_init(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    startup_info = eina_hash_string_superfast_new(
        _ecore_x_netwm_startup_info_free);
 }
@@ -82,7 +82,7 @@ ecore_x_netwm_init(void)
 EAPI void
 ecore_x_netwm_shutdown(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (startup_info)
      eina_hash_free(startup_info);
 
@@ -97,7 +97,7 @@ ecore_x_netwm_wm_identify(Ecore_X_Window root,
                           Ecore_X_Window check,
                           const char *wm_name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(check,
                                   ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
                                   &check,
@@ -123,7 +123,7 @@ ecore_x_netwm_supported_set(Ecore_X_Window root,
                             Ecore_X_Atom *supported,
                             int num)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_atom_set(root,
                                 ECORE_X_ATOM_NET_SUPPORTED,
                                 supported,
@@ -142,7 +142,7 @@ ecore_x_netwm_supported_get(Ecore_X_Window root,
    if (num)
      *num = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    num_ret = ecore_x_window_prop_atom_list_get(root, ECORE_X_ATOM_NET_SUPPORTED,
                                                supported);
    if (num_ret <= 0)
@@ -161,7 +161,7 @@ EAPI void
 ecore_x_netwm_desk_count_set(Ecore_X_Window root,
                              unsigned int n_desks)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_NUMBER_OF_DESKTOPS,
                                   &n_desks, 1);
 }
@@ -171,7 +171,7 @@ ecore_x_netwm_desk_roots_set(Ecore_X_Window root,
                              Ecore_X_Window *vroots,
                              unsigned int n_desks)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(root,
                                   ECORE_X_ATOM_NET_VIRTUAL_ROOTS,
                                   vroots,
@@ -188,7 +188,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root,
    unsigned int i;
    int l, len;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    buf = NULL;
    len = 0;
 
@@ -225,7 +225,7 @@ ecore_x_netwm_desk_size_set(Ecore_X_Window root,
 {
    unsigned int size[2];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    size[0] = width;
    size[1] = height;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_GEOMETRY, size,
@@ -237,7 +237,7 @@ ecore_x_netwm_desk_viewports_set(Ecore_X_Window root,
                                  unsigned int *origins,
                                  unsigned int n_desks)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_VIEWPORT,
                                   origins, 2 * n_desks);
 }
@@ -251,7 +251,7 @@ ecore_x_netwm_desk_layout_set(Ecore_X_Window root,
 {
    unsigned int layout[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    layout[0] = orientation;
    layout[1] = columns;
    layout[2] = rows;
@@ -265,7 +265,7 @@ ecore_x_netwm_desk_workareas_set(Ecore_X_Window root,
                                  unsigned int *areas,
                                  unsigned int n_desks)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_WORKAREA, areas,
                                   4 * n_desks);
 }
@@ -293,7 +293,7 @@ EAPI void
 ecore_x_netwm_desk_current_set(Ecore_X_Window root,
                                unsigned int desk)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_CURRENT_DESKTOP, &desk,
                                   1);
 }
@@ -304,7 +304,7 @@ ecore_x_netwm_showing_desktop_set(Ecore_X_Window root,
 {
    unsigned int val;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    val = (on) ? 1 : 0;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_SHOWING_DESKTOP, &val,
                                   1);
@@ -320,7 +320,7 @@ ecore_x_netwm_client_list_set(Ecore_X_Window root,
                               Ecore_X_Window *p_clients,
                               unsigned int n_clients)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_CLIENT_LIST,
                                   p_clients, n_clients);
 }
@@ -331,7 +331,7 @@ ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root,
                                        Ecore_X_Window *p_clients,
                                        unsigned int n_clients)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_CLIENT_LIST_STACKING,
                                   p_clients, n_clients);
 }
@@ -340,7 +340,7 @@ EAPI void
 ecore_x_netwm_client_active_set(Ecore_X_Window root,
                                 Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_ACTIVE_WINDOW,
                                   &win, 1);
 }
@@ -353,7 +353,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root,
 {
    XEvent xev = { 0 };
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -377,7 +377,7 @@ EAPI void
 ecore_x_netwm_name_set(Ecore_X_Window win,
                        const char *name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_NAME, name);
 }
 
@@ -385,7 +385,7 @@ EAPI int
 ecore_x_netwm_name_get(Ecore_X_Window win,
                        char **name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (name)
      *name = _ecore_x_window_prop_string_utf8_get(win,
                                                   ECORE_X_ATOM_NET_WM_NAME);
@@ -397,7 +397,7 @@ EAPI void
 ecore_x_netwm_startup_id_set(Ecore_X_Window win,
                              const char *id)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_STARTUP_ID, id);
 }
 
@@ -405,7 +405,7 @@ EAPI int
 ecore_x_netwm_startup_id_get(Ecore_X_Window win,
                              char **id)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (id)
      *id = _ecore_x_window_prop_string_utf8_get(win,
                                                 ECORE_X_ATOM_NET_STARTUP_ID);
@@ -417,7 +417,7 @@ EAPI void
 ecore_x_netwm_visible_name_set(Ecore_X_Window win,
                                const char *name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_VISIBLE_NAME,
                                         name);
 }
@@ -426,7 +426,7 @@ EAPI int
 ecore_x_netwm_visible_name_get(Ecore_X_Window win,
                                char **name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (name)
      *name = _ecore_x_window_prop_string_utf8_get(
          win,
@@ -439,7 +439,7 @@ EAPI void
 ecore_x_netwm_icon_name_set(Ecore_X_Window win,
                             const char *name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME,
                                         name);
 }
@@ -448,7 +448,7 @@ EAPI int
 ecore_x_netwm_icon_name_get(Ecore_X_Window win,
                             char **name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (name)
      *name = _ecore_x_window_prop_string_utf8_get(
          win,
@@ -461,7 +461,7 @@ EAPI void
 ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win,
                                     const char *name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_window_prop_string_utf8_set(win,
                                         ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME,
                                         name);
@@ -471,7 +471,7 @@ EAPI int
 ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win,
                                     char **name)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (name)
      *name = _ecore_x_window_prop_string_utf8_get(
          win,
@@ -484,7 +484,7 @@ EAPI void
 ecore_x_netwm_desktop_set(Ecore_X_Window win,
                           unsigned int desk)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_DESKTOP, &desk, 1);
 }
 
@@ -495,7 +495,7 @@ ecore_x_netwm_desktop_get(Ecore_X_Window win,
    int ret;
    unsigned int tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_DESKTOP,
                                         &tmp, 1);
 
@@ -517,7 +517,7 @@ ecore_x_netwm_strut_set(Ecore_X_Window win,
 {
    unsigned int strut[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    strut[0] = left;
    strut[1] = right;
    strut[2] = top;
@@ -538,7 +538,7 @@ ecore_x_netwm_strut_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int strut[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_NET_WM_STRUT,
                                         strut,
@@ -578,7 +578,7 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win,
 {
    unsigned int strut[12];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    strut[0] = left;
    strut[1] = right;
    strut[2] = top;
@@ -615,7 +615,7 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int strut[12];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_NET_WM_STRUT_PARTIAL,
                                         strut,
@@ -670,7 +670,7 @@ ecore_x_netwm_icons_set(Ecore_X_Window win,
    unsigned int *data, *p, *p2;
    unsigned int i, size, x, y;
    
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    size = 0;
    for (i = 0; i < (unsigned int)num; i++)
      {
@@ -723,7 +723,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win,
    unsigned int len, icons, i;
    int num_ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (num)
      *num = 0;
 
@@ -831,7 +831,7 @@ ecore_x_netwm_icon_geometry_set(Ecore_X_Window win,
 {
    unsigned int geometry[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    geometry[0] = x;
    geometry[1] = y;
    geometry[2] = width;
@@ -852,7 +852,7 @@ ecore_x_netwm_icon_geometry_get(Ecore_X_Window win,
    int ret;
    unsigned int geometry[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_NET_WM_ICON_GEOMETRY,
                                         geometry,
@@ -881,7 +881,7 @@ ecore_x_netwm_pid_set(Ecore_X_Window win,
 {
    unsigned int tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    tmp = pid;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_PID,
                                   &tmp, 1);
@@ -894,7 +894,7 @@ ecore_x_netwm_pid_get(Ecore_X_Window win,
    int ret;
    unsigned int tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_PID,
                                         &tmp, 1);
    if (pid)
@@ -906,7 +906,7 @@ ecore_x_netwm_pid_get(Ecore_X_Window win,
 EAPI void
 ecore_x_netwm_handled_icons_set(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
                                   NULL, 0);
 }
@@ -915,7 +915,7 @@ EAPI Eina_Bool
 ecore_x_netwm_handled_icons_get(Ecore_X_Window win)
 {
    int ret = 0;
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
                                         NULL, 0);
    return ret == 0 ? EINA_TRUE : EINA_FALSE;
@@ -925,7 +925,7 @@ EAPI void
 ecore_x_netwm_user_time_set(Ecore_X_Window win,
                             unsigned int tim)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_USER_TIME,
                                   &tim, 1);
 }
@@ -937,7 +937,7 @@ ecore_x_netwm_user_time_get(Ecore_X_Window win,
    int ret;
    unsigned int tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_USER_TIME,
                                         &tmp, 1);
    if (tim)
@@ -1031,7 +1031,7 @@ ecore_x_netwm_window_state_set(Ecore_X_Window win,
    Ecore_X_Atom *set;
    unsigned int i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!num)
      {
         ecore_x_window_prop_property_del(win, ECORE_X_ATOM_NET_WM_STATE);
@@ -1058,7 +1058,7 @@ ecore_x_netwm_window_state_get(Ecore_X_Window win,
    int num_ret, i;
    Ecore_X_Atom *atoms;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (num)
      *num = 0;
 
@@ -1182,7 +1182,7 @@ ecore_x_netwm_window_type_set(Ecore_X_Window win,
 {
    Ecore_X_Atom atom;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    atom = _ecore_x_netwm_window_type_atom_get(type);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
                                 &atom, 1);
@@ -1196,7 +1196,7 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win,
    int num;
    Ecore_X_Atom *atoms = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (type)
      *type = ECORE_X_WINDOW_TYPE_NORMAL;
 
@@ -1221,7 +1221,7 @@ ecore_x_netwm_window_types_get(Ecore_X_Window win,
    Ecore_X_Atom *atoms = NULL;
    Ecore_X_Window_Type *atoms2 = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (types)
      *types = NULL;
 
@@ -1309,7 +1309,7 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window win,
    Ecore_X_Atom *atoms, atom;
    Eina_Bool ret = EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    num = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
                                            &atoms);
    if (num <= 0)
@@ -1339,7 +1339,7 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window win,
    Ecore_X_Atom *set;
    unsigned int i;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!num)
      {
         ecore_x_window_prop_property_del(win,
@@ -1370,7 +1370,7 @@ ecore_x_netwm_allowed_action_get(Ecore_X_Window win,
    int num_ret, i;
    Ecore_X_Atom *atoms;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (num)
      *num = 0;
 
@@ -1403,7 +1403,7 @@ EAPI void
 ecore_x_netwm_opacity_set(Ecore_X_Window win,
                           unsigned int opacity)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
                                   &opacity, 1);
 }
@@ -1415,7 +1415,7 @@ ecore_x_netwm_opacity_get(Ecore_X_Window win,
    int ret;
    unsigned int tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
                                         &tmp, 1);
    if (opacity)
@@ -1433,7 +1433,7 @@ ecore_x_netwm_frame_size_set(Ecore_X_Window win,
 {
    unsigned int frames[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    frames[0] = fl;
    frames[1] = fr;
    frames[2] = ft;
@@ -1454,7 +1454,7 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win,
    int ret = 0;
    unsigned int frames[4];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
                                         ECORE_X_ATOM_NET_FRAME_EXTENTS,
                                         frames,
@@ -1484,7 +1484,7 @@ ecore_x_netwm_sync_counter_get(Ecore_X_Window win,
    int ret;
    unsigned int tmp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ret = ecore_x_window_prop_card32_get(
        win,
        ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER,
@@ -1505,7 +1505,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
    if (!win)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -1531,7 +1531,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win,
    if (!win)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    XSyncIntToValue(&value, (int)serial);
 
    xev.xclient.type = ClientMessage;
@@ -1561,7 +1561,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window win,
    if (!win)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1595,7 +1595,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
    if (!win)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1625,7 +1625,7 @@ ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
    if (!win)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xev.xclient.window = win;
    xev.xclient.type = ClientMessage;
    xev.xclient.message_type = ECORE_X_ATOM_NET_WM_MOVERESIZE;
@@ -2061,7 +2061,7 @@ ecore_x_screen_is_composited(int screen)
    Ecore_X_Atom atom;
    char buf[32];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
    atom = XInternAtom(_ecore_x_disp, buf, True);
    if (atom == None) return EINA_FALSE;
@@ -2077,7 +2077,7 @@ ecore_x_screen_is_composited_set(int screen,
    Ecore_X_Atom atom;
    char buf[32];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
    atom = XInternAtom(_ecore_x_disp, buf, False);
    if (atom == None) return;

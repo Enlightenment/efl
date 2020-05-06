@@ -175,7 +175,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w,
                               const void *data,
                               int size)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_PRIMARY);
 }
 
@@ -188,7 +188,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w,
 EAPI Eina_Bool
 ecore_x_selection_primary_clear(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_PRIMARY);
 }
 
@@ -205,7 +205,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w,
                                 const void *data,
                                 int size)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(w,
                                  data,
                                  size,
@@ -221,7 +221,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w,
 EAPI Eina_Bool
 ecore_x_selection_secondary_clear(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(None,
                                  NULL,
                                  0,
@@ -241,7 +241,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window w,
                            const void *data,
                            int size)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_XDND);
 }
 
@@ -254,7 +254,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window w,
 EAPI Eina_Bool
 ecore_x_selection_xdnd_clear(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_XDND);
 }
 
@@ -274,7 +274,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w,
                                 const void *data,
                                 int size)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(w,
                                  data,
                                  size,
@@ -290,7 +290,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w,
 EAPI Eina_Bool
 ecore_x_selection_clipboard_clear(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return _ecore_x_selection_set(None,
                                  NULL,
                                  0,
@@ -365,7 +365,7 @@ EAPI void
 ecore_x_selection_primary_request(Ecore_X_Window w,
                                   const char *target)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_PRIMARY, target);
 }
 
@@ -373,7 +373,7 @@ EAPI void
 ecore_x_selection_secondary_request(Ecore_X_Window w,
                                     const char *target)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_SECONDARY, target);
 }
 
@@ -384,7 +384,7 @@ ecore_x_selection_xdnd_request(Ecore_X_Window w,
    Ecore_X_Atom atom;
    Ecore_X_DND_Target *_target;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _target = _ecore_x_dnd_target_get();
    atom = _ecore_x_selection_target_atom_get(target);
    XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND, atom,
@@ -397,7 +397,7 @@ EAPI void
 ecore_x_selection_clipboard_request(Ecore_X_Window w,
                                     const char *target)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_CLIPBOARD, target);
 }
 
@@ -413,7 +413,7 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
 {
    Ecore_X_Selection_Converter *cnv;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_INLIST_FOREACH(converters, cnv)
       if (cnv->target == target)
@@ -446,7 +446,7 @@ ecore_x_selection_converter_add(char *target,
    if (!func || !target)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    x_target = _ecore_x_selection_target_atom_get(target);
 
    ecore_x_selection_converter_atom_add(x_target, func);
@@ -457,7 +457,7 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
 {
    Ecore_X_Selection_Converter *cnv;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_INLIST_FOREACH(converters, cnv)
      {
@@ -479,7 +479,7 @@ ecore_x_selection_converter_del(char *target)
    if (!target)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    x_target = _ecore_x_selection_target_atom_get(target);
    ecore_x_selection_converter_atom_del(x_target);
 }
@@ -494,7 +494,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
    XEvent xev = { 0 };
    XSelectionEvent xnotify;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xnotify.type = SelectionNotify;
    xnotify.display = _ecore_x_disp;
    xnotify.requestor = requestor;
@@ -523,7 +523,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
    void *data = NULL;
    char *tgt_str;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
 
@@ -576,7 +576,7 @@ ecore_x_selection_converter_text(char *target,
    if (!data || !size)
      return EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
      style = XTextStyle;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_COMPOUND_TEXT))
@@ -641,7 +641,7 @@ ecore_x_selection_parser_add(const char *target,
    if (!target)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_INLIST_FOREACH(parsers, prs)
       if (!strcmp(prs->target, target))
@@ -668,7 +668,7 @@ ecore_x_selection_parser_del(const char *target)
    if (!target)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    EINA_INLIST_FOREACH(parsers, prs)
      {

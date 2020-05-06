@@ -35,7 +35,7 @@ ecore_wl_subsurf_create(Ecore_Wl_Window *win)
    Ecore_Wl_Subsurf *ess;
    struct wl_subcompositor *subcomp;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!win) return NULL;
    if (!win->surface) return NULL;
@@ -89,7 +89,7 @@ _ecore_wl_subsurf_destroy(Ecore_Wl_Subsurf *ess)
 EAPI void
 ecore_wl_subsurf_del(Ecore_Wl_Subsurf *ess)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
 
@@ -112,7 +112,7 @@ _ecore_wl_subsurfs_del_all(Ecore_Wl_Window *win)
 EAPI struct wl_surface *
 ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return NULL;
 
@@ -122,7 +122,7 @@ ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess)
 EAPI void
 ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
    if (!ess->subsurface) return;
@@ -139,7 +139,7 @@ ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y)
 EAPI void
 ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
 
@@ -150,7 +150,7 @@ ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y)
 EAPI void
 ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
    if (!surface) return;
@@ -162,7 +162,7 @@ ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 EAPI void
 ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
    if (!surface) return;
@@ -174,7 +174,7 @@ ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 EAPI void
 ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
    if (!ess->subsurface) return;
@@ -195,7 +195,7 @@ ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, i
 {
    struct wl_region *region = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!ess) return;
    if (!ess->surface) return;

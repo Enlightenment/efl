@@ -20,7 +20,7 @@
 EAPI void
 ecore_x_icccm_init(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 }
 
 EAPI void
@@ -29,7 +29,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win,
 {
    unsigned long c[2];
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
      c[0] = WithdrawnState;
    else if (state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
@@ -53,7 +53,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    int format_ret;
    Ecore_X_Window_State_Hint hint;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    hint = ECORE_X_WINDOW_STATE_HINT_NONE;
    XGetWindowProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_STATE,
                       0, 0x7fffffff, False, ECORE_X_ATOM_WM_STATE,
@@ -80,7 +80,7 @@ EAPI void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win,
                                  Ecore_X_Time t)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
                                  ECORE_X_EVENT_MASK_NONE,
                                  ECORE_X_ATOM_WM_DELETE_WINDOW,
@@ -91,7 +91,7 @@ EAPI void
 ecore_x_icccm_take_focus_send(Ecore_X_Window win,
                               Ecore_X_Time t)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
                                  ECORE_X_EVENT_MASK_NONE,
                                  ECORE_X_ATOM_WM_TAKE_FOCUS,
@@ -102,7 +102,7 @@ EAPI void
 ecore_x_icccm_save_yourself_send(Ecore_X_Window win,
                                  Ecore_X_Time t)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
                                  ECORE_X_EVENT_MASK_NONE,
                                  ECORE_X_ATOM_WM_SAVE_YOURSELF,
@@ -118,7 +118,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win,
 {
    XEvent ev;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ev.type = ConfigureNotify;
    ev.xconfigure.display = _ecore_x_disp;
    ev.xconfigure.event = win;
@@ -150,7 +150,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
    if (!hints)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    hints->flags = InputHint | StateHint;
    hints->input = accepts_focus;
    if (initial_state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
@@ -204,7 +204,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
 {
    XWMHints *hints;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (accepts_focus)
      *accepts_focus = EINA_TRUE;
 
@@ -288,7 +288,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
    XSizeHints hint;
    long mask;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
      memset(&hint, 0, sizeof(XSizeHints));
    if (_ecore_xlib_sync) ecore_x_sync();
@@ -368,7 +368,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    int stepx = -1, stepy = -1;
    double mina = 0.0, maxa = 0.0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
      {
         if (_ecore_xlib_sync) ecore_x_sync();
@@ -483,7 +483,7 @@ ecore_x_icccm_title_set(Ecore_X_Window win,
    if (!t)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xprop.value = NULL;
 #ifdef X_HAVE_UTF8_STRING
    list[0] = strdup(t);
@@ -520,7 +520,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    XTextProperty xprop;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xprop.value = NULL;
    if (XGetWMName(_ecore_x_disp, win, &xprop) >= Success)
      {
@@ -585,7 +585,7 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
    int i;
    
    for (i = 0; i < num; i++) protos2[i] = protos[i];
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (num > 0)
      XSetWMProtocols(_ecore_x_disp, win, protos2, num);
    else
@@ -614,7 +614,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
@@ -699,7 +699,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win,
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
      return EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
@@ -738,7 +738,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win,
    if (!xch)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xch->res_name = (char *)n;
    xch->res_class = (char *)c;
    XSetClassHint(_ecore_x_disp, win, xch);
@@ -761,7 +761,7 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win,
 {
    XClassHint xch;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (n)
      *n = NULL;
 
@@ -798,7 +798,7 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
 {
    char *name;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_CLIENT_MACHINE);
    return name;
 }
@@ -815,7 +815,7 @@ ecore_x_icccm_command_set(Ecore_X_Window win,
                           int argc,
                           char **argv)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    XSetCommand(_ecore_x_disp, win, argv, argc);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -844,7 +844,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win,
    if (argv)
      *argv = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    success = XGetCommand(_ecore_x_disp, win, &v, &c);
    if (_ecore_xlib_sync) ecore_x_sync();
    if (!success) return;
@@ -899,7 +899,7 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win,
    XTextProperty xprop;
    int ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xprop.value = NULL;
 #ifdef X_HAVE_UTF8_STRING
    list[0] = strdup(t);
@@ -941,7 +941,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
    XTextProperty xprop;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    xprop.value = NULL;
    if (XGetWMIconName(_ecore_x_disp, win, &xprop) >= Success)
      {
@@ -1009,7 +1009,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
    Window *oldset = NULL;
    Window *newset = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_property_get(win,
                                          ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
                                          XA_WINDOW, 32, &old_data, &num))
@@ -1073,7 +1073,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
    Window *oldset = NULL;
    Window *newset = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!ecore_x_window_prop_property_get(win,
                                          ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
                                          XA_WINDOW, 32, &old_data, &num))
@@ -1134,7 +1134,7 @@ EAPI void
 ecore_x_icccm_transient_for_set(Ecore_X_Window win,
                                 Ecore_X_Window forwin)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    XSetTransientForHint(_ecore_x_disp, win, forwin);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -1146,7 +1146,7 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win,
 EAPI void
 ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_TRANSIENT_FOR);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -1162,7 +1162,7 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
    Window forwin;
    Eina_Bool success;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    success = XGetTransientForHint(_ecore_x_disp, win, &forwin);
    if (_ecore_xlib_sync) ecore_x_sync();
    if (success)
@@ -1180,7 +1180,7 @@ EAPI void
 ecore_x_icccm_window_role_set(Ecore_X_Window win,
                               const char *role)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_WINDOW_ROLE,
                                   (char *)role);
 }
@@ -1193,7 +1193,7 @@ ecore_x_icccm_window_role_set(Ecore_X_Window win,
 EAPI char *
 ecore_x_icccm_window_role_get(Ecore_X_Window win)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    return ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_WINDOW_ROLE);
 }
 
@@ -1209,7 +1209,7 @@ EAPI void
 ecore_x_icccm_client_leader_set(Ecore_X_Window win,
                                 Ecore_X_Window l)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    ecore_x_window_prop_window_set(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
                                   &l, 1);
 }
@@ -1223,7 +1223,7 @@ ecore_x_icccm_client_leader_get(Ecore_X_Window win)
 {
    Ecore_X_Window l;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (ecore_x_window_prop_window_get(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
                                       &l, 1) > 0)
      return l;
@@ -1240,7 +1240,7 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win,
    if (!win)
      return;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 

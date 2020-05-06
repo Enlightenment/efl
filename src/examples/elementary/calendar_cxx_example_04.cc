@@ -15,8 +15,6 @@
  */
 #include <Efl_Ui.hh>
 
-#warning This example can not be implemented with EO APIs... FIXME
-
 using efl::eo::instantiate;
 
 #define SECS_DAY 86400

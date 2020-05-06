@@ -17,7 +17,7 @@ _ecore_x_damage_init(void)
    _damage_major = 1;
    _damage_minor = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    if (XDamageQueryVersion(_ecore_x_disp, &_damage_major, &_damage_minor))
      _damage_available = EINA_TRUE;
    else
@@ -41,7 +41,7 @@ ecore_x_damage_new(Ecore_X_Drawable d,
 #ifdef ECORE_XDAMAGE
    Ecore_X_Damage damage;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    damage = XDamageCreate(_ecore_x_disp, d, level);
    if (_ecore_xlib_sync) ecore_x_sync();
@@ -55,7 +55,7 @@ EAPI void
 ecore_x_damage_free(Ecore_X_Damage damage)
 {
 #ifdef ECORE_XDAMAGE
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XDamageDestroy(_ecore_x_disp, damage);
 #endif /* ifdef ECORE_XDAMAGE */
@@ -67,7 +67,7 @@ ecore_x_damage_subtract(Ecore_X_Damage damage,
                         Ecore_X_Region parts)
 {
 #ifdef ECORE_XDAMAGE
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XDamageSubtract(_ecore_x_disp, damage, repair, parts);
    if (_ecore_xlib_sync) ecore_x_sync();
