@@ -33,9 +33,10 @@
 
 # ifdef LOGFNS
 #  include <stdio.h>
-#  define LOGFN(fl, ln, fn) printf("-EVAS-WL: %25s: %5i - %s\n", fl, ln, fn);
+#  define LOGFN printf("-EVAS-WL: %25s: %5i - %s\n", __FILE__, __LINE__, __func__)
+
 # else
-#  define LOGFN(fl, ln, fn)
+#  define LOGFN
 # endif
 
 extern int _evas_engine_way_shm_log_dom;
