@@ -81,8 +81,7 @@ group { name: "e/fileman/default/list/variable";
       part { name: "icon"; type: SPACER;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            rel1.to: "icon0";
-            rel2.to: "icon0";
+            rel.to: "icon0";
          }
          description { state: "start" 0.0;
             inherit: "default" 0.0;
@@ -107,8 +106,7 @@ group { name: "e/fileman/default/list/variable";
       part { name: "icon_base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 48 48 48 255;
-            rel1.to: "e.swallow.icon";
-            rel2.to: "e.swallow.icon";
+            rel.to: "e.swallow.icon";
             visible: 0;
          }
          description { state: "start" 0.0;
@@ -129,8 +127,7 @@ group { name: "e/fileman/default/list/variable";
             image.normal: "speaker_vol.png";
             FIXED_SIZE(7, 7)
             rel1.relative: 1.0 1.0;
-            rel1.to: "e.swallow.icon";
-            rel2.to: "e.swallow.icon";
+            rel.to: "e.swallow.icon";
             color: 255 255 255 128;
             visible: 0;
             fixed: 1 1;
@@ -189,50 +186,43 @@ group { name: "e/fileman/default/list/variable";
       }
       part { name: "label_event"; type: RECT;
          ignore_flags: ON_HOLD;
+         scale: 1;
          description { state: "default" 0.0;
             color: 0 0 0 0;
-            rel1.to: "e.text.label";
-            rel1.relative: 0.0 0.2;
-            rel1.offset: -3 0;
-            rel2.to: "e.text.label";
-            rel2.relative: 1.0 0.8;
+            rel1.to_x: "e.text.label";
+            rel1.offset: -5 0;
+            offscale;
          }
       }
       part { name: "e.swallow.entry"; type: SWALLOW;
          description {state: "default" 0.0;
-            rel1.to: "e.text.label";
-            rel2.to: "e.text.label";
+            rel.to: "e.text.label";
          }
       }
    }
    programs {
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "sel_base";
          target: "e.text.label";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "sel_base";
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,down,1"; source: "label_event";
+      program { signal: "mouse,down,1"; source: "label_event";
          script {
             set_int(longpressed, 0);
          }
       }
-      program { name: "rename1";
-         signal: "mouse,down,1"; source: "label_event";
+      program { signal: "mouse,down,1"; source: "label_event";
          in: 0.4 0.0;
          script {
             set_int(longpressed, 1);
          }
       }
-      program { name: "rename2";
-         signal: "mouse,up,1"; source: "label_event";
+      program { signal: "mouse,up,1"; source: "label_event";
          script {
             if (get_int(longpressed)) {
                set_int(longpressed, 0);
@@ -240,16 +230,14 @@ group { name: "e/fileman/default/list/variable";
             }
          }
       }
-      program {
-         signal: "e,action,thumb,gen"; source: "e";
+      program { signal: "e,action,thumb,gen"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
          target: "shadow";
          after: "gen";
       }
-      program {
-         signal: "e,action,thumb,gen,alpha"; source: "e";
+      program { signal: "e,action,thumb,gen,alpha"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
@@ -261,33 +249,27 @@ group { name: "e/fileman/default/list/variable";
          transition: SPRING 0.4 1.7 5;
          target: "icon";
       }
-      program {
-         signal: "e,state,ask"; source: "e";
+      program { signal: "e,state,ask"; source: "e";
          action: STATE_SET "ask" 0.0;
          target: "op";
       }
-      program {
-         signal: "e,state,move"; source: "e";
+      program { signal: "e,state,move"; source: "e";
          action: STATE_SET "move" 0.0;
          target: "op";
       }
-      program {
-         signal: "e,state,copy"; source: "e";
+      program { signal: "e,state,copy"; source: "e";
          action: STATE_SET "copy" 0.0;
          target: "op";
       }
-      program {
-         signal: "e,state,volume,off"; source: "e";
+      program { signal: "e,state,volume,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "vol";
       }
-      program {
-         signal: "e,state,volume,unmounted"; source: "e";
+      program { signal: "e,state,volume,unmounted"; source: "e";
          action: STATE_SET "unmounted" 0.0;
          target: "vol";
       }
-      program {
-         signal: "e,state,volume,mounted"; source: "e";
+      program { signal: "e,state,volume,mounted"; source: "e";
          action: STATE_SET "mounted" 0.0;
          target: "vol";
       }
@@ -348,15 +330,21 @@ group { name: "e/fileman/default/icon/fixed";
          }
       }
 //////////////////////////////      
-      part { name: "label0"; type: SPACER;
+      part { name: "label0"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
             align: 0.5 1.0;
+            rel1.relative: 0.0 1.0;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            min: 0 10;
-            max: 99999 28;
+            min: 20 12;
             fixed: 0 1;
+            text {
+              text_class: "fileman_icon";
+              font: FN; size: 10;
+              min: 0 1;
+            }
+            offscale;
          }
       }
       part { name: "e.text.label"; type: TEXTBLOCK; mouse_events: 0;
@@ -364,8 +352,8 @@ group { name: "e/fileman/default/icon/fixed";
          clip_to: "textmaster";
          description { state: "default" 0.0;
             align: 0.5 0.0;
-            rel1.to: "label0";
-            rel2.to: "label0";
+            rel.to: "label0";
+            rel1.relative: 0.0 -1.2;
             text {
                style: "fileman_icon_name";
                align: 0.5 0.0;
@@ -388,18 +376,19 @@ group { name: "e/fileman/default/icon/fixed";
       }
 //////////////////////////
       part { name: "icon0"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 4 4;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -5 -1;
+            rel2.relative: 1.0 -1.2;
+            rel2.offset: -5 -5;
             rel2.to_y: "label0";
+            offscale;
          }
       }
       part { name: "icon"; type: SPACER;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            rel1.to: "icon0";
-            rel2.to: "icon0";
+            rel.to: "icon0";
          }
          description { state: "start" 0.0;
             inherit: "default" 0.0;
@@ -423,8 +412,7 @@ group { name: "e/fileman/default/icon/fixed";
       part { name: "icon_base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 48 48 48 255;
-            rel1.to: "e.swallow.icon";
-            rel2.to: "e.swallow.icon";
+            rel.to: "e.swallow.icon";
             visible: 0;
          }
          description { state: "start" 0.0;
@@ -434,8 +422,7 @@ group { name: "e/fileman/default/icon/fixed";
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "icon";
-            rel2.to: "icon";
+            rel.to: "icon";
          }
       }
       part { name: "vol"; mouse_events: 0;
@@ -444,8 +431,7 @@ group { name: "e/fileman/default/icon/fixed";
             image.normal: "speaker_vol.png";
             FIXED_SIZE(7, 7)
             rel1.relative: 1.0 1.0;
-            rel1.to: "e.swallow.icon";
-            rel2.to: "e.swallow.icon";
+            rel.to: "e.swallow.icon";
             color: 255 255 255 128;
             visible: 0;
             fixed: 1 1;
@@ -496,68 +482,57 @@ group { name: "e/fileman/default/icon/fixed";
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
             color: 0 0 0 0;
-            rel1.to: "icon0";
-            rel2.to: "icon0";
-            rel1.relative: 0.1 0.1;
-            rel2.relative: 0.9 0.9;
-            rel2.offset: 0 5;
+            rel.to: "icon0";
          }
       }
       part { name: "label_event"; type: RECT;
          ignore_flags: ON_HOLD;
+         scale: 1;
          description { state: "default" 0.0;
             color: 0 0 0 0;
-            rel1.to: "e.text.label";
-            rel2.to: "e.text.label";
-            rel1.relative: 0.1 0.0;
-            rel2.relative: 0.9 0.9;
+            rel.to: "e.text.label";
+            rel1.offset: -5 -5;
+            rel2.offset: 4 4;
+            offscale;
          }
       }
       part { name: "e.swallow.entry"; type: SWALLOW;
          description {state: "default" 0.0;
-            rel1.to: "label0";
-            rel2.to: "label0";
+            rel.to: "label_event";
          }
       }
    }
    programs {
-      program { name: "rename-on";
-         signal: "e,state,rename,on"; source: "e";
+      program { signal: "e,state,rename,on"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "textmaster";
       }
-      program { name: "rename-off";
-         signal: "e,state,rename,off"; source: "e";
+      program { signal: "e,state,rename,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "textmaster";
       }
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "e.text.label";
          target: "base";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
          target: "base";
       }
-      program {
-         signal: "mouse,down,1"; source: "label_event";
+      program { signal: "mouse,down,1"; source: "label_event";
          script {
             set_int(longpressed, 0);
          }
       }
-      program { name: "rename1";
-         signal: "mouse,down,1"; source: "label_event";
+      program { signal: "mouse,down,1"; source: "label_event";
          in: 0.4 0.0;
          script {
             set_int(longpressed, 1);
          }
       }
-      program { name: "rename2";
-         signal: "mouse,up,1"; source: "label_event";
+      program { signal: "mouse,up,1"; source: "label_event";
          script {
             if (get_int(longpressed)) {
                set_int(longpressed, 0);
@@ -565,16 +540,14 @@ group { name: "e/fileman/default/icon/fixed";
             }
          }
       }
-      program {
-         signal: "e,action,thumb,gen"; source: "e";
+      program { signal: "e,action,thumb,gen"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
          target: "icon_shadow";
          after: "gen";
       }
-      program {
-         signal: "e,action,thumb,gen,alpha"; source: "e";
+      program { signal: "e,action,thumb,gen,alpha"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
@@ -586,33 +559,27 @@ group { name: "e/fileman/default/icon/fixed";
          transition: SPRING 0.4 1.7 5;
          target: "icon";
       }
-      program {
-         signal: "e,state,ask"; source: "e";
+      program { signal: "e,state,ask"; source: "e";
          action: STATE_SET "ask" 0.0;
          target: "op";
       }
-      program {
-         signal: "e,state,move"; source: "e";
+      program { signal: "e,state,move"; source: "e";
          action: STATE_SET "move" 0.0;
          target: "op";
       }
-      program {
-         signal: "e,state,copy"; source: "e";
+      program { signal: "e,state,copy"; source: "e";
          action: STATE_SET "copy" 0.0;
          target: "op";
       }
-      program {
-         signal: "e,state,volume,off"; source: "e";
+      program { signal: "e,state,volume,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "vol";
       }
-      program {
-         signal: "e,state,volume,unmounted"; source: "e";
+      program { signal: "e,state,volume,unmounted"; source: "e";
          action: STATE_SET "unmounted" 0.0;
          target: "vol";
       }
-      program {
-         signal: "e,state,volume,mounted"; source: "e";
+      program { signal: "e,state,volume,mounted"; source: "e";
          action: STATE_SET "mounted" 0.0;
          target: "vol";
       }
@@ -631,13 +598,14 @@ group { name: "e/fileman/desktop/icon/fixed";
       part { name: "back"; type: RECT; mouse_events: 0;
          insert_before: "e.text.label";
          clip_to: "textmaster";
+         scale: 1;
          description { state: "default" 0.0;
+            rel.to: "labelmin";
             rel1.offset: -3 -3;
-            rel1.to: "labelmin";
             rel2.offset: 2 2;
-            rel2.to: "labelmin";
             color: 0 0 0 128;
             fixed: 1 1;
+            offscale;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
@@ -649,8 +617,7 @@ group { name: "e/fileman/desktop/icon/fixed";
          scale: 1;
          description { state: "default" 0.0;
             align: 0.5 0.0;
-            rel1.to: "label0";
-            rel2.to: "label0";
+            rel.to: "e.text.label";
             text {
                style: "fileman_icon_name";
                align: 0.5 0.0;
@@ -659,26 +626,18 @@ group { name: "e/fileman/desktop/icon/fixed";
                max: 0 1;
             }
             fixed: 1 1;
-            visible: 1;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            text.style: "fileman_icon_name_selected";
+            visible: 0;
          }
       }
    }
    programs {
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "back";
-         target: "labelmin";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "back";
-         target: "labelmin";
       }
    }
 }

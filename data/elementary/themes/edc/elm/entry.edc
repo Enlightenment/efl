@@ -149,7 +149,7 @@ group { name: "elm/scroller/entry/default";
 }
 
 group { name: "elm/scroller/entry_single/default";
-   images.image: "shadow_circle_horiz.png" COMP;
+   alias: "elm/scroller/entry_single/combobox_vertical/default";
    images.image: "shadow_circle_vert.png" COMP;
 
    data.item: "focus_highlight" "on";
@@ -536,12 +536,11 @@ group { name: "elm/entry/selection/default";
 }
 
 group { name: "elm/entry/anchor/default";
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
    parts {
       part { name: "bar"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 51 135 255 255;
+            color: 51 153 255 255;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
             rel1.offset: -1 -1;
@@ -813,6 +812,8 @@ group { name: "elm/entry/base-nowrap/default";
 
 group { name: "elm/entry/base-single/default";
    inherit: "elm/entry/base/default";
+   alias: "elm/entry/base-single/combobox_vertical/default";
+   alias: "elm/entry/base-single/combobox_vertical/entry";
    styles {
       style { name: "entry_single_style";
          base: "font="FN" font_size=10 color=#a0a0a0 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
