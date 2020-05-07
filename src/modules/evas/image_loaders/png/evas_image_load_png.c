@@ -116,7 +116,7 @@ static Eina_Bool
 _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
                                         Evas_Image_Property *prop,
                                         Evas_PNG_Info *epi,
-                                        int *error, Eina_Bool is_for_data)
+                                        int *error, Eina_Bool is_for_head)
 {
    Evas_Image_Load_Opts *opts = loader->opts;
    Eina_File *f = loader->f;
@@ -125,10 +125,10 @@ _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
    *error = EVAS_LOAD_ERROR_NONE;
 
    epi->hasa = 0;
-   if (!is_for_data)
-     epi->map = eina_file_map_all(f, EINA_FILE_RANDOM);
-   else
+   if (!is_for_head)
      epi->map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   else
+     epi->map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!epi->map)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -219,7 +219,7 @@ _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
    if (png_get_valid(epi->png_ptr, epi->info_ptr, PNG_INFO_tRNS))
      {
         /* expand transparency entry -> alpha channel if present */
-        if (!is_for_data) png_set_tRNS_to_alpha(epi->png_ptr);
+        if (!is_for_head) png_set_tRNS_to_alpha(epi->png_ptr);
         epi->hasa = 1;
      }
 
@@ -248,7 +248,7 @@ _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
 
    r = EINA_TRUE;
 
-   if (!is_for_data) return r;
+   if (!is_for_head) return r;
 
  close_file:
    if (epi->png_ptr) png_destroy_read_struct(&epi->png_ptr,
