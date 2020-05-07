@@ -316,6 +316,12 @@ evas_image_load_file_head_with_data_png(void *loader_data,
    if (!_evas_image_load_file_internal_head_png(loader, prop, &epi, error, EINA_FALSE))
      return EINA_FALSE;
 
+   if (setjmp(png_jmpbuf(epi.png_ptr)))
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto close_file;
+     }
+
    image_w = epi.w32;
    image_h = epi.h32;
 
@@ -612,6 +618,12 @@ evas_image_load_file_data_png(void *loader_data,
 
    if (!_evas_image_load_file_internal_head_png(loader, prop, &epi, error, EINA_FALSE))
      return EINA_FALSE;
+
+   if (setjmp(png_jmpbuf(epi.png_ptr)))
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto close_file;
+     }
 
    image_w = epi.w32;
    image_h = epi.h32;
