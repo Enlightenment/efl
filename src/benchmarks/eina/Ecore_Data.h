@@ -69,7 +69,7 @@ extern "C" {
                "\t%s();\n\n" \
                "\tWith the parameter:\n\n" \
                "\t%s\n\n" \
-               "\tbeing NULL. Please fix your program.", __FUNCTION__, sparam); \
+               "\tbeing NULL. Please fix your program.", __func__, sparam); \
         if (getenv("ECORE_ERROR_ABORT")) { abort(); } \
         return ret; \
      }
@@ -83,14 +83,14 @@ extern "C" {
                "\t%s();\n\n" \
                "\tWith the parameter:\n\n" \
                "\t%s\n\n" \
-               "\tbeing NULL. Please fix your program.", __FUNCTION__, sparam); \
+               "\tbeing NULL. Please fix your program.", __func__, sparam); \
         if (getenv("ECORE_ERROR_ABORT")) { abort(); } \
         return; \
      }
 
 
 # ifdef __sgi
-#  define __FUNCTION__ "unknown"
+#  define __func__ "unknown"
 #  ifndef __cplusplus
 #   define inline
 #  endif

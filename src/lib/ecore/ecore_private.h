@@ -270,7 +270,7 @@ ecore_print_warning(const char *function,
 #define CHECK_PARAM_POINTER_RETURN(sparam, param, ret) \
   if (!(param))                                        \
     {                                                  \
-       ecore_print_warning(__FUNCTION__, sparam);      \
+       ecore_print_warning(__func__, sparam);      \
        return ret;                                     \
     }
 
@@ -278,7 +278,7 @@ ecore_print_warning(const char *function,
 #define CHECK_PARAM_POINTER(sparam, param)        \
   if (!(param))                                   \
     {                                             \
-       ecore_print_warning(__FUNCTION__, sparam); \
+       ecore_print_warning(__func__, sparam); \
        return;                                    \
     }
 

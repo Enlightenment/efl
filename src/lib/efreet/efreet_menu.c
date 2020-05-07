@@ -531,7 +531,7 @@ efreet_menu_file_set(const char *file)
 EFREET_DEPRECATED_API EAPI void
 efreet_menu_async_get(Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNUSED)
 {
-    ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+    ERR("%s is deprecated and shouldn't be called", __func__);
 
     return;
 }
@@ -575,7 +575,7 @@ efreet_menu_get(void)
 EFREET_DEPRECATED_API EAPI void
 efreet_menu_async_parse(const char *path EINA_UNUSED, Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNUSED)
 {
-    ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+    ERR("%s is deprecated and shouldn't be called", __func__);
 
     return;
 }

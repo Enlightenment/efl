@@ -11,10 +11,10 @@
 #define EVGLD_FUNC_BEGIN() \
 { \
    EVGL_FUNC_BEGIN(); \
-   _func_begin_debug(__FUNCTION__); \
+   _func_begin_debug(__func__); \
 }
 
-#define EVGLD_FUNC_END() GLERRV(__FUNCTION__)
+#define EVGLD_FUNC_END() GLERRV(__func__)
 #define _EVGL_INT_INIT_VALUE -3
 
 #define SET_GL_ERROR(gl_error_type) \

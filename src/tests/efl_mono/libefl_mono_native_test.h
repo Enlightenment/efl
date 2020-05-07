@@ -75,7 +75,7 @@
 
 #include <interfaces/efl_part.eo.h>
 
-#define EQUAL(a, b) ((a) == (b) ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s)", __FILE__, __LINE__, __FUNCTION__), fflush(stderr), 0))
-#define STR_EQUAL(a, b) (strcmp((a), (b)) == 0 ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s) '%s' != '%s'", __FILE__, __LINE__, __FUNCTION__, (a), (b)), fflush(stderr), 0))
+#define EQUAL(a, b) ((a) == (b) ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s)", __FILE__, __LINE__, __func__), fflush(stderr), 0))
+#define STR_EQUAL(a, b) (strcmp((a), (b)) == 0 ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s) '%s' != '%s'", __FILE__, __LINE__, __func__, (a), (b)), fflush(stderr), 0))
 
 #endif

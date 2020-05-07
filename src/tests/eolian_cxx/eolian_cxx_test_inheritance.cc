@@ -33,7 +33,7 @@
 
 //   bool simple_get()
 //   {
-//      printf("calling bar::%s\n", __FUNCTION__);
+//      printf("calling bar::%s\n", __func__);
 //      return false;
 //   }
 // };

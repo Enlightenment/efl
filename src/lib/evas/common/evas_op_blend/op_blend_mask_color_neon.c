@@ -9,7 +9,7 @@
 	do {			\
 	static int _foo = 0;		\
 	if (_foo++%10000 ==0)		\
-		printf("%s %+d %s: %d (%s)\n",__FILE__,__LINE__,__FUNCTION__,\
+		printf("%s %+d %s: %d (%s)\n",__FILE__,__LINE__,__func__,\
 				_foo, x " optimised");\
 	} while (0)
 #else

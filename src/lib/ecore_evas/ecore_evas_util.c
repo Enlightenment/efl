@@ -86,13 +86,13 @@ _ecore_evas_object_intercept_lower(void *data, Evas_Object *obj EINA_UNUSED)
 static void
 _ecore_evas_object_intercept_stack_above(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *above EINA_UNUSED)
 {
-   INF("TODO: %s", __FUNCTION__);
+   INF("TODO: %s", __func__);
 }
 
 static void
 _ecore_evas_object_intercept_stack_below(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *below EINA_UNUSED)
 {
-   INF("TODO: %s", __FUNCTION__);
+   INF("TODO: %s", __func__);
 }
 
 static void
@@ -227,12 +227,12 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
 
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __func__);
       return EINA_FALSE;
    }
 
    CHECK_PARAM_POINTER_RETURN("obj", obj, EINA_FALSE);
-   if (!_ecore_evas_object_evas_check(__FUNCTION__, ee, obj))
+   if (!_ecore_evas_object_evas_check(__func__, ee, obj))
      return EINA_FALSE;
 
    old_ee = _evas_object_associate_get(obj);
@@ -255,7 +255,7 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __func__);
       return EINA_FALSE;
    }
 
@@ -284,7 +284,7 @@ ecore_evas_object_associate_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __func__);
       return NULL;
    }
    return _ecore_evas_associate_get(ee);
@@ -380,7 +380,7 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
-      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __func__);
    }
    else
    {

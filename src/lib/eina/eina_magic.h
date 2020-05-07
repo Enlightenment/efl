@@ -249,7 +249,7 @@ EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
 /**
  * @def EINA_MAGIC_FAIL(d, m)
  * @brief Definition to call eina_magic_fail() with the parameters @p d, @p d->__magic,
- *        @p m, __FILE__, __FUNCTION__, and __LINE__. @p d must be a structure that
+ *        @p m, __FILE__, __func__, and __LINE__. @p d must be a structure that
  *        holds an Eina magic number declaration. Use #EINA_MAGIC to add such a
  *        declaration.
  *
@@ -261,7 +261,7 @@ EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
                   (d) ? (d)->__magic : 0, \
                   (m),                    \
                   __FILE__,               \
-                  __FUNCTION__,           \
+                  __func__,               \
                   __LINE__);
 
 /**

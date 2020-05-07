@@ -1103,19 +1103,19 @@ EFL_START_TEST(efl_test_promise_log)
    fail_if(domain < 0);
    eina_log_domain_level_set(PROMISE_LOG_DOMAIN_STR, EINA_LOG_LEVEL_DBG);
    ctx.dbg = (Eina_Future_Cb_Log_Desc){"dbg prefix:", " dbg suffix", __FILE__,
-                                       __FUNCTION__, EINA_LOG_LEVEL_DBG,
+                                       __func__, EINA_LOG_LEVEL_DBG,
                                        domain, __LINE__};
    ctx.crit = (Eina_Future_Cb_Log_Desc){NULL, NULL, __FILE__,
-                                       __FUNCTION__, EINA_LOG_LEVEL_CRITICAL,
+                                       __func__, EINA_LOG_LEVEL_CRITICAL,
                                        domain, __LINE__};
    ctx.warn = (Eina_Future_Cb_Log_Desc){"warn prefix:", NULL, __FILE__,
-                                       __FUNCTION__, EINA_LOG_LEVEL_WARN,
+                                       __func__, EINA_LOG_LEVEL_WARN,
                                         domain, __LINE__};
    ctx.err = (Eina_Future_Cb_Log_Desc){NULL, " err suffix", __FILE__,
-                                       __FUNCTION__, EINA_LOG_LEVEL_ERR,
+                                       __func__, EINA_LOG_LEVEL_ERR,
                                        domain, __LINE__};
    ctx.info = (Eina_Future_Cb_Log_Desc){"info prefix:", " info suffix",
-                                        __FILE__, __FUNCTION__, EINA_LOG_LEVEL_INFO,
+                                        __FILE__, __func__, EINA_LOG_LEVEL_INFO,
                                         domain, __LINE__};
    eina_log_print_cb_set(_log_test, &ctx);
    f = eina_future_chain(_int_future_get(),

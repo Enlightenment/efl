@@ -195,7 +195,7 @@ struct _Efl_Net_Ssl_Conn
 #define EFL_NET_SOCKET_SSL_CIPHERS "aRSA+HIGH:+kEDH:+kRSA:!kSRP:!kPSK:+3DES:!MD5"
 
 #define _efl_net_ssl_conn_session_debug(conn) \
-  __efl_net_ssl_conn_session_debug(__FILE__, __LINE__, __FUNCTION__, conn)
+  __efl_net_ssl_conn_session_debug(__FILE__, __LINE__, __func__, conn)
 static void
 __efl_net_ssl_conn_session_debug(const char *file, int line, const char *fname, Efl_Net_Ssl_Conn *conn)
 {
@@ -294,7 +294,7 @@ __efl_net_ssl_conn_session_debug(const char *file, int line, const char *fname, 
 }
 
 #define _efl_net_ssl_conn_check_errors() \
-  __efl_net_ssl_conn_check_errors(__FILE__, __LINE__, __FUNCTION__)
+  __efl_net_ssl_conn_check_errors(__FILE__, __LINE__, __func__)
 static unsigned long
 __efl_net_ssl_conn_check_errors(const char *file, int line, const char *fname)
 {

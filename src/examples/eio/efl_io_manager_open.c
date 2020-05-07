@@ -23,7 +23,7 @@ _closing_cb(void* data EINA_UNUSED,
      }
    else
      {
-        printf("%s closed file.\n", __FUNCTION__);
+        printf("%s closed file.\n", __func__);
      }
 
    ecore_main_loop_quit();
@@ -54,7 +54,7 @@ _open_cb(void *data,
 
         eina_value_get(&file, &f);
 
-        printf("%s opened file %s\n", __FUNCTION__, eina_file_filename_get(f));
+        printf("%s opened file %s\n", __func__, eina_file_filename_get(f));
 
         return eina_future_as_value(efl_io_manager_close(job, f));
      }

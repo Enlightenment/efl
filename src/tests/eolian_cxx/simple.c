@@ -18,7 +18,7 @@ static Eo *_simple_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 
 static Eina_Bool _simple_simple_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   printf("calling %s\n", __FUNCTION__);
+   printf("calling %s\n", __func__);
 
    return EINA_TRUE;
 }
@@ -27,7 +27,7 @@ static Eina_Bool _simple_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, con
 {
    static const char* _name= "simple_class";
 
-   printf("calling %s= simples class\n", __FUNCTION__);
+   printf("calling %s= simples class\n", __func__);
    *name = _name;
 
    return EINA_TRUE;

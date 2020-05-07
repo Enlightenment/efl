@@ -9,10 +9,10 @@
 
 #define EVGLD_FUNC_BEGIN() \
 { \
-   _func_begin_debug(__FUNCTION__); \
+   _func_begin_debug(__func__); \
 }
 
-#define EVGLD_FUNC_END() GLERRV(__FUNCTION__)
+#define EVGLD_FUNC_END() GLERRV(__func__)
 
 static void *_gles1_handle = NULL;
 static Evas_GL_API _gles1_api;

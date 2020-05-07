@@ -1122,7 +1122,7 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
    static int warned = 0;
    if (!warned)
      {
-        ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+        ERR("%s is deprecated and shouldn't be called", __func__);
         warned = 1;
      }
 
@@ -1198,7 +1198,7 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
    static int warned = 0;
    if (!warned)
      {
-        ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+        ERR("%s is deprecated and shouldn't be called", __func__);
         warned = 1;
      }
 

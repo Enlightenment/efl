@@ -29,7 +29,7 @@ evil_char_to_wchar(const char *text)
        (wsize > (int)(ULONG_MAX / sizeof(wchar_t))))
      {
         if (wsize == 0)
-          _evil_last_error_display(__FUNCTION__);
+          _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -37,7 +37,7 @@ evil_char_to_wchar(const char *text)
    if (wtext)
      if (!MultiByteToWideChar(CP_ACP, 0, text, (int)strlen(text) + 1, wtext, wsize))
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -56,7 +56,7 @@ evil_wchar_to_char(const wchar_t *text)
    asize = WideCharToMultiByte(CP_ACP, 0, text, -1, NULL, 0, NULL, NULL);
    if (asize == 0)
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -67,7 +67,7 @@ evil_wchar_to_char(const wchar_t *text)
    asize = WideCharToMultiByte(CP_ACP, 0, text, -1, atext, asize, NULL, NULL);
    if (asize == 0)
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -89,7 +89,7 @@ evil_utf16_to_utf8(const wchar_t *text16)
    size8 = WideCharToMultiByte(CP_UTF8, flag, text16, -1, NULL, 0, NULL, NULL);
    if (size8 == 0)
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -100,7 +100,7 @@ evil_utf16_to_utf8(const wchar_t *text16)
    size8 = WideCharToMultiByte(CP_UTF8, flag, text16, -1, text8, size8, NULL, NULL);
    if (size8 == 0)
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -120,7 +120,7 @@ evil_utf8_to_utf16(const char *text)
    size16 = MultiByteToWideChar(CP_UTF8, flag, text, -1, NULL, 0);
    if (size16 == 0)
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 
@@ -128,7 +128,7 @@ evil_utf8_to_utf16(const char *text)
    if (text16)
      if (!MultiByteToWideChar(CP_UTF8, flag, text, -1, text16, size16))
      {
-        _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__func__);
         return NULL;
      }
 

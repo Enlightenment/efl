@@ -161,7 +161,7 @@ struct _Ecore_Con_Url
     { \
        if (!EINA_MAGIC_CHECK(u, ECORE_MAGIC_CON_URL)) \
          { \
-            ECORE_MAGIC_FAIL(u, ECORE_MAGIC_CON_URL, __FUNCTION__); \
+            ECORE_MAGIC_FAIL(u, ECORE_MAGIC_CON_URL, __func__); \
             return __VA_ARGS__; \
          } \
        EINA_SAFETY_ON_TRUE_RETURN_VAL(u->delete_me, __VA_ARGS__); \

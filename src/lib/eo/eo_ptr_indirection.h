@@ -9,12 +9,12 @@
 void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file, int line, const char *fmt, ...);
 
 #define _EO_POINTER_ERR(obj_id, fmt, ...) \
-  _eo_pointer_error(obj_id, __FUNCTION__, __FILE__, __LINE__, fmt, __VA_ARGS__)
+  _eo_pointer_error(obj_id, __func__, __FILE__, __LINE__, fmt, __VA_ARGS__)
 
 #define EO_OBJ_POINTER(obj_id, obj) \
    _Eo_Object *obj; \
    do { \
-      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __FUNCTION__, __FILE__, __LINE__); \
+      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __func__, __FILE__, __LINE__); \
    } while (0)
 
 #define EO_OBJ_POINTER_PROXY(obj_id, obj) \
@@ -26,7 +26,7 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
 #define EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, ret)  \
    _Eo_Object *obj; \
    do { \
-      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __FUNCTION__, __FILE__, __LINE__); \
+      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __func__, __FILE__, __LINE__); \
       if (!obj) return (ret); \
    } while (0)
 
@@ -41,7 +41,7 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
 #define EO_OBJ_POINTER_RETURN(obj_id, obj) \
    _Eo_Object *obj; \
    do { \
-      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __FUNCTION__, __FILE__, __LINE__); \
+      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __func__, __FILE__, __LINE__); \
       if (!obj) return; \
    } while (0)
 
@@ -55,7 +55,7 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
 #define EO_OBJ_POINTER_GOTO(obj_id, obj, label) \
    _Eo_Object *obj; \
    do { \
-      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __FUNCTION__, __FILE__, __LINE__); \
+      obj = _eo_obj_pointer_get((Eo_Id)obj_id, __func__, __FILE__, __LINE__); \
       if (!obj) goto label; \
    } while (0)
 

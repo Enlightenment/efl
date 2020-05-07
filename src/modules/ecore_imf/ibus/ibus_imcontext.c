@@ -287,7 +287,7 @@ _request_surrounding_text(IBusIMContext *ibusimcontext)
 IBusIMContext *
 ecore_imf_context_ibus_new(void)
 {
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
 
    IBusIMContext *context = calloc(1, sizeof(IBusIMContext));
 
@@ -320,7 +320,7 @@ ecore_imf_context_ibus_shutdown(void)
 void
 ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 {
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
 
    char *s = NULL;
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
@@ -358,7 +358,7 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 void
 ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
 {
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
 
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
    Ecore_IMF_Preedit_Attr *attr = NULL;
@@ -401,7 +401,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
    if (type != ECORE_IMF_EVENT_KEY_UP && type != ECORE_IMF_EVENT_KEY_DOWN)
      return EINA_FALSE;
 
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
 
    if (G_LIKELY(ibusimcontext->ibuscontext && ibusimcontext->has_focus))
      {
@@ -979,7 +979,7 @@ static void
 _ecore_imf_context_ibus_hide_preedit_text_cb(IBusInputContext *ibuscontext EINA_UNUSED,
                                              IBusIMContext    *ibusimcontext)
 {
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    if (ibusimcontext->preedit_visible == EINA_FALSE)
@@ -1002,7 +1002,7 @@ static void
 _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
                                    IBusIMContext    *ibusimcontext)
 {
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    g_object_unref(ibusimcontext->ibuscontext);
@@ -1028,7 +1028,7 @@ _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
 static void
 _ecore_imf_context_ibus_create(IBusIMContext *ibusimcontext)
 {
-   EINA_LOG_DBG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __func__);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->ibuscontext = ibus_bus_create_input_context(_bus, "ecore");

@@ -50,7 +50,7 @@ _tap_long_single_tap_start_cb(void *data, void *event_info)
    Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    if (!info->nb_taps_on_single)
      {
-        gl_debug("\n%s\n", __FUNCTION__);
+        gl_debug("\n%s\n", __func__);
         _cb_call(info, ELM_GESTURE_STATE_START, event_info);
      }
    return flags;
@@ -63,7 +63,7 @@ _tap_long_single_tap_abort_cb(void *data, void *event_info EINA_UNUSED)
    Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    if (!info->long_tap_started)
      {
-        gl_debug("%s\n", __FUNCTION__);
+        gl_debug("%s\n", __func__);
         _cb_call(info, ELM_GESTURE_STATE_ABORT, NULL);
         info->nb_taps_on_single = 0;
      }
@@ -73,7 +73,7 @@ _tap_long_single_tap_abort_cb(void *data, void *event_info EINA_UNUSED)
 static Eina_Bool
 _tap_long_timeout(void *data)
 {
-   gl_debug("%s\n", __FUNCTION__);
+   gl_debug("%s\n", __func__);
    Tap_Longpress_Info *info = data;
    _tap_long_single_tap_abort_cb(info, NULL);
    info->timer_between_taps = NULL;
@@ -83,7 +83,7 @@ _tap_long_timeout(void *data)
 static Evas_Event_Flags
 _tap_long_single_tap_end_cb(void *data, void *event_info)
 {
-   gl_debug("%s\n", __FUNCTION__);
+   gl_debug("%s\n", __func__);
    Tap_Longpress_Info *info = data;
    Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    double timeout_between_taps = elm_gesture_layer_double_tap_timeout_get(info->obj);
@@ -100,7 +100,7 @@ _tap_long_long_tap_start_cb(void *data, void *event_info EINA_UNUSED)
    Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    if (info->nb_taps_on_single && info->timer_between_taps)
      {
-        gl_debug("%s\n", __FUNCTION__);
+        gl_debug("%s\n", __func__);
         info->long_tap_started = EINA_TRUE;
         ecore_timer_del(info->timer_between_taps);
         info->timer_between_taps = NULL;
@@ -115,7 +115,7 @@ _tap_long_long_tap_abort_cb(void *data, void *event_info EINA_UNUSED)
    Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    if (info->long_tap_started)
      {
-        gl_debug("%s\n", __FUNCTION__);
+        gl_debug("%s\n", __func__);
         _cb_call(info, ELM_GESTURE_STATE_ABORT, NULL);
         info->nb_taps_on_single = 0;
         info->long_tap_started = EINA_FALSE;
@@ -136,7 +136,7 @@ _tap_long_long_tap_move_cb(void *data, void *event_info)
           }
         else
           {
-             gl_debug("%s\n", __FUNCTION__);
+             gl_debug("%s\n", __func__);
              _cb_call(info, ELM_GESTURE_STATE_MOVE, event_info);
           }
      }
@@ -150,7 +150,7 @@ _tap_long_long_tap_end_cb(void *data, void *event_info)
    Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    if (info->long_tap_started)
      {
-        gl_debug("%s\n", __FUNCTION__);
+        gl_debug("%s\n", __func__);
         _cb_call(info, ELM_GESTURE_STATE_END, event_info);
         info->long_tap_started = EINA_FALSE;
         info->nb_taps_on_single = 0;

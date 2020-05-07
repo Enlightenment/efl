@@ -95,7 +95,7 @@ typedef struct _Ecore_Con_Lookup_Ctx {
        if (!svr) return __VA_ARGS__;                                    \
        if (!EINA_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))              \
          {                                                              \
-            ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __FUNCTION__); \
+            ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__); \
             return __VA_ARGS__;                                         \
          }                                                              \
     }                                                                   \
@@ -115,7 +115,7 @@ typedef struct _Ecore_Con_Lookup_Ctx {
        if (!cl) return __VA_ARGS__;                                     \
        if (!EINA_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))               \
          {                                                              \
-            ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, __FUNCTION__); \
+            ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, __func__); \
             return __VA_ARGS__;                                         \
          }                                                              \
     }                                                                   \

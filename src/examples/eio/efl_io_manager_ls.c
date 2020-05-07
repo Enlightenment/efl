@@ -29,7 +29,7 @@ done_cb(void *data EINA_UNUSED,
 
         eina_value_get(&file, &value);
 
-        printf("%s done listing files %"PRIu64".\n", __FUNCTION__, value);
+        printf("%s done listing files %"PRIu64".\n", __func__, value);
      }
 
    ecore_main_loop_quit();
@@ -46,7 +46,7 @@ progress_cb(void *data EINA_UNUSED, Eina_Array *array)
    unsigned int count;
 
    EINA_ARRAY_ITER_NEXT(array, count, filename, it)
-     printf("%s listing filename: %s\n", __FUNCTION__, filename);
+     printf("%s listing filename: %s\n", __func__, filename);
 }
 
 void list_files(void *data)

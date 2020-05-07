@@ -146,7 +146,7 @@ EFL_START_TEST(eina_magic_simple)
 #ifdef SHOW_LOG
    fprintf(stderr, "you should see 'Input handle pointer is NULL' below\n");
 #endif
-   TEST_MAGIC_SAFETY(__FUNCTION__,
+   TEST_MAGIC_SAFETY(__func__,
                      "*** Eina Magic Check Failed !!!\n"
                      "    Input handle pointer is NULL.\n"
                      "\n");
@@ -164,7 +164,7 @@ EFL_START_TEST(eina_magic_simple)
    fprintf(stderr,
            "you should see 'Input handle has already been freed' below\n");
 #endif
-   TEST_MAGIC_SAFETY(__FUNCTION__,
+   TEST_MAGIC_SAFETY(__func__,
                      "*** Eina Magic Check Failed at %p !!!\n"
                      "    Input handle has already been freed.\n"
                      "\n");
@@ -176,7 +176,7 @@ EFL_START_TEST(eina_magic_simple)
 #ifdef SHOW_LOG
    fprintf(stderr, "you should see 'Input handle is wrong type' below\n");
 #endif
-   TEST_MAGIC_SAFETY(__FUNCTION__,
+   TEST_MAGIC_SAFETY(__func__,
                      "*** Eina Magic Check Failed at %p !!!\n"
                      "    Input handle is wrong type.\n"
                      "    Expected: %08x - %s\n"

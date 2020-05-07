@@ -12,7 +12,7 @@
 Eina_Value
 _close_cb(void *data EINA_UNUSED, const Eina_Value array, const Eina_Future *dead EINA_UNUSED)
 {
-   printf("%s closed all files.\n", __FUNCTION__);
+   printf("%s closed all files.\n", __func__);
 
    ecore_main_loop_quit();
 
