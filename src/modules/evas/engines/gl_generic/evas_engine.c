@@ -1319,13 +1319,12 @@ eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *su
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
 
-   if (!gl_context->msaa &&
-       (m->pts[0].x == m->pts[3].x) &&
-       (m->pts[1].x == m->pts[2].x) &&
-       (m->pts[0].y == m->pts[1].y) &&
-       (m->pts[3].y == m->pts[2].y) &&
-       (m->pts[0].x <= m->pts[1].x) &&
-       (m->pts[0].y <= m->pts[2].y) &&
+   if (fabsf(m->pts[0].fx - m->pts[3].fx) < FLT_EPSILON &&
+       fabsf(m->pts[1].fx - m->pts[2].fx) < FLT_EPSILON &&
+       fabsf(m->pts[0].fy - m->pts[1].fy) < FLT_EPSILON &&
+       fabsf(m->pts[3].fy - m->pts[2].fy) < FLT_EPSILON &&
+       (m->pts[0].fx <= m->pts[1].fx) &&
+       (m->pts[0].fy <= m->pts[2].fy) &&
        (m->pts[0].u == 0) &&
        (m->pts[0].v == 0) &&
        (m->pts[1].u == (gim->w << FP)) &&
