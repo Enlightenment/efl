@@ -125,16 +125,7 @@
  *
  * For more information, see
  * @ref eina_simple_xml_parser_example_01_page "this example".
- */
-
-/**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
- * @defgroup Eina_Simple_XML_Group Simple_XML
+ * @ingroup Eina_Tools_Group Tools
  *
  * @{
  */
@@ -505,10 +496,6 @@ EAPI void eina_simple_xml_node_root_free(Eina_Simple_XML_Node_Root *root);
  */
 EAPI char * eina_simple_xml_node_dump(Eina_Simple_XML_Node *node, const char *indent);
 
-
-/**
- * @}
- */
 
 /**
  * @}
