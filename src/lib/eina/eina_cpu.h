@@ -45,18 +45,18 @@
  */
 typedef enum _Eina_Cpu_Features
 {
-   EINA_CPU_MMX     = 0x00000001,
-   EINA_CPU_SSE     = 0x00000002,
-   EINA_CPU_SSE2    = 0x00000004,
-   EINA_CPU_SSE3    = 0x00000008,
+   EINA_CPU_MMX     = 0x00000001, /**< Multimedia Extensions (Intel) */
+   EINA_CPU_SSE     = 0x00000002, /**< Streaming SIMD Extensions (Intel) */
+   EINA_CPU_SSE2    = 0x00000004, /**< Streaming SIMD Extensions 2 (Intel) */
+   EINA_CPU_SSE3    = 0x00000008, /**< Streaming SIMD Extensions 3 (Intel) */
    /* TODO 3DNow! */
-   EINA_CPU_ALTIVEC = 0x00000010,
-   EINA_CPU_VIS     = 0x00000020,
-   EINA_CPU_NEON    = 0x00000040,
-   EINA_CPU_SSSE3   = 0x00000080,
-   EINA_CPU_SSE41   = 0x00000100,
-   EINA_CPU_SSE42   = 0x00000200,
-   EINA_CPU_SVE     = 0x00000400
+   EINA_CPU_ALTIVEC = 0x00000010, /**< Single-precision floating point and integer SIMD (PowerPC) */
+   EINA_CPU_VIS     = 0x00000020, /**< Visual Instruction Set (Spark) */
+   EINA_CPU_NEON    = 0x00000040, /**< Advanced SIMD Extension (ARM) */
+   EINA_CPU_SSSE3   = 0x00000080, /**< Supplemental Streaming SIMD Extension 3 (Intel) */
+   EINA_CPU_SSE41   = 0x00000100, /**< Streaming SIMD Extension 4.1 (Intel) */
+   EINA_CPU_SSE42   = 0x00000200, /**< Streaming SIMD Extension 4.2 (Intel) */
+   EINA_CPU_SVE     = 0x00000400  /**< Scalable Vector Extension (ARM) */
 } Eina_Cpu_Features;
 
 /**
@@ -136,10 +136,18 @@ static inline unsigned int eina_ntohl(unsigned int net);
 static inline unsigned long long eina_ntohll(unsigned long long net);
 
 #ifndef MIN
+/** Returns the minimum of the two parameters
+ * @warning Beware of side effects, since the returned parameter is evaluated
+ * twice.
+ */
 # define MIN(x, y)          (((x) > (y)) ? (y) : (x))
 #endif
 
 #ifndef MAX
+/** Returns the maximum of the two parameters
+ * @warning Beware of side effects, since the returned parameter is evaluated
+ * twice.
+ */
 # define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #endif
 
