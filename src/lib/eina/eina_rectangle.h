@@ -39,15 +39,24 @@
  * @{
  */
 
+/** A zero-size rectangle. */
 #define EINA_RECTANGLE_INIT { 0, 0, 0, 0}
+/** A format string useful for printf-like functions. */
 #define EINA_RECTANGLE_FORMAT "dx%d - %dx%d"
+/** Separates the components of the rectangle structure into a comma-separated list,
+ * so they can be used as parameters. */
 #define EINA_RECTANGLE_ARGS(r) (r)->x, (r)->y, (r)->w, (r)->h
 
+/** Creates an instance of an #Eina_Rect */
 #define EINA_RECT(x, y, w, h) ((Eina_Rect) { { (x), (y), (w), (h) } })
+/** A zero-size rectangle that can be used to initialize #Eina_Rect structures. */
 #define EINA_RECT_ZERO() { EINA_RECTANGLE_INIT }
+/** A zero-size rectangle that can be used to initialize #Eina_Rect structures. */
 #define EINA_RECT_EMPTY() ((Eina_Rect) EINA_RECT_ZERO())
 
+/** Creates an instance of an #Eina_Position2D */
 #define EINA_POSITION2D(x, y) ((Eina_Position2D) { (x), (y) })
+/** Creates an instance of an #Eina_Size2D */
 #define EINA_SIZE2D(x, y) ((Eina_Size2D) { (x), (y) })
 
 /** @brief A 2D position in pixel coordinates */
@@ -104,15 +113,22 @@ typedef struct _Eina_Rectangle
    int h; /**< height of rectangle */
 } Eina_Rectangle;
 
+/**
+ * @typedef Eina_Rect
+ * A convenient rectangle structure which can be accessed in different ways.
+ */
 typedef union _Eina_Rect
 {
-   Eina_Rectangle rect;
+   Eina_Rectangle rect; /**< Embedded simple rectangle structure */
    struct {
-      Eina_Position2D pos;
-      Eina_Size2D size;
+      Eina_Position2D pos; /**< Top-left corner in pixels */
+      Eina_Size2D size; /**< Size in pixels */
    };
    struct {
-      int x, y, w, h;
+      int x; /**< Top-left x coordinate of rectangle */
+      int y; /**< Top-left y coordinate of rectangle */
+      int w; /**< Width of rectangle */
+      int h; /**< Height of rectangle */
    };
 } Eina_Rect;
 
@@ -141,10 +157,10 @@ typedef enum {
  * @since 1.19
  */
 typedef enum {
-    EINA_RECTANGLE_OUTSIDE_TOP = 1,
-    EINA_RECTANGLE_OUTSIDE_LEFT = 2,
-    EINA_RECTANGLE_OUTSIDE_BOTTOM = 4,
-    EINA_RECTANGLE_OUTSIDE_RIGHT = 8
+    EINA_RECTANGLE_OUTSIDE_TOP = 1,    /**< Position is over the rectangle */
+    EINA_RECTANGLE_OUTSIDE_LEFT = 2,   /**< Position is to the left of the rectangle */
+    EINA_RECTANGLE_OUTSIDE_BOTTOM = 4, /**< Position is below the rectangle */
+    EINA_RECTANGLE_OUTSIDE_RIGHT = 8   /**< Position is to the right of the rectangle */
 } Eina_Rectangle_Outside;
 
 
@@ -527,6 +543,10 @@ EAPI void                 eina_rectangle_pool_release(Eina_Rectangle *rect) EINA
       (Rectangle)->h = H;			  \
     }
 
+/**
+ * @def EINA_RECT_SET
+ * Functionally equivalent to #EINA_RECTANGLE_SET
+ */
 #define EINA_RECT_SET(rect, x, y, w, h) do { EINA_RECTANGLE_SET((&rect), x, y, w, h) } while (0)
 
 
