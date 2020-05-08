@@ -146,7 +146,7 @@ absi(int a)
 
 #ifndef DBG
 # ifdef DEBUG
-#  define DBG(fmt, ...) fprintf(stderr, "%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## __VA_ARGS__)
+#  define DBG(fmt, ...) fprintf(stderr, "%s:%d: " fmt "\n", __func__, __LINE__, ## __VA_ARGS__)
 # else
 #  define DBG(...)
 # endif

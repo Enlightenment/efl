@@ -2757,7 +2757,7 @@ void _edje_lua_shutdown(void);
 
 void __edje_lua_error(const char *file, const char *fnc, int line, lua_State *L, int err_code);
 #define _edje_lua_error(L, err_code)					\
-  __edje_lua_error(__FILE__, __FUNCTION__, __LINE__, L, err_code)
+  __edje_lua_error(__FILE__, __func__, __LINE__, L, err_code)
 
 Eina_Bool  _edje_lua_script_only(Edje *ed);
 void _edje_lua_script_only_init(Edje *ed);
@@ -2892,7 +2892,7 @@ EAPI void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
 EAPI void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 
 void _edje_lua2_error_full(const char *file, const char *fnc, int line, lua_State *L, int err_code);
-#define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __FUNCTION__, __LINE__, L, err_code)
+#define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __func__, __LINE__, L, err_code)
 void _edje_lua2_script_init(Edje *ed);
 void _edje_lua2_script_shutdown(Edje *ed);
 void _edje_lua2_script_load(Edje_Part_Collection *edc, void *data, int size);

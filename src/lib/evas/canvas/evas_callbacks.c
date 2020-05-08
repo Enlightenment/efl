@@ -731,7 +731,7 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
    if (e->delete_me) return;
    if (e->current_event == EVAS_CALLBACK_LAST)
      {
-        ERR("%s() can only be called from an input event callback!", __FUNCTION__);
+        ERR("%s() can only be called from an input event callback!", __func__);
         return;
      }
    EVAS_MEMPOOL_INIT(_mp_pc, "evas_post_callback", Evas_Post_Callback, 64, );

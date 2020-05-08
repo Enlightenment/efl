@@ -210,7 +210,7 @@ inline void _log(std::stringstream const& stream, int domain, ::Eina_Log_Level l
     for( bool run = ::eina_log_domain_level_check((DOMAIN), LEVEL); run;) \
       for(std::stringstream stream; run ;                               \
           ::efl::eina::_log(std::move(stream), (DOMAIN), LEVEL          \
-                            , __FILE__, __FUNCTION__, __LINE__), run = false) \
+                            , __FILE__, __func__, __LINE__), run = false) \
         stream
 
 /**

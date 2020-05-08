@@ -1091,7 +1091,7 @@ EAPI Eina_Future *eina_future_then_from_desc(Eina_Future *prev, const Eina_Futur
  * fill the following fields:
  *
  * @li Eina_Future_Cb_Log_Desc::file: The `__FILE__` function will be used.
- * @li Eina_Future_Cb_Log_Desc::func: The `__FUNCTION__` macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The `__func__` macro will be used.
  * @li Eina_Future_Cb_Log_Desc::level: `EINA_LOG_LEVEL_DBG` will be used.
  * @li Eina_Future_Cb_Log_Desc::domain: `EINA_LOG_DOMAIN_DEFAULT` will be used.
  * @li Eina_Future_Cb_Log_Desc::line: The `__LINE__` macro will be used.
@@ -1752,7 +1752,7 @@ eina_future_race_array(Eina_Future *array[])
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
  * @li Eina_Future_Cb_Log_Desc::file: The `__FILE__` function will be used.
- * @li Eina_Future_Cb_Log_Desc::func: The `__FUNCTION__` macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The `__func__` macro will be used.
  * @li Eina_Future_Cb_Log_Desc::level: `EINA_LOG_LEVEL_DBG` will be used.
  * @li Eina_Future_Cb_Log_Desc::domain: `EINA_LOG_DOMAIN_DEFAULT` will be used.
  * @li Eina_Future_Cb_Log_Desc::line: The `__LINE__` macro will be used.
@@ -1765,7 +1765,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_cb_log_dbg(_prefix, _suffix)                        \
   eina_future_cb_log_from_desc((Eina_Future_Cb_Log_Desc){_prefix, _suffix, __FILE__, \
-         __FUNCTION__, EINA_LOG_LEVEL_DBG, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
+         __func__, EINA_LOG_LEVEL_DBG, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
@@ -1773,7 +1773,7 @@ eina_future_race_array(Eina_Future *array[])
  * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
  * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __func__ macro will be used.
  * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_CRITICAL will be used.
  * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
  * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
@@ -1786,7 +1786,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_cb_log_crit(_prefix, _suffix)                       \
   eina_future_cb_log_from_desc((Eina_Future_Cb_Log_Desc){_prefix, _suffix, __FILE__, \
-         __FUNCTION__, EINA_LOG_LEVEL_CRITICAL, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
+         __func__, EINA_LOG_LEVEL_CRITICAL, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
@@ -1794,7 +1794,7 @@ eina_future_race_array(Eina_Future *array[])
  * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
  * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __func__ macro will be used.
  * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_ERR will be used.
  * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
  * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
@@ -1807,7 +1807,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_cb_log_err(_prefix, _suffix)                        \
   eina_future_cb_log_from_desc((Eina_Future_Cb_Log_Desc){_prefix, _suffix, __FILE__, \
-         __FUNCTION__, EINA_LOG_LEVEL_ERR, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
+         __func__, EINA_LOG_LEVEL_ERR, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
@@ -1815,7 +1815,7 @@ eina_future_race_array(Eina_Future *array[])
  * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
  * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __func__ macro will be used.
  * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_INFO will be used.
  * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
  * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
@@ -1828,7 +1828,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_cb_log_info(_prefix, _suffix)                       \
   eina_future_cb_log_from_desc((Eina_Future_Cb_Log_Desc){_prefix, _suffix, __FILE__, \
-         __FUNCTION__, EINA_LOG_LEVEL_INFO, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
+         __func__, EINA_LOG_LEVEL_INFO, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
  * A syntactic sugar over eina_future_cb_log_from_desc().
@@ -1836,7 +1836,7 @@ eina_future_race_array(Eina_Future *array[])
  * This macro will set the following fields of the Eina_Future_Cb_Log_Desc:
  *
  * @li Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
- * @li Eina_Future_Cb_Log_Desc::func: The __FUNCTION__ macro will be used.
+ * @li Eina_Future_Cb_Log_Desc::func: The __func__ macro will be used.
  * @li Eina_Future_Cb_Log_Desc::level: EINA_LOG_LEVEL_WARN will be used.
  * @li Eina_Future_Cb_Log_Desc::domain: EINA_LOG_DOMAIN_DEFAULT will be used.
  * @li Eina_Future_Cb_Log_Desc::line: The __LINE__ macro will be used.
@@ -1852,7 +1852,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_cb_log_warn(_prefix, _suffix)                       \
   eina_future_cb_log_from_desc((Eina_Future_Cb_Log_Desc){_prefix, _suffix, __FILE__, \
-         __FUNCTION__, EINA_LOG_LEVEL_WARN, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
+         __func__, EINA_LOG_LEVEL_WARN, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
  * A syntactic sugar over eina_future_then() and eina_future_cb_easy().

@@ -539,12 +539,15 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   Evas_Textblock_Style *st = _edje_textblock_style_get(ed, chosen_desc->text.style.str);
                   const char *text_style = evas_textblock_style_get(st);
                   char *s_font_size = (text_style) ? strrstr(text_style,"font_size=") : NULL;
-                  if (s_font_size)
+                  if (s_font_size && s_font_size[10])
                     {
-                      int font_size = strtol(&s_font_size[10], NULL, 10);
-                      chosen_desc->text.size_range_max = font_size;
-                      if (chosen_desc->text.size_range_min > chosen_desc->text.size_range_max)
-                        chosen_desc->text.size_range_min = chosen_desc->text.size_range_max;
+                      int font_size = (int) strtol(&s_font_size[10], NULL, 10);
+                      if (font_size > 0)
+                        {
+                          chosen_desc->text.size_range_max = font_size;
+                          if (chosen_desc->text.size_range_min > chosen_desc->text.size_range_max)
+                            chosen_desc->text.size_range_min = chosen_desc->text.size_range_max;
+                        }
                     }
                   EINA_LIST_FOREACH(chosen_desc->text.fit_size_array, l, value)
                     {
@@ -558,11 +561,13 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                     mode |= TEXTBLOCK_FIT_MODE_HEIGHT;
                   evas_textblock_fit_options_set(ep->object, mode);
                   evas_textblock_fit_step_size_set(ep->object, chosen_desc->text.fit_step);
-                  if ( chosen_desc->text.size_range_min || chosen_desc->text.size_range_max)
-                     evas_textblock_fit_size_range_set(ep->object, chosen_desc->text.size_range_min,  chosen_desc->text.size_range_max);
-                  if (size_array_len>0)
+                  if (size_array_len > 0)
                     {
                        evas_textblock_fit_size_array_set(ep->object,size_array,size_array_len);
+                    }
+                  else if ( chosen_desc->text.size_range_min || chosen_desc->text.size_range_max)
+                    {
+                       evas_textblock_fit_size_range_set(ep->object, chosen_desc->text.size_range_min,  chosen_desc->text.size_range_max);
                     }
                }
 

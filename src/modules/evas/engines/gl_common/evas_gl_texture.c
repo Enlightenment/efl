@@ -1378,7 +1378,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                 err = glGetError();
                 if (err != GL_NO_ERROR)
                   {
-                     __evas_gl_err(err, __FILE__, __FUNCTION__, __LINE__,
+                     __evas_gl_err(err, __FILE__, __func__, __LINE__,
                                    "glCompressedTexSubImage2D");
 
                      // FIXME: Changing settings on the fly.

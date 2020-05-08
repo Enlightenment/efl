@@ -31,7 +31,7 @@ eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
    Render_Engine *re;
    Outbuf *ob;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    /* try to allocate space for new render engine */
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
@@ -91,7 +91,7 @@ eng_output_info_setup(void *info)
 {
    Evas_Engine_Info_Wayland *einfo = info;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
@@ -102,7 +102,7 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
    Render_Engine *re;
    Evas_Engine_Info_Wayland *einfo;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (!(re = (Render_Engine *)data)) return;
    if (!(einfo = re->generic.ob->info)) return;
@@ -291,7 +291,7 @@ eng_image_native_get(void *engine EINA_UNUSED, void *image)
 static int
 module_open(Evas_Module *em)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    /* check for valid evas module */
    if (!em) return 0;
@@ -335,7 +335,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    /* unregister logging domain */
    if (_evas_engine_way_shm_log_dom >= 0)

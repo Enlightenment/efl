@@ -499,7 +499,7 @@ th61_do(void *data EINA_UNUSED, Ecore_Thread *th)
      }
 
    eina_semaphore_release(&th6_sem, 1);
-   if (DEBUG) printf("%s: message sending done!\n", __FUNCTION__);
+   if (DEBUG) printf("%s: message sending done!\n", __func__);
 }
 
 static void
@@ -515,7 +515,7 @@ th62_do(void *data EINA_UNUSED, Ecore_Thread *th)
 
         msg = eina_thread_queue_wait(thq1, &ref);
         fail_if(!msg);
-        if (DEBUG) printf("%s: v %08i: %i  [%i]\n", __FUNCTION__, cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        if (DEBUG) printf("%s: v %08i: %i  [%i]\n", __func__, cnt, msg->value, eina_thread_queue_pending_get(thq1));
         val = msg->value;
         eina_thread_queue_wait_done(thq1, ref);
         if (val == EXIT_MESSAGE || (ecore_thread_check(th))) break;
@@ -529,7 +529,7 @@ th62_do(void *data EINA_UNUSED, Ecore_Thread *th)
    ck_assert_int_eq(msgnum, 100);
    eina_spinlock_release(&msgnum_lock);
    eina_semaphore_release(&th6_sem, 1);
-   if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
+   if (DEBUG) printf("%s: message reading done!\n", __func__);
 }
 
 static void
@@ -545,7 +545,7 @@ th63_do(void *data EINA_UNUSED, Ecore_Thread *th)
 
         msg = eina_thread_queue_wait(thq1, &ref);
         fail_if(!msg);
-        if (DEBUG) printf("%s: v %08i: %i  [%i]\n", __FUNCTION__, cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        if (DEBUG) printf("%s: v %08i: %i  [%i]\n", __func__, cnt, msg->value, eina_thread_queue_pending_get(thq1));
         val = msg->value;
         eina_thread_queue_wait_done(thq1, ref);
         if (val == EXIT_MESSAGE || (ecore_thread_check(th))) break;
@@ -559,7 +559,7 @@ th63_do(void *data EINA_UNUSED, Ecore_Thread *th)
    ck_assert_int_eq(msgnum, 100);
    eina_spinlock_release(&msgnum_lock);
    eina_semaphore_release(&th6_sem, 1);
-   if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
+   if (DEBUG) printf("%s: message reading done!\n", __func__);
 }
 
 EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)

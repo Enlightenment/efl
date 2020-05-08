@@ -635,7 +635,7 @@ _gl_dnd_default_anim_data_getcb(Evas_Object *obj,  /* The genlist object */
    /* Now, collect data to send for drop from ALL selected items */
    /* Save list pointer to remove items after drop and free list on done */
    info->data = _gl_get_drag_data(obj, it, (Eina_List **) &info->donecbdata);
-   printf("%s - data = %s\n", __FUNCTION__, info->data);
+   printf("%s - data = %s\n", __func__, info->data);
    info->acceptdata = info->donecbdata;
 
    if (info->data)
@@ -740,7 +740,7 @@ _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
    /* Now, collect data to send for drop from ALL selected items */
    /* Save list pointer to remove items after drop and free list on done */
    info->data = _grid_get_drag_data(obj, it, (Eina_List **) &info->donecbdata);
-   printf("%s %d- data = %s\n", __FUNCTION__, __LINE__, info->data);
+   printf("%s %d- data = %s\n", __func__, __LINE__, info->data);
    info->acceptdata = info->donecbdata;
 
    if (info->data)
@@ -1005,7 +1005,7 @@ static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selec
 
 void _enter_but_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
-   printf("Entered %s - drop it here and I will never print this line anymore.\n", __FUNCTION__);
+   printf("Entered %s - drop it here and I will never print this line anymore.\n", __func__);
 }
 
 static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)

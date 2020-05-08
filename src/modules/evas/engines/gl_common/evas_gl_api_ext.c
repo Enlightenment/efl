@@ -122,7 +122,7 @@ struct wl_resource;
 
 // Evas extensions from EGL extensions
 #ifdef GL_GLES
-#define EGLDISPLAY_GET(a) _evgl_egl_display_get(__FUNCTION__, a)
+#define EGLDISPLAY_GET(a) _evgl_egl_display_get(__func__, a)
 
 // this struct defines an EvasGLImage when using EGL
 typedef struct _EvasGLImage {

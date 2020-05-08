@@ -323,7 +323,7 @@ _efl_ref(_Eo_Object *obj)
    return obj;
 }
 
-#define _efl_unref(obj) _efl_unref_internal(obj, __FUNCTION__, __FILE__, __LINE__)
+#define _efl_unref(obj) _efl_unref_internal(obj, __func__, __FILE__, __LINE__)
 static inline void
 _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
 {
@@ -333,27 +333,27 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
         if (obj->user_refcount > 0)
           {
              ERR("Object %p is still refcounted %i by users, but internal refcount reached 0. This should never happen. Please report a bug and send a backtrace to EFL developer.", (Eo*) obj->header.id, obj->user_refcount);
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __func__, __FILE__, __LINE__);
              return;
           }
         if (obj->refcount < 0)
           {
              ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.", file, line, func_name, obj, obj->refcount);
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __func__, __FILE__, __LINE__);
              return;
           }
 
         if (obj->destructed)
           {
              ERR("in %s:%d: func '%s' Object %p already destructed.", file, line, func_name, _eo_obj_id_get(obj));
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __func__, __FILE__, __LINE__);
              return;
           }
 
         if (obj->del_triggered)
           {
              ERR("in %s:%d: func '%s' Object %p deletion already triggered. You wrongly call efl_unref() within a destructor.", file, line, func_name, _eo_obj_id_get(obj));
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __func__, __FILE__, __LINE__);
              return;
           }
 

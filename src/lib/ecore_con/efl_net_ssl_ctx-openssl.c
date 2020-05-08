@@ -17,7 +17,7 @@ struct _Efl_Net_Ssl_Ctx
 #define EFL_NET_SSL_CONTEXT_CIPHERS "aRSA+HIGH:+kEDH:+kRSA:!kSRP:!kPSK:+3DES:!MD5"
 
 #define _efl_net_ssl_ctx_check_errors() \
-  __efl_net_ssl_ctx_check_errors(__FILE__, __LINE__, __FUNCTION__)
+  __efl_net_ssl_ctx_check_errors(__FILE__, __LINE__, __func__)
 static unsigned long
 __efl_net_ssl_ctx_check_errors(const char *file, int line, const char *fname)
 {

@@ -404,8 +404,6 @@ _drm_show(Ecore_Evas *ee)
         if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
      }
 
-   if (ee->visible) return;
-
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 

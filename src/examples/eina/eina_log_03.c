@@ -7,7 +7,7 @@
 #include <Eina.h>
 
 #define log(fmt, ...)                                    \
-   eina_log_print(EINA_LOG_LEVEL_ERR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+   eina_log_print(EINA_LOG_LEVEL_ERR, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
 
 typedef struct _Data Data;
 

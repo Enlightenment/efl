@@ -25,7 +25,7 @@ travis_fold check "ninja test"
 if [ "$DISTRO" != "" ] ; then
   for tries in $(seq 1 ${NUM_TRIES}); do
     if [ "$1" = "asan" ]; then
-      (docker exec --env EINA_LOG_BACKTRACE="0" --env EIO_MONITOR_POLL=1 --env ASAN_OPTIONS=detect_leaks=0:abort_on_error=0 $(cat $HOME/cid) meson test -t 120 -C build --wrapper dbus-launch) && break
+      (docker exec --env EINA_LOG_BACKTRACE="0" --env EIO_MONITOR_POLL=1 --env ASAN_OPTIONS=detect_leaks=0:abort_on_error=0:detect_odr_violation=0 $(cat $HOME/cid) meson test -t 120 -C build --wrapper dbus-launch) && break
     else
       (docker exec --env EINA_LOG_BACKTRACE="0" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) meson test -t 120 -C build --wrapper dbus-launch ) && break
     fi

@@ -53,7 +53,7 @@ struct _ptr_list_iterator_base
   typedef std::ptrdiff_t difference_type;
   typedef std::bidirectional_iterator_tag iterator_category;
 
-  _ptr_list_iterator_base() : _list(0) {}
+  _ptr_list_iterator_base() : _list(nullptr), _node(nullptr) {}
   _ptr_list_iterator_base(Eina_List* list, Eina_List* node)
     : _list(list), _node(node)
   {}

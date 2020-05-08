@@ -2278,7 +2278,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const color_quad_u8 *color,
 
    if (!rg_etc1_inverse_lookup[0][255])
      {
-        fprintf(stderr, "ETC1: Inverse lookup table not set (in %s)!\n", __FUNCTION__);
+        fprintf(stderr, "ETC1: Inverse lookup table not set (in %s)!\n", __func__);
         return 0;
      }
 
@@ -2392,7 +2392,7 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
 
    if (!rg_etc1_inverse_lookup[0][255])
      {
-        fprintf(stderr, "ETC1: Inverse lookup table not set (in %s)!\n", __FUNCTION__);
+        fprintf(stderr, "ETC1: Inverse lookup table not set (in %s)!\n", __func__);
         return 0;
      }
 

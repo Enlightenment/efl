@@ -11,7 +11,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
 {
    Outbuf *ob = NULL;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    /* try to allocate space for new Outbuf */
    if (!(ob = calloc(1, sizeof(Outbuf)))) return NULL;
@@ -41,7 +41,7 @@ surf_err:
 void 
 _evas_outbuf_free(Outbuf *ob)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    while (ob->priv.pending_writes)
      {
@@ -108,7 +108,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
    RGBA_Image *img;
    unsigned int i = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
@@ -212,7 +212,7 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
 {
    int age;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    age = ecore_wl2_surface_assign(ob->surface);
    if (!age) return MODE_FULL;
@@ -228,7 +228,7 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
 int 
 _evas_outbuf_rotation_get(Outbuf *ob)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    return ob->rotation;
 }
@@ -236,7 +236,7 @@ _evas_outbuf_rotation_get(Outbuf *ob)
 void 
 _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    if ((depth == OUTBUF_DEPTH_NONE) || 
        (depth == OUTBUF_DEPTH_INHERIT))
@@ -271,7 +271,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
    RGBA_Image *img;
    Eina_Rectangle *rect;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, ob->w, ob->h);
    if ((w <= 0) || (h <= 0)) return NULL;
@@ -364,7 +364,7 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    int ww = 0, hh = 0;
    int rx = 0, ry = 0;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN;
 
    /* check for valid output buffer */
    if (!ob) return;

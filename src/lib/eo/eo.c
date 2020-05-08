@@ -989,7 +989,7 @@ err_vtable:
 static Eo *
 _efl_add_internal_start_do(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
 {
-   const char *func_name = __FUNCTION__;
+   const char *func_name = __func__;
    _Eo_Object *obj;
    Eo_Stack_Frame *fptr = NULL;
 
@@ -1981,7 +1981,7 @@ efl_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
    efl_ref(obj_id);
 
 #ifdef EO_DEBUG
-   const char *func_name = __FUNCTION__;
+   const char *func_name = __func__;
    EO_OBJ_POINTER_RETURN_VAL_PROXY(obj_id, obj, obj_id);
 
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
@@ -2092,7 +2092,7 @@ efl_unref(const Eo *obj_id)
           {
              ERR("Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.",
                  obj->klass->desc->name, obj_id, obj->user_refcount);
-             _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, __func__, __FILE__, __LINE__);
              EO_OBJ_DONE(obj_id);
              _efl_unref(obj);
              return;
@@ -2336,7 +2336,7 @@ efl_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_C
 {
    void *ret = NULL;
    _Efl_Class *klass = NULL;
-   const char *func_name = __FUNCTION__;
+   const char *func_name = __func__;
    EO_OBJ_POINTER_RETURN_VAL_PROXY(obj_id, obj, NULL);
    EO_OBJ_POINTER_PROXY(ref_obj_id, ref_obj);
    if (ref_obj)
@@ -3476,7 +3476,7 @@ _eo_log_obj_shutdown(void)
                                     entry->klass,
                                     entry->klass->desc->name,
                                     entry->timestamp - _eo_log_time_start, now - entry->timestamp);
-                  _eo_log_obj_entry_show(entry, EINA_LOG_LEVEL_DBG, __FUNCTION__, __FILE__, __LINE__, now);
+                  _eo_log_obj_entry_show(entry, EINA_LOG_LEVEL_DBG, __func__, __FILE__, __LINE__, now);
                   leaks++;
                }
           }

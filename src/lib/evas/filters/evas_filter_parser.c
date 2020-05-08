@@ -594,7 +594,7 @@ _bool_parse(const char *str, Eina_Bool *b)
 #define PARSE_ABORT() do {} while (0)
 //#define PARSE_ABORT() abort()
 
-#define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __FUNCTION__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
+#define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __func__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
 
 /* Buffers */
 static Buffer *
@@ -1924,7 +1924,7 @@ _padding_set_instruction_prepare(Evas_Filter_Program *pgm EINA_UNUSED,
 /* Evas_Filter_Parser entry points */
 
 #undef PARSE_CHECK
-#define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __FUNCTION__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
+#define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __func__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
 
 EAPI void
 evas_filter_program_del(Evas_Filter_Program *pgm)

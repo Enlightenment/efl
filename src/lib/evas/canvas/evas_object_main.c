@@ -933,7 +933,7 @@ evas_object_del(Evas_Object *obj)
    if (!efl_isa(obj, MY_CLASS))
      {
         ERR("Called %s on a non-evas object: %s@%p",
-            __FUNCTION__, efl_class_name_get(obj), obj);
+            __func__, efl_class_name_get(obj), obj);
         return;
      }
    pd = efl_data_scope_get(obj, MY_CLASS);

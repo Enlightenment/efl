@@ -98,7 +98,7 @@
 #undef CRI
 #define CRI(...) EINA_LOG_DOM_CRIT(_promise_log_dom, __VA_ARGS__)
 
-#define _eina_promise_value_dbg(_msg, _p, _v) __eina_promise_value_dbg(_msg, _p, _v, __LINE__, __FUNCTION__)
+#define _eina_promise_value_dbg(_msg, _p, _v) __eina_promise_value_dbg(_msg, _p, _v, __LINE__, __func__)
 
 struct _Eina_Promise {
    Eina_Future *future;

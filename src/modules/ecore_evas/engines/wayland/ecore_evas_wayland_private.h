@@ -11,10 +11,10 @@
 //#define LOGFNS 1
 #  ifdef LOGFNS
 #   include <stdio.h>
-#   define LOGFN(fl, ln, fn) \
-   printf("-ECORE_EVAS-WL: %25s: %5i - %s\n", fl, ln, fn);
+#   define LOGFN \
+   printf("-ECORE_EVAS-WL: %25s: %5i - %s\n", __FILE__, __LINE__, __func__)
 #  else
-#   define LOGFN(fl, ln, fn)
+#   define LOGFN
 #  endif
 
 #  include <Eina.h>

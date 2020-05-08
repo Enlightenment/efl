@@ -114,7 +114,7 @@ EFL_START_TEST(eina_log_macro)
    ctx.level = lvl;                             \
    ctx.line = __LINE__ + 1;                     \
    ctx.msg = _msg;                              \
-   ctx.fnc = __FUNCTION__;                      \
+   ctx.fnc = __func__;                          \
    ctx.did = EINA_FALSE
 
 #ifdef EINA_LOG_LEVEL_MAXIMUM
@@ -188,7 +188,7 @@ EFL_START_TEST(eina_log_domains_macros)
    ctx.level = lvl;                             \
    ctx.line = __LINE__ + 1;                     \
    ctx.msg = _msg;                              \
-   ctx.fnc = __FUNCTION__;                      \
+   ctx.fnc = __func__;                          \
    ctx.dom = "MyDomain";                        \
    ctx.did = EINA_FALSE
 
@@ -310,7 +310,7 @@ EFL_START_TEST(eina_log_level_indexes)
    ctx.level = lvl;                             \
    ctx.line = __LINE__ + 1;                     \
    ctx.msg = _msg;                              \
-   ctx.fnc = __FUNCTION__;                      \
+   ctx.fnc = __func__;                          \
    ctx.dom = "Levels";                          \
    ctx.did = EINA_FALSE;
 

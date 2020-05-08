@@ -44,14 +44,14 @@
 #define ECORE_EVAS_CHECK(ee, ...) \
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS)) \
      { \
-        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__); \
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __func__); \
         return __VA_ARGS__; \
      }
 
 #define ECORE_EVAS_CHECK_GOTO(_ee, _label) \
   if (!ECORE_MAGIC_CHECK(_ee, ECORE_MAGIC_EVAS)) \
     { \
-       ECORE_MAGIC_FAIL(_ee, ECORE_MAGIC_EVAS, __FUNCTION__); \
+       ECORE_MAGIC_FAIL(_ee, ECORE_MAGIC_EVAS, __func__); \
        goto _label; \
     }
 
@@ -2785,13 +2785,13 @@ ecore_evas_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
 EAPI void
 ecore_evas_draw_frame_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool draw_frame EINA_UNUSED)
 {
-   WRN("Calling deprecated function %s (not implemented)", __FUNCTION__);
+   WRN("Calling deprecated function %s (not implemented)", __func__);
 }
 
 EAPI Eina_Bool
 ecore_evas_draw_frame_get(const Ecore_Evas *ee EINA_UNUSED)
 {
-   WRN("Calling deprecated function %s (not implemented)", __FUNCTION__);
+   WRN("Calling deprecated function %s (not implemented)", __func__);
    return EINA_FALSE;
 }
 

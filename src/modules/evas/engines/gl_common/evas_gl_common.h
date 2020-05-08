@@ -872,7 +872,7 @@ __evas_gl_errdyn(int err, const char *file, const char *func, int line, const ch
 # define GLERRV(op) do { \
       int __gl_err = glGetError(); \
       if (__gl_err != GL_NO_ERROR) \
-        __evas_gl_errdyn(__gl_err, __FILE__, __FUNCTION__, __LINE__, op); \
+        __evas_gl_errdyn(__gl_err, __FILE__, __func__, __LINE__, op); \
    } while (0)
 /* Redefine common gl funcs */
 # ifndef GL_ERRORS_NODEF

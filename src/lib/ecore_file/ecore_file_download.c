@@ -305,7 +305,7 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
      return;
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB))
      {
-        ECORE_MAGIC_FAIL(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB, __FUNCTION__);
+        ECORE_MAGIC_FAIL(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB, __func__);
         return;
      }
 

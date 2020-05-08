@@ -12,8 +12,8 @@
 #define REMOTE_SERVER_PORT 6666
 
 #ifdef DEBUGON
-# define e_debug(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "\n", getpid(), __FUNCTION__, __LINE__, ##args)
-# define e_debug_begin(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "", getpid(), __FUNCTION__, __LINE__, ##args)
+# define e_debug(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "\n", getpid(), __func__, __LINE__, ##args)
+# define e_debug_begin(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "", getpid(), __func__, __LINE__, ##args)
 # define e_debug_continue(fmt, args...) fprintf(stderr, fmt, ##args)
 # define e_debug_end() fprintf(stderr, "\n")
 #else
