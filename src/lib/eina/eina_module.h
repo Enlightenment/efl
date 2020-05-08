@@ -25,19 +25,9 @@
 #include "eina_inline_modinfo.x"
 
 /**
- * @addtogroup Eina_Module_Group Module
- *
- * @brief These functions provide module management.
- */
-
-/**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
  * @defgroup Eina_Module_Group Module
+ * @ingroup Eina_Tools_Group Tools
+ * @brief These functions provide module management.
  *
  * Eina module provides some helpers over POSIX dlopen(). It is not
  * meant to replace, abstract or make a "portable" version of
@@ -59,6 +49,16 @@
  * directory listing. See eina_module_arch_list_get(),
  * eina_module_list_get() and eina_module_find().
  *
+ * #EINA_MODULE_LICENSE, #EINA_MODULE_AUTHOR, #EINA_MODULE_VERSION and
+ * #EINA_MODULE_DESCRIPTION allow you to define module information that can
+ * be retrieved with the @c eina_modinfo tool.
+   @code{.sh}
+   $ eina_modinfo module.so
+   version: 0.1
+   description:   Entry test
+   license: GPLv2
+   author:  Enlightenment Community
+   @endcode
  * @{
  */
 
@@ -335,10 +335,6 @@ EAPI void
  */
 EAPI Eina_Module *
  eina_module_find(const Eina_Array *array, const char *module) EINA_ARG_NONNULL(1, 2);
-
-/**
- * @}
- */
 
 /**
  * @}

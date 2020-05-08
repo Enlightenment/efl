@@ -28,46 +28,33 @@
 __attribute__((__used__)) __attribute__((unused, aligned(1))) = info;
 #define EINA_MODINFO(tag, info) _EINA_MODINFO(tag, info)
 
-/**
-  * @defgroup Eina_Module_Group Module
-  *  
-  * These macros allow you to define module informations like author/description/version/license.
-  * eina_modinfo - shows information about an eina module.
-  * eina_modinfo pulls out information from the eina modules given on command line.
-  *
-  * $ eina_modinfo module.so
-  * version: 0.1
-  * description:   Entry test
-  * license: GPLv2
-  * author:  Enlightenment Community
-  *
-  */
-
 /** 
-  * @defgroup Eina_Module_Group Module
+  * @ingroup Eina_Module_Group
   *  
   * This macro is used for defining license.
   *
   */
 #define EINA_MODULE_LICENSE(_license) EINA_MODINFO(license, _license)
 /**
-  * @defgroup Eina_Module_Group Module
+  * @ingroup Eina_Module_Group
   *  
   * This macro is used for defining author
   * Use "name <email>" or just "name"
   * for multiple authors, use multiple lines like below
-  *        EINA_MODULE_AUTHOR("Author 1 <author1.email>\n
+    @code{.c}
+           EINA_MODULE_AUTHOR("Author 1 <author1.email>\n"
                               "Author 2 <author2.email>");
+    @endcode
   */
 #define EINA_MODULE_AUTHOR(_author) EINA_MODINFO(author, _author)
 /**
-  * @defgroup Eina_Module_Group Module
+  * @ingroup Eina_Module_Group
   *  
   * This macro is used for defining version.
   */
 #define EINA_MODULE_VERSION(_ver) EINA_MODINFO(ver, _ver)
 /**
-  * @defgroup Eina_Module_Group Module
+  * @ingroup Eina_Module_Group
   *  
   * This macro is used for defining description.
   * Explain what your module does.
