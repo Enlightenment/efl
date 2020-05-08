@@ -24,7 +24,9 @@
 #include <sys/types.h>
 
 /**
- * @addtogroup Eina_Tools_Group Tools
+ * @addtogroup Eina_Xattr_Group Xattrs
+ * @ingroup Eina_Tools_Group
+ * @brief Extended Attributes handling
  *
  * @{
  */
