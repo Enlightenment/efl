@@ -257,10 +257,11 @@ EFL_END_TEST
 
 EFL_START_TEST(elm_image_test_memfile_set)
 {
-   Evas_Object *win, *image;
+   Evas_Object *win, *image, *image2;
    char *mem;
    int size;
    const char *file = NULL;
+   int error_called = 0;
 
    win = win_add(NULL, "image", ELM_WIN_BASIC);
 
@@ -274,6 +275,15 @@ EFL_START_TEST(elm_image_test_memfile_set)
    ck_assert(elm_image_file_set(image, ELM_IMAGE_DATA_DIR"/images/icon_01.png", NULL));
    elm_image_file_get(image, &file, NULL);
    ck_assert_str_eq(file, ELM_IMAGE_DATA_DIR"/images/icon_01.png");
+
+   image2 = elm_image_add(win);
+   evas_object_smart_callback_add(image2, "load,ready", event_callback_that_quits_the_main_loop_when_called, NULL);
+   evas_object_smart_callback_add(image2, "load,error", event_callback_single_call_int_data, &error_called);
+   ck_assert(elm_image_memfile_set(image2, mem, size, "png", NULL));
+   ck_assert_int_eq(error_called, 0);
+   ecore_main_loop_begin();
+
+   ck_assert_int_eq(error_called, 0);
 }
 EFL_END_TEST
 
