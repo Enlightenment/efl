@@ -673,6 +673,7 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
         if (o->engine_data)
           {
              ENFN->image_free(ENC, o->engine_data);
+             o->engine_data = NULL;
              o->changed = EINA_TRUE;
              evas_object_change(eo_obj, obj);
           }
@@ -687,8 +688,6 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
              state_write->image.stride = 0;
           }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-
-        o->engine_data = NULL;
      }
 /* FIXME - in engine call above
    if (o->engine_data)
