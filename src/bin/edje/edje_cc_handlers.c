@@ -8304,7 +8304,7 @@ st_collections_group_parts_part_description_inherit(void)
              exit(-1);
           }
 
-        if (!strcmp(parent_name, "default") && parent_val == 0.0)
+        if (!strcmp(parent_name, "default") && EINA_DBL_EQ(parent_val, 0.0))
           parent = ep->default_desc;
         else
           {
@@ -8335,7 +8335,7 @@ st_collections_group_parts_part_description_inherit(void)
                     }
                }
 
-             if (min_dst)
+             if (EINA_DBL_NONZERO(min_dst))
                {
                   WRN("%s:%i: couldn't find an exact match in part '%s' when looking for '%s' %lf. Falling back to nearest one '%s' %lf.",
                       file_in, line - 1, ep->name, parent_name, parent_val, parent ? parent->state.name : NULL, parent ? parent->state.value : 0);
@@ -8569,8 +8569,8 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
    Edje_Part *ep = current_part;
 
    if (ed == ep->default_desc) return;
-   if ((ep->default_desc->state.name && !strcmp(ed->state.name, ep->default_desc->state.name) && ed->state.value == ep->default_desc->state.value) ||
-       (!ep->default_desc->state.name && !strcmp(ed->state.name, "default") && ed->state.value == ep->default_desc->state.value))
+   if ((ep->default_desc->state.name && !strcmp(ed->state.name, ep->default_desc->state.name) && EINA_DBL_EQ(ed->state.value, ep->default_desc->state.value)) ||
+       (!ep->default_desc->state.name && !strcmp(ed->state.name, "default") && EINA_DBL_EQ(ed->state.value, ep->default_desc->state.value)))
      {
         if (ep->type == EDJE_PART_TYPE_IMAGE)
           _edje_part_description_image_remove((Edje_Part_Description_Image *)ed);
@@ -8586,7 +8586,7 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
         unsigned int i;
         for (i = 0; i < ep->other.desc_count - 1; ++i)
           {
-             if (!strcmp(ed->state.name, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
+             if (!strcmp(ed->state.name, ep->other.desc[i]->state.name) && EINA_DBL_EQ(ed->state.value, ep->other.desc[i]->state.value))
                {
                   if (ep->type == EDJE_PART_TYPE_IMAGE)
                     _edje_part_description_image_remove((Edje_Part_Description_Image *)ed);
@@ -8645,7 +8645,7 @@ st_collections_group_parts_part_description_state(void)
      val = parse_float_range(1, 0.0, 1.0);
 
    /* if only default desc exists and current desc is not default, commence paddling */
-   if ((!ep->other.desc_count) && (val || (!eina_streq(s, "default"))))
+   if ((!ep->other.desc_count) && (EINA_DBL_NONZERO(val) || (!eina_streq(s, "default"))))
      {
         ERR("parse error %s:%i. invalid state name: '%s'. \"default\" state must always be first.",
             file_in, line - 1, s);
@@ -15135,7 +15135,7 @@ edje_cc_handlers_wildcard(void)
 
                        if (((!!ed->state.name) != (!!current_desc->state.name)) ||
                            (ed->state.name && strcmp(ed->state.name, current_desc->state.name)) ||
-                           (fabs(ed->state.value - st) > DBL_EPSILON)) continue;
+                           (!EINA_DBL_EQ(ed->state.value, st))) continue;
                        current_desc = ed;
                        break;
                     }
