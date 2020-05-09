@@ -148,16 +148,16 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_tone)
    rate = ecore_audio_obj_in_samplerate_get(in);
    fail_if(rate != 44100);
    len = ecore_audio_obj_in_length_get(in);
-   fail_if(len != 1);
+   fail_if(!EINA_DBL_EQ(len,  1));
 
    ecore_audio_obj_in_length_set(in, 2.5);
    len = ecore_audio_obj_in_length_get(in);
-   fail_if(len != 2.5);
+   fail_if(!EINA_DBL_EQ(len,  2.5));
 
    ecore_audio_obj_in_looped_set(in, EINA_TRUE);
 
    len = ecore_audio_obj_in_remaining_get(in);
-   fail_if(len != 2.5);
+   fail_if(!EINA_DBL_EQ(len,  2.5));
 
    freq = (intptr_t) efl_key_data_get(in, ECORE_AUDIO_ATTR_TONE_FREQ);
    fail_if(freq != 1000);
@@ -173,28 +173,28 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_tone)
    ck_assert_str_eq(tmp, "bar");
 
    len = ecore_audio_obj_in_seek(in, 5.0, SEEK_SET);
-   fail_if(len != -1);
+   fail_if(!EINA_DBL_EQ(len,  -1));
 
    len = ecore_audio_obj_in_seek(in, 1.0, 42);
-   fail_if(len != -1);
+   fail_if(!EINA_DBL_EQ(len,  -1));
 
    len = ecore_audio_obj_in_seek(in, 1.0, SEEK_SET);
-   fail_if(len != 1.0);
+   fail_if(!EINA_DBL_EQ(len,  1.0));
 
    len = ecore_audio_obj_in_remaining_get(in);
-   fail_if(len != 1.5);
+   fail_if(!EINA_DBL_EQ(len,  1.5));
 
    len = ecore_audio_obj_in_seek(in, 1.0, SEEK_CUR);
-   fail_if(len != 2.0);
+   fail_if(!EINA_DBL_EQ(len,  2.0));
 
    len = ecore_audio_obj_in_remaining_get(in);
-   fail_if(len != 0.5);
+   fail_if(!EINA_DBL_EQ(len,  0.5));
 
    len = ecore_audio_obj_in_seek(in, -1.0, SEEK_END);
-   fail_if(len != 1.5);
+   fail_if(!EINA_DBL_EQ(len,  1.5));
 
    len = ecore_audio_obj_in_remaining_get(in);
-   fail_if(len != 1.0);
+   fail_if(!EINA_DBL_EQ(len,  1.0));
 
    out = efl_add_ref(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
@@ -260,18 +260,18 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_sndfile)
    rate = ecore_audio_obj_in_samplerate_get(in);
    fail_if(rate != 44100);
    len = ecore_audio_obj_in_length_get(in);
-   fail_if(len == 0);
+   fail_if(EINA_DBL_EQ(len, 0));
    rem = ecore_audio_obj_in_remaining_get(in);
-   fail_if(len != rem);
+   fail_if(!EINA_DBL_EQ(len,  rem));
 
    fmt = ecore_audio_obj_format_get(in);
    fail_if(fmt != ECORE_AUDIO_FORMAT_OGG);
 
    len = ecore_audio_obj_in_seek(in, 0.5, SEEK_SET);
-   fail_if(len != 0.5);
+   fail_if(!EINA_DBL_EQ(len,  0.5));
 
    len = ecore_audio_obj_in_seek(in, 1.0, SEEK_CUR);
-   fail_if(len != 1.5);
+   fail_if(!EINA_DBL_EQ(len,  1.5));
 
    len = ecore_audio_obj_in_seek(in, -1.5, SEEK_END);
    fail_if(fabs(rem - 1 - len) > 0.6);
@@ -467,22 +467,22 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_in)
   fail_if(!freed);
 
   speed = ecore_audio_obj_in_speed_get(in);
-  fail_if(speed != 1.0);
+  fail_if(!EINA_DBL_EQ(speed,  1.0));
 
   ecore_audio_obj_in_speed_set(in, 2.5);
 
   speed = ecore_audio_obj_in_speed_get(in);
-  fail_if(speed != 2.5);
+  fail_if(!EINA_DBL_EQ(speed,  2.5));
 
   ecore_audio_obj_in_speed_set(in, 0);
 
   speed = ecore_audio_obj_in_speed_get(in);
-  fail_if(speed != 0.2);
+  fail_if(!EINA_DBL_EQ(speed,  0.2));
 
   ecore_audio_obj_in_speed_set(in, 10);
 
   speed = ecore_audio_obj_in_speed_get(in);
-  fail_if(speed != 5.0);
+  fail_if(!EINA_DBL_EQ(speed,  5.0));
 
   samplerate = ecore_audio_obj_in_samplerate_get(in);
   fail_if(samplerate != 0);
@@ -509,10 +509,10 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_in)
   fail_if(!looped);
 
   length = ecore_audio_obj_in_length_get(in);
-  fail_if(length != 0);
+  fail_if(!EINA_DBL_EQ(length,  0));
 
   length = ecore_audio_obj_in_remaining_get(in);
-  fail_if(length != -1);
+  fail_if(!EINA_DBL_EQ(length,  -1));
 
   memset(buf, 0xaa, 10);
   read = ecore_audio_obj_in_read(in, buf, 10);
@@ -573,11 +573,11 @@ EFL_START_TEST(ecore_test_ecore_audio_obj)
     fail_if(!paused);
 
     volume = ecore_audio_obj_volume_get(obj);
-    fail_if(volume != 1.0);
+    fail_if(!EINA_DBL_EQ(volume,  1.0));
 
     ecore_audio_obj_volume_set(obj, 0.5);
     volume = ecore_audio_obj_volume_get(obj);
-    fail_if(volume != 0.5);
+    fail_if(!EINA_DBL_EQ(volume,  0.5));
 
     efl_unref(obj);
   }

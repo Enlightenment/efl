@@ -265,7 +265,7 @@ EFL_START_TEST(evas_text_ellipsis)
    _test_ellipsis(to, buf, font, size, 1.0);
 
    /* Check ellipsis value with NULL */
-   fail_if(evas_object_text_ellipsis_get(NULL) != -1.0);
+   fail_if(!EINA_DBL_EQ(evas_object_text_ellipsis_get(NULL), -1.0));
 
    END_TEXT_TEST();
 }

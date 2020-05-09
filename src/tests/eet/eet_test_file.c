@@ -435,11 +435,11 @@ EFL_START_TEST(eet_test_file_fp)
    fail_if(build->f1 != eina_f32p32_int_from(1));
    fail_if(build->f0 != 0);
 
-   fail_if(convert->fp32 != 1.125);
-   fail_if(convert->fp16 != 2000);
-   fail_if(convert->fp8 != 125);
-   fail_if(convert->f1 != 1);
-   fail_if(convert->f0 != 0);
+   fail_if(!EINA_DBL_EQ(convert->fp32, 1.125));
+   fail_if(!EINA_DBL_EQ(convert->fp16, 2000));
+   fail_if(!EINA_DBL_EQ(convert->fp8, 125));
+   fail_if(!EINA_DBL_EQ(convert->f1, 1));
+   fail_if(!EINA_DBL_EQ(convert->f0, 0));
 
    eet_close(ef);
 

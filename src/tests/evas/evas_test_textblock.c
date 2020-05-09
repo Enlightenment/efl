@@ -3826,15 +3826,15 @@ EFL_START_TEST(evas_textblock_set_get)
    fail_if(strcmp(evas_object_textblock_replace_char_get(tb), "ש"));
 
    evas_object_textblock_valign_set(tb, -1.0);
-   fail_if(evas_object_textblock_valign_get(tb) != 0.0);
+   fail_if(EINA_DBL_NONZERO(evas_object_textblock_valign_get(tb)));
    evas_object_textblock_valign_set(tb, 0.0);
-   fail_if(evas_object_textblock_valign_get(tb) != 0.0);
+   fail_if(EINA_DBL_NONZERO(evas_object_textblock_valign_get(tb)));
    evas_object_textblock_valign_set(tb, 0.432);
-   fail_if(evas_object_textblock_valign_get(tb) != 0.432);
+   fail_if(!EINA_DBL_EQ(evas_object_textblock_valign_get(tb), 0.432));
    evas_object_textblock_valign_set(tb, 1.0);
-   fail_if(evas_object_textblock_valign_get(tb) != 1.0);
+   fail_if(!EINA_DBL_EQ(evas_object_textblock_valign_get(tb), 1.0));
    evas_object_textblock_valign_set(tb, 1.5);
-   fail_if(evas_object_textblock_valign_get(tb) != 1.0);
+   fail_if(!EINA_DBL_EQ(evas_object_textblock_valign_get(tb), 1.0));
 
    evas_object_textblock_bidi_delimiters_set(tb, ",.|");
    fail_if(strcmp(evas_object_textblock_bidi_delimiters_get(tb), ",.|"));

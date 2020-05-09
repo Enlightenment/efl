@@ -639,7 +639,7 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(!expr);
    v = eolian_expression_eval(expr, EOLIAN_MASK_FLOAT);
    fail_if(v.type != EOLIAN_EXPR_DOUBLE);
-   fail_if(v.value.d != 1337.6);
+   fail_if(!EINA_DBL_EQ(v.value.d, 1337.6));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_PARAMETER_IN);
    fail_if(strcmp(eolian_type_short_name_get(eolian_parameter_type_get(param)), "int"));
