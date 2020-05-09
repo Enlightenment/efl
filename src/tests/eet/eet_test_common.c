@@ -549,22 +549,22 @@ eet_test_ex_check(Eet_Test_Ex_Type *stuff,
    if (tmp > 0.00005)
      return 1;
 
-   if (stuff->f2 != -(EET_TEST_FLOAT2 + offset))
+   if (!EINA_FLT_EQ(stuff->f2, -(EET_TEST_FLOAT2 + offset)))
      return 1;
 
-   if (stuff->d2 != -(EET_TEST_DOUBLE2 + offset))
+   if (!EINA_DBL_EQ(stuff->d2, -(EET_TEST_DOUBLE2 + offset)))
      return 1;
 
-   if (stuff->f3 != EET_TEST_FLOAT3 + offset)
+   if (!EINA_FLT_EQ(stuff->f3, EET_TEST_FLOAT3 + offset))
      return 1;
 
-   if (stuff->d3 != EET_TEST_DOUBLE3 + offset)
+   if (!EINA_DBL_EQ(stuff->d3, EET_TEST_DOUBLE3 + offset))
      return 1;
 
-   if (stuff->f4 != EET_TEST_FLOAT2 + offset)
+   if (!EINA_FLT_EQ(stuff->f4, EET_TEST_FLOAT2 + offset))
      return 1;
 
-   if (stuff->d4 != EET_TEST_DOUBLE2 + offset)
+   if (!EINA_DBL_EQ(stuff->d4, EET_TEST_DOUBLE2 + offset))
      return 1;
 
    if (stuff->uc != EET_TEST_CHAR + offset)

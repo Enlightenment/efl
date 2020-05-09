@@ -43,7 +43,7 @@ _add(void *data, int type EINA_UNUSED, void *ev)
 
         ecore_con_client_timeout_set(event->client, timeout_val);
         ret = ecore_con_client_timeout_get(event->client);
-        fail_if (ret != timeout_val);
+        fail_if (!EINA_DBL_EQ(ret, timeout_val));
 
         ecore_con_client_data_set(event->client, cdata);
         del_data = ecore_con_client_data_get(event->client);
@@ -243,7 +243,7 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
 
    ecore_con_server_timeout_set(server, timeout_val);
    timeout_ret = ecore_con_server_timeout_get(server);
-   fail_if (timeout_ret != timeout_val);
+   fail_if (!EINA_DBL_EQ(timeout_ret, timeout_val));
 
    ret = ecore_con_server_port_get(server);
    fail_if (ret != server_port);

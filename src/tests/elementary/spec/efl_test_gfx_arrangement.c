@@ -18,8 +18,8 @@ EFL_START_TEST(pack_align)
    double v, h; \
    efl_gfx_arrangement_content_align_set(widget, H, V); \
    efl_gfx_arrangement_content_align_get(widget, &h, &v); \
-   ck_assert(v == rv); \
-   ck_assert(h == rh); \
+   ck_assert(EINA_DBL_EQ(v, rv)); \
+   ck_assert(EINA_DBL_EQ(h, rh)); \
   } while(0);
 
   TUPLE_CHECK(  1.0,   1.0,  1.0,  1.0);

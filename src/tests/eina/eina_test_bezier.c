@@ -42,14 +42,14 @@ EFL_START_TEST(eina_bezier_test_values)
                           &cx1, &cy1,
                           &cx2, &cy2,
                           &ex, &ey);
-   fail_if(sx != 1 ||
-           sy != 2 ||
-           cx1 != 3 ||
-           cy1 != 4 ||
-           cx2 != 5 ||
-           cy2 != 6 ||
-           ex != 7 ||
-           ey != 8);
+   fail_if(!EINA_DBL_EQ(sx, 1) ||
+           !EINA_DBL_EQ(sy, 2) ||
+           !EINA_DBL_EQ(cx1, 3) ||
+           !EINA_DBL_EQ(cy1, 4) ||
+           !EINA_DBL_EQ(cx2, 5) ||
+           !EINA_DBL_EQ(cy2, 6) ||
+           !EINA_DBL_EQ(ex, 7) ||
+           !EINA_DBL_EQ(ey, 8));
 }
 EFL_END_TEST
 
@@ -65,7 +65,7 @@ EFL_START_TEST(eina_bezier_test_angle)
                           7, 1);
    angle = eina_bezier_angle_at(&b, 0.5);
 
-   fail_if(angle != 0);
+   fail_if(EINA_DBL_NONZERO(angle));
 
    eina_bezier_values_set(&b,
                           1, 2,
@@ -73,7 +73,7 @@ EFL_START_TEST(eina_bezier_test_angle)
                           1, 6,
                           1, 8);
    angle = eina_bezier_angle_at(&b, 0.5);
-   fail_if(floor(angle) != 90);
+   fail_if(!EINA_DBL_EQ(floor(angle), 90));
 
 }
 EFL_END_TEST
@@ -89,7 +89,7 @@ EFL_START_TEST(eina_bezier_test_length)
                           5, 1,
                           7, 1);
    length = eina_bezier_length_get(&b);
-   fail_if(floor(length) != 6);
+   fail_if(!EINA_DBL_EQ(floor(length), 6));
 
    eina_bezier_values_set(&b,
                           1, 1,
@@ -97,7 +97,7 @@ EFL_START_TEST(eina_bezier_test_length)
                           1, 1,
                           1, 1);
    length = eina_bezier_length_get(&b);
-   fail_if(length != 0);
+   fail_if(!EINA_DBL_EQ(length, 0));
 
 }
 EFL_END_TEST
@@ -114,10 +114,10 @@ EFL_START_TEST(eina_bezier_test_t_at)
                           7, 1);
    length = eina_bezier_length_get(&b);
    t = eina_bezier_t_at(&b, 0);
-   fail_if(floor(t) != 0);
+   fail_if(!EINA_DBL_EQ(floor(t), 0));
 
    t = eina_bezier_t_at(&b, length);
-   fail_if(t != 1);
+   fail_if(!EINA_DBL_EQ(t, 1));
 
 }
 EFL_END_TEST
@@ -133,13 +133,13 @@ EFL_START_TEST(eina_bezier_test_point_at)
                           5, 6,
                           7, 8);
    eina_bezier_point_at(&b, 0, &x , &y);
-   fail_if(x != 1 ||
-           y != 2);
+   fail_if(!EINA_DBL_EQ(x, 1) ||
+           !EINA_DBL_EQ(y, 2));
 
    eina_bezier_point_at(&b, 1, &x , &y);
 
-   fail_if(x != 7 ||
-           y != 8);
+   fail_if(!EINA_DBL_EQ(x, 7) ||
+           !EINA_DBL_EQ(y, 8));
 
 }
 EFL_END_TEST
@@ -159,7 +159,7 @@ EFL_START_TEST(eina_bezier_test_split_at_length)
    len1 = eina_bezier_length_get(&l);
    len2 = eina_bezier_length_get(&r);
 
-   fail_if(len != (len1 + len2));
+   fail_if(!EINA_DBL_EQ(len, (len1 + len2)));
 
 }
 EFL_END_TEST
@@ -177,7 +177,7 @@ EFL_START_TEST(eina_bezier_test_bounds_get)
 
    eina_bezier_bounds_get(&b, &x, &y, &w, &h);
 
-   fail_if(x !=0 || y!=0 || w !=100 || h !=100 );
+   fail_if(!EINA_DBL_EQ(x, 0) || !EINA_DBL_EQ(y, 0) || !EINA_DBL_EQ(w, 100) || !EINA_DBL_EQ(h, 100));
 
 }
 EFL_END_TEST
@@ -196,7 +196,7 @@ EFL_START_TEST(eina_bezier_test_on_interval)
    eina_bezier_on_interval(&b, 0.25, 0.5, &res);
    eina_bezier_point_at(&res, 0, &px2, &py2);
 
-   fail_if(px1 != px2 || py1 != py2);
+   fail_if(!EINA_DBL_EQ(px1, px2) || !EINA_DBL_EQ(py1, py2));
 
 }
 EFL_END_TEST

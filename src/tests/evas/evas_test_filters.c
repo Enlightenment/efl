@@ -448,7 +448,7 @@ EFL_START_TEST(evas_filter_state_test)
            "state render test failed: %p (%#x)", pixels, pixels ? *pixels : 0);
 
    efl_gfx_filter_state_get(to, &s1, &v1, &s2, &v2, &p);
-   fail_unless(strequal(s1, "state1") && strequal(s2, "state2") && (v1 == 0.0) && (v2 == 1.0) && (p == 0.5),
+   fail_unless(strequal(s1, "state1") && strequal(s2, "state2") && EINA_DBL_EQ(v1, 0.0) && EINA_DBL_EQ(v2, 1.0) && EINA_DBL_EQ(p, 0.5),
                "got: %s %f %s %f %f", s1, v1, s2, v2, p);
 
    /* data test */
