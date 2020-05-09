@@ -448,7 +448,7 @@ _map_name_loaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
    if (addr)
      {
         printf("name of [lon = %lf, lat = %lf] is %s\n", lon, lat, addr);
-        if ((lon != 0.0) && (lat !=0.0))
+        if (EINA_DBL_NONZERO(lon) && EINA_DBL_NONZERO(lat))
           {
              Eina_Bool b = elm_map_paused_get(data);
              elm_map_paused_set(data, EINA_TRUE);
