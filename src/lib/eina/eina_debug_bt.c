@@ -34,6 +34,7 @@
 
 #include "eina_debug.h"
 #include "eina_debug_private.h"
+#include "eina_util.h"
 
 #ifndef _WIN32
 # include <signal.h>
@@ -307,7 +308,7 @@ _trace_cb(void *data EINA_UNUSED)
    static int bts = 0;
    int i;
 
-   if (!_trace_t0) _trace_t0 = get_time();
+   if (!EINA_DBL_NONZERO(_trace_t0)) _trace_t0 = get_time();
 
    // take a lock on grabbing thread debug info like backtraces
    eina_spinlock_take(&_eina_debug_thread_lock);
