@@ -3514,6 +3514,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
              o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
              if (ENFN->gl_get_pixels_post)
                ENFN->gl_get_pixels_post(ENC, output);
+             pixels = _evas_image_pixels_get(eo_obj, obj, ENC, output, NULL, NULL, 0, 0,
+                                             &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_FALSE);
+             if (!pixels) return is_inside;
           }
      }
 
