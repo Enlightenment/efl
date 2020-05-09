@@ -497,9 +497,9 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    else
      {
         efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
-        if (sd->val == min)
+        if (EINA_DBL_EQ(sd->val, min))
           efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MIN_REACHED, NULL);
-        if (sd->val == max)
+        if (EINA_DBL_EQ(sd->val, max))
           efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
      }
 }

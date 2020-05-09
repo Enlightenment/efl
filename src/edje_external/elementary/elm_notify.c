@@ -39,23 +39,23 @@ _elm_notify_orient_get(const Evas_Object *obj)
 
    elm_notify_align_get(obj, &horizontal, &vertical);
 
-   if ((horizontal == 0.5) && (vertical == 0.0))
+   if (EINA_DBL_EQ(horizontal, 0.5) && EINA_DBL_EQ(vertical, 0.0))
      orient = ELM_NOTIFY_ORIENT_TOP;
-   else if ((horizontal == 0.5) && (vertical == 0.5))
+   else if (EINA_DBL_EQ(horizontal, 0.5) && EINA_DBL_EQ(vertical, 0.5))
      orient = ELM_NOTIFY_ORIENT_CENTER;
-   else if ((horizontal == 0.5) && (vertical == 1.0))
+   else if (EINA_DBL_EQ(horizontal, 0.5) && EINA_DBL_EQ(vertical, 1.0))
      orient = ELM_NOTIFY_ORIENT_BOTTOM;
-   else if ((horizontal == 0.0) && (vertical == 0.5))
+   else if (EINA_DBL_EQ(horizontal, 0.0) && EINA_DBL_EQ(vertical, 0.5))
      orient = ELM_NOTIFY_ORIENT_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 0.5))
+   else if (EINA_DBL_EQ(horizontal, 1.0) && EINA_DBL_EQ(vertical, 0.5))
      orient = ELM_NOTIFY_ORIENT_RIGHT;
-   else if ((horizontal == 0.0) && (vertical == 0.0))
+   else if (EINA_DBL_EQ(horizontal, 0.0) && EINA_DBL_EQ(vertical, 0.0))
      orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 0.0))
+   else if (EINA_DBL_EQ(horizontal, 1.0) && EINA_DBL_EQ(vertical, 0.0))
      orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
-   else if ((horizontal == 0.0) && (vertical == 1.0))
+   else if (EINA_DBL_EQ(horizontal, 0.0) && EINA_DBL_EQ(vertical, 1.0))
      orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 1.0))
+   else if (EINA_DBL_EQ(horizontal, 1.0) && EINA_DBL_EQ(vertical, 1.0))
      orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
    else
      orient = ELM_NOTIFY_ORIENT_TOP;

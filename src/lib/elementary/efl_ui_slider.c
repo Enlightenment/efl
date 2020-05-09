@@ -67,10 +67,10 @@ _emit_events(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
 
-   if (sd->val == sd->val_min)
+   if (EINA_DBL_EQ(sd->val, sd->val_min))
      efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MIN_REACHED, NULL);
 
-   if (sd->val == sd->val_max)
+   if (EINA_DBL_EQ(sd->val, sd->val_max))
      efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
 
    // emit accessibility event also if value was changed by API
@@ -133,7 +133,7 @@ _drag_value_fetch(Evas_Object *obj)
 static void
 _adjust_to_step(Efl_Ui_Slider *obj,  Efl_Ui_Slider_Data *pd)
 {
-   if (pd->step)
+   if (EINA_DBL_NONZERO(pd->step))
      {
         double relative_step = pd->step/(pd->val_max - pd->val_min);
         double new_value = (round(pd->val/relative_step))*relative_step;
@@ -777,7 +777,7 @@ _efl_ui_slider_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Efl_
         return;
      }
 
-   if (sd->step == step) return;
+   if (EINA_DBL_EQ(sd->step, step)) return;
 
    sd->step = step;
 }

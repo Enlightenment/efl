@@ -2112,10 +2112,10 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         return;
      }
 
-   if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
+   if (EINA_DBL_EQ(pd->gravity_x, 1.0) || EINA_DBL_EQ(pd->gravity_y, 1.0))
      _elm_code_widget_scroll_by(widget,
-        (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
-        (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
+        (EINA_DBL_EQ(pd->gravity_x, 1.0) && ww > old_width) ? ww - old_width : 0,
+        (EINA_DBL_EQ(pd->gravity_y, 1.0) && wh > old_height) ? wh - old_height : 0);
 }
 
 EOAPI void

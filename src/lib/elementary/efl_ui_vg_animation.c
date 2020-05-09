@@ -49,8 +49,8 @@ _sizing_eval(Eo *obj, void *data)
    Eina_Size2D size = efl_canvas_vg_object_default_size_get(pd->vg);
 
    Eina_Size2D min = {-1, -1};
-   if (hw == 0) min.w = size.w;
-   if (hh == 0) min.h = size.h;
+   if (EINA_DBL_EQ(hw, 0)) min.w = size.w;
+   if (EINA_DBL_EQ(hh, 0)) min.h = size.h;
 
    efl_gfx_hint_size_min_set(obj, min);
 }
@@ -148,8 +148,8 @@ _transit_del_cb(Elm_Transit_Effect *effect, Elm_Transit *transit)
    EFL_UI_VG_ANIMATION_DATA_GET(obj, pd);
    if (!pd) return;
 
-   if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && pd->progress == 1) ||
-       (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && pd->progress == 0))
+   if ((pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING && EINA_DBL_EQ(pd->progress, 1)) ||
+       (pd->state == EFL_UI_VG_ANIMATION_STATE_PLAYING_BACKWARDS && EINA_DBL_EQ(pd->progress, 0)))
      {
         if (elm_widget_is_legacy(obj))
           evas_object_smart_callback_call(obj, SIG_PLAY_DONE, NULL);
@@ -212,7 +212,7 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
    int update_frame = (int)((maxframe - minframe) * progress) + minframe;
    int current_frame = evas_object_vg_animated_frame_get(pd->vg);
 
-   if (pd->playback_speed == 0)
+   if (EINA_DBL_EQ(pd->playback_speed, 0))
      update_frame = current_frame;
 
    evas_object_vg_animated_frame_set(pd->vg, update_frame);
@@ -308,7 +308,7 @@ _update_frame_duration(Efl_Ui_Vg_Animation_Data *pd)
 
    pd->frame_duration = (double)(max_frame - min_frame) / frame_rate;
    if (pd->transit)
-     elm_transit_duration_set(pd->transit, speed != 0 ? pd->frame_duration * (1 / speed) : 0);
+     elm_transit_duration_set(pd->transit, EINA_DBL_NONZERO(speed) ? pd->frame_duration * (1 / speed) : 0);
 }
 
 static Eina_Bool
@@ -333,10 +333,10 @@ _ready_play(Eo *obj, Efl_Ui_Vg_Animation_Data *pd)
         elm_transit_objects_final_state_keep_set(transit, EINA_TRUE);
         elm_transit_event_enabled_set(transit, EINA_TRUE);
         pd->transit = transit;
-        if (pd->min_progress != 0.0 || pd->max_progress != 1.0)
+        if (EINA_DBL_NONZERO(pd->min_progress) || !EINA_DBL_EQ(pd->max_progress, 1.0))
           _update_frame_duration(pd);
         else
-          elm_transit_duration_set(transit, speed != 0 ? pd->frame_duration * (1 / speed) : 0);
+          elm_transit_duration_set(transit, EINA_DBL_NONZERO(speed) ? pd->frame_duration * (1 / speed) : 0);
 
         return EINA_TRUE;
      }
@@ -710,7 +710,7 @@ _efl_ui_vg_animation_efl_player_playing_set(Eo *obj, Efl_Ui_Vg_Animation_Data *p
 
         if (pd->state == EFL_UI_VG_ANIMATION_STATE_STOPPED)
           {
-             if (pd->playing_reverse && pd->progress == 0) pd->progress = 1.0;
+             if (pd->playing_reverse && EINA_DBL_EQ(pd->progress, 0)) pd->progress = 1.0;
              _transit_go_facade(obj, pd);
           }
         else if (rewind)
@@ -785,7 +785,7 @@ _efl_ui_vg_animation_efl_player_playback_position_set(Eo *obj, Efl_Ui_Vg_Animati
    EINA_SAFETY_ON_TRUE_RETURN(sec < 0);
    EINA_SAFETY_ON_TRUE_RETURN(sec > pd->frame_duration);
 
-   efl_player_playback_progress_set(obj, pd->frame_duration != 0 ? sec / pd->frame_duration : 0);
+   efl_player_playback_progress_set(obj, EINA_DBL_NONZERO(pd->frame_duration) ? sec / pd->frame_duration : 0);
 }
 
 EOLIAN static double
@@ -805,7 +805,7 @@ _efl_ui_vg_animation_efl_player_playback_progress_set(Eo *obj EINA_UNUSED, Efl_U
 {
    if (progress < 0) progress = 0;
    else if (progress > 1) progress = 1;
-   if (pd->progress == progress) return;
+   if (EINA_DBL_EQ(pd->progress, progress)) return;
 
    pd->progress = progress;
 
@@ -844,7 +844,7 @@ _efl_ui_vg_animation_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_V
    pd->playback_speed = speed;
    speed = speed < 0 ? speed * -1 : speed;
    if (pd->transit)
-     elm_transit_duration_set(pd->transit, pd->playback_speed != 0 ? pd->frame_duration * (1 / speed) : 0);
+     elm_transit_duration_set(pd->transit, EINA_DBL_NONZERO(pd->playback_speed) ? pd->frame_duration * (1 / speed) : 0);
 }
 
 EOLIAN static double

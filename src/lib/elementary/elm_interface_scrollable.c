@@ -946,8 +946,8 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
             -((double)sid->page.y * ((double)vh / (double)h)) / 100.0);
 
         elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
-        if (vx != mx) x = px;
-        if (vy != my) y = py;
+        if (!EINA_DBL_EQ(vx, mx)) x = px;
+        if (!EINA_DBL_EQ(vy, my)) y = py;
         elm_obj_pan_pos_set(sid->pan_obj, x, y);
 
         if (mx > 0) vx = (double)(x - minx) / (double)mx;
@@ -2292,8 +2292,8 @@ _elm_scroll_post_event_up(void *data,
 static Eina_Bool
 _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
 {
-   if ((sid->pagerel_h == 0.0) && (!sid->pagesize_h) &&
-       (sid->pagerel_v == 0.0) && (!sid->pagesize_v))
+   if (EINA_DBL_EQ(sid->pagerel_h, 0.0) && (!sid->pagesize_h) &&
+       EINA_DBL_EQ(sid->pagerel_v, 0.0) && (!sid->pagesize_v))
      return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -2314,7 +2314,7 @@ _elm_scroll_momentum_animator(void *data, const Efl_Event *event EINA_UNUSED)
 
    t = ecore_loop_time_get();
 
-   if (sid->down.anim_dur == 0) dt = 1.0;
+   if (EINA_DBL_EQ(sid->down.anim_dur, 0)) dt = 1.0;
    else dt = (t - sid->down.anim_start) / sid->down.anim_dur;
 
    if (dt >= 0.0)
@@ -2675,7 +2675,7 @@ _elm_scroll_momentum_calc(int dx, int dy, double dt, double *vx, double *vy, int
    double r = _elm_config->thumbscroll_momentum_friction;
    const int min_px = 3;
 
-   if ( dt == 0 ) return EINA_FALSE;
+   if (EINA_DBL_EQ(dt, 0)) return EINA_FALSE;
 
    // store sign value of distance
    sign_dx = (dx > 0) - (dx < 0);
@@ -3749,7 +3749,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
              else
                vy = 1.0;
           }
-        if ((vx != 0.0) || (vy != 0.0))
+        if (EINA_DBL_NONZERO(vx) || EINA_DBL_NONZERO(vy))
           {
              sid->down.onhold_vx = vx;
              sid->down.onhold_vy = vy;

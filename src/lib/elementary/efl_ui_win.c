@@ -3745,12 +3745,12 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    maxh = sd->max_h;
 
    // Compatibility hack (for E)
-   if (sd->single_edje_content && !wx && !wy)
+   if (sd->single_edje_content && EINA_DBL_EQ(wx, 0) && EINA_DBL_EQ(wy, 0))
      wx = wy = 1;
 
-   if (!wx) maxw = minw;
+   if (EINA_DBL_EQ(wx, 0)) maxw = minw;
    if (maxw < 1) maxw = 32767;
-   if (!wy) maxh = minh;
+   if (EINA_DBL_EQ(wy, 0)) maxh = minh;
    if (maxh < 1) maxh = 32767;
    if (maxw < minw) maxw = minw;
    if (maxh < minh) maxh = minh;
