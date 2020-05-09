@@ -175,7 +175,7 @@ my_bt_zoom_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
      zoom -= 0.5;
    else if ((zoom > 1.0) && (zoom <= 1.5))
      zoom = 1.0;
-   else if (zoom == 1.0)
+   else if (EINA_DBL_EQ(zoom, 1.0))
      zoom = 0.8;
    else
      zoom = zoom * zoom;

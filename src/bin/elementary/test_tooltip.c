@@ -157,7 +157,7 @@ _tt_item_icon3(void *data   EINA_UNUSED,
           sc = ((float)sw * 0.8) / (float)w;
         else if ((float)h / (float)sh >= 0.8)
           sc = ((float)sh * 0.8) / (float)h;
-        if (sc) elm_object_scale_set(ic, sc);
+        if (EINA_FLT_NONZERO(sc)) elm_object_scale_set(ic, sc);
      }
    return ic;
 }

@@ -1345,7 +1345,7 @@ _calcf(char op, double a, double b)
         return a;
 
       case '/':
-        if (b != 0) a /= b;
+        if (EINA_DBL_NONZERO(b)) a /= b;
         else
           ERR("%s:%i divide by zero", file_in, line - 1);
         return a;
@@ -1355,7 +1355,7 @@ _calcf(char op, double a, double b)
         return a;
 
       case '%':
-        if (0 != b) a = (double)((int)a % (int)b);
+        if (EINA_DBL_NONZERO(b)) a = (double)((int)a % (int)b);
         else
           ERR("%s:%i modula by zero", file_in, line - 1);
         return a;
