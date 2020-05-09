@@ -3554,7 +3554,7 @@ st_collections_base_scale(void)
    check_min_arg_count(1);
 
    edje_file->base_scale = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
-   if (edje_file->base_scale == ZERO)
+   if (EQ(edje_file->base_scale, ZERO))
      {
         ERR("The base_scale is 0.0. The value should be bigger than 0.0.");
         exit(-1);
@@ -4015,12 +4015,12 @@ _link_combine(void)
              EINA_LIST_FOREACH_SAFE(tup->data, l, ll, ell)
                {
                   if (ell->pr->tween.mode != el->pr->tween.mode) continue;
-                  if (fabs(ell->pr->tween.time - el->pr->tween.time) > DBL_EPSILON) continue;
-                  if (fabs(ell->pr->tween.v1 - el->pr->tween.v1) > DBL_EPSILON) continue;
-                  if (fabs(ell->pr->tween.v2 - el->pr->tween.v2) > DBL_EPSILON) continue;
-                  if (fabs(ell->pr->tween.v3 - el->pr->tween.v3) > DBL_EPSILON) continue;
-                  if (fabs(ell->pr->tween.v4 - el->pr->tween.v4) > DBL_EPSILON) continue;
-                  if (fabs(ell->ed->state.value - el->ed->state.value) > DBL_EPSILON) continue;
+                  if (!EQ(ell->pr->tween.time, el->pr->tween.time)) continue;
+                  if (!EQ(ell->pr->tween.v1, el->pr->tween.v1)) continue;
+                  if (!EQ(ell->pr->tween.v2, el->pr->tween.v2)) continue;
+                  if (!EQ(ell->pr->tween.v3, el->pr->tween.v3)) continue;
+                  if (!EQ(ell->pr->tween.v4, el->pr->tween.v4)) continue;
+                  if (!EQ(ell->ed->state.value, el->ed->state.value)) continue;
                   if ((!!ell->ed->state.name) != (!!el->ed->state.name))
                     {
                        if (((!!ell->ed->state.name) && strcmp(ell->ed->state.name, "default")) ||
