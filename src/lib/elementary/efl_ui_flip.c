@@ -536,7 +536,7 @@ _state_update(Evas_Object *obj)
 
    if (mx < 1) mx = 1;  // quick hack to keep curl line visible
 
-   if (mgrad == 0.0) // special horizontal case
+   if (EINA_DBL_EQ(mgrad, 0.0)) // special horizontal case
      mgrad = 0.001;  // quick dirty hack for now
    // else
    {
@@ -2099,7 +2099,7 @@ _efl_ui_flip_interaction_direction_hitsize_set(Eo *obj, Efl_Ui_Flip_Data *sd, Ef
    else if (hitsize > 1.0)
      hitsize = 1.0;
 
-   if (sd->dir_hitsize[i] == hitsize) return;
+   if (EINA_DBL_EQ(sd->dir_hitsize[i], hitsize)) return;
    sd->dir_hitsize[i] = hitsize;
 
    if (hitsize >= 0.0)

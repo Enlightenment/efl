@@ -144,7 +144,7 @@ _transition_event_emission(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data 
              pd->show_request.to = -1;
              _transition_end(obj, pd);
           }
-        if (pd->position == pd->show_request.to)
+        if (EINA_DBL_EQ(pd->position, pd->show_request.to))
           {
              //successfully there
              _transition_end(obj, pd);
@@ -707,7 +707,7 @@ _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Da
         //the api indicates that the caller passes ownership to this function, so we need to unref here
         efl_unref(pd->indicator);
         efl_ui_spotlight_indicator_bind(pd->indicator, obj);
-        if (pd->position != -1)
+        if (!EINA_DBL_EQ(pd->position, -1))
           efl_ui_spotlight_indicator_position_update(pd->indicator, pd->position);
      }
 }

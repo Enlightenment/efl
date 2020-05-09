@@ -4452,7 +4452,7 @@ _elm_gengrid_align_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, double align_x
      align_y = 0.0;
    sd->align_y = align_y;
 
-   if ((old_h != sd->align_x) || (old_y != sd->align_y))
+   if (!EINA_DBL_EQ(old_h, sd->align_x) || !EINA_DBL_EQ(old_y, sd->align_y))
      evas_object_smart_calculate(sd->pan_obj);
 }
 

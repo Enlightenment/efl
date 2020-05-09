@@ -2047,7 +2047,7 @@ _config_flush_get(void)
    evas_font_reinit();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
-   if (pre_scale != _elm_config->scale)
+   if (!EINA_DBL_EQ(pre_scale, _elm_config->scale))
      _elm_rescale();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
@@ -2997,7 +2997,7 @@ elm_config_scale_set(double scale)
 {
    _elm_config->priv.scale = EINA_TRUE;
    if (scale < 0.0) return;
-   if (_elm_config->scale == scale) return;
+   if (EINA_DBL_EQ(_elm_config->scale, scale)) return;
    _elm_config->scale = scale;
    _elm_rescale();
 }
@@ -3049,7 +3049,7 @@ elm_config_password_show_last_timeout_set(double password_show_last_timeout)
 {
    _elm_config->priv.password_show_last_timeout = EINA_TRUE;
    if (password_show_last_timeout < 0.0) return;
-   if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
+   if (EINA_DBL_EQ(_elm_config->password_show_last_timeout, password_show_last_timeout)) return;
    _elm_config->password_show_last_timeout = password_show_last_timeout;
    edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
 }
@@ -4494,12 +4494,13 @@ _elm_config_reload(void)
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
 #define CMP(x) (p##x != _elm_config->x)
+#define DBL_CMP(x) !EINA_DBL_EQ(p##x, _elm_config->x)
    if (
-          CMP(scale)
+          DBL_CMP(scale)
        || CMP(finger_size)
        || CMP(icon_size)
        || CMP(password_show_last)
-       || CMP(password_show_last_timeout)
+       || DBL_CMP(password_show_last_timeout)
        || CMP(week_start)
        || CMP(weekend_start)
        || CMP(weekend_len)
@@ -4513,6 +4514,7 @@ _elm_config_reload(void)
        || CMP(icon_theme)
       )
      _elm_rescale();
+#undef DBL_CMP
 #undef CMP
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
@@ -4695,7 +4697,7 @@ elm_config_transition_duration_factor_set(double factor)
 {
     _elm_config->priv.transition_duration_factor = EINA_TRUE;
     if (factor < 0.0) return;
-    if (_elm_config->transition_duration_factor == factor) return;
+    if (EINA_DBL_EQ(_elm_config->transition_duration_factor, factor)) return;
     _elm_config->transition_duration_factor = factor;
     edje_transition_duration_factor_set(_elm_config->transition_duration_factor);
 }

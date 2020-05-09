@@ -3498,12 +3498,12 @@ _elm_toolbar_align_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, double align)
 {
    if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      {
-        if (sd->align != align)
+        if (!EINA_DBL_EQ(sd->align, align))
           evas_object_box_align_set(sd->bx, 0.5, align);
      }
    else
      {
-        if (sd->align != align)
+        if (!EINA_DBL_EQ(sd->align, align))
           evas_object_box_align_set(sd->bx, align, 0.5);
      }
    sd->align = align;

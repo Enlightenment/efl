@@ -1501,7 +1501,7 @@ elm_slider_step_set(Evas_Object *obj, double step)
         ERR("Wrong param. The step(%lf) should be greater than 0.0", step);
         return;
      }
-   if (sd->step == step) return;
+   if (EINA_DBL_EQ(sd->step, step)) return;
 
    sd->step = step;
 }

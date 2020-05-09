@@ -346,7 +346,7 @@ _transit_animate_cb(void *data)
    duration = transit->time.duration;
    transit->progress = elapsed_time / duration;
 
-   if (transit->revert_mode && transit->revert_begin_progress == 0)
+   if (transit->revert_mode && EINA_DBL_EQ(transit->revert_begin_progress, 0))
      {
         transit->revert_begin_progress = transit->progress;
         transit->time.revert_start = transit->time.current;
@@ -932,14 +932,14 @@ elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
      {
         if (transit->revert_mode)
           {
-             if (transit->time.revert_paused == 0) return;
+             if (EINA_DBL_EQ(transit->time.revert_paused, 0)) return;
              ecore_animator_thaw(transit->animator);
              transit->time.revert_delayed += (ecore_loop_time_get() - transit->time.revert_paused);
              transit->time.revert_paused = 0;
           }
         else
           {
-             if (transit->time.paused == 0) return;
+             if (EINA_DBL_EQ(transit->time.paused, 0)) return;
              ecore_animator_thaw(transit->animator);
              transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
              transit->time.paused = 0;
@@ -952,7 +952,7 @@ elm_transit_paused_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
 
-   if (transit->time.paused == 0)
+   if (EINA_DBL_EQ(transit->time.paused, 0))
      return EINA_FALSE;
 
    return EINA_TRUE;

@@ -1628,7 +1628,7 @@ _efl_ui_scroll_manager_post_event_move_on_hold_eval(Efl_Ui_Scroll_Manager_Data *
                _elm_config->thumbscroll_hold_threshold;
      }
 
-   if ((vx != 0.0) || (vy != 0.0)) _scroll_manager_on_hold_animator_add(sd, vx*sx, vy*sy);
+   if (EINA_DBL_NONZERO(vx) || EINA_DBL_NONZERO(vy)) _scroll_manager_on_hold_animator_add(sd, vx*sx, vy*sy);
    else _scroll_manager_on_hold_animator_del(sd);
 }
 

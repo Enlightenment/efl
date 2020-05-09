@@ -476,7 +476,7 @@ _items_add(Evas_Object *obj)
 EOLIAN static void
 _elm_flipselector_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
 {
-   if ((sd->val_min == min) && (sd->val_max == max)) return;
+   if (EINA_DBL_EQ(sd->val_min, min) && EINA_DBL_EQ(sd->val_max, max)) return;
 
    sd->val_min = min;
    sd->val_max = max;
@@ -494,9 +494,9 @@ _elm_flipselector_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSE
 EOLIAN static void
 _elm_flipselector_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double step)
 {
-   if (sd->step == step) return;
+   if (EINA_DBL_EQ(sd->step, step)) return;
 
-   if (step == 0.0) step = 1.0;
+   if (EINA_DBL_EQ(step, 0.0)) step = 1.0;
    else if (step < 0.0) step *= -1;
 
    sd->step = step;
@@ -512,7 +512,7 @@ _elm_flipselector_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNU
 EOLIAN static double
 _elm_flipselector_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
-   if (sd->val_min == 0 && sd->val_max == 0)
+   if (EINA_DBL_EQ(sd->val_min, 0) && EINA_DBL_EQ(sd->val_max, 0))
      {
         WRN("This API can be used only if you set min and max and flipselector values are numericals");
         return 0;

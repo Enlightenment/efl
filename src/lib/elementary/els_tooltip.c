@@ -385,7 +385,7 @@ _elm_tooltip_reconfigure_orient(Elm_Tooltip *tt,
      {
         dx = -mx;
         mx = -(px / 2);
-        if (tt->rel_pos.x == 0.5)
+        if (EINA_DBL_EQ(tt->rel_pos.x, 0.5))
           {
              tt->rel_pos.x = 0.5 - dx / (double)tcw;
              if (tt->rel_pos.x < 0.0) tt->rel_pos.x = 0.0;
@@ -395,7 +395,7 @@ _elm_tooltip_reconfigure_orient(Elm_Tooltip *tt,
      {
         dx = mx + tw - cw;
         mx = cw - tw + px / 2;
-        if (tt->rel_pos.x == 0.5)
+        if (EINA_DBL_EQ(tt->rel_pos.x, 0.5))
           {
              tt->rel_pos.x = 0.5 + dx / (double)tcw;
              if (tt->rel_pos.x > 1.0) tt->rel_pos.x = 1.0;
@@ -406,7 +406,7 @@ _elm_tooltip_reconfigure_orient(Elm_Tooltip *tt,
      {
         dy = -my;
         my = -(py / 2);
-        if (tt->rel_pos.y == 0.5)
+        if (EINA_DBL_EQ(tt->rel_pos.y, 0.5))
           {
              tt->rel_pos.y = 0.5 - dy / (double)tch;
              if (tt->rel_pos.y < 0.0) tt->rel_pos.y = 0.0;
@@ -416,7 +416,7 @@ _elm_tooltip_reconfigure_orient(Elm_Tooltip *tt,
      {
         dy = my + th - ch;
         my = ch - th + py / 2;
-        if (tt->rel_pos.y == 0.5)
+        if (EINA_DBL_EQ(tt->rel_pos.y, 0.5))
           {
              tt->rel_pos.y = 0.5 + dy / (double)tch;
              if (tt->rel_pos.y > 1.0) tt->rel_pos.y = 1.0;

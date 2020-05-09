@@ -2602,7 +2602,7 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
             ret = efl_access_value_and_text_set(obj, value, NULL);
         else if(efl_isa(obj, EFL_UI_RANGE_DISPLAY_INTERFACE)) {
             efl_ui_range_value_set(obj, value);
-            ret = (efl_ui_range_value_get(obj) == value);
+            ret = EINA_DBL_EQ(efl_ui_range_value_get(obj), value);
         }
         else ret = EINA_FALSE;
         Eldbus_Message *answer = eldbus_message_method_return_new(request_msg);

@@ -619,7 +619,7 @@ _path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
    eina_vector2_normalize(&first, &first);
    eina_vector2_normalize(&last, &last);
    rad = acos(eina_vector2_dot_product(&first, &last));
-   if (rad == 0) return;
+   if (EINA_DBL_EQ(rad, 0)) return;
 
    offset_angle = _rad_to_deg(rad);
    if (r.w > pd->total_length / 2)
@@ -851,8 +851,8 @@ _efl_ui_textpath_circular_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double radius, 
    Eina_Size2D text_size;
    double sweep_length, x, y;
 
-   if (pd->circle.radius == radius &&
-       pd->circle.start_angle == start_angle &&
+   if (EINA_DBL_EQ(pd->circle.radius, radius) &&
+       EINA_DBL_EQ(pd->circle.start_angle, start_angle) &&
        pd->direction == direction &&
        _map_point_calc(pd) > 0)
         return;
@@ -984,9 +984,9 @@ elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start
    EFL_UI_TEXTPATH_DATA_GET(obj, pd);
    if (!pd) return;
 
-   if (pd->circle.x == x && pd->circle.y == y &&
-       pd->circle.radius == radius &&
-       pd->circle.start_angle == start_angle &&
+   if (EINA_DBL_EQ(pd->circle.x, x) && EINA_DBL_EQ(pd->circle.y, y) &&
+       EINA_DBL_EQ(pd->circle.radius, radius) &&
+       EINA_DBL_EQ(pd->circle.start_angle, start_angle) &&
        pd->direction == direction &&
        _map_point_calc(pd) > 0)
         return;

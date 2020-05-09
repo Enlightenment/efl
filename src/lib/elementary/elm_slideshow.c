@@ -63,7 +63,7 @@ _key_action_pause(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_SLIDESHOW_DATA_GET(obj, sd);
 
-   if (sd->timeout)
+   if (EINA_DBL_NONZERO(sd->timeout))
      {
         if (sd->timer)
           ELM_SAFE_FREE(sd->timer, ecore_timer_del);

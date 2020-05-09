@@ -32,29 +32,29 @@ _notify_theme_apply(Evas_Object *obj)
    ax = sd->horizontal_align;
    ay = sd->vertical_align;
 
-   if (ay == 0.0)
+   if (EINA_DBL_EQ(ay, 0.0))
      {
-        if (ax == 0.0)
+        if (EINA_DBL_EQ(ax, 0.0))
           position = "top_left";
-        else if (ax == 1.0)
+        else if (EINA_DBL_EQ(ax, 1.0))
           position = "top_right";
         else
           position = "top";
      }
-   else if (ay == 1.0)
+   else if (EINA_DBL_EQ(ay, 1.0))
      {
-        if (ax == 0.0)
+        if (EINA_DBL_EQ(ax, 0.0))
           position = "bottom_left";
-        else if (ax == 1.0)
+        else if (EINA_DBL_EQ(ax, 1.0))
           position = "bottom_right";
         else
           position = "bottom";
      }
    else
      {
-        if (ax == 0.0)
+        if (EINA_DBL_EQ(ax, 0.0))
           position = "left";
-        else if (ax == 1.0)
+        else if (EINA_DBL_EQ(ax, 1.0))
           position = "right";
         else
           position = "center";
@@ -88,10 +88,10 @@ _notify_move_to_orientation(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_C
 
    ax = sd->horizontal_align;
    ay = sd->vertical_align;
-   if ((efl_ui_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
+   if ((efl_ui_mirrored_get(obj)) && (!EINA_DBL_EQ(ax, ELM_NOTIFY_ALIGN_FILL))) ax = 1.0 - ax;
 
-   if (ax == ELM_NOTIFY_ALIGN_FILL) minw = w;
-   if (ay == ELM_NOTIFY_ALIGN_FILL) minh = h;
+   if (EINA_DBL_EQ(ax, ELM_NOTIFY_ALIGN_FILL)) minw = w;
+   if (EINA_DBL_EQ(ay, ELM_NOTIFY_ALIGN_FILL)) minh = h;
 
    x = x + ((w - minw) * ax);
    y = y + ((h - minh) * ay);
@@ -609,23 +609,23 @@ elm_notify_orient_get(const Evas_Object *obj)
 
    elm_notify_align_get(obj, &horizontal, &vertical);
 
-   if ((horizontal == 0.5) && (vertical == 0.0))
+   if (EINA_DBL_EQ(horizontal, 0.5) && EINA_DBL_EQ(vertical, 0.0))
      orient = ELM_NOTIFY_ORIENT_TOP;
-   else if ((horizontal == 0.5) && (vertical == 0.5))
+   else if (EINA_DBL_EQ(horizontal, 0.5) && EINA_DBL_EQ(vertical, 0.5))
      orient = ELM_NOTIFY_ORIENT_CENTER;
-   else if ((horizontal == 0.5) && (vertical == 1.0))
+   else if (EINA_DBL_EQ(horizontal, 0.5) && EINA_DBL_EQ(vertical, 1.0))
      orient = ELM_NOTIFY_ORIENT_BOTTOM;
-   else if ((horizontal == 0.0) && (vertical == 0.5))
+   else if (EINA_DBL_EQ(horizontal, 0.0) && EINA_DBL_EQ(vertical, 0.5))
      orient = ELM_NOTIFY_ORIENT_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 0.5))
+   else if (EINA_DBL_EQ(horizontal, 1.0) && EINA_DBL_EQ(vertical, 0.5))
      orient = ELM_NOTIFY_ORIENT_RIGHT;
-   else if ((horizontal == 0.0) && (vertical == 0.0))
+   else if (EINA_DBL_EQ(horizontal, 0.0) && EINA_DBL_EQ(vertical, 0.0))
      orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 0.0))
+   else if (EINA_DBL_EQ(horizontal, 1.0) && EINA_DBL_EQ(vertical, 0.0))
      orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
-   else if ((horizontal == 0.0) && (vertical == 1.0))
+   else if (EINA_DBL_EQ(horizontal, 0.0) && EINA_DBL_EQ(vertical, 1.0))
      orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
-   else if ((horizontal == 1.0) && (vertical == 1.0))
+   else if (EINA_DBL_EQ(horizontal, 1.0) && EINA_DBL_EQ(vertical, 1.0))
      orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
    else
      orient = ELM_NOTIFY_ORIENT_TOP;

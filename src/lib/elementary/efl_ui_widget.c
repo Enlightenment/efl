@@ -1482,7 +1482,7 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
 
         if (!pd->on_create)
           {
-             if ((scale != prev_scale) || (th != prev_th) ||
+             if (!EINA_DBL_EQ(scale, prev_scale) || (th != prev_th) ||
                  (pmirrored != mirrored))
                elm_widget_theme(obj);
           }
@@ -2343,7 +2343,7 @@ EOLIAN static void
 _efl_ui_widget_efl_gfx_entity_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
 {
    if (scale < 0.0) scale = 0.0;
-   if (sd->scale != scale)
+   if (!EINA_DBL_EQ(sd->scale, scale))
      {
         sd->scale = scale;
         elm_widget_theme(obj);
@@ -2354,7 +2354,7 @@ EOLIAN static double
 _efl_ui_widget_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    // FIXME: save walking up the tree by storing/caching parent scale
-   if (sd->scale == 0.0)
+   if (EINA_DBL_EQ(sd->scale, 0.0))
      {
         if (sd->parent_obj && elm_widget_is(sd->parent_obj))
           {

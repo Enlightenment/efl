@@ -417,7 +417,7 @@ _cont_obj_anim_start(void *data)
                _drag_anim_start(st);
              else
                {
-                  if (st->anim_tm)
+                  if (EINA_DBL_NONZERO(st->anim_tm))
                     {
                        // even if we don't manage the icons animation, we have
                        // to wait until it is finished before beginning drag.
