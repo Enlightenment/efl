@@ -364,3 +364,9 @@ option('mono-friend-assemblies',
   value : [],
   description : 'List of friend assemblies that can access efl_mono assembly\'s internal types and members.'
 )
+
+option('efl-one',
+  type: 'boolean',
+  value : false,
+  description : 'Build special set of .so´s as a single .so'
+)

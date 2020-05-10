@@ -320,3 +320,5 @@ install_headers(evas_header_src,
 pub_eo_files = []
 package_eo_subdirs += ['canvas', 'gesture']
 package_header_subdirs += ['canvas', 'gesture']
+#special case becase evas has a more structures subfolder
+efl_one_include_dirs += evas_include_directories

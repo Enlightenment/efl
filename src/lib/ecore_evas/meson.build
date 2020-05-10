@@ -52,3 +52,6 @@ ecore_evas = declare_dependency(
 install_headers(ecore_evas_header_src,
   install_dir : dir_package_include,
 )
+
+#a custom directory that must be added to efl_one
+efl_one_include_dirs += [include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))]
