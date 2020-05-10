@@ -25,7 +25,9 @@ efreet_src = [
   'efreet_cache.c',
   'efreet_private.h',
   'efreet_xml.h',
-  'efreet_cache_private.h'
+  'efreet_cache_private.h',
+  'efreet_mime.c',
+  'efreet_trash.c'
 ]
 
 efreet_deps = [eet, ecore, ecore_con, ecore_file, eo, efl, eina, emile, ecore_ipc, buildsystem,intl]
@@ -46,50 +48,39 @@ efreet = declare_dependency(
   dependencies: efreet_pub_deps,
 )
 
-efreet_mime_lib = library('efreet_mime',
-    'efreet_mime.c',
-    dependencies: efreet_pub_deps + [m, efreet, efreet_deps],
-    include_directories : config_dir + [include_directories('.')],
-    install: true,
-    c_args : package_c_args,
-    version : meson.project_version()
-)
-
-
-efreet_mime = declare_dependency(
-  include_directories: [include_directories('.')],
-  link_with: efreet_mime_lib,
-  dependencies: efreet_pub_deps
-)
-
-efreet_trash_lib = library('efreet_trash',
-    'efreet_trash.c',
-    dependencies: efreet_pub_deps + [efreet, efreet_deps],
-    include_directories : config_dir + [include_directories('.')],
-    install: true,
-    c_args : package_c_args,
-    version : meson.project_version()
-)
-
-efreet_trash = declare_dependency(
-  include_directories: [include_directories('.')],
-  link_with: efreet_trash_lib,
-  dependencies: efreet_pub_deps,
-)
-
 install_headers(efreet_header_src,
   install_dir : dir_package_include,
 )
 
-pkgconfig.generate(efreet_mime_lib,
+
+#Deprecated efreet libs
+# everything and everyone should use efreet itself, efreet_mime and efreet_trash are contained in libefreet.so
+# libefreet_mime.so and libefreet_trash.so will just have NEEDED on libefreet.so so the symbols get caught in like that
+
+deprecated_efreet_mime_lib = library('efreet_mime',
+    dependencies: [efreet],
+    include_directories : config_dir + [include_directories('.')],
+    install: true,
+    version : meson.project_version()
+)
+
+deprecated_efreet_trash_lib = library('efreet_trash',
+    dependencies: efreet,
+    include_directories : config_dir + [include_directories('.')],
+    install: true,
+    version : meson.project_version()
+)
+pkgconfig.generate(efreet_lib,
         name : 'efreet-mime',
+        description : 'Deprecated, please just use efreet',
         subdirs : package_version_name,
         version : version_major + '.' + version_minor + '.' + version_micro,
         libraries : efreet_pub_deps,
 )
 
-pkgconfig.generate(efreet_trash_lib,
+pkgconfig.generate(efreet_lib,
         name : 'efreet-trash',
+        description : 'Deprecated, please just use efreet',
         subdirs : package_version_name,
         version : version_major + '.' + version_minor + '.' + version_micro,
         libraries : efreet_pub_deps,

@@ -94,6 +94,12 @@ efreet_init(void)
    if (!efreet_util_init())
      goto shutdown_efreet_menu;
 
+   if (!efreet_internal_mime_init())
+     goto shutdown_efreet_mime;
+
+   if (!efreet_internal_trash_init())
+     goto shutdown_efreet_trash;
+
 #ifdef ENABLE_NLS
    bindtextdomain(PACKAGE, LOCALE_DIR);
    bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -101,6 +107,10 @@ efreet_init(void)
 
    return _efreet_init_count;
 
+shutdown_efreet_trash:
+   efreet_internal_trash_shutdown();
+shutdown_efreet_mime:
+   efreet_internal_mime_shutdown();
 shutdown_efreet_menu:
    efreet_menu_shutdown();
 shutdown_efreet_desktop:
@@ -146,6 +156,8 @@ efreet_shutdown(void)
    efreet_xml_shutdown();
    efreet_cache_shutdown();
    efreet_base_shutdown();
+   efreet_internal_mime_shutdown();
+   efreet_internal_trash_shutdown();
 
    IF_RELEASE(efreet_lang);
    IF_RELEASE(efreet_lang_country);

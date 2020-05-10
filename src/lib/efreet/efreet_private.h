@@ -114,7 +114,7 @@
 
 /**
  * macros that are used all around the code for message processing
- * four macros are defined ERR, WRN, DGB, INF. 
+ * four macros are defined ERR, WRN, DGB, INF.
  * EFREET_MODULE_LOG_DOM should be defined individually for each module
  */
 #ifdef CRI
@@ -213,6 +213,12 @@ void efreet_desktop_shutdown(void);
 
 int efreet_util_init(void);
 int efreet_util_shutdown(void);
+
+int efreet_internal_mime_init(void);
+int efreet_internal_mime_shutdown(void);
+
+int efreet_internal_trash_init(void);
+int efreet_internal_trash_shutdown(void);
 
 const char *efreet_home_dir_get(void);
 void        efreet_dirs_reset(void);

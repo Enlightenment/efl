@@ -32,28 +32,25 @@ static const char *efreet_trash_dir = NULL;
 # define getuid() GetCurrentProcessId()
 #endif
 
-EAPI int
-efreet_trash_init(void)
+
+int
+efreet_internal_trash_init(void)
 {
     if (++_efreet_trash_init_count != 1)
         return _efreet_trash_init_count;
-
-    if (!eina_init())
-        return --_efreet_trash_init_count;
 
     _efreet_trash_log_dom = eina_log_domain_register
       ("efreet_trash", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_trash_log_dom < 0)
     {
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_trash");
-        eina_shutdown();
         return --_efreet_trash_init_count;
     }
     return _efreet_trash_init_count;
 }
 
-EAPI int
-efreet_trash_shutdown(void)
+int
+efreet_internal_trash_shutdown(void)
 {
     if (--_efreet_trash_init_count != 0)
         return _efreet_trash_init_count;
@@ -61,9 +58,20 @@ efreet_trash_shutdown(void)
     IF_RELEASE(efreet_trash_dir);
     eina_log_domain_unregister(_efreet_trash_log_dom);
     _efreet_trash_log_dom = -1;
-    eina_shutdown();
 
     return _efreet_trash_init_count;
+}
+
+EAPI int
+efreet_trash_init(void)
+{
+   return efreet_init();
+}
+
+EAPI int
+efreet_trash_shutdown(void)
+{
+   return efreet_shutdown();
 }
 
 EAPI const char*

@@ -31,7 +31,7 @@ efreet_test_src = [
   'main.c'
 ]
 
-efreet_test_deps = [check, efreet, ecore, ecore_file, efreet_mime, intl]
+efreet_test_deps = [check, efreet, ecore, ecore_file, intl]
 
 efreet_test = executable('efreet_test',
   efreet_test_src,
