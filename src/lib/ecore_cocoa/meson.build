@@ -1,12 +1,18 @@
+cocoa_external_dep = declare_dependency(
+  link_args : ['-lobjc', '-framework', 'CoreFoundation', '-framework', 'cocoa', ],
+)
+
 ecore_cocoa_deps = [eina, ecore_input, ecore, emile, eet]
 ecore_cocoa_pub_deps = [eina]
+ecore_cocoa_ext_deps = [cocoa_external_dep]
+
 pub_eo_file_target = []
 
 ecore_cocoa_header_src = [
   'Ecore_Cocoa.h'
 ]
 
-ecore_cocoa_src = [
+ecore_cocoa_src = files([
   'ecore_cocoa.m',
   'ecore_cocoa_keys.h',
   'ecore_cocoa_window.h',
@@ -15,7 +21,7 @@ ecore_cocoa_src = [
   'ecore_cocoa_app.m',
   'ecore_cocoa_app.h',
   'ecore_cocoa_private.h'
-]
+])
 
 evas_include_directories = [
   include_directories(join_paths('..', 'evas')),
@@ -28,9 +34,9 @@ evas_include_directories = [
 ecore_cocoa_lib = library('ecore_cocoa',
     ecore_cocoa_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_cocoa_deps + ecore_cocoa_pub_deps,
+    dependencies: ecore_cocoa_deps + ecore_cocoa_pub_deps + ecore_cocoa_ext_deps,
+    link_args : '-Wl,-U,_evas_textblock_text_markup_to_utf8',
     include_directories : config_dir + evas_include_directories,
-    link_args : ['-lobjc', '-framework', 'CoreFoundation', '-framework', 'cocoa', '-Wl,-U,_evas_textblock_text_markup_to_utf8'],
     install: true,
     version : meson.project_version()
 )

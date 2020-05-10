@@ -18,3 +18,7 @@ buildsystem = declare_dependency(
   link_with: buildsystem_lib,
   dependencies: [eina],
 )
+
+buildsystem_simple = declare_dependency(
+  include_directories: [include_directories('.'), include_directories(join_paths('..', '..', 'lib'))],
+)

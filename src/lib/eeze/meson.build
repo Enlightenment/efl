@@ -1,5 +1,6 @@
 eeze_deps = [buildsystem]
-eeze_pub_deps = [eina, efl]
+eeze_pub_deps = [eina, efl, ecore, ecore_file]
+eeze_ext_deps = []
 pub_eo_file_target = []
 
 eeze_header_src = [
@@ -10,7 +11,7 @@ eeze_header_src = [
   join_paths('..','..','bin','eeze','eeze_scanner','eeze_scanner.h')
 ]
 
-eeze_src = [
+eeze_src = files([
   'eeze_main.c',
   'eeze_net.c',
   'eeze_net_private.h',
@@ -26,7 +27,7 @@ eeze_src = [
   'eeze_disk_udev.c',
   'eeze_disk_mount.c',
   'eeze_disk_private.h'
-]
+])
 
 if get_option('v4l2')
   config_h.set('HAVE_V4L2', '1')
@@ -37,17 +38,17 @@ endif
 
 if (get_option('libmount'))
   libmount = dependency('mount')
-  eeze_deps += [libmount]
+  eeze_ext_deps += [libmount]
  if libmount.version() == '2.19'
-    eeze_src +=   'eeze_disk_libmount.c'
+    eeze_src +=   files('eeze_disk_libmount.c')
   elif libmount.version() < '2.19'
-    eeze_src +=   'eeze_disk_libmount_old.c'
+    eeze_src +=   files('eeze_disk_libmount_old.c')
   elif libmount.version() > '2.19'
-    eeze_src +=   'eeze_disk_libmount_new.c'
+    eeze_src +=   files('eeze_disk_libmount_new.c')
   endif
   config_h.set('HAVE_EEZE_MOUNT', '1')
 else
-  eeze_src +=   'eeze_disk_dummy.c'
+  eeze_src +=   files('eeze_disk_dummy.c')
 endif
 
 options_to_check = ['eject', 'mount', 'unmount']
@@ -55,7 +56,7 @@ options_to_check = ['eject', 'mount', 'unmount']
 udev = dependency('libudev',
   version: ['>=148']
 )
-eeze_deps += udev
+eeze_ext_deps += udev
 
 if udev.version() < '199'
    config_h.set('OLD_LIBUDEV', '1')
@@ -87,7 +88,7 @@ config_h.set_quoted('EEZE_UNMOUNT_BIN', unmount_bin)
 
 eeze_lib = library('eeze',
     eeze_src, pub_eo_file_target,
-    dependencies: eeze_deps + eeze_pub_deps + [ecore, ecore_file, buildsystem, eeze_deps],
+    dependencies: eeze_deps + eeze_pub_deps + eeze_deps + eeze_ext_deps,
     include_directories : config_dir,
     install: true,
     c_args : package_c_args,

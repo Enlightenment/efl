@@ -1,6 +1,6 @@
-ecore_con_deps = []
+ecore_con_deps = [buildsystem, eldbus, eet]
 ecore_con_pub_deps = [eina, eo, efl, ecore]
-
+ecore_con_ext_deps = [buildsystem_simple, dl, http_parser]
 if sys_windows == true
   ipv6 = true
 else
@@ -110,7 +110,7 @@ ecore_con_header_src = [
   'ecore_con_eet_server_obj_eo.legacy.h'
 ]
 
-ecore_con_src = [
+ecore_con_src = files([
   'ecore_con_alloc.c',
   'ecore_con.c',
   'ecore_con_proxy_helper.c',
@@ -145,46 +145,46 @@ ecore_con_src = [
   'efl_net_server_ssl.c',
   'ecore_con_local.c',
   'efl_net_ip_address.c'
-]
+])
 
 if sys_windows == true
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net_socket_windows.c',
     'efl_net_dialer_windows.c',
     'efl_net_server_windows.c'
-  ]
+  ])
 else
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net_socket_unix.c',
     'efl_net_dialer_unix.c',
     'efl_net_server_unix.c'
-  ]
+  ])
 endif
 
 if get_option('network-backend') == 'none'
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net_control_access_point-none.c',
     'efl_net_control_technology-none.c',
     'efl_net_control-none.c',
     'efl_net_session-none.c'
-  ]
+  ])
 else
-  ecore_con_src += [
+  ecore_con_src += files([
     'efl_net-connman.h',
     'efl_net-connman.c',
     'efl_net_control_access_point-connman.c',
     'efl_net_control_technology-connman.c',
     'efl_net_control-connman.c',
     'efl_net_session-connman.c'
-  ]
+  ])
   ecore_con_deps += eldbus
 endif
 
-ecore_con_deps += crypto
+ecore_con_ext_deps += crypto
 
 ecore_con_lib = library('ecore_con',
     ecore_con_src, pub_eo_file_target,
-    dependencies: [ecore, ecore_con_deps, http_parser, eldbus, eet, buildsystem, dl],
+    dependencies: [ecore_con_deps, ecore_con_ext_deps, ecore_con_pub_deps],
     include_directories : config_dir,
     install: true,
     c_args : package_c_args,

@@ -1,5 +1,6 @@
 eo_deps = []
 eo_pub_deps = [eina]
+eo_ext_deps = [valgrind, dl, execinfo]
 
 pub_eo_files = [
   'efl_object.eo',
@@ -7,7 +8,7 @@ pub_eo_files = [
   'efl_object_override.eo'
 ]
 
-eo_src = [
+eo_src = files([
   'eo.c',
   'eo_ptr_indirection.c',
   'eo_ptr_indirection.h',
@@ -17,7 +18,7 @@ eo_src = [
   'eo_add_fallback.h',
   'eo_private.h',
   'eo_internal.h'
-]
+])
 
 pub_eo_types_files = [
   'eina_types.eot'
@@ -61,7 +62,7 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 eo_lib = library('eo',
     eo_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: [eina, valgrind, dl, execinfo],
+    dependencies: [eo_deps, eo_pub_deps, eo_ext_deps],
     install: true,
     version : meson.project_version()
 )
@@ -69,7 +70,7 @@ eo_lib = library('eo',
 eo_lib_dbg = library('eo_dbg',
     eo_src, pub_eo_file_target,
     c_args : package_c_args + [ '-DEO_DEBUG' ],
-    dependencies: [eina, valgrind, dl, execinfo],
+    dependencies: [eo_deps, eo_pub_deps, eo_ext_deps],
     install: true,
     version : meson.project_version()
 )

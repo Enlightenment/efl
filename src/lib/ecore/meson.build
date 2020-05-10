@@ -1,5 +1,6 @@
-ecore_deps = [intl]
+ecore_deps = []
 ecore_pub_deps = [eina, eo, efl]
+ecore_ext_deps = [intl, m, buildsystem]
 
 pub_legacy_eo_files = [
   'ecore_event_message.eo',
@@ -98,7 +99,7 @@ ecore_header_src = [
   'efl_loop_timer_eo.legacy.h',
 ]
 
-ecore_src = [
+ecore_src = files([
   'efl_app.c',
   'ecore.c',
   'ecore_alloc.c',
@@ -168,18 +169,18 @@ ecore_src = [
   'efl_core_env.c',
   'efl_core_proc_env.c',
   'efl_core_command_line.c',
-]
+])
 
 if sys_windows == true
   #nothing for now ... needs testing
-  ecore_src += ['ecore_exe_win32.c']
+  ecore_src += files(['ecore_exe_win32.c'])
 else
-  ecore_src += ['ecore_signal.c', 'ecore_exe_posix.c']
+  ecore_src += files(['ecore_signal.c', 'ecore_exe_posix.c'])
 endif
 
 if get_option('glib') == true and sys_windows == false
-  ecore_deps += dependency('glib-2.0')
-  ecore_deps += dependency('gthread-2.0')
+  ecore_ext_deps += dependency('glib-2.0')
+  ecore_ext_deps += dependency('gthread-2.0')
   config_h.set('GLIB_INTEGRATION_ALWAYS', '1')
   config_h.set('HAVE_GLIB', '1')
 endif
@@ -194,7 +195,7 @@ endif
 
 ecore_lib = library('ecore',
     ecore_src, pub_eo_file_target,
-    dependencies: ecore_pub_deps + [m, buildsystem, ecore_deps],
+    dependencies: ecore_pub_deps + [ecore_deps, ecore_ext_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,

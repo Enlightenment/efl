@@ -11,7 +11,7 @@ foreach loader_inst : evas_image_loaders_file
       shared_module('shared_loader_'+loader, file,
         c_args : package_c_args,
         include_directories : config_dir,
-        dependencies : [eina, evas] + loader_deps,
+        dependencies : [eina, evas, evas_ext_deps] + loader_deps,
         install : true,
         install_dir : mod_install_dir,
         name_suffix : sys_mod_extension

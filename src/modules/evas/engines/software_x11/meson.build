@@ -26,11 +26,11 @@ config_h.set('BUILD_ENGINE_SOFTWARE_XLIB', '1')
 
 #ecore_x_deps carries all the extensions etc. so we dont have to search them twice
 #it looks weird but is right, gl_deps is needed for evas_x_egl.c
-engine_deps = [x11, ecore_x, ecore_x_deps, gl_deps]
+engine_deps += [x11, ecore_x, ecore_x_deps, gl_deps]
 
 shared_module(mod_full_name, engine_src,
   include_directories : config_dir + [engine_include_dir],
-  dependencies : [eina, evas] + engine_deps,
+  dependencies : engine_deps,
   install : true,
   install_dir : mod_install_dir,
   name_suffix : sys_mod_extension

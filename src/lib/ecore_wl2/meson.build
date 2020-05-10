@@ -1,14 +1,13 @@
-ecore_wl2_deps = [
-  dependency('wayland-client'), dependency('wayland-server'), dependency('xkbcommon'),
-  wayland_protocol, dl, m, ecore, ecore_input, libdrm, buildsystem
-]
+ecore_wl2_deps = [ecore, ecore_input, buildsystem]
 ecore_wl2_pub_deps = [eina, ecore]
+ecore_wl2_ext_deps = [dependency('wayland-client'), dependency('wayland-server'), dependency('xkbcommon'),
+  wayland_protocol, libdrm, buildsystem_simple, dl, m]
 
 ecore_wl2_header_src = [
   'Ecore_Wl2.h'
 ]
 
-ecore_wl2_src = [
+ecore_wl2_src = files([
   'ecore_wl2_internal.h',
   'ecore_wl2_subsurf.c',
   'ecore_wl2_dnd.c',
@@ -20,12 +19,12 @@ ecore_wl2_src = [
   'ecore_wl2_private.h',
   'ecore_wl2_buffer.c',
   'ecore_wl2_surface.c'
-]
+])
 
 ecore_wl2_lib = library('ecore_wl2',
     ecore_wl2_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_wl2_deps + ecore_wl2_pub_deps,
+    dependencies: ecore_wl2_deps + ecore_wl2_pub_deps + ecore_wl2_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()
@@ -36,6 +35,11 @@ ecore_wl2 = declare_dependency(
   link_with: ecore_wl2_lib,
   sources : pub_eo_file_target + priv_eo_file_target,
   dependencies: ecore_wl2_pub_deps,
+)
+
+ecore_wl2_internal_headers = declare_dependency(
+  include_directories: include_directories('.'),
+  dependencies: [wayland_protocol_simple, libdrm, dependency('wayland-client'), dependency('wayland-server'), dependency('xkbcommon'),],
 )
 
 install_headers(ecore_wl2_header_src,

@@ -2,16 +2,17 @@ ecore_imf_evas_header_src = [
   'Ecore_IMF_Evas.h'
 ]
 
-ecore_imf_evas_src = [
+ecore_imf_evas_src = files([
   'ecore_imf_evas.c'
-]
+])
 
 ecore_imf_evas_deps = [ecore_imf, evas]
 ecore_imf_evas_pub_deps = [eina, eo, efl]
+ecore_imf_evas_ext_deps = [m]
 
 ecore_imf_evas_lib = library('ecore_imf_evas',
     ecore_imf_evas_src,
-    dependencies: ecore_imf_evas_pub_deps + [m] + ecore_imf_evas_deps,
+    dependencies: ecore_imf_evas_pub_deps + ecore_imf_evas_deps + ecore_imf_evas_ext_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
     c_args : package_c_args,

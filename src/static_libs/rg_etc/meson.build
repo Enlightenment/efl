@@ -9,3 +9,7 @@ rg_etc = declare_dependency(
   include_directories: include_directories('.'),
   sources : rg_etc_src
 )
+
+rg_etc_simple = declare_dependency(
+  include_directories: include_directories('.'),
+)

@@ -712,7 +712,7 @@ elementary_header_src = [
   'Elementary_Cursor.h'
 ] + elementary_pub_headers + elementary_headers_unstable
 
-elementary_src = [
+elementary_src = files([
   'elm_priv.h',
   'elementary_config.h',
   'els_box.h',
@@ -947,12 +947,12 @@ elementary_src = [
   'efl_ui_stack.c',
   'efl_ui_separator.c',
   'efl_ui_spotlight_animation_manager.c',
-]
+])
 
-elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, eio, atspi, dl, intl]
+elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, eio]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,
                        edje, eldbus, efreet, ethumb_client, efl]
-
+elementary_ext_deps = [atspi, dl, intl]
 elm_options = configuration_data()
 
 config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.build_root())
@@ -986,6 +986,10 @@ endif
 if get_option('wl')
   config_h.set('HAVE_ELEMENTARY_WL2', '1')
   elementary_deps += ecore_wl2
+  elementary_ext_deps += declare_dependency(
+    include_directories: include_directories([join_paths('..', '..', 'modules', 'ecore_evas', 'engines', 'wayland'), join_paths('..', '..', 'lib', 'ecore_wl2')]),
+    dependencies : ecore_wl2_internal_headers
+  )
 endif
 
 if get_option('drm')
@@ -1013,8 +1017,8 @@ elm_package_c_args =  package_c_args
 
 elementary_lib = library('elementary',
     elementary_src, pub_eo_file_target, priv_eo_file_target, c, embed_config,
-    dependencies: elementary_pub_deps + elementary_deps,
-    include_directories : config_dir + [include_directories('.')] + [include_directories(join_paths('..', '..', '..'))] + [ecore_evas_wayland_engine_include_dir],
+    dependencies: elementary_pub_deps + elementary_deps + elementary_ext_deps,
+    include_directories : config_dir + [include_directories('.')] + [include_directories(join_paths('..', '..', '..'))],
     install: true,
     c_args : elm_package_c_args,
     version : meson.project_version()
@@ -1026,7 +1030,6 @@ elementary = declare_dependency(
   sources : pub_eo_file_target + priv_eo_file_target,
   dependencies: elementary_pub_deps,
 )
-
 
 if get_option('install-eo-files')
   install_data(pub_eo_files + pub_eo_types_files,

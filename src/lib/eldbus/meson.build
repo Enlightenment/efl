@@ -1,5 +1,6 @@
 eldbus_deps = [ecore]
 eldbus_pub_deps = [eina, eo, efl]
+eldbus_ext_deps = []
 
 pub_eo_files = [
   'eldbus_model_connection.eo',
@@ -61,7 +62,7 @@ eldbus_header_src = [
   'eldbus_message_eina_value.h'
 ]
 
-eldbus_src = [
+eldbus_src = files([
   'eldbus_private.h',
   'eldbus_private_types.h',
   'eldbus_model_private.h',
@@ -90,14 +91,14 @@ eldbus_src = [
   'eldbus_model_arguments.c',
   'eldbus_model_signal.c',
   'eldbus_introspection.c'
-]
+])
 
-eldbus_deps += dependency('dbus-1')
+eldbus_ext_deps += dependency('dbus-1')
 
 eldbus_lib = library('eldbus',
     eldbus_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: eldbus_pub_deps + eldbus_deps,
+    dependencies: eldbus_pub_deps + eldbus_deps + eldbus_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()

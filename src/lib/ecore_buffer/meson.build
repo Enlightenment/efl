@@ -1,12 +1,13 @@
-ecore_buffer_deps = [dependency('wayland-client'), dependency('wayland-server'), ecore]
+ecore_buffer_deps = [ecore]
 ecore_buffer_pub_deps = [eina]
+ecore_buffer_ext_deps = [dependency('wayland-client'), dependency('wayland-server')]
 
 ecore_buffer_header_src = [
   'Ecore_Buffer.h',
   'Ecore_Buffer_Queue.h'
 ]
 
-ecore_buffer_src = [
+ecore_buffer_src = files([
   'bq_mgr_protocol.c',
   'buffer_queue.c',
   'shared_buffer.c',
@@ -15,12 +16,12 @@ ecore_buffer_src = [
   'ecore_buffer_con.c',
   'ecore_buffer_provider.c',
   'ecore_buffer_consumer.c'
-]
+])
 
 ecore_buffer_lib = library('ecore_buffer',
     ecore_buffer_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_buffer_pub_deps + ecore_buffer_deps,
+    dependencies: ecore_buffer_pub_deps + ecore_buffer_deps + ecore_buffer_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()

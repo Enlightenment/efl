@@ -122,7 +122,7 @@ examples = [
 ]
 
 foreach example : examples
-  executable(example, example + '.c', dependencies: [elementary, ecore, eio])
+  executable(example, example + '.c', dependencies: [elementary, ecore, eio, m])
 endforeach
 if get_option('bindings').contains('cxx')
   cxx_examples = [

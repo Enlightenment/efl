@@ -1,19 +1,19 @@
 ecore_ipc_deps = [ecore, ecore_con]
 ecore_ipc_pub_deps = [eina]
-
+ecore_ipc_ext_deps = []
 ecore_ipc_header_src = [
   'Ecore_Ipc.h'
 ]
 
-ecore_ipc_src = [
+ecore_ipc_src = files([
   'ecore_ipc.c',
   'ecore_ipc_private.h',
-]
+])
 
 ecore_ipc_lib = library('ecore_ipc',
     ecore_ipc_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_ipc_deps + ecore_ipc_pub_deps,
+    dependencies: [ecore_ipc_deps, ecore_ipc_pub_deps, ecore_ipc_ext_deps],
     include_directories : config_dir,
     install: true,
     version : meson.project_version()
