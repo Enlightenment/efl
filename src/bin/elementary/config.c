@@ -213,7 +213,7 @@ bf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -224,7 +224,7 @@ bf_change(void *data       EINA_UNUSED,
    double bf = elm_config_scroll_bounce_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (bf == val) return;
+   if (EINA_DBL_EQ(bf, val)) return;
    elm_config_scroll_bounce_friction_set(val);
    elm_config_all_flush();
 }
@@ -238,7 +238,7 @@ ps_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -249,7 +249,7 @@ ps_change(void *data       EINA_UNUSED,
    double ps = elm_config_scroll_page_scroll_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (ps == val) return;
+   if (EINA_DBL_EQ(ps, val)) return;
    elm_config_scroll_page_scroll_friction_set(val);
    elm_config_all_flush();
 }
@@ -263,7 +263,7 @@ bis_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -274,7 +274,7 @@ bis_change(void *data       EINA_UNUSED,
    double bis = elm_config_scroll_bring_in_scroll_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (bis == val) return;
+   if (EINA_DBL_EQ(bis, val)) return;
    elm_config_scroll_bring_in_scroll_friction_set(val);
    elm_config_all_flush();
 }
@@ -288,7 +288,7 @@ zf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -299,7 +299,7 @@ zf_change(void *data       EINA_UNUSED,
    double zf = elm_config_scroll_zoom_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (zf == val) return;
+   if (EINA_DBL_EQ(zf, val)) return;
    elm_config_scroll_zoom_friction_set(val);
    elm_config_all_flush();
 }
@@ -313,7 +313,7 @@ smooth_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 100.0))) / 100.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -324,7 +324,7 @@ smooth_change(void *data       EINA_UNUSED,
    double zf = elm_config_scroll_thumbscroll_smooth_amount_get();
    double val = elm_slider_value_get(obj);
 
-   if (zf == val) return;
+   if (EINA_DBL_EQ(zf, val)) return;
    elm_config_scroll_thumbscroll_smooth_amount_set(val);
    elm_config_all_flush();
 }
@@ -338,7 +338,7 @@ smooth_win_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 100.0))) / 100.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -349,7 +349,7 @@ smooth_win_change(void *data       EINA_UNUSED,
    double zf = elm_config_scroll_thumbscroll_smooth_time_window_get();
    double val = elm_slider_value_get(obj);
 
-   if (zf == val) return;
+   if (EINA_DBL_EQ(zf, val)) return;
    elm_config_scroll_thumbscroll_smooth_time_window_set(val);
    elm_config_all_flush();
 }
@@ -378,7 +378,7 @@ tst_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -389,7 +389,7 @@ tst_change(void *data       EINA_UNUSED,
    double tst = elm_config_scroll_thumbscroll_threshold_get();
    double val = elm_slider_value_get(obj);
 
-   if (tst == val) return;
+   if (EINA_DBL_EQ(tst, val)) return;
    elm_config_scroll_thumbscroll_threshold_set(val);
    elm_config_all_flush();
 }
@@ -403,7 +403,7 @@ tsht_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -414,7 +414,7 @@ tsht_change(void *data       EINA_UNUSED,
    double tst = elm_config_scroll_thumbscroll_hold_threshold_get();
    double val = elm_slider_value_get(obj);
 
-   if (tst == val) return;
+   if (EINA_DBL_EQ(tst, val)) return;
    elm_config_scroll_thumbscroll_hold_threshold_set(val);
    elm_config_all_flush();
 }
@@ -428,7 +428,7 @@ tsmt_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -439,7 +439,7 @@ tsmt_change(void *data       EINA_UNUSED,
    double tsmt = elm_config_scroll_thumbscroll_momentum_threshold_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsmt == val) return;
+   if (EINA_DBL_EQ(tsmt, val)) return;
    elm_config_scroll_thumbscroll_momentum_threshold_set(val);
    elm_config_all_flush();
 }
@@ -453,7 +453,7 @@ tsfdt_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -464,7 +464,7 @@ tsfdt_change(void *data       EINA_UNUSED,
    double tsfdt = elm_config_scroll_thumbscroll_flick_distance_tolerance_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsfdt == val) return;
+   if (EINA_DBL_EQ(tsfdt, val)) return;
    elm_config_scroll_thumbscroll_flick_distance_tolerance_set(val);
    elm_config_all_flush();
 }
@@ -478,7 +478,7 @@ tsf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -489,7 +489,7 @@ tsf_change(void *data       EINA_UNUSED,
    double tsf = elm_config_scroll_thumbscroll_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsf == val) return;
+   if (EINA_DBL_EQ(tsf, val)) return;
    elm_config_scroll_thumbscroll_friction_set(val);
    elm_config_all_flush();
 }
@@ -503,7 +503,7 @@ tsmf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -514,7 +514,7 @@ tsmf_change(void *data       EINA_UNUSED,
    double tsmf = elm_config_scroll_thumbscroll_min_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsmf == val) return;
+   if (EINA_DBL_EQ(tsmf, val)) return;
    elm_config_scroll_thumbscroll_min_friction_set(val);
    elm_config_all_flush();
 }
@@ -528,7 +528,7 @@ tsfs_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -539,7 +539,7 @@ tsfs_change(void *data       EINA_UNUSED,
    double tsfs = elm_config_scroll_thumbscroll_friction_standard_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsfs == val) return;
+   if (EINA_DBL_EQ(tsfs, val)) return;
    elm_config_scroll_thumbscroll_friction_standard_set(val);
    elm_config_all_flush();
 }
@@ -553,7 +553,7 @@ tsbf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -564,7 +564,7 @@ tsbf_change(void *data       EINA_UNUSED,
    double tsbf = elm_config_scroll_thumbscroll_border_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsbf == val) return;
+   if (EINA_DBL_EQ(tsbf, val)) return;
    elm_config_scroll_thumbscroll_border_friction_set(val);
    elm_config_all_flush();
 }
@@ -578,7 +578,7 @@ tssf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 20.0))) / 20.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -589,7 +589,7 @@ tssf_change(void *data       EINA_UNUSED,
    double tssf = elm_config_scroll_thumbscroll_sensitivity_friction_get();
    double val = elm_slider_value_get(obj);
 
-   if (tssf == val) return;
+   if (EINA_DBL_EQ(tssf, val)) return;
    elm_config_scroll_thumbscroll_sensitivity_friction_set(val);
    elm_config_all_flush();
 }
@@ -603,7 +603,7 @@ tsat_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -614,7 +614,7 @@ tsat_change(void *data       EINA_UNUSED,
    double tsat = elm_config_scroll_thumbscroll_acceleration_threshold_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsat == val) return;
+   if (EINA_DBL_EQ(tsat, val)) return;
    elm_config_scroll_thumbscroll_acceleration_threshold_set(val);
    elm_config_all_flush();
 }
@@ -628,7 +628,7 @@ tsatl_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -639,7 +639,7 @@ tsatl_change(void *data       EINA_UNUSED,
    double tsatl = elm_config_scroll_thumbscroll_acceleration_time_limit_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsatl == val) return;
+   if (EINA_DBL_EQ(tsatl, val)) return;
    elm_config_scroll_thumbscroll_acceleration_time_limit_set(val);
    elm_config_all_flush();
 }
@@ -653,7 +653,7 @@ tsaw_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -664,7 +664,7 @@ tsaw_change(void *data       EINA_UNUSED,
    double tsaw = elm_config_scroll_thumbscroll_acceleration_weight_get();
    double val = elm_slider_value_get(obj);
 
-   if (tsaw == val) return;
+   if (EINA_DBL_EQ(tsaw, val)) return;
    elm_config_scroll_thumbscroll_acceleration_weight_set(val);
    elm_config_all_flush();
 }
@@ -692,7 +692,7 @@ cf_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 5.0))) / 5.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -703,7 +703,7 @@ cf_change(void *data       EINA_UNUSED,
    double cf = elm_config_cache_flush_interval_get();
    double val = elm_slider_value_get(obj);
 
-   if (cf == val) return;
+   if (EINA_DBL_EQ(cf, val)) return;
    elm_config_cache_flush_interval_set(val);
    elm_config_all_flush();
 }
@@ -717,7 +717,7 @@ fc_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -728,7 +728,7 @@ fc_change(void *data       EINA_UNUSED,
    double font_cache = elm_config_cache_font_cache_size_get();
    double val = elm_slider_value_get(obj);
 
-   if (font_cache == val) return;
+   if (EINA_DBL_EQ(font_cache, val)) return;
    elm_config_cache_font_cache_size_set(val * 1024);
    elm_config_all_flush();
 }
@@ -742,7 +742,7 @@ ic_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -753,7 +753,7 @@ ic_change(void *data       EINA_UNUSED,
    double image_cache = elm_config_cache_image_cache_size_get();
    double val = elm_slider_value_get(obj);
 
-   if (image_cache == val) return;
+   if (EINA_DBL_EQ(image_cache, val)) return;
    elm_config_cache_image_cache_size_set(val * 1024);
    elm_config_all_flush();
 }
@@ -767,7 +767,7 @@ sc_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 10.0))) / 10.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -778,7 +778,7 @@ sc_change(void *data       EINA_UNUSED,
    double scale = elm_config_scale_get();
    double val = elm_slider_value_get(obj);
 
-   if (scale == val) return;
+   if (EINA_DBL_EQ(scale, val)) return;
    elm_config_scale_set(val);
    elm_config_all_flush();
 }
@@ -792,7 +792,7 @@ fs_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 5.0))) / 5.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -803,7 +803,7 @@ fs_change(void *data       EINA_UNUSED,
    double fs = elm_config_finger_size_get();
    double val = elm_slider_value_get(obj);
 
-   if (fs == val) return;
+   if (EINA_DBL_EQ(fs, val)) return;
    elm_config_finger_size_set(val);
    elm_config_all_flush();
 }
@@ -817,7 +817,7 @@ efc_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 5.0))) / 5.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -828,7 +828,7 @@ efc_change(void *data       EINA_UNUSED,
    double efc = elm_config_cache_edje_file_cache_size_get();
    double val = elm_slider_value_get(obj);
 
-   if (efc == val) return;
+   if (EINA_DBL_EQ(efc, val)) return;
    elm_config_cache_edje_file_cache_size_set(val);
    elm_config_all_flush();
 }
@@ -842,7 +842,7 @@ ecc_round(void *data       EINA_UNUSED,
    double v;
 
    v = ((double)((int)(val * 5.0))) / 5.0;
-   if (v != val) elm_slider_value_set(obj, v);
+   if (!EINA_DBL_EQ(v, val)) elm_slider_value_set(obj, v);
 }
 
 static void
@@ -853,7 +853,7 @@ ecc_change(void *data       EINA_UNUSED,
    double ecc = elm_config_cache_edje_collection_cache_size_get();
    double val = elm_slider_value_get(obj);
 
-   if (ecc == val) return;
+   if (EINA_DBL_EQ(ecc, val)) return;
    elm_config_cache_edje_collection_cache_size_set(val);
    elm_config_all_flush();
 }
@@ -944,7 +944,7 @@ transition_duration_change(void *data EINA_UNUSED,
    double val = elm_slider_value_get(obj);
    Eina_Bool scale = elm_config_transition_duration_factor_get();
 
-   if (scale == val) return;
+   if (EINA_DBL_EQ(scale, val)) return;
    elm_config_transition_duration_factor_set(val);
    elm_config_all_flush();
 }

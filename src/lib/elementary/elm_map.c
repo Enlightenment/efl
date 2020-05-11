@@ -4331,7 +4331,7 @@ _elm_map_efl_ui_zoom_zoom_level_set(Eo *obj, Elm_Map_Data *sd, double zoom)
 
    if (sd->mode != EFL_UI_ZOOM_MODE_MANUAL) return;
    if (zoom < 0) zoom = 0;
-   if (sd->zoom == zoom) return;
+   if (EINA_DBL_EQ(sd->zoom, zoom)) return;
 
    sd->calc_job.zoom = zoom;
    sd->calc_job.zoom_mode_set = _zoom_mode_set;

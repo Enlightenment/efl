@@ -60,11 +60,11 @@ _timer2_cb(void *data)
 
    // check set new interval for timer 1
    ecore_timer_interval_set(timer->timer1, timer->interval_1[timer->num_elem]);
-   fail_if(timer->interval_1[timer->num_elem] != ecore_timer_interval_get(timer->timer1), "Error set new interval");
+   fail_if(!EINA_DBL_EQ(timer->interval_1[timer->num_elem], ecore_timer_interval_get(timer->timer1)), "Error set new interval");
 
    // check set new precision
    ecore_timer_precision_set(timer->precision[timer->num_elem]);
-   fail_if(timer->precision[timer->num_elem] != ecore_timer_precision_get(), "Error set new precision");
+   fail_if(!EINA_DBL_EQ(timer->precision[timer->num_elem], ecore_timer_precision_get()), "Error set new precision");
 
    // check removal timer 2
    if (ecore_timer_del(timer->timer2))

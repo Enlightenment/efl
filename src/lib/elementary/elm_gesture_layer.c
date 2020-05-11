@@ -3582,7 +3582,7 @@ _rotate_test(Evas_Object *obj,
    Gesture_Info *gesture;
    Rotate_Type *st = NULL;
 
-   if (!_elm_config->glayer_rotate_finger_enable)
+   if (EINA_DBL_EQ(_elm_config->glayer_rotate_finger_enable, 0))
      return;
 
    if (!pe)

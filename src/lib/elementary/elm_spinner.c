@@ -134,7 +134,7 @@ _entry_show(Elm_Spinner_Data *sd)
 
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
-        if (sv->value == sd->val)
+        if (EINA_DBL_EQ(sv->value, sd->val))
           {
              snprintf(buf, sizeof(buf), "%s", sv->label);
              goto apply;
@@ -196,7 +196,7 @@ _label_write(Evas_Object *obj)
 
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
-        if (sv->value == sd->val)
+        if (EINA_DBL_EQ(sv->value, sd->val))
           {
              snprintf(buf, sizeof(buf), "%s", sv->label);
              goto apply;
@@ -245,7 +245,7 @@ _value_set(Evas_Object *obj,
    if (sd->round > 0)
      {
         //Spin value changed by entry input.
-        if (changed != 0)
+        if (EINA_DBL_NONZERO(changed))
           new_val = sd->val_base +
             (double)((((int)((val + changed) - sd->val_base)) / sd->round) * sd->round);
         else
@@ -270,12 +270,12 @@ _value_set(Evas_Object *obj,
           new_val = sd->val_max;
      }
 
-   if (new_val == sd->val) return EINA_FALSE;
+   if (EINA_DBL_EQ(new_val, sd->val)) return EINA_FALSE;
    sd->val = new_val;
 
-   if (sd->val == sd->val_min)
+   if (EINA_DBL_EQ(sd->val, sd->val_min))
      efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_MIN_REACHED, NULL);
-   else if (sd->val == sd->val_max)
+   else if (EINA_DBL_EQ(sd->val, sd->val_max))
      efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_MAX_REACHED, NULL);
 
    efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
@@ -334,7 +334,7 @@ _drag_cb(void *data,
    else
      efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"), &pos, NULL);
 
-   if (sd->drag_prev_pos != 0)
+   if (EINA_DBL_NONZERO(sd->drag_prev_pos))
      sd->drag_val_step = pow((pos - sd->drag_prev_pos), 2);
    else
      sd->drag_val_step = 1;
@@ -688,7 +688,7 @@ _spin_value(void *data)
    double real_speed = sd->spin_speed;
 
    /* Sanity check: our step size should be at least as large as our rounding value */
-   if ((sd->spin_speed != 0.0) && (fabs(sd->spin_speed) < sd->round))
+   if (EINA_DBL_NONZERO(sd->spin_speed) && (fabs(sd->spin_speed) < sd->round))
      {
         WRN("The spinning step is smaller than the rounding value, please check your code");
         real_speed = sd->spin_speed > 0 ? sd->round : -sd->round;
@@ -800,11 +800,11 @@ _button_inc_dec_start_cb(void *data,
           {
              if (sd->inc_btn_activated)
                {
-                  if (sd->val == sd->val_min) return;
+                  if (EINA_DBL_EQ(sd->val, sd->val_min)) return;
                }
              else
                {
-                  if (sd->val == sd->val_max) return;
+                  if (EINA_DBL_EQ(sd->val, sd->val_max)) return;
                }
           }
      }
@@ -1438,7 +1438,7 @@ _elm_spinner_label_format_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 EOLIAN static void
 _elm_spinner_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
 {
-   if ((sd->val_min == min) && (sd->val_max == max)) return;
+   if (EINA_DBL_EQ(sd->val_min, min) && EINA_DBL_EQ(sd->val_max, max)) return;
 
    sd->val_min = min;
    sd->val_max = max;
@@ -1472,7 +1472,7 @@ _elm_spinner_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static void
 _elm_spinner_efl_ui_range_display_range_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
 {
-   if (sd->val == val) return;
+   if (EINA_DBL_EQ(sd->val, val)) return;
 
    sd->val = (sd->round <= 0) ? val : sd->val_base +
       (double)((((int)(val - sd->val_base + (sd->round / 2))) / sd->round) * sd->round);
@@ -1520,7 +1520,7 @@ _elm_spinner_special_value_add(Eo *obj, Elm_Spinner_Data *sd, double value, cons
 
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
-        if (sv->value != value)
+        if (!EINA_DBL_EQ(sv->value, value))
           continue;
 
         eina_stringshare_replace(&sv->label, label);
@@ -1549,7 +1549,7 @@ elm_spinner_special_value_del(Evas_Object *obj,
 
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
-        if (sv->value != value)
+        if (!EINA_DBL_EQ(sv->value, value))
           continue;
 
         sd->special_values = eina_list_remove_list(sd->special_values, l);
@@ -1572,7 +1572,7 @@ elm_spinner_special_value_get(Evas_Object *obj,
 
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
-        if (sv->value == value)
+        if (EINA_DBL_EQ(sv->value, value))
           return sv->label;
      }
 

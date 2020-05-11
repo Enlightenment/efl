@@ -21,7 +21,7 @@ static void
 _emit_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Plain_Manager_Data *pd)
 {
    double absolut_position = efl_pack_index_get(pd->container, pd->current_content);
-   if (pd->last_pos != absolut_position)
+   if (!EINA_DBL_EQ(pd->last_pos, absolut_position))
      efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &absolut_position);
 
    pd->last_pos = absolut_position;

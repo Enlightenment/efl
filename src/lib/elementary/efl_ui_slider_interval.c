@@ -48,9 +48,9 @@ static void
 _emit_events(Eo *obj, Efl_Ui_Slider_Interval_Data *sd)
 {
    efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
-   if (sd->val == sd->val_min)
+   if (EINA_DBL_EQ(sd->val, sd->val_min))
      efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MIN_REACHED, NULL);
-   if (sd->val == sd->val_max)
+   if (EINA_DBL_EQ(sd->val, sd->val_max))
      efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
 }
 
@@ -850,7 +850,7 @@ _efl_ui_slider_interval_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNU
         return;
      }
 
-   if (sd->step == step) return;
+   if (EINA_DBL_EQ(sd->step, step)) return;
 
    sd->step = step;
 }

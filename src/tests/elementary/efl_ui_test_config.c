@@ -25,7 +25,15 @@ EFL_START_TEST(efl_config_eoapi)
 
 #define CONFIG_CHKB(opt, val) CONFIG_CHK(opt, bool, val)
 #define CONFIG_CHKI(opt, val) CONFIG_CHK(opt, int, val)
-#define CONFIG_CHKD(opt, val) CONFIG_CHK(opt, double, val)
+
+#define CONFIG_CHKD_internal(opt, typ, val) do { \
+   typ old = elm_config_ ## opt ## _get(); \
+   fail_if(!EINA_DBL_EQ(old, efl_config_ ## typ ## _get(cfg, #opt))); \
+   fail_if(!efl_config_ ## typ ## _set(cfg, #opt, val)); \
+   fail_if(!EINA_DBL_EQ(elm_config_ ## opt ## _get(), val)); \
+   fail_if(!EINA_DBL_EQ(efl_config_ ## typ ## _get(cfg, #opt), val)); \
+   } while (0)
+#define CONFIG_CHKD(opt, val) CONFIG_CHKD_internal(opt, double, val)
 
    // note: leaks badly
 #define CONFIG_CHKS(opt, val) do { \

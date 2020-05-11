@@ -544,11 +544,11 @@ EFL_START_TEST(eet_test_data_fp)
    fail_if(build->f1 != eina_f32p32_int_from(1));
    fail_if(build->f0 != 0);
 
-   fail_if(convert->fp32 != 1.125);
-   fail_if(convert->fp16 != 2000);
-   fail_if(convert->fp8 != 125);
-   fail_if(convert->f1 != 1);
-   fail_if(convert->f0 != 0);
+   fail_if(!EINA_DBL_EQ(convert->fp32, 1.125));
+   fail_if(!EINA_DBL_EQ(convert->fp16, 2000));
+   fail_if(!EINA_DBL_EQ(convert->fp8, 125));
+   fail_if(!EINA_DBL_EQ(convert->f1, 1));
+   fail_if(!EINA_DBL_EQ(convert->f0, 0));
 
 }
 EFL_END_TEST
@@ -774,7 +774,7 @@ EFL_START_TEST(eet_test_data_hash_value)
 
    val = (Eina_Value *)eina_hash_find(h->hash, "val/double");
    eina_value_get(val, &d);
-   fail_if((!val) || (d != EET_TEST_DOUBLE));
+   fail_if((!val) || (!EINA_DBL_EQ(d, EET_TEST_DOUBLE)));
 
    val = (Eina_Value *)eina_hash_find(h->hash, "val/string");
    eina_value_get(val, &s);

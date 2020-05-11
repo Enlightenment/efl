@@ -127,10 +127,7 @@ EAPI void *evas_data_attach_get(const Evas_Canvas *obj);
  * @c null, if none.
  *
  * See also @ref evas_object_focus_set, @ref evas_object_focus_get, @ref
- * evas_object_key_grab, @ref evas_object_key_ungrab, @ref evas_seat_focus_get,
- * @ref Efl.Canvas.Object.seat_focus_check,
- * @ref Efl.Canvas.Object.seat_focus_add,
- * @ref Efl.Canvas.Object.seat_focus_del.
+ * evas_object_key_grab, @ref evas_object_key_ungrab, @ref evas_seat_focus_get.
  *
  * @param[in] obj The object.
  *
@@ -318,7 +315,7 @@ EAPI void evas_pointer_output_xy_get(const Evas_Canvas *obj, int *x, int *y);
  * only on the ones at the "top level", with regard to object parenting.
  *
  * See also @ref evas_object_layer_get, @ref evas_object_layer_set, @ref
- * evas_object_below_get, @ref evas_object_below_set.
+ * evas_object_below_get.
  *
  * @param[in] obj The object.
  *
@@ -540,7 +537,7 @@ EAPI void evas_norender(Evas_Canvas *obj);
  * This function updates the canvas internal objects not triggering
  * renderization. To force renderization function @ref evas_render should be
  * used.
- * @param[in] obj The object.
+ * @param[in] eo_e The object.
  *
  * @since 1.24
  *
@@ -800,7 +797,7 @@ EAPI int evas_coord_world_x_to_screen(const Evas_Canvas *obj, int x) EINA_WARN_U
  * @param[in] obj The object.
  *
  * @return A newly allocated list of updated rectangles of the canvas
- * (@Eina.Rect structs). Free this list with @ref evas_render_updates_free.
+ * (@ref Eina_Rect structs). Free this list with @ref evas_render_updates_free.
  *
  * @ingroup Evas_Canvas
  */

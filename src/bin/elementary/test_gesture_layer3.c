@@ -272,7 +272,7 @@ rotate_end(void *_po, void *event_info)
    po->rot_tot_time = fabs(r_info->momentum) / ROTATE_MOMENTUM_FRICTION;
    po->rot_momentum = r_info->momentum;
    po->rot_progress = 0.0;
-   if (po->rot_momentum)
+   if (EINA_DBL_NONZERO(po->rot_momentum))
      {
         po->rot_timer = ecore_animator_add(rotate_momentum_animation_operation, po);
      }
@@ -334,7 +334,7 @@ zoom_end(void *_po, void *event_info)
    po->zoom_mom_time = tot_time;
    po->zoom_mom = p->momentum;
    po->base_zoom = po->zoom;
-   if (po->zoom_mom)
+   if (EINA_DBL_NONZERO(po->zoom_mom))
      {
         po->zoom_momentum = elm_transit_add();
         elm_transit_duration_set(po->zoom_momentum,
@@ -425,7 +425,7 @@ momentum_end(void *_po, void *event_info)
    po->mom_tot_time = sqrt((p->mx * p->mx) + (p->my * p->my))
       / MOMENTUM_FRICTION;
 
-   if (po->mom_tot_time)
+   if (EINA_DBL_NONZERO(po->mom_tot_time))
      {  /* Compute acceleration for both compenents, and launch timer */
         po->mom_x_acc = (p->mx) / po->mom_tot_time; /* a = (v-v0) / t */
         po->mom_y_acc = (p->my) / po->mom_tot_time; /* a = (v-v0) / t */

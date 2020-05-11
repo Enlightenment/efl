@@ -815,7 +815,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                         ev->action = EFL_POINTER_ACTION_IN;
                         evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_IN, evt,
                                                         event_id2, EFL_EVENT_POINTER_IN);
-                        if ((cur_pt.x != prev_pt.x) && (cur_pt.y != prev_pt.y))
+                        if ((cur_pt.x != prev_pt.x) || (cur_pt.y != prev_pt.y))
                           {
                              ev->action = EFL_POINTER_ACTION_MOVE;
                              evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, evt,

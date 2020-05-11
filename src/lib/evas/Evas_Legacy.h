@@ -1923,11 +1923,11 @@ EAPI void evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_
  *
  * These are hints on the display mode @c obj. This is not a size enforcement
  * in any way, it's just a hint that can be used whenever appropriate. This
- * mode can be used object's display mode like commpress or expand.
+ * mode can be used object's display mode like compress or expand.
  *
  * @return Display mode hint.
  *
- * @ingroup Evas_Objects
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas_Display_Mode evas_object_size_hint_display_mode_get(const Evas_Object *obj);
 
@@ -1952,6 +1952,7 @@ EAPI Evas_Display_Mode evas_object_size_hint_display_mode_get(const Evas_Object 
  *
  * @param[in] l The number of the layer to place the object on.
 Must be between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX.
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_layer_set(Evas_Object *obj, short l);
 
@@ -1963,6 +1964,7 @@ EAPI void evas_object_layer_set(Evas_Object *obj, short l);
  *
  * @see evas_object_layer_set()
  *
+ * @ingroup Evas_Object_Group
  */
 EAPI short evas_object_layer_get(const Evas_Object *obj);
 
@@ -1980,6 +1982,7 @@ EAPI short evas_object_layer_get(const Evas_Object *obj);
  * @see evas_object_layer_set()
  * @see evas_object_below_get()
  *
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas_Object *evas_object_below_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -1997,6 +2000,7 @@ EAPI Evas_Object *evas_object_below_get(const Evas_Object *obj) EINA_WARN_UNUSED
  * @see evas_object_layer_set()
  * @see evas_object_below_get()
  *
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas_Object *evas_object_above_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -2026,6 +2030,7 @@ EAPI Evas_Object *evas_object_above_get(const Evas_Object *obj) EINA_WARN_UNUSED
  *
  *
  * @param[in] below the object below which to stack
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_stack_below(Evas_Object *obj, Evas_Object *below) EINA_ARG_NONNULL(2);
 
@@ -2040,6 +2045,7 @@ EAPI void evas_object_stack_below(Evas_Object *obj, Evas_Object *below) EINA_ARG
  * @see evas_object_stack_below()
  * @see evas_object_lower()
  *
+ * @ingroup Evas_Object_Group
  *
  */
 EAPI void evas_object_raise(Evas_Object *obj);
@@ -2070,6 +2076,7 @@ EAPI void evas_object_raise(Evas_Object *obj);
  *
  *
  * @param[in] above the object above which to stack
+ * @ingroup Evas_Object_Group
  */
 EAPI void evas_object_stack_above(Evas_Object *obj, Evas_Object *above) EINA_ARG_NONNULL(2);
 
@@ -2084,6 +2091,7 @@ EAPI void evas_object_stack_above(Evas_Object *obj, Evas_Object *above) EINA_ARG
  * @see evas_object_stack_below()
  * @see evas_object_raise()
  *
+ * @ingroup Evas_Object_Group
  *
  */
 EAPI void evas_object_lower(Evas_Object *obj);

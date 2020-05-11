@@ -395,7 +395,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
      }
    count = eina_list_count(priv->children);
 
-   if (!expand)
+   if (EINA_DBL_EQ(expand, 0))
      {
         if (rtl) ax = 1.0 - ax;
         if (horizontal)
@@ -435,8 +435,8 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
         fw = fh = 0;
         xw = xh = 0;
         /* align(-1) means fill to maximum apportioned size */
-        if (ax == -1.0) {fw = 1; ax = 0.5;}
-        if (ay == -1.0) {fh = 1; ay = 0.5;}
+        if (EINA_DBL_EQ(ax, -1.0)) {fw = 1; ax = 0.5;}
+        if (EINA_DBL_EQ(ay, -1.0)) {fh = 1; ay = 0.5;}
         if (rtl) ax = 1.0 - ax;
         if (wx > 0.0) xw = 1;
         if (wy > 0.0) xh = 1;

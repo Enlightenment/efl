@@ -39,6 +39,7 @@
 #include "eina_safety_checks.h"
 #include "eina_convert.h"
 #include "eina_fp.h"
+#include "eina_util.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -613,7 +614,7 @@ eina_convert_strtod_c(const char *nptr, char **endptr)
         else if (*iter == 0)
           goto on_success;
 
-        if ((val == 2.2250738585072011) && ((minus_e * (int)expo_part) == -308))
+        if ((eina_dbl_exact(val, 2.2250738585072011)) && ((minus_e * (int)expo_part) == -308))
           {
             val *= 1.0e-308;
             a = iter;
@@ -621,7 +622,7 @@ eina_convert_strtod_c(const char *nptr, char **endptr)
             goto on_success;
           }
 
-        if ((val == 2.2250738585072012) && ((minus_e * (int)expo_part) <= -308))
+        if ((eina_dbl_exact(val, 2.2250738585072012)) && ((minus_e * (int)expo_part) <= -308))
           {
             val *= 1.0e-308;
             a = iter;

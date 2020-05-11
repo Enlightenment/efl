@@ -220,7 +220,7 @@ EFL_START_TEST(eina_test_quaternion_dot)
 
 
    res = eina_quaternion_dot(&q, &r);
-   fail_if(res != 59);
+   fail_if(!EINA_DBL_EQ(res, 59));
 
 }
 EFL_END_TEST
@@ -457,25 +457,25 @@ EFL_START_TEST(eina_test_quaternion_operations)
            (out.z + 0.1 > DBL_EPSILON) || (out.w - 0.1 > DBL_EPSILON));
 
    eina_quaternion_array_set(&out, v);
-   fail_if((out.x != 0) || (out.y != 1) ||
-           (out.z != 2) || (out.w != 3));
+   fail_if((!EINA_DBL_EQ(out.x,  0)) || (!EINA_DBL_EQ(out.y,  1)) ||
+           (!EINA_DBL_EQ(out.z,  2)) || (!EINA_DBL_EQ(out.w,  3)));
 
    eina_quaternion_copy(&out, &in);
-   fail_if((out.x != 2) || (out.y != 2) ||
-           (out.z != 1) || (out.w != 1));
+   fail_if((!EINA_DBL_EQ(out.x,  2)) || (!EINA_DBL_EQ(out.y,  2)) ||
+           (!EINA_DBL_EQ(out.z,  1)) || (!EINA_DBL_EQ(out.w,  1)));
 
    eina_quaternion_homogeneous_regulate(&out, &in2);
-   fail_if((out.x != 1) || (out.y != 1) ||
-           (out.z != 1) || (out.w != 1));
+   fail_if((!EINA_DBL_EQ(out.x,  1)) || (!EINA_DBL_EQ(out.y,  1)) ||
+           (!EINA_DBL_EQ(out.z,  1)) || (!EINA_DBL_EQ(out.w,  1)));
 
    eina_quaternion_subtract(&out, &in2, &in);
-   fail_if((out.x != 3) || (out.y != 3) ||
-           (out.z != 4) || (out.w != 4));
+   fail_if((!EINA_DBL_EQ(out.x,  3)) || (!EINA_DBL_EQ(out.y,  3)) ||
+           (!EINA_DBL_EQ(out.z,  4)) || (!EINA_DBL_EQ(out.w,  4)));
 
-   fail_if(eina_quaternion_length_get(&in2) != 10);
-   fail_if(eina_quaternion_length_square_get(&in) != 10);
+   fail_if(!EINA_DBL_EQ(eina_quaternion_length_get(&in2), 10));
+   fail_if(!EINA_DBL_EQ(eina_quaternion_length_square_get(&in), 10));
    fail_if((eina_quaternion_distance_get(&in2, &in) - sqrt(50)) > DBL_EPSILON);
-   fail_if(eina_quaternion_distance_square_get(&in2, &in) != 50);
+   fail_if(!EINA_DBL_EQ(eina_quaternion_distance_square_get(&in2, &in), 50));
 
    angle = eina_quaternion_angle_plains(&in, &in2);
    fail_if(angle - 0.963 > DBL_EPSILON);

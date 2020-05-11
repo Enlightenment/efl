@@ -15,7 +15,7 @@ static Eina_Bool _anim_cb(void *data EINA_UNUSED, double pos)
   fail_if(prev > pos);
   prev = pos;
 
-  if (pos == 1.0)
+  if (EINA_DBL_EQ(pos, 1.0))
     ecore_main_loop_quit();
 
   return EINA_TRUE;
@@ -59,7 +59,7 @@ Eina_Bool test_pos(Ecore_Pos_Map posmap, double v1, double v2, double (*testmap)
           return EINA_FALSE;
       }
   }
-  fail_if(ecore_animator_pos_map(1.0, posmap, v1, v2) != 1.0);
+  fail_if(!EINA_DBL_EQ(ecore_animator_pos_map(1.0, posmap, v1, v2), 1.0));
 
   return EINA_TRUE;
 }

@@ -127,7 +127,7 @@ static void
 _emit_pos(Eo *obj, double d)
 {
    printf("EMITTING %f %f\n", d, transition_calls.last_position);
-   if (d == transition_calls.last_position) return;
+   if (EINA_DBL_EQ(d, transition_calls.last_position)) return;
 
    efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &d);
    transition_calls.last_position = d;
@@ -403,7 +403,7 @@ _verify_indicator_calls(void)
    ck_assert_ptr_eq(indicator_calls.content_add.subobj, w);
    ck_assert_int_eq(indicator_calls.content_del.called, 0);
    ck_assert_int_eq(indicator_calls.position_update.called, 1);
-   ck_assert(indicator_calls.position_update.position == 0.0);
+   ck_assert(EINA_DBL_EQ(indicator_calls.position_update.position, 0.0));
    indicator_calls.content_add.called = 0;
    indicator_calls.position_update.called = 0;
 
@@ -414,7 +414,7 @@ _verify_indicator_calls(void)
    ck_assert_ptr_eq(indicator_calls.content_add.subobj, w1);
    ck_assert_int_eq(indicator_calls.content_del.called, 0);
    ck_assert_int_eq(indicator_calls.position_update.called, 1);
-   ck_assert(indicator_calls.position_update.position == 1.0);
+   ck_assert(EINA_DBL_EQ(indicator_calls.position_update.position, 1.0));
    indicator_calls.content_add.called = 0;
    indicator_calls.position_update.called = 0;
 
@@ -435,7 +435,7 @@ _verify_indicator_calls(void)
    ck_assert_int_eq(indicator_calls.content_del.index, 0);
    ck_assert_ptr_eq(indicator_calls.content_del.subobj, w1);
    ck_assert_int_eq(indicator_calls.position_update.called, 1);
-   ck_assert(indicator_calls.position_update.position == 0.0);
+   ck_assert(EINA_DBL_EQ(indicator_calls.position_update.position, 0.0));
    indicator_calls.content_del.called = 0;
    indicator_calls.position_update.called = 0;
 }

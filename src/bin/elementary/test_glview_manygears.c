@@ -405,7 +405,7 @@ perspective(GLfloat *m, GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFa
    sine = sin(radians);
    cosine = cos(radians);
 
-   if ((deltaZ == 0) || (sine == 0) || (aspect == 0))
+   if (EINA_DBL_EQ(deltaZ, 0) || EINA_DBL_EQ(sine, 0) || EINA_DBL_EQ(aspect, 0))
       return;
 
    cotangent = cosine / sine;

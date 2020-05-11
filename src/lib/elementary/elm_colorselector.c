@@ -398,10 +398,10 @@ _rgb_to_hsl(Elm_Colorselector_Data *sd)
    g2 = (v - g) / vm;
    b2 = (v - b) / vm;
 
-   if (r == v) sd->h = (g == m ? 5.0 + b2 : 1.0 - g2);
-   else if (g == v)
-     sd->h = (b == m ? 1.0 + r2 : 3.0 - b2);
-   else sd->h = (r == m ? 3.0 + g2 : 5.0 - r2);
+   if (EINA_DBL_EQ(r, v)) sd->h = (EINA_DBL_EQ(g, m) ? 5.0 + b2 : 1.0 - g2);
+   else if (EINA_DBL_EQ(g, v))
+     sd->h = (EINA_DBL_EQ(b, m) ? 1.0 + r2 : 3.0 - b2);
+   else sd->h = (EINA_DBL_EQ(r, m) ? 3.0 + g2 : 5.0 - r2);
 
    sd->h *= 60.0;
 }
@@ -418,16 +418,16 @@ _hsl_to_rgb(Elm_Colorselector_Data *sd)
    _s = sd->s;
    _l = sd->l;
 
-   if (_s == 0.0) r = g = b = _l;
+   if (EINA_DBL_EQ(_s, 0.0)) r = g = b = _l;
    else
      {
-        if (_h == 360.0) _h = 0.0;
+        if (EINA_DBL_EQ(_h, 360.0)) _h = 0.0;
         _h /= 60.0;
 
         v = (_l <= 0.5) ? (_l * (1.0 + _s)) : (_l + _s - (_l * _s));
         p = _l + _l - v;
 
-        if (v) sv = (v - p) / v;
+        if (EINA_DBL_NONZERO(v)) sv = (v - p) / v;
         else sv = 0;
 
         i = (int)_h;
@@ -489,7 +489,7 @@ _hsl_to_rgb(Elm_Colorselector_Data *sd)
    f = (b * 255.0) - i;
    b = (f <= 0.5) ? i : (i + 1);
 
-   if (sd->r == r && sd->g == g && sd->b == b) return EINA_FALSE;
+   if (EINA_DBL_EQ(sd->r, r) && EINA_DBL_EQ(sd->g, g) && EINA_DBL_EQ(sd->b, b)) return EINA_FALSE;
 
    sd->r = r;
    sd->g = g;

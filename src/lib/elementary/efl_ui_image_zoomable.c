@@ -2451,7 +2451,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_level_set(Eo *obj, Efl_Ui_Image_Zoomable
                z = (double)sd->size.imw / pw;
              else
                z = (double)sd->size.imh / ph;
-             if (z != sd->zoom)
+             if (!EINA_DBL_EQ(z, sd->zoom))
                zoom_changed = 1;
              sd->zoom = z;
              sd->size.nw = pw;

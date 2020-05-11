@@ -135,9 +135,7 @@ EOAPI void *evas_canvas_data_attach_get(const Eo *obj);
  *
  * See also @ref evas_object_focus_set, @ref evas_object_focus_get, @ref
  * evas_object_key_grab, @ref evas_object_key_ungrab,
- * @ref evas_canvas_seat_focus_get, @ref efl_canvas_object_seat_focus_check,
- * @ref efl_canvas_object_seat_focus_add,
- * @ref efl_canvas_object_seat_focus_del.
+ * @ref evas_canvas_seat_focus_get
  *
  * @param[in] obj The object.
  *
@@ -325,7 +323,7 @@ EOAPI void evas_canvas_pointer_output_xy_get(const Eo *obj, int *x, int *y);
  * only on the ones at the "top level", with regard to object parenting.
  *
  * See also @ref evas_object_layer_get, @ref evas_object_layer_set, @ref
- * evas_object_below_get, @ref evas_object_below_set.
+ * evas_object_below_get.
  *
  * @param[in] obj The object.
  *

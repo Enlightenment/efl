@@ -482,8 +482,8 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d,
  */
 typedef enum _Eina_Log_State
 {
-  EINA_LOG_STATE_START,
-  EINA_LOG_STATE_STOP
+  EINA_LOG_STATE_START, /**< Logging is Started */
+  EINA_LOG_STATE_STOP   /**< Logging is Stopped */
 } Eina_Log_State;
 
 /*
