@@ -1,6 +1,18 @@
 ==========
-EFL 1.24.0
+EFL 1.24.1
 ==========
+
+Changes since 1.24.0:
+---------------------
+
+Fixes:
+
+   * edje - don't set font sizes less than 1
+   * ecore_evas_x - fix maximize/unmaximize request corner case
+   * ecore_evas: only define these eina errors once
+   * exactness: remove no longer needed _evas_new()
+   * exactness_player: do not test for delay_ms
+   * evas + gl - fix callback-to-app-changes-state issue with pixel data
 
 Changes since 1.23.0:
 ---------------------
