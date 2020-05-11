@@ -267,6 +267,7 @@ luaold_interpreters = [
 lua_pc_name = ''
 
 if get_option('lua-interpreter') == 'lua'
+  config_h.set('ENABLE_LUA_OLD', '1')
   foreach l : luaold_interpreters
     lua = dependency(l[0], version: l[1], required:false)
     lua_pc_name = l[0]
