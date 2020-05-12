@@ -365,7 +365,7 @@ _efl_ui_radio_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
    /* FIXME: replicated from elm_layout just because radio's icon
     * spot is elm.swallow.content, not elm.swallow.icon. Fix that
     * whenever we can changed the theme API */
-   _icon_signal_emit(obj);
+   if (efl_finalized_get(obj)) _icon_signal_emit(obj);
 
    return int_ret;
 }
