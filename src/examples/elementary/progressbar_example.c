@@ -117,7 +117,7 @@ _on_changed(void        *data,
    Evas_Object *label =  (Evas_Object *)data;
 
    val = elm_progressbar_value_get(obj);
-   if (val == 0)
+   if (EINA_DBL_EQ(val, 0))
      {
         tstart = 0;
         elm_object_text_set(label, "ETA: N/A");

@@ -218,7 +218,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
 
               return EFL_GESTURE_RECOGNIZER_RESULT_IGNORE;
            }
-         if ((pd->zoom_base) && (pd->zoom_distance_tolerance == 0))
+         if ((pd->zoom_base) && EINA_DBL_EQ(pd->zoom_distance_tolerance, 0))
            {
               _reset_recognizer(pd);
 

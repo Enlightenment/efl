@@ -3912,8 +3912,9 @@ EAPI void evas_vg_node_geometry_get(Evas_Vg_Node *obj, int *x, int *y, int *w, i
  * @param[in] h The h geometry of the given object.
  *
  * @since 1.24
+ * @deprecated
  */
-EAPI void evas_vg_node_geometry_set(Evas_Vg_Node *obj, int x, int y, int w, int h);
+EAPI void evas_vg_node_geometry_set(Evas_Vg_Node *obj, int x, int y, int w, int h) EINA_DEPRECATED;
 
 /**
  * @brief Stack @p obj immediately below @p below.

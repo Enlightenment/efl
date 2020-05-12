@@ -240,7 +240,7 @@ _efl_canvas_gesture_recognizer_flick_efl_canvas_gesture_recognizer_recognize(Eo 
                {
                   /* This is for continues-gesture */
                   /* Finish line on zero momentum for continues gesture */
-                  if ((!fd->momentum.x) && (!fd->momentum.y))
+                  if (EINA_DBL_EQ(fd->momentum.x, 0) && EINA_DBL_EQ(fd->momentum.y, 0))
                     pd->t_end = efl_gesture_touch_current_timestamp_get(event);
                }
           }

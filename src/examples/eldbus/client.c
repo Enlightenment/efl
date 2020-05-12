@@ -219,7 +219,7 @@ _on_send_double(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pendin
         return;
      }
 
-   if (d != expected.d)
+   if (!EINA_DBL_EQ(d, expected.d))
      {
         ERR("Double value doesn't match expected value");
         return;

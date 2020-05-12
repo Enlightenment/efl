@@ -23,7 +23,7 @@ printf_style(Svg_Style_Property *style, Eina_Strbuf *buf)
      eina_strbuf_append_printf(buf, " fill-opacity=\"%f\"", style->fill.opacity / 255.0);
    if ((style->stroke.paint.r) || (style->stroke.paint.g) || (style->stroke.paint.b))
      eina_strbuf_append_printf(buf, " stroke=\"#%02X%02X%02X\" ", style->stroke.paint.r, style->stroke.paint.g, style->stroke.paint.b);
-   if (style->stroke.width)
+   if (EINA_DBL_NONZERO(style->stroke.width))
      eina_strbuf_append_printf(buf, " stroke-width=\"%f\" ", style->stroke.width);
    if (style->stroke.cap == EFL_GFX_CAP_ROUND)
      eina_strbuf_append_printf(buf, " stroke-linecap=\"round\" ");

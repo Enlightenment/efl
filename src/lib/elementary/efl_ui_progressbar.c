@@ -771,7 +771,7 @@ _efl_ui_progressbar_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNU
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
-   _icon_signal_emit(obj);
+   if (efl_finalized_get(obj)) _icon_signal_emit(obj);
 
    return int_ret;
 }

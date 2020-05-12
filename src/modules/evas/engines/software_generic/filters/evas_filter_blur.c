@@ -469,32 +469,32 @@ eng_filter_blur_func_get(Evas_Filter_Command *cmd)
       case EVAS_FILTER_BLUR_BOX:
         if (!cmd->output->alpha_only)
           {
-             if (cmd->blur.dx)
+             if (EINA_DBL_NONZERO(cmd->blur.dx))
                return _box_blur_horiz_apply_rgba;
-             else if (cmd->blur.dy)
+             else if (EINA_DBL_NONZERO(cmd->blur.dy))
                return _box_blur_vert_apply_rgba;
           }
         else
           {
-             if (cmd->blur.dx)
+             if (EINA_DBL_NONZERO(cmd->blur.dx))
                return _box_blur_horiz_apply_alpha;
-             else if (cmd->blur.dy)
+             else if (EINA_DBL_NONZERO(cmd->blur.dy))
                return _box_blur_vert_apply_alpha;
           }
         break;
       case EVAS_FILTER_BLUR_GAUSSIAN:
         if (!cmd->output->alpha_only)
           {
-             if (cmd->blur.dx)
+             if (EINA_DBL_NONZERO(cmd->blur.dx))
                return _gaussian_blur_horiz_apply_rgba;
-             else if (cmd->blur.dy)
+             else if (EINA_DBL_NONZERO(cmd->blur.dy))
                return _gaussian_blur_vert_apply_rgba;
           }
         else
           {
-             if (cmd->blur.dx)
+             if (EINA_DBL_NONZERO(cmd->blur.dx))
                return _gaussian_blur_horiz_apply_alpha;
-             else if (cmd->blur.dy)
+             else if (EINA_DBL_NONZERO(cmd->blur.dy))
                return _gaussian_blur_vert_apply_alpha;
           }
         break;

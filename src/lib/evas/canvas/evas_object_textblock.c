@@ -3608,11 +3608,11 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
           halign_value_str = "locale";
           break;
         case EVAS_TEXTBLOCK_ALIGN_AUTO_NONE:
-          if (fmt->halign == 0.5)
+          if (EINA_DBL_EQ(fmt->halign, 0.5))
             halign_value_str = "center";
-          else if (fmt->halign == 0.0)
+          else if (EINA_DBL_EQ(fmt->halign, 0.0))
             halign_value_str = "left";
-          else if (fmt->halign == 1.0)
+          else if (EINA_DBL_EQ(fmt->halign, 1.0))
             halign_value_str = "right";
 
           break;
@@ -3626,13 +3626,13 @@ _format_string_get(const Eo *eo_obj, Evas_Object_Textblock_Format *fmt)
 
    char *valign_value_str = NULL;
 
-   if (fmt->valign == 0.5)
+   if (EINA_DBL_EQ(fmt->valign, 0.5))
      valign_value_str = "center";
-   else if (fmt->valign == 0.0)
+   else if (EINA_DBL_EQ(fmt->valign, 0.0))
      valign_value_str = "top";
-   else if (fmt->valign == 1.0)
+   else if (EINA_DBL_EQ(fmt->valign, 1.0))
      valign_value_str = "bottom";
-   else if (fmt->valign == -1.0)
+   else if (EINA_DBL_EQ(fmt->valign, -1.0))
      valign_value_str = "baseline";
 
    if (valign_value_str != NULL)
@@ -4891,7 +4891,7 @@ loop_advance:
      }
 
    /* Check current line's height is acceptable or not */
-   if ((fmt->ellipsis == 1.0) &&
+   if (EINA_DBL_EQ(fmt->ellipsis, 1.0) &&
        (c->h > 0) && (c->y + c->ln->h > c->h))
      {
         /* No text is shown when the object height is smaller than actual font size's height.
@@ -8219,6 +8219,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
         else if (us)
           {
              o->styles = eina_list_remove_list(o->styles, itr);
+             old_ts = us->st;
              free(us);
           }
      }
@@ -15829,13 +15830,13 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
      }
 
    //evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
-   if (!_relayout_if_needed(eo_obj, o))
+   is_v = evas_object_is_visible(obj);
+   was_v = evas_object_was_visible(obj);
+   if (is_v && !_relayout_if_needed(eo_obj, o))
      {
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
-        is_v = evas_object_is_visible(obj);
-        was_v = evas_object_was_visible(obj);
         goto done;
      }
    if (o->changed)
@@ -15844,8 +15845,6 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
-        is_v = evas_object_is_visible(obj);
-        was_v = evas_object_was_visible(obj);
         goto done;
      }
 
@@ -15854,14 +15853,10 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
-        is_v = evas_object_is_visible(obj);
-        was_v = evas_object_was_visible(obj);
         goto done;
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
-   is_v = evas_object_is_visible(obj);
-   was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
         evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes,
@@ -16635,6 +16630,10 @@ _efl_canvas_textblock_efl_text_font_properties_font_bitmap_scalable_get(const Eo
    if (_FMT(x) == v) return; \
    _FMT(x) = v; \
    _canvas_text_format_changed(obj, o);
+#define _FMT_SETD(x, v) \
+   if (EINA_DBL_EQ(_FMT(x), v)) return; \
+   _FMT(x) = v; \
+   _canvas_text_format_changed(obj, o);
 
 /* Helper: updates format field of extended format information, and informs if changed. */
 #define _FMT_INFO_SET_START(x, v) \
@@ -16736,7 +16735,7 @@ static void
 _efl_canvas_textblock_efl_text_style_text_underline_height_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double height EINA_UNUSED)
 {
    ASYNC_BLOCK;
-   _FMT_SET(underline_height, height);
+   _FMT_SETD(underline_height, height);
 }
 
 static double
@@ -17005,7 +17004,7 @@ static void
 _efl_canvas_textblock_efl_text_format_ellipsis_set(Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED, double value EINA_UNUSED)
 {
    ASYNC_BLOCK;
-   _FMT_SET(ellipsis, value);
+   _FMT_SETD(ellipsis, value);
 }
 
 static double
@@ -17291,7 +17290,7 @@ _efl_canvas_textblock_efl_text_format_text_horizontal_align_set(Eo *obj, Efl_Can
    ASYNC_BLOCK;
    if (EINA_DBL_EQ(_FMT(halign), value)) return;
    _FMT(halign_auto) = EVAS_TEXTBLOCK_ALIGN_AUTO_NONE;
-   _FMT_SET(halign, value);
+   _FMT_SETD(halign, value);
 }
 
 static double
@@ -17327,7 +17326,7 @@ _efl_canvas_textblock_efl_text_format_line_gap_set(Eo *obj EINA_UNUSED, Efl_Canv
 
    if (EINA_DBL_EQ(linerelgap, 0.0))
      {
-        _FMT_SET(linegap, value);
+        _FMT_SETD(linegap, value);
      }
    else
     {
@@ -17352,7 +17351,7 @@ _efl_canvas_textblock_efl_text_format_line_rel_gap_set(Eo *obj EINA_UNUSED, Efl_
 
    if (EINA_DBL_EQ(linegap, 0.0))
      {
-        _FMT_SET(linerelgap, value);
+        _FMT_SETD(linerelgap, value);
      }
    else
     {

@@ -199,7 +199,7 @@ view_set_ortho(float result[16], const float left, const float right,
                const float bottom, const float top, const float near_,
                const float far_)
 {
-   if ((right - left) == 0.0f || (top - bottom) == 0.0f || (far_ - near_) == 0.0f)
+   if (EINA_FLT_EQ((right - left), 0.0f) || EINA_FLT_EQ((top - bottom), 0.0f) || EINA_FLT_EQ((far_ - near_), 0.0f))
         return 0;
 
     result[0] = 2.0f / (right - left);

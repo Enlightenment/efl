@@ -411,7 +411,7 @@ _interpolation_keyframe(void *data EINA_UNUSED, double pos)
                            eina_list_nth(d.shape_list, next),
                            ecore_animator_pos_map(pos, ECORE_POS_MAP_SINUSOIDAL, 0.0, 0.0));
 
-   if (pos == 1.0)
+   if (EINA_DBL_EQ(pos, 1.0))
      {
         anim_index = (anim_index == 1) ? 0 : 1;
         animator = ecore_animator_timeline_add(1, _interpolation_keyframe, NULL);

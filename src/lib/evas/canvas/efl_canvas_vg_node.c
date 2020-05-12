@@ -476,107 +476,56 @@ _efl_canvas_vg_node_efl_gfx_stack_lower_to_bottom(Eo *obj, Efl_Canvas_Vg_Node_Da
    _node_change(parent, efl_data_scope_get(parent, MY_CLASS));
 }
 
-static const Eo *
-_efl_canvas_vg_node_root_parent_get(const Eo *obj)
-{
-   const Eo *parent;
-
-   parent = efl_parent_get(obj);
-
-   if (!parent) return obj;
-   return _efl_canvas_vg_node_root_parent_get(parent);
-}
-
-static void
-_efl_canvas_vg_node_walk_down_at(const Eo *root, Eina_Array *a, Eina_Rectangle *r)
-{
-   Eina_Rect bounds;
-
-   efl_gfx_path_bounds_get(root, &bounds);
-   if (!eina_rectangles_intersect(&bounds.rect, r)) return ;
-
-   eina_array_push(a, root);
-
-   if (efl_isa(root, EFL_CANVAS_VG_CONTAINER_CLASS))
-     {
-        Efl_Canvas_Vg_Container_Data *cd;
-        Eina_List *l;
-        Eo *child;
-
-        cd = efl_data_scope_get(root, EFL_CANVAS_VG_CONTAINER_CLASS);
-        EINA_LIST_FOREACH(cd->children, l, child)
-          _efl_canvas_vg_node_walk_down_at(child, a, r);
-     }
-}
-
-static void
-_efl_canvas_vg_node_object_at(const Eo *obj, Eina_Array *a, Eina_Rectangle *r)
-{
-   const Eo *root;
-
-   root = _efl_canvas_vg_node_root_parent_get(obj);
-   if (!root) return ;
-
-   _efl_canvas_vg_node_walk_down_at(root, a, r);
-}
-
 static Efl_Gfx_Stack *
 _efl_canvas_vg_node_efl_gfx_stack_below_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
-   Eina_Rect r;
-   Eina_Array a;
-   Eo *current;
-   Eo *below = NULL;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
+   Eo *parent, *below;
+   const Eina_List *list;
 
-   efl_gfx_path_bounds_get(obj, &r);
+   parent = efl_parent_get(obj);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
 
-   eina_array_step_set(&a, sizeof (Eina_Array), 8);
+   list = efl_canvas_vg_container_children_direct_get(parent);
+   if (list == NULL) goto on_error;
 
-   _efl_canvas_vg_node_object_at(obj, &a, &r.rect);
+   list = eina_list_data_find_list(list, obj);
+   if (list == NULL) goto on_error;
 
-   EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
-     if (current == obj)
-       {
-          i++;
-          if (i < eina_array_count(&a))
-            below = eina_array_data_get(&a, i);
-          break;
-       }
+   list = eina_list_prev(list);
+   if (list == NULL) goto on_error;
 
-   eina_array_flush(&a);
+   below = list->data;
 
    return below;
+
+ on_error:
+   return NULL;
 }
 
 static Efl_Gfx_Stack *
 _efl_canvas_vg_node_efl_gfx_stack_above_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
-   Eina_Rect r;
-   Eina_Array a;
-   Eo *current;
-   Eo *above = NULL;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
+   Eo *parent, *above;
+   const Eina_List *list;
 
-   efl_gfx_path_bounds_get(obj, &r);
+   parent = efl_parent_get(obj);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
 
-   eina_array_step_set(&a, sizeof (Eina_Array), 8);
+   list = efl_canvas_vg_container_children_direct_get(parent);
+   if (list == NULL) goto on_error;
 
-   _efl_canvas_vg_node_object_at(obj, &a, &r.rect);
+   list = eina_list_data_find_list(list, obj);
+   if (list == NULL) goto on_error;
 
-   EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
-     if (current == obj)
-       {
-          if (i > 0)
-            above = eina_array_data_get(&a, i - 1);
-          break;
-       }
+   list = eina_list_next(list);
+   if (list == NULL) goto on_error;
 
-   eina_array_flush(&a);
+   above = list->data;
 
    return above;
+
+ on_error:
+   return NULL;
 }
 
 static Efl_Canvas_Vg_Interpolation *
@@ -788,6 +737,7 @@ evas_vg_node_geometry_get(Evas_Vg_Node *obj, int *x, int *y, int *w, int *h)
    if (h) *h = r.h;
 }
 
+/* deprecated */
 EAPI void
 evas_vg_node_geometry_set(Evas_Vg_Node *obj, int x, int y, int w, int h)
 {

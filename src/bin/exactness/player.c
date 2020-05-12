@@ -801,7 +801,7 @@ _src_open()
                   last_action_type = act->type;
                }
           }
-        if (_speed && _speed != 1)
+        if (EINA_DBL_NONZERO(_speed) && (!EINA_DBL_EQ(_speed, 1)))
           {
              EINA_LIST_FOREACH(_src_unit->actions, itr, act)
                 act->delay_ms /= _speed;

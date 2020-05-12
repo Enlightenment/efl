@@ -2588,7 +2588,7 @@ _write_to_fd(void *data, Ecore_Fd_Handler *fd_handler)
    fd = ecore_main_fd_handler_fd_get(fd_handler);
    if (fd < 0) goto end;
 
-   len = write(fd, slice->slice.mem + slice->written_bytes,
+   len = write(fd, (char*)slice->slice.mem + slice->written_bytes,
                slice->slice.len - slice->written_bytes);
 
    slice->written_bytes += len;

@@ -205,20 +205,20 @@ struct _Eina_Accessor_CArray_Length
 static Eina_Bool
 eina_carray_length_accessor_get_at(Eina_Accessor_CArray_Length *accessor, unsigned int idx, void **data)
 {
-   if (accessor->array + idx*accessor->step >= accessor->end)
+   if ((char*)accessor->array + idx*accessor->step >= (char*)accessor->end)
      return EINA_FALSE;
 
-   memcpy(data, (void*) accessor->array + idx*accessor->step, accessor->step);
+   memcpy(data, (char*) accessor->array + idx*accessor->step, accessor->step);
 
    return EINA_TRUE;
 }
 static Eina_Bool
 eina_carray_length_accessor_ptr_get_at(Eina_Accessor_CArray_Length *accessor, unsigned int idx, void **data)
 {
-   if (accessor->array + idx*accessor->step >= accessor->end)
+   if ((char*)accessor->array + idx*accessor->step >= (char*)accessor->end)
      return EINA_FALSE;
 
-   *data = (((void*)accessor->array) + idx*accessor->step);
+   *data = (((char*)accessor->array) + idx*accessor->step);
 
    return EINA_TRUE;
 }
@@ -246,7 +246,7 @@ eina_carray_length_accessor_new(void** array, unsigned int step, unsigned int le
    EINA_MAGIC_SET(&accessor->accessor, EINA_MAGIC_ACCESSOR);
 
    accessor->array = array;
-   accessor->end = accessor->array + length * step;
+   accessor->end = (void**)((char*)accessor->array + length * step);
    accessor->step = step;
 
    accessor->accessor.version = EINA_ACCESSOR_VERSION;
@@ -269,7 +269,7 @@ eina_carray_length_ptr_accessor_new(void** array, unsigned int step, unsigned in
    EINA_MAGIC_SET(&accessor->accessor, EINA_MAGIC_ACCESSOR);
 
    accessor->array = array;
-   accessor->end = accessor->array + length * step;
+   accessor->end = (void**)((char*)accessor->array + length * step);
    accessor->step = step;
 
    accessor->accessor.version = EINA_ACCESSOR_VERSION;

@@ -108,7 +108,7 @@ _edje_box_layout(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
 {
    Edje_Part_Box_Animation *anim = data;
 
-   if (anim->progress == 0.0)
+   if (EINA_DBL_EQ(anim->progress, 0.0))
      {
         if (anim->start.layout)
           {
@@ -195,7 +195,7 @@ _edje_box_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, Edje_Calc_Param
         ep->typedata.container->anim->end.layout = NULL;
      }
 
-   if (ep->description_pos == 0.0 || !ep->typedata.container->anim->start.layout)
+   if (EINA_DBL_EQ(ep->description_pos, 0.0) || !ep->typedata.container->anim->start.layout)
      {
         _edje_box_layout_find_all(chosen_desc->box.layout, chosen_desc->box.alt_layout, &ep->typedata.container->anim->start.layout, &ep->typedata.container->anim->start.data, &ep->typedata.container->anim->start.free_data);
         ep->typedata.container->anim->start.padding.x = chosen_desc->box.padding.x;
