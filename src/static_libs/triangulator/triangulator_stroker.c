@@ -409,8 +409,8 @@ _end_cap_or_join_closed(Triangulator_Stroker *stroker,
 static inline void
 _skip_duplicate_points(const double **pts, const double *end_pts)
 {
-   while ((*pts + 2) < end_pts && (*pts)[0] == (*pts)[2] &&
-          EINA_FLT_EQ((*pts)[1], (*pts)[3]))
+   while ((*pts + 2) < end_pts && EINA_DBL_EQ((*pts)[0], (*pts)[2]) &&
+          EINA_DBL_EQ((*pts)[1], (*pts)[3]))
      {
         *pts += 2;
      }
