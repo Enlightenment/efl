@@ -587,7 +587,7 @@ _map_triangle_draw(RGBA_Image *src, RGBA_Image *dst,
    denom = ((x[2] - x[0]) * (y[1] - y[0]) - (x[1] - x[0]) * (y[2] - y[0]));
 
    //Skip poly if it's an infinitely thin line
-   if (denom == 0) return;
+   if (EINA_DBL_EQ(denom, 0)) return;
 
    denom = 1 / denom;   //Reciprocal for speeding up
    dudx = ((u[2] - u[0]) * (y[1] - y[0]) - (u[1] - u[0]) * (y[2] - y[0])) * denom;
@@ -619,8 +619,8 @@ _map_triangle_draw(RGBA_Image *src, RGBA_Image *dst,
    //Determine which side of the polygon the longer edge is on
    side = (dxdy[1] > dxdy[0]) ? EINA_TRUE:EINA_FALSE;
 
-   if (y[0] == y[1]) side = x[0] > x[1];
-   if (y[1] == y[2]) side = x[2] > x[1];
+   if (EINA_DBL_EQ(y[0], y[1])) side = x[0] > x[1];
+   if (EINA_DBL_EQ(y[1], y[2])) side = x[2] > x[1];
 
    //Longer edge is on the left side
    if (!side)

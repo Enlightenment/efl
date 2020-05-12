@@ -226,7 +226,7 @@ _local_transform(Efl_VG *root, double w, double h, Vg_File_Data *vfd)
    Eina_Matrix3 m;
 
    if (!vfd->static_viewbox) return;
-   if (vfd->view_box.w == w && vfd->view_box.h == h) return;
+   if (EINA_DBL_EQ(vfd->view_box.w, w) && EINA_DBL_EQ(vfd->view_box.h, h)) return;
 
    sx = w / vfd->view_box.w;
    sy = h / vfd->view_box.h;
