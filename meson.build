@@ -75,6 +75,7 @@ dev_cflags = []
 dev_cflags_try = [
   '-fvisibility=hidden',
   '-Wall',
+  '-Wfloat-compare',
   '-Wunused-parameter',
   '-Wsign-compare',
   '-Wno-missing-field-initializers',
