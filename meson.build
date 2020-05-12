@@ -76,6 +76,7 @@ dev_cflags_try = [
   '-fvisibility=hidden',
   '-Wall',
   '-Wfloat-compare',
+  '-Wpointer-arith',
   '-Wunused-parameter',
   '-Wsign-compare',
   '-Wno-missing-field-initializers',
