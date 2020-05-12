@@ -737,6 +737,7 @@ evas_vg_node_geometry_get(Evas_Vg_Node *obj, int *x, int *y, int *w, int *h)
    if (h) *h = r.h;
 }
 
+/* deprecated */
 EAPI void
 evas_vg_node_geometry_set(Evas_Vg_Node *obj, int x, int y, int w, int h)
 {
