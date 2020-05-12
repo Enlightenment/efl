@@ -821,7 +821,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
      }
 #endif
 
-   if (dx && dy)
+   if (EINA_DBL_NONZERO(dx) && EINA_DBL_NONZERO(dy))
      {
         tmp = evas_filter_temporary_buffer_get(ctx, dx_in->w, dx_in->h, in->alpha_only, 1);
         if (!tmp) goto fail;
@@ -833,7 +833,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         dy_in = in;
      }
 
-   if (dx)
+   if (EINA_DBL_NONZERO(dx))
      {
         XDBG("Add GL blur %d -> %d (%.2fx%.2f px)", dx_in->id, dx_out->id, dx, 0.0);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dx_in, NULL, dx_out);
@@ -844,7 +844,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         cmd->draw.alphaonly = alphaonly;
      }
 
-   if (dy)
+   if (EINA_DBL_NONZERO(dy))
      {
         XDBG("Add GL blur %d -> %d (%.2fx%.2f px)", dy_in->id, dy_out->id, 0.0, dy);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dy_in, NULL, dy_out);

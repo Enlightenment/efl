@@ -145,7 +145,10 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    s_h = cmd->input->h;
    d_w = cmd->output->w;
    d_h = cmd->output->h;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(s_w && s_h && d_w && d_h, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(
+     EINA_DBL_NONZERO(s_w) && EINA_DBL_NONZERO(s_h) && EINA_DBL_NONZERO(d_w) && EINA_DBL_NONZERO(d_h),
+     EINA_FALSE
+   );
 
    gc = gl_generic_context_find(re, 1);
 
@@ -157,7 +160,7 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 
    evas_gl_common_context_target_surface_set(gc, surface);
 
-   if (cmd->blur.dx)
+   if (EINA_DBL_NONZERO(cmd->blur.dx))
      {
         horiz = EINA_TRUE;
         radius = cmd->blur.dx;
@@ -274,7 +277,7 @@ gl_filter_blur_func_get(Render_Engine_GL_Generic *re EINA_UNUSED, Evas_Filter_Co
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
 
    // 1D blurs only, radius != 0
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((!cmd->blur.dx) ^ (!cmd->blur.dy), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!EINA_DBL_EQ(cmd->blur.dx, 0) ^ !EINA_DBL_EQ(cmd->blur.dy, 0), NULL);
 
    return _gl_filter_blur;
 }
