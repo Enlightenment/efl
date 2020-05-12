@@ -148,7 +148,7 @@ _efl_canvas_object_animation_animation_pause_set(Eo *obj, Efl_Canvas_Object_Anim
      _end(obj, pd);
    else
      _start(obj, pd,(pd->in->speed < 0) ? 1.0 - pd->in->progress : pd->in->progress);
-   pd->in->pause_state = pause;
+   if (pd->in) pd->in->pause_state = pause;
 }
 
 EOLIAN static Eina_Bool
