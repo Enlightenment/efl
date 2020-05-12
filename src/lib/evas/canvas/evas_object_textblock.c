@@ -8219,6 +8219,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
         else if (us)
           {
              o->styles = eina_list_remove_list(o->styles, itr);
+             old_ts = us->st;
              free(us);
           }
      }
