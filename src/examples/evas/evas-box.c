@@ -150,13 +150,13 @@ list_free:
 
         evas_object_box_align_get(d.box, &h, &v);
 
-        if (h == 0.5)
+        if (EINA_DBL_EQ(h, 0.5))
           h = v = 1.0;
-        else if (h == 1.0)
+        else if (EINA_DBL_EQ(h, 1.0))
           h = v = -1.0;
-        else if (h == -1.0)
+        else if (EINA_DBL_EQ(h, -1.0))
           h = v = 0.0;
-        else if (h == 0.0)
+        else if (EINA_DBL_EQ(h, 0.0))
           h = v = 0.5;
 
         evas_object_box_align_set(d.box, h, v);

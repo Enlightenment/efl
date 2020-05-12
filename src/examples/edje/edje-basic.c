@@ -60,7 +60,7 @@ _on_keydown(void        *data,
 
         printf("got scale %f\n", scale);
 
-        if (scale != 1.0) scale = 1.0;
+        if (!EINA_DBL_EQ(scale, 1.0)) scale = 1.0;
         else scale = 2.0;
 
         edje_scale_set(scale);
@@ -75,8 +75,8 @@ _on_keydown(void        *data,
 
         printf("got scale %f\n", scale);
 
-        if (!scale) scale = 1.0;
-        else if (scale == 1.0) scale = 2.0;
+        if (EINA_DBL_EQ(scale, 0)) scale = 1.0;
+        else if (EINA_DBL_EQ(scale, 1.0)) scale = 2.0;
         else scale = 0.0;
 
         edje_object_scale_set(edje_obj, scale);
