@@ -747,23 +747,6 @@ _efl_ui_progressbar_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 /* FIXME: replicated from elm_layout just because progressbar's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   char buf[64];
-
-   if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-   edje_object_message_signal_process(elm_layout_edje_get(obj));
-   efl_canvas_group_change(obj);
-}
-
-/* FIXME: replicated from elm_layout just because progressbar's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
 EOLIAN static Eina_Error
 _efl_ui_progressbar_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
 {
@@ -771,7 +754,7 @@ _efl_ui_progressbar_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNU
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
-   if (efl_finalized_get(obj)) _icon_signal_emit(obj);
+   if (efl_finalized_get(obj)) _elm_layout_legacy_icon_signal_emit(obj);
 
    return int_ret;
 }
@@ -787,7 +770,7 @@ _efl_ui_progressbar_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_p
    int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
-   _icon_signal_emit(obj);
+   _elm_layout_legacy_icon_signal_emit(obj);
 
    return EINA_TRUE;
 }
@@ -803,7 +786,7 @@ _efl_ui_progressbar_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const cha
    int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS), part), content);
    if (!int_ret) return EINA_FALSE;
 
-   _icon_signal_emit(obj);
+   _elm_layout_legacy_icon_signal_emit(obj);
 
    return EINA_TRUE;
 }
