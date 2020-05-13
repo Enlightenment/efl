@@ -3243,6 +3243,7 @@ _edje_vector_load_lottie(Edje *ed, Edje_Real_Part *ep, const char *key)
           {
              lottie_data[lottie_data_len] = '\0';
              file = eina_file_virtualize(NULL, lottie_data, lottie_data_len + 1, EINA_FALSE);
+             if (efl_file_loaded_get(ep->object)) efl_file_unload(ep->object);
              efl_file_simple_mmap_load(ep->object, file, NULL);
 
              if (ep->typedata.vector->lottie_virtual_file)
