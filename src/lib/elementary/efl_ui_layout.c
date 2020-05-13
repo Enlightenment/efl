@@ -3297,6 +3297,26 @@ _elm_layout_signal_callback_add_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_sig
                                          _edje_signal_callback, esd);
 }
 
+/* replicated from elm_layout just because legacy widget's icon spot
+ * is elm.swallow.content, not elm.swallow.icon.
+ */
+void
+_elm_layout_legacy_icon_signal_emit(Evas_Object *obj)
+{
+   char buf[63];
+   Eo *edje;
+
+   edje = elm_layout_edje_get(obj);
+   if (!edje) return;
+   if (!edje_object_part_exists(obj, "elm.swallow.content")) return;
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(edje);
+   efl_canvas_group_change(obj);
+}
+
 EAPI void
 elm_layout_signal_callback_add(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
