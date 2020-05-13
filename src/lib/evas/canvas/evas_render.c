@@ -438,18 +438,6 @@ _evas_render_object_is_mask(Evas_Object_Protected_Data *obj)
    return EINA_FALSE;
 }
 
-static inline Evas_Object_Protected_Data *
-_evas_mask_owner_get(Evas_Object_Protected_Data *obj)
-{
-   Evas_Object_Protected_Data *parent = NULL;
-
-   if (!obj->smart.parent) return obj;
-   parent = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
-   if (parent->clip.mask != obj->clip.mask) return obj;
-
-   return _evas_mask_owner_get(parent);
-}
-
 static void
 _evas_render_phase1_direct(Evas_Public_Data *e,
                            Eina_Inarray *active_objects,
@@ -2157,13 +2145,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              if (obj->is_smart)
                {
                   /* Clipper masks */
-                  if (obj->cur->clipper && (mapped > 1) &&  _evas_render_object_is_mask(obj->cur->clipper))
-                    {
-                       //Apply only owner mask in the map
-                       Evas_Object_Protected_Data *owner = _evas_mask_owner_get(obj);
-                       if (owner == obj || (_evas_render_has_map(owner) && !_evas_render_can_map(owner)))
-                         _evas_render_mapped_mask(evas, obj, obj->cur->clipper, proxy_render_data, output, ctx, off_x, off_y, level, do_async);
-                    }
+                  if (obj->cur->clipper && (mapped > 1) &&
+                      _evas_render_object_is_mask(obj->cur->clipper))
+                    _evas_render_mapped_mask(evas, obj, obj->cur->clipper, proxy_render_data, output, ctx, off_x, off_y, level, do_async);
                   else if (!proxy_src_clip && proxy_render_data)
                     {
                        if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
@@ -2210,40 +2194,35 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                   if (obj->cur->clipper && (mapped > 1))
                     {
-                       //Apply only owner mask in the map
-                       Evas_Object_Protected_Data *owner = _evas_mask_owner_get(obj);
-                       if (owner == obj || (_evas_render_has_map(owner) && !_evas_render_can_map(owner)))
+                       Evas_Object_Protected_Data *mask = obj->clip.mask;
+
+                       if (obj->mask->surface != surface)
                          {
-                            Evas_Object_Protected_Data *mask = obj->clip.mask;
-
-                            if (obj->mask->surface != surface)
+                            if (proxy_src_clip)
                               {
-                                 if (proxy_src_clip)
-                                   {
-                                      if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
-                                          _evas_render_object_is_mask(obj->cur->clipper))
-                                        evas_object_clip_recalc(obj);
-                                      _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
-                                                                           proxy_render_data,
-                                                                           off_x, off_y);
-                                   }
-                                 else if (proxy_render_data)
-                                   {
-                                      if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
-                                        goto on_empty_clip;
-                                   }
+                                 if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
+                                     _evas_render_object_is_mask(obj->cur->clipper))
+                                   evas_object_clip_recalc(obj);
+                                 _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
+                                                                      proxy_render_data,
+                                                                      off_x, off_y);
                               }
-                            else
+                            else if (proxy_render_data)
                               {
-                                 // rendering a mask in its own surface:
-                                 // we want to render it fully and clip only at
-                                 // clippee (maskee) render time
-                                 RD(level, "  draw mask\n");
+                                 if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                                   goto on_empty_clip;
                               }
-
-                            /* Clipper masks */
-                            _evas_render_mapped_mask(evas, obj, mask, proxy_render_data, output, ctx, off_x, off_y, level, do_async);
                          }
+                       else
+                         {
+                            // rendering a mask in its own surface:
+                            // we want to render it fully and clip only at
+                            // clippee (maskee) render time
+                            RD(level, "  draw mask\n");
+                         }
+
+                       /* Clipper masks */
+                       _evas_render_mapped_mask(evas, obj, mask, proxy_render_data, output, ctx, off_x, off_y, level, do_async);
                     }
 
 #ifdef REND_DBG
