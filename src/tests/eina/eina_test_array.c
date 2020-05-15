@@ -177,24 +177,24 @@ EFL_END_TEST
 EFL_START_TEST(eina_array_find_test)
 {
    Eina_Array sea;
-   unsigned long i;
+   uintptr_t i;
    unsigned int out = 0;
 
-   fail_if(eina_array_find(NULL, (void*)1, NULL) != EINA_FALSE);
+   fail_if(eina_array_find(NULL, (void *)1, NULL) != EINA_FALSE);
 
    eina_array_step_set(&sea, sizeof(sea), 5);
 
-   for (i =1 ; i < 10 ; i++)
-     eina_array_push(&sea, (void*)i);
+   for (i = 1 ; i < 10 ; i++)
+     eina_array_push(&sea, (void *)i);
 
-   fail_if(eina_array_find(&sea, (void*)15, NULL) != EINA_FALSE);
+   fail_if(eina_array_find(&sea, (void *)15, NULL) != EINA_FALSE);
 
-   fail_if(eina_array_find(&sea, (void*)5, NULL) != EINA_TRUE);
-   fail_if(eina_array_find(&sea, (void*)6, &out) != EINA_TRUE);
+   fail_if(eina_array_find(&sea, (void *)5, NULL) != EINA_TRUE);
+   fail_if(eina_array_find(&sea, (void *)6, &out) != EINA_TRUE);
    fail_if(out != 5);
 
-   eina_array_data_set(&sea, 7, (void*)99);
-   fail_if(eina_array_find(&sea, (void*)99, &out) != EINA_TRUE);
+   eina_array_data_set(&sea, 7, (void *)99);
+   fail_if(eina_array_find(&sea, (void *)99, &out) != EINA_TRUE);
    fail_if(out != 7);
 
    eina_array_flush(&sea);
