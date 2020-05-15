@@ -206,7 +206,7 @@ _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_
      {
         //Add it to the gesture context.
         Eina_Hash *thisisreallystupid = eina_hash_find(pd->m_gesture_contex, &target);
-        int count = 0;
+        intptr_t count = 0;
         /* already present */
         if (thisisreallystupid)
           count = (intptr_t)eina_hash_find(thisisreallystupid, &type);
@@ -216,7 +216,7 @@ _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_
              eina_hash_set(pd->m_gesture_contex, &target, thisisreallystupid);
           }
         count++;
-        eina_hash_set(thisisreallystupid, &type, (intptr_t*)(long)count);
+        eina_hash_set(thisisreallystupid, &type, (intptr_t*)count);
      }
 }
 
@@ -234,13 +234,13 @@ _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_
    if (recognizer)
      {
         Eina_Hash *thisisreallystupid = eina_hash_find(pd->m_gesture_contex, &target);
-        int count;
+        intptr_t count;
 
         if (!thisisreallystupid) return;
         count = (intptr_t)eina_hash_find(thisisreallystupid, &type);
         if (!count) return;
         count--;
-        eina_hash_set(thisisreallystupid, &type, (intptr_t*)(long)count);
+        eina_hash_set(thisisreallystupid, &type, (intptr_t*)count);
         if (count) return;
         eina_hash_del_by_key(thisisreallystupid, &type);
         if (eina_hash_population(thisisreallystupid)) return;
