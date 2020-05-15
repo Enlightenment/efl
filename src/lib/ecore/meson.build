@@ -192,10 +192,6 @@ if get_option('g-mainloop') == true
   endif
 endif
 
-if get_option('systemd') == true
-  ecore_deps += systemd
-endif
-
 ecore_lib = library('ecore',
     ecore_src, pub_eo_file_target,
     dependencies: ecore_pub_deps + [m, buildsystem, ecore_deps],

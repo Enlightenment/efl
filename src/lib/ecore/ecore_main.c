@@ -20,10 +20,6 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #ifdef HAVE_IEEEFP_H
 # include <ieeefp.h> // for Solaris
 #endif
@@ -1195,9 +1191,11 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
    pd->loop_active++;
    if (obj == ML_OBJ)
      {
-#ifdef HAVE_SYSTEMD
-        sd_notify(0, "READY=1");
-#endif
+        if (getenv("NOTIFY_SOCKET"))
+          {
+             _ecore_sd_init();
+             if (_ecore_sd_notify) _ecore_sd_notify(0, "READY=1");
+          }
 #ifdef HAVE_LIBUV
         if (!_dl_uv_run)
           {

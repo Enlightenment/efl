@@ -19,12 +19,6 @@ elput_src = [
 elput_deps += dependency('libinput', version : ['>=1.7.0'])
 elput_deps += dependency('xkbcommon', version : ['>=0.3.0'])
 elput_deps += dependency('libudev')
-if get_option('systemd')
-  elput_deps += systemd
-endif
-if get_option('elogind')
-  elput_deps += dependency('libelogind')
-endif
 
 elput_lib = library('elput',
     elput_src, pub_eo_file_target,

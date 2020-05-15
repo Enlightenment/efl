@@ -34,10 +34,6 @@
 # include <sys/filio.h>
 #endif
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #ifdef _WIN32
 # include <ws2tcpip.h>
 # include <evil_private.h> /* evil_init|shutdown */
@@ -107,7 +103,11 @@ ecore_con_init(void)
    EFL_NET_SOCKET_SSL_ERROR_CERTIFICATE_VERIFY_FAILED;
 
 #ifdef HAVE_SYSTEMD
-   sd_fd_max = sd_listen_fds(0);
+   if (getenv("LISTEN_PID") && getenv("LISTEN_FDS"))
+     {
+        _ecore_con_sd_init();
+        if (_ecore_sd_listen_fds) sd_fd_max = _ecore_sd_listen_fds(0);
+     }
 #endif
 
    eina_log_timing(_ecore_con_log_dom,
@@ -389,10 +389,15 @@ efl_net_ip_port_split(char *buf, const char **p_host, const char **p_port)
 Eina_Error
 efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina_Bool *listening)
 {
-   SOCKET fd = SD_LISTEN_FDS_START + sd_fd_index;
+   SOCKET fd = /*SD_LISTEN_FDS_START*/3 + sd_fd_index;
    int r;
 
+   // check first as this will return if we're not socket activated...
+   // or systemd not found, which means the below init will not be done then
    if (sd_fd_index >= sd_fd_max) return ENOENT;
+
+   _ecore_con_sd_init();
+   if ((!_ecore_sd_is_socket_unix) || (!_ecore_sd_is_socket)) return ENOENT;
 
    if (family == AF_UNIX)
      {
@@ -424,7 +429,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
              len = strlen(address) + 1;
           }
 
-        r = sd_is_socket_unix(fd, type, 0, sun_path, len);
+        r = _ecore_sd_is_socket_unix(fd, type, 0, sun_path, len);
         if (r < 0)
           {
              ERR("socket " SOCKET_FMT " is not of family=%d, type=%d", fd, family, type);
@@ -443,7 +448,7 @@ efl_net_ip_socket_activate_check(const char *address, int family, int type, Eina
         Eina_Error err;
         int x;
 
-        r = sd_is_socket(fd, family, type, (type == SOCK_DGRAM) ? -1 : 0);
+        r = _ecore_sd_is_socket(fd, family, type, (type == SOCK_DGRAM) ? -1 : 0);
         if (r < 0)
           {
              ERR("socket " SOCKET_FMT " is not of family=%d, type=%d", fd, family, type);
@@ -2588,3 +2593,49 @@ ecore_con_libproxy_proxies_free(char **proxies)
      free(*itr);
    free(proxies);
 }
+
+#ifdef HAVE_SYSTEMD
+static Eina_Module *_libsystemd = NULL;
+static Eina_Bool _libsystemd_broken = EINA_FALSE;
+
+int (*_ecore_sd_listen_fds) (int unset_environment) = NULL;
+int (*_ecore_sd_is_socket_unix) (int fd, int type, int listening, const char *path, size_t length) = NULL;
+int (*_ecore_sd_is_socket) (int fd, int family, int type, int listening) = NULL;
+
+void
+_ecore_con_sd_init(void)
+{
+   if (_libsystemd_broken) return;
+   _libsystemd = eina_module_new("libsystemd.so.0");
+   if (_libsystemd)
+     {
+        if (!eina_module_load(_libsystemd))
+          {
+             eina_module_free(_libsystemd);
+             _libsystemd = NULL;
+          }
+     }
+   if (!_libsystemd)
+     {
+        _libsystemd_broken = EINA_TRUE;
+        return;
+     }
+   _ecore_sd_listen_fds =
+     eina_module_symbol_get(_libsystemd, "sd_listen_fds");
+   _ecore_sd_is_socket_unix =
+     eina_module_symbol_get(_libsystemd, "sd_is_socket_unix");
+   _ecore_sd_is_socket =
+     eina_module_symbol_get(_libsystemd, "sd_is_socket");
+   if ((!_ecore_sd_listen_fds) ||
+       (!_ecore_sd_is_socket_unix) ||
+       (!_ecore_sd_is_socket))
+     {
+        _ecore_sd_listen_fds = NULL;
+        _ecore_sd_is_socket_unix = NULL;
+        _ecore_sd_is_socket = NULL;
+        eina_module_free(_libsystemd);
+        _libsystemd = NULL;
+        _libsystemd_broken = EINA_TRUE;
+     }
+}
+#endif

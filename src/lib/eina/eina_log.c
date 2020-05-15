@@ -29,10 +29,6 @@
 #include <assert.h>
 #include <errno.h>
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-journal.h>
-#endif
-
 #ifdef _WIN32
 # include <windows.h>
 #endif
@@ -51,6 +47,7 @@
 #include "eina_thread.h"
 #include "eina_convert.h"
 #include "eina_strbuf.h"
+#include "eina_module.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -2091,6 +2088,43 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d,
 #endif
 }
 
+#ifdef HAVE_SYSTEMD
+static Eina_Module *_libsystemd = NULL;
+static Eina_Bool _libsystemd_broken = EINA_FALSE;
+
+static int (*_eina_sd_journal_send_with_location) (const char *file, const char *line, const char *func, const char *format, ...) = NULL;
+
+static void
+_eina_sd_init(void)
+{
+   if (_libsystemd_broken) return;
+   _libsystemd = eina_module_new("libsystemd.so.0");
+   if (_libsystemd)
+     {
+        if (!eina_module_load(_libsystemd))
+          {
+             eina_module_free(_libsystemd);
+             _libsystemd = NULL;
+          }
+     }
+   if (!_libsystemd)
+     {
+        _libsystemd_broken = EINA_TRUE;
+        return;
+     }
+   _eina_sd_journal_send_with_location =
+     eina_module_symbol_get(_libsystemd, "sd_journal_send_with_location");
+   if (!_eina_sd_journal_send_with_location)
+     {
+        _eina_sd_journal_send_with_location = NULL;
+        eina_module_free(_libsystemd);
+        _libsystemd = NULL;
+        _libsystemd_broken = EINA_TRUE;
+     }
+}
+
+#endif
+
 EAPI void
 eina_log_print_cb_journald(const Eina_Log_Domain *d,
                            Eina_Log_Level level,
@@ -2107,6 +2141,9 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
    char *message = NULL;
    Eina_Thread cur;
    int r;
+
+   _eina_sd_init();
+   if (!_eina_sd_journal_send_with_location) goto nosystemd;
 
    r = asprintf(&file_prefixed, "CODE_FILE=%s", file);
    if (r == -1)
@@ -2134,12 +2171,12 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
 #ifdef EINA_LOG_BACKTRACE
    if (EINA_LIKELY(level > _backtrace_level))
 #endif
-     sd_journal_send_with_location(file_prefixed, line_str, fnc,
-                                   "PRIORITY=%i", level,
-                                   "MESSAGE=%s", message,
-                                   "EFL_DOMAIN=%s", d->domain_str,
-                                   "THREAD=%lu", cur,
-                                   NULL);
+     _eina_sd_journal_send_with_location(file_prefixed, line_str, fnc,
+                                         "PRIORITY=%i", level,
+                                         "MESSAGE=%s", message,
+                                         "EFL_DOMAIN=%s", d->domain_str,
+                                         "THREAD=%lu", cur,
+                                         NULL);
 #ifdef EINA_LOG_BACKTRACE
    else
      {
@@ -2159,14 +2196,14 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
           else
             eina_strbuf_append_printf(bts, "[%s], ", strings[i]);
 
-        sd_journal_send_with_location(file_prefixed, line_str, fnc,
-                                      "PRIORITY=%i", level,
-                                      "MESSAGE=%s", message,
-                                      "EFL_DOMAIN=%s", d->domain_str,
-                                      "THREAD=%lu", cur,
-                                      "BACKTRACE=%s",
-                                      eina_strbuf_string_get(bts),
-                                      NULL);
+        _eina_sd_journal_send_with_location(file_prefixed, line_str, fnc,
+                                            "PRIORITY=%i", level,
+                                            "MESSAGE=%s", message,
+                                            "EFL_DOMAIN=%s", d->domain_str,
+                                            "THREAD=%lu", cur,
+                                            "BACKTRACE=%s",
+                                            eina_strbuf_string_get(bts),
+                                            NULL);
         eina_strbuf_free(bts);
         free(strings);
      }
@@ -2176,10 +2213,10 @@ finish:
    free(file_prefixed);
    free(line_str);
    free(message);
-
-#else
-   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, data, args);
+   return;
+nosystemd:
 #endif
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, data, args);
 }
 
 EAPI void

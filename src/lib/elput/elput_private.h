@@ -23,14 +23,6 @@
 # include <xkbcommon/xkbcommon.h>
 # include <xkbcommon/xkbcommon-compose.h>
 
-# ifdef HAVE_SYSTEMD
-#  include <systemd/sd-login.h>
-# endif
-
-# ifdef HAVE_ELOGIND
-#  include <elogind/sd-login.h>
-# endif
-
 #ifndef ELPUT_NODEFS
 # ifdef ELPUT_DEFAULT_LOG_COLOR
 #  undef ELPUT_DEFAULT_LOG_COLOR
