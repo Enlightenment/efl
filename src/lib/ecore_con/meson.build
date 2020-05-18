@@ -182,12 +182,14 @@ endif
 
 ecore_con_deps += crypto
 
+ecore_con_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 ecore_con_lib = library('ecore_con',
     ecore_con_src, pub_eo_file_target,
     dependencies: [ecore, ecore_con_deps, http_parser, eldbus, eet, buildsystem, dl],
     include_directories : config_dir,
     install: true,
-    c_args : package_c_args,
+    c_args : ecore_con_c_args,
     version : meson.project_version()
 )
 

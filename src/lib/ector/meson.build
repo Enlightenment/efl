@@ -80,8 +80,11 @@ endforeach
 
 subdir('software')
 
+ector_c_args = [ '-DEFL_BUILD' ]
+
 ector_lib = library('ector',
     ector_src, pub_eo_file_target,
+    c_args : ector_c_args,
     dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,
     include_directories : config_dir,
     install: true,

@@ -11,9 +11,11 @@ ecore_input_evas_src = [
   'ecore_input_evas_private.h',
 ]
 
+ecore_input_evas_c_args = [ '-DEFL_BUILD' ]
 
 ecore_input_evas_lib = library('ecore_input_evas',
     ecore_input_evas_src, pub_eo_file_target,
+    c_args : ecore_input_evas_c_args,
     dependencies: ecore_input_evas_pub_deps + ecore_input_evas_deps,
     include_directories : config_dir,
     install: true,

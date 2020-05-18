@@ -27,9 +27,11 @@ ecore_evas_src = [
   'ecore_evas_fallback_selection.c'
 ]
 
+ecore_evas_c_args = [ '-DEFL_BUILD' ]
 
 ecore_evas_lib = library('ecore_evas',
     ecore_evas_src, pub_eo_file_target,
+    c_args: ecore_evas_c_args,
     dependencies: [ecore_evas_deps, buildsystem],
     include_directories : config_dir,
     install: true,

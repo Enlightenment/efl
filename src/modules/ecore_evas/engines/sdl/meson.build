@@ -1,7 +1,10 @@
 engine_src = files(['ecore_evas_sdl.c'])
 engine_deps = [ecore_sdl, ecore_input, ecore, dependency('sdl2')]
 
+ecore_evas_mod_sdl_c_args = [ '-DEFL_BUILD' ]
+
 shared_module(mod_full_name, engine_src,
+  c_args : ecore_evas_mod_sdl_c_args,
   include_directories : config_dir + [engine_include_dir],
   dependencies : [eina, ecore_evas, ecore_input_evas] + engine_deps,
   install : true,

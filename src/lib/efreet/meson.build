@@ -31,12 +31,14 @@ efreet_src = [
 efreet_deps = [eet, ecore, ecore_con, ecore_file, eo, efl, eina, emile, ecore_ipc, buildsystem,intl]
 efreet_pub_deps = [eina, eo, efl]
 
+efreet_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 efreet_lib = library('efreet',
     efreet_src,
     dependencies: efreet_pub_deps + [m] + efreet_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : [package_c_args, '-DDATA_DIR="'+dir_data+'"'],
+    c_args : [efreet_c_args, '-DDATA_DIR="'+dir_data+'"'],
     version : meson.project_version()
 )
 
@@ -51,7 +53,7 @@ efreet_mime_lib = library('efreet_mime',
     dependencies: efreet_pub_deps + [m, efreet, efreet_deps],
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : efreet_c_args,
     version : meson.project_version()
 )
 
@@ -67,7 +69,7 @@ efreet_trash_lib = library('efreet_trash',
     dependencies: efreet_pub_deps + [efreet, efreet_deps],
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : efreet_c_args,
     version : meson.project_version()
 )
 

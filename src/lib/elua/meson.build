@@ -4,12 +4,14 @@ elua_pub_deps = [lua]
 elua_src = ['elua.c', 'io.c', 'cache.c']
 elua_header_src = ['Elua.h']
 
+elua_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 elua_lib = library('elua',
     elua_src,
+    c_args : elua_c_args,
     dependencies: [m, dl] + elua_deps + elua_pub_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
-    c_args : package_c_args,
     version : meson.project_version()
 )
 

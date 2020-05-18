@@ -13,12 +13,14 @@ ethumb_client_deps = [
 
 ethumb_client_pub_deps = [eina, eo, efl, ethumb]
 
+ethumb_client_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 ethumb_client_lib = library('ethumb_client',
     ethumb_client_src,
     dependencies: ethumb_client_pub_deps + ethumb_client_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : ethumb_client_c_args,
     version : meson.project_version()
 )
 

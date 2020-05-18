@@ -20,12 +20,14 @@ ephysics_src = [
   'ephysics_world.cpp'
 ]
 
+ephysics_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 ephysics_lib = library('ephysics',
     ephysics_src,
     dependencies: ephysics_pub_deps + [m] + ephysics_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : ephysics_c_args,
     version : meson.project_version()
 )
 

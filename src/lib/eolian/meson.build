@@ -35,11 +35,13 @@ eolian_src = [
 'eolian_aux.c'
 ]
 
+eolian_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 eolian_lib = library('eolian', eolian_src,
     include_directories: config_dir,
     dependencies: eina,
     install: true,
-    c_args : package_c_args,
+    c_args : eolian_c_args,
     version : meson.project_version()
 )
 

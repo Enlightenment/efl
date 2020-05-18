@@ -66,12 +66,14 @@ endif
 eio_deps = [ecore, ecore_file, eet, eo, eina, efl, emile, efreet_mime]
 eio_pub_deps = [eina, eet]
 
+eio_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
 eio_lib = library('eio',
     eio_src, pub_eo_file_target,
     dependencies: [eina, eo, efl, m, eio_deps],
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : eio_c_args,
     link_args : linker_args,
     version : meson.project_version()
 )

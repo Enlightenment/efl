@@ -20,12 +20,14 @@ if sys_windows == true
     'Ecore_Win32.h'
   ]
 
+  ecore_win32_c_args = package_c_args + [ '-DEFL_BUILD' ]
+
   ecore_win32_lib = library('ecore_win32',
       ecore_win32_src,
       dependencies: ecore_win32_deps + ecore_win32_pub_deps,
       include_directories : config_dir,
       install: true,
-      c_args : package_c_args,
+      c_args : ecore_win32_c_args,
   )
 
   ecore_win32 = declare_dependency(

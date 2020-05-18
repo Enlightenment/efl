@@ -361,7 +361,10 @@ endif
 
 execinfo = cc.find_library('execinfo', required: false)
 
+eina_c_args = [ '-DEFL_BUILD' ]
+
 eina_lib = library('eina', sources,
+  c_args : eina_c_args,
   include_directories : config_dir,
   dependencies: [m, rt, dl, execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil],
   install: true,

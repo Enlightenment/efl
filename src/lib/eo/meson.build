@@ -58,18 +58,23 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
+eo_c_args = [ '-DEFL_BUILD' ]
+
 eo_lib = library('eo',
     eo_src, pub_eo_file_target,
+    c_args : eo_c_args,
     dependencies: [eina, valgrind, dl, execinfo],
     install: true,
     version : meson.project_version()
 )
 
+eo_db_c_args = eo_c_args + [ '-DEO_DEBUG' ]
+
 eo_lib_dbg = library('eo_dbg',
     eo_src, pub_eo_file_target,
+    c_args : eo_c_args,
     dependencies: [eina, valgrind, dl, execinfo],
     install: true,
-    c_args : '-DEO_DEBUG',
     version : meson.project_version()
 )
 
