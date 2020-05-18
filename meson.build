@@ -96,7 +96,6 @@ foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-D_GNU_SOURCE=1', language: lang)
   add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
   add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
-  add_global_arguments('-DEFL_BUILD=1', language: lang)
   add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
   if sys_windows == true
     add_global_arguments('-D_POSIX_C_SOURCE=200809L', language: lang)
@@ -240,7 +239,6 @@ if sys_exe_extension == ''
 else
   config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
 endif
-config_h.set('EFL_BUILD', '1')
 
 if get_option('tslib') == true
   config_h.set('HAVE_TSLIB', '1')
@@ -360,10 +358,6 @@ tmp_empty = declare_dependency()
 foreach package : subprojects
   package_name = package[0]
   package_version_name = '-'.join(package_name.split('_')) + '-' + version_major
-  package_c_args = [
-    '-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"',
-    '-DNEED_RUN_IN_TREE=1',
-  ]
   automatic_pkgfile = true
   if package[1].length() == 0 or get_option(package[1][0])
     config_h.set('HAVE_'+package_name.to_upper().underscorify(), '1')
@@ -396,6 +390,12 @@ foreach package : subprojects
       endif
     endforeach
 
+    #package_c_args definition for lib and module
+    package_c_args = [
+      '-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"',
+      '-DNEED_RUN_IN_TREE=1',
+      '-DEFL_BUILD=1',
+    ]
     if (package[3])
       subdir(join_paths(local_lib, package_name))
       set_variable(package_name + '_eo_files', pub_eo_files)
@@ -406,6 +406,11 @@ foreach package : subprojects
     if (package[2])
        subdir(join_paths(local_module, package_name))
     endif
+    #package_c_args definition for the rest
+    package_c_args = [
+      '-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"',
+      '-DNEED_RUN_IN_TREE=1',
+    ]
     if (package[4])
        subdir(join_paths(local_bin, package_name))
     endif
