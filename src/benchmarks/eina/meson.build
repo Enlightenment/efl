@@ -31,7 +31,7 @@ city = shared_library('city',
 eina_bench = executable('eina_bench',
   sources : eina_bench_src,
   dependencies : eina,
-  c_args : ['-fPIC','-DCITYHASH_BENCH', '-DEINA_ENABLE_BENCH_E17'],
+  c_args : ['-fPIC','-DCITYHASH_BENCH', '-DEINA_ENABLE_BENCH_E17', '-DEFL_BUILD'],
   include_directories : config_dir,
   link_with : city,
 )
