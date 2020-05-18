@@ -25,15 +25,15 @@ eina_bench_src = files(
 'evas_mempool.h')
 
 city = shared_library('city',
-    sources : ['city.cc','city.h'],
+  sources : ['city.cc','city.h'],
 )
 
 eina_bench = executable('eina_bench',
-	sources : eina_bench_src,
-	dependencies : eina,
-    c_args : ['-fPIC','-DCITYHASH_BENCH', '-DEINA_ENABLE_BENCH_E17'],
-	include_directories : config_dir,
-	link_with : city,
+  sources : eina_bench_src,
+  dependencies : eina,
+  c_args : ['-fPIC','-DCITYHASH_BENCH', '-DEINA_ENABLE_BENCH_E17'],
+  include_directories : config_dir,
+  link_with : city,
 )
 
 benchmark('eina_bench', eina_bench,
