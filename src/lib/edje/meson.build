@@ -144,14 +144,12 @@ edje_src = [
 
 ]
 
-edje_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 edje_lib = library('edje',
     edje_src, pub_eo_file_target, priv_eo_file_target,
     dependencies: edje_pub_deps + edje_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : edje_c_args,
+    c_args : [package_c_args],
     version : meson.project_version()
 )
 

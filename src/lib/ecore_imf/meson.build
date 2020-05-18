@@ -12,13 +12,12 @@ ecore_imf_src = [
   'ecore_imf_private.h',
 ]
 
-ecore_imf_c_args = package_c_args + [ '-DEFL_BUILD' ]
 
 ecore_imf_lib = library('ecore_imf',
     ecore_imf_src, pub_eo_file_target,
     dependencies: [buildsystem, ecore_imf_deps, ecore_imf_pub_deps],
     include_directories : config_dir,
-    c_args : ecore_imf_c_args,
+    c_args : package_c_args,
     install: true,
     version : meson.project_version()
 )

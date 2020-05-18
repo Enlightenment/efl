@@ -12,14 +12,12 @@ ethumb_src = [
 ethumb_deps = [eet, evas, ecore, ecore_evas, ecore_file, ecore_imf, edje, emile]
 ethumb_pub_deps = [eina, eo, efl]
 
-ethumb_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 ethumb_lib = library('ethumb',
     ethumb_src,
     dependencies: ethumb_pub_deps + [m] + ethumb_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : ethumb_c_args,
+    c_args : package_c_args,
     version : meson.project_version()
 )
 

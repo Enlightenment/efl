@@ -9,14 +9,11 @@ engine_deps = []
 
 evas_include_directories += include_directories('.')
 
-evas_mod_buffer_c_args = [ '-DEFL_BUILD' ]
-
 install_headers('Evas_Engine_Buffer.h',
   install_dir : join_paths(dir_include, 'evas-'+version_major),
 )
 
 evas_engine_buffer_mod = shared_module(mod_full_name, engine_src,
-  c_args : evas_mod_buffer_c_args,
   include_directories : config_dir + [engine_include_dir],
   dependencies : [eina, evas] + engine_deps,
   install : true,

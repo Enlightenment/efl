@@ -279,16 +279,13 @@ foreach loader : evas_vg_savers_file
   endif
 endforeach
 
-evas_c_args = [ '-DPACKAGE_DATA_DIR="'+join_paths(dir_data, 'evas')+'"' ]
-evas_c_args += [ '-DEFL_BUILD' ]
-
 evas_lib = library('evas',
     include_directories: evas_include_directories + [vg_common_inc_dir],
     sources : [evas_src, pub_eo_file_target, priv_eo_file_target],
     dependencies: [evas_deps, m, draw, valgrind, libunibreak, evas_static_list],
     link_with: evas_link,
     install: true,
-    c_args : evas_c_args,
+    c_args : '-DPACKAGE_DATA_DIR="'+join_paths(dir_data, 'evas')+'"',
     version : meson.project_version()
 )
 

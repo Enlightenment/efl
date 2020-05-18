@@ -15,14 +15,12 @@ generic_deps = [
   dependency('gstreamer-pbutils-1.0'),
   ]
 
-emotion_mod_gst_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 shared_module(emotion_loader,
     generic_src,
     include_directories : config_dir,
     dependencies: [eina, evas, emotion, generic_deps],
     install: true,
     install_dir : mod_install_dir,
-    c_args : emotion_mod_gst_c_args,
+    c_args : package_c_args,
     name_suffix : sys_mod_extension
 )

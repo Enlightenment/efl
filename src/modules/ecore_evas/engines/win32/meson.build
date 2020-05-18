@@ -5,10 +5,7 @@ config_h.set('BUILD_ECORE_EVAS_SOFTWARE_GDI', '1')
 
 engine_deps = [engine_software_ddraw, engine_software_gdi]
 
-ecore_evas_mod_win32_c_args = [ '-DEFL_BUILD' ]
-
 shared_module(mod_full_name, engine_src,
-  c_args : ecore_evas_mod_win32_c_args,
   include_directories : config_dir + [engine_include_dir],
   dependencies : [eina, ecore_win32, ecore_input, ecore_evas, ecore_input_evas] + engine_deps,
   install : true,

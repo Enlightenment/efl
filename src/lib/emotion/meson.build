@@ -44,16 +44,16 @@ if get_option('eeze') == true
   emotion_deps += [eeze]
 endif
 
-emotion_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 emotion_lib = library('emotion',
     emotion_src, pub_eo_file_target, priv_eo_file_target,
     dependencies: emotion_deps + emotion_pub_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : emotion_c_args,
+    c_args : package_c_args,
     version : meson.project_version()
 )
+
+emotion_package_c_args = package_c_args
 
 emotion = declare_dependency(
   include_directories: [include_directories('.')],

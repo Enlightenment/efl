@@ -12,14 +12,12 @@ ecore_sdl_header_src = [
 
 ecore_sdl_deps += dependency('sdl2')
 
-ecore_sdl_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 ecore_sdl_lib = library('ecore_sdl',
     ecore_sdl_src,
     dependencies: [m] + ecore_sdl_deps + ecore_sdl_pub_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
-    c_args : ecore_sdl_c_args,
+    c_args : package_c_args,
 )
 
 ecore_sdl = declare_dependency(

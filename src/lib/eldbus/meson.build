@@ -94,11 +94,8 @@ eldbus_src = [
 
 eldbus_deps += dependency('dbus-1')
 
-eldbus_c_args = [ '-DEFL_BUILD' ]
-
 eldbus_lib = library('eldbus',
     eldbus_src, pub_eo_file_target,
-    c_args : eldbus_c_args,
     dependencies: eldbus_pub_deps + eldbus_deps,
     include_directories : config_dir,
     install: true,

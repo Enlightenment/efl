@@ -16,8 +16,6 @@
 #include <string.h>
 #include <fnmatch.h>
 
-#include <Eina.h>
-
 #include "Embryo.h"
 #include "embryo_private.h"
 

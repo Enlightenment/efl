@@ -7,13 +7,9 @@ engine_src = files([
 
 engine_deps = [cc.find_library('ddraw')]
 
-evas_mod_software_ddraw_c_args = [ '-DEFL_BUILD' ]
-evas_mod_software_ddraw_cpp_args = ['-fno-rtti', '-fno-exceptions']
-
 shared_module(mod_full_name, engine_src,
-  c_args: evas_mod_software_ddraw_c_args,
-  cpp_args: evas_mod_software_ddraw_cpp_args,
   include_directories : config_dir + [engine_include_dir],
+  cpp_args: ['-fno-rtti', '-fno-exceptions'],
   dependencies : [eina, evas] + engine_deps,
   install : true,
   install_dir : mod_install_dir,

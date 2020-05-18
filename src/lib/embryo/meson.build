@@ -19,14 +19,12 @@ embryo_src = [
 
 embryo_deps = [eina, m]
 
-embryo_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 embryo_lib = library('embryo',
     embryo_src,
-    c_args : embryo_c_args,
     dependencies: [m, buildsystem] + embryo_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
+    c_args : package_c_args,
     version : meson.project_version()
 )
 

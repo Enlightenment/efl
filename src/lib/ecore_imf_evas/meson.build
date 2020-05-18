@@ -9,14 +9,12 @@ ecore_imf_evas_src = [
 ecore_imf_evas_deps = [ecore_imf, evas]
 ecore_imf_evas_pub_deps = [eina, eo, efl]
 
-ecore_imf_evas_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 ecore_imf_evas_lib = library('ecore_imf_evas',
     ecore_imf_evas_src,
     dependencies: ecore_imf_evas_pub_deps + [m] + ecore_imf_evas_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : ecore_imf_evas_c_args,
+    c_args : package_c_args,
     version : meson.project_version()
 )
 

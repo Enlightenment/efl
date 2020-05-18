@@ -10,11 +10,8 @@ ecore_ipc_src = [
   'ecore_ipc_private.h',
 ]
 
-ecore_ipc_c_args = [ '-DEFL_BUILD' ]
-
 ecore_ipc_lib = library('ecore_ipc',
     ecore_ipc_src, pub_eo_file_target,
-    c_args : ecore_ipc_c_args,
     dependencies: ecore_ipc_deps + ecore_ipc_pub_deps,
     include_directories : config_dir,
     install: true,

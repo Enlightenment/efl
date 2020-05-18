@@ -11,11 +11,8 @@ efl_src = []
 subdir('interfaces')
 package_header_subdirs += 'interfaces'
 
-efl_c_args = [ '-DEFL_BUILD' ]
-
 efl_lib = library('efl',
     efl_src, pub_eo_file_target,
-    c_args : efl_c_args,
     dependencies: [eina, eo, m],
     install: true,
     version : meson.project_version()

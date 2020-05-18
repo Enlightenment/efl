@@ -1,6 +1,8 @@
 #ifndef _EMBRYO_PRIVATE_H
 #define _EMBRYO_PRIVATE_H
 
+#include <Eina.h>
+
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
 enum _Embryo_Opcode

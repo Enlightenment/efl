@@ -23,11 +23,8 @@ elif (get_option('crypto') == 'openssl')
   emile_src += 'emile_cipher_openssl.c'
 endif
 
-emile_c_args = [ '-DEFL_BUILD' ]
-
 emile_lib = library('emile',
     emile_src,
-    c_args : emile_c_args,
     include_directories: config_dir,
     dependencies: emile_pub_deps + emile_deps + [lz4, rg_etc, m],
     install: true,

@@ -192,14 +192,12 @@ if get_option('g-mainloop') == true
   endif
 endif
 
-ecore_c_args = package_c_args + [ '-DEFL_BUILD' ]
-
 ecore_lib = library('ecore',
     ecore_src, pub_eo_file_target,
-    c_args : ecore_c_args,
     dependencies: ecore_pub_deps + [m, buildsystem, ecore_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
+    c_args : package_c_args,
     version : meson.project_version()
 )
 

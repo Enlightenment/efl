@@ -18,11 +18,8 @@ eet_src = [
   'eet_utils.c',
 ]
 
-eet_c_args = [ '-DEFL_BUILD' ]
-
 eet_lib = library('eet',
     eet_src, pub_eo_file_target,
-    c_args : eet_c_args,
     dependencies: eet_deps + eet_pub_deps,
     include_directories : config_dir,
     install: true,

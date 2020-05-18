@@ -17,11 +17,9 @@ if get_option('eeze')
   ecore_input_deps += eeze
 endif
 
-ecore_input_c_args = [ '-DEFL_BUILD' ]
 
 ecore_input_lib = library('ecore_input',
     ecore_input_src, pub_eo_file_target,
-    c_args: ecore_input_c_args,
     dependencies: ecore_input_pub_deps + ecore_input_deps,
     include_directories : config_dir,
     install: true,

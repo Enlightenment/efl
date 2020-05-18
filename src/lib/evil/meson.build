@@ -23,10 +23,7 @@ if target_machine.system() == 'windows'
   secur32 = cc.find_library('secur32')
   uuid = cc.find_library('uuid')
 
-  evil_c_args = [ '-DEFL_BUILD' ]
-
   evil_lib = library('evil', evil_src,
-    c_args : evil_c_args,
     dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
     include_directories : [config_dir],
     install: true,

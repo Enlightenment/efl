@@ -7,10 +7,7 @@ engine_src = files([
 
 engine_deps = [cc.find_library('gdi32')]
 
-evas_mod_software_gdi_c_args = [ '-DEFL_BUILD' ]
-
 shared_module(mod_full_name, engine_src,
-  c_args: evas_mod_software_gdi_c_args,
   include_directories : config_dir + [engine_include_dir],
   dependencies : [eina, evas] + engine_deps,
   install : true,
