@@ -1,6 +1,5 @@
 elput_deps = [ecore, ecore_input, eeze, eo, m]
 elput_pub_deps = [eina, eldbus]
-pub_eo_file_target = []
 
 elput_header_src = [
   'Elput.h'
