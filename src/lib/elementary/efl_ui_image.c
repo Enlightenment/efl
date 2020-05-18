@@ -181,6 +181,7 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
 {
    Evas_Coord x = 0, y = 0, w = 1, h = 1;
    int ox, oy, ow, oh;
+   Eina_Bool img_no_resize = EINA_FALSE;
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    if (efl_isa(img, EFL_CANVAS_LAYOUT_CLASS))
@@ -202,9 +203,7 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
         //Exception Case
         if ((iw == 0) || (ih == 0) || (ow == 0) || (oh == 0))
           {
-             evas_object_resize(img, 0, 0);
-             evas_object_resize(sd->hit_rect, 0, 0);
-             return;
+             img_no_resize = EINA_TRUE;
           }
 
         iw = ((double)iw) * sd->scale;
@@ -306,7 +305,10 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
           }
      }
 done:
-   evas_object_geometry_set(img, x, y, w, h);
+   if (img_no_resize)
+     evas_object_geometry_set(img, 0, 0, 0, 0);
+   else
+     evas_object_geometry_set(img, x, y, w, h);
 
    evas_object_geometry_set(sd->hit_rect, x, y, w, h);
 }
