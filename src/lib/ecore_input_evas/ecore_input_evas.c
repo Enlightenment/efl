@@ -7,8 +7,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "Ecore.h"
-#include "Ecore_Input.h"
+#include <Ecore.h>
+#include <Ecore_Input.h>
 
 #include "Ecore_Input_Evas.h"
 #include "ecore_input_evas_private.h"

@@ -40,13 +40,6 @@
 #include <alloca.h>
 #endif
 
-#ifdef ELM_WIN32
-#include <malloc.h>
-#ifndef alloca
-#define alloca _alloca
-#endif
-#endif
-
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>

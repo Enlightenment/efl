@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <Eina.h>
+
 #include "Embryo.h"
 #include "embryo_private.h"
 

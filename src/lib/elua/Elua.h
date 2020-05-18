@@ -18,6 +18,14 @@
 #ifndef _ELUA_H
 #define _ELUA_H
 
+#ifdef EFL_BETA_API_SUPPORT
+
+#include <Eina.h>
+
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -91,14 +99,6 @@ extern "C" {
  * @addtogroup Elua
  * @{
  */
-
-#ifdef EFL_BETA_API_SUPPORT
-
-#include <Eina.h>
-
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
 
 /** Opaque Elua state
  *
