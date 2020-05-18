@@ -4,6 +4,7 @@ src = files([
 
 shared_module(mod,
     src,
+    c_args : package_c_args,
     dependencies: [elementary],
     install: true,
     install_dir : mod_install_dir,
