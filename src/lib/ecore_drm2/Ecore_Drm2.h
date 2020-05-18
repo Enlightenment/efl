@@ -412,6 +412,18 @@ EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
 EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
 
 /**
+ * Get the default depth & bpp from a given device
+ *
+ * @param device
+ * @param depth
+ * @param bpp
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.25
+ */
+EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *device, int *depth, int *bpp);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs

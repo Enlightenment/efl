@@ -1,5 +1,9 @@
 #include "ecore_drm2_private.h"
 
+#ifndef DRM_CAP_DUMB_PREFERRED_DEPTH
+# define DRM_CAP_DUMB_PREFERRED_DEPTH 0x3
+#endif
+
 #ifndef DRM_CAP_DUMB_PREFER_SHADOW
 # define DRM_CAP_DUMB_PREFER_SHADOW 0x4
 #endif
@@ -881,6 +885,22 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
      return EINA_TRUE;
    else
      return EINA_FALSE;
+}
+
+EAPI void
+ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *device, int *depth, int *bpp)
+{
+   uint64_t caps;
+   int ret;
+
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   ret = sym_drmGetCap(device->fd, DRM_CAP_DUMB_PREFERRED_DEPTH, &caps);
+   if (ret == 0)
+     {
+        if (depth) *depth = caps;
+        if (bpp) *bpp = caps;
+     }
 }
 
 EAPI int

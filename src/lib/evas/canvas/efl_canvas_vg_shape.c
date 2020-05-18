@@ -474,7 +474,12 @@ evas_vg_shape_add(Efl_Canvas_Vg_Node *parent)
 {
    /* Warn it because the usage has been changed.
       We can remove this message after v1.21. */
-   if (!parent) CRI("Efl_Canvas_Vg_Shape only allow Efl_Canvas_Vg_Node as the parent");
+   if (!parent)
+     {
+        ERR("Efl_Canvas_Vg_Shape only allow Efl_Canvas_Vg_Node as the parent");
+        return NULL;
+     }
+
    return efl_add(MY_CLASS, parent);
 }
 
