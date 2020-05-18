@@ -20,6 +20,7 @@ eet_src = [
 
 eet_lib = library('eet',
     eet_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: eet_deps + eet_pub_deps,
     include_directories : config_dir,
     install: true,

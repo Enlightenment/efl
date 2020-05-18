@@ -96,6 +96,7 @@ eldbus_deps += dependency('dbus-1')
 
 eldbus_lib = library('eldbus',
     eldbus_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: eldbus_pub_deps + eldbus_deps,
     include_directories : config_dir,
     install: true,

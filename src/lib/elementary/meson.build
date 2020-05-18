@@ -1008,7 +1008,8 @@ c = configure_file(
   install_dir : dir_package_include,
   configuration: elm_options)
 
-elm_package_c_args =  package_c_args + ['-DELEMENTARY_BUILD=1']
+# Save in extra variable here to pass to edje_external
+elm_package_c_args =  package_c_args
 
 elementary_lib = library('elementary',
     elementary_src, pub_eo_file_target, priv_eo_file_target, c, embed_config,
