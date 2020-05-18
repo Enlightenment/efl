@@ -2881,8 +2881,9 @@ _ecore_evas_wl_selection_init(Ecore_Evas *ee)
      ecore_event_handler_add(ECORE_WL2_EVENT_DND_DROP,
                              _wl_selection_dnd_drop, ee);
    wdata->dnd_end_handler =
-     ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_DROP,
+     ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
                              _wl_selection_dnd_end, ee);
+
    for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
      {
         wdata->selection_data[i].callbacks.available_types = NULL;
