@@ -1191,11 +1191,13 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
    pd->loop_active++;
    if (obj == ML_OBJ)
      {
+#ifdef HAVE_SYSTEMD
         if (getenv("NOTIFY_SOCKET"))
           {
              _ecore_sd_init();
              if (_ecore_sd_notify) _ecore_sd_notify(0, "READY=1");
           }
+#endif
 #ifdef HAVE_LIBUV
         if (!_dl_uv_run)
           {
