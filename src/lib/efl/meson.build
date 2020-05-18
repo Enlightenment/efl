@@ -13,6 +13,7 @@ package_header_subdirs += 'interfaces'
 
 efl_lib = library('efl',
     efl_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: [eina, eo, m],
     install: true,
     version : meson.project_version()

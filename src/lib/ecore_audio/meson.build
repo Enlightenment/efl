@@ -79,6 +79,7 @@ endif
 
 ecore_audio_lib = library('ecore_audio',
     ecore_audio_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: ecore_audio_pub_deps + [m] + ecore_audio_deps,
     include_directories : config_dir,
     install: true,
