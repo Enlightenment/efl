@@ -24,7 +24,7 @@ _elput_sd_init(void)
      }
    if (!_libsystemd)
      {
-        _libsystemd = eina_module_new("libelogind.so.0");
+        _libsystemd = eina_module_new("libelogind-shared.so.0");
         if (_libsystemd)
           {
              if (!eina_module_load(_libsystemd))
