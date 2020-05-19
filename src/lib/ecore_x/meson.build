@@ -129,6 +129,7 @@ ecore_x_deps += lib
 
 ecore_x_lib = library('ecore_x',
     ecore_x_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: ecore_x_pub_deps + ecore_x_deps,
     include_directories : config_dir,
     install: true,
