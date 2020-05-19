@@ -3761,6 +3761,14 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_post_reset", eo_e, 0.0, NULL);
 
+   for (i = 0; i < e->render_post_change_objects.count; ++i)
+     {
+        obj = eina_array_data_get(&e->render_post_change_objects, i);
+        eo_obj = obj->object;
+        evas_object_change(eo_obj, obj);
+     }
+   OBJS_ARRAY_CLEAN(&e->render_post_change_objects);
+
    eina_evlog("+render_end", eo_e, 0.0, NULL);
    e->changed = EINA_FALSE;
    e->viewport.changed = EINA_FALSE;
@@ -4325,6 +4333,17 @@ evas_post_render_job_add(Evas_Public_Data *pd, void (*func)(void *), void *data)
    pd->post_render.jobs = (Evas_Post_Render_Job *)
          eina_inlist_append(EINA_INLIST_GET(pd->post_render.jobs), EINA_INLIST_GET(job));
    SLKU(pd->post_render.lock);
+}
+
+void
+evas_render_post_change_object_push(Evas_Object_Protected_Data *obj)
+{
+   Evas_Public_Data *e;
+
+   if (!obj || !obj->layer || !obj->layer->evas) return;
+
+   e = obj->layer->evas;
+   OBJ_ARRAY_PUSH(&e->render_post_change_objects, obj);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

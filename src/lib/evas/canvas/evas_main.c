@@ -363,6 +363,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    EVAS_ARRAY_SET(e, glyph_unref_queue);
    EVAS_ARRAY_SET(e, texts_unref_queue);
 
+   eina_array_step_set(&e->render_post_change_objects, sizeof(e->render_post_change_objects), 10);
    eina_array_step_set(&e->map_clip_objects, sizeof(e->map_clip_objects), 64);
 
    e->active_objects.version = EINA_ARRAY_VERSION;
@@ -648,6 +649,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_array_flush(&e->texts_unref_queue);
    eina_array_flush(&e->map_clip_objects);
    eina_hash_free(e->focused_objects);
+   eina_array_flush(&e->render_post_change_objects);
 
    SLKL(e->post_render.lock);
    EINA_INLIST_FREE(e->post_render.jobs, job)

@@ -3256,7 +3256,7 @@ evas_object_image_render_post(Evas_Object *eo_obj EINA_UNUSED,
    /* FIXME: copy strings across */
 
    //Somehow(preloading cancelled) image has been changed, need to redraw.
-   if (o->changed) evas_object_change(eo_obj, obj);
+   if (o->changed) evas_render_post_change_object_push(obj);
 }
 
 static void *
