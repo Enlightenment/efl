@@ -2540,8 +2540,10 @@ ecore_x_xkb_track_state(void)
 {
    Eina_Bool ret = EINA_FALSE;
 #ifdef ECORE_XKB
+   unsigned mask = XkbNewKeyboardNotifyMask | XkbMapNotifyMask |
+     XkbStateNotifyMask | XkbCompatMapNotifyMask;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
-   ret = XkbSelectEvents(_ecore_x_disp, XkbUseCoreKbd, XkbStateNotifyMask, XkbStateNotifyMask);
+   ret = XkbSelectEvents(_ecore_x_disp, XkbUseCoreKbd, mask, mask);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif
    return ret;
