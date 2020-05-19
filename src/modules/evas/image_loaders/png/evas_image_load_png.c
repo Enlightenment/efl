@@ -121,6 +121,8 @@ _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
    Evas_Image_Load_Opts *opts = loader->opts;
    Eina_File *f = loader->f;
    volatile Eina_Bool r = EINA_FALSE;
+   const char *filename;
+   unsigned int filename_len = 0;
 
    *error = EVAS_LOAD_ERROR_NONE;
 
@@ -238,7 +240,10 @@ _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
      }
    if (epi->hasa) prop->info.alpha = 1;
 
-   prop->need_data = eina_str_has_extension(eina_file_filename_get(f), ".9.png");
+   filename = eina_file_filename_get(f);
+   if (filename) filename_len = strlen(filename);
+   prop->need_data = (filename_len > 6 && filename[filename_len - 7] != '/') &&
+                     (eina_str_has_extension(filename, ".9.png"));
    if (prop->need_data)
      {
         // Adjust size to take into account the 9 patch pixels information
