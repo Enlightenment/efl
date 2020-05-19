@@ -20,6 +20,7 @@ ecore_fb_src = [
 
 ecore_fb_lib = library('ecore_fb',
     ecore_fb_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: ecore_fb_pub_deps + ecore_fb_deps,
     include_directories : config_dir,
     install: true,
