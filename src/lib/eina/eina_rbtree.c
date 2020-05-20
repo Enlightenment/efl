@@ -61,7 +61,7 @@ struct _Eina_Iterator_Rbtree_List
 {
    Eina_Rbtree *tree;
 
-   Eina_Rbtree_Direction dir : 1;
+   unsigned int dir : 1;
    Eina_Bool up : 1;
 };
 
