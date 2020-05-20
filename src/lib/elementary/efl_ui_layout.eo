@@ -19,6 +19,5 @@ class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
       Efl.File.load;
       Efl.File.unload;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_calculate;
    }
 }
