@@ -355,7 +355,7 @@ eina_error_msg_get(Eina_Error error)
                EINA_SAFETY_ERROR("strerror_r() failed");
              else
                {
-                  if (strncmp(str, unknown_prefix, sizeof(unknown_prefix) -1) == 0)
+                  if (strncmp(str, unknown_prefix, sizeof(unknown_prefix) - 2) == 0)
                     msg = NULL;
                   else
                     {
