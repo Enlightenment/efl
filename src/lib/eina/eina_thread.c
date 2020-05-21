@@ -141,11 +141,43 @@ _eina_internal_call(void *context)
 
    EINA_THREAD_CLEANUP_PUSH(free, c);
 
-   if (c->prio == EINA_THREAD_BACKGROUND ||
-       c->prio == EINA_THREAD_IDLE)
-     eina_sched_prio_drop();
-
    self = pthread_self();
+
+   if (c->prio == EINA_THREAD_IDLE)
+     {
+        struct sched_param params;
+        int min;
+
+        min = sched_get_priority_min(SCHED_IDLE);
+        params.sched_priority = min;
+        pthread_setschedparam(self, SCHED_IDLE, &params);
+     }
+   else if (c->prio == EINA_THREAD_BACKGROUND)
+     {
+        struct sched_param params;
+        int min, max;
+
+        min = sched_get_priority_min(SCHED_BATCH);
+        max = sched_get_priority_max(SCHED_BATCH);
+        params.sched_priority = (max - min) / 2;
+        pthread_setschedparam(self, SCHED_BATCH, &params);
+     }
+// do nothing for normal
+//   else if (c->prio == EINA_THREAD_NORMAL)
+//     {
+//     }
+   else if (c->prio == EINA_THREAD_URGENT)
+     {
+        struct sched_param params;
+        int max, pol;
+
+        pthread_getschedparam(self, &pol, &params);
+        max = sched_get_priority_max(pol);
+        params.sched_priority += 5;
+        if (params.sched_priority > max) params.sched_priority = max;
+        pthread_setschedparam(self, pol, &params);
+     }
+
    _eina_debug_thread_add(&self);
    EINA_THREAD_CLEANUP_PUSH(_eina_debug_thread_del, &self);
    r = c->func((void*) c->data, eina_thread_self());
