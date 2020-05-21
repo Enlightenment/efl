@@ -236,7 +236,7 @@ M.direct_ls = function(dir) return Direct_Ls_Iterator(dir) end
 
 M.path_sanitize = function(path)
     local v = eina.eina_file_path_sanitize(path)
-    if v == nil then return nil end
+    if v == ffi.nullptr then return nil end
     local r = ffi.string(v)
     C.free(v)
     return r
@@ -358,7 +358,7 @@ M.File = ffi.metatype("Eina_File", {
 
         map_all = function(self, rule, raw)
             local v = ffi.cast("char*", eina.eina_file_map_all(self, rule or 0))
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             if not raw then
                 local r = ffi.string(v)
                 self:map_free(v)
@@ -370,7 +370,7 @@ M.File = ffi.metatype("Eina_File", {
         map_new = function(self, rule, offset, length, raw)
             local v = ffi.cast("char*", eina.eina_file_map_new(self, rule or 0,
                 offset or 0, length))
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             if not raw then
                 local r = ffi.string(v, length)
                 self:map_free(v)

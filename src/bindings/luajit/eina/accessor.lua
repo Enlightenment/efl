@@ -46,12 +46,12 @@ ffi.metatype("Eina_Accessor", {
         unlock = function(self) return eina.eina_accessor_unlock(self) ~= 0 end,
         clone  = function(self)
             local v = eina.eina_accessor_clone(self)
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end,
         container_get = function(self)
             local v = eina.eina_accessor_container_get(self)
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end
     }
@@ -64,7 +64,7 @@ local dgetmt = debug.getmetatable
 M.Accessor = util.Readonly_Object:clone {
     __ctor = function(self, selfmt, acc)
         -- prevent null stuff
-        if acc == nil then acc = nil end
+        if acc == ffi.nullptr then acc = nil end
         if acc then ffi.gc(acc, acc.free) end
         selfmt.__eq = function(self, other)
             return selfmt.__accessor == dgetmt(other).__accessor

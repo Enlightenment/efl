@@ -51,7 +51,7 @@ M.Counter = ffi.metatype("Eina_Counter", {
 
         dump = function(self)
             local v = eina.eina_counter_dump(self)
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             local r = ffi.string(v)
             C.free(v)
             return r

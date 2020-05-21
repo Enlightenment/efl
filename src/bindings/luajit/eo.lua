@@ -337,7 +337,7 @@ end
 
 local get_obj_mt = function(obj)
     local cl = eo.eo_class_get(obj)
-    if cl == nil then return nil end
+    if cl == ffi.nullptr then return nil end
     return classes[eo_obj_addr_get(cl)]
 end
 
@@ -416,7 +416,7 @@ ffi.metatype("Eo", {
     -- handles property getting with no keys and also properties with keys
     __index = function(self, key)
         local mt = get_obj_mt(self)
-        if mt == nil then return nil end
+        if not mt then return nil end
         local pt = mt.__properties
         local pp = pt[key]
         if not pp then
@@ -444,7 +444,7 @@ ffi.metatype("Eo", {
     -- handles property setting with no keys
     __newindex = function(self, key, val)
         local mt = get_obj_mt(self)
-        if mt == nil then return nil end
+        if not mt then return nil end
         local pt = mt.__properties
         local pp = pt[key]
         if not pp then

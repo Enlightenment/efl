@@ -83,7 +83,9 @@ local dgetmt = debug.getmetatable
 
 local List_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, list)
-        if list == nil then return Iterator.__ctor(self, selfmt, nil) end
+        if not list or list == ffi.nullptr then
+            return Iterator.__ctor(self, selfmt, nil)
+        end
         selfmt.__list = list
         return Iterator.__ctor(self, selfmt,
             eina.eina_list_iterator_new(dgetmt(list).__list))
@@ -98,7 +100,9 @@ local List_Iterator = Iterator:clone {
 
 local List_Reverse_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, list)
-        if list == nil then return Iterator.__ctor(self, selfmt, nil) end
+        if not list or list == ffi.nullptr then
+            return Iterator.__ctor(self, selfmt, nil)
+        end
         selfmt.__list = list
         return Iterator.__ctor(self, selfmt,
             eina.eina_list_iterator_reversed_new(dgetmt(list).__list))
@@ -115,7 +119,9 @@ local Accessor = accessor.Accessor
 
 local List_Accessor = Accessor:clone {
     __ctor = function(self, selfmt, list)
-        if list == nil then return Accessor.__ctor(self, selfmt, nil) end
+        if not list or list == ffi.nullptr then
+            return Accessor.__ctor(self, selfmt, nil)
+        end
         selfmt.__list = list
         return Accessor.__ctor(self, selfmt,
             eina.eina_list_accessor_new(dgetmt(list).__list))
@@ -141,37 +147,37 @@ local List = ffi.metatype("Eina_List", {
         data_get = function(self, ptr)
             if ptr ~= nil then return ptr end
             local v = get_list_t(self).data
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end,
 
         nth = function(self, n)
             local v = eina.eina_list_nth(self, n - 1)
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return self:data_get(v)
         end,
 
         nth_list = function(self, n)
             local v = eina.eina_list_nth_list(self, n - 1)
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end,
 
         last = function(self)
             local v = get_list_t(self).accounting.last
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end,
 
         next = function(self)
             local v = get_list_t(self).next
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end,
 
         prev = function(self)
             local v = get_list_t(self).prev
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end
     }
@@ -183,7 +189,7 @@ local List_Base = util.Readonly_Object:clone {
             list = ffi.gc(list, freefunc)
             selfmt.__free = freefunc
         end
-        if list == nil then return end
+        if not list or list == ffi.nullptr then return end
         selfmt.__eq = function(self, other)
             return selfmt.__list == dgetmt(other).__list
         end
@@ -194,62 +200,62 @@ local List_Base = util.Readonly_Object:clone {
     free = function(self)
         self = dgetmt(self)
         local  ffunc, l = self.__free, self.__list
-        if not ffunc or l == nil then return end
+        if not ffunc or not l or l == ffi.nullptr then return end
         ffunc(ffi.gc(self.__list, nil))
     end,
 
     count = function(self)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return 0 end
+        if not l or l == ffi.nullptr then return 0 end
         return #l
     end,
 
     nth = function(self, n)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return nil end
+        if not l or l == ffi.nullptr then return nil end
         return l:nth()
     end,
 
     nth_list = function(self, n)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return nil end
+        if not l or l == ffi.nullptr then return nil end
         return self.__index(l:nth_list())
     end,
 
     last = function(self, n)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return nil end
+        if not l or l == ffi.nullptr then return nil end
         return self.__index(l:last())
     end,
 
     next = function(self, n)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return nil end
+        if not l or l == ffi.nullptr then return nil end
         return self.__index(l:next())
     end,
 
     prev = function(self, n)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return nil end
+        if not l or l == ffi.nullptr then return nil end
         return self.__index(l:prev())
     end,
 
     data_get = function(self, ptr)
         self = dgetmt(self)
         local l = self.__list
-        if l == nil then return nil end
+        if not l or l == ffi.nullptr then return nil end
         return l:data_get(ptr)
     end,
 
     to_array = function(self)
         local l = dgetmt(self).__list
-        if l == nil then return {}, 0 end
+        if not l or l == ffi.nullptr then return {}, 0 end
         local n = 0
         local r = {}
         while l ~= nil do
@@ -293,7 +299,7 @@ M.Ptr_List = List_Base:clone {
 M.String_List = List_Base:clone {
     data_get = function(self, ptr)
         ptr = List_Base.data_get(self, ptr)
-        if ptr == nil then return nil end
+        if not ptr or ptr == ffi.nullptr then return nil end
         return ffi.string(ptr)
     end
 }
