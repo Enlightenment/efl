@@ -18,6 +18,8 @@
 # define EAPI
 #endif // ifdef __GNUC__
 
+EAPI double _ecore_x_vxync_wakeup_time_get(void);
+
 #define ECORE_X_VERSION_MAJOR EFL_VERSION_MAJOR
 #define ECORE_X_VERSION_MINOR EFL_VERSION_MINOR
 /**

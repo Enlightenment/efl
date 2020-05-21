@@ -282,6 +282,13 @@ _drm_vblank_handler(int fd EINA_UNUSED,
      }
 }
 
+static double _ecore_x_vsync_wakeup_time = 0.0;
+
+EAPI double _ecore_x_vxync_wakeup_time_get(void)
+{
+   return _ecore_x_vsync_wakeup_time;
+}
+
 static void
 _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
@@ -357,6 +364,20 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                tv.tv_usec = _drm_fail_time * 1000000;
              D("    @%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
              ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
+             _ecore_x_vsync_wakeup_time = ecore_time_get();
+#if 0
+             static double pt = 0.0;
+             double t = ecore_time_get();
+             double f = 1.0 / (t - pt);
+             char buf[1024];
+             int i, fps;
+             fps = 30 + ((f - 60.0) * 10.0);
+             if (fps > 1000) fps = 1000;
+             for (i = 0; i < fps; i++) buf[i] = '#';
+             buf[i] = 0;
+             printf("WAKE %1.5f [%s>\n", 1.0 / (t - pt), buf);
+             pt = t;
+#endif
              if ((ret == 1) && (FD_ISSET(drm_fd, &rfds)))
                {
                   D("    @%1.5f have event\n", ecore_time_get());
@@ -387,17 +408,22 @@ _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void 
    D("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
    if (drm_event_is_busy)
      {
-        double *t = msg;
-        static double pt = 0.0;
+        double *t = msg, rt, lt;
+        static double pt = 0.0, prt = 0.0, plt = 0.0;
 
-        DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
-        D("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
+        rt = ecore_time_get();
+        lt = ecore_loop_time_get();
+        DBG("VSYNC %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
+        D("VSYNC %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
+//        printf("VSYNC %1.8f = delt %1.5f | real = %1.5f | loop = %1.5f\n", *t, 1.0 / (*t - pt), 1.0 / (rt - prt), 1.0 / (lt - plt));
         if ((!tick_skip) || (tick_queued == 1))
           {
              ecore_loop_time_set(*t);
              ecore_animator_custom_tick();
           }
         pt = *t;
+        prt = rt;
+        plt = lt;
      }
    free(msg);
 }
