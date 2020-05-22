@@ -493,7 +493,11 @@ evas_vg_container_add(Evas_Object *parent)
 {
    /* Warn it because the usage has been changed.
       We can remove this message after v1.21. */
-   if (!parent) CRI("Efl_VG Container doesn't allow null parent!");
+   if (!parent)
+     {
+        ERR("Efl_VG Container doesn't allow null parent!");
+        return NULL;
+     }
    return efl_add(MY_CLASS, parent);
 }
 
