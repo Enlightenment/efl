@@ -4,6 +4,10 @@
 
 #include <stdlib.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* realpath() */
+#endif
+
 #include "elm_suite.h"
 #include "Elementary.h"
 
