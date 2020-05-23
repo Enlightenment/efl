@@ -721,6 +721,7 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
         ecore_drm2_output_info_get(output, &x, &y, &w, &h, NULL);
 
         if (!edata->once) t = ecore_time_get();
+//        printf("ECORE_EVAS: drm tick %1.5f @ %1.5f\n", t, ecore_time_get());
         ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
                                  t - edata->offset);
      }
