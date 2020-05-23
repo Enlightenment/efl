@@ -21,10 +21,6 @@
 # include <sys/mman.h>
 #endif
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #ifdef _WIN32
 # include <evil_private.h> /* evil_init/shutdown */
 #endif
