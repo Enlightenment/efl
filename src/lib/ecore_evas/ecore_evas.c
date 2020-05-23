@@ -5490,7 +5490,7 @@ static Eina_Bool
 _deliver_cb(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer buffer, const char *type, Eina_Rw_Slice *slice)
 {
    Ecore_Evas_Selection_Seat_Buffers *buffers;
-   Eina_Content *content;
+   Eina_Content *content = NULL;
    Eina_Content *converted = NULL;
    Eina_Bool result = EINA_FALSE;
 
