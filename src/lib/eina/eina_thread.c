@@ -147,20 +147,30 @@ _eina_internal_call(void *context)
      {
         struct sched_param params;
         int min;
-
-        min = sched_get_priority_min(SCHED_IDLE);
+#ifdef SCHED_IDLE
+        int pol = SCHED_IDLE;
+#else
+        int pol;
+        pthread_getschedparam(self, &pol, &params);
+#endif
+        min = sched_get_priority_min(pol);
         params.sched_priority = min;
-        pthread_setschedparam(self, SCHED_IDLE, &params);
+        pthread_setschedparam(self, pol, &params);
      }
    else if (c->prio == EINA_THREAD_BACKGROUND)
      {
         struct sched_param params;
         int min, max;
-
-        min = sched_get_priority_min(SCHED_BATCH);
-        max = sched_get_priority_max(SCHED_BATCH);
+#ifdef SCHED_BATCH
+        int pol = SCHED_BATCH;
+#else
+        int pol;
+        pthread_getschedparam(self, &pol, &params);
+#endif
+        min = sched_get_priority_min(pol);
+        max = sched_get_priority_max(pol);
         params.sched_priority = (max - min) / 2;
-        pthread_setschedparam(self, SCHED_BATCH, &params);
+        pthread_setschedparam(self, pol, &params);
      }
 // do nothing for normal
 //   else if (c->prio == EINA_THREAD_NORMAL)
