@@ -1,6 +1,16 @@
 ==========
-EFL 1.24.1
+EFL 1.24.2
 ==========
+
+Changes since 1.24.1:
+---------------------
+
+Fixes:
+
+   * evas_vg_shape: return NULL in evas_vg_shape_add when the parent of shape is NULL
+   * efl_ui_image: fix to call "clicked" smart callback when there is no img
+   * ecore-x - ensure we fully look at all xkb events and refresh all binds
+   * evas_vg_container: return NULL in evas_vg_container_add when the parent of container is NULL
 
 Changes since 1.24.0:
 ---------------------
