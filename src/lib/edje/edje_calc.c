@@ -3332,10 +3332,11 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
         root = efl_duplicate(src_root);
 
         if (!efl_gfx_path_interpolate(root, src_root, dest_root, pos))
-          {
-             ERR("Can't interpolate check the svg file");
-          }
+          ERR("Can't interpolate check the svg file");
+
         efl_canvas_vg_object_root_node_set(ep->object, root);
+
+        efl_unref(root);
         efl_unref(src_root);
         efl_unref(dest_root);
      }
