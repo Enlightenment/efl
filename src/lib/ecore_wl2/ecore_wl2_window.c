@@ -649,9 +649,6 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 {
-   Ecore_Wl2_Subsurface *subsurf;
-   Eina_Inlist *tmp;
-
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    _ecore_wl2_window_hide_send(window);
