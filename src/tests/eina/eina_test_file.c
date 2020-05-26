@@ -376,7 +376,7 @@ EFL_START_TEST(eina_file_map_new_test)
    fail_if(eina_file_refresh(e_file));
 
    e_file2 = eina_file_open(test_file2_path, EINA_FALSE);
-   fail_if(!e_file);
+   fail_if(!e_file2);
    file2_length = eina_file_size_get(e_file2);
    correct_file_open_check = file2_length - (big_buffer_size - file_min_offset);
    // check size of big_buffer == size of file
