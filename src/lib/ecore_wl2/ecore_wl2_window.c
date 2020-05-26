@@ -635,9 +635,6 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 
    _ecore_wl2_window_hide_send(window);
 
-   EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
-     _ecore_wl2_subsurf_unmap(subsurf);
-
    if (window->commit_pending)
      {
         /* We've probably been hidden while an animator
