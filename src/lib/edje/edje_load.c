@@ -1881,14 +1881,6 @@ _edje_file_del(Edje *ed)
              if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                _edje_entry_real_part_shutdown(ed, rp);
 
-             if (rp->object)
-               {
-                  _edje_callbacks_focus_del(rp->object, ed);
-                  _edje_callbacks_del(rp->object, ed);
-                  evas_object_del(rp->object);
-                  rp->object = NULL;
-               }
-
              if (rp->custom)
                {
                   // xxx: lua2
@@ -1956,7 +1948,10 @@ _edje_file_del(Edje *ed)
                       (rp->typedata.vector))
                {
                   if (rp->typedata.vector->anim)
-                    efl_del(rp->typedata.vector->anim);
+                    {
+                       efl_canvas_object_animation_stop(rp->object);
+                       efl_del(rp->typedata.vector->anim);
+                    }
                   if (rp->typedata.vector->lottie_virtual_file)
                     eina_file_close(rp->typedata.vector->lottie_virtual_file);
                   if (rp->typedata.vector->lottie_data)
@@ -1964,6 +1959,14 @@ _edje_file_del(Edje *ed)
 
                   free(rp->typedata.vector);
                   rp->typedata.vector = NULL;
+               }
+
+             if (rp->object)
+               {
+                  _edje_callbacks_focus_del(rp->object, ed);
+                  _edje_callbacks_del(rp->object, ed);
+                  evas_object_del(rp->object);
+                  rp->object = NULL;
                }
 
              /* Cleanup optional part. */
