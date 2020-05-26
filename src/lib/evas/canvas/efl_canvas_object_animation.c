@@ -167,6 +167,7 @@ _efl_canvas_object_animation_animation_start(Eo *obj, Efl_Canvas_Object_Animatio
      efl_canvas_object_animation_stop(obj);
    EINA_SAFETY_ON_FALSE_RETURN(!pd->in);
    in = pd->in = calloc(1, sizeof(Efl_Canvas_Object_Animation_Indirect_Data));
+   ERR("alloc pd->in = %p", pd->in);
 
    EINA_SAFETY_ON_NULL_RETURN(animation);
    EINA_SAFETY_ON_FALSE_RETURN(start_pos >= 0.0 && start_pos <= 1.0);
@@ -195,6 +196,7 @@ _efl_canvas_object_animation_animation_start(Eo *obj, Efl_Canvas_Object_Animatio
 EOLIAN static void
 _efl_canvas_object_animation_animation_stop(Eo *obj, Efl_Canvas_Object_Animation_Data *pd)
 {
+   ERR("animation stop!");
    if (!pd->in) return;
 
    if (!efl_animation_final_state_keep_get(pd->in->animation))
@@ -207,7 +209,10 @@ _efl_canvas_object_animation_animation_stop(Eo *obj, Efl_Canvas_Object_Animation
 
    //this could be NULL if some weird callstack calls stop again while the above event is executed
    if (pd->in)
-     free(pd->in);
+     {
+        ERR("free pd->in = %p", pd->in);
+        free(pd->in);
+     }
    pd->in = NULL;
 }
 
