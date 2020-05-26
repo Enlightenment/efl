@@ -53,10 +53,6 @@
 # include <linux/input.h>
 # include <libinput.h>
 
-# ifdef HAVE_SYSTEMD
-#  include <systemd/sd-login.h>
-# endif
-
 # include <Eldbus.h>
 # include <Ecore_Drm.h>
 

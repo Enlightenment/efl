@@ -98,7 +98,7 @@ end
 M.get = function(file, attribute)
     local size = ffi.new("size_t[1]")
     local v = eina.eina_xattr_get(file, attribute, size)
-    if v == nil then return nil end
+    if v == ffi.nullptr then return nil end
     local r = ffi.string(v, size[0])
     C.free(v)
     return r
@@ -126,7 +126,7 @@ end
 
 M.string_get = function(file, attribute)
     local v = eina.eina_xattr_string_get(file, attribute)
-    if v == nil then return nil end
+    if v == ffi.nullptr then return nil end
     local r = ffi.string(v)
     C.free(v)
     return r

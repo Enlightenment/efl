@@ -455,6 +455,7 @@ struct _Evas_Public_Data
    Eina_Array     texts_unref_queue;
    Eina_Array     map_clip_objects;
    Eina_List     *finalize_objects;
+   Eina_Array     render_post_change_objects;
 
    struct {
       Evas_Post_Render_Job *jobs;
@@ -1283,6 +1284,7 @@ void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
 void evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph);
 void evas_unref_queue_texts_put(Evas_Public_Data *pd, void *glyph);
 void evas_post_render_job_add(Evas_Public_Data *pd, void (*func)(void *), void *data);
+void evas_render_post_change_object_push(Evas_Object_Protected_Data *obj);
 
 void evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
                                      void *engine, void *data, void *context, void *surface,

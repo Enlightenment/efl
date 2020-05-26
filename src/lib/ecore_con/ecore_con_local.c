@@ -17,10 +17,6 @@
 #endif
 #include <libgen.h>
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #ifdef _WIN32
 # include <ws2tcpip.h>
 #endif

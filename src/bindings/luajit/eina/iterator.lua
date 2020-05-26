@@ -43,7 +43,7 @@ ffi.metatype("Eina_Iterator", {
         unlock = function(self) return eina.eina_iterator_unlock(self) ~= 0 end,
         container_get = function(self)
             local v = eina.eina_iterator_container_get(self)
-            if v == nil then return nil end
+            if v == ffi.nullptr then return nil end
             return v
         end
     }
@@ -56,7 +56,7 @@ local dgetmt = debug.getmetatable
 M.Iterator = util.Readonly_Object:clone {
     __ctor = function(self, selfmt, iter)
         -- prevent null stuff
-        if iter == nil then iter = nil end
+        if iter == ffi.nullptr then iter = nil end
         if iter then ffi.gc(iter, iter.free) end
         selfmt.__eq = function(self, other)
             return selfmt.__iterator == dgetmt(other).__iterator

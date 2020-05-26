@@ -331,6 +331,8 @@ extern "C" {
 #endif
 #include "Ecore_Eo.h"
 
+EAPI double _ecore_main_loop_wakeup_time_get(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -626,68 +626,103 @@ _pos_map_spring(double pos,
    return _pos_map_sin((M_PI / 2.0) + (p2 * len)) * decay;
 }
 
-static double
-_cubic_bezier_a (double a1, double a2)
+static inline double
+cuberoot(double v)
 {
-    return 1.0 - 3.0 * a2 + 3.0 * a1;
+   if (v < 0.0)
+     return -pow(-v, 1. / 3.);
+   else
+     return pow(v, 1. / 3.);
 }
 
 static double
-_cubic_bezier_b (double a1, double a2)
+_bezier_t_get(double _x, double _x1, double _x2)
 {
-    return 3.0 * a2 - 6.0 * a1;
+   if (_x < 0.0 || _x > 1.0) return _x;
+
+   // Cardano's algorithm
+   double\
+   pa = _x - 0.0,
+   pb = _x - _x1,
+   pc = _x - _x2,
+   pd = _x - 1.0;
+
+   double\
+   a = 3*pa-6*pb+3*pc,
+   b = -3*pa+3*pb,
+   c = pa,
+   d = -pa+3*pb-3*pc+pd;
+
+   a /= d;
+   b /= d;
+   c /= d;
+
+   double\
+   p = (3*b-a*a)/3.0,
+   p3 = p/3.0,
+   q = (2*a*a*a-9*a*b+27*c)/27.0,
+   q2 = q/2.0,
+   discriminant = q2*q2 + p3*p3*p3;
+
+   double u1, v1, root1, root2, root3;
+
+   if (discriminant < 0)
+     {
+        double\
+        mp3  = -p/3.0,
+        mp33 = mp3*mp3*mp3,
+        r    = sqrt(mp33),
+        t    = -q / (2*r),
+        cosphi = t<-1.0 ? -1.0 : t>1.0 ? 1.0 : t,
+        phi  = acos(cosphi),
+        crtr = cuberoot(r),
+        t1   = 2*crtr;
+        root1 = t1 * cos(phi/3.0) - a/3.0;
+        root2 = t1 * cos((phi+2*M_PI)/3.0) - a/3.0;
+        root3 = t1 * cos((phi+4*M_PI)/3.0) - a/3.0;
+
+        if (root1 >= 0.0 && root1 <= 1.0) return root1;
+        if (root2 >= 0.0 && root2 <= 1.0) return root2;
+        if (root3 >= 0.0 && root3 <= 1.0) return root3;
+     }
+   else if (discriminant == 0)
+     {
+        u1 = q2 < 0 ? cuberoot(-q2) : -cuberoot(q2);
+        root1 = 2*u1 - a/3.0;
+        root2 = -u1 - a/3.0;
+
+        if (root1 >= 0.0 && root1 <= 1.0) return root1;
+        if (root2 >= 0.0 && root2 <= 1.0) return root2;
+     }
+   else
+     {
+        double sd = sqrt(discriminant);
+        u1 = cuberoot(sd - q2);
+        v1 = cuberoot(sd + q2);
+        root1 = u1 - v1 - a/3.0;
+
+        if (root1 >= 0.0 && root1 <= 1.0) return root1;
+     }
+
+   return _x;
 }
 
 static double
-_cubic_bezier_c(double a1)
+_bezier_calc(double t, double y1, double y2)
 {
-    return 3.0 * a1;
-}
+   double y0 = 0.0;
+   double y3 = 1.0;
 
-static double
-_cubic_bezier_calc(double t,
-                   double a1,
-                   double a2)
-{
-    return ((_cubic_bezier_a(a1, a2) * t +
-             _cubic_bezier_b(a1, a2)) * t +
-            _cubic_bezier_c(a1)) * t;
-}
+   double u = 1.0 - t;
+   double t2 = t*t;
+   double t3 = t*t*t;
+   double u2 = u*u;
+   double u3 = u*u*u;
 
-static double
-_cubic_bezier_slope_get(double t,
-                        double a1,
-                        double a2)
-{
-    return 3.0 * _cubic_bezier_a(a1, a2) * t * t +
-           2.0 * _cubic_bezier_b(a1, a2) * t +
-           _cubic_bezier_c(a1);
-}
-
-static double
-_cubic_bezier_t_get(double a,
-                        double x1,
-                        double x2)
-{
-#define APPROXIMATE_RANGE(val) \
-  ((((val) < 0.01) && ((val) > -0.01)) ? EINA_TRUE : EINA_FALSE)
-
-    const int LIMIT = 100;
-    double current_slope;
-    double change;
-    double current_x;
-    double guess_t = a;
-
-    for (int i = 0; i < LIMIT; i++)
-      {
-         current_slope = _cubic_bezier_slope_get(guess_t, x1, x2);
-         if (EINA_DBL_EQ(current_slope, 0.0)) return guess_t;
-         current_x = _cubic_bezier_calc(guess_t, x1, x2) - a;
-         change = current_x / current_slope;
-         guess_t -= change;
-         if (APPROXIMATE_RANGE(change)) break;
-      }
-    return guess_t;
+   return       u3 *      y0 +
+          3.0 * u2 * t  * y1 +
+          3.0 * u  * t2 * y2 +
+                     t3 * y3;
 }
 
 static double
@@ -700,7 +735,7 @@ _pos_map_cubic_bezier(double pos,
    if (EINA_DBL_EQ(x1, y1) &&
        EINA_DBL_EQ(x2, y2))
      return pos;
-   return _cubic_bezier_calc(_cubic_bezier_t_get(pos, x1, x2), y1, y2);
+   return _bezier_calc(_bezier_t_get(pos, x1, x2), y1, y2);
 }
 
 #define DBL_TO(Fp) eina_f32p32_double_to(Fp)

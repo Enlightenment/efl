@@ -1000,13 +1000,6 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, void *_pd EINA_UNUSED)
-{
-   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
-   _sizing_eval(obj, efl_data_scope_get(obj, MY_CLASS), NULL);
-}
-
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void

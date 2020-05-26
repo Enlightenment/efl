@@ -128,7 +128,7 @@ option('gstreamer',
 option('systemd',
   type : 'boolean',
   value : true,
-  description : 'Systemd support in efl'
+  description : 'Systemd and Elogind support at runtime in efl'
 )
 
 option('pulseaudio',
@@ -332,12 +332,6 @@ option('native-arch-optimization',
   type: 'boolean',
   value: true,
   description: 'Enable architecture native optimizations in efl'
-)
-
-option('elogind',
-  type : 'boolean',
-  value : false,
-  description : 'elogind support in efl (subset of systemd)'
 )
 
 option('windows-version',

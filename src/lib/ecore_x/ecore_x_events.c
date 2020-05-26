@@ -2511,10 +2511,16 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
 
         if (xkbev->any.xkb_type == XkbMapNotify)
           {
-             XkbMapNotifyEvent *xkbmapping;
+             XkbMapNotifyEvent *xkbmapping = (XkbMapNotifyEvent *)xkbev;
 
-             xkbmapping = (XkbMapNotifyEvent *)xkbev;
+             _ecore_x_window_grab_suspend();
+             _ecore_x_key_grab_suspend();
+             XkbGetMap(_ecore_x_disp, XkbAllMapComponentsMask,
+                       xkbmapping->device);
              XkbRefreshKeyboardMapping(xkbmapping);
+             _ecore_x_modifiers_get();
+             _ecore_x_window_grab_resume();
+             _ecore_x_key_grab_resume();
           }
         else
           {

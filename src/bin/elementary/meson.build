@@ -237,11 +237,16 @@ elementary_codegen = executable('elementary_codegen',
         link_args: link_args
 )
 
+asan_option =[]
+if get_option('b_sanitize') == 'address'
+  asan_option= 'ASAN_OPTIONS=detect_leaks=0'
+endif
+
 if meson.is_cross_build()
   elementary_codegen_exe = [find_program('elementary_codegen', native: true)]
 else
   env = find_program('env', native: true)
-  elementary_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', elementary_codegen.full_path()]
+  elementary_codegen_exe = [env, asan_option, 'EFL_RUN_IN_TREE=1', elementary_codegen.full_path()]
 endif
 
 elm_prefs_cc_src = [
@@ -267,7 +272,7 @@ if meson.is_cross_build()
   elm_prefs_cc_exe = [_elm_prefs_cc]
 else
   env = find_program('env', native: true)
-  elm_prefs_cc_exe = [env, 'EFL_RUN_IN_TREE=1', elm_prefs_cc.full_path()]
+  elm_prefs_cc_exe = [env, asan_option, 'EFL_RUN_IN_TREE=1', elm_prefs_cc.full_path()]
 endif
 
 if sys_windows == false

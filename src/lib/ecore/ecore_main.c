@@ -20,10 +20,6 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #ifdef HAVE_IEEEFP_H
 # include <ieeefp.h> // for Solaris
 #endif
@@ -211,12 +207,20 @@ static gboolean   _ecore_glib_idle_enterer_called;
 static gboolean   ecore_fds_ready;
 #endif
 
+static double _ecore_main_loop_wakeup_time = 0.0;
+
+EAPI double _ecore_main_loop_wakeup_time_get(void)
+{
+   return _ecore_main_loop_wakeup_time;
+}
+
 static inline void
 _update_loop_time(Efl_Loop_Data *pd)
 {
    double loop_time = ecore_time_get();
    if (loop_time > pd->loop_time)
      pd->loop_time = loop_time;
+   _ecore_main_loop_wakeup_time = loop_time;
 }
 
 #ifdef EFL_EXTRA_SANITY_CHECKS
@@ -1196,7 +1200,11 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
    if (obj == ML_OBJ)
      {
 #ifdef HAVE_SYSTEMD
-        sd_notify(0, "READY=1");
+        if (getenv("NOTIFY_SOCKET"))
+          {
+             _ecore_sd_init();
+             if (_ecore_sd_notify) _ecore_sd_notify(0, "READY=1");
+          }
 #endif
 #ifdef HAVE_LIBUV
         if (!_dl_uv_run)

@@ -634,7 +634,7 @@ _efl_net_socket_windows_efl_object_constructor(Eo *o, Efl_Net_Socket_Windows_Dat
 }
 
 EOLIAN static void
-_efl_net_socket_windows_efl_object_invalidate(Eo *o, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_object_invalidate(Eo *o, Efl_Net_Socket_Windows_Data *pd EINA_UNUSED)
 {
    if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))

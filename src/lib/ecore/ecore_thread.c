@@ -40,6 +40,7 @@
 # define PHE(x, y)    eina_thread_equal(x, y)
 # define PHS()        eina_thread_self()
 # define PHC(x, f, d) eina_thread_create(&(x), EINA_THREAD_BACKGROUND, -1, (void *)f, d)
+# define PHC2(x, f, d)eina_thread_create(&(x), EINA_THREAD_URGENT, -1, (void *)f, d)
 # define PHJ(x)       eina_thread_join(x)
 
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;
@@ -953,7 +954,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
         eina_threads_init();
 
 retry_direct:
-        if (PHC(t, _ecore_direct_worker, worker))
+        if (PHC2(t, _ecore_direct_worker, worker))
           {
              SLKL(_ecore_pending_job_threads_mutex);
              _ecore_thread_count_no_queue++;

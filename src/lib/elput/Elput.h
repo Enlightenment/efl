@@ -2,22 +2,21 @@
 # define _ELPUT_H
 
 # ifdef EFL_BETA_API_SUPPORT
-# include <Eina.h>
+#  include <Eina.h>
 
-# ifdef EAPI
-#  undef EAPI
-# endif
+#  ifdef EAPI
+#   undef EAPI
+#  endif
 
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
+#  ifdef __GNUC__
+#   if __GNUC__ >= 4
+#    define EAPI __attribute__ ((visibility("default")))
+#   else
+#    define EAPI
+#   endif
 #  else
 #   define EAPI
 #  endif
-# else
-#  define EAPI
-# endif
-
 
 typedef enum
 {

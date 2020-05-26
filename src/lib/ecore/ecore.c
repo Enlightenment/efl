@@ -21,10 +21,6 @@
 # include <sys/mman.h>
 #endif
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #ifdef _WIN32
 # include <evil_private.h> /* evil_init/shutdown */
 #endif
@@ -313,9 +309,7 @@ ecore_init(void)
 #ifdef HAVE_SYSTEMD
    if (getenv("WATCHDOG_USEC"))
      {
-        double sec;
-
-        sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
+        double sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
 
         _systemd_watchdog =
            efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
@@ -326,7 +320,6 @@ ecore_init(void)
         unsetenv("WATCHDOG_USEC");
 
         INF("Setup systemd watchdog to : %f", sec);
-
         _systemd_watchdog_cb(NULL, NULL);
      }
 #endif
@@ -962,7 +955,11 @@ _ecore_fps_debug_runtime_add(double t)
 static void
 _systemd_watchdog_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   sd_notify(0, "WATCHDOG=1");
+   if (getenv("NOTIFY_SOCKET"))
+     {
+        _ecore_sd_init();
+        if (_ecore_sd_notify) _ecore_sd_notify(0, "WATCHDOG=1");
+     }
 }
 #endif
 
@@ -1122,3 +1119,39 @@ ecore_memory_state_set(Ecore_Memory_State state)
    _ecore_memory_state = state;
    ecore_event_add(ECORE_EVENT_MEMORY_STATE, NULL, NULL, NULL);
 }
+
+#ifdef HAVE_SYSTEMD
+static Eina_Module *_libsystemd = NULL;
+static Eina_Bool _libsystemd_broken = EINA_FALSE;
+
+int (*_ecore_sd_notify) (int unset_environment, const char *state) = NULL;
+
+void
+_ecore_sd_init(void)
+{
+   if (_libsystemd_broken) return;
+   _libsystemd = eina_module_new("libsystemd.so.0");
+   if (_libsystemd)
+     {
+        if (!eina_module_load(_libsystemd))
+          {
+             eina_module_free(_libsystemd);
+             _libsystemd = NULL;
+          }
+     }
+   if (!_libsystemd)
+     {
+        _libsystemd_broken = EINA_TRUE;
+        return;
+     }
+   _ecore_sd_notify =
+     eina_module_symbol_get(_libsystemd, "sd_notify");
+   if (!_ecore_sd_notify)
+     {
+        _ecore_sd_notify = NULL;
+        eina_module_free(_libsystemd);
+        _libsystemd = NULL;
+        _libsystemd_broken = EINA_TRUE;
+     }
+}
+#endif

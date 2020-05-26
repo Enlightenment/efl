@@ -90,6 +90,13 @@ struct Ecore_Con_Socks_v5
 #ifdef HAVE_SYSTEMD
 extern int sd_fd_index;
 extern int sd_fd_max;
+
+void _ecore_con_sd_init(void);
+
+extern int (*_ecore_sd_listen_fds) (int unset_environment);
+extern int (*_ecore_sd_is_socket_unix) (int fd, int type, int listening, const char *path, size_t length);
+extern int (*_ecore_sd_is_socket) (int fd, int family, int type, int listening);
+
 #endif
 
 /* init must be called from main thread */

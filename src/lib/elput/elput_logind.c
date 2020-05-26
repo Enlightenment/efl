@@ -1,6 +1,68 @@
 #include "elput_private.h"
 
-#if defined(HAVE_SYSTEMD) || defined(HAVE_ELOGIND)
+#ifdef HAVE_SYSTEMD
+static Eina_Module *_libsystemd = NULL;
+static Eina_Bool _libsystemd_broken = EINA_FALSE;
+
+static int (*_elput_sd_session_get_vt) (const char *session, unsigned *vtnr) = NULL;
+static int (*_elput_sd_session_get_tty) (const char *session, char **display) = NULL;
+static int (*_elput_sd_pid_get_session) (pid_t pid, char **session) = NULL;
+static int (*_elput_sd_session_get_seat) (const char *session, char **seat) = NULL;
+
+void
+_elput_sd_init(void)
+{
+   if (_libsystemd_broken) return;
+   _libsystemd = eina_module_new("libsystemd.so.0");
+   if (_libsystemd)
+     {
+        if (!eina_module_load(_libsystemd))
+          {
+             eina_module_free(_libsystemd);
+             _libsystemd = NULL;
+          }
+     }
+   if (!_libsystemd)
+     {
+        _libsystemd = eina_module_new("libelogind-shared.so.0");
+        if (_libsystemd)
+          {
+             if (!eina_module_load(_libsystemd))
+               {
+                  eina_module_free(_libsystemd);
+                  _libsystemd = NULL;
+               }
+          }
+     }
+   if (!_libsystemd)
+     {
+        _libsystemd_broken = EINA_TRUE;
+        return;
+     }
+   // sd_session_get_vt == newere in systemd 207
+   _elput_sd_session_get_vt =
+     eina_module_symbol_get(_libsystemd, "sd_session_get_vt");
+   // sd_session_get_tty == older api in ssystemd 198
+   _elput_sd_session_get_tty =
+     eina_module_symbol_get(_libsystemd, "sd_session_get_tty");
+   _elput_sd_pid_get_session =
+     eina_module_symbol_get(_libsystemd, "sd_pid_get_session");
+   _elput_sd_session_get_seat =
+     eina_module_symbol_get(_libsystemd, "sd_session_get_seat");
+   if (((!_elput_sd_session_get_vt) && (!_elput_sd_session_get_tty)) ||
+       (!_elput_sd_pid_get_session) ||
+       (!_elput_sd_session_get_seat))
+     {
+        _elput_sd_session_get_vt = NULL;
+        _elput_sd_session_get_tty = NULL;
+        _elput_sd_pid_get_session = NULL;
+        _elput_sd_session_get_seat = NULL;
+        eina_module_free(_libsystemd);
+        _libsystemd = NULL;
+        _libsystemd_broken = EINA_TRUE;
+     }
+}
+
 
 static void
 _logind_session_active_cb_free(void *data EINA_UNUSED, void *event)
@@ -140,13 +202,16 @@ _cb_device_resumed(void *data, const Eldbus_Message *msg)
 static Eina_Bool
 _logind_session_vt_get(const char *sid, unsigned int *vt)
 {
-# ifdef HAVE_SYSTEMD_LOGIN_209
-   return (sd_session_get_vt(sid, vt) >= 0);
-# else
    int ret = 0;
    char *tty;
 
-   ret = sd_session_get_tty(sid, &tty);
+   _elput_sd_init();
+   if ((!_elput_sd_session_get_vt) && (!_elput_sd_session_get_tty))
+     return EINA_FALSE;
+   if (_elput_sd_session_get_vt)
+     return (_elput_sd_session_get_vt(sid, vt) >= 0);
+
+   ret = _elput_sd_session_get_tty(sid, &tty);
    if (ret < 0) return ret;
 
    ret = sscanf(tty, "tty%u", vt);
@@ -154,7 +219,6 @@ _logind_session_vt_get(const char *sid, unsigned int *vt)
 
    if (ret != 1) return EINA_FALSE;
    return EINA_TRUE;
-# endif
 }
 
 static Eina_Bool
@@ -489,13 +553,16 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
    int ret = 0;
    char *s = NULL;
 
+   _elput_sd_init();
+   if (!_elput_sd_pid_get_session) return EINA_FALSE;
+
    em = calloc(1, sizeof(Elput_Manager));
    if (!em) return EINA_FALSE;
 
    em->interface = &_logind_interface;
    em->seat = eina_stringshare_add(seat);
 
-   ret = sd_pid_get_session(getpid(), &em->sid);
+   ret = _elput_sd_pid_get_session(getpid(), &em->sid);
 
    if (ret < 0)
      {
@@ -508,7 +575,7 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
 
    if (!em->sid) goto session_err;
 
-   ret = sd_session_get_seat(em->sid, &s);
+   ret = _elput_sd_session_get_seat(em->sid, &s);
    if (ret < 0)
      {
         ERR("Failed to get session seat");

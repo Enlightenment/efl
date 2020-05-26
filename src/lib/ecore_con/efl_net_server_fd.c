@@ -14,10 +14,6 @@
 # include <sys/socket.h>
 #endif
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #define MY_CLASS EFL_NET_SERVER_FD_CLASS
 
 typedef struct _Efl_Net_Server_Fd_Data
@@ -233,7 +229,7 @@ _efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Fd_Data *pd EINA_UNUSED
      }
    else
      {
-        SOCKET fd = SD_LISTEN_FDS_START + sd_fd_index;
+        SOCKET fd = /*SD_LISTEN_FDS_START*/3 + sd_fd_index;
         int family;
         socklen_t len = sizeof(family);
 

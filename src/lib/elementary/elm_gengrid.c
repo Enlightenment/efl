@@ -165,8 +165,10 @@ _item_cache_free(Item_Cache *itc)
    /* does not exist if cache item has just been reused */
    if (itc->base_view)
      {
+        Evas_Object *view = itc->base_view;
         efl_wref_del(itc->base_view, &itc->base_view);
-        efl_del(itc->base_view);
+        efl_del(view);
+        itc->base_view = NULL;
      }
    eina_stringshare_del(itc->item_style);
    EINA_LIST_FREE(itc->contents, c)
@@ -1494,7 +1496,10 @@ _item_unrealize_cb(Elm_Gen_Item *it)
    Evas_Object *c;
    if (!_item_cache_add(it, _content_cache_add(it, &cache)))
      {
-        ELM_SAFE_FREE(VIEW(it), evas_object_del);
+        Evas_Object *view = VIEW(it);
+        efl_wref_del(VIEW(it), &VIEW(it));
+        ELM_SAFE_FREE(view, evas_object_del);
+        VIEW(it) = NULL;
         ELM_SAFE_FREE(it->spacer, evas_object_del);
         EINA_LIST_FREE(cache, c)
           evas_object_del(c);

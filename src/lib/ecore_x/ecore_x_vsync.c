@@ -154,6 +154,9 @@ static Ecore_Thread *drm_thread = NULL;
 static Eina_Spinlock tick_queue_lock;
 static int           tick_queue_count = 0;
 static Eina_Bool     tick_skip = EINA_FALSE;
+static Eina_Bool     threaded_vsync = EINA_FALSE;
+static Ecore_Timer  *fail_timer = NULL;
+static Ecore_Timer  *fallback_timer = NULL;
 
 typedef struct
 {
@@ -166,6 +169,37 @@ typedef struct
 #else
 # define D(args...)
 #endif
+
+static void _drm_send_time(double t);
+
+static Eina_Bool
+_fallback_timeout(void *data EINA_UNUSED)
+{
+   if (drm_event_is_busy)
+     {
+        _drm_send_time(ecore_loop_time_get());
+        return EINA_TRUE;
+     }
+   fallback_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_fail_timeout(void *data EINA_UNUSED)
+{
+   fail_timer = NULL;
+   _drm_fail_count++;
+   if (_drm_fail_count >= 10)
+     {
+        _drm_fail_count = 10;
+        if (!fallback_timer)
+          fallback_timer = ecore_timer_add
+            (1.0 / 60.0, _fallback_timeout, NULL);
+     }
+   if (drm_event_is_busy)
+     _drm_send_time(ecore_loop_time_get());
+   return EINA_FALSE;
+}
 
 static Eina_Bool
 _drm_tick_schedule(void)
@@ -196,7 +230,33 @@ _drm_tick_begin(void *data EINA_UNUSED)
 {
    _drm_fail_count = 0;
    drm_event_is_busy = 1;
-   _tick_send(1);
+   if (threaded_vsync)
+     {
+        _tick_send(1);
+     }
+   else
+     {
+        if (fail_timer) ecore_timer_reset(fail_timer);
+        else fail_timer = ecore_timer_add(1.0 / 15.0, _fail_timeout, NULL);
+        if (_drm_fail_count < 10)
+          {
+             if (!_drm_tick_schedule())
+               {
+                  _drm_fail_count = 999999;
+                  if (!fallback_timer)
+                    fallback_timer = ecore_timer_add
+                      (1.0 / 60.0, _fallback_timeout, NULL);
+               }
+          }
+        else
+          {
+             if (!_drm_tick_schedule())
+               _drm_fail_count = 999999;
+             if (!fallback_timer)
+               fallback_timer = ecore_timer_add
+                 (1.0 / 60.0, _fallback_timeout, NULL);
+          }
+     }
 }
 
 static void
@@ -204,22 +264,64 @@ _drm_tick_end(void *data EINA_UNUSED)
 {
    _drm_fail_count = 0;
    drm_event_is_busy = 0;
-   _tick_send(0);
+   if (threaded_vsync)
+     {
+        _tick_send(0);
+     }
+   else
+     {
+        if (fail_timer)
+          {
+             ecore_timer_del(fail_timer);
+             fail_timer = NULL;
+          }
+        if (fallback_timer)
+          {
+             ecore_timer_del(fallback_timer);
+             fallback_timer = NULL;
+          }
+     }
 }
 
 static void
 _drm_send_time(double t)
 {
-   double *tim = malloc(sizeof(*tim));
-   if (tim)
+   if (threaded_vsync)
      {
-        *tim = t;
-        DBG("   ... send %1.8f", t);
-        D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
-        eina_spinlock_take(&tick_queue_lock);
-        tick_queue_count++;
-        eina_spinlock_release(&tick_queue_lock);
-        ecore_thread_feedback(drm_thread, tim);
+        double *tim = malloc(sizeof(*tim));
+        if (tim)
+          {
+             *tim = t;
+             DBG("   ... send %1.8f", t);
+             D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
+             eina_spinlock_take(&tick_queue_lock);
+             tick_queue_count++;
+             eina_spinlock_release(&tick_queue_lock);
+             ecore_thread_feedback(drm_thread, tim);
+          }
+     }
+   else
+     {
+        if (drm_event_is_busy)
+          {
+             if (_drm_fail_count == 0)
+               {
+                  if (fallback_timer)
+                    {
+                       ecore_timer_del(fallback_timer);
+                       fallback_timer = NULL;
+                    }
+               }
+             ecore_loop_time_set(t);
+             ecore_animator_custom_tick();
+             if (drm_event_is_busy)
+               {
+                  if (fail_timer) ecore_timer_reset(fail_timer);
+                  else fail_timer = ecore_timer_add(1.0 / 15.0, _fail_timeout, NULL);
+                  if (!_drm_tick_schedule())
+                    _drm_fail_count = 999999;
+               }
+          }
      }
 }
 
@@ -272,6 +374,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
                   tdelta_avg = 0.0;
                   tdelta_n = 0;
                }
+             _drm_fail_count = 0;
              _drm_send_time(t);
              pframe = frame;
           }
@@ -280,6 +383,13 @@ _drm_vblank_handler(int fd EINA_UNUSED,
      {
         D("    @%1.5f vblank drm event when not busy!\n", ecore_time_get());
      }
+}
+
+static double _ecore_x_vsync_wakeup_time = 0.0;
+
+EAPI double _ecore_x_vxync_wakeup_time_get(void)
+{
+   return _ecore_x_vsync_wakeup_time;
 }
 
 static void
@@ -357,6 +467,20 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                tv.tv_usec = _drm_fail_time * 1000000;
              D("    @%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
              ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
+             _ecore_x_vsync_wakeup_time = ecore_time_get();
+#if 0
+             static double pt = 0.0;
+             double t = ecore_time_get();
+             double f = 1.0 / (t - pt);
+             char buf[1024];
+             int i, fps;
+             fps = 30 + ((f - 60.0) * 10.0);
+             if (fps > 1000) fps = 1000;
+             for (i = 0; i < fps; i++) buf[i] = '#';
+             buf[i] = 0;
+             printf("WAKE %1.5f [%s>\n", 1.0 / (t - pt), buf);
+             pt = t;
+#endif
              if ((ret == 1) && (FD_ISSET(drm_fd, &rfds)))
                {
                   D("    @%1.5f have event\n", ecore_time_get());
@@ -387,19 +511,33 @@ _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void 
    D("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
    if (drm_event_is_busy)
      {
-        double *t = msg;
-        static double pt = 0.0;
+        double *t = msg, rt, lt;
+        static double pt = 0.0, prt = 0.0, plt = 0.0;
 
-        DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
-        D("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
+        rt = ecore_time_get();
+        lt = ecore_loop_time_get();
+        DBG("VSYNC %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
+        D("VSYNC %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
+//        printf("VSYNC %1.8f = delt %1.5f | real = %1.5f | loop = %1.5f\n", *t, 1.0 / (*t - pt), 1.0 / (rt - prt), 1.0 / (lt - plt));
         if ((!tick_skip) || (tick_queued == 1))
           {
              ecore_loop_time_set(*t);
              ecore_animator_custom_tick();
           }
         pt = *t;
+        prt = rt;
+        plt = lt;
      }
    free(msg);
+}
+
+static Eina_Bool
+_ecore_vsync_fd_handler(void *data EINA_UNUSED,
+                        Ecore_Fd_Handler *fd_handler EINA_UNUSED)
+{
+   _ecore_x_vsync_wakeup_time = ecore_time_get();
+   sym_drmHandleEvent(drm_fd, &drm_evctx);
+   return ECORE_CALLBACK_RENEW;
 }
 
 // yes. most evil. we dlopen libdrm and libGL etc. to manually find smbols
@@ -675,11 +813,20 @@ checkdone:
      }
 
    if (getenv("ECORE_ANIMATOR_SKIP")) tick_skip = EINA_TRUE;
-   tick_queue_count = 0;
-   eina_spinlock_new(&tick_queue_lock);
-   thq = eina_thread_queue_new();
-   drm_thread = ecore_thread_feedback_run(_drm_tick_core, _drm_tick_notify,
-                                          NULL, NULL, NULL, EINA_TRUE);
+   if (threaded_vsync)
+     {
+        tick_queue_count = 0;
+        eina_spinlock_new(&tick_queue_lock);
+        thq = eina_thread_queue_new();
+        drm_thread = ecore_thread_feedback_run(_drm_tick_core, _drm_tick_notify,
+                                               NULL, NULL, NULL, EINA_TRUE);
+     }
+   else
+     {
+        ecore_main_fd_handler_add(drm_fd, ECORE_FD_READ,
+                                  _ecore_vsync_fd_handler, NULL,
+                                  NULL, NULL);
+     }
    return 1;
 }
 
@@ -759,6 +906,7 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
         const char *home;
         struct stat st;
 
+        if (getenv("ECORE_VSYNC_TRHEAD")) threaded_vsync = EINA_TRUE;
         home = eina_environment_home_get();
         if (!home) eina_environment_tmp_get();
         snprintf(buf, sizeof(buf), "%s/.ecore-no-vsync", home);

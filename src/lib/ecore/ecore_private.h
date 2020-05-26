@@ -511,6 +511,12 @@ extern Eina_Bool _ecore_glib_always_integrate;
 extern Ecore_Select_Function main_loop_select;
 extern int in_main_loop;
 
+#ifdef HAVE_SYSTEMD
+void _ecore_sd_init(void);
+
+extern int (*_ecore_sd_notify) (int unset_environment, const char *state);
+#endif
+
 Eina_Bool ecore_mempool_init(void);
 void ecore_mempool_shutdown(void);
 #define GENERIC_ALLOC_FREE_HEADER(TYPE, Type) \

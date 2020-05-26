@@ -36,12 +36,62 @@
 static Ecore_Event_Handler *active_hdlr;
 
 #ifdef HAVE_SYSTEMD
-static inline Eina_Bool 
+static Eina_Module *_libsystemd = NULL;
+static Eina_Bool _libsystemd_broken = EINA_FALSE;
+
+static int (*_ecore_sd_session_get_vt) (const char *session, unsigned *vtnr) = NULL;
+static int (*_ecore_sd_pid_get_session) (pid_t pid, char **session) = NULL;
+static int (*_ecore_sd_session_get_seat) (const char *session, char **seat) = NULL;
+
+void
+_ecore_drm_sd_init(void)
+{
+   if (_libsystemd_broken) return;
+   _libsystemd = eina_module_new("libsystemd.so.0");
+   if (_libsystemd)
+     {
+        if (!eina_module_load(_libsystemd))
+          {
+             eina_module_free(_libsystemd);
+             _libsystemd = NULL;
+          }
+     }
+   if (!_libsystemd)
+     {
+        _libsystemd_broken = EINA_TRUE;
+        return;
+     }
+   _ecore_sd_session_get_vt =
+     eina_module_symbol_get(_libsystemd, "sd_session_get_vt");
+   _ecore_sd_pid_get_session =
+     eina_module_symbol_get(_libsystemd, "sd_pid_get_session");
+   _ecore_sd_session_get_seat =
+     eina_module_symbol_get(_libsystemd, "sd_session_get_seat");
+   if ((!_ecore_sd_session_get_vt) ||
+       (!_ecore_sd_pid_get_session) ||
+       (!_ecore_sd_session_get_seat))
+     {
+        _ecore_sd_session_get_vt = NULL;
+        _ecore_sd_pid_get_session = NULL;
+        _ecore_sd_session_get_seat = NULL;
+        eina_module_free(_libsystemd);
+        _libsystemd = NULL;
+        _libsystemd_broken = EINA_TRUE;
+     }
+}
+
+static inline Eina_Bool
 _ecore_drm_logind_vt_get(Ecore_Drm_Device *dev)
 {
    int ret;
 
-   ret = sd_session_get_vt(dev->session, &dev->vt);
+   _ecore_drm_sd_init();
+   if (!_ecore_sd_session_get_vt)
+     {
+        ERR("Could not get systemd tty");
+        return EINA_FALSE;
+     }
+   ret = _ecore_sd_session_get_vt(dev->session, &dev->vt);
    if (ret < 0)
      {
         ERR("Could not get systemd tty");
@@ -142,20 +192,26 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-Eina_Bool 
+Eina_Bool
 _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
 {
 #ifdef HAVE_SYSTEMD
-   char *seat;
+   char *seat = NULL;
 
-   /* get session id */
-   if (sd_pid_get_session(getpid(), &dev->session) < 0)
+   _ecore_drm_sd_init();
+   if ((!_ecore_sd_pid_get_session) ||
+       (!_ecore_sd_session_get_seat))
      {
         ERR("Could not get systemd session");
         return EINA_FALSE;
      }
-
-   if (sd_session_get_seat(dev->session, &seat) < 0)
+   /* get session id */
+   if (_ecore_sd_pid_get_session(getpid(), &dev->session) < 0)
+     {
+        ERR("Could not get systemd session");
+        return EINA_FALSE;
+     }
+   if (_ecore_sd_session_get_seat(dev->session, &seat) < 0)
      {
         ERR("Could not get systemd seat");
         return EINA_FALSE;
@@ -166,9 +222,7 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
         free(seat);
         return EINA_FALSE;
      }
-
    free(seat);
-
    if (!_ecore_drm_logind_vt_get(dev)) return EINA_FALSE;
 #endif
 
