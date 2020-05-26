@@ -13,6 +13,10 @@ pkgconfig = import('pkgconfig')
 test_env = environment()
 test_env.set('EFL_RUN_IN_TREE', '1')
 
+if get_option('b_sanitize') == 'address'
+  test_env.set('ASAN_OPTIONS', 'detect_leaks=0')
+endif
+
 version_arr = meson.project_version().split('.')
 
 version_major = version_arr[0]
