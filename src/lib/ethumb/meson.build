@@ -9,9 +9,9 @@ ethumb_src = files([
   'md5.c',
 ])
 
-ethumb_deps = [eet, evas, ecore, ecore_evas, ecore_file, ecore_imf, edje, emile]
+ethumb_deps = [eet, evas, ecore, ecore_evas, ecore_file, ecore_imf, edje, emile, buildsystem]
 ethumb_pub_deps = [eina, eo, efl]
-ethumb_ext_deps = [m]
+ethumb_ext_deps = [m, buildsystem_simple]
 
 ethumb_lib = library('ethumb',
     ethumb_src,

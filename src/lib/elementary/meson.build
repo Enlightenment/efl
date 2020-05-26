@@ -949,10 +949,10 @@ elementary_src = files([
   'efl_ui_spotlight_animation_manager.c',
 ])
 
-elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, eio]
+elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, eio, buildsystem]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,
                        edje, eldbus, efreet, ethumb_client, efl]
-elementary_ext_deps = [atspi, dl, intl]
+elementary_ext_deps = [atspi, dl, intl, buildsystem_simple]
 elm_options = configuration_data()
 
 config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.build_root())

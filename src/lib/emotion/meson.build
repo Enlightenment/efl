@@ -37,9 +37,9 @@ emotion_src = files([
   'emotion_main.c'
 ])
 
-emotion_deps = [ecore, eet, evas, eio, emile]
+emotion_deps = [ecore, eet, evas, eio, emile, buildsystem]
 emotion_pub_deps = [eina, eo, efl]
-emotion_ext_deps = []
+emotion_ext_deps = [buildsystem_simple]
 
 if get_option('eeze') == true
   emotion_deps += [eeze]
