@@ -519,6 +519,7 @@ _ecore_wl2_window_show_send(Ecore_Wl2_Window *window)
    if (window->parent)
      ev->parent_win = window->parent;
    ev->event_win = window;
+   window->visible = EINA_TRUE;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_SHOW, ev, NULL, NULL);
 }
 
@@ -534,7 +535,25 @@ _ecore_wl2_window_hide_send(Ecore_Wl2_Window *window)
    if (window->parent)
      ev->parent_win = window->parent;
    ev->event_win = window;
+   window->visible = EINA_FALSE;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_HIDE, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl2_window_create_destroy_send(Ecore_Wl2_Window *window, Eina_Bool create)
+{
+   Ecore_Wl2_Event_Window_Hide *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Common));
+   if (!ev) return;
+
+   ev->win = window;
+   if (window->parent)
+     ev->parent_win = window->parent;
+   ev->event_win = window;
+
+   if (create) ecore_event_add(ECORE_WL2_EVENT_WINDOW_CREATE, ev, NULL, NULL);
+   else ecore_event_add(ECORE_WL2_EVENT_WINDOW_DESTROY, ev, NULL, NULL);
 }
 
 EAPI Ecore_Wl2_Window *
@@ -568,6 +587,8 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
      eina_inlist_append(display->windows, EINA_INLIST_GET(win));
 
    _ecore_wl2_window_surface_create(win);
+
+   _ecore_wl2_window_create_destroy_send(win, EINA_TRUE);
 
    return win;
 }
@@ -691,6 +712,10 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    Eina_Inlist *tmp;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (window->visible) _ecore_wl2_window_hide_send(window);
+
+   _ecore_wl2_window_create_destroy_send(window, EINA_FALSE);
 
    display = window->display;
 

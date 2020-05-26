@@ -320,6 +320,13 @@ typedef struct _Ecore_Wl2_Event_Window_Deactivate
    Ecore_Wl2_Window *event_win;
 } Ecore_Wl2_Event_Window_Deactivate;
 
+typedef struct _Ecore_Wl2_Event_Window_Common
+{
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *parent_win;
+   Ecore_Wl2_Window *event_win;
+} Ecore_Wl2_Event_Window_Common;
+
 typedef struct _Ecore_Wl2_Event_Window_Iconify_State_Change
 {
    Ecore_Wl2_Window *win;
@@ -422,6 +429,8 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_ACTIVATE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_DEACTIVATE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE; /** @since 1.21 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_OFFSCREEN; /** @since 1.21 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_CREATE; /** @since 1.25 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_DESTROY; /** @since 1.25 */
 
 typedef struct _Ecore_Wl2_Surface_Interface
 {
