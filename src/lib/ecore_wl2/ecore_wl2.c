@@ -281,7 +281,7 @@ ecore_wl2_shutdown(void)
                           ECORE_WL2_EVENT_WINDOW_ACTIVATE,
                           ECORE_WL2_EVENT_WINDOW_DEACTIVATE,
                           ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
-                          ECORE_WL2_EVENT_WINDOW_OFFSCREEN
+                          ECORE_WL2_EVENT_WINDOW_OFFSCREEN,
                           ECORE_WL2_EVENT_WINDOW_CREATE,
                           ECORE_WL2_EVENT_WINDOW_DESTROY);
 
