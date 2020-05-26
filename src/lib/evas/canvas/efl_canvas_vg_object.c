@@ -349,6 +349,7 @@ _efl_canvas_vg_object_efl_object_invalidate(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
      {
         Vg_User_Entry *user_entry = pd->user_entry;
         ENFN->ector_surface_cache_drop(ENC, user_entry->root);
+        if (pd->user_entry->root) efl_unref(pd->user_entry->root);
         free(pd->user_entry);
      }
    pd->user_entry = NULL;
