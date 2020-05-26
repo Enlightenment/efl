@@ -489,12 +489,17 @@ EFL_END_TEST
 static void *
 _eina_test_file_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
+#ifdef _WIN32
+   const char *filename = "cmd.exe";
+#else
+   const char *filename = "/bin/sh";
+#endif
    Eina_File *f;
    unsigned int i;
 
    for (i = 0; i < 100; ++i)
      {
-        f = eina_file_open("/bin/sh", EINA_FALSE);
+        f = eina_file_open(filename, EINA_FALSE);
         fail_if(!f);
         eina_file_close(f);
      }
