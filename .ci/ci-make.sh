@@ -19,7 +19,7 @@ if [ "$DISTRO" != "" ] ; then
     docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c "sysctl vsyscall=emulate"
     docker exec --env EIO_MONITOR_POLL=1 --env PATH="/src/cov-analysis-linux64-2019.03/bin:$PATH" $(cat $HOME/cid) sh -c "cov-build --dir cov-int ninja -C build"
     docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c "tar caf efl-$(git rev-parse --short HEAD).xz cov-int"
-    docker exec --env EIO_MONITOR_POLL=1 --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c ".ci/coverity-upload.sh"
+#docker exec --env EIO_MONITOR_POLL=1 --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c ".ci/coverity-upload.sh"
   else
     docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) ninja -C build
   fi
