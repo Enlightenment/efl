@@ -1,5 +1,5 @@
-efl_canvas_wl_deps = [ecore_wl2, ecore_input, ecore, ecore_evas, evas, emile, eina]
-efl_canvas_wl_pub_deps = [eo, efl, evas, dependency('wayland-server', version : '>= 1.11.0'), dependency('xkbcommon', version : '>= 0.6.0'), wayland_protocol]
+efl_canvas_wl_deps = [ecore_wl2, ecore_input, ecore, ecore_evas, evas, emile, eina, wayland_protocol ]
+efl_canvas_wl_pub_deps = [eo, efl, evas, dependency('wayland-server', version : '>= 1.11.0'), dependency('xkbcommon', version : '>= 0.6.0')]
 
 if (get_option('x11'))
   efl_canvas_wl_deps += [ecore_x]
