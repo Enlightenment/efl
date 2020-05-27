@@ -1,5 +1,5 @@
 eina_deps = [dl]
-eina_pub_deps = [thread_dep]
+eina_pub_deps = [thread_dep, m]
 eina_pc_deps = [m, rt, dl, thread_dep] #special case, this array is taken to drag in external deps to efl-one
 eina_ext_deps = eina_pc_deps
 
