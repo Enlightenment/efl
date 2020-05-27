@@ -542,7 +542,7 @@ _ecore_wl2_window_hide_send(Ecore_Wl2_Window *window)
 static void
 _ecore_wl2_window_create_destroy_send(Ecore_Wl2_Window *window, Eina_Bool create)
 {
-   Ecore_Wl2_Event_Window_Hide *ev;
+   Ecore_Wl2_Event_Window_Common *ev;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Common));
    if (!ev) return;
