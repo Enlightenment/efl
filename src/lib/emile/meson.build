@@ -25,6 +25,7 @@ endif
 
 emile_lib = library('emile',
     emile_src,
+    c_args : package_c_args,
     include_directories: config_dir,
     dependencies: emile_pub_deps + emile_deps + [lz4, rg_etc, m],
     install: true,

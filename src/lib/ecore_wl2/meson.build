@@ -24,6 +24,7 @@ ecore_wl2_src = [
 
 ecore_wl2_lib = library('ecore_wl2',
     ecore_wl2_src, pub_eo_file_target,
+    c_args : package_c_args,
     dependencies: ecore_wl2_deps + ecore_wl2_pub_deps,
     include_directories : config_dir,
     install: true,

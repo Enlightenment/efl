@@ -41,19 +41,19 @@ _anim_cb_tick(Ecore_Wl2_Window *win EINA_UNUSED, uint32_t timestamp, void *data)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Wl_Data *edata;
-   double t, rt;
-   static double pt = 0.0, prt = 0.0;
+   double t;//, rt;
+   /* static double pt = 0.0, prt = 0.0; */
 
    edata = ee->engine.data;
 
    if (!edata->ticking) return;
    t = ((double)timestamp / 1000.0);
    ecore_loop_time_set(t);
-   rt = ecore_time_get();
-//   printf("ECORE_EVAS: wl client anim tick %p | %p - %1.5f @ %1.5f delt=%1.5f | %1.5f\n", ee, edata, t, ecore_time_get(), t - pt, rt - prt);
+   /* rt = ecore_time_get(); */
+   /* printf("ECORE_EVAS: wl client anim tick %p | %p - %1.5f @ %1.5f delt=%1.5f | %1.5f\n", ee, edata, t, ecore_time_get(), t - pt, rt - prt); */
    ecore_evas_animator_tick(ee, NULL, t);
-   pt = t;
-   prt = rt;
+   /* pt = t; */
+   /* prt = rt; */
 }
 
 static void

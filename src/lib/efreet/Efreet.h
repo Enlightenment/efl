@@ -167,6 +167,9 @@ EAPI void efreet_cache_disable(void);
  */
 EAPI void efreet_cache_enable(void);
 
+#include <Efreet_Mime.h>
+#include <Efreet_Trash.h>
+
 #undef EAPI
 #define EAPI
 

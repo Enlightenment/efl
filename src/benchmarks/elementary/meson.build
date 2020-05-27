@@ -10,6 +10,7 @@ benchmark('focus_widget_tree', focus_widget_tree_bench,
 
 item_container = executable('collection',
   'collection.c',
+  c_args: ['-DEFL_BUILD'],
   dependencies: [elementary, ecore_input_evas, eio],
 )
 

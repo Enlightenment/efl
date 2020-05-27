@@ -2722,6 +2722,15 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
                            obj->cur->cache.clip.w, obj->cur->cache.clip.h);
      }
    else return;
+   if (!_is_obj_in_framespace(obj, evas))
+     {
+        int fw, fh;
+
+        fw = evas->viewport.w - evas->framespace.w;
+        fh = evas->viewport.h - evas->framespace.h;
+        RECTS_CLIP_TO_RECT(cox, coy, cow, coh,
+                           0, 0, fw, fh);
+     }
    if (cutout_margin)
      {
         cox += cutout_margin->l;

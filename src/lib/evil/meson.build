@@ -24,6 +24,7 @@ if target_machine.system() == 'windows'
   uuid = cc.find_library('uuid')
 
   evil_lib = library('evil', evil_src,
+    c_args : package_c_args,
     dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
     include_directories : [config_dir],
     install: true,

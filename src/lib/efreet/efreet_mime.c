@@ -348,20 +348,11 @@ _efreet_mimedb_glob_mime_get(unsigned int num)
 
 /** --------------------------------- **/
 
-EAPI int
-efreet_mime_init(void)
+int
+efreet_internal_mime_init(void)
 {
    if (++_efreet_mime_init_count != 1)
      return _efreet_mime_init_count;
-
-   if (!ecore_init())
-     return --_efreet_mime_init_count;
-
-   if (!ecore_file_init())
-     goto shutdown_ecore;
-
-   if (!efreet_init())
-     goto shutdown_ecore_file;
 
    _efreet_mime_log_dom = eina_log_domain_register
       ("efreet_mime", EFREET_DEFAULT_LOG_COLOR);
@@ -388,17 +379,11 @@ unregister_log_domain:
    eina_log_domain_unregister(_efreet_mime_log_dom);
    _efreet_mime_log_dom = -1;
 shutdown_efreet:
-   efreet_shutdown();
-shutdown_ecore_file:
-   ecore_file_shutdown();
-shutdown_ecore:
-   ecore_shutdown();
-
    return --_efreet_mime_init_count;
-}
+ }
 
-EAPI int
-efreet_mime_shutdown(void)
+int
+efreet_internal_mime_shutdown(void)
 {
    if (_efreet_mime_init_count == 0)
      {
@@ -428,11 +413,20 @@ efreet_mime_shutdown(void)
    IF_FREE_HASH(mime_icons);
    eina_log_domain_unregister(_efreet_mime_log_dom);
    _efreet_mime_log_dom = -1;
-   efreet_shutdown();
-   ecore_file_shutdown();
-   ecore_shutdown();
 
    return _efreet_mime_init_count;
+}
+
+EAPI int
+efreet_mime_init(void)
+{
+   return efreet_init();
+}
+
+EAPI int
+efreet_mime_shutdown(void)
+{
+   return efreet_shutdown();
 }
 
 EAPI const char *

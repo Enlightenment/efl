@@ -63,7 +63,7 @@ elif sys_bsd == true
   eio_src += ['eio_monitor_kevent.c']
 endif
 
-eio_deps = [ecore, ecore_file, eet, eo, eina, efl, emile, efreet_mime]
+eio_deps = [ecore, ecore_file, eet, eo, eina, efl, emile, efreet]
 eio_pub_deps = [eina, eet]
 
 eio_lib = library('eio',

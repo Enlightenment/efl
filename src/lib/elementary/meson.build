@@ -950,9 +950,9 @@ elementary_src = [
   'efl_ui_spotlight_animation_manager.c',
 ]
 
-elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
+elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, eio, atspi, dl, intl]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,
-                       edje, eldbus, efreet, efreet_mime, efreet_trash, ethumb_client, efl]
+                       edje, eldbus, efreet, ethumb_client, efl]
 
 elm_options = configuration_data()
 
@@ -1009,7 +1009,8 @@ c = configure_file(
   install_dir : dir_package_include,
   configuration: elm_options)
 
-elm_package_c_args =  package_c_args + ['-DELEMENTARY_BUILD=1']
+# Save in extra variable here to pass to edje_external
+elm_package_c_args =  package_c_args
 
 elementary_lib = library('elementary',
     elementary_src, pub_eo_file_target, priv_eo_file_target, c, embed_config,

@@ -22,6 +22,7 @@ ecore_file_header_src = ['Ecore_File.h']
 
 ecore_file_lib = library('ecore_file',
     ecore_file_src,
+    c_args : package_c_args,
     dependencies: ecore_file_deps + ecore_file_pub_deps + ecore_file_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,

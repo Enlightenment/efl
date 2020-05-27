@@ -1068,7 +1068,7 @@ EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *
 #define EVAS_ERROR_INVALID_OPERATION    0x0003
 
 
-/** Get the object's content it options.
+/** Get the object's content fit options.
  *
  * @param obj The textblock object.
  * @param[out] p_options content fitting options.
@@ -1076,7 +1076,7 @@ EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *
  */
 EAPI int evas_textblock_fit_options_get(const Evas_Object *obj,  unsigned int * p_options);
 
-/** Set the object's content it options.
+/** Set the object's content fit options.
  *
  * @param obj The textblock object.
  * @param[in] options content fitting options.

@@ -285,7 +285,7 @@ evas_lib = library('evas',
     dependencies: [evas_deps, m, draw, valgrind, libunibreak, evas_static_list],
     link_with: evas_link,
     install: true,
-    c_args : '-DPACKAGE_DATA_DIR="'+join_paths(dir_data, 'evas')+'"',
+    c_args : package_c_args,
     version : meson.project_version()
 )
 
