@@ -504,7 +504,7 @@ if (get_option('efl-one'))
   pkgconfig.generate(
     name : 'efl-one',
     description: 'Configureation for efl in one big fat .so',
-    libraries : efl_one,
+    libraries : [efl_one] + eina_pc_deps, #eina is a special case here which drags in m dl & threads
   )
 
   #overwrite all the dependencies of subprojects with efl-one, in order to link the modules and binaries to the correct .so
