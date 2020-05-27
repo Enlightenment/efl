@@ -1,7 +1,7 @@
 import eina_types;
 import efl_gfx_types;
 
-mixin @beta Efl.Gfx.Path requires Efl.Object
+mixin @beta Efl.Gfx.Path
 {
    [[EFL graphics path object interface]]
    methods {
@@ -266,8 +266,5 @@ mixin @beta Efl.Gfx.Path requires Efl.Object
           information.
         ]]
       }
-   }
-   implements {
-     Efl.Object.destructor;
    }
 }
