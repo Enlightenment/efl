@@ -1,5 +1,5 @@
 eina_deps = [dl]
-eina_pub_deps = [thread_dep]
+eina_pub_deps = [thread_dep, m]
 
 if sys_windows == true
    eina_pub_deps += [evil]
