@@ -415,7 +415,7 @@ _key_generic_cb_del(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo_Generic_Data_Node *node = data;
    Efl_Object_Data *pd = efl_data_scope_get(node->obj, EFL_OBJECT_CLASS);
-   _eo_key_generic_direct_del(pd, node, EINA_FALSE);
+   _eo_key_generic_direct_del(pd, node, EINA_TRUE);
 }
 
 EOLIAN static void
