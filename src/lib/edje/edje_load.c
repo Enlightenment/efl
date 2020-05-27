@@ -2172,6 +2172,22 @@ _edje_file_free(Edje_File *edf)
         free(edf->vibration_dir);
      }
 
+   if (edf->filter_dir)
+     {
+        int i;
+
+        if (edf->free_strings)
+          {
+             for (i = 0; i < edf->filter_dir->filters_count; ++i)
+               {
+                  eina_stringshare_del(edf->filter_dir->filters[i].name);
+                  eina_stringshare_del(edf->filter_dir->filters[i].script);
+               }
+          }
+        free(edf->filter_dir->filters);
+        free(edf->filter_dir);
+     } 
+
    if (edf->mo_dir)
      {
         unsigned int i;
