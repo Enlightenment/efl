@@ -4057,8 +4057,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
              ERR("Circular dependency in the group '%s' : %s",
                  ed->group, depends_path);
-             eina_array_free(part_array);
           }
+
+        eina_array_free(part_array);
 #endif
         return;
      }
