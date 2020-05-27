@@ -388,11 +388,6 @@ install_headers(public_sub_headers,
   install_dir : join_paths(dir_package_include, 'eina')
 )
 
-automatic_pkgfile = false
-
-pkgconfig.generate(eina_lib,
-  name : 'eina',
-  subdirs : ['eina-'+version_major, 'efl-'+version_major, join_paths('eina-'+version_major, 'eina')],
-  version : version_major + '.' + version_minor + '.' + version_micro,
-  libraries : eina_pub_deps + eina_pc_deps,
-)
+package_header_subdirs += 'eina'
+#special case here to support -lm -ldl -threads
+eina_pub_deps += eina_pc_deps
