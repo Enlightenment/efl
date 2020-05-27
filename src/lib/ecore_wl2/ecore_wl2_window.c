@@ -739,6 +739,9 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    if (window->class) eina_stringshare_del(window->class);
    if (window->role) eina_stringshare_del(window->role);
 
+   if (window->wm_rot.available_rots) free(window->wm_rot.available_rots);
+   window->wm_rot.available_rots = NULL;
+
    display->windows =
      eina_inlist_remove(display->windows, EINA_INLIST_GET(window));
 
@@ -1252,9 +1255,24 @@ ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *rots, unsigned int count)
 {
+   unsigned int i = 0;
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (window->wm_rot.available_rots)
+     {
+        free(window->wm_rot.available_rots);
+        window->wm_rot.available_rots = NULL;
+     }
    window->wm_rot.count = count;
-   window->wm_rot.available_rots = (int *)rots;
+
+   if (count >= 1)
+     {
+        window->wm_rot.available_rots = calloc(count, sizeof(int));
+        if (!window->wm_rot.available_rots) return;
+
+        for (; i < count; i++)
+          window->wm_rot.available_rots[i] = ((int *)rots)[i];
+     }
 }
 
 EAPI Eina_Bool
