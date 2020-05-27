@@ -428,7 +428,7 @@ foreach package : subprojects
         )
         # dependency for all the .eo file targets
         efl_one_eo_deps += declare_dependency(
-          sources: pub_eo_file_target,
+          sources: pub_eo_file_target + priv_eo_file_target, #this here *needs* to be public and private, because our binaries and modules do depend on internal headers
         )
         efl_one_deps += external_deps
         efl_one_parts += tmp
