@@ -361,6 +361,7 @@ efl_one_parts = []
 efl_one_deps = []
 efl_one_eo_deps = []
 efl_one_include_dirs = []
+efl_one_sub_dirs = []
 tmp_empty = declare_dependency()
 
 foreach package : subprojects
@@ -462,7 +463,9 @@ foreach package : subprojects
       foreach subdir : package_header_subdirs
         tmp_package_subdirs += join_paths(package_version_name, subdir)
       endforeach
-
+      if (package[8] and get_option('efl-one'))
+        efl_one_sub_dirs += [package_version_name] + tmp_package_subdirs
+      endif
       pkgconfig.generate(tmp_lib,
         name : '-'.join(package_name.split('_')),
         subdirs : [package_version_name] + tmp_package_subdirs,
@@ -503,6 +506,7 @@ if (get_option('efl-one'))
 
   pkgconfig.generate(
     name : 'efl-one',
+    subdirs : efl_one_sub_dirs,
     description: 'Configureation for efl in one big fat .so',
     libraries : [efl_one] + eina_pc_deps, #eina is a special case here which drags in m dl & threads
   )
