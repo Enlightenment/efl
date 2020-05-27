@@ -11,7 +11,7 @@
 # ifdef minor
 #  define MINOR(x) minor(x)
 # else
-#  define MAJOR(x) (((x) & 0xff) | (((x) >> 12) & ~0xff))
+#  define MINOR(x) (((x) & 0xff) | (((x) >> 12) & ~0xff))
 # endif
 
 static Eina_Module *_libsystemd = NULL;
