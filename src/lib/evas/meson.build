@@ -205,7 +205,7 @@ evas_pub_deps = [eina, ecore, ector, emile]
 
 if cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
   evas_opt = static_library('evas_opt',
-    sources: evas_src_opt,
+    sources: [evas_src_opt, pub_eo_file_target, priv_eo_file_target],
     include_directories:
       [ include_directories('../../..') ] +
       evas_include_directories +
