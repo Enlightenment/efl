@@ -1755,6 +1755,9 @@ _evas_render_mapped_mask(Evas_Public_Data *evas, Evas_Object_Protected_Data *obj
                          Evas_Proxy_Render_Data *proxy_render_data, void *output, void *ctx, int off_x, int off_y, int level, Eina_Bool do_async)
 {
    if (!mask) return;
+   if (proxy_render_data &&
+       !proxy_render_data->source_clip &&
+       proxy_render_data->src_obj->clip.mask == mask) return;
 
    // This path can be hit when we're multiplying masks on top of each other...
    Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
