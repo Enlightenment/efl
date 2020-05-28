@@ -17,7 +17,7 @@ if [ "$DISTRO" != "" ] ; then
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= \
-  -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
+  -Dharfbuzz=true -Dpixman=true -Dhyphen=true -Defl-one=true \
   -Dvnc-server=true -Dbindings=lua,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
   # Enabled png, jpeg evas loader for in tree edje file builds
