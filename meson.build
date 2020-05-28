@@ -620,7 +620,7 @@ configure_file(
 configure_file(
   input: join_paths('src','lib', 'efl', 'Efl_Config.h.in'),
   output: 'Efl_Config.h',
-  install_dir : join_paths(dir_include,'efl-'+version_major),
+  install_dir : join_paths(dir_include,'eina-'+version_major),
   configuration: efl_config_h
 )
 
