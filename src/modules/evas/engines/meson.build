@@ -46,7 +46,7 @@ foreach engine_conf : engines
   if build
     engine_include_dir = []
     engine_src = []
-    engine_deps = []
+    engine_deps = [eina, evas, evas_ext_deps]
     engine_dep = declare_dependency(
       include_directories: include_directories(engine),
     )

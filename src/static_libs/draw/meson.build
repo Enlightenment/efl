@@ -27,3 +27,14 @@ draw = declare_dependency(
   sources : draw_src,
   link_with : draw_opt_lib
 )
+
+draw_without_deps = declare_dependency(
+  include_directories: [include_directories('.'), include_directories(join_paths('..', '..', 'lib'))],
+  dependencies: [rg_etc_simple],
+  sources : draw_src,
+  link_with : draw_opt_lib
+)
+
+draw_simple = declare_dependency(
+  include_directories: [include_directories('.'), include_directories(join_paths('..', '..', 'lib'))],
+)

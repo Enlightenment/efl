@@ -8,7 +8,6 @@ if get_option('wl')
   mods += ['wayland']
 endif
 
-
 loader_disabler = get_option('ecore-imf-loaders-disabler')
 
 foreach mod_name : mods

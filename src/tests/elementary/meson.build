@@ -108,7 +108,7 @@ elementary_suite_src = [
 
 elementary_suite = executable('elementary_suite',
   elementary_suite_src,
-  dependencies: [check, eina, elementary, elementary_deps],
+  dependencies: [check, eina, elementary, elementary_deps, intl],
   include_directories : [config_dir] + [elementary_config_dir],
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
@@ -172,7 +172,7 @@ efl_ui_suite_src = [
 
 efl_ui_suite = executable('efl_ui_suite',
   efl_ui_suite_src, priv_eo_file_target,
-  dependencies: [check, eina, elementary, elementary_deps],
+  dependencies: [check, eina, elementary, elementary_deps, intl],
   include_directories : [config_dir] + [elementary_config_dir],
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',

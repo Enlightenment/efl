@@ -1,5 +1,6 @@
-ecore_evas_deps = [eina, ecore_input_evas, ecore_input, ecore, eet, evas, efl, eo, eina, emile]
+ecore_evas_deps = [eina, ecore_input_evas, ecore_input, ecore, eet, evas, efl, eo, eina, emile, buildsystem]
 ecore_evas_pub_deps = [evas, ecore]
+ecore_evas_ext_deps = [buildsystem_simple]
 pub_eo_file_target = []
 
 ecore_evas_header_src = [
@@ -8,7 +9,7 @@ ecore_evas_header_src = [
 
 ]
 
-ecore_evas_src = [
+ecore_evas_src = files([
   'ecore_evas.c',
   'ecore_evas_buffer.c',
   'ecore_evas_buffer.h',
@@ -25,20 +26,24 @@ ecore_evas_src = [
   'ecore_evas_x11.h',
   'ecore_evas_util.c',
   'ecore_evas_fallback_selection.c'
-]
+])
+
+ecore_evas_ext_deps += declare_dependency(
+  include_directories: include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer')),
+)
 
 
 ecore_evas_lib = library('ecore_evas',
     ecore_evas_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: [ecore_evas_deps, buildsystem],
+    dependencies: ecore_evas_deps + ecore_evas_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()
 )
 
 ecore_evas = declare_dependency(
-  include_directories: [include_directories('.')],
+  include_directories: [include_directories('.'), include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))],
   link_with: ecore_evas_lib,
   sources : pub_eo_file_target + priv_eo_file_target,
   dependencies: [evas],
@@ -47,3 +52,6 @@ ecore_evas = declare_dependency(
 install_headers(ecore_evas_header_src,
   install_dir : dir_package_include,
 )
+
+#a custom directory that must be added to efl_one
+efl_one_include_dirs += [include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))]

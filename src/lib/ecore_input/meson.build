@@ -1,27 +1,27 @@
 ecore_input_deps = [ecore]
 ecore_input_pub_deps = [eina, eo]
+ecore_input_ext_deps = []
 
 ecore_input_header_src = [
   'Ecore_Input.h'
 ]
 
-ecore_input_src = [
+ecore_input_src = files([
   'ecore_input.c',
   'ecore_input_compose.c',
   'ecore_input_joystick.c',
   'ecore_input_compose.h',
   'ecore_input_private.h'
-]
+])
 
 if get_option('eeze')
   ecore_input_deps += eeze
 endif
 
-
 ecore_input_lib = library('ecore_input',
     ecore_input_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_input_pub_deps + ecore_input_deps,
+    dependencies: ecore_input_pub_deps + ecore_input_deps + ecore_input_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()

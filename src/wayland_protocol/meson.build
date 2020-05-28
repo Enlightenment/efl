@@ -66,3 +66,8 @@ wayland_protocol = declare_dependency(
   sources: gen_obj_header,
   dependencies : [wayland_client]
 )
+
+wayland_protocol_simple = declare_dependency(
+  include_directories: include_directories('.'),
+  sources: gen_obj_header,
+)

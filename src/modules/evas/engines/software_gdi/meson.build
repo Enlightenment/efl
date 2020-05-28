@@ -5,12 +5,12 @@ engine_src = files([
   'evas_gdi_main.c',
 ])
 
-engine_deps = [cc.find_library('gdi32')]
+engine_deps += [cc.find_library('gdi32')]
 
 shared_module(mod_full_name, engine_src,
   c_args : package_c_args,
   include_directories : config_dir + [engine_include_dir],
-  dependencies : [eina, evas] + engine_deps,
+  dependencies : engine_deps,
   install : true,
   install_dir : mod_install_dir,
   name_suffix : sys_mod_extension

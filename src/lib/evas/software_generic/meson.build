@@ -33,4 +33,6 @@ foreach file : raw_evas_src
   evas_src += files(join_paths(rel_evas_modules, file))
 endforeach
 
+evas_include_directories += include_directories('.')
+
 subdir('filters')

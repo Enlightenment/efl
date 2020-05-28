@@ -1,20 +1,21 @@
 ecore_sdl_deps = [eina, ecore, ecore_input]
 ecore_sdl_pub_deps = []
+ecore_sdl_ext_deps = [m]
 
-ecore_sdl_src = [
+ecore_sdl_src = files([
   'ecore_sdl.c'
-]
+])
 
 ecore_sdl_header_src = [
   'Ecore_Sdl.h',
   'Ecore_Sdl_Keys.h'
 ]
 
-ecore_sdl_deps += dependency('sdl2')
+ecore_sdl_ext_deps += dependency('sdl2')
 
 ecore_sdl_lib = library('ecore_sdl',
     ecore_sdl_src,
-    dependencies: [m] + ecore_sdl_deps + ecore_sdl_pub_deps,
+    dependencies: [ecore_sdl_deps, ecore_sdl_pub_deps, ecore_sdl_ext_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,

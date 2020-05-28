@@ -1,5 +1,6 @@
 ecore_audio_deps = [ecore]
 ecore_audio_pub_deps = [eina, eo]
+ecore_audio_ext_deps = [m]
 
 pub_eo_files = [
   'ecore_audio.eo',
@@ -41,46 +42,46 @@ ecore_audio_header_src = [
   'ecore_audio_obj_out_wasapi.h'
 ]
 
-ecore_audio_src = [
+ecore_audio_src = files([
   'ecore_audio.c',
   'ecore_audio_obj.c',
   'ecore_audio_obj_in.c',
   'ecore_audio_obj_out.c',
   'ecore_audio_obj_in_tone.c',
   'ecore_audio_private.h'
-]
+])
 
-ecore_audio_src += [
+ecore_audio_src += files([
   'ecore_audio_obj_in_sndfile.c',
   'ecore_audio_obj_out_sndfile.c',
   'ecore_audio_sndfile_vio.c'
-]
+])
 
 ecore_audio_deps += dependency('sndfile')
 config_h.set('HAVE_SNDFILE', '1')
 
 if get_option('pulseaudio')
-  ecore_audio_deps += dependency('libpulse')
+  ecore_audio_ext_deps += dependency('libpulse')
 
-  ecore_audio_src += [
+  ecore_audio_src += files([
     'ecore_audio_pulse_ml.c',
     'ecore_audio_obj_out_pulse.c'
-  ]
+  ])
 
   config_h.set('HAVE_PULSE', '1')
 endif
 
 if sys_windows == true
-  ecore_audio_src += [
+  ecore_audio_src += files([
     'ecore_audio_obj_out_wasapi.c'
-  ]
-  ecore_audio_deps += [cc.find_library('ksuser', required: true), cc.find_library('winmm', required: true)]
+  ])
+  ecore_audio_ext_deps += [cc.find_library('ksuser', required: true), cc.find_library('winmm', required: true)]
 endif
 
 ecore_audio_lib = library('ecore_audio',
     ecore_audio_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_audio_pub_deps + [m] + ecore_audio_deps,
+    dependencies: ecore_audio_pub_deps + ecore_audio_deps + ecore_audio_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()

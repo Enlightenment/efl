@@ -6,7 +6,8 @@ edje_bin_deps = [
   ecore_file, ecore_input,
   ecore_imf, ecore_imf_evas,
   embryo, efreet, eio,
-  edje, ecore_evas
+  edje, ecore_evas,
+  intl,
 ]
 
 edje_cc_src = [

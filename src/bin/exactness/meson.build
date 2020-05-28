@@ -32,7 +32,7 @@ edjs = custom_target('player_entry',
 
 exactness_play_bin = library('exactness_play',
   [ 'player.c', 'common.c', 'common.h', edjs ],
-  dependencies: [ elementary ],
+  dependencies: [ elementary, dl],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   version : meson.project_version()
@@ -40,7 +40,7 @@ exactness_play_bin = library('exactness_play',
 
 exactness_record_bin = library('exactness_record',
   [ 'recorder.c', 'common.c', 'common.h' ],
-  dependencies: [ elementary ],
+  dependencies: [ elementary, dl],
   c_args: '-DDATA_DIR="'+join_paths(dir_data, 'exactness')+'"',
   install: true,
   version : meson.project_version()

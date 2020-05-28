@@ -1,6 +1,19 @@
 #include "elput_private.h"
 
 #ifdef HAVE_SYSTEMD
+
+# ifdef major
+#  define MAJOR(x) major(x)
+# else
+#  define MAJOR(x) ((((x) >> 8) & 0xfff) | (((x) >> 32) & ~0xfff))
+# endif
+
+# ifdef minor
+#  define MINOR(x) minor(x)
+# else
+#  define MINOR(x) (((x) & 0xff) | (((x) >> 12) & ~0xff))
+# endif
+
 static Eina_Module *_libsystemd = NULL;
 static Eina_Bool _libsystemd_broken = EINA_FALSE;
 
@@ -673,7 +686,7 @@ _logind_open_async(Elput_Manager *em, const char *path, int flags)
    if ((stat(path, &st) < 0) || (!S_ISCHR(st.st_mode)))
      _logind_pipe_write_fd(em, fd);
    else
-     _logind_device_take_async(em, flags, major(st.st_rdev), minor(st.st_rdev));
+     _logind_device_take_async(em, flags, MAJOR(st.st_rdev), MINOR(st.st_rdev));
 }
 
 static int
@@ -688,10 +701,10 @@ _logind_open(Elput_Manager *em, const char *path, int flags)
 
    if (!S_ISCHR(st.st_mode)) return -1;
 
-   fd = _logind_device_take(em, major(st.st_rdev), minor(st.st_rdev));
+   fd = _logind_device_take(em, MAJOR(st.st_rdev), MINOR(st.st_rdev));
    if (fd < 0) return fd;
 
-   if (major(st.st_rdev) == 226) //DRM_MAJOR
+   if (MAJOR(st.st_rdev) == 226) //DRM_MAJOR
      em->drm_opens++;
 
    fl = fcntl(fd, F_GETFL);
@@ -707,7 +720,7 @@ _logind_open(Elput_Manager *em, const char *path, int flags)
 
 err:
    close(fd);
-   _logind_device_release(em, major(st.st_rdev), minor(st.st_rdev));
+   _logind_device_release(em, MAJOR(st.st_rdev), MINOR(st.st_rdev));
    return -1;
 }
 
@@ -723,7 +736,7 @@ _logind_close(Elput_Manager *em, int fd)
 
    if (!S_ISCHR(st.st_mode)) return;
 
-   _logind_device_release(em, major(st.st_rdev), minor(st.st_rdev));
+   _logind_device_release(em, MAJOR(st.st_rdev), MINOR(st.st_rdev));
 }
 
 static Eina_Bool

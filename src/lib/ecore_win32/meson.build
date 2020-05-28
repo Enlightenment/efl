@@ -1,8 +1,14 @@
-if sys_windows == true
-  ecore_win32_deps = [evil, eina, ecore, ecore_input]
-  ecore_win32_pub_deps = []
+ecore_win32_deps = []
+ecore_win32_pub_deps = []
+ecore_win32_ext_deps = []
+ecore_win32_src = []
 
-  ecore_win32_src = [
+if sys_windows == true
+  ecore_win32_deps += [evil, eina, ecore, ecore_input]
+  ecore_win32_pub_deps += []
+  ecore_win32_ext_deps += []
+
+  ecore_win32_src += files([
     'ecore_win32.c',
     'ecore_win32_clipboard.c',
     'ecore_win32_cursor.c',
@@ -14,7 +20,7 @@ if sys_windows == true
     'ecore_win32_event.c',
     'ecore_win32_monitor.c',
     'ecore_win32_window.c',
-  ]
+  ])
 
   ecore_win32_header_src = [
     'Ecore_Win32.h'
@@ -22,7 +28,7 @@ if sys_windows == true
 
   ecore_win32_lib = library('ecore_win32',
       ecore_win32_src,
-      dependencies: ecore_win32_deps + ecore_win32_pub_deps,
+      dependencies: [ecore_win32_deps, ecore_win32_pub_deps, ecore_win32_ext_deps],
       include_directories : config_dir,
       install: true,
       c_args : package_c_args,

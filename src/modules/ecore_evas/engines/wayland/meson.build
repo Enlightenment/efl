@@ -11,7 +11,7 @@ engine_src = files([
   'ecore_evas_wayland_private.h'
   ])
 
-engine_deps = [ecore_wl2, ecore_input]
+engine_deps = [ecore_wl2, ecore_input] + ecore_wl2_ext_deps
 engine_include_dir += include_directories(join_paths('..', '..', '..', 'evas', 'engines', 'wayland_common'))
 
 

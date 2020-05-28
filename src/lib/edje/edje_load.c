@@ -2121,6 +2121,9 @@ _edje_file_free(Edje_File *edf)
           {
              for (i = 0; i < edf->image_dir->entries_count; ++i)
                eina_stringshare_del(edf->image_dir->entries[i].entry);
+
+             for (i = 0; i < edf->image_dir->vectors_count; ++i)
+               eina_stringshare_del(edf->image_dir->vectors[i].entry);
           }
 
         /* Sets have been added after edje received eet dictionary support */
@@ -2134,6 +2137,7 @@ _edje_file_free(Edje_File *edf)
 
         free(edf->image_dir->entries);
         free(edf->image_dir->sets);
+        free(edf->image_dir->vectors);
         free(edf->image_dir);
      }
    if (edf->sound_dir)
@@ -2171,6 +2175,22 @@ _edje_file_free(Edje_File *edf)
         free(edf->vibration_dir->samples);
         free(edf->vibration_dir);
      }
+
+   if (edf->filter_dir)
+     {
+        int i;
+
+        if (edf->free_strings)
+          {
+             for (i = 0; i < edf->filter_dir->filters_count; ++i)
+               {
+                  eina_stringshare_del(edf->filter_dir->filters[i].name);
+                  eina_stringshare_del(edf->filter_dir->filters[i].script);
+               }
+          }
+        free(edf->filter_dir->filters);
+        free(edf->filter_dir);
+     } 
 
    if (edf->mo_dir)
      {
@@ -2351,6 +2371,8 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 
    if (ec->script) embryo_program_free(ec->script);
    _edje_lua2_script_unload(ec);
+
+   if (ec->limits.parts) free(ec->limits.parts);
 
    eina_hash_free(ec->alias);
    eina_hash_free(ec->aliased);

@@ -1,5 +1,6 @@
-ecore_x_deps = [ecore, dl, m, ecore_input]
+ecore_x_deps = [ecore, ecore_input]
 ecore_x_pub_deps = [eina, efl]
+ecore_x_ext_deps = [dl, m]
 
 ecore_x_header_src = [
   'Ecore_X.h',
@@ -7,7 +8,7 @@ ecore_x_header_src = [
   'Ecore_X_Cursor.h'
 ]
 
-ecore_x_src = [
+ecore_x_src = files([
   'ecore_x_atoms_decl.h',
   'ecore_x.c',
   'ecore_x_dnd.c',
@@ -43,7 +44,7 @@ ecore_x_src = [
   'ecore_x_vsync.c',
   'ecore_x_gesture.c',
   'ecore_x_private.h'
-]
+])
 
 ecore_x_checks = [
   ['Xcomposite', 'Xcomposite.h', 'Xcomposite', 'XCompositeQueryExtension'],
@@ -104,12 +105,12 @@ int main () {
   else
     error('extension '+ecore_x_check[0]+' not found for X11')
   endif
-  ecore_x_deps += x_lib
+  ecore_x_ext_deps += x_lib
 endforeach
 
-ecore_x_deps += x11
-ecore_x_deps += xcb
-ecore_x_deps += x11_xcb
+ecore_x_ext_deps += x11
+ecore_x_ext_deps += xcb
+ecore_x_ext_deps += x11_xcb
 
 
 # there are a few special cases
@@ -125,12 +126,12 @@ cc.has_header_symbol('X11/Xcursor/Xcursor.h', 'XcursorSupportsARGB',
   dependencies : [x11, xcb]
   )
 config_h.set('ECORE_XCURSOR', '1')
-ecore_x_deps += lib
+ecore_x_ext_deps += lib
 
 ecore_x_lib = library('ecore_x',
     ecore_x_src, pub_eo_file_target,
     c_args : package_c_args,
-    dependencies: ecore_x_pub_deps + ecore_x_deps,
+    dependencies: ecore_x_pub_deps + ecore_x_deps + ecore_x_ext_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()

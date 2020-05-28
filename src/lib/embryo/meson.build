@@ -1,12 +1,12 @@
-embryo_deps = [ecore]
+embryo_deps = [eina, ecore, buildsystem]
 embryo_pub_deps = [eina, eo, efl]
-
+embryo_ext_deps = [buildsystem_simple, m]
 
 embryo_header_src = [
   'Embryo.h'
 ]
 
-embryo_src = [
+embryo_src = files([
   'embryo_amx.c',
   'embryo_args.c',
   'embryo_float.c',
@@ -15,13 +15,11 @@ embryo_src = [
   'embryo_str.c',
   'embryo_time.c',
   'embryo_private.h'
-]
-
-embryo_deps = [eina, m]
+])
 
 embryo_lib = library('embryo',
     embryo_src,
-    dependencies: [m, buildsystem] + embryo_deps,
+    dependencies: [embryo_deps, embryo_pub_deps, embryo_ext_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,
