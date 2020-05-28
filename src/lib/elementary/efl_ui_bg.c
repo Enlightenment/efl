@@ -187,7 +187,11 @@ elm_bg_load_size_set(Evas_Object *obj, int w, int h)
 EAPI Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
-   return efl_file_simple_load((Eo *) obj, file, group);
+   EFL_UI_BG_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = efl_file_simple_load((Eo *) obj, file, group);
+   if (ret) elm_image_preload_disabled_set(sd->img, EINA_TRUE);
+
+   return ret;
 }
 
 EOLIAN static Eina_Error
