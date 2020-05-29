@@ -97,7 +97,6 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
    double u0, u1, v0, v1;
    double t;
    double px, py, px2, py2;
-   double rad;
    Eina_Rect r;
    Eina_Vector2 vec, nvec, vec0, vec1, vec2, vec3;
    Eina_Matrix2 mat;
@@ -107,9 +106,7 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
 #endif
 
    r = efl_gfx_entity_geometry_get(pd->text_obj);
-
-   rad = _deg_to_rad(90);
-   eina_matrix2_values_set(&mat, cos(rad), -sin(rad), sin(rad), cos(rad));
+   eina_matrix2_values_set(&mat, 0.0, -1.0, 1.0, 0.0);
 
    eina_bezier_values_get(&bezier, NULL, NULL, NULL, NULL, NULL, NULL, &px2, &py2);
    t = 0;
