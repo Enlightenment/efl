@@ -2,7 +2,6 @@
 -- For use with Elua
 
 local ffi = require("ffi")
-local bit = require("bit")
 
 ffi.cdef [[
     void eina_stringshare_del(const char *str);
@@ -1564,22 +1563,21 @@ M.expression_type = {
 local etype = M.expression_type
 
 M.expression_mask = {
-    SINT   = bit.lshift(1, 0),
-    UINT   = bit.lshift(1, 1),
-    FLOAT  = bit.lshift(1, 2),
-    BOOL   = bit.lshift(1, 3),
-    STRING = bit.lshift(1, 4),
-    CHAR   = bit.lshift(1, 5),
-    NULL   = bit.lshift(1, 6)
+    SINT   = 2 ^ 0,
+    UINT   = 2 ^ 1,
+    FLOAT  = 2 ^ 2,
+    BOOL   = 2 ^ 3,
+    STRING = 2 ^ 4,
+    CHAR   = 2 ^ 5,
+    NULL   = 2 ^ 6
 }
 
 local emask = M.expression_mask
 
-emask.INT    = bit.bor(emask.SINT  , emask.UINT )
-emask.SIGNED = bit.bor(emask.SINT  , emask.FLOAT)
-emask.NUMBER = bit.bor(emask.INT   , emask.FLOAT)
-emask.ALL    = bit.bor(emask.NUMBER, emask.BOOL,
-                       emask.STRING, emask.CHAR, emask.NULL)
+emask.INT    = emask.SINT + emask.UINT
+emask.SIGNED = emask.SINT + emask.FLOAT
+emask.NUMBER = emask.INT  + emask.FLOAT
+emask.ALL = emask.NUMBER + emask.BOOL + emask.STRING + emask.CHAR + emask.NULL
 
 local value_con = {
     [etype.INT   ] = function(v) return tonumber(v.value.i   ) end,
