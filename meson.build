@@ -337,7 +337,7 @@ subprojects = [
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false,  true, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
 ['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
-['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false, false, false, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
+['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false, false,  true, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
 ['elua'             ,['elua']              , false,  true,  true, false,  true, false, false, ['eina', 'luajit'], []],
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, false, ['eina'], []],
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, false, ['eina'], []],
@@ -428,7 +428,7 @@ foreach package : subprojects
         )
         # dependency for all the .eo file targets
         efl_one_eo_deps += declare_dependency(
-          sources: pub_eo_file_target,
+          sources: pub_eo_file_target + priv_eo_file_target, #this here *needs* to be public and private, because our binaries and modules do depend on internal headers
         )
         efl_one_deps += external_deps
         efl_one_parts += tmp
@@ -620,7 +620,7 @@ configure_file(
 configure_file(
   input: join_paths('src','lib', 'efl', 'Efl_Config.h.in'),
   output: 'Efl_Config.h',
-  install_dir : join_paths(dir_include,'efl-'+version_major),
+  install_dir : join_paths(dir_include,'eina-'+version_major),
   configuration: efl_config_h
 )
 

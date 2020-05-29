@@ -1,9 +1,10 @@
-efl_canvas_wl_deps = [ecore_wl2, ecore_input, ecore, ecore_evas, evas, emile, eina, wayland_protocol ]
-efl_canvas_wl_pub_deps = [eo, efl, evas, dependency('wayland-server', version : '>= 1.11.0'), dependency('xkbcommon', version : '>= 0.6.0')]
+efl_canvas_wl_deps = [ecore_wl2, ecore_input, ecore, ecore_evas, evas, emile, eina]
+efl_canvas_wl_pub_deps = [eo, efl, evas]
+efl_canvas_wl_ext_deps = [dependency('wayland-server', version : '>= 1.11.0'), dependency('xkbcommon', version : '>= 0.6.0'), wayland_protocol]
 
 if (get_option('x11'))
   efl_canvas_wl_deps += [ecore_x]
-  efl_canvas_wl_pub_deps += [dependency('xkbcommon-x11')]
+  efl_canvas_wl_ext_deps += [dependency('xkbcommon-x11')]
 endif
 
 pub_eo_files = [
@@ -25,16 +26,17 @@ foreach eo_file : pub_eo_files
                            '-gchd', '@INPUT@'])
 endforeach
 
-efl_canvas_wl_src = [
+efl_canvas_wl_src = files([
  'dmabuf.c',
  'efl_canvas_wl.c',
-]
+])
+
 efl_canvas_wl_header_src = ['Efl_Canvas_Wl.h']
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
 efl_canvas_wl_lib = library('efl_canvas_wl',
     efl_canvas_wl_src, pub_eo_file_target,
-    dependencies: [m, dl] + efl_canvas_wl_deps + efl_canvas_wl_pub_deps,
+    dependencies: efl_canvas_wl_deps + efl_canvas_wl_pub_deps + efl_canvas_wl_ext_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,

@@ -1,5 +1,5 @@
 eina_deps = [dl]
-eina_pub_deps = [thread_dep]
+eina_pub_deps = [thread_dep, m]
 eina_pc_deps = [m, rt, dl, thread_dep] #special case, this array is taken to drag in external deps to efl-one
 eina_ext_deps = eina_pc_deps
 
@@ -388,11 +388,6 @@ install_headers(public_sub_headers,
   install_dir : join_paths(dir_package_include, 'eina')
 )
 
-automatic_pkgfile = false
-
-pkgconfig.generate(eina_lib,
-  name : 'eina',
-  subdirs : ['eina-'+version_major, 'efl-'+version_major, join_paths('eina-'+version_major, 'eina')],
-  version : version_major + '.' + version_minor + '.' + version_micro,
-  libraries : eina_pub_deps + eina_pc_deps,
-)
+package_header_subdirs += 'eina'
+#special case here to support -lm -ldl -threads
+eina_pub_deps += eina_pc_deps
