@@ -134,29 +134,28 @@ group { name: "e/widgets/border/default/border";
    IMAGE_RING("ringb", 160)
    IMAGE_RING("ringc", 160)
 
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    data.item: "shadow" "1";
    parts {
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
-            rel.to: "shadow";
+            rel.to: "_sh1";
          }
          description { state: "hidden";
             visible: 0;
          }
       }
-      part { name: "shadow"; mouse_events: 0; clip_to: "shadow_clip";
-         scale: 1;
+      part { name: "shadow_base"; type: SPACER;
          description { state: "default" 0.0;
             rel1.to: "top";
             rel2.to: "bottom";
-            WIN_SHADOW;
          }
          description { state: "shaded";
             inherit: "default";
             rel2.to: "e.swallow.client";
          }
       }
+      WIN_SHAD("shadow_base", "shadow_clip", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
       part { name: "client_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to_y: "e.swallow.client";
@@ -628,7 +627,7 @@ group { name: "e/widgets/border/default/border";
       program {
          signal: "e,state,shaded"; source: "e";
          action: STATE_SET "shaded" 0.0;
-         target: "shadow";
+         target: "shadow_base";
          after: "shading";
       }
       program { name: "shading";
@@ -654,7 +653,7 @@ group { name: "e/widgets/border/default/border";
          signal: "e,state,unshading"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.client";
-         target: "shadow";
+         target: "shadow_base";
          target: "client_clip";
       }
 //      program {
@@ -1021,28 +1020,28 @@ group { name: "e/widgets/border/pixel/border";
 }
 
 group { name: "e/widgets/border/tiling/border";
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    data.item: "shadow" "1";
    parts {
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
-            rel1.to: "shadow";
-            rel2.to: "shadow";
+            rel.to: "_sh1";
          }
          description { state: "hidden";
             visible: 0;
          }
       }
-      part { name: "shadow"; mouse_events: 0; clip_to: "shadow_clip";
+      part { name: "shadow_base"; type: SPACER;
          description { state: "default" 0.0;
-            rel.to: "e.swallow.client";
-            WIN_SHADOW;
+            rel1.to: "top";
+            rel2.to: "bottom";
          }
          description { state: "shaded";
             inherit: "default";
             rel2.to: "e.swallow.client";
          }
       }
+      WIN_SHAD("shadow_base", "shadow_clip", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
       part { name: "client_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to_y: "e.swallow.client";

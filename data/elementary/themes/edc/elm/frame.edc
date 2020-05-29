@@ -1,17 +1,16 @@
 group { name: "elm/frame/base/default";
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    parts {
-      part { name: "shadow"; mouse_events: 0;
-         scale: 1;
+      part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
-            rel.to: "base";
-            WIN_SHADOW_SMALL;
+            rel.to: "_sh1";
          }
          description { state: "hidden" 0.0;
             inherit;
             visible: 0;
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
@@ -260,19 +259,18 @@ group { name: "elm/frame/base/outdent_bottom";
 }
 
 group { name: "elm/frame/base/outline";
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    parts {
-      part { name: "shadow"; mouse_events: 0;
-         scale: 1;
+      part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
-            rel.to: "base";
-            WIN_SHADOW_SMALL;
+            rel.to: "_sh1";
          }
          description { state: "hidden" 0.0;
             inherit;
             visible: 0;
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
