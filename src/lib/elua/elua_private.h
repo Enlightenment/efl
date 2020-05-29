@@ -53,12 +53,12 @@ Eina_Bool _elua_state_io_setup(const Elua_State *es);
 #if LUA_VERSION_NUM < 502
 
 #define elua_register(L, lib) luaL_register(L, NULL, 0)
-#define elua_rawlen(L, i) lua_rawlen(L, i)
+#define elua_strlen(L, i) lua_strlen(L, i)
 
 #else
 
 #define elua_register(L, lib) luaL_setfuncs(L, lib, 0)
-#define elua_rawlen(L, i) lua_rawlen(L, i)
+#define elua_strlen(L, i) lua_rawlen(L, i)
 
 #endif
 

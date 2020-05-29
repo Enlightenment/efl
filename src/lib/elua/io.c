@@ -167,7 +167,7 @@ read_line(lua_State *L, FILE *f)
         if (fgets(p, LUAL_BUFFERSIZE, f) == NULL)
           {
              luaL_pushresult(&b);
-             return (elua_rawlen(L, -1) > 0);
+             return (elua_strlen(L, -1) > 0);
           }
         l = strlen(p);
         if (!l || p[l - 1] != '\n')
@@ -198,7 +198,7 @@ read_chars(lua_State *L, FILE *f, size_t n)
         n -= nr;
      } while (n > 0 && nr == rlen);
    luaL_pushresult(&b);
-   return (n == 0 || elua_rawlen(L, -1) > 0);
+   return (n == 0 || elua_strlen(L, -1) > 0);
 }
 
 static int
