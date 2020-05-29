@@ -857,6 +857,41 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
      {
         fg->glyph_out->rle = NULL;
         fg->glyph_out->bitmap.rle_alloc = EINA_FALSE;
+        if (fi->is_resized)
+          {
+             int w = fbg->bitmap.width;
+             int h = fbg->bitmap.rows;
+
+             RGBA_Image src = {0};
+             src.image.data = (DATA32 *) fbg->bitmap.buffer;
+             src.cache_entry.w = w;
+             src.cache_entry.h = h;
+             src.cache_entry.flags.alpha = 1;
+
+             RGBA_Image dst = {0};
+             dst.cache_entry.w = w * fi->scale_factor;
+             dst.cache_entry.h = h * fi->scale_factor;
+             dst.image.data = malloc(dst.cache_entry.w * dst.cache_entry.h * 4);
+             dst.cache_entry.flags.alpha = 1;
+
+             evas_common_scale_rgba_smooth_draw(&src, &dst,
+                                        0, 0, src.cache_entry.w , src.cache_entry.h,
+                                        0xffffffff, EVAS_RENDER_COPY,
+                                        0, 0, src.cache_entry.w , src.cache_entry.h,
+                                        0, 0, dst.cache_entry.w, dst.cache_entry.h,
+                                        NULL, 0, 0);
+
+             fg->glyph_out->bitmap.rows = dst.cache_entry.h;
+             fg->glyph_out->bitmap.width = dst.cache_entry.w;
+             fg->glyph_out->bitmap.buffer = (unsigned char *) dst.image.data;
+             fg->glyph_out->bitmap.pitch = dst.cache_entry.w * 4;
+ 
+             fg->glyph_out->rle = NULL;
+             fg->glyph_out->bitmap.rle_alloc = EINA_TRUE;
+             // this may be technically incorrect as we go and free a bitmap buffer
+             // behind the ftglyph's back...
+             FT_Bitmap_Done(evas_ft_lib, &(fbg->bitmap));
+          }
      }
 
    return EINA_TRUE;

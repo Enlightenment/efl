@@ -294,7 +294,8 @@ struct _RGBA_Font_Int
    Eina_Hash        *kerning;
    Fash_Glyph       *fash;
    unsigned int      size;
-   float             scale_factor;
+   double            scale_factor;
+   Eina_Bool         is_resized;
    int               real_size;
    int               max_h;
    int               references;

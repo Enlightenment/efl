@@ -105,8 +105,12 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
              if ((fg->fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR) &&
                  FT_HAS_COLOR(fg->fi->src->ft.face))
                {
-                  w *= fg->fi->scale_factor;
-                  h *= fg->fi->scale_factor;
+                  if ( !fg->fi->is_resized )
+                    {
+                       w *= fg->fi->scale_factor;
+                       h *= fg->fi->scale_factor;
+                    }
+
                }
           }
 
