@@ -8,6 +8,7 @@ png = dependency('libpng')
 tiff = dependency('libtiff-4', required: get_option('evas-loaders-disabler').contains('tiff') == false)
 giflib = cc.find_library('gif')
 webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
+webpdemux = dependency('libwebpdemux', required: get_option('evas-loaders-disabler').contains('webp') == false)
 libopenjp2 = dependency('libopenjp2', required: get_option('evas-loaders-disabler').contains('jp2k') == false)
 
 evas_image_loaders_file = [
@@ -25,7 +26,7 @@ evas_image_loaders_file = [
      ['tgv',     'shared', [rg_etc, lz4]],
      ['tiff',    'shared', [tiff]],
      ['wbmp',    'shared', []],
-     ['webp',    'shared', [webp]],
+     ['webp',    'shared', [webp, webpdemux]],
      ['xpm',     'shared', []]
 ]
 
