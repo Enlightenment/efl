@@ -136,7 +136,7 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
    Map_Stream *s    = ud;
    const char *fmap = s->fmap;
    *size = s->flen;
-   /* gotta null it - tell luajit to terminate reading */
+   /* gotta null it - tell lua to terminate reading */
    s->fmap = NULL;
    return fmap;
 }
