@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "evas-common.h"
+
 #define WIDTH  (640)
 #define HEIGHT (480)
 
