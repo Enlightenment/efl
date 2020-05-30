@@ -274,7 +274,8 @@ ffi.cdef [[
 
     typedef struct _Eolian_Doc_Token {
         Eolian_Doc_Token_Type type;
-        const char *text, *text_end;
+        const char *text;
+        const char *text_end;
     } Eolian_Doc_Token;
 
     int eolian_init(void);

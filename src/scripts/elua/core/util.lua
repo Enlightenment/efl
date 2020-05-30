@@ -184,11 +184,12 @@ end
 ffi.cdef [[
     typedef struct _Str_Buf {
         char  *buf;
-        size_t len, cap;
+        size_t len;
+        size_t cap;
     } Str_Buf;
 
     void *malloc(size_t);
-    void    free(void*);
+    void    free(void *);
     size_t  strlen(const char *str);
 
     int isalnum(int c);
