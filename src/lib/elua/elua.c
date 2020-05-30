@@ -2,6 +2,10 @@
 #include <Ecore_File.h>
 #include "elua_private.h"
 
+#ifdef ENABLE_LUA_OLD
+#  include <cffi-lua.h>
+#endif
+
 static Eina_Prefix *_elua_pfx = NULL;
 
 static int _elua_init_counter = 0;
@@ -65,10 +69,6 @@ elua_shutdown(void)
    eina_shutdown();
    return _elua_init_counter;
 }
-
-#ifdef ENABLE_LUA_OLD
-int luaopen_cffi(lua_State *L);
-#endif
 
 EAPI Elua_State *
 elua_state_new(const char *progname)
