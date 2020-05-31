@@ -278,6 +278,9 @@ ffi.cdef [[
         const char *text_end;
     } Eolian_Doc_Token;
 
+    void *malloc(size_t sz);
+    void free(void *ptr);
+
     int eolian_init(void);
     int eolian_shutdown(void);
     unsigned short eolian_file_format_version_get(void);
@@ -443,7 +446,7 @@ ffi.cdef [[
 
     const Eolian_Function *eolian_typedecl_function_pointer_get(const Eolian_Typedecl *tp);
 
-    Eolian_Value_t eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
+    Eina_Bool eolian_expression_eval_fill(const Eolian_Expression *expr, Eolian_Expression_Mask m, Eolian_Value_t *val);
     const char *eolian_expression_value_to_literal(const Eolian_Value *v);
     const char *eolian_expression_serialize(const Eolian_Expression *expr);
     Eolian_Expression_Type eolian_expression_type_get(const Eolian_Expression *expr);
@@ -452,7 +455,7 @@ ffi.cdef [[
     const Eolian_Expression *eolian_expression_binary_rhs_get(const Eolian_Expression *expr);
     Eolian_Unary_Operator eolian_expression_unary_operator_get(const Eolian_Expression *expr);
     const Eolian_Expression *eolian_expression_unary_expression_get(const Eolian_Expression *expr);
-    Eolian_Value_t eolian_expression_value_get(const Eolian_Expression *expr);
+    Eina_Bool eolian_expression_value_get_fill(const Eolian_Expression *expr, Eolian_Value_t *val);
     const Eolian_Documentation *eolian_constant_documentation_get(const Eolian_Constant *var);
     const Eolian_Type *eolian_constant_type_get(const Eolian_Constant *var);
     const Eolian_Expression *eolian_constant_value_get(const Eolian_Constant *var);
@@ -1656,9 +1659,15 @@ M.Expression = ffi.metatype("Eolian_Expression", {
     __index = wrap_object {
         eval = function(self, mask)
             mask = mask or emask.ALL
-            local v = eolian.eolian_expression_eval(self, mask)
-            if v == ffi.nullptr then return nil end
-            return ffi.cast("Eolian_Value*", v)
+            local vsz = ffi.sizeof("Eolian_Value_t")
+            local p = ffi.cast("Eolian_Value_t *", ffi.C.malloc(vsz))
+            if p == ffi.nullptr then return nil end
+            local v = eolian.eolian_expression_eval_fill(self, mask, p)
+            if v == 0 then
+                ffi.C.free(p)
+                return nil
+            end
+            return ffi.gc(ffi.cast("Eolian_Value *", p), ffi.C.free)
         end,
 
         serialize = function(self)
@@ -1698,9 +1707,15 @@ M.Expression = ffi.metatype("Eolian_Expression", {
         end,
 
         value_get = function(self)
-            local v = eolian.eolian_expression_value_get(self)
-            if v == ffi.nullptr then return nil end
-            return ffi.cast("Eolian_Value*", v)
+            local vsz = ffi.sizeof("Eolian_Value_t")
+            local p = ffi.cast("Eolian_Value_t *", ffi.C.malloc(vsz))
+            if p == ffi.nullptr then return nil end
+            local v = eolian.eolian_expression_value_get_fill(self, p)
+            if v == 0 then
+                ffi.C.free(p)
+                return nil
+            end
+            return ffi.gc(ffi.cast("Eolian_Value *", p), ffi.C.free)
         end
     }
 })
