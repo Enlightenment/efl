@@ -1853,8 +1853,7 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
 
         ref_resolve = function(self, state)
             local stor = ffi.new("const Eolian_Object *[2]")
-            local sp = ffi.cast("const Eolian_Object **", stor)
-            local tp = tonum(eolian.eolian_doc_token_ref_resolve(self, state, sp, sp + 1))
+            local tp = tonum(eolian.eolian_doc_token_ref_resolve(self, state, stor, stor + 1))
             local reft = M.object_type
             if tp == reft.CLASS then
                 return tp, ffi.cast("const Eolian_Class *", stor[0])
