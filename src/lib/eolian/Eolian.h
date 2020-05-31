@@ -2958,6 +2958,24 @@ eolian_type_namespaces_get(const Eolian_Type *tp)
 EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
 
 /*
+ * @brief Evaluate an Eolian expression into an out-param.
+ *
+ * @param[in] expr the expression.
+ * @param[in] mask the mask of allowed values (can combine with bitwise OR).
+ * @param[out] the value to fill
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * This is like eolian_expression_eval, except it writes into an out-param
+ * and returns whether it succeeded or failed. On failure, no write is
+ * guaranteed.
+ *
+ * @since 1.25
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_expression_eval_fill(const Eolian_Expression *expr, Eolian_Expression_Mask m, Eolian_Value *val);
+
+/*
  * @brief Convert the result of expression evaluation to a literal as in how
  * it would appear in C (e.g. strings are quoted and escaped).
  *
@@ -3078,6 +3096,22 @@ EAPI const Eolian_Expression *eolian_expression_unary_expression_get(const Eolia
  * @ingroup Eolian
  */
 EAPI Eolian_Value eolian_expression_value_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the value of an expression into an out-param.
+ *
+ * @param[in] expr the expression.
+ * @param[out] val the value to fill.
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * This is like eolian_expression_value_get, but it fills an out-param. On
+ * failure, nothing is guaranteed to be filled.
+ *
+ * @since 1.25
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_expression_value_get_fill(const Eolian_Expression *expr, Eolian_Value *val);
 
 /*
  * @brief Get the documentation of a constant.

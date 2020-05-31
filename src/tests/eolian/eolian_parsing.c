@@ -539,7 +539,7 @@ EFL_START_TEST(eolian_simple_parsing)
    const Eolian_Type *tp;
    const Eolian_Unit *unit;
    Eina_Iterator *iter;
-   Eolian_Value v;
+   Eolian_Value v, vv;
    void *dummy;
 
    Eolian_State *eos = eolian_state_new();
@@ -579,13 +579,14 @@ EFL_START_TEST(eolian_simple_parsing)
    /* Set return */
    tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
    fail_if(!tp);
-   printf("BUILT %d\n", (int)eolian_type_builtin_type_get(tp));
    fail_if(eolian_type_builtin_type_get(tp) != EOLIAN_TYPE_BUILTIN_BOOL);
    fail_if(strcmp(eolian_type_short_name_get(tp), "bool"));
    expr = eolian_function_return_default_value_get(fid, EOLIAN_PROP_SET);
    fail_if(!expr);
    v = eolian_expression_eval(expr, EOLIAN_MASK_BOOL);
+   fail_if(!eolian_expression_eval_fill(expr, EOLIAN_MASK_BOOL, &vv));
    fail_if(v.type != EOLIAN_EXPR_BOOL);
+   fail_if(vv.type != EOLIAN_EXPR_BOOL);
    /* Get return */
    tp = eolian_function_return_type_get(fid, EOLIAN_PROP_GET);
    fail_if(tp);

@@ -15,6 +15,19 @@ eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m)
    return database_expr_eval(NULL, (Eolian_Expression *)expr, m, NULL, NULL);
 }
 
+EAPI Eina_Bool
+eolian_expression_eval_fill(const Eolian_Expression *expr,
+                            Eolian_Expression_Mask m, Eolian_Value *val)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EINA_FALSE);
+   Eolian_Value ret = database_expr_eval(NULL, (Eolian_Expression *)expr, m,
+                                         NULL, NULL);
+   if (ret.type == EOLIAN_EXPR_UNKNOWN)
+     return EINA_FALSE;
+   *val = ret;
+   return EINA_TRUE;
+}
+
 static void
 _append_char_escaped(Eina_Strbuf *buf, char c)
 {
@@ -268,4 +281,16 @@ eolian_expression_value_get(const Eolian_Expression *expr)
    v.type  = expr->type;
    v.value = expr->value;
    return v;
+}
+
+EAPI Eina_Bool
+eolian_expression_value_get_fill(const Eolian_Expression *expr, Eolian_Value *val)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type != EOLIAN_EXPR_UNKNOWN
+                                && expr->type != EOLIAN_EXPR_BINARY
+                                && expr->type != EOLIAN_EXPR_UNARY, EINA_FALSE);
+   val->type  = expr->type;
+   val->value = expr->value;
+   return EINA_TRUE;
 }
