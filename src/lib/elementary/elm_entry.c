@@ -5691,12 +5691,14 @@ _elm_entry_efl_access_text_character_count_get(const Eo *obj, Elm_Entry_Data *_p
    return ret;
 }
 
-EOLIAN static char*
-_elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
+EOLIAN static void
+_elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset, char **ret EFL_TRANSFER_OWNERSHIP)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
-   char *ret = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN(ret);
+   *ret = NULL;
 
    tblk = elm_entry_textblock_get(obj);
    if (!tblk) goto fail;
@@ -5754,26 +5756,26 @@ _elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UN
 
    if (end_offset) *end_offset = evas_textblock_cursor_pos_get(cur2);
 
-   ret = evas_textblock_cursor_range_text_get(cur, cur2, EVAS_TEXTBLOCK_TEXT_PLAIN);
+   *ret = evas_textblock_cursor_range_text_get(cur, cur2, EVAS_TEXTBLOCK_TEXT_PLAIN);
 
    evas_textblock_cursor_free(cur);
    evas_textblock_cursor_free(cur2);
 
-   if (ret && _pd->password)
+   if (*ret && _pd->password)
      {
         int i = 0;
-        while (ret[i] != '\0')
-         ret[i++] = ENTRY_PASSWORD_MASK_CHARACTER;
+        while (*ret[i] != '\0')
+         *ret[i++] = ENTRY_PASSWORD_MASK_CHARACTER;
      }
 
-   return ret;
+   return;
 
 fail:
    if (start_offset) *start_offset = -1;
    if (end_offset) *end_offset = -1;
    if (cur) evas_textblock_cursor_free(cur);
    if (cur2) evas_textblock_cursor_free(cur2);
-   return NULL;
+   *ret = NULL;
 }
 
 EOLIAN static char*
@@ -6067,26 +6069,29 @@ _elm_entry_efl_access_text_attribute_get(const Eo *obj, Elm_Entry_Data *_pd EINA
    return EINA_FALSE;
 }
 
-EOLIAN static Eina_List*
-_elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
+EOLIAN static void
+_elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset, Eina_List **ret EFL_TRANSFER_OWNERSHIP)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
-   Eina_List *formats, *ret = NULL, *l;
+   Eina_List *formats, *l;
    Evas_Object_Textblock_Node_Format *format;
    Efl_Access_Text_Attribute *attr;
 
+   EINA_SAFETY_ON_NULL_RETURN(ret);
+   *ret = NULL;
+
    txtblk = elm_entry_textblock_get(obj);
-   if (!txtblk) return NULL;
+   if (!txtblk) return;
 
    cur1 = evas_object_textblock_cursor_new(txtblk);
-   if (!cur1) return NULL;
+   if (!cur1) return;
 
    cur2 = evas_object_textblock_cursor_new(txtblk);
    if (!cur2)
      {
         evas_textblock_cursor_free(cur1);
-        return NULL;
+        return;
      }
 
    evas_textblock_cursor_pos_set(cur1, *start_offset);
@@ -6097,16 +6102,14 @@ _elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *_p
    evas_textblock_cursor_free(cur1);
    evas_textblock_cursor_free(cur2);
 
-   if (!formats) return NULL;
+   if (!formats) return;
 
    EINA_LIST_FOREACH(formats, l , format)
      {
         attr = _textblock_node_format_to_atspi_text_attr(format);
         if (!attr) continue;
-        ret = eina_list_append(ret, attr);
+        *ret = eina_list_append(*ret, attr);
      }
-
-   return ret;
 }
 
 EOLIAN static Eina_List*

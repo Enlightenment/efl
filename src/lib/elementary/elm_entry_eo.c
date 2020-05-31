@@ -904,13 +904,13 @@ const char *_elm_entry_efl_access_object_i18n_name_get(const Eo *obj, Elm_Entry_
 char *_elm_entry_efl_access_text_access_text_get(const Eo *obj, Elm_Entry_Data *pd, int start_offset, int end_offset);
 
 
-char *_elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *pd, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset);
+void _elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *pd, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset, char **ret EFL_TRANSFER_OWNERSHIP);
 
 
 Eina_Bool _elm_entry_efl_access_text_attribute_get(const Eo *obj, Elm_Entry_Data *pd, const char *name, int *start_offset, int *end_offset, char **value);
 
 
-Eina_List *_elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *pd, int *start_offset, int *end_offset);
+void _elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *pd, int *start_offset, int *end_offset, Eina_List **attributes);
 
 
 Eina_List *_elm_entry_efl_access_text_default_attributes_get(const Eo *obj, Elm_Entry_Data *pd);

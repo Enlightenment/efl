@@ -66,12 +66,12 @@ interface @beta Efl.Access.Text
          }
          keys {
             granularity: Efl.Access.Text_Granularity; [[Text granularity]]
-            start_offset: ptr(int); [[Offset indicating start of string according to given granularity.
-                                      -1 in case of error.]]
-            end_offset: ptr(int); [[Offset indicating end of string according to given granularity.
-                                    -1 in case of error.]]
          }
          values {
+            start_offset: int; [[Offset indicating start of string according to given granularity.
+                                      -1 in case of error.]]
+            end_offset: int; [[Offset indicating end of string according to given granularity.
+                                    -1 in case of error.]]
             string: mstring @move; [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
          }
       }
@@ -105,10 +105,10 @@ interface @beta Efl.Access.Text
          }
          keys {
             name: string; [[Text attribute name]]
-            start_offset: ptr(int); [[Position in text from which given attribute is set.]]
-            end_offset: ptr(int); [[Position in text to which given attribute is set.]]
          }
          values {
+            start_offset: int; [[Position in text from which given attribute is set.]]
+            end_offset: int; [[Position in text to which given attribute is set.]]
             value: mstring @move; [[Value of text attribute. Should be free()]]
          }
       }
@@ -116,11 +116,9 @@ interface @beta Efl.Access.Text
          [[Gets list of all text attributes.]]
          get {
          }
-         keys {
-            start_offset: ptr(int); [[Start offset]]
-            end_offset: ptr(int); [[End offset]]
-         }
          values {
+            start_offset: int; [[Start offset]]
+            end_offset: int; [[End offset]]
             attributes: list<Efl.Access.Text_Attribute> @move; [[List of text attributes]]
          }
       }

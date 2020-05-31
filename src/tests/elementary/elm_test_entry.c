@@ -155,28 +155,28 @@ EFL_START_TEST(elm_entry_atspi_text_string_get_char)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end, &val);
    ck_assert_str_eq(val, "o");
    ck_assert(start == 1);
    ck_assert(end == 2);
    if (val) free(val);
 
    start = 8;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end, &val);
    ck_assert_str_eq(val, "ś");
    ck_assert(start == 8);
    ck_assert(end == 9);
    if (val) free(val);
 
    start = 11;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end, &val);
    ck_assert_str_eq(val, " ");
    ck_assert(start == 11);
    ck_assert(end == 12);
    if (val) free(val);
 
    start = 111;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_CHAR, &start, &end, &val);
    ck_assert(start == -1);
    ck_assert(end == -1);
    ck_assert(val == NULL);
@@ -198,28 +198,28 @@ EFL_START_TEST(elm_entry_atspi_text_string_get_word)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end, &val);
    ck_assert_str_eq(val, "Lorem");
    ck_assert(start == 0);
    ck_assert(end == 5);
    if (val) free(val);
 
    start = 6;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end, &val);
    ck_assert_str_eq(val, "ipśum");
    ck_assert(start == 6);
    ck_assert(end == 11);
    if (val) free(val);
 
    start = 19;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end, &val);
    ck_assert_str_eq(val, "dolor");
    ck_assert(start == 14);
    ck_assert(end == 19);
    if (val) free(val);
 
    start = 111;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end, &val);
    ck_assert(start == -1);
    ck_assert(end == -1);
    ck_assert(val == NULL);
@@ -242,28 +242,28 @@ EFL_START_TEST(elm_entry_atspi_text_string_get_paragraph)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH, &start, &end, &val);
    ck_assert_str_eq(val, "Lorem ipśum");
    ck_assert(start == 0);
    ck_assert(end == 11);
    if (val) free(val);
 
    start = 20;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH, &start, &end, &val);
    ck_assert_str_eq(val, "   dolor sit");
    ck_assert(start == 12);
    ck_assert(end == 24);
    if (val) free(val);
 
    start = 25;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH, &start, &end, &val);
    ck_assert_str_eq(val, " amęt");
    ck_assert(start == 25);
    ck_assert(end == 30);
    if (val) free(val);
 
    start = 111;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_WORD, &start, &end, &val);
    ck_assert(start == -1);
    ck_assert(end == -1);
    ck_assert(val == NULL);
@@ -288,7 +288,7 @@ EFL_START_TEST(elm_entry_atspi_text_string_get_line)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_LINE, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_LINE, &start, &end, &val);
 
    ck_assert_str_eq(val, "Lorem ipśum");
    ck_assert(start == 0);
@@ -296,7 +296,7 @@ EFL_START_TEST(elm_entry_atspi_text_string_get_line)
    if (val) free(val);
 
    start = 13;
-   val = efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_LINE, &start, &end);
+   efl_access_text_string_get(entry, EFL_ACCESS_TEXT_GRANULARITY_LINE, &start, &end, &val);
    ck_assert_str_eq(val, "   dolor sit amęt");
    ck_assert(start == 12);
    ck_assert(end == 29);
