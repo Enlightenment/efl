@@ -478,6 +478,8 @@ ffi.cdef [[
 local cutil = require("cutil")
 local util  = require("util")
 
+local tonum = ffi.tonumber or tonumber
+
 local iterator = require("eina.iterator")
 
 local Ptr_Iterator = iterator.Ptr_Iterator
@@ -554,7 +556,7 @@ local object_idx, wrap_object = gen_wrap {
     end,
 
     type_get = function(self)
-        return tonumber(eolian.eolian_object_type_get(cast_obj(self)))
+        return tonum(eolian.eolian_object_type_get(cast_obj(self)))
     end,
 
     unit_get = function(self)
@@ -566,11 +568,11 @@ local object_idx, wrap_object = gen_wrap {
     end,
 
     line_get = function(self)
-        return tonumber(eolian.eolian_object_line_get(cast_obj(self)))
+        return tonum(eolian.eolian_object_line_get(cast_obj(self)))
     end,
 
     column_get = function(self)
-        return tonumber(eolian.eolian_object_column_get(cast_obj(self)))
+        return tonum(eolian.eolian_object_column_get(cast_obj(self)))
     end,
 
     file_get = function(self)
@@ -642,7 +644,7 @@ local unit_idx, wrap_unit = gen_wrap {
     end,
 
     version_get = function(self)
-        return tonumber(eolian.eolian_unit_version_get(cast_unit(self)))
+        return tonum(eolian.eolian_unit_version_get(cast_unit(self)))
     end,
 
     object_by_name_get = function(self, name)
@@ -729,7 +731,7 @@ local panic_cbs = {}
 local error_cbs = {}
 
 local obj_to_idx = function(obj)
-    return tonumber(ffi.cast("size_t", obj))
+    return tonum(ffi.cast("size_t", obj))
 end
 
 local panic_cb, err_cb
@@ -1009,7 +1011,7 @@ ffi.metatype("Eolian_Enum_Type_Field", {
 M.Typedecl = ffi.metatype("Eolian_Typedecl", {
     __index = wrap_object {
         type_get = function(self)
-            return tonumber(eolian.eolian_typedecl_type_get(self))
+            return tonum(eolian.eolian_typedecl_type_get(self))
         end,
 
         struct_fields_get = function(self)
@@ -1085,11 +1087,11 @@ M.Typedecl = ffi.metatype("Eolian_Typedecl", {
 M.Type = ffi.metatype("Eolian_Type", {
     __index = wrap_object {
         type_get = function(self)
-            return tonumber(eolian.eolian_type_type_get(self))
+            return tonum(eolian.eolian_type_type_get(self))
         end,
 
         builtin_type_get = function(self)
-            return tonumber(eolian.eolian_type_builtin_type_get(self))
+            return tonum(eolian.eolian_type_builtin_type_get(self))
         end,
 
         base_type_get = function(self)
@@ -1160,11 +1162,11 @@ M.function_type = {
 M.Function = ffi.metatype("Eolian_Function", {
     __index = wrap_object {
         type_get = function(self)
-            return tonumber(eolian.eolian_function_type_get(self))
+            return tonum(eolian.eolian_function_type_get(self))
         end,
 
         scope_get = function(self, ftype)
-            return tonumber(eolian.eolian_function_scope_get(self, ftype))
+            return tonum(eolian.eolian_function_scope_get(self, ftype))
         end,
 
         full_c_name_get = function(self, ftype)
@@ -1259,7 +1261,7 @@ M.parameter_dir = {
 ffi.metatype("Eolian_Function_Parameter", {
     __index = wrap_object {
         direction_get = function(self)
-            return tonumber(eolian.eolian_parameter_direction_get(self))
+            return tonum(eolian.eolian_parameter_direction_get(self))
         end,
 
         type_get = function(self)
@@ -1384,7 +1386,7 @@ ffi.metatype("Eolian_Event", {
         end,
 
         scope_get = function(self)
-            return tonumber(eolian.eolian_event_scope_get(self))
+            return tonum(eolian.eolian_event_scope_get(self))
         end,
 
         c_macro_get = function(self)
@@ -1430,7 +1432,7 @@ M.class_type = {
 M.Class = ffi.metatype("Eolian_Class", {
     __index = wrap_object {
         type_get = function(self)
-            return tonumber(eolian.eolian_class_type_get(self))
+            return tonum(eolian.eolian_class_type_get(self))
         end,
 
         documentation_get = function(self)
@@ -1584,14 +1586,14 @@ emask.NUMBER = emask.INT  + emask.FLOAT
 emask.ALL = emask.NUMBER + emask.BOOL + emask.STRING + emask.CHAR + emask.NULL
 
 local value_con = {
-    [etype.INT   ] = function(v) return tonumber(v.value.i   ) end,
-    [etype.UINT  ] = function(v) return tonumber(v.value.u   ) end,
+    [etype.INT   ] = function(v) return tonum(v.value.i      ) end,
+    [etype.UINT  ] = function(v) return tonum(v.value.u      ) end,
     [etype.LONG  ] = function(v) return v.value.l              end,
     [etype.ULONG ] = function(v) return v.value.ul             end,
     [etype.LLONG ] = function(v) return v.value.ll             end,
     [etype.ULLONG] = function(v) return v.value.ull            end,
-    [etype.FLOAT ] = function(v) return tonumber(v.value.f   ) end,
-    [etype.DOUBLE] = function(v) return tonumber(v.value.d   ) end,
+    [etype.FLOAT ] = function(v) return tonum(v.value.f      ) end,
+    [etype.DOUBLE] = function(v) return tonum(v.value.d      ) end,
     [etype.STRING] = function(v) return ffi.string(v.value.s ) end,
     [etype.CHAR  ] = function(v) return string.char(v.value.c) end,
     [etype.NULL  ] = function(v) return nil                    end,
@@ -1601,12 +1603,12 @@ local value_con = {
 M.Value = ffi.metatype("Eolian_Value", {
     __index = {
         get_type = function(self)
-            return tonumber(ffi.cast("Eolian_Value_t*", self).type)
+            return tonum(ffi.cast("Eolian_Value_t*", self).type)
         end,
 
         get_value = function(self)
             local   tp = self:get_type()
-            local  fun = value_con[tonumber(tp)]
+            local  fun = value_con[tonum(tp)]
             if not fun then return nil end
             return fun()
         end,
@@ -1677,11 +1679,11 @@ M.Expression = ffi.metatype("Eolian_Expression", {
         end,
 
         type_get = function(self)
-            return tonumber(eolian.eolian_expression_type_get(self))
+            return tonum(eolian.eolian_expression_type_get(self))
         end,
 
         binary_operator_get = function(self)
-            return tonumber(eolian.eolian_expression_binary_operator_get(self))
+            return tonum(eolian.eolian_expression_binary_operator_get(self))
         end,
 
         binary_lhs_get = function(self)
@@ -1697,7 +1699,7 @@ M.Expression = ffi.metatype("Eolian_Expression", {
         end,
 
         unary_operator_get = function(self)
-            return tonumber(eolian.eolian_expression_unary_operator_get(self))
+            return tonum(eolian.eolian_expression_unary_operator_get(self))
         end,
 
         unary_expression_get = function(self)
@@ -1836,7 +1838,7 @@ end
 M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
     __index = {
         type_get = function(self)
-            return tonumber(eolian.eolian_doc_token_type_get(self))
+            return tonum(eolian.eolian_doc_token_type_get(self))
         end,
 
         text_get = function(self)
@@ -1851,7 +1853,8 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
 
         ref_resolve = function(self, state)
             local stor = ffi.new("const Eolian_Object *[2]")
-            local tp = tonumber(eolian.eolian_doc_token_ref_resolve(self, state, stor, stor + 1))
+            local sp = ffi.cast("const Eolian_Object **", stor)
+            local tp = tonum(eolian.eolian_doc_token_ref_resolve(self, state, sp, sp + 1))
             local reft = M.object_type
             if tp == reft.CLASS then
                 return tp, ffi.cast("const Eolian_Class *", stor[0])

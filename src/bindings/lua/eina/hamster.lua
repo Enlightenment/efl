@@ -3,6 +3,8 @@
 
 local ffi = require("ffi")
 
+local tonum = ffi.tonumber or tonumber
+
 ffi.cdef [[
     int eina_hamster_count(void);
 ]]
@@ -25,7 +27,7 @@ end
 cutil.init_module(init, shutdown)
 
 M.count = function()
-    return tonumber(eina.eina_hamster_count())
+    return tonum(eina.eina_hamster_count())
 end
 
 return M

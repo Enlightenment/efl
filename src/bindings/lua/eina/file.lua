@@ -4,6 +4,8 @@
 local ffi = require("ffi")
 local C = ffi.C
 
+local tonum = ffi.tonumber or tonumber
+
 local iterator = require("eina.iterator")
 require("eina.xattr")
 
@@ -210,8 +212,8 @@ local direct_info_iterator_next = function(self)
     if not v then return nil end
     local s = ffi.cast("Eina_File_Direct_Info*", v)
     local path = ffi.string(s.path, s.path_length)
-    local ns = tonumber(s.name_start)
-    local nl = tonumber(s.name_length)
+    local ns = tonum(s.name_start)
+    local nl = tonum(s.name_length)
     local tp = file_type_map[s.type]
     return Direct_Info(path, ns, nl, tp), self:container_get()
 end
@@ -301,7 +303,7 @@ local Line_Iterator = Iterator:clone {
         local  v = Iterator.next(self)
         if not v then return nil end
         v = ffi.cast(v, "Eina_File_Line*")
-        return ffi.string(v.start, v.length), tonumber(v.index)
+        return ffi.string(v.start, v.length), tonum(v.index)
     end
 }
 
@@ -342,11 +344,11 @@ M.File = ffi.metatype("Eina_File", {
         end,
 
         size_get = function(self)
-            return tonumber(eina.eina_file_size_get(self))
+            return tonum(eina.eina_file_size_get(self))
         end,
 
         mtime_get = function(self)
-            return tonumber(eina.eina_file_mtime_get(self))
+            return tonum(eina.eina_file_mtime_get(self))
         end,
 
         filename_get = function(self)

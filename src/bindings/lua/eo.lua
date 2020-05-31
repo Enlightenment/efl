@@ -109,11 +109,13 @@ ffi.cdef [[
     extern const Eo_Event_Description _EO_BASE_EVENT_DEL;
 ]]
 
+local tonum = ffi.tonumber or tonumber
+
 local addr_d = ffi.typeof("union { double d; const Eo *p; }")
 local eo_obj_addr_get = function(x)
     local v = addr_d()
     v.p = x
-    return tonumber(v.d)
+    return tonum(v.d)
 end
 
 local cutil = require("cutil")
@@ -143,7 +145,7 @@ local eo_event_cb_fun = function(data, obj, desc, einfo)
     local  addr = eo_obj_addr_get(obj)
     local  cbs  = eo_callbacks[addr]
     assert(cbs)
-    local cidx = tonumber(ffi.cast("intptr_t", data))
+    local cidx = tonum(ffi.cast("intptr_t", data))
     local fun  = cbs[cidx]
     assert(fun)
     return fun() ~= false
