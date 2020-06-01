@@ -1,5 +1,16 @@
 import eina_types;
 
+enum @beta Efl.Gfx.Vg_Value_Provider_Flags {
+   [[ Property information applied to value provider.
+      @since 1.24
+   ]]
+   none = 0,                 [[ Nothing changed.]]
+   fill_color = 1,           [[ Fill color changed. ]]
+   stroke_color = 2,         [[ Stroke color changed. ]]
+   stroke_width = 4,         [[ Stroke width changed. ]]
+   transform_matrix = 8,     [[ Transform matrix changed. ]]
+}
+
 class @beta Efl.Gfx.Vg.Value_Provider extends Efl.Object
 {
    [[Efl Vector Value Provider class.
@@ -64,6 +75,14 @@ class @beta Efl.Gfx.Vg.Value_Provider extends Efl.Object
          }
          values {
             width: double; [[ Width value of stroke. ]]
+         }
+      }
+      @property updated {
+         [[ Flag of properties updated in value provider object. ]]
+         get {
+         }
+         values {
+             flag: Efl.Gfx.Vg_Value_Provider_Flags; [[ Flag of the changed property. ]]
          }
       }
    }

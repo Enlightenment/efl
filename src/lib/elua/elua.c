@@ -2,6 +2,10 @@
 #include <Ecore_File.h>
 #include "elua_private.h"
 
+#ifdef ENABLE_LUA_OLD
+#  include <cffi-lua.h>
+#endif
+
 static Eina_Prefix *_elua_pfx = NULL;
 
 static int _elua_init_counter = 0;
@@ -77,6 +81,14 @@ elua_state_new(const char *progname)
    ret->luastate = L;
    if (progname) ret->progname = eina_stringshare_add(progname);
    luaL_openlibs(L);
+#ifdef ENABLE_LUA_OLD
+   /* make sure to inject cffi-lua to preload so that the system gets it */
+   lua_getglobal(L, "package");
+   lua_getfield(L, -1, "preload");
+   lua_pushcfunction(L, luaopen_cffi);
+   lua_setfield(L, -2, "ffi");
+   lua_pop(L, 2);
+#endif
    /* on 64-bit, split the state pointer into two and reconstruct later */
    size_t retn = (size_t)ret;
    if (sizeof(void *) < sizeof(lua_Number))
@@ -424,7 +436,7 @@ _elua_state_i18n_setup(Elua_State *es)
    if (elua_util_error_report(es, elua_io_loadfile(es, buf)))
      return EINA_FALSE;
    lua_createtable(es->luastate, 0, 0);
-   luaL_register(es->luastate, NULL, gettextlib);
+   elua_register(es->luastate, gettextlib);
    lua_call(es->luastate, 1, 0);
    return EINA_TRUE;
 }
@@ -507,7 +519,7 @@ _elua_state_modules_setup(const Elua_State *es)
      return EINA_FALSE;
    lua_pushcfunction(es->luastate, _elua_module_system_init);
    lua_createtable(es->luastate, 0, 0);
-   luaL_register(es->luastate, NULL, _elua_cutillib);
+   elua_register(es->luastate, _elua_cutillib);
    lua_call(es->luastate, 2, 0);
    return EINA_TRUE;
 }

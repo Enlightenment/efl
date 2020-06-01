@@ -7,6 +7,12 @@
 
 /* bytecode caching */
 
+#if LUA_VERSION_NUM > 501
+#  define elua_load(L, reader, data, chunkname) lua_load(L, reader, data, chunkname, NULL)
+#else
+#  define elua_load(L, reader, data, chunkname) lua_load(L, reader, data, chunkname)
+#endif
+
 static Eina_File *
 check_bc(Eina_File *of, const char *fname, Eina_Bool *bc)
 {
@@ -108,7 +114,7 @@ static int
 elua_loadstdin(lua_State *L)
 {
    char buff[LUAL_BUFFERSIZE];
-   int status = lua_load(L, getf, &buff, "=stdin");
+   int status = elua_load(L, getf, &buff, "=stdin");
    if (ferror(stdin))
      {
         lua_pop(L, 1);
@@ -130,7 +136,7 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
    Map_Stream *s    = ud;
    const char *fmap = s->fmap;
    *size = s->flen;
-   /* gotta null it - tell luajit to terminate reading */
+   /* gotta null it - tell lua to terminate reading */
    s->fmap = NULL;
    return fmap;
 }
@@ -163,7 +169,7 @@ elua_io_loadfile(const Elua_State *es, const char *fname)
         lua_remove(L, -2);
         return LUA_ERRFILE;
      }
-   status = lua_load(L, getf_map, &s, chname);
+   status = elua_load(L, getf_map, &s, chname);
    eina_file_map_free(f, s.fmap);
    eina_file_close(f);
    if (status)
@@ -186,7 +192,7 @@ elua_io_loadfile(const Elua_State *es, const char *fname)
                }
              /* loaded original file, pop old error and load again */
              lua_pop(L, 1);
-             status = lua_load(L, getf_map, &s, chname);
+             status = elua_load(L, getf_map, &s, chname);
              eina_file_map_free(f, s.fmap);
              eina_file_close(f);
              /* force write new bytecode */
@@ -215,7 +221,12 @@ loadfile(lua_State *L)
         if (hasenv)
           {
              lua_pushvalue(L, 3);
+#if LUA_VERSION_NUM < 502
              lua_setfenv(L, -2);
+#else
+             if (!lua_setupvalue(L, -2, 1))
+               lua_pop(L, 1);
+#endif
           }
         return 1;
      }

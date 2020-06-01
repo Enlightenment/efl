@@ -22,10 +22,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "evas-common.h"
+
 #define WIDTH  (640)
 #define HEIGHT (480)
 
-static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
+static const char *border_img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/red.png";
 
 static const char *commands = \
   "commands are:\n"

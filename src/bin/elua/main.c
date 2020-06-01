@@ -138,6 +138,13 @@ elua_bin_shutdown(Elua_State *es, int c)
    exit(c);
 }
 
+#if LUA_VERSION_NUM < 502
+#  define elua_cpcall(L, f, u) lua_cpcall(L, f, u)
+#else
+#  define elua_cpcall(L, f, u) \
+      (lua_pushcfunction(L, f), lua_pushlightuserdata(L, u), lua_pcall(L, 1, 0, 0))
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -175,7 +182,7 @@ main(int argc, char **argv)
    m.argv   = argv;
    m.status = 0;
 
-   elua_bin_shutdown(es, !!(lua_cpcall(elua_state_lua_state_get(es), elua_main, &m) || m.status));
+   elua_bin_shutdown(es, !!(elua_cpcall(elua_state_lua_state_get(es), elua_main, &m) || m.status));
 
    return 0; /* never gets here */
 }

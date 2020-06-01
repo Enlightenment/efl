@@ -460,9 +460,14 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
                       fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
                     {
                        if (fi->real_size > 0)
-                         fi->scale_factor = (float)fi->size * 64.0 / (float)fi->real_size;
+                         {
+                           fi->scale_factor = (double)fi->size * 64.0 / (double)fi->real_size;
+                           fi->is_resized = EINA_FALSE;
+                           if ((fi->scale_factor <= 0.9) && (fi->scale_factor != 0))
+                             fi->is_resized = EINA_TRUE;
+                         }
                        else
-                         fi->scale_factor = (float)64.0;
+                         fi->scale_factor = 64.0;
                     }
                }
           }

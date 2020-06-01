@@ -1393,9 +1393,6 @@ data_write_vectors(Eet_File *ef, int *vector_num)
    buf = eina_strbuf_new();
    for (i = 0; i < edje_file->image_dir->vectors_count; i++)
      {
-        if (!beta)
-          error_and_abort(ef, "Vector part are currently a beta feature, please enable them by running edje_cc with -beta.");
-
         vector = &edje_file->image_dir->vectors[i];
         EINA_LIST_FOREACH(img_dirs, ll, s)
           {

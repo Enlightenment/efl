@@ -5920,6 +5920,7 @@ _elm_genlist_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Data *sd)
 
    eina_stringshare_replace(&sd->decorate_it_type, NULL);
 
+   eina_hash_free(sd->content_item_map);
    _elm_genlist_tree_effect_stop(sd);
 }
 

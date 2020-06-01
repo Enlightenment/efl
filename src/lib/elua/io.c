@@ -167,7 +167,7 @@ read_line(lua_State *L, FILE *f)
         if (fgets(p, LUAL_BUFFERSIZE, f) == NULL)
           {
              luaL_pushresult(&b);
-             return (lua_strlen(L, -1) > 0);
+             return (elua_strlen(L, -1) > 0);
           }
         l = strlen(p);
         if (!l || p[l - 1] != '\n')
@@ -198,7 +198,7 @@ read_chars(lua_State *L, FILE *f, size_t n)
         n -= nr;
      } while (n > 0 && nr == rlen);
    luaL_pushresult(&b);
-   return (n == 0 || lua_strlen(L, -1) > 0);
+   return (n == 0 || elua_strlen(L, -1) > 0);
 }
 
 static int
@@ -338,7 +338,7 @@ elua_newfile(lua_State *L)
      {
         lua_pushvalue(L, -1);
         lua_setfield (L, -2, "__index");
-        luaL_register(L, NULL, elua_popenlib);
+        elua_register(L, elua_popenlib);
      }
    lua_setmetatable(L, -2);
    return f;

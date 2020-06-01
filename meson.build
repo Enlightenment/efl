@@ -14,7 +14,7 @@ test_env = environment()
 test_env.set('EFL_RUN_IN_TREE', '1')
 
 if get_option('b_sanitize') == 'address'
-  test_env.set('ASAN_OPTIONS', 'detect_leaks=0')
+  test_env.set('ASAN_OPTIONS', 'detect_leaks=0:detect_odr_violation=0')
 endif
 
 version_arr = meson.project_version().split('.')
@@ -338,7 +338,7 @@ subprojects = [
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
 ['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
 ['efl_canvas_wl'    ,['wl']                , false,  true,  true, false, false, false,  true, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
-['elua'             ,['elua']              , false,  true,  true, false,  true, false, false, ['eina', 'luajit'], []],
+['elua'             ,['elua']              , false,  true,  true, false,  true, false, false, ['eina', lua_pc_name], []],
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, false, ['eina'], []],
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, false, ['eina'], []],
 ['exactness'        ,[]                    , false,  false,  true, false, false, false, false, ['eina, evas, eet'], []],

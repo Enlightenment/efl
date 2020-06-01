@@ -13,6 +13,17 @@ local M = {}
 
 local getmetatable, setmetatable = getmetatable, setmetatable
 local dgetmt = debug.getmetatable
+local newproxy = newproxy
+
+if not newproxy then
+    -- tables can have __gc from 5.2
+    newproxy = function(b)
+        if b then
+            return setmetatable({}, {})
+        end
+        return {}
+    end
+end
 
 -- multiple inheritance index with depth-first search
 local proto_lookup = function(protos, name)
@@ -98,8 +109,6 @@ M.Object = {
     end
 }
 
-local newproxy = newproxy
-
 local robj_gc = function(px)
     local dtor = px.__dtor
     if dtor then dtor(px) end
@@ -108,7 +117,7 @@ end
 M.Readonly_Object = M.Object:clone {}
 M.Readonly_Object.__call = function(self, ...)
     local r = newproxy(true)
-    local rmt = getmetatable(r)
+    local rmt = dgetmt(r)
     rmt.__index = self
     rmt.__tostring = Object_MT.__tostring
     rmt.__metatable = false
@@ -184,11 +193,12 @@ end
 ffi.cdef [[
     typedef struct _Str_Buf {
         char  *buf;
-        size_t len, cap;
+        size_t len;
+        size_t cap;
     } Str_Buf;
 
     void *malloc(size_t);
-    void    free(void*);
+    void    free(void *);
     size_t  strlen(const char *str);
 
     int isalnum(int c);

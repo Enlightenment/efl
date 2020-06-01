@@ -50,4 +50,16 @@ extern int _elua_log_dom;
 int _elua_io_popen(lua_State *L);
 Eina_Bool _elua_state_io_setup(const Elua_State *es);
 
+#if LUA_VERSION_NUM < 502
+
+#define elua_register(L, lib) luaL_register(L, NULL, 0)
+#define elua_strlen(L, i) lua_strlen(L, i)
+
+#else
+
+#define elua_register(L, lib) luaL_setfuncs(L, lib, 0)
+#define elua_strlen(L, i) lua_rawlen(L, i)
+
+#endif
+
 #endif
