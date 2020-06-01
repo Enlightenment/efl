@@ -1060,6 +1060,8 @@ _items_fix(Evas_Object *obj)
    //focus highlight in_theme is set by list item theme.
    _elm_widget_item_highlight_in_theme(
          obj, elm_list_first_item_get(obj));
+
+   eina_array_flush(&walk);
 }
 
 static void
