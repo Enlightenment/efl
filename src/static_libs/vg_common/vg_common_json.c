@@ -503,10 +503,10 @@ _value_provider_override(Vg_File_Data *vfd)
    EINA_LIST_FOREACH(vfd->vp_list, l, vp)
      {
         const char *keypath;
-        Efl_Gfx_Vg_Value_Provider_Change_Flag flag;
-        flag = efl_gfx_vg_value_provider_changed_flag_get(vp);
+        Efl_Gfx_Vg_Value_Provider_Flags flag;
+        flag = efl_gfx_vg_value_provider_updated_get(vp);
 
-        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_FILL_COLOR)
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_FLAGS_FILL_COLOR)
           {
              int r, g, b, a;
              r = g = b = a = 0;
@@ -516,7 +516,7 @@ _value_provider_override(Vg_File_Data *vfd)
              lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_FILLCOLOR, (char*)keypath, r / 255.0, g / 255.0, b / 255.0);
              lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_FILLOPACITY, (char*)keypath, (a / 255.0) * 100.0);
           }
-        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_COLOR)
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_FLAGS_STROKE_COLOR)
           {
              int r, g, b, a;
              r = g = b = a = 0;
@@ -526,7 +526,7 @@ _value_provider_override(Vg_File_Data *vfd)
              lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_STROKECOLOR, (char*)keypath, r / 255.0, g / 255.0, b / 255.0);
              lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_STROKEOPACITY, (char*)keypath, (a / 255.0) * 100.0);
           }
-        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_WIDTH)
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_FLAGS_STROKE_WIDTH)
           {
              double w;
              w = efl_gfx_vg_value_provider_stroke_width_get(vp);
@@ -534,7 +534,7 @@ _value_provider_override(Vg_File_Data *vfd)
 
              lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_STROKEWIDTH, (char*)keypath, w);
           }
-        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX)
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_FLAGS_TRANSFORM_MATRIX)
           {
              Eina_Matrix4 m, *orig_m;
              double tx, ty, sx, sy, radian_z, si, cs;

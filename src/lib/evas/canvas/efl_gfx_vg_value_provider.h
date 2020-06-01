@@ -8,7 +8,7 @@
 struct _Efl_Gfx_Vg_Value_Provider_Data
 {
    Eo* obj;
-   Efl_Gfx_Vg_Value_Provider_Change_Flag flag;
+   Efl_Gfx_Vg_Value_Provider_Flags flag;
 
    Eina_Stringshare *keypath;
 

@@ -8,7 +8,7 @@ _efl_gfx_vg_value_provider_efl_object_constructor(Eo *obj,
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   pd->flag = EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_NONE;
+   pd->flag = EFL_GFX_VG_VALUE_PROVIDER_FLAGS_NONE;
 
    return obj;
 }
@@ -44,7 +44,7 @@ _efl_gfx_vg_value_provider_transform_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_P
              pd->m = malloc(sizeof (Eina_Matrix4));
              if (!pd->m) return;
           }
-        pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX;
+        pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_FLAGS_TRANSFORM_MATRIX;
         memcpy(pd->m, m, sizeof (Eina_Matrix4));
      }
    else
@@ -63,7 +63,7 @@ _efl_gfx_vg_value_provider_transform_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_V
 EOAPI void
 _efl_gfx_vg_value_provider_fill_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, int r, int g, int b, int a)
 {
-   pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_FILL_COLOR;
+   pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_FLAGS_FILL_COLOR;
 
    pd->fill.r = r;
    pd->fill.g = g;
@@ -83,7 +83,7 @@ _efl_gfx_vg_value_provider_fill_color_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_
 EOAPI void
 _efl_gfx_vg_value_provider_stroke_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, int r, int g, int b, int a)
 {
-   pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_COLOR;
+   pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_FLAGS_STROKE_COLOR;
 
    pd->stroke.r = r;
    pd->stroke.g = g;
@@ -105,7 +105,7 @@ _efl_gfx_vg_value_provider_stroke_width_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Valu
 {
   if (w < 0) return ;
 
-  pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_WIDTH;
+  pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_FLAGS_STROKE_WIDTH;
   pd->stroke.width = w;
 }
 
@@ -115,13 +115,9 @@ _efl_gfx_vg_value_provider_stroke_width_get(const Eo *obj EINA_UNUSED, Efl_Gfx_V
    return pd->stroke.width;
 }
 
-/* This function only use in internal */
-Efl_Gfx_Vg_Value_Provider_Change_Flag
-efl_gfx_vg_value_provider_changed_flag_get(Eo *obj)
+EOAPI Efl_Gfx_Vg_Value_Provider_Flags
+_efl_gfx_vg_value_provider_updated_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_NONE);
-   Efl_Gfx_Vg_Value_Provider_Data *pd = efl_data_scope_get(obj, MY_CLASS);
-   if (!pd) return EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_NONE;
    return pd->flag;
 }
 
