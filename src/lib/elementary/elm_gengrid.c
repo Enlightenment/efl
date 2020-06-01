@@ -4185,6 +4185,8 @@ _elm_gengrid_efl_canvas_group_group_del(Eo *obj, Elm_Gengrid_Data *sd)
    _item_cache_zero(sd);
    ecore_job_del(sd->calc_job);
 
+   eina_hash_free(sd->content_item_map);
+
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
