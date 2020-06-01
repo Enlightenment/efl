@@ -2410,6 +2410,7 @@ static Eina_Bool
 evas_vg_load_file_close_svg(Vg_File_Data *vfd)
 {
    if (vfd->root) efl_unref(vfd->root);
+   free(vfd);
    return EINA_TRUE;
 }
 
@@ -2462,7 +2463,9 @@ evas_vg_load_file_open_svg(Eina_File *file,
      }
    free(loader.svg_parse);
 
-   return vg_common_svg_create_vg_node(loader.doc);
+   Vg_File_Data* result = vg_common_svg_create_vg_node(loader.doc);
+   vg_common_svg_node_free(loader.doc);
+   return result;
 }
 
 static Evas_Vg_Load_Func evas_vg_load_svg_func =
