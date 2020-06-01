@@ -536,12 +536,14 @@ vg_common_svg_node_free(Svg_Node *node)
              {
                 _svg_style_gradient_free(grad);
              }
+        case SVG_NODE_CUSTOME_COMMAND:
+           if (node->node.command.commands) free(node->node.command.commands);
+           if (node->node.command.points) free(node->node.command.points);         
            break;
         default:
            break;
      }
-   if (node->node.command.commands_count > 0) free(node->node.command.commands);
-   if (node->node.command.points_count > 0) free(node->node.command.points);
+
    free(node);
 }
 
