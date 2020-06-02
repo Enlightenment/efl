@@ -721,8 +721,11 @@ _elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static void
-_elm_hoversel_efl_object_destructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
+_elm_hoversel_efl_object_destructor(Eo *obj, Elm_Hoversel_Data *_pd)
 {
+   if (_pd->resize_job)
+     ELM_SAFE_FREE(_pd->resize_job, ecore_job_del);
+
    elm_obj_hoversel_clear(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
