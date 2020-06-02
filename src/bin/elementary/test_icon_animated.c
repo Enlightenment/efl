@@ -22,8 +22,7 @@ test_icon_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "icon-animated-gif", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Icon Animated Gif");
+   win = elm_win_util_standard_add("icon-animated-gif", "Icon Animated Gif");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
