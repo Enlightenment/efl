@@ -988,7 +988,7 @@ evas_gl_common_context_new(void)
                       &(shared->info.max_texture_units));
         glGetIntegerv(GL_MAX_TEXTURE_SIZE,
                       &(shared->info.max_texture_size));
-        shared->info.max_vertex_elements = 6 * 100000;
+        shared->info.max_vertex_elements = 6 * 100;
 #ifdef GL_MAX_ELEMENTS_VERTICES
 /* only applies to glDrawRangeElements. don't really need to get it.
         glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,
@@ -1847,14 +1847,13 @@ vertex_array_size_check(Evas_Engine_GL_Context *gc EINA_UNUSED, int pn EINA_UNUS
 {
    return 1;
 // this fixup breaks for expedite test 32. why?
-/* for reference
+// for reference
    if ((gc->pipe[pn].array.num + n) > gc->shared->info.max_vertex_elements)
      {
         shader_array_flush(gc);
         return 0;
      }
    return 1;
- */
 }
 
 static int
@@ -1966,30 +1965,33 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_LINE;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = 0;
-   gc->pipe[pn].shader.cur_texm = mtexid;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.clip = clip;
-   gc->pipe[pn].shader.cx = cx;
-   gc->pipe[pn].shader.cy = cy;
-   gc->pipe[pn].shader.cw = cw;
-   gc->pipe[pn].shader.ch = ch;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_LINE;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = 0;
+        gc->pipe[pn].shader.cur_texm = mtexid;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = clip;
+        gc->pipe[pn].shader.cx = cx;
+        gc->pipe[pn].shader.cy = cy;
+        gc->pipe[pn].shader.cw = cw;
+        gc->pipe[pn].shader.ch = ch;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
 
-   gc->pipe[pn].array.line = 1;
-   gc->pipe[pn].array.anti_alias = gc->dc->anti_alias;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
-   gc->pipe[pn].array.use_texuv = 0;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = 0;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
-   gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.line = 1;
+        gc->pipe[pn].array.anti_alias = gc->dc->anti_alias;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = 1;
+        gc->pipe[pn].array.use_texuv = 0;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texa = 0;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+        gc->pipe[pn].array.use_mask = !!mtex;
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 2);
@@ -2031,29 +2033,31 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                      EINA_FALSE,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
-
-   gc->pipe[pn].region.type = SHD_RECT;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = 0;
-   gc->pipe[pn].shader.cur_texm = mtexid;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
-   gc->pipe[pn].array.use_texuv = 0;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = 0;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
-   gc->pipe[pn].array.use_mask = !!mtex;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_RECT;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = 0;
+        gc->pipe[pn].shader.cur_texm = mtexid;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = 1;
+        gc->pipe[pn].array.use_texuv = 0;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texa = 0;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+        gc->pipe[pn].array.use_mask = !!mtex;
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2250,29 +2254,32 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_IMAGE;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = pt->texture;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.tex_target = tex_target;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = render_op;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_IMAGE;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = pt->texture;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.tex_target = tex_target;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2452,28 +2459,31 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_FONT;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = 0;
-   gc->pipe[pn].shader.blend = 1;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_FONT;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = 0;
+        gc->pipe[pn].shader.blend = 1;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = 1;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2532,30 +2542,33 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_YUV;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
-   gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 1;
-   gc->pipe[pn].array.use_texuv3 = 1;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_YUV;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+        gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 1;
+        gc->pipe[pn].array.use_texuv3 = 1;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2612,30 +2625,33 @@ evas_gl_common_context_yuv_709_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_YUV_709;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
-   gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 1;
-   gc->pipe[pn].array.use_texuv3 = 1;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_YUV_709;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+        gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 1;
+        gc->pipe[pn].array.use_texuv3 = 1;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2692,29 +2708,32 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_YUY2;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 1;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_YUY2;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 1;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2770,31 +2789,34 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_NV12;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_tex_dyn = tex->pt->dyn.img;
-   gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
-   gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 1;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_NV12;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_tex_dyn = tex->pt->dyn.img;
+        gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
+        gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 1;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2855,30 +2877,33 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
                                      EINA_FALSE, 0, 0, 0, 0,
                                      mask_smooth);
 
-   gc->pipe[pn].region.type = SHD_RGB_A_PAIR;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texa = tex->pta->texture;
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.blend = EINA_TRUE;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = EINA_TRUE;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = EINA_TRUE;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = EINA_TRUE;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_RGB_A_PAIR;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texa = tex->pta->texture;
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = EINA_TRUE;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = EINA_TRUE;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = EINA_TRUE;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texa = EINA_TRUE;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -3040,43 +3065,46 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                      smooth,
                                      clip, cx, cy, cw, ch,
                                      mask_smooth);
-   gc->pipe[pn].region.type = SHD_MAP;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_MAP;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
 
-   if (utexture)
-     {
-       gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
-       gc->pipe[pn].shader.cur_texu_dyn = tex->ptu->dyn.img;
-       gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
-       gc->pipe[pn].shader.cur_texv_dyn = tex->ptv->dyn.img;
+        if (utexture)
+          {
+             gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+             gc->pipe[pn].shader.cur_texu_dyn = tex->ptu->dyn.img;
+             gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+             gc->pipe[pn].shader.cur_texv_dyn = tex->ptv->dyn.img;
+          }
+        else if (uvtexture)
+          {
+             gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
+             gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
+          }
+        gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.mask_smooth = mask_smooth;
+        gc->pipe[pn].shader.clip = clip;
+        gc->pipe[pn].shader.cx = cx;
+        gc->pipe[pn].shader.cy = cy;
+        gc->pipe[pn].shader.cw = cw;
+        gc->pipe[pn].shader.ch = ch;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
+        gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
+        gc->pipe[pn].array.use_mask = !!mtex;
+        gc->pipe[pn].array.use_texa = use_texa;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
      }
-   else if (uvtexture)
-     {
-       gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
-       gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
-     }
-   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.mask_smooth = mask_smooth;
-   gc->pipe[pn].shader.clip = clip;
-   gc->pipe[pn].shader.cx = cx;
-   gc->pipe[pn].shader.cy = cy;
-   gc->pipe[pn].shader.cw = cw;
-   gc->pipe[pn].shader.ch = ch;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
-   gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
-   gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texa = use_texa;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_masksam = (masksam != SHD_SAM11);
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -3238,29 +3266,32 @@ evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc,
                                      x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
-   gc->pipe[pn].region.type = SHD_FILTER_DISPLACE;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texm = 0;
-   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.mask_smooth = 0;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
-   gc->pipe[pn].array.use_mask = 0;
-   gc->pipe[pn].array.use_masksam = 0;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_FILTER_DISPLACE;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texm = 0;
+        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.mask_smooth = 0;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
+        gc->pipe[pn].array.use_mask = 0;
+        gc->pipe[pn].array.use_masksam = 0;
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -3357,29 +3388,32 @@ evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc,
                                      x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
-   gc->pipe[pn].region.type = SHD_FILTER_CURVE;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texm = 0;
-   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.mask_smooth = 0;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
-   gc->pipe[pn].array.use_mask = 0;
-   gc->pipe[pn].array.use_masksam = 0;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = SHD_FILTER_CURVE;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texm = 0;
+        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.mask_smooth = 0;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
+        gc->pipe[pn].array.use_mask = 0;
+        gc->pipe[pn].array.use_masksam = 0;
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -3586,29 +3620,32 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                      sx, sy, dw, dh, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
-   gc->pipe[pn].region.type = type;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texm = 0;
-   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.mask_smooth = 0;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_mask = 0;
-   gc->pipe[pn].array.use_masksam = 0;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = type;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texm = 0;
+        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.mask_smooth = 0;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_mask = 0;
+        gc->pipe[pn].array.use_masksam = 0;
+     }
 
    pipe_region_expand(gc, pn, dx, dy, dw, dh);
    PIPE_GROW(gc, pn, 6);
@@ -3711,29 +3748,32 @@ evas_gl_common_filter_grayscale_push(Evas_Engine_GL_Context *gc,
                                      x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
-   gc->pipe[pn].region.type = type;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texm = 0;
-   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.mask_smooth = 0;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_mask = 0;
-   gc->pipe[pn].array.use_masksam = 0;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = type;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texm = 0;
+        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.mask_smooth = 0;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_mask = 0;
+        gc->pipe[pn].array.use_masksam = 0;
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -3804,29 +3844,32 @@ evas_gl_common_filter_inverse_color_push(Evas_Engine_GL_Context *gc,
                                      x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
-   gc->pipe[pn].region.type = type;
-   gc->pipe[pn].shader.prog = prog;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texm = 0;
-   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
-   gc->pipe[pn].shader.smooth = smooth;
-   gc->pipe[pn].shader.mask_smooth = 0;
-   gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
-   gc->pipe[pn].shader.clip = 0;
-   gc->pipe[pn].shader.cx = 0;
-   gc->pipe[pn].shader.cy = 0;
-   gc->pipe[pn].shader.cw = 0;
-   gc->pipe[pn].shader.ch = 0;
-   gc->pipe[pn].array.line = 0;
-   gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = !nomul;
-   gc->pipe[pn].array.use_texuv = 1;
-   gc->pipe[pn].array.use_texuv2 = 0;
-   gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_mask = 0;
-   gc->pipe[pn].array.use_masksam = 0;
+   if (gc->pipe[pn].array.num == 0)
+     {
+        gc->pipe[pn].region.type = type;
+        gc->pipe[pn].shader.prog = prog;
+        gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+        gc->pipe[pn].shader.cur_texm = 0;
+        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+        gc->pipe[pn].shader.smooth = smooth;
+        gc->pipe[pn].shader.mask_smooth = 0;
+        gc->pipe[pn].shader.blend = blend;
+        gc->pipe[pn].shader.render_op = gc->dc->render_op;
+        gc->pipe[pn].shader.clip = 0;
+        gc->pipe[pn].shader.cx = 0;
+        gc->pipe[pn].shader.cy = 0;
+        gc->pipe[pn].shader.cw = 0;
+        gc->pipe[pn].shader.ch = 0;
+        gc->pipe[pn].array.line = 0;
+        gc->pipe[pn].array.use_vertex = 1;
+        gc->pipe[pn].array.use_color = !nomul;
+        gc->pipe[pn].array.use_texuv = 1;
+        gc->pipe[pn].array.use_texuv2 = 0;
+        gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_mask = 0;
+        gc->pipe[pn].array.use_masksam = 0;
+     }
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -4559,8 +4602,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                          i,
                          gc->pipe[i].array.num / 6,
                          gc->pipe[0].shader.surface,
-                         gc->pipe[0].shader.surface->w,
-                         gc->pipe[0].shader.surface->h,
+                         gc->pipe[0].shader.surface ? gc->pipe[0].shader.surface->w : 0,
+                         gc->pipe[0].shader.surface ? gc->pipe[0].shader.surface->h : 0,
                          gw, gh,
                          gc->pipe[i].shader.cur_tex,
                          types[gc->pipe[i].region.type]
