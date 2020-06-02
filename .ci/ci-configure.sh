@@ -7,7 +7,7 @@ if [ "$DISTRO" != "" ] ; then
   # Why do we need to disable the imf loaders here?
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
-  MONO_LINUX_COPTS=" -Dbindings=luajit,cxx,mono -Dmono-beta=true"
+  MONO_LINUX_COPTS=" -Dbindings=lua,cxx,mono -Dmono-beta=true"
 
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
@@ -18,7 +18,7 @@ if [ "$DISTRO" != "" ] ; then
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= \
   -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
-  -Dvnc-server=true -Dbindings=luajit,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
+  -Dvnc-server=true -Dbindings=lua,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
   # Enabled png, jpeg evas loader for in tree edje file builds
   DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
