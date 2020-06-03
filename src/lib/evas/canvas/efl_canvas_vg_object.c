@@ -296,7 +296,8 @@ _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 
    // NOTE: Update object's viewbox. In this case, there is no need to update
    //       the root of tree. That's why We don't use viewbox_set.
-   pd->viewbox.rect = pd->vg_entry->vfd->view_box;
+   if (pd->vg_entry && pd->vg_entry->vfd)
+     pd->viewbox.rect = pd->vg_entry->vfd->view_box;
 
    evas_object_change(eo_obj, obj);
    pd->changed = EINA_TRUE;
