@@ -1357,7 +1357,7 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
      {
-        str = efl_access_text_string_get(obj, gran, &start, &end);
+        efl_access_text_string_get(obj, gran, &start, &end, &str);
      }
    else
      {
@@ -1635,7 +1635,8 @@ _text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message
      }
    else if (efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE))
      {
-        Eina_List *attrs = efl_access_text_attributes_get(obj, &start, &end);
+        Eina_List *attrs = NULL;
+        efl_access_text_attributes_get(obj, &start, &end, &attrs);
         EINA_LIST_FREE(attrs, attr)
           {
              eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
@@ -2224,7 +2225,7 @@ _text_run_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   attrs = efl_access_text_attributes_get(obj, &start, &end);
+   efl_access_text_attributes_get(obj, &start, &end, &attrs);
 
    if (incl_def)
      {

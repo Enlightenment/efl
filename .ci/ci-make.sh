@@ -15,6 +15,9 @@ if [ "$DISTRO" != "" ] ; then
     docker exec --env EIO_MONITOR_POLL=1 --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c ".ci/coverity-upload.sh"
   else
     docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) ninja -C build
+    if [ "$1" = "options-enabled" ]; then # we have efl-one on and want to check it after build
+      docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) python scripts/test-efl-one.py build
+    fi
   fi
 elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   latest_brew_python3_bin="$(ls -1d /usr/local/Cellar/python/3.*/bin | sort -n | tail -n1)"

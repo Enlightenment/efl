@@ -1145,11 +1145,12 @@ _pending_device_add(Eina_List *list,
  * user may cancel refeed of events by setting repeat events.
  *
  * @param obj The gesture-layer object.
+ * @param need_reset Clear all gestures data or not.
  *
  * @ingroup Elm_Gesture_Layer
  */
 static Eina_Bool
-_event_history_clear(Evas_Object *obj)
+_event_history_clear(Evas_Object *obj, Eina_Bool need_reset)
 {
    int i;
    Gesture_Info *p;
@@ -1179,16 +1180,17 @@ _event_history_clear(Evas_Object *obj)
    _states_reset(sd); /* we are ready to start testing for gestures again */
 
    /* Clear all gestures intermediate data */
-   {
-      /* FIXME: +1 because of the mistake in the enum. */
-      Gesture_Info **gitr = sd->gesture + 1;
-      Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
-      for (; fitr->reset; fitr++, gitr++)
-        {
-           if (IS_TESTED_GESTURE(*gitr))
-             fitr->reset(*gitr);
-        }
-   }
+   if (need_reset)
+     {
+        /* FIXME: +1 because of the mistake in the enum. */
+        Gesture_Info **gitr = sd->gesture + 1;
+        Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+        for (; fitr->reset; fitr++, gitr++)
+          {
+             if (IS_TESTED_GESTURE(*gitr))
+               fitr->reset(*gitr);
+          }
+     }
 
    /* Disable gesture layer so refeeded events won't be consumed by it */
    _callbacks_unregister(obj);
@@ -1263,7 +1265,7 @@ _clear_if_finished(Evas_Object *obj)
      }
 
    if (reset_s && (!all_undefined))
-     return _event_history_clear(obj);
+     return _event_history_clear(obj, EINA_TRUE);
 
    return EINA_FALSE;
 }
@@ -1348,6 +1350,7 @@ _event_process(void *data,
 
    ELM_GESTURE_LAYER_DATA_GET(data, sd);
 
+   evas_object_ref(sd->target);
    /* Start testing candidate gesture from here */
    if (_pointer_event_make(data, event_info, event_type, &_pe))
      pe = &_pe;
@@ -1386,6 +1389,8 @@ _event_process(void *data,
    Eina_Bool states_reset = _clear_if_finished(data);
    if (sd->glayer_continues_enable)
      _continues_gestures_restart(data, states_reset);
+
+   evas_object_unref(sd->target);
 }
 
 static Eina_Bool
@@ -3812,7 +3817,7 @@ _elm_gesture_layer_efl_canvas_group_group_del(Eo *obj, Elm_Gesture_Layer_Data *s
    ecore_timer_del(sd->gest_taps_timeout);
 
    /* Then take care of clearing events */
-   _event_history_clear(obj);
+   _event_history_clear(obj, EINA_FALSE);
    sd->pending = eina_list_free(sd->pending);
 
    EINA_LIST_FREE(sd->touched, data)
