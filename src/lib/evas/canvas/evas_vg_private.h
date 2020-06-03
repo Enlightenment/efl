@@ -35,6 +35,7 @@ typedef struct _Vg_User_Entry
 {
    int                   w; // current surface width
    int                   h; // current surface height
+   Eina_Rect             path_bounds;
    Efl_VG               *root;
 } Vg_User_Entry;
 

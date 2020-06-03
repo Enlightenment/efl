@@ -293,6 +293,11 @@ _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
                                              file, key,
                                              obj->cur->geometry.w,
                                              obj->cur->geometry.h, NULL);
+
+   // NOTE: Update object's viewbox. In this case, there is no need to update
+   //       the root of tree. That's why We don't use viewbox_set.
+   pd->viewbox.rect = pd->vg_entry->vfd->view_box;
+
    evas_object_change(eo_obj, obj);
    pd->changed = EINA_TRUE;
 
@@ -504,7 +509,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 //renders a vg_tree to an offscreen buffer and push it to the cache.
 static void *
 _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
-                  void *engine, Efl_VG *root, int w, int h, void *buffer, void *ckey,
+                  void *engine, Efl_VG *root, int x, int y, int w, int h, void *buffer, void *ckey,
                   Eina_Bool do_async)
 {
    Ector_Surface *ector;
@@ -532,7 +537,7 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, 255, NULL, 0);
 
    //Actual content drawing
-   if (!ENFN->ector_begin(engine, buffer, context, ector, 0, 0, do_async))
+   if (!ENFN->ector_begin(engine, buffer, context, ector, x, y, do_async))
      {
         ERR("Failed ector begin!");
         return NULL;
@@ -688,7 +693,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
 
    if (!buffer)
      {
-        buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL, key, do_async);
+        buffer = _render_to_buffer(obj, pd, engine, root, 0, 0, w, h, NULL, key, do_async);
      }
    else
      {
@@ -710,26 +715,52 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                       int x, int y, int w, int h, Eina_Bool do_async)
 {
    Vg_User_Entry *user_entry = pd->user_entry;
+   Eina_Rect render_rect = EINA_RECT(x, y, w, h);
+
+   // Get changed boundary and fit the size.
+   Eina_Rect r;
+   if (pd->changed)
+     efl_gfx_path_bounds_get(user_entry->root, &user_entry->path_bounds);
+   EINA_RECTANGLE_SET(&r, user_entry->path_bounds.x,
+                      user_entry->path_bounds.y,
+                      user_entry->path_bounds.w,
+                      user_entry->path_bounds.h);
+
+   if (pd->viewbox.w != 0 || pd->viewbox.h !=0)
+     {
+        double sx = 0, sy= 0;
+        sx = (double)render_rect.w / (double)pd->viewbox.w;
+        sy = (double)render_rect.h / (double)pd->viewbox.h;
+        r.pos.x = (r.pos.x - pd->viewbox.x) * sx;
+        r.pos.y = (r.pos.y - pd->viewbox.y) * sy;
+        r.size.w *= sx;
+        r.size.h *= sy;
+     }
+
+   if (render_rect.x < r.pos.x) render_rect.x = r.pos.x;
+   if (render_rect.y < r.pos.y) render_rect.y = r.pos.y;
+   if (render_rect.w > r.size.w) render_rect.w = r.size.w;
+   if (render_rect.h > r.size.h) render_rect.h = r.size.h;
 
    //if the size doesn't match, drop previous cache surface.
-   if ((user_entry->w != w ) ||
-       (user_entry->h != h))
+   if ((user_entry->w != render_rect.w ) ||
+       (user_entry->h != render_rect.h))
      {
-         ENFN->ector_surface_cache_drop(engine, user_entry->root);
-         user_entry->w = w;
-         user_entry->h = h;
+        ENFN->ector_surface_cache_drop(engine, user_entry->root);
+        user_entry->w = w;
+        user_entry->h = h;
      }
 
    //if the buffer is not created yet
    void *buffer = NULL;
 
-     buffer = ENFN->ector_surface_cache_get(engine, user_entry->root);
+   buffer = ENFN->ector_surface_cache_get(engine, user_entry->root);
 
    if (!buffer)
      {
         // render to the buffer
         buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
-                                   w, h, buffer, user_entry->root, do_async);
+                                   render_rect.x, render_rect.y, render_rect.w, render_rect.h, buffer, user_entry->root, do_async);
      }
    else
      {
@@ -737,7 +768,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
         if (pd->changed)
           buffer = _render_to_buffer(obj, pd, engine,
                                      user_entry->root,
-                                     w, h, buffer, NULL,
+                                     render_rect.x, render_rect.y, render_rect.w, render_rect.h, buffer, NULL,
                                      do_async);
         //cache reference was increased when we get the cache.
         ENFN->ector_surface_cache_drop(engine, user_entry->root);
@@ -746,7 +777,9 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    _render_buffer_to_screen(obj,
                             engine, output, context, surface,
                             buffer,
-                            x, y, w, h,
+                            x + r.pos.x,
+                            y + r.pos.y,
+                            render_rect.w, render_rect.h,
                             do_async, EINA_TRUE);
 }
 

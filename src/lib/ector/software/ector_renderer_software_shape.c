@@ -654,8 +654,8 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj EINA_UNUSED,
    if (task) ector_software_wait(_update_rle, _done_rle, task);
 
    // adjust the offset
-   x = pd->surface->x + (int)pd->base->origin.x;
-   y = pd->surface->y + (int)pd->base->origin.y;
+   x = (int)pd->base->origin.x - pd->surface->x;
+   y = (int)pd->base->origin.y - pd->surface->y;
 
    ector_software_rasterizer_clip_rect_set(pd->surface->rasterizer, clips);
    ector_software_rasterizer_transform_set(pd->surface->rasterizer, pd->base->m);
