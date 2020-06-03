@@ -29,8 +29,14 @@ if [ "$DISTRO" != "" ] ; then
     if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
       false
   done
+  ret=$?
+elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
+  meson test -t 120 -C build --wrapper dbus-launch
+  ret=$?
+else
+  meson test -t 120 -C build --wrapper dbus-launch
+  ret=$?
 fi
-ret=$?
 travis_time_finish "ninja-test"
 travis_fold end "ninja-test"
 
