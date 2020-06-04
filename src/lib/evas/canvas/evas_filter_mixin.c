@@ -1,9 +1,7 @@
 #define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
 
-#include "evas_common_private.h"
-#include "evas_private.h"
-#include "../../lib/efl/interfaces/efl_gfx_filter.eo.h"
-#include "efl_canvas_filter_internal.eo.h"
+#include <Evas.h>
+
 #include "evas_filter.h"
 
 #define MY_CLASS EFL_CANVAS_FILTER_INTERNAL_MIXIN
