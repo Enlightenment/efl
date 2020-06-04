@@ -31,11 +31,11 @@ if [ "$DISTRO" != "" ] ; then
   done
   ret=$?
 elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-  meson test -t 120 -C build --wrapper dbus-launch
+  meson test -t 120 -C build --wrapper dbus-launch || true
   cat build/meson-logs/testlog-dbus-launch.txt
   ret=$?
 else
-  meson test -t 120 -C build --wrapper dbus-launch
+  meson test -t 120 -C build --wrapper dbus-launch || true
   cat build/meson-logs/testlog-dbus-launch.txt
   ret=$?
 fi
