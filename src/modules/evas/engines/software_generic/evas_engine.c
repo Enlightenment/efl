@@ -3958,7 +3958,6 @@ _smart_merge(Tilebuf *tb, Tilebuf_Rect *rects)
                }
              j++;
           }
-        n2 = n;
         free(box);
         box = box2;
         if (!did_merge) break;
@@ -3976,15 +3975,58 @@ _smart_merge(Tilebuf *tb, Tilebuf_Rect *rects)
    box = region_rects(region);
    n = region_rects_num(region);
    merged = calloc(1, n * sizeof(Tilebuf_Rect));
+   j = 0;
+#if 1
+   // regions sometimes produce box sets like:
+   // +---+
+   // |   |
+   // +---+    +-------+
+   // |   |    |       |
+   // +---+    +-------+---------+
+   //          |                 |
+   //          |                 |
+   //          +-----------------+
+   // so the upper-left 2 boxes can be merged into 1 and they have the same
+   // x coords and are flush-aligned one above the other. that is what
+   // this does - find these and merge them to have fewer rects
    for (i = 0; i < n; i++)
      {
-        merged[i].x = box[i].x1;
-        merged[i].y = box[i].y1;
-        merged[i].w = box[i].x2 - box[i].x1;
-        merged[i].h = box[i].y2 - box[i].y1;
+        // skip empty boxes
+        if (box[i].x1 == box[i].x2) continue;
+        // walk all following boxes after this and see if they can be merged
+        // into box i
+        for (k = i + 1; k < n; k++)
+          {
+             // skip empty boxes after i
+             if (box[k].x1 == box[k].x2) continue;
+             // match x coords
+             if ((box[i].x1 == box[k].x1) && // if aligned vertically
+                 (box[i].x2 == box[k].x2))   // exactly above/below
+               {
+                  // right below, or right above
+                  if (box[i].y2 == box[k].y1) // this box flush below
+                    {
+                       box[i].y2 = box[k].y2; // merge below i
+                       box[k].x2 = box[k].x1; // empty this box - merged
+                    }
+                  else if (box[i].y1 == box[k].y2) // this box flush above
+                    {
+                       box[i].y2 = box[k].y2; // merge above i
+                       box[k].x2 = box[k].x1; // empty this box - merged
+                    }
+               }
+          }
+        // i may have expanded but will not be empty. future boxes after
+        // this may be empty though but handled at top of loop
+        merged[j].x = box[i].x1;
+        merged[j].y = box[i].y1;
+        merged[j].w = box[i].x2 - box[i].x1;
+        merged[j].h = box[i].y2 - box[i].y1;
         mergelist = (Tilebuf_Rect *)eina_inlist_append
-          (EINA_INLIST_GET(mergelist), EINA_INLIST_GET(&(merged[i])));
+          (EINA_INLIST_GET(mergelist), EINA_INLIST_GET(&(merged[j])));
+        j++;
      }
+#endif
    region_free(region);
    rects = mergelist;
 
