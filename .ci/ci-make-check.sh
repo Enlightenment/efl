@@ -32,11 +32,11 @@ if [ "$DISTRO" != "" ] ; then
   ret=$?
 elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   meson test -t 120 -C build --wrapper dbus-launch
-  cat /Users/travis/build/Enlightenment/efl/build/meson-logs/testlog-dbus-launch.txt
+  cat build/meson-logs/testlog-dbus-launch.txt
   ret=$?
 else
   meson test -t 120 -C build --wrapper dbus-launch
-  cat /home/travis/build/Enlightenment/efl/build/meson-logs/testlog-dbus-launch.txt
+  cat build/meson-logs/testlog-dbus-launch.txt
   ret=$?
 fi
 travis_time_finish "ninja-test"
