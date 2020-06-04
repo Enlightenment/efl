@@ -26,6 +26,88 @@
 #define DARK_GREY_BG_COLOR 48 48 48 255
 #define DARK_GREY_BG_DISABLED_COLOR 64 64 64 255
 
+#define SHAD(_to, _clip, _img, _l, _r, _t, _b, _scale) \
+      scale: 1; clip_to: _clip; \
+      description { state: "default" 0.0; \
+         rel.to: _to; \
+         image.normal: _img; \
+         image.border: 44 44 44 44; \
+         image.border_scale: 1; \
+         image.border_scale_by: _scale; \
+         rel1.offset: (-_l) (-_t); \
+         rel2.offset: (_r-1) (_b-1); \
+         fill.smooth: 0; \
+         offscale; \
+      }
+#define SHAD_CLIP(_to, _clip, _l, _r, _t, _b, _scale) \
+   part { type: RECT; name: "_shcl1"; \
+      scale: 1; clip_to: _clip; \
+      description { state: "default" 0.0; \
+         rel.to: _to; \
+         rel1.offset: (-_l) (-_t); \
+         rel2.offset: (_r-1) -1; \
+         rel2.relative: 1.0 0.0; \
+         offscale; \
+      } \
+   } \
+   part { type: RECT; name: "_shcl2"; \
+      scale: 1; clip_to: _clip; \
+      description { state: "default" 0.0; \
+         rel.to: _to; \
+         rel1.offset: (-_l) 0; \
+         rel1.relative: 0.0 1.0; \
+         rel2.offset: (_r-1) (_b-1); \
+         offscale; \
+      } \
+   } \
+   part { type: RECT; name: "_shcl3"; \
+      scale: 1; clip_to: _clip; \
+      description { state: "default" 0.0; \
+         rel.to: _to; \
+         rel1.offset: (-_l) 0; \
+         rel2.offset: -1 -1; \
+         rel2.relative: 0.0 1.0; \
+         offscale; \
+      } \
+   } \
+   part { type: RECT; name: "_shcl4"; \
+      scale: 1; clip_to: _clip; \
+      description { state: "default" 0.0; \
+         rel.to: _to; \
+         rel1.offset: 0 0; \
+         rel1.relative: 1.0 0.0; \
+         rel2.offset: (_r-1) -1; \
+         offscale; \
+      } \
+   }
+
+#define WIN_SHAD(_to, _clip, _img, _l, _r, _t, _b, _scale) \
+   SHAD_CLIP(_to, _clip, _l, _r, _t, _b, _scale) \
+   part { name: "_sh1"; mouse_events: 0; \
+      SHAD(_to, "_shcl1", _img, _l, _r, _t, _b, _scale) \
+   } \
+   part { name: "_sh2"; mouse_events: 0; \
+      SHAD(_to, "_shcl2", _img, _l, _r, _t, _b, _scale) \
+   } \
+   part { name: "_sh3"; mouse_events: 0; \
+      SHAD(_to, "_shcl3", _img, _l, _r, _t, _b, _scale) \
+   } \
+   part { name: "_sh4"; mouse_events: 0; \
+      SHAD(_to, "_shcl4", _img, _l, _r, _t, _b, _scale) \
+   }
+
+// XXX: below - remove these in favor of WIN_SHAD() above in the edc
+#define WIN_SHADOW_SMALL \
+   image.normal: "win_shadow.png"; \
+   image.border: 32 32 32 32; \
+   image.border_scale: 1; \
+   image.border_scale_by: 0.5; \
+   image.middle: 0; \
+   rel1.offset: -10 -7; \
+   rel2.offset: 9 10; \
+   fill.smooth: 0; \
+   offscale
+
 #define WIN_SHADOW \
    image.normal: "win_shadow.png"; \
    image.border: 32 32 32 32; \
