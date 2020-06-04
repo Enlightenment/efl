@@ -204,6 +204,7 @@ ecore_pipe_write(Ecore_Pipe  *p,
    size_t already_written = 0;
    int retry = ECORE_PIPE_WRITE_RETRY;
    Eina_Bool ok = EINA_FALSE;
+   unsigned int bytes = nbytes;
 
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
@@ -217,7 +218,7 @@ ecore_pipe_write(Ecore_Pipe  *p,
 
    do // First write the len into the pipe
      {
-        ret = pipe_write(p->fd_write, &nbytes, sizeof(nbytes));
+        ret = pipe_write(p->fd_write, &bytes, sizeof(bytes));
         if (ret == sizeof(nbytes))
           {
              retry = ECORE_PIPE_WRITE_RETRY;

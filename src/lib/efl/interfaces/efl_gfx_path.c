@@ -241,7 +241,7 @@ _efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_
         maxy = maxy > pd->points[i + 1] ? maxy : pd->points[i + 1];
      }
 
-   EINA_RECTANGLE_SET(r, minx, miny, (maxx - minx), (maxy - miny));
+   EINA_RECTANGLE_SET(r, floor(minx), floor(miny), (ceil(maxx) - floor(minx)), (ceil(maxy) - floor(miny)));
 }
 
 EOLIAN static void

@@ -1,13 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
-. .ci/travis.sh
 
 if [ "$1" != "release-ready" ] ; then
   exit 0
 fi
 
-travis_fold distcheck "ninja dist"
+travis_fold start "ninja-dist"
+travis_time_start "ninja-dist"
 if [ "$DISTRO" != "" ] ; then
   docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" \
@@ -18,4 +18,5 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
   ninja -C build dist
 fi
-travis_endfold distcheck
+travis_time_finish "ninja-dist"
+travis_fold end "ninja-dist"

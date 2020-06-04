@@ -169,11 +169,9 @@ elementary_test_src = [
 
 if sys_windows == false
   link_args = ['-rdynamic', '-fPIC', '-pie']
-  link_args_lib = ['-rdynamic', '-fPIC']
   package_c_args =  package_c_args + ['-fPIC']
 else
   link_args = []
-  link_args_lib = []
 endif
 elementary_test = executable('elementary_test',
         elementary_test_src,
@@ -185,18 +183,6 @@ elementary_test = executable('elementary_test',
           '-Delementary_test_DATA_DIR="'+join_paths(dir_data,'elementary')+'"'
         ],
         link_args: link_args
-)
-
-library('elementary_test',
-        elementary_test_src,
-        dependencies: [elementary, intl] + elementary_deps + elementary_pub_deps,
-        install: false,
-        c_args : package_c_args + [
-          '-Delementary_test_BIN_DIR="'+dir_bin+'"',
-          '-Delementary_test_LIB_DIR="'+dir_lib+'"',
-          '-Delementary_test_DATA_DIR="'+join_paths(dir_data,'elementary')+'"'
-        ],
-        link_args: link_args_lib
 )
 
 elementary_config_src = [

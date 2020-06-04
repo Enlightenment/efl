@@ -14,8 +14,17 @@ generic_cache_new(void *user_data, Generic_Cache_Free func)
 EAPI void
 generic_cache_destroy(Generic_Cache *cache)
 {
-   generic_cache_dump(cache);
-   eina_hash_free(cache->hash);
+   Generic_Cache_Entry *entry;
+   if (cache)
+     {
+        EINA_LIST_FREE(cache->lru_list, entry)
+          {
+             free(entry);
+          }
+
+        eina_hash_free(cache->hash);
+        free(cache);          
+     }
 }
 
 EAPI void

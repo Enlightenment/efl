@@ -3319,17 +3319,23 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
      }
    else
      {
+        Eina_Rect viewbox;
+
         snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_id);
 
         efl_file_simple_load(ep->object, ed->file->path, src_key);
         src_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(src_root);
 
+        // Note: Assume that the viewboxes of two interpolation objects are the same.
+        viewbox = efl_canvas_vg_object_viewbox_get(ep->object);
+
         efl_file_simple_load(ep->object, ed->file->path, dest_key);
         dest_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(dest_root);
 
         root = efl_duplicate(src_root);
+        efl_canvas_vg_object_viewbox_set(ep->object, viewbox);
 
         if (!efl_gfx_path_interpolate(root, src_root, dest_root, pos))
           ERR("Can't interpolate check the svg file");

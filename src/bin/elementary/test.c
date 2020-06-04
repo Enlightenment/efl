@@ -681,13 +681,22 @@ _my_win_key_up(void *d EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Key *ev)
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_auto_close(void *data EINA_UNUSED)
+{
+   elm_exit();
+   return EINA_FALSE;
+}
+
 static void
-my_win_main(const char *autorun, Eina_Bool test_win_only)
+my_win_main(const char *autorun, Eina_Bool test_win_only, Eina_Bool autoclose)
 {
    Evas_Object *bg = NULL, *bx0 = NULL, *bx1 = NULL, *lb = NULL, *chk = NULL;
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *en = NULL;
    Eina_List *l = NULL;
    struct elm_test *t = NULL;
+
+   if (autoclose) ecore_timer_add(2, _auto_close, win);
 
    if (test_win_only) goto add_tests;
    /* Create an elm window - It returns an evas object. This is a little
@@ -1414,6 +1423,7 @@ efl_main(void *data EINA_UNUSED,
 {
    Efl_Loop_Arguments *arge = ev->info;
    Eina_Bool test_win_only = EINA_FALSE;
+   Eina_Bool autoclose = EINA_FALSE;
    char *autorun = NULL;
 
    if (arge->initialization)
@@ -1454,6 +1464,7 @@ efl_main(void *data EINA_UNUSED,
                                                        "$ elementary_test\n"
                                                        "$ elementary_test --test-win-only [TEST_NAME]\n"
                                                        "$ elementary_test -to [TEST_NAME]\n\n"
+                                                       "$ elementary_test --autoclose\n\n"
                                                        "Examples:\n"
                                                        "$ elementary_test -to Button\n\n"));
                   return ;
@@ -1467,6 +1478,8 @@ efl_main(void *data EINA_UNUSED,
                }
              else if (eina_streq(arg, "--all") || eina_streq(arg, "-a"))
                all_tests = EINA_TRUE;
+             else if (eina_streq(arg, "--autoclose"))
+               autoclose = EINA_TRUE;
              else if ((i == eina_array_count(arge->argv) - 1) && (arg[0] != '-'))
                autorun = arg;
 
@@ -1476,7 +1489,7 @@ efl_main(void *data EINA_UNUSED,
      {
      }
 
-   my_win_main(autorun, test_win_only); /* create main window */
+   my_win_main(autorun, test_win_only, autoclose); /* create main window */
 
    /* FIXME: Hum, no exit code anywhere anymore ? */
 }
