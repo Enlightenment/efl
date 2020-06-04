@@ -1,7 +1,7 @@
 project('efl', ['c','cpp'],
   version: '1.24.99',
   default_options : ['buildtype=plain', 'cpp_std=c++11'],
-  meson_version : '>=0.47'
+  meson_version : '>=0.52'
 )
 
 if host_machine.system() == 'darwin'
