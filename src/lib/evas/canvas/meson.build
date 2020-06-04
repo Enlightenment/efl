@@ -5,10 +5,6 @@ pub_eo_files = [
   'efl_canvas_image.eo',
   'efl_canvas_snapshot.eo',
   'efl_canvas_proxy.eo',
-  'efl_canvas_surface.eo',
-  'efl_canvas_surface_tbm.eo',
-  'efl_canvas_surface_x11.eo',
-  'efl_canvas_surface_wayland.eo',
   'efl_canvas_filter_internal.eo',
   'efl_input_state.eo',
   'efl_input_interface.eo',
@@ -49,6 +45,25 @@ pub_eo_files = [
   'efl_text_formatter.eo',
   'efl_canvas_object_animation.eo',
 ]
+
+priv_eo_files = [
+  'efl_canvas_surface.eo',
+  'efl_canvas_surface_tbm.eo',
+  'efl_canvas_surface_x11.eo',
+  'efl_canvas_surface_wayland.eo',
+]
+
+foreach eo_file : priv_eo_files
+  priv_eo_file_target += custom_target('eolian_gen_' + eo_file,
+    input : eo_file,
+    output : [eo_file + '.h'],
+    depfile : eo_file + '.d',
+    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
+                           '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
+                           '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
+                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-gchd', '@INPUT@'])
+endforeach
 
 evas_canvas_eo_files = pub_eo_files
 
