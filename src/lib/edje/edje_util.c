@@ -6725,7 +6725,7 @@ edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *
 
    ed = _edje_fetch(obj);
 
-   return _edje_efl_text_text_set((Eo *) obj, ed, part, text, EINA_TRUE, EINA_FALSE);
+   return _edje_efl_text_text_set((Eo *) obj, ed, part, text, EINA_TRUE, EINA_TRUE);
 }
 
 EAPI const char *
