@@ -41,6 +41,7 @@ EFL_START_TEST(emotion_object_basic)
    const char *file;
 
    ecore_evas_init();
+   emotion_init();
    ecore_evas = ecore_evas_new(NULL, 0, 0, 320, 240, NULL);
    evas = ecore_evas_get(ecore_evas);
 
@@ -50,19 +51,47 @@ EFL_START_TEST(emotion_object_basic)
    /* We test an audio file here, no need to try decoding the video part */
    emotion_object_video_mute_set(obj, EINA_TRUE);
 
+   fprintf(stderr, "DEBUG: %s\n", TESTS_SRC_DIR"/sample.ogg");
    emotion_object_file_set(obj, TESTS_SRC_DIR"/sample.ogg");
    file = emotion_object_file_get(obj);
-
 
    emotion_object_play_set(obj, 1);
    emotion_object_play_get(obj);
    emotion_object_play_set(obj, 0);
    emotion_object_play_get(obj);
 
+   emotion_shutdown();
    ecore_evas_free(ecore_evas);
    ecore_evas_shutdown();
 }
 EFL_END_TEST
+
+/** Not covered Emotiopn EAPI
+emotion_object_play_speed_set
+emotion_object_play_speed_get
+emotion_object_video_subtitle_file_set
+emotion_object_video_subtitle_file_get
+emotion_object_video_channel_name_get
+emotion_object_video_channel_set
+emotion_object_video_channel_get
+emotion_object_spu_mute_set
+emotion_object_spu_mute_get
+emotion_object_spu_channel_name_get
+emotion_object_spu_channel_set
+emotion_object_spu_channel_get
+emotion_object_chapter_count
+emotion_object_chapter_set
+emotion_object_chapter_get
+emotion_object_chapter_name_get
+emotion_object_eject
+emotion_object_meta_info_get
+emotion_object_vis_get
+emotion_object_priority_set
+emotion_object_priority_get
+emotion_object_suspend_set
+emotion_object_suspend_get
+emotion_file_meta_artwork_get
+*/
 
 EFL_START_TEST(emotion_object_basic2)
 {
@@ -165,7 +194,7 @@ EFL_END_TEST
 void emotion_test_init(TCase *tc)
 {
    tcase_add_test(tc, emotion_object_basic);
-   //tcase_add_test(tc, emotion_object_basic);
+   tcase_add_test(tc, emotion_object_basic2);
    //tcase_add_test(tc, emotion_object_video);
    //tcase_add_test(tc, emotion_object_audio);
    //tcase_add_test(tc, emotion_object_misc);
