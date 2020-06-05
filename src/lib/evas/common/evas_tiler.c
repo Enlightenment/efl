@@ -3,6 +3,8 @@
 
 
 #ifdef NEWTILER
+#define MAXREG 24
+
 EAPI void
 evas_common_tilebuf_init(void)
 {
@@ -99,7 +101,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
    Tilebuf_Rect *rects = NULL, *r, *rend, *rbuf;
    Region *region2;
    Box *rects2, *rs;
-   int n;
+   int n, num, minx, miny, maxx, maxy;
 
    region2 = _region_round(tb->region, 16);
    if (!region2) return NULL;
@@ -126,8 +128,18 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 
    rend = rbuf + n;
    rs = rects2;
+   num = 0;
+
+   minx = rs->x1;
+   miny = rs->y1;
+   maxx = rs->x2;
+   maxy = rs->y2;
    for (r = rbuf; r < rend; r++)
      {
+        if (rs->x1 < minx) minx = rs->x1;
+        if (rs->y1 < miny) miny = rs->y1;
+        if (rs->x2 > maxx) maxx = rs->x2;
+        if (rs->y2 > maxy) maxy = rs->y2;
         EINA_INLIST_GET(r)->next = NULL;
         EINA_INLIST_GET(r)->prev = NULL;
         EINA_INLIST_GET(r)->last = NULL;
@@ -139,6 +151,19 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
         rects = (Tilebuf_Rect *)
           eina_inlist_append(EINA_INLIST_GET(rects),
                              EINA_INLIST_GET(r));
+        num++;
+     }
+   // if > max, then bounding box
+   if (num > MAXREG)
+     {
+        r = rects;
+        EINA_INLIST_GET(r)->next = NULL;
+        EINA_INLIST_GET(r)->prev = NULL;
+        EINA_INLIST_GET(r)->last = NULL;
+        r->x = minx;
+        r->y = miny;
+        r->w = maxx - minx;
+        r->h = maxy - miny;
      }
    region_free(region2);
    return rects;

@@ -727,7 +727,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                       user_entry->path_bounds.w,
                       user_entry->path_bounds.h);
 
-   if (pd->viewbox.w != 0 || pd->viewbox.h !=0)
+   if (pd->viewbox.w != 0 && pd->viewbox.h !=0)
      {
         double sx = 0, sy= 0;
         sx = (double)render_rect.w / (double)pd->viewbox.w;
@@ -748,8 +748,8 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
        (user_entry->h != render_rect.h))
      {
         ENFN->ector_surface_cache_drop(engine, user_entry->root);
-        user_entry->w = w;
-        user_entry->h = h;
+        user_entry->w = render_rect.w;
+        user_entry->h = render_rect.h;
      }
 
    //if the buffer is not created yet

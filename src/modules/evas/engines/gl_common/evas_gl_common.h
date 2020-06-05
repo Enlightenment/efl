@@ -165,7 +165,7 @@ struct _Evas_GL_Shared
 #define DEF_CUTOUT                 4096
 
 #define MAX_PIPES                    32
-#define DEF_PIPES                    32
+#define DEF_PIPES                     8
 #define DEF_PIPES_SGX_540            24
 #define DEF_PIPES_TEGRA_2             8
 #define DEF_PIPES_TEGRA_3            24

@@ -3277,6 +3277,7 @@ evas_render_updates_internal(Evas *eo_e,
      EVAS_RENDER_MODE_SYNC :
      EVAS_RENDER_MODE_ASYNC_INIT;
    Eina_Bool haveup = EINA_FALSE;
+   static int show_update_boxes = -1;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
@@ -3304,6 +3305,11 @@ evas_render_updates_internal(Evas *eo_e,
    double start_time = _time_get();
 #endif
 
+   if (show_update_boxes == -1)
+     {
+        if (getenv("EVAS_RENDER_DEBUG_UPDATE_BOXES")) show_update_boxes = 1;
+        else show_update_boxes = 0;
+     }
    evas_render_pre(eo_e, evas);
 
    _evas_planes(e);
@@ -3610,6 +3616,29 @@ evas_render_updates_internal(Evas *eo_e,
                   eina_evlog("-render_update", eo_e, 0.0, NULL);
                   if (!do_async)
                     {
+                       if (show_update_boxes == 1)
+                         {
+                            static int fn = 0;
+                            void *ctx;
+
+                            fn++;
+                            ctx = ENFN->context_new(ENC);
+                            ENFN->context_color_set
+                              (ENC, ctx, fn & 0xff, 0x40, 0x20, 0xff);
+                            ENFN->rectangle_draw(ENC, out->output,
+                                                 ctx, surface,
+                                                 ux - out->geometry.x, uy - out->geometry.y, uw, 1, do_async);
+                            ENFN->rectangle_draw(ENC, out->output,
+                                                 ctx, surface,
+                                                 ux - out->geometry.x, uy - out->geometry.y + uh - 1, uw, 1, do_async);
+                            ENFN->rectangle_draw(ENC, out->output,
+                                                 ctx, surface,
+                                                 ux - out->geometry.x, uy - out->geometry.y, 1, uh, do_async);
+                            ENFN->rectangle_draw(ENC, out->output,
+                                                 ctx, surface,
+                                                 ux - out->geometry.x + uw - 1, uy - out->geometry.y, 1, uh, do_async);
+                            ENFN->context_free(ENC, ctx);
+                         }
                        eina_evlog("+render_push", eo_e, 0.0, NULL);
                        ENFN->output_redraws_next_update_push(ENC, out->output, surface,
                                                              ux - out->geometry.x, uy - out->geometry.y, uw, uh,
