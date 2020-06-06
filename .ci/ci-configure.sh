@@ -8,7 +8,7 @@ if [ "$DISTRO" != "" ] ; then
   # Why do we need to disable the imf loaders here?
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
-  MONO_LINUX_COPTS=" -Dbindings=lua,cxx,mono -Dmono-beta=true"
+  MONO_LINUX_COPTS=" -Dbindings=cxx,mono -Dmono-beta=true"
 
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
