@@ -2,10 +2,7 @@ elua_deps = [eina, eo, efl, ecore, ecore_file, intl]
 elua_pub_deps = [lua]
 
 if get_option('lua-interpreter') == 'lua'
-  luaver_min = cc.compute_int('LUA_VERSION_NUM - 500',
-    prefix: '#include <lua.h>', dependencies: lua
-  )
-  elua_deps += dependency('cffi-lua-5.@0@'.format(luaver_min))
+  elua_deps += lua_ffi
 endif
 
 elua_src = ['elua.c', 'io.c', 'cache.c']

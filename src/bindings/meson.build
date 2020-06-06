@@ -18,6 +18,10 @@ if (bindings.contains('cxx') == false and bindings.contains('mono'))
   )
 endif
 
+if bindings.contains('lua') and not have_elua
+  error('Elua is necessary for Lua bindings')
+endif
+
 foreach binding : bindings_order
   if bindings.contains(binding)
     subdir(join_paths( binding))

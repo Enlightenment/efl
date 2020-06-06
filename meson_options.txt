@@ -262,7 +262,7 @@ option('v4l2',
 
 option('elua',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Lua launcher binary support in efl'
 )
 
@@ -287,7 +287,7 @@ option('nls',
 option('bindings',
   type : 'array',
   choices : ['lua', 'cxx', 'mono'],
-  value : ['lua', 'cxx'],
+  value : ['cxx'],
   description : 'Which auto-generated language bindings for efl to enable',
 )
 
