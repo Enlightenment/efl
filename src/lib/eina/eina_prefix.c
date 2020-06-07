@@ -301,8 +301,9 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
      {
         if (getcwd(buf2, sizeof(buf2)))
           {
-             char joined[PATH_MAX];
-             eina_file_path_join(joined, sizeof(joined), buf2, argv0);
+             size_t len = strlen(buf2) + 1 + strlen(argv0) + 1;
+             char *joined = alloca(len);
+             eina_file_path_join(joined, len, buf2, argv0);
              if (realpath(joined, buf))
                {
                   if (access(buf, X_OK) == 0)
@@ -371,7 +372,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 static int
 _get_env_var(char **var, const char *envprefix, const char *envsuffix, const char *prefix, const char *dir)
 {
-   char env[1024];
+   char env[64];
    const char *s;
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
@@ -387,8 +388,11 @@ _get_env_var(char **var, const char *envprefix, const char *envsuffix, const cha
      }
    else if (prefix)
      {
-        char buf[PATH_MAX];
-        eina_file_path_join(buf, sizeof(buf), prefix, dir);
+        size_t len = strlen(prefix) + 1 + strlen(dir) + 1;
+        char *buf;
+
+        buf = alloca(len);
+        eina_file_path_join(buf, len, prefix, dir);
         INF("Have %s_PREFIX = %s, use %s = %s", envprefix, prefix, env, buf);
         STRDUP_REP(*var, buf);
         return 1;
@@ -409,7 +413,7 @@ _get_env_vars(Eina_Prefix *pfx,
               const char *datadir,
               const char *localedir)
 {
-   char env[1024];
+   char env[32];
    const char *prefix;
    int ret = 0;
 
