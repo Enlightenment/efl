@@ -4,7 +4,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "efl_canvas_filter_internal.eo.h"
 
 #ifdef EAPI
 # undef EAPI
@@ -31,6 +30,8 @@
 #  define EAPI
 # endif
 #endif
+
+#include "efl_canvas_filter_internal.eo.h"
 
 #ifdef DEBUG
 # define FILTERS_DEBUG

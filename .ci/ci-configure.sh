@@ -8,7 +8,7 @@ if [ "$DISTRO" != "" ] ; then
   # Why do we need to disable the imf loaders here?
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
-  MONO_LINUX_COPTS=" -Dbindings=lua,cxx,mono -Dmono-beta=true"
+  MONO_LINUX_COPTS=" -Dbindings=cxx,mono -Dmono-beta=true"
 
   WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
@@ -19,7 +19,7 @@ if [ "$DISTRO" != "" ] ; then
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
   -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= \
   -Dharfbuzz=true -Dpixman=true -Dhyphen=true -Defl-one=true \
-  -Dvnc-server=true -Dbindings=lua,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
+  -Dvnc-server=true -Delua=true -Dbindings=lua,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
   # Enabled png, jpeg evas loader for in tree edje file builds
   DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
@@ -30,7 +30,7 @@ if [ "$DISTRO" != "" ] ; then
   -Decore-imf-loaders-disabler=xim,ibus,scim \
   -Dfribidi=false -Dfontconfig=false \
   -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
-  -Delua=true -Dnls=false -Dbindings= -Dlua-interpreter=luajit -Dnative-arch-optimization=false"
+  -Delua=false -Dnls=false -Dbindings= -Dlua-interpreter=luajit -Dnative-arch-optimization=false"
   #evas_filter_parser.c:(.text+0xc59): undefined reference to `lua_getglobal' with interpreter lua
 
   RELEASE_READY_LINUX_COPTS=" --buildtype=release"

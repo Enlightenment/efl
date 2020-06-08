@@ -270,6 +270,7 @@ luaold_interpreters = [
 ]
 
 lua_pc_name = ''
+have_elua = get_option('elua')
 
 if get_option('lua-interpreter') == 'lua'
   config_h.set('ENABLE_LUA_OLD', '1')
@@ -280,13 +281,27 @@ if get_option('lua-interpreter') == 'lua'
       break
     endif
   endforeach
+  if not lua.found()
+    error('Lua not found')
+  endif
+  if have_elua
+    luaver_min = cc.compute_int('LUA_VERSION_NUM - 500',
+      prefix: '#include <lua.h>', dependencies: lua
+    )
+    lua_ffi = dependency('cffi-lua-5.@0@'.format(luaver_min), required: false)
+    if not lua_ffi.found()
+      error('Elua with interpreter is experimental, disable it or install cffi-lua...')
+    else
+      message('Using experimental Elua with interpreter support...')
+    endif
+  endif
 else
   lua = dependency(get_option('lua-interpreter'))
   lua_pc_name = 'luajit'
 endif
 
 if sys_osx == true and get_option('lua-interpreter') == 'luajit'
-# luajit on macro is broken, this means we need to generate our own dependency with our arguments, a library later still needs to link to luajit for the pagesize argument thingy
+# luajit on macos is broken, this means we need to generate our own dependency with our arguments, a library later still needs to link to luajit for the pagesize argument thingy
   lua = declare_dependency(
     include_directories: include_directories(lua.get_pkgconfig_variable('includedir')),
     link_args: ['-L'+lua.get_pkgconfig_variable('libdir'), '-l'+lua.get_pkgconfig_variable('libname')]

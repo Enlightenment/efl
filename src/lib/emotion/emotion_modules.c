@@ -11,21 +11,9 @@
 #include "../../static_libs/buildsystem/buildsystem.h"
 #include <unistd.h>
 
-#ifdef EMOTION_STATIC_BUILD_XINE
-Eina_Bool xine_module_init(void);
-void      xine_module_shutdown(void);
-#endif
-#if defined(EMOTION_STATIC_BUILD_GSTREAMER) || defined(EMOTION_STATIC_BUILD_GSTREAMER1)
+#if defined(EMOTION_STATIC_BUILD_GSTREAMER1)
 Eina_Bool gstreamer_module_init(void);
 void      gstreamer_module_shutdown(void);
-#endif
-#ifdef EMOTION_STATIC_BUILD_LIBVLC
-Eina_Bool libvlc_module_init(void);
-void      libvlc_module_shutdown(void);
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-Eina_Bool generic_module_init(void);
-void      generic_module_shutdown(void);
 #endif
 
 typedef struct _Emotion_Engine_Registry_Entry
@@ -81,15 +69,7 @@ _emotion_modules_load(void)
              if (stat(buf, &st) == 0)
                {
                   const char *built_modules[] = {
-#ifdef EMOTION_BUILD_GSTREAMER1
                      "gstreamer1",
-#endif
-#ifdef EMOTION_BUILD_XINE
-                     "xine",
-#endif
-#ifdef EMOTION_BUILD_LIBVLC
-                     "libvlc",
-#endif
                      NULL
                   };
                   const char **itr;
@@ -128,17 +108,8 @@ _emotion_modules_load(void)
 Eina_Bool
 emotion_modules_init(void)
 {
-#ifdef EMOTION_STATIC_BUILD_XINE
-   xine_module_init();
-#endif
-#if defined(EMOTION_STATIC_BUILD_GSTREAMER) || defined(EMOTION_STATIC_BUILD_GSTREAMER1)
+#if defined(EMOTION_STATIC_BUILD_GSTREAMER1)
    gstreamer_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_LIBVLC
-   libvlc_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-   generic_module_init();
 #endif
 
    return EINA_TRUE;
@@ -149,17 +120,8 @@ emotion_modules_shutdown(void)
 {
    Emotion_Engine_Registry_Entry *re;
 
-#ifdef EMOTION_STATIC_BUILD_XINE
-   xine_module_shutdown();
-#endif
-#if defined(EMOTION_STATIC_BUILD_GSTREAMER) || defined(EMOTION_STATIC_BUILD_GSTREAMER1)
+#if defined(EMOTION_STATIC_BUILD_GSTREAMER1)
    gstreamer_module_shutdown();
-#endif
-#ifdef EMOTION_STATIC_BUILD_LIBVLC
-   libvlc_module_shutdown();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-   generic_module_shutdown();
 #endif
 
    if (_emotion_modules)
@@ -403,11 +365,7 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
 
    if (!_emotion_engine_registry)
      {
-        m = _find_mod("generic");
-        if (!m) m = _find_mod("xine");
-        if (!m) m = _find_mod("gstreamer");
-        if (!m) m = _find_mod("gstreamer1");
-        if (!m) m = _find_mod("libvlc");
+        m = _find_mod("gstreamer1");
         if (!eina_module_load(m))
           ERR("Cannot load module %s", eina_module_file_get(m));
      }

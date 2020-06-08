@@ -480,6 +480,26 @@ EFL_START_TEST(elm_entry_text_set)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_guide_text_set)
+{
+   Evas_Object *win, *entry;
+   const char *markup_text = "<font_size=32 color=#FFF>markup_test</font_size>";
+   const char *markup_text2 = "<font_size=24 color=#FFF>test_markup</font_size>";
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+
+   entry = elm_entry_add(win);
+
+   elm_object_part_text_set(entry, "elm.guide", markup_text);
+   elm_entry_editable_set(entry, EINA_FALSE);
+   ck_assert_str_eq(elm_object_part_text_get(entry, "elm.guide"), markup_text);
+
+   elm_object_part_text_set(entry, "elm.guide", markup_text2);
+   elm_entry_single_line_set(entry, EINA_FALSE);
+   ck_assert_str_eq(elm_object_part_text_get(entry, "elm.guide"), markup_text2);
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_entry_file_get_set)
 {
    Evas_Object *win, *entry;
@@ -627,6 +647,7 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_atspi_text_selections);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_entry_text_set);
+   tcase_add_test(tc, elm_entry_guide_text_set);
    tcase_add_test(tc, elm_entry_magnifier);
    tcase_add_test(tc, elm_entry_file_get_set);
    tcase_add_test(tc, elm_entry_test_text_class);

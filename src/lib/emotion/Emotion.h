@@ -26,8 +26,7 @@
  *
  * A media object library for Evas and Ecore.
  *
- * Emotion is a library that allows playing audio and video files, using one of
- * its backends (gstreamer, xine or generic shm player).
+ * Emotion is a library that allows playing audio and video files.
  *
  * It is integrated into Ecore through its mainloop, and is transparent to the
  * user of the library how the decoding of audio and video is being done. Once
@@ -134,12 +133,6 @@ extern "C" {
  * @brief The file that provides Emotion the API, with functions available for
  *        play, seek, change volume, etc.
  */
-
-enum _Emotion_Module
-{
-  EMOTION_MODULE_XINE,
-  EMOTION_MODULE_GSTREAMER
-};
 
 enum _Emotion_Event
 {
@@ -265,7 +258,6 @@ enum _Emotion_Aspect
   EMOTION_ASPECT_CUSTOM, /**< use custom borders/crop for the video */
 };
 
-typedef enum _Emotion_Module    Emotion_Module;
 typedef enum _Emotion_Event     Emotion_Event;
 typedef enum _Emotion_Meta_Info Emotion_Meta_Info; /**< Meta info type to be retrieved. */
 typedef enum _Emotion_Vis       Emotion_Vis; /**< Type of visualization. */

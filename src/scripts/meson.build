@@ -1,2 +1,5 @@
 subdir('eo')
-subdir('elua')
+
+if have_elua
+  subdir('elua')
+endif
