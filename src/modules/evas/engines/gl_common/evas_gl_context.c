@@ -1843,7 +1843,7 @@ pipe_region_expand(Evas_Engine_GL_Context *gc, int n,
 }
 
 static Eina_Bool
-vertex_array_size_check(Evas_Engine_GL_Context *gc EINA_UNUSED, int pn EINA_UNUSED, int n EINA_UNUSED)
+vertex_array_size_check(Evas_Engine_GL_Context *gc, int pn, int n)
 {
    return 1;
 // this fixup breaks for expedite test 32. why?
