@@ -43,17 +43,9 @@
 
 static int _log_domain = -1;
 
-typedef enum
-{
-   FTYPE_DIR,
-   FTYPE_EXU,
-} File_Type;
-
-static File_Type _dest_type = FTYPE_EXU;
 static Eina_Stringshare *_dest = NULL;
 static Exactness_Unit *_dest_unit = NULL;
 
-static File_Type _src_type = FTYPE_EXU;
 static Eina_Stringshare *_src_filename = NULL;
 static Exactness_Unit *_src_unit = NULL;
 
@@ -133,26 +125,10 @@ _evas_render_post_cb(void *data EINA_UNUSED, const Efl_Event *event)
 
         if (e_data)
           {
-             if (_dest_type == FTYPE_DIR)
-               {
-                  char *filename = e_data;
-                  Eo *o = evas_object_image_add(event->object);
-                  evas_object_image_size_set(o, ex_shot->w, ex_shot->h);
-                  evas_object_image_data_set(o, ex_shot->pixels);
-                  INF("Shot taken (%s).\n", filename);
-                  if (!evas_object_image_save(o, filename, NULL, NULL))
-                    {
-                       printf("Cannot save widget to <%s>\n", filename);
-                    }
-                  free(filename);
-               }
-             else if (_dest_type == FTYPE_EXU)
-               {
-                  Exactness_Image *ex_img = e_data;
-                  memcpy(ex_img, ex_shot, sizeof(Exactness_Image));
-                  ex_shot->pixels = NULL;
-                  INF("Shot taken (in %s).\n", _dest);
-               }
+             Exactness_Image *ex_img = e_data;
+             memcpy(ex_img, ex_shot, sizeof(Exactness_Image));
+             ex_shot->pixels = NULL;
+             INF("Shot taken (in %s).\n", _dest);
           }
         exactness_image_free(ex_shot);
         efl_key_data_set(event->object, "_shot", NULL);
@@ -173,26 +149,10 @@ _shot_do(Evas *e)
 
    if (!_disable_shots)
      {
-        if (_dest_type == FTYPE_DIR)
-          {
-             int dir_name_len;
-             char *filename;
-
-             dir_name_len = strlen(_dest) + 1; /* includes space of a '/' */
-             filename = malloc(strlen(_test_name) + strlen(IMAGE_FILENAME_EXT) +
-                   dir_name_len + 8); /* also space for serial */
-
-             sprintf(filename, "%s/%s%c%03d%s", _dest, _test_name,
-                   SHOT_DELIMITER, _cur_shot_id, IMAGE_FILENAME_EXT);
-             e_data = filename;
-          }
-        else if (_dest_type == FTYPE_EXU)
-          {
-             Exactness_Image *ex_img = malloc(sizeof(*ex_img));
-             _dest_unit->imgs = eina_list_append(_dest_unit->imgs, ex_img);
-             _dest_unit->nb_shots++;
-             e_data = ex_img;
-          }
+        Exactness_Image *ex_img = malloc(sizeof(*ex_img));
+        _dest_unit->imgs = eina_list_append(_dest_unit->imgs, ex_img);
+        _dest_unit->nb_shots++;
+        e_data = ex_img;
      }
    efl_key_data_set(e, "_shot", e_data);
    _shot_needed = EINA_TRUE;
@@ -201,7 +161,7 @@ _shot_do(Evas *e)
    ev.object = e;
    _evas_render_post_cb(NULL, &ev);
 
-   if (_scan_objects && _dest_type == FTYPE_EXU)
+   if (_scan_objects)
      {
         Eina_Iterator *iter;
         Eo *obj;
@@ -571,11 +531,9 @@ _src_open()
         Eina_List *itr, *itr2;
         Exactness_Action *act;
         DBG("<%s> Source file is <%s>\n", __func__, _src_filename);
-        if (_src_type == FTYPE_EXU)
-          {
-             _src_unit = exactness_unit_file_read(_src_filename);
-             _ready_to_write = EINA_TRUE;
-          }
+        _src_unit = exactness_unit_file_read(_src_filename);
+        _ready_to_write = EINA_TRUE;
+
         if (!_src_unit) return EINA_FALSE;
         if (_stabilize_shots)
           {
@@ -599,24 +557,6 @@ _src_open()
           }
      }
    return EINA_TRUE;
-}
-
-static void
-_old_shots_rm_cb(const char *name, const char *path, void *data)
-{
-   const char *prefix = data;
-   unsigned int len = strlen(prefix);
-   if (!strncmp(name, prefix, len) && (strlen(name) > len) && (name[len] == SHOT_DELIMITER))
-     {
-        unsigned int length = strlen(path) + strlen(name) + 2;
-        char *buf = alloca(length);
-        snprintf(buf, length, "%s/%s", path, name);
-        if (unlink(buf))
-          {
-             printf("Failed deleting '%s/%s': ", path, name);
-             perror("");
-          }
-     }
 }
 
 static void
@@ -675,7 +615,6 @@ _setup_dest_type(const char *dest)
         _dest = eina_stringshare_add(dest);
         if (!strcmp(_dest + strlen(_dest) - 4,".exu"))
           {
-             _dest_type = FTYPE_EXU;
              char *path = ecore_file_dir_get(dest);
 
              if (!ecore_file_mkpath(path))
@@ -685,15 +624,6 @@ _setup_dest_type(const char *dest)
                   return EINA_FALSE;
                }
              free(path);
-          }
-        else
-          {
-             _dest_type = FTYPE_DIR;
-             if (!ecore_file_mkpath(_dest))
-               {
-                  fprintf(stderr, "Directory %s cannot be created\n", _dest);
-                  return EINA_FALSE;
-               }
           }
      }
    return EINA_TRUE;
@@ -707,7 +637,6 @@ _setup_names(const char *src)
         _src_filename = eina_stringshare_add(src);
         if (!strcmp(_src_filename + strlen(_src_filename) - 4,".exu"))
           {
-             _src_type = FTYPE_EXU;
              _dest = "./output.exu";
           }
         char *slash = strrchr(_src_filename, '/');
@@ -721,15 +650,8 @@ _setup_names(const char *src)
 static void
 _setup_dest_unit(void)
 {
-   if (_dest_type == FTYPE_EXU) _dest_unit = calloc(1, sizeof(*_dest_unit));
+   _dest_unit = calloc(1, sizeof(*_dest_unit));
 
-}
-
-static void
-_remove_old_shots(void)
-{
-   if (_dest_type == FTYPE_DIR && _test_name)
-      eina_file_dir_list(_dest, 0, _old_shots_rm_cb, (void *)_test_name);
 }
 
 static Eina_Bool
@@ -797,11 +719,8 @@ _write_unit_file(void)
         Exactness_Unit *tmp = NULL;
 
         EINA_SAFETY_ON_NULL_RETURN(_src_unit);
-        if (_src_type == FTYPE_EXU)
-          {
-             tmp = exactness_unit_file_read(_src_filename);
-             _dest_unit->actions = tmp->actions;
-          }
+        tmp = exactness_unit_file_read(_src_filename);
+        _dest_unit->actions = tmp->actions;
         exactness_unit_file_write(_dest_unit, _dest);
      }
 }
@@ -847,7 +766,6 @@ eina_init(void)
           return 0;
         _setup_names(src);
         _setup_dest_unit();
-        _remove_old_shots();
 
         if (!_src_open())
           {
