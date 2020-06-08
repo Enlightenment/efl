@@ -407,7 +407,15 @@ inline bool is_unique_event(attributes::event_def const& evt
 inline std::vector<attributes::constructor_def> reorder_constructors(std::vector<attributes::constructor_def> constructors)
 {
   auto is_required = [](attributes::constructor_def const& ctr) { return !ctr.is_optional; };
+  auto is_object_parent = [](attributes::constructor_def const& ctr)
+                          {
+                            return (ctr.klass.namespaces.size() == 1
+                                    && ctr.klass.namespaces[0] == "Efl"
+                                    && ctr.klass.eolian_name == "Object"
+                                    && ctr.name == "Efl.Object.parent");
+                          };
   std::stable_partition(constructors.begin(), constructors.end(), is_required);
+  constructors.erase (std::remove_if (constructors.begin(), constructors.end(), is_object_parent), constructors.end());
   return constructors;
 }
 
