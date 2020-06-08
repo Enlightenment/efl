@@ -2160,6 +2160,7 @@ test_gengrid_update(void *data EINA_UNUSED,
 
    win = elm_win_util_standard_add("gengrid-update", "Gengrid Update");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    api->box = bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
