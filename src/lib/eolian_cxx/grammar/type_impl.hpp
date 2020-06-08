@@ -174,10 +174,10 @@ struct visitor_generate
                 if (r.base_qualifier.qualifier & qualifier_info::is_const)
                 {
                   r.base_qualifier.qualifier ^= qualifier_info::is_const;
-                  return replace_base_type(r, " Eina_Binbuf*");
+                  return replace_base_type(r, " ::efl::eina::strbuf");
                 }
                 else
-                  return replace_base_type(r, " Eina_Binbuf const*");
+                  return replace_base_type(r, " ::efl::eina::strbuf_view");
               }}
            /* FIXME: handle any_value_ref */
            , {"any_value", true, nullptr, nullptr, [&]
