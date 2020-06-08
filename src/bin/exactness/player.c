@@ -45,18 +45,15 @@ static int _log_domain = -1;
 
 typedef enum
 {
-   FTYPE_UNKNOWN,
    FTYPE_DIR,
-   FTYPE_REC = FTYPE_DIR,
    FTYPE_EXU,
-   FTYPE_REMOTE
 } File_Type;
 
-static File_Type _dest_type = FTYPE_UNKNOWN;
+static File_Type _dest_type = FTYPE_EXU;
 static Eina_Stringshare *_dest = NULL;
 static Exactness_Unit *_dest_unit = NULL;
 
-static File_Type _src_type = FTYPE_UNKNOWN;
+static File_Type _src_type = FTYPE_EXU;
 static Eina_Stringshare *_src_filename = NULL;
 static Exactness_Unit *_src_unit = NULL;
 
@@ -70,10 +67,6 @@ static Eina_List *_cur_event_list = NULL;
 static int _cur_shot_id = 0;
 static Eina_Bool _shot_needed = EINA_FALSE;
 static Eina_Bool _scan_objects = EINA_FALSE, _disable_shots = EINA_FALSE, _stabilize_shots = EINA_FALSE;
-
-static Eina_Debug_Session *_last_debug_session = NULL;
-static int _last_debug_src_cid = 0;
-static int _take_shot_op = EINA_DEBUG_OPCODE_INVALID;
 
 static Eina_Bool _stabilization_timer_cb(void *);
 static double _speed = 1.0;
@@ -160,16 +153,6 @@ _evas_render_post_cb(void *data EINA_UNUSED, const Efl_Event *event)
                   ex_shot->pixels = NULL;
                   INF("Shot taken (in %s).\n", _dest);
                }
-             else if (_dest_type == FTYPE_REMOTE)
-               {
-                  int len = sizeof(int) + sizeof(int) + ex_shot->w * ex_shot->h * 4;
-                  char *buf = alloca(len);
-                  char *tmp = buf;
-                  STORE_INT(tmp, ex_shot->w);
-                  STORE_INT(tmp, ex_shot->h);
-                  memcpy(tmp, ex_shot->pixels, ex_shot->w * ex_shot->h * 4);
-                  eina_debug_session_send(_last_debug_session, _last_debug_src_cid, _take_shot_op, buf, len);
-               }
           }
         exactness_image_free(ex_shot);
         efl_key_data_set(event->object, "_shot", NULL);
@@ -209,10 +192,6 @@ _shot_do(Evas *e)
              _dest_unit->imgs = eina_list_append(_dest_unit->imgs, ex_img);
              _dest_unit->nb_shots++;
              e_data = ex_img;
-          }
-        else if (_dest_type == FTYPE_REMOTE)
-          {
-             e_data = e;
           }
      }
    efl_key_data_set(e, "_shot", e_data);
@@ -396,7 +375,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
               DBG("%s take shot n_evas=<%d>\n", __func__, n_evas);
               if (rect) evas_object_color_set(rect, 0, 0, 255, 255);
               _cur_shot_id++;
-              if (_dest_type != FTYPE_UNKNOWN && e) _shot_do(e);
+              if (e) _shot_do(e);
               break;
            }
       case EXACTNESS_ACTION_EFL_EVENT:
@@ -549,7 +528,7 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
    if (!need_more)
      {
         _playing_status = EINA_FALSE;
-        if (_src_type != FTYPE_REMOTE && !_pause_request)
+        if (!_pause_request)
           {
              Exactness_Action *act = eina_list_data_get(_cur_event_list);
              if (act)
@@ -564,194 +543,6 @@ _stabilization_timer_cb(void *data EINA_UNUSED)
    need_more--;
    return ECORE_CALLBACK_RENEW;
 }
-
-static void
-_main_loop_mouse_in_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   int n_evas = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_MOUSE_IN, n_evas, NULL);
-}
-
-static void
-_main_loop_mouse_out_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   int n_evas = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_MOUSE_OUT, n_evas, NULL);
-}
-
-static void
-_main_loop_mouse_wheel_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Mouse_Wheel t;
-   int n_evas = EXTRACT_INT(buf);
-   t.direction = EXTRACT_INT(buf);
-   t.z = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_MOUSE_WHEEL, n_evas, &t);
-}
-
-static void
-_main_loop_multi_down_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Multi_Event t;
-   int n_evas = EXTRACT_INT(buf);
-   t.d = EXTRACT_INT(buf);
-   t.b = EXTRACT_INT(buf);
-   t.x = EXTRACT_INT(buf);
-   t.y = EXTRACT_INT(buf);
-   t.rad = EXTRACT_DOUBLE(buf);
-   t.radx = EXTRACT_DOUBLE(buf);
-   t.rady = EXTRACT_DOUBLE(buf);
-   t.pres = EXTRACT_DOUBLE(buf);
-   t.ang = EXTRACT_DOUBLE(buf);
-   t.fx = EXTRACT_DOUBLE(buf);
-   t.fy = EXTRACT_DOUBLE(buf);
-   t.flags = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_MULTI_DOWN, n_evas, &t);
-}
-
-static void
-_main_loop_multi_up_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Multi_Event t;
-   int n_evas = EXTRACT_INT(buf);
-   t.d = EXTRACT_INT(buf);
-   t.b = EXTRACT_INT(buf);
-   t.x = EXTRACT_INT(buf);
-   t.y = EXTRACT_INT(buf);
-   t.rad = EXTRACT_DOUBLE(buf);
-   t.radx = EXTRACT_DOUBLE(buf);
-   t.rady = EXTRACT_DOUBLE(buf);
-   t.pres = EXTRACT_DOUBLE(buf);
-   t.ang = EXTRACT_DOUBLE(buf);
-   t.fx = EXTRACT_DOUBLE(buf);
-   t.fy = EXTRACT_DOUBLE(buf);
-   t.flags = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_MULTI_UP, n_evas, &t);
-}
-
-static void
-_main_loop_multi_move_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Multi_Move t;
-   int n_evas = EXTRACT_INT(buf);
-   t.d = EXTRACT_INT(buf);
-   t.x = EXTRACT_INT(buf);
-   t.y = EXTRACT_INT(buf);
-   t.rad = EXTRACT_DOUBLE(buf);
-   t.radx = EXTRACT_DOUBLE(buf);
-   t.rady = EXTRACT_DOUBLE(buf);
-   t.pres = EXTRACT_DOUBLE(buf);
-   t.ang = EXTRACT_DOUBLE(buf);
-   t.fx = EXTRACT_DOUBLE(buf);
-   t.fy = EXTRACT_DOUBLE(buf);
-   _feed_event(EXACTNESS_ACTION_MULTI_MOVE, n_evas, &t);
-}
-
-static void
-_main_loop_key_down_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Key_Down_Up t;
-   int n_evas = EXTRACT_INT(buf);
-   t.keyname = EXTRACT_STRING(buf);
-   t.key = EXTRACT_STRING(buf);
-   t.string = EXTRACT_STRING(buf);
-   t.compose = EXTRACT_STRING(buf);
-   t.keycode = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_KEY_DOWN, n_evas, &t);
-}
-
-static void
-_main_loop_key_up_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Key_Down_Up t;
-   int n_evas = EXTRACT_INT(buf);
-   t.keyname = EXTRACT_STRING(buf);
-   t.key = EXTRACT_STRING(buf);
-   t.string = EXTRACT_STRING(buf);
-   t.compose = EXTRACT_STRING(buf);
-   t.keycode = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_KEY_UP, n_evas, &t);
-}
-
-static void
-_main_loop_take_shot_cb(Eina_Debug_Session *session, int srcid, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   int n_evas = EXTRACT_INT(buf);
-   _feed_event(EXACTNESS_ACTION_TAKE_SHOT, n_evas, NULL);
-   _last_debug_session = session;
-   _last_debug_src_cid = srcid;
-}
-
-static void
-_main_loop_efl_event_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Efl_Event t;
-   t.wdg_name = EXTRACT_STRING(buf);
-   t.event_name = EXTRACT_STRING(buf);
-   _feed_event(EXACTNESS_ACTION_EFL_EVENT, 0, &t);
-}
-
-static void
-_main_loop_click_on_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
-{
-   char *buf = buffer;
-   Exactness_Action_Click_On t;
-   t.wdg_name = EXTRACT_STRING(buf);
-   _feed_event(EXACTNESS_ACTION_CLICK_ON, 0, &t);
-}
-
-static void
-_main_loop_stabilize_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
-{
-   _feed_event(EXACTNESS_ACTION_STABILIZE, 0, NULL);
-}
-
-static void
-_main_loop_finish_cb(Eina_Debug_Session *session EINA_UNUSED, int srcid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-}
-
-WRAPPER_TO_XFER_MAIN_LOOP(_mouse_in_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_mouse_out_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_mouse_wheel_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_multi_down_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_multi_up_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_multi_move_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_key_down_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_key_up_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_take_shot_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_efl_event_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_click_on_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_stabilize_cb)
-WRAPPER_TO_XFER_MAIN_LOOP(_finish_cb)
-
-EINA_DEBUG_OPCODES_ARRAY_DEFINE(_debug_ops,
-     {"Exactness/Actions/Mouse In", NULL, &_mouse_in_cb},
-     {"Exactness/Actions/Mouse Out", NULL, &_mouse_out_cb},
-     {"Exactness/Actions/Mouse Wheel", NULL, &_mouse_wheel_cb},
-     {"Exactness/Actions/Multi Down", NULL, &_multi_down_cb},
-     {"Exactness/Actions/Multi Up", NULL, &_multi_up_cb},
-     {"Exactness/Actions/Multi Move", NULL, &_multi_move_cb},
-     {"Exactness/Actions/Key Down", NULL, &_key_down_cb},
-     {"Exactness/Actions/Key Up", NULL, &_key_up_cb},
-     {"Exactness/Actions/Take Shot", &_take_shot_op, &_take_shot_cb},
-     {"Exactness/Actions/EFL Event", NULL, &_efl_event_cb},
-     {"Exactness/Actions/Click On", NULL, &_click_on_cb},
-     {"Exactness/Actions/Stabilize", NULL, &_stabilize_cb},
-     {"Exactness/Actions/Finish", NULL, &_finish_cb},
-     {NULL, NULL, NULL}
-);
 
 static Eina_Bool
 _src_feed(void *data EINA_UNUSED)
@@ -775,7 +566,7 @@ _src_feed(void *data EINA_UNUSED)
 static Eina_Bool
 _src_open()
 {
-   if (_src_type != FTYPE_REMOTE)
+   if (1)
      {
         Eina_List *itr, *itr2;
         Exactness_Action *act;
@@ -806,10 +597,6 @@ _src_open()
              EINA_LIST_FOREACH(_src_unit->actions, itr, act)
                 act->delay_ms /= _speed;
           }
-     }
-   else
-     {
-        eina_debug_opcodes_register(NULL, _debug_ops(), NULL, NULL);
      }
    return EINA_TRUE;
 }
@@ -881,7 +668,7 @@ _my_evas_new(int w EINA_UNUSED, int h EINA_UNUSED)
 }
 
 static Eina_Bool
-_setup_dest_type(const char *dest, Eina_Bool external_injection)
+_setup_dest_type(const char *dest)
 {
    if (dest)
      {
@@ -909,11 +696,6 @@ _setup_dest_type(const char *dest, Eina_Bool external_injection)
                }
           }
      }
-   if (external_injection)
-     {
-        _src_type = FTYPE_REMOTE;
-        if (_dest_type == FTYPE_UNKNOWN) _dest_type = FTYPE_REMOTE;
-     }
    return EINA_TRUE;
 }
 
@@ -926,11 +708,7 @@ _setup_names(const char *src)
         if (!strcmp(_src_filename + strlen(_src_filename) - 4,".exu"))
           {
              _src_type = FTYPE_EXU;
-             if (_dest_type == FTYPE_UNKNOWN)
-               {
-                  _dest_type = FTYPE_EXU;
-                  _dest = "./output.exu";
-               }
+             _dest = "./output.exu";
           }
         char *slash = strrchr(_src_filename, '/');
         if (slash) _test_name = strdup(slash + 1);
@@ -1008,8 +786,7 @@ static void
 _setup_ee_creation(void)
 {
    ecore_evas_callback_new_set(_my_evas_new);
-   if (_src_type != FTYPE_REMOTE)
-      ecore_idler_add(_src_feed, NULL);
+   ecore_idler_add(_src_feed, NULL);
 }
 
 static void
@@ -1054,7 +831,6 @@ eina_init(void)
    if (original_return == 1)
      {
         const char *dest = getenv("EXACTNESS_DEST");
-        const char *external_injection = getenv("EXACTNESS_EXTERNAL_INJECTION");
         const char *src = getenv("EXACTNESS_SRC");
         const char *fonts_dir = getenv("EXACTNESS_FONTS_DIR");
         const char *speed = getenv("EXACTNESS_SPEED");
@@ -1067,7 +843,7 @@ eina_init(void)
           _speed = atof(speed);
 
         _log_domain = eina_log_domain_register("exactness_player", NULL);
-        if (!_setup_dest_type(dest, !!external_injection))
+        if (!_setup_dest_type(dest))
           return 0;
         _setup_names(src);
         _setup_dest_unit();
