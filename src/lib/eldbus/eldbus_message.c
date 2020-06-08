@@ -619,32 +619,36 @@ eldbus_message_iter_next(Eldbus_Message_Iter *iter)
 static void
 get_basic(char type, DBusMessageIter *iter, va_list *vl)
 {
+   DBusBasicValue val;
+
    switch (type)
      {
       case DBUS_TYPE_BYTE:
         {
            uint8_t *byte = va_arg(*vl, uint8_t *);
-           dbus_message_iter_get_basic(iter, byte);
+           dbus_message_iter_get_basic(iter, &val);
+           *byte = val.bool_val;
            break;
         }
       case DBUS_TYPE_BOOLEAN:
         {
            Eina_Bool *boolean = va_arg(*vl, Eina_Bool *);
-           dbus_bool_t val;
            dbus_message_iter_get_basic(iter, &val);
-           *boolean = val;
+           *boolean = val.bool_val;
            break;
         }
       case DBUS_TYPE_INT16:
         {
            int16_t *int16 = va_arg(*vl, int16_t *);
-           dbus_message_iter_get_basic(iter, int16);
+           dbus_message_iter_get_basic(iter, &val);
+           *int16 = val.i16;
            break;
         }
       case DBUS_TYPE_UINT16:
         {
            uint16_t *uint16 = va_arg(*vl, uint16_t *);
-           dbus_message_iter_get_basic(iter, uint16);
+           dbus_message_iter_get_basic(iter, &val);
+           *uint16 = val.u16;
            break;
         }
       case DBUS_TYPE_INT32:
@@ -653,31 +657,36 @@ get_basic(char type, DBusMessageIter *iter, va_list *vl)
 #endif
         {
            int32_t *int32 = va_arg(*vl, int32_t *);
-           dbus_message_iter_get_basic(iter, int32);
+           dbus_message_iter_get_basic(iter, &val);
+           *int32 = val.i32;
            break;
         }
       case DBUS_TYPE_UINT32:
         {
            uint32_t *uint32 = va_arg(*vl, uint32_t *);
-           dbus_message_iter_get_basic(iter, uint32);
+           dbus_message_iter_get_basic(iter, &val);
+           *uint32 = val.u32;
            break;
         }
       case DBUS_TYPE_INT64:
         {
            int64_t *int64 = va_arg(*vl, int64_t *);
-           dbus_message_iter_get_basic(iter, int64);
+           dbus_message_iter_get_basic(iter, &val);
+           *int64 = val.i64;
            break;
         }
       case DBUS_TYPE_UINT64:
         {
            uint64_t *uint64 = va_arg(*vl, uint64_t *);
-           dbus_message_iter_get_basic(iter, uint64);
+           dbus_message_iter_get_basic(iter, &val);
+           *uint64 = val.u64;
            break;
         }
       case DBUS_TYPE_DOUBLE:
         {
            double *double_ieee = va_arg(*vl, double *);
-           dbus_message_iter_get_basic(iter, double_ieee);
+           dbus_message_iter_get_basic(iter, &val);
+           *double_ieee = val.dbl;
            break;
         }
       case DBUS_TYPE_STRING:
@@ -685,7 +694,8 @@ get_basic(char type, DBusMessageIter *iter, va_list *vl)
       case DBUS_TYPE_SIGNATURE:
         {
            char **string = va_arg(*vl, char**);
-           dbus_message_iter_get_basic(iter, string);
+           dbus_message_iter_get_basic(iter, &val);
+           *string = val.str;
            break;
         }
       default:
