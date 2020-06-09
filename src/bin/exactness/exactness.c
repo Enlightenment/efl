@@ -32,6 +32,7 @@ typedef struct
    EINA_INLIST;
    char *name;
    const char *command;
+   double start_time;
 } List_Entry;
 
 typedef enum
@@ -205,14 +206,17 @@ found:
         n++;
      } while (EINA_TRUE);
    if (!nb_fails)
-      printf("STATUS %s: END - SUCCESS\n", ent->name);
+     {
+        double runtime = ecore_time_get() - ent->start_time;
+        printf("STATUS %s: END - SUCCESS (time: %.2fs)\n", ent->name, runtime);
+     }
    else
       printf("STATUS %s: END - FAIL (%d/%d)\n", ent->name, nb_fails, n - 1);
 }
 
 #define CONFIG "ELM_SCALE=1 ELM_FINGER_SIZE=10 "
 static Eina_Bool
-_run_command_prepare(const List_Entry *ent, char *buf)
+_run_command_prepare(List_Entry *ent, char *buf)
 {
    char scn_path[PATH_MAX];
    Eina_Strbuf *sbuf;
@@ -228,6 +232,7 @@ _run_command_prepare(const List_Entry *ent, char *buf)
 ok:
    sbuf = eina_strbuf_new();
    printf("STATUS %s: START\n", ent->name);
+   ent->start_time = ecore_time_get();
    eina_strbuf_append_printf(sbuf,
          "%s exactness_play %s %s%s %s%.*s %s%s%s-t '%s' ",
          _wrap_command ? _wrap_command : "",
