@@ -27,12 +27,19 @@ static Eina_Error
 _a_set_reflect(Eo *obj, Eina_Value value)
 {
    int a;
+   Eina_Error r = 0;
 
-   eina_value_int_convert(&value, &a);
+   if (!eina_value_int_convert(&value, &a))
+      {
+        r = EINA_ERROR_VALUE_FAILED;
+        goto end;
+      }
    simple_a_set(obj, a);
+
+end:
    eina_value_flush(&value);
 
-   return 0;
+   return r;
 }
 
 static int
