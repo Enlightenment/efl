@@ -61,7 +61,7 @@ public static class TestMVVMParts
 {
     public static void mvvm_dynamic_parts()
     {
-        var parent = new Efl.Ui.Win(null);
+        var parent = new Efl.Ui.Win(null, "", "");
         parent.Visible = false;
         var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>(parent);
 
@@ -75,7 +75,7 @@ public static class TestMVVMParts
 
     public static void mvvm_factory_properties()
     {
-        var parent = new Efl.Ui.Win(null);
+        var parent = new Efl.Ui.Win(null, "", "");
         parent.Visible = false;
         var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>(parent);
         var iconFactory = new Efl.Ui.ImageFactory(null);
