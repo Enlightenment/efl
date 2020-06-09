@@ -597,6 +597,11 @@ _glyph_free(RGBA_Font_Glyph *fg)
 
         if ((fg->glyph_out->rle) && (fg->glyph_out->bitmap.rle_alloc))
           free(fg->glyph_out->rle);
+        else if ((fg->glyph_out->bitmap.buffer) && (fg->glyph_out->bitmap.rle_alloc))
+          {
+             free(fg->glyph_out->bitmap.buffer);
+             fg->glyph_out->bitmap.buffer = NULL;
+          }
         fg->glyph_out->rle = NULL;
         if (!fg->glyph_out->bitmap.no_free_glout) free(fg->glyph_out);
         fg->glyph_out = NULL;
