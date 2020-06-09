@@ -21,7 +21,7 @@
 #include "efl_loop_message_future_handler.eo.h"
 
 /**
- * @addtogroup Ecore_MainLoop_Group
+ * @addtogroup Ecore_Main_Loop_Group
  *
  * @{
  */
@@ -93,6 +93,7 @@ EAPI Eo *efl_main_loop_get(void);
  */
 
 /**
+ * @ingroup Ecore
  * @addtogroup Ecore_Fd_Io_Group
  *
  * @{
@@ -115,6 +116,7 @@ EAPI Eo *efl_main_loop_get(void);
  */
 
 /**
+ * @ingroup Ecore
  * @addtogroup Ecore_Model_Group
  *
  * @{
