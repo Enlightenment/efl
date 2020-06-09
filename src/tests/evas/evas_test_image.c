@@ -904,7 +904,8 @@ EFL_START_TEST(evas_object_image_map_unmap)
 
    // save file, verify its pixels
    fd = eina_file_mkstemp("/tmp/evas-test.XXXXXX.png", &tmp);
-   close(fd);
+   fail_if(fd <= 0);
+   fail_if(close(fd));
    if (efl_file_save(o, tmp, NULL, NULL))
      {
         Eina_Rw_Slice sorig, sdest;
