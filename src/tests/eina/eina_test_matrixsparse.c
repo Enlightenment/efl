@@ -145,9 +145,11 @@ EFL_START_TEST(eina_test_simple)
    fail_if(row != 3 || col != 5);
 
    test1 = eina_matrixsparse_data_idx_get(matrix, 4, 3);
+   fail_if(test1 == NULL);
    fail_if(*test1 != data[4][3]);
 
    test1 = eina_matrixsparse_data_idx_get(matrix, 1, 3);
+   fail_if(test1 == NULL);
    fail_if(*test1 != data[1][3]);
 
    /* data changing */
