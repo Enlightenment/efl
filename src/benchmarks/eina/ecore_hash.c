@@ -429,9 +429,12 @@ ecore_hash_dump_stats(Ecore_Hash *hash)
              sum_n += (double)n;
           }
      }
-   variance = (sum_n_2 - ((sum_n * sum_n) / (double)i)) / (double)i;
-           printf("Average length: %f\n\tvariance^2: %f", (sum_n / (double)i),
-          variance);
+   if (i)
+     {
+        variance = (sum_n_2 - ((sum_n * sum_n) / (double)i)) / (double)i;
+        printf("Average length: %f\n\tvariance^2: %f", (sum_n / (double)i),
+               variance);
+     }
 }
 
 static int
