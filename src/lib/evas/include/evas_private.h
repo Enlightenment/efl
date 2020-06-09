@@ -1140,6 +1140,8 @@ struct _Vg_File_Data
 
    Eina_Bool       static_viewbox: 1;
    Eina_Bool       preserve_aspect : 1;    //Used in SVG
+
+   Eina_Bool       shareable: 1;
 };
 
 struct _Evas_Vg_Load_Func
