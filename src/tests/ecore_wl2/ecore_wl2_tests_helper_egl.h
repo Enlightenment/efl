@@ -24,7 +24,7 @@ _init_egl(Test_Data *td)
 
    if (!eglInitialize(td->egl_display, NULL, NULL))
      {
-        ERR("Failed to initialize egl");
+        EINA_LOG_ERR("Failed to initialize egl");
         eglTerminate(td->egl_display);
         return EINA_FALSE;
      }
@@ -32,7 +32,7 @@ _init_egl(Test_Data *td)
    if (!eglChooseConfig(td->egl_display, attributes, &td->egl_conf,
                         1, &num_config))
      {
-        ERR("Failed to choose egl config");
+        EINA_LOG_ERR("Failed to choose egl config");
         eglTerminate(td->egl_display);
         return EINA_FALSE;
      }
