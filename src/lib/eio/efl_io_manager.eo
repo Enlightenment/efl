@@ -80,13 +80,13 @@ class @beta Efl.Io.Manager extends Efl.Loop_Consumer
       [[Retrieves or sets information of a given extended attribute.]]
       set {
          values {
-            data: ptr(Eina.Binbuf); [[Data to set as information]]
+            data: binbuf; [[Data to set as information]]
             flags: Eina.Xattr.Flags; [[Extended attributes flags]]
          }
          return: future<uint64> @move; [[Future for asynchronous set operation]]
       }
       get {
-         return: future<Eina.Binbuf> @move; [[Information]]
+         return: future<binbuf> @move; [[Information]]
       }
       keys {
          path: string; [[File path]]

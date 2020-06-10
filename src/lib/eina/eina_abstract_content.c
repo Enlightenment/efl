@@ -321,7 +321,7 @@ _eina_value_type_content_convert_to(const Eina_Value_Type *type EINA_UNUSED, con
                }
              //create some fallback
              {
-                char buf[PATH_MAX];
+                char buf[128];
                 char *tmp = (char*) &buf;
                 snprintf(buf, sizeof(buf), "Content %p cannot be converted to \"text/plain;charset=utf-8\"", *ra);
                 return eina_value_type_pset(convert, convert_mem, &tmp);

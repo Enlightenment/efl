@@ -483,6 +483,9 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
          }
       }
    }
+   constructors {
+        Efl.Object.parent;
+   }
    implements {
       Efl.Object.constructor;
       Efl.Object.finalize;

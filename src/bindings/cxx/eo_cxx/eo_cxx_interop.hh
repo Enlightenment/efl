@@ -53,6 +53,10 @@ template <>
 struct in_traits<efl::eina::strbuf> { typedef efl::eina::strbuf type; };
 template <>
 struct in_traits<efl::eina::strbuf const> { typedef efl::eina::strbuf const type; };
+template <>
+struct in_traits<efl::eina::strbuf_view> { typedef efl::eina::strbuf_view type; };
+template <>
+struct in_traits<efl::eina::strbuf_view const> { typedef efl::eina::strbuf_view const type; };
 template <typename T>
 struct in_traits<T&> { typedef T& type; };
 template <typename T>
@@ -550,9 +554,21 @@ inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, 
 {
    return eina_stringshare_ref(x.c_str());
 }
+inline Eina_Strbuf const* convert_to_c_impl(efl::eina::strbuf& x, tag<Eina_Strbuf const*, efl::eina::strbuf, false>)
+{
+   return x.native_handle();
+}
 inline Eina_Strbuf* convert_to_c_impl(efl::eina::strbuf& x, tag<Eina_Strbuf*, efl::eina::strbuf, false>)
 {
    return x.native_handle();
+}
+inline Eina_Strbuf const* convert_to_c_impl(efl::eina::strbuf_view const& x, tag<Eina_Strbuf const*, efl::eina::strbuf_view, false>)
+{
+   return x.native_handle();
+}
+inline Eina_Strbuf* convert_to_c_impl(efl::eina::strbuf_view const& x, tag<Eina_Strbuf*, efl::eina::strbuf_view, false>)
+{
+   return const_cast<Eina_Strbuf*>(x.native_handle());
 }
 template <typename T, typename U, typename Deleter>
 T* convert_to_c_impl(std::unique_ptr<U, Deleter>& v, tag<T*, std::unique_ptr<U, Deleter>>)
@@ -731,6 +747,19 @@ T convert_to_return(U* value, tag<T, U*>, typename std::enable_if<is_range<T>::v
 {
   // const should be to the type if value is const
   return T{const_cast<typename std::remove_const<U>::type*>(value)};
+}
+inline eina::strbuf convert_to_return(Eina_Strbuf* value, tag<Eina_Strbuf*, efl::eina::strbuf>)
+{
+  eina::strbuf_wrapper t{value};
+  return t;
+}
+inline eina::strbuf_view convert_to_return(Eina_Strbuf* value, tag<Eina_Strbuf*, efl::eina::strbuf_view>)
+{
+  return {value};
+}
+inline eina::strbuf_view convert_to_return(Eina_Strbuf const* value, tag<Eina_Strbuf const*, efl::eina::strbuf_view>)
+{
+  return {value};
 }
 inline eina::stringshare convert_to_return(const Eina_Stringshare* value, tag<const char*, efl::eina::stringshare>)
 {
