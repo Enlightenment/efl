@@ -22,7 +22,12 @@ _init_egl(Test_Data *td)
    td->egl_display =
      eglGetDisplay((EGLNativeDisplayType)ecore_wl2_display_get(td->display));
 
-   eglInitialize(td->egl_display, NULL, NULL);
+   if (!eglInitialize(td->egl_display, NULL, NULL))
+     {
+        ERR("Failed to initialize egl");
+        eglTerminate(td->egl_display);
+        return EINA_FALSE;
+     }
 
    if (!eglChooseConfig(td->egl_display, attributes, &td->egl_conf,
                         1, &num_config))
