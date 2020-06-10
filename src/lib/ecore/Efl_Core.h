@@ -54,7 +54,7 @@
 extern "C" {
 #endif
 
-extern EAPI double _efl_startup_time;
+EAPI extern double _efl_startup_time;
 
 #include "Ecore_Common.h"
 #include "Ecore_Eo.h"

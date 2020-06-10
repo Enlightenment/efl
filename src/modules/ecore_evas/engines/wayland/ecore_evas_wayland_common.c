@@ -6,8 +6,8 @@
 #include <Evas_Engine_Wayland.h>
 #include "ecore_wl2_internal.h"
 
-extern EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
-extern EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
+EAPI extern Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
+EAPI extern void _evas_canvas_image_data_regenerate(Eina_List *list);
 
 #define _smart_frame_type "ecore_evas_wl_frame"
 

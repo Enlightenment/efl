@@ -301,7 +301,7 @@
 #include "efl_ui.eot.h"
 typedef Eo Efl_Ui_Focus_Manager;
 
-extern EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+EAPI extern Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
 
 #define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
 #include "efl_ui_focus_object.eo.h"
