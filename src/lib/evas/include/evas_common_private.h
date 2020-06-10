@@ -948,12 +948,12 @@ struct _Tilebuf
    struct {
       short w, h;
    } tile_size;
-   int need_merge;
    list_t rects;
    struct {
       int x, y, w, h;
    } prev_add, prev_del;
    Eina_Bool strict_tiles : 1;
+   Eina_Bool need_merge : 1;
 #endif
 };
 
