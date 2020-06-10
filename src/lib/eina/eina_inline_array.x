@@ -44,16 +44,13 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
 static inline Eina_Bool
 eina_array_push(Eina_Array *array, const void *data)
 {
-   if (data)
-     {
-        if (EINA_UNLIKELY((array->count + 1) > array->total)) goto do_grow;
+   if (EINA_UNLIKELY(data == NULL)) return EINA_FALSE;
+   if (EINA_UNLIKELY((array->count + 1) > array->total)) goto do_grow;
 do_grow_back:
 
-        array->data[array->count++] = (void*) data;
+   array->data[array->count++] = (void*) data;
 
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   return EINA_TRUE;
 do_grow:
    if (!eina_array_grow(array)) return EINA_FALSE;
    goto do_grow_back;
