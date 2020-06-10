@@ -716,9 +716,14 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
 
    /* restore crtc state */
    if (output->crtc)
-     drmModeSetCrtc(output->dev->drm.fd, output->crtc->crtc_id,
-                    output->crtc->buffer_id, output->crtc->x, output->crtc->y, 
-                    &output->conn_id, 1, &output->crtc->mode);
+     {
+        if (drmModeSetCrtc(output->dev->drm.fd, output->crtc->crtc_id,
+                           output->crtc->buffer_id, output->crtc->x, output->crtc->y,
+                           &output->conn_id, 1, &output->crtc->mode))
+          {
+             ERR("Failed to restore Crtc state for output %s: %m", output->name);
+          }
+     }
 
    /* free modes */
    EINA_LIST_FREE(output->modes, mode)
