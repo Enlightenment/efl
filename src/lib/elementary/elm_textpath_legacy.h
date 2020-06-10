@@ -12,4 +12,16 @@ typedef Eo Elm_Textpath;
  */
 EAPI Evas_Object                 *elm_textpath_add(Evas_Object *parent);
 
+/**
+ * @brief Set the user text style
+ *
+ * @param[in] obj The textpath object
+ * @param[in] style The user text style. If the sytle is $null, the default style will be applied
+ *
+ * @ingroup Elm_Textpath
+ *
+ * @since 1.25
+ */
+EAPI void                        elm_textpath_text_user_style_set(Evas_Object *obj, const char *style);
+
 #include "efl_ui_textpath_eo.legacy.h"
