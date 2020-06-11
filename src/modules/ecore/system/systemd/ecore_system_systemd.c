@@ -163,7 +163,7 @@ static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
 
         setenv(type, value, 1);
      }
-   setlocale(__LC_ALL, "");
+   setlocale(LC_ALL, "");
 
  end:
    ecore_event_add(ECORE_EVENT_LOCALE_CHANGED, NULL, NULL, NULL);

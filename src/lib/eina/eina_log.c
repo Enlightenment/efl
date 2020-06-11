@@ -38,7 +38,10 @@
 #endif
 
 #include "eina_debug_private.h"
+
+#ifdef HAVE_BACKTRACE
 //#define EINA_LOG_BACKTRACE
+#endif
 
 #include "eina_config.h"
 #include "eina_private.h"

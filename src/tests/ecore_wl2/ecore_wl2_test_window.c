@@ -324,6 +324,7 @@ _test_activated_window_activate(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 EFL_START_TEST(wl2_window_activated)
 {
    Test_Data *td;
+   Eina_Bool ret = EINA_FALSE;
 
    ecore_wl2_init();
 
@@ -345,7 +346,9 @@ EFL_START_TEST(wl2_window_activated)
 
    ecore_wl2_window_show(td->win);
 
-   _init_egl(td);
+   ret = _init_egl(td);
+   fail_if(ret != EINA_TRUE);
+
    td->handler = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
                                          _test_activated_configure_complete, td);
    ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ACTIVATE,

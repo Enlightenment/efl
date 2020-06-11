@@ -56,6 +56,20 @@ _short_text_changed_cb(void *data, const Efl_Event *event)
      efl_text_set(txtpath, TEST_UI_TEXTPATH_LONG_TEXT);
 }
 
+static char *user_style = "DEFAULT='font_size=16 color=#F00 underline=on underline_color=#00ffff'";
+
+static void
+_user_style_changed_cb(void *data, const Efl_Event *event)
+{
+   Evas_Object *txtpath = data;
+   Eina_Bool val = elm_check_selected_get(event->object);
+
+   if (val)
+     elm_textpath_text_user_style_set(txtpath, user_style);
+   else
+     elm_textpath_text_user_style_set(txtpath, NULL);
+}
+
 static void
 _change_shape_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -135,6 +149,12 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    chk = efl_add(EFL_UI_CHECK_CLASS, win);
    efl_text_set(chk, "Short text");
    efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _short_text_changed_cb, txtpath);
+   elm_box_pack_end(hbox, chk);
+   efl_gfx_entity_visible_set(chk, EINA_TRUE);
+
+   chk = efl_add(EFL_UI_CHECK_CLASS, win);
+   efl_text_set(chk, "User style");
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _user_style_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
 

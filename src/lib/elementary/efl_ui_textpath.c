@@ -15,6 +15,8 @@
 
 #define MY_CLASS EFL_UI_TEXTPATH_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Textpath"
+#define LEGACY_TEXT_PART_NAME "elm.text"
+#define EFL_UI_TEXT_PART_NAME "efl.text"
 
 #define SLICE_DEFAULT_NO 99
 typedef struct _Efl_Ui_Textpath_Point Efl_Ui_Textpath_Point;
@@ -54,6 +56,7 @@ struct _Efl_Ui_Textpath_Data
 {
    Evas_Object *text_obj;
    char *text;
+   Eina_Strbuf *user_style;
    Efl_Gfx_Path *path;
    struct {
         double x, y;
@@ -529,13 +532,40 @@ _sizing_eval(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_textpath_ellipsis_set(Efl_Ui_Textpath_Data *pd, Eina_Bool enabled)
+_textpath_ellipsis_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool enabled)
 {
-   edje_object_part_text_style_user_pop(pd->text_obj, "efl.text");
+   char *text_part;
+   if (elm_widget_is_legacy(obj))
+     text_part = LEGACY_TEXT_PART_NAME;
+   else
+     text_part = EFL_UI_TEXT_PART_NAME;
+
+   edje_object_part_text_style_user_pop(pd->text_obj, text_part);
 
    if (enabled)
-     edje_object_part_text_style_user_push(pd->text_obj, "efl.text",
-                                           "DEFAULT='ellipsis=1.0'");
+     {
+        if (pd->user_style)
+          {
+             eina_strbuf_replace_first(pd->user_style, "DEFAULT='", "DEFAULT='ellipsis=1.0 ");
+             edje_object_part_text_style_user_push(pd->text_obj, text_part,
+                                                   eina_strbuf_string_get(pd->user_style));
+          }
+        else
+          {
+             edje_object_part_text_style_user_push(pd->text_obj, text_part,
+                                                   "DEFAULT='ellipsis=1.0 '");
+             return;
+          }
+     }
+   else
+     {
+        if (pd->user_style)
+          {
+             eina_strbuf_replace_first(pd->user_style, "DEFAULT='ellipsis=1.0 ", "DEFAULT='");
+             edje_object_part_text_style_user_push(pd->text_obj, text_part,
+                                                   eina_strbuf_string_get(pd->user_style));
+          }
+     }
 }
 
 static void
@@ -563,7 +593,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd, Eo *obj)
           }
      }
    efl_gfx_entity_size_set(pd->text_obj, EINA_SIZE2D(w,  h));
-   _textpath_ellipsis_set(pd, is_ellipsis);
+   _textpath_ellipsis_set(obj, pd, is_ellipsis);
 }
 
 static void
@@ -713,6 +743,7 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
 
    if (pd->text) free(pd->text);
    if (pd->text_obj) evas_object_del(pd->text_obj);
+   if (pd->user_style) eina_strbuf_free(pd->user_style);
    EINA_INLIST_FREE(pd->segments, seg)
      {
         pd->segments = eina_inlist_remove(pd->segments, EINA_INLIST_GET(seg));
@@ -1011,6 +1042,38 @@ elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start
    _sizing_eval(pd);
 
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
+}
+
+EAPI void
+elm_textpath_text_user_style_set(Eo *obj, const char *style)
+{
+   EFL_UI_TEXTPATH_DATA_GET(obj, pd);
+   if (!pd) return;
+
+   char *text_part;
+   if (elm_widget_is_legacy(obj))
+     text_part = LEGACY_TEXT_PART_NAME;
+   else
+     text_part = EFL_UI_TEXT_PART_NAME;
+
+   if (pd->user_style)
+     {
+        edje_object_part_text_style_user_pop(pd->text_obj, text_part);
+        eina_strbuf_free(pd->user_style);
+        pd->user_style = NULL;
+     }
+
+   if (style)
+     {
+        pd->user_style = eina_strbuf_new();
+        eina_strbuf_append(pd->user_style, style);
+
+        edje_object_part_text_style_user_pop(pd->text_obj, text_part);
+        edje_object_part_text_style_user_push(pd->text_obj, text_part, eina_strbuf_string_get(pd->user_style));
+     }
+
+   _ellipsis_set(pd, obj);
+   _sizing_eval(pd);
 }
 
 #include "efl_ui_textpath_legacy_eo.c"

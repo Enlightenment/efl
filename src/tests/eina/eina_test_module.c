@@ -32,14 +32,14 @@ static Eina_Bool list_cb(Eina_Module *m, void *data EINA_UNUSED)
    const char *file;
 
    /* the reference count */
-   eina_module_load(m);
+   fail_if(!eina_module_load(m));
    /* get */
    sym = eina_module_symbol_get(m, "dummy_symbol");
    fail_if(!sym);
    fail_if(*sym != 0xbad);
    file = eina_module_file_get(m);
    fail_if(!file);
-   eina_module_unload(m);
+   fail_if(eina_module_unload(m));
 
    return EINA_TRUE;
 }

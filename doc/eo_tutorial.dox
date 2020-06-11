@@ -122,7 +122,7 @@
  * - If the object is new, establish the public APIs
  * - \#define \$(CLASS_NAME) \$(class_name)_class_get(): will be used to access data/inherit from this class...
  * - const Eo_Class *\$(class_name)_class_get(void) EINA_CONST: declaration of the function that will create the class (not the instance), i.e virtual table...
- * - extern EAPI Eo_Op \$(CLASS_NAME)_BASE_ID: class id that will be essentially used to identify functions set of this class
+ * - EAPI extern Eo_Op \$(CLASS_NAME)_BASE_ID: class id that will be essentially used to identify functions set of this class
  * - enum of the function ids of the class in the form \$(CLASS_NAME)_SUB_ID: used to identify the function inside the class; function id is unique per class but (class id, function id) is unique per system..
  * - \#define \$(CLASS_NAME)_ID(sub_id) (\$(CLASS_NAME)_BASE_ID + sub_id): formula to calculate the system function id
  * - define of each function consists of:
@@ -138,7 +138,7 @@
 
    const Eo_Class *evas_object_line_class_get(void) EINA_CONST;
 
-   extern EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID;
+   EAPI extern Eo_Op EVAS_OBJ_LINE_BASE_ID;
 
    enum
    {
