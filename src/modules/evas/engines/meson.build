@@ -16,10 +16,7 @@ endif
 have_gl_engine = false
 
 if get_option('opengl') != 'none'
-  engines += [
-   ['gl_x11', ['x11']],
-   ['gl_drm', ['drm']]
-  ]
+  engines += [['gl_x11', ['x11']]]
   have_gl_engine = true
 endif
 
@@ -29,7 +26,10 @@ if get_option('opengl') == 'full'
 endif
 
 if get_option('opengl') == 'es-egl'
-  engines += [['wayland_egl', ['wl']]]
+  engines += [
+   ['wayland_egl', ['wl']],
+   ['gl_drm', ['drm']]
+ ]
   have_gl_engine = true
 endif
 
