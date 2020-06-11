@@ -971,8 +971,11 @@ _spin_value(void *data)
    if (_update_data(data, sd->month_btn_clicked, sd->spin_speed))
      evas_object_smart_changed(data);
 
-   sd->interval = sd->interval / 1.05;
-   ecore_timer_interval_set(sd->spin_timer, sd->interval);
+   if (sd->spin_timer)
+     {
+        sd->interval = sd->interval / 1.05;
+        ecore_timer_interval_set(sd->spin_timer, sd->interval);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
