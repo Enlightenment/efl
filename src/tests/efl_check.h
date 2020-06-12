@@ -10,7 +10,13 @@
 #include <string.h> /* strcmp */
 #include <unistd.h> /* execvp */
 #include <errno.h> /* errno */
-#include <sys/time.h>
+
+#ifdef _WIN32
+# include <evil_private.h>
+#else
+# include <unistd.h> /* execvp */
+# include <sys/time.h>
+#endif
 
 #ifdef HAVE_FORK
 # ifdef HAVE_SYS_TYPES_H

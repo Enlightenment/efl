@@ -21,13 +21,14 @@
 #endif
 
 #include <stdlib.h>
-#include <unistd.h>
-#ifdef _WIN32
-# include <string.h>
-#else
+#include <string.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
 # include <sys/types.h>
-# include <pwd.h>
-# include <string.h>
+# ifndef _WIN32
+#  include <pwd.h>
+# endif
 #endif
 
 #include "eina_config.h"

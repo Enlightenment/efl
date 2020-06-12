@@ -6,8 +6,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <unistd.h>
-#include <pthread.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <pthread.h>
+#endif
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>

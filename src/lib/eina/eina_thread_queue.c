@@ -2,13 +2,18 @@
 # include "config.h"
 #endif
 
-#include <unistd.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 #include "Eina.h"
 #include "eina_thread_queue.h"
 #include "eina_safety_checks.h"
 #include "eina_log.h"
 
 #include "eina_private.h"
+#ifdef _WIN32
+# include <evil_private.h>
+#endif
 
 #ifdef __ATOMIC_RELAXED
 #define ATOMIC 1

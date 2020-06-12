@@ -28,17 +28,29 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <unistd.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <sys/time.h>
+# include <pthread.h>
+#endif
 #ifdef HAVE_SYS_EPOLL_H
 # include <sys/epoll.h>
 #endif
-#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pthread.h>
 #include <signal.h>
 #include <time.h>
 #include <fcntl.h>
+
+#ifdef _WIN32
+# include <evil_private.h>
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+# include <winsock2.h>
+# undef WIN32_LEAN_AND_MEAN
+#endif
 
 #include "eina_debug.h"
 #include "eina_debug_private.h"

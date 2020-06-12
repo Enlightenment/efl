@@ -28,11 +28,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <unistd.h>
 #ifdef HAVE_SYS_EPOLL_H
 # include <sys/epoll.h>
 #endif
-#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pthread.h>
@@ -57,6 +55,12 @@
 #ifdef _WIN32
 # include <ws2tcpip.h>
 # include <evil_private.h> /* fcntl */
+#endif
+
+#ifndef _MSC_VER
+# include <fcntl.h>
+# include <sys/time.h>
+# include <unistd.h>
 #endif
 
 #include "eina_alloca.h"

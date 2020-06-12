@@ -20,7 +20,9 @@
 # define EINA_INLINE_PRIVATE_H_
 
 # include <time.h>
+#ifndef _MSC_VER
 # include <sys/time.h>
+#endif
 
 typedef struct timespec Eina_Nano_Time;
 

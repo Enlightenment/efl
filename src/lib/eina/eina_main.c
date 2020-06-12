@@ -27,7 +27,9 @@
 # ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
 # endif
-# include <unistd.h>
+# ifndef _MSC_VER
+#  include <unistd.h>
+# endif
 #endif
 
 #ifdef HAVE_MCHECK_H

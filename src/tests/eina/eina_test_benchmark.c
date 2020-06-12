@@ -20,7 +20,9 @@
 # include "config.h"
 #endif
 
-#include <unistd.h>
+#ifndef _WIN32
+# include <unistd.h>
+#endif
 
 #include "eina_suite.h"
 #include "eina_benchmark.h"

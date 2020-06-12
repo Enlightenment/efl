@@ -34,11 +34,11 @@
 #endif
 
 #include <time.h>
-#include <unistd.h>
 
 #ifdef _WIN32
 # include <evil_private.h> /* mmap */
 #else
+# include <unistd.h>
 # include <sys/mman.h>
 #endif
 

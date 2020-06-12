@@ -23,7 +23,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <unistd.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 

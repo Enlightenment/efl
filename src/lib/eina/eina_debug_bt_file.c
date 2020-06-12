@@ -19,10 +19,13 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #ifdef _WIN32
 #include <evil_private.h> /* realpath */
+#endif
+
+#ifndef _MSC_VER
+# include <unistd.h>
 #endif
 
 #include "eina_debug_private.h"

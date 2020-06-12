@@ -24,11 +24,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
 
 #ifdef _WIN32
 # include <evil_private.h> /* mkdir */
+#else
+# include <unistd.h>
 #endif
 
 #include <Eina.h>

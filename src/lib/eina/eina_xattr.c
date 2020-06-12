@@ -23,8 +23,11 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
-#include <unistd.h>
 #include <math.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #ifdef HAVE_XATTR
 # include <sys/xattr.h>

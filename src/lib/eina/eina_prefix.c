@@ -34,7 +34,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <limits.h>
 
 #if defined HAVE_DLADDR && ! defined _WIN32
@@ -44,6 +43,10 @@
 #ifdef _WIN32
 # include <direct.h> /* getcwd */
 # include <evil_private.h> /* path_is_absolute realpath dladdr */
+#endif
+
+#ifndef _MSC_VER
+# include <unistd.h>
 #endif
 
 #include "eina_config.h"
