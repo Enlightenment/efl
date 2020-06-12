@@ -251,7 +251,7 @@ option('libmount',
 option('vnc-server',
   type : 'boolean',
   value : false,
-  description : 'VNS server support in efl for multiseat testing'
+  description : 'VNc server support in efl for multiseat testing'
 )
 
 option('v4l2',
