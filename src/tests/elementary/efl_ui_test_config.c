@@ -142,7 +142,7 @@ EFL_START_TEST(efl_config_eoapi)
         Eina_Bool b = elm_config_audio_mute_get(channels[i].chan);
         if (b != efl_config_bool_get(cfg, channels[i].name))
           fail(channels[i].name);
-        efl_config_bool_set(cfg, channels[i].name, !b);
+        fail_unless(efl_config_bool_set(cfg, channels[i].name, !b));
         if(efl_config_bool_get(cfg, channels[i].name) != !b)
           fail(channels[i].name);
         if(elm_config_audio_mute_get(channels[i].chan) != !b)

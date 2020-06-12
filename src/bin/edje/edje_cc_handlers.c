@@ -8830,8 +8830,8 @@ st_collections_group_parts_part_description_align(void)
         This affects the minimum size calculation. See
         edje_object_size_min_calc() and edje_object_size_min_restricted_calc().
         This tells the min size calculation routine that this part does not
-        change size in width or height (1 for it doesn't, 0 for it does), so
-        the routine should not try and expand or contract the part.
+        change group size in width or height (1 for it doesn't, 0 for it does),
+        so the routine should not try and expand or contract the group.
 
         Defaults: 0 0
     @endproperty
