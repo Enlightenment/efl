@@ -2561,6 +2561,7 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
    if (!sd->img)
      {
         if (disable) sd->preload_status = EFL_UI_IMAGE_PRELOAD_DISABLED;
+        else sd->preload_status = EFL_UI_IMAGE_PRELOAD_ENABLED;
         return;
      }
 
