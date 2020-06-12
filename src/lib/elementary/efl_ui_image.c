@@ -2557,7 +2557,12 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
    EFL_UI_IMAGE_CHECK(obj);
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
-   if (sd->edje || !sd->img) return;
+   if (sd->edje) return;
+   if (!sd->img)
+     {
+        if (disable) sd->preload_status = EFL_UI_IMAGE_PRELOAD_DISABLED;
+        return;
+     }
 
    if (disable)
      {
