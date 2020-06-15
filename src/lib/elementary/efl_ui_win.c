@@ -7596,29 +7596,28 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
 
 /* Legacy theme compatibility */
 static Eina_Bool
-_elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
+_elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd, Eo **bg)
 {
    if (EINA_UNLIKELY(!sd->legacy.bg_must_swallow_init))
      {
         /* Overkill: check which theme version the standard elm_bg uses */
         Elm_Widget_Smart_Data *wd;
         const char *version;
-        Eo *bg;
         int v;
 
         sd->legacy.bg_must_swallow = 1;
         sd->legacy.bg_must_swallow_init = 1;
 
         if (sd->legacy.ctor)
-          bg = elm_bg_add(sd->obj);
+          *bg = elm_bg_add(sd->obj);
         else
           {
              // Note: This code path is probably not necessary (custom legacy
              // theme but efl_add'ed window -- all efl_add'ed widgets would
              // use default theme)
-             bg = efl_add(EFL_UI_BG_CLASS, sd->obj);
+             *bg = efl_add(EFL_UI_BG_CLASS, sd->obj);
           }
-        wd = efl_data_scope_get(bg, EFL_UI_WIDGET_CLASS);
+        wd = efl_data_scope_get(*bg, EFL_UI_WIDGET_CLASS);
         if (wd)
           {
              version = edje_object_data_get(wd->resize_obj, "version");
@@ -7626,7 +7625,6 @@ _elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
              if (v >= FRAME_OBJ_THEME_MIN_VERSION)
                sd->legacy.bg_must_swallow = 0;
           }
-        evas_object_del(bg);
      }
 
    return sd->legacy.bg_must_swallow;
@@ -7637,29 +7635,33 @@ _elm_win_standard_init(Eo *obj)
 {
    /* Support for elm_util_win_standard_add() and Efl.Ui.Win.Standard */
    Efl_Ui_Win_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+   Eo *bg = NULL;
 
    ELM_SAFE_DEL(sd->bg);
 
    sd->csd.need_bg_standard = 1;
-   if (!_elm_win_bg_must_swallow(sd))
+   if (!_elm_win_bg_must_swallow(sd, &bg))
      {
         sd->csd.need_bg_solid = EINA_TRUE;
+        evas_object_del(bg);
      }
    else
      {
-        Eo *bg;
-
         /* Legacy theme compatibility */
         DBG("Detected legacy theme used for elm_bg. Swallowing object.");
         sd->csd.need_bg_solid = EINA_FALSE;
-        if (sd->legacy.ctor)
-          bg = elm_bg_add(obj);
-        else
+
+        if (!bg)
           {
-             // Note: This code path is probably not necessary (custom legacy
-             // theme but efl_add'ed window -- all efl_add'ed widgets would
-             // use default theme)
-             bg = efl_add(EFL_UI_BG_CLASS, obj);
+             if (sd->legacy.ctor)
+               bg = elm_bg_add(obj);
+             else
+               {
+                  // Note: This code path is probably not necessary (custom legacy
+                  // theme but efl_add'ed window -- all efl_add'ed widgets would
+                  // use default theme)
+                  bg = efl_add(EFL_UI_BG_CLASS, obj);
+               }
           }
         _elm_win_bg_set(sd, bg);
      }

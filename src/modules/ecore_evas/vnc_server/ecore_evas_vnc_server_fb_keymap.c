@@ -1,4 +1,8 @@
-#include <linux/input-event-codes.h>
+#if defined(__linux__)
+ #include <linux/input-event-codes.h>
+#elif defined(__FreeBSD__)
+ #include <dev/evdev/input-event-codes.h>
+#endif
 #include <rfb/keysym.h>
 #include <stdlib.h>
 #include <limits.h>
