@@ -6,8 +6,7 @@ travis_fold start "meson"
 travis_time_start "meson"
 if [ "$DISTRO" != "" ] ; then
   # Why do we need to disable the imf loaders here?
-  # Once libwebp 1.1.0 is available in more distros we can enable it by default again
-  OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Devas-loaders-disabler=json,webp"
+  OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
   MONO_LINUX_COPTS=" -Dbindings=cxx,mono -Dmono-beta=true"
 
@@ -99,7 +98,7 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig:$(pwd)/.ci"
   mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Dgstreamer=false
 else # Native Ubuntu Linux Travis builds (non-docker)
-  OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Devas-loaders-disabler=json,webp"
+  OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 
   if [ "$TRAVIS_CPU_ARCH" = "ppc64le" ]; then
       OPTS="$OPTS -Dbindings="
