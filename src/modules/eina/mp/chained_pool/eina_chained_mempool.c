@@ -274,7 +274,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 {
    Chained_Mempool *pool = data;
    Chained_Pool *p = NULL;
-   void *mem;
+   void *mem = NULL;
 
    if (!eina_spinlock_take(&pool->mutex))
      {
@@ -321,10 +321,10 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
                                                _eina_chained_mp_pool_cmp, NULL);
      }
 
-   mem = _eina_chained_mempool_alloc_in(pool, pool->first_fill);
+   if (pool->first_fill)
+     mem = _eina_chained_mempool_alloc_in(pool, pool->first_fill);
 
    eina_spinlock_release(&pool->mutex);
-
    return mem;
 }
 
