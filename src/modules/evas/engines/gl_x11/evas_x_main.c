@@ -661,9 +661,10 @@ eng_window_free(Outbuf *gw)
      }
 #ifdef GL_GLES
    SET_RESTORE_CONTEXT();
-   evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   if (!evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+     ERR("evas_eglMakeCurrent() failed!");
    if (gw->egl_surface != EGL_NO_SURFACE)
-      eglDestroySurface(gw->egl_disp, gw->egl_surface);
+     eglDestroySurface(gw->egl_disp, gw->egl_surface);
    if (gw->egl_context != context)
      eglDestroyContext(gw->egl_disp, gw->egl_context);
    if (ref == 0)
@@ -802,9 +803,10 @@ eng_window_unsurf(Outbuf *gw)
    if (xwin == gw)
      {
         SET_RESTORE_CONTEXT();
-        evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (!evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+          ERR("evas_eglMakeCurrent() failed!");
         if (gw->egl_surface != EGL_NO_SURFACE)
-           eglDestroySurface(gw->egl_disp, gw->egl_surface);
+          eglDestroySurface(gw->egl_disp, gw->egl_surface);
         gw->egl_surface = EGL_NO_SURFACE;
         _tls_outbuf_set(NULL);
      }
