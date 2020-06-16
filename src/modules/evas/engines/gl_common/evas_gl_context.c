@@ -1847,13 +1847,14 @@ vertex_array_size_check(Evas_Engine_GL_Context *gc, int pn, int n)
 {
    return 1;
 // this fixup breaks for expedite test 32. why?
-// for reference
+/* for reference
    if ((gc->pipe[pn].array.num + n) > gc->shared->info.max_vertex_elements)
      {
         shader_array_flush(gc);
         return 0;
      }
    return 1;
+*/
 }
 
 static int
