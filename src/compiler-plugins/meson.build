@@ -19,7 +19,7 @@ myplugin_dep = custom_target('myplugin',
 compiler_plugin = declare_dependency()
 
 test_1 = executable('test-1', 'test-1.c', myplugin_dep,
-	c_args: [ '-fdump-passes', '-fplugin=' + myplugin.full_path() ],
+	c_args: [ '-fdump-tree-gimple', '-fplugin=' + myplugin.full_path(), ],
 	native: true,
 )
 test('test_1', test_1)

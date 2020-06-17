@@ -35,7 +35,7 @@
 #include "ggc.h"
 #include "timevar.h"
 
-#include "params.h"
+//#include "params.h"
 
 #if BUILDING_GCC_VERSION <= 4009
 #include "pointer-set.h"
@@ -847,19 +847,19 @@ static inline gimple gimple_build_assign_with_ops(enum tree_code subcode, tree l
 	return gimple_build_assign(lhs, subcode, op1, op2 PASS_MEM_STAT);
 }
 
-template <>
+/*template <>
 template <>
 inline bool is_a_helper<const ggoto *>::test(const_gimple gs)
 {
 	return gs->code == GIMPLE_GOTO;
-}
+}*/
 
-template <>
+/*template <>
 template <>
 inline bool is_a_helper<const greturn *>::test(const_gimple gs)
 {
 	return gs->code == GIMPLE_RETURN;
-}
+}*/
 
 static inline gasm *as_a_gasm(gimple stmt)
 {

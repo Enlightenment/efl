@@ -355,7 +355,6 @@ _obj_accessor_get_at(void *data, Efl_Ui_Position_Manager_Request_Range range, Ei
    return result;
 }
 
-
 EOLIAN static Efl_Object*
 _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EINA_UNUSED)
 {

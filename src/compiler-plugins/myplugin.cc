@@ -23,6 +23,7 @@ static void super2_add(gimple_stmt_iterator *gsi)
 	int frequency;
 	basic_block bb;
 
+
 	stmt = gimple_build_call(super2_function_decl, 0);
 	super2_func = as_a_gcall(stmt);
 	gsi_insert_after(gsi, super2_func, GSI_CONTINUE_LINKING);
@@ -36,12 +37,71 @@ static void super2_add(gimple_stmt_iterator *gsi)
 			super2_func, bb->count, frequency);
 }
 
+struct Caller {
+  bool valid;
+  const char *called_api;
+  const char *klass;
+};
+
+typedef struct _Fetch_Result {
+  bool valid;
+  const char *api_name;
+  const_gimple first_argument;
+} Fetch_Result;
+
+static Fetch_Result
+_fetch_first_argument(const_gimple arg, unsigned int narg)
+{
+   Fetch_Result ret = {false, NULL, {}};
+
+   if (gimple_call_num_args(arg) < narg + 1) return ret;
+   tree first_argument = gimple_call_arg(arg, narg);
+
+   if (!first_argument) return ret;
+   if (TREE_CODE(first_argument) != SSA_NAME) return ret;
+   ret.first_argument = SSA_NAME_DEF_STMT(first_argument);
+   if (!ret.first_argument) return ret;
+   if (!is_gimple_call(ret.first_argument)) return ret;
+   tree tmp = gimple_call_fndecl(ret.first_argument);
+   if (!tmp) return ret;
+   ret.api_name = IDENTIFIER_POINTER(DECL_NAME(tmp));
+   ret.valid = true;
+   return ret;
+}
+
+/**
+ * Check that the first argument is a call to efl_super, and fetch the class function from it.
+ * As a result, this gives a boolean flag if the result is valid or not.
+ * If false, called_api and klass are invalid
+ * If true, klass is the class this is supering on, and called_api contains the API call
+ *
+ */
+static Caller fetch_efl_super_class(const_gimple stmt)
+{
+   Caller ret = {false, NULL, NULL};
+
+   //check that we have efl_super as the first argument
+   Fetch_Result first = _fetch_first_argument(stmt, 0);
+   if (!first.valid) return ret;
+   tree called_api_tree = gimple_call_fndecl(first.first_argument);
+   ret.called_api = IDENTIFIER_POINTER(DECL_NAME(called_api_tree));
+   if (!!strncmp(first.api_name, "efl_super", 9)) return ret;
+
+   //copy the name we have inside efl_super
+   Fetch_Result argument_efl_super = _fetch_first_argument(first.first_argument, 1);
+   if (!argument_efl_super.valid) return ret;
+   ret.klass = argument_efl_super.api_name;
+   ret.valid = true;
+
+   return ret;
+}
+
 static unsigned int eo_execute(void)
 {
   basic_block bb, entry_bb;
   gimple_stmt_iterator gsi;
 
-  //fprintf(stderr, "Function %s called\n", get_name(cfun->decl));
+  //fprintf(stderr, "Function %s eval\n", get_name(cfun->decl));
 
   gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
   entry_bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
@@ -51,16 +111,15 @@ static unsigned int eo_execute(void)
     for (gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi))
       {
         stmt = gsi_stmt(gsi);
-        if (is_gimple_call(stmt)){
-	  tree current_fn_decl = gimple_call_fndecl(stmt);
-	  if (!current_fn_decl)
-	     continue;
-          const char* name = IDENTIFIER_POINTER(DECL_NAME(current_fn_decl));
-          if (!strncmp(name, "efl_super", 9)) {
-            fprintf(stderr, "Found function %s\n", name);
-            super2_add(&gsi);
-	  }
-        }
+        if (!stmt || !is_gimple_call(stmt)) continue;
+
+        struct Caller c = fetch_efl_super_class(stmt);
+
+        if (!c.klass)
+          continue;
+
+        fprintf(stderr, "Found call of %s as super of %s\n", c.called_api, c.klass);
+        //FIXME work
       }
     }
   return 0;

@@ -448,7 +448,8 @@ foreach package : subprojects
             src, pub_eo_file_target, priv_eo_file_target,
             include_directories: efl_one_include_dirs,
             dependencies: external_deps + efl_one_eo_deps,
-            c_args : package_c_args,
+            c_args : [ '-fplugin=' + myplugin.full_path()] + package_c_args,
+            depends_on : myplugin
         )
         # dependency for all the .eo file targets
         efl_one_eo_deps += declare_dependency(
