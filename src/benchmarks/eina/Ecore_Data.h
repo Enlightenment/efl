@@ -299,76 +299,6 @@ EAPI int               ecore_dlist_free_cb_set(Ecore_DList *dlist,
                                                Ecore_Free_Cb free_func);
 
 
-
-/*
- * Hash Table Implementation:
- *
- * Traditional hash table implementation. I had tried a list of tables
- * approach to save on the realloc's but it ended up being much slower than
- * the traditional approach.
- */
-
-typedef struct _ecore_hash_node Ecore_Hash_Node;
-# define ECORE_HASH_NODE(hash) ((Ecore_Hash_Node *)hash)
-
-struct _ecore_hash_node
-{
-   Ecore_Hash_Node *next; /* Pointer to the next node in the bucket list */
-   void *key; /* The key for the data node */
-   void *value; /* The value associated with this node */
-};
-
-typedef struct _ecore_hash Ecore_Hash;
-# define ECORE_HASH(hash) ((Ecore_Hash *)hash)
-
-struct _ecore_hash
-{
-   Ecore_Hash_Node **buckets;
-   int size; /* An index into the table of primes to
-                determine size */
-   int nodes; /* The number of nodes currently in the hash */
-
-   int index; /* The current index into the bucket table */
-
-   Ecore_Compare_Cb compare; /* The function used to compare node values */
-   Ecore_Hash_Cb hash_func; /* The callback function to determine hash */
-
-   Ecore_Free_Cb free_key; /* The callback function to free key */
-   Ecore_Free_Cb free_value; /* The callback function to free value */
-};
-
-/* Create and initialize a hash */
-EAPI Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func,
-                                Ecore_Compare_Cb compare);
-EAPI int         ecore_hash_init(Ecore_Hash *hash,
-                                 Ecore_Hash_Cb hash_func,
-                                 Ecore_Compare_Cb compare);
-
-/* Functions related to freeing the data in the hash table */
-EAPI int         ecore_hash_free_key_cb_set(Ecore_Hash *hash,
-                                            Ecore_Free_Cb function);
-EAPI int         ecore_hash_free_value_cb_set(Ecore_Hash *hash,
-                                              Ecore_Free_Cb function);
-EAPI void        ecore_hash_destroy(Ecore_Hash *hash);
-
-EAPI int         ecore_hash_count(Ecore_Hash *hash);
-EAPI int         ecore_hash_for_each_node(Ecore_Hash *hash,
-                                          Ecore_For_Each for_each_func,
-                                          void *user_data);
-EAPI Ecore_List *ecore_hash_keys(Ecore_Hash *hash);
-
-/* Retrieve and store data into the hash */
-EAPI void *      ecore_hash_get(Ecore_Hash *hash, const void *key);
-EAPI int         ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
-EAPI int         ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set);
-EAPI void *      ecore_hash_remove(Ecore_Hash *hash, const void *key);
-EAPI void *      ecore_hash_find(Ecore_Hash *hash,
-                                 Ecore_Compare_Cb compare,
-                                 const void *value);
-EAPI void        ecore_hash_dump_graph(Ecore_Hash *hash);
-EAPI void        ecore_hash_dump_stats(Ecore_Hash *hash);
-
-
 typedef struct _ecore_heap Ecore_Sheap;
 # define ECORE_HEAP(heap) ((Ecore_Sheap *)heap)
 
@@ -414,11 +344,6 @@ struct _ecore_string
    char *string;
    int references;
 };
-
-EAPI int         ecore_string_init();
-EAPI int         ecore_string_shutdown();
-EAPI const char *ecore_string_instance(const char *string);
-EAPI void        ecore_string_release(const char *string);
 
 typedef struct _Ecore_Tree_Node Ecore_Tree_Node;
 # define ECORE_TREE_NODE(object) ((Ecore_Tree_Node *)object)

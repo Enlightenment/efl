@@ -36,7 +36,6 @@ struct _Eina_Benchmark_Case
 };
 
 static const Eina_Benchmark_Case etc[] = {
-   { "Hash", eina_bench_hash, EINA_TRUE },
    { "Hash_Short_Key", eina_bench_crc_hash_short, EINA_TRUE },
    { "Hash_Medium_Key", eina_bench_crc_hash_medium, EINA_TRUE },
    { "Hash_Large_key", eina_bench_crc_hash_large, EINA_TRUE },
@@ -128,8 +127,6 @@ main(int argc, char **argv)
            }
          break;
      }
-
-   eina_bench_e17();
 
    eina_shutdown();
 
