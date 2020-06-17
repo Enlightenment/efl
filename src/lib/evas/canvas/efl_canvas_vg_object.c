@@ -719,29 +719,27 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    Eina_Rect render_rect = EINA_RECT(x, y, w, h);
 
    // Get changed boundary and fit the size.
-   Eina_Rect r;
    if (pd->changed)
      efl_gfx_path_bounds_get(user_entry->root, &user_entry->path_bounds);
-   EINA_RECTANGLE_SET(&r, user_entry->path_bounds.x,
-                      user_entry->path_bounds.y,
-                      user_entry->path_bounds.w,
-                      user_entry->path_bounds.h);
+
+   if (user_entry->path_bounds.w != 0 && user_entry->path_bounds.h != 0)
+     {
+        EINA_RECTANGLE_SET(&render_rect, user_entry->path_bounds.x,
+                           user_entry->path_bounds.y,
+                           user_entry->path_bounds.w,
+                           user_entry->path_bounds.h);
+     }
 
    if (pd->viewbox.w != 0 && pd->viewbox.h !=0)
      {
         double sx = 0, sy= 0;
-        sx = (double)render_rect.w / (double)pd->viewbox.w;
-        sy = (double)render_rect.h / (double)pd->viewbox.h;
-        r.pos.x = (r.pos.x - pd->viewbox.x) * sx;
-        r.pos.y = (r.pos.y - pd->viewbox.y) * sy;
-        r.size.w *= sx;
-        r.size.h *= sy;
+        sx = (double)w / (double)pd->viewbox.w;
+        sy = (double)h / (double)pd->viewbox.h;
+        render_rect.x = (render_rect.x - pd->viewbox.x) * sx;
+        render_rect.y = (render_rect.y - pd->viewbox.y) * sy;
+        render_rect.w *= sx;
+        render_rect.h *= sy;
      }
-
-   if (render_rect.x < r.pos.x) render_rect.x = r.pos.x;
-   if (render_rect.y < r.pos.y) render_rect.y = r.pos.y;
-   if (render_rect.w > r.size.w) render_rect.w = r.size.w;
-   if (render_rect.h > r.size.h) render_rect.h = r.size.h;
 
    //if the size doesn't match, drop previous cache surface.
    if ((user_entry->w != render_rect.w ) ||
@@ -778,8 +776,8 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    _render_buffer_to_screen(obj,
                             engine, output, context, surface,
                             buffer,
-                            x + r.pos.x,
-                            y + r.pos.y,
+                            x + render_rect.x,
+                            y + render_rect.y,
                             render_rect.w, render_rect.h,
                             do_async, EINA_TRUE);
 }
