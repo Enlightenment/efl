@@ -1,6 +1,21 @@
 ==========
-EFL 1.24.2
+EFL 1.24.3
 ==========
+
+Changes since 1.24.2:
+---------------------
+
+Fixes:
+
+   * evas - csd and wl csd - fix alpha zeroing to avoid framespace junk
+   * evas - genetic update regions smart merge - merge v adjacent regions
+   * efreet - handle runtime relocation right with default XDG_DATA_DIRS
+   * edje: fix animation memory leak.
+   * canvas vg: fix dangling vector containers.
+   * evas vg: clean up dangling instances
+   * canvas vg: fix vector file data memory leak.
+   * efl gfx_path: fix memory leak.
+   * efl_ui_image: fixed elm_image_preload_disabled_set api is not working when it is called before file set
 
 Changes since 1.24.1:
 ---------------------
