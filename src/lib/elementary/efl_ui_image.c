@@ -2461,10 +2461,10 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
      {
         const char *cur_group = efl_file_key_get(obj);
         if (!(cur_group && group && strcmp(cur_group, group)))
-	{
-           if (efl_file_loaded_get(obj)) return EINA_TRUE;
-	   if (_efl_ui_image_is_remote(file)) return EINA_TRUE;
-	}
+          {
+             if (efl_file_loaded_get(obj)) return EINA_TRUE;
+             if (_efl_ui_image_is_remote(file)) return EINA_TRUE;
+          }
      }
 
    ret = efl_file_simple_load(obj, file, group);
