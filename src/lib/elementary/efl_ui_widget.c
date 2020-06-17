@@ -2356,7 +2356,7 @@ _efl_ui_widget_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Elm_Widget_Sm
    // FIXME: save walking up the tree by storing/caching parent scale
    if (EINA_DBL_EQ(sd->scale, 0.0))
      {
-        if (sd->parent_obj && elm_widget_is(sd->parent_obj))
+        if (sd->parent_obj)
           {
              return efl_gfx_entity_scale_get(sd->parent_obj);
           }
@@ -2621,7 +2621,7 @@ elm_widget_theme_get(const Evas_Object *obj)
 
    if (!sd->theme)
      {
-        if (sd->parent_obj && elm_widget_is(sd->parent_obj))
+        if (sd->parent_obj)
            return elm_widget_theme_get(sd->parent_obj);
         else return NULL;
      }
@@ -5263,7 +5263,7 @@ elm_widget_show_region_set(Eo *obj, Eina_Rect sr, Eina_Bool forceshow)
    do
      {
         parent_obj = sd->parent_obj;
-        if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
+        if ((!parent_obj)) break;
         sd = efl_data_scope_get(parent_obj, MY_CLASS);
         if (!sd) break;
 
