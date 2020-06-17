@@ -186,8 +186,6 @@ _on_sub_obj_del(void *data, const Efl_Event *event);
 static void _propagate_event(void *data, const Efl_Event *eo_event);
 static void _elm_widget_shadow_update(Efl_Ui_Widget *obj);
 
-EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
-                          { EFL_EVENT_DEL, _on_sub_obj_del });
 EFL_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del });
 EFL_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
@@ -198,27 +196,13 @@ EFL_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
 static inline void
 _callbacks_add(Eo *widget, void *data)
 {
-   if (_elm_widget_is(widget))
-     {
-        efl_event_callback_array_add(widget, elm_widget_subitems_callbacks(), data);
-     }
-   else
-     {
-        efl_event_callback_array_add(widget, efl_subitems_callbacks(), data);
-     }
+    efl_event_callback_array_add(widget, efl_subitems_callbacks(), data);
 }
 
 static inline void
 _callbacks_del(Eo *widget, void *data)
 {
-   if (_elm_widget_is(widget))
-     {
-        efl_event_callback_array_del(widget, elm_widget_subitems_callbacks(), data);
-     }
-   else
-     {
-        efl_event_callback_array_del(widget, efl_subitems_callbacks(), data);
-     }
+    efl_event_callback_array_del(widget, efl_subitems_callbacks(), data);
 }
 
 void
@@ -1532,12 +1516,14 @@ EOLIAN static Eina_Bool
 _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
    Efl_Ui_Widget *parent;
+   Eina_Bool is_widget;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(sobj, EFL_GFX_ENTITY_INTERFACE), EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
+   is_widget = elm_widget_is(sobj);
    //first make sure that we unregister the sobj from the parent
-   if (elm_widget_is(sobj))
+   if (is_widget)
      parent = efl_ui_widget_parent_get(sobj);
    else
      parent = evas_object_data_get(sobj, "elm-parent");
@@ -1560,7 +1546,7 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
 
    //and if it is a widget, please set the correct parent on the widget itself
    //the parent set method will take care of the property syncing etc.
-   if (elm_widget_is(sobj))
+   if (is_widget)
      efl_ui_widget_parent_set(sobj, obj);
 
    return EINA_TRUE;
@@ -1569,13 +1555,17 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
 EOLIAN static Eina_Bool
 _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
-   Evas_Object *sobj_parent;
+   Evas_Object *sobj_parent = NULL;
+   Eina_Bool is_widget;
 
    if (!sobj) return EINA_FALSE;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
-   sobj_parent = evas_object_data_del(sobj, "elm-parent");
+   is_widget = _elm_widget_is(sobj);
+   
+   if (!is_widget) sobj_parent = evas_object_data_del(sobj, "elm-parent");
+   
    if (sobj_parent && sobj_parent != obj)
      {
         static int abort_on_warn = -1;
@@ -1595,7 +1585,7 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         return EINA_FALSE;
      }
 
-   if (_elm_widget_is(sobj))
+   if (is_widget)
      {
         if (_is_focused(sobj))
           {
