@@ -1587,6 +1587,8 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
 
    if (is_widget)
      {
+	if (efl_ui_widget_parent_get(sobj) != obj)
+          return EINA_FALSE;
         if (_is_focused(sobj))
           {
              elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
