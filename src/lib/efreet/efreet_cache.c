@@ -630,6 +630,8 @@ efreet_file_cache_fill(const char *file, Efreet_Cache_Check *check)
    ssize_t size = 0;
    char link[PATH_MAX];
 
+   memset(check, 0, sizeof(Efreet_Cache_Check));
+#ifndef _WIN32
    if (lstat(file, &st) != 0) return EINA_FALSE;
    if (S_ISLNK(st.st_mode))
      {
@@ -637,14 +639,18 @@ efreet_file_cache_fill(const char *file, Efreet_Cache_Check *check)
         if ((size > 0) && ((size_t)size >= sizeof(link))) return EINA_FALSE;
         if (stat(file, &st) != 0) return EINA_FALSE;
      }
-
-   memset(check, 0, sizeof(Efreet_Cache_Check));
    if (size > 0) sha1((unsigned char *)link, size, check->link_sha1);
-   else memset(check->link_sha1, 0, sizeof(check->link_sha1));
+   else
+#endif
+     memset(check->link_sha1, 0, sizeof(check->link_sha1));
    check->uid    = st.st_uid;
    check->gid    = st.st_gid;
    check->size   = st.st_size;
+#ifndef _WIN32
    check->blocks = st.st_blocks;
+#else
+   check->blocks = 0;
+#endif
    check->mtime  = st.st_mtime;
    check->chtime = st.st_ctime;
    check->mode   = st.st_mode;
