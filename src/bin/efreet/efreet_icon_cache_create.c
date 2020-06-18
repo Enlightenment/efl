@@ -316,6 +316,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
         unsigned int i;
 
         ext = strrchr(scentry->path + scentry->name_start, '.');
+        if (!ext) continue;
         /* icon with known extension */
         name = scentry->path + scentry->name_start;
         *ext = '\0';
