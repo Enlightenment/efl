@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -536,6 +537,137 @@ efreet_desktop_util_cache_file(void)
 /*
  * Needs EAPI because of helper binaries
  */
+#define SHSH(n, v) ((((v) << (n)) & 0xffffffff) | ((v) >> (32 - (n))))
+
+static inline int
+int_to_bigendian(int in)
+{
+   static const unsigned char test[4] = { 0x11, 0x22, 0x33, 0x44 };
+   static const unsigned int *test_i = (const unsigned int *)test;
+   if (test_i[0] == 0x44332211) return eina_swap32(in);
+   return in;
+}
+
+static void
+sha1(unsigned char *data, int size, unsigned char *dst)
+{
+   unsigned int digest[5], word[80], wa, wb, wc, wd, we, t;
+   unsigned char buf[64], *d;
+   int idx, left, i;
+   const unsigned int magic[4] =
+     { 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6 };
+
+   idx = 0;
+   digest[0] = 0x67452301; digest[1] = 0xefcdab89; digest[2] = 0x98badcfe;
+   digest[3] = 0x10325476; digest[4] = 0xc3d2e1f0;
+
+   memset(buf, 0, sizeof(buf));
+   for (left = size, d = data; left > 0; left--, d++)
+     {
+        if ((idx == 0) && (left < 64))
+          {
+             memset(buf, 0, 60);
+             buf[60] = (size >> 24) & 0xff;
+             buf[61] = (size >> 16) & 0xff;
+             buf[62] = (size >> 8) & 0xff;
+             buf[63] = (size) & 0xff;
+          }
+        buf[idx] = *d;
+        idx++;
+        if ((idx == 64) || (left == 1))
+          {
+             if ((left == 1) && (idx < 64)) buf[idx] = 0x80;
+             for (i = 0; i < 16; i++)
+               {
+                  word[i]  = (unsigned int)buf[(i * 4)    ] << 24;
+                  word[i] |= (unsigned int)buf[(i * 4) + 1] << 16;
+                  word[i] |= (unsigned int)buf[(i * 4) + 2] << 8;
+                  word[i] |= (unsigned int)buf[(i * 4) + 3];
+               }
+             for (i = 16; i < 80; i++)
+               word[i] = SHSH(1,
+                              word[i - 3 ] ^ word[i - 8 ] ^
+                              word[i - 14] ^ word[i - 16]);
+             wa = digest[0]; wb = digest[1]; wc = digest[2];
+             wd = digest[3]; we = digest[4];
+             for (i = 0; i < 80; i++)
+               {
+                  if (i < 20)
+                    t = SHSH(5, wa) + ((wb & wc) | ((~wb) & wd)) +
+                        we + word[i] + magic[0];
+                  else if (i < 40)
+                    t = SHSH(5, wa) + (wb ^ wc ^ wd) +
+                        we + word[i] + magic[1];
+                  else if (i < 60)
+                    t = SHSH(5, wa) + ((wb & wc) | (wb & wd) | (wc & wd)) +
+                        we + word[i] + magic[2];
+                  else if (i < 80)
+                    t = SHSH(5, wa) + (wb ^ wc ^ wd) +
+                        we + word[i] + magic[3];
+                  we = wd;
+                  wd = wc;
+                  wc = SHSH(30, wb);
+                  wb = wa;
+                  wa = t;
+               }
+             digest[0] += wa; digest[1] += wb; digest[2] += wc;
+             digest[3] += wd; digest[4] += we;
+             idx = 0;
+          }
+     }
+   t = int_to_bigendian(digest[0]); digest[0] = t;
+   t = int_to_bigendian(digest[1]); digest[1] = t;
+   t = int_to_bigendian(digest[2]); digest[2] = t;
+   t = int_to_bigendian(digest[3]); digest[3] = t;
+   t = int_to_bigendian(digest[4]); digest[4] = t;
+   memcpy(dst, digest, 5 * 4);
+}
+
+EAPI Eina_Bool
+efreet_file_cache_fill(const char *file, Efreet_Cache_Check *check)
+{
+   struct stat st;
+   ssize_t size = 0;
+   char link[PATH_MAX];
+
+   if (lstat(file, &st) != 0) return EINA_FALSE;
+   if (S_ISLNK(st.st_mode))
+     {
+        size = readlink(file, link, sizeof(link));
+        if ((size > 0) && ((size_t)size >= sizeof(link))) return EINA_FALSE;
+        if (stat(file, &st) != 0) return EINA_FALSE;
+     }
+
+   memset(check, 0, sizeof(Efreet_Cache_Check));
+   if (size > 0) sha1((unsigned char *)link, size, check->link_sha1);
+   else memset(check->link_sha1, 0, sizeof(check->link_sha1));
+   check->uid    = st.st_uid;
+   check->gid    = st.st_gid;
+   check->size   = st.st_size;
+   check->blocks = st.st_blocks;
+   check->mtime  = st.st_mtime;
+   check->chtime = st.st_ctime;
+   check->mode   = st.st_mode;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool // true if matches
+efreet_file_cache_check(const Efreet_Cache_Check *check1, const Efreet_Cache_Check *check2)
+{
+   if ((check1->mtime  != check2->mtime ) ||
+       (check1->size   != check2->size  ) ||
+       (check1->chtime != check2->chtime ) ||
+       (check1->blocks != check2->blocks) ||
+       (check1->mode   != check2->mode  ) ||
+       (check1->uid    != check2->uid   ) ||
+       (check1->gid    != check2->gid   ) ||
+       (memcmp(check1->link_sha1, check2->link_sha1, 20) != 0))
+     {
+        return EINA_FALSE;
+     }
+   return EINA_TRUE; // matches
+}
+
 EAPI Eet_Data_Descriptor *
 efreet_version_edd(void)
 {
@@ -691,8 +823,22 @@ efreet_icon_directory_edd(void)
     directory_edd = eet_data_descriptor_file_new(&eddc);
     if (!directory_edd) return NULL;
 
-    EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
-                                  "modified_time", modified_time, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.uid", check.uid, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.gid", check.gid, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.size", check.size, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.blocks", check.blocks, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.mtime", check.mtime, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.chtime", check.chtime, EET_T_LONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(directory_edd, Efreet_Cache_Directory,
+                                 "check.mode", check.mode, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(directory_edd, Efreet_Cache_Directory,
+                                       "check.link_sha1", check.link_sha1, EET_T_CHAR);
 
     return directory_edd;
 }
@@ -790,7 +936,21 @@ efreet_icon_theme_edd(Eina_Bool cache)
     if (cache)
     {
         EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
-                                      "last_cache_check", last_cache_check, EET_T_LONG_LONG);
+                                      "check.uid", check.uid, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "check.gid", check.gid, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "check.size", check.size, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "check.blocks", check.blocks, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "check.mtime", check.mtime, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "check.chtime", check.chtime, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "check.mode", check.mode, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                            "check.link_sha1", check.link_sha1, EET_T_CHAR);
 
         EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
                                       "path", path, EET_T_STRING);

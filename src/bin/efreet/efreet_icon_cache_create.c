@@ -38,38 +38,36 @@ static Eina_Hash *icon_themes = NULL;
 static Eina_Bool
 cache_directory_modified(Eina_Hash *dirs, const char *dir)
 {
-    Efreet_Cache_Directory *dcache;
-    long long time;
+   Efreet_Cache_Directory *dcache;
+   Efreet_Cache_Check check;
 
-    if (!dirs) return EINA_TRUE;
-
-    time = ecore_file_mod_time(dir);
-    if (!time)
-      return EINA_FALSE;
-    dcache = eina_hash_find(dirs, dir);
-    if (!dcache)
-    {
+   if (!dirs) return EINA_TRUE;
+   if (!efreet_file_cache_fill(dir, &check)) return EINA_FALSE;
+   dcache = eina_hash_find(dirs, dir);
+   if (!dcache)
+     {
         dcache = malloc(sizeof (Efreet_Cache_Directory));
         if (!dcache) return EINA_TRUE;
-
-        dcache->modified_time = time;
+        dcache->check = check;
         eina_hash_add(dirs, dir, dcache);
-    }
-    else if (dcache->modified_time == time) return EINA_FALSE;
-    dcache->modified_time = time;
-
-    return EINA_TRUE;
+     }
+   else if (efreet_file_cache_check(&check, &dcache->check))
+     return EINA_FALSE;
+   else
+     dcache->check = check;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
 cache_extension_lookup(const char *ext)
 {
-    unsigned int i;
+   unsigned int i;
 
-    for (i = 0; i < exts->count; ++i)
-        if (!strcmp(exts->data[i], ext))
-            return EINA_TRUE;
-    return EINA_FALSE;
+   for (i = 0; i < exts->count; ++i)
+     {
+        if (!strcmp(exts->data[i], ext)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -223,6 +221,37 @@ check_fallback_changed(Efreet_Cache_Icon_Theme *theme)
     return EINA_FALSE;
 }
 
+typedef struct
+{
+  char *path;
+  int name_start;
+} Scanned_Entry;
+
+static Eina_Hash *already_scanned_path = NULL;
+
+static void
+cache_theme_change_verify(Efreet_Cache_Icon_Theme *theme)
+{
+   Eina_Bool changed = EINA_FALSE;
+   Eina_List *l;
+   Efreet_Icon_Theme_Directory *d;
+   char buf[PATH_MAX], *tdir, *sep;
+
+   tdir = strdup(theme->path);
+   sep = strrchr(tdir, '/');
+   if (sep) *sep = 0;
+   EINA_LIST_FOREACH(theme->theme.directories, l, d)
+     {
+        snprintf(buf, sizeof(buf), "%s/%s", tdir, d->name);
+        if (cache_directory_modified(theme->dirs, buf))
+          {
+             changed = EINA_TRUE;
+          }
+     }
+   free(tdir);
+   if (changed) theme->changed = changed;
+}
+
 static Eina_Bool
 cache_scan_path_dir(Efreet_Icon_Theme *theme,
                     const char *path,
@@ -232,29 +261,63 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
     Eina_Iterator *it;
     char buf[PATH_MAX];
     Eina_File_Direct_Info *entry;
+    Eina_List *dirs = NULL;
+    Eina_List *l;
+    char *ext;
+    Scanned_Entry *scentry;
 
     snprintf(buf, sizeof(buf), "%s/%s", path, dir->name);
+    // we wont ever free this - no point
+    if (!already_scanned_path)
+      already_scanned_path = eina_hash_string_superfast_new(NULL);
+    dirs = eina_hash_find(already_scanned_path, buf);
+    if ((intptr_t)dirs == (intptr_t)(-1L)) return EINA_TRUE;
+    else if (!dirs)
+    {
+       it = eina_file_stat_ls(buf);
+       if (!it)
+         {
+            eina_hash_add(already_scanned_path, buf, (void *)(intptr_t)(-1L));
+            return EINA_TRUE;
+         }
 
-    it = eina_file_stat_ls(buf);
-    if (!it) return EINA_TRUE;
+       EINA_ITERATOR_FOREACH(it, entry)
+         {
+            if (entry->type == EINA_FILE_DIR) continue;
+            ext = strrchr(entry->path + entry->name_start, '.');
+            if (!ext || !cache_extension_lookup(ext)) continue;
+            scentry = malloc(sizeof(Scanned_Entry));
+            if (!scentry)
+              {
+                 ERR("Out of memory");
+                 exit(1);
+              }
+            scentry->name_start = entry->name_start;
+            scentry->path = strdup(entry->path);
+            if (!scentry->path)
+              {
+                 ERR("Out of memory");
+                 exit(1);
+              }
+            dirs = eina_list_append(dirs, scentry);
+         }
+       eina_iterator_free(it);
+       if (dirs)
+         eina_hash_add(already_scanned_path, buf, dirs);
+       else
+         eina_hash_add(already_scanned_path, buf, (void *)(intptr_t)(-1L));
+    }
 
-    EINA_ITERATOR_FOREACH(it, entry)
+   EINA_LIST_FOREACH(dirs, l, scentry)
     {
         Efreet_Cache_Icon *icon;
         char *name;
-        char *ext;
         const char **tmp;
         unsigned int i;
 
-        if (entry->type == EINA_FILE_DIR)
-            continue;
-
-        ext = strrchr(entry->path + entry->name_start, '.');
-        if (!ext || !cache_extension_lookup(ext))
-            continue;
-
+        ext = strrchr(scentry->path + scentry->name_start, '.');
         /* icon with known extension */
-        name = entry->path + entry->name_start;
+        name = scentry->path + scentry->name_start;
         *ext = '\0';
 
         icon = eina_hash_find(icons, name);
@@ -284,7 +347,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
 
             /* check if the path already exist */
             for (j = 0; j < icon->icons[i]->paths_count; ++j)
-                if (!strcmp(icon->icons[i]->paths[j], entry->path))
+                if (!strcmp(icon->icons[i]->paths[j], scentry->path))
                     break;
 
             if (j != icon->icons[i]->paths_count)
@@ -348,12 +411,9 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
            exit(1);
         }
         icon->icons[i]->paths = tmp;
-        icon->icons[i]->paths[icon->icons[i]->paths_count] = eina_stringshare_add(entry->path);
+        icon->icons[i]->paths[icon->icons[i]->paths_count] = eina_stringshare_add(scentry->path);
         eina_array_push(strs, icon->icons[i]->paths[icon->icons[i]->paths_count++]);
     }
-
-    eina_iterator_free(it);
-
     return EINA_TRUE;
 }
 
@@ -364,7 +424,9 @@ cache_scan_path(Efreet_Icon_Theme *theme, Eina_Hash *icons, const char *path)
     Efreet_Icon_Theme_Directory *dir;
 
     EINA_LIST_FOREACH(theme->directories, l, dir)
+     {
         if (!cache_scan_path_dir(theme, path, dir, icons)) return EINA_FALSE;
+     }
 
     return EINA_TRUE;
 }
@@ -511,13 +573,13 @@ icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
     Efreet_Ini *ini;
     Efreet_Icon_Theme_Directory *dir;
     const char *tmp;
-    long long time;
+    Efreet_Cache_Check check;
 
     if (!theme || !path) return EINA_FALSE;
 
-    time = ecore_file_mod_time(path);
-    if (!time) return EINA_FALSE;
-    if (theme->path && !strcmp(theme->path, path) && theme->last_cache_check >= time)
+    if (!efreet_file_cache_fill(path, &check)) return EINA_FALSE;
+    if (theme->path && !strcmp(theme->path, path) &&
+        efreet_file_cache_check(&check, &(theme->check)))
     {
         /* no change */
         theme->valid = 1;
@@ -528,8 +590,7 @@ icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
         theme->path = eina_stringshare_add(path);
         eina_array_push(strs, theme->path);
     }
-    if (time > theme->last_cache_check)
-        theme->last_cache_check = time;
+    theme->check = check;
     theme->changed = 1;
 
     ini = efreet_ini_new(path);
@@ -644,10 +705,10 @@ cache_theme_scan(const char *dir)
         Efreet_Cache_Icon_Theme *theme;
         const char *name;
         const char *path;
-        long long time;
+        Efreet_Cache_Check check;
+        Efreet_Cache_Directory *d;
 
-        time = ecore_file_mod_time(entry->path);
-        if (!time) continue;
+        if (!efreet_file_cache_fill(entry->path, &check)) continue;
 
         if ((entry->type != EINA_FILE_DIR) &&
             (entry->type != EINA_FILE_LNK))
@@ -669,10 +730,26 @@ cache_theme_scan(const char *dir)
                           (void *)theme->theme.name.internal, theme);
             theme->changed = 1;
         }
-        if (time > theme->last_cache_check)
-        {
-            theme->last_cache_check = time;
+
+       d = NULL;
+       if (theme->dirs)
+         d = eina_hash_find(theme->dirs, entry->path);
+       if (!d)
+         {
+            if (!theme->dirs)
+              theme->dirs = eina_hash_string_superfast_new(NULL);
             theme->changed = 1;
+            d = NEW(Efreet_Cache_Directory, 1);
+            d->check = check;
+            eina_hash_add(theme->dirs, entry->path, d);
+         }
+       else
+         {
+            if (!efreet_file_cache_check(&check, &(d->check)))
+              {
+                 d->check = check;
+                 theme->changed = 1;
+              }
         }
 
         /* TODO: We need to handle change in order of included paths */
@@ -732,8 +809,7 @@ icon_theme_free(Efreet_Cache_Icon_Theme *theme)
 
     eina_list_free(theme->theme.paths);
     eina_list_free(theme->theme.inherits);
-    EINA_LIST_FREE(theme->theme.directories, data)
-        free(data);
+    EINA_LIST_FREE(theme->theme.directories, data) free(data);
     if (theme->dirs) efreet_hash_free(theme->dirs, free);
     free(theme);
 }
@@ -926,7 +1002,7 @@ main(int argc, char **argv)
         if (!theme->theme.name.name) continue;
 #endif
         INF("scan theme %s", theme->theme.name.name);
-
+        cache_theme_change_verify(theme);
         theme->changed = check_changed(theme);
         if (flush)
             theme->changed = EINA_TRUE;
@@ -981,18 +1057,18 @@ main(int argc, char **argv)
 
                 icons_it = eina_hash_iterator_tuple_new(icons);
                 EINA_ITERATOR_FOREACH(icons_it, tuple)
-                    eet_data_write(icon_ef, icon_edd, tuple->key, tuple->data, 1);
+                    eet_data_write(icon_ef, icon_edd, tuple->key, tuple->data, EET_COMPRESSION_SUPERFAST);
                 eina_iterator_free(icons_it);
 
-                INF("theme change: %s %lld", theme->theme.name.internal, theme->last_cache_check);
-                eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, 1);
+                INF("theme change: %s %lld", theme->theme.name.internal, theme->check.mtime);
+                eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, EET_COMPRESSION_SUPERFAST);
             }
             eina_hash_free(themes);
             eina_hash_free(icons);
             changed = EINA_TRUE;
         }
 
-        eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
+        eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, EET_COMPRESSION_SUPERFAST);
         eet_close(icon_ef);
         efreet_setowner(efreet_icon_cache_file(theme->theme.name.internal));
         free(icon_version);
@@ -1064,17 +1140,17 @@ main(int argc, char **argv)
 
             icons_it = eina_hash_iterator_tuple_new(icons);
             EINA_ITERATOR_FOREACH(icons_it, tuple)
-                eet_data_write(icon_ef, fallback_edd, tuple->key, tuple->data, 1);
+                eet_data_write(icon_ef, fallback_edd, tuple->key, tuple->data, EET_COMPRESSION_SUPERFAST);
             eina_iterator_free(icons_it);
         }
         eina_hash_free(icons);
 
-        eet_data_write(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK, theme, 1);
+        eet_data_write(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK, theme, EET_COMPRESSION_SUPERFAST);
     }
 
     icon_theme_free(theme);
 
-    eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
+    eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, EET_COMPRESSION_SUPERFAST);
     eet_close(icon_ef);
     efreet_setowner(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK));
     free(icon_version);
@@ -1082,7 +1158,7 @@ main(int argc, char **argv)
     eina_hash_free(icon_themes);
 
     /* save data */
-    eet_data_write(theme_ef, efreet_version_edd(), EFREET_CACHE_VERSION, theme_version, 1);
+    eet_data_write(theme_ef, efreet_version_edd(), EFREET_CACHE_VERSION, theme_version, EET_COMPRESSION_SUPERFAST);
 
     eet_close(theme_ef);
     theme_ef = NULL;
