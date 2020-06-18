@@ -48,11 +48,13 @@ windows = ['windows', 'cygwin']
 bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd', 'openbsd']
 linux = ['linux']
 osx = ['darwin']
+sun = ['sunos']
 
 sys_linux = linux.contains(host_machine.system())
 sys_bsd = bsd.contains(host_machine.system())
 sys_windows = windows.contains(host_machine.system())
 sys_osx = osx.contains(host_machine.system())
+sys_sun = sun.contains(host_machine.system())
 
 module_files = []
 evas_loader_map = []
@@ -125,6 +127,11 @@ foreach lang : ['c', 'objc', 'cpp']
     add_global_arguments('-D__USE_MINGW_ANSI_STDIO', language: lang)
   endif
 endforeach
+
+if sys_sun == true
+# for getpwuid_r()
+  add_global_arguments('-D_POSIX_PTHREAD_SEMANTICS', language: 'c')
+endif
 
 config_h = configuration_data()
 config_h.set_quoted('MODULE_ARCH', version_name)
@@ -200,7 +207,7 @@ endif
 config_dir = [include_directories('.')]
 eolian_include_directories = []
 
-if sys_linux == true or sys_bsd == true
+if sys_linux == true or sys_bsd == true or sys_sun == true
   sys_lib_extension = 'so'
   sys_exe_extension = ''
   sys_mod_extension = 'so'

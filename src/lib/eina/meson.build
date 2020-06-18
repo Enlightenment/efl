@@ -7,6 +7,10 @@ if sys_windows == true
    eina_pub_deps += [evil]
 endif
 
+if sys_sun == true
+   eina_deps += [socket]
+endif
+
 public_sub_headers = [
 'eina_promise.h',
 'eina_safety_checks.h',

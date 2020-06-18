@@ -167,12 +167,15 @@ elementary_test_src = [
   'test.h'
 ]
 
+link_args = []
 if sys_windows == false
-  link_args = ['-rdynamic', '-fPIC', '-pie']
+  link_args += ['-rdynamic', '-fPIC']
   package_c_args =  package_c_args + ['-fPIC']
-else
-  link_args = []
 endif
+if sys_windows == false and sys_sun == false
+  link_args += ['-pie']
+endif
+
 elementary_test = executable('elementary_test',
         elementary_test_src,
         dependencies: [elementary, intl] + elementary_deps + elementary_pub_deps,
