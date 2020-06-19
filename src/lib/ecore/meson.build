@@ -2,6 +2,10 @@ ecore_deps = []
 ecore_pub_deps = [eina, eo, efl]
 ecore_ext_deps = [intl, m, buildsystem]
 
+if sys_sun == true
+   ecore_deps += [malloc]
+endif
+
 pub_legacy_eo_files = [
   'ecore_event_message.eo',
   'ecore_event_message_handler.eo',

@@ -2453,6 +2453,20 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
    Eina_Bool ret = EINA_FALSE;
 
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
+
+   /* check if previous path is same with new one.
+      and return true if they are same */
+   const char *cur_file_path = efl_file_get(obj);
+   if ((cur_file_path && file) && !strcmp(cur_file_path, file))
+     {
+        const char *cur_group = efl_file_key_get(obj);
+        if (!(cur_group && group && strcmp(cur_group, group)))
+          {
+             if (efl_file_loaded_get(obj)) return EINA_TRUE;
+             if (_efl_ui_image_is_remote(file)) return EINA_TRUE;
+          }
+     }
+
    ret = efl_file_simple_load(obj, file, group);
    efl_canvas_group_change(obj);
    return ret;

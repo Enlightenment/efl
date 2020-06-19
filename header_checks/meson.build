@@ -88,7 +88,6 @@ function_checks = [
   ['getxattr', ['sys/types.h', 'sys/xattr.h']],
   ['iconv', ['iconv.h']],
   ['listxattr', ['sys/types.h', 'sys/xattr.h']],
-  ['mallinfo', ['malloc.h']],
   ['malloc_info', ['malloc.h']],
   ['malloc_usable_size', ['malloc.h']],
   ['mkdirat', ['sys/stat.h']],
@@ -114,6 +113,7 @@ function_checks = [
   ['dlopen', ['dlfcn.h'],                               ['dl']],
   ['dlsym', ['dlfcn.h'],                                ['dl']],
   ['lround', ['math.h'],                                ['m']],
+  ['mallinfo', ['malloc.h'],                            ['malloc']],
   ['shm_open', ['sys/mman.h', 'sys/stat.h', 'fcntl.h'], ['rt']],
 #from here on we specify arguments
   ['splice', ['fcntl.h'],                               [],      '-D_GNU_SOURCE=1'],
@@ -156,6 +156,11 @@ m = cc.find_library('m')
 #just keep this here as required false, if it is not inplace the library rt will just be linked as NOP
 dl = cc.find_library('dl', required: false)
 rt = cc.find_library('rt', required: false)
+
+if sys_sun == true
+  malloc = cc.find_library('malloc', required: true)
+  socket = cc.find_library('socket', required: true)
+endif
 
 thread_dep = dependency('threads')
 
