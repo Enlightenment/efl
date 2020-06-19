@@ -118,7 +118,7 @@ static unsigned int eo_execute(void)
         if (!c.klass)
           continue;
 
-        fprintf(stderr, "Found call of %s as super of %s\n", c.called_api, c.klass);
+        // FIXME fprintf(stderr, "Found call of %s as super of %s\n", c.called_api, c.klass);
         //FIXME work
       }
     }

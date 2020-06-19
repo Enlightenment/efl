@@ -154,7 +154,6 @@ elm_bg_color_set(Evas_Object *obj,
 EOLIAN static void
 _efl_ui_bg_efl_gfx_color_color_set(Eo *obj, Efl_Ui_Bg_Data *sd, int r, int g, int b, int a)
 {
-   efl_gfx_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
    efl_gfx_color_set(sd->rect, r, g, b, a);
 }
 
