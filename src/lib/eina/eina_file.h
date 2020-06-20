@@ -356,10 +356,10 @@ EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Sta
  *          if no fd's are to be skipped, but if some fd's are to skip being
  *          closed then this will be an array of fd numbers being terminated
  *          by a fd value of -1.
- * 
+ *
  * @param[in] fd The fd value to begin closing at
  * @param[in] except_fd An array of fd's not to close terminated by -1 as the last invalid fd
- * 
+ *
  * @since 1.24
  */
 EAPI void eina_file_close_from(int fd, int *except_fd);
@@ -674,13 +674,13 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @details This advises the operating system as to what to do with the memory mapped
  *          to the given @p file. This affects a specific range of memory and may not
  *          be honored if the system chooses to ignore the request.
- * 
+ *
  * @param[in] file The file handle from which the map comes
  * @param[in] rule The rule to apply to the mapped memory
  * @param[in] map Memory that was mapped inside of which the memory range is
  * @param[in] offset The offset in bytes from the start of the map address
  * @param[in] length The length in bytes of the memory region to populate
- * 
+ *
  * @since 1.8
  */
 EAPI void

@@ -200,21 +200,21 @@ typedef struct _Eina_FreeQ_Block Eina_FreeQ_Block;
 // F: 0xaaab04a55170 0xffff8af1c638 0xc0
 // F: 0xaaab04a55ca0 0xffff8af1c638 0xc0
 // ...
-// so in future maybe create delta compression. keep a "start value" in the 
+// so in future maybe create delta compression. keep a "start value" in the
 // Eina_FreeQ_Block block for each to begin from (and update these as we
 // march blcok->start forward (or at least update them when we finish a run
 // of processing items at the end of the processing.
-// 
+//
 // we can store things as DELTAS from the preview value. ptr, func, size all
 // are ptr sized values so we can compress them with deltas and thus encode
 // them in variable runs of bytes depending on the size of the delta. e.g.
 // use LEB128 maybe or PrefixVariant.
-// 
+//
 // after some playng leb128 seems to be the best from simplicity (so fast
 // encode which matters and decode needs to be good too) and size. i saw
 // a reduction to 24% of the original data size this way based on the sample
 // data i collected like above. is it worth the extra cycles? don't know.
-// 
+//
 // when looking at the deltas i noticed that func and sie delats are very
 // often 0 for long runs. this means we can probably use RLE effectively
 // if we split this into 3 streams wahc delta compressed then RLE compressed

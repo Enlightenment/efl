@@ -1101,7 +1101,7 @@ static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
              it->r.x = cur.left;
              it->r.y = cur.top;
              it->r.w = cur.width;
-             it->r.h = cur.height;             
+             it->r.h = cur.height;
           }
 
         if (eina_rectangle_intersection(&it->r, &it->tiler->area) == EINA_FALSE)
@@ -1614,7 +1614,7 @@ eina_tile_grid_slicer_iterator_new(int x,
 {
    Eina_Tile_Grid_Slicer_Iterator *it;
 
-   if ((x < 0) || (y < 0) || (w <= 0) || (h <= 0) || 
+   if ((x < 0) || (y < 0) || (w <= 0) || (h <= 0) ||
        (tile_w <= 0) || (tile_h <= 0))
      return NULL;
 

@@ -366,7 +366,7 @@ _eina_file_map_rule_apply(Eina_File_Populate rule, const void *map, unsigned lon
       case EINA_FILE_REMOVE: flag = MADV_FREE; break;
 #else
 # warning "EINA_FILE_REMOVE does not have system support"
-#endif        
+#endif
       default: return tmp; break;
      }
 
@@ -511,7 +511,7 @@ eina_file_mmap_faulty(void *addr, long page_size)
 
 /* ================================================================ *
  *   Simplified logic for portability layer with eina_file_common   *
- * ================================================================ */  
+ * ================================================================ */
 
 Eina_Bool
 eina_file_path_relative(const char *path)

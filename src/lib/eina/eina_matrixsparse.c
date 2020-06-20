@@ -941,7 +941,7 @@ eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(
    if (!m) return NULL;
 
    EINA_MAGIC_SET(m, EINA_MAGIC_MATRIXSPARSE);
-   
+
    m->rows = NULL;
    m->last_row = NULL;
    m->last_used = NULL;

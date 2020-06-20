@@ -545,13 +545,13 @@ static inline Eina_Bool eina_log_level_check(int level);
  * @brief Checks if current thread is the main thread.
  *
  * If there is no thread support (compiled with --disable-pthreads) or
- * threads were not enabled, then #EINA_TRUE is returned. The only case where 
- * #EINA_FALSE is returned is when threads were successfully enabled but the 
- * current thread is not the one that called eina_log_threads_init() (the 
+ * threads were not enabled, then #EINA_TRUE is returned. The only case where
+ * #EINA_FALSE is returned is when threads were successfully enabled but the
+ * current thread is not the one that called eina_log_threads_init() (the
  * main thread).
- * 
- * @return #EINA_TRUE if the current thread is the one that called 
- * eina_log_threads_init(), otherwise #EINA_FALSE. 
+ *
+ * @return #EINA_TRUE if the current thread is the one that called
+ * eina_log_threads_init(), otherwise #EINA_FALSE.
  */
 EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
 
@@ -984,7 +984,7 @@ EAPI extern const char *_eina_log_state_init;
 EAPI extern const char *_eina_log_state_shutdown;
 /**
  * @def EINA_LOG_STATE_INIT
- * String that indicates the log system is initializing 
+ * String that indicates the log system is initializing
  */
 #define EINA_LOG_STATE_INIT _eina_log_state_init
 /**
