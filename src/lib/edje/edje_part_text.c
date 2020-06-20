@@ -511,7 +511,7 @@ _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj,
 
       case EDJE_PART_TEXT_PROP_FONT:
         efl_text_font_family_set(efl_part(obj,
-                 eud->part), 
+                 eud->part),
               prop->val.font.font);
         efl_text_font_size_set(efl_part(obj,
                  eud->part),

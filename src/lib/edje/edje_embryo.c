@@ -193,7 +193,7 @@
  *   POINTER_MODE_NOGRAB = 1,
  *   POINTER_MODE_NOGREP = 2,
  * }
- * 
+ *
  * set_pointer_mode(part_id, mode)
  * set_repeat_events(part_id, rep)
  * get_repeat_events(part_id)

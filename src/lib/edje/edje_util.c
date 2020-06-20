@@ -5975,7 +5975,7 @@ _edje_text_class_find(Edje *ed, const char *text_class)
 
    /* first look through the object scope */
    tc = eina_hash_find(ed->text_classes, text_class);
- 
+
    /* next look through the global scope */
    if (!tc)
      tc = eina_hash_find(_edje_text_class_hash, text_class);
