@@ -1377,7 +1377,7 @@ _next_command(char *path, char *cmd, double *arr, int *count)
         path++;
         *count = _number_count(*cmd);
      }
-   else 
+   else
      {
         if (*cmd == 'm')
           *cmd = 'l';

@@ -67,7 +67,7 @@ EAPI const char *efreet_trash_dir_get(const char *for_file);
  * will be deleted permanently
  * @return @c 1 on success, @c 0 on failure or @c -1 in case the uri is not on
  * the same filesystem and force_delete is not set.
- * @brief This function try to move the given uri to the trash. Files on 
+ * @brief This function try to move the given uri to the trash. Files on
  * different filesystem can't be moved to trash. If force_delete
  * is @c 0 than non-local files will be ignored and @c -1 is returned, if you set
  * force_delete to @c 1 non-local files will be deleted without asking.
