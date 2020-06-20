@@ -620,7 +620,7 @@ EAPI Eina_Bool        eeze_udev_syspath_is_joystick(const char *syspath);
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @return A integer with the sysnum or -1 on failure
- * 
+ *
  * @since 1.12
  */
 EAPI int              eeze_udev_syspath_get_sysnum(const char *syspath);

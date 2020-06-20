@@ -369,7 +369,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    return ret;
 }
 
-EAPI int 
+EAPI int
 eeze_udev_syspath_get_sysnum(const char *syspath)
 {
    _udev_device *device;

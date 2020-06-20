@@ -33,9 +33,9 @@ eet_connection_new(Eet_Read_Cb  *eet_read_cb,
                    const void   *user_data)
 {
    Eet_Connection *conn;
-   
+
    if ((!eet_read_cb) || (!eet_write_cb)) return NULL;
-   
+
    conn = calloc(1, sizeof (Eet_Connection));
    if (!conn) return NULL;
    conn->eet_read_cb = eet_read_cb;
@@ -53,12 +53,12 @@ eet_connection_received(Eet_Connection *conn,
    do
      {
         size_t copy_size;
-        
+
         if (conn->size == 0)
           {
              const int *msg;
              size_t packet_size;
-             
+
              if (size < (sizeof(int) * 2)) break;
 
              msg = data;
@@ -76,7 +76,7 @@ eet_connection_received(Eet_Connection *conn,
                   /* Not a partial receive, go the quick way. */
                   if (!conn->eet_read_cb(data, packet_size, conn->user_data))
                     break;
-                  
+
                   data = (void *)((char *)data + packet_size);
                   size -= packet_size;
                   conn->received = 0;
@@ -86,7 +86,7 @@ eet_connection_received(Eet_Connection *conn,
              if (conn->allocated < conn->size)
                {
                   void *tmp;
-                  
+
                   tmp = realloc(conn->buffer, conn->size);
                   if (!tmp) break;
                   conn->buffer = tmp;
@@ -99,15 +99,15 @@ eet_connection_received(Eet_Connection *conn,
           (conn->size - conn->received >=
               size) ? size : conn->size - conn->received;
         memcpy((char *)conn->buffer + conn->received, data, copy_size);
-        
+
         conn->received += copy_size;
         data = (void *)((char *)data + copy_size);
         size -= copy_size;
-        
+
         if (conn->received == conn->size)
           {
              size_t data_size;
-             
+
              data_size = conn->size;
              conn->size = 0;
              conn->received = 0;
@@ -121,7 +121,7 @@ eet_connection_received(Eet_Connection *conn,
           }
      }
    while (size > 0);
-   
+
    return size;
 }
 
