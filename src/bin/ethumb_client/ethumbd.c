@@ -249,7 +249,7 @@ static Eina_Bool
 _ethumbd_timeout_cb(void *data)
 {
    Ethumbd *ed = data;
-   
+
    ecore_main_loop_quit();
    ed->timeout_timer = NULL;
    return EINA_FALSE;
@@ -282,7 +282,7 @@ static Eina_Bool
 _ethumbd_hang_cb(void *data)
 {
    Ethumbd *ed = data;
-   
+
    ed->hang_timer = NULL;
    if (ed->processing)
      {
@@ -296,7 +296,7 @@ static void
 _ethumbd_hang_start(Ethumbd *ed)
 {
    double tim = ed->timeout;
-   
+
    if (tim < 0) tim = 10.0;
    else
      {
@@ -1752,7 +1752,7 @@ main(int argc, char *argv[])
 #elif _WIN32
    SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
 #endif
-   
+
    memset(&ed, 0, sizeof(ed));
    ecore_init();
    eina_init();

@@ -101,7 +101,7 @@ plungequalifiedfile(char *name)
 	  }			/* if */
 	ext_idx++;
      }
-   while ((!fp) && 
+   while ((!fp) &&
           (ext_idx < (int)(sizeof extensions / sizeof extensions[0])));
    if (!fp)
      {
@@ -1004,8 +1004,8 @@ command(void)
 			 {
 			    int                 i;
 
-			    for (i = 0; 
-                                 (i < (int)(sizeof(name)) - 1) && 
+			    for (i = 0;
+                                 (i < (int)(sizeof(name)) - 1) &&
                                  (alphanum(*lptr));
 				 i++, lptr++)
 			       name[i] = *lptr;
@@ -1041,7 +1041,7 @@ command(void)
 		       /* first gather all information, start with the tag name */
 		       while ((*lptr <= ' ') && (*lptr != '\0'))
 			  lptr++;
-		       for (i = 0; 
+		       for (i = 0;
                             (i < (int)(sizeof(name)) - 1) &&
                             (alphanum(*lptr));
 			    i++, lptr++)
@@ -1105,8 +1105,8 @@ command(void)
 			    /* get the name */
 			    while ((*lptr <= ' ') && (*lptr != '\0'))
 			       lptr++;
-			    for (i = 0; 
-                                 (i < (int)(sizeof(name)) - 1) && 
+			    for (i = 0;
+                                 (i < (int)(sizeof(name)) - 1) &&
                                  (sc_isalpha(*lptr));
 				 i++, lptr++)
 			       name[i] = *lptr;
