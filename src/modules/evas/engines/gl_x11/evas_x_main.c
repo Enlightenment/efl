@@ -331,7 +331,7 @@ try_gles2:
      }
    if (context == EGL_NO_CONTEXT)
      _tls_context_set(gw->egl_context);
-   
+
    SET_RESTORE_CONTEXT();
    if (evas_eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface,

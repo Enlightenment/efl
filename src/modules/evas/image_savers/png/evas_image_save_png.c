@@ -184,7 +184,7 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
    return 0;
 }
 
-static int 
+static int
 evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key EINA_UNUSED,
                          int quality EINA_UNUSED, int do_compress, const char *encoding EINA_UNUSED)
 {

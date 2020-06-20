@@ -287,7 +287,7 @@ evas_image_load_file_data_tiff(void *loader_data,
         uint32 *ps, pixel;
         unsigned int a, r, g, b;
 	unsigned int nas = 0;
-        
+
         pix = pixels;
         pd = pix + ((prop->h - y - 1) * prop->w);
         ps = rast + (y * prop->w);

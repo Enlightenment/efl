@@ -98,7 +98,7 @@ _evas_gl_preload_main_loop_wakeup(void)
           {
              async->tex->was_preloaded = EINA_TRUE;
 
-             async->tex->ptt->allocations = 
+             async->tex->ptt->allocations =
                eina_list_remove(async->tex->ptt->allocations,
                                 async->tex->aptt);
              eina_rectangle_pool_release(async->tex->aptt);
@@ -135,7 +135,7 @@ _evas_gl_preload_lock(void)
         eina_condition_signal(&async_loader_cond);
 
         eina_condition_wait(&async_loader_cond);
-        if (async_loader_exit) 
+        if (async_loader_exit)
           {
              eina_lock_release(&async_loader_lock);
              return EINA_FALSE;

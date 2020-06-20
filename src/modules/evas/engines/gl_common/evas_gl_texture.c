@@ -337,7 +337,7 @@ _tex_2d(Evas_Engine_GL_Context *gc, int intfmt, int w, int h, int fmt, int type)
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
 # ifdef GL_GLES
 # else
-// this is not in opengles!!! hrrrm   
+// this is not in opengles!!! hrrrm
 //   if (glGetTexLevelParameteriv) // in case of weak symbols?
      {
         int intfmtret = -1;
@@ -1605,7 +1605,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
    tex->ptv2 = NULL;
    tex->ptuv = NULL;
 
-   if (tex->im) 
+   if (tex->im)
      {
         tex->im->tex = NULL;
         if (tex->im->im) tex->im->im->cache_entry.flags.textured = 0;
@@ -1974,7 +1974,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
    else if (rows[0] && rows[h])
      {
         unsigned int y;
-        
+
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
         if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))

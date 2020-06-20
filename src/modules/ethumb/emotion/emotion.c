@@ -122,10 +122,10 @@ _video_pos_set(struct _emotion_plugin *_plugin)
      _plugin->first = EINA_TRUE;
 
    if ((pos <= 0) || (pos >= 1))
-     _plugin->pi = (0.1 * _plugin->len) + 
+     _plugin->pi = (0.1 * _plugin->len) +
      (_plugin->pcount * _plugin->len * interval);
    else
-     _plugin->pi = (pos * _plugin->len) + 
+     _plugin->pi = (pos * _plugin->len) +
      (_plugin->pcount * _plugin->len * interval);
 
    emotion_object_position_set(_plugin->video, _plugin->pi);

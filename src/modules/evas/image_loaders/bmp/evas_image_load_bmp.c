@@ -377,7 +377,7 @@ evas_image_load_file_head_bmp(void *loader_data,
         header.height = load_opts->emile.region.h;
      }
 
-   /* It is not bad idea that bmp loader support scale down decoding 
+   /* It is not bad idea that bmp loader support scale down decoding
     * because of memory issue in mobile world.*/
    if (load_opts->emile.scale_down_by > 1)
      {
@@ -530,7 +530,7 @@ evas_image_load_file_data_bmp(void *loader_data,
         header.width = opts->emile.region.w;
         header.height = opts->emile.region.h;
      }
-   /* It is not bad idea that bmp loader support scale down decoding 
+   /* It is not bad idea that bmp loader support scale down decoding
     * because of memory issue in mobile world. */
    if (opts->emile.scale_down_by > 1)
      scale_ratio = opts->emile.scale_down_by;
@@ -1314,7 +1314,7 @@ evas_image_load_file_data_bmp(void *loader_data,
                          }
                     }
                }
-             else if ((header.bit_count == 16) && 
+             else if ((header.bit_count == 16) &&
                       (header.rmask == 0x7c00) && (header.gmask == 0x03e0) && (header.bmask == 0x001f)
                      )
                {

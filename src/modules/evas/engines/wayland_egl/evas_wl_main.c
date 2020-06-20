@@ -238,7 +238,7 @@ eng_window_free(Outbuf *gw)
         glsym_evas_gl_common_context_free(gw->gl_context);
      }
 
-   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
+   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE,
                   EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
    if (gw->egl_context != context)
@@ -260,7 +260,7 @@ eng_window_free(Outbuf *gw)
    free(gw);
 }
 
-void 
+void
 eng_window_use(Outbuf *gw)
 {
    Eina_Bool force = EINA_FALSE;
@@ -303,7 +303,7 @@ eng_window_use(Outbuf *gw)
      }
 }
 
-void 
+void
 eng_window_unsurf(Outbuf *gw)
 {
    if (!gw->surf) return;
@@ -315,7 +315,7 @@ eng_window_unsurf(Outbuf *gw)
 
    if (_evas_gl_wl_window == gw)
      {
-        eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
+        eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE,
                        EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface != EGL_NO_SURFACE)
           eglDestroySurface(gw->egl_disp, gw->egl_surface);
@@ -327,7 +327,7 @@ eng_window_unsurf(Outbuf *gw)
    gw->surf = EINA_FALSE;
 }
 
-void 
+void
 eng_window_resurf(Outbuf *gw)
 {
    struct wl_surface *wls;
@@ -366,7 +366,7 @@ eng_window_resurf(Outbuf *gw)
    gw->surf = EINA_TRUE;
 }
 
-void 
+void
 eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
 {
    ob->w = w;
@@ -387,7 +387,7 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
      }
 }
 
-int 
+int
 eng_outbuf_rotation_get(Outbuf *ob)
 {
    return ob->rot;
@@ -433,7 +433,7 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
    return ob->swap_mode;
 }
 
-Eina_Bool 
+Eina_Bool
 eng_outbuf_region_first_rect(Outbuf *ob)
 {
    glsym_evas_gl_preload_render_lock(eng_preload_make_current, ob);
@@ -522,7 +522,7 @@ eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx EIN
    return ob->gl_context->def_surface;
 }
 
-void 
+void
 eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    if (!_re_wincheck(ob)) return;
@@ -530,7 +530,7 @@ eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x 
    glsym_evas_gl_common_context_flush(ob->gl_context);
 }
 
-void 
+void
 eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
@@ -604,7 +604,7 @@ eng_gl_context_new(Outbuf *ob)
 
    if (!(ctx = calloc(1, sizeof(Context_3D)))) return NULL;
 
-   ctx->context = 
+   ctx->context =
      eglCreateContext(ob->egl_disp, ob->egl_config, ob->egl_context, attrs);
    if (!ctx->context)
      {
@@ -622,17 +622,17 @@ err:
    return NULL;
 }
 
-void 
+void
 eng_gl_context_free(Context_3D *ctx)
 {
    eglDestroyContext(ctx->display, ctx->context);
    free(ctx);
 }
 
-void 
+void
 eng_gl_context_use(Context_3D *ctx)
 {
-   if (eglMakeCurrent(ctx->display, ctx->surface, 
+   if (eglMakeCurrent(ctx->display, ctx->surface,
                       ctx->surface, ctx->context) == EGL_FALSE)
      {
         ERR("eglMakeCurrent Failed: %#x", eglGetError());

@@ -153,7 +153,7 @@ im_module_init(void)
 {
    const char *s;
 
-   _ecore_imf_wayland_log_dom = 
+   _ecore_imf_wayland_log_dom =
      eina_log_domain_register("ecore_imf_wayland", EINA_COLOR_YELLOW);
 
    if (!getenv("WAYLAND_DISPLAY")) return EINA_FALSE;
@@ -168,7 +168,7 @@ im_module_init(void)
    ewd = ecore_wl2_display_connect(NULL);
    if (!ewd) goto err;
 
-   ecore_imf_module_register(&wayland_im_info, im_module_create, 
+   ecore_imf_module_register(&wayland_im_info, im_module_create,
                              im_module_exit);
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module initialized");
 

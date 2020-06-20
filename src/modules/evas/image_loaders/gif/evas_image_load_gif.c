@@ -32,7 +32,7 @@ struct _Frame_Info
 {
    int x, y, w, h;
    unsigned short delay; // delay time in 1/100ths of a sec
-   short transparent : 10; // -1 == not, anything else == index 
+   short transparent : 10; // -1 == not, anything else == index
    short dispose : 6; // 0, 1, 2, 3 (others invalid)
    Eina_Bool interlace : 1; // interlaced or not
 };
@@ -69,7 +69,7 @@ _fill_image(DATA32 *data, int rowpix, DATA32 val, int x, int y, int w, int h)
 {
    int xx, yy;
    DATA32 *p;
-   
+
    for (yy = 0; yy < h; yy++)
      {
         p = data + ((y + yy) * rowpix) + x;
@@ -384,14 +384,14 @@ _flush_older_frames(Evas_Image_Animated *animated,
         if (!l) l = animated->frames;
      }
 }
-                    
+
 static int
 _file_read(GifFileType *gft, GifByteType *buf, int len)
 {
    File_Info *fi = gft->UserData;
 
    if (fi->pos >= fi->len) return 0; // if at or past end - no
-   if ((fi->pos + len) >= fi->len) len = fi->len - fi->pos; 
+   if ((fi->pos + len) >= fi->len) len = fi->len - fi->pos;
    memcpy(buf, fi->map + fi->pos, len);
    fi->pos += len;
    return len;
@@ -587,7 +587,7 @@ evas_image_load_file_data_gif2(void *loader_data,
    // so we have to load multiple times to animate. what if the
    // same image is shared/loaded in 2 ore more places AND animated
    // there?
-   
+
    // use index stored in image (XXX: yuk!)
    index = animated->cur_frame;
    // if index is invalid for animated image - error out
@@ -665,7 +665,7 @@ open_file:
           {
              int                 ext_code;
              GifByteType        *ext;
-             
+
              ext = NULL;
              DGifGetExtension(gif, &ext_code, &ext);
              while (ext)
@@ -727,7 +727,7 @@ open_file:
                        else if (finfo->dispose == 3) // GIF_DISPOSE_RESTORE
                          {
                             Image_Entry_Frame *prevframe2;
-                            
+
                             // we need to copy data from one frame back
                             // from the prev frame into the current frame
                             // (copy the whole image - at least the sample
@@ -757,7 +757,7 @@ open_file:
                }
              // if we hve a frame BUT the image is not animated... different
              // path
-             else if ((thisframe) && (!thisframe->data) && 
+             else if ((thisframe) && (!thisframe->data) &&
                       (!animated->animated))
                {
                   // if we don't have the data decoded yet - decode it
@@ -815,18 +815,18 @@ open_file:
         loader->fi.map = NULL;
         loader->imgnum = 0;
      }
-   
-on_ok:   
+
+on_ok:
    // no errors in header scan etc. so set err and return value
    *error = EVAS_LOAD_ERROR_NONE;
    ret = EINA_TRUE;
-   
+
    // if it was an animated image we need to copy the data to the
    // pixels for the image from the frame holding the data
    if (animated->animated && frame->data)
      memcpy(pixels, frame->data, prop->w * prop->h * sizeof(DATA32));
    prop->premul = EINA_TRUE;
-   
+
 on_error: // jump here on any errors to clean up
    return ret;
 }
@@ -846,13 +846,13 @@ evas_image_load_frame_duration_gif2(void *loader_data,
    if (!animated->animated) return -1.0;
    if ((start_frame + frame_num) > animated->frame_count) return -1.0;
    if (frame_num < 0) return -1.0;
-   
+
    if (frame_num < 1) frame_num = 1;
    // walk frames from start frame though and total up delays
    for (i = start_frame; i < (start_frame + frame_num); i++)
      {
         Frame_Info *finfo;
-        
+
         // find the frame
         frame = _find_frame(animated, i);
         // no frame? barf - bad file or i/o?

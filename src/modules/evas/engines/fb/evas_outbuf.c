@@ -300,11 +300,11 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 					  buf->priv.mask.b, PAL_MODE_NONE,
 					  buf->rot);
 	  }
-        else if (buf->rot == 180)  
+        else if (buf->rot == 180)
           {
              data = (DATA8 *)buf->priv.fb.fb->mem +
                buf->priv.fb.fb->mem_offset +
-               buf->priv.fb.fb->bpp *  
+               buf->priv.fb.fb->bpp *
                (buf->w - x - w + ((buf->h - y - h) * buf->priv.fb.fb->stride));
              conv_func = evas_common_convert_func_get(data, w, h,
                                           buf->priv.fb.fb->fb_var.bits_per_pixel,

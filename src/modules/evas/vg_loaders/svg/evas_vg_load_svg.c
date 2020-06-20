@@ -2279,7 +2279,7 @@ _inherit_style(Svg_Style_Property *child, Svg_Style_Property *parent)
 {
    if (parent == NULL)
      return;
-   // inherit the property of parent if not present in child. 
+   // inherit the property of parent if not present in child.
    // fill
    if (!(child->fill.flags & SVG_FILL_FLAGS_PAINT))
      {

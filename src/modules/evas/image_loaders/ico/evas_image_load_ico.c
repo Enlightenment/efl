@@ -386,7 +386,7 @@ evas_image_load_file_data_ico(void *loader_data,
    //   NULL == highest res
    //   biggest == highest res
    //   smallest == lowest res
-   //   
+   //
    //   smaller == next size SMALLER than load opts WxH (if possible)
    //   bigger == next size BIGGER than load opts WxH (if possible)
    //   more ?

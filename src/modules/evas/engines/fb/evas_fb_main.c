@@ -268,15 +268,15 @@ static void
 fb_init_palette_332(FB_Mode *mode)
 {
    int r, g, b, i;
-   
+
    if (mode->fb_var.bits_per_pixel != 8)
       return;
    i = 0;
-   
+
    if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
      ERR("could not get colormap: ioctl(%d, FBIOGETCMAP) = %s",
          fb, strerror(errno));
-   
+
    /* generate the palette */
    for (r = 0; r < 8; r++)
      {
@@ -285,7 +285,7 @@ fb_init_palette_332(FB_Mode *mode)
              for (b = 0; b < 4; b++)
                {
                   int val;
-                  
+
                   val = (r << 5) | (r << 2) | (r >> 1);
                   red[i] = (val << 8) | val;
                   val = (g << 5) | (g << 2) | (g >> 1);
@@ -296,7 +296,7 @@ fb_init_palette_332(FB_Mode *mode)
                }
           }
      }
-   
+
    /* set colormap */
    if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
      {
@@ -312,14 +312,14 @@ static void
 fb_init_palette_linear(FB_Mode *mode)
 {
    int i;
-   
+
    if (mode->fb_var.bits_per_pixel != 8)
       return;
-   
+
    if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
      ERR("could not get colormap: ioctl(%d, FBIOGETCMAP) = %s",
          fb, strerror(errno));
-   
+
    /* generate the palette */
    for (i = 0; i < 256; i++)
       red[i] = (i << 8) | i;
@@ -327,7 +327,7 @@ fb_init_palette_linear(FB_Mode *mode)
       green[i] = (i << 8) | i;
    for (i = 0; i < 256; i++)
       blue[i] = (i << 8) | i;
-   
+
    /* set colormap */
    if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
       perror("ioctl FBIOPUTCMAP");
@@ -343,7 +343,7 @@ fb_list_modes(unsigned int *num_return)
    char line[256], label[256], value[256];
    FB_Mode *modes = NULL, *temp;
    int num;
-   
+
    num = 0;
    f = fopen("/etc/fb.modes","rb");
    if (!f)
@@ -356,14 +356,14 @@ fb_list_modes(unsigned int *num_return)
         if (sscanf(line, "mode \"%250[^\"]\"", label) == 1)
           {
              char f1[32], f2[32], f3[32], f4[32];
-             
+
              f1[0] = 0; f2[0] = 0; f3[0] = 0; f4[0] = 0;
              sscanf(label, "%30[^x]x%30[^-]-%30[^-]-%30s", f1, f2, f3, f4);
              if ((f1[0]) && (f2[0]))
                {
                   int geometry = 0;
                   int timings = 0;
-                  
+
                   num++;
                   temp = modes;
                   modes = realloc(modes, num * sizeof(FB_Mode));
@@ -385,7 +385,7 @@ fb_list_modes(unsigned int *num_return)
                   while ((fgets(line, sizeof(line) - 1, f)) &&
                          (!strstr(line, "endmode")))
                     {
-                       
+
                        if (sscanf(line," geometry %i %i %i %i %i",
                                   &modes[num - 1].fb_var.xres,
                                   &modes[num - 1].fb_var.yres,
@@ -468,7 +468,7 @@ fb_setmode(unsigned int width, unsigned int height, unsigned int pdepth, unsigne
 {
    FB_Mode *modes;
    unsigned int i, num_modes;
-   
+
    modes = fb_list_modes(&num_modes);
    DBG("want %ux%u, bitdepth=%u, refresh=%u, modes=%p, num_modes=%u",
        width, height, pdepth, refresh, modes, num_modes);
@@ -521,7 +521,7 @@ fb_changeres(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigne
 {
    FB_Mode *modes;
    unsigned int i, num_modes;
-   
+
    modes = fb_list_modes(&num_modes);
    DBG("want %ux%u, bitdepth=%u, refresh=%u, modes=%p, num_modes=%u",
        width, height, cur_mode->depth, refresh, modes, num_modes);
@@ -567,7 +567,7 @@ fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsign
 {
    FB_Mode *modes;
    unsigned int i, num_modes;
-   
+
    modes = fb_list_modes(&num_modes);
    DBG("want %ux%u, bitdepth=%u, refresh=%u, modes=%p, num_modes=%u",
        width, height, pdepth, refresh, modes, num_modes);
@@ -614,10 +614,10 @@ fb_getmode(void)
 {
    FB_Mode *mode = NULL;
    int      hpix, lines, clockrate;
-   
+
    mode = malloc(sizeof(FB_Mode));
    /* look what we have now ... */
-   
+
    if (ioctl(fb, FBIOGET_VSCREENINFO, &mode->fb_var) == -1)
      {
         ERR("could not get screeninfo: ioctl(%d, FBIOGET_VSCREENINFO) = %s",
@@ -711,7 +711,7 @@ fb_setvt(int vtno)
    struct vt_stat vts;
    char vtname[32];
    int vtfd;
-   
+
    if (vtno < 0)
      {
         if ((ioctl(tty,VT_OPENQRY, &vtno) == -1))
@@ -737,14 +737,14 @@ fb_setvt(int vtno)
         return;
      }
    vtfd = open(vtname,O_RDWR);
-   
+
    if (ioctl(tty, VT_GETSTATE, &vts) == -1)
      {
         perror("ioctl VT_GETSTATE");
         close(vtfd);
         return;
      }
-   
+
    orig_vt_no = vts.v_active;
    close(vtfd);
 #if 0
@@ -799,7 +799,7 @@ fb_init(int vt EINA_UNUSED, int device)
         return;
      }
    DBG("opened fb=%d (%s)", fb, dev);
-   
+
    if (ioctl(fb, FBIOGET_VSCREENINFO, &fb_ovar) == -1)
      {
         ERR("could not get screeninfo: ioctl(%d, FBIOGET_VSCREENINFO) = %s",
@@ -878,7 +878,7 @@ fb_postinit(FB_Mode *mode)
         fb_cleanup();
         return -1;
      }
-   
+
    if (fb_fix.type != FB_TYPE_PACKED_PIXELS)
      {
         CRI("can handle only packed pixel frame buffers (want %#x, got %#x)",
@@ -919,7 +919,7 @@ fb_postinit(FB_Mode *mode)
      {
         mode->fb_var.xoffset = 0;
         mode->fb_var.yoffset = 0;
-        
+
         if (ioctl(fb, FBIOPAN_DISPLAY, &(mode->fb_var)) == -1)
           {
              const char *errmsg = strerror(errno);
@@ -998,11 +998,11 @@ fb_cleanup(void)
               "mode=%hhd, waitv=%hhd, relsig=%hd, acqsig=%hd, frsig=%hd}) = %s",
               tty, vt_omode.mode, vt_omode.waitv, vt_omode.relsig,
               vt_omode.acqsig, vt_omode.frsig, strerror(errno));
-#if 0        
+#if 0
 	if ((ioctl(tty, VT_ACTIVATE, orig_vt_no) == -1) && (orig_vt_no))
           ERR("could not activate: ioctl(%d, VT_ACTIVATE, %d) = %s",
               tty, orig_vt_no, strerror(errno));
-#endif        
+#endif
         if (tty > 0) /* don't close if got from isatty(0) */
           close(tty);
      }

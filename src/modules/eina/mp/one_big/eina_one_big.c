@@ -411,7 +411,7 @@ eina_one_big_shutdown(void *data)
 // mempool is cleaning up the mess created. be quiet for now as we were before
 // but edje seems to be a big offender at the moment! bad cedric! :)
 //        WRN(
-//            "Pool [%s] over by %i. cleaning up for you", 
+//            "Pool [%s] over by %i. cleaning up for you",
 //            pool->name, pool->over);
         while (pool->over_list)
           {
@@ -425,7 +425,7 @@ eina_one_big_shutdown(void *data)
    if (pool->over > 0)
      {
         WRN(
-            "Pool [%s] still over by %i\n", 
+            "Pool [%s] still over by %i\n",
             pool->name, pool->over);
      }
 

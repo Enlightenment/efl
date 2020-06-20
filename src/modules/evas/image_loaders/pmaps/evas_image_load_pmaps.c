@@ -398,7 +398,7 @@ pmaps_buffer_plain_int_get(Pmaps_Buffer *b, int *val)
    DATA8 lastc;
 
    /* first skip all white space
-    * Note: we are skipping here actually every character than is not 
+    * Note: we are skipping here actually every character than is not
     * a digit */
    while (!isdigit(*b->current))
      {
@@ -523,7 +523,7 @@ static int
 pmaps_buffer_plain_bw_get(Pmaps_Buffer *b, DATA32 *val)
 {
    /* first skip all white space
-    * Note: we are skipping here actually every character than is not 
+    * Note: we are skipping here actually every character than is not
     * a digit */
    while (!isdigit(*b->current))
      {

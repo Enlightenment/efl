@@ -307,7 +307,7 @@ eng_image_data_direct_get(void *engine EINA_UNUSED, void *image, int plane,
 
    if (!slice || !im) return ret;
 
-   /* If content hint is DYNAMIC, the im->im could be NULL. If the im->im does 
+   /* If content hint is DYNAMIC, the im->im could be NULL. If the im->im does
       not exist, eng_image_data_direct_get needs to return copied dyn.data to
       make functions including efl_file_save work. */
    if ((im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC) &&
@@ -2172,7 +2172,7 @@ eng_image_animated_frame_set(void *engine EINA_UNUSED, void *image, int frame_in
    return EINA_TRUE;
 }
 
-static int 
+static int
 eng_image_animated_frame_get(void *engine EINA_UNUSED, void *image)
 {
    Evas_GL_Image *gim = image;

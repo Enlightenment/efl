@@ -2915,7 +2915,7 @@ eng_image_animated_frame_set(void *data EINA_UNUSED, void *image, int frame_inde
    return EINA_TRUE;
 }
 
-static int 
+static int
 eng_image_animated_frame_get(void *data EINA_UNUSED, void *image)
 {
    Image_Entry *im;

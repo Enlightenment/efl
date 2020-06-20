@@ -38,7 +38,7 @@ surf_err:
    return NULL;
 }
 
-void 
+void
 _evas_outbuf_free(Outbuf *ob)
 {
    LOGFN;
@@ -49,7 +49,7 @@ _evas_outbuf_free(Outbuf *ob)
         Eina_Rectangle *rect;
 
         img = ob->priv.pending_writes->data;
-        ob->priv.pending_writes = 
+        ob->priv.pending_writes =
           eina_list_remove_list(ob->priv.pending_writes, ob->priv.pending_writes);
 
         rect = img->extended_info;
@@ -69,7 +69,7 @@ _evas_outbuf_free(Outbuf *ob)
    free(ob);
 }
 
-void 
+void
 _evas_outbuf_idle_flush(Outbuf *ob)
 {
    RGBA_Image *img;
@@ -90,8 +90,8 @@ _evas_outbuf_idle_flush(Outbuf *ob)
         while (ob->priv.prev_pending_writes)
           {
              img = ob->priv.prev_pending_writes->data;
-             ob->priv.prev_pending_writes = 
-               eina_list_remove_list(ob->priv.prev_pending_writes, 
+             ob->priv.prev_pending_writes =
+               eina_list_remove_list(ob->priv.prev_pending_writes,
                                      ob->priv.prev_pending_writes);
              rect = img->extended_info;
              evas_cache_image_drop(&img->cache_entry);
@@ -101,7 +101,7 @@ _evas_outbuf_idle_flush(Outbuf *ob)
      }
 }
 
-void 
+void
 _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Eina_Rectangle *result;
@@ -225,7 +225,7 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
    return MODE_FULL;
 }
 
-int 
+int
 _evas_outbuf_rotation_get(Outbuf *ob)
 {
    LOGFN;
@@ -233,17 +233,17 @@ _evas_outbuf_rotation_get(Outbuf *ob)
    return ob->rotation;
 }
 
-void 
+void
 _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
 {
    LOGFN;
 
-   if ((depth == OUTBUF_DEPTH_NONE) || 
+   if ((depth == OUTBUF_DEPTH_NONE) ||
        (depth == OUTBUF_DEPTH_INHERIT))
      depth = ob->depth;
 
    if ((ob->w == w) && (ob->h == h) &&
-       (ob->rotation == rot) && (ob->depth == depth) && 
+       (ob->rotation == rot) && (ob->depth == depth) &&
        (ob->priv.destination_alpha == alpha))
      return;
 
@@ -340,7 +340,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 
         img->extended_info = rect;
 
-        ob->priv.pending_writes = 
+        ob->priv.pending_writes =
           eina_list_append(ob->priv.pending_writes, img);
 
         if (cx) *cx = 0;
@@ -353,7 +353,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
    return NULL;
 }
 
-void 
+void
 _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h)
 {
    Gfx_Func_Convert func = NULL;
@@ -374,15 +374,15 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        func = 
-          evas_common_convert_func_get(0, w, h, depth, 
+        func =
+          evas_common_convert_func_get(0, w, h, depth,
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
                                        PAL_MODE_NONE, ob->rotation);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        func = 
-          evas_common_convert_func_get(0, h, w, depth, 
+        func =
+          evas_common_convert_func_get(0, h, w, depth,
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
                                        PAL_MODE_NONE, ob->rotation);
      }

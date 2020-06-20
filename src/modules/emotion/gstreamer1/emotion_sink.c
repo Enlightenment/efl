@@ -6,7 +6,7 @@
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
                                                                    GST_PAD_SINK, GST_PAD_ALWAYS,
-                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_MAKE("{ I420, YV12, YUY2, NV12, BGRx, BGR, BGRA }"))); 
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_MAKE("{ I420, YV12, YUY2, NV12, BGRx, BGR, BGRA }")));
 
 GST_DEBUG_CATEGORY_STATIC(emotion_video_sink_debug);
 #define GST_CAT_DEFAULT emotion_video_sink_debug
