@@ -1414,7 +1414,7 @@ _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
              param->allow_any_string = EINA_TRUE;
           }
      }
-     
+
    _instruction_param_seq_add(instr, "interpolation", VT_STRING, "linear");
    _instruction_param_seq_add(instr, "channel", VT_STRING, "rgb");
    _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));

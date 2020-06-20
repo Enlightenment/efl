@@ -143,7 +143,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
    if (dc->render_op == _EVAS_RENDER_BLEND)
      op = PIXMAN_OP_OVER;
-# endif   
+# endif
 #endif
 
    ext_x = 0;

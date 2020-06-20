@@ -245,7 +245,7 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA3
 		"vldm	%[s]!,	{d0,d1,d2,d3)		\n\t"
 		"vldm	%[d],	{d4,d5,d6,d7}		\n\t"
                 "pld    [%[s], #64]                     \n\t"
-                
+
 
 		// Copy s.a into q2 (>> 24) & subtract from 255
 		"vmvn.u8	q4,	q0		\n\t"
@@ -302,7 +302,7 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA3
 		"sub		%[tmp],%[e],$0x7	\n\t"
 	AP "dualloop2int:				\n\t"
 		//** Trailing double
-	
+
 		"vldm		%[s]!,	{d0}		\n\t"
 		"vldm		%[d],	{d4}		\n\t"
 

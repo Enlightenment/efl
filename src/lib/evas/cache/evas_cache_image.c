@@ -850,7 +850,7 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
 
 
 EAPI Image_Entry *
-evas_cache_image_request(Evas_Cache_Image *cache, const char *file, 
+evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
                          const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    const char           *ckey = "(null)";
@@ -1132,9 +1132,9 @@ evas_cache_image_alone(Image_Entry *im)
      }
    else
      {
-        im_dirty = evas_cache_image_copied_data(cache, im->w, im->h, 
-                                                evas_cache_image_pixels(im), 
-                                                im->flags.alpha, 
+        im_dirty = evas_cache_image_copied_data(cache, im->w, im->h,
+                                                evas_cache_image_pixels(im),
+                                                im->flags.alpha,
                                                 im->space);
         if (!im_dirty) goto on_error;
         if (cache->func.debug) cache->func.debug("dirty-src", im);
@@ -1151,8 +1151,8 @@ on_error:
 }
 
 EAPI Image_Entry *
-evas_cache_image_copied_data(Evas_Cache_Image *cache, 
-                             unsigned int w, unsigned int h, 
+evas_cache_image_copied_data(Evas_Cache_Image *cache,
+                             unsigned int w, unsigned int h,
                              DATA32 *image_data, int alpha,
                              Evas_Colorspace cspace)
 {
@@ -1364,7 +1364,7 @@ evas_cache_image_unload_data(Image_Entry *im)
      }
 
    SLKL(im->lock_cancel);
-   if ((!im->flags.loaded) || (!im->file && !im->f) || (!im->info.module) || 
+   if ((!im->flags.loaded) || (!im->file && !im->f) || (!im->info.module) ||
        (im->flags.dirty))
      {
         SLKU(im->lock_cancel);
@@ -1516,7 +1516,7 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
    if (!cache) return 0;
 #ifdef CACHEDUMP
    _dump_cache(cache);
-#endif  
+#endif
    if (cache->limit == (unsigned int)-1) return -1;
 
    SLKL(engine_lock);

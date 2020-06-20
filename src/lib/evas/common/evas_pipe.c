@@ -621,7 +621,7 @@ static Eina_Bool
 evas_common_pipe_map_draw_prepare(void *data EINA_UNUSED, RGBA_Image *dst, RGBA_Pipe_Op *op)
 {
    RGBA_Draw_Context context;
-   Eina_Bool r; 
+   Eina_Bool r;
 
    memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
    r = evas_common_map_rgba_prepare(op->op.map.src, dst,
@@ -641,10 +641,10 @@ evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
    /* pts_copy = malloc(sizeof (RGBA_Map_Point) * 4); */
    /* if (!pts_copy) return; */
    dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
-   if (!dst->cache_entry.pipe) 
+   if (!dst->cache_entry.pipe)
      {
        /* free(pts_copy); */
-       return; 
+       return;
      }
 
    /* for (i = 0; i < 4; ++i) */

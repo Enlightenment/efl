@@ -471,7 +471,7 @@ Evas_Device *
 _evas_device_top_get(const Evas *eo_e)
 {
    int num;
-   
+
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->cur_device) return NULL;
    num = eina_array_count(e->cur_device);

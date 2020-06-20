@@ -76,7 +76,7 @@ init_copy_pixel_mask_pt_funcs_neon(void)
 /* copy_rel pixel x mask --> dst */
 
 #ifdef BUILD_NEON
-static void 
+static void
 _op_copy_rel_p_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    // FIXME: neon-it
    DATA32 *e;
@@ -122,7 +122,7 @@ init_copy_rel_pixel_mask_span_funcs_neon(void)
 #endif
 
 #ifdef BUILD_NEON
-static void 
+static void
 _op_copy_rel_pt_p_mas_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
    c = MUL_SYM(*d >> 24, s);
    *d = INTERP_256(m + 1, c, *d);

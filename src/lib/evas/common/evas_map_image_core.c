@@ -76,7 +76,7 @@
                   c2 = span->col[1]; // col
                   cv = 0; // col
                   cd = (255 << 16) / w; // col
-                       
+
                   if (c1 == c2)
                     {
                        if (c1 == 0xffffffff)

@@ -455,7 +455,7 @@ evas_common_rgba_image_scalecache_size_set(unsigned int size)
         _cache_prune(NULL, 1);
      }
    SLKU(cache_lock);
-#endif   
+#endif
 }
 
 EAPI unsigned int
@@ -469,7 +469,7 @@ evas_common_rgba_image_scalecache_size_get(void)
    return t;
 #else
    return 0;
-#endif   
+#endif
 }
 
 EAPI void
@@ -493,7 +493,7 @@ evas_common_rgba_image_scalecache_dump(void)
    _cache_prune(NULL, 0);
    max_cache_size = t;
    SLKU(cache_lock);
-#endif   
+#endif
 }
 
 EAPI void
@@ -507,7 +507,7 @@ evas_common_rgba_image_scalecache_flush(void)
    _cache_prune(NULL, 1);
    max_cache_size = t;
    SLKU(cache_lock);
-#endif   
+#endif
 }
 
 EAPI Eina_Bool
@@ -534,7 +534,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
    if (ret == EINA_FALSE) /* can't get image lock */
      {
         useconds_t slp = 1, slpt = 0;
-        
+
         while (slpt < 500000)
           {
 #ifdef _WIN32
@@ -567,7 +567,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
         printf("WARNING: DEADLOCK on image %p (%s)\n", im, ie->file);
      }
    else locked = 1;
-#endif   
+#endif
    if (!locked) { SLKL(im->cache.lock); locked = 1; }
    use_counter++;
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
@@ -588,8 +588,8 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
         return EINA_FALSE;
      }
    SLKL(cache_lock);
-   sci = _sci_find(im, dc, smooth, 
-                   src_region_x, src_region_y, src_region_w, src_region_h, 
+   sci = _sci_find(im, dc, smooth,
+                   src_region_x, src_region_y, src_region_w, src_region_h,
                    dst_region_w, dst_region_h);
    if (!sci)
      {
@@ -609,7 +609,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
      {
         if (!sci->im)
           {
-             if ((sci->key.dst_w < max_dimension) && 
+             if ((sci->key.dst_w < max_dimension) &&
                  (sci->key.dst_h < max_dimension))
                {
                   if (sci->flop <= max_flop_count)
@@ -623,12 +623,12 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
    sci->usage++;
    sci->usage_count = use_counter;
    SLKU(cache_lock);
-   if (sci->usage > im->cache.newest_usage) 
+   if (sci->usage > im->cache.newest_usage)
      im->cache.newest_usage = sci->usage;
-//   INF("newset? %p %i > %i", im, 
-//          (int)sci->usage, 
+//   INF("newset? %p %i > %i", im,
+//          (int)sci->usage,
 //          (int)im->cache.newest_usage);
-   if (sci->usage_count > im->cache.newest_usage_count) 
+   if (sci->usage_count > im->cache.newest_usage_count)
      im->cache.newest_usage_count = sci->usage_count;
 //   INF("  -------------- used %8i#, %8i@", (int)sci->usage, (int)sci->usage_count);
    if (locked) SLKU(im->cache.lock);

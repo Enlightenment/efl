@@ -32,7 +32,7 @@ init_copy_color_span_funcs_c(void)
    op_copy_span_funcs[SP_N][SM_N][SC_AN][DP_AN][CPU_C] = _op_copy_can_dpan;
    op_copy_span_funcs[SP_N][SM_N][SC_AA][DP_AN][CPU_C] = _op_copy_caa_dpan;
 }
- 
+
 static void
 _op_copy_pt_c_dp(DATA32 s EINA_UNUSED, DATA8 m EINA_UNUSED, DATA32 c, DATA32 *d) {
    *d = c;

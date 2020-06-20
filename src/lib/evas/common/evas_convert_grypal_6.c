@@ -12,8 +12,8 @@ void evas_common_convert_rgba_to_8bpp_pal_gray64(DATA32 *src, DATA8 *dst, int sr
     CONVERT_LOOP_START_ROT_0();
 
     /* RGB -> YUV conversion */
-    Y = ((R_VAL(src_ptr) * 76) + 
-         (G_VAL(src_ptr) * 151) + 
+    Y = ((R_VAL(src_ptr) * 76) +
+         (G_VAL(src_ptr) * 151) +
          (B_VAL(src_ptr) * 29)) >> 10;
     *dst_ptr = pal[Y];
 

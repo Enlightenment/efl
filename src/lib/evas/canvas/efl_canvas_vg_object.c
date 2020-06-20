@@ -400,7 +400,7 @@ _efl_canvas_vg_object_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Object_Data *pd
    Evas *e = evas_object_evas_get(obj);
 
    /* Container must have a set parent after construction.
-      efl_add_ref() with a parent won't work this case 
+      efl_add_ref() with a parent won't work this case
       because container needs some jobs in overriding parent_set()
       after proper intialization. */
    efl_parent_set(pd->root, obj);

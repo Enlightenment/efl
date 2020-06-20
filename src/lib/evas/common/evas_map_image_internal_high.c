@@ -87,7 +87,7 @@ _map_aa_edge_calc_internal(AALine *spans, int eidx, int ystart, int yend)
 {
    int y = 0;
    Evas_Coord_Point p_edge = {-1, -1};  //previous edge point
-   Evas_Coord_Point edge_diff = {0, 0}; //temporary used for point distance 
+   Evas_Coord_Point edge_diff = {0, 0}; //temporary used for point distance
 
    /* store bigger to tx[0] between prev and current edge's x positions. */
    int tx[2] = {0, 0};
@@ -763,7 +763,7 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
    DATA32 c[4];
    RGBA_Gfx_Func func = NULL;
    RGBA_Gfx_Func func2 = NULL;
-   DATA32 *tbuf = NULL;                //Temporarily used span buffer 
+   DATA32 *tbuf = NULL;                //Temporarily used span buffer
    Eina_Bool have_alpha = EINA_FALSE;
    Eina_Bool src_alpha = src->cache_entry.flags.alpha;
    Eina_Bool ssrc_alpha = src->cache_entry.flags.alpha_sparse;
@@ -773,8 +773,8 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
    //FIXME: we cannot apply anti_aliasing per polygons.
    anti_alias = EINA_FALSE;
 
-   /* Prepare points data. 
-      Convert to float, 
+   /* Prepare points data.
+      Convert to float,
       shift XY coordinates to match the sub-pixeling technique.
       Check alpha transparency. */
    for (int i = 0; i < 4; i++)
@@ -844,7 +844,7 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
      }
 #endif
 
-   /* 
+   /*
       1 polygon is consisted of 2 triangles, 4 polygons constructs 1 mesh.
       below figure illustrates vert[9] index info.
       If you need better quality, please divide a mesh by more number of triangles.

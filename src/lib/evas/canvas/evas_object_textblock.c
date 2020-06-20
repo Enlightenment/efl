@@ -2992,7 +2992,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
           {
              _format_command_unified_only(o, fmt, cmd, param, len);
           }
-        
+
      }
 }
 
@@ -3158,7 +3158,7 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
 
         part1 = alloca(len + 1);
         *part1 = 0;
-        
+
         part2 = alloca(len + 1);
         *part2 = 0;
 
@@ -3179,7 +3179,7 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
   return changed;
 }
 
-/* 
+/*
  * @internal
  * just to create a constant without using marco
  * 2 cacheline is enough for the string we parse
@@ -3188,12 +3188,12 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
  */
 enum _Internal{ ALLOCATOR_SIZE = 120 };
 
-/* 
+/*
  * @internal
  * A simple stack allocator which first
  * tries to create a string in the stack (buffer
  * it holds). if the string size is bigger than its
- * buffer capacity it will fall back to creating the 
+ * buffer capacity it will fall back to creating the
  * string on heap.
  * USAGE :
  * Allocator a;
@@ -4461,7 +4461,7 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, const ch
 {
    const char *key = NULL;
    char *val = NULL;
-   
+
    Allocator allocator;
    _allocator_init(&allocator);
 
@@ -8225,7 +8225,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
           }
      }
 
-   // Verify nothing has changed 
+   // Verify nothing has changed
    if (ts == old_ts) return;
 
    if ((ts) && (ts->delete_me)) return;
@@ -8491,7 +8491,7 @@ _escaped_is_eq_and_advance(const char *s, const char *s_end,
  * @internal
  *
  * @param s the escape string to search for its index
- * @param s_len length of s string 
+ * @param s_len length of s string
  * @param escape_values array of Escape_Value to look inside, Sorted by Escape
  * @param escape_values_len is the len of Escape_Value array
  */
@@ -8564,9 +8564,9 @@ _escaped_char_match(const char *s, int *adv)
    if (n_ret != -1)
      {
         *adv = (int) escape_values_v_common_sorted[n_ret].value_len;
-        return escape_values_v_common_sorted[n_ret].escape; 
+        return escape_values_v_common_sorted[n_ret].escape;
      }
-   else 
+   else
      {
         static const size_t escape_size = sizeof(escape_values_v_sorted) / sizeof(Escape_Value);
         n_ret = _escaped_value_search(s, escape_values_v_sorted, escape_size);

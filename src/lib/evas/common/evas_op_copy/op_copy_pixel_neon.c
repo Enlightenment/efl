@@ -13,8 +13,8 @@ _op_copy_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32
    if (e > d)
      {
         int dl;
-        
-        asm volatile 
+
+        asm volatile
         (".fpu neon \n\t"
             "_op_copy_p_dp_neon_asmloop: \n\t"
             "pld     [%[s], #192]      \n\t" // preload 256 bytes ahead
@@ -31,12 +31,12 @@ _op_copy_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32
           : /*in */ [s] "r" (s), [e] "r" (e), [d] "r" (d)
           : /*clobber*/
             "q0", "q1", "q2","q3", "q4", "q5", "q6",
-            "d0", "d1", "d2", "d3", 
-            "d4", "d5", "d6", "d7", 
+            "d0", "d1", "d2", "d3",
+            "d4", "d5", "d6", "d7",
             "d8", "d9", "d10", "d11",
             "memory" // clobbered
         );
-        dl = l % 24; // dl is how many pixels at end that is not a multiple of 24 
+        dl = l % 24; // dl is how many pixels at end that is not a multiple of 24
         l = l - dl; // jump to there at the end of the run?
         s = s + l;
         d = d + l;

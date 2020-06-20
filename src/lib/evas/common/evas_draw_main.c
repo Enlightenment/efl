@@ -266,16 +266,16 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
 #if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
    if (dc->col.pixman_color_image)
      pixman_image_unref(dc->col.pixman_color_image);
-   
+
    pixman_color_t pixman_color;
-   
+
    pixman_color.alpha =  (dc->col.col & 0xff000000) >> 16;
    pixman_color.red = (dc->col.col & 0x00ff0000) >> 8;
    pixman_color.green = (dc->col.col & 0x0000ff00);
    pixman_color.blue = (dc->col.col & 0x000000ff) << 8;
 
    dc->col.pixman_color_image = pixman_image_create_solid_fill(&pixman_color);
-#endif   
+#endif
 #endif
 
 }

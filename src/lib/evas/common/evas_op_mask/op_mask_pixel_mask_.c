@@ -1,6 +1,6 @@
 /* mask pixel x mask --> dst */
 
-static void 
+static void
 _op_mask_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
@@ -36,7 +36,7 @@ init_mask_pixel_mask_span_funcs_c(void)
    op_mask_span_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_mask_pas_mas_dpan;
 }
 
-static void 
+static void
 _op_mask_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c EINA_UNUSED, DATA32 *d) {
 	s = 256 - (((256 - (s >> 24)) * m) >> 8);
 	*d = MUL_256(s, *d);

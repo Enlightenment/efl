@@ -23,7 +23,7 @@ generic_cache_destroy(Generic_Cache *cache)
           }
 
         eina_hash_free(cache->hash);
-        free(cache);          
+        free(cache);
      }
 }
 

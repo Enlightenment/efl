@@ -5402,7 +5402,7 @@ EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
 
 /**
  * @brief Set a load option to skip initial header load and defer to preload
- * 
+ *
  * This is meant to be used in conjunction with evas_object_image_file_set()
  * and evas_object_image_preload() by deferring any header loading until
  * a evas_object_image_preload() is issued making the file file set simply
@@ -5411,17 +5411,17 @@ EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
  * channel flags etc. All of this will then be done as part of the preload
  * stage.
  * @param[in] obj The object
- * 
+ *
  * @since 1.19
  */
 EAPI void evas_object_image_load_head_skip_set(Evas_Object *obj, Eina_Bool skip);
 
 /**
  * @brief Get the load option to skip header loads before preload
- * 
+ *
  * This gets the head skip value set by evas_object_image_load_head_skip_set()
  * @param[in] obj The object
- * 
+ *
  * @see evas_object_image_load_head_skip_set
  * @since 1.19
  */
@@ -7100,7 +7100,7 @@ EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord 
  *
  * @{
  */
- 
+
  /**
  * Add a new box object on the provided canvas.
  *
@@ -8376,7 +8376,7 @@ EAPI Eina_Bool evas_object_map_enable_get(const Evas_Object *obj);
  *
  * Note: the preferred method for filters is to edit EDC styles, rather than
  * calling this API directly.
- * 
+ *
  * @since 1.18
  */
 EAPI void evas_object_text_filter_program_set(Evas_Object *obj, const char *code) EINA_DEPRECATED;

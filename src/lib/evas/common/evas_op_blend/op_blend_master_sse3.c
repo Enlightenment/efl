@@ -47,7 +47,7 @@ evas_common_op_blend_init_sse3(void)
    init_blend_pixel_mask_pt_funcs_sse3();
    init_blend_color_pt_funcs_sse3();
    init_blend_mask_color_pt_funcs_sse3();
-#endif   
+#endif
 }
 
 void
@@ -65,7 +65,7 @@ evas_common_op_blend_rel_init_sse3(void)
    init_blend_rel_pixel_mask_pt_funcs_sse3();
    init_blend_rel_color_pt_funcs_sse3();
    init_blend_rel_mask_color_pt_funcs_sse3();
-#endif   
+#endif
 }
 
 //#pragma GCC push_options
@@ -75,10 +75,10 @@ evas_common_op_sse3_test(void)
 {
 #ifdef BUILD_SSE3
    DATA32 s[64] = {0x11883399}, d[64] = {0xff88cc33};
-   
+
    s[0] = rand(); d[1] = rand();
    _op_blend_pas_dp_sse3(s, NULL, 0, d, 64);
    evas_common_cpu_end_opt();
-#endif   
+#endif
 }
 //#pragma GCC pop_options

@@ -23,43 +23,43 @@ struct ext_loader_s
 static const struct ext_loader_s loaders[] =
 { /* map extensions to loaders to use for good first-guess tries */
    MATCHING(".png", "png"),
-   
+
    MATCHING(".jpg", "jpeg"),
    MATCHING(".jpeg", "jpeg"),
    MATCHING(".jfif", "jpeg"),
-   
+
    MATCHING(".j2k", "jp2k"),
    MATCHING(".jp2", "jp2k"),
    MATCHING(".jpx", "jp2k"),
    MATCHING(".jpf", "jp2k"),
-   
+
    MATCHING(".eet", "eet"),
    MATCHING(".edj", "eet"),
    MATCHING(".eap", "eet"),
-   
+
    MATCHING(".xpm", "xpm"),
-   
+
    MATCHING(".tiff", "tiff"),
    MATCHING(".tif", "tiff"),
-   
+
    MATCHING(".gif", "gif"),
-   
+
    MATCHING(".pbm", "pmaps"),
    MATCHING(".pgm", "pmaps"),
    MATCHING(".ppm", "pmaps"),
    MATCHING(".pnm", "pmaps"),
-   
+
    MATCHING(".bmp", "bmp"),
-   
+
    MATCHING(".tga", "tga"),
-   
+
    MATCHING(".wbmp", "wbmp"),
-   
+
    MATCHING(".webp", "webp"),
-   
+
    MATCHING(".ico", "ico"),
    MATCHING(".cur", "ico"),
-   
+
    MATCHING(".psd", "psd"),
 
    MATCHING(".tgv", "tgv"),

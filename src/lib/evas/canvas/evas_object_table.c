@@ -1082,7 +1082,7 @@ _evas_table_pack_get(const Eo *o EINA_UNUSED, Evas_Table_Data *_pd EINA_UNUSED, 
    if (row) *row = opt->row;
    if (colspan) *colspan = opt->colspan;
    if (rowspan) *rowspan = opt->rowspan;
-   
+
    return EINA_TRUE;
 }
 
@@ -1121,7 +1121,7 @@ _evas_table_pack(Eo *o, Evas_Table_Data *priv, Evas_Object *child, unsigned shor
      {
         WRN("row + rowspan getting rather large (>32767)");
      }
-   
+
    opt = _evas_object_table_option_get(child);
    if (opt)
      {
