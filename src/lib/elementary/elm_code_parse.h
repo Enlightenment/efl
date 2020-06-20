@@ -18,7 +18,7 @@ EAPI extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO; /**< A provided pars
 
 /**
  * @brief Parser helper functions.
- * @defgroup Parser  Hooking in and launching parsers 
+ * @defgroup Parser  Hooking in and launching parsers
  *
  * @{
  *

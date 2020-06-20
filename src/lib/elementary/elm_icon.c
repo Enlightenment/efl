@@ -322,7 +322,7 @@ _elm_icon_efl_file_load(Eo *obj, Elm_Icon_Data *sd)
    if (efl_file_loaded_get(obj)) return 0;
    err = efl_file_load(efl_super(obj, MY_CLASS));
    if (err) return err;
-   
+
    Efl_Ui_Image_Data *id = efl_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    _edje_signals_free(sd);
