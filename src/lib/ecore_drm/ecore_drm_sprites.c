@@ -30,14 +30,14 @@
 
 /**
  * @defgroup Ecore_Drm_Sprites_Group Ecore DRM Sprites
- * 
+ *
  * Functions for managing DRM sprites.
- * 
+ *
  */
 
 /* TODO: DOXY !! */
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_sprites_create(Ecore_Drm_Device *dev)
 {
    drmModePlaneRes *res;
@@ -58,8 +58,8 @@ ecore_drm_sprites_create(Ecore_Drm_Device *dev)
           continue;
 
         /* allocate space for sprite */
-        if (!(sprite = 
-              malloc(sizeof(Ecore_Drm_Sprite) + 
+        if (!(sprite =
+              malloc(sizeof(Ecore_Drm_Sprite) +
                      ((sizeof(unsigned int)) * p->count_formats))))
           {
              drmModeFreePlane(p);
@@ -71,7 +71,7 @@ ecore_drm_sprites_create(Ecore_Drm_Device *dev)
         sprite->crtcs = p->possible_crtcs;
         sprite->plane_id = p->plane_id;
         sprite->num_formats = p->count_formats;
-        memcpy(sprite->formats, p->formats, 
+        memcpy(sprite->formats, p->formats,
                p->count_formats * sizeof(p->formats[0]));
         drmModeFreePlane(p);
 
@@ -84,7 +84,7 @@ ecore_drm_sprites_create(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Sprite *sprite;
@@ -106,28 +106,28 @@ ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
      }
 }
 
-EAPI void 
+EAPI void
 ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags)
 {
    EINA_SAFETY_ON_TRUE_RETURN((!sprite) || (!sprite->output));
 
    if (fb_id)
      {
-        drmModeSetPlane(sprite->drm_fd, sprite->plane_id, 
-                        sprite->output->crtc_id, fb_id, flags, 
-                        sprite->dest.x, sprite->dest.y, sprite->dest.w, 
+        drmModeSetPlane(sprite->drm_fd, sprite->plane_id,
+                        sprite->output->crtc_id, fb_id, flags,
+                        sprite->dest.x, sprite->dest.y, sprite->dest.w,
                         sprite->dest.h, sprite->src.x, sprite->src.y,
                         sprite->src.w, sprite->src.h);
      }
    else
      {
-        drmModeSetPlane(sprite->drm_fd, sprite->plane_id, 
-                        sprite->output->crtc_id, 0, 0, 
+        drmModeSetPlane(sprite->drm_fd, sprite->plane_id,
+                        sprite->output->crtc_id, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0);
      }
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supported)
 {
    Ecore_Drm_Device *dev;

@@ -33,7 +33,7 @@ static int _dbus_init_count = 0;
 static Eldbus_Connection *dconn;
 static Eldbus_Object *dobj;
 
-static void 
+static void
 _ecore_drm_dbus_device_pause_done(uint32_t major, uint32_t minor)
 {
    Eldbus_Proxy *proxy;
@@ -56,7 +56,7 @@ _ecore_drm_dbus_device_pause_done(uint32_t major, uint32_t minor)
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
 }
 
-static void 
+static void
 _cb_session_removed(void *data, const Eldbus_Message *msg)
 {
    Ecore_Drm_Device *dev;
@@ -81,7 +81,7 @@ _cb_session_removed(void *data, const Eldbus_Message *msg)
      }
 }
 
-static void 
+static void
 _cb_device_paused(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *errname, *errmsg;
@@ -104,7 +104,7 @@ _cb_device_paused(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
      }
 }
 
-static void 
+static void
 _cb_device_resumed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *errname, *errmsg;
@@ -133,7 +133,7 @@ _property_response_set(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus
      ERR("Eldbus Message error %s - %s\n\n", errname, errmsg);
 }
 
-static void 
+static void
 _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
 {
    Eldbus_Proxy_Event_Property_Changed *ev;
@@ -142,14 +142,14 @@ _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, 
 
    if (!strcmp(ev->name, "Active"))
      {
-         eldbus_proxy_property_set(proxy, "Active", "b", (void *)EINA_TRUE, 
+         eldbus_proxy_property_set(proxy, "Active", "b", (void *)EINA_TRUE,
                                    _property_response_set, NULL);
-         eldbus_proxy_property_set(proxy, "State", "s", &"active", 
+         eldbus_proxy_property_set(proxy, "State", "s", &"active",
                                    _property_response_set, NULL);
      }
 }
 
-Eina_Bool 
+Eina_Bool
 _ecore_drm_dbus_session_take(void)
 {
    Eldbus_Proxy *proxy;
@@ -184,7 +184,7 @@ _ecore_drm_dbus_session_take(void)
    return EINA_TRUE;
 }
 
-Eina_Bool 
+Eina_Bool
 _ecore_drm_dbus_session_release(void)
 {
    Eldbus_Proxy *proxy;
@@ -217,7 +217,7 @@ _ecore_drm_dbus_session_release(void)
    return EINA_TRUE;
 }
 
-void 
+void
 _ecore_drm_dbus_device_release(uint32_t major, uint32_t minor)
 {
    Eldbus_Proxy *proxy;
@@ -264,7 +264,7 @@ eldbus_err:
    if (callback) callback(data, fd, b);
 }
 
-int 
+int
 _ecore_drm_dbus_device_take(uint32_t major, uint32_t minor, Ecore_Drm_Open_Cb callback, void *data)
 {
    Eldbus_Proxy *proxy;
@@ -338,7 +338,7 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
    return fd;
 }
 
-int 
+int
 _ecore_drm_dbus_init(Ecore_Drm_Device *dev)
 {
    Eldbus_Proxy *proxy;
@@ -385,7 +385,7 @@ _ecore_drm_dbus_init(Ecore_Drm_Device *dev)
         goto proxy_err;
      }
 
-   eldbus_proxy_signal_handler_add(proxy, "SessionRemoved", 
+   eldbus_proxy_signal_handler_add(proxy, "SessionRemoved",
                                    _cb_session_removed, dev);
 
    /* try to get the Session proxy */
@@ -395,9 +395,9 @@ _ecore_drm_dbus_init(Ecore_Drm_Device *dev)
         goto proxy_err;
      }
 
-   eldbus_proxy_signal_handler_add(proxy, "PauseDevice", 
+   eldbus_proxy_signal_handler_add(proxy, "PauseDevice",
                                    _cb_device_paused, NULL);
-   eldbus_proxy_signal_handler_add(proxy, "ResumeDevice", 
+   eldbus_proxy_signal_handler_add(proxy, "ResumeDevice",
                                    _cb_device_resumed, NULL);
 
    /* try to get the Properties proxy */
@@ -408,7 +408,7 @@ _ecore_drm_dbus_init(Ecore_Drm_Device *dev)
      }
 
    eldbus_proxy_properties_monitor(proxy, EINA_TRUE);
-   eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED, 
+   eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                    _cb_properties_changed, NULL);
 
    return _dbus_init_count;
@@ -424,7 +424,7 @@ conn_err:
    return --_dbus_init_count;
 }
 
-int 
+int
 _ecore_drm_dbus_shutdown(void)
 {
    if (--_dbus_init_count != 0) return _dbus_init_count;

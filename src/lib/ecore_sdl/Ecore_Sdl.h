@@ -100,7 +100,7 @@ struct _Ecore_Sdl_Event_Mouse_Button_Up /** SDL Mouse Up event */
 };
 
 typedef struct _Ecore_Sdl_Event_Mouse_Move Ecore_Sdl_Event_Mouse_Move;
-struct _Ecore_Sdl_Event_Mouse_Move /** SDL Mouse Move event */ 
+struct _Ecore_Sdl_Event_Mouse_Move /** SDL Mouse Move event */
 {
    int             x; /**< Mouse co-ordinates where the mouse cursor moved to */
    int             y; /**< Mouse co-ordinates where the mouse cursor moved to */

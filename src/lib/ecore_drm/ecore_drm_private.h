@@ -173,7 +173,7 @@ struct _Ecore_Drm_Output
         char serial[13];
      } edid;
 
-   Ecore_Drm_Backlight *backlight;   
+   Ecore_Drm_Backlight *backlight;
    Ecore_Drm_Fb *current, *next;
 
    Eina_Bool primary : 1;
@@ -237,7 +237,7 @@ struct _Ecore_Drm_Evdev
    /*        } pt[EVDEV_MAX_SLOTS]; */
    /*   } abs; */
 
-   struct 
+   struct
      {
         int ix, iy;
         int minx, miny, maxw, maxh;
@@ -249,7 +249,7 @@ struct _Ecore_Drm_Evdev
         uint32_t prev_button, last_button;
      } mouse;
 
-   struct 
+   struct
      {
         struct xkb_keymap *keymap;
         struct xkb_state *state;
@@ -282,7 +282,7 @@ struct _Ecore_Drm_Sprite
    unsigned int crtcs;
    unsigned int plane_id;
 
-   struct 
+   struct
      {
         int x, y;
         unsigned int w, h;

@@ -1186,7 +1186,7 @@ EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect geometry value.
  *
  * This is a helper function to be used with ECORE_GETOPT_CALLBACK_*().
- * 
+ *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
 EAPI Eina_Bool  ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);

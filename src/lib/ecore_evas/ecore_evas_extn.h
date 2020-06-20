@@ -3,7 +3,7 @@
 
 typedef struct _Ecore_Evas_Interface_Extn Ecore_Evas_Interface_Extn;
 
-struct _Ecore_Evas_Interface_Extn 
+struct _Ecore_Evas_Interface_Extn
 {
    Ecore_Evas_Interface base;
 

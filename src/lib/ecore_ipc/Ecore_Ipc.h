@@ -133,7 +133,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED
                 p->v = (char *)ptr; \
                 ptr += strlen(p->v) + 1; \
             } \
-    } 
+    }
 #define ECORE_IPC_PUTS(v, l)\
     { \
         strcpy((char *)ptr, p->v); \
@@ -234,7 +234,7 @@ typedef enum _Ecore_Ipc_Type
    ECORE_IPC_USE_SSL = (1 << 4),
    ECORE_IPC_NO_PROXY = (1 << 5)
 } Ecore_Ipc_Type;
-   
+
 typedef struct _Ecore_Ipc_Event_Client_Add  Ecore_Ipc_Event_Client_Add;
 typedef struct _Ecore_Ipc_Event_Client_Del  Ecore_Ipc_Event_Client_Del;
 typedef struct _Ecore_Ipc_Event_Server_Add  Ecore_Ipc_Event_Server_Add;
@@ -318,7 +318,7 @@ struct _Ecore_Ipc_Event_Server_Data
    void             *data; /**< The message data */
    int               size; /**< The data length (in bytes) */
 };
-   
+
 EAPI extern int ECORE_IPC_EVENT_CLIENT_ADD;
 EAPI extern int ECORE_IPC_EVENT_CLIENT_DEL;
 EAPI extern int ECORE_IPC_EVENT_SERVER_ADD;

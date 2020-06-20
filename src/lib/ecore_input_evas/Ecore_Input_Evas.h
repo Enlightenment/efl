@@ -37,7 +37,7 @@ typedef void (*Ecore_Event_Mouse_Move_Cb)(void *window, int x, int y, unsigned i
 typedef void (*Ecore_Event_Multi_Move_Cb)(void *window, int device, int x, int y, double radius, double radius_x, double radius_y, double pressure, double angle, double mx, double my, unsigned int timestamp);
 typedef void (*Ecore_Event_Multi_Down_Cb)(void *window, int device, int x, int y, double radius, double radius_x, double radius_y, double pressure, double angle, double mx, double my, Evas_Button_Flags flags, unsigned int timestamp);
 typedef void (*Ecore_Event_Multi_Up_Cb)(void *window, int device, int x, int y, double radius, double radius_x, double radius_y, double pressure, double angle, double mx, double my, Evas_Button_Flags flags, unsigned int timestamp);
-      
+
 EAPI int       ecore_event_evas_init(void);
 EAPI int       ecore_event_evas_shutdown(void);
 

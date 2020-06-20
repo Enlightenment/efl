@@ -52,7 +52,7 @@ ecore_compose_get(const Eina_List *seq, char **seqstr_ret)
    for (p = comp; (p < pend) && s;)
      {
         int len, jump = -1, bsize = -1;
-        
+
         len = strlen(p);
         psz = (unsigned char *)(p + len + 1);
         // decode jump amount to next entry

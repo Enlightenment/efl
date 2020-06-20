@@ -437,7 +437,7 @@ _cb_create_prepare(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    wl_display_flush_clients(ewd->wl.display);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _recovery_timer(Ecore_Wl2_Display *ewd)
 {
    if (!_ecore_wl2_display_connect(ewd, 1))

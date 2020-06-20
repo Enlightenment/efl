@@ -277,7 +277,7 @@ ecore_ipc_post_event_client_del(Ecore_Ipc_Client *cl)
    Ecore_Ipc_Event_Client_Del *ev;
 
    if (cl->delete_me) return;
-   
+
    cl->delete_me = EINA_TRUE;
 
    ev = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));

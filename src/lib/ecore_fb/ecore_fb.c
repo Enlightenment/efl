@@ -57,7 +57,7 @@ ecore_fb_init(const char *name)
      {
         oldhand = signal(SIGINT, nosigint);
      }
-   
+
    _ecore_fb_size_get(name, &_ecore_fb_console_w, &_ecore_fb_console_h);
 
    return _ecore_fb_init_count;

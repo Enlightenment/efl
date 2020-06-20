@@ -101,7 +101,7 @@ _ecore_x_image_shm_check(void)
         _ecore_x_image_shm_can = 0;
         return _ecore_x_image_shm_can;
      }
-   
+
    XSync(_ecore_x_disp, False);
    _ecore_x_image_err = 0;
 
@@ -691,7 +691,7 @@ ecore_x_image_to_argb_convert(void *src,
                   break;
                }
              break;
-             
+
            case 32:
              s32 = ((unsigned int *)(((unsigned char *)src) + ((y + row) * sbpl))) + x;
              switch (mode)

@@ -124,7 +124,7 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { 127,                       "BackSpace",    "\x08" },
 { 126,                       "asciitilde",   "~" },
 
-{ 160,                       "w0",           "" }, 
+{ 160,                       "w0",           "" },
 { 161,                       "w1",           "" },
 { 162,                       "w2",           "" },
 { 163,                       "w3",           "" },

@@ -37,7 +37,7 @@
 #define EDID_OFFSET_PNPID 0x08
 #define EDID_OFFSET_SERIAL 0x0c
 
-static const char *conn_types[] = 
+static const char *conn_types[] =
 {
    "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
    "Composite", "S-Video", "LVDS", "Component", "DIN",
@@ -111,7 +111,7 @@ _ecore_drm_output_property_get(int fd, drmModeConnectorPtr conn, const char *nam
    return NULL;
 }
 
-static void 
+static void
 _ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
 {
    int i = 0, rep = 0;
@@ -139,7 +139,7 @@ _ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
    if (rep > 4) text[0] = '\0';
 }
 
-static int 
+static int
 _ecore_drm_output_edid_parse(Ecore_Drm_Output *output, const uint8_t *data, size_t len)
 {
    int i = 0;
@@ -149,8 +149,8 @@ _ecore_drm_output_edid_parse(Ecore_Drm_Output *output, const uint8_t *data, size
    if ((data[0] != 0x00) || (data[1] != 0xff)) return -1;
 
    output->edid.pnp[0] = 'A' + ((data[EDID_OFFSET_PNPID + 0] & 0x7c) / 4) - 1;
-   output->edid.pnp[1] = 
-     'A' + ((data[EDID_OFFSET_PNPID + 0] & 0x3) * 8) + 
+   output->edid.pnp[1] =
+     'A' + ((data[EDID_OFFSET_PNPID + 0] & 0x3) * 8) +
      ((data[EDID_OFFSET_PNPID + 1] & 0xe0) / 32) - 1;
    output->edid.pnp[2] = 'A' + (data[EDID_OFFSET_PNPID + 1] & 0x1f) - 1;
    output->edid.pnp[3] = '\0';
@@ -178,7 +178,7 @@ _ecore_drm_output_edid_parse(Ecore_Drm_Output *output, const uint8_t *data, size
    return 0;
 }
 
-static void 
+static void
 _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
 {
    drmModePropertyBlobPtr blob = NULL;
@@ -189,10 +189,10 @@ _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
      {
         if (!(prop = drmModeGetProperty(output->dev->drm.fd, conn->props[i])))
           continue;
-        if ((prop->flags & DRM_MODE_PROP_BLOB) && 
+        if ((prop->flags & DRM_MODE_PROP_BLOB) &&
             (!strcmp(prop->name, "EDID")))
           {
-             blob = drmModeGetPropertyBlob(output->dev->drm.fd, 
+             blob = drmModeGetPropertyBlob(output->dev->drm.fd,
                                            conn->prop_values[i]);
           }
         drmModeFreeProperty(prop);
@@ -217,7 +217,7 @@ _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
    drmModeFreePropertyBlob(blob);
 }
 
-static void 
+static void
 _ecore_drm_output_software_render(Ecore_Drm_Output *output)
 {
    if (!output) return;
@@ -637,7 +637,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->current_mode->flags |= DRM_MODE_TYPE_DEFAULT;
 
    /* try to init backlight */
-   output->backlight = 
+   output->backlight =
      _ecore_drm_output_backlight_init(output, conn->connector_type);
 
    /* parse edid */
@@ -692,7 +692,7 @@ err:
    return NULL;
 }
 
-static void 
+static void
 _ecore_drm_output_free(Ecore_Drm_Output *output)
 {
    Ecore_Drm_Output_Mode *mode;
@@ -708,7 +708,7 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
      }
 
    /* delete the backlight struct */
-   if (output->backlight) 
+   if (output->backlight)
      _ecore_drm_output_backlight_shutdown(output->backlight);
 
    /* turn off hardware cursor */
@@ -743,7 +743,7 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    free(output);
 }
 
-void 
+void
 _ecore_drm_output_frame_finish(Ecore_Drm_Output *output)
 {
    if (!output) return;
@@ -753,7 +753,7 @@ _ecore_drm_output_frame_finish(Ecore_Drm_Output *output)
    output->repaint_scheduled = EINA_FALSE;
 }
 
-void 
+void
 _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {
    if ((!output) || (!fb)) return;
@@ -763,7 +763,7 @@ _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
      ecore_drm_fb_destroy(fb);
 }
 
-void 
+void
 _ecore_drm_output_repaint_start(Ecore_Drm_Output *output)
 {
    unsigned int fb;
@@ -780,7 +780,7 @@ _ecore_drm_output_repaint_start(Ecore_Drm_Output *output)
      }
 
    fb = output->dev->current->id;
-   if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, fb, 
+   if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, fb,
                        DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
      {
         ERR("Could not schedule output page flip event");
@@ -920,12 +920,12 @@ _ecore_drm_output_render_disable(Ecore_Drm_Output *output)
 
 /**
  * @defgroup Ecore_Drm_Output_Group Ecore DRM Output
- * 
+ *
  * Functions to manage DRM outputs.
- * 
+ *
  */
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 {
    Eina_Bool ret = EINA_TRUE;
@@ -998,13 +998,13 @@ next:
    return ret;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_output_free(Ecore_Drm_Output *output)
 {
    _ecore_drm_output_free(output);
 }
 
-EAPI void 
+EAPI void
 ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
@@ -1012,7 +1012,7 @@ ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, in
    drmModeSetCursor(output->dev->drm.fd, output->crtc_id, handle, w, h);
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_output_enable(Ecore_Drm_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
@@ -1036,7 +1036,7 @@ ecore_drm_output_disable(Ecore_Drm_Output *output)
    _ecore_drm_output_event_send(output, EINA_FALSE);
 }
 
-EAPI void 
+EAPI void
 ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
@@ -1044,7 +1044,7 @@ ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
    _ecore_drm_output_fb_release(output, fb);
 }
 
-EAPI void 
+EAPI void
 ecore_drm_output_repaint(Ecore_Drm_Output *output)
 {
    Ecore_Drm_Device *dev;
@@ -1070,7 +1070,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
 
    output->need_repaint = EINA_FALSE;
 
-   if ((!dev->current) || 
+   if ((!dev->current) ||
        (dev->current->stride != dev->next->stride))
      {
         Ecore_Drm_Output_Mode *mode;
@@ -1099,13 +1099,13 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    EINA_LIST_FOREACH(dev->sprites, l, sprite)
      {
         unsigned int flags = 0, id = 0;
-        drmVBlank vbl = 
+        drmVBlank vbl =
           {
              .request.type = (DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT),
              .request.sequence = 1,
           };
 
-        if (((!sprite->current_fb) && (!sprite->next_fb)) || 
+        if (((!sprite->current_fb) && (!sprite->next_fb)) ||
             (!ecore_drm_sprites_crtc_supported(output, sprite->crtcs)))
           continue;
 
@@ -1132,7 +1132,7 @@ err:
      }
 }
 
-EAPI void 
+EAPI void
 ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h)
 {
    drmModeFB *fb;
@@ -1147,7 +1147,7 @@ ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h)
    drmModeFreeFB(fb);
 }
 
-EAPI void 
+EAPI void
 ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, int *h)
 {
    Ecore_Drm_Output *output;

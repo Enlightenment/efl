@@ -7,10 +7,10 @@
 #include "Ecore_X.h"
 
 /* NB: FIXME:
- * 
- * A lot of this code uses XRRGetScreenInfo and then calls 
- * XRRFreeScreenConfigInfo. Typically this is not an Unheard of thing to do, 
- * however this process of getting config and freeing config does force a 
+ *
+ * A lot of this code uses XRRGetScreenInfo and then calls
+ * XRRFreeScreenConfigInfo. Typically this is not an Unheard of thing to do,
+ * however this process of getting config and freeing config does force a
  * round-trip to the X server */
 
 /* local variables */
@@ -33,7 +33,7 @@ static Ecore_X_Atom connector_number = 0;
 # define RANDR_EDID_MANUFACTURER 0x08
 # define RANDR_EDID_BLOCK 0x36
 
-typedef enum _Ecore_X_Randr_Edid_Aspect_Ratio_Preferred 
+typedef enum _Ecore_X_Randr_Edid_Aspect_Ratio_Preferred
 {
    RANDR_EDID_ASPECT_RATIO_PREFERRED_4_3 = 0x00,
      RANDR_EDID_ASPECT_RATIO_PREFERRED_16_9 = 0x01,
@@ -49,7 +49,7 @@ XRRScreenResources *(*_ecore_x_randr_screen_resources_get)(Display *disp, Window
 #endif
 
 /* local functions */
-void 
+void
 _ecore_x_randr_init(void)
 {
 #ifdef ECORE_XRANDR
@@ -76,7 +76,7 @@ _ecore_x_randr_init(void)
 }
 
 /* public functions */
-EAPI int 
+EAPI int
 ecore_x_randr_version_get(void)
 {
 #ifdef ECORE_XRANDR
@@ -85,23 +85,23 @@ ecore_x_randr_version_get(void)
    return -1;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_query(void)
 {
    return _randr_avail;
 }
 
 /**
- * @brief This function returns the current config timestamp from 
+ * @brief This function returns the current config timestamp from
  * XRRScreenConfiguration.
- * 
+ *
  * @param root root window to query screen configuration from
- * 
+ *
  * @returns The screen configuration timestamp
- * 
+ *
  * @since 1.8
  */
-EAPI Ecore_X_Time 
+EAPI Ecore_X_Time
 ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
 {
    Ecore_X_Time timestamp = 0;
@@ -133,14 +133,14 @@ ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
 /*
  * @param root window which's primary output will be queried
  */
-EAPI Ecore_X_Randr_Orientation 
+EAPI Ecore_X_Randr_Orientation
 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
    Rotation ret = 0, crot = 0;
 
    /* get the rotations available from XRandr */
-   ret = XRRRotations(_ecore_x_disp, 
+   ret = XRRRotations(_ecore_x_disp,
                       XRRRootToScreen(_ecore_x_disp, root), &crot);
 
    return ret;
@@ -153,14 +153,14 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
  * @param root window which's primary output will be queried
  * @return the current orientation of the root window's screen primary output
  */
-EAPI Ecore_X_Randr_Orientation 
+EAPI Ecore_X_Randr_Orientation
 ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
    Rotation ret = 0;
 
    /* get the current rotation available from XRandr */
-   XRRRotations(_ecore_x_disp, 
+   XRRRotations(_ecore_x_disp,
                 XRRRootToScreen(_ecore_x_disp, root), &ret);
 
    return ret;
@@ -178,7 +178,7 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
  * @return @c EINA_TRUE if the primary output's orientation could be
  * successfully altered.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Orientation orient)
 {
 #ifdef ECORE_XRANDR
@@ -223,7 +223,7 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
    int n = 0, i = 0;
 
    /* retrieve the number of sizes from X, and the sizes themselves.
-    * 
+    *
     * NB: don't have to free the returned sizes */
    sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
    if (!sizes) return NULL;
@@ -250,7 +250,7 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 #endif
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm, int *size_index)
 {
 #ifdef ECORE_XRANDR
@@ -264,9 +264,9 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
         int n = 0;
 
         /* retrieve the number of sizes from X, and the sizes themselves.
-         * 
+         *
          * NB: don't have to free the returned sizes */
-        sizes = 
+        sizes =
           XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
         if ((sizes) && (n > 0))
           {
@@ -275,7 +275,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
              /* get the index of the current configuration */
              idx = XRRConfigCurrentConfiguration(cfg, &crot);
 
-             /* if the index is valid, then fill in the return variables with 
+             /* if the index is valid, then fill in the return variables with
               * the size information for this index */
              if ((idx < n) && (idx >= 0))
                {
@@ -303,7 +303,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure due to e.g.
  * invalid times.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index)
 {
 #ifdef ECORE_XRANDR
@@ -325,10 +325,10 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
         if ((cfg = XRRGetScreenInfo(_ecore_x_disp, root)))
           {
              /* try to set the new screen config
-              * 
+              *
               * NB: Returns Success (0) if it works */
-             if (!XRRSetScreenConfig(_ecore_x_disp, cfg, root, size_index, 
-                                      ECORE_X_RANDR_ORIENTATION_ROT_0, 
+             if (!XRRSetScreenConfig(_ecore_x_disp, cfg, root, size_index,
+                                      ECORE_X_RANDR_ORIENTATION_ROT_0,
                                       CurrentTime))
                {
                   ret = EINA_TRUE;
@@ -349,7 +349,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
  * @param root window which's primary output will be queried
  * @return currently used refresh rate or - if request failed or RandRR is not available - 0.0
  */
-EAPI Ecore_X_Randr_Refresh_Rate 
+EAPI Ecore_X_Randr_Refresh_Rate
 ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -385,7 +385,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
    int n = 0;
 
    /* try to get the refresh rates for this screen */
-   if ((rates = XRRRates(_ecore_x_disp, 
+   if ((rates = XRRRates(_ecore_x_disp,
                          XRRRootToScreen(_ecore_x_disp, root), size_index, &n)))
      {
         Ecore_X_Randr_Refresh_Rate *ret = NULL;
@@ -418,7 +418,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
  * @param rate The refresh rate to be set.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int size_index, Ecore_X_Randr_Refresh_Rate rate)
 {
 #ifdef ECORE_XRANDR
@@ -434,11 +434,11 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int si
 
              /* get the current rotation */
              XRRConfigRotations(cfg, &rot);
- 
+
              /* try to set the new screen config
-              * 
+              *
               * NB: Returns Success (0) if it works */
-             if (!XRRSetScreenConfigAndRate(_ecore_x_disp, cfg, root, 
+             if (!XRRSetScreenConfigAndRate(_ecore_x_disp, cfg, root,
                                             size_index, rot, rate, CurrentTime))
                {
                   ret = EINA_TRUE;
@@ -465,7 +465,7 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int si
  * @param win Select this window's properties for RandR events.
  * @param on Enable/disable selecting.
  */
-EAPI void 
+EAPI void
 ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
 {
 #ifdef ECORE_XRANDR
@@ -475,7 +475,7 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
      {
         mask = RRScreenChangeNotifyMask;
         if (_randr_version >= RANDR_VERSION_1_2)
-          mask |= (RRCrtcChangeNotifyMask | RROutputChangeNotifyMask | 
+          mask |= (RRCrtcChangeNotifyMask | RROutputChangeNotifyMask |
                    RROutputPropertyNotifyMask);
      }
 
@@ -488,7 +488,7 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
  * @param w width of screen in px
  * @param h height of screen in px
  */
-EAPI void 
+EAPI void
 ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm)
 {
 #ifdef ECORE_XRANDR
@@ -514,7 +514,7 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *
  * @param wmax maximum width the screen can be set to
  * @param hmax maximum height the screen can be set to
  */
-EAPI void 
+EAPI void
 ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, int *wmax, int *hmax)
 {
 #ifdef ECORE_XRANDR
@@ -523,9 +523,9 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, i
         int swmin = 0, shmin = 0, swmax = 0, shmax = 0;
 
         /* try to get the screen size range from XRandr
-         * 
+         *
          * NB: returns 1 on success */
-        if ((XRRGetScreenSizeRange(_ecore_x_disp, root, &swmin, &shmin, 
+        if ((XRRGetScreenSizeRange(_ecore_x_disp, root, &swmin, &shmin,
                                    &swmax, &shmax)))
           {
              /* fill in the return variables */
@@ -543,7 +543,7 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, i
  * and all other CRTCs dx,dy respectively.
  * @param root the window's screen which will be reset.
  */
-EAPI void 
+EAPI void
 ecore_x_randr_screen_reset(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -612,7 +612,7 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 }
 
 /*
- * @param root Window which's screen's size should be set. If invalid (e.g. 
+ * @param root Window which's screen's size should be set. If invalid (e.g.
  * @c NULL) no action is taken.
  * @param w Width in px the screen should be set to. If out of valid
  * boundaries, current value is assumed.
@@ -625,7 +625,7 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
  * @return @c EINA_TRUE if request was successfully sent or screen is already
  * in requested size, @c EINA_FALSE if parameters are invalid.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_mm, int h_mm)
 {
 #ifdef ECORE_XRANDR
@@ -733,7 +733,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
                        ret[i]->vTotal = res->modes[i].vTotal;
                        if (res->modes[i].nameLength > 0)
                          {
-                            if ((ret[i]->name = 
+                            if ((ret[i]->name =
                                  (malloc(res->modes[i].nameLength + 1))))
                               strncpy(ret[i]->name, res->modes[i].name,
                                       (res->modes[i].nameLength + 1));
@@ -775,7 +775,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
  * adding failed.
  * @since 1.2.0
  */
-EAPI Ecore_X_Randr_Mode 
+EAPI Ecore_X_Randr_Mode
 ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_info)
 {
 #ifdef ECORE_XRANDR
@@ -783,7 +783,7 @@ ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_i
      {
         Ecore_X_Randr_Mode mode = 0;
 
-        /* if we have valid mode_info from the user, then ask XRandr to 
+        /* if we have valid mode_info from the user, then ask XRandr to
          * create the new mode using that as base */
         if (mode_info)
           mode = XRRCreateMode(_ecore_x_disp, root, (XRRModeInfo *)mode_info);
@@ -800,7 +800,7 @@ ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_i
  * @param mode_info
  * @since 1.2.0
  */
-EAPI void 
+EAPI void
 ecore_x_randr_mode_del(Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -887,7 +887,7 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
  *
  * @param mode_info The mode information that should be freed.
  */
-EAPI void 
+EAPI void
 ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
 {
 #ifdef ECORE_XRANDR
@@ -1024,9 +1024,9 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
         Ecore_X_Randr_Output *ret = NULL;
 
         /* try to get the screen resources from Xrandr
-         * 
+         *
          * NB: We do this ONCE here as we reuse it for every crtc.
-         * NB: The old code used to loop and fetch the screen resources on 
+         * NB: The old code used to loop and fetch the screen resources on
          *     every crtc */
         if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
           {
@@ -1041,15 +1041,15 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
                   /* try to get the crtc info for this crtc */
                   if (!(crtc = XRRGetCrtcInfo(_ecore_x_disp, res, crtcs[i])))
                     continue;
-                  
+
                   if (crtc->noutput > 0)
                     {
                        /* try to reallocate our return variable */
-                       if ((tret = realloc(ret, ((nret + crtc->noutput) * 
+                       if ((tret = realloc(ret, ((nret + crtc->noutput) *
                                                  sizeof(Ecore_X_Randr_Output)))))
                          {
                             ret = tret;
-                            memcpy(&ret[nret], crtc->outputs, 
+                            memcpy(&ret[nret], crtc->outputs,
                                    (crtc->noutput * sizeof(Ecore_X_Randr_Output)));
                             nret += crtc->noutput;
                          }
@@ -1130,9 +1130,9 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window, int *num)
           }
 
         /* try to get the screen resources from Xrandr
-         * 
+         *
          * NB: We do this ONCE here as we reuse it for every crtc.
-         * NB: The old code used to loop and fetch the screen resources on 
+         * NB: The old code used to loop and fetch the screen resources on
          *     every crtc */
         if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
           {
@@ -1141,11 +1141,11 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window, int *num)
              int i = 0, nret = 0;
 
              /* get the geometry of this window */
-             ecore_x_window_geometry_get(window, &wrect.x, &wrect.y, 
+             ecore_x_window_geometry_get(window, &wrect.x, &wrect.y,
                                          &wrect.w, &wrect.h);
 
              /* translate coordinates relative to root window */
-             XTranslateCoordinates(_ecore_x_disp, window, root, 
+             XTranslateCoordinates(_ecore_x_disp, window, root,
                                    0, 0, &wrect.x, &wrect.y, &tw);
 
              for (i = 0; i < ncrtcs; i++)
@@ -1325,7 +1325,7 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc 
    return NULL;
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -1356,7 +1356,7 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, in
 #endif
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y)
 {
 #ifdef ECORE_XRANDR
@@ -1378,7 +1378,7 @@ ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x,
  * value will be kept.
  * @return @c EINA_TRUE if position could successfully be altered.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, int y)
 {
 #ifdef ECORE_XRANDR
@@ -1419,7 +1419,7 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
  * @return currently set mode or - in case parameters are invalid -
  * Ecore_X_Randr_Unset
  */
-EAPI Ecore_X_Randr_Mode 
+EAPI Ecore_X_Randr_Mode
 ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1466,19 +1466,19 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
  * @return @c EINA_TRUE if mode setting was successful, @c EINA_FALSE
  * otherwise.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_mode_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Output *outputs, int noutputs, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
    if (_randr_version < RANDR_VERSION_1_2) return EINA_FALSE;
 
-   return ecore_x_randr_crtc_settings_set(root, crtc, outputs, noutputs, 
+   return ecore_x_randr_crtc_settings_set(root, crtc, outputs, noutputs,
                                           -1, -1, mode, -1);
 #endif
    return EINA_FALSE;
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -1487,7 +1487,7 @@ ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w
 #endif
 }
 
-EAPI Ecore_X_Randr_Refresh_Rate 
+EAPI Ecore_X_Randr_Refresh_Rate
 ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc EINA_UNUSED, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -1524,7 +1524,7 @@ ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
    return 0.0;
 }
 
-EAPI Ecore_X_Randr_Orientation 
+EAPI Ecore_X_Randr_Orientation
 ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1557,7 +1557,7 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
    return 0;
 }
 
-EAPI Ecore_X_Randr_Orientation 
+EAPI Ecore_X_Randr_Orientation
 ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1590,20 +1590,20 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    return 0;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Orientation orientation)
 {
 #ifdef ECORE_XRANDR
    if (_randr_version < RANDR_VERSION_1_2) return EINA_FALSE;
 
    if (orientation != 0)
-     return ecore_x_randr_crtc_settings_set(root, crtc, NULL, 
+     return ecore_x_randr_crtc_settings_set(root, crtc, NULL,
                                             -1, -1, -1, -1, orientation);
 #endif
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, Ecore_X_Randr_Crtc cln)
 {
 #ifdef ECORE_XRANDR
@@ -1632,7 +1632,7 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, E
              XRRFreeCrtcInfo(info);
           }
 
-        ret = ecore_x_randr_crtc_settings_set(root, cln, NULL, -1, ox, oy, 
+        ret = ecore_x_randr_crtc_settings_set(root, cln, NULL, -1, ox, oy,
                                               orig_mode, orig_orient);
 
         /* free the resources */
@@ -1666,7 +1666,7 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, E
  * @return @c EINA_TRUE if the configuration alteration was successful,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Output *outputs, int noutputs, int x, int y, Ecore_X_Randr_Mode mode, Ecore_X_Randr_Orientation orientation)
 {
 #ifdef ECORE_XRANDR
@@ -1719,8 +1719,8 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
           }
 
         /* try to set the crtc config */
-        if (!XRRSetCrtcConfig(_ecore_x_disp, res, rcrtc, CurrentTime, 
-                              x, y, mode, orientation, 
+        if (!XRRSetCrtcConfig(_ecore_x_disp, res, rcrtc, CurrentTime,
+                              x, y, mode, orientation,
                               routputs, noutputs))
           ret = EINA_TRUE;
 
@@ -1751,7 +1751,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
  * if repositioning failed or if position of new crtc would be out of given
  * screen's min/max bounds.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc_r1, Ecore_X_Randr_Crtc crtc_r2, Ecore_X_Randr_Output_Policy policy, Ecore_X_Randr_Relative_Alignment alignment)
 {
 #ifdef ECORE_XRANDR
@@ -1818,7 +1818,7 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
              nx = -1;
              break;
            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
-             nx = ((int)((((double)r2.x + (double)r2.w) / 2.0) - 
+             nx = ((int)((((double)r2.x + (double)r2.w) / 2.0) -
                          ((double)r1.w / 2.0)));
              break;
            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
@@ -1836,7 +1836,7 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
              nx = -1;
              break;
            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_REL:
-             nx = ((int)((((double)r2.x + (double)r2.w) / 2.0) - 
+             nx = ((int)((((double)r2.x + (double)r2.w) / 2.0) -
                          ((double)r1.w / 2.0)));
              break;
            case ECORE_X_RANDR_RELATIVE_ALIGNMENT_CENTER_SCR:
@@ -1902,7 +1902,7 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 
                   if (info->noutput > 0)
                     {
-                       if ((ret->outputs = 
+                       if ((ret->outputs =
                             malloc(info->noutput * sizeof(Ecore_X_Randr_Output))))
                          {
                             int i = 0;
@@ -1915,7 +1915,7 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 
                   if (info->npossible > 0)
                     {
-                       if ((ret->possible = 
+                       if ((ret->possible =
                             malloc(info->npossible * sizeof(Ecore_X_Randr_Output))))
                          {
                             int i = 0;
@@ -1943,7 +1943,7 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 /*
  * @since 1.8
  */
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
 {
 #ifdef ECORE_XRANDR
@@ -1968,7 +1968,7 @@ ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
  * @c EINA_TRUE.
  * @since 1.2.0
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -1977,7 +1977,7 @@ ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mo
    if ((output) && (mode))
      {
         /* add this mode to output
-         * 
+         *
          * NB: This XRR function returns void so we have to assume it worked */
         XRRAddOutputMode(_ecore_x_disp, output, mode);
 
@@ -1993,7 +1993,7 @@ ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mo
  * @param mode the mode removed from the output
  * @since 1.2.0
  */
-EAPI void 
+EAPI void
 ecore_x_randr_output_mode_del(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -2144,7 +2144,7 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
    return NULL;
 }
 
-EAPI Ecore_X_Randr_Crtc 
+EAPI Ecore_X_Randr_Crtc
 ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -2231,7 +2231,7 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
 /*
  * @deprecated use ecore_x_randr_crtc_gamma_size_get()
  */
-EINA_DEPRECATED EAPI int 
+EINA_DEPRECATED EAPI int
 ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
    return 0;
@@ -2249,7 +2249,7 @@ ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 /*
  * @deprecated use ecore_x_randr_crtc_gamma_set()
  */
-EINA_DEPRECATED EAPI Eina_Bool 
+EINA_DEPRECATED EAPI Eina_Bool
 ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *red EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *green EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *blue EINA_UNUSED)
 {
    return EINA_FALSE;
@@ -2258,7 +2258,7 @@ ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc EINA_UNUSED, const Ec
 /*
  * @since 1.8
  */
-EAPI int 
+EAPI int
 ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -2303,14 +2303,14 @@ ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc)
 /*
  * @since 1.8
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma)
 {
 #ifdef ECORE_XRANDR
    if (_randr_version < RANDR_VERSION_1_2) return EINA_FALSE;
 
    /* try to set the gamma
-    * 
+    *
     * NB: XRRSetCrtcGamma returns void
     */
    XRRSetCrtcGamma(_ecore_x_disp, crtc, (XRRCrtcGamma *)gamma);
@@ -2322,7 +2322,7 @@ ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_G
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *not_moved, int nnot_moved, int dx, int dy)
 {
 #ifdef ECORE_XRANDR
@@ -2388,7 +2388,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
  * @param dy Amount of pixels the CRTCs should be moved in y direction.
  * @return @c EINA_TRUE if all crtcs could be moved successfully.
  */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, int ncrtc, int dx, int dy)
 {
 #ifdef ECORE_XRANDR
@@ -2420,8 +2420,8 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
              /* try to get crtc info for original crtc */
              if ((info[i] = XRRGetCrtcInfo(_ecore_x_disp, res, crtcs[i])))
                {
-                  if (((info[i]->x + dx) < 0) || ((info[i]->y + dy < 0)) || 
-                      ((int)(info[i]->x + info[i]->width) > mw) || 
+                  if (((info[i]->x + dx) < 0) || ((info[i]->y + dy < 0)) ||
+                      ((int)(info[i]->x + info[i]->width) > mw) ||
                       ((int)(info[i]->y + info[i]->height) > mh))
                     {
                        goto err;
@@ -2433,17 +2433,17 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
           }
 
         /* resize the screen if we need to */
-        if (!(((nw > sw) || (nh > sh)) || 
+        if (!(((nw > sw) || (nh > sh)) ||
               ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1)))
           goto err;
 
         /* actually move the crtcs */
         for (i = 0; ((i < ncrtc) && info[i]); i++)
           {
-             if (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
-                                                  (info[i]->x + dx), 
-                                                  (info[i]->y + dy), 
-                                                  info[i]->mode, 
+             if (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1,
+                                                  (info[i]->x + dx),
+                                                  (info[i]->y + dy),
+                                                  info[i]->mode,
                                                   info[i]->rotation))
                {
                   ret = EINA_FALSE;
@@ -2457,10 +2457,10 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
              while ((--i) >= 0)
                {
                   if (info[i])
-                    ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
-                                                    (info[i]->x - dx), 
-                                                    (info[i]->y - dy), 
-                                                    info[i]->mode, 
+                    ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1,
+                                                    (info[i]->x - dx),
+                                                    (info[i]->y - dy),
+                                                    info[i]->mode,
                                                     info[i]->rotation);
                }
           }
@@ -2494,7 +2494,7 @@ err:
  * @param w width of given mode in px
  * @param h height of given mode in px
  */
-EAPI void 
+EAPI void
 ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -2526,20 +2526,20 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w
 #endif
 }
 
-EAPI Ecore_X_Randr_Connection_Status 
+EAPI Ecore_X_Randr_Connection_Status
 ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
    XRRScreenResources *res = NULL;
 
-   if (_randr_version < RANDR_VERSION_1_2) 
+   if (_randr_version < RANDR_VERSION_1_2)
      return ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 
    /* try to get the screen resources from Xrandr */
    if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
      {
         XRROutputInfo *info = NULL;
-        Ecore_X_Randr_Connection_Status ret = 
+        Ecore_X_Randr_Connection_Status ret =
           ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 
         /* try to get output info */
@@ -2560,7 +2560,7 @@ ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Ou
    return ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -2589,14 +2589,14 @@ ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output outpu
 #endif
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_output_crtc_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, const Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
    /* TODO: !! */
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_output_backlight_available(void)
 {
 #ifdef ECORE_XRANDR
@@ -2619,7 +2619,7 @@ ecore_x_randr_output_backlight_available(void)
  * @param root The window's screen which will be set.
  * @param level Of the backlight between @c 0 and @c 1.
  */
-EAPI void 
+EAPI void
 ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level)
 {
 #ifdef ECORE_XRANDR
@@ -2641,7 +2641,7 @@ ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level)
 #endif
 }
 
-EAPI double 
+EAPI double
 ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -2656,11 +2656,11 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
    /* check if "new" backlight is available */
    if (_randr_version >= RANDR_VERSION_1_3)
      {
-        if ((backlight = 
+        if ((backlight =
              XInternAtom(_ecore_x_disp, RR_PROPERTY_BACKLIGHT, True)))
           {
-             XRRGetOutputProperty(_ecore_x_disp, output, backlight, 0, 4, 
-                                  False, False, None, &type, &format, 
+             XRRGetOutputProperty(_ecore_x_disp, output, backlight, 0, 4,
+                                  False, False, None, &type, &format,
                                   &items, &bytes, &prop);
           }
      }
@@ -2668,15 +2668,15 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
    if ((!prop) || (items == 0))
      {
         /* check legacy backlight property
-         * 
-         * FIXME: NB: Not sure what randr version we need for the legacy 
+         *
+         * FIXME: NB: Not sure what randr version we need for the legacy
          * backlight property so skip version check */
         if ((backlight = XInternAtom(_ecore_x_disp, "BACKLIGHT", True)))
           {
              free(prop);
              prop = NULL;
-             XRRGetOutputProperty(_ecore_x_disp, output, backlight, 0, 4, 
-                                  False, False, None, &type, &format, 
+             XRRGetOutputProperty(_ecore_x_disp, output, backlight, 0, 4,
+                                  False, False, None, &type, &format,
                                   &items, &bytes, &prop);
           }
      }
@@ -2700,7 +2700,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
         if ((info->range) && (info->num_values == 2))
           {
              /* convert the current value */
-             ret = ((double)(val - info->values[0])) / 
+             ret = ((double)(val - info->values[0])) /
                ((double)(info->values[1] - info->values[0]));
           }
 
@@ -2713,7 +2713,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
    return -1;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_output_backlight_level_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, double level)
 {
 #ifdef ECORE_XRANDR
@@ -2757,8 +2757,8 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root EINA_UNUSED, Ecore_
              if (val < min) val = min;
 
              /* tell xrandr to change the backlight value */
-             XRRChangeOutputProperty(_ecore_x_disp, output, backlight, 
-                                     XA_INTEGER, 32, PropModeReplace, 
+             XRRChangeOutputProperty(_ecore_x_disp, output, backlight,
+                                     XA_INTEGER, 32, PropModeReplace,
                                      (unsigned char *)&val, 1);
 
              /* send changes to X */
@@ -2796,14 +2796,14 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
    if (_randr_version < RANDR_VERSION_1_2) return NULL;
 
    /* try to get the edid atom */
-   if (!(edid = XInternAtom(_ecore_x_disp, RR_PROPERTY_RANDR_EDID, False))) 
+   if (!(edid = XInternAtom(_ecore_x_disp, RR_PROPERTY_RANDR_EDID, False)))
      return NULL;
 
    /* get the output property
-    * 
+    *
     * NB: Returns 0 on success */
    if (!XRRGetOutputProperty(_ecore_x_disp, output, edid, 0, 128, False, False,
-                            AnyPropertyType, &type, &format, &nitems, 
+                            AnyPropertyType, &type, &format, &nitems,
                             &bytes, &prop))
      {
         if ((type == XA_INTEGER) && (nitems >= 1) && (format == 8))
@@ -2824,13 +2824,13 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
    return NULL;
 }
 
-EAPI Ecore_X_Render_Subpixel_Order 
+EAPI Ecore_X_Render_Subpixel_Order
 ecore_x_randr_output_subpixel_order_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
    XRRScreenResources *res = NULL;
 
-   if (_randr_version < RANDR_VERSION_1_2) 
+   if (_randr_version < RANDR_VERSION_1_2)
      return ECORE_X_RENDER_SUBPIXEL_ORDER_UNKNOWN;
 
    /* try to get the screen resources from Xrandr */
@@ -2870,9 +2870,9 @@ ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_R
    int format = 0;
    unsigned long nitems = 0, bytes = 0;
 
-   /* NB: FIXME: 
-    * 
-    * I am not sure that this code is correct. This needs checking 
+   /* NB: FIXME:
+    *
+    * I am not sure that this code is correct. This needs checking
     */
 
    if (_randr_version < RANDR_VERSION_1_3) return NULL;
@@ -2882,10 +2882,10 @@ ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_R
      return NULL;
 
    /* get the output property
-    * 
+    *
     * NB: Returns 0 on success */
-   if (!XRRGetOutputProperty(_ecore_x_disp, output, clones, 0, 100, False, False, 
-                            AnyPropertyType, &type, &format, &nitems, 
+   if (!XRRGetOutputProperty(_ecore_x_disp, output, clones, 0, 100, False, False,
+                            AnyPropertyType, &type, &format, &nitems,
                             &bytes, &prop))
      {
         if ((type == XA_ATOM) && (nitems >= 1) && (format == 32))
@@ -2932,10 +2932,10 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
      return NULL;
 
    /* try to get the output property from Xrandr
-    * 
+    *
     * NB: Returns 0 on success */
-   if (XRRGetOutputProperty(_ecore_x_disp, output, sig, 0, 100, 
-                            False, False, AnyPropertyType, &type, &format, 
+   if (XRRGetOutputProperty(_ecore_x_disp, output, sig, 0, 100,
+                            False, False, AnyPropertyType, &type, &format,
                             &items, &bytes, &prop))
      {
         free(prop);
@@ -2958,10 +2958,10 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
 
         if (info->num_values > 0)
           {
-             if ((formats = 
+             if ((formats =
                   malloc(info->num_values * sizeof(Ecore_X_Randr_Signal_Format))))
                {
-                  memcpy(formats, info->values, 
+                  memcpy(formats, info->values,
                          (info->num_values * sizeof(Ecore_X_Randr_Signal_Format)));
                }
           }
@@ -2975,7 +2975,7 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    return NULL;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_output_signal_format_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, Ecore_X_Randr_Signal_Format *sig EINA_UNUSED)
 {
    /* TODO: (1.3) !! */
@@ -3001,10 +3001,10 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecor
      return NULL;
 
    /* try to get the output property from Xrandr
-    * 
+    *
     * NB: Returns 0 on success */
-   if (XRRGetOutputProperty(_ecore_x_disp, output, sig, 0, 100, 
-                            False, False, AnyPropertyType, &type, &format, 
+   if (XRRGetOutputProperty(_ecore_x_disp, output, sig, 0, 100,
+                            False, False, AnyPropertyType, &type, &format,
                             &items, &bytes, &prop))
      {
         free(prop);
@@ -3027,10 +3027,10 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecor
 
         if (info->num_values > 0)
           {
-             if ((props = 
+             if ((props =
                   malloc(info->num_values * sizeof(Ecore_X_Randr_Signal_Property))))
                {
-                  memcpy(props, info->values, 
+                  memcpy(props, info->values,
                          (info->num_values * sizeof(Ecore_X_Randr_Signal_Property)));
                }
           }
@@ -3045,17 +3045,17 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecor
 }
 
 /* TODO NB:
- * 
+ *
  * Document this.
- * 
- * Returns: 
+ *
+ * Returns:
  * 0 == unknown
  * 1 == primary
  * 2 == secondary
  * 3 == (typically) TV Connector but is driver/hardware dependent
- * 
+ *
  */
-EAPI int 
+EAPI int
 ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -3069,10 +3069,10 @@ ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore
    if (_randr_version < RANDR_VERSION_1_3) return -1;
 
    /* try to get the output property from Xrandr
-    * 
+    *
     * NB: Returns 0 on success */
-   if (XRRGetOutputProperty(_ecore_x_disp, output, connector_number, 0, 100, 
-                            False, False, AnyPropertyType, &type, &format, 
+   if (XRRGetOutputProperty(_ecore_x_disp, output, connector_number, 0, 100,
+                            False, False, AnyPropertyType, &type, &format,
                             &items, &bytes, &prop))
      {
         free(prop);
@@ -3107,7 +3107,7 @@ ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore
    return -1;
 }
 
-EAPI Ecore_X_Randr_Connector_Type 
+EAPI Ecore_X_Randr_Connector_Type
 ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -3121,8 +3121,8 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    if (_randr_version < RANDR_VERSION_1_3) return -1;
 
    /* try to get the connector type atom */
-   if (XRRGetOutputProperty(_ecore_x_disp, output, connector_type, 0, 100, 
-                        False, False, AnyPropertyType, &type, &format, 
+   if (XRRGetOutputProperty(_ecore_x_disp, output, connector_type, 0, 100,
+                        False, False, AnyPropertyType, &type, &format,
                         &items, &bytes, &prop) != Success)
      {
         free(prop);
@@ -3134,12 +3134,12 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
         Atom conn;
 
         free(prop);
-        /* NB: some butthead drivers (*cough* nouveau *cough*) do not 
-         * implement randr properly. They are not using the connector type 
+        /* NB: some butthead drivers (*cough* nouveau *cough*) do not
+         * implement randr properly. They are not using the connector type
          * property of randr, but rather a "subconnector" property */
         if ((conn = XInternAtom(_ecore_x_disp, "subconnector", True)))
-          XRRGetOutputProperty(_ecore_x_disp, output, conn, 0, 4, 
-                               False, False, AnyPropertyType, &type, 
+          XRRGetOutputProperty(_ecore_x_disp, output, conn, 0, 4,
+                               False, False, AnyPropertyType, &type,
                                &format, &items, &bytes, &prop);
      }
 
@@ -3178,7 +3178,7 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    return -1;
 }
 
-EAPI Ecore_X_Randr_Output 
+EAPI Ecore_X_Randr_Output
 ecore_x_randr_primary_output_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -3189,7 +3189,7 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
 #endif
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -3202,7 +3202,7 @@ ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output outpu
  * API Functions for RandR version 1.4 *
  ***************************************/
 
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -3232,7 +3232,7 @@ ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
 {
 #ifdef ECORE_XRANDR
@@ -3273,7 +3273,7 @@ ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -3303,7 +3303,7 @@ ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crt
 #endif
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
 {
 #ifdef ECORE_XRANDR
@@ -3344,7 +3344,7 @@ ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crt
 #endif
 }
 
-EAPI void 
+EAPI void
 ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -3374,7 +3374,7 @@ ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
 #endif
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int left, const int top, const int right, const int bottom)
 {
 #ifdef ECORE_XRANDR
@@ -3419,7 +3419,7 @@ ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
  * API Functions for RandR Edid
  ***************************************/
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_length)
 {
    const unsigned char header[] =
@@ -3431,7 +3431,7 @@ ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_leng
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3466,14 +3466,14 @@ ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long ed
 #endif
 }
 
-EAPI int 
+EAPI int
 ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
-   if ((edid_length > RANDR_EDID_VERSION_MINOR) && 
+   if ((edid_length > RANDR_EDID_VERSION_MINOR) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      {
-        return (edid[RANDR_EDID_VERSION_MAJOR] << 8) | 
+        return (edid[RANDR_EDID_VERSION_MAJOR] << 8) |
           edid[RANDR_EDID_VERSION_MINOR];
      }
 
@@ -3487,7 +3487,7 @@ EAPI char *
 ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
-   if ((edid_length > RANDR_EDID_MANUFACTURER + 1) && 
+   if ((edid_length > RANDR_EDID_MANUFACTURER + 1) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      {
         unsigned char *x;
@@ -3517,7 +3517,7 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return NULL;
 
-   for (block = (edid + RANDR_EDID_BLOCK); 
+   for (block = (edid + RANDR_EDID_BLOCK);
         block <= (edid + RANDR_EDID_BLOCK + (3 * 18)); block += 18)
      {
         if ((block[0] == 0) && (block[1] == 0))
@@ -3553,7 +3553,7 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_len
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return NULL;
 
-   for (block = (edid + RANDR_EDID_BLOCK); 
+   for (block = (edid + RANDR_EDID_BLOCK);
         block <= (edid + RANDR_EDID_BLOCK + (3 * 18)); block += 18)
      {
         if ((block[0] == 0) && (block[1] == 0))
@@ -3589,7 +3589,7 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return NULL;
 
-   for (block = (edid + RANDR_EDID_BLOCK); 
+   for (block = (edid + RANDR_EDID_BLOCK);
         block <= (edid + RANDR_EDID_BLOCK + (3 * 18)); block += 18)
      {
         if ((block[0] == 0) && (block[1] == 0))
@@ -3615,19 +3615,19 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
    return NULL;
 }
 
-EAPI int 
+EAPI int
 ecore_x_randr_edid_model_get(unsigned char *edid, unsigned long edid_length)
 {
    return ecore_x_randr_edid_manufacturer_model_get(edid, edid_length);
 }
 
-EAPI int 
+EAPI int
 ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
-   if ((edid_length > RANDR_EDID_MANUFACTURER + 1) && 
+   if ((edid_length > RANDR_EDID_MANUFACTURER + 1) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
-     return (int)(edid[0x0c] + (edid[0x0d] << 8) + 
+     return (int)(edid[0x0c] + (edid[0x0d] << 8) +
                   (edid[0x0e] << 16) + (edid[0x0f] << 24));
 
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
@@ -3636,18 +3636,18 @@ ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned 
 #endif
 }
 
-EAPI int 
+EAPI int
 ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
-   if ((edid_length > RANDR_EDID_MANUFACTURER + 1) && 
+   if ((edid_length > RANDR_EDID_MANUFACTURER + 1) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      return (int)(edid[0x0a] + (edid[0x0b] << 8));
 #endif
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3662,7 +3662,7 @@ ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_le
 #endif
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3676,7 +3676,7 @@ ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3690,7 +3690,7 @@ ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3704,7 +3704,7 @@ ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edi
    return EINA_FALSE;
 }
 
-EAPI Ecore_X_Randr_Edid_Aspect_Ratio 
+EAPI Ecore_X_Randr_Edid_Aspect_Ratio
 ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3712,17 +3712,17 @@ ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsig
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
-   if (version < RANDR_EDID_VERSION_1_3) 
+   if (version < RANDR_EDID_VERSION_1_3)
      return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
-   for (block = (edid + RANDR_EDID_BLOCK); 
+   for (block = (edid + RANDR_EDID_BLOCK);
         block <= (edid + RANDR_EDID_BLOCK + (3 * 18)); block += 18)
      {
         if ((block[0] == 0) && (block[1] == 0))
           {
              if ((block[3] == 0xfd) && (block[10] == 0x04))
                {
-                  Ecore_X_Randr_Edid_Aspect_Ratio_Preferred ratio = 
+                  Ecore_X_Randr_Edid_Aspect_Ratio_Preferred ratio =
                     (Ecore_X_Randr_Edid_Aspect_Ratio_Preferred)((block[15] & 0xe0) >> 5);
 
                   switch (ratio)
@@ -3750,7 +3750,7 @@ ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsig
 #endif
 }
 
-EAPI Ecore_X_Randr_Edid_Aspect_Ratio 
+EAPI Ecore_X_Randr_Edid_Aspect_Ratio
 ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3761,10 +3761,10 @@ ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long 
    ret = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
-   if (version < RANDR_EDID_VERSION_1_3) 
+   if (version < RANDR_EDID_VERSION_1_3)
      return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
-   for (block = (edid + RANDR_EDID_BLOCK); 
+   for (block = (edid + RANDR_EDID_BLOCK);
         block <= (edid + RANDR_EDID_BLOCK + (3 * 18)); block += 18)
      {
         if ((block[0] == 0) && (block[1] == 0))
@@ -3791,7 +3791,7 @@ ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long 
 #endif
 }
 
-EAPI Ecore_X_Randr_Edid_Display_Colorscheme 
+EAPI Ecore_X_Randr_Edid_Display_Colorscheme
 ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3801,7 +3801,7 @@ ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long ed
    ret = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
-   if (version < RANDR_EDID_VERSION_1_3) 
+   if (version < RANDR_EDID_VERSION_1_3)
      return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
    if (ecore_x_randr_edid_display_type_digital_get(edid, edid_length))
@@ -3821,7 +3821,7 @@ ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long ed
 #endif
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_x_randr_edid_display_type_digital_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3836,7 +3836,7 @@ ecore_x_randr_edid_display_type_digital_get(unsigned char *edid, unsigned long e
 #endif
 }
 
-EAPI Ecore_X_Randr_Edid_Display_Interface_Type 
+EAPI Ecore_X_Randr_Edid_Display_Interface_Type
 ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3846,7 +3846,7 @@ ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long
    type = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
-   if (version < RANDR_EDID_VERSION_1_3) 
+   if (version < RANDR_EDID_VERSION_1_3)
      return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
    type = (edid[0x14] & 0x0f);

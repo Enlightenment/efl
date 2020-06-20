@@ -3,7 +3,7 @@
 
 typedef struct _Ecore_Evas_Interface_Wayland Ecore_Evas_Interface_Wayland;
 
-struct _Ecore_Evas_Interface_Wayland 
+struct _Ecore_Evas_Interface_Wayland
 {
    Ecore_Evas_Interface base;
 

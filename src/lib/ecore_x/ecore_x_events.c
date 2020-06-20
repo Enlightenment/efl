@@ -2375,7 +2375,7 @@ _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 void
 _ecore_x_event_handle_damage_notify(XEvent *event)
 {
-   XDamageNotifyEvent *damage_event;   
+   XDamageNotifyEvent *damage_event;
    Ecore_X_Event_Damage *e;
 
    _ecore_x_last_event_mouse_move = EINA_FALSE;

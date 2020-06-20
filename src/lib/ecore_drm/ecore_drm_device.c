@@ -193,8 +193,8 @@ _ecore_drm_device_cached_keymap_update(struct xkb_keymap *map)
 
 /**
  * @defgroup Ecore_Drm_Device_Group Device manipulation functions
- * 
- * Functions that deal with finding, opening, closing, and otherwise using 
+ *
+ * Functions that deal with finding, opening, closing, and otherwise using
  * the DRM device itself.
  */
 
@@ -231,7 +231,7 @@ ecore_drm_device_find(const char *name, const char *seat)
         if (!(devseat = eeze_udev_syspath_get_property(device, "ID_SEAT")))
           devseat = eina_stringshare_add("seat0");
 
-        if ((seat) && (strcmp(seat, devseat))) 
+        if ((seat) && (strcmp(seat, devseat)))
           goto cont;
         else if (strcmp(devseat, "seat0"))
           goto cont;
@@ -239,7 +239,7 @@ ecore_drm_device_find(const char *name, const char *seat)
         devparent = eeze_udev_syspath_get_parent_filtered(device, "pci", NULL);
         if (!devparent)
           {
-             devparent = 
+             devparent =
                eeze_udev_syspath_get_parent_filtered(device, "platform", NULL);
              platform = EINA_TRUE;
           }
@@ -297,7 +297,7 @@ out:
    return dev;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_device_free(Ecore_Drm_Device *dev)
 {
    unsigned int i = 0;
@@ -334,7 +334,7 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
    free(dev);
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
    uint64_t caps;
@@ -454,7 +454,7 @@ ecore_drm_devices_get(void)
    return drm_devices;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_device_master_get(Ecore_Drm_Device *dev)
 {
    drm_magic_t mag;
@@ -463,14 +463,14 @@ ecore_drm_device_master_get(Ecore_Drm_Device *dev)
    if ((!dev) || (dev->drm.fd < 0)) return EINA_FALSE;
 
    /* get if we are master or not */
-   if ((drmGetMagic(dev->drm.fd, &mag) == 0) && 
+   if ((drmGetMagic(dev->drm.fd, &mag) == 0) &&
        (drmAuthMagic(dev->drm.fd, mag) == 0))
      return EINA_TRUE;
 
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_device_master_set(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -483,7 +483,7 @@ ecore_drm_device_master_set(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -496,14 +496,14 @@ ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI int 
+EAPI int
 ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, -1);
    return dev->drm.fd;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window)
 {
    /* check for valid device */

@@ -217,7 +217,7 @@ ecore_x_screensaver_custom_blanking_enable(void)
 {
 #ifdef ECORE_XSS
    XSetWindowAttributes attr;
-   
+
    XScreenSaverSetAttributes(_ecore_x_disp,
                              DefaultRootWindow(_ecore_x_disp),
                              -9999, -9999, 1, 1, 0,
@@ -247,7 +247,7 @@ ecore_x_screensaver_supend(void)
    ecore_x_screensaver_suspend();
 }
 
-EAPI void 
+EAPI void
 ecore_x_screensaver_suspend(void)
 {
 #ifdef ECORE_XSS
