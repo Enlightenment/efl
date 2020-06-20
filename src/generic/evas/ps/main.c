@@ -151,7 +151,7 @@ _pixcopy(DATA32 *dst, unsigned char *src, int size)
    e = s + size;
    while (s < e)
      {
-        d[0] = 
+        d[0] =
            0xff000000 |
            (s[2] << 16) |
            (s[1] << 8 ) |
@@ -250,7 +250,7 @@ main(int argc, char **argv)
    D("page...: %d\n", page_nbr);
 
    timeout_init(10);
-   
+
    if (!_spectre_init(file, page_nbr, size_w, size_h))
      return -1;
    D("_spectre_init done\n");

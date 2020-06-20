@@ -70,7 +70,7 @@ _gst_init(const char *filename)
 
    D("Setting file %s\n", uri);
 
-   descr = g_strdup_printf("uridecodebin uri=%s ! typefind ! videoconvert ! " 
+   descr = g_strdup_printf("uridecodebin uri=%s ! typefind ! videoconvert ! "
       " appsink name=sink caps=\"" CAPS "\"", uri);
    pipeline = gst_parse_launch(descr, &error);
    free(uri);

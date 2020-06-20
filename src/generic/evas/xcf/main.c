@@ -275,7 +275,7 @@ static File *
 f_open(const char *file)
 {
    File *f;
-   
+
    f = calloc(1, sizeof(File));
    if (!f) return NULL;
    f->fd = open(file, O_RDONLY);
@@ -304,13 +304,13 @@ f_close(File *f)
    free(f);
 }
 
-#ifdef FBUF   
+#ifdef FBUF
 static void
 _f_read_pos(File *f, long pos, long bytes)
 {
    long i, cnum;
    Chunk **cks;
-   
+
    if (f->size > 0) return;
    cnum = ((pos + bytes) / CHUNK_SIZE) + 1;
    if (f->chunk_num >= cnum) return;
@@ -343,19 +343,19 @@ _f_read_pos(File *f, long pos, long bytes)
 static long
 f_read(File *f, unsigned char *dest, long bytes)
 {
-#ifdef FBUF   
+#ifdef FBUF
    long done = 0, off = 0;
    int c;
    unsigned char *p;
    _f_read_pos(f, f->pos, bytes);
-   
+
    c = f->pos / CHUNK_SIZE;
    off = f->pos - (c * CHUNK_SIZE);
    p = dest;
    while ((done < bytes) && (c < f->chunk_num))
      {
         long amount = bytes - done;
-        
+
         if (!f->chunk[c]) break;
         if (amount > (f->chunk[c]->size - off))
            amount = (f->chunk[c]->size - off);
@@ -372,7 +372,7 @@ f_read(File *f, unsigned char *dest, long bytes)
    long done = gzread(f->fp, dest, bytes);
    f->pos += done;
    return done;
-#endif   
+#endif
 }
 
 static void
@@ -383,14 +383,14 @@ f_seek(File *f, long pos)
      {
         if (pos >= f->size) pos = f->size -1;
      }
-#endif   
+#endif
    if (f->pos == pos) return;
    f->pos = pos;
 #ifdef FBUF
    _f_read_pos(f, f->pos, 1);
 #else
    gzseek(f->fp, f->pos, SEEK_SET);
-#endif   
+#endif
 }
 
 
@@ -1696,12 +1696,12 @@ main(int argc, char **argv)
              // int size_h = atoi(argv[i]);
           }
      }
-   
+
    timeout_init(8);
-   
+
    D("xcf_file_init\n");
    if (!xcf_file_init(file)) return -1;
-   
+
    D("size %i %i\n", image->width, image->height);
    if (!head_only)
      {

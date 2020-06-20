@@ -199,7 +199,7 @@ int main(int argc, char **argv)
      }
 
    timeout_init(5);
-   
+
    if (!_svg_init(file)) return -1;
    if (!read_svg_header(scale_down, dpi, size_w, size_h)) return -1;
 
