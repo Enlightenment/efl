@@ -40,7 +40,7 @@ eina_unicode_utf8_next_get(const char *buf, int *iindex)
    ind = *iindex;
 
    /* if this char is the null terminator, exit */
-   if ((d = buf[ind++]) == 0) return 0;
+   if ((d = (unsigned char)buf[ind++]) == 0) return 0;
 
    if ((d & 0x80) == 0)
      { // 1 byte (7bit) - 0xxxxxxx
@@ -51,7 +51,8 @@ eina_unicode_utf8_next_get(const char *buf, int *iindex)
    if ((d & 0xe0) == 0xc0)
      { // 2 byte (11bit) - 110xxxxx 10xxxxxx
         r  = (d & 0x1f) << 6;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
         if (r <= 0x7F) goto error;
@@ -65,7 +66,7 @@ eina_unicode_utf8_next_get(const char *buf, int *iindex)
  * we just use the invalid unicode codepoints 8 lower bits represent
  * the original char */
 error:
-   d = buf[*iindex];
+   d = (unsigned char)buf[*iindex];
    (*iindex)++;
    return ERROR_REPLACEMENT_BASE | d;
 }
