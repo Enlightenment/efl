@@ -21,7 +21,7 @@ static void
 _data_reset(Data *d)
 {
    char *str;
-   
+
    EINA_LIST_FREE(d->seq, str) eina_stringshare_del(str);
    d->composing = EINA_FALSE;
 }

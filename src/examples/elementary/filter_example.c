@@ -1,7 +1,7 @@
 /**
  * gcc -g filter_example.c -o filter_example `pkg-config --cflags --libs elementary`
  */
-#define EFL_BETA_API_SUPPORT 1 
+#define EFL_BETA_API_SUPPORT 1
 #include <Elementary.h>
 
 typedef struct _Filter

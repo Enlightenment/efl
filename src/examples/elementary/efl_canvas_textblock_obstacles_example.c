@@ -1,7 +1,7 @@
 #define EFL_BETA_API_SUPPORT 1
- 
+
 #include <Efl_Ui.h>
- 
+
  /**
  * Example of canvas textblock obstacles.
  *
@@ -114,7 +114,7 @@ _key_down(void *data EINA_UNUSED, const Efl_Event *ev)
 
         printf("Show/hide toggle for obstacle %p\n",
                *d.t_data.obs_ptr);
-               
+
         efl_canvas_textblock_obstacles_update(d.text);
 
         return;
@@ -126,7 +126,7 @@ _key_down(void *data EINA_UNUSED, const Efl_Event *ev)
         POINTER_CYCLE(d.t_data.obs_size_ptr, d.t_data.obs_size);
 
         efl_gfx_entity_size_set(*d.t_data.obs_ptr, EINA_SIZE2D(*d.t_data.obs_size_ptr, *d.t_data.obs_size_ptr));
-        
+
         efl_canvas_textblock_obstacles_update(d.text);
 
         printf("Changing obstacle size to: %d,%d\n",
@@ -205,7 +205,7 @@ _gui_quit_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 
 static void
 _gui_setup()
-{ 
+{
    /* init values one is going to cycle through while running this
     * example */
    struct text_preset_data init_data =
