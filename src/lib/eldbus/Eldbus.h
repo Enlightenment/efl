@@ -21,7 +21,7 @@
  *
  * <ul>
  * <li> @ref Eldbus_Core
- * <li> @ref Eldbus_Conneciton
+ * <li> @ref Eldbus_Connection
  * <li> @ref Eldbus_Object_Mapper
  * <li> @ref Eldbus_Proxy
  * <li> @ref Eldbus_Message

@@ -53,7 +53,7 @@ typedef struct stat _eio_stat_t;
 # include <pwd.h>
 #endif
 
-/* Keeping 8 Eio_File_Progress alive should be enought */
+/* Keeping 8 Eio_File_Progress alive should be enough */
 #define EIO_PROGRESS_LIMIT 8
 
 /* Huge TLB == 16M on most system */

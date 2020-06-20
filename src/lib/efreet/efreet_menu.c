@@ -65,7 +65,7 @@ struct Efreet_Menu_Internal
     Eina_List *layout;             /**< This menus layout */
     Eina_List *default_layout;     /**< Default layout */
     signed char show_empty;    /**< Whether to show empty menus */
-    signed char in_line;       /**< Whether this meny can be inlined */
+    signed char in_line;       /**< Whether this menu can be inlined */
     signed char inline_limit;  /**< Number of elements which triggers inline */
     signed char inline_header; /**< Whether we should use the header name when this menu is inlined */
     signed char inline_alias;  /**< Whether we should use the menu name when inlining */
@@ -143,7 +143,7 @@ struct Efreet_Menu_Layout
 
     /* The items below are for Menuname Layout elements */
     signed char show_empty;    /**< Whether to show empty menus */
-    signed char in_line;       /**< Whether this meny can be inlined */
+    signed char in_line;       /**< Whether this menu can be inlined */
     signed char inline_limit;  /**< Number of elements which triggers inline */
     signed char inline_header; /**< Whether we should use the header name when this menu is inlined */
     signed char inline_alias;  /**< Whether we should use the menu name when inlining */

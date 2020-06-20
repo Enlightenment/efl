@@ -339,7 +339,7 @@ typedef enum
 #ifdef EFL_BETA_API_SUPPORT
    EOLIAN_TYPE_BUILTIN_LIST,
 #else
-   // Placeholder when using release API only. Done to prevent offseting the value below.
+   // Placeholder when using release API only. Done to prevent offsetting the value below.
    EOLIAN_TYPE_BUILTIN_BETA_PLACEHOLDER1,
 #endif
 
@@ -906,7 +906,7 @@ EAPI Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
 /*
  * @brief Perform additional checks on the state.
  *
- * This funciton performs additional checks that aren't crucial for the
+ * This function performs additional checks that aren't crucial for the
  * database integrity (that's checked as a part of the regular parse process,
  * so the database is guaranteed to be valid), but are important for proper
  * correctness. It is recommended that all available .eot and .eo files are
@@ -1553,7 +1553,7 @@ EAPI const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
 /*
  * @brief Returns an iterator to the required classes of this mixin
  *
- * For none mixins this will return an empty iterator, for mixins this retuns a iterator that
+ * For none mixins this will return an empty iterator, for mixins this returns a iterator that
  * carries all the classes that are required by this passed mixin.
  *
  * @param[in] klass the class

@@ -769,7 +769,7 @@ eio_file_associate_add(Eio_File *ls,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   /* FIXME: Check if we are in the right worker thred */
+   /* FIXME: Check if we are in the right worker thread */
    if (!ls->worker.associated)
      ls->worker.associated = eina_hash_string_small_new(eio_associate_free);
 
@@ -785,7 +785,7 @@ eio_file_associate_direct_add(Eio_File *ls,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   /* FIXME: Check if we are in the right worker thred */
+   /* FIXME: Check if we are in the right worker thread */
    if (!ls->worker.associated)
      ls->worker.associated = eina_hash_string_small_new(eio_associate_free);
 

@@ -2,7 +2,7 @@
 #define ELDBUS_CONNECTION_H 1
 
 /**
- * @defgroup Eldbus_Conneciton Connection
+ * @defgroup Eldbus_Connection Connection
  * @ingroup Eldbus
  *
  * @{

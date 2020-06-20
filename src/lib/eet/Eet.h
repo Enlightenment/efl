@@ -932,7 +932,7 @@ eet_list(Eet_File *ef,
  * @ingroup Eet_File_Group
  * @brief Returns an iterator that will describe each entry of an Eet_File.
  * @param ef A valid eet file handle.
- * @return An interator of Eet_Entry.
+ * @return An iterator of Eet_Entry.
  *
  * @since 1.8.0
  */
