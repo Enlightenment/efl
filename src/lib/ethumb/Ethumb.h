@@ -407,18 +407,18 @@ EAPI float        ethumb_video_start_get(const Ethumb *e) EINA_WARN_UNUSED_RESUL
 
 /**
  * @brief Set the video time (duration) in seconds.
- * 
+ *
  * @param e handle of the current thumbnailer.
  * @param time the video duration in seconds
- */ 
+ */
 EAPI void         ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the video time (duration) in seconds.
- * 
+ *
  * @param e handle of the current thumbnailer.
  * @return the video duration in seconds
- */ 
+ */
 EAPI float        ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**

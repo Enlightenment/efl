@@ -983,7 +983,7 @@ _ethumb_client_queue_add_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendin
    pending->pending_call = NULL;
    if (!client) goto end;
    client->pending_add = eina_list_remove(client->pending_add, pending);
-   
+
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
@@ -996,7 +996,7 @@ _ethumb_client_queue_add_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendin
         goto end;
      }
 
-   
+
    generating = calloc(1, sizeof(*generating));
    generating->id = id;
    generating->file = pending->file;
@@ -1050,7 +1050,7 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    _ethumb_client_dbus_append_bytearray(main_itr, thumb_key);
 
    client->pending_add = eina_list_append(client->pending_add, pending);
-   
+
    pending->pending_call = eldbus_proxy_send(client->proxy, msg,
                                              _ethumb_client_queue_add_cb,
                                              pending, -1);
