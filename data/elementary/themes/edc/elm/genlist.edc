@@ -62,7 +62,6 @@
       } \
    }
 
-#define ICMIN 15
 #define TREEPAD (ICMIN+4)
 
 group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
@@ -87,6 +86,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
+            align: 0.0 0.5;
             color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 1 1;

@@ -7,6 +7,8 @@
 #define FIXED_SIZE(_WIDTH, _HEIGHT) \
    min: _WIDTH _HEIGHT; max: _WIDTH _HEIGHT; fixed: 1 1;
 
+#define ICMIN 15
+
 #define SPACER_TEXT "NN";
 
 #define BACKGROUND_COMP LOSSY 99

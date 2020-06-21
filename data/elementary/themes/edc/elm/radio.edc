@@ -58,6 +58,7 @@ group { name: "elm/radio/base/default";
          desc { "visible"; inherit;
             fixed: 1 0;
             aspect: 1.0 1.0;
+            min: ICMIN ICMIN;
             visible: 1;
          }
          desc { "icononly"; inherit;
@@ -137,7 +138,7 @@ group { name: "elm/radio/base/default";
       text { "elm.text"; nomouse;
          scale: 1;
          desc { "default";
-            fixed: 1 1;
+            fixed: 0 1;
             color: 160 160 160 255;
             rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
