@@ -328,6 +328,7 @@ _elm_scroller_efl_ui_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd E
 EOLIAN static void
 _elm_scroller_efl_canvas_group_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
 {
+   Evas_Coord ovw, ovh;
    Evas_Coord vw = 0, vh = 0, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h,
               vmw, vmh;
    Evas_Coord h_pagesize, v_pagesize;
@@ -345,6 +346,10 @@ _elm_scroller_efl_canvas_group_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
 
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, NULL, NULL, &vw, &vh);
+
+   ovw = vw;
+   ovh = vh;
+
    if (xw > 0.0)
      {
         if ((minw > 0) && (vw < minw))
@@ -372,7 +377,8 @@ _elm_scroller_efl_canvas_group_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
      {
         if (!sd->proxy_content[i]) continue;
         elm_interface_scrollable_paging_get((Eo *)obj, NULL, NULL, &h_pagesize, &v_pagesize);
-        evas_object_image_fill_set(sd->proxy_content[i], 0, 0, vw, vh);
+        evas_object_image_fill_set(sd->proxy_content[i], 0, 0, ovw, ovh);
+        evas_object_image_load_region_set(sd->proxy_content[i], 0, 0, ovw, ovh);
         evas_object_size_hint_min_set(sd->proxy_content[i],
                                       h_pagesize, v_pagesize);
      }

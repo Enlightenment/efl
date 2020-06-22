@@ -13342,21 +13342,26 @@ _evas_textblock_cursor_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_
                                        * try to move cursor to a nearest breakable position. */
                                       if (grapheme_breaks && (grapheme_breaks[pos + it->text_pos - 1] != GRAPHEMEBREAK_BREAK))
                                         {
-                                           size_t left_index = pos + it->text_pos - 1;
+                                           int left_index = pos + it->text_pos - 1;
                                            size_t right_index = pos + it->text_pos - 1;
+                                           int temp_index;
                                            int lx, rx;
 
                                            /* To the left */
-                                           while ((left_index > 0) &&
+                                           while ((left_index >= 0) &&
                                                   (grapheme_breaks[left_index] != GRAPHEMEBREAK_BREAK))
                                              {
                                                 left_index--;
                                              }
 
+                                           temp_index = left_index - it->text_pos + 1;
+                                           if (temp_index < 0)
+                                             temp_index = 0;
+
                                            ENFN->font_pen_coords_get(ENC,
                                                                      ti->parent.format->font.font,
                                                                      &ti->text_props,
-                                                                     left_index - it->text_pos + 1,
+                                                                     temp_index,
                                                                      &lx, NULL, NULL, NULL);
 
                                            /* To the right */

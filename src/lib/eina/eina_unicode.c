@@ -193,7 +193,7 @@ eina_unicode_escape(const Eina_Unicode *str)
 EAPI Eina_Unicode
 _eina_unicode_utf8_next_get(int ind,
                             unsigned char d,
-                            const char *buf, 
+                            const char *buf,
 			    int *iindex)
 {
    Eina_Unicode r;
@@ -201,10 +201,12 @@ _eina_unicode_utf8_next_get(int ind,
    if ((d & 0xf0) == 0xe0)
      { // 3 byte (16bit) - 1110xxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x0f) << 12;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
         if (r <= 0x7FF) goto error;
@@ -214,13 +216,16 @@ _eina_unicode_utf8_next_get(int ind,
    if ((d & 0xf8) == 0xf0)
      { // 4 byte (21bit) - 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x07) << 18;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 12;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
         if (r <= 0xFFFF) goto error;
@@ -230,16 +235,20 @@ _eina_unicode_utf8_next_get(int ind,
    if ((d & 0xfc) == 0xf8)
      { // 5 byte (26bit) - 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x03) << 24;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 18;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 12;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
         if (r <= 0x1FFFFF) goto error;
@@ -249,19 +258,24 @@ _eina_unicode_utf8_next_get(int ind,
    if ((d & 0xfe) == 0xfc)
      { // 6 byte (31bit) - 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x01) << 30;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0)
+            || EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 24;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char) buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 18;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 12;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if (((d = buf[ind++]) == 0) || EINA_IS_INVALID_BYTE(d) ||
+        if (((d = (unsigned char)buf[ind++]) == 0) ||
+            EINA_IS_INVALID_BYTE(d) ||
             !EINA_IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
         if (r <= 0x3FFFFFF) goto error;
@@ -273,7 +287,7 @@ _eina_unicode_utf8_next_get(int ind,
  * we just use the invalid unicode codepoints 8 lower bits represent
  * the original char */
 error:
-   d = buf[*iindex];
+   d = (unsigned char)buf[*iindex];
    (*iindex)++;
    return ERROR_REPLACEMENT_BASE | d;
 }
@@ -298,7 +312,7 @@ eina_unicode_utf8_get_prev(const char *buf, int *iindex)
    /* Next advance iindex to previous codepoint */
    ind = *iindex;
    ind--;
-   while ((ind > 0) && ((buf[ind] & 0xc0) == 0x80))
+   while ((ind > 0) && (((unsigned char)buf[ind] & 0xc0) == 0x80))
      ind--;
 
    *iindex = ind;

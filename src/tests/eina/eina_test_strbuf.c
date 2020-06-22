@@ -303,6 +303,16 @@ EFL_START_TEST(eina_test_strbuf_replace)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
 
+   fail_if(eina_strbuf_replace_first(buf, "a", "b") == 0);
+   fail_if(strcmp(eina_strbuf_string_get(buf), "bbaaab"));
+
+   eina_strbuf_free(buf);
+
+   buf = eina_strbuf_manage_read_only_new_length("baaaab",6);
+   fail_if(!buf);
+   fail_if(eina_strbuf_replace_first(buf, "a", "b") == 0);
+   fail_if(strcmp(eina_strbuf_string_get(buf), "bbaaab"));
+
    eina_strbuf_free(buf);
 }
 EFL_END_TEST

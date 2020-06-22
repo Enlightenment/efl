@@ -1003,6 +1003,20 @@ EFL_START_TEST(evas_textblock_cursor)
    while (evas_textblock_cursor_char_prev(cur2)) j++;
    ck_assert_int_eq(j, 4);
 
+   //make sure if we have cluster at line start we return to pos 0
+   Evas_Coord x_coord, y_coord;
+   int pos;
+
+   cur2 = evas_object_textblock_cursor_new(tb);
+   evas_object_textblock_text_markup_set(tb, "&#x262a;&#xfe0f;");
+
+   evas_textblock_cursor_char_next(cur2);
+   evas_textblock_cursor_pen_geometry_get(cur2, &x_coord, &y_coord, NULL, NULL);
+   evas_textblock_cursor_cluster_coord_set(cur, x_coord, y_coord);
+   pos = evas_textblock_cursor_pos_get(cur);
+   
+   ck_assert_int_eq(pos, 0);
+
    END_TB_TEST();
 }
 EFL_END_TEST
