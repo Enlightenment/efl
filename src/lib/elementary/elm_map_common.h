@@ -473,7 +473,7 @@ EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Over
  *
  * You can change the state (hidden, paused, etc.) or set the content
  * or icon of the group overlays by changing the state of the class overlay.
- * Do not modifty the group overlay itself.
+ * Do not modify the group overlay itself.
  *
  * @see elm_map_overlay_class_add()
  */

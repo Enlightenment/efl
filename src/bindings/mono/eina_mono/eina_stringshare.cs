@@ -69,7 +69,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     /// <summary>
     /// Main constructor. Wrap the given string.
     /// Have private acess to avoid wrapping a null reference,
-    /// use convertion or the factory method to create a new instance.
+    /// use conversion or the factory method to create a new instance.
     /// <para>Since EFL 1.23.</para>
     /// <see cref="Create(string)"/>
     /// <see cref="implicit operator Stringshare(string)"/>
@@ -108,7 +108,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     }
 
     /// <summary>
-    /// Implicit convertion to string.
+    /// Implicit conversion to string.
     /// </summary>
     public static implicit operator string(Stringshare ss)
     {
@@ -121,12 +121,12 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     }
 
     /// <summary>
-    /// Implicit convertion from string to Stringshare.
+    /// Implicit conversion from string to Stringshare.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <remarks>
     /// Note that this method can be used to create an instance of this class,
-    /// either via an explicit cast or an implicit convertion.
+    /// either via an explicit cast or an implicit conversion.
     /// <seealso cref="Create(string)"/>
     /// </remarks>
     public static implicit operator Stringshare(string s)
@@ -145,7 +145,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     /// </summary>
     /// <remarks>
     /// Note that this method can be used to create an instance of this class,
-    /// either via an explicit cast or an implicit convertion.
+    /// either via an explicit cast or an implicit conversion.
     /// <seealso cref="Create(string)"/>
     /// </remarks>
     public static Stringshare FromString(string s) => s;

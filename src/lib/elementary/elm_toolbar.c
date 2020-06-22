@@ -127,7 +127,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
              evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
              if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
              else *iw += ciw;
-             //expand is the case where the bx_more stuff is used and the prio.visible is completly ignored.
+             //expand is the case where the bx_more stuff is used and the prio.visible is completely ignored.
              //if this is the case - then every item in there is just visible in the box - nothing (beside the items in the other box is hidden)
              if (!usage_bx_more)
                {

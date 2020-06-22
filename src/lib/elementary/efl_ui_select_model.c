@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-// Note: we do not rely on reflection here to implement select as it require to asynchronously acces
+// Note: we do not rely on reflection here to implement select as it require to asynchronously access
 // children. Could be done differently by implementing the children select in the parent instead of
 // in the children. For later optimization.
 
@@ -543,7 +543,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_all_select(Eo *obj,
    unsigned int count, i;
 
    // Not the fastest way to implement it, but will reuse more code and be easier as a v1.
-   // It also make it not very async which could be noticable.
+   // It also make it not very async which could be noticeable.
    count = efl_model_children_count_get(obj);
 
    for (i = 0; i < count; i++)
@@ -573,7 +573,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_select(Eo *ob
    unsigned long count, i;
 
    // Not the fastest way to implement it, but will reuse more code and be easier as a v1.
-   // It also make it not very async which could be noticable.
+   // It also make it not very async which could be noticeable.
    count = MIN(efl_model_children_count_get(obj), b + 1);
 
    for (i = a; i < count; i++)

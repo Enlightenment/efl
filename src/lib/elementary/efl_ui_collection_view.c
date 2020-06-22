@@ -1685,7 +1685,7 @@ _item_scroll_internal(Eo *obj EINA_UNUSED,
    ipos.x = ipos.x + vpos.x - view.x;
    ipos.y = ipos.y + vpos.y - view.y;
 
-   //FIXME scrollable needs some sort of align, the docs do not even garantee to completly move in the element
+   //FIXME scrollable needs some sort of align, the docs do not even garantee to completely move in the element
    efl_ui_scrollable_scroll(pd->scroller, ipos, anim);
 }
 

@@ -291,7 +291,7 @@ typedef enum
 typedef enum
 {
   ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT = 0, /**< default multiple select mode */
-  ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection
+  ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL, /**< disallow multiple selection
                                               * when clicked without control
                                               * key pressed */
   ELM_OBJECT_MULTI_SELECT_MODE_MAX /**< canary value: any value greater or equal

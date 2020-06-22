@@ -86,7 +86,7 @@ static void
 _fast_accessor_init(Fast_Accessor *accessor, Eina_List **items)
 {
    //this is the accessor for accessing the items
-   //we have to workarround here the problem that
+   //we have to workaround here the problem that
    //no accessor can be created for a not yet created list.
    accessor->items = items;
 }
@@ -239,7 +239,7 @@ _item_scroll_internal(Eo *obj EINA_UNUSED,
    ipos.x = ipos.x + vpos.x - view.x;
    ipos.y = ipos.y + vpos.y - view.y;
 
-   //FIXME scrollable needs some sort of align, the docs do not even garantee to completly move in the element
+   //FIXME scrollable needs some sort of align, the docs do not even garantee to completely move in the element
    efl_ui_scrollable_scroll(pd->smanager, ipos, anim);
 }
 
@@ -569,7 +569,7 @@ _selection_changed(void *data, const Efl_Event *ev)
    Efl_Ui_Selection *fallback;
 
    //if this is the highest call in the tree of selection changes, safe the fallback and apply it later
-   //this way we ensure that we are not accidently adding fallback even if we just want to have a empty selection list
+   //this way we ensure that we are not accidentally adding fallback even if we just want to have a empty selection list
    fallback = pd->fallback;
    pd->fallback = NULL;
 

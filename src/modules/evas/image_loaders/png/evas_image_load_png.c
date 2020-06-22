@@ -519,7 +519,7 @@ evas_image_load_file_head_with_data_png(void *loader_data,
           memcpy(&prop->content, &optional_content, sizeof (Eina_Rectangle));
 
         // Check that the limit of our content zone are correct
-        // This could be handled as an incorrect file completly,
+        // This could be handled as an incorrect file completely,
         // but let's try to recover
         if (prop->content.x == 0 || prop->content.y == 0)
           {

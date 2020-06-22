@@ -17,7 +17,7 @@
 
 #ifdef BILINEAR_HALF_TO_FULL_SCALE
    if (// image is not too big so that cululative error on steps might be
-       // noticable
+       // noticeable
        (dst_region_w <= 4096) &&
        (dst_region_h <= 4096) &&
        (src_region_w <= 4096) &&
