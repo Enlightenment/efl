@@ -371,6 +371,7 @@ _wl_shm_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, in
    void *out = NULL;
    char *tmp;
 
+   // XXX try memfd, then shm open then the below...
    tmp = eina_vpath_resolve("(:usr.run:)/evas-wayland_shm-XXXXXX");
    *fd = eina_file_mkstemp(tmp, &fullname);
    free(tmp);
