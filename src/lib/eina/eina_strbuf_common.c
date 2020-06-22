@@ -757,6 +757,7 @@ eina_strbuf_common_remove(size_t csize,
         if (!dest) return 0;
         memcpy(dest, buf->buf, buf->len);
         buf->buf = dest;
+        buf->ro = EINA_FALSE;
      }
 
    remove_len = end - start;
@@ -825,6 +826,7 @@ eina_strbuf_common_string_steal(size_t csize, Eina_Strbuf *buf)
         if (!dest) return 0;
         memcpy(dest, buf->buf, buf->len);
         buf->buf = dest;
+        buf->ro = EINA_FALSE;
      }
 
    ret = buf->buf;
@@ -958,6 +960,7 @@ eina_strbuf_replace(Eina_Strbuf *buf,
         if (!dest) return 0;
         memcpy(dest, buf->buf, buf->len);
         buf->buf = dest;
+        buf->ro = EINA_FALSE;
      }
 
    if (len1 != len2)
@@ -1003,6 +1006,7 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
         if (!dest) return 0;
         memcpy(dest, buf->buf, buf->len);
         buf->buf = dest;
+        buf->ro = EINA_FALSE;
      }
 
    len1 = strlen(str);
