@@ -27,6 +27,7 @@ _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 
 #define TEST_FONT "font=DejaVuSans,UnDotum,malayalam font_source=" TESTS_SRC_DIR "/fonts/TestFont.eet"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFontSource.eet"
 
 static const char *style_buf =
    "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'"
@@ -5075,6 +5076,36 @@ EFL_START_TEST(efl_text_markup)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_text_font_source)
+{
+   START_EFL_CANVAS_TEXTBLOCK_TEST();
+
+   Eina_Size2D size1, size2;
+
+   efl_canvas_textblock_style_apply(txt,"\tfont_size=30\t");
+   efl_text_markup_set(txt, "Hello, This Text Use The Font : Does_Not_Exists_Font");
+
+   efl_text_font_family_set(txt, "Does_Not_Exists_Font_1");
+   size1 = efl_canvas_textblock_size_native_get(txt);
+
+   efl_text_font_source_set(txt, TEST_FONT_SOURCE);
+   efl_text_font_family_set(txt, "Does_Not_Exists_Font_1");
+   size2 = efl_canvas_textblock_size_native_get(txt);
+   ck_assert_int_ne(size1.w, size2.w);
+
+   efl_text_font_source_set(txt, "");
+   efl_text_font_family_set(txt, "Does_Not_Exists_Font_2");
+   size1 = efl_canvas_textblock_size_native_get(txt);
+
+   efl_text_font_source_set(txt, TEST_FONT_SOURCE);
+   efl_text_font_family_set(txt, "Does_Not_Exists_Font_2");
+   size2 = efl_canvas_textblock_size_native_get(txt);
+   ck_assert_int_ne(size1.w, size2.w);
+
+   END_EFL_CANVAS_TEXTBLOCK_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -5115,5 +5146,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_canvas_textblock_style);
    tcase_add_test(tc, efl_text_style);
    tcase_add_test(tc, efl_text_markup);
+   tcase_add_test(tc, efl_text_font_source);
 }
 

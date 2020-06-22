@@ -4343,6 +4343,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->weight = _FMT_INFO(font_weight);
              fmt->font.fdesc->slant = _FMT_INFO(font_slant);
              fmt->font.fdesc->width = _FMT_INFO(font_width);
+             eina_stringshare_replace(&(fmt->font.source), _FMT_INFO(font_source));
              evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
              fmt->font.font = evas_font_load(evas_obj->layer->evas->font_path,
                                              evas_obj->layer->evas->hinting,
