@@ -945,6 +945,10 @@ eina_strbuf_replace(Eina_Strbuf *buf,
         if (n) spos++;
      }
 
+   pos = spos - (const char *)buf->buf;
+   len1 = strlen(str);
+   len2 = strlen(with);
+
    /* This is a read only buffer which need change to be made */
    if (buf->ro)
      {
@@ -956,9 +960,6 @@ eina_strbuf_replace(Eina_Strbuf *buf,
         buf->buf = dest;
      }
 
-   pos = spos - (const char *)buf->buf;
-   len1 = strlen(str);
-   len2 = strlen(with);
    if (len1 != len2)
      {
         /* resize the buffer if necessary */
