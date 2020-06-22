@@ -89,7 +89,8 @@ EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  *
  * This function creates a new string buffer.  The passed string is used
  * directly as the buffer, it's effectively the inverse of
- * eina_strbuf_string_steal().  The passed string must be malloc'd.
+ * eina_strbuf_string_steal().
+ * The passed string must be malloc'd, and its ownership will transfer to Eina_Strbuf(do not free it with free()).
  * To free the resources, use eina_strbuf_free().
  *
  * @see eina_strbuf_free()
