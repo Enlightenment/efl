@@ -296,7 +296,7 @@
 
 2011-05-04  Carsten Haitzler (The Rasterman)
 
-	* Improved table layout for homogenous mode to handle not column
+	* Improved table layout for homogeneous mode to handle not column
         or row multiple sized table better.
 
 2011-05-04  Jiyoun Park

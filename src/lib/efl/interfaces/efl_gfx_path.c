@@ -683,7 +683,7 @@ _efl_gfx_path_append_arc_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    cy += (sy + y) / 2.0;
 
    // step 4 (F6.5.4)
-   // we dont' use arccos (as per w3c doc), see
+   // we don't use arccos (as per w3c doc), see
    // http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
    // note: atan2 (0.0, 1.0) == 0.0
    at = atan2(((y1p - cyp) / ry), ((x1p - cxp) / rx));

@@ -117,7 +117,7 @@ _eval(Evas_Object *obj)
    evas_output_viewport_get(evas_object_evas_get(obj),
                             &cvx, &cvy, &cvw, &cvh);
    if ((cvw < 1) || (cvh < 1)) return;
-   // need some fuzz value thats beyond the current viewport
+   // need some fuzz value that's beyond the current viewport
    // for now just make it the viewport * 3 in size (so 1 vp in each direction)
    /*
    cvx -= cvw;

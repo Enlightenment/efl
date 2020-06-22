@@ -4049,7 +4049,7 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
    GG_IT(it) = ELM_NEW(Elm_Gen_Item_Type);
    GG_IT(it)->wsd = sd;
 
-   /* for non homogenous items */
+   /* for non homogeneous items */
    it->item->w = sd->item_width;
    it->item->h = sd->item_height;
 
@@ -4167,7 +4167,7 @@ _elm_gengrid_efl_canvas_group_group_add(Eo *obj, Elm_Gengrid_Data *priv)
 
    elm_interface_scrollable_extern_pan_set(obj, priv->pan_obj);
 
-   /* for non homogenous mode */
+   /* for non homogeneous mode */
    priv->custom_size_mode = EINA_FALSE;
    priv->custom_size_sum = NULL;
    priv->custom_tot_sum = NULL;

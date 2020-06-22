@@ -22,7 +22,7 @@ typedef Eo Elm_Table;
 EWAPI const Efl_Class *elm_table_class_get(void);
 
 /**
- * @brief Control the homogenous state in a table.
+ * @brief Control the homogeneous state in a table.
  *
  * @param[in] obj The object.
  * @param[in] homogeneous A boolean to set if the layout is homogeneous in the
@@ -33,7 +33,7 @@ EWAPI const Efl_Class *elm_table_class_get(void);
 EOAPI void elm_obj_table_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
 
 /**
- * @brief Control the homogenous state in a table.
+ * @brief Control the homogeneous state in a table.
  *
  * @param[in] obj The object.
  *

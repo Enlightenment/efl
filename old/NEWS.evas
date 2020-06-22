@@ -240,7 +240,7 @@ Improvements:
     * speed and memory usage of textblock
     * cache handler to also use file size, mode and sub-second timestamp
     * textblock to re-layout only paragraphs that have changed
-    * homogenous table layout alignment and sizing
+    * homogeneous table layout alignment and sizing
     * textblock linebreaking by using liblinebreak
     * image loader to drop out instantly if image file is a directory
     * object allocation to use mempools

@@ -58,7 +58,7 @@ evas_object_recalc_clippees(Evas_Object_Protected_Data *obj)
  * or any change in clipper of an object or any change in smart object
  * membership needs to walk the obj tree both up and down from the changed
  * object and probably walk entire object trees to find these and mark them.
- * thats silly-expensive and i was about to fix it that way but it has since
+ * that's silly-expensive and i was about to fix it that way but it has since
  * dawned on me that that is just going to kill performance in some critical
  * areas like during object setup and manipulation, as well as teardown.
  *

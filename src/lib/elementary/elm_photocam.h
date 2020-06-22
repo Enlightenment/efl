@@ -69,7 +69,7 @@ struct _Elm_Photocam_Progress
 };
 
 /**
- * Structre associated with smart callback 'download,error'
+ * Structure associated with smart callback 'download,error'
  * @since 1.8
  */
 typedef struct _Elm_Photocam_Error Elm_Photocam_Error;

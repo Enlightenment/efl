@@ -174,7 +174,7 @@ struct Elm_Gen_Item_Type
                                               * this item only once */
    Eina_Bool               nocache : 1; /* do not use cache for this item */
 
-   /* for non homogenous items */
+   /* for non homogeneous items */
    Evas_Coord              w, h, sw, sh;
 };
 

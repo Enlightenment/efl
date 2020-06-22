@@ -15,7 +15,7 @@ typedef Eo Elm_Table;
 #endif
 
 /**
- * @brief Control the homogenous state in a table.
+ * @brief Control the homogeneous state in a table.
  *
  * @param[in] obj The object.
  * @param[in] homogeneous A boolean to set if the layout is homogeneous in the
@@ -26,7 +26,7 @@ typedef Eo Elm_Table;
 EAPI void elm_table_homogeneous_set(Elm_Table *obj, Eina_Bool homogeneous);
 
 /**
- * @brief Control the homogenous state in a table.
+ * @brief Control the homogeneous state in a table.
  *
  * @param[in] obj The object.
  *
