@@ -980,6 +980,61 @@ eina_strbuf_replace(Eina_Strbuf *buf,
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+eina_strbuf_replace_last(Eina_Strbuf *buf,
+                    const char *str,
+                    const char *with)
+{
+   size_t len1, len2;
+   char *spos, *spos_next;
+   size_t pos;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL( str, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(with, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(buf, 0);
+
+   spos = NULL;
+   spos_next = strstr(buf->buf, str);
+   while (spos_next && *spos_next)
+     {
+        spos = spos_next;
+        spos_next = strstr(spos + 1, str);
+     }
+
+   if (!spos) return EINA_FALSE;
+
+   pos = spos - (const char *)buf->buf;
+   len1 = strlen(str);
+   len2 = strlen(with);
+
+   /* This is a read only buffer which need change to be made */
+   if (buf->ro)
+     {
+        char *dest;
+
+        dest = malloc(buf->size);
+        if (!dest) return 0;
+        memcpy(dest, buf->buf, buf->len);
+        buf->buf = dest;
+     }
+
+   if (len1 != len2)
+     {
+        /* resize the buffer if necessary */
+        if (EINA_UNLIKELY(!_eina_strbuf_common_grow(_STRBUF_CSIZE, buf,
+                                                    buf->len - len1 + len2)))
+           return EINA_FALSE; /* move the existing text */
+        memmove(((unsigned char *)(buf->buf)) + pos + len2,
+                ((unsigned char *)(buf->buf)) + pos + len1,
+                buf->len - pos - len1);
+     }
+   /* and now insert the given string */
+   memcpy(((unsigned char *)(buf->buf)) + pos, with, len2);
+   buf->len += len2 - len1;
+   memset(((unsigned char *)(buf->buf)) + buf->len, 0, 1);
+   return EINA_TRUE;
+}
+
 EAPI int
 eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 {

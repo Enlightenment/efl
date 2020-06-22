@@ -609,6 +609,19 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 #define eina_strbuf_replace_first(buf, str, with) eina_strbuf_replace(buf, str, with, 1)
 
 /**
+ * @brief Replaces the last occurrence of a substring with another string.
+ *
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The text to match.
+ * @param[in] with The replacement string.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function replaces the last occurrence of @p str in @p buf with
+ * @p with.
+ */
+EAPI Eina_Bool eina_strbuf_replace_last(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
  * @brief Replaces all matching substrings with another string.
  *
  * @param[in,out] buf The string buffer.
