@@ -53,6 +53,25 @@ clock_gettime(int mode, struct timespec* ts)
 
    return 0;
 }
+
+# elif defined(_WIN32)
+
+#  define CLOCK_REALTIME 0
+
+int
+clock_gettime(int mode, struct timespec* ts)
+{
+   FILETIME sys_time;
+   ULARGE_INTEGER li_sys_time;
+
+   GetSystemTimeAsFileTime(&sys_time);
+   li_sys_time.u.LowPart = sys_time.dwLowDateTime;
+   li_sys_time.u.HighPart = sys_time.dwHighDateTime;
+   ts->tv_sec = li_sys_time.QuadPart / 10000000UL;
+   ts->tv_nsec = (li_sys_time.QuadPart % 10000000UL) * 100UL;
+   return 0;
+}
+
 # else /* ! __MACH__ */
 # error No support for clock_gettime()
 # endif /* __MACH__ */
