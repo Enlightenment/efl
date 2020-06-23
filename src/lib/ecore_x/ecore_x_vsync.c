@@ -906,7 +906,7 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
         const char *home;
         struct stat st;
 
-        if (getenv("ECORE_VSYNC_TRHEAD")) threaded_vsync = EINA_TRUE;
+        if (getenv("ECORE_VSYNC_THREAD")) threaded_vsync = EINA_TRUE;
         home = eina_environment_home_get();
         if (!home) eina_environment_tmp_get();
         snprintf(buf, sizeof(buf), "%s/.ecore-no-vsync", home);
