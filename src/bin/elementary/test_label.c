@@ -492,6 +492,8 @@ test_textblock_fit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_textblock_style_set(style,styles[0]);
    evas_object_textblock_style_set(app->txtblock,style);
    evas_object_textblock_text_markup_set(app->txtblock,contents[0]);
+   evas_textblock_style_free(style);
+   style = NULL;
 
    elm_box_horizontal_set(app->boxHor, EINA_TRUE);
    elm_box_horizontal_set(app->boxHor2, EINA_TRUE);

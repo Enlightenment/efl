@@ -89,7 +89,8 @@ EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  *
  * This function creates a new string buffer.  The passed string is used
  * directly as the buffer, it's effectively the inverse of
- * eina_strbuf_string_steal().  The passed string must be malloc'd.
+ * eina_strbuf_string_steal().
+ * The passed string must be malloc'd, and its ownership will transfer to Eina_Strbuf(do not free it with free()).
  * To free the resources, use eina_strbuf_free().
  *
  * @see eina_strbuf_free()
@@ -606,6 +607,19 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
  * equal to @c 1.
  */
 #define eina_strbuf_replace_first(buf, str, with) eina_strbuf_replace(buf, str, with, 1)
+
+/**
+ * @brief Replaces the last occurrence of a substring with another string.
+ *
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The text to match.
+ * @param[in] with The replacement string.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function replaces the last occurrence of @p str in @p buf with
+ * @p with.
+ */
+EAPI Eina_Bool eina_strbuf_replace_last(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Replaces all matching substrings with another string.
