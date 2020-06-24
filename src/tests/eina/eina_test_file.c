@@ -490,7 +490,29 @@ static void *
 _eina_test_file_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
 #ifdef _WIN32
-   const char *filename = "cmd.exe";
+   char filename[MAX_PATH];
+   size_t len;
+   const char test_file[] = "cmd.exe";
+
+   fail_if(!GetSystemDirectoryA(filename, MAX_PATH));
+
+   len = strlen(filename);
+
+   /*
+    * Check the buffer size.
+    * The system path length + path separator + length of the test_file + null terminator
+    * Must fit in MAX_PATH.
+    */
+   fail_if(MAX_PATH < len + 1 + sizeof(test_file));
+
+   // append trailing directory separator if there isn't one
+   if (filename[len - 1] != '\\' && filename[len - 1] != '/')
+     {
+         filename[len] = '\\';
+         filename[len + 1] = '\0';
+     }
+
+   strncat(filename, test_file, MAX_PATH - len - 2);
 #else
    const char *filename = "/bin/sh";
 #endif
