@@ -298,7 +298,7 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 #endif
          if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
          {
-#ifdef PRIO_PROCESS            
+#ifdef PRIO_PROCESS
             if ((run_pri >= -20) && (run_pri <= 19))
               setpriority(PRIO_PROCESS, 0, run_pri);
 #else

@@ -311,7 +311,7 @@ static inline list_node_t *
 rect_list_unlink_next(list_t *rects, list_node_t *parent_node)
 {
    list_node_t *node;
-   
+
    if (parent_node)
      {
         node = parent_node->next;
@@ -341,7 +341,7 @@ rect_list_clear(list_t *rects)
    while (node)
      {
         list_node_t *aux;
-        
+
         aux = node->next;
         rect_list_node_pool_put(node);
         node = aux;
@@ -485,7 +485,7 @@ _calc_intra_outer_rect_area(const rect_t a, const rect_t b,
 {
    int min_left, max_left, min_right, max_right;
    int min_top, max_top, min_bottom, max_bottom;
-   
+
    if (a.left < b.left)
      {
         max_left = b.left;
@@ -911,7 +911,7 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
    if ((w <= 0) || (h <= 0)) return 0;
    // optimize a common case -> adding the exact same rect 2x in a row
-   if ((tb->prev_add.x == x) && (tb->prev_add.y == y) && 
+   if ((tb->prev_add.x == x) && (tb->prev_add.y == y) &&
        (tb->prev_add.w == w) && (tb->prev_add.h == h)) return 1;
    tb->prev_add.x = x; tb->prev_add.y = y;
    tb->prev_add.w = w; tb->prev_add.h = h;
@@ -929,7 +929,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
    if ((w <= 0) || (h <= 0)) return 0;
    // optimize a common case -> deleting the exact same rect 2x in a row
-   if ((tb->prev_del.x == x) && (tb->prev_del.y == y) && 
+   if ((tb->prev_del.x == x) && (tb->prev_del.y == y) &&
        (tb->prev_del.w == w) && (tb->prev_del.h == h)) return 1;
    tb->prev_del.x = x; tb->prev_del.y = y;
    tb->prev_del.w = w; tb->prev_del.h = h;
@@ -1018,7 +1018,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
              if (x1 < bx1) bx1 = x1;
              x2 = x1 + ((rect_node_t *)n)->rect.width;
              if (x2 > bx2) bx2 = x2;
-             
+
              y1 = ((rect_node_t *)n)->rect.top;
              if (y1 < by1) by1 = y1;
              y2 = y1 + ((rect_node_t *)n)->rect.height;
@@ -1028,7 +1028,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
      }
    else
      return NULL;
-   
+
    /* magic number - if we have > MAXREG regions to update, take bounding */
    if (num > MAXREG)
      {

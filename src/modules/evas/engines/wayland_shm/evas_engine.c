@@ -345,7 +345,7 @@ module_close(Evas_Module *em EINA_UNUSED)
      }
 }
 
-static Evas_Module_Api evas_modapi = 
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION, "wayland_shm", "none", {module_open, module_close}
 };

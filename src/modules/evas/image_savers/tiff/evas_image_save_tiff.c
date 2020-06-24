@@ -45,7 +45,7 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress EINA_UNUSED, int 
    /* By default uses patent-free use COMPRESSION_DEFLATE,
     * another lossless compression technique */
    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
-   
+
    if (has_alpha)
      {
         uint16 extras[] = { EXTRASAMPLE_ASSOCALPHA };

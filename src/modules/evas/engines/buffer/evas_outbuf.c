@@ -296,7 +296,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	     if (!buf->priv.back_buf)
 	       {
 		  Gfx_Func_Copy func;
-		  
+
 		  func = evas_common_draw_func_copy_get(w, 0);
 		  if (func)
 		    {
@@ -306,7 +306,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 			    dst = (DATA32 *)((DATA8 *)(buf->dest) + ((y + yy) * row_bytes));
 			    func(src, dst, w);
 			 }
-		       
+
 		    }
 	       }
 	     if (buf->func.free_update_region)
@@ -320,7 +320,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	     DATA32 *src, *dst;
 	     DATA8 *dest;
 	     int xx, yy, row_bytes;
-	     
+
 	     row_bytes = buf->dest_row_bytes;
 	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
 	     if (buf->func.new_update_region)
@@ -351,7 +351,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	     DATA32 *src, *dst;
 	     DATA8 *dest;
 	     int xx, yy, row_bytes;
-	     
+
 	     row_bytes = buf->dest_row_bytes;
 	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
 	     if (buf->func.new_update_region)

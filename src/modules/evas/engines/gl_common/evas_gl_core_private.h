@@ -342,7 +342,7 @@ struct _EVGL_Engine
    Eina_List         *surfaces;
    Eina_List         *contexts;
 
-   //void              *engine_data;  
+   //void              *engine_data;
    Eina_Hash         *safe_extensions;
 };
 

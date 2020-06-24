@@ -32,7 +32,7 @@ struct _Efl_Ui_Progressbar_Data
 
    Evas_Coord            size; /**< Width or height of progressbar */
    double                val; /**< Value of progressbar */
-   
+
    double                val_min;
    double                val_max;
 

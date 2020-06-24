@@ -144,7 +144,7 @@ static inline Eina_F32p32  eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b);
 
 /**
  * @brief Calculates the scale multiplication of one Eina_F32p32 floating point
- * number with an integer 
+ * number with an integer
  *
  * @param[in] a The Eina_F32p32 number
  * @param[in] b The integer value
@@ -230,7 +230,7 @@ static inline Eina_F16p16  eina_f16p16_int_from(int32_t v);
 
 /**
  * @brief Creates a new standard 32-bit integer from Eina_F16p16 floating point
- * number 
+ * number
  *
  * @param[in] v Eina_F16p16 value to convert
  * @return The value converted into 32-bit integer
@@ -247,7 +247,7 @@ static inline Eina_F16p16  eina_f16p16_double_from(double v);
 
 /**
  * @brief Creates a new standard double from Eina_F16p16 floating point
- * number 
+ * number
  *
  * @param[in] v Eina_F16p16 value to convert
  * @return The value converted into double

@@ -76,7 +76,7 @@ _button_1_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    color->b = b;
    color->a = a;
 
-   ecore_evas_msg_parent_send(ee, MSG_DOMAIN_CONTROL_OBJECT, MSG_ID_BG_COLOR, color, sizeof(Msg_Color)); 
+   ecore_evas_msg_parent_send(ee, MSG_DOMAIN_CONTROL_OBJECT, MSG_ID_BG_COLOR, color, sizeof(Msg_Color));
 }
 
 static void

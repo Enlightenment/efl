@@ -20,7 +20,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 
    // expand to 32bit (4 byte) aligned rows for texture upload
    nw = ((w + 3) / 4) * 4;
-   // if image already (4 byte) aligned rows then assign old image data to new data(ndata) to 
+   // if image already (4 byte) aligned rows then assign old image data to new data(ndata) to
    if(nw == w){
       ndata = data;
    } else {

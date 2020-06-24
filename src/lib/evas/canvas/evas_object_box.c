@@ -334,7 +334,7 @@ _evas_box_internal_insert_at(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *chi
              return new_opt;
           }
      }
-   return NULL; 
+   return NULL;
 }
 
 EOLIAN static Evas_Object *
@@ -390,7 +390,7 @@ _evas_box_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Box_Data *priv)
    Evas_Object_Smart_Clipped_Data *cso;
 
    efl_canvas_group_add(efl_super(eo_obj, MY_CLASS));
-   
+
    evas_object_event_callback_add
      (eo_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_hints_changed, eo_obj);
    priv->children = NULL;
@@ -1880,7 +1880,7 @@ EOLIAN static Eina_Iterator*
 _evas_box_iterator_new(const Eo *o, Evas_Object_Box_Data *priv)
 {
    Evas_Object_Box_Iterator *it;
-   
+
    if (!priv->children) return NULL;
 
    it = calloc(1, sizeof(Evas_Object_Box_Iterator));

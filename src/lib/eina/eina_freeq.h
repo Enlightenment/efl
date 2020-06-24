@@ -62,18 +62,18 @@
  * will be filled with this pattern value in every byte. The default value
  * is 0x77 (119). Memory is only filled if the size of the allocation is
  * less than the max that you can adjust with EINA_FREEQ_FILL_MAX.
- * 
+ *
  * @{
  *
  * @since 1.19
- * 
+ *
  * @typedef Eina_FreeQ
  *
  * A queue of pointers to free in the future. You may create custom free
  * queues of your own to defer freeing, use the main free queue where the
  * mainloop will free things as it iterates, or eina will free everything
  * on shut down.
- * 
+ *
  */
 typedef struct _Eina_FreeQ Eina_FreeQ;
 
@@ -133,7 +133,7 @@ eina_freeq_new(Eina_FreeQ_Type type);
  * @brief Free a free queue and anything that is queued in it.
  *
  * @param[in,out] fq The free queue to free and clear.
- * 
+ *
  * @since 1.19
  */
 EAPI void
@@ -153,7 +153,7 @@ eina_freeq_type_get(Eina_FreeQ *fq);
  * @brief Get the main loop free queue.
  *
  * @return The main loop free queue.
- * 
+ *
  * @since 1.19
  */
 EAPI Eina_FreeQ *
@@ -185,7 +185,7 @@ eina_freeq_count_max_set(Eina_FreeQ *fq, int count);
  *
  * @param[in] fq The free queue to query
  * @return The maximum number of free items allowed or -1 for infinity
- * 
+ *
  * @since 1.19
  */
 EAPI int
@@ -207,7 +207,7 @@ eina_freeq_count_max_get(Eina_FreeQ *fq);
  *
  * @note Setting a memory limit on a postponed free queue leads to undefined
  *       behavior.
- * 
+ *
  * @since 1.19
  */
 EAPI void
@@ -232,7 +232,7 @@ eina_freeq_mem_max_get(Eina_FreeQ *fq);
  * This will free and thus remove all queued items from the free queue when
  * this function is called. When it returns the free queue should be
  * empty.
- * 
+ *
  * @since 1.19
  */
 EAPI void
@@ -248,7 +248,7 @@ eina_freeq_clear(Eina_FreeQ *fq);
  * and thus reduce the amount of memory it is holding on to. This function
  * will return once it has removed @p count items or there are no more items
  * to remove from the queue.
- * 
+ *
  * @since 1.19
  */
 EAPI void
@@ -259,7 +259,7 @@ eina_freeq_reduce(Eina_FreeQ *fq, int count);
  *
  * @param[in] fq The free queue to query
  * @return EINA_TRUE if there are items to free, EINA_FALSE otherwise
- * 
+ *
  * @since 1.19
  */
 EAPI Eina_Bool
@@ -303,7 +303,7 @@ eina_freeq_ptr_pending(Eina_FreeQ *fq);
  * This note does not apply if you use a size of 0 for the pointer, but then
  * you lose canary debugging ability when using 0 sized pointers on the free
  * queue.
- * 
+ *
  * @since 1.19
  */
 EAPI void
@@ -315,10 +315,10 @@ eina_freeq_ptr_add(Eina_FreeQ *fq, void *ptr, void (*free_func) (void *ptr), siz
  * @param[in] ptr The pointer to free
  * @param[in] free_func The function used to free the pointer with
  * @param[in] size The size of the data the pointer points to
- * 
+ *
  * This is the same as eina_freeq_ptr_add() but the main free queue is
  * fetched by eina_freeq_main_get().
- * 
+ *
  * @since 1.19
  */
 static inline void
@@ -331,12 +331,12 @@ eina_freeq_ptr_main_add(void *ptr, void (*free_func) (void *ptr), size_t size)
  * @brief Convenience macro for well known structures and types
  *
  * @param[in] ptr The pointer to free
- * 
+ *
  * This is the same as eina_freeq_ptr_main_add() but the free function is
  * assumed to be the libc free() function, and size is provided by
  * sizeof(*ptr), so it will not work on void pointers or will be inaccurate
  * for pointers to arrays. For arrays please use EINA_FREEQ_ARRAY_FREE()
- * 
+ *
  * @since 1.19
  */
 #define EINA_FREEQ_FREE(ptr) eina_freeq_ptr_main_add(ptr, NULL, sizeof(*(ptr)))
@@ -345,12 +345,12 @@ eina_freeq_ptr_main_add(void *ptr, void (*free_func) (void *ptr), size_t size)
  * @brief Convenience macro for well known structures and types
  *
  * @param[in] ptr The pointer to free
- * 
+ *
  * This is the same as eina_freeq_ptr_main_add() but the free function is
  * assumed to be the libc free() function, and size is provided by
  * sizeof(*ptr), so it will not work on void pointers. Total size is multiplied
  * by the count @p n so it should work well for arrays of types.
- * 
+ *
  * @since 1.19
  */
 #define EINA_FREEQ_N_FREE(ptr, n) eina_freeq_ptr_main_add(ptr, NULL, sizeof(*(ptr)) * n)

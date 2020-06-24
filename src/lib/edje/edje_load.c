@@ -2190,7 +2190,7 @@ _edje_file_free(Edje_File *edf)
           }
         free(edf->filter_dir->filters);
         free(edf->filter_dir);
-     } 
+     }
 
    if (edf->mo_dir)
      {

@@ -334,8 +334,8 @@ eet_data_put_null(Eet_Dictionary *ed,
                   int            *size_ret);
 
 static int
-eet_data_get_value(const Eet_Dictionary *ed,     
-		   const void           *src,    
+eet_data_get_value(const Eet_Dictionary *ed,
+		   const void           *src,
 		   const void           *src_end,
 		   void                 *dst);
 
@@ -1306,10 +1306,10 @@ _eina_value_to_eet_type_get(const Eina_Value_Type *eina_type)
 }
 
 static int
-eet_data_get_value(const Eet_Dictionary *ed,     
-		   const void           *src,    
+eet_data_get_value(const Eet_Dictionary *ed,
+		   const void           *src,
 		   const void           *src_end,
-		   void                 *dst)    
+		   void                 *dst)
 {
    const Eina_Value_Type *eina_type;
    void *tmp;
@@ -1349,9 +1349,9 @@ eet_data_get_value(const Eet_Dictionary *ed,
 }
 
 static void *
-eet_data_put_value(Eet_Dictionary *ed,       
-		   const void     *src,      
-		   int            *size_ret) 
+eet_data_put_value(Eet_Dictionary *ed,
+		   const void     *src,
+		   int            *size_ret)
 {
    const Eina_Value *value = *(Eina_Value **)src;
    const Eina_Value_Type *value_type;
@@ -2249,7 +2249,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->counter_name = counter_name;
 
    if (subtype)
-     INF("Adding '%s' of size %i to '%s' at offset %i.", 
+     INF("Adding '%s' of size %i to '%s' at offset %i.",
          subtype->name, subtype->size,
          edd->name, offset);
 
@@ -2299,7 +2299,7 @@ EAPI void *
 eet_data_read_cipher_buffer(Eet_File            *ef,
                             Eet_Data_Descriptor *edd,
                             const char          *name,
-                            const char          *cipher_key, 
+                            const char          *cipher_key,
                             char* buffer,
                             int buffer_size)
 {
@@ -4613,7 +4613,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                        memcpy(data, data_ret, subtype->size);
                        free(data_ret);
                     }
-                  else 
+                  else
                     {
                        ptr = data;
                        *ptr = (void *)data_ret;

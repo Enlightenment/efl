@@ -665,7 +665,7 @@ eet_mode_get(Eet_File *ef);
  * If the eet file handle is not valid nothing will be done.
  *
  * @since 1.0.0
- * 
+ *
  * @see eet_clearcache()
  */
 EAPI Eet_Error
@@ -2027,7 +2027,7 @@ eet_identity_open(const char *certificate_file,
 
 /**
  * @ingroup Eet_Cipher_Group
- * @brief Close and release all resource used by an Eet_Key. 
+ * @brief Close and release all resource used by an Eet_Key.
  * A reference counter prevent it from being freed until all file
  * using it are also closed.
  *
@@ -3192,11 +3192,11 @@ eet_data_write(Eet_File *ef,
 
 /**
  *  @typedef Eet_Data_Descriptor_Class
- * 
- * Callback protoype for Eet_Dump 
+ *
+ * Callback protoype for Eet_Dump
  *
  * @param data To passe to the callback
- * @param str The string to dump 
+ * @param str The string to dump
  *
  */
 typedef void (*Eet_Dump_Callback)(void *data, const char *str);

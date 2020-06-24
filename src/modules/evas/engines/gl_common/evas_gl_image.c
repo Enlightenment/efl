@@ -332,7 +332,7 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
    if (((int)w > gc->shared->info.max_texture_size) ||
        ((int)h > gc->shared->info.max_texture_size))
      return NULL;
-     
+
    if (data)
      {
         EINA_LIST_FOREACH(gc->shared->images, l, im)
@@ -399,7 +399,7 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
    if (((int)w > gc->shared->info.max_texture_size) ||
        ((int)h > gc->shared->info.max_texture_size))
      return NULL;
-   
+
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
@@ -453,7 +453,7 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
    if (((int)w > gc->shared->info.max_texture_size) ||
        ((int)h > gc->shared->info.max_texture_size))
      return NULL;
-   
+
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
@@ -735,7 +735,7 @@ evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, uns
    if (((int)w > gc->shared->info.max_texture_size) ||
        ((int)h > gc->shared->info.max_texture_size))
      return NULL;
-   
+
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
@@ -1352,7 +1352,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
      }
 
    if ((sw == dw) && (sh == dh)) smooth = 0;
-   
+
    im->tex->im = im;
    if ((!gc->dc->cutout.rects) ||
        ((gc->shared->info.tune.cutout.max > 0) &&

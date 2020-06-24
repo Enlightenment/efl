@@ -229,7 +229,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
           }
         signal(SIGBUS, SIG_DFL);
      }
-done:   
+done:
    mmap_safe = enabled;
    return mmap_safe;
 #endif

@@ -188,43 +188,43 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
 
              x = p[e1].x + temp; // intersected x point
 
-/*             
+/*
              // FIXME: 3d accuracy here
              // XXX t needs adjusting. above its a linear interp point
              // only.
-             // 
+             //
              // // FIXME: do in fixed pt. reduce divides
              evas_common_cpu_end_opt();
-             // 
+             //
              int foc = 512, z0 = 0, px = 320, py = 240; // FIXME: need from map points
              //
              float focf, hf;
              float z1, z2, y1, y2, dz, dy, zt, dydz, yt;
-             
+
              focf = foc;
              hf = h;
-             
+
              // adjust for fixed point and focal length and z0 for map
              z1 = (p[e1].z >> FP) - z0 + foc;
              z2 = (p[e2].z >> FP) - z0 + foc;
              // deltas
              dz = z1 - z2;
-             
+
              if (dz != 0)
                {
                   int pt;
-                  
+
                   // adjust for perspective point (being 0 0)
                   y1 = (p[e1].y >> FP) - py;
                   y2 = (p[e2].y >> FP) - py;
-                  
+
                   // correct for x &y not being in world coords - screen coords
                   y1 = (y1 * z1) / focf;
                   y2 = (y2 * z2) / focf;
-                  
+
                   // deltas
                   dy = y1 - y2;
-                  
+
                   yt = y - py;
                   dydz = dy / dz;
 
@@ -506,14 +506,14 @@ _evas_common_map_rgba_span(RGBA_Map_Spans *span,
      {
         if (p[i].y > ybottom) ybottom = p[i].y;
      }
-   
+
    // convert to screen space from fixed point
    ytop = ytop >> FP;
    ybottom = ybottom >> FP;
-   
+
    // if its outside the clip vertical bounds - don't bother
    if ((ytop >= (cy + ch)) || (ybottom < cy)) return;
-   
+
    // limit to the clip vertical bounds
    if (ytop < cy) span->ystart = cy;
    else span->ystart = ytop;
@@ -529,12 +529,12 @@ _evas_common_map_rgba_span(RGBA_Map_Spans *span,
         if (p[i].u < 0) p[i].u = 0;
         else if (p[i].u > (int)(sw << FP))
           p[i].u = src->cache_entry.w << FP;
-        
+
         if (p[i].v < 0) p[i].v = 0;
         else if (p[i].v > (int)(sw << FP))
           p[i].v = src->cache_entry.h << FP;
      }
-   
+
    // allocate some spans to hold out span list
    if (span->size < (span->yend - span->ystart + 1))
      {
@@ -950,7 +950,7 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
 
 #ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#endif   
+#endif
 
    spans = m->engine_data;
    rects = spans->rects;

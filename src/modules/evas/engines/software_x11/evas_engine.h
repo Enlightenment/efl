@@ -47,12 +47,12 @@ struct _Outbuf
    int rot;
    int onebuf;
 
-   struct 
+   struct
      {
         Convert_Pal *pal;
-        union 
+        union
           {
-             struct 
+             struct
                {
                   Display *disp;
                   Window win;
@@ -65,7 +65,7 @@ struct _Outbuf
                   unsigned char bit_swap : 1;
                } xlib;
           } x11;
-        struct 
+        struct
           {
              DATA32 r, g, b;
           } mask;
@@ -73,7 +73,7 @@ struct _Outbuf
         /* 1 big buffer for updates - flush on idle_flush */
         RGBA_Image *onebuf;
         Eina_Array  onebuf_regions;
-        
+
         void *swapper;
 
         /* a list of pending regions to write to the target */

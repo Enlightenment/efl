@@ -973,7 +973,7 @@ _eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, co
         for (method2 = desc2->methods2; method2 && method2->method.member; method2++)
            _eldbus_service_method_add(iface, &method2->method);
      }
-   
+
    iface->signals = desc->signals;
    iface->sign_of_signals = signatures;
 

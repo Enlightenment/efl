@@ -369,15 +369,15 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        func = 
-          evas_common_convert_func_get(0, w, h, ob->bpp, 
+        func =
+          evas_common_convert_func_get(0, w, h, ob->bpp,
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
                                        PAL_MODE_NONE, ob->rotation);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        func = 
-          evas_common_convert_func_get(0, h, w, ob->bpp, 
+        func =
+          evas_common_convert_func_get(0, h, w, ob->bpp,
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
                                        PAL_MODE_NONE, ob->rotation);
      }
@@ -429,7 +429,7 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
 
    if (ob->rotation == 0)
      {
-        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h,
                            0, 0, bw, bh);
         dst += (bpl * rect.y) + (rect.x * bpp);
         w -= rx;
@@ -437,7 +437,7 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    else if (ob->rotation == 180)
      {
         pr = rect;
-        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h,
                            0, 0, bw, bh);
         rx = pr.w - rect.w;
         ry = pr.h - rect.h;
@@ -447,7 +447,7 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    else if (ob->rotation == 90)
      {
         pr = rect;
-        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h,
                            0, 0, bw, bh);
         rx = pr.w - rect.w; ry = pr.h - rect.h;
         src += ry;
@@ -456,7 +456,7 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    else if (ob->rotation == 270)
      {
         pr = rect;
-        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h,
                            0, 0, bw, bh);
         rx = pr.w - rect.w; ry = pr.h - rect.h;
         src += (update->cache_entry.w * rx);

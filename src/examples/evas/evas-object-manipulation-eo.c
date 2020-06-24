@@ -193,7 +193,7 @@ main(void)
     * will be deleted automatically by parent.*/
 
    if (efl_file_set(d.img, img_path)) goto panic;
-   
+
    err = efl_file_load(d.img);
 
    if (err != EVAS_LOAD_ERROR_NONE)

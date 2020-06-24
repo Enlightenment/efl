@@ -254,10 +254,10 @@ evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
 #ifdef ALIGN_FIX
    intptr_t src_align;
    intptr_t dst_align;
-   
+
    src_align = (intptr_t)src & 0x3f; /* 64 byte alignment */
    dst_align = (intptr_t)dst & 0x3f; /* 64 byte alignment */
-   
+
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
      {

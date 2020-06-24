@@ -86,7 +86,7 @@ init_copy_pixel_mask_pt_funcs_mmx(void)
 /* copy_rel pixel x mask --> dst */
 
 #ifdef BUILD_MMX
-static void 
+static void
 _op_copy_rel_p_mas_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
@@ -139,7 +139,7 @@ init_copy_rel_pixel_mask_span_funcs_mmx(void)
 #endif
 
 #ifdef BUILD_MMX
-static void 
+static void
 _op_copy_rel_pt_p_mas_dp_mmx(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
 	c = m + 1;
 	pxor_r2r(mm0, mm0);

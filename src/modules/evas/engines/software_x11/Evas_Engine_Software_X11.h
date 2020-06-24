@@ -15,7 +15,7 @@ struct _Evas_Engine_Info_Software_X11
    Evas_Engine_Info magic;
 
    /* engine specific data & parameters it needs to set up */
-   struct 
+   struct
      {
         Evas_Engine_Info_Software_X11_Backend backend;
 

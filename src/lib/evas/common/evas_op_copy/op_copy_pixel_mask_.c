@@ -1,6 +1,6 @@
 /* copy pixel x mask --> dst */
 
-static void 
+static void
 _op_copy_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    DATA32 *e;
    int color;

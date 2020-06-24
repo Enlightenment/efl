@@ -82,7 +82,7 @@ struct _Outbuf
 
    Ecore_Wl2_Surface *surface;
 
-   struct 
+   struct
      {
         /* one big buffer for updates. flushed on idle_flush */
         RGBA_Image *onebuf;

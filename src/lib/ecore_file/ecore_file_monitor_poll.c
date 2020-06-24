@@ -119,8 +119,8 @@ ecore_file_monitor_backend_add(const char *path,
                   f->name = file;
                   f->mtime = ecore_file_mod_time(buf);
                   f->is_dir = ecore_file_is_dir(buf);
-                  em->files = 
-                    (Ecore_File *) eina_inlist_append(EINA_INLIST_GET(em->files), 
+                  em->files =
+                    (Ecore_File *) eina_inlist_append(EINA_INLIST_GET(em->files),
                                                       EINA_INLIST_GET(f));
                }
           }

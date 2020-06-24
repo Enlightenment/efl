@@ -582,7 +582,7 @@ ecore_fork_reset(void)
         fcb->func(fcb->data);
      }
    fork_cbs_walking--;
-   
+
    EINA_LIST_FOREACH_SAFE(fork_cbs, l, ln, fcb)
      {
         if (fcb->delete_me)

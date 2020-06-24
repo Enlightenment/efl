@@ -153,7 +153,7 @@ ecore_x_keysym_string_get(int keysym)
    return XKeysymToString(keysym);
 }
 
-EAPI int 
+EAPI int
 ecore_x_keysym_keycode_get(const char *keyname)
 {
    int keycode = 0;

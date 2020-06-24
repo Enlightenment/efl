@@ -142,7 +142,7 @@ EAPI void        elm_config_profile_list_free(Eina_List *l);
 
 /**
  * Return if a profile of the given name exists
- * 
+ *
  * @return EINA_TRUE if the profile exists, or EINA_FALSE if not
  * @param profile The profile's name
  * @ingroup Elm_Profile
@@ -170,7 +170,7 @@ EAPI void        elm_config_profile_set(const char *profile);
  * This will take the current in-memory config and write it out to the named
  * profile specified by @p profile. This will not change profile for the
  * application or make other processes switch profile.
- * 
+ *
  * @param profile The profile's name
  * @ingroup Elm_Profile
  *
@@ -554,7 +554,7 @@ EAPI void         elm_config_scroll_thumbscroll_sensitivity_friction_set(double 
  * Get the smooth start mode for scrolling with your finger
  *
  * @return smooth scroll flag
- * 
+ *
  * @see elm_config_scroll_thumbscroll_smooth_start_set()
  *
  * @since 1.16
@@ -568,9 +568,9 @@ EAPI Eina_Bool    elm_config_scroll_thumbscroll_smooth_start_get(void);
  * This enabled finger scrolling to scroll from the currunt point rather than
  * jumping and playing catch-up to make start of scrolling look smoother once
  * the finger or mouse goes past the threshold.
- * 
+ *
  * @param enable The enabled state of the smooth scroller
- * 
+ *
  * @see elm_config_scroll_thumbscroll_smooth_start_get()
  *
  * @since 1.16
@@ -582,7 +582,7 @@ EAPI void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enabl
  * Get the value of this option
  *
  * @return State of this option
- * 
+ *
  * @see elm_config_scroll_animation_disabled_set()
  *
  * @since 1.18
@@ -595,9 +595,9 @@ EAPI Eina_Bool    elm_config_scroll_animation_disabled_get(void);
  *
  * This option disables timed animations during scrolling and forces scroll actions
  * to be performed immediately.
- * 
+ *
  * @param enable The state of this option
- * 
+ *
  * @see elm_config_scroll_animation_disabled_get()
  *
  * @since 1.18
@@ -609,7 +609,7 @@ EAPI void         elm_config_scroll_animation_disabled_set(Eina_Bool enable);
  * Get the value of this option
  *
  * @return State of this option
- * 
+ *
  * @see elm_config_scroll_accel_factor_set()
  *
  * @since 1.18
@@ -623,12 +623,12 @@ EAPI double       elm_config_scroll_accel_factor_get(void);
  * Using a mouse wheel or touchpad to scroll will result in events
  * being processed. If events occur quickly, the scroll amount will
  * be multiplied by this value to accelerate the scrolling.
- * 
+ *
  * @param factor The value of this option from 0.0 to 10.0
  *
  * @see elm_config_scroll_accel_factor_get()
  * @note Set 0.0 to disable acceleration
- * 
+ *
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
@@ -652,11 +652,11 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
  * Scrolling with your finger can be smoothed out and the amount to smooth
  * is determined by this parameter. 0.0 means to not smooth at all and
  * 1.0 is to smooth as much as possible.
- * 
+ *
  * @param amount the amount to smooth from 0.0 to 1.0 with 0.0 being none
  *
  * @see elm_config_thumbscroll_acceleration_threshold_set()
- * 
+ *
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
@@ -680,11 +680,11 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_time_window_get(void);
  * Scrolling with your finger can be smoothed out and the window of time
  * to look at is determined by this config. The value is in seconds and
  * is from 0.0 to 1.0
- * 
+ *
  * @param amount the time window in seconds (between 0.0 and 1.0)
  *
  * @see elm_config_scroll_thumbscroll_smooth_time_window_get()
- * 
+ *
  * @since 1.16
  * @ingroup Elm_Scrolling
  */

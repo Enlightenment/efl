@@ -38,7 +38,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
              if (obj->map->prev.map->count == obj->map->cur.map->count)
                {
                   const Evas_Map_Point *p2;
-                  
+
                   p = obj->map->cur.map->points;
                   p2 = obj->map->prev.map->points;
                   if (memcmp(p, p2, sizeof(Evas_Map_Point) *
@@ -48,7 +48,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                          {
-                            if (map_write->cache_map) evas_map_free(map_write->cache_map); 
+                            if (map_write->cache_map) evas_map_free(map_write->cache_map);
                             map_write->cache_map = map_write->cur.map;
                             map_write->cur.map = map_write->prev.map;
                          }
@@ -61,7 +61,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
      }
    else
       ch = EINA_TRUE;
-   
+
    p = obj->map->cur.map->points;
    p_end = p + obj->map->cur.map->count;
    x1 = x2 = lround(p->x);
@@ -70,7 +70,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
    for (; p < p_end; p++)
      {
         Evas_Coord x, y;
-        
+
         x = lround(p->x);
         y = lround(p->y);
         if (x < x1) x1 = x;
@@ -78,7 +78,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
         if (y < yy1) yy1 = y;
         if (y > yy2) yy2 = y;
      }
-// this causes clip-out bugs now mapped objs canbe opaque!!!   
+// this causes clip-out bugs now mapped objs canbe opaque!!!
 //   // add 1 pixel of fuzz around the map region to ensure updates are correct
 //   x1 -= 1; yy1 -= 1;
 //   x2 += 1; yy2 += 1;
@@ -238,7 +238,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
                   map_write->spans = NULL;
                }
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
-          }      
+          }
      }
    m->magic = 0;
    free(m);
@@ -552,7 +552,7 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
           return;
      }
      /* changed_pchange means map's change.
-      * This flag will be used to decide whether to redraw the map surface. 
+      * This flag will be used to decide whether to redraw the map surface.
       * And value of flag would be EINA_FALSE after rendering. */
      obj->changed_pchange = EINA_TRUE;
 

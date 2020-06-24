@@ -1030,7 +1030,7 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
               Ipc_Data_Update *ipc;
               int n = e->response;
 
-              /* b->lockfd is not enough to ensure the size is same 
+              /* b->lockfd is not enough to ensure the size is same
                * between what server knows, and client knows.
                * So should check file lock also. */
               if ((n >= 0) && (n < NBUF))

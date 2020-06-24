@@ -43,7 +43,7 @@ evas_common_convert_rgba_to_24bpp_rgb_666(DATA32 *src, DATA8 *dst, int src_jump,
      {
 	for (x = 0; x < w; x++)
 	  {
-             scratch = 
+             scratch =
                (((R_VAL(src_ptr) << 12) | (B_VAL(src_ptr) >> 2)) & 0x03f03f) |
                ((G_VAL(src_ptr) << 4) & 0x000fc0);
 	     dst_ptr[0] = scratch_ptr[1];

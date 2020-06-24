@@ -890,7 +890,7 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
              fg->glyph_out->bitmap.width = dst.cache_entry.w;
              fg->glyph_out->bitmap.buffer = (unsigned char *) dst.image.data;
              fg->glyph_out->bitmap.pitch = dst.cache_entry.w * 4;
- 
+
              fg->glyph_out->rle = NULL;
              fg->glyph_out->bitmap.rle_alloc = EINA_TRUE;
              // this may be technically incorrect as we go and free a bitmap buffer

@@ -34,7 +34,7 @@
 
 static int kbd_mode = 0;
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Device *dev;
@@ -77,14 +77,14 @@ _ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt)
    return ioctl(dev->tty.fd, VT_ACTIVATE, activate_vt) >= 0;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
 {
    struct stat st;
    int kmode;
    struct vt_mode vtmode = { 0, 0, SIGUSR1, SIGUSR2, 0 };
 
-   if ((fstat(dev->tty.fd, &st) == -1) || 
+   if ((fstat(dev->tty.fd, &st) == -1) ||
        (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) <= 0) ||
        (minor(st.st_rdev) >= 64))
      {
@@ -121,7 +121,7 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    else if (dev->tty.kbd_mode == K_OFF)
      dev->tty.kbd_mode = K_UNICODE;
 
-   if (ioctl(dev->tty.fd, KDSKBMUTE, 1) && 
+   if (ioctl(dev->tty.fd, KDSKBMUTE, 1) &&
        ioctl(dev->tty.fd, KDSKBMODE, K_OFF))
      {
         ERR("Could not set K_OFF keyboard mode: %m");
@@ -156,11 +156,11 @@ err_kmode:
 
 /**
  * @defgroup Ecore_Drm_Tty_Group Tty manipulation functions
- * 
+ *
  * Functions that deal with opening, closing, and otherwise using a tty
  */
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 {
    char tty[32] = "<stdin>";
@@ -219,8 +219,8 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
         return EINA_FALSE;
      }
 
-   dev->tty.event_hdlr = 
-     ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
+   dev->tty.event_hdlr =
+     ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER,
                              _ecore_drm_tty_cb_vt_signal, dev);
 
    /* set current tty into env */
@@ -240,7 +240,7 @@ _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
    if (ioctl(fd, KDSETMODE, KD_TEXT))
      ERR("Could not set KD_TEXT mode on tty: %m\n");
 
-   if (ioctl(dev->tty.fd, KDSKBMUTE, 0) && 
+   if (ioctl(dev->tty.fd, KDSKBMUTE, 0) &&
        ioctl(dev->tty.fd, KDSKBMODE, kbd_mode))
      {
         ERR("Could not restore keyboard mode: %m");
@@ -253,7 +253,7 @@ _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
      ERR("Could not reset VT handling\n");
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -276,7 +276,7 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_tty_release(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -284,7 +284,7 @@ ecore_drm_tty_release(Ecore_Drm_Device *dev)
                                   (dev->tty.fd < 0), EINA_FALSE);
 
    /* send ioctl for vt release */
-   if (ioctl(dev->tty.fd, VT_RELDISP, 1) < 0) 
+   if (ioctl(dev->tty.fd, VT_RELDISP, 1) < 0)
      {
         ERR("Could not release VT: %m");
         return EINA_FALSE;
@@ -293,7 +293,7 @@ ecore_drm_tty_release(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -301,7 +301,7 @@ ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
                                   (dev->tty.fd < 0), EINA_FALSE);
 
    /* send ioctl for vt acquire */
-   if (ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ) < 0) 
+   if (ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ) < 0)
      {
         ERR("Could not acquire VT: %m");
         return EINA_FALSE;
@@ -310,7 +310,7 @@ ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI int 
+EAPI int
 ecore_drm_tty_get(Ecore_Drm_Device *dev)
 {
    /* check for valid device */

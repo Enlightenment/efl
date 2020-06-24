@@ -220,7 +220,7 @@ _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
 {
 #ifdef DEBUG
    void *pmem;
-  
+
    // pool mem base
    pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
 

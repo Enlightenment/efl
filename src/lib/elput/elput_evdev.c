@@ -317,7 +317,7 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
 {
    Ecore_Event_Key *ev;
 
-   ev = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) + 
+   ev = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
                ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
    if (!ev) return;
 

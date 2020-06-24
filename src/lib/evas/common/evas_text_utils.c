@@ -1430,7 +1430,7 @@ evas_common_format_color_parse(const char *str, int slen,
 
          if ((strncmp(color_name,"rgb(",4) == 0) && color_name[slen-1] == ')'&& slen >= 10 && slen <=16) /* rgb() */
            {
-              char * p_color = &color_name[3]; 
+              char * p_color = &color_name[3];
 
               if (
                   (!read_byte_color_component(++p_color,&p_color,r)  || !p_color   || *p_color != ',') ||
@@ -1448,7 +1448,7 @@ evas_common_format_color_parse(const char *str, int slen,
            }
          else if ((strncmp(color_name,"rgba(",4) == 0) && color_name[slen-1] == ')'&& slen >= 13 && slen <=21) /* rgba() */
            {
-              char * p_color = &color_name[4]; 
+              char * p_color = &color_name[4];
 
               if (
                   (!read_byte_color_component(++p_color,&p_color,r)  || !p_color   || *p_color != ',') ||

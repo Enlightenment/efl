@@ -50,25 +50,25 @@ _ecore_drm_event_activate_send(Eina_Bool active)
    if (!(e = calloc(1, sizeof(Ecore_Drm_Event_Activate)))) return;
 
    e->active = active;
-   ecore_event_add(ECORE_DRM_EVENT_ACTIVATE, e, 
+   ecore_event_add(ECORE_DRM_EVENT_ACTIVATE, e,
                    _ecore_drm_event_activate_free, NULL);
 }
 
 /**
  * @defgroup Ecore_Drm_Init_Group Drm Library Init and Shutdown Functions
- * 
+ *
  * Functions that start and shutdown the Ecore_Drm Library.
  */
 
 /**
  * Initialize the Ecore_Drm library
- * 
+ *
  * @return  The number of times the library has been initialized without
  *          being shut down. 0 is returned if an error occurs.
- * 
+ *
  * @ingroup Ecore_Drm_Init_Group
  */
-EAPI int 
+EAPI int
 ecore_drm_init(void)
 {
    /* if we have already initialized, return the count */
@@ -78,7 +78,7 @@ ecore_drm_init(void)
    if (!eina_init()) return --_ecore_drm_init_count;
 
    /* try to init ecore */
-   if (!ecore_init()) 
+   if (!ecore_init())
      {
         eina_shutdown();
         return --_ecore_drm_init_count;
@@ -96,7 +96,7 @@ ecore_drm_init(void)
    /* eina_log_level_set(EINA_LOG_LEVEL_DBG); */
 
    /* try to create logging domain */
-   _ecore_drm_log_dom = 
+   _ecore_drm_log_dom =
      eina_log_domain_register("ecore_drm", ECORE_DRM_DEFAULT_LOG_COLOR);
    if (!_ecore_drm_log_dom)
      {

@@ -17,7 +17,7 @@ typedef struct Efreet_Uri Efreet_Uri;
 
 /**
  * Efreet_Uri
- * @brief Contains a simple rappresentation of an uri. The string don't have 
+ * @brief Contains a simple rappresentation of an uri. The string don't have
  * special chars escaped.
  */
 struct Efreet_Uri

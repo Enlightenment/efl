@@ -26,7 +26,7 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    free(arr[0]);
    free(arr);
-   
+
    str = malloc(sizeof(char) * 4);
    strcpy(str, "bsd");
 

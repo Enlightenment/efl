@@ -583,7 +583,7 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
 {
    Atom *protos2 = alloca(sizeof(Atom) * num);
    int i;
-   
+
    for (i = 0; i < num; i++) protos2[i] = protos[i];
    LOGFN;
    if (num > 0)

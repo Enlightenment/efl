@@ -256,7 +256,7 @@ EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
  * @ingroup Elm_Slider
  */
  EAPI void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
- 
+
  /**
   * @brief Get the indicator label format of the slider.
   *

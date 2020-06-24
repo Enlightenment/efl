@@ -95,7 +95,7 @@ main(void)
    evas_object_move(r0, 0, 0);
    evas_object_resize(r0, ((2 * WIDTH) / 3) - 6, ((2 * HEIGHT) / 3) - 6);
    evas_object_show(r0);
-   
+
    r1 = evas_object_rectangle_add(sub_canvas);
    evas_object_color_set(r1, 255, 0, 0, 255); /* 100% opaque red */
    evas_object_move(r1, 10, 10);

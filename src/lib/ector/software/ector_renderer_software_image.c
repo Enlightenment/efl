@@ -140,7 +140,7 @@ _ector_renderer_software_image_ector_renderer_draw(Eo *obj EINA_UNUSED,
                   temp = draw_mul_256(pd->opacity, *src);
                }
              int inv_alpha = 255 - ((temp) >> 24);
-             *dst = temp + draw_mul_256(inv_alpha, *dst); 
+             *dst = temp + draw_mul_256(inv_alpha, *dst);
           }
      }
 

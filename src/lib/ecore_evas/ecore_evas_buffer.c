@@ -239,7 +239,7 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
         fw = ee->w; fh = ee->h;
         ww = ee->w; hh = ee->h;
      }
-   
+
    if ((fx == 0) && (fy == 0) && (fw == ww) && (fh == hh))
      {
         *x = (ee->w * (*x - xx)) / fw;
@@ -262,12 +262,12 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 static void
 _ecore_evas_buffer_transfer_modifiers_locks(Evas *e, Evas *e2)
 {
-   const char *mods[] = 
+   const char *mods[] =
      { "Shift", "Control", "Alt", "Meta", "Hyper", "Super", NULL };
-   const char *locks[] = 
+   const char *locks[] =
      { "Scroll_Lock", "Num_Lock", "Caps_Lock", NULL };
    int i;
-   
+
    for (i = 0; mods[i]; i++)
      {
         if (evas_key_modifier_is_set(evas_key_modifier_get(e), mods[i]))
@@ -532,7 +532,7 @@ _ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
    else
      {
         Evas_Engine_Info_Buffer *einfo;
-        
+
         einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
@@ -639,13 +639,13 @@ _ecore_evas_buffer_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y
         ev->root.y = y;
 
         {
-           const char *mods[] = 
+           const char *mods[] =
              { "Shift", "Control", "Alt", "Super", NULL };
            int modifiers[] =
              { ECORE_EVENT_MODIFIER_SHIFT, ECORE_EVENT_MODIFIER_CTRL, ECORE_EVENT_MODIFIER_ALT,
                ECORE_EVENT_MODIFIER_WIN, 0 };
            int i;
-           
+
            for (i = 0; mods[i]; i++)
              if (evas_key_modifier_is_set(evas_key_modifier_get(ee->evas), mods[i]))
                ev->modifiers |= modifiers[i];

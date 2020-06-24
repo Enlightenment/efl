@@ -30,9 +30,9 @@
 
 /**
  * @defgroup Ecore_Drm_Fb_Group Frame buffer manipulation
- * 
+ *
  * Functions that deal with frame buffers.
- * 
+ *
  */
 
 static Eina_Bool
@@ -148,7 +148,7 @@ create_err:
    return NULL;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_fb_destroy(Ecore_Drm_Fb *fb)
 {
    struct drm_mode_destroy_dumb darg;

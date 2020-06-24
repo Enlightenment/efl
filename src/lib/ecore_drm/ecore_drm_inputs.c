@@ -32,7 +32,7 @@ EAPI int ECORE_DRM_EVENT_SEAT_ADD = -1;
 static Eina_Hash *_fd_hash = NULL;
 
 /* local functions */
-static int 
+static int
 _cb_open_restricted(const char *path, int flags, void *data)
 {
    Ecore_Drm_Input *input;
@@ -49,7 +49,7 @@ _cb_open_restricted(const char *path, int flags, void *data)
    return fd;
 }
 
-static void 
+static void
 _cb_close_restricted(int fd, void *data)
 {
    Ecore_Drm_Input *input;
@@ -108,7 +108,7 @@ _seat_get(Ecore_Drm_Input *input, const char *seat)
    return _seat_create(input, seat);
 }
 
-static void 
+static void
 _device_added(Ecore_Drm_Input *input, struct libinput_device *device)
 {
    struct libinput_seat *libinput_seat;
@@ -139,7 +139,7 @@ _device_added(Ecore_Drm_Input *input, struct libinput_device *device)
    seat->devices = eina_list_append(seat->devices, edev);
 }
 
-static void 
+static void
 _device_removed(Ecore_Drm_Input *input EINA_UNUSED, struct libinput_device *device)
 {
    Ecore_Drm_Evdev *edev;
@@ -161,7 +161,7 @@ _device_removed(Ecore_Drm_Input *input EINA_UNUSED, struct libinput_device *devi
    _ecore_drm_evdev_device_destroy(edev);
 }
 
-static int 
+static int
 _udev_event_process(struct libinput_event *event)
 {
    struct libinput *libinput;
@@ -188,14 +188,14 @@ _udev_event_process(struct libinput_event *event)
    return ret;
 }
 
-static void 
+static void
 _input_event_process(struct libinput_event *event)
 {
    if (_udev_event_process(event)) return;
    if (_ecore_drm_evdev_event_process(event)) return;
 }
 
-static void 
+static void
 _input_events_process(Ecore_Drm_Input *input)
 {
    struct libinput_event *event;
@@ -207,7 +207,7 @@ _input_events_process(Ecore_Drm_Input *input)
      }
 }
 
-static Eina_Bool 
+static Eina_Bool
 _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    Ecore_Drm_Input *input;
@@ -223,14 +223,14 @@ _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    return EINA_TRUE;
 }
 
-const struct libinput_interface _input_interface = 
+const struct libinput_interface _input_interface =
 {
    _cb_open_restricted,
    _cb_close_restricted,
 };
 
 /* public functions */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
@@ -246,7 +246,7 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
    input->dev = dev;
 
    /* try to create libinput context */
-   input->libinput = 
+   input->libinput =
      libinput_udev_create_context(&_input_interface, input, eeze_udev_get());
    if (!input->libinput)
      {
@@ -285,7 +285,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
@@ -313,7 +313,7 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
      }
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_inputs_enable(Ecore_Drm_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
@@ -323,14 +323,14 @@ ecore_drm_inputs_enable(Ecore_Drm_Input *input)
 
    if (!input->hdlr)
      {
-        input->hdlr = 
-          ecore_main_fd_handler_add(input->fd, ECORE_FD_READ, 
+        input->hdlr =
+          ecore_main_fd_handler_add(input->fd, ECORE_FD_READ,
                                     _cb_input_dispatch, input, NULL, NULL);
      }
 
    if (input->suspended)
      {
-        if (libinput_resume(input->libinput) != 0) 
+        if (libinput_resume(input->libinput) != 0)
           goto err;
 
         input->suspended = EINA_FALSE;
@@ -351,7 +351,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_inputs_disable(Ecore_Drm_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);

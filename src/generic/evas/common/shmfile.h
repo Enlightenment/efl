@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 extern int   shm_fd;
 extern int   shm_size;
 extern void *shm_addr;

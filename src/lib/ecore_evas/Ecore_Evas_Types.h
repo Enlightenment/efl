@@ -12,7 +12,7 @@
 typedef unsigned int Ecore_X_Window;
 typedef unsigned int Ecore_X_Pixmap;
 typedef unsigned int Ecore_X_Atom;
-typedef struct _Ecore_X_Icon 
+typedef struct _Ecore_X_Icon
 {
    unsigned int width, height;
    unsigned int *data;

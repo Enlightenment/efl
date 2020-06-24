@@ -190,7 +190,7 @@ evas_image_load_file_head_psd(void *loader_data,
 
 static unsigned int
 read_compressed_channel(const unsigned char *map, size_t length, size_t *position,
-			const unsigned int channel_length EINA_UNUSED, 
+			const unsigned int channel_length EINA_UNUSED,
                         unsigned int size,
 			unsigned char* channel)
 {

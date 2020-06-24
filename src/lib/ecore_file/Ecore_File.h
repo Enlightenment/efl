@@ -92,7 +92,7 @@ typedef void (*Ecore_File_Download_Completion_Cb)(void *data, const char *file, 
 
 /**
  * @typedef _Ecore_File_Progress_Return
- * What to do with the download as a return from the 
+ * What to do with the download as a return from the
  * Ecore_File_Download_Progress_Cb function, if provided.
  */
 typedef enum _Ecore_File_Progress_Return
@@ -518,7 +518,7 @@ EAPI int            ecore_file_dir_is_empty (const char *dir);
  * This function monitors @p path. If @p path is @c NULL, or is an
  * empty string, or none of the notify methods (Inotify, Windows
  * notification or polling) is available, or if @p path does not exist
- * the function returns @c NULL. Otherwise, it returns a newly 
+ * the function returns @c NULL. Otherwise, it returns a newly
  * allocated Ecore_File_Monitor object and the monitoring begins.
  * When one of the Ecore_File_Event event is notified, @p func is called
  * and @p data is passed to @p func.Call ecore_file_monitor_del() to

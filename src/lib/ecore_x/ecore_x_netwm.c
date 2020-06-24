@@ -669,7 +669,7 @@ ecore_x_netwm_icons_set(Ecore_X_Window win,
 {
    unsigned int *data, *p, *p2;
    unsigned int i, size, x, y;
-   
+
    LOGFN;
    size = 0;
    for (i = 0; i < (unsigned int)num; i++)
@@ -690,7 +690,7 @@ ecore_x_netwm_icons_set(Ecore_X_Window win,
              for (x = 0; x < icon[i].width; x++)
                {
                   unsigned int r, g, b, a;
-                  
+
                   a = (*p2 >> 24) & 0xff;
                   r = (*p2 >> 16) & 0xff;
                   g = (*p2 >> 8 ) & 0xff;

@@ -439,7 +439,7 @@ eeze_mount_tabs_watch(void)
    _mountinfo = open("/proc/self/mountinfo", O_RDONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
    if (_mountinfo < 0) goto error;
    if (fcntl(_mountinfo, F_SETFL, O_NONBLOCK) < 0) goto error;
-   
+
    _mountinfo_fdh = ecore_main_fd_handler_file_add(_mountinfo, ECORE_FD_ERROR, _eeze_mount_fdh, NULL, NULL, NULL);
    if (!_mountinfo_fdh) goto error;
    _fstab_mon = ecore_file_monitor_add("/etc/fstab", _eeze_mount_tab_watcher, NULL);

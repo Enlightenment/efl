@@ -1563,9 +1563,9 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
    is_widget = _elm_widget_is(sobj);
-   
+
    if (!is_widget) sobj_parent = evas_object_data_del(sobj, "elm-parent");
-   
+
    if (sobj_parent && sobj_parent != obj)
      {
         static int abort_on_warn = -1;

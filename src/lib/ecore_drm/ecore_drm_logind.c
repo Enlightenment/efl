@@ -102,7 +102,7 @@ _ecore_drm_logind_vt_get(Ecore_Drm_Device *dev)
 }
 #endif
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_drm_logind_vt_setup(Ecore_Drm_Device *dev)
 {
    char buff[64];
@@ -116,7 +116,7 @@ _ecore_drm_logind_vt_setup(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_drm_logind_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Device *dev;
@@ -146,7 +146,7 @@ _ecore_drm_logind_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Event_Activate *ev;
@@ -245,15 +245,15 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
    /* setup handler for vt signals */
    if (!dev->tty.event_hdlr)
      {
-        dev->tty.event_hdlr = 
-          ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
+        dev->tty.event_hdlr =
+          ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER,
                                   _ecore_drm_logind_cb_vt_signal, dev);
      }
 
    if (!active_hdlr)
      {
-        active_hdlr = 
-          ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE, 
+        active_hdlr =
+          ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE,
                                   _ecore_drm_logind_cb_activate, dev);
      }
 
@@ -266,7 +266,7 @@ take_err:
    return EINA_FALSE;
 }
 
-void 
+void
 _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev)
 {
    if (active_hdlr) ecore_event_handler_del(active_hdlr);
@@ -277,7 +277,7 @@ _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev)
    _ecore_drm_dbus_shutdown();
 }
 
-void 
+void
 _ecore_drm_logind_restore(Ecore_Drm_Device *dev)
 {
    _ecore_drm_tty_restore(dev);
@@ -291,7 +291,7 @@ _ecore_drm_logind_device_open(const char *device, Ecore_Drm_Open_Cb callback, vo
    if (stat(device, &st) < 0) return EINA_FALSE;
    if (!S_ISCHR(st.st_mode)) return EINA_FALSE;
 
-   if (_ecore_drm_dbus_device_take(major(st.st_rdev), minor(st.st_rdev), 
+   if (_ecore_drm_dbus_device_take(major(st.st_rdev), minor(st.st_rdev),
                                    callback, data) < 0)
      return EINA_FALSE;
 

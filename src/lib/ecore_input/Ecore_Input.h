@@ -130,7 +130,7 @@ extern "C" {
     * An enum of Compose states.
     */
    typedef enum _Ecore_Compose_State
-     {   
+     {
         ECORE_COMPOSE_NONE,
         ECORE_COMPOSE_MIDDLE,
         ECORE_COMPOSE_DONE
@@ -202,10 +202,10 @@ extern "C" {
         Ecore_Window     window; /**< The main window where event happened */
         Ecore_Window     root_window; /**< The root window where event happened */
         Ecore_Window     event_window; /**< The child window where event happened */
-        
+
         unsigned int     timestamp; /**< Time when the event occurred */
         unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
-        
+
         int              same_screen; /**< same screen flag */
 
         unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
@@ -231,14 +231,14 @@ extern "C" {
         unsigned int     double_click; /**< Double click event */
         unsigned int     triple_click; /**< Triple click event */
         int              same_screen; /**< Same screen flag */
-        
+
         int              x; /**< x coordinate relative to window where event happened */
         int              y; /**< y coordinate relative to window where event happened */
         struct {
            int           x;
            int           y;
         } root; /**< Coordinates relative to root window */
-        
+
         struct {
            int           device; /**< 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
            double        radius, radius_x, radius_y; /**< radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
@@ -262,14 +262,14 @@ extern "C" {
         Ecore_Window     window; /**< The main window where event happened */
         Ecore_Window     root_window; /**< The root window where event happened */
         Ecore_Window     event_window; /**< The child window where event happened */
-        
+
         unsigned int     timestamp; /**< Time when the event occurred */
         unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
-        
+
         int              same_screen; /**< Same screen flag */
         int              direction; /**< Orientation of the wheel (horizontal/vertical) */
         int              z; /**< Value of the wheel event (+1/-1) */
-        
+
         int              x; /**< x coordinate relative to window where event happened */
         int              y; /**< y coordinate relative to window where event happened */
         struct {
@@ -289,19 +289,19 @@ extern "C" {
         Ecore_Window     window; /**< The main window where event happened */
         Ecore_Window     root_window; /**< The root window where event happened */
         Ecore_Window     event_window; /**< The child window where event happened */
-        
+
         unsigned int     timestamp; /**< Time when the event occurred */
         unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
-        
+
         int              same_screen; /**< Same screen flag */
-        
+
         int              x; /**< x coordinate relative to window where event happened */
         int              y; /**< y coordinate relative to window where event happened */
         struct {
            int           x;
            int           y;
         } root; /**< Coordinates relative to root window */
-        
+
         struct {
            int           device; /**< 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
            double        radius, radius_x, radius_y; /**< radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
@@ -367,10 +367,10 @@ extern "C" {
      {
         Ecore_Window     window; /**< The main window where event happened */
         Ecore_Window     event_window; /**< The child window where event happened */
-        
+
         unsigned int     timestamp; /**< Time when the event occurred */
         unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
-        
+
         int              x; /**< x coordinate relative to window where event happened */
         int              y; /**< y coordinate relative to window where event happened */
 

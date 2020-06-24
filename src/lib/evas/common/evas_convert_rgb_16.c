@@ -79,7 +79,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	for (x = 0; x < w; x++)
 	  {
              DATA32  p = *src++,  q = *src++;
-             
+
              dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
              dith2 = dith >> DM_SHF(6);
              dith >>= DM_SHF(5);
@@ -89,7 +89,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
              if ((r1 < 0x1f) && ((((p & 0xff0000) >> 16) - (r1 << 3)) >= dith )) r1++;
              if ((g1 < 0x3f) && ((((p & 0xff00) >> 8) - (g1 << 2)) >= dith2)) g1++;
              if ((b1 < 0x1f) && (((p & 0xff) - (b1 << 3)) >= dith )) b1++;
-             
+
              x++;
              dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
              dith2 = dith >> DM_SHF(6);
@@ -100,7 +100,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
              if ((r2 < 0x1f) && ((((q & 0xff0000) >> 16) - (r2 << 3)) >= dith )) r2++;
              if ((g2 < 0x3f) && ((((q & 0xff00) >> 8) - (g2 << 2)) >= dith2)) g2++;
              if ((b2 < 0x1f) && (((q & 0xff) - (b2 << 3)) >= dith )) b2++;
-	     
+
 #ifndef WORDS_BIGENDIAN
              *((DATA32 *)d) = (r2 << 27) | (g2 << 21) | (b2 << 16) |
 	                      (r1 << 11) | (g1 << 5) | (b1);
@@ -113,7 +113,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	src += src_jump;
 	d += dst_jump;
      }
-#endif   
+#endif
 #else
    DATA16 *d = (DATA16 *)dst;
    int w0 = w;
@@ -159,7 +159,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 	     for (x = 0; x < w; x++)
 	       {
 		  DATA32  p = *src++;
-		  
+
 		  r = (p & 0xff0000) >> 19;
 		  if (r > 0x1f) r = 0x1f;
 		  g = (p & 0xff00) >> 10;
@@ -182,13 +182,13 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 	src += src_jump;
 	d += dst_jump;
      }
-#else   
+#else
    for (y = 0; y < h; y++)
      {
 	for (x = 0; x < w; x++)
 	  {
              DATA32  p = *src++;
-             
+
              dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK];
              dith2 = dith >> DM_SHF(6);
              dith >>= DM_SHF(5);
@@ -198,13 +198,13 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
              if ((r < 0x1f) && ((((p & 0xff0000) >> 16) - (r << 3)) >= dith )) r++;
              if ((g < 0x3f) && ((((p & 0xff00) >> 8) - (g << 2)) >= dith2)) g++;
              if ((b < 0x1f) && (((p & 0xff) - (b << 3)) >= dith )) b++;
-             
+
              *d++ = (r << 11) | (g << 5) | b;
 	  }
 	src += src_jump;
 	d += dst_jump;
      }
-#endif   
+#endif
 #else
    DATA16 *d = (DATA16 *)dst;
    int w0 = w;

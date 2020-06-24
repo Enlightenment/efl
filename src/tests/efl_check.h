@@ -131,7 +131,7 @@ _efl_test_option_disp(int argc, char **argv, const Efl_Test_Case *etc)
           }
         else if (strcmp(argv[i], "--valgrind") == 0)
           {
-             const char *nav[argc + 3];
+             const char ** nav = (const char **) alloca(sizeof(char*) * (argc + 3));
              int j, k;
 
              nav[0] = "valgrind";

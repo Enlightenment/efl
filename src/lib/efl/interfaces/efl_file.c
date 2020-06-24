@@ -69,7 +69,7 @@ _efl_file_mmap_set(Eo *obj, Efl_File_Data *pd, const Eina_File *f)
    if (pd->file) eina_file_close(pd->file); // close matching open (dup above) OK
    pd->file = file;
    pd->loaded = EINA_FALSE;
-   
+
    if (!pd->setting)
      {
         /* avoid infinite recursion */
@@ -138,7 +138,7 @@ _efl_file_key_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
    return pd->key;
 }
 
-EOLIAN static Eina_Bool 
+EOLIAN static Eina_Bool
 _efl_file_loaded_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
 {
    return pd->loaded;

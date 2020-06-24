@@ -65,7 +65,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 #ifndef _WIN32
    sigset_t oldset, newset;
 #endif
-   
+
    pthread_attr_init(&attr);
    if (affinity >= 0)
      {

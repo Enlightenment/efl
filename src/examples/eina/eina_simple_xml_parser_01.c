@@ -47,7 +47,7 @@ main(void)
                                    _xml_tag_cb, array);
 
              eina_array_foreach(array, _print, NULL);
-        
+
              eina_array_free(array);
              free(buffer);
           }

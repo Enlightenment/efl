@@ -476,7 +476,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
 	       rt = (*rt)->son + dir;
 	    }
 
-	 if (q != NULL) 
+	 if (q != NULL)
 	    {
 	       int r_color = r->color;
 	       Eina_Rbtree *nd = q->son[dir ^ 1];

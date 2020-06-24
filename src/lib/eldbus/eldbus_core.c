@@ -75,7 +75,7 @@ static int _eldbus_init_count = 0;
 int _eldbus_log_dom = -1;
 int eldbus_model_log_dom = -1;
 
-/* We don't save ELDBUS_CONNECTION_TYPE_UNKNOWN in here so we need room for 
+/* We don't save ELDBUS_CONNECTION_TYPE_UNKNOWN in here so we need room for
  * last - 1 elements */
 static void *shared_connections[ELDBUS_CONNECTION_TYPE_LAST - 1];
 static Eina_Hash *address_connections = NULL;

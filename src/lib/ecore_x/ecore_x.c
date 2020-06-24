@@ -2431,7 +2431,7 @@ ecore_x_pointer_root_xy_get(int *x, int *y)
    LOGFN;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    root = ecore_x_window_root_list(&num);
-   for (i = 0; i < num; i++) 
+   for (i = 0; i < num; i++)
      {
         ret = XQueryPointer(_ecore_x_disp, root[i], &rwin, &cwin,
                             &rx, &ry, &wx, &wy, &mask);

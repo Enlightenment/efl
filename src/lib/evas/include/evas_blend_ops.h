@@ -198,7 +198,7 @@ extern const DATA32 ALPHA_256;
 
 /* copy 32bit value to lower bits of register reg */
 #define VMOV_M2R_NEON(reg, value) \
-	__asm__ __volatile__("vmov.32 " #reg "[0], %[val] \n\t" :: [val] "r" (value) : #reg); 
+	__asm__ __volatile__("vmov.32 " #reg "[0], %[val] \n\t" :: [val] "r" (value) : #reg);
 
 /* save 32bit value from lower 64 bits of register regq to memory location */
 /* pointed to by pointer, using 64bit register regd as temporary location */
@@ -212,7 +212,7 @@ extern const DATA32 ALPHA_256;
 
 /* spread value in register reg */
 #define VDUP_NEON(reg, value) \
-	__asm__ __volatile__("vdup.16 " #reg ", %[val] \n\t" :: [val] "r" (value) : #reg); 
+	__asm__ __volatile__("vdup.16 " #reg ", %[val] \n\t" :: [val] "r" (value) : #reg);
 
 /* interleave contents of reg1 and reg2 */
 #define VZIP_NEON(reg1, reg2) \

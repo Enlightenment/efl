@@ -4,7 +4,7 @@
 extern int _ecore_input_log_dom;
 
 #ifdef ECORE_INPUT_DEFAULT_LOG_COLOR
-# undef ECORE_INPUT_DEFAULT_LOG_COLOR 
+# undef ECORE_INPUT_DEFAULT_LOG_COLOR
 #endif
 
 #define ECORE_INPUT_DEFAULT_LOG_COLOR EINA_COLOR_BLUE

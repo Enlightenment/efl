@@ -98,7 +98,7 @@ struct _Outbuf
 
    struct gbm_surface *surface;
 
-   struct 
+   struct
      {
         EGLContext context;
         EGLSurface surface;
@@ -106,7 +106,7 @@ struct _Outbuf
         EGLDisplay disp;
      } egl;
 
-   struct 
+   struct
      {
         Ecore_Drm2_Output *output;
         Ecore_Drm2_Plane *plane;

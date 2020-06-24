@@ -319,7 +319,7 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
    FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", NULL, glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTiling", NULL, glsym_func_void);
-   
+
    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
      {
         // Not sure there's an EXT variant. (probably no KHR variant)
@@ -2289,7 +2289,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
        (tex->im->orient == EVAS_IMAGE_ORIENT_90))
      {
         double tmp;
-        
+
         SWAP(&sw, &sh, tmp);
         SWAP(&sx, &sy, tmp);
 
@@ -2333,7 +2333,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
         SWAP(&sw, &sh, tmp);
         SWAP(&sx, &sy, tmp);
-        
+
         sx = tex->im->w - sw - sx;
         sy = tex->im->h - sh - sy;
      }
@@ -2424,7 +2424,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh, masksam);
-   
+
    if (!nomul)
      PUSH_6_COLORS(pn, r, g, b, a);
 }

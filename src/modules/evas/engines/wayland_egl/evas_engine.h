@@ -142,7 +142,7 @@ void eng_gl_context_use(Context_3D *context);
 
 void eng_gl_symbols(EGLDisplay disp);
 
-static inline int 
+static inline int
 _re_wincheck(Outbuf *ob)
 {
    if (ob->surf) return 1;

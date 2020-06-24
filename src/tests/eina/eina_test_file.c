@@ -746,15 +746,13 @@ EFL_START_TEST(eina_test_file_mktemp)
       "./eina_file_test_XXXXXX.txt",
    };
 
-   errno = 0;
-
    /* test NULL */
    EXPECT_ERROR_START;
    fd = eina_file_mkstemp(NULL, NULL);
    fail_if(fd >= 0);
    EXPECT_ERROR_END;
    fd = eina_file_mkstemp(patterns[0], NULL);
-   fail_if((fd < 0) || errno);
+   fail_if(fd < 0);
 
    /* here's an attempt at removing the file, without knowing its path */
 #ifdef F_GETPATH
@@ -783,12 +781,10 @@ EFL_START_TEST(eina_test_file_mktemp)
 
    for (unsigned int k = 0; k < sizeof(patterns) / sizeof(patterns[0]); k++)
      {
-        errno = 0;
         tmpfile = NULL;
         fd = eina_file_mkstemp(patterns[k], &tmpfile);
         ck_assert(fd >= 0);
         ck_assert(!!tmpfile);
-        ck_assert_msg(!errno, "ERROR(%s): %s\n", patterns[k], strerror(errno));
         file = eina_file_open(tmpfile, EINA_FALSE);
         fail_if(!file);
         eina_file_close(file);
@@ -813,7 +809,7 @@ EFL_START_TEST(eina_test_file_mktemp)
    eina_file_path_join(buf, sizeof(buf), tmpdir, "eina_file_test_XXXXXX.txt");
 
    fd = eina_file_mkstemp(buf, &tmpfile);
-   fail_if((fd < 0) || !tmpfile || errno);
+   fail_if((fd < 0) || !tmpfile);
    fail_if(close(fd));
 
    it = eina_file_direct_ls(tmpdir);

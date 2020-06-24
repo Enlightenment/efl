@@ -226,7 +226,7 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
    Eina_Error ret;
 
    EVAS_IMAGE_API(obj, EINA_FALSE);
-   
+
    if (flags)
      {
         char *p, *pp;

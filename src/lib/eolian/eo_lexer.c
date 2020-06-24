@@ -80,7 +80,7 @@ static const char * const ctypes[] =
    "Eina_Value", "Eina_Value *", "Eina_Binbuf *", "Efl_Event *",
    "char *", "const char *", "Eina_Stringshare *", "Eina_Strbuf *",
 
-   "Eina_Hash *", 
+   "Eina_Hash *",
    "void *",
 
    "function",

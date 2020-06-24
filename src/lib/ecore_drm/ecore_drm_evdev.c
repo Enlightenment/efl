@@ -32,7 +32,7 @@
 
 static void  _device_modifiers_update(Ecore_Drm_Evdev *edev);
 
-static void 
+static void
 _device_calibration_set(Ecore_Drm_Evdev *edev)
 {
    const char *sysname;
@@ -42,7 +42,7 @@ _device_calibration_set(Ecore_Drm_Evdev *edev)
    const char *vals;
    enum libinput_config_status status;
 
-   if ((!libinput_device_config_calibration_has_matrix(edev->device)) || 
+   if ((!libinput_device_config_calibration_has_matrix(edev->device)) ||
        (libinput_device_config_calibration_get_default_matrix(edev->device, cal) != 0))
      return;
 
@@ -54,7 +54,7 @@ _device_calibration_set(Ecore_Drm_Evdev *edev)
    EINA_LIST_FREE(devices, device)
      {
         vals = eeze_udev_syspath_get_property(device, "WL_CALIBRATION");
-	if ((!vals) || 
+	if ((!vals) ||
             (sscanf(vals, "%f %f %f %f %f %f",
                     &cal[0], &cal[1], &cal[2], &cal[3], &cal[4], &cal[5]) != 6))
           goto cont;
@@ -62,7 +62,7 @@ _device_calibration_set(Ecore_Drm_Evdev *edev)
         cal[2] /= edev->output->current_mode->width;
         cal[5] /= edev->output->current_mode->height;
 
-        status = 
+        status =
           libinput_device_config_calibration_set_matrix(edev->device, cal);
 
         if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)
@@ -74,7 +74,7 @@ cont:
      }
 }
 
-static void 
+static void
 _device_output_set(Ecore_Drm_Evdev *edev)
 {
    Ecore_Drm_Input *input;
@@ -102,7 +102,7 @@ _device_output_set(Ecore_Drm_Evdev *edev)
 
    edev->output = output;
 
-   if (libinput_device_has_capability(edev->device, 
+   if (libinput_device_has_capability(edev->device,
                                       LIBINPUT_DEVICE_CAP_POINTER))
      {
         edev->seat->ptr.ix = edev->seat->ptr.dx = edev->output->current_mode->width / 2;
@@ -112,7 +112,7 @@ _device_output_set(Ecore_Drm_Evdev *edev)
      }
 }
 
-static void 
+static void
 _device_configure(Ecore_Drm_Evdev *edev)
 {
    if (libinput_device_config_tap_get_finger_count(edev->device) > 0)
@@ -123,7 +123,7 @@ _device_configure(Ecore_Drm_Evdev *edev)
         libinput_device_config_tap_set_enabled(edev->device, tap);
      }
 
-   ecore_drm_outputs_geometry_get(edev->seat->input->dev, 
+   ecore_drm_outputs_geometry_get(edev->seat->input->dev,
                                   &edev->mouse.minx, &edev->mouse.miny,
                                   &edev->mouse.maxw, &edev->mouse.maxh);
 
@@ -131,7 +131,7 @@ _device_configure(Ecore_Drm_Evdev *edev)
    _device_calibration_set(edev);
 }
 
-static void 
+static void
 _device_keyboard_setup(Ecore_Drm_Evdev *edev)
 {
    Ecore_Drm_Input *input;
@@ -155,25 +155,25 @@ _device_keyboard_setup(Ecore_Drm_Evdev *edev)
         return;
      }
 
-   edev->xkb.ctrl_mask = 
+   edev->xkb.ctrl_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_CTRL);
-   edev->xkb.alt_mask = 
+   edev->xkb.alt_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_ALT);
-   edev->xkb.shift_mask = 
+   edev->xkb.shift_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_SHIFT);
-   edev->xkb.win_mask = 
+   edev->xkb.win_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_LOGO);
-   edev->xkb.scroll_mask = 
+   edev->xkb.scroll_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_LED_NAME_SCROLL);
-   edev->xkb.num_mask = 
+   edev->xkb.num_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_LED_NAME_NUM);
-   edev->xkb.caps_mask = 
+   edev->xkb.caps_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_CAPS);
-   edev->xkb.altgr_mask = 
+   edev->xkb.altgr_mask =
      1 << xkb_map_mod_get_index(edev->xkb.keymap, "ISO_Level3_Shift");
 }
 
-static int 
+static int
 _device_keysym_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buffer, int bytes)
 {
    unsigned long hbytes = 0;
@@ -222,13 +222,13 @@ _device_modifiers_update_device(Ecore_Drm_Evdev *edev, Ecore_Drm_Evdev *from)
 {
    xkb_mod_mask_t mask;
 
-   edev->xkb.depressed = 
+   edev->xkb.depressed =
      xkb_state_serialize_mods(from->xkb.state, XKB_STATE_DEPRESSED);
-   edev->xkb.latched = 
+   edev->xkb.latched =
      xkb_state_serialize_mods(from->xkb.state, XKB_STATE_LATCHED);
-   edev->xkb.locked = 
+   edev->xkb.locked =
      xkb_state_serialize_mods(from->xkb.state, XKB_STATE_LOCKED);
-   edev->xkb.group = 
+   edev->xkb.group =
      xkb_state_serialize_mods(from->xkb.state, XKB_STATE_EFFECTIVE);
 
    mask = (edev->xkb.depressed | edev->xkb.latched);
@@ -251,7 +251,7 @@ _device_modifiers_update_device(Ecore_Drm_Evdev *edev, Ecore_Drm_Evdev *from)
      edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 }
 
-static void 
+static void
 _device_modifiers_update(Ecore_Drm_Evdev *edev)
 {
    edev->xkb.modifiers = 0;
@@ -322,7 +322,7 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
        ((state == LIBINPUT_KEY_STATE_RELEASED) && (key_count != 0)))
      return;
 
-   xkb_state_update_key(edev->xkb.state, code, 
+   xkb_state_update_key(edev->xkb.state, code,
                         (state ? XKB_KEY_DOWN : XKB_KEY_UP));
 
    /* get the keysym for this code */
@@ -340,8 +340,8 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
    /* if shift is active, we need to transform the key to lower */
-   if (xkb_state_mod_index_is_active(edev->xkb.state, 
-                                     xkb_map_mod_get_index(edev->xkb.keymap, 
+   if (xkb_state_mod_index_is_active(edev->xkb.state,
+                                     xkb_map_mod_get_index(edev->xkb.keymap,
                                                            XKB_MOD_NAME_SHIFT),
                                      XKB_STATE_MODS_EFFECTIVE))
      {
@@ -350,7 +350,7 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
      }
 
    memset(compose_buffer, 0, sizeof(compose_buffer));
-   if (_device_keysym_translate(sym, edev->xkb.modifiers, 
+   if (_device_keysym_translate(sym, edev->xkb.modifiers,
                                 compose_buffer, sizeof(compose_buffer)))
      {
         compose = eina_str_convert("ISO8859-1", "UTF-8", compose_buffer);
@@ -398,7 +398,7 @@ err:
    if (tmp) free(tmp);
 }
 
-static void 
+static void
 _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Input *input;
@@ -455,7 +455,7 @@ _ecore_drm_pointer_motion_post(Ecore_Drm_Evdev *edev)
    _device_pointer_motion(edev, NULL);
 }
 
-static void 
+static void
 _device_handle_pointer_motion(struct libinput_device *device, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -476,7 +476,7 @@ _device_handle_pointer_motion(struct libinput_device *device, struct libinput_ev
   _device_pointer_motion(edev, event);
 }
 
-static void 
+static void
 _device_handle_pointer_motion_absolute(struct libinput_device *device, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -498,7 +498,7 @@ _device_handle_pointer_motion_absolute(struct libinput_device *device, struct li
    _device_pointer_motion(edev, event);
 }
 
-static void 
+static void
 _device_handle_button(struct libinput_device *device, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -557,7 +557,7 @@ _device_handle_button(struct libinput_device *device, struct libinput_event_poin
             (button == edev->mouse.prev_button))
           {
              edev->mouse.did_double = EINA_TRUE;
-             if (((current - edev->mouse.last) <= (2 * edev->mouse.threshold)) && 
+             if (((current - edev->mouse.last) <= (2 * edev->mouse.threshold)) &&
                  (button == edev->mouse.last_button))
                {
                   edev->mouse.did_triple = EINA_TRUE;
@@ -600,7 +600,7 @@ _event_scroll_get(struct libinput_event_pointer *pe, enum libinput_pointer_axis 
    return 0.0;
 }
 
-static void 
+static void
 _device_handle_axis(struct libinput_device *device, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -635,7 +635,7 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
      ev->z = _event_scroll_get(event, axis);
 
    axis = LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
-   if (libinput_event_pointer_has_axis(event, axis)) 
+   if (libinput_event_pointer_has_axis(event, axis))
      {
         ev->direction = 1;
         ev->z = _event_scroll_get(event, axis);
@@ -771,7 +771,7 @@ _device_handle_touch_event_send(Ecore_Drm_Evdev *edev, struct libinput_event_tou
             (button == edev->mouse.prev_button))
           {
              edev->mouse.did_double = EINA_TRUE;
-             if (((current - edev->mouse.last) <= (2 * edev->mouse.threshold)) && 
+             if (((current - edev->mouse.last) <= (2 * edev->mouse.threshold)) &&
                  (button == edev->mouse.last_button))
                {
                   edev->mouse.did_triple = EINA_TRUE;
@@ -877,7 +877,7 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
    _device_handle_touch_motion_send(edev, event);
 }
 
-static void 
+static void
 _device_handle_touch_up(struct libinput_device *device, struct libinput_event_touch *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -889,13 +889,13 @@ _device_handle_touch_up(struct libinput_device *device, struct libinput_event_to
    _device_handle_touch_event_send(edev, event, ECORE_EVENT_MOUSE_BUTTON_UP);
 }
 
-static void 
+static void
 _device_handle_touch_frame(struct libinput_device *device EINA_UNUSED, struct libinput_event_touch *event EINA_UNUSED)
 {
    /* DBG("Unhandled Touch Frame Event"); */
 }
 
-void 
+void
 _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *edev)
 {
    EINA_SAFETY_ON_NULL_RETURN(edev);
@@ -913,7 +913,7 @@ _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *edev)
    free(edev);
 }
 
-Eina_Bool 
+Eina_Bool
 _ecore_drm_evdev_event_process(struct libinput_event *event)
 {
    struct libinput_device *device;
@@ -926,11 +926,11 @@ _ecore_drm_evdev_event_process(struct libinput_event *event)
         _device_handle_key(device, libinput_event_get_keyboard_event(event));
         break;
       case LIBINPUT_EVENT_POINTER_MOTION:
-        _device_handle_pointer_motion(device, 
+        _device_handle_pointer_motion(device,
                                       libinput_event_get_pointer_event(event));
         break;
       case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
-        _device_handle_pointer_motion_absolute(device, 
+        _device_handle_pointer_motion_absolute(device,
                                                libinput_event_get_pointer_event(event));
         break;
       case LIBINPUT_EVENT_POINTER_BUTTON:
@@ -943,7 +943,7 @@ _ecore_drm_evdev_event_process(struct libinput_event *event)
         _device_handle_touch_down(device, libinput_event_get_touch_event(event));
         break;
       case LIBINPUT_EVENT_TOUCH_MOTION:
-        _device_handle_touch_motion(device, 
+        _device_handle_touch_motion(device,
                                     libinput_event_get_touch_event(event));
         break;
       case LIBINPUT_EVENT_TOUCH_UP:
@@ -985,7 +985,7 @@ ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *edev, int w, int h)
    EINA_SAFETY_ON_NULL_RETURN(edev);
    EINA_SAFETY_ON_TRUE_RETURN((w == 0) || (h == 0));
 
-   if ((!libinput_device_config_calibration_has_matrix(edev->device)) || 
+   if ((!libinput_device_config_calibration_has_matrix(edev->device)) ||
        (libinput_device_config_calibration_get_default_matrix(edev->device, cal) != 0))
      return;
 
@@ -997,7 +997,7 @@ ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *edev, int w, int h)
    EINA_LIST_FREE(devices, device)
      {
         vals = eeze_udev_syspath_get_property(device, "WL_CALIBRATION");
-	if ((!vals) || 
+	if ((!vals) ||
             (sscanf(vals, "%f %f %f %f %f %f",
                     &cal[0], &cal[1], &cal[2], &cal[3], &cal[4], &cal[5]) != 6))
           goto cont;
@@ -1005,7 +1005,7 @@ ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *edev, int w, int h)
         cal[2] /= w;
         cal[5] /= h;
 
-        status = 
+        status =
           libinput_device_config_calibration_set_matrix(edev->device, cal);
 
         if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)

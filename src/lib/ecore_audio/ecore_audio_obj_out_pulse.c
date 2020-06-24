@@ -234,11 +234,11 @@ static void _state_cb(pa_context *context, void *data)
    Eo *eo_obj;
    pa_context_state_t state;
    Ecore_Audio_Out_Pulse_Data *pd = data;
-   
+
    if (!EPA_LOAD()) return;
    state = EPA_CALL(pa_context_get_state)(context);
    pd->state = state;
-   
+
    //ref everything in the list to be sure...
    EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {
       efl_ref(eo_obj);
@@ -271,7 +271,7 @@ static void _state_job(void *data)
      {
         Eo *eo_obj;
         Eina_List *out, *tmp;
-        
+
         DBG("PA context fail.");
         //ref everything in the list to be sure...
         EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {

@@ -110,7 +110,7 @@ eldbus_message_method_call_new(const char *dest, const char *path, const char *i
 
 #ifdef DBUS_SYNTAX_H
    // added to libdbus:
-   // f426c6cddd158d6324923f28117bc8e512d6f64f Fri Feb 24 12:43:55 2012 +0000 
+   // f426c6cddd158d6324923f28117bc8e512d6f64f Fri Feb 24 12:43:55 2012 +0000
    if (!dbus_validate_bus_name(dest, NULL))
      {
         ERR("Invalid bus name '%s'", dest);

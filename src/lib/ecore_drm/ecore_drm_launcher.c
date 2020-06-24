@@ -30,7 +30,7 @@
 
 static Eina_Bool logind = EINA_FALSE;
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_drm_launcher_cb_vt_switch(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Device *dev;
@@ -81,7 +81,7 @@ _ecore_drm_launcher_device_flags_set(int fd, int flags)
    return fd;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
@@ -106,14 +106,14 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
           }
      }
 
-   dev->tty.switch_hdlr = 
-     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, 
+   dev->tty.switch_hdlr =
+     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
                              _ecore_drm_launcher_cb_vt_switch, dev);
 
    return EINA_TRUE;
 }
 
-EAPI void 
+EAPI void
 ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN(dev);

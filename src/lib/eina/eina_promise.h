@@ -66,7 +66,7 @@ typedef struct _Eina_Future_Cb_Log_Desc Eina_Future_Cb_Log_Desc;
 
 /**
  * @typedef Eina_Future_Cb
- 
+
  * A callback used to inform that a future was resolved.
  * Usually this callback is called from a clean context, that is, from the
  * main loop or some platform defined safe context. However there are

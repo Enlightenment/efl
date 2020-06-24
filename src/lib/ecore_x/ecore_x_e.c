@@ -397,7 +397,7 @@ ecore_x_e_illume_access_action_next_send(Ecore_X_Window win)
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
-                                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_NEXT, 
+                                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_NEXT,
                                  0, 0, 0);
 }
 
@@ -419,7 +419,7 @@ ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win)
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  win,
-                                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE, 
+                                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE,
                                  0, 0, 0);
 }
 
@@ -988,17 +988,17 @@ ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
 }
 
 /* for sliding window */
-EAPI void 
+EAPI void
 ecore_x_e_illume_sliding_win_state_set(Ecore_X_Window win,
                                        unsigned int   is_visible)
 {
    LOGFN;
-   ecore_x_window_prop_card32_set(win, 
-                                  ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
+   ecore_x_window_prop_card32_set(win,
+                                  ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE,
                                   &is_visible, 1);
 } /* ecore_x_e_illume_sliding_win_state_set */
 
-EAPI int 
+EAPI int
 ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
 {
    unsigned int is_visible = 0;
@@ -1006,7 +1006,7 @@ ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
 
    LOGFN;
    ret = ecore_x_window_prop_card32_get(win,
-                                        ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
+                                        ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE,
                                         &is_visible, 1);
    if ((ret == 0) || (ret == -1))
      return 0;
@@ -1029,11 +1029,11 @@ ecore_x_e_illume_sliding_win_geometry_set(Ecore_X_Window win,
    geom[2] = w;
    geom[3] = h;
    ecore_x_window_prop_card32_set(win,
-                                  ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY, 
+                                  ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY,
                                   geom, 4);
 } /* ecore_x_e_illume_sliding_win_geometry_set */
 
-EAPI int 
+EAPI int
 ecore_x_e_illume_sliding_win_geometry_get(Ecore_X_Window win,
                                           int           *x,
                                           int           *y,
@@ -1042,27 +1042,27 @@ ecore_x_e_illume_sliding_win_geometry_get(Ecore_X_Window win,
 {
    int ret = 0;
    unsigned int geom[4];
-   
+
    LOGFN;
-   ret = 
-     ecore_x_window_prop_card32_get(win, 
-                                    ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY, 
+   ret =
+     ecore_x_window_prop_card32_get(win,
+                                    ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY,
                                     geom, 4);
    if (ret != 4)
       return 0;
-   
+
    if (x)
       *x = geom[0];
-   
+
    if (y)
       *y = geom[1];
-   
+
    if (w)
       *w = geom[2];
-   
+
    if (h)
       *h = geom[3];
-   
+
    return 1;
 }/* ecore_x_e_illume_sliding_win_geometry_get */
 
@@ -1269,7 +1269,7 @@ ecore_x_e_window_profile_set(Ecore_X_Window win,
 }
 
 /*
- * @since 1.3 
+ * @since 1.3
  */
 EAPI char *
 ecore_x_e_window_profile_get(Ecore_X_Window win)

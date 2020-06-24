@@ -69,7 +69,7 @@ typedef struct _Eina_Lines_Iterator Eina_Lines_Iterator;
 struct _Eina_File
 {
    EINA_MAGIC;            /**< Indicates whether Eina Magic should be used. */
-   const char *filename;  /**< The absolute path of the file. Note that the path given when calling @ref eina_file_open will be run through @ref eina_file_path_sanitize before it is stored here. */ 
+   const char *filename;  /**< The absolute path of the file. Note that the path given when calling @ref eina_file_open will be run through @ref eina_file_path_sanitize before it is stored here. */
    Eina_Hash *map;        /**< Tracks portions of a file that have been mapped with mmap(2).  The key is a tuple offset/length and the data is a pointer to the mapped region. */
    Eina_Hash *rmap;       /**< Similar function to #map, but used to look up mapped areas by pointer rather than offset/length. */
    void *global_map;      /**< A pointer to the entire contents of the file that have been mapped with mmap(2).  This is the common case, and EFL and is optimized for it. */
