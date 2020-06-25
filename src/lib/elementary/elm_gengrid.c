@@ -3993,7 +3993,7 @@ _item_select(Elm_Gen_Item *it)
           efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
      }
 
-   efl_ref(eo_it);
+   efl_unref(eo_it);
    sd->walking--;
    if ((sd->clear_me) && (!sd->walking))
      _internal_elm_gengrid_clear(WIDGET(it), EINA_TRUE);
