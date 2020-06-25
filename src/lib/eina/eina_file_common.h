@@ -124,6 +124,9 @@ struct _Eina_File_Map
 
    Eina_Bool hugetlb : 1;  /**< Indicates if we are using HugeTLB */
    Eina_Bool faulty : 1;   /**< Indicates if this region was not mapped correctly (i.e. the call to mmap(2) failed). */
+#ifdef _WIN32
+   void *ret;  /**< A pointer to the mapped region */
+#endif
 };
 
 /**

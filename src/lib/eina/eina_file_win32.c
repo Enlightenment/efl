@@ -900,7 +900,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    if (offset + length > file->length)
      return NULL;
 
-   if (offset == 0 && length == file->length)
+   if (offset == 0UL && length == file->length)
      return eina_file_map_all(file, rule);
 
    if (file->virtual)
@@ -914,39 +914,55 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    map = eina_hash_find(file->map, &key);
    if (!map)
      {
+        SYSTEM_INFO si;
         HANDLE fm;
+        __int64 map_size;
+        DWORD view_offset;
+        DWORD view_length;
+        DWORD granularity;
+
         map = malloc(sizeof (Eina_File_Map));
         if (!map)
-          {
-             eina_lock_release(&file->lock);
-             return NULL;
-          }
+          goto on_error;
 
-        /* the length parameter is unsigned long, that is a DWORD */
-        /* so the max size high parameter of CreateFileMapping is 0 */
+        /*
+         * the size of the mapping object is the offset plus the length,
+         * which might be greater than a DWORD
+         */
+        map_size = (__int64)offset + (__int64)length;
         fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
-                                     0, (DWORD)length, NULL);
+                               (DWORD)((map_size >> 32) & 0x00000000ffffffffULL),
+                               (DWORD)(map_size & 0x00000000ffffffffULL),
+                               NULL);
         if (!fm)
-          return NULL;
+          goto on_error;
 
+        /*
+         * get the system allocation granularity as the
+         * offset passed to MapViewOfFile() must be a
+         * multiple of this granularity
+         */
+        GetSystemInfo(&si);
+        granularity = si.dwAllocationGranularity;
+
+        /*
+         * view_offset is the greatest multiple of granularity, less or equal
+         * than offset (and can be stored in a DWORD)
+         */
+        view_offset = (offset / granularity) * granularity;
+        view_length = (offset - view_offset) + length;
         map->map = MapViewOfFile(fm, FILE_MAP_READ,
-                             offset & 0xffff0000,
-                             offset & 0x0000ffff,
-                             length);
+                                 0,
+                                 view_offset,
+                                 view_length);
         CloseHandle(fm);
         if (!map->map)
-          map->map = MAP_FAILED;
+          goto on_error;
 
+        map->ret = (unsigned char *)map->map + (offset - view_offset);
         map->offset = offset;
         map->length = length;
         map->refcount = 0;
-
-        if (map->map == MAP_FAILED)
-          {
-             free(map);
-             eina_lock_release(&file->lock);
-             return NULL;
-          }
 
         eina_hash_add(file->map, &key, map);
         eina_hash_direct_add(file->rmap, map->map, map);
@@ -956,7 +972,13 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 
    eina_lock_release(&file->lock);
 
-   return map->map;
+   return map->ret;
+
+ on_error:
+   free(map);
+   eina_lock_release(&file->lock);
+
+   return NULL;
 }
 
 EAPI void
