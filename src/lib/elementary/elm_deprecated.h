@@ -309,7 +309,7 @@ EINA_DEPRECATED EAPI void                  elm_map_markers_list_show(Eina_List *
  * elm_map_marker_class_get_cb_set() should be used.
  *
  * This content is what will be inside the bubble that will be displayed
- * when an user clicks over the marker.
+ * when a user clicks over the marker.
  *
  * This returns the actual Evas object used to be placed inside
  * the bubble. This may be @c NULL, as it may

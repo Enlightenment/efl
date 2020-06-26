@@ -2750,7 +2750,7 @@
  *
  * The both states and the item are using the same callback function,
  * that will cycle between states and unselect the item. Unseleting
- * is required because it won't call the callback if an user clicks
+ * is required because it won't call the callback if a user clicks
  * over an item already selected:
  * @dontinclude toolbar_example_02.c
  * @skip static

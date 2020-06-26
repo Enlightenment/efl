@@ -1971,7 +1971,7 @@ EAPI void                          ecore_imf_context_candidate_panel_geometry_ge
 
 /**
  * @ingroup Ecore_IMF_Context_Group
- * @brief Sets whether the Input Method Context should request to show the input panel in case of only an user's explicit Mouse Up event.
+ * @brief Sets whether the Input Method Context should request to show the input panel in case of only a user's explicit Mouse Up event.
  * It doesn't request to show the input panel even though the Input Method Context has focus.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -1982,7 +1982,7 @@ EAPI void                          ecore_imf_context_input_panel_show_on_demand_
 
 /**
  * @ingroup Ecore_IMF_Context_Group
- * @brief Gets whether the Input Method Context should request to show the input panel in case of only an user's explicit Mouse Up event.
+ * @brief Gets whether the Input Method Context should request to show the input panel in case of only a user's explicit Mouse Up event.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.

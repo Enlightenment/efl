@@ -332,7 +332,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_circle_add(Elm_Map *obj, double lon, doubl
  * have default style layouts at first.
  *
  * You can change the state (hidden, paused, etc.) or set the content or icon
- * of the group overlays by chaning the state of the class overlay. Do not
+ * of the group overlays by changing the state of the class overlay. Do not
  * modify the group overlay itself.
  *
  * Also these changes have a influence on the overlays in the same class even

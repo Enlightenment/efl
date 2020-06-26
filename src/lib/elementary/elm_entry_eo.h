@@ -48,7 +48,7 @@ EOAPI void elm_obj_entry_scrollable_set(Eo *obj, Eina_Bool scroll);
 EOAPI Eina_Bool elm_obj_entry_scrollable_get(const Eo *obj);
 
 /**
- * @brief Set the attribute to show the input panel in case of only an user's
+ * @brief Set the attribute to show the input panel in case of only a user's
  * explicit Mouse Up event. It doesn't request to show the input panel even
  * though it has focus.
  *
@@ -63,7 +63,7 @@ EOAPI Eina_Bool elm_obj_entry_scrollable_get(const Eo *obj);
 EOAPI void elm_obj_entry_input_panel_show_on_demand_set(Eo *obj, Eina_Bool ondemand);
 
 /**
- * @brief Get the attribute to show the input panel in case of only an user's
+ * @brief Get the attribute to show the input panel in case of only a user's
  * explicit Mouse Up event.
  *
  * @param[in] obj The object.

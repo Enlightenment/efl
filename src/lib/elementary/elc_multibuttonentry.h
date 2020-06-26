@@ -5,7 +5,7 @@
  * @image html multibuttonentry_inheritance_tree.png
  * @image latex multibuttonentry_inheritance_tree.eps
  *
- * A multi-button entry is a widget letting an user enter text and
+ * A multi-button entry is a widget letting a user enter text and
  * each chunk of text managed as a set of buttons. Each text button is
  * inserted by pressing the "return" key. If there is no space in the
  * current row, a new button is added to the next row. When a text

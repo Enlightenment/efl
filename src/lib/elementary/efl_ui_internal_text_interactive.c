@@ -1139,7 +1139,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
 
-   /* FIXME: Maybe allow selctions to happen even when not editable. */
+   /* FIXME: Maybe allow selections to happen even when not editable. */
    if (!en->editable) return;
 
 #ifdef HAVE_ECORE_IMF

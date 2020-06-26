@@ -47,14 +47,14 @@ function(eo_rule_create build_files relative_include_dirs)
       ${EOLIAN_EO_DIR_WITHOUT_NEWLINE}
     )
 
-   # convert relative to absolut
+   # convert relative to absolute
    foreach(relative_include_dir ${relative_include_dirs})
       list(APPEND include_dirs
         ${CMAKE_CURRENT_SOURCE_DIR}/${relative_include_dir}
       )
    endforeach()
 
-   # work with the absolut paths
+   # work with the absolute paths
    foreach(include_cmd ${include_dirs})
       # build include cmd
       string(CONCAT includes "${includes}" " -I${include_cmd}")

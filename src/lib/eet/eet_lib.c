@@ -1069,7 +1069,7 @@ eet_internal_read1(Eet_File *ef)
                       (byte_entries > 0x7fffffff), ef))
      return NULL;
 
-   /* we can't have more entires than minimum bytes for those! invalid! */
+   /* we can't have more entries than minimum bytes for those! invalid! */
    if (eet_test_close((num_entries * 20) > byte_entries, ef))
      return NULL;
 

@@ -72,7 +72,7 @@ EAPI void elm_spinner_wrap_set(Elm_Spinner *obj, Eina_Bool wrap);
 EAPI Eina_Bool elm_spinner_wrap_get(const Elm_Spinner *obj);
 
 /**
- * @brief Control the interval on time updates for an user mouse button hold on
+ * @brief Control the interval on time updates for a user mouse button hold on
  * spinner widgets' arrows.
  *
  * This interval value is decreased while the user holds the mouse pointer
@@ -96,7 +96,7 @@ EAPI Eina_Bool elm_spinner_wrap_get(const Elm_Spinner *obj);
 EAPI void elm_spinner_interval_set(Elm_Spinner *obj, double interval);
 
 /**
- * @brief Control the interval on time updates for an user mouse button hold on
+ * @brief Control the interval on time updates for a user mouse button hold on
  * spinner widgets' arrows.
  *
  * This interval value is decreased while the user holds the mouse pointer

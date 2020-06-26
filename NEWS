@@ -4527,7 +4527,7 @@ Fixes:
    * ecore-drm: Send proper keycode to ecore key event, and remove erroneous variable.
    * edje/Edje_Edit: _edje_edit_real_part_add init field of Edje_Real_part
    * fix ecore_con_url using 100% cpu and just let fd handler do work (T1251)
-   * fix behavior of edje entry to match other toolkit entires (T1229)
+   * fix behavior of edje entry to match other toolkit entries (T1229)
    * fix ecore_thread_global_data_wait to work when no data exists yet
    * Eo: Fix deref after free. (CID1039898)
    * evas/render - fix segfault because of null cow access. (T1252)

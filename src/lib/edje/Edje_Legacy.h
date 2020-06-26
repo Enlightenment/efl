@@ -2697,7 +2697,7 @@ EAPI void edje_object_part_text_input_panel_return_key_type_set(Evas_Object *obj
 EAPI Edje_Input_Panel_Return_Key_Type edje_object_part_text_input_panel_return_key_type_get(const Evas_Object *obj, const char *part);
 
 /**
- * @brief Sets the attribute to show the input panel in case of only an user's
+ * @brief Sets the attribute to show the input panel in case of only a user's
  * explicit Mouse Up event. It doesn't request to show the input panel even
  * though it has focus.
  *
@@ -2712,7 +2712,7 @@ EAPI Edje_Input_Panel_Return_Key_Type edje_object_part_text_input_panel_return_k
 EAPI void edje_object_part_text_input_panel_show_on_demand_set(Evas_Object *obj, const char *part, Eina_Bool ondemand);
 
 /**
- * @brief Gets the attribute to show the input panel in case of only an user's
+ * @brief Gets the attribute to show the input panel in case of only a user's
  * explicit Mouse Up event.
  *
  * @param[in] part The part name

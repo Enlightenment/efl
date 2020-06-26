@@ -34,7 +34,7 @@
  *
  * Once a prefs widget is created, after elm_prefs_file_set() is
  * issued on it, all of its UI elements will get default values,
- * declared on that file. To fetch an user's own, personal set of
+ * declared on that file. To fetch a user's own, personal set of
  * those values, one gets to pair an <b>@ref elm-prefs-data</b> handle
  * to the prefs widget.
  *
