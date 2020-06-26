@@ -115,7 +115,13 @@ _eina_error_msg_alloc(void)
 /* Windows has strerror_s(), similar to POSIX strerror_r() */
 static inline int strerror_r(int errnum, char *buf, size_t buflen)
 {
-   return strerror_s(buf, buflen, errnum);
+   int ret;
+
+   ret = strerror_s(buf, buflen, errnum);
+   if (strcmp(buf, "Unknown error") == 0)
+     snprintf(buf, buflen, "Unknown error %d", errnum);
+
+   return ret;
 }
 #endif
 
