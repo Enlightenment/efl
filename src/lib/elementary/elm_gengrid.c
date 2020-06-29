@@ -3453,7 +3453,11 @@ _key_action_select(Evas_Object *obj, const char *params)
              it->highlight_cb(it);
              it->sel_cb(it);
           }
-        else it->unsel_cb(it);
+        else
+          {
+             it->unhighlight_cb(it);
+             it->unsel_cb(it);
+          }
      }
    else
      {
