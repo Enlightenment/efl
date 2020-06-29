@@ -596,14 +596,14 @@ EAPI Eina_Bool    elm_config_scroll_animation_disabled_get(void);
  * This option disables timed animations during scrolling and forces scroll actions
  * to be performed immediately.
  *
- * @param enable The state of this option
+ * @param disable The state of this option
  *
  * @see elm_config_scroll_animation_disabled_get()
  *
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_animation_disabled_set(Eina_Bool enable);
+EAPI void         elm_config_scroll_animation_disabled_set(Eina_Bool disable);
 
 /**
  * Get the value of this option

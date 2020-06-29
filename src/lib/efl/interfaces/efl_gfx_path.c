@@ -683,7 +683,7 @@ _efl_gfx_path_append_arc_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    cy += (sy + y) / 2.0;
 
    // step 4 (F6.5.4)
-   // we dont' use arccos (as per w3c doc), see
+   // we don't use arccos (as per w3c doc), see
    // http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
    // note: atan2 (0.0, 1.0) == 0.0
    at = atan2(((y1p - cyp) / ry), ((x1p - cxp) / rx));
@@ -1108,18 +1108,16 @@ _efl_gfx_path_append_rect(Eo *obj, Efl_Gfx_Path_Data *pd,
      }
 
    // clamp the rx and ry radius value.
+   rx = 2*rx;
+   ry = 2*ry;
    if (rx > w) rx = w;
    if (ry > h) ry = h;
 
-   _efl_gfx_path_append_move_to(obj, pd, x + rx, y);
-   _efl_gfx_path_append_line_to(obj, pd, x + (w - rx), y);
-   _efl_gfx_path_append_quadratic_to(obj, pd, x + w, y + ry, x + w, y);
-   _efl_gfx_path_append_line_to(obj, pd, x + w, y + (h - ry));
-   _efl_gfx_path_append_quadratic_to(obj, pd, x + (w - rx), y + h, x + w, y + h);
-   _efl_gfx_path_append_line_to(obj, pd, x + rx, y + h);
-   _efl_gfx_path_append_quadratic_to(obj, pd, x , y + (h - ry), x, y + h);
-   _efl_gfx_path_append_line_to(obj, pd, x, y + ry);
-   _efl_gfx_path_append_quadratic_to(obj, pd, x + rx, y, x, y);
+   _efl_gfx_path_append_move_to(obj, pd, x, y + h/2);
+   _efl_gfx_path_append_arc(obj, pd, x, y + h - ry, rx, ry, 180, 90);
+   _efl_gfx_path_append_arc(obj, pd, x + w - rx, y + h - ry, rx, ry, 270, 90);
+   _efl_gfx_path_append_arc(obj, pd, x + w - rx, y, rx, ry, 0, 90);
+   _efl_gfx_path_append_arc(obj, pd, x, y, rx, ry, 90, 90);
    _efl_gfx_path_append_close(obj, pd);
 
    //update convex flag

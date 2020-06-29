@@ -2714,6 +2714,11 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
    Ecore_Wl2_Event_Offer_Data_Ready *ready = event;
    Ecore_Evas_Selection_Buffer selection = ECORE_EVAS_SELECTION_BUFFER_LAST;
 
+   if ((!ready->data) || (ready->len < 1))
+     {
+        ERR("no se;lection data");
+        return ECORE_CALLBACK_PASS_ON;
+     }
    for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
      {
         if (wdata->selection_data[i].offer == ready->offer)

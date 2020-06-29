@@ -99,7 +99,7 @@ public static class BaseData
         [ CallerMemberName ] string member = null) {
         Contract.Requires(a != null, nameof(a));
         Contract.Requires(b != null, nameof(b));
-        Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
+        Test.Assert(a.Length == b.Length, "Different length", line, file, member);
         for (int i = 0; i < a.Length; ++i)
         {
             int av = a[i].Number;

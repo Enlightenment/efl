@@ -3187,7 +3187,7 @@ _zoom_compute(Zoom_Type *st,
  * @internal
  *
  * This function handles zoom with mouse wheel.
- * thats a combination of wheel + CTRL key.
+ * that's a combination of wheel + CTRL key.
  * @param obj The gesture-layer object.
  * @param event_info Original input event pointer.
  * @param event_type Type of original input event.

@@ -384,7 +384,7 @@ EAPI Eina_Bool eldbus_message_iter_fixed_array_get(Eldbus_Message_Iter *iter, in
  * Eldbus_Message_Iter will be need.
  *
  * @param iter iterator
- * @param signature of the complete data types on interator
+ * @param signature of the complete data types on iterator
  * @param ... pointers of where data will be stored
  *
  * @return EINA_FALSE if signature different from signature in iterator
@@ -397,7 +397,7 @@ EAPI Eina_Bool               eldbus_message_iter_arguments_get(Eldbus_Message_It
  * Eldbus_Message_Iter will be need.
  *
  * @param iter iterator
- * @param signature of the complete data types on interator
+ * @param signature of the complete data types on iterator
  * @param ap va_list of the pointers of where data will be stored
  *
  * @return EINA_FALSE if signature different from signature in iterator

@@ -773,7 +773,7 @@ _attr_parse_svg_node(void *data, const char *key, const char *value)
    Svg_Doc_Node *doc = &(node->node.doc);
    Svg_Length_Type type;
 
-   // @TODO handle lenght unit.
+   // @TODO handle length unit.
    if (!strcmp(key, "width"))
      {
         doc->width = parse_length(value, &type);

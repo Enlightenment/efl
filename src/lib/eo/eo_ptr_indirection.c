@@ -138,7 +138,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
      {
         eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
         if (obj_id == tdata->cache.id)
-        // yes we return keeping the lock locked. thats why
+        // yes we return keeping the lock locked. that's why
         // you must call _eo_obj_pointer_done() wrapped
         // by EO_OBJ_DONE() to release
           return tdata->cache.object;
@@ -169,7 +169,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
                        // Cache the result of that lookup
                        tdata->cache.object = entry->ptr;
                        tdata->cache.id = obj_id;
-                       // yes we return keeping the lock locked. thats why
+                       // yes we return keeping the lock locked. that's why
                        // you must call _eo_obj_pointer_done() wrapped
                        // by EO_OBJ_DONE() to release
                        return entry->ptr;

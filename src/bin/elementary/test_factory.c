@@ -5,7 +5,7 @@
 
 // 16 ^ 4 = 65k
 #define BLOK 16
-// homogenous layout
+// homogeneous layout
 //#define HOMOG 1
 // aligned to top of box
 #define ZEROALIGN 1

@@ -1728,7 +1728,7 @@ _tree_unfocusable_counter_get(Eo *widget)
  *
  * The basic idea here is:
  * - The numeric number beeing bigger than 0, means that the property is true
- * - The differnce between the number of the parent, and the number of the object, represents the boolean flag
+ * - The difference between the number of the parent, and the number of the object, represents the boolean flag
  *   (0 means that the flag is equal to the one of the parent, 1 means that if the parent is false, this child is true).
  */
 static int
@@ -2815,7 +2815,7 @@ _efl_ui_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EI
 
      }
 
-   //if thats a focus manager, give useful information like the border elements
+   //if that's a focus manager, give useful information like the border elements
    if (efl_isa(eo_obj, EFL_UI_FOCUS_MANAGER_INTERFACE))
      {
         Efl_Dbg_Info *border;

@@ -478,7 +478,7 @@ edje_match_programs_exec_check_finals(const unsigned int *signal_finals,
    unsigned int i;
    unsigned int j;
 
-   /* when not enought memory, they could be NULL */
+   /* when not enough memory, they could be NULL */
    if (!signal_finals || !source_finals) return EINA_TRUE;
 
    for (i = 0; i < signal_states->size; ++i)

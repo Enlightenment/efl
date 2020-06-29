@@ -625,7 +625,7 @@ EAPI void elm_object_item_domain_part_text_translatable_set(Elm_Widget_Item *obj
  * items may/may not have the internal object so this api may return @c NULL if
  * the widget item doesn't have it. Additionally, the widget item is
  * managed/controlled by the widget, the widget item could be changed(moved,
- * resized even deleted) anytime by it's own widget's decision. So please dont'
+ * resized even deleted) anytime by it's own widget's decision. So please don't
  * change the track object as well as don't keep the track object in your side
  * as possible but get the track object at the moment you need to refer.
  * Otherwise, you need to add some callbacks to the track object to track it's

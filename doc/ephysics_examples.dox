@@ -297,7 +297,7 @@
  * The purpose of this example is to demonstrate the EPhysics_Camera usage.
  *
  * The EPhysics_Camera facilitates the usage of scenarios bigger than the
- * viewport, thats because the EPhysics handles the position of objects
+ * viewport, that's because the EPhysics handles the position of objects
  * which has control.
  *
  * @image html camera.png
@@ -426,7 +426,7 @@
  * usage.
  *
  * The EPhysics_Camera facilitates the usage of scenarios bigger than the
- * viewport, thats because the EPhysics handles the position of objects
+ * viewport, that's because the EPhysics handles the position of objects
  * which has control.
  *
  * @image html camera_track.png
