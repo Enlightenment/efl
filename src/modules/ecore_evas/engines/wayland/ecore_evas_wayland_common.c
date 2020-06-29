@@ -2716,7 +2716,7 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
 
    if ((!ready->data) || (ready->len < 1))
      {
-        ERR("no se;lection data");
+        ERR("no selection data");
         return ECORE_CALLBACK_PASS_ON;
      }
    for (int i = 0; i < ECORE_EVAS_SELECTION_BUFFER_LAST; ++i)
