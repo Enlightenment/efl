@@ -1205,6 +1205,30 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    eina_strbuf_append(buf, "};\n\n");
 
+   /* add implementation details to the declaration */
+   const Eolian_Implement *imp;
+   Eina_Iterator *itr = eolian_class_implements_get(cl);
+   EINA_ITERATOR_FOREACH(itr, imp)
+     {
+        const Eolian_Class *icl = eolian_implement_class_get(imp);
+        Eolian_Function_Type ftype;
+        const Eolian_Function *fid = eolian_implement_function_get(imp, &ftype);
+
+        if (eolian_function_is_static(fid)) continue;
+        if (icl == cl) continue;
+
+        Eina_Bool found_get = !!eina_hash_find(_funcs_params_init_get, &imp);
+        Eina_Bool found_set = !!eina_hash_find(_funcs_params_init_set, &imp);
+        char *ocnamel = NULL;
+        if (cl != icl)
+          eo_gen_class_names_get(icl, NULL, NULL, &ocnamel);
+
+
+        eina_strbuf_append_printf(buf, "//register_next(\"%s\",\"_%s_%s\");\n", eolian_function_full_c_name_get(fid, ftype), ocnamel, eolian_function_full_c_name_get(fid, ftype)); //FIXME wrong name
+        free(ocnamel);
+     }
+   eina_iterator_free(itr);
+
    /* class def */
    eina_strbuf_append(buf, "EFL_DEFINE_CLASS(");
 

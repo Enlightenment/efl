@@ -80,10 +80,12 @@ static Caller fetch_efl_super_class(const_gimple stmt)
 {
    Caller ret = {false, NULL, NULL};
 
+   tree called_api_tree = gimple_call_fndecl(stmt);
+   if (!called_api_tree) return ret;
+
    //check that we have efl_super as the first argument
    Fetch_Result first = _fetch_first_argument(stmt, 0);
    if (!first.valid) return ret;
-   tree called_api_tree = gimple_call_fndecl(first.first_argument);
    ret.called_api = IDENTIFIER_POINTER(DECL_NAME(called_api_tree));
    if (!!strncmp(first.api_name, "efl_super", 9)) return ret;
 
@@ -118,7 +120,7 @@ static unsigned int eo_execute(void)
         if (!c.klass)
           continue;
 
-        // FIXME fprintf(stderr, "Found call of %s as super of %s\n", c.called_api, c.klass);
+        fprintf(stderr, "Found call of %s as super of %s\n", c.called_api, c.klass);
         //FIXME work
       }
     }
