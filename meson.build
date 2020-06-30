@@ -448,7 +448,7 @@ foreach package : subprojects
             src, pub_eo_file_target, priv_eo_file_target, myplugin_dep,
             include_directories: efl_one_include_dirs,
             dependencies: external_deps + efl_one_eo_deps, #FIXME my plugin here is WRONG
-            c_args : [ '-fplugin=' + myplugin.full_path()] + package_c_args,
+            c_args : ['-DCOMPILER_PLUGIN_REGISTER_NEXT_SUPPORT=1', '-fplugin=' + myplugin.full_path()] + package_c_args,
         )
         # dependency for all the .eo file targets
         efl_one_eo_deps += declare_dependency(

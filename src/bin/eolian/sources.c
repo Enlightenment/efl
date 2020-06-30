@@ -1147,7 +1147,7 @@ _gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_
 
    eo_gen_class_names_get(next_implemen_class, NULL, NULL, &impl_name);
 
-   eina_strbuf_append_printf(buf, "__attribute__((register_next(\"%s\",\"_%s_%s\")))\n", eolian_function_full_c_name_get(fid, ftype), impl_name, eolian_function_full_c_name_get(fid, ftype));
+   eina_strbuf_append_printf(buf, "COMPILER_PLUGIN_REGISTER_NEXT(\"%s\",\"_%s_%s\")\n", eolian_function_full_c_name_get(fid, ftype), impl_name, eolian_function_full_c_name_get(fid, ftype));
 }
 
 static void
@@ -1304,6 +1304,14 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    eina_strbuf_append(buf, "};\n\n");
 
+   /* create macro for COMPILER_PLUGIN_REGISTER_NEXT */
+   eina_strbuf_append(buf, "#ifdef COMPILER_PLUGIN_REGISTER_NEXT_SUPPORT\n");
+   eina_strbuf_append(buf, "   #define COMPILER_PLUGIN_REGISTER_NEXT(a, b) __attribute__((register_next(a, b)))\n");
+   eina_strbuf_append(buf, "#else\n");
+   eina_strbuf_append(buf, "   #define COMPILER_PLUGIN_REGISTER_NEXT(a, b) /* NOP */\n");
+   eina_strbuf_append(buf, "#endif\n");
+
+
    /* add implementation details to the declaration */
    Eina_Array *call_chain = _gen_call_chain(cl);
    const Eolian_Implement *imp;
@@ -1354,6 +1362,8 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    /* terminate inherits */
    eina_strbuf_append(buf, ", NULL);\n");
+
+   eina_strbuf_append(buf, "#undef COMPILER_PLUGIN_REGISTER_NEXT\n");
 
    /* and we're done */
    free(cnamel);
