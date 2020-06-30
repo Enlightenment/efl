@@ -41,11 +41,13 @@ struct Caller {
   bool valid;
   const char *called_api;
   const char *klass;
+  tree klass_decl;
 };
 
 typedef struct _Fetch_Result {
   bool valid;
   const char *api_name;
+  tree api;
   const_gimple first_argument;
 } Fetch_Result;
 
@@ -65,6 +67,7 @@ _fetch_first_argument(const_gimple arg, unsigned int narg)
    tree tmp = gimple_call_fndecl(ret.first_argument);
    if (!tmp) return ret;
    ret.api_name = IDENTIFIER_POINTER(DECL_NAME(tmp));
+   ret.api = tmp;
    ret.valid = true;
    return ret;
 }
@@ -93,6 +96,7 @@ static Caller fetch_efl_super_class(const_gimple stmt)
    Fetch_Result argument_efl_super = _fetch_first_argument(first.first_argument, 1);
    if (!argument_efl_super.valid) return ret;
    ret.klass = argument_efl_super.api_name;
+   ret.klass_decl = argument_efl_super.api;
    ret.valid = true;
 
    return ret;
@@ -116,12 +120,33 @@ static unsigned int eo_execute(void)
         if (!stmt || !is_gimple_call(stmt)) continue;
 
         struct Caller c = fetch_efl_super_class(stmt);
+        tree replacement_candidate = NULL;
 
         if (!c.klass)
           continue;
 
-        fprintf(stderr, "Found call of %s as super of %s\n", c.called_api, c.klass);
-        //FIXME work
+        for (tree attribute = DECL_ATTRIBUTES(c.klass_decl); attribute != NULL_TREE; attribute = TREE_CHAIN(attribute))
+          {
+             tree attribute_name = TREE_PURPOSE(attribute);
+             if (!attribute_name)
+               {
+                  fprintf(stderr, "Error, expected name\n");
+                  continue;
+               }
+             if (!!strncmp(IDENTIFIER_POINTER(attribute_name), "register_next", strlen("register_next")))
+               continue;
+
+             //this here assumes a special tree_list structure
+             tree attribute_arguments = TREE_VALUE(attribute);
+             tree call = TREE_VALUE(attribute_arguments);
+             tree implementation = TREE_VALUE(TREE_CHAIN(attribute_arguments));
+
+             if (!!strncmp(TREE_STRING_POINTER(call), c.called_api, strlen(c.called_api))) continue;
+
+             replacement_candidate = implementation;
+          }
+        if (!replacement_candidate) continue;
+        fprintf(stderr, "Replace! %s %s\n", c.called_api, TREE_STRING_POINTER(replacement_candidate));
       }
     }
   return 0;
@@ -145,12 +170,26 @@ static tree
 handle_user_attribute (tree *node, tree name, tree args,
                       int flags, bool *no_add_attrs)
 {
-  warning (0, G_("Callback to handle attributes"));
+  *no_add_attrs = 0;
+
+  //FIXME we should validate that in some way
+/*
+  fprintf(stderr, "%p\n", node);
+
+  for (tree arg = args; arg; arg = TREE_CHAIN(arg))
+    {
+       //tree value = TREE_VALUE(arg);
+       //fprintf(stderr, "%s\n", get_tree_code_name(TREE_CODE(value)));
+
+       //tree value = TREE_VALUE(arg);
+       //fprintf(stderr, "----> %s\n", TREE_STRING_POINTER(value));
+    }
+*/
   return NULL_TREE;
 }
 
 static struct attribute_spec next_hop_attr =
-      { "register_next", 2, 2, true,  true, false,  true, handle_user_attribute, NULL};
+      { "register_next", 2, 2, true,  false, false,  true, handle_user_attribute, NULL};
 
 static void
 register_next_hop_attribute (void *event_data, void *data)

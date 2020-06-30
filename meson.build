@@ -445,11 +445,10 @@ foreach package : subprojects
         endforeach
 
         tmp = static_library('efl_one_part_'+package_name,
-            src, pub_eo_file_target, priv_eo_file_target,
+            src, pub_eo_file_target, priv_eo_file_target, myplugin_dep,
             include_directories: efl_one_include_dirs,
-            dependencies: external_deps + efl_one_eo_deps,
+            dependencies: external_deps + efl_one_eo_deps, #FIXME my plugin here is WRONG
             c_args : [ '-fplugin=' + myplugin.full_path()] + package_c_args,
-            depends_on : myplugin
         )
         # dependency for all the .eo file targets
         efl_one_eo_deps += declare_dependency(
