@@ -1,18 +1,4 @@
 // === toolbar default base with scrolling arrows etc.
-#define IC(_NAME, _ICON) \
-set { name: _NAME; \
-image {image: _ICON"-060.png" COMP; size: 31 31 60000 60000; } \
-image {image: _ICON"-030.png" COMP; size: 16 16    30    30; } \
-image {image: _ICON"-015.png" COMP; size:  0  0    15    15; } \
-}
-IC("ic-arrow-l", "arrow-l")
-IC("ic-arrow-r", "arrow-r")
-IC("ic-arrow-u", "arrow-u")
-IC("ic-arrow-d", "arrow-d")
-IC("ic-reload", "reload")
-IC("ic-heart", "heart")
-#undef IC
-
 group { name: "elm/toolbar/base/default";
    parts {
       part { name: "base"; type: RECT;
@@ -61,7 +47,7 @@ group { name: "elm/toolbar/base/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "arrow_l_ev";
-            image.normal: "ic-arrow-l";
+            image.normal: "i-arrow-l";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }
@@ -101,7 +87,7 @@ group { name: "elm/toolbar/base/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "arrow_r_ev";
-            image.normal: "ic-arrow-r";
+            image.normal: "i-arrow-r";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }
@@ -141,7 +127,7 @@ group { name: "elm/toolbar/base/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "arrow_u_ev";
-            image.normal: "ic-arrow-u";
+            image.normal: "i-arrow-u";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }
@@ -181,7 +167,7 @@ group { name: "elm/toolbar/base/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "arrow_d_ev";
-            image.normal: "ic-arrow-d";
+            image.normal: "i-arrow-d";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }

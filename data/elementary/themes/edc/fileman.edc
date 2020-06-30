@@ -1,17 +1,3 @@
-#define IC(_NAME, _ICON) \
-set { name: _NAME; \
-   image {image: _ICON"-060.png" COMP; size: 31 31 60000 60000; } \
-   image {image: _ICON"-030.png" COMP; size: 16 16    30    30; } \
-   image {image: _ICON"-015.png" COMP; size:  0  0    15    15; } \
-}
-IC("ic-arrow-l", "arrow-l")
-IC("ic-arrow-r", "arrow-r")
-IC("ic-arrow-u", "arrow-u")
-IC("ic-arrow-d", "arrow-d")
-IC("ic-reload", "reload")
-IC("ic-heart", "heart")
-#undef IC
-
 group { name: "e/fileman/default/list/variable";
    alias: "e/fileman/default/list/fixed";
 //   data.item: "stacking" "above";
@@ -1070,7 +1056,7 @@ group { name: "e/fileman/default/list/drop_in";
             align: 0.5 0.0;
             rel1.relative: 0.0 -1.0;
             rel2.relative: 1.0 0.0;
-            image.normal: "ic-arrow-d";
+            image.normal: "i-arrow-d";
             FIXED_SIZE(15, 15)
             color: 51 153 255 255;
             visible: 0;
@@ -1094,7 +1080,7 @@ group { name: "e/fileman/default/list/drop_in";
             align: 0.5 1.0;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 2.0;
-            image.normal: "ic-arrow-u";
+            image.normal: "i-arrow-u";
             FIXED_SIZE(15, 15)
             color: 51 153 255 255;
             visible: 0;
@@ -1170,7 +1156,7 @@ group { name: "e/fileman/default/list/drop_between";
             align: 0.5 0.0;
             rel1.offset: 0 -40;
             rel2.relative: 1.0 0.0;
-            image.normal: "ic-arrow-d";
+            image.normal: "i-arrow-d";
             FIXED_SIZE(15, 15)
             color: 51 153 255 255;
             visible: 0;
@@ -1195,7 +1181,7 @@ group { name: "e/fileman/default/list/drop_between";
             align: 0.5 1.0;
             rel1.relative: 0.0 1.0;
             rel2.offset: -1 39;
-            image.normal: "ic-arrow-u";
+            image.normal: "i-arrow-u";
             FIXED_SIZE(15, 15)
             color: 51 153 255 255;
             visible: 0;
@@ -1526,7 +1512,7 @@ group { name: "e/modules/efm_navigation/main";
          description { state: "default" 0.0; \
             rel1.to: _REL; \
             rel2.to: _REL; \
-            image.normal: "ic-"_ICON; \
+            image.normal: "i-"_ICON; \
             min: 15 15; \
             max: 15 15; \
             fixed: 1 1; \
@@ -1718,7 +1704,7 @@ group { name: "e/modules/efm_navigation/pathbar_scrollframe";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "arrow1_ev";
-            image.normal: "ic-arrow-l";
+            image.normal: "i-arrow-l";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }
@@ -1741,7 +1727,7 @@ group { name: "e/modules/efm_navigation/pathbar_scrollframe";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "arrow2_ev";
-            image.normal: "ic-arrow-r";
+            image.normal: "i-arrow-r";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }

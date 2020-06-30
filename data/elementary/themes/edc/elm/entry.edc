@@ -3,7 +3,7 @@ group { name: "elm/scroller/entry/default";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: DARK_GREY_BG_COLOR;
+            color: 48 48 48 255;
          }
       }
       part { name: "validation_glow"; type: RECT; mouse_events: 0;
@@ -40,9 +40,8 @@ group { name: "elm/scroller/entry/default";
          insert_before: "elm.swallow.content";
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "bg";
+            rel.to: "bg";
             rel1.relative: 0.0 1.0;
-            rel2.to: "bg";
             rel1.offset: 0 0;
             color: 51 153 255 0;
             visible: 0;
@@ -55,26 +54,27 @@ group { name: "elm/scroller/entry/default";
             visible: 1;
          }
       }
-      program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
+      program { signal: "elm,action,focus_highlight,show"; source: "elm";
          action: STATE_SET "focused" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
       }
-      program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
+      program { signal: "elm,action,focus_highlight,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
       }
       part { name: "elm.swallow.content";
+         scale: 1;
+         clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
+            rel1.to_x: "elm.swallow.icon";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 0;
-            rel2.to: "elm.swallow.end";
+            rel1.offset: 2 2;
+            rel2.to_x: "elm.swallow.end";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -1;
+            rel2.offset: -3 -3;
+            offscale;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
@@ -82,10 +82,9 @@ group { name: "elm/scroller/entry/default";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bg";
-            rel1.offset: 0 2;
-            rel2.to: "bg";
-            rel2.offset: 0 -3;
+            rel.to: "bg";
+            rel1.offset: -1 2;
+            rel2.offset: -1 -3;
             rel2.relative: 0.0 1.0;
             visible: 0;
             align: 0.0 0.5;
@@ -101,13 +100,11 @@ group { name: "elm/scroller/entry/default";
             aspect: 1.0 1.0;
          }
       }
-      program {
-         signal: "elm,action,show,icon"; source: "elm";
+      program { signal: "elm,action,show,icon"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
       }
-      program {
-         signal: "elm,action,hide,icon"; source: "elm";
+      program { signal: "elm,action,hide,icon"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
       }
@@ -116,10 +113,9 @@ group { name: "elm/scroller/entry/default";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bg";
+            rel.to: "bg";
             rel1.offset: 0 2;
             rel1.relative: 1.0 0.0;
-            rel2.to: "bg";
             rel2.offset: 0 -3;
             visible: 0;
             align: 1.0 0.5;
@@ -135,13 +131,11 @@ group { name: "elm/scroller/entry/default";
             aspect: 1.0 1.0;
          }
       }
-      program {
-         signal: "elm,action,show,end"; source: "elm";
+      program { signal: "elm,action,show,end"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.end";
       }
-      program {
-         signal: "elm,action,hide,end"; source: "elm";
+      program { signal: "elm,action,hide,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.end";
       }
@@ -201,10 +195,8 @@ group { name: "elm/scroller/entry_single/default";
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.background";
-            rel2.to: "elm.swallow.background";
-            color: DARK_GREY_BG_COLOR;
-            color_class: "scroller_bg";
+            rel.to: "elm.swallow.background";
+            color: 48 48 48 255;
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;
@@ -226,9 +218,8 @@ group { name: "elm/scroller/entry_single/default";
       part { name: "glow"; type: RECT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "bg";
+            rel.to: "bg";
             rel1.relative: 0.0 1.0;
-            rel2.to: "bg";
             rel1.offset: 0 0;
             color: 51 153 255 0;
             visible: 0;
@@ -241,14 +232,12 @@ group { name: "elm/scroller/entry_single/default";
             visible: 1;
          }
       }
-      program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
+      program { signal: "elm,action,focus_highlight,show"; source: "elm";
          action: STATE_SET "focused" 0.0;
          transition: DECELERATE 0.2;
          target: "glow";
       }
-      program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
+      program { signal: "elm,action,focus_highlight,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.2;
          target: "glow";
@@ -271,6 +260,7 @@ group { name: "elm/scroller/entry_single/default";
          scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
+            fixed: 1 1;
             rel2.relative: 0.0 1.0;
             rel1.offset: -1 2;
             rel2.offset: -1 -3;
@@ -288,13 +278,11 @@ group { name: "elm/scroller/entry_single/default";
             aspect: 1.0 1.0;
          }
       }
-      program {
-         signal: "elm,action,show,icon"; source: "elm";
+      program { signal: "elm,action,show,icon"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
       }
-      program {
-         signal: "elm,action,hide,icon"; source: "elm";
+      program { signal: "elm,action,hide,icon"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
       }
@@ -303,6 +291,7 @@ group { name: "elm/scroller/entry_single/default";
          scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
+            fixed: 1 1;
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 2;
             rel2.offset: 0 -3;
@@ -320,13 +309,11 @@ group { name: "elm/scroller/entry_single/default";
             aspect: 1.0 1.0;
          }
       }
-      program {
-         signal: "elm,action,show,end"; source: "elm";
+      program { signal: "elm,action,show,end"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.end";
       }
-      program {
-         signal: "elm,action,hide,end"; source: "elm";
+      program { signal: "elm,action,hide,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.end";
       }

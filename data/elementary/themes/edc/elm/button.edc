@@ -627,7 +627,7 @@ group { name: "elm/button/base/colorselector/left/default";
             fixed: 1 1;
             min: 15 15;
             max: 15 15;
-            image.normal: "ic-arrow-l";
+            image.normal: "i-arrow-l";
             color: 160 160 160 255;
          }
       }
@@ -643,7 +643,7 @@ group { name: "elm/button/base/colorselector/right/default";
             fixed: 1 1;
             min: 15 15;
             max: 15 15;
-            image.normal: "ic-arrow-r";
+            image.normal: "i-arrow-r";
             color: 160 160 160 255;
          }
       }
@@ -1178,18 +1178,6 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
 }
 
 /******************* SPINNER BUTTONS STYLES **********************/
-#define IC(_NAME, _ICON) \
-set { name: _NAME; \
-   image {image: _ICON"-060.png" COMP; size: 31 31 60000 60000; } \
-   image {image: _ICON"-030.png" COMP; size: 16 16    30    30; } \
-   image {image: _ICON"-015.png" COMP; size:  0  0    15    15; } \
-}
-IC("ic-arrow-l", "arrow-l")
-IC("ic-arrow-r", "arrow-r")
-IC("ic-arrow-u", "arrow-u")
-IC("ic-arrow-d", "arrow-d")
-#undef IC
-
    group { name: "elm/button/base/spinner/increase/default";
       alias: "elm/button/base/spinner/increase/colorselector/default";
       alias: "elm/button/base/spin_button/increase/default";
@@ -1204,7 +1192,7 @@ IC("ic-arrow-d", "arrow-d")
             scale: 1;
             description { state: "default" 0.0;
                FIXED_SIZE(15, 15)
-               image.normal: "ic-arrow-r";
+               image.normal: "i-arrow-r";
                color: 160 160 160 255;
             }
             description { state: "pressed" 0.0;
@@ -1335,13 +1323,13 @@ IC("ic-arrow-d", "arrow-d")
       parts {
          part { name: "arrow.image";
             description { state: "default" 0.0;
-               image.normal: "ic-arrow-l";
+               image.normal: "i-arrow-l";
             }
             description { state: "pressed" 0.0;
-               image.normal: "ic-arrow-l";
+               image.normal: "i-arrow-l";
             }
             description { state: "disabled" 0.0;
-               image.normal: "ic-arrow-l";
+               image.normal: "i-arrow-l";
             }
          }
       }
@@ -1424,13 +1412,13 @@ IC("ic-arrow-d", "arrow-d")
       parts {
          part { name: "arrow.image";
             description { state: "default" 0.0;
-               image.normal: "ic-arrow-u";
+               image.normal: "i-arrow-u";
             }
             description { state: "pressed" 0.0;
-               image.normal: "ic-arrow-u";
+               image.normal: "i-arrow-u";
             }
             description { state: "disabled" 0.0;
-               image.normal: "ic-arrow-u";
+               image.normal: "i-arrow-u";
             }
          }
       }
@@ -1445,13 +1433,13 @@ IC("ic-arrow-d", "arrow-d")
       parts {
          part { name: "arrow.image";
             description { state: "default" 0.0;
-               image.normal: "ic-arrow-d";
+               image.normal: "i-arrow-d";
             }
             description { state: "pressed" 0.0;
-               image.normal: "ic-arrow-d";
+               image.normal: "i-arrow-d";
             }
             description { state: "disabled" 0.0;
-               image.normal: "ic-arrow-d";
+               image.normal: "i-arrow-d";
             }
          }
       }

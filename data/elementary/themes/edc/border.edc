@@ -126,9 +126,6 @@ group { name: "e/widgets/border/volume";
 
 group { name: "e/widgets/border/default/border";
    alias: "e/widgets/border/shaped/border";
-   images.image: "border_close.png" COMP;
-   images.image: "border_maximize.png" COMP;
-   images.image: "border_minimize.png" COMP;
 
    IMAGE_RING("ringa", 160)
    IMAGE_RING("ringb", 160)
@@ -186,12 +183,12 @@ group { name: "e/widgets/border/default/border";
          }
       }
       part { name: "top"; type: RECT; mouse_events: 0;
-//         scale: 1;
+         scale: 1;
          description { state: "default" 0.0;
             rel2.to_y: "e.text.title";
-            rel2.offset: -1 3;
+            rel2.offset: -1 2;
             color: 64 64 64 255;
-//            offscale;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -202,10 +199,10 @@ group { name: "e/widgets/border/default/border";
          scale: 1;
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 3;
+            rel1.offset: 1 4;
             rel1.to_x: "e.swallow.volume";
             rel2.relative: 0.0 0.0;
-            rel2.offset: -2 3;
+            rel2.offset: -2 4;
             rel2.to_x: "e.event.minimize";
             align: 0.5 0.0;
             color: 160 160 160 255;
@@ -216,7 +213,7 @@ group { name: "e/widgets/border/default/border";
                min: 0 1;
             }
             fixed: 0 1;
-//            offscale;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -278,8 +275,9 @@ group { name: "e/widgets/border/default/border";
          }
       }
       part { name: "close1";  mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "e.event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -292,8 +290,9 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "max1"; mouse_events: 0;
          clip_to: "clip1";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_maximize.png";
+            image.normal: "i-arrow-u";
             rel.to: "e.event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -306,8 +305,9 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "min1"; mouse_events: 0;
          clip_to: "clip1";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_minimize.png";
+            image.normal: "i-arrow-d";
             rel.to: "e.event.minimize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -320,8 +320,9 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "close2"; mouse_events: 0;
          clip_to: "clip2";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "e.event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -334,8 +335,9 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "max2"; mouse_events: 0;
          clip_to: "clip2";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_maximize.png";
+            image.normal: "i-arrow-u";
             rel.to: "e.event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -348,8 +350,9 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "min2"; mouse_events: 0;
          clip_to: "clip2";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_minimize.png";
+            image.normal: "i-arrow-d";
             rel.to: "e.event.minimize";
             min: 15 15; max: 15 15;
             fixed: 1 1;

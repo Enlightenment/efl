@@ -132,7 +132,7 @@
    offscale
 #define WIN_SHADOW_SPACER \
    rel1.offset: 21 14; \
-   rel2.offset: -21 -28; \
+   rel2.offset: -22 -29; \
    offscale
 #define WIN_MENU_SHADOW \
    image.normal: "win_menu_shadow.png"; \

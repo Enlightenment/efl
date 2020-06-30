@@ -473,7 +473,7 @@ group { name: "elm/gengrid/item/album-preview/default";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             rel.to: "icon_area";
-            image.normal: "efm_folder_icon";
+            image.normal: "i-folder";
          }
       }
       part { name: "elm.swallow.icon.1"; type: SWALLOW; mouse_events: 0;
