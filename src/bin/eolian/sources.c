@@ -1095,6 +1095,105 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh)
    free(cnamel);
 }
 
+static Eina_Bool
+_is_function_type_compatible(const Eolian_Function_Type t1, const Eolian_Function_Type t2)
+{
+   if (t1 == t2) return EINA_TRUE;
+   if (t1 == EOLIAN_PROPERTY && (t2 == EOLIAN_PROP_SET || t2 == EOLIAN_PROP_GET)) return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+/**
+ * Implementations can only be provided by abstracts/classes/mixins
+ * To find the correct implementation we:
+ * - Iterate from the passed class up super, until we are reaching parent beeing NULL.
+ * - Filter out mixins and normal classes
+ * - Deduplicate the filtered list from back to front
+ * - Pick the first item of the implementation
+ *
+ */
+static void
+_gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_Class *impl_klass, const Eolian_Implement *impl, Eina_Strbuf *buf)
+{
+   Eolian_Function_Type ftype;
+   const Eolian_Function *fid = eolian_implement_function_get(impl, &ftype);
+   const Eolian_Class *next_implemen_class = NULL;
+   char *impl_name;
+
+   if (eolian_class_type_get(impl_klass) == EOLIAN_CLASS_MIXIN)
+     {
+        //mixins cannot fast forward to a fixed implementation, so we cannot register there anything sane
+        return;
+     }
+   for (unsigned int i = 0; i < eina_array_count_get(call_chain); ++i)
+     {
+        Eina_Iterator *implementations = eolian_class_implements_get(eina_array_data_get(call_chain, i));
+        const Eolian_Implement *impl2;
+        EINA_ITERATOR_FOREACH(implementations, impl2)
+          {
+             Eolian_Function_Type ftype2;
+             if (eolian_implement_function_get(impl2, &ftype2) == fid && _is_function_type_compatible(ftype2, ftype))
+               {
+                  next_implemen_class = eina_array_data_get(call_chain, i);
+                  break;
+               }
+          }
+        if (next_implemen_class)
+          break;
+     }
+
+   if (!next_implemen_class) return;
+
+   eo_gen_class_names_get(next_implemen_class, NULL, NULL, &impl_name);
+
+   eina_strbuf_append_printf(buf, "__attribute__((register_next(\"%s\",\"_%s_%s\")))\n", eolian_function_full_c_name_get(fid, ftype), impl_name, eolian_function_full_c_name_get(fid, ftype));
+}
+
+static void
+_fill_call_chain(Eina_Array *res, const Eolian_Class *klass)
+{
+   Eina_Iterator *extensions = eolian_class_extensions_get(klass);
+   const Eolian_Class *tmp;
+
+   eina_array_push(res, klass);
+
+   EINA_ITERATOR_FOREACH(extensions, tmp) {
+      if (eolian_class_type_get(tmp) == EOLIAN_CLASS_MIXIN)
+        _fill_call_chain(res, tmp);
+   }
+
+   const Eolian_Class *parent = eolian_class_parent_get(klass);
+   if (parent)
+     _fill_call_chain(res, parent);
+}
+
+static Eina_Array*
+_gen_call_chain(const Eolian_Class *klass)
+{
+   Eina_Array *res = eina_array_new(10);
+   Eina_Array *tmp = eina_array_new(10);
+
+   _fill_call_chain(tmp, klass);
+
+   for (unsigned int i = 1; i < eina_array_count_get(tmp); ++i)
+     {
+        Eina_Bool found_a_second_time = EINA_FALSE;
+        for (unsigned int j = i + 1; j < eina_array_count_get(tmp); ++j)
+          {
+             if (eina_array_data_get(tmp, i) == eina_array_data_get(tmp, j))
+               {
+                  found_a_second_time = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!found_a_second_time)
+          eina_array_push(res, eina_array_data_get(tmp, i));
+     }
+
+   return res;
+}
+
 void
 eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 {
@@ -1206,6 +1305,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_append(buf, "};\n\n");
 
    /* add implementation details to the declaration */
+   Eina_Array *call_chain = _gen_call_chain(cl);
    const Eolian_Implement *imp;
    Eina_Iterator *itr = eolian_class_implements_get(cl);
    EINA_ITERATOR_FOREACH(itr, imp)
@@ -1217,15 +1317,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         if (eolian_function_is_static(fid)) continue;
         if (icl == cl) continue;
 
-        Eina_Bool found_get = !!eina_hash_find(_funcs_params_init_get, &imp);
-        Eina_Bool found_set = !!eina_hash_find(_funcs_params_init_set, &imp);
-        char *ocnamel = NULL;
-        if (cl != icl)
-          eo_gen_class_names_get(icl, NULL, NULL, &ocnamel);
-
-
-        eina_strbuf_append_printf(buf, "//register_next(\"%s\",\"_%s_%s\");\n", eolian_function_full_c_name_get(fid, ftype), ocnamel, eolian_function_full_c_name_get(fid, ftype)); //FIXME wrong name
-        free(ocnamel);
+        _gen_next_super_implementation_registering(call_chain, cl, imp, buf);
      }
    eina_iterator_free(itr);
 
