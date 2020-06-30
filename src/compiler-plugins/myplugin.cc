@@ -141,25 +141,40 @@ static void super2_start_unit(void *gcc_data __unused,
 	DECL_PRESERVE_P(super2_function_decl) = 1;
 }
 
+static tree
+handle_user_attribute (tree *node, tree name, tree args,
+                      int flags, bool *no_add_attrs)
+{
+  warning (0, G_("Callback to handle attributes"));
+  return NULL_TREE;
+}
+
+static struct attribute_spec next_hop_attr =
+      { "register_next", 2, 2, true,  true, false,  true, handle_user_attribute, NULL};
+
+static void
+register_next_hop_attribute (void *event_data, void *data)
+{
+  register_attribute (&next_hop_attr);
+}
+
 #define PASS_NAME eo
 #define NO_GATE
 #include "gcc-generate-gimple-pass.h"
 
 __visible int plugin_init(struct plugin_name_args *plugin_info,
-		struct plugin_gcc_version *version)
+    struct plugin_gcc_version *version)
 {
-	const char *plugin_name = plugin_info->base_name;
+  const char *plugin_name = plugin_info->base_name;
 
-	if (!plugin_default_version_check (version, &gcc_version))
-		return 1;
+  if (!plugin_default_version_check (version, &gcc_version))
+    return 1;
 
-        PASS_INFO(eo, "cfg", 1, PASS_POS_INSERT_AFTER);
+  PASS_INFO(eo, "cfg", 1, PASS_POS_INSERT_AFTER);
 
-	/* Register to be called before processing a translation unit */
-	register_callback(plugin_name, PLUGIN_START_UNIT,
-					&super2_start_unit, NULL);
-
-        register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, NULL, &eo_pass_info);
-
-	return 0;
+  /* Register to be called before processing a translation unit */
+  register_callback(plugin_name, PLUGIN_START_UNIT, &super2_start_unit, NULL);
+  register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, NULL, &eo_pass_info);
+  register_callback (plugin_name, PLUGIN_ATTRIBUTES, register_next_hop_attribute, NULL);
+  return 0;
 }
