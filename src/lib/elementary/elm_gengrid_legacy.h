@@ -14,7 +14,7 @@
  * @see elm_object_item_del()
  * @see elm_gengrid_clear()
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
 
@@ -28,7 +28,7 @@ EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
  * @return The item stored in @p obj at position @p nth or @c NULL, if there's
  * no item with that index (and on errors)
  *
- * @ingroup Genilst
+ * @ingroup Elm_Gengrid_Group
  * @since 1.8
  */
 EAPI Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth);
@@ -80,7 +80,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_page_show(const E
  *
  * @see elm_gengrid_scroller_policy_get()
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -97,7 +97,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *
  *
  * @see elm_gengrid_scroller_policy_set()
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -121,7 +121,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Ob
  *
  * @see elm_scroller_bounce_set()
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -139,7 +139,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina
  *
  * @see elm_scroller_bounce_get()
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -218,7 +218,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *
  * @param[in] h_pagesize Page size horizontal
  * @param[in] v_pagesize Page size vertical
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EAPI void elm_gengrid_page_size_set(Evas_Object *obj, int h_pagesize, int v_pagesize);
 
@@ -230,7 +230,7 @@ EAPI void elm_gengrid_page_size_set(Evas_Object *obj, int h_pagesize, int v_page
  * @param[in] h_pagerel Page relation horizontal
  * @param[in] v_pagerel Page relation vertical
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EAPI void elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
 
@@ -242,7 +242,7 @@ EAPI void elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, doub
  * @param[out] h_pagerel Page relation horizontal
  * @param[out] v_pagerel Page relation vertical
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EAPI void elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
 
@@ -258,7 +258,7 @@ EAPI void elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagere
  * @param[in] disabled Use @c true to disable mouse wheel or @c false to enable
  * it.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EAPI void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -271,7 +271,7 @@ EAPI void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * @return Use @c true to disable mouse wheel or @c false to enable it.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EAPI Eina_Bool elm_gengrid_wheel_disabled_get(const Evas_Object *obj);
 

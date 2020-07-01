@@ -6,7 +6,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
 
@@ -43,5 +43,7 @@ EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
  * @param[in] cb The callback function used for layout
  * @param[in] data Data that will be passed to layout function
  * @param[in] free_data Function called to free @c data
+ *
+ * @ingroup Elm_Box_Group
  */
 EAPI void elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data);

@@ -13,7 +13,7 @@ typedef Eo Elm_Gengrid;
 
 /** Gengrid reorder modes
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 typedef enum
 {

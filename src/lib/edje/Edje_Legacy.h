@@ -48,6 +48,9 @@
  * @note Before creating the first Edje object in your code, remember
  * to initialize the library, with edje_init(), or unexpected behavior
  * might occur.
+ *
+ * @ingroup Edje_Object_Group
+ *
  */
 EAPI Evas_Object *edje_object_add                 (Evas *evas);
 
@@ -67,6 +70,9 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
  * will remove it (if it was issued before).
  *
  * @return @c false if obj was not a valid Edje object otherwise @c true
+ *
+ * @ingroup Edje_Object_Group
+ *
  */
 EAPI Eina_Bool edje_object_preload(Evas_Object *obj, Eina_Bool cancel);
 
@@ -110,6 +116,9 @@ EAPI Eina_Bool edje_object_preload(Evas_Object *obj, Eina_Bool cancel);
  * @param[in] func The callback function to be executed when the signal is
  * emitted.
  * @param[in] data A pointer to data to pass in to func.
+ *
+ * @ingroup Edje_Object_Group
+ *
  */
 EAPI void edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
@@ -125,6 +134,9 @@ EAPI void edje_object_signal_callback_add(Evas_Object *obj, const char *emission
  *
  * @param[in] emission The signal's "emission" string
  * @param[in] source The signal's "source" string
+ *
+ * @ingroup Edje_Object_Group
+ *
  */
 EAPI void edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
@@ -145,6 +157,8 @@ EAPI void edje_object_signal_emit(Evas_Object *obj, const char *emission, const 
  *
  * @see edje_object_signal_callback_add().
  * @see edje_object_signal_callback_del_full().
+ *
+ * @ingroup Edje_Object_Group
  *
  */
 EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
@@ -170,6 +184,8 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
  *
  * @see edje_object_signal_callback_add().
  * @see edje_object_signal_callback_del().
+ *
+ * @ingroup Edje_Object_Group
  *
  */
 EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
@@ -207,6 +223,9 @@ typedef enum
  * #EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED - #EDJE_LOAD_ERROR_CORRUPT_FILE
  * - #EDJE_LOAD_ERROR_UNKNOWN_FORMAT - #EDJE_LOAD_ERROR_INCOMPATIBLE_FILE -
  * #EDJE_LOAD_ERROR_UNKNOWN_COLLECTION - #EDJE_LOAD_ERROR_RECURSIVE_REFERENCE
+ *
+ * @ingroup Edje_Object_Group
+ *
  */
 EAPI Edje_Load_Error edje_object_load_error_get(const Evas_Object *obj);
 
@@ -223,6 +242,9 @@ EAPI Edje_Load_Error edje_object_load_error_get(const Evas_Object *obj);
  * edje_object_load_error_get(). The function in question is meant
  * to be used in conjunction with the latter, for pretty-printing any
  * possible error cause.
+ *
+ * @ingroup Edje_Object_Group
+ *
  */
 EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 
@@ -248,7 +270,7 @@ EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI Eina_Bool edje_object_part_geometry_get(const Evas_Object *obj, const char * part, int *x, int *y, int *w, int *h);
 
@@ -260,7 +282,7 @@ EAPI Eina_Bool edje_object_part_geometry_get(const Evas_Object *obj, const char 
  *
  * @return The part state: "default" for the default state "" for other states
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI const char *edje_object_part_state_get(const Evas_Object *obj, const char * part, double *val_ret);
 
@@ -286,7 +308,7 @@ EAPI const char *edje_object_part_state_get(const Evas_Object *obj, const char *
  * @return A pointer to the Evas object implementing the given part, @c null on
  * failure (e.g. the given part doesn't exist)
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI const Efl_Canvas_Object *edje_object_part_object_get(const Evas_Object *obj, const char * part);
 
@@ -307,7 +329,7 @@ EAPI const Efl_Canvas_Object *edje_object_part_object_get(const Evas_Object *obj
  *
  * @param[in] update Whether or not update the size hints.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update);
 
@@ -328,7 +350,7 @@ EAPI void edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update);
  *
  * @return Whether or not update the size hints.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI Eina_Bool edje_object_update_hints_get(const Evas_Object *obj);
 
@@ -341,7 +363,7 @@ EAPI Eina_Bool edje_object_update_hints_get(const Evas_Object *obj);
  * @param[out] minw The minimum required width (return value)
  * @param[out] minh The minimum required height (return value)
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_size_min_calc(Evas_Object *obj, int *minw, int *minh);
 
@@ -368,7 +390,7 @@ EAPI void edje_object_size_min_calc(Evas_Object *obj, int *minw, int *minh);
  * @param[in] restrictedh The minimum height constraint as input, @c minh can
  * not be lower than this
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_size_min_restricted_calc(Evas_Object *obj, int *minw, int *minh, int restrictedw, int restrictedh);
 
@@ -392,7 +414,7 @@ EAPI void edje_object_size_min_restricted_calc(Evas_Object *obj, int *minw, int 
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI Eina_Bool edje_object_parts_extends_calc(Evas_Object *obj, int *x, int *y, int *w, int *h);
 
@@ -403,7 +425,7 @@ EAPI Eina_Bool edje_object_parts_extends_calc(Evas_Object *obj, int *x, int *y, 
  *
  * See also @ref edje_object_freeze and @ref edje_object_thaw.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_calc_force(Evas_Object *obj);
 
@@ -417,7 +439,7 @@ EAPI void edje_object_calc_force(Evas_Object *obj);
  *
  * @return The frozen state or 0 on error
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI int edje_object_freeze(Evas_Object *obj);
 
@@ -433,7 +455,7 @@ EAPI int edje_object_freeze(Evas_Object *obj);
  *
  * @return The frozen state or 0 if the object is not frozen or on error.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI int edje_object_thaw(Evas_Object *obj);
 
@@ -657,7 +679,7 @@ EAPI void edje_object_message_signal_recursive_process(Evas_Object *obj);
  */
 
 /**
- * @addgroup Edje_Object
+ * @addgroup Edje_Object_Group
  *
  * @{
  */
@@ -671,7 +693,7 @@ EAPI void edje_object_message_signal_recursive_process(Evas_Object *obj);
  * @return @ref EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value from
  * @ref Edje_External_Param_Type on success.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Edje_External_Param_Type edje_object_part_external_param_type_get(const Evas_Object *obj, const char *part, const char * param);
 
@@ -700,7 +722,7 @@ EAPI Edje_External_Param_Type edje_object_part_external_param_type_get(const Eva
  *
  * @return @c true if everything went fine, @c false on errors.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_external_param_set(Evas_Object *obj, const char *part, const Edje_External_Param *param);
 
@@ -726,7 +748,7 @@ EAPI Eina_Bool edje_object_part_external_param_set(Evas_Object *obj, const char 
  * information, @c false on errors and param member values are not set or
  * valid.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Edje_External_Param *param);
 
@@ -749,7 +771,7 @@ EAPI Eina_Bool edje_object_part_external_param_get(const Evas_Object *obj, const
  * @return The externally created object, or @c null if there is none or part
  * is not an external.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Evas_Object *edje_object_part_external_object_get(const Evas_Object *obj, const char * part);
 
@@ -765,7 +787,7 @@ EAPI Evas_Object *edje_object_part_external_object_get(const Evas_Object *obj, c
  *
  * @return Canvas object
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Evas_Object *edje_object_part_external_content_get(const Evas_Object *obj, const char *part, const char *content);
 
@@ -783,6 +805,8 @@ EAPI Evas_Object *edje_object_part_external_content_get(const Evas_Object *obj, 
  *
  * This sets the minimum size restriction for the object.
  *
+ * @ingroup Edje_Object_Group
+ *
  */
 EINA_DEPRECATED EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
 
@@ -795,6 +819,8 @@ EINA_DEPRECATED EAPI void         edje_extern_object_min_size_set (Evas_Object *
  * @param maxh The maximum height
  *
  * This sets the maximum size restriction for the object.
+ *
+ * @ingroup Edje_Object_Group
  *
  */
 EINA_DEPRECATED EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
@@ -812,6 +838,8 @@ EINA_DEPRECATED EAPI void         edje_extern_object_max_size_set (Evas_Object *
  * swallowed by Edje. The width and height define a preferred size
  * ASPECT and the object may be scaled to be larger or smaller, but
  * retaining the relative scale of both aspect width and height.
+ *
+ * @ingroup Edje_Object_Group
  *
  */
 EINA_DEPRECATED EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
@@ -847,7 +875,7 @@ EINA_DEPRECATED EAPI void         edje_extern_object_aspect_set   (Evas_Object *
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI Eina_Bool edje_object_file_set(Evas_Object *obj, const char *file, const char *group);
 
@@ -869,7 +897,7 @@ EAPI Eina_Bool edje_object_file_set(Evas_Object *obj, const char *file, const ch
  * @param[out] group The name of the group, in @p file, which implements an
 Edje object
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_file_get(const Evas_Object *obj, const char **file, const char **group);
 
@@ -905,7 +933,7 @@ EAPI void edje_object_file_get(const Evas_Object *obj, const char **file, const 
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  *
  */
 EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
@@ -941,7 +969,7 @@ EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, con
  *
  * @param[in] obj_swallow The object to occupy that part
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
 
@@ -952,7 +980,7 @@ EAPI Eina_Bool edje_object_part_swallow(Evas_Object *obj, const char *part, Evas
  *
  * @return The swallowed object, or @c null if there is none.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Evas_Object *edje_object_part_swallow_get(const Evas_Object *obj, const char *part);
 
@@ -967,7 +995,7 @@ EAPI Evas_Object *edje_object_part_swallow_get(const Evas_Object *obj, const cha
  *
  * @param[in] obj_swallow The swallowed object
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow);
 
@@ -978,7 +1006,7 @@ EAPI void edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
  *
  * @since 1.7.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_List *edje_object_access_part_list_get(const Evas_Object *obj);
 
@@ -996,7 +1024,7 @@ EAPI Eina_List *edje_object_access_part_list_get(const Evas_Object *obj);
  *
  * @return @c true: Successfully added. @c false: An error occurred.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_box_append(Evas_Object *obj, const char *part, Evas_Object *child);
 
@@ -1014,7 +1042,7 @@ EAPI Eina_Bool edje_object_part_box_append(Evas_Object *obj, const char *part, E
  *
  * @return @c true: Successfully added. @c false: An error occurred.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child);
 
@@ -1033,7 +1061,7 @@ EAPI Eina_Bool edje_object_part_box_prepend(Evas_Object *obj, const char *part, 
  *
  * @return @c true: Successfully added. @c false: An error occurred.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
 
@@ -1072,7 +1100,7 @@ EAPI Eina_Bool edje_object_part_box_insert_after(Evas_Object *obj, const char *p
  *
  * @return @c true: Successfully added. @c false: An error occurred.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
 
@@ -1088,7 +1116,7 @@ EAPI Eina_Bool edje_object_part_box_insert_at(Evas_Object *obj, const char *part
  *
  * @return Pointer to the object removed, or @c null.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Evas_Object *edje_object_part_box_remove_at(Evas_Object *obj, const char *part, unsigned int pos);
 
@@ -1104,7 +1132,7 @@ EAPI Evas_Object *edje_object_part_box_remove_at(Evas_Object *obj, const char *p
  *
  * @return Pointer to the object removed, or @c null.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Evas_Object *edje_object_part_box_remove(Evas_Object *obj, const char *part, Evas_Object *child);
 
@@ -1121,7 +1149,7 @@ EAPI Evas_Object *edje_object_part_box_remove(Evas_Object *obj, const char *part
  *
  * @return 1: Successfully cleared. 0: An error occurred.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear);
 
@@ -1138,7 +1166,7 @@ EAPI Eina_Bool edje_object_part_box_remove_all(Evas_Object *obj, const char *par
  *
  * @return @c true object was added, @c false on failure
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_table_pack(Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 
@@ -1151,7 +1179,7 @@ EAPI Eina_Bool edje_object_part_table_pack(Evas_Object *obj, const char *part, E
  *
  * @return @c true object removed, @c false on failure
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj);
 
@@ -1165,7 +1193,7 @@ EAPI Eina_Bool edje_object_part_table_unpack(Evas_Object *obj, const char *part,
  *
  * @return @c true get some data, @c false on failure
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_table_col_row_size_get(const Evas_Object *obj, const char *part, int *cols, int *rows);
 
@@ -1177,7 +1205,7 @@ EAPI Eina_Bool edje_object_part_table_col_row_size_get(const Evas_Object *obj, c
  *
  * @return The child Efl.Canvas.Object
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Evas_Object *edje_object_part_table_child_get(const Evas_Object *obj, const char *part, unsigned int col, unsigned int row);
 
@@ -1191,7 +1219,7 @@ EAPI Evas_Object *edje_object_part_table_child_get(const Evas_Object *obj, const
  *
  * @return @c true clear the table, @c false on failure
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
 
@@ -1225,7 +1253,7 @@ EAPI Eina_Bool edje_object_part_table_clear(Evas_Object *obj, const char *part, 
  * @param[in] b3 Shadow Blue value
  * @param[in] a3 Shadow Alpha value
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Color_Class
  */
 EAPI Eina_Bool edje_object_color_class_set(Evas_Object *obj, const char * color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
 
@@ -1257,7 +1285,7 @@ EAPI Eina_Bool edje_object_color_class_set(Evas_Object *obj, const char * color_
  *
  * @return true if found or false if not found and all values are zeroed.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Color_Class
  */
 EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
 
@@ -1275,7 +1303,7 @@ EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * 
  *
  * @param[in] color_class The color class to be deleted.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Color_Class
  */
 EAPI void edje_object_color_class_del(Evas_Object *obj, const char *color_class);
 
@@ -1290,7 +1318,7 @@ EAPI void edje_object_color_class_del(Evas_Object *obj, const char *color_class)
  *
  * @since 1.17.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Color_Class
  */
 EAPI Eina_Bool edje_object_color_class_clear(const Evas_Object *obj);
 
@@ -1305,7 +1333,7 @@ EAPI Eina_Bool edje_object_color_class_clear(const Evas_Object *obj);
  *
  * @return @c true, on success or @c false, on error
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Text_Class
  */
 EAPI Eina_Bool edje_object_text_class_set(Evas_Object *obj, const char * text_class, const char *font, Evas_Font_Size size);
 
@@ -1322,7 +1350,7 @@ EAPI Eina_Bool edje_object_text_class_set(Evas_Object *obj, const char * text_cl
  *
  * @return @c true, on success or @c false, on error
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Text_Class
  */
 EAPI Eina_Bool edje_object_text_class_get(const Evas_Object *obj, const char * text_class, const char **font, Evas_Font_Size *size);
 
@@ -1339,7 +1367,7 @@ EAPI Eina_Bool edje_object_text_class_get(const Evas_Object *obj, const char * t
  *
  * @since 1.17
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Text_Class
  */
 EAPI void edje_object_text_class_del(Evas_Object *obj, const char *text_class);
 
@@ -1360,7 +1388,7 @@ EAPI void edje_object_text_class_del(Evas_Object *obj, const char *text_class);
  *
  * @since 1.17
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Size_Class
  */
 EAPI Eina_Bool edje_object_size_class_set(Evas_Object *obj, const char * size_class, int minw, int minh, int maxw, int maxh);
 
@@ -1381,7 +1409,7 @@ EAPI Eina_Bool edje_object_size_class_set(Evas_Object *obj, const char * size_cl
  *
  * @since 1.17
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Size_Class
  */
 EAPI Eina_Bool edje_object_size_class_get(const Evas_Object *obj, const char * size_class, int *minw, int *minh, int *maxw, int *maxh);
 
@@ -1398,7 +1426,7 @@ EAPI Eina_Bool edje_object_size_class_get(const Evas_Object *obj, const char * s
  *
  * @since 1.17
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Size_Class
  */
 EAPI void edje_object_size_class_del(Evas_Object *obj, const char *size_class);
 
@@ -1412,7 +1440,7 @@ EAPI void edje_object_size_class_del(Evas_Object *obj, const char *size_class);
  * @param[in] part The part name
  * @param[in] allow true to enable, false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Eina_Bool allow);
 
@@ -1423,7 +1451,7 @@ EAPI void edje_object_part_text_select_allow_set(const Evas_Object *obj, const c
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
@@ -1436,7 +1464,7 @@ EAPI void edje_object_mirrored_set(Evas_Object *obj, Eina_Bool rtl);
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI Eina_Bool edje_object_mirrored_get(const Evas_Object *obj);
 
@@ -1447,7 +1475,7 @@ EAPI Eina_Bool edje_object_mirrored_get(const Evas_Object *obj);
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_language_set(Evas_Object *obj, const char *language);
 
@@ -1458,7 +1486,7 @@ EAPI void edje_object_language_set(Evas_Object *obj, const char *language);
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI const char *edje_object_language_get(const Evas_Object *obj);
 
@@ -1482,7 +1510,7 @@ EAPI const char *edje_object_language_get(const Evas_Object *obj);
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Scale
  */
 EAPI Eina_Bool edje_object_scale_set(Evas_Object *obj, double scale);
 
@@ -1497,7 +1525,7 @@ EAPI Eina_Bool edje_object_scale_set(Evas_Object *obj, double scale);
  * @return The scaling factor (the default value is @0.0, meaning individual
  * scaling  not set)
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Scale
  */
 EAPI double edje_object_scale_get(const Evas_Object *obj);
 
@@ -1511,7 +1539,7 @@ EAPI double edje_object_scale_get(const Evas_Object *obj);
  * @return The base_scale factor (the default value is @ 1.0, that means the
  * edc file is made based on scale 1.0.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Scale
  */
 EAPI double edje_object_base_scale_get(const Evas_Object *obj);
 
@@ -1772,7 +1800,7 @@ EAPI Eina_Bool edje_object_part_drag_page(Evas_Object *obj, const char *part, do
  * @param[in] part The part name
  * @param[in] text The text to set on that part
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_set(const Evas_Object *obj, const char *part, const char *text);
 
@@ -1783,7 +1811,7 @@ EAPI Eina_Bool edje_object_part_text_set(const Evas_Object *obj, const char *par
  *
  * @return The text set on the part, @c null otherwise.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI const char * edje_object_part_text_get(const Evas_Object *obj, const char *part);
 
@@ -1794,7 +1822,7 @@ EAPI const char * edje_object_part_text_get(const Evas_Object *obj, const char *
  * @param[in] part The part name
  * @param[in] cur The edje cursor to work on
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_begin_set(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1805,7 +1833,7 @@ EAPI void edje_object_part_text_cursor_begin_set(Evas_Object *obj, const char *p
  * @param[in] part The part name
  * @param[in] cur The edje cursor to work on
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_end_set(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1818,7 +1846,7 @@ EAPI void edje_object_part_text_cursor_end_set(Evas_Object *obj, const char *par
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_pos_set(Evas_Object *obj, const char * part, Edje_Cursor cur, int pos);
 
@@ -1832,7 +1860,7 @@ EAPI void edje_object_part_text_cursor_pos_set(Evas_Object *obj, const char * pa
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI int edje_object_part_text_cursor_pos_get(const Evas_Object *obj, const char * part, Edje_Cursor cur);
 
@@ -1848,7 +1876,7 @@ EAPI int edje_object_part_text_cursor_pos_get(const Evas_Object *obj, const char
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_coord_set(Evas_Object *obj, const char *part, Edje_Cursor cur, int x, int y);
 
@@ -1859,7 +1887,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_coord_set(Evas_Object *obj, const ch
  * @param[in] part The part name
  * @param[in] cur The edje cursor to work on
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_line_begin_set(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1870,7 +1898,7 @@ EAPI void edje_object_part_text_cursor_line_begin_set(Evas_Object *obj, const ch
  * @param[in] part The part name
  * @param[in] cur The edje cursor to work on
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_line_end_set(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1883,7 +1911,7 @@ EAPI void edje_object_part_text_cursor_line_end_set(Evas_Object *obj, const char
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_prev(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1896,7 +1924,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_prev(Evas_Object *obj, const char *p
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_next(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1908,7 +1936,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_next(Evas_Object *obj, const char *p
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_up(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1920,7 +1948,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_up(Evas_Object *obj, const char *par
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_down(Evas_Object *obj, const char *part, Edje_Cursor cur);
 
@@ -1931,7 +1959,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_down(Evas_Object *obj, const char *p
  * @param[in] src The cursor to copy from
  * @param[in] dst The cursor to copy to
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_copy(Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst);
 
@@ -1947,7 +1975,7 @@ EAPI void edje_object_part_text_cursor_copy(Evas_Object *obj, const char *part, 
  * @return The character string pointed to (may be a multi-byte utf8 sequence)
  * terminated by a null byte.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI char *edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char * part, Edje_Cursor cur);
 
@@ -1960,7 +1988,7 @@ EAPI char *edje_object_part_text_cursor_content_get(const Evas_Object *obj, cons
  * @param[out] w Cursor width
  * @param[out] h Cursor height
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char * part, int *x, int *y, int *w, int *h);
 
@@ -1974,7 +2002,7 @@ EAPI void edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, cons
  *
  * @since 1.18.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_hide_visible_password(Evas_Object *obj, const char *part);
 
@@ -1987,7 +2015,7 @@ EAPI Eina_Bool edje_object_part_text_hide_visible_password(Evas_Object *obj, con
  *
  * @return @c true if the cursor points to a format, @c false otherwise.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char * part, Edje_Cursor cur);
 
@@ -2001,7 +2029,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_is_format_get(const Evas_Object *obj
  * @return @c true if the cursor points to a visible format, @c false
  * otherwise.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char * part, Edje_Cursor cur);
 
@@ -2016,7 +2044,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_is_visible_format_get(const Evas_Obj
  * @return The list of anchor rects (const Evas_Textblock_Rectangle *), do not
  * modify! Geometry is relative to entry part.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char * part, const char * anchor);
 
@@ -2029,7 +2057,7 @@ EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(const Evas_Objec
  *
  * @return The list of anchors (const char *), do not modify!
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI const Eina_List *edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char * part);
 
@@ -2044,7 +2072,7 @@ EAPI const Eina_List *edje_object_part_text_anchor_list_get(const Evas_Object *o
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI const char *edje_object_part_text_style_user_peek(const Evas_Object *obj, const char *part);
 
@@ -2058,7 +2086,7 @@ EAPI const char *edje_object_part_text_style_user_peek(const Evas_Object *obj, c
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_style_user_push(Evas_Object *obj, const char *part, const char *style);
 
@@ -2069,7 +2097,7 @@ EAPI void edje_object_part_text_style_user_push(Evas_Object *obj, const char *pa
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_style_user_pop(Evas_Object *obj, const char *part);
 
@@ -2087,7 +2115,7 @@ EAPI void edje_object_part_text_style_user_pop(Evas_Object *obj, const char *par
  *
  * @return $1 if item exists, $0 if not
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_item_geometry_get(const Evas_Object *obj, const char * part, const char * item, int *cx, int *cy, int *cw, int *ch);
 
@@ -2100,7 +2128,7 @@ EAPI Eina_Bool edje_object_part_text_item_geometry_get(const Evas_Object *obj, c
  *
  * @return The list of items (const char *), do not modify!
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI const Eina_List *edje_object_part_text_item_list_get(const Evas_Object *obj, const char * part);
 
@@ -2135,7 +2163,7 @@ EAPI const Eina_List *edje_object_part_text_item_list_get(const Evas_Object *obj
  * @param[in] func The callback function that will act as filter
  * @param[in] data User provided data to pass to the filter function
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
 
@@ -2153,7 +2181,7 @@ EAPI void edje_object_text_insert_filter_callback_add(Evas_Object *obj, const ch
  *
  * @return The user data pointer if successful, or @c null otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void *edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func);
 
@@ -2172,7 +2200,7 @@ EAPI void *edje_object_text_insert_filter_callback_del(Evas_Object *obj, const c
  *
  * @return The same data pointer if successful, or @c null otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void *edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
 
@@ -2205,7 +2233,7 @@ EAPI void *edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, co
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_text_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
 
@@ -2225,7 +2253,7 @@ EAPI void edje_object_text_markup_filter_callback_add(Evas_Object *obj, const ch
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void *edje_object_text_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func);
 
@@ -2247,7 +2275,7 @@ EAPI void *edje_object_text_markup_filter_callback_del(Evas_Object *obj, const c
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void *edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
 
@@ -2262,7 +2290,7 @@ EAPI void *edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, co
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_user_insert(const Evas_Object *obj, const char *part, const char *text);
 
@@ -2277,7 +2305,7 @@ EAPI void edje_object_part_text_user_insert(const Evas_Object *obj, const char *
  *
  * @since 1.1
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_append(Evas_Object *obj, const char *part, const char *text);
 
@@ -2295,7 +2323,7 @@ EAPI void edje_object_part_text_append(Evas_Object *obj, const char *part, const
  *
  * @since 1.2
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_escaped_set(Evas_Object *obj, const char *part, const char *text);
 
@@ -2313,7 +2341,7 @@ EAPI Eina_Bool edje_object_part_text_escaped_set(Evas_Object *obj, const char *p
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_unescaped_set(Evas_Object *obj, const char * part, const char *text_to_escape);
 
@@ -2330,7 +2358,7 @@ EAPI Eina_Bool edje_object_part_text_unescaped_set(Evas_Object *obj, const char 
  *
  * @return The text string
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI char *edje_object_part_text_unescaped_get(const Evas_Object *obj, const char * part);
 
@@ -2343,7 +2371,7 @@ EAPI char *edje_object_part_text_unescaped_get(const Evas_Object *obj, const cha
  * @param[in] part The part name
  * @param[in] text The text string
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *text);
 
@@ -2355,7 +2383,7 @@ EAPI void edje_object_part_text_insert(Evas_Object *obj, const char *part, const
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_autocapital_type_set(Evas_Object *obj, const char *part, Edje_Text_Autocapital_Type autocapital_type);
 
@@ -2368,7 +2396,7 @@ EAPI void edje_object_part_text_autocapital_type_set(Evas_Object *obj, const cha
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Edje_Text_Autocapital_Type edje_object_part_text_autocapital_type_get(const Evas_Object *obj, const char *part);
 
@@ -2380,7 +2408,7 @@ EAPI Edje_Text_Autocapital_Type edje_object_part_text_autocapital_type_get(const
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_prediction_allow_set(Evas_Object *obj, const char *part, Eina_Bool prediction);
 
@@ -2393,7 +2421,7 @@ EAPI void edje_object_part_text_prediction_allow_set(Evas_Object *obj, const cha
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_prediction_allow_get(const Evas_Object *obj, const char *part);
 
@@ -2409,7 +2437,7 @@ EAPI Eina_Bool edje_object_part_text_prediction_allow_get(const Evas_Object *obj
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void *edje_object_part_text_imf_context_get(const Evas_Object *obj, const char *part);
 
@@ -2423,7 +2451,7 @@ EAPI void *edje_object_part_text_imf_context_get(const Evas_Object *obj, const c
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_imf_context_reset(const Evas_Object *obj, const char *part);
 
@@ -2436,7 +2464,7 @@ EAPI void edje_object_part_text_imf_context_reset(const Evas_Object *obj, const 
  *
  * @since 1.12.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_hint_set(Evas_Object *obj, const char *part, Edje_Input_Hints input_hints);
 
@@ -2449,7 +2477,7 @@ EAPI void edje_object_part_text_input_hint_set(Evas_Object *obj, const char *par
  *
  * @since 1.12.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Edje_Input_Hints edje_object_part_text_input_hint_get(const Evas_Object *obj, const char *part);
 
@@ -2465,7 +2493,7 @@ EAPI Edje_Input_Hints edje_object_part_text_input_hint_get(const Evas_Object *ob
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_show(const Evas_Object *obj, const char *part);
 
@@ -2481,7 +2509,7 @@ EAPI void edje_object_part_text_input_panel_show(const Evas_Object *obj, const c
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_hide(const Evas_Object *obj, const char *part);
 
@@ -2498,7 +2526,7 @@ EAPI void edje_object_part_text_input_panel_hide(const Evas_Object *obj, const c
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_imdata_set(Evas_Object *obj, const char *part, const void *data, int len);
 
@@ -2513,7 +2541,7 @@ EAPI void edje_object_part_text_input_panel_imdata_set(Evas_Object *obj, const c
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_imdata_get(const Evas_Object *obj, const char *part, void *data, int *len);
 
@@ -2530,7 +2558,7 @@ EAPI void edje_object_part_text_input_panel_imdata_get(const Evas_Object *obj, c
  *
  * @since 1.1
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_layout_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Layout layout);
 
@@ -2545,7 +2573,7 @@ EAPI void edje_object_part_text_input_panel_layout_set(Evas_Object *obj, const c
  *
  * @since 1.1
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Edje_Input_Panel_Layout edje_object_part_text_input_panel_layout_get(const Evas_Object *obj, const char *part);
 
@@ -2559,7 +2587,7 @@ EAPI Edje_Input_Panel_Layout edje_object_part_text_input_panel_layout_get(const 
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_language_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Lang lang);
 
@@ -2575,7 +2603,7 @@ EAPI void edje_object_part_text_input_panel_language_set(Evas_Object *obj, const
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Edje_Input_Panel_Lang edje_object_part_text_input_panel_language_get(const Evas_Object *obj, const char *part);
 
@@ -2592,7 +2620,7 @@ EAPI Edje_Input_Panel_Lang edje_object_part_text_input_panel_language_get(const 
  *
  * @since 1.8
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_layout_variation_set(Evas_Object *obj, const char *part, int variation);
 
@@ -2607,7 +2635,7 @@ EAPI void edje_object_part_text_input_panel_layout_variation_set(Evas_Object *ob
  *
  * @since 1.8
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI int edje_object_part_text_input_panel_layout_variation_get(const Evas_Object *obj, const char *part);
 
@@ -2620,7 +2648,7 @@ EAPI int edje_object_part_text_input_panel_layout_variation_get(const Evas_Objec
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_enabled_set(Evas_Object *obj, const char *part, Eina_Bool enabled);
 
@@ -2635,7 +2663,7 @@ EAPI void edje_object_part_text_input_panel_enabled_set(Evas_Object *obj, const 
  *
  * @since 1.1.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_input_panel_enabled_get(const Evas_Object *obj, const char *part);
 
@@ -2647,7 +2675,7 @@ EAPI Eina_Bool edje_object_part_text_input_panel_enabled_get(const Evas_Object *
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_return_key_disabled_set(Evas_Object *obj, const char *part, Eina_Bool disabled);
 
@@ -2661,7 +2689,7 @@ EAPI void edje_object_part_text_input_panel_return_key_disabled_set(Evas_Object 
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_input_panel_return_key_disabled_get(const Evas_Object *obj, const char *part);
 
@@ -2676,7 +2704,7 @@ EAPI Eina_Bool edje_object_part_text_input_panel_return_key_disabled_get(const E
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_return_key_type_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type);
 
@@ -2692,7 +2720,7 @@ EAPI void edje_object_part_text_input_panel_return_key_type_set(Evas_Object *obj
  *
  * @since 1.2.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Edje_Input_Panel_Return_Key_Type edje_object_part_text_input_panel_return_key_type_get(const Evas_Object *obj, const char *part);
 
@@ -2707,7 +2735,7 @@ EAPI Edje_Input_Panel_Return_Key_Type edje_object_part_text_input_panel_return_k
  *
  * @since 1.9.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_input_panel_show_on_demand_set(Evas_Object *obj, const char *part, Eina_Bool ondemand);
 
@@ -2722,7 +2750,7 @@ EAPI void edje_object_part_text_input_panel_show_on_demand_set(Evas_Object *obj,
  *
  * @since 1.9.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_input_panel_show_on_demand_get(const Evas_Object *obj, const char *part);
 
@@ -2735,7 +2763,7 @@ EAPI Eina_Bool edje_object_part_text_input_panel_show_on_demand_get(const Evas_O
  *
  * @since 1.20.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_prediction_hint_set(Evas_Object *obj, const char *part, const char *prediction_hint);
 
@@ -2750,7 +2778,7 @@ EAPI void edje_object_part_text_prediction_hint_set(Evas_Object *obj, const char
  *
  * @since 1.21.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_set(Evas_Object *obj, const char *part, const char *key, const char *value);
 
@@ -2764,7 +2792,7 @@ EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_set(Evas_Object *obj, 
  *
  * @since 1.21.0
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_del(Evas_Object *obj, const char *part, const char *key);
 
@@ -2773,7 +2801,7 @@ EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_del(Evas_Object *obj, 
  *
  * @param[in] part The part name
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_select_begin(const Evas_Object *obj, const char *part);
 
@@ -2782,7 +2810,7 @@ EAPI void edje_object_part_text_select_begin(const Evas_Object *obj, const char 
  *
  * @param[in] part The part name
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_select_abort(const Evas_Object *obj, const char *part);
 
@@ -2791,7 +2819,7 @@ EAPI void edje_object_part_text_select_abort(const Evas_Object *obj, const char 
  *
  * @param[in] part The part name
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_select_extend(const Evas_Object *obj, const char *part);
 
@@ -2802,7 +2830,7 @@ EAPI void edje_object_part_text_select_extend(const Evas_Object *obj, const char
  *
  * @param[in] part The part name
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_select_all(const Evas_Object *obj, const char *part);
 
@@ -2813,7 +2841,7 @@ EAPI void edje_object_part_text_select_all(const Evas_Object *obj, const char *p
  *
  * @param[in] part The part name
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI void edje_object_part_text_select_none(const Evas_Object *obj, const char *part);
 
@@ -2829,7 +2857,7 @@ EAPI void edje_object_part_text_select_none(const Evas_Object *obj, const char *
  *
  * @return The text string
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI const char *edje_object_part_text_selection_get(const Evas_Object *obj, const char *part);
 
@@ -2851,7 +2879,7 @@ EAPI const char *edje_object_part_text_selection_get(const Evas_Object *obj, con
  *
  * @param[in] play The play state, @c true by default.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_play_set(Evas_Object *obj, Eina_Bool play);
 
@@ -2873,7 +2901,7 @@ EAPI void edje_object_play_set(Evas_Object *obj, Eina_Bool play);
  *
  * @return The play state, @c true by default.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI Eina_Bool edje_object_play_get(const Evas_Object *obj);
 
@@ -2888,7 +2916,7 @@ EAPI Eina_Bool edje_object_play_get(const Evas_Object *obj);
  *
  * @param[in] scale The transition duration factor.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_transition_duration_factor_set(Evas_Object *obj, double scale);
 
@@ -2903,7 +2931,7 @@ EAPI void edje_object_transition_duration_factor_set(Evas_Object *obj, double sc
  *
  * @return The transition duration factor.
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI double edje_object_transition_duration_factor_get(const Evas_Object *obj);
 
@@ -2925,7 +2953,7 @@ EAPI double edje_object_transition_duration_factor_get(const Evas_Object *obj);
  * @param[out] minw Pointer to a variable where to store the minimum width
  * @param[out] minh Pointer to a variable where to store the minimum height
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_size_min_get(const Evas_Object *obj, int *minw, int *minh);
 
@@ -2947,7 +2975,7 @@ EAPI void edje_object_size_min_get(const Evas_Object *obj, int *minw, int *minh)
  * @param[out] maxw The maximum width
  * @param[out] maxh The maximum height
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_size_max_get(const Evas_Object *obj, int *maxw, int *maxh);
 
@@ -2965,11 +2993,9 @@ EAPI void edje_object_size_max_get(const Evas_Object *obj, int *maxw, int *maxh)
  * @return @c true if the Edje part exists in obj's group, or @c false
  * otherwise (and on errors)
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Part
  */
 EAPI Eina_Bool edje_object_part_exists(const Evas_Object *obj, const char *part);
-
-
 
 /**
  * @brief Sets the function that provides item objects for named items in an
@@ -2983,7 +3009,7 @@ EAPI Eina_Bool edje_object_part_exists(const Evas_Object *obj, const char *part)
  * objects
  * @param[in] data The data pointer to pass to the func callback
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Group
  */
 EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
@@ -2997,7 +3023,7 @@ EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb 
  *
  * @return The description of the target color class or @c null if not found
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Object_Color_Class
  */
 EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
 
@@ -3139,6 +3165,10 @@ EAPI void edje_object_perspective_set(Evas_Object *obj, Edje_Perspective *ps);
 EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj);
 
 /**
+ * @}
+ */
+
+/**
  * @brief Sets Edje text class for edje file (if loaded)
  *
  * This function sets the text class for All Edje Objects created from Edje file.
@@ -3150,6 +3180,9 @@ EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj)
  * @param[in] size Font Size
  *
  * @return @c true, on success or @c false, on error
+ *
+ * @ingroup Edje_Object_Text_Class
+ *
  */
 EAPI Eina_Bool edje_file_text_class_set(const char *file, const char *text_class, const char *font, Evas_Font_Size size);
 
@@ -3160,6 +3193,9 @@ EAPI Eina_Bool edje_file_text_class_set(const char *file, const char *text_class
  * file and text class.
  *
  * @param[in] text_class The text class to be deleted.
+ *
+ * @ingroup Edje_Object_Text_Class
+ *
  */
 EAPI Eina_Bool edje_file_text_class_del(const char *file, const char *text_class);
 
@@ -3173,12 +3209,12 @@ EAPI Eina_Bool edje_file_text_class_del(const char *file, const char *text_class
  * @param[out] size Font Size
  *
  * @return @c true, on success or @c false, on error
+ *
+ * @ingroup Edje_Object_Text_Class
+ *
  */
 EAPI Eina_Bool edje_file_text_class_get(const char *file, const char * text_class, const char **font, Evas_Font_Size *size);
 
-/**
- * @}
- */
 
 /**
  * @defgroup Edje_Object_Part Edje Part

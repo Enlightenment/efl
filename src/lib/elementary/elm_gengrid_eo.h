@@ -13,7 +13,7 @@ typedef Eo Elm_Gengrid;
 
 /** Gengrid reorder modes
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 typedef enum
 {
@@ -25,7 +25,7 @@ typedef enum
 #endif
 /** Elementary gengrid class
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_CLASS elm_gengrid_class_get()
 
@@ -46,7 +46,7 @@ EWAPI const Efl_Class *elm_gengrid_class_get(void);
  * @param[in] align_x Alignment in the horizontal axis (0 <= align_x <= 1).
  * @param[in] align_y Alignment in the vertical axis (0 <= align_y <= 1).
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_align_set(Eo *obj, double align_x, double align_y);
 
@@ -60,7 +60,7 @@ EOAPI void elm_obj_gengrid_align_set(Eo *obj, double align_x, double align_y);
  * @param[out] align_x Alignment in the horizontal axis (0 <= align_x <= 1).
  * @param[out] align_y Alignment in the vertical axis (0 <= align_y <= 1).
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_align_get(const Eo *obj, double *align_x, double *align_y);
 
@@ -75,7 +75,7 @@ EOAPI void elm_obj_gengrid_align_get(const Eo *obj, double *align_x, double *ali
  * @param[in] obj The object.
  * @param[in] fill @c true if the grid is filled, @c false otherwise
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_filled_set(Eo *obj, Eina_Bool fill);
 
@@ -89,7 +89,7 @@ EOAPI void elm_obj_gengrid_filled_set(Eo *obj, Eina_Bool fill);
  *
  * @return @c true if the grid is filled, @c false otherwise
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Eina_Bool elm_obj_gengrid_filled_get(const Eo *obj);
 
@@ -107,7 +107,7 @@ EOAPI Eina_Bool elm_obj_gengrid_filled_get(const Eo *obj);
  * @param[in] obj The object.
  * @param[in] multi @c true if multislect is enabled, @c false otherwise
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_multi_select_set(Eo *obj, Eina_Bool multi);
 
@@ -119,7 +119,7 @@ EOAPI void elm_obj_gengrid_multi_select_set(Eo *obj, Eina_Bool multi);
  *
  * @return @c true if multislect is enabled, @c false otherwise
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Eina_Bool elm_obj_gengrid_multi_select_get(const Eo *obj);
 
@@ -135,7 +135,7 @@ EOAPI Eina_Bool elm_obj_gengrid_multi_select_get(const Eo *obj);
  * @param[in] w The group items' width.
  * @param[in] h The group items' height.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_group_item_size_set(Eo *obj, int w, int h);
 
@@ -149,7 +149,7 @@ EOAPI void elm_obj_gengrid_group_item_size_set(Eo *obj, int w, int h);
  * @param[out] w The group items' width.
  * @param[out] h The group items' height.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_group_item_size_get(const Eo *obj, int *w, int *h);
 
@@ -168,7 +168,7 @@ EOAPI void elm_obj_gengrid_group_item_size_get(const Eo *obj, int *w, int *h);
  * @param[in] obj The object.
  * @param[in] mode The select mode.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_select_mode_set(Eo *obj, Elm_Object_Select_Mode mode);
 
@@ -179,7 +179,7 @@ EOAPI void elm_obj_gengrid_select_mode_set(Eo *obj, Elm_Object_Select_Mode mode)
  *
  * @return The select mode.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Object_Select_Mode elm_obj_gengrid_select_mode_get(const Eo *obj);
 
@@ -199,7 +199,7 @@ EOAPI Elm_Object_Select_Mode elm_obj_gengrid_select_mode_get(const Eo *obj);
  * @param[in] reorder_mode Use @c true to turn reordering on, @c false to turn
  * it off.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_reorder_mode_set(Eo *obj, Eina_Bool reorder_mode);
 
@@ -211,7 +211,7 @@ EOAPI void elm_obj_gengrid_reorder_mode_set(Eo *obj, Eina_Bool reorder_mode);
  *
  * @return Use @c true to turn reordering on, @c false to turn it off.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Eina_Bool elm_obj_gengrid_reorder_mode_get(const Eo *obj);
 
@@ -222,7 +222,7 @@ EOAPI Eina_Bool elm_obj_gengrid_reorder_mode_get(const Eo *obj);
  * @param[in] obj The object.
  * @param[in] highlight @c true if item will be highlighted, @c false otherwise
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_highlight_mode_set(Eo *obj, Eina_Bool highlight);
 
@@ -234,7 +234,7 @@ EOAPI void elm_obj_gengrid_highlight_mode_set(Eo *obj, Eina_Bool highlight);
  *
  * @return @c true if item will be highlighted, @c false otherwise
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Eina_Bool elm_obj_gengrid_highlight_mode_get(const Eo *obj);
 
@@ -246,7 +246,7 @@ EOAPI Eina_Bool elm_obj_gengrid_highlight_mode_get(const Eo *obj);
  *
  * @since 1.11
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_reorder_type_set(Eo *obj, Elm_Gengrid_Reorder_Type type);
 
@@ -262,7 +262,7 @@ EOAPI void elm_obj_gengrid_reorder_type_set(Eo *obj, Elm_Gengrid_Reorder_Type ty
  * @param[in] w The items' width.
  * @param[in] h The items' height.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_item_size_set(Eo *obj, int w, int h);
 
@@ -276,7 +276,7 @@ EOAPI void elm_obj_gengrid_item_size_set(Eo *obj, int w, int h);
  * @param[out] w The items' width.
  * @param[out] h The items' height.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_item_size_get(const Eo *obj, int *w, int *h);
 
@@ -294,7 +294,7 @@ EOAPI void elm_obj_gengrid_item_size_get(const Eo *obj, int *w, int *h);
  *
  * @since 1.8
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_multi_select_mode_set(Eo *obj, Elm_Object_Multi_Select_Mode mode);
 
@@ -309,7 +309,7 @@ EOAPI void elm_obj_gengrid_multi_select_mode_set(Eo *obj, Elm_Object_Multi_Selec
  *
  * @since 1.8
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Object_Multi_Select_Mode elm_obj_gengrid_multi_select_mode_get(const Eo *obj);
 
@@ -330,7 +330,7 @@ EOAPI Elm_Object_Multi_Select_Mode elm_obj_gengrid_multi_select_mode_get(const E
  * @param[in] horizontal @c true to make the gengrid expand horizontally,
  * @c false to expand vertically.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_horizontal_set(Eo *obj, Eina_Bool horizontal);
 
@@ -343,7 +343,7 @@ EOAPI void elm_obj_gengrid_horizontal_set(Eo *obj, Eina_Bool horizontal);
  * @return @c true to make the gengrid expand horizontally, @c false to expand
  * vertically.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Eina_Bool elm_obj_gengrid_horizontal_get(const Eo *obj);
 
@@ -360,7 +360,7 @@ EOAPI Eina_Bool elm_obj_gengrid_horizontal_get(const Eo *obj);
  * @return The selected item's handle or @c null if none is selected at the
  * moment (and on errors).
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_selected_item_get(const Eo *obj);
 
@@ -376,7 +376,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_selected_item_get(const Eo *obj);
  *
  * @return The list of realized items or @c null if none are realized.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Eina_List *elm_obj_gengrid_realized_items_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -390,7 +390,7 @@ EOAPI Eina_List *elm_obj_gengrid_realized_items_get(const Eo *obj) EINA_WARN_UNU
  * @return The first item's handle or @c null, if there are no items in @c obj
  * (and on errors)
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_first_item_get(const Eo *obj);
 
@@ -407,7 +407,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_first_item_get(const Eo *obj);
  * @return The list of selected items or @c null, if none is selected at the
  * moment (and on errors).
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI const Eina_List *elm_obj_gengrid_selected_items_get(const Eo *obj);
 
@@ -421,7 +421,7 @@ EOAPI const Eina_List *elm_obj_gengrid_selected_items_get(const Eo *obj);
  * @return The last item's handle or @c null if there are no  items in @c obj
  * (and on errors).
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_last_item_get(const Eo *obj);
 
@@ -439,7 +439,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_last_item_get(const Eo *obj);
  *
  * @return A handle to the item added or @c null on errors.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_insert_before(Eo *obj, const Elm_Gengrid_Item_Class *itc, const void *data, Elm_Widget_Item *relative, Evas_Smart_Cb func, const void *func_data);
 
@@ -453,7 +453,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_insert_before(Eo *obj, const Elm_Gen
  * To update just one item, use @ref elm_gengrid_item_update.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_realized_items_update(Eo *obj);
 
@@ -471,7 +471,7 @@ EOAPI void elm_obj_gengrid_realized_items_update(Eo *obj);
  *
  * @return A handle to the item added or @c null on error.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_insert_after(Eo *obj, const Elm_Gengrid_Item_Class *itc, const void *data, Elm_Widget_Item *relative, Evas_Smart_Cb func, const void *func_data);
 
@@ -484,7 +484,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_insert_after(Eo *obj, const Elm_Geng
  *
  * @return Items in list
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI unsigned int elm_obj_gengrid_items_count(const Eo *obj);
 
@@ -512,7 +512,7 @@ EOAPI unsigned int elm_obj_gengrid_items_count(const Eo *obj);
  *
  * @return The item at the coordinates or @c null if none.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_at_xy_item_get(const Eo *obj, int x, int y, int *xposret, int *yposret);
 
@@ -529,7 +529,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_at_xy_item_get(const Eo *obj, int x, int 
  *
  * @return A handle to the item added or @c null on errors.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_append(Eo *obj, const Elm_Gengrid_Item_Class *itc, const void *data, Evas_Smart_Cb func, const void *func_data);
 
@@ -546,7 +546,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_append(Eo *obj, const Elm_Gengrid_It
  *
  * @return A handle to the item added or @c null on errors.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_prepend(Eo *obj, const Elm_Gengrid_Item_Class *itc, const void *data, Evas_Smart_Cb func, const void *func_data);
 
@@ -558,7 +558,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_prepend(Eo *obj, const Elm_Gengrid_I
  * See @ref elm_gengrid_item_del to remove just one item.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_clear(Eo *obj);
 
@@ -580,7 +580,7 @@ EOAPI void elm_obj_gengrid_clear(Eo *obj);
  *
  * @return A handle to the item added or @c null on errors.
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_sorted_insert(Eo *obj, const Elm_Gengrid_Item_Class *itc, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
@@ -607,7 +607,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_sorted_insert(Eo *obj, const Elm_Gen
  *
  * @since 1.11
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_search_by_text_item_get(Eo *obj, Elm_Widget_Item *item_to_search_from, const char *part_name, const char *pattern, Elm_Glob_Match_Flags flags);
 
@@ -619,7 +619,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_search_by_text_item_get(Eo *obj, Elm_Widg
  *
  * @since 1.10
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_reorder_mode_start(Eo *obj, Ecore_Pos_Map tween_mode);
 
@@ -627,7 +627,7 @@ EOAPI void elm_obj_gengrid_reorder_mode_start(Eo *obj, Ecore_Pos_Map tween_mode)
  *
  * @since 1.10
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 EOAPI void elm_obj_gengrid_reorder_mode_stop(Eo *obj);
 
@@ -636,7 +636,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_REALIZED;
 /** Called when gengrid realized
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_REALIZED (&(_ELM_GENGRID_EVENT_REALIZED))
 
@@ -645,7 +645,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_UNREALIZED;
 /** Called when gengrid unrealized
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_UNREALIZED (&(_ELM_GENGRID_EVENT_UNREALIZED))
 
@@ -654,7 +654,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_INDEX_UPDATE;
 /** Called on gengrid index update
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_INDEX_UPDATE (&(_ELM_GENGRID_EVENT_INDEX_UPDATE))
 
@@ -662,7 +662,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_SCROLL_PAGE_CHANGED;
 
 /** Called when scroll page changed
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_SCROLL_PAGE_CHANGED (&(_ELM_GENGRID_EVENT_SCROLL_PAGE_CHANGED))
 
@@ -670,7 +670,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_EDGE_BOTTOM;
 
 /** Called when bottom edge is reached
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_EDGE_BOTTOM (&(_ELM_GENGRID_EVENT_EDGE_BOTTOM))
 
@@ -678,7 +678,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_EDGE_TOP;
 
 /** Called when top edge is reached
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_EDGE_TOP (&(_ELM_GENGRID_EVENT_EDGE_TOP))
 
@@ -686,7 +686,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_EDGE_RIGHT;
 
 /** Called when right edge is reached
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_EDGE_RIGHT (&(_ELM_GENGRID_EVENT_EDGE_RIGHT))
 
@@ -694,7 +694,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_EDGE_LEFT;
 
 /** Called when left edge is reached
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_EDGE_LEFT (&(_ELM_GENGRID_EVENT_EDGE_LEFT))
 
@@ -703,7 +703,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_ITEM_FOCUSED;
 /** Called when item got focus
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_ITEM_FOCUSED (&(_ELM_GENGRID_EVENT_ITEM_FOCUSED))
 
@@ -712,7 +712,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_ITEM_UNFOCUSED;
 /** Called when item no longer has focus
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_ITEM_UNFOCUSED (&(_ELM_GENGRID_EVENT_ITEM_UNFOCUSED))
 
@@ -721,7 +721,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_ST
 /** Called when item reorder animation started
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_START (&(_ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_START))
 
@@ -730,7 +730,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_ST
 /** Called when item reorder animation stopped
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_STOP (&(_ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_STOP))
 
@@ -739,7 +739,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_ACTIVATED;
 /** Called when gengrid got activated
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_ACTIVATED (&(_ELM_GENGRID_EVENT_ACTIVATED))
 
@@ -748,7 +748,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_HIGHLIGHTED;
 /** Called when gengrid is highlighted
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_HIGHLIGHTED (&(_ELM_GENGRID_EVENT_HIGHLIGHTED))
 
@@ -757,7 +757,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_UNHIGHLIGHTED;
 /** Called when gengrid is no longer highlighted
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_UNHIGHLIGHTED (&(_ELM_GENGRID_EVENT_UNHIGHLIGHTED))
 
@@ -766,7 +766,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_RELEASED;
 /** Called when gengrid is released
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_RELEASED (&(_ELM_GENGRID_EVENT_RELEASED))
 
@@ -775,7 +775,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENGRID_EVENT_MOVED;
 /** Called when gengrid item moved
  * @return Efl_Object *
  *
- * @ingroup Elm_Gengrid
+ * @ingroup Elm_Gengrid_Group
  */
 #define ELM_GENGRID_EVENT_MOVED (&(_ELM_GENGRID_EVENT_MOVED))
 

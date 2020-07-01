@@ -68,7 +68,7 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_autosave_get(const Evas_Obj
  *
  * @deprecated
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 
 EINA_DEPRECATED EAPI void         elm_scrolled_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly);
@@ -81,7 +81,7 @@ EINA_DEPRECATED EAPI void         elm_scrolled_entry_cnp_textonly_set(Evas_Objec
  *
  * @deprecated
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj);
@@ -680,7 +680,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_get(const Evas_Ob
  *
  * @deprecated Use elm_scroller_policy_set() instead.
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
 
@@ -696,7 +696,7 @@ EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_S
  *
  * @deprecated Use elm_scroller_bounce_set() instead.
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -709,7 +709,7 @@ EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bou
  *
  * @deprecated Use elm_scroller_bounce_get() instead.
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EINA_DEPRECATED EAPI void elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 

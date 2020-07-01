@@ -342,7 +342,7 @@ typedef enum
 /** Defines if the item is of any special type (has subitems or it's the index
  * of a group), or is just a simple item.
  *
- * @ingroup Elm_Genlist_Item
+ * @ingroup Elm_Genlist_Item_Group
  */
 typedef enum
 {
@@ -359,7 +359,7 @@ typedef enum
 /** Defines the type of the item part Used while updating item's parts It can
  * be used at updating multi fields.
  *
- * @ingroup Elm_Genlist_Item
+ * @ingroup Elm_Genlist_Item_Group
  */
 typedef enum
 {
@@ -371,7 +371,7 @@ typedef enum
 
 /** Defines where to position the item in the genlist.
  *
- * @ingroup Elm_Genlist_Item
+ * @ingroup Elm_Genlist_Item_Group
  */
 typedef enum
 {
@@ -389,7 +389,7 @@ typedef enum
 
 /** Defines where to position the item in the genlist.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 typedef enum
 {
@@ -407,7 +407,7 @@ typedef enum
 /** Defines the type of the item part Used while updating item's parts. It can
  * be used at updating multi fields.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 typedef enum
 {

@@ -13,9 +13,17 @@ typedef Eo Elm_Ctxpopup_Item;
 
 
 #endif
-/** Elementary context popup item class
+/**
+ * Elementary context popup item class
  *
- * @ingroup Elm_Ctxpopup_Item
+ * @defgroup Elm_Ctxpopup_Item_Group
+ * @ingroup Elm_Ctxpopup_Group
+ */
+
+/**
+ * @brief Get the context popup item class
+ *
+ * @ingroup Elm_Ctxpopup_Item_Group
  */
 #define ELM_CTXPOPUP_ITEM_CLASS elm_ctxpopup_item_class_get()
 
@@ -31,7 +39,7 @@ EWAPI const Efl_Class *elm_ctxpopup_item_class_get(void);
  * @return The item before the object in its parent's list. If there is no
  * previous item or in case of error, @c null is returned.
  *
- * @ingroup Elm_Ctxpopup_Item
+ * @ingroup Elm_Ctxpopup_Item_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_prev_get(const Eo *obj);
 
@@ -45,7 +53,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_prev_get(const Eo *obj);
  * @return The item after the object in its parent's list. If there is no next
  * item or in case of error, @c null is returned.
  *
- * @ingroup Elm_Ctxpopup_Item
+ * @ingroup Elm_Ctxpopup_Item_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_next_get(const Eo *obj);
 
@@ -66,7 +74,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_next_get(const Eo *obj);
  * @param[in] obj The object.
  * @param[in] selected The selection state.
  *
- * @ingroup Elm_Ctxpopup_Item
+ * @ingroup Elm_Ctxpopup_Item_Group
  */
 EOAPI void elm_obj_ctxpopup_item_selected_set(Eo *obj, Eina_Bool selected);
 
@@ -79,7 +87,7 @@ EOAPI void elm_obj_ctxpopup_item_selected_set(Eo *obj, Eina_Bool selected);
  *
  * @return The selection state.
  *
- * @ingroup Elm_Ctxpopup_Item
+ * @ingroup Elm_Ctxpopup_Item_Group
  */
 EOAPI Eina_Bool elm_obj_ctxpopup_item_selected_get(const Eo *obj);
 
@@ -90,7 +98,7 @@ EOAPI Eina_Bool elm_obj_ctxpopup_item_selected_get(const Eo *obj);
  * @param[in] func Smart callback function
  * @param[in] data Data pointer
  *
- * @ingroup Elm_Ctxpopup_Item
+ * @ingroup Elm_Ctxpopup_Item_Group
  */
 EOAPI void elm_obj_ctxpopup_item_init(Eo *obj, Evas_Smart_Cb func, const void *data);
 

@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Gengrid Gengrid (Generic grid)
+ * @defgroup Elm_Gengrid_Group Gengrid (Generic grid)
  * @ingroup Elementary
  *
  * @image html gengrid_inheritance_tree.png
@@ -271,7 +271,7 @@
  */
 
 /**
- * @addtogroup Elm_Gengrid
+ * @addtogroup Elm_Gengrid_Group
  * @{
  */
 

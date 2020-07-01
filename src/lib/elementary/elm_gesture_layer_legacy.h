@@ -10,7 +10,7 @@
  * This does not activate the gesture layer. You have to
  * call elm_gesture_layer_attach() in order to 'activate' gesture-layer.
  *
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  */
 EAPI Evas_Object *elm_gesture_layer_add(Evas_Object *parent);
 
@@ -32,7 +32,7 @@ EAPI Evas_Object *elm_gesture_layer_add(Evas_Object *parent);
  *
  * @see elm_gesture_layer_tap_longpress_cb_del
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  */
 EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data);
 
@@ -49,6 +49,6 @@ EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_S
  *
  * @see elm_gesture_layer_tap_longpress_cb_add
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  */
 EAPI void elm_gesture_layer_tap_longpress_cb_del(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data);

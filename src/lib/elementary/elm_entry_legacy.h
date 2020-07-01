@@ -12,7 +12,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
 
@@ -24,7 +24,7 @@ EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
  *
  * @note Using this function bypasses text filters
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry);
 
@@ -35,7 +35,7 @@ EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry)
  * @param obj The entry object
  * @return The currently displayed text or NULL on failure
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
 
@@ -51,7 +51,7 @@ EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  *
  * @param[in] obj The entry object
  * @param[in] file The path to the file to load and save
@@ -66,7 +66,7 @@ EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, E
  * This function can be used to retrieve any file set on the entry for
  * edition, along with the format used to load and save it.
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  *
  * @param[in] obj The entry object
  * @param[out] file The path to the file to load and save
@@ -82,6 +82,6 @@ EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **
  * @ref elm_entry_textblock_get for more information.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  */
 EAPI void elm_entry_calc_force(Evas_Object *obj);

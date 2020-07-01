@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Ctxpopup Ctxpopup
+ * @defgroup Elm_Ctxpopup_Group Ctxpopup
  * @ingroup Elementary
  *
  * @image html ctxpopup_inheritance_tree.png
@@ -60,9 +60,13 @@
  * @li @ref elm_object_item_focus_get
  *
  * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
- * @{
+ *
  */
 
+/**
+ * @addtogroup Elm_Ctxpopup_Group
+ * @{
+ */
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elc_ctxpopup_legacy.h"
 #endif

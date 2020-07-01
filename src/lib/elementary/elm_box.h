@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Box Box
+ * @defgroup Elm_Box_Group Box
  * @ingroup Elementary
  *
  * @image html box_inheritance_tree.png

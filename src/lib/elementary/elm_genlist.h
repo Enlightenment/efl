@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Genlist Genlist (Generic list)
+ * @defgroup Elm_Genlist_Group Genlist (Generic list)
  * @ingroup Elementary
  *
  * @image html genlist_inheritance_tree.png
@@ -393,7 +393,7 @@
  */
 
 /**
- * @addtogroup Elm_Genlist
+ * @addtogroup Elm_Genlist_Group
  * @{
  */
 
