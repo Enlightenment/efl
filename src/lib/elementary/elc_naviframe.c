@@ -1088,6 +1088,13 @@ _on_item_push_finished(void *data,
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
+   /* If pushed item becomes top item, then do not hide pushed item view.
+    * If top item is deleted in "transition,finished" smart callback by user
+    * before this function is called, then pushed item becomes top item.
+    */
+   if (EO_OBJ(it) == elm_naviframe_top_item_get(WIDGET(it)))
+     return;
+
    evas_object_hide(VIEW(it));
 
    elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
