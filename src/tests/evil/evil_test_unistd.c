@@ -22,6 +22,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
 
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
@@ -109,7 +111,38 @@ EFL_START_TEST(evil_unistd_pipe)
 }
 EFL_END_TEST
 
+EFL_START_TEST(evil_unistd_ftruncate)
+{
+   FILE* f = fopen("foo.txt", "wb");
+   ck_assert(f);
+   fseek(f, 0L, SEEK_END);
+   ck_assert_int_eq(ftell(f), 0);
+
+   int fd = fileno(f);
+   int ret;
+
+   ret = ftruncate(fd, 16L);
+   ck_assert(ret >= 0);
+   fseek(f, 0L, SEEK_END);
+   ck_assert_int_eq(ftell(f), 16);
+
+   ret = ftruncate(fd, 8L);
+   ck_assert(ret >= 0);
+   fseek(f, 0L, SEEK_END);
+   ck_assert_int_eq(ftell(f), 8);
+
+   ret = ftruncate(fd, -8L);
+   ck_assert(ret < 0);
+   ck_assert_int_eq(errno, EINVAL);
+   fseek(f, 0L, SEEK_END);
+   ck_assert_int_eq(ftell(f), 8);
+
+   fclose(f);
+}
+EFL_END_TEST
+
 void evil_test_unistd(TCase *tc)
 {
    tcase_add_test(tc, evil_unistd_pipe);
+   tcase_add_test(tc, evil_unistd_ftruncate);
 }

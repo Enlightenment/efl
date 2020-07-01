@@ -23,6 +23,7 @@
 #include <process.h> // for _execvp (but not execvp), getpid
 #undef execvp 
 EVIL_API int execvp(const char *file, char *const argv[]);
+EVIL_API int ftruncate(int fd, off_t size);
 
 /* Values for the second argument to access.  These may be OR'd together.  */
 #define R_OK    4       /* Test for read permission.  */

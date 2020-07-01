@@ -25,6 +25,26 @@ execvp(const char *file, char *const argv[])
 LONGLONG _evil_time_freq;
 LONGLONG _evil_time_count;
 
+EVIL_API int
+ftruncate(int fd, off_t size)
+{
+   HANDLE file = (HANDLE)_get_osfhandle(fd);
+
+   if (SetFilePointer(file, (LONG)size, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+     {
+       _set_errno(EINVAL);
+       return -1;
+     }
+
+   if (!SetEndOfFile(file))
+     {
+       _set_errno(EIO);
+       return -1;
+     }
+
+    return 0;
+}
+
 /*
  * Time related functions
  *
