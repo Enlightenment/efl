@@ -954,6 +954,9 @@ EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl
  */
 EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Property_Reflection_Ops *reflection_table);
 
+
+EAPI unsigned int efl_class_offset(const Efl_Class *klass_id);
+
 /**
  * @brief Override Eo functions of this object.
  * @param ops The op description to override with.

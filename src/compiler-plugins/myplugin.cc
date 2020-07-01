@@ -1,13 +1,25 @@
 #include <stdio.h>
 #include "gcc-common.h"
 
+/*
+ * Why all this ?
+ *
+ * In eo we have super calls, these super calls already validated to have a valid obj pointer, and the pd pointer is already enough to calculate one, *without* the need to call eo again.
+ *
+ * How:
+ *
+ * - First of all, in eolian we are calculating the next call candidates for a overriden function, for them we are storing the name of the symbol *and* and class  providing it.
+ * - Additionally, eolian generates more symbols:
+ *    a) One symbol containing the offset over logical 0 address in pd's
+ *    b) For each mixin in the inheritance of the class, the offset to reach exactly *that* mixin
+ * - In the plugin here we are fetching all the calls of foo(efl_super(obj, XXX), aaa, bbb, ccc); then we are fetching from the eolian output what the actaul implementation for foo is, after the class XXX
+ * - Then we are replacing the foo call with the actaul implementation, 2 arguments for the calls are preprended (obj, pd - A + B) where A is the offset from XXX to logical 0, and B is the offset from B to logical 0.
+ *
+ */
+
 /* TODO:
- * Find all efl_super calls
- * Traverse back to find function calling it (foo)
- * Calculate the private data pointer diff
  * Replace foo(efl_super(obj, MY_CLASS),...) calls with the next lower level function for foo and
  * adjust private data with diff
- * Make eolian more expressive (We need the implemented methods of classes, accross the tree)
  */
 
 __visible int plugin_is_GPL_compatible;
@@ -139,7 +151,8 @@ static unsigned int eo_execute(void)
              //this here assumes a special tree_list structure
              tree attribute_arguments = TREE_VALUE(attribute);
              tree call = TREE_VALUE(attribute_arguments);
-             tree implementation = TREE_VALUE(TREE_CHAIN(attribute_arguments));
+             tree providing_class = TREE_VALUE(TREE_CHAIN(attribute_arguments));
+             tree implementation = TREE_VALUE(TREE_CHAIN(TREE_CHAIN(attribute_arguments)));
 
              if (!!strncmp(TREE_STRING_POINTER(call), c.called_api, strlen(c.called_api))) continue;
 
@@ -189,7 +202,7 @@ handle_user_attribute (tree *node, tree name, tree args,
 }
 
 static struct attribute_spec next_hop_attr =
-      { "register_next", 2, 2, true,  false, false,  true, handle_user_attribute, NULL};
+      { "register_next", 3, 3, true,  false, false,  true, handle_user_attribute, NULL};
 
 static void
 register_next_hop_attribute (void *event_data, void *data)

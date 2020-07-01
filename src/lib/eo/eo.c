@@ -1807,6 +1807,23 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    return _eo_class_id_get(klass);
 }
 
+EAPI unsigned int
+efl_class_offset(const Efl_Class *klass_id)
+{
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, 0);
+
+   return klass->data_offset;
+}
+
+EAPI unsigned int
+efl_class_mixin_offset(const Efl_Class *klass_id, const Efl_Class *mixin_id)
+{
+   /* FIXME */
+
+   return -1;
+}
+
+
 EAPI Eina_Bool
 efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 {
