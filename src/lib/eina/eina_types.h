@@ -264,8 +264,8 @@
 #  define EINA_FORMAT(fmt)
 #  define EINA_CONST
 #  define EINA_NOINSTRUMENT
-#  define EINA_UNLIKELY(exp) exp
-#  define EINA_LIKELY(exp)   exp
+#  define EINA_UNLIKELY(exp) (exp)
+#  define EINA_LIKELY(exp)   (exp)
 #  define EINA_SENTINEL
 #  define EINA_FALLTHROUGH
 #  define EINA_PREFETCH(arg) ((void) (arg))
@@ -290,8 +290,8 @@
 # define EINA_FORMAT(fmt)
 # define EINA_CONST
 # define EINA_NOINSTRUMENT
-# define EINA_UNLIKELY(exp) exp
-# define EINA_LIKELY(exp)   exp
+# define EINA_UNLIKELY(exp) (exp)
+# define EINA_LIKELY(exp)   (exp)
 # define EINA_SENTINEL
 # define EINA_FALLTHROUGH
 # define EINA_PREFETCH(arg) ((void) (arg))
@@ -320,8 +320,8 @@
 #  define EINA_CONST
 # endif
 # define EINA_NOINSTRUMENT
-# define EINA_UNLIKELY(exp) exp
-# define EINA_LIKELY(exp)   exp
+# define EINA_UNLIKELY(exp) (exp)
+# define EINA_LIKELY(exp)   (exp)
 # define EINA_SENTINEL
 # define EINA_FALLTHROUGH
 # define EINA_PREFETCH(arg) ((void) (arg))
@@ -424,7 +424,7 @@
  * processor architectures can then optimize the more likely path.
  * @param[in] exp The expression to be used.
  */
-# define EINA_UNLIKELY(exp) exp
+# define EINA_UNLIKELY(exp) (exp)
 
 /**
  * @def EINA_LIKELY
@@ -432,7 +432,7 @@
  * processor architectures can then optimize the more likely path.
  * @param[in] exp The expression to be used.
  */
-# define EINA_LIKELY(exp)   exp
+# define EINA_LIKELY(exp)   (exp)
 
 /**
  * @def EINA_SENTINEL
