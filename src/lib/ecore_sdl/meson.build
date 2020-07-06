@@ -8,6 +8,7 @@ ecore_sdl_src = files([
 
 ecore_sdl_header_src = [
   'Ecore_Sdl.h',
+  'ecore_sdl_api.h',
   'Ecore_Sdl_Keys.h'
 ]
 
@@ -18,7 +19,7 @@ ecore_sdl_lib = library('ecore_sdl',
     dependencies: [ecore_sdl_deps, ecore_sdl_pub_deps, ecore_sdl_ext_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_SDL_BUILD'],
 )
 
 ecore_sdl = declare_dependency(

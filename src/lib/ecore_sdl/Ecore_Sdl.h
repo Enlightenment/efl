@@ -1,31 +1,7 @@
 #ifndef _ECORE_SDL_H
 #define _ECORE_SDL_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_sdl_api.h>
 
 /**
  * @file
@@ -36,10 +12,10 @@
 extern "C" {
 #endif
 
-EAPI extern int ECORE_SDL_EVENT_GOT_FOCUS;
-EAPI extern int ECORE_SDL_EVENT_LOST_FOCUS;
-EAPI extern int ECORE_SDL_EVENT_RESIZE;
-EAPI extern int ECORE_SDL_EVENT_EXPOSE;
+ECORE_SDL_API extern int ECORE_SDL_EVENT_GOT_FOCUS;
+ECORE_SDL_API extern int ECORE_SDL_EVENT_LOST_FOCUS;
+ECORE_SDL_API extern int ECORE_SDL_EVENT_RESIZE;
+ECORE_SDL_API extern int ECORE_SDL_EVENT_EXPOSE;
 
 typedef struct _Ecore_Sdl_Event_Video_Resize Ecore_Sdl_Event_Video_Resize;
 struct _Ecore_Sdl_Event_Video_Resize
@@ -55,9 +31,9 @@ struct _Ecore_Sdl_Event_Window
    unsigned int    windowID;
 };
 
-EAPI int        ecore_sdl_init(const char *name);
-EAPI int        ecore_sdl_shutdown(void);
-EAPI void       ecore_sdl_feed_events(void);
+ECORE_SDL_API int        ecore_sdl_init(const char *name);
+ECORE_SDL_API int        ecore_sdl_shutdown(void);
+ECORE_SDL_API void       ecore_sdl_feed_events(void);
 
   /* The following data structure have been deprecated since a long time */
 
@@ -119,8 +95,5 @@ struct _Ecore_Sdl_Event_Mouse_Wheel /** SDL Mouse Wheel event */
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
