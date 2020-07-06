@@ -711,6 +711,46 @@ _fash_gl_add(Fash_Glyph *fash, int item, RGBA_Font_Glyph *glyph)
    fash->bucket[grp]->bucket[maj]->item[min] = glyph;
 }
 
+static void evas_font_glyph_load(RGBA_Font_Glyph *fg)
+{
+   if(fg->glyph) return;
+
+   RGBA_Font_Int *fi = fg->fi;
+   FT_UInt idx = fg->index;
+   FT_Error error;
+
+   const FT_Int32 hintflags[3] =
+     { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
+   static FT_Matrix transform = {0x10000, _EVAS_FONT_SLANT_TAN * 0x10000,
+        0x00000, 0x10000};
+
+   evas_common_font_int_reload(fi);
+   FTLOCK();
+   error = FT_Load_Glyph(fi->src->ft.face, idx,
+                         (FT_HAS_COLOR(fi->src->ft.face) ?
+                          (FT_LOAD_COLOR | hintflags[fi->hinting]) :
+                          (FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP | hintflags[fi->hinting])));
+
+   FTUNLOCK();
+   if (error)
+     {
+        return;
+     }
+
+   /* Transform the outline of Glyph according to runtime_rend. */
+   if (fi->runtime_rend & FONT_REND_SLANT)
+     FT_Outline_Transform(&fi->src->ft.face->glyph->outline, &transform);
+   /* Embolden the outline of Glyph according to rundtime_rend. */
+   if (fi->runtime_rend & FONT_REND_WEIGHT)
+     FT_GlyphSlot_Embolden(fi->src->ft.face->glyph);
+
+   FTLOCK();
+   error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
+   FTUNLOCK();
+
+   return;
+}
+
 EAPI RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 {
@@ -749,47 +789,59 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 
    /* Transform the outline of Glyph according to runtime_rend. */
    if (fi->runtime_rend & FONT_REND_SLANT)
-      FT_Outline_Transform(&fi->src->ft.face->glyph->outline, &transform);
+     FT_Outline_Transform(&fi->src->ft.face->glyph->outline, &transform);
    /* Embolden the outline of Glyph according to rundtime_rend. */
    if (fi->runtime_rend & FONT_REND_WEIGHT)
-      FT_GlyphSlot_Embolden(fi->src->ft.face->glyph);
+     FT_GlyphSlot_Embolden(fi->src->ft.face->glyph);
 
    fg = calloc(1, sizeof(RGBA_Font_Glyph));
    if (!fg) return NULL;
 
-   FTLOCK();
-   error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
-   FTUNLOCK();
-   if (error)
+   if (FT_HAS_COLOR(fi->src->ft.face))
      {
-        free(fg);
-        if (!fi->fash) fi->fash = _fash_gl_new();
-        if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
-        return NULL;
-     }
+        fg->advance.x = fi->src->ft.face->glyph->advance.x * 1024;
+        fg->advance.y = fi->src->ft.face->glyph->advance.y * 1024;
 
-     {
-        FT_BBox outbox;
-        FT_Glyph_Get_CBox(fg->glyph,
-              ((fi->hinting == 0) ? FT_GLYPH_BBOX_UNSCALED :
-               FT_GLYPH_BBOX_GRIDFIT),
-              &outbox);
-        fg->width = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMax - outbox.xMin);
-        fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMin);
-        fg->y_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.yMax);
+        FT_GlyphSlot slot = fi->src->ft.face->glyph;
+        fg->width = EVAS_FONT_ROUND_26_6_TO_INT(slot->metrics.width);
+        fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(slot->metrics.horiBearingX);
+        fg->y_bear = EVAS_FONT_ROUND_26_6_TO_INT(slot->metrics.horiBearingY);
 
         if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
           {
-             if (FT_HAS_COLOR(fi->src->ft.face) &&
-                 fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
+             if (fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
                {
-                  fg->glyph->advance.x *= fi->scale_factor;
-                  fg->glyph->advance.y *= fi->scale_factor;
+                  fg->advance.x *= fi->scale_factor;
+                  fg->advance.y *= fi->scale_factor;
                   fg->width *= fi->scale_factor;
                   fg->x_bear *= fi->scale_factor;
                   fg->y_bear *= fi->scale_factor;
                }
           }
+     }
+   else
+     {
+        FTLOCK();
+        error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
+        FTUNLOCK();
+        if (error)
+          {
+             free(fg);
+             if (!fi->fash) fi->fash = _fash_gl_new();
+             if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
+             return NULL;
+          }
+        fg->advance.x = fg->glyph->advance.x;
+        fg->advance.y = fg->glyph->advance.y;
+
+        FT_BBox outbox;
+        FT_Glyph_Get_CBox(fg->glyph,
+              ((fi->hinting == 0) ? FT_GLYPH_BBOX_UNSCALED :
+              FT_GLYPH_BBOX_GRIDFIT),
+              &outbox);
+        fg->width = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMax - outbox.xMin);
+        fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMin);
+        fg->y_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.yMax);
      }
 
    fg->index = idx;
@@ -813,7 +865,7 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
    /* no cserve2 case */
    if (fg->glyph_out)
      return EINA_TRUE;
-
+   evas_font_glyph_load(fg);
    FTLOCK();
    error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
    if (error)

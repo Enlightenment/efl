@@ -1104,7 +1104,7 @@ _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
              if (is_replacement)
                {
                   /* Update the advance accordingly */
-                  adjust_x += (pen_x + (fg->glyph->advance.x >> 16)) -
+                  adjust_x += (pen_x + (fg->advance.x >> 16)) -
                      gl_itr->pen_after;
                }
              pen_x = gl_itr->pen_after;
@@ -1198,7 +1198,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
         gl_itr->index = idx;
         gl_itr->x_bear = fg->x_bear;
         gl_itr->y_bear = fg->y_bear;
-        adv = fg->glyph->advance.x >> 10;
+        adv = fg->advance.x >> 10;
         gl_itr->width = fg->width;
 
         if (EVAS_FONT_CHARACTER_IS_INVISIBLE(_gl))
