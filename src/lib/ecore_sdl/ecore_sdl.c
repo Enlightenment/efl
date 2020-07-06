@@ -22,10 +22,10 @@ struct _Ecore_SDL_Pressed
    SDL_Keycode key;
 };
 
-EAPI int ECORE_SDL_EVENT_GOT_FOCUS = 0;
-EAPI int ECORE_SDL_EVENT_LOST_FOCUS = 0;
-EAPI int ECORE_SDL_EVENT_RESIZE = 0;
-EAPI int ECORE_SDL_EVENT_EXPOSE = 0;
+ECORE_SDL_API int ECORE_SDL_EVENT_GOT_FOCUS = 0;
+ECORE_SDL_API int ECORE_SDL_EVENT_LOST_FOCUS = 0;
+ECORE_SDL_API int ECORE_SDL_EVENT_RESIZE = 0;
+ECORE_SDL_API int ECORE_SDL_EVENT_EXPOSE = 0;
 
 static int _ecore_sdl_init_count = 0;
 static Eina_Rbtree *repeat = NULL;
@@ -61,7 +61,7 @@ _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
  *          been initialised without being shut down.
  * @ingroup Ecore_SDL_Library_Group
  */
-EAPI int
+ECORE_SDL_API int
 ecore_sdl_init(const char *name EINA_UNUSED)
 {
    if(++_ecore_sdl_init_count != 1)
@@ -92,7 +92,7 @@ ecore_sdl_init(const char *name EINA_UNUSED)
  *             being shut down.
  * @ingroup Ecore_SDL_Library_Group
  */
-EAPI int
+ECORE_SDL_API int
 ecore_sdl_shutdown(void)
 {
    if (--_ecore_sdl_init_count != 0)
@@ -161,7 +161,7 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
  * Poll SDL for mouse, keyboard, and window events, and add corresponding events to ecore.
  * @ingroup Ecore_SDL_Library_Group
  */
-EAPI void
+ECORE_SDL_API void
 ecore_sdl_feed_events(void)
 {
    SDL_Event    event;
