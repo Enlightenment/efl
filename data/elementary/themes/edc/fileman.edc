@@ -1382,7 +1382,7 @@ group { name: "e/fileman/default/progress";
       part { name: "close"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "close_event";
             FIXED_SIZE(15, 15)
             fixed: 1 1;

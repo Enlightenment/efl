@@ -1,5 +1,4 @@
 group { name: "elm/radio/base/default";
-   images.image: "radio.png" COMP;
 #define SELECTED 8
    script {
       BUTTONMODE_SCRIPT
@@ -97,6 +96,7 @@ group { name: "elm/radio/base/default";
          }
       }
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
@@ -108,6 +108,7 @@ group { name: "elm/radio/base/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             offscale;
             visible: 0;
+            offscale;
          }
          desc { "pressed"; inherit;
          }
@@ -115,12 +116,13 @@ group { name: "elm/radio/base/default";
          }
       }
       part { name: "ck_check";
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 0;
             rel.to: "base";
-            image.normal: "radio.png";
-            min: 13 13;
-            max: 13 13;
+            image.normal: "i-radio";
+            min: 15 15;
+            max: 15 15;
             color: 0 0 0 64;
          }
          description { state: "pressed" 0.0;

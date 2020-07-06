@@ -835,8 +835,6 @@ group { name: "e/modules/clock/calendar/day";
 
 group { name: "e/modules/clock/calendar";
    alias: "e/gadget/clock/calendar";
-   images.image: "calendar_prev.png" COMP;
-   images.image: "calendar_next.png" COMP;
    parts {
       part { name: "e.text.month"; type: TEXT;
          mouse_events: 1;
@@ -876,12 +874,13 @@ group { name: "e/modules/clock/calendar";
          }
       }
       part { name: "previm"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             min: 15 15;
             max: 15 15;
             rel.to: "prev";
-            image.normal: "calendar_prev.png";
+            image.normal: "i-arrow-l";
             color: 160 160 160 255;
          }
          description { state: "pressed" 0.0;
@@ -915,12 +914,13 @@ group { name: "e/modules/clock/calendar";
          }
       }
       part { name: "nextim"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             min: 15 15;
             max: 15 15;
             rel.to: "next";
-            image.normal: "calendar_next.png";
+            image.normal: "i-arrow-r";
             color: 160 160 160 255;
          }
          description { state: "pressed" 0.0;

@@ -1,5 +1,4 @@
 group { name: "elm/check/base/default";
-   images.image: "check.png" COMP;
    script {
       BUTTONMODE_SCRIPT
    }
@@ -111,12 +110,13 @@ group { name: "elm/check/base/default";
       }
       part { name: "ck_check";
          clip_to: "ck_selected";
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 0;
             rel.to: "base";
-            image.normal: "check.png";
-            min: 13 13;
-            max: 13 13;
+            image.normal: "i-check";
+            min: 15 15;
+            max: 15 15;
             visible: 0;
             color: 160 160 160 255;
          }
@@ -210,27 +210,22 @@ group { name: "elm/check/base/default";
       }
    }
    programs {
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
       }
-      program {
-         signal: "elm,state,check,on"; source: "elm";
+      program { signal: "elm,state,check,on"; source: "elm";
          action:  STATE_SET "selected" 0.0;
          target: "ck_check";
       }
-      program {
-         signal: "elm,state,check,off"; source: "elm";
+      program { signal: "elm,state,check,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "ck_check";
       }
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,press" "elm";
          after: "button_click_anim";
       }
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          action: STATE_SET "pressed" 0.0;
          target: "ck_check";
       }
@@ -242,8 +237,7 @@ group { name: "elm/check/base/default";
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
          after: "button_unclick_anim";
       }
-      program {
-         signal: "mouse,up,1"; source: "event";
+      program { signal: "mouse,up,1"; source: "event";
          action: STATE_SET "default" 0.0;
          target: "ck_check";
       }
@@ -261,8 +255,7 @@ group { name: "elm/check/base/default";
          action: STATE_SET "default" 0.0;
          target: "ck_check";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name: "button_text_visible";
@@ -297,13 +290,11 @@ group { name: "elm/check/base/default";
          signal: "elm,state,enabled"; source: "elm";
          script { flag_unset(DISABLE); }
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action:  STATE_SET "disabled" 0.0;
          target: "ck_selected";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "ck_selected";
       }

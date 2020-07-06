@@ -27,8 +27,11 @@ I060("i-arrow-d", "arrow-d")
 I060("i-reload", "reload")
 I060("i-heart", "heart")
 I060("i-close", "close")
-// close
-// lock
+I060("i-move", "move")
+I060("i-resize", "move")
+I060("i-lock", "lock")
+I060("i-check", "check")
+I060("i-radio", "radio")
 // lock double
 // unlocked
 // exclam
@@ -44,15 +47,10 @@ I060("i-close", "close")
 // system
 // border
 // kill
-// maximize
-// minimize
 // more
-// move
 // pager
 // pin
 // properties
-// remember
-// resize
 // send to
 // shaded
 // skip
@@ -60,7 +58,6 @@ I060("i-close", "close")
 // stack norm
 // stack top
 // chat
-// check
 // clock
 // delete
 // edit
@@ -92,13 +89,6 @@ I060("i-close", "close")
 // unpair
 // more
 // cancel
-// sys lock
-// sys halt
-// sys reboot
-// sys suspend
-// sys hibernate
-// sys lgout
-// system
 // center
 // fill
 // pan
@@ -180,8 +170,15 @@ I160("i-folder", "efm-folder")
 I160("i-home", "efm-home")
 I160("i-temp", "efm-temp")
 
+I160("i-system", "system")
+I160("i-system-restart", "system-restart")
 I160("i-system-shutdown", "system-shutdown")
 I160("i-system-suspend", "system-suspend")
+I160("i-system-suspend-hibernate", "system-suspend-hibernate")
+I160("i-system-lock", "system-lock")
+I160("i-system-logout", "system-logout")
+
+I160("i-enlightenment", "enlightenment")
 
 ///////////////////////////////////////////////////////////////////////////////
 // misc larger icons

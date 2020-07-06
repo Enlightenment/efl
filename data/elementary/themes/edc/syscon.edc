@@ -92,7 +92,6 @@ group { name: "e/widgets/syscon/item/button";
       }
       part { name: "icon_clip"; type: RECT;
          description { state: "default" 0.0;
-            color: 160 160 160 255;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -211,13 +210,12 @@ group { name: "e/widgets/syscon/item/button";
 }
 
 group { name: "e/modules/syscon/button";
-   images.image: "icon_system-shutdown.png" COMP;
    parts {
       part { name: "base";
          description { state: "default" 0.0;
             rel1.relative: 0.1 0.1;
             rel2.relative: 0.9 0.9;
-            image.normal: "icon_system-shutdown.png";
+            image.normal: "i-system-shutdown";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             color: 160 160 160 255;
          }
@@ -227,7 +225,7 @@ group { name: "e/modules/syscon/button";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 255;
+            color: 200 200 200 255;
          }
       }
    }

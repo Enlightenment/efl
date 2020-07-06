@@ -1,5 +1,4 @@
 group { name: "e/widgets/check";
-   images.image: "check.png" COMP;
    parts {
       part { name: "base"; type: RECT;
          scale: 1;
@@ -30,11 +29,10 @@ group { name: "e/widgets/check";
       part { name: "indicator"; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "check.png";
-            min: 13 13;
-            max: 13 13;
+            rel.to: "base";
+            image.normal: "i-check";
+            min: 15 15;
+            max: 15 15;
             visible: 0;
             color: 160 160 160 255;
          }
@@ -85,42 +83,35 @@ group { name: "e/widgets/check";
       }
    }
    programs {
-      program {
-         signal: "e,state,checked"; source: "e";
+      program { signal: "e,state,checked"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "indicator";
       }
-      program {
-         signal: "e,state,unchecked"; source: "e";
+      program { signal: "e,state,unchecked"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "indicator";
       }
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          action: STATE_SET "pressed" 0.0;
 //         target: "indicator";
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,up,1"; source: "event";
+      program { signal: "mouse,up,1"; source: "event";
          action: STATE_SET "default" 0.0;
 //         target: "indicator";
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "e,action,toggle" "";
       }
-      program {
-         signal: "e,state,disabled"; source: "e";
+      program { signal: "e,state,disabled"; source: "e";
          action: STATE_SET "disabled" 0.0;
          target: "base";
          target: "clip";
          target: "e.text.label";
          target: "event";
       }
-      program {
-         signal: "e,state,enabled"; source: "e";
+      program { signal: "e,state,enabled"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "clip";
