@@ -956,6 +956,7 @@ EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Obje
 
 
 EAPI unsigned int efl_class_offset(const Efl_Class *klass_id);
+EAPI unsigned int efl_class_mixin_offset(const Efl_Class *klass_id, const Efl_Class *mixin_id);
 
 /**
  * @brief Override Eo functions of this object.

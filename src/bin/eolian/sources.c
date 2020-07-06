@@ -995,7 +995,7 @@ _gen_reflop(const Eolian_Function *fid, Eina_Strbuf *buf, const char *cnamel, Ei
 }
 
 static void
-_gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh)
+_gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh, Eina_Array *call_chain)
 {
    char *cnamel = NULL, *cnameu = NULL;
    eo_gen_class_names_get(cl, NULL, &cnameu, &cnamel);
@@ -1083,7 +1083,30 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh)
         eina_strbuf_append(buf, "   };\n");
         eina_strbuf_append(buf, "   ropsp = &rops;\n\n");
      }
-
+   /* generate unsigned int field that will contain the pd offset */
+   {
+      if (eolian_class_type_get(cl) == EOLIAN_CLASS_REGULAR || eolian_class_type_get(cl) == EOLIAN_CLASS_ABSTRACT)
+        {
+           Eina_Strbuf *name = eina_strbuf_new();
+           eina_strbuf_append_printf(name, "%s_pd_offset = efl_class_offset(klass);\n", eolian_class_c_name_get(cl)/*, eolian_class_c_get_function_name_get(cl)*/);
+           eina_strbuf_tolower(name);
+           eina_strbuf_append(buf, "#ifdef COMPILER_PLUGIN_REGISTER_NEXT_SUPPORT\n");
+           eina_strbuf_append_buffer(buf, name);
+           eina_strbuf_reset(name);
+           for (unsigned int i = 0; i < eina_array_count_get(call_chain); ++i)
+             {
+                Eolian_Class *called = eina_array_data_get(call_chain, i);
+                if (eolian_class_type_get(called) != EOLIAN_CLASS_MIXIN)
+                  break;
+                eina_strbuf_append_printf(name, "%s_%s_pd_offset = efl_class_mixin_offset(klass, %s());\n", eolian_class_c_name_get(cl), eolian_class_c_name_get(called), /*eolian_class_c_macro_get(cl),*/ eolian_class_c_get_function_name_get(called));
+                eina_strbuf_tolower(name);
+                eina_strbuf_append_buffer(buf, name);
+                eina_strbuf_reset(name);
+             }
+           eina_strbuf_append(buf, "#endif\n");
+           eina_strbuf_free(name);
+        }
+   }
    eina_strbuf_append(buf, "   return efl_class_functions_set(klass, opsp, ropsp);\n");
 
    eina_strbuf_free(ops);
@@ -1284,7 +1307,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    }
 
    /* class initializer - contains method defs */
-   _gen_initializer(cl, buf, refh);
+   _gen_initializer(cl, buf, refh, call_chain);
    eina_hash_free(refh);
 
    /* class description */
