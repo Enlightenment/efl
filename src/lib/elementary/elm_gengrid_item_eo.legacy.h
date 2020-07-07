@@ -15,6 +15,11 @@ typedef Eo Elm_Gengrid_Item;
 #endif
 
 /**
+ * @defgroup Elm_Gengrid_Item_Group
+ * @ingroup Elm_Gengrid_Group
+ */
+
+/**
  * @brief Get the previous item in a gengrid widget's internal list of items,
  * given a handle to one of those items.
  *

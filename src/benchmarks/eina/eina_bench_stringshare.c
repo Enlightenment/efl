@@ -139,14 +139,14 @@ eina_bench_ecore_job(int request)
    unsigned int j;
    int i;
 
-   ecore_string_init();
+   //ecore_string_init();
 
    for (i = 0; i < request; ++i)
      {
         char build[64] = "string_";
 
         eina_convert_xtoa(i, build + 7);
-        tmp = ecore_string_instance(build);
+        //tmp = ecore_string_instance(build);
      }
 
    srand(time(NULL));
@@ -157,13 +157,13 @@ eina_bench_ecore_job(int request)
            char build[64] = "string_";
 
            eina_convert_xtoa(rand() % request, build + 7);
-           tmp = ecore_string_instance(build);
+           //tmp = ecore_string_instance(build);
         }
 
    /* Suppress warnings as we really don't want to do anything. */
    (void) tmp;
 
-   ecore_string_shutdown();
+   //ecore_string_shutdown();
 }
 
 void eina_bench_stringshare(Eina_Benchmark *bench)

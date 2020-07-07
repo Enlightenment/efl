@@ -13,9 +13,17 @@ typedef Eo Elm_Gengrid_Item;
 
 
 #endif
-/** Elementary gengrid item class
+/**
+ * Elementary gengrid item class
  *
- * @ingroup Elm_Gengrid_Item
+ * @defgroup Elm_Gengrid_Item_Group
+ * @ingroup Elm_Gengrid_Group
+ */
+
+/**
+ * @brief Get gengrid item class
+ *
+ * @ingroup Elm_Gengrid_Item_Group
  */
 #define ELM_GENGRID_ITEM_CLASS elm_gengrid_item_class_get()
 
@@ -31,7 +39,7 @@ EWAPI const Efl_Class *elm_gengrid_item_class_get(void);
  *
  * @return The item before @c item, or @c NULL if there's none (and on errors)
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_prev_get(const Eo *obj);
 
@@ -45,7 +53,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_prev_get(const Eo *obj);
  *
  * @return The item after @c item, or @c NULL if there's none (and on errors)
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI Elm_Widget_Item *elm_obj_gengrid_item_next_get(const Eo *obj);
 
@@ -63,7 +71,7 @@ EOAPI Elm_Widget_Item *elm_obj_gengrid_item_next_get(const Eo *obj);
  * @param[in] selected The selected state ($true selected, @c false not
  * selected)
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_selected_set(Eo *obj, Eina_Bool selected);
 
@@ -81,7 +89,7 @@ EOAPI void elm_obj_gengrid_item_selected_set(Eo *obj, Eina_Bool selected);
  *
  * @return The selected state ($true selected, @c false not selected)
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI Eina_Bool elm_obj_gengrid_item_selected_get(const Eo *obj);
 
@@ -95,7 +103,7 @@ EOAPI Eina_Bool elm_obj_gengrid_item_selected_get(const Eo *obj);
  *
  * @return Gengrid Item class for the given item
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI const Elm_Gengrid_Item_Class *elm_obj_gengrid_item_class_get(const Eo *obj);
 
@@ -106,7 +114,7 @@ EOAPI const Elm_Gengrid_Item_Class *elm_obj_gengrid_item_class_get(const Eo *obj
  *
  * @return The position inside the list of item.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI int elm_obj_gengrid_item_index_get(const Eo *obj);
 
@@ -121,7 +129,7 @@ EOAPI int elm_obj_gengrid_item_index_get(const Eo *obj);
  * @param[out] x Pointer to variable to store the item's <b>row number</b>.
  * @param[out] y Pointer to variable to store the item's <b>column number</b>.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_pos_get(const Eo *obj, unsigned int *x, unsigned int *y);
 
@@ -147,7 +155,7 @@ EOAPI void elm_obj_gengrid_item_pos_get(const Eo *obj, unsigned int *x, unsigned
  * @param[in] obj The object.
  * @param[in] mode The selected mode
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_select_mode_set(Eo *obj, Elm_Object_Select_Mode mode);
 
@@ -174,7 +182,7 @@ EOAPI void elm_obj_gengrid_item_select_mode_set(Eo *obj, Elm_Object_Select_Mode 
  *
  * @return The selected mode
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI Elm_Object_Select_Mode elm_obj_gengrid_item_select_mode_get(const Eo *obj);
 
@@ -196,7 +204,7 @@ EOAPI Elm_Object_Select_Mode elm_obj_gengrid_item_select_mode_get(const Eo *obj)
  *
  * @since 1.19
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_custom_size_set(Eo *obj, int w, int h);
 
@@ -215,7 +223,7 @@ EOAPI void elm_obj_gengrid_item_custom_size_set(Eo *obj, int w, int h);
  *
  * @since 1.19
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_custom_size_get(const Eo *obj, int *w, int *h);
 
@@ -229,7 +237,7 @@ EOAPI void elm_obj_gengrid_item_custom_size_get(const Eo *obj, int *w, int *h);
  * @param[in] obj The object.
  * @param[in] type Where to position the item in the viewport.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_show(Eo *obj, Elm_Gengrid_Item_Scrollto_Type type);
 
@@ -244,7 +252,7 @@ EOAPI void elm_obj_gengrid_item_show(Eo *obj, Elm_Gengrid_Item_Scrollto_Type typ
  * @param[in] obj The object.
  * @param[in] type Where to position the item in the viewport.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_bring_in(Eo *obj, Elm_Gengrid_Item_Scrollto_Type type);
 
@@ -256,7 +264,7 @@ EOAPI void elm_obj_gengrid_item_bring_in(Eo *obj, Elm_Gengrid_Item_Scrollto_Type
  * changed and you want the changes to be reflected.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_update(Eo *obj);
 
@@ -277,7 +285,7 @@ EOAPI void elm_obj_gengrid_item_update(Eo *obj);
  *
  * @since 1.15
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_fields_update(Eo *obj, const char *parts, Elm_Gengrid_Item_Field_Type itf);
 
@@ -292,7 +300,7 @@ EOAPI void elm_obj_gengrid_item_fields_update(Eo *obj, const char *parts, Elm_Ge
  * @param[in] itc The gengrid item class describing the function pointers and
  * the item style.
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_class_update(Eo *obj, const Elm_Gengrid_Item_Class *itc);
 
@@ -308,7 +316,7 @@ EOAPI void elm_obj_gengrid_item_class_update(Eo *obj, const Elm_Gengrid_Item_Cla
  *
  * @since 1.18
  *
- * @ingroup Elm_Gengrid_Item
+ * @ingroup Elm_Gengrid_Item_Group
  */
 EOAPI void elm_obj_gengrid_item_all_contents_unset(Eo *obj, Eina_List **l);
 

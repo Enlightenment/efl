@@ -11,7 +11,7 @@
  * @see elm_object_item_del()
  * @see elm_genlist_clear()
  *
- * @ingroup Elm_Genlist
+ * @ingroup Elm_Genlist_Group
  */
 EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
 
@@ -25,7 +25,7 @@ EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
  * @return The item stored in @p obj at position @p nth or @c NULL, if there's
  * no item with that index (and on errors)
  *
- * @ingroup Genilst
+ * @ingroup Elm_Genlist_Group
  * @since 1.8
  */
 EAPI Elm_Object_Item *

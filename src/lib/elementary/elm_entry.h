@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Entry Entry
+ * @defgroup Elm_Entry_Group Entry
  * @ingroup Elementary
  *
  * @image html entry_inheritance_tree.png

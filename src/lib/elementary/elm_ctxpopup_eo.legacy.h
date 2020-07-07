@@ -13,7 +13,7 @@ typedef Eo Elm_Ctxpopup;
 
 /** Direction in which to show the popup.
  *
- * @ingroup Elm_Ctxpopup
+ * @ingroup Elm_Ctxpopup_Group
  */
 typedef enum
 {

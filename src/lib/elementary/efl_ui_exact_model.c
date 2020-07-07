@@ -204,7 +204,7 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *pd, unsigned int index,
         pd->parent->slot[found].start_offset = index / EFL_UI_EXACT_MODEL_CONTENT;
      }
 
-   // Increase usage of the returnd slot for now
+   // Increase usage of the returned slot for now
    pd->parent->slot[found].usage++;
 
    // Unpack the data if requested

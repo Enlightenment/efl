@@ -176,7 +176,7 @@ EAPI void elm_calendar_selectable_set(Elm_Calendar *obj, Elm_Calendar_Selectable
 EAPI Elm_Calendar_Selectable elm_calendar_selectable_get(const Elm_Calendar *obj);
 
 /**
- * @brief The interval on time updates for an user mouse button hold on
+ * @brief The interval on time updates for a user mouse button hold on
  * calendar widgets' month/year selection.
  *
  * This interval value is decreased while the user holds the mouse pointer
@@ -200,7 +200,7 @@ EAPI Elm_Calendar_Selectable elm_calendar_selectable_get(const Elm_Calendar *obj
 EAPI void elm_calendar_interval_set(Elm_Calendar *obj, double interval);
 
 /**
- * @brief The interval on time updates for an user mouse button hold on
+ * @brief The interval on time updates for a user mouse button hold on
  * calendar widgets' month/year selection.
  *
  * This interval value is decreased while the user holds the mouse pointer

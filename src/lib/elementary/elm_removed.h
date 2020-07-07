@@ -1976,7 +1976,7 @@ EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
 EINA_DEPRECATED EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
 
 /**
- * Get the interval on time updates for an user mouse button hold
+ * Get the interval on time updates for a user mouse button hold
  * on a flip selector widget.
  *
  * @param obj The flip selector object

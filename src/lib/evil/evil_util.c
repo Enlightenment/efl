@@ -197,6 +197,8 @@ evil_path_is_absolute(const char *path)
    if (!path)
      return 0;
 
+   if (*path == '/' || *path == '\\') return 1;
+
    length = strlen(path);
    if (length < 3) return 0;
 

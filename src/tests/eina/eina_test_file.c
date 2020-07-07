@@ -547,6 +547,11 @@ static const struct {
    const char *test;
    const char *result;
 } sanitize[] = {
+#ifdef _WIN32
+  { "C:\\home\\mydir\\..\\myfile", "C:/home/myfile" },
+  { "C:/home/mydir/../myfile", "C:/home/myfile" },
+  { "\\home\\mydir\\..\\myfile", "/home/myfile" },
+#endif
   { "/home/mydir/../myfile", "/home/myfile" }
 };
 
@@ -558,7 +563,7 @@ EFL_START_TEST(eina_test_file_path)
    for (i = 0; i < sizeof (sanitize) / sizeof (sanitize[0]); i++)
      {
         path = eina_file_path_sanitize(sanitize[i].test);
-        fail_if(strcmp(path, sanitize[i].result));
+        ck_assert_str_eq(path, sanitize[i].result);
         free(path);
      }
 }

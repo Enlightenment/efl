@@ -304,7 +304,7 @@ EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
  *
  * @return @c EINA_TRUE if context menu is disabled, otherwise @c EINA_FALSE.
  *
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  * @since 1.17
  */
 EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
@@ -315,7 +315,7 @@ EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
  * @param disabled disable context menu if @c EINA_TRUE, enable otherwise
  *
  * @see elm_config_context_menu_disabled_get()
- * @ingroup Elm_Entry
+ * @ingroup Elm_Entry_Group
  * @since 1.17
  */
 EAPI void elm_config_context_menu_disabled_set(Eina_Bool disabled);
@@ -1927,7 +1927,7 @@ EAPI const char *elm_config_indicator_service_get(int rotation);
  * Get the duration for occurring long tap event of gesture layer.
  *
  * @return Timeout for long tap event of gesture layer.
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
 EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
@@ -1936,7 +1936,7 @@ EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
  * Set the duration for occurring long tap event of gesture layer.
  *
  * @param long_tap_timeout Timeout for long tap event of gesture layer.
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
 EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout);
@@ -1945,7 +1945,7 @@ EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout
  * Get the duration for occurring double tap event of gesture layer.
  *
  * @return Timeout for double tap event of gesture layer.
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
 EAPI double   elm_config_glayer_double_tap_timeout_get(void);
@@ -1954,7 +1954,7 @@ EAPI double   elm_config_glayer_double_tap_timeout_get(void);
  * Set the duration for occurring double tap event of gesture layer.
  *
  * @param double_tap_timeout Timeout for double tap event of gesture layer.
- * @ingroup Elm_Gesture_Layer
+ * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
 EAPI void   elm_config_glayer_double_tap_timeout_set(double double_tap_timeout);

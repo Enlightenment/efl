@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Gesture_Layer Gesture Layer
+ * @defgroup Elm_Gesture_Layer_Group Gesture Layer
  * @ingroup Elementary
  *
  * @image html gesture_layer_inheritance_tree.png

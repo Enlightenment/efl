@@ -15,7 +15,7 @@ typedef Eo Elm_Box;
 #endif
 /** Elementary box class
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 #define ELM_BOX_CLASS elm_box_class_get()
 
@@ -32,7 +32,7 @@ EWAPI const Efl_Class *elm_box_class_get(void);
  * @param[in] obj The object.
  * @param[in] homogeneous The homogeneous flag
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
 
@@ -44,7 +44,7 @@ EOAPI void elm_obj_box_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
  *
  * @return The homogeneous flag
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI Eina_Bool elm_obj_box_homogeneous_get(const Eo *obj);
 
@@ -59,7 +59,7 @@ EOAPI Eina_Bool elm_obj_box_homogeneous_get(const Eo *obj);
  * @param[in] horizontal The horizontal alignment of elements
  * @param[in] vertical The vertical alignment of elements
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_align_set(Eo *obj, double horizontal, double vertical);
 
@@ -72,7 +72,7 @@ EOAPI void elm_obj_box_align_set(Eo *obj, double horizontal, double vertical);
  * @param[out] horizontal The horizontal alignment of elements
  * @param[out] vertical The vertical alignment of elements
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_align_get(const Eo *obj, double *horizontal, double *vertical);
 
@@ -88,7 +88,7 @@ EOAPI void elm_obj_box_align_get(const Eo *obj, double *horizontal, double *vert
  * @param[in] obj The object.
  * @param[in] horizontal The horizontal flag
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_horizontal_set(Eo *obj, Eina_Bool horizontal);
 
@@ -100,7 +100,7 @@ EOAPI void elm_obj_box_horizontal_set(Eo *obj, Eina_Bool horizontal);
  *
  * @return The horizontal flag
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI Eina_Bool elm_obj_box_horizontal_get(const Eo *obj);
 
@@ -116,7 +116,7 @@ EOAPI Eina_Bool elm_obj_box_horizontal_get(const Eo *obj);
  * @param[in] horizontal The horizontal space between elements
  * @param[in] vertical The vertical space between elements
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_padding_set(Eo *obj, int horizontal, int vertical);
 
@@ -129,7 +129,7 @@ EOAPI void elm_obj_box_padding_set(Eo *obj, int horizontal, int vertical);
  * @param[out] horizontal The horizontal space between elements
  * @param[out] vertical The vertical space between elements
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_padding_get(const Eo *obj, int *horizontal, int *vertical);
 
@@ -145,7 +145,7 @@ EOAPI void elm_obj_box_padding_get(const Eo *obj, int *horizontal, int *vertical
  *
  * @return List of children
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI Eina_List *elm_obj_box_children_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
@@ -164,7 +164,7 @@ EOAPI Eina_List *elm_obj_box_children_get(const Eo *obj) EINA_WARN_UNUSED_RESULT
  * @param[in] obj The object.
  * @param[in] subobj The object to add to the box
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_pack_end(Eo *obj, Efl_Canvas_Object *subobj);
 
@@ -180,7 +180,7 @@ EOAPI void elm_obj_box_pack_end(Eo *obj, Efl_Canvas_Object *subobj);
  * See also @ref elm_obj_box_clear, @ref elm_obj_box_unpack.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_unpack_all(Eo *obj);
 
@@ -195,7 +195,7 @@ EOAPI void elm_obj_box_unpack_all(Eo *obj);
  * @param[in] obj The object.
  * @param[in] subobj The object to unpack
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_unpack(Eo *obj, Efl_Canvas_Object *subobj);
 
@@ -215,7 +215,7 @@ EOAPI void elm_obj_box_unpack(Eo *obj, Efl_Canvas_Object *subobj);
  * @param[in] subobj The object to add to the box
  * @param[in] after The object after which to add it
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_pack_after(Eo *obj, Efl_Canvas_Object *subobj, Efl_Canvas_Object *after);
 
@@ -234,7 +234,7 @@ EOAPI void elm_obj_box_pack_after(Eo *obj, Efl_Canvas_Object *subobj, Efl_Canvas
  * @param[in] obj The object.
  * @param[in] subobj The object to add to the box
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_pack_start(Eo *obj, Efl_Canvas_Object *subobj);
 
@@ -247,7 +247,7 @@ EOAPI void elm_obj_box_pack_start(Eo *obj, Efl_Canvas_Object *subobj);
  * position of a just added item you must force recalculate before doing so.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_recalculate(Eo *obj);
 
@@ -267,7 +267,7 @@ EOAPI void elm_obj_box_recalculate(Eo *obj);
  * @param[in] subobj The object to add to the box
  * @param[in] before The object before which to add it
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_pack_before(Eo *obj, Efl_Canvas_Object *subobj, Efl_Canvas_Object *before);
 
@@ -280,7 +280,7 @@ EOAPI void elm_obj_box_pack_before(Eo *obj, Efl_Canvas_Object *subobj, Efl_Canva
  * See also @ref elm_obj_box_unpack, @ref elm_obj_box_unpack_all.
  * @param[in] obj The object.
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 EOAPI void elm_obj_box_clear(Eo *obj);
 
@@ -289,7 +289,7 @@ EWAPI extern const Efl_Event_Description _ELM_BOX_EVENT_CHILD_ADDED;
 /** Called when child was added
  * @return Efl_Object *
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 #define ELM_BOX_EVENT_CHILD_ADDED (&(_ELM_BOX_EVENT_CHILD_ADDED))
 
@@ -298,7 +298,7 @@ EWAPI extern const Efl_Event_Description _ELM_BOX_EVENT_CHILD_REMOVED;
 /** Called when child was removed
  * @return Efl_Object *
  *
- * @ingroup Elm_Box
+ * @ingroup Elm_Box_Group
  */
 #define ELM_BOX_EVENT_CHILD_REMOVED (&(_ELM_BOX_EVENT_CHILD_REMOVED))
 

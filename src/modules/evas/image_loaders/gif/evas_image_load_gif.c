@@ -263,7 +263,7 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
 
    if (cmap)
      {
-        // fill in local color table of guaranteed 256 entires with cmap & pad
+        // fill in local color table of guaranteed 256 entries with cmap & pad
         for (cnum = 0; cnum < cmap->ColorCount; cnum++)
           colors[cnum] = cmap->Colors[cnum];
         for (cnum = cmap->ColorCount; cnum < 256; cnum++)

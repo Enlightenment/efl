@@ -2,7 +2,7 @@
 #define ELM_ENTRY_COMMON_H_
 
 /**
- * @addtogroup Elm_Entry
+ * @addtogroup Elm_Entry_Group
  *
  * @{
  */

@@ -5907,7 +5907,7 @@ EAPI int evas_object_image_stride_get(const Evas_Object *obj) EINA_WARN_UNUSED_R
  * @brief Replaces the raw image data of the given image object.
  *
  * This function lets the application replace an image object's internal pixel
- * buffer with an user-allocated one. For best results, you should generally
+ * buffer with a user-allocated one. For best results, you should generally
  * first call @ref evas_object_image_size_set with the width and height for the
  * new buffer.
  *

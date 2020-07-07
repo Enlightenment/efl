@@ -26,7 +26,7 @@ EWAPI const Efl_Class *elm_prefs_class_get(void);
  *
  * Once a prefs widget is created, after elm_prefs_file_set() is issued on it,
  * all of its UI elements will get default values, when declared on that file.
- * To fetch an user's own, personal set of those values, one gets to pair a
+ * To fetch a user's own, personal set of those values, one gets to pair a
  * prefs data handle to the prefs widget. This is what this call is intended
  * for.
  *
@@ -59,7 +59,7 @@ EOAPI Eina_Bool elm_obj_prefs_data_set(Eo *obj, Elm_Prefs_Data *data);
  *
  * Once a prefs widget is created, after elm_prefs_file_set() is issued on it,
  * all of its UI elements will get default values, when declared on that file.
- * To fetch an user's own, personal set of those values, one gets to pair a
+ * To fetch a user's own, personal set of those values, one gets to pair a
  * prefs data handle to the prefs widget. This is what this call is intended
  * for.
  *
@@ -147,7 +147,7 @@ EOAPI void elm_obj_prefs_reset(Eo *obj, Elm_Prefs_Reset_Mode mode);
 /**
  * @brief Set the value on a given prefs widget's item.
  *
- * This will change the value of item named @c name programatically.
+ * This will change the value of item named @c name programmatically.
  *
  * @param[in] obj The object.
  * @param[in] name The name of the item (as declared in the prefs collection)
@@ -304,7 +304,7 @@ EOAPI Efl_Canvas_Object *elm_obj_prefs_item_unswallow(Eo *obj, const char *name)
  *
  * Each prefs item may have a default visibility state, declared on the $.epb
  * @c prefs it was loaded with. By this call one may alter that state,
- * programatically.
+ * programmatically.
  *
  * @param[in] obj The object.
  * @param[in] name The name of the item (as declared in the prefs collection)

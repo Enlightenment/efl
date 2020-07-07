@@ -19,7 +19,7 @@ typedef Eo Elm_Prefs;
  *
  * Once a prefs widget is created, after elm_prefs_file_set() is issued on it,
  * all of its UI elements will get default values, when declared on that file.
- * To fetch an user's own, personal set of those values, one gets to pair a
+ * To fetch a user's own, personal set of those values, one gets to pair a
  * prefs data handle to the prefs widget. This is what this call is intended
  * for.
  *
@@ -52,7 +52,7 @@ EAPI Eina_Bool elm_prefs_data_set(Elm_Prefs *obj, Elm_Prefs_Data *data);
  *
  * Once a prefs widget is created, after elm_prefs_file_set() is issued on it,
  * all of its UI elements will get default values, when declared on that file.
- * To fetch an user's own, personal set of those values, one gets to pair a
+ * To fetch a user's own, personal set of those values, one gets to pair a
  * prefs data handle to the prefs widget. This is what this call is intended
  * for.
  *
@@ -140,7 +140,7 @@ EAPI void elm_prefs_reset(Elm_Prefs *obj, Elm_Prefs_Reset_Mode mode);
 /**
  * @brief Set the value on a given prefs widget's item.
  *
- * This will change the value of item named @c name programatically.
+ * This will change the value of item named @c name programmatically.
  *
  * @param[in] obj The object.
  * @param[in] name The name of the item (as declared in the prefs collection)
@@ -297,7 +297,7 @@ EAPI Efl_Canvas_Object *elm_prefs_item_unswallow(Elm_Prefs *obj, const char *nam
  *
  * Each prefs item may have a default visibility state, declared on the $.epb
  * @c prefs it was loaded with. By this call one may alter that state,
- * programatically.
+ * programmatically.
  *
  * @param[in] obj The object.
  * @param[in] name The name of the item (as declared in the prefs collection)

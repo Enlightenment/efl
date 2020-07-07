@@ -108,7 +108,7 @@ EOAPI Elm_Widget_Item *elm_obj_flipselector_selected_item_get(const Eo *obj);
 EOAPI void elm_obj_flipselector_first_interval_set(Eo *obj, double interval);
 
 /**
- * @brief Get the interval on time updates for an user mouse button hold on a
+ * @brief Get the interval on time updates for a user mouse button hold on a
  * flip selector widget.
  *
  * See also @ref elm_obj_flipselector_first_interval_set for more details.

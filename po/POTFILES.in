@@ -2188,10 +2188,8 @@ src/benchmarks/evas/evas_bench_saver.c
 src/benchmarks/evas/evas_bench_loader.c
 src/benchmarks/elementary/collection.c
 src/benchmarks/elementary/focus_widget_tree.c
-src/benchmarks/eina/eina_bench_stringshare_e17.c
 src/benchmarks/eina/eina_bench_convert.c
 src/benchmarks/eina/eina_bench_mempool.c
-src/benchmarks/eina/ecore_hash.c
 src/benchmarks/eina/eina_bench_stringshare.c
 src/benchmarks/eina/eina_bench_crc_hash.c
 src/benchmarks/eina/evas_object_list.c
@@ -2201,10 +2199,8 @@ src/benchmarks/eina/eina_bench_rectangle_pool.c
 src/benchmarks/eina/eina_bench_quad.c
 src/benchmarks/eina/evas_mempool.c
 src/benchmarks/eina/eina_bench_array.c
-src/benchmarks/eina/ecore_strings.c
 src/benchmarks/eina/eina_bench_sort.c
 src/benchmarks/eina/ecore_list.c
 src/benchmarks/eina/evas_stringshare.c
 src/benchmarks/eina/ecore_sheap.c
-src/benchmarks/eina/eina_bench_hash.c
 src/benchmarks/eina/evas_list.c
