@@ -5602,23 +5602,17 @@ _edje_real_part_text_text_source_description_get(Edje_Real_Part *ep, Edje_Real_P
 Edje_Real_Part *
 _edje_real_part_recursive_get(Edje **ed, const char *part)
 {
-   if ((*ed)->collection && (*ed)->collection->alias)
-     {
-        Edje_Real_Part *rp;
-        char **path;
+   Edje_Real_Part *rp;
+   char **path;
 
-        path = eina_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
-        if (!path) return NULL;
+   path = eina_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
+   if (!path) return NULL;
 
-        rp = _edje_real_part_recursive_get_helper(ed, path);
+   rp = _edje_real_part_recursive_get_helper(ed, path);
 
-        free(*path);
-        free(path);
-
-        return rp;
-     }
-
-   return _edje_real_part_get(*ed, part);;
+   free(*path);
+   free(path);
+   return rp;
 }
 
 Evas_Object *
