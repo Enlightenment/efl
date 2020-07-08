@@ -1818,9 +1818,21 @@ efl_class_offset(const Efl_Class *klass_id)
 EAPI unsigned int
 efl_class_mixin_offset(const Efl_Class *klass_id, const Efl_Class *mixin_id)
 {
-   /* FIXME */
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, 0);
+   EO_CLASS_POINTER_RETURN_VAL(mixin_id, mixin, 0);
+   Eo_Extension_Data_Offset *doff_itr = klass->extn_data_off;
 
-   return -1;
+   if (!doff_itr)
+     return 0;
+
+   while (doff_itr->klass)
+     {
+        if (doff_itr->klass == mixin)
+          return doff_itr->offset;
+        doff_itr++;
+     }
+
+   return 0;
 }
 
 

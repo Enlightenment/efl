@@ -54,6 +54,7 @@ struct Caller {
   const char *called_api;
   const char *klass;
   tree klass_decl;
+  tree called_api_decl;
 };
 
 typedef struct _Fetch_Result {
@@ -77,6 +78,7 @@ _fetch_first_argument(const_gimple arg, unsigned int narg)
    if (!ret.first_argument) return ret;
    if (!is_gimple_call(ret.first_argument)) return ret;
    tree tmp = gimple_call_fndecl(ret.first_argument);
+
    if (!tmp) return ret;
    ret.api_name = IDENTIFIER_POINTER(DECL_NAME(tmp));
    ret.api = tmp;
@@ -102,6 +104,7 @@ static Caller fetch_efl_super_class(const_gimple stmt)
    Fetch_Result first = _fetch_first_argument(stmt, 0);
    if (!first.valid) return ret;
    ret.called_api = IDENTIFIER_POINTER(DECL_NAME(called_api_tree));
+   ret.called_api_decl = called_api_tree;
    if (!!strncmp(first.api_name, "efl_super", 9)) return ret;
 
    //copy the name we have inside efl_super
@@ -109,6 +112,7 @@ static Caller fetch_efl_super_class(const_gimple stmt)
    if (!argument_efl_super.valid) return ret;
    ret.klass = argument_efl_super.api_name;
    ret.klass_decl = argument_efl_super.api;
+
    ret.valid = true;
 
    return ret;
@@ -120,6 +124,9 @@ static unsigned int eo_execute(void)
   gimple_stmt_iterator gsi;
 
   //fprintf(stderr, "Function %s eval\n", get_name(cfun->decl));
+
+  //FIXME check if this is a real eo op, with Eo *obj, and *pd as next agument
+  //FIXME therefore we need *something* to check if this is really
 
   gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
   entry_bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
@@ -133,6 +140,7 @@ static unsigned int eo_execute(void)
 
         struct Caller c = fetch_efl_super_class(stmt);
         tree replacement_candidate = NULL;
+        tree provider_of_replacement_candidate = NULL;
 
         if (!c.klass)
           continue;
@@ -156,10 +164,46 @@ static unsigned int eo_execute(void)
 
              if (!!strncmp(TREE_STRING_POINTER(call), c.called_api, strlen(c.called_api))) continue;
 
+             provider_of_replacement_candidate = providing_class;
              replacement_candidate = implementation;
           }
         if (!replacement_candidate) continue;
         fprintf(stderr, "Replace! %s %s\n", c.called_api, TREE_STRING_POINTER(replacement_candidate));
+
+        //Create a new call to the found replacement candidate
+
+        //FIXME we need here:
+        //replace the called api with the replacement_candidate
+        //add another argument "pd - <my_class>_pd_offset + <providing_class>_pd_offset" (TODO check if these are mixins)
+        vec<tree> argument_types;
+        unsigned int i = 0;
+        argument_types.create(10);
+        for (tree argument = DECL_ARGUMENTS(c.called_api_decl); argument; argument = TREE_CHAIN(argument), i++)
+          {
+             if (!argument_types.space(i + 1))
+               argument_types.safe_grow(i + 1);
+             if (i == 0) {
+               argument_types[i] = argument;
+             } else {
+               argument_types[i + 1] = argument;
+             }
+          }
+        argument_types[1] = argument_types[0]; //FIXME fill the second argument to contain the pd argument
+        tree result = DECL_RESULT(c.called_api_decl);
+        if (!result)
+          result = void_type_node;
+        tree implementation_function_types = build_function_type_array(result, i + 1, argument_types.address()); //CRASH
+        tree implementation_function_declaration = build_fn_decl(TREE_STRING_POINTER(replacement_candidate), implementation_function_types);
+        vec<tree> new_arguments;
+        new_arguments.create(gimple_call_num_args(stmt) + 1);
+        new_arguments[0] = gimple_call_arg(stmt, 0);
+        new_arguments[1] = new_arguments[0]; //FIXME create calls to second argument of cfun pd + and -
+        for (unsigned int i = 1; i < gimple_call_num_args(stmt); ++i)
+          {
+             new_arguments[i + 1] = gimple_call_arg(stmt, i);
+          }
+        gcall *new_call = gimple_build_call_vec(implementation_function_declaration, new_arguments);
+        gsi_replace(&gsi, new_call, true);
       }
     }
   return 0;
@@ -202,7 +246,7 @@ handle_user_attribute (tree *node, tree name, tree args,
 }
 
 static struct attribute_spec next_hop_attr =
-      { "register_next", 3, 3, true,  false, false,  true, handle_user_attribute, NULL};
+      { "register_next", 4, 4, true,  false, false,  true, handle_user_attribute, NULL};
 
 static void
 register_next_hop_attribute (void *event_data, void *data)
