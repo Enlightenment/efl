@@ -172,8 +172,8 @@ static unsigned int eo_execute(void)
 
         //Create a new call to the found replacement candidate
 
+#if 0
         //FIXME we need here:
-        //replace the called api with the replacement_candidate
         //add another argument "pd - <my_class>_pd_offset + <providing_class>_pd_offset" (TODO check if these are mixins)
         vec<tree> argument_types;
         unsigned int i = 0;
@@ -204,6 +204,7 @@ static unsigned int eo_execute(void)
           }
         gcall *new_call = gimple_build_call_vec(implementation_function_declaration, new_arguments);
         gsi_replace(&gsi, new_call, true);
+#endif
       }
     }
   return 0;

@@ -1142,7 +1142,9 @@ _gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_
    Eolian_Function_Type ftype;
    const Eolian_Function *fid = eolian_implement_function_get(impl, &ftype);
    const Eolian_Class *next_implemen_class = NULL;
+   const Eolian_Class *definition_class = eolian_function_class_get(fid);
    char *impl_name;
+   char *defi_name;
 
    if (eolian_class_type_get(impl_klass) == EOLIAN_CLASS_MIXIN)
      {
@@ -1169,11 +1171,23 @@ _gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_
    if (!next_implemen_class) return;
 
    eo_gen_class_names_get(next_implemen_class, NULL, NULL, &impl_name);
+   eo_gen_class_names_get(definition_class, NULL, NULL, &defi_name);
 
    char *class_name = eina_strdup(eolian_class_c_name_get(next_implemen_class));
+   char *prefix = "";
    eina_str_tolower(&class_name);
 
-   eina_strbuf_append_printf(buf, "COMPILER_PLUGIN_REGISTER_NEXT(\"%s\", \"%s\",\"_%s_%s\", %d)\n", eolian_function_full_c_name_get(fid, ftype), class_name, impl_name, eolian_function_full_c_name_get(fid, ftype), eolian_class_type_get(next_implemen_class) == EOLIAN_CLASS_MIXIN ? 1 : 0);
+   if (ftype == EOLIAN_PROP_GET)
+     prefix = "_get";
+   else if (ftype == EOLIAN_PROP_SET)
+     prefix = "_set";
+
+   eina_strbuf_append_printf(buf, "COMPILER_PLUGIN_REGISTER_NEXT(\"%s\", \"%s\", ", eolian_function_full_c_name_get(fid, ftype), class_name);
+   eina_strbuf_append_printf(buf, "\"_%s", impl_name);
+   if (definition_class != next_implemen_class)
+     eina_strbuf_append_printf(buf, "_%s", defi_name);
+   eina_strbuf_append_printf(buf, "_%s%s\"", eolian_function_name_get(fid), prefix);
+   eina_strbuf_append_printf(buf, ", %d)\n", eolian_class_type_get(next_implemen_class) == EOLIAN_CLASS_MIXIN ? 1 : 0);
 }
 
 static void
