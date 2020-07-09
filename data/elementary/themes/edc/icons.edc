@@ -1,11 +1,124 @@
-#define ICON(_NAME, _SIZE, _FILE) \
-   group { \
-      name: "e/icons/"_NAME; \
-      max: _SIZE _SIZE; \
+// regular icons
+#define ICON(_NAME, _ICON) \
+   group { name: "e/icons/"_NAME; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
             description { state: "default" 0.0; \
-               max: _SIZE _SIZE; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _ICON; \
+            } \
+         } \
+      } \
+   }
+   ICON("modules-files", "i-folder")
+   ICON("system-file-manager", "i-folder")
+   ICON("folder", "i-folder")
+   ICON("folder-image", "i-folder")
+   ICON("inode/directory", "i-folder")
+   ICON("user-home", "i-home")
+   ICON("user-desktop", "i-desktop")
+   ICON("user-temp", "i-temp")
+   ICON("user-bookmarks", "i-favorite")
+   ICON("computer", "i-computer")
+   ICON("drive-optical", "i-drive-cd")
+   ICON("drive-harddisk", "i-drive-hdd")
+   ICON("drive-removable-media", "i-drive-usb-media")
+   ICON("media-flash", "i-drive-flash")
+
+   ICON("dialog-ask", "i-unknown")
+   ICON("unknown", "i-unknown")
+   ICON("emblem-symbolic-link", "i-unknown")
+#undef ICON
+
+// mono color default fg color icons
+#define ICON(_NAME, _ICON) \
+   group { name: "e/icons/"_NAME; \
+      parts { \
+         part { name: "icon"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _ICON; \
+               color: 160 160 160 255; \
+            } \
+         } \
+      } \
+   }
+   ICON("system", "i-system")
+   ICON("system-restart", "i-system-restart")
+   ICON("system-shutdown", "i-system-shutdown")
+   ICON("system-suspend", "i-system-suspend")
+   ICON("system-suspend-hibernate", "i-system-suspend-hibernate")
+   ICON("system-lock-screen", "i-system-lock")
+   ICON("system-log-out", "i-system-logout")
+
+   ICON("application-exit", "i-system-logout")
+   ICON("enlightenment", "i-enlightenment")
+   ICON("help-about", "i-enlightenment")
+#undef ICON
+
+// mono border action icons
+#define ICON(_NAME, _ICON) \
+   group { name: "e/widgets/border/default/"_NAME; \
+      parts { \
+         part { name: "icon"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _ICON; \
+               color: 160 160 160 255; \
+            } \
+         } \
+      } \
+   }
+   ICON("close", "i-close")
+   ICON("minimize", "i-arrow-d")
+   ICON("maximize", "i-arrow-u")
+   ICON("basic", "i-move")
+   ICON("move_icon", "i-move")
+   ICON("resize_icon", "i-resize")
+   ICON("locks", "i-lock")
+   ICON("locks_user", "i-lock")
+   ICON("locks_application", "i-lock")
+   ICON("remember", "i-check")
+// remove from border-icons.edc
+//   ICON("kill", "icon_border_kill.png")
+//   ICON("stacking", "icon_border_stack_norm.png")
+//   ICON("stack_on_top", "icon_border_stack_top.png")
+//   ICON("stack_normal", "icon_border_stack_norm.png")
+//   ICON("stack_below", "icon_border_stack_bot.png")
+//   ICON("fullscreen", "icon_border_maximize.png")
+//   ICON("stick", "icon_border_pin.png")
+//   ICON("sendto", "icon_border_sendto.png")
+//   ICON("skip", "icon_border_skip.png")
+//   ICON("skip_pager", "icon_border_pager.png")
+//   ICON("skip_taskbar", "icon_border_skip.png")
+//   ICON("skip_winlist", "icon_border_skip.png")
+//   ICON("borderless", "icon_border_border.png")
+//   ICON("shade", "icon_border_shaded.png")
+//   ICON("properties", "icon_border_properties.png")
+#undef ICON
+
+// mime icons
+#define ICON(_NAME, _ICON) \
+   group { name: "e/icons/fileman/mime/"_NAME; \
+      parts { \
+         part { name: "icon"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _ICON; \
+            } \
+         } \
+      } \
+   }
+   ICON("inode/directory", "i-folder")
+#undef ICON
+
+/////////////////////////////////////////////////////////////////////////////
+
+#define ICON(_NAME, _FILE) \
+   group { name: "e/icons/"_NAME; \
+      parts { \
+         part { name: "icon"; mouse_events: 0; \
+            description { state: "default" 0.0; \
                aspect: 1.0 1.0; aspect_preference: BOTH; \
                image.image: _FILE COMP; \
                image.normal: _FILE; \
@@ -13,94 +126,20 @@
          } \
       } \
    }
+   ICON("preferences-desktop-environments",       "icon_preferences-desktop-environments.png")
+   ICON("preferences-applications-screen-lock",   "icon_preferences-applications-screen-lock.png")
+   ICON("preferences-applications-screen-unlock", "icon_preferences-applications-screen-unlock.png")
+   ICON("preferences-applications-personal",      "icon_preferences-applications-personal.png")
+   ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
+   ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
+   ICON("preferences-variables",                  "icon_preferences-variables.png")
+   ICON("preferences-interaction",                "icon_preferences-interaction.png")
+   ICON("preferences-composite",                  "icon_preferences-composite.png")
 
-   ICON("system",                                 80, "icon_system.png")
-   ICON("system-shutdown",                        80, "icon_system-shutdown.png")
-   ICON("system-restart",                         80, "icon_system-restart.png")
-   ICON("system-suspend",                         80, "icon_system-suspend.png")
-   ICON("system-suspend-hibernate",               80, "icon_system-suspend-hibernate.png")
-   ICON("system-log-out",                         80, "icon_system-log-out.png")
-   ICON("system-lock-screen",                     80, "icon_system-lock-screen.png")
-   ICON("application-exit",                       80, "icon_system-log-out.png")
-   ICON("enlightenment",                          80, "icon_enlightenment.png")
-   ICON("help-about",                             80, "icon_enlightenment.png")
-   ICON("preferences-desktop-environments",       80, "icon_preferences-desktop-environments.png")
-   ICON("preferences-applications-screen-lock",   80, "icon_preferences-applications-screen-lock.png")
-   ICON("preferences-applications-screen-unlock", 80, "icon_preferences-applications-screen-unlock.png")
-   ICON("preferences-applications-personal",      80, "icon_preferences-applications-personal.png")
-   ICON("preferences-desklock-locale",            80, "icon_preferences-desklock-locale.png")
-   ICON("preferences-desktop-signal-bindings",    80, "icon_preferences-desktop-signal-bindings.png")
-   ICON("preferences-variables",                  80, "icon_preferences-variables.png")
-   ICON("preferences-interaction",                80, "icon_preferences-interaction.png")
-   ICON("preferences-composite",                  80, "icon_preferences-composite.png")
-
-   ICON("enlightenment/wallpaper_stretch",          80, "icon_wallpaper_stretch.png")
-   ICON("enlightenment/wallpaper_center",           80, "icon_wallpaper_center.png")
-   ICON("enlightenment/wallpaper_tile",             80, "icon_wallpaper_tile.png")
-   ICON("enlightenment/wallpaper_scale_aspect_in",  80, "icon_wallpaper_within.png")
-   ICON("enlightenment/wallpaper_scale_aspect_out", 80, "icon_wallpaper_fill.png")
-   ICON("enlightenment/wallpaper_pan",              80, "icon_wallpaper_pan.png")
-#if 0
-//   ICON("", 80, "")
-#endif
-#undef ICON
-
-// regular icons
-#define ICON(_NAME, _FILE) \
-   set { name: _FILE"_icon"; \
-      image { image: _FILE"_160.png" COMP; size: 81 81 16000 16000; } \
-      image { image: _FILE"_080.png" COMP; size: 41 41 80 80; } \
-      image { image: _FILE"_040.png" COMP; size: 0 0 40 40; } \
-   } \
-   group { \
-      name: "e/icons/"_NAME; \
-      max: 16000 16000; \
-      parts { \
-         part { name: "icon"; mouse_events: 0; \
-            description { state: "default" 0.0; \
-               aspect: 1.0 1.0; aspect_preference: BOTH; \
-               image.normal: _FILE"_icon"; \
-            } \
-         } \
-      } \
-   }
-   ICON("modules-files", "efm_folder")
-   ICON("system-file-manager", "efm_folder")
-   ICON("folder", "efm_folder")
-   ICON("folder-image", "efm_folder")
-   ICON("inode/directory", "efm_folder")
-   ICON("user-home", "efm_home")
-   ICON("user-desktop", "efm_desktop")
-   ICON("user-temp", "efm_temp")
-   ICON("user-bookmarks", "efm_favorite")
-   ICON("computer", "efm_computer")
-   ICON("drive-optical", "efm_drive_cd")
-   ICON("drive-harddisk", "efm_drive_hdd")
-   ICON("drive-removable-media", "efm_drive_usb_media")
-   ICON("media-flash", "efm_drive_flash")
-
-   ICON("dialog-ask", "ic_unknown")
-   ICON("unknown", "ic_unknown")
-   ICON("emblem-symbolic-link", "ic_unknown")
-#undef ICON
-// mime icons
-#define ICON(_NAME, _FILE) \
-   set { name: _FILE"_icon"; \
-      image { image: _FILE"_160.png" COMP; size: 81 81 16000 16000; } \
-      image { image: _FILE"_080.png" COMP; size: 41 41 80 80; } \
-      image { image: _FILE"_040.png" COMP; size: 0 0 40 40; } \
-   } \
-   group { \
-      name: "e/icons/fileman/mime/"_NAME; \
-      max: 16000 16000; \
-      parts { \
-         part { name: "icon"; mouse_events: 0; \
-            description { state: "default" 0.0; \
-               aspect: 1.0 1.0; aspect_preference: BOTH; \
-               image.normal: _FILE"_icon"; \
-            } \
-         } \
-      } \
-   }
-   ICON("inode/directory", "efm_folder")
+   ICON("enlightenment/wallpaper_stretch",          "icon_wallpaper_stretch.png")
+   ICON("enlightenment/wallpaper_center",           "icon_wallpaper_center.png")
+   ICON("enlightenment/wallpaper_tile",             "icon_wallpaper_tile.png")
+   ICON("enlightenment/wallpaper_scale_aspect_in",  "icon_wallpaper_within.png")
+   ICON("enlightenment/wallpaper_scale_aspect_out", "icon_wallpaper_fill.png")
+   ICON("enlightenment/wallpaper_pan",              "icon_wallpaper_pan.png")
 #undef ICON

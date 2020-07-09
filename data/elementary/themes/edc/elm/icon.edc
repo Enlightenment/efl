@@ -1,12 +1,8 @@
-
-/*
- * All the icons below are not standard and are to be considered
- * deprecated or at least just for internal usage only.
- *
- * We suggest to instead use the icons in icon_fdo.edc (at least if you
- * want your app to be user customizable wrt icons)
- * 
- */
+// All the icons below are not standard and are to be considered
+// deprecated or at least just for internal usage only.
+//
+// We suggest to instead use the icons in icon_fdo.edc (at least if you
+// want your app to be user customizable wrt icons)
 
 #define IC(Name, Alias, File, Min, Max) \
    group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \

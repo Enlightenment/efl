@@ -1,10 +1,5 @@
 group { name: "e/modules/start/main";
    alias: "e/gadget/start/main";
-   images.image: "big_arrow_down.png" COMP;
-   images.image: "big_arrow_up.png" COMP;
-   images.image: "big_arrow_left.png" COMP;
-   images.image: "big_arrow_right.png" COMP;
-   max: 128 128;
    parts {
       part { name: "arrow_base"; type: RECT;
          description { state: "default" 0.0;
@@ -20,28 +15,22 @@ group { name: "e/modules/start/main";
       part { name: "arrow";
          clip_to: "arrow_base";
          description { state: "default" 0.0;
-            image.normal: "big_arrow_up.png";
-            aspect: (17/14) (17/14);
-            max: 17 14;
+            image.normal: "i-arrow-u";
             color: 160 160 160 255;
+            rel1.relative: (4/40) (4/40);
+            rel2.relative: (36/40) (36/40);
          }
          description { state: "down" 0.0;
             inherit: "default" 0.0;
-            image.normal: "big_arrow_down.png";
-            aspect: (17/14) (17/14);
-            max: 17 14;
+            image.normal: "i-arrow-d";
          }
          description { state: "left" 0.0;
             inherit: "default" 0.0;
-            image.normal: "big_arrow_left.png";
-            aspect: (14/17) (14/17);
-            max: 14 17;
+            image.normal: "i-arrow-l";
          }
          description { state: "right" 0.0;
             inherit: "default" 0.0;
-            image.normal: "big_arrow_right.png";
-            aspect: (14/17) (14/17);
-            max: 14 17;
+            image.normal: "i-arrow-r";
          }
       }
       part { name: "events"; type: RECT;
@@ -51,15 +40,11 @@ group { name: "e/modules/start/main";
       }
    }
    programs {
-      program {
-         signal: "e,state,focused";
-         source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "arrow_base";
       }
-      program {
-         signal: "e,state,unfocused";
-         source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "arrow_base";
       }

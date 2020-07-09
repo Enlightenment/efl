@@ -8,14 +8,7 @@
  */
 
 group { name: "elm/border/base/default";
-   images.image: "border_close.png" COMP;
-   images.image: "border_maximize.png" COMP;
-   images.image: "border_minimize.png" COMP;
-
-   images.image: "glow_round_corners_small.png" COMP;
-   images.image: "knob_round_small_busy.png" COMP;
-
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    data.item: "shadow" "1";
    data.item: "version" "119";
    parts {
@@ -37,10 +30,17 @@ group { name: "elm/border/base/default";
             rel2.relative: 1.0 0.0;
          }
       }
-      /* shadow spacer and clipper */
-      spacer { "shadow_spacer";
+      part { name: "shadow_clip"; type: RECT; mouse_events: 0;
+         description { state: "default";
+            rel.to: "_sh1";
+         }
+         description { state: "hidden";
+            visible: 0;
+         }
+      }
+      part { name: "shadow_base"; type: SPACER;
          scale: 1;
-         desc { "default";
+         description { state: "default" 0.0;
             WIN_SHADOW_SPACER;
          }
          desc { "hidden";
@@ -48,17 +48,9 @@ group { name: "elm/border/base/default";
             rel2.offset: -1 -1;
          }
       }
-      image { "shadow"; nomouse;
-         scale: 1;
-         desc { "default";
-            rel.to: "shadow_spacer";
-            WIN_SHADOW;
-         }
-         desc { "hidden"; inherit: "default"; hid; }
-      }
+      WIN_SHAD("shadow_base", "shadow_clip", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
       /* window background: solid color */
-      rect { "bg_clip";
-         nomouse;
+      rect { "bg_clip"; nomouse;
          desc { "default";
             rel1.to: "top_clip";
             rel1.relative: 0.0 1.0;
@@ -69,8 +61,7 @@ group { name: "elm/border/base/default";
          required; // @since 1.19
          clip: "bg_clip";
          desc { "default";
-            color: 255 255 255 255;
-            color_class: "elm/win/background"; // FIXME: color_class naming scheme
+            color: 64 64 64 255;
             visible: 0;
          }
          desc { "visible";
@@ -101,6 +92,8 @@ group { name: "elm/border/base/default";
             color: 64 64 64 255; // FIXME: color_class
             align: 0.5 0.0;
             rel.to: "elm.swallow.menu";
+            fixed: 1 1;
+            visible: 0;
          }
       }
       swallow { "elm.swallow.menu";
@@ -108,12 +101,16 @@ group { name: "elm/border/base/default";
          desc { "default";
             rel.to: "top_clip";
             visible: 0;
-            align: 0.5 0.0;
+            align: 0.5 1.0;
             fixed: 1 1;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -1;
          }
          desc { "visible"; inherit: "default";
-            visible: 1;
-            fixed: 0 1;
+//            rel1.offset: 0 0;
+//            align: 0.5 0.0;
+//            visible: 1;
+//            fixed: 0 1;
          }
       }
 
@@ -162,21 +159,21 @@ group { name: "elm/border/base/default";
 
       /* top title bar - spacer and clipper */
       rect { "top_clip"; //nomouse;
-//         scale: 1;
+         scale: 1;
          desc { "default";
-            rel1.to: "shadow_spacer";
+            rel1.to: "shadow_base";
+            rel2.to_x: "shadow_base";
             rel2.to_y: "elm.text.title";
-            rel2.to_x: "shadow_spacer";
-            rel2.offset: -1 3;
+            rel2.offset: -1 2;
             vis;
-//            offscale;
+            offscale;
          }
          desc { "hidden";
             inherit: "default";
             rel1.to: "";
             rel2.to: "";
             rel1.relative: 0.0 0.0;
-            rel2.to: "shadow_spacer";
+            rel2.to: "shadow_base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -1 0;
             max: -1 0;
@@ -202,13 +199,13 @@ group { name: "elm/border/base/default";
          clip: "top_clip";
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 3;
+            rel1.offset: 1 4;
             rel1.to_x: "icon";
-            rel1.to_y: "shadow_spacer";
+            rel1.to_y: "shadow_base";
             rel2.relative: 0.0 0.0;
-            rel2.offset: -2 3;
+            rel2.offset: -2 4;
             rel2.to_x: "elm.event.minimize";
-            rel2.to_y: "shadow_spacer";
+            rel2.to_y: "shadow_base";
             align: 0.5 0.0;
             color: 160 160 160 255;
             min: 0 16;
@@ -218,7 +215,7 @@ group { name: "elm/border/base/default";
                min: 0 1;
             }
             fixed: 0 1;
-//            offscale;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -250,49 +247,6 @@ group { name: "elm/border/base/default";
             rel2.offset: 0 0;
          }
       }
-      rect {  "busy_clip"; nomouse;
-         desc { "default";
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         desc { "hung";
-            inherit: "default";
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
-      image { "knob"; nomouse;
-         clip: "busy_clip";
-         desc { "default";
-            fixed: 1 1;
-            image.normal: "knob_round_small_busy.png";
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            max: 20 20;
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 2 -0;
-            rel1.to: "elm.event.icon";
-            rel2.relative: 1.0 1.0;
-            rel2.offset: 2 -1;
-            rel2.to: "elm.event.icon";
-            align: 0.0 0.5;
-            fixed: 1 1;
-         }
-      }
-      image { "knob_spinner"; nomouse;
-         clip: "busy_clip";
-         desc { "default";
-            fixed: 1 1;
-            rel.to: "knob";
-            image.normal: "glow_round_corners_small.png";
-            map.on: 1;
-            map.smooth: 1;
-            map.rotation.center: "knob";
-         }
-         desc { "spin";
-            inherit: "default";
-            map.rotation.z: 360;
-         }
-      }
       rect {  "clip1"; nomouse;
          desc { "default";
             rel.to: "top_clip";
@@ -314,8 +268,9 @@ group { name: "elm/border/base/default";
       }
       image { "close1";  nomouse;
          clip: "clip1";
+         scale: 1;
          desc { "default";
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "elm.event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -328,8 +283,9 @@ group { name: "elm/border/base/default";
       }
       image { "max1"; nomouse;
          clip: "clip1";
+         scale: 1;
          desc { "default";
-            image.normal: "border_maximize.png";
+            image.normal: "i-arrow-u";
             rel.to: "elm.event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -342,8 +298,9 @@ group { name: "elm/border/base/default";
       }
       image { "min1"; nomouse;
          clip: "clip1";
+         scale: 1;
          desc { "default";
-            image.normal: "border_minimize.png";
+            image.normal: "i-arrow-d";
             rel.to: "elm.event.minimize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
@@ -356,44 +313,47 @@ group { name: "elm/border/base/default";
       }
       image { "close2";  nomouse;
          clip: "clip2";
+         scale: 1;
          desc { "default";
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "elm.event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color: 255 255 255 255;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color: 220 220 220 255;
          }
       }
       image { "max2"; nomouse;
          clip: "clip2";
+         scale: 1;
          desc { "default";
-            image.normal: "border_maximize.png";
+            image.normal: "i-arrow-u";
             rel.to: "elm.event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color: 255 255 255 255;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color: 220 220 220 255;
          }
       }
       image { "min2"; nomouse;
          clip: "clip2";
+         scale: 1;
          desc { "default";
-            image.normal: "border_minimize.png";
+            image.normal: "i-arrow-d";
             rel.to: "elm.event.minimize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color: 255 255 255 255;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color: 220 220 220 255;
          }
       }
       rect {  "elm.event.icon";
@@ -524,14 +484,16 @@ group { name: "elm/border/base/default";
       rect { "bottom_clip";
          scale: 1;
          desc { "default";
-            rel.to: "shadow_spacer";
-            rel1 { relative: 0.0 1.0; offset: 0 -5; }
+            rel.to: "shadow_base";
+            rel1 { relative: 0.0 1.0; offset: 0 -1; }
+            align: 0.0 1.0;
             min: 0 5;
             fixed: 0 1;
          }
          desc { "hidden";
             inherit: "default";
             rel1 { relative: 0.0 1.0; offset: 0 0; }
+            rel2 { relative: 1.0 1.0; offset: 0 0; }
             min: 0 0;
             hid;
          }
@@ -671,12 +633,14 @@ group { name: "elm/border/base/default";
       program {
          signal: "elm,state,shadow,on"; source: "elm";
          action: STATE_SET "default";
-         targets: "shadow_spacer" "shadow";
+         target: "shadow_clip";
+         target: "shadow_base";
       }
       program {
          signal: "elm,state,shadow,off"; source: "elm";
          action: STATE_SET "hidden";
-         targets: "shadow_spacer" "shadow";
+         target: "shadow_clip";
+         target: "shadow_base";
       }
       program {
          signal: "elm,state,background,solid,on"; source: "elm";
@@ -736,41 +700,6 @@ group { name: "elm/border/base/default";
          signal: "elm,state,not_urgent"; source: "elm";
          action: STATE_SET "default";
          target: "icon";
-      }
-      program { name: "spin";
-         signal: "elm,state,hung"; source: "elm";
-         action: STATE_SET "spin";
-         transition: LINEAR 1.0;
-         target: "knob_spinner";
-         after: "spin2";
-      }
-      program { name: "spin2";
-         action: STATE_SET "default";
-         target: "knob_spinner";
-         after: "spin";
-      }
-      program {
-         signal: "elm,state,hung"; source: "elm";
-         action: STATE_SET "hung";
-         transition: SINUSOIDAL 0.25;
-         target: "busy_clip";
-      }
-      program {
-         signal: "elm,state,unhung"; source: "elm";
-         action: STATE_SET "default";
-         transition: SINUSOIDAL 1.0;
-         target: "busy_clip";
-         after: "spin3";
-      }
-      program { name: "spin3";
-         action: ACTION_STOP;
-         target: "spin";
-         target: "spin2";
-         after: "spin4";
-      }
-      program { name: "spin4";
-         action: STATE_SET "default";
-         target: "knob_spinner";
       }
 
       /* maximize & unmaximize */
@@ -1096,25 +1025,22 @@ group { name: "elm/border/dialog/default";
 
 group { name: "elm/border/naviframe/default";
    inherit:   "elm/border/dialog/default";
-   images.image: "sym_left_dark_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_left_light_normal.png" COMP;
    parts {
       image { "close1";
          desc { "default";
-            image.normal: "sym_left_dark_normal.png";
+            image.normal: "i-arrow-l";
          }
          desc { "selected";
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
          }
       }
       image { "close2"; nomouse;
          clip: "clip2";
          desc { "default";
-            image.normal: "sym_left_light_normal.png";
+            image.normal: "i-arrow-l";
          }
          desc { "selected";
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
          }
       }
    }

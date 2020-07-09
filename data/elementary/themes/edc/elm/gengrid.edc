@@ -7,179 +7,93 @@ group { name: "elm/gengrid/item/default/default";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
-#define IMGP() \
-   images.image: "bevel_dark_out.png" COMP; \
-   images.image: "shadow_rounded_horiz.png" COMP; \
-   images.image: "vgrad_med_dark.png" COMP; \
-   images.image: "bevel_out.png" COMP; \
-   images.image: "shine.png" COMP;
-   IMGP()
    parts {
 //---------------------------------------------------------------------------
 #define BASEP() \
-      part { name: "event"; type: RECT; \
-         description { state: "default" 0.0; \
-            color: 0 0 0 0; \
-         } \
-         description { state: "disabled" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 0; \
-         } \
+   part { name: "event"; type: RECT; \
+      description { state: "default" 0.0; \
+         color: 0 0 0 0; \
       } \
-      part { name: "base"; type: RECT; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            color: 64 64 64 255; \
-            color_class: "list_item_base"; \
-         } \
-         description { state: "odd" 0.0; \
-            color: 56 56 56 255; \
-            color_class: "list_item_base_odd"; \
-         } \
+      description { state: "disabled" 0.0; \
+         inherit: "default" 0.0; \
+          visible: 0; \
       } \
-      program { \
-         signal: "elm,state,odd"; source: "elm"; \
-         action: STATE_SET "odd" 0.0; \
-         target: "base"; \
+   } \
+   part { name: "base"; type: RECT; mouse_events: 0; \
+      description { state: "default" 0.0; \
+         color: 64 64 64 255; \
       } \
-      program { \
-         signal: "elm,state,even"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "base"; \
+      description { state: "odd" 0.0; \
+         color: 56 56 56 255; \
       } \
-      part { name: "bevel"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "bevel_dark_out.png"; \
-            image.border: 2 2 2 2; \
-            image.middle: 0; \
-            fill.smooth: 0; \
-         } \
+   } \
+   program { signal: "elm,state,odd"; source: "elm"; \
+      action: STATE_SET "odd" 0.0; \
+      target: "base"; \
+   } \
+   program { signal: "elm,state,even"; source: "elm"; \
+      action: STATE_SET "default" 0.0; \
+      target: "base"; \
+   } \
+   part { name: "sel_base"; type: RECT; mouse_events: 0; \
+      description { state: "default" 0.0; \
+         color: 51 153 255 255; \
+         visible: 0; \
       } \
-      part { name: "sel_shadow"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "shadow_rounded_horiz.png"; \
-            image.border: 0 0 9 9; \
-            rel1.offset: 0 -4; \
-            rel2.offset: -1 5; \
-            fill.smooth: 0; \
-            visible: 0; \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
+      description { state: "selected" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
       } \
-      part { name: "sel_base"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "vgrad_med_dark.png"; \
-            fill.smooth: 0; \
-            visible: 0; \
-            TILED_HORIZ(120) \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      part { name: "sel_bevel"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "bevel_out.png"; \
-            image.border: 2 2 2 2; \
-            image.middle: 0; \
-            fill.smooth: 0; \
-            visible: 0; \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      program { \
-         signal: "elm,state,selected"; source: "elm"; \
-         action: STATE_SET "selected" 0.0; \
-         target: "sel_shadow"; \
-         target: "sel_base"; \
-         target: "sel_bevel"; \
-      } \
-      program { \
-         signal: "elm,state,unselected"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "sel_shadow"; \
-         target: "sel_base"; \
-         target: "sel_bevel"; \
-      } \
-      program { \
-         signal: "elm,state,disabled"; source: "elm"; \
-         action: STATE_SET "disabled" 0.0; \
-         target: "event"; \
-      } \
-      program { \
-         signal: "elm,state,enabled"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "event"; \
-      }
+   } \
+   program { signal: "elm,state,selected"; source: "elm"; \
+      action: STATE_SET "selected" 0.0; \
+      target: "sel_base"; \
+   } \
+   program { signal: "elm,state,unselected"; source: "elm"; \
+      action: STATE_SET "default" 0.0; \
+      target: "sel_base"; \
+   } \
+   program { signal: "elm,state,disabled"; source: "elm"; \
+       action: STATE_SET "disabled" 0.0; \
+       target: "event"; \
+   } \
+   program { signal: "elm,state,enabled"; source: "elm"; \
+      action: STATE_SET "default" 0.0; \
+      target: "event"; \
+   }
 #define TOPP() \
-      part { name: "sel_shine"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "shine.png"; \
-            rel1.offset: 0 -2; \
-            rel1.to: "sel_base"; \
-            rel2.relative: 1.0 0.0; \
-            rel2.offset: -1 2; \
-            rel2.to: "sel_base"; \
-            visible: 0; \
-            FIXED_SIZE(69, 5) \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
+   part { name: "event_block"; type: RECT; \
+      description { state: "default" 0.0; \
+         color: 0 0 0 0; \
+         visible: 0; \
       } \
-      part { name: "event_block"; type: RECT; \
-         description { state: "default" 0.0; \
-            color: 0 0 0 0; \
-            visible: 0; \
-         } \
-         description { state: "disabled" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
+      description { state: "disabled" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
       } \
-      program { \
-         signal: "elm,state,selected"; source: "elm"; \
-         action: STATE_SET "selected" 0.0; \
-         target: "sel_shine"; \
-      } \
-      program { \
-         signal: "elm,state,unselected"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "sel_shine"; \
-      } \
-      program { \
-         signal: "elm,state,disabled"; source: "elm"; \
-         action: STATE_SET "disabled" 0.0; \
-         target: "event_block"; \
-      } \
-      program { \
-         signal: "elm,state,enabled"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "event_block"; \
-      }
+   } \
+   program { signal: "elm,state,disabled"; source: "elm"; \
+      action: STATE_SET "disabled" 0.0; \
+      target: "event_block"; \
+   } \
+   program { signal: "elm,state,enabled"; source: "elm"; \
+       action: STATE_SET "default" 0.0; \
+       target: "event_block"; \
+   }
 //---------------------------------------------------------------------------
       BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.offset: 5 -5;
-            rel2.relative: 1.0 1.0;
+            rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: FN_COL_DEFAULT;
-            color_class: "grid_item";
+            color: 160 160 160 255;
             align: 0.5 1.0;
+            offscale;
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.5 1.0;
@@ -188,101 +102,40 @@ group { name: "elm/gengrid/item/default/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 255 255 255 255;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 80 80 80 255;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "grid_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.offset: -2 -2;
-            rel1.to: "elm.text";
-            rel2.offset: 1 0;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "grid_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      program {
-         signal: "elm,state,selected"; source: "elm";
+      program { signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,unselected"; source: "elm";
+      program { signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
          target: "icon_area";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
          target: "icon_area";
       }
       //##//
       part { name: "icon_area"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.to_y: "elm.swallow.pad";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -290,34 +143,40 @@ group { name: "elm/gengrid/item/default/default";
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.0 1.0;
             rel1.to_y: "elm.text";
+            rel2.offset: 0 0;
             rel2.to_y: "elm.text";
             rel2.relative: 1.0 0.0;
+            rel2.offset: -1 0;
+            offscale;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "icon_area";
          description { state: "default" 0.0;
-            rel1.to: "icon_area";
-            rel2.to: "icon_area";
+            rel.to: "icon_area";
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
+         scale: 1;
          clip_to: "icon_area";
          description { state: "default" 0.0;
-            fixed: 1 1;
+            min: ICMIN ICMIN;
             align: 1.0 0.0;
+            rel.to: "icon_area";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 2;
+            rel2.offset: -5 4;
+            offscale;
          }
       }
       //##//
-      
+
       TOPP()
    }
 }
@@ -328,7 +187,7 @@ group { name: "elm/gengrid/item/default_style/default";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    styles.style {    name: "gengrid_style";
-      base: "font="FN" font_size=10 align=left color=#fff style=shadow,bottom shadow_color=#00000080 text_class=list_item ellipsis=1.0";
+      base: "font="FN" font_size=10 align=left color=#a0a0a0 text_class=list_item ellipsis=1.0";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -336,7 +195,7 @@ group { name: "elm/gengrid/item/default_style/default";
       tag: "tab" "\t";
    }
    styles.style { name: "gengrid_style_selected";
-      base: "font="FN" font_size=10 align=left color=#3399ffff style=glow glow_color=#3399ff18 glow2_color=#3399ff12 text_class=list_item_selected ellipsis=1.0";
+      base: "font="FN" font_size=10 align=left color=#fff text_class=list_item_selected ellipsis=1.0";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -344,15 +203,14 @@ group { name: "elm/gengrid/item/default_style/default";
       tag: "tab" "\t";
    }
    styles.style { name: "gengrid_style_disabled";
-      base: "font="FN" font_size=10 align=left color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=list_item ellipsis=1.0";
+      base: "font="FN" font_size=10 align=left color=#505050 text_class=list_item ellipsis=1.0";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
       tag: "b" "+ font_weight=Bold";
       tag: "tab" "\t";
    }
-   
-   IMGP()
+
    parts {
       BASEP()
 
@@ -362,11 +220,11 @@ group { name: "elm/gengrid/item/default_style/default";
          description { state: "default" 0.0;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.offset: 5 -5;
+            rel1.offset: 4 -5;
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
-            color_class: "grid_item";
             align: 0.5 1.0;
+            offscale;
             text {
                min: 0 1;
                align: 0.5 1.0;
@@ -376,97 +234,40 @@ group { name: "elm/gengrid/item/default_style/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            text.style: "gengrid_style_selected";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            text.style: "gengrid_style_disabled";
          }
       }
-      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color_class: "grid_item_disabled";
-            text {
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-               style: "gengrid_style_disabled";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color_class: "grid_item_selected";
-            text {
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-               style: "gengrid_style_selected";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      program {
-         signal: "elm,state,selected"; source: "elm";
+      program { signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,unselected"; source: "elm";
+      program { signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
          target: "icon_area";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
          target: "icon_area";
       }
       //##//
       part { name: "icon_area"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.to_y: "elm.swallow.pad";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -474,37 +275,52 @@ group { name: "elm/gengrid/item/default_style/default";
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.0 1.0;
             rel1.to_y: "elm.text";
+            rel2.offset: 0 0;
             rel2.to_y: "elm.text";
             rel2.relative: 1.0 0.0;
+            rel2.offset: -1 0;
+            offscale;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "icon_area";
          description { state: "default" 0.0;
-            rel1.to: "icon_area";
-            rel2.to: "icon_area";
+            rel.to: "icon_area";
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
+         scale: 1;
          clip_to: "icon_area";
          description { state: "default" 0.0;
-            fixed: 1 1;
+            min: ICMIN ICMIN;
             align: 1.0 0.0;
+            rel.to: "icon_area";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 2;
+            rel2.offset: -5 4;
+            offscale;
          }
       }
       //##//
-      
+
       TOPP()
    }
 }
+
+#define IC(_NAME, _ICON) \
+   set { name: _NAME; \
+      image {image: _ICON"-060.png" COMP; size: 31 31 60000 60000; } \
+      image {image: _ICON"-030.png" COMP; size: 16 16    30    30; } \
+      image {image: _ICON"-015.png" COMP; size:  0  0    15    15; } \
+   }
+IC("ic-arrow-u", "arrow-u")
+#undef IC
 
 group { name: "elm/gengrid/item/up/default";
    inherit: "elm/gengrid/item/default/default";
@@ -517,12 +333,38 @@ group { name: "elm/gengrid/item/up/default";
       }
       part { name: "up";
          insert_after: "elm.swallow.pad";
+         scale: 1;
          description { state: "default" 0.0;
+            min: 30 30; max: 30 30;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            rel1.to: "icon_area";
-            rel2.to: "icon_area";
-            image.normal: "icon_arrow_up.png";
+            rel.to: "icon_area";
+            image.normal: "ic-arrow-u";
+            color: 160 160 160 255;
          }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 80 80 80 255;
+         }
+      }
+      program { signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "up";
+      }
+      program { signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "up";
+      }
+      program { signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "up";
+      }
+      program { signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "up";
       }
    }
 }
@@ -533,26 +375,21 @@ group { name: "elm/gengrid/item/album-preview/default";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon.1 elm.swallow.icon.2 elm.swallow.icon.3 elm.swallow.icon.4";
    data.item: "states" "have_files";
-   
-   IMGP()
-   images.image: "icon_folder.png" COMP;
-   
+
    parts {
       BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.offset: 5 -5;
-            rel2.relative: 1.0 1.0;
+            rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: FN_COL_DEFAULT;
-            color_class: "grid_item";
+            color: 160 160 160 255;
             align: 0.5 1.0;
+            offscale;
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.5 1.0;
@@ -561,101 +398,40 @@ group { name: "elm/gengrid/item/album-preview/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 255 255 255 255;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 80 80 80 255;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "grid_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.offset: -2 -2;
-            rel1.to: "elm.text";
-            rel2.offset: 1 0;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "grid_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      program {
-         signal: "elm,state,selected"; source: "elm";
+      program { signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,unselected"; source: "elm";
+      program { signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
          target: "icon_area";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
          target: "icon_area";
       }
       //##//
       part { name: "icon_area"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.to_y: "elm.swallow.pad";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
+            offscale;
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -665,18 +441,30 @@ group { name: "elm/gengrid/item/album-preview/default";
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 64;
+            visible: 1;
          }
       }
-      program {      
-         signal: "elm,state,have_files,active"; source: "elm";
+      program { signal: "elm,state,have_files,active"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "icon_area";
       }
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            align: 0.0 1.0;
+            rel1.to_y: "elm.text";
+            rel2.offset: 0 0;
+            rel2.to_y: "elm.text";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 0;
+            offscale;
+         }
+      }
       part { name: "icon_area2"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "icon_area";
+            rel.to: "icon_area";
             rel1.relative: 0.3  0.3;
-            rel2.to: "icon_area";
             rel2.relative: 0.7  0.7;
          }
       }
@@ -684,18 +472,8 @@ group { name: "elm/gengrid/item/album-preview/default";
          insert_after: "elm.swallow.pad";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            rel1.to: "icon_area";
-            rel2.to: "icon_area";
-            image.normal: "icon_folder.png";
-         }
-      }
-      part { name: "elm.swallow.pad"; type: SWALLOW;
-         description { state: "default" 0.0;
-            fixed: 0 1;
-            align: 0.0 1.0;
-            rel1.to_y: "elm.text";
-            rel2.to_y: "elm.text";
-            rel2.relative: 1.0 0.0;
+            rel.to: "icon_area";
+            image.normal: "i-folder";
          }
       }
       part { name: "elm.swallow.icon.1"; type: SWALLOW; mouse_events: 0;
@@ -734,8 +512,28 @@ group { name: "elm/gengrid/item/album-preview/default";
             rel2.relative: 1.0  1.0;
          }
       }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         clip_to: "icon_area";
+         description { state: "default" 0.0;
+            rel.to: "icon_area";
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         scale: 1;
+         clip_to: "icon_area";
+         description { state: "default" 0.0;
+            min: ICMIN ICMIN;
+            align: 1.0 0.0;
+            rel.to: "icon_area";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -5 4;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 4;
+            offscale;
+         }
+      }
       //##//
-      
+
       TOPP()
    }
 }
@@ -745,97 +543,88 @@ group { name: "elm/gengrid/item/thumb/default";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
-   
-   images.image: "win_shadow.png" COMP;
-   images.image: "win_glow.png" COMP;
    parts {
-
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            rel1.to: "base";
-            rel1.offset: -7  -3;
-            rel2.to: "base";
-            rel2.offset: 6 11;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -5  -5;
-            rel1.to: "base";
-            rel2.offset: 4 4;
-            rel2.to: "base";
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
+            rel.to: "icon_area";
             rel1.offset: -4 -4;
-            rel1.to: "icon_area";
-            rel2.offset: 3 3;
+            rel2.offset: 4 4;
             rel2.to: "icon_area";
             color: 255 255 255 255;
+            offscale;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 48 48 48 255;
+            color: 51 153 255 255;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 64 64 64 255;
+            visible: 0;
          }
       }
-      program {
-         signal: "elm,state,selected"; source: "elm";
+      part { name: "base2"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            color: 51 153 255 255;
+            offscale;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            rel1.to_y: "base";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program { signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected" 0.0;
          target: "base";
-         target: "glow";
       }
-      program {
-         signal: "elm,state,unselected"; source: "elm";
+      program { signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "glow";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "base";
-         target: "icon_area";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "icon_area";
       }
-      
+      program { signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         transition: DECELERATE 0.2;
+         target: "base2";
+      }
+      program { signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.2;
+         target: "base2";
+      }
+      program { signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "base2";
+      }
+      program { signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base2";
+      }
+
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.offset: 5 -5;
-            rel2.relative: 1.0 1.0;
+            rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: FN_COL_DEFAULT;
-            color_class: "grid_item";
+            color: 160 160 160 255;
             align: 0.5 1.0;
+            offscale;
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.5 1.0;
@@ -844,100 +633,40 @@ group { name: "elm/gengrid/item/thumb/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 255 255 255 255;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 80 80 80 255;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "grid_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.offset: -2 -2;
-            rel1.to: "elm.text";
-            rel2.offset: 1 0;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "grid_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      program {
-         signal: "elm,state,selected"; source: "elm";
+      program { signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,unselected"; source: "elm";
+      program { signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
+         target: "icon_area";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
-         target: "label2";
-         target: "label3";
+         target: "icon_area";
       }
       //##//
       part { name: "icon_area"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 0;
-            aspect: 1.0 1.0; aspect_preference: BOTH;
-            rel1.offset: 12 12;
+            rel1.offset: 8 8;
             rel2.to_y: "elm.swallow.pad";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -13 -13;
+            rel2.offset: -9 -9;
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -945,34 +674,39 @@ group { name: "elm/gengrid/item/thumb/default";
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.0 1.0;
             rel1.to_y: "elm.text";
+            rel2.offset: 0 0;
             rel2.to_y: "elm.text";
             rel2.relative: 1.0 0.0;
+            rel2.offset: -1 0;
+            offscale;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "icon_area";
          description { state: "default" 0.0;
-            rel1.to: "icon_area";
-            rel2.to: "icon_area";
+            rel.to: "icon_area";
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
+         scale: 1;
          clip_to: "icon_area";
          description { state: "default" 0.0;
-            fixed: 1 1;
+            min: ICMIN ICMIN;
             align: 1.0 0.0;
+            rel.to: "icon_area";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 2;
+            rel2.offset: -5 4;
+            offscale;
          }
       }
    }
 }
-#undef IMGP
 #undef BASEP
 #undef TOPP

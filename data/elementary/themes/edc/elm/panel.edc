@@ -361,20 +361,6 @@ group { name: "elm/scroller/panel/bottom/default";
    }
 }
 
-#define IC(_NAME, _ICON) \
-   set { name: _NAME; \
-      image {image: _ICON"-060.png" COMP; size: 31 31 60000 60000; } \
-      image {image: _ICON"-030.png" COMP; size: 16 16    30    30; } \
-      image {image: _ICON"-015.png" COMP; size:  0  0    15    15; } \
-   }
-IC("ic-arrow-l", "arrow-l")
-IC("ic-arrow-r", "arrow-r")
-IC("ic-arrow-u", "arrow-u")
-IC("ic-arrow-d", "arrow-d")
-IC("ic-reload", "reload")
-IC("ic-heart", "heart")
-#undef IC
-
 group { name: "elm/panel/left/default";
    data.item: "focus_highlight" "on";
    script {
@@ -456,11 +442,11 @@ group { name: "elm/panel/left/default";
             fixed: 1 1;
             min: 30 30; max: 30 30;
             rel.to: "btn";
-            image.normal: "ic-arrow-l";
+            image.normal: "i-arrow-l";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            image.normal: "ic-arrow-r";
+            image.normal: "i-arrow-r";
          }
       }
    }
@@ -631,10 +617,10 @@ group { name: "elm/panel/right/default";
       }
       part { name: "icn";
          description { state: "default" 0.0;
-            image.normal: "ic-arrow-r";
+            image.normal: "i-arrow-r";
          }
          description { state: "hidden" 0.0;
-            image.normal: "ic-arrow-l";
+            image.normal: "i-arrow-l";
          }
       }
    }
@@ -681,10 +667,10 @@ group { name: "elm/panel/top/default";
       }
       part { name: "icn";
          description { state: "default" 0.0;
-            image.normal: "ic-arrow-u";
+            image.normal: "i-arrow-u";
          }
          description { state: "hidden" 0.0;
-            image.normal: "ic-arrow-d";
+            image.normal: "i-arrow-d";
          }
       }
    }
@@ -765,10 +751,10 @@ group { name: "elm/panel/bottom/default";
       }
       part { name: "icn";
          description { state: "default" 0.0;
-            image.normal: "ic-arrow-d";
+            image.normal: "i-arrow-d";
          }
          description { state: "hidden" 0.0;
-            image.normal: "ic-arrow-u";
+            image.normal: "i-arrow-u";
          }
       }
    }
