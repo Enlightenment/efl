@@ -14,6 +14,11 @@
  * @{
  */
 
+#ifdef _MSC_VER
+
+#include <io.h> // for read, write, access, close
+
+#endif // _MSC_VER
 
 /*
  * Time related functions

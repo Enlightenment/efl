@@ -31,9 +31,6 @@ evil_init(void)
 
    _evil_time_count = count.QuadPart;
 
-   if (!evil_sockets_init())
-     return --_evil_init_count;
-
    return _evil_init_count;
 }
 
@@ -49,8 +46,6 @@ evil_shutdown(void)
 
    if (--_evil_init_count != 0)
      return _evil_init_count;
-
-   evil_sockets_shutdown();
 
    return _evil_init_count;
 }

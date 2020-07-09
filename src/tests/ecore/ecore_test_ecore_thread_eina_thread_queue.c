@@ -647,7 +647,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
 
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
-   if (pipe(p) != 0)
+   if (eina_pipe_new(p) != 0)
      {
         ck_abort_msg("ERR: pipe create fail\n");
      }
@@ -661,7 +661,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
      {
         char buf;
 
-        if (read(p[0], &buf, 1) != 1)
+        if (eina_pipe_read(p[0], &buf, 1) != 1)
           if (DEBUG) printf("Error reading from pipe\n");
         msg = eina_thread_queue_wait(thq1, &ref);
         if (msg)
@@ -675,8 +675,8 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
    if (DEBUG) printf("msg fd ok\n");
    ecore_thread_wait(eth1, 0.1);
    eina_thread_queue_free(thq1);
-   close(p[0]);
-   close(p[1]);
+   eina_pipe_free(p[0]);
+   eina_pipe_free(p[1]);
 }
 EFL_END_TEST
 

@@ -42,6 +42,7 @@
 
 #include "eina_debug.h"
 #include "eina_debug_private.h"
+#include "eina_pipe.h"
 
 static Eina_Spinlock _lock;
 
@@ -77,7 +78,7 @@ end:
    t->rel_time = t->timeout - prev_time;
    if (!t2) _timers = eina_list_append(_timers, t);
    else _timers = eina_list_prepend_relative(_timers, t, t2);
-   if (write(pipeToThread[1], &c, 1) != 1)
+   if (eina_pipe_write(pipeToThread[1], &c, 1) != 1)
      e_debug("EINA DEBUG ERROR: Can't wake up thread for debug timer");
 }
 
@@ -121,7 +122,7 @@ _monitor(void *_data EINA_UNUSED)
         if (ret)
           {
              char c;
-             if (read(pipeToThread[0], &c, 1) != 1) break;
+             if (eina_pipe_read(pipeToThread[0], &c, 1) != 1) break;
           }
         else
           {
@@ -143,8 +144,8 @@ _monitor(void *_data EINA_UNUSED)
      }
 #endif
    _thread_runs = EINA_FALSE;
-   close(pipeToThread[0]);
-   close(pipeToThread[1]);
+   eina_pipe_free(pipeToThread[0]);
+   eina_pipe_free(pipeToThread[1]);
    return NULL;
 }
 
@@ -210,10 +211,8 @@ Eina_Bool
 _eina_debug_timer_init(void)
 {
    eina_spinlock_new(&_lock);
-#ifndef _WIN32
-   if (pipe(pipeToThread) == -1)
+   if (eina_pipe_new(pipeToThread) == -1)
      return  EINA_FALSE;
-#endif
    return EINA_TRUE;
 }
 
@@ -225,8 +224,8 @@ _eina_debug_timer_shutdown(void)
    eina_spinlock_take(&_lock);
    EINA_LIST_FREE(_timers, t)
      free(t);
-   close(pipeToThread[0]);
-   close(pipeToThread[1]);
+   eina_pipe_free(pipeToThread[0]);
+   eina_pipe_free(pipeToThread[1]);
    if (_thread_runs)
      pthread_cancel(_thread);
    _thread_runs = 0;

@@ -15,28 +15,6 @@
 # include <sys/timerfd.h>
 #endif
 
-#ifdef _WIN32
-
-# include <winsock2.h>
-# include <evil_private.h> /* pipe */
-
-# define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
-# define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
-# define pipe_close(fd)               closesocket(fd)
-# define PIPE_FD_ERROR   SOCKET_ERROR
-
-#else
-
-# include <sys/select.h>
-# include <fcntl.h>
-
-# define pipe_write(fd, buffer, size) write((fd), buffer, size)
-# define pipe_read(fd, buffer, size)  read((fd), buffer, size)
-# define pipe_close(fd)               close(fd)
-# define PIPE_FD_ERROR   -1
-
-#endif /* ! _WIN32 */
-
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>
 #endif
@@ -106,7 +84,7 @@ static void
 _tick_send(signed char val)
 {
    DBG("_tick_send(%i)", val);
-   if (pipe_write(timer_fd_write, &val, 1) != 1)
+   if (eina_pipe_write(timer_fd_write, &val, 1) != 1)
      {
         ERR("Cannot write to animator control fd");
      }
@@ -259,7 +237,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                }
              if (data_control)
                {
-                  if (pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
+                  if (eina_pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
                     {
                        ERR("Cannot read from animator control fd");
                     }
@@ -308,7 +286,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                data_timeout = EINA_TRUE;
              if (data_control)
                {
-                  if (pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
+                  if (eina_pipe_read(timer_fd_read, &tick, sizeof(tick)) != 1)
                     {
                        ERR("Cannot read from animator control fd");
                     }
@@ -334,9 +312,9 @@ done:
         timerfd = -1;
      }
 #endif
-   pipe_close(timer_fd_read);
+   eina_pipe_free(timer_fd_read);
    timer_fd_read = -1;
-   pipe_close(timer_fd_write);
+   eina_pipe_free(timer_fd_write);
    timer_fd_write = -1;
 }
 
@@ -378,12 +356,12 @@ _timer_tick_finished(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
    tick_queue_count = 0;
    if (timer_fd_read >= 0)
      {
-        pipe_close(timer_fd_read);
+        eina_pipe_free(timer_fd_read);
         timer_fd_read = -1;
      }
    if (timer_fd_write >= 0)
      {
-        pipe_close(timer_fd_write);
+        eina_pipe_free(timer_fd_write);
         timer_fd_write = -1;
      }
 }
@@ -395,7 +373,7 @@ _timer_tick_begin(void)
      {
         int fds[2];
 
-        if (pipe(fds) != 0) return;
+        if (eina_pipe_new(fds) != 0) return;
         eina_file_close_on_exec(fds[0], EINA_TRUE);
         eina_file_close_on_exec(fds[1], EINA_TRUE);
         timer_fd_read = fds[0];

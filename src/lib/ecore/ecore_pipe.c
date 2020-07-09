@@ -36,14 +36,11 @@
  */
 
 #define PIPE_FD_INVALID -1
+#define PIPE_FD_ERROR   -1
 
 #ifdef _WIN32
 # include <winsock2.h>
 # include <evil_private.h> /* pipe fcntl */
-# define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
-# define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
-# define pipe_close(fd)               closesocket(fd)
-# define PIPE_FD_ERROR   SOCKET_ERROR
 #else
 # ifdef HAVE_SYS_EPOLL_H
 #  include <sys/epoll.h>
@@ -53,10 +50,6 @@
 # endif
 # include <unistd.h>
 # include <fcntl.h>
-# define pipe_write(fd, buffer, size) write((fd), buffer, size)
-# define pipe_read(fd, buffer, size)  read((fd), buffer, size)
-# define pipe_close(fd)               close(fd)
-# define PIPE_FD_ERROR   -1
 #endif /* ! _WIN32 */
 
 #include "Ecore.h"
@@ -120,7 +113,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
      }
    if (p->fd_read != PIPE_FD_INVALID)
      {
-        pipe_close(p->fd_read);
+        eina_pipe_free(p->fd_read);
         p->fd_read = PIPE_FD_INVALID;
      }
 }
@@ -182,7 +175,7 @@ ecore_pipe_write_close(Ecore_Pipe *p)
      }
    if (p->fd_write != PIPE_FD_INVALID)
      {
-        pipe_close(p->fd_write);
+        eina_pipe_free(p->fd_write);
         p->fd_write = PIPE_FD_INVALID;
      }
 }
@@ -218,7 +211,7 @@ ecore_pipe_write(Ecore_Pipe  *p,
 
    do // First write the len into the pipe
      {
-        ret = pipe_write(p->fd_write, &bytes, sizeof(bytes));
+        ret = eina_pipe_write(p->fd_write, &bytes, sizeof(bytes));
         if (ret == sizeof(nbytes))
           {
              retry = ECORE_PIPE_WRITE_RETRY;
@@ -233,7 +226,7 @@ ecore_pipe_write(Ecore_Pipe  *p,
           }
         else if ((ret == PIPE_FD_ERROR) && (errno == EPIPE))
           {
-             pipe_close(p->fd_write);
+             eina_pipe_free(p->fd_write);
              p->fd_write = PIPE_FD_INVALID;
              goto out;
           }
@@ -253,7 +246,7 @@ ecore_pipe_write(Ecore_Pipe  *p,
 
    do // and now pass the data to the pipe
      {
-        ret = pipe_write(p->fd_write,
+        ret = eina_pipe_write(p->fd_write,
                          ((unsigned char *)buffer) + already_written,
                          nbytes - already_written);
 
@@ -269,7 +262,7 @@ ecore_pipe_write(Ecore_Pipe  *p,
           }
         else if ((ret == PIPE_FD_ERROR) && (errno == EPIPE))
           {
-             pipe_close(p->fd_write);
+             eina_pipe_free(p->fd_write);
              p->fd_write = PIPE_FD_INVALID;
              goto out;
           }
@@ -308,7 +301,7 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
 
    if ((fd_read == -1) && (fd_write == -1))
      {
-        if (pipe(fds))
+        if (eina_pipe_new(fds))
           {
              ecore_pipe_mp_free(p);
              return NULL;
@@ -383,8 +376,8 @@ _ecore_pipe_del(Ecore_Pipe *p)
    if (p->handling > 0) return (void *)p->data;
    if (p->fd_handler) _ecore_main_fd_handler_del(ML_OBJ, ML_DAT,
                                                  p->fd_handler);
-   if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
-   if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
+   if (p->fd_read != PIPE_FD_INVALID) eina_pipe_free(p->fd_read);
+   if (p->fd_write != PIPE_FD_INVALID) eina_pipe_free(p->fd_write);
    p->fd_handler = NULL;
    p->fd_read = PIPE_FD_INVALID;
    p->fd_write = PIPE_FD_INVALID;
@@ -552,7 +545,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
 
         if ((fd_timer_found) && (p->timerfd != PIPE_FD_INVALID))
           {
-             if (pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf)) <
+             if (eina_pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf)) <
                  (int)sizeof(int64_t))
                WRN("Could not read timerfd data");
              _ecore_pipe_unhandle(p);
@@ -612,7 +605,7 @@ _ecore_pipe_read(void             *data,
         if (p->len == 0)
           {
              // read the len of the passed data
-             ret = pipe_read(p->fd_read, &p->len, sizeof(p->len));
+             ret = eina_pipe_read(p->fd_read, &p->len, sizeof(p->len));
 
              // catch the non error case first
              // read amount ok - nothing more to do
@@ -634,7 +627,7 @@ _ecore_pipe_read(void             *data,
                     {
                        // no data on first try through means an error
                        _ecore_pipe_handler_call(p, NULL, 0);
-                       pipe_close(p->fd_read);
+                       eina_pipe_free(p->fd_read);
                        p->fd_read = PIPE_FD_INVALID;
                        p->fd_handler = NULL;
                        _ecore_pipe_unhandle(p);
@@ -668,7 +661,7 @@ _ecore_pipe_read(void             *data,
                    if (WSAGetLastError() != WSAEWOULDBLOCK)
                      {
                         _ecore_pipe_handler_call(p, NULL, 0);
-                        pipe_close(p->fd_read);
+                        eina_pipe_free(p->fd_read);
                         p->fd_read = PIPE_FD_INVALID;
                         p->fd_handler = NULL;
                         _ecore_pipe_unhandle(p);
@@ -696,7 +689,7 @@ _ecore_pipe_read(void             *data,
                {
                   _ecore_pipe_handler_call(p, NULL, 0);
                   // close the pipe
-                  pipe_close(p->fd_read);
+                  eina_pipe_free(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
                   _ecore_pipe_unhandle(p);
@@ -705,7 +698,7 @@ _ecore_pipe_read(void             *data,
           }
 
         // and read the passed data
-        ret = pipe_read(p->fd_read,
+        ret = eina_pipe_read(p->fd_read,
                         ((unsigned char *)p->passed_data) + p->already_read,
                         p->len - p->already_read);
 
@@ -747,7 +740,7 @@ _ecore_pipe_read(void             *data,
              if (WSAGetLastError() != WSAEWOULDBLOCK)
                {
                   _ecore_pipe_handler_call(p, NULL, 0);
-                  pipe_close(p->fd_read);
+                  eina_pipe_free(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
                   _ecore_pipe_unhandle(p);

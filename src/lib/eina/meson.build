@@ -113,7 +113,8 @@ public_sub_headers = [
 'eina_freeq.h',
 'eina_slstr.h',
 'eina_vpath.h',
-'eina_abstract_content.h'
+'eina_abstract_content.h',
+'eina_pipe.h',
 ]
 
 public_headers = [
@@ -160,6 +161,7 @@ eina_src = files([
 'eina_mempool.c',
 'eina_mmap.c',
 'eina_module.c',
+'eina_pipe.c',
 'eina_prefix.c',
 'eina_promise.c',
 'eina_promise_private.h',

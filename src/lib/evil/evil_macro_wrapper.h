@@ -61,19 +61,5 @@
 # define gettimeofday(tv, tz) evil_gettimeofday(tv, tz)
 #endif
 
-/*
- * evil_unistd.h
- */
-
-/**
- * @def pipe(fds)
- *
- * Wrapper around evil_pipe().
- */
-#ifdef pipe
-# undef pipe
-#endif
-#define pipe(fds) evil_pipe(fds)
-
 
 #endif
