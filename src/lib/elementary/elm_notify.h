@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Notify Notify
+ * @defgroup Elm_Notify_Group Notify
  * @ingroup Elementary
  *
  * @image html notify_inheritance_tree.png

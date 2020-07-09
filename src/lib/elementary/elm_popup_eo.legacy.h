@@ -19,7 +19,7 @@ typedef Eo Elm_Popup;
  * conjunction with elm_popup_orient_get() to know where the popup is
  * appearing.
  *
- * @ingroup Elm_Popup
+ * @ingroup Elm_Popup_Group
  */
 typedef enum
 {

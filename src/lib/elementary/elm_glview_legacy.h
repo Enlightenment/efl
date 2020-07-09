@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
 
@@ -25,7 +25,7 @@ EAPI Evas_Object *elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Ve
  *
  * @param obj The GLView object
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI void elm_glview_changed_set(Evas_Object *obj);
 
@@ -36,7 +36,7 @@ EAPI void elm_glview_changed_set(Evas_Object *obj);
  * @param w pointer of int width
  * @param h pointer of int height
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI void elm_glview_size_get(const Evas_Object *obj, int *w, int *h);
 
@@ -47,7 +47,7 @@ EAPI void elm_glview_size_get(const Evas_Object *obj, int *w, int *h);
  * @param w width of GLView
  * @param h height of GLView
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI void elm_glview_size_set(Evas_Object *obj, int w, int h);
 
@@ -66,7 +66,7 @@ EAPI void elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  * @param obj The GLView object
  * @param func The callback function
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI void elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
@@ -76,7 +76,7 @@ EAPI void elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  * @param obj The GLView object
  * @param func The callback function
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI void elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
@@ -86,7 +86,7 @@ EAPI void elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  * @param obj The GLView object
  * @param func The callback function
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 EAPI void elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 #include "elm_glview_eo.legacy.h"

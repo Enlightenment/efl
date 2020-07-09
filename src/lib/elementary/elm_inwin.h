@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Inwin Inwin
+ * @defgroup Elm_Inwin_Group Inwin
  * @ingroup Elm_Win
  *
  * @image html inwin_inheritance_tree.png

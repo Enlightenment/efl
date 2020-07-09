@@ -1,5 +1,5 @@
 /**
- * @addtogroup Elm_Win
+ * @addtogroup Elm_Win_Group
  *
  * @{
  */

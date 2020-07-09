@@ -7,7 +7,7 @@
  *
  * This function inserts a new index widget on the canvas.
  *
- * @ingroup Elm_Index
+ * @ingroup Elm_Index_Group
  */
 EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
 
@@ -23,7 +23,7 @@ EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
  * it, i.e., to enable vertical mode. it's an area one Fingers "finger" wide on
  * the bottom side of the index widget's container.
  *
- * @ingroup Elm_Index
+ * @ingroup Elm_Index_Group
  */
 EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
@@ -39,7 +39,7 @@ EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  * @return Current status of horizontal mode on index object.
  * @c true if horizontal mode is enabled or @c false if disabled.
  *
- * @ingroup Elm_Index
+ * @ingroup Elm_Index_Group
  */
 EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj);
 

@@ -6,7 +6,7 @@ typedef Eo Elm_Radio;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Radio
+ * @ingroup Elm_Radio_Group
  */
 EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
 
@@ -18,7 +18,7 @@ EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
  *
  * @param[in] value The value to use for the group
  *
- * @ingroup Elm_Radio
+ * @ingroup Elm_Radio_Group
  */
 EAPI void                       elm_radio_value_set(Evas_Object *obj, int value);
 
@@ -27,7 +27,7 @@ EAPI void                       elm_radio_value_set(Evas_Object *obj, int value)
  *
  * @return The value to use for the group
  *
- * @ingroup Elm_Radio
+ * @ingroup Elm_Radio_Group
  */
 EAPI int                        elm_radio_value_get(const Evas_Object *obj);
 

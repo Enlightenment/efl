@@ -950,7 +950,7 @@ EAPI Evas_GL                 *evas_gl_current_evas_gl_get (Evas_GL_Context **con
 
 /*
  * This document is licensed under the SGI Free Software B License Version
- * 2.0. For details, see http://oss.sgi.com/projects/FreeB/ .
+ * 2.0. For details, see https://spdx.org/licenses/SGI-B-2.0.html .
  */
 
 /*-------------------------------------------------------------------------

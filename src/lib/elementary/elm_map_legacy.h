@@ -11,7 +11,7 @@
  *
  * See @ref elm_map_zoom_mode_set() See @ref elm_map_zoom_mode_get()
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 typedef enum
 {
@@ -33,7 +33,7 @@ typedef enum
  *
  * This function inserts a new map widget on the canvas.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
 
@@ -55,7 +55,7 @@ EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
  * @param[in] obj The object.
  * @param[in] zoom The zoom level.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI void elm_map_zoom_set(Evas_Object *obj, int zoom);
 
@@ -72,7 +72,7 @@ EAPI void elm_map_zoom_set(Evas_Object *obj, int zoom);
  *
  * @return The zoom level.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI int elm_map_zoom_get(const Evas_Object *obj);
 
@@ -97,7 +97,7 @@ EAPI int elm_map_zoom_get(const Evas_Object *obj);
  * #ELM_MAP_ZOOM_MODE_MANUAL (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT, or
  * #ELM_MAP_ZOOM_MODE_AUTO_FILL.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI void elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
 
@@ -111,7 +111,7 @@ EAPI void elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
  * @return The zoom mode of the map, being it one of #ELM_MAP_ZOOM_MODE_MANUAL
  * (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT, or #ELM_MAP_ZOOM_MODE_AUTO_FILL.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
 
@@ -124,7 +124,7 @@ EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
  * @param[in] disabled Use @c true to disable mouse wheel or @c false to enable
  * it.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -137,7 +137,7 @@ EAPI void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * @return Use @c true to disable mouse wheel or @c false to enable it.
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 EAPI Eina_Bool elm_map_wheel_disabled_get(const Evas_Object *obj);
 

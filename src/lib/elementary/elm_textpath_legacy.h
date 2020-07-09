@@ -6,7 +6,7 @@ typedef Eo Elm_Textpath;
  * @param[in] parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Textpath
+ * @ingroup Elm_Textpath_Group
  *
  * @since 1.22
  */
@@ -21,7 +21,7 @@ EAPI Evas_Object                 *elm_textpath_add(Evas_Object *parent);
  * @note ellipsis in the style will be ignored since textpath supports ellipsis API.
  * @see elm_textpath_ellipsis_set()
  *
- * @ingroup Elm_Textpath
+ * @ingroup Elm_Textpath_Group
  *
  * @since 1.25
  */

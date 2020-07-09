@@ -6,7 +6,7 @@ typedef Eo Elm_Frame;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Frame
+ * @ingroup Elm_Frame_Group
  */
 EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
 

@@ -13,7 +13,7 @@ typedef Eo Elm_Panel;
 
 /** Panel orientation mode
  *
- * @ingroup Elm_Panel
+ * @ingroup Elm_Panel_Group
  */
 typedef enum
 {

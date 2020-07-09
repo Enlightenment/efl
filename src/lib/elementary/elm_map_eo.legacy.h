@@ -17,7 +17,7 @@ typedef Eo Elm_Map;
  * See @ref elm_map_sources_get() See @ref elm_map_source_get() See
  * @ref elm_map_source_set()
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 typedef enum
 {
@@ -33,7 +33,7 @@ typedef enum
  *
  * See @ref elm_map_route_add()
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 typedef enum
 {
@@ -51,7 +51,7 @@ typedef enum
  *
  * See @ref elm_map_route_add()
  *
- * @ingroup Elm_Map
+ * @ingroup Elm_Map_Group
  */
 typedef enum
 {

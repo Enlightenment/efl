@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new plug image object or NULL if it cannot be created
  *
- * @ingroup Plug
+ * @ingroup Elm_Plug_Group
  */
 EAPI Evas_Object    *elm_plug_add(Evas_Object *parent);
 

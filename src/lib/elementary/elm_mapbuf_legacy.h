@@ -7,7 +7,7 @@
  *
  * This function inserts a new mapbuf widget on the canvas.
  *
- * @ingroup Elm_Mapbuf
+ * @ingroup Elm_Mapbuf_Group
  */
 EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent);
 

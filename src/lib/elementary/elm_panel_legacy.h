@@ -5,7 +5,7 @@
  *
  * @return The panel object, or NULL on failure
  *
- * @ingroup Elm_Panel
+ * @ingroup Elm_Panel_Group
  */
 EAPI Evas_Object                 *elm_panel_add(Evas_Object *parent);
 

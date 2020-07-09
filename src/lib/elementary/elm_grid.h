@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Grid Grid
+ * @defgroup Elm_Grid_Group Grid
  * @ingroup Elementary
  *
  * @image html grid_inheritance_tree.png

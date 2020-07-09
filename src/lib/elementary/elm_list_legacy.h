@@ -7,7 +7,7 @@
  *
  * This function inserts a new list widget on the canvas.
  *
- * @ingroup Elm_List
+ * @ingroup Elm_List_Group
  */
 EAPI Evas_Object                 *elm_list_add(Evas_Object *parent);
 

@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Spinner Spinner
+ * @defgroup Elm_Spinner_Group Spinner
  * @ingroup Elementary
  *
  * @image html spinner_inheritance_tree.png
@@ -53,7 +53,7 @@
  */
 
 /**
- * @addtogroup Elm_Spinner
+ * @addtogroup Elm_Spinner_Group
  * @{
  */
 
