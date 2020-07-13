@@ -29,11 +29,26 @@ I060("i-heart", "heart")
 I060("i-close", "close")
 I060("i-move", "move")
 I060("i-resize", "move")
+I060("i-fullscreen", "fullscreen")
+I060("i-kill", "kill")
 I060("i-lock", "lock")
+I060("i-unlock", "unlock")
 I060("i-check", "check")
 I060("i-radio", "radio")
+I060("i-properties", "properties")
+I060("i-stacking", "stacking")
+I060("i-stacking-top", "stacking-top")
+I060("i-stacking-normal", "stacking-normal")
+I060("i-stacking-bottom", "stacking-bottom")
+I060("i-pin", "pin")
+I060("i-shade", "shade")
+I060("i-skip", "skip")
+I060("i-skip-pager", "skip-pager")
+I060("i-skip-taskbar", "skip-taskbar")
+I060("i-skip-winlist", "skip-winlist")
+I060("i-border", "border")
+I060("i-sendto", "sendto")
 // lock double
-// unlocked
 // exclam
 // apps
 // everything
@@ -45,18 +60,9 @@ I060("i-radio", "radio")
 // enlightenment
 // spanner
 // system
-// border
-// kill
 // more
 // pager
-// pin
-// properties
 // send to
-// shaded
-// skip
-// stack bottom
-// stack norm
-// stack top
 // chat
 // clock
 // delete
@@ -156,6 +162,7 @@ I060("i-radio", "radio")
 // bulb
 // bright bulb
 // phone
+// cleanup
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)
@@ -170,6 +177,8 @@ I160("i-folder", "efm-folder")
 I160("i-home", "efm-home")
 I160("i-temp", "efm-temp")
 
+///////////////////////////////////////////////////////////////////////////////
+// larger mono icons (mostly efm or settings)
 I160("i-system", "system")
 I160("i-system-restart", "system-restart")
 I160("i-system-shutdown", "system-shutdown")
@@ -177,7 +186,6 @@ I160("i-system-suspend", "system-suspend")
 I160("i-system-suspend-hibernate", "system-suspend-hibernate")
 I160("i-system-lock", "system-lock")
 I160("i-system-logout", "system-logout")
-
 I160("i-enlightenment", "enlightenment")
 
 ///////////////////////////////////////////////////////////////////////////////
