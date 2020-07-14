@@ -64,10 +64,10 @@
    ICON("transform-move","icon_autoscroll.png",64)                 // "enlightenment/autoscroll"
    ICON("view-refresh","icon_reset.png",16)                  // EFMBUTTON("refresh"
    ICON("view-inherit","icon_dummy.png",64)                 // *** // EFMBUTTON("inherit"
-   ICON("screenshot","icon_screenshot.png",64)                     // dunno
+//   ICON("screenshot","icon_screenshot.png",64)                     // dunno
    //Standard Status Icons
-   ICON("dialog-warning","icon_warning.png",128)                   // "enlightenment/warning"
-   ICON("dialog-error","icon_warning.png",128)                     // "enlightenment/error"
+//   ICON("dialog-warning","icon_warning.png",128)                   // "enlightenment/warning"
+//   ICON("dialog-error","icon_warning.png",128)                     // "enlightenment/error"
 //   ICON("dialog-ask","icon_dummy.png",64)                          // "enlightenment/unknown"
 //   ICON("unknown","icon_dummy.png",64)                      // *** // "enlightenment/unknown"
    //Standard Application Icons
@@ -145,7 +145,7 @@
    ICON("preferences-screen-right","icon_screen_right.png",64)   // *** // "enlightenment/screen_right"
    ICON("preferences-screen-vflip","icon_screen_vflip.png",64)   // *** // "enlightenment/screen_vflip"
    ICON("preferences-screen-hflip","icon_screen_hflip.png",64)   // *** // "enlightenment/screen_hflip"
-   ICON("preferences-applications","icon_applications.png",64)                 // *** // "enlightenment/applications"
+//   ICON("preferences-applications","icon_applications.png",64)                 // *** // "enlightenment/applications"
    ICON("preferences-applications-add","icon_applications_new.png",64)         // *** // "enlightenment/add_application"
    ICON("preferences-applications-ibar","icon_applications_ibar.png",64)       // *** // "enlightenment/ibar_applications"
    ICON("preferences-applications-restart","icon_applications_restart.png",64) // *** // "enlightenment/restart_applications"
@@ -153,7 +153,7 @@
    ICON("preferences-desktop-default-applications","icon_advanced.png",64)
    ICON("preferences-preferences","icon_config.png",64)                             // "enlightenment/configuration" "enlightenment/settings"
    ICON("preferences-plugin","icon_modules.png",64)                                   // "enlightenment/modules"
-   ICON("preferences-system","icon_configuration.png",64)                             // "enlightenment/configuration" "enlightenment/settings"
+//   ICON("preferences-system","icon_configuration.png",64)                             // "enlightenment/configuration" "enlightenment/settings"
    ICON("preferences-system-windows","icon_windows.png",64)                           // "enlightenment/windows" "enlightenment/showhide"
    ICON("preferences-system-performance","icon_performance.png",64)                   // "enlightenment/performance"
    ICON("preferences-system-power-management","icon_power_management.png",64)         // "enlightenment/power_management"
