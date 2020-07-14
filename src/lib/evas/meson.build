@@ -10,10 +10,8 @@ giflib = cc.find_library('gif')
 webp = dependency('libwebp', version: ['>=0.5.0'], required: get_option('evas-loaders-disabler').contains('webp') == false)
 webpdemux = dependency('libwebpdemux', version: ['>=0.5.0'], required: get_option('evas-loaders-disabler').contains('webp') == false)
 libopenjp2 = dependency('libopenjp2', required: get_option('evas-loaders-disabler').contains('jp2k') == false)
-libavif = dependency('libavif', required: get_option('evas-loaders-disabler').contains('avif') == false)
 
 evas_image_loaders_file = [
-     ['avif',    'shared', [libavif]],
      ['bmp',     'shared', []],
      ['eet',     'static', [eet]],
      ['generic', 'shared', [rt]],

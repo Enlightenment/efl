@@ -495,7 +495,6 @@ src/modules/evas/image_loaders/pmaps/evas_image_load_pmaps.c
 src/modules/evas/image_loaders/generic/evas_image_load_generic.c
 src/modules/evas/image_loaders/gif/evas_image_load_gif.c
 src/modules/evas/image_loaders/tgv/evas_image_load_tgv.c
-src/modules/evas/image_loaders/avif/evas_image_load_avif.c
 src/modules/evas/image_savers/jpeg/evas_image_save_jpeg.c
 src/modules/evas/image_savers/png/evas_image_save_png.c
 src/modules/evas/image_savers/tiff/evas_image_save_tiff.c

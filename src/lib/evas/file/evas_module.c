@@ -196,7 +196,6 @@ EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, json);
 #endif
 
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
-EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, avif);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, bmp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, dds);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, eet);
@@ -288,9 +287,6 @@ static const struct {
 #endif
 #endif
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
-#ifdef EVAS_STATIC_BUILD_AVIF
-  EVAS_EINA_STATIC_MODULE_USE(image_loader, avif),
-#endif
 #ifdef EVAS_STATIC_BUILD_BMP
   EVAS_EINA_STATIC_MODULE_USE(image_loader, bmp),
 #endif
