@@ -1526,6 +1526,18 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
      }
 }
 
+static void
+_elm_code_widget_scroll_newline(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Evas_Coord x, y, w, h;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_scroller_region_get(pd->scroller, &x, &y, &w, &h);
+   elm_scroller_region_show(pd->scroller, 0, y, w, h);
+}
+
 void
 _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
@@ -1575,6 +1587,8 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
    free(text);
+
+   _elm_code_widget_scroll_newline(widget);
 }
 
 static void
