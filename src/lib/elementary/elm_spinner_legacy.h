@@ -7,7 +7,7 @@
  *
  * This function inserts a new spinner widget on the canvas.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  *
  */
 EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
@@ -23,7 +23,7 @@ EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
  *
  * @see elm_spinner_special_value_add() for more details.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  * @since 1.8
  */
 EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
@@ -37,7 +37,7 @@ EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
  *
  * @see elm_spinner_special_value_add() for more details.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  * @since 1.8
  */
 EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
@@ -58,7 +58,7 @@ EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
  * @param[in] min The minimum value.
  * @param[in] max The maximum value.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  */
 EAPI void elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
 
@@ -78,7 +78,7 @@ EAPI void elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
  * @param[out] min The minimum value.
  * @param[out] max The maximum value.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  */
 EAPI void elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max);
 
@@ -96,7 +96,7 @@ EAPI void elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *m
  *
  * @param[in] step The step value.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  */
 EAPI void elm_spinner_step_set(Evas_Object *obj, double step);
 
@@ -114,7 +114,7 @@ EAPI void elm_spinner_step_set(Evas_Object *obj, double step);
  *
  * @return The step value.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  */
 EAPI double elm_spinner_step_get(const Evas_Object *obj);
 
@@ -129,7 +129,7 @@ EAPI double elm_spinner_step_get(const Evas_Object *obj);
  *
  * @param[in] val The value to be displayed.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  */
 EAPI void elm_spinner_value_set(Evas_Object *obj, double val);
 
@@ -144,7 +144,7 @@ EAPI void elm_spinner_value_set(Evas_Object *obj, double val);
  *
  * @return The value to be displayed.
  *
- * @ingroup Elm_Spinner
+ * @ingroup Elm_Spinner_Group
  */
 EAPI double elm_spinner_value_get(const Evas_Object *obj);
 

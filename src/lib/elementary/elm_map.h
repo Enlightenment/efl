@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Map Map
+ * @defgroup Elm_Map_Group Map
  * @ingroup Elementary
  *
  * @image html map_inheritance_tree.png

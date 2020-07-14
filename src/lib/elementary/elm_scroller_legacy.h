@@ -8,7 +8,7 @@
  *
  * See also @ref elm_interface_scrollable_policy_set.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 typedef enum
 {
@@ -24,7 +24,7 @@ typedef enum
  *
  * See also @ref elm_interface_scrollable_single_direction_set.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 typedef enum
 {
@@ -46,7 +46,7 @@ typedef enum
  *
  * @since 1.8
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 typedef enum
 {
@@ -61,7 +61,7 @@ typedef enum
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI Evas_Object                  *elm_scroller_add(Evas_Object *parent);
 
@@ -77,7 +77,7 @@ EAPI Evas_Object                  *elm_scroller_add(Evas_Object *parent);
  * right size horizontally and/or vertically to perfectly fit its content in
  * that direction.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
 
@@ -94,7 +94,7 @@ EAPI void                          elm_scroller_content_min_limit(Evas_Object *o
  * region in the virtual content object (0, 0 starting at the top-left of the
  * virtual content object) is shown within the scroller.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
@@ -111,7 +111,7 @@ EAPI void                          elm_scroller_region_show(Evas_Object *obj, Ev
  * the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
  * respectively for the horizontal and vertical scrollbars.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -124,7 +124,7 @@ EAPI void                          elm_scroller_policy_set(Evas_Object *obj, Elm
  *
  * @see elm_scroller_policy_set()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -138,7 +138,7 @@ EAPI void                          elm_scroller_policy_get(const Evas_Object *ob
  *
  * @since 1.8
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_single_direction_set(Evas_Object *obj, Elm_Scroller_Single_Direction single_dir);
 
@@ -152,7 +152,7 @@ EAPI void                          elm_scroller_single_direction_set(Evas_Object
  *
  * @since 1.8
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI Elm_Scroller_Single_Direction elm_scroller_single_direction_get(const Evas_Object *obj);
 
@@ -173,7 +173,7 @@ EAPI Elm_Scroller_Single_Direction elm_scroller_single_direction_get(const Evas_
  *
  * @see elm_scroller_region_show()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
@@ -186,7 +186,7 @@ EAPI void                          elm_scroller_region_get(const Evas_Object *ob
  *
  * This gets the size of the content object of the scroller.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -209,7 +209,7 @@ EAPI void                          elm_scroller_child_size_get(const Evas_Object
  *
  * @since 1.8
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_snap_set(Evas_Object *obj, Eina_Bool page_h_snap, Eina_Bool page_v_snap);
 
@@ -224,7 +224,7 @@ EAPI void                          elm_scroller_page_snap_set(Evas_Object *obj, 
  *
  * @since 1.8
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_snap_get(const Evas_Object *obj, Eina_Bool *page_h_snap, Eina_Bool *page_v_snap);
 
@@ -240,7 +240,7 @@ EAPI void                          elm_scroller_page_snap_get(const Evas_Object 
  * This is enabled by default for both axis. This API will set if it is enabled
  * for the given axis with the boolean parameters for each axis.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -253,7 +253,7 @@ EAPI void                          elm_scroller_bounce_set(Evas_Object *obj, Ein
  *
  * @see elm_scroller_bounce_set()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -275,7 +275,7 @@ EAPI void                          elm_scroller_bounce_get(const Evas_Object *ob
  * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
  * the other axis.
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
 
@@ -293,7 +293,7 @@ EAPI void                          elm_scroller_page_relative_set(Evas_Object *o
  *
  * @since 1.7
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
 
@@ -310,7 +310,7 @@ EAPI void                          elm_scroller_page_relative_get(const Evas_Obj
  * @see elm_scroller_page_relative_set()
  * @see elm_scroller_page_size_get()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
 
@@ -326,7 +326,7 @@ EAPI void                          elm_scroller_page_size_set(Evas_Object *obj, 
  *
  * @since 1.7
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_size_get(const Evas_Object *obj, Evas_Coord *h_pagesize, Evas_Coord *v_pagesize);
 
@@ -346,7 +346,7 @@ EAPI void                          elm_scroller_page_size_get(const Evas_Object 
  * @see elm_scroller_page_show()
  * @see elm_scroller_page_bring_in()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -364,7 +364,7 @@ EAPI void                          elm_scroller_current_page_get(const Evas_Obje
  * @see elm_scroller_page_show()
  * @see elm_scroller_page_bring_in()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -390,7 +390,7 @@ EAPI void                          elm_scroller_last_page_get(const Evas_Object 
  *
  * @see elm_scroller_page_bring_in()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_show(Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
@@ -416,7 +416,7 @@ EAPI void                          elm_scroller_page_show(Evas_Object *obj, int 
  *
  * @see elm_scroller_page_show()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_page_bring_in(Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
@@ -439,7 +439,7 @@ EAPI void                          elm_scroller_page_bring_in(Evas_Object *obj, 
  *
  * @see elm_scroller_region_show()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
@@ -462,7 +462,7 @@ EAPI void                          elm_scroller_region_bring_in(Evas_Object *obj
  *
  * Default values for x and y are 0.0
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_gravity_set(Evas_Object *obj, double x, double y);
 
@@ -477,7 +477,7 @@ EAPI void                          elm_scroller_gravity_set(Evas_Object *obj, do
  *
  * @see elm_scroller_gravity_set()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_gravity_get(const Evas_Object *obj, double *x, double *y);
 
@@ -501,7 +501,7 @@ EAPI void                          elm_scroller_gravity_get(const Evas_Object *o
  *
  * @since 1.8
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                         elm_scroller_movement_block_set(Evas_Object *obj, Elm_Scroller_Movement_Block block);
 
@@ -515,7 +515,7 @@ EAPI void                         elm_scroller_movement_block_set(Evas_Object *o
  *
  * @see elm_scroller_movement_block_set() for more details
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI Elm_Scroller_Movement_Block  elm_scroller_movement_block_get(const Evas_Object *obj);
 
@@ -532,7 +532,7 @@ EAPI Elm_Scroller_Movement_Block  elm_scroller_movement_block_get(const Evas_Obj
  *
  * @since 1.13
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_step_size_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
@@ -547,7 +547,7 @@ EAPI void                          elm_scroller_step_size_set(Evas_Object *obj, 
  *
  * @since 1.13
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_step_size_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 
@@ -563,7 +563,7 @@ EAPI void                          elm_scroller_step_size_get(const Evas_Object 
  *
  * @since 1.14
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_loop_set(Evas_Object *obj, Eina_Bool loop_h, Eina_Bool loop_v);
 
@@ -578,7 +578,7 @@ EAPI void                          elm_scroller_loop_set(Evas_Object *obj, Eina_
  *
  * @see elm_scroller_loop_set() for more details
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_loop_get(const Evas_Object *obj, Eina_Bool *loop_h, Eina_Bool *loop_v);
 
@@ -595,7 +595,7 @@ EAPI void                          elm_scroller_loop_get(const Evas_Object *obj,
  *
  * @see elm_scroller_wheel_disabled_get()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void                          elm_scroller_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -611,7 +611,7 @@ EAPI void                          elm_scroller_wheel_disabled_set(Evas_Object *
  *
  * @see elm_scroller_wheel_disabled_set()
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI Eina_Bool                     elm_scroller_wheel_disabled_get(const Evas_Object *obj);
 
@@ -624,7 +624,7 @@ EAPI Eina_Bool                     elm_scroller_wheel_disabled_get(const Evas_Ob
  * @param[in] obj The scroller object
  * @param[in] propagation The propagation state
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI void elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation);
 
@@ -636,7 +636,7 @@ EAPI void elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagat
  * @param[in] obj The scroller object
  * @return The propagation state
  *
- * @ingroup Elm_Scroller
+ * @ingroup Elm_Scroller_Group
  */
 EAPI Eina_Bool elm_scroller_propagate_events_get(const Evas_Object *obj);
 #endif

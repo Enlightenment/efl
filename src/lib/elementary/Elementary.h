@@ -138,6 +138,11 @@ typedef struct _Elm_Version
    int revision;
 } Elm_Version;
 
+/**
+ * Elementary Version Information
+ *
+ * @ingroup Elm_General
+ */
 EAPI extern Elm_Version *elm_version;
 
 

@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Naviframe Naviframe
+ * @defgroup Elm_Naviframe_Group Naviframe
  * @ingroup Elementary
  *
  * @image html naviframe_inheritance_tree.png
@@ -85,7 +85,7 @@
  */
 
 /**
- * @addtogroup Elm_Naviframe
+ * @addtogroup Elm_Naviframe_Group
  * @{
  */
 

@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Panel Panel
+ * @defgroup Elm_Panel_Group Panel
  * @ingroup Elementary
  *
  * @image html panel_inheritance_tree.png

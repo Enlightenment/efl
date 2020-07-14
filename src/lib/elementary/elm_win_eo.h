@@ -2,7 +2,7 @@
 # define ELM_WIN_EO_H
 
 /**
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  *
  * @{
  */

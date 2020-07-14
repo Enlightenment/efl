@@ -6,7 +6,7 @@ typedef Eo Elm_Photocam;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
 
@@ -21,7 +21,7 @@ EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
  *
  * This shows the region of the image using animation.
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
 
@@ -38,7 +38,7 @@ EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj,
  * photo that at some time in the future will be displayed at the full
  * quality needed.
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  *
  * @param[in] file The photo file
  */
@@ -52,7 +52,7 @@ EAPI Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
  *
  * @see elm_photocam_file_set()
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  *
  */
 EAPI const char *elm_photocam_file_get(const Evas_Object *obj);
@@ -67,7 +67,7 @@ EAPI const char *elm_photocam_file_get(const Evas_Object *obj);
  *
  * @since 1.14
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient);
 
@@ -79,7 +79,7 @@ EAPI void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orie
  *
  * @since 1.14
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
 
@@ -92,7 +92,7 @@ EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
  *
  * @return The internal image object handle or @c null
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
 
@@ -106,7 +106,7 @@ EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
  * @param[in] w Width of region in image original pixels
  * @param[in] h Height of region in image original pixels
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
 
@@ -119,7 +119,7 @@ EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, i
  * @param[out] w A pointer to the width return
  * @param[out] h A pointer to the height return
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void              elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
 
@@ -130,7 +130,7 @@ EAPI void              elm_photocam_image_size_get(const Evas_Object *obj, int *
  *
  * @return The pause state.
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
 
@@ -143,7 +143,7 @@ EAPI Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
  *
  * @param[in] paused The pause state.
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
 
@@ -160,7 +160,7 @@ EAPI void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused
  *
  * @param[in] zoom The zoom level to set
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
 
@@ -174,7 +174,7 @@ EAPI void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
  *
  * @return The zoom level to set
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI double           elm_photocam_zoom_get(const Evas_Object *obj);
 
@@ -207,7 +207,7 @@ typedef enum
  *
  * @param[in] mode The zoom mode.
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
 
@@ -218,7 +218,7 @@ EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photoca
  *
  * @return The zoom mode.
  *
- * @ingroup Elm_Photocam
+ * @ingroup Elm_Photocam_Group
  */
 EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
 

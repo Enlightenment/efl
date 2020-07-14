@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Win Win
+ * @defgroup Elm_Win_Group Win
  * @ingroup Elementary
  *
  * @image html win_inheritance_tree.png

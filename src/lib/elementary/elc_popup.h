@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Popup Popup
+ * @defgroup Elm_Popup_Group Popup
  * @ingroup Elementary
  *
  * @image html popup_inheritance_tree.png

@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Scroller Scroller
+ * @defgroup Elm_Scroller_Group Scroller
  * @ingroup Elementary
  *
  * @image html scroller_inheritance_tree.png

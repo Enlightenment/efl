@@ -15,6 +15,11 @@ typedef Eo Elm_Index_Item;
 #endif
 
 /**
+ * @defgroup Elm_Index_Item_Group
+ * @ingroup Elm_Index_Group
+ */
+
+/**
  * @brief Set the selected state of an item.
  *
  * This sets the selected state of the given item @c it. @c true for selected,

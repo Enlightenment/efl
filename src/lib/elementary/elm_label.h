@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Label Label
+ * @defgroup Elm_Label_Group Label
  * @ingroup Elementary
  *
  * @image html label_inheritance_tree.png

@@ -1,5 +1,5 @@
 /**
- * @addtogroup Elm_Panel
+ * @addtogroup Elm_Panel_Group
  *
  * @{
  */

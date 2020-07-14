@@ -13,7 +13,7 @@ typedef Eo Elm_Label;
 
 /** Slide mode of a label widget
  *
- * @ingroup Elm_Label
+ * @ingroup Elm_Label_Group
  */
 typedef enum
 {

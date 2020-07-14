@@ -1,5 +1,5 @@
 /**
- * @defgroup Plug Plug
+ * @defgroup Elm_Plug_Group Plug
  * @ingroup Elementary
  *
  * @image html plug_inheritance_tree.png
@@ -27,7 +27,7 @@
 
 
 /**
- * @addtogroup Plug
+ * @addtogroup Elm_Plug_Group
  * @{
  */
 
